@@ -166,6 +166,17 @@ module Emma
     # Don't colorize AWS logs.
     config.colorize_logging = !application_deployed?
 
+    # Use a different logger for distributed setups.
+    # require 'syslog/logger'
+    # config.logger =
+    #   ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
+    if true?(ENV['RAILS_LOG_TO_STDOUT'])
+      logger           = ActiveSupport::Logger.new(STDOUT)
+      logger.formatter = config.log_formatter
+      config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    end
+
     # =========================================================================
     # Assets
     # =========================================================================

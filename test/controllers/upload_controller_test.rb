@@ -127,6 +127,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
       u_opt[:expect] = :redirect
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit
+        rec.set_state(:validating)
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] = :unauthorized unless fmt == :html

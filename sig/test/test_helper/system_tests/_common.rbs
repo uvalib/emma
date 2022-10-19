@@ -53,6 +53,10 @@ module TestHelper::SystemTests::Common
   #
   def get_browser_url: (?port: bool) -> (String | nil)
 
+  DEFAULT_WAIT_MAX_TIME: Numeric
+
+  DEFAULT_WAIT_MAX_PASS: Integer
+
   # Block until the browser can confirm that it is on the target page.
   #
   # @param [String, Array] target     One or more acceptable target URLs.

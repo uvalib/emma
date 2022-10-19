@@ -88,6 +88,9 @@ module TestHelper::SystemTests::Common
     (url && !port) ? url_without_port(url) : url
   end
 
+  DEFAULT_WAIT_MAX_TIME = 2 * Capybara.default_max_wait_time
+  DEFAULT_WAIT_MAX_PASS = 5
+
   # Block until the browser can confirm that it is on the target page.
   #
   # @param [String, Array] target     One or more acceptable target URLs.
@@ -101,8 +104,14 @@ module TestHelper::SystemTests::Common
   #
   # @return [Boolean]
   #
-  def wait_for_page(target, wait: nil, max: 5, port: false, assert: true, trace: true)
-    wait  ||= 2 * Capybara.default_max_wait_time
+  def wait_for_page(
+    target,
+    wait:   DEFAULT_WAIT_MAX_TIME,
+    max:    DEFAULT_WAIT_MAX_PASS,
+    port:   false,
+    assert: true,
+    trace:  true
+  )
     timer   = Capybara::Helpers::Timer.new(wait)
     current = nil
     targets = Array.wrap(target)
@@ -140,7 +149,7 @@ module TestHelper::SystemTests::Common
   # @return [void]
   #
   def success_screenshot
-    take_screenshot
+    take_screenshot if TESTING_JAVASCRIPT
   rescue Selenium::WebDriver::Error::UnknownError => error
     $stderr.puts "[Screenshot Image]: #{error.class} - #{error.message}"
   end

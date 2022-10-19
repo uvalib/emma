@@ -9,13 +9,13 @@
 # be the best choice in general.
 #
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  include TestHelper::SystemTests
+
   HEADLESS: bool
 
   BROWSER: Symbol
 
   SCREEN_SIZE: [Integer,Integer]
-
-  include TestHelper::SystemTests
 end
 
 # Encapsulates setup of 'capybara-lockstep'.

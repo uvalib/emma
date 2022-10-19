@@ -162,7 +162,7 @@ module Record::Debugging
       # @param [Proc, nil] block
       #
       def initialize(attr = nil, &block)
-        ldr = "new #{self.class.base_class.name.upcase} RECORD"
+        ldr = "new #{self.class.base_class.name.underscore.upcase} RECORD"
         __debug_items(binding, leader: ldr)
         super(attr, &block)
         __debug_items(self.class.name, self, leader: ldr)

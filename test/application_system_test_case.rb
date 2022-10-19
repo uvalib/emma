@@ -18,13 +18,17 @@ require 'capybara-lockstep'
 #
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
+  include TestHelper::SystemTests
+
   HEADLESS    = true
   BROWSER     = HEADLESS ? :headless_firefox   : :firefox
   SCREEN_SIZE = HEADLESS ? [1920, 1080].freeze : [1024, 768].freeze
 
-  driven_by :selenium, using: BROWSER, screen_size: SCREEN_SIZE
-
-  include TestHelper::SystemTests
+  if TESTING_JAVASCRIPT
+    driven_by :selenium, using: BROWSER, screen_size: SCREEN_SIZE
+  else
+    driven_by :rack_test
+  end
 
   # ===========================================================================
   # :section:

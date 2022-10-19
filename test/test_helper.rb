@@ -25,6 +25,15 @@ DEBUG_TESTS = true
 #
 BASE_URL = 'http://localhost'
 
+# If not testing client-side behavior for system tests, setting this to *false*
+# will use Rack::Test rather than Selenium.
+#
+# NOTE: This is unverified.
+#
+# @type [Boolean]
+#
+TESTING_JAVASCRIPT = true
+
 # =============================================================================
 # Test helpers
 # =============================================================================
@@ -149,3 +158,5 @@ end
 
 # Setup decorators.
 Draper::ViewContext.test_strategy :fast
+
+$stderr.puts "\nDATE #{Date.today}"

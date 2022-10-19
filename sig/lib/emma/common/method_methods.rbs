@@ -26,7 +26,8 @@ module Emma::Common::MethodMethods
   # Return the indicated method.  If *meth* is something other than a Symbol or
   # a Method then *nil* is returned.
   #
-  # @param [Array<Symbol,Binding,Method>] args
+  # @param [Symbol, Method, *] meth
+  # @param [Binding, *]        bind
   #
   # @return [Method, nil]
   #
@@ -47,14 +48,15 @@ module Emma::Common::MethodMethods
   #   @param [Method] meth
   #   @return [Method]
   #
-  def get_method: (Symbol name, Binding bind, *untyped ignored) -> (Method | nil)
-                | (Binding bind,              *untyped ignored) -> (Method | nil)
-                | (Method meth,               *untyped ignored) -> (Method | nil)
+  def get_method: (Symbol meth, Binding bind, *untyped _ignored) -> (Method | nil)
+                | (             Binding bind, *untyped _ignored) -> (Method | nil)
+                | (Method meth,               *untyped _ignored) -> Method
 
   # Return a table of a method's parameters and their values given a Binding
   # from that method invocation.
   #
-  # @param [Array]                 args
+  # @param [Symbol, Method, *]     meth
+  # @param [Binding, *]            bind
   # @param [Symbol, Array<Symbol>] only
   # @param [Symbol, Array<Symbol>] except
   #

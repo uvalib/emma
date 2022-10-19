@@ -388,27 +388,24 @@ module Emma::Debug
     #   @param [Hash]           opt     Passed to #__debug_line.
     #
     def __debug_items(*args, **opt, &block)
+      gp_opt = extract_hash!(opt, :only, :except)
+      meth, bind = args.first(2)
+      if bind.is_a?(Binding)
+        args.shift(2)
+      elsif meth.is_a?(Binding)
+        args.shift
+        meth, bind = [nil, meth]
+      end
 
-      # Variations to inject the parameters of the calling method.
-      # noinspection RubyNilAnalysis
-      if args[0..1].any? { |arg| arg.is_a?(Binding) }
-
-        # Extract the method and/or binding from *args*.
-        gp_opt = extract_hash!(opt, :only, :except)
-        meth   = (args.shift unless args.first.is_a?(Binding))
-        bind   = (args.shift if args.first.is_a?(Binding))
-        meth ||= (bind.eval('__method__') if bind.is_a?(Binding))
-
-        # Append calling method parameter values if possible.
-        prms = meth.is_a?(Method) || bind.is_a?(Binding)
-        args << get_params(meth, bind, **gp_opt) if prms
-
-        # Prepend the method label if it was given or could be determined.
+      # Append calling method parameter values if possible.
+      # Prepend the method label if it was given or could be determined.
+      if bind.is_a?(Binding)
+        prms = get_params(meth, bind, **gp_opt).presence
         unless meth.is_a?(String)
-          meth = __debug_label(call_method: (meth || calling_method))
+          meth = get_method(meth, bind) || calling_method
+          meth = __debug_label(call_method: meth)
         end
-        args.prepend(meth) if meth
-
+        args = [meth, *args, prms].compact
       end
 
       items = block ? __debug_inspect_items(**opt, &block) : []

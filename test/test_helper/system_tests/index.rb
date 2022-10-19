@@ -50,7 +50,6 @@ module TestHelper::SystemTests::Index
     **opt
   )
     ctrlr = controller_name(model)
-    terms = terms.presence
     prop  = property(ctrlr, :index)&.slice(:title, :heading)
     opt.reverse_merge!(prop) if prop.present?
     if (terms = terms.presence)

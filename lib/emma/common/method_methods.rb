@@ -54,7 +54,8 @@ module Emma::Common::MethodMethods
   # Return the indicated method.  If *meth* is something other than a Symbol or
   # a Method then *nil* is returned.
   #
-  # @param [Array<Symbol,Binding,Method>] args
+  # @param [Symbol, Method, *] meth
+  # @param [Binding, *]        bind
   #
   # @return [Method, nil]
   #
@@ -75,19 +76,20 @@ module Emma::Common::MethodMethods
   #   @param [Method] meth
   #   @return [Method]
   #
-  def get_method(*args)
-    meth = (args.shift unless args.first.is_a?(Binding))
+  def get_method(meth, bind, *)
     return meth if meth.is_a?(Method)
-    bind = args.first
+    meth, bind = [nil, meth] if meth.is_a?(Binding)
     return unless bind.is_a?(Binding)
-    meth ||= bind.eval('__method__')
-    bind.receiver.method(meth) if bind.receiver.methods.include?(meth)
+    meth = bind.eval('__method__') unless meth.is_a?(Symbol)
+    rcvr = bind.receiver
+    rcvr.method(meth) if rcvr.methods.include?(meth)
   end
 
   # Return a table of a method's parameters and their values given a Binding
   # from that method invocation.
   #
-  # @param [Array]                 args
+  # @param [Symbol, Method, *]     meth
+  # @param [Binding, *]            bind
   # @param [Symbol, Array<Symbol>] only
   # @param [Symbol, Array<Symbol>] except
   #
@@ -110,24 +112,20 @@ module Emma::Common::MethodMethods
   #   @param [Symbol, Array<Symbol>] except
   #   @return [Hash{Symbol=>Any}]
   #
-  def get_params(*args, only: [], except: [], **)
+  def get_params(meth, bind, *, only: [], except: [], **)
+    meth, bind = [nil, meth] if meth.is_a?(Binding)
+    meth   = get_method(meth, bind) or return {}
     only   = Array.wrap(only).presence
     except = Array.wrap(except).presence
-    meth   = (args.shift unless args.first.is_a?(Binding))
-    bind   = (args.shift if args.first.is_a?(Binding))
-    if !meth.is_a?(Method) && bind.is_a?(Binding)
-      meth = bind.eval('__method__') unless meth.is_a?(Symbol)
-      rcvr = bind.receiver
-      meth = (rcvr.method(meth) if rcvr.methods.include?(meth))
-    end
-    prms = meth.is_a?(Method) ? meth.parameters : {}
-    prms.flat_map { |type, name|
-      next if (type == :block) || name.blank? || except&.include?(name)
-      next unless only.nil? || only.include?(name)
+    meth.parameters.flat_map { |type, name|
+      next if (type == :block) || name.blank?
+      next if only && !only.include?(name) || except&.include?(name)
+      next unless bind.local_variable_defined?(name)
+      next unless (value = bind.local_variable_get(name))
       if type == :keyrest
-        bind.local_variable_get(name).map(&:itself)
+        value.map(&:itself)
       else
-        [[name, bind.local_variable_get(name)]]
+        [[name, value]]
       end
     }.compact.to_h
   end

@@ -11,6 +11,15 @@ BASE_URL: String
 #
 DEBUG_TESTS: bool
 
+# If not testing client-side behavior for system tests, setting this to *false*
+# will use Rack::Test rather than Selenium.
+#
+# NOTE: This is unverified.
+#
+# @type [Boolean]
+#
+TESTING_JAVASCRIPT: bool
+
 # Support methods for tests.
 #
 module TestHelper
