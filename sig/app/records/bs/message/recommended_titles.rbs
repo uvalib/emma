@@ -1,0 +1,17 @@
+# Bs::Message::RecommendedTitles
+#
+# @attr [Integer]                                 limit
+# @attr [Array<Bs::Record::Link>]                 links
+# @attr [String]                                  next
+# @attr [Array<Bs::Record::TitleMetadataSummary>] recommendedTitles
+# @attr [Integer]                                 totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_recommended_titles
+#
+class Bs::Message::RecommendedTitles < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

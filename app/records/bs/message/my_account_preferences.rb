@@ -15,6 +15,7 @@ __loading_begin(__FILE__)
 # @attr [String]                  language
 # @attr [Array<Bs::Record::Link>] links
 # @attr [Boolean]                 showAllBooks
+# @attr [Boolean]                 showRecommendations
 # @attr [Boolean]                 useUeb
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_myaccount_preferences
@@ -37,6 +38,7 @@ class Bs::Message::MyAccountPreferences < Bs::Api::Message
     has_one   :language
     has_many  :links,                Bs::Record::Link
     has_one   :showAllBooks,         Boolean
+    has_one   :showRecommendations,  Boolean
     has_one   :useUeb,               Boolean
   end
 

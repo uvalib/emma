@@ -1,0 +1,19 @@
+# Bs::Message::BookmarkList
+#
+# @attr [Array<BsAllowsType>]         allows
+# @attr [Array<Bs::Record::Bookmark>] bookmarks
+# @attr [Integer]                     limit
+# @attr [Array<Bs::Record::Link>]     links
+# @attr [Bs::Record::StatusModel]     message
+# @attr [String]                      next
+# @attr [Integer]                     totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_bookmark_list
+#
+class Bs::Message::BookmarkList < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

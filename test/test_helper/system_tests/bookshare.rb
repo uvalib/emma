@@ -263,6 +263,9 @@ module TestHelper::SystemTests::Bookshare
       when 'string', 'integer', 'boolean'
         type.camelize
 
+      when /^number/
+        'Float'
+
       when /^(integer|boolean).*/
         $1.to_s.camelize
 

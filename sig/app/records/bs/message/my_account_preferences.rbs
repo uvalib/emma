@@ -8,6 +8,7 @@
 # @attr [String]                  language
 # @attr [Array<Bs::Record::Link>] links
 # @attr [Boolean]                 showAllBooks
+# @attr [Boolean]                 showRecommendations
 # @attr [Boolean]                 useUeb
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_myaccount_preferences
