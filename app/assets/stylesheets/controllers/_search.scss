@@ -1770,7 +1770,7 @@ body.search.dev-style {
     }
 
     @mixin type-marker($term, $color: red, $inner-color: black) {
-        &:before {
+        &::before {
             content:        '[#{$term}]';
             position:       absolute;
             left:           -2rem;

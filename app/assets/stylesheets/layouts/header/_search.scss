@@ -211,7 +211,7 @@ $search-button-width:    6rem;
              * is obscured until that point.
              */
             // noinspection CssOverwrittenProperties
-            option:before {
+            option::before {
                 display:        block;
                 color:          $uva-text-gray;
                 background:     $root-bg-color;

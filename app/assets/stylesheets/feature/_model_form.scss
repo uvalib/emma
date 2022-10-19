@@ -765,7 +765,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
             min-height: 3rem;
 
-            &:before {
+            &::before {
                 background-color: transparent;
             }
 

@@ -771,7 +771,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         .slider {
             $x-pos:     $slider-offset;
             transform:  translate($x-pos);
-            &:before {  content: 'unlocked'; }
+            &::before { content: 'unlocked'; }
         }
     }
 
@@ -786,7 +786,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         .slider {
             $x-pos:     $slider-offset + $slider-pad-x * 2;
             transform:  translate(calc(100% - #{$x-pos}));
-            &:after {   content: 'locked'; }
+            &::after {  content: 'locked'; }
         }
     }
 

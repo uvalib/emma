@@ -115,7 +115,7 @@
         border-radius: 0.75rem;
         visibility:    inherit;
 
-        &:after {
+        &::after {
             content: "%";
         }
     }
@@ -132,7 +132,7 @@
             color:      transparent;
             transform:  none;
 
-            &:after {
+            &::after {
                 content:       "saving...";
                 display:       inline-block;
                 padding:       0.25rem;
