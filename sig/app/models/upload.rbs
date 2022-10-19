@@ -306,4 +306,8 @@ class Upload < ApplicationRecord
   # @return [void]
   #
   def check_required: ((Upload|symHash) source, symHash required_fields) -> void
+
+  private
+
+  def error: (Symbol field, Symbol `type`, ?(String|nil) message) -> void
 end

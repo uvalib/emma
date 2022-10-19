@@ -796,9 +796,9 @@ class Upload < ApplicationRecord
       value = source.is_a?(Hash) ? source[field] : source.send(field)
       if entry.is_a?(Hash)
         if !value.is_a?(Hash)
-          errors.add(field, :invalid, 'expecting Hash')
+          error(field, :invalid, 'expecting Hash')
         elsif value.blank?
-          errors.add(field, :missing)
+          error(field, :missing)
         else
           check_required(value, entry)
         end
@@ -810,19 +810,30 @@ class Upload < ApplicationRecord
         max = entry[:max].to_i
         if value.is_a?(Array)
           if value.size < min
-            errors.add(field, :too_few, "at least #{min} is required")
+            error(field, :too_few, "at least #{min} is required")
           elsif (0 < max) && (max < value.size)
-            errors.add(field, :too_many, "no more than #{max} is expected")
+            error(field, :too_many, "no more than #{max} is expected")
           end
         else
           if max != 1
-            errors.add(field, :invalid, 'expecting Array')
+            error(field, :invalid, 'expecting Array')
           elsif !min.zero?
-            errors.add(field, :missing)
+            error(field, :missing)
           end
         end
       end
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def error(field, type, message = nil)
+    opt = { message: message }.compact
+    errors.add(field, type, **opt)
   end
 
 end

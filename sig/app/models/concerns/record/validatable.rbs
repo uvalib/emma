@@ -58,6 +58,10 @@ module Record::Validatable
 
   private
 
+  def error: (Symbol field, Symbol `type`, ?(String|nil) message) -> void
+
+  private
+
   THIS_MODULE: Module
 
   # :nocov:

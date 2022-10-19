@@ -19,7 +19,7 @@ gem 'rails', '~> 7'
 gem 'pg'
 
 # Use Puma as the app server
-gem 'puma'
+gem 'puma', '5.6.5' # NOTE: 6.0.0 breaks capybara 3.37.1
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4'

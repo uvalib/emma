@@ -152,7 +152,7 @@ class User < ApplicationRecord
 
   validate on: :create do
     unless uid.match?(/^.+@.+$/)
-      errors.add(:base, 'User ID must be a valid email address')
+      errors.add(:base, message: 'User ID must be a valid email address')
     end
   end
 
