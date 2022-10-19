@@ -73,6 +73,13 @@ module Emma
       Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
 
     # =========================================================================
+    # ActionController
+    # =========================================================================
+
+    # NOTE: Needed for "javascript:history.back()" for now.
+    config.action_controller.raise_on_open_redirects = false
+
+    # =========================================================================
     # ActiveSupport
     # =========================================================================
 

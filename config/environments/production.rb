@@ -60,6 +60,12 @@ Rails.application.configure do
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
+  # =========================================================================
+  # ActionController
+  # =========================================================================
+
+  # See config/application.rb
+
   # ===========================================================================
   # ActiveSupport
   # ===========================================================================
