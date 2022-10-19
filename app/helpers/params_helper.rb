@@ -171,6 +171,13 @@ module ParamsHelper
     last_operation['time'].to_i
   end
 
+  # Indicate whether this is the session's first operation since the last
+  # reboot.
+  #
+  def first_operation?
+    last_operation_time < BOOT_TIME.to_i
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

@@ -67,8 +67,12 @@ body.upload {
         margin-bottom: 0;
     }
 
-    .search-in-progress {
-        &.visible { transition: unset; }
+    // Fix closer appearance for simple flash messages.
+    .flash-messages.floating {
+        .text + .closer {
+            max-width:   max-content;
+            margin-left: auto;
+        }
     }
 }
 

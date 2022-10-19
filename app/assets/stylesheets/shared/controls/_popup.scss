@@ -2,4 +2,63 @@
 //
 // Definitions supporting pop-up elements.
 
-// NOTE: none currently
+
+//=============================================================================
+// Floating elements
+//=============================================================================
+
+/// Used to make an element float in the center of the screen.
+///
+/// @param {Numeric} $width           Must be in 'vw' units.
+/// @param {Numeric} $height          Must be in 'vh' units.
+///
+@mixin center-float($width: 50vw, $height: 50vh) {
+    position: sticky;
+    top:      (100vh - $height) * 0.5;
+    left:     (100vw - $width)  * 0.5;
+    display:  block;
+    height:   $height;
+    width:    $width;
+    margin:   0;
+}
+
+/// Used to make a floating container element in the center of the screen.
+///
+/// @param {Numeric} $width           Must be in 'vw' units.
+/// @param {Numeric} $height          Must be in 'vh' units.
+///
+@mixin center-float-container($width, $height) {
+
+    @include center-float($width, $height);
+
+    display:   flex;
+    flex-wrap: nowrap;
+    gap:       1vh 1vw;
+    overflow:  visible;
+}
+
+/// Used to make a floating container element that expands vertically around
+/// the horizontal center line of the screen.
+///
+/// @param {Numeric} $width           Must be in 'vw' units.
+///
+@mixin center-float-vertical($width: 50vw) {
+
+    @include center-float-container($width, 0);
+
+    flex-direction:  column;
+    justify-content: center;
+}
+
+/// Used to make a floating container element that expands horizontally around
+/// the vertical midline of the screen.
+///
+/// @param {Numeric} $height          Must be in 'vh' units.
+///
+@mixin center-float-horizontal($height: 50vw) {
+
+    @include center-float-container(0, $height);
+
+    flex-direction: row;
+    align-content:  center;
+}

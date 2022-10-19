@@ -27,8 +27,6 @@ module SessionConcern
   #
   PRESERVE_SESSION_KEYS: Array[String|Regexp]
 
-  @reset_browser_cache: bool
-
   # Redirect after a successful authorization operation.
   #
   # @param [String, nil] path         Default: `#after_sign_in_path_for`.

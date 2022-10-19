@@ -1,38 +1,11 @@
 // app/assets/stylesheets/feature/_overlay.scss
 
-@use 'shared/variables' as *;
-@use 'shared/functions' as *;
+@use 'shared/feature/overlay' as overlay;
 
 //=============================================================================
 // Content overlay frames
 //=============================================================================
 
 .overlay {
-
-    position:   absolute;
-    top:        0;
-    left:       0;
-    display:    block;
-    width:      100%;
-    height:     100%;
-    background: #00000010;
-    transition: opacity 0.5s ease-in 0.75s;
-
-    // Add the "visible" class to the element to make the overlay appear.
-    &.visible {
-        z-index: $z-overlay;
-        opacity: 1;
-    }
-
-    // Without the addition of the "visible" class, the overlay remains hidden.
-    &:not(.visible) {
-        z-index: $z-hidden;
-        opacity: 0;
-    }
-
-    // Wrapper for overlay features that should remain in place on the screen.
-    .content {
-        position: sticky;
-        display:  block;
-    }
+    @include overlay.fill-animated;
 }

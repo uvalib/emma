@@ -106,11 +106,31 @@
     display: none !important;
 }
 
+/// Apply settings to both the element itself and its direct descendents.
+///
+@mixin self-and-children {
+    @content;
+    > * { @content }
+}
+
+/// Apply settings to both the element itself and all of its descendents.
+///
+@mixin self-and-descendents {
+    @content;
+    * { @content }
+}
+
 /// Hide the contents of the element while maintaining the space it occupies on
 /// the display.
 ///
-@mixin invisible {
-    visibility: hidden !important;
+/// @param {Boolean} $force           If true, add "!important".
+///
+@mixin invisible($force: false) {
+    $important: if($force, '!important', '');
+    @include self-and-descendents {
+        overflow:   visible #{$important};
+        visibility: hidden  #{$important};
+    }
 }
 
 /// Hide the contents of the element while maintaining horizontal displacement.

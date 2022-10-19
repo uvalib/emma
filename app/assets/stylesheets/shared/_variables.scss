@@ -101,6 +101,12 @@ $notice-bg:         $success-bg;
 $failure-bg:        $alert-bg;
 $success-bg:        $notice-bg;
 
+// Flash borders.
+$alert-accent:      $alert-fg;
+$notice-accent:     $uva-accent-green;
+$failure-accent:    $alert-accent;
+$success-accent:    $notice-accent;
+
 // Other colors.
 $debug-bg:          f.lighter($debug-fg,          75%);
 $header-bg:         $uva-blue;
@@ -118,7 +124,7 @@ $text-focus:        f.darker($uva-accent-teal,    10%);
 
 $block-shadow:      0.25rem 0.25rem 0.25rem -0.0625rem lightgray;
 $control-shadow:    0.25rem 0.25rem 0.25rem -0.125rem  lightgray;
-$popup-shadow:      0.25rem 0.25rem    1rem  0.125rem  gray;
+$popup-shadow:      0.75rem 0.75rem 1.50rem  0.125rem  gray;
 
 //=============================================================================
 // Fonts.
@@ -148,6 +154,7 @@ $z-scroll-to-top:   300;
 $z-popup:           400;
 $z-uppy-progress:   500;
 $z-uppy-informer:   600;
+$z-flash:           1000;
 $z-overlay:         10000;
 
 //=============================================================================

@@ -1,11 +1,13 @@
 // app/assets/javascripts/shared/flash.js
 
 
-import { arrayWrap }                     from '../shared/arrays'
-import { isDefined, isEmpty, isMissing } from '../shared/definitions'
-import { scrollIntoView }                from '../shared/html'
-import { selector }                      from '../shared/css'
-import { SECONDS }                       from '../shared/time'
+import { arrayWrap }                                    from './arrays'
+import { selector }                                     from './css'
+import { isDefined, isMissing, isPresent }              from './definitions'
+import { handleClickAndKeypress, handleEvent, isEvent } from './events'
+import { noScroll, scrollIntoView }                     from './html'
+import { SECONDS }                                      from './time'
+import { HEAVY_X }                                      from './unicode'
 
 
 // ============================================================================
@@ -13,12 +15,26 @@ import { SECONDS }                       from '../shared/time'
 // ============================================================================
 
 /**
+ * If *false*, the flash container is inline.  If *true* it appears above the
+ * main page content.
+ *
+ * @type {boolean}
+ */
+const FLOAT = true;
+
+/**
  * Container element for flash messages.
  *
  * @readonly
  * @type {string}
  */
-const FLASH_CONTAINER_CLASS = 'flash-messages';
+const CONTAINER_CLASS = 'flash-messages';
+const INLINE_CLASS    = 'inline';
+const FLOATING_CLASS  = 'floating';
+const NO_RESET_CLASS  = 'no-reset';
+const VISIBLE_MARKER  = 'visible';
+const ITEM_CLASS      = 'flash';
+const CLOSER_CLASS    = 'closer';
 
 /**
  * Selector root for flash messages.
@@ -26,22 +42,36 @@ const FLASH_CONTAINER_CLASS = 'flash-messages';
  * @readonly
  * @type {Selector}
  */
-const FLASH_ROOT_SELECTOR = selector(FLASH_CONTAINER_CLASS);
+const CONTAINER  = selector(CONTAINER_CLASS);
+const INLINE     = selector(INLINE_CLASS);
+const FLOATING   = selector(FLOATING_CLASS);
+const NO_RESET   = selector(NO_RESET_CLASS);
+const VISIBLE    = selector(VISIBLE_MARKER);
+const FLASH_ITEM = selector(ITEM_CLASS);
+const CLOSER     = selector(CLOSER_CLASS);
+
+/**
+ * Default display of flash messages by type.
+ *
+ * @type {{messages: boolean, errors: boolean}}
+ */
+const DEFAULT_SHOW = {
+    messages: true,
+    errors:   true,
+};
 
 // ============================================================================
 // Variables
 // ============================================================================
 
-// noinspection ES6ConvertVarToLetConst
+const $window = $(window);
+
 /**
- * Control  display of flash messages by type.
+ * Control display of flash messages by type.
  *
  * @type {object}
  */
-var show_flash = {
-    messages: true,
-    errors:   true
-};
+const show_flash = DEFAULT_SHOW;
 
 // ============================================================================
 // Functions
@@ -50,7 +80,7 @@ var show_flash = {
 /**
  * The flash message container.
  *
- * @param {Selector} [selector]         Default: {@link FLASH_ROOT_SELECTOR}.
+ * @param {Selector} [selector]       Default: {@link CONTAINER}.
  *
  * @returns {jQuery}
  */
@@ -60,7 +90,62 @@ export function flashContainer(selector) {
     } else if (typeof selector === 'string') {
         return $(selector);
     } else {
-        return $(FLASH_ROOT_SELECTOR);
+        return $(CONTAINER);
+    }
+}
+
+/**
+ * Initialize the flash message container.
+ *
+ * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ *
+ * @returns {boolean}                 *false* if only inline flash.
+ *
+ * @see file:app/views/layouts/_flash.html.erb
+ */
+export function flashInitialize(fc) {
+    const $fc    = flashContainer(fc);
+    const $items = $fc.find(FLASH_ITEM);
+    let $first_closer;
+    if (floating($fc)) {
+        $items.each(function() {
+            const $item = $(this);
+            let $closer = $item.find(CLOSER);
+            if (isMissing($closer)) {
+                $closer = makeCloser();
+                const $m = $('<div>').addClass('text').html($item.html());
+                $item.empty().append($m, $closer);
+            } else {
+                initializeCloser($closer);
+            }
+            $first_closer ||= $closer;
+            initializeFlashItem($item);
+        });
+        $fc.toggleClass(FLOATING_CLASS, true);
+    }
+    if (isPresent($items)) {
+        $first_closer?.focus();
+        showFlash($fc, true);
+    }
+    return !!$first_closer;
+}
+
+/**
+ * Clear the flash message container on refreshed pages.
+ *
+ * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ */
+export function flashReset(fc) {
+    const $fc = flashContainer(fc);
+    if (!flashEmpty($fc)) {
+        if ($fc.is(NO_RESET)) {
+            showFlash($fc);
+        } else {
+            clearFlash($fc);
+        }
+    }
+    if (floating($fc)) {
+        $fc.toggleClass(FLOATING_CLASS, true);
     }
 }
 
@@ -107,9 +192,9 @@ export function enableFlash(all) {
  * @returns {jQuery}                  The flash container.
  */
 export function flashMessage(text, type, role, fc) {
-    let $fc = flashContainer(fc);
+    const $fc = flashContainer(fc);
     if (show_flash.messages) {
-        clearFlash($fc);
+        $fc.empty();
         addFlashMessage(text, type, role, $fc);
     }
     return $fc;
@@ -128,38 +213,12 @@ export function flashMessage(text, type, role, fc) {
  * @returns {jQuery}                  The flash container.
  */
 export function flashError(text, type, role, fc) {
-    let $fc = flashContainer(fc);
+    const $fc = flashContainer(fc);
     if (show_flash.errors) {
-        clearFlash($fc);
+        $fc.empty();
         addFlashError(text, type, role, $fc);
     }
     return $fc;
-}
-
-/**
- * Display flash message container.
- *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
- *
- * @returns {jQuery}                  The flash container.
- */
-export function showFlash(fc) {
-    let $fc = flashContainer(fc);
-    $fc.removeClass('hidden');
-    $fc.removeClass('invisible');
-    $fc.removeAttr('aria-hidden');
-    return scrollIntoView($fc);
-}
-
-/**
- * Hide flash message container.
- *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
- *
- * @returns {jQuery}                  The flash container.
- */
-export function hideFlash(fc) {
-    return flashContainer(fc).addClass('hidden');
 }
 
 /**
@@ -181,7 +240,9 @@ export function clearFlash(fc) {
  * @returns {boolean}
  */
 export function flashEmpty(fc) {
-    return flashContainer(fc).is(':empty');
+    const $fc    = flashContainer(fc);
+    const $items = $fc.find(FLASH_ITEM);
+    return isMissing($items);
 }
 
 /**
@@ -192,25 +253,93 @@ export function flashEmpty(fc) {
  * @returns {boolean}
  */
 export function flashHidden(fc) {
-    let $fc = flashContainer(fc);
-    return $fc.hasClass('hidden') || $fc.hasClass('invisible');
+    return !flashContainer(fc).is(VISIBLE);
 }
 
-// noinspection JSUnusedGlobalSymbols
+// ============================================================================
+// Functions - internal
+// ============================================================================
+
 /**
- * Indicate whether flash message(s) are being displayed.
+ * Indicate whether the flash containing is a floating container.
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
  * @returns {boolean}
  */
-export function flashDisplayed(fc) {
-    let $fc = flashContainer(fc);
-    return !flashHidden($fc) && !flashEmpty($fc);
+function floating(fc) {
+    const $fc = flashContainer(fc);
+    return FLOAT && !$fc.is(INLINE) || $fc.is(FLOATING);
 }
 
 /**
- * Add a flash message, un-hiding the flash message container if needed.
+ * Display flash message container.
+ *
+ * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {boolean}  [force]          Don't check {@link flashHidden}
+ *
+ * @returns {jQuery}                  The flash container.
+ */
+function showFlash(fc, force) {
+    const $fc   = flashContainer(fc);
+    const show  = force || flashHidden($fc);
+    const float = floating($fc);
+    if (show && float) {
+        noScroll(() => toggleFlashContainer($fc, true));
+        monitorWindowEvents(true);
+    } else if (show) {
+        toggleFlashContainer($fc, true);
+    }
+    if (!float) {
+        scrollIntoView($fc);
+    }
+    return $fc;
+}
+
+/**
+ * Hide flash message container.
+ *
+ * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {boolean}  [force]          Don't check {@link flashHidden}
+ *
+ * @returns {jQuery}                  The flash container.
+ */
+function hideFlash(fc, force) {
+    const $fc = flashContainer(fc);
+    if (force || !flashHidden($fc)) {
+        if (floating($fc)) {
+            monitorWindowEvents(false);
+        }
+        toggleFlashContainer($fc, false);
+    }
+    return $fc;
+}
+
+/**
+ * Show/hide the flash container.
+ *
+ * (Only for use within {@link showFlash} and {@link hideFlash}.
+ *
+ * @param {jQuery}  $fc
+ * @param {boolean} show
+ *
+ * @return {jQuery}
+ */
+function toggleFlashContainer($fc, show) {
+    if (show) {
+        $fc.removeAttr('aria-hidden');
+    } else {
+        $fc.attr('aria-hidden', true);
+    }
+    return $fc.toggleClass(VISIBLE_MARKER, show);
+}
+
+// ============================================================================
+// Functions - flash items
+// ============================================================================
+
+/**
+ * Display a new flash message.
  *
  * @param {string|string[]} text
  * @param {string}          [type]
@@ -220,24 +349,11 @@ export function flashDisplayed(fc) {
  * @returns {jQuery}                  The flash container.
  */
 export function addFlashMessage(text, type, role, fc) {
-    const css_class = type || 'notice';
-    const aria_role = role || 'alert';
-    let message;
-    if ((typeof text === 'string') && !text.startsWith('<')) {
-        message = text.split(/<br\/?>|\n/);
-    } else {
-        message = arrayWrap(text);
-    }
-    message = message.map(v => v?.toString && v?.toString() || '???');
-    let $message = $('<div>');
-    $message.addClass(css_class);
-    $message.attr('role', aria_role);
-    $message.html(message.join('<br/>'));
-    return showFlash(fc).append($message);
+    return addFlashItem(text, (type || 'notice'), role, fc);
 }
 
 /**
- * Add a flash error message, un-hiding the flash message container if needed.
+ * Display a new flash error message.
  *
  * @param {string|string[]} text
  * @param {string}          [type]
@@ -247,9 +363,178 @@ export function addFlashMessage(text, type, role, fc) {
  * @returns {jQuery}                  The flash container.
  */
 export function addFlashError(text, type, role, fc) {
-    const css_class = type || 'alert';
+    return addFlashItem(text, (type || 'alert'), role, fc);
+}
+
+// ============================================================================
+// Functions - flash items - internal
+// ============================================================================
+
+/**
+ * Add a flash item, un-hiding the flash message container if needed.
+ *
+ * @param {string|string[]} text
+ * @param {string}          [type]
+ * @param {string}          [role]    Default: 'alert'.
+ * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
+ *
+ * @returns {jQuery}                  The flash container.
+ */
+function addFlashItem(text, type, role, fc) {
+    const css_class = `${ITEM_CLASS} ${type}`.trim();
     const aria_role = role || 'alert';
-    return addFlashMessage(text, css_class, aria_role, fc);
+    const plain     = (typeof text === 'string') && !text.startsWith('<');
+    const lines     = plain ? text.split(/<br\/?>|\n/) : arrayWrap(text);
+    const message   = lines.map(v => v?.toString && v?.toString() || '???');
+    const $message  = $('<div>').html(message.join('<br/>'));
+
+    let $item, $closer;
+    const $fc = flashContainer(fc);
+    if (floating($fc)) {
+        $message.addClass('text');
+        $closer = makeCloser();
+        $item   = $('<div>').append($message, $closer);
+    } else {
+        $item   = $message;
+    }
+    initializeFlashItem($item).addClass(css_class).attr('role', aria_role);
+
+    showFlash($fc).append($item);
+    $closer?.focus();
+    return $fc;
+}
+
+/**
+ * Setup event handlers a flash item.
+ *
+ * @param {jQuery} $item
+ *
+ * @returns {jQuery}
+ */
+function initializeFlashItem($item) {
+    handleEvent($item, 'keyup',     onKeyUpFlashItem);
+    handleEvent($item, 'mousedown', onMouseDownFlashItem);
+    return $item;
+}
+
+/**
+ * Return the flash item associated with the argument.
+ *
+ * @param {jQuery.Event|Event|Selector} arg
+ *
+ * @returns {jQuery}
+ */
+function flashItem(arg) {
+    const $elem = isEvent(arg) ? $(arg.currentTarget || arg.target) : $(arg);
+    return $elem.is(FLASH_ITEM) ? $elem : $elem.parents(FLASH_ITEM).first();
+}
+
+/**
+ * Callback invoked to remove a flash item from view.
+ *
+ * @param {jQuery.Event} event
+ */
+function closeFlashItem(event) {
+    flashItem(event).remove();
+    const $fc = flashContainer();
+    if (flashEmpty($fc)) {
+        hideFlash($fc, true);
+    }
+}
+
+/**
+ * Allow "Escape" key to close a specific flash item.
+ *
+ * @param {jQuery.Event|KeyboardEvent} event
+ */
+function onKeyUpFlashItem(event) {
+    if (event.key === 'Escape') {
+        event.stopImmediatePropagation();
+        closeFlashItem(event);
+    }
+}
+
+/**
+ * Allow mouse down inside a flash item to avoid closing any flash item by
+ * preventing {@link onMouseDownWindow} from being invoked.
+ *
+ * @param {jQuery.Event|KeyboardEvent} event
+ */
+function onMouseDownFlashItem(event) {
+    event.stopPropagation();
+}
+
+// ============================================================================
+// Functions - closer control - internal
+// ============================================================================
+
+/**
+ * Generate a flash closer control.
+ *
+ * @returns {jQuery}
+ */
+function makeCloser() {
+    const $closer = $('<button>').addClass('closer').text(HEAVY_X);
+    return initializeCloser($closer);
+}
+
+/**
+ * Setup event handlers for a flash closer control.
+ *
+ * @param {jQuery} $closer
+ *
+ * @returns {jQuery}
+ */
+function initializeCloser($closer) {
+    handleClickAndKeypress($closer, closeFlashItem);
+    return $closer;
+}
+
+// ============================================================================
+// Functions - window events - internal
+// ============================================================================
+
+/**
+ * Window events that could result in clearing all flash messages.
+ *
+ * @type {Object.<string,function(jQuery.Event)>}
+ */
+const WINDOW_EVENTS = {
+    'keyup':     onKeyUpWindow,
+    'mousedown': onMouseDownWindow,
+};
+
+/**
+ * Begin monitoring for window events that could result in removing all flash
+ * messages from the display.
+ *
+ * @param {boolean} [on]
+ * @param {boolean} [off]
+ */
+function monitorWindowEvents(on = true, off = true) {
+    off && $.each(WINDOW_EVENTS, (event, func) => $window.off(event, func));
+    on  && $.each(WINDOW_EVENTS, (event, func) => $window.on(event,  func));
+}
+
+/**
+ * Allow "Escape" key to close all flash items.
+ *
+ * @param {jQuery.Event|KeyboardEvent} event
+ */
+function onKeyUpWindow(event) {
+    if (event.key === 'Escape') {
+        event.stopImmediatePropagation();
+        clearFlash();
+    }
+}
+
+/**
+ * Allow mouse down outside of a flash item to close all flash items.
+ *
+ * @param {jQuery.Event|MouseEvent} event
+ */
+function onMouseDownWindow(event) {
+    clearFlash();
 }
 
 // ============================================================================
@@ -275,13 +560,9 @@ export function extractFlashMessage(xhr) {
         try {
             const messages = JSON.parse(text);
             if (Array.isArray(messages)) {
-                messages.forEach(function(msg) {
-                    lines.push(msg.toString());
-                });
+                messages.forEach(msg => lines.push(msg.toString()));
             } else if (typeof messages === 'object') {
-                $.each(messages, function(k, v) {
-                    lines.push(`${k}: ${v}`);
-                });
+                $.each(messages, (k, v) => lines.push(`${k}: ${v}`));
             } else {
                 lines.push(messages.toString());
             }
@@ -304,8 +585,8 @@ export function extractFlashMessage(xhr) {
  * @see "EncodingHelper#xhr_encode"
  */
 export function xhrDecode(data) {
-    if (isEmpty(data)) { return ''; }
-    let string    = data.toString();
+    if (isMissing(data)) { return ''; }
+    const string  = data.toString();
     const encoded = !!string.match(/%[0-9A-F][0-9A-F]/i);
     return (encoded ? decodeURIComponent(string) : string).trim();
 }

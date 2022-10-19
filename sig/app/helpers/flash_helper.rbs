@@ -29,6 +29,50 @@ module FlashHelper
   #
   FLASH_MAX_TOTAL_SIZE: Integer
 
+  # If *true*, the flash container should be displayed inline on the page.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader flash_inline: bool | nil
+
+  # If *true*, the flash container should float above the page.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader flash_floating: bool | nil
+
+  # Specify that flash messages are displayed inline on the page.
+  #
+  # @param [Boolean] on
+  #
+  # @return [Boolean]
+  #
+  def set_flash_inline: (?bool on) -> bool
+
+  # Specify that flash messages should float above the page.
+  #
+  # @param [Boolean] on
+  #
+  # @return [Boolean]
+  #
+  def set_flash_floating: (?bool on) -> bool
+
+  # Specify that the flash container should be cleared on page refresh.
+  #
+  # @param [Boolean] on
+  #
+  # @return [Boolean]
+  #
+  def set_flash_reset: (?bool on) -> bool
+
+  # Indicate whether the flash container should be cleared on page refresh.
+  #
+  # @return [Boolean]
+  #
+  def flash_reset: () -> bool
+
+  @flash_reset: bool | nil
+
   # Each instance translates to a distinct line in the flash message.
   #
   class FlashPart < ExecReport::FlashPart
@@ -80,24 +124,24 @@ module FlashHelper
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash notice messages.
   #
   # @see #flash_notice
   # @see #flash_format
   #
-  def flash_success: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> void
+  def flash_success: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> strArray
 
   # Failure flash notice.
   #
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash alert messages.
   #
   # @see #flash_alert
   # @see #flash_format
   #
-  def flash_failure: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> void
+  def flash_failure: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> strArray
 
   # Flash notice.
   #
@@ -105,12 +149,12 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash notice messages.
   #
   # @see #set_flash
   # @see #flash_format
   #
-  def flash_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
+  def flash_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> strArray
 
   # Flash alert.
   #
@@ -118,12 +162,12 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash alert messages.
   #
   # @see #set_flash
   # @see #flash_format
   #
-  def flash_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
+  def flash_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> strArray
 
   # Flash notification, which appears on the next page to be rendered.
   #
@@ -133,37 +177,37 @@ module FlashHelper
   # @param [Boolean]     clear        If *true* clear flash first.
   # @param [Hash]        opt          Passed to #flash_format.
   #
-  # @return [void]
+  # @return [Array<String>]           Current *type* flash messages.
   #
   # @see #flash_format
   #
-  def set_flash: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol|nil, ?clear: bool|nil, **untyped opt) -> void
+  def set_flash: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol|nil, ?clear: bool|nil, **untyped opt) -> strArray
 
   # Success flash now.
   #
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now notice messages.
   #
   # @note Currently unused.
   #
   # @see #flash_now_notice
   # @see #flash_format
   #
-  def flash_now_success: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> void
+  def flash_now_success: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> strArray
 
   # Failure flash now.
   #
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now alert messages.
   #
   # @see #flash_now_alert
   # @see #flash_format
   #
-  def flash_now_failure: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> void
+  def flash_now_failure: (*(Symbol|String|Exception|ExecReport|FlashPart) args, **untyped opt) -> strArray
 
   # Flash now notice.
   #
@@ -171,12 +215,12 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now notice messages.
   #
   # @see #set_flash_now
   # @see #flash_format
   #
-  def flash_now_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
+  def flash_now_notice: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> strArray
 
   # Flash now alert.
   #
@@ -184,12 +228,12 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now alert messages.
   #
   # @see #set_flash_now
   # @see #flash_format
   #
-  def flash_now_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> void
+  def flash_now_alert: (*(Symbol|String|Exception|ExecReport|FlashPart) args, ?topic: Symbol|nil, **untyped opt) -> strArray
 
   # Flash now notification, which appears on the current page when it is
   # rendered.
@@ -199,11 +243,11 @@ module FlashHelper
   # @param [Symbol, nil] topic
   # @param [Hash]        opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current *type* flash.now messages.
   #
   # @see #flash_format
   #
-  def set_flash_now: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol|nil, **untyped opt) -> void
+  def set_flash_now: (*(Symbol|String|Exception|ExecReport|FlashPart) args, type: Symbol, ?topic: Symbol|nil, **untyped opt) -> strArray
 
   # Create items(s) to be included in the 'X-Flash-Message' header to support
   # the ability of the client to update the flash display.

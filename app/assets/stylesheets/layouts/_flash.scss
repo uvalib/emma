@@ -1,17 +1,23 @@
 // app/assets/stylesheets/layouts/_flash.scss
 
-@use 'shared/variables' as *;
-@use 'shared/mixins'    as *;
+@use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/popup'   as popup;
+@use 'shared/feature/overlay'  as overlay;
 
 //=============================================================================
 // Flash message display.
 //=============================================================================
 
-// @see file:app/views/layouts/_messages.html.erb
+$flash-width: 50vw;
+
+// @see file:app/views/layouts/_flash.html.erb
 .flash-messages {
 
     margin:    0 $page-padding;
-    max-width: 100%;
+    padding:   0;
+    max-width: $flash-width;
 
     @media #{$narrow-screen} {
         margin-top: $page-padding-y;
@@ -29,8 +35,8 @@
         margin:        1rem 0;
         padding:       1rem;
         overflow-wrap: break-word;
-        border:        2px solid gray;
-        border-radius: 8px;
+        border:        0.125rem solid gray;
+        border-radius: 0.5rem;
 
         &:first-child { margin-top:    $page-padding; }
         &:last-child  { margin-bottom: 0; }
@@ -76,5 +82,98 @@
 
     .line + .line {
         margin-top: 0.5rem;
+    }
+}
+
+// Inline flash messages are anchored to their position within <body>.  When
+// they appear they cause the subsequent page elements to be displaced down.
+.flash-messages.inline {
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    // The container starts out hidden until 'visible' is added.
+    &:not(.visible) {
+        @include hidden;
+    }
+}
+
+// Floating flash messages appear in a stack in the center of the viewport.
+// They appear above other page elements without effecting their placement.
+.flash-messages.floating {
+
+    // Providing a wide box-shadow let the flash container appear as though
+    // it's displayed above an overlay without needing an additional element.
+
+    @include popup.center-float-vertical($flash-width);
+
+    z-index:    $z-flash;
+    border:     none;
+    background: overlay.$default-bg;
+    box-shadow: 0 0 0 50vh overlay.$default-bg;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    // Individual flash message box(es).
+    > * {
+
+        display:        flex;
+        flex-direction: row;
+        align-items:    center;
+        gap:            1rem;
+        margin:         0;
+        max-height:     20vh;
+        border-width:   0.25rem;
+        border-style:   outset;
+        border-radius:  0.5rem;
+        box-shadow:     $popup-shadow, 0 0 0 0.125rem white;
+
+        // noinspection CssBrowserCompatibilityForProperties
+        .text {
+            max-height:          100%;
+            margin:              auto 0;
+            font-weight:         bold;
+            overflow:            auto;
+            overscroll-behavior: contain;
+            flex:                1 1 100%;
+        }
+
+        .closer {
+
+            @include button.basic;
+
+            margin-top:    0;
+            font-weight:   bold;
+            background:    white;
+            border:        0.125rem solid black;
+            border-radius: 0.25rem;
+            flex:          0 0 auto;
+
+            &:focus {
+                outline-color: $uva-text-gray;
+            }
+        }
+    }
+
+    .notice {
+        border-color: $notice-accent;
+    }
+
+    .alert {
+        border-color: $alert-accent;
+    }
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    // The container starts out hidden until 'visible' is added.  (Not using
+    // "display: none" avoids an expensive re-render when it becomes visible.)
+    &:not(.visible) {
+        @include invisible;
+        z-index: $z-hidden;
     }
 }

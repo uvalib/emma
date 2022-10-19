@@ -160,7 +160,7 @@ module EngineConcern
   #
   # @option opt [Integer, String] :spaces
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [void]
   #
   def flash_reset_notice(service, url, **opt)
     service = service_name(service)

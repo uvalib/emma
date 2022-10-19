@@ -1,17 +1,18 @@
 // app/assets/javascripts/feature/search-analysis.js
 
 
-import { Emma }                         from '../shared/assets'
 import { arrayWrap }                    from '../shared/arrays'
-import { DB }                           from '../shared/database'
+import { Emma }                         from '../shared/assets'
 import { BaseClass }                    from '../shared/base-class'
-import { SessionState, removeByPrefix } from '../shared/session-state'
-import { CallbackQueue }                from '../shared/queue'
 import { rgbColor, rgbColorInverse }    from '../shared/color'
 import { selector }                     from '../shared/css'
+import { DB }                           from '../shared/database'
 import { handleClickAndKeypress }       from '../shared/events'
 import { compact }                      from '../shared/objects'
+import { CallbackQueue }                from '../shared/queue'
 import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random'
+import { SessionState, removeByPrefix } from '../shared/session-state'
+import { NNBS }                         from '../shared/unicode'
 import { makeUrl, urlParameters }       from '../shared/url'
 import {
     isDefined,
@@ -830,14 +831,6 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
      */
     const EARLY_EXILE_TOOLTIP =
         'A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE';
-
-    /**
-     * Narrow no-break space.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const NNBS = "\u202F";
 
     /**
      * Maximum integer color value.

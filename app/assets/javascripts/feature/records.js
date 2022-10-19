@@ -1,8 +1,8 @@
 // app/assets/javascripts/feature/records.js
 
 
-import { Emma }                                 from '../shared/assets'
 import { delegateInputClick, toggleVisibility } from '../shared/accessibility'
+import { Emma }                                 from '../shared/assets'
 import { pageController }                       from '../shared/controller'
 import { isMissing, isPresent }                 from '../shared/definitions'
 import { camelCase, singularize }               from '../shared/strings'
@@ -175,41 +175,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $no_record_lines = $record_list.children('.no-records');
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    // Broaden click targets for radio buttons and checkboxes that are paired
-    // with labels.
-    $list_filter_controls.each(function() { delegateInputClick(this); });
-    $filter_options_controls.each(function() { delegateInputClick(this); });
-
-    // Listen for a change to the record filter selection.
-    handleEvent($list_filter_radio_buttons, 'change', function(event) {
-        let $target = $(event.target);
-        if ($target.is(':checked')) {
-            filterPageDisplay($target.val());
-        }
-    });
-
-    // Listen for a change to the debug-only filter options checkboxes.
-    handleEvent($filter_options_checkboxes, 'change', function(event) {
-        filterOptionToggle(event.target);
-    });
-
-    // When hovering/focusing on a group selection button, display its
-    // description below the group selection panel.
-    handleHoverAndFocus($group_select_links, showGroupNote, hideGroupNote);
-
-    // Initialize controls and the initial record filtering.
-    initializeFilterOptions();
-    if ($list_filter_panel.is(':visible')) {
-        listFilterSelect();
-    } else {
-        filterPageDisplayAll();
-    }
+    const $no_record_lines = $record_list.children('.no-records');
 
     // ========================================================================
     // Functions
@@ -427,6 +393,40 @@ $(document).on('turbolinks:load', function() {
      */
     function _debug(...args) {
         if (DEBUGGING) { console.log(...args); }
+    }
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    // Broaden click targets for radio buttons and checkboxes that are paired
+    // with labels.
+    $list_filter_controls.each((_, ctrl) => delegateInputClick(ctrl));
+    $filter_options_controls.each((_, ctrl) => delegateInputClick(ctrl));
+
+    // Listen for a change to the record filter selection.
+    handleEvent($list_filter_radio_buttons, 'change', (event) => {
+        const $target = $(event.target);
+        if ($target.is(':checked')) {
+            filterPageDisplay($target.val());
+        }
+    });
+
+    // Listen for a change to the debug-only filter options checkboxes.
+    handleEvent($filter_options_checkboxes, 'change', (event) => {
+        filterOptionToggle(event.target);
+    });
+
+    // When hovering/focusing on a group selection button, display its
+    // description below the group selection panel.
+    handleHoverAndFocus($group_select_links, showGroupNote, hideGroupNote);
+
+    // Initialize controls and the initial record filtering.
+    initializeFilterOptions();
+    if ($list_filter_panel.is(':visible')) {
+        listFilterSelect();
+    } else {
+        filterPageDisplayAll();
     }
 
 });

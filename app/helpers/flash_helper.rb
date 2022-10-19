@@ -7,6 +7,15 @@ __loading_begin(__FILE__)
 
 # Methods for creating and displaying flash messages.
 #
+# The .flash-messages container starts hidden and only displayed when the
+# client side can determine that this is an original page load and not one due
+# to page history or page reload.
+#
+# @see app/assets/javascripts/shared/flash.js *flashInitialize*
+#
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module FlashHelper
 
   include Emma::Common
@@ -40,6 +49,63 @@ module FlashHelper
   # @type [Integer]
   #
   FLASH_MAX_TOTAL_SIZE = 2 * FLASH_MAX_ITEM_SIZE
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # If *true*, the flash container should be displayed inline on the page.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader :flash_inline
+
+  # If *true*, the flash container should float above the page.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader :flash_floating
+
+  # Specify that flash messages are displayed inline on the page.
+  #
+  # @param [Boolean] on
+  #
+  # @return [Boolean]
+  #
+  def set_flash_inline(on = true)
+    @flash_inline = on
+  end
+
+  # Specify that flash messages should float above the page.
+  #
+  # @param [Boolean] on
+  #
+  # @return [Boolean]
+  #
+  def set_flash_floating(on = true)
+    @flash_floating = on
+  end
+
+  # Specify that the flash container should be cleared on page refresh.
+  #
+  # @param [Boolean] on
+  #
+  # @return [Boolean]
+  #
+  def set_flash_reset(on = true)
+    @flash_reset = on
+  end
+
+  # Indicate whether the flash container should be cleared on page refresh.
+  #
+  # @return [Boolean]
+  #
+  def flash_reset
+    @flash_reset = true if @flash_reset.nil?
+    @flash_reset
+  end
 
   # ===========================================================================
   # :section: Classes
@@ -153,7 +219,7 @@ module FlashHelper
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash notice messages.
   #
   # @see #flash_notice
   # @see #flash_format
@@ -168,7 +234,7 @@ module FlashHelper
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash alert messages.
   #
   # @see #flash_alert
   # @see #flash_format
@@ -184,7 +250,7 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash notice messages.
   #
   # @see #set_flash
   # @see #flash_format
@@ -200,7 +266,7 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash alert messages.
   #
   # @see #set_flash
   # @see #flash_format
@@ -218,7 +284,7 @@ module FlashHelper
   # @param [Boolean]     clear        If *true* clear flash first.
   # @param [Hash]        opt          Passed to #flash_format.
   #
-  # @return [void]
+  # @return [Array<String>]           Current *type* flash messages.
   #
   # @see #flash_format
   #
@@ -227,7 +293,7 @@ module FlashHelper
     message = flash_format(*args, topic: topic, **opt)
     target  = flash_target(type)
     clear ||= flash[target].blank?
-    flash[target] = clear ? message : [*flash[target], *message]
+    flash[target] = clear ? [message] : [*flash[target], *message]
   end
 
   # ===========================================================================
@@ -241,7 +307,7 @@ module FlashHelper
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now notice messages.
   #
   # @note Currently unused.
   #
@@ -258,7 +324,7 @@ module FlashHelper
   # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now alert messages.
   #
   # @see #flash_now_alert
   # @see #flash_format
@@ -274,7 +340,7 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now notice messages.
   #
   # @see #set_flash_now
   # @see #flash_format
@@ -290,7 +356,7 @@ module FlashHelper
   # @param [Symbol, nil]                                         topic
   # @param [Hash]                                                opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current flash.now alert messages.
   #
   # @see #set_flash_now
   # @see #flash_format
@@ -308,7 +374,7 @@ module FlashHelper
   # @param [Symbol, nil] topic
   # @param [Hash]        opt
   #
-  # @return [void]
+  # @return [Array<String>]           Current *type* flash.now messages.
   #
   # @see #flash_format
   #

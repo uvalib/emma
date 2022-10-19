@@ -6,8 +6,7 @@
   # makes decisions about cache use based on whether the contents of <head>
   # has changed.
 
-  @reset_browser_cache ||= false
-  return unless @reset_browser_cache
+  return unless first_operation?
   __debug { 'Turbolinks cache cleared for page' }
 
 -%>

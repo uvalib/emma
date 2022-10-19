@@ -402,7 +402,6 @@ module SessionConcern
     __debug  { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
     Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
     local_sign_out
-    @reset_browser_cache = true
   end
 
   # Remember the last operation performed in this session and set the flash

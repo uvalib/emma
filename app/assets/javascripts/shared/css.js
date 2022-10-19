@@ -126,8 +126,10 @@ export function selector(...args) {
  * @returns {string}
  */
 export function elementSelector(element) {
-    let e = $(element)[0];
-    if (e.id) {
+    const e = $(element)[0];
+    if (!e) {
+        return '';
+    } else if (e.id) {
         return `#${e.id}`;
     } else if (e.className) {
         return e.localName + '.' + e.className.replace(/\s+/g, '.');

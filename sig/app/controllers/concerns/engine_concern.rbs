@@ -80,9 +80,9 @@ module EngineConcern
   #
   # @option opt [Integer, String] :spaces
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [void]
   #
-  def flash_reset_notice: ((String|Symbol|Class) service, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+  def flash_reset_notice: ((String|Symbol|Class) service, String url, **untyped opt) -> void
 
   private
 

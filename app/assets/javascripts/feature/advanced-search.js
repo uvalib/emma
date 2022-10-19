@@ -1,12 +1,11 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
-import { Emma }                          from '../shared/assets'
 import { toggleVisibility }              from '../shared/accessibility'
 import { arrayWrap, maxSize }            from '../shared/arrays'
+import { Emma }                          from '../shared/assets'
 import { compact, deepFreeze, toObject } from '../shared/objects'
 import { randomizeName }                 from '../shared/random'
-import { SearchInProgress }              from '../shared/search-in-progress'
 import { urlParameters }                 from '../shared/url'
 import {
     isDefined,
@@ -301,28 +300,6 @@ $(document).on('turbolinks:load', function() {
         isPresent($filter_controls.siblings('.immediate-search-marker'));
 
     // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleClickAndKeypress($search_button,    performSearch);
-    handleClickAndKeypress($search_clear,     clearSearchTerm);
-    handleClickAndKeypress($row_show_buttons, showNextRow);
-    handleClickAndKeypress($row_hide_buttons, hideThisRow);
-    handleClickAndKeypress($advanced_toggle,  toggleFilterPanel);
-
-    if (IMMEDIATE_SEARCH) {
-        handleClickAndKeypress($reset_button, SearchInProgress.show);
-        handleEvent($search_filters, 'change', SearchInProgress.show);
-    }
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    initializeAdvancedSearch();
-    SearchInProgress.hide();
-
-    // ========================================================================
     // Functions - initialization
     // ========================================================================
 
@@ -532,7 +509,6 @@ $(document).on('turbolinks:load', function() {
     function performSearch(event) {
         _debug('performSearch:', event);
         resolveFormFields();
-        SearchInProgress.show();
     }
 
     /**
@@ -1819,5 +1795,21 @@ $(document).on('turbolinks:load', function() {
     function _debug(...args) {
         if (DEBUGGING) { console.log(...args); }
     }
+
+    // ========================================================================
+    // Event handlers
+    // ========================================================================
+
+    handleClickAndKeypress($search_button,    performSearch);
+    handleClickAndKeypress($search_clear,     clearSearchTerm);
+    handleClickAndKeypress($row_show_buttons, showNextRow);
+    handleClickAndKeypress($row_hide_buttons, hideThisRow);
+    handleClickAndKeypress($advanced_toggle,  toggleFilterPanel);
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    initializeAdvancedSearch();
 
 });

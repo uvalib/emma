@@ -1,0 +1,30 @@
+<%# app/views/layouts/_flash.html.erb -%>
+<%-
+  # Flash messages.
+
+  # Inject an alert if the system is currently unavailable.
+  run_state_alert =
+    unless modal? || flash.present? || flash.now.flash.present?
+      flash_now_alert(RunState.text) if RunState.unavailable?
+    end
+  force_inline = run_state_alert || modal?
+
+  classes = %w(flash-messages)
+  classes << 'inline'   if flash_inline   || force_inline
+  classes << 'floating' if flash_floating && !force_inline
+  classes << 'no-reset' unless flash_reset
+  classes = css_classes(classes)
+
+  messages =
+    %i[alert notice].flat_map { |type|
+      [flash.now[type], flash[type]].flatten.compact_blank.uniq.map { |msg|
+        html_div(msg.html_safe, class: "flash #{type}", role: 'alert')
+      }
+    }.presence
+  messages &&= messages.unshift(nil).push(nil) # For leading/trailing newlines
+  messages &&= safe_join(messages, "\n")
+-%>
+
+<div class="<%= classes -%>" data-turbolinks-cache="false">
+  <%= messages %>
+</div>

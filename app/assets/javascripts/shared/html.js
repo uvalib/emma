@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/html.js
 
 
-import { cssClass }  from '../shared/css'
-import { isDefined } from '../shared/definitions'
+import { cssClass }  from './css'
+import { isDefined } from './definitions'
 
 
 // ============================================================================
@@ -68,16 +68,40 @@ export function htmlDecode(text) {
  * @returns {jQuery}
  */
 export function scrollIntoView(element) {
-    let $element = $(element);
-    const rect   = $element[0].getBoundingClientRect();
-    const top    = 0;
-    const bottom = window.innerHeight || document.documentElement.clientHeight;
-    if (rect.top < top) {
-        $element[0].scrollIntoView(true);
-    } else if (rect.bottom > bottom) {
-        $element[0].scrollIntoView(false);
+    const $element = $(element);
+    const elem     = $element[0];
+    if (elem) {
+        const r = elem.getBoundingClientRect();
+        const t = 0;
+        const b = window.innerHeight || document.documentElement.clientHeight;
+        if (r.top < t) {
+            elem.scrollIntoView(true);
+        } else if (r.bottom > b) {
+            elem.scrollIntoView(false);
+        }
+    } else {
+        console.error('scrollIntoView: empty', element);
     }
     return $element;
+}
+
+/**
+ * For use in situations where actions cause an undesirable scroll.
+ *
+ * NOTE: This was discovered implementing the floating flash container. Firefox
+ *  and MS Edge show it in the middle of the viewport as intended, but Chrome
+ *  shifts to the top of the page first.  This locking strategy keeps it from
+ *  doing that (whereas simply setting window.scroll() afterwards results in a
+ *  "flashing" effect that is more severe as scrollY increases).
+ *
+ * @param {function} callback
+ */
+export function noScroll(callback) {
+    const [current_x, current_y] = [window.scrollX, window.scrollY];
+    const scroll_lock = () => window.scroll(current_x, current_y);
+    window.addEventListener('scroll', scroll_lock);
+    callback();
+    setTimeout(() => window.removeEventListener('scroll', scroll_lock));
 }
 
 /**

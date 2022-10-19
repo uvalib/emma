@@ -18,7 +18,7 @@ import { asDateTime }    from '../shared/time'
  */
 export function capitalize(item) {
     const s = String(item).trim();
-    return s[0].toUpperCase() + s.slice(1);
+    return s ? (s[0].toUpperCase() + s.slice(1)) : '';
 }
 
 /**
@@ -58,10 +58,11 @@ export function camelCase(item) {
  *  singular form of existing model/controller names.
  */
 export function singularize(item) {
-    if (item.endsWith('ies')) { return item.replace(/ies$/, 'y') } else
-    if (item.endsWith('es'))  { return item.replace(/es$/,  '')  } else
-    if (item.endsWith('s'))   { return item.replace(/s$/,   '')  } else
-                              { return item }
+    if (typeof item !== 'string') { return item }
+    if (item.endsWith('ies'))     { return item.replace(/ies$/, 'y') }
+    if (item.endsWith('es'))      { return item.replace(/es$/,  '')  }
+    if (item.endsWith('s'))       { return item.replace(/s$/,   '')  }
+    return item;
 }
 
 // noinspection JSUnusedGlobalSymbols

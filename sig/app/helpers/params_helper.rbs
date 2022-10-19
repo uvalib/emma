@@ -97,6 +97,11 @@ module ParamsHelper
   #
   def last_operation_time: () -> Integer
 
+  # Indicate whether this is the session's first operation since the last
+  # reboot.
+  #
+  def first_operation?: () -> bool
+
   # Indicate whether the value has been compressed.
   #
   # @param [String, nil] v

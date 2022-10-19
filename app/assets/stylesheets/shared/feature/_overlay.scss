@@ -5,7 +5,78 @@
 @use 'shared/variables' as v;
 @use 'shared/functions' as f;
 
-@use 'feature/overlay'  as overlay-classes;
+//=============================================================================
+// Definitions
+//=============================================================================
+
+$default-bg:     #00000008; // Effectively dims the screen a little.
+$default-height: 100vh;     // Enough to cover the viewport.
+
+//=============================================================================
+// Basic overlay mixins
+//=============================================================================
+
+/// Make an overlay which covers the screen.
+///
+/// @param {Numeric} $bg              Overlay background.
+/// @param {Numeric} $height          At least enough to cover the viewport
+///
+@mixin fill($bg: $default-bg, $height: $default-height) {
+
+    position:   absolute;
+    top:        0;
+    left:       0;
+    display:    block;
+    width:      100%;
+    height:     $height;
+    min-height: $default-height;
+    background: $bg;
+}
+
+/// Make an overlay which covers the screen when the ".visible" class is added
+/// to the element.
+///
+/// @param {Numeric} $bg              Overlay background.
+/// @param {Numeric} $height          At least enough to cover the viewport
+///
+@mixin fill-hidden($bg: $default-bg, $height: $default-height) {
+
+    @include fill($bg, $height);
+
+    // Add the "visible" class to the element to make the overlay appear.
+    &.visible {
+        z-index: v.$z-overlay;
+        opacity: 1;
+    }
+
+    // Without the addition of the "visible" class, the overlay remains hidden.
+    &:not(.visible) {
+        z-index: v.$z-hidden;
+        opacity: 0;
+    }
+
+}
+
+/// Make a dynamic overlay.
+///
+/// @param {Numeric} $duration        Speed of overlay appearance.
+/// @param {Numeric} $delay           Start of overlay appearance.
+/// @param {Numeric} $bg              Overlay background.
+///
+@mixin fill-animated($duration: 0.5s, $delay: 0.75s, $bg: $default-bg) {
+
+    @include fill-hidden($bg);
+
+    transition:
+        opacity    $duration ease-in $delay,
+        background $duration ease-in $delay;
+
+    // Wrapper for overlay features that should remain in place on the screen.
+    .content {
+        position: sticky;
+        display:  block;
+    }
+}
 
 //=============================================================================
 // Content overlay mixins
@@ -25,7 +96,7 @@
     $img-y-pos:  50vh
 ) {
 
-    @extend .overlay;
+    @include fill-animated;
 
     display:         flex;
     justify-content: center;
@@ -61,7 +132,7 @@
     $txt-y-pos:  50vh
 ) {
 
-    @extend .overlay;
+    @include fill-animated;
 
     .content {
         top:           $txt-y-pos;

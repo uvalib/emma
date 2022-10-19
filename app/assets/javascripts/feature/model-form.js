@@ -1,9 +1,10 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import { Emma }                             from '../shared/assets'
 import { delegateInputClick }               from '../shared/accessibility'
 import { arrayWrap }                        from '../shared/arrays'
+import { Emma }                             from '../shared/assets'
+import { pageLoadType }                     from '../shared/browser'
 import { pageController }                   from '../shared/controller'
 import { selector, toggleClass }            from '../shared/css'
 import { turnOffAutocomplete }              from '../shared/form'
@@ -765,46 +766,6 @@ $(document).on('turbolinks:load', function() {
     const TMP_LINE = 'Uploading...'; // TODO: I18n
 
     // ========================================================================
-    // Actions
-    // ========================================================================
-
-    SearchInProgress.hide();
-
-    // Setup bibliographic lookup first so that linkages are in place before
-    // setupLookupButton() executes.
-    LookupModal.initializeAll();
-
-    // Setup Uppy for any <input type="file"> elements (unless this page is
-    // being reached via browser history).
-    $model_form.each(function() {
-        let $form = $(this);
-
-        // Setup file uploader (if applicable).
-        initializeFileUploader($form);
-
-        // noinspection JSDeprecatedSymbols
-        switch (performance.navigation.type) {
-            case PerformanceNavigation.TYPE_BACK_FORWARD:
-                _debugSection('HISTORY BACK/FORWARD');
-                refreshRecord($form);
-                break;
-            case PerformanceNavigation.TYPE_RELOAD:
-                _debugSection('PAGE REFRESH');
-                // TODO: this causes a junk record to be created for /new.
-                refreshRecord($form);
-                break;
-            default:
-                initializeModelForm($form);
-                break;
-        }
-    });
-
-    // Setup handlers for bulk operation pages.
-    $bulk_op_form.each(function() {
-        initializeBulkOpForm(this);
-    });
-
-    // ========================================================================
     // Functions - Uploader
     // ========================================================================
 
@@ -1513,6 +1474,8 @@ $(document).on('turbolinks:load', function() {
      * fields to complete page initialization.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {boolean}
      */
     function refreshRecord(form) {
 
@@ -1522,7 +1485,11 @@ $(document).on('turbolinks:load', function() {
         if (isCreateForm($form)) {
             url = PROPERTIES.Path.renew;
         } else {
-            url = makeUrl(PROPERTIES.Path.reedit, submissionParams($form));
+            url = PROPERTIES.Path.reedit;
+            url &&= makeUrl(url, submissionParams($form));
+        }
+        if (isMissing(url)) {
+            return false;
         }
 
         /** @type {SubmissionRecord} */
@@ -1597,6 +1564,8 @@ $(document).on('turbolinks:load', function() {
             }
             initializeModelForm($form, record);
         }
+
+        return true;
     }
 
     /**
@@ -1608,6 +1577,9 @@ $(document).on('turbolinks:load', function() {
     function initializeModelForm(form, start_data) {
 
         let $form = $(form);
+
+        // Setup file uploader (if applicable).
+        initializeFileUploader($form);
 
         // Setup buttons.
         setupSubmitButton($form);
@@ -4893,5 +4865,41 @@ $(document).on('turbolinks:load', function() {
     function _debugXhr(...args) {
         if (DEBUG.XHR) { console.log('XHR:', ...args); }
     }
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    // Setup bibliographic lookup first so that linkages are in place before
+    // setupLookupButton() executes.
+    LookupModal.initializeAll();
+
+    // Setup Uppy for any <input type="file"> elements (unless this page is
+    // being reached via browser history).
+    $model_form.each(function() {
+        const $form = $(this);
+
+        let refreshed;
+        switch (pageLoadType()) {
+            case 'back_forward':
+                _debugSection('HISTORY BACK/FORWARD');
+                refreshed = refreshRecord($form);
+                break;
+            case 'reload':
+                _debugSection('PAGE REFRESH');
+                // TODO: this causes a junk record to be created for /new.
+                refreshed = refreshRecord($form);
+                break;
+            default:
+                refreshed = null;
+                break;
+        }
+        if (!refreshed) {
+            initializeModelForm($form);
+        }
+    });
+
+    // Setup handlers for bulk operation pages.
+    $bulk_op_form.each((_, form) => initializeBulkOpForm(form));
 
 });

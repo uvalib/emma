@@ -2,6 +2,7 @@
 
 
 import { Emma }         from '../shared/assets'
+import { selector }     from '../shared/css'
 import { isMissing }    from '../shared/definitions'
 import { secondsSince } from '../shared/time'
 
@@ -30,50 +31,8 @@ $(document).on('turbolinks:load', function() {
      */
     const DEBUGGING = true;
 
-    /**
-     * Placeholder CSS class.
-     *
-     * @readonly
-     * @type {string}
-     */
     const PLACEHOLDER_CLASS = Emma.Image.placeholder.class;
-
-    /**
-     * Placeholder alt text.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const PLACEHOLDER_ALT = Emma.Image.placeholder.alt;
-
-    /**
-     * Placeholder image source.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const PLACEHOLDER_SRC = Emma.Image.placeholder.asset;
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    // Download all deferred images.
-    $placeholders.each(function() {
-        let $image = $(this);
-        let src;
-        if ((src = $image.attr('data-path'))) {
-            _debug('FETCHING IMAGE data-path ==', src);
-            loadImage($image, src);
-        } else if ((src = $image.attr('src')) && src.match(/^http/)) {
-            _debug('REPLACING IMAGE src ==', src);
-            // noinspection JSCheckFunctionSignatures
-            $image.parent().append(imagePlaceholder());
-            loadImage($image, src);
-        } else {
-            _debug('USING IMAGE src ==', src);
-        }
-    });
+    const PLACEHOLDER       = selector(PLACEHOLDER_CLASS);
 
     // ========================================================================
     // Functions
@@ -205,9 +164,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function imagePlaceholder() {
-        return makeImage(PLACEHOLDER_SRC, PLACEHOLDER_ALT)
-            .addClass(PLACEHOLDER_CLASS)
-            .attr('data-turbolinks-track', false);
+        const src = Emma.Image.placeholder.asset;   // Image source.
+        const alt = Emma.Image.placeholder.alt;     // Alt text.
+        return makeImage(src, alt).addClass(PLACEHOLDER_CLASS);
     }
 
     /**
@@ -234,5 +193,26 @@ $(document).on('turbolinks:load', function() {
     function _debug(...args) {
         if (DEBUGGING) { console.log(...args); }
     }
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    // Download all deferred images.
+    $placeholders.each(function() {
+        const $image = $(this);
+        let src;
+        if ((src = $image.attr('data-path'))) {
+            _debug('FETCHING IMAGE data-path ==', src);
+            loadImage($image, src);
+        } else if ((src = $image.attr('src')) && src.match(/^http/)) {
+            _debug('REPLACING IMAGE src ==', src);
+            // noinspection JSCheckFunctionSignatures
+            $image.parent().append(imagePlaceholder());
+            loadImage($image, src);
+        } else {
+            _debug('USING IMAGE src ==', src);
+        }
+    });
 
 });
