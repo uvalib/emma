@@ -11,9 +11,10 @@ require 'rails/code_statistics'
 
 module CodeStatisticsExt
 
-  EXTENSIONS  = %w(rb js ts coffee rake css scss sass)
-  EXT_PATTERN = '(%s)' % EXTENSIONS.join('|')
-  FILE_REGEX  = /^(?!\.).*?\.#{EXT_PATTERN}$/
+  require_relative './code_statistics_calculator'
+
+  EXTENSIONS = CodeStatisticsCalculatorExt::PATTERNS.keys
+  FILE_REGEX = Regexp.new('^(?!\.).*?\.(%s)$' % EXTENSIONS.join('|'))
 
   def calculate_directory_statistics(directory, pattern = FILE_REGEX)
     super

@@ -54,6 +54,8 @@ EMMA_STATS_DIRECTORIES ||= [
   %w(Integration\ tests test/integration),
   %w(System\ tests      test/system),
   %w(Test\ helpers      test/test_helper),
+
+  %w(Configuration      config/locales),
 ].map { |name, dir|
   [name, "#{File.dirname(Rake.application.rakefile_location)}/#{dir}"]
  }.select { |_name, dir| File.directory?(dir) }

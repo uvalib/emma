@@ -1,7 +1,5 @@
 module CodeStatisticsExt
-  EXTENSIONS: strArray
-
-  EXT_PATTERN: String
+  EXTENSIONS: symArray
 
   FILE_REGEX: Regexp
 

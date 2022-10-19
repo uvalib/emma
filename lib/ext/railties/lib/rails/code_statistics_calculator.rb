@@ -15,11 +15,12 @@ module CodeStatisticsCalculatorExt
   #
   # @type [Hash{Symbol=>Hash{Symbol=>Regexp}}]
   #
-  PATTERNS = CodeStatisticsCalculator::PATTERNS.dup
-  PATTERNS[:css]  = PATTERNS[:js].except(:method)
-  PATTERNS[:scss] = PATTERNS[:css]
-  PATTERNS[:sass] = PATTERNS[:css]
-  PATTERNS[:js][:begin_block_comment] = %r{(^|\s+)/\*}
+  PATTERNS =
+    CodeStatisticsCalculator::PATTERNS.dup.tap do |pat|
+      pat[:yml] = pat[:yaml] = { line_comment: /^\s*#/ }
+      pat[:css] = pat[:scss] = pat[:sass] = pat[:js].except(:method)
+      pat[:js]  = pat[:js].merge(begin_block_comment: %r{(^|\s+)/\*})
+    end
 
   # This replacement addresses several issues:
   #
