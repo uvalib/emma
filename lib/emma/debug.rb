@@ -440,7 +440,7 @@ module Emma::Debug
       if defined?(flash)
         args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
         args +=
-          ApiService.table.map { |service, instance|
+          ApiService.table(user: current_user).map { |service, instance|
             error = instance.exec_report
             "#{service} ERROR: #{error.inspect}" if error.present?
           }.compact

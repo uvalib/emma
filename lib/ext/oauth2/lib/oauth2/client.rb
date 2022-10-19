@@ -109,6 +109,7 @@ module OAuth2
           if options[:connection_build]
             options[:connection_build].call(bld)
           else
+            bld.request :url_encoded
             bld.adapter Faraday.default_adapter
           end
         end

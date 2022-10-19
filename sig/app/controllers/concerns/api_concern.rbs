@@ -13,72 +13,61 @@ module ApiConcern
   #
   def api_service: (Class service) -> ApiService
 
-  # Update all active API service(s).
-  #
-  # @param [Array<Class>] only        If given, limit to those service(s).
-  # @param [Hash]         opt
-  #
-  # @return [Hash{Class=>ApiService}]
-  #
-  def api_update: (*Class only, **untyped opt) -> Hash[Class,ApiService]
-
   # Remove all active API service(s).
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Hash]         opt         Passed to #api_active_table.
   #
-  # @return [nil]
+  # @return [void]
   #
-  def api_clear: (*Class only) -> nil
-
-  # Indicate whether any API service has been activated.
-  #
-  # @param [Array<Class>] only        If given, limit to those service(s).
-  #
-  # @note Currently unused.
-  #
-  def api_active?: (*Class only) -> bool
+  def api_clear: (*Class only, **untyped opt) -> void
 
   # Indicate whether any API request generated an exception.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Hash]         opt         Passed to #api_active_table.
   #
-  def api_error?: (*Class only) -> bool
+  def api_error?: (*Class only, **untyped opt) -> bool
 
   # Get the current API exception message(s).
   #
   # @param [Array<Class>] only          If given, limit to those service(s).
+  # @param [Hash]         opt           Passed to #api_active_table.
   #
   # @return [Hash{Class=>ExecReport}]   Multiple services with error messages.
   # @return [ExecReport]                Current service error message.
   # @return [nil]                       No service error or service not active.
   #
-  def api_exec_report: (*Class only) -> (Hash[Class,ExecReport] | ExecReport | nil)
+  def api_exec_report: (*Class only, **untyped opt) -> (Hash[Class,ExecReport] | ExecReport | nil)
 
   # Get the current API service exception.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Hash]         opt         Passed to #api_active_table.
   #
   # @return [Hash{Class=>Exception}]  Multiple services with exceptions.
   # @return [Exception]               Current service exception.
   # @return [nil]                     No exception or service not active.
   #
-  def api_exception: (*Class only) -> (Hash[Class,Exception] | Exception | nil)
+  def api_exception: (*Class only, **untyped opt) -> (Hash[Class,Exception] | Exception | nil)
 
   # Clear the current API service exception.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Hash]         opt         Passed to #api_active_table.
   #
   # @return [void]
   #
-  def api_reset: (*Class only) -> void
+  def api_reset: (*Class only, **untyped opt) -> void
 
   # The ApiService.table with any blank entries removed.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Hash]         opt         Passed to ApiService#table.
   #
   # @return [Hash{Class=>ApiService}]
   #
-  def api_active_table: (*Class only) -> Hash[Class,ApiService]
+  def api_active_table: (*Class only, **untyped opt) -> Hash[Class,ApiService]
 
   # Modify :emma_data fields and content.
   #

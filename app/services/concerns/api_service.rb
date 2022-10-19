@@ -50,6 +50,47 @@ class ApiService
   end
 
   # ===========================================================================
+  # :section: ApiService::PerUser
+  # ===========================================================================
+
+  public
+
+  module PerUser
+
+    # All services for the given user (or the default services).
+    #
+    # @param [User, String, nil] user
+    #
+    # @return [Hash{Class=>ApiService}]
+    #
+    #--
+    # noinspection RubyNilAnalysis, RbsMissingTypeSignature
+    #++
+    def self.table(user)
+      user = user.uid if user.is_a?(User)
+      user = user.to_s
+      @table ||= {}
+      @table[user] ||= {}
+    end
+
+    # Remove all services for user
+    #
+    # @param [User, String] user
+    #
+    # @return [void]
+    #
+    def self.clear(user)
+      user = user.uid if user.is_a?(User)
+      if (user = user.to_s).blank?
+        Log.debug { "#{self}: cannot clear default services" }
+      else
+        table(user).clear
+      end
+    end
+
+  end
+
+  # ===========================================================================
   # :section: Class methods
   # ===========================================================================
 
@@ -57,19 +98,22 @@ class ApiService
 
   # A table of all service instances.
   #
-  # @return [Hash{Class=>ApiService}]
+  # @param [User, String, nil] user
   #
-  def self.table
-    # noinspection RbsMissingTypeSignature
-    @table ||= {}
+  # @return [Hash{Class=>ApiService,nil}]
+  #
+  def self.table(user:, **)
+    PerUser.table(user)
   end
 
   # Remove all service instances.
   #
+  # @param [User, String] user
+  #
   # @return [void]
   #
-  def self.clear
-    table.clear
+  def self.clear(user:, **)
+    PerUser.clear(user)
   end
 
   # ===========================================================================
@@ -108,21 +152,9 @@ class ApiService
       #
       def self.instance(**opt)
         opt = reject_blanks(opt)
-        srv = ApiService.table[self]
-        use_existing   = srv.present?
-        use_existing &&= User.match?(opt[:user], srv.user)
-        use_existing &&= (opt.except(:user) == srv.options)
-        use_existing ? srv : (ApiService.table[self] = new(**opt))
-      end
-
-      # Update the service instance with new information.
-      #
-      # @param [Hash] opt             Passed to #instance.
-      #
-      # @return [ApiService]
-      #
-      def self.update(**opt)
-        instance(**opt)
+        tbl = ApiService.table(user: opt[:user])
+        tbl[self] = nil unless opt.except(:user) == tbl[self]&.options
+        tbl[self] ||= new(**opt)
       end
 
       # Remove the single instance of the class so that a fresh instance will
@@ -130,8 +162,8 @@ class ApiService
       #
       # @return [void]
       #
-      def self.clear
-        ApiService.table.delete(self)
+      def self.clear(**opt)
+        ApiService.table(**opt).delete(self)
       end
 
     end

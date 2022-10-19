@@ -104,9 +104,15 @@ module OAuth2
       #
       def initialize(client, token, opts = {})
         super
-        __ext_debug(binding) do
-          { '@expires_in': @expires_in, '@options': @options }
-        end
+        __ext_debug(binding) { {
+          '@client':      @client,
+          '@token':       @token,
+          '@expires_in':  @expires_in,
+          '@expires_at':  @expires_at,
+          '@options':     @options,
+          '@params':      @params,
+          expired:        expired?,
+        } }
       end
 
       # Refreshes the current Access Token.

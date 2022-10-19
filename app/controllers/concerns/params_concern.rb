@@ -380,7 +380,7 @@ module ParamsConcern
       before_action :set_origin,           only:   %i[index]
       before_action :resolve_sort,         only:   %i[index]
       before_action :initialize_menus,     except: %i[index] # TODO: keep?
-      before_action :cleanup_parameters
+      before_action :cleanup_parameters,   if:     :route_request?
 
       append_before_action :conditional_redirect
 

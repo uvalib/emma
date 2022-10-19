@@ -74,7 +74,6 @@ class User::SessionsController < Devise::SessionsController
     __debug_request
     update_auth_data
     self.resource = warden.authenticate!(auth_options)
-    api_update(user: resource.bookshare_user)
     remember_dev(resource)
     set_flash_notice
     sign_in_and_redirect(resource)
@@ -99,7 +98,7 @@ class User::SessionsController < Devise::SessionsController
     user = current_user&.uid&.dup
     delete_auth_data(no_revoke: true?(params[:no_revoke]))
     super
-    api_clear
+    api_clear(user: user)
     set_flash_notice(user: user, clear: true)
   rescue => error
     auth_failure_redirect(message: error)
@@ -138,8 +137,7 @@ class User::SessionsController < Devise::SessionsController
   def sign_in_as
     __debug_route
     __debug_request
-    user = local_sign_in
-    api_update(user: user)
+    local_sign_in
     check_user_validity
     set_flash_notice(action: :create)
     auth_success_redirect

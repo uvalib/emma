@@ -8,6 +8,24 @@ class ApiService
 
   include Api
 
+  include ApiService::Properties
+
+  include ApiService::Common
+
+  include ApiService::Definition
+
+  include ApiService::Exceptions
+
+  include ApiService::Identity
+
+  include ApiService::Status
+
+  extend ApiService::Properties
+
+  extend ApiService::Definition
+
+  extend ApiService::Status
+
   # Internal service options along with connection options.
   #
   # @return [Hash]
@@ -16,6 +34,8 @@ class ApiService
   # @see ApiService::Common#make_connection
   #
   attr_reader options: symHash
+
+  @base_url: String | nil
 
   # Initialize a new instance
   #
@@ -27,19 +47,39 @@ class ApiService
   #
   def initialize: (?user: User|nil, ?base_url: String|nil, **untyped opt) -> void
 
-  @base_url: String | nil
+  module PerUser
+    # All services for the given user (or the default services).
+    #
+    # @param [User, String, nil] user
+    #
+    # @return [Hash{Class=>ApiService}]
+    #
+    def self.table: ((User|String|nil) user) -> Hash[Class,(ApiService|nil)]
+
+    # Remove all services for user
+    #
+    # @param [User, String] user
+    #
+    # @return [void]
+    #
+    def self.clear: ((User|String) user) -> void
+  end
 
   # A table of all service instances.
   #
-  # @return [Hash{Class=>ApiService}]
+  # @param [User, String, nil] user
   #
-  def self.table: () -> Hash[Class,ApiService]
+  # @return [Hash{Class=>ApiService,nil}]
+  #
+  def self.table: (user: User|String|nil, **untyped _ignored) -> Hash[Class,(ApiService|nil)]
 
   # Remove all service instances.
   #
+  # @param [User, String] user
+  #
   # @return [void]
   #
-  def self.clear: () -> void
+  def self.clear: (user: User|String, **untyped _ignored) -> void
 
   # Each subclass gets its own distinct set of service state variables.
   #
@@ -47,9 +87,97 @@ class ApiService
   #
   def self.inherited: (ApiService subclass) -> void
 
-  def self.instance:    (**untyped opt) -> void
-  def self.update:      (**untyped opt) -> ApiService
-  def self.add_api:     (Hash[Symbol,symHash] prop, ?(String|nil) topic) -> void
+  # The single instance of this class.
+  #
+  # @param [Hash] opt             Passed to ApiService#initialize.
+  #
+  # @return [ApiService]
+  #
+  # == Usage Notes
+  # For special purposes (like overriding :no_raise for all API requests
+  # within a single method), use `ApiService.new` rather than
+  # `ApiService.instance`.  Providing modified options to this method
+  # creates a new single instance; if the options are the same as the
+  # current options then the existing instance is returned.
+  #
+  # == Implementation Notes
+  # The Singleton pattern is avoided so that the instance is unique
+  # per-request and not per-thread (potentially spanning multiple requests
+  # by different users).
+  #
+  def self.instance: (**untyped opt) -> void
+
+  # Add a method name and its properties to #api_methods.
+  #
+  # @param [Hash{Symbol=>Hash{Symbol=>Any}}] prop
+  # @param [String, nil]                     topic
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # The definition of each API request method is followed by a block which
+  # invokes this method in order to register the properties of the method
+  # and its associated API endpoint.  The *prop* argument is expected to be
+  # a hash with a single entry whose key is the symbol for the method and
+  # whose value is a Hash containing the properties.
+  #
+  # All keys in the property hash are optional, however :reference_id must
+  # be included for methods that map on to documented API requests.
+  #
+  # :alias          One or more identifiers which associate a method named
+  #                 argument with the name of the API parameter it
+  #                 represents. (This is not needed for arguments with
+  #                 names that are the same as the documented API
+  #                 parameter.)
+  #
+  # :required       One or more API parameters which are mandatory, which
+  #                 may include either Path or Query parameters.
+  #
+  # :optional       One or more API optional Query parameters.
+  #                 (Path parameters are never optional.)
+  #
+  # :multi          An array of one or more parameters that can be passed
+  #                 in as a single value or as an array.
+  #
+  # :role           If given as :anonymous this is a hint that the request
+  #                 should succeed even if the current user is not logged
+  #                 in.
+  #
+  # :reference_id   This is the HTML element ID of the request on the
+  #                 Bookshare API documentation page.  If this is not
+  #                 provided then the method is not treated as a true API
+  #                 method.
+  #
+  # :topic          The base of the module in which the method was defined
+  #                 added by this method as a hint for the API Explorer.
+  #
+  def self.add_api: (Hash[Symbol,symHash] prop, ?(String|nil) topic) -> void
+
+  # Properties for each method which implements an API request.
+  #
+  # @param [Hash, Symbol, String, nil] arg
+  #
+  # @return [Hash, nil]
+  #
+  # -
+  # == Variations
+  # +
+  #
+  # @overload api_methods(arg)
+  #   @param [Hash, nil] arg
+  #   @option arg [Boolean] :synthetic  Default: false.
+  #   @return [Hash{Symbol=>Hash}]      Properties of all methods.
+  #
+  # @overload api_methods(arg)
+  #   @param [Symbol, String] arg       Method name.
+  #   @return [Hash, nil]               Properties of the named method.
+  #
+  # == Usage Notes
+  # By default only true (documented) API methods are returned, unless:
+  # - If :synthetic is *true* then "fake" methods (which implement
+  #     functionality not directly supported by the API) are also included.
+  # - If :synthetic is :only then only the "fake" methods are returned.
+  #
   def self.api_methods: (?(symHash|nil)  arg) -> Hash[Symbol,symHash]
                       | ((Symbol|String) arg) -> (symHash | nil)
 end
