@@ -186,6 +186,8 @@
     //
     .logo {
 
+        @include user-select(none);
+
         margin-top: 0;
         min-height: 3rem;
         max-height: 4rem;

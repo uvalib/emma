@@ -1,6 +1,7 @@
 // app/assets/stylesheets/layouts/header/_page_controls.scss
 
 @use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
 @use 'shared/controls/buttons' as button;
 @use 'shared/layouts/header'   as header;
 
@@ -49,6 +50,7 @@
 
         @include header.section;
         @include header.control-panel;
+        @include user-select(none);
 
         $page-control-gap:   $gap;
         $page-control-gap-x: $gap-x;

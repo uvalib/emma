@@ -32,11 +32,12 @@ $(document).on('turbolinks:load', function() {
     // Constants
     // ========================================================================
 
-    const ITEM_CLASS       = 'search-list-item';
-    const ITEM_SELECTOR    = selector(ITEM_CLASS);
-
-    const CONTROL_CLASS    = 'toggle for-item';
-    const CONTROL_SELECTOR = selector(CONTROL_CLASS);
+    const ITEM_CLASS      = 'search-list-item';
+    const TOGGLE_CLASS    = 'toggle';
+    const CONTROL_CLASS   = `${TOGGLE_CLASS} for-item`;
+    const OPEN_MARKER     = 'open';
+    const HIDDEN_MARKER   = 'hidden';
+    const DISABLED_MARKER = 'disabled';
 
     /**
      * Selector for item sub-sections.
@@ -44,23 +45,13 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const SUBSECTION_SELECTOR = '.pair.field-section';
-
-    /**
-     * Marker class indicating that the list item should be fully displayed.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const OPEN_MARKER = 'open';
-
-    /**
-     * Marker class indicating that an element should not be visible.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const HIDDEN_MARKER = 'hidden';
+    const SUBSECTION = '.pair.field-section';
+    const ITEM       = selector(ITEM_CLASS);
+    const TOGGLE     = selector(TOGGLE_CLASS);
+    const CONTROL    = selector(CONTROL_CLASS);
+    const OPEN       = selector(OPEN_MARKER);
+    //const HIDDEN   = selector(HIDDEN_MARKER);
+    const DISABLED   = selector(DISABLED_MARKER);
 
     // ========================================================================
     // Variables
@@ -85,7 +76,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $result_items = $list_parts.filter(ITEM_SELECTOR);
+    const $result_items = $list_parts.filter(ITEM);
 
     /**
      * Results type selection menu.
@@ -147,17 +138,22 @@ $(document).on('turbolinks:load', function() {
      * Make one or more items present as a buttons for title results.
      *
      * @param {Selector} items
-     * @param {string}   [controls]     ID of the element the button controls.
+     * @param {string}   controls     ID of the element the button controls.
+     * @param {boolean}  [open]       Initially expanded (default: false).
      *
      * @returns {jQuery}
      */
-    function makeButton(items, controls) {
-        let $items  = $(items);
-        const attrs = {
+    function makeButton(items, controls, open) {
+        const $items = $(items);
+        const attrs  = {
             role:            'button',
             tabindex:        0,
-            'aria-controls': controls
+            'aria-controls': controls,
+            'aria-expanded': !!open,
         };
+        if (isEmpty(controls)) {
+            console.error('makeButton: no id for aria-controls');
+        }
         $items.each(function() {
             const $item = $(this);
             $.each(attrs, (name, value) => {
@@ -174,168 +170,77 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Mark a collapsible element as open.
+     * Mark a collapsible element as open/closed.
      *
      * @param {Selector} element
-     * @param {boolean}  [aria]
+     * @param {boolean}  [open]       If *false*, mark as closed.
      */
-    function markAsOpen(element, aria) {
-        let $element = $(element);
-        $element.addClass(OPEN_MARKER);
-        if (aria !== false) {
-            updateOpenClosed($element);
-        }
-    }
-
-    /**
-     * Mark a collapsible element as closed.
-     *
-     * @param {Selector} element
-     * @param {boolean}  [aria]
-     */
-    function markAsClosed(element, aria) {
-        let $element = $(element);
-        $element.removeClass(OPEN_MARKER);
-        if (aria !== false) {
-            updateOpenClosed($element);
-        }
-    }
-
-    /**
-     * Mark elements with the proper ARIA attribute based on the presence of
-     * {@link OPEN_MARKER}.
-     *
-     * @param {Selector} element
-     */
-    function updateOpenClosed(element) {
-        let $element   = $(element);
-        const expanded = $element.hasClass(OPEN_MARKER);
-        $element.attr('aria-expanded', expanded);
-    }
-
-    /**
-     * Collapse a search results item.
-     *
-     * **Usage Notes**
-     * This function expects that "item" resolves to a single HTML element.
-     *
-     * @param {Selector} item
-     * @param {Selector} [number]
-     */
-    function closeItem(item, number) {
-        // noinspection DuplicatedCode
-        const func = 'closeItem';
-        let $item  = $(item);
-
-        if (!onlyOne($item, func, 'item')) { return }
-
-        /** @type {jQuery} */
-        let $children = $item.children();
-        let $title    = $children.filter('.field-Title').find('.title');
-        let $contents = $children.not('.field-Title');
-
-        markAsClosed($item);
-        markAsClosed($title);
-        markAsHidden($contents);
-
-        let $number   = number ? $(number) : $item.prev();
-        let $controls = $number.find(CONTROL_SELECTOR);
-
-        openerControl($controls, $number);
-    }
-
-    /**
-     * Expand a search results item.
-     *
-     * **Usage Notes**
-     * This function expects that "item" resolves to a single HTML element.
-     *
-     * @param {Selector} item
-     * @param {Selector} [number]
-     */
-    function openItem(item, number) {
-        // noinspection DuplicatedCode
-        const func = 'openItem';
-        let $item  = $(item);
-
-        if (!onlyOne($item, func, 'item')) { return }
-
-        /** @type {jQuery} */
-        let $children = $item.children();
-        let $title    = $children.filter('.field-Title').find('.title');
-        let $contents = $children.not('.field-Title');
-
-        markAsOpen($item);
-        markAsOpen($title);
-        markAsVisible($contents);
-        $contents.filter(SUBSECTION_SELECTOR).each(function() {
-            updateSectionOpenClosed(this);
-        });
-
-        let $number   = number ? $(number) : $item.prev();
-        let $controls = $number.find(CONTROL_SELECTOR);
-
-        closerControl($controls, $number);
+    function markAsOpen(element, open) {
+        const is_open = notDefined(open) || open;
+        $(element).toggleClass(OPEN_MARKER, is_open);
     }
 
     /**
      * Toggle visibility of the associated list item.
      *
      * @param {jQuery.Event|UIEvent} event
+     * @param {boolean}              [open]
      */
-    function toggleItem(event) {
+    function toggleItem(event, open) {
         /** @type {jQuery} */
         const $target = $(event.currentTarget || event.target);
         let $item, $number;
-        if ($target.is(CONTROL_SELECTOR)) {
+        if ($target.is(CONTROL)) {
             $number  = $target.parents('.number');
             $item    = $number.next();
-        } else if ($target.is(ITEM_SELECTOR)) {
+        } else if ($target.is(ITEM)) {
             $item    = $target;
             $number  = $item.prev();
         } else {
-            $item    = $target.parents(ITEM_SELECTOR);
+            $item    = $target.parents(ITEM);
             $number  = $item.prev();
         }
 
-        // Update the toggle control(s) and the item itself.
-        if ($item.hasClass(OPEN_MARKER)) {
-            closeItem($item, $number);
-        } else {
-            openItem($item, $number);
+        /** @type {jQuery} */
+        const $children = $item.children();
+        const $title    = $children.filter('.field-Title').find('.title');
+        const $contents = $children.not('.field-Title');
+        const $controls = $number.find(CONTROL);
+        const opening   = isDefined(open) ? open : !$item.is(OPEN);
+
+        markAsOpen($item, opening);
+        markAsOpen($title, opening);
+        markAsVisible($contents, opening);
+
+        if (opening) {
+            $contents.filter(SUBSECTION).each(function() {
+                updateSectionOpenClosed(this);
+            });
         }
+
+        updateControl($controls, $number, opening);
     }
 
-    // noinspection DuplicatedCode
     /**
-     * Set the control to indicate that its function is to close the associated
-     * list item.
+     * Set the control to indicate whether the element it controls is expanded
+     * and change its attributes to indicate that its function is to reverse
+     * that state.
      *
-     * @param {jQuery} $control
-     * @param {jQuery} [$container]
+     * @param {jQuery}  $control
+     * @param {jQuery}  [$container]
+     * @param {boolean} [open]          Default: `$control.is(OPEN)`.
      */
-    function closerControl($control, $container) {
-        let $parent = $container || $control.parent();
-        markAsOpen($parent, false);
-        markAsOpen($parent.find('button,[role="button"]'));
-        $control.attr('title', Emma.Tree.closer.tooltip);
-        $control.text(Emma.Tree.closer.label);
-    }
-
-    // noinspection DuplicatedCode
-    /**
-     * Set the control to indicate that its function is to open the associated
-     * list item.
-     *
-     * @param {jQuery} $control
-     * @param {jQuery} [$container]
-     */
-    function openerControl($control, $container) {
-        let $parent = $container || $control.parent();
-        markAsClosed($parent, true);
-        markAsClosed($parent.find('button,[role="button"]'));
-        $control.attr('title', Emma.Tree.opener.tooltip);
-        $control.text(Emma.Tree.opener.label);
+    function updateControl($control, $container, open) {
+        const is_open = isDefined(open) ? open : $control.is(OPEN);
+        if ($container) {
+            markAsOpen($container, is_open);
+            markAsOpen($container.find('button,[role="button"]'), is_open);
+        }
+        const config = is_open ? Emma.Tree.closer : Emma.Tree.opener;
+        $control.text(config.label);
+        $control.attr('title', config.tooltip);
+        $control.attr('aria-expanded', is_open);
+        return $control;
     }
 
     /**
@@ -343,22 +248,19 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {number}  row
      * @param {string}  target
-     * @param {boolean} [closer]      By default, control created as an opener.
+     * @param {boolean} [open]        If *true*, start in the open state.
      *
      * @returns {jQuery}
      */
-    function createToggleControl(row, target, closer) {
-        let $control = $('<button>');
+    function createToggleControl(row, target, open) {
+        const is_open  = !!open;
+        const $control = $('<button>');
         $control.addClass(`${CONTROL_CLASS} ${row}`);
+        $control.toggleClass(OPEN_MARKER, is_open);
         $control.attr('type',          'button');
         $control.attr('data-row',      `.${row}`);
         $control.attr('aria-controls', target);
-        if (closer) {
-            closerControl($control);
-        } else {
-            openerControl($control);
-        }
-        return $control;
+        return updateControl($control);
     }
 
     /**
@@ -388,20 +290,20 @@ $(document).on('turbolinks:load', function() {
         // Find or create the toggle control visible for wide and
         // medium-width screens.
         /** @type {jQuery} */
-        let $children = $number.children();
-        let $control  = $children.filter(CONTROL_SELECTOR);
-        if (isMissing($control)) {
-            let $item    = $number.next();
-            const target = $item.attr('id');
-            $control = createToggleControl(row, target).appendTo($number);
+        const $children   = $number.children();
+        let $wide_control = $children.filter(CONTROL);
+        if (isMissing($wide_control)) {
+            const $item   = $number.next();
+            const target  = $item.attr('id');
+            $wide_control = createToggleControl(row, target).appendTo($number);
         }
-        handleClickAndKeypress($control, toggleItem);
+        handleClickAndKeypress($wide_control, toggleItem);
 
         // Find or create the toggle control visible for narrow screens.
-        let $container      = $children.filter('.container');
-        let $narrow_control = $container.find(CONTROL_SELECTOR);
+        const $container    = $children.filter('.container');
+        let $narrow_control = $container.find(CONTROL);
         if (isMissing($narrow_control)) {
-            $narrow_control = $control.clone().appendTo($container);
+            $narrow_control = $wide_control.clone().appendTo($container);
         }
         handleClickAndKeypress($narrow_control, toggleItem);
     }
@@ -442,166 +344,76 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Mark element(s) as hidden.
-     *
-     * @param {Selector} element
-     */
-    function markAsHidden(element) {
-        let $element = $(element).not('.disabled');
-        $element.addClass(HIDDEN_MARKER);
-        updateVisibility($element);
-    }
-
-    /**
      * Mark previously-hidden element(s) as visible.
      *
      * @param {Selector} element
+     * @param {boolean}  [visible]    If *false*, make hidden.
      */
-    function markAsVisible(element) {
-        let $element = $(element).not('.disabled');
-        $element.removeClass(HIDDEN_MARKER);
-        updateVisibility($element);
-    }
-
-    /**
-     * Mark elements with the proper ARIA attribute based on the presence of
-     * {@link HIDDEN_MARKER}.
-     *
-     * @param {Selector} elements
-     */
-    function updateVisibility(elements) {
-        $(elements).each(function() {
-            let $element = $(this);
-            if ($element.hasClass(HIDDEN_MARKER)) {
-                $element.attr('aria-hidden', true);
-            } else {
-                $element.removeAttr('aria-hidden');
-            }
-        });
-    }
-
-    /**
-     * Mark section elements as hidden.
-     *
-     * @param {Selector} section
-     */
-    function markSectionHidden(section) {
-        let $section  = $(section).not('.disabled');
-        let $elements = getSection($section);
-        markAsHidden($elements);
+    function markAsVisible(element, visible) {
+        const $element = $(element).not(DISABLED);
+        const hidden   = isDefined(visible) && !visible;
+        if (hidden) {
+            $element.attr('aria-hidden', true);
+        } else {
+            $element.removeAttr('aria-hidden');
+        }
+        $element.toggleClass(HIDDEN_MARKER, hidden);
     }
 
     /**
      * Mark section elements as visible.
      *
      * @param {Selector} section
+     * @param {boolean}  [visible]    If *false*, make hidden.
      */
-    function markSectionVisible(section) {
-        let $section  = $(section).not('.disabled');
-        let $elements = getSection($section);
-        markAsVisible($elements);
-    }
-
-    /**
-     * Mark elements with the proper ARIA attribute.
-     *
-     * **Usage Notes**
-     * This function expects that "section" resolves to a single HTML element
-     * unless "open" is provided.
-     *
-     * @param {Selector} section
-     * @param {boolean}  [open]
-     */
-    function updateSectionVisibility(section, open) {
-        const func   = 'updateSectionVisibility';
-        let $section = $(section);
-        let is_open;
-        if (isDefined(open)) {
-            is_open = open;
-        } else if (onlyOne($section, func, 'section')) {
-            is_open = $section.hasClass(OPEN_MARKER);
-        } else {
-            return;
-        }
-        if (is_open) {
-            markSectionVisible($section);
-        } else {
-            markSectionHidden($section);
-        }
+    function markSectionVisible(section, visible) {
+        const $section  = $(section).not(DISABLED);
+        const $elements = getSection($section);
+        markAsVisible($elements, visible);
     }
 
     /**
      * Update the open/closed state of a sub-section.
      *
      * **Usage Notes**
-     * This function expects that "section" resolves to a single HTML element.
+     * This function expects that "section" resolves to a single HTML element
+     * unless "open" is provided.
      *
      * @param {Selector} section
      * @param {Selector} [toggle]
+     * @param {boolean}  [open]       Default: current section open state.
      */
-    function updateSectionOpenClosed(section, toggle) {
-        const func   = 'updateSectionOpenClosed';
-        let $section = $(section);
-        if (!onlyOne($section, func, 'section')) {
+    function updateSectionOpenClosed(section, toggle, open) {
+        const func     = 'updateSectionOpenClosed';
+        const $section = $(section);
+        let is_open;
+        if (isDefined(open)) {
+            is_open = open;
+        } else if (onlyOne($section, func, 'section')) {
+            is_open = $section.is(OPEN);
+        } else {
             return;
         }
-        let $toggle =
-            toggle ? $(toggle) : $section.find('.toggle').not('.for-item');
-        if ($section.hasClass(OPEN_MARKER)) {
-            markAsOpen($section.children());
-            markSectionVisible($section);
-            closerControl($toggle, $section);
-        } else {
-            markAsClosed($section.children());
-            markSectionHidden($section);
-            openerControl($toggle, $section);
-        }
-    }
-
-    /**
-     * Collapse a search results item sub-section.
-     *
-     * @param {Selector} section
-     * @param {Selector} [toggle]
-     */
-    function closeSection(section, toggle) {
-        let $section = $(section);
-        markAsClosed($section, true);
-        updateSectionOpenClosed($section, toggle);
-    }
-
-    /**
-     * Expand a search results item sub-section.
-     *
-     * @param {Selector} section
-     * @param {Selector} [toggle]
-     */
-    function openSection(section, toggle) {
-        let $section = $(section);
-        markAsOpen($section, false);
-        updateSectionOpenClosed($section, toggle);
+        markAsOpen($section.children(), is_open);
+        markSectionVisible($section, is_open);
+        const $t = toggle ? $(toggle) : $section.find(TOGGLE).not('.for-item');
+        updateControl($t, $section, is_open);
     }
 
     /**
      * Toggle open/closed state of the associated item sub-section.
      *
      * @param {jQuery.Event|UIEvent} event
+     * @param {boolean}              [open]     Def: opposite state.
      */
-    function toggleSection(event) {
-        let $tgt      = $(event.currentTarget || event.target || event);
-        let $toggle   = $tgt.is('.toggle') ? $tgt : $tgt.siblings('.toggle');
-        const section = $toggle.attr('aria-controls');
-        let $section;
-        if (section) {
-            $section = $(`#${section}`);
-        } else {
-            $section = $toggle.parents(SUBSECTION_SELECTOR).first();
-        }
-        if ($section.hasClass(OPEN_MARKER)) {
-            closeSection($section, $toggle);
-        } else {
-            openSection($section, $toggle);
-        }
+    function toggleSection(event, open) {
+        const $tgt    = $(event.currentTarget || event.target || event);
+        const $toggle = $tgt.is(TOGGLE) ? $tgt : $tgt.siblings(TOGGLE);
+        const id      = $toggle.attr('aria-controls');
+        const $sect   = id ? $(`#${id}`) : $toggle.parents(SUBSECTION).first();
+        const opening = isDefined(open) ? open : !$sect.is(OPEN);
+        markAsOpen($sect, opening);
+        updateSectionOpenClosed($sect, $toggle, opening);
     }
 
     /**
@@ -645,33 +457,30 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     $result_items.each(function() {
-        let $item = $(this);
-        updateOpenClosed($item);
+        const $item = $(this);
 
         // Ensure that open/closed items have the right CSS marker classes
         // ARIA attributes.
-        const is_open = $item.hasClass(OPEN_MARKER);
-        let $sections = $item.children(SUBSECTION_SELECTOR);
-        updateSectionVisibility($sections, is_open);
+        /** @type {jQuery} */
+        const $sections = $item.children(SUBSECTION);
+        const is_open   = $item.is(OPEN);
+        markSectionVisible($sections, is_open);
 
         // Make clicking on sub-section toggles and associated labels
         // open/close that sub-section, but hide toggles/labels which are not
         // actually part of the item display.
-        //
-        // noinspection JSCheckFunctionSignatures
-        $sections.find('.toggle').not('.for-item').each(function() {
-            let $toggle = $(this);
-            let $label  = $toggle.parent();
+        $sections.find(TOGGLE).not('.for-item').each(function() {
+            const $toggle = $(this);
+            const $label  = $toggle.parent();
             if ($label.attr('data-value')) {
                 const target = $toggle.attr('aria-controls');
-                let $text    = $toggle.siblings('.text');
-                makeButton($text, target);
+                const $text  = makeButton($toggle.siblings('.text'), target);
                 handleClickAndKeypress($text,   toggleSection);
                 handleClickAndKeypress($toggle, toggleSection);
             } else {
-                let $section = $label.parent();
-                markAsHidden($section);
-                $section.addClass('disabled');
+                const $section = $label.parent();
+                markAsVisible($section, false);
+                $section.toggleClass(DISABLED_MARKER, true);
             }
         });
     });

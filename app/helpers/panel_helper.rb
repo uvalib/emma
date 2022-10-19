@@ -88,6 +88,7 @@ module PanelHelper
     opt[:'aria-controls'] = id.presence or raise 'no target id given'
     open = 'open' if open.is_a?(TrueClass)
     open = nil    unless open.is_a?(String)
+    opt[:'aria-expanded'] = !!open
     if context
       # noinspection RubyNilAnalysis
       context = "for-#{context}" unless context.start_with?('for-')

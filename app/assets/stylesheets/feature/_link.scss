@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_link.scss
 
 @use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
 
 @use 'layouts/controls/panels' as panel-classes;
 
@@ -81,6 +82,8 @@ $page-section-gap-small: $page-section-gap * 0.5;
 // List of controller actions (new, edit, delete).
 // @see BaseDecorator::Links#action_list
 ul.page-actions {
+
+    @include user-select(none);
 
     margin-top: 3rem;
     padding:    0.5rem 0 0;

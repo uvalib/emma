@@ -70,6 +70,7 @@
 
         @include header.section;
         @include header.control-panel;
+        @include user-select(none);
 
         $page-control-gap-x: $gap-x;
         $page-control-gap-y: calc(#{$gap-y} / 2);

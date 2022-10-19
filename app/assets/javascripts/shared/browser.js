@@ -57,7 +57,8 @@ export function pageLoadNormal() {
  * @returns {boolean}
  */
 export function isInternetExplorer() {
-    // noinspection PlatformDetectionJS
-    const ua = navigator.userAgent || '';
-    return ua.includes('MSIE ') || ua.includes('Trident/');
+    // If NavigatorUAData is present then no actual check is required.
+    // noinspection JSUnresolvedVariable, PlatformDetectionJS
+    const ua = navigator.userAgentData ? undefined : navigator.userAgent;
+    return ua?.includes('MSIE ') || ua?.includes('Trident/') || false;
 }
