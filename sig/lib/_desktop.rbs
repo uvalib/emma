@@ -1,0 +1,17 @@
+class Object
+  # All ancestors which define a given method.
+  #
+  # @param [Symbol] meth
+  #
+  # @return [Hash{Symbol=>Array<Module>}]
+  #
+  def self.ancestors_with: (Symbol meth) -> Hash[Symbol,Array[Module]]
+
+  # Display all ancestors which define a given method.
+  #
+  # @param [Symbol] meth
+  #
+  # @return [Integer]
+  #
+  def self.show_ancestors_with: (Symbol meth) -> Integer
+end

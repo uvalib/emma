@@ -147,4 +147,10 @@ require 'ext/active_support/ext'
 require_submodules(__FILE__)
 require 'ext'
 
+# =============================================================================
+# Desktop-only affordances
+# =============================================================================
+
+require '_desktop' unless application_deployed?
+
 __loading_end(__FILE__)
