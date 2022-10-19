@@ -24,27 +24,29 @@ $bookshare-button: #445f9e;
 $bookshare-border: #3c548c;
 
 // @see https://brand.virginia.edu/brand-essentials/colors
-$uva-blue:           #232d4b;
-$uva-orange:         #e57200;
+$uva-blue:           #232D4B;
+$uva-orange:         #E57200;
+
+// UVA accent colors.
+// @see https://brand.virginia.edu/brand-essentials/colors/web-palette
+$uva-accent-blue:    #141E3C;
+$uva-accent-cyan:    #009FDF;
+$uva-accent-green:   #62BB46;
+$uva-accent-magenta: #EF3F6B;
+$uva-accent-orange:  #EB5F0C;
+$uva-accent-teal:    #25CAD3;
+$uva-accent-yellow:  #FDDA24;
+
+$uva-light-gray:     #F1F1EF;
+$uva-medium-gray:    #DADADA;
+$uva-text-gray:      #666666;
+
+$uva-emergency-red:  #DF1E43;
 
 // UVA text colors.
 // @see https://brand.virginia.edu/brand-essentials/colors/web-palette
 $uva-text-blue:      $uva-blue;
-$uva-text-orange:    $uva-orange; // >= 24px normal; >= 18px bold
-
-// UVA accent colors.
-// @see https://brand.virginia.edu/brand-essentials/colors/web-palette
-$uva-accent-blue:    #141e3c;
-$uva-accent-cyan:    #008fdf;
-$uva-accent-green:   #62bb46;
-$uva-accent-magenta: #ef3f6b;
-$uva-accent-orange:  #eb5f0c;
-$uva-accent-teal:    #25cad3;
-$uva-accent-yellow:  #fdda24;
-$uva-light-gray:     #f1f1ef;
-$uva-medium-gray:    #dadada;
-$uva-text-gray:      #666666;
-$uva-emergency-red:  #df1e43;
+$uva-text-orange:    $uva-accent-orange; // >= 24px normal; >= 18px bold
 
 // Uppy colors.
 // @see file:node_modules/uppy/dist/uppy.css
