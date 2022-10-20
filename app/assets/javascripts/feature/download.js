@@ -688,7 +688,6 @@ $(document).on('turbolinks:load', function() {
         hideDownloadButton($link);
         set(STATE.REQUESTING, $link);
         setRetryPeriod($link);
-        SearchInProgress.suppressed = true;
     }
 
     /**
@@ -710,7 +709,6 @@ $(document).on('turbolinks:load', function() {
             set(STATE.READY, $link);
         }
         clearRetryPeriod($link);
-        SearchInProgress.suppressed = false;
     }
 
     /**
@@ -987,5 +985,16 @@ $(document).on('turbolinks:load', function() {
 
     // Override download links in order to get the artifact asynchronously.
     handleClickAndKeypress($artifact_links, getDownload);
+
+    // Clicking on the download link causes a page navigation, which is set up
+    // to cause a search-in-progress overlay to display.  This is a problem
+    // because it's not really a page transition so it just causes the page to
+    // be unusable.
+    //
+    // TODO: Determine how to restore after the download is complete.
+    //
+    handleClickAndKeypress($artifact_links.siblings('.button'), () => {
+        SearchInProgress.suppressed = true;
+    });
 
 });
