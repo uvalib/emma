@@ -20,6 +20,7 @@ module Record::Uploadable
   extend ActiveSupport::Concern
 
   include Record
+  include Record::FileData
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -34,18 +35,6 @@ module Record::Uploadable
   # ===========================================================================
 
   public
-
-  # The default name for the column which holds upload data.
-  #
-  # @type [Symbol]
-  #
-  FILE_DATA_COLUMN = :file_data
-
-  # Whether the #FILE_DATA_COLUMN should be persisted as a Hash.
-  #
-  # @type [Boolean]
-  #
-  FILE_DATA_HASH = true
 
   # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: from Upload::FileMethods
   # be valid only for a single time.
@@ -162,7 +151,7 @@ module Record::Uploadable
   # @return [nil]
   #
   def file_attacher_load(data = nil)                                          # NOTE: from Upload::FileMethods#attached_file
-    data = json_parse((data || file_data), symbolize_keys: false)
+    data = make_file_record(data)
     file_attacher.load_data(data) if data.present?
   end
 

@@ -22,6 +22,12 @@ module Upload::IdentifierMethods
   # @type [Regexp]                                                              # NOTE: to Record::EmmaIdentification
   SID_PATTERN: Regexp
 
+  # Indicate whether the value could be a valid #id_column value.
+  #
+  # @param [*] value
+  #
+  def valid_id?: (untyped value) -> bool
+
   # Extract the database ID from the given item.
   #
   # @param [Api::Record, Upload, Hash, String, Any, nil] item
@@ -166,6 +172,19 @@ module Upload::IdentifierMethods
   #   expand_ids('$-$') -> %w(6)
   #
   def expand_ids: (*(String|Integer|Upload|Array[String|Integer|Upload]) ids, **untyped opt) -> strArray
+
+  # Condense an array of identifiers by replacing runs of contiguous number
+  # values like "first", "first+1", "first+2", ..., "last" with "first-last".
+  #
+  # If the array represents all identifiers, ['*'] is returned.
+  #
+  # @param [Array<String>] ids
+  # @param [Integer, nil]  min_id     Default: `#minimum_id`
+  # @param [Integer, nil]  max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
+  def group_ids: (*String ids, ?min_id: Integer|nil, ?max_id: Integer|nil, **untyped _ignored) -> strArray
 
   # A valid ID range term for interpolation into a Regexp.                      # NOTE: to Record::Identification::RNG_TERM
   #

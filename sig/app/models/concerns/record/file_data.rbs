@@ -1,0 +1,121 @@
+# Record methods to support processing of :file_data record columns.
+#
+# TODO: distinguish between :file_data intended for Shrine versus :file_data
+#   that may hold other info related to ManifestItem.
+#
+# TODO: Does PG return 'json' fields as a symbolized Hashes?
+# TODO: Does PG accommodate setting 'json' fields with symbolized Hashes?
+# TODO: If the answer to both of those questions is "yes" then these methods
+#   shouldn't go to the trouble of stringify-ing Hashes.
+#
+module Record::FileData
+  extend ActiveSupport::Concern
+
+  include Emma::Json
+
+  include Record
+
+  # The default name for the column which holds upload data.
+  #
+  # @type [Symbol]
+  #
+  FILE_DATA_COLUMN: Symbol
+
+  # Whether the #FILE_DATA_COLUMN should be persisted as a Hash.
+  #
+  # @type [Boolean]
+  #
+  FILE_DATA_HASH: bool
+
+  # Generate a record to express structured file data.
+  #
+  # @param [Hash, String, nil] data
+  #
+  # @return [Hash{String=>Any}]
+  #
+  def make_file_record: (String|anyHash|nil data, **untyped opt) -> strHash
+
+  # parse_file_data
+  #
+  # @param [String, Hash, nil] data
+  # @param [Boolean]           allow_blank
+  #
+  # @return [Hash]
+  #
+  def parse_file_data: (String|anyHash|nil data, ?bool allow_blank) -> symHash
+
+  # generate_file_data
+  #
+  # @param [String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [String, Hash, ActionController::Parameters, Model, nil] attr
+  #
+  # @return [Hash]
+  #
+  # @note Currently unused.
+  #
+  def generate_file_data: (Model|prmHash|String|nil data, Model|prmHash|String|nil attr) -> symHash
+
+  # Class methods automatically added to the including record class.
+  #
+  module ClassMethods
+    include Record::FileData
+  end
+
+  # Instance implementations to be included if the schema has an
+  # FILE_DATA_COLUMN column.
+  #
+  module InstanceMethods
+    include Record::FileData
+
+    def generate_file_data: (Model|prmHash|String|nil data, Model|prmHash|String|nil attr) -> symHash
+
+    # Present :file_data as a structured object (if it is present).
+    #
+    # @return [Hash] # TODO: ???
+    #
+    # @note Currently unused.
+    #
+    def emma_file_record: () -> strHash
+
+    @emma_file_record: strHash | nil
+
+    # Present :file_data as a hash (if it is present).
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def emma_file_data: () -> symHash
+
+    @emma_file_data: symHash | nil
+
+    # Set the :file_data field value (if not #FILE_DATA_HASH).
+    #
+    # @param [Hash, String, nil] data
+    # @param [Boolean]           allow_blank
+    #
+    # @return [String]                New value of :file_data
+    # @return [nil]                   ...if *data* is *nil*.
+    #
+    # @note Currently unused.
+    #
+    def set_file_data: (String|anyHash data, ?bool allow_blank) -> String
+                     | (nil            data, ?bool allow_blank) -> nil
+
+    # Selectively modify the :file_data field value (if not #FILE_DATA_HASH).
+    #
+    # @param [Hash]    data
+    # @param [Boolean] allow_blank
+    #
+    # @return [String]                New value of :file_data.
+    # @return [nil]                   If no change and :file_data was *nil*.
+    #
+    # @note Currently unused.
+    #
+    def modify_file_data: (anyHash data, ?bool allow_blank) -> (String | nil)
+  end
+
+  private
+
+  THIS_MODULE: Module
+
+  include InstanceMethods
+end

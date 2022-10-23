@@ -46,7 +46,7 @@ class Options
   #
   # @type [Array<Symbol>]
   #
-  FORM_PARAMS = %i[selected field-group cancel].freeze
+  FORM_PARAMS = %i[field-group cancel].freeze
 
   # POST/PUT/PATCH parameters from the entry form that are not relevant to the
   # create/update of a model instance.
@@ -208,6 +208,7 @@ class Options
   def get_model_params(p = nil)
     prm = url_parameters(p)
     prm.except!(*ignored_form_params)
+    prm[:id] = prm.delete(:selected) || prm[:id]
     prm.deep_symbolize_keys!
     reject_blanks(prm)
   end

@@ -66,9 +66,9 @@ module Record::EmmaIdentification
   def sid_value(item, **opt)                                                    # NOTE: from Upload::IdentifierMethods#sid_for
     # noinspection RubyMismatchedReturnType
     return item if valid_sid?(item)
+    return unless (key = opt[:sid_key] || sid_column)
     opt  = item.merge(opt) if item.is_a?(Hash)
     item = opt unless item.is_a?(Model)
-    key  = opt[:sid_key] || sid_column
     get_value(item, key) || get_value(item, :sid) if item.present?
   end
 
@@ -297,57 +297,24 @@ module Record::EmmaIdentification
     end
   end
 
-  # ===========================================================================
-  # :section: Record::Identification overrides
-  # ===========================================================================
-
-  public
-
   # Interpret an identifier as either an :id or :submission_id, generating a
   # field/value pair for use with #find_by or #where.
   #
   # If :sid_key set to *nil* then the result will always be in terms of :id_key
   # (which cannot be set to *nil*).
   #
-  # @param [String, Symbol, Integer, Hash, Model, Any, nil] v
-  # @param [Hash]                                          opt
+  # @param [String, Symbol, Integer, Hash, Model, *] v
+  # @param [Hash]                                    opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   # @option opt [Symbol] :sid_key     Default: `#sid_column`.
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def id_term(v, **opt)                                                         # NOTE: from Upload::IdentifierMethods
-    result  = {}
-    id_key  = opt.key?(:id_key)  ? opt.delete(:id_key)  : id_column
-    sid_key = opt.key?(:sid_key) ? opt.delete(:sid_key) : sid_column
-    v = opt     if v.nil? && opt.present?
-    v = v.strip if v.is_a?(String)
-    if v.is_a?(Model) || v.is_a?(Hash)
-      result[id_key]  = get_value(v, id_key)  if id_key
-      result[sid_key] = get_value(v, sid_key) if sid_key && !result[id_key]
-    elsif digits_only?(v)
-      result[id_key]  = v if id_key
-    else
-      result[sid_key] = v if sid_key
-    end
-    result.compact.presence || { (id_key || sid_key || id_column) => nil }
+  def id_term(v = nil, **opt)                                                         # NOTE: from Upload::IdentifierMethods
+    opt[:sid_key] = sid_column unless opt.key?(:sid_key)
+    super
   end
-
-  # ===========================================================================
-  # :section: Record::Identification overrides
-  # ===========================================================================
-
-  public
-
-  # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
-  #
-  # @type [String]
-  #
-  RNG_TERM = Record::Identification::RNG_TERM
 
   # Interpret an ID string as a range of IDs if possible.
   #
@@ -358,36 +325,11 @@ module Record::EmmaIdentification
   # @param [String, Integer, Model] id
   # @param [Hash]                   opt
   #
-  # @option opt [Integer]     :min_id   Default: `#minimum_id`.
-  # @option opt [Integer]     :max_id   Default: `#maximum_id`.
-  # @option opt [Symbol]      :id_key   Default: `#id_column`.
-  # @option opt [Symbol, nil] :sid_key  Default: `#sid_column`.
-  #
   # @return [Array<String>]
   #
-  # @see #expand_ids
-  #
   def expand_id_range(id, **opt)                                                # NOTE: from Upload::IdentifierMethods
-    id_key  = opt[:id_key] || id_column
-    sid_key = opt.key?(:sid_key) ? opt[:sid_key] : sid_column
-    min = max = nil
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case id
-      when Numeric, /^\d+$/, '$'       then min = id
-      when Model                       then min = id.id
-      when Hash                        then min = id[id_key] || id[id_key.to_s]
-      when '*'                         then min, max = [1,  '$']
-      when /^-#{RNG_TERM}/             then min, max = [1,  $1 ]
-      when /^#{RNG_TERM}-$/            then min, max = [$1, '$']
-      when /^#{RNG_TERM}-#{RNG_TERM}$/ then min, max = [$1, $2 ]
-    end
-    min &&= (opt[:max_id] ||= maximum_id) if (min == '$')
-    min &&= [1, min.to_i].max
-    max &&= (opt[:max_id] ||= maximum_id) if (max == '$') || (max == '*')
-    max &&= [1, max.to_i].max
-    result   = max ? (min..max).to_a : min
-    result ||= sid_key && get_value(id, sid_key) || id
-    Array.wrap(result).compact_blank.map(&:to_s)
+    opt[:sid_key] = sid_column unless opt.key?(:sid_key)
+    super
   end
 
   # ===========================================================================

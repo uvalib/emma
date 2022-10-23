@@ -44,6 +44,14 @@ module Upload::IdentifierMethods
 
   public
 
+  # Indicate whether the value could be a valid #id_column value.
+  #
+  # @param [*] value
+  #
+  def valid_id?(value)
+    digits_only?(value)
+  end
+
   # Extract the database ID from the given item.
   #
   # @param [Api::Record, Upload, Hash, String, Any, nil] item
@@ -51,15 +59,10 @@ module Upload::IdentifierMethods
   # @return [String]                  Record ID (:id).
   # @return [nil]                     No valid :id specified.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def id_for(item)                                                              # NOTE: to Record::Identification#id_value
-    result   = (item                    if digits_only?(item))
-    result ||= (item.id                 if item.is_a?(Upload))
-    result ||= (item[:id] || item['id'] if item.is_a?(Hash))
-    result   = result.to_i
-    result.to_s unless result.zero?
+    # noinspection RailsParamDefResolve
+    v = item.is_a?(Hash) ? (item[:id] || item['id']) : (item.try(:id) || item)
+    v.to_s if valid_id?(v)
   end
 
   # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
@@ -162,9 +165,10 @@ module Upload::IdentifierMethods
         when Integer then [v, nil]
         when Upload  then [v[:id], v[:submission_id]]
         when Hash    then v.symbolize_keys.values_at(:id, :submission_id)
-        else digits_only?((v = v.to_s.strip)) ? [v, nil] : [nil, v]
+        else              valid_id?((v = v.to_s.strip)) ? [v, nil] : [nil, v]
       end
-    id ? { id: id.to_i } : { submission_id: sid }
+    id = id.to_i if digits_only?(id)
+    id ? { id: id } : { submission_id: sid }
   end
 
   # The database ID of the first "upload" table record.
@@ -194,27 +198,9 @@ module Upload::IdentifierMethods
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def compact_ids(*items, **opt)                                                # NOTE: to Record::Identification
-    opt[:min_id] ||= minimum_id
-    opt[:max_id] ||= maximum_id
-    ids, non_ids = expand_ids(*items, **opt).partition { |v| digits_only?(v) }
-    non_ids.sort!.uniq!
-    ids.map! { |id| [id.to_i, opt[:min_id]].max }.sort!.uniq!
-    ids =
-      ids.chunk_while { |prev, this| (prev + 1) == this }.map do |range|
-        first = range.shift
-        last  = range.pop || first
-        (first == last) ? first.to_s : "#{first}-#{last}"
-      end
-    min, max = opt.values_at(:min_id, :max_id).map(&:to_s)
-    all = (ids == [max] if min == max)
-    all ||= (ids == [min, '$']) || (ids == [min, max])
-    all ||= ids.first&.match?(/^(0|1|#{min}|\*)?-(#{max}|\$)$/)
-    ids = %w(*) if all
-    ids + non_ids
+    ids, non_ids = expand_ids(*items, **opt).partition { |v| valid_id?(v) }
+    group_ids(*ids, **opt) + non_ids.sort!.uniq
   end
 
   # Transform a mixture of ID representations into a list of single IDs.
@@ -277,6 +263,35 @@ module Upload::IdentifierMethods
     }.compact.uniq
   end
 
+  # Condense an array of identifiers by replacing runs of contiguous number
+  # values like "first", "first+1", "first+2", ..., "last" with "first-last".
+  #
+  # If the entire
+  #
+  #
+  # @param [Array<String>] ids
+  # @param [Integer, nil]  min_id     Default: `#minimum_id`
+  # @param [Integer, nil]  max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
+  def group_ids(*ids, min_id: nil, max_id: nil, **)
+    min = (min_id ||= minimum_id).to_s
+    max = (max_id ||  maximum_id).to_s
+    ids.map! { |id| [id.to_i, min_id].max }.sort!.uniq!
+    # noinspection RubyMismatchedArgumentType
+    ids =
+      ids.chunk_while { |prev, this| (prev + 1) == this }.map do |range|
+        first = range.shift
+        last  = range.pop || first
+        (first == last) ? first.to_s : "#{first}-#{last}"
+      end
+    all   = (ids == [max] if min == max)
+    all ||= (ids == [min]) || (ids == [min, max])
+    all ||= ids.first&.match?(/^(0|1|#{min}|\*)?-(#{max}|\$)$/)
+    all ? %w(*) : ids
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -317,15 +332,19 @@ module Upload::IdentifierMethods
       when /^#{RANGE_TERM}-$/              then min, max = [$1, '$']
       when /^#{RANGE_TERM}-#{RANGE_TERM}$/ then min, max = [$1, $2 ]
     end
-    min &&= (opt[:max_id] ||= maximum_id) if (min == '$')
-    min &&= [1, min.to_i].max
-    max &&= (opt[:max_id] ||= maximum_id) if (max == '$') || (max == '*')
-    max &&= [1, max.to_i].max
-    result   = max ? (min..max).to_a : min
-    result ||= (id.submission_id                          if id.is_a?(Upload))
-    result ||= (id[:submission_id] || id['submission_id'] if id.is_a?(Hash))
-    result ||= id
-    Array.wrap(result).compact_blank.map(&:to_s)
+    min = (opt[:max_id] ||= maximum_id) if (min == '$')
+    min = [1, min.to_i].max             if digits_only?(min)
+    max = (opt[:max_id] ||= maximum_id) if (max == '$') || (max == '*')
+    max = [1, max.to_i].max             if digits_only?(max)
+    if min.is_a?(Integer) && max.is_a?(Integer)
+      # noinspection RubyMismatchedReturnType
+      (min..max).to_a.map!(&:to_s)
+    else
+      min ||= (id.submission_id                          if id.is_a?(Upload))
+      min ||= (id[:submission_id] || id['submission_id'] if id.is_a?(Hash))
+      min ||= id
+      Array.wrap(min&.to_s)
+    end
   end
 
 end

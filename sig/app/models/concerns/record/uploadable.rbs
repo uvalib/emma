@@ -13,22 +13,12 @@ module Record::Uploadable
 
   include Record
 
+  include Record::FileData
+
   # :nocov:
   #include ActiveRecord::Validations
 
   #include Record::Testing
-
-  # The default name for the column which holds upload data.
-  #
-  # @type [Symbol]
-  #
-  FILE_DATA_COLUMN: Symbol
-
-  # Whether the #FILE_DATA_COLUMN should be persisted as a Hash.
-  #
-  # @type [Boolean]
-  #
-  FILE_DATA_HASH: bool
 
   # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: from Upload::FileMethods
   # be valid only for a single time.

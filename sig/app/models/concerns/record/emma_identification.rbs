@@ -165,13 +165,7 @@ module Record::EmmaIdentification
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
-  def id_term: (untyped v, **untyped opt) -> Hash[Symbol,(String|Integer|nil)]
-
-  # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
-  #
-  # @type [String]
-  #
-  RNG_TERM: String
+  def id_term: (?untyped v, **untyped opt) -> Hash[Symbol,(String|Integer|nil)]
 
   # Interpret an ID string as a range of IDs if possible.
   #
@@ -182,14 +176,7 @@ module Record::EmmaIdentification
   # @param [String, Integer, Model] id
   # @param [Hash]                   opt
   #
-  # @option opt [Integer]     :min_id   Default: `#minimum_id`.
-  # @option opt [Integer]     :max_id   Default: `#maximum_id`.
-  # @option opt [Symbol]      :id_key   Default: `#id_column`.
-  # @option opt [Symbol, nil] :sid_key  Default: `#sid_column`.
-  #
   # @return [Array<String>]
-  #
-  # @see #expand_ids
   #
   def expand_id_range: ((String|Integer|Model) id, **untyped opt) -> strArray
 

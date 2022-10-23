@@ -53,6 +53,12 @@ module Record::Identification
   #
   def id_column: () -> Symbol
 
+  # Indicate whether the value could be a valid #id_column value.
+  #
+  # @param [*] value
+  #
+  def valid_id?: (untyped value) -> bool
+
   # Extract the database ID from the given item.
   #
   # @param [Model, Hash, String, Any] item
@@ -76,13 +82,13 @@ module Record::Identification
   #
   # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @param [Model, Hash, String, Symbol, Any, nil] item
-  # @param [Symbol, String, Array<Symbol,String>]  key
-  # @param [Any]                                   default
+  # @param [Model, Hash, String, Symbol, *]       item
+  # @param [Symbol, String, Array<Symbol,String>] key
+  # @param [Any]                                  default
   #
-  # @return [Any]
+  # @return [*]
   #
-  def get_value: (untyped item, (Symbol|String|Array[Symbol|String]) key, ?default: untyped|nil) -> (untyped | nil)
+  def get_value: (untyped item, untyped key, ?default: untyped|nil) -> (untyped | nil)
 
   # A foreign-key reference to the current record.
   #
@@ -153,14 +159,15 @@ module Record::Identification
   # If :sid_key set to *nil* then the result will always be in terms of :id_key
   # (which cannot be set to *nil*).
   #
-  # @param [String, Symbol, Integer, Hash, Model, Any] v
-  # @param [Hash]                                      opt
+  # @param [String, Symbol, Integer, Hash, Model, *] v
+  # @param [Hash]                                    opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
+  # @option opt [Symbol] :sid_key     Default: nil.
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
-  def id_term: (untyped v, **untyped opt) -> Hash[Symbol,(Integer|String|nil)]
+  def id_term: (?untyped v, **untyped opt) -> Hash[Symbol,(Integer|String|nil)]
 
   # Transform a mixture of ID representations into a set of one or more
   # non-overlapping range representations followed by non-identifiers (if any).
@@ -226,6 +233,19 @@ module Record::Identification
   #
   def expand_ids: (*(String|Integer|Model|Array[String|Integer|Model]) ids, **untyped opt) -> strArray
 
+  # Condense an array of identifiers by replacing runs of contiguous number
+  # values like "first", "first+1", "first+2", ..., "last" with "first-last".
+  #
+  # If the array represents all identifiers, ['*'] is returned.
+  #
+  # @param [Array<String>] ids
+  # @param [Integer, nil]  min_id     Default: `#minimum_id`
+  # @param [Integer, nil]  max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
+  def group_ids: (*String ids, ?min_id: Integer|nil, ?max_id: Integer|nil, **untyped _ignored) -> strArray
+
   # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
   #
   # @type [String]
@@ -244,6 +264,7 @@ module Record::Identification
   # @option opt [Integer]     :min_id   Default: `#minimum_id`.
   # @option opt [Integer]     :max_id   Default: `#maximum_id`.
   # @option opt [Symbol]      :id_key   Default: `#id_column`.
+  # @option opt [Symbol, nil] :sid_key  Default: nil.
   #
   # @return [Array<String>]
   #
@@ -253,19 +274,21 @@ module Record::Identification
 
   # The database ID of the first record associated with the including class.
   #
-  # @param [Symbol] id_key            Default: `#id_column`.
+  # @param [Symbol, nil] id_key       Default: `#id_column`.
   #
   # @return [Integer]                 If 0 then the table is empty.
+  # @return [nil]                     Not supported by the current schema.
   #
-  def minimum_id: (?id_key: Symbol|nil) -> Integer
+  def minimum_id: (?id_key: Symbol|nil) -> (Integer | nil)
 
   # The database ID of the last record associated with the including class.
   #
-  # @param [Symbol] id_key            Default: `#id_column`.
+  # @param [Symbol, nil] id_key       Default: `#id_column`.
   #
   # @return [Integer]                 If 0 then the table is empty.
+  # @return [nil]                     Not supported by the current schema.
   #
-  def maximum_id: (?id_key: Symbol|nil) -> Integer
+  def maximum_id: (?id_key: Symbol|nil) -> (Integer | nil)
 
   # Class methods automatically added to the including record class.
   #
@@ -299,11 +322,11 @@ module Record::Identification
 
     # @see Record::Identification#minimum_id
     #
-    def minimum_id: (**untyped opt) -> Integer
+    def minimum_id: (**untyped opt) -> (Integer | nil)
 
     # @see Record::Identification#maximum_id
     #
-    def maximum_id: (**untyped opt) -> Integer
+    def maximum_id: (**untyped opt) -> (Integer | nil)
   end
 
   private
