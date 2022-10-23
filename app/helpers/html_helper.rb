@@ -192,8 +192,8 @@ module HtmlHelper
   # @return [Hash]
   #
   def add_needed_attributes(tag, options)
-    missing = ADDED_HTML_ATTRIBUTES[tag.to_sym] || {}
-    options.reverse_merge(missing)
+    required = ADDED_HTML_ATTRIBUTES[tag&.to_sym] || {}
+    required.merge(options)
   end
 
   # Attributes that are expected for a given HTML tag.
@@ -215,7 +215,8 @@ module HtmlHelper
   # @return [Boolean]                 If *false* at least one was missing.
   #
   def check_required_attributes(tag, options)
-    missing = (REQUIRED_HTML_ATTRIBUTES[tag.to_sym] - options.keys).presence
+    required = Array.wrap(REQUIRED_HTML_ATTRIBUTES[tag&.to_sym])
+    missing  = (required - options.keys).presence
     Log.debug { "#{meth}: missing opt: #{missing.join(',')}" } if missing
     missing.nil?
   end
