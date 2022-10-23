@@ -332,6 +332,15 @@ class Ability
   #
   def can_manage_group_entries: (User user) -> void
 
+  # Define a set of capabilities on EMMA bulk operations which allows full
+  # control over instances which meet the given constraints.
+  #
+  # @param [Hash] with_constraints
+  #
+  # @return [void]
+  #
+  def can_manage_bulk_operations: (**untyped with_constraints) -> void
+
   # Define a set of capabilities on EMMA submissions which allows full control
   # over instances which meet the given constraints.
   #
@@ -350,6 +359,8 @@ class Ability
   #
   # @return [void]
   #
+  # @note Currently unused
+  #
   def can_manage_own: (Class model, User user) -> void
 
   # Allow full control over model instances which are associated with the
@@ -360,11 +371,22 @@ class Ability
   #
   # @return [void]
   #
+  # @note Currently unused
   # @note This is not yet supported by any data model.
   #
   def can_manage_group: (Class model, User user) -> void
 
   # Define a set of capabilities on a given model type which allows full
+  # control over instances which meet the given constraints.
+  #
+  # @param [Class] model
+  # @param [Hash]  with_constraints
+  #
+  # @return [void]
+  #
+  def can_manage_records: (Class model, **untyped with_constraints) -> void
+
+  # Define a set of capabilities on a given model type which allows basic
   # control over instances which meet the given constraints.
   #
   # @param [Class] model

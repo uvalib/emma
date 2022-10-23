@@ -1,0 +1,66 @@
+class ManifestItem < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::EmmaData
+
+  include Record::FileData
+
+  include Record::Assignable
+
+  include Record::Authorizable
+
+  include Record::Describable
+
+  include Record::Searchable
+
+  include Record::Uploadable
+
+  include Record::Validatable
+
+  include Record::Testing
+
+  include Record::Debugging
+
+  # :nocov:
+  #extend Record::Describable::ClassMethods
+
+  include ManifestItem::Config
+
+  include ManifestItem::Assignable
+
+  include ManifestItem::EmmaIdentification
+
+  include ManifestItem::FieldMethods
+
+  include ManifestItem::Identification
+
+  include ManifestItem::StatusMethods
+
+  include ManifestItem::Validatable
+
+  # Create a new instance.
+  #
+  # @param [ManifestItem,Manifest,Hash] attr    To #assign_attributes via super
+  # @param [Proc]                       block   Passed to super.
+  #
+  def initialize: (?(ManifestItem|Manifest|anyHash|nil) attr) ?{ () -> untyped } -> void
+
+  # Mark the record as saved.
+  #
+  # @param [DateTime, nil] timestamp  Default: time now.
+  # @param [Hash]          opt        Field values to updated.
+  #
+  # @return [self]
+  #
+  def save_changes!: (?(DateTime|nil) timestamp, **untyped opt) -> self
+
+  # Back out of provisional changes.
+  #
+  # @param [Hash] opt                 Field values to update.
+  #
+  # @return [self]
+  #
+  def cancel_changes!: (**untyped opt) -> self
+end

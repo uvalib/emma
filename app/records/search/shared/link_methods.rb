@@ -72,7 +72,7 @@ module Search::Shared::LinkMethods
     url   = entry[:download_url]
     url   = url[fmt.to_sym] if url.is_a?(Hash)
     path  = entry[:download_path]
-    if path.blank? && (src.to_s == DEFAULT_REPOSITORY)
+    if path.blank? && (src.to_s == EmmaRepository.default)
       path = request.base_url if respond_to?(:request)
     end
     raise 'no download_path' if path.blank?

@@ -1,0 +1,42 @@
+# config/locales/types/manifest_item.en.yml
+#
+# Data type enumerations for ManifestItems.
+
+en:
+
+  emma:
+
+    manifest_item:
+
+      type:
+
+        # =====================================================================
+        # Status values
+        # @see "file:stylesheets/controllers/_manifest_item.scss" *.indicators*
+        # =====================================================================
+
+        file_status:
+          missing:      'No content has been provided yet'
+          invalid:      'The provided content location is invalid'
+          hidden:       'The indicated content cannot be accessed'
+          corrupt:      'The indicated content is invalid or corrupt'
+          bad_read:     'A network problem prevented acquiring the content'
+          complete:     'Remediated content has been provided'
+
+        data_status:
+          missing:      'No information has been provided yet'
+          invalid:      'Critical data field(s) are missing or invalid'
+          minimal:      'Only minimal information has been provided so far'
+          no_bib:       'No bibliographic information has been provided yet'
+          min_bib:      'Only minimal bibliographic info provided; have you tried Lookup?'
+          no_rem:       'No remediation information has been provided yet'
+          min_rem:      'Only minimal remediation information has been provided'
+          complete:     'Sufficient bibliographic and remediation information'
+
+        ready_status:
+          missing:      'This record is not ready for submission'
+          ready:        'This record is ready for submission'
+          db_fail:      'Database failure prevented completion'
+          store_fail:   'File upload failure prevented completion'
+          index_fail:   'Indexing failure prevented completion'
+          complete:     'This record has been submitted'

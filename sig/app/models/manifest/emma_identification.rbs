@@ -1,0 +1,42 @@
+module Manifest::EmmaIdentification
+  include Record::EmmaIdentification
+
+  # Column name for the submission ID.
+  #
+  # @return [nil]
+  #
+  def sid_column: () -> nil
+
+  # @private
+  UUID_PATTERN: ::Regexp
+
+  # Indicate whether the value could be a valid #id_column value.
+  #
+  # @param [*] value
+  #
+  def valid_id?: (untyped value) -> bool
+
+  # UUID identifiers can't be grouped into ranges.
+  #
+  # @param [Array<String>] ids
+  #
+  # @return [Array<String>]
+  #
+  def group_ids: (*String ids, **untyped _ignored) -> strArray
+
+  # There is no "minimum" UUID.
+  #
+  # @return [nil]
+  #
+  def minimum_id: (*untyped _ignored) ?{ () -> untyped } -> nil
+
+  # There is no "maximum" UUID.
+  #
+  # @return [nil]
+  #
+  def maximum_id: (*untyped _ignored) ?{ () -> untyped } -> nil
+
+  private
+
+  def self.included: (Module base) -> void
+end

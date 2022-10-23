@@ -1,0 +1,80 @@
+module Manifest::ItemMethods
+  include Manifest::Config
+
+  # Return a table of all pending ManifestItem ID's and their status values.
+  #
+  # @param [Manifest, String, nil] manifest   Default: self
+  # @param [Array<Symbol>]         columns    ManifestItem status columns.
+  #
+  # @return [Hash{Integer=>Hash}]
+  #
+  def pending_items_hash: (?(Manifest|String|nil) manifest, ?columns: symArray, **untyped _ignored) -> Hash[Integer,symHash]
+
+  # Return a table of pending ManifestItem ID with incomplete status(es).
+  #
+  # @param [Manifest, String, nil] manifest   Default: self
+  # @param [Array<Symbol>]         columns    ManifestItem status columns.
+  #
+  # @return [Hash{Integer=>Hash}]
+  #
+  def invalid_items_hash: (?(Manifest|String|nil) manifest, ?columns: symArray, **untyped _ignored) -> Hash[Integer,symHash]
+
+  # Return a table of ManifestItem values keyed on identifier.
+  #
+  # @param [Manifest, String, *]        manifest  Default: self
+  # @param [Array<Symbol>, Symbol, nil] columns
+  #
+  # @return [Hash{Integer=>Hash}]
+  #
+  def items_hash: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, ?columns: symArray|Symbol|nil, **untyped _ignored) -> Hash[Integer,symHash]
+
+  # The number of ManifestItems for the given Manifest.
+  #
+  # @param [Manifest, String, *]        manifest  Default: self
+  #
+  # @return [Integer]
+  #
+  def item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  # The number of ManifestItems for the given Manifest (not including records
+  # marked for deletion).
+  #
+  # @param [Manifest, String, *]        manifest  Default: self
+  #
+  # @return [Integer]
+  #
+  def saved_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  # The number of ManifestItems for the given Manifest that have been created
+  # or changed but not yet saved.
+  #
+  # @param [Manifest, String, *]        manifest  Default: self
+  #
+  # @return [Integer]
+  #
+  def pending_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  def updated_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  def unsaved_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  def never_saved_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  def incomplete_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  def to_delete_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+
+  private
+
+  # Items for the indicated Manifest.
+  #
+  # @param [Manifest, String, *] manifest   Default: self
+  #
+  # @return [ActiveRecord::Associations::Association, nil]
+  #
+  def items_related_to: (untyped manifest) -> (ActiveRecord::Associations::Association | nil)
+
+  private
+
+  def self.included: (Module base) -> void
+end

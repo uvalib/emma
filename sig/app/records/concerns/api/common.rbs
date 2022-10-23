@@ -28,6 +28,22 @@ class ScalarType
     #
     def normalize: (untyped v) -> String
 
+    # Type-cast an object to an instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [superclass, nil]
+    #
+    def cast: (untyped v) -> (self | nil)
+
+    # Create a new instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [superclass, nil]
+    #
+    def create: (untyped v, *untyped _ignored) -> (self | nil)
+
     private
 
     def self.included: (Module base) -> void
@@ -286,14 +302,30 @@ class IsoDate < ScalarType
     #
     def normalize: (untyped v) -> (String | nil)
 
+    # Type-cast an object to an instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [IsoDate, nil]
+    #
+    def cast: (untyped v) -> (IsoDate | nil)
+
+    # Create a new instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [IsoDate, nil]
+    #
+    def create: (untyped v) -> (IsoDate | nil)
+
     # Prepare a date string for normalization.
     #
     # @param [*] v
     #
     # @return [*]
     #
-    def strip_copyright: (String  v) -> String
-                       | (untyped v) -> untyped
+    def strip_copyright:     (String  v) -> String
+                       | [T] (T       v) -> T
 
     # Transform *v* into a ISO 8601 form.
     #
@@ -427,22 +459,6 @@ class IsoDate < ScalarType
     # @param [Any] v
     #
     def complete?: (untyped v) -> bool
-
-    # Type-cast an object to an instance of this type.
-    #
-    # @param [Any, nil] v
-    #
-    # @return [IsoDate, nil]
-    #
-    def cast: (untyped v) -> (IsoDate | nil)
-
-    # Create a new instance of this type.
-    #
-    # @param [Any, nil] v
-    #
-    # @return [IsoDate, nil]
-    #
-    def create: (untyped v) -> (IsoDate | nil)
 
     private
 
@@ -596,14 +612,54 @@ class EnumType < ScalarType
 
     @@enumerations: Hash[Symbol,symHash]
 
-    # Called from API record definitions to provide this base class with the
-    # values that will be accessed implicitly from subclasses.
+    # Add enumeration values from configuration entries.
     #
-    # @param [Hash{Symbol=>Hash}] new_entries
+    # @param [String, Hash]        arg
+    # @param [Symbol, String, nil] name
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    def add_enumerations: (Hash[Symbol,symHash] new_entries) -> Hash[Symbol,symHash]
+    # -
+    # == Variations
+    # +
+    #
+    # @overload add_enumeration(i18n_path, name)
+    #   A configuration entry where the last part of the path is a string that
+    #   when camelized is the same as the name of the class being defined.
+    #   (E.g. "emma.manifest_item.type.file_path" for class FilePath.)
+    #   @param [String]              i18n_path
+    #   @return [Hash{Symbol=>Hash}]
+    #
+    # @overload add_enumeration(i18n_path, name)
+    #   A configuration entry where the last part of the path is a string that
+    #   @param [String]              i18n_path
+    #   @param [Symbol, String]      name
+    #   @return [Hash{Symbol=>Hash}]
+    #
+    # @overload add_enumeration(i18n_path, name)
+    #   @param [Hash]                config
+    #   @param [Symbol, String, nil] name
+    #   @return [Hash{Symbol=>Hash}]
+    #
+    def add_enumeration: (anyHash arg,  (Symbol|String)     name) -> Hash[Symbol,symHash]
+                       | (String  arg, ?(Symbol|String|nil) name) -> Hash[Symbol,symHash]
+
+    # add_enumerations_from
+    #
+    # @param [String] i18n_path
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def add_enumerations_from: (String i18n_path) -> Hash[Symbol,symHash]
+
+    # Called from API record definitions to provide this base class with the
+    # values that will be accessed implicitly from subclasses.
+    #
+    # @param [Hash{Symbol,String=>*}] entries
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def add_enumerations: (Hash[(Symbol|String),(symHash|strArray)] entries) -> Hash[Symbol,symHash]
 
     # Enumeration definitions accumulated from API records.
     #
@@ -638,6 +694,17 @@ class EnumType < ScalarType
     # @return [String]
     #
     def default_for: ((Symbol|String) entry) -> String
+
+    private
+
+    # get_configuration
+    #
+    # @param [String]                   i18n_path
+    # @param [Array<Symbol>,Symbol,nil] default
+    #
+    # @return [Hash{Symbol=>*}, Array<String>, nil]
+    #
+    def get_configuration: (String i18n_path, default: symArray|Symbol|nil) -> (symHash | strArray | nil)
   end
 
   extend Enumerations
@@ -696,6 +763,24 @@ class EnumType < ScalarType
   # @param [String, nil] v            Default: #value.
   #
   def valid?: (?(untyped|nil) v) -> bool
+
+  # This is a convenience for defining a subclass of EnumType in terms of the
+  # configuration which holds its enumeration values (and their related natural
+  # language labels).
+  #
+  # @param [String, Hash]        arg
+  # @param [Symbol, String, nil] name
+  #
+  # @return [Class]
+  #
+  # @see #add_enumeration
+  #
+  def self.[]: (symHash arg,  (Symbol|String)     name) -> Class
+             | (String  arg, ?(Symbol|String|nil) name) -> Class
+
+  private
+
+  def self.inherited: (Class subclass) -> void
 end
 
 # Shared values and methods.

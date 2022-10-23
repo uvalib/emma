@@ -1,0 +1,76 @@
+class Manifest < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Assignable
+
+  include Record::Authorizable
+
+  include Record::Describable
+
+  include Record::Searchable
+
+  include Record::Testing
+
+  include Record::Debugging
+
+  # :nocov:
+  #extend Record::Describable::ClassMethods
+
+  include Manifest::Config
+
+  include Manifest::EmmaIdentification
+
+  include Manifest::ItemMethods
+
+  # Create a new instance.
+  #
+  # @param [Hash, Manifest] attr      Passed to #assign_attributes via super.
+  # @param [Proc]           block     Passed to super.
+  #
+  def initialize: (?(Manifest|prmHash|nil) attr) ?{ () -> untyped } -> void
+
+  # Mark associated ManifestItem records as saved while renumbering their rows.
+  #
+  # @param [DateTime, nil] timestamp  Default: time now.
+  # @param [Hash]          opt        Manifest field values to update.
+  #
+  # @return [self]
+  #
+  def save_changes!: (?(DateTime|nil) timestamp, **untyped opt) -> self
+
+  # Back out of provisional ManifestItem changes.
+  #
+  # @param [Hash] opt                 Manifest field values to update.
+  #
+  # @return [self]
+  #
+  def cancel_changes!: (**untyped opt) -> self
+
+  # label
+  #
+  # @param [Manifest, nil] item       Default: self.
+  #
+  # @return [String, nil]
+  #
+  # @see Api::Shared::TitleMethods#label
+  #
+  def label: (?(Manifest|nil) item) -> (String | nil)
+
+  # menu_label
+  #
+  # @param [Manifest, nil] item           Default: self.
+  #
+  # @return [String, nil]
+  #
+  # @see BaseDecorator::Menu#items_menu_label
+  #
+  def menu_label: (?(Manifest|nil) item) -> (String | nil)
+
+  # Generate a default Manifest title name.
+  #
+  # @return [String]
+  #
+  def self.default_name: () -> String
+end

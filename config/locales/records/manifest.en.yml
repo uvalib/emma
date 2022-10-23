@@ -1,0 +1,143 @@
+# config/locales/records/manifest.en.yml
+#
+# Manifest fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/manifest.en.yml
+
+en:
+
+  emma:
+
+    manifest:
+
+      record:
+
+        # =====================================================================
+        # Database record fields
+        # =====================================================================
+
+        id:
+          min:            1
+          max:            1
+          label:          'Manifest ID'
+          origin:         system
+
+        # =====================================================================
+        # Source of user-supplied manifest data.
+        # =====================================================================
+
+        name:
+          min:            1
+          max:            1
+          label:          'Title'
+          tooltip:        'A name for this manifest.'
+
+        # =====================================================================
+        # Database record fields
+        # =====================================================================
+
+        user_id:
+          min:            1
+          max:            1
+          label:          'User ID'
+          tooltip:        'The EMMA user who owns the manifest.'
+          origin:         system
+
+        created_at:
+          min:            1
+          max:            1
+          label:          'Created'
+          tooltip:        'Date of manifest creation.'
+          type:           datetime
+          origin:         system
+
+        updated_at:
+          min:            1
+          max:            1
+          label:          'Updated'
+          tooltip:        'Date of last manifest update.'
+          type:           datetime
+          origin:         system
+
+        # =====================================================================
+        # Display-only synthetic fields
+        # =====================================================================
+
+        _synthetic:
+
+          item_count:     # @see Manifest#item_count
+            min:          1
+            max:          1
+            label:        'Total Items'
+            tooltip:      'Current items contained in this manifest'
+            type:         number
+            origin:       system
+
+          saved_item_count:
+            min:          1
+            max:          1
+            label:        'Saved Items'
+            tooltip:      |
+              Items that have been created or changed since the last save.
+              These will persist even if the current manifest session is canceled.
+            type:         number
+            origin:       system
+
+          pending_item_count:
+            min:          1
+            max:          1
+            label:        'Pending Items'
+            tooltip:      |
+              Items that have been created or changed since the last save.
+              NOTE: These will be removed if the current manifest session is canceled.
+            type:         number
+            origin:       system
+
+          updated_item_count:
+            min:          1
+            max:          1
+            label:        'Updated Items'
+            tooltip:      |
+              Items that are up-to-date.
+              NOTE: This total also includes items marked for deletion.
+            type:         number
+            origin:       system
+
+          unsaved_item_count:
+            min:          1
+            max:          1
+            label:        'Unsaved Items'
+            tooltip:      |
+              Items that have been changed since the last save.
+              NOTE: This total also includes items marked for deletion.
+            type:         number
+            origin:       system
+
+          never_saved_item_count:
+            min:          1
+            max:          1
+            label:        'New Items'
+            tooltip:      |
+              Items that have been created since the last save.
+              NOTE: This total also includes items marked for deletion.
+            type:         number
+            origin:       system
+
+          incomplete_item_count:
+            min:          1
+            max:          1
+            label:        'Incomplete Items'
+            tooltip:      |
+              Items that have been created or changed since the last save.
+              NOTE: This total also includes items marked for deletion.
+            type:         number
+            origin:       system
+
+          to_delete_item_count:
+            min:          1
+            max:          1
+            label:        'To-Delete Items'
+            tooltip:      'Items that have been marked for deletion.'
+            type:         number
+            origin:       system

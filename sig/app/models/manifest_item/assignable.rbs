@@ -1,0 +1,19 @@
+module ManifestItem::Assignable
+  include Record::Assignable
+
+  # Ensure that blanks are allowed and that input values are normalized.
+  #
+  # @param [Hash, nil] attr
+  # @param [Hash, nil] opt
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  # -
+  # noinspection RubyNilAnalysis
+  # +
+  def attribute_options: (symHash attr, ?(symHash|nil) opt) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

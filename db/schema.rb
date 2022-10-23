@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_04_07_000010) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_06_14_190010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -137,6 +136,69 @@ ActiveRecord::Schema[7.0].define(version: 2022_04_07_000010) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["active_job_id"], name: "index_job_results_on_active_job_id"
+  end
+
+  create_table "manifest_items", force: :cascade do |t|
+    t.uuid "manifest_id"
+    t.integer "row", default: 0
+    t.integer "delta", default: 0
+    t.boolean "editing"
+    t.boolean "deleting"
+    t.datetime "last_saved", precision: nil
+    t.datetime "last_lookup", precision: nil
+    t.datetime "last_submit", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "data_status"
+    t.string "file_status"
+    t.string "ready_status"
+    t.json "file_data"
+    t.string "repository"
+    t.date "emma_publicationDate"
+    t.string "dc_title"
+    t.string "emma_version"
+    t.string "bib_seriesType"
+    t.string "bib_series"
+    t.string "bib_seriesPosition"
+    t.string "dc_publisher"
+    t.text "dc_creator"
+    t.text "dc_identifier"
+    t.text "dc_relation"
+    t.string "dc_language", array: true
+    t.string "dc_rights"
+    t.text "dc_description"
+    t.text "dc_subject"
+    t.string "dc_type"
+    t.string "dc_format"
+    t.string "emma_formatFeature", array: true
+    t.date "dcterms_dateAccepted"
+    t.string "dcterms_dateCopyright"
+    t.string "rem_source"
+    t.text "rem_metadataSource"
+    t.text "rem_remediatedBy"
+    t.boolean "rem_complete"
+    t.text "rem_coverage"
+    t.string "rem_remediatedAspects", array: true
+    t.string "rem_textQuality"
+    t.string "rem_status"
+    t.date "rem_remediationDate"
+    t.text "rem_comments"
+    t.string "s_accessibilityFeature", array: true
+    t.string "s_accessibilityControl", array: true
+    t.string "s_accessibilityHazard", array: true
+    t.string "s_accessMode", array: true
+    t.string "s_accessModeSufficient", array: true
+    t.text "s_accessibilitySummary"
+    t.jsonb "backup"
+    t.index ["manifest_id"], name: "index_manifest_items_on_manifest_id"
+  end
+
+  create_table "manifests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_manifests_on_user_id"
   end
 
   create_table "members", force: :cascade do |t|

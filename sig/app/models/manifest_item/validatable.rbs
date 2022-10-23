@@ -1,0 +1,13 @@
+module ManifestItem::Validatable
+  include Record::Validatable
+
+  # Configured requirements for ManifestItem fields.
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def database_fields: () -> Hash[Symbol,symHash]
+
+  private
+
+  def self.included: (Module base) -> void
+end

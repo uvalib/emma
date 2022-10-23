@@ -116,6 +116,27 @@ class PublicationIdentifier < ScalarType
     #
     def normalize: (untyped v) -> String
 
+    # Type-cast a value to a PublicationIdentifier.
+    #
+    # @param [Any, nil] v             Value to use or transform.
+    # @param [Boolean]  invalid
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def cast: (untyped v,  invalid: true)  -> PublicationIdentifier
+            | (untyped v, ?invalid: false) -> (PublicationIdentifier | nil)
+
+    # Create a new instance.
+    #
+    # @param [String, nil]    v       Identifier number.
+    # @param [Symbol, String] type    Determined from *v* if missing.
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def create: ((String|nil) v, ?(String|Symbol|nil) `type`, *untyped _ignored) -> (PublicationIdentifier | nil)
+
     # Indicate whether a value could be used as a PublicationIdentifier.
     #
     # @param [String, Any, nil] v
@@ -143,27 +164,6 @@ class PublicationIdentifier < ScalarType
     # @param [String, Any, nil] v
     #
     def prefix?: (untyped v) -> bool
-
-    # Type-cast a value to a PublicationIdentifier.
-    #
-    # @param [Any, nil] v             Value to use or transform.
-    # @param [Boolean]  invalid
-    #
-    # @return [PublicationIdentifier] Possibly invalid identifier.
-    # @return [nil]                   If *v* is not any kind of identifier.
-    #
-    def cast: (untyped v,  invalid: true)  -> PublicationIdentifier
-            | (untyped v, ?invalid: false) -> (PublicationIdentifier | nil)
-
-    # Create a new instance.
-    #
-    # @param [String, nil]    v       Identifier number.
-    # @param [Symbol, String] type    Determined from *v* if missing.
-    #
-    # @return [PublicationIdentifier] Possibly invalid identifier.
-    # @return [nil]                   If *v* is not any kind of identifier.
-    #
-    def create: ((String|nil) v, ?(String|Symbol|nil) `type`) -> (PublicationIdentifier | nil)
 
     private
 

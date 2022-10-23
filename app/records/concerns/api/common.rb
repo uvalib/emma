@@ -64,6 +64,33 @@ class ScalarType
       v.to_s.strip
     end
 
+    # Type-cast an object to an instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [superclass, nil]
+    #
+    def cast(v)
+      c = is_a?(Class) ? self : self.class
+      v.is_a?(c) ? v : create(v)
+    end
+
+    # Create a new instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [superclass, nil]
+    #
+    def create(v, *)
+      c = is_a?(Class) ? self : self.class
+      # noinspection xRubyMismatchedReturnType
+      if v.is_a?(c)
+        v.dup
+      elsif (v = normalize(v)).present?
+        c.new(v)
+      end
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================
@@ -555,6 +582,33 @@ class IsoDate < ScalarType
       datetime_convert(v)
     end
 
+    # Type-cast an object to an instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [IsoDate, nil]
+    #
+    def cast(v)
+      c = is_a?(Class) ? self : self.class
+      v.is_a?(c) ? v : create(v)
+    end
+
+    # Create a new instance of this type.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [IsoDate, nil]
+    #
+    def create(v, *)
+      c = is_a?(Class) ? self : self.class
+      # noinspection RubyMismatchedReturnType
+      if v.is_a?(c)
+        v.dup
+      elsif (v = normalize(v)).present?
+        c.new(v)
+      end
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================
@@ -824,39 +878,6 @@ class IsoDate < ScalarType
     #
     def complete?(v)
       normalize(v).to_s.match?(MATCH_PATTERN[:complete])
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Type-cast an object to an instance of this type.
-    #
-    # @param [Any, nil] v
-    #
-    # @return [IsoDate, nil]
-    #
-    def cast(v)
-      c = is_a?(Class) ? self : self.class
-      v.is_a?(c) ? v : create(v)
-    end
-
-    # Create a new instance of this type.
-    #
-    # @param [Any, nil] v
-    #
-    # @return [IsoDate, nil]
-    #
-    def create(v, *)
-      c = is_a?(Class) ? self : self.class
-      # noinspection RubyMismatchedReturnType
-      if v.is_a?(c)
-        v.dup
-      elsif (v = normalize(v)).present?
-        c.new(v)
-      end
     end
 
     # =========================================================================
@@ -1163,17 +1184,76 @@ class EnumType < ScalarType
 
   module Enumerations
 
-    # Called from API record definitions to provide this base class with the
-    # values that will be accessed implicitly from subclasses.
+    # Add enumeration values from configuration entries.
     #
-    # @param [Hash{Symbol=>Hash}] new_entries
+    # @param [String, Hash]        arg
+    # @param [Symbol, String, nil] name
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    def add_enumerations(new_entries)
-      new_entries ||= {}
-      new_entries =
-        new_entries.transform_values do |cfg|
+    #--
+    # == Variations
+    #++
+    #
+    # @overload add_enumeration(i18n_path, name)
+    #   A configuration entry where the last part of the path is a string that
+    #   when camelized is the same as the name of the class being defined.
+    #   (E.g. "emma.manifest_item.type.file_path" for class FilePath.)
+    #   @param [String]              i18n_path
+    #   @return [Hash{Symbol=>Hash}]
+    #
+    # @overload add_enumeration(i18n_path, name)
+    #   A configuration entry where the last part of the path is a string that
+    #   @param [String]              i18n_path
+    #   @param [Symbol, String]      name
+    #   @return [Hash{Symbol=>Hash}]
+    #
+    # @overload add_enumeration(i18n_path, name)
+    #   @param [Hash]                config
+    #   @param [Symbol, String, nil] name
+    #   @return [Hash{Symbol=>Hash}]
+    #
+    def add_enumeration(arg, name = nil)
+      key = name.presence
+      key = key.underscore if key.is_a?(String)
+      case arg
+        when String
+          part  = arg.split('.')
+          name  = part.last       if name.blank?
+          arg   = "#{arg}.#{key}" if key && (key != part.last)
+          entry = get_configuration(arg.to_s)
+        when Hash
+          raise 'name required for Hash argument' if name.blank?
+          key   = key&.to_sym
+          entry = arg[key] || arg
+        else
+          raise "invalid type #{arg.class}"
+      end
+      add_enumerations(name => entry)
+    end
+
+    # add_enumerations_from
+    #
+    # @param [String] i18n_path
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def add_enumerations_from(i18n_path)
+      config = get_configuration(i18n_path)
+      raise "'#{i18n_path}' is not a Hash" unless config.is_a?(Hash)
+      add_enumerations(config)
+    end
+
+    # Called from API record definitions to provide this base class with the
+    # values that will be accessed implicitly from subclasses.
+    #
+    # @param [Hash{Symbol,String=>*}] entries
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def add_enumerations(entries)
+      entries =
+        entries.map { |name, cfg|
           if cfg.is_a?(Hash)
             default = cfg[:_default].presence
             pairs   = cfg.except(:_default).stringify_keys
@@ -1183,9 +1263,11 @@ class EnumType < ScalarType
             values  = Array.wrap(cfg).map(&:to_s)
             pairs   = values.map { |v| [v, v] }.to_h
           end
-          { values: values, pairs: pairs, default: default }.compact
-        end
-      enumerations.merge!(new_entries)
+          entry = { values: values, pairs: pairs, default: default }.compact
+          name  = name.to_s.camelize.to_sym
+          [name, entry]
+        }.to_h
+      enumerations.merge!(entries)
     end
 
     # Enumeration definitions accumulated from API records.
@@ -1231,6 +1313,34 @@ class EnumType < ScalarType
       enumerations.dig(entry.to_sym, :default)
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    # get_configuration
+    #
+    # @param [String]                   i18n_path
+    # @param [Array<Symbol>,Symbol,nil] default
+    #
+    # @return [Hash{Symbol=>*}, Array<String>, nil]
+    #
+    def get_configuration(i18n_path, default: nil)
+      default &&= Array.wrap(default)
+      default &&= [*default, nil] unless default&.last.nil?
+      # noinspection RubyMismatchedReturnType
+      I18n.t(i18n_path, default: default).tap do |config|
+        raise "'#{i18n_path}' is empty" if config.blank?
+        if config.is_a?(Hash)
+          items = config.reject { |k, _| k.to_s.start_with?('_') }
+          raise "'#{i18n_path}' has no items" if items.blank?
+        elsif !config.is_a?(Array)
+          raise "'#{i18n_path}' is not a Hash or Array"
+        end
+      end
+    end
+
   end
 
   extend Enumerations
@@ -1244,6 +1354,7 @@ class EnumType < ScalarType
   module Methods
 
     include ScalarType::Methods
+    extend Enumerations
 
     # =========================================================================
     # :section: ScalarType::Methods overrides
@@ -1346,6 +1457,39 @@ class EnumType < ScalarType
   #
   def valid?(v = nil)
     super(v || value)
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # This is a convenience for defining a subclass of EnumType in terms of the
+  # configuration which holds its enumeration values (and their related natural
+  # language labels).
+  #
+  # @param [String, Hash]        arg
+  # @param [Symbol, String, nil] name
+  #
+  # @return [Class]
+  #
+  # @see #add_enumeration
+  #
+  def self.[](arg, name = nil)
+    add_enumeration(arg, name)
+    self
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.inherited(subclass)
+    subclass.delegate :enumerations, to: :EnumType
+    Object.define_method(subclass.to_s.to_sym) { |*args| subclass.cast(*args) }
   end
 
 end

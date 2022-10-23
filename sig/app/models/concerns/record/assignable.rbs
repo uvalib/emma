@@ -19,7 +19,7 @@ module Record::Assignable
   # * :force    Allow these fields unconditionally.
   # * :except   Ignore these fields (default: []).
   # * :only     Not limited if *false* (default: `#field_name`).
-  # * :blanks   If *true*, allow blanks (default: *false*).
+  # * :compact  If *false*, allow blanks (default: *true*).
   # * :options  An Options instance.
   #
   ATTRIBUTE_OPTIONS_OPTS: symArray
@@ -34,7 +34,7 @@ module Record::Assignable
   # @option attr [Symbol, Array<Symbol>]        :force
   # @option attr [Symbol, Array<Symbol>]        :except
   # @option attr [Symbol, Array<Symbol>, false] :only
-  # @option attr [Boolean]                      :blanks
+  # @option attr [Boolean]                      :compact
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #

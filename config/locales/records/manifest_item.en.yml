@@ -1,0 +1,808 @@
+# config/locales/records/manifest_item.en.yml
+#
+# Manifest fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+# in config/locales/controllers/manifest_item.en.yml
+
+en:
+
+  emma:
+
+    manifest_item:
+
+      _template:
+        _internal:      &INTERNAL_FIELD
+          notes_html:   |
+            <p>
+              If this column is present in your imported data file it will
+              cause your file to be interpreted as
+              <strong>replacements</strong> for existing manifest records.
+            </p>
+          origin:       system
+
+      record:
+
+        id:
+          <<:           *INTERNAL_FIELD
+          min:          1
+          max:          1
+          label:        'Manifest Item ID'
+          type:         number
+
+        manifest_id:
+          <<:           *INTERNAL_FIELD
+          min:          1
+          max:          1
+          label:        'Manifest'
+          tooltip:      'The identifier of the containing manifest.'
+          type:         uuid
+
+        row:
+          <<:           *INTERNAL_FIELD
+          min:          1
+          max:          1
+          label:        'Row'
+          tooltip:      'The position of the record in the containing manifest.'
+          type:         number
+
+        delta:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Row Insertion Offset'
+          tooltip:      |
+            Temporary offset number for an inserted row.  For any given row
+            this will be non-zero only until the rows are renumbered on update.
+          type:         number
+
+        # =====================================================================
+        # Internal record state
+        # =====================================================================
+
+        editing:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Editing'
+          tooltip:      'Indication that a field is being edited'
+          type:         boolean
+
+        deleting:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Editing'
+          tooltip:      'Indication the record has been marked for deletion'
+          type:         boolean
+
+        last_saved:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Saved'
+          tooltip:      'The last time changes to this row were committed.'
+          notes_html:   |
+            <p>
+              This is an internal record value noting the last time
+              (in ISO 8601 format)
+              that change(s) to this manifest item where committed to the
+              database.
+            </p>
+          type:         datetime
+
+        last_lookup:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Lookup'
+          tooltip:      'Date of last bibliographic lookup for this row.'
+          notes_html:   |
+            <p>
+              This is an internal record value noting the last time
+              (in ISO 8601 format)
+              that bibliographic lookup was run for the matching record.
+              If your imported data file has this column, its use will depend
+              on the manifest record:
+            </p>
+            <ul>
+              <li>If the data file row matches an existing manifest item, the
+                  value will be used to update that item.</li>
+              <li>If the data file row represents a new manifest item, the
+                  value will be discarded.</li>
+            </ul>
+          type:         datetime
+
+        last_submit:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Submitted'
+          tooltip:      'Date of last submission for this row.'
+          notes_html:   |
+            <p>
+              This is an internal record value noting the last time
+              (in ISO 8601 format)
+              that a submission was attempted for the matching record.
+              If your imported data file has this column, its use will depend
+              on the manifest record:
+            </p>
+            <ul>
+              <li>If the data file row matches an existing manifest item, the
+                  value will be used to update that item.</li>
+              <li>If the data file row represents a new manifest item, the
+                  value will be discarded.</li>
+            </ul>
+          type:         datetime
+
+        created_at:
+          <<:           *INTERNAL_FIELD
+          min:          1
+          max:          1
+          label:        'Created'
+          tooltip:      'Date of creation of this row.'
+          notes_html:   |
+            <p>
+              This is an internal record value noting the time
+              (in ISO 8601 format)
+              that the matching record was created.
+              If your imported data file has this column, its use will depend
+              on the manifest record:
+            </p>
+            <ul>
+              <li>If the data file row matches an existing manifest item, the
+                  value will be used to update that item.</li>
+              <li>If the data file row represents a new manifest item, the
+                  value will be discarded.</li>
+            </ul>
+          type:         datetime
+
+        updated_at:
+          <<:           *INTERNAL_FIELD
+          min:          1
+          max:          1
+          label:        'Updated'
+          tooltip:      'Date of last update of this row.'
+          notes_html:   |
+            <p>
+              This is an internal record value noting the last time
+              (in ISO 8601 format)
+              that the matching record was modified.
+              If your imported data file has this column, its use will depend
+              on the manifest record:
+            </p>
+            <ul>
+              <li>If the data file row matches an existing manifest item, the
+                  value will be used to update that item.</li>
+              <li>If the data file row represents a new manifest item, the
+                  value will be discarded.</li>
+            </ul>
+
+          type:         datetime
+
+        # =====================================================================
+        # Synthetic metadata
+        # =====================================================================
+
+        data_status:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Data Status'
+          tooltip:      'TODO'
+          type:         !ruby/symbol DataStatus
+
+        file_status:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'File Status'
+          tooltip:      'TODO'
+          type:         !ruby/symbol FileStatus
+
+        ready_status:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Submission Status'
+          tooltip:      'TODO'
+          type:         !ruby/symbol ReadyStatus
+
+        # =====================================================================
+        # Database record field with upload data in JSON format
+        #
+        # TODO: Needs to be augmented to include URI and/or other information
+        # required to get a copy of the content during submission.
+        # =====================================================================
+
+        file_data:
+          min:          0
+          max:          1
+          label:        'File Data'
+          tooltip:      'Uploaded file metadata for the associated submission.'
+          notes_html:   |
+            <p>
+              This field holds a reference to the file holding the remediated
+              content which is being submitted for the given manifest item.
+            </p>
+          type:         json
+          origin:       system
+
+        # =====================================================================
+        # Database record field with Unified Search metadata in JSON format
+        # based on Search::Record::MetadataRecord with additional fields that
+        # relate to the "FRAME Metadata Worksheet" but are not currently
+        # defined by the Unified Search index.
+        # =====================================================================
+
+        repository:
+          min:          1
+          max:          1
+          label:        'Repository'
+          tooltip:      'Destination repository for the associated submission.'
+          notes_html:   |
+            <p>
+              This field indicates the repository which will receive the
+              manifest item when it is submitted.
+            </p>
+            <div><strong>DEVELOPMENT NOTE:</strong></div>
+            <p>
+              This will probably change for practical reasons so that a given
+              manifest will be dedicated to a specific repository.
+            </p>
+          type:         !ruby/symbol EmmaRepository
+
+        # =====================================================================
+        # Repository information (emma_data)
+        # =====================================================================
+
+        emma_publicationDate:
+          min:          0
+          max:          1
+          label:        'Publication Date'
+          tooltip:      |
+            Copyright or publication date of the creative work represented
+            by the remediated content file.
+          notes_html:     |
+            <p>
+              Copyright or publication date of the creative work represented
+              by the remediated content file.
+            </p>
+          type:         date
+          category:     bibliographic
+
+        # =====================================================================
+        # Bibliographic information (emma_data)
+        # =====================================================================
+
+        dc_title:
+          min:          1
+          max:          1
+          label:        'Title'
+          tooltip:      |
+            Title of the creative work represented by the remediated content
+            file.
+          notes_html:   |
+            <p>
+              Title of the creative work represented by the remediated content
+              file.
+            </p>
+          placeholder:  'Title of work'
+          category:     bibliographic
+
+        emma_version:
+          min:          0
+          max:          1
+          label:        'Version'
+          tooltip:      |
+            For book content, the edition or version of the book.
+          notes_html:   |
+            <p>
+              For book content, the edition or version of the book.
+            </p>
+          placeholder:  'Edition, version, etc.'
+          category:     bibliographic
+
+        bib_seriesType:
+          min:          0
+          max:          1
+          label:        'Series Type'
+          tooltip:      |
+            The type of publication from which the content was extracted.
+          notes_html:   |
+            <p>
+              The type of publication from which the content was extracted.
+            </p>
+          type:         !ruby/symbol SeriesType
+          category:     bibliographic
+
+        bib_series:
+          min:          0
+          max:          1
+          label:        'Series Title'
+          tooltip:      |
+            For an article or paper, the name of the journal or periodical
+            in which it published; for book content, the name of the series
+            to which the book belongs.
+          notes_html:   |
+            <p>
+              For an article or paper, the name of the journal or periodical
+              in which it published;
+              for book content, the name of the series to which the book
+              belongs.
+            </p>
+          placeholder:  'Journal name or publication series (if applicable)'
+          category:     bibliographic
+
+        bib_seriesPosition:
+          min:          0
+          max:          1
+          label:        'Series Position'
+          tooltip:      |
+            For an article, the volume/issue/number of the journal or
+            periodical; for book content, the volume number or other
+            description of position within a series of books.
+          notes_html:   |
+            <p>
+              For an article, the volume/issue/number of the journal or
+              periodical;
+              for book content, the volume number or other description of
+              position within a series of books.
+            </p>
+          placeholder:  'Journal volume/issue/number'
+          category:     bibliographic
+
+        dc_publisher:
+          min:          0
+          max:          1
+          label:        'Publisher'
+          tooltip:      |
+            Publisher/producer of the creative work represented by the
+            remediated content file.
+          notes_html:   |
+            <p>
+              Publisher/producer of the creative work represented by the
+              remediated content file.
+            </p>
+            <div><strong>TIP:</strong></div>
+            <p>
+              Do not include names associated with the generation or production
+              of the remediated content file.
+            </p>
+          placeholder:  'Publisher of the work'
+          category:     bibliographic
+
+        dc_creator:
+          min:          1
+          max:          ~
+          label:        'Author/Creator'
+          tooltip:      |
+            Author/editor/creator of the creative work represented by the
+            remediated content file.
+          notes_html:   |
+            <p>
+              Author/editor/creator of the creative work represented by the
+              remediated content file.
+            </p>
+            <div><strong>TIP:</strong></div>
+            <p>
+              Include authors, editors, translators, etc. of the creative work
+              itself.
+              Do not include names involved in the creation of the remediated
+              content file.
+            </p>
+          placeholder:  'Author(s) of the work'
+          category:     bibliographic
+
+        dc_identifier:
+          min:          0
+          max:          ~
+          label:        'Identifier'
+          tooltip:      |
+            Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
+            creative work represented by the remediated content file.
+          notes_html:   |
+            <p>
+              Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
+              creative work represented by the remediated content file.
+            </p>
+          placeholder:  'ISBN/etc for the work'
+          category:     bibliographic
+
+        dc_relation:
+          min:          0
+          max:          ~
+          label:        'Related'
+          tooltip:      |
+            Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
+            related edition of the creative work represented by the
+            remediated content file.
+          notes_html:   |
+            <p>
+              Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
+              related edition of the creative work represented by the
+              remediated content file.
+            </p>
+            <div><strong>TIP:</strong></div>
+            <p>
+              Include identifiers for related versions or printings.
+              Do not include identifiers for similar works -- only of
+              identifiers of publications that are essentially variations of
+              the same creative work title.
+            </p>
+          placeholder:  'ISBN/etc for a related edition of the work'
+          category:     bibliographic
+
+        dc_language:
+          min:          1
+          max:          ~
+          label:        'Language'
+          tooltip:      |
+            Language(s) of the creative work represented by the remediated
+            content file.
+          notes_html:   |
+            <p>
+              Language(s) of the creative work represented by the remediated
+              content file.
+            </p>
+          type:         !ruby/symbol LanguageType
+          category:     bibliographic
+
+        dc_rights:
+          min:          0
+          max:          1
+          label:        'Rights'
+          tooltip:      |
+            Reproduction rights for the creative work represented by the
+            remediated content file.
+          notes_html:   |
+            <p>
+              Reproduction rights for the creative work represented by the
+              remediated content file.
+            </p>
+          type:         !ruby/symbol Rights
+          category:     bibliographic
+
+        dc_description:
+          min:          0
+          max:          1
+          label:        'Description'
+          tooltip:      |
+            Description/synopsis/abstract of the creative work represented by
+            the remediated content file.
+          notes_html:   |
+            <p>
+              Description/synopsis/abstract of the creative work represented by
+              the remediated content file.
+            </p>
+          placeholder:  'Description/synopsis/abstract of the work'
+          type:         textarea
+          category:     bibliographic
+
+        dc_subject:
+          min:          0
+          max:          ~
+          label:        'Subject'
+          tooltip:      |
+            Subject/keyword characterizing the creative work represented by
+            the remediated content file.
+          notes_html:   |
+            <p>
+              Subject/keyword characterizing the creative work represented by
+              the remediated content file.
+            </p>
+          placeholder:  'Enter keyword/subject term'
+          category:     bibliographic
+
+        dc_type:
+          min:          1
+          max:          1
+          label:        'Type'
+          tooltip:      |
+            Original type of creative work represented by the remediated
+            content file.
+          notes_html:   |
+            <p>
+              Original type of creative work represented by the remediated
+              content file.
+            </p>
+          type:         !ruby/symbol DcmiType
+          category:     bibliographic
+
+        dc_format:
+          min:          1
+          max:          1
+          label:        'Format'
+          tooltip:      |
+            The file format (or variant) of the remediated content file.
+          notes_html:   |
+            <p>
+              The file format (or variant) of the remediated content file.
+            </p>
+          type:         !ruby/symbol DublinCoreFormat
+          category:     bibliographic
+
+        emma_formatFeature:
+          min:          0
+          max:          ~
+          label:        'Format Feature'
+          tooltip:      |
+            Format-specific attributes which are exhibited by the remediated
+            content file.
+          notes_html:   |
+            <p>
+              Format-specific attributes which are exhibited by the remediated
+              content file.
+            </p>
+          type:         !ruby/symbol FormatFeature
+          category:     bibliographic
+
+        dcterms_dateAccepted:
+          min:          0
+          max:          1
+          label:        'Date Accepted'
+          tooltip:      |
+            Date in which the remediated content file was added to its
+            repository.
+          notes_html:   |
+            <p>
+              Date in which the remediated content file was added to its
+              repository.
+            </p>
+          placeholder:  'Enter date file added to repository'
+          type:         date
+          category:     bibliographic
+
+        dcterms_dateCopyright:
+          min:          0
+          max:          1
+          label:        'Copyright Date'
+          tooltip:      |
+            The year of copyright (or publication) of the creative work
+            represented by the remediated content file.
+          notes_html:   |
+            <p>
+              The year of copyright (or publication) of the creative work
+              represented by the remediated content file.
+            </p>
+          placeholder:  'Enter date of the creative work'
+          category:     bibliographic
+
+        # =====================================================================
+        # Remediation information (emma_data)
+        # =====================================================================
+
+        rem_source:
+          min:          0
+          max:          1
+          label:        'Source of Content'
+          tooltip:      |
+            The source of the original content from which the remediated file
+            was scanned or copied.
+          notes_html:   |
+            <p>
+              The source of the original content from which the remediated file
+              was scanned or copied.
+            </p>
+          type:         !ruby/symbol SourceType
+          category:     remediation
+
+        rem_metadataSource:
+          min:          0
+          max:          ~
+          label:        'Source of Metadata'
+          tooltip:      |
+            The source of the metadata for the original creative work on
+            which the remediated file was based.
+          notes_html:   |
+            <p>
+              The source of the metadata for the original creative work on
+              which the remediated file was based.
+            </p>
+          placeholder:  'Enter source of metadata'
+          category:     remediation
+
+        rem_remediatedBy:
+          min:          0
+          max:          ~
+          label:        'Remediated By'
+          tooltip:      |
+            The source of the remediations provided in the submitted file.
+          notes_html:   |
+            <p>
+              The source of the remediations provided in the submitted file.
+            </p>
+          placeholder:  'Enter source of remediated file'
+          category:     remediation
+
+        rem_complete:
+          min:          1
+          max:          1
+          label:        'Entire Document Remediated?'
+          tooltip:      |
+            True if the submission is a presentation of the entire original
+            work; false if the submission only covers certain sections or
+            chapters, or contains gaps or omissions.
+          notes_html:   |
+            <p>
+              True if the submission is a presentation of the entire original
+              work;
+              false if the submission only covers certain sections or chapters,
+              or contains gaps or omissions.
+            </p>
+          type:         !ruby/symbol TrueFalse
+          category:     remediation
+
+        rem_coverage:
+          min:          1
+          max:          1
+          label:        'Part(s) Remediated'
+          tooltip:      |
+            For a submission which does not present the entire original
+            work, describe the part(s) which are covered by the submission.
+          notes_html:   |
+            <p>
+              For a submission which does not present the entire original
+              work, describe the part(s) which are covered by the submission.
+            </p>
+          placeholder:  'Describe the part(s) that have been remediated'
+          type:         textarea
+          category:     remediation
+
+        rem_remediatedAspects:
+          min:          0
+          max:          ~
+          label:        'Remediated Aspects'
+          tooltip:      |
+            One or more terms which characterize the remediations that are
+            provided in this submission.
+          notes_html:   |
+            <p>
+              One or more terms which characterize the remediations that are
+              provided in this submission.
+            </p>
+          type:         !ruby/symbol RemediatedAspects
+          category:     remediation
+
+        rem_textQuality:
+          min:          0
+          max:          1
+          label:        'Text Quality'
+          tooltip:      |
+            One or more indicators of the quality of the original scan on
+            which the submission was based.
+          notes_html:   |
+            <p>
+              One or more indicators of the quality of the original scan on
+              which the submission was based.
+            </p>
+          type:         !ruby/symbol TextQuality
+          category:     remediation
+
+        rem_status:
+          min:          1
+          max:          1
+          label:        'Remediation Status'
+          tooltip:      |
+            The remediation status of submitted file.
+          notes_html:   |
+            <p>
+              The remediation status of submitted file.
+            </p>
+          type:         !ruby/symbol RemediationStatus
+          category:     remediation
+
+        rem_remediationDate:
+          min:          1
+          max:          1
+          label:        'Remediation Date'
+          tooltip:      |
+            Date of the most recent change to the remediated content file.
+          notes_html:   |
+            <p>
+              Date of the most recent change to the remediated content file.
+            </p>
+          type:         date
+          category:     remediation
+
+        rem_comments:
+          min:          1
+          max:          1
+          label:        'Remediation Comments'
+          tooltip:      'Description of remediation(s) for this file.'
+          notes_html:   |
+            <p>
+              Description of remediation(s) for this file.
+            </p>
+          placeholder:  'Enter description'
+          type:         textarea
+          category:     remediation
+
+        # =====================================================================
+        # Accessibility information (emma_data)
+        # =====================================================================
+
+        s_accessibilityFeature:
+          min:          0
+          max:          ~
+          label:        'Accessibility Features'
+          tooltip:      'Accessibility features of the remediated content.'
+          notes_html:   |
+            <p>
+              Accessibility features of the remediated content.
+            </p>
+          type:         !ruby/symbol A11yFeature
+          category:     remediation
+
+        s_accessibilityControl:
+          min:          0
+          max:          ~
+          label:        'Accessibility Controls'
+          tooltip:      'Accessibility controls of the remediated content.'
+          notes_html:   |
+            <p>
+              Accessibility controls of the remediated content.
+            </p>
+          type:         !ruby/symbol A11yControl
+          category:     remediation
+
+        s_accessibilityHazard:
+          min:          0
+          max:          ~
+          label:        'Accessibility Hazards'
+          tooltip:      'Accessibility hazards of the remediated content.'
+          notes_html:   |
+            <p>
+              Accessibility hazards of the remediated content.
+            </p>
+          type:         !ruby/symbol A11yHazard
+          category:     remediation
+
+        s_accessMode:
+          min:          0
+          max:          ~
+          label:        'Access Mode'
+          tooltip:      'Access mode for the remediated content.'
+          notes_html:   |
+            <p>
+              Access mode for the remediated content.
+            </p>
+          type:         !ruby/symbol A11yAccessMode
+          category:     remediation
+
+        s_accessModeSufficient:
+          min:          0
+          max:          ~
+          label:        'Sufficient Mode'
+          tooltip:      'Access mode sufficient for the remediated content.'
+          notes_html:   |
+            <p>
+              Access mode sufficient for the remediated content.
+            </p>
+          type:         !ruby/symbol A11ySufficient
+          category:     remediation
+
+        s_accessibilitySummary:
+          min:          0
+          max:          1
+          label:        'Accessibility Summary'
+          tooltip:      'Accessibility summary for the remediated content.'
+          notes_html:   |
+            <p>
+              Accessibility summary for the remediated content.
+            </p>
+          placeholder:  'Any details not otherwise mentioned above'
+          type:         textarea
+          category:     remediation
+
+        # =====================================================================
+        # Internal record state
+        # =====================================================================
+
+        backup:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Record Backup'
+          tooltip:      'A copy of record fields to support row editing'
+          type:         json

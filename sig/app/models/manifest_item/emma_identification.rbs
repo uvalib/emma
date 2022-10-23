@@ -1,0 +1,13 @@
+module ManifestItem::EmmaIdentification
+  include Record::EmmaIdentification
+
+  # Column name for the submission ID.
+  #
+  # @return [nil]
+  #
+  def sid_column: () -> nil
+
+  private
+
+  def self.included: (Module base) -> void
+end

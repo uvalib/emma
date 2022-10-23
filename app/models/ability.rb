@@ -315,6 +315,7 @@ class Ability
   #
   def act_as_librarian(user)
     act_as_authenticated(user)
+    can_manage_own_entries(user)
     can_manage_group_entries(user)
     can :create, Artifact
     can :modify, Artifact
@@ -473,8 +474,8 @@ class Ability
   # @note This is not yet supported by any data model.
   #
   def can_manage_group_account(user)
-    # can_manage_account(group_id: user.group_id) # TODO: institutional groups
-    can_manage_own_account(user) # TODO: remove after institutional groups
+    Log.debug { "#{__method__}: not implemented for #{user}" }
+    # can_manage_records(User, group_id: user.group_id) # TODO: groups
   end
 
   # Define a set of capabilities on EMMA submissions which allows full control
@@ -487,8 +488,6 @@ class Ability
   #
   def can_manage_account(model = User, **with_constraints)
     can_manage(model, **with_constraints)
-    can :edit_select,   model, **with_constraints
-    can :delete_select, model, **with_constraints
   end
 
   # ===========================================================================
@@ -505,8 +504,10 @@ class Ability
   # @return [void]
   #
   def can_manage_own_entries(user)
-    can_manage_entries(Upload, id: user.id) # TODO: remove after upload -> entry
-    can_manage_entries(id: user.id)
+    with_constraints = { user_id: user.id }
+    can_manage_entries(**with_constraints)
+    can_manage_entries(Upload, **with_constraints) # TODO: remove after upload -> entry
+    can_manage_bulk_operations(**with_constraints)
   end
 
   # Allow full control over EMMA submissions which are associated with the
@@ -519,8 +520,20 @@ class Ability
   # @note This is not yet supported by any data model.
   #
   def can_manage_group_entries(user)
+    Log.debug { "#{__method__}: not implemented for #{user}" }
     # can_manage_entries(group_id: user.group_id) # TODO: institutional groups
-    can_manage_own_entries(user) # TODO: remove after institutional groups
+  end
+
+  # Define a set of capabilities on EMMA bulk operations which allows full
+  # control over instances which meet the given constraints.
+  #
+  # @param [Hash] with_constraints
+  #
+  # @return [void]
+  #
+  def can_manage_bulk_operations(**with_constraints)
+    can_manage_entries(Manifest,     **with_constraints)
+    can_manage_entries(ManifestItem, **with_constraints)
   end
 
   # Define a set of capabilities on EMMA submissions which allows full control
@@ -532,16 +545,15 @@ class Ability
   # @return [void]
   #
   def can_manage_entries(model = Entry, **with_constraints)
-    can_manage(model, **with_constraints)
-    can :new,           model
-    can :create,        model
-    can :check,         model
-    can :renew,         model
-    can :reedit,        model
-    can :upload,        model
-    can :retrieve,      model
-    can :edit_select,   model, **with_constraints
-    can :delete_select, model, **with_constraints
+
+    # == Basic record management
+    can_manage_records(model, **with_constraints)
+
+    # == Record modification
+    can :start_edit,   model, **with_constraints
+    can :finish_edit,  model, **with_constraints
+    can :reedit,       model, **with_constraints
+
   end
 
   # ===========================================================================
@@ -558,8 +570,10 @@ class Ability
   #
   # @return [void]
   #
+  # @note Currently unused
+  #
   def can_manage_own(model, user)
-    can_manage(model, id: user.id)
+    can_manage(model, user_id: user.id)
   end
 
   # Allow full control over model instances which are associated with the
@@ -570,12 +584,19 @@ class Ability
   #
   # @return [void]
   #
+  # @note Currently unused
   # @note This is not yet supported by any data model.
   #
   def can_manage_group(model, user)
+    Log.debug { "#{__method__}: not implemented for #{model} / #{user}" }
     # can_manage(model, group_id: user.group_id) # TODO: institutional groups
-    can_manage_own(model, user) # TODO: remove after institutional groups
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
 
   # Define a set of capabilities on a given model type which allows full
   # control over instances which meet the given constraints.
@@ -585,16 +606,60 @@ class Ability
   #
   # @return [void]
   #
+  def can_manage_records(model, **with_constraints)
+
+    # == Basic record management
+    can_manage(model, **with_constraints)
+
+    # == Record creation
+    can :new,         model
+    can :create,      model
+    can :renew,       model
+    can :bulk_new,    model
+    can :bulk_create, model
+
+    # == Other
+    can :upload,      model
+    can :check,       model
+
+  end
+
+  # Define a set of capabilities on a given model type which allows basic
+  # control over instances which meet the given constraints.
+  #
+  # @param [Class] model
+  # @param [Hash]  with_constraints
+  #
+  # @return [void]
+  #
   def can_manage(model, **with_constraints)
-    can :index,   model, **with_constraints
-    can :list,    model, **with_constraints
-    can :show,    model
-    can :view,    model
-    can :edit,    model, **with_constraints
-    can :modify,  model, **with_constraints
-    can :destroy, model, **with_constraints
-    can :remove,  model, **with_constraints
-    can :cancel,  model
+
+    # == List resources
+    can :index,         model, **with_constraints
+    can :list,          model, **with_constraints
+
+    # == View resource
+    can :show,          model
+    can :view,          model
+
+    # == Modify resource
+    can :edit,          model, **with_constraints
+    can :modify,        model, **with_constraints
+    can :edit_select,   model, **with_constraints
+    can :bulk_edit,     model, **with_constraints
+    can :bulk_update,   model, **with_constraints
+
+    # == Remove resource
+    can :destroy,       model, **with_constraints
+    can :remove,        model, **with_constraints
+    can :delete_select, model, **with_constraints
+    can :bulk_delete,   model, **with_constraints
+    can :bulk_destroy,  model, **with_constraints
+
+    # == Other
+    can :save,          model
+    can :cancel,        model
+
   end
 
   # ===========================================================================

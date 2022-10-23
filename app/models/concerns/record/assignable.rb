@@ -36,10 +36,10 @@ module Record::Assignable
   # * :force    Allow these fields unconditionally.
   # * :except   Ignore these fields (default: []).
   # * :only     Not limited if *false* (default: `#field_name`).
-  # * :blanks   If *true*, allow blanks (default: *false*).
+  # * :compact  If *false*, allow blanks (default: *true*).
   # * :options  An Options instance.
   #
-  ATTRIBUTE_OPTIONS_OPTS = %i[from user force except only blanks options]
+  ATTRIBUTE_OPTIONS_OPTS = %i[from user force except only compact options]
 
   # Called to prepare values to be used for assignment to record attributes.
   #
@@ -51,7 +51,7 @@ module Record::Assignable
   # @option attr [Symbol, Array<Symbol>]        :force
   # @option attr [Symbol, Array<Symbol>]        :except
   # @option attr [Symbol, Array<Symbol>, false] :only
-  # @option attr [Boolean]                      :blanks
+  # @option attr [Boolean]                      :compact
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
@@ -78,22 +78,23 @@ module Record::Assignable
     end
     attr.merge!(opt) if opt.present?
 
-    opt   = extract_hash!(attr, *ATTRIBUTE_OPTIONS_OPTS)
-    from  = opt[:from] && attribute_options(opt[:from], except: ignored_keys)
-    user  = (opt[:user] unless attr.key?(:user_id) || from&.dig(:user_id))
-    opts  = [opt.delete(:options), from&.delete(:options)].compact.first
-    force = Array.wrap(opt[:force])
-    excp  = Array.wrap(opt[:except])
-    only  = !false?(opt[:only]) && Array.wrap(opt[:only] || allowed_keys)
+    opt     = extract_hash!(attr, *ATTRIBUTE_OPTIONS_OPTS)
+    from    = opt[:from] && attribute_options(opt[:from], except: ignored_keys)
+    user    = (opt[:user] unless attr.key?(:user_id) || from&.dig(:user_id))
+    force   = Array.wrap(opt[:force])
+    excp    = Array.wrap(opt[:except])
+    only    = !false?(opt[:only]) && Array.wrap(opt[:only] || allowed_keys)
+    compact = !false?(opt[:compact])
+    options = [opt[:options], from&.delete(:options)].compact.first
 
     attr.reverse_merge!(from)     if from.present?
     attr.merge!(user_id: user)    if (user &&= User.id_value(user))
     attr.slice!(*(only + force))  if only.present?
     attr.except!(*(excp - force)) if excp.present?
-    attr.merge!(options: opts)    if opts
+    attr.merge!(options: options) if options
 
     # noinspection RubyMismatchedReturnType
-    opt[:blanks] ? attr : reject_blanks(attr)
+    compact ? reject_blanks(attr) : attr
   end
 
   # The fields that will be accepted by #attribute_options.

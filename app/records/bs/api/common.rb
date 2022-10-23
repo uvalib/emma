@@ -62,6 +62,7 @@ module Bs::Api::Common
   # :section:
   # ===========================================================================
 
+  # noinspection RubyMismatchedArgumentType
   EnumType.add_enumerations(CONFIGURATION)
 
 end

@@ -62,6 +62,7 @@ module Search::Api::Common
   # :section:
   # ===========================================================================
 
+  # noinspection RubyMismatchedArgumentType
   EnumType.add_enumerations(CONFIGURATION)
 
 end
@@ -198,6 +199,34 @@ class PublicationIdentifier < ScalarType
       remove_prefix(v).rstrip
     end
 
+    # Type-cast a value to a PublicationIdentifier.
+    #
+    # @param [Any, nil] v             Value to use or transform.
+    # @param [Boolean]  invalid
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def cast(v, invalid: false)
+      v = create(v) unless v.is_a?(identifier_subclass)
+      v if invalid || v&.valid?
+    end
+
+    # Create a new instance.
+    #
+    # @param [String, nil]    v       Identifier number.
+    # @param [Symbol, String] type    Determined from *v* if missing.
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def create(v, type = nil, *)
+      prefix, value = type ? [type, v] : parts(v)
+      return                       if value.blank?
+      value = "#{prefix}:#{value}" if prefix.present?
+      identifier_classes.find { |c| c.candidate?(value) }&.new(value)
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================
@@ -238,40 +267,6 @@ class PublicationIdentifier < ScalarType
     #
     def prefix?(v)
       v != remove_prefix(v)
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Type-cast a value to a PublicationIdentifier.
-    #
-    # @param [Any, nil] v             Value to use or transform.
-    # @param [Boolean]  invalid
-    #
-    # @return [PublicationIdentifier] Possibly invalid identifier.
-    # @return [nil]                   If *v* is not any kind of identifier.
-    #
-    def cast(v, invalid: false)
-      v = create(v) unless v.is_a?(identifier_subclass)
-      v if invalid || v&.valid?
-    end
-
-    # Create a new instance.
-    #
-    # @param [String, nil]    v       Identifier number.
-    # @param [Symbol, String] type    Determined from *v* if missing.
-    #
-    # @return [PublicationIdentifier] Possibly invalid identifier.
-    # @return [nil]                   If *v* is not any kind of identifier.
-    #
-    def create(v, type = nil, *)
-      prefix, value = type ? [type, v] : parts(v)
-      return                       if value.blank?
-      value = "#{prefix}:#{value}" if prefix.present?
-      identifier_classes.find { |c| c.candidate?(value) }&.new(value)
     end
 
     # =========================================================================
