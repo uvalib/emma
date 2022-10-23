@@ -437,6 +437,7 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *    Field:            FieldProperties,
  *    Repo:             RepositoryProperties,
  *    Record:           RecordProperties,
+ *    Label?:           Object.<string,StringTable>,
  * }} ModelProperties
  */
 
@@ -470,6 +471,8 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @property {ModelProperties}    User
  * @property {ModelProperties}    Entry
  * @property {ModelProperties}    Upload
+ * @property {ModelProperties}    Manifest
+ * @property {ModelProperties}    ManifestItem
  */
 export const Emma = (function() {
 
@@ -592,10 +595,12 @@ export const Emma = (function() {
         // Model properties
         // ====================================================================
 
-        Account: o$('<%= js AccountDecorator.js_properties %>'),
-        User:    o$('<%= js UserDecorator.js_properties %>'),
-        Entry:   o$('<%= js EntryDecorator.js_properties %>'),
-        Upload:  o$('<%= js UploadDecorator.js_properties %>'),
+        Account:        o$('<%= js AccountDecorator.js_properties %>'),
+        User:           o$('<%= js UserDecorator.js_properties %>'),
+        Entry:          o$('<%= js EntryDecorator.js_properties %>'),
+        Upload:         o$('<%= js UploadDecorator.js_properties %>'),
+        Manifest:       o$('<%= js ManifestDecorator.js_properties %>'),
+        ManifestItem:   o$('<%= js ManifestItemDecorator.js_properties %>'),
 
     };
 

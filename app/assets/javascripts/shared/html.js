@@ -31,6 +31,49 @@ import { isDefined } from './definitions'
  */
 export const HTML_BREAK = "<br/>\n";
 
+/**
+ * Conversion of character to HTML entity.
+ *
+ * @readonly
+ * @type {StringTable}
+ */
+export const HTML_ENTITY = {
+    "'": '&apos;',
+    '"': '&quot;',
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+};
+
+// ============================================================================
+// Functions
+// ============================================================================
+
+/**
+ * Transform a string into one that can be used wherever HTML is expected.
+ *
+ * @param {string} text
+ *
+ * @returns {string}
+ */
+export function htmlEncode(text) {
+    const str = text.toString().trim();
+    return [...str].map(c => HTML_ENTITY[c] || c).join('');
+}
+
+/**
+ * Safely transform HTML-encoded text.
+ *
+ * @param {string} text
+ *
+ * @returns {string}
+ */
+export function htmlDecode(text) {
+    const str = text.toString().trim();
+    const doc = str && new DOMParser().parseFromString(str, 'text/html');
+    return doc?.documentElement?.textContent;
+}
+
 // ============================================================================
 // Functions
 // ============================================================================
@@ -45,19 +88,6 @@ export const HTML_BREAK = "<br/>\n";
 export function attributeSelector(attributes) {
     const list = attributes.join('], [');
     return `[${list}]`;
-}
-
-/**
- * Safely transform HTML-encoded text.
- *
- * @param {string} text
- *
- * @returns {string}
- */
-export function htmlDecode(text) {
-    let str = text.toString().trim();
-    let doc = str && new DOMParser().parseFromString(str, 'text/html');
-    return doc?.documentElement?.textContent;
 }
 
 /**

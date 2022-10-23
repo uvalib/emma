@@ -42,18 +42,16 @@ module Emma::Common::ObjectMethods
 
   # Translate a item into a class.
   #
-  # @param [Symbol, String, Class, nil] name
+  # @param [Symbol, String, Class, *] item
   #
-  # @return [Class]
-  # @return [nil]
+  # @return [Class, nil]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
-  def to_class(name)
-    return name if name.nil? || name.is_a?(Class)
-    c = name.to_s.underscore.delete_suffix('_controller').classify
-    c.safe_constantize or Log.warn { "#{__method__}: #{name.inspect} invalid" }
+  def to_class(item)
+    return item if item.nil? || item.is_a?(Class)
+    name = item.is_a?(Symbol) ? item.to_s : item
+    name = name.class.to_s unless name.is_a?(String)
+    name.underscore.delete_suffix('_controller').classify.safe_constantize or
+      Log.warn { "#{__method__}: invalid: #{item.inspect}" }
   end
 
 end

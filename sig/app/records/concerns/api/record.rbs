@@ -3,6 +3,8 @@
 # serialized into data to be sent to that API.
 #
 class Api::Record
+  extend ActiveModel::Naming
+
   include Model
 
   include Api::Common

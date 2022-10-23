@@ -1,0 +1,26 @@
+<%# app/views/manifest_item/bulk_index.html.erb -%>
+<%-
+  # Bulk operation information. # TODO: ???
+
+  view_debug(__FILE__)
+
+  list  ||= @list
+  dec     = ManifestItemsDecorator.new(list: list, **context)
+
+  help  ||= dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  unless modal?
+    label = dec.page_meta_title
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<div class="heading container">
+  <%= page_heading(title, help: help) %>
+</div>
+
+TODO

@@ -1,0 +1,309 @@
+# Item presenter for "/manifest" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Manifest]
+#
+class ManifestDecorator < BaseDecorator
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
+
+    def upload_path: (*untyped _ignored, **untyped opt)-> String
+  end
+
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
+
+    # Control icon definitions.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+    #
+    # @see BaseDecorator::Controls#ICON_PROPERTIES
+    #
+    ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
+
+    # Control icon definitions.
+    #
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    #
+    def control_icons: () -> Hash[Symbol,symHash]
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Include control icons below the entry number.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Don't display an item number in manifest listings.
+    #
+    # @return [nil]
+    #
+    def list_item_number_label: (**untyped _ignored) -> nil
+
+    # Generate a prompt for #items_menu.
+    #
+    # @param [User, Symbol, nil] user
+    #
+    # @return [String]
+    #
+    def items_menu_prompt: (?user: User|Symbol|nil) -> String
+
+    # Generate a label for a specific menu entry.
+    #
+    # @param [Manifest]    item
+    # @param [String, nil] label      Override label.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu_label: (Manifest item, ?label: String|nil) -> ActiveSupport::SafeBuffer
+
+    # The element displayed when the user has no Manifests to list.
+    #
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def no_items: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # The button displayed when the user has no Manifests to list.
+    #
+    # @param [String, nil] label
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #make_link.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def start_button: (?(String|nil) label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  end
+
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+
+    # Create a value for #context based on the parameters supplied through the
+    # initializer
+    #
+    # @param [Hash] opt
+    #
+    # @return [Hash]                  Suitable for assignment to #context.
+    #
+    def initialize_context: (**untyped opt) -> symHash
+
+    # options
+    #
+    # @return [Manifest::Options]
+    #
+    def options: () -> Manifest::Options
+  end
+
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+  end
+
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
+  module SharedDefinitions
+    def self.included: (Module base) -> void
+  end
+
+end
+
+class ManifestDecorator
+  include SharedDefinitions
+  include SharedInstanceMethods
+  extend  SharedClassMethods
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [*]         value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to the render method or super.
+  #
+  # @return [Field::Type]
+  # @return [String]
+  # @return [nil]
+  #
+  def render_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
+
+  # Upload cancel button.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Page count label for manifest items.
+  #
+  # @param [Hash] opt               Passed to #config_lookup
+  #
+  # @option opt [Integer] :count
+  #
+  # @return [String]                The specified value.
+  # @return [nil]                   No non-empty value was found.
+  #
+  def get_page_count_label: (**untyped opt) -> (String | nil)
+
+  # The collection of rows associated with the manifest.
+  #
+  # @return [ManifestItem::Paginator]
+  #
+  def paginator: () -> ManifestItem::Paginator
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  def row_model_type: () -> Symbol
+
+  # The class of individual associated items for iteration.
+  #
+  # @return [Class]
+  #
+  def row_model_class: () -> Class
+
+  # The collection of rows associated with the manifest.
+  #
+  # @return [ActiveRecord::Associations::HasManyAssociation]
+  #
+  def row_items: () -> ActiveRecord::Associations::HasManyAssociation
+
+  # The names of each ManifestItem column which is not displayed.
+  #
+  # @return [Array<Symbol>]
+  #
+  def row_skipped_columns: () -> symArray
+
+  # The names of each grid data column which is not displayed.
+  #
+  # @return [Array<Symbol>]
+  #
+  def grid_row_skipped_columns: () -> symArray
+
+  # Show a button for expanding/contracting the controls column in the top
+  # left grid cell.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def grid_head_control_headers: (**untyped opt) -> Array[ActiveSupport::SafeBuffer]
+
+  # Basic form controls, including #import_button if appropriate.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  # @yield [parts] Extend or replace results.
+  # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  #
+  def form_buttons: (**untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> Array[ActiveSupport::SafeBuffer] } -> Array[ActiveSupport::SafeBuffer]
+
+  # For use on view templates in place of LayoutHelper#page_heading to support
+  # editing the Manifest title.
+  #
+  # @param [ActiveSupport::SafeBuffer, Array<Symbol>, Symbol, nil] help
+  # @param [Hash]                                                  opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def manifest_page_heading: (?help: Symbol|symArray|ActiveSupport::SafeBuffer|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer|String|Array[ActiveSupport::SafeBuffer|String]) } -> ActiveSupport::SafeBuffer
+
+  # Import manifest items from an external source.
+  #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/controllers/_manifest.js *importRows()*
+  # @see file:app/assets/stylesheets/feature/_model_form.scss ".import-button"
+  #
+  def import_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Export manifest items to an external file.
+  #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/controllers/_manifest.js *exportRows()*
+  # @see file:app/assets/stylesheets/feature/_model_form.scss ".export-button"
+  #
+  def export_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Pre-defined status messages for #comm_status.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  STATUS_MESSAGE: Hash[Symbol,String]
+
+  # An area for transient status messages updated by the client if there are
+  # problems communicating with the server.
+  #
+  # @param [String]              css      Characteristic CSS class/selector.
+  # @param [Symbol, String, nil] status   Initial status.
+  # @param [Hash]                opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def comm_status: (?css: String|nil, ?status: Symbol|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render item attributes.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super except:
+  #
+  # @option opt [String, Symbol, Array<String,Symbol>] :columns
+  # @option opt [String, Regexp, Array<String,Regexp>] :filter
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #model_field_values
+  #
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Client-side scripting which are supplied via 'assets:precompile'.
+  #
+  # @param [Hash{Symbol=>Any}]
+  #
+  # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Manifest*
+  #
+  def self.js_properties: () -> symHash
+end

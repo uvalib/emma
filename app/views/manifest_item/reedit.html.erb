@@ -1,0 +1,7 @@
+<%# app/views/manifest_item/reedit.html.erb -%>
+<%-
+  # Fall-back page for a failed ManifestItem reedit action.
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+  view_debug(__FILE__)
+-%>
+<%= render 'manifest_item/fallback', action: :reedit %>

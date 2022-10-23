@@ -15,13 +15,13 @@ module UploadConcern
   extend ActiveSupport::Concern
 
   include Emma::Common
-  include Emma::Csv
   include Emma::Json
 
   include ParamsHelper
   include FlashHelper
   include HttpHelper
 
+  include ImportConcern
   include IngestConcern
   include OptionsConcern
   include ResponseConcern
@@ -111,18 +111,19 @@ module UploadConcern
 
   # Extract POST parameters and data for bulk operations.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  # @param [ActionDispatch::Request, nil]            req Def: `#request`.
-  #
   # @raise [RuntimeError]             If both :src and :data are present.
   #
-  # @return [Array<Hash{Symbol=>Any}>]
+  # @return [Array<Hash{Symbol=>*}>]
   #
-  def upload_bulk_post_params(p = nil, req = nil)                               # NOTE: to EntryConcern#entry_bulk_post_params
-    prm = model_options.model_post_params(p)
-    src = prm[:src] || prm[:source]
-    opt = src ? { src: src } : { data: (req || request) }
-    Array.wrap(fetch_data(**opt)).map(&:symbolize_keys)
+  # @see ImportConcern#fetch_data
+  #
+  def upload_bulk_post_params                               # NOTE: to EntryConcern#entry_bulk_post_params
+    prm = upload_post_params
+    opt = extract_hash!(prm, :src, :source, :data)
+    opt[:src]  = opt.delete(:source) if opt.key?(:source)
+    opt[:data] = request             if opt.blank?
+    opt[:type] = prm.delete(:type)&.to_sym
+    fetch_data(**opt) || []
   end
 
   # workflow_parameters
@@ -134,53 +135,6 @@ module UploadConcern
     result.compact!
     result.merge!(upload_post_params)
     result.except!(:selected)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Remote or locally-provided data.
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [String]       :src   URI or path to file containing the data.
-  # @option opt [String, Hash] :data  Literal data.
-  #
-  # @raise [RuntimeError]             If both *src* and *data* are present.
-  #
-  # @return [nil]                     If both *src* and *data* are missing.
-  # @return [Hash]
-  # @return [Array<Hash>]
-  #
-  def fetch_data(**opt)                                                         # NOTE: to EntryConcern
-    __debug_items("UPLOAD #{__method__}", binding)
-    src  = opt[:src].presence
-    data = opt[:data].presence
-    if data
-      raise "#{__method__}: both :src and :data were given" if src
-      name = nil
-    elsif src.is_a?(ActionDispatch::Http::UploadedFile)
-      name = src.original_filename
-      data = src.read
-    elsif src
-      name = src
-      data =
-        case name
-          when /^https?:/ then Faraday.get(src)   # Remote file URI.
-          when /\.csv$/   then src                # Local CSV file path.
-          else                 File.read(src)     # Local JSON file path.
-        end
-    else
-      return Log.warn { "#{__method__}: neither :data nor :src given" }
-    end
-    case name.to_s.downcase.split('.').last
-      when 'json' then json_parse(data)
-      when 'csv'  then csv_parse(data)
-      else             json_parse(data) || csv_parse(data)
-    end
   end
 
   # ===========================================================================

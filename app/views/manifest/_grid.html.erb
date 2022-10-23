@@ -1,0 +1,28 @@
+<%# app/views/manifest/_grid.html.erb -%>
+<%-
+  # A grid of ManifestItems belonging to a Manifest.
+
+  view_debug(__FILE__)
+
+  item   ||= nil
+  dec    ||= item && ManifestDecorator.new(item, **context) or return
+
+  level  ||= 1
+  row    ||= level
+  skip   ||= nil
+
+  skip     = [*skip, :thumbnail, :title]
+
+  top_controls, bottom_controls = dec.grid_controls(row: row)
+  row += 1              if top_controls
+  bottom_controls = nil if paginator.page_items.blank?
+
+-%>
+
+<%#= dec.render_grid_table(row: row, level: level, skip: skip) %>
+
+<div class="<%= dec.grid_css_class -%>">
+  <%= top_controls %>
+  <%= dec.render_grid_table(row: row, level: level, skip: skip) %>
+  <%= bottom_controls %>
+</div>

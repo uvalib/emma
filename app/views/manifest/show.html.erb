@@ -1,0 +1,31 @@
+<%# app/views/manifest/show.html.erb -%>
+<%-
+  # Show details of a Manifest.
+
+  view_debug(__FILE__)
+
+  item  ||= @item
+  dec     = ManifestDecorator.new(item, **context)
+  item  ||= dec.object
+
+  help  ||= nil # dec.help_topic
+  title ||= dec.page_heading(name: item.name)
+
+  unless modal?
+    label = "#{dec.page_meta_title} - #{title}"
+    set_page_meta_title(label)
+    set_page_description(Manifest: title)
+  end
+
+  opt = { dec: dec }
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= render 'manifest/details', opt %>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? || cannot?(:edit, Manifest) %>

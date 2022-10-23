@@ -96,11 +96,16 @@ module LayoutHelper::PageClasses
     p ||= request_parameters
     c = p[:controller].to_s.presence
     a = p[:action].to_s.presence
+    s = (p[:id] == 'SELECT') || a&.end_with?('_select')
+    s = ('select' if s && (!p[:selected] || (p[:selected] == 'SELECT')))
     [].tap do |result|
-      result << "#{c}-#{a}" if c && a
-      result << c           if c
-      result << a           if a
-      result << 'modal'     if modal?
+      result << "#{c}-#{a}-#{s}" if c && a && s
+      result << "#{c}-#{a}"      if c && a
+      result << "#{a}-#{s}"      if a && s
+      result << c                if c
+      result << a                if a
+      result << s                if s
+      result << 'modal'          if modal?
     end
   end
 

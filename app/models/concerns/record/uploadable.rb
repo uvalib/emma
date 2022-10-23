@@ -240,7 +240,16 @@ module Record::Uploadable
   #
   def upload_file(**opt)
     fault!(opt) # @see Record::Testing
-    FileUploader.upload_response(:cache, opt[:env])
+    FileUploader.upload_response(:cache, opt[:env]).tap do |stat, _hdrs, body|
+      # noinspection RubyScope, RubyCaseWithoutElseBlockInspection
+      err =
+        case
+          when stat.nil?          then 'missing request env data'
+          when stat != 200        then 'invalid file'
+          when body&.first.blank? then 'invalid response body'
+        end # TODO: I18n
+      file_attacher.errors.add(:file, :invalid, message: err) if err
+    end
   end
 
   # Acquire a file and upload it to storage.

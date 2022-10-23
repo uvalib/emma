@@ -119,7 +119,9 @@ class BaseDecorator < Draper::Decorator
     # noinspection RailsParamDefResolve, RubyMismatchedReturnType
     #++
     def id_for(item = nil, **opt)
-      id = opt[:id] || (item ||= try(:object))&.try(:id) || item
+      id   = opt[:id]
+      id ||= (item if item.is_a?(Array) || item.is_a?(String))
+      id ||= item&.try(:id) || try(:object)&.try(:id)
       id.is_a?(Array) ? id.join(',') : id
     end
 
@@ -132,12 +134,11 @@ class BaseDecorator < Draper::Decorator
     #
     def path_for(item = nil, **opt)
       opt.compact!
-      opt[:only_path] = true unless opt.key?(:only_path)
-      # noinspection RailsParamDefResolve
-      item ||=
-        (try(:object) if opt.except(:controller, :action, :only_path).blank?)
-      opt[:id]         ||= item&.id if item&.id
+      unless opt[:id] || opt.except(:controller, :action, :only_path).present?
+        opt[:id] = id_for(item)
+      end
       opt[:controller] ||= model_type
+      opt[:only_path] = true unless opt.key?(:only_path)
       h.url_for(opt)
     end
 
@@ -250,7 +251,7 @@ class BaseDecorator < Draper::Decorator
 
     public
 
-    # model_type
+    # The model associated with the decorator instance.
     #
     # @return [Symbol]
     #
@@ -258,7 +259,7 @@ class BaseDecorator < Draper::Decorator
       self.class.model_type
     end
 
-    # ar_class
+    # The ActiveRecord subclass associated with the decorator instance.
     #
     # @return [Class, nil]
     #
@@ -848,7 +849,13 @@ class BaseDecorator
   def self.set_model_type(mt)
     raise 'Nil model_type' unless mt
     # noinspection RubyMismatchedVariableType, RubyNilAnalysis
-    @model_type = mt.is_a?(Symbol) ? mt : mt.to_s.demodulize.underscore.to_sym
+    if mt.is_a?(Symbol)
+      @model_type = mt
+    elsif mt.respond_to?(:model_name)
+      @model_type = mt.model_name.singular.to_sym
+    else
+      @model_type = mt.to_s.demodulize.underscore.to_sym
+    end
     ModelTypeMap.set(@model_type, self)
   end
 

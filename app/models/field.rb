@@ -37,6 +37,7 @@ module Field
     :role,        # Field visible only to a user with this role.
     :tooltip,     # Tooltip when hovering over field label.
     :type,        # A symbol or 'text', 'textarea', 'number', 'datetime', etc.
+    :category,    # Logical field grouping value.
   ].freeze
 
   # ===========================================================================
@@ -355,7 +356,7 @@ module Field
     config ||= configuration_for(field, model)
     return if config.blank?
 
-    array = config[:array]
+    array = true?(config[:array])
     range = config[:type].then { |v| v if v.is_a?(Class) && (v < EnumType) }
 
     if    range && array     then type = Field::MultiSelect

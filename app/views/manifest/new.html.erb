@@ -1,0 +1,51 @@
+<%# app/views/manifest/new.html.erb -%>
+<%-
+  # Create a new bulk operations manifest.
+
+  view_debug(__FILE__)
+
+  item  ||= @item
+  dec     = ManifestDecorator.new(item, **context)
+  item  ||= dec.object
+
+  menu    = false
+  simple  = true?(params[:record_only]) && !menu
+  name    = menu ? '' : item.name
+
+  help  ||= dec.help_topic
+  title ||= dec.page_heading(name: name)
+  title   = title.strip.delete_suffix(':')
+
+  unless modal?
+    label = title
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+  if menu || simple
+    heading = page_heading(title, help: help)
+  else
+    heading = dec.manifest_page_heading(help: help)
+  end
+
+  opt = { dec: dec }
+
+-%>
+
+<%= heading %>
+<%= page_description_section %>
+
+<%- if simple -%>
+
+  <%= page_directions_section %>
+  <%= dec.model_form %>
+
+<%- else -%>
+
+  <%= page_directions_section %>
+  <%= render 'manifest/grid', opt %>
+
+<%- end -%>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? %>

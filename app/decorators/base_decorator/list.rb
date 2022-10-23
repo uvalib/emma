@@ -20,9 +20,9 @@ module BaseDecorator::List
 
   public
 
-  # The CSS class wrapping label/values pairs (if any).
+  # The default CSS class for wrapping label/values pairs (when requested).
   #
-  # @type [String, nil]
+  # @type [String]
   #
   PAIR_WRAPPER = 'pair'
 

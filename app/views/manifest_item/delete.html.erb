@@ -1,0 +1,48 @@
+<%# app/views/manifest_item/delete.html.erb -%>
+<%-
+  # Prompt to remove an existing ManifestItem.
+
+  view_debug(__FILE__)
+
+  list  ||= @list
+  recs    = list&.select { |e| e.is_a?(ManifestItem) }
+  dec     = ManifestItemsDecorator.new(recs, list: list, **context)
+  recs  ||= dec.object
+  list  ||= recs
+
+  help  ||= dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  repo  ||= recs.first&.repository
+  logo  ||= repository_source_logo(repo)
+
+  unless modal?
+    label = "#{dec.page_meta_title} - #{title}"
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help, logo: logo) %>
+<%= page_description_section %>
+
+<%- if list.blank? -%>
+
+  <%= dec.items_menu %>
+
+<%- else -%>
+
+  <%- list.each_with_index do |item, idx| -%>
+    <%= render 'manifest_item/selected', item: item, row: idx %>
+  <%- end -%>
+
+  <%= page_directions_section %>
+  <%#= dec.preview %>
+  <%= dec.delete_form %>
+
+<%- end -%>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? %>

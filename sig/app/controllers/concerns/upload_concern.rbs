@@ -8,8 +8,6 @@ module UploadConcern
 
   include Emma::Common
 
-  include Emma::Csv
-
   include Emma::Json
 
   include ParamsHelper
@@ -17,6 +15,8 @@ module UploadConcern
   include FlashHelper
 
   include HttpHelper
+
+  include ImportConcern
 
   include IngestConcern
 
@@ -83,35 +83,19 @@ module UploadConcern
 
   # Extract POST parameters and data for bulk operations.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  # @param [ActionDispatch::Request, nil]            req Def: `#request`.
-  #
   # @raise [RuntimeError]             If both :src and :data are present.
   #
-  # @return [Array<Hash{Symbol=>Any}>]
+  # @return [Array<Hash{Symbol=>*}>]
   #
-  def upload_bulk_post_params: (?(prmHash|nil) p, ?(ActionDispatch::Request|nil) req) -> Array[symHash]
+  # @see ImportConcern#fetch_data
+  #
+  def upload_bulk_post_params: () -> Array[symHash]
 
   # workflow_parameters
   #
   # @return [Hash{Symbol=>*}]
   #
   def workflow_parameters: () -> symHash
-
-  # Remote or locally-provided data.
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [String]       :src   URI or path to file containing the data.
-  # @option opt [String, Hash] :data  Literal data.
-  #
-  # @raise [RuntimeError]             If both *src* and *data* are present.
-  #
-  # @return [nil]                     If both *src* and *data* are missing.
-  # @return [Hash]
-  # @return [Array<Hash>]
-  #
-  def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash] | nil)
 
   # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
   #

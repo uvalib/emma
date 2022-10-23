@@ -10,93 +10,117 @@ en:
     # Ability aliases
     # =========================================================================
 
-    manage:         &TEMPLATE
-      all:          'You are not authorized to %{action} %{subject}.'
-      # account:    'You are not authorized to %{action} EMMA local accounts.'
-      artifact:     'You are not authorized to %{action} artifacts.'
-      # category:   'You are not authorized to %{action} Bookshare categories.'
-      # data:       'You are not authorized to %{action} EMMA data.'
-      edition:      'You are not authorized to %{action} Bookshare periodical editions.'
-      member:       'You are not authorized to %{action} Bookshare organization members.'
-      periodical:   'You are not authorized to %{action} Bookshare periodicals.'
-      reading_list: 'You are not authorized to %{action} Bookshare reading lists.'
-      search_call:  'You are not authorized to %{action} EMMA statistics.'
-      # search:     'You are not authorized to %{action} EMMA searches.'
-      title:        'You are not authorized to %{action} Bookshare catalog metadata.'
-      upload:       'You are not authorized to %{action} EMMA submissions.'
-      user:         'You are not authorized to %{action} EMMA local accounts.'
+    manage:           &TEMPLATE
+      all:            'You are not authorized to %{action} %{subject}.'
+      # account:      'You are not authorized to %{action} EMMA local accounts.'
+      artifact:       'You are not authorized to %{action} artifacts.'
+      # category:     'You are not authorized to %{action} Bookshare categories.'
+      # data:         'You are not authorized to %{action} EMMA data.'
+      edition:        'You are not authorized to %{action} Bookshare periodical editions.'
+      member:         'You are not authorized to %{action} Bookshare organization members.'
+      periodical:     'You are not authorized to %{action} Bookshare periodicals.'
+      reading_list:   'You are not authorized to %{action} Bookshare reading lists.'
+      search_call:    'You are not authorized to %{action} EMMA statistics.'
+      # search:       'You are not authorized to %{action} EMMA searches.'
+      title:          'You are not authorized to %{action} Bookshare catalog metadata.'
+      upload:         'You are not authorized to %{action} EMMA submissions.'
+      user:           'You are not authorized to %{action} EMMA local accounts.'
+      entry:          'You are not authorized to %{action} EMMA submissions.'
+      manifest:       'You are not authorized to %{action} manifests.'
+      manifest_item:  'You are not authorized to %{action} manifest items.'
 
-    list:           &LIST
+    list:             &LIST
       <<: *TEMPLATE
-      artifact:     'You are not authorized to list artifacts.'
-      edition:      'You are not authorized to list Bookshare periodical editions.'
-      member:       'You are not authorized to list Bookshare organization members.'
-      periodical:   'You are not authorized to list Bookshare periodicals.'
-      reading_list: 'You are not authorized to list Bookshare reading lists.'
-      search_call:  'You are not authorized to list EMMA statistics.'
-      title:        'You are not authorized to list Bookshare catalog metadata.'
-      upload:       'You are not authorized to list EMMA submissions.'
-      user:         'You are not authorized to list EMMA local accounts.'
+      artifact:       'You are not authorized to list artifacts.'
+      edition:        'You are not authorized to list Bookshare periodical editions.'
+      member:         'You are not authorized to list Bookshare organization members.'
+      periodical:     'You are not authorized to list Bookshare periodicals.'
+      reading_list:   'You are not authorized to list Bookshare reading lists.'
+      search_call:    'You are not authorized to list EMMA statistics.'
+      title:          'You are not authorized to list Bookshare catalog metadata.'
+      upload:         'You are not authorized to list EMMA submissions.'
+      user:           'You are not authorized to list EMMA local accounts.'
+      entry:          'You are not authorized to list EMMA submissions.'
+      manifest:       'You are not authorized to list manifests.'
+      manifest_item:  'You are not authorized to list manifest items.'
 
-    view:           &VIEW
+    view:             &VIEW
       <<: *TEMPLATE
-      artifact:     'You are not authorized to view artifacts.'
-      edition:      'You are not authorized to view Bookshare periodical editions.'
-      member:       'You are not authorized to view Bookshare organization members.'
-      periodical:   'You are not authorized to view Bookshare periodicals.'
-      reading_list: 'You are not authorized to view Bookshare reading lists.'
-      search_call:  'You are not authorized to view EMMA statistics.'
-      title:        'You are not authorized to view Bookshare catalog metadata.'
-      upload:       'You are not authorized to view EMMA submissions.'
-      user:         'You are not authorized to view EMMA local accounts.'
+      artifact:       'You are not authorized to view artifacts.'
+      edition:        'You are not authorized to view Bookshare periodical editions.'
+      member:         'You are not authorized to view Bookshare organization members.'
+      periodical:     'You are not authorized to view Bookshare periodicals.'
+      reading_list:   'You are not authorized to view Bookshare reading lists.'
+      search_call:    'You are not authorized to view EMMA statistics.'
+      title:          'You are not authorized to view Bookshare catalog metadata.'
+      upload:         'You are not authorized to view EMMA submissions.'
+      user:           'You are not authorized to view EMMA local accounts.'
+      entry:          'You are not authorized to view EMMA submissions.'
+      manifest:       'You are not authorized to view manifests.'
+      manifest_item:  'You are not authorized to view manifest items.'
 
-    create:         &CREATE
+    create:           &CREATE
       <<: *TEMPLATE
-      artifact:     'You are not authorized to create artifacts.'
-      edition:      'You are not authorized to create Bookshare periodical editions.'
-      member:       'You are not authorized to create Bookshare organization members.'
-      periodical:   'You are not authorized to create Bookshare periodicals.'
-      reading_list: 'You are not authorized to create Bookshare reading lists.'
-      search_call:  'You are not authorized to create EMMA statistics.'
-      title:        'You are not authorized to create Bookshare catalog metadata.'
-      upload:       'You are not authorized to create EMMA submissions.'
-      user:         'You are not authorized to create EMMA local accounts.'
+      artifact:       'You are not authorized to create artifacts.'
+      edition:        'You are not authorized to create Bookshare periodical editions.'
+      member:         'You are not authorized to create Bookshare organization members.'
+      periodical:     'You are not authorized to create Bookshare periodicals.'
+      reading_list:   'You are not authorized to create Bookshare reading lists.'
+      search_call:    'You are not authorized to create EMMA statistics.'
+      title:          'You are not authorized to create Bookshare catalog metadata.'
+      upload:         'You are not authorized to create EMMA submissions.'
+      user:           'You are not authorized to create EMMA local accounts.'
+      entry:          'You are not authorized to create EMMA submissions.'
+      manifest:       'You are not authorized to create manifests.'
+      manifest_item:  'You are not authorized to create manifest items.'
 
-    modify:         &MODIFY
+    modify:           &MODIFY
       <<: *TEMPLATE
-      artifact:     'You are not authorized to modify artifacts.'
-      edition:      'You are not authorized to modify Bookshare periodical editions.'
-      member:       'You are not authorized to modify Bookshare organization members.'
-      periodical:   'You are not authorized to modify Bookshare periodicals.'
-      reading_list: 'You are not authorized to modify Bookshare reading lists.'
-      search_call:  'You are not authorized to modify EMMA statistics.'
-      title:        'You are not authorized to modify Bookshare catalog metadata.'
-      upload:       'You are not authorized to modify EMMA submissions.'
-      user:         'You are not authorized to modify EMMA local accounts.'
+      artifact:       'You are not authorized to modify artifacts.'
+      edition:        'You are not authorized to modify Bookshare periodical editions.'
+      member:         'You are not authorized to modify Bookshare organization members.'
+      periodical:     'You are not authorized to modify Bookshare periodicals.'
+      reading_list:   'You are not authorized to modify Bookshare reading lists.'
+      search_call:    'You are not authorized to modify EMMA statistics.'
+      title:          'You are not authorized to modify Bookshare catalog metadata.'
+      upload:         'You are not authorized to modify EMMA submissions.'
+      user:           'You are not authorized to modify EMMA local accounts.'
+      entry:          'You are not authorized to modify EMMA submissions.'
+      manifest:       'You are not authorized to modify manifests.'
+      manifest_item:  'You are not authorized to modify manifest items.'
 
-    remove:         &REMOVE
+    remove:           &REMOVE
       <<: *TEMPLATE
-      artifact:     'You are not authorized to remove artifacts.'
-      edition:      'You are not authorized to remove Bookshare periodical editions.'
-      member:       'You are not authorized to remove Bookshare organization members.'
-      periodical:   'You are not authorized to remove Bookshare periodicals.'
-      reading_list: 'You are not authorized to remove Bookshare reading lists.'
-      search_call:  'You are not authorized to remove EMMA statistics.'
-      title:        'You are not authorized to remove Bookshare catalog metadata.'
-      upload:       'You are not authorized to remove EMMA submissions.'
-      user:         'You are not authorized to remove EMMA local accounts.'
+      artifact:       'You are not authorized to remove artifacts.'
+      edition:        'You are not authorized to remove Bookshare periodical editions.'
+      member:         'You are not authorized to remove Bookshare organization members.'
+      periodical:     'You are not authorized to remove Bookshare periodicals.'
+      reading_list:   'You are not authorized to remove Bookshare reading lists.'
+      search_call:    'You are not authorized to remove EMMA statistics.'
+      title:          'You are not authorized to remove Bookshare catalog metadata.'
+      upload:         'You are not authorized to remove EMMA submissions.'
+      user:           'You are not authorized to remove EMMA local accounts.'
+      entry:          'You are not authorized to remove EMMA submissions.'
+      manifest:       'You are not authorized to remove manifests.'
+      manifest_item:  'You are not authorized to remove manifest items.'
 
-    upload:         &UPLOAD
+    upload:           &UPLOAD
       <<: *TEMPLATE
-      artifact:     'You are not authorized to upload artifacts.'
-      edition:      'You are not authorized to upload Bookshare periodical editions.'
-      upload:       'You are not authorized to upload EMMA submissions.'
+      artifact:       'You are not authorized to upload artifacts.'
+      edition:        'You are not authorized to upload Bookshare periodical editions.'
+      upload:         'You are not authorized to upload EMMA submissions.'
+      entry:          'You are not authorized to upload EMMA submissions.'
+      manifest:       'You are not authorized to upload manifests.'
+      manifest_item:  'You are not authorized to upload manifest items.'
 
-    download:       &DOWNLOAD
+    download:         &DOWNLOAD
       <<: *TEMPLATE
-      artifact:     'You are not authorized to download artifacts.'
-      edition:      'You are not authorized to download Bookshare periodical editions.'
-      upload:       'You are not authorized to download EMMA submissions.'
+      artifact:       'You are not authorized to download artifacts.'
+      edition:        'You are not authorized to download Bookshare periodical editions.'
+      upload:         'You are not authorized to download EMMA submissions.'
+      entry:          'You are not authorized to download EMMA submissions.'
+      manifest:       'You are not authorized to download manifests.'
+      manifest_item:  'You are not authorized to download manifest items.'
 
     # =========================================================================
     # Ability actions
@@ -114,14 +138,23 @@ en:
     edit:           &EDIT
       <<: *MODIFY
 
+    edit_select:
+      <<: *EDIT
+
     update:         &UPDATE
       <<: *EDIT
 
-    destroy:        &DESTROY
-      <<: *REMOVE
+    update_select:
+      <<: *UPDATE
 
     delete:         &DELETE
-      <<: *DESTROY
+      <<: *REMOVE
+
+    delete_select:
+      <<: *DELETE
+
+    destroy:        &DESTROY
+      <<: *DELETE
 
     # =========================================================================
     # Ability specific aliases

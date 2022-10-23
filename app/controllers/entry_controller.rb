@@ -742,7 +742,7 @@ class EntryController < ApplicationController
   # @return [Hash{Symbol=>*}]
   #
   def show_values(item = @item, **opt)
-    item = item.is_a?(ActiveRecord) ? item.attributes.symbolize_keys : item.dup
+    item = item.try(:fields) || item.dup
     data = item.extract!(:file_data).first&.last
     item[:file_data] = safe_json_parse(data)
     super(item, **opt)

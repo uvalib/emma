@@ -1,0 +1,17 @@
+<%# app/views/manifest_item/_details.html.erb -%>
+<%-
+  # A listing of ManifestItem details.
+
+  view_debug(__FILE__)
+
+  item  ||= nil
+  image ||= nil
+  dec   ||= item && ManifestItemDecorator.new(item, cover: image, **context) or return
+
+  level ||= 1
+  extra ||= nil
+  skip  ||= nil
+
+-%>
+
+<%= dec.details_container(level: level, pairs: extra, skip: skip) %>

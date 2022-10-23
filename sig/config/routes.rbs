@@ -46,506 +46,609 @@ class Object
 
   def bulk_create_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_create_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_create_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_create_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_create_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_delete_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_create_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_delete_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_create_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_delete_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_delete_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_delete_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_delete_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_destroy_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_delete_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_destroy_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_delete_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_destroy_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_delete_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_destroy_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_delete_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_edit_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_destroy_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_edit_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_destroy_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_edit_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_destroy_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_edit_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_destroy_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_entry_index_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_destroy_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_entry_index_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_destroy_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_new_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_edit_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_new_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_edit_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_new_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_edit_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_new_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_edit_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_reindex_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_edit_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_reindex_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_edit_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_reindex_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_entry_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_reindex_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_entry_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_update_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_new_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_update_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_new_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_update_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_new_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_update_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_new_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_upload_index_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_new_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_upload_index_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_new_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def cancel_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_reindex_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def cancel_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_reindex_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def cancel_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_reindex_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def cancel_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_reindex_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def cancel_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_update_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def cancel_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_update_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def category_index_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_update_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def category_index_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_update_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_update_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_update_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_health_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_upload_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_health_url: (*untyped) ?{ () -> untyped } -> String
+  def bulk_upload_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_subsystem_health_path: (*untyped) ?{ () -> untyped } -> String
+  def cancel_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_subsystem_health_url: (*untyped) ?{ () -> untyped } -> String
+  def cancel_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def cancel_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def check_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def cancel_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def confirmation_path: (*untyped) ?{ () -> untyped } -> String
+  def cancel_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def confirmation_url: (*untyped) ?{ () -> untyped } -> String
+  def cancel_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_account_path: (*untyped) ?{ () -> untyped } -> String
+  def cancel_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_account_url: (*untyped) ?{ () -> untyped } -> String
+  def cancel_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_artifact_path: (*untyped) ?{ () -> untyped } -> String
+  def category_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_artifact_url: (*untyped) ?{ () -> untyped } -> String
+  def category_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def check_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def check_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def check_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def check_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_user_path: (*untyped) ?{ () -> untyped } -> String
+  def check_subsystem_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def check_subsystem_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def check_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def create_user_url: (*untyped) ?{ () -> untyped } -> String
+  def check_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def dashboard_path: (*untyped) ?{ () -> untyped } -> String
+  def confirmation_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def dashboard_url: (*untyped) ?{ () -> untyped } -> String
+  def confirmation_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_counts_path: (*untyped) ?{ () -> untyped } -> String
+  def create_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_counts_url: (*untyped) ?{ () -> untyped } -> String
+  def create_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_index_path: (*untyped) ?{ () -> untyped } -> String
+  def create_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_index_url: (*untyped) ?{ () -> untyped } -> String
+  def create_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_path: (*untyped) ?{ () -> untyped } -> String
+  def create_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_submissions_path: (*untyped) ?{ () -> untyped } -> String
+  def create_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_submissions_url: (*untyped) ?{ () -> untyped } -> String
+  def create_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def data_url: (*untyped) ?{ () -> untyped } -> String
+  def create_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_account_path: (*untyped) ?{ () -> untyped } -> String
+  def create_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_account_url: (*untyped) ?{ () -> untyped } -> String
+  def create_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def create_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def create_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_account_path: (*untyped) ?{ () -> untyped } -> String
+  def create_user_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_account_url: (*untyped) ?{ () -> untyped } -> String
+  def create_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def create_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def create_user_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def dashboard_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def dashboard_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def data_counts_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_select_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def data_counts_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def data_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def data_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def data_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def delete_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def data_submissions_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_account_path: (*untyped) ?{ () -> untyped } -> String
+  def data_submissions_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_account_url: (*untyped) ?{ () -> untyped } -> String
+  def data_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_user_session_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def destroy_user_session_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_account_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_account_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_artifact_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_artifact_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_edition_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_edition_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_member_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_member_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_select_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_password_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_password_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_periodical_path: (*untyped) ?{ () -> untyped } -> String
+  def delete_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_periodical_url: (*untyped) ?{ () -> untyped } -> String
+  def delete_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_account_path: (*untyped) ?{ () -> untyped } -> String
+  def destroy_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_account_url: (*untyped) ?{ () -> untyped } -> String
+  def destroy_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def destroy_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def destroy_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def destroy_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def destroy_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_user_path: (*untyped) ?{ () -> untyped } -> String
+  def destroy_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  # /users/edit_select
-  def edit_select_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def destroy_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def destroy_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_select_user_url: (*untyped) ?{ () -> untyped } -> String
+  def destroy_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_title_path: (*untyped) ?{ () -> untyped } -> String
+  def destroy_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_title_url: (*untyped) ?{ () -> untyped } -> String
+  def destroy_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def destroy_user_session_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def destroy_user_session_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_user_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  # /users/edit
-  def edit_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_user_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edition_download_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_edition_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edition_download_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_edition_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edition_index_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edition_index_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def entries_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def entries_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def entry_index_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def entry_index_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def file_download_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_member_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def file_download_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_member_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def healthcheck_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_password_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def healthcheck_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_password_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def help_index_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_periodical_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def help_index_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_periodical_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def help_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def help_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def history_title_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def history_title_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def home_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def home_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def md_proxy_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def md_proxy_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def md_trial_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_user_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def md_trial_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def member_index_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def member_index_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_select_user_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def member_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_title_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def member_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_title_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def metrics_test_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def metrics_test_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_account_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_user_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_account_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_artifact_path: (*untyped) ?{ () -> untyped } -> String
+  def edit_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_artifact_url: (*untyped) ?{ () -> untyped } -> String
+  def edit_user_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_edition_path: (*untyped) ?{ () -> untyped } -> String
+  def edition_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_edition_url: (*untyped) ?{ () -> untyped } -> String
+  def edition_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def edition_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def edition_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_member_path: (*untyped) ?{ () -> untyped } -> String
+  def entry_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_member_url: (*untyped) ?{ () -> untyped } -> String
+  def entry_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_periodical_path: (*untyped) ?{ () -> untyped } -> String
+  def entry_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_periodical_url: (*untyped) ?{ () -> untyped } -> String
+  def entry_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_title_path: (*untyped) ?{ () -> untyped } -> String
+  def file_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_title_url: (*untyped) ?{ () -> untyped } -> String
+  def file_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def healthcheck_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def healthcheck_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_user_path: (*untyped) ?{ () -> untyped } -> String
+  def help_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def help_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  # /users/new
-  def new_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def help_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_user_session_path: (*untyped) ?{ () -> untyped } -> String
+  def help_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_user_session_url: (*untyped) ?{ () -> untyped } -> String
+  def history_title_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_user_url: (*untyped) ?{ () -> untyped } -> String
+  def history_title_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def password_path: (*untyped) ?{ () -> untyped } -> String
+  def home_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def password_url: (*untyped) ?{ () -> untyped } -> String
+  def home_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def periodical_index_path: (*untyped) ?{ () -> untyped } -> String
+  def manifest_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def periodical_index_url: (*untyped) ?{ () -> untyped } -> String
+  def manifest_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def reading_list_index_path: (*untyped) ?{ () -> untyped } -> String
+  def manifest_item_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def reading_list_index_url: (*untyped) ?{ () -> untyped } -> String
+  def manifest_item_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def reedit_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def manifest_item_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def reedit_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def manifest_item_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def reedit_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def md_proxy_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def reedit_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def md_proxy_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def registration_path: (*untyped) ?{ () -> untyped } -> String
+  def md_trial_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def registration_url: (*untyped) ?{ () -> untyped } -> String
+  def md_trial_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def renew_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def member_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def renew_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def member_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def renew_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def member_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def renew_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def member_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def retrieval_path: (*untyped) ?{ () -> untyped } -> String
+  def metrics_test_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def retrieval_url: (*untyped) ?{ () -> untyped } -> String
+  def metrics_test_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def root_path: (*untyped) ?{ () -> untyped } -> String
+  def new_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def root_url: (*untyped) ?{ () -> untyped } -> String
+  def new_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def run_state_health_path: (*untyped) ?{ () -> untyped } -> String
+  def new_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def run_state_health_url: (*untyped) ?{ () -> untyped } -> String
+  def new_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_api_path: (*untyped) ?{ () -> untyped } -> String
+  def new_edition_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_api_url: (*untyped) ?{ () -> untyped } -> String
+  def new_edition_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_call_index_path: (*untyped) ?{ () -> untyped } -> String
+  def new_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_call_index_url: (*untyped) ?{ () -> untyped } -> String
+  def new_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_call_path: (*untyped) ?{ () -> untyped } -> String
+  def new_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_call_url: (*untyped) ?{ () -> untyped } -> String
+  def new_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_direct_path: (*untyped) ?{ () -> untyped } -> String
+  def new_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_direct_url: (*untyped) ?{ () -> untyped } -> String
+  def new_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_index_path: (*untyped) ?{ () -> untyped } -> String
+  def new_member_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_index_url: (*untyped) ?{ () -> untyped } -> String
+  def new_member_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_path: (*untyped) ?{ () -> untyped } -> String
+  def new_periodical_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_url: (*untyped) ?{ () -> untyped } -> String
+  def new_periodical_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_validate_path: (*untyped) ?{ () -> untyped } -> String
+  def new_title_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def search_validate_url: (*untyped) ?{ () -> untyped } -> String
+  def new_title_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def session_path: (*untyped) ?{ () -> untyped } -> String
+  def new_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def session_url: (*untyped) ?{ () -> untyped } -> String
+  def new_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def set_run_state_health_path: (*untyped) ?{ () -> untyped } -> String
+  def new_user_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def set_run_state_health_url: (*untyped) ?{ () -> untyped } -> String
+  def new_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_account_path: (*untyped) ?{ () -> untyped } -> String
+  def new_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_account_url: (*untyped) ?{ () -> untyped } -> String
+  def new_user_session_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def new_user_session_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def new_user_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_upload_path: (*untyped) ?{ () -> untyped } -> String
+  def password_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_upload_url: (*untyped) ?{ () -> untyped } -> String
+  def password_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_user_registration_path: (*untyped) ?{ () -> untyped } -> String
+  def periodical_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def show_user_registration_url: (*untyped) ?{ () -> untyped } -> String
+  def periodical_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def sign_in_as_path: (*untyped) ?{ () -> untyped } -> String
+  def reading_list_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  # /users/sign_in_as
-  def sign_in_as_url: (*untyped) ?{ () -> untyped } -> String
+  def reading_list_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def sign_in_local_path: (*untyped) ?{ () -> untyped } -> String
+  def reedit_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  # /users/sign_in_local
-  def sign_in_local_url: (*untyped) ?{ () -> untyped } -> String
+  def reedit_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def system_unavailable_path: (*untyped) ?{ () -> untyped } -> String
+  def reedit_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def system_unavailable_url: (*untyped) ?{ () -> untyped } -> String
+  def reedit_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def title_index_path: (*untyped) ?{ () -> untyped } -> String
+  def registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def title_index_url: (*untyped) ?{ () -> untyped } -> String
+  def registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def title_path: (*untyped) ?{ () -> untyped } -> String
+  def renew_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def title_url: (*untyped) ?{ () -> untyped } -> String
+  def renew_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def tool_index_path: (*untyped) ?{ () -> untyped } -> String
+  def renew_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def tool_index_url: (*untyped) ?{ () -> untyped } -> String
+  def renew_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def unlock_path: (*untyped) ?{ () -> untyped } -> String
+  def retrieval_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def unlock_url: (*untyped) ?{ () -> untyped } -> String
+  def retrieval_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_account_path: (*untyped) ?{ () -> untyped } -> String
+  def root_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_account_url: (*untyped) ?{ () -> untyped } -> String
+  def root_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_artifact_path: (*untyped) ?{ () -> untyped } -> String
+  def run_state_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_artifact_url: (*untyped) ?{ () -> untyped } -> String
+  def run_state_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def save_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_entry_url: (*untyped) ?{ () -> untyped } -> String
+  def save_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_api_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_api_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_call_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_call_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_call_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_call_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_direct_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_direct_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_validate_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def search_validate_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def session_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def session_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def set_run_state_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def set_run_state_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def sign_in_as_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def sign_in_as_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def sign_in_local_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def sign_in_local_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def system_unavailable_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def system_unavailable_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def title_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def title_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def title_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def title_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def tool_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def tool_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def unlock_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def unlock_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def update_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 

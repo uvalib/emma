@@ -10,7 +10,22 @@ module Record::Searchable
   # :nocov:
   #include ActiveRecord::FinderMethods
 
-  STATE_COLUMN: Symbol
+  # Name of the column on which pagination is based.
+  #
+  # @return [Symbol]
+  #
+  # == Implementation Notes
+  # This has to be a column with unique values for every record which can be
+  # ordered (that is, #minimum_id and #maximum_id have to be non-nil).
+  #
+  def pagination_column: () -> Symbol
+
+  # The database column currently associated with the workflow state of the
+  # record.
+  #
+  # @return [Symbol, nil]
+  #
+  def state_column: () -> (Symbol | nil)
 
   # Get a record by either :id or :submission_id.
   #
@@ -112,9 +127,11 @@ module Record::Searchable
   # @param [ActiveRecord::Relation] relation
   # @param [Symbol]                 column
   #
+  # @raise [RuntimeError] If the current model does not have a :state_column.
+  #
   # @return [Hash{Symbol=>Integer}]
   #
-  def group_by_state: (ActiveRecord::Relation relation, ?Symbol column) -> Hash[Symbol,Integer]
+  def group_by_state: (ActiveRecord::Relation relation, ?(Symbol|nil) column) -> Hash[Symbol,Integer]
 
   # Class methods automatically added to the including record class.
   #

@@ -21,7 +21,7 @@ module Emma::Json
 
   # Covert JSON into a Hash.
   #
-  # @param [Any,nil] arg
+  # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] log           If *false*, do not log errors.
   # @param [Boolean] no_raise      If *false*, re-raise exceptions.
   # @param [Hash]    opt           Passed to MultiJson#load.
@@ -70,20 +70,20 @@ module Emma::Json
   # noinspection RubyNilAnalysis
   #++
   def json_parse(arg, log: true, no_raise: true, **opt)
+    return if arg.nil?
     str = false?(opt[:symbolize_keys])
     sym = opt[:symbolize_keys] = !str
-    arg = arg.to_io  if arg.respond_to?(:to_io)
-    arg = arg.read   if arg.respond_to?(:read)
-    arg = arg.body   if arg.respond_to?(:body)
-    arg = arg.string if arg.respond_to?(:string)
     case arg
-      when nil          then return
-      when Hash         then res = sym ? arg.deep_symbolize_keys : arg
-      when /\A\s*[\[{]/ then res = MultiJson.load(arg, opt)
-      when String       then res = log.presence
-      else                   raise "#{arg.class} unexpected"
+      when Hash
+        res = sym ? arg.deep_symbolize_keys : arg
+      when IO, StringIO, IO::Like, /\A\s*[\[{]/
+        res = MultiJson.load(arg, opt)
+      when String
+        res = log.presence
+      else
+        raise "#{arg.class} unexpected"
     end
-    # noinspection RubyCaseWithoutElseBlockInspection
+    # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedReturnType
     case res
       when Hash  then str ? res.deep_stringify_keys : res
       when Array then res.map { |v| str && v.try(:deep_stringify_keys) || v }
@@ -97,10 +97,10 @@ module Emma::Json
 
   # Attempt to interpret *arg* as JSON if it is a string.
   #
-  # @param [Any,nil] arg
-  # @param [Any]     default          On parse failure, return this if provided
+  # @param [*]    arg
+  # @param [Any]  default             On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
-  # @param [Hash]    opt              Passed to #json_parse.
+  # @param [Hash] opt                 Passed to #json_parse.
   #
   # @return [Hash, Array<Hash>, Any, nil]
   #
@@ -116,7 +116,7 @@ module Emma::Json
 
   # json_render
   #
-  # @param [Any,nil] arg
+  # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
@@ -142,7 +142,7 @@ module Emma::Json
 
   # pretty_json
   #
-  # @param [Any,nil] arg
+  # @param [*]       arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
@@ -196,13 +196,13 @@ module Emma::Json
   # @return [Array<Hash>, Hash, nil]
   #
   def hash_parse(arg)
-    json = arg.is_a?(Hash) ? arg : hash_inspect_to_json(arg)
-    json_parse(json)
+    arg = hash_inspect_to_json(arg) if arg && !arg.is_a?(Hash)
+    json_parse(arg) if arg
   end
 
   # Translate from Hash#to_s output to JSON.
   #
-  # @param [Any,nil] arg
+  # @param [*] arg
   #
   # @return [String]
   #
@@ -224,7 +224,7 @@ module Emma::Json
 
   # hash_render
   #
-  # @param [Any,nil] arg
+  # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Hash]    opt              Passed to #json_render.
   #

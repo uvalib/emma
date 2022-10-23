@@ -1,0 +1,13 @@
+module ManifestItem::Identification
+  include Record::Identification
+
+  # Column name for the identifier of the associated user.
+  #
+  # @return [nil]
+  #
+  def user_column: () -> nil
+
+  private
+
+  def self.included: (Module base) -> void
+end

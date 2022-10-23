@@ -1,0 +1,27 @@
+<%# app/views/manifest_item/cancel.html.erb -%>
+<%-
+  # Fall-back page for a failed ManifestItem cancel action.
+
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[manifest_item cancel]
+  # noinspection RailsI18nInspection
+  title ||= t('emma.manifest_item.cancel.title')
+
+  error ||= 'Invalid identifier' # TODO: I18n
+
+  unless modal?
+    set_page_meta_title(title)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<p><%= error -%></p>
+
+<%= page_notes_section %>

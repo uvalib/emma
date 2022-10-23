@@ -1,0 +1,473 @@
+# Item presenter for "/manifest_item" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [ManifestItem]
+#
+class ManifestItemDecorator < BaseDecorator
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
+
+    def edit_select_path:   (*untyped _ignored) -> nil
+    def delete_select_path: (*untyped _ignored) -> nil
+    def upload_path:        (*untyped _ignored,                  **untyped opt) -> String
+    def bulk_new_path:      (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+    def bulk_create_path:   (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+    def bulk_edit_path:     (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+    def bulk_update_path:   (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+    def bulk_delete_path:   (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+    def bulk_destroy_path:  (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
+
+    # manifest_for
+    #
+    # @param [String,Model,Hash,Array,nil] item
+    # @param [Hash]                        opt
+    #
+    # @return [String, nil]
+    #
+    def manifest_for: (?(String | Model | anyHash | anyArray | nil) item, **untyped opt) -> (String | nil)
+
+    # path_for
+    #
+    # @param [Model,Hash,Array,nil] item
+    # @param [Hash]                 opt
+    #
+    # @return [String]
+    #
+    def path_for: (?(Model | anyHash | anyArray | nil) item, **untyped opt) -> String
+  end
+
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
+
+    # Control icon definitions.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+    #
+    # @see BaseDecorator::Controls#ICON_PROPERTIES
+    #
+    ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
+
+    # Control icon definitions.
+    #
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    #
+    def control_icons: () -> Hash[Symbol, symHash]
+
+    # control_icon_button
+    #
+    # @param [Symbol]             action    One of #ICONS.keys.
+    # @param [GridIndex, Integer] index
+    # @param [String]             unique
+    # @param [Hash]               opt       Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def control_icon_button: (Symbol action, ?unique: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item: (?pairs: symHash | nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Include control icons below the entry number.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Don't display an item number in manifest listings.
+    #
+    # @return [nil]
+    #
+    def list_item_number_label: (**untyped _ignored) -> nil
+
+    def config_button_values: ((String|Symbol) action) -> Hash[Symbol,Hash[Symbol,String|symHash]]
+
+    # Form action button configuration.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
+
+    IDENTITY_FIELDS: symArray
+
+    GRID_ROWS_FIELDS: symArray
+
+    TRANSIENT_FIELDS: symArray
+
+    STATUS_FIELDS: symArray
+
+    DETAILS_FIELDS: symArray
+
+    HIDDEN_FIELDS: symArray
+
+    # The names of each ManifestItem column which is not displayed.
+    #
+    # @return [Array<Symbol>]
+    #
+    def row_skipped_columns: () -> symArray
+
+    # The names of each grid data column which is not displayed.
+    #
+    # @return [Array<Symbol>]
+    #
+    def grid_row_skipped_columns: () -> symArray
+
+    # Show a button for expanding/contracting the controls column in the top
+    # left grid cell.
+    #
+    # @param [Hash] opt
+    #
+    # @return [Array<ActiveSupport::SafeBuffer>]
+    #
+    def grid_head_control_headers: (**untyped opt) -> Array[ActiveSupport::SafeBuffer]
+
+    # Render a grid header cell.
+    #
+    # @param [Symbol, nil] col        Data column.
+    # @param [Hash]        opt        Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @yield Leading content
+    # @yieldreturn [String, Array]
+    #
+    def grid_head_cell: ((Symbol|nil) col, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+    # Generate a <detail> element describing a field.
+    #
+    # @param [Symbol]    col
+    # @param [Hash, nil] cfg
+    # @param [Proc]      block        Passed to #html_details
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def field_details: ((Symbol|nil) col, ?(Hash[Symbol,symHash]|nil) cfg, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+    # Generate a <detail> element describing a type.
+    #
+    # @param [Symbol]    col
+    # @param [Hash, nil] cfg
+    # @param [Proc]      block        Passed to #html_details
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def type_details: ((Symbol|nil) col, ?(Hash[Symbol,symHash]|nil) cfg, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+    # A button for expanding/contracting the controls column.
+    #
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #grid_control
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def column_expander: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # A button for expanding/contracting the head row.
+    #
+    # @param [String] css             Characteristic CSS class/selector.
+    # @param [Hash]   opt             Passed to #grid_control
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def header_expander: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Column/header expand/contract controls.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    GRID_CFG: Hash[Symbol,symHash]
+
+    # A button for controlling overall grid behavior.
+    #
+    # @param [Symbol]  type           Either :column or :row.
+    # @param [Boolean] expanded       If *true* start expanded.
+    # @param [String]  css            Characteristic CSS class/selector.
+    # @param [Hash]    opt            Passed to #html_button except:
+    #
+    # @option opt [String] :label     Override default label.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def grid_control: (Symbol `type`, ?expanded: bool, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_indicators
+    #
+    # @param [ManifestItem] item
+    # @param [Integer]      row
+    # @param [String]       unique
+    # @param [String]       css       Characteristic CSS class/selector.
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_indicators: (ManifestItem item, ?row: Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_details
+    #
+    # @param [ManifestItem] item
+    # @param [Integer]      row
+    # @param [String]       unique
+    # @param [String]       css       Characteristic CSS class/selector.
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_details: (ManifestItem item, ?row: Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    LABEL_CLASS: String
+
+    VALUE_CLASS: String
+
+    # row_indicator
+    #
+    # @param [String,Symbol] value
+    # @param [String]        css
+    # @param [Hash]          opt
+    #
+    # @option opt [String]        :id                 Required
+    # @option opt [String,Symbol] :'data-field'       Required
+    # @option opt [String]        :'aria-labelledby'  Required
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_indicator: (String|Symbol value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_indicator_label
+    #
+    # @param [String,Symbol] label
+    # @param [String]        css
+    # @param [Hash]          opt
+    #
+    # @option opt [String]   :id      Required
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_indicator_label: (String|Symbol label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_detail_value
+    #
+    # @param [String,Symbol] value
+    # @param [String]        css
+    # @param [Hash]          opt
+    #
+    # @option opt [String]        :id                 Required
+    # @option opt [String,Symbol] :'data-field'       Required
+    # @option opt [String]        :'aria-labelledby'  Required
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_detail_value: (String|Symbol value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_detail_value_label
+    #
+    # @param [String,Symbol] label
+    # @param [String]        css
+    # @param [Hash]          opt
+    #
+    # @option opt [String]   :id      Required
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_detail_value_label: (String|Symbol label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  end
+
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+
+    # options
+    #
+    # @return [ManifestItem::Options]
+    #
+    def options: () -> ManifestItem::Options
+
+    # row_indicators
+    #
+    # @param [ManifestItem, nil] item   Default: `#object`.
+    # @param [Hash]              opt    Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_indicators: (?(ManifestItem|nil) item, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_details
+    #
+    # @param [ManifestItem, nil] item   Default: `#object`.
+    # @param [Hash]              opt    Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_details: (?(ManifestItem|nil) item, **untyped opt) -> ActiveSupport::SafeBuffer
+  end
+
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+  end
+
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
+  module SharedDefinitions
+    def self.included: (Module base) -> void
+  end
+
+end
+
+class ManifestItemDecorator
+  include SharedDefinitions
+  include SharedInstanceMethods
+  extend  SharedClassMethods
+
+  # The ID of the Manifest associated with the decorated ManifestItem.
+  #
+  # @param [String] id                Override the normal value.
+  #
+  # @return [String]
+  #
+  def manifest_id: (?(String|nil) id) -> String
+
+  @manifest_id: String
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [*]         value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to the render method or super.
+  #
+  # @return [Field::Type]
+  # @return [String]
+  # @return [nil]
+  #
+  def render_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
+
+  # Generate the interior of the controls grid cell.
+  #
+  # @param [Array]   added            Optional elements after the buttons.
+  # @param [Integer] row              Associated grid row.
+  # @param [String]  unique
+  # @param [Hash]    opt              Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Additional content if provided.
+  # @yieldreturn [Array,ActiveSupport::SafeBuffer,nil]
+  #
+  def grid_row_control_contents: (*ActiveSupport::SafeBuffer added, ?row: Integer|nil, ?unique: String|nil, **untyped opt) ?{ () -> (Array[ActiveSupport::SafeBuffer] | ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+
+  # Render a single grid item.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_item: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The CSS class for the element containing feedback elements generated by
+  # Uppy plugins.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/shared/uploader.js *MultiUploader.DISPLAY_CLASS*
+  #
+  UPLOADER_DISPLAY_CLASS: String
+
+  # Render a single label/value pair in a grid cell.
+  #
+  # @param [String, Symbol, nil] label
+  # @param [*]                   value
+  # @param [Symbol]              field
+  # @param [Hash]                prop
+  # @param [Integer, nil]        col
+  # @param [Hash]                opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_data_cell_render_pair: ((String|Symbol|nil) label, (untyped|nil) value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The edit element for a grid data cell.
+  #
+  # @param [Symbol]    field          For 'data-field' attribute.
+  # @param [*]         value
+  # @param [Hash, nil] prop           Default: from field/model.
+  # @param [Hash]      opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def grid_data_cell_edit: (Symbol field, untyped value, (symHash|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # For the :file_data column, display the path to the file if present or an
+  # upload button if not.
+  #
+  # @param [String] _name
+  # @param [*]      _value
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid_file_input: (String _name, (any|nil) _value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render item attributes.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super except:
+  #
+  # @option opt [String, Symbol, Array<String,Symbol>] :columns
+  # @option opt [String, Regexp, Array<String,Regexp>] :filter
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #model_field_values
+  #
+  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # details_container
+  #
+  # @param [Array]         added      Optional elements after the details.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt        Passed to super
+  # @param [Proc]          block      Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details_container: (*ActiveSupport::SafeBuffer added, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+
+  # Client-side scripting which are supplied via 'assets:precompile'.
+  #
+  # @param [Hash{Symbol=>Any}]
+  #
+  # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.ManifestItem*
+  #
+  def self.js_properties: () -> symHash
+end

@@ -915,7 +915,7 @@ class EntryDecorator
   # :section: BaseDecorator::Form overrides
   # ===========================================================================
 
-  protected
+  public
 
   # Screen-reader-only label for file input.  (This is to satisfy accessibility
   # checkers which don't ignore the file input which is made invisible in favor

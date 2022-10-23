@@ -1,0 +1,315 @@
+# config/locales/controllers/manifest_item.en.yml
+#
+# ManifestItemController pages
+
+en:
+
+  emma:
+
+    manifest_item:
+
+      unit:
+        brief:          'item'
+        long:           'manifest item'
+      label:            'Items'
+      title:            'Manifest Items'
+      tooltip:          'Work on a bulk operations manifest.'
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:        false
+
+      search_filters:
+
+        layout:
+          - [size, ~, ~, ~]
+
+      page_controls:
+        label:          'Actions'
+        actions:
+          - index
+          - new
+          - edit_select
+          - delete_select
+          #- admin
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      pagination:
+        page_size:      25
+        count:
+          one:          'item'
+          many:         'items'
+
+      action_links:
+
+        new:
+          action:       new
+          label:        'Create %{article} new item'
+          article:      'a'
+
+        edit:
+          action:       edit_select
+          label:        'Modify %{article} item'
+          article:      'a'
+
+        delete:
+          action:       delete_select
+          label:        'Remove %{article} item'
+          article:      'a'
+
+        back:
+          action:       index
+          label:        'View all items'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      display_fields:
+
+        id:
+          cond:
+            only:       [new, edit]
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      generic:
+        label:          'Manifest Item'
+        title:          'Manifest Item'
+        tooltip:        '(A brief description of this operation.)'
+        description:    '(A more detailed description of this operation.)'
+        directions:     '(Brief guidance for using the operation form.)'
+        notes:          '(A more detailed description of this operation.)'
+
+        submit:         &GENERIC_SUBMIT
+          label:        'Save'
+          enabled:
+            tooltip:    'Keep all changes'
+          disabled:
+            tooltip:    'No valid changes have been made yet'
+
+        cancel:         &GENERIC_CANCEL
+          label:        'Cancel'
+          enabled:
+            tooltip:    'Discard all changes'
+          disabled:
+            tooltip:    'Not able to cancel right now'
+
+        select:         &GENERIC_SELECT
+          label:        'Upload'
+          enabled:
+            tooltip:    'Include data from an external file'
+          disabled:
+            tooltip:    'Not able to choose a file right now'
+
+        warning:
+          experimental: &EXPERIMENTAL
+            directions_html: |
+               <span style="color:red">
+                 WARNING: This is an experimental feature and not intended for
+                 general use
+               </span>
+        success:        'Operation successful %{file}'
+        failure:        'Could not proceed: %{error}'
+
+      # =======================================================================
+
+      index:
+        label:          'List All'
+        title:          'Manifest: %{name}'
+        tooltip:        ~ # 'All manifest items.'
+
+        # TODO: want to see 'id' and '-user_id' if administrator/developer.
+        display_fields: # @see 'en.emma.manifest_item.record'
+          - !ruby/symbol all
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      show:
+        label:          'Manifest'
+        title:          'Bulk Operation Manifest'
+        tooltip:        'Details of this manifest.'
+
+        display_fields: # @see 'en.emma.manifest_item.record'
+          - !ruby/symbol all
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      new:              &NEW_ACTION
+        label:          'New Item'
+        title:          'New Manifest item'
+        tooltip:        'Add a new item to the manifest'
+
+        select:         &NEW_SELECT
+          <<:           *GENERIC_SELECT
+
+        success:        'Item created'
+        failure:        'Could not create item: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
+        label:          'Edit Item'
+        title:          'Modify a Manifest Item'
+        tooltip:        'Modify an existing manifest item'
+
+        select:         &NEW_SELECT
+          <<:           *GENERIC_SELECT
+
+        success:        'Changes saved'
+        failure:        'Could not save changes: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
+        label:          'Remove Item'
+        title:          'Remove a Manifest Item'
+        tooltip:        'Remove a manifest item.'
+
+        success:        'Item removed'
+        failure:        'Could not remove item: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
+
+      # =======================================================================
+
+      bulk_new:         &BULK_NEW_ACTION
+        label:          'Bulk Import'
+        title:          'Import New Manifest Items'
+        tooltip:        |
+          Add new manifest items via a CSV or JSON control file.
+        description:    |
+          Provide a *.csv or *.json data file to specify files and metadata to
+          be used to create new EMMA entries.
+          NOTE: Existing manifest entries will not be overwritten.
+        directions:     ~
+        notes:          'Some notes on bulk upload...'
+
+        submit:         &BULK_SUBMIT
+          <<:           *GENERIC_SUBMIT
+          label:        'Begin'
+          enabled:
+            tooltip:    'Submit the data file to begin uploading'
+          disabled:
+            tooltip:    'First provide a data file'
+
+        cancel:         &BULK_CANCEL
+          <<:           *GENERIC_CANCEL
+
+        select:         &BULK_SELECT
+          <<:           *GENERIC_SELECT
+
+        success:        'Added manifest items from: %{files}'
+        failure:        'Could not create items: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      bulk_create:
+        <<: *BULK_NEW_ACTION
+
+      # =======================================================================
+
+      bulk_edit:        &BULK_EDIT_ACTION
+        label:          'Bulk Update'
+        title:          'Import Manifest Modifications'
+        tooltip:        |
+          Modify existing manifest items via a CSV or JSON control file.
+        description:    |
+          Provide a *.csv or *.json data file to specify files and/or metadata
+          to be used to update existing EMMA entries.
+          NOTE: Only existing manifest entries will be changed;
+          new entries will not be created.
+        directions:     ~
+        notes:          'Some notes on bulk edit...'
+
+        submit:
+          <<: *BULK_SUBMIT
+
+        cancel:
+          <<: *BULK_CANCEL
+
+        select:
+          <<: *BULK_SELECT
+
+        success:        'Modified manifest items from: %{files}'
+        failure:        'Could not modify items: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      bulk_update:
+        <<: *BULK_EDIT_ACTION
+
+      # =======================================================================
+
+      bulk_delete:      &BULK_DELETE_ACTION
+        label:          'Bulk Delete'
+        title:          'Remove Multiple Manifest Items'
+        tooltip:        'Delete multiple manifest items by identifier.'
+        description:    |
+          Provide a comma-separated list of item numbers to specify which items
+          to delete.
+        directions:     ~
+        notes:          'Some notes on bulk delete...'
+
+        submit:
+          <<:           *BULK_SUBMIT
+          label:        'Continue'
+          enabled:
+            tooltip:    'Validate entries to be removed.'
+          disabled:
+            tooltip:    'Required information is still needed'
+
+        cancel:
+          <<:           *BULK_CANCEL
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      bulk_destroy:
+        <<: *BULK_DELETE_ACTION
+
+      # =======================================================================
+
+      upload:
+
+        #select:
+        #  <<: *GENERIC_SELECT
+        #  label:        'Select file'
+
+        _endpoint:      true

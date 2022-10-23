@@ -1,0 +1,12 @@
+<%# app/views/manifest_item/retrieval.html.erb -%>
+<%-
+  # Fall-back page for a failed ManifestItem retrieval action.
+
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+  view_debug(__FILE__)
+
+  title ||= t('emma.download.title', default: :'emma.download.label')
+  error ||= t('emma.download.error.server')
+
+-%>
+<%= render 'manifest_item/fallback', title: title, error: error %>

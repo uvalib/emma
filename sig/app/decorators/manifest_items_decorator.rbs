@@ -1,0 +1,12 @@
+# Collection presenter for "/manifest_item" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Array<ManifestItem>]
+#
+class ManifestItemsDecorator < BaseCollectionDecorator
+  # :nocov:
+  #include ManifestItemDecorator::SharedInstanceMethods
+
+  #extend ManifestItemDecorator::SharedClassMethods
+end

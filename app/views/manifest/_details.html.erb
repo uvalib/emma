@@ -1,0 +1,16 @@
+<%# app/views/manifest/_details.html.erb -%>
+<%-
+  # A listing of a Manifest record details.
+
+  view_debug(__FILE__)
+
+  item  ||= nil
+  dec   ||= item && ManifestDecorator.new(item, **context) or return
+
+  level ||= 1
+  extra ||= nil
+  skip  ||= nil
+
+-%>
+
+<%= dec.details_container(level: level, pairs: extra, skip: skip) %>

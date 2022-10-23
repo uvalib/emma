@@ -1,0 +1,32 @@
+<%# app/views/manifest_item/bulk_edit.html.erb -%>
+<%-
+  # Prompt for a manifest to control the modification of multiple rows.
+
+  view_debug(__FILE__)
+
+  list  ||= @list
+  dec     = ManifestItemsDecorator.new(list: list, **context)
+
+  help  ||= dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  logo  ||= repository_source_logo
+
+  unless modal?
+    label = "#{dec.page_meta_title} - #{title}"
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help, logo: logo) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= dec.bulk_op_form %>
+<%= dec.bulk_op_results %>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? %>

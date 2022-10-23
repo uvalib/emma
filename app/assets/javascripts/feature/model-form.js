@@ -15,8 +15,9 @@ import { LookupRequest }                    from '../shared/lookup-request'
 import { K, asSize }                        from '../shared/math'
 import { SearchInProgress }                 from '../shared/search-in-progress'
 import { asString, camelCase, singularize } from '../shared/strings'
-import { Uploader }                         from '../shared/uploader'
+import { SingleUploader }                   from '../shared/uploader'
 import { cancelAction, makeUrl }            from '../shared/url'
+import { transientError }                   from '../shared/xhr'
 import { Rails }                            from '../vendor/rails'
 import {
     isDefined,
@@ -769,11 +770,8 @@ $(document).on('turbolinks:load', function() {
     // Functions - Uploader
     // ========================================================================
 
-    // noinspection ES6ConvertVarToLetConst
-    /**
-     * @type {Uploader|undefined}
-     */
-    var uploader;
+    /** @type {SingleUploader|null} */
+    let uploader;
 
     /**
      * Indicate whether the form requires file uploading capability.
@@ -785,7 +783,7 @@ $(document).on('turbolinks:load', function() {
      * @see "BaseDecorator::Form#model_form"
      */
     function isFileUploader(form) {
-        return formElement(form).hasClass('file-uploader');
+        return formElement(form).is(SingleUploader.UPLOADER);
     }
 
     /**
@@ -793,12 +791,12 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} form
      *
-     * @returns {Uploader|undefined}
+     * @returns {SingleUploader|null}
      */
     function initializeFileUploader(form) {
-        const $form = $(form);
-        if (!uploader && isFileUploader($form)) {
-            uploader = newUploader($form);
+        if (notDefined(uploader)) {
+            const $form = $(form);
+            uploader = isFileUploader($form) ? newUploader($form) : null;
         }
         return uploader;
     }
@@ -808,7 +806,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} form
      *
-     * @returns {Uploader}
+     * @returns {SingleUploader}
      */
     function newUploader(form) {
         // noinspection JSUnusedGlobalSymbols
@@ -819,7 +817,8 @@ $(document).on('turbolinks:load', function() {
             edit:   isUpdateForm($form),
             bulk:   isBulkOpForm($form),
         };
-        const instance = new Uploader($form, MODEL, FEATURES, state, cb);
+        const instance = new SingleUploader($form, MODEL, FEATURES, state, cb);
+        // noinspection JSValidateTypes
         return instance.initialize();
 
         /**
@@ -839,7 +838,7 @@ $(document).on('turbolinks:load', function() {
          * upload endpoint URL in order to correlate the upload with the
          * appropriate workflow.
          *
-         * @param {{id: string, fileIDs: string[]}} data
+         * @param {UppyFileUploadStartData} data
          *
          * @returns {object}          URL parameters for the remote endpoint.
          */
@@ -849,7 +848,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         /**
-         * This event occurs when the response from POST /entry/endpoint is
+         * This event occurs when the response from POST /entry/upload is
          * received with a failure status (4xx).
          *
          * @param {Uppy.UppyFile}                  file
@@ -862,7 +861,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         /**
-         * This event occurs when the response from POST /entry/endpoint is
+         * This event occurs when the response from POST /entry/upload is
          * received with success status (200).  At this point, the file has
          * been uploaded by Shrine, but has not yet been validated.
          *
@@ -871,32 +870,34 @@ $(document).on('turbolinks:load', function() {
          * 'emma_data' object in addition to the fields associated with
          * 'file_data'.
          *
-         * @param {Uppy.UppyFile}         file
-         * @param {ShrineResponseMessage} response
+         * @param {Uppy.UppyFile}       file
+         * @param {UppyResponseMessage} response
          *
          * @see "Shrine::UploadEndpointExt#make_response"
          */
         function onSuccess(file, response) {
 
             const body = response.body || {};
+            let error  = undefined;
 
             // Save uploaded EMMA metadata.
             /** @type {EmmaDataOrError} */
-            let emma_data = body.emma_data || {};
+            const emma_data = { ...body.emma_data };
+            error ||= emma_data.error;
+            delete emma_data.error;
             if (isPresent(emma_data)) {
-                emma_data = compact(emma_data);
                 const $emma_data = emmaDataElement($form);
                 if (isPresent($emma_data)) {
                     $emma_data.val(asString(emma_data));
                 }
-                delete body.emma_data;
             }
+            delete body.emma_data;
 
             // Set hidden field value to the uploaded file data so that it is
             // submitted with the form as the attachment.
-            // noinspection JSValidateTypes
             /** @type {FileData} */
-            const file_data = body;
+            const file_data = body.file_data || body;
+            error ||= file_data?.error || body.error;
             if (file_data) {
                 const $file_data = fileDataElement($form);
                 if (isPresent($file_data)) {
@@ -909,11 +910,12 @@ $(document).on('turbolinks:load', function() {
                 }
             }
 
-            if (emma_data.error) {
+            if (error) {
 
                 // If there was a problem with the uploaded file (e.g. not an
                 // expected file type) it will be reported here.
-                showFlashError(emma_data.error);
+                //
+                showFlashError(error);
 
             } else {
 
@@ -1282,12 +1284,13 @@ $(document).on('turbolinks:load', function() {
      * @returns {number}              Number of entries to be shown.
      */
     function showBulkOpResults(results, data) {
+        const func     = 'showBulkOpResults';
         const $results = bulkOpResults(results);
         let entries = data || getBulkOpTrace();
         if (entries && !entries.startsWith('[')) {
             entries = `[${entries}]`;
         }
-        const list = entries && fromJSON(entries) || [];
+        const list = entries && fromJSON(entries, func) || [];
         $.each(list, function(row, record) {
             makeBulkOpResult(record, (row + 1)).appendTo($results);
         });
@@ -2125,6 +2128,7 @@ $(document).on('turbolinks:load', function() {
             const old_req = $other_input.attr('data-required')?.toString();
             if (old_req !== new_req?.toString()) {
                 $other_input.attr('data-required', new_req);
+                $other_input.attr('aria-required', new_req);
                 changed = true;
             }
             if (isDefined(new_val) && ($other_input.val() !== new_val)) {
@@ -2213,6 +2217,15 @@ $(document).on('turbolinks:load', function() {
                     setIcon($status, icon);
                 } else {
                     restoreIcon($status);
+                }
+
+                // Update ARIA attributes on the input field.
+                if (required) {
+                    $input.attr('aria-required', required);
+                    $input.attr('aria-invalid',  invalid);
+                } else if ($input.attr('aria-required')) {
+                    $input.attr('aria-required', false);
+                    $input.removeAttr('aria-invalid');
                 }
 
                 // Update CSS status classes on all parts of the field.
@@ -3764,13 +3777,12 @@ $(document).on('turbolinks:load', function() {
         const $form   = formElement($button);
         if (!formState($form)) {
             setFormCanceled($form);
-            let cancel_path = $button.attr('data-path');
             if (PROPERTIES.Path.cancel) {
+                const path   = $button.attr('data-path');
                 const fields = isUpdateForm($form) && revertEditData($form);
-                cancelCurrent($form, cancel_path, fields);
+                cancelCurrent($form, path, fields);
             } else {
-                cancel_path ||= $button.attr('href') || 'back';
-                cancelAction(cancel_path);
+                cancelAction($button);
             }
         }
     }
@@ -4383,7 +4395,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      *
      * @see "BaseDecorator::Form#model_form"
-     * @see Uploader.buttonTray
+     * @see SingleUploader.fileInputTarget
      */
     function buttonTray(form) {
         const MATCH = BUTTON_TRAY;
@@ -4743,7 +4755,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {ElementProperties|null}
      *
-     * @see Uploader.selectProperties
+     * @see SingleUploader._selectProperties
      */
     function selectProperties(form, op_name, can_perform, asset) {
         const func  = 'selectProperties';
@@ -4768,7 +4780,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {EndpointProperties}
      *
-     * @see Uploader._endpointProperties
+     * @see SingleUploader._endpointProperties
      */
     function endpointProperties(form) {
         const $form  = formElement(form);
@@ -4818,24 +4830,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Functions - other
     // ========================================================================
-
-    /**
-     * Indicate whether the HTTP status code should be treated as a temporary
-     * condition.
-     *
-     * @param {number} code
-     *
-     * @returns {boolean}
-     */
-    function transientError(code) {
-        switch (code) {
-            case HTTP.service_unavailable:
-            case HTTP.gateway_timeout:
-                return true;
-            default:
-                return false;
-        }
-    }
 
     /**
      * Indicate whether console debugging is active.

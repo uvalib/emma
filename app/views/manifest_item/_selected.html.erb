@@ -1,0 +1,51 @@
+<%# app/views/manifest_item/_selected.html.erb -%>
+<%-
+  # Display the selected item in an expandable panel.
+
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+  view_debug(__FILE__)
+
+  item   ||= nil
+  dec    ||= ManifestItemDecorator.new(item, **context)
+  item   ||= dec&.object or return
+
+  level  ||= 2
+  row    ||= 0
+  skip   ||= nil
+
+  skip     = [*skip, :thumbnail, :number]
+  panel_id = panel_css = toggle = nil
+  if item.is_a?(ManifestItem)
+    heading   = "Selected item #{item.id} record details:" # TODO: I18n
+    panel_css = 'selected-details'
+    panel_id  = css_randomize(panel_css)
+    toggle    = toggle_button(id: panel_id)
+    panel_css = "#{panel_css} row-#{row}"
+  elsif !dec.options[:force]
+    name      = html_span(item, class: 'item')
+    heading   = "Item #{name} is not in the database".html_safe # TODO: I18n
+  elsif item.include?('-')
+    name      = html_span(item, class: 'item')
+    heading   = "Removing index entry #{name}".html_safe # TODO: I18n
+  else
+    repo    ||= EmmaRepository.default
+    name      = html_span("#{repo}-#{item}-*", class: 'item')
+    heading   = "No index entries match #{name}".html_safe # TODO: I18n
+  end
+
+-%>
+
+<div class="selected-item">
+
+  <div class="toggle-panel-title">
+    <h2 class="selected-header"><%= heading -%></h2>
+    <%= toggle %>
+  </div>
+
+  <%- if toggle -%>
+    <div id="<%= panel_id -%>" class="<%= panel_css -%>">
+      <%= dec.list_row(row: (row + 1), level: level, skip: skip) %>
+    </div>
+  <%- end -%>
+
+</div>

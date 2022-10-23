@@ -1,0 +1,37 @@
+<%# app/views/manifest_item/show.html.erb -%>
+<%-
+  # Show details of a ManifestItem.
+
+  view_debug(__FILE__)
+
+  item  ||= @item
+  image ||= nil
+  dec     = ManifestItemDecorator.new(item, cover: image, **context)
+  item  ||= dec.object
+
+  host  ||= @host
+
+  help  ||= nil # dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title, name: item.filename)
+  title   = "#{host} - #{title}" if host.present?
+
+  unless modal?
+    label = "#{dec.page_meta_title} - #{title}"
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+  opt = { dec: dec }
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= dec.preview %>
+<%= render 'manifest_item/details', opt %>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? || cannot?(:edit, ManifestItem) %>

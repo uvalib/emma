@@ -19,44 +19,51 @@ module Emma::Csv
 
   public
 
-  # Generate data from a CSV file.
+  # Default CSV options used by #csv_parse.
   #
-  # @param [String, IO, StringIO, IO::Like] src
+  # @type [Hash{Symbol=>*}]
+  #
+  # @see CSV#DEFAULT_OPTIONS
+  #
+  CSV_DEFAULTS = {
+    converters:        :all,
+    empty_value:       nil,
+    header_converters: :symbol,
+    headers:           true,
+    strip:             true,
+    skip_blanks:       true,
+  }.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Generate data from CSV input.
+  #
+  # @param [String, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] utf8
   # @param [Hash]    opt
   #
   # @return [Array<Hash>]
   # @return [nil]                     Only if *no_raise* is *true*.
   #
-  #--
-  # == Variations
-  #++
-  #
-  # @overload csv_parse(path, no_raise:, **opt)
-  #   @param [String]                 path      Local file path.
-  #   @param [Boolean]                no_raise
-  #   @param [Hash]                   opt       Passed to CSV#foreach.
-  #
-  # @overload csv_parse(io, no_raise:, **opt)
-  #   @param [IO, StringIO, IO::Like] io        IO-like object.
-  #   @param [Boolean]                no_raise
-  #   @param [Hash]                   opt       Passed to CSV#parse.
+  # == Usage Notes
+  # The argument is expected to either be the literal data or an object like an
+  # IO or StringIO through which the data can be acquired.  To parse the
+  # content located at a URI (web page or local file path) read the contents
+  # first or pass in an open file handle.
   #
   # == Implementation Notes
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
-  # encoding.
+  # encoding.  NOTE: This might not be necessary any longer though.
   #
-  def csv_parse(src, no_raise: true, **opt)
-    opt.reverse_merge!(headers: true)
-    src = src.body   if src.respond_to?(:body)
-    src = src.string if src.respond_to?(:string)
-    if src.is_a?(String)
-      CSV.foreach(src, **opt).to_a.map(&:to_h) if src.present?
-    else
-      src = src.to_io if src.respond_to?(:to_io)
-      CSV.parse(src, **opt).each.map do |row|
-        row.to_h.transform_values { |col| force_utf8(col) }
-      end
+  def csv_parse(arg, no_raise: true, utf8: true, **opt)
+    return if arg.nil? || arg.is_a?(Puma::NullIO)
+    CSV.parse(arg, **CSV_DEFAULTS, **opt).map(&:to_h).tap do |rows|
+      rows.each { |row| row.transform_values! { |v| force_utf8(v) } } if utf8
     end
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" }

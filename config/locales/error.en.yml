@@ -161,3 +161,9 @@ en:
         # @see UploadConcern
 
         <<: *ENTRY
+
+      manifest:
+        <<: *MODEL
+
+      manifest_item:
+        <<: *MODEL

@@ -1,0 +1,147 @@
+# Manage bulk operation manifests
+#
+# @see ManifestDecorator
+# @see ManifestsDecorator
+# @see file:app/views/manifest/**
+#
+class ManifestController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include OptionsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include SerializationConcern
+
+  include ManifestConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  #include ActionController::RespondWith
+
+  #extend  CanCan::ControllerAdditions::ClassMethods
+
+  # Results for :index.
+  #
+  # @return [Array<Manifest>]
+  # @return [Array<String>]
+  # @return [nil]
+  #
+  attr_reader list: Array[Manifest] | strArray | nil
+
+  # Single item.
+  #
+  # @return [Manifest, nil]
+  #
+  attr_reader item: Manifest | nil
+
+  # == GET /manifest
+  #
+  # @see #manifest_index_path         Route helper
+  #
+  def index: () -> nil
+
+  # == GET /manifest/show/:id
+  #
+  # @see #show_manifest_path          Route helper
+  #
+  def show: () -> void
+
+  # == GET /manifest/new
+  #
+  # @see #new_manifest_path           Route helper
+  #
+  def new: () -> void
+
+  # == POST  /manifest/create
+  # == PUT   /manifest/create
+  # == PATCH /manifest/create
+  #
+  # @see #create_manifest_path        Route helper
+  #
+  def create: () -> void
+
+  # == GET /manifest/edit/:id
+  # == GET /manifest/edit/SELECT
+  # == GET /manifest/edit_select
+  #
+  # @see #edit_manifest_path          Route helper
+  # @see #edit_select_manifest_path   Route helper
+  #
+  def edit: () -> void
+
+  # == POST  /manifest/update/:id
+  # == PUT   /manifest/update/:id
+  # == PATCH /manifest/update/:id
+  #
+  # @see #update_manifest_path        Route helper
+  #
+  def update: () -> void
+
+  # == GET /manifest/delete/:id
+  # == GET /manifest/delete_select
+  #
+  # @see #delete_manifest_path        Route helper
+  # @see #delete_select_manifest_path Route helper
+  #
+  def delete: () -> void
+
+  # == DELETE /manifest/destroy/:id
+  #
+  # @see #destroy_manifest_path       Route helper
+  #
+  def destroy: () -> void
+
+  # == POST  /manifest/save/:id
+  # == PUT   /manifest/save/:id
+  # == PATCH /manifest/save/:id
+  #
+  # @see #save_manifest_path          Route helper
+  #
+  def save: () -> void
+
+  # == POST  /manifest/cancel/:id
+  # == PUT   /manifest/cancel/:id
+  # == PATCH /manifest/cancel/:id
+  #
+  # @see #cancel_manifest_path        Route helper
+  #
+  def cancel: () -> void
+
+  # Indicate whether URL parameters require that a menu should be shown rather
+  # than operating on an explicit set of identifiers.
+  #
+  # @param [Array<String,Integer>] id_params  Default: `@identifier`.
+  #
+  def show_menu?: (?(Array[(String|Integer)]|nil) id_params) -> bool
+
+  # Display the failure on the screen -- immediately if modal, or after a
+  # redirect otherwise.
+  #
+  # @param [Exception] error
+  # @param [String]    fallback   Redirect fallback (def.: #entry_index_path).
+  # @param [Symbol]    meth       Calling method.
+  #
+  # @return [void]
+  #
+  def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
+
+  # A table of the Manifest's items.
+  #
+  # @param [Manifest, nil]       item
+  # @param [Symbol, String, nil] wrap
+  # @param [Hash]                opt            Passed to Manifest#items_hash.
+  #
+  # @return [Hash{Symbol=>Hash{Integer=>Hash}}]
+  # @return [Hash{Integer=>Hash}]               If *wrap* is *nil*.
+  #
+  def save_response: (?(Manifest|nil) item, ?wrap: Symbol|String, **untyped opt) -> Hash[Symbol, Hash[Integer,symHash]]
+                   | (?(Manifest|nil) item,  wrap: nil,           **untyped opt) -> Hash[Integer,symHash]
+end

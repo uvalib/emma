@@ -1,0 +1,66 @@
+<%# app/views/manifest/index.html.erb -%>
+<%-
+  # A list of manifests by the current user.
+
+  view_debug(__FILE__)
+
+  list  ||= paginator.page_items
+  dec     = ManifestsDecorator.new(list, **context)
+  list  ||= dec.object
+
+  help  ||= dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  row   ||= 1
+
+  search  = search_terms
+  query   = search.except(:group, *Manifest::NON_SEARCH_PARAMS).presence
+
+  unless modal?
+    page  = paginator.page_number
+    terms = (page > 1) ? query&.merge(page: page) : query
+    terms = list_search_terms(terms)          if terms
+    group = search[:group]&.values&.first
+    group = Manifest.state_group_label(group) if group
+    label = dec.page_meta_title
+    set_page_meta_title(label)
+    append_page_meta_title('-', group)        if group
+    append_page_meta_title('-', terms)        if terms
+    set_page_description(title)
+  end
+
+  opt = { row: row }
+
+  top_controls, bottom_controls = dec.index_controls(**opt)
+  opt[:row] += 1        if top_controls
+  bottom_controls = nil if list.blank?
+
+  opt.merge!(dec: dec, skip: :title)
+
+-%>
+
+<%= page_heading(title, help: help) %>
+
+<%- if list.blank? -%>
+
+  <div class="<%= dec.list_css_class -%>">
+    <%= dec.no_items %>
+  </div>
+
+<%- else -%>
+
+  <%= dec.list_filter_options if session_debug? %>
+  <%= page_description_section %>
+  <%# dec.state_group_select %>
+
+  <div class="<%= dec.list_css_class -%>">
+    <%= top_controls %>
+    <%= render 'manifest/list', opt %>
+    <%= bottom_controls %>
+  </div>
+
+<%- end -%>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? %>

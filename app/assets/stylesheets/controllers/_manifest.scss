@@ -1,0 +1,303 @@
+// app/assets/stylesheets/controllers/_manifest.scss
+//
+// Bulk operation manifests
+
+@use 'shared/mixins'           as *;
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/popup'   as popup;
+@use 'shared/feature/model'    as model;
+
+@use 'controllers/entry';
+
+//=============================================================================
+// Manifest index page
+//=============================================================================
+
+.manifest-list-item {
+
+    @extend .entry-list-item;
+
+    $max-columns: 20; // from .model-list-item-panel
+
+    @media #{$wide-screen} {
+        $name-width:   minmax(auto,1fr);
+        $name-columns: 1;
+        @for $n from 2 through $max-columns {
+            $data-columns: $n - $name-columns;
+            &.columns-#{$n} {
+                grid-template-columns:
+                    [name] repeat($name-columns, $name-width)
+                    [data] repeat($data-columns, 1fr);
+            }
+        }
+    }
+
+    .value.field-Name {
+        font-weight: bold;
+    }
+}
+
+// Zero or more .manifest-list-item elements.
+.manifest-list {
+
+    @extend .entry-list;
+
+    //=========================================================================
+    // Components - only if there are no Manifests displayed
+    //=========================================================================
+
+    .start-button {
+        @include button.basic;
+    }
+
+    // Element displayed when the user has no manifests to list.
+    .no-items {
+
+        max-width:   100%;
+        font-weight: bold;
+
+        .start-button {
+            display:     inline-block;
+            padding:     2px 4px;
+            font-weight: normal;
+        }
+    }
+}
+
+//=============================================================================
+// Manifest show page
+//=============================================================================
+
+.manifest-details {
+    @extend .entry-details;
+}
+
+// Container for a .manifest-details.
+.manifest-container {
+    @extend .entry-container;
+}
+
+//=============================================================================
+// Manifest new/edit pages
+//=============================================================================
+
+$popup-width: 75vw;
+
+body.manifest.new,
+body.manifest.edit {
+
+    .layout-content {
+        margin-right: 1.5rem;
+    }
+
+    // @see ManifestDecorator#manifest_page_heading
+    .heading-bar {
+
+        margin:      $page-padding 0;
+        gap:         1rem;
+        align-items: center;
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .heading {
+
+            margin: 0;
+            gap:    1rem;
+
+            .text.label {
+                word-break: keep-all;
+            }
+
+            .text.name {
+                &::before, &::after {
+                    content:     '"';
+                    font-weight: normal;
+                }
+            }
+        }
+
+        .mini-form {
+
+            display:               inline-grid;
+            grid-template-columns: 1fr min-content min-content;
+            gap:                   0.75rem;
+            font-size:             $h1-font-size;
+            background:            ghostwhite;
+            box-shadow:            0 0 0 0.75rem ghostwhite;
+            border-radius:         1px;
+
+            // Title input
+            input[type="text"] {
+                font-size: smaller;
+            }
+
+            .update,
+            .cancel {
+
+                @include button.basic;
+
+                height:     min-content;
+                margin:     auto 0;
+                font-size:  large;
+                background: white;
+            }
+        }
+
+        .title-edit {
+
+            @include button.basic;
+
+            height:        min-content;
+            margin:        auto 0;
+            padding:       1px 4px;
+            font-size:     medium;
+            border-radius: 6px;
+        }
+
+        .help-popup {}
+
+        //=====================================================================
+        // Variations
+        //=====================================================================
+
+        &:not(.editing) {
+
+            grid-template-columns:
+                [heading]    minmax(auto, max-content)
+                [title-edit] min-content
+                [help-popup] min-content;
+
+            .mini-form {
+                @include hidden;
+            }
+        }
+
+        &.editing {
+
+            grid-template-columns:
+                [heading]    auto
+                [mini-form]  1fr
+                [help-popup] min-content;
+
+            .text.name,
+            .title-edit {
+                @include hidden;
+            }
+        }
+    }
+
+    .button-tray {
+
+        display:        flex;
+        flex-direction: row;
+        gap:            1vw;
+
+        > .submit-button,
+        > .cancel-button,
+        > .import-button,
+        > .export-button {
+
+            @include button.control;
+
+            min-width: 5vw;
+
+            &.offline {
+                @include forbidden($force: true);
+            }
+        }
+
+        > .import-button {
+
+            display:        flex;
+            flex-direction: row;
+            align-items:    center;
+            position:       relative;
+            padding-left:   0;
+            padding-right:  0;
+            overflow:       clip;
+
+            // The actual input positioned so that the transparent file chooser
+            // button fills the available area of the button.
+            input[type="file"] {
+                position:    absolute;
+                z-index:     1;
+                border:      2rem solid;
+                cursor:      inherit;
+                opacity:     0;
+            }
+
+            label {
+                text-align:  center;
+                flex:        1 1 100%;
+                cursor:      inherit;
+            }
+        }
+
+        > .comm-status {
+
+            display:     block;
+            margin:      auto 1rem;
+            font-weight: bold;
+            font-size:   larger;
+            color:       $uva-emergency-red;
+
+            $statuses: offline, dynamic; // ManifestDecorator::STATUS_MESSAGE
+
+            @each $status in $statuses {
+                &.#{$status} {
+                    display: block;
+                    > *:not(.#{$status}) {
+                        display: none;
+                    }
+                }
+            }
+
+            & {
+                display: none;
+            }
+        }
+    }
+
+    .manifest-grid-container {
+
+        min-height: 50vh;
+
+        .pagination-top {
+
+            margin-bottom: model.$list-item-gap-y;
+            align-items:   baseline;
+            flex-wrap:     nowrap;
+
+            .button-tray {
+                flex:           1 1 100%;
+            }
+
+            .counts {
+
+                flex-direction: row-reverse;
+                gap:            1rem;
+                margin-left:    0;
+                margin-right:   1.5rem;
+                flex:           1 0 auto;
+
+                .search-count {
+                    margin: auto 0;
+                }
+            }
+        }
+    }
+
+    // NOTE: This variant may go away...
+    .uploader-feedback.floating {
+
+        @include popup.center-float-vertical($popup-width);
+
+        &:not(.visible) {
+            @include invisible;
+            z-index: $z-hidden;
+        }
+    }
+}

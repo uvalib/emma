@@ -1,0 +1,34 @@
+<%# app/views/manifest_item/new.html.erb -%>
+<%-
+  # Prompt to create a new ManifestItem.
+
+  view_debug(__FILE__)
+
+  item  ||= @item
+  dec     = ManifestItemDecorator.new(item, **context)
+  item  ||= dec.object
+
+  help  ||= dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  repo  ||= item.repository
+  logo  ||= repository_source_logo(repo)
+
+  unless modal?
+    label = dec.page_meta_title
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help, logo: logo) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= dec.preview %>
+<%= dec.model_form %>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? %>

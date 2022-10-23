@@ -1,0 +1,65 @@
+# Controller support methods importing files via the HTTP request.
+#
+module ImportConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Emma::Csv
+
+  include Emma::Json
+
+  # Remote or locally-provided data.
+  #
+  # @param [String,ActionDispatch::Http::UploadedFile]        src   URI/path.
+  # @param [String,ActionDispatch::Request,Faraday::Response] data  Raw data.
+  # @param [Symbol]                                           type  Media type.
+  #
+  # @raise [RuntimeError]             If both *src* and *data* are present.
+  #
+  # @return [Array<Hash{Symbol=>*}>]
+  # @return [nil]                     If both *src* and *data* are missing.
+  #
+  # == Usage Notes
+  # If the source is in the request body and not given by either `params[:src]`
+  # or `params[:data]` then `params[:type]` must be present to indicate the
+  # media type of the source being supplied via `request.body` (or `req.body`).
+  #
+  def fetch_data: ( src: String|ActionDispatch::Http::UploadedFile, ?data: nil,                                              ?type: Symbol|nil, **untyped _ignored) -> (Array[symHash] | nil)
+                | (?src: nil,                                        data: String|ActionDispatch::Request|Faraday::Response, ?type: Symbol|nil, **untyped _ignored) -> (Array[symHash] | nil)
+
+  # Interpret data as JSON.
+  #
+  # @param [String, IO, StringIO, IO::Like] data
+  #
+  # @return [Array<Hash{Symbol=>*}>]
+  # @return [nil]
+  #
+  def from_json: (String|IO|StringIO|IO::Like data) -> (Array[symHash] | nil)
+
+  # Interpret data as CSV.
+  #
+  # @param [String, IO, StringIO, IO::Like] data
+  #
+  # @return [Array<Hash{Symbol=>*}>]
+  # @return [nil]
+  #
+  def from_csv: (String|IO|StringIO|IO::Like data) -> (Array[symHash] | nil)
+
+  # Get data and source name in a usable form.
+  #
+  # @param [*] src
+  #
+  # @return [Array<(IO, String)>]
+  # @return [Array<(String, String)>]
+  # @return [Array<(String, nil)>]
+  # @return [Array<(nil, nil)>]
+  #
+  def extract_from: (ActionDispatch::Http::UploadedFile src)        ->  [IO,         String]
+                  | (ActionDispatch::Request|Faraday::Response src) ->  [String|nil, nil]
+                  | (String                                    src) -> ([String|nil, String] | [IO, String])
+
+  private
+
+  THIS_MODULE: Module
+end

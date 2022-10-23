@@ -1,0 +1,40 @@
+<%# app/views/manifest_item/check.html.erb -%>
+<%-
+  # Display result of checking for updated ManifestItem submission status.
+
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+  view_debug(__FILE__)
+
+  # @type [Array<String>]
+  list  ||= @list
+
+  help  ||= nil # %i[manifest_item check]
+  # noinspection RailsI18nInspection
+  title ||= t('emma.manifest_item.check.title')
+
+  error ||= 'Invalid identifier' # TODO: I18n
+
+  unless modal?
+    set_page_meta_title(title)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%- if list.blank? -%>
+
+  <p><%= error -%></p>
+
+<%- else -%>
+
+  <%= page_directions_section %>
+  <%- list.each do |item| -%>
+    <p><%= item -%></p>
+  <%- end -%>
+
+<%- end -%>
+
+<%= page_notes_section %>

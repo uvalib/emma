@@ -90,10 +90,7 @@ module LayoutHelper::Main
   #   @return [ActiveSupport::SafeBuffer]
   #
   def page_heading(title, *controls, help: nil, logo: nil, **)
-    unless help.blank? || help.html_safe?
-      help = Array.wrap(help).first(2).presence
-      help &&= help_popup(*help)
-    end
+    help  &&= page_heading_help(help)      unless help.html_safe?
     logo  &&= repository_source_logo(logo) unless logo.html_safe?
 
     added   = (yield if block_given?)
@@ -106,6 +103,19 @@ module LayoutHelper::Main
     heading = html_div(class: 'heading container') { heading << logo } if logo
     heading = html_div(heading, *added, class: 'heading-bar')          if added
     heading
+  end
+
+  # page_heading_help
+  #
+  # @param [ActiveSupport::SafeBuffer, Array<Symbol>, Symbol, nil] help
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def page_heading_help(help)
+    # noinspection RubyMismatchedReturnType
+    return help if help.html_safe?
+    topic = Array.wrap(help).first(2).compact
+    help_popup(*topic) if topic.present?
   end
 
 end

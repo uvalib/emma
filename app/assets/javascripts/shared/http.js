@@ -12,6 +12,7 @@
  * @type {Object.<string,number>}
  */
 export const HTTP = Object.freeze({
+    failed:                 0,   // no response (xhr.status === 0)
     ok:                     200,
     created:                201,
     accepted:               202,

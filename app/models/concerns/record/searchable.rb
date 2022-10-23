@@ -27,7 +27,26 @@ module Record::Searchable
 
   public
 
-  STATE_COLUMN = Record::Steppable::STATE_COLUMN
+  # Name of the column on which pagination is based.
+  #
+  # @return [Symbol]
+  #
+  # == Implementation Notes
+  # This has to be a column with unique values for every record which can be
+  # ordered (that is, #minimum_id and #maximum_id have to be non-nil).
+  #
+  def pagination_column(*)
+    :id
+  end
+
+  # The database column currently associated with the workflow state of the
+  # record.
+  #
+  # @return [Symbol, nil]
+  #
+  def state_column(*)
+    Log.debug "#{__method__}: not defined for #{self.class}"
+  end
 
   # ===========================================================================
   # :section:
@@ -71,8 +90,8 @@ module Record::Searchable
   #   :first    If the given :page is the first page of the record set.
   #   :last     If the given :page is the last page of the record set.
   #   :total    Count of all matching records.
-  #   :min_id   The :id of the first matching record.
-  #   :max_id   The :id of the last matching record.
+  #   :min_id   The #pagination_column value of the first matching record.
+  #   :max_id   The #pagination_column value of the last matching record.
   #   :groups   Table of counts for each state group.
   #   :pages    An array of arrays where each element has the IDs for that page
   #   :list     An array of matching Entry records.
@@ -146,8 +165,7 @@ module Record::Searchable
     return result.merge!(groups: group_by_state(all)) if prop[:groups] == :only
 
     # Group record IDs into pages.
-    # noinspection RailsParamDefResolve
-    all_ids = all.pluck(:id)
+    all_ids = all.pluck(pagination_column)
     limit   = positive(prop[:limit])
     pg_size = limit || 10 # TODO: fall-back page size for grouping
     pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
@@ -181,7 +199,7 @@ module Record::Searchable
     result[:groups] = group_by_state(all) if prop[:groups]
 
     # Finally, get the specific set of results.
-    opt.merge!(limit: limit, offset: offset)
+    opt.merge!(limit: limit, offset: offset, sort: pagination_column)
     result[:list] = get_relation(*identifiers, **opt).records
 
     result
@@ -235,26 +253,29 @@ module Record::Searchable
     # the default sort order ascending; :desc as shorthand for the default sort
     # order descending.
     if (sort = opt.key?(:sort) ? opt.delete(:sort) : (ids || sids).blank?)
-      sort_col = implicit_order_column || :id
-      if sort.is_a?(TrueClass)
-        sort = sort_col
-      elsif %W(ASC DESC).include?((dir = sort.to_s.upcase))
-        sort = "#{sort_col} #{dir}"
+      dir = sort.to_s.upcase
+      col = nil
+      unless %W(ASC DESC).include?(dir)
+        dir = nil
+        col = sort unless sort.is_a?(TrueClass)
       end
+      col ||= implicit_order_column || pagination_column
+      sort = "#{col} #{dir}".squish
     end
 
-    if (user_opt = opt.extract!(:user, :user_id)).present?
+    user_opt = opt.extract!(:user, :user_id)
+    if user_column && user_opt.present?
       users = user_opt.values.flatten.map { |u| User.id_value(u) }.uniq
       users = users.first if users.size == 1
-      terms << sql_terms(user_id: users, join: :or)
+      terms << sql_terms(user_column => users, join: :or)
     end
 
-    state_opt = opt.extract!(STATE_COLUMN)
+    state_opt = state_column && opt.extract!(state_column)
     terms << sql_terms(state_opt, join: :or) if state_opt.present?
 
     limit  = positive(opt.delete(:limit))
     offset = positive(opt.delete(:offset))
-    terms << "id > #{offset}" if offset
+    terms << "#{pagination_column} > #{offset}" if offset
 
     query  = sql_terms(opt, *terms, join: :and)
     where(query).tap do |result|
@@ -274,9 +295,12 @@ module Record::Searchable
   # @param [ActiveRecord::Relation] relation
   # @param [Symbol]                 column
   #
+  # @raise [RuntimeError] If the current model does not have a :state_column.
+  #
   # @return [Hash{Symbol=>Integer}]
   #
-  def group_by_state(relation, column = STATE_COLUMN)                           # NOTE: from Upload::LookupMethods
+  def group_by_state(relation, column = state_column)                           # NOTE: from Upload::LookupMethods
+    raise "no :state_column for #{self.class}" unless column
     group_count = {}
     relation.group(column).count.each_pair do |state, count|
       group = Record::Steppable.state_group(state)

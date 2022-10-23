@@ -44,7 +44,7 @@ module Record::Validatable
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def entry_fields                                                              # NOTE: from Upload
+  def database_fields                                                           # NOTE: from Upload
     Model.database_fields(:entry)
   end
 
@@ -59,16 +59,16 @@ module Record::Validatable
   #
   def emma_data_valid?                                                          # NOTE: from Upload
     if emma_data.blank?
-      errors.add(:emma_data, :missing)
+      error(:emma_data, :missing)
     else
-      check_required(entry_fields[:emma_data], emma_metadata)
+      check_required(database_fields[:emma_data], emma_metadata)
     end
     errors.empty?
   end
 
   # Compare the source fields against configured requirements.
   #
-  # @param [Hash, nil]        required_fields   Default: `#entry_fields`
+  # @param [Hash, nil]        required_fields   Default: `#database_fields`
   # @param [Entry, Hash, nil] source            Default: self.
   #
   # @return [void]
@@ -91,36 +91,41 @@ module Record::Validatable
   #   @param [Entry, Hash] source
   #
   def check_required(required_fields = nil, source = nil)                       # NOTE: from Upload
-    source  ||= self
-    (required_fields || entry_fields).each_pair do |field, entry|
-      value = source[field]
-      if entry.is_a?(Hash)
-        if !value.is_a?(Hash)
-          error(field, :invalid, 'expecting Hash')
-        elsif value.blank?
-          error(field, :missing)
+    source ||= self
+    (required_fields || database_fields).each_pair do |field, config|
+      value      = source[field]
+      min, max   = config.values_at(:min, :max).map(&:to_i)
+      nested_cfg = config.except(:cond).select { |_, v| v.is_a?(Hash) }
+      if nested_cfg.present?
+        value ||= {}
+        if value.is_a?(Hash)
+          check_required(nested_cfg, value)
         else
-          check_required(value, entry)
+          error(field, :invalid, "expecting Hash; got #{value.class}")
         end
-      elsif entry[:max] == 0
-        # TODO: Should this indicate that the field is *forbidden* instead?
-        next
-      else
-        min = entry[:min].to_i
-        max = entry[:max].to_i
-        if value.is_a?(Array)
-          if value.size < min
-            error(field, :too_few, "at least #{min} is required")
-          elsif (0 < max) && (max < value.size)
-            error(field, :too_many, "no more than #{max} is expected")
-          end
-        else
-          if max != 1
-            error(field, :invalid, 'expecting Array')
-          elsif !min.zero?
-            error(field, :missing)
-          end
+
+      elsif config[:required] && value.blank?
+        error(field, :missing, 'required field')
+
+      elsif config[:max] == 0
+        error(field, :invalid, 'max == 0') if value.present?
+
+      elsif config[:type].to_s.include?('json')
+        unless value.nil? || value.is_a?(Hash)
+          error(field, :invalid, "expecting Hash; got #{value.class}")
         end
+
+      elsif value.is_a?(Array)
+        too_few  = min.positive? && (value.size < min)
+        too_many = max.positive? && (value.size > max)
+        error(field, :too_few,  "at least #{min} is required")    if too_few
+        error(field, :too_many, "no more than #{max} is allowed") if too_many
+
+      elsif value.blank?
+        error(field, :missing)                    unless min.zero?
+
+      elsif database_columns[field]&.array
+        error(field, :invalid, 'expecting Array') unless max == 1
       end
     end
   end

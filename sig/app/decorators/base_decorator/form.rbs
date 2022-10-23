@@ -251,7 +251,10 @@ module BaseDecorator::Form
   #
   def form_input_related_opt: (?css: String|nil, **untyped opt) -> symHash
 
-  # @private
+  # Default action for #model_form if #context[:action] is not present.
+  #
+  # @type [Symbol]
+  #
   DEFAULT_FORM_ACTION: Symbol
 
   # The CSS class which indicates that the element or its descendent(s) involve
@@ -287,6 +290,43 @@ module BaseDecorator::Form
   # @see file:app/assets/javascripts/feature/model-form.js *isFileUploader()*
   #
   def model_form: (?label: String|nil, ?action: String|Symbol|nil, ?cancel: String|nil, ?uploader: bool|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Label for mini-form update button. # TODO: I18n
+  #
+  # @type [String]
+  #
+  UPDATE_LABEL: String
+
+  UPDATE_CSS: String
+
+  # Label for mini-form cancel button. # TODO: I18n
+  #
+  # @type [String]
+  #
+  CANCEL_LABEL: String
+
+  CANCEL_CSS: String
+
+  # Generate a form for inline use.
+  #
+  # @param [Hash, nil]      pairs     Fields/values; default #model_form_fields
+  # @param [String, Symbol] action    Either :new or :edit.
+  # @param [String]         css       Characteristic CSS class/selector.
+  # @param [Hash]           opt       Passed to #form_with.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def model_mini_form: (?pairs: symHash|nil, ?action: String|Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Modify a form options hash based on form action.
+  #
+  # @param [Hash, nil]      opt       The hash to modify (or create)
+  # @param [String, Symbol] action    Either :new or :edit.
+  # @param [Hash]           other     Values to add to the hash.
+  #
+  # @return [Hash]                    The modified (or created) hash.
+  #
+  def model_form_options!: (?(symHash|nil) opt, ?action: String|Symbol|nil, **untyped opt) -> symHash
 
   # @private
   FORM_BUTTON_OPTIONS: symArray
@@ -374,32 +414,61 @@ module BaseDecorator::Form
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def form_buttons: (?label: String|nil, ?cancel: String|nil, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> (untyped|anyArray) } -> Array[ActiveSupport::SafeBuffer]
+  def form_buttons: (?label: String|nil, ?cancel: String|nil, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> Array[ActiveSupport::SafeBuffer] } -> Array[ActiveSupport::SafeBuffer]
 
   # Form submit button.
   #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/model-form.js    *submitButton()*
+  # @see file:app/assets/stylesheets/feature/_model_form.scss ".submit-button"
+  #
+  def submit_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Form cancel button.
+  #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @option opt [String] :url         Passed to #make_link
+  # @option opt [String] :'data-path' Passed to #html_button (supersedes :url)
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/model-form.js    *cancelButton()*
+  # @see file:app/assets/stylesheets/feature/_model_form.scss ".cancel-button"
+  #
+  def cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generic form button.
+  #
+  # @param [Symbol]              type     The button configuration name.
   # @param [String, Symbol, nil] action
+  # @param [Symbol]              state    Start state (:enabled/:disabled).
   # @param [String, nil]         label    Override button label.
-  # @param [Hash] opt                     Passed to #submit_tag.
+  # @param [String, Hash, nil]   url      Invokes #make_link if present.
+  # @param [String]              css      Default: ".#(type)-button"
+  # @param [Hash]                opt      Passed to #submit_tag.
+  #
+  # @option opt [Symbol] :type            Input type (default *type*).
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/model-form.js *submitButton()*
   #
-  def submit_button: (?action: String|Symbol|nil, ?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_button: (Symbol `type`, ?action: String|Symbol|nil, ?state: Symbol|nil, ?label: String|nil, ?url: anyHash|String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Form cancel button.
+  # file_input_button
   #
-  # @param [String, Symbol, nil] action
-  # @param [String, nil]         label    Override button label.
-  # @param [String, Hash, nil]   url      Default: `#back_path`.
-  # @param [Hash]                opt      To #html_button/LinkHelper#make_link
+  # @param [String] label
+  # @param [String] id          For input field
+  # @param [String] type        Input field type
+  # @param [Hash]   opt         To outer div except for #file_field_tag options
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *cancelButton()*
-  #
-  def cancel_button: (?action: String|Symbol|nil, ?label: String|nil, ?url: anyHash|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def file_input_button: (String label, ?id: String|nil, ?type: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Data for hidden form fields.
   #

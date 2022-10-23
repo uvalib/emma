@@ -23,8 +23,12 @@ import { fromJSON }  from './objects'
  * @see file:config/boot.rb "#js"
  */
 export function decodeJSON(arg) {
-    const string = arg.includes('%5C') ? decodeURIComponent(arg) : arg;
-    return fromJSON(string.replace(/\n/g, '\\n'));
+    const func    = 'decodeJSON';
+    const string  = arg.replace(/\n/g, '\\n');
+    return fromJSON(string, func, (k, v) => {
+        const encoded = (typeof v === 'string') && v.includes('%5C');
+        return encoded ? decodeURIComponent(v) : v;
+    });
 }
 
 // noinspection JSUnusedGlobalSymbols

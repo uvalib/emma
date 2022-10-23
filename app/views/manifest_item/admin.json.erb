@@ -1,0 +1,8 @@
+<%# app/views/manifest_item/admin.json.erb -%>
+<%-
+  # ManifestItem submission administration values in JSON.
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+-%>
+{
+  "buckets": { <%= json_s3_bucket_table(s3_object_table, erb: true) %> }
+}

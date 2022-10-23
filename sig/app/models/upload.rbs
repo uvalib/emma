@@ -246,7 +246,7 @@ class Upload < ApplicationRecord
   # @param [Boolean] no_raise           If *true*, return *nil* on error.
   # @param [Hash]    opt                Passed to #where.
   #
-  # @raise [UploadWorkflow::Errors::SubmitError]
+  # @raise [UploadWorkflow::SubmitError]
   #
   # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
   #
@@ -284,16 +284,33 @@ class Upload < ApplicationRecord
   #
   def emma_data_valid?: () -> bool
 
-  private
-
   # Compare the source fields against configured requirements.
   #
-  # @param [Upload, Hash] source
   # @param [Hash]         required_fields
+  # @param [Upload, Hash] source
   #
   # @return [void]
   #
-  def check_required: ((Upload|symHash) source, symHash required_fields) -> void
+  def check_required: (?(symHash|nil) required_fields, ?(Upload|symHash|nil) source) -> void
+
+  # Database column schema.
+  #
+  # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+  #
+  def database_columns: () -> Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
+
+  module ClassMethods
+
+    # Database column schema.
+    #
+    # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+    #
+    def database_columns: () -> Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
+
+    @database_columns: Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
+  end
+
+  extend ClassMethods
 
   private
 

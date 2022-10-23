@@ -205,7 +205,7 @@ module UploadWorkflow::Single::Data
     case data
       when Upload
         (id = data.id) or (sid = data.submission_id)
-        data = data.attributes.symbolize_keys.except(:id, :submission_id)
+        data = data.fields.except(:id, :submission_id)
       when Hash
         data = data.symbolize_keys
         ids  = extract_hash!(data, :id, :submission_id)

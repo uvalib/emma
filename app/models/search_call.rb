@@ -336,7 +336,7 @@ class SearchCall < ApplicationRecord
   #++
   def assign_attributes(attr, opt = nil)
     #__debug_items(binding)
-    attr = attr.is_a?(SearchCall) ? attr.attributes : map_parameters(attr)
+    attr = attr.is_a?(SearchCall) ? attr.fields : map_parameters(attr)
     attr.delete(:id)
     #__debug_items(__method__, attr)
     super(attr, opt)

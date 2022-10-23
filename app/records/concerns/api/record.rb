@@ -11,6 +11,8 @@ __loading_begin(__FILE__)
 #
 class Api::Record
 
+  extend ActiveModel::Naming
+
   include Model
 
   include Api::Common

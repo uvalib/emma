@@ -69,6 +69,14 @@ module Record
     # @param [Boolean]                    any   If *false*, all are required.
     #
     def has_column?: (*(Symbol|String|Array[Symbol|String]) columns, ?any: bool) -> bool
+
+    # Database column schema.
+    #
+    # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+    #
+    def database_columns: () -> Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
+
+    @database_columns: Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
   end
 
   # Methods which are only appropriate if the including class is an
@@ -86,6 +94,12 @@ module Record
     # @see Record::ClassMethods#has_column?
     #
     def has_column?: (*(Symbol|String|Array[Symbol|String]) columns, **untyped opt) -> bool
+
+    # Database column schema.
+    #
+    # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+    #
+    def database_columns: () -> Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
 
     # For use with Record::* methods.
     #

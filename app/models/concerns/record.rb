@@ -150,6 +150,14 @@ module Record
       raise error
     end
 
+    # Database column schema.
+    #
+    # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+    #
+    def database_columns
+      @database_columns ||= columns_hash.symbolize_keys
+    end
+
   end
 
   # Methods which are only appropriate if the including class is an
@@ -174,7 +182,15 @@ module Record
     # @see Record::ClassMethods#has_column?
     #
     def has_column?(*columns, **opt)
-      self.class.send(__method__, *columns, **opt)
+      self.class.has_column?(*columns, **opt)
+    end
+
+    # Database column schema.
+    #
+    # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+    #
+    def database_columns
+      self.class.database_columns
     end
 
     # For use with Record::* methods.

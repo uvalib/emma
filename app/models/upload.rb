@@ -90,7 +90,7 @@ class Upload < ApplicationRecord
   #
   def initialize(attr = nil, &block)
     __debug_items(binding)
-    attr = attr.attributes if attr.is_a?(Upload)
+    attr = attr.fields if attr.is_a?(Upload)
     attr = attr.merge(initializing: true).except!(:reset) if attr.is_a?(Hash)
     super(attr, &block)
     __debug_items(leader: 'new UPLOAD') { self }
@@ -201,7 +201,7 @@ class Upload < ApplicationRecord
   #
   def assign_attributes(opt, *)                                                 # NOTE: to Record::EmmaData#generate_emma_data (sorta)
     __debug_items(binding)
-    opt = opt.attributes if opt.is_a?(Upload)
+    opt = opt.fields if opt.is_a?(Upload)
     control, fields = partition_hash(opt, *ASSIGN_CONTROL_OPTIONS)
     mode = ASSIGN_MODES.find { |m| control[m].present? }
 
@@ -477,7 +477,7 @@ class Upload < ApplicationRecord
   #
   def log_ignored(label, values, caller = nil)
     Log.warn do
-      c = caller || calling_method(3)
+      c = caller || calling_method(5)
       p = workflow_phase || '-'
       s = active_state   || '-'
       "#{c}: [#{p}/#{s}] #{label}: #{values.inspect}"
@@ -738,7 +738,7 @@ class Upload < ApplicationRecord
   # :section: ActiveRecord validations
   # ===========================================================================
 
-  protected
+  public
 
   # Configured requirements for Upload fields.
   #
@@ -751,7 +751,7 @@ class Upload < ApplicationRecord
   # Indicate whether all required fields have valid values.
   #
   def required_fields_valid?
-    check_required(self, upload_fields)
+    check_required
     errors.empty?
   end
 
@@ -759,59 +759,82 @@ class Upload < ApplicationRecord
   #
   def emma_data_valid?
     if active_emma_data.blank?
-      errors.add(:emma_data, :missing)
+      error(:emma_data, :missing)
     else
-      check_required(active_emma_metadata, upload_fields[:emma_data])
+      check_required(upload_fields[:emma_data], active_emma_metadata)
     end
     errors.empty?
   end
 
-  # ===========================================================================
-  # :section: ActiveRecord validations
-  # ===========================================================================
-
-  private
-
   # Compare the source fields against configured requirements.
   #
-  # @param [Upload, Hash] source
   # @param [Hash]         required_fields
+  # @param [Upload, Hash] source
   #
   # @return [void]
   #
-  def check_required(source, required_fields)
-    required_fields.each_pair do |field, entry|
-      value = source.is_a?(Hash) ? source[field] : source.send(field)
-      if entry.is_a?(Hash)
-        if !value.is_a?(Hash)
-          error(field, :invalid, 'expecting Hash')
-        elsif value.blank?
-          error(field, :missing)
+  def check_required(required_fields = nil, source = nil)
+    source ||= self
+    (required_fields || upload_fields).each_pair do |field, config|
+      value      = source.is_a?(Hash) ? source[field] : source.send(field)
+      min, max   = config.values_at(:min, :max).map(&:to_i)
+      nested_cfg = config.except(:cond).select { |_, v| v.is_a?(Hash) }
+      if nested_cfg.present?
+        value ||= {}
+        value   = safe_json_parse(value) if value.is_a?(String)
+        if value.is_a?(Hash)
+          check_required(nested_cfg, value)
         else
-          check_required(value, entry)
+          error(field, :invalid, "expecting Hash; got #{value.class}")
         end
-      elsif entry[:max] == 0
-        # TODO: Should this indicate that the field is *forbidden* instead?
-        next
-      else
-        min = entry[:min].to_i
-        max = entry[:max].to_i
-        if value.is_a?(Array)
-          if value.size < min
-            error(field, :too_few, "at least #{min} is required")
-          elsif (0 < max) && (max < value.size)
-            error(field, :too_many, "no more than #{max} is expected")
-          end
-        else
-          if max != 1
-            error(field, :invalid, 'expecting Array')
-          elsif !min.zero?
-            error(field, :missing)
-          end
+
+      elsif config[:required] && value.blank?
+        error(field, :missing, 'required field')
+
+      elsif config[:max] == 0
+        error(field, :invalid, 'max == 0') if value.present?
+
+      elsif config[:type].to_s.include?('json')
+        unless value.nil? || safe_json_parse(value).is_a?(Hash)
+          error(field, :invalid, "expecting Hash; got #{value.class}")
         end
+
+      elsif value.is_a?(Array)
+        too_few  = min.positive? && (value.size < min)
+        too_many = max.positive? && (value.size > max)
+        error(field, :too_few,  "at least #{min} is required")    if too_few
+        error(field, :too_many, "no more than #{max} is allowed") if too_many
+
+      elsif value.blank?
+        error(field, :missing)                    unless min.zero?
+
+      elsif database_columns[field]&.array
+        error(field, :invalid, 'expecting Array') unless max == 1
       end
     end
   end
+
+  # Database column schema.
+  #
+  # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+  #
+  def database_columns
+    self.class.database_columns
+  end
+
+  module ClassMethods
+
+    # Database column schema.
+    #
+    # @return [Hash{Symbol=>ActiveRecord::ConnectionAdapters::PostgreSQL::Column}]
+    #
+    def database_columns
+      @database_columns ||= columns_hash.symbolize_keys
+    end
+
+  end
+
+  extend ClassMethods
 
   # ===========================================================================
   # :section:

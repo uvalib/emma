@@ -59,6 +59,7 @@ en:
 
         - 'search'
         - 'upload'
+        - 'manifest'
         - 'category'
         - 'title'
         - 'periodical'
@@ -77,6 +78,7 @@ en:
 
         - 'search'
         - 'upload'
+        - 'manifest'
         - 'tool'
         - 'help'
         - 'home'

@@ -212,21 +212,18 @@ export function makeUrl(...parts) {
  * Provide an action for a cancel button, redirecting to the value of the
  * 'data-path' attribute if present or redirecting back otherwise.
  *
- * @param {string|Selector|Event} arg
+ * @param {string|Selector} [arg]
  */
 export function cancelAction(arg) {
-    let button;
-    if (notDefined(arg)) {
-        button = this;
-    } else if (typeof arg === 'object') {
-        arg.stopPropagation();
-        arg.preventDefault();
-        button = arg.target;
-    } else if (arg && !arg.match(/^back$|^\/|^https?:|^javascript:/i)) {
-        button = arg;
+    let url, $el;
+    const str = (typeof arg === 'string') ? arg : undefined;
+    if (str?.match(/^back$|^\/|^https?:|^javascript:/i)) {
+        url = arg;
+    } else if (arg) {
+        $el = $(arg);
+        url = $el.attr('data-path') || $el.attr('href') || 'back';
     }
-    let url = button ? $(button).attr('data-path') : arg;
-    if ((url === 'back') || (url === 'BACK')) {
+    if (url?.toLowerCase() === 'back') {
         url = '';                       // Previous page.
     } else if (!url && window.location.search && !window.history.length) {
         url = window.location.pathname; // Current page with no URL parameters.

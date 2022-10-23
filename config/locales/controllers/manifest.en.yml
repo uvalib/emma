@@ -1,0 +1,298 @@
+# config/locales/controllers/manifest.en.yml
+#
+# ManifestController pages
+
+en:
+
+  emma:
+
+    manifest:
+
+      unit:
+        brief:          'manifest'
+        long:           'bulk operation manifest'
+      label:            'Bulk Uploads'
+      title:            'Bulk Operation Manifest'
+      tooltip:          'Manage bulk operations.'
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:        false
+
+      search_filters:
+
+        layout:
+          - [size, ~, ~, ~]
+
+      page_controls:
+        label:          'Manifest Actions'
+        actions:
+          - index
+          - new
+          - edit_select
+          - delete_select
+          #- admin
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      pagination:
+        page_size:      25
+        count:
+          one:          'manifest'
+          many:         'manifests'
+
+      action_links:
+
+        edit:
+          action:       edit_select
+          label:        'Change details of %{article} existing manifest'
+          article:      'an'
+
+        new:
+          action:       new
+          label:        'Create %{article} new manifest'
+          article:      'a'
+
+        delete:
+          action:       delete_select
+          label:        'Remove %{article} existing manifest'
+          article:      'an'
+
+        back:
+          action:       index
+          label:        'View all manifests'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      display_fields:
+
+        id:
+          cond:
+            except:     [index]
+
+        user_id:
+          cond:
+            except:     [index]
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      generic:          &GENERIC
+        label:          'Manifest'
+        title:          'Manifest'
+        tooltip:        '(A brief description of this operation.)'
+        description:    '(A more detailed description of this operation.)'
+        directions:     '(Brief guidance for using the operation form.)'
+        notes:          '(A more detailed description of this operation.)'
+
+        submit:         &GENERIC_SUBMIT
+          label:        'Save'
+          enabled:
+            tooltip:    'Keep all changes'
+          disabled:
+            tooltip:    'No valid changes have been made yet'
+
+        cancel:         &GENERIC_CANCEL
+          label:        'Cancel'
+          enabled:
+            tooltip:    'Discard all changes'
+          disabled:
+            tooltip:    'Not able to cancel right now'
+
+        import:         &GENERIC_IMPORT
+          label:        'Import'
+          enabled:
+            tooltip:    'Add rows from an external CSV file'
+          disabled:
+            tooltip:    'Not able to import at this point'
+
+        export:         &GENERIC_EXPORT
+          label:        'Export'
+          enabled:
+            tooltip:    'Save a copy of this manifest in CSV format'
+          disabled:
+            tooltip:    'Not able to export at this point'
+
+        warning:
+          experimental: &EXPERIMENTAL
+            directions_html: |
+               <span style="color:red">
+                 WARNING: This is an experimental feature and not intended for
+                 general use
+               </span>
+        success:        'Operation successful %{file}'
+        failure:        'Could not proceed: %{error}'
+
+      # =======================================================================
+
+      index:
+        label:          'List All'
+        title:          'Bulk Operation Manifests'
+        tooltip:        ~ # 'Your current bulk operation manifests.'
+
+        # TODO: want to see 'id' and 'user_id' if administrator/developer.
+        display_fields: # @see 'en.emma.manifest.record'
+          - id
+          - user_id
+          - name
+          - item_count
+          - saved_item_count
+          - pending_item_count
+         #- updated_item_count
+         #- unsaved_item_count
+         #- never_saved_item_count
+         #- incomplete_item_count
+         #- to_delete_item_count
+          - created_at
+          - updated_at
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      show:
+        label:          'Manifest'
+        title:          'Manifest: %{name}'
+        tooltip:        'Details of this manifest.'
+
+        display_fields: # @see 'en.emma.manifest.record'
+          - !ruby/symbol all
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      new:              &NEW_ACTION
+        <<:             *GENERIC
+        label:          'Create'
+        title:          'New Manifest: %{name}'
+        tooltip:        'Start a new bulk operation manifest.'
+        description:    ~
+        directions:     ~
+        notes:          ~
+
+        submit:         #&NEW_SUBMIT
+          <<:           *GENERIC_SUBMIT
+          enabled:
+            tooltip:    'Save the new manifest'
+          disabled:
+            tooltip:    'No valid items have been created yet'
+
+        cancel:         #&NEW_CANCEL
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Discard this manifest and associated items'
+
+        import:
+          <<:           *GENERIC_IMPORT
+
+        export:
+          <<:           *GENERIC_EXPORT
+
+        success:        'Saved manifest'
+        failure:        'Could not save manifest: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      new_select:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      create:
+        <<: *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
+        <<:             *GENERIC
+        label:          'Change'
+        title:          'Modify Manifest: %{name}'
+        tooltip:        'Modify a bulk operation manifest.'
+        description:    ~
+        directions:     ~
+        notes:          ~
+
+        submit:         &EDIT_SUBMIT
+          <<:           *GENERIC_SUBMIT
+          enabled:
+            tooltip:    'Keep all changes made since the last save'
+
+        cancel:         &EDIT_CANCEL
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Discard all changes made since the last save'
+
+        import:
+          <<:           *GENERIC_IMPORT
+
+        export:
+          <<:           *GENERIC_EXPORT
+
+        success:        'Saved changes to the manifest'
+        failure:        'Could not save changes: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      edit_select:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      update:
+        <<: *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
+        label:          'Remove'
+        title:          'Remove Manifest'
+        tooltip:        'Remove a bulk operation manifest.'
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Delete'
+          enabled:
+            tooltip:    'Remove this manifest and all of its associated items'
+          disabled:
+            tooltip:    'Not able to delete right now'
+
+        cancel:
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Keep this manifest'
+
+        success:        'Removed manifest'
+        failure:        'Could not remove manifest: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      delete_select:
+        <<: *DELETE_ACTION
+
+      # =======================================================================
+
+      destroy:
+        <<: *DELETE_ACTION
+
+      # =======================================================================
+
+      #check:
+      #  label:          'Validate'
+      #  title:          'Validate Bulk Operation Manifest'
+      #  tooltip:        'Check a bulk operation manifest.'
+      #  _endpoint:      true

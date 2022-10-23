@@ -3,7 +3,6 @@
 
 import { BaseClass } from './base-class'
 import { HTTP }      from './http'
-import { dupObject } from './objects'
 import { makeUrl }   from './url'
 import * as xhr      from './xhr'
 import { Rails }     from '../vendor/rails'
@@ -107,8 +106,8 @@ export class Api extends BaseClass {
 
         let caller_cb, settings;
         switch (typeof opt) {
-            case 'function': caller_cb = opt;            break;
-            case 'object':   settings  = dupObject(opt); break;
+            case 'function': caller_cb = opt;        break;
+            case 'object':   settings  = { ...opt }; break;
         }
         caller_cb ||= cb || this.callback;
         settings  ||= {};
@@ -153,7 +152,7 @@ export class Api extends BaseClass {
      * @protected
      */
     _addHeaders(current_headers) {
-        const headers = dupObject(current_headers);
+        const headers = { ...current_headers };
         if (this.isLocal) {
             headers['X-CSRF-Token'] = Rails.csrfToken();
         }

@@ -1,0 +1,1258 @@
+// app/assets/stylesheets/controllers/_manifest_item.scss
+//
+// Bulk operation manifests
+
+@use 'sass:map';
+
+@use 'shared/variables'        as *;
+@use 'shared/functions'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/controls/grids'   as grid;
+@use 'shared/feature/emoji'    as emoji;
+@use 'shared/feature/model'    as model;
+
+@use 'controllers/entry';
+
+//=============================================================================
+// Manifest item index page
+//
+// NOTE: This is not a part of typical usage, so these style will only come
+//  into play during development.
+//=============================================================================
+
+.manifest_item-list-item {
+
+    @extend .entry-list-item;
+
+    $max-columns: 52; // The number of ManifestItem database columns.
+
+    @media #{$wide-screen} {
+        grid-template-columns: repeat($max-columns, minmax(auto,10vw));
+    }
+
+    width:          max-content;
+    margin:         0;
+    padding:        0 0 1rem;
+    gap:            0;
+    background:     inherit;
+    border:         none;
+    border-bottom:  0.125rem solid red;
+    border-radius:  0;
+
+    %cell {
+        margin:       0;
+        padding:      0.25rem 0.5rem;
+        border-left:  0.0625rem solid;
+        border-right: 0.0625rem solid;
+        grid-column:  auto;
+        grid-row:     auto;
+    }
+
+    > .controls {
+        @extend %cell;
+    }
+
+    > .value {
+
+        @extend %cell;
+
+        &.field-FileData,
+        &.field-EmmaData {
+            @extend %cell
+        }
+
+        &.textbox {
+            height:         max-content;
+            margin-top:     0.25rem;
+            margin-left:    0.5rem;
+        }
+
+        .item {
+            height:         max-content;
+            padding-bottom: 0.0625rem;
+        }
+    }
+
+    > .label {
+        display: none;
+    }
+
+    &.head {
+        font-weight:  bold;
+        border-color: black; // NOTE: only because border-bottom above is 'red'...
+    }
+
+    &:not(.head) {
+        > .controls {
+
+            background: lightcyan;
+
+            .icon-tray {
+
+                display:        flex;
+                flex-direction: column;
+                gap:            0.5rem;
+                margin-top:     0.125rem;
+                margin-bottom:  0.25rem;
+
+                *:focus {
+                    outline-offset: 1px;
+                    outline-color:  $uva-text-gray;
+                }
+            }
+        }
+    }
+}
+
+// Zero or more .manifest_item-list-item elements.
+.manifest_item-list {
+
+    @extend .entry-list;
+
+    grid-template-columns: auto 1fr;
+    gap:                   1rem;
+    padding-bottom:        1rem;
+    max-height:            85vh;
+    border:                0.25rem solid gray;
+    border-radius:         0.25rem;
+    border-right-width:    0.125rem;
+    border-bottom-width:   0.125rem;
+    overflow:              auto;
+
+    .number {
+        margin:  0 0 0.5rem 1rem;
+        padding: 0;
+    }
+}
+
+//=============================================================================
+// Manifest item show page
+//
+// NOTE: This is not a part of typical usage, so these style will only come
+//  into play during development.
+//=============================================================================
+
+.manifest_item-details {
+    @extend .entry-details;
+}
+
+// Container for a .manifest_item-details.
+.manifest_item-container {
+    @extend .entry-container;
+}
+
+//=============================================================================
+// Manifest item grid
+//=============================================================================
+
+$ctrl-col-width:  auto;
+$data-col-width:  5vw;
+
+$max-columns:     50;
+$ctrl-cols:       1;
+
+$grid-border:     $table-border;
+$grid-head-bg:    $table-header-bg;
+$controls-bg:     $grid-head-bg;
+$enum-fg:         $uva-text-blue;
+
+$max-row-height:  40vh;
+$max-cell-height: 25vh;
+
+@if $max-cell-height > $max-row-height {
+    @error "$max-cell-height > $max-row-height";
+}
+
+// Indicates whether expand/contract controls rotate (via CSS transition)
+// or whether their state is indicated by different icons (if *false*).
+//
+// @see file:javascripts/controllers/manifest.js *CONTROLS_ROTATE*
+//
+$controls-rotate: true;
+
+@mixin setup-columns($data-cols: auto-fill, $data-col-template: 1fr) {
+    grid-template-columns:
+        [controls] repeat($ctrl-cols, $ctrl-col-width)
+        [data]     repeat($data-cols, $data-col-template);
+}
+
+@mixin vertical-list {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.25rem;
+    background:     white;
+}
+
+//=============================================================================
+// Manifest item grid
+//=============================================================================
+
+// The current implementation assumes that the grid is being applied to a
+// <table>.
+table.manifest_item-grid {
+
+    $border-wd: 0.25rem;
+    $bottom-wd: $border-wd * 0.75;
+
+    display:                grid;
+    grid-template-columns:  1fr;
+    align-content:          flex-start;
+    gap:                    0;
+    margin:                 model.$list-item-gap-y 0;
+    max-width:              inherit;
+    max-height:             80vh;
+    overflow:               auto;
+    border:                 $border-wd solid $grid-border;
+    border-bottom-width:    $bottom-wd;
+    border-radius:          $border-wd $border-wd $bottom-wd $bottom-wd;
+    box-shadow:             0.25rem 0.25rem 0.5rem -0.125rem gray;
+
+    // noinspection CssBrowserCompatibilityForProperties
+    overscroll-behavior:    contain;
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    $data-col-template: minmax(max-content,$data-col-width);
+
+    @include setup-columns(auto-fill, $data-col-template);
+
+    @media #{$not-narrow-screen} {
+        @for $n from 2 through $max-columns {
+            $data-cols: $n - $ctrl-cols;
+            &.columns-#{$n} {
+                @include setup-columns($data-cols, $data-col-template);
+            }
+        }
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    $cell-border-width:     0.125rem;
+    $controls-border-width: $cell-border-width * 1.5;
+    $cell-pad:              0.25rem;
+    $value-pad:             $cell-pad * 0.5;
+
+    // Until "display: subgrid" exists, this is necessary so that individual
+    // grid cells are the items being controlled by the grid.
+    thead, tbody, tfoot {
+        display: contents;
+    }
+
+    // Grid row
+    tr.manifest_item-grid-item {
+
+        display: contents;
+
+        //=====================================================================
+        // Status indicators
+        //=====================================================================
+
+        $indicator-icon: (
+            file_status: (
+                emoji: emoji.$OPEN_FILE_FOLDER,
+                base:  yellow,
+                size:  x-large,
+            ),
+            data_status: (
+                emoji: emoji.$SCROLL,
+                base:  orange,
+                size:  larger,
+            ),
+            ready_status: (
+                emoji: emoji.$DELIVERY_TRUCK,
+                base:  red,
+                size:  x-large,
+            ),
+        );
+
+        $indicators: map.keys($indicator-icon);
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        > .controls,
+        > .cell {
+            display:            flex;
+            flex-direction:     column;
+            margin:             0;
+            font-weight:        unset;
+            text-align:         match-parent;
+            word-break:         break-word;
+            border-right:       $cell-border-width solid $grid-border;
+            border-bottom:      $cell-border-width solid $grid-border;
+        }
+
+        // First column.
+        > .controls {
+
+            gap:                $cell-pad * 2;
+            padding:            $cell-pad * 2;
+            border-right-width: $controls-border-width;
+
+            *:focus {
+                outline-offset: 1px;
+                outline-color:  $uva-text-gray;
+            }
+
+            .icon-tray,
+            .indicators {
+
+                display:        flex;
+                flex-direction: row;
+                gap:            inherit;
+
+                > * {
+                    flex:    1 1 auto;
+                    margin:  0;
+                    padding: 0;
+                }
+            }
+
+            .icon-tray {
+
+                @include user-select(none);
+
+                button {
+                    font-size:    medium;
+                    font-weight:  bold;
+                    aspect-ratio: 1/1;
+                }
+
+                button.insert {   // Adjustment for HEAVY PLUS SIGN ("\u2795")
+                    font-size:    x-small;
+                }
+            }
+
+            .indicators {
+
+                @each $indicator in $indicators {
+
+                    .#{$indicator} {
+
+                        margin:       0;
+                        aspect-ratio: 1/1;
+
+                        $prop: map.get($indicator-icon, $indicator);
+                        $base: map.get($prop, 'base');
+
+                        &::before {
+
+                            @include emoji.gray($base: $base);
+
+                            content:   map.get($prop, 'emoji');
+                            font-size: map.get($prop, 'size');
+                        }
+
+                        &.initial {
+                            &::before { @include emoji.gray($base: $base); }
+                        }
+
+                        &.error {
+                            &::before { @include emoji.red($base: $base); }
+                        }
+
+                        &.warning {
+                            &::before { @include emoji.red($base: $base); }
+                        }
+
+                        &.complete {
+                            &::before { @include emoji.green($base: $base); }
+                        }
+
+                        // @see "en.emma.manifest_item.type.*"
+                        &.value-missing     { @extend .initial; }
+                        &.value-invalid     { @extend .error; }
+                        &.value-complete    { @extend .complete; }
+
+                        // @see "en.emma.manifest_item.type.file_status"
+                        &.value-hidden      { @extend .error; }
+                        &.value-corrupt     { @extend .warning; }
+                        &.value-bad_read    { @extend .warning; }
+
+                        // @see "en.emma.manifest_item.type.data_status"
+                        &.value-minimal     { @extend .warning; }
+                        &.value-no_bib      { @extend .error; }
+                        &.value-min_bib     { @extend .warning; }
+                        &.value-no_rem      { @extend .error; }
+                        &.value-min_rem     { @extend .warning; }
+
+                        // @see "en.emma.manifest_item.type.ready_status"
+                        &.value-ready       { @extend .complete; }
+                        &.value-db_fail     { @extend .error; }
+                        &.value-store_fail  { @extend .error; }
+                        &.value-index_fail  { @extend .error; }
+                    }
+                }
+            }
+        }
+
+        // Subsequent columns.
+        > .cell {
+
+            padding: $cell-pad;
+
+            *:focus {
+                outline-offset: 1px;
+            }
+
+            textarea:focus {
+                outline-offset: 0;
+                outline-width:  3px;
+            }
+        }
+
+        // Last column.
+        > :last-child {
+            border-right: none;
+        }
+
+        //=====================================================================
+        // Variant - heading row
+        //=====================================================================
+
+        &.head {
+
+            > * {
+                position:            sticky;
+                top:                 0;
+                z-index:             1;
+                line-height:         3;
+                font-weight:         bold;
+                background:          $grid-head-bg;
+                border-bottom-width: $controls-border-width;
+            }
+
+            // Cell in the upper-left corner of the grid (first column).
+            > .controls {
+
+                left:                0;
+                z-index:             2;
+                flex-direction:      row;
+                justify-content:     space-between;
+                align-items:         start;
+
+                border-right-style:  double;
+                border-bottom-style: double;
+
+                border-bottom-right-radius: $controls-border-width;
+
+                .row-expander,
+                .column-expander {
+
+                    @include button.basic;
+
+                    width:         max-content;
+                    margin:        0;
+                    padding:       $cell-pad;
+                    font-size:     large;
+                    border-color:  transparent;
+                    border-radius: 50%;
+                    aspect-ratio:  1;
+
+                    @if $controls-rotate {
+                        transition: transform 0.25s;
+                    }
+
+                    &:focus {
+                        text-decoration: none;
+                        outline-offset:  -2px;
+                        outline-color:   $uva-text-gray;
+                    }
+
+                    &:hover {
+                        color:           $uva-accent-orange;
+                        text-decoration: none;
+                        box-shadow:      none;
+                    }
+                }
+
+                @if $controls-rotate {
+                    &.expanded {
+                        .column-expander {
+                            transform: rotate(0.5turn);
+                        }
+                    }
+                    &:not(.expanded) {
+                        .column-expander {
+                            transform: rotate(0);
+                        }
+                    }
+                }
+            }
+
+            // Data column headings (subsequent columns).
+            > .cell {
+
+                padding:    0 ($cell-pad * 2);
+                box-shadow: inset 0 -1rem 1rem -1.5rem gray;
+
+                details {
+
+                    margin-bottom: $cell-pad * 4;
+                    line-height:   1.25;
+
+                    //=========================================================
+                    // Components
+                    //=========================================================
+
+                    %special {
+                        font-size: large;
+                        color:     $uva-accent-orange;
+                    }
+
+                    summary {
+
+                        @include user-select(text);
+
+                        .tag {
+                            @include user-select(none);
+                        }
+
+                        .field-name {
+
+                            @extend %special;
+
+                            font-family: monospace;
+                        }
+
+                        .type-name {
+                            font-style: italic;
+                        }
+                    }
+
+                    .content {
+
+                        font-weight: normal;
+
+                        > * {
+                            display: block;
+                            margin:  ($cell-pad * 2) 0;
+                            padding: 0;
+                        }
+
+                        :first-child {
+                            margin-top: 0;
+                        }
+
+                        :last-child {
+                            margin-bottom: 0;
+                        }
+
+                        dl {
+
+                            display:               grid;
+                            margin-right:          $cell-pad * 2;
+                            column-gap:            $cell-pad * 2;
+                            align-items:           baseline;
+                            grid-template-columns: [dt] 1fr [dd] 1fr;
+
+                            > * {
+                                margin:         0;
+                                padding:        0;
+                                white-space:    nowrap;
+                            }
+
+                            .label {
+                                padding-top:    $value-pad * 2;
+                                padding-bottom: $value-pad;
+                                font-style:     italic;
+                            }
+
+                            dt:not(.label) {
+                                @extend %special;
+                            }
+
+                            dd:not(.label) {
+                                &::before, &::after {
+                                    content: '"';
+                                }
+                            }
+                        }
+                    }
+                }
+
+                details[open] {
+
+                    max-width: 25vw;
+                    min-width: max-content;
+
+                    summary {
+                        margin-bottom:  $value-pad * 2;
+                        padding-bottom: $value-pad;
+                        border-bottom:  1px solid black;
+                    }
+                }
+            }
+
+            //=================================================================
+            // Variations
+            //=================================================================
+
+            // noinspection CssBrowserCompatibilityForProperties
+            &.expanded {
+                > .cell {
+                    text-align:          left;
+                    max-height:          33vh;
+                    overflow-y:          auto;
+                    overflow-x:          hidden;
+                    overscroll-behavior: contain;
+                }
+            }
+
+            &:not(.expanded) {
+                > .cell {
+                    details {
+                        display: none;
+                    }
+                }
+            }
+
+            // NOTE: Using "\u27A4" # ➤ BLACK RIGHT ARROWHEAD as the icon.
+            //  This does not have a related downward-facing version of the
+            //  character, so it's being used by manually rotating downward.
+            @if $controls-rotate {
+                &.expanded {
+                    > .controls {
+                        .row-expander {
+                            transform: rotate(0.75turn);
+                        }
+                    }
+                }
+                &:not(.expanded) {
+                    > .controls {
+                        .row-expander {
+                            transform: rotate(0.25turn);
+                        }
+                    }
+                }
+            }
+        }
+
+        //=====================================================================
+        // Variant - data row
+        //=====================================================================
+
+        &:not(.head) {
+
+            // Expandable cell containing per-row controls (first column).
+            > .controls {
+
+                position:   sticky;
+                left:       0;
+                z-index:    1;
+                background: $controls-bg;
+                box-shadow: inset -0.75rem 0 1rem -1.5rem gray;
+
+                //=============================================================
+                // Components
+                //=============================================================
+
+                .icon-tray,
+                .indicators {
+                    display:               grid;
+                    justify-items:         start;
+                    align-items:           center;
+                    grid-template-columns: [item] auto [label] 1fr;
+                }
+
+                .icon-tray {
+                    button {
+
+                        padding-inline: 0.375rem;
+
+                        @include except-for-Firefox {
+                            &.insert {
+                                padding-inline: 0.25rem;
+                            }
+                        }
+                    }
+                }
+
+                .indicators {
+
+                    @each $indicator in $indicators {
+                        .#{$indicator} {
+                            align-self:  start;
+                        }
+                    }
+
+                    .label {
+                        padding-top: $value-pad;
+                        border-top:  1px solid gray;
+                    }
+                }
+
+                details {
+
+                    margin-top:    $value-pad * 4;
+                    margin-bottom: $value-pad * 4;
+                    padding:       $value-pad;
+                    border-top:    2px solid black;
+                    border-bottom: 2px solid black;
+
+                    summary {
+                        font-weight: bold;
+                    }
+
+                    .content {
+
+                        display:        flex;
+                        flex-direction: column;
+                        gap:            $value-pad * 2;
+                        margin-top:     $value-pad * 2;
+                        margin-bottom:  $value-pad * 4;
+
+                        .label {
+                            margin-top:  $value-pad * 2;
+                            font-weight: bold;
+                        }
+                        .value {
+                            // TODO: ?
+                        }
+                    }
+                }
+
+                details[open] {
+                    summary {
+                        padding-bottom: $value-pad;
+                        border-bottom:  1px solid black;
+                    }
+                }
+
+                //=============================================================
+                // Variations
+                //=============================================================
+
+                &.expanded {
+
+                    min-width:  12.5vw;
+                    text-align: start;
+
+                    .icon-tray {
+                        label {
+                            font-weight: bold;
+                        }
+                    }
+
+                    .indicators {
+
+                        .file_status {
+                            line-height: 1.25;
+                        }
+
+                        .data_status {
+                            line-height: 1.75;
+                        }
+
+                        .ready_status {
+                            line-height: 1.125;
+                        }
+
+                        .error, .warning, .value-invalid, .value-hidden,
+                        .value-corrupt, .value-bad_read, .value-no_bib,
+                        .value-no_rem, .value-db_fail, .value-store_fail,
+                        .value-index_fail {
+                            & + .label {
+                                @include hover-bold;
+                            }
+                        }
+                    }
+                }
+
+                &:not(.expanded) {
+
+                    .icon-tray,
+                    .indicators {
+
+                        grid-auto-flow: column;
+
+                        > * {
+                            margin: auto;
+                        }
+
+                        label,
+                        .label {
+                            @include sr-only;
+                        }
+                    }
+
+                    .indicators {
+
+                        margin-left:  -$value-pad;
+                        margin-right: -$value-pad;
+
+                        > * {
+                            margin-bottom: 0;
+                        }
+
+                        .file_status {
+                            line-height: 1.3125;
+                        }
+
+                        .data_status {
+                            line-height: 1.125;
+                        }
+
+                        .ready_status {
+                            line-height: 1.125;
+                        }
+                    }
+
+                    details {
+                        @include sr-only;
+                    }
+                }
+            }
+
+            // Data cell for the value of a record field (subsequent columns).
+            > .cell {
+
+                max-height: inherit;
+                background: white;
+
+                //=============================================================
+                // Components
+                //=============================================================
+
+                > * {
+                    overflow-x: auto;
+                }
+
+                // The table is generated by the shared label/value pair logic.
+                // Labels aren't desirable for display, however they're still
+                // useful to hold text for aria-labelledby (available to screen
+                // readers even though the elements are not displayed).
+                > .label {
+                    display: none;
+                }
+
+                // Static column value
+                > .value {
+
+                    &.field-Title,
+                    &.text {
+                        white-space:    pre-line;
+                    }
+
+                    &.array {
+                        display:        flex;
+                        flex-direction: column;
+                        gap:            $value-pad;
+                    }
+
+                    // Before each multi-select item value show a check
+                    // mark icon that looks like a checked checkbox.
+                    &.array.enum.multi {
+                        .item::before {
+
+                            @include emoji.blue($base: green);
+
+                            content:        $WHITE_CHECK_MARK;
+                            font-size:      x-small;
+                            margin-right:   $value-pad * 2;
+                            vertical-align: text-top;
+
+                            @include Firefox-only {
+                                vertical-align: middle;
+                            }
+                        }
+                    }
+
+                    &.enum:not(.array),
+                    &.array:not(.multi) {
+
+                        color: $enum-fg;
+
+                        .item {
+                            outline: 1px solid $enum-fg;
+                        }
+                    }
+                }
+
+                // Editing value (<input>).
+                > .edit {
+
+                    line-height: 1.375;
+                    font:        inherit;
+
+                    > * {
+                        line-height: inherit;
+                    }
+
+                    &.input.single {
+                        resize:      none;
+                        border:      none;
+                    }
+
+                    &.input.multi {
+                        line-height: 1.375;
+                        resize:      none;
+                        border:      none;
+                    }
+
+                    &.menu.single {
+                        color:       $enum-fg;
+                        background:  white;
+                    }
+
+                    &.menu.multi {
+                        > * { // NOTE: .edit.menu.multi > div.menu.multi
+
+                            display:        flex;
+                            flex-direction: column;
+                            gap:            $value-pad * 2;
+                            background:     white;
+
+                            .single.checkbox {
+
+                                display:     inline-flex;
+                                column-gap:  $value-pad * 2;
+                                white-space: nowrap;
+                                overflow-x:  hidden;
+
+                                label {
+
+                                    @include user-select(none);
+
+                                    margin-right: $value-pad * 2;
+                                    flex:         1 0 100%;
+                                }
+
+                                &:not(.disabled):hover {
+
+                                    background: whitesmoke;
+
+                                    label {
+                                        @include hover-bold;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //=============================================================
+                // Variations
+                //=============================================================
+
+                &:hover {
+
+                    background: ghostwhite;
+
+                    > .value {
+                        @include hover-bold;
+                    }
+                }
+            }
+
+            // Data cell for item file data.
+            // noinspection CssReplaceWithShorthandSafely
+            > .cell[data-field="file_data"] {
+
+                padding:        $value-pad * 4;
+                padding-top:    $value-pad * 5;
+                column-gap:     $value-pad * 4;
+                flex-direction: row;
+
+                //=============================================================
+                // Components
+                //=============================================================
+
+                // Element appended by the Uppy FileInput plugin to manage
+                // file input through a replacement for the file chooser.
+                .uppy-FileInput-container {
+
+                    margin:     0;
+                    align-self: start;
+
+                    // Invisible <input type="file">.
+                    .uppy-FileInput-input { }
+
+                    // Visible replacement for the file chooser control.
+                    .uppy-FileInput-btn {
+                        padding: 0.25rem 0.5rem;
+                    }
+                }
+
+                .uploaded-filename {
+                    margin:      0;
+                    line-height: 1.5;
+                    align-self:  start;
+                }
+
+                // Container generated server-side for display element(s) added
+                // by Uppy plugins.
+                .uploader-feedback {
+
+                    display:    flex;
+                    position:   relative;
+                    overflow:   hidden;
+                    transition: width 0.25s ease;
+
+                    //=========================================================
+                    // Variations
+                    //=========================================================
+
+                    &.visible {
+                        width:      50vw;
+                    }
+
+                    &:not(.visible) {
+                        width:      0;
+                        visibility: hidden;
+                    }
+
+                    //=========================================================
+                    // Components
+                    //=========================================================
+
+                    .uppy-ProgressBar {
+                        height:     0.5rem;
+                        margin:     auto 0;
+                        z-index:    0;
+                    }
+
+                    .uppy-Informer {
+
+                        top:             0;
+                        bottom:          unset;
+                        height:          100%;
+                        display:         flex;
+                        align-items:     center;
+                        justify-content: center;
+
+                        p {
+                            padding: 0.125rem 0.75rem;
+                        }
+                    }
+                }
+            }
+
+            // Data cell for item metadata.
+            > .cell:not([data-field="file_data"]) {
+
+                //=============================================================
+                // Variations
+                //=============================================================
+
+                &.editing {
+
+                    .menu.multi:not([data-field]) {
+                        min-height: 100%;
+                    }
+
+                    > .value {
+                        display: none;
+                    }
+
+                    > .edit {
+
+                        margin:  0;
+                        padding: 0;
+                        flex:    1 0 auto;
+
+                        &.input.single.date {
+                            margin-top:     $value-pad * 2;
+                            margin-left:    $value-pad * 2;
+                            width:          min-content;
+                            flex:           0 1 auto;
+                        }
+
+                        &.input.single:not(.date) {
+                            padding-top:    $value-pad * 2;
+                            padding-left:   $value-pad * 2;
+                        }
+
+                        &.input.multi {
+                            padding-left:   $value-pad;
+                            padding-bottom: $value-pad * 2;
+                        }
+
+                        &.menu.single {
+                            margin-top:     $value-pad;
+                            flex:           0 1 auto;
+                        }
+
+                        &.menu.multi {
+
+                            padding-top:    $value-pad * 2;
+                            min-height:     $max-cell-height;
+
+                            > * { // NOTE: .edit.menu.multi > div.menu.multi
+                                // noinspection CssReplaceWithShorthandSafely
+                                .single.checkbox {
+                                    input {
+                                        margin:       0;
+                                        margin-left:  $value-pad * 2;
+                                        margin-right: $value-pad;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //=========================================================
+                    // Variations
+                    //=========================================================
+
+                    // Make room for the -webkit-calendar-picker-indicator.
+                    &.date {
+                        padding-right: $value-pad * 4;
+                    }
+                }
+
+                &:not(.editing) {
+
+                    > .value {
+
+                        margin:  0;
+                        padding: $value-pad;
+                        flex:    1 0 auto;
+
+                        &:not(.array) {
+                            padding-top:    $value-pad * 2;
+                            padding-left:   $value-pad * 2;
+                        }
+
+                        &.date {
+                            height:         calc(100% - ($value-pad * 3));
+                            width:          calc(100% + $value-pad);
+                            letter-spacing: 0.25px;
+                        }
+
+                        &.array.multi {
+                            gap:            $value-pad * 2;
+                        }
+
+                        &.array.enum {
+                            padding-top:    $value-pad * 2;
+                            padding-left:   $value-pad * 2;
+                            height:         calc(100% - ($value-pad * 3));
+                        }
+
+                        &.array.enum.multi {
+                            padding-left:   $value-pad;
+                            height:         calc(100% - ($value-pad * 4));
+                        }
+                    }
+
+                    // Making the element invisible while retaining its width
+                    // (rather than "display: none") allows the grid column
+                    // width to remain constant regardless of which child
+                    // element is the one being displayed.
+                    > .edit {
+
+                        @include invisible-height;
+
+                        flex: 0 1 0;
+                    }
+
+                    //=========================================================
+                    // Variations
+                    //=========================================================
+
+                    // Reserve room for the -webkit-calendar-picker-indicator
+                    // so that the column does not have to change width when
+                    // editing.
+                    &.date {
+                        padding-right: $value-pad * 6;
+                    }
+
+                    @mixin inset-outline($color) {
+                        box-shadow:
+                            inset 0 0 0        1px      white,
+                            inset 0 0 0.125rem 0.125rem $color;
+                    }
+
+                    &.changed {
+                        @include inset-outline($uva-accent-yellow);
+                    }
+
+                    &.error {
+                        @include inset-outline($uva-emergency-red);
+                    }
+                }
+            }
+
+            //=================================================================
+            // Variations
+            //=================================================================
+
+            &.row-first {}
+            &.row-last  {}
+
+            &.deleting {
+                > * {
+                    background: lightgray !important;
+                }
+            }
+        }
+    }
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    &:not(.controls-expanded) {
+
+        tr.manifest_item-grid-item {
+
+            // NOTE: This is only set for the sake of contained items with
+            //  "max-height: inherit" -- it has no direct effect on the row
+            //  element due to "display: content".
+            max-height: $max-row-height;
+
+            &:not(.head) {
+                > .cell {
+                    > * {
+                        max-height: $max-cell-height;
+                    }
+                }
+            }
+        }
+    }
+
+    &.controls-expanded {
+
+        tr.manifest_item-grid-item {
+
+            &:not(.head) {
+                > .controls,
+                > .cell {
+                    border-bottom-width: $controls-border-width;
+                }
+            }
+        }
+    }
+
+    &.offline {
+
+        tr.manifest_item-grid-item {
+
+            &:not(.head) {
+
+                > .cell {
+
+                    > .edit {
+                        color: inherit;
+                    }
+
+                    &:hover {
+
+                        background: lighter($uva-emergency-red, 90%);
+
+                        > .value {
+                            text-shadow: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

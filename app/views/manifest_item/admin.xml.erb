@@ -1,0 +1,8 @@
+<%# app/views/manifest_item/admin.xml.erb -%>
+<%-
+  # ManifestItem submission administration values in XML.
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
+-%>
+<buckets>
+  <%= xml_s3_bucket_table(s3_object_table, erb: true) %>
+</buckets>

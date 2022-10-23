@@ -567,7 +567,10 @@ module BaseDecorator::Form
 
   public
 
-  # @private
+  # Default action for #model_form if #context[:action] is not present.
+  #
+  # @type [Symbol]
+  #
   DEFAULT_FORM_ACTION = :new
 
   # The CSS class which indicates that the element or its descendent(s) involve
@@ -614,22 +617,10 @@ module BaseDecorator::Form
     outer_css = '.form-container'
     uploader  = UPLOADER_CLASS if uploader.is_a?(TrueClass)
     action    = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
+    classes   = [action, model_type, uploader]
 
-    case action
-      when :edit
-        opt[:method] ||= :put
-        opt[:url]      = update_path
-      when :new
-        opt[:method] ||= :post
-        opt[:url]      = create_path
-      else
-        Log.warn("#{self.class}.#{__method__}: #{action}: unexpected action")
-    end
-    opt[:multipart]    = true
-    opt[:autocomplete] = 'off'
-
-    classes = [action, model_type, uploader]
     prepend_css!(opt, css, *classes)
+    model_form_options!(opt, action: action)
     scroll_to_top_target!(opt)
 
     buttons   = form_buttons(label: label, action: action, cancel: cancel)
@@ -645,11 +636,80 @@ module BaseDecorator::Form
     end
   end
 
+  # Label for mini-form update button. # TODO: I18n
+  #
+  # @type [String]
+  #
+  UPDATE_LABEL = 'Change'
+  UPDATE_CSS   = 'update'
+
+  # Label for mini-form cancel button. # TODO: I18n
+  #
+  # @type [String]
+  #
+  CANCEL_LABEL = 'Cancel'
+  CANCEL_CSS   = 'cancel'
+
+  # Generate a form for inline use.
+  #
+  # @param [Hash, nil]      pairs     Fields/values; default #model_form_fields
+  # @param [String, Symbol] action    Either :new or :edit.
+  # @param [String]         css       Characteristic CSS class/selector.
+  # @param [Hash]           opt       Passed to #form_with.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def model_mini_form(pairs: nil, action: nil, css: '.mini-form', **opt)
+    pairs ||= model_form_fields
+    prepend_css!(opt, css)
+    model_form_options!(opt, action: action)
+    form_with(model: object, **opt) do |f|
+      parts  = form_hidden_fields(f)
+      parts << render_form_fields(action: action, pairs: pairs, no_label: true)
+      parts << html_button(UPDATE_LABEL, class: UPDATE_CSS)
+      parts << html_button(CANCEL_LABEL, class: CANCEL_CSS)
+      safe_join(parts)
+    end
+  end
+
   # ===========================================================================
   # :section: Item forms (new/edit/delete pages)
   # ===========================================================================
 
   protected
+
+  # Modify a form options hash based on form action.
+  #
+  # @param [Hash, nil]      opt       The hash to modify (or create)
+  # @param [String, Symbol] action    Either :new or :edit.
+  # @param [Hash]           other     Values to add to the hash.
+  #
+  # @return [Hash]                    The modified (or created) hash.
+  #
+  def model_form_options!(opt = nil, action: nil, **other)
+    opt    = opt&.merge!(other) || other
+    action = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
+    case action
+      when :edit
+        opt[:method] ||= :put
+        opt[:url]    ||= update_path
+      when :new
+        opt[:method] ||= :post
+        opt[:url]    ||= create_path
+      else
+        Log.warn("#{self.class}.#{__method__}: #{action}: unexpected action")
+    end
+    opt[:multipart]    = true
+    opt[:autocomplete] = 'off'
+    # noinspection RubyMismatchedReturnType
+    opt
+  end
+
+  # ===========================================================================
+  # :section: Item forms (new/edit/delete pages)
+  # ===========================================================================
+
+  public
 
   # @private
   FORM_BUTTON_OPTIONS = %i[action cancel label]
@@ -769,9 +829,56 @@ module BaseDecorator::Form
 
   # Form submit button.
   #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/model-form.js    *submitButton()*
+  # @see file:app/assets/stylesheets/feature/_model_form.scss ".submit-button"
+  #
+  def submit_button(**opt)
+    opt[:state] = :disabled unless opt.key?(:state)
+    form_button(:submit, **opt)
+  end
+
+  # Form cancel button.
+  #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @option opt [String] :url         Passed to #make_link
+  # @option opt [String] :'data-path' Passed to #html_button (supersedes :url)
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/model-form.js    *cancelButton()*
+  # @see file:app/assets/stylesheets/feature/_model_form.scss ".cancel-button"
+  #
+  def cancel_button(**opt)
+    if opt.key?(:'data-path')
+      opt.delete(:url)
+    else
+      opt[:url] ||= back_path
+    end
+    form_button(:cancel, **opt)
+  end
+
+  # ===========================================================================
+  # :section: Item forms (new/edit/delete pages)
+  # ===========================================================================
+
+  protected
+
+  # Generic form button.
+  #
+  # @param [Symbol]              type     The button configuration name.
   # @param [String, Symbol, nil] action
+  # @param [Symbol]              state    Start state (:enabled/:disabled).
   # @param [String, nil]         label    Override button label.
-  # @param [Hash] opt                     Passed to #submit_tag.
+  # @param [String, Hash, nil]   url      Invokes #make_link if present.
+  # @param [String]              css      Default: ".#(type)-button"
+  # @param [Hash]                opt      Passed to #submit_tag.
+  #
+  # @option opt [Symbol] :type            Input type (default *type*).
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -780,45 +887,57 @@ module BaseDecorator::Form
   #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def submit_button(action: nil, label: nil, **opt)
-    css     = '.submit-button'
-    action  = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
-    config  = form_actions.dig(action, :submit) || {}
-    label ||= config[:label]
+  def form_button(
+    type,
+    action: nil,
+    state:  nil,
+    label:  nil,
+    url:    nil,
+    css:    nil,
+    **opt
+  )
+    css    ||= ".#{type}-button"
+    action   = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
+    config   = form_actions.dig(action, type) || {}
+    state  ||= config[:state]&.to_sym || :enabled
+
+    label       ||= config.dig(state, :label)   || config[:label]
+    opt[:title] ||= config.dig(state, :tooltip) || config[:tooltip]
 
     prepend_css!(opt, css)
-    opt[:title] ||= config.dig(:disabled, :tooltip)
-    h.submit_tag(label, opt)
+    input_type = opt[:type] || type
+    if input_type == :submit
+      h.submit_tag(label, opt)
+    elsif input_type == :file
+      file_input_button(label, **opt)
+    elsif url
+      make_link(label, url, **opt)
+    else
+      html_button(label, opt)
+    end
   end
 
-  # Form cancel button.
+  # file_input_button
   #
-  # @param [String, Symbol, nil] action
-  # @param [String, nil]         label    Override button label.
-  # @param [String, Hash, nil]   url      Default: `#back_path`.
-  # @param [Hash]                opt      To #html_button/LinkHelper#make_link
+  # @param [String] label
+  # @param [String] id          For input field
+  # @param [String] type        Input field type
+  # @param [Hash]   opt         To outer div except for #file_field_tag options
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *cancelButton()*
-  #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
-  def cancel_button(action: nil, label: nil, url: nil, **opt)
-    css    = '.cancel-button'
-    action = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
-    config = form_actions.dig(action, :cancel) || {}
+  def file_input_button(label, id: nil, type: 'file', **opt)
+    i_id  = id || unique_id(type)
+    l_id  = "label-#{i_id}"
 
-    label       ||= config[:label]
-    opt[:title] ||= config[:tooltip]
+    i_opt = extract_hash!(opt, :accept, :multiple, :value, :title)
+    i_opt.merge!('aria-labelledby': l_id, id: i_id)
+    input = h.file_field_tag(type, i_opt)
 
-    prepend_css!(opt, css)
+    label = html_tag(:label, label, id: l_id)
 
-    if opt[:'data-path'].present?
-      html_button(label, opt)
-    else
-      make_link(label, (url || back_path), **opt)
+    html_div(opt) do
+      input << label
     end
   end
 

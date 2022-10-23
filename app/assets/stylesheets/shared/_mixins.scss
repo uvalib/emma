@@ -135,20 +135,38 @@
 
 /// Hide the contents of the element while maintaining horizontal displacement.
 ///
-@mixin invisible-height {
-
-    @include invisible;
-
-    height: 0;
+/// @param {Boolean} $force           If true, add "!important".
+///
+@mixin invisible-height($force: false) {
+    $important: if($force, '!important', '');
+    @include self-and-descendents {
+        height:         0       #{$important};
+        min-height:     0       #{$important};
+        margin-top:     0       #{$important};
+        margin-bottom:  0       #{$important};
+        padding-top:    0       #{$important};
+        padding-bottom: 0       #{$important};
+        overflow-x:     visible #{$important};
+        visibility:     hidden  #{$important};
+    }
 }
 
 /// Hide the contents of the element while maintaining vertical displacement.
 ///
-@mixin invisible-width {
-
-    @include invisible;
-
-    width: 0;
+/// @param {Boolean} $force           If true, add "!important".
+///
+@mixin invisible-width($force: false) {
+    $important: if($force, '!important', '');
+    @include self-and-descendents {
+        width:          0       #{$important};
+        min-width:      0       #{$important};
+        margin-left:    0       #{$important};
+        margin-right:   0       #{$important};
+        padding-left:   0       #{$important};
+        padding-right:  0       #{$important};
+        overflow-y:     visible #{$important};
+        visibility:     hidden  #{$important};
+    }
 }
 
 /// Make an actionable item (e.g. <a>) appear non-functional.
@@ -423,6 +441,14 @@
 ///
 @mixin Firefox-only {
     @supports (-moz-appearance: none) {
+        @content;
+    }
+}
+
+/// Include a block of content that should not be activated when on Firefox.
+///
+@mixin except-for-Firefox {
+    @supports not (-moz-appearance: none) {
         @content;
     }
 }

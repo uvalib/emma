@@ -1,0 +1,263 @@
+# Support methods for the "/manifest" controller.
+#
+# @!method paginator
+#   @return [Manifest::Paginator]
+#
+module ManifestConcern
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include ParamsHelper
+
+  include FlashHelper
+
+  include HttpHelper
+
+  include OptionsConcern
+
+  include PaginationConcern
+
+  include ResponseConcern
+
+  # URL parameters associated with manifest identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMS: symArray
+
+  # The manifest identified in URL parameters either as :selected or :id.
+  #
+  # @return [String, nil]
+  #
+  def identifier: () -> (String | nil)
+
+  @identifier: String | nil
+
+  # URL parameters relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def manifest_params: () -> symHash
+
+  @manifest_params: symHash
+
+  # Get URL parameters relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def get_manifest_params: () -> symHash
+
+  # Extract POST parameters that are usable for creating/updating a Manifest
+  # instance.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def manifest_post_params: () -> symHash
+
+  # manifest_request_params
+  #
+  # @param [Manifest, Hash{Symbol=>*}, *] manifest
+  # @param [Hash{Symbol=>*}, nil]         prm
+  #
+  # @return [Array<(Manifest, Hash{Symbol=>*})>]
+  # @return [Array<(Any, Hash{Symbol=>*})>]
+  #
+  def manifest_request_params: ((Manifest|untyped|nil) manifest, ?(symHash|nil) prm) -> ([Manifest, symHash] | [untyped, symHash])
+
+  # Parameters used by Manifest#search_records.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_RECORDS_PARAMS: symArray
+
+  # Manifest#search_records parameters that specify a distinct search query.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_ONLY_PARAMS: symArray
+
+  # Parameters used by #find_by_match_records or passed on to
+  # Manifest#search_records.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIND_OR_MATCH_PARAMS: symArray
+
+  # Locate and filter Manifest records.
+  #
+  # @param [Array<String,Array>] items  Default: `@identifier`.
+  # @param [Hash]                opt    Passed to Manifest#search_records;
+  #                                       default: `#manifest_params` if no
+  #                                       *items* are given.
+  #
+  # @raise [Record::SubmitError]        If :page is not valid.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def find_or_match_manifests: (*(String|anyArray) items, **untyped opt) -> symHash
+
+  # Return with the specified Manifest record.
+  #
+  # @param [String, Hash, Manifest, nil] item  Default: @identifier.
+  # @param [Hash]                        opt   Passed to Manifest#find_record.
+  #
+  # @raise [Record::StatementInvalid]   If :id not given.
+  # @raise [Record::NotFound]           If *item* was not found.
+  #
+  # @return [Manifest, nil]
+  #
+  def get_manifest: (?(String|Manifest|anyHash|nil) item, **untyped opt) -> (Manifest | nil)
+
+  # Locate related ManifestItem records.
+  #
+  # @param [Manifest, nil] item
+  # @param [Hash]          opt
+  #
+  # @raise [Record::SubmitError]        If :page is not valid.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def find_or_match_rows: (?(Manifest|nil) item, **untyped opt) -> symHash
+
+  # Start a new (un-persisted) manifest.
+  #
+  # @param [Hash, nil] opt            Default: `#get_manifest_params`.
+  #
+  # @return [Manifest]                Un-persisted Manifest instance.
+  #
+  def new_manifest: (?(symHash|nil) opt) -> Manifest
+
+  # Create and persist a new manifest.
+  #
+  # @param [Hash, nil] opt              Default: `#get_manifest_params`.
+  #
+  # @return [Manifest]                  New persisted Manifest instance.
+  #
+  def create_manifest: (?(symHash|nil) opt) -> Manifest
+
+  # Start editing an existing manifest.
+  #
+  # @param [Manifest, Hash, nil] item   If present, used as a template.
+  # @param [Hash, nil]           opt    Default: `#manifest_request_params`.
+  #
+  # @return [Manifest, nil]
+  #
+  def edit_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Persist changes to an existing manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def update_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # For the 'delete' endpoint...
+  #
+  # @param [String, Manifest, Array, nil] items
+  # @param [Hash, nil]                    opt   Def: `#manifest_request_params`
+  #
+  # @raise [RangeError]               If :page is not valid.
+  #
+  # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
+  #
+  def delete_manifest:  (?(Manifest|String|Integer|Array[String|Integer]|nil) items, ?(symHash|nil) opt) -> symHash
+
+  # For the 'destroy' endpoint... # TODO: ?
+  #
+  # @param [String, Manifest, Array, nil] items
+  # @param [Hash, nil]                    opt   Def: `#manifest_request_params`
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed entries.
+  #
+  def destroy_manifest: (?(Manifest|String|strArray|nil) items, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Persist changes to an existing manifest and update the saved state of all
+  # associated rows.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  # @see file:app/assets/javascripts/controllers/manifest.js *saveUpdates()*
+  #
+  def save_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Back out of provisional changes to associated rows.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  # @see file:app/assets/javascripts/controllers/manifest.js *cancelUpdates()*
+  #
+  def cancel_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Generate a response to a POST.
+  #
+  # @param [Symbol, Integer, Exception, nil] status
+  # @param [*]                               item
+  # @param [Hash]                            opt
+  #
+  # @return [void]
+  #
+  def post_response: ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
+                   | (                              Exception     item, **untyped opt) -> void
+
+  # Raise an exception.
+  #
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [Any, nil]                                                  value
+  #
+  # @raise [UploadWorkflow::SubmitError]
+  # @raise [ExecError]
+  #
+  # @see ExceptionHelper#failure
+  #
+  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
+
+  # Create a @model_options instance from the current parameters.
+  #
+  # @return [Manifest::Options]
+  #
+  def set_model_options: () -> Manifest::Options
+
+  @model_options: Manifest::Options
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [Manifest::Paginator]
+  #
+  def pagination_setup: (?paginator: Class, **untyped opt) -> Manifest::Paginator
+
+  private
+
+  THIS_MODULE: Module
+end

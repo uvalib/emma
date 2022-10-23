@@ -22,6 +22,7 @@ module Record::Steppable
   extend ActiveSupport::Concern
 
   include Record
+  include Record::Searchable
 
   extend self
 
@@ -108,7 +109,7 @@ module Record::Steppable
     }.sort.to_h.freeze
 
   # ===========================================================================
-  # :section:
+  # :section: Record::Searchable overrides
   # ===========================================================================
 
   public
@@ -121,6 +122,12 @@ module Record::Steppable
   def state_column(*)                                                           # NOTE: from Upload::WorkflowMethods
     STATE_COLUMN
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Workflow state table associated with *item*.
   #
@@ -687,7 +694,7 @@ module Record::Steppable
 
     # Get a natural-language description for the current state.
     #
-    # @param [Model, Symbol, String, nil] item  Default: `self[STATE_COLUMN]`.
+    # @param [Model, Symbol, String, nil] item  Default: `self[state_column]`.
     #
     # @return [String, nil]
     #

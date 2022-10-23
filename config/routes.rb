@@ -148,6 +148,57 @@ Rails.application.routes.draw do
   get    '/retrieval',              to: 'upload#retrieval',     as: 'retrieval'
 
   # ===========================================================================
+  # EMMA bulk operations - manifests
+  # ===========================================================================
+
+  get    '/manifest/new',           to: 'manifest#new',         as: 'new_manifest'
+  match  '/manifest/create',        to: 'manifest#create',      as: 'create_manifest',        via: %i[post put patch]
+
+  get    '/manifest/edit_select',   to: 'manifest#edit',        as: 'edit_select_manifest',   defaults: { id: 'SELECT' }
+  get    '/manifest/edit/:id',      to: 'manifest#edit',        as: 'edit_manifest'
+  match  '/manifest/update/:id',    to: 'manifest#update',      as: 'update_manifest',        via: %i[put patch]
+
+  get    '/manifest/delete_select', to: 'manifest#delete',      as: 'delete_select_manifest', defaults: { id: 'SELECT' }
+  get    '/manifest/delete/:id',    to: 'manifest#delete',      as: 'delete_manifest'
+  delete '/manifest/destroy/:id',   to: 'manifest#destroy',     as: 'destroy_manifest'
+
+  match  '/manifest/save/:id',      to: 'manifest#save',        as: 'save_manifest',          via: %i[post put patch]
+  match  '/manifest/cancel/:id',    to: 'manifest#cancel',      as: 'cancel_manifest',        via: %i[post put patch]
+
+  get    '/manifest/show/:id',      to: 'manifest#show',        as: 'show_manifest'
+  get    '/manifest/:id',           to: redirect('/manifest/update/%{id}'),                   via: %i[get post put patch]
+  get    '/manifest',               to: 'manifest#index',       as: 'manifest_index'
+
+  # ===========================================================================
+  # EMMA bulk operations - manifest items
+  # ===========================================================================
+
+  get    '/manifest_item/new/:manifest',          to: 'manifest_item#new',          as: 'new_manifest_item'
+  match  '/manifest_item/create/:manifest',       to: 'manifest_item#create',       as: 'create_manifest_item',       via: %i[post put patch]
+
+  get    '/manifest_item/edit/:manifest/:id',     to: 'manifest_item#edit',         as: 'edit_manifest_item'
+  match  '/manifest_item/update/:manifest/:id',   to: 'manifest_item#update',       as: 'update_manifest_item',       via: %i[put patch]
+
+  get    '/manifest_item/delete/:manifest/:id',   to: 'manifest_item#delete',       as: 'delete_manifest_item'
+  delete '/manifest_item/destroy/:manifest/:id',  to: 'manifest_item#destroy',      as: 'destroy_manifest_item'
+
+  post   '/manifest_item/start_edit/:id',         to: 'manifest_item#start_edit'
+  post   '/manifest_item/finish_edit/:id',        to: 'manifest_item#finish_edit'
+  post   '/manifest_item/upload',                 to: 'manifest_item#upload',       as: 'manifest_item_upload'        # Invoked from file-upload.js
+
+  get    '/manifest_item/bulk/new/:manifest',     to: 'manifest_item#bulk_new',     as: 'bulk_new_manifest_item'
+  match  '/manifest_item/bulk/create/:manifest',  to: 'manifest_item#bulk_create',  as: 'bulk_create_manifest_item',  via: %i[post put patch]
+
+  get    '/manifest_item/bulk/edit/:manifest',    to: 'manifest_item#bulk_edit',    as: 'bulk_edit_manifest_item'
+  match  '/manifest_item/bulk/update/:manifest',  to: 'manifest_item#bulk_update',  as: 'bulk_update_manifest_item',  via: %i[put patch]
+
+  get    '/manifest_item/bulk/delete/:manifest',  to: 'manifest_item#bulk_delete',  as: 'bulk_delete_manifest_item'
+  delete '/manifest_item/bulk/destroy/:manifest', to: 'manifest_item#bulk_destroy', as: 'bulk_destroy_manifest_item'
+
+  get    '/manifest_item/show/:manifest/:id',     to: 'manifest_item#show',         as: 'show_manifest_item'
+  get    '/manifest_item/:manifest',              to: 'manifest_item#index',        as: 'manifest_item_index'
+
+  # ===========================================================================
   # Category operations
   # ===========================================================================
 
@@ -170,8 +221,7 @@ Rails.application.routes.draw do
   resources :periodical
   resources :edition
 
-  get '/edition/:editionId/:fmt?seriesId=:seriesId',
-      to: 'edition#download', as: 'edition_download'
+  get '/edition/:editionId/:fmt?seriesId=:seriesId', to: 'edition#download', as: 'edition_download'
 
   # ===========================================================================
   # Artifact operations
@@ -278,7 +328,8 @@ Rails.application.routes.draw do
   match  '/account/create',         to: 'account#create',         as: 'create_account',         via: %i[post put patch]
 
   get    '/account/edit_select',    to: 'account#edit',           as: 'edit_select_account',    defaults: { id: 'SELECT' }
-  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: current_user.id }
+  # noinspection RailsParamDefResolve
+  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: try(:current_user)&.id }
   match  '/account/update/:id',     to: 'account#update',         as: 'update_account',         via: %i[put patch]
 
   get    '/account/delete_select',  to: 'account#delete',         as: 'delete_select_account',  defaults: { id: 'SELECT' }
@@ -363,24 +414,34 @@ unless ONLY_FOR_DOCUMENTATION
   def bs_retrieval_url(...);                       end
   def bulk_create_entry_path(...);                 end
   def bulk_create_entry_url(...);                  end
+  def bulk_create_manifest_item_path(...);         end
+  def bulk_create_manifest_item_url(...);          end
   def bulk_create_upload_path(...);                end
   def bulk_create_upload_url(...);                 end
   def bulk_delete_entry_path(...);                 end
   def bulk_delete_entry_url(...);                  end
+  def bulk_delete_manifest_item_path(...);         end
+  def bulk_delete_manifest_item_url(...);          end
   def bulk_delete_upload_path(...);                end
   def bulk_delete_upload_url(...);                 end
   def bulk_destroy_entry_path(...);                end
   def bulk_destroy_entry_url(...);                 end
+  def bulk_destroy_manifest_item_path(...);        end
+  def bulk_destroy_manifest_item_url(...);         end
   def bulk_destroy_upload_path(...);               end
   def bulk_destroy_upload_url(...);                end
   def bulk_edit_entry_path(...);                   end
   def bulk_edit_entry_url(...);                    end
+  def bulk_edit_manifest_item_path(...);           end
+  def bulk_edit_manifest_item_url(...);            end
   def bulk_edit_upload_path(...);                  end
   def bulk_edit_upload_url(...);                   end
   def bulk_entry_index_path(...);                  end
   def bulk_entry_index_url(...);                   end
   def bulk_new_entry_path(...);                    end
   def bulk_new_entry_url(...);                     end
+  def bulk_new_manifest_item_path(...);            end
+  def bulk_new_manifest_item_url(...);             end
   def bulk_new_upload_path(...);                   end
   def bulk_new_upload_url(...);                    end
   def bulk_reindex_entry_path(...);                end
@@ -389,12 +450,16 @@ unless ONLY_FOR_DOCUMENTATION
   def bulk_reindex_upload_url(...);                end
   def bulk_update_entry_path(...);                 end
   def bulk_update_entry_url(...);                  end
+  def bulk_update_manifest_item_path(...);         end
+  def bulk_update_manifest_item_url(...);          end
   def bulk_update_upload_path(...);                end
   def bulk_update_upload_url(...);                 end
   def bulk_upload_index_path(...);                 end
   def bulk_upload_index_url(...);                  end
   def cancel_entry_path(...);                      end
   def cancel_entry_url(...);                       end
+  def cancel_manifest_path(...);                   end
+  def cancel_manifest_url(...);                    end
   def cancel_upload_path(...);                     end
   def cancel_upload_url(...);                      end
   def cancel_user_registration_path(...);          end
@@ -417,6 +482,10 @@ unless ONLY_FOR_DOCUMENTATION
   def create_artifact_url(...);                    end
   def create_entry_path(...);                      end
   def create_entry_url(...);                       end
+  def create_manifest_item_path(...);              end
+  def create_manifest_item_url(...);               end
+  def create_manifest_path(...);                   end
+  def create_manifest_url(...);                    end
   def create_upload_path(...);                     end
   def create_upload_url(...);                      end
   def create_user_path(...);                       end
@@ -437,10 +506,16 @@ unless ONLY_FOR_DOCUMENTATION
   def delete_account_url(...);                     end
   def delete_entry_path(...);                      end
   def delete_entry_url(...);                       end
+  def delete_manifest_item_path(...);              end
+  def delete_manifest_item_url(...);               end
+  def delete_manifest_path(...);                   end
+  def delete_manifest_url(...);                    end
   def delete_select_account_path(...);             end
   def delete_select_account_url(...);              end
   def delete_select_entry_path(...);               end
   def delete_select_entry_url(...);                end
+  def delete_select_manifest_path(...);            end
+  def delete_select_manifest_url(...);             end
   def delete_select_upload_path(...);              end
   def delete_select_upload_url(...);               end
   def delete_select_user_registration_path(...);   end
@@ -453,6 +528,10 @@ unless ONLY_FOR_DOCUMENTATION
   def destroy_account_url(...);                    end
   def destroy_entry_path(...);                     end
   def destroy_entry_url(...);                      end
+  def destroy_manifest_item_path(...);             end
+  def destroy_manifest_item_url(...);              end
+  def destroy_manifest_path(...);                  end
+  def destroy_manifest_url(...);                   end
   def destroy_upload_path(...);                    end
   def destroy_upload_url(...);                     end
   def destroy_user_registration_path(...);         end
@@ -467,6 +546,10 @@ unless ONLY_FOR_DOCUMENTATION
   def edit_edition_url(...);                       end
   def edit_entry_path(...);                        end
   def edit_entry_url(...);                         end
+  def edit_manifest_item_path(...);                end
+  def edit_manifest_item_url(...);                 end
+  def edit_manifest_path(...);                     end
+  def edit_manifest_url(...);                      end
   def edit_member_path(...);                       end
   def edit_member_url(...);                        end
   def edit_password_path(...);                     end
@@ -477,6 +560,8 @@ unless ONLY_FOR_DOCUMENTATION
   def edit_select_account_url(...);                end
   def edit_select_entry_path(...);                 end
   def edit_select_entry_url(...);                  end
+  def edit_select_manifest_path(...);              end
+  def edit_select_manifest_url(...);               end
   def edit_select_upload_path(...);                end
   def edit_select_upload_url(...);                 end
   def edit_select_user_path(...);                  end # /users/edit_select
@@ -511,6 +596,12 @@ unless ONLY_FOR_DOCUMENTATION
   def history_title_url(...);                      end
   def home_path(...);                              end
   def home_url(...);                               end
+  def manifest_index_path(...);                    end
+  def manifest_index_url(...);                     end
+  def manifest_item_index_path(...);               end
+  def manifest_item_index_url(...);                end
+  def manifest_item_upload_path(...);              end
+  def manifest_item_upload_url(...);               end
   def md_proxy_path(...);                          end
   def md_proxy_url(...);                           end
   def md_trial_path(...);                          end
@@ -529,6 +620,10 @@ unless ONLY_FOR_DOCUMENTATION
   def new_edition_url(...);                        end
   def new_entry_path(...);                         end
   def new_entry_url(...);                          end
+  def new_manifest_item_path(...);                 end
+  def new_manifest_item_url(...);                  end
+  def new_manifest_path(...);                      end
+  def new_manifest_url(...);                       end
   def new_member_path(...);                        end
   def new_member_url(...);                         end
   def new_periodical_path(...);                    end
@@ -565,6 +660,8 @@ unless ONLY_FOR_DOCUMENTATION
   def root_url(...);                               end
   def run_state_health_path(...);                  end
   def run_state_health_url(...);                   end
+  def save_manifest_path(...);                     end
+  def save_manifest_url(...);                      end
   def search_api_path(...);                        end
   def search_api_url(...);                         end
   def search_call_index_path(...);                 end
@@ -587,6 +684,10 @@ unless ONLY_FOR_DOCUMENTATION
   def show_account_url(...);                       end
   def show_entry_path(...);                        end
   def show_entry_url(...);                         end
+  def show_manifest_item_path(...);                end
+  def show_manifest_item_url(...);                 end
+  def show_manifest_path(...);                     end
+  def show_manifest_url(...);                      end
   def show_upload_path(...);                       end
   def show_upload_url(...);                        end
   def show_user_registration_path(...);            end
@@ -611,6 +712,10 @@ unless ONLY_FOR_DOCUMENTATION
   def update_artifact_url(...);                    end
   def update_entry_path(...);                      end
   def update_entry_url(...);                       end
+  def update_manifest_item_path(...);              end
+  def update_manifest_item_url(...);               end
+  def update_manifest_path(...);                   end
+  def update_manifest_url(...);                    end
   def update_upload_path(...);                     end
   def update_upload_url(...);                      end
   def update_user_path(...);                       end

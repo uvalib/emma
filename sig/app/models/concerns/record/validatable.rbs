@@ -20,7 +20,7 @@ module Record::Validatable
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def entry_fields: () -> Hash[Symbol,symHash]
+  def database_fields: () -> Hash[Symbol,symHash]
 
   # Indicate whether all required fields have valid values.
   #
@@ -32,7 +32,7 @@ module Record::Validatable
 
   # Compare the source fields against configured requirements.
   #
-  # @param [Hash, nil]        required_fields   Default: `#entry_fields`
+  # @param [Hash, nil]        required_fields   Default: `#database_fields`
   # @param [Entry, Hash, nil] source            Default: self.
   #
   # @return [void]
@@ -54,7 +54,7 @@ module Record::Validatable
   #   @param [Hash]        required_fields
   #   @param [Entry, Hash] source
   #
-  def check_required: (?(symHash|nil) required_fields, ?(symHash|Entry|nil) source) -> void
+  def check_required: (?(symHash|nil) required_fields, ?(Entry|symHash|nil) source) -> void
 
   private
 

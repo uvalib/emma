@@ -18,13 +18,13 @@ module EntryConcern
   extend ActiveSupport::Concern
 
   include Emma::Common
-  include Emma::Csv
   include Emma::Json
 
   include ParamsHelper
   include FlashHelper
   include HttpHelper
 
+  include ImportConcern
   include IngestConcern
   include OptionsConcern
   include ResponseConcern
@@ -152,18 +152,19 @@ module EntryConcern
 
   # Extract POST parameters and data for bulk operations.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  # @param [ActionDispatch::Request, nil]            req Def: `#request`.
-  #
   # @raise [RuntimeError]             If both :src and :data are present.
   #
-  # @return [Array<Hash{Symbol=>Any}>]
+  # @return [Array<Hash{Symbol=>*}>]
   #
-  def entry_bulk_post_params(p = nil, req = nil)                                # NOTE: from UploadConcern#upload_bulk_post_params
-    prm = model_options.model_post_params(p)
-    src = prm[:src] || prm[:source] || prm[:manifest]
-    opt = src ? { src: src } : { data: (req || request) }
-    Array.wrap(fetch_data(**opt)).map(&:symbolize_keys)
+  # @see ImportConcern#fetch_data
+  #
+  def entry_bulk_post_params                                                    # NOTE: from UploadConcern#upload_bulk_post_params
+    prm = entry_post_params
+    opt = extract_hash!(prm, :src, :source, :data)
+    opt[:src]  = opt.delete(:source) if opt.key?(:source)
+    opt[:data] = request             if opt.blank?
+    opt[:type] = prm.delete(:type)&.to_sym
+    fetch_data(**opt) || []
   end
 
   # entry_request_params
@@ -178,53 +179,6 @@ module EntryConcern
     entry, prm = [nil, entry] if entry.is_a?(Hash)
     prm ||= entry_params
     return entry, prm
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Remote or locally-provided data.
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [String]       :src   URI or path to file containing the data.
-  # @option opt [String, Hash] :data  Literal data.
-  #
-  # @raise [RuntimeError]             If both *src* and *data* are present.
-  #
-  # @return [nil]                     If both *src* and *data* are missing.
-  # @return [Hash]
-  # @return [Array<Hash>]
-  #
-  def fetch_data(**opt)                                                         # NOTE: from UploadConcern
-    __debug_items("ENTRY #{__method__}", binding)
-    src  = opt[:src].presence
-    data = opt[:data].presence
-    if data
-      raise "#{__method__}: both :src and :data were given" if src
-      name = nil
-    elsif src.is_a?(ActionDispatch::Http::UploadedFile)
-      name = src.original_filename
-      data = src.read
-    elsif src
-      name = src
-      data =
-        case name
-          when /^https?:/ then Faraday.get(src)   # Remote file URI.
-          when /\.csv$/   then src                # Local CSV file path.
-          else                 File.read(src)     # Local JSON file path.
-        end
-    else
-      return Log.warn { "#{__method__}: neither :data nor :src given" }
-    end
-    case name.to_s.downcase.split('.').last
-      when 'json' then json_parse(data)
-      when 'csv'  then csv_parse(data)
-      else             json_parse(data) || csv_parse(data)
-    end
   end
 
   # ===========================================================================
@@ -429,17 +383,13 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Phase record creation halted.
   #
-  # @return [Entry, nil]
+  # @return [Entry]
   #
   def edit_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
     item, opt = entry_request_params(item, opt)
     get_entry(item, **opt).tap do |entry|
-      if entry.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        entry.generate_phase(:Edit, **opt)
-      end
+      entry.generate_phase(:Edit, **opt)
     end
   end
 
@@ -454,14 +404,12 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Entry record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Entry record update halted.
   #
-  # @return [Entry, nil]
+  # @return [Entry]
   #
   def update_entry(item = nil, opt = nil)
     item, opt = entry_request_params(item, opt)
     get_entry(item, **opt).tap do |entry|
-      if entry.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      elsif (phase = entry.phases.where(type: :Edit).order(:created_at).last)
+      if (phase = entry.phases.where(type: :Edit).order(:created_at).last)
         entry.update!(from: phase)
       else
         failure("No Phase::Edit for Entry #{entry.id}") # TODO: I18n
@@ -561,27 +509,23 @@ module EntryConcern
   # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
   # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
+  # @raise [Record::NotFound]                   If *item* was not found.
   # @raise [Record::SubmitError]                If Entry could not be found.
   # @raise [ActiveRecord::RecordNotDestroyed]   If Phase could not be removed.
   #
   # @return [Entry]
-  # @return [nil]                               If the Entry was not found.
   #
   def cancel_entry(item = nil, opt = nil)
     item, opt = entry_request_params(item, opt)
     get_entry(item, no_raise: true, **opt).tap do |entry|
-      if entry.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        unless (phase = entry.current_phase)
-          sid   = entry.sid_value || opt[:submission_id]
-          phase =
-            Phase::Edit.where(submission_id: sid).order(:updated_at).last ||
+      unless (phase = entry.current_phase)
+        sid   = entry.sid_value || opt[:submission_id]
+        phase =
+          Phase::Edit.where(submission_id: sid).order(:updated_at).last ||
             Phase::Create.where(submission_id: sid).order(:created_at).last
-          failure("No record for submission #{sid.inspect}") unless phase # TODO: I18n
-        end
-        phase.destroy!
+        failure("No record for submission #{sid.inspect}") unless phase # TODO: I18n
       end
+      phase.destroy!
     end
   end
 

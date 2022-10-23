@@ -3,34 +3,36 @@
 module Emma::Csv
   include Emma::Common
 
-  # Generate data from a CSV file.
+  # Default CSV options used by #csv_parse.
   #
-  # @param [String, IO, StringIO, IO::Like] src
+  # @type [Hash{Symbol=>*}]
+  #
+  # @see CSV#DEFAULT_OPTIONS
+  #
+  CSV_DEFAULTS: symHash
+
+  # Generate data from CSV input.
+  #
+  # @param [String, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] utf8
   # @param [Hash]    opt
   #
   # @return [Array<Hash>]
   # @return [nil]                     Only if *no_raise* is *true*.
   #
-  # -
-  # == Variations
-  # +
-  #
-  # @overload csv_parse(path, no_raise:, **opt)
-  #   @param [String]                 path      Local file path.
-  #   @param [Boolean]                no_raise
-  #   @param [Hash]                   opt       Passed to CSV#foreach.
-  #
-  # @overload csv_parse(io, no_raise:, **opt)
-  #   @param [IO, StringIO, IO::Like] io        IO-like object.
-  #   @param [Boolean]                no_raise
-  #   @param [Hash]                   opt       Passed to CSV#parse.
+  # == Usage Notes
+  # The argument is expected to either be the literal data or an object like an
+  # IO or StringIO through which the data can be acquired.  To parse the
+  # content located at a URI (web page or local file path) read the contents
+  # first or pass in an open file handle.
   #
   # == Implementation Notes
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
-  # encoding.
+  # encoding.  NOTE: This might not be necessary any longer though.
   #
-  def csv_parse: ((String|IO|StringIO|IO::Like) src, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | nil)
+  def csv_parse: (nil                         arg, ?no_raise: bool, ?utf8: bool, **untyped opt) -> nil
+               | (String|IO|StringIO|IO::Like arg, ?no_raise: bool, ?utf8: bool, **untyped opt) -> Array[anyHash]
 
   # force_utf8
   #
@@ -38,7 +40,7 @@ module Emma::Csv
   #
   # @return [String, Array, Hash, Any]  Replacement for *item*.
   #
-  def force_utf8: (untyped item) -> untyped
+  def force_utf8: [T] (T item) -> T
 
   private
 

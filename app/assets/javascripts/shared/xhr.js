@@ -19,7 +19,10 @@ import { makeUrl }      from './url'
 /**
  * AjaxOptions
  *
+ * Options beginning with an underscore are local to {@link xmit}().
+ *
  * @typedef {{
+ *      _ignoreBody?:   boolean,
  *      accepts?:       object,
  *      async?:         boolean,
  *      beforeSend?:    function(XMLHttpRequest,object),
@@ -138,6 +141,12 @@ export function xmit(method, path, prm, opt, cb) {
         }
     }
 
+    let ignore_body;
+    if (settings.hasOwnProperty('_ignoreBody')) {
+        ignore_body = settings._ignoreBody;
+        delete settings._ignoreBody;
+    }
+
     if (settings.hasOwnProperty('method')) {
         settings.type ||= settings.method;
         delete settings.method;
@@ -198,8 +207,10 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {XMLHttpRequest} xhr
      */
     function onSuccess(data, status, xhr) {
-        // _debug(`${func}: received`, (data?.length || 0), 'bytes.');
-        if (isMissing(data)) {
+        _debug(`${func}: received`, (data?.length || 0), 'bytes.');
+        if (ignore_body) {
+            result = data || {};
+        } else if (isMissing(data)) {
             error  = 'no data';
         } else if (typeof(data) !== 'object') {
             error  = `unexpected data type ${typeof data}`;
@@ -212,18 +223,27 @@ export function xmit(method, path, prm, opt, cb) {
     /**
      * Accumulate the status failure message.
      *
+     * This handles what appears to be a very specific jQuery bug where a HEAD
+     * response causes jQuery to fail trying to parse the response body.  In
+     * this scenario, onSuccess isn't run so the recovery code here will invoke
+     * `callback.success` if it is defined.
+     *
      * @param {XMLHttpRequest} xhr
      * @param {string}         status
      * @param {string}         message
      */
     function onError(xhr, status, message) {
-        const failure = `${status}: ${xhr.status} ${message}`;
-        if (transientError(xhr.status)) {
-            warning = failure;
-        } else {
-            error   = failure;
+        _debug(`${func}: ${status}: ${message}`);
+        let cb = callback.error;
+        if ((status === 'parsererror') && (xhr.status < 400)) {
+            cb = callback.success;
+            result ||= {};
+        } else if (cb) {
+            const transient = transientError(xhr.status);
+            const failure   = `${status}: ${xhr.status} ${message}`;
+            if (transient) { warning = failure } else { error = failure }
         }
-        callback.error && callback.error(result, warning, error, xhr);
+        cb?.(result, warning, error, xhr);
     }
 
     /**

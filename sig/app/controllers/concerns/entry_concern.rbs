@@ -8,8 +8,6 @@ module EntryConcern
 
   include Emma::Common
 
-  include Emma::Csv
-
   include Emma::Json
 
   include ParamsHelper
@@ -17,6 +15,8 @@ module EntryConcern
   include FlashHelper
 
   include HttpHelper
+
+  include ImportConcern
 
   include IngestConcern
 
@@ -103,14 +103,13 @@ module EntryConcern
 
   # Extract POST parameters and data for bulk operations.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  # @param [ActionDispatch::Request, nil]            req Def: `#request`.
-  #
   # @raise [RuntimeError]             If both :src and :data are present.
   #
-  # @return [Array<Hash{Symbol=>Any}>]
+  # @return [Array<Hash{Symbol=>*}>]
   #
-  def entry_bulk_post_params: (?(prmHash|nil) p, ?(ActionDispatch::Request|nil) req) -> Array[symHash]
+  # @see ImportConcern#fetch_data
+  #
+  def entry_bulk_post_params: () -> Array[symHash]
 
   # entry_request_params
   #
@@ -121,21 +120,6 @@ module EntryConcern
   # @return [Array<(Any, Hash{Symbol=>*})>]
   #
   def entry_request_params: ((Entry|untyped|nil) entry, ?(symHash|nil) prm) -> ([Entry, symHash] | [untyped, symHash])
-
-  # Remote or locally-provided data.
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [String]       :src   URI or path to file containing the data.
-  # @option opt [String, Hash] :data  Literal data.
-  #
-  # @raise [RuntimeError]             If both *src* and *data* are present.
-  #
-  # @return [nil]                     If both *src* and *data* are missing.
-  # @return [Hash]
-  # @return [Array<Hash>]
-  #
-  def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash] | nil)
 
   # URL parameters associated with item/entry identification.                   # NOTE: from UploadConcern
   #
@@ -256,9 +240,9 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Phase record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Phase record creation halted.
   #
-  # @return [Entry, nil]
+  # @return [Entry]
   #
-  def edit_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> (Entry | nil)
+  def edit_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> Entry
 
   # For the 'update' endpoint, get the matching Entry and update it from its
   # most recent Phase::Edit.
@@ -271,9 +255,9 @@ module EntryConcern
   # @raise [ActiveRecord::RecordInvalid]    Entry record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Entry record update halted.
   #
-  # @return [Entry, nil]
+  # @return [Entry]
   #
-  def update_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> (Entry | nil)
+  def update_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> Entry
 
   # For the 'delete' endpoint...
   #
@@ -328,13 +312,13 @@ module EntryConcern
   # @param [Entry, Hash{Symbol=>*}, nil] item   If present, used as a template.
   # @param [Hash{Symbol=>*}, nil]        opt    Default: `#get_entry_params`.
   #
+  # @raise [Record::NotFound]                   If *item* was not found.
   # @raise [Record::SubmitError]                If Entry could not be found.
   # @raise [ActiveRecord::RecordNotDestroyed]   If Phase could not be removed.
   #
   # @return [Entry]
-  # @return [nil]                               If the Entry was not found.
   #
-  def cancel_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> (Entry | nil)
+  def cancel_entry: (?(Entry|symHash|nil) item, ?(symHash|nil) opt) -> Entry
 
   # Get a description of the status of the Entry, if it exists, or a temporary
   # (un-persisted) Entry based on Phase lookup.

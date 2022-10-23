@@ -1,0 +1,31 @@
+<%# app/views/manifest/_fallback.html.erb -%>
+<%-
+  # Fall-back error page for a failed Manifest action.
+
+  view_debug(__FILE__)
+
+  item   ||= @item || params[:id]
+  item     = item.id if item.respond_to?(:id)
+
+  action ||= params[:action]
+  config   = "emma.manifest.#{action}"
+  title  ||= t("#{config}.title", default: nil)
+  title  ||= t("#{config}.label", default: :'emma.manifest.label')
+  error  ||= t("#{config}.failure", id: item, default: "ERROR record #{item}")
+
+  unless modal?
+    set_page_meta_title(title)
+    set_page_description(title)
+  end
+
+  error = (html_tag(:p, error) unless error.blank? || (error == :none))
+
+-%>
+
+<%= page_heading(title) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= error %>
+
+<%= page_notes_section %>

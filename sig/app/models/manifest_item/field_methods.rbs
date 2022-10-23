@@ -1,0 +1,46 @@
+module ManifestItem::FieldMethods
+  include ManifestItem::Config
+
+  # Fields which are not directly related to :emma_data values.
+  #
+  # @type [Array<Symbol>]
+  #
+  RECORD_COLUMNS: symArray
+
+  ID_COLS: symArray
+
+  GRID_COLS: symArray
+
+  DATE_COLS: symArray
+
+  TRANSIENT_COLS: symArray
+
+  CLIENT_COLS: symArray
+
+  NON_DATA_COLS: symArray
+
+  NON_BACKUP_COLS: symArray
+
+  # Create :backup field contents.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self
+  # @param [Hash]                    added  Added key/value pairs.
+  #
+  # @return [Hash]
+  #
+  def get_backup: (?(ManifestItem|symHash|nil) item, **untyped added) -> symHash
+
+  # Update backup field value.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self
+  # @param [Hash]                    added  Added key/value pairs.
+  #
+  # @return [ManifestItem, Hash]
+  #
+  def set_backup!: ( (symHash)          item, **untyped added) -> symHash
+                 | (?(ManifestItem|nil) item, **untyped added) -> ManifestItem
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

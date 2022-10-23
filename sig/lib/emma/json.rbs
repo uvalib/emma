@@ -5,7 +5,7 @@ module Emma::Json
 
   # Covert JSON into a Hash.
   #
-  # @param [Any,nil] arg
+  # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] log           If *false*, do not log errors.
   # @param [Boolean] no_raise      If *false*, re-raise exceptions.
   # @param [Hash]    opt           Passed to MultiJson#load.
@@ -50,22 +50,26 @@ module Emma::Json
   # If opt[:symbolize_keys] is explicitly *false* then this causes all result
   # keys to be converted to strings.
   #
-  def json_parse: (untyped arg, ?log: bool, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | anyHash | nil)
+  def json_parse: (nil                         arg, ?log: bool, ?no_raise: bool, **untyped opt) -> nil
+                | (anyHash                     arg, ?log: bool, ?no_raise: bool, **untyped opt) -> anyHash
+                | (String|IO|StringIO|IO::Like arg, ?log: bool, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | anyHash | nil)
 
   # Attempt to interpret *arg* as JSON if it is a string.
   #
-  # @param [Any,nil] arg
-  # @param [Any]     default          On parse failure, return this if provided
+  # @param [*]    arg
+  # @param [Any]  default             On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
-  # @param [Hash]    opt              Passed to #json_parse.
+  # @param [Hash] opt                 Passed to #json_parse.
   #
   # @return [Hash, Array<Hash>, Any, nil]
   #
-  def safe_json_parse: (untyped arg, ?default: untyped|:original, **untyped opt) -> (Array[anyHash] | anyHash | untyped | nil)
+  def safe_json_parse: (nil     arg, ?default: untyped|:original, **untyped opt) -> nil
+                     | (anyHash arg, ?default: untyped|:original, **untyped opt) -> anyHash
+                     | [T] (T   arg, ?default: untyped|:original, **untyped opt) -> (Array[anyHash] | anyHash | T | nil)
 
   # json_render
   #
-  # @param [Any,nil] arg
+  # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
@@ -77,11 +81,11 @@ module Emma::Json
   #
   # @see #pretty_json
   #
-  def json_render: (untyped arg, ?no_raise: bool, ?align_values: bool, ?ruby_keys: bool) -> String
+  def json_render: (String|IO|StringIO|IO::Like|anyHash|nil arg, ?no_raise: bool, ?align_values: bool, ?ruby_keys: bool) -> String
 
   # pretty_json
   #
-  # @param [Any,nil] arg
+  # @param [*]       arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
@@ -105,11 +109,13 @@ module Emma::Json
   #
   # @return [Array<Hash>, Hash, nil]
   #
-  def hash_parse: (untyped arg) -> (Array[anyHash] | anyHash | nil)
+  def hash_parse: (nil     arg) -> nil
+                | (anyHash arg) -> anyHash
+                | (untyped arg) -> (Array[anyHash] | anyHash | nil)
 
   # Translate from Hash#to_s output to JSON.
   #
-  # @param [Any,nil] arg
+  # @param [*] arg
   #
   # @return [String]
   #
@@ -117,7 +123,7 @@ module Emma::Json
 
   # hash_render
   #
-  # @param [Any,nil] arg
+  # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Hash]    opt              Passed to #json_render.
   #
@@ -128,7 +134,7 @@ module Emma::Json
   #
   # @see #json_render
   #
-  def hash_render: (untyped arg, ?no_raise: bool, **untyped opt) -> String
+  def hash_render: (String|IO|StringIO|IO::Like|anyHash|nil arg, ?no_raise: bool, **untyped opt) -> String
 
   private
 

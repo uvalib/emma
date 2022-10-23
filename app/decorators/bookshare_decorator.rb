@@ -198,6 +198,7 @@ class BookshareDecorator < BaseDecorator
         tip   = 'View on the Bookshare website.' # TODO: I18n
       end
       path = bookshare_url(path, **path_opt)
+      # noinspection RubyMismatchedArgumentType
       external_link(label, path, title: tip) if path.present?
     end
 

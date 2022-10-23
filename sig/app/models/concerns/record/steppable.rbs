@@ -341,7 +341,7 @@ module Record::Steppable
 
     # Get a natural-language description for the current state.
     #
-    # @param [Model, Symbol, String, nil] item  Default: `self[STATE_COLUMN]`.
+    # @param [Model, Symbol, String, nil] item  Default: `self[state_column]`.
     #
     # @return [String, nil]
     #
