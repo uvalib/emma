@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'net/http'
-
 # Support methods for the "/entry" controller.
 #
 #--
@@ -19,8 +17,6 @@ module EntryConcern
   include Emma::Common
   include Emma::Csv
   include Emma::Json
-
-  include Record::Exceptions
 
   include ParamsHelper
   include FlashHelper
@@ -877,79 +873,24 @@ module EntryConcern
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ResponseConcern overrides
   # ===========================================================================
 
   public
 
   # Generate a response to a POST.
   #
-  # @param [Symbol, Integer, Exception]                            status
-  # @param [Exception, String, FlashPart, Array<String,FlashPart>] item
-  # @param [String, FalseClass]       redirect
-  # @param [Boolean]                  xhr       Override `request.xhr?`.
-  # @param [Symbol]                   meth      Calling method.
+  # @param [Symbol, Integer, Exception, nil] status
+  # @param [*]                               item
+  # @param [Hash]                            opt
   #
   # @return [void]
   #
-  #--
-  # == Variations
-  #++
-  #
-  # @overload post_response(status, items, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Symbol, Integer]                            status
-  #   @param [String, FlashPart, Array<String,FlashPart>] items
-  #   @param [String, FalseClass]                         redirect
-  #   @param [Boolean]                                    xhr
-  #   @param [Symbol]                                     meth
-  #
-  # @overload post_response(status, error, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Symbol, Integer]        status
-  #   @param [Exception]              error
-  #   @param [String, FalseClass]     redirect
-  #   @param [Boolean]                xhr
-  #   @param [Symbol]                 meth
-  #
-  # @overload post_response(error, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Exception]              error
-  #   @param [String, FalseClass]     redirect
-  #   @param [Boolean]                xhr
-  #   @param [Symbol]                 meth
-  #
-  def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)     # NOTE: from UploadConcern
-    meth ||= calling_method
-    __debug_items("ENTRY #{meth} #{__method__}", binding)
-    unless status.is_a?(Symbol) || status.is_a?(Integer)
-      status, item = [nil, status]
-    end
-    re_raise_if_internal_exception(item) if item.is_a?(Exception)
-
-    xhr       = request_xhr? if xhr.nil?
-    html      = !xhr || redirect.present?
-    report    = item.presence && ExecReport[item]
-    status  ||= report&.http_status || :bad_request
-    message   = report&.render(html: html)&.presence
-    # noinspection RubyMismatchedArgumentType
-    message ||= Record::Rendering.make_label(item, default: '')
-
-    opt = { meth: meth, status: status }
-
-    if html
-      if http_success?(status) || http_redirect?(status)
-        flash_success(*message, **opt)
-      else
-        flash_failure(*message, **opt)
-      end
-      case redirect
-        when false  then # no redirect
-        when String then redirect_to(redirect)
-        else             redirect_back(fallback_location: entry_index_path)
-      end
-    elsif message.present?
-      head status, 'X-Flash-Message': flash_xhr(*message, **opt)
-    else
-      head status
-    end
+  def post_response(status, item = nil, **opt)
+    opt[:meth]     ||= calling_method
+    opt[:tag]      ||= "ENTRY #{opt[:meth]}"
+    opt[:fallback] ||= entry_index_path
+    super
   end
 
   # ===========================================================================
@@ -960,7 +901,19 @@ module EntryConcern
 
   THIS_MODULE = self
 
-  included do |base|
+  # Raise an exception.
+  #
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [Any, nil]                                                  value
+  #
+  # @raise [Record::SubmitError]
+  # @raise [ExecError]
+  #
+  # @see ExceptionHelper#failure
+  #
+  def failure(problem, value = nil)
+    ExceptionHelper.failure(problem, value, model: :entry)
+  end
 
     __included(base, THIS_MODULE)
 

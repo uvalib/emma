@@ -5,24 +5,15 @@ module Record::Exceptions
 
   include Emma::Debug
 
-  # Error types and messages.                                                   # NOTE: from UploadWorkflow::Errors::UPLOAD_ERROR
-  #
-  # @type [Hash{Symbol=>(String,Class)}]
-  #
-  ENTRY_ERROR: Hash[Symbol,(String|Class)]
-
   # Raise an exception.
   #
-  # If *problem* is a symbol, it is used as a key to #ENTRY_ERROR with *value*
-  # used for string interpolation.
-  #
-  # Otherwise, error message(s) are extracted from *problem*.
-  #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any]                                                       value
+  # @param [Any, nil]                                                  value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
+  #
+  # @see ExceptionHelper#failure
   #
   def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?(untyped|nil) value) -> void
 

@@ -88,7 +88,37 @@ en:
 
         _name:          'EMMA Unified Search service'
 
+      _model:           &MODEL
+
+        _name:          '%{Model}'
+
+        invalid:
+          message:      'Issues to resolve: %s'
+
+        find:
+          message:      'Item %s not found'
+          error:        Record::NotFound
+
+        create:
+          message:      'Failed to create item'
+
+        update:
+          message:      'Failed to update item'
+
+        destroy:
+          message:      'Failed to remove item'
+
+        bulk_new:
+          message:      'Failed to create items'
+
+        bulk_edit:
+          message:      'Failed to update items'
+
+        bulk_delete:
+          message:      'Failed to delete items'
+
       entry:            &ENTRY
+        <<: *MODEL
 
         # @see EntryConcern
 

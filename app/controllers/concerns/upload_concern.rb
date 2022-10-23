@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'net/http'
-
 # Support methods for the "/upload" controller.
 #
 module UploadConcern
@@ -16,8 +14,6 @@ module UploadConcern
   include Emma::Common
   include Emma::Csv
   include Emma::Json
-
-  include UploadWorkflow::Errors
 
   include ParamsHelper
   include FlashHelper
@@ -443,7 +439,7 @@ module UploadConcern
   #
   def wf_check_partial_failure(wf = @workflow)
     return if (problems = wf.failures).blank?
-    post_response(nil, problems, redirect: false, xhr: false)
+    post_response(problems, redirect: false, xhr: false)
   end
 
   # Default batch size for #reindex_submissions
@@ -554,52 +550,25 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ResponseConcern overrides
   # ===========================================================================
 
   public
 
   # Generate a response to a POST.
   #
-  # @param [Symbol, Integer, Exception]                            status
-  # @param [Exception, String, FlashPart, Array<String,FlashPart>] item
-  # @param [String, FalseClass]       redirect
-  # @param [Boolean]                  xhr       Override `request.xhr?`.
-  # @param [Symbol]                   meth      Calling method.
+  # @param [Symbol, Integer, Exception, nil] status
+  # @param [*]                               item
+  # @param [Hash]                            opt
   #
   # @return [void]
   #
-  #--
-  # == Variations
-  #++
-  #
-  # @overload post_response(status, items, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Symbol, Integer]                            status
-  #   @param [String, FlashPart, Array<String,FlashPart>] items
-  #   @param [String, FalseClass]                         redirect
-  #   @param [Boolean]                                    xhr
-  #   @param [Symbol]                                     meth
-  #
-  # @overload post_response(status, error, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Symbol, Integer]        status
-  #   @param [Exception]              error
-  #   @param [String, FalseClass]     redirect
-  #   @param [Boolean]                xhr
-  #   @param [Symbol]                 meth
-  #
-  # @overload post_response(error, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Exception]              error
-  #   @param [String, FalseClass]     redirect
-  #   @param [Boolean]                xhr
-  #   @param [Symbol]                 meth
-  #
-  def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)     # NOTE: to EntryConcern
-    meth ||= calling_method
-    __debug_items("UPLOAD #{meth} #{__method__}", binding)
-    unless status.is_a?(Symbol) || status.is_a?(Integer)
-      status, item = [nil, status]
-    end
-    re_raise_if_internal_exception(item) if item.is_a?(Exception)
+  def post_response(status, item = nil, **opt)
+    opt[:meth]     ||= calling_method
+    opt[:tag]      ||= "UPLOAD #{opt[:meth]}"
+    opt[:fallback] ||= upload_index_path
+    super
+  end
 
     xhr       = request_xhr? if xhr.nil?
     html      = !xhr || redirect.present?
@@ -637,7 +606,19 @@ module UploadConcern
 
   THIS_MODULE = self
 
-  included do |base|
+  # Raise an exception.
+  #
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [Any, nil]                                                  value
+  #
+  # @raise [UploadWorkflow::SubmitError]
+  # @raise [ExecError]
+  #
+  # @see ExceptionHelper#failure
+  #
+  def failure(problem, value = nil)
+    ExceptionHelper.failure(problem, value, model: :upload)
+  end
 
     __included(base, THIS_MODULE)
 

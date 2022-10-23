@@ -200,7 +200,7 @@ class EntryController < ApplicationController
     __debug_route
     @item = new_entry
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == POST  /entry/create
@@ -241,7 +241,7 @@ class EntryController < ApplicationController
     __debug_route
     @item = (edit_entry unless show_menu?)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == PUT   /entry/update/:id
@@ -284,7 +284,7 @@ class EntryController < ApplicationController
     __debug_route
     @list = (delete_entry[:list] unless show_menu?)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == DELETE /entry/destroy/:id[?force=true&truncate=true&emergency=true]
@@ -301,7 +301,7 @@ class EntryController < ApplicationController
     __debug_route
     back  = delete_select_entry_path
     @list = destroy_entry
-    post_response(:found, @list, redirect: back)
+    post_response(:ok, @list, redirect: back)
   rescue => error
     # noinspection RubyScope
     post_response(error, redirect: back)
@@ -323,7 +323,7 @@ class EntryController < ApplicationController
     __debug_route
     # TODO: bulk_index ???
   rescue => error
-    failure_response(error, status: :bad_request)
+    failure_status(error, status: :bad_request)
   end
 
   # == GET /entry/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -339,7 +339,7 @@ class EntryController < ApplicationController
     __debug_route
     bulk_new_entries
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == POST /entry/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -373,7 +373,7 @@ class EntryController < ApplicationController
     __debug_route
     @list = bulk_edit_entries
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == PUT   /entry/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -408,7 +408,7 @@ class EntryController < ApplicationController
     __debug_route
     @list = bulk_delete_entries
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == DELETE /entry/bulk[?force=true]
@@ -421,7 +421,7 @@ class EntryController < ApplicationController
     __debug_route
     __debug_request
     @list = bulk_destroy_entries
-    post_response(:found, @list)
+    post_response(:ok, @list)
   rescue => error
     post_response(error, xhr: false)
   end
@@ -498,7 +498,7 @@ class EntryController < ApplicationController
     end
   rescue => error
     if request.get?
-      failure_response(error)
+      failure_status(error)
     else
       post_response(error)
     end
@@ -523,7 +523,7 @@ class EntryController < ApplicationController
       format.xml  { render_xml  data }
     end
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # ===========================================================================
@@ -620,7 +620,7 @@ class EntryController < ApplicationController
     __debug_route
     @s3_object_table = get_s3_object_table(**url_parameters)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # ===========================================================================
@@ -642,7 +642,7 @@ class EntryController < ApplicationController
     @list, failed = reindex_submissions(*@identifier, **opt)
     failure(:invalid, failed.uniq) if failed.present?
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # ===========================================================================
@@ -697,7 +697,7 @@ class EntryController < ApplicationController
     re_raise_if_internal_exception(error)
     meth ||= calling_method
     if modal?
-      failure_response(error, meth: meth)
+      failure_status(error, meth: meth)
     else
       flash_failure(error, meth: meth)
       redirect_back(fallback_location: (fallback || entry_index_path))

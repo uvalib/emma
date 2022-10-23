@@ -109,8 +109,6 @@ module HttpHelper
   #
   # @param [Symbol, Integer, *] code
   #
-  # @note Currently unused.
-  #
   def http_temporary_redirect?(code)
     http_status?(:temp_redirect, code)
   end

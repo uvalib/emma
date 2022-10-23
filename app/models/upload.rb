@@ -689,17 +689,17 @@ class Upload < ApplicationRecord
   # @param [Boolean] no_raise           If *true*, return *nil* on error.
   # @param [Hash]    opt                Passed to #where.
   #
-  # @raise [UploadWorkflow::Errors::SubmitError]
+  # @raise [UploadWorkflow::SubmitError]
   #
   # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
   #
   def self.matching_sid(sid = nil, max: nil, meth: nil, no_raise: false, **opt)
     sid = opt[:submission_id] = sid_for(sid || opt)
     if sid.blank?
-      err = (UploadWorkflow::Errors::SubmitError unless no_raise)
+      err = (UploadWorkflow::SubmitError unless no_raise)
       msg = 'No submission ID given'
     elsif (result = where(**opt)).empty?
-      err = (UploadWorkflow::Errors::SubmitError unless no_raise)
+      err = (UploadWorkflow::SubmitError unless no_raise)
       msg = "No %{type} record for submission ID #{sid}"
     elsif (max = positive(max)) && (max < (total = result.size))
       err = nil

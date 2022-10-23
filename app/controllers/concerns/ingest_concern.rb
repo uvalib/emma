@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'net/http'
-
 # Controller support methods for access to the Ingest API service.
 #
 module IngestConcern

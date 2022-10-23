@@ -85,7 +85,7 @@ class PeriodicalController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /periodical/:id
@@ -115,7 +115,7 @@ class PeriodicalController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /periodical/new[?id=:id]

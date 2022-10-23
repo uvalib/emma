@@ -76,7 +76,7 @@ class HelpController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /help/:topic
@@ -97,7 +97,7 @@ class HelpController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # ===========================================================================

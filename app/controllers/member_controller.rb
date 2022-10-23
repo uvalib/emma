@@ -90,7 +90,7 @@ class MemberController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /member/:id
@@ -113,7 +113,7 @@ class MemberController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /member/new[?id=:id]

@@ -42,13 +42,9 @@ module UploadWorkflow::Errors
 
   include Emma::Debug
 
-  # Error types and messages.                                                   # NOTE: to Record::Exceptions::ENTRY_ERROR
-  #
-  # @type [Hash{Symbol=>(String,Class)}]
-  #
-  UPLOAD_ERROR: Hash[Symbol,(String|Class)]
-
   module RenderMethods
+    extend ::UploadWorkflow::Errors::RenderMethods
+
     # Default label. TODO: I18n                                                 # NOTE: to Record::Rendering
     #
     # @type [String]
@@ -93,16 +89,13 @@ module UploadWorkflow::Errors
 
   # Raise an exception.
   #
-  # If *problem* is a symbol, it is used as a key to #UPLOAD_ERROR with *value*
-  # used for string interpolation.
-  #
-  # Otherwise, error message(s) are extracted from *problem*.
-  #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [Any, nil]                                                  value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
+  #
+  # @see ExceptionHelper#failure
   #
   def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
 end
@@ -628,6 +621,13 @@ module UploadWorkflow::External
   #
   DISABLE_UPLOAD_INDEX_UPDATE: bool
 
+  # Patterns indicating errors that should not be reported as indicating a
+  # problem that would abort a removal workflow.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  IGNORED_REMOVE_ERRORS: Array[String|Regexp]
+
   # Add the indicated items from the EMMA Unified Index.
   #
   # @param [Array<Upload>] items
@@ -670,6 +670,7 @@ module UploadWorkflow::External
   #
   # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
   # @param [Array<Upload, String>]                                   items
+  # @param [Hash]                                                    opt
   #
   # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
   #                                         msgs, and records to roll back.
@@ -681,7 +682,7 @@ module UploadWorkflow::External
   # of errors by index, errors by submission ID, and/or general errors, but
   # this method was written to be able to cope with the possibility.
   #
-  def process_ingest_errors: ((Ingest::Message::Response|Hash[(String|Integer),String]) result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
+  def process_ingest_errors: ((Ingest::Message::Response|Hash[(String|Integer),String]) result, *(Upload|String) items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart], Array[Upload]]
 
   # Return a flatten array of items.
   #

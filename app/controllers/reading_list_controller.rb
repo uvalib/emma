@@ -87,7 +87,7 @@ class ReadingListController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /reading_list/:id
@@ -117,7 +117,7 @@ class ReadingListController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /reading_list/new[?id=:id]

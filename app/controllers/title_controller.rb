@@ -111,7 +111,7 @@ class TitleController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /title/:id
@@ -134,7 +134,7 @@ class TitleController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /title/new[?id=:id]

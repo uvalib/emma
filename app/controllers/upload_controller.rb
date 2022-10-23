@@ -138,7 +138,7 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end
-  rescue SubmitError, Record::SubmitError => error
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     show_search_failure(error)
   rescue => error
     show_search_failure(error, root_path)
@@ -159,7 +159,8 @@ class UploadController < ApplicationController
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
-  rescue SubmitError, Record::NotFound, ActiveRecord::RecordNotFound => error
+  rescue UploadWorkflow::SubmitError, Record::NotFound,
+    ActiveRecord::RecordNotFound => error
     # As a convenience (for HTML only), if an index item is actually on another
     # instance, fetch it from there to avoid a potentially confusing result.
     if request.format.html?
@@ -198,7 +199,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = wf_single(rec: (@db_id || :unset), event: :create)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == POST  /upload/create
@@ -216,7 +217,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
-  rescue SubmitError, Record::SubmitError => error
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
     post_response(error)
@@ -240,7 +241,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = (wf_single(event: :edit) unless show_menu?(@identifier))
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == PUT   /upload/update/:id
@@ -257,7 +258,7 @@ class UploadController < ApplicationController
     __debug_request
     @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
-  rescue SubmitError, Record::SubmitError => error
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
     post_response(error)
@@ -288,7 +289,7 @@ class UploadController < ApplicationController
       @list = wf_single(rec: :unset, data: @identifier, event: :remove)
     end
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == DELETE /upload/destroy/:id[?force=true&truncate=true&emergency=true]
@@ -312,8 +313,8 @@ class UploadController < ApplicationController
     opt   = { start_state: :removing, event: :submit, variant: :remove }
     @list = wf_single(rec: rec, data: dat, **opt)
     failure(:file_id) unless @list.present?
-    post_response(:found, @list, redirect: back)
-  rescue SubmitError, Record::SubmitError => error
+    post_response(:ok, @list, redirect: back)
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
     post_response(:not_found, error, redirect: back)
@@ -334,7 +335,7 @@ class UploadController < ApplicationController
   def bulk_index
     __debug_route
   rescue => error
-    failure_response(error, status: :bad_request)
+    failure_status(error, status: :bad_request)
   end
 
   # == GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -350,7 +351,7 @@ class UploadController < ApplicationController
     __debug_route
     wf_bulk(rec: :unset, data: :unset, event: :create)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -368,7 +369,7 @@ class UploadController < ApplicationController
     @list = wf_bulk(start_state: :creating, event: :submit, variant: :create)
     wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
-  rescue SubmitError, Record::SubmitError => error
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
@@ -387,7 +388,7 @@ class UploadController < ApplicationController
     __debug_route
     @list = wf_bulk(rec: :unset, data: :unset, event: :edit)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == PUT   /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
@@ -407,7 +408,7 @@ class UploadController < ApplicationController
     @list = wf_bulk(start_state: :editing, event: :submit, variant: :edit)
     wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
-  rescue SubmitError, Record::SubmitError => error
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
@@ -425,7 +426,7 @@ class UploadController < ApplicationController
     __debug_route
     @list = wf_bulk(event: :remove)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == DELETE /upload/bulk[?force=true]
@@ -440,8 +441,8 @@ class UploadController < ApplicationController
     @list = wf_bulk(start_state: :removing, event: :submit, variant: :remove)
     failure(:file_id) unless @list.present?
     wf_check_partial_failure
-    post_response(:found, @list)
-  rescue SubmitError, Record::SubmitError => error
+    post_response(:ok, @list)
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
@@ -518,7 +519,7 @@ class UploadController < ApplicationController
     end
   rescue => error
     if request.get?
-      failure_response(error)
+      failure_status(error)
     else
       post_response(error)
     end
@@ -543,7 +544,7 @@ class UploadController < ApplicationController
       format.xml  { render_xml  data }
     end
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # ===========================================================================
@@ -571,7 +572,7 @@ class UploadController < ApplicationController
     self.status = stat        if stat.present?
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?
-  rescue SubmitError, Record::SubmitError => error
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, xhr: true)
   rescue => error
     post_response(error, xhr: true)
@@ -644,7 +645,7 @@ class UploadController < ApplicationController
     __debug_route
     @s3_object_table = get_s3_object_table(**url_parameters)
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # ===========================================================================
@@ -669,7 +670,7 @@ class UploadController < ApplicationController
       format.xml  { render xml:  @list }
     end
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # == GET /upload/bulk_reindex?size=PAGE_SIZE[&id=(:id|SID|RANGE_LIST)]
@@ -685,7 +686,7 @@ class UploadController < ApplicationController
     @list, failed = reindex_submissions(*@identifier, **opt)
     failure(:invalid, failed.uniq) if failed.present?
   rescue => error
-    failure_response(error)
+    failure_status(error)
   end
 
   # ===========================================================================
@@ -716,7 +717,7 @@ class UploadController < ApplicationController
     re_raise_if_internal_exception(error)
     meth ||= calling_method
     if modal?
-      failure_response(error, meth: meth)
+      failure_status(error, meth: meth)
     else
       flash_failure(error, meth: meth)
       redirect_back(fallback_location: (fallback || upload_index_path))

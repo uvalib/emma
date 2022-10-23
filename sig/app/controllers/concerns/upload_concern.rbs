@@ -9,8 +9,6 @@ module UploadConcern
 
   include Emma::Json
 
-  include UploadWorkflow::Errors
-
   include ParamsHelper
 
   include FlashHelper
@@ -258,50 +256,34 @@ module UploadConcern
 
   # Generate a response to a POST.
   #
-  # @param [Symbol, Integer, Exception]                            status
-  # @param [Exception, String, FlashPart, Array<String,FlashPart>] item
-  # @param [String, FalseClass]       redirect
-  # @param [Boolean]                  xhr       Override `request.xhr?`.
-  # @param [Symbol]                   meth      Calling method.
+  # @param [Symbol, Integer, Exception, nil] status
+  # @param [*]                               item
+  # @param [Hash]                            opt
   #
   # @return [void]
   #
-  # -
-  # == Variations
-  # +
+  def post_response: ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
+                   | (                              Exception     item, **untyped opt) -> void
+
+  # Render an item for display in a message.
   #
-  # @overload post_response(status, items, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Symbol, Integer]                            status
-  #   @param [String, FlashPart, Array<String,FlashPart>] items
-  #   @param [String, FalseClass]                         redirect
-  #   @param [Boolean]                                    xhr
-  #   @param [Symbol]                                     meth
+  # @param [Model, Hash, String, *] item
   #
-  # @overload post_response(status, error, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Symbol, Integer]        status
-  #   @param [Exception]              error
-  #   @param [String, FalseClass]     redirect
-  #   @param [Boolean]                xhr
-  #   @param [Symbol]                 meth
+  # @return [String]
   #
-  # @overload post_response(error, redirect: nil, xhr: nil, meth: nil)
-  #   @param [Exception]              error
-  #   @param [String, FalseClass]     redirect
-  #   @param [Boolean]                xhr
-  #   @param [Symbol]                 meth
+  def make_label: (untyped item, **untyped opt) -> String
+
+  # Raise an exception.
   #
-  def post_response: ( (Symbol|Integer|nil) status, (Upload|String|FlashHelper::FlashPart|Array[Upload|String|FlashHelper::FlashPart]|nil) item, ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil) -> void
-                   | (?(Symbol|Integer|nil) status, Exception item,                                                                              ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil) -> void
-
-  private
-
-  THIS_MODULE: Module
-
-  public
-
-  include OptionsConcern
-
-  include PaginationConcern
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [Any, nil]                                                  value
+  #
+  # @raise [UploadWorkflow::SubmitError]
+  # @raise [ExecError]
+  #
+  # @see ExceptionHelper#failure
+  #
+  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
 
   # Create a @model_options instance from the current parameters.
   #

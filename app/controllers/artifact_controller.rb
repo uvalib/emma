@@ -91,7 +91,7 @@ class ArtifactController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 =end
 
@@ -118,7 +118,7 @@ class ArtifactController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /artifact/new[?id=:id]

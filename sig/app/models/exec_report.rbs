@@ -332,21 +332,31 @@ class ExecReport
     # error_table
     #
     # @param [Array<ExecReport,Exception,Hash,Array,*>] entries
+    # @param [Boolean, nil]                             html
+    # @param [Hash]                                     opt
     #
     # @return [Hash{String,Integer=>String}]
     #
-    def error_table: (*untyped entries) -> Hash[(String|Integer),String]
+    def error_table: (*untyped entries, ?html: bool|nil, **untyped opt) -> Hash[(String|Integer),String]
 
     # Return workflow error messages as multiple string(s).
     #
     # @param [ExecReport, Model, Exception, Hash, Array, *] src
     # @param [Boolean, nil]                                 html
+    # @param [Hash]                                         opt
     #
     # @return [Array<String>]
     #
-    def error_messages: (untyped src, ?(bool|nil) html) -> strArray
+    def error_messages: ((untyped|anyArray) src, ?html: bool|nil, **untyped opt) -> strArray
 
-    def error_table_hash: ((untyped|anyArray) src) -> strHash
+    # error_table_hash
+    #
+    # @param [Array<ExecReport,Exception,Hash,Array,*>] entries
+    # @param [String, Regexp, Array, nil]               ignore
+    #
+    # @return [Hash{String,Integer=>String}]
+    #
+    def error_table_hash: ((untyped|anyArray) src, ?ignore: String|Regexp|Array[String|Regexp]|nil, **untyped _ignored) -> Hash[(String|Integer),String]
 
     def inspect_item: (untyped value) -> String
 
@@ -376,19 +386,22 @@ class ExecReport
   # The error table for the current instance.
   #
   # @param [Array<ExecReport,Exception,Hash,Array,*>] entries   Def.: `self`.
+  # @param [Boolean, nil]                             html
+  # @param [Hash]                                     opt       To super
   #
   # @return [Hash{String,Integer=>String}]
   #
-  def error_table: (*untyped entries) -> Hash[(String|Integer),String]
+  def error_table: (*untyped entries, ?html: bool|nil, **untyped opt) -> Hash[(String|Integer),String]
 
   # Return error messages from the instance as multiple string(s).
   #
   # @param [ExecReport, Model, Exception, Hash, Array, *] src   Def.: `self`.
   # @param [Boolean, nil]                                 html
+  # @param [Hash]                                         opt   To super
   #
   # @return [Array<String>]
   #
-  def error_messages: (?untyped src, ?(bool|nil) html) -> strArray
+  def error_messages: (?untyped src, ?html: bool|nil, **untyped opt) -> strArray
 
   # Return the HTTP status value from the instance.
   #

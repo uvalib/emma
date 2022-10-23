@@ -223,6 +223,15 @@ module Record::Submittable
     #
     DISABLE_UPLOAD_INDEX_UPDATE = true?(ENV['DISABLE_UPLOAD_INDEX_UPDATE'])
 
+    # Patterns indicating errors that should not be reported as indicating a
+    # problem that would abort a removal workflow.
+    #
+    # @type [Array<String,Regexp>]
+    #
+    IGNORED_REMOVE_ERRORS = [
+      'Document not found',
+    ].freeze
+
     # Add the indicated items from the EMMA Unified Index.
     #
     # @param [Array<Entry>] items                                               # TODO: NOTE: by usage must be Entry not Model
@@ -302,7 +311,8 @@ module Record::Submittable
       return [], [] if items.blank?
 
       result = ingest_api.delete_records(*items)
-      succeeded, failed, _ = process_ingest_errors(result, *items)
+      succeeded, failed, _ =
+        process_ingest_errors(result, *items, ignore: IGNORED_REMOVE_ERRORS)
       succeeded = [] if atomic && failed.present?
       return succeeded, failed
     end
@@ -333,6 +343,7 @@ module Record::Submittable
     #
     # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
     # @param [Array<Model,String>]                                     items
+    # @param [Hash]                                                    opt
     #
     # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
     #                                         msgs, and records to roll back.
@@ -344,13 +355,10 @@ module Record::Submittable
     # mix of errors by index, errors by submission ID, and/or general errors,
     # but this method was written to be able to cope with the possibility.
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
-    def process_ingest_errors(result, *items)
+    def process_ingest_errors(result, *items, **opt)
 
       # If there were no errors then indicate that all items succeeded.
-      errors = ExecReport[result].error_table.dup
+      errors = ExecReport[result].error_table(**opt).dup
       return items, [], [] if errors.blank?
 
       # Otherwise, all items will be assumed to have failed.

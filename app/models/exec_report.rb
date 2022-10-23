@@ -129,7 +129,7 @@ class ExecReport
   #
   def render(html: nil, **)
     html = true if html.nil?
-    error_messages(nil, html)
+    error_messages(nil, html: html)
   end
 
   # ===========================================================================
@@ -620,13 +620,16 @@ class ExecReport
     # error_table
     #
     # @param [Array<ExecReport,Exception,Hash,Array,*>] entries
+    # @param [Boolean, nil]                             html
+    # @param [Hash]                                     opt
     #
     # @return [Hash{String,Integer=>String}]
     #
-    def error_table(*entries)
-      html = (entries.pop if [true, false, nil].any? { |v| entries.last == v })
+    # @see #error_table_hash
+    #
+    def error_table(*entries, html: nil, **opt)
       html = entries.any? { |v| v.try(:html_safe?) } if html.nil?
-      error_table_hash(entries).transform_values! { |v|
+      error_table_hash(entries, **opt).transform_values! { |v|
         message_line(nil, *v, html: html)
       }.compact_blank!
     end
@@ -635,14 +638,17 @@ class ExecReport
     #
     # @param [ExecReport, Model, Exception, Hash, Array, *] src
     # @param [Boolean, nil]                                 html
+    # @param [Hash]                                         opt
     #
     # @return [Array<String>]
     #
-    def error_messages(src, html = nil)
+    # @see #error_table_hash
+    #
+    def error_messages(src, html: nil, **opt)
       # noinspection RubyNilAnalysis
       src  = src.exec_report      if src.respond_to?(:exec_report)
       html = src.try(:html_safe?) if html.nil?
-      error_table_hash(src).map { |k, v|
+      error_table_hash(src, **opt).map { |k, v|
         next if v.blank?
         k = k.to_s
         k = nil if k.start_with?(GENERAL_ERROR_TAG)
@@ -656,17 +662,38 @@ class ExecReport
 
     protected
 
-    def error_table_hash(src)
+    # error_table_hash
+    #
+    # @param [Array<ExecReport,Exception,Hash,Array,*>] entries
+    # @param [String, Regexp, Array, nil]               ignore
+    #
+    # @return [Hash{String,Integer=>String}]
+    #
+    def error_table_hash(src, ignore: nil, **)
       result = {}
-      index  = 0
-      src    = src.is_a?(Array) ? src.flatten : [src]
-      src.each do |entry|
+      t_idx  = 0
+      ignore = Array.wrap(ignore).presence
+      Array.wrap(src).flatten.each do |entry|
         message_hashes(entry).each do |part|
-          part.slice(TOPIC_KEY, DETAILS_KEY).values.flatten.each do |item|
-            num, txt = item.to_s.split(/\s*-+\s*/, 2)
-            txt = item unless (num = positive(num))
-            next if txt.blank?
-            key = num || (GENERAL_ERROR_KEY % (index += 1))
+          topic, details = part.values_at(TOPIC_KEY, DETAILS_KEY)
+          t_key = GENERAL_ERROR_KEY % (t_idx += 1)
+          d_idx = 0
+          items =
+            Array.wrap(details).flatten.map { |item|
+              msg = item.to_s
+              next if ignore&.any? { |pattern| msg.match?(pattern) }
+              key, txt = msg.split(/\s*-+\s*/, 2)
+              txt = item unless (key = positive(key))
+              next if txt.blank?
+              key ||= "#{t_key}[%d]" % (d_idx += 1)
+              [key, txt]
+            }.compact.to_h
+          if topic.present? && (details.blank? || items.present?)
+            result[t_key] = topic
+          elsif items.blank?
+            t_idx -= 1
+          end
+          items.each_pair do |key, txt|
             result[key] ||= []
             result[key] << txt
           end
@@ -748,25 +775,36 @@ class ExecReport
   # The error table for the current instance.
   #
   # @param [Array<ExecReport,Exception,Hash,Array,*>] entries   Def.: `self`.
+  # @param [Boolean, nil]                             html
+  # @param [Hash]                                     opt       To super
   #
   # @return [Hash{String,Integer=>String}]
   #
-  def error_table(*entries)
-    entries.presence and super or @error_table ||= super(self).deep_freeze
+  def error_table(*entries, html: nil, **opt)
+    if entries.present?
+      super
+    elsif opt.present? || (html.presence != render_html.presence)
+      super(self, html: html, **opt)
+    else
+      @error_table ||= super(self).deep_freeze
+    end
   end
 
   # Return error messages from the instance as multiple string(s).
   #
   # @param [ExecReport, Model, Exception, Hash, Array, *] src   Def.: `self`.
   # @param [Boolean, nil]                                 html
+  # @param [Hash]                                         opt   To super
   #
   # @return [Array<String>]
   #
-  def error_messages(src = nil, html = nil)
-    if src.nil? && (html.nil? || (html.presence == render_html.presence))
-      @error_messages ||= super(self).deep_freeze
+  def error_messages(src = nil, html: nil, **opt)
+    if src
+      super
+    elsif opt.present? || (html.presence != render_html.presence)
+      super(self, html: html, **opt)
     else
-      super((src || self), html)
+      @error_messages ||= super(self).deep_freeze
     end
   end
 

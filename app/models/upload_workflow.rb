@@ -74,36 +74,14 @@ module UploadWorkflow::Errors
   include Emma::Debug
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Error types and messages.                                                   # NOTE: to Record::Exceptions::ENTRY_ERROR
-  #
-  # @type [Hash{Symbol=>(String,Class)}]
-  #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  UPLOAD_ERROR =
-    I18n.t('emma.error.upload').transform_values { |properties|
-      next unless properties.is_a?(Hash)
-      text = properties[:message]
-      err  = properties[:error]
-      err  = "Net::#{err}" if err.is_a?(String) && !err.start_with?('Net::')
-      err  = err&.safe_constantize unless err.is_a?(Module)
-      err  = err.exception_type if err.respond_to?(:exception_type)
-      [text, err]
-    }.compact.symbolize_keys.deep_freeze
-
-  # ===========================================================================
   # :section: Modules
   # ===========================================================================
 
   public
 
   module RenderMethods
+
+    extend self
 
     # =========================================================================
     # :section:
@@ -191,42 +169,16 @@ module UploadWorkflow::Errors
 
   # Raise an exception.
   #
-  # If *problem* is a symbol, it is used as a key to #UPLOAD_ERROR with *value*
-  # used for string interpolation.
-  #
-  # Otherwise, error message(s) are extracted from *problem*.
-  #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [Any, nil]                                                  value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
+  # @see ExceptionHelper#failure
+  #
   def failure(problem, value = nil)                                             # NOTE: to Record::Exceptions
-    __debug_items("UPLOAD WF #{__method__}", binding)
-
-    # If any failure is actually an internal error, re-raise it now so that it
-    # will result in a stack trace when it is caught and processed.
-    [problem, *value].each { |v| re_raise_if_internal_exception(v) }
-
-    report = nil
-    msg, error = problem.is_a?(Symbol) ? UPLOAD_ERROR[problem] : [problem, nil]
-    if msg.is_a?(String)
-      if msg.include?('%') # Message expects value interpolation.
-        msg %= value.is_a?(Array) ? value.size : value.to_s
-      elsif value.is_a?(Array) && value.many?
-        msg += " (#{value.size})"
-      end
-    elsif msg.is_a?(ExecReport)
-      report = msg if value.blank?
-    end
-    report ||= ExecReport.new(msg, *value)
-    error  ||= report.exception || UploadWorkflow::SubmitError
-
-    raise error, report.render
+    ExceptionHelper.failure(problem, value, model: :upload)
   end
 
 end
@@ -1191,6 +1143,15 @@ module UploadWorkflow::External
   #
   DISABLE_UPLOAD_INDEX_UPDATE = true?(ENV['DISABLE_UPLOAD_INDEX_UPDATE'])
 
+  # Patterns indicating errors that should not be reported as indicating a
+  # problem that would abort a removal workflow.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  IGNORED_REMOVE_ERRORS = [
+    'Document not found',
+  ].freeze
+
   # Add the indicated items from the EMMA Unified Index.
   #
   # @param [Array<Upload>] items
@@ -1260,7 +1221,8 @@ module UploadWorkflow::External
     return [], [] if items.blank?
 
     result = ingest_api.delete_records(*items)
-    succeeded, failed, _ = process_ingest_errors(result, *items)
+    succeeded, failed, _ =
+      process_ingest_errors(result, *items, ignore: IGNORED_REMOVE_ERRORS)
     succeeded = [] if atomic && failed.present?
     return succeeded, failed
   end
@@ -1291,6 +1253,7 @@ module UploadWorkflow::External
   #
   # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
   # @param [Array<Upload, String>]                                   items
+  # @param [Hash]                                                    opt
   #
   # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
   #                                         msgs, and records to roll back.
@@ -1302,10 +1265,10 @@ module UploadWorkflow::External
   # of errors by index, errors by submission ID, and/or general errors, but
   # this method was written to be able to cope with the possibility.
   #
-  def process_ingest_errors(result, *items)
+  def process_ingest_errors(result, *items, **opt)
 
     # If there were no errors then indicate that all items succeeded.
-    errors = ExecReport[result].error_table.dup
+    errors = ExecReport[result].error_table(**opt).dup
     return items, [], [] if errors.blank?
 
     # Otherwise, all items will be assumed to have failed.

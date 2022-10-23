@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'net/http'
+
 # Methods for creating and displaying flash messages.
 #
 # The .flash-messages container starts hidden and only displayed when the

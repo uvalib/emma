@@ -44,7 +44,7 @@ module BsDownloadConcern
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # ===========================================================================

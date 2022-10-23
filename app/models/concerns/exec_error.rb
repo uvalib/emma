@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'net/http/status'
-
 # Base exception for augmented application errors.
 #
 class ExecError < RuntimeError

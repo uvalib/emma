@@ -114,7 +114,7 @@ class SearchController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # == GET /search/:id
@@ -140,7 +140,7 @@ class SearchController < ApplicationController
   rescue => error
     err = error
   ensure
-    failure_response(err) if err
+    failure_status(err)
   end
 
   # ===========================================================================

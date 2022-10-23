@@ -1,0 +1,34 @@
+module ExceptionHelper
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Emma::Debug
+
+  extend ::ExceptionHelper
+
+  # Error types and messages.
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>(String,Class)}}]
+  #
+  # -
+  # noinspection RailsI18nInspection
+  # +
+  MODEL_ERROR: Hash[Symbol,Hash[Symbol,[String,Class|nil]]]
+
+  # Raise an exception.
+  #
+  # If *problem* is a symbol, it is used as a key into #MODEL_ERROR with
+  # *value* used for string interpolation.
+  #
+  # Otherwise, error message(s) are extracted from *problem*.
+  #
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [Any, nil]                                                  value
+  # @param [Symbol]                                                    model
+  #
+  # @raise [Record::SubmitError]
+  # @raise [ExecError]
+  #
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?(untyped|nil) value, model: Symbol) -> void
+end

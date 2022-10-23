@@ -42,7 +42,7 @@ module Record::Rendering
     # noinspection RailsParamDefResolve
     file  = item.try(:filename)
     ident = item.try(:identifier) || item_identity(item) || default
-    ident = "Item #{ident}"      if digits_only?(ident) # TODO: I18n
+    ident = "Item #{ident}"      # TODO: look for :name field...
     ident = "#{ident} (#{file})" if file.present?
     ident
   end
