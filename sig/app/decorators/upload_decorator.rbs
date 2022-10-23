@@ -8,49 +8,18 @@ class UploadDecorator < BaseDecorator
   module SharedPathMethods
     include BaseDecorator::SharedPathMethods
 
-    def index_path: (**untyped opt) -> String
-
-    def show_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
-
-    def new_path: (**untyped opt) -> String
-
-    def create_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
-
-    def edit_select_path: (**untyped opt) -> String
-
-    def edit_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
-
-    def update_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
-
-    def delete_select_path: (**untyped opt) -> String
-
-    def delete_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
-
-    def destroy_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
-
-    def renew_path: (**untyped opt) -> String
-
-    def reedit_path: (**untyped opt) -> String
-
-    def cancel_path: (**untyped opt) -> String
-
-    def check_path: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
-
-    def endpoint_path: (**untyped opt) -> String
-
-    def bulk_index_path: (**untyped opt) -> String
-
-    def bulk_new_path: (**untyped opt) -> String
-
-    def bulk_create_path: (**untyped opt) -> String
-
-    def bulk_edit_path: (**untyped opt) -> String
-
-    def bulk_update_path: (**untyped opt) -> String
-
-    def bulk_delete_path: (**untyped opt) -> String
-
-    def bulk_destroy_path: (**untyped opt) -> String
+    def renew_path:         (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def reedit_path:        (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def cancel_path:        (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def check_path:         (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def upload_path:        (*untyped _ignored,          **untyped opt) -> String
+    def bulk_index_path:    (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def bulk_new_path:      (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def bulk_create_path:   (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def bulk_edit_path:     (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def bulk_update_path:   (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def bulk_delete_path:   (?(Upload|anyHash|nil) item, **untyped opt) -> String
+    def bulk_destroy_path:  (?(Upload|anyHash|nil) item, **untyped opt) -> String
   end
 
   # Definitions available to both classes and instances of either this
@@ -63,7 +32,7 @@ class UploadDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>String}]
     #
-    UPLOAD: Hash[Symbol,String]
+    UPLOADER: Hash[Symbol,String]
 
     # Groupings of states related by theme.
     #

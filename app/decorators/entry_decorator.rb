@@ -54,8 +54,8 @@ class EntryDecorator < BaseDecorator
       path_for(item, **opt, action: :check)
     end
 
-    def delete_select_path(**opt)
-      h.delete_select_entry_path(**opt)
+    def upload_path(*, **opt)
+      h.entry_upload_path(**opt)
     end
 
     def bulk_index_path(item = nil, **opt)
@@ -107,7 +107,7 @@ class EntryDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>String}]
     #
-    UPLOAD = {
+    UPLOADER = {
       drag_target: 'drag-drop-target',
       preview:     'item-preview',
     }.deep_freeze
@@ -1057,7 +1057,7 @@ class EntryDecorator
       reedit:       reedit_path,
       check:        check_path(id: JS_ID),
       cancel:       cancel_path,
-      endpoint:     endpoint_path,
+      upload:       upload_path,
       bulk_index:   bulk_index_path,
       bulk_new:     bulk_new_path,
       bulk_create:  bulk_create_path,

@@ -389,16 +389,16 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 /**
  * PathProperties
  *
- * - index              The endpoint for listing submissions.
- * - show               Display a single item.
- * - new                The new entry creation form.
- * - create             The POST endpoint for creating a database entry for the uploaded file.
- * - edit               The existing entry modification form.
- * - update             The POST endpoint for modifying a database entry for the uploaded file.
- * - renew              The POST endpoint for generating a fresh database entry.
- * - reedit             The POST endpoint for re-starting an edit workflow on an existing database entry.
- * - cancel             The endpoint for canceling a submission.
- * - endpoint           Shrine's upload endpoint (the server route to which uploads are directed).
+ * - index:             The endpoint for listing submissions.
+ * - show:              Display a single item.
+ * - new:               The new entry creation form.
+ * - create:            The POST endpoint for creating a database entry for the uploaded file.
+ * - edit:              The existing entry modification form.
+ * - update:            The POST endpoint for modifying a database entry for the uploaded file.
+ * - renew:             The POST endpoint for generating a fresh database entry.
+ * - reedit:            The POST endpoint for re-starting an edit workflow on an existing database entry.
+ * - cancel:            The endpoint for canceling a submission.
+ * - upload:            Shrine's upload endpoint (the server route to which uploads are directed).
  *
  * @typedef {{
  *    index:            string,
@@ -412,25 +412,24 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *    renew?:           string,
  *    reedit?:          string,
  *    cancel?:          string,
- *    endpoint?:        string,
+ *    upload?:          string,
  * }} PathProperties
  */
 
 /**
  * ModelProperties
  *
- * - Upload.drag_target CSS class for the element used to hold an Uppy drag-and-drop target.
- * - Upload.preview     CSS class for the element used to hold an Uppy preview thumbnail image.
- * - Action             Form action label/tooltips for controller actions.
- * - Filter             Form action label/tooltips for form field filter selections.
- * - Status             Status marker label/tooltips.
- * - Mime.to_fmt        A table mapping MIME type to file format.
- * - Field.empty        Blank field value indicator.
- * - Repo.default       The name of the default repository.
+ * - Uploader.*:        CSS classes for elements used to hold an Uppy plugin targets.
+ * - Action:            Form action label/tooltips for controller actions.
+ * - Filter:            Form action label/tooltips for form field filter selections.
+ * - Status:            Status marker label/tooltips.
+ * - Mime.to_fmt:       A table mapping MIME type to file format.
+ * - Field.empty:       Blank field value indicator.
+ * - Repo.default:      The name of the default repository.
  *
  * @typedef {{
  *    Path:             PathProperties,
- *    Upload:           UploaderProperties,
+ *    Uploader:         UploaderProperties,
  *    Action:           ControllerActionProperties,
  *    Filter:           FilterProperties,
  *    Status:           StatusProperties,

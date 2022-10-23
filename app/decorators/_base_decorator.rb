@@ -1084,27 +1084,32 @@ class BaseDecorator
       StateGroup: fetch_property(:STATE_GROUP)&.keys,
     )
 
+    repo_properties = {
+      name:       EmmaRepository.pairs,
+      default:    EmmaRepository.default,
+    }
+
     path_properties = {
-      index:    (index_path               rescue nil),
-      show:     (show_path(id: JS_ID)     rescue nil),
-      new:      (new_path                 rescue nil),
-      create:   (create_path              rescue nil),
-      edit:     (edit_path(id: JS_ID)     rescue nil),
-      update:   (update_path(id: JS_ID)   rescue nil),
-      delete:   (delete_path(id: JS_ID)   rescue nil),
-      destroy:  (destroy_path(id: JS_ID)  rescue nil),
+      index:      (index_path               rescue nil),
+      show:       (show_path(id: JS_ID)     rescue nil),
+      new:        (new_path                 rescue nil),
+      create:     (create_path              rescue nil),
+      edit:       (edit_path(id: JS_ID)     rescue nil),
+      update:     (update_path(id: JS_ID)   rescue nil),
+      delete:     (delete_path(id: JS_ID)   rescue nil),
+      destroy:    (destroy_path(id: JS_ID)  rescue nil),
     }.compact
 
     {
-      Action: form_actions,
-      Filter: field_groups,
-      Status: status_markers,
-      Upload: fetch_property(:UPLOAD),
-      Record: record_properties,
-      Mime:   { to_fmt: FileNaming.mime_to_fmt },
-      Field:  { empty: EMPTY_VALUE },
-      Repo:   { name:  EmmaRepository.pairs, default: EmmaRepository.default },
-      Path:   path_properties,
+      Action:     form_actions,
+      Filter:     field_groups,
+      Status:     status_markers,
+      Uploader:   fetch_property(:UPLOADER),
+      Record:     record_properties,
+      Mime:       { to_fmt: FileNaming.mime_to_fmt },
+      Field:      { empty: EMPTY_VALUE },
+      Repo:       repo_properties,
+      Path:       path_properties,
     }
   end
 

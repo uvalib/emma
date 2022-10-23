@@ -526,15 +526,15 @@ class EntryController < ApplicationController
 
   public
 
-  # == POST /entry/endpoint
+  # == POST /entry/upload
   #
   # Invoked from 'Uppy.XHRUpload'.
   #
-  # @see #entries_path                Route helper
+  # @see #entry_upload_path           Route helper
   # @see EntryConcern#upload_file
   # @see file:app/assets/javascripts/feature/model-form.js
   #
-  def endpoint
+  def upload
     __debug_route
     __debug_request
     stat, hdrs, body = upload_file

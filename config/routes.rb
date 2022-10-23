@@ -38,53 +38,52 @@ Rails.application.routes.draw do
   # NOTE: Avoid "resources :upload" because :action can get turned into :id.
   # ===========================================================================
 
-  get    '/upload',               to: 'upload#index',           as: 'upload_index'
-  get    '/upload/show/:id',      to: 'upload#show',            as: 'show_upload'
+  get    '/upload',                 to: 'upload#index',         as: 'upload_index'
+  get    '/upload/show/:id',        to: 'upload#show',          as: 'show_upload'
 
   # === UploadWorkflow::Single
 
-  get    '/upload/new_select',    to: redirect('/upload/new'),  as: 'new_select_upload'     # Only for consistency
-  get    '/upload/new',           to: 'upload#new',             as: 'new_upload'
-  match  '/upload/create',        to: 'upload#create',          as: 'create_upload',        via: %i[post put patch]
+  get    '/upload/new',             to: 'upload#new',           as: 'new_upload'
+  match  '/upload/create',          to: 'upload#create',        as: 'create_upload',          via: %i[post put patch]
 
-  get    '/upload/edit_select',   to: 'upload#edit',            as: 'edit_select_upload',   defaults: { id: 'SELECT' }
-  get    '/upload/edit/:id',      to: 'upload#edit',            as: 'edit_upload'
-  match  '/upload/update/:id',    to: 'upload#update',          as: 'update_upload',        via: %i[put patch]
+  get    '/upload/edit_select',     to: 'upload#edit',          as: 'edit_select_upload',     defaults: { id: 'SELECT' }
+  get    '/upload/edit/:id',        to: 'upload#edit',          as: 'edit_upload'
+  match  '/upload/update/:id',      to: 'upload#update',        as: 'update_upload',          via: %i[put patch]
 
-  get    '/upload/delete_select', to: 'upload#delete',          as: 'delete_select_upload', defaults: { id: 'SELECT' }
-  get    '/upload/delete/:id',    to: 'upload#delete',          as: 'delete_upload'
-  delete '/upload/destroy/:id',   to: 'upload#destroy',         as: 'destroy_upload'
+  get    '/upload/delete_select',   to: 'upload#delete',        as: 'delete_select_upload',   defaults: { id: 'SELECT' }
+  get    '/upload/delete/:id',      to: 'upload#delete',        as: 'delete_upload'
+  delete '/upload/destroy/:id',     to: 'upload#destroy',       as: 'destroy_upload'
 
   # === UploadWorkflow::Bulk
 
-  get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',    as: 'bulk_reindex_upload'
+  get    '/upload/bulk_reindex',    to: 'upload#bulk_reindex',  as: 'bulk_reindex_upload'
 
-  get    '/upload/bulk_new',      to: 'upload#bulk_new',        as: 'bulk_new_upload'
-  post   '/upload/bulk',          to: 'upload#bulk_create',     as: 'bulk_create_upload'
+  get    '/upload/bulk_new',        to: 'upload#bulk_new',      as: 'bulk_new_upload'
+  post   '/upload/bulk',            to: 'upload#bulk_create',   as: 'bulk_create_upload'
 
-  get    '/upload/bulk_edit',     to: 'upload#bulk_edit',       as: 'bulk_edit_upload'
-  match  '/upload/bulk',          to: 'upload#bulk_update',     as: 'bulk_update_upload',   via: %i[put patch]
+  get    '/upload/bulk_edit',       to: 'upload#bulk_edit',     as: 'bulk_edit_upload'
+  match  '/upload/bulk',            to: 'upload#bulk_update',   as: 'bulk_update_upload',     via: %i[put patch]
 
-  get    '/upload/bulk_delete',   to: 'upload#bulk_delete',     as: 'bulk_delete_upload'
-  delete '/upload/bulk',          to: 'upload#bulk_destroy',    as: 'bulk_destroy_upload'
+  get    '/upload/bulk_delete',     to: 'upload#bulk_delete',   as: 'bulk_delete_upload'
+  delete '/upload/bulk',            to: 'upload#bulk_destroy',  as: 'bulk_destroy_upload'
 
-  get    '/upload/bulk',          to: 'upload#bulk_index',      as: 'bulk_upload_index'
+  get    '/upload/bulk',            to: 'upload#bulk_index',    as: 'bulk_upload_index'
 
   # === UploadWorkflow
 
-  post   '/upload/renew',         to: 'upload#renew',           as: 'renew_upload'
-  post   '/upload/reedit',        to: 'upload#reedit',          as: 'reedit_upload'
-  match  '/upload/cancel',        to: 'upload#cancel',          as: 'cancel_upload',        via: %i[get post]
-  get    '/upload/check/:id',     to: 'upload#check',           as: 'check_upload',         defaults: { modal: true }
-  post   '/upload/endpoint',      to: 'upload#endpoint',        as: 'uploads'               # Invoked from file-upload.js
+  post   '/upload/renew',           to: 'upload#renew',         as: 'renew_upload'
+  post   '/upload/reedit',          to: 'upload#reedit',        as: 'reedit_upload'
+  match  '/upload/cancel',          to: 'upload#cancel',        as: 'cancel_upload',          via: %i[get post]
+  get    '/upload/check/:id',       to: 'upload#check',         as: 'check_upload',           defaults: { modal: true }
+  post   '/upload/upload',          to: 'upload#upload',        as: 'upload_upload'           # Invoked from file-upload.js
 
   # === Administration
 
-  get    '/upload/admin',         to: 'upload#admin',           as: 'admin_upload'
+  get    '/upload/admin',           to: 'upload#admin',         as: 'admin_upload'
 
   # === Other
 
-  get    '/upload/api_migrate',   to: 'upload#api_migrate',     as: 'api_migrate'
+  get    '/upload/api_migrate',     to: 'upload#api_migrate',   as: 'api_migrate'
 
   # ===========================================================================
   # EMMA entry operations
@@ -92,62 +91,61 @@ Rails.application.routes.draw do
   # NOTE: Avoid "resources :entry" because :action can get turned into :id.
   # ===========================================================================
 
-  get    '/entry',                to: 'entry#index',          as: 'entry_index'
-  get    '/entry/show/:id',       to: 'entry#show',           as: 'show_entry'
+  get    '/entry',                  to: 'entry#index',          as: 'entry_index'
+  get    '/entry/show/:id',         to: 'entry#show',           as: 'show_entry'
 
   # === Single-entry workflows
 
-  get    '/entry/new_select',     to: redirect('/entry/new'), as: 'new_select_entry'     # Only for consistency
-  get    '/entry/new',            to: 'entry#new',            as: 'new_entry'
-  match  '/entry/create',         to: 'entry#create',         as: 'create_entry',        via: %i[post put patch]
+  get    '/entry/new',              to: 'entry#new',            as: 'new_entry'
+  match  '/entry/create',           to: 'entry#create',         as: 'create_entry',           via: %i[post put patch]
 
-  get    '/entry/edit_select',    to: 'entry#edit',           as: 'edit_select_entry',   defaults: { id: 'SELECT' }
-  get    '/entry/edit/:id',       to: 'entry#edit',           as: 'edit_entry'
-  match  '/entry/update/:id',     to: 'entry#update',         as: 'update_entry',        via: %i[put patch]
+  get    '/entry/edit_select',      to: 'entry#edit',           as: 'edit_select_entry',      defaults: { id: 'SELECT' }
+  get    '/entry/edit/:id',         to: 'entry#edit',           as: 'edit_entry'
+  match  '/entry/update/:id',       to: 'entry#update',         as: 'update_entry',           via: %i[put patch]
 
-  get    '/entry/delete_select',  to: 'entry#delete',         as: 'delete_select_entry', defaults: { id: 'SELECT' }
-  get    '/entry/delete/:id',     to: 'entry#delete',         as: 'delete_entry'
-  delete '/entry/destroy/:id',    to: 'entry#destroy',        as: 'destroy_entry'
+  get    '/entry/delete_select',    to: 'entry#delete',         as: 'delete_select_entry',    defaults: { id: 'SELECT' }
+  get    '/entry/delete/:id',       to: 'entry#delete',         as: 'delete_entry'
+  delete '/entry/destroy/:id',      to: 'entry#destroy',        as: 'destroy_entry'
 
   # === Bulk operation workflows
 
-  get    '/entry/bulk_reindex',   to: 'entry#bulk_reindex',   as: 'bulk_reindex_entry'
+  get    '/entry/bulk_reindex',     to: 'entry#bulk_reindex',   as: 'bulk_reindex_entry'
 
-  get    '/entry/bulk_new',       to: 'entry#bulk_new',       as: 'bulk_new_entry'
-  post   '/entry/bulk',           to: 'entry#bulk_create',    as: 'bulk_create_entry'
+  get    '/entry/bulk_new',         to: 'entry#bulk_new',       as: 'bulk_new_entry'
+  post   '/entry/bulk',             to: 'entry#bulk_create',    as: 'bulk_create_entry'
 
-  get    '/entry/bulk_edit',      to: 'entry#bulk_edit',      as: 'bulk_edit_entry'
-  match  '/entry/bulk',           to: 'entry#bulk_update',    as: 'bulk_update_entry',   via: %i[put patch]
+  get    '/entry/bulk_edit',        to: 'entry#bulk_edit',      as: 'bulk_edit_entry'
+  match  '/entry/bulk',             to: 'entry#bulk_update',    as: 'bulk_update_entry',      via: %i[put patch]
 
-  get    '/entry/bulk_delete',    to: 'entry#bulk_delete',    as: 'bulk_delete_entry'
-  delete '/entry/bulk',           to: 'entry#bulk_destroy',   as: 'bulk_destroy_entry'
+  get    '/entry/bulk_delete',      to: 'entry#bulk_delete',    as: 'bulk_delete_entry'
+  delete '/entry/bulk',             to: 'entry#bulk_destroy',   as: 'bulk_destroy_entry'
 
-  get    '/entry/bulk',           to: 'entry#bulk_index',     as: 'bulk_entry_index'
+  get    '/entry/bulk',             to: 'entry#bulk_index',     as: 'bulk_entry_index'
 
   # === Upload support
 
-  post   '/entry/renew',          to: 'entry#renew',          as: 'renew_entry'
-  post   '/entry/reedit',         to: 'entry#reedit',         as: 'reedit_entry'
-  match  '/entry/cancel',         to: 'entry#cancel',         as: 'cancel_entry',        via: %i[get post]
-  get    '/entry/check/:id',      to: 'entry#check',          as: 'check_entry',         defaults: { modal: true }
-  post   '/entry/endpoint',       to: 'entry#endpoint',       as: 'entries'              # Invoked from entry.form.js
+  post   '/entry/renew',            to: 'entry#renew',          as: 'renew_entry'
+  post   '/entry/reedit',           to: 'entry#reedit',         as: 'reedit_entry'
+  match  '/entry/cancel',           to: 'entry#cancel',         as: 'cancel_entry',           via: %i[get post]
+  get    '/entry/check/:id',        to: 'entry#check',          as: 'check_entry',            defaults: { modal: true }
+  post   '/entry/upload',           to: 'entry#upload',         as: 'entry_upload'            # Invoked from entry.form.js
 
   # === Administration
 
-  get    '/entry/admin',          to: 'entry#admin',          as: 'admin_entry'
-  get    '/entry/phases',         to: 'entry#phases',         as: 'phases'
-  get    '/entry/actions',        to: 'entry#actions',        as: 'actions'
+  get    '/entry/admin',            to: 'entry#admin',          as: 'admin_entry'
+  get    '/entry/phases',           to: 'entry#phases',         as: 'phases'
+  get    '/entry/actions',          to: 'entry#actions',        as: 'actions'
 
   # === Display
 
-  get    '/entry/:id',            to: redirect('/entry/show/%{id}')
+  get    '/entry/:id',              to: redirect('/entry/show/%{id}')
 
   # ===========================================================================
   # File download operations
   # ===========================================================================
 
-  get '/download/:id', to: 'upload#download',  as: 'file_download'
-  get '/retrieval',    to: 'upload#retrieval', as: 'retrieval'
+  get    '/download/:id',           to: 'upload#download',      as: 'file_download'
+  get    '/retrieval',              to: 'upload#retrieval',     as: 'retrieval'
 
   # ===========================================================================
   # Category operations
@@ -276,7 +274,6 @@ Rails.application.routes.draw do
 
   get    '/account/show/:id',       to: 'account#show',           as: 'show_account'
 
-  get    '/account/new_select',     to: redirect('/account/new'), as: 'new_select_account'      # Only for consistency
   get    '/account/new',            to: 'account#new',            as: 'new_account'
   match  '/account/create',         to: 'account#create',         as: 'create_account',         via: %i[post put patch]
 
@@ -498,10 +495,10 @@ unless ONLY_FOR_DOCUMENTATION
   def edition_download_url(...);                   end
   def edition_index_path(...);                     end
   def edition_index_url(...);                      end
-  def entries_path(...);                           end
-  def entries_url(...);                            end
   def entry_index_path(...);                       end
   def entry_index_url(...);                        end
+  def entry_upload_path(...);                      end
+  def entry_upload_url(...);                       end
   def file_download_path(...);                     end
   def file_download_url(...);                      end
   def healthcheck_path(...);                       end
@@ -620,8 +617,8 @@ unless ONLY_FOR_DOCUMENTATION
   def update_user_url(...);                        end
   def upload_index_path(...);                      end
   def upload_index_url(...);                       end
-  def uploads_path(...);                           end
-  def uploads_url(...);                            end
+  def upload_upload_path(...);                     end
+  def upload_upload_url(...);                      end
   def user_bookshare_omniauth_authorize_path(...); end
   def user_bookshare_omniauth_authorize_url(...);  end
   def user_registration_path(...);                 end

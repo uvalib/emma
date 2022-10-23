@@ -559,9 +559,9 @@ class Object
 
   def upload_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def uploads_path: (*untyped) ?{ () -> untyped } -> String
+  def upload_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def uploads_url: (*untyped) ?{ () -> untyped } -> String
+  def upload_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def user_bookshare_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
 

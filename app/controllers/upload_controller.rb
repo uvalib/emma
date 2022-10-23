@@ -547,17 +547,17 @@ class UploadController < ApplicationController
 
   public
 
-  # == POST /upload/endpoint
+  # == POST /upload/upload
   #
   # Invoked from 'Uppy.XHRUpload'.
   #
-  # @see #uploads_path                Route helper
+  # @see #upload_upload_path          Route helper
   # @see UploadWorkflow::Single::Create::States#on_validating_entry
   # @see UploadWorkflow::Single::Edit::States#on_replacing_entry
   # @see UploadWorkflow::External#upload_file
   # @see file:app/assets/javascripts/feature/model-form.js
   #
-  def endpoint
+  def upload
     __debug_route
     __debug_request
     rec = db_id || identifier

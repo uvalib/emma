@@ -217,7 +217,7 @@ module UploadWorkflow::Single::Create::States
 
     # Verify validity of the uploaded file. # TODO: simulation - remove
     if simulating
-      # From UploadController#endpoint:
+      # From UploadController#upload:
       # stat, hdrs, body = FileUploader.upload_response(:cache, request.env)
       __debug_sim('CODE') do
         args = ':cache, request.env'
