@@ -1,6 +1,8 @@
 # Methods supporting tabular display of Model instances.
 #
 module BaseDecorator::Table
+  include BaseDecorator::Common
+
   include BaseDecorator::List
 
   # Make the heading row stick to the top of the table when scrolling.

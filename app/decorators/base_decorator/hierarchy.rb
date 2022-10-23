@@ -11,6 +11,8 @@ __loading_begin(__FILE__)
 #
 module BaseDecorator::Hierarchy
 
+  include BaseDecorator::Common
+  include BaseDecorator::Fields
   include BaseDecorator::List
 
   # ===========================================================================

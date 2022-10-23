@@ -22,7 +22,7 @@
     set_page_description(title)
   end
 
-  template_opt = { dec: dec }
+  opt = { dec: dec }
 
 -%>
 
@@ -31,7 +31,7 @@
 
 <%= page_directions_section %>
 <%= dec.preview %>
-<%= render 'entry/details', template_opt %>
+<%= render 'entry/details', opt %>
 
 <%= page_notes_section %>
 <%= dec.action_list unless modal? || cannot?(:edit, Entry) %>

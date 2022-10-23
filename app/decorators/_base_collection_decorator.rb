@@ -7,10 +7,6 @@ __loading_begin(__FILE__)
 
 # Common base for collection decorator classes.
 #
-# @!attribute [r] object
-#   Set in Draper#initialize
-#   @return [Array<Model>]
-#
 class BaseCollectionDecorator < Draper::CollectionDecorator
 
   include_submodules(self)
@@ -18,12 +14,15 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
+    include BaseCollectionDecorator::Configuration
     include BaseCollectionDecorator::Fields
     include BaseCollectionDecorator::Form
+    include BaseCollectionDecorator::Helpers
     include BaseCollectionDecorator::Hierarchy
     include BaseCollectionDecorator::Links
     include BaseCollectionDecorator::List
     include BaseCollectionDecorator::Menu
+    include BaseCollectionDecorator::Pagination
     include BaseCollectionDecorator::Table
     # :nocov:
   end
@@ -36,12 +35,9 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   # Methods for each collection decorator class instance.
   #
-  # @!attribute [r] object_class
-  #   @return [Class]
-  #
-  module InstanceMethods
+  module SharedInstanceMethods
 
-    include BaseDecorator::InstanceMethods
+    include BaseDecorator::SharedInstanceMethods
 
     # =========================================================================
     # :section: Object overrides
@@ -71,9 +67,9 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   # Methods for each collection decorator class.
   #
-  module ClassMethods
+  module SharedClassMethods
 
-    include BaseDecorator::ClassMethods
+    include BaseDecorator::SharedClassMethods
 
     # =========================================================================
     # :section:
@@ -99,14 +95,21 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   end
 
-  module Common
+  # Used by BaseCollectionDecorator#collection_of to supply shared definitions
+  # with the associated collection decorator.
+  #
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class BaseCollectionDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section: Draper::CollectionDecorator overrides
@@ -144,11 +147,11 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   #
   DEBUG_COLLECTION_INHERITANCE = false
 
-  # Define the association between a collection decorator and the decorator
-  # for its elements.
+  # Define the association between a collection decorator and the decorator for
+  # its elements.
   #
-  # This also causes the element decorator's Common module to be included so
-  # that the collection decorator acquires the same definitions.
+  # This also causes the element decorator's SharedDefinitions module to be
+  # included so that the collection decorator acquires the same definitions.
   #
   # @param [Class] base
   #
@@ -163,7 +166,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
     end
     @decorator_class = base
     @model_type      = @decorator_class.model_type
-    definitions      = "#{base}::Common".safe_constantize
+    definitions      = "#{base}::SharedDefinitions".safe_constantize
     include(definitions) if definitions.is_a?(Module)
     debug_inheritance    if DEBUG_COLLECTION_INHERITANCE
   end

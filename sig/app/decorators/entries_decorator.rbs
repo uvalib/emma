@@ -6,9 +6,9 @@
 #
 class EntriesDecorator < BaseCollectionDecorator
   # :nocov:
-  #include EntryDecorator::InstanceMethods
+  #include EntryDecorator::SharedInstanceMethods
 
-  extend EntryDecorator::ClassMethods
+  #extend EntryDecorator::SharedClassMethods
 
   # group_counts
   #

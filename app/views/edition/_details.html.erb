@@ -7,9 +7,10 @@
   item  ||= nil
   dec   ||= item && EditionDecorator.new(item, **context) or return
 
-  add   ||= nil
   level ||= 1
+  extra ||= nil
+  skip  ||= nil
 
 -%>
 
-<%= dec.details_element(pairs: add, level: level) %>
+<%= dec.details_container(level: level, pairs: extra, skip: skip) %>

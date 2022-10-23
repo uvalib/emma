@@ -1,0 +1,11 @@
+# Definitions to support inclusion of helpers.
+#
+module BaseCollectionDecorator::Helpers
+  include BaseDecorator::Helpers
+
+  include BaseCollectionDecorator::Common
+
+  private
+
+  def self.included: (Module base) -> void
+end

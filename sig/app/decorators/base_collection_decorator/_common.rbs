@@ -1,0 +1,12 @@
+# Model/controller related configuration information relative to model_type.
+#
+# @!attribute [r] object
+#   Set in Draper::CollectionDecorator#initialize
+#   @return [Array<Model>]
+#
+# @!attribute [r] context
+#   Set in Draper::CollectionDecorator#initialize
+#   @return [Hash{Symbol=>*}]
+#
+module BaseCollectionDecorator::Common
+end

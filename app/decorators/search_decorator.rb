@@ -22,23 +22,43 @@ class SearchDecorator < BaseDecorator
   @model_type = :search
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with SearchesDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BaseDecorator::Paths
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
+  module SharedGenericMethods
 
     include CssHelper
 
-    include BaseDecorator::Methods
+    include BaseDecorator::SharedGenericMethods
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render a single label/value pair.
+    #
+    # @param [String, Symbol, nil] label
+    # @param [Any, nil]            value
+    # @param [Hash]                opt        Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_pair(label, value, **opt)
+      return if value.blank?
+      opt[:no_code] = true unless opt.key?(:no_code)
+      super(label, value, **opt)
+    end
 
     # =========================================================================
     # :section: BaseDecorator::Fields overrides
@@ -254,8 +274,10 @@ class SearchDecorator < BaseDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods, Paths, Methods
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -264,21 +286,27 @@ class SearchDecorator < BaseDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class SearchDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section: BaseDecorator::Links overrides
@@ -302,19 +330,6 @@ class SearchDecorator < BaseDecorator
   # ===========================================================================
 
   public
-
-  # Render a single label/value pair.
-  #
-  # @param [String, Symbol, nil] label
-  # @param [Any, nil]            value
-  # @param [Hash]                opt        Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  def render_pair(label, value, **opt)
-    opt[:no_code] = true unless opt.key?(:no_code)
-    super(label, value, **opt)
-  end
 
   # Transform a field value for HTML rendering.
   #
@@ -576,6 +591,21 @@ class SearchDecorator < BaseDecorator
   def details(pairs: nil, **opt)
     opt[:pairs] = model_show_fields.merge(pairs || {})
     super(**opt)
+  end
+
+  # details_container
+  #
+  # @param [Array]         added      Optional elements after the details.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt        Passed to super
+  # @param [Proc]          block      Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details_container(*added, skip: [], **opt, &block)
+    skip = Array.wrap(skip)
+    added.prepend(cover(placeholder: false)) unless skip.include?(:cover)
+    super(*added, **opt, &block)
   end
 
   # Create a container with the repository ID displayed as a link but acting as

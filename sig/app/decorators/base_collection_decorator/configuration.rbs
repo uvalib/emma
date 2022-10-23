@@ -1,0 +1,11 @@
+# Model/controller related configuration information relative to model_type.
+#
+module BaseCollectionDecorator::Configuration
+  include BaseDecorator::Configuration
+
+  include BaseCollectionDecorator::Common
+
+  private
+
+  def self.included: (Module base) -> void
+end

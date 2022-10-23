@@ -16,8 +16,8 @@ class EntriesDecorator < BaseCollectionDecorator
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include EntryDecorator::InstanceMethods
-    extend  EntryDecorator::ClassMethods
+    include EntryDecorator::SharedInstanceMethods
+    extend  EntryDecorator::SharedClassMethods
     # :nocov:
   end
 
@@ -500,8 +500,7 @@ class EntriesDecorator < BaseCollectionDecorator
       bulk_opt[:prefix] ||= options.title_prefix
       bulk_opt[:batch]  ||= options.batch_size
 
-      # @type [ActionView::Helpers::FormBuilder] f
-      h.form_with(**opt) do |f|
+      form_with(**opt) do |f|
         lines = []
 
         # === Batch title prefix input
@@ -645,8 +644,7 @@ class EntriesDecorator < BaseCollectionDecorator
       sub_opt = options.all
       opt.except!(*sub_opt.keys)
 
-      # @type [ActionView::Helpers::FormBuilder] f
-      h.form_with(**opt) do |f|
+      form_with(**opt) do |f|
         lines = []
 
         # === Options

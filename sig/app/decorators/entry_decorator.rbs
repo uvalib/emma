@@ -5,8 +5,8 @@
 #   @return [Entry]
 #
 class EntryDecorator < BaseDecorator
-  module Paths
-    include BaseDecorator::Paths
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
 
     def index_path: (**untyped opt) -> String
 
@@ -56,8 +56,8 @@ class EntryDecorator < BaseDecorator
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BaseDecorator::Methods
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
 
     # Uploader properties.
     #
@@ -148,6 +148,45 @@ class EntryDecorator < BaseDecorator
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons: () -> Hash[Symbol,symHash]
+
+    # Render item attributes.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super except:
+    #
+    # @option opt [String, Symbol, Array<String,Symbol>] :columns
+    # @option opt [String, Regexp, Array<String,Regexp>] :filter
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #model_field_values
+    #
+    def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Include control icons below the entry number.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Generate a prompt for #items_menu.
+    #
+    # @param [User, Symbol, nil] user
+    #
+    # @return [String]
+    #
+    def items_menu_prompt: (?user: User|Symbol|nil) -> String
 
     # The CSS class selector associated with bibliographic lookup buttons.
     #
@@ -274,12 +313,12 @@ class EntryDecorator < BaseDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
 
     # options
     #
@@ -294,22 +333,29 @@ class EntryDecorator < BaseDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
+
+class EntryDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend SharedClassMethods
 
   # Display preview of Shrine uploads.  NOTE: Not currently enabled.
   #
@@ -378,36 +424,16 @@ class EntryDecorator < BaseDecorator
   #
   def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
 
-  # Render item attributes.
+  # details_container
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super
+  # @param [Array]         added      Optional elements after the details.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt        Passed to super
+  # @param [Proc]          block      Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Include control icons below the entry number.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def details_container: (*ActiveSupport::SafeBuffer added, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # Called by SearchDecorator#edit_controls.
   #
@@ -516,14 +542,6 @@ class EntryDecorator < BaseDecorator
   # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*
   #
   def parent_entry_select: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Generate a prompt for #items_menu.
-  #
-  # @param [User, Symbol, nil] user
-  #
-  # @return [String]
-  #
-  def items_menu_prompt: (?user: User|Symbol|nil) -> String
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #

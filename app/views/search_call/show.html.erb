@@ -17,7 +17,7 @@
     set_page_description(Search: title)
   end
 
-  template_opt = { dec: dec }
+  opt = { dec: dec }
 
 -%>
 
@@ -25,7 +25,7 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'search_call/details', template_opt %>
+<%= render 'search_call/details', opt %>
 
 <%= page_notes_section %>
 <%= dec.action_list unless modal? %>

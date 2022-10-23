@@ -5,15 +5,33 @@
 #   @return [Bs::Record::PeriodicalSeriesMetadataSummary]
 #
 class PeriodicalDecorator < BookshareDecorator
-  module Paths
-    include BookshareDecorator::Paths
+  module SharedPathMethods
+    include BookshareDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BookshareDecorator::Methods
+  module SharedGenericMethods
+    include BookshareDecorator::SharedGenericMethods
+
+    # Render a metadata listing of an periodical.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -22,12 +40,12 @@ class PeriodicalDecorator < BookshareDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BookshareDecorator::InstanceMethods
+  module SharedInstanceMethods
+    include BookshareDecorator::SharedInstanceMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -36,22 +54,29 @@ class PeriodicalDecorator < BookshareDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BookshareDecorator::ClassMethods
+  module SharedClassMethods
+    include BookshareDecorator::SharedClassMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
+
+class PeriodicalDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend SharedClassMethods
 
   # editions_data
   #
@@ -111,25 +136,16 @@ class PeriodicalDecorator < BookshareDecorator
   #
   def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
 
-  # Render a metadata listing of an periodical.
+  # details_container
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # details_element
-  #
-  # @param [Integer, nil]        level
-  # @param [String, Symbol, nil] role
-  # @param [Hash]                opt    Passed to #details.
-  # @param [Proc]                block  Passed to #html_join.
+  # @param [Array]         added      Optional elements after the details.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt        Passed to super
+  # @param [Proc]          block      Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_element: (?level: Integer|nil, ?role: String|Symbol|nil, **untyped opt) ?{ () -> untyped } -> ActiveSupport::SafeBuffer
+  def details_container: (*ActiveSupport::SafeBuffer added, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # A sub-section displaying the editions for the periodical.
   #
@@ -138,15 +154,6 @@ class PeriodicalDecorator < BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def edition_list: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # form_action_link
   #

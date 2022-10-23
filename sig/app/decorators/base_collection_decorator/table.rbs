@@ -3,6 +3,10 @@
 module BaseCollectionDecorator::Table
   include BaseDecorator::Table
 
+  include BaseCollectionDecorator::Common
+
+  include BaseCollectionDecorator::Row
+
   # Render model items as a table.
   #
   # @param [String] css               Characteristic CSS class/selector.

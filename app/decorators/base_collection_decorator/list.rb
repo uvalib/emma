@@ -11,6 +11,9 @@ module BaseCollectionDecorator::List
 
   include BaseDecorator::List
 
+  include BaseCollectionDecorator::Common
+  include BaseCollectionDecorator::Pagination
+
   # ===========================================================================
   # :section: Item list (index page) support
   # ===========================================================================

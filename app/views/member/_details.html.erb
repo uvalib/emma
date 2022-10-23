@@ -11,8 +11,8 @@
   pref  ||= dec.preference_data
   hist  ||= dec.history_data
 
-  add   ||= nil
   level ||= 1
+  extra ||= nil
   skip  ||= nil
 
   skip    = [*skip]
@@ -24,14 +24,14 @@
       html_tag((level + 1), title, class: 'account list-heading')
     end
 
-  template_opt = { dec: dec, level: (level + 1), skip: skip }
+  opt = { dec: dec, level: (level + 1), skip: skip }
 
 -%>
 
 <%= heading %>
 
-<%= dec.details_element(pairs: add, level: level) do -%>
-  <%= render 'member/preferences', template_opt if pref %>
+<%= dec.details_container(level: level, pairs: extra, skip: skip) do %>
+  <%= render 'member/preferences', opt if pref %>
 <%- end -%>
 
-<%= render 'member/history', template_opt if hist %>
+<%= render 'member/history', opt if hist %>

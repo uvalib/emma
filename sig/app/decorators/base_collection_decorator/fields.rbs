@@ -3,6 +3,8 @@
 module BaseCollectionDecorator::Fields
   include BaseDecorator::Fields
 
+  include BaseCollectionDecorator::Common
+
   private
 
   def self.included: (Module base) -> void

@@ -5,6 +5,8 @@
 module BaseCollectionDecorator::Hierarchy
   include BaseDecorator::Hierarchy
 
+  include BaseCollectionDecorator::Common
+
   private
 
   def self.included: (Module base) -> void

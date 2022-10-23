@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module BaseDecorator::Menu
 
+  include BaseDecorator::Common
+  include BaseDecorator::Configuration
   include BaseDecorator::Links
 
   # ===========================================================================
@@ -87,7 +89,7 @@ module BaseDecorator::Menu
   # @return [Symbol]
   #
   def items_menu_controller
-    controller_config_base
+    controller_config_key
   end
 
   # Generate a prompt for #items_menu.

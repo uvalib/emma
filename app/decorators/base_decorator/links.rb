@@ -10,12 +10,13 @@ __loading_begin(__FILE__)
 #
 module BaseDecorator::Links
 
-  include Emma::Unicode
+  include BaseDecorator::Common
+  include BaseDecorator::Configuration
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include BaseDecorator::InstanceMethods
+    include BaseDecorator::SharedInstanceMethods # for link_to_action override
     # :nocov:
   end
 
@@ -105,6 +106,20 @@ module BaseDecorator::Links
   def button_link(css: '.button', **opt)
     opt[:role] ||= 'button'
     link(css: css, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # show_tooltip
+  #
+  # @return [String, nil]
+  #
+  def show_tooltip
+    controller_config.dig(:show, :tooltip)
   end
 
   # ===========================================================================

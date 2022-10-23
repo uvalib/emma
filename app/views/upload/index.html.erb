@@ -38,7 +38,7 @@
   opt[:row] += 1        if top_controls
   bottom_controls = nil if list.blank?
 
-  template_opt = opt.merge!(dec: dec, skip: :title)
+  opt.merge!(dec: dec, skip: :title)
 
 -%>
 
@@ -51,7 +51,7 @@
 <%= page_directions_section %>
 <div class="<%= dec.css_list_class -%>">
   <%= top_controls %>
-  <%= render 'upload/list', template_opt %>
+  <%= render 'upload/list', opt %>
   <%= bottom_controls %>
 </div>
 

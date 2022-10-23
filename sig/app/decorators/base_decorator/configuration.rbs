@@ -1,0 +1,129 @@
+# Model/controller related configuration information relative to model_type.
+#
+module BaseDecorator::Configuration
+  include BaseDecorator::Common
+
+  include BaseDecorator::Helpers
+
+  # The model associated with the decorator.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseDecorator#decorator_for
+  #
+  def model_type: () -> Symbol
+
+  # The ActiveRecord subclass associated with the decorator.
+  #
+  # @return [Class, nil]
+  #
+  # @see BaseDecorator#decorator_for
+  #
+  def ar_class: () -> (Class | nil)
+
+  # null_object
+  #
+  # @return [Object]
+  #
+  def null_object: () -> Object
+
+  # The controller associated with the decorator (Model#fields_table key).
+  #
+  # @return [Symbol]
+  #
+  def controller_config_key: () -> Symbol
+
+  # The model associated with the decorator (Model#fields_table key).
+  #
+  # @return [Symbol]
+  #
+  def model_config_key: () -> Symbol
+
+  # Get the controller/action configuration for the model.
+  #
+  # @param [Symbol] type              Def: controller associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def controller_config: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+
+  # Get configured record fields relevant to an :index action for the model.
+  #
+  # @param [Symbol] type              Def: controller associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def model_index_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+
+  # Get configured record fields relevant to an :show action for the model.
+  #
+  # @param [Symbol] type              Def: controller associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def model_show_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+
+  # Get configured record fields for the model.
+  #
+  # @param [Symbol] type              Def: model associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def model_config: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+
+  # Get all configured record fields for the model.
+  #
+  # @param [Symbol] type              Def: model associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def model_database_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+
+  # Get all configured record fields for the model.
+  #
+  # @param [Symbol] type              Def: model associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def model_form_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+
+  # Configuration properties for a field.
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt               Passed to Field#for.
+  #
+  # @return [Field::Type, nil]
+  #
+  def field_for: (Symbol field, **untyped opt) -> (Field::Type | nil)
+
+  # Configuration properties for a field.
+  #
+  # @param [Symbol, String, nil] field
+  # @param [Symbol, String, nil] action
+  #
+  # @return [Hash]                    Frozen result.
+  #
+  def field_configuration: ((Symbol|String|nil) field, ?(Symbol|String|nil) action, **untyped _ignored) -> Hash[Symbol,symHash]
+
+  # Find the field whose configuration entry has a matching label.
+  #
+  # @param [String, Symbol, nil] label
+  # @param [Symbol, String, nil] action
+  #
+  # @return [Hash]                    Frozen result.
+  #
+  def field_configuration_for_label: ((String|Symbol|nil) label, ?(Symbol|String|nil) action, **untyped _ignored) -> Hash[Symbol,symHash]
+
+  # config_lookup
+  #
+  # @param [String, Array] path       Partial I18n path.
+  # @param [Hash]          opt        To ConfigurationHelper#config_lookup
+  #
+  # @return [Any]
+  #
+  def config_lookup: (*(String|strArray) path, **untyped opt) -> untyped
+
+  private
+
+  def self.included: (Module base) -> void
+end

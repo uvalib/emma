@@ -4,6 +4,8 @@
 module BaseCollectionDecorator::Links
   include BaseDecorator::Links
 
+  include BaseCollectionDecorator::Common
+
   private
 
   def self.included: (Module base) -> void

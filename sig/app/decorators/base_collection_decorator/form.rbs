@@ -3,6 +3,8 @@
 module BaseCollectionDecorator::Form
   include BaseDecorator::Form
 
+  include BaseCollectionDecorator::Common
+
   # Generate a form with controls for deleting a model instance.
   #
   # @param [String] label             Label for the submit button.

@@ -21,20 +21,52 @@ class PeriodicalDecorator < BookshareDecorator
                 and: Periodical
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with PeriodicalsDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BookshareDecorator::Paths
+  module SharedPathMethods
+    include BookshareDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BookshareDecorator::Methods
+  module SharedGenericMethods
+
+    include BookshareDecorator::SharedGenericMethods
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render a metadata listing of an periodical.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def details(pairs: nil, **opt)
+      opt[:pairs] = model_show_fields.merge(pairs || {})
+      super(**opt)
+    end
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item(pairs: nil, **opt)
+      opt[:pairs] = model_index_fields.merge(pairs || {})
+      super(**opt)
+    end
+
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -43,8 +75,10 @@ class PeriodicalDecorator < BookshareDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BookshareDecorator::InstanceMethods, Paths, Methods
+  module SharedInstanceMethods
+    include BookshareDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -53,21 +87,27 @@ class PeriodicalDecorator < BookshareDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BookshareDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BookshareDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class PeriodicalDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section:
@@ -186,36 +226,20 @@ class PeriodicalDecorator < BookshareDecorator
 
   public
 
-  # Render a metadata listing of an periodical.
+  # details_container
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def details(pairs: nil, **opt)
-    opt[:pairs] = model_show_fields.merge(pairs || {})
-    super(**opt)
-  end
-
-  # details_element
-  #
-  # @param [Integer, nil]        level
-  # @param [String, Symbol, nil] role
-  # @param [Hash]                opt    Passed to #details.
-  # @param [Proc]                block  Passed to #html_join.
+  # @param [Array]         added      Optional elements after the details.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt        Passed to super
+  # @param [Proc]          block      Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_element(level: nil, role: nil, **opt, &block)
-    role ||= (:article if level == 1)
-    skip   = Array.wrap(opt.delete(:skip))
-    list   = (''.html_safe if skip.include?(:editions))
-    list ||= edition_list(level: (level + 1), skip: skip)
-    added  = block ? h.capture(&block) : ''
-    html_div(class: "#{model_type}-container", role: role) do
-      details(**opt) << list << added
-    end
+  def details_container(*added, skip: [], **opt, &block)
+    skip = Array.wrap(skip)
+    full = !skip.include?(:editions)
+    added.prepend(edition_list(level: opt[:level]&.next, skip: skip)) if full
+    super(*added, **opt, &block)
   end
 
   # ===========================================================================
@@ -252,24 +276,6 @@ class PeriodicalDecorator < BookshareDecorator
     html_div(opt) do
       title << list
     end
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item(pairs: nil, **opt)
-    opt[:pairs] = model_index_fields.merge(pairs || {})
-    super(**opt)
   end
 
   # ===========================================================================

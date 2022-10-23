@@ -13,6 +13,8 @@ module BaseCollectionDecorator::Hierarchy
 
   include BaseDecorator::Hierarchy
 
+  include BaseCollectionDecorator::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================

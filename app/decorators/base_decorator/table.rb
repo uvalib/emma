@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module BaseDecorator::Table
 
+  include BaseDecorator::Common
   include BaseDecorator::List
 
   # ===========================================================================

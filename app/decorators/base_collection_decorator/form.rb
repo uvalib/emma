@@ -11,6 +11,8 @@ module BaseCollectionDecorator::Form
 
   include BaseDecorator::Form
 
+  include BaseCollectionDecorator::Common
+
   # ===========================================================================
   # :section: Item forms (delete pages)
   # ===========================================================================
@@ -123,7 +125,7 @@ module BaseCollectionDecorator::Form
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Item forms (delete pages)
   # ===========================================================================
 
   protected

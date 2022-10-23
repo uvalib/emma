@@ -9,8 +9,8 @@
   dec   ||= item && SearchDecorator.new(item, cover: image, **context) or return
   item  ||= dec.object
 
-  add   ||= nil
   level ||= 1
+  extra ||= nil
   skip  ||= nil
 
   skip    = [*skip, :cover]
@@ -25,6 +25,4 @@
 
 -%>
 
-<%= dec.details_element(pairs: add, level: level) do -%>
-  <%= dec.cover(placeholder: false) unless skip.include?(:cover) %>
-<%- end -%>
+<%= dec.details_container(level: level, pairs: extra, skip: skip) %>

@@ -5,15 +5,43 @@
 #   @return [Bs::Record::UserAccount]
 #
 class MemberDecorator < BookshareDecorator
-  module Paths
-    include BookshareDecorator::Paths
+  module SharedPathMethods
+    include BookshareDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BookshareDecorator::Methods
+  module SharedGenericMethods
+    include BookshareDecorator::SharedGenericMethods
+
+    # Render a single label/value pair.
+    #
+    # @param [String, Symbol, nil] label
+    # @param [Any, nil]            value
+    # @param [Hash]                opt        Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_pair: ((String|Symbol|nil) label, (untyped|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+    # Render a metadata listing of a member account.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -22,12 +50,12 @@ class MemberDecorator < BookshareDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BookshareDecorator::InstanceMethods
+  module SharedInstanceMethods
+    include BookshareDecorator::SharedInstanceMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -36,22 +64,29 @@ class MemberDecorator < BookshareDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BookshareDecorator::ClassMethods
+  module SharedClassMethods
+    include BookshareDecorator::SharedClassMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
+
+class MemberDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend SharedClassMethods
 
   # history_data
   #
@@ -108,15 +143,6 @@ class MemberDecorator < BookshareDecorator
   # This is specifically for the sake of "emma.member.*.display_fields" which
   # expect the view helper to have defined :member_link.
   alias member_link link
-
-  # Render a metadata listing of a member account.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a listing of member preferences.
   #
@@ -181,15 +207,6 @@ class MemberDecorator < BookshareDecorator
   # @return [BookshareDecorator, nil]
   #
   def history_decorator: ((Bs::Record::TitleDownload|nil) download) -> (BookshareDecorator | nil)
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # form_action_link
   #

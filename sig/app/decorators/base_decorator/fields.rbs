@@ -1,9 +1,9 @@
 # Methods supporting manipulation of Model instance fields.
 #
 module BaseDecorator::Fields
-  include Emma::Json
+  include BaseDecorator::Common
 
-  include BaseDecorator::Links
+  include BaseDecorator::Configuration
 
   # Field value used to explicitly indicate missing data.
   #

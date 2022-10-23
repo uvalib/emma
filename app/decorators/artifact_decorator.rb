@@ -20,20 +20,69 @@ class ArtifactDecorator < BookshareDecorator
   decorator_for artifact: Bs::Record::ArtifactMetadata, and: Artifact
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with ArtifactsDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BookshareDecorator::Paths
+  module SharedPathMethods
+    include BookshareDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BookshareDecorator::Methods
+  module SharedGenericMethods
+
+    include BookshareDecorator::SharedGenericMethods
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render a metadata listing of an artifact.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def details(pairs: nil, **opt)
+      opt[:pairs] = model_show_fields.merge(pairs || {})
+      super(**opt)
+    end
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item(pairs: nil, **opt)
+      opt[:pairs] = model_index_fields.merge(pairs || {})
+      super(**opt)
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Menu overrides
+    # =========================================================================
+
+    public
+
+    # Generate a menu of artifact instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu(**opt)
+      opt[:user] ||= :all
+      super(**opt)
+    end
+
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -42,12 +91,14 @@ class ArtifactDecorator < BookshareDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
+  module SharedInstanceMethods
 
-    include BookshareDecorator::InstanceMethods, Paths, Methods
+    include BookshareDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
 
     # =========================================================================
-    # :section: BookshareDecorator::Methods overrides
+    # :section: BookshareDecorator::SharedGenericMethods overrides
     # =========================================================================
 
     public
@@ -78,21 +129,27 @@ class ArtifactDecorator < BookshareDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BookshareDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BookshareDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class ArtifactDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section:
@@ -343,59 +400,6 @@ class ArtifactDecorator < BookshareDecorator
     prepend_css!(opt, css)
     # noinspection RubyMismatchedArgumentType
     make_link(label, '#', **opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a metadata listing of an artifact.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def details(pairs: nil, **opt)
-    opt[:pairs] = model_show_fields.merge(pairs || {})
-    super(**opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item(pairs: nil, **opt)
-    opt[:pairs] = model_index_fields.merge(pairs || {})
-    super(**opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::Menu overrides
-  # ===========================================================================
-
-  protected
-
-  # Generate a menu of artifact instances.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def items_menu(**opt)
-    opt[:user] ||= :all
-    super(**opt)
   end
 
   # ===========================================================================

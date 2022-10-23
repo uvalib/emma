@@ -3,6 +3,8 @@
 module BaseCollectionDecorator::Pagination
   include BaseDecorator::Pagination
 
+  include BaseCollectionDecorator::Common
+
   private
 
   def self.included: (Module base) -> void

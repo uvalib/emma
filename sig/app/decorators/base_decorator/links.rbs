@@ -2,10 +2,12 @@
 # API messages).
 #
 module BaseDecorator::Links
-  include Emma::Unicode
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
 
   # :nocov:
-  #include BaseDecorator::InstanceMethods
+  #include BaseDecorator::SharedInstanceMethods # for link_to_action override
 
   # Separator for a list formed by HTML elements.
   #
@@ -54,6 +56,12 @@ module BaseDecorator::Links
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
   def button_link: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # show_tooltip
+  #
+  # @return [String, nil]
+  #
+  def show_tooltip: () -> (Symbol | nil)
 
   # TODO: I18n
   #

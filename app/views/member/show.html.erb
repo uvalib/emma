@@ -14,7 +14,7 @@
   title ||= item.try(:label).presence
   title   = dec.page_heading(title)
 
-  add     = { EmmaRoles: current_user.role_list.join(', ') }
+  extra   = { EmmaRoles: current_user.role_list.join(', ') }
 
   unless modal?
     label = "#{dec.page_meta_title} - #{title}"
@@ -22,7 +22,7 @@
     set_page_description(Title: title)
   end
 
-  template_opt = { dec: dec, add: add }
+  opt = { dec: dec, extra: extra }
 
 -%>
 
@@ -30,6 +30,6 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'member/details', template_opt %>
+<%= render 'member/details', opt %>
 
 <%= page_notes_section %>

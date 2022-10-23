@@ -18,7 +18,7 @@
 
   intro = intro.presence && help_element(intro, class: 'help-intro')
 
-  template_opt = { item: item, skip: :title }
+  opt = { item: item, skip: :title }
 
 -%>
 
@@ -26,7 +26,7 @@
 
 <%= intro %>
 
-<%= render 'help/details', template_opt %>
+<%= render 'help/details', opt %>
 
 <div class="help-toc">
   <%= help_toc(type: :path) %>

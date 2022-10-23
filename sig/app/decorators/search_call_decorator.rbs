@@ -5,15 +5,38 @@
 #   @return [SearchCall]
 #
 class SearchCallDecorator < BaseDecorator
-  module Paths
-    include BaseDecorator::Paths
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BaseDecorator::Methods
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
+
+    # Render details of a search call.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super except:
+    #
+    # @option opt [String, Symbol, Array<String,Symbol>] :columns
+    # @option opt [String, Regexp, Array<String,Regexp>] :filter
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #model_field_values
+    #
+    def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -22,12 +45,12 @@ class SearchCallDecorator < BaseDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -36,22 +59,29 @@ class SearchCallDecorator < BaseDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
+
+class SearchCallDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend SharedClassMethods
 
   # Create a link to the details show page for the given item.
   #
@@ -60,29 +90,6 @@ class SearchCallDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def link: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Render details of a search call.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Specified field selections from the given SearchCall instance.
   #

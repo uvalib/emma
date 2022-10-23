@@ -20,17 +20,17 @@ class AccountDecorator < BaseDecorator
   decorator_for account: User
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with AccountsDecorator
   # ===========================================================================
 
   public
 
-  module Paths
+  module SharedPathMethods
 
-    include BaseDecorator::Paths
+    include BaseDecorator::SharedPathMethods
 
     # =========================================================================
-    # :section: BaseDecorator::Paths overrides
+    # :section: BaseDecorator::SharedPathMethods overrides
     # =========================================================================
 
     public
@@ -93,23 +93,9 @@ class AccountDecorator < BaseDecorator
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
+  module SharedGenericMethods
 
-    include BaseDecorator::Methods
-
-    # =========================================================================
-    # :section: BaseDecorator::Configuration overrides
-    # =========================================================================
-
-    public
-
-    # Get all configured record fields for the model.
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    def model_form_fields(**)
-      super
-    end
+    include BaseDecorator::SharedGenericMethods
 
     # =========================================================================
     # :section: BaseDecorator::Links overrides
@@ -142,6 +128,52 @@ class AccountDecorator < BaseDecorator
     # =========================================================================
 
     public
+
+    # Render details of an account.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super except:
+    #
+    # @option opt [String, Symbol, Array<String,Symbol>] :columns
+    # @option opt [String, Regexp, Array<String,Regexp>] :filter
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #model_field_values
+    #
+    def details(pairs: nil, **opt)
+      fv_opt      = extract_hash!(opt, :columns, :filter)
+      opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
+      count       = opt[:pairs].size
+      append_css!(opt, "columns-#{count}") if count.positive?
+      super(**opt)
+    end
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item(pairs: nil, **opt)
+      opt[:pairs] = model_index_fields.merge(pairs || {})
+      super(**opt)
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Menu overrides
+    # =========================================================================
+
+    protected
+
+    # Generate a prompt for #items_menu.
+    #
+    # @return [String]
+    #
+    def items_menu_prompt(**)
+      'Select an EMMA user account' # TODO: I18n
+    end
 
     # Descriptive term for an item of the given type.
     #
@@ -196,8 +228,10 @@ class AccountDecorator < BaseDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods, Paths, Methods
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -206,21 +240,27 @@ class AccountDecorator < BaseDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class AccountDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section: BaseDecorator::Links overrides
@@ -295,50 +335,6 @@ class AccountDecorator < BaseDecorator
   end
 
   # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render details of an account.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details(pairs: nil, **opt)
-    fv_opt      = extract_hash!(opt, :columns, :filter)
-    opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
-    count       = opt[:pairs].size
-    append_css!(opt, "columns-#{count}") if count.positive?
-    super(**opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item(pairs: nil, **opt)
-    opt[:pairs] = model_index_fields.merge(pairs || {})
-    super(**opt)
-  end
-
-  # ===========================================================================
   # :section: BaseDecorator::Table overrides
   # ===========================================================================
 
@@ -387,20 +383,6 @@ class AccountDecorator < BaseDecorator
       v = EMPTY_VALUE if v.nil?
       [k, v]
     }.compact.to_h.merge!('Role Prototype' => role_prototype)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::Menu overrides
-  # ===========================================================================
-
-  protected
-
-  # Generate a prompt for #items_menu.
-  #
-  # @return [String]
-  #
-  def items_menu_prompt(**)
-    'Select an EMMA user account' # TODO: I18n
   end
 
   # ===========================================================================

@@ -11,6 +11,8 @@ module BaseCollectionDecorator::Fields
 
   include BaseDecorator::Fields
 
+  include BaseCollectionDecorator::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================

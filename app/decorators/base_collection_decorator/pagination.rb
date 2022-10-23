@@ -11,6 +11,8 @@ module BaseCollectionDecorator::Pagination
 
   include BaseDecorator::Pagination
 
+  include BaseCollectionDecorator::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================

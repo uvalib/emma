@@ -20,20 +20,70 @@ class MemberDecorator < BookshareDecorator
   decorator_for member: Bs::Record::UserAccount, and: Member
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with MembersDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BookshareDecorator::Paths
+  module SharedPathMethods
+    include BookshareDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BookshareDecorator::Methods
+  module SharedGenericMethods
+
+    include BookshareDecorator::SharedGenericMethods
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render a single label/value pair.
+    #
+    # @param [String, Symbol, nil] label
+    # @param [Any, nil]            value
+    # @param [Hash]                opt        Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_pair(label, value, **opt)
+      super(label, value, **opt) if value.present?
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render a metadata listing of a member account.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def details(pairs: nil, **opt)
+      opt[:pairs] = model_show_fields.merge(pairs || {})
+      super(**opt)
+    end
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item(pairs: nil, **opt)
+      opt[:pairs] = model_index_fields.merge(pairs || {})
+      super(**opt)
+    end
+
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -42,8 +92,10 @@ class MemberDecorator < BookshareDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BookshareDecorator::InstanceMethods, Paths, Methods
+  module SharedInstanceMethods
+    include BookshareDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -52,21 +104,27 @@ class MemberDecorator < BookshareDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BookshareDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BookshareDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class MemberDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section:
@@ -150,24 +208,6 @@ class MemberDecorator < BookshareDecorator
   # This is specifically for the sake of "emma.member.*.display_fields" which
   # expect the view helper to have defined :member_link.
   alias member_link link
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a metadata listing of a member account.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def details(pairs: nil, **opt)
-    opt[:pairs] = model_show_fields.merge(pairs || {})
-    super(**opt)
-  end
 
   # ===========================================================================
   # :section: Item details (show page) support
@@ -308,24 +348,6 @@ class MemberDecorator < BookshareDecorator
 
       end
     end
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item(pairs: nil, **opt)
-    opt[:pairs] = model_index_fields.merge(pairs || {})
-    super(**opt)
   end
 
   # ===========================================================================

@@ -20,41 +20,101 @@ class SearchCallDecorator < BaseDecorator
   decorator_for SearchCall
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with SearchCallsDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BaseDecorator::Paths
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BaseDecorator::Methods
+  module SharedGenericMethods
+
+    include BaseDecorator::SharedGenericMethods
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render details of a search call.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super except:
+    #
+    # @option opt [String, Symbol, Array<String,Symbol>] :columns
+    # @option opt [String, Regexp, Array<String,Regexp>] :filter
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #model_field_values
+    #
+    def details(pairs: nil, **opt)
+      fv_opt      = extract_hash!(opt, :columns, :filter)
+      opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
+      count       = opt[:pairs].size
+      append_css!(opt, "columns-#{count}") if count.positive?
+      super(**opt)
+    end
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item(pairs: nil, **opt)
+      opt[:pairs] = model_index_fields.merge(pairs || {})
+      super(**opt)
+    end
+
   end
 
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods, Paths, Methods
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
-  module ClassMethods
-    include BaseDecorator::ClassMethods, Paths, Methods
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class SearchCallDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section: BaseDecorator::Links overrides
@@ -70,50 +130,6 @@ class SearchCallDecorator < BaseDecorator
   #
   def link(**opt)
     opt[:path] = show_path(id: object.identifier)
-    super(**opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render details of a search call.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details(pairs: nil, **opt)
-    fv_opt      = extract_hash!(opt, :columns, :filter)
-    opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
-    count       = opt[:pairs].size
-    append_css!(opt, "columns-#{count}") if count.positive?
-    super(**opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item(pairs: nil, **opt)
-    opt[:pairs] = model_index_fields.merge(pairs || {})
     super(**opt)
   end
 

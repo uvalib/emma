@@ -1,6 +1,10 @@
 # Methods pagination of Model instance lists.
 #
 module BaseDecorator::Pagination
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
   include BaseDecorator::Links
 
   # Configuration for pagination control properties.

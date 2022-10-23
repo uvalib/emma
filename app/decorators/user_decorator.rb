@@ -20,17 +20,17 @@ class UserDecorator < AccountDecorator
   decorator_for User
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with UsersDecorator
   # ===========================================================================
 
   public
 
-  module Paths
+  module SharedPathMethods
 
-    include AccountDecorator::Paths
+    include AccountDecorator::SharedPathMethods
 
     # =========================================================================
-    # :section: AccountDecorator::Paths overrides
+    # :section: AccountDecorator::SharedPathMethods overrides
     # =========================================================================
 
     public
@@ -75,9 +75,9 @@ class UserDecorator < AccountDecorator
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
+  module SharedGenericMethods
 
-    include AccountDecorator::Methods
+    include AccountDecorator::SharedGenericMethods
 
     # =========================================================================
     # :section: BaseDecorator::Configuration overrides
@@ -85,12 +85,29 @@ class UserDecorator < AccountDecorator
 
     public
 
-    # The start of a configuration YAML path (including the leading "emma.")
+    # The model associated with the decorator (Model#fields_table key).
     #
     # @return [Symbol]
     #
-    def model_config_base
+    def model_config_key
       :account
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Menu overrides
+    # =========================================================================
+
+    public
+
+    # Generate a menu of user instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu(**opt)
+      opt[:user] ||= :all
+      super(**opt)
     end
 
   end
@@ -101,12 +118,14 @@ class UserDecorator < AccountDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
+  module SharedInstanceMethods
 
-    include AccountDecorator::InstanceMethods, Paths, Methods
+    include AccountDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
 
     # =========================================================================
-    # :section: BaseDecorator::InstanceMethods overrides
+    # :section: BaseDecorator::SharedInstanceMethods overrides
     # =========================================================================
 
     public
@@ -129,38 +148,27 @@ class UserDecorator < AccountDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include AccountDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include AccountDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
 
-  # ===========================================================================
-  # :section: BaseDecorator::Menu overrides
-  # ===========================================================================
+class UserDecorator
 
-  protected
-
-  # Generate a menu of user instances.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def items_menu(**opt)
-    opt[:user] ||= :all
-    super(**opt)
-  end
+  include SharedDefinitions
 
 end
 

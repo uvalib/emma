@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module BaseDecorator::List
 
+  include BaseDecorator::Common
+  include BaseDecorator::Configuration
   include BaseDecorator::Fields
   include BaseDecorator::Pagination
 
@@ -352,21 +354,28 @@ module BaseDecorator::List
     end
   end
 
-  # details_element
+  # details_container
   #
+  # @param [Array]               added  Optional elements after the details.
   # @param [Integer, nil]        level
   # @param [String, Symbol, nil] role
+  # @param [String, nil]         css    Default: "#(model_type)-container"
   # @param [Hash]                opt    Passed to #details.
   # @param [Proc]                block  Passed to #capture.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_element(level: nil, role: nil, **opt, &block)
+  def details_container(*added, level: nil, role: nil, css: nil, **opt, &block)
+    css  ||= ".#{model_type}-container"
     role ||= (:article if level == 1)
-    added  = block ? h.capture(&block) : ''
-    html_div(class: "#{model_type}-container", role: role) do
-      details(**opt) << added
-    end
+    opt.delete(:skip) # In case this slipped in to the base method.
+
+    parts = [details(**opt), *added]
+    parts << h.capture(&block) if block
+
+    outer_opt = { role: role }.compact
+    prepend_css!(outer_opt, css)
+    html_div(*parts, outer_opt)
   end
 
   # ===========================================================================

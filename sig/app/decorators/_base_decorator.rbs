@@ -5,57 +5,30 @@
 #   @return [Model]
 #
 class BaseDecorator < Draper::Decorator
+  include BaseDecorator::Configuration
 
-  # Definitions to support inclusion of helpers.
-  #
-  # == Implementation Notes
-  # This approach avoids `include Draper::LazyHelpers` because this can make it
-  # difficult to pin down where problems with the use of Draper::ViewContext
-  # originate when including /app/helpers/**.
-  #
-  module Helpers
-    include Draper::ViewHelpers
+  include BaseDecorator::Fields
 
-    # Direct access to the controller.
-    #
-    # @return [ApplicationController]
-    #
-    # == Implementation Notes
-    # This probably isn't "cricket", but app/helpers/**.rb generally expect
-    # access to controller values, and while the decorator subclasses are
-    # relying on including these helpers, there is a need to access these
-    # values directly.
-    #
-    # While you *can* access these from Draper::ViewContext#current (via
-    # Draper::ViewHelpers#helpers [i.e., prefixing with "h."] or via
-    # Draper::LazyHelpers#method_missing), the values don't seem to be coming
-    # back correctly.
-    #
-    def controller_context: () -> ApplicationController
+  include BaseDecorator::Form
 
-    # Defined here for the sake of RepositoryHelper.
-    #
-    def retrieval_path: (*untyped args) -> String
+  include BaseDecorator::Helpers
 
-    include ConfigurationHelper
-    include FormHelper
-    include HtmlHelper
-    include ImageHelper
-    include LinkHelper
-    include PanelHelper
-    include PopupHelper
-    include RepositoryHelper
-    include RoleHelper
-    include ScrollHelper
-    include SearchModesHelper
-    include SessionDebugHelper
-    include TreeHelper
-  end
+  include BaseDecorator::Hierarchy
+
+  include BaseDecorator::Links
+
+  include BaseDecorator::List
+
+  include BaseDecorator::Menu
+
+  include BaseDecorator::Pagination
+
+  include BaseDecorator::Table
 
   # Generic path helper methods.
   #
-  module Paths
-    include Helpers
+  module SharedPathMethods
+    include BaseDecorator::Helpers
 
     def index_path:         (**untyped opt)                 -> String
     def show_path:          (?untyped item, **untyped opt)  -> String
@@ -87,34 +60,29 @@ class BaseDecorator < Draper::Decorator
     def path_for: (?(Model|anyHash|anyArray|nil) item, **untyped opt) -> String
   end
 
-  # Model/controller related configuration information relative to model_type.
-  #
-  module Configuration
-    include Helpers
-
-    def model_type: () -> Symbol
-    def ar_class: () -> (Class | nil)
-    def null_object: () -> Object
-    def model_config_base: () -> Symbol
-    def controller_config_base: () -> Symbol
-    def controller_config: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
-    def model_config: () -> Hash[Symbol,symHash]
-    def model_index_fields: () -> Hash[Symbol,symHash]
-    def model_show_fields: () -> Hash[Symbol,symHash]
-    def model_database_fields: () -> Hash[Symbol,symHash]
-    def model_form_fields: () -> Hash[Symbol,symHash]
-    def field_for: (Symbol field, ?value: untyped|nil, ?config: symHash|nil) -> (Field::Type | nil)
-    def field_configuration: ((Symbol|String|nil) field, ?(Symbol|String|nil) action) -> Hash[Symbol,symHash]
-    def field_configuration_for_label: ((String|Symbol|nil) label, ?(Symbol|String|nil) action) -> Hash[Symbol,symHash]
-    def action_config: () -> symHash
-    def show_tooltip: () -> (Symbol | nil)
-    def config_lookup: (*(String|strArray) path, **untyped opt) -> untyped
-  end
-
   # Methods available to every decorator class and decorator class instance.
   #
-  module Methods
-    include Configuration
+  module SharedGenericMethods
+    include BaseDecorator::Configuration
+
+    # :nocov:
+    #include BaseDecorator::Fields
+
+    #include BaseDecorator::Form
+
+    #include BaseDecorator::Helpers
+
+    #include BaseDecorator::Hierarchy
+
+    #include BaseDecorator::Links
+
+    #include BaseDecorator::List
+
+    #include BaseDecorator::Menu
+
+    #include BaseDecorator::Pagination
+
+    #include BaseDecorator::Table
 
     def css_list_class:  () -> String
     def can?: (Symbol action, ?(untyped|nil) target) -> bool
@@ -124,18 +92,10 @@ class BaseDecorator < Draper::Decorator
 
   # Methods for every decorator class instance.
   #
-  # @!attribute [r] object
-  #   Set in Draper#initialize
-  #   @return [Model]
-  #
-  # @!attribute [r] context
-  #   Set in Draper#initialize
-  #   @return [Hash{Symbol=>*}]
-  #
-  module InstanceMethods
-    include Paths
+  module SharedInstanceMethods
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
 
     def current_user: () -> (User | nil)
 
@@ -147,8 +107,19 @@ class BaseDecorator < Draper::Decorator
     def nil?: () -> bool
     def blank?: () -> bool
     def present?: () -> bool
+
+    # This makes the assumption that duplicating the decorator is intended to
+    # produce a new "wrapper" around the associated object and not to also
+    # create a new object as well (which can lead to unexpected results).
+    #
     def dup: () -> BaseDecorator
+
+    # This makes the assumption that duplicating the decorator is intended to
+    # produce a new "wrapper" around the associated object and not to also
+    # create a new object as well (which can lead to unexpected results).
+    #
     def deep_dup: () -> BaseDecorator
+
     def inspect: (?max: Integer) -> String
 
     def initialize_context: (**untyped opt) -> symHash
@@ -212,10 +183,10 @@ class BaseDecorator < Draper::Decorator
   #   Draper::Decorator#object_class
   #   @return [Class]
   #
-  module ClassMethods
-    include Paths
+  module SharedClassMethods
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
 
     @other_class: Array[Class]
 
@@ -276,11 +247,14 @@ class BaseDecorator < Draper::Decorator
     def self.included: (Module base) -> void
   end
 
-  module Common
+  # Used by BaseCollectionDecorator#collection_of to supply shared definitions
+  # with the associated collection decorator.
+  #
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+  include SharedDefinitions
 
   # @private
   DEFAULT_ACTION: Symbol
@@ -333,7 +307,7 @@ class BaseDecorator < Draper::Decorator
   #
   def self.set_model_type: ((Class|Symbol|String|nil) mt) -> (Symbol | nil)
 
-  @model_type:   Symbol
+  @model_type: Symbol
 
   # set_object_class
   #

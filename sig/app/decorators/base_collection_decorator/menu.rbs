@@ -3,6 +3,8 @@
 module BaseCollectionDecorator::Menu
   include BaseDecorator::Menu
 
+  include BaseCollectionDecorator::Common
+
   private
 
   def self.included: (Module base) -> void

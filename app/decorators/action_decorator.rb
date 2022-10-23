@@ -20,38 +20,46 @@ class ActionDecorator < BaseDecorator
   decorator_for Action
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with ActionsDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BaseDecorator::Paths
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
   end
 
-  module Methods
-    include BaseDecorator::Methods
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
   end
 
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods, Paths, Methods
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
-  module ClassMethods
-    include BaseDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class ActionDecorator
+
+  include SharedDefinitions
 
 end
 

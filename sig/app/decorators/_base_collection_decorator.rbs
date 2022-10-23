@@ -1,32 +1,39 @@
 # Common base for collection decorator classes.
 #
-# @!attribute [r] object
-#   Set in Draper#initialize
-#   @return [Array<Model>]
-#
 class BaseCollectionDecorator < Draper::CollectionDecorator
+  include BaseCollectionDecorator::Configuration
+
+  include BaseCollectionDecorator::Fields
+
+  include BaseCollectionDecorator::Form
+
+  include BaseCollectionDecorator::Helpers
+
+  include BaseCollectionDecorator::Hierarchy
+
+  include BaseCollectionDecorator::Links
+
+  include BaseCollectionDecorator::List
+
+  include BaseCollectionDecorator::Menu
+
+  include BaseCollectionDecorator::Pagination
+
+  include BaseCollectionDecorator::Table
 
   # Methods for each collection decorator class instance.
   #
   # @!attribute [r] object_class
   #   @return [Class]
   #
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods
-
-    # Modify the inspection to limit the size of individual member results.
-    #
-    # @param [Integer] max            Maximum characters per member.
-    #
-    # @return [String]
-    #
-    def inspect: (?max: Integer) -> String
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
   end
 
   # Methods for each collection decorator class.
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
 
     @model_type: Symbol
 
@@ -45,11 +52,18 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
     def object_class: () -> Class
   end
 
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
+
+class BaseCollectionDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend  SharedClassMethods
 
   # @private
   DEFAULT_ACTION: Symbol
@@ -61,6 +75,14 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   #
   def initialize: (?untyped obj, **untyped opt) -> void
 
+  # Modify the inspection to limit the size of individual member results.
+  #
+  # @param [Integer] max              Maximum characters per member.
+  #
+  # @return [String]
+  #
+  def inspect: (?max: Integer) -> String
+
   # Set to *true* to see how each collection decorator overrides Array methods.
   #
   # @type [Boolean]
@@ -69,11 +91,11 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   #
   DEBUG_COLLECTION_INHERITANCE: bool
 
-  # Define the association between a collection decorator and the decorator
-  # for its elements.
+  # Define the association between a collection decorator and the decorator for
+  # its elements.
   #
-  # This also causes the element decorator's Common module to be included so
-  # that the collection decorator acquires the same definitions.
+  # This also causes the element decorator's SharedDefinitions module to be
+  # included so that the collection decorator acquires the same definitions.
   #
   # @param [Class] base
   #

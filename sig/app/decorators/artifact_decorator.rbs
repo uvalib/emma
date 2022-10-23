@@ -5,15 +5,41 @@
 #   @return [Bs::Record::ArtifactMetadata]
 #
 class ArtifactDecorator < BookshareDecorator
-  module Paths
-    include BookshareDecorator::Paths
+  module SharedPathMethods
+    include BookshareDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BookshareDecorator::Methods
+  module SharedGenericMethods
+    include BookshareDecorator::SharedGenericMethods
+
+    # Render a metadata listing of an artifact.
+    #
+    # @param [Hash, nil] pairs          Additional field mappings.
+    # @param [Hash]      opt            Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs          Additional field mappings.
+    # @param [Hash]      opt            Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Generate a menu of artifact instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -22,12 +48,12 @@ class ArtifactDecorator < BookshareDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BookshareDecorator::InstanceMethods
+  module SharedInstanceMethods
+    include BookshareDecorator::SharedInstanceMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
 
     # This is a kludge
     #
@@ -45,22 +71,29 @@ class ArtifactDecorator < BookshareDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BookshareDecorator::ClassMethods
+  module SharedClassMethods
+    include BookshareDecorator::SharedClassMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
+
+class ArtifactDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend SharedClassMethods
 
   # Configuration for Bookshare download control properties.
   #
@@ -191,25 +224,6 @@ class ArtifactDecorator < BookshareDecorator
   #
   def download_button: (?label: String|nil, ?fmt: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Render a metadata listing of an artifact.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
   def form_action_link: (**untyped opt) -> ActiveSupport::SafeBuffer
   def form_action_description: (?action: Symbol|nil, **untyped opt) -> String
   def form_target_description: (?action: Symbol|nil, **untyped opt) -> String

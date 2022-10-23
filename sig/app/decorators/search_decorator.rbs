@@ -8,17 +8,27 @@ class SearchDecorator < BaseDecorator
 
   @model_type: Symbol
 
-  module Paths
-    include BaseDecorator::Paths
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
+  module SharedGenericMethods
     include CssHelper
 
-    include BaseDecorator::Methods
+    include BaseDecorator::SharedGenericMethods
+
+    # Render a single label/value pair.
+    #
+    # @param [String, Symbol, nil] label
+    # @param [Any, nil]            value
+    # @param [Hash]                opt        Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_pair: ((String|Symbol|nil) label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
     # Bridge the gap between "emma.search.record" (which defines the order of
     # display of data fields) and "emma.entry.record.emma_data" (which holds
@@ -130,12 +140,12 @@ class SearchDecorator < BaseDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -144,22 +154,29 @@ class SearchDecorator < BaseDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
+
+class SearchDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend SharedClassMethods
 
   # Create a link to the details show page for the given item.
   #
@@ -168,16 +185,6 @@ class SearchDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def link: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Render a single label/value pair.
-  #
-  # @param [String, Symbol, nil] label
-  # @param [Any, nil]            value
-  # @param [Hash]                opt        Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  def render_pair: ((String|Symbol|nil) label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Transform a field value for HTML rendering.
   #
@@ -289,6 +296,17 @@ class SearchDecorator < BaseDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # details_container
+  #
+  # @param [Array]         added      Optional elements after the details.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt        Passed to super
+  # @param [Proc]          block      Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def details_container: (*ActiveSupport::SafeBuffer added, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.

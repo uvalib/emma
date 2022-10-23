@@ -8,14 +8,10 @@
   image ||= nil
   dec   ||= item && UploadDecorator.new(item, cover: image, **context) or return
 
-  add   ||= nil
   level ||= 1
+  extra ||= nil
   skip  ||= nil
-
-  skip    = [*skip]
 
 -%>
 
-<%= dec.details_element(pairs: add, level: level) do -%>
-  <%= dec.cover(placeholder: false) unless skip.include?(:cover) %>
-<%- end -%>
+<%= dec.details_container(level: level, pairs: extra, skip: skip) %>

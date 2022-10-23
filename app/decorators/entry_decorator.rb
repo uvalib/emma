@@ -20,14 +20,14 @@ class EntryDecorator < BaseDecorator
   decorator_for Entry
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with EntriesDecorator
   # ===========================================================================
 
   public
 
-  module Paths
+  module SharedPathMethods
 
-    include BaseDecorator::Paths
+    include BaseDecorator::SharedPathMethods
 
     # =========================================================================
     # :section: BaseDecorator::Paths overrides
@@ -142,9 +142,9 @@ class EntryDecorator < BaseDecorator
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
+  module SharedGenericMethods
 
-    include BaseDecorator::Methods
+    include BaseDecorator::SharedGenericMethods
 
     # =========================================================================
     # :section:
@@ -327,6 +327,73 @@ class EntryDecorator < BaseDecorator
     #
     def control_icons
       super(icons: CONTROL_ICONS)
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render item attributes.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super except:
+    #
+    # @option opt [String, Symbol, Array<String,Symbol>] :columns
+    # @option opt [String, Regexp, Array<String,Regexp>] :filter
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #model_field_values
+    #
+    def details(pairs: nil, **opt)
+      fv_opt      = extract_hash!(opt, :columns, :filter)
+      opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
+      super(**opt)
+    end
+
+    # Render a single entry for use within a list of items.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item(pairs: nil, **opt)
+      opt[:pairs] = model_index_fields.merge(pairs || {})
+      super(**opt)
+    end
+
+    # Include control icons below the entry number.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def list_item_number(**opt)
+      super(**opt) do
+        control_icon_buttons
+      end
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Menu overrides
+    # =========================================================================
+
+    protected
+
+    # Generate a prompt for #items_menu.
+    #
+    # @param [User, Symbol, nil] user
+    #
+    # @return [String]
+    #
+    def items_menu_prompt(user: nil, **)
+      case user
+        when nil, :all then 'Select an existing EMMA entry'    # TODO: I18n
+        else                'Select an EMMA entry you created' # TODO: I18n
+      end
     end
 
     # =========================================================================
@@ -655,12 +722,14 @@ class EntryDecorator < BaseDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
+  module SharedInstanceMethods
 
-    include BaseDecorator::InstanceMethods, Paths, Methods
+    include BaseDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
 
     # =========================================================================
-    # :section: BaseDecorator::InstanceMethods overrides
+    # :section: BaseDecorator::SharedInstanceMethods overrides
     # =========================================================================
 
     public
@@ -681,21 +750,27 @@ class EntryDecorator < BaseDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class EntryDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section:
@@ -727,80 +802,7 @@ class EntryDecorator < BaseDecorator
   #
   def preview(force = false)
     return unless force || preview_enabled?
-    html_div('', class: UPLOAD[:preview])
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # @private
-  EMMA_DATA_FIELDS =
-    model_database_fields[:emma_data]&.select { |_, v| v.is_a?(Hash) } || {}
-
-  # Render the contents of the :file_data field.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_json_data
-  #
-  def render_file_data(**opt)
-    data = object.try(:file_data) || object.try(:[], :file_data)
-    render_json_data(data, **opt, field_root: :file_data)
-  end
-
-  # Render the contents of the :emma_data field in the same order of EMMA data
-  # fields as defined for search results.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_json_data
-  #
-  def render_emma_data(**opt)
-    data  = object.try(:emma_data) || object.try(:[], :emma_data)
-    pairs = json_parse(data).presence
-    pairs &&=
-      EMMA_DATA_FIELDS.map { |field, config|
-        value = pairs.delete(config[:label]) || pairs.delete(field)
-        [field, value] unless value.nil?
-      }.compact.to_h.merge(pairs)
-    render_json_data(pairs, **opt)
-  end
-
-  # Render hierarchical data.
-  #
-  # @param [String, Hash, nil] value
-  # @param [Hash]              opt        Passed to #render_field_values
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *value* was not valid JSON.
-  #
-  def render_json_data(value, **opt)
-    value &&= json_parse(value) unless value.is_a?(Hash)
-    html_div(class: 'data-list') do
-      if value.present?
-        root = opt[:field_root]
-        opt[:no_format] ||= :dc_description
-        # noinspection RubyNilAnalysis
-        pairs =
-          value.map { |k, v|
-            if v.is_a?(Hash)
-              sub_opt = root ? opt.merge(field_root: [root, k.to_sym]) : opt
-              v = render_json_data(v, **sub_opt)
-            end
-            [k, v]
-          }.to_h
-        render_field_values(pairs: pairs, **opt)
-      else
-        render_empty_value(EMPTY_VALUE)
-      end
-    end
+    html_div('', class: UPLOADER[:preview])
   end
 
   # ===========================================================================
@@ -835,52 +837,20 @@ class EntryDecorator < BaseDecorator
 
   public
 
-  # Render item attributes.
+  # details_container
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details(pairs: nil, **opt)
-    fv_opt      = extract_hash!(opt, :columns, :filter)
-    opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
-    super(**opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a single entry for use within a list of items.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Array]         added      Optional elements after the details.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt        Passed to super
+  # @param [Proc]          block      Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item(pairs: nil, **opt)
-    opt[:pairs] = model_index_fields.merge(pairs || {})
-    super(**opt)
-  end
-
-  # Include control icons below the entry number.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_item_number(**opt)
-    super(**opt) do
-      control_icon_buttons
-    end
+  def details_container(*added, skip: [], **opt, &block)
+    skip = Array.wrap(skip)
+    full = !skip.include?(:cover)
+    added.prepend(cover(placeholder: false)) if full
+    super(*added, **opt, &block)
   end
 
   # ===========================================================================
@@ -1119,25 +1089,6 @@ class EntryDecorator < BaseDecorator
     prepend_css!(opt, css, 'hidden')
     html_div(opt) do
       title << input << submit << cancel
-    end
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::Menu overrides
-  # ===========================================================================
-
-  protected
-
-  # Generate a prompt for #items_menu.
-  #
-  # @param [User, Symbol, nil] user
-  #
-  # @return [String]
-  #
-  def items_menu_prompt(user: nil, **)
-    case user
-      when nil, :all then 'Select an existing EMMA entry'    # TODO: I18n
-      else                'Select an EMMA entry you created' # TODO: I18n
     end
   end
 

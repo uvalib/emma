@@ -5,8 +5,8 @@
 #   @return [User]
 #
 class UserDecorator < AccountDecorator
-  module Paths
-    include AccountDecorator::Paths
+  module SharedPathMethods
+    include AccountDecorator::SharedPathMethods
 
     def index_path: (**untyped opt) -> untyped
 
@@ -26,14 +26,22 @@ class UserDecorator < AccountDecorator
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include AccountDecorator::Methods
+  module SharedGenericMethods
+    include AccountDecorator::SharedGenericMethods
 
-    # The start of a configuration YAML path (including the leading "emma.")
+    # The model associated with the decorator (Model#fields_table key).
     #
     # @return [Symbol]
     #
-    def model_config_base: () -> Symbol
+    def model_config_key: () -> Symbol
+
+    # Generate a menu of user instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -42,12 +50,12 @@ class UserDecorator < AccountDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include AccountDecorator::InstanceMethods
+  module SharedInstanceMethods
+    include AccountDecorator::SharedInstanceMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
 
     # help_topic
     #
@@ -62,28 +70,27 @@ class UserDecorator < AccountDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include AccountDecorator::ClassMethods
+  module SharedClassMethods
+    include AccountDecorator::SharedClassMethods
 
-    include Paths
+    include SharedPathMethods
 
-    include Methods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included: (Module base) -> void
   end
 
-  include Common
+end
 
-  # Generate a menu of user instances.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+class UserDecorator
+  include SharedDefinitions
+
+  include SharedInstanceMethods
+
+  extend SharedClassMethods
 end

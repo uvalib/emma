@@ -20,20 +20,20 @@ class PhaseDecorator < BaseDecorator
   decorator_for Phase
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with PhasesDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BaseDecorator::Paths
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BaseDecorator::Methods
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -42,8 +42,10 @@ class PhaseDecorator < BaseDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BaseDecorator::InstanceMethods, Paths, Methods
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -52,21 +54,27 @@ class PhaseDecorator < BaseDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BaseDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class PhaseDecorator
+
+  include SharedDefinitions
 
 end
 

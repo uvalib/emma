@@ -9,9 +9,8 @@ __loading_begin(__FILE__)
 #
 module BaseDecorator::Fields
 
-  include Emma::Json
-
-  include BaseDecorator::Links
+  include BaseDecorator::Common
+  include BaseDecorator::Configuration
 
   # ===========================================================================
   # :section:

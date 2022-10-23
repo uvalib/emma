@@ -1,6 +1,10 @@
 # Methods supporting selectable lists of Model instances.
 #
 module BaseDecorator::Menu
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
   include BaseDecorator::Links
 
   # Generate a menu of database item entries.

@@ -12,6 +12,9 @@ __loading_begin(__FILE__)
 #++
 module BaseDecorator::Form
 
+  include BaseDecorator::Common
+  include BaseDecorator::Configuration
+  include BaseDecorator::Fields
   include BaseDecorator::List
 
   # ===========================================================================
@@ -536,10 +539,7 @@ module BaseDecorator::Form
   #                                     supporting file upload.
   # @param [Hash]           outer     Passed to outer div.
   # @param [String]         css       Characteristic CSS class/selector.
-  # @param [Hash]           opt       Passed to #form_with except for:
-  #
-  # @option opt [String]  :cancel     URL for cancel button action (default:
-  #                                     :back).
+  # @param [Hash]           opt       Passed to #form_with.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -578,13 +578,12 @@ module BaseDecorator::Form
     buttons   = form_buttons(label: label, action: action, cancel: cancel)
     outer_opt = prepend_css(outer, outer_css, *classes)
     html_div(outer_opt) do
-      # @type [ActionView::Helpers::FormBuilder] f
-      h.form_with(model: object, **opt) do |f|
-        sections  = form_hidden_fields(f)
-        sections << form_top_controls(f, *buttons)
-        sections << field_container
-        sections << form_bottom_controls(f, *buttons)
-        safe_join(sections.compact, "\n")
+      form_with(model: object, **opt) do |f|
+        parts  = form_hidden_fields(f)
+        parts << form_top_controls(f, *buttons)
+        parts << field_container
+        parts << form_bottom_controls(f, *buttons)
+        safe_join(parts.compact, "\n")
       end
     end
   end

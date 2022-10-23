@@ -1,6 +1,12 @@
 # Methods supporting the creation and modification of Model instances.
 #
 module BaseDecorator::Form
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
+  include BaseDecorator::Fields
+
   include BaseDecorator::List
 
   # Configuration-related values which are available to either the class or the
@@ -253,10 +259,7 @@ module BaseDecorator::Form
   #                                     supporting file upload.
   # @param [Hash]           outer     Passed to outer div.
   # @param [String]         css       Characteristic CSS class/selector.
-  # @param [Hash]           opt       Passed to #form_with except for:
-  #
-  # @option opt [String]  :cancel     URL for cancel button action (default:
-  #                                     :back).
+  # @param [Hash]           opt       Passed to #form_with.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

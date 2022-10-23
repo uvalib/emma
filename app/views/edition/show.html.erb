@@ -18,7 +18,7 @@
     set_page_description(title)
   end
 
-  template_opt = { dec: dec }
+  opt = { dec: dec }
 
 -%>
 
@@ -26,6 +26,6 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'edition/details', template_opt %>
+<%= render 'edition/details', opt %>
 
 <%= page_notes_section %>

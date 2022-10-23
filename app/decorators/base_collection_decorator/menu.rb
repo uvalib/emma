@@ -11,6 +11,8 @@ module BaseCollectionDecorator::Menu
 
   include BaseDecorator::Menu
 
+  include BaseCollectionDecorator::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================

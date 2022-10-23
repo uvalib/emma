@@ -49,7 +49,7 @@
   bottom = top = nil if title_results?
   opt[:row]   += 1   if top && opt[:row].is_a?(Integer)
 
-  template_opt = opt.merge!(dec: dec, skip: :title)
+  opt.merge!(dec: dec, skip: :title)
 
 -%>
 
@@ -59,7 +59,7 @@
 <%= page_directions_section %>
 <div class="<%= css_classes(list_classes) -%>">
   <%= top %>
-  <%= render 'search/list', template_opt %>
+  <%= render 'search/list', opt %>
   <%= bottom %>
 </div>
 

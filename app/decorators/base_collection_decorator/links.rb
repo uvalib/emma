@@ -12,6 +12,8 @@ module BaseCollectionDecorator::Links
 
   include BaseDecorator::Links
 
+  include BaseCollectionDecorator::Common
+
   # ===========================================================================
   # :section:
   # ===========================================================================

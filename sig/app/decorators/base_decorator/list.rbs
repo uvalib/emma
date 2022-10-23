@@ -1,6 +1,10 @@
 # Methods supporting display of individual Model instances.
 #
 module BaseDecorator::List
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
   include BaseDecorator::Fields
 
   include BaseDecorator::Pagination
@@ -118,16 +122,18 @@ module BaseDecorator::List
   #
   def details: (?pairs: anyHash|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # details_element
+  # details_container
   #
+  # @param [Array]               parts  Optional elements after the details.
   # @param [Integer, nil]        level
   # @param [String, Symbol, nil] role
+  # @param [String, nil]         css    Default: "#(model_type)-container"
   # @param [Hash]                opt    Passed to #details.
   # @param [Proc]                block  Passed to #capture.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_element: (level: Integer|nil, role: String|Symbol|nil, **untyped opt) { () -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+  def details_container: (*ActiveSupport::SafeBuffer parts, level: Integer|nil, role: String|Symbol|nil, ?css: String|nil, **untyped opt) { () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # A complete list item entry.
   #

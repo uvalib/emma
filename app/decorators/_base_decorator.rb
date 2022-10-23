@@ -18,8 +18,10 @@ class BaseDecorator < Draper::Decorator
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
+    include BaseDecorator::Configuration
     include BaseDecorator::Fields
     include BaseDecorator::Form
+    include BaseDecorator::Helpers
     include BaseDecorator::Hierarchy
     include BaseDecorator::Links
     include BaseDecorator::List
@@ -35,159 +37,11 @@ class BaseDecorator < Draper::Decorator
 
   public
 
-  # Definitions to support inclusion of helpers.
-  #
-  # == Implementation Notes
-  # This approach avoids `include Draper::LazyHelpers` because this can make it
-  # difficult to pin down where problems with the use of Draper::ViewContext
-  # originate when including /app/helpers/**.
-  #
-  module Helpers
-
-    include Draper::ViewHelpers
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Explicit overrides for the sake of those helpers which still rely on
-    # direct access to controller-related items.
-    #
-    # @!method request
-    # @!method params
-    # @!method session
-    # @!method current_user
-    # @!method current_ability
-    #
-    %i[request params session current_user current_ability].each do |meth|
-      define_method(meth) do
-        controller_context.send(meth)
-      end
-    end
-
-    # Explicit overrides for the sake of those helpers which still rely on
-    # direct access to controller-related items.
-    #
-    # @!method cookies
-    #
-    %i[cookies].each do |meth|
-      define_method(meth) do
-        request.cookies
-      end
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    protected
-
-    # Direct access to the controller.
-    #
-    # @return [ApplicationController]
-    #
-    # == Implementation Notes
-    # This probably isn't "cricket", but app/helpers/**.rb generally expect
-    # access to controller values, and while the decorator subclasses are
-    # relying on including these helpers, there is a need to access these
-    # values directly.
-    #
-    # While you *can* access these from Draper::ViewContext#current (via
-    # Draper::ViewHelpers#helpers [i.e., prefixing with "h."] or via
-    # Draper::LazyHelpers#method_missing), the values don't seem to be coming
-    # back correctly.
-    #
-    def controller_context
-      Draper::ViewContext.controller
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
-    #
-    # @!method asset_path(*args)
-    #   @see ActionView::Helpers::AssetUrlHelper#asset_path
-    #
-    # @!method safe_join(*args)
-    #   @see ActionView::Helpers::OutputSafetyHelper#safe_join
-    #
-    %i[
-      asset_path
-      safe_join
-    ].each do |meth|
-      define_method(meth) do |*args|
-        helpers.send(meth, *args)
-      end
-      ruby2_keywords(meth)
-    end
-
-    # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
-    #
-    7    # @!method button_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#button_tag
-    #
-    # @!method content_tag(*args, &block)
-    #   @see ActionView::Helpers::TagHelper#content_tag
-    #
-    # @!method form_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#form_tag
-    #
-    # @!method image_tag(*args, &block)
-    #   @see ActionView::Helpers::AssetTagHelper#image_tag
-    #
-    # @!method link_to(*args, &block)
-    #   @see ActionView::Helpers::UrlHelper#link_to
-    #
-    # @!method submit_tag(*args, &block)
-    #   @see ActionView::Helpers::FormTagHelper#submit_tag
-    #
-    %i[
-      button_tag
-      content_tag
-      form_tag
-      image_tag
-      link_to
-      submit_tag
-    ].each do |meth|
-      define_method(meth) do |*args, &block|
-        helpers.send(meth, *args, &block)
-      end
-      ruby2_keywords(meth)
-    end
-
-    # Defined here for the sake of RepositoryHelper.
-    #
-    def retrieval_path(*args)
-      h.retrieval_path(*args)
-    end
-
-    include ConfigurationHelper
-    include FormHelper
-    include HtmlHelper
-    include ImageHelper
-    include LinkHelper
-    include PanelHelper
-    include PopupHelper
-    include RepositoryHelper
-    include RoleHelper
-    include ScrollHelper
-    include SearchModesHelper
-    include SessionDebugHelper
-    include TreeHelper
-
-  end
-
   # Generic path helper methods.
   #
-  module Paths
+  module SharedPathMethods
 
-    include Helpers
+    include BaseDecorator::Helpers
 
     # =========================================================================
     # :section:
@@ -291,197 +145,18 @@ class BaseDecorator < Draper::Decorator
 
   end
 
-  # Model/controller related configuration information relative to model_type.
-  #
-  module Configuration
-
-    include Helpers
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # model_type
-    #
-    # @return [Symbol]
-    #
-    def model_type
-      not_implemented 'To be overridden'
-    end
-
-    # ar_class
-    #
-    # @return [Class, nil]
-    #
-    def ar_class
-      not_implemented 'To be overridden'
-    end
-
-    # null_object
-    #
-    # @return [Object]
-    #
-    def null_object
-      not_implemented 'To be overridden'
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # The start of a configuration YAML path (including the leading "emma.")
-    #
-    # @return [Symbol]
-    #
-    def model_config_base
-      model_type
-    end
-
-    # The start of a configuration YAML path (including the leading "emma.")
-    #
-    # @return [Symbol]
-    #
-    def controller_config_base
-      model_type
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Get the controller/action configuration for the model.
-    #
-    # @param [Symbol, nil] type
-    #
-    # @return [Hash{Symbol=>Hash}]    Frozen result.
-    #
-    def controller_config(type = nil)
-      type ||= controller_config_base
-      ApplicationHelper::CONTROLLER_CONFIGURATION[type] || {}.freeze
-    end
-
-    # Get configured record fields for the model.
-    #
-    # @return [Hash{Symbol=>Hash}]    Frozen result.
-    #
-    def model_config(**)
-      Model.config_for(model_config_base)
-    end
-
-    # Get configured record fields relevant to an :index action for the model.
-    #
-    # @return [Hash{Symbol=>Hash}]    Frozen result.
-    #
-    def model_index_fields(**)
-      Model.index_fields(controller_config_base)
-    end
-
-    # Get configured record fields relevant to an :show action for the model.
-    #
-    # @return [Hash{Symbol=>Hash}]    Frozen result.
-    #
-    def model_show_fields(**)
-      Model.show_fields(controller_config_base)
-    end
-
-    # Get all configured record fields for the model.
-    #
-    # @return [Hash{Symbol=>Hash}]    Frozen result.
-    #
-    def model_database_fields(**)
-      Model.database_fields(model_config_base)
-    end
-
-    # Get all configured record fields for the model.
-    #
-    # @return [Hash{Symbol=>Hash}]    Frozen result.
-    #
-    def model_form_fields(**)
-      Model.form_fields(model_config_base)
-    end
-
-    # Configuration properties for a field.
-    #
-    # @param [Symbol]    field
-    # @param [*]         value
-    # @param [Hash, nil] config
-    #
-    # @return [Field::Type, nil]
-    #
-    # @see Field#for
-    #
-    def field_for(field, value: nil, config: nil)
-      Field.for(object, field, model_config_base, value: value, config: config)
-    end
-
-    # Configuration properties for a field.
-    #
-    # @param [Symbol, String, nil] field
-    # @param [Symbol, String, nil] action
-    #
-    # @return [Hash]                  Frozen result.
-    #
-    def field_configuration(field, action = nil, **)
-      Field.configuration_for(field, model_config_base, action)
-    end
-
-    # Find the field whose configuration entry has a matching label.
-    #
-    # @param [String, Symbol, nil] label
-    # @param [Symbol, String, nil] action
-    #
-    # @return [Hash]                  Frozen result.
-    #
-    def field_configuration_for_label(label, action = nil, **)
-      Field.configuration_for_label(label, model_config_base, action)
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # show_tooltip
-    #
-    # @return [String, nil]
-    #
-    def show_tooltip
-      controller_config.dig(:show, :tooltip)
-    end
-
-    # config_lookup
-    #
-    # @param [String, Array] path     Partial I18n path.
-    # @param [Hash]          opt      To ConfigurationHelper#config_lookup
-    #
-    # @return [Any]
-    #
-    def config_lookup(*path, **opt)
-      opt[:ctrlr]  ||= opt.delete(:controller) || controller_config_base
-      opt[:action] ||= :index
-      h.config_lookup(*path, **opt)
-    end
-
-  end
-
   # Methods available to every decorator class and decorator class instance.
   #
-  module Methods
+  module SharedGenericMethods
 
-    include Configuration
+    include BaseDecorator::Configuration
 
     # Non-functional hints for RubyMine type checking.
     unless ONLY_FOR_DOCUMENTATION
       # :nocov:
       include BaseDecorator::Fields
       include BaseDecorator::Form
+      include BaseDecorator::Helpers
       include BaseDecorator::Hierarchy
       include BaseDecorator::Links
       include BaseDecorator::List
@@ -545,21 +220,13 @@ class BaseDecorator < Draper::Decorator
 
   # Methods for every decorator class instance.
   #
-  # @!attribute [r] object
-  #   Set in Draper#initialize
-  #   @return [Model]
-  #
-  # @!attribute [r] context
-  #   Set in Draper#initialize
-  #   @return [Hash{Symbol=>*}]
-  #
   #--
   # noinspection RubyTooManyMethodsInspection
   #++
-  module InstanceMethods
+  module SharedInstanceMethods
 
-    include Paths
-    include Methods
+    include SharedPathMethods
+    include SharedGenericMethods
 
     # =========================================================================
     # :section: BaseDecorator::Helpers overrides
@@ -636,16 +303,22 @@ class BaseDecorator < Draper::Decorator
       !blank?
     end
 
-    # noinspection RubyMismatchedReturnType
+    # This makes the assumption that duplicating the decorator is intended to
+    # produce a new "wrapper" around the associated object and not to also
+    # create a new object as well (which can lead to unexpected results).
+    #
     def dup
-      obj = (object.dup if present?)
-      self.class.new(obj)
+      # noinspection RubyMismatchedReturnType
+      self.class.new(object.presence)
     end
 
-    # noinspection RubyMismatchedReturnType
+    # This makes the assumption that duplicating the decorator is intended to
+    # produce a new "wrapper" around the associated object and not to also
+    # create a new object as well (which can lead to unexpected results).
+    #
     def deep_dup
-      obj = (object.deep_dup if present?)
-      self.class.new(obj)
+      # noinspection RubyMismatchedReturnType
+      dup
     end
 
     # Modify the inspection to limit the size of individual member results.
@@ -921,10 +594,10 @@ class BaseDecorator < Draper::Decorator
   #   Draper::Decorator#object_class
   #   @return [Class]
   #
-  module ClassMethods
+  module SharedClassMethods
 
-    include Paths
-    include Methods
+    include SharedPathMethods
+    include SharedGenericMethods
 
     # =========================================================================
     # :section: BaseDecorator::Configuration overrides
@@ -1031,11 +704,11 @@ class BaseDecorator < Draper::Decorator
     private
 
     def self.included(base)
-      if base.is_a?(Module) && (base.to_s.demodulize == 'ClassMethods')
+      if base.is_a?(Module) && (base.to_s.demodulize == 'SharedClassMethods')
         # noinspection RbsMissingTypeSignature
         base.module_eval do
 
-          # Override BaseDecorator::ClassMethods#null_object in order to
+          # Override BaseDecorator::SharedClassMethods#null_object in order to
           # established a specific object as "the" null object (for use with
           # the "==" operator).
           #
@@ -1051,14 +724,21 @@ class BaseDecorator < Draper::Decorator
 
   end
 
-  module Common
+  # Used by BaseCollectionDecorator#collection_of to supply shared definitions
+  # with the associated collection decorator.
+  #
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class BaseDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section: Draper::Decorator overrides

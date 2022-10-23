@@ -9,8 +9,8 @@
   dec   ||= item && PeriodicalDecorator.new(item, editions: list, **context) or return
   item  ||= dec.object
 
-  add   ||= nil
   level ||= 1
+  extra ||= nil
   skip  ||= nil
 
   unless modal?
@@ -22,4 +22,4 @@
 
 -%>
 
-<%= dec.details_element(pairs: add, level: level, skip: skip) %>
+<%= dec.details_container(level: level, pairs: extra, skip: skip) %>

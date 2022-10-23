@@ -36,7 +36,7 @@
   opt[:row] += 1        if top_controls
   bottom_controls = nil if list.blank?
 
-  template_opt = opt.merge!(dec: dec, skip: :title)
+  opt.merge!(dec: dec, skip: :title)
 
 -%>
 
@@ -46,7 +46,7 @@
 <%= page_directions_section %>
 <div class="reading_list-list">
   <%= top_controls %>
-  <%= render 'reading_list/list', template_opt %>
+  <%= render 'reading_list/list', opt %>
   <%= bottom_controls %>
 </div>
 

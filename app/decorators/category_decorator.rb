@@ -20,20 +20,40 @@ class CategoryDecorator < BookshareDecorator
   decorator_for category: Bs::Record::CategorySummary
 
   # ===========================================================================
-  # :section:
+  # :section: Definitions shared with CategoriesDecorator
   # ===========================================================================
 
   public
 
-  module Paths
-    include BookshareDecorator::Paths
+  module SharedPathMethods
+    include BookshareDecorator::SharedPathMethods
   end
 
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
-  module Methods
-    include BookshareDecorator::Methods
+  module SharedGenericMethods
+
+    include BookshareDecorator::SharedGenericMethods
+
+    # =========================================================================
+    # :section: BaseDecorator::List overrides
+    # =========================================================================
+
+    public
+
+    # Render a metadata listing of a category.
+    #
+    # @param [Hash, nil] pairs        Additional field mappings.
+    # @param [Hash]      opt          Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def details(pairs: nil, **opt)
+      opt[:pairs] = model_show_fields.merge(pairs || {})
+      super(**opt)
+    end
+
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -42,8 +62,10 @@ class CategoryDecorator < BookshareDecorator
   # (Definitions that are only applicable to instances of this decorator but
   # *not* to collection decorator instances are not included here.)
   #
-  module InstanceMethods
-    include BookshareDecorator::InstanceMethods, Paths, Methods
+  module SharedInstanceMethods
+    include BookshareDecorator::SharedInstanceMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Definitions available to both this decorator class and the related
@@ -52,21 +74,27 @@ class CategoryDecorator < BookshareDecorator
   # (Definitions that are only applicable to this class but *not* to the
   # collection class are not included here.)
   #
-  module ClassMethods
-    include BookshareDecorator::ClassMethods, Paths, Methods
+  module SharedClassMethods
+    include BookshareDecorator::SharedClassMethods
+    include SharedPathMethods
+    include SharedGenericMethods
   end
 
   # Cause definitions to be included here and in the associated collection
   # decorator via BaseCollectionDecorator#collection_of.
   #
-  module Common
+  module SharedDefinitions
     def self.included(base)
-      base.include(InstanceMethods)
-      base.extend(ClassMethods)
+      base.include(SharedInstanceMethods)
+      base.extend(SharedClassMethods)
     end
   end
 
-  include Common
+end
+
+class CategoryDecorator
+
+  include SharedDefinitions
 
   # ===========================================================================
   # :section: BaseDecorator::Links overrides
@@ -89,24 +117,6 @@ class CategoryDecorator < BookshareDecorator
       opt[:no_link] = true if object.bookshare_category.blank?
     end
     model_link(object, **opt) { |term| h.title_index_path(categories: term) }
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Render a metadata listing of a category.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def details(pairs: nil, **opt)
-    opt[:pairs] = model_show_fields.merge(pairs || {})
-    super(**opt)
   end
 
   # ===========================================================================

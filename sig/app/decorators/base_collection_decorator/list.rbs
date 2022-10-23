@@ -3,6 +3,10 @@
 module BaseCollectionDecorator::List
   include BaseDecorator::List
 
+  include BaseCollectionDecorator::Common
+
+  include BaseCollectionDecorator::Pagination
+
   # Render list items.
   #
   # @param [Integer]       index      Starting index number.

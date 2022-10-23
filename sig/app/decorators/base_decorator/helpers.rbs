@@ -1,0 +1,94 @@
+# Definitions to support inclusion of helpers.
+#
+# == Implementation Notes
+# This approach avoids `include Draper::LazyHelpers` because this can make it
+# difficult to pin down where problems with the use of Draper::ViewContext
+# originate when including /app/helpers/**.
+#
+module BaseDecorator::Helpers
+
+  include Draper::ViewHelpers
+
+  include BaseDecorator::Common
+
+  # Direct access to the controller.
+  #
+  # @return [ApplicationController]
+  #
+  # == Implementation Notes
+  # This probably isn't "cricket" but app/helpers/**.rb generally expect access
+  # to controller values, and while the decorator subclasses are relying on
+  # including these helpers, there is a need to access these values directly.
+  #
+  # While you *can* access these from Draper::ViewContext#current (via
+  # Draper::ViewHelpers#helpers [i.e., prefixing with "h."] or via
+  # Draper::LazyHelpers#method_missing), the values don't seem to be coming
+  # back correctly.
+  #
+  def controller_context: () -> ApplicationController
+
+  # Defined here for the sake of RepositoryHelper.
+  #
+  def retrieval_path: (*untyped args) -> String
+
+  # @private
+  FORM_WITH_OPTIONS: symArray
+
+  # Due to #html_options_for_form_with only certain #form_with options are
+  # actually passed on to the <form> element.
+  #
+  # Data attributes of the form `opt['data-xxx']` are expected to be passed as
+  # `opt[:data][:xxx]`, and HTML element options are expected to be passed via
+  # `opt[:html]`.
+  #
+  # This shim coalesces 'data-xxx' options into opt[:data], and other non-form
+  # options into opt[:html], creating either as needed.
+  #
+  # @param [Model, nil]           model
+  # @param [Symbol, String, nil]  scope
+  # @param [String, Hash, nil]    url
+  # @param [Symbol, String, nil]  format
+  # @param [Hash]                 opt
+  # @param [Proc]                 block
+  #
+  # @option opt [Hash] :html
+  # @option opt [Hash] :data
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield form
+  # @yieldparam [ActionView::Helpers::FormBuilder] form
+  # @yieldreturn ActiveSupport::SafeBuffer
+  #
+  def form_with: (?model: Model|nil, ?scope: Symbol|String|nil, ?url: String|symHash|nil, ?format: Symbol|String|nil, **untyped opt) { (ActionView::Helpers::FormBuilder form) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+
+  include ConfigurationHelper
+
+  include FormHelper
+
+  include HtmlHelper
+
+  include ImageHelper
+
+  include LinkHelper
+
+  include PanelHelper
+
+  include PopupHelper
+
+  include RepositoryHelper
+
+  include RoleHelper
+
+  include ScrollHelper
+
+  include SearchModesHelper
+
+  include SessionDebugHelper
+
+  include TreeHelper
+
+  private
+
+  def self.included: (Module base) -> void
+end
