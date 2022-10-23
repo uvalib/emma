@@ -5,6 +5,8 @@ module BaseDecorator::Table
 
   include BaseDecorator::List
 
+  include BaseDecorator::Row
+
   # Make the heading row stick to the top of the table when scrolling.
   #
   # @type [Boolean]
@@ -32,6 +34,42 @@ module BaseDecorator::Table
   MODEL_TABLE_ENTRY_OPT:  symArray
   MODEL_TABLE_ROW_OPT:    symArray
   MODEL_TABLE_TABLE_OPT:  symArray
+
+  # Default number of rows per table page.
+  #
+  # @type [Integer]
+  #
+  TABLE_PAGE_SIZE: Integer
+
+  # The collection of items to be presented in tabular form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  def table_row_items: () -> decoratorRowItems
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseCollectionDecorator::SharedClassMethods#decorator_class
+  #
+  def table_row_model_type: () -> Symbol
+
+  # The number of rows of associated items per table page.
+  #
+  # @return [Integer]
+  #
+  def table_page_size: () -> Integer
+
+  # Get a subset of associated items.
+  #
+  # @param [Hash] opt                 #ROW_PAGE_PARAMS passed to #row_page.
+  #
+  # @return [Array<Model>]
+  #
+  def table_row_page: (**untyped opt) -> Array[Model]
 
   # Render the object for use within a table of items.
   #

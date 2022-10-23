@@ -240,27 +240,27 @@ class SearchDecorator
 
   # Create a control for jumping to the previous record in the list.
   #
-  # @param [Integer, #to_i]      index      Current index.
-  # @param [Integer, #to_i, nil] min_index  Default: 0.
+  # @param [Integer] index            Current index.
+  # @param [String]  css              Characteristic CSS class/selector.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LinkHelper#icon_button
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToPrev()*
   #
-  def prev_record_link: (?index: Integer|nil, ?min_index: Integer|nil) -> ActiveSupport::SafeBuffer
+  def prev_record_link: (?index: Integer|nil, ?min_index: Integer|nil, ?css: String|nil, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # Create a control for jumping to the next record in the list.
   #
-  # @param [Integer, #to_i]      index      Current index.
-  # @param [Integer, #to_i, nil] max_index  Default: 1<<32.
+  # @param [Integer] index            Current index.
+  # @param [String]  css              Characteristic CSS class/selector.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LinkHelper#icon_button
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToNext()*
   #
-  def next_record_link: (?index: Integer|nil, ?max_index: Integer|nil) -> ActiveSupport::SafeBuffer
+  def next_record_link: (?index: Integer|nil, ?css: String|nil, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # Make a clickable link to the display page for the title on the originating
   # repository's web site.

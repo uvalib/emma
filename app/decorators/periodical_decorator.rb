@@ -250,26 +250,35 @@ class PeriodicalDecorator
 
   # A sub-section displaying the editions for the periodical.
   #
-  # @param [Hash] **opt
+  # @param [Integer, nil]  level
+  # @param [Integer, nil]  count      Default: `editions.size`.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [String]        css        Characteristic CSS class/selector.
+  # @param [Hash]          opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def edition_list(**opt)
-    css    = 'edition-list'
-    skip   = Array.wrap(opt.delete(:skip))
-    level  = opt.delete(:level)  || 1
-    count  = opt.delete(:count)  || editions.size
+  def edition_list(
+    level: nil,
+    count: nil,
+    skip:  [],
+    css:   '.edition-list',
+    **opt
+  )
+    level ||= 1
+    count ||= editions.size
+    skip    = Array.wrap(skip)
 
     # A heading for the sub-section.
     title  = 'Periodical Editions' # TODO: I18n
     title += " (#{count})" unless skip.include?(:count)
     h_opt  = { class: 'list-heading' }
-    append_css!(h_opt, 'empty') if count.zero?
+    append_css!(h_opt, 'empty') if count.to_i.zero?
     title  = html_tag(level, title, h_opt)
 
     # The list of titles.
     l_opt  = { skip: skip, count: count, level: (level + 1) }
-    list   = EditionsDecorator.new(editions).render(**l_opt)
+    list   = EditionsDecorator.new(editions).list_rows(**l_opt)
 
     opt[:role] = 'complementary' if level > 1
     prepend_css!(opt, css)

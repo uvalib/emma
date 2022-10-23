@@ -1,0 +1,46 @@
+# Methods supporting grid-based displays.
+#
+module BaseCollectionDecorator::Grid
+  include BaseDecorator::Grid
+
+  include BaseCollectionDecorator::Common
+
+  include BaseCollectionDecorator::Row
+
+  # The collection of items to be presented in grid form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  # @see BaseCollectionDecorator::Row#row_items
+  #
+  def grid_row_items: () -> decoratorRowItems
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseCollectionDecorator::Row#row_model_type
+  #
+  def grid_row_model_type: () -> Symbol
+
+  # The class of individual associated items for iteration.
+  #
+  # @return [Class]
+  #
+  def row_model_class: () -> Class
+
+  # Log the fact that a method intended for a single-item decorator has been
+  # invoked by a collection decorator.
+  #
+  # @param [Symbol] meth              Calling method.
+  #
+  # @return [nil]
+  #
+  def single_item_method: (Symbol meth) -> nil
+
+  private
+
+  def self.included: (Module base) -> void
+end

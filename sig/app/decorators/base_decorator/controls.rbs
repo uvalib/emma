@@ -1,0 +1,105 @@
+# Common methods supporting display of Model instances (both database items and
+# API messages).
+#
+module BaseDecorator::Controls
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
+  include BaseDecorator::Links
+
+  # Valid properties for entries under #ICONS.
+  #
+  # * :icon     [String]
+  # * :tip      [String]
+  # * :path     [String, Symbol, Proc]
+  # * :auto     [Boolean]
+  # * :enabled  [Boolean, Proc]
+  #
+  ICON_PROPERTIES: symArray
+
+  # Control icon definitions.
+  #
+  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  # @see BaseDecorator::Controls#ICON_PROPERTIES
+  #
+  ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
+
+  # Control icon definitions.
+  #
+  # @param [Hash{Symbol=>Hash{Symbol=>*}}] icons
+  # @param [Boolean, Array<Symbol>]        authorized
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def control_icons: (?icons: Hash[Symbol, symHash], ?authorized: bool|symArray) -> Hash[Symbol, symHash]
+
+  # Generate an element with icon controls for the operation(s) the user is
+  # authorized to perform on the item.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #control_icon_button
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no operations are authorized.
+  #
+  # @see #control_icons
+  #
+  def control_icon_buttons: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Produce an action icon based on either :path or :id.
+  #
+  # If :path is :button then the generated item is a button (which is expected
+  # to be handled client-side.)
+  #
+  # @param [Symbol]             action    One of #ICONS.keys.
+  # @param [GridIndex, Integer] index
+  # @param [String]             unique
+  # @param [String]             css       Characteristic CSS class/selector.
+  # @param [Hash]               opt       To LinkHelper#make_link except for
+  #                                         #ICON_PROPERTIES.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
+  # @return [nil]                         If *item* unrelated to a submission.
+  #
+  def control_icon_button: (Symbol action, ?index: BaseDecorator::Grid::GridIndex|Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) ?{ (String|Symbol|Proc, symHash) -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
+
+  # Create a link to the details show page for the given item.
+  #
+  # @param [Hash] opt                 Passed to #icon_control
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def show_control: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a link to the edit page for the given item.
+  #
+  # @param [Hash] opt                 Passed to #icon_control
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def edit_control: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a link to remove the given item.
+  #
+  # @param [Hash] opt                 Passed to #icon_control
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_control: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create an icon button link.
+  #
+  # @param [Symbol] type
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #button_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def icon_control: (untyped `type`, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

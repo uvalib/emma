@@ -12,20 +12,19 @@ module BaseDecorator::Hierarchy
   # Render field/value pairs of a title-level record.
   #
   # @param [String, Symbol, nil] action
-  # @param [Hash, nil]           pairs        Except for #render_pair options.
-  # @param [Integer, nil]        row_offset   Def: 0.
-  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash, nil]           pairs      Except for #render_pair options.
+  # @param [String, nil]         separator  Def: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Hash]                opt
   #
-  # @option opt [Integer] :index              Offset to make unique element IDs
-  #                                             passed to #render_pair.
+  # @option opt [Integer] :index            Offset to make unique element IDs
+  #                                           passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #item_lines
   # @see Search::Record::TitleRecord#field_hierarchy
   #
-  def render_field_hierarchy: (?action: String|Symbol|nil, ?pairs: symHash|nil, ?row_offset: Integer|nil, ?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_field_hierarchy: (?action: String|Symbol|nil, ?pairs: symHash|nil, ?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The term used for a file instance instead of 'file'. # TODO: I18n
   #

@@ -351,7 +351,8 @@ export const DB = (function() {
      * @returns {number}
      */
     function savedDbVersion(new_version) {
-        const table = fromJSON(localStorage.getItem('idb-version')) || {};
+        const value = localStorage.getItem('idb-version');
+        const table = fromJSON(value, 'savedDbVersion') || {};
         const name  = dbName();
         if (new_version) {
             table[name] = new_version;

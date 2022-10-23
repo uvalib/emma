@@ -25,12 +25,12 @@
   actions_menu      = 'Upload Actions'
 
   signed_in         = help_jump('signed in', :sign_in)
-  delta             = UploadDecorator::CONTROL_ICONS.dig(:edit, :icon)
+  delta             = UploadDecorator::ICONS.dig(:edit, :icon)
   delta             = html_span(delta, 'aria-label': 'triangle')
-  x                 = UploadDecorator::CONTROL_ICONS.dig(:delete, :icon)
+  x                 = UploadDecorator::ICONS.dig(:delete, :icon)
   x                 = html_span(x, 'aria-label': 'X')
-  edit_tip          = UploadDecorator::CONTROL_ICONS.dig(:edit, :tip)
-  delete_tip        = UploadDecorator::CONTROL_ICONS.dig(:delete, :tip)
+  edit_tip          = UploadDecorator::ICONS.dig(:edit, :tip)
+  delete_tip        = UploadDecorator::ICONS.dig(:delete, :tip)
 
   panel_opener      = PanelHelper::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')

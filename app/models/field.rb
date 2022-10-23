@@ -164,8 +164,8 @@ module Field
 
   # Ensure that field entry values are cleaned up and have the expected type.
   #
-  # @param [Hash, String] entry
-  # @param [Symbol, nil]  field
+  # @param [Hash, String, Symbol] entry
+  # @param [Symbol, nil]          field
   #
   # @option entry [Integer, nil]   :min
   # @option entry [Integer, nil]   :max

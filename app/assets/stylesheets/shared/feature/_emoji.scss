@@ -1,0 +1,188 @@
+// app/assets/stylesheets/shared/feature/_emoji.scss
+//
+// Shared definitions supporting Unicode emoji characters.
+//
+// @see https://www.unicode.org/emoji/charts/full-emoji-list.html
+
+
+//=============================================================================
+// Constants
+//=============================================================================
+
+$OPEN_FILE_FOLDER:  "\1F4C2"; // 📂 OPEN FILE FOLDER
+$SCROLL:            "\1F4DC"; // 📜 SCROLL
+$MEMO:              "\1F4DD"; // 📝 MEMO
+$DELIVERY_TRUCK:    "\1F69A"; // 🚚 DELIVERY TRUCK
+
+// The Unicode variation selector for a text representation of certain types of
+// emoji
+// @see http://www.unicode.org/reports/tr51/#Emoji_Variation_Sequences
+$EMOJI_TEXT_VARIANT: "\FE0E";
+
+//=============================================================================
+// Functions
+//=============================================================================
+
+/// Return the text variation of an emoji (for use with "content:" attributes).
+///
+/// NOTE: Only for certain types of emoji (TBD).
+///
+/// @param {String}  $code            The Unicode code for the character.
+///
+@function text($code) {
+    @return "#{$code}#{$EMOJI_TEXT_VARIANT}";
+}
+
+//=============================================================================
+// Macros
+//=============================================================================
+
+/// Change the color of an emoji
+///
+/// (This was developed for "\1F4C2" which is primarily yellow.)
+///
+/// NOTE: May not work with all emoji (TBD).
+///
+/// @param {Color}  $base           The dominant color of the emoji to change.
+/// @param {String} $char           Optionally include the character.
+/// @param {Number} $hue            The required hue rotation.
+/// @param {Number} $saturate       Optional saturation level.
+/// @param {Number} $brightness     Optional brightness level.
+/// @param {Number} $contrast       Optional contrast level.
+///
+@mixin color-emoji($base, $char: null, $hue: null, $saturate: null, $brightness: null, $contrast: null) {
+    $filter: opacity(1);
+    @if $hue {
+        $filter: $filter hue-rotate($hue);
+    } @else {
+        @warn "Haven't determined a hue rotation for #{$base}-based emoji"
+    }
+    @if $saturate {
+        $filter: $filter saturate($saturate);
+    }
+    @if $brightness {
+        $filter: $filter brightness($brightness);
+    }
+    @if $contrast {
+        $filter: $filter contrast($contrast);
+    }
+    @if $filter {
+        filter: $filter;
+    }
+    @if $char {
+        content: $char;
+    }
+}
+
+/// Make a colored emoji green.
+///
+/// (This was developed for "\1F4C2" which is primarily yellow.)
+///
+/// @param {String} $char           Optionally include the character.
+/// @param {Color}  $base           The dominant color of the emoji to change.
+///
+@mixin green($char: false, $base: yellow) {
+    $hue: map-get((
+        orange: 80deg,
+        red:    75deg,
+        yellow: 65deg,
+    ), $base);
+    $saturate: map-get((
+        orange: 300%,
+        red:    100%,
+        yellow: 100%,
+    ), $base);
+    $brightness: map-get((
+        orange: 100%,
+        red:    175%,
+        yellow: 100%,
+    ), $base);
+    @include color-emoji($base, $char, $hue, $saturate, $brightness);
+}
+
+/// Make a colored emoji red.
+///
+/// (This was developed for "\1F4C2" which is primarily yellow.)
+///
+/// @param {String} $char           Optionally include the character.
+/// @param {Color}  $base           The dominant color of the emoji to change.
+///
+@mixin red($char: false, $base: yellow) {
+    $hue: map-get((
+        orange: 320deg,
+        red:    0,
+        yellow: 305deg,
+    ), $base);
+    $saturate: map-get((
+        orange: 200%,
+        red:    75%,
+        yellow: 150%,
+    ), $base);
+    $brightness: map-get((
+        orange: 90%,
+        red:    150%,
+        yellow: 100%,
+    ), $base);
+    @include color-emoji($base, $char, $hue, $saturate, $brightness);
+}
+
+/// Make a colored emoji orange.
+///
+/// (This was developed for "\1F4C2" which is primarily yellow.)
+///
+/// @param {String} $char           Optionally include the character.
+/// @param {Color}  $base           The dominant color of the emoji to change.
+///
+@mixin orange($char: null, $base: yellow) {
+    $hue: map-get((
+        orange: 0,
+        red:    20deg,
+        yellow: 330deg,
+    ), $base);
+    $saturate: map-get((
+        red:    50%,
+        yellow: 150%,
+    ), $base);
+    $brightness: map-get((
+        red:    200%,
+        yellow: 100%,
+    ), $base);
+    @include color-emoji($char, $base, $hue, $saturate, $brightness);
+}
+
+/// Make a colored emoji blue.
+///
+/// (This was developed for "\2705" which is primarily green.)
+///
+/// @param {String} $char           Optionally include the character.
+/// @param {Color}  $base           The dominant color of the emoji to change.
+///
+@mixin blue($char: null, $base: green) {
+    $hue: map-get((
+        green:  120deg,
+    ), $base);
+    $saturate: map-get((
+        green:  75%,
+    ), $base);
+    $brightness: map-get((
+        green:  90%,
+    ), $base);
+    $contrast: map-get((
+        green:  200%,
+    ), $base);
+    @include color-emoji($char, $base, $hue, $saturate, $brightness, $contrast);
+}
+
+/// Drain the color from a colored emoji.
+///
+/// NOTE: May not work with all emoji (TBD).
+///
+/// @param {String} $char           Optionally include the character.
+/// @param {Color}  $base           The dominant color of the emoji to change.
+///
+@mixin gray($char: null, $base: yellow) {
+    filter: saturate(0);
+    @if $char {
+        content: $char;
+    }
+}

@@ -151,6 +151,33 @@
     width: 0;
 }
 
+/// Make an actionable item (e.g. <a>) appear non-functional.
+/// NOTE: The link should also have attribute 'tabindex="-1"'.
+///
+/// @param {Boolean} $force
+/// @param {String} $cursor
+///
+@mixin disabled($force: false, $cursor: default) {
+
+    $important: if($force, '!important', '');
+
+    text-decoration: none    #{$important};
+    cursor:          $cursor #{$important};
+
+    &:active { pointer-events:  none #{$important}; }
+    &:focus  { outline:         none #{$important}; }
+    &:hover  { text-decoration: none #{$important}; }
+}
+
+/// Include to "de-activate" an active element because it is an invalid choice.
+///
+/// @param {Boolean} $force
+/// @param {String}  $cursor
+///
+@mixin forbidden($force: false, $cursor: not-allowed) {
+    @include disabled($force, $cursor);
+}
+
 /// Make focus outline more easily seen.
 ///
 @mixin focus {

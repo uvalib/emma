@@ -24,6 +24,9 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
     include BaseCollectionDecorator::Menu
     include BaseCollectionDecorator::Pagination
     include BaseCollectionDecorator::Table
+    include BaseCollectionDecorator::Controls
+    include BaseCollectionDecorator::Grid
+    include BaseCollectionDecorator::Row
     # :nocov:
   end
 

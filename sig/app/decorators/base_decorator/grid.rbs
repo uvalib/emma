@@ -1,0 +1,376 @@
+# Methods supporting grid-based displays.
+#
+module BaseDecorator::Grid
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
+  include BaseDecorator::Form
+
+  include BaseDecorator::List
+
+  include BaseDecorator::Pagination
+
+  include BaseDecorator::Row
+
+  # The collection of items to be presented in grid form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  # @see BaseDecorator::Row#row_items
+  #
+  def grid_row_items: () -> decoratorRowItems
+
+  # The total number of associated items.
+  #
+  # @return [Integer]
+  #
+  def grid_row_items_total: () -> Integer
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseDecorator::Row#row_model_type
+  #
+  def grid_row_model_type: () -> Symbol
+
+  # The class of individual associated items for iteration.
+  #
+  # @return [Class]
+  #
+  def grid_row_model_class: () -> Class
+
+  # The default CSS class for the container of a grid element.
+  #
+  # @return [String]
+  #
+  def grid_css_class: () -> String
+
+  # The names and configurations for each possible grid data column (whether
+  # displayed or not).
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def grid_row_fields: () -> Hash[Symbol,symHash]
+
+  # The names of each grid data column for display.
+  #
+  # @return [Array<Symbol>]
+  #
+  def grid_row_columns: () -> symArray
+
+  # The names of each grid data column which is not displayed.
+  #
+  # @return [Array<Symbol>]
+  #
+  def grid_row_skipped_columns: () -> symArray
+
+  # This is the number of <tr> rows within <thead>.
+  #
+  # @return [Integer]
+  #
+  def grid_header_rows: () -> Integer
+
+  # Default number of rows per grid page.
+  #
+  # @type [Integer]
+  #
+  GRID_PAGE_SIZE: Integer
+
+  # The number of rows of associated items per grid page.
+  #
+  # @return [Integer]
+  #
+  def grid_page_size: () -> Integer
+
+  # Get a subset of associated items.
+  #
+  # @param [Hash] opt                 #ROW_PAGE_PARAMS passed to #row_page.
+  #
+  # @return [Array<Model>]
+  #
+  def grid_row_page: (**untyped opt) -> Array[Model]
+
+  # Generate grid header/column controls and top/bottom pagination controls.
+  #
+  # @param [Integer, nil] row
+  # @param [Hash]         opt             Passed to #page_content_controls.
+  #
+  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  #
+  def grid_controls: (?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
+
+  # HTML tags indicating construction of a <table>.
+  #
+  # For use with the :tag named option, any of these tags may be passed in to
+  # indicate participation in a table; the method will replace it with the
+  # appropriate tag as needed.
+  #
+  # @type [Array<Symbol>]
+  #
+  TABLE_TAGS: symArray
+
+  # Render associated items in a grid based on <table>.
+  #
+  # @param [Hash] opt                 Passed to #render_grid.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid_table: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render associated items.
+  #
+  # @param [Integer] row              Starting row number.
+  # @param [Integer] index            Starting index number.
+  # @param [Array]   cols             Default: `#grid_row_columns`.
+  # @param [Symbol]  tag              If :table, generate <table>.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to container div except
+  #                                     #ROW_PAGE_PARAMS to #grid_row_page.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid: (?row: Integer|nil, ?index: Integer|nil, ?cols: symArray|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a header row from field names in the order they are emitted.
+  #
+  # @param [Array]   cols             Default: `#grid_row_columns`.
+  # @param [Integer] row              Starting row number.
+  # @param [Symbol]  tag              #TABLE_TAGS
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to outer div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid_head_row: (?cols: symArray|nil, ?row: Integer|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # render_grid_data_rows
+  #
+  # @param [Array<Model>,nil] items
+  # @param [Integer]          row
+  # @param [Integer]          index
+  # @param [Hash]             opt     Passed to #grid_row.
+  #
+  # @option opt [Symbol] :tag         Also used by this method.
+  # @option opt [Hash]   :outer       Augmented by this method.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid_data_rows: (?(Array[Model]|nil) items, ?row: Integer|nil, ?index: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A data row generated by the *item* decorator.
+  #
+  # @param [Model] item               Provided by the subclass override.
+  # @param [Hash]  opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid_data_row: (Model item, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An additional row -- always hidden -- which can be used as a template for
+  # adding a new row.
+  #
+  # @param [Model, nil] model
+  # @param [Hash]       opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid_template_row: (?(Array[Model]|nil) model, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Properties that need to be conveyed to the grid header columns.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELD_PROPERTIES: symArray
+
+  # grid_head_headers
+  #
+  # @param [Hash] **opt
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def grid_head_headers: (**untyped opt) -> Array[ActiveSupport::SafeBuffer]
+
+  # Render the control column header (the top left grid cell).
+  #
+  # By default this is just a spacer for the control column.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #grid_head_cell.
+  # @param [Proc]   block             Passed to #grid_head_cell.
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def grid_head_control_headers: (?css: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> Array[ActiveSupport::SafeBuffer]
+
+  # Render data column headers.
+  #
+  # @param [Array] cols               Default: `#grid_row_columns`.
+  # @param [Hash]  opt                Passed to #grid_head_cell.
+  # @param [Proc]  block              Passed to #grid_head_cell.
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def grid_head_data_headers: (?cols: symArray|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> Array[ActiveSupport::SafeBuffer]
+
+  # Render a grid header cell.
+  #
+  # @param [Symbol, nil] col          Data column.
+  # @param [Integer]     row          Starting row.
+  # @param [Symbol]      tag          #TABLE_TAGS
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to #html_tag except:
+  #
+  # @option opt [String] :label       Overrides default label.
+  # @option opt [Hash]   :config      Field configuration.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_head_cell: ((Symbol|nil) col, ?row: Integer|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # grid_row
+  #
+  # @param [Hash]    control          Options for #grid_row_controls.
+  # @param [String]  unique
+  # @param [Symbol]  tag              #TABLE_TAGS
+  # @param [Hash]    opt              Passed to #grid_item
+  #
+  # @option opt [Integer] :row
+  # @option opt [Integer] :index
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_row: (?control: symHash, ?unique: String|nil, ?tag: Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate controls for an item grid row.
+  #
+  # @param [Hash]    button           Passed to #grid_row_control_contents.
+  # @param [Symbol]  tag              #TABLE_TAGS
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to outer div.
+  #
+  # @option opt [String] :unique      Moved into a copy of :button hash.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_row_controls: (?button: symHash, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate the interior of the controls grid cell.
+  #
+  # @param [Array]   added            Optional elements after the buttons.
+  # @param [Integer] row              Associated grid row.
+  # @param [Hash]    opt              Passed to #control_icon_buttons.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Additional content if provided.
+  # @yieldreturn [Array,ActiveSupport::SafeBuffer,nil]
+  #
+  def grid_row_control_contents: (*ActiveSupport::SafeBuffer added, ?row: Integer|nil, **untyped opt) ?{ () -> (Array[ActiveSupport::SafeBuffer] | ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+
+  # Render a single grid item.
+  #
+  # @param [Array] cols               Default: `#grid_row_columns`.
+  # @param [Hash]  opt                @see BaseDecorator::List#list_item
+  #
+  # @option opt [Symbol] :tag         Set for #list_item if required.
+  # @option opt [String] :unique
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_item: (?cols: symArray|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a grid data cell with value display element and an edit element.
+  #
+  # @param [Hash, nil]   pairs        Passed to #field_pairs.
+  # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Symbol]      tag          #TABLE_TAGS
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          To #render_pair except
+  #                                     #FIELD_PAIRS_OPTIONS to #field_pairs.
+  #
+  # @option opt [Integer] :index      Offset to make unique element IDs passed
+  #                                     to #render_pair.
+  # @option opt [*]       :row        Deleted to avoid propagation so that
+  #                                     individual elements don't have CSS
+  #                                     class "row-*".
+  # @option opt [*]       :unique     Deleted to avoid propagation.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_data_cell: (?pairs: anyHash|nil, ?separator: String|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a single label/value pair in a grid cell.
+  #
+  # @param [String, Symbol, nil] label
+  # @param [*]                   value
+  # @param [Symbol]              field
+  # @param [Hash]                prop
+  # @param [Integer, nil]        col
+  # @param [Hash]                opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Implementation Notes
+  # Compare with BaseDecorator::List#render_field_value_pair
+  #
+  def grid_data_cell_render_pair: ((String|Symbol|nil) label, (untyped|nil) value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The edit element for a grid data cell.
+  #
+  # @param [Symbol]    field          For 'data-field' attribute.
+  # @param [*]         value
+  # @param [Hash, nil] prop           Default: from field/model.
+  # @param [String]    css            Characteristic CSS class/selector.
+  # @param [Hash]      opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def grid_data_cell_edit: (Symbol field, untyped value, (symHash|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Create an object that can be used to unambiguously indicate whether an
+  # index value has been adjusted from its original raw value.
+  #
+  # @param [GridIndex, Symbol, Integer, String, nil] item
+  #
+  # @return [GridIndex, nil]
+  #
+  def grid_index: ((GridIndex|String|Integer|nil) item) -> (GridIndex | nil)
+
+  # This is a special variation which causes a <textarea> to be created for
+  # retrieving single text strings instead of <input type="text">.
+  #
+  # (This is the only way to cause the placeholder text to be wrapped in the
+  # grid cell.  For a simple input, the width of the <input> placeholder does
+  # not contribute to the width of the invisible edit element, so the grid
+  # column does not get created wide enough to see the whole placeholder text.)
+  #
+  # @param [String] name
+  # @param [*]      value
+  # @param [Hash]   opt               Passed to #render_form_input.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid_input: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  class GridIndex
+    NONE: Symbol
+    attr_reader base: Integer
+    attr_reader offset: Integer
+    attr_reader none: bool
+    def initialize: ((String|Integer|nil) item, ?(Integer|nil) starting_offset) -> void
+                  | ((GridIndex|Symbol)   item                                ) -> void
+    def value: () -> Integer
+    alias to_i value
+    def to_s: () -> String
+    def +: ((GridIndex|String|Integer|nil) item) -> GridIndex
+    def next: () -> (GridIndex | nil)
+  end
+
+  private
+
+  def self.included: (Module base) -> void
+end

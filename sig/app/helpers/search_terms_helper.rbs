@@ -48,6 +48,12 @@ module SearchTermsHelper
   #
   NON_SEARCH_TERM_KEYS: symArray
 
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_PARAMS: symArray
+
   # Term separator for #list_search_terms.
   #
   # @type [String]
@@ -127,13 +133,13 @@ module SearchTermsHelper
 
   # Produce a text-only listing of search terms.
   #
-  # @param [Hash{Symbol=>SearchTerm}, nil] term_list  Default: `#search_terms`.
+  # @param [Hash{Symbol=>*}, nil] term_list  Default: `#search_terms`.
   #
   # @option term_list [String] :separator   Default: #LIST_SEARCH_SEPARATOR.
   #
   # @return [String]
   #
-  def list_search_terms: (?(Hash[Symbol,SearchTerm]|nil) term_list) -> String
+  def list_search_terms: (?(Hash[Symbol,(SearchTerm|String|Integer|nil)]|nil) term_list) -> String
 
   private
 

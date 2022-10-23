@@ -97,6 +97,106 @@ module BaseDecorator::Pagination
 
   public
 
+  # Generic top/bottom pagination controls.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] ctrls
+  # @param [Integer, nil] row
+  # @param [Hash]         opt         Passed to #page_count_and_number
+  #
+  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  #
+  def page_content_controls(*ctrls, row: nil, **opt)
+    links   = pagination_controls
+    counts  = page_count_and_number(**opt)
+    top     = pagination_top(*ctrls, counts, links, row: row)
+    bottom  = pagination_bottom(links)
+    return top, bottom
+  end
+
+  # Used to supply pagination- and content-specific controls for display above
+  # the content.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] parts
+  # @param [Integer, nil]                     row
+  # @param [String]                           css   Characteristic CSS class.
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_top(*parts, row: nil, css: '.pagination-top', **opt)
+    prepend_css!(opt, "row-#{row}") if row
+    prepend_css!(opt, css)
+    html_div(*parts, opt)
+  end
+
+  # Used to supply pagination- and content-specific controls for display below
+  # the content.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] parts
+  # @param [Integer, nil]                     row
+  # @param [String]                           css   Characteristic CSS class.
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_bottom(*parts, row: nil, css: '.pagination-bottom', **opt)
+    prepend_css!(opt, "row-#{row}") if row
+    prepend_css!(opt, css)
+    html_div(*parts, opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Page count along with the page number when appropriate.
+  #
+  # @param [Integer, nil] count       Default: *list* size.
+  # @param [Integer, nil] total       Default: `paginator.total_items`.
+  # @param [Integer, nil] records     Default: `paginator.record_count`.
+  # @param [Integer, nil] page        Default: `paginator.page_number`.
+  # @param [Integer, nil] size        Default: `paginator.page_size`.
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt         Passed to the outer div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
+  def page_count_and_number(
+    count:   nil,
+    total:   nil,
+    records: nil,
+    page:    nil,
+    size:    nil,
+    list:    nil,
+    unit:    nil,
+    css:    '.counts',
+    **opt
+  )
+    count   = positive(count)   || list&.size
+    total   = positive(total)   || paginator.total_items
+    records = positive(records) || paginator.record_count
+    size    = positive(size)    || paginator.page_size
+    page    = positive(page)    || paginator.page_number || 1
+    count ||= size || list&.size.to_i
+    size  ||= DEFAULT_PAGE_SIZE
+    more    = (page > 1) || total.nil?
+    more  ||= (count < total) && (total == size)
+    more  ||= (count == size) || (records == size)
+    total   = nil if total == size
+
+    parts   = []
+    parts  << page_number(page) if more
+    parts  << pagination_count(count, total, unit: unit)
+
+    prepend_css!(opt, css)
+    html_div(*parts, opt)
+  end
+
   # Page number display element.
   #
   # @param [Integer] page
@@ -132,15 +232,20 @@ module BaseDecorator::Pagination
   )
     count = positive(count).to_i
     total = positive(total).to_i
+    num   = ->(n, c) { html_span(h.number_with_delimiter(n), class: c) }
     # noinspection RubyMismatchedArgumentType
-    total = nil unless total > count
-    prepend_css!(opt, css)
-    html_div(opt) do
-      found = get_page_count_label(count: (total || count), item: unit)
-      words = total ? [count, 'of', total, found] : [count, found]
-      label = words.map! { |v| h.number_with_delimiter(v) }.join(' ')
-      total ? label : "(#{label})"
+    if total > count
+      found = get_page_count_label(count: total, item: unit)
+      count = num.call(count, 'page-items')
+      total = num.call(total, 'total-items')
+      label = "#{count} of #{total} #{found}"
+    else
+      found = get_page_count_label(count: count, item: unit)
+      count = num.call(count, 'page-items total-items')
+      label = "(#{count} #{found})"
     end
+    prepend_css!(opt, css)
+    html_div(label.html_safe, opt)
   end
 
   # Placeholder for an item that would have been a link if it had a path.
@@ -223,7 +328,7 @@ module BaseDecorator::Pagination
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # paginator
   #
@@ -232,6 +337,12 @@ module BaseDecorator::Pagination
   def paginator
     @paginator ||= context[:paginator] || Paginator.new(h.controller)
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
 
   # pagination_first
   #

@@ -38,14 +38,27 @@ module HtmlHelper
                  | ((String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
                  | (                                                 ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
+  # Short-cut for generating an HTML '<details>' element.
+  #
+  # For easier styling, additional content is wrapped in a '.content' element.
+  #
+  # @param [String]   summary         The text visible when not expanded.
+  # @param [Array<*>] content         Appended to the '.content' element.
+  # @param [Hash]     opt             Passed to the outer '<details>' element.
+  # @param [Proc]     block           Appended to the '.content' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_details: (String summary, *String content, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
   # Short-cut for generating an HTML element which normalizes element contents
   # provided via the parameter list and/or the block.
   #
   # If *tag* is a number it is translated to 'h1'-'h6'.  If *tag* is 0 or *nil*
   # then it defaults to 'div'.
   #
-  # @param [Symbol, Integer, nil] tag
-  # @param [Array<*>]             args
+  # @param [Symbol, String, Integer, nil] tag
+  # @param [Array]                        args
   #
   # @option args.last [String] :separator
   #
@@ -61,19 +74,19 @@ module HtmlHelper
   # +
   #
   # @overload html_tag(tag, content, *more_content, options = nil)
-  #   @param [Symbol, String, nil]                         tag
+  #   @param [Symbol, String, Integer]                     tag
   #   @param [ActiveSupport::SafeBuffer, String, nil]      content
   #   @param [Array<ActiveSupport::SafeBuffer,String,nil>] more_content
   #   @param [Hash, nil]                                   options
   #
   # @overload html_tag(tag, options = nil, &block)
-  #   @param [Symbol, String, nil]                         tag
+  #   @param [Symbol, String, Integer]                     tag
   #   @param [Hash, nil]                                   options
   #   @param [Proc]                                        block
   #
-  def html_tag: ((Symbol|Integer|nil) tag, (String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-              | ((Symbol|Integer|nil) tag, (String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-              | ((Symbol|Integer|nil) tag,                                                  ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_tag: ((Symbol|String|Integer|nil) tag, (String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+              | ((Symbol|String|Integer|nil) tag, (String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+              | ((Symbol|String|Integer|nil) tag,                                                  ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Invoke #form_tag after normalizing element contents provided via the
   # parameter list and/or the block.
@@ -101,6 +114,39 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def placeholder_element: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Attributes that are expected for a given HTML tag and can be added
+  # automatically.
+  #
+  # @param[Hash{Symbol=>Array<Symbol>}]
+  #
+  # @see https://developer.mozilla.org/en-US/docs/Web/CSS/display#tables
+  #
+  ADDED_HTML_ATTRIBUTES: Hash[Symbol,symHash]
+
+  # Augment with default options.
+  #
+  # @param [Symbol, String]  tag
+  # @param [Hash{Symbol=>*}] options
+  #
+  # @return [Hash]
+  #
+  def add_needed_attributes: (Symbol|String tag, symHash options) -> symHash
+
+  # Attributes that are expected for a given HTML tag.
+  #
+  # @param[Hash{Symbol=>Array<Symbol>}]
+  #
+  REQUIRED_HTML_ATTRIBUTES: Hash[Symbol,symArray]
+
+  # Verify that options have been included.
+  #
+  # @param [Symbol, String]  tag
+  # @param [Hash{Symbol=>*}] options
+  #
+  # @return [Boolean]                 If *false* at least one was missing.
+  #
+  def check_required_attributes: (Symbol|String tag, symHash options) -> bool
 
   # These are observed hash keys which may travel alongside HTML attributes
   # like :id, :class, :tabindex etc. when passed as named parameters, but

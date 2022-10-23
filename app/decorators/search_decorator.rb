@@ -438,20 +438,17 @@ class SearchDecorator
 
   # Create a control for jumping to the previous record in the list.
   #
-  # @param [Integer, #to_i]      index      Current index.
-  # @param [Integer, #to_i, nil] min_index  Default: 0.
+  # @param [Integer] index            Current index.
+  # @param [String]  css              Characteristic CSS class/selector.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LinkHelper#icon_button
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToPrev()*
   #
-  def prev_record_link(index: nil, min_index: nil, **)
-    css       = '.prev'
-    index     = positive(index)     || 0
-    min_index = positive(min_index) || 0
+  def prev_record_link(index: nil, css: '.prev', **)
     opt = {}
-    if index > min_index
+    if (enabled = index && (index > paginator.first_index))
       opt[:icon]     = UP_TRIANGLE
       opt[:title]    = 'Go to the previous record' # TODO: I18n
       opt[:url]      = '#value-Title-%d' % (index - 1)
@@ -459,29 +456,25 @@ class SearchDecorator
       opt[:icon]     = DELTA
       opt[:title]    = 'This is the first record on the page' # TODO: I18n
       opt[:tabindex] = -1
-      append_css!(opt, 'forbidden')
     end
     prepend_css!(opt, css)
+    append_css!(opt, 'forbidden') unless enabled
     icon_button(**opt)
   end
 
   # Create a control for jumping to the next record in the list.
   #
-  # @param [Integer, #to_i]      index      Current index.
-  # @param [Integer, #to_i, nil] max_index  Default: 1<<32.
+  # @param [Integer] index            Current index.
+  # @param [String]  css              Characteristic CSS class/selector.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see LinkHelper#icon_button
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToNext()*
   #
-  def next_record_link(index: nil, max_index: nil, **)
-    css       = '.next'
-    index     = positive(index) || 0
-    max_index = max_index&.to_i
-    max_index = (1 << 32) unless max_index && (max_index >= 0)
+  def next_record_link(index: nil, css: '.next', **)
     opt = {}
-    if index < max_index
+    if (enabled = index && (index < paginator.last_index))
       opt[:icon]     = DOWN_TRIANGLE
       opt[:title]    = 'Go to the next record' # TODO: I18n
       opt[:url]      = '#value-Title-%d' % (index + 1)
@@ -489,9 +482,9 @@ class SearchDecorator
       opt[:icon]     = REVERSE_DELTA
       opt[:title]    = 'This is the last record on the page' # TODO: I18n
       opt[:tabindex] = -1
-      append_css!(opt, 'forbidden')
     end
     prepend_css!(opt, css)
+    append_css!(opt, 'forbidden') unless enabled
     icon_button(**opt)
   end
 
@@ -710,7 +703,7 @@ class SearchDecorator
     else
       Log.warn("#{__method__}: no decorator for model type #{type.inspect}")
     end ||
-      if (decorator = ModelTypeMap.get(:upload)) # TODO: remove after upload -> entry
+      if (decorator = ModelTypeMap.get((type == :upload) ? :entry : :upload)) # TODO: remove after upload -> entry
         decorator.controls_for(object, context: context)
       end
   end

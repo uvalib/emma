@@ -44,6 +44,8 @@ module Emma::Unicode
 
   REVERSE_DELTA: String
 
+  LEFT_TRIANGLE: String
+
   BLACK_CIRCLE: String
 
   STAR: String
@@ -63,6 +65,16 @@ module Emma::Unicode
   HEAVY_PLUS: String
 
   HEAVY_MINUS: String
+
+  RIGHT_ARROWHEAD: String
+
+  OPEN_FILE_FOLDER: String
+
+  SCROLL: String
+
+  MEMO: String
+
+  DELIVERY_TRUCK: String
 
   private
 

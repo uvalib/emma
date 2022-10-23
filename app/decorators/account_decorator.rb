@@ -92,7 +92,7 @@ class AccountDecorator < BaseDecorator
     include BaseDecorator::SharedGenericMethods
 
     # =========================================================================
-    # :section: BaseDecorator::Links overrides
+    # :section: BaseDecorator::Controls overrides
     # =========================================================================
 
     public
@@ -101,8 +101,10 @@ class AccountDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    CONTROL_ICONS =
-      BaseDecorator::Links::CONTROL_ICONS.except(:show).transform_values { |v|
+    # @see BaseDecorator::Controls#ICON_PROPERTIES
+    #
+    ICONS =
+      BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
         v.dup.tap do |entry|
           entry[:tip] %= { item: 'account' } if entry[:tip]&.include?('%')
           entry[:enabled] = true
@@ -114,7 +116,7 @@ class AccountDecorator < BaseDecorator
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons
-      super(icons: CONTROL_ICONS)
+      super(icons: ICONS)
     end
 
     # =========================================================================
@@ -257,7 +259,7 @@ class AccountDecorator
   include SharedDefinitions
 
   # ===========================================================================
-  # :section: BaseDecorator::Links overrides
+  # :section: BaseDecorator::Controls overrides
   # ===========================================================================
 
   public
@@ -268,7 +270,7 @@ class AccountDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def show_link(**opt)
+  def show_control(**opt)
     opt[:label] ||= 'Show' # TODO: I18n
     opt[:path]  ||= show_path
     button_link(**opt)
@@ -341,7 +343,7 @@ class AccountDecorator
   # @return [Hash]
   #
   def table_columns(**opt)
-    super.reverse_merge!(actions: [show_link, edit_link, delete_link])
+    { actions: [show_control, edit_control, delete_control], **super }
   end
 
   # ===========================================================================

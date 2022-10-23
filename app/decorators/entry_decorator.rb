@@ -249,7 +249,7 @@ class EntryDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: BaseDecorator::Links overrides
+    # :section: BaseDecorator::Controls overrides
     # =========================================================================
 
     public
@@ -258,8 +258,10 @@ class EntryDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    CONTROL_ICONS =
-      BaseDecorator::Links::CONTROL_ICONS.except(:show).transform_values { |v|
+    # @see BaseDecorator::Controls#ICON_PROPERTIES
+    #
+    ICONS =
+      BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
         v.dup.tap do |entry|
           entry[:tip] %= { item: 'EMMA entry' } if entry[:tip]&.include?('%')
           entry[:enabled] = true
@@ -277,7 +279,7 @@ class EntryDecorator < BaseDecorator
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons
-      super(icons: CONTROL_ICONS)
+      super(icons: ICONS)
     end
 
     # =========================================================================
@@ -826,23 +828,17 @@ class EntryDecorator
   end
 
   # ===========================================================================
-  # :section: BaseDecorator::Links overrides
+  # :section: BaseDecorator::Controls overrides
   # ===========================================================================
 
   protected
 
   # Produce an action icon based on either :path or :id.
   #
-  # @param [Symbol] action                One of #CONTROL_ICONS.keys.
-  # @param [Hash]   opt                   To LinkHelper#make_link except for:
+  # @param [Symbol] action
+  # @param [Hash]   opt
   #
-  # @option opt [String, Proc]  :path
-  # @option opt [String]        :icon
-  # @option opt [String]        :tip
-  # @option opt [Boolean, Proc] :enabled
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
-  # @return [nil]                         If *item* unrelated to a submission.
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   def control_icon_button(action, **opt)
     return super unless action == :check

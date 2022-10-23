@@ -11,6 +11,52 @@ module BaseDecorator::Fields
   #
   EMPTY_VALUE: String
 
+  # Database columns with hierarchical data.
+  #
+  # @return [Array<Symbol>]
+  #
+  def compound_fields: () -> symArray
+
+  # emma_data_fields
+  #
+  # @param [Symbol] field
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def emma_data_fields: (?field: Symbol) -> Hash[Symbol,symHash]
+
+  # Render the contents of the :emma_data field in the same order of EMMA data
+  # fields as defined for search results.
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #render_json_data
+  #
+  def render_emma_data: (?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render the contents of the :file_data field.
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #render_json_data
+  #
+  def render_file_data: (?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render hierarchical data.
+  #
+  # @param [String, Hash, nil] value
+  # @param [Hash]              opt        Passed to #render_field_values
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_json_data: ((String|anyHash|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Field/value pairs.
   #
   # @param [Model, Hash, nil] item    Default: `#object`.
@@ -19,10 +65,17 @@ module BaseDecorator::Fields
   #
   def field_values: (?(Model|anyHash|nil) item) -> anyHash
 
+  # Local options for #field_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELD_PAIRS_OPTIONS: symArray
+
   # field_pairs
   #
   # @param [Model, Hash, nil]           item        Passed to #field_values.
   # @param [String, Symbol, nil]        action
+  # @param [Array<Symbol>, nil]         only        Only matching fields.
   # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
   #
   # @return [Hash{Symbol=>Hash}]
@@ -34,7 +87,7 @@ module BaseDecorator::Fields
   # the configuration for :file_data.  (This allows [:file_data][:id] to be
   # associated with the proper field configuration.)
   #
-  def field_pairs: (?(Model|anyHash|nil) item, ?action: String|Symbol|nil) -> Hash[Symbol,symHash]
+  def field_pairs: (?(Model|anyHash|nil) item, ?action: String|Symbol|nil, ?only: symArray|nil, ?except: symArray|nil, ?field_root: Symbol|symArray|nil, **untyped _ignored) -> Hash[Symbol,symHash]
 
   # Field type indicators mapped on to related class(es).
   #

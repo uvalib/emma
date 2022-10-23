@@ -4,19 +4,18 @@
 
   view_debug(__FILE__)
 
-  list   ||= nil
-  dec    ||= TitlesDecorator.new(list, **context)
-  list   ||= dec.object
+  list  ||= nil
+  dec   ||= TitlesDecorator.new(list, **context)
+  list  ||= dec.object
 
-  count  ||= list.size
-  offset ||= @page.page_offset
-  level  ||= 1
-  row    ||= level
-  skip   ||= nil
+  level ||= 1
+  row   ||= level
+  skip  ||= nil
 
   skip    = [*skip]
   heading =
     unless skip.include?(:title)
+      count ||= list.size
       title ||= nil
       title   = dec.page_heading(title)
       title  += " (#{count})" unless skip.include?(:count)
@@ -30,4 +29,4 @@
 
 <%= heading %>
 
-<%= dec.render(row: row, offset: offset, level: level, skip: skip) %>
+<%= dec.list_rows(row: row, level: level, skip: skip) %>

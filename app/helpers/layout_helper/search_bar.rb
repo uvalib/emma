@@ -161,11 +161,11 @@ module LayoutHelper::SearchBar
     elsif minimum
       rows << [fields.first, ''] while rows.size < minimum
     end
-    index = 0
+    row = 0
     rows.map! do |field, value|
-      row_opt[:first] = index.zero?
-      row_opt[:index] = (index += 1)
-      row_opt[:last]  = (index == rows.size)
+      row_opt[:first] = row.zero?
+      row_opt[:index] = (row += 1)
+      row_opt[:last]  = (row == rows.size)
       # noinspection RubyMismatchedReturnType
       search_bar_row(field, value, **row_opt)
     end

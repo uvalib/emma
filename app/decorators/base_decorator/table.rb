@@ -11,6 +11,7 @@ module BaseDecorator::Table
 
   include BaseDecorator::Common
   include BaseDecorator::List
+  include BaseDecorator::Row
 
   # ===========================================================================
   # :section:
@@ -46,6 +47,58 @@ module BaseDecorator::Table
     MODEL_TABLE_ROW_OPT   = %i[row col],
     MODEL_TABLE_TABLE_OPT = %i[model thead tbody tfoot],
   ].flatten.freeze
+
+  # Default number of rows per table page.
+  #
+  # @type [Integer]
+  #
+  TABLE_PAGE_SIZE = ROW_PAGE_SIZE
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The collection of items to be presented in tabular form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  def table_row_items
+    not_implemented 'Not applicable to single decorators by default'
+  end
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # @note Not currently used.
+  #
+  def table_row_model_type
+    row_model_type
+  end
+
+  # The number of rows of associated items per table page.
+  #
+  # @return [Integer]
+  #
+  def table_page_size
+    TABLE_PAGE_SIZE
+  end
+
+  # Get a subset of associated items.
+  #
+  # @param [Hash] opt                 #ROW_PAGE_PARAMS passed to #row_page.
+  #
+  # @return [Array<Model>]
+  #
+  def table_row_page(**opt)
+    opt[:rows]  = table_row_items unless opt.key?(:rows)
+    opt[:limit] = table_page_size unless opt.key?(:limit)
+    row_page(**opt)
+  end
 
   # ===========================================================================
   # :section: Item list (index page) support
@@ -157,7 +210,8 @@ module BaseDecorator::Table
     prepend_css(opt, field).tap do |html_opt|
       append_css!(html_opt, "row-#{row}") if row
       append_css!(html_opt, "col-#{col}") if col
-      html_opt[:id] ||= [field, row, col].compact.join('-')
+      html_opt[:role] ||= 'cell'
+      html_opt[:id]   ||= [field, row, col].compact.join('-')
     end
   end
 

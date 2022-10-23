@@ -28,6 +28,9 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Menu
     include BaseDecorator::Pagination
     include BaseDecorator::Table
+    include BaseDecorator::Controls
+    include BaseDecorator::Grid
+    include BaseDecorator::Row
     # :nocov:
   end
 
@@ -158,6 +161,9 @@ class BaseDecorator < Draper::Decorator
       include BaseDecorator::Menu
       include BaseDecorator::Pagination
       include BaseDecorator::Table
+      include BaseDecorator::Controls
+      include BaseDecorator::Grid
+      include BaseDecorator::Row
       # :nocov:
     end
 
@@ -171,7 +177,7 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [String]
     #
-    def css_list_class
+    def list_css_class
       "#{model_type}-list"
     end
 
@@ -1061,7 +1067,7 @@ class BaseDecorator
 
     record_properties = fetch_properties(
       List: {
-        class: css_list_class,
+        class:    list_css_class,
       },
       FilterOptions: {
         class:    :FILTER_OPTIONS_CLASS,

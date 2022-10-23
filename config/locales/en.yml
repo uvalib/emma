@@ -97,6 +97,24 @@ en:
           label:        '▼'
           tooltip:      'Close'
 
+    grid:
+
+      column:
+        opener:
+          tooltip:      'Show details about each record'
+        closer:
+          tooltip:      'Make this column take up less space'
+        # Used when CONTROLS_ROTATE is true:
+        label:          "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
+
+      row:
+        opener:
+          tooltip:      'Show details about each column data type'
+        closer:
+          tooltip:      'Minimize this row'
+        # Used when CONTROLS_ROTATE is true (with "transform:rotate(0.25turn)")
+        label:          "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
+
     search_type:        &SEARCH_TYPE
 
       identifier:
@@ -405,16 +423,19 @@ en:
     control_icons:    &CONTROL_ICONS
 
       show:
+        icon:         "\u2605" # ★ BLACK STAR
         label:        "\u2605" # ★ BLACK STAR
         tooltip:      'View this %{item}'
         enabled:      false
 
       edit:
+        icon:         "\u25B3" # △ WHITE UP-POINTING TRIANGLE
         label:        "\u25B3" # △ WHITE UP-POINTING TRIANGLE
         tooltip:      'Modify this %{item}'
         enabled:      false
 
       delete:
+        icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
         label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
         tooltip:      'Modify this %{item}'
         enabled:      false

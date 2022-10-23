@@ -137,11 +137,15 @@ class ReadingListDecorator
 
   # A sub-section displaying the titles in the reading list.
   #
-  # @param [Hash] **opt
+  # @param [Integer, nil]  level
+  # @param [Integer, nil]  count      Default: `titles.size`.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [String]        css        Characteristic CSS class/selector.
+  # @param [Hash]          opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def title_list: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def title_list: (?level: Integer|nil, ?count: Integer|nil, ?skip: Symbol|symArray|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Control whether thumbnails are shown for reading list entries.
   #

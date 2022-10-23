@@ -7,10 +7,10 @@
   item    ||= nil
   dec     ||= item && SearchCallDecorator.new(item, **context) or return
 
-  add     ||= nil
   columns ||= nil
   filter  ||= nil
+  extra   ||= nil
 
 -%>
 
-<%= dec.details(pairs: add, columns: columns, filter: filter) %>
+<%= dec.details(columns: columns, filter: filter, pairs: extra) %>

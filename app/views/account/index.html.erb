@@ -7,29 +7,26 @@
   list  ||= paginator.page_items
   dec     = AccountsDecorator.new(list, **context)
 
-  help   ||= nil # dec.help_topic
-  title  ||= nil
-  title    = dec.page_heading(title)
+  help  ||= nil # dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
 
-  count  ||= positive(@page.total_items) || list.size
-  terms  ||= search_terms
-  filter ||= nil
+  count ||= paginator.total_items || list.size
 
-  page_opt = Record::Searchable::SEARCH_RECORDS_OPTIONS.dup << :group
-  page_terms, search = partition_hash(terms, *page_opt)
-  page     = positive(page_terms[:page]&.values&.first) || 1
-  search   = search.presence
+  search  = search_terms
+  query   = search.except(*SearchTermsHelper::NON_SEARCH_PARAMS).presence
 
   unless modal?
-    label = dec.page_meta_title
-    terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
+    page  = paginator.page_number
+    terms = (page > 1) ? query&.merge(page: page) : query
     terms = list_search_terms(terms) if terms
+    label = dec.page_meta_title
     label = "#{label} - #{terms}"    if terms
     set_page_meta_title(label)
     set_page_description(title)
   end
 
-  title += " (#{count} %s)" % (search ? 'matches' : 'total')
+  title += " (#{count} %s)" % (query ? 'matches' : 'total')
 
 -%>
 
@@ -37,7 +34,7 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= dec.table(filter: filter) %>
+<%= dec.table %>
 
 <%= page_notes_section %>
 <%= dec.action_list unless modal? %>

@@ -5,12 +5,12 @@
   view_debug(__FILE__)
 
   signed_in         = help_jump('signed in', :sign_in)
-  delta             = EntryDecorator::CONTROL_ICONS.dig(:edit, :icon)
+  delta             = EntryDecorator::ICONS.dig(:edit, :icon)
   delta             = html_span(delta, 'aria-label': 'triangle')
-  x                 = EntryDecorator::CONTROL_ICONS.dig(:delete, :icon)
+  x                 = EntryDecorator::ICONS.dig(:delete, :icon)
   x                 = html_span(x, 'aria-label': 'X')
-  edit_tip          = EntryDecorator::CONTROL_ICONS.dig(:edit, :tip)
-  delete_tip        = EntryDecorator::CONTROL_ICONS.dig(:delete, :tip)
+  edit_tip          = EntryDecorator::ICONS.dig(:edit, :tip)
+  delete_tip        = EntryDecorator::ICONS.dig(:delete, :tip)
   upload_actions    = help_image(:upload_actions)
   panel_opener      = PanelHelper::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')

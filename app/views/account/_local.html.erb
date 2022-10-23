@@ -7,8 +7,8 @@
   user  ||= current_user
   dec   ||= AccountDecorator.new(user, **context)
 
-  add   ||= nil
   level ||= 1
+  extra ||= nil
   skip  ||= nil
 
   skip    = [*skip]
@@ -22,4 +22,4 @@
 
 <%= heading %>
 
-<%= dec.details(pairs: add) %>
+<%= dec.details(pairs: extra) %>

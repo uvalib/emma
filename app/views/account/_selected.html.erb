@@ -8,7 +8,6 @@
   dec    ||= item && AccountDecorator.new(item, **context) or return
   item   ||= dec.object
 
-  offset ||= 0
   level  ||= 2
   row    ||= 0
   skip   ||= nil
@@ -37,8 +36,7 @@
 
   <%- if toggle -%>
     <div id="<%= panel_id -%>" class="<%= panel_css -%>">
-      <%- row += 1 -%>
-      <%= dec.list_row(row: row, offset: offset, level: level, skip: skip) %>
+      <%= dec.list_row(row: (row + 1), level: level, skip: skip) %>
     </div>
   <%- end -%>
 

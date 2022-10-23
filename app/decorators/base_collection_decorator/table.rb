@@ -63,7 +63,7 @@ module BaseCollectionDecorator::Table
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
   #
   def table_entries(row: 1, separator: "\n", **opt)
-    rows  = object.dup
+    rows  = table_row_page(limit: nil) # TODO: paginate tables
     first = row + 1
     last  = row + rows.size
     rows.map!.with_index(first) do |item, r|
@@ -73,6 +73,7 @@ module BaseCollectionDecorator::Table
       decorate(item).table_entry(**row_opt)
     end
     rows.compact!
+    # noinspection RubyMismatchedReturnType
     separator ? safe_join(rows, separator) : rows
   end
 
@@ -119,12 +120,13 @@ module BaseCollectionDecorator::Table
 
     if inner_tag
       first_col = col
-      last_col  = fields.size + col - 1
-      fields.map! do |field|
+      last_col  = col + fields.size - 1
+      # noinspection RubyScope
+      fields.map!.with_index(first_col) do |field, col|
         row_opt = model_rc_options(field, row, col, opt)
+        row_opt.merge!(role: 'columnheader')
         append_css!(row_opt, 'col-first') if col == first_col
         append_css!(row_opt, 'col-last')  if col == last_col
-        col += 1
         html_tag(inner_tag, row_opt) do
           html_div(labelize(field), class: 'field')
         end
@@ -132,13 +134,41 @@ module BaseCollectionDecorator::Table
     else
       fields.map! { |field| labelize(field) }
     end
+    return fields unless (tag = outer_tag)
 
-    if outer_tag
-      fields = html_tag(outer_tag, fields)
-      fields = html_tag(outer_tag, '', class: 'spanner') << fields if dark
-    end
+    parts = []
+    parts << html_tag(tag, '', class: 'spanner', role: 'presentation') if dark
+    parts << html_tag(tag, fields)
+    safe_join(parts)
+  end
 
-    fields
+  # ===========================================================================
+  # :section: BaseDecorator::Table overrides
+  # ===========================================================================
+
+  public
+
+  # The collection of items to be presented in tabular form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  def table_row_items
+    # noinspection RubyMismatchedReturnType
+    row_items
+  end
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseCollectionDecorator::SharedClassMethods#decorator_class
+  #
+  # @note Not currently used.
+  #
+  def table_row_model_type
+    row_model_type
   end
 
   # ===========================================================================

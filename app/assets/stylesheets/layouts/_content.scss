@@ -33,7 +33,7 @@
     align-items: center;
     margin:      $page-padding 0;
     word-break:  break-all;
-    font-size:   xx-large;
+    font-size:   $h1-font-size;
 
     @media #{$not-wide-screen} {
         margin:     calc(2 * #{$page-padding}) auto;

@@ -13,15 +13,13 @@
   title ||= item.try(:label).presence
   title   = dec.page_heading(title)
 
-  count ||= @page.total_items
-
   unless modal?
     label = "#{dec.page_meta_title} - #{title}"
     set_page_meta_title(label)
     set_page_description(Title: title)
   end
 
-  template_opt = { dec: dec, count: count }
+  opt = { dec: dec }
 
 -%>
 
@@ -29,6 +27,6 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'reading_list/details', template_opt %>
+<%= render 'reading_list/details', opt %>
 
 <%= page_notes_section %>

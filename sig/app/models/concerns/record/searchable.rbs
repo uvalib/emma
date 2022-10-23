@@ -54,6 +54,12 @@ module Record::Searchable
   #
   SEARCH_RECORDS_OPTIONS: symArray
 
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_PARAMS: symArray
+
   # Get the records specified by either :id or :submission_id.
   #
   # Additional constraints may be supplied via *opt*.  If no *identifiers* are

@@ -19,29 +19,29 @@
     <%= toggle %>
   </div>
   <div id="<%= panel_id -%>" class="<%= panel_css -%>">
-    <table>
-      <thead>
-        <tr>
-          <th class="model">Model</th>
-          <th class="action">Action</th>
-          <th class="status">Can perform?</th>
+    <table role="table">
+      <thead role="rowgroup">
+        <tr role="row">
+          <th role="columnheader" class="model">Model</th>
+          <th role="columnheader" class="action">Action</th>
+          <th role="columnheader" class="status">Can perform?</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody role="rowgroup">
         <%- models.each do |model| -%>
           <%- actions.each do |action| -%>
             <%- status = can?(action, model) -%>
             <%- can    = status ? 'can' : 'cannot' -%>
-            <tr class="<%= can -%> <%= action %>-<%= model -%>">
-              <td class="model <%= can -%>"><%= model -%></td>
-              <td class="action <%= can -%>"><%= action -%></td>
-              <td class="status <%= can -%>"><%= status -%></td>
+            <tr role="row" class="<%= can -%> <%= action %>-<%= model -%>">
+              <td role="cell" class="model <%=  can -%>"><%= model  -%></td>
+              <td role="cell" class="action <%= can -%>"><%= action -%></td>
+              <td role="cell" class="status <%= can -%>"><%= status -%></td>
             </tr>
           <%- end -%>
-          <tr class="blank-row">
-            <td class="model"></td>
-            <td class="action"></td>
-            <td class="status"></td>
+          <tr role="row" class="blank-row">
+            <td role="cell" class="model"></td>
+            <td role="cell" class="action"></td>
+            <td role="cell" class="status"></td>
           </tr>
         <%- end -%>
       </tbody>

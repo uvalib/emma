@@ -103,10 +103,13 @@
                     margin-bottom: $page-control-gap-y;
                 }
 
-                &.disabled {
-                    text-decoration-color: transparent;
+                &.current {
                     background-color:      $panel-accent;
                     border-color:          white;
+                }
+
+                &.disabled {
+                    text-decoration-color: transparent;
                     pointer-events:        none;
                 }
             }

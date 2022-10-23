@@ -22,24 +22,22 @@ module BaseCollectionDecorator::List
 
   # Render list items.
   #
-  # @param [Integer]       index      Starting index number.
-  # @param [Integer]       row        Starting row number.
-  # @param [Array<Symbol>] skip       Passed to #list_row.
-  # @param [String, nil]   separator  If *nil*, return an array of lines.
-  # @param [Hash]          opt        Passed to #list_row.
+  # @param [Integer] row              Starting row number.
+  # @param [Integer] index            Starting index number.
+  # @param [Hash]    opt              Passed to #list_row.
   #
-  # @return [Array<ActiveSupport::SafeBuffer>]  If *separator* set to *nil*.
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render(index: 0, row: 1, skip: nil, separator: "\n", **opt)
-    opt[:skip] = Array.wrap(skip).compact.uniq
+  def list_rows(row: nil, index: nil, **opt)
+    row   ||= 1
+    index ||= paginator.first_index
     lines =
       object.map.with_index(index) do |item, idx|
         # noinspection RailsParamDefResolve
         opt.merge!(index: idx, row: (row + idx), group: item.try(:state_group))
         decorate(item).list_row(**opt)
       end
-    separator ? safe_join(lines, separator) : lines
+    safe_join(lines, DEFAULT_ELEMENT_SEPARATOR)
   end
 
   # ===========================================================================
@@ -80,48 +78,21 @@ module BaseCollectionDecorator::List
 
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Integer, #to_i, nil] count    Default: *list* size.
-  # @param [Integer, #to_i, nil] total    Default: count.
-  # @param [Integer, #to_i, nil] records  Number of API records for this page.
-  # @param [Integer, #to_i, nil] page     Default: 1.
-  # @param [Integer, #to_i, nil] size     Default: #DEFAULT_PAGE_SIZE
-  # @param [Integer, #to_i, nil] row      Default: 1.
-  # @param [Hash]    opt                  Passed to #list_controls.
+  # @param [Integer] row              Starting row number.
+  # @param [Hash]    opt              Passed to #list_controls.
   #
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
-  def index_controls(
-    count:   nil,
-    total:   nil,
-    records: nil,
-    page:    nil,
-    size:    nil,
-    row:     1,
-    **opt
-  )
-    opt.except!(*VIEW_TEMPLATE_OPT)
-    list    = object            || []
-    count   = positive(count)   || list.size
-    total   = positive(total)   || count
-    records = positive(records) || 0
-    page    = positive(page)    || 1
-    size    = positive(size)    || DEFAULT_PAGE_SIZE
-    row   &&= (positive(row) || 1) + 1
-    paging  = (page > 1)
-    more    = (count < total) || (count == size) || (records == size)
-    unit    = ('title' if list.first&.aggregate?)
+  def index_controls(row: nil, **opt)
+    opt[:list] ||= object || []
+    opt[:unit] ||= 'title' if opt[:list].first&.aggregate? # TODO: I18n
 
-    links   = pagination_controls
+    ctrls  = list_controls(**opt)
+    links  = pagination_controls
+    counts = page_count_and_number(**opt)
 
-    pg_num  = (page_number(page) if paging || more)
-    counts  = pagination_count(count, total, unit: unit)
-    counts  = html_div(pg_num, counts, class: 'counts')
-
-    ctrls   = list_controls(**opt)
-
-    top_css = css_classes('pagination-top', (row && "row-#{row}"))
-    top     = html_div(links, counts, *ctrls, class: top_css)
-    bottom  = html_div(links, class: 'pagination-bottom')
+    top    = pagination_top(links, counts, *ctrls, row: row)
+    bottom = pagination_bottom(links)
     return top, bottom
   end
 

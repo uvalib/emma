@@ -58,20 +58,17 @@ module LayoutHelper::PageControls
     controller = opt[:controller].to_sym
     action     = opt[:action].to_sym
     ca_opt     = { controller: controller, action: action }
+    actions    = page_control_actions(**ca_opt).presence or return
 
-    select   = (id == 'SELECT') && %i[new edit delete].include?(action)
-    pca_opt  = select ? ca_opt.merge(action: :"#{action}_select") : ca_opt
-    actions  = page_control_actions(**pca_opt).presence or return
+    anchor     = "#{action}-page-controls"
+    label_id   = opt.delete(:label_id) || css_randomize(anchor)
+    label_opt  = { class: 'label', id: label_id }
+    label      = html_div(label_opt) { page_controls_label(**opt) }
 
-    anchor   = "#{action}-page-controls"
-    label_id = opt[:label_id] || css_randomize(anchor)
-
-    l_opt    = { class: 'label', id: label_id }
-    label    = html_div(l_opt) { page_controls_label(**opt) }
-
-    ctl_opt  = { class: 'controls', 'aria-labelledby': label_id, id: anchor }
-    pc_opt   = ca_opt.merge(id: id)
-    controls = html_div(ctl_opt) { page_controls(*actions, **pc_opt) }
+    controls =
+      html_div(class: 'controls', id: anchor, 'aria-labelledby': label_id) do
+        page_controls(*actions, **ca_opt, id: id)
+      end
 
     skip_nav_prepend(controller => anchor)
 
@@ -135,34 +132,25 @@ module LayoutHelper::PageControls
     link_opt = path_opt.delete(:link_opt)&.dup || {}
     append_css!(html_opt, link_opt[:class])
     path_opt[:link_opt] = link_opt.merge!(html_opt)
-    controller = controller&.to_sym
-    action     = action&.to_sym
+    ctrlr  = controller&.to_sym
+    action = action&.to_sym
+    base   = action&.to_s&.delete_suffix('_select')&.to_sym
+    if (select = (action != base))
+      action &&= base                if item_id
+    else
+      action &&= :"#{action}_select" if item_id == 'SELECT'
+    end
     pairs.map { |path|
       ctr, act = path
-      opt = path_opt.merge(controller: ctr, action: act)
-      if opt[:action]
-        if item_id && %i[new edit delete].include?(opt[:action])
-          if item_id != 'SELECT'
-            opt[:id] = item_id
-          elsif !opt[:action].end_with?('_select')
-            opt[:action] = :"#{opt[:action]}_select"
-          end
-        end
-        current =
-          if action && (controller == opt[:controller])
-            # noinspection RubyNilAnalysis
-            a_sel = action.end_with?('_select')
-            p_sel = opt[:action].end_with?('_select')
-            case
-              when p_sel && !a_sel then opt[:action] == :"#{action}_select"
-              when a_sel && !p_sel then action == :"#{opt[:action]}_select"
-              else                      action == opt[:action]
-            end
-          end
-        opt[:link_opt] = append_css(link_opt, 'disabled') if current
-        opt[:action] = :new if opt[:action] == :new_select
+      state = []
+      if act && action && (ctr == ctrlr)
+        base_act = act.to_s.delete_suffix('_select').to_sym
+        act      = :"#{act}_select" if select && !act.end_with?('_select')
+        state << 'current'  if base   == base_act
+        state << 'disabled' if action == act
       end
-      # noinspection RubyMismatchedReturnType
+      opt = path_opt.merge(controller: ctr, action: act)
+      opt[:link_opt] = append_css(link_opt, *state)
       page_control(**opt)
     }.compact.join("\n").html_safe
   end

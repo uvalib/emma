@@ -141,7 +141,9 @@ class EntryDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    CONTROL_ICONS: Hash[Symbol,symHash]
+    # @see BaseDecorator::Controls#ICON_PROPERTIES
+    #
+    ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
     # Control icon definitions.
     #
@@ -379,39 +381,6 @@ class EntryDecorator
   #
   def preview: (?bool force) -> (ActiveSupport::SafeBuffer | nil)
 
-  EMMA_DATA_FIELDS: Hash[Symbol,symHash]
-
-  # Render the contents of the :file_data field.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_json_data
-  #
-  def render_file_data: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-
-  # Render the contents of the :emma_data field in the same order of EMMA data
-  # fields as defined for search results.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_json_data
-  #
-  def render_emma_data: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-
-  # Render hierarchical data.
-  #
-  # @param [String, Hash, nil] value
-  # @param [Hash]              opt        Passed to #render_field_values
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *value* was not valid JSON.
-  #
-  def render_json_data: ((String|anyHash|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-
   # Transform a field value for HTML rendering.
   #
   # @param [*]         value
@@ -446,18 +415,12 @@ class EntryDecorator
 
   # Produce an action icon based on either :path or :id.
   #
-  # @param [Symbol] action                One of #CONTROL_ICONS.keys.
-  # @param [Hash]   opt                   To LinkHelper#make_link except for:
+  # @param [Symbol] action
+  # @param [Hash]   opt
   #
-  # @option opt [String, Proc]  :path
-  # @option opt [String]        :icon
-  # @option opt [String]        :tip
-  # @option opt [Boolean, Proc] :enabled
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
-  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
-  # @return [nil]                         If *item* unrelated to a submission.
-  #
-  def control_icon_button: (Symbol action, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def control_icon_button: (Symbol action, **untyped opt) ?{ (String|Symbol|Proc, symHash) -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
 
   # Create a container with the repository ID displayed as a link but acting as
   # a popup toggle button and a popup panel which is initially hidden.

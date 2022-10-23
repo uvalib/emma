@@ -1,0 +1,12 @@
+# Common methods supporting display of Model instances (both database items and
+# API messages).
+#
+module BaseCollectionDecorator::Controls
+  include BaseDecorator::Controls
+
+  include BaseCollectionDecorator::Common
+
+  private
+
+  def self.included: (Module base) -> void
+end

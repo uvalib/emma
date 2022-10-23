@@ -58,6 +58,54 @@ module BaseDecorator::Pagination
   #
   NEXT_PAGE: Hash[Symbol,String]
 
+  # Generic top/bottom pagination controls.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] ctrls
+  # @param [Integer, nil] row
+  # @param [Hash]         opt         Passed to #page_count_and_number
+  #
+  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  #
+  def page_content_controls: (*ActiveSupport::SafeBuffer ctrls, ?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
+
+  # Used to supply pagination- and content-specific controls for display above
+  # the content.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] parts
+  # @param [Integer, nil]                     row
+  # @param [String]                           css   Characteristic CSS class.
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_top: (*ActiveSupport::SafeBuffer parts, ?row: Integer|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Used to supply pagination- and content-specific controls for display below
+  # the content.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] parts
+  # @param [Integer, nil]                     row
+  # @param [String]                           css   Characteristic CSS class.
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_bottom: (*ActiveSupport::SafeBuffer parts, ?row: Integer|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Page count along with the page number when appropriate.
+  #
+  # @param [Integer, nil] count       Default: *list* size.
+  # @param [Integer, nil] total       Default: `paginator.total_items`.
+  # @param [Integer, nil] records     Default: `paginator.record_count`.
+  # @param [Integer, nil] page        Default: `paginator.page_number`.
+  # @param [Integer, nil] size        Default: `paginator.page_size`.
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt         Passed to the outer div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def page_count_and_number: (?count: Integer|nil, ?total: Integer|nil, ?records: Integer|nil, ?page: Integer|nil, ?size: Integer|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Page number display element.
   #
   # @param [Integer] page

@@ -86,6 +86,13 @@ module Upload::LookupMethods
   #
   SEARCH_RECORDS_OPTIONS = %i[offset limit page pages groups].freeze
 
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_PARAMS =
+    (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS).uniq.freeze
+
   # Get the Upload records specified by either :id or :submission_id.
   #
   # Additional constraints may be supplied via *opt*.  If no *identifiers* are

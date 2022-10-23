@@ -24,11 +24,9 @@ module CssHelper
   # @param [Array<#to_s,Array>] classes   CSS classes to find.
   #
   def has_class?(html_opt, *classes)
-    classes     = css_class_array(*classes)
     opt_classes = html_opt&.dig(:class) || []
     opt_classes = opt_classes.split(' ') if opt_classes.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
-    (classes - opt_classes) != classes
+    opt_classes.intersect?(css_class_array(*classes))
   end
 
   # Combine arrays and space-delimited strings to produce a space-delimited
@@ -90,14 +88,13 @@ module CssHelper
   #   @return [Hash]
   #
   def append_css(html_opt, *classes, &block)
-    if html_opt.nil?
-      # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
-    elsif !html_opt.is_a?(Hash)
+    if html_opt.is_a?(Hash)
       # noinspection RubyMismatchedArgumentType
-      classes.unshift(html_opt)
-      html_opt = nil
+      html_opt = dup_options(html_opt)
+    else
+      classes.unshift(html_opt) if html_opt.present?
+      html_opt = {}
     end
-    html_opt = html_opt&.deep_dup || {}
     append_css!(html_opt, *classes, &block)
   end
 
@@ -143,14 +140,13 @@ module CssHelper
   #   @return [Hash]
   #
   def prepend_css(html_opt, *classes, &block)
-    if html_opt.nil?
-      # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
-    elsif !html_opt.is_a?(Hash)
+    if html_opt.is_a?(Hash)
       # noinspection RubyMismatchedArgumentType
-      classes.unshift(html_opt)
-      html_opt = nil
+      html_opt = dup_options(html_opt)
+    else
+      classes.unshift(html_opt) if html_opt.present?
+      html_opt = {}
     end
-    html_opt = html_opt&.deep_dup || {}
     prepend_css!(html_opt, *classes, &block)
   end
 
@@ -180,9 +176,13 @@ module CssHelper
   # @return [Hash]                        A new hash with :class set.
   #
   def remove_css(html_opt, *classes)
-    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
-    html_opt = html_opt&.deep_dup || {}
-    remove_css!(html_opt, *classes)
+    if html_opt.is_a?(Hash)
+      html_opt = dup_options(html_opt)
+      remove_css!(html_opt, *classes)
+    else
+      Log.debug { "#{__method__}: nil html_opt from #{caller}" }
+      {}
+    end
   end
 
   # Replace `html_opt[:class]` with a new string that includes none of the
@@ -202,6 +202,66 @@ module CssHelper
       html_opt.except!(:class)
     else
       html_opt.merge!(class: css_classes(*result))
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return an independent copy of HTML options that can be modified without
+  # affecting the original.
+  #
+  # @param [Hash, nil] html_opt
+  #
+  # @return [Hash]
+  #
+  def dup_options(html_opt)
+    # noinspection RubyMismatchedReturnType
+    html_opt.presence ? deep_dup_options(html_opt) : {}
+  end
+
+  # Recursively duplicate HTML options parts, avoiding duplication of object
+  # instances and other things that may be passed via named options.
+  #
+  # @param [*] item
+  #
+  # @return [*]
+  #
+  def deep_dup_options(item)
+    case item
+      when *NO_DUP then item
+      when String  then item.dup
+      when Array   then item.map { |v| deep_dup_options(v) }
+      when Hash    then item.transform_values { |v| deep_dup_options(v) }
+      else             duplicable_option?(item) ? item.dup : item
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # @private
+  NO_DUP = [NilClass, BoolType, Numeric, Symbol, Method, Module, Proc].freeze
+
+  # Indicate whether the item should be duplicated as part of a deep_dup of
+  # HTML options.
+  #
+  # @param [*] item
+  #
+  def duplicable_option?(item)
+    case item
+      when Model, Record            then false
+      when AbstractController::Base then false
+      when ActiveJob::Base          then false
+      when ActiveRecord::Base       then false
+      when *NO_DUP                  then false
+      else                               item.duplicable?
     end
   end
 

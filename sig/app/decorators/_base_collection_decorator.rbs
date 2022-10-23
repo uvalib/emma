@@ -21,6 +21,12 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   include BaseCollectionDecorator::Table
 
+  include BaseCollectionDecorator::Controls
+
+  include BaseCollectionDecorator::Grid
+
+  include BaseCollectionDecorator::Row
+
   # Methods for each collection decorator class instance.
   #
   # @!attribute [r] object_class

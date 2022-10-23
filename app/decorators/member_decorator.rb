@@ -223,9 +223,8 @@ class MemberDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def preference_list(pairs: nil, **opt)
-    prefs            = preference_decorator(preferences) or return ''.html_safe
-    opt[:pairs]      = preference_fields.merge(pairs || {})
-    opt[:row_offset] = opt.delete(:row) || opt[:row_offset]
+    prefs       = preference_decorator(preferences) or return ''.html_safe
+    opt[:pairs] = preference_fields.merge(pairs || {})
     prefs.render_field_values(**opt)
   end
 
@@ -242,7 +241,9 @@ class MemberDecorator
   # @return [BookshareDecorator, nil]
   #
   def preference_decorator(prefs)
-    prefs && BookshareDecorator.new(prefs, context: context)
+    return unless prefs
+    ctx = context.merge(action: :preferences)
+    BookshareDecorator.new(prefs, context: ctx)
   end
 
   # ===========================================================================
@@ -323,7 +324,7 @@ class MemberDecorator
   #
   def history_decorator(download)
     return unless download
-    ctx = context.except(:action)
+    ctx = context.merge(action: :history)
     BookshareDecorator.new(download, context: ctx).tap do |decorator|
       # noinspection RbsMissingTypeSignature
       decorator.instance_eval do
@@ -340,7 +341,7 @@ class MemberDecorator
           end || super
         end
 
-        # The method that will be run by BaseDecorator::List#execute when it
+        # The method that will be run by BaseDecorator::List#access when it
         # fails to find it for the instance of Bs::Record::TitleDownload.
         def downloaded_title
           object.title.to_s.presence

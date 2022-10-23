@@ -43,8 +43,12 @@ class SearchTitleDecorator < SearchDecorator
         added.transform_values! { |score| score || EMPTY_VALUE }
         pairs = pairs&.merge(added) || added
       end
-      opt[:pairs]    = pairs || {}             if object.aggregate?
-      opt[:render] ||= :render_field_hierarchy if title_results?
+      if title_results?
+        opt.delete(:'aria-rowindex')
+        opt[:outer]    = (opt[:outer]&.dup || {}).merge!('aria-rowindex': nil)
+        opt[:render] ||= :render_field_hierarchy
+      end
+      opt[:pairs] = pairs || {} if object.aggregate?
     end
     super(**opt)
   end

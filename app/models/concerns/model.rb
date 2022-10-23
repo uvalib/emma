@@ -298,20 +298,25 @@ module Model
   protected
 
   # Keys under "emma.*.record" beginning with an underscore, which represent
-  # control directives and not record fields.
+  # the control directive for specifying the base configuration.
   #
   # @type [Array<Symbol>]
   #
-  DIRECTIVES = [
+  BASE_DIRECTIVE = %i[base base_config base_configuration].freeze,
 
-    # Keys under "emma.*.record" beginning with an underscore, which represent
-    # the control directive for specifying the base configuration.
-    #
-    # @type [Array<Symbol>]
-    #
-    BASE_DIRECTIVE = %i[base base_config base_configuration].freeze
+  # Keys under "emma.*.record" beginning with an underscore, which define
+  # display fields which are filled dynamically.
+  #
+  # @type [Array<Symbol>]
+  #
+  SYNTHETIC_FIELDS = %i[synthetic].freeze
 
-  ].flatten.freeze
+  # Keys under "emma.*.record" beginning with an underscore, which do not map
+  # on to actual database columns.
+  #
+  # @type [Array<Symbol>]
+  #
+  DIRECTIVES = (BASE_DIRECTIVE + SYNTHETIC_FIELDS).freeze
 
   # Configured record fields for each model/controller.
   #
@@ -330,35 +335,38 @@ module Model
   #
   def self.configured_fields_for(type)
     return {} unless type.is_a?(Symbol)
-    model_config = I18n.t("emma.#{type}", default: {}).deep_dup
+    model_config = I18n.t("emma.#{type}", default: nil)&.deep_dup || {}
 
     # Start with definitions from config/locales/records/*.yml, separating
     # control directives from field name entries.
     directives = {}
-    all_fields = model_config[:record] || {}
-    all_fields.each_pair do |field, entry|
-      name = field.to_s.sub!(/^_/, '')&.to_sym
-      if name && DIRECTIVES.include?(name)
-        directives[name] = entry
-      elsif name
-        Log.info { "#{__method__}(#{type}): #{name}: unexpected directive" }
-      end
-      all_fields[field] = (Field.normalize(entry, field) unless name)
-    end
-    all_fields.compact!
+    all_fields =
+      (model_config[:record] || {}).map { |field, entry|
+        name = field.to_s.sub!(/^_/, '')&.to_sym
+        if name && DIRECTIVES.include?(name)
+          directives[name] = entry
+        elsif name
+          Log.warn { "#{__method__}(#{type}): #{name}: unexpected directive" }
+        end
+        [field, Field.normalize(entry, field)] unless name
+      }.compact.to_h
 
     # Special handling so that "emma.search.record" entries are initialized
     # with the equivalent values from the submission record configuration.
-    if directives.present?
-      if (base = directives.values_at(*BASE_DIRECTIVE).first).present?
-        base = base.values_at(:record, :field) if base.is_a?(Hash)
-        base_config, base_field = Array.wrap(base).map(&:to_sym)
-        base_config = configuration_fields(base_config)&.dig(:all)
-        base_config = base_field.present? && base_config&.dig(base_field) || {}
-        all_fields.each_pair do |field, entry|
-          all_fields[field] = base_config[field].deep_merge(entry)
-        end
+    if (base = directives.values_at(*BASE_DIRECTIVE).first).present?
+      base = base.values_at(:record, :field) if base.is_a?(Hash)
+      base_config, base_field = Array.wrap(base).map(&:to_sym)
+      base_config = configuration_fields(base_config)&.dig(:all)
+      base_config = base_field.present? && base_config&.dig(base_field) || {}
+      all_fields.each_pair do |field, entry|
+        all_fields[field] = base_config[field].deep_merge(entry)
       end
+    end
+
+    # Add definitions of fields which do not map on to data columns.
+    synthetic = directives.values_at(*SYNTHETIC_FIELDS).first || {}
+    synthetic.each_pair do |field, entry|
+      all_fields[field] = Field.normalize(entry, field).merge!(synthetic: true)
     end
 
     # Apply adjustments from config/locales/controllers/*.yml then finalize
@@ -369,6 +377,9 @@ module Model
     end
     all_fields.transform_values! { |entry| Field.finalize!(entry) }
     all_fields.delete_if { |_, entry| Field.unused?(entry) }
+
+    # Identify the fields which map on to database columns.
+    database_fields = all_fields.except(*synthetic.keys)
 
     # For pages that specify their own :display_fields section.  If its
     # value is :all or [:all] then all record fields will be displayed on
@@ -385,23 +396,21 @@ module Model
         page_fields = field_list.delete(:all) ? all_fields.deep_dup : {}
         field_list.each do |field_entry|
           field_entry = { field_entry => nil } unless field_entry.is_a?(Hash)
-          field_entry.symbolize_keys.each_pair do |field, override|
-            next if page_fields[field] && !override
-            override &&= Field.normalize(override, field)
-            entry = page_fields[field] || all_fields[field]&.deep_dup
-            entry = override && entry&.deep_merge!(override) || override || {}
-            entry = Field.finalize!(entry)
-            page_fields[field] = (entry unless Field.unused?(entry))
+          field_entry.symbolize_keys.each_pair do |field, delta|
+            next unless delta || page_fields[field].nil?
+            props = page_fields[field] || all_fields[field]&.deep_dup || {}
+            props.deep_merge!(Field.normalize(delta, field)) if delta
+            Field.finalize!(props, field)
+            page_fields[field] = (props unless Field.unused?(props, action))
           end
         end
-        # noinspection RubyNilAnalysis
         page_fields.compact!
         [action, page_fields]
       }.compact.to_h
 
     # Return with the generic field configurations followed by entries for
     # each model/controller-specific field configuration.
-    { all: all_fields }.merge!(controller_configs)
+    { all: all_fields, database: database_fields }.merge!(controller_configs)
   end
 
   # ===========================================================================
@@ -521,7 +530,7 @@ module Model
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
   def self.database_fields(item)
-    config_for(item)[:all] || EMPTY_CONFIG
+    config_for(item)[:database] || EMPTY_CONFIG
   end
 
   # Get all configured record fields for the indicated model.

@@ -21,12 +21,13 @@
 <%= page_heading(title, help: help) %>
 
 <div class="session-debug">
-  <table>
-    <tbody>
+  <table role="table">
+    <tbody role="rowgroup">
       <%- info.each_pair do |k, v| -%>
-        <tr>
-          <th class="key"><%= k -%></th>
-          <td class="value"><%= v.is_a?(String) ? v : v.inspect -%></td>
+        <%- v = v.inspect unless v.is_a?(String) -%>
+        <tr role="row">
+          <th role="rowheader" class="key"><%= k -%></th>
+          <td role="cell" class="value"><%= v -%></td>
         </tr>
       <%- end -%>
     </tbody>

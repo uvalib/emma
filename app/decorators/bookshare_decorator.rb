@@ -492,7 +492,7 @@ class BookshareDecorator
 
     separator  = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     check_link = !opt.key?(:no_link)
-    values = execute(object, meth, opt[:method_opt])
+    values = access(object, meth, opt[:method_opt])
     values = values.is_a?(Array) ? values.dup : [values]
     values.map! { |record|
       link_opt = html_opt

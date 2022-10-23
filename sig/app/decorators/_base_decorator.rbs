@@ -1,9 +1,5 @@
 # Common base for decorator classes.
 #
-# @!attribute [r] object
-#   Set in Draper#initialize
-#   @return [Model]
-#
 class BaseDecorator < Draper::Decorator
   include BaseDecorator::Configuration
 
@@ -24,6 +20,12 @@ class BaseDecorator < Draper::Decorator
   include BaseDecorator::Pagination
 
   include BaseDecorator::Table
+
+  include BaseDecorator::Controls
+
+  include BaseDecorator::Grid
+
+  include BaseDecorator::Row
 
   # Generic path helper methods.
   #
@@ -84,7 +86,13 @@ class BaseDecorator < Draper::Decorator
 
     #include BaseDecorator::Table
 
-    def css_list_class:  () -> String
+    #include BaseDecorator::Controls
+
+    #include BaseDecorator::Grid
+
+    #include BaseDecorator::Row
+
+    def list_css_class:  () -> String
     def can?: (Symbol action, ?(untyped|nil) target) -> bool
     def config_button_values: ((String|Symbol) action) -> Hash[Symbol,Hash[Symbol,String|symHash]]
     def link_to_action: ((String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer

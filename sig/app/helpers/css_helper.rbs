@@ -140,6 +140,34 @@ module CssHelper
   #
   def remove_css!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) -> symHash
 
+  # Return an independent copy of HTML options that can be modified without
+  # affecting the original.
+  #
+  # @param [Hash, nil] html_opt
+  #
+  # @return [Hash]
+  #
+  def dup_options: ((symHash|nil) html_opt) -> symHash
+
+  # Recursively duplicate HTML options parts, avoiding duplication of object
+  # instances and other things that may be passed via named options.
+  #
+  # @param [*] item
+  #
+  # @return [*]
+  #
+  def deep_dup_options: [T] (T item) -> T
+
+  # @private
+  NO_DUP: Array[Module]
+
+  # Indicate whether the item should be duplicated as part of a deep_dup of
+  # HTML options.
+  #
+  # @param [*] item
+  #
+  def duplicable_option?: (untyped item) -> bool
+
   # Default number of digits produced by #hex_rand.
   #
   # @type [Integer]

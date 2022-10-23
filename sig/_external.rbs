@@ -31,6 +31,12 @@ interface _DateTime
 end
 
 # =============================================================================
+# Shorthand notation for decorator-related RBS definitions
+# =============================================================================
+
+type decoratorRowItems = Array[Model] | ActiveRecord::Relation | ActiveRecord::Associations::CollectionAssociation
+
+# =============================================================================
 # Overrides and supplements to current RBS definitions
 # =============================================================================
 

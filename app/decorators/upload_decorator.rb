@@ -246,7 +246,7 @@ class UploadDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: BaseDecorator::Links overrides
+    # :section: BaseDecorator::Controls overrides
     # =========================================================================
 
     public
@@ -255,8 +255,10 @@ class UploadDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    CONTROL_ICONS =
-      BaseDecorator::Links::CONTROL_ICONS.except(:show).transform_values { |v|
+    # @see BaseDecorator::Controls#ICON_PROPERTIES
+    #
+    ICONS =
+      BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
         v.dup.tap do |entry|
           entry[:tip] %= { item: 'EMMA entry' } if entry[:tip]&.include?('%')
           entry[:enabled] = true
@@ -274,7 +276,7 @@ class UploadDecorator < BaseDecorator
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def control_icons
-      super(icons: CONTROL_ICONS)
+      super(icons: ICONS)
     end
 
     # =========================================================================
@@ -754,79 +756,6 @@ class UploadDecorator
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # @private
-  EMMA_DATA_FIELDS =
-    model_database_fields[:emma_data]&.select { |_, v| v.is_a?(Hash) } || {}
-
-  # Render the contents of the :file_data field.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_json_data
-  #
-  def render_file_data(**opt)
-    data = object.try(:file_data) || object.try(:[], :file_data)
-    render_json_data(data, **opt, field_root: :file_data)
-  end
-
-  # Render the contents of the :emma_data field in the same order of EMMA data
-  # fields as defined for search results.
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_json_data
-  #
-  def render_emma_data(**opt)
-    data  = object.try(:emma_data) || object.try(:[], :emma_data)
-    pairs = json_parse(data).presence
-    pairs &&=
-      EMMA_DATA_FIELDS.map { |field, config|
-        value = pairs.delete(config[:label]) || pairs.delete(field)
-        [field, value] unless value.nil?
-      }.compact.to_h.merge(pairs)
-    render_json_data(pairs, **opt)
-  end
-
-  # Render hierarchical data.
-  #
-  # @param [String, Hash, nil] value
-  # @param [Hash]              opt        Passed to #render_field_values
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *value* was not valid JSON.
-  #
-  def render_json_data(value, **opt)
-    value &&= json_parse(value) unless value.is_a?(Hash)
-    html_div(class: 'data-list') do
-      if value.present?
-        root = opt[:field_root]
-        opt[:no_format] ||= :dc_description
-        # noinspection RubyNilAnalysis
-        pairs =
-          value.map { |k, v|
-            if v.is_a?(Hash)
-              sub_opt = root ? opt.merge(field_root: [root, k.to_sym]) : opt
-              v = render_json_data(v, **sub_opt)
-            end
-            [k, v]
-          }.to_h
-        render_field_values(pairs: pairs, **opt)
-      else
-        render_empty_value(EMPTY_VALUE)
-      end
-    end
-  end
-
-  # ===========================================================================
   # :section: BaseDecorator::List overrides
   # ===========================================================================
 
@@ -921,23 +850,17 @@ class UploadDecorator
   end
 
   # ===========================================================================
-  # :section: BaseDecorator::Links overrides
+  # :section: BaseDecorator::Controls overrides
   # ===========================================================================
 
   protected
 
   # Produce an action icon based on either :path or :id.
   #
-  # @param [Symbol] action                One of #CONTROL_ICONS.keys.
-  # @param [Hash]   opt                   To LinkHelper#make_link except for:
+  # @param [Symbol] action
+  # @param [Hash]   opt
   #
-  # @option opt [String, Proc]  :path
-  # @option opt [String]        :icon
-  # @option opt [String]        :tip
-  # @option opt [Boolean, Proc] :enabled
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
-  # @return [nil]                         If *item* unrelated to a submission.
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   def control_icon_button(action, **opt)
     return super unless action == :check

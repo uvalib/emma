@@ -1338,7 +1338,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
 body.entry-admin {
     h2 {
-        font-size: xx-large;
+        font-size: $h1-font-size;
     }
     h3 {
         font-size: x-large;

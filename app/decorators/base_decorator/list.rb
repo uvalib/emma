@@ -56,58 +56,86 @@ module BaseDecorator::List
 
   # Render field/value pairs.
   #
-  # @param [Hash, nil]           pairs        Passed to #field_pairs.
-  # @param [String, Symbol, nil] action       Passed to #field_pairs.
-  # @param [Integer, nil]        row_offset   Def: 0.
-  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Hash]                opt
+  # @param [Hash, nil]   pairs        Passed to #field_pairs.
+  # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash]        opt          To #render_pair except
+  #                                     #FIELD_PAIRS_OPTIONS to #field_pairs.
   #
-  # @option opt [Integer] :index              Offset to make unique element IDs
-  #                                             passed to #render_pair.
+  # @option opt [Integer] :index      Offset to make unique element IDs passed
+  #                                     to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_field_values(
-    pairs:      nil,
-    action:     nil,
-    row_offset: nil,
-    field_root: nil,
-    separator:  DEFAULT_ELEMENT_SEPARATOR,
-    **opt
-  )
+  def render_field_values(pairs: nil, separator: nil, **opt)
     return ''.html_safe if pairs.nil? && object.nil?
+    opt.delete(:level) # Not propagated in the general case.
 
-    opt[:row] = row_offset || 0
-    value_opt = opt.slice(:index, :min_index, :max_index, :no_format)
-    fp_opt    = { action: action, field_root: field_root }
+    fp_opt      = extract_hash!(opt, *FIELD_PAIRS_OPTIONS)
+    value_opt   = opt.slice(:index, :no_format)
+    opt[:row]   = 0
+    separator ||= DEFAULT_ELEMENT_SEPARATOR
 
     # noinspection RubyMismatchedArgumentType
     field_pairs(pairs, **fp_opt).map { |field, prop|
       opt[:row] += 1
-      value  = render_value(prop[:value], field: field, **value_opt)
-      scopes = field_scopes(field).presence
-      rp_opt = scopes ? append_css(opt, scopes) : opt
-      render_pair(prop[:label], value, prop: prop, **rp_opt)
+      label = prop[:label]
+      value = render_value(prop[:value], field: field, **value_opt)
+      p_opt = { field: field, prop: prop, **opt }
+      render_field_value_pair(label, value, **p_opt)
     }.unshift(nil).join(separator).html_safe
   end
 
-  # Render a single label/value pair.
+  # Render a single label/value pair in a list item.
   #
   # @param [String, Symbol, nil] label
-  # @param [Any, nil]            value
-  # @param [Hash, nil]           prop       Default: from field/model.
-  # @param [Symbol, nil]         field
-  # @param [String, Integer]     index      Offset to make unique element IDs.
-  # @param [Integer]             row        Display row.
-  # @param [String, nil]         separator  Between parts if *value* is array.
-  # @param [String, nil]         wrap       Class for outer wrapper.
-  # @param [Hash]                opt        Passed to each #html_div except:
+  # @param [*]                   value
+  # @param [Symbol]              field
+  # @param [Hash]                prop
+  # @param [Hash]                opt
   #
-  # @option opt [Symbol, Array<Symbol>] :no_format
-  # @option opt [Boolean]               :no_code
+  # @return [ActiveSupport::SafeBuffer]
   #
-  # @return [ActiveSupport::SafeBuffer]     HTML label and value elements.
-  # @return [nil]                           If *value* is blank.
+  # == Implementation Notes
+  # Compare with BaseDecorator::Grid#grid_data_cell_render_pair
+  #
+  def render_field_value_pair(label, value, field:, prop:, **opt)
+    rp_opt = opt.merge(field: field, prop: prop)
+    scopes = field_scopes(field).presence and append_css!(rp_opt, *scopes)
+    render_pair(label, value, **rp_opt)
+  end
+
+  DEFAULT_LABEL_CLASS = 'label'
+  DEFAULT_VALUE_CLASS = 'value'
+
+  # Render a single label/value pair.
+  #
+  # @param [String, Symbol, nil]  label
+  # @param [Any, nil]             value
+  # @param [Hash, nil]            prop      Default: from field/model.
+  # @param [Symbol, nil]          field
+  # @param [String, Integer]      index     Offset to make unique element IDs.
+  # @param [Integer, nil]         row       Display row.
+  # @param [String, nil]          separator Between parts if *value* is array.
+  # @param [String, nil]          wrap      Class for outer wrapper.
+  # @param [Symbol]               tag       @see BaseDecorator::Grid#TABLE_TAGS
+  # @param [Boolean,Symbol,Array] no_format
+  # @param [Boolean]              no_code
+  # @param [Boolean]              no_label
+  # @param [Boolean]              no_help
+  # @param [String, nil]          label_css
+  # @param [String, nil]          value_css
+  # @param [Hash]                 opt       Passed to each #html_div except:
+  #
+  # @option opt [String] :role              Passed to outer wrapper only.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [fld, val, prp, **o] To supply part(s) after the .value element.
+  # @yieldparam [Symbol] fld          The field.
+  # @yieldparam [*]      val          The raw value.
+  # @yieldparam [Hash]   prp          The adjusted field properties.
+  # @yieldparam [Hash]   o            Options for #html_div.
+  # @yieldreturn [Array, ActiveSupport::SafeBuffer, nil]
   #
   # == Usage Notes
   # If *label* is HTML then no ".field-???" class is included for the ".label"
@@ -119,30 +147,38 @@ module BaseDecorator::List
   def render_pair(
     label,
     value,
-    prop:      nil,
-    field:     nil,
-    index:     nil,
-    row:       1,
-    separator: nil,
-    wrap:      nil,
-    **opt
+    prop:       nil,
+    field:      nil,
+    index:      nil,
+    row:        nil,
+    separator:  nil,
+    wrap:       nil,
+    tag:        :div,
+    no_format:  nil,
+    no_code:    nil,
+    no_label:   nil,
+    no_help:    nil,
+    label_css:  'label',
+    value_css:  'value',
+    **opt,
+    &block
   )
-    return if value.blank?
     prop  ||= field_configuration(field)
     field ||= prop[:field]
 
-    # Pre-process label to derive names and identifiers.
-    base = model_html_id(field || label)
-    v_id = ['value', base, index].compact.join('-')
-    l_id = ['label', base, index].compact.join('-')
+    # Setup a lambda for creating related HTML identifiers.
+    id_base = model_html_id(field || label)
+    make_id = ->(v) { html_id(v, id_base, index, underscore: false) }
 
     # Extract range values.
-    value = value.content if value.is_a?(Field::Type)
+    value   = value.content if value.is_a?(Field::Type)
+    raw_val = value
 
     # Format the content of certain fields.
-    no_code = opt.delete(:no_code)
-    lines   = nil
-    unless Array.wrap(opt.delete(:no_format)).include?(field)
+    lines     = nil
+    no_format = [no_format]               if no_format.is_a?(Symbol)
+    no_format = no_format.include?(field) if no_format.is_a?(Array)
+    unless no_format
       # noinspection RubyCaseWithoutElseBlockInspection
       case field
         when :dc_description
@@ -160,80 +196,112 @@ module BaseDecorator::List
 
     # Adjust field properties.
     enum  = prop[:type].is_a?(Class)
+    multi = true?(prop[:array])
     delta = {}
     delta[:type]  = 'textarea' if lines&.many? && !enum
-    delta[:array] = true       if enum && !prop[:array]
+    delta[:array] = true       if enum && !multi && !prop[:array]
     prop = prop.merge(delta)   if delta.present?
 
     # Pre-process value(s).
-    if prop[:array]
+    if no_format
+      value = safe_join(value, separator) if value.is_a?(Array)
+    elsif prop[:array]
       value = value.is_a?(Array) ? value.dup : [value]
-      value.map!.with_index(1) { |v, i| html_div(v, class: "item-#{i}") }
+      value.map!.with_index(1) { |v, i| html_div(v, class: "item item-#{i}") }
       value = safe_join(value, separator)
     elsif value.is_a?(Array)
       value = safe_join(value, (separator || HTML_BREAK))
     end
 
-    # Create a help icon control if applicable.
-    if (help = prop[:help]).present?
-      replace = topic = nil
-      if field == :emma_retrievalLink
-        url     = extract_url(value)
-        topic   = url_repository(url, default: !application_deployed?)
-        replace = help.is_a?(Array) && (help.size > 1)
-      end
-      help = replace ? (help[0...-1] << topic) : [*help, topic] if topic
-      help = h.help_popup(*help)
-    end
+    # Extract attributes that are appropriate for the wrapper element which
+    # should not propagate into the label, value, or other enclosed elements.
+    role = opt.delete(:role)
+    lvl  = opt.delete(:'aria-level')
+    col  = opt.delete(:'aria-colindex')
 
     # Add tooltip if configured.
     tooltip = (prop[:tooltip] unless field == :dc_title)
 
     # Option settings for both label and value.
-    status = nil
+    status = []
     unless field == :dc_title
-      status ||= ('array'     if prop[:array] && enum)
-      status ||= ('list'      if prop[:array])
-      status ||= ('enum'      if enum)
-      status ||= ('textbox'   if prop[:type] == 'textarea')
-      status ||= ('numeric'   if prop[:type] == 'number')
-      status ||= ('hierarchy' if prop[:type] == 'json')
-      status ||= prop[:type]
+      if prop[:array]
+        status << 'array'
+        status << 'multi' if multi
+      else
+        case prop[:type]
+          when 'textarea' then status << 'textbox'
+          when 'number'   then status << 'numeric'
+          when 'json'     then status << 'hierarchy'
+          else                 status << prop[:type] unless enum
+        end
+      end
+      status << 'enum' if enum
     end
-    prepend_css!(opt, "field-#{base}", status, "row-#{row}")
+    prepend_css!(opt, "row-#{row}") if row
+    prepend_css!(opt, "field-#{id_base}", *status)
 
     # Explicit 'data-*' attributes.
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
+    opt[:'data-field'] ||= field
+    parts = []
 
     # Label and label HTML options.
-    l_opt = prepend_css(opt, 'label')
-    l_opt[:id]    = l_id    if l_id
-    l_opt[:title] = tooltip if tooltip && !wrap
-    label = prop[:label] || label
-    unless label.is_a?(ActiveSupport::SafeBuffer)
-      label ||= labelize(field)
-      label = html_span(label, class: 'text')
+    l_id = nil
+    unless no_label || (label = prop[:label] || label).blank?
+      # Wrap label text in a <span>.
+      unless label.is_a?(ActiveSupport::SafeBuffer)
+        label ||= labelize(field)
+        label = html_span(label, class: 'text')
+      end
+      # Append a help icon control if applicable.
+      unless no_help || (help = prop[:help]).blank?
+        replace = topic = nil
+        if field == :emma_retrievalLink
+          url     = extract_url(value)
+          topic   = url_repository(url, default: !application_deployed?)
+          replace = help.is_a?(Array) && (help.size > 1)
+        end
+        help = replace ? (help[0...-1] << topic) : [*help, topic] if topic
+        label += h.help_popup(*help)
+      end
+      l_tag = wrap ? :div : tag
+      l_id  = make_id.call('label')
+      l_opt = prepend_css(opt, label_css)
+      l_opt[:id]    = l_id    if l_id
+      l_opt[:title] = tooltip if tooltip && !wrap
+      parts << html_tag(l_tag, label, l_opt)
     end
-    label += help if help.present?
-    label = html_div(label, l_opt)
 
     # Value and value HTML options.
-    v_opt = prepend_css(opt, 'value')
+    v_tag = wrap ? :div : tag
+    v_id  = make_id.call('value')
+    v_opt = prepend_css(opt, value_css)
     v_opt[:id]                = v_id    if v_id
     v_opt[:title]             = tooltip if tooltip && !wrap
     v_opt[:'aria-labelledby'] = l_id    if l_id
-    value = html_div(value, v_opt)
+    parts << html_tag(v_tag, value, v_opt)
+
+    # Optional additional element(s).
+    if block_given?
+      b_opt = l_id ? opt.merge('aria-labelledby': l_id) : opt
+      parts += Array.wrap(yield(field, raw_val, prop, **b_opt))
+    end
 
     # Pair wrapper.
     if wrap
-      wrap  = 'pair' if wrap.is_a?(TrueClass)
+      wrap  = PAIR_WRAPPER if wrap.is_a?(TrueClass)
       w_opt = prepend_css(opt, wrap)
-      w_opt[:id]    = [wrap, base, index].compact.join('-')
-      w_opt[:title] = tooltip if tooltip
-      html_div(w_opt) { label << value }
+      w_opt.reverse_merge!(
+        id:               make_id.call(wrap),
+        role:             role,
+        title:            tooltip,
+        'aria-level':     lvl,
+        'aria-colindex':  col,
+      )
+      html_tag(tag, *parts, w_opt)
     else
-      # noinspection RubyMismatchedReturnType
-      label << value
+      safe_join(parts)
     end
   end
 
@@ -258,14 +326,14 @@ module BaseDecorator::List
   #
   # @param [*]         value
   # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to #execute.
+  # @param [Hash]      opt            Passed to #access.
   #
   # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If *value* or *object* is *nil*.
   #
   def render_value(value, field:, **opt)
-    value = execute(nil, field, **opt) if value.nil? && field.is_a?(Symbol)
-    value = value.to_s                 if value.is_a?(FalseClass)
+    value = access(nil, field, opt) if value.nil? && field.is_a?(Symbol)
+    value = value.to_s              if value.is_a?(FalseClass)
     value
   end
 
@@ -294,7 +362,7 @@ module BaseDecorator::List
   #--
   # noinspection RubyNilAnalysis, RailsParamDefResolve
   #++
-  def execute(item, m, opt = nil)
+  def access(item, m, opt = nil)
     item ||= object
     if item.try(:emma_metadata)&.key?(m)
       item.emma_metadata[m]
@@ -304,15 +372,15 @@ module BaseDecorator::List
       item[m]
     elsif item.respond_to?(m)
       kw = opt.present?
-      if kw && item.method(m).parameters.any? { |k, _| k.start_with?('key') }
+      if kw && item.method(m).parameters.any? { |p, _| p.start_with?('key') }
         item.send(m, **opt)
       else
         item.send(m)
       end
     elsif respond_to?(m)
-      prm = method(m).parameters
-      kw, args = prm.partition { |p, _| p.start_with?('key') }.map!(&:presence)
-      kw &&= false if opt.blank?
+      kw, args = method(m).parameters.partition { |p, _| p.start_with?('key') }
+      args = args.presence
+      kw   = (kw.presence if opt.present?)
       if args && kw
         send(m, item, **opt)
       elsif args
@@ -323,7 +391,7 @@ module BaseDecorator::List
         send(m)
       end
     elsif DEBUG_DECORATOR_EXECUTE
-      Log.warn("#{self.class}.execute(#{item.class}): #{m.inspect} not usable")
+      Log.warn("#{self.class}.access(#{item.class}): #{m.inspect} not usable")
     end
   end
 
@@ -386,14 +454,16 @@ module BaseDecorator::List
 
   # A complete list item entry.
   #
-  # @param [Hash] opt
+  # @param [Hash, nil]     add        Additional label/value pairs.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [Hash]          opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_row(**opt)
-    opt[:id] ||= model_item_id
-    skip  = Array.wrap(opt.delete(:skip))
-    add   = opt.delete(:add)
+  def list_row(add: nil, skip: [], **opt)
+    opt[:id]              ||= model_item_id
+    opt[:'aria-rowindex'] ||= opt[:index] + 1 if opt[:index]
+    skip  = Array.wrap(skip)
     parts = []
     parts << list_item_number(**opt)      unless skip.include?(:number)
     parts << thumbnail(link: true, **opt) unless skip.include?(:thumbnail)
@@ -406,7 +476,7 @@ module BaseDecorator::List
   #
   # @type [Array<Symbol>]
   #
-  ITEM_ENTRY_OPT = %i[index offset group row level skip].freeze
+  ITEM_ENTRY_OPT = %i[index group row level skip].freeze
 
   # Render an element containing the ordinal position of an entry within a list
   # based on the provided *offset* and *index*.
@@ -420,64 +490,50 @@ module BaseDecorator::List
   #     will go after the container.
   #
   # @param [Integer]                index   Index number.
-  # @param [Integer, nil]           offset  Default: 0.
   # @param [Integer, nil]           level   Heading tag level (@see #html_tag).
   # @param [String, nil]            group   Sets :'data-group' for outer div.
   # @param [Integer, nil]           row
   # @param [Boolean, String, Array] inner   *1* above.
   # @param [Boolean, String, Array] outer   *2* above.
+  # @param [String]                 css     Characteristic CSS class/selector.
   # @param [Hash]                   opt     Passed to inner #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @yield [index,offset] To supply additional parts within .number element.
-  # @yieldparam  [Integer] index      The effective index number.
-  # @yieldparam  [Integer] offset     The effective page offset.
-  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  # @yield To supply additional parts within .number element.
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>,ActiveSupport::SafeBuffer]
   #
   #--
   # noinspection RailsParamDefResolve
   #++
   def list_item_number(
     index:,
-    offset: nil,
     level:  nil,
     group:  nil,
     row:    nil,
     inner:  nil,
     outer:  nil,
+    css:    '.number',
     **opt
   )
-    css    = '.number'
     index  = non_negative(index) or return
     row    = positive(row)
-    offset = positive(offset) || 0
 
     opt.except!(*ITEM_ENTRY_OPT)
 
-    # Set up outer parts if supplied.
+    # Set up number label and inner parts if supplied.
     inner_parts = []
+    inner_parts << list_item_number_label(index: index)
+    inner_parts += inner if inner.is_a?(Array)
+    inner_parts << inner if inner.is_a?(String)
+
+    # Set up outer parts if supplied.
     outer_parts = []
-    if outer.is_a?(Array) || outer.is_a?(String)
-      outer_parts += Array.wrap(outer)
-    end
-
-    # Label visible only to screen-readers:
-    label = index ? 'Entry ' : 'Empty results' # TODO: I18n
-    inner_parts << html_span(label, class: 'sr-only')
-
-    # Visible item number value:
-    value = index ? "#{offset + index + 1}" : ''
-    inner_parts << html_span(value, class: 'value')
-
-    # Add inner parts if supplied.
-    if inner.is_a?(Array) || inner.is_a?(String)
-      inner_parts += Array.wrap(inner)
-    end
+    outer_parts += outer if outer.is_a?(Array)
+    outer_parts << outer if outer.is_a?(String)
 
     # Additional elements supplied by the block:
-    # noinspection RubyMismatchedArgumentType
-    if block_given? && (added = Array.wrap(yield(index, offset))).present?
+    if block_given? && (added = Array.wrap(yield)).present?
       if inner.is_a?(TrueClass) || outer.nil? || outer.is_a?(FalseClass)
         inner_parts += added
       else
@@ -498,29 +554,83 @@ module BaseDecorator::List
     html_div(container, outer_parts, outer_opt)
   end
 
-  # Render a single entry for use within a list of items.
+  # list_item_number_label
   #
-  # @param [Hash, nil] pairs          Label/value pairs.
-  # @param [Symbol]    render         Default: #render_field_values.
-  # @param [Hash]      outer          HTML options for outer div container.
-  # @param [Hash]      opt            Passed to the render method.
+  # @param [Integer,nil] index
+  # @param [String]      label        Alternate label contents.
+  # @param [String]      value        Alternate value contents.
+  # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item(pairs: nil, render: nil, outer: nil, **opt)
-    css      = ".#{model_type}-list-item"
-    row      = positive(opt[:row])
-    id       = opt.delete(:id)
-    group    = opt[:group] ||= state_group
-    classes  = [css, ('empty' if blank?), ("row-#{row}" if row)].compact
-    html_opt = prepend_css(outer, *classes)
-    html_opt[:id]              ||= id || model_item_id(**opt)
-    html_opt[:'data-group']    ||= group
-    html_opt[:'data-title_id'] ||= title_id_values
-    html_div(html_opt) do
+  def list_item_number_label(index: nil, label: nil, value: nil, **opt)
+
+    # Label visible only to screen-readers:
+    l_opt   = prepend_css(opt, 'sr-only')
+    label ||= index ? 'Entry ' : 'Empty results' # TODO: I18n
+    label   = html_span(label, l_opt)
+
+    # Visible item number value:
+    v_opt   = prepend_css(opt, 'value')
+    value ||= index ? "#{index + 1}" : ''
+    value   = html_span(value, v_opt)
+
+    # noinspection RubyMismatchedReturnType
+    label << value
+  end
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Hash, nil]     pairs      Label/value pairs.
+  # @param [Symbol]        render     Default: #render_field_values.
+  # @param [Hash]          outer      HTML options for outer div container.
+  # @param [String, Array] leading    Optional leading column(s).
+  # @param [String, Array] trailing   Optional trailing columns(s).
+  # @param [Symbol]        tag        If :tr, generate <tr>.
+  # @param [Integer, nil]  level
+  # @param [String]        css        Default: .(model_type)-list-item
+  # @param [String]        id         Passed to :outer div.
+  # @param [Hash]          opt        Passed to the render method.
+  #
+  # @option opt [Integer] :row        Sets "row-#{row}" in :outer div.
+  # @option opt [Integer] :index      May set :'aria-rowindex' for :outer div.
+  # @option opt [Symbol]  :group      May set :'data-group' for :outer div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_item(
+    pairs:    nil,
+    render:   nil,
+    outer:    nil,
+    leading:  nil,
+    trailing: nil,
+    tag:      :div,
+    level:    nil,
+    css:      nil,
+    id:       nil,
+    **opt
+  )
+    css   ||= ".#{model_type}-list-item"
+    row     = positive(opt[:row])
+    group   = opt[:group] ||= state_group
+    role    = opt.delete(:role) || ('heading' if level)
+    classes = [css] << ("row-#{row}" if row) << ('empty' if blank?)
+    row_opt = prepend_css(outer, *classes).except!(:'aria-colindex')
+    row_opt.reverse_merge!(
+      id:               id || model_item_id(**opt),
+      role:             role,
+      'data-group':     group,
+      'data-title_id':  title_id_values,
+      'aria-level':     level,
+      'aria-rowindex':  opt[:index]&.next,
+    )
+    html_tag(tag, row_opt) do
+      leading  &&= Array.wrap(leading).compact.map  { |v| ERB::Util.h(v) }
+      trailing &&= Array.wrap(trailing).compact.map { |v| ERB::Util.h(v) }
       render = :render_empty_value  if blank?
       render = :render_field_values if render.nil?
-      send(render, pairs: pairs, **opt)
+      pairs  = send(render, pairs: pairs, **opt, level: level&.next)
+      [*leading, *pairs, *trailing]
     end
   end
 
@@ -600,15 +710,17 @@ module BaseDecorator::List
 
   # Generate a standardized (base) element identifier from the object.
   #
+  # @param [Hash] opt                 Passed to #html_id.
+  #
   # @return [String]
   #
   #--
   # noinspection RailsParamDefResolve
   #++
-  def model_item_id(...)
+  def model_item_id(**opt)
     obj = (object if present?)
     id  = obj&.try(:submission_id) || obj&.try(:identifier) || hex_rand
-    html_id(model_type, id, underscore: false)
+    html_id(model_type, id, underscore: false, **opt)
   end
 
   # All :emma_titleId value(s) associated with the object.

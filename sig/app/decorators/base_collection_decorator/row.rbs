@@ -1,0 +1,33 @@
+# Methods supporting iteration within a Model or collection.
+#
+module BaseCollectionDecorator::Row
+  include BaseDecorator::Row
+
+  include BaseCollectionDecorator::Common
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseCollectionDecorator::SharedClassMethods#decorator_class
+  #
+  def row_model_type: () -> Symbol
+
+  # The class of individual associated items for iteration.
+  #
+  # @return [Class]
+  #
+  def row_model_class: () -> Class
+
+  # The collection of associated items to be presented in iterable form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  def row_items: () -> decoratorRowItems
+
+  private
+
+  def self.included: (Module base) -> void
+end

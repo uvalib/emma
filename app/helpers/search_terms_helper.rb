@@ -71,6 +71,14 @@ module SearchTermsHelper
   #
   NON_SEARCH_TERM_KEYS = (NON_SEARCH_KEYS - %i[page]).freeze
 
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_PARAMS = (
+    Record::Searchable::SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS
+  ).uniq.freeze
+
   # Term separator for #list_search_terms.
   #
   # @type [String]
@@ -205,7 +213,7 @@ module SearchTermsHelper
 
   # Produce a text-only listing of search terms.
   #
-  # @param [Hash{Symbol=>SearchTerm}, nil] term_list  Default: `#search_terms`.
+  # @param [Hash{Symbol=>*}, nil] term_list  Default: `#search_terms`.
   #
   # @option term_list [String] :separator   Default: #LIST_SEARCH_SEPARATOR.
   #
@@ -221,8 +229,9 @@ module SearchTermsHelper
       term_list = term_list.except(:separator).presence
     end
     term_list ||= search_terms
-    term_list.map { |_field, term|
+    term_list.map { |field, term|
       next if term.blank?
+      term = SearchTerm.new(field, term) unless term.is_a?(SearchTerm)
       if term.query?
         array_string(term.names, inspect: true)
       else

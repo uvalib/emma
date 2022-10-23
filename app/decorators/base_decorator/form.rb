@@ -72,11 +72,13 @@ module BaseDecorator::Form
 
   public
 
+  # @private # TODO: I18n
+  UNMODIFIABLE = 'System-generated; not modifiable.'
+
   # Render field/value pairs.
   #
   # @param [String, Symbol, nil] action
   # @param [Hash, nil]           pairs        Except #render_form_pair options.
-  # @param [Integer, nil]        row_offset   Def: 0.
   # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Hash]                opt
   #
@@ -92,18 +94,13 @@ module BaseDecorator::Form
   # AccountDecorator#form_fields.
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # noinspection RubyMismatchedArgumentType
   #++
-  def render_form_fields(
-    action:     nil,
-    pairs:      nil,
-    row_offset: nil,
-    separator:  DEFAULT_ELEMENT_SEPARATOR,
-    **opt
-  )
+  def render_form_fields(action: nil, pairs: nil, separator: nil, **opt)
     return ''.html_safe unless pairs || object
-    action  ||= context[:action]
-    opt[:row] = row_offset || 0
+    action    ||= context[:action]
+    separator ||= DEFAULT_ELEMENT_SEPARATOR
+    opt[:row]   = 0
     field_values(pairs).map { |label, value|
       next if (label == :file_data) || (label == :emma_data)
       if value.is_a?(Symbol)
@@ -136,42 +133,56 @@ module BaseDecorator::Form
   # Render a single label/value pair.
   #
   # @param [String, Symbol] label
-  # @param [Any]            value
+  # @param [*]              value
+  # @param [Hash, nil]      prop        Default: from field/model.
   # @param [Symbol]         field       For 'data-field' attribute.
   # @param [Integer]        index       Offset for making unique element IDs.
   # @param [Integer]        row         Display row.
   # @param [Boolean]        disabled
   # @param [Boolean]        required    For 'data-required' attribute.
-  # @param [Hash]           opt
+  # @param [Boolean]        no_label    Don't generate the label element.
+  # @param [Boolean]        no_help     Don't add help icon to the label.
+  # @param [String, nil]    label_css
+  # @param [String, nil]    value_css
+  # @param [Hash]           opt         To label/value except:
+  #
+  # @option opt [Symbol] :render        Force render method.
   #
   # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
-  # @return [nil]                       If *value* is blank.
+  # @return [nil]                       If *field* is :ignored or disallowed
+  #                                       for the current user.
   #
   # == Implementation Notes
   # Compare with BaseDecorator::List#render_pair
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def render_form_pair(
     label,
     value,
-    field:    nil,
-    index:    nil,
-    row:      1,
-    disabled: nil,
-    required: nil,
+    prop:       nil,
+    field:      nil,
+    index:      nil,
+    row:        nil,
+    disabled:   nil,
+    required:   nil,
+    no_label:   nil,
+    no_help:    nil,
+    label_css:  DEFAULT_LABEL_CLASS,
+    value_css:  DEFAULT_VALUE_CLASS,
     **opt
   )
-    prop = field_configuration(field)
+    prop  ||= field_configuration(field)
+    field ||= prop[:field]
     return if prop[:ignored]
-    # noinspection RubyMismatchedArgumentType
     return if prop[:role] && !has_role?(prop[:role])
 
     # Pre-process label to derive names and identifiers.
     base = model_html_id(field || label)
     name = field&.to_s || base
     type = "field-#{base}"
-    v_id = type.dup
-    l_id = +"label-#{base}"
-    [v_id, l_id].each { |id| id << "-#{index}" } if index
+    v_id = [type, index].compact.join('-')
 
     # Pre-process value.
     render_method = placeholder = range = optional = nil
@@ -207,61 +218,106 @@ module BaseDecorator::Form
         render_method ||= :render_form_input
     end
     placeholder ||= prop[:placeholder]
+    render_method = opt.delete(:render) if opt.key?(:render)
 
-    value    = Array.wrap(value).compact_blank
+    # Update properties.
     disabled = prop[:readonly] if disabled.nil?
     required = prop[:required] if required.nil?
-    fieldset = false # (render_method == :render_form_menu_multi)
+    help     = opt.delete(:help)
+    help     = (help || prop[:help].presence unless no_help)
+    tooltip  = opt.delete(:title) || prop[:tooltip]
 
-    # Create a help icon control if applicable.  (The associated popup panel
-    # require some special handling to get it to appear above other elements
-    # that are in different stacking contexts.)
-    help = prop[:help].presence
-    help &&= h.help_popup(*help, panel: { class: 'z-order-capture' })
+    raw_val  = value
+    value    = Array.wrap(value).compact_blank
 
-    # Create status marker icon.
+    # Accumulate status values.
     status = []
     status << :required if required
     status << :disabled if disabled
     status << :invalid  if required && value.empty?
     status << :valid    if value.present?
-    marker = status_marker(status: status, label: label)
 
     # Option settings for both label and value.
-    prepend_css!(opt, "row-#{row}", type, *status)
+    prepend_css!(opt, type, *status)
+    prepend_css!(opt, "row-#{row}") if row
+    parts = []
 
     # Label for input element.
-    l_opt = append_css(opt, 'label')
-    l_opt[:id]      = l_id
-    l_opt[:for]     = v_id
-    l_opt[:title] ||= prop[:tooltip] if prop[:tooltip]
-    label  = prop[:label] || label
-    label  = labelize(name) unless label.is_a?(String)
-    wrap   = !label.is_a?(ActiveSupport::SafeBuffer)
-    legend = (label.dup if fieldset)
-    label  = wrap ? html_span(label, class: 'text') : ERB::Util.h(label)
-    label  = html_span { label << help } if help
-    label << marker                      if marker
-    label = fieldset ? html_div(label, l_opt) : h.label_tag(name, label, l_opt)
+    l_id = nil
+    unless no_label
+      label = prop[:label] || label
+      l_id  = label_css || DEFAULT_LABEL_CLASS
+      l_id  = ["#{l_id}-#{base}", index].compact.join('-')
+      l_opt = prepend_css(opt, label_css)
+      l_opt.merge!(id: l_id, for: v_id, status: status)
+      l_opt[:help]    = help    if help
+      l_opt[:title] ||= tooltip if tooltip
+      # noinspection RubyMismatchedArgumentType
+      parts << render_form_pair_label(field, label, **l_opt)
+    end
 
     # Input element pre-populated with value.
-    v_opt = append_css(opt, 'value')
-    v_opt[:id]                = v_id
-    v_opt[:name]              = name
-    v_opt[:title]             = 'System-generated; not modifiable.' if disabled # TODO: I18n
-    v_opt[:readonly]          = true        if disabled # Not :disabled.
-    v_opt[:placeholder]       = placeholder if placeholder
-    v_opt[:'data-field']      = field       if field
-    v_opt[:'data-required']   = false       if optional
-    v_opt[:'data-required']   = true        if required
-    v_opt[:'aria-labelledby'] = l_id
+    v_opt = prepend_css(opt, value_css)
+    v_opt.merge!(id: v_id, name: name)
+    v_opt[:title]             = UNMODIFIABLE if disabled # TODO: I18n
+    v_opt[:readonly]          = true         if disabled # Not :disabled.
+    v_opt[:placeholder]       = placeholder  if placeholder
+    v_opt[:'data-field']      = field        if field
+    v_opt[:'data-required']   = false        if optional
+    v_opt[:'data-required']   = true         if required
+    v_opt[:'aria-labelledby'] = l_id         if l_id
+    v_opt[:range]             = range        if range
     v_opt[:base]              = base
-    v_opt[:range]             = range       if range
-    v_opt[:legend]            = legend      if legend
-    value = send(render_method, name, value, **v_opt)
+    parts << send(render_method, name, value, **v_opt)
 
-    # noinspection RubyMismatchedReturnType
-    label << value
+    # Other content if provided.
+    parts += Array.wrap(yield(field, raw_val, prop, **opt)) if block_given?
+
+    safe_join(parts)
+  end
+
+  # Render the label for a label/value pair.
+  #
+  # @param [Symbol]                field
+  # @param [String, nil]           label
+  # @param [Symbol, Array<Symbol>] status
+  # @param [Symbol, String, Array] help
+  # @param [String]                css      Characteristic CSS class/selector.
+  # @param [Hash]                  opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_form_pair_label(
+    field,
+    label,
+    status: nil,
+    help:   nil,
+    css:    DEFAULT_LABEL_CLASS,
+    **opt
+  )
+    # Encapsulate the text in its own element to ensure separation from added
+    # icon(s).
+    unless label.is_a?(ActiveSupport::SafeBuffer)
+      label = labelize(field) unless label.is_a?(String)
+      label = html_span(label, class: 'text')
+    end
+
+    # Include a help icon control if applicable.  (The associated popup panel
+    # require some special handling to get it to appear above other elements
+    # that are in different stacking contexts.)
+    if help.present?
+      icon  = h.help_popup(*help, panel: { class: 'z-order-capture' })
+      label = html_span { label << icon }
+    end
+
+    # Include status marker icon.
+    if status.present?
+      marker = status_marker(status: status, label: label)
+      label << marker
+    end
+
+    append_css!(opt, css)
+    h.label_tag(field, label, opt)
   end
 
   # Single-select menu - drop-down.
@@ -341,7 +397,7 @@ module BaseDecorator::Form
       range.pairs.map do |item_value, item_label|
         cb_name          = "[#{field}][]"
         cb_value         = item_value
-        cb_opt[:id]      = "#{field}_#{item_value}"
+        cb_opt[:id]      = [item_value, field, opt[:id]].compact.join('-')
         cb_opt[:label]   = item_label
         cb_opt[:checked] = selected&.include?(item_value)
         render_check_box(cb_name, cb_value, **cb_opt)
@@ -471,19 +527,20 @@ module BaseDecorator::Form
   # @type [Array<Symbol>]
   #
   RELATED_IGNORED_KEYS = %i[
-    id
-    name
-    readonly
-    placeholder
+    aria-labelledby
+    aria-required
+    base
     data-field
     data-required
-    aria-labelledby
-    base
-    range
+    id
     legend
-    type
-    minlength
     maxlength
+    minlength
+    name
+    placeholder
+    range
+    readonly
+    type
   ].freeze
 
   # Modify the provided options for a field related to an form input field.
@@ -862,27 +919,26 @@ module BaseDecorator::Form
         next if false?(enabled)
         next if (enabled == 'debug') && !session_debug?
 
-        tooltip  = properties[:tooltip]
-        selected = true?(properties[:default])
+        parts = []
 
-        input = h.radio_button_tag(name, group, selected, role: 'radio')
+        # Selection control.
+        selected = true?(properties[:default])
+        parts << h.radio_button_tag(name, group, selected, role: 'radio')
 
         # One or more label variants, only one of which will be visible
         # depending on the display form factor.
-        lbl_name = "#{name}_#{group}"
-        variants = %i[label_narrow label_medium label_wide]
-        narrow, medium, wide = properties.values_at(*variants)
-        var = []
-        var << h.label_tag(lbl_name, narrow, class: 'narrow-screen') if narrow
-        var << h.label_tag(lbl_name, medium, class: 'medium-width')  if medium
-        l_css   = ('wide-screen'       if wide || (narrow && medium))
-        l_css ||= ('not-narrow-screen' if narrow)
-        l_opt   = l_css ? { class: l_css } : {}
-        label   = wide || properties[:label] || group.to_s
-        var << h.label_tag(lbl_name, label, l_opt)
-        label = safe_join(var)
+        l_name = "#{name}_#{group}"
+        narrow, medium, wide =
+          properties.values_at(:label_narrow, :label_medium, :label_wide)
+        parts << h.label_tag(l_name, narrow, class: 'narrow-screen') if narrow
+        parts << h.label_tag(l_name, medium, class: 'medium-width')  if medium
+        label = wide || properties[:label] || group.to_s
+        l_opt = {}
+        l_opt[:class] ||= ('wide-screen'       if wide || (narrow && medium))
+        l_opt[:class] ||= ('not-narrow-screen' if narrow)
+        parts << h.label_tag(l_name, label, l_opt)
 
-        html_div(class: 'radio', title: tooltip) { input << label }
+        html_div(*parts, class: 'radio', title: properties[:tooltip])
       end
     return ''.html_safe if controls.blank?
 

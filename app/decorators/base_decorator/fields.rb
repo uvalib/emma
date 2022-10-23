@@ -30,6 +30,94 @@ module BaseDecorator::Fields
 
   public
 
+  # Database columns with hierarchical data.
+  #
+  # @return [Array<Symbol>]
+  #
+  def compound_fields
+    %i[file_data emma_data]
+  end
+
+  # emma_data_fields
+  #
+  # @param [Symbol] field
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def emma_data_fields(field: :emma_data)
+    model_database_fields[field]&.select { |_, v| v.is_a?(Hash) } || {}
+  end
+
+  # Render the contents of the :emma_data field in the same order of EMMA data
+  # fields as defined for search results.
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #render_json_data
+  #
+  def render_emma_data(field: :emma_data, **opt)
+    data  = object.try(field) || object.try(:[], field)
+    pairs = json_parse(data).presence
+    pairs &&=
+      emma_data_fields.map { |fld, cfg|
+        value = pairs.delete(cfg[:label]) || pairs.delete(fld)
+        [fld, value] unless value.nil?
+      }.compact.to_h.merge(pairs)
+    render_json_data(pairs, **opt)
+  end
+
+  # Render the contents of the :file_data field.
+  #
+  # @param [Symbol] field
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #render_json_data
+  #
+  def render_file_data(field: :file_data, **opt)
+    data = object.try(field) || object.try(:[], field)
+    render_json_data(data, **opt, field_root: field)
+  end
+
+  # Render hierarchical data.
+  #
+  # @param [String, Hash, nil] value
+  # @param [Hash]              opt        Passed to #render_field_values
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_json_data(value, **opt)
+    value &&= json_parse(value) unless value.is_a?(Hash)
+    html_div(class: 'data-list') do
+      if value.present?
+        root = opt[:field_root]
+        opt[:no_format] ||= :dc_description
+        # noinspection RubyNilAnalysis
+        pairs =
+          value.map { |k, v|
+            if v.is_a?(Hash)
+              sub_opt = root ? opt.merge(field_root: [root, k.to_sym]) : opt
+              v = render_json_data(v, **sub_opt)
+            end
+            [k, v]
+          }.to_h
+        render_field_values(pairs: pairs, **opt)
+      else
+        render_empty_value(EMPTY_VALUE)
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Field/value pairs.
   #
   # @param [Model, Hash, nil] item    Default: `#object`.
@@ -44,7 +132,7 @@ module BaseDecorator::Fields
     case item
       when ApplicationRecord
         # Convert :file_data and :emma_data into hashes and move to the end.
-        data, pairs = partition_hash(item.fields, :file_data, :emma_data)
+        data, pairs = partition_hash(item.fields, *compound_fields)
         data.each_pair { |k, v| pairs[k] = json_parse(v) }
       when Api::Record
         item.field_names.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
@@ -55,10 +143,18 @@ module BaseDecorator::Fields
     end
   end
 
+  # Local options for #field_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELD_PAIRS_OPTIONS = %i[action only except field_root].freeze
+
   # field_pairs
   #
   # @param [Model, Hash, nil]           item        Passed to #field_values.
   # @param [String, Symbol, nil]        action
+  # @param [Array<Symbol>, nil]         only        Only matching fields.
+  # @param [Array<Symbol>, nil]         except      Not matching fields.
   # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
   #
   # @return [Hash{Symbol=>Hash}]
@@ -73,8 +169,18 @@ module BaseDecorator::Fields
   #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def field_pairs(item = nil, action: nil, field_root: nil, **)
+  def field_pairs(
+    item =      nil,
+    action:     nil,
+    only:       nil,
+    except:     nil,
+    field_root: nil,
+    **
+  )
+    only   &&= Array.wrap(only)
+    except &&= Array.wrap(except)
     field_values(item).map { |k, v|
+
       field, value, config = k, v, nil
       if v.is_a?(Symbol)
         field = v
@@ -93,6 +199,9 @@ module BaseDecorator::Fields
         config ||= field_configuration(field, action)
       end
 
+      # noinspection RubyNilAnalysis
+      next if except&.include?(field) || only && !only.include?(field)
+
       prop = field_properties(field, config)
       prop[:field]   = field.join('_').to_sym if field.is_a?(Array)
       prop[:field] ||= (field if field.is_a?(Symbol))
@@ -100,6 +209,7 @@ module BaseDecorator::Fields
       prop[:value]   = value
 
       [field, prop]
+
     }.compact.to_h
   end
 

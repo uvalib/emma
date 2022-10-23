@@ -9,7 +9,6 @@
   list   ||= dec.object
 
   count  ||= list.size
-  offset ||= @page.page_offset
   level  ||= 1
   row    ||= level
   skip   ||= nil
@@ -30,4 +29,4 @@
 
 <%= heading %>
 
-<%= dec.render(row: row, offset: offset, level: level, skip: skip) %>
+<%= dec.list_rows(row: row, level: level, skip: skip) %>

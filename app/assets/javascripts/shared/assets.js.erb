@@ -260,6 +260,18 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  */
 
 /**
+ * GridProperties
+ *
+ * - column:            Properties for column toggle.
+ * - row:               Properties for header row toggle.
+ *
+ * @typedef {{
+ *    column:           ToggleProperties,
+ *    row:              ToggleProperties,
+ *  }} GridProperties
+ */
+
+/**
  * PopupProperties
  *
  * - button.class:      Popup activator CSS class.
@@ -449,6 +461,7 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @property {ImageProperties}    Image
  * @property {PanelProperties}    Panel
  * @property {TreeProperties}     Tree
+ * @property {GridProperties}     Grid
  * @property {PopupProperties}    Popup
  * @property {ScrollProperties}   Scroll
  * @property {SearchProperties}   Search
@@ -511,6 +524,8 @@ export const Emma = (function() {
             },
         },
 
+        Grid:           o$('<%= js I18n.t(%q(emma.grid)) %>'),
+
         Popup: {
             button: {
                 class:   "<%= PopupHelper::POPUP_TOGGLE_CLASS %>",
@@ -572,7 +587,7 @@ export const Emma = (function() {
             },
         },
 
-        Lookup:  o$('<%= js I18n.t(%q(emma.lookup)) %>'),
+        Lookup:         o$('<%= js I18n.t(%q(emma.lookup)) %>'),
 
         // ====================================================================
         // Model properties

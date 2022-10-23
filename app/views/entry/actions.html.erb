@@ -7,38 +7,32 @@
   list  ||= paginator.page_items
   dec     = ActionsDecorator.new(list, **context)
 
-  help   ||= nil # %i[entry actions]
-  title  ||= nil
-  title    = dec.page_heading(title)
+  help  ||= nil # %i[entry actions]
+  title ||= nil
+  title   = dec.page_heading(title)
 
-  count  ||= list.size
-  offset ||= @page.page_offset
-  level  ||= 1
-  row    ||= level
-  skip   ||= nil
+  level ||= 1
+  row   ||= level
 
-  total  ||= count
-  terms  ||= search_terms
-
-  page_opt = Entry::SEARCH_RECORDS_OPTIONS.dup << :group
-  page_terms, search = partition_hash(terms, *page_opt)
-  page     = positive(page_terms[:page]&.values&.first) || 1
-  search   = search.presence
+  search  = search_terms
+  query   = search.except(:group, *Entry::NON_SEARCH_PARAMS).presence
 
   unless modal?
+    page  = paginator.page_number
+    terms = (page > 1) ? query&.merge(page: page) : query
+    terms = list_search_terms(terms)       if terms
+    group = search[:group]&.values&.first
+    group = Entry.state_group_label(group) if group
     label = dec.page_meta_title
-    terms = (page > 1) ? search&.merge(page: page_terms[:page]) : search
-    group = page_terms[:group]&.values&.first
-    group = Entry.state_group_label(group)                if group
     set_page_meta_title(label)
-    append_page_meta_title('-', group)                    if group
-    append_page_meta_title('-', list_search_terms(terms)) if terms
+    append_page_meta_title('-', group)     if group
+    append_page_meta_title('-', terms)     if terms
     set_page_description(title)
   end
 
   level += 1
 
-  opt = { total: total, page: page, row: row, offset: offset, level: level }
+  opt = { level: level, row: row }
 
   top_controls, bottom_controls = dec.index_controls(**opt)
   opt[:row] += 1        if top_controls
@@ -52,8 +46,8 @@
 <%#= page_description_section %>
 <%#= dec.state_group_select %>
 
-<div class="<%= dec.css_list_class -%>">
+<div class="<%= dec.list_css_class -%>">
   <%= top_controls %>
-  <%= dec.render(skip: skip, **opt) %>
+  <%= dec.list_rows(**opt) %>
   <%= bottom_controls %>
 </div>

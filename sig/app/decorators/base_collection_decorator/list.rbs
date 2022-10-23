@@ -9,17 +9,13 @@ module BaseCollectionDecorator::List
 
   # Render list items.
   #
-  # @param [Integer]       index      Starting index number.
-  # @param [Integer]       row        Starting row number.
-  # @param [Array<Symbol>] skip       Passed to #list_row.
-  # @param [String, nil]   separator  If *nil*, return an array of lines.
-  # @param [Hash]          opt        Passed to #list_row.
+  # @param [Integer] row              Starting row number.
+  # @param [Integer] index            Starting index number.
+  # @param [Hash]    opt              Passed to #list_row.
   #
-  # @return [Array<ActiveSupport::SafeBuffer>]  If *separator* set to *nil*.
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render: (?index: Integer, ?row: Integer, ?skip: symArray|nil, ?separator: String, **untyped opt) -> ActiveSupport::SafeBuffer
-            | (?index: Integer, ?row: Integer, ?skip: symArray|nil,  separator: nil,    **untyped opt) -> Array[ActiveSupport::SafeBuffer]
+  def list_rows: (?row: Integer|nil, ?index: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Text for #no_records_row. # TODO: I18n
   #
@@ -44,17 +40,12 @@ module BaseCollectionDecorator::List
 
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Integer, #to_i, nil] count    Default: *list* size.
-  # @param [Integer, #to_i, nil] total    Default: count.
-  # @param [Integer, #to_i, nil] records  Number of API records for this page.
-  # @param [Integer, #to_i, nil] page     Default: 1.
-  # @param [Integer, #to_i, nil] size     Default: #DEFAULT_PAGE_SIZE
-  # @param [Integer, #to_i, nil] row      Default: 1.
-  # @param [Hash]    opt                  Passed to #list_controls.
+  # @param [Integer] row              Starting row number.
+  # @param [Hash]    opt              Passed to #list_controls.
   #
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
-  def index_controls: (?count: Integer|nil, ?total: Integer|nil, ?records: Integer|nil, ?page: Integer|nil, ?size: Integer|nil, ?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
+  def index_controls: (?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
 
   # Optional controls to modify the display or generation of the item list in
   # the order of display.

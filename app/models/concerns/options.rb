@@ -208,7 +208,6 @@ class Options
     prm.except!(*ignored_form_params)
     prm[:id] = prm.delete(:selected) || prm[:id]
     prm.deep_symbolize_keys!
-    reject_blanks(prm)
   end
 
   # Extract POST parameters that are usable for creating/updating a new model
@@ -246,21 +245,21 @@ class Options
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
   #
-  # @param [Hash] prm         Parameters to update
-  # @param [Hash] opt         Options to #json_parse.
+  # @param [Hash]    prm              Parameters to update
+  # @param [Boolean] compact          If *false*, allow blanks.
+  # @param [Hash]    opt              Options to #json_parse.
   #
-  # @return [Hash, nil]       The new contents of *prm* if modified.
+  # @return [Hash, nil]               The new contents of *prm* if modified.
   #
-  def extract_model_data!(prm, **opt)
+  def extract_model_data!(prm, compact: true, **opt)
     opt[:log] = false unless opt.key?(:log)
     # @type [Hash, nil]
     fields = json_parse(prm.delete(model), **opt) or return
     model_data_params.each_pair do |hash_key, url_param|
       prm[url_param] = json_parse(fields.delete(hash_key), **opt)
     end
-    # noinspection RubyMismatchedArgumentType
     prm.merge!(fields)
-    reject_blanks(prm)
+    compact ? reject_blanks(prm) : prm
   end
 
   # ===========================================================================

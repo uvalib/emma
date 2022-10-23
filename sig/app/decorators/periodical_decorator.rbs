@@ -149,11 +149,15 @@ class PeriodicalDecorator
 
   # A sub-section displaying the editions for the periodical.
   #
-  # @param [Hash] **opt
+  # @param [Integer, nil]  level
+  # @param [Integer, nil]  count      Default: `editions.size`.
+  # @param [Array<Symbol>] skip       Display aspects to avoid.
+  # @param [String]        css        Characteristic CSS class/selector.
+  # @param [Hash]          opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def edition_list: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def edition_list: (?level: Integer|nil, ?count: Integer|nil, ?skip: Symbol|symArray|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # form_action_link
   #

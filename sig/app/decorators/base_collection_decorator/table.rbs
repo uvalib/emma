@@ -62,6 +62,24 @@ module BaseCollectionDecorator::Table
                     | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
                     | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[String]
 
+  # The collection of items to be presented in tabular form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  def table_row_items: () -> decoratorRowItems
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseCollectionDecorator::SharedClassMethods#decorator_class
+  #
+  # @note Not currently used.
+  #
+  def table_row_model_type: () -> Symbol
+
   private
 
   def self.included: (Module base) -> void

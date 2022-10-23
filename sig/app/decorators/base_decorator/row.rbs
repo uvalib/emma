@@ -1,0 +1,89 @@
+# Methods supporting iteration within a Model or collection.
+#
+module BaseDecorator::Row
+  include BaseDecorator::Common
+
+  # The #model_type of individual associated items for iteration.
+  #
+  # @return [Symbol]
+  #
+  # == Implementation Notes
+  # This is a fallback definition.  A BaseDecorator subclass which supports
+  # iteration should probably override this method in addition to #row_items.
+  #
+  def row_model_type: () -> Symbol
+
+  # The class of individual associated items for iteration.
+  #
+  # @return [Class]
+  #
+  def row_model_class: () -> Class
+
+  # The collection of associated items to be presented in iterable form.
+  #
+  # @return [Array<Model>]
+  # @return [ActiveRecord::Relation]
+  # @return [ActiveRecord::Associations::CollectionAssociation]
+  #
+  # == Implementation Notes
+  # A BaseDecorator subclass which supports iteration should override this
+  # method to return the iterable items.
+  #
+  def row_items: () -> decoratorRowItems
+
+  # The total number of associated items.
+  #
+  # @return [Integer]
+  #
+  def row_items_total: () -> Integer
+
+  # The names and configurations for each possible row data column (whether
+  # displayed or not).
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def row_fields: () -> Hash[Symbol,symHash]
+
+  # The names of each row data column for display.
+  #
+  # @return [Array<Symbol>]
+  #
+  def row_columns: () -> symArray
+
+  # The names of each row data column which is not displayed.
+  #
+  # @return [Array<Symbol>]
+  #
+  def row_skipped_columns: () -> symArray
+
+  # Default number of rows per iteration.
+  #
+  # @type [Integer]
+  #
+  ROW_PAGE_SIZE: Integer
+
+  # The number of rows of associated items per iteration.
+  #
+  # @return [Integer]
+  #
+  def row_page_size: () -> Integer
+
+  # Named parameters for #row_page.
+  #
+  # @type [Array<Symbol>]
+  #
+  ROW_PAGE_PARAMS: symArray
+
+  # Get a subset of associated items.
+  #
+  # @param [*, nil]      rows         Default: `#row_items`.
+  # @param [Integer,nil] limit        Number of rows to display.
+  #
+  # @return [Array<Model>]
+  #
+  def row_page: (?rows: decoratorRowItems|nil, ?limit: Integer|nil) -> Array[Model]
+
+  private
+
+  def self.included: (Module base) -> void
+end

@@ -24,13 +24,12 @@ module BaseDecorator::Hierarchy
   # Render field/value pairs of a title-level record.
   #
   # @param [String, Symbol, nil] action
-  # @param [Hash, nil]           pairs        Except for #render_pair options.
-  # @param [Integer, nil]        row_offset   Def: 0.
-  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash, nil]           pairs      Except for #render_pair options.
+  # @param [String, nil]         separator  Def: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Hash]                opt
   #
-  # @option opt [Integer] :index              Offset to make unique element IDs
-  #                                             passed to #render_pair.
+  # @option opt [Integer] :index            Offset to make unique element IDs
+  #                                           passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -40,17 +39,13 @@ module BaseDecorator::Hierarchy
   #--
   # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
   #++
-  def render_field_hierarchy(
-    action:     nil,
-    pairs:      nil,
-    row_offset: nil,
-    separator:  DEFAULT_ELEMENT_SEPARATOR,
-    **opt
-  )
+  def render_field_hierarchy(action: nil, pairs: nil, separator: nil, **opt)
     return ''.html_safe if blank?
+    separator  ||= DEFAULT_ELEMENT_SEPARATOR
 
-    opt[:row]    = row_offset || 0
+    opt[:row]    = 0
     opt[:action] = action
+    opt.delete(:'aria-rowindex')
 
     # Get the hierarchy of field/value pairs, inserting additional field/value
     # pairs (if any) at the title level.
@@ -100,6 +95,7 @@ module BaseDecorator::Hierarchy
     item_index = [opt[:index]]
     item_prop  = { record: self }
     skip_opt   = { meth: __method__, except: { hash: :title, array: :parts } }
+    level      = opt.delete(:level)
     hierarchy.flat_map { |main_key, main_section|
       next if skip_entry?(main_key, main_section, **skip_opt)
       main_index = item_index
@@ -107,6 +103,7 @@ module BaseDecorator::Hierarchy
       if main_key == :title
         title_level_lines(main_section, main_index, main_prop, opt)
       else
+        main_prop.merge!(level: level) if level
         part_level_lines(main_section, main_index, main_prop, opt)
       end
     }.compact_blank!
@@ -146,10 +143,12 @@ module BaseDecorator::Hierarchy
   # @see "en.emma.search.field_hierarchy.parts"
   #
   def part_level_lines(main_section, main_index, main_prop, opt)
-    multiple_parts = main_section.many?
+    many_parts = main_section.many?
+    this_level = main_prop[:level]
+    next_level = this_level&.next
     main_section.flat_map.with_index(1) do |part, part_no|
       index = [*main_index, part_no]
-      prop  = main_prop.merge('data-part': part_no)
+      prop  = main_prop.merge('data-part': part_no, level: next_level)
 
       # Defer the heading row until the enclosed information is gathered.
       h_row = opt[:row]
@@ -158,15 +157,16 @@ module BaseDecorator::Hierarchy
 
       # Create the heading row.
       value   = part.dig(:bibliographic, :bib_seriesPosition).presence
-      if multiple_parts && !value
+      if many_parts && !value
         value = :all
         name  = ERB::Util.h('Complete Work') # TODO: I18n
       else
         name  = value&.inspect || part_no
       end
       details = count_unique(lines, :format)
+      h_prop  = prop.merge(level: this_level)
       h_opt   = opt.merge(row: h_row)
-      heading = new_section(:part, name, value, details, index, prop, h_opt)
+      heading = new_section(:part, name, value, details, index, h_prop, h_opt)
 
       [heading, *lines]
     end
@@ -213,10 +213,13 @@ module BaseDecorator::Hierarchy
   #
   def part_lines(part_section, part_key, part_index, part_prop, opt)
     opt[:term] = FILE_TERM unless (original_term = opt[:term])
+    this_level = part_prop[:level]
+    next_level = this_level&.next
     part_section.flat_map.with_index(1) { |format, format_no|
       index = [*part_index, format_no]
       prop  = add_scope(part_prop, part_key, index: index)
       prop[:'data-format'] = format_no
+      prop[:level]         = next_level
 
       # Defer the heading row until the enclosed information is gathered.
       h_row = opt[:row]
@@ -227,6 +230,7 @@ module BaseDecorator::Hierarchy
       value   = format.dig(:bibliographic, :dc_format).presence
       name    = value ? ERB::Util.h(value.titleize.upcase) : format_no
       details = count_unique(lines, :file, term: opt[:term])
+      prop    = prop.merge(level: this_level)
       h_opt   = opt.merge(row: h_row)
       heading = new_section(:format, name, value, details, index, prop, h_opt)
 
@@ -281,7 +285,7 @@ module BaseDecorator::Hierarchy
       value   = (file_no if files.many?)
       name    = file_no
       heading = new_section(:file, name, value, nil, index, prop, opt)
-      lines   = file_section_lines(file, index, prop, opt)
+      lines   = file_section_lines(file, index, prop.except(:level), opt)
       [heading, *lines]
     end
   end
@@ -346,6 +350,7 @@ module BaseDecorator::Hierarchy
     opt[:index] = Array.wrap(line[:index]).compact.join('-')
     scopes      = field_scopes(line[:scopes])
     opt         = append_css(opt, scopes) if scopes.present?
+    opt.delete(:level) # Label/value pairs are "leaf nodes".
     render_line(label, value, prop: line, **opt)
   end
 
@@ -374,6 +379,7 @@ module BaseDecorator::Hierarchy
     field = :"new_#{type.underscore}"
     base  = model_html_id(field)
     index = index.compact.join('-') if index.is_a?(Array)
+    level = prop[:level]
 
     # The open/close toggle control for this section.
     tgt_id = [(PAIR_WRAPPER || 'value'), base, index].compact.join('-')
@@ -393,6 +399,7 @@ module BaseDecorator::Hierarchy
 
     opt = prepend_css(opt, css)
     append_css!(opt, 'open') if open
+    opt.merge!(role: 'heading', 'aria-level': level) if level
     opt.merge!(index: index, field: field, 'data-value': data_value)
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
     render_line(label, value, **opt)
@@ -426,8 +433,9 @@ module BaseDecorator::Hierarchy
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_line(label, value, **opt)
+    return ''.html_safe if value.blank?
     opt.except!(:action, :record_map, :term)
-    render_pair(label, value, **opt) || ''.html_safe
+    render_pair(label, value, **opt)
   end
 
   # Indicate whether a section should be ignored, either because its name

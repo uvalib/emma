@@ -27,6 +27,14 @@ fieldset {
     border:  none;
 }
 
+// Have the cursor treat <details> as if it was a button.
+details {
+    summary {
+        cursor:      default;
+        user-select: none;
+    }
+}
+
 //=============================================================================
 // Classes for composition
 //=============================================================================
@@ -51,29 +59,14 @@ fieldset {
     }
 }
 
-// Make an actionable item (e.g. <a>) appear non-functional.
-// NOTE: The link should also have attribute 'tabindex="-1"'.
-%disabled {
-    text-decoration: none;
-    &:active { pointer-events:  none; }
-    &:focus  { outline:         none; }
-    &:hover  { text-decoration: none; }
-}
-
 // Include to "de-activate" an active element like a button or link.
 .disabled {
-
-    @extend %disabled;
-
-    cursor: default;
+    @include disabled;
 }
 
 // Include to "de-activate" an active element because it is an invalid choice.
 .forbidden {
-
-    @extend %disabled;
-
-    cursor: not-allowed;
+    @include forbidden;
 }
 
 // Include to make an element only visible to screen readers.
