@@ -7,8 +7,17 @@ class Paginator
 
   include ParamsHelper
 
-  # NOTE: from SearchTermsHelper::PAGINATION_KEYS
+  # URL parameters that are search-related but "out-of-band".
+  #
+  # @type [Array<Symbol>]
+  #
   PAGINATION_KEYS: symArray
+
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_KEYS: symArray
 
   # URL parameters involved in pagination.
   #
@@ -29,33 +38,80 @@ class Paginator
   #
   IGNORED_FORM_PARAMS: symArray
 
-  private
+  # Pagination data values.
+  #
+  # This does not include :page_items so that value can be handled separately
+  # for diagnostic reporting.
+  #
+  class Properties < ::Hash[Symbol,untyped]
+    # Property names relating to the range of index values on the page.
+    #
+    # @type [Array<Symbol>]
+    #
+    INDEX: symArray
 
-  attr_reader controller: ApplicationController | nil
+    # Property names relating to cursors for field position per page item.
+    #
+    # @type [Array<Symbol>]
+    #
+    POSITION: symArray
+
+    # Empty copy of data values in the preferred order (for debug output).
+    #
+    # @type [Hash{Symbol=>any}]
+    #
+    TEMPLATE: symHash
+
+    def initialize: (?(symHash|nil) values) -> void
+
+    # All property names.
+    #
+    # @return [Array<Symbol>]
+    #
+    def self.keys: () -> symArray
+  end
 
   attr_reader context: symHash
-
-  public
 
   attr_reader initial_parameters: symHash
 
   # Create a new instance.
   #
-  # @param [ApplicationController, nil] controller
+  # @param [ApplicationController, nil] ctrlr
+  # @param [ActionDispatch::Request]    request
   # @param [Hash]                       opt         From `#request_parameters`.
   #
-  def initialize: (?(ApplicationController|nil) controller, **untyped opt) -> void
+  def initialize: (ApplicationController ctrlr, ?request: ActionDispatch::Request|nil, **untyped opt) -> void
+                | (?nil                  ctrlr,  request: ActionDispatch::Request,     **untyped opt) -> void
 
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Api::Record, Array] result
-  # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
-  # @param [Hash]               search  Passed to #next_page_path.
+  # @param [Api::Record, Array, Hash] result
+  # @param [Symbol, nil]              meth
+  # @param [Hash]                     opt
   #
-  # @return [Array]                     The value of #page_items.
+  # @return [Array]
   #
-  def finalize: ((Api::Record|anyArray) result, ?(Symbol|nil) meth, **untyped search) -> anyArray
+  # -
+  # == Variations
+  # +
+  #
+  # @overload finalize(result, **opt)
+  #   Generally for Record-related models.
+  #   @param [Hash{Symbol=>*}]    result
+  #   @param [Hash]               opt     Passed to #url_for.
+  #   @return [Array]                     The value of #page_items.
+  #
+  # @overload finalize(result, meth = nil, **opt)
+  #   Generally for other models (e.g. Bookshare API-related).
+  #   @param [Api::Record, Array] result
+  #   @param [Symbol, nil]        meth    Method to extract items from result.
+  #   @param [Hash]               opt     Passed to #next_page_path.
+  #   @return [Array]                     The value of #page_items.
+  #
+  def finalize: (symHash              result,                     **untyped search) -> anyArray
+              | (Api::Record|anyArray result, ?(Symbol|nil) meth, **untyped search) -> anyArray
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.
@@ -64,17 +120,140 @@ class Paginator
   #
   def inspect: () -> String
 
-  # Pagination data values.
+  # Originating request
   #
-  class Properties < ::Hash[Symbol,untyped]
-    # Empty copy of data values in the preferred order (for debug output).
-    #
-    # @type [Hash{Symbol=>any}]
-    #
-    TEMPLATE: symHash
+  # @note Defined to support use of external routing methods like #url_for.
+  #
+  # @return [ActionDispatch::Request]
+  #
+  def request: () -> ActionDispatch::Request
 
-    def initialize: (?(symHash|nil) values) -> void
+  # Originating environment.
+  #
+  # @note Defined to support use of external routing methods like #url_for.
+  #
+  # @return [Hash{String=>*}]
+  #
+  def env: () -> strHash
+
+  module PageMethods
+    # Configured results per page for the given controller/action.
+    #
+    # @param [Symbol, String, Hash, nil] c   Controller
+    # @param [Symbol, String, nil]       a   Action
+    #
+    # @return [Integer]
+    #
+    def get_page_size: (symHash)                                        -> Integer
+                     | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+
+    def self.included: (Module base) -> void
   end
+
+  module ListMethods
+    # Determine the number of records reported by an object.
+    #
+    # @param [Api::Record, Model, Array, Hash, Any, nil] value
+    # @param [Integer]                                   default
+    #
+    # @return [Integer]               Zero indicates unknown count.
+    #
+    def record_count: (?(untyped|nil) value, ?default: Integer) -> Integer
+
+    # Extract the number of "items" reported by an object.
+    #
+    # (For aggregate items, this is the number of aggregates as opposed to the
+    # number of records from which they are composed.)
+    #
+    # @param [Api::Record, Model, Array, Hash, Any, nil] value
+    # @param [Integer]                                   default
+    #
+    # @return [Integer]               Zero indicates unknown count.
+    #
+    def item_count: (?(untyped|nil) value, ?default: Integer) -> Integer
+
+    def self.included: (Module base) -> void
+  end
+
+  module PathMethods
+    # Interpret *value* as a URL path or a JavaScript action.
+    #
+    # @param [String, Symbol, nil] value  One of [:back, :forward, :go].
+    # @param [Integer, nil]   page        To #page_history for *action* :go.
+    #
+    # @return [String]                    A value usable with 'href'.
+    # @return [nil]                       If *value* is invalid.
+    #
+    def page_path: ((String|Symbol|nil) value, ?(Integer|nil) page) -> (String | nil)
+
+    # A value to use in place of a path in order to engage browser history.
+    #
+    # @param [String, Symbol] action    One of [:back, :forward, :go].
+    # @param [Integer, nil]   page      History page if *directive* is :go.
+    #
+    # @return [String]
+    #
+    def page_history: ((String|Symbol) action, ?(Integer|nil) page) -> String
+
+    def self.included: (Module base) -> void
+  end
+
+  include PageMethods
+
+  include ListMethods
+
+  include PathMethods
+
+  extend PageMethods
+
+  extend ListMethods
+
+  extend PathMethods
+
+  # Current results per page for the given controller/action (unless an
+  # argument is present).
+  #
+  # @param [Symbol, String, Hash, nil] c   Controller
+  # @param [Symbol, String, nil]       a   Action
+  #
+  # @return [Integer]
+  #
+  def get_page_size: (symHash)                                        -> Integer
+                   | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+
+  # Determine the number of records reported by an object.
+  #
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Hash]                                      opt
+  #
+  # @return [Integer]               Zero indicates unknown count.
+  #
+  def record_count: (?(untyped|nil) value, **untyped opt) -> Integer
+
+  # Extract the number of "items" reported by an object.
+  #
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Hash]                                      opt
+  #
+  # @return [Integer]               Zero indicates unknown count.
+  #
+  def item_count: (?(untyped|nil) value, **untyped opt) -> Integer
+
+  # Get the current page of result items.
+  #
+  # @return [Array]
+  #
+  def page_items: () -> anyArray
+
+  # Set the current page of result items.
+  #
+  # @param [Array] values
+  #
+  # @return [Array]
+  #
+  def page_items=: (anyArray values) -> anyArray
+
+  @page_items: anyArray
 
   # property
   #
@@ -83,6 +262,34 @@ class Paginator
   def property: () -> Paginator::Properties
 
   @property: Paginator::Properties
+
+  # Induce all properties to acquire a value (typically for diagnostics).
+  #
+  # @return [Hash]
+  #
+  def current_properties: () -> symHash
+
+  # Default results per page for the current controller/action.
+  #
+  # @return [Integer]
+  #
+  def default_page_size: () -> Integer
+
+  @default_page_size: Integer
+
+  # Get the current page number.
+  #
+  # @return [Integer]
+  #
+  def page_number: () -> Integer
+
+  # Set the current page number.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer]
+  #
+  def page_number=: ((Integer|nil) value) -> Integer
 
   # Get the number of results per page.
   #
@@ -97,6 +304,48 @@ class Paginator
   # @return [Integer]
   #
   def page_size=: ((Integer|nil) value) -> Integer
+
+  # Get the offset of the current page into the total set of results.
+  #
+  # @return [Integer]
+  #
+  def page_offset: () -> Integer
+
+  # Set the offset of the current page into the total set of results.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer]
+  #
+  def page_offset=: ((Integer|nil) value) -> Integer
+
+  # Get the total results count if known.
+  #
+  # @return [Integer, nil]
+  #
+  def total_items: () -> (Integer | nil)
+
+  # Set the total results count.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer, nil]
+  #
+  def total_items=: ((Integer|nil) value) -> (Integer | nil)
+
+  # Get the number of records returned from the API for this page.
+  #
+  # @return [Integer, nil]
+  #
+  def page_records: () -> (Integer | nil)
+
+  # Set the number of records returned from the API for this page.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer, nil]
+  #
+  def page_records=: ((Integer|nil) value) -> (Integer | nil)
 
   # Get the path to the first page of results.
   #
@@ -162,83 +411,6 @@ class Paginator
   #
   def prev_page=: ((String|Symbol|nil) value) -> (String | nil)
 
-  # Get the offset of the current page into the total set of results.
-  #
-  # @return [Integer]
-  #
-  def page_offset: () -> Integer
-
-  # Set the offset of the current page into the total set of results.
-  #
-  # @param [Integer, nil] value
-  #
-  # @return [Integer]
-  #
-  def page_offset=: ((Integer|nil) value) -> Integer
-
-  # Get the total results count.
-  #
-  # @return [Integer]
-  #
-  def total_items: () -> Integer
-
-  # Set the total results count.
-  #
-  # @param [Integer, nil] value
-  #
-  # @return [Integer]
-  #
-  def total_items=: ((Integer|nil) value) -> Integer
-
-  # Get the number of records returned from the API for this page.
-  #
-  # @return [Integer]
-  #
-  def page_records: () -> Integer
-
-  # Set the number of records returned from the API for this page.
-  #
-  # @param [Integer, nil] value
-  #
-  # @return [Integer]
-  #
-  def page_records=: ((Integer|nil) value) -> Integer
-
-  # Get the current page of result items.
-  #
-  # @return [Array]
-  #
-  def page_items: () -> anyArray
-
-  # Set the current page of result items.
-  #
-  # @param [Array] values
-  #
-  # @return [Array]
-  #
-  def page_items=: (anyArray values) -> anyArray
-
-  @page_items: anyArray
-
-  # Interpret *value* as a URL path or a JavaScript action.
-  #
-  # @param [String, Symbol, nil] value  One of [:back, :forward, :go].
-  # @param [Integer, nil]   page        To #page_history for *action* :go.
-  #
-  # @return [String]                    A value usable with 'href'.
-  # @return [nil]                       If *value* is invalid.
-  #
-  def page_path: ((String|Symbol|nil) value, ?(Integer|nil) page) -> (String | nil)
-
-  # A value to use in place of a path in order to engage browser history.
-  #
-  # @param [String, Symbol] action    One of [:back, :forward, :go].
-  # @param [Integer, nil]   page      History page if *directive* is :go.
-  #
-  # @return [String]
-  #
-  def page_history: ((String|Symbol) action, ?(Integer|nil) page) -> String
-
   # Analyze the *list* object to generate the path for the next page of
   # results.
   #
@@ -250,64 +422,84 @@ class Paginator
   #
   def next_page_path: (?list: Api::Record|Array[Api::Record]|nil, **untyped url_params) -> (String | nil)
 
-  # Default results per page for the current controller/action.
+  # The item index of the first item on the current page.
   #
   # @return [Integer]
   #
-  def default_page_size: () -> Integer
+  def first_index: () -> Integer
 
-  @default_page_size: Integer
-
-  # Default results per page.
+  # Set the item index of the first item on the current page.
+  #
+  # @param [Integer, nil] value       If *nil*, resets to default.
   #
   # @return [Integer]
   #
-  def get_page_size: () -> Integer
+  def first_index=: ((Integer|nil) value) -> Integer
 
-  # Extract the number of "items" reported by an object.
-  #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Hash]                                      opt
+  # The item index of the last item on the current page.
   #
   # @return [Integer]
   #
-  def item_count: (?(untyped|nil) value, **untyped opt) -> Integer
+  def last_index: () -> Integer
 
-  # Determine the number of records reported by an object.
+  # Set the item index of the first item on the current page.
   #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Integer, nil] value       If *nil*, resets to default.
   #
   # @return [Integer]
   #
-  def record_count: (?(untyped|nil) value) -> Integer
+  def last_index=: ((Integer|nil) value) -> Integer
 
-  # Default results per page for the given controller/action.
+  # The item index cursor.
   #
-  # @param [Symbol, String, Hash, nil] c   Controller
-  # @param [Symbol, String, nil]       a   Action
+  # @param [Boolean] increment        If *true*, post-increment value.
+  # @param [Boolean] check            If *true*, raise if out of bounds.
   #
   # @return [Integer]
   #
-  def self.get_page_size: (symHash)                                        -> Integer
-                        | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+  def current_index: (?increment: bool, ?check: bool) -> Integer
 
-  # Extract the number of "items" reported by an object.
+  # The field position of the first field for the indicated item.
   #
-  # (For aggregate items, this is the number of aggregates as opposed to the
-  # number of records from which they are composed.)
-  #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Any]                                       default
+  # @param [Integer, nil] index       Default: `#current_index`
   #
   # @return [Integer]
   #
-  def self.item_count: ((untyped|nil) value, ?default: untyped) -> Integer
+  def first_position: (?(Integer|nil) index) -> Integer
 
-  # Determine the number of records reported by an object.
+  # Set the field position of the first field for the indicated item.
   #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Integer]      value
+  # @param [Integer, nil] index       Default: `#current_index`
   #
   # @return [Integer]
   #
-  def self.record_count: ((untyped|nil) value) -> Integer
+  def set_first_position: (Integer value, ?(Integer|nil) index) -> Integer
+
+  # The field position of the last field for the indicated item.
+  #
+  # @param [Integer, nil] index       Default: `#current_index`
+  #
+  # @return [Integer, nil]
+  #
+  def final_position: (?(Integer|nil) index) -> Integer
+
+  # Set the field position of the first field for the indicated item.
+  #
+  # @param [Integer]      value
+  # @param [Integer, nil] index       Default: `#current_index`
+  #
+  # @return [Integer]
+  #
+  def set_final_position: (Integer value, ?(Integer|nil) index) -> Integer
+
+  # The field position cursor.
+  #
+  # @param [Integer, nil] index       Default: `#current_index`
+  # @param [Boolean]      increment   If *true*, post-increment value.
+  # @param [Boolean]      check       If *true*, raise if out of bounds.
+  #
+  # @return [Integer]
+  #
+  def current_position: (?(Integer|nil) index, ?increment: bool, ?check: bool) -> Integer
 end

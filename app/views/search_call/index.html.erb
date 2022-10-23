@@ -4,8 +4,8 @@
 
   view_debug(__FILE__)
 
-  list   ||= @page.page_items
-  dec      = SearchCallsDecorator.new(list, **context)
+  list  ||= paginator.page_items
+  dec     = SearchCallsDecorator.new(list, **context)
 
   help   ||= nil # dec.help_topic
   title  ||= nil

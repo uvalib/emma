@@ -4,9 +4,8 @@
 
   view_debug(__FILE__)
 
-  list   ||= @list
-  dec      = PhasesDecorator.new(list, **context)
-  list   ||= dec.object
+  list  ||= paginator.page_items
+  dec     = PhasesDecorator.new(list, **context)
 
   help   ||= nil # %i[entry phases]
   title  ||= nil

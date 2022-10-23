@@ -1,5 +1,8 @@
 # Support methods for the "/upload" controller.
 #
+# @!method paginator
+#   @return [Upload::Paginator]
+#
 module UploadConcern
   extend ActiveSupport::Concern
 
@@ -17,14 +20,37 @@ module UploadConcern
 
   include IngestConcern
 
-  # :nocov:
-  #include OptionsConcern
+  include OptionsConcern
+
+  include ResponseConcern
+
+  include PaginationConcern
 
   MIME_REGISTRATION: Array[Class]
 
-  @db_id:         Integer | nil
-  @identifier:    String
-  @workflow:      Workflow::Base
+  # URL parameters associated with item/entry identification.                   # NOTE: to EntryConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
+  # The upload identified in URL parameters either as :selected or :id.
+  #
+  # @return [String, nil]
+  #
+  def identifier: () -> (String | nil)
+
+  @identifier: String | nil
+
+  # The database ID of the upload identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def db_id: () -> (Integer | nil)
+
+  @db_id: Integer | nil
+
+  @workflow: Workflow::Base
 
   # URL parameters relevant to the current operation.
   #
@@ -36,16 +62,12 @@ module UploadConcern
 
   # Get URL parameters relevant to the current operation.                       # NOTE: method now unused
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  #
   # @return [Hash{Symbol=>*}]
   #
-  def get_upload_params: (?(prmHash|nil) p) -> symHash
+  def get_upload_params: () -> symHash
 
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
-  #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -57,7 +79,7 @@ module UploadConcern
   # submission where metadata is being changed but the uploaded file is not
   # being replaced.
   #
-  def upload_post_params: (?(prmHash|nil) p) -> symHash
+  def upload_post_params: () -> symHash
 
   # Extract POST parameters and data for bulk operations.
   #
@@ -91,24 +113,6 @@ module UploadConcern
   #
   def fetch_data: (**untyped opt) -> (anyHash | Array[anyHash] | nil)
 
-  # URL parameters associated with item/entry identification.                   # NOTE: to EntryConcern
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS: symArray
-
-  # Extract the best-match URL parameter which represents an item identifier.
-  #
-  # The @identifier member variable contains the original item specification,
-  # if one was provided, and not the array of IDs represented by it.
-  #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  #
-  # @return [String]                  Value of @identifier.
-  # @return [nil]                     No param from #IDENTIFIER_PARAMS found.
-  #
-  def set_identifiers: (?(prmHash|nil) p) -> (String | nil)
-
   # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
   #
   # @type [Array<Symbol>]
@@ -130,7 +134,7 @@ module UploadConcern
 
   # Locate and filter Upload records.
   #
-  # @param [Array<String,Array>] items  Default: `@identifier`.
+  # @param [Array<String,Array>] items  Default: `UploadConcern#identifier`.
   # @param [Hash]                opt    Passed to Upload#search_records;
   #                                       default: `#upload_params` if no
   #                                       *items* are given.
@@ -143,15 +147,15 @@ module UploadConcern
 
   # Return with the specified Upload record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Upload, nil] id
+  # @param [String, Hash, Upload, nil] id   Default: UploadConcern#identifier.
   #
-  # @raise [UploadWorkflow::SubmitError]  If *item* not found.
+  # @raise [UploadWorkflow::SubmitError]    If *item* not found.
   #
   # @return [Upload, nil]
   #
   # @see Upload#get_record
   #
-  def get_record: (String|Upload|anyHash|nil id) -> (Upload | nil)
+  def get_record: (?(String|Upload|anyHash|nil) id) -> (Upload | nil)
 
   # Get item data from the production service.
   #
@@ -302,4 +306,7 @@ module UploadConcern
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> Upload::Paginator
 
+  private
+
+  THIS_MODULE: Module
 end

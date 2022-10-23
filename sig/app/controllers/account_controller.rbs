@@ -32,8 +32,6 @@ class AccountController < ApplicationController
   #
   attr_reader item: User | nil
 
-  @page: Paginator
-
   # == GET /account
   #
   # List all user accounts.

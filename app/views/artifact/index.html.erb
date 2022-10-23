@@ -4,9 +4,8 @@
 
   view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
 
-  list   ||= @page.page_items
-  dec      = ArtifactsDecorator.new(list, **context)
-  list   ||= dec.object
+  list  ||= paginator.page_items
+  dec     = ArtifactsDecorator.new(list, **context)
 
   help   ||= nil # dec.help_topic
   title  ||= nil

@@ -1,0 +1,30 @@
+class ManifestItem::Options < Options
+  include Record::Properties
+
+  # @private
+  MODEL_TYPE: Symbol
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMS: symArray
+
+  def initialize: (?untyped? prm) -> void
+
+  # Get URL parameters relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def get_model_params: () -> symHash
+
+  # Extract POST parameters that are usable for creating/updating an Upload
+  # instance.
+  #
+  # @param [Hash] prm         Parameters to update
+  # @param [Hash] opt         Options to #json_parse.
+  #
+  # @return [Hash, nil]       The new contents of *prm* if modified.
+  #
+  def extract_model_data!: (symHash prm, **untyped opt) -> (symHash | nil)
+end

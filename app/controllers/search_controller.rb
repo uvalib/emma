@@ -87,25 +87,24 @@ class SearchController < ApplicationController
   def index
     __debug_route
     err   = nil
-    @page    = pagination_setup
-    opt      = @page.initial_parameters
-    playback = opt.delete(:search_call)
-    search   = playback || opt
-    s_params = search.except(*NON_SEARCH_KEYS)
+    prm      = paginator.initial_parameters
+    playback = prm.delete(:search_call)
+    search   = playback || prm
+    s_params = search.except(*Paginator::NON_SEARCH_KEYS)
     q_params = extract_hash!(s_params, *search_query_keys).compact_blank!
     if q_params.blank?
       if s_params.present?
-        redirect_to opt.merge!(q: SearchTerm::NULL_SEARCH)
+        redirect_to prm.merge!(q: SearchTerm::NULL_SEARCH)
       else
         render 'search/advanced'
       end
       return
     end
-    opt    = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+    prm    = prm.slice(*Paginator::NON_SEARCH_KEYS).merge!(s_params, q_params)
     titles = title_results?
-    @list  = index_search(titles: titles, save: !playback, **opt)
+    @list  = index_search(titles: titles, save: !playback, **prm)
     err    = @list.exec_report if @list.error?
-    @page.finalize(@list, (titles ? :titles : :records), **opt)
+    paginator.finalize(@list, (titles ? :titles : :records), **prm)
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -176,11 +175,10 @@ class SearchController < ApplicationController
   def direct
     __debug_route
     force_file_results
-    @page   = pagination_setup
-    opt     = @page.initial_parameters
-    opt[:q] = SearchTerm::NULL_SEARCH if opt.slice(*search_query_keys).blank?
-    @list   = index_search(titles: false, save: false, scores: false, **opt)
-    @page.finalize(@list, :records, **opt)
+    prm     = paginator.initial_parameters
+    prm[:q] = SearchTerm::NULL_SEARCH if prm.slice(*search_query_keys).blank?
+    @list   = index_search(titles: false, save: false, scores: false, **prm)
+    paginator.finalize(@list, :records, **prm)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html { render 'search/index' }
@@ -204,10 +202,8 @@ class SearchController < ApplicationController
   #
   def validate
     __debug_route
-    opt = request_parameters
-    if (ids = opt[:identifier])
-      render json: validate_identifiers(ids)
-    end
+    ids = param[:identifier]
+    render json: validate_identifiers(ids) if ids
   end
 
   # ===========================================================================

@@ -94,23 +94,12 @@ module ParamsHelper
 
   # All request parameters (including :controller and :action) as a Hash.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
-  #
-  # @return [Integer]
-  #
-  def request_parameter_count(p = nil)
-    prm = p || try(:params) || {}
-    prm.keys.size
-  end
-
-  # All request parameters (including :controller and :action) as a Hash.
-  #
-  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  # @param [ActionController::Parameters, Hash, nil] prm  Default: `params`.
   #
   # @return [Hash{Symbol=>String}]
   #
-  def request_parameters(p = nil)
-    normalize_hash(p || try(:params))
+  def request_parameters(prm = nil)
+    normalize_hash(prm || try(:params))
   end
 
   # The meaningful request URL parameters as a Hash (not including :controller
@@ -136,13 +125,11 @@ module ParamsHelper
   # Get a reference to `session[section]`.
   #
   # @param [String, Symbol, nil] section
-  # @param [Hash, nil]           p        Default: `params`.
   #
   # @return [Hash]
   #
-  def session_section(section = nil, p = nil)
-    section, p = [nil, section] if section.is_a?(Hash)
-    section = (section || request_parameters(p)[:controller] || :all).to_s
+  def session_section(section = nil)
+    section = (section || request_parameters[:controller] || :all).to_s
     session[section] = {} unless session[section].is_a?(Hash)
     session[section]
   end

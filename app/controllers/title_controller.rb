@@ -71,34 +71,33 @@ class TitleController < ApplicationController
   def index
     __debug_route
     err = nil
-    opt = request_parameters
+    prm = request_parameters
 
-    if Isbn.candidate?((isbn = opt[:keyword]))
+    if Isbn.candidate?((isbn = prm[:keyword]))
       # The search looks like an ISBN so interpret this as an ISBN search.
-      opt[:isbn] = Isbn.to_isbn(isbn) || isbn
-      opt.delete(:keyword)
-      return redirect_to opt
+      prm[:isbn] = Isbn.to_isbn(isbn) || isbn
+      prm.delete(:keyword)
+      return redirect_to prm
 
-    elsif (isbn = opt[:isbn]) && opt[:keyword]
+    elsif (isbn = prm[:isbn]) && prm[:keyword]
       # Since the same input box is used for both ISBN and keyword searches,
       # if there's a non-ISBN keyword search then it must be replacing a
       # previous ISBN search (if there was one).
-      opt.delete(:isbn)
-      return redirect_to opt
+      prm.delete(:isbn)
+      return redirect_to prm
 
     elsif isbn && !Isbn.valid?(isbn)
       # The supplied ISBN is not valid.
-      opt.delete(:isbn)
-      @page = pagination_setup
+      prm.delete(:isbn)
+      pagination_setup
       err   = "#{isbn.inspect} is not a valid ISBN" # TODO: I18n
 
     else
       # Search for keyword(s) or a valid ISBN.
-      @page = pagination_setup
-      opt   = @page.initial_parameters
-      b_opt = opt.except(:format)
+      prm   = paginator.initial_parameters
+      b_opt = bs_params(:start, :limit, **prm)
       @list = bs_api.get_titles(**b_opt)
-      @page.finalize(@list, :titles, **opt)
+      paginator.finalize(@list, :titles, **prm)
       err   = @list.exec_report if @list.error?
     end
 
@@ -124,7 +123,8 @@ class TitleController < ApplicationController
   def show
     __debug_route
     err   = nil
-    @item = bs_api.get_title(bookshareId: bs_id)
+    b_opt = { bookshareId: bs_id }
+    @item = bs_api.get_title(**b_opt)
     err   = @item.exec_report if @item.error?
     respond_to do |format|
       format.html

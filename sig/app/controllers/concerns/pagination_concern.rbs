@@ -5,6 +5,14 @@ module PaginationConcern
 
   include ParamsConcern
 
+  # Pagination information for the current page.
+  #
+  # @return [Paginator]
+  #
+  def paginator: (*untyped _ignored) -> Paginator
+
+  @paginator: Paginator
+
   # Create a Paginator for the current controller action.
   #
   # @param [ApplicationController] ctrlr      Default: calling controller.

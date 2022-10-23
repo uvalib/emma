@@ -19,6 +19,14 @@ module PaginationConcern
 
   public
 
+  # Pagination information for the current page.
+  #
+  # @return [Paginator]
+  #
+  def paginator(*)
+    @paginator ||= pagination_setup
+  end
+
   # Create a Paginator for the current controller action.
   #
   # @param [ApplicationController] ctrlr      Default: calling controller.
@@ -28,11 +36,8 @@ module PaginationConcern
   # @return [Paginator]
   #
   def pagination_setup(ctrlr: nil, paginator: Paginator, **opt)
-    unless (ctrlr ||= self).is_a?(ApplicationController)
-      raise "#{__method__}: invalid controller: #{ctrlr.class}"
-    end
-    opt.reverse_merge!(request_parameters)
-    paginator.new(ctrlr, **opt)
+    ctrlr ||= self
+    paginator.new(ctrlr, **request_parameters, **opt)
   end
 
   # ===========================================================================
@@ -46,7 +51,7 @@ module PaginationConcern
   # @return [void]
   #
   def cleanup_pagination
-    original_count = request_parameter_count
+    original_count = params.keys.size
 
     # Eliminate :offset if not still paginating.
     if params[:offset].present?
@@ -54,7 +59,7 @@ module PaginationConcern
     end
 
     # If parameters were removed, redirect to the corrected URL.
-    will_redirect unless request_parameter_count == original_count
+    will_redirect unless params.keys.size == original_count
   end
 
   # ===========================================================================
@@ -84,6 +89,12 @@ module PaginationConcern
     if respond_to?(:before_action)
       before_action :cleanup_pagination, only: %i[index]
     end
+
+    # =========================================================================
+    # :section: Helpers
+    # =========================================================================
+
+    helper_method :paginator if respond_to?(:helper_method)
 
   end
 

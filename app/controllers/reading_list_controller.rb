@@ -72,12 +72,11 @@ class ReadingListController < ApplicationController
   def index
     __debug_route
     err   = nil
-    @page = pagination_setup
-    opt   = @page.initial_parameters
-    b_opt = opt.except(:format)
+    prm   = paginator.initial_parameters
+    b_opt = bs_params(**prm)
     @list = bs_api.get_reading_lists_list(**b_opt)
     err   = @list.exec_report if @list.error?
-    @page.finalize(@list, :lists, **opt)
+    paginator.finalize(@list, :lists, **prm)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html
@@ -101,14 +100,13 @@ class ReadingListController < ApplicationController
   def show
     __debug_route
     err   = nil
-    @page = pagination_setup
-    opt   = @page.initial_parameters
+    prm   = paginator.initial_parameters
     b_opt = { readingListId: bs_list }
     @item = bs_api.get_reading_list(**b_opt)
     @list = bs_api.get_reading_list_titles(**b_opt, no_raise: true)
     err   = @item.exec_report if @item.error?
     err   = @list.exec_report if @list.error?
-    @page.finalize(@list, :titles, **opt)
+    paginator.finalize(@list, :titles, **prm)
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -139,8 +137,8 @@ class ReadingListController < ApplicationController
   #
   def create
     __debug_route
-    opt = params.slice(:name, :description, :access).to_unsafe_h
-    bs_api.create_my_reading_list(**opt)
+    prm = request_parameters.slice(:name, :description, :access)
+    bs_api.create_my_reading_list(**prm)
   end
 
   # == GET /reading_list/:id/edit
@@ -163,15 +161,16 @@ class ReadingListController < ApplicationController
   #
   def update
     __debug_route
+    prm   = request_parameters
     b_opt = { readingListId: bs_list }
-    Array.wrap(params[:add_titles]).each do |bid|
+    Array.wrap(prm[:add_titles]).each do |bid|
       bs_api.create_reading_list_title(**b_opt, bookshareId: bid)
     end
-    Array.wrap(params[:remove_titles]).each do |bid|
+    Array.wrap(prm[:remove_titles]).each do |bid|
       bs_api.remove_reading_list_title(**b_opt, bookshareId: bid)
     end
-    opt = params.slice(:name, :description, :access).to_unsafe_h
-    bs_api.update_reading_list(**b_opt, **opt) if opt.present?
+    prm.slice!(:name, :description, :access)
+    bs_api.update_reading_list(**b_opt, **prm) if prm.present?
   end
 
   # == DELETE /reading_list/:id

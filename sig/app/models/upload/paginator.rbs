@@ -1,13 +1,13 @@
 class Upload::Paginator < Paginator
-  def initialize: (?(ApplicationController|nil) controller, **untyped opt) -> void
+  def initialize: (?(ApplicationController|nil) ctrlr, **untyped opt) -> void
 
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Hash{Symbol=>Any}] result   NOTE: different than super
-  # @param [Hash]              opt
+  # @param [Hash{Symbol=>*}] result
+  # @param [Hash]            opt
   #
-  # @return [Array]                     The value of #page_items.
+  # @return [Array]
   #
   def finalize: (symHash result, **untyped opt) -> anyArray
 end

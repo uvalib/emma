@@ -1,5 +1,8 @@
 # Support methods for the "/entry" controller.
 #
+# @!method paginator
+#   @return [Entry::Paginator]
+#
 module EntryConcern
   extend ActiveSupport::Concern
 
@@ -17,22 +20,57 @@ module EntryConcern
 
   include IngestConcern
 
-  # :nocov:
-  #include OptionsConcern
+  include OptionsConcern
+
+  include ResponseConcern
+
+  include PaginationConcern
 
   MIME_REGISTRATION: Array[Class]
 
-  # POST/PUT/PATCH parameters from the entry form that are not relevant to the  # NOTE: from UploadConcern#IGNORED_UPLOAD_FORM_PARAMS
-  # create/update of an Entry instance.
+  # URL parameters associated with item/entry identification.                   # NOTE: from UploadConcern
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_ENTRY_FORM_PARAMS: symArray
+  IDENTIFIER_PARAMS: symArray
 
-  @action_id:  String | Integer | nil
-  @phase_id:   String | Integer | nil
-  @entry_id:   String | Integer | nil
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMS: symArray
+
+  # The entry identified in URL parameters either as :selected or :id.
+  #
+  # @return [String, nil]
+  #
+  def identifier: () -> (String | Integer | nil)
+
   @identifier: String | Integer | nil
+
+  # The Entry record identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def entry_id: () -> (Integer | nil)
+
+  @entry_id: Integer | nil
+
+  # The Phase record identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def phase_id: () -> (Integer | nil)
+
+  @phase_id: Integer | nil
+
+  # The Action record identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def action_id: () -> (Integer | nil)
+
+  @action_id: Integer | nil
 
   # URL parameters relevant to the current operation.
   #
@@ -44,16 +82,12 @@ module EntryConcern
 
   # Get URL parameters relevant to the current operation.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
-  #
   # @return [Hash{Symbol=>*}]
   #
-  def get_entry_params: (?(prmHash|nil) p) -> symHash
+  def get_entry_params: () -> symHash
 
   # Extract POST parameters that are usable for creating/updating an Entry
   # instance.
-  #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -65,7 +99,7 @@ module EntryConcern
   # submission where metadata is being changed but the uploaded file is not
   # being replaced.
   #
-  def entry_post_params: (?(prmHash|nil) p) -> symHash
+  def entry_post_params: () -> symHash
 
   # Extract POST parameters and data for bulk operations.
   #
@@ -148,28 +182,30 @@ module EntryConcern
 
   # Locate and filter Entry records.
   #
-  # @param [Array<String,Array>] items  Default: `@identifier`.
-  # @param [Hash]                opt    Passed to Entry#search_records;
-  #                                       default: `#entry_params` if no
-  #                                       *items* are given.
+  # @param [Array<String,IntegerArray>] items   Def: `EntryConcern#identifier`.
+  # @param [Hash]                       opt     Passed to Entry#search_records;
+  #                                               default: `#entry_params` if
+  #                                               no *items* are given.
   #
   # @raise [Record::SubmitError]        If :page is not valid.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def find_or_match_entries: (*(String|anyArray) items, **untyped opt) -> symHash
+  def find_or_match_entries: (*(String|Integer|Array[String|Integer]) items, **untyped opt) -> symHash
 
-  # Return with the specified Entry record or *nil* if one could not be found.
+  # Return with the specified Entry record.
   #
-  # @param [String, Hash, Entry, nil] item  Default: @identifier.
+  # @param [String, Hash, Entry, nil] item  Default: `EntryConcern#identifier`.
   # @param [Hash]                     opt   Passed to Entry#find_record.
+  #
+  # @option opt [Boolean] :no_raise     If *true*, return *nil* if not found.
   #
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [Entry, nil]
+  # @return [Entry]                     Or possibly *nil* if *no_raise*.
   #
-  def get_entry: (?(String|Entry|anyHash|nil) item, **untyped opt) -> (Entry | nil)
+  def get_entry: (?(String|Entry|anyHash|nil) item, **untyped opt) -> Entry
 
   # Get Entry data from the production service.
   #
@@ -331,70 +367,56 @@ module EntryConcern
 
   # bulk_new_entries
   #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
-  #
   # @return [Any]
   #
-  def bulk_new_entries: (?(symHash|nil) prm) -> untyped
+  def bulk_new_entries: () -> untyped
 
   # bulk_create_entries
-  #
-  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Created entries.
   #
-  def bulk_create_entries: (?(symHash|nil) prm) -> Array[Entry]
+  def bulk_create_entries: () -> Array[Entry]
 
   # bulk_edit_entries
   #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
-  #
   # @return [Any]
   #
-  def bulk_edit_entries: (?(symHash|nil) prm) -> untyped
+  def bulk_edit_entries: () -> untyped
 
   # bulk_update_entries
-  #
-  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Modified entries.
   #
-  def bulk_update_entries: (?(symHash|nil) prm) -> Array[Entry]
+  def bulk_update_entries: () -> Array[Entry]
 
   # bulk_delete_entries
   #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
-  #
   # @return [Any]
   #
-  def bulk_delete_entries: (?(symHash|nil) prm) -> untyped
+  def bulk_delete_entries: () -> untyped
 
   # bulk_destroy_entries
-  #
-  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Removed entries.
   #
-  def bulk_destroy_entries: (?(symHash|nil) prm) -> Array[Entry]
+  def bulk_destroy_entries: () -> Array[Entry]
 
   # bulk_check_entries
-  #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
   #
   # @return [Any]
   #
   # @note Currently unused.
   #
-  def bulk_check_entries: (?(symHash|nil) prm) -> untyped
+  def bulk_check_entries: () -> untyped
 
   # Default batch size for #reindex_submissions
   #
@@ -465,4 +487,8 @@ module EntryConcern
   # @return [Entry::Paginator]
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> Entry::Paginator
+
+  private
+
+  THIS_MODULE: Module
 end

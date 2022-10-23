@@ -4,9 +4,8 @@
 
   view_debug(__FILE__)
 
-  list   ||= @page.page_items
-  dec      = UploadsDecorator.new(list, **context)
-  list   ||= dec.object
+  list  ||= paginator.page_items
+  dec     = UploadsDecorator.new(list, **context)
 
   help   ||= dec.help_topic
   title  ||= nil

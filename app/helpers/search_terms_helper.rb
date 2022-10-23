@@ -62,7 +62,7 @@ module SearchTermsHelper
   #
   # @type [Array<Symbol>]
   #
-  NON_SEARCH_KEYS = [:api_key, :modal, :limit, *PAGINATION_KEYS].freeze
+  NON_SEARCH_KEYS = Paginator::NON_SEARCH_KEYS
 
   # URL parameters that do not represent relevant search result
   # characteristics for #search_terms.

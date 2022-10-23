@@ -25,7 +25,6 @@ class MemberController < ApplicationController
   #include AbstractController::Callbacks
 
   @list:         Bs::Message::UserAccountList
-  @page:         Paginator
   @item:         Bs::Message::MyAccountSummary     | nil
   @preferences:  Bs::Message::MyAccountPreferences | nil
   @history:      Bs::Message::TitleDownloadList    | nil

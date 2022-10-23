@@ -4,9 +4,8 @@
 
   view_debug(__FILE__)
 
-  list   ||= @list
-  dec      = ActionsDecorator.new(list, **context)
-  list   ||= dec.object
+  list  ||= paginator.page_items
+  dec     = ActionsDecorator.new(list, **context)
 
   help   ||= nil # %i[entry actions]
   title  ||= nil

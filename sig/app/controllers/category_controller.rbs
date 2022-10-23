@@ -28,7 +28,6 @@ class CategoryController < ApplicationController
   #include AbstractController::Callbacks
 
   @list: Bs::Message::CategoriesList
-  @page: Paginator
 
   # == GET /category
   #

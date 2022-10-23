@@ -58,7 +58,6 @@ class UploadController < ApplicationController
   #
   attr_reader s3_object_table: Hash[String,Array[Aws::S3::Object]]
 
-  @page:         Paginator
   @group_counts: symHash
   @host:         String
 
@@ -355,7 +354,7 @@ class UploadController < ApplicationController
   # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
-  # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
+  # @param [String, Array, nil] id_params  Default: `UploadConcern#identifier`.
   #
   def show_menu?: (?(String|strArray|nil) id_params) -> bool
 

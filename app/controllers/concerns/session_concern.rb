@@ -142,20 +142,15 @@ module SessionConcern
   #
   # @param [Time]   time              Default: `Time.now`.
   # @param [String] path              Default: `request.path`.
-  # @param [Hash]   req_params        Default: `params`.
   #
   # @return [Hash{String=>Any}]
   #
-  def last_operation_update(time: nil, path: nil, req_params: nil)
-    req_params ||= params
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case req_params[:controller]
-      when 'bs_api' then return if req_params[:action] == 'image'
-    end
+  def last_operation_update(time: nil, path: nil)
+    return if (params[:controller] == 'bs_api') && (params[:action] == 'image')
     last_operation.merge!(
       'time'   => (time || Time.now).to_i,
       'path'   => (path || request_path),
-      'params' => abbreviate_params!(url_parameters(req_params))
+      'params' => abbreviate_params!(url_parameters)
     )
       .tap do
         __debug { "session_update 'time' = #{last_operation_time.inspect}" }

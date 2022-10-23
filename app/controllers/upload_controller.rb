@@ -57,11 +57,6 @@ class UploadController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_identifiers, only: %i[
-    index         show
-    create        edit          update        delete        destroy
-    cancel        check         endpoint      download      bulk_reindex
-  ]
   before_action :set_ingest_engine, only: %i[
     index         new           edit          delete
     bulk_index    bulk_new      bulk_edit     bulk_delete   bulk_reindex
@@ -126,12 +121,11 @@ class UploadController < ApplicationController
   #
   def index
     __debug_route
-    @page  = pagination_setup
-    opt    = @page.initial_parameters
-    all    = opt[:group].nil? || (opt[:group].to_sym == :all)
-    result = find_or_match_records(groups: all, **opt)
-    @list  = @page.finalize(result, **opt)
-    result = find_or_match_records(groups: :only, **opt) if opt.delete(:group)
+    prm    = paginator.initial_parameters
+    all    = prm[:group].nil? || (prm[:group].to_sym == :all)
+    result = find_or_match_records(groups: all, **prm)
+    @list  = paginator.finalize(result, **prm)
+    result = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
     @group_counts = result[:groups]
     respond_to do |format|
       format.html
@@ -153,7 +147,7 @@ class UploadController < ApplicationController
   #
   def show
     __debug_route
-    @item = get_record(@identifier)
+    @item = get_record
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -164,11 +158,11 @@ class UploadController < ApplicationController
     # As a convenience (for HTML only), if an index item is actually on another
     # instance, fetch it from there to avoid a potentially confusing result.
     if request.format.html?
-      # noinspection RubyMismatchedReturnType
+      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
       [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
         next if base_url.start_with?(request.base_url)
         @host = base_url
-        @item = proxy_get_record(@identifier, @host)
+        @item = proxy_get_record(identifier, @host)
       end
     end
     show_search_failure(error) if @item.blank?
@@ -186,8 +180,8 @@ class UploadController < ApplicationController
   #
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
-  # On the initial visit to the page, @db_id should be *nil*.  On subsequent
-  # visits (due to "Cancel" returning to this same page), @db_id will be
+  # On the initial visit to the page, #db_id should be *nil*.  On subsequent
+  # visits (due to "Cancel" returning to this same page), #db_id will be
   # included in order to reuse the Upload record that was created at that time.
   #
   # @see #new_upload_path             Route helper
@@ -197,7 +191,7 @@ class UploadController < ApplicationController
   #
   def new
     __debug_route
-    @item = wf_single(rec: (@db_id || :unset), event: :create)
+    @item = wf_single(rec: (db_id || :unset), event: :create)
   rescue => error
     failure_status(error)
   end
@@ -239,7 +233,7 @@ class UploadController < ApplicationController
   #
   def edit
     __debug_route
-    @item = (wf_single(event: :edit) unless show_menu?(@identifier))
+    @item = (wf_single(event: :edit) unless show_menu?)
   rescue => error
     failure_status(error)
   end
@@ -285,8 +279,8 @@ class UploadController < ApplicationController
   def delete
     __debug_route
     @list = []
-    unless show_menu?(@identifier)
-      @list = wf_single(rec: :unset, data: @identifier, event: :remove)
+    unless show_menu?
+      @list = wf_single(rec: :unset, data: identifier, event: :remove)
     end
   rescue => error
     failure_status(error)
@@ -309,7 +303,7 @@ class UploadController < ApplicationController
     __debug_route
     back  = delete_select_upload_path
     rec   = :unset
-    dat   = @identifier
+    dat   = identifier
     opt   = { start_state: :removing, event: :submit, variant: :remove }
     @list = wf_single(rec: rec, data: dat, **opt)
     failure(:file_id) unless @list.present?
@@ -566,7 +560,7 @@ class UploadController < ApplicationController
   def endpoint
     __debug_route
     __debug_request
-    rec = @db_id || @identifier
+    rec = db_id || identifier
     dat = { env: request.env }
     stat, hdrs, body = wf_single(rec: rec, data: dat, event: :upload)
     self.status = stat        if stat.present?
@@ -594,7 +588,7 @@ class UploadController < ApplicationController
   #
   def download
     __debug_route
-    @item = get_record(@identifier)
+    @item = get_record
     link  = @item.download_url
     respond_to do |format|
       format.html { redirect_to(link, allow_other_host: true) }
@@ -682,8 +676,8 @@ class UploadController < ApplicationController
   #
   def bulk_reindex
     __debug_route
-    opt = request_parameters.slice(:size).merge!(meth: __method__)
-    @list, failed = reindex_submissions(*@identifier, **opt)
+    prm = request_parameters.slice(:size).merge!(meth: __method__)
+    @list, failed = reindex_submissions(*identifier, **prm)
     failure(:invalid, failed.uniq) if failed.present?
   rescue => error
     failure_status(error)
@@ -698,10 +692,10 @@ class UploadController < ApplicationController
   # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
-  # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
+  # @param [String, Array, nil] id_params  Default: `UploadConcern#identifier`.
   #
   def show_menu?(id_params = nil)
-    Array.wrap(id_params || @identifier).include?('SELECT')
+    Array.wrap(id_params || identifier).include?('SELECT')
   end
 
   # Display the failure on the screen -- immediately if modal, or after a
@@ -736,8 +730,8 @@ class UploadController < ApplicationController
   # @return [void]
   #
   def index_redirect
-    return unless @identifier && @identifier.match?(/[^[:alnum:]]/)
-    redirect_to action: :index, selected: @identifier
+    return unless identifier&.match?(/[^[:alnum:]]/)
+    redirect_to action: :index, selected: identifier
   end
 
   # ===========================================================================

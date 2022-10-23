@@ -76,12 +76,11 @@ class MemberController < ApplicationController
   def index
     __debug_route
     err   = nil
-    @page = pagination_setup
-    opt   = @page.initial_parameters
-    b_opt = opt.except(:format)
+    prm   = paginator.initial_parameters
+    b_opt = bs_params(**prm)
     @list = bs_api.get_my_organization_members(**b_opt)
     err   = @list.exec_report if @list.error?
-    @page.finalize(@list, :userAccounts, **opt)
+    paginator.finalize(@list, :userAccounts, **prm)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

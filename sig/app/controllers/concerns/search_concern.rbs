@@ -15,6 +15,8 @@ module SearchConcern
 
   include EngineConcern
 
+  include PaginationConcern
+
   include SearchCallConcern
 
   # Access the EMMA Unified Search API service.
@@ -191,9 +193,7 @@ module SearchConcern
   #
   def set_search_feature: (Symbol param_key, untyped value, (Symbol|symArray) valid_values, ?session_key: String|nil, ?meth: Symbol|nil) -> void
 
-  THIS_MODULE: Module
-
-  include PaginationConcern
+  public
 
   # Create a Paginator for the current controller action.
   #
@@ -203,4 +203,6 @@ module SearchConcern
   # @return [SearchPaginator]
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> SearchPaginator
+
+  THIS_MODULE: Module
 end

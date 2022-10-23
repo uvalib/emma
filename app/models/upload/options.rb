@@ -42,11 +42,11 @@ class Upload::Options < Options
   protected
 
   def option_keys
-    WF_METHOD_MAP.keys
+    OPTION_METHOD_MAP.keys
   end
 
   def option_method(key)
-    super || WF_METHOD_MAP[key]
+    super || OPTION_METHOD_MAP[key]
   end
 
   # ===========================================================================

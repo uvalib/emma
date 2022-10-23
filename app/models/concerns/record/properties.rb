@@ -156,7 +156,7 @@ module Record::Properties                                                       
   #
   # @type [Hash{Symbol=>Any}]
   #
-  WF_PARAMETER_DEFAULT = {
+  OPTION_PARAMETER_DEFAULT = {
     prefix:       TITLE_PREFIX,
     batch:        BATCH_SIZE,
     force:        FORCE_DELETE_DEFAULT,
@@ -171,7 +171,7 @@ module Record::Properties                                                       
   #
   # @type [Hash{Symbol=>Symbol}]
   #
-  WF_METHOD_MAP = {
+  OPTION_METHOD_MAP = {
     prefix:      :title_prefix,
     batch:       :batch_size,
     force:       :force_delete,
@@ -186,7 +186,7 @@ module Record::Properties                                                       
   #
   # @type [Hash{Symbol=>Symbol}]
   #
-  WF_PARAMETER_MAP = WF_METHOD_MAP.invert.freeze
+  OPTION_PARAMETER_MAP = OPTION_METHOD_MAP.invert.freeze
 
   # ===========================================================================
   # :section: Property values
@@ -206,11 +206,11 @@ module Record::Properties                                                       
   # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
   #
   def title_prefix
-    key   = WF_PARAMETER_MAP[__method__]
+    key   = OPTION_PARAMETER_MAP[__method__]
     value = parameters[key]
     return false if false?(value)
     value = nil  if true?(value)
-    value&.to_s || WF_PARAMETER_DEFAULT[key]
+    value&.to_s || OPTION_PARAMETER_DEFAULT[key]
   end
 
   # Force deletions of Unified Index entries regardless of whether the item is
@@ -221,7 +221,7 @@ module Record::Properties                                                       
   # @see #FORCE_DELETE_DEFAULT
   #
   def force_delete
-    key = WF_PARAMETER_MAP[__method__]
+    key = OPTION_PARAMETER_MAP[__method__]
     parameter_setting(key)
   end
 
@@ -234,7 +234,7 @@ module Record::Properties                                                       
   # @see #EMERGENCY_DELETE_DEFAULT
   #
   def emergency_delete
-    key = WF_PARAMETER_MAP[__method__]
+    key = OPTION_PARAMETER_MAP[__method__]
     parameter_setting(key)
   end
 
@@ -245,7 +245,7 @@ module Record::Properties                                                       
   # @see #TRUNCATE_DELETE_DEFAULT
   #
   def truncate_delete
-    key = WF_PARAMETER_MAP[__method__]
+    key = OPTION_PARAMETER_MAP[__method__]
     parameter_setting(key)
   end
 
@@ -257,9 +257,9 @@ module Record::Properties                                                       
   # @see #REPO_CREATE_DEFAULT
   #
   def repo_create
-    key = WF_PARAMETER_MAP[__method__]
+    key = OPTION_PARAMETER_MAP[__method__]
     # TODO: conditionally accept repo_create based on user?
-    WF_PARAMETER_DEFAULT[key]
+    OPTION_PARAMETER_DEFAULT[key]
   end
 
   # Permit the "update" of member repository items via a request to be queued
@@ -270,9 +270,9 @@ module Record::Properties                                                       
   # @see #REPO_EDIT_DEFAULT
   #
   def repo_edit
-    key = WF_PARAMETER_MAP[__method__]
+    key = OPTION_PARAMETER_MAP[__method__]
     # TODO: conditionally accept repo_edit based on user?
-    WF_PARAMETER_DEFAULT[key]
+    OPTION_PARAMETER_DEFAULT[key]
   end
 
   # Permit the "removal" of member repository items via a request to be queued
@@ -283,9 +283,9 @@ module Record::Properties                                                       
   # @see #REPO_REMOVE_DEFAULT
   #
   def repo_remove
-    key = WF_PARAMETER_MAP[__method__]
+    key = OPTION_PARAMETER_MAP[__method__]
     # TODO: conditionally accept repo_remove based on user?
-    WF_PARAMETER_DEFAULT[key]
+    OPTION_PARAMETER_DEFAULT[key]
   end
 
   # Handle bulk operations in batches.
@@ -299,12 +299,12 @@ module Record::Properties                                                       
   # @see #set_bulk_batch
   #
   def batch_size
-    key   = WF_PARAMETER_MAP[__method__]
+    key   = OPTION_PARAMETER_MAP[__method__]
     value = parameters[key]
     return false if false?(value)
     value = positive(value)
     # noinspection RubyMismatchedReturnType
-    value ? [value, MAX_BATCH_SIZE].min : WF_PARAMETER_DEFAULT[key]
+    value ? [value, MAX_BATCH_SIZE].min : OPTION_PARAMETER_DEFAULT[key]
   end
 
   # ===========================================================================
@@ -346,7 +346,7 @@ module Record::Properties                                                       
   def parameter_setting(key, prm = nil)
     prm   ||= parameters
     value   = prm&.dig(key)
-    default = WF_PARAMETER_DEFAULT[key]
+    default = OPTION_PARAMETER_DEFAULT[key]
     case value
       when true, false then value
       when nil         then default

@@ -26,7 +26,6 @@ class TitleController < ApplicationController
 
   @list: Bs::Message::TitleMetadataSummaryList | []
   @item: Bs::Message::TitleMetadataDetail
-  @page: Paginator
 
   # == GET /title
   #

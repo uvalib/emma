@@ -15,6 +15,7 @@ module SerializationConcern
   include SessionDebugHelper
 
   include ApiConcern
+  include PaginationConcern
 
   # ===========================================================================
   # :section:
@@ -82,12 +83,12 @@ module SerializationConcern
     item_name = opt.delete(:item)
     debug     = session_debug?
 
-    items  = @page&.page_items || list || []
+    items  = paginator&.page_items || list || []
     list ||= items
 
     prop = {
-      total: @page&.total_items || list.size,
-      limit: list.try(:limit) || @page&.item_count(list),
+      total: paginator&.total_items || paginator&.item_count(list),
+      limit: list.try(:limit),
       links: list.try(:links)
     }
     prop[:list_type] = list.class.name        if debug

@@ -5,6 +5,8 @@ module BookshareConcern
 
   include ApiConcern
 
+  include PaginationConcern
+
   # Access the Bookshare API service.
   #
   # @return [BookshareService]
@@ -53,6 +55,22 @@ module BookshareConcern
   #
   attr_accessor item_download_url: String | nil
 
+  # A Bookshare API search starting offset.
+  #
+  # @return [Integer, nil]
+  #
+  def bs_start: () -> (Integer | nil)
+
+  @bs_start: Integer | nil
+
+  # A Bookshare API search limit (page size).
+  #
+  # @return [Integer, nil]
+  #
+  def bs_limit: () -> (Integer | nil)
+
+  @bs_limit: Integer | nil
+
   # Return a member associated with the given user.
   #
   # @param [User, String] for_user    Default: `#current_user`.
@@ -63,54 +81,85 @@ module BookshareConcern
   #
   def get_member: (?(User|String|nil) for_user, ?(String|nil) _name) -> (String | nil)
 
+  # Local names for Bookshare API parameters mapped on to the actual URL
+  # parameters(s).
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  BS_PARAMETERS: Hash[Symbol,symArray]
+
+  # Local names for Bookshare API parameters.
+  #
+  # @type [Array<Symbol>]
+  #
+  BS_KEYS: symArray
+
+  # Parameter aliases mapping on to the true Bookshare API parameters.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  BS_PARAM_ALIAS: Hash[Symbol,Symbol]
+
+  # Build up Bookshare API parameters.
+  #
+  # @param [Array<Symbol>] keys   Required Bookshare API keys.
+  # @param [Hash]          prm    Other parameters.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def bs_params: (*Symbol keys, **untyped prm) -> symHash
+
   # Extract the best-match URL parameter which represents an item identifier.
   #
-  # @return [String]                  Value of `params[:id]`.
-  # @return [nil]                     No :id, :bookshareId found.
+  # @return [String, nil]
   #
   def set_bs_id: () -> (String | nil)
 
   # Extract the URL parameter which specifies a journal/periodical series.
   #
-  # @return [String]                  Value of `params[:series]`.
-  # @return [nil]                     No :series, :seriesId found.
+  # @return [String, nil]
   #
   def set_bs_series: () -> (String | nil)
 
   # Extract the URL parameter which specifies a journal/periodical edition.
   #
-  # @return [String]                  Value of `params[:id]`.
-  # @return [nil]                     No :id, :edition, :editionId found.
+  # @return [String, nil]
   #
   def set_bs_edition: () -> (String | nil)
 
   # Extract the best-match URL parameter which represents an item format.
   #
-  # @return [String]                  Value of `params[:fmt]`.
-  # @return [nil]                     No :fmt found.
+  # @return [String, nil]
   #
   def set_bs_format: () -> (String | nil)
 
   # Extract the URL parameter which specifies a reading list.
   #
-  # @return [String]                  Value of `params[:id]`.
-  # @return [nil]                     No :id, :readingListId found.
+  # @return [String, nil]
   #
   def set_bs_list: () -> (String | nil)
 
   # Extract the URL parameter which indicates a Bookshare member.
   #
-  # @return [String]                  Value of `params[:member]`.
-  # @return [nil]                     No :member, :forUser found.
+  # @return [String, nil]
   #
   def set_bs_member: () -> (String | nil)
 
   # Extract the URL parameter which indicates a remote URL path.
   #
-  # @return [String]                  Value of `params[:url]`.
-  # @return [nil]                     No :url found.
+  # @return [String, nil]
   #
   def set_item_download_url: () -> (String | nil)
+
+  private
+
+  # Get the value of the associated URL parameter.
+  #
+  # @param [Symbol] name
+  #
+  # @return [String, nil]
+  #
+  def get_bs_param: (Symbol name) -> (String | nil)
 
   private
 

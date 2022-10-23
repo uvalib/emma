@@ -5,7 +5,7 @@
   view_debug(__FILE__)
 
   item  ||= @item
-  list  ||= @page.page_items
+  list  ||= paginator.page_items
   dec     = PeriodicalDecorator.new(item, editions: list, **context)
   item  ||= dec.object
 

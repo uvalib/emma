@@ -18,6 +18,7 @@ module SearchConcern
 
   include ApiConcern
   include EngineConcern
+  include PaginationConcern
   include SearchCallConcern
 
   # ===========================================================================
@@ -371,6 +372,24 @@ module SearchConcern
   end
 
   # ===========================================================================
+  # :section: PaginationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [SearchPaginator]
+  #
+  def pagination_setup(paginator: SearchPaginator, **opt)
+    # noinspection RubyMismatchedReturnType
+    super
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -379,27 +398,7 @@ module SearchConcern
   THIS_MODULE = self
 
   included do |base|
-
     __included(base, THIS_MODULE)
-
-    include PaginationConcern
-
-    # =========================================================================
-    # :section: PaginatorConcern overrides
-    # =========================================================================
-
-    # Create a Paginator for the current controller action.
-    #
-    # @param [Class<Paginator>] paginator  Paginator class.
-    # @param [Hash]             opt        Passed to super.
-    #
-    # @return [SearchPaginator]
-    #
-    def pagination_setup(paginator: SearchPaginator, **opt)
-      # noinspection RubyMismatchedReturnType
-      super
-    end
-
   end
 
 end

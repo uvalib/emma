@@ -81,11 +81,10 @@ module SessionConcern
   #
   # @param [Time]   time              Default: `Time.now`.
   # @param [String] path              Default: `request.path`.
-  # @param [Hash]   req_params        Default: `params`.
   #
   # @return [Hash{String=>Any}]
   #
-  def last_operation_update: (?time: Time|nil, ?path: String|nil, ?req_params: symHash|nil) -> (strHash | nil)
+  def last_operation_update: (?time: Time|nil, ?path: String|nil) -> (strHash | nil)
 
   # Application-specific `#session` keys.
   #

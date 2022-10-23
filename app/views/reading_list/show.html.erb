@@ -5,7 +5,7 @@
   view_debug(__FILE__)
 
   item  ||= @item
-  list  ||= @page.page_items
+  list  ||= paginator.page_items
   dec     = ReadingListDecorator.new(item, titles: list, **context)
   item  ||= dec.object
 

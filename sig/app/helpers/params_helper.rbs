@@ -44,19 +44,11 @@ module ParamsHelper
 
   # All request parameters (including :controller and :action) as a Hash.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
-  #
-  # @return [Integer]
-  #
-  def request_parameter_count: (?(prmHash|nil) p) -> Integer
-
-  # All request parameters (including :controller and :action) as a Hash.
-  #
-  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  # @param [ActionController::Parameters, Hash, nil] prm  Default: `params`.
   #
   # @return [Hash{Symbol=>String}]
   #
-  def request_parameters: (?(prmHash|nil) p) -> symHash
+  def request_parameters: (?(prmHash|nil) prm) -> symHash
 
   # The meaningful request URL parameters as a Hash (not including :controller
   # or :action).
@@ -73,11 +65,10 @@ module ParamsHelper
   # Get a reference to `session[section]`.
   #
   # @param [String, Symbol, nil] section
-  # @param [Hash, nil]           p        Default: `params`.
   #
   # @return [Hash]
   #
-  def session_section: (?(String|Symbol|nil) section, ?(symHash|nil) p) -> anyHash
+  def session_section: (?(String|Symbol|nil) section) -> anyHash
 
   # Information about the last operation performed in this session.
   #

@@ -1,11 +1,11 @@
-# app/models/entry/options.rb
+# app/models/manifest_item/options.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-class Entry::Options < Options
+class ManifestItem::Options < Options
 
   include Record::Properties
 
@@ -16,19 +16,13 @@ class Entry::Options < Options
   public
 
   # @private
-  MODEL_TYPE = :entry
-
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS = [*Options::IDENTIFIER_PARAMS, :submission_id].uniq.freeze
+  MODEL_TYPE = :manifest_item
 
   # URL parameters associated with POST data.
   #
   # @type [Array<Symbol>]
   #
-  DATA_PARAMS = [*Options::DATA_PARAMS, :entry, :phase, :action].uniq.freeze
+  DATA_PARAMS = [*Options::DATA_PARAMS, MODEL_TYPE].uniq.freeze
 
   # ===========================================================================
   # :section:
@@ -44,24 +38,17 @@ class Entry::Options < Options
   # :section: Options overrides
   # ===========================================================================
 
-  protected
-
-  def option_method(key)
-    OPTION_METHOD_MAP[key&.to_sym]
-  end
-
-  # ===========================================================================
-  # :section: Options overrides
-  # ===========================================================================
-
   public
 
-  # Get URL parameters relevant to the current operation.
+  # Extract POST parameters that are usable for creating/updating a new model
+  # instance.
   #
   # @return [Hash{Symbol=>Any}]
   #
   def get_model_params
-    super.delete_if { |k, _| k.start_with?('edit_') } # TODO: temporary until JavaScript upload -> entry
+    super.tap do |prm|
+      prm[:manifest_id] = prm.delete(:manifest) if prm.key?(:manifest)
+    end
   end
 
   # ===========================================================================
@@ -70,16 +57,17 @@ class Entry::Options < Options
 
   protected
 
-  MODEL_DATA_PARAMS = {
-    # URL param   Data hash key
-    # ---------   -------------
-    file_data:    :file,
-    emma_data:    :emma_data,
-    revert:       :revert_data,
-  }.freeze
-
-  def model_data_params
-    MODEL_DATA_PARAMS
+  # Extract POST parameters that are usable for creating/updating an Upload
+  # instance.
+  #
+  # @param [Hash] prm         Parameters to update
+  # @param [Hash] opt         Options to #json_parse.
+  #
+  # @return [Hash, nil]       The new contents of *prm* if modified.
+  #
+  def extract_model_data!(prm, **opt)
+    opt[:compact] = false
+    super
   end
 
 end

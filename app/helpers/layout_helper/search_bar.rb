@@ -140,7 +140,7 @@ module LayoutHelper::SearchBar
     # The initial determination of the order and initial input type selections
     # will be determined by the data supplied.
     values ||= url_parameters
-    values = values.except(*NON_SEARCH_KEYS)
+    values = values.except(*Paginator::NON_SEARCH_KEYS)
     values.transform_keys! { |k| prm_map[k.to_sym] }
     values.slice!(*fields)
     values.transform_values! do |v|

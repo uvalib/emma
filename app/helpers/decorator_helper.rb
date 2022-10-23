@@ -28,8 +28,8 @@ module DecoratorHelper
     opt[:cancel]       ||= params[:cancel] if params[:cancel]
     opt[:user]         ||= current_user    if defined?(current_user)
     opt[:request]      ||= request         if defined?(request)
+    opt[:paginator]    ||= paginator       if defined?(paginator)
     opt[:options]      ||= @model_options  if defined?(@model_options)
-    opt[:paginator]    ||= @page           if defined?(@page)
     opt[:group_counts] ||= @group_counts   if defined?(@group_counts)
     opt[:results_type] ||= results_type    if defined?(results_type)
     opt[:search_style] ||= search_style    if defined?(search_style)

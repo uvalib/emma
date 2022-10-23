@@ -125,20 +125,16 @@ class Options
 
   # Get URL parameters relevant to the current operation.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_model_params: (?(prmHash|nil) p) -> symHash
+  def get_model_params: () -> symHash
 
   # Extract POST parameters that are usable for creating/updating a new model
   # instance.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `Options#params`
-  #
   # @return [Hash{Symbol=>Any}]
   #
-  def model_post_params: (?(prmHash|nil) p) -> symHash
+  def model_post_params: () -> symHash
 
   # ignored_form_params
   #

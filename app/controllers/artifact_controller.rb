@@ -77,11 +77,10 @@ class ArtifactController < ApplicationController
   def index
     __debug_route
     err   = nil
-    @page = pagination_setup
-    opt   = @page.initial_parameters
-    @list = bs_api.get_artifact_list(**opt)
+    prm   = paginator.initial_parameters
+    @list = bs_api.get_artifact_list(**prm)
     err   = @list.exec_report if @list.error?
-    @page.finalize(@list, :artifacts, **opt)
+    paginator.finalize(@list, :artifacts, **prm)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html

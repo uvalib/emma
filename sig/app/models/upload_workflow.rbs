@@ -237,19 +237,19 @@ module UploadWorkflow::Properties
   #
   # @type [Hash{Symbol=>Any}]
   #
-  WF_PARAMETER_DEFAULT: symHash
+  OPTION_PARAMETER_DEFAULT: symHash
 
   # Module method mapped to URL parameter.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
-  WF_METHOD_MAP: Hash[Symbol,Symbol]
+  OPTION_METHOD_MAP: Hash[Symbol,Symbol]
 
   # URL parameter mapped to module method.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
-  WF_PARAMETER_MAP: Hash[Symbol,Symbol]
+  OPTION_PARAMETER_MAP: Hash[Symbol,Symbol]
 
   # A string added to the start of each title.
   #

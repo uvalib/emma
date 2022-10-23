@@ -69,7 +69,7 @@ module OptionsConcern
     # =========================================================================
 
     if respond_to?(:before_action)
-      before_action :set_model_options, if: :request_get?
+      prepend_before_action :set_model_options
     end
 
   end

@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Support methods for the "/entry" controller.
 #
+# @!method paginator
+#   @return [Entry::Paginator]
+#
 #--
 # noinspection RubyTooManyMethodsInspection
 #++
@@ -23,13 +26,9 @@ module EntryConcern
   include HttpHelper
 
   include IngestConcern
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include OptionsConcern
-    # :nocov:
-  end
+  include OptionsConcern
+  include ResponseConcern
+  include PaginationConcern
 
   # ===========================================================================
   # :section: Initialization
@@ -46,35 +45,79 @@ module EntryConcern
 
   public
 
+  # URL parameters associated with item/entry identification.                   # NOTE: from UploadConcern
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS = Entry::Options::IDENTIFIER_PARAMS
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMS = Entry::Options::DATA_PARAMS
+
+  # The entry identified in URL parameters either as :selected or :id.
+  #
+  # @return [String, Integer, nil]
+  #
+  def identifier
+    entry_params unless defined?(@identifier)
+    @identifier
+  end
+
+  # The Entry record identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def entry_id
+    entry_params unless defined?(@entry_id)
+    @entry_id
+  end
+
+  # The Phase record identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def phase_id
+    entry_params unless defined?(@phase_id)
+    @phase_id
+  end
+
+  # The Action record identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def action_id
+    entry_params unless defined?(@action_id)
+    @action_id
+  end
+
   # URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>*}]
   #
   def entry_params                                                              # NOTE: from UploadConcern#upload_params
-    @entry_params ||=
-      model_options.model_params.tap do |prm|
-        @action_id ||= prm[:action_id]
-        @phase_id  ||= prm[:phase_id]
-        @entry_id  ||= prm[:entry_id] || prm[:id]
-      end
+    @entry_params ||= request.get? ? get_entry_params : entry_post_params
   end
 
   # Get URL parameters relevant to the current operation.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
-  #
   # @return [Hash{Symbol=>*}]
   #
-  def get_entry_params(p = nil)                                                 # NOTE: from UploadConcern#get_upload_params
-    model_options.get_model_params(p).tap do |prm|
-      prm[:user] = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
+  def get_entry_params                                                          # NOTE: from UploadConcern#get_upload_params
+    model_options.get_model_params.tap do |prm|
+      id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
+      @identifier = sel || sid || id
+      @entry_id   = [sel, id].compact.find { |v| digits_only?(v) }&.to_i
+      @phase_id   = positive(prm[:phase_id])
+      @action_id  = positive(prm[:action_id])
+      prm[:user]  = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
     end
   end
 
   # Extract POST parameters that are usable for creating/updating an Entry
   # instance.
-  #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters` # NOTE: never used; always nil
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -86,11 +129,24 @@ module EntryConcern
   # submission where metadata is being changed but the uploaded file is not
   # being replaced.
   #
-  def entry_post_params(p = nil)                                                # NOTE: from UploadConcern#upload_post_params
-    model_options.model_post_params(p).tap do |prm|
+  def entry_post_params                                                         # NOTE: from UploadConcern#upload_post_params
+    model_options.model_post_params.tap do |prm|
       prm[:base_url] = request.base_url
-      @entry_id    ||= prm[:id] if p.nil?
-      @entry_params  = prm      if p.nil?
+      extract_hash!(prm, *DATA_PARAMS).each_pair do |k, v|
+        next unless (v &&= safe_json_parse(v)).is_a?(Hash)
+        next unless v[:id].present?
+        next unless (id = positive(v[:id]))
+        case k
+          when :action then @action_id = id
+          when :phase  then @phase_id  = id
+          else              @entry_id  = id
+        end
+      end
+      id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
+      @identifier  = sel || sid || id
+      @entry_id  ||= [sel, id].compact.find { |v| digits_only?(v) }&.to_i
+      @phase_id  ||= prm[:phase_id]
+      @action_id ||= prm[:action_id]
     end
   end
 
@@ -120,7 +176,7 @@ module EntryConcern
   #
   def entry_request_params(entry, prm = nil)                                    # NOTE: from UploadConcern#workflow_parameters (sorta)
     entry, prm = [nil, entry] if entry.is_a?(Hash)
-    prm ||= request.get? ? get_entry_params : entry_post_params
+    prm ||= entry_params
     return entry, prm
   end
 
@@ -177,55 +233,6 @@ module EntryConcern
 
   public
 
-  # URL parameters associated with item/entry identification.                   # NOTE: from UploadConcern
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS = Entry::Options::IDENTIFIER_PARAMS
-
-  # URL parameters associated with POST data.
-  #
-  # @type [Array<Symbol>]
-  #
-  DATA_PARAMS = Entry::Options::DATA_PARAMS
-
-  # Extract the best-match URL parameter which represents an item identifier.
-  #
-  # The @identifier member variable contains the original item specification,
-  # if one was provided, and not the array of IDs represented by it.
-  #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  #
-  # @return [String]                  Value of @identifier.
-  # @return [nil]                     No param from #IDENTIFIER_PARAMS found.
-  #
-  def set_identifiers(p = nil)                                                  # NOTE: from UploadConcern
-    prm  = url_parameters(p)
-    data = extract_hash!(prm, *DATA_PARAMS)
-    data.each_pair do |k, v|
-      next unless (v &&= safe_json_parse(v)).is_a?(Hash)
-      if v[:id].present?
-        case k
-          when :action then @action_id = v[:id]
-          when :phase  then @phase_id  = v[:id]
-          else              @entry_id  = v[:id]
-        end
-      end
-      prm[k] = v
-    end
-    id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-    id          ||= @entry_id
-    @entry_id   ||= (sel.to_i if digits_only?(sel))
-    @entry_id   ||= (id.to_i  if digits_only?(id))
-    @identifier   = sel || sid || id
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Parameters used by Entry#search_records.                                    # NOTE: from UploadConcern
   #
   # @type [Array<Symbol>]
@@ -249,10 +256,10 @@ module EntryConcern
 
   # Locate and filter Entry records.
   #
-  # @param [Array<String,Array>] items  Default: `@identifier`.
-  # @param [Hash]                opt    Passed to Entry#search_records;
-  #                                       default: `#entry_params` if no
-  #                                       *items* are given.
+  # @param [Array<String,Integer,Array>] items  Def: `EntryConcern#identifier`.
+  # @param [Hash]                       opt     Passed to Entry#search_records;
+  #                                               default: `#entry_params` if
+  #                                               no *items* are given.
   #
   # @raise [Record::SubmitError]        If :page is not valid.
   #
@@ -260,14 +267,14 @@ module EntryConcern
   #
   def find_or_match_entries(*items, **opt)                                      # NOTE: from UploadConcern#find_or_match_records
     items = items.flatten.compact
-    items << @identifier if items.blank? && @identifier.present?
+    items << identifier if items.blank? && identifier.present?
 
     # If neither items nor field queries were given, use request parameters.
     if items.blank? && (opt[:groups] != :only)
       opt = entry_params.merge(opt) if opt.except(*SEARCH_ONLY_PARAMS).blank?
     end
-    opt[:limit] ||= 20 # TODO: Default page size for Entry index.
-    opt[:page]  ||= 0  # Start at the first page by default.
+    opt[:limit] ||= paginator.page_size
+    opt[:page]  ||= paginator.page_number
 
     # Disallow experimental database WHERE predicates unless privileged.
     opt.slice!(*FIND_OR_MATCH_PARAMS) unless current_user&.administrator?
@@ -330,19 +337,21 @@ module EntryConcern
 
   end
 
-  # Return with the specified Entry record or *nil* if one could not be found.
+  # Return with the specified Entry record.
   #
-  # @param [String, Hash, Entry, nil] item  Default: @identifier.
+  # @param [String, Hash, Entry, nil] item  Default: `EntryConcern#identifier`.
   # @param [Hash]                     opt   Passed to Entry#find_record.
+  #
+  # @option opt [Boolean] :no_raise     If *true*, return *nil* if not found.
   #
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [Entry, nil]
+  # @return [Entry]                     Or possibly *nil* if *no_raise*.
   #
   def get_entry(item = nil, **opt)                                              # NOTE: from UploadConcern#get_record
     # noinspection RubyMismatchedReturnType
-    Entry.find_record((item || @identifier), **opt)
+    Entry.find_record((item || identifier), **opt)
   end
 
   # Get Entry data from the production service.
@@ -399,6 +408,9 @@ module EntryConcern
   #
   # @return [Entry]                         New persisted Entry instance.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
+  #++
   def create_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
     entry, opt = entry_request_params(item, opt)
@@ -467,7 +479,7 @@ module EntryConcern
   # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
   #++
   def delete_entry(entries = nil, opt = nil)
     entries, opt = entry_request_params(entries, opt)
@@ -487,7 +499,7 @@ module EntryConcern
   # @return [Array]                   Destroyed entries.
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
   #++
   def destroy_entry(entries = nil, opt = nil)                                   # NOTE: from UploadWorkflow::Actions#wf_remove_items
     entries, opt = entry_request_params(entries, opt)
@@ -518,7 +530,7 @@ module EntryConcern
   #
   def renew_entry(item = nil, opt = nil)
     entry, opt = entry_request_params(item, opt)
-    sid   = Entry.sid_value((entry || @identifier), **opt)
+    sid   = Entry.sid_value((entry || identifier), **opt)
     phase = Phase::Create.latest_for_sid(sid, **opt)
     Entry.new(from: phase)
   end
@@ -534,9 +546,12 @@ module EntryConcern
   #
   # @return [Entry]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
+  #++
   def reedit_entry(item = nil, opt = nil)
     entry, opt = entry_request_params(item, opt)
-    sid   = Entry.sid_value((entry || @identifier), **opt)
+    sid   = Entry.sid_value((entry || identifier), **opt)
     phase = Phase::Edit.latest_for_sid(sid, **opt.merge(no_raise: true))
     phase&.entry&.take || renew_entry(**opt)
   end
@@ -583,6 +598,9 @@ module EntryConcern
   #
   # @return [Array<String>]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
+  #++
   def check_entry(item = nil, opt = nil)                                        # NOTE: from UploadWorkflow::Single::Actions#wf_check_status
     entry, opt = entry_request_params(item, opt)
     local, opt = partition_hash(opt, :html)
@@ -590,7 +608,7 @@ module EntryConcern
     if (entry = get_entry(entry, **opt))
       note  = entry.describe_status
     else
-      sid   = Entry.sid_value(@identifier, **opt)
+      sid   = Entry.sid_value(identifier, **opt)
       phase = Phase.latest_for_sid(sid, **opt)
       entry = Entry.new(from: phase)
       note  = entry.describe_status(phase: phase)
@@ -653,13 +671,10 @@ module EntryConcern
 
   # bulk_new_entries
   #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
-  #
   # @return [Any]
   #
-  def bulk_new_entries(prm = nil)
-    prm ||= get_entry_params
-    # noinspection RubyNilAnalysis
+  def bulk_new_entries
+    prm = get_entry_params
     if prm.slice(:src, :source, :manifest).present?
       post make_path(bulk_create_entry_path, **prm)
     else
@@ -669,8 +684,6 @@ module EntryConcern
 
   # bulk_create_entries
   #
-  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
-  #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -679,8 +692,8 @@ module EntryConcern
   #--
   # noinspection RubyUnusedLocalVariable
   #++
-  def bulk_create_entries(prm = nil)
-    data = entry_bulk_post_params(prm) << { base_url: request.base_url }
+  def bulk_create_entries
+    data = entry_bulk_post_params << { base_url: request.base_url }
     succeeded = []
     failed    = []
     # TODO: bulk_create_entries
@@ -690,13 +703,10 @@ module EntryConcern
 
   # bulk_edit_entries
   #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
-  #
   # @return [Any]
   #
-  def bulk_edit_entries(prm = nil)
-    prm ||= get_entry_params
-    # noinspection RubyNilAnalysis
+  def bulk_edit_entries
+    prm = get_entry_params
     if prm.slice(:src, :source, :manifest).present?
       put make_path(bulk_update_entry_path, **prm)
     else
@@ -706,8 +716,6 @@ module EntryConcern
 
   # bulk_update_entries
   #
-  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params.
-  #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -716,8 +724,8 @@ module EntryConcern
   #--
   # noinspection RubyUnusedLocalVariable
   #++
-  def bulk_update_entries(prm = nil)
-    data = entry_bulk_post_params(prm) << { base_url: request.base_url }
+  def bulk_update_entries
+    data = entry_bulk_post_params << { base_url: request.base_url }
     succeeded = []
     failed    = []
     # TODO: bulk_update_entries
@@ -727,13 +735,10 @@ module EntryConcern
 
   # bulk_delete_entries
   #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
-  #
   # @return [Any]
   #
-  def bulk_delete_entries(prm = nil)
-    prm ||= get_entry_params
-    # noinspection RubyNilAnalysis
+  def bulk_delete_entries
+    prm = get_entry_params
     if prm.slice(:src, :source, :manifest).present?
       delete make_path(bulk_destroy_entry_path, **prm)
     else
@@ -743,8 +748,6 @@ module EntryConcern
 
   # bulk_destroy_entries
   #
-  # @param [Hash, nil] prm            Passed to #entry_bulk_post_params
-  #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -753,8 +756,8 @@ module EntryConcern
   #--
   # noinspection RubyUnusedLocalVariable
   #++
-  def bulk_destroy_entries(prm = nil)
-    data = entry_bulk_post_params(prm) << { base_url: request.base_url }
+  def bulk_destroy_entries
+    data = entry_bulk_post_params << { base_url: request.base_url }
     succeeded = []
     failed    = []
     # TODO: bulk_destroy_entries
@@ -764,8 +767,6 @@ module EntryConcern
 
   # bulk_check_entries
   #
-  # @param [Hash, nil] prm            Default: `#get_entry_params`
-  #
   # @return [Any]
   #
   # @note Currently unused.
@@ -773,8 +774,8 @@ module EntryConcern
   #--
   # noinspection RubyUnusedLocalVariable
   #++
-  def bulk_check_entries(prm = nil)
-    prm ||= get_entry_params
+  def bulk_check_entries
+    prm = get_entry_params
     # TODO: bulk_check_entries
   end
 
@@ -897,9 +898,7 @@ module EntryConcern
   # :section:
   # ===========================================================================
 
-  private
-
-  THIS_MODULE = self
+  protected
 
   # Raise an exception.
   #
@@ -915,40 +914,49 @@ module EntryConcern
     ExceptionHelper.failure(problem, value, model: :entry)
   end
 
+  # ===========================================================================
+  # :section: OptionsConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Create a @model_options instance from the current parameters.
+  #
+  # @return [Entry::Options]
+  #
+  def set_model_options
+    # noinspection RubyMismatchedVariableType, RubyMismatchedReturnType
+    @model_options = Entry::Options.new(request_parameters)
+  end
+
+  # ===========================================================================
+  # :section: PaginationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [Entry::Paginator]
+  #
+  def pagination_setup(paginator: Entry::Paginator, **opt)
+    # noinspection RubyMismatchedReturnType
+    super
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  THIS_MODULE = self
+
+  included do |base|
     __included(base, THIS_MODULE)
-
-    include OptionsConcern
-    include PaginationConcern
-
-    # =========================================================================
-    # :section: OptionsConcern overrides
-    # =========================================================================
-
-    # Create a @model_options instance from the current parameters.
-    #
-    # @return [Entry::Options]
-    #
-    def set_model_options
-      # noinspection RubyMismatchedVariableType, RubyMismatchedReturnType
-      @model_options = Entry::Options.new(request_parameters)
-    end
-
-    # =========================================================================
-    # :section: PaginatorConcern overrides
-    # =========================================================================
-
-    # Create a Paginator for the current controller action.
-    #
-    # @param [Class<Paginator>] paginator  Paginator class.
-    # @param [Hash]             opt        Passed to super.
-    #
-    # @return [Entry::Paginator]
-    #
-    def pagination_setup(paginator: Entry::Paginator, **opt)
-      # noinspection RubyMismatchedReturnType
-      super
-    end
-
   end
 
 end

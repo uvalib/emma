@@ -4,9 +4,8 @@
 
   view_debug(__FILE__)
 
-  list   ||= @page.page_items
-  dec      = PeriodicalsDecorator.new(list, **context)
-  list   ||= dec.object
+  list  ||= paginator.page_items
+  dec     = PeriodicalsDecorator.new(list, **context)
 
   help   ||= nil # dec.help_topic
   title  ||= nil

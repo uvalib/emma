@@ -1,11 +1,11 @@
-# app/models/upload/paginator.rb
+# app/models/manifest/paginator.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-class Upload::Paginator < Paginator
+class Manifest::Paginator < Paginator
 
   # ===========================================================================
   # :section: Paginator overrides

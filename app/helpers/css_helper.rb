@@ -227,10 +227,9 @@ module CssHelper
   def hex_rand(digits: nil, upper: nil)
     digits = digits.to_i
     digits = HEX_RAND_DEFAULT_DIGITS unless digits.positive?
-    format = "%0#{digits}X"
-    format = format.downcase if upper.is_a?(FalseClass)
     limit  = 16.pow(digits) - 1
-    format % rand(0..limit)
+    value  = rand(0..limit)
+    hex_format(value, digits: digits, upper: upper)
   end
 
   # Create a unique CSS identifier from *base* and a random hex digit string.

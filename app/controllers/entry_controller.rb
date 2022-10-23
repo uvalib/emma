@@ -56,11 +56,6 @@ class EntryController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_identifiers, only: %i[
-    index         show
-    create        edit          update        delete        destroy
-    cancel        check         endpoint      download      bulk_reindex
-  ]
   before_action :set_ingest_engine, only: %i[
     index         new           edit          delete
     bulk_index    bulk_new      bulk_edit     bulk_delete   bulk_reindex
@@ -125,13 +120,12 @@ class EntryController < ApplicationController
   #
   def index
     __debug_route
-    @page  = pagination_setup
-    opt    = @page.initial_parameters
-    opt.except!(:group, :groups) # TODO: upload -> entry
-    all    = opt[:group].nil? || (opt[:group].to_sym == :all)
-    result = find_or_match_entries(groups: all, **opt)
-    @list  = @page.finalize(result, **opt)
-    result = find_or_match_entries(groups: :only, **opt) if opt.delete(:group)
+    prm   = paginator.initial_parameters
+    prm.except!(:group, :groups) # TODO: upload -> entry
+    all    = prm[:group].nil? || (prm[:group].to_sym == :all)
+    result = find_or_match_entries(groups: all, **prm)
+    @list  = paginator.finalize(result, **prm)
+    result = find_or_match_entries(groups: :only, **prm) if prm.delete(:group)
     @group_counts = result[:groups]
     respond_to do |format|
       format.html
@@ -167,7 +161,7 @@ class EntryController < ApplicationController
       [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
         next if base_url.start_with?(request.base_url)
         @host = base_url
-        @item = proxy_get_record(@identifier, @host)
+        @item = proxy_get_record(identifier, @host)
       end
     end
     show_search_failure(error) if @item.blank?
@@ -187,8 +181,8 @@ class EntryController < ApplicationController
   # to upload a file and collects metadata for the new entry.
   #
   # TODO: verify this:
-  # On the initial visit to the page, @entry_id should be *nil*.  On subsequent
-  # visits (due to "Cancel" returning to this same page), @entry_id will be
+  # On the initial visit to the page, #entry_id should be *nil*.  On subsequent
+  # visits (due to "Cancel" returning to this same page), #entry_id will be
   # included in order to reuse the Entry record that was created at that time.
   #
   # @see #new_entry_path              Route helper
@@ -638,8 +632,8 @@ class EntryController < ApplicationController
   #
   def bulk_reindex
     __debug_route
-    opt = request_parameters.slice(:size).merge!(meth: __method__)
-    @list, failed = reindex_submissions(*@identifier, **opt)
+    prm = request_parameters.slice(:size).merge!(meth: __method__)
+    @list, failed = reindex_submissions(*identifier, **prm)
     failure(:invalid, failed.uniq) if failed.present?
   rescue => error
     failure_status(error)
@@ -657,7 +651,8 @@ class EntryController < ApplicationController
   #
   def phases
     __debug_route
-    @list = Phase.all.to_a
+    prm    = paginator.initial_parameters
+    @list  = paginator.finalize(Phase.all.to_a, **prm)
   end
 
   # == GET /actions
@@ -666,7 +661,8 @@ class EntryController < ApplicationController
   #
   def actions
     __debug_route
-    @list = Action.all.to_a
+    prm    = paginator.initial_parameters
+    @list  = paginator.finalize(Action.all.to_a, **prm)
   end
 
   # ===========================================================================
@@ -678,10 +674,10 @@ class EntryController < ApplicationController
   # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
-  # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
+  # @param [String, Array, nil] id_params  Default: `EntryConcern#identifier`.
   #
   def show_menu?(id_params = nil)
-    Array.wrap(id_params || @identifier).include?('SELECT')
+    Array.wrap(id_params || identifier).include?('SELECT')
   end
 
   # Display the failure on the screen -- immediately if modal, or after a
@@ -716,8 +712,8 @@ class EntryController < ApplicationController
   # @return [void]
   #
   def index_redirect
-    return unless @identifier && @identifier.match?(/[^[:alnum:]]/)
-    redirect_to action: :index, selected: @identifier
+    return unless identifier&.match?(/[^[:alnum:]]/)
+    redirect_to action: :index, selected: identifier
   end
 
   # ===========================================================================

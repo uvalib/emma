@@ -26,7 +26,6 @@ class ReadingListController < ApplicationController
 
   @list: Bs::Message::ReadingListList
   @item: Bs::Message::ReadingListUserView
-  @page: Paginator
 
   # == GET /reading_list
   #

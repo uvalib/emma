@@ -76,12 +76,11 @@ class AccountController < ApplicationController
   #
   def index
     __debug_route
-    @page  = pagination_setup
-    opt    = @page.initial_parameters
-    search = opt.delete(:like)
-    opt.except!(:limit, *Paginator::PAGINATION_KEYS)
-    @list  = get_accounts(*search, **opt).to_a
-    @page.finalize(@list, **opt)
+    prm    = paginator.initial_parameters
+    search = prm.delete(:like)
+    prm.except!(:limit, *Paginator::PAGINATION_KEYS)
+    @list  = get_accounts(*search, **prm).to_a
+    paginator.finalize(@list, **prm)
   end
 
   # == GET /account/show/:id

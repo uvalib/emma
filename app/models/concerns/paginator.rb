@@ -15,8 +15,6 @@ class Paginator
   include ActionController::UrlFor
   include Rails.application.routes.url_helpers
 
-  delegate :env, :request, to: :controller
-
   include Emma::Common
   include ParamsHelper
 
@@ -26,8 +24,17 @@ class Paginator
 
   public
 
-  # NOTE: from SearchTermsHelper::PAGINATION_KEYS
+  # URL parameters that are search-related but "out-of-band".
+  #
+  # @type [Array<Symbol>]
+  #
   PAGINATION_KEYS = %i[start offset page prev_id prev_value].freeze
+
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_KEYS = [:api_key, :modal, :limit, *PAGINATION_KEYS].freeze
 
   # URL parameters involved in pagination.
   #
@@ -54,22 +61,96 @@ class Paginator
 
   public
 
-  attr_reader :controller
-  attr_reader :context
-  private :controller, :context
+  # Pagination data values.
+  #
+  # This does not include :page_items so that value can be handled separately
+  # for diagnostic reporting.
+  #
+  class Properties < ::Hash
 
+    # Property names relating to the range of index values on the page.
+    #
+    # @type [Array<Symbol>]
+    #
+    INDEX = %i[first_index last_index current_index].freeze
+
+    # Property names relating to cursors for field position per page item.
+    #
+    # @type [Array<Symbol>]
+    #
+    POSITION = %i[first_position final_position current_position].freeze
+
+    # Empty copy of data values in the preferred order (for debug output).
+    #
+    # @type [Hash{Symbol=>any}]
+    #
+    TEMPLATE = {
+      page_number:      nil,
+      page_size:        nil,
+      page_offset:      nil,
+
+      total_items:      nil,
+      page_records:     nil,
+
+      next_page:        nil,
+      prev_page:        nil,
+      first_page:       nil,
+      last_page:        nil,
+
+      first_index:      nil,
+      last_index:       nil,
+      current_index:    nil,
+
+      first_position:   nil,
+      final_position:    nil,
+      current_position: nil,
+    }.freeze
+
+    def initialize(values = nil)
+      replace(TEMPLATE)
+      POSITION.each { |k| store(k, {}) }
+      update(values) if values
+    end
+
+    # All property names.
+    #
+    # @return [Array<Symbol>]
+    #
+    def self.keys
+      TEMPLATE.keys
+    end
+
+  end
+
+  attr_reader :context
   attr_reader :initial_parameters
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Create a new instance.
   #
-  # @param [ApplicationController, nil] controller
+  # @param [ApplicationController, nil] ctrlr
+  # @param [ActionDispatch::Request]    request
   # @param [Hash]                       opt         From `#request_parameters`.
   #
-  def initialize(controller = nil, **opt)
+  def initialize(ctrlr = nil, request: nil, **opt)
 
-    @controller = controller
-    @context    = extract_hash!(opt, :controller, :action)
-    @context[:controller] ||= @controller&.controller_name&.to_sym
+    @context = extract_hash!(opt, :controller, :action)
+    @context[:controller] ||= ctrlr&.controller_name&.to_sym
+    @context[:request]    ||= request || ctrlr&.request
+
+    if ctrlr && !ctrlr.is_a?(ApplicationController)
+      raise "not an ApplicationController: #{ctrlr.inspect}"
+    end
+    raise 'no controller given' if @context[:controller].blank?
+    raise 'no request given'    if @context[:request].blank?
+
+    # Strip off index cursor initialization values.
+    Properties::INDEX.each { |k| property[k] = opt.delete(k)&.to_i }
 
     # Get pagination values.
     limit, page, offset =
@@ -77,10 +158,11 @@ class Paginator
     limit  ||= page_size
     page   ||= (offset / limit) + 1 if offset
     offset ||= (page - 1) * limit   if page
+    offset   = positive(offset)
 
     # Get first and current page paths; adjust values if currently on the first
     # page of results.
-    main_page  = request.path
+    main_page  = @context[:request].path
     path_opt   = { decorate: true, unescape: true }
     mp_opt     = opt.merge(path_opt)
     current    = make_path(main_page, **mp_opt)
@@ -97,41 +179,75 @@ class Paginator
       on_first = (current == first)
     end
 
-    # Unless already on the first page, the previous page link is just
-    # 'history.back()'.
-    if on_first
-      offset = 0
-      prev = first = nil
-    else
-      prev = :back
+    # Sanity check.
+    unless application_deployed?
+      if on_first
+        raise "on_first for opt = #{opt.inspect}" if page.to_i > 1
+      else
+        raise "no page number for opt = #{opt.inspect}" if page.blank?
+      end
     end
 
-    # Set current values for the including controller.
-    self.page_size   = limit
-    self.page_offset = offset
-    self.first_page  = first
-    self.prev_page   = prev
+    # On the first page, all pagination values retain their defaults.
+    # Otherwise the previous page link is just 'history.back()'.
+    unless on_first
+      self.page_offset = offset
+      self.page_number = page
+      self.first_page  = first
+      self.prev_page   = :back
+    end
+    self.page_size = limit
 
-    # Adjust parameters to be transmitted to the Bookshare API.
-    opt[:limit]  = limit
-    opt[:offset] = (offset if offset.nonzero?)
-    @initial_parameters = url_parameters(opt).compact
+    # Set the effective URL parameters, including those required by API calls
+    # for paginated results.
+    @initial_parameters =
+      url_parameters(opt).merge!(offset: offset, limit: limit).compact
   end
 
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Api::Record, Array] result
-  # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
-  # @param [Hash]               search  Passed to #next_page_path.
+  # @param [Api::Record, Array, Hash] result
+  # @param [Symbol, nil]              meth
+  # @param [Hash]                     opt
   #
-  # @return [Array]                     The value of #page_items.
+  # @return [Array]
   #
-  def finalize(result, meth = nil, **search)
-    self.page_items   = meth && result.try(meth) || result
-    self.page_records = record_count(result)
-    self.total_items  = item_count(result, default: page_items.size)
-    self.next_page    = next_page_path(list: result, **search)
+  #--
+  # == Variations
+  #++
+  #
+  # @overload finalize(result, **opt)
+  #   Generally for Record-related models.
+  #   @param [Hash{Symbol=>*}]    result
+  #   @param [Hash]               opt     Passed to #url_for.
+  #   @return [Array]                     The value of #page_items.
+  #
+  # @overload finalize(result, meth = nil, **opt)
+  #   Generally for other models (e.g. Bookshare API-related).
+  #   @param [Api::Record, Array] result
+  #   @param [Symbol, nil]        meth    Method to extract items from result.
+  #   @param [Hash]               opt     Passed to #next_page_path.
+  #   @return [Array]                     The value of #page_items.
+  #
+  def finalize(result, meth = nil, **opt)
+    # noinspection RubyMismatchedArgumentType
+    if result.is_a?(Hash)
+      first, last, page = result.values_at(:first, :last, :page)
+      self.page_items   = result[:list]
+      self.page_size    = result[:limit]
+      self.page_offset  = result[:offset]
+      self.total_items  = result[:total]
+      self.next_page    = (url_for(opt.merge(page: (page + 1))) unless last)
+      self.prev_page    = (url_for(opt.merge(page: (page - 1))) unless first)
+      self.first_page   = (url_for(opt.except(*PAGE_PARAMS))    unless first)
+      self.prev_page    = first_page if page == 2
+    else
+      self.page_items   = meth && result.try(meth) || result
+      self.page_records = record_count(result)
+      self.total_items  = item_count(result)
+      self.next_page    = next_page_path(list: result, **opt)
+    end
     self.page_items
   end
 
@@ -157,35 +273,253 @@ class Paginator
   end
 
   # ===========================================================================
+  # :section: Special definitions
+  # ===========================================================================
+
+  public
+
+  # Originating request.
+  #
+  # @note Defined to support use of external routing methods like #url_for.
+  #
+  # @return [ActionDispatch::Request]
+  #
+  def request
+    context[:request]
+  end
+
+  # Originating environment.
+  #
+  # @note Defined to support use of external routing methods like #url_for.
+  #
+  # @return [Hash{String=>*}]
+  #
+  def env
+    # noinspection RubyMismatchedReturnType
+    request.env
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 
   protected
 
-  # Pagination data values.
-  #
-  class Properties < ::Hash
+  module PageMethods
 
-    # Empty copy of data values in the preferred order (for debug output).
-    #
-    # @type [Hash{Symbol=>any}]
-    #
-    TEMPLATE = {
-      page_size:    nil,
-      page_offset:  nil,
-      total_items:  nil,
-      page_records: nil,
-      next_page:    nil,
-      prev_page:    nil,
-      first_page:   nil,
-      last_page:    nil
-    }.freeze
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
-    def initialize(values = nil)
-      replace(TEMPLATE)
-      update(values) if values
+    public
+
+    # Configured results per page for the given controller/action.
+    #
+    # @param [Symbol, String, Hash, nil] c   Controller
+    # @param [Symbol, String, nil]       a   Action
+    #
+    # @return [Integer]
+    #
+    def get_page_size(c = nil, a = nil)
+      # noinspection RubyNilAnalysis
+      c, a = c.values_at(:controller, :action) if c.is_a?(Hash)
+      keys = []
+      keys << :"emma.#{c}.#{a}.pagination.page_size" if c && a
+      keys << :"emma.#{c}.#{a}.page_size"            if c && a
+      keys << :"emma.#{c}.pagination.page_size"      if c
+      keys << :"emma.#{c}.page_size"                 if c
+      keys << :'emma.generic.pagination.page_size'
+      keys << :'emma.generic.page_size'
+      keys << :'emma.pagination.page_size'
+      keys << :'emma.page_size'
+      I18n.t(keys.shift, default: keys).to_i
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
+  end
+
+  module ListMethods
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Determine the number of records reported by an object.
+    #
+    # @param [Api::Record, Model, Array, Hash, Any, nil] value
+    # @param [Integer]                                   default
+    #
+    # @return [Integer]               Zero indicates unknown count.
+    #
+    def record_count(value, default: 0)
+      default = positive(default) || 1 if value.is_a?(Array)
+      Array.wrap(value).sum do |v|
+        res   = v.try(:totalResults)
+        res ||= v.try(:records).try(:size)
+        res ||= v.try(:size) unless v.is_a?(Hash)
+        res || default
+      end
+    end
+
+    # Extract the number of "items" reported by an object.
+    #
+    # (For aggregate items, this is the number of aggregates as opposed to the
+    # number of records from which they are composed.)
+    #
+    # @param [Api::Record, Model, Array, Hash, Any, nil] value
+    # @param [Integer]                                   default
+    #
+    # @return [Integer]               Zero indicates unknown count.
+    #
+    #--
+    # noinspection RubyNilAnalysis, RailsParamDefResolve
+    #++
+    def item_count(value, default: 0)
+      result   = (value.size if value.is_a?(Hash) || value.is_a?(Array))
+      result ||= value.try(:totalResults)
+      result ||= value.try(:records).try(:size)
+      result ||= value.try(:item_count)
+      result ||= value.try(:titles).try(:size)
+      result || default
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
+  end
+
+  module PathMethods
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Interpret *value* as a URL path or a JavaScript action.
+    #
+    # @param [String, Symbol, nil] value  One of [:back, :forward, :go].
+    # @param [Integer, nil]   page        To #page_history for *action* :go.
+    #
+    # @return [String]                    A value usable with 'href'.
+    # @return [nil]                       If *value* is invalid.
+    #
+    def page_path(value, page = nil)
+      # noinspection RubyMismatchedArgumentType
+      value.is_a?(Symbol) ? page_history(value, page) : value.to_s.presence
+    end
+
+    # A value to use in place of a path in order to engage browser history.
+    #
+    # @param [String, Symbol] action    One of [:back, :forward, :go].
+    # @param [Integer, nil]   page      History page if *directive* is :go.
+    #
+    # @return [String]
+    #
+    def page_history(action, page = nil)
+      "javascript:history.#{action}(#{page});"
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
+  end
+
+  include PageMethods, ListMethods, PathMethods
+
+  # ===========================================================================
+  # :section: Paginator::PageMethods overrides
+  # ===========================================================================
+
+  public
+
+  # Current results per page for the given controller/action (unless an
+  # argument is present).
+  #
+  # @param [Symbol, String, Hash, nil] c   Controller
+  # @param [Symbol, String, nil]       a   Action
+  #
+  # @return [Integer]
+  #
+  def get_page_size(c = nil, a = nil)
+    c ? super : super(context)
+  end
+
+  # ===========================================================================
+  # :section: Paginator::ListMethods overrides
+  # ===========================================================================
+
+  public
+
+  # Determine the number of records reported by an object.
+  #
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Hash]                                      opt
+  #
+  # @return [Integer]               Zero indicates unknown count.
+  #
+  def record_count(value = nil, **opt)
+    super((value || page_items), **opt)
+  end
+
+  # Extract the number of "items" reported by an object.
+  #
+  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # @param [Hash]                                      opt
+  #
+  # @return [Integer]               Zero indicates unknown count.
+  #
+  def item_count(value = nil, **opt)
+    super((value || page_items), **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get the current page of result items.
+  #
+  # @return [Array]
+  #
+  def page_items
+    @page_items ||= []
+  end
+
+  # Set the current page of result items.
+  #
+  # @param [Array] values
+  #
+  # @return [Array]
+  #
+  def page_items=(values)
+    @page_items = Array.wrap(values)
   end
 
   # property
@@ -196,11 +530,47 @@ class Paginator
     @property ||= Properties.new
   end
 
+  # Induce all properties to acquire a value (typically for diagnostics).
+  #
+  # @return [Hash]
+  #
+  def current_properties
+    Properties.keys.map { |prop| [prop, send(prop)] }.to_h
+  end
+
+  # Default results per page for the current controller/action.
+  #
+  # @return [Integer]
+  #
+  def default_page_size
+    @default_page_size ||= get_page_size
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # Get the current page number.
+  #
+  # @return [Integer]
+  #
+  def page_number
+    property[:page_number] ||= 1
+  end
+
+  # Set the current page number.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer]
+  #
+  def page_number=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
+    property[:page_number] = value&.to_i
+    page_number
+  end
 
   # Get the number of results per page.
   #
@@ -217,8 +587,80 @@ class Paginator
   # @return [Integer]
   #
   def page_size=(value)
-    property[:page_size] = value&.to_i || default_page_size
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
+    property[:page_size] = value&.to_i
+    page_size
   end
+
+  # Get the offset of the current page into the total set of results.
+  #
+  # @return [Integer]
+  #
+  def page_offset
+    property[:page_offset] ||= 0
+  end
+
+  # Set the offset of the current page into the total set of results.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer]
+  #
+  def page_offset=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
+    property[:page_offset] = value&.to_i
+    page_offset
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get the total results count if known.
+  #
+  # @return [Integer, nil]
+  #
+  def total_items
+    property[:total_items]
+  end
+
+  # Set the total results count.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer, nil]
+  #
+  def total_items=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
+    property[:total_items] = positive(value)
+  end
+
+  # Get the number of records returned from the API for this page.
+  #
+  # @return [Integer, nil]
+  #
+  def page_records
+    property[:page_records]
+  end
+
+  # Set the number of records returned from the API for this page.
+  #
+  # @param [Integer, nil] value
+  #
+  # @return [Integer, nil]
+  #
+  def page_records=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
+    property[:page_records] = positive(value)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Get the path to the first page of results.
   #
@@ -237,6 +679,7 @@ class Paginator
   # @return [nil]                     If @first_page is unset.
   #
   def first_page=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:first_page] = page_path(value)
   end
 
@@ -257,6 +700,7 @@ class Paginator
   # @return [nil]                     If @last_page is unset.
   #
   def last_page=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:last_page] = page_path(value)
   end
 
@@ -277,6 +721,7 @@ class Paginator
   # @return [nil]                     If @next_page is unset.
   #
   def next_page=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:next_page] = page_path(value)
   end
 
@@ -297,109 +742,8 @@ class Paginator
   # @return [nil]                     If @prev_page is unset.
   #
   def prev_page=(value)
+    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:prev_page] = page_path(value)
-  end
-
-  # Get the offset of the current page into the total set of results.
-  #
-  # @return [Integer]
-  #
-  def page_offset
-    property[:page_offset] ||= 0
-  end
-
-  # Set the offset of the current page into the total set of results.
-  #
-  # @param [Integer, nil] value
-  #
-  # @return [Integer]
-  #
-  def page_offset=(value)
-    property[:page_offset] = value.to_i
-  end
-
-  # Get the total results count.
-  #
-  # @return [Integer]
-  #
-  def total_items
-    property[:total_items] ||= 0
-  end
-
-  # Set the total results count.
-  #
-  # @param [Integer, nil] value
-  #
-  # @return [Integer]
-  #
-  def total_items=(value)
-    property[:total_items] = value.to_i
-  end
-
-  # Get the number of records returned from the API for this page.
-  #
-  # @return [Integer]
-  #
-  def page_records
-    property[:page_records] ||= 0
-  end
-
-  # Set the number of records returned from the API for this page.
-  #
-  # @param [Integer, nil] value
-  #
-  # @return [Integer]
-  #
-  def page_records=(value)
-    property[:page_records] = value.to_i
-  end
-
-  # Get the current page of result items.
-  #
-  # @return [Array]
-  #
-  def page_items
-    @page_items ||= []
-  end
-
-  # Set the current page of result items.
-  #
-  # @param [Array] values
-  #
-  # @return [Array]
-  #
-  def page_items=(values)
-    @page_items = Array.wrap(values)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Interpret *value* as a URL path or a JavaScript action.
-  #
-  # @param [String, Symbol, nil] value  One of [:back, :forward, :go].
-  # @param [Integer, nil]   page        To #page_history for *action* :go.
-  #
-  # @return [String]                    A value usable with 'href'.
-  # @return [nil]                       If *value* is invalid.
-  #
-  def page_path(value, page = nil)
-    # noinspection RubyMismatchedArgumentType
-    value.is_a?(Symbol) ? page_history(value, page) : value.to_s.presence
-  end
-
-  # A value to use in place of a path in order to engage browser history.
-  #
-  # @param [String, Symbol] action    One of [:back, :forward, :go].
-  # @param [Integer, nil]   page      History page if *directive* is :go.
-  #
-  # @return [String]
-  #
-  def page_history(action, page = nil)
-    "javascript:history.#{action}(#{page});"
   end
 
   # ===========================================================================
@@ -443,50 +787,11 @@ class Paginator
       # Parameters specific to the Bookshare API.
       prm[:start] = list.next
 
-      make_path(request.path, **prm)
+      make_path(context[:request].path, **prm)
 
     else
       list.try(:get_link, :next)
     end
-  end
-
-  # Default results per page for the current controller/action.
-  #
-  # @return [Integer]
-  #
-  def default_page_size
-    @default_page_size ||= get_page_size
-  end
-
-  # Default results per page.
-  #
-  # @return [Integer]
-  #
-  def get_page_size
-    self.class.get_page_size(@context)
-  end
-
-  # Extract the number of "items" reported by an object.
-  #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Hash]                                      opt
-  #
-  # @return [Integer]
-  #
-  def item_count(value = nil, **opt)
-    value ||= page_items
-    self.class.item_count(value, **opt)
-  end
-
-  # Determine the number of records reported by an object.
-  #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  #
-  # @return [Integer]
-  #
-  def record_count(value = nil)
-    value ||= page_items
-    self.class.record_count(value)
   end
 
   # ===========================================================================
@@ -495,60 +800,127 @@ class Paginator
 
   public
 
-  # Default results per page for the given controller/action.
-  #
-  # @param [Symbol, String, Hash, nil] c   Controller
-  # @param [Symbol, String, nil]       a   Action
+  # The item index of the first item on the current page.
   #
   # @return [Integer]
   #
-  def self.get_page_size(c = nil, a = nil)
-    # noinspection RubyNilAnalysis
-    c, a = c.values_at(:controller, :action) if c.is_a?(Hash)
-    keys = []
-    keys << :"emma.#{c}.#{a}.pagination.page_size" if c && a
-    keys << :"emma.#{c}.#{a}.page_size"            if c && a
-    keys << :"emma.#{c}.pagination.page_size"      if c
-    keys << :"emma.#{c}.page_size"                 if c
-    keys << :'emma.generic.pagination.page_size'
-    keys << :'emma.generic.page_size'
-    keys << :'emma.pagination.page_size'
-    keys << :'emma.page_size'
-    I18n.t(keys.shift, default: keys).to_i
+  def first_index
+    property[:first_index] ||=
+      page_offset.nonzero? || ((page_number - 1) * page_size)
   end
 
-  # Extract the number of "items" reported by an object.
+  # Set the item index of the first item on the current page.
   #
-  # (For aggregate items, this is the number of aggregates as opposed to the
-  # number of records from which they are composed.)
-  #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Any]                                       default
+  # @param [Integer, nil] value       If *nil*, resets to default.
   #
   # @return [Integer]
   #
-  #--
-  # noinspection RubyNilAnalysis, RailsParamDefResolve
-  #++
-  def self.item_count(value, default: 1)
-    result   = (value.size if value.is_a?(Hash) || value.is_a?(Array))
-    result ||= value.try(:item_count)   || value.try(:titles).try(:size)
-    result ||= value.try(:totalResults) || value.try(:records).try(:size)
-    result || default
+  def first_index=(value)
+    property[:first_index] = value&.to_i
+    first_index
   end
 
-  # Determine the number of records reported by an object.
-  #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
+  # The item index of the last item on the current page.
   #
   # @return [Integer]
   #
-  def self.record_count(value)
-    Array.wrap(value).sum do |v|
-      (v.totalResults  if v.respond_to?(:totalResults))           ||
-      (v.records&.size if v.respond_to?(:records))                ||
-      (v.size          if v.respond_to?(:size) && !v.is_a?(Hash)) ||
-      1
+  def last_index
+    property[:last_index] ||= first_index + (page_size - 1)
+  end
+
+  # Set the item index of the first item on the current page.
+  #
+  # @param [Integer, nil] value       If *nil*, resets to default.
+  #
+  # @return [Integer]
+  #
+  def last_index=(value)
+    property[:last_index] = value&.to_i
+    last_index
+  end
+
+  # The item index cursor.
+  #
+  # @param [Boolean] increment        If *true*, post-increment value.
+  # @param [Boolean] check            If *true*, raise if out of bounds.
+  #
+  # @return [Integer]
+  #
+  def current_index(increment: false, check: false)
+    (property[:current_index] ||= first_index).tap do |v|
+      raise "#{__method__}: #{v} > #{last_index}" if check && (v > last_index)
+      property[:current_index] += 1 if increment
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The field position of the first field for the indicated item.
+  #
+  # @param [Integer, nil] index       Default: `#current_index`
+  #
+  # @return [Integer]
+  #
+  def first_position(index = nil)
+    index ||= current_index
+    property[:first_position][index] ||= 0
+  end
+
+  # Set the field position of the first field for the indicated item.
+  #
+  # @param [Integer]      value
+  # @param [Integer, nil] index       Default: `#current_index`
+  #
+  # @return [Integer]
+  #
+  def set_first_position(value, index = nil)
+    index ||= current_index
+    property[:first_position][index] = value.to_i
+  end
+
+  # The field position of the last field for the indicated item.
+  #
+  # @param [Integer, nil] index       Default: `#current_index`
+  #
+  # @return [Integer, nil]
+  #
+  def final_position(index = nil)
+    index ||= current_index
+    property[:final_position][index] ||= nil
+  end
+
+  # Set the field position of the first field for the indicated item.
+  #
+  # @param [Integer]      value
+  # @param [Integer, nil] index       Default: `#current_index`
+  #
+  # @return [Integer]
+  #
+  def set_final_position(value, index = nil)
+    index ||= current_index
+    property[:final_position][index] = value.to_i
+  end
+
+  # The field position cursor.
+  #
+  # @param [Integer, nil] index       Default: `#current_index`
+  # @param [Boolean]      increment   If *true*, post-increment value.
+  # @param [Boolean]      check       If *true*, raise if out of bounds.
+  #
+  # @return [Integer]
+  #
+  def current_position(index = nil, increment: false, check: false)
+    index ||= current_index
+    current = property[:current_position]
+    (current[index] ||= first_position(index)).tap do |v|
+      if check && (final = final_position(index)) && (v > final)
+        raise "#{__method__}: #{v} > #{final} [final_position(#{index})]"
+      end
+      current[index] += 1 if increment
     end
   end
 

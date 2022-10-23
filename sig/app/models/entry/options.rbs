@@ -22,11 +22,9 @@ class Entry::Options < Options
 
   # Get URL parameters relevant to the current operation.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `Options#params`
-  #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_model_params: (?(prmHash|nil) p) -> symHash
+  def get_model_params: () -> symHash
 
   MODEL_DATA_PARAMS: Hash[Symbol, Symbol]
 

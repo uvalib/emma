@@ -298,14 +298,14 @@ module ParamsConcern
   # callback.
   #
   def cleanup_parameters
-    original_count = request_parameter_count
+    original_count = params.keys.size
 
     # Eliminate "noise" parameters.
     params.delete_if { |k, v| k.blank? || v.blank? }
     %w(utf8 commit).each { |k| params.delete(k) }
 
     # If parameters were removed, redirect to the corrected URL.
-    will_redirect unless request_parameter_count == original_count
+    will_redirect unless params.keys.size == original_count
   end
 
   # To be run after all before_actions that modify params and require a

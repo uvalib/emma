@@ -596,11 +596,11 @@ module LayoutHelper::SearchFilters
   # @see Paginator#page_size
   #
   def size_menu(menu_name, **opt)
-    opt[:config]     = config = current_menu_config(menu_name, **opt)
-    opt[:default]  ||= opt.dig(:config, :default) || @page.page_size
-    url_param        = (config[:url_param] || menu_name).to_sym
-    opt[:selected] ||= request_parameters[url_param]
-    opt[:selected] ||= opt[:default]
+    opt[:config]     = current_menu_config(menu_name, **opt)
+    opt[:default]  ||= opt.dig(:config, :default)
+    opt[:default]  ||= (paginator.page_size if defined?(paginator))
+    url_param        = (opt[:config][:url_param] || menu_name).to_sym
+    opt[:selected] ||= request_parameters[url_param] || opt[:default]
     opt[:selected]   = opt[:selected].first if opt[:selected].is_a?(Array)
     opt[:selected]   = opt[:selected].to_i
     opt.delete(:selected) if opt[:selected].zero?
@@ -1019,7 +1019,7 @@ module LayoutHelper::SearchFilters
     target = search_target(**opt)
     keys   = SEARCH_PARAMETER_MENU_MAP[target]&.keys || []
     keys  -= QUERY_PARAMETERS[target]
-    keys  += NON_SEARCH_KEYS
+    keys  += Paginator::NON_SEARCH_KEYS
     opt.except(*keys)
   end
 

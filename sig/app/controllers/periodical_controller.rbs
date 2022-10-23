@@ -26,7 +26,6 @@ class PeriodicalController < ApplicationController
 
   @list: Bs::Message::PeriodicalSeriesMetadataSummaryList
   @item: Bs::Message::PeriodicalSeriesMetadataSummary
-  @page: Paginator
 
   # == GET /periodical
   #

@@ -201,12 +201,10 @@ class Options
 
   # Get URL parameters relevant to the current operation.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
-  #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_model_params(p = nil)
-    prm = url_parameters(p)
+  def get_model_params
+    prm = url_parameters(params)
     prm.except!(*ignored_form_params)
     prm[:id] = prm.delete(:selected) || prm[:id]
     prm.deep_symbolize_keys!
@@ -216,12 +214,10 @@ class Options
   # Extract POST parameters that are usable for creating/updating a new model
   # instance.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Def: `Options#params`
-  #
   # @return [Hash{Symbol=>Any}]
   #
-  def model_post_params(p = nil)
-    prm = p ? get_model_params(p) : model_params
+  def model_post_params
+    prm = model_params
     extract_model_data!(prm) || prm
   end
 

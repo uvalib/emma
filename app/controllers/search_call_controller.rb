@@ -65,21 +65,20 @@ class SearchCallController < ApplicationController
   #
   def index
     __debug_route
-    @page     = pagination_setup
-    prm       = @page.initial_parameters
+    prm       = paginator.initial_parameters
     @extended = prm.key?(:expand) ? true?(prm.delete(:expand)) : EXPAND_JSON
     search    = prm.delete(:like) # TODO: :like param
     search    = search ? build_query_options(search) : {}
-    @list =
+    results   =
       if @extended
         SearchCall.extended_table(search)
       else
         get_search_calls(search)
       end
-    @list.limit!(prm[:limit])   if prm[:limit]  # TODO: temporary
-    @list.offset!(prm[:offset]) if prm[:offset] # TODO: temporary
-    @list = @list.to_a
-    @page.finalize(@list, **search)
+    results.limit!(prm[:limit])   if prm[:limit]  # TODO: temporary
+    results.offset!(prm[:offset]) if prm[:offset] # TODO: temporary
+    @list = results.to_a
+    paginator.finalize(@list, **search)
     respond_to do |format|
       format.html
       format.json { render_json show_values }

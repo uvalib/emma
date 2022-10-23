@@ -79,12 +79,11 @@ class EditionController < ApplicationController
   def index
     __debug_route
     err   = nil
-    @page = pagination_setup
-    opt   = @page.initial_parameters
-    b_opt = opt.except(:format).merge!(seriesId: bs_series)
+    prm   = paginator.initial_parameters
+    b_opt = bs_params(:seriesId, **prm)
     @list = bs_api.get_periodical_editions(**b_opt)
     err   = @list.exec_report if @list.error?
-    @page.finalize(@list, :periodicalEditions, **opt)
+    paginator.finalize(@list, :periodicalEditions, **prm)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

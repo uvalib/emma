@@ -115,6 +115,29 @@ module Emma::Common::NumericMethods
     end
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Generate a string of hex digits from a number-like value.
+  #
+  # @param [Integer, String, nil] value
+  # @param [Integer]              digits  Left-zero filled if necessary.
+  # @param [Boolean]              upper   If *false* show lowercase hex digits.
+  #
+  # @return [String]
+  #
+  def hex_format(value, digits: nil, upper: nil)
+    hex = upper.is_a?(FalseClass) ? 'x' : 'X'
+    fmt = (digits &&= positive(digits)) ? "%0#{digits}#{hex}" : "%#{hex}"
+    fmt % value
+  rescue ArgumentError, TypeError
+    # noinspection RubyScope
+    fmt % 0
+  end
+
 end
 
 __loading_end(__FILE__)

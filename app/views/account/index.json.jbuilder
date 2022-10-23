@@ -5,6 +5,6 @@
 #
 # Local EMMA user accounts as JSON.
 
-list ||= @page.page_items
+list ||= paginator.page_items
 
 json.array! list, partial: 'account/details', as: :user

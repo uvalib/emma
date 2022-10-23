@@ -56,7 +56,6 @@ class EntryController < ApplicationController
   #
   attr_reader s3_object_table: Hash[String,Array[Aws::S3::Object]]
 
-  @page:         Paginator
   @group_counts: symHash
   @host:         String
 
@@ -90,8 +89,8 @@ class EntryController < ApplicationController
   # to upload a file and collects metadata for the new entry.
   #
   # TODO: verify this:
-  # On the initial visit to the page, @entry_id should be *nil*.  On subsequent
-  # visits (due to "Cancel" returning to this same page), @entry_id will be
+  # On the initial visit to the page, #entry_id should be *nil*.  On subsequent
+  # visits (due to "Cancel" returning to this same page), #entry_id will be
   # included in order to reuse the Entry record that was created at that time.
   #
   # @see #new_entry_path              Route helper
@@ -358,7 +357,7 @@ class EntryController < ApplicationController
   # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
-  # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
+  # @param [String, Array, nil] id_params  Default: `EntryConcern#identifier`.
   #
   def show_menu?: (?(String|strArray|nil) id_params) -> bool
 

@@ -407,8 +407,7 @@ class BaseDecorator < Draper::Decorator
     # @return [Hash{Symbol=>any}]
     #
     def param_values
-      values = context[:params] || request_value(:params)
-      values ? h.request_parameters(values) : {}
+      normalize_hash(context[:params] || request_value(:params))
     end
 
     # session_values
