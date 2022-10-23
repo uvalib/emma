@@ -114,9 +114,9 @@ module ConfigurationHelper
   #
   # @return [Hash, Array, String, Integer, Boolean, nil]
   #
-  def apply_config_interpolations: (anyHash  item, units: symHash, **untyped ignored) -> anyHash
-                                 | (anyArray item, units: symHash, **untyped ignored) -> anyArray
-                                 | (untyped  item, units: symHash, **untyped ignored) -> untyped
+  def apply_config_interpolations: (anyHash  item, units: symHash, **untyped _ignored) -> anyHash
+                                 | (anyArray item, units: symHash, **untyped _ignored) -> anyArray
+                                 | (untyped  item, units: symHash, **untyped _ignored) -> untyped
 
   # The variations on the description of a model item managed by a controller.
   #

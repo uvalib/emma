@@ -81,6 +81,7 @@ module BookshareService::Request::Organization
     username  = name_of(user)
     # noinspection RailsParamDefResolve
     acct_id   = user.is_a?(String) ? user : user.try(:userAccountId)
+    # noinspection RubyMismatchedArgumentType
     acct_id &&= CGI.unescape(acct_id)
     member =
       get_my_organization_members(**opt).userAccounts.find do |acct|

@@ -66,7 +66,7 @@ module AwsConcern
   #
   # @return [String]
   #
-  def repo_bucket: ((Symbol|String) repository, ?(Symbol|String|nil) deployment, ?service: AwsS3Service|nil, **untyped ignored) -> String
+  def repo_bucket: ((Symbol|String) repository, ?(Symbol|String|nil) deployment, ?service: AwsS3Service|nil, **untyped _ignored) -> String
 
   # get_repo_bucket
   #

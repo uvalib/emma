@@ -42,7 +42,7 @@ class Object
 
   def bs_retrieval_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def bulk_create_entry_path: (*untyped) ?{ () -> untyped } -> String
+  def bulk_create_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def bulk_create_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String
 

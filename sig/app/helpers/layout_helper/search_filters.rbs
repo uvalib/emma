@@ -30,7 +30,7 @@ module LayoutHelper::SearchFilters
     #
     # @see #SEARCH_MENU_MAP
     #
-    def current_menu_config: ((Symbol|String) menu_name, ?target: Symbol|String|nil, **untyped ignored) -> symHash
+    def current_menu_config: ((Symbol|String) menu_name, ?target: Symbol|String|nil, **untyped _ignored) -> symHash
 
     # Generate an array of label/value pairs to be used with #select_tag.
     #
@@ -591,7 +591,7 @@ module LayoutHelper::SearchFilters
   #
   # @return [Hash]
   #
-  def current_menu_config: ((String|Symbol) menu_name, ?target: Symbol|String|nil, **untyped ignored) -> symHash
+  def current_menu_config: ((String|Symbol) menu_name, ?target: Symbol|String|nil, **untyped _ignored) -> symHash
 
   # Get the configured tooltip for the control.
   #

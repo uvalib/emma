@@ -48,6 +48,7 @@ class MemberController < ApplicationController
   # ===========================================================================
 
   # Undo the over-encoding required in MemberDecorator#link.
+  # noinspection RubyMismatchedArgumentType
   before_action do
     @account_id = params[:userAccountId] || params[:username] || params[:id]
     @account_id &&= CGI.unescape(@account_id)

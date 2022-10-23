@@ -79,6 +79,6 @@ module Emma::Common::MethodMethods
   #   @param [Symbol, Array<Symbol>] except
   #   @return [Hash{Symbol=>Any}]
   #
-  def get_params: ((Symbol|Method) meth, Binding bind, *untyped ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
-                | (                      Binding bind, *untyped ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
+  def get_params: ((Symbol|Method) meth, Binding bind, *untyped _ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
+                | (                      Binding bind, *untyped _ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
 end

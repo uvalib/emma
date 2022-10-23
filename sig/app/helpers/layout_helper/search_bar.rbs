@@ -202,7 +202,7 @@ module LayoutHelper::SearchBar
   # @return [Symbol]                      The controller used for searching.
   # @return [nil]                         If search input should not be enabled
   #
-  def search_input_target: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, **untyped ignored) -> (Symbol | nil)
+  def search_input_target: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, **untyped _ignored) -> (Symbol | nil)
 
   # Generate a form search field input control.
   #
@@ -290,7 +290,7 @@ module LayoutHelper::SearchBar
   #
   # @return [Array]                   A modified copy of *obj*.
   #
-  def filter: ((Symbol|symArray|nil) obj, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped ignored) -> symArray
+  def filter: ((Symbol|symArray|nil) obj, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped _ignored) -> symArray
 
   # Filter values from an array.
   #
@@ -300,5 +300,5 @@ module LayoutHelper::SearchBar
   #
   # @return [Array]                   The original object, possibly modified.
   #
-  def filter!: (symArray array, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped ignored) -> symArray
+  def filter!: (symArray array, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, **untyped _ignored) -> symArray
 end
