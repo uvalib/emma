@@ -34,6 +34,14 @@ module TestHelper::Samples
   # @return [JobResult]
   def sample_job_result: () -> JobResult
 
+  # Generate a sample instance from text/fixtures/manifests.yml.
+  # @return [Manifest]
+  def sample_manifest: () -> Manifest
+
+  # Generate a sample instance from text/fixtures/manifest_items.yml.
+  # @return [ManifestItem]
+  def sample_manifest_item: () -> ManifestItem
+
   # Generate a sample instance from text/fixtures/members.yml.
   # @return [Member]
   def sample_member: () -> Member

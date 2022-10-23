@@ -1,0 +1,70 @@
+class ManifestsTest < ApplicationSystemTestCase
+  MODEL: Class
+
+  CONTROLLER: Symbol
+
+  PARAMS: symHash
+
+  INDEX_TITLE: String
+
+  TEST_USER: Symbol
+
+  @total: Integer
+
+  @user: User
+
+  # new_test
+  #
+  # @param [Boolean] direct
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def new_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # edit_select_test
+  #
+  # @param [Boolean] direct
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def edit_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # delete_select_test
+  #
+  # @param [Boolean] direct
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Check operation of Manifest information display/edit.
+  #
+  # @param [Hash] opt                 Test options
+  #
+  # @return [void]
+  #
+  def manifest_title_test: (**untyped opt) -> void
+
+  # Check operation of ManifestItem grid.
+  #
+  # @param [Hash] opt                 Test options
+  #
+  # @return [void]
+  #
+  def manifest_grid_test: (**untyped opt) -> void
+
+  # Extract named value entries from *opt*.
+  #
+  # @param [Hash]          opt        Source hash to modify.
+  # @param [Array<Symbol>] names      Value entry keys.
+  #
+  # @return [Array]
+  #
+  def extract_options!: (symHash opt, *Symbol names) -> anyArray
+end

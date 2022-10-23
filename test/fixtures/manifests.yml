@@ -1,0 +1,32 @@
+# test/fixtures/manifests.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+csv:            &CSV
+  name:         'Sample from CSV data'
+  #user:         emmadso
+  user_id:      1
+
+json:           &JSON
+  name:         'Sample from JSON data'
+  #user:         emmadso
+  user_id:      1
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<:           *CSV
+  id:           <%= Random.uuid %>
+  name:         'Sample manifest'
+
+edit_example:
+  <<:           *CSV
+  id:           <%= Random.uuid %>
+  name:         'Sample manifest for editing'
+
+delete_example:
+  <<:           *CSV
+  id:           <%= Random.uuid %>
+  name:         'Sample manifest for deleting'

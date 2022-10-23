@@ -1,0 +1,2 @@
+class ManifestTest < ActiveSupport::TestCase
+end

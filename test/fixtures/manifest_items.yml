@@ -1,0 +1,34 @@
+# test/fixtures/manifest_items.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# This model initially had no columns defined. If you add columns to the
+# model remove the '{}' from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+
+one:              &ONE
+  manifest:       csv
+  row:            1
+  repository:     'EMMA'
+
+two:              &TWO
+  manifest:       json
+  row:            2
+  repository:     'EMMA'
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<:             *ONE
+  row:            3
+
+edit_example:
+  <<:             *ONE
+  row:            4
+
+delete_example:
+  <<:             *TWO
+  row:            5

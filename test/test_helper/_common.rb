@@ -29,6 +29,7 @@ module TestHelper::Common
     category
     edition
     health
+    manifest
     member
     periodical
     reading_list

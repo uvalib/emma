@@ -18,6 +18,8 @@ module TestHelper::Samples
     artifact:       :brf,
     edition:        :New_Yorker_1,
     job_result:     :example,
+    manifest:       :example,
+    manifest_item:  :example,
     member:         :organization,
     periodical:     :New_Yorker,
     reading_list:   :A_Member_List,
@@ -85,6 +87,14 @@ module TestHelper::Samples
     # Generate a sample instance from text/fixtures/jobs_results.yml.
     # @return [JobResult]
     def sample_job_result; end
+
+    # Generate a sample instance from text/fixtures/manifests.yml.
+    # @return [Manifest]
+    def sample_manifest; end
+
+    # Generate a sample instance from text/fixtures/manifest_items.yml.
+    # @return [ManifestItem]
+    def sample_manifest_item; end
 
     # Generate a sample instance from text/fixtures/members.yml.
     # @return [Member]
