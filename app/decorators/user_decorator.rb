@@ -52,22 +52,31 @@ class UserDecorator < AccountDecorator
       h.create_user_path(**opt)
     end
 
-    def edit_select_path(**opt)
+    def edit_select_path(*, **opt)
       h.edit_select_user_path(**opt)
     end
 
     def edit_path(item = nil, **opt)
-      if opt[:selected]
-        edit_select_path(**opt)
-      else
-        opt[:id] = id_for(item, **opt)
-        h.edit_user_path(**opt)
-      end
+      return edit_select_path(item, **opt) if opt[:selected]
+      opt[:id] = id_for(item, **opt)
+      h.edit_user_path(**opt)
     end
 
     def update_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
       h.update_user_path(**opt)
+    end
+
+    def delete_select_path(*)
+      # NOTE: not applicable to this model
+    end
+
+    def delete_path(*)
+      # NOTE: not applicable to this model
+    end
+
+    def destroy_path(*)
+      # NOTE: not applicable to this model
     end
 
   end

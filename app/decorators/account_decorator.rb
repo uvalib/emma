@@ -52,17 +52,14 @@ class AccountDecorator < BaseDecorator
       h.create_account_path(**opt)
     end
 
-    def edit_select_path(**opt)
+    def edit_select_path(*, **opt)
       h.edit_select_account_path(**opt)
     end
 
     def edit_path(item = nil, **opt)
-      if opt[:selected]
-        edit_select_path(**opt)
-      else
-        opt[:id] = id_for(item, **opt)
-        h.edit_account_path(**opt)
-      end
+      return edit_select_path(item, **opt) if opt[:selected]
+      opt[:id] = id_for(item, **opt)
+      h.edit_account_path(**opt)
     end
 
     def update_path(item = nil, **opt)
@@ -70,17 +67,14 @@ class AccountDecorator < BaseDecorator
       h.update_account_path(**opt)
     end
 
-    def delete_select_path(**opt)
+    def delete_select_path(*, **opt)
       h.delete_select_account_path(**opt)
     end
 
     def delete_path(item = nil, **opt)
-      if opt[:selected]
-        delete_select_path(**opt)
-      else
-        opt[:id] = id_for(item, **opt)
-        h.delete_account_path(**opt)
-      end
+      return delete_select_path(item, **opt) if opt[:selected]
+      opt[:id] = id_for(item, **opt)
+      h.delete_account_path(**opt)
     end
 
     def destroy_path(item = nil, **opt)

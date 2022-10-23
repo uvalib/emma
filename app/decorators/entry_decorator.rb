@@ -30,111 +30,62 @@ class EntryDecorator < BaseDecorator
     include BaseDecorator::SharedPathMethods
 
     # =========================================================================
-    # :section: BaseDecorator::Paths overrides
+    # :section:
     # =========================================================================
 
     public
 
-    def index_path(*, **opt)
-      h.entry_index_path(**opt)
+    def renew_path(item = nil, **opt)
+      path_for(item, **opt, action: :renew)
     end
 
-    def show_path(item = nil, **opt)
+    def reedit_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
-      h.show_entry_path(**opt)
+      path_for(item, **opt, action: :reedit)
     end
 
-    def new_path(*, **opt)
-      h.new_entry_path(**opt)
-    end
-
-    def create_path(*, **opt)
-      h.create_entry_path(**opt)
-    end
-
-    def edit_select_path(**opt)
-      h.edit_select_entry_path(**opt)
-    end
-
-    def edit_path(item = nil, **opt)
-      if opt[:selected]
-        edit_select_path(**opt)
-      else
-        opt[:id] = id_for(item, **opt)
-        h.edit_entry_path(**opt)
-      end
-    end
-
-    def update_path(item = nil, **opt)
+    def cancel_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
-      h.update_entry_path(**opt)
+      path_for(item, **opt, action: :cancel)
+    end
+
+    def check_path(item = nil, **opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :check)
     end
 
     def delete_select_path(**opt)
       h.delete_select_entry_path(**opt)
     end
 
-    def delete_path(item = nil, **opt)
-      if opt[:selected]
-        delete_select_path(**opt)
-      else
-        opt[:id] = id_for(item, **opt)
-        h.delete_entry_path(**opt)
-      end
+    def bulk_index_path(item = nil, **opt)
+      path_for(item, **opt, action: :bulk_index)
     end
 
-    def destroy_path(item = nil, **opt)
+    def bulk_new_path(item = nil, **opt)
+      path_for(item, **opt, action: :bulk_new)
+    end
+
+    def bulk_create_path(item = nil, **opt)
+      path_for(item, **opt, action: :bulk_create)
+    end
+
+    def bulk_edit_path(item = nil, **opt)
+      path_for(item, **opt, action: :bulk_edit)
+    end
+
+    def bulk_update_path(item = nil, **opt)
+      path_for(item, **opt, action: :bulk_update)
+    end
+
+    def bulk_delete_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
-      h.destroy_entry_path(**opt)
+      path_for(item, **opt, action: :bulk_delete)
     end
 
-    def renew_path(*, **opt)
-      h.renew_entry_path(**opt)
-    end
-
-    def reedit_path(*, **opt)
-      h.reedit_entry_path(**opt)
-    end
-
-    def cancel_path(*, **opt)
-      h.cancel_entry_path(**opt)
-    end
-
-    def check_path(item = nil, **opt)
+    def bulk_destroy_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
-      h.check_entry_path(**opt)
-    end
-
-    def endpoint_path(*, **opt)
-      h.entries_path(**opt)
-    end
-
-    def bulk_index_path(*, **opt)
-      h.bulk_entry_index_path(**opt)
-    end
-
-    def bulk_new_path(*, **opt)
-      h.bulk_new_entry_path(**opt)
-    end
-
-    def bulk_create_path(*, **opt)
-      h.bulk_create_entry_path(**opt)
-    end
-
-    def bulk_edit_path(*, **opt)
-      h.bulk_edit_entry_path(**opt)
-    end
-
-    def bulk_update_path(*, **opt)
-      h.bulk_update_entry_path(**opt)
-    end
-
-    def bulk_delete_path(*, **opt)
-      h.bulk_delete_entry_path(**opt)
-    end
-
-    def bulk_destroy_path(*, **opt)
-      h.bulk_destroy_entry_path(**opt)
+      path_for(item, **opt, action: :bulk_destroy)
     end
 
   end

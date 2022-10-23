@@ -30,16 +30,16 @@ class BaseDecorator < Draper::Decorator
   module SharedPathMethods
     include BaseDecorator::Helpers
 
-    def index_path:         (**untyped opt)                 -> String
-    def show_path:          (?untyped item, **untyped opt)  -> String
-    def new_path:           (**untyped opt)                 -> String
-    def create_path:        (**untyped opt)                 -> String
-    def edit_select_path:   (**untyped opt)                 -> String
-    def edit_path:          (?untyped item, **untyped opt)  -> String
-    def update_path:        (?untyped item, **untyped opt)  -> String
-    def delete_select_path: (**untyped opt)                 -> String
-    def delete_path:        (?untyped item, **untyped opt)  -> String
-    def destroy_path:       (?untyped item, **untyped opt)  -> String
+    def index_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def show_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def new_path:           (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def create_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def edit_select_path:   (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def edit_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def update_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def delete_select_path: (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def delete_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def destroy_path:       (?(Model|anyHash|nil) item, **untyped opt)  -> String
 
     # id_for
     #

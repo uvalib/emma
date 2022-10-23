@@ -49,59 +49,54 @@ class BaseDecorator < Draper::Decorator
 
     public
 
-    def index_path(*, **opt)
+    def index_path(item = nil, **opt)
       opt.except!(:action)
-      path_for(**opt)
+      path_for(item, **opt)
     end
 
     def show_path(item = nil, **opt)
-      opt[:action] = :show
-      opt[:id]     = id_for(item, **opt)
-      path_for(**opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :show)
     end
 
-    def new_path(*, **opt)
-      opt[:action] = :new
-      path_for(**opt)
+    def new_path(item = nil, **opt)
+      path_for(item, **opt, action: :new)
     end
 
-    def create_path(*, **opt)
-      opt[:action] = :create
-      path_for(**opt)
+    def create_path(item = nil, **opt)
+      path_for(item, **opt, action: :create)
     end
 
-    def edit_select_path(**opt)
+    def edit_select_path(item = nil, **opt)
       opt[:id] ||= 'SELECT'
-      edit_path(**opt)
+      path_for(item, **opt, action: :edit)
     end
 
     def edit_path(item = nil, **opt)
-      opt[:action] = :edit
-      opt[:id]     = id_for(item, **opt)
-      path_for(**opt)
+      return edit_select_path(item, **opt) if opt[:selected]
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :edit)
     end
 
     def update_path(item = nil, **opt)
-      opt[:action] = :update
-      opt[:id]     = id_for(item, **opt)
-      path_for(**opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :update)
     end
 
-    def delete_select_path(**opt)
+    def delete_select_path(item = nil, **opt)
       opt[:id] ||= 'SELECT'
-      delete_path(**opt)
+      path_for(item, **opt, action: :delete)
     end
 
     def delete_path(item = nil, **opt)
-      opt[:action] = :delete
-      opt[:id]     = id_for(item, **opt)
-      path_for(**opt)
+      return delete_select_path(item, **opt) if opt[:selected]
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :delete)
     end
 
     def destroy_path(item = nil, **opt)
-      opt[:action] = :destroy
-      opt[:id]     = id_for(item, **opt)
-      path_for(**opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :destroy)
     end
 
     # =========================================================================
