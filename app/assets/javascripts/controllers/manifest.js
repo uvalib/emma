@@ -1745,8 +1745,9 @@ $(document).on('turbolinks:load', function() {
         if (lookup) {
             lookup.toggleModal();
         } else {
-            _error(`LOOKUP - TO BE IMPLEMENTED`);
+            console.error('No LookupModal for', target);
         }
+        _error('LOOKUP - TO BE IMPLEMENTED'); // TODO: bibliographic lookup
     }
 
     /**
