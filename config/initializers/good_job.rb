@@ -15,10 +15,9 @@
 GoodJob.preserve_job_records      = DEBUG_JOB             # Default: *true*
 #GoodJob.retry_on_unhandled_error = application_deployed? # Default: *false*
 
+GoodJob.logger          = Log.new(progname: 'JOBS')
+GoodJob.logger.level    = DEBUG_JOB ? Log::DEBUG : Log::INFO
 GoodJob.on_thread_error = ->(e) { Log.error("#{e.class}: #{e.message}") }
-
-# GoodJob.active_record_parent_class = 'ApplicationRecord::Base'
-# GoodJob.logger                     = Rails.logger
 
 # =============================================================================
 # GoodJob::Configuration

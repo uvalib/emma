@@ -1,0 +1,7 @@
+module ActionView
+  # Generates an empty method for each LogSubscriber method marked as inactive,
+  # which will prevent that method from writing to the log when this module is
+  # prepended to LogSubscriber.
+  module LogSubscriberExt
+  end
+end

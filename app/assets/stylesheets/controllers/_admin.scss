@@ -219,3 +219,35 @@ body.admin.settings {
         }
     }
 }
+
+//=============================================================================
+// Loggers page
+//=============================================================================
+
+body.admin.loggers {
+
+    table {
+
+        display:       grid;
+        justify-items: start;
+        grid-template-columns:
+            [progname] max-content
+            [class]    max-content
+            [level]    max-content
+            [inspect]  1fr;
+        gap: 1rem;
+
+        thead, tbody, tr {
+            display: contents;
+        }
+
+        tbody th {
+            grid-column: 1;
+        }
+
+        .progname {}
+        .class {}
+        .level {}
+        .inspect {}
+    }
+}

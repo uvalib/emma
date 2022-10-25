@@ -81,38 +81,19 @@ module OAuth2
     #                                             statuses do not raise
     #                                             OAuth2::Error.
     #
-    # @option opts [Logger]     :logger           Logger to use when
+    # @option options [Logger]  :logger           Logger to use when
     #                                             OAUTH_DEBUG is enabled.
     #
-    # @option opts [Proc] :extract_access_token   Proc that extracts the
+    # @option options [Proc]    :extract_access_token
+    #                                             Proc that extracts the
     #                                             access token from the
     #                                             response.
     #
     def initialize(client_id, client_secret, options = {}, &block)
       super
-      @options[:revoke_url] = '/oauth/revocations'
-    end
-
-    # The Faraday connection object.
-    #
-    # @return [Faraday::Connection]
-    #
-    # == Implementation Notes
-    # This corrects the logic error of setting :logger repeatedly in #request
-    # by setting it once here.
-    #
-    def connection
-      @connection ||=
-        Faraday.new(site, options[:connection_opts]) do |bld|
-          log_options = { bodies: { request: true, response: DEBUG_OAUTH } }
-          bld.response :logger, Log.logger, log_options
-          if options[:connection_build]
-            options[:connection_build].call(bld)
-          else
-            bld.request :url_encoded
-            bld.adapter Faraday.default_adapter
-          end
-        end
+      @options[:logger] = Log.new(progname: 'OAUTH2') unless options[:logger]
+      @options[:logger].level = DEBUG_OAUTH ? Log::DEBUG : Log::INFO
+      @options[:revoke_url]   = '/oauth/revocations'
     end
 
     # Makes a request relative to the specified site root.
@@ -208,6 +189,22 @@ module OAuth2
     end
 
     # =========================================================================
+    # :section: OAuth2::Client overrides
+    # =========================================================================
+
+    protected
+
+    # Include the response with logger output.
+    #
+    # @param [Faraday::RackBuilder] builder
+    #
+    def oauth_debug_logging(builder)
+      return unless DEBUG_OAUTH
+      log_options = { bodies: { request: true, response: DEBUG_OAUTH } }
+      builder.response :logger, options[:logger], log_options
+    end
+
+    # =========================================================================
     # :section:
     # =========================================================================
 
@@ -289,53 +286,54 @@ module OAuth2
       #
       # @param [String] client_id
       # @param [String] client_secret
-      # @param [Hash]   opts
+      # @param [Hash]   options
       # @param [Proc]   block           @see OAuth2::Client#initialize
       #
-      # @option opts [String]  :site             The OAuth2 provider site
+      # @option options [String]  :site             The OAuth2 provider site
       #                                             host.
       #
-      # @option opts [String]  :redirect_uri        The absolute URI to the
+      # @option options [String]  :redirect_uri     The absolute URI to the
       #                                             Redirection Endpoint for
       #                                             use in authorization grants
       #                                             and token exchange.
       #
-      # @option opts [String]  :authorize_url       Absolute or relative URL
+      # @option options [String]  :authorize_url    Absolute or relative URL
       #                                             path to the Authorization
       #                                             endpoint.
       #                                             Default: '/oauth/authorize'
       #
-      # @option opts [String]  :token_url           Absolute or relative URL
+      # @option options [String]  :token_url        Absolute or relative URL
       #                                             path to the Token endpoint.
       #                                             Default: '/oauth/token'
       #
-      # @option opts [Symbol]  :token_method        HTTP method to use to
+      # @option options [Symbol]  :token_method     HTTP method to use to
       #                                             request the token.
       #                                             Default: :post
       #
-      # @option opts [Symbol]  :auth_scheme         Method to use to authorize
+      # @option options [Symbol]  :auth_scheme      Method to use to authorize
       #                                             request: :basic_auth or
       #                                             :request_body (default).
       #
-      # @option opts [Hash]    :connection_opts     Hash of connection options
+      # @option options [Hash]    :connection_opts  Hash of connection options
       #                                             to pass to initialize
       #                                             Faraday.
       #
-      # @option opts [FixNum]  :max_redirects       Maximum number of redirects
+      # @option options [FixNum]  :max_redirects    Maximum number of redirects
       #                                             to follow. Default: 5.
       #
-      # @option opts [Boolean] :raise_errors        If *false*, 400+ response
+      # @option options [Boolean] :raise_errors     If *false*, 400+ response
       #                                             statuses do not raise
       #                                             OAuth2::Error.
       #
-      # @option opts [Logger]  :logger              Logger to use when
+      # @option options [Logger]  :logger           Logger to use when
       #                                             OAUTH_DEBUG is enabled.
       #
-      # @option opts [Proc] :extract_access_token   Proc that extracts the
+      # @option options [Proc]    :extract_access_token
+      #                                             Proc that extracts the
       #                                             access token from the
       #                                             response.
       #
-      def initialize(client_id, client_secret, opts = {}, &block)
+      def initialize(client_id, client_secret, options = {}, &block)
         __ext_debug(binding)
         super
       end

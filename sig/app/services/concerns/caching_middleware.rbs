@@ -8,6 +8,9 @@ module CachingMiddleware
     # Faraday cache directory for :file_store.
     FARADAY_CACHE_DIR: String
 
+    # Logging progname.
+    LOG_NAME: String
+
     # Default expiration time.
     DEFAULT_EXPIRATION: ActiveSupport::Duration
 

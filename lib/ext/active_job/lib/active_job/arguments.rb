@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Extensions for the Down gem.
+# ActiveJob overrides.
 
 __loading_begin(__FILE__)
 

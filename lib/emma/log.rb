@@ -20,21 +20,24 @@ module Emma::Log
     unknown: UNKNOWN,
   }.freeze
 
+  LEVEL_NAME =
+    LOG_LEVEL.invert.transform_values { |v| v.to_s.upcase }.freeze
+
   # ===========================================================================
   # :section: Module methods
   # ===========================================================================
 
   public
 
-  # The current logger.
+  # The current application logger.
   #
   # @return [Logger]
   #
   def self.logger
-    @logger ||= Rails.logger
+    @logger ||= new(Rails.logger, progname: 'EMMA')
   end
 
-  # Set the current logger.
+  # Set the current application logger.
   #
   # @param [Logger] logger
   #
@@ -164,6 +167,18 @@ module Emma::Log
     return value if value.is_a?(Integer)
     value = value.to_s.downcase.to_sym unless value.is_a?(Symbol)
     LOG_LEVEL[value] || LOG_LEVEL[default]
+  end
+
+  # Return the display name for a log level.
+  #
+  # @param [Integer, Symbol, String, nil] value
+  # @param [Symbol]                       default
+  #
+  # @return [String]
+  #
+  def self.level_name(value, default = :unknown)
+    level = log_level(value, default)
+    LEVEL_NAME[level]
   end
 
   # local_levels
@@ -341,10 +356,25 @@ module Emma::Log
 
   # Create a new instance of the assigned Logger class.
   #
-  # @param [Array] args               @see Logger#initialize
+  # @param [Logger, nil] src
+  # @param [Hash]        opt                    @see Logger#initialize
   #
-  def self.new(*args)
-    logger.class.new(*args)
+  # @option opt [Integer]           :level      Logging level (default: #DEBUG)
+  # @option opt [String]            :progname   Default: nil.
+  # @option opt [Logger::Formatter] :formatter  Default: from Log.logger
+  #
+  # @return [Logger]
+  #
+  def self.new(src = nil, **opt)
+    ignored = opt.except(:progname, :level, :formatter, :datetime_format)
+    $stderr.puts "Log.new ignoring options #{ignored.keys}" if ignored.present?
+    (src || logger).clone.tap do |log|
+      log.progname        = opt[:progname]
+      log.level           = opt[:level]           if opt.key?(:level)
+      log.datetime_format = opt[:datetime_format] if opt.key?(:datetime_format)
+      log.formatter =
+        opt.key?(:formatter) ? opt[:formatter] : log.formatter&.clone
+    end
   end
 
 end

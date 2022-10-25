@@ -360,15 +360,17 @@ module ApiService::Common
       }
     }
     conn_opt.deep_merge!(opt) if opt.present?
-    token     = conn_opt.delete(:token) || access_token
-    retry_opt = conn_opt.delete(:retry)
+    token        = conn_opt.delete(:token) || access_token
+    retry_opt    = conn_opt.delete(:retry)
+    logger       = conn_opt.delete(:logger) || Log.new(progname: ' API')
+    logger.level = DEBUG_TRANSMISSION ? Log::DEBUG : Log::INFO
 
     Faraday.new(conn_opt) do |bld|
       bld.use      :instrumentation
       bld.use      :api_caching_middleware          if CACHING
       bld.request  :authorization, 'Bearer', token  if token.present?
       bld.request  :retry,  retry_opt
-      bld.response :logger, Log.logger
+      bld.response :logger, logger
       bld.adapter  options[:adapter] || Faraday.default_adapter
     end
   end

@@ -5,13 +5,15 @@ module Emma::Log
 
   LOG_LEVEL: Hash[Symbol, Integer]
 
-  # The current logger.
+  LEVEL_NAME: Hash[Integer, String]
+
+  # The current application logger.
   #
   # @return [Logger]
   #
   def self.logger: () -> Logger
 
-  # Set the current logger.
+  # Set the current application logger.
   #
   # @param [Logger] logger
   #
@@ -94,6 +96,15 @@ module Emma::Log
   # @return [Integer]
   #
   def self.log_level: ((Integer|Symbol|String|nil) value, ?Symbol default) -> Integer
+
+  # Return the display name for a log level.
+  #
+  # @param [Integer, Symbol, String, nil] value
+  # @param [Symbol]                       default
+  #
+  # @return [String]
+  #
+  def self.level_name: ((Integer|Symbol|String|nil) value, ?Symbol default) -> String
 
   # local_levels
   #
@@ -220,9 +231,16 @@ module Emma::Log
 
   # Create a new instance of the assigned Logger class.
   #
-  # @param [Array] args               @see Logger#initialize
+  # @param [Logger, nil] src
+  # @param [Hash]        opt                    @see Logger#initialize
   #
-  def self.new: (*untyped args) -> Logger
+  # @option opt [Integer]           :level      Logging level (default: #DEBUG)
+  # @option opt [String]            :progname   Default: nil.
+  # @option opt [Logger::Formatter] :formatter  Default: from Log.logger
+  #
+  # @return [Logger]
+  #
+  def self.new: (?(Logger|nil) src, **untyped opt) -> Logger
 end
 
 # Defined as an "alias" for Emma::Log without needing to "include Emma".

@@ -56,6 +56,18 @@ module Faraday
       "BODY:\n#{super.truncate(4096)}"
     end
 
+    # Faraday disregards Logger#progname by replacing with an explicit
+    # 'request' or 'response' tag.  This corrects that by appending the tag to
+    # the progname if it is present.
+    #
+    # @param [Symbol] log_method    :debug, :info, :warn, etc
+    # @param [String] type          'request' or 'response'
+    #
+    def public_send(log_method, type, &block)
+      progname = [@logger&.progname, type].compact.join(': ')
+      super(log_method, progname, &block) # Object#public_send
+    end
+
   end
 
 end

@@ -20,6 +20,7 @@ en:
           - settings
           - processes
           - disk_space
+          - loggers
 
       # =======================================================================
       # Pages
@@ -53,6 +54,14 @@ en:
         label:          'Disk Space'
         title:          'Host Machine Disk Space'
         tooltip:        'View the system disk space on the host machine.'
+        _endpoint:      true
+
+      # =======================================================================
+
+      loggers:
+        label:          'Loggers'
+        title:          'Logger Instances'
+        tooltip:        'View live logger instances.'
         _endpoint:      true
 
       # =======================================================================

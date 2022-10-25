@@ -36,7 +36,7 @@ require 'shrine/storage/file_system' unless SHRINE_CLOUD_STORAGE
 # Logging
 # =============================================================================
 
-Shrine.logger       = Log.logger
+Shrine.logger       = Log.new(progname: 'SHRINE')
 Shrine.logger.level = DEBUG_SHRINE ? Log::DEBUG : Log::INFO
 
 # =============================================================================

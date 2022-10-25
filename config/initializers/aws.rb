@@ -5,5 +5,6 @@
 #
 # Setup and initialization for 'aws-sdk-core', 'aws-sdk-s3' and other AWS gems.
 
-Aws.config[:logger]    = Log.logger
-Aws.config[:log_level] = DEBUG_AWS ? :debug : :info
+Aws.config[:log_level]    = DEBUG_AWS ? :debug : :info
+Aws.config[:logger]       = Log.new(progname: '  AWS')
+Aws.config[:logger].level = Log.log_level(Aws.config[:log_level])

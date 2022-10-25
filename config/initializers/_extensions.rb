@@ -6,6 +6,8 @@
 # Extensions to classes that need to be established as soon as possible during
 # initialization.
 
+Rails.logger.progname = '____' if Rails.logger && Rails.logger.progname.blank?
+
 # == Loader debugging
 Rails.autoloaders.main.log! if DEBUG_ZEITWERK
 

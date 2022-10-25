@@ -21,6 +21,9 @@ module CachingMiddleware
     # Faraday cache directory for :file_store.
     FARADAY_CACHE_DIR = File.join(CACHE_ROOT_DIR, 'faraday').freeze
 
+    # Logging progname.
+    LOG_NAME = 'COMM'
+
 =begin # TODO: redis cache?
     # Redis server cache configuration.
     RAILS_CONFIG = Rails.application.config_for(:redis).deep_symbolize_keys
@@ -36,7 +39,7 @@ module CachingMiddleware
       store:  :redis_cache_store,
 =end
       store:  :file_store,
-      logger: Log.logger,
+      logger: Log.new(progname: LOG_NAME),
     }.freeze
 
   end
@@ -312,18 +315,15 @@ module CachingMiddleware
     # @return [void]
     #
     def initialize_logger
-      return if @logger.blank?
       log = @logger
       log = log.to_s if log.is_a?(Pathname)
-      if log.is_a?(String)
-        log = File.join(TMPDIR, log) unless log.start_with?('/')
-        # noinspection RubyMismatchedArgumentType
-        @logger =
-          Logger.new(log).tap { |l| l.level = Logger.const_get(@log_level) }
-      end
-      unless @logger.is_a?(Logger)
-        raise "expected String, got #{log.class} #{log.inspect}"
-      end
+      return if log.blank? || log.is_a?(Logger)
+      raise "expected String, got #{log.inspect}" unless log.is_a?(String)
+      log = File.join(TMPDIR, log) unless log.start_with?('/')
+      # noinspection RubyMismatchedArgumentType
+      @logger = Logger.new(log)
+      @logger.level = Rails.application.config.log_level
+      @logger.progname = LOG_NAME
     end
 
     # Run from #initialize to set up the cache store.
