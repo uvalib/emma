@@ -6,4 +6,4 @@
 # Setup and initialization for ActionCable.
 
 ActionCable::Server::Base.config.logger =
-  Log.new(progname: 'SOCK', level: (DEBUG_CABLE ? Log::DEBUG : Log::Info))
+  Log.new(progname: 'SOCK', level: (DEBUG_CABLE ? Log::DEBUG : Log::INFO))
