@@ -217,7 +217,7 @@ module HtmlHelper
   def check_required_attributes(tag, options)
     required = Array.wrap(REQUIRED_HTML_ATTRIBUTES[tag&.to_sym])
     missing  = (required - options.keys).presence
-    Log.debug { "#{meth}: missing opt: #{missing.join(',')}" } if missing
+    Log.debug { "#{tag}: missing opt: #{missing.join(',')}" } if missing
     missing.nil?
   end
 

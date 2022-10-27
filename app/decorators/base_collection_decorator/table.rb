@@ -124,7 +124,7 @@ module BaseCollectionDecorator::Table
       # noinspection RubyScope
       fields.map!.with_index(first_col) do |field, col|
         row_opt = model_rc_options(field, row, col, opt)
-        row_opt.merge!(role: 'columnheader')
+        row_opt.merge!(role: 'columnheader', 'aria-colindex': col)
         append_css!(row_opt, 'col-first') if col == first_col
         append_css!(row_opt, 'col-last')  if col == last_col
         html_tag(inner_tag, row_opt) do
@@ -138,7 +138,7 @@ module BaseCollectionDecorator::Table
 
     parts = []
     parts << html_tag(tag, '', class: 'spanner', role: 'presentation') if dark
-    parts << html_tag(tag, fields)
+    parts << html_tag(tag, fields, 'aria-rowindex': row)
     safe_join(parts)
   end
 

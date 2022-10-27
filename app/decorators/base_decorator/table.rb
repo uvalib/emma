@@ -137,6 +137,7 @@ module BaseDecorator::Table
         last_col  = pairs.size + col - 1
         pairs.map do |field, value|
           row_opt = model_rc_options(field, row, col, opt)
+          row_opt.merge!('aria-colindex': col)
           append_css!(row_opt, 'col-first') if col == first_col
           append_css!(row_opt, 'col-last')  if col == last_col
           col += 1
@@ -145,7 +146,7 @@ module BaseDecorator::Table
       else
         pairs.values.compact.map { |value| ERB::Util.h(value) }
       end
-    outer_tag ? html_tag(outer_tag, fields) : fields
+    outer_tag ? html_tag(outer_tag, fields, 'aria-rowindex': row) : fields
   end
 
   # table_columns
