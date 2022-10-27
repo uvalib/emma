@@ -116,6 +116,16 @@ class ApiService
     PerUser.clear(user)
   end
 
+  # The logger for API transmissions.
+  #
+  # @return [Logger]
+  #
+  def self.api_logger
+    # noinspection RbsMissingTypeSignature
+    @api_logger ||=
+      Log.new(progname: ' API', level: (DEBUG_TRANSMISSION ? :debug : :info))
+  end
+
   # ===========================================================================
   # :section: Per-service class methods
   # ===========================================================================

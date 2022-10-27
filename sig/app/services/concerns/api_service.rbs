@@ -81,6 +81,12 @@ class ApiService
   #
   def self.clear: (user: User|String, **untyped _ignored) -> void
 
+  # The logger for API transmissions.
+  #
+  # @return [Logger]
+  #
+  def self.api_logger: () -> Logger
+
   # Each subclass gets its own distinct set of service state variables.
   #
   # @param [ApiService] subclass
