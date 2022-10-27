@@ -121,16 +121,20 @@ def __output_impl(*args, **opt)
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
 
   if defined?(Log)
+    begin
 
-    # For desktop builds, if explicitly requested, copy output to the log.
-    unless (level = opt[:log]).blank? || application_deployed?
-      level = Log.log_level(level, :debug)
-      Log.add(level, lines)
+      # Apply log formatting rather than writing directly.
+      return Log.debug(lines) if LOG_TO_STDOUT
+
+      # For desktop builds, if explicitly requested, copy output to the log.
+      unless (level = opt[:log]).blank? || application_deployed?
+        level = Log.log_level(level, :debug)
+        Log.add(level, lines)
+      end
+
+    rescue
+      # Too early -- fall through to the normal write to stdout.
     end
-
-    # If logging to stdout, apply log formatting rather than writing directly.
-    return Log.debug(lines) if LOG_TO_STDOUT
-
   end
 
   # Emit output.
