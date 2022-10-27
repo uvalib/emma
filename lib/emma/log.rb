@@ -341,7 +341,7 @@ module Emma::Log
     __output "Log.new ignoring options #{ignored.keys}" if ignored.present?
     log = src || logger
     log = log.clone                             if log.is_a?(::Logger)
-    log = ActiveSupport::Logger.new(log, **opt) unless log.is_a?(::Logger)
+    log = Emma::Logger.new(log, **opt)          unless log.is_a?(::Logger)
     log.progname        = opt[:progname]
     log.level           = opt[:level]           if opt[:level]
     log.datetime_format = opt[:datetime_format] if opt[:datetime_format]
