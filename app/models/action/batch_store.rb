@@ -59,7 +59,7 @@ class Action::BatchStore < Action::BulkOperation
     opt.reverse_merge!(defaults)
     prev_state = transition_to(:storing, **opt) or return false
 
-    $stderr.puts "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!"
+    __output "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!"
     success = nil # TODO: partition items into batches, run each batch as a job...
 
     run_callback(**opt) if success

@@ -134,10 +134,10 @@ module Record::Uploadable
 =begin # TODO: remove when :json resolved
     file_attacher.load_data(file_data)
 =end
-    $stderr.puts "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached"
-    $stderr.puts "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached | action.file_data #{file_data.class} | BAD | at start" if file_data.is_a?(String)
+    __output "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached"
+    __output "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached | action.file_data #{file_data.class} | BAD | at start" if file_data.is_a?(String)
     file_attacher_load
-    $stderr.puts "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached | action.file_data #{file_data.class} | BAD | after file_attacher_load" if file_data.is_a?(String)
+    __output "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached | action.file_data #{file_data.class} | BAD | after file_attacher_load" if file_data.is_a?(String)
     file_attacher.set(nil) unless file_attacher.cached?
     file_attacher.file
   end
@@ -171,8 +171,8 @@ module Record::Uploadable
   # @return [void]
   #
   def promote_file(no_raise: true)                                              # NOTE: from Upload::FileMethods
-    $stderr.puts "++++++++++++++++++++++++ promote! | #{self.class} | promote_file"
-    $stderr.puts "++++++++++++++++++++++++ promote! | #{self.class} | promote_file | action.file_data #{file_data.class} | BAD | at start" if file_data.is_a?(String)
+    __output "++++++++++++++++++++++++ promote! | #{self.class} | promote_file"
+    __output "++++++++++++++++++++++++ promote! | #{self.class} | promote_file | action.file_data #{file_data.class} | BAD | at start" if file_data.is_a?(String)
     __debug_items(binding)
     promote_cached_file(no_raise: no_raise)
   end
@@ -314,7 +314,7 @@ module Record::Uploadable
     opt[:metadata]['filename'] ||= File.basename(url)
     file_attacher.attach(io, **opt)
   rescue => error
-    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
+    __output "!!! #{__method__}: #{error.class}: #{error.message}"
     raise error
   ensure
     # noinspection RubyScope, RubyMismatchedReturnType
@@ -333,7 +333,7 @@ module Record::Uploadable
       file_attacher.attach(io, **opt)
     end
   rescue => error
-    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
+    __output "!!! #{__method__}: #{error.class}: #{error.message}"
     raise error
   end
 

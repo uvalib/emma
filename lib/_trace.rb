@@ -43,12 +43,18 @@ end
 
 public
 
-# For AWS, add indentation prefix characters to help make debugging output
-# stand out from normal Rails.logger entries.
+# If true, log output is going to $stdout rather than a file.
+#
+# @type [Boolean]
+#
+LOG_TO_STDOUT = true?(ENV['RAILS_LOG_TO_STDOUT'])
+
+# For AWS, add line prefix characters to help make debugging output stand out
+# from normal log entries.
 #
 # @type [String]
 #
-CONS_INDENT = $stderr.isatty ? '' : '_   '
+OUTPUT_PREFIX = LOG_TO_STDOUT ? '| ' : ''
 
 # Write indented line(s) to $stderr.
 #
@@ -56,7 +62,7 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # @param [Hash]     opt
 #
 # @option opt [String]                   :leader     At the start of each line.
-# @option opt [String, Integer]          :indent     Default: #CONS_INDENT.
+# @option opt [String, Integer]          :indent     Default: none.
 # @option opt [String]                   :separator  Default: "\n"
 # @option opt [Boolean]                  :debug      Structure for debug output
 # @option opt [Symbol, Integer, Boolean] :log        Note [1]
@@ -76,10 +82,11 @@ def __output_impl(*args, **opt)
   sep = opt[:separator] || "\n"
 
   # Construct the string that is prepended to each output line.
-  indent = opt[:indent] || (sep.include?("\n") ? CONS_INDENT : '')
-  indent = (' ' * indent if indent.is_a?(Integer) && indent.positive?)
+  indent = opt[:indent]
+  indent = (' ' * indent if indent.positive?) if indent.is_a?(Integer)
+  indent = "#{OUTPUT_PREFIX}#{indent}"
   leader = "#{indent}#{opt[:leader]}"
-  leader += ' ' unless (leader == indent.to_s) || leader.match?(/\s$/)
+  leader << ' ' unless (leader == indent) || leader.match?(/\s$/)
 
   # Combine arguments and block results into a single string.
   args += Array.wrap(yield) if block_given?
@@ -120,10 +127,14 @@ def __output_impl(*args, **opt)
   end
 
   # Emit output.
-  $stdout.flush
-  $stderr.flush
-  $stderr.puts(lines)
-  $stderr.flush
+  if LOG_TO_STDOUT
+    Log.debug(lines)
+  else
+    $stdout.flush
+    $stderr.flush
+    $stderr.puts(lines)
+    $stderr.flush
+  end
   nil
 end
 

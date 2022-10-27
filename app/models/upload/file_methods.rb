@@ -368,7 +368,7 @@ module Upload::FileMethods
     opt[:metadata]['filename'] ||= File.basename(url)
     file_attacher.attach(io, **opt)
   rescue => error
-    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
+    __output "!!! #{__method__}: #{error.class}: #{error.message}"
     raise error
   ensure
     # noinspection RubyScope, RubyMismatchedReturnType
@@ -387,7 +387,7 @@ module Upload::FileMethods
       file_attacher.attach(io, **opt)
     end
   rescue => error
-    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
+    __output "!!! #{__method__}: #{error.class}: #{error.message}"
     raise error
   end
 

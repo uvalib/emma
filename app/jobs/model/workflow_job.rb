@@ -24,7 +24,7 @@ class Model::WorkflowJob < ApplicationJob
   # ===========================================================================
 
   queue_as do
-    $stderr.puts ">>> #{CLASS} queue_as | args = #{arguments_inspect(self)}"
+    __output ">>> #{CLASS} queue_as | args = #{arguments_inspect(self)}"
     arguments.first.try(:bulk?) ? :bulk : :normal
   end
 
@@ -87,9 +87,9 @@ class Model::WorkflowJob < ApplicationJob
         { model: model, meth: meth, callback: callback, from: meth_opt[:from] }
           .transform_values { |v| item_inspect(v) }
       end
-      $stderr.puts "..................... perform | BEFORE #{model.class}.#{meth}(#{meth_opt.inspect}) | callback = #{callback.inspect}"
+      __output "..................... perform | BEFORE #{model.class}.#{meth}(#{meth_opt.inspect}) | callback = #{callback.inspect}"
       result = model.send(meth, **meth_opt)
-      $stderr.puts "..................... perform | AFTER  #{model.class}.#{meth}(#{meth_opt.inspect}) | callback = #{callback.inspect}"
+      __output "..................... perform | AFTER  #{model.class}.#{meth}(#{meth_opt.inspect}) | callback = #{callback.inspect}"
       perform_callback(callback, from: model) if callback && result
       __debug_job('END') do
         { result: item_inspect(result) }

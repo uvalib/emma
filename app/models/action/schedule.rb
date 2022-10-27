@@ -52,7 +52,7 @@ class Action::Schedule < Action::Single
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
       scheduling: ->(*, **) {
-        $stderr.puts "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: schedule review
+        __output "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: schedule review
       },
       assigning:  ->(*, **) { assign! }
     }} and run_callback(**opt)
@@ -72,7 +72,7 @@ class Action::Schedule < Action::Single
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
       assigning: ->(*, **) {
-        $stderr.puts "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: assign reviewer
+        __output "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: assign reviewer
       },
       holding:   true
     }} and run_callback(**opt)

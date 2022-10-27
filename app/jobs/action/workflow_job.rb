@@ -27,7 +27,7 @@ class Action::WorkflowJob < Model::WorkflowJob
   # ===========================================================================
 
   queue_as do
-    $stderr.puts ">>> #{CLASS} queue_as | args = #{arguments_inspect(self)}"
+    __output ">>> #{CLASS} queue_as | args = #{arguments_inspect(self)}"
     self.arguments.first.try(:bulk?) ? :bulk : :normal
   end
 =end

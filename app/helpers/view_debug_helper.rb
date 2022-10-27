@@ -32,7 +32,7 @@ module ViewDebugHelper
   def view_debug(template, *arg, separator: ' ')
     return unless view_debug?
     template = template.to_s.delete_prefix(Rails.root.to_s)
-    $stderr.puts arg.prepend("--- VIEW TEMPLATE #{template}").join(separator)
+    __output arg.prepend("--- VIEW TEMPLATE #{template}").join(separator)
   end
 
   # view_abort

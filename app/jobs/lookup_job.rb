@@ -105,7 +105,7 @@ class LookupJob < ActiveJob::Base
   rescue => error
     record&.update(error: error)
     raise error unless no_raise
-    $stderr.puts "JOB ERROR: #{error.full_message}"
+    __output "JOB ERROR: #{error.full_message}"
     {}
   end
 

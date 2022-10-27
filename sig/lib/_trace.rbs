@@ -1,9 +1,15 @@
-# For AWS, add indentation prefix characters to help make debugging output
-# stand out from normal Rails.logger entries.
+# If true, log output is going to $stdout rather than a file.
+#
+# @type [Boolean]
+#
+LOG_TO_STDOUT: bool
+
+# For AWS, add line prefix characters to help make debugging output stand out
+# from normal log entries.
 #
 # @type [String]
 #
-CONS_INDENT: String
+OUTPUT_PREFIX: String
 
 # Initial characters which mark a debug line.
 #
@@ -95,7 +101,7 @@ class Object
   # @param [Hash]     opt
   #
   # @option opt [String]                   :leader     At the start of each line.
-  # @option opt [String, Integer]          :indent     Default: #CONS_INDENT.
+  # @option opt [String, Integer]          :indent     Default: none.
   # @option opt [String]                   :separator  Default: "\n"
   # @option opt [Boolean]                  :debug      Structure for debug output
   # @option opt [Symbol, Integer, Boolean] :log        Note [1]

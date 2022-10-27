@@ -349,11 +349,11 @@ class LookupService
         'data.keys': data.keys,
         data:        data.except(*big_data),
       }.merge!(data.slice(*big_data))
-      $stderr.puts
+      __output
       line.each do |k, v|
-        $stderr.puts '@@@ INSTRUMENTATION %-10s = %s' % [k, v.inspect]
+        __output '@@@ INSTRUMENTATION %-10s = %s' % [k, v.inspect]
       end
-      $stderr.puts
+      __output
     end
 
   end

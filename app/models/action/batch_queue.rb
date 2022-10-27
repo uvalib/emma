@@ -52,7 +52,7 @@ class Action::BatchQueue < Action::BulkOperation
     opt[:meth] ||= __method__
     prev_state = transition_to(:submitting, **opt) or return false
 
-    $stderr.puts "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!"
+    __output "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!"
     success = nil # TODO: partition items into batches, run each batch as a job...
 
     run_callback(**opt) if success

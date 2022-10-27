@@ -1375,7 +1375,7 @@ class Search::Record::TitleRecord < Search::Api::Record
           field  = '%-20s' % "[#{k}]"
           record = "FILE #{idx} -> #{rec_fields[section][k].inspect}"
           shared = "EXEMPLAR -> #{title_fields[section][k].inspect}"
-          $stderr.puts "*** #{sec} | #{field} #{record} | #{shared}"
+          __output "*** #{sec} | #{field} #{record} | #{shared}"
         end
       end
     end

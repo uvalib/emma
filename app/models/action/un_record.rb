@@ -46,7 +46,7 @@ class Action::UnRecord < Action::BulkPart
     opt[:meth] ||= __method__
     transition_sequence(**opt) {{
       removing:  ->(*, **) {
-        $stderr.puts "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: remove record
+        __output "!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!" # TODO: remove record
       },
       completed: true
     }} and run_callback(**opt)

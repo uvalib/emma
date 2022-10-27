@@ -481,7 +481,7 @@ class Upload < ApplicationRecord
       p = workflow_phase || '-'
       s = active_state   || '-'
       "#{c}: [#{p}/#{s}] #{label}: #{values.inspect}"
-        .tap { |m| $stderr.puts "!!! #{m}" }
+        .tap { |m| __output "!!! #{m}" }
     end
   end
 

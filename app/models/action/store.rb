@@ -107,7 +107,7 @@ class Action::Store < Action::BulkPart
         # noinspection RubyNilAnalysis
         self.emma_data = data.delete(:emma_data)
         self.file_data = data
-        $stderr.puts "++++++++++++++++++++++++ #{CLASS}.upload! | action.file_data #{file_data.class} | action.emma_data #{emma_data.class}"
+        __output "++++++++++++++++++++++++ #{CLASS}.upload! | action.file_data #{file_data.class} | action.emma_data #{emma_data.class}"
         'empty file_data' if file_data.blank?
       end
     if problem.nil?
@@ -121,13 +121,13 @@ class Action::Store < Action::BulkPart
     end
     save if update_record
     if retry?
-      $stderr.puts "++++++++++++++++++++++++ #{CLASS}.upload! | retry? = #{retry?.inspect}"
+      __output "++++++++++++++++++++++++ #{CLASS}.upload! | retry? = #{retry?.inspect}"
       nil # TODO: ...what happens here?
     else
-      $stderr.puts "++++++++++++++++++++++++ #{CLASS}.upload! | run_callback opt = #{cb_opt.inspect}"
+      __output "++++++++++++++++++++++++ #{CLASS}.upload! | run_callback opt = #{cb_opt.inspect}"
       cb_opt[:meth] = opt[:meth]
       run_callback(**cb_opt)
-      $stderr.puts "++++++++++++++++++++++++ #{CLASS}.upload! | action.file_data #{file_data.class} | BAD | after run_callback" if file_data.is_a?(String)
+      __output "++++++++++++++++++++++++ #{CLASS}.upload! | action.file_data #{file_data.class} | BAD | after run_callback" if file_data.is_a?(String)
     end
     return stat, hdrs, body
   end
@@ -148,9 +148,9 @@ class Action::Store < Action::BulkPart
       promoting: ->(*, **) { promote_file },
       completed: true
     }} or return false
-    $stderr.puts "++++++++++++++++++++++++ #{CLASS}.promote! | action.file_data #{file_data.class} | BAD | after promote_file" if file_data.is_a?(String)
+    __output "++++++++++++++++++++++++ #{CLASS}.promote! | action.file_data #{file_data.class} | BAD | after promote_file" if file_data.is_a?(String)
     run_callback(**opt)
-      .tap { $stderr.puts "++++++++++++++++++++++++ #{CLASS}.promote! | action.file_data #{file_data.class} | BAD | after run_callback" if file_data.is_a?(String) }
+      .tap { __output "++++++++++++++++++++++++ #{CLASS}.promote! | action.file_data #{file_data.class} | BAD | after run_callback" if file_data.is_a?(String) }
   end
 
   # ===========================================================================

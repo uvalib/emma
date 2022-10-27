@@ -65,13 +65,13 @@ class Phase::Edit < Phase::BulkPart
   # Always performed synchronously.
   #
   def upload!(request, **opt)
-    $stderr.puts "++++++++++++++++++++++++ upload! | #{self.class} |"
+    __output "++++++++++++++++++++++++ upload! | #{self.class} |"
     __debug_items(binding)
     opt[:meth] ||= __method__
     transition_to(:uploading, **opt) or return []
     set_callback!(opt, :upload_cb)
     generate_action(:Store).upload!(request, **opt)
-      .tap { $stderr.puts "++++++++++++++++++++++++ upload! | #{self.class} | phase.file_data #{file_data.class} | BAD after action.upload!" if file_data.is_a?(String) }
+      .tap { __output "++++++++++++++++++++++++ upload! | #{self.class} | phase.file_data #{file_data.class} | BAD after action.upload!" if file_data.is_a?(String) }
   end
 
   # Method called from the action launched by #upload!.
@@ -88,19 +88,19 @@ class Phase::Edit < Phase::BulkPart
     action = opt.delete(:from) || action
     __debug { "CALLBACK #{CLASS}.#{__method__} | #{action.inspect} | #{opt.inspect}" } # TODO: remove
     raise 'NO ACTION' if action.blank? # TODO: remove
-    $stderr.puts "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | action.file_data #{action.file_data.class} | action.emma_data #{action.emma_data.class}"
+    __output "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | action.file_data #{action.file_data.class} | action.emma_data #{action.emma_data.class}"
     if action.failed?
       aborted!
       false
     else
       self.file_data = safe_json_parse(action.file_data, symbolize_keys: false)
       self.emma_data = safe_json_parse(action.emma_data, symbolize_keys: false)
-      $stderr.puts "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | phase.file_data #{file_data.class} | phase.emma_data #{emma_data.class}"
+      __output "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | phase.file_data #{file_data.class} | phase.emma_data #{emma_data.class}"
       save
-      $stderr.puts "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | phase.file_data #{file_data.class} | BAD after save" if file_data.is_a?(String)
+      __output "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | phase.file_data #{file_data.class} | BAD after save" if file_data.is_a?(String)
       run_callback(**opt)
     end
-      .tap { $stderr.puts "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | phase.file_data #{file_data.class} | BAD after run_callback" if file_data.is_a?(String) }
+      .tap { __output "++++++++++++++++++++++++ upload_cb | #{self.class} | from #{action.class} | phase.file_data #{file_data.class} | BAD after run_callback" if file_data.is_a?(String) }
   end
 
   # ===========================================================================

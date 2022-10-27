@@ -371,17 +371,17 @@ class ApiMigrate
         end
       end
       if log
-        $stderr.puts("\n#{column.inspect}")
+        __output("\n#{column.inspect}")
         if changes.blank?
-          $stderr.puts('NO CHANGES')
+          __output('NO CHANGES')
         else
           col = $stderr.tty? ? [79, 25, 25] : [120, 35, 35]
-          $stderr.puts(divider = '-' * col[0])
+          __output(divider = '-' * col[0])
           changes.each_pair do |k, values|
             field = [k, *values].map!(&:inspect)
-            $stderr.puts("--- %-#{col[1]}s NOW: %-#{col[2]}s WAS: %s" % field)
+            __output("--- %-#{col[1]}s NOW: %-#{col[2]}s WAS: %s" % field)
           end
-          $stderr.puts(divider)
+          __output(divider)
         end
       end
     end
@@ -979,11 +979,11 @@ class ApiMigrate
       rpt[:record] ||= {}
       opt[:report] = rpt = rpt[:record][record[:id]] ||= {}
     end
-    $stderr.puts "\n*** Upload #{record[:id]} ***" if log
+    __output "\n*** Upload #{record[:id]} ***" if log
     cols = Array.wrap(column).each { |col| super(record, column: col, **opt) }
     flds = (record.slice(*cols).compact if rpt || log)
-    flds.each { |fld, dat| $stderr.puts "\n#{fld.inspect} =\n#{dat}" } if log
-    rpt[:results] = flds.transform_values { |v| safe_json_parse(v) }   if rpt
+    flds.each { |fld, dat| __output "\n#{fld.inspect} =\n#{dat}" }   if log
+    rpt[:results] = flds.transform_values { |v| safe_json_parse(v) } if rpt
     record
   end
 

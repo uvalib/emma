@@ -51,7 +51,7 @@ class Action::Review < Action::Single
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_to(:reviewing, **opt) or return false
-    $stderr.puts "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review start
+    __output "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review start
     run_callback(**opt)
   end
 
@@ -68,7 +68,7 @@ class Action::Review < Action::Single
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_to(:holding, **opt) or return false
-    $stderr.puts "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review hold
+    __output "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review hold
     run_callback(**opt)
   end
 
@@ -85,7 +85,7 @@ class Action::Review < Action::Single
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_to(:approved, **opt) or return false
-    $stderr.puts "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review approve
+    __output "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review approve
     run_callback(**opt)
   end
 
@@ -102,7 +102,7 @@ class Action::Review < Action::Single
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_to(:rejected, **opt) or return false
-    $stderr.puts "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review reject
+    __output "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review reject
     run_callback(**opt)
   end
 
@@ -119,7 +119,7 @@ class Action::Review < Action::Single
     __debug_step(binding)
     opt[:meth] ||= __method__
     transition_to(:canceled, **opt) or return false
-    $stderr.puts "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review cancel
+    __output "!!!!!!!!!!!!! TODO: #{self.class} #{__method__} !!!!!!!!!!!!" # TODO: review cancel
     run_callback(**opt)
   end
 

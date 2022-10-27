@@ -295,9 +295,9 @@ en:
             meth:       'index!'
             note_proc:  |
               ->(action, **opt) do
-              $stderr.puts "***** action = #{action.inspect}"
-              $stderr.puts "***** opt    = #{opt.inspect}"
-              $stderr.puts "***** action.emma_native? = #{action.emma_native?}"
+                __output "***** action = #{action.inspect}"
+                __output "***** opt    = #{opt.inspect}"
+                __output "***** action.emma_native? = #{action.emma_native?}"
                 if action.emma_native?
                   'indexing in progress'
                 else

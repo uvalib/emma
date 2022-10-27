@@ -105,7 +105,7 @@ class ApplicationJob < ActiveJob::Base
   # @return [void]
   #
   def perform_callback(callback, **opt)
-    $stderr.puts "..................... #{self.class}.perform_callback | callback = #{callback.inspect}"
+    __output "..................... #{self.class}.perform_callback | callback = #{callback.inspect}"
     job_warn { 'ignoring blank callback' } unless callback
     callback&.cb_schedule(**opt)
   end

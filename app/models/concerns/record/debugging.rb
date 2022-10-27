@@ -59,7 +59,7 @@ module Record::Debugging
     def output(*parts, tag: nil, ldr: '***', width: 72, **)
       line = [ldr, tag, *parts].compact.join(' ').strip
       trailer = '*' * (width - line.size - 1)
-      $stdout.puts "#{line} #{trailer}"
+      __output "#{line} #{trailer}"
       pp yield if block_given?
       nil
     end
@@ -71,7 +71,7 @@ module Record::Debugging
     public
 
     def __debug_step(*args, **opt, &block)
-      $stderr.puts "\n\n###################################################"
+      __output "\n\n###################################################"
       __debug_items(*args, **opt, &block)
     end
 

@@ -291,8 +291,8 @@ class Search::Message::SearchTitleList < Search::Api::Message
       leader = '---' * (level + 1)
       fields = fields.inspect
       count  = recs.size
-      $stderr.puts if level.zero?
-      $stderr.puts "#{leader} GROUP_BY #{fields} --- (#{count} records)"
+      __output if level.zero?
+      __output "#{leader} GROUP_BY #{fields} --- (#{count} records)"
     end
   else
     def __debug_group(...)

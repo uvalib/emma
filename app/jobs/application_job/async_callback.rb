@@ -84,7 +84,7 @@ class ApplicationJob::AsyncCallback
     else
       receiver = src
     end
-    $stderr.puts "#{CLASS} FAIL\n#{caller.pretty_inspect}" unless receiver && meth # TODO: remove - testing
+    __output "#{CLASS} FAIL\n#{caller.pretty_inspect}" unless receiver && meth # TODO: remove - testing
     @receiver = receiver or raise "#{CLASS}: no receiver"
     @meth     = meth     or raise "#{CLASS}: no method"
     @callback = callback && CLASS[callback]

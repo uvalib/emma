@@ -691,11 +691,11 @@ class BaseDecorator < Draper::Decorator
         loc = obj.instance_eval { method(m).source_location rescue [] }
         #next if loc.blank?
         #next unless loc&.first&.include?('/decor')
-        $stderr.puts "#{ldr}.#{m} ->\t#{loc&.join(':')}"
+        __output "#{ldr}.#{m} ->\t#{loc&.join(':')}"
       end
     rescue => err
       # noinspection RubyScope
-      $stderr.puts "#{typ} METHOD SKIPPING #{self} - #{err}"
+      __output "#{typ} METHOD SKIPPING #{self} - #{err}"
     end
 
     # =========================================================================
@@ -781,7 +781,7 @@ class BaseDecorator
   # @deprecated Use "decorator_for" instead of "decorates"
   #
   def self.decorates(object_class)
-    $stderr.puts 'WARNING: Use "decorator_for" instead of "decorates"'
+    __output 'WARNING: Use "decorator_for" instead of "decorates"'
     decorator_for(object_class)
   end
 
