@@ -66,6 +66,7 @@ OUTPUT_PREFIX = LOG_TO_STDOUT ? '| ' : ''
 # @option opt [String]                   :separator  Default: "\n"
 # @option opt [Boolean]                  :debug      Structure for debug output
 # @option opt [Symbol, Integer, Boolean] :log        Note [1]
+# @option opt [Boolean]                  :no_log     Note [2]
 #
 # @return [nil]
 #
@@ -76,6 +77,9 @@ OUTPUT_PREFIX = LOG_TO_STDOUT ? '| ' : ''
 # [1] When deployed, this option will create a log entry rather than produce
 # $stderr output.  If not deployed, the log entry is created in addition to
 # $stderr output.
+# [2] During initial trace output (if enabled) it makes sense to only send to
+# $stderr so that the overall trace output doesn't switch forms as soon as
+# `Log.add` starts working.
 #
 def __output_impl(*args, **opt)
   return if defined?(Log) && Log.silenced?
@@ -120,7 +124,7 @@ def __output_impl(*args, **opt)
   end
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
 
-  if defined?(Log)
+  unless opt[:no_log] || !defined?(Log)
     begin
 
       # Apply log formatting rather than writing directly.
@@ -147,9 +151,13 @@ end
 
 # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
 #
-# @param [Array<*>] args              Passed to #__output_impl.
-# @param [Hash]     opt               Passed to #__output_impl.
-# @param [Proc]     block             Passed to #__output_impl.
+# @param [Array<*>] args
+# @param [Hash]     opt
+# @param [Proc]     block
+#
+# @return [nil]
+#
+# @see #__output_impl
 #
 # == Usage Notes
 # The method is only functional if #CONSOLE_OUTPUT is true.
@@ -180,11 +188,13 @@ DEBUG_MAX = 2048
 
 # Write indented debug line(s) to $stderr.
 #
-# @param [Array<*>] args              Passed to #__output_impl.
-# @param [Hash]     opt               Passed to #__output_impl.
-# @param [Proc]     block             Passed to #__output_impl.
+# @param [Array<*>] args
+# @param [Hash]     opt
+# @param [Proc]     block
 #
 # @return [nil]
+#
+# @see #__output_impl
 #
 def __debug_impl(*args, **opt, &block)
   opt.reverse_merge!(
@@ -198,9 +208,13 @@ end
 
 # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
 #
-# @param [Array<*>] args              Passed to #__debug_impl.
-# @param [Hash]     opt               Passed to #__debug_impl.
-# @param [Proc]     block             Passed to #__debug_impl.
+# @param [Array<*>] args
+# @param [Hash]     opt
+# @param [Proc]     block
+#
+# @return [nil]
+#
+# @see #__debug_impl
 #
 def __debug(*args, **opt, &block)
   __debug_impl(*args, **opt, &block)
@@ -209,10 +223,45 @@ end
 neutralize(:__debug) unless CONSOLE_DEBUGGING
 
 # =============================================================================
+# Debugging - trace output
+# =============================================================================
+
+public
+
+# Output a trace line which always goes to $stderr.
+#
+# @param [Array<*>] args
+# @param [Hash]     opt
+# @param [Proc]     block
+#
+# @return [nil]
+#
+# @see #__output_impl
+#
+def __trace_impl(*args, **opt, &block)
+  opt[:no_log] = true unless opt.key?(:no_log)
+  __output_impl(*args, **opt, &block)
+end
+
+# Output a trace line which always goes to $stderr.
+#
+# @param [Array<*>] args
+# @param [Hash]     opt
+# @param [Proc]     block
+#
+# @return [nil]
+#
+# @see #__trace_impl
+#
+def __trace(*args, **opt, &block)
+  __trace_impl(*args, **opt, &block)
+end
+
+# =============================================================================
 # Debugging - file load/require
 # =============================================================================
 
-__output_impl { "TRACE_LOADING = #{TRACE_LOADING.inspect}" } if TRACE_LOADING
+__trace { "TRACE_LOADING = #{TRACE_LOADING.inspect}" } if TRACE_LOADING
 
 # For AWS, make the indentation standout in CloudWatch.
 #
@@ -249,7 +298,7 @@ end
 # Place as the first non-comment line of a Ruby source file.
 #
 def __loading(file)
-  __output_impl { "====== #{__loading_level}#{file}" }
+  __trace { "====== #{__loading_level}#{file}" }
 end
 
 # Display console output to indicate that a file is being loaded.
@@ -269,7 +318,7 @@ def __loading_begin(file)
   warning = warning.join(' <<<<<<<<<< ')
   @load_level += 1
   @load_table[file] = [@load_level, true]
-  __output_impl { "====-> #{__loading_level}#{file}#{warning}" }
+  __trace { "====-> #{__loading_level}#{file}#{warning}" }
 end
 
 # Display console output to indicate the end of a file that is being loaded.
@@ -288,7 +337,7 @@ def __loading_end(file)
   warning << "UNBALANCED - expected level #{expected}" if unbalanced
   warning << 'ALREADY CLOSED' unless still_open
   warning = warning.join(' <<<<<<<<<< ')
-  __output_impl { "<-==== #{__loading_level}#{file}#{warning}" }
+  __trace { "<-==== #{__loading_level}#{file}#{warning}" }
   @load_table[file] = [@load_level, !still_open]
   @load_level -= 1
   @load_table.clear if @load_level.zero?
@@ -301,7 +350,7 @@ neutralize(:__loading, :__loading_begin, :__loading_end) unless TRACE_LOADING
 # Debugging - Concerns
 # =============================================================================
 
-__output_impl("TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}") if TRACE_CONCERNS
+__trace { "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}" } if TRACE_CONCERNS
 
 # Indicate invocation of a module's "included" block.
 #
@@ -312,7 +361,7 @@ __output_impl("TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}") if TRACE_CONCERNS
 # @return [nil]
 #
 def __included(base, mod, tag = nil)
-  __output_impl { "... including #{tag || mod.try(:name) || mod} in #{base}" }
+  __trace { "... including #{tag || mod.try(:name) || mod} in #{base}" }
 end
 
 neutralize(:__included) unless TRACE_CONCERNS
@@ -366,7 +415,7 @@ if TRACE_NOTIFICATIONS
       else             /.*/
     end
 
-  __output_impl { "TRACE_NOTIFICATIONS = #{NOTIFICATIONS.inspect}" }
+  __trace { "TRACE_NOTIFICATIONS = #{NOTIFICATIONS.inspect}" }
 
   # Limit each notification display to this number of characters.
   MAX_NOTIFICATION_SIZE = 1024

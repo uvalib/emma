@@ -9,31 +9,32 @@ module Emma
 
   # Application logger.
   #
-  class Logger < ::Logger
+  class Logger < ActiveSupport::Logger
 
     FILTERING =
-      if application_deployed?
+      if LOG_TO_STDOUT
         !false?(ENV['EMMA_LOG_FILTERING'])
       else
         true?(ENV['EMMA_LOG_FILTERING'])
       end
 
     AWS_FORMATTING =
-      if application_deployed?
+      if LOG_TO_STDOUT
         !false?(ENV['EMMA_LOG_AWS_FORMATTING'])
       else
         true?(ENV['EMMA_LOG_AWS_FORMATTING'])
       end
 
     # =========================================================================
-    # :section: Logger overrides
+    # :section: ActiveSupport::Logger overrides
     # =========================================================================
 
     public
 
     def initialize(*arg, **opt)
-      super(*arg, **opt)
-      @default_formatter = Formatter.new
+      super
+      @default_formatter = Emma::Logger::Formatter.new
+      @formatter = @default_formatter unless opt[:formatter]
     end
 
     # Prefix all lines with the same leading log information, and reduce log
@@ -108,17 +109,35 @@ module Emma
     #
     class Formatter < ::Logger::Formatter
 
+      # Width of severity column.
+      #
+      # @type [Integer]
+      #
+      SEV = 5
+
+      # Width of progname column.
+      #
+      # @type [Integer]
+      #
+      PRG = 4
+
+      # Character used for filling out fixed-width columns for AWS format.
+      #
+      # @type [String]
+      #
+      AWS_FILL = '_'
+
       # Time not shown in favor of the CloudWatch timestamp.
       #
       # @type [String]
       #
-      AWS_FORMAT = "[%d] %5s -- %4s: %s\n"
+      AWS_FORMAT = "[%d] %-#{SEV}s -- %-#{PRG}s: %s\n"
 
       # The same as Logger::Formatter::Format but with the progname aligned.
       #
       # @type [String]
       #
-      BASIC_FORMAT = "%s, [%s #%d] %5s -- %4s: %s\n"
+      BASIC_FORMAT = "%s, [%s #%d] %-#{SEV}s -- %-#{PRG}s: %s\n"
 
       # =======================================================================
       # :section:
@@ -127,6 +146,9 @@ module Emma
       public
 
       # Format for AWS CloudWatch logging.
+      #
+      # Because the collapsed view of log lines squeezes out multiple spaces,
+      # fixed-width columns are right-filled with #AWS_FILL as needed.
       #
       # @param [Integer] severity
       # @param [Time]    _time
@@ -139,8 +161,10 @@ module Emma
       #
       def aws_call(severity, _time, progname, msg)
         pid = Process.pid
+        sev = right_fill(severity, SEV)
+        prg = right_fill(progname, PRG)
         msg2str(msg).split("\n").map { |line|
-          AWS_FORMAT % [pid, severity, progname, line]
+          AWS_FORMAT % [pid, sev, prg, line]
         }.join
       end
 
@@ -156,11 +180,13 @@ module Emma
       # @see #BASIC_FORMAT
       #
       def basic_call(severity, time, progname, msg)
-        time = format_datetime(time)
         char = severity[0..0]
+        time = format_datetime(time)
         pid  = Process.pid
+        sev  = severity
+        prg  = right_fill(progname, PRG, ' ')
         msg2str(msg).split("\n").map { |line|
-          BASIC_FORMAT % [char, time, pid, severity, progname, line]
+          BASIC_FORMAT % [char, time, pid, sev, prg, line]
         }.join
       end
 
@@ -168,6 +194,32 @@ module Emma
         alias call aws_call
       else
         alias call basic_call
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      protected
+
+      # Right-fill *item* if necessary so that its representation has at least
+      # *width* characters.
+      #
+      # @param [*]       item
+      # @param [Integer] width
+      # @param [String]  char
+      #
+      # @return [String]
+      #
+      def right_fill(item, width, char = AWS_FILL)
+        item  = item.to_s
+        part  = item.split(':')
+        tag   = part.shift
+        fill  = width - tag.size
+        fill  = (char * fill if fill > 0)
+        tag  << fill if fill
+        part << nil   if item.end_with?(':')
+        [tag, *part].join(':')
       end
 
     end

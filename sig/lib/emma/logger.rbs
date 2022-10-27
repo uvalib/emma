@@ -1,14 +1,16 @@
 module Emma
   # Application logger.
   #
-  class Logger < ::Logger
+  class Logger < ActiveSupport::Logger
     FILTERING: bool
 
     AWS_FORMATTING: bool
 
     def initialize: (*untyped arg, **untyped opt) -> void
 
-    @default_formatter: Formatter
+    @default_formatter: ::Logger::Formatter
+
+    @formatter: ::Logger::Formatter
 
     # Refrain from generating certain entries in the AWS CloudWatch log.
     #
@@ -47,6 +49,24 @@ module Emma
     # facilitate filtering.
     #
     class Formatter < ::Logger::Formatter
+      # Width of severity column.
+      #
+      # @type [Integer]
+      #
+      SEV: Integer
+
+      # Width of progname column.
+      #
+      # @type [Integer]
+      #
+      PRG: Integer
+
+      # Character used for filling out fixed-width columns for AWS format.
+      #
+      # @type [String]
+      #
+      AWS_FILL: String
+
       # Time not shown in favor of the CloudWatch timestamp.
       #
       # @type [String]
@@ -60,6 +80,9 @@ module Emma
       BASIC_FORMAT: String
 
       # Format for AWS CloudWatch logging.
+      #
+      # Because the collapsed view of log lines squeezes out multiple spaces,
+      # fixed-width columns are right-filled with #AWS_FILL as needed.
       #
       # @param [Integer] severity
       # @param [Time]    _time
@@ -83,6 +106,17 @@ module Emma
 
       #alias call aws_format
       #alias call basic_call
+
+      # Right-fill *item* if necessary so that its representation has at least
+      # *width* characters.
+      #
+      # @param [*]       item
+      # @param [Integer] width
+      # @param [String]  char
+      #
+      # @return [String]
+      #
+      def right_fill: (untyped item, Integer width, ?String char) -> String
     end
   end
 end

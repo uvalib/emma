@@ -105,6 +105,7 @@ class Object
   # @option opt [String]                   :separator  Default: "\n"
   # @option opt [Boolean]                  :debug      Structure for debug output
   # @option opt [Symbol, Integer, Boolean] :log        Note [1]
+  # @option opt [Boolean]                  :no_log     Note [2]
   #
   # @return [nil]
   #
@@ -115,15 +116,22 @@ class Object
   # [1] When deployed, this option will create a log entry rather than produce
   # $stderr output.  If not deployed, the log entry is created in addition to
   # $stderr output.
+  # [2] During initial trace output (if enabled) it makes sense to only send to
+  # $stderr so that the overall trace output doesn't switch forms as soon as
+  # `Log.add` starts working.
   #
   def __output_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
                    | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
   #
-  # @param [Array<*>] args              Passed to #__output_impl.
-  # @param [Hash]     opt               Passed to #__output_impl.
-  # @param [Proc]     block             Passed to #__output_impl.
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block
+  #
+  # @return [nil]
+  #
+  # @see #__output_impl
   #
   # == Usage Notes
   # The method is only functional if #CONSOLE_OUTPUT is true.
@@ -135,22 +143,54 @@ class Object
 
   # Write indented debug line(s) to $stderr.
   #
-  # @param [Array<*>] args              Passed to #__output_impl.
-  # @param [Hash]     opt               Passed to #__output_impl.
-  # @param [Proc]     block             Passed to #__output_impl.
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block
   #
   # @return [nil]
+  #
+  # @see #__output_impl
   #
   def __debug_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
                   | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
   #
-  # @param [Array<*>] args              Passed to #__debug_impl.
-  # @param [Hash]     opt               Passed to #__debug_impl.
-  # @param [Proc]     block             Passed to #__debug_impl.
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block
+  #
+  # @return [nil]
+  #
+  # @see #__debug_impl
   #
   def __debug: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+             | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+
+  # Output a trace line which always goes to $stderr.
+  #
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block
+  #
+  # @return [nil]
+  #
+  # @see #__output_impl
+  #
+  def __trace_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+                  | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+
+  # Output a trace line which always goes to $stderr.
+  #
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block
+  #
+  # @return [nil]
+  #
+  # @see #__trace_impl
+  #
+  def __trace: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
              | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Loading level and indentation.

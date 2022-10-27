@@ -123,7 +123,7 @@ class ApiService
   def self.api_logger
     # noinspection RbsMissingTypeSignature
     @api_logger ||=
-      Log.new(progname: ' API', level: (DEBUG_TRANSMISSION ? :debug : :info))
+      Log.new(progname: 'API', level: (DEBUG_TRANSMISSION ? :debug : :info))
   end
 
   # ===========================================================================
