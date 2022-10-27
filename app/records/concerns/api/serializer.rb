@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 #
 class Api::Serializer < ::Representable::Decorator
 
-  include Emma::Time
+  include Emma::TimeMethods
   include Emma::Debug
 
   include Api::Serializer::Schema

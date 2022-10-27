@@ -1,5 +1,5 @@
 class LookupJob < ActiveJob::Base
-  include Emma::Time
+  include Emma::TimeMethods
 
   include Emma::Debug
 

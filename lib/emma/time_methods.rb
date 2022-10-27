@@ -1,4 +1,4 @@
-# lib/emma/time.rb
+# lib/emma/time_methods.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Time and time span methods.
 #
-module Emma::Time
+module Emma::TimeMethods
 
   extend self
 

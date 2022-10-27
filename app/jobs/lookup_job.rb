@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 class LookupJob < ActiveJob::Base
 
-  include Emma::Time
+  include Emma::TimeMethods
   include Emma::Debug
   extend  Emma::Debug
 

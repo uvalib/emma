@@ -10,7 +10,7 @@ end
 
 # TODO: Work into Emma::Extension::Debugging
 class DebugTiming
-  extend Emma::Time
+  extend Emma::TimeMethods
 
   def self.start: () -> Float
 

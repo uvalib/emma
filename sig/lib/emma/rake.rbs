@@ -8,7 +8,7 @@
 module Emma::Rake
   include Emma::Common
 
-  include Emma::Time
+  include Emma::TimeMethods
 
   extend ::Emma::Rake
 

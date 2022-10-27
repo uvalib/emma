@@ -11,7 +11,7 @@ module BsApiConcern
 
   include BookshareConcern
 
-  extend Emma::Time
+  extend Emma::TimeMethods
 
   # Invoke a Bookshare API method for display in the "Bookshare API Explorer".
   #

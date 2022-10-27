@@ -38,7 +38,7 @@ if DEBUG_SPROCKETS
   # TODO: Work into Emma::Extension::Debugging
   class DebugTiming
 
-    extend Emma::Time
+    extend Emma::TimeMethods
 
     def self.start
       @start ||= 0.0

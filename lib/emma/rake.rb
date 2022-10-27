@@ -20,7 +20,7 @@ __loading_begin(__FILE__)
 module Emma::Rake
 
   include Emma::Common
-  include Emma::Time
+  include Emma::TimeMethods
 
   extend self
 

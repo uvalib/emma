@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #
 class LookupService
 
-  include Emma::Time
+  include Emma::TimeMethods
 
   include Lookup
 

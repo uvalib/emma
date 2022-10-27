@@ -15,7 +15,7 @@ __loading_begin(__FILE__)
 #
 module Api::Message
 
-  include Emma::Time
+  include Emma::TimeMethods
 
   # ===========================================================================
   # :section:

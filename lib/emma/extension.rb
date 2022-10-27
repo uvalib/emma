@@ -8,7 +8,7 @@
 __loading_begin(__FILE__)
 
 require 'emma/debug'
-require 'emma/time'
+require 'emma/time_methods'
 
 module Emma::Extension
 
@@ -19,7 +19,7 @@ module Emma::Extension
     module Methods
 
       include Emma::Debug::OutputMethods
-      include Emma::Time
+      include Emma::TimeMethods
 
       EXT_LOG_SEPARATOR = ' | '
       EXT_LOG_LEADER    = EXT_LOG_SEPARATOR.lstrip.freeze

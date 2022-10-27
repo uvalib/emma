@@ -7,7 +7,7 @@
 # instances from record instances.
 #
 module Api::Message
-  include Emma::Time
+  include Emma::TimeMethods
 
   # Annotate and time the creation of a message.
   #

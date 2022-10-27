@@ -23,7 +23,7 @@ module BsApiConcern
   # ===========================================================================
 
   if Log.info?
-    extend Emma::Time
+    extend Emma::TimeMethods
     # Log API request times.
     ActiveSupport::Notifications.subscribe('request.faraday') do |*args|
       _name    = args.shift # 'request.faraday'

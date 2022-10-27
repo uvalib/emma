@@ -2,7 +2,7 @@
 # Api::Record.
 #
 class Api::Serializer < ::Representable::Decorator
-  include Emma::Time
+  include Emma::TimeMethods
 
   include Emma::Debug
 

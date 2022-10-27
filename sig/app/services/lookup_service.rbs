@@ -20,7 +20,7 @@ type lookupJobTable     = Hash[String,lookupJobData]
 # ApiService -- instead, the classes defined within its namespace are.
 #
 class LookupService
-  include Emma::Time
+  include Emma::TimeMethods
 
   include Lookup
 
