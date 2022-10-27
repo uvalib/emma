@@ -22,6 +22,10 @@ module Emma
   # noinspection RubyResolve
   class Application < Rails::Application
 
+    # Bring in application-specific methods.
+    add_lib_to_load_path!(Rails.root)
+    require 'emma'
+
     # Initialize configuration defaults.
     config.load_defaults 7.0
 
@@ -163,19 +167,14 @@ module Emma
     # when problems arise.
     config.log_level = CONSOLE_DEBUGGING ? :debug : :info
 
+    # Use default formatter so that PID and timestamp are not suppressed.
+    config.log_formatter = Emma::Logger::Formatter.new
+
     # Don't colorize AWS logs.
     config.colorize_logging = !application_deployed?
 
-    # Use a different logger for distributed setups.
-    # require 'syslog/logger'
-    # config.logger =
-    #   ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
-    if true?(ENV['RAILS_LOG_TO_STDOUT'])
-      logger           = ActiveSupport::Logger.new(STDOUT)
-      logger.formatter = config.log_formatter
-      config.logger    = ActiveSupport::TaggedLogging.new(logger)
-    end
+    # Use a different logger when logging to $stdout.
+    config.logger = Emma::Logger.new(STDOUT) if LOG_TO_STDOUT
 
     # =========================================================================
     # Assets

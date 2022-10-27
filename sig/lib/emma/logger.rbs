@@ -1,0 +1,88 @@
+module Emma
+  # Application logger.
+  #
+  class Logger < ::Logger
+    FILTERING: bool
+
+    AWS_FORMATTING: bool
+
+    def initialize: (*untyped arg, **untyped opt) -> void
+
+    @default_formatter: Formatter
+
+    # Refrain from generating certain entries in the AWS CloudWatch log.
+    #
+    # @param [Integer] severity
+    # @param [*]       message
+    # @param [*]       progname       Default @progname
+    #
+    # @return [TrueClass]
+    #
+    def add: (Integer severity, ?untyped? message, ?untyped? progname) ?{ () -> untyped } -> true
+
+    private
+
+    # Regexp fragment for matching an ANSI color sequence.
+    #
+    # @type [String]
+    #
+    ANSI_COLOR: String
+
+    START: String
+
+    # Patterns of log entries which are not helpful and/or way too frequent.
+    #
+    # @type [Array<Regexp>]
+    #
+    FILTER_OUT: Array[Regexp]
+
+    # Indicate whether the given log entry should be skipped if log output is
+    # going to AWS CloudWatch.
+    #
+    # @param [*] message
+    #
+    def filter_out?: (untyped message) -> bool
+
+    # Ensure that every log line is prefixed with the same log information to
+    # facilitate filtering.
+    #
+    class Formatter < ::Logger::Formatter
+      # Time not shown in favor of the CloudWatch timestamp.
+      #
+      # @type [String]
+      #
+      AWS_FORMAT: String
+
+      # The same as Logger::Formatter::Format but with the progname aligned.
+      #
+      # @type [String]
+      #
+      BASIC_FORMAT: String
+
+      # Format for AWS CloudWatch logging.
+      #
+      # @param [Integer] severity
+      # @param [Time]    _time
+      # @param [String]  progname
+      # @param [*]       msg
+      #
+      # @return [String]
+      #
+      def aws_call: (Integer severity, Time _time, String progname, untyped msg) -> String
+
+      # Format for local logging.
+      #
+      # @param [Integer] severity
+      # @param [Time]    time
+      # @param [String]  progname
+      # @param [*]       msg
+      #
+      # @return [String]
+      #
+      def basic_call: (Integer severity, Time time, String progname, untyped msg) -> String
+
+      #alias call aws_format
+      #alias call basic_call
+    end
+  end
+end

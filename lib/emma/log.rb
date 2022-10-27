@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require_relative 'logger'
+
 # Emma::Log
 #
 module Emma::Log
@@ -34,17 +36,13 @@ module Emma::Log
   # @return [Logger]
   #
   def self.logger
-    @logger ||= new(Rails.logger, progname: 'EMMA')
-  end
-
-  # Set the current application logger.
-  #
-  # @param [Logger] logger
-  #
-  # @return [Logger]
-  #
-  def self.logger=(logger)
-    @logger = logger
+    # noinspection RbsMissingTypeSignature
+    @logger ||=
+      if LOG_TO_STDOUT
+        new(STDOUT, progname: 'EMMA')
+      else
+        new(Rails.application.config.default_log_file, progname: 'EMMA')
+      end
   end
 
   # Add a log message.
@@ -65,32 +63,23 @@ module Emma::Log
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
-  def self.add(severity = nil, *args)
-    if severity.is_a?(String)
-      args.unshift(severity)
-      severity = nil
+  def self.add(severity, *args)
+    return if (level = log_level(severity)) < logger.level
+    args += Array.wrap(yield) if block_given?
+    args.compact!
+    message = []
+    message << args.shift if args.first.is_a?(Symbol)
+    error = (args.shift if args.first.is_a?(Exception))
+    if error.is_a?(YAML::SyntaxError)
+      note = (" - #{args.shift}" if args.present?)
+      args.prepend("#{error.class}: #{error.message}#{note}")
+    elsif error
+      note = (error.messages[1..].presence if error.respond_to?(:messages))
+      note &&= ' - %s' % note.join('; ')
+      args << "#{error.message} [#{error.class}]#{note}"
     end
-    severity = log_level(severity)
-    if severity >= logger.level
-      args += Array.wrap(yield) if block_given?
-      args.compact!
-      message = []
-      message << args.shift if args.first.is_a?(Symbol)
-      error = (args.shift if args.first.is_a?(Exception))
-      if error.is_a?(YAML::SyntaxError)
-        note = (" - #{args.shift}" if args.present?)
-        args.prepend("#{error.class}: #{error.message}#{note}")
-      elsif error
-        note = (error.messages[1..].presence if error.respond_to?(:messages))
-        note &&= ' - %s' % note.join('; ')
-        args << "#{error.message} [#{error.class}]#{note}"
-      end
-      message += args if args.present?
-      logger.add(severity, message.join(': '))
-    end
+    message += args if args.present?
+    logger.add(level, message.join(': '))
     nil
   end
 
@@ -331,50 +320,34 @@ module Emma::Log
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Module methods
   # ===========================================================================
 
   public
 
-  # The current logger.
-  #
-  # @return [Logger]
-  #
-  def logger
-    Log.logger
-  end
-
-  # Set the current logger.
-  #
-  # @param [Logger] logger
-  #
-  # @return [Logger]
-  #
-  def logger=(logger)
-    Log.logger = logger
-  end
-
   # Create a new instance of the assigned Logger class.
   #
-  # @param [Logger, nil] src
-  # @param [Hash]        opt                    @see Logger#initialize
+  # @param [::Logger, String, IO, nil] src
+  # @param [Hash]                      opt        @see Logger#initialize
   #
-  # @option opt [Integer]           :level      Logging level (default: #DEBUG)
-  # @option opt [String]            :progname   Default: nil.
-  # @option opt [Logger::Formatter] :formatter  Default: from Log.logger
+  # @option opt [Integer]             :level      Logging level (def.: #DEBUG)
+  # @option opt [String]              :progname   Default: nil.
+  # @option opt [::Logger::Formatter] :formatter  Default: from Log.logger
   #
-  # @return [Logger]
+  # @return [::Logger]
   #
   def self.new(src = nil, **opt)
     ignored = opt.except(:progname, :level, :formatter, :datetime_format)
-    $stderr.puts "Log.new ignoring options #{ignored.keys}" if ignored.present?
-    (src || logger).clone.tap do |log|
-      log.progname        = opt[:progname]
-      log.level           = opt[:level]           if opt.key?(:level)
-      log.datetime_format = opt[:datetime_format] if opt.key?(:datetime_format)
-      log.formatter =
-        opt.key?(:formatter) ? opt[:formatter] : log.formatter&.clone
-    end
+    __output "Log.new ignoring options #{ignored.keys}" if ignored.present?
+    log = src || logger
+    log = log.clone                             if log.is_a?(::Logger)
+    log = ActiveSupport::Logger.new(log, **opt) unless log.is_a?(::Logger)
+    log.progname        = opt[:progname]
+    log.level           = opt[:level]           if opt[:level]
+    log.datetime_format = opt[:datetime_format] if opt[:datetime_format]
+    log.formatter       = opt[:formatter]       if opt[:formatter]
+    log.formatter       = log.formatter&.clone  unless opt[:formatter]
+    log
   end
 
 end

@@ -19,22 +19,6 @@ module OmniAuth
 
       include OmniAuth::ExtensionDebugging
 
-      # Direct access to the OmniAuth logger, automatically prefixed with this
-      # strategy's name.
-      #
-      # @param [Symbol] level
-      # @param [String] message
-      #
-      # @return [nil]
-      #
-      # == Implementation Notes
-      # Instead of attempting to override Configuration#default_logger this
-      # override simply manages its own logger instance.
-      #
-      def log: (Symbol level, String message) -> nil
-
-      @log: Emma::Log
-
       # Performs the steps necessary to run the request phase of a strategy.
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]

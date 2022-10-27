@@ -13,16 +13,6 @@ module Emma::Log
   #
   def self.logger: () -> Logger
 
-  # Set the current application logger.
-  #
-  # @param [Logger] logger
-  #
-  # @return [Logger]
-  #
-  def self.logger=: (Logger logger) -> Logger
-
-  @logger: Logger
-
   # Add a log message.
   #
   # If the first element of *args* is a Symbol, that is taken to be the calling
@@ -41,7 +31,7 @@ module Emma::Log
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
-  def self.add: (?(Integer|Symbol|nil) severity, *untyped args) ?{ () -> untyped } -> nil
+  def self.add: ((Integer|Symbol) severity, *untyped args) ?{ () -> untyped } -> nil
 
   # Add a DEBUG-level log message.
   #
@@ -215,32 +205,18 @@ module Emma::Log
   #
   def self.method_missing: (untyped meth, *untyped args) ?{ () -> untyped } -> untyped
 
-  # The current logger.
-  #
-  # @return [Logger]
-  #
-  def logger: () -> Logger
-
-  # Set the current logger.
-  #
-  # @param [Logger] logger
-  #
-  # @return [Logger]
-  #
-  def logger=: (Logger logger) -> Logger
-
   # Create a new instance of the assigned Logger class.
   #
-  # @param [Logger, nil] src
-  # @param [Hash]        opt                    @see Logger#initialize
+  # @param [::Logger, String, IO, nil] src
+  # @param [Hash]                      opt        @see Logger#initialize
   #
-  # @option opt [Integer]           :level      Logging level (default: #DEBUG)
-  # @option opt [String]            :progname   Default: nil.
-  # @option opt [Logger::Formatter] :formatter  Default: from Log.logger
+  # @option opt [Integer]             :level      Logging level (def.: #DEBUG)
+  # @option opt [String]              :progname   Default: nil.
+  # @option opt [::Logger::Formatter] :formatter  Default: from Log.logger
   #
-  # @return [Logger]
+  # @return [::Logger]
   #
-  def self.new: (?(Logger|nil) src, **untyped opt) -> Logger
+  def self.new: (?(::Logger|IO|String|nil) src, **untyped opt) -> ::Logger
 end
 
 # Defined as an "alias" for Emma::Log without needing to "include Emma".

@@ -110,9 +110,6 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = %i[request_id]
 
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
-
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
