@@ -93,9 +93,9 @@ en:
           - new
           - edit_select
           - delete_select
-          - bulk_new
-          - bulk_edit
-          - bulk_delete
+         #- bulk_new    # TODO: remove related logic for Entry
+         #- bulk_edit   # TODO: remove related logic for Entry
+         #- bulk_delete # TODO: remove related logic for Entry
           - admin
 
       # =======================================================================

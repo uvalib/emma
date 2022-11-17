@@ -36,22 +36,33 @@ module LayoutHelper::NavBar
   # == Implementation Notes
   # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  NAV_BAR_CONTROLLERS = NAV_BAR_CONFIG[:controllers].map(&:to_sym).freeze
+  NAV_BAR_CONTROLLERS =
+    Array.wrap(NAV_BAR_CONFIG[:controllers]).compact.map!(&:to_sym).freeze
 
   # The important nav bar entries.
   #
   # @type [Array<Symbol>]
   #
-  # == Implementation Notes
-  # Should contain some or all of superset #PRIMARY_CONTROLLERS.
+  PRIMARY_CONTROLLERS =
+    Array.wrap(NAV_BAR_CONFIG[:primary]).compact.map!(&:to_sym).freeze
+
+  # Nav bar primary entries that are not displayed in the production
+  # deployment.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  PRIMARY_CONTROLLERS = NAV_BAR_CONFIG[:primary].map(&:to_sym).freeze
+  # @type [Array<Symbol>]
+  #
+  UNRELEASED_CONTROLLERS =
+    Array.wrap(NAV_BAR_CONFIG[:unreleased]).compact.map!(&:to_sym).freeze
+
+  # Desktop-only validations.
+  unless application_deployed?
+    if (invalid = PRIMARY_CONTROLLERS - NAV_BAR_CONTROLLERS).present?
+      raise "Invalid PRIMARY_CONTROLLERS: #{invalid.inspect}"
+    end
+    if (invalid = UNRELEASED_CONTROLLERS - PRIMARY_CONTROLLERS).present?
+      raise "Invalid UNRELEASED_CONTROLLERS: #{invalid.inspect}"
+    end
+  end
 
   # Configuration for dashboard page properties.
   #
@@ -61,24 +72,6 @@ module LayoutHelper::NavBar
   # noinspection RailsI18nInspection
   #++
   DASHBOARD_CONFIG = I18n.t('emma.home.dashboard', default: {}).deep_freeze
-
-  # Default dashboard link label.
-  #
-  # @type [String]
-  #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
-  DASHBOARD_LABEL = DASHBOARD_CONFIG[:label]
-
-  # Default dashboard link tooltip.
-  #
-  # @type [String]
-  #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
-  DASHBOARD_TOOLTIP = DASHBOARD_CONFIG[:tooltip]
 
   # Controller link labels.
   #
@@ -125,8 +118,8 @@ module LayoutHelper::NavBar
         if controller == :home
           # Special entry for the dashboard/welcome screen.
           path   = dashboard_path
-          label  = DASHBOARD_LABEL
-          tip    = DASHBOARD_TOOLTIP
+          label  = DASHBOARD_CONFIG[:label]
+          tip    = DASHBOARD_CONFIG[:tooltip]
           hidden = !current_user
         else
           # Entry for the main page of the given controller.
@@ -135,7 +128,12 @@ module LayoutHelper::NavBar
           tip    = CONTROLLER_TOOLTIP[controller]
           hidden = false
         end
+
         primary  = PRIMARY_CONTROLLERS.include?(controller)
+        if primary && production_deployment?
+          primary &&= UNRELEASED_CONTROLLERS.include?(controller)
+        end
+
         current  = (path == curr_path)
         base     = (path == base_path)
         active   = current || base
