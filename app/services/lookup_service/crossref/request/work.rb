@@ -87,7 +87,6 @@ module LookupService::Crossref::Request::Work
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works__doi_
   #
   def get_work(doi, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'works', doi, **opt)
     api_return(Lookup::Crossref::Message::Work)
@@ -114,7 +113,6 @@ module LookupService::Crossref::Request::Work
     ids   = extract_hash!(terms, *ID_TYPES)
     opt[:filter] = [*opt[:filter], *ids.values] if ids.present?
     opt[:filter] &&= Array.wrap(opt[:filter]).compact.join(',')
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'works', **terms, **opt)
     api_return(Lookup::Crossref::Message::WorkResults)

@@ -162,7 +162,7 @@ class ArtifactDecorator
   # @type [Hash{Symbol=>*}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   DOWNLOAD_CONFIG = I18n.t('emma.download', default: {}).deep_freeze
 
@@ -170,9 +170,6 @@ class ArtifactDecorator
   #
   # @type [String]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   DOWNLOAD_TOOLTIP = DOWNLOAD_CONFIG[:tooltip]
 
   # Default completed link tooltip.

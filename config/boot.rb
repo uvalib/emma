@@ -175,9 +175,6 @@ end
 # Indicate whether this instance is being run as "rake" or "rails" with a Rake
 # task argument.
 #
-#--
-# noinspection RubyMismatchedReturnType
-#++
 def rake_task?
   if !defined?(@in_rake) || @in_rake.nil?
     @in_rake   = (ENV['RUBYMINE_CONFIG'] == 'rake') # desktop only

@@ -22,7 +22,7 @@ module LogoHelper
   # @type [Array<Symbol>]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   LOGO_TYPE = I18n.t('emma.repository._template.logo').keys.freeze
 

@@ -54,7 +54,6 @@ module TestHelper::CommandLine
   # @return [Array<Symbol>, nil]
   #
   def cli_env_value(value = nil, var:, default:)
-    # noinspection RubyMismatchedReturnType
     val = value || $*.find { |arg| arg.dup.sub!(/#{var}=/i, '') } || ENV[var]
     return default unless val
     val = val.to_s.gsub(/\W/, ' ').squish.split(' ') unless val.is_a?(Array)

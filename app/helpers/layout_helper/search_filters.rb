@@ -127,6 +127,7 @@ module LayoutHelper::SearchFilters
           when String
             path = values
             path = "emma.#{path}" unless path.start_with?('emma.')
+            # noinspection RubyNilAnalysis
             I18n.t(path, default: {}).invert
           when Symbol
             EnumType.pairs_for(values)&.invert
@@ -286,7 +287,7 @@ module LayoutHelper::SearchFilters
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   SEARCH_FILTERS_ROOT = I18n.t('emma.search_filters').deep_freeze
 
@@ -409,7 +410,7 @@ module LayoutHelper::SearchFilters
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   ADV_SEARCH_CONFIG = I18n.t('emma.search_bar.advanced').deep_freeze
 

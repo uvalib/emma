@@ -24,7 +24,7 @@ module BaseDecorator::Pagination
   # @type [Hash{Symbol=>*}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   PAGINATION_CONFIG = I18n.t('emma.pagination', default: {}).deep_freeze
 
@@ -38,9 +38,6 @@ module BaseDecorator::Pagination
   #
   # @type [Integer]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   DEFAULT_PAGE_SIZE = PAGINATION_CONFIG[:page_size]
 
   # Properties for the "start over" pagination control.
@@ -50,45 +47,30 @@ module BaseDecorator::Pagination
   # == Usage Notes
   # To link to the base search without any search terms (a.k.a. "null search").
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   START_OVER = PAGINATION_CONFIG[:start_over]
 
   # Properties for the "first page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   FIRST_PAGE = PAGINATION_CONFIG[:first_page]
 
   # Properties for the "last page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   LAST_PAGE = PAGINATION_CONFIG[:last_page]
 
   # Properties for the "previous page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   PREV_PAGE = PAGINATION_CONFIG[:prev_page]
 
   # Properties for the "next page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   NEXT_PAGE = PAGINATION_CONFIG[:next_page]
 
   # ===========================================================================

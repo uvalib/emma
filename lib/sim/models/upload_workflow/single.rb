@@ -374,7 +374,6 @@ module UploadWorkflow::Single::Events
   # The user initiates submission of a new entry.
   def create(*)
     super.tap do
-      # noinspection RubyMismatchedArgumentType
       submission.set_simulation(__method__) if simulating
     end
   end
@@ -382,7 +381,6 @@ module UploadWorkflow::Single::Events
   # The user initiates modification of an existing entry.
   def edit(*)
     super.tap do
-      # noinspection RubyMismatchedArgumentType
       submission.set_simulation(__method__) if simulating
     end
   end
@@ -390,7 +388,6 @@ module UploadWorkflow::Single::Events
   # The user initiates removal of an existing entry.
   def remove(*)
     super.tap do
-      # noinspection RubyMismatchedArgumentType
       submission.set_simulation(__method__) if simulating
     end
   end

@@ -473,7 +473,6 @@ module BaseDecorator::Fields
   def model_html_id(base)
     name = base.to_s.strip
     unless name.end_with?(*RESERVED_SUFFIX)
-      # noinspection RubyMismatchedReturnType
       FIELD_PREFIX.find { |prefix| name.delete_prefix!(prefix) }
     end
     name = 'None' if name.blank?

@@ -405,7 +405,6 @@ class Phase < ApplicationRecord
 
     def describe_parts(phase = nil, **opt)
       unless (group = opt[:bulk_id])
-        # noinspection RubyMismatchedArgumentType
         phase ||= self_for_instance_method(__method__)
         # noinspection RubyCaseWithoutElseBlockInspection
         case phase

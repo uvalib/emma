@@ -208,10 +208,8 @@ class Search::Message::SearchTitleList < Search::Api::Message
     def inspect
       # @type [Hash{Symbol=>Array,String,nil}]
       part = { ids: ids&.to_a, values: values }
-      # noinspection RubyMismatchedReturnType
       part.transform_values! { |v| v&.map(&:inspect)&.join(', ') }
       part[:ids].tr!('()', '') if part[:ids]
-      # noinspection RubyMismatchedReturnType
       part.transform_values! { |v| v || '---' }
       '<%{ids} | %{values} | GroupingCriteria>' % part
     end

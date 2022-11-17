@@ -741,6 +741,7 @@ module FlashHelper
     opt[:default] << flash_i18n_path(scope, topic)
     opt[:default] << flash_i18n_path('error', topic)
     opt[:default] << ExecError::DEFAULT_ERROR
+    # noinspection RubyMismatchedReturnType
     I18n.t(i18n_path, **opt)
   end
 

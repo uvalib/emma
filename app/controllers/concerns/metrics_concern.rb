@@ -36,7 +36,6 @@ module MetricsConcern
   def self.metrics(type, hash, **opt)
     hash.map { |name, docstring|
       if REGISTRY.exist?(name)
-        # noinspection RubyMismatchedReturnType
         Log.warn { "#{name}: metric already registered" }
       else
         [name, REGISTRY.send(type, name, **opt.merge(docstring: docstring))]

@@ -24,7 +24,7 @@ module DataHelper
   # @type [Array<Symbol>]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   EMMA_DATA_FIELDS =
     I18n.t('emma.upload.record.emma_data').except(*Field::PROPERTY_KEYS)

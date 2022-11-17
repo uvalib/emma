@@ -44,9 +44,6 @@ module TestHelper::Common
   #
   # @type [Hash{Symbol=>Hash{Symbol=>*}}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   PROPERTY =
     CONTROLLERS.map { |model|
       path = (model == :user_sessions) ? 'emma.user.sessions' : "emma.#{model}"
@@ -58,6 +55,7 @@ module TestHelper::Common
         emma.generic.unit.brief
       ]
       unit = I18n.t(unit.shift, default: [*unit, model.to_s])
+      # noinspection RubyNilAnalysis
       endpoints =
         I18n.t(path, default: {}).map { |endpoint, config|
           next unless config.is_a?(Hash) && config[:_endpoint]

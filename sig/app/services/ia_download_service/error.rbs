@@ -64,7 +64,6 @@ end
 
 # :nocov:
 class IaDownloadService::AuthError < ApiService::AuthError
-  # :nocov:
   include IaDownloadService::Error::ClassType
 end
 

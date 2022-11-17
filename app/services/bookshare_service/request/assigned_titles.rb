@@ -44,7 +44,6 @@ module BookshareService::Request::AssignedTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-assigned-titles
   #
   def get_my_assigned_titles(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myAssignedTitles', **opt)
     api_return(Bs::Message::TitleMetadataSummaryList)
@@ -80,7 +79,6 @@ module BookshareService::Request::AssignedTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_titles-assigned-member
   #
   def get_assigned_titles(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'assignedTitles', userId, **opt)
@@ -120,7 +118,6 @@ module BookshareService::Request::AssignedTitles
   #
   def create_assigned_title(user: nil, bookshareId:, **opt)
     opt.merge!(bookshareId: bookshareId)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'assignedTitles', userId, **opt)
@@ -154,7 +151,6 @@ module BookshareService::Request::AssignedTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_title-unassign
   #
   def remove_assigned_title(user: nil, bookshareId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'assignedTitles', userId, bookshareId, **opt)

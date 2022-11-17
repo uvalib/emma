@@ -1,4 +1,4 @@
-# lib/emma/loggger.rb
+# lib/emma/logger.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true

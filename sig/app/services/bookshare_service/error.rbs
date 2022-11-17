@@ -37,7 +37,6 @@ end
 
 # :nocov:
 class BookshareService::AuthError < ApiService::AuthError
-  # :nocov:
   include BookshareService::Error::ClassType
 end
 
@@ -99,7 +98,6 @@ end
 
 # === Unused exception classes:
 class BookshareService::AccountError < BookshareService::Error
-  # === Unused exception classes:
   include BookshareService::Error::ClassType
 end
 

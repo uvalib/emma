@@ -354,13 +354,11 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash{Symbol=>Any}]
     #
-    #--
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-    #++
     def extract_fields(rec, fields)
       return {} if rec.blank?
       fields = fields.flatten
       fields.compact!
+      # noinspection RubyMismatchedArgumentType
       fields.map! { |f| [f.to_sym, field_value(rec, f)] }.to_h
     end
 
@@ -1172,7 +1170,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   FIELD_HIERARCHY =
     symbolize_values(I18n.t('emma.search.field_hierarchy')).deep_freeze

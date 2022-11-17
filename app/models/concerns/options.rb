@@ -181,7 +181,7 @@ class Options
 
   # Supplied URL parameters.
   #
-  # @note This method will be used in ParamsHelper.
+  # @note This method is expected by ParamsHelper.
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -191,7 +191,7 @@ class Options
 
   # URL parameters relevant to the associated model/controller.
   #
-  # @note This method will be used by Record::Properties#parameters.
+  # @note This method is expected by Record::Properties#parameters.
   #
   # @return [Hash{Symbol=>Any}]
   #

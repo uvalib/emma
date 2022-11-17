@@ -42,7 +42,7 @@ module RepositoryHelper
 
   # Indicate whether the given URL is an EMMA link.
   #
-  # @param [String] url
+  # @param [String, nil] url
   #
   def emma_link?(url)
     url.to_s.strip.match?(%r{^https?://emma[^/]*\.virginia\.edu/})
@@ -50,7 +50,7 @@ module RepositoryHelper
 
   # Indicate whether the given URL is a Bookshare link.
   #
-  # @param [String,nil] url
+  # @param [String, nil] url
   #
   # == Usage Notes
   # This exists to support the handful of items which are represented as
@@ -61,9 +61,9 @@ module RepositoryHelper
     url.to_s.strip.match?(%r{^https?://([^/]+\.)?bookshare\.org/})
   end
 
-  # Indicate whether the given URL is an Internet Archive link.
+  # Indicate whether the given URL is a HathiTrust link.
   #
-  # @param [String,nil] url
+  # @param [String, nil] url
   #
   def ht_link?(url)
     url.to_s.strip.match?(%r{^https?://([^/]+\.)?handle\.net/})
@@ -71,7 +71,7 @@ module RepositoryHelper
 
   # Indicate whether the given URL is an Internet Archive link.
   #
-  # @param [String,nil] url
+  # @param [String, nil] url
   #
   def ia_link?(url)
     url.to_s.strip.match?(%r{^https?://([^/]+\.)?archive\.org/})

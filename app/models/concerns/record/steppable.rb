@@ -51,7 +51,7 @@ module Record::Steppable
   # @see file:config/locales/state_table.en.yml *en.emma.state_table*
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   STATE_TABLES =
     I18n.t('emma.state_table', default: {}).transform_values { |leaf_classes|
@@ -91,7 +91,7 @@ module Record::Steppable
   # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   STATE_GROUP =
     I18n.t('emma.entry.state_group', default: {}).transform_values { |entry|

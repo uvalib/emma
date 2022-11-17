@@ -100,7 +100,6 @@ class SearchDecorator < BaseDecorator
     # @return [Symbol]
     #
     def results_type
-      # noinspection RubyMismatchedArgumentType
       context[__method__] || h.send(__method__)
     end
 
@@ -109,7 +108,6 @@ class SearchDecorator < BaseDecorator
     # @return [Symbol]
     #
     def search_style
-      # noinspection RubyMismatchedArgumentType
       context[__method__] || h.send(__method__)
     end
 
@@ -130,7 +128,7 @@ class SearchDecorator < BaseDecorator
     # @type [Hash{Symbol=>String,Symbol}]
     #
     #--
-    # noinspection RailsI18nInspection, RubyMismatchedConstantType
+    # noinspection RailsI18nInspection
     #++
     STYLE_BUTTON_TEMPLATE = I18n.t('emma.search.styles._colorize').deep_freeze
 
@@ -139,7 +137,7 @@ class SearchDecorator < BaseDecorator
     # @type [Hash{Symbol=>Hash}]
     #
     #--
-    # noinspection RailsI18nInspection
+    # noinspection RailsI18nInspection, RubyNilAnalysis
     #++
     STYLE_BUTTONS =
       I18n.t('emma.search.styles').map { |style, prop|
@@ -172,7 +170,7 @@ class SearchDecorator < BaseDecorator
     # @type [Hash{Symbol=>Hash}]
     #
     #--
-    # noinspection RailsI18nInspection
+    # noinspection RailsI18nInspection, RubyNilAnalysis
     #++
     RESULT_TYPES =
       I18n.t('emma.search.results').map { |style, prop|
@@ -246,7 +244,6 @@ class SearchDecorator < BaseDecorator
       styles << :dev if search_debug?
       styles.compact_blank!
       styles.reject! { |v| EngineConcern::RESET_KEYS.include?(v) }
-      # noinspection RubyMismatchedReturnType
       styles.map! { |v| v.to_s.delete_suffix(suffix) << suffix }
     end
 
@@ -262,7 +259,6 @@ class SearchDecorator < BaseDecorator
       results = [results_type]
       results.compact_blank!
       results.reject! { |v| EngineConcern::RESET_KEYS.include?(v) }
-      # noinspection RubyMismatchedReturnType
       results.map! { |v| v.to_s.delete_suffix(suffix) << suffix }
     end
 

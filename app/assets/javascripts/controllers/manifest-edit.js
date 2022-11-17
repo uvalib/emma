@@ -1197,8 +1197,8 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Indicate whether the given row is an empty row which has never cause the
-     * creation of a database item.
+     * Indicate whether the given row is an empty row which has never caused
+     * the creation of a database item.
      *
      * @param {Selector} target
      *
@@ -2698,7 +2698,7 @@ $(document).on('turbolinks:load', function() {
 
         //_debugWantNoDataValues($copy, '$copy'); // TODO: remove - debugging
 
-        // If the row is being inserted after an inserted row look to the
+        // If the row is being inserted after an inserted row, look to the
         // original row for information.
         const row   = dbRowValue($row) || 0;
         const delta = nextDeltaCounter(row);
@@ -4071,10 +4071,6 @@ $(document).on('turbolinks:load', function() {
             $toggle.attr('aria-controls', final_ids.join(' '));
         }
     }
-
-    // ========================================================================
-    // Functions - display - data rows
-    // ========================================================================
 
     // ========================================================================
     // Functions - database - Manifest

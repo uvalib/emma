@@ -45,7 +45,7 @@ module Record::EmmaData
   # @type [Hash]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType, RubyArgCount
+  # noinspection RailsI18nInspection
   #++
   EMMA_DATA_CONFIG =
     I18n.t('emma.entry.record.emma_data').select { |_, v|

@@ -285,7 +285,6 @@ module Import::IaBulk
       else
         Log.warn do
           path.select! { |_, v| v.nil? }
-          # noinspection RubyMismatchedReturnType
           keys = [:download, *path.keys].map! { |key| "'#{key}'" }
           last = keys.pop
           keys = keys.join(', ') << " and #{last}"

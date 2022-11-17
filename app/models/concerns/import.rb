@@ -105,7 +105,7 @@ module Import
 
   # Transform a value into a name that can be used as a symbolized hash key.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Symbol]
   #
@@ -126,7 +126,7 @@ module Import
   #
   # Arrays without multiple items are transformed into strings.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Array, String, Integer, Boolean, nil]
   #
@@ -139,7 +139,7 @@ module Import
 
   # Transform a data item into an array unconditionally.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Array]
   #
@@ -155,7 +155,7 @@ module Import
 
   # Transform a data item into a string.
   #
-  # @param [Any]    v
+  # @param [*]      v
   # @param [String] join              Connector if *v* is an array.  If *join*
   #                                     is set to *nil* then only the first
   #                                     array element is selected.
@@ -174,7 +174,7 @@ module Import
 
   # Transform a data item into a counting number (1 or greater).
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Integer, nil]
   #
@@ -198,7 +198,7 @@ module Import
 
   # Transform a data item into one or more three-character ISO 639 values.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Array<String>]
   #
@@ -208,7 +208,7 @@ module Import
 
   # Transform a data item into one or more DOI identifiers.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Array<String>]
   #
@@ -218,7 +218,7 @@ module Import
 
   # Transform a data item into one or more ISBN identifiers.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Array<String>]
   #
@@ -228,7 +228,7 @@ module Import
 
   # Transform a data item into one or more ISSN identifiers.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Array<String>]
   #
@@ -238,7 +238,7 @@ module Import
 
   # Transform a data item into one or more LCCN identifiers.
   #
-  # @param [Any] v
+  # @param [*] v
   #
   # @return [Array<String>]
   #
@@ -249,7 +249,7 @@ module Import
   # Transform a data item into one or more identifiers of the form expected by
   # :dc_identifier and :dc_relation.
   #
-  # @param [Any]           v
+  # @param [*]             v
   # @param [String, #to_s] prefix
   #
   # @return [Array<String>]
@@ -273,7 +273,7 @@ module Import
 
   # Transform a data item into an EnumType value.
   #
-  # @param [Any]   v
+  # @param [*]     v
   # @param [Class] type               A subclass of EnumType.
   #
   # @return [String, nil]
@@ -289,7 +289,7 @@ module Import
 
   # Transform a data item into an array of EnumType values.
   #
-  # @param [Any]   v
+  # @param [*]     v
   # @param [Class] type               A subclass of EnumType.
   #
   # @return [Array<String>]
@@ -308,13 +308,12 @@ module Import
   # associated import field should be skipped and not included in data stored
   # in the record.
   #
-  # @param [Any] k                    Imported field being skipped.
-  # @param [Any] v
+  # @param [*] k                      Imported field being skipped.
+  # @param [*] v
   #
   # @return [Array<(nil,nil)>]
   #
   def skip(k = nil, v = nil)
-    # noinspection RubyMismatchedArgumentType
     __debug_import(__method__, k, v)
     return nil, nil
   end
@@ -322,14 +321,13 @@ module Import
   # Default transformation.
   #
   # @param [Symbol, String] k
-  # @param [Any]            v
+  # @param [*]              v
   # @param [String]         prefix
   #
   # @return [Array<(Symbol,Any)>]
   # @return [Array<(Symbol,Array)>]
   #
   def default(k, v, prefix = name_prefix)
-    # noinspection RubyMismatchedArgumentType
     __debug_import(__method__, k, v)
     k = default_name(k, prefix)
     v = values(v)
@@ -358,7 +356,7 @@ module Import
   # Apply the appropriate method for the given import field.
   #
   # @param [Symbol, String] k         Import field name.
-  # @param [Any]            v         Import field value.
+  # @param [*]              v         Import field value.
   #
   # @return [Array<(Symbol,Any)>]
   #
@@ -420,8 +418,8 @@ module Import
     # __debug_import
     #
     # @param [String, Symbol] label
-    # @param [Any]            k
-    # @param [Any]            v
+    # @param [*]              k
+    # @param [*]              v
     #
     # @return [nil]
     #

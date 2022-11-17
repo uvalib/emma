@@ -288,7 +288,6 @@ class ExecReport
     #
     def message_hashes(src)
       extract_message_hashes(src, __method__).map! { |part|
-        # noinspection RubyMismatchedReturnType
         normalized_hash(part)
       }.compact_blank!
     end

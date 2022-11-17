@@ -30,9 +30,6 @@ module RunStateConcern
   #
   # @type [Array<String,Hash>]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   NO_RUN_STATE_REDIRECT =
     I18n.t('emma.health.run_state.exempt', default: []).deep_freeze
 

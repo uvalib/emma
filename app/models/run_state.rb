@@ -57,7 +57,7 @@ class RunState < Hash
   # :unavailable so that they maintain their first/last positions.
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   STATE =
     I18n.t('emma.health.run_state.state', default: {}).map { |state, entry|
@@ -265,9 +265,6 @@ class RunState < Hash
   #
   # @type [Hash{String=>String}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   ABBREV_UNIT = {
     sec: 'second',
     min: 'minute',

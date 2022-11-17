@@ -30,9 +30,6 @@ module ManifestItem::StatusMethods
   #
   # @return [ManifestItem, Hash]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def update_status!(
     item = nil,
     file:       true,
@@ -48,6 +45,7 @@ module ManifestItem::StatusMethods
     item[:file_status]  = evaluate_file_status(item, **added)  if file
     item[:data_status]  = evaluate_data_status(item, **added)  if data
     item[:ready_status] = evaluate_ready_status(item, **added) if ready
+    # noinspection RubyMismatchedReturnType
     item
   end
 

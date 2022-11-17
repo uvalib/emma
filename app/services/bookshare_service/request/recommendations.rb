@@ -42,7 +42,6 @@ module BookshareService::Request::Recommendations
   # @see https://apidocs.bookshare.org/reference/index.html#_get-my-recommended-titles
   #
   def get_recommendations(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myRecommendations', **opt)
     api_return(Bs::Message::RecommendedTitles)

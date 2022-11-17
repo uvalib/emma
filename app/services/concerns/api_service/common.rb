@@ -605,9 +605,6 @@ module ApiService::Common
   #
   # @see #api_headers
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def __debug_api_headers(
     options,
     headers,
@@ -619,6 +616,7 @@ module ApiService::Common
     opts_hdrs.transform_values! { |v| v&.inspect || '(none)' }
     body = "BODY:\n#{body.presence&.pretty_inspect}"
     opt  = full ? { max: nil } : {}
+    # noinspection RubyMismatchedArgumentType
     __debug_impl(leader: '>>>', separator: DEBUG_SEPARATOR, **opt) do
       [service_name] << action.inspect << opts_hdrs << body
     end
@@ -634,8 +632,7 @@ module ApiService::Common
   # @return [void]
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  # noinspection RailsParamDefResolve
+  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
   #++
   def __debug_api_response(
     response: @response,

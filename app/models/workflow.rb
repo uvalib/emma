@@ -38,7 +38,7 @@ class Workflow::Base
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   CONFIGURATION = I18n.t('emma.workflow').deep_freeze
 

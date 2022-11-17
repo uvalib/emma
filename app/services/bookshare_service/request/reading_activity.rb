@@ -48,7 +48,6 @@ module BookshareService::Request::ReadingActivity
   # @see https://apidocs.bookshare.org/reference/index.html#_post-reading-activity-event
   #
   def create_reading_event(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'readingEvents', **opt)
     api_return(Bs::Message::StatusModel)
@@ -86,7 +85,6 @@ module BookshareService::Request::ReadingActivity
   # @see https://apidocs.bookshare.org/reference/index.html#_get-reading-position
   #
   def get_reading_position(bookshareId:, format:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myReadingPosition', bookshareId, format, **opt)
     api_return(Bs::Message::ReadingPosition)

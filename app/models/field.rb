@@ -107,9 +107,7 @@ module Field
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
       next unless (section_cfg = config[section]).is_a?(Hash)
-      # noinspection RubyMismatchedReturnType
       sub_sections.find do |sub_sec|
-        # noinspection RubyNilAnalysis
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
         field_cfg = sub_section_cfg[field]
@@ -134,9 +132,7 @@ module Field
     [action, :all].find do |section|
       next unless (section = section&.to_sym)
       next unless (section_cfg = config[section]).is_a?(Hash)
-      # noinspection RubyMismatchedReturnType
       sub_sections.find do |sub_sec|
-        # noinspection RubyNilAnalysis
         sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
         next unless sub_section_cfg.is_a?(Hash)
         sub_section_cfg.find do |_, fld_cfg|

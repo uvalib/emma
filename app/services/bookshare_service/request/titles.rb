@@ -53,7 +53,6 @@ module BookshareService::Request::Titles
   # This request can be made without an Authorization header.
   #
   def get_title_count(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', 'count', **opt)
     response&.body&.presence&.to_i || exception
@@ -83,7 +82,6 @@ module BookshareService::Request::Titles
   # This request can be made without an Authorization header.
   #
   def get_title(bookshareId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, **opt)
     api_return(Bs::Message::TitleMetadataDetail)
@@ -122,7 +120,6 @@ module BookshareService::Request::Titles
   # @see https://apidocs.bookshare.org/reference/index.html#_title-download
   #
   def download_title(bookshareId:, format:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, **opt)
     api_return(Bs::Message::StatusModel)
@@ -185,7 +182,6 @@ module BookshareService::Request::Titles
   # This request can be made without an Authorization header.
   #
   def get_titles(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', **opt)
     api_return(Bs::Message::TitleMetadataSummaryList)
@@ -276,7 +272,6 @@ module BookshareService::Request::Titles
   # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource-list
   #
   def get_title_resource_files(bookshareId:, format:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, 'resources', **opt)
     api_return(Bs::Message::TitleFileResourceList)
@@ -313,7 +308,6 @@ module BookshareService::Request::Titles
   # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource
   #
   def get_title_resource_file(bookshareId:, format:, resourceId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, 'resources', resourceId, **opt)
     api_return(Bs::Message::StatusModel)
@@ -357,7 +351,6 @@ module BookshareService::Request::Titles
   # This request can be made without an Authorization header.
   #
   def get_categories(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'categories', **opt)
     api_return(Bs::Message::CategoriesList)
@@ -394,7 +387,6 @@ module BookshareService::Request::Titles
   # @see https://apidocs.bookshare.org/reference/index.html#_get-bisac-codes
   #
   def get_bisac_codes(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'bisacCodes', **opt)
     api_return(Bs::Message::BisacCodeList)

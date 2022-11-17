@@ -157,7 +157,6 @@ class EntryController < ApplicationController
     # As a convenience (for HTML only), if an index item is actually on another
     # instance, fetch it from there to avoid a potentially confusing result.
     if request.format.html?
-      # noinspection RubyMismatchedReturnType
       [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
         next if base_url.start_with?(request.base_url)
         @host = base_url
@@ -727,7 +726,7 @@ class EntryController < ApplicationController
   # @param [*]    list
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>*}]
   #
   def index_values(list = @list, **opt)
     opt.reverse_merge!(wrap: :entries)

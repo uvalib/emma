@@ -24,6 +24,7 @@ module I18nHelper
   #
   def i18n_erb(path, **opt)
     result = I18n.t(path, **opt)
+    # noinspection RubyNilAnalysis
     return result if !result.respond_to?(:empty?) || result.empty?
     erb_interpolate(result, caller_locations&.first)
   end

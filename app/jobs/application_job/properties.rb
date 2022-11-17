@@ -237,22 +237,18 @@ module ApplicationJob::Properties
     public
 
     def default_queue_key
-      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__)
     end
 
     def default_queue_name
-      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__)
     end
 
     def default_priority
-      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__)
     end
 
     def queue_name_from_part(part_name)
-      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__, part_name)
     end
 

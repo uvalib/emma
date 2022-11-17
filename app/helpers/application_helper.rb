@@ -52,7 +52,7 @@ module ApplicationHelper
   # @type [Hash{Symbol=>*}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   APP_CONFIG = I18n.t('emma.application', default: {}).deep_freeze
 

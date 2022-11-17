@@ -384,7 +384,7 @@ class EntryController < ApplicationController
   # @param [*]    list
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>*}]
   #
   def index_values: (?untyped list, **untyped opt) -> symHash
 

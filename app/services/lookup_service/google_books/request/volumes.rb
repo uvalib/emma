@@ -63,14 +63,12 @@ module LookupService::GoogleBooks::Request::Volumes
   # @see https://developers.google.com/books/docs/v1/using#api_params
   # @see https://cloud.google.com/apis/docs/system-parameters
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def get_volumes(terms, **opt)
     terms = query_terms!(terms, opt)
     lccns = terms.select { |v| v.start_with?('lccn:') }.presence
     ids   = terms.map { |v| v.split(':', 2).first }.intersect?(ID_TYPES)
     opt[:foreign] = false unless ids
+    # noinspection RubyMismatchedArgumentType
     opt[:q] = make_query(terms)
 
     opt = get_parameters(__method__, **opt)

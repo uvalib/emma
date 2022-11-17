@@ -516,7 +516,6 @@ module Record::Identification
     max = (opt[:max_id] ||= maximum_id) if (max == '$') || (max == '*')
     max = [1, max.to_i].max             if digits_only?(max)
     if min.is_a?(Integer) && max.is_a?(Integer)
-      # noinspection RubyMismatchedReturnType
       (min..max).to_a.map!(&:to_s)
     else
       min ||= sid_key && get_value(id, sid_key) || id
@@ -632,14 +631,12 @@ module Record::Identification
     # @see Record::Identification#minimum_id
     #
     def minimum_id(**opt)
-      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__, **opt)
     end
 
     # @see Record::Identification#maximum_id
     #
     def maximum_id(**opt)
-      # noinspection RubyMismatchedArgumentType
       self.class.send(__method__, **opt)
     end
 

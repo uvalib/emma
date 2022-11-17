@@ -440,7 +440,6 @@ class SearchCall < ApplicationRecord
   # @see SqlMethods#sql_extended_table
   #
   def sql_extended_table(extra = nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__, extra, **opt)
   end
 
@@ -454,7 +453,6 @@ class SearchCall < ApplicationRecord
   # @see SqlMethods#sql_where_clause
   #
   def sql_where_clause(**opt)
-    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__, **opt)
   end
 

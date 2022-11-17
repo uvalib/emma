@@ -108,7 +108,6 @@ end
 
 # :nocov:
 class IngestService::AuthError < ApiService::AuthError
-  # :nocov:
   include IngestService::Error::ClassType
 end
 

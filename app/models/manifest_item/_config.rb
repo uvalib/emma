@@ -20,7 +20,7 @@ module ManifestItem::Config
   # @see file:config/locales/types/manifest_item.en.yml
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   CONFIGURATION = I18n.t('emma.manifest_item.type').deep_freeze
 
@@ -44,9 +44,6 @@ module ManifestItem::Config
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   STATUS = CONFIGURATION.slice(*STATUS_COLUMNS).freeze
 
   # ===========================================================================

@@ -197,12 +197,13 @@ class AccountDecorator < BaseDecorator
     # Input placeholder to indicate that the password field does not need to be
     # filled out.
     #
-    # @type [String]
+    # @type [String, nil]
     #
     #--
     # noinspection RailsI18nInspection
     #++
-    PASSWORD_PLACEHOLDER = I18n.t('emma.user.registrations.edit.password')
+    PASSWORD_PLACEHOLDER =
+      I18n.t('emma.user.registrations.edit.password').freeze
 
     # If set, the minimum number of characters accepted for passwords.
     #
@@ -485,9 +486,6 @@ class AccountDecorator
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def bookshare_user_menu(selected: nil, default: DEFAULT_BOOKSHARE_ENTRY)
     label    = 'Equivalent Bookshare user' # TODO: I18n
     value    = selected || object&.effective_id

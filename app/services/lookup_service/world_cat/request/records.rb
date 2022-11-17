@@ -45,7 +45,6 @@ module LookupService::WorldCat::Request::Records
     end
     opt[:query] = make_query(terms)
 
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
 
     api(:get, 'catalog/search/worldcat/sru', **opt)
@@ -109,7 +108,6 @@ module LookupService::WorldCat::Request::Records
   # noinspection DuplicatedCode
   #++
   def get_oclc(term, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content', term, **opt)
     api_return(Lookup::WorldCat::Message::Oclc)
@@ -138,7 +136,6 @@ module LookupService::WorldCat::Request::Records
   # noinspection DuplicatedCode
   #++
   def get_isbn(term, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/isbn', term, **opt)
     api_return(Lookup::WorldCat::Message::Isbn)
@@ -167,7 +164,6 @@ module LookupService::WorldCat::Request::Records
   # noinspection DuplicatedCode
   #++
   def get_issn(term, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/issn', term, **opt)
     api_return(Lookup::WorldCat::Message::Issn)
@@ -203,7 +199,6 @@ module LookupService::WorldCat::Request::Records
   # noinspection DuplicatedCode
   #++
   def get_lccn(term, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/sn', term, **opt)
     api_return(Lookup::WorldCat::Message::Lccn)
@@ -234,7 +229,6 @@ module LookupService::WorldCat::Request::Records
   def get_opensearch_records(terms, **opt)
     terms   = query_terms!(terms, opt)
     opt[:q] = make_query(terms)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/search/worldcat/opensearch', **opt)
     api_return(Lookup::WorldCat::Message::OpenSearch)
@@ -287,7 +281,6 @@ module LookupService::WorldCat::Request::Records
     end
 
     [*terms, *opt.delete(:q), *opt.delete(:query)].flatten.each do |term|
-      # noinspection RubyMismatchedReturnType
       next if groups.any? { |group| group.add(term) }
       _, item = term.split(':', 2)
       result[:query].add(:keyword, (item || term))

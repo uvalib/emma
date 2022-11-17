@@ -46,7 +46,6 @@ module BookshareService::Request::Organization
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myorganization-members
   #
   def get_my_organization_members(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myOrganization', 'members', **opt)
     api_return(Bs::Message::UserAccountList)
@@ -75,7 +74,6 @@ module BookshareService::Request::Organization
   # @note This is not a real Bookshare API call.
   #
   def get_my_organization_member(user:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     opt[:limit] ||= :max
     username  = name_of(user)
@@ -124,7 +122,6 @@ module BookshareService::Request::Organization
   # @see https://apidocs.bookshare.org/reference/index.html#_create-my-organizationmember
   #
   def add_my_organization_member(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'myOrganization', 'members', **opt)
     api_return(Bs::Message::UserAccount)

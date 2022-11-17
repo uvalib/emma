@@ -29,9 +29,9 @@ module AwsHelper
 
   AWS_RENDER_OPT: symArray
 
-  S3_BUCKET_PRIMARY_SORT: Symbol
-
   S3_BUCKET_DEFAULT_SORT: String
+
+  S3_BUCKET_PRIMARY_SORT: Symbol
 
   # Return the AWS console URL for a given AWS S3 bucket.
   #

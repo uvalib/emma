@@ -58,7 +58,7 @@ module Upload::WorkflowMethods
   # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   STATE_GROUP =
     I18n.t('emma.upload.state_group', default: {}).transform_values { |entry|

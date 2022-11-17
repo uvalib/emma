@@ -355,7 +355,6 @@ class ManifestDecorator
   # @return [Array<Symbol>]
   #
   def row_skipped_columns
-    # noinspection RubyMismatchedArgumentType
     ManifestItemDecorator.send(__method__)
   end
 
@@ -375,7 +374,6 @@ class ManifestDecorator
   # @return [Array<Symbol>]
   #
   def grid_row_skipped_columns
-    # noinspection RubyMismatchedArgumentType
     ManifestItemDecorator.send(__method__)
   end
 
@@ -387,7 +385,6 @@ class ManifestDecorator
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def grid_head_control_headers(**opt)
-    # noinspection RubyMismatchedArgumentType
     ManifestItemDecorator.send(__method__, **opt)
   end
 
@@ -399,7 +396,6 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_head_cell(col, **opt)
-    # noinspection RubyMismatchedArgumentType
     ManifestItemDecorator.send(__method__, col, **opt)
   end
 

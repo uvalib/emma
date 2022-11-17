@@ -27,7 +27,7 @@ class ApiMigrate
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   CONFIGURATION_ENTRY =
     I18n.t('emma.api_migrate').map { |name, entries|
@@ -405,9 +405,6 @@ class ApiMigrate
     #
     # @return [Hash]
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
     def parse_data(data)
       json_parse(data, no_raise: false) || {}
     rescue

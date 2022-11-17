@@ -206,7 +206,7 @@ class BaseDecorator < Draper::Decorator
       action_config.select { |_, v| v.is_a?(Hash) }
     end
 
-    # form_action_link
+    # link_to_action
     #
     # @param [String, nil] label
     # @param [Hash]        opt        Passed to LinkHelper#link_to_action.
@@ -867,8 +867,7 @@ class BaseDecorator
   # @return [Class, nil]
   #
   #--
-  # noinspection RubyResolve
-  # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
+  # noinspection RubyResolve, RubyMismatchedVariableType
   #++
   def self.set_object_class(obj, *other)
     meth          = "BaseDecorator.#{__method__}"

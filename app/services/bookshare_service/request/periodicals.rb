@@ -55,7 +55,6 @@ module BookshareService::Request::Periodicals
   # This request can be made without an Authorization header.
   #
   def get_periodicals(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', **opt)
     api_return(Bs::Message::PeriodicalSeriesMetadataSummaryList)
@@ -92,7 +91,6 @@ module BookshareService::Request::Periodicals
   # This request can be made without an Authorization header.
   #
   def get_periodical(seriesId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, **opt)
     api_return(Bs::Message::PeriodicalSeriesMetadataSummary)
@@ -126,7 +124,6 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_periodical-editions
   #
   def get_periodical_editions(seriesId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, 'editions', **opt)
     api_return(Bs::Message::PeriodicalEditionList)
@@ -201,7 +198,6 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_periodical-download
   #
   def download_periodical_edition(seriesId:, editionId:, format:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, 'editions', editionId, format, **opt)
     api_return(Bs::Message::StatusModel)
@@ -240,7 +236,6 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_get-periodical-title-file-resource-list
   #
   def get_periodical_resource_files(seriesId:, editionId:, format:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt  = get_parameters(__method__, **opt)
     path = [seriesId, 'editions', editionId, format, 'resources']
     api(:get, 'periodicals', *path, **opt)
@@ -282,7 +277,6 @@ module BookshareService::Request::Periodicals
   def get_periodical_resource_file(
     seriesId:, editionId:, format:, resourceId:, **opt
   )
-    # noinspection RubyMismatchedArgumentType
     opt  = get_parameters(__method__, **opt)
     path = [seriesId, 'editions', editionId, format, 'resources', resourceId]
     api(:get, 'periodicals', *path, **opt)
@@ -319,7 +313,6 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myperiodicals
   #
   def get_my_periodicals(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myPeriodicals', **opt)
     api_return(Bs::Message::PeriodicalSubscriptionList)
@@ -345,7 +338,6 @@ module BookshareService::Request::Periodicals
   #
   def subscribe_my_periodical(seriesId:, format:, **opt)
     opt.merge!(seriesId: seriesId, format: format)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'myPeriodicals', **opt)
     api_return(Bs::Message::PeriodicalSubscriptionList)
@@ -373,7 +365,6 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_unsubscribe-myperiodicals
   #
   def unsubscribe_my_periodical(seriesId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:delete, 'myPeriodicals', seriesId, **opt)
     api_return(Bs::Message::PeriodicalSubscriptionList)

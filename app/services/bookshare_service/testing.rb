@@ -27,7 +27,7 @@ module BookshareService::Testing
     # == Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
+    # noinspection RubyUnusedLocalVariable
     ALL_FAULTS = [
       BAD_CATEGORY      = 1 << (bit += 1),
       BAD_HISTORY       = 1 << (bit += 1),

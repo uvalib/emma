@@ -130,12 +130,10 @@ module Serializable
       public
 
       def serialize_argument(item)
-        # noinspection RubyMismatchedArgumentType
         ActiveJob::Arguments.send(__method__, item)
       end
 
       def deserialize_argument(item)
-        # noinspection RubyMismatchedArgumentType
         ActiveJob::Arguments.send(__method__, item)
       end
 
@@ -144,7 +142,6 @@ module Serializable
       # @return [Hash{String,Symbol=>*}]
       #
       def re_symbolize_keys(hash)
-        # noinspection RubyMismatchedReturnType
         hash.deep_transform_keys do |key|
           if RESERVED_KEYS.include?(key)
             key.to_s

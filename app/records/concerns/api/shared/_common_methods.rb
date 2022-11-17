@@ -64,10 +64,7 @@ module Api::Shared::CommonMethods
     end
   end
 
-  # Indicate whether this record represents a canonical index entry.
-  #
-  # In production, for EMMA repository items, this would mean an entry whose
-  # :emma_retrievalLink starts with the base URL for the production service.
+  # Indicate whether this record has no field values.
   #
   # @param [Api::Record, nil] rec  Default: `self`.
   #

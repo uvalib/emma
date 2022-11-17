@@ -79,8 +79,11 @@ class AccountDecorator < BaseDecorator
     def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
 
     EMAIL_FIELD_READONLY: String
-    PASSWORD_PLACEHOLDER: String
+
+    PASSWORD_PLACEHOLDER: String | nil
+
     MINIMUM_PASSWORD_LENGTH: Integer | nil
+
     MAXIMUM_PASSWORD_LENGTH: Integer | nil
   end
 

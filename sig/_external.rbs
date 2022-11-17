@@ -115,7 +115,19 @@ end
 
 # NOTE: overrides .gem_rbs_collection/activesupport/6.0/activesupport-generated.rbs
 class Array[unchecked out Elem] < Object
+
   def extract_options!: () -> anyHash
+
+  def delete_if: () { (Elem item) -> top } -> self
+               | () -> ::Enumerator[Elem, self]
+
+  def collect!: () { (Elem item) -> untyped } -> anyArray
+              | () -> ::Enumerator[Elem, self]
+
+  def all?: () -> bool
+          | (_Pattern[Elem] pattern) -> bool
+          | () { (Elem obj) -> top } -> bool
+
 end
 
 module CanCan
@@ -216,6 +228,15 @@ module Draper
   end
 end
 
+module Enumerable[unchecked out Elem] : _Each[Elem]
+
+  def find:     ()                    { (Elem) -> top } -> Elem?
+          |     ()                                      -> ::Enumerator[Elem, Elem?]
+          | [T] (_NotFound[T] ifnone) { (Elem) -> top } -> (Elem | T)
+          | [T] (_NotFound[T] ifnone)                   -> ::Enumerator[Elem, Elem | T]
+
+end
+
 module Faraday
   module DecodeMethods
   end
@@ -226,8 +247,6 @@ module Faraday
   class Error < StandardError
   end
   class Env
-  end
-  class Middleware
   end
   class RackBuilder
   end
@@ -250,7 +269,31 @@ end
 
 # NOTE: overrides .gem_rbs_collection/activesupport/6.0/activesupport-generated.rbs
 class Hash[unchecked out K, unchecked out V] < Object
+
   def deep_dup: () -> self
+
+  def any?: () -> bool
+          | (untyped pattern) -> bool
+          | () { (K, V) -> top } -> bool
+
+  def transform_keys!: () -> Enumerator[K, self]
+                     | () { (K) -> untyped } -> Hash[untyped, V]
+
+  def transform_values!: () -> Enumerator[V, self]
+                       | () { (V) -> untyped } -> Hash[K, untyped]
+
+  def deep_transform_keys: () -> Enumerator[K, self]
+                         | () { (K) -> untyped } -> Hash[untyped, V]
+
+  def deep_transform_keys!: () -> Enumerator[K, self]
+                          | () { (K) -> untyped } -> Hash[untyped, V]
+
+  def deep_transform_values: () -> Enumerator[V, self]
+                           | () { (V) -> untyped } -> Hash[K, untyped]
+
+  def deep_transform_values!: () -> Enumerator[V, self]
+                            | () { (V) -> untyped } -> Hash[K, untyped]
+
 end
 
 module Hashie
@@ -260,8 +303,23 @@ module Hashie
   end
 end
 
+# NOTE: overrides .gem_rbs_collection/i18n/1.10/i18n.rbs
+module I18n
+  module Base
+    def translate: (String|Symbol        key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> (untyped | nil)
+                 | (Array[String|Symbol] key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> Array[untyped|nil]
+  end
+end
+
 module IO::Like
   extend _ToIO
+end
+
+# NOTE: overrides gems/rbs-2.7.0/core/kernel.rbs
+module Kernel
+
+  def self?.__method__: () -> Symbol
+
 end
 
 module OAuth2

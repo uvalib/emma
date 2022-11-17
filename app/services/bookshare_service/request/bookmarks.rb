@@ -42,7 +42,6 @@ module BookshareService::Request::Bookmarks
   #
   def get_bookmark(bookshareId:, **opt)
     opt.merge!(bookshareId: bookshareId)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myBookmarks', **opt)
     api_return(Bs::Message::BookmarkList)
@@ -80,7 +79,6 @@ module BookshareService::Request::Bookmarks
   #
   def submit_bookmark(bookshareId:, location:, **opt)
     opt.merge!(bookshareId: bookshareId, location: location)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'myBookmarks', **opt)
     api_return(Bs::Message::StatusModel)
@@ -120,7 +118,6 @@ module BookshareService::Request::Bookmarks
   #
   def delete_bookmark(bookshareId:, location:, **opt)
     opt.merge!(bookshareId: bookshareId, location: location)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:delete, 'myBookmarks', **opt)
     api_return(Bs::Message::BookmarkList)

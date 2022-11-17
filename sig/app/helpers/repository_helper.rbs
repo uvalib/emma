@@ -17,13 +17,13 @@ module RepositoryHelper
 
   # Indicate whether the given URL is an EMMA link.
   #
-  # @param [String] url
+  # @param [String, nil] url
   #
   def emma_link?: ((String|nil) url) -> bool
 
   # Indicate whether the given URL is a Bookshare link.
   #
-  # @param [String,nil] url
+  # @param [String, nil] url
   #
   # == Usage Notes
   # This exists to support the handful of items which are represented as
@@ -32,15 +32,15 @@ module RepositoryHelper
   #
   def bs_link?: ((String|nil) url) -> bool
 
-  # Indicate whether the given URL is an Internet Archive link.
+  # Indicate whether the given URL is a HathiTrust link.
   #
-  # @param [String,nil] url
+  # @param [String, nil] url
   #
   def ht_link?: ((String|nil) url) -> bool
 
   # Indicate whether the given URL is an Internet Archive link.
   #
-  # @param [String,nil] url
+  # @param [String, nil] url
   #
   def ia_link?: ((String|nil) url) -> bool
 

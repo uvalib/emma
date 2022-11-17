@@ -83,7 +83,6 @@ class ScalarType
     #
     def create(v, *)
       c = is_a?(Class) ? self : self.class
-      # noinspection xRubyMismatchedReturnType
       if v.is_a?(c)
         v.dup
       elsif (v = normalize(v)).present?
@@ -397,7 +396,7 @@ class IsoDuration < ScalarType
         else                              v = v.to_s
       end
       # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-      MATCH_PATTERN.any? { |pattern| v.match?(pattern) } ? v : ''
+      MATCH_PATTERN.any? { |_, pattern| v.match?(pattern) } ? v : ''
     end
 
     # =========================================================================
@@ -1329,7 +1328,6 @@ class EnumType < ScalarType
     def get_configuration(i18n_path, default: nil)
       default &&= Array.wrap(default)
       default &&= [*default, nil] unless default&.last.nil?
-      # noinspection RubyMismatchedReturnType
       I18n.t(i18n_path, default: default).tap do |config|
         raise "'#{i18n_path}' is empty" if config.blank?
         if config.is_a?(Hash)
@@ -1517,7 +1515,7 @@ module Api::Common
   # @see file:config/locales/en.yml *en.emma.application.deployment*
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   DEPLOYMENT = I18n.t('emma.application.deployment').deep_freeze
 
@@ -1541,7 +1539,7 @@ module Api::Common
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   REPOSITORY_CONFIG = I18n.t('emma.repository', default: {}).deep_freeze
 
@@ -1551,9 +1549,6 @@ module Api::Common
   #
   # @see file:config/locales/repository.en.yml *en.emma.repository._default*
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   DEFAULT_REPOSITORY = REPOSITORY_CONFIG[:_default]
 
   # Values associated with each source repository.
@@ -1591,7 +1586,7 @@ module Api::Common
   # @see file:config/locales/types.en.yml *en.emma.categories*
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   CATEGORY = I18n.t('emma.categories', default: {}).deep_freeze
 
@@ -1614,7 +1609,7 @@ module Api::Common
   # @type [Hash{Symbol=>Any}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   LANGUAGE_CONFIG = I18n.t('emma.language', default: {}).deep_freeze
 
@@ -1624,9 +1619,6 @@ module Api::Common
   #
   # @see file:config/locales/types.en.yml *en.emma.language.list*
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   LANGUAGE = LANGUAGE_CONFIG[:list] || {}.freeze
 
   # Languages that appear first in the list.

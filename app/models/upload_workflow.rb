@@ -1498,7 +1498,6 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     repository_requests(items).each_pair do |_repo, repo_items|
-      # noinspection RubyMismatchedReturnType
       repo_items.map! { |item| Upload.record_id(item) }
       s, f = repository_remove(*repo_items, **opt)
       succeeded += s
@@ -1532,7 +1531,6 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     repository_requests(items).each_pair do |_repo, repo_items|
-      # noinspection RubyMismatchedReturnType
       repo_items.map! { |item| Upload.record_id(item) }
       s, f = repository_dequeue(*repo_items, **opt)
       succeeded += s

@@ -49,7 +49,6 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_get-my-readinglists-list
   #
   def get_my_reading_lists(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'mylists', **opt)
     api_return(Bs::Message::ReadingListList)
@@ -84,7 +83,6 @@ module BookshareService::Request::ReadingLists
   #
   def create_my_reading_list(name:, access:, **opt)
     opt.merge!(name: name, access: access)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'mylists', **opt)
     api_return(Bs::Message::ReadingList)
@@ -118,7 +116,6 @@ module BookshareService::Request::ReadingLists
   #
   def subscribe_my_reading_list(readingListId:, **opt)
     opt.reverse_merge!(enabled: true)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     api_return(Bs::Message::ReadingListUserView)
@@ -149,7 +146,6 @@ module BookshareService::Request::ReadingLists
   #
   def unsubscribe_my_reading_list(readingListId:, **opt)
     opt.reverse_merge!(enabled: false)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     api_return(Bs::Message::ReadingListUserView)
@@ -187,7 +183,6 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_get-readinglists-list
   #
   def get_reading_lists_list(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'lists', **opt)
     api_return(Bs::Message::ReadingListList)
@@ -249,7 +244,6 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-edit-metadata
   #
   def update_reading_list(readingListId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'lists', readingListId, **opt)
     api_return(Bs::Message::ReadingList)
@@ -286,7 +280,6 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_get-readinglist-titles
   #
   def get_reading_list_titles(readingListId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'lists', readingListId, 'titles', **opt)
     api_return(Bs::Message::ReadingListTitlesList)
@@ -323,7 +316,6 @@ module BookshareService::Request::ReadingLists
   #
   def create_reading_list_title(readingListId:, bookshareId:, **opt)
     opt.merge!(bookshareId: bookshareId)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'lists', readingListId, 'titles', **opt)
     api_return(Bs::Message::ReadingListTitlesList)
@@ -354,7 +346,6 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_delete-readinglist-title
   #
   def remove_reading_list_title(readingListId:, bookshareId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:delete, 'lists', readingListId, 'titles', bookshareId, **opt)
     api_return(Bs::Message::ReadingListTitlesList)

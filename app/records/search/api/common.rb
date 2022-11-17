@@ -26,7 +26,7 @@ module Search::Api::Common
   # @see file:config/locales/types/search.en.yml *en.emma.search.type*
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   CONFIGURATION = I18n.t('emma.search.type').deep_freeze
 
@@ -442,7 +442,7 @@ end
 #
 class Isbn < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis, RubyMismatchedConstantType
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -830,7 +830,7 @@ end
 #
 class Issn < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis, RubyMismatchedConstantType
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1056,7 +1056,7 @@ end
 #
 class Oclc < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis, RubyMismatchedConstantType
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1277,7 +1277,7 @@ end
 #
 class Lccn < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis, RubyMismatchedConstantType
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1469,7 +1469,7 @@ end
 #
 class Upc < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis, RubyMismatchedConstantType
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1698,7 +1698,7 @@ end
 #
 class Doi < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis, RubyMismatchedConstantType
+  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 

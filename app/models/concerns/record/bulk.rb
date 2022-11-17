@@ -92,7 +92,6 @@ module Record::Bulk
   # @return [String]
   #
   def bulk_operation_class
-    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
@@ -101,7 +100,6 @@ module Record::Bulk
   # @return [String]
   #
   def bulk_part_class
-    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 
@@ -288,7 +286,6 @@ module Record::Bulk::Operation
   end
 
   def bulk_type
-    # noinspection RubyMismatchedArgumentType
     self.class.send(__method__)
   end
 

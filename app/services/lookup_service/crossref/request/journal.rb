@@ -31,7 +31,6 @@ module LookupService::Crossref::Request::Journal
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals__issn_
   #
   def get_journal(issn, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'journals', issn, **opt)
     api_return(Lookup::Crossref::Message::Journal)
@@ -51,7 +50,6 @@ module LookupService::Crossref::Request::Journal
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals
   #
   def get_journal_list(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'journals', **opt)
     api_return(Lookup::Crossref::Message::JournalResults)

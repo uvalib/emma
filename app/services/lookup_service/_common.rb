@@ -23,7 +23,7 @@ module LookupService::Common
   # @type [Hash{Symbol=>Hash}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   CONFIGURATION =
     I18n.t('emma.service.lookup').transform_values { |service_config|

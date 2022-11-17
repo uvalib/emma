@@ -46,7 +46,6 @@ module BookshareService::Request::PopularLists
   # This request can be made without an Authorization header.
   #
   def get_popular_lists(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'popularLists', **opt)
     api_return(Bs::Message::PopularListList)
@@ -78,7 +77,6 @@ module BookshareService::Request::PopularLists
   # This request can be made without an Authorization header.
   #
   def get_popular_list(popularListId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'popularLists', popularListId, **opt)
     api_return(Bs::Message::PopularList)

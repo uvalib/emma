@@ -35,8 +35,9 @@ module AwsHelper
   AWS_FILTER_OPT   = %i[after before prefix prefix_limit].freeze
   AWS_RENDER_OPT   = %i[heading html object].freeze
 
-  S3_BUCKET_PRIMARY_SORT = :prefix
+  # noinspection RubyMismatchedConstantType
   S3_BUCKET_DEFAULT_SORT = I18n.t('emma.upload.search_filters.sort.default')
+  S3_BUCKET_PRIMARY_SORT = :prefix
 
   # ===========================================================================
   # :section:

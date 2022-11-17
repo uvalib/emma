@@ -41,7 +41,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-useraccount-search
   #
   def get_account(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, **opt)
@@ -92,7 +91,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_update-useraccount
   #
   def update_account(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, **opt)
@@ -162,7 +160,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_create-useraccount
   #
   def create_account(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'accounts', **opt)
     api_return(Bs::Message::UserAccount)
@@ -211,7 +208,6 @@ module BookshareService::Request::MembershipUserAccounts
   #
   def update_account_password(user: nil, password:, **opt)
     opt.merge!(password: password)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'password', **opt)
@@ -250,7 +246,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-membership-subscriptions
   #
   def get_subscriptions(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'subscriptions', **opt)
@@ -289,7 +284,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_create-membership-subscription
   #
   def create_subscription(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'subscriptions', **opt)
@@ -330,7 +324,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-single-membership-subscription
   #
   def get_subscription(user: nil, subscriptionId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'subscriptions', subscriptionId, **opt)
@@ -371,7 +364,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_update-membership-subscription
   #
   def update_subscription(user: nil, subscriptionId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'subscriptions', subscriptionId, **opt)
@@ -412,7 +404,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-membership-subscription-types
   #
   def get_subscription_types(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'subscriptiontypes', **opt)
     api_return(Bs::Message::UserSubscriptionTypeList)
@@ -443,7 +434,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-membership-pods
   #
   def get_user_pod(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'pod', **opt)
@@ -479,7 +469,6 @@ module BookshareService::Request::MembershipUserAccounts
   #
   def create_user_pod(user: nil, disabilityType:, proofSource:, **opt)
     opt.merge!(disabilityType: disabilityType, proofSource: proofSource)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'pod', **opt)
@@ -516,7 +505,6 @@ module BookshareService::Request::MembershipUserAccounts
   #
   def update_user_pod(user: nil, disabilityType:, proofSource:, **opt)
     opt.merge!(proofSource: proofSource)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'pod', disabilityType, **opt)
@@ -551,7 +539,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_delete-membership-pod
   #
   def remove_user_pod(user: nil, disabilityType:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'pod', disabilityType, **opt)
@@ -590,7 +577,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-signed-agreements
   #
   def get_user_agreements(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'agreements', **opt)
@@ -627,7 +613,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_create-signed-agreement
   #
   def create_user_agreement(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'agreements', **opt)
@@ -666,7 +651,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_expire-signed-agreement
   #
   def remove_user_agreement(user: nil, id:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'agreements', id, 'expired', **opt)
@@ -705,7 +689,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-recommendation-profile
   #
   def get_recommendation_profile(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'recommendationProfile', **opt)
@@ -749,7 +732,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_put-recommendation-profile
   #
   def update_recommendation_profile(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'recommendationProfile', **opt)
@@ -804,7 +786,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-user-account-preferences
   #
   def get_preferences(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'preferences', **opt)
@@ -845,7 +826,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_put-user-account-preferences
   #
   def update_preferences(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:put, 'accounts', userId, 'preferences', **opt)
@@ -894,7 +874,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-periodicals-user
   #
   def get_periodical_subscriptions(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'periodicals', **opt)
@@ -929,7 +908,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_subscribe-periodical-series
   #
   def subscribe_periodical(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'periodicals', **opt)
@@ -964,7 +942,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_unsubscribe-periodical-series
   #
   def unsubscribe_periodical(user: nil, seriesId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:delete, 'accounts', userId, 'periodicals', seriesId, **opt)
@@ -1010,7 +987,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_get-member-readinglists-list
   #
   def get_reading_lists(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:get, 'accounts', userId, 'lists', **opt)
@@ -1053,7 +1029,6 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/membership/index.html#_post-member-readinglist-create
   #
   def create_reading_list(user: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt    = get_parameters(__method__, **opt)
     userId = opt.delete(:userIdentifier) || name_of(user || @user)
     api(:post, 'accounts', userId, 'lists', **opt)

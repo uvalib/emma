@@ -85,6 +85,8 @@ module BaseDecorator::Form
   # @param [Boolean]        required    For 'data-required' attribute.
   # @param [Boolean]        no_label    Don't generate the label element.
   # @param [Boolean]        no_help     Don't add help icon to the label.
+  # @param [String, nil]    label_css
+  # @param [String, nil]    value_css
   # @param [Hash]           opt         To label/value except:
   #
   # @option opt [Symbol] :render        Force render method.

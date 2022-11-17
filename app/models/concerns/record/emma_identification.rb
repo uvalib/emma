@@ -220,7 +220,6 @@ module Record::EmmaIdentification
   # @return [Integer]
   #
   def sid_counter                                                               # NOTE: from Upload::IdentifierMethods
-    # noinspection RubyMismatchedArgumentType
     Entry.send(__method__)
   end
 

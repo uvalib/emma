@@ -107,6 +107,7 @@ module ApiService::Properties
   # @type [Hash{Symbol=>Any}]
   #
   def configuration
+    # noinspection RubyMismatchedReturnType
     i18n_erb("emma.service.#{service_name}", default: {})
   end
 

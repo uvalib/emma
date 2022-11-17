@@ -49,7 +49,6 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books
   #
   def get_my_active_books(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myActiveBooks', **opt)
     api_return(Bs::Message::ActiveBookList)
@@ -81,7 +80,6 @@ module BookshareService::Request::ActiveTitles
   #
   def add_my_active_book(bookshareId:, format:, **opt)
     opt.merge!(bookshareId: bookshareId, format: format)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'myActiveBooks', **opt)
     api_return(Bs::Message::ActiveBookList)
@@ -109,7 +107,6 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-remove
   #
   def remove_my_active_book(activeTitleId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:delete, 'myActiveBooks', activeTitleId, **opt)
     api_return(Bs::Message::ActiveBookList)
@@ -146,7 +143,6 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals
   #
   def get_my_active_periodicals(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myActivePeriodicals', **opt)
     api_return(Bs::Message::ActivePeriodicalList)
@@ -178,7 +174,6 @@ module BookshareService::Request::ActiveTitles
   #
   def add_my_active_periodical(editionId:, format:, **opt)
     opt.merge!(editionId: editionId, format: format)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'myActivePeriodicals', **opt)
     api_return(Bs::Message::ActivePeriodicalList)
@@ -206,7 +201,6 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-remove
   #
   def remove_my_active_periodical(activeTitleId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:delete, 'myActivePeriodicals', activeTitleId, **opt)
     api_return(Bs::Message::ActivePeriodicalList)
@@ -239,7 +233,6 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-book-profile-get
   #
   def get_my_active_books_profile(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'myActiveBooksProfile', **opt)
     api_return(Bs::Message::ActiveBookProfile)
@@ -267,7 +260,6 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-book-profile-put
   #
   def update_my_active_books_profile(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'myActiveBooksProfile', **opt)
     api_return(Bs::Message::ActiveBookProfile)

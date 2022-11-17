@@ -48,7 +48,6 @@ class Api::Error < ExecError
   def initialize(*args, **opt)
     @http_response = @http_status = @cause = nil
     args.map! do |arg|
-      # noinspection RubyMismatchedReturnType
       case arg
         when Integer           then (@http_status = arg) and next
         when Exception         then @cause = arg
@@ -227,6 +226,7 @@ class Api::Error < ExecError
       keys << :"emma.error.#{source}._name" if source
       keys << :'emma.error.api._name'
       keys << 'remote service'
+      # noinspection RubyMismatchedReturnType
       I18n.t(keys.shift, default: keys)
     end
 

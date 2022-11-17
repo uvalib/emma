@@ -90,7 +90,6 @@ class PublicationIdentifierSet < Set
   end
 
   def ==(other)
-    # noinspection RubyMismatchedReturnType
     eql?(other)
   end
 

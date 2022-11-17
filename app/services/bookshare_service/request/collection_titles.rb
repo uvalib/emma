@@ -60,7 +60,6 @@ module BookshareService::Request::CollectionTitles
   # @see https://apidocs.bookshare.org/catalog/index.html#_catalog-search
   #
   def get_catalog(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog', **opt)
     api_return(Bs::Message::TitleMetadataCompleteList)
@@ -163,7 +162,6 @@ module BookshareService::Request::CollectionTitles
   # @see https://apidocs.bookshare.org/catalog/index.html#_title-submit
   #
   def submit_catalog_title(**opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:post, 'titles', **opt)
     api_return(Bs::Message::StatusModel)
@@ -341,7 +339,6 @@ module BookshareService::Request::CollectionTitles
   # @see https://apidocs.bookshare.org/catalog/index.html#_title-metadata-update
   #
   def update_catalog_title(bookshareId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:put, 'titles', bookshareId, **opt)
     api_return(Bs::Message::StatusModel)
@@ -460,7 +457,6 @@ module BookshareService::Request::CollectionTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_get-title-history-events
   #
   def get_title_history(bookshareId:, **opt)
-    # noinspection RubyMismatchedArgumentType
     opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, 'history', **opt)
     api_return(Bs::Message::TitleHistoryEventResourceList)

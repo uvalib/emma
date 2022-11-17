@@ -129,6 +129,7 @@ module SessionConcern
     user     = user[:uid] || user['uid'] if user.is_a?(Hash)
     user     = user.uid                  if user.respond_to?(:uid)
     user     = user.to_s.presence || 'unknown user' # TODO: I18n
+    # noinspection RubyMismatchedReturnType
     I18n.t("emma.user.sessions.#{action}.#{status}", user: user)
   end
 

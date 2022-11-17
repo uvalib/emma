@@ -337,7 +337,6 @@ module Upload::IdentifierMethods
     max = (opt[:max_id] ||= maximum_id) if (max == '$') || (max == '*')
     max = [1, max.to_i].max             if digits_only?(max)
     if min.is_a?(Integer) && max.is_a?(Integer)
-      # noinspection RubyMismatchedReturnType
       (min..max).to_a.map!(&:to_s)
     else
       min ||= (id.submission_id                          if id.is_a?(Upload))

@@ -38,7 +38,6 @@ end
 
 # :nocov:
 class SearchService::AuthError < ApiService::AuthError
-  # :nocov:
   include SearchService::Error::ClassType
 end
 

@@ -28,9 +28,6 @@ class AwsS3::Api::Record < Api::Record
   #
   # @param [Any] item
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def remove_empty_values(item)
     case item
       when BaseDecorator::EMPTY_VALUE

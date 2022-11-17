@@ -31,7 +31,7 @@ module HelpHelper
   # @type [Hash{Symbol=>*}]
   #
   #--
-  # noinspection RailsI18nInspection, RubyMismatchedConstantType
+  # noinspection RailsI18nInspection
   #++
   HELP_CONFIG = I18n.t('emma.help', default: {}).deep_freeze
 

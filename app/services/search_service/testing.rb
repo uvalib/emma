@@ -27,7 +27,7 @@ module SearchService::Testing
     # == Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
+    # noinspection RubyUnusedLocalVariable
     ALL_FAULTS = [
       BAD_PARAM   = 1 << (bit += 1),
       BAD_REPO    = 1 << (bit += 1),

@@ -453,7 +453,6 @@ module BaseDecorator::Hierarchy
     if except.is_a?(Hash)
       ok.merge!(except)
     elsif except
-      # noinspection RubyMismatchedReturnType
       ok.transform_values! { except }
     end
     ok.transform_values! { |v| Array.wrap(v).compact }

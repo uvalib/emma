@@ -189,7 +189,6 @@ module Record::Uploadable
     file_attacher.destroy
     file_attacher.set(nil)
   rescue => error
-    # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
     re_raise_if_internal_exception(error)
     raise error unless no_raise
@@ -404,7 +403,6 @@ module Record::Uploadable
     old_file &&= FileUploader::UploadedFile.new(old_file)
     file_attacher.promote.tap { old_file&.delete }
   rescue => error
-    # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
     re_raise_if_internal_exception(error)
     raise error unless no_raise
@@ -423,7 +421,6 @@ module Record::Uploadable
     file_attacher.set(nil)
     true
   rescue => error
-    # noinspection RubyMismatchedArgumentType
     log_exception(error, __method__)
     re_raise_if_internal_exception(error)
     raise error unless no_raise

@@ -27,7 +27,7 @@ module ExceptionHelper
   # @type [Hash{Symbol=>Hash{Symbol=>(String,Class)}}]
   #
   #--
-  # noinspection RailsI18nInspection
+  # noinspection RailsI18nInspection, RubyNilAnalysis
   #++
   MODEL_ERROR =
     I18n.t('emma.error').map { |key, entry|
