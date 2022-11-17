@@ -1009,7 +1009,7 @@ en:
             # SR:   IsoDay
             # IR:   IsoDay
             # NOTE: Not actually repeatable.
-            min:          1
+            min:          0
             max:          1
             label:        'Remediation Date'
             tooltip:      |
@@ -1017,7 +1017,6 @@ en:
             notes_html:   |
               <em>TODO</em>
             type:         date
-            origin:       system
 
           rem_comments:
             # FMM5: "Remediation Comments", Optional, Repeatable

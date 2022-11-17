@@ -693,7 +693,7 @@ en:
           category:     remediation
 
         rem_remediationDate:
-          min:          1
+          min:          0
           max:          1
           label:        'Remediation Date'
           tooltip:      |
