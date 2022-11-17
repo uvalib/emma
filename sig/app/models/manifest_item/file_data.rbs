@@ -1,0 +1,29 @@
+module ManifestItem::FileData
+  # :nocov:
+  #include Record::FileData
+
+  # Top-level :file_data Hash keys for each data variant that can appear in the
+  # :file_data record column.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # TODO: Might not be needed.
+  #
+  FILE_DATA_KEYS: Hash[Symbol,String]
+
+  # Generate a record to express structured file data.
+  #
+  # @param [Hash, String, nil] data
+  #
+  # @return [Hash{String=>Any}]
+  #
+  # @note Only used by #file_attacher_load
+  #
+  # @see config/locales/bulk.en.yml "en.emma.bulk.grid.file"
+  #
+  def make_file_record: (String|anyHash|nil data, **untyped opt) -> strHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

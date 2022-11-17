@@ -243,8 +243,8 @@ class ManifestController < ApplicationController
   # == PUT   /manifest/save/:id
   # == PATCH /manifest/save/:id
   #
-  # @see #save_manifest_path          Route helper
-  # @see file:javascripts/controllers/manifest.js  *updateDataRow()*
+  # @see #save_manifest_path                                  Route helper
+  # @see file:assets/javascripts/controllers/manifest-edit.js *updateDataRow()*
   #
   def save
     __log_activity
@@ -273,6 +273,98 @@ class ManifestController < ApplicationController
       # noinspection RubyMismatchedArgumentType
       redirect_to(params[:redirect] || manifest_index_path)
     end
+  rescue Record::SubmitError => error
+    post_response(:conflict, error)
+  rescue => error
+    post_response(error)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # == GET /manifest/remit/:id
+  # == GET /manifest/remit/SELECT
+  # == GET /manifest/remit_select
+  #
+  # @see #remit_manifest_path         Route helper
+  # @see #remit_select_manifest_path  Route helper
+  #
+  def remit
+    __log_activity
+    __debug_route
+    account_index_path
+    @item = (remit_manifest unless show_menu?)
+  rescue => error
+    failure_status(error)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # == POST /manifest/start/:id
+  #
+  # @see #start_manifest_path         Route helper
+  #
+  def start
+    __log_activity
+    __debug_route
+    @item = start_manifest
+    stat  = true # TODO: bulk upload start status
+    render json: { id: @item.id, __method__ => stat }
+  rescue Record::SubmitError => error
+    post_response(:conflict, error)
+  rescue => error
+    post_response(error)
+  end
+
+  # == POST /manifest/stop/:id
+  #
+  # @see #stop_manifest_path          Route helper
+  #
+  def stop
+    __log_activity
+    __debug_route
+    @item = stop_manifest
+    stat  = true # TODO: bulk upload abort status
+    render json: { id: @item.id, __method__ => stat }
+  rescue Record::SubmitError => error
+    post_response(:conflict, error)
+  rescue => error
+    post_response(error)
+  end
+
+  # == POST /manifest/pause/:id
+  #
+  # @see #pause_manifest_path         Route helper
+  #
+  def pause
+    __log_activity
+    __debug_route
+    @item = pause_manifest
+    stat  = true # TODO: bulk upload pause status
+    render json: { id: @item.id, __method__ => stat }
+  rescue Record::SubmitError => error
+    post_response(:conflict, error)
+  rescue => error
+    post_response(error)
+  end
+
+  # == POST /manifest/resume/:id
+  #
+  # @see #resume_manifest_path        Route helper
+  #
+  def resume
+    __log_activity
+    __debug_route
+    @item = resume_manifest
+    stat  = true # TODO: bulk upload resume status
+    render json: { id: @item.id, __method__ => stat }
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error

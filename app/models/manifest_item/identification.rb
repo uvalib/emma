@@ -7,7 +7,11 @@ __loading_begin(__FILE__)
 
 module ManifestItem::Identification
 
-  include Record::Identification
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Record::Identification
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section: Record::Identification overrides

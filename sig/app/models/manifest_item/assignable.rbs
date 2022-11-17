@@ -1,5 +1,8 @@
 module ManifestItem::Assignable
-  include Record::Assignable
+  # :nocov:
+  #include Record::Assignable
+
+  #include Record::InstanceMethods
 
   # Ensure that blanks are allowed and that input values are normalized.
   #

@@ -106,24 +106,6 @@ en:
           label:        '▼'
           tooltip:      'Close'
 
-    grid:
-
-      column:
-        opener:
-          tooltip:      'Show details about each record'
-        closer:
-          tooltip:      'Make this column take up less space'
-        # Used when CONTROLS_ROTATE is true:
-        label:          "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
-
-      row:
-        opener:
-          tooltip:      'Show details about each column data type'
-        closer:
-          tooltip:      'Minimize this row'
-        # Used when CONTROLS_ROTATE is true (with "transform:rotate(0.25turn)")
-        label:          "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
-
     search_type:        &SEARCH_TYPE
 
       identifier:

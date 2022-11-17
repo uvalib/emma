@@ -586,7 +586,7 @@ module ManifestItemConcern
   #
   # @return [Hash]
   #
-  # @see file:javascripts/controllers/manifest.js  *parseFinishEditResponse()*
+  # @see file:javascripts/controllers/manifest-edit.js *parseFinishEditResponse*
   #
   def finish_editing(item = nil, **opt)
     opt.merge!(editing: false)
@@ -697,7 +697,7 @@ module ManifestItemConcern
   def bulk_create_manifest_items
     items = bulk_item_data(validate: true)
     res   = ManifestItem.insert_all(items, returning: ManifestItem.field_names)
-    res.to_a.map(&:symbolize_keys)
+    bulk_returning(res)
   rescue ActiveRecord::ActiveRecordError => error
     failure(error)
   end
@@ -725,7 +725,7 @@ module ManifestItemConcern
   def bulk_update_manifest_items
     items = bulk_item_data(validate: true)
     res   = ManifestItem.upsert_all(items, returning: ManifestItem.field_names)
-    res.to_a.map(&:symbolize_keys)
+    bulk_returning(res)
   rescue ActiveRecord::ActiveRecordError => error
     failure(error)
   end
@@ -764,20 +764,6 @@ module ManifestItemConcern
     ids
   end
 
-  # bulk_check_manifest_items
-  #
-  # @return [Any]
-  #
-  # @note Currently unused.
-  #
-  #--
-  # noinspection RubyUnusedLocalVariable, RubyMismatchedReturnType
-  #++
-  def bulk_check_manifest_items
-    prm = manifest_item_params
-    # TODO: bulk_check_manifest_items
-  end
-
   # ===========================================================================
   # :section: Workflow - Bulk
   # ===========================================================================
@@ -805,6 +791,23 @@ module ManifestItemConcern
       ManifestItem.update_status!(item) if validate
       # noinspection RubyMismatchedArgumentType
       ManifestItem.attribute_options(item)
+    end
+  end
+
+  # Transform a :returning result into an array of data hashes.
+  #
+  # @param [ActiveRecord::Result] result
+  #
+  # @return [Array<Hash{Symbol=>*}>]
+  #
+  def bulk_returning(result)
+    types = result.column_types
+    result.rows.map do |row|
+      result.columns.map.with_index { |col, idx|
+        k = col.to_sym
+        v = types[col]&.deserialize(row[idx]) || row[idx]
+        [k, v]
+      }.to_h
     end
   end
 

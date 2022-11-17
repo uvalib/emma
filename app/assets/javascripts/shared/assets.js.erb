@@ -115,7 +115,13 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * @typedef {{
  *     submit:          ActionProperties,
  *     cancel:          ActionProperties,
- *     select?:         ActionProperties|null|undefined,
+ *     select?:         ActionProperties,
+ *     import?:         ActionProperties,
+ *     export?:         ActionProperties,
+ *     start?:          ActionProperties,
+ *     stop?:           ActionProperties,
+ *     pause?:          ActionProperties,
+ *     resume?:         ActionProperties,
  * }} EndpointProperties
  */
 
@@ -129,6 +135,7 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *    bulk_new?:        EndpointProperties,
  *    bulk_edit?:       EndpointProperties,
  *    bulk_delete?:     EndpointProperties,
+ *    remit?:           EndpointProperties,
  * }} ControllerActionProperties
  */
 
@@ -528,7 +535,7 @@ export const Emma = (function() {
             },
         },
 
-        Grid:           o$('<%= js I18n.t(%q(emma.grid)) %>'),
+        Grid:           o$('<%= js ManifestItemDecorator::GRID_HEADER %>'),
 
         Popup: {
             button: {

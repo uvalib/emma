@@ -97,7 +97,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @type {ModalDialog|undefined}
      */
-    const modal = $popup_button?.data(ModalDialog.MODAL_INSTANCE);
+    const modal = $popup_button?.data(ModalDialog.MODAL_INSTANCE_DATA);
 
     /**
      * Base element associated with the dialog.

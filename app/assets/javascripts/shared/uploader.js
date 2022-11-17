@@ -9,6 +9,7 @@ import { selector }                                    from './css'
 import { isDefined, isMissing, isPresent, notDefined } from './definitions'
 import { handleClickAndKeypress }                      from './events'
 import { extractFlashMessage }                         from './flash'
+import { ID_ATTRIBUTES, uniqAttrs }                    from './html'
 import { percent }                                     from './math'
 import { compact, deepFreeze, fromJSON }               from './objects'
 import { camelCase }                                   from './strings'
@@ -227,6 +228,7 @@ class BaseUploader extends BaseClass {
      *     action?:     string,
      *     uppy?:       Uppy.UppyOptions,
      *     plugin?:     UppyPluginOptions,
+     *     added?:      function(Selector),
      * }} UploaderOptions
      */
 
@@ -462,7 +464,7 @@ class BaseUploader extends BaseClass {
         // === Display setup ===
 
         if (this.feature.replace_input) {
-            this._initializeFileSelectContainer();
+            this._initializeFileSelectContainer(options);
         }
         this._initializeFileSelectButton();
         this._initializeProgressBar();
@@ -977,6 +979,7 @@ class BaseUploader extends BaseClass {
      * @typedef {{
      *     input_id?: string,
      *     label_id?: string,
+     *     added?:    function(jQuery),
      * }} InitializeFileSelectOptions
      */
 
@@ -1097,18 +1100,31 @@ class BaseUploader extends BaseClass {
      * @returns {boolean}
      */
     displayFilename(filename) {
+        if (!this._updateFilename(filename)) { return false }
+        this.hideFilename(false);
+        this.hideProgressBar();
+        return true;
+    }
+
+    /**
+     * Update the element containing the selected file name based on its type.
+     *
+     * @param {String} filename
+     * @param {String} [inner]        Interior element holding the name.
+     *
+     * @returns {boolean}
+     */
+    _updateFilename(filename, inner = '.filename') {
         if (isMissing(filename)) { return false }
         const $element = this.uploadedFilenameDisplay();
         if (isPresent($element)) {
-            const $inner = $element.find('.filename');
+            const $inner = $element.find(inner);
             if (isPresent($inner)) {
                 $inner.text(filename);
             } else {
                 $element.text(filename);
             }
             $element.addClass('complete');
-            this.hideFilename(false);
-            this.hideProgressBar();
         }
         return true;
     }
@@ -1522,16 +1538,33 @@ export class MultiUploader extends BaseUploader {
      * If *false* then defer assignment of this._display to initialize() since
      * it may result in render changes.
      *
-     * @note Currently manifest.js relies upon this being *true*.
+     * @note Currently manifest-edit.js relies upon this being *true*.
      *
      * @type {boolean}
      */
     static DISPLAY_IN_CTOR = true;
 
-    static VISIBLE_MARKER = 'visible';
-    static DISPLAY_CLASS  = 'uploader-feedback';
+    static VISIBLE_MARKER         = 'visible';
+    static DISPLAY_CLASS          = 'uploader-feedback';
+    static FILE_TYPE_CLASS        = 'from-uploader';
+    static PREPEND_CONTROLS_CLASS = 'uppy-FileInput-container-prepend';
+    static APPEND_CONTROLS_CLASS  = 'uppy-FileInput-container-append';
 
-    static DISPLAY = selector(this.DISPLAY_CLASS);
+    static DISPLAY          = selector(this.DISPLAY_CLASS);
+    static FILE_TYPE        = selector(this.FILE_TYPE_CLASS);
+    static PREPEND_CONTROLS = selector(this.PREPEND_CONTROLS_CLASS);
+    static APPEND_CONTROLS  = selector(this.APPEND_CONTROLS_CLASS);
+
+    // ========================================================================
+    // Fields
+    // ========================================================================
+
+    /**
+     * Additional input controls added next to the usual file input control.
+     *
+     * @type {jQuery}
+     */
+    $added_controls = $(null);
 
     // ========================================================================
     // Constructor
@@ -1622,6 +1655,80 @@ export class MultiUploader extends BaseUploader {
         const label_id  = $elements.first().attr('aria-labelledby');
         const opt       = { label_id, ...options };
         super._initializeFileSelectContainer(opt);
+
+        // Inject copies of additional controls if present.
+        const pre  = this.constructor.PREPEND_CONTROLS;
+        const app  = this.constructor.APPEND_CONTROLS;
+        const $pre = this._addFileSelectControls(pre, true);
+        const $app = this._addFileSelectControls(app, false);
+        this.$added_controls = $([...$pre.toArray(), ...$app.toArray()]);
+        if (options?.added && isPresent(this.$added_controls)) {
+            options.added(this.$added_controls);
+        }
+    }
+
+    // ========================================================================
+    // Methods - file selection controls
+    // ========================================================================
+
+    /**
+     * Add controls to {@link fileSelectContainer}.
+     *
+     * (The originals are preserved so that they will be there if the
+     * associated item is cloned.)
+     *
+     * @param {Selector} selector
+     * @param {boolean}  [prepend]
+     *
+     * @returns {jQuery}
+     * @protected
+     */
+    _addFileSelectControls(selector, prepend) {
+        const $element = this.$root.find(selector);
+        const $clones  = $element.children().clone();
+        if (isPresent($clones)) {
+            const tag   = '0';
+            const attrs = [...ID_ATTRIBUTES, 'data-id'];
+            $clones.each((_, element) => uniqAttrs(element, tag, attrs, true));
+            if (prepend) {
+                this.fileSelectContainer().prepend($clones);
+            } else {
+                this.fileSelectContainer().append($clones);
+            }
+        }
+        // Just to be sure (although this should already be the case):
+        $element.toggleClass(this.constructor.HIDDEN_MARKER, true);
+        return $clones;
+    }
+
+    /**
+     * Initialize the state of the file select button.
+     *
+     * @returns {jQuery}              The file select button.
+     * @protected
+     */
+    _initializeFileSelectButton() {
+        const file_type = this.constructor.FILE_TYPE_CLASS;
+        return super._initializeFileSelectButton().addClass(file_type);
+    }
+
+    /**
+     * Update the element containing the selected file name based on its type.
+     *
+     * @param {String} filename
+     * @param {String} [inner]        Interior element holding the name.
+     *
+     * @returns {boolean}
+     */
+    _updateFilename(filename, inner = this.constructor.FILE_TYPE) {
+        if (!super._updateFilename(filename, inner)) { return false }
+        this.uploadedFilenameDisplay().children().each((_, line) => {
+            const $line  = $(line);
+            const active = $line.is(inner);
+            $line.attr('aria-hidden', !active);
+            $line.toggleClass('active', active);
+        });
+        return true;
     }
 
     // ========================================================================

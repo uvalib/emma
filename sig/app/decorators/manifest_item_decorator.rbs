@@ -99,6 +99,12 @@ class ManifestItemDecorator < BaseDecorator
     #
     def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
 
+    # Bulk grid configuration values.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    BULK_GRID_CFG: Hash[Symbol,symHash]
+
     IDENTITY_FIELDS: symArray
 
     GRID_ROWS_FIELDS: symArray
@@ -186,7 +192,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    GRID_CFG: Hash[Symbol,symHash]
+    GRID_HEADER: Hash[Symbol,symHash]
 
     # A button for controlling overall grid behavior.
     #
@@ -200,6 +206,115 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def grid_control: (Symbol `type`, ?expanded: bool, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Submission status type keys and column labels.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    SUBMIT_STATUS_TYPE: Hash[Symbol,String]
+
+    # Submission status grid column names.
+    #
+    # @type [Array<Symbol>]
+    #
+    SUBMIT_STATUS_COLUMNS: symArray
+
+    # Submission status value CSS classes and labels.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+    #
+    SUBMIT_STATUS: Hash[Symbol,Hash[Symbol,String]]
+
+    # Mapping of submission status CSS class on to label.
+    #
+    # @type [Hash{String=>String}]
+    #
+    SUBMIT_STATUS_LABELS: Hash[String,String]
+
+    # submission_status_header
+    #
+    # @param [Integer, nil] row
+    # @param [String]       css
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #submit_status_element
+    #
+    def submission_status_header: (?row: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # submit_status_element
+    #
+    # @param [String, nil]     ctrl
+    # @param [String]          name
+    # @param [Hash{Symbol=>*}] status
+    # @param [Integer, nil]    row
+    # @param [Integer]         col
+    # @param [String]          css
+    # @param [Hash]            opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_element: ((String|nil) ctrl, String name, Hash[Symbol,(String|Symbol|bool|nil)] status, ?row: Integer|nil, ?col: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # submit_status_ctls
+    #
+    # @param [String, nil]  ctrl
+    # @param [Integer, nil] col
+    # @param [String]       css
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_ctls: (?(String|nil) ctrl, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # submit_status_item
+    #
+    # @param [String]       name
+    # @param [Integer, nil] col
+    # @param [String]       css
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_item: (String name, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # submit_status_value
+    #
+    # @param [Symbol]                    type
+    # @param [String,Symbol,Boolean,nil] status
+    # @param [Integer, nil]              col
+    # @param [String]                    css
+    # @param [Hash]                      opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_value: (Symbol `type`, (String|Symbol|bool|nil) status, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # The text on the status element.
+    #
+    # @param [Symbol]                    _type
+    # @param [String,Symbol,Boolean,nil] status
+    # @param [Hash]                      entry
+    # @param [String]                    css
+    # @param [Hash]                      opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_text: (Symbol _type, (String|Symbol|bool|nil) status, ?symHash entry, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Control for fixing a condition resulting in a given status.
+    #
+    # @param [Symbol]                    _type
+    # @param [String,Symbol,Boolean,nil] status
+    # @param [String]                    css
+    # @param [Hash]                      opt
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
+    #
+    def submit_status_link: (Symbol _type, (String|Symbol|bool|nil) status, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
     # row_indicators
     #
@@ -402,6 +517,10 @@ class ManifestItemDecorator
   #
   UPLOADER_DISPLAY_CLASS: String
 
+  # @private
+  # @type [Hash{Symbol=>Hash}]
+  FILE_TYPE_CFG: Hash[Symbol,symHash]
+
   # Render a single label/value pair in a grid cell.
   #
   # @param [String, Symbol, nil] label
@@ -412,6 +531,8 @@ class ManifestItemDecorator
   # @param [Hash]                opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *updateFileUploaderCols*
   #
   def grid_data_cell_render_pair: ((String|Symbol|nil) label, (untyped|nil) value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -426,8 +547,19 @@ class ManifestItemDecorator
   #
   def grid_data_cell_edit: (Symbol field, untyped value, (symHash|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
+  INPUT_CONTROL_CFG: Hash[Symbol,symHash]
+
+  FILE_INPUT_TYPES: symArray
+
+  PREPEND_CONTROLS_CLASS: String
+
+  APPEND_CONTROLS_CLASS: String
+
   # For the :file_data column, display the path to the file if present or an
   # upload button if not.
+  #
+  # This also generates a hidden container for buttons that can be added
+  # client-side to .uppy-FileInput-container after it is created by Uppy.
   #
   # @param [String] _name
   # @param [*]      _value
@@ -436,7 +568,40 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see file:controllers/manifest-edit.js  *initializeAddedControls*
+  #
   def render_grid_file_input: (String _name, (any|nil) _value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate an alternate file input control as a button with a hidden popup.
+  #
+  # @param [Symbol] src               One of #FILE_INPUT_TYPES.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def file_input_popup: (src: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a visible button of an alternate file input control.
+  #
+  # @param [Symbol] src               One of #FILE_INPUT_TYPES.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def file_input_ctrl: (src: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a hidden panel to prompt for a file name.
+  #
+  # @param [String] id                HTML ID of the visible button.
+  # @param [Symbol] src               One of #FILE_INPUT_TYPES.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def file_input_panel: (id: String, src: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render item attributes.
   #
@@ -462,6 +627,17 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def details_container: (*ActiveSupport::SafeBuffer added, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+
+  # submission_status
+  #
+  # @param [Integer, nil] row
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #submit_status_element
+  #
+  def submission_status: (?row: Integer|nil, ?col: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #

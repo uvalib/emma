@@ -1,0 +1,142 @@
+# config/locales/bulk.en.yml
+#
+# Bulk operations
+
+en:
+
+  emma:
+
+    bulk:
+
+      grid:
+
+        headers:
+
+          column:
+            opener:
+              tooltip: 'Show details about each record'
+            closer:
+              tooltip: 'Make this column take up less space'
+            # Used when CONTROLS_ROTATE is true:
+            label: "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
+
+          row:
+            opener:
+              tooltip: 'Show details about each column data type'
+            closer:
+              tooltip: 'Minimize this row'
+            # Used when CONTROLS_ROTATE is true (with "transform:rotate(0.25turn)")
+            label: "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
+
+        status:
+
+          type:
+            db:           'Database Status'
+            file:         'File Status'
+            upload:       'Storage Status'
+            index:        'Indexing Status'
+
+          value:
+
+            blank:
+              css:        'not-started'
+              label:      'NOT STARTED'
+            active:
+              css:        'active'
+              label:      'SENDING...'
+            busy:
+              css:        'busy'
+              label:      '[BUSY]'
+
+            # == Pre-submit conditions
+
+            data:
+              css:        'data-missing'
+              label:      'DATA NEEDED'
+            file:
+              css:        'file-missing'
+              label:      'FILE NEEDED'
+            blocked:
+              css:        'blocked'
+              label:      'BLOCKED'
+
+            # == Post-submit conditions
+
+            ok:
+              css:        'succeeded'
+              label:      'OK'
+            error:
+              css:        'failed'
+              label:      'ERROR'
+            done:
+              css:        'done'
+              label:      'DONE'
+
+        file:
+
+          uploader:
+            label:        'Upload'
+            description:  |
+              You can choose to pre-load your remediated content file now
+              if that is more convenient.
+
+          name:
+            label:        'File Name'
+            description:  |
+              Provide the name of a file accessible from your web browser
+              to be acquired at the start of the bulk upload process.
+
+          url:
+            label:        'File URL'
+            description:  |
+              Provide the location of a file on the Internet
+              to be acquired at the start of the bulk upload process.
+
+          data:
+            label:        'File Data'
+            description:  |
+              Literal encoded file data.
+              (NOT CURRENTLY IMPLEMENTED)
+
+        controls:
+
+          uploader:
+            label:        'Upload'
+            type:         uploader
+            class:        'from-uploader'
+            description:  |
+              You can choose to pre-load your remediated content file now
+              if that is more convenient.
+
+          local_file:
+            label:        'File Name'
+            type:         name
+            class:        'from-name'
+            description:  |
+              Provide the name of a file accessible from your web browser
+              to be acquired at the start of the bulk upload process.
+            panel:
+              label:      'Filename'
+              submit:     'OK'
+              cancel:     'Cancel'
+
+          remote_file:
+            label:        'File URL'
+            type:         url
+            class:        'from-url'
+            description:  |
+              Provide the location of a file on the Internet
+              to be acquired at the start of the bulk upload process.
+            panel:
+              label:      'URL'
+              submit:     'OK'
+              cancel:     'Cancel'
+
+      submit:
+
+        counts:
+          total:        'Total'
+          ready:        'Ready'
+          transmitting: 'Transmitting'
+          succeeded:    'Succeeded'
+          failed:       'Failed'

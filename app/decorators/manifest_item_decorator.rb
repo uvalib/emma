@@ -124,6 +124,9 @@ class ManifestItemDecorator < BaseDecorator
   # Definitions available to both classes and instances of either this
   # decorator or its related collection decorator.
   #
+  #--
+  # noinspection RubyTooManyMethodsInspection
+  #++
   module SharedGenericMethods
 
     include BaseDecorator::SharedGenericMethods
@@ -283,6 +286,15 @@ class ManifestItemDecorator < BaseDecorator
     # =========================================================================
 
     public
+
+    # Bulk grid configuration values.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    #--
+    # noinspection RailsI18nInspection
+    #++
+    BULK_GRID_CFG = I18n.t('emma.bulk.grid', default: {}).deep_freeze
 
     IDENTITY_FIELDS  = ManifestItem::ID_COLS
     GRID_ROWS_FIELDS = ManifestItem::GRID_COLS
@@ -450,7 +462,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    # @see file:javascripts/controllers/manifest.js *toggleControlsColumn()*
+    # @see file:javascripts/controllers/manifest-edit.js *toggleControlsColumn*
     #
     def column_expander(css: '.column-expander', **opt)
       grid_control(:column, css: css, **opt)
@@ -463,7 +475,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    # @see file:javascripts/controllers/manifest.js *toggleHeaderRow()*
+    # @see file:javascripts/controllers/manifest-edit.js *toggleHeaderRow*
     #
     def header_expander(css: '.row-expander', **opt)
       grid_control(:row, css: css, **opt)
@@ -473,21 +485,13 @@ class ManifestItemDecorator < BaseDecorator
     # :section:
     # =========================================================================
 
-    protected
-
-    # Indicates whether expand/contract controls rotate (via CSS transition)
-    # or whether their state is indicated by different icons (if *false*).
-    #
-    # @type [Boolean]
+    public
 
     # Column/header expand/contract controls.
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    #--
-    # noinspection RailsI18nInspection, RubyMismatchedConstantType
-    #++
-    GRID_CFG = I18n.t('emma.grid', default: {}).deep_freeze
+    GRID_HEADER = BULK_GRID_CFG[:headers]
 
     # A button for controlling overall grid behavior.
     #
@@ -503,13 +507,201 @@ class ManifestItemDecorator < BaseDecorator
     # == Implementation Notes
     #
     def grid_control(type, expanded: false, css: '.grid-control', **opt)
-      base  = GRID_CFG[type] || {}
-      cfg   = expanded ? base[:closer] : base[:opener]
-      label = opt.delete(:label) || cfg[:label] || base[:label]
-      opt[:title] ||= cfg[:tooltip] || base[:tooltip]
+      type_cfg  = GRID_HEADER[type] || {}
+      state_cfg = expanded ? type_cfg[:closer] : type_cfg[:opener]
+      label     = opt.delete(:label) || state_cfg[:label] || type_cfg[:label]
+      opt[:title] ||= state_cfg[:tooltip] || type_cfg[:tooltip]
       prepend_css!(opt, 'expanded') if expanded
       prepend_css!(opt, css)
       html_button(label, opt)
+    end
+
+    # =========================================================================
+    # :section: Item forms (remit page)
+    # =========================================================================
+
+    public
+
+    # Submission status type keys and column labels.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    SUBMIT_STATUS_TYPE = BULK_GRID_CFG.dig(:status, :type)
+
+    # Submission status grid column names.
+    #
+    # @type [Array<Symbol>]
+    #
+    SUBMIT_STATUS_COLUMNS =
+      [:controls, :item_name, *SUBMIT_STATUS_TYPE.keys].freeze
+
+    # Submission status value CSS classes and labels.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+    #
+    SUBMIT_STATUS = BULK_GRID_CFG.dig(:status, :value)
+
+    # Mapping of submission status CSS class on to label.
+    #
+    # @type [Hash{String=>String}]
+    #
+    SUBMIT_STATUS_LABELS =
+      SUBMIT_STATUS.map { |_, entry| [entry[:css], entry[:label]] }.to_h.freeze
+
+    # =========================================================================
+    # :section: Item forms (remit page)
+    # =========================================================================
+
+    public
+
+    # submission_status_header
+    #
+    # @param [Integer, nil] row
+    # @param [String]       css
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #submit_status_element
+    #
+    def submission_status_header(row: nil, css: '.head', **opt)
+      ctrl = nil
+      name = 'Item Name' # TODO: I18n
+      stat = SUBMIT_STATUS_TYPE
+      prepend_css!(opt, css)
+      submit_status_element(ctrl, name, stat, row: row, head: true, **opt)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # submit_status_element
+    #
+    # @param [String, nil]     ctrl
+    # @param [String]          name
+    # @param [Hash{Symbol=>*}] status
+    # @param [Integer, nil]    row
+    # @param [Integer]         col
+    # @param [String]          css
+    # @param [Hash]            opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_element(
+      ctrl,
+      name,
+      status,
+      row:    nil,
+      col:    0,
+      css:    '.submission-status',
+      **opt
+    )
+      col += 1; ctrl&.html_safe? or (ctrl = submit_status_ctls(ctrl, col: col))
+      col += 1; name&.html_safe? or (name = submit_status_item(name, col: col))
+      opt.delete(:index)          # Just in cause this slipped in.
+      opt[:'aria-rowindex'] = row if row
+      opt[:separator]       = ''  unless opt.key?(:separator)
+      prepend_css!(opt, css)
+      html_div(ctrl, name, opt) do
+        status.map { |k, v| submit_status_value(k, v, col: (col += 1)) }
+      end
+    end
+
+    # submit_status_ctls
+    #
+    # @param [String, nil]  ctrl
+    # @param [Integer, nil] col
+    # @param [String]       css
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_ctls(ctrl = nil, col: nil, css: '.controls', **opt)
+      ctrl &&= html_div(ctrl, class: 'text') unless ctrl&.html_safe?
+      ctrl ||=
+        html_div(class: (cls = 'selection')) do
+          name = 'Selection' # TODO: I18n
+          id   = css_randomize(cls)
+          h.check_box_tag(id) << h.label_tag(id, name)
+        end
+      opt[:'aria-colindex'] = col if col
+      prepend_css!(opt, css)
+      html_div(ctrl, opt)
+    end
+
+    # submit_status_item
+    #
+    # @param [String]       name
+    # @param [Integer, nil] col
+    # @param [String]       css
+    # @param [Hash]         opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_item(name, col: nil, css: '.item-name', **opt)
+      name = html_div(name, class: 'text') unless name&.html_safe?
+      opt[:'aria-colindex'] = col if col
+      prepend_css!(opt, css)
+      html_div(name, opt)
+    end
+
+    # submit_status_value
+    #
+    # @param [Symbol]                    type
+    # @param [String,Symbol,Boolean,nil] status
+    # @param [Integer, nil]              col
+    # @param [String]                    css
+    # @param [Hash]                      opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_value(type, status, col:, css: '.status', **opt)
+      status = status ? :ok : :blank if status.nil? || status.is_a?(BoolType)
+      entry  = status.is_a?(Symbol) && SUBMIT_STATUS[status] || {}
+      text   = submit_status_text(type, status, entry)
+      button = submit_status_link(type, status)
+      opt[:'aria-colindex'] = col if col
+      prepend_css!(opt, css, "#{type}-status", entry[:css])
+      html_div(text, button, opt)
+    end
+
+    # The text on the status element.
+    #
+    # @param [Symbol]                    _type
+    # @param [String,Symbol,Boolean,nil] status
+    # @param [Hash]                      entry
+    # @param [String]                    css
+    # @param [Hash]                      opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def submit_status_text(_type, status, entry = {}, css: '.text', **opt)
+      prepend_css!(opt, css)
+      html_div(opt) { entry.is_a?(Hash) && entry[:text] || status }
+    end
+
+    # Control for fixing a condition resulting in a given status.
+    #
+    # @param [Symbol]                    _type
+    # @param [String,Symbol,Boolean,nil] status
+    # @param [String]                    css
+    # @param [Hash]                      opt
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
+    #
+    def submit_status_link(_type, status, css: '.fix', **opt)
+      return unless status == :data # Only one with a control for now.
+      label = 'Edit' # TODO: I18n
+      row   = "data-item-id=#{object.id}"
+      path  = h.edit_manifest_path(id: object.manifest_id, anchor: row)
+      opt[:title] ||= 'Go to this item' # TODO: I18n
+      prepend_css!(opt, css)
+      make_link(label, path, **opt, 'data-turbolinks': false)
     end
 
     # =========================================================================
@@ -844,6 +1036,10 @@ class ManifestItemDecorator
   #
   UPLOADER_DISPLAY_CLASS = 'uploader-feedback'
 
+  # @private
+  # @type [Hash{Symbol=>Hash}]
+  FILE_TYPE_CFG = BULK_GRID_CFG[:file]
+
   # Render a single label/value pair in a grid cell.
   #
   # @param [String, Symbol, nil] label
@@ -855,18 +1051,25 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:javascripts/controllers/manifest.js  *updateFileUploaderCols()*
+  # @see file:javascripts/controllers/manifest-edit.js *updateFileUploaderCols*
   #
   def grid_data_cell_render_pair(label, value, field:, prop:, col: nil, **opt)
     if field == :file_data
-      value_css = opt[:value_css] || FILE_NAME_CLASS
-      if (value = json_parse(value))
-        opt[:'data-value'] = value.to_json
-        value = value.dig(:metadata, :filename)
-        value_css = css_classes(value_css, 'complete')
-      end
-      opt[:value_css] = value_css
-      opt[:wrap]      = css_classes(UPLOADER_CLASS, opt[:wrap])
+      value = json_parse(value)
+      opt[:'data-value'] = value.to_json if value
+      file_name, file_type = value && ManifestItem.file_name_type(value)
+      file_type_entries =
+        FILE_TYPE_CFG.keys.map do |t|
+          if t == file_type
+            html_div(file_name, class: "from-#{t} active")
+          else
+            html_div(nil, class: "from-#{t}", 'aria-hidden': true)
+          end
+        end
+      value = safe_join(file_type_entries)
+      opt[:value_css] ||= FILE_NAME_CLASS
+      opt[:value_css]   = css_classes(opt[:value_css], 'complete') if file_name
+      opt[:wrap]        = css_classes(UPLOADER_CLASS, opt[:wrap])
     end
     super
   end
@@ -893,8 +1096,17 @@ class ManifestItemDecorator
 
   protected
 
+  INPUT_CONTROL_CFG = BULK_GRID_CFG[:controls]
+  FILE_INPUT_TYPES  = INPUT_CONTROL_CFG.select { |_, v| v[:panel] }.keys.freeze
+
+  PREPEND_CONTROLS_CLASS = 'uppy-FileInput-container-prepend'
+  APPEND_CONTROLS_CLASS  = 'uppy-FileInput-container-append'
+
   # For the :file_data column, display the path to the file if present or an
   # upload button if not.
+  #
+  # This also generates a hidden container for buttons that can be added
+  # client-side to .uppy-FileInput-container after it is created by Uppy.
   #
   # @param [String] _name
   # @param [*]      _value
@@ -903,9 +1115,93 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see file:controllers/manifest-edit.js  *initializeAddedControls*
+  #
   def render_grid_file_input(_name, _value, css: UPLOADER_DISPLAY_CLASS, **opt)
     prepend_css!(opt, css)
-    html_div(opt)
+    display  = html_div(opt)
+    controls = FILE_INPUT_TYPES.map { |type| file_input_popup(src: type) }
+    controls = html_div(*controls, class: "#{APPEND_CONTROLS_CLASS} hidden")
+    controls << display
+  end
+
+  # Generate an alternate file input control as a button with a hidden popup.
+  #
+  # @param [Symbol] src               One of #FILE_INPUT_TYPES.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def file_input_popup(src:, css: '.inline-popup', **opt)
+    config     = INPUT_CONTROL_CFG[src] || {}
+    type       = config[:type]
+    type_class = config[:class] || "from-#{type}"
+    prepend_css!(opt, type_class)
+    raise "en.emma.bulk.grid.controls.#{src}" if config.blank?
+
+    id     = opt.delete(:id) || unique_id
+    button = file_input_ctrl(src: src, id: id, **opt)
+    panel  = file_input_panel(src: src, id: id, **opt)
+
+    prepend_css!(opt, css).merge!('data-src': src, 'data-type': type)
+    html_div(opt) do
+      button << panel
+    end
+  end
+
+  # Generate a visible button of an alternate file input control.
+  #
+  # @param [Symbol] src               One of #FILE_INPUT_TYPES.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def file_input_ctrl(src:, css: PopupHelper::POPUP_TOGGLE_CLASS, **opt)
+    config = INPUT_CONTROL_CFG[src] || {}
+    label  = config[:label]
+    prepend_css!(opt, css)
+    html_button(label, opt)
+  end
+
+  # Generate a hidden panel to prompt for a file name.
+  #
+  # @param [String] id                HTML ID of the visible button.
+  # @param [Symbol] src               One of #FILE_INPUT_TYPES.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def file_input_panel(id:, src:, css: PopupHelper::POPUP_PANEL_CLASS, **opt)
+    config       = INPUT_CONTROL_CFG[src] || {}
+    type         = config[:type]
+    type_class   = config[:class] || "from-#{type}"
+    panel_config = config[:panel] || {}
+
+    desc_opt     = append_css(opt, 'description').merge!(for: id)
+    description  = config[:description]
+    description  = h.label_tag(nil, description, desc_opt)
+
+    label        = panel_config[:label]
+    name         = html_id(type || label)
+    input_id     = "#{name}-#{id}"
+    input_opt    = append_css(opt, 'input')
+    input_label  = h.label_tag(name, label, input_opt.merge(for: input_id))
+    input_field  = h.text_field_tag(name, nil, input_opt.merge(id: input_id))
+
+    input_submit, input_cancel =
+      %i[submit cancel].map do |key|
+        b_lbl = panel_config[key]
+        b_opt = append_css(input_opt, "input-#{key}", "#{type_class}-#{key}")
+        html_button(b_lbl, b_opt)
+      end
+
+    prepend_css!(opt, css).merge!('data-id': id)
+    html_div(opt) do
+      description << input_label << input_field << input_submit << input_cancel
+    end
   end
 
   # ===========================================================================
@@ -945,6 +1241,40 @@ class ManifestItemDecorator
     skip = Array.wrap(skip)
     added.prepend(cover(placeholder: false)) unless skip.include?(:cover)
     super(*added, **opt, &block)
+  end
+
+  # ===========================================================================
+  # :section: Item forms (remit page)
+  # ===========================================================================
+
+  public
+
+  # submission_status
+  #
+  # @param [Integer, nil] row
+  # @param [Integer]      col
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #submit_status_element
+  #
+  def submission_status(row: nil, col: 1, **opt)
+    ctrl = submit_status_ctls(col: col)
+    name = [*object.dc_title, *object.dc_creator].take(2).join(' / ')
+    stat = SUBMIT_STATUS_TYPE.transform_values { nil }
+    stat[:index]  = object.in_index?
+    stat[:upload] = object.file_uploaded?
+    stat[:file]   = stat[:upload] || object.file_literal? || :file
+    stat[:db]     = object.data_ok? || :data
+    if Log.debug? && (skipped = stat.select { |_, v| v.nil? }).present?
+      Log.debug { "#{__method__}: not handling status types: #{skipped.keys}" }
+    end
+    opt[:'data-item-id']   ||= object.id
+    opt[:'data-manifest']  ||= object.manifest_id
+    opt[:'data-file-name'] ||= object.pending_file_name
+    opt[:'data-file-url']  ||= object.pending_file_url
+    submit_status_element(ctrl, name, stat, row: row, **opt)
   end
 
   # ===========================================================================

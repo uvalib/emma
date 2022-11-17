@@ -1,0 +1,451 @@
+// app/assets/javascripts/shared/manifests.js
+
+
+import { Api }                        from './api'
+import { Emma }                       from './assets'
+import { pageAction, pageController } from './controller'
+import { isDefined, isMissing }       from './definitions'
+import { flashError, flashMessage }   from './flash'
+import { compact }                    from './objects'
+import { camelCase, singularize }     from './strings'
+
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+/**
+ * Current action.
+ *
+ * @readonly
+ * @type {string}
+ */
+export const PAGE_ACTION = pageAction();
+
+/**
+ * Current controller.
+ *
+ * @readonly
+ * @type {string}
+ */
+export const PAGE_CONTROLLER = pageController();
+
+/**
+ * Base name (singular of the related database table).
+ *
+ * @readonly
+ * @type {string}
+ */
+export const PAGE_MODEL = singularize(PAGE_CONTROLLER);
+
+/**
+ * Page assets.js properties.
+ *
+ * @readonly
+ * @type {ModelProperties}
+ */
+export const PAGE_PROPERTIES = Emma[camelCase(PAGE_MODEL)];
+
+/**
+ * Base name (singular of the related database table).
+ *
+ * @readonly
+ * @type {string}
+ */
+export const MANIFEST_MODEL = 'manifest';
+
+/**
+ * Base name (singular of the related database table).
+ *
+ * @readonly
+ * @type {string}
+ */
+export const ITEM_MODEL = 'manifest_item';
+
+export const BULK_CONTROLLER = MANIFEST_MODEL;
+export const ROW_CONTROLLER  = ITEM_MODEL;
+
+/**
+ * Name of the attribute indicating the ID of the Manifest database record
+ * associated with an element or its ancestor.
+ *
+ * @type {string}
+ */
+export const MANIFEST_ATTR = 'data-manifest';
+
+/**
+ * Name of the attribute indicating the ID of the ManifestItem database
+ * record associated with an element or its ancestor.
+ *
+ * @type {string}
+ */
+export const ITEM_ATTR = 'data-item-id';
+
+export const DISABLED_MARKER = 'disabled';
+
+// ============================================================================
+// Functions
+// ============================================================================
+
+/**
+ * Return all elements and descendents which match.
+ *
+ * @param {Selector} target
+ * @param {Selector} match
+ *
+ * @returns {jQuery}
+ */
+export function allMatching(target, match) {
+    const $target = $(target);
+    return $target.filter(match).add($target.find(match));
+}
+
+/**
+ * Return the target if it matches or all descendents that match.
+ *
+ * @param {Selector} target
+ * @param {Selector} match
+ *
+ * @returns {jQuery}
+ */
+export function selfOrDescendents(target, match) {
+    //_debug(`selfOrDescendents: match = "${match}"; target =`, target);
+    const $target = $(target);
+    return $target.is(match) ? $target : $target.find(match);
+}
+
+/**
+ * The attribute value which applies to the given target (either directly
+ * or from a parent element).
+ *
+ * @param {Selector} target
+ * @param {string}   name         Attribute name.
+ *
+ * @returns {string}
+ */
+export function attribute(target, name) {
+    const func = 'attribute';
+    //_debug(`${func}: name = ${name}; target =`, target);
+    return selfOrParent(target, `[${name}]`, func).attr(name);
+}
+
+/**
+ * Return the target if it matches or the first parent that matches.
+ *
+ * @param {Selector} target
+ * @param {Selector} match
+ * @param {string}   [caller]     Name of caller (for diagnostics).
+ *
+ * @returns {jQuery}
+ */
+export function selfOrParent(target, match, caller) {
+    const func = caller || 'selfOrParent';
+    const $t   = $(target);
+    return $t.is(match) ? single($t, func) : $t.parents(match).first();
+}
+
+/**
+ * Ensure that the target resolves to exactly one element.
+ *
+ * @param {Selector} target
+ * @param {string}   [caller]     Name of caller (for diagnostics).
+ *
+ * @returns {jQuery}
+ */
+export function single(target, caller) {
+    const $element = $(target);
+    const count    = $element.length;
+    if (count === 1) {
+        return $element;
+    } else {
+        console.warn(`${caller}: ${count} results; 1 expected`);
+        return $element.first();
+    }
+}
+
+// ============================================================================
+// Functions - buttons
+// ============================================================================
+
+/**
+ * initializeButtonSet
+ *
+ * @param {Object.<string,jQuery>} buttons
+ * @param {string}                 [caller]
+ */
+export function initializeButtonSet(buttons, caller) {
+    if (_debugging()) {
+        const func = caller || 'initializeButtonSet';
+        _debug(func);
+        $.each(buttons, (type, $button) => {
+            if (isMissing($button)) {
+                _error(`${func}: no button for "${type}"`);
+            }
+        });
+    }
+}
+
+/**
+ * Return the button indicated by *type*.
+ *
+ * @param {String}                 type
+ * @param {Object.<string,jQuery>} buttons
+ * @param {string}                 [caller]
+ *
+ * @returns {jQuery|undefined}
+ */
+export function buttonFor(type, buttons, caller) {
+    const $button = buttons[type];
+    if (isMissing($button)) {
+        const func  = caller || 'buttonFor';
+        const types = Object.keys(buttons);
+        if (types.includes(type)) {
+            console.error(`${func}: no button for "${type}"`);
+        } else {
+            console.error(`${func}: "${type}" not in`, types);
+        }
+        return;
+    }
+    return $button;
+}
+
+/**
+ * Change button state.
+ *
+ * @param {Selector}                button
+ * @param {boolean}                 [enable]
+ * @param {string|ActionProperties} [config]
+ * @param {ActionProperties}        [override]  Overrides to *config*.
+ *
+ * @returns {jQuery|undefined}
+ */
+export function enableButton(button, enable, config, override) {
+    _debug(`enableButton: enable = "${enable}"`, button);
+    if (!button) { return }
+    const $button  = $(button);
+    const enabling = (enable !== false);
+    const type     = (typeof(config) === 'string') ? config : '';
+    let prop       = type ? configFor(type, enabling) : (config || {});
+    if (override)     { prop = { ...prop, ...properties(override, enabling) } }
+    if (prop.label)   { $button.text(prop.label) }
+    if (prop.tooltip) { $button.attr('title', prop.tooltip) }
+    $button.attr('aria-disabled', !enabling);
+    $button.toggleClass(DISABLED_MARKER, !enabling);
+    return $button;
+}
+
+// ============================================================================
+// Functions - configuration
+// ============================================================================
+
+/**
+ * Configuration values entries for the given *type*.
+ *
+ * @param {string}  type
+ * @param {boolean} [enabled]
+ * @param {string}  [action]          Default: {@link PAGE_ACTION}
+ *
+ * @returns {ActionProperties}
+ */
+export function configFor(type, enabled, action = PAGE_ACTION) {
+    //_debug(`configFor: type = "${type}"; action = "${action}"`);
+    const ctrlr_config  = PAGE_PROPERTIES.Action || {};
+    const action_config = ctrlr_config[action] || ctrlr_config.new || {};
+    return properties(action_config[type], enabled);
+}
+
+/**
+ * Get configuration property values based on context.
+ *
+ * @param {ActionProperties} [config]
+ * @param {boolean}          [enabled]
+ *
+ * @returns {ActionProperties}
+ */
+export function properties(config, enabled = undefined) {
+    switch (enabled) {
+        case true:  return { ...config, ...config?.enabled };
+        case false: return { ...config, ...config?.disabled };
+        default:    return { ...config };
+    }
+}
+
+// ============================================================================
+// Functions - page - server interface
+// ============================================================================
+
+let api_server;
+
+/**
+ * The server controller for most operations.
+ *
+ * @returns {string}
+ */
+export function apiController() {
+    return ROW_CONTROLLER;
+}
+
+/**
+ * Interface to the server.
+ *
+ * @param {string}       [controller]   Default: {@link apiController}.
+ * @param {XmitCallback} [callback]
+ *
+ * @returns {Api}
+ */
+export function server(controller, callback) {
+    if (controller || callback) {
+        const ctrlr   = controller || apiController();
+        const options = callback ? { callback: callback } : {};
+        return new Api(ctrlr, options);
+    } else {
+        return api_server ||= new Api(apiController());
+    }
+}
+
+/**
+ * SendOptions
+ *
+ * Option values for the {@link serverSend} function.
+ *
+ * @typedef {{
+ *      _ignoreBody?:   boolean,
+ *      method?:        string,
+ *      controller?:    string,
+ *      action?:        string,
+ *      params?:        Object.<string,any>,
+ *      headers?:       StringTable,
+ *      caller?:        string,
+ *      onSuccess?:     XmitCallback,
+ *      onError?:       XmitCallback,
+ *      onComplete?:    XmitCallback,
+ *      onCommStatus?:  XmitCallback,
+ * }} SendOptions
+ */
+
+/**
+ * Post to a 'manifest' controller endpoint.
+ *
+ * @param {string|SendOptions} action
+ * @param {SendOptions}        [send_options]
+ */
+export function serverBulkSend(action, send_options) {
+    const func       = 'serverBulkSend';
+    const controller = BULK_CONTROLLER;
+    const override   = send_options?.controller;
+    if (typeof action !== 'string') {
+        console.error(`${func}: invalid action`, action);
+    } else if (override && (override !== controller)) {
+        console.warn(`${func}: ignored controller override "${override}"`);
+    }
+    serverSend([controller, action], send_options);
+}
+
+/**
+ * Post to a server endpoint.
+ *
+ * @param {string|string[]|SendOptions} ctr_act
+ * @param {SendOptions}                 [send_options]
+ *
+ * @overload serverSend(controller_action, send_options)
+ *  Controller/action followed by options.
+ *  @param {string[]}    ctr_act
+ *  @param {SendOptions} [send_options]
+ *
+ * @overload serverSend(action, send_options)
+ *  Action followed by options (optionally specifying controller).
+ *  @param {string}      ctr_act
+ *  @param {SendOptions} [send_options]
+ *
+ * @overload serverSend(send_options)
+ *  Options which specify action (and optionally controller).
+ *  @param {SendOptions} [send_options]
+ */
+export function serverSend(ctr_act, send_options) {
+    const func = 'serverItemSend';
+    let ctrlr, action, opt;
+    if (Array.isArray(ctr_act))      { [ctrlr, action] = ctr_act } else
+    if (typeof ctr_act === 'string') { action = ctr_act }          else
+    if (typeof ctr_act === 'object') { opt    = ctr_act }
+    opt    ||= { ...send_options };
+    action ||= opt.action;
+    ctrlr  ||= opt.controller;
+
+    const params   = opt.params  || {};
+    const headers  = opt.headers || {};
+    const options  = { headers: headers };
+    const cb_ok    = opt.onSuccess;
+    const cb_err   = opt.onError;
+    const cb_done  = opt.onComplete;
+    const cb_comm  = opt.onCommStatus;
+    const caller   = compact([opt.caller, func]).join(': ');
+    const callback = (result, warning, error, xhr) => {
+        if (_debugging()) {
+            _debug(`${caller}: result =`, result);
+            warning && _debug(`${caller}: warning =`, warning);
+            error   && _debug(`${caller}: error   =`, error);
+            xhr     && _debug(`${caller}: xhr     =`, xhr);
+        }
+        let [err, warn, offline] = [error, warning, !xhr.status];
+        if (!err && !warn && !offline) {
+            cb_ok?.(result, warn, err, xhr);
+        } else if (offline && !cb_comm) {
+            err = 'EMMA is offline'; // TODO: I18n
+        }
+        if (err || warn) {
+            if (!offline || !cb_comm) {
+                if (err) { flashError(err) } else { flashMessage(warn) }
+            }
+            cb_err?.(result, warn, err, xhr);
+        }
+        cb_done?.(result, warn, err, xhr);
+        cb_comm?.(!offline, warn, err, xhr);
+    }
+    if (_debugging()) {
+        _debug(`${caller}: ctrlr   = "${ctrlr || apiController()}"`);
+        _debug(`${caller}: action  = "${action}"`);
+        _debug(`${caller}: params  =`, params);
+        _debug(`${caller}: options =`, options);
+    }
+    if (action) {
+        const method = opt.method?.toUpperCase() || 'POST';
+        options._ignoreBody = opt._ignoreBody;
+        server(ctrlr).xmit(method, action, params, options, callback);
+    } else {
+        _error(`${caller}: no action given`);
+    }
+}
+
+// ============================================================================
+// Functions - diagnostics
+// ============================================================================
+
+/**
+ * Indicate whether console debugging is active.
+ *
+ * @returns {boolean}
+ */
+export function _debugging() {
+    return window.DEBUG.activeFor('Manifest', true);
+}
+
+/**
+ * Emit a console message if debugging.
+ *
+ * @param {...*} args
+ */
+export function _debug(...args) {
+    _debugging() && console.log(...args);
+}
+
+/**
+ * Emit a console error and display as a flash error if debugging.
+ *
+ * @param {string} caller
+ * @param {string} [message]
+ */
+export function _error(caller, message) {
+    const msg = isDefined(message) ? `${caller}: ${message}` : caller;
+    console.error(msg);
+    _debugging() && flashError(msg);
+}

@@ -169,7 +169,7 @@ $max-cell-height: 25vh;
 // Indicates whether expand/contract controls rotate (via CSS transition)
 // or whether their state is indicated by different icons (if *false*).
 //
-// @see file:javascripts/controllers/manifest.js *CONTROLS_ROTATE*
+// @see file:assets/javascripts/controllers/manifest-edit.js *CONTROLS_ROTATE*
 //
 $controls-rotate: true;
 
@@ -244,6 +244,8 @@ table.manifest_item-grid {
     $controls-border-width: $cell-border-width * 1.5;
     $cell-pad:              0.25rem;
     $value-pad:             $cell-pad * 0.5;
+    $max-column-width:      25vw;
+    $max-file-column-width: 33vw;
 
     // Until "display: subgrid" exists, this is necessary so that individual
     // grid cells are the items being controlled by the grid.
@@ -281,6 +283,17 @@ table.manifest_item-grid {
         $indicators: map.keys($indicator-icon);
 
         //=====================================================================
+        // File input types
+        //=====================================================================
+
+        $file-type-map: (
+            uploader: '.from-uploader',
+            name:     '.from-name',
+            url:      '.from-url',
+            data:     '.from-data',
+        );
+
+        //=====================================================================
         // Components
         //=====================================================================
 
@@ -290,6 +303,7 @@ table.manifest_item-grid {
             display:            flex;
             flex-direction:     column;
             margin:             0;
+            max-width:          $max-column-width;
             font-weight:        unset;
             text-align:         match-parent;
             word-break:         break-word;
@@ -439,6 +453,11 @@ table.manifest_item-grid {
                 outline-offset: 0;
                 outline-width:  3px;
             }
+        }
+
+        // Column for item file data (header and .file-uploader)
+        > .cell[data-field="file_data"] {
+            max-width:    $max-file-column-width;
         }
 
         // Last column.
@@ -613,8 +632,7 @@ table.manifest_item-grid {
 
                 details[open] {
 
-                    max-width: 25vw;
-                    min-width: max-content;
+                    max-width: inherit;
 
                     summary {
                         margin-bottom:  $value-pad * 2;
@@ -752,6 +770,9 @@ table.manifest_item-grid {
                 }
 
                 details[open] {
+
+                    max-width: inherit;
+
                     summary {
                         padding-bottom: $value-pad;
                         border-bottom:  1px solid black;
@@ -1000,22 +1021,145 @@ table.manifest_item-grid {
                 // file input through a replacement for the file chooser.
                 .uppy-FileInput-container {
 
-                    margin:     0;
-                    align-self: start;
+                    margin:          0;
+                    padding-top:     $value-pad;
+                    height:          100%;
+                    line-height:     1.5;
+                    align-self:      start;
+                    flex-direction:  column;
+                    justify-content: start;
+                    gap:             0.5rem;
+                    overflow:        visible;
+                    background:      $controls-bg;
+                    box-shadow:      0 0 0 0.25rem $controls-bg;
+
+                    //=========================================================
+                    // Components
+                    //=========================================================
+
+                    %file-type-button {
+
+                        @include button.control;
+
+                        width:       100%;
+                        margin:      0;
+                        padding:     0.25rem 0.5rem;
+                        font-size:   small;
+                        font-weight: bold;
+
+                        &:hover {
+                            box-shadow: none;
+                        }
+
+                        &:not(.hover) {
+                            background-color: $root-bg-color;
+                        }
+                    }
 
                     // Invisible <input type="file">.
                     .uppy-FileInput-input { }
 
                     // Visible replacement for the file chooser control.
                     .uppy-FileInput-btn {
-                        padding: 0.25rem 0.5rem;
+                        @extend %file-type-button;
+                    }
+
+                    // @see ManifestItemDecorator#file_input_popup
+                    .inline-popup {
+
+                        .popup-toggle {
+                            @extend %file-type-button;
+                        }
+
+                        .popup-panel {
+
+                            flex-direction: row;
+                            align-items:    baseline;
+                            gap:            0.5rem 1rem;
+                            min-height:     20vh;
+                            padding:        1rem 1rem 0;
+                            font-size:      large;
+                            font-weight:    bold;
+
+                            label.description {
+                                flex:    1 0 100%;
+                            }
+
+                            label.input {
+                                flex:    0 1 max-content;
+                            }
+
+                            input.input {
+                                flex:    1 1 auto;
+                            }
+
+                            button.input {
+
+                                @include button.control;
+
+                                margin:  0;
+                                padding: 0.1875rem 0.375rem;
+                                flex:    0 1 max-content;
+                            }
+                        }
                     }
                 }
 
                 .uploaded-filename {
-                    margin:      0;
-                    line-height: 1.5;
-                    align-self:  start;
+
+                    margin:          0;
+                    padding-top:     $value-pad;
+                    padding-left:    $value-pad;
+                    height:          100%;
+                    line-height:     1.5;
+                    align-self:      start;
+                    flex-direction:  column;
+                    justify-content: start;
+                    gap:             0.375rem;
+                    flex:            1 1 100%;
+
+                    //=========================================================
+                    // Components
+                    //=========================================================
+
+                    // Indicates file location data that will need to be
+                    // resolved at submission rather than the filename from
+                    // uploader metadata.
+                    //
+                    // @see ManifestItemDecorator#grid_data_cell_render_pair
+                    //
+                    .from-uploader {
+                        // The dynamically created .uppy-FileInput-btn
+                    }
+                    .from-name {
+                        //color:      $uva-emergency-red;
+                    }
+                    .from-url {
+                        //color:      $uva-emergency-red;
+                    }
+                    .from-data { // TODO: not yet handled.
+                        color:      white;
+                        background: $uva-emergency-red;
+                    }
+
+                    @each $type-class in map.values($file-type-map) {
+
+                        #{$type-class}.active {
+                            padding-left:  $value-pad;
+                            padding-right: $value-pad;
+                        }
+
+                        #{$type-class}:not(.active) {
+
+                            @include invisible-width;
+
+                            white-space: pre;
+
+                            &::after {
+                                content: ' '; // Holds vertical displacement.
+                            }
+                        }
+                    }
                 }
 
                 // Container generated server-side for display element(s) added
@@ -1061,6 +1205,20 @@ table.manifest_item-grid {
 
                         p {
                             padding: 0.125rem 0.75rem;
+                        }
+                    }
+                }
+
+                //=============================================================
+                // Variations
+                //=============================================================
+
+                @each $type-name, $type-class in $file-type-map {
+                    &[data-hover="#{$type-name}"] {
+                        .uploaded-filename {
+                            #{$type-class}.active {
+                                box-shadow: 0 0 0 2px;
+                            }
                         }
                     }
                 }
@@ -1241,6 +1399,38 @@ table.manifest_item-grid {
     //=========================================================================
     // Variations
     //=========================================================================
+
+    &.head-expanded {
+
+        @if $scroll-snap {
+
+            // Without dynamic calculation (and setting) of scroll-padding-top
+            // there's no safe way to support vertical scroll snap when the
+            // header row is expanded and <details> elements can be toggled at
+            // will.  Horizontal scroll snap can result in unexpected behavior
+            // when columns are very wide.
+
+            scroll-snap-type: none;
+        }
+
+        tr.manifest_item-grid-item {
+
+            > .controls,
+            > .cell {
+                max-width: unset;
+            }
+
+            &.head {
+                > .cell:not([data-field="file_data"]) {
+                    details[open] {
+                        .content {
+                            max-width: $max-file-column-width;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     &:not(.controls-expanded) {
 

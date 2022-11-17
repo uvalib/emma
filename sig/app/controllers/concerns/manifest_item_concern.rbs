@@ -316,7 +316,7 @@ module ManifestItemConcern
   #
   # @return [Hash]
   #
-  # @see file:javascripts/controllers/manifest.js  *parseFinishEditResponse()*
+  # @see file:javascripts/controllers/manifest-edit.js *parseFinishEditResponse*
   #
   def finish_editing: (?(ManifestItem|nil) item, **untyped opt) -> { :fields => Hash[Integer,symHash], :problems => symHash, :pending => Hash[Integer,symHash]|nil }
 
@@ -375,7 +375,7 @@ module ManifestItemConcern
   #
   # @return [Array<Hash>]             Modified rows.
   #
-  def bulk_update_manifest_items: () -> Array[ManifestItem]
+  def bulk_update_manifest_items: () -> Array[symHash]
 
   # bulk_delete_manifest_items
   #
@@ -394,19 +394,19 @@ module ManifestItemConcern
   #
   def bulk_destroy_manifest_items: () -> Array[Integer]
 
-  # bulk_check_manifest_items
-  #
-  # @return [Any]
-  #
-  # @note Currently unused.
-  #
-  def bulk_check_manifest_items: () -> Array[ManifestItem]
-
   # Data for one or more manifest items from parameters.
   #
   # @return [Array<Hash>]
   #
   def bulk_item_data: () -> Array[symHash]
+
+  # Transform a :returning result into an array of data hashes.
+  #
+  # @param [ActiveRecord::Result] result
+  #
+  # @return [Array<Hash{Symbol=>*}>]
+  #
+  def bulk_returning: (ActiveRecord::Result result) -> Array[symHash]
 
   # Generate a response to a POST.
   #

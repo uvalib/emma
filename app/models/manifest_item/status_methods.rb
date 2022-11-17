@@ -153,6 +153,26 @@ module ManifestItem::StatusMethods
     %i[file_status data_status].all? { |col| status_ok?(item, column: col) }
   end
 
+  # Indicate whether the item has been associated with a file.
+  #
+  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
+  #
+  # @return [Boolean]
+  #
+  def file_ok?(item = nil)
+    status_ok?(item, column: :file_status)
+  end
+
+  # Indicate whether the item has valid data.
+  #
+  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
+  #
+  # @return [Boolean]
+  #
+  def data_ok?(item = nil)
+    status_ok?(item, column: :data_status)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -168,6 +188,158 @@ module ManifestItem::StatusMethods
     item ||= default_to_self
     item   = item[column] if item.is_a?(ManifestItem) || item.is_a?(Hash)
     STATUS_VALID[column].include?(item&.to_sym)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the item's :file_data field references a local asset.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example File at a local location
+  #   { "name" => "my_file.zip", ... }
+  #
+  def file_name?(item = nil)
+    pending_file_name(item).present?
+  end
+
+  # Indicate whether the item's :file_data field references a remote asset.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example File at a remote location
+  #   { "url" => "https://host/path/file...", ... }
+  #
+  def file_url?(item = nil)
+    pending_file_url(item).present?
+  end
+
+  # Indicate whether the item contains encoded file data in the :file_data
+  # field.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example Literal (encoded) file data
+  #   { "data" => "STRING_OF_CHARACTERS", ... }
+  #
+  def file_literal?(item = nil)
+    encoded_file_data(item).present?
+  end
+
+  # Indicate whether the item's :file_data field contains information from a
+  # Shrine upload to AWS.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example Original syntax
+  #   { "id" => "...", "storage" => "cache", ... }
+  #
+  # @example New syntax # TODO: alternate :file_data format
+  #   { "shrine" => { "id" => "...", "storage" => "cache", ... } ... }
+  #
+  def file_uploaded?(item = nil)
+    file_upload_data(item).present?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return with the local filename that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def pending_file_name(item = nil)
+    get_file_data(item)[:name].presence
+  end
+
+  # Return with the remote filename that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def pending_file_url(item = nil)
+    get_file_data(item)[:url].presence
+  end
+
+  # Return with encoded file data that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def encoded_file_data(item = nil)
+    get_file_data(item)[:data].presence
+  end
+
+  # Return with uploader data that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [Hash, nil]
+  #
+  def file_upload_data(item = nil)
+    fd = get_file_data(item)
+    fd = (fd[:uploader] || fd[:shrine] || fd).symbolize_keys
+    fd.deep_symbolize_keys if fd[:storage].present?
+  end
+
+  # Return the named file associated with the item along with a value
+  # indicating its mode of access.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [Array<(String,Symbol)>, nil]
+  #
+  def file_name_type(item = nil)
+    fd   = get_file_data(item)
+    file = file_upload_data(fd)
+    file = file&.dig(:metadata, :filename)  and return [file, :uploader]
+    file = pending_file_name(fd)            and return [file, :name]
+    file = pending_file_url(fd)             and return [file, :url]
+    ['ENCODED', :data] if encoded_file_data(fd) # TODO: don't handle this yet
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # get_file_data
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [Hash]
+  #
+  def get_file_data(item)
+    item ||= default_to_self
+    # noinspection RubyMismatchedReturnType
+    item[:file_data]&.symbolize_keys || (item.is_a?(Hash) ? item : {})
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the item is now in the Unified Index.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def in_index?(item = nil)
+    item ||= default_to_self
+    false # TODO: How does the ManifestItem know it's in the index?
   end
 
   # ===========================================================================

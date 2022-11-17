@@ -7,7 +7,11 @@ __loading_begin(__FILE__)
 
 module ManifestItem::Validatable
 
-  include Record::Validatable
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Record::Validatable
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section: Record::Validatable overrides

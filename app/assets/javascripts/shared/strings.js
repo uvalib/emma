@@ -100,8 +100,8 @@ export function asString(item, limit) {
 
     switch (typeof item) {
         case 'string':
-            result += item;
-            if ((item[0] !== s_quote) && (item[0] !== d_quote)) {
+            result += item.replace(/\\([^\\])/g, '\\\\$1');
+            if (![s_quote, d_quote].includes(item[0])) {
                 left = right = d_quote;
             }
             break;
@@ -131,8 +131,7 @@ export function asString(item, limit) {
             } else if (Array.isArray(item)) {
                 // An array object.
                 result = item.map(v => asString(v)).join(', ');
-                left   = '[';
-                right  = ']';
+                [left, right] = ['[',']'];
 
             } else if (item.hasOwnProperty('originalEvent')) {
                 // JSON.stringify fails with "cyclic object value" for jQuery
@@ -141,13 +140,10 @@ export function asString(item, limit) {
 
             } else {
                 // A generic object.
-                result =
-                    objectEntries(item).map(
-                        kv => `"${kv[0]}": ${asString(kv[1])}`
-                    ).join(', ');
-                left   = '{';
-                right  = '}';
-                if (result) { space = ' '; }
+                const pair = (kv) => `"${kv[0]}": ${asString(kv[1])}`;
+                result = objectEntries(item).map(pair).join(', ');
+                [left, right] = ['{','}'];
+                if (result) { space = ' ' }
             }
             break;
     }

@@ -39,6 +39,37 @@ class ManifestDecorator < BaseDecorator
       h.manifest_item_upload_path(**opt)
     end
 
+    def remit_select_path(item = nil, **opt)
+      opt[:id] ||= 'SELECT'
+      path_for(item, **opt, action: :remit)
+    end
+
+    def remit_path(item = nil, **opt)
+      return remit_select_path(item, **opt) if opt[:selected]
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :remit)
+    end
+
+    def start_path(item = nil, **opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :start)
+    end
+
+    def stop_path(item = nil, **opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :stop)
+    end
+
+    def pause_path(item = nil, **opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :pause)
+    end
+
+    def resume_path(item = nil, **opt)
+      opt[:id] = id_for(item, **opt)
+      path_for(item, **opt, action: :resume)
+    end
+
   end
 
   # Definitions available to both classes and instances of either this
@@ -121,6 +152,20 @@ class ManifestDecorator < BaseDecorator
     end
 
     # =========================================================================
+    # :section: BaseDecorator::Form overrides
+    # =========================================================================
+
+    public
+
+    # Form action button configuration.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    def generate_form_actions(*)
+      super(%i[new edit delete remit])
+    end
+
+    # =========================================================================
     # :section: Item forms (edit/delete pages)
     # =========================================================================
 
@@ -151,6 +196,21 @@ class ManifestDecorator < BaseDecorator
       label ||= "#{model_item_name(capitalize: true)} #{item.id}"
       ERB::Util.h(label)
     end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Bulk submission configuration values.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    #--
+    # noinspection RailsI18nInspection
+    #++
+    BULK_SUBMIT_CFG = I18n.t('emma.bulk.submit', default: {}).deep_freeze
 
     # =========================================================================
     # :section:
@@ -509,6 +569,154 @@ class ManifestDecorator
   end
 
   # ===========================================================================
+  # :section: Item forms (remit page)
+  # ===========================================================================
+
+  public
+
+  # ManifestItem entries to be submitted.
+  #
+  # @return [ActiveRecord::Relation<ManifestItem>]
+  #
+  def submit_items
+    object.manifest_items.scope.submittable
+  end
+
+  # Submission button types.
+  #
+  # @type [Array<Symbol>]
+  #
+  SUBMISSION_BUTTONS = %i[start stop pause resume].freeze
+
+  # submission_button_tray
+  #
+  # @param [Array<Symbol,ActiveSupport::SafeBuffer>] buttons
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_button_tray
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_button_tray(*buttons, css: '.submission-buttons', **opt)
+    opt.reverse_merge!('data-manifest': object.id)
+    buttons = [*SUBMISSION_BUTTONS, *buttons, submission_counts]
+    buttons.map!{ |b| b.is_a?(Symbol) ? form_button(b) : b }
+    prepend_css!(opt, css)
+    form_button_tray(*buttons, **opt)
+  end
+
+  # Submission count types.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  SUBMISSION_COUNTS = BULK_SUBMIT_CFG[:counts]
+
+  # submission_counts
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_counts(css: '.submission-counts', **opt)
+    prepend_css!(opt, css)
+    html_div(opt) do
+      SUBMISSION_COUNTS.map do |type, label|
+        label  = (label || type).downcase
+        label  = ERB::Util.h("- #{label}")
+        number = (type == :total) ? submit_items.size : 0
+        number = html_span(number, class: 'value')
+        html_span(class: "#{type} count") do
+          number << label
+        end
+      end
+    end
+  end
+
+  # auxiliary_button_tray
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] buttons
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_button_tray
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def auxiliary_button_tray(*buttons, css: '.auxiliary-buttons', **opt)
+    opt.reverse_merge!('data-manifest': object.id)
+    prepend_css!(opt, css)
+    form_button_tray(submission_local, *buttons, **opt)
+  end
+
+  # @private TODO: I18n
+  FILE_NEEDED_TEXT = <<~HEREDOC
+    Use the file chooser to identify all of the files on your machine that are
+    referenced in the items below.
+  HEREDOC
+
+  # A button and text panel to display to resolve items whose :file_data
+  # indicates a local file that needs to be acquired in order to proceed with
+  # automated batch submission.
+  #
+  # @param [Boolean] hidden           If *false* show initially.
+  # @param [String]  css              Characteristic CSS class/selector.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_local(hidden: true, css: '.local-file', **)
+    b_opt  = { multiple: true }
+    append_css!(b_opt, 'best-choice', css)
+    append_css!(b_opt, 'hidden') if hidden
+    button = form_button(:file, **b_opt)
+
+    n_opt  = {}
+    append_css!(n_opt, 'panel', css)
+    append_css!(n_opt, 'hidden') if hidden
+    notice = html_div(FILE_NEEDED_TEXT, n_opt)
+
+    button << notice
+  end
+
+  # @private
+  STATUS_COLUMN_COUNT = ManifestItemDecorator::SUBMIT_STATUS_COLUMNS.size
+
+  # @private
+  STATUS_LABELS = ManifestItemDecorator::SUBMIT_STATUS_LABELS.to_json.freeze
+
+  # submission_status_list
+  #
+  # @param [Integer, nil] row
+  # @param [Integer, nil] index
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_status_list(
+    row:    nil,
+    index:  nil,
+    css:    '.submission-status-list',
+    **opt
+  )
+    row   ||= 1
+    index ||= paginator.first_index
+
+    head = ManifestItemDecorator.submission_status_header(row: row)
+    row += 1 if head
+
+    # noinspection RubyMismatchedArgumentType
+    rows =
+      submit_items.map.with_index(index) do |item, idx|
+        decorate(item).submission_status(index: idx, row: (row + idx))
+      end
+
+    opt[:role]            ||= 'grid'
+    opt[:'data-labels']   ||= STATUS_LABELS
+    opt[:'aria-colcount'] ||= STATUS_COLUMN_COUNT
+    opt[:'aria-rowcount'] ||= (head ? 1 : 0) + rows.size
+    prepend_css!(opt, css)
+    html_div(head, *rows, opt)
+  end
+
+  # ===========================================================================
   # :section: Item details (show page) support
   # ===========================================================================
 
@@ -547,6 +755,11 @@ class ManifestDecorator
   def self.js_properties
     path_properties = {
       upload: upload_path,
+      remit:  remit_path(id: JS_ID),
+      start:  start_path(id: JS_ID),
+      stop:   stop_path(id: JS_ID),
+      pause:  pause_path(id: JS_ID),
+      resume: resume_path(id: JS_ID),
     }
     super.deep_merge!(Path: path_properties)
   end

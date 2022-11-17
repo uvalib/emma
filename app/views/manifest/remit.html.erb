@@ -1,0 +1,45 @@
+<%# app/views/manifest/remit.html.erb -%>
+<%-
+  # Initiate bulk upload of a manifest.
+
+  view_debug(__FILE__)
+
+  item  ||= @item
+  dec     = ManifestDecorator.new(item, **context)
+  item  ||= dec.object
+
+  menu    = dec.blank?
+  name    = menu ? '' : item.name
+
+  help  ||= dec.help_topic
+  title ||= dec.page_heading(name: name)
+  title   = title.strip.delete_suffix(':')
+
+  unless modal?
+    label = title
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%- if menu -%>
+
+  <%= dec.items_menu %>
+
+<%- else -%>
+
+  <h2 class="selected-header"><%= name -%></h2>
+
+  <%= page_directions_section %>
+  <%= dec.submission_button_tray %>
+  <%= dec.auxiliary_button_tray %>
+  <%= dec.submission_status_list %>
+
+<%- end -%>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? %>

@@ -200,3 +200,69 @@ export function findTabbable(base, root, all) {
     const $base    = (r && b) ? $(r).find(b) : $(r || b || 'body');
     return $base.find(selector).filter((_, e) => (e.tabIndex >= 0));
 }
+
+// ============================================================================
+// Functions - attributes
+// ============================================================================
+
+/**
+ * HTML attributes which should be made unique.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input [input]
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label [label]
+ * @see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes#relationship_attributes [aria]
+ *
+ * @type {string[]}
+ */
+export const ID_ATTRIBUTES = [
+    'aria-activedescendant',
+    'aria-controls',
+    'aria-describedby',
+    'aria-details',
+    'aria-errormessage',
+    'aria-flowto',
+    'aria-labelledby',
+    'aria-owns',
+    'for',                      // @see [label]#attr-for
+    'form',                     // @see [input]#form
+    'id',                       // @see [input]#id
+    'list',                     // @see [input]#list
+  //'name',                     // @note Must *not* be included.
+];
+
+/**
+ * Make attributes unique within an element.
+ *
+ * @param {Selector}      element
+ * @param {string|number} unique
+ * @param {string[]}      [attributes]  Default: {@link ID_ATTRIBUTES}
+ * @param {boolean}       [append_only]
+ */
+export function uniqAttrs(element, unique, attributes, append_only) {
+    const $element = $(element);
+    const attrs    = attributes || ID_ATTRIBUTES;
+    attrs.forEach(name => {
+        const old_attr = $element.attr(name);
+        if (isDefined(old_attr)) {
+            const new_attr = uniqAttr(old_attr, unique, append_only);
+            $element.attr(name, new_attr);
+        }
+    });
+}
+
+/**
+ * Make an attribute value unique.
+ *
+ * @param {string}        value
+ * @param {string|number} unique
+ * @param {boolean}       [append_only]
+ *
+ * @returns {string}
+ */
+export function uniqAttr(value, unique, append_only) {
+    if (!append_only && (/-0$/.test(value) || /-\d+-\d+$/.test(value))) {
+        return value.replace(/-\d+$/, `-${unique}`);
+    } else {
+        return `${value}-${unique}`;
+    }
+}

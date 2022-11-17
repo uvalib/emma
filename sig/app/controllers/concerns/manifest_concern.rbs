@@ -206,7 +206,7 @@ module ManifestConcern
   #
   # @return [Manifest, nil]
   #
-  # @see file:app/assets/javascripts/controllers/manifest.js *saveUpdates()*
+  # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
   #
   def save_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
 
@@ -221,9 +221,74 @@ module ManifestConcern
   #
   # @return [Manifest, nil]
   #
-  # @see file:app/assets/javascripts/controllers/manifest.js *cancelUpdates()*
+  # @see file:assets/javascripts/controllers/manifest-edit.js *cancelUpdates()*
   #
   def cancel_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Validate readiness of a manifest to start transmission.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def remit_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Start transmission of a manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def start_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Terminate transmission of a manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def stop_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Pause transmission of a manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def pause_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+
+  # Resume transmission of a paused manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def resume_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
 
   # Generate a response to a POST.
   #

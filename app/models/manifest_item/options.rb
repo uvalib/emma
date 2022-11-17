@@ -57,6 +57,20 @@ class ManifestItem::Options < Options
 
   protected
 
+  MODEL_DATA_PARAMS = {
+    # URL param   Data hash key
+    # ---------   -------------
+    file_data:    :file_data,
+  }.freeze
+
+  # model_data_params
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def model_data_params
+    MODEL_DATA_PARAMS
+  end
+
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
   #

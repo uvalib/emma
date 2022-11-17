@@ -55,26 +55,40 @@ class ManifestItem < ApplicationRecord
   # :section: ActiveRecord scopes
   #
   # active:       Records not marked for deletion.
-  # saved:        Valid records.
-  # pending:      Records with unsaved change(s).
+  # to_delete:    Records marked for deletion.
   #
   # updated:      Records which have been saved.
   # unsaved:      Records which have been changed since the last save.
   # never_saved:  Records which have been created since the last save.
   # incomplete:   New or changed records.
-  # to_delete:    Records marked for deletion.
+  #
+  # saved:        Valid records.
+  # pending:      Records with unsaved change(s).
+  #
+  # data_valid:   Records with sufficient bibliographic and remediation data.
+  # file_valid:   Records with resolved file data.
+  #
+  # submittable:  Records that can appear in "/manifest/remit".
+  # auto_submit:  Records can be submitted en masse without human intervention.
   #
   # ===========================================================================
 
   scope :active,      -> { where('NOT deleting IS TRUE') }
-  scope :saved,       -> { active.and(updated) }
-  scope :pending,     -> { active.and(incomplete) }
+  scope :to_delete,   -> { where(deleting: true) }
 
   scope :updated,     -> { where('last_saved >= updated_at') }
   scope :unsaved,     -> { where('last_saved < updated_at') }
   scope :never_saved, -> { where(last_saved: nil) }
   scope :incomplete,  -> { unsaved.or(never_saved) }
-  scope :to_delete,   -> { where(deleting: true) }
+
+  scope :saved,       -> { active.and(updated) }
+  scope :pending,     -> { active.and(incomplete) }
+
+  scope :data_valid,  -> { where(data_status: STATUS_VALID[:data_status]) }
+  scope :file_valid,  -> { where(file_status: STATUS_VALID[:file_status]) }
+
+  scope :submittable, -> { saved }
+  scope :auto_submit, -> { submittable.and(data_valid).and(file_valid) }
 
   # ===========================================================================
   # :section: ApplicationRecord overrides

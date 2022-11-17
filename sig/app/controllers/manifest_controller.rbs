@@ -103,7 +103,8 @@ class ManifestController < ApplicationController
   # == PUT   /manifest/save/:id
   # == PATCH /manifest/save/:id
   #
-  # @see #save_manifest_path          Route helper
+  # @see #save_manifest_path                                  Route helper
+  # @see file:assets/javascripts/controllers/manifest-edit.js *updateDataRow()*
   #
   def save: () -> void
 
@@ -114,6 +115,39 @@ class ManifestController < ApplicationController
   # @see #cancel_manifest_path        Route helper
   #
   def cancel: () -> void
+
+  # == GET /manifest/remit/:id
+  # == GET /manifest/remit/SELECT
+  # == GET /manifest/remit
+  #
+  # @see #remit_manifest_path         Route helper
+  # @see #remit_select_manifest_path  Route helper
+  #
+  def remit: () -> void
+
+  # == POST /manifest/start/:id
+  #
+  # @see #start_manifest_path         Route helper
+  #
+  def start: () -> void
+
+  # == POST /manifest/stop/:id
+  #
+  # @see #stop_manifest_path          Route helper
+  #
+  def stop: () -> void
+
+  # == POST /manifest/pause/:id
+  #
+  # @see #pause_manifest_path         Route helper
+  #
+  def pause: () -> void
+
+  # == POST /manifest/resume/:id
+  #
+  # @see #resume_manifest_path        Route helper
+  #
+  def resume: () -> void
 
   # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.

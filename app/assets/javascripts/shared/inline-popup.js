@@ -115,7 +115,7 @@ export class InlinePopup extends ModalBase {
         const $popups = popups ? $(popups) : this.$open_popups;
         $popups.each((_, p) =>
             this.instanceFor(p)?.close() ||
-            this._error(`${func}: no data(${this.MODAL_INSTANCE}) for`, p)
+            this._error(`${func}: no data(${this.MODAL_INSTANCE_DATA}) for`, p)
         );
     }
 
@@ -144,7 +144,7 @@ export class InlinePopup extends ModalBase {
     static instanceFor(target) {
         const $target = $(target);
         return super.instanceFor($target) ||
-            this.findPopup($target).data(this.MODAL_INSTANCE);
+            this.findPopup($target).data(this.MODAL_INSTANCE_DATA);
     }
 
     // ========================================================================

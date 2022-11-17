@@ -18,6 +18,14 @@ class ManifestItem::Options < Options
   #
   def get_model_params: () -> symHash
 
+  MODEL_DATA_PARAMS: Hash[Symbol, Symbol]
+
+  # model_data_params
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def model_data_params: () -> Hash[Symbol, Symbol]
+
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
   #

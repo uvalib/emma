@@ -10,6 +10,9 @@ __loading_begin(__FILE__)
 # @!method paginator
 #   @return [Manifest::Paginator]
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module ManifestConcern
 
   extend ActiveSupport::Concern
@@ -391,7 +394,7 @@ module ManifestConcern
   #
   # @return [Manifest, nil]
   #
-  # @see file:app/assets/javascripts/controllers/manifest.js *saveUpdates()*
+  # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
   #
   def save_changes(item = nil, opt = nil)
     item, opt = manifest_request_params(item, opt)
@@ -415,7 +418,7 @@ module ManifestConcern
   #
   # @return [Manifest, nil]
   #
-  # @see file:app/assets/javascripts/controllers/manifest.js *cancelUpdates()*
+  # @see file:assets/javascripts/controllers/manifest-edit.js *cancelUpdates()*
   #
   def cancel_changes(item = nil, opt = nil)
     item, opt = manifest_request_params(item, opt)
@@ -424,6 +427,133 @@ module ManifestConcern
         Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
       else
         manifest.cancel_changes!(**opt)
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section: Workflow
+  # ===========================================================================
+
+  public
+
+  # Validate readiness of a manifest to start transmission.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def remit_manifest(item = nil, opt = nil)
+    item, opt = manifest_request_params(item, opt)
+    get_manifest(item).tap do |manifest|
+      if manifest.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      else
+        # TODO: validate readiness to start transmission
+      end
+    end
+  end
+
+  # Start transmission of a manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def start_manifest(item = nil, opt = nil)
+    item, opt = manifest_request_params(item, opt)
+    get_manifest(item).tap do |manifest|
+      if manifest.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      else
+        # TODO: start manifest transmission
+        # TODO: create Bulk record
+        #   - id          UUID      Unique identifier
+        #   - manifest_id UUID      Owning manifest
+        #   - created_at  DateTime  Start time
+        #   - updated_at  DateTime  ...
+        #   - finished_at DateTime  Time completed or canceled
+        #   - canceled    Boolean   Canceled state (manual)
+        #   - paused      Boolean   Paused state (manual)
+        #   - halted      Boolean   Halted due to failures
+        # TODO: Bulk.create(manifest_id: manifest.id, created_at: Time.now)
+      end
+    end
+  end
+
+  # Terminate transmission of a manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def stop_manifest(item = nil, opt = nil)
+    item, opt = manifest_request_params(item, opt)
+    get_manifest(item).tap do |manifest|
+      if manifest.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      else
+        # TODO: abort manifest transmission
+        # TODO: Bulk.find(manifest_id: manifest.id).update!(canceled: true)
+      end
+    end
+  end
+
+  # Pause transmission of a manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def pause_manifest(item = nil, opt = nil)
+    item, opt = manifest_request_params(item, opt)
+    get_manifest(item).tap do |manifest|
+      if manifest.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      else
+        # TODO: Bulk.find(manifest_id: manifest.id).update!(paused: true)
+      end
+    end
+  end
+
+  # Resume transmission of a paused manifest.
+  #
+  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Hash, nil]           opt        Default: `#manifest_request_params`
+  #
+  # @raise [Record::NotFound]               If the Manifest could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
+  #
+  # @return [Manifest, nil]
+  #
+  def resume_manifest(item = nil, opt = nil)
+    item, opt = manifest_request_params(item, opt)
+    get_manifest(item).tap do |manifest|
+      if manifest.nil?
+        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
+      else
+        # TODO: Bulk.find(manifest_id: manifest.id).update!(paused: false)
       end
     end
   end

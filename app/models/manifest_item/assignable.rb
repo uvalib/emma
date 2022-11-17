@@ -7,11 +7,10 @@ __loading_begin(__FILE__)
 
 module ManifestItem::Assignable
 
-  include Record::Assignable
-
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
+    include Record::Assignable
     include Record::InstanceMethods
     # :nocov:
   end

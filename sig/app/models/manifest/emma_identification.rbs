@@ -1,5 +1,6 @@
 module Manifest::EmmaIdentification
-  include Record::EmmaIdentification
+  # :nocov:
+  #Record::EmmaIdentification
 
   # Column name for the submission ID.
   #

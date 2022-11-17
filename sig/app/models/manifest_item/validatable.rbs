@@ -1,5 +1,6 @@
 module ManifestItem::Validatable
-  include Record::Validatable
+  # :nocov:
+  #include Record::Validatable
 
   # Configured requirements for ManifestItem fields.
   #

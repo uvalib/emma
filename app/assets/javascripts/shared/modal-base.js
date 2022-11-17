@@ -78,7 +78,7 @@ export class ModalBase extends BaseClass {
      * @readonly
      * @type {string}
      */
-    static MODAL_INSTANCE = 'modalInstance';
+    static MODAL_INSTANCE_DATA = 'modalInstance';
 
     // ========================================================================
     // Constants - z-order
@@ -1006,7 +1006,7 @@ export class ModalBase extends BaseClass {
      * @return {jQuery|undefined}
      */
     associate(toggle) {
-        const name    = this.constructor.MODAL_INSTANCE;
+        const name    = this.constructor.MODAL_INSTANCE_DATA;
         const $toggle = $(toggle);
         const modal   = $toggle.data(name);
         if (modal) {
@@ -1027,7 +1027,7 @@ export class ModalBase extends BaseClass {
      * @return {jQuery}
      */
     setupPanel(panel) {
-        const name  = this.constructor.MODAL_INSTANCE;
+        const name  = this.constructor.MODAL_INSTANCE_DATA;
         this.$modal = $(panel);
         if (this.$modal.data(name)) {
             this._error('modal panel already linked', this.$modal);
@@ -1093,7 +1093,7 @@ export class ModalBase extends BaseClass {
      * @returns {ModalBase|undefined}
      */
     static instanceFor(target) {
-        return $(target).data(this.MODAL_INSTANCE);
+        return $(target).data(this.MODAL_INSTANCE_DATA);
     }
 
     // ========================================================================

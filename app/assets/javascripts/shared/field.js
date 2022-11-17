@@ -9,6 +9,7 @@ import { BaseClass }         from './base-class'
 import { isEmpty }           from './definitions'
 import { htmlEncode }        from './html'
 import { compact, fromJSON } from './objects'
+import { asString }          from './strings'
 
 
 // ============================================================================
@@ -475,6 +476,7 @@ export class Value extends BaseClass {
         switch (type || this._typeFor(value)) {
             case 'string':  return value;
             case 'array':   return value.join("\n");
+            case 'object':  return asString(value);
             default:        return value?.toString() || '';
         }
     }
@@ -521,6 +523,7 @@ export class Value extends BaseClass {
         if (!value) { return {} }
         switch (type || this._typeFor(value)) {
             case 'object': return value;
+            case 'string': return fromJSON(value);
             default:       return Object.fromEntries(value);
         }
     }

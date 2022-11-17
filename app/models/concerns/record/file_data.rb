@@ -7,9 +7,6 @@ __loading_begin(__FILE__)
 
 # Record methods to support processing of :file_data record columns.
 #
-# TODO: distinguish between :file_data intended for Shrine versus :file_data
-#   that may hold other info related to ManifestItem.
-#
 # TODO: Does PG return 'json' fields as a symbolized Hashes?
 # TODO: Does PG accommodate setting 'json' fields with symbolized Hashes?
 # TODO: If the answer to both of those questions is "yes" then these methods
@@ -53,6 +50,8 @@ module Record::FileData
   #
   # @return [Hash{String=>Any}]
   #
+  # @note Only used by #file_attacher_load
+  #
   def make_file_record(data, **opt)
     opt.reverse_merge!(symbolize_keys: false)
     json_parse(data, **opt) || {}
@@ -64,6 +63,8 @@ module Record::FileData
   # @param [Boolean]           allow_blank
   #
   # @return [Hash]
+  #
+  # @note Invoked only from methods which are currently unused.
   #
   def parse_file_data(data, allow_blank = false)
     return {} if data.blank?
@@ -146,6 +147,8 @@ module Record::FileData
     # Present :file_data as a hash (if it is present).
     #
     # @return [Hash{Symbol=>Any}]
+    #
+    # @note Invoked only from methods which are currently unused.
     #
     def emma_file_data
       @emma_file_data ||= parse_file_data(file_data, true)

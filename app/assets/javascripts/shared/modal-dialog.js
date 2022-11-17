@@ -196,7 +196,7 @@ export class ModalDialog extends ModalBase {
         let $toggles    = $();
         const type_data = this.CLASS_ATTR;
         const this_type = this.CLASS_NAME;
-        const link_data = this.MODAL_INSTANCE
+        const link_data = this.MODAL_INSTANCE_DATA;
         this.$modals.each((_, element) => {
             const $modal = $(element);
             let instance, type;

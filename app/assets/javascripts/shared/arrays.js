@@ -83,3 +83,18 @@ export function maxSize(item, minimum = 0) {
         minimum
     );
 }
+
+/**
+ * Remove an element from the given array.
+ *
+ * @param {*[]} array
+ * @param {*}   element
+ *
+ * @returns {boolean}             True if the element was found.
+ */
+export function removeFrom(array, element) {
+    const index = array.indexOf(element);
+    const found = (index >= 0);
+    if (found) { array.splice(index, 1) }
+    return found;
+}

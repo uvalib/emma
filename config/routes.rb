@@ -165,6 +165,14 @@ Rails.application.routes.draw do
   match  '/manifest/save/:id',      to: 'manifest#save',        as: 'save_manifest',          via: %i[post put patch]
   match  '/manifest/cancel/:id',    to: 'manifest#cancel',      as: 'cancel_manifest',        via: %i[post put patch]
 
+  get    '/manifest/remit_select',  to: 'manifest#remit',       as: 'remit_select_manifest',  defaults: { id: 'SELECT' }
+  get    '/manifest/remit/:id',     to: 'manifest#remit',       as: 'remit_manifest'
+
+  post   '/manifest/start/:id',     to: 'manifest#start',       as: 'start_manifest'
+  post   '/manifest/stop/:id',      to: 'manifest#stop',        as: 'stop_manifest'
+  post   '/manifest/pause/:id',     to: 'manifest#pause',       as: 'pause_manifest'
+  post   '/manifest/resume/:id',    to: 'manifest#resume',      as: 'resume_manifest'
+
   get    '/manifest/show/:id',      to: 'manifest#show',        as: 'show_manifest'
   get    '/manifest/:id',           to: redirect('/manifest/update/%{id}'),                   via: %i[get post put patch]
   get    '/manifest',               to: 'manifest#index',       as: 'manifest_index'

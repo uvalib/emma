@@ -60,12 +60,124 @@ module ManifestItem::StatusMethods
   #
   def ready?: (?(ManifestItem|symHash|nil) item) -> bool
 
+  # Indicate whether the item has been associated with a file.
+  #
+  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
+  #
+  # @return [Boolean]
+  #
+  def file_ok?: (?(ManifestItem|symHash|nil) item) -> bool
+
+  # Indicate whether the item has valid data.
+  #
+  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
+  #
+  # @return [Boolean]
+  #
+  def data_ok?: (?(ManifestItem|symHash|nil) item) -> bool
+
   # Indicate whether the given status is OK.
   #
   # @param [*]      item     Field values, or a value to check (default: self).
   # @param [Symbol] column   Field name.
   #
   def status_ok?: (?(ManifestItem|symHash|String|Symbol|nil) item, column: Symbol) -> bool
+
+  # Indicate whether the item's :file_data field references a local asset.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example File at a local location
+  #   { "name" => "my_file.zip", ... }
+  #
+  def file_name?: (?(ManifestItem|symHash|nil) item) -> bool
+
+  # Indicate whether the item's :file_data field references a remote asset.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example File at a remote location
+  #   { "url" => "https://host/path/file...", ... }
+  #
+  def file_url?: (?(ManifestItem|symHash|nil) item) -> bool
+
+  # Indicate whether the item contains encoded file data in the :file_data
+  # field.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example Literal (encoded) file data
+  #   { "data" => "STRING_OF_CHARACTERS", ... }
+  #
+  def file_literal?: (?(ManifestItem|symHash|nil) item) -> bool
+
+  # Indicate whether the item's :file_data field contains information from a
+  # Shrine upload to AWS.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @example Original syntax
+  #   { "id" => "...", "storage" => "cache", ... }
+  #
+  # @example New syntax # TODO: alternate :file_data format
+  #   { "shrine" => { "id" => "...", "storage" => "cache", ... } ... }
+  #
+  def file_uploaded?: (?(ManifestItem|symHash|nil) item) -> bool
+
+  # Return with the local filename that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def pending_file_name: (?(ManifestItem|symHash|nil) item) -> (String | nil)
+
+  # Return with the remote filename that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def pending_file_url: (?(ManifestItem|symHash|nil) item) -> (String | nil)
+
+  # Return with encoded file data that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def encoded_file_data: (?(ManifestItem|symHash|nil) item) -> (String | nil)
+
+  # Return with uploader data that has been associated with the item.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [Hash, nil]
+  #
+  def file_upload_data: (?(ManifestItem|symHash|nil) item) -> (symHash | nil)
+
+  # Return the named file associated with the item along with a value
+  # indicating its mode of access.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [Array<(String,Symbol)>, nil]
+  #
+  def file_name_type: (?(ManifestItem|symHash|nil) item) -> ([String,Symbol] | nil)
+
+  # get_file_data
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @return [Hash]
+  #
+  def get_file_data: (?(ManifestItem|symHash|nil) item) -> symHash
+
+  # Indicate whether the item is now in the Unified Index.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def in_index?: (?(ManifestItem|symHash|nil) item) -> bool
 
   private
 

@@ -34,6 +34,7 @@ en:
           - new
           - edit_select
           - delete_select
+          - remit_select
           #- admin
 
       # =======================================================================
@@ -62,6 +63,11 @@ en:
           action:       delete_select
           label:        'Remove %{article} existing manifest'
           article:      'an'
+
+        remit:
+          action:       remit_select
+          label:        'Submit %{article} manifest'
+          article:      'a'
 
         back:
           action:       index
@@ -120,6 +126,38 @@ en:
             tooltip:    'Save a copy of this manifest in CSV format'
           disabled:
             tooltip:    'Not able to export at this point'
+
+        start:          &GENERIC_START
+          label:        'Submit'
+          enabled:
+            tooltip:    'Submit manifest items to become EMMA entries'
+          disabled:
+            tooltip:    'Already submitting'
+
+        stop:           &GENERIC_STOP
+          label:        'Cancel'
+          enabled:
+            tooltip:    'Cancel the submission'
+          disabled:
+            tooltip:    'No submission is active'
+
+        pause:          &GENERIC_PAUSE
+          label:        'Pause'
+          enabled:
+            tooltip:    'Pause the submission'
+          disabled:
+            tooltip:    'Submission is already paused'
+
+        resume:         &GENERIC_RESUME
+          label:        'Resume'
+          enabled:
+            tooltip:    'Resume the paused submission'
+          disabled:
+            tooltip:    'Submission is not paused'
+
+        file:           &GENERIC_FILE
+          label:        'Files'
+          tooltip:      'Identify local files'
 
         warning:
           experimental: &EXPERIMENTAL
@@ -291,8 +329,32 @@ en:
 
       # =======================================================================
 
-      #check:
-      #  label:          'Validate'
-      #  title:          'Validate Bulk Operation Manifest'
-      #  tooltip:        'Check a bulk operation manifest.'
-      #  _endpoint:      true
+      remit:            &REMIT_ACTION
+        label:          'Submit'
+        title:          'Submit Manifest'
+        tooltip:        'Submit multiple items from a manifest at one time.'
+
+        start:
+          <<:           *GENERIC_START
+
+        stop:
+          <<:           *GENERIC_STOP
+
+        pause:
+          <<:           *GENERIC_PAUSE
+
+        resume:
+          <<:           *GENERIC_RESUME
+
+        file:
+          <<:           *GENERIC_FILE
+
+        success:        'Manifest submission started'
+        failure:        'Could not submit manifest: %{error}'
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      remit_select:
+        <<: *REMIT_ACTION

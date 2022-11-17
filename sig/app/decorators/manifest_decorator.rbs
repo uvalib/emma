@@ -8,7 +8,13 @@ class ManifestDecorator < BaseDecorator
   module SharedPathMethods
     include BaseDecorator::SharedPathMethods
 
-    def upload_path: (*untyped _ignored, **untyped opt)-> String
+    def upload_path:        (*untyped _ignored,         **untyped opt)  -> String
+    def remit_select_path:  (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def remit_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def start_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def stop_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def pause_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def resume_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
   end
 
   # Definitions available to both classes and instances of either this
@@ -54,6 +60,14 @@ class ManifestDecorator < BaseDecorator
     #
     def list_item_number_label: (**untyped _ignored) -> nil
 
+    # Form action button configuration.
+    #
+    # @param [Array<Symbol>] actions
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
+
     # Generate a prompt for #items_menu.
     #
     # @param [User, Symbol, nil] user
@@ -70,6 +84,12 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu_label: (Manifest item, ?label: String|nil) -> ActiveSupport::SafeBuffer
+
+    # Bulk submission configuration values.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    BULK_SUBMIT_CFG: Hash[Symbol,symHash]
 
     # The element displayed when the user has no Manifests to list.
     #
@@ -284,6 +304,84 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def comm_status: (?css: String|nil, ?status: Symbol|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # ManifestItem entries to be submitted.
+  #
+  # @return [ActiveRecord::Relation<ManifestItem>]
+  #
+  def submit_items: () -> ActiveRecord::Relation
+
+  # Submission button types.
+  #
+  # @type [Array<Symbol>]
+  #
+  SUBMISSION_BUTTONS: symArray
+
+  # submission_button_tray
+  #
+  # @param [Array<Symbol,ActiveSupport::SafeBuffer>] buttons
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_button_tray
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_button_tray: (?Array[Symbol|ActiveSupport::SafeBuffer] buttons, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Submission count types.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  SUBMISSION_COUNTS: Hash[Symbol,String]
+
+  # submission_counts
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_counts: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # auxiliary_button_tray
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] buttons
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_button_tray
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def auxiliary_button_tray: (?Array[ActiveSupport::SafeBuffer] buttons, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # @private TODO: I18n
+  FILE_NEEDED_TEXT: String
+
+  # A button and text panel to display to resolve items whose :file_data
+  # indicates a local file that needs to be acquired in order to proceed with
+  # automated batch submission.
+  #
+  # @param [Boolean] hidden           If *false* show initially.
+  # @param [String]  css              Characteristic CSS class/selector.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_local: (?hidden: bool, ?css: String, **untyped _ignored) -> ActiveSupport::SafeBuffer
+
+  # @private
+  STATUS_COLUMN_COUNT: Integer
+
+  # @private
+  STATUS_LABELS: String
+
+  # submission_status_list
+  #
+  # @param [Integer, nil] row
+  # @param [Integer, nil] index
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_status_list: (?row: Integer|nil, ?index: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render item attributes.
   #

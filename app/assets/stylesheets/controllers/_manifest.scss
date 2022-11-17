@@ -306,3 +306,379 @@ body.manifest.edit {
         }
     }
 }
+
+//=============================================================================
+// Manifest remit page
+//=============================================================================
+
+body.manifest.remit {
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    // Add to a button to accent it as the next best action to perform.
+    .best-choice:not(:hover) {
+
+        box-shadow: 0 0 0.5rem 0.25rem $button-accent;
+
+        &:focus {
+            outline: 1px solid gray;
+        }
+    }
+
+    .form-button {
+
+        @include button.control;
+
+        &.start-button {}
+        &.stop-button {}
+        &.pause-button {}
+        &.resume-button {}
+
+        &.file-button {
+
+            display:        inline-flex;
+            flex-direction: row;
+            position:       relative;
+            overflow:       clip;
+
+            input[type="file"] {
+                position:     absolute;
+                top:          0;
+                left:         0;
+                padding-left: 3rem;
+                border:       0.375rem solid;
+                cursor:       pointer;
+                opacity:      0;
+            }
+
+            label {
+                width:        100%;
+                text-align:   center;
+            }
+
+        }
+
+        &.offline {
+            @include forbidden($force: true);
+        }
+    }
+
+    .submission-counts {
+
+        display:         flex;
+        flex-direction:  row;
+        align-items:     center;
+        justify-content: space-between;
+        height:          2rem;
+        padding:         0.25rem 1.25rem;
+        border:          double;
+        background:      ghostwhite;
+        flex:            1 1 auto;
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        .value {
+            margin-right: 0.25rem;
+            font-weight:  bold;
+            font-size:    large;
+        }
+
+        //=====================================================================
+        // Components - @see "en.emma.bulk.submit.counts"
+        //=====================================================================
+
+        .total.count {}
+        .ready.count {}
+        .transmitting.count {}
+        .succeeded.count {}
+        .failed.count {}
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .selected-header {
+
+        margin-bottom: $page-padding;
+
+        &::before, &::after {
+            content:     '"';
+            font-weight: normal;
+        }
+    }
+
+    .button-tray {
+
+        display:        flex;
+        flex-direction: row;
+        align-items:    center;
+        gap:            1vw;
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        > .form-button {
+
+            min-width: 5vw;
+
+            &.file-button {
+                min-width: 3vw;
+            }
+        }
+
+        > .submission-counts {
+            flex: 1 1 auto;
+        }
+
+        > .panel {
+            padding-top:    0.25rem;
+            padding-bottom: 0.25rem;
+            font-weight:    bold;
+        }
+
+        @media #{$not-narrow-screen} {
+            .form-button + .submission-counts,
+            .submission-counts + .form-button {
+                margin-left: 2rem;
+            }
+        }
+    }
+
+    .button-tray + .button-tray {
+        > * {
+            margin-top: $page-padding-y;
+        }
+    }
+
+    .submission-status-list {
+
+        @extend .entry-list;
+
+        // If true limit the list to a scrollable list that fits in the
+        // viewport; otherwise, the entire list is displayed and scrolling is
+        // delegated to the page itself.
+
+        $limit-height: false;
+
+        $bg-clear:  $root-bg-color;
+        $bg-solid:  $root-rev-bg-color;
+
+        $fg-clear:  $bg-clear;
+        $fg-light:  $uva-text-gray;
+        $fg-dark:   $root-fg-color;
+
+        grid-template-columns: 1fr;
+        gap:                   1rem;
+        color:                 $fg-clear;
+        background:            $bg-clear;
+        border:                0.25rem solid gray;
+        border-radius:         0.25rem;
+
+        // noinspection CssBrowserCompatibilityForProperties
+        @if $limit-height {
+            max-height:          67vh;
+            overflow:            auto;
+            overscroll-behavior: contain;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        $x-pad: 0.5rem;
+
+        // Status line for the submission of an individual manifest item.
+        .submission-status {
+
+            @extend .entry-list-item;
+
+            width:         calc(100% - ($x-pad * 2));
+            padding:       0 $x-pad 1rem;
+            margin:        0;
+            line-height:   1.375;
+            gap:           1rem;
+            color:         inherit;
+            background:    inherit;
+            border:        none;
+            border-bottom: 1px solid gray;
+            border-radius: 0;
+            grid-template-columns:
+                [controls]      minmax(auto, 1rem)
+                [item-name]     minmax(auto, 33vw)
+                [db-status]     1fr
+                [file-status]   1fr
+                [upload-status] 1fr
+                [index-status]  1fr;
+
+            //=================================================================
+            // Components
+            //=================================================================
+
+            > * {
+                padding:         ($x-pad * 0.5);
+                font-weight:     bold;
+            }
+
+            .controls {
+
+                display:         flex;
+                flex-direction:  column;
+
+                .selection {
+                    [type="checkbox"] {
+                        transform: scale(1.25);
+                    }
+                    label {
+                        @include sr-only;
+                    }
+                }
+            }
+
+            .item-name {
+                white-space:     nowrap;
+                overflow:        hidden;
+                text-overflow:   ellipsis;
+                color:           $fg-dark;
+                background:      ghostwhite;
+            }
+
+            .db-status,
+            .file-status,
+            .upload-status,
+            .index-status {
+
+                display:         inline-flex;
+                flex-direction:  row;
+                align-items:     start;
+                justify-content: space-between;
+                gap:             ($x-pad * 0.5);
+                color:           inherit;
+                background:      inherit;
+                overflow-x:      auto;
+                overflow-y:      clip;
+
+                //=============================================================
+                // Elements
+                //=============================================================
+
+                // @see ManifestItemDecorator#submit_status_text
+                .text {
+                    width:       100%;
+                    height:      100%;
+                    color:       inherit;
+                    flex:        1 1 100%;
+                }
+
+                // Control for fixing a condition resulting in a given status.
+                // @see ManifestItemDecorator#submit_status_link
+                .fix {
+
+                    @include button.basic;
+
+                    padding:     1px 6px;
+                    margin-top:  0;
+                    line-height: 1;
+                    font-weight: normal;
+                    text-align:  center;
+                    color:       $fg-dark;
+                    background:  $bg-clear;
+                    flex:        1 1 auto;
+                }
+
+                //=============================================================
+                // Variations - color
+                //=============================================================
+
+                @mixin colors($fg, $bg) {
+                    color:      $fg;
+                    background: $bg;
+                }
+
+                @mixin outline($color: $bg-solid) {
+                    box-shadow: inset 0 0 1px 0 $color;
+                }
+
+                @mixin neutral {
+                    @include colors($fg-light, $bg-clear);
+                    @include outline($uva-emergency-red);
+                }
+
+                @mixin started {
+                    @include colors($fg-clear, $bg-solid);
+                }
+
+                @mixin stopped {
+                    @include colors($fg-dark, $uva-accent-yellow);
+                    @include outline($uva-emergency-red);
+                }
+
+                @mixin failure {
+                    @include colors($fg-clear, $uva-emergency-red);
+                    @include outline;
+                }
+
+                @mixin success {
+                    @include colors($fg-clear, $uva-accent-green);
+                    @include outline;
+                }
+
+                &.not-started  { @include neutral; }
+                &.active       { @include started; }
+                &.busy         { @include started; }
+
+                &.data-missing { @include stopped; }
+                &.file-missing { @include stopped; }
+                &.blocked      { @include stopped; }
+
+                &.failed       { @include failure; }
+                &.succeeded    { @include success; }
+                &.done         { @include success; }
+
+                //=============================================================
+                // Variations - special
+                //=============================================================
+
+                &.active::after {
+                    content:    ' ';
+                    height:     100%;
+                    box-shadow: 0 0 1.25rem 1.5rem $bg-clear;
+                }
+            }
+        }
+
+        // The first status line contains column headers.
+        .submission-status.head {
+
+            position:   sticky;
+            top:        0;
+            padding:    $x-pad;
+            color:      $fg-clear;
+            background: $bg-solid;
+            z-index:    $z-raised;
+
+            .controls {
+
+                .selection {
+                    [type="checkbox"] {
+                        box-shadow: 0 0 1px 1px white;
+                    }
+                }
+
+                .text {
+                    @include sr-only;
+                }
+            }
+
+            .item-name {
+                color:      inherit;
+                background: inherit;
+            }
+        }
+    }
+}

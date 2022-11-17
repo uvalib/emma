@@ -1,0 +1,17 @@
+module ManifestItem::Uploadable
+  include ManifestItem::FileData
+
+  # :nocov:
+  #include Record::Uploadable
+
+  # Indicate whether the attached file is valid.
+  #
+  # If the :file_data field does not contain uploader information then this
+  # just returns *true* so that Shrine-related validations do not fail.
+  #
+  def attached_file_valid?: () -> bool
+
+  private
+
+  def self.included: (Module base) -> void
+end

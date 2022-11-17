@@ -227,12 +227,11 @@ class ManifestItemController < ApplicationController
   # A list of ManifestItems plus validity information.
   #
   # @param [*]       list
-  # @param [Boolean] validity
   # @param [Hash]    opt              Passed to #index_values.
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def bulk_update_response: (?untyped list, ?validity: bool|nil, **untyped opt) -> symHash
+  def bulk_update_response: (?untyped list, **untyped opt) -> Hash[Symbol,symHash]
 
   # A list of ManifestItem IDs.
   #
@@ -240,7 +239,7 @@ class ManifestItemController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def bulk_id_response: (?untyped list, **untyped _ignored) -> symHash
+  def bulk_id_response: (?untyped list, **untyped _ignored) -> Hash[Symbol,symHash]
 
   # @private
   RESPONSE_OUTER: Symbol
@@ -253,7 +252,7 @@ class ManifestItemController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values: (?untyped list, wrap: Symbol|nil, **untyped opt) -> symHash
+  def index_values: (?untyped list, wrap: Symbol|nil, **untyped opt) -> Hash[Symbol,symHash]
 
   # Response values for de-serializing the show page to JSON or XML.
   #

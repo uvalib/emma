@@ -436,17 +436,12 @@ class ManifestItemController < ApplicationController
   # A list of ManifestItems plus validity information.
   #
   # @param [*]       list
-  # @param [Boolean] validity
   # @param [Hash]    opt              Passed to #index_values.
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def bulk_update_response(list = @list, validity: true, **opt)
-    no_wrap    = validity && opt.key?(:wrap) && opt[:wrap].nil?
-    opt[:wrap] = nil unless no_wrap
-    result = index_values(list, **opt)
-    result[:valid] = list.map { |item| ManifestItem.ready?(item) } if validity
-    no_wrap ? result : { RESPONSE_OUTER => result }
+  def bulk_update_response(list = @list, **opt)
+    index_values(list, **opt)
   end
 
   # A list of ManifestItem IDs.

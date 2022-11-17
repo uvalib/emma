@@ -1,18 +1,18 @@
-// app/assets/javascripts/controllers/manifest.js
+// app/assets/javascripts/controllers/manifest-edit.js
 
 
-import { Api }                        from '../shared/api'
-import { arrayWrap }                  from '../shared/arrays'
-import { Emma }                       from '../shared/assets'
-import { pageAction, pageController } from '../shared/controller'
-import { selector }                   from '../shared/css'
-import * as Field                     from '../shared/field'
-import { LookupModal }                from '../shared/lookup-modal'
-import { compact, deepFreeze }        from '../shared/objects'
-import { randomizeName }              from '../shared/random'
-import { camelCase, singularize }     from '../shared/strings'
-import { MultiUploader }              from '../shared/uploader'
-import { cancelAction }               from '../shared/url'
+import { arrayWrap }           from '../shared/arrays'
+import { Emma }                from '../shared/assets'
+import { selector }            from '../shared/css'
+import * as Field              from '../shared/field'
+import { uniqAttrs }           from '../shared/html'
+import { InlinePopup }         from '../shared/inline-popup'
+import { LookupModal }         from '../shared/lookup-modal'
+import { ModalShowHooks }      from '../shared/modal_hooks'
+import { compact, deepFreeze } from '../shared/objects'
+import { randomizeName }       from '../shared/random'
+import { MultiUploader }       from '../shared/uploader'
+import { cancelAction }        from '../shared/url'
 import {
     isDefined,
     isEmpty,
@@ -22,8 +22,10 @@ import {
     presence,
 } from '../shared/definitions'
 import {
+    debounce,
     handleClickAndKeypress,
     handleEvent,
+    handleHoverAndFocus,
     onPageExit,
 } from '../shared/events'
 import {
@@ -32,6 +34,24 @@ import {
     flashError,
     flashMessage,
 } from '../shared/flash'
+import {
+    ITEM_ATTR,
+    ITEM_MODEL,
+    MANIFEST_ATTR,
+    PAGE_PROPERTIES,
+    _debug,
+    _debugging,
+    _error,
+    attribute,
+    buttonFor,
+    enableButton,
+    initializeButtonSet,
+    selfOrDescendents,
+    selfOrParent,
+    serverBulkSend,
+    serverSend,
+    single,
+} from '../shared/manifests'
 
 
 // noinspection SpellCheckingInspection, FunctionTooLongJS
@@ -147,11 +167,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * JSON format of a response message containing a list of ManifestItems.
      *
+     * @see "ManifestItemController#bulk_update_response"
+     *
      * @typedef {{
      *      items: {
      *          properties: RecordMessageProperties,
      *          list:       ManifestItem[],
-     *          valid?:     boolean[],
      *      }
      * }} ManifestRecordMessage
      */
@@ -236,7 +257,6 @@ $(document).on('turbolinks:load', function() {
     const GRID_CLASS            = 'manifest_item-grid';
     const CTRL_EXPANDED_MARKER  = 'controls-expanded';
     const HEAD_EXPANDED_MARKER  = 'head-expanded';
-    const DISABLED_MARKER       = 'disabled';
     const HIDDEN_MARKER         = 'hidden';
     const TO_DELETE_MARKER      = 'deleting';
     const ROW_CLASS             = 'manifest_item-grid-item';
@@ -274,7 +294,6 @@ $(document).on('turbolinks:load', function() {
     const EXPORT        = selector(EXPORT_CLASS);
     const COMM_STATUS   = selector(COMM_STATUS_CLASS);
     const GRID          = selector(GRID_CLASS);
-    //const DISABLED    = selector(DISABLED_MARKER);
     const HIDDEN        = selector(HIDDEN_MARKER);
     const TO_DELETE     = selector(TO_DELETE_MARKER);
     const ROW           = selector(ROW_CLASS);
@@ -300,38 +319,6 @@ $(document).on('turbolinks:load', function() {
     //const CELL_VALUE  = selector(CELL_VALUE_CLASS);
     const CELL_DISPLAY  = selector(CELL_DISPLAY_CLASS);
     const CELL_EDIT     = selector(CELL_EDIT_CLASS);
-
-    /**
-     * Current controller.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const PAGE_ACTION = pageAction();
-
-    /**
-     * Current controller.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const PAGE_CONTROLLER = pageController();
-
-    /**
-     * Base name (singular of the related database table).
-     *
-     * @readonly
-     * @type {string}
-     */
-    const PAGE_MODEL = singularize(PAGE_CONTROLLER);
-
-    /**
-     * Page assets.js properties.
-     *
-     * @readonly
-     * @type {ModelProperties}
-     */
-    const PAGE_PROPERTIES = Emma[camelCase(PAGE_MODEL)];
 
     // ========================================================================
     // Variables
@@ -489,14 +476,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Initialize the grid and controls.
      */
-    function initialize() {
-        _debug('initialize');
+    function initializeEditForm() {
+        _debug('initializeEditForm');
         setTimeout(scrollToTop, 0);
         initializeControlButtons();
         initializeAllDataRows();
         initializeGrid();
-        validateForm();         // Want to initialize validation data...
-        updateFormValid(false); // ...but don't want to start with Save enabled
     }
 
     // ========================================================================
@@ -516,72 +501,54 @@ $(document).on('turbolinks:load', function() {
     };
 
     /**
-     * Symbolic button names.
-     *
-     * @type {string[]}
-     */
-    const CONTROL_BUTTON_TYPES = Object.keys(CONTROL_BUTTONS);
-
-    /**
      * initializeControlButtons
      */
     function initializeControlButtons() {
-        if (_debugging()) {
-            const func = 'initializeControlButtons';
-            _debug(func);
-            $.each(CONTROL_BUTTONS, (type, $button) => {
-                if (isMissing($button)) {
-                    _error(`${func}: no button for "${type}"`);
-                }
-            });
-        }
+        const func = 'initializeControlButtons'; //_debug(func);
+        initializeButtonSet(CONTROL_BUTTONS, func);
+        enableSave(false);
+        enableExport();
     }
 
     /**
      * Enable/disable the Save button.
      *
-     * @param {boolean} [setting]     If *false*, disable the button.
+     * @param {boolean} [setting]     Default: {@link formChanged}.
+     *
+     * @returns {jQuery|undefined}
      */
     function enableSave(setting) {
         //_debug(`enableSave: setting = "${setting}"`);
-        const enable = (setting !== false);
-        enableControlButton('submit', enable);
+        const enable = isDefined(setting) ? setting : formChanged();
+        return enableControlButton('submit', enable);
     }
 
     /**
      * Enable/disable the Export button.
      *
-     * @param {boolean} [setting]     If *false*, disable the button.
+     * @param {boolean} [setting]     Def.: presence of {@link activeDataRows}.
+     *
+     * @returns {jQuery|undefined}
      */
     function enableExport(setting) {
         //_debug(`enableExport: setting = "${setting}"`);
-        const enable = (setting !== false);
-        enableControlButton('export', enable);
+        const yes = isDefined(setting) ? setting : isPresent(activeDataRows());
+        return enableControlButton('export', yes);
     }
 
     /**
      * Change control button state.
      *
-     * @param {string}  type          One of {@link CONTROL_BUTTON_TYPES}.
-     * @param {boolean} [enable]
+     * @param {string}  type          One of {@link CONTROL_BUTTONS} keys.
+     * @param {boolean} enable
+     *
+     * @returns {jQuery|undefined}
      */
     function enableControlButton(type, enable) {
-        if (_debugging()) {
-            const func = 'enableControlButton';
-            _debug(`${func}: type = "${type}"; enable = "${enable}"`);
-            if (!CONTROL_BUTTON_TYPES.includes(type)) {
-                console.error(`${func}: "${type}" not in`, CONTROL_BUTTONS);
-            }
-        }
-        const enabling  = isDefined(enable) ? enable : checkFormValidation();
-        const $button   = CONTROL_BUTTONS[type];
-        const config    = PAGE_PROPERTIES.Action || {};
-        const action    = config[PAGE_ACTION] || config.new || {};
-        const state_cfg = action[type] || {};
-        const new_state = enabling ? state_cfg.enabled : state_cfg.disabled;
-        if (new_state?.label)   { $button.text(new_state.label) }
-        if (new_state?.tooltip) { $button.attr('title', new_state.tooltip) }
-        $button.toggleClass(DISABLED_MARKER, !enabling);
+        const func = 'enableControlButton';
+        _debug(`${func}: type = "${type}"; enable = "${enable}"`);
+        const $button = buttonFor(type, CONTROL_BUTTONS, func);
+        return enableButton($button, enable, type);
     }
 
     // ========================================================================
@@ -734,7 +701,7 @@ $(document).on('turbolinks:load', function() {
             return;
         }
 
-        serverSend(action, {
+        serverItemSend(action, {
             caller:     func,
             params:     { data: data, type: type },
             headers:    { 'Content-Type': content, Accept: accept },
@@ -758,7 +725,7 @@ $(document).on('turbolinks:load', function() {
             } else if (isEmpty(list)) {
                 _error(func, 'no items present in response data');
             } else {
-                appendRows(list, data.valid);
+                appendRows(list);
             }
         }
     }
@@ -794,46 +761,43 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - form - validation
+    // Functions - form - changed state
     // ========================================================================
 
     /**
-     * Determine the form is in a state where updates can be persisted and
-     * update controls accordingly.
+     * Indicate whether the form is in a state where a save is permitted.
      *
      * @returns {boolean}
      */
-    function validateForm() {
-        _debug('validateForm');
-        const ready = validateGrid();
-        return updateFormValid(ready);
+    function formChanged() {
+        return checkFormChanged();
     }
 
     /**
-     * Update form controls based on form validity.
+     * Update form controls based on form changed state.
      *
-     * @param {boolean} [setting]     Default: {@link checkFormValidation}.
+     * @param {boolean} [setting]     Default: {@link checkFormChanged}.
      *
-     * @returns {boolean}             Validation status.
+     * @returns {boolean}             Changed status.
      */
-    function updateFormValid(setting) {
-        _debug(`updateFormValid: setting = ${setting}`);
-        const ready = isDefined(setting) ? setting : checkFormValidation();
+    function updateFormChanged(setting) {
+        _debug(`updateFormChanged: setting = ${setting}`);
+        const ready = isDefined(setting) ? setting : checkFormChanged();
         enableSave(ready);
-        enableExport(ready);
+        enableExport();
         return ready;
     }
 
     /**
-     * Check whether the grid is in a state where a save is permitted.
+     * Check whether the form is in a state where a save is permitted.
      *
      * @param {Selector} [target]
      *
-     * @returns {boolean}             Form readiness.
+     * @returns {boolean}             Changed status.
      */
-    function checkFormValidation(target) {
-        //_debug('checkFormValidation: target =', target);
-        return checkGridValidation(target);
+    function checkFormChanged(target) {
+        //_debug('checkFormChanged: target =', target);
+        return checkGridChanged(target);
     }
 
     // ========================================================================
@@ -1121,36 +1085,35 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - grid - validation
+    // Functions - grid - changed state
     // ========================================================================
 
     /**
-     * Determine the row(s) are in a state where updates can be persisted.
+     * Update row changed state to determine whether the grid has changed.
      *
      * @param {Selector} [target]     Default: {@link allDataRows}
      *
-     * @returns {boolean}             Validation status.
+     * @returns {boolean}             False if no changes.
      */
-    function validateGrid(target) {
-        _debug('validateGrid: target =', target);
-        const update_row = (valid, row) => validateDataRow(row) && valid;
-        return dataRows(target).toArray().reduce(update_row, true);
+    function evaluateGridChanged(target) {
+        _debug('evaluateGridChanged: target =', target);
+        const evaluate_row = (change, row) => updateRowChanged(row) || change;
+        return dataRows(target).toArray().reduce(evaluate_row, false);
     }
 
     /**
-     * Check row validation to indicate whether the grid is in a state where a
-     * save is permitted.
+     * Check row changed state to determine whether the grid has changed.
      *
      * (No stored data values are updated.)
      *
      * @param {Selector} [target]     Default: {@link allDataRows}
      *
-     * @returns {boolean}             Validation status.
+     * @returns {boolean}             False if no changes.
      */
-    function checkGridValidation(target) {
-        //_debug('checkGridValidation: target =', target);
-        const check_row = (valid, row) => valid && checkRowValidation(row);
-        return dataRows(target).toArray().reduce(check_row, true);
+    function checkGridChanged(target) {
+        //_debug('checkGridChanged: target =', target);
+        const check_row = (change, row) => change || checkRowChanged(row);
+        return dataRows(target).toArray().reduce(check_row, false);
     }
 
     // ========================================================================
@@ -1194,6 +1157,28 @@ $(document).on('turbolinks:load', function() {
         const func  = 'dataRow'; //_debug(`${func}: target =`, target);
         const match = hidden ? ALL_DATA_ROW : DATA_ROW;
         return selfOrParent(target, match, func);
+    }
+
+    /**
+     * Indicate whether the given row exists in the database (saved or not).
+     *
+     * @param {Selector} target
+     *
+     * @returns {boolean}
+     */
+    function activeDataRow(target) {
+        return databaseId(target);
+    }
+
+    /**
+     * All rows that are associated with database items.
+     *
+     * @param {Selector} [target]     Default: {@link allDataRows}
+     *
+     * @returns {jQuery}
+     */
+    function activeDataRows(target) {
+        return dataRows(target).filter((_, row) => activeDataRow(row));
     }
 
     /**
@@ -1251,7 +1236,7 @@ $(document).on('turbolinks:load', function() {
             console.error(`${func}: received deleted item:`, data);
         }
 
-        let changed, row_valid = true;
+        let changed;
         dataCells($row).each((_, cell) => {
             let different;
             const $cell = $(cell);
@@ -1260,22 +1245,18 @@ $(document).on('turbolinks:load', function() {
                 const old_value = cellCurrentValue($cell);
                 const new_value = $cell.makeValue(data[field]);
                 if ((different = new_value.differsFrom(old_value))) {
-                    changed   = true;
-                    row_valid = updateDataCell($cell, new_value) && row_valid;
+                    updateDataCell($cell, new_value, true);
+                    changed = true;
                 }
             }
-            if (!different) {
-                if (cellChanged($cell)) {
-                    changed   = true;
-                    row_valid = validateDataCell($cell) && row_valid;
-                } else {
-                    row_valid &&= checkCellValidation($cell);
-                }
+            if (!different && cellChanged($cell)) {
+                updateCellValid($cell);
+                changed = true;
             }
         });
         if (changed) {
-            updateRowValid($row, row_valid);
-            updateFormValid();
+            updateRowChanged($row, true);
+            updateFormChanged();
         }
 
         updateRowIndicators($row, data);
@@ -1310,8 +1291,9 @@ $(document).on('turbolinks:load', function() {
     function initializeDataRow(target) {
         //_debug('initializeDataRow: target =', target);
         const $row = dataRow(target);
-        initDbRowValue($row);
-        initDbRowDelta($row);
+        initializeDbRowValue($row);
+        initializeDbRowDelta($row);
+        initializeRowIndicators($row);
         setupRowEventHandlers($row);
         return $row;
     }
@@ -1459,13 +1441,11 @@ $(document).on('turbolinks:load', function() {
      * Insert new row(s) after the last row in the grid.
      *
      * @param {ManifestItem[]} list
-     * @param {boolean[]}      [validity]
      * @param {boolean}        [renumber]   Default: *true*.
      */
-    function appendRows(list, validity, renumber) {
+    function appendRows(list, renumber) {
         _debug('appendRows: list =', list);
         const items = arrayWrap(list);
-        const valid = validity || [];
         const $last = allDataRows().last();
 
         let $row; // When undefined, first insertRow starts with $template_row.
@@ -1476,13 +1456,11 @@ $(document).on('turbolinks:load', function() {
         }
         const row = dbRowValue($row);
         let delta = dbRowDelta($row);
-        items.forEach((record, idx) => {
+        items.forEach(record => {
             $row = insertRow($row, record, false);
+            setRowChanged($row);
             setDbRowValue($row, row);
             setDbRowDelta($row, ++delta);
-            if (isDefined(valid[idx])) {
-                updateRowValid($row, valid[idx]);
-            }
         });
         if (renumber !== false) {
             incrementItemCount(items.length);
@@ -1606,7 +1584,7 @@ $(document).on('turbolinks:load', function() {
             return;
         }
 
-        serverSend(action, {
+        serverItemSend(action, {
             caller:     func,
             method:     'DELETE',
             params:     { ids: id_list },
@@ -1828,12 +1806,12 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * initLookup
+     * initializeLookup
      *
      * @param {Selector} row
      */
-    function initLookup(row) {
-        //_debug('initLookup: row =', row);
+    function initializeLookup(row) {
+        //_debug('initializeLookup: row =', row);
         const $row = dataRow(row);
         if (!getLookup($row)) {
             newLookup($row);
@@ -1848,7 +1826,7 @@ $(document).on('turbolinks:load', function() {
     function setupLookup(target) {
         _debug('setupLookup: target =', target);
         if (target) {
-            dataRows(target).each((_, row) => initLookup(row));
+            dataRows(target).each((_, row) => initializeLookup(row));
         } else {
             LookupModal.initializeAll();
         }
@@ -1901,14 +1879,6 @@ $(document).on('turbolinks:load', function() {
      * @type {string}
      */
     const UPLOADER_DATA = 'uploader';
-
-    /**
-     * Base name (singular of the related database table).
-     *
-     * @readonly
-     * @type {string}
-     */
-    const ROW_MODEL = 'manifest_item';
 
     /**
      * Flags controlling console debug output for specific purposes.
@@ -1974,14 +1944,21 @@ $(document).on('turbolinks:load', function() {
         // noinspection JSUnusedGlobalSymbols
         const cbs      = { onSelect, onStart, onError, onSuccess };
         const $row     = $(row);
-        const instance = new MultiUploader($row, ROW_MODEL, FEATURES, cbs);
+        const instance = new MultiUploader($row, ITEM_MODEL, FEATURES, cbs);
+        const exists   = instance.isUppyInitialized();
         let name_shown;
-        if (instance.isUppyInitialized()) {
+
+        // Clear display elements of an existing uploader.
+        if (exists) {
             instance.$root.find(MultiUploader.FILE_SELECT).remove();
             instance.$root.find(MultiUploader.DISPLAY).empty();
         }
-        // noinspection JSValidateTypes
-        return instance.initialize();
+
+        // Ensure that the uploader is fully initialized and set up handlers
+        // for added input controls.
+        instance.initialize({ added: initializeAddedControls });
+
+        return instance;
 
         /**
          * Callback invoked when the file select button is pressed.
@@ -2087,6 +2064,145 @@ $(document).on('turbolinks:load', function() {
                 instance.displayUploadedFilename(file_data);
             }
         }
+
+        /**
+         * Setup handlers for added input controls.
+         *
+         * @param {Selector} container
+         *
+         * @see "ManifestItemDecorator#render_grid_file_input"
+         */
+        function initializeAddedControls(container) {
+            _debug(`${func}: initializeAddedControls: container =`, container);
+            const HOVER_ATTR = 'data-hover';
+
+            /** @type {jQuery} */
+            const $cell  = $row.find(MultiUploader.UPLOADER),
+                  $lines = $cell.find(MultiUploader.FILE_NAME).children();
+            $(container).each((_, element) => {
+                const popup   = new InlinePopup(element);
+                const $toggle = popup.popupControl;
+                const $panel  = popup.popupPanel;
+                const $submit = $panel.find('button.input-submit');
+                const $cancel = $panel.find('button.input-cancel');
+
+                handleClickAndKeypress($submit, onSubmit);
+                handleClickAndKeypress($cancel, onCancel);
+
+                ModalShowHooks.set($toggle, onShow);
+                handleHoverAndFocus($toggle, hoverToggle, unhoverToggle);
+
+                const $element  = $(element);
+                const type      = $element.attr('data-type');
+                const from_type = `.from-${type}`;
+                const $type     = $lines.filter(from_type);
+                const $input    = $panel.find('input');
+
+                /**
+                 * If a value was given update the displayed file value and
+                 * send the new :file_data value to the server.
+                 *
+                 * @param {Event} event
+                 */
+                function onSubmit(event) {
+                    _debug('onSubmit: event =', event);
+                    const value = $input.val()?.trim();
+                    if (value) {
+                        $lines.each((_, line) => {
+                            const $file = $(line);
+                            const found = $file.is(from_type);
+                            if (found) {
+                                $file.text(value);
+                            }
+                            $file.toggleClass('active', found);
+                            $file.attr('aria-hidden', !found);
+                        });
+                        const file_data = { [type]: value };
+                        atomicEdit($cell, file_data);
+                    }
+                    popup.close();
+                }
+
+                /**
+                 * Just close the modal.
+                 *
+                 * @param {Event} event
+                 */
+                function onCancel(event) {
+                    _debug('onCancel: event =', event);
+                    popup.close();
+                }
+
+                /**
+                 * Initialize the input with the current value if there is one.
+                 *
+                 * @param {jQuery}  $target
+                 * @param {boolean} [check_only]
+                 * @param {boolean} [halted]
+                 */
+                function onShow($target, check_only, halted) {
+                    _debug('onShow:', $target, check_only, halted);
+                    if (!check_only && !halted) {
+                        const value = $type.text()?.trim();
+                        if (value) {
+                            $input.val(value);
+                        }
+                    }
+                }
+
+                /**
+                 * Add an attribute to the cell element indicating the button
+                 * being hovered, allowing for CSS rules relative to the cell.
+                 *
+                 * @param {Event} event
+                 */
+                function hoverToggle(event) {
+                    _debug('hoverToggle: event =', event);
+                    $cell.attr(HOVER_ATTR, type);
+                }
+
+                /**
+                 * Remove the attribute unless it has been changed by something
+                 * else.
+                 *
+                 * @param {Event} event
+                 */
+                function unhoverToggle(event) {
+                    _debug('unhoverToggle: event =', event);
+                    if ($cell.attr(HOVER_ATTR) === type) {
+                        $cell.removeAttr(HOVER_ATTR);
+                    }
+                }
+            });
+
+            const $upload = instance.fileSelectButton();
+            const type    = 'uploader';
+            handleHoverAndFocus($upload, hoverUpload, unhoverUpload);
+
+            /**
+             * Add an attribute to the cell element indicating the button
+             * being hovered, allowing for CSS rules relative to the cell.
+             *
+             * @param {Event} event
+             */
+            function hoverUpload(event) {
+                _debug('hoverUpload: event =', event);
+                $cell.attr(HOVER_ATTR, type);
+            }
+
+            /**
+             * Remove the attribute unless it has been changed by something
+             * else.
+             *
+             * @param {Event} event
+             */
+            function unhoverUpload(event) {
+                _debug('unhoverUpload: event =', event);
+                if ($cell.attr(HOVER_ATTR) === type) {
+                    $cell.removeAttr(HOVER_ATTR);
+                }
+            }
+        }
     }
 
     /**
@@ -2094,8 +2210,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} row
      */
-    function initUploader(row) {
-        //_debug('initUploader: row =', row);
+    function initializeUploader(row) {
+        //_debug('initializeUploader: row =', row);
         const $row = dataRow(row);
         if (!getUploader($row)) {
             setUploader($row, newUploader($row));
@@ -2109,7 +2225,7 @@ $(document).on('turbolinks:load', function() {
      */
     function setupUploader(target) {
         _debug('setupUploader: target =', target);
-        dataRows(target).each((_, row) => initUploader(row));
+        dataRows(target).each((_, row) => initializeUploader(row));
     }
 
     // ========================================================================
@@ -2253,7 +2369,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {number}
      */
-    function initDbRowValue(target) {
+    function initializeDbRowValue(target) {
         const $row = dataRow(target, true);
         const attr = $row.attr(DB_ROW_ATTR);
         if (attr) {
@@ -2309,7 +2425,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {number}
      */
-    function initDbRowDelta(target) {
+    function initializeDbRowDelta(target) {
         const $row = dataRow(target, true);
         const attr = $row.attr(DB_DELTA_ATTR);
         if (attr) {
@@ -2401,6 +2517,17 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * The container for all indicators for the row.
+     *
+     * @param {Selector} target
+     *
+     * @returns {jQuery}
+     */
+    function rowIndicatorPanel(target) {
+        return dataRow(target).find(`${CONTROLS_CELL} ${INDICATORS}`);
+    }
+
+    /**
      * All indicator value elements for the row.
      *
      * @param {Selector} target
@@ -2408,8 +2535,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function rowIndicators(target) {
-        const $row = dataRow(target);
-        return $row.find(`${CONTROLS_CELL} ${INDICATORS} ${INDICATOR}`);
+        return rowIndicatorPanel(target).find(INDICATOR);
     }
 
     /**
@@ -2482,6 +2608,25 @@ $(document).on('turbolinks:load', function() {
         STATUS_TYPES.forEach(type => clearRowIndicator($row, type));
     }
 
+    /**
+     * Ensure that indicators have the appropriate tooltip from the start.
+     *
+     * @param {Selector} target
+     */
+    function initializeRowIndicators(target) {
+        //_debug('initializeRowIndicators: target =', target);
+        const $panel = rowIndicatorPanel(target);
+        $panel.find(INDICATOR).each((_, indicator) => {
+            const $indicator = $(indicator);
+            const tooltip    = $indicator.attr('title');
+            const label_id   = $indicator.attr('aria-labelledby');
+            if (label_id && !tooltip) {
+                const $label = $panel.find(`#${label_id}`);
+                $indicator.attr('title', $label.text());
+            }
+        });
+    }
+
     // ========================================================================
     // Functions - row - details display
     // ========================================================================
@@ -2530,18 +2675,18 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - row - validity state
+    // Functions - row - changed state
     // ========================================================================
 
     /**
-     * Name of the data() entry indicating whether the data row is invalid.
+     * Name of the data() entry indicating whether the data row has changed.
      *
      * @type {string}
      */
-    const ROW_VALID_DATA = 'valid';
+    const ROW_CHANGED_DATA = 'changed';
 
     /**
-     * Indicate whether all of the cells of the related data row are valid.
+     * Indicate whether any of the cells of the related data row have changed.
      *
      * An undefined result means that the row hasn't been evaluated.
      *
@@ -2549,65 +2694,45 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {boolean|undefined}
      */
-    function rowValid(target) {
-        return dataRow(target).data(ROW_VALID_DATA);
+    function rowChanged(target) {
+        return dataRow(target).data(ROW_CHANGED_DATA);
     }
 
     /**
-     * Set the related data row's valid state.
+     * Set the related data row's changed state.
      *
      * @param {Selector} target
-     * @param {boolean}  [setting]    If *false*, make invalid.
+     * @param {boolean}  [setting]    If *false*, set as unchanged.
      *
      * @returns {boolean}
      */
-    function setRowValid(target, setting) {
-        //_debug(`setRowValid: "${setting}"; target =`, target);
-        const $row  = dataRow(target)
-        const valid = (setting !== false);
-        $row.data(ROW_VALID_DATA, valid);
-        return valid;
+    function setRowChanged(target, setting) {
+        //_debug(`setRowChanged: "${setting}"; target =`, target);
+        const $row    = dataRow(target)
+        const changed = (setting !== false);
+        $row.data(ROW_CHANGED_DATA, changed);
+        return changed;
     }
 
     /**
-     * Change the related data row's validity status.
+     * Modify the related data row's changed state.
      *
      * @param {Selector} target
-     * @param {boolean}  setting
+     * @param {boolean}  [setting]    Default: {@link evaluateRowChanged}
      *
      * @returns {boolean}
      */
-    function updateRowValid(target, setting) {
-        _debug(`updateRowValid: "${setting}"; target =`, target);
-        const $row  = dataRow(target)
-        const valid = setRowValid($row, setting);
-        $row.toggleClass(ERROR_MARKER, !valid);
-        return valid;
-    }
-
-    // ========================================================================
-    // Functions - row - validation
-    // ========================================================================
-
-    /**
-     * Update validity information and display for the associated data row and
-     * all of its data cells.
-     *
-     * @param {Selector} target
-     *
-     * @returns {boolean}
-     */
-    function validateDataRow(target) {
-        _debug('validateDataRow: target =', target);
-        const $row     = dataRow(target);
-        const validate = (valid, cell) => validateDataCell(cell) && valid;
-        const valid    = dataCells($row).toArray().reduce(validate, true);
-        return updateRowValid($row, (valid || false));
+    function updateRowChanged(target, setting) {
+        _debug(`updateRowChanged: "${setting}"; target =`, target);
+        const $row    = dataRow(target)
+        const change = isDefined(setting) ? setting : evaluateRowChanged($row);
+        setRowChanged($row, change);
+        $row.toggleClass(CHANGED_MARKER, change);
+        return change;
     }
 
     /**
-     * Consult row .data() to determine if the row is valid and only attempt to
-     * re-evaluate if that result is false.
+     * Evaluate whether any of a row's data cells have changed.
      *
      * (No changes are made to element attributes or data.)
      *
@@ -2615,33 +2740,32 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {boolean}
      */
-    function checkRowValidation(target) {
-        //_debug('checkRowValidation: target =', target);
+    function evaluateRowChanged(target) {
+        _debug('evaluateRowChanged: target =', target);
+        const $row    = dataRow(target);
+        const changed = (change, cell) => evaluateCellChanged(cell) || change;
+        return dataCells($row).toArray().reduce(changed, false);
+    }
+
+    /**
+     * Consult row .data() to determine if the row has changed and only attempt
+     * to re-evaluate if that result is missing.
+     *
+     * (No changes are made to element attributes or data.)
+     *
+     * @param {Selector} target
+     *
+     * @returns {boolean}
+     */
+    function checkRowChanged(target) {
+        //_debug('checkRowChanged: target =', target);
         const $row  = dataRow(target);
-        const valid = rowValid($row);
-        if (isDefined(valid)) {
-            return valid;
-        } else {
-            const check = (valid, cell) => valid && checkCellValidation(cell);
-            return dataCells($row).toArray().reduce(check, true);
+        let changed = rowChanged($row);
+        if (notDefined(changed)) {
+            const check = (change, cell) => change || cellChanged(cell);
+            changed = dataCells($row).toArray().reduce(check, false) || false;
         }
-    }
-
-    // noinspection JSUnusedLocalSymbols
-    /**
-     * Evaluate whether all of a row's data cells are valid.
-     *
-     * (No changes are made to element attributes or data.)
-     *
-     * @param {Selector} target
-     *
-     * @returns {boolean}
-     */
-    function performRowValidation(target) {
-        _debug('performRowValidation: target =', target);
-        const $row     = dataRow(target);
-        const validate = (valid, cell) => valid && performCellValidation(cell);
-        return dataCells($row).toArray().reduce(validate, true);
+        return changed;
     }
 
     // ========================================================================
@@ -2666,7 +2790,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Create an empty unattached data row based on a previous data row.
      *
-     * The {@link DB_ID_ATTR} attribute is removed so that editing logic knows
+     * The {@link ITEM_ATTR} attribute is removed so that editing logic knows
      * this is a row unrelated to any ManifestItem record.
      *
      * @param {Selector} [original]   Source data row.
@@ -2715,65 +2839,6 @@ $(document).on('turbolinks:load', function() {
         setupRowEventHandlers($copy);
 
         return $copy;
-    }
-
-    /**
-     * HTML attributes which should be made unique.
-     *
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input [input]
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label [label]
-     * @see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes#relationship_attributes [aria]
-     *
-     * @type {string[]}
-     */
-    const ID_ATTRIBUTES = [
-        'aria-activedescendant',
-        'aria-controls',
-        'aria-describedby',
-        'aria-details',
-        'aria-errormessage',
-        'aria-flowto',
-        'aria-labelledby',
-        'aria-owns',
-        'for',                      // @see [label]#attr-for
-        'form',                     // @see [input]#form
-        'id',                       // @see [input]#id
-        'list',                     // @see [input]#list
-      //'name',                     // @note Must *not* be included.
-    ];
-
-    /**
-     * Make numbered attributes unique within an element.
-     *
-     * @param {Selector}      element
-     * @param {string|number} unique
-     * @param {string[]}      attrs
-     */
-    function uniqAttrs(element, unique, attrs = ID_ATTRIBUTES) {
-        const $element = $(element);
-        attrs.forEach(name => {
-            const old_attr = $element.attr(name);
-            const new_attr = old_attr && uniqAttr(old_attr, unique);
-            if (new_attr) { $element.attr(name, new_attr) }
-        });
-    }
-
-    /**
-     * Make a numbered attribute value unique.
-     *
-     * @param {string}        old_attr
-     * @param {string|number} unique
-     *
-     * @returns {string}
-     */
-    function uniqAttr(old_attr, unique) {
-        if (/-0$/.test(old_attr)) { // An attribute from $template_row.
-            return old_attr.replace(/-0$/, `-${unique}`);
-        } else if (/-\d+-\d+$/.test(old_attr)) {
-            return old_attr.replace(/-\d+$/, `-${unique}`);
-        } else {
-            return `${old_attr}-${unique}`;
-        }
     }
 
     // ========================================================================
@@ -2851,7 +2916,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Value}    value
      * @param {boolean}  [change]   Default: check {@link cellOriginalValue}
      *
-     * @returns {boolean}           Result of {@link validateDataCell}.
+     * @returns {boolean}           Whether the cell value changed.
      */
     function updateDataCell(target, value, change) {
         _debug('updateDataCell: value =', value, target);
@@ -2863,7 +2928,8 @@ $(document).on('turbolinks:load', function() {
             changed = value.differsFrom(cellOriginalValue($cell));
         }
         updateCellChanged($cell, changed);
-        return validateDataCell($cell);
+        updateCellValid($cell);
+        return changed;
     }
 
     // ========================================================================
@@ -2891,13 +2957,18 @@ $(document).on('turbolinks:load', function() {
         //_debug('initializeDataCell: target =', target);
         const $cell = dataCell(target).removeClass(STATUS_MARKERS);
         if ($cell.is(MultiUploader.UPLOADER)) {
-            $cell.find(MultiUploader.FILE_NAME).empty();
+            $cell.find(MultiUploader.FILE_NAME).children().each((_, line) => {
+                const $line = $(line);
+                $line.text('');
+                $line.attr('aria-hidden', true);
+                $line.toggleClass('active', false);
+            });
         } else {
             clearCellDisplay($cell);
             clearCellEdit($cell);
         }
         updateCellDisplayValue($cell);
-        validateDataCell($cell);
+        updateCellValid($cell);
         return $cell;
     }
 
@@ -3013,8 +3084,27 @@ $(document).on('turbolinks:load', function() {
         return changed;
     }
 
+    /**
+     * Refresh the related data cell's changed status.
+     *
+     * @param {Selector} target
+     *
+     * @returns {boolean}
+     */
+    function evaluateCellChanged(target) {
+        _debug('evaluateCellChanged: target =', target);
+        const $cell = dataCell(target);
+        let changed = cellChanged($cell);
+        if (notDefined(changed)) {
+            const original = cellOriginalValue($cell);
+            const current  = cellCurrentValue($cell);
+            changed = current.differsFrom(original);
+        }
+        return updateCellChanged($cell, changed);
+    }
+
     // ========================================================================
-    // Functions - cell - invalid state
+    // Functions - cell - validity state
     // ========================================================================
 
     /**
@@ -3043,7 +3133,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} target
      * @param {boolean}  [setting]    If *false*, make invalid.
      *
-     * @returns {boolean}
+     * @returns {boolean}             True if set to valid.
      */
     function setCellValid(target, setting) {
         //_debug(`setCellValid: "${setting}"; target =`, target);
@@ -3057,51 +3147,17 @@ $(document).on('turbolinks:load', function() {
      * Change the related data cell's validity status.
      *
      * @param {Selector} target
-     * @param {boolean}  setting
+     * @param {boolean}  [setting]    Default: {@link evaluateCellValid}
      *
-     * @returns {boolean}
+     * @returns {boolean}             True if valid.
      */
     function updateCellValid(target, setting) {
         //_debug(`updateCellValid: "${setting}"; target =`, target);
         const $cell = dataCell(target);
-        const valid = setCellValid($cell, setting);
+        const valid = isDefined(setting) ? setting : evaluateCellValid($cell);
+        setCellValid($cell, valid);
         $cell.toggleClass(ERROR_MARKER, !valid);
         return valid;
-    }
-
-    // ========================================================================
-    // Functions - cell - validation
-    // ========================================================================
-
-    /**
-     * Update data cell validity information and display.
-     *
-     * @param {Selector} target
-     *
-     * @returns {boolean}
-     */
-    function validateDataCell(target) {
-        //_debug('validateDataCell: target =', target);
-        const $cell = dataCell(target);
-        const valid = performCellValidation($cell);
-        return updateCellValid($cell, valid);
-    }
-
-    /**
-     * Consult cell .data() to determine if the cell is valid and only attempt
-     * to re-evaluate if that result is false.
-     *
-     * (No changes are made to element attributes or data.)
-     *
-     * @param {Selector} target
-     *
-     * @returns {boolean}
-     */
-    function checkCellValidation(target) {
-        //_debug('checkCellValidation: target =', target);
-        const $cell = dataCell(target);
-        const valid = cellValid($cell);
-        return isDefined(valid) ? valid : performCellValidation($cell);
     }
 
     /**
@@ -3115,8 +3171,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {boolean}
      */
-    function performCellValidation(target, current) {
-        //_debug('performCellValidation: target =', target);
+    function evaluateCellValid(target, current) {
+        //_debug('evaluateCellValid: target =', target);
         const $cell = dataCell(target);
         const prop  = cellProperties($cell);
         if (!prop.required) {
@@ -3410,6 +3466,30 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Combine {@link startValueEdit} and {@link finishValueEdit}.
+     *
+     * @param {Selector} target
+     * @param {*}        new_value
+     */
+    function atomicEdit(target, new_value) {
+        const func  = 'atomicEdit'; _debug(`${func}:`, target);
+        const $cell = dataCell(target)
+        if (inCellEditMode($cell)) {
+            _debug(`--- ${func}: already editing $cell =`, $cell);
+        } else {
+            _debug(`>>> ${func}: $cell =`, $cell);
+            setCellEditMode($cell, true);
+            cellEditBegin($cell);
+            postStartEdit($cell);
+            debounce(() => {
+                const value = $cell.makeValue(new_value);
+                postFinishEdit($cell, value);
+                setCellEditMode($cell, false);
+            })();
+        }
+    }
+
+    /**
      * Respond to click within a data cell value.
      *
      * @param {jQuery.Event|UIEvent} event
@@ -3468,7 +3548,7 @@ $(document).on('turbolinks:load', function() {
         _debug(`${func}: $row = `, $row);
         const row   = dbRowValue($row);
         const delta = dbRowDelta($row);
-        serverSend(`start_edit/${db_id}`, {
+        serverItemSend(`start_edit/${db_id}`, {
             params:     { row: row, delta: delta },
             onError:    () => finishValueEdit($cell),
             caller:     func,
@@ -3519,11 +3599,12 @@ $(document).on('turbolinks:load', function() {
         const old_value = cellCurrentValue($cell); // || cellOriginalValue($cell);
         const new_value = cellEditValue($cell);
         if (new_value.differsFrom(old_value)) {
-            const row_validity  = rowValid($cell);
-            const cell_validity = updateDataCell($cell, new_value);
-            if (cell_validity !== row_validity) {
-                validateDataRow($cell);
-                updateFormValid();
+            const $row        = dataRow($cell);
+            const row_change  = rowChanged($row);
+            const cell_change = updateDataCell($cell, new_value);
+            if (cell_change !== row_change) {
+                updateRowChanged($row);
+                updateFormChanged();
             }
         }
         return new_value;
@@ -3574,7 +3655,7 @@ $(document).on('turbolinks:load', function() {
         if (action) {
             options.params = params || {};
             options.caller = func;
-            serverSend(action, options);
+            serverItemSend(action, options);
         }
     }
 
@@ -4076,14 +4157,6 @@ $(document).on('turbolinks:load', function() {
     // Functions - database - Manifest
     // ========================================================================
 
-    /**
-     * Name of the attribute indicating the ID of the Manifest database record
-     * associated with an element or its ancestor.
-     *
-     * @type {string}
-     */
-    const MANIFEST_ATTR = 'data-manifest';
-
     let manifest_id;
 
     /**
@@ -4220,14 +4293,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Name of the attribute indicating the ID of the ManifestItem database
-     * record associated with an element or its ancestor.
-     *
-     * @type {string}
-     */
-    const DB_ID_ATTR = 'data-item-id';
-
-    /**
      * The database ID for the ManifestItem associated with the target.
      *
      * The only rows for which this value should be undefined are blank rows
@@ -4239,7 +4304,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {number|undefined}
      */
     function databaseId(target) {
-        const value = attribute(target, DB_ID_ATTR);
+        const value = attribute(target, ITEM_ATTR);
         return Number(value) || undefined;
     }
 
@@ -4256,7 +4321,7 @@ $(document).on('turbolinks:load', function() {
         _debug(`${func}: value = "${value}"; target =`, target);
         const db_id = Number(value);
         if (db_id) {
-            dataRow(target).attr(DB_ID_ATTR, db_id);
+            dataRow(target).attr(ITEM_ATTR, db_id);
         } else {
             console.error(`${func}: invalid value:`, value);
         }
@@ -4270,7 +4335,7 @@ $(document).on('turbolinks:load', function() {
      */
     function removeDatabaseId(target) {
         const func = 'removeDatabaseId'; _debug(`${func}: target =`, target);
-        selfOrParent(target, `[${DB_ID_ATTR}]`, func).removeAttr(DB_ID_ATTR);
+        selfOrParent(target, `[${ITEM_ATTR}]`, func).removeAttr(ITEM_ATTR);
     }
 
     /**
@@ -4283,7 +4348,7 @@ $(document).on('turbolinks:load', function() {
      */
     function rowForDatabaseId(value, rows) {
         const $rows = rows ? $(rows) : allDataRows();
-        const $row  = $rows.filter(`[${DB_ID_ATTR}="${value}"]`);
+        const $row  = $rows.filter(`[${ITEM_ATTR}="${value}"]`);
         if (isPresent($row)) { return $row }
     }
 
@@ -4328,99 +4393,64 @@ $(document).on('turbolinks:load', function() {
         return result;
     }
 
-    /**
-     * Extract the names of data fields from the header row.
-     *
-     * @returns {string[]}
-     */
-/*
-    function fieldNames() {
-        return Object.keys(fieldProperty());
-    }
-*/
-
-    /**
-     * Mapping of comparison name to actual field name.
-     *
-     * @returns {StringTable}
-     */
-/*
-    function fieldMap() {
-        return field_map ||= getFieldMap();
-    }
-*/
-
-    /**
-     * Mapping of allowable column names to the actual field name.
-     *
-     * @type {StringTable}
-     */
-/*
-    const COLUMN_MAP = {
-        'isbn': 'dc_identifier',
-        'issn': 'dc_identifier',
-        'doi':  'dc_identifier',
-        'oclc': 'dc_identifier',
-        'lccn': 'dc_identifier',
-    };
-*/
-
-    /**
-     * Make a mapping of comparison name to actual field name.
-     *
-     * @returns {StringTable}
-     */
-/*
-    function getFieldMap() {
-        _debug('getFieldMap');
-        const pairs = fieldNames().map(f => [comparisonName(f), f]);
-        let result  = Object.fromEntries(pairs);
-        $.extend(result, COLUMN_MAP);
-        _debug('getFieldMap ->', result);
-        return result;
-    }
-*/
-
-    /**
-     * Transform the given name to a valid field name.
-     *
-     * @param {string} name
-     *
-     * @returns {string|undefined}
-     */
-/*
-    function getFieldName(name) {
-        //_debug(`getFieldName: name = ${name}`);
-        const result = fieldMap()[comparisonName(name)];
-        result || _debug(`getFieldName: invalid name "${name}"`);
-        return result;
-    }
-*/
-
-    /**
-     * Transform into a normalized name for case-insensitive comparison.
-     *
-     * @param {string} field_name
-     *
-     * @returns {string}
-     */
-/*
-    function comparisonName(field_name) {
-        //_debug(`comparisonName: field_name = ${field_name}`);
-        return field_name.trim().toLowerCase().replaceAll(/_/g, '');
-    }
-*/
-
     // ========================================================================
     // Functions - page
     // ========================================================================
 
     /**
      * Position the page so that the title, controls and grid are all visible.
+     *
+     * If the URL has a hash, the indicated target item will be scrolled to the
+     * center first before aligning the title to the top of the viewport.
      */
     function scrollToTop() {
         _debug('scrollToTop');
+        const anchor = window.location.hash;
+        if (anchor) { scrollToCenter(anchor) }
         $('#main')[0].scrollIntoView({block: 'start', inline: 'nearest'});
+    }
+
+    /**
+     * Position the page so that indicated item is scrolled to the center of
+     * the viewport.
+     *
+     * If target has an equals sign it's assumed to be an attribute/value pair
+     * which is used to find the indicated item (e.g. "#data-item-id=18" will
+     * result in the selector '[data-item-id="18"]`.
+     *
+     * @params {string} target
+     */
+    function scrollToCenter(target) {
+        const func   = 'scrollToCenter'; _debug(`${func}: target =`, target);
+        const anchor = target.trim().replace(/^#/, '');
+        const parts  = anchor.split('=');
+        let $target;
+        if ((parts.length > 1) && !anchor.match(/^\[(.*)]$/)) {
+            const attr  = parts.shift();
+            const val   = parts.join('=').trim();
+            const value = val.match(/^(["'])(.*)\1$/)?.at(2) || val;
+            $target     = $(`[${attr}="${value}"]`);
+        } else {
+            $target     = $(`#${anchor}`);
+        }
+        if (isPresent($target)) {
+            const $rows = dataRows();
+            let $row    = $rows.filter($target);
+            if (isMissing($row)) {
+                const $cell = $rows.find($target);
+                if (isPresent($cell)) {
+                    $row = dataRow($cell);
+                }
+            }
+            if (isPresent($row)) {
+                $target = $row.children(CONTROLS_CELL);
+            }
+        }
+        if (isPresent($target)) {
+            $target[0].scrollIntoView({block: 'center', inline: 'start'});
+        } else {
+            _debug(`${func}: missing target =`, target);
+        }
     }
 
     // ========================================================================
@@ -4612,148 +4642,49 @@ $(document).on('turbolinks:load', function() {
     // Functions - page - server interface
     // ========================================================================
 
-    const MANIFEST_CONTROLLER = 'manifest';
-    const ROW_CONTROLLER      = ROW_MODEL;
-
-    let api_server;
-
     /**
-     * The server controller for most operations.
-     *
-     * @returns {string}
-     */
-    function apiController() {
-        return ROW_CONTROLLER;
-    }
-
-    /**
-     * Interface to the server.
-     *
-     * @param {string}       [controller]   Default: {@link apiController}.
-     * @param {XmitCallback} [callback]
-     *
-     * @returns {Api}
-     */
-    function server(controller, callback) {
-        if (controller || callback) {
-            const ctrlr   = controller || apiController();
-            const options = callback ? { callback: callback } : {};
-            return new Api(ctrlr, options);
-        } else {
-            return api_server ||= new Api(apiController());
-        }
-    }
-
-    /**
-     * SendOptions
-     *
-     * Option values for the {@link serverSend} function.
-     *
-     * @typedef {{
-     *      _ignoreBody?:   boolean,
-     *      method?:        string,
-     *      controller?:    string,
-     *      action?:        string,
-     *      params?:        Object.<string,any>,
-     *      headers?:       StringTable,
-     *      caller?:        string,
-     *      onSuccess?:     XmitCallback,
-     *      onError?:       XmitCallback,
-     *      onComplete?:    XmitCallback,
-     * }} SendOptions
-     */
-
-    /**
-     * Post to a server endpoint.
+     * Post to a server ManifestItem endpoint.
      *
      * @param {string|string[]|SendOptions} ctr_act
      * @param {SendOptions}                 [send_options]
      *
-     * @overload serverSend(controller_action, send_options)
-     *  Controller/action followed by options.
-     *  @param {string[]}    ctr_act
-     *  @param {SendOptions} [send_options]
-     *
-     * @overload serverSend(action, send_options)
-     *  Action followed by options (optionally specifying controller).
-     *  @param {string}      ctr_act
-     *  @param {SendOptions} [send_options]
-     *
-     * @overload serverSend(send_options)
-     *  Options which specify action (and optionally controller).
-     *  @param {SendOptions} [send_options]
+     * @see serverSend
      */
-    function serverSend(ctr_act, send_options) {
-        const func = 'serverSend';
-        let ctrlr, action, opt;
-        if (Array.isArray(ctr_act))      { [ctrlr, action] = ctr_act } else
-        if (typeof ctr_act === 'string') { action = ctr_act }          else
-        if (typeof ctr_act === 'object') { opt    = ctr_act }
-        opt    ||= send_options || {};
-        action ||= opt.action;
-        ctrlr  ||= opt.controller;
-
-        const params   = opt.params  || {};
-        const headers  = opt.headers || {};
-        const options  = { headers: headers };
-        const cb_ok    = opt.onSuccess;
-        const cb_err   = opt.onError;
-        const cb_done  = opt.onComplete;
-        const caller   = compact([opt.caller, func]).join(': ');
-        const callback = (result, warning, error, xhr) => {
-            if (_debugging()) {
-                _debug(`${caller}: result =`, result);
-                warning && _debug(`${caller}: warning =`, warning);
-                error   && _debug(`${caller}: error   =`, error);
-                xhr     && _debug(`${caller}: xhr     =`, xhr);
-            }
-            let cbs = [cb_done];
-            let [err, warn, offline] = [error, warning, !xhr.status];
-            if (offline) {
-                // Throw up a flash message only the first time triggered.
-                err = warn = isOnline() && 'EMMA is offline'; // TODO: I18n
-            } else if (error) {
-                cbs = [cb_err, ...cbs];
-            } else if (warning) {
-                cbs = [cb_err, ...cbs];
-            } else {
-                cbs = [cb_ok, ...cbs];
-            }
-            if (err || warn) { err ? flashError(err) : flashMessage(warn) }
-            cbs.forEach(cb => cb?.(result, warn, err, xhr));
-            setOffline(offline);
-        }
-        if (_debugging()) {
-            _debug(`${caller}: ctrlr   = "${ctrlr || apiController()}"`);
-            _debug(`${caller}: action  = "${action}"`);
-            _debug(`${caller}: params  =`, params);
-            _debug(`${caller}: options =`, options);
-        }
-        if (action) {
-            const method = opt.method?.toUpperCase() || 'POST';
-            options._ignoreBody = opt._ignoreBody;
-            server(ctrlr).xmit(method, action, params, options, callback);
-        } else {
-            _error(`${caller}: no action given`);
-        }
+    function serverItemSend(ctr_act, send_options) {
+        const func = 'serverItemSend';
+        const opt  = { ...send_options };
+        opt.caller       ||= func;
+        opt.onCommStatus ||= onCommStatus
+        serverSend(ctr_act, opt);
     }
 
     /**
-     * Post to a 'manifest' controller endpoint.
+     * Post to a Manifest controller endpoint.
      *
      * @param {string|SendOptions} action
      * @param {SendOptions}        [send_options]
+     *
+     * @see serverBulkSend
      */
     function serverManifestSend(action, send_options) {
-        const func       = 'serverManifestSend';
-        const controller = MANIFEST_CONTROLLER;
-        const override   = send_options?.controller;
-        if (typeof action !== 'string') {
-            console.error(`${func}: invalid action`, action);
-        } else if (override && (override !== controller)) {
-            console.warn(`${func}: ignored controller override "${override}"`);
-        }
-        serverSend([controller, action], send_options);
+        const func = 'serverManifestSend';
+        const opt  = { ...send_options };
+        opt.caller       ||= func;
+        opt.onCommStatus ||= onCommStatus
+        serverBulkSend(action, opt);
+    }
+
+    /**
+     * Throw up a flash message only the first time an offline comm status is
+     * triggered.
+     *
+     * @param {boolean} online
+     */
+    function onCommStatus(online) {
+        const offline = !online;
+        const error   = offline && isOnline() && 'EMMA is offline'; // TODO: I18n
+        if (error) { flashError(error) }
+        setOffline(offline);
     }
 
     // ========================================================================
@@ -4828,69 +4759,6 @@ $(document).on('turbolinks:load', function() {
         return $result;
     }
 
-    /**
-     * Return the target if it matches or all descendents that match.
-     *
-     * @param {Selector} target
-     * @param {Selector} match
-     *
-     * @returns {jQuery}
-     */
-    function selfOrDescendents(target, match) {
-        //_debug(`selfOrDescendents: match = "${match}"; target =`, target);
-        const $target = $(target);
-        return $target.is(match) ? $target : $target.find(match);
-    }
-
-    /**
-     * The attribute value which applies to the given target (either directly
-     * or from a parent element).
-     *
-     * @param {Selector} target
-     * @param {string}   name         Attribute name.
-     *
-     * @returns {string}
-     */
-    function attribute(target, name) {
-        const func = 'attribute';
-        //_debug(`${func}: name = ${name}; target =`, target);
-        return selfOrParent(target, `[${name}]`, func).attr(name);
-    }
-
-    /**
-     * Return the target if it matches or the first parent that matches.
-     *
-     * @param {Selector} target
-     * @param {Selector} match
-     * @param {string}   [caller]     Name of caller (for diagnostics).
-     *
-     * @returns {jQuery}
-     */
-    function selfOrParent(target, match, caller) {
-        const func = caller || 'selfOrParent';
-        const $t   = $(target);
-        return $t.is(match) ? single($t, func) : $t.parents(match).first();
-    }
-
-    /**
-     * Ensure that the target resolves to exactly one element.
-     *
-     * @param {Selector} target
-     * @param {string}   [caller]     Name of caller (for diagnostics).
-     *
-     * @returns {jQuery}
-     */
-    function single(target, caller) {
-        const $element = $(target);
-        const count    = $element.length;
-        if (count === 1) {
-            return $element;
-        } else {
-            console.warn(`${caller}: ${count} results; 1 expected`);
-            return $element.first();
-        }
-    }
-
     // ========================================================================
     // Functions - other
     // ========================================================================
@@ -4937,36 +4805,6 @@ $(document).on('turbolinks:load', function() {
     // Functions - diagnostics
     // ========================================================================
 
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return window.DEBUG.activeFor('Manifest', true);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(...args);
-    }
-
-    /**
-     * Emit a console error and display as a flash error if debugging.
-     *
-     * @param {string} caller
-     * @param {string} [message]
-     */
-    function _error(caller, message) {
-        const msg = isDefined(message) ? `${caller}: ${message}` : caller;
-        console.error(msg);
-        _debugging() && flashError(msg);
-    }
-
     // noinspection JSUnusedLocalSymbols
     /**
      * This is a convenience function that can be added to check all data()
@@ -4988,7 +4826,7 @@ $(document).on('turbolinks:load', function() {
         LOOKUP_DATA,
         OFFLINE_DATA,
         ORIGINAL_VALUE_DATA,
-        ROW_VALID_DATA,
+        ROW_CHANGED_DATA,
         UPLOADER_DATA,
         VALUE_CHANGED_DATA,
     ]) {
@@ -5058,6 +4896,6 @@ $(document).on('turbolinks:load', function() {
     // Actions
     // ========================================================================
 
-    initialize();
+    initializeEditForm();
 
 });
