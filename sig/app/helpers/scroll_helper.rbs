@@ -15,7 +15,13 @@ module ScrollHelper
   #
   # @type [Hash{Symbol=>String}]
   #
-  SCROLL_TOP: Hash[Symbol,String]
+  SCROLL_TOP_BUTTON: Hash[Symbol,String]
+
+  # Default properties for the scroll-down-to-top button.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  SCROLL_DOWN_BUTTON: Hash[Symbol,String]
 
   # Modify the provided CSS options to indicate that the element is defined as
   # the target for the scroll-to-top button.

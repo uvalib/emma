@@ -296,10 +296,12 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  *
  * - target:            Properties for an element which is scrolled to the top.
  * - button:            Properties for the scroll-to-top button.
+ * - down:              Properties for the scroll-down-to-top variant.
  *
  * @typedef {{
  *     target:          ElementProperties,
  *     button:          ElementProperties,
+ *     down:            ElementProperties,
  * }} ScrollProperties
  */
 
@@ -551,7 +553,8 @@ export const Emma = (function() {
 
         Scroll: {
             target: o$('<%= js ScrollHelper::SCROLL_TARGET %>'),
-            button: o$('<%= js ScrollHelper::SCROLL_TOP %>'),
+            button: o$('<%= js ScrollHelper::SCROLL_TOP_BUTTON %>'),
+            down:   o$('<%= js ScrollHelper::SCROLL_DOWN_BUTTON %>'),
         },
 
         Search: {

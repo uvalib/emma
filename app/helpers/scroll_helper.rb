@@ -31,12 +31,23 @@ module ScrollHelper
   #
   # @type [Hash{Symbol=>String}]
   #
-  SCROLL_TOP = {
-    type:    'button',
-    class:   'scroll-to-top',
-    label:   UP_TRIANGLE, # TODO: I18n
-    tooltip: 'Go back to the top of the page', # TODO: I18n
+  SCROLL_TOP_BUTTON = {
+    type:     'button',
+    class:    'scroll-to-top',
+    label:    UP_TRIANGLE, # TODO: I18n
+    tooltip:  'Go back to the top of the page', # TODO: I18n
   }.freeze
+
+  # Default properties for the scroll-down-to-top button.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  SCROLL_DOWN_BUTTON = {
+    type:     'button',
+    class:    'scroll-down-to-top',
+    label:    DOWN_TRIANGLE, # TODO: I18n
+    tooltip:  'Align with the top of the page', # TODO: I18n
+  }
 
   # ===========================================================================
   # :section:
@@ -66,7 +77,7 @@ module ScrollHelper
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToTop()*
   #
   def scroll_to_top_button(**opt)
-    opt   = merge_html_options(SCROLL_TOP, opt, { class: 'hidden' })
+    opt   = merge_html_options(SCROLL_TOP_BUTTON, opt, { class: 'hidden' })
     label = opt.delete(:label)
     tip   = opt.delete(:tooltip)
     opt[:title] = tip if tip

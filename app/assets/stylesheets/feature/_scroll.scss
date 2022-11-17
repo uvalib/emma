@@ -79,4 +79,8 @@
         animation: show-scroll-to-top 1s;
     }
 
+    // This variant is displayed initially when at the top of the page to allow
+    // moving the "scroll-to-top target" to the top of the window in one click.
+    &.scroll-down-to-top { }
+
 }

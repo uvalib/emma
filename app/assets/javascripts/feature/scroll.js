@@ -11,13 +11,13 @@ import { deepFreeze }                          from '../shared/objects'
 $(document).on('turbolinks:load', function() {
 
     /**
-     * CSS class indicating the "scroll-to-top" button.
+     * Properties of the "scroll-to-top" button.
      *
      * @readonly
-     * @type {string}
+     * @type {ElementProperties}
      */
-    const SCROLL_BUTTON_CLASS = Emma.Scroll.button.class;
-    const SCROLL_BUTTON = selector(SCROLL_BUTTON_CLASS);
+    const SCROLL_BUTTON_PROP = Emma.Scroll.button;
+    const SCROLL_BUTTON      = selector(SCROLL_BUTTON_PROP.class);
 
     /** @type {jQuery} */
     const $scroll_button = $(SCROLL_BUTTON).not('.for-example');
@@ -30,13 +30,23 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Properties of the "scroll-down-to-top" button variant.
+     *
+     * @readonly
+     * @type {ElementProperties}
+     */
+    const SCROLL_DOWN_PROP  = Emma.Scroll.down;
+    const SCROLL_DOWN_CLASS = SCROLL_DOWN_PROP.class;
+    const HIDDEN_MARKER     = 'hidden';
+
+    /**
      * CSS class for the element which is scrolled to the top.
      *
      * @readonly
      * @type {string}
      */
     const SCROLL_TARGET_CLASS = Emma.Scroll.target.class;
-    const SCROLL_TARGET = selector(SCROLL_TARGET_CLASS);
+    const SCROLL_TARGET       = selector(SCROLL_TARGET_CLASS);
 
     /**
      * Selector(s) for scroll target with fall-backs.
@@ -84,19 +94,30 @@ $(document).on('turbolinks:load', function() {
     /**
      * Set visibility of the scroll-to-top button.
      *
-     * @param {Event|boolean} [event]
+     * At the top of the page, it presents as a "scroll-down" button.  If the
+     * page is scrolled sufficiently far it presents as a "scroll-up" button.
      */
-    function toggleScrollButton(event) {
+    function updateScrollButton() {
+        //_debug('updateScrollButton');
         let visible;
-        if (typeof event === 'boolean') {
-            visible = event;
-        } else {
-            const $container  = $(window);
-            const scroll_pos  = $container.scrollTop();
-            const visible_pos = $container.height() / 3;
-            visible = (scroll_pos > visible_pos);
+        const html     = document.documentElement;
+        const max_y    = html.scrollHeight - html.clientHeight;
+        const target   = $scroll_target[0].getBoundingClientRect();
+        const body     = $('body')[0].getBoundingClientRect();
+        const needed_y = Math.abs(target.y - body.y);
+        if (needed_y <= max_y) {
+            const target  = $scroll_target[0].getBoundingClientRect();
+            const epsilon = 1; // pixel
+            const up      = (target.y < -epsilon);
+            const down    = (target.y > +epsilon);
+            if ((visible = (down || up))) {
+                const prop = down ? SCROLL_DOWN_PROP : SCROLL_BUTTON_PROP;
+                $scroll_button.text(prop.label);
+                $scroll_button.attr('title', prop.tooltip);
+                $scroll_button.toggleClass(SCROLL_DOWN_CLASS, down);
+            }
         }
-        $scroll_button.toggleClass('hidden', !visible);
+        $scroll_button.toggleClass(HIDDEN_MARKER, !visible);
     }
 
     /**
@@ -152,8 +173,8 @@ $(document).on('turbolinks:load', function() {
     function scrollToRecord(event, button_selector) {
         const $button = $(event.currentTarget || event.target);
         if (!$button.hasClass('disabled') && !$button.hasClass('forbidden')) {
-            const record_id = $button.attr('href');
 
+            const record_id = $button.attr('href');
             const $title    = $(record_id);
             const $t_pair   = $title.parents('.pair').first();
             const $f_pair   = $t_pair.siblings(':not(.field-Title)').first();
@@ -214,18 +235,15 @@ $(document).on('turbolinks:load', function() {
     // Event handlers
     // ========================================================================
 
-    handleEvent($(window), 'scroll', toggleScrollButton);
     handleClickAndKeypress($scroll_button, scrollToTop);
     handleClickAndKeypress($prev_buttons,  scrollToPrev);
     handleClickAndKeypress($next_buttons,  scrollToNext);
+    handleEvent($(window), 'scroll', updateScrollButton);
 
     // ========================================================================
     // Actions
     // ========================================================================
 
-    // Button should start hidden initially and only appear after scrolling.
-    // However, if the page is refreshed with the window already scrolled, then
-    // button should appear immediately.
-    toggleScrollButton();
+    updateScrollButton();
 
 });
