@@ -64,6 +64,7 @@ class SearchCallController < ApplicationController
   # @see SearchCall#extended_table
   #
   def index
+    __log_activity
     __debug_route
     prm       = paginator.initial_parameters
     @extended = prm.key?(:expand) ? true?(prm.delete(:expand)) : EXPAND_JSON
@@ -94,6 +95,7 @@ class SearchCallController < ApplicationController
   # @see SearchCall#find
   #
   def show
+    __log_activity
     __debug_route
     @item = SearchCall.find(params[:id])
     respond_to do |format|

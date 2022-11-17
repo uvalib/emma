@@ -77,6 +77,7 @@ class EditionController < ApplicationController
   # @see BookshareService::Request::Periodicals#get_periodical_editions
   #
   def index
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters
@@ -104,6 +105,7 @@ class EditionController < ApplicationController
   # @see BookshareService::Request::Periodicals#get_periodical_edition
   #
   def show
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     b_opt = { seriesId: bs_series, editionId: bs_edition }
@@ -129,6 +131,7 @@ class EditionController < ApplicationController
   # @see #new_edition_path            Route helper
   #
   def new
+    __log_activity
     __debug_route
   end
 
@@ -140,6 +143,7 @@ class EditionController < ApplicationController
   # @see #edition_path                Route helper
   #
   def create
+    __log_activity
     __debug_route
   end
 
@@ -151,6 +155,7 @@ class EditionController < ApplicationController
   # @see #edit_edition_path           Route helper
   #
   def edit
+    __log_activity
     __debug_route
   end
 
@@ -164,6 +169,7 @@ class EditionController < ApplicationController
   # @see #edition_path                Route helper
   #
   def update
+    __log_activity
     __debug_route
   end
 
@@ -175,6 +181,7 @@ class EditionController < ApplicationController
   # @see #edition_path                Route helper
   #
   def destroy
+    __log_activity
     __debug_route
   end
 
@@ -193,6 +200,7 @@ class EditionController < ApplicationController
   # @see BookshareService::Request::Periodicals#download_periodical_edition
   #
   def download
+    __log_activity
     __debug_route
     opt = {
       seriesId:  bs_series,

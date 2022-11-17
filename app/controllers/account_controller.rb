@@ -75,6 +75,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#get_accounts
   #
   def index
+    __log_activity
     __debug_route
     prm    = paginator.initial_parameters
     search = prm.delete(:like)
@@ -91,6 +92,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#get_account
   #
   def show
+    __log_activity
     __debug_route
     @item = get_account
   end
@@ -103,6 +105,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#new_account
   #
   def new
+    __log_activity
     __debug_route
     @item = new_account
   end
@@ -122,6 +125,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#create_account
   #
   def create
+    __log_activity
     __debug_route
     @item   = create_account(no_raise: true)
     success = @item.errors.blank?
@@ -150,6 +154,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#get_account
   #
   def edit
+    __log_activity
     __debug_route
     @item = nil
     unless show_menu?((ids = id_params))
@@ -170,6 +175,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#update_account
   #
   def update
+    __log_activity
     __debug_route
     __debug_request
     @item   = update_account(no_raise: true)
@@ -201,6 +207,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#find_accounts
   #
   def delete
+    __log_activity
     __debug_route
     @list = nil
     unless show_menu?((ids = id_params))
@@ -219,6 +226,7 @@ class AccountController < ApplicationController
   # @see AccountConcern#destroy_accounts
   #
   def destroy
+    __log_activity
     __debug_route
     @list = destroy_accounts
     respond_to do |format|

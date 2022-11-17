@@ -69,6 +69,7 @@ class TitleController < ApplicationController
   # @see BookshareService::Request::Titles#get_titles
   #
   def index
+    __log_activity(anonymous: true)
     __debug_route
     err = nil
     prm = request_parameters
@@ -121,6 +122,7 @@ class TitleController < ApplicationController
   # @see BookshareService::Request::Titles#get_title
   #
   def show
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     b_opt = { bookshareId: bs_id }
@@ -144,6 +146,7 @@ class TitleController < ApplicationController
   # @see #new_title_path              Route helper
   #
   def new
+    __log_activity
     __debug_route
   end
 
@@ -154,6 +157,7 @@ class TitleController < ApplicationController
   # @see #title_path                  Route helper
   #
   def create
+    __log_activity
     __debug_route
   end
 
@@ -164,6 +168,7 @@ class TitleController < ApplicationController
   # @see #edit_title_path             Route helper
   #
   def edit
+    __log_activity
     __debug_route
   end
 
@@ -175,6 +180,7 @@ class TitleController < ApplicationController
   # @see #title_path                  Route helper
   #
   def update
+    __log_activity
     __debug_route
   end
 
@@ -185,6 +191,7 @@ class TitleController < ApplicationController
   # @see #title_path                  Route helper
   #
   def destroy
+    __log_activity
     __debug_route
   end
 

@@ -85,6 +85,7 @@ module Emma
     FILTER_OUT = [
       /#{START}GoodJob::Execution Load/,
       /#{START}GoodJob::Lockable Unlock/,
+      /#{START}Processing by HealthController#check/,
     ].freeze
 
     # Indicate whether the given log entry should be skipped if log output is

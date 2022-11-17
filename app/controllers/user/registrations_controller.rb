@@ -41,6 +41,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @see #new_user_registration_path  Route helper
   #
   def new
+    __log_activity
     __debug_route
     if current_user
       message = 'You already have an EMMA account' # TODO: I18n
@@ -55,6 +56,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @see #create_user_registration_path   Route helper
   #
   def create
+    __log_activity
     __debug_route
     __debug_request
     super
@@ -70,6 +72,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @see #edit_user_registration_path   Route helper
   #
   def edit
+    __log_activity
     __debug_route
     id = (params[:selected] || params[:id]).to_s
     return redirect_to edit_select_user_path if show_menu?(id)
@@ -90,6 +93,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @see #user_registration_path      Route helper
   #
   def update
+    __log_activity
     __debug_route
     __debug_request
     update_resource(resource, account_update_params) or raise set_flash_alert
@@ -102,12 +106,14 @@ class User::RegistrationsController < Devise::RegistrationsController
   # == GET /users/resign
   #
   def delete
+    __log_activity
     __debug_route
   end
 
   # == DELETE /users
   #
   def destroy
+    __log_activity
     __debug_route
     __debug_request
     user = resource&.uid&.dup || 'unknown'
@@ -126,6 +132,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @see #cancel_user_registration_path   Route helper
   #
   def cancel
+    __log_activity
     __debug_route
     __debug_request
     super
@@ -144,6 +151,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @see #edit_select_user_path       Route helper
   #
   def edit_select
+    __log_activity
     __debug_route
   end
 

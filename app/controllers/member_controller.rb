@@ -74,6 +74,7 @@ class MemberController < ApplicationController
   # @see BookshareService::Request::Organization#get_my_organization_members
   #
   def index
+    __log_activity
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters
@@ -100,6 +101,7 @@ class MemberController < ApplicationController
   # @see UserConcern#get_account_details
   #
   def show
+    __log_activity
     __debug_route
     err = nil
     @item, @preferences, @history = get_account_details(id: @account_id)
@@ -122,6 +124,7 @@ class MemberController < ApplicationController
   # @see #new_member_path             Route helper
   #
   def new
+    __log_activity
     __debug_route
   end
 
@@ -132,6 +135,7 @@ class MemberController < ApplicationController
   # @see #member_path                 Route helper
   #
   def create
+    __log_activity
     __debug_route
   end
 
@@ -142,6 +146,7 @@ class MemberController < ApplicationController
   # @see #edit_member_path            Route helper
   #
   def edit
+    __log_activity
     __debug_route
   end
 
@@ -153,6 +158,7 @@ class MemberController < ApplicationController
   # @see #member_path                 Route helper
   #
   def update
+    __log_activity
     __debug_route
   end
 
@@ -163,6 +169,7 @@ class MemberController < ApplicationController
   # @see #member_path                 Route helper
   #
   def destroy
+    __log_activity
     __debug_route
   end
 

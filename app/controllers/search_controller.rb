@@ -85,6 +85,7 @@ class SearchController < ApplicationController
   # @see SearchConcern#index_search
   #
   def index
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     prm      = paginator.initial_parameters
@@ -127,6 +128,7 @@ class SearchController < ApplicationController
   #   Unified Search API endpoint which does not exist.
   #
   def show
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     @item = index_record(record_id: @record_id)
@@ -155,6 +157,7 @@ class SearchController < ApplicationController
   # @see #advanced_search_path        Route helper
   #
   def advanced
+    __log_activity(anonymous: true)
     __debug_route
   end
 
@@ -173,6 +176,7 @@ class SearchController < ApplicationController
   # @see SearchConcern#index_search
   #
   def direct
+    __log_activity(anonymous: true)
     __debug_route
     force_file_results
     prm     = paginator.initial_parameters

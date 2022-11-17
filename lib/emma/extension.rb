@@ -22,7 +22,7 @@ module Emma::Extension
       include Emma::TimeMethods
 
       EXT_LOG_SEPARATOR = ' | '
-      EXT_LOG_LEADER    = EXT_LOG_SEPARATOR.lstrip.freeze
+      EXT_LOG_LEADER    = LOG_TO_STDOUT ? '' : EXT_LOG_SEPARATOR.lstrip.freeze
 
       # =======================================================================
       # :section:

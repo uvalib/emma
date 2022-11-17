@@ -66,7 +66,6 @@ class HomeController < ApplicationController
   # dashboard for an authenticated session or the welcome screen otherwise.
   #
   def main
-    __debug_route
     # noinspection RubyMismatchedArgumentType
     if current_user
       redirect_to dashboard_path
@@ -82,6 +81,7 @@ class HomeController < ApplicationController
   # @see #welcome_path                Route helper
   #
   def welcome
+    __log_activity
     __debug_route
   end
 
@@ -93,6 +93,7 @@ class HomeController < ApplicationController
   # @see UserConcern#get_account_details
   #
   def dashboard
+    __log_activity
     __debug_route
     opt  = url_parameters
     fast = opt.key?(:fast) ? true?(opt[:fast]) : Rails.env.test?

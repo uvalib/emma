@@ -39,6 +39,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # @see #user_bookshare_omniauth_authorize_path  Route helper
   #
   def passthru
+    __log_activity
     __debug_route
     __debug_request
     super
@@ -53,6 +54,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # @see AuthConcern#set_auth_data
   #
   def bookshare
+    __log_activity
     __debug_route
     __debug_request
     self.resource = set_auth_data(request)
@@ -69,6 +71,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
   #
   def failure
+    __log_activity
     __debug { "failure endpoint: request_format          = #{request_format.inspect}"  } # TODO: remove - testing
     __debug { "failure endpoint: is_navigational_format? = #{is_navigational_format?}" } # TODO: remove - testing
     __debug { "failure endpoint: is_flashing_format?     = #{is_flashing_format?}"     } # TODO: remove - testing

@@ -75,6 +75,7 @@ class ArtifactController < ApplicationController
   # List all artifacts.
   #
   def index
+    __log_activity
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters
@@ -103,6 +104,7 @@ class ArtifactController < ApplicationController
   # @see BookshareService::Request::Titles#get_artifact_metadata
   #
   def show
+    __log_activity
     __debug_route
     err   = nil
     b_opt = { bookshareId: bs_id, format: bs_format }
@@ -128,6 +130,7 @@ class ArtifactController < ApplicationController
   # @see #new_artifact_path           Route helper
   #
   def new
+    __log_activity
     __debug_route
   end
 
@@ -139,6 +142,7 @@ class ArtifactController < ApplicationController
   # @see #create_artifact_path        Route helper
   #
   def create
+    __log_activity
     __debug_route
   end
 
@@ -150,6 +154,7 @@ class ArtifactController < ApplicationController
   # @see #edit_artifact_path          Route helper
   #
   def edit
+    __log_activity
     __debug_route
   end
 
@@ -163,6 +168,7 @@ class ArtifactController < ApplicationController
   # @see #update_artifact_path        Route helper
   #
   def update
+    __log_activity
     __debug_route
   end
 
@@ -172,6 +178,7 @@ class ArtifactController < ApplicationController
   # Remove an existing artifact entry.
   #
   def destroy
+    __log_activity
     __debug_route
   end
 
@@ -190,6 +197,7 @@ class ArtifactController < ApplicationController
   # @see BookshareService::Request::Titles#download_title
   #
   def download
+    __log_activity
     __debug_route
     b_opt = { bookshareId: bs_id, format: bs_format, forUser: bs_member }
     bs_download_response(:download_title, **b_opt)
@@ -205,6 +213,7 @@ class ArtifactController < ApplicationController
   # @see BookshareService::Request::Titles#get_retrieval
   #
   def retrieval
+    __log_activity
     __debug_route
     b_opt = { url: item_download_url, forUser: bs_member }
     bs_download_response(:get_retrieval, **b_opt)

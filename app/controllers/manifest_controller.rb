@@ -91,6 +91,7 @@ class ManifestController < ApplicationController
   # @see #manifest_index_path         Route helper
   #
   def index
+    __log_activity
     __debug_route
     prm    = paginator.initial_parameters
     redirect_to prm.merge!(action: :edit) if identifier.present?
@@ -112,6 +113,7 @@ class ManifestController < ApplicationController
   # @see #show_manifest_path          Route helper
   #
   def show
+    __log_activity
     __debug_route
     @item = get_manifest
     respond_to do |format|
@@ -128,6 +130,7 @@ class ManifestController < ApplicationController
   # @see #new_manifest_path           Route helper
   #
   def new
+    __log_activity
     __debug_route
     @item = new_manifest
   rescue => error
@@ -141,6 +144,7 @@ class ManifestController < ApplicationController
   # @see #create_manifest_path        Route helper
   #
   def create
+    __log_activity
     __debug_route
     @item = create_manifest
     if request_xhr?
@@ -162,6 +166,7 @@ class ManifestController < ApplicationController
   # @see #edit_select_manifest_path   Route helper
   #
   def edit
+    __log_activity
     __debug_route
     @item = (edit_manifest unless show_menu?)
   rescue => error
@@ -175,6 +180,7 @@ class ManifestController < ApplicationController
   # @see #update_manifest_path        Route helper
   #
   def update
+    __log_activity
     __debug_route
     __debug_request
     @item = update_manifest
@@ -196,6 +202,7 @@ class ManifestController < ApplicationController
   # @see #delete_select_manifest_path Route helper
   #
   def delete
+    __log_activity
     __debug_route
     @list = (delete_manifest[:list] unless show_menu?)
   rescue => error
@@ -210,6 +217,7 @@ class ManifestController < ApplicationController
   # noinspection RubyScope
   #++
   def destroy
+    __log_activity
     __debug_route
     back  = delete_select_manifest_path
     @list = destroy_manifest
@@ -234,6 +242,7 @@ class ManifestController < ApplicationController
   # @see file:javascripts/controllers/manifest.js  *updateDataRow()*
   #
   def save
+    __log_activity
     __debug_route
     @item = save_changes
     render_json save_response(columns: :row)
@@ -250,6 +259,7 @@ class ManifestController < ApplicationController
   # @see #cancel_manifest_path        Route helper
   #
   def cancel
+    __log_activity
     __debug_route
     @item = cancel_changes
     if request_xhr?

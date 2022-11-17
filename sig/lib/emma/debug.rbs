@@ -253,17 +253,6 @@ module Emma::Debug
     def __debug_banner: (String text, **untyped opt) -> nil
   end
 
-  # Within the block, output to $stderr is captured and returned as a string.
-  #
-  # @return [String]
-  #
-  # @yield Block to execute.
-  # @yieldreturn [void]
-  #
-  # @note Currently unused.
-  #
-  def capture_stderr: () { () -> void } -> String
-
   include FormatMethods
 
   include OutputMethods
@@ -279,4 +268,33 @@ module Emma::Debug
   # @param [Module] base
   #
   def self.included: (Module base) -> void
+
+  public
+
+  # Output a line marking a user action.
+  #
+  # @param [Array]             message    Additional log entry parts.
+  # @param [User, String, nil] user
+  # @param [String, nil]       addr
+  # @param [Boolean]           anonymous
+  # @param [Hash]              opt
+  #
+  # @option opt [String, Symbol] :controller
+  # @option opt [String, Symbol] :action
+  # @option opt [String]         :activity
+  #
+  # @return [nil]
+  #
+  def __log_activity: (*String message, ?user: User|String|nil, ?addr: String|nil, ?anonymous: bool, **untyped opt) -> nil
+
+  # Within the block, output to $stderr is captured and returned as a string.
+  #
+  # @return [String]
+  #
+  # @yield Block to execute.
+  # @yieldreturn [void]
+  #
+  # @note Currently unused.
+  #
+  #def capture_stderr: () { () -> void } -> String
 end

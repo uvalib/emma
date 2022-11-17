@@ -119,6 +119,7 @@ class EntryController < ApplicationController
   # @see EntryConcern#find_or_match_entries
   #
   def index
+    __log_activity
     __debug_route
     prm   = paginator.initial_parameters
     prm.except!(:group, :groups) # TODO: upload -> entry
@@ -146,6 +147,7 @@ class EntryController < ApplicationController
   # @see EntryConcern#get_entry
   #
   def show
+    __log_activity
     __debug_route
     @item = get_entry
     respond_to do |format|
@@ -190,6 +192,7 @@ class EntryController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js
   #
   def new
+    __log_activity
     __debug_route
     @item = new_entry
   rescue => error
@@ -208,6 +211,7 @@ class EntryController < ApplicationController
   # @see EntryController#new
   #
   def create
+    __log_activity
     __debug_route
     @item = create_entry
     post_response(:ok, @item, redirect: entry_index_path)
@@ -231,6 +235,7 @@ class EntryController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js
   #
   def edit
+    __log_activity
     __debug_route
     @item = (edit_entry unless show_menu?)
   rescue => error
@@ -247,6 +252,7 @@ class EntryController < ApplicationController
   # @see EntryController#edit
   #
   def update
+    __log_activity
     __debug_route
     __debug_request
     @item = update_entry
@@ -274,6 +280,7 @@ class EntryController < ApplicationController
   # @see EntryController#destroy
   #
   def delete
+    __log_activity
     __debug_route
     @list = (delete_entry[:list] unless show_menu?)
   rescue => error
@@ -291,6 +298,7 @@ class EntryController < ApplicationController
   # @see EntryController#delete
   #
   def destroy
+    __log_activity
     __debug_route
     back  = delete_select_entry_path
     @list = destroy_entry
@@ -313,6 +321,7 @@ class EntryController < ApplicationController
   # @see #bulk_entry_index_path       Route helper
   #
   def bulk_index
+    __log_activity
     __debug_route
     # TODO: bulk_index ???
   rescue => error
@@ -329,6 +338,7 @@ class EntryController < ApplicationController
   # @see EntryController#bulk_create
   #
   def bulk_new
+    __log_activity
     __debug_route
     bulk_new_entries
   rescue => error
@@ -345,6 +355,7 @@ class EntryController < ApplicationController
   # @see EntryController#bulk_new
   #
   def bulk_create
+    __log_activity
     __debug_route
     __debug_request
     @list = bulk_create_entries
@@ -363,6 +374,7 @@ class EntryController < ApplicationController
   # @see EntryController#bulk_update
   #
   def bulk_edit
+    __log_activity
     __debug_route
     @list = bulk_edit_entries
   rescue => error
@@ -381,6 +393,7 @@ class EntryController < ApplicationController
   # @see EntryController#bulk_edit
   #
   def bulk_update
+    __log_activity
     __debug_route
     __debug_request
     @list = bulk_update_entries
@@ -398,6 +411,7 @@ class EntryController < ApplicationController
   # @see EntryController#bulk_destroy
   #
   def bulk_delete
+    __log_activity
     __debug_route
     @list = bulk_delete_entries
   rescue => error
@@ -411,6 +425,7 @@ class EntryController < ApplicationController
   # @see EntryController#bulk_delete
   #
   def bulk_destroy
+    __log_activity
     __debug_route
     __debug_request
     @list = bulk_destroy_entries
@@ -434,6 +449,7 @@ class EntryController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def renew
+    __log_activity
     __debug_route
     @item = renew_entry
     respond_to do |format|
@@ -454,6 +470,7 @@ class EntryController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def reedit
+    __log_activity
     __debug_route
     @item = reedit_entry
     respond_to do |format|
@@ -481,6 +498,7 @@ class EntryController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js  *cancelForm()*
   #
   def cancel
+    __log_activity
     __debug_route
     @item = nil # cancel_entry # TODO: cancel_entry for Entry/Phase/Action ?
     if request.get?
@@ -507,6 +525,7 @@ class EntryController < ApplicationController
   # @see EntryConcern#check_entry
   #
   def check
+    __log_activity
     __debug_route
     @list = check_entry
     data  = { messages: @list }
@@ -534,6 +553,7 @@ class EntryController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js
   #
   def upload
+    __log_activity
     __debug_route
     __debug_request
     stat, hdrs, body = upload_file
@@ -561,6 +581,7 @@ class EntryController < ApplicationController
   # @see Record::Uploadable#download_url
   #
   def download
+    __log_activity
     __debug_route
     @item = get_entry
     link  = @item.download_url
@@ -585,6 +606,7 @@ class EntryController < ApplicationController
   # noinspection RubyMismatchedArgumentType
   #++
   def retrieval
+    __log_activity
     __debug_route
     if ia_link?(item_download_url)
       ia_download_response(item_download_url)
@@ -610,6 +632,7 @@ class EntryController < ApplicationController
   # @see AwsConcern#get_object_table
   #
   def admin
+    __log_activity
     __debug_route
     @s3_object_table = get_s3_object_table(**url_parameters)
   rescue => error
@@ -630,6 +653,7 @@ class EntryController < ApplicationController
   # @see EntryConcern#reindex_record
   #
   def bulk_reindex
+    __log_activity
     __debug_route
     prm = request_parameters.slice(:size).merge!(meth: __method__)
     @list, failed = reindex_submissions(*identifier, **prm)
@@ -649,6 +673,7 @@ class EntryController < ApplicationController
   # List Phase records # TODO: probably temporary
   #
   def phases
+    __log_activity
     __debug_route
     prm    = paginator.initial_parameters
     @list  = paginator.finalize(Phase.all.to_a, **prm)
@@ -659,6 +684,7 @@ class EntryController < ApplicationController
   # List Action records # TODO: probably temporary
   #
   def actions
+    __log_activity
     __debug_route
     prm    = paginator.initial_parameters
     @list  = paginator.finalize(Action.all.to_a, **prm)

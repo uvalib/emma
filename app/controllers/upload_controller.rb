@@ -120,6 +120,7 @@ class UploadController < ApplicationController
   # @see UploadConcern#find_or_match_records
   #
   def index
+    __log_activity
     __debug_route
     prm    = paginator.initial_parameters
     all    = prm[:group].nil? || (prm[:group].to_sym == :all)
@@ -146,6 +147,7 @@ class UploadController < ApplicationController
   # @see UploadConcern#get_record
   #
   def show
+    __log_activity(anonymous: true)
     __debug_route
     @item = get_record
     respond_to do |format|
@@ -190,6 +192,7 @@ class UploadController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js
   #
   def new
+    __log_activity
     __debug_route
     @item = wf_single(rec: (db_id || :unset), event: :create)
   rescue => error
@@ -208,6 +211,7 @@ class UploadController < ApplicationController
   # @see UploadWorkflow::Single::Create::States#on_submitting_entry
   #
   def create
+    __log_activity
     __debug_route
     @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
@@ -232,6 +236,7 @@ class UploadController < ApplicationController
   # @see UploadWorkflow::Single::Edit::States#on_editing_entry
   #
   def edit
+    __log_activity
     __debug_route
     @item = (wf_single(event: :edit) unless show_menu?)
   rescue => error
@@ -248,6 +253,7 @@ class UploadController < ApplicationController
   # @see UploadWorkflow::Single::Edit::States#on_modifying_entry
   #
   def update
+    __log_activity
     __debug_route
     __debug_request
     @item = wf_single(event: :submit)
@@ -277,6 +283,7 @@ class UploadController < ApplicationController
   # @see UploadController#destroy
   #
   def delete
+    __log_activity
     __debug_route
     @list = []
     unless show_menu?
@@ -300,6 +307,7 @@ class UploadController < ApplicationController
   # noinspection RubyScope
   #++
   def destroy
+    __log_activity
     __debug_route
     back  = delete_select_upload_path
     rec   = :unset
@@ -327,6 +335,7 @@ class UploadController < ApplicationController
   # @see #bulk_upload_index_path      Route helper
   #
   def bulk_index
+    __log_activity
     __debug_route
   rescue => error
     failure_status(error, status: :bad_request)
@@ -342,6 +351,7 @@ class UploadController < ApplicationController
   # @see UploadController#bulk_create
   #
   def bulk_new
+    __log_activity
     __debug_route
     wf_bulk(rec: :unset, data: :unset, event: :create)
   rescue => error
@@ -358,6 +368,7 @@ class UploadController < ApplicationController
   # @see UploadController#bulk_new
   #
   def bulk_create
+    __log_activity
     __debug_route
     __debug_request
     @list = wf_bulk(start_state: :creating, event: :submit, variant: :create)
@@ -379,6 +390,7 @@ class UploadController < ApplicationController
   # @see UploadController#bulk_update
   #
   def bulk_edit
+    __log_activity
     __debug_route
     @list = wf_bulk(rec: :unset, data: :unset, event: :edit)
   rescue => error
@@ -397,6 +409,7 @@ class UploadController < ApplicationController
   # @see UploadController#bulk_edit
   #
   def bulk_update
+    __log_activity
     __debug_route
     __debug_request
     @list = wf_bulk(start_state: :editing, event: :submit, variant: :edit)
@@ -417,6 +430,7 @@ class UploadController < ApplicationController
   # @see UploadController#bulk_destroy
   #
   def bulk_delete
+    __log_activity
     __debug_route
     @list = wf_bulk(event: :remove)
   rescue => error
@@ -430,6 +444,7 @@ class UploadController < ApplicationController
   # @see UploadController#bulk_delete
   #
   def bulk_destroy
+    __log_activity
     __debug_route
     __debug_request
     @list = wf_bulk(start_state: :removing, event: :submit, variant: :remove)
@@ -456,6 +471,7 @@ class UploadController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def renew
+    __log_activity
     __debug_route
     @item = wf_single(rec: :unset, event: :create)
     respond_to do |format|
@@ -475,6 +491,7 @@ class UploadController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def reedit
+    __log_activity
     __debug_route
     @item = wf_single(event: :edit)
     respond_to do |format|
@@ -503,6 +520,7 @@ class UploadController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js  *cancelForm()*
   #
   def cancel
+    __log_activity
     __debug_route
     @item = wf_single(event: :cancel)
     if request.get?
@@ -529,6 +547,7 @@ class UploadController < ApplicationController
   # @see UploadConcern#wf_single_check
   #
   def check
+    __log_activity
     __debug_route
     @list = wf_single_check
     data  = { messages: @list }
@@ -558,6 +577,7 @@ class UploadController < ApplicationController
   # @see file:app/assets/javascripts/feature/model-form.js
   #
   def upload
+    __log_activity
     __debug_route
     __debug_request
     rec = db_id || identifier
@@ -587,6 +607,7 @@ class UploadController < ApplicationController
   # @see Upload#download_url
   #
   def download
+    __log_activity
     __debug_route
     @item = get_record
     link  = @item.download_url
@@ -611,6 +632,7 @@ class UploadController < ApplicationController
   # noinspection RubyMismatchedArgumentType
   #++
   def retrieval
+    __log_activity
     __debug_route
     if ia_link?(item_download_url)
       ia_download_response(item_download_url)
@@ -636,6 +658,7 @@ class UploadController < ApplicationController
   # @see AwsConcern#get_object_table
   #
   def admin
+    __log_activity
     __debug_route
     @s3_object_table = get_s3_object_table(**url_parameters)
   rescue => error
@@ -656,6 +679,7 @@ class UploadController < ApplicationController
   # @see ApiConcern#api_data_migration
   #
   def api_migrate
+    __log_activity
     __debug_route
     @list = api_data_migration(**request_parameters)
     respond_to do |format|
@@ -675,6 +699,7 @@ class UploadController < ApplicationController
   # @see UploadConcern#reindex_record
   #
   def bulk_reindex
+    __log_activity
     __debug_route
     prm = request_parameters.slice(:size).merge!(meth: __method__)
     @list, failed = reindex_submissions(*identifier, **prm)

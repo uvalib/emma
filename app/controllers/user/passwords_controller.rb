@@ -23,6 +23,7 @@ class User::PasswordsController < Devise::PasswordsController
   # == GET /users/password/new
   #
   def new
+    __log_activity
     __debug_route
     super
   end
@@ -30,6 +31,7 @@ class User::PasswordsController < Devise::PasswordsController
   # == POST /users/password
   #
   def create
+    __log_activity
     __debug_route
     __debug_request
     super
@@ -38,6 +40,7 @@ class User::PasswordsController < Devise::PasswordsController
   # == GET /users/password/edit[?reset_password_token=TOKEN]
   #
   def edit
+    __log_activity
     __debug_route
     super
   end
@@ -45,6 +48,7 @@ class User::PasswordsController < Devise::PasswordsController
   # == PUT /users/password
   #
   def update
+    __log_activity
     __debug_route
     __debug_request
     super

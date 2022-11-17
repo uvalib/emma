@@ -91,9 +91,9 @@ module Emma::Debug
     # @return [String]
     #
     def __debug_route_label(controller: nil, action: nil, **)
-      action     ||= calling_method
-      controller ||= self.class.name
-      controller ||= (params[:controller] if respond_to?(:params))
+      prm = respond_to?(:params) ? params : {}
+      action     ||= prm[:action]     || calling_method
+      controller ||= prm[:controller] || self.class.name
       controller =
         controller.to_s.underscore.split('_').tap { |parts|
           # noinspection RubyNilAnalysis
@@ -545,30 +545,6 @@ module Emma::Debug
   # :section:
   # ===========================================================================
 
-  public
-
-  # Within the block, output to $stderr is captured and returned as a string.
-  #
-  # @return [String]
-  #
-  # @yield Block to execute.
-  # @yieldreturn [void]
-  #
-  # @note Currently unused.
-  #
-  def capture_stderr
-    saved, $stderr = $stderr, StringIO.new
-    yield
-    $stderr.string
-  ensure
-    # noinspection RubyMismatchedReturnType
-    $stderr = saved
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
   if CONSOLE_DEBUGGING
 
     include FormatMethods
@@ -596,6 +572,57 @@ module Emma::Debug
     end
 
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Output a line marking a user action.
+  #
+  # @param [Array]             message    Additional log entry parts.
+  # @param [User, String, nil] user
+  # @param [String, nil]       addr
+  # @param [Boolean]           anonymous
+  # @param [Hash]              opt
+  #
+  # @option opt [String, Symbol] :controller
+  # @option opt [String, Symbol] :action
+  # @option opt [String]         :activity
+  #
+  # @return [nil]
+  #
+  #--
+  # noinspection RailsParamDefResolve
+  #++
+  def __log_activity(*message, user: nil, addr: nil, anonymous: false, **opt)
+    user ||= try(:current_user) || ('anonymous' if anonymous) or return
+    addr ||= try(:request)&.try(:ip) || '-'
+    action = opt[:activity] || __debug_route_label(**opt)
+    entry  = [user, addr, action, *message].join(' | ')
+    Log.info("*** ACTIVITY | #{entry}")
+  end
+
+=begin
+  # Within the block, output to $stderr is captured and returned as a string.
+  #
+  # @return [String]
+  #
+  # @yield Block to execute.
+  # @yieldreturn [void]
+  #
+  # @note Currently unused.
+  #
+  def capture_stderr
+    saved, $stderr = $stderr, StringIO.new
+    yield
+    $stderr.string
+  ensure
+    # noinspection RubyMismatchedReturnType
+    $stderr = saved
+  end
+=end
 
 end
 

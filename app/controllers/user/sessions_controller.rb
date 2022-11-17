@@ -52,6 +52,7 @@ class User::SessionsController < Devise::SessionsController
   # @see #new_user_session_path       Route helper
   #
   def new
+    __log_activity
     __debug_route
     opt  = request_parameters
     mode = opt.delete(:mode)&.to_sym
@@ -74,6 +75,7 @@ class User::SessionsController < Devise::SessionsController
     __debug_request
     update_auth_data
     self.resource = warden.authenticate!(auth_options)
+    __log_activity("LOGIN #{resource}")
     remember_dev(resource)
     set_flash_notice
     sign_in_and_redirect(resource)
@@ -93,6 +95,7 @@ class User::SessionsController < Devise::SessionsController
   # @see AuthConcern#delete_auth_data
   #
   def destroy
+    __log_activity("LOGOUT #{current_user}")
     __debug_route
     __debug_request
     user = current_user&.uid&.dup
@@ -117,6 +120,7 @@ class User::SessionsController < Devise::SessionsController
   # @see #sign_in_local_path          Route helper
   #
   def sign_in_local
+    __log_activity
     __debug_route
   end
 
@@ -138,6 +142,7 @@ class User::SessionsController < Devise::SessionsController
     __debug_route
     __debug_request
     local_sign_in
+    __log_activity("LOGIN #{resource}")
     check_user_validity
     set_flash_notice(action: :create)
     auth_success_redirect

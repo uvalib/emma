@@ -91,6 +91,7 @@ class ManifestItemController < ApplicationController
   # @see ManifestItemConcern#find_or_match_manifest_items
   #
   def index
+    __log_activity
     __debug_route
     prm    = paginator.initial_parameters
     prm.except!(:group, :groups) # TODO: groups
@@ -118,6 +119,7 @@ class ManifestItemController < ApplicationController
   # @see ManifestItemConcern#get_manifest_item
   #
   def show
+    __log_activity
     __debug_route
     @item = get_manifest_item
     respond_to do |format|
@@ -287,6 +289,7 @@ class ManifestItemController < ApplicationController
   # Invoked from 'Uppy.XHRUpload'.
   #
   def upload
+    __log_activity
     __debug_route
     __debug_request
     stat, hdrs, body = upload_file(**manifest_item_params)

@@ -70,6 +70,7 @@ class ReadingListController < ApplicationController
   # @see BookshareService::Request::ReadingLists#get_reading_lists_list
   #
   def index
+    __log_activity
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters
@@ -98,6 +99,7 @@ class ReadingListController < ApplicationController
   # @see BookshareService::Request::ReadingLists#get_reading_list_titles
   #
   def show
+    __log_activity
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters
@@ -125,6 +127,7 @@ class ReadingListController < ApplicationController
   # @see #new_reading_list_path       Route helper
   #
   def new
+    __log_activity
     __debug_route
     # TODO: get fields :name, :description, :access
   end
@@ -136,6 +139,7 @@ class ReadingListController < ApplicationController
   # @see #reading_list_path           Route helper
   #
   def create
+    __log_activity
     __debug_route
     prm = request_parameters.slice(:name, :description, :access)
     bs_api.create_my_reading_list(**prm)
@@ -148,6 +152,7 @@ class ReadingListController < ApplicationController
   # @see #edit_reading_list_path      Route helper
   #
   def edit
+    __log_activity
     __debug_route
     # TODO: modify fields :name, :description, :access, :titles
   end
@@ -160,6 +165,7 @@ class ReadingListController < ApplicationController
   # @see #reading_list_path           Route helper
   #
   def update
+    __log_activity
     __debug_route
     prm   = request_parameters
     b_opt = { readingListId: bs_list }
@@ -180,6 +186,7 @@ class ReadingListController < ApplicationController
   # @see #reading_list_path           Route helper
   #
   def destroy
+    __log_activity
     __debug_route
     # TODO: no API method; show Bookshare page
   end

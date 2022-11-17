@@ -45,6 +45,7 @@ class AdminController < ApplicationController
   # @see #admin_index_path            Route helper
   #
   def index
+    __log_activity
     __debug_route
   end
 
@@ -57,6 +58,7 @@ class AdminController < ApplicationController
   # @see #update_admin_path           Route helper
   #
   def update
+    __log_activity
     __debug_route
     prm   = url_parameters
     flags = prm.delete(:flags)
@@ -71,6 +73,7 @@ class AdminController < ApplicationController
   PAGES = ADMIN_PAGES
   PAGES.each do |page|
     define_method(page) do
+      __log_activity
       __debug_route
     end
   end

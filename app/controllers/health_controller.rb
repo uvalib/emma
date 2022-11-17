@@ -97,6 +97,7 @@ class HealthController < ApplicationController
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #
   def set_run_state
+    __log_activity
     __debug_route
     update_run_state
     redirect_to action: :run_state

@@ -56,6 +56,8 @@ class ToolController < ApplicationController
   # @see #tool_index_path             Route helper
   #
   def index
+    __log_activity(anonymous: true)
+    __debug_route
   end
 
   # ===========================================================================
@@ -71,6 +73,8 @@ class ToolController < ApplicationController
   # @see #md_trial_path               Route helper
   #
   def md
+    __log_activity(anonymous: true)
+    __debug_route
   end
 
   # == GET  /tool/md_proxy
@@ -81,6 +85,9 @@ class ToolController < ApplicationController
   # @see #md_proxy_path               Route helper
   #
   def md_proxy
+    __log_activity(anonymous: true)
+    __debug_route
+    __debug_request unless request.get?
     meth     = request.request_method
     meth     = ActionDispatch::Request::HTTP_METHOD_LOOKUP[meth]
     prm      = url_parameters
@@ -102,7 +109,8 @@ class ToolController < ApplicationController
   # Lookup bibliographic information.
   #
   def lookup
-    Log.info(">>> /tool/lookup thread #{Thread.current.name}")
+    __log_activity(anonymous: true)
+    __debug_route
   end
 
   # == GET /tool/lookup_result/:job_id[?column=(output|diagnostic|error)]

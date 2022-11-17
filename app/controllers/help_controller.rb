@@ -66,6 +66,7 @@ class HelpController < ApplicationController
     err = nil
     # noinspection RubyMismatchedArgumentType
     return redirect_to help_path(id: @topic) if @topic.present?
+    __log_activity
     __debug_route
     @list = help_topics
     respond_to do |format|
@@ -87,6 +88,7 @@ class HelpController < ApplicationController
   # @see #help_path                   Route helper
   #
   def show
+    __log_activity
     __debug_route
     err = ('No topic specified' if @topic.nil?)
     respond_to do |format|

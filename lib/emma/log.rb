@@ -63,12 +63,15 @@ module Emma::Log
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
+  # If not logging to STDOUT then the message is echoed on $stderr so that it
+  # is also visible on console output without having to switch to log output.
+  #
   def self.add(severity, *args)
     return if (level = log_level(severity)) < logger.level
     args += Array.wrap(yield) if block_given?
     args.compact!
-    message = []
-    message << args.shift if args.first.is_a?(Symbol)
+    parts = []
+    parts << args.shift if args.first.is_a?(Symbol)
     error = (args.shift if args.first.is_a?(Exception))
     if error.is_a?(YAML::SyntaxError)
       note = (" - #{args.shift}" if args.present?)
@@ -78,9 +81,9 @@ module Emma::Log
       note &&= ' - %s' % note.join('; ')
       args << "#{error.message} [#{error.class}]#{note}"
     end
-    message += args if args.present?
-    logger.add(level, message.join(': '))
-    nil
+    message = [*parts, *args].join(': ')
+    logger.add(level, message)
+    __output(message) unless LOG_TO_STDOUT
   end
 
   # Add a DEBUG-level log message.

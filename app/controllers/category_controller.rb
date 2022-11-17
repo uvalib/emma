@@ -71,6 +71,7 @@ class CategoryController < ApplicationController
   # @see BookshareService::Request::Titles#get_categories
   #
   def index
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters

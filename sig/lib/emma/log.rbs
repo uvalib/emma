@@ -31,6 +31,9 @@ module Emma::Log
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
+  # If not logging to STDOUT then the message is echoed on $stderr so that it
+  # is also visible on console output without having to switch to log output.
+  #
   def self.add: ((Integer|Symbol) severity, *untyped args) ?{ () -> untyped } -> nil
 
   # Add a DEBUG-level log message.

@@ -69,6 +69,7 @@ class PeriodicalController < ApplicationController
   # @see BookshareService::Request::Periodicals#get_periodicals
   #
   def index
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters
@@ -96,6 +97,7 @@ class PeriodicalController < ApplicationController
   # @see BookshareService::Request::Periodicals#get_periodical_editions
   #
   def show
+    __log_activity(anonymous: true)
     __debug_route
     err   = nil
     prm   = paginator.initial_parameters
@@ -123,6 +125,7 @@ class PeriodicalController < ApplicationController
   # @see #new_periodical_path         Route helper
   #
   def new
+    __log_activity
     __debug_route
   end
 
@@ -133,6 +136,7 @@ class PeriodicalController < ApplicationController
   # @see #periodical_path             Route helper
   #
   def create
+    __log_activity
     __debug_route
   end
 
@@ -143,6 +147,7 @@ class PeriodicalController < ApplicationController
   # @see #edit_periodical_path        Route helper
   #
   def edit
+    __log_activity
     __debug_route
   end
 
@@ -164,6 +169,7 @@ class PeriodicalController < ApplicationController
   # @see #periodical_path             Route helper
   #
   def destroy
+    __log_activity
     __debug_route
   end
 

@@ -61,6 +61,7 @@ class BsApiController < ApplicationController
   # The main API test page.
   #
   def index
+    __log_activity(anonymous: true)
     __debug_route
     @api_results = ApiTesting.run_trials(user: current_user)
     respond_to do |format|
@@ -82,6 +83,7 @@ class BsApiController < ApplicationController
   # NOTE: Intended to translate URLs within data directly into actionable links
   #
   def v2
+    __log_activity(anonymous: true)
     __debug_route
     prm  = url_parameters
     path = prm.delete(:api_path).to_s
@@ -112,6 +114,7 @@ class BsApiController < ApplicationController
   # without having to contend with CSRF.
   #
   def image
+    #__log_activity
     # __debug_route
     response   = Faraday.get(params[:url]) # TODO: caching
     image_data = Base64.encode64(response.body)
