@@ -168,7 +168,12 @@ class ManifestController < ApplicationController
   def edit
     __log_activity
     __debug_route
-    @item = (edit_manifest unless show_menu?)
+    unless show_menu?
+      @item  = edit_manifest
+      prm    = paginator.initial_parameters
+      result = find_or_match_manifest_items(@item, **prm)
+      paginator.finalize(result, **prm)
+    end
   rescue => error
     failure_status(error)
   end

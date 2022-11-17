@@ -96,6 +96,7 @@ module LayoutHelper::PageControls
     model   = model_class(controller)
     user    = (@user || current_user)
     subject = (user if model == User)
+    log     = (->(m) { Log.debug("#{__method__}: #{m}") } if Log.debug?)
     actions.map { |entry|
       next if entry.blank?
       if entry.is_a?(Array)
@@ -106,9 +107,11 @@ module LayoutHelper::PageControls
         action = entry.to_sym
         subj   = subject || model
       end
-      next unless action.present? && can?(action, subj)
+      next log&.('no action')                        unless action.present?
+      next log&.("#{action} not permitted for user") unless can?(action, subj)
       role = config_lookup('role', controller: ctrlr, action: action)
-      next unless role.blank? || has_role?(role, user)
+      ok   = role.blank? || has_role?(role, user)
+      next log&.("#{action} requires #{role} role")  unless ok
       [ctrlr, action]
     }.compact
   end

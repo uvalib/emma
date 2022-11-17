@@ -81,8 +81,7 @@ module ManifestItemConcern
   def manifest_item_get_params
     model_options.get_model_params.tap do |prm|
       prm[:user] = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
-      id, sel = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-      @manifest_item_id ||= [sel,id].compact.find { |v| digits_only?(v) }&.to_i
+      @manifest_item_id ||= extract_identifier(prm)
       @manifest_id      ||= prm[:manifest_id] || prm[:manifest]
     end
   end
@@ -99,8 +98,7 @@ module ManifestItemConcern
         prm[:id]            = v[:id]
         prm[:manifest_id] ||= v[:manifest_id] || v[:manifest]
       end
-      id, sel = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-      @manifest_item_id ||= [sel,id].compact.find { |v| digits_only?(v) }&.to_i
+      @manifest_item_id ||= extract_identifier(prm)
       @manifest_id      ||= prm[:manifest_id] || prm[:manifest]
     end
   end
@@ -120,6 +118,23 @@ module ManifestItemConcern
     opt[:data] = request             if opt.blank?
     opt[:type] = prm.delete(:type)&.to_sym
     prm.merge!(data: fetch_data(**opt))
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # extract_identifier
+  #
+  # @param [Hash] prm
+  #
+  # @return [Integer, nil]
+  #
+  def extract_identifier(prm)
+    id, sel = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
+    [sel, id].compact.find { |v| digits_only?(v) }&.to_i
   end
 
   # ===========================================================================

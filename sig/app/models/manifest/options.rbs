@@ -10,5 +10,11 @@ class Manifest::Options < Options
   #
   DATA_PARAMS: symArray
 
+  # URL parameters associated with item/entry identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
   def initialize: (?untyped? prm) -> void
 end

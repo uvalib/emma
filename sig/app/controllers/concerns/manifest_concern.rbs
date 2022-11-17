@@ -71,6 +71,14 @@ module ManifestConcern
   #
   def manifest_request_params: ((Manifest|untyped|nil) manifest, ?(symHash|nil) prm) -> ([Manifest, symHash] | [untyped, symHash])
 
+  # extract_identifier
+  #
+  # @param [Hash] prm
+  #
+  # @return [String, nil]
+  #
+  def extract_identifier: (symHash prm) -> (String | nil)
+
   # Parameters used by Manifest#search_records.
   #
   # @type [Array<Symbol>]
@@ -124,7 +132,7 @@ module ManifestConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  def find_or_match_rows: (?(Manifest|nil) item, **untyped opt) -> symHash
+  def find_or_match_manifest_items: (?(Manifest|nil) item, **untyped opt) -> symHash
 
   # Start a new (un-persisted) manifest.
   #

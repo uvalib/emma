@@ -67,8 +67,7 @@ module ManifestConcern
   def get_manifest_params
     model_options.get_model_params.tap do |prm|
       prm[:user] = @user if @user && !prm[:user] && !prm[:user_id]
-      id, sel = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-      @identifier ||= sel || id
+      @identifier ||= extract_identifier(prm)
     end
   end
 
@@ -84,8 +83,7 @@ module ManifestConcern
         next unless (id = positive(v[:id]))
         prm[:id] = id
       end
-      id, sel = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-      @identifier ||= sel || id
+      @identifier ||= extract_identifier(prm)
     end
   end
 
@@ -101,6 +99,23 @@ module ManifestConcern
     manifest, prm = [nil, manifest] if manifest.is_a?(Hash)
     prm ||= manifest_params
     return manifest, prm
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # extract_identifier
+  #
+  # @param [Hash] prm
+  #
+  # @return [String, nil]
+  #
+  def extract_identifier(prm)
+    manifest_id, id, sel = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
+    sel || manifest_id || id
   end
 
   # ===========================================================================
@@ -237,7 +252,9 @@ module ManifestConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  def find_or_match_rows(item = nil, **opt)
+  def find_or_match_manifest_items(item = nil, **opt)
+    # An :id is only valid in this context if it's a ManifestItem ID.
+    opt[:id] &&= positive(opt[:id]) or opt.delete(:id)
     opt[:limit]       ||= paginator.page_size
     opt[:page]        ||= paginator.page_number
     opt[:manifest_id] ||= item&.id || identifier
@@ -476,8 +493,7 @@ module ManifestConcern
   # @return [Manifest::Paginator]
   #
   def pagination_setup(paginator: Manifest::Paginator, **opt)
-    opt[:id]          ||= nil
-    opt[:manifest_id] ||= identifier
+    opt[:id] ||= identifier
     # noinspection RubyMismatchedReturnType
     super
   end

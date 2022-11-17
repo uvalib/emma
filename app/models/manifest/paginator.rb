@@ -14,6 +14,7 @@ class Manifest::Paginator < Paginator
   public
 
   def initialize(ctrlr = nil, **opt)
+    opt[:action] &&= opt[:action].to_s.delete_suffix('_select').to_sym
     super
     @initial_parameters.except!(*FORM_PARAMS)
   end

@@ -18,6 +18,12 @@ class Manifest::Options < Options
   # @private
   MODEL_TYPE = :manifest
 
+  # URL parameters associated with item/entry identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS = [:manifest_id, *Options::IDENTIFIER_PARAMS].uniq.freeze
+
   # URL parameters associated with POST data.
   #
   # @type [Array<Symbol>]

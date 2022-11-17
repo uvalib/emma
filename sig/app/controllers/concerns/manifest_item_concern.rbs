@@ -80,6 +80,14 @@ module ManifestItemConcern
   #
   def manifest_item_bulk_post_params: () -> symHash
 
+  # extract_identifier
+  #
+  # @param [Hash] prm
+  #
+  # @return [Integer, nil]
+  #
+  def extract_identifier: (symHash prm) -> (Integer | nil)
+
   # Interpret data as JSON.
   #
   # @param [String, ActionDispatch::Request, nil] data
