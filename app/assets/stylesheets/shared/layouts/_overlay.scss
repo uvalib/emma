@@ -1,6 +1,6 @@
-// app/assets/stylesheets/shared/feature/_overlay.scss
+// app/assets/stylesheets/shared/layouts/_overlay.scss
 //
-// Shared definitions supporting `feature/_overlay.scss`.
+// Shared definitions supporting `layouts/overlay/*`.
 
 @use 'shared/variables' as v;
 @use 'shared/functions' as f;
@@ -102,7 +102,7 @@ $default-height: 100vh;     // Enough to cover the viewport.
     justify-content: center;
 
     &.visible {
-        height: 1000%;
+        height: 100vh;
     }
 
     .content {

@@ -1,20 +1,17 @@
 // app/assets/javascripts/feature/download.js
 
 
-import { Emma }                     from '../shared/assets'
-import { cssClass, selector }       from '../shared/css'
-import { isMissing, isPresent }     from '../shared/definitions'
-import { create, scrollIntoView }   from '../shared/html'
-import { HTTP }                     from '../shared/http'
-import { compact, deepFreeze }      from '../shared/objects'
-import { randomizeName }            from '../shared/random'
-import { SearchInProgress }         from '../shared/search-in-progress'
-import { SECOND, secondsSince }     from '../shared/time'
-import { urlParameters }            from '../shared/url'
-import {
-    handleClickAndKeypress,
-    handleEvent
-} from '../shared/events'
+import { SearchInProgress }                    from './search-in-progress'
+import { Emma }                                from '../shared/assets'
+import { cssClass, selector }                  from '../shared/css'
+import { isMissing, isPresent }                from '../shared/definitions'
+import { handleClickAndKeypress, handleEvent } from '../shared/events'
+import { create, scrollIntoView }              from '../shared/html'
+import { HTTP }                                from '../shared/http'
+import { compact, deepFreeze }                 from '../shared/objects'
+import { randomizeName }                       from '../shared/random'
+import { SECOND, secondsSince }                from '../shared/time'
+import { urlParameters }                       from '../shared/url'
 
 
 $(document).on('turbolinks:load', function() {

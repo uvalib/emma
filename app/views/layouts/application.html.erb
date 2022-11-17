@@ -27,6 +27,7 @@
   </head>
 
   <body class="<%= page_classes -%>">
+    <%= render 'layouts/overlays' %>
     <%= render 'layouts/session' %>
     <%= render 'layouts/header' %>
     <%= render 'layouts/flash' %>
@@ -34,7 +35,6 @@
       <%= yield %>
     </main>
     <%= render 'layouts/footer' %>
-    <%= render 'layouts/overlays' %>
     <%= page_modals %>
     <%= scroll_to_top_button %>
     <%- skip_nav_prepend('Main Content' => main_id) -%>

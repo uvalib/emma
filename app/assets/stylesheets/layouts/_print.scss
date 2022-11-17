@@ -27,6 +27,7 @@
         page-break-after:  avoid !important;
     }
 
+    .overlays               { display: none !important; }
     .skip-nav               { display: none !important; }
     .layout-header          { display: none !important; }
     .search-in-progress     { display: none !important; }

@@ -1,0 +1,51 @@
+// app/assets/stylesheets/layouts/_overlay.scss
+
+@use '../shared/variables'       as *;
+@use '../shared/layouts/overlay' as overlay;
+
+//=============================================================================
+// Overlay container
+//=============================================================================
+
+.overlays {
+
+    position:   sticky;
+    top:        0;
+    left:       0;
+    height:     0;
+    width:      100%;
+    margin:     0;
+    padding:    0;
+    overflow:   clip;
+    background: transparent;
+    z-index:    $z-overlay;
+
+    //// NOTE: The preferred approach when there is full support for :has().
+    //&:has(.visible) {
+    //    overflow-y: visible;
+    //}
+
+    &.visible {
+        overflow-y: visible;
+    }
+
+    //=========================================================================
+    // In-progress overlay
+    //=========================================================================
+
+    // An indicator that is presented during a time-consuming search.
+    .search-in-progress {
+
+        @include overlay.image('loading-balls.gif', $img-height: 1rem);
+
+        .content {
+            filter: saturate(1.5) drop-shadow(2px 2px 2px #444);
+        }
+
+        // When the search is done, hide the overlay immediately rather than
+        // easing back to transparency.
+        &:not(.visible) { transition: unset; }
+
+    }
+
+}

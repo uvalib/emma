@@ -4,7 +4,7 @@
 @use 'shared/mixins'           as *;
 @use 'shared/controls/buttons' as button;
 @use 'shared/controls/popup'   as popup;
-@use 'shared/feature/overlay'  as overlay;
+@use 'shared/layouts/overlay'  as overlay;
 
 //=============================================================================
 // Flash message display.

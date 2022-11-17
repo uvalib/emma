@@ -1,9 +1,8 @@
 // app/assets/stylesheets/feature/_search.scss
 
-@use 'shared/variables'       as *;
-@use 'shared/controls/grids'  as grid;
-@use 'shared/feature/model'   as model;
-@use 'shared/feature/overlay' as overlay;
+@use 'shared/variables'      as *;
+@use 'shared/controls/grids' as grid;
+@use 'shared/feature/model'  as model;
 
 //=============================================================================
 // Search controls
@@ -59,24 +58,4 @@
             margin-top: 0.5rem;
         }
     }
-}
-
-//=============================================================================
-// In-progress overlay
-//=============================================================================
-
-// An indicator that is presented during a time-consuming search.
-// @see file:app/views/layouts/_overlays.html.erb
-.search-in-progress {
-
-    @include overlay.image('loading-balls.gif', $img-height: 1rem);
-
-    .content {
-        filter: saturate(1.5) drop-shadow(2px 2px 2px #444);
-    }
-
-    // When the search is done, hide the overlay immediately rather than easing
-    // back to transparency.
-    &:not(.visible) { transition: unset; }
-
 }

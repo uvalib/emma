@@ -28,9 +28,9 @@ via `@use` without causing duplication in the resulting compiled file in
 |                               **[controls/_shapes.scss](controls/_shapes.scss)** | Definitions supporting shaped elements                |
 |                                **[controls/_table.scss](controls/_tables.scss)** | Definitions supporting tables and table elements      |
 |   **[layouts/_header.scss](app/assets/stylesheets/shared/layouts/_header.scss)** | Shared definitions used in `layouts/header/*`         |
+| **[layouts/_overlay.scss](app/assets/stylesheets/shared/layouts/_overlay.scss)** | Shared definitions supporting `layouts/_overlay.scss` |
 |   **[feature/_images.scss](app/assets/stylesheets/shared/feature/_images.scss)** | Shared definitions supporting `feature/_images.scss`  |
 |     **[feature/_model.scss](app/assets/stylesheets/shared/feature/_model.scss)** | Shared definitions supporting `feature/_model.scss`   |
-| **[feature/_overlay.scss](app/assets/stylesheets/shared/feature/_overlay.scss)** | Shared definitions supporting `feature/_overlay.scss` |
 
 ## Implementation Notes
 
