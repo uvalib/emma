@@ -255,14 +255,15 @@ module BaseDecorator::List
         label = html_span(label, class: 'text')
       end
       # Append a help icon control if applicable.
-      unless no_help || (help = prop[:help]).blank?
-        replace = topic = nil
+      unless no_help || (help = Array.wrap(prop[:help])).blank?
+        # NOTE: To accommodate ACE items, an assumption is being made that this
+        #   method is only ever called for the decorator's object (and not for
+        #   an arbitrary label/value pair outside of that context).
         if field == :emma_retrievalLink
-          url     = extract_url(value)
-          topic   = url_repository(url, default: !application_deployed?)
-          replace = help.is_a?(Array) && (help.size > 1)
+          url   = extract_url(value)
+          topic = repository_for(object, url)
+          help  = help.many? ? [*help[0...-1], topic] : [*help, topic] if topic
         end
-        help = replace ? (help[0...-1] << topic) : [*help, topic] if topic
         label += h.help_popup(*help)
       end
       l_tag = wrap ? :div : tag

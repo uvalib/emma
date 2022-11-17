@@ -23,7 +23,9 @@ module AwsConcern
 
   # get_aws_repositories
   #
-  # If :emma is included it will be moved to the end of the list.
+  # - If :emma is included it will be moved to the end of the list.
+  # - If :ace is included it is replaced with :internetArchive since ACE items
+  #   are transferred via Internet Archive through the 'ia' bucket.
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
   # @param [Hash]                       prm       Passed to #params_values.

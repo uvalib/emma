@@ -71,6 +71,7 @@ template:
       multiple: false
       values:
         - emma
+        - ace
         - bookshare
         - hathiTrust
         - internetArchive

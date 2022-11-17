@@ -56,7 +56,9 @@ module AwsConcern
 
   # get_aws_repositories
   #
-  # If :emma is included it will be moved to the end of the list.
+  # - If :emma is included it will be moved to the end of the list.
+  # - If :ace is included it is replaced with :internetArchive since ACE items
+  #   are transferred via Internet Archive through the 'ia' bucket.
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
   # @param [Hash]                       prm       Passed to #params_values.
@@ -68,15 +70,18 @@ module AwsConcern
     values = values.presence || Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
       values = EmmaRepository.values.map(&:to_sym)
+      values.delete(:ace)
     else
       values.map! { |v|
         case v.to_s.downcase
           when 'bs', /bookshare/         then :bookshare
-          when 'ia', /internet.*archive/ then :internetArchive
           when 'ht', /hathi.*trust/      then :hathiTrust
+          when 'ia', /internet.*archive/ then :internetArchive
+          when 'ac', 'ace', /ace/        then :internetArchive
           else Log.debug { "#{__method__}: #{v.inspect}: invalid" }
         end
-      }.uniq!
+      }.compact!
+      values.uniq!
     end
     emma = EmmaRepository.default.to_sym
     values << emma if values.delete(emma)

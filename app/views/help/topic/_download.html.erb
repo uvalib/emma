@@ -5,11 +5,13 @@
   view_debug(__FILE__)
 
   ht_title            = 'Downloading a HathiTrust item'
+  ace_title           = 'Downloading an ACE / Scholars Portal item'
   ia_title            = 'Downloading an Internet Archive item'
   bs_title            = 'Downloading a Bookshare item'
   emma_title          = 'Downloading an EMMA item'
 
   ht_logo             = repository_source_logo(:hathiTrust)
+  ace_logo            = repository_source_logo(:ace)
   ia_logo             = repository_source_logo(:internetArchive)
   bs_logo             = repository_source_logo(:bookshare)
   emma_logo           = repository_source_logo(:emma)
@@ -39,6 +41,7 @@
   </label>
   <ul>
     <li><a href="#download_hathiTrust_help"><%=      ht_title   -%></a></li>
+    <li><a href="#download_ace_help"><%=             ace_title  -%></a></li>
     <li><a href="#download_internetArchive_help"><%= ia_title   -%></a></li>
     <li><a href="#download_bookshare_help"><%=       bs_title   -%></a></li>
     <li><a href="#download_emma_help"><%=            emma_title -%></a></li>
@@ -69,6 +72,20 @@
     For now, however, the EMMA system will not be able to track your file
     download from HathiTrust, and therefore will not know the origin of this
     item.
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="download_ace_help">
+
+  <h2 class="section" id="download_ace_help">
+    <span class="text"><%= ace_title -%></span>
+    <%= ace_logo %>
+  </h2>
+
+  <p>
+    Because these items are made available to EMMA users via Internet Archive,
+    see <a href="#download_internetArchive_help"><%= ia_title -%></a> below.
   </p>
 
 </section>

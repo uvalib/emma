@@ -64,6 +64,12 @@ en:
 
         commercial:
 
+          ace:
+            name:
+              short:    'ACE'
+              long:     'ACE / Scholars Portal'
+            tag:        'ACE'
+
           bookshare:    # @see "en.emma.repository.bookshare"
             name:
               short:    'Bookshare'

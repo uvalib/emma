@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Controller support methods for downloads from Internet Archive.
+# Controller support methods for downloads from Internet Archive (including
+# items held there on behalf of ACE/ScholarsPortal).
 #
 module IaDownloadConcern
 

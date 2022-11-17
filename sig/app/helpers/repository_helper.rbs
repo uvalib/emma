@@ -40,19 +40,38 @@ module RepositoryHelper
 
   # Indicate whether the given URL is an Internet Archive link.
   #
+  # ACE/ScholarsPortal items are hosted by Internet Archive with download links
+  # which are indistinguishable.
+  #
   # @param [String, nil] url
   #
   def ia_link?: ((String|nil) url) -> bool
 
   # Report the member repository associated with the given URL.
   #
-  # @param [String]               url
-  # @param [Symbol, Boolean, nil] default   *true* => `EmmaRepository#default`.
+  # @param [String, nil] url
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If not associated with any repository.
   #
-  def url_repository: (String url, ?default: Symbol|bool|nil) -> (String | nil)
+  def url_repository: ((String|nil) url) -> (String | nil)
+
+  # Report the member repository as indicated by the given parameters.
+  #
+  # To account for the handful of "EMMA" items that are actually Bookshare
+  # items from the "EMMA collection", if both a String (URL) and Model/Hash are
+  # given, change the reported repository based on the nature of the URL.
+  #
+  # @param [Model, Hash, String, nil] arg1
+  # @param [Model, Hash, String, nil] arg2
+  #
+  # @return [String]                  One of EmmaRepository#values.
+  # @return [nil]                     If not associated with any repository.
+  #
+  def repository_for: (Model|symHash obj,  ?(String|nil)           url)  -> (String | nil)
+                    | (String        url,  ?(Model|symHash|nil)    obj)  -> (String | nil)
+                    | (nil           arg1,  (Model|symHash|String) arg2) -> (String | nil)
+                    | (nil           arg1, ?nil                    arg2) -> nil
 
   # Produce a link to retrieve an EMMA file.
   #

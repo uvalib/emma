@@ -71,6 +71,9 @@ module RepositoryHelper
 
   # Indicate whether the given URL is an Internet Archive link.
   #
+  # ACE/ScholarsPortal items are hosted by Internet Archive with download links
+  # which are indistinguishable.
+  #
   # @param [String, nil] url
   #
   def ia_link?(url)
@@ -79,21 +82,44 @@ module RepositoryHelper
 
   # Report the member repository associated with the given URL.
   #
-  # @param [String]               url
-  # @param [Symbol, Boolean, nil] default   *true* => `EmmaRepository#default`.
+  # @param [String, nil] url
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If not associated with any repository.
   #
-  def url_repository(url, default: nil)
-    result =
-      (:emma                  if emma_link?(url))          ||
-      (:bookshare             if bs_link?(url))            ||
-      (:hathiTrust            if ht_link?(url))            ||
-      (:internetArchive       if ia_link?(url))            ||
-      (EmmaRepository.default if default.is_a?(TrueClass)) ||
-      default.presence
-    result&.to_s
+  def url_repository(url)
+    return unless url.present?
+    # noinspection RubyCaseWithoutElseBlockInspection
+    case
+      when emma_link?(url) then :emma
+      when bs_link?(url)   then :bookshare
+      when ht_link?(url)   then :hathiTrust
+      when ia_link?(url)   then :internetArchive
+    end&.to_s
+  end
+
+  # Report the member repository as indicated by the given parameters.
+  #
+  # To account for the handful of "EMMA" items that are actually Bookshare
+  # items from the "EMMA collection", if both a String (URL) and Model/Hash are
+  # given, change the reported repository based on the nature of the URL.
+  #
+  # @param [Model, Hash, String, nil] arg1
+  # @param [Model, Hash, String, nil] arg2
+  #
+  # @return [String]                  One of EmmaRepository#values.
+  # @return [nil]                     If not associated with any repository.
+  #
+  def repository_for(arg1, arg2 = nil)
+    obj, url = arg1.is_a?(String) ? [arg2, arg1] : [arg1, arg2]
+    field  = :emma_repository
+    result = obj&.try(field)&.to_s || obj&.try(:[], field)&.to_s
+    # noinspection RubyMismatchedArgumentType
+    if result&.to_sym == :emma
+      url_repository(url) || result
+    else
+      result || url_repository(url)
+    end
   end
 
   # ===========================================================================

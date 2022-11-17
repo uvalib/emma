@@ -493,7 +493,7 @@ class SearchDecorator
   #
   def source_record_link(**opt)
     url  = object.record_title_url
-    repo = url && url_repository(url) || object.emma_repository.presence
+    repo = repository_for(object, url)
     if repo == EmmaRepository.default
       record_popup(**opt)
     elsif url.present?
@@ -527,17 +527,13 @@ class SearchDecorator
     url = CGI.unescape(url.to_s)
     return if url.blank?
 
+    repo  = repository_for(object, url)
     label = opt.delete(:label) || url.dup
 
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
     permitted = can?(:download, Artifact)
     append_css!(opt, 'sign-in-required') unless permitted
-
-    # To account for the handful of "EMMA" items that are actually Bookshare
-    # items from the "EMMA collection", change the reported repository based on
-    # the nature of the URL.
-    repo = url_repository(url) || object.emma_repository.presence
 
     # Set up the tooltip to be shown before the item has been requested.
     opt[:title] ||=
@@ -557,9 +553,10 @@ class SearchDecorator
     opt[:context] ||= context
     case repo&.to_sym
       when :emma            then emma_retrieval_link(object, label, url, **opt)
-      when :bookshare       then bs_retrieval_link(object, label, url, **opt)
-      when :hathiTrust      then ht_retrieval_link(object, label, url, **opt)
+      when :ace             then ia_retrieval_link(object, label, url, **opt)
       when :internetArchive then ia_retrieval_link(object, label, url, **opt)
+      when :hathiTrust      then ht_retrieval_link(object, label, url, **opt)
+      when :bookshare       then bs_retrieval_link(object, label, url, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end

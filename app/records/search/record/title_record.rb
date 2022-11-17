@@ -268,7 +268,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       # noinspection RubyCaseWithoutElseBlockInspection
       value ||=
         case repository(rec)&.to_sym
-          when :internetArchive
+          when :internetArchive, :ace
             positive(repo_id(rec)&.sub(/^[a-z].*?[a-z_.]0(\d\d\d).*$/i, '\1'))
           when :hathiTrust
             description(rec)
