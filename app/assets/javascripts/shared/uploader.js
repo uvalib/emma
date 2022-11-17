@@ -240,6 +240,7 @@ class BaseUploader extends BaseClass {
     static FILE_BUTTON_CLASS    = 'uppy-FileInput-btn';
     static PROGRESS_BAR_CLASS   = 'uppy-ProgressBar';
     static FILE_NAME_CLASS      = 'uploaded-filename';
+    static HIDDEN_MARKER        = 'hidden';
 
     static UPLOADER     = selector(this.UPLOADER_CLASS);
     static FILE_SELECT  = selector(this.FILE_SELECT_CLASS);
@@ -247,6 +248,7 @@ class BaseUploader extends BaseClass {
     static FILE_BUTTON  = selector(this.FILE_BUTTON_CLASS);
     static PROGRESS_BAR = selector(this.PROGRESS_BAR_CLASS);
     static FILE_NAME    = selector(this.FILE_NAME_CLASS);
+    static HIDDEN       = selector(this.HIDDEN_MARKER);
 
     // ========================================================================
     // Fields
@@ -1117,8 +1119,9 @@ class BaseUploader extends BaseClass {
      * @param {boolean} [hidden]      If *false*, un-hide.
      */
     hideFilename(hidden) {
-        const hide = notDefined(hidden) || hidden;
-        this.uploadedFilenameDisplay().toggleClass('hidden', hide);
+        const marker = this.constructor.HIDDEN_MARKER;
+        const hide   = notDefined(hidden) || hidden;
+        this.uploadedFilenameDisplay().toggleClass(marker, hide);
     }
 
     /**
@@ -1128,7 +1131,8 @@ class BaseUploader extends BaseClass {
      */
     isFilenameDisplayed() {
         const $element = this.uploadedFilenameDisplay();
-        return isPresent($element.text()) && !$element.is('.hidden');
+        const hidden   = this.constructor.HIDDEN;
+        return isPresent($element.text()) && !$element.is(hidden);
     }
 
     /**

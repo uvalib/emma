@@ -450,7 +450,7 @@ module BaseDecorator::Form
   # @param [Symbol]              state    Start state (:enabled/:disabled).
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url      Invokes #make_link if present.
-  # @param [String]              css      Default: ".#(type)-button"
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #submit_tag.
   #
   # @option opt [Symbol] :type            Input type (default *type*).

@@ -28,7 +28,7 @@
             &.columns-#{$n} {
                 grid-template-columns:
                     [name] repeat($name-columns, $name-width)
-                    [data] repeat($data-columns, 1fr);
+                    [data] repeat($data-columns, 0.5fr);
             }
         }
     }
@@ -47,7 +47,7 @@
     // Components - only if there are no Manifests displayed
     //=========================================================================
 
-    .start-button {
+    .new-button {
         @include button.basic;
     }
 
@@ -57,7 +57,7 @@
         max-width:   100%;
         font-weight: bold;
 
-        .start-button {
+        .new-button {
             display:     inline-block;
             padding:     2px 4px;
             font-weight: normal;
@@ -195,44 +195,49 @@ body.manifest.edit {
         flex-direction: row;
         gap:            1vw;
 
-        > .submit-button,
-        > .cancel-button,
-        > .import-button,
-        > .export-button {
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        > .form-button {
 
             @include button.control;
 
             min-width: 5vw;
 
+            &.submit-button {}
+            &.cancel-button {}
+            &.export-button {}
+
+            &.import-button {
+
+                display:        flex;
+                flex-direction: row;
+                align-items:    center;
+                position:       relative;
+                padding-left:   0;
+                padding-right:  0;
+                overflow:       clip;
+
+                // The actual input positioned so that the transparent file
+                // chooser button fills the available area of the button.
+                input[type="file"] {
+                    position:    absolute;
+                    z-index:     1;
+                    border:      2rem solid;
+                    cursor:      inherit;
+                    opacity:     0;
+                }
+
+                label {
+                    text-align:  center;
+                    flex:        1 1 100%;
+                    cursor:      inherit;
+                }
+            }
+
             &.offline {
                 @include forbidden($force: true);
-            }
-        }
-
-        > .import-button {
-
-            display:        flex;
-            flex-direction: row;
-            align-items:    center;
-            position:       relative;
-            padding-left:   0;
-            padding-right:  0;
-            overflow:       clip;
-
-            // The actual input positioned so that the transparent file chooser
-            // button fills the available area of the button.
-            input[type="file"] {
-                position:    absolute;
-                z-index:     1;
-                border:      2rem solid;
-                cursor:      inherit;
-                opacity:     0;
-            }
-
-            label {
-                text-align:  center;
-                flex:        1 1 100%;
-                cursor:      inherit;
             }
         }
 

@@ -167,7 +167,7 @@ class ManifestDecorator < BaseDecorator
     #
     def no_items(css: '.no-items', **opt)
       desc = 'Use the %s control above to start a new manifest.' # TODO: I18n
-      desc = ERB::Util.h(desc) % start_button('Create')
+      desc = ERB::Util.h(desc) % new_button('Create')
       prepend_css!(opt, css)
       h.page_description_section(desc, **opt)
     end
@@ -180,7 +180,7 @@ class ManifestDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def start_button(label = nil, css: '.start-button', **opt)
+    def new_button(label = nil, css: '.new-button', **opt)
       label ||= 'Start a new manifest' # TODO: I18n
       prepend_css!(opt, css)
       link_to_action(label, action: :new, link_opt: opt)

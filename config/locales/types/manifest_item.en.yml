@@ -34,8 +34,8 @@ en:
           complete:     'Sufficient bibliographic and remediation information'
 
         ready_status:
-          missing:      'This record is not ready for submission'
-          ready:        'This record is ready for submission'
+          missing:      'This record is not ready to be submitted'
+          ready:        'This record is ready to be submitted'
           db_fail:      'Database failure prevented completion'
           store_fail:   'File upload failure prevented completion'
           index_fail:   'Indexing failure prevented completion'

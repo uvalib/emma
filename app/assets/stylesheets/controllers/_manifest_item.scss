@@ -146,6 +146,8 @@
 // Manifest item grid
 //=============================================================================
 
+$scroll-snap:     true;
+
 $ctrl-col-width:  auto;
 $data-col-width:  5vw;
 
@@ -195,21 +197,27 @@ table.manifest_item-grid {
     $border-wd: 0.25rem;
     $bottom-wd: $border-wd * 0.75;
 
-    display:                grid;
-    grid-template-columns:  1fr;
-    align-content:          flex-start;
-    gap:                    0;
-    margin:                 model.$list-item-gap-y 0;
-    max-width:              inherit;
-    max-height:             80vh;
-    overflow:               auto;
-    border:                 $border-wd solid $grid-border;
-    border-bottom-width:    $bottom-wd;
-    border-radius:          $border-wd $border-wd $bottom-wd $bottom-wd;
-    box-shadow:             0.25rem 0.25rem 0.5rem -0.125rem gray;
+    display:                 grid;
+    grid-template-columns:   1fr;
+    align-content:           flex-start;
+    gap:                     0;
+    margin:                  model.$list-item-gap-y 0;
+    max-width:               inherit;
+    max-height:              80vh;
+    overflow:                auto;
+    border:                  $border-wd solid $grid-border;
+    border-bottom-width:     $bottom-wd;
+    border-radius:           $border-wd $border-wd $bottom-wd $bottom-wd;
+    box-shadow:              0.25rem 0.25rem 0.5rem -0.125rem gray;
 
     // noinspection CssBrowserCompatibilityForProperties
-    overscroll-behavior:    contain;
+    overscroll-behavior:     contain;
+
+    @if $scroll-snap {
+        scroll-snap-type:    both mandatory;
+        scroll-padding-top:  51px;  // TODO: dynamic calc of head row height
+        scroll-padding-left: 124px; // TODO: dynamic calc of ctrl col width
+    }
 
     //=========================================================================
     // Variations
@@ -278,6 +286,7 @@ table.manifest_item-grid {
 
         > .controls,
         > .cell {
+
             display:            flex;
             flex-direction:     column;
             margin:             0;
@@ -286,6 +295,10 @@ table.manifest_item-grid {
             word-break:         break-word;
             border-right:       $cell-border-width solid $grid-border;
             border-bottom:      $cell-border-width solid $grid-border;
+
+            @if $scroll-snap {
+                scroll-snap-align: start;
+            }
         }
 
         // First column.
@@ -358,7 +371,7 @@ table.manifest_item-grid {
                         }
 
                         &.warning {
-                            &::before { @include emoji.red($base: $base); }
+                            &::before { @include emoji.green($base: $base); }
                         }
 
                         &.complete {
@@ -372,8 +385,8 @@ table.manifest_item-grid {
 
                         // @see "en.emma.manifest_item.type.file_status"
                         &.value-hidden      { @extend .error; }
-                        &.value-corrupt     { @extend .warning; }
-                        &.value-bad_read    { @extend .warning; }
+                        &.value-corrupt     { @extend .error; }
+                        &.value-bad_read    { @extend .error; }
 
                         // @see "en.emma.manifest_item.type.data_status"
                         &.value-minimal     { @extend .warning; }
@@ -387,7 +400,28 @@ table.manifest_item-grid {
                         &.value-db_fail     { @extend .error; }
                         &.value-store_fail  { @extend .error; }
                         &.value-index_fail  { @extend .error; }
+
+                        &.value-complete::after {
+                            content:        $HEAVY_PLUS;
+                            font-size:      small;
+                            position:       absolute;
+                        }
+
+                        &.value-ready::before {
+                            padding-bottom: 0.125rem;
+                            border-bottom:  0.1875rem dotted;
+                        }
                     }
+                }
+
+                .file_status.value-complete::after {
+                    margin-top:  1.125rem;
+                    margin-left: -1.125rem;
+                }
+
+                .data_status.value-complete::after {
+                    margin-top:  0.75rem;
+                    margin-left: -1rem;
                 }
             }
         }
@@ -548,9 +582,9 @@ table.manifest_item-grid {
 
                             display:               grid;
                             margin-right:          $cell-pad * 2;
-                            column-gap:            $cell-pad * 2;
+                            column-gap:            $cell-pad * 4;
                             align-items:           baseline;
-                            grid-template-columns: [dt] 1fr [dd] 1fr;
+                            grid-template-columns: [dt] 1fr [dd] 2fr;
 
                             > * {
                                 margin:         0;
@@ -599,8 +633,7 @@ table.manifest_item-grid {
                 > .cell {
                     text-align:          left;
                     max-height:          33vh;
-                    overflow-y:          auto;
-                    overflow-x:          hidden;
+                    overflow:            auto;
                     overscroll-behavior: contain;
                 }
             }
@@ -952,8 +985,7 @@ table.manifest_item-grid {
             }
 
             // Data cell for item file data.
-            // noinspection CssReplaceWithShorthandSafely
-            > .cell[data-field="file_data"] {
+            > .cell.file-uploader {
 
                 padding:        $value-pad * 4;
                 padding-top:    $value-pad * 5;
@@ -1035,7 +1067,11 @@ table.manifest_item-grid {
             }
 
             // Data cell for item metadata.
-            > .cell:not([data-field="file_data"]) {
+            > .cell:not(.file-uploader) {
+
+                @if $scroll-snap {
+                    scroll-margin-left: 1px;
+                }
 
                 //=============================================================
                 // Variations
@@ -1180,6 +1216,13 @@ table.manifest_item-grid {
                 }
             }
 
+            > .cell:last-of-type {
+                // Allow the entire last column to be scrolled into view.
+                @if $scroll-snap {
+                    scroll-snap-align: end;
+                }
+            }
+
             //=================================================================
             // Variations
             //=================================================================
@@ -1219,6 +1262,10 @@ table.manifest_item-grid {
     }
 
     &.controls-expanded {
+
+        @if $scroll-snap {
+            scroll-padding-left: 239px; // TODO: dynamic calc of ctrl col width
+        }
 
         tr.manifest_item-grid-item {
 

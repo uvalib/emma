@@ -253,12 +253,12 @@ $search-button-width:    6rem;
 
         &.ready:not(:hover) {
 
-            @include button.link(lightgray, gray);
+            @include button.link(lightgray, gray, 1px);
 
             box-shadow: 0 0 0.75rem 0.5rem $button-accent;
 
             &:focus {
-                @include button.link(gray, gray);
+                @include button.link(gray, gray, 1px);
             }
         }
     }

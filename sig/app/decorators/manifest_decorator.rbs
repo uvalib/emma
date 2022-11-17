@@ -88,7 +88,7 @@ class ManifestDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def start_button: (?(String|nil) label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    def new_button: (?(String|nil) label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related

@@ -875,7 +875,7 @@ module BaseDecorator::Form
   # @param [Symbol]              state    Start state (:enabled/:disabled).
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url      Invokes #make_link if present.
-  # @param [String]              css      Default: ".#(type)-button"
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #submit_tag.
   #
   # @option opt [Symbol] :type            Input type (default *type*).
@@ -893,18 +893,21 @@ module BaseDecorator::Form
     state:  nil,
     label:  nil,
     url:    nil,
-    css:    nil,
+    css:    '.form-button',
     **opt
   )
-    css    ||= ".#{type}-button"
-    action   = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
-    config   = form_actions.dig(action, type) || {}
-    state  ||= config[:state]&.to_sym || :enabled
+    action = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
+    config = form_actions.dig(action, type)
 
-    label       ||= config.dig(state, :label)   || config[:label]
-    opt[:title] ||= config.dig(state, :tooltip) || config[:tooltip]
+    if config.blank?
+      Log.warn { "#{__method__}: no config for (#{action},#{type})" }
+    else
+      state       ||= config[:state]&.to_sym      || :enabled
+      label       ||= config.dig(state, :label)   || config[:label]
+      opt[:title] ||= config.dig(state, :tooltip) || config[:tooltip]
+    end
 
-    prepend_css!(opt, css)
+    prepend_css!(opt, css, "#{type}-button")
     input_type = opt[:type] || type
     if input_type == :submit
       h.submit_tag(label, opt)

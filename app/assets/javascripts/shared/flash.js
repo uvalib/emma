@@ -385,7 +385,7 @@ function addFlashItem(text, type, role, fc) {
     const aria_role = role || 'alert';
     const plain     = (typeof text === 'string') && !text.startsWith('<');
     const lines     = plain ? text.split(/<br\/?>|\n/) : arrayWrap(text);
-    const message   = lines.map(v => v?.toString && v?.toString() || '???');
+    const message   = lines.map(v => v?.toString ? v?.toString() : '???');
     const $message  = $('<div>').html(message.join('<br/>'));
 
     let $item, $closer;
