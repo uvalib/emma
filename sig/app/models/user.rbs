@@ -317,12 +317,12 @@ class User < ApplicationRecord
   # associated User object with additional information from the provider.
   #
   # @param [OmniAuth::AuthHash, Hash, nil] data
-  # @param [Boolean, nil]                  update   Default: *true*.
+  # @param [Boolean]                       update   If *false* keep DB record.
   #
   # @return [User]                    Updated record of the indicated user.
   # @return [nil]                     If *data* is not valid.
   #
   # @see https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
   #
-  def self.from_omniauth: ((OmniAuth::AuthHash|symHash|nil) data, ?(bool|nil) update) -> (User | nil)
+  def self.from_omniauth: ((OmniAuth::AuthHash|symHash|nil) data, ?update: bool) -> (User | nil)
 end

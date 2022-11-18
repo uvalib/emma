@@ -13,6 +13,7 @@ __loading_begin(__FILE__)
 #
 class SearchController < ApplicationController
 
+  include UserConcern
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
@@ -31,7 +32,7 @@ class SearchController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  # before_action :update_user
+  before_action :update_user
 
   # ===========================================================================
   # :section: Authorization

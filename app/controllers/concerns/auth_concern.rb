@@ -217,7 +217,6 @@ module AuthConcern
       # noinspection RubyMismatchedReturnType
       session['app.local.auth'] = nil
     else
-      # noinspection RubyMismatchedArgumentType
       session['app.local.auth'] = auth_hash(user)
       session['omniauth.auth']  = auth_hash(user.bookshare_user)
     end
@@ -299,7 +298,7 @@ module AuthConcern
       session['omniauth.auth'] = auth
     end
     auth ||= session['omniauth.auth']
-    User.from_omniauth(auth, true)
+    User.from_omniauth(auth)
   end
 
   # user_from_session
