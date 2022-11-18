@@ -107,7 +107,7 @@ export class Overlay extends BaseClass {
     hide() { this.toggle(false) }
 
     /**
-     * Toggle search-in-progress visibility.
+     * Toggle overlay visibility.
      *
      * If suppressed, this always hides the overlay.
      *
@@ -153,7 +153,7 @@ export class Overlay extends BaseClass {
     }
 
     /**
-     * Locate the page element for the search-in-progress overlay.
+     * Locate the page element for the specific overlay.
      *
      * @param {Selector} [overlay]    Default: {@link OVERLAY_CLASS}.
      *

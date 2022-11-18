@@ -1,9 +1,11 @@
 // app/assets/javascripts/shared/session.js
 
 
-import { focusable }          from './accessibility'
-import { isInternetExplorer } from './browser'
-import { urlFrom }            from './url'
+import { focusable }             from './accessibility'
+import { isInternetExplorer }    from './browser'
+import { isPresent, notDefined } from './definitions'
+import { SearchInProgress }      from './search-in-progress'
+import { urlFrom }               from './url'
 
 
 $(document).on('turbolinks:load', function() {
@@ -54,12 +56,14 @@ $(document).on('turbolinks:load', function() {
      * **Usage Notes**
      * Local URLs are assumedly to be relative.
      *
-     * @param {Event|Location|string} arg
-     * @param {boolean}               [add_hash]    Default: *true*.
+     * @param {Event|Location|string} [arg]       Def.: `window.location.hash`.
+     * @param {boolean}               [add_hash]  Def.: *true*.
      *
      * @returns {string}
      */
     function getInPageAnchor(arg, add_hash) {
+        if (notDefined(arg)) { return window.location.hash }
+        if ((typeof arg === 'string') && arg.startsWith('#')) { return arg }
         let path = urlFrom(arg);
         if (path.startsWith('http')) {
             let in_page = false;
@@ -70,11 +74,9 @@ $(document).on('turbolinks:load', function() {
             }
             path = in_page && path.replace(/^.*#/, '');
         }
-        path = path && path.split('#').pop() || '';
-        if (add_hash !== false) {
-            path = '#' + path;
-        }
-        return path;
+        path &&= path.split('#').pop();
+        const hash = path && (add_hash !== false);
+        return hash && `#${path}` || path || '';
     }
 
     /**
@@ -115,9 +117,10 @@ $(document).on('turbolinks:load', function() {
      *
      */
     function focusAnchor(event) {
-        const anchor = event ? getInPageAnchor(event) : window.location.hash;
-        if (anchor && focusable(anchor)) {
-            $(anchor).first().focus();
+        const anchor  = getInPageAnchor(event);
+        const $anchor = anchor && $(anchor);
+        if (isPresent($anchor) && focusable($anchor)) {
+            $anchor.first().focus();
         }
     }
 
@@ -132,11 +135,16 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} event
      */
     function clickInPageAnchor(event) {
-        if (getInPageAnchor(event)) {
+        console.warn('clickInPageAnchor', event);
+        const anchor = getInPageAnchor(event);
+        if (anchor) {
             // noinspection JSUnresolvedVariable
             updatePageUrl(event.data.url);
             event.preventDefault();
-            setTimeout(function() { focusAnchor(); }, FOCUS_DELAY);
+            setTimeout(function() {
+                focusAnchor(anchor);
+                SearchInProgress.hide();
+            }, FOCUS_DELAY);
         }
     }
 

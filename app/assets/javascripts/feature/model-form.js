@@ -1,7 +1,6 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import { SearchInProgress }                 from './search-in-progress'
 import { delegateInputClick }               from '../shared/accessibility'
 import { arrayWrap }                        from '../shared/arrays'
 import { Emma }                             from '../shared/assets'
@@ -14,6 +13,7 @@ import { HTTP }                             from '../shared/http'
 import { LookupModal }                      from '../shared/lookup-modal'
 import { LookupRequest }                    from '../shared/lookup-request'
 import { K, asSize }                        from '../shared/math'
+import { SearchInProgress }                 from '../shared/search-in-progress'
 import { asString, camelCase, singularize } from '../shared/strings'
 import { SingleUploader }                   from '../shared/uploader'
 import { cancelAction, makeUrl }            from '../shared/url'

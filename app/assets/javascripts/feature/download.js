@@ -1,17 +1,19 @@
 // app/assets/javascripts/feature/download.js
 
 
-import { SearchInProgress }                    from './search-in-progress'
-import { Emma }                                from '../shared/assets'
-import { cssClass, selector }                  from '../shared/css'
-import { isMissing, isPresent }                from '../shared/definitions'
-import { handleClickAndKeypress, handleEvent } from '../shared/events'
-import { create, scrollIntoView }              from '../shared/html'
-import { HTTP }                                from '../shared/http'
-import { compact, deepFreeze }                 from '../shared/objects'
-import { randomizeName }                       from '../shared/random'
-import { SECOND, secondsSince }                from '../shared/time'
-import { urlParameters }                       from '../shared/url'
+import { Emma }                   from '../shared/assets'
+import { cssClass, selector }     from '../shared/css'
+import { isMissing, isPresent }   from '../shared/definitions'
+import { create, scrollIntoView } from '../shared/html'
+import { compact, deepFreeze }    from '../shared/objects'
+import { randomizeName }          from '../shared/random'
+import { SearchInProgress }       from '../shared/search-in-progress'
+import { SECOND, secondsSince }   from '../shared/time'
+import { urlParameters }          from '../shared/url'
+import {
+    handleClickAndKeypress,
+    handleEvent
+} from '../shared/events'
 
 
 $(document).on('turbolinks:load', function() {
@@ -984,7 +986,7 @@ $(document).on('turbolinks:load', function() {
     handleClickAndKeypress($artifact_links, getDownload);
 
     // Clicking on the download link causes a page navigation, which is set up
-    // to cause a search-in-progress overlay to display.  This is a problem
+    // to cause a SearchInProgress overlay to display.  This is a problem
     // because it's not really a page transition so it just causes the page to
     // be unusable.
     //
