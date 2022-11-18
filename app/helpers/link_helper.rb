@@ -110,8 +110,7 @@ module LinkHelper
     sign_in  = has_class?(opt, 'sign-in-required')
     disabled = has_class?(opt, 'disabled', 'forbidden')
     if sign_in
-      opt[:tabindex]   = 0 unless opt.key?(:tabindex)
-      opt[:onkeypress] = 'return false;'
+      opt[:tabindex] = 0 unless opt.key?(:tabindex)
       disabled = true
     end
     if disabled

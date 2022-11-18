@@ -18,11 +18,20 @@ import {
 
 $(document).on('turbolinks:load', function() {
 
+    /**
+     * Selector for links which are not currently enabled.
+     *
+     * @type {string}
+     */
+    const UNAUTHORIZED = '.sign-in-required';
+
     /** @type {jQuery} */
-    const $artifact_links = $('.artifact .link');
+    const $download_links = $('.artifact').children('.link, .download');
+    const $no_auth_links  = $download_links.filter(UNAUTHORIZED);
+    const $artifact_links = $download_links.not(`.download, ${UNAUTHORIZED}`);
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($artifact_links)) { return; }
+    if (isMissing($artifact_links) && isMissing($no_auth_links)) { return }
 
     // ========================================================================
     // Type definitions
@@ -258,7 +267,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const MEMBER_POPUP_SELECTOR = selector(MEMBER_POPUP.panel.class);
+    const PANEL = selector(MEMBER_POPUP.panel.class);
 
     /**
      * Progress indicator element selector.
@@ -266,7 +275,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const PROGRESS_SELECTOR = selector(Emma.Download.progress.class);
+    const PROGRESS = selector(Emma.Download.progress.class);
 
     /**
      * Failure message element selector.
@@ -274,7 +283,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const FAILURE_SELECTOR = selector(Emma.Download.failure.class);
+    const FAILURE = selector(Emma.Download.failure.class);
 
     /**
      * Download button element selector.
@@ -282,7 +291,7 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const BUTTON_SELECTOR = selector(Emma.Download.button.class);
+    const BUTTON = selector(Emma.Download.button.class);
 
     /**
      * For the data() item holding the link's retry period.
@@ -299,14 +308,15 @@ $(document).on('turbolinks:load', function() {
     /**
      * Prompt for Bookshare member and download.
      *
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      *
      * @returns {boolean}             Always *false* to end event propagation.
      */
     function getDownload(event) {
-        const $link = $(this || event.target);
+        //_debug('getDownload: event =', event);
+        const $link = $(event.currentTarget || event.target);
         const url   = $link.attr('href');
-        let $panel  = $link.siblings(MEMBER_POPUP_SELECTOR);
+        let $panel  = $link.siblings(PANEL);
         if (setLinkMember($link, getUrlMember(url))) {
             manageDownloadState($link);
         } else if (isPresent($panel)) {
@@ -342,6 +352,7 @@ $(document).on('turbolinks:load', function() {
          * @returns {boolean}
          */
         function onSubmit(event) {
+            //_debug('onSubmit: event =', event);
             event.preventDefault();
             const members = [];
             // noinspection JSCheckFunctionSignatures
@@ -413,11 +424,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            if (xhr.status === HTTP.unauthorized) {
-                error = Emma.Download.failure.sign_in;
-            } else {
-                error = `${status}: ${xhr.status} ${message}`;
-            }
+            error = `${status}: ${xhr.status} ${message}`;
         }
 
         /**
@@ -445,6 +452,7 @@ $(document).on('turbolinks:load', function() {
          * @returns {object}
          */
         function extractMemberData(data) {
+            //_debug('`${func}: extractMemberData: data =', data);
             const result  = {};
             const info    = data || message;
             /** @type {Member[]} */
@@ -473,6 +481,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function createMemberPopup(member_table) {
+        //_debug('createMemberPopup: member_table =', member_table);
 
         const $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
 
@@ -529,6 +538,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function resetMemberPopup(panel) {
+        //_debug('resetMemberPopup: panel =', panel);
         const disabled = MEMBER_POPUP.submit.disabled.class;
         const $panel   = $(panel);
         const $submit  = $panel.find('[type="submit"]').addClass(disabled);
@@ -554,6 +564,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function manageDownloadState(link) {
+        //_debug('manageDownloadState: link =', link);
         const $link = $(link);
         if ($link.hasClass(STATE.READY)) {
             endRequesting($link);
@@ -667,6 +678,7 @@ $(document).on('turbolinks:load', function() {
          * reschedule another polling attempt.
          */
         function reRequestArtifact() {
+            //_debug('reRequestArtifact');
             if (document.hidden) {
                 setTimeout(reRequestArtifact, delay);
             } else {
@@ -682,6 +694,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function beginRequesting($link) {
+        //_debug('beginRequesting: $link =', $link);
         showProgressIndicator($link);
         hideFailureMessage($link);
         hideDownloadButton($link);
@@ -697,9 +710,12 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [error]
      */
     function endRequesting($link, error) {
+        //_debug(`endRequesting: error = "${error}"; $link =`, $link);
         hideProgressIndicator($link);
         if (error) {
-            showFailureMessage($link, error);
+            const canceled = error.match(/cancell?ed/i);
+            const prefix   = canceled ? '' : Emma.Download.failure.prefix;
+            showFailureMessage($link, `${prefix}${error}`);
             hideDownloadButton($link);
             set(STATE.FAILED, $link);
         } else {
@@ -713,11 +729,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Stop polling with "download" requests.
      *
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      */
     function cancelRequest(event) {
+        //_debug('cancelRequest: event =', event);
         const state = STATE.REQUESTING;
-        let $link   = $(this || event.target);
+        let $link   = $(event.currentTarget || event.target);
         if (!$link.hasClass(state)) {
             let selector = '.' + state;
             let $element = $link.siblings(selector);
@@ -742,6 +759,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string|undefined}
      */
     function getUrlMember(url) {
+        //_debug('getUrlMember: url =', url);
         const params = urlParameters(url);
         return params['member'] || params['forUser'];
     }
@@ -754,6 +772,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function getLinkMember($link) {
+        //_debug('getLinkMember: $link =', $link);
         const for_user = $link.attr('data-forUser');
         $link.removeAttr('data-forUser');
         return for_user || $link.attr('data-member') || '';
@@ -768,6 +787,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function setLinkMember($link, member) {
+        //_debug(`setLinkMember: member = "${member}"; $link =`, $link);
         const value = Array.isArray(member) ? member.join(',') : member;
         if (value) {
             $link.attr('data-member', value);
@@ -788,7 +808,8 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function showProgressIndicator($link) {
-        const $indicator = $link.siblings(PROGRESS_SELECTOR);
+        //_debug('showProgressIndicator: $link =', $link);
+        const $indicator = $link.siblings(PROGRESS);
         if ($indicator.hasClass('hidden')) {
             $indicator.removeClass('hidden').on('click', cancelRequest);
         }
@@ -800,7 +821,8 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideProgressIndicator($link) {
-        const $indicator = $link.siblings(PROGRESS_SELECTOR);
+        //_debug('hideProgressIndicator: $link =', $link);
+        const $indicator = $link.siblings(PROGRESS);
         $indicator.addClass('hidden').off('click', cancelRequest);
     }
 
@@ -809,19 +831,30 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Display a failure message for an unauthorized link.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function showNotAuthorized(event) {
+        //_debug('showNotAuthorized: event =', event);
+        event.preventDefault();
+        const $link = $(event.currentTarget || event.target);
+        showFailureMessage($link, Emma.Download.failure.sign_in);
+    }
+
+    /**
      * Display a download failure message after the download link.
      *
      * @param {jQuery} $link
      * @param {string} [error]
      */
     function showFailureMessage($link, error) {
-        let content = error || '';
-        if (!content.match(/cancell?ed/i)) {
-            const error_message = error || Emma.Download.failure.unknown;
-            content = '' + Emma.Download.failure.prefix + error_message;
-        }
-        const $failure = $link.siblings(FAILURE_SELECTOR);
-        $failure.attr('title', content).text(content).removeClass('hidden');
+        //_debug(`showFailureMessage: error = "${error}"; $link =`, $link);
+        const message  = error || Emma.Download.failure.unknown;
+        const $failure = $link.siblings(FAILURE);
+        $failure.text(message);
+        $failure.attr('title', message);
+        $failure.toggleClass('hidden', false);
     }
 
     /**
@@ -830,8 +863,9 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideFailureMessage($link) {
-        const $failure = $link.siblings(FAILURE_SELECTOR);
-        $failure.addClass('hidden');
+        //_debug('hideFailureMessage: $link =', $link);
+        const $failure = $link.siblings(FAILURE);
+        $failure.toggleClass('hidden', true);
     }
 
     // ========================================================================
@@ -858,7 +892,7 @@ $(document).on('turbolinks:load', function() {
             $link.attr('title',        new_tip);
         }
         $link.addClass('disabled').attr('tabindex', -1);
-        const $button = $link.siblings(BUTTON_SELECTOR);
+        const $button = $link.siblings(BUTTON);
         $button.attr('href', url).removeClass('hidden');
     }
 
@@ -868,6 +902,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function hideDownloadButton(link) {
+        //_debug('hideDownloadButton: link =', link);
         const $link   = $(link);
         const old_tip = $link.attr('data-tooltip');
         if (old_tip) {
@@ -875,7 +910,7 @@ $(document).on('turbolinks:load', function() {
         }
         $link.removeData('path');
         $link.removeClass('disabled').removeAttr('tabindex');
-        const $button = $link.siblings(BUTTON_SELECTOR);
+        const $button = $link.siblings(BUTTON);
         $button.addClass('hidden');
     }
 
@@ -890,6 +925,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function set(new_state, $link) {
+        //_debug(`set: new_state = "${new_state}"; $link =`, $link);
         $.each(STATE, function(key, state) {
             if (state === new_state) {
                 $link.addClass(state);
@@ -906,6 +942,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function clear(old_state, $link) {
+        //_debug(`clear: old_state = "${old_state}"; $link =`, $link);
         $link.removeClass(old_state);
     }
 
@@ -931,6 +968,7 @@ $(document).on('turbolinks:load', function() {
      * @param {number} [value]        Default: RETRY_PERIOD.
      */
     function setRetryPeriod($link, value) {
+        //_debug(`setRetryPeriod: value = "${value}"; $link =`, $link);
         const period = value || defaultRetryPeriod($link);
         $link.data(RETRY_DATA, period);
     }
@@ -941,6 +979,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function clearRetryPeriod($link) {
+        //_debug('clearRetryPeriod: $link =', $link);
         $link.removeData(RETRY_DATA);
     }
 
@@ -981,6 +1020,9 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Event handlers
     // ========================================================================
+
+    // Display failure message if not authorized.
+    handleClickAndKeypress($no_auth_links, showNotAuthorized);
 
     // Override download links in order to get the artifact asynchronously.
     handleClickAndKeypress($artifact_links, getDownload);
