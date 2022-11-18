@@ -206,7 +206,7 @@ class SearchController < ApplicationController
   #
   def validate
     __debug_route
-    ids = param[:identifier]
+    ids = params[:identifier].presence
     render json: validate_identifiers(ids) if ids
   end
 
