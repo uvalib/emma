@@ -268,31 +268,6 @@ GIT_ARGS+=$@
 [ "$APP_VERSION" ] || Abort "Could not get current version from $DEV_HOST"
 
 : =============================================================================
-  Announce "Checking local git repo '$APP_DIR'"
-: =============================================================================
-
-cd_to "$APP_DIR"
-Git fetch --all
-Git pull
-Git gc --quiet
-
-# The production deployment should be a clone of the staging deployment.
-# Since CI causes the staging deployment to be updated whenever changes are
-# pushed, if there are un-pushed changes then they have definitely not been
-# vetted via staging so production should not yet be deployed.
-
-MODIFIED=`Git --force status --porcelain`
-if [ "$MODIFIED" ] ; then
-    MESSAGE="Cannot deploy production with untested changes:$NL$MODIFIED"
-    if [ "$DRY_RUN" ] ; then
-        Announce "$MESSAGE"
-        Announce '*** DURING NORMAL OPERATION EXECUTION WOULD END HERE ***'
-    else
-        Abort "$MESSAGE"
-    fi
-fi
-
-: =============================================================================
   Announce "Updating '$DEPLOY_DIR' to '$APP_VERSION'"
 : =============================================================================
 
