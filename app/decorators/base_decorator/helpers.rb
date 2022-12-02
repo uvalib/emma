@@ -27,26 +27,25 @@ module BaseDecorator::Helpers
   # Explicit overrides for the sake of those helpers which still rely on direct
   # access to controller-related items.
   #
-  # @!method request
+  # @!method cookies
   # @!method params
+  # @!method request
   # @!method session
-  # @!method current_user
   # @!method current_ability
+  # @!method current_user
   #
-  %i[request params session current_user current_ability].each do |meth|
+  CONTROLLER_METHODS = %i[
+    cookies
+    params
+    request
+    session
+    current_user
+    current_ability
+  ].freeze
+
+  CONTROLLER_METHODS.each do |meth|
     define_method(meth) do
       controller_context.send(meth)
-    end
-  end
-
-  # Explicit overrides for the sake of those helpers which still rely on direct
-  # access to controller-related items.
-  #
-  # @!method cookies
-  #
-  %i[cookies].each do |meth|
-    define_method(meth) do
-      request.cookies
     end
   end
 
@@ -88,10 +87,9 @@ module BaseDecorator::Helpers
   # @!method safe_join(*args)
   #   @see ActionView::Helpers::OutputSafetyHelper#safe_join
   #
-  %i[
-      asset_path
-      safe_join
-  ].each do |meth|
+  HELPER_METHODS = %i[asset_path safe_join].freeze
+
+  HELPER_METHODS.each do |meth|
     define_method(meth) do |*args|
       helpers.send(meth, *args)
     end
@@ -118,14 +116,16 @@ module BaseDecorator::Helpers
   # @!method submit_tag(*args, &block)
   #   @see ActionView::Helpers::FormTagHelper#submit_tag
   #
-  %i[
-      button_tag
-      content_tag
-      form_tag
-      image_tag
-      link_to
-      submit_tag
-  ].each do |meth|
+  VIEW_HELPER_METHODS = %i[
+    button_tag
+    content_tag
+    form_tag
+    image_tag
+    link_to
+    submit_tag
+  ].freeze
+
+  VIEW_HELPER_METHODS.each do |meth|
     define_method(meth) do |*args, &block|
       helpers.send(meth, *args, &block)
     end

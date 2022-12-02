@@ -11,6 +11,18 @@ module BaseDecorator::Helpers
 
   include BaseDecorator::Common
 
+  # Explicit overrides for the sake of those helpers which still rely on direct
+  # access to controller-related items.
+  #
+  # @!method cookies
+  # @!method params
+  # @!method request
+  # @!method session
+  # @!method current_ability
+  # @!method current_user
+  #
+  CONTROLLER_METHODS: symArray
+
   # Direct access to the controller.
   #
   # @return [ApplicationController]
@@ -26,6 +38,38 @@ module BaseDecorator::Helpers
   # back correctly.
   #
   def controller_context: () -> ApplicationController
+
+  # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
+  #
+  # @!method asset_path(*args)
+  #   @see ActionView::Helpers::AssetUrlHelper#asset_path
+  #
+  # @!method safe_join(*args)
+  #   @see ActionView::Helpers::OutputSafetyHelper#safe_join
+  #
+  HELPER_METHODS: symArray
+
+  # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
+  #
+  # @!method button_tag(*args, &block)
+  #   @see ActionView::Helpers::FormTagHelper#button_tag
+  #
+  # @!method content_tag(*args, &block)
+  #   @see ActionView::Helpers::TagHelper#content_tag
+  #
+  # @!method form_tag(*args, &block)
+  #   @see ActionView::Helpers::FormTagHelper#form_tag
+  #
+  # @!method image_tag(*args, &block)
+  #   @see ActionView::Helpers::AssetTagHelper#image_tag
+  #
+  # @!method link_to(*args, &block)
+  #   @see ActionView::Helpers::UrlHelper#link_to
+  #
+  # @!method submit_tag(*args, &block)
+  #   @see ActionView::Helpers::FormTagHelper#submit_tag
+  #
+  VIEW_HELPER_METHODS: symArray
 
   # Defined here for the sake of RepositoryHelper.
   #
