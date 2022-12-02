@@ -10,6 +10,8 @@
 module TestHelper::SystemTests::Common
   include TestHelper::Common
 
+  include Emma::Json
+
   #include Capybara::Node::Finders
 
   #include TestHelper::SystemTests::Authentication
@@ -35,6 +37,21 @@ module TestHelper::SystemTests::Common
   # @return [true]
   #
   def assert_valid_page: (?(String|nil) text, ?heading: String|nil, ?title: String|nil, **untyped _ignored) -> true
+
+  # Assert that the current output is JSON with the given key/value pairs.
+  #
+  # @note The pairs must be in the expected order.
+  #
+  # @param [Hash, String, nil] value  Key/value pairs or (partial) JSON.
+  # @param [Boolean, nil]      exact
+  # @param [Hash]              pairs  Key/value pairs if value is nil.
+  #
+  # @raise [Minitest::Assertion]      If *pairs* are not present or incomplete.
+  #
+  # @return [true]
+  #
+  def assert_json: (anyHash|anyArray|String value, ?exact: bool|nil, **untyped _ignored) -> true
+                 | (?nil _ignored,                 ?exact: bool|nil, **untyped pairs)    -> true
 
   # Return the given URL without its HTTP port.
   #

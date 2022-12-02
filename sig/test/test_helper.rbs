@@ -20,6 +20,8 @@ DEBUG_TESTS: bool
 #
 TESTING_JAVASCRIPT: bool
 
+NO_JAVASCRIPT: bool
+
 # Support methods for tests.
 #
 module TestHelper

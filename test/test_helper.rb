@@ -33,6 +33,7 @@ BASE_URL = 'http://localhost'
 # @type [Boolean]
 #
 TESTING_JAVASCRIPT = true
+NO_JAVASCRIPT      = !TESTING_JAVASCRIPT
 
 # =============================================================================
 # Test helpers

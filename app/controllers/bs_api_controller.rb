@@ -61,6 +61,7 @@ class BsApiController < ApplicationController
   # The main API test page.
   #
   def index
+    return unless permitted_session
     __log_activity(anonymous: true)
     __debug_route
     @api_results = ApiTesting.run_trials(user: current_user)
@@ -83,17 +84,18 @@ class BsApiController < ApplicationController
   # NOTE: Intended to translate URLs within data directly into actionable links
   #
   def v2
+    prm  = url_parameters
+    user = prm.delete(:user).presence
+    return unless user || permitted_session
     __log_activity(anonymous: true)
     __debug_route
-    prm  = url_parameters
-    path = prm.delete(:api_path).to_s
-    if (user = prm.delete(:user)).present?
+    if user
       path = request.fullpath.sub(/\?.*/, '')
       path << '?' << url_query(prm) if prm.present?
       # noinspection RubyMismatchedArgumentType
       redirect_to sign_in_as_path(id: bookshare_user(user), redirect: path)
     else
-      # noinspection RubyMismatchedArgumentType
+      path = prm.delete(:api_path).to_s
       @api_result = bs_api_explorer(request.method, path, **prm)
       respond_to do |format|
         format.html
@@ -120,6 +122,32 @@ class BsApiController < ApplicationController
     image_data = Base64.encode64(response.body)
     mime_type  = response.headers['content-type']
     render plain: image_data, format: mime_type, layout: false
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Respond with JSON and status 401 unless being called from an authorized
+  # session.
+  #
+  # == URL parameters
+  #
+  # * fail=true     Causes the method to always returns *false*.
+  # * no_test=true  Causes normal checks to proceed in the 'test' environment
+  #                   (otherwise the method always returns *true*).
+  #
+  # @return [Boolean]
+  #
+  def permitted_session
+    unless true?(params[:fail])
+      return true if Rails.env.test? && !true?(params[:no_test])
+      return true if current_user.present? || dev_client?
+    end
+    render json: { error: 'Unauthorized' }, status: :unauthorized
+    false
   end
 
   # ===========================================================================

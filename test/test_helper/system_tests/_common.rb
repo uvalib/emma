@@ -15,6 +15,7 @@
 module TestHelper::SystemTests::Common
 
   include TestHelper::Common
+  include Emma::Json
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -56,6 +57,34 @@ module TestHelper::SystemTests::Common
     assert_selector 'h1', text: heading if (heading ||= text)
     assert_title title                  if (title   ||= text)
     assert_no_flash 'service error'
+  end
+
+  # Assert that the current output is JSON with the given key/value pairs.
+  #
+  # @note The pairs must be in the expected order.
+  #
+  # @param [Hash, String, nil] value  Key/value pairs or (partial) JSON.
+  # @param [Boolean, nil]      exact
+  # @param [Hash]              pairs  Key/value pairs if value is nil.
+  #
+  # @raise [Minitest::Assertion]      If *pairs* are not present or incomplete.
+  #
+  # @return [true]
+  #
+  def assert_json(value = nil, exact: nil, **pairs)
+    # noinspection RubyNilAnalysis
+    if value.nil?
+      value = pairs
+    elsif value.is_a?(String) || value.is_a?(Array)
+      value = json_parse(value, symbolize_keys: false) || {}
+    elsif exact.nil? && value.key?(:exact)
+      exact = value[:exact]
+      value = value.except(:exact)
+    end
+    text = value.to_json
+    text = text[1...-1] unless exact
+    assert false if text.blank?
+    assert text, exact: !!exact
   end
 
   # ===========================================================================

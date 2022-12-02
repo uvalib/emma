@@ -53,6 +53,19 @@ class BsApiController < ApplicationController
   #
   def image: () -> void
 
+  # Respond with JSON and status 401 unless being called from an authorized
+  # session.
+  #
+  # == URL parameters
+  #
+  # * fail=true     Causes the method to always returns *false*.
+  # * no_test=true  Causes normal checks to proceed in the 'test' environment
+  #                   (otherwise the method always returns *true*).
+  #
+  # @return [Boolean]
+  #
+  def permitted_session: () -> bool
+
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [Hash] items
