@@ -70,24 +70,7 @@ export class Overlay extends BaseClass {
      */
     constructor(overlay) {
         super();
-        return this.constructor._instance || this._initialize(overlay);
-    }
-
-    // ========================================================================
-    // Methods - internal
-    // ========================================================================
-
-    /**
-     * Initialize the instance.
-     *
-     * @param {Selector} [overlay]
-     *
-     * @returns {this}
-     * @protected
-     */
-    _initialize(overlay) {
         this.$overlay = this.constructor.findOverlay(overlay);
-        return this;
     }
 
     // ========================================================================
@@ -122,7 +105,7 @@ export class Overlay extends BaseClass {
     // Class properties
     // ========================================================================
 
-    static get instance()  { return this._instance  ||= new this }
+    static get instance()  { return this._instance  ||= new this() }
     static get container() { return this._container ||= this.findContainer() }
 
     static set suppressed(v)  { this._suppressed = !!v; }

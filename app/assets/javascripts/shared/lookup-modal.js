@@ -225,10 +225,9 @@ export class LookupModal extends ModalDialog {
      * @type {string[]}
      */
     static DATA_COLUMNS = deepFreeze(
-        Object.entries(this.ENTRY_TABLE).map(kv => {
-            const [field, config] = kv;
-            return config.non_data ? [] : field;
-        }).flat()
+        Object.entries(this.ENTRY_TABLE).map(
+            ([field, config]) => config.non_data ? [] : field
+        ).flat()
     );
 
     /**

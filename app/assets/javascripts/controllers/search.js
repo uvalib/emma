@@ -100,7 +100,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     handleEvent($mode_menu, 'change', function(event) {
-        const $menu    = $(event.currentTarget || event.target || event);
+        const $menu    = $(event.currentTarget || event.target);
         const new_mode = $menu.val();
         if (new_mode !== current_mode) {
             const path   = $menu.attr('data-path') || window.location.pathname;
@@ -407,7 +407,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}              [open]     Def: opposite state.
      */
     function toggleSection(event, open) {
-        const $tgt    = $(event.currentTarget || event.target || event);
+        const $tgt    = $(event.currentTarget || event.target);
         const $toggle = $tgt.is(TOGGLE) ? $tgt : $tgt.siblings(TOGGLE);
         const id      = $toggle.attr('aria-controls');
         const $sect   = id ? $(`#${id}`) : $toggle.parents(SUBSECTION).first();

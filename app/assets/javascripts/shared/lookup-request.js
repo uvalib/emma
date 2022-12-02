@@ -262,8 +262,7 @@ export class LookupRequest extends BaseClass {
         const REQUEST_TYPE     = this.constructor.REQUEST_TYPE;
         const DEF_REQUEST_TYPE = this.constructor.DEF_REQUEST_TYPE;
         const pairs = terms.map(term => this.extractParts(term)).flat(1);
-        pairs.forEach(function(pair) {
-            const [prefix, value] = pair;
+        pairs.forEach(([prefix, value]) => {
             const term = `${prefix}:${value}`;
             let type;
             $.each(REQUEST_TYPE, function(req_type, prefixes) {
@@ -358,7 +357,7 @@ export class LookupRequest extends BaseClass {
      */
     _appendParts(dst, src) {
         let src_val;
-        $.each(dst, function(key, val) {
+        $.each(dst, (key, val) => {
             if (isPresent(src_val = src[key])) {
                 dst[key] = Array.from(new Set([...val, ...src_val]));
             }
@@ -403,7 +402,7 @@ export class LookupRequest extends BaseClass {
     static get idPrefixes()    { return this.ID_TYPES }
     static get queryPrefixes() { return this.QUERY_TYPES }
     static get limitPrefixes() { return this.LIMIT_TYPES }
-    static get allPrefixes()   { return this.prefixes ||= this._prefixList(); }
+    static get allPrefixes()   { return this.prefixes ||= this._prefixList() }
 
     // ========================================================================
     // Class methods - internal

@@ -57,8 +57,8 @@ export function compact(item, trim) {
         return item.map(v => compact(v, trim)).filter(v => isPresent(v));
 
     } else if (typeof item === 'object') {
-        const pr = objectEntries(item).map(kv => [kv[0], compact(kv[1],trim)]);
-        return Object.fromEntries(pr.filter(kv => isPresent(kv[1])));
+        const pr = objectEntries(item).map(([k,v]) => [k, compact(v, trim)]);
+        return Object.fromEntries(pr.filter(([_,v]) => isPresent(v)));
 
     } else {
         return item;
@@ -79,7 +79,7 @@ export function deepFreeze(item) {
     if (Array.isArray(item)) {
         new_item = item.map(v => deepFreeze(v));
     } else if (typeof item === 'object') {
-        const pr = objectEntries(item).map(kv => [kv[0], deepFreeze(kv[1])]);
+        const pr = objectEntries(item).filter(([k,v]) => [k, deepFreeze(v)]);
         new_item = Object.fromEntries(pr);
     } else {
         new_item = item;
@@ -167,7 +167,7 @@ export function toObject(array, mapper) {
     } else if (typeof array === 'object') {
         obj = array;
     } else {
-        console.warn('toObject: not an array:', array);
+        console.warn('toObject: not an array or object:', array);
     }
     return obj || {};
 }
@@ -185,7 +185,7 @@ export function toObject(array, mapper) {
  */
 export function objectEntries(item) {
     if (item && (typeof item === 'object')) {
-        return Object.entries(item).filter(kv => item.hasOwnProperty(kv[0]));
+        return Object.entries(item).filter(([k,_]) => item.hasOwnProperty(k));
     } else {
         return [];
     }

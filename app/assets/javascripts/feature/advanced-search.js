@@ -957,7 +957,7 @@ $(document).on('turbolinks:load', function() {
     function updatedSearchTerm(event) {
         const func   = 'updatedSearchTerm';
         const target = event.currentTarget || event.target;
-        let $input   = getSearchInput(target, func);
+        const $input = getSearchInput(target, func);
         const time   = 'timestamp';
         const prev_t = $input.data(time);
         const this_t = event.timeStamp;
@@ -1141,9 +1141,10 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event} event
      */
     function updatedSearchType(event) {
-        const func = 'updatedSearchType';
-        let $menu  = getSearchInputSelect(event.currentTarget || event.target);
-        const type = $menu.val();
+        const func   = 'updatedSearchType';
+        const target = event.currentTarget || event.target;
+        const $menu  = getSearchInputSelect(target);
+        const type   = $menu.val();
         setSearchType($menu, type, func);
         if (IMMEDIATE_SEARCH) {
             setSearchFilterParams(type, searchTerm($menu));
@@ -1377,7 +1378,7 @@ $(document).on('turbolinks:load', function() {
             //searching:       'Searching…',
             removeAllItems:  'Remove all selected values'
         };
-        let translations = {};
+        const translations = {};
         $.each(text, function(name, value) {
             switch (name) {
                 case 'inputTooLong':
@@ -1424,9 +1425,9 @@ $(document).on('turbolinks:load', function() {
      * @note Not currently used.
      *!/
     function preChange(event) {
-        let menu = event.currentTarget || event.target;
-        // setSearchFormParamsFromFilters(menu);
-        // setSearchFilterParamsFromFilters(menu);
+        const $menu = $(event.currentTarget || event.target);
+        // setSearchFormParamsFromFilters($menu);
+        // setSearchFilterParamsFromFilters($menu);
     }
 */
 
@@ -1439,7 +1440,7 @@ $(document).on('turbolinks:load', function() {
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
      */
     function multiSelectPostChange(event) {
-        let $menu = $(event.currentTarget || event.target);
+        const $menu = $(event.currentTarget || event.target);
         $menu.prop('ongoing-event', event.type);
     }
 
@@ -1455,7 +1456,7 @@ $(document).on('turbolinks:load', function() {
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
      */
     function suppressMenuOpen(event) {
-        let $menu = $(event.currentTarget || event.target);
+        const $menu = $(event.currentTarget || event.target);
         if ($menu.prop('ongoing-event')) {
             event.preventDefault();
             event.stopImmediatePropagation();
@@ -1479,8 +1480,8 @@ $(document).on('turbolinks:load', function() {
       //if (menu.className) { target += '.' + menu.className; }
       //if (menu.type)      { target += `[${menu.type}]`; }
         // noinspection JSCheckFunctionSignatures
-        let $selected  = $(menu).siblings().find('[aria-activedescendant]');
-        const selected = $selected.attr('aria-activedescendant');
+        const $selected = $(menu).siblings().find('[aria-activedescendant]');
+        const selected  = $selected.attr('aria-activedescendant');
         if (selected) { target += ' ' + selected; }
         _debug('SELECT2', evt, target);
     }

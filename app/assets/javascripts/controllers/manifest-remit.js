@@ -1236,9 +1236,8 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event|Event} event
      */
     function afterLocalFilesSelected(event) {
-        const func   = 'afterLocalFilesSelected';
-        const button = event.currentTarget || event.target;
-        const files  = button?.files;
+        const func  = 'afterLocalFilesSelected';
+        const files = event.currentTarget?.files || event.target?.files;
         //_debug(`*** ${func}: event =`, event);
         if (!files) {
             console.warn(`${func}: no event target`);

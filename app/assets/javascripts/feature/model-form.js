@@ -989,7 +989,8 @@ $(document).on('turbolinks:load', function() {
              * @param {jQuery.Event} event
              */
             function setBulkFilename(event) {
-                const filename = ((event.target.files || [])[0] || {}).name;
+                const files    = event.target.files || [];
+                const filename = (files[0] || {}).name;
                 if (uploader.displayFilename(filename)) {
                     uploader.fileSelectButton().removeClass('best-choice');
                     enableSubmit($form);
@@ -3372,8 +3373,8 @@ $(document).on('turbolinks:load', function() {
         const $button   = lookupButton($form);
         const condition = getLookupCondition($button);
         let found;
-        $.each(condition, function(logical_op, field_flags) {
-            found = Object.keys(field_flags).includes(field);
+        $.each(condition, function(logical_op, entry) {
+            found = Object.keys(entry).includes(field);
             if (found) {
                 condition[logical_op][field] = valid;
             }
@@ -3417,8 +3418,8 @@ $(document).on('turbolinks:load', function() {
         if (!forbid) {
             const $fields   = inputFields($form);
             const condition = getLookupCondition($button);
-            $.each(condition, (logical_op, field_flags) => {
-                $.each(field_flags, (field, _) => {
+            $.each(condition, (logical_op, entry) => {
+                $.each(entry, (field, _) => {
                     const $field = $fields.filter(`[data-field="${field}"]`);
                     condition[logical_op][field] = isPresent($field.val());
                 });
@@ -3544,8 +3545,8 @@ $(document).on('turbolinks:load', function() {
         const $form     = formElement($button);
         const $fields   = inputFields($form).filter('.valid');
         const condition = value || getLookupCondition($button);
-        $.each(condition, function(_logical_op, field_flags) {
-            $.each(field_flags, function(field, active) {
+        $.each(condition, function(_logical_op, entry) {
+            $.each(entry, function(field, active) {
                 if (active) {
                     const $field = $fields.filter(`[data-field="${field}"]`);
                     const values = $field.val();

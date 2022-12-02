@@ -47,7 +47,7 @@ $(document).on('turbolinks:load', function() {
      */
     function scrollToAnchor(event) {
         const func   = 'IFRAME scrollToAnchor';
-        let $link    = $(event ? event.target : this);
+        const $link  = $(event ? event.target : this);
         const anchor = $link[0].hash;
         let $anchor  = anchor && $(anchor);
         if ($anchor) {

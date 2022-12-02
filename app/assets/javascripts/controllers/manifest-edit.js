@@ -1361,8 +1361,7 @@ $(document).on('turbolinks:load', function() {
      */
     function rowOperation(event) {
         _debug('rowOperation: event =', event);
-        const target   = event.currentTarget || event.target;
-        const $control = $(target);
+        const $control = $(event.currentTarget || event.target);
         const action   = $control.attr(ACTION_ATTR);
         switch (action) {
             case 'insert': insertRow($control); break;
@@ -1418,24 +1417,24 @@ $(document).on('turbolinks:load', function() {
      */
     function insertRow(after, data, renumber) {
         _debug('insertRow after', after);
-        let $new;
+        let $new_row;
         if (after) {
             const $row = dataRow(after);
-            $new = emptyDataRow($row);
-            $new.insertAfter($row);
+            $new_row = emptyDataRow($row);
+            $new_row.insertAfter($row);
         } else {
-            $new = emptyDataRow();
-            $new.attr('id', 'manifest_item-item-1');
-            $grid.children('tbody').prepend($new);
+            $new_row = emptyDataRow();
+            $new_row.attr('id', 'manifest_item-item-1');
+            $grid.children('tbody').prepend($new_row);
         }
         if (isPresent(data)) {
-            updateDataRow($new, data);
+            updateDataRow($new_row, data);
         }
         if (renumber !== false) {
             incrementItemCount();
             updateGridRowIndexes();
         }
-        return $new;
+        return $new_row;
     }
 
     /**
