@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/queue.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { flatten }   from './arrays'
@@ -10,7 +12,6 @@ import { isEmpty }   from './definitions'
 // Class Queue
 // ============================================================================
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * A generic FIFO queue.
  */

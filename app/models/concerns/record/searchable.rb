@@ -379,6 +379,7 @@ module Record::Searchable
     def latest_for_sid(sid = nil, sort: nil, **opt)
       result = matching_sid(sid, **opt) or return
       sort ||= :created_at
+      # noinspection RubyMismatchedReturnType
       result.order(sort).last
     end
 

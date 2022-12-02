@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/arrays.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { isDefined, notDefined } from './definitions'
@@ -9,7 +11,6 @@ import { dup }                   from './objects'
 // Functions - returning Array
 // ============================================================================
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Make a duplicate of the given array.
  *

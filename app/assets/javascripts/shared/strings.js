@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/strings.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { objectEntries } from './objects'
@@ -65,7 +67,6 @@ export function singularize(item) {
     return item;
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Manually interpolate a string.
  *

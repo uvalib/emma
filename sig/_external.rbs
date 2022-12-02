@@ -53,6 +53,15 @@ module ActionCable
   end
 end
 
+# NOTE: overrides .gem_rbs_collection/actionpack/6.0/actionpack-generated.rbs
+module ActionDispatch
+  module Assertions
+    module ResponseAssertions
+      def assert_redirected_to: ((anyHash|String) options, ?(String|nil) message) -> true
+    end
+  end
+end
+
 module ActionMailer
   class Base
   end
@@ -111,10 +120,24 @@ module ActiveRecord
       end
     end
   end
+  # NOTE: overrides .gem_rbs_collection/activerecord/6.1/activerecord-generated.rbs
+  module FinderMethods
+    def take: (?nil    limit) -> (untyped | nil)
+            | (Integer limit) -> anyArray
+    def first: (?nil    limit) -> (untyped | nil)
+             | (Integer limit) -> anyArray
+    def last: (?nil    limit) -> (untyped | nil)
+            | (Integer limit) -> anyArray
+  end
 end
 
-# NOTE: overrides .gem_rbs_collection/activesupport/6.0/activesupport-generated.rbs
 class Array[unchecked out Elem] < Object
+
+  # NOTE: overrides gems/rbs-2.8.1/core/array.rbs
+
+  def join: (?(string|nil) separator) -> String
+
+  # NOTE: overrides .gem_rbs_collection/activesupport/6.0/activesupport-generated.rbs
 
   def extract_options!: () -> anyHash
 
@@ -127,7 +150,6 @@ class Array[unchecked out Elem] < Object
   def all?: () -> bool
           | (_Pattern[Elem] pattern) -> bool
           | () { (Elem obj) -> top } -> bool
-
 end
 
 module CanCan

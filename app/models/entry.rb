@@ -267,6 +267,7 @@ class Entry < ApplicationRecord
   # @return [Array<User>]
   #
   def uploaders
+    # noinspection RailsParamDefResolve
     ids = actions.where(type: %i[Store BatchStore]).pluck(:user_id)
     User.where(id: ids).to_a
   end

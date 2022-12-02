@@ -35,6 +35,7 @@ if DEBUG_SPROCKETS && Gem.loaded_specs['sassc'].present?
 
   end
 
+  # noinspection RubyResolve
   require 'sassc-rails'
 
   module SassC

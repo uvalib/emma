@@ -54,6 +54,7 @@ module Manifest::ItemMethods
     rows = items_related_to(manifest) or return {}
     cols = Array.wrap(columns)
     if cols.present?
+      # noinspection RailsParamDefResolve
       rows.pluck(:id, *cols).map { |id, *vals| [id, cols.zip(vals).to_h] }.to_h
     else
       rows.map { |row| [row.id, row.fields] }.to_h

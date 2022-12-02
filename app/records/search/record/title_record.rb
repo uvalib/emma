@@ -1403,6 +1403,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     numbers.map! { |v| ERB::Util.h(v) } if html
     numbers = numbers.join(separator)   if separator
     numbers = numbers.html_safe         if html
+    # noinspection RubyMismatchedReturnType
     numbers
   end
 

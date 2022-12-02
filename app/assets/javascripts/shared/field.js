@@ -360,6 +360,7 @@ export class Value extends BaseClass {
         let type, value = this._normalize(arg, arg_type);
         const prop      = (typeof(as_type) === 'object');
         if (prop) {
+            // noinspection JSValidateTypes
             this._map   = { ...as_type.pairs };
             type = as_type.array ? 'array' : as_type.type;
         } else {

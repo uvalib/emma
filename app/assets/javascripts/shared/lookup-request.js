@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/lookup-request.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { arrayWrap }                        from './arrays'
@@ -25,7 +27,6 @@ import { deepFreeze, toObject }             from './objects'
 // Class LookupRequest
 // ============================================================================
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * A lookup request message formed by parsing one or more term strings.
  */

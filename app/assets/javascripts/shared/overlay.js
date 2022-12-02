@@ -44,7 +44,7 @@ export class Overlay extends BaseClass {
     /**
      * The singleton instance
      *
-     * @type {this|undefined}
+     * @type {Overlay}
      */
     static _instance;
 
@@ -67,8 +67,6 @@ export class Overlay extends BaseClass {
      * Create a new instance.
      *
      * @param {Selector} [overlay]
-     *
-     * @returns {this}
      */
     constructor(overlay) {
         super();

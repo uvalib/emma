@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/decode.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { isDefined } from './definitions'
@@ -31,7 +33,6 @@ export function decodeJSON(arg) {
     });
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Interpret a string as an Array definition.
  *
@@ -65,7 +66,6 @@ export function decodeObject(arg) {
     }
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Interpret a string as a boolean value.
  *
@@ -81,7 +81,6 @@ export function decodeBoolean(arg) {
     }
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Interpret a string as a integer value.
  *

@@ -1,11 +1,15 @@
 // app/assets/javascripts/shared/base-class.js
+//
+// noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
+
+
+// No imports
 
 
 // ============================================================================
 // Class BaseClass
 // ============================================================================
 
-// noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
 /**
  * The base for application-defined classes which provides logging support.
  *

@@ -31,6 +31,7 @@ module Record::EmmaIdentification
   SID_LETTERS = ('g'..'z').minmax.map(&:ord).deep_freeze
 
   # @type [Integer]                                                             # NOTE: from Upload::IdentifierMethods
+  # noinspection RubyMismatchedArgumentType
   SID_LETTER_SPAN = SID_LETTERS.then { |pr| pr.last - pr.first + 1 }
 
   # @type [String]                                                              # NOTE: from Upload::IdentifierMethods

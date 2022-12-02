@@ -281,7 +281,7 @@ class BaseUploader extends BaseClass {
      * Create a new instance.
      *
      * @param {Selector}            root
-     * @param {String}              model
+     * @param {string}              model
      * @param {UppyFeatures|object} features
      * @param {UppyCallbacks}       [callbacks]
      */
@@ -1095,7 +1095,7 @@ class BaseUploader extends BaseClass {
     /**
      * Display the name of the file selected by the user.
      *
-     * @param {String} filename
+     * @param {string} filename
      *
      * @returns {boolean}
      */
@@ -1113,6 +1113,7 @@ class BaseUploader extends BaseClass {
      * @param {String} [inner]        Interior element holding the name.
      *
      * @returns {boolean}
+     * @protected
      */
     _updateFilename(filename, inner = '.filename') {
         if (isMissing(filename)) { return false }
@@ -1405,7 +1406,7 @@ export class SingleUploader extends BaseUploader {
      * Create a new instance.
      *
      * @param {Selector}            form
-     * @param {String}              model
+     * @param {string}              model
      * @param {UppyFeatures|object} features
      * @param {States}              state
      * @param {UppyCallbacks}       [callbacks]
@@ -1574,7 +1575,7 @@ export class MultiUploader extends BaseUploader {
      * Create a new instance.
      *
      * @param {Selector}            root
-     * @param {String}              model
+     * @param {string}              model
      * @param {UppyFeatures|object} features
      * @param {UppyCallbacks}       [callbacks]
      */
@@ -1719,6 +1720,7 @@ export class MultiUploader extends BaseUploader {
      * @param {String} [inner]        Interior element holding the name.
      *
      * @returns {boolean}
+     * @protected
      */
     _updateFilename(filename, inner = this.constructor.FILE_TYPE) {
         if (!super._updateFilename(filename, inner)) { return false }

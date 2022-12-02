@@ -1943,6 +1943,8 @@ export class LookupModal extends ModalDialog {
      *
      * @param {boolean} [visible]     If *true* do not create hidden.
      * @param {string}  [css_class]   Default: {@link LOADING_CLASS}.
+     *
+     * @returns {jQuery}
      */
     makeLoadingPlaceholder(visible, css_class) {
         const css    = css_class || this.constructor.LOADING_CLASS;

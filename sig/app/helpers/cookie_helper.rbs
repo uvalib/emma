@@ -1,4 +1,4 @@
-# Support methods for working with authentication strategies.
+# Support methods for working with request cookies.
 #
 module CookieHelper
   # Common cookie header settings.

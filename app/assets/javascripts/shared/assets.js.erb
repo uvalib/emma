@@ -22,40 +22,6 @@ import {
     decodeObject  as o$,
 } from '../javascripts/shared/decode'
 
-/**
- * AssetOverrides
- *
- * @typedef {{
- *     OverrideScriptSettings:  object,
- *     Image_placeholder_asset: string
- * }} AssetOverrides
- */
-
-// noinspection JSUnresolvedVariable
-/**
- * The server passes current information via a <script> tag that is inserted
- * before 'application.js' in a global location that will be accessible from
- * any ES6 module.
- *
- * @type {AssetOverrides}
- *
- * @see "HeadHelper::Scripts#page_script_settings"
- */
-const ASSET_OVERRIDES = window.ASSET_OVERRIDES || {};
-
-/**
- * Updated top-level values.
- *
- * @type {object}
- */
-const OverrideScriptSettings = ASSET_OVERRIDES.OverrideScriptSettings || {};
-
-/**
- * Current path to the placeholder asset.
- *
- * @type {string}
- */
-const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 
 // ============================================================================
 // Type definitions
@@ -450,6 +416,15 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
  * }} ModelProperties
  */
 
+/**
+ * AssetOverrides
+ *
+ * @typedef {{
+ *     OverrideScriptSettings:  object,
+ *     Image_placeholder_asset: string
+ * }} AssetOverrides
+ */
+
 // ============================================================================
 // Application settings
 // ============================================================================
@@ -486,6 +461,24 @@ const Image_placeholder_asset = ASSET_OVERRIDES.Image_placeholder_asset || {};
 export const Emma = (function() {
 
     // ========================================================================
+    // Asset precompile overrides
+    // ========================================================================
+
+    // noinspection JSUnresolvedVariable
+    /**
+     * The server passes current information via a <script> tag that is
+     * inserted before 'application.js' in a global location that will be
+     * accessible from any ES6 module.
+     *
+     * @type {AssetOverrides}
+     *
+     * @see "HeadHelper::Scripts#page_script_settings"
+     */
+    const ASSET_OVERRIDES   = { ...window.ASSET_OVERRIDES };
+    const setting_overrides = ASSET_OVERRIDES.OverrideScriptSettings  || {};
+    const image_placeholder = ASSET_OVERRIDES.Image_placeholder_asset || '';
+
+    // ========================================================================
     // Application settings
     // ========================================================================
 
@@ -509,7 +502,7 @@ export const Emma = (function() {
             placeholder: {
                 alt:     "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
                 class:   "<%= ImageHelper::PLACEHOLDER_IMAGE_CLASS %>",
-                asset:   Image_placeholder_asset,
+                asset:   image_placeholder,
             }
         },
 
@@ -614,9 +607,9 @@ export const Emma = (function() {
 
     };
 
-    // Update with any live data values injected from the server.
+    // Update with any configuration values injected from the server.
     const tag = 'OverrideScriptSettings';
-    $.each(OverrideScriptSettings, function(key, value) {
+    $.each(setting_overrides, function(key, value) {
         const current = settings[key];
         const type    = typeof value;
         if (type === 'undefined') {
@@ -626,7 +619,7 @@ export const Emma = (function() {
         } else if (Array.isArray(current) || (typeof current !== 'object')) {
             settings[key] = value;
         } else if (type === 'object') {
-            $.extend(settings[key], value);
+            settings[key] = { ...settings[key], ...value };
         } else {
             console.warn(`${tag}: ${key}: cannot merge "${type}" value`);
         }

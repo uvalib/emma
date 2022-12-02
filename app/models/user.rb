@@ -526,6 +526,7 @@ class User < ApplicationRecord
   # @type [Array<(String,Integer)>]
   #
   def self.test_user_menu
+    # noinspection RailsParamDefResolve
     where(email: test_users.keys).pluck(:email, :id)
   end
 

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Support methods for working with authentication strategies.
+# Support methods for working with request cookies.
 #
 module CookieHelper
 

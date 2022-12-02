@@ -43,6 +43,7 @@ class Manifest < ApplicationRecord
 
   belongs_to :user, optional: true
 
+  # noinspection RailsParamDefResolve
   has_many :manifest_items, -> { order(:row, :delta) }, dependent: :destroy
 
   # ===========================================================================

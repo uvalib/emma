@@ -22,11 +22,11 @@ module BaseDecorator::Controls
 
   # Valid properties for entries under #ICONS.
   #
-  # * :icon     [String]
-  # * :tip      [String]
-  # * :path     [String, Symbol, Proc]
-  # * :auto     [Boolean]
-  # * :enabled  [Boolean, Proc]
+  # * :icon     [String]                Unicode character.
+  # * :tip      [String]                Tooltip on hover.
+  # * :path     [String, Symbol, Proc]  Activation action (see below).
+  # * :auto     [Boolean]               If *true* available for anon user.
+  # * :enabled  [Boolean, Proc]         If *false* do not show.
   #
   ICON_PROPERTIES = %i[icon tip path auto enabled].freeze
 

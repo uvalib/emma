@@ -188,7 +188,7 @@ export function initializeButtonSet(buttons, caller) {
 /**
  * Return the button indicated by *type*.
  *
- * @param {String}                 type
+ * @param {string}                 type
  * @param {Object.<string,jQuery>} buttons
  * @param {string}                 [caller]
  *

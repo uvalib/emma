@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/session-state.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { BaseClass }             from './base-class'
@@ -207,7 +209,6 @@ export class SessionState extends BaseClass {
 // Class SessionToggle
 // ============================================================================
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * A binary on/off state saved in sessionStorage.
  */

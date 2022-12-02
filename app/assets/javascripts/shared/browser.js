@@ -1,4 +1,9 @@
 // app/assets/javascripts/shared/browser.js
+//
+// noinspection JSUnusedGlobalSymbols
+
+
+// No imports
 
 
 // ============================================================================
@@ -17,7 +22,6 @@ export function pageLoadType() {
     return timing.type;
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Indicate whether the current page load was due to navigation via
  * 'history.back()' or 'history.forward()'.
@@ -28,7 +32,6 @@ export function pageLoadFromHistory() {
     return pageLoadType() === 'back_forward';
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Indicate whether the current page load was due to the page being reloaded.
  *

@@ -68,7 +68,7 @@ $(document).on('turbolinks:load', function() {
      * CSS class for single-entry form elements.
      *
      * @readonly
-     * @type {String}
+     * @type {string}
      */
     const MODEL_FORM_SELECTOR = selector(MODEL_FORM_CLASS);
 
@@ -881,6 +881,7 @@ $(document).on('turbolinks:load', function() {
             let error  = undefined;
 
             // Save uploaded EMMA metadata.
+            // noinspection JSValidateTypes
             /** @type {EmmaDataOrError} */
             const emma_data = { ...body.emma_data };
             error ||= emma_data.error;
@@ -3221,6 +3222,7 @@ $(document).on('turbolinks:load', function() {
      */
     function onLookupComplete($toggle, check_only, halted) {
         if (check_only || halted) { return }
+
         const $form = formElement();
         let message = 'No fields changed.'; // TODO: I18n
         const data  = getFieldResultsData($toggle);
@@ -3269,7 +3271,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Enable form submission.
+     * Enable bibliographic lookup.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      * @param {boolean}  [enable]     If *false* run {@link disableLookup}.
@@ -3292,7 +3294,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Disable form submission.
+     * Disable bibliographic lookup.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      * @param {boolean}  [forbid]     If *true* add '.forbidden'.
@@ -3471,6 +3473,8 @@ $(document).on('turbolinks:load', function() {
 
     /**
      * Get the search terms to be provided for lookup.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
      *
      * @returns {LookupRequest|undefined}
      */

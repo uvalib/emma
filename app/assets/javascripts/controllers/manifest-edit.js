@@ -450,11 +450,12 @@ $(document).on('turbolinks:load', function() {
         $title_heading.toggleClass(EDITING_MARKER, false);
     }
 
-    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Allow ENTER to work as "Change" and ESC to work as "Keep".
      *
      * @param {jQuery.Event|KeyboardEvent} event
+     *
+     * @returns {boolean|undefined}
      */
     function onTitleEditKeypress(event) {
         const key = event.key;
@@ -1210,7 +1211,7 @@ $(document).on('turbolinks:load', function() {
      * If the row doesn't have a 'data-item-id' attribute it will be set here
      * if data has an 'id' value.
      *
-     * @param {Selector}    target
+     * @param {Selector}     target
      * @param {ManifestItem} data
      */
     function updateDataRow(target, data) {
@@ -1334,7 +1335,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Name of the attribute indicating the action of a control button.
+     * The name of the attribute indicating the action of a control button.
      *
      * @type {string}
      */
@@ -2031,6 +2032,7 @@ $(document).on('turbolinks:load', function() {
             let error  = undefined;
 
             // Extract uploaded EMMA metadata.
+            // noinspection JSValidateTypes
             /** @type {ManifestItemDataOrError} */
             const emma_data = { ...body.emma_data };
             error ||= emma_data.error;
