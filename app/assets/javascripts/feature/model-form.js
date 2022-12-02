@@ -851,7 +851,7 @@ $(document).on('turbolinks:load', function() {
          * This event occurs when the response from POST /entry/upload is
          * received with a failure status (4xx).
          *
-         * @param {Uppy.UppyFile}                  file
+         * @param {UppyFile}                       file
          * @param {Error}                          error
          * @param {{status: number, body: string}} [response]
          */
@@ -870,7 +870,7 @@ $(document).on('turbolinks:load', function() {
          * 'emma_data' object in addition to the fields associated with
          * 'file_data'.
          *
-         * @param {Uppy.UppyFile}       file
+         * @param {UppyFile}            file
          * @param {UppyResponseMessage} response
          *
          * @see "Shrine::UploadEndpointExt#make_response"
@@ -4570,7 +4570,7 @@ $(document).on('turbolinks:load', function() {
         const message = 'Cancel this submission before retrying'; // TODO: I18n
         const tooltip = { 'title': message };
         uploader?.cancel();
-        uploader?.disableFileSelectButton()?.attr(tooltip);
+        uploader?.disableFileSelectButton();
         disableSubmit($form).attr(tooltip);
         fieldContainer($form).attr(tooltip);
         inputFields($form).attr(tooltip).each(function() {

@@ -1940,12 +1940,13 @@ $(document).on('turbolinks:load', function() {
      * @returns {MultiUploader}
      */
     function newUploader(row) {
-        const func     = 'newUploader'; //_debug(`${func}: row =`, row);
+        //_debug('newUploader: row =', row);
         // noinspection JSUnusedGlobalSymbols
         const cbs      = { onSelect, onStart, onError, onSuccess };
         const $row     = $(row);
         const instance = new MultiUploader($row, ITEM_MODEL, FEATURES, cbs);
         const exists   = instance.isUppyInitialized();
+        const func     = 'uploader';
         let name_shown;
 
         // Clear display elements of an existing uploader.
@@ -1966,9 +1967,9 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event} [event]    Ignored.
          */
         function onSelect(event) {
+            _debug(`${func}: onSelect: event =`, event);
             clearFlash();
             if (!manifestId()) {
-                _debug(`${func}: triggering manifest creation`);
                 createManifest();
             }
         }
@@ -1986,9 +1987,10 @@ $(document).on('turbolinks:load', function() {
          * @returns {object}          URL parameters for the remote endpoint.
          */
         function onStart(data) {
+            _debug(`${func}: onStart: data =`, data);
             clearFlash();
             name_shown = instance.isFilenameDisplayed();
-            if (name_shown) { instance.hideFilename() }
+            instance.hideFilename(); // Make room for .uploader-feedback
             return compact({
                 id:          databaseId($row),
                 row:         dbRowValue($row),
@@ -2001,11 +2003,12 @@ $(document).on('turbolinks:load', function() {
          * This event occurs when the response from POST /manifest_item/upload
          * is received with a failure status (4xx).
          *
-         * @param {Uppy.UppyFile}                  file
+         * @param {UppyFile}                       file
          * @param {Error}                          error
          * @param {{status: number, body: string}} [response]
          */
         function onError(file, error, response) {
+            _debug(`${func}: onError: file =`, file);
             flashError(error?.message || error);
             if (name_shown) { instance.hideFilename(false) }
         }
@@ -2020,12 +2023,13 @@ $(document).on('turbolinks:load', function() {
          * 'emma_data' object in addition to the fields associated with
          * 'file_data'.
          *
-         * @param {Uppy.UppyFile}       file
+         * @param {UppyFile}            file
          * @param {UppyResponseMessage} response
          *
          * @see "Shrine::UploadEndpointExt#make_response"
          */
         function onSuccess(file, response) {
+            _debug(`${func}: onSuccess: file =`, file);
 
             const body = response.body  || {};
             let error  = undefined;
@@ -2187,7 +2191,7 @@ $(document).on('turbolinks:load', function() {
              * @param {Event} event
              */
             function hoverUpload(event) {
-                _debug('hoverUpload: event =', event);
+                //_debug('hoverUpload: event =', event);
                 $cell.attr(HOVER_ATTR, type);
             }
 
@@ -2198,7 +2202,7 @@ $(document).on('turbolinks:load', function() {
              * @param {Event} event
              */
             function unhoverUpload(event) {
-                _debug('unhoverUpload: event =', event);
+                //_debug('unhoverUpload: event =', event);
                 if ($cell.attr(HOVER_ATTR) === type) {
                     $cell.removeAttr(HOVER_ATTR);
                 }

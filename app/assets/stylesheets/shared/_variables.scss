@@ -8,119 +8,118 @@
 // Colors.
 //=============================================================================
 
-$green:      #00ff00;
-$red:        #ff0000;
-$blue:       #0000ff;
-
-$text-green: $green;
-$text-red:   #a80000;   // Passes WCAG AAA on "background-color: snow".
-//$text-red: #b30000;   // Passes WCAG AAA on "background-color: white".
-$text-blue:  $blue;
+$text-red:              #a80000; // Passes WCAG AAA on background-color "snow"
+//$text-red:            #b30000; // Passes WCAG AAA on background-color "white"
+$text-green:            #00ff00;
+$text-blue:             #0000ff;
 
 // Observed Bookshare site colors.
-$bookshare-blue:   #24408e;
-$bookshare-orange: #e65d24;
-$bookshare-button: #445f9e;
-$bookshare-border: #3c548c;
+$bookshare-blue:        #24408e;
+$bookshare-orange:      #e65d24;
+$bookshare-button:      #445f9e;
+$bookshare-border:      #3c548c;
 
 // @see https://brand.virginia.edu/brand-essentials/colors
-$uva-blue:           #232D4B;
-$uva-orange:         #E57200;
+$uva-blue:              #232D4B;
+$uva-orange:            #E57200;
 
 // UVA accent colors.
 // @see https://brand.virginia.edu/brand-essentials/colors/web-palette
-$uva-accent-blue:    #141E3C;
-$uva-accent-cyan:    #009FDF;
-$uva-accent-green:   #62BB46;
-$uva-accent-magenta: #EF3F6B;
-$uva-accent-orange:  #EB5F0C;
-$uva-accent-teal:    #25CAD3;
-$uva-accent-yellow:  #FDDA24;
+$uva-accent-blue:       #141E3C;
+$uva-accent-cyan:       #009FDF;
+$uva-accent-green:      #62BB46;
+$uva-accent-magenta:    #EF3F6B;
+$uva-accent-orange:     #EB5F0C;
+$uva-accent-teal:       #25CAD3;
+$uva-accent-yellow:     #FDDA24;
 
-$uva-light-gray:     #F1F1EF;
-$uva-medium-gray:    #DADADA;
-$uva-text-gray:      #666666;
+$uva-light-gray:        #F1F1EF;
+$uva-medium-gray:       #DADADA;
+$uva-text-gray:         #666666;
 
-$uva-emergency-red:  #DF1E43;
+$uva-emergency-red:     #DF1E43;
 
 // UVA text colors.
 // @see https://brand.virginia.edu/brand-essentials/colors/web-palette
-$uva-text-blue:      $uva-blue;
-$uva-text-orange:    $uva-accent-orange; // >= 24px normal; >= 18px bold
+$uva-text-blue:         $uva-blue;
+$uva-text-orange:       $uva-accent-orange; // >= 24px normal; >= 18px bold
 
 // Uppy colors.
-// @see file:node_modules/uppy/dist/uppy.css
-$uppy-white:               #fff;
-$uppy-blue:                #2275d7;
-$uppy-green:               #1bb240;
-$uppy-red:                 #e32437;
-$uppy-orange:              #f6a623;
-$uppy-light-gray:          #eaeaea;
-$uppy-dark-gray:           #939393;
-$uppy-bg-light:            #fafafa;
-$uppy-bg-dark:             rgba(0, 0, 0, 0.3);
-$uppy-focus-bg-light:      #eceef2;
-$uppy-text:                $uppy-dark-gray;
-$uppy-link-text:           #525252;
-$uppy-hover-text:          #1b5dab;
-$uppy-shadow:              rgb(34, 117, 215);
-$uppy-border:              $uppy-light-gray;
-$uppy-file-input:          #14457f;
-$uppy-file-input-accent:   $uppy-file-input;
-$uppy-file-input-text:     $uppy-file-input;
-$uppy-file-input-bg:       none;
-$uppy-file-input-text-rev: $uppy-white;
-$uppy-file-input-bg-rev:   $uppy-file-input;
+// @see file:node_modules/@uppy/core/src/_variables.scss
+$uppy-white:            #fff;
+$uppy-black:            #000;
+$uppy-red:              #e32437;
+$uppy-pomegranate:      #ff4b23;
+$uppy-orange:           #f6a623;
+$uppy-yellow:           #ffd600;
+$uppy-green:            #1bb240;
+$uppy-dark-green:       #1c8b37;
+$uppy-blue:             #2275d7;
+$uppy-light-blue:       #aae1ff;
+$uppy-beige:            #edd4b9;
+$uppy-pink:             #eb2177;
+$uppy-white-50:         #fffbf7;
+$uppy-gray-50:          #fafafa;
+$uppy-gray-100:         #f4f4f4;
+$uppy-gray-200:         #eaeaea;
+$uppy-gray-300:         #cfcfcf;
+$uppy-gray-400:         #bbb;
+$uppy-gray-500:         #939393;
+$uppy-gray-600:         #757575;
+$uppy-gray-700:         #525252;
+$uppy-gray-800:         #333;
+$uppy-gray-900:         #1f1f1f;
+$uppy-file-input:       darken($uppy-blue, 20%); // #14457f;
 
 // Text colors.
-$error-fg:          $uva-emergency-red;
-$alert-fg:          $uva-emergency-red;
-$debug-fg:          hotpink;
+$error-fg:              $uva-emergency-red;
+$alert-fg:              $uva-emergency-red;
+$debug-fg:              hotpink;
 
 // Status backgrounds.
-$failure-bg:        f.lighter($uva-accent-magenta, 50%);
-$success-bg:        f.lighter($uva-accent-green,   50%);
-$selected-bg:       f.lighter($uva-accent-green,   75%);
+$failure-bg:            f.lighter($uva-accent-magenta, 50%);
+$success-bg:            f.lighter($uva-accent-green,   50%);
+$selected-bg:           f.lighter($uva-accent-green,   75%);
 
 // Input field backgrounds.
-$input-error-bg:    f.lighter($uva-emergency-red, 90%);
-$input-sealed-bg:   $uva-light-gray;
-$input-readonly-bg: $uva-medium-gray;
-$input-disabled-bg: $input-readonly-bg;
-$input-sealed-fg:   $uva-text-gray;
-$input-readonly-fg: $uva-text-gray;
-$input-disabled-fg: $input-readonly-fg;
+$input-error-bg:        f.lighter($uva-emergency-red, 90%);
+$input-sealed-bg:       $uva-light-gray;
+$input-readonly-bg:     $uva-medium-gray;
+$input-disabled-bg:     $input-readonly-bg;
+$input-sealed-fg:       $uva-text-gray;
+$input-readonly-fg:     $uva-text-gray;
+$input-disabled-fg:     $input-readonly-fg;
 
 // Control colors.
-$control-text:      $uppy-file-input-text;
-$control-accent:    $control-text;
+$control-text:          $uppy-file-input;
+$control-accent:        $control-text;
 
 // Flash backgrounds.
-$alert-bg:          $failure-bg;
-$notice-bg:         $success-bg;
-$failure-bg:        $alert-bg;
-$success-bg:        $notice-bg;
+$alert-bg:              $failure-bg;
+$notice-bg:             $success-bg;
+$failure-bg:            $alert-bg;
+$success-bg:            $notice-bg;
 
 // Flash borders.
-$alert-accent:      $alert-fg;
-$notice-accent:     $uva-accent-green;
-$failure-accent:    $alert-accent;
-$success-accent:    $notice-accent;
+$alert-accent:          $alert-fg;
+$notice-accent:         $uva-accent-green;
+$failure-accent:        $alert-accent;
+$success-accent:        $notice-accent;
 
 // Other colors.
-$debug-bg:          f.lighter($debug-fg,          75%);
-$header-bg:         $uva-blue;
+$debug-bg:              f.lighter($debug-fg,          75%);
+$header-bg:             $uva-blue;
 
-$panel-bg:          f.lighter($uva-accent-orange, 90%);
-$panel-border:      f.lighter($uva-accent-orange, 50%);
-$panel-accent:      $uva-accent-orange;
+$panel-bg:              f.lighter($uva-accent-orange, 90%);
+$panel-border:          f.lighter($uva-accent-orange, 50%);
+$panel-accent:          $uva-accent-orange;
 
-$button-accent:     f.lighter($uva-accent-teal,   35%);
-$focus-accent:      $button-accent;
-$text-focus:        f.darker($uva-accent-teal,    10%);
+$button-accent:         f.lighter($uva-accent-teal,   35%);
+$focus-accent:          $button-accent;
+$text-focus:            f.darker($uva-accent-teal,    10%);
 
-$table-border:      $uva-blue;
-$table-header-bg:   f.lighter($uva-accent-teal,   80%);
+$table-border:          $uva-blue;
+$table-header-bg:       f.lighter($uva-accent-teal,   80%);
 
 //=============================================================================
 // Box shadow components.

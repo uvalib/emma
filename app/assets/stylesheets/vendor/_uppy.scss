@@ -1,21 +1,28 @@
 // app/assets/stylesheets/vendor/_uppy.scss
 
-// @use '../../../node_modules/uppy/dist/uppy.css';
-
 @use 'shared/variables'        as *;
 @use 'shared/functions'        as *;
 @use 'shared/controls/buttons' as button;
 
 //=============================================================================
-// Overrides of Uppy styles (node_modules/uppy/dist/uppy.css)
+// Overrides of Uppy styles (node_modules/@uppy/core/src/_common.scss)
 //=============================================================================
 
-// Associated with the first element appended by Uppy within a given element.
-.uppy-Root {}
+// As of @uppy/core 2.2.0, each plugin creates its own .uppy-Root to contain
+// the element(s) it renders.  There is no way to reconfigure this behavior.
+// By "neutralizing" with "display: contents", styling previously determined
+// without this extra layer can happen as intended.
+.uppy-Root {
+    display: contents;
+}
 
 // Associated with subsequently-appended elements related to Uppy plugins
 // within a given element.
 .uppy {}
+
+//=============================================================================
+// Overrides of Uppy styles (node_modules/@uppy/file-input/src/style.scss)
+//=============================================================================
 
 // Upload action button.
 .uppy-FileInput-btn {
@@ -40,17 +47,39 @@
     }
 }
 
+//=============================================================================
+// Overrides of Uppy styles (node_modules/@uppy/informer/src/style.scss)
+//=============================================================================
+
 // The container for the information message that is displayed briefly for
 // various events.
-.uppy-Informer {
+[dir=ltr] .uppy-Informer {
 
     flex: 0 0 0;
 
-    // The actual message popup.
-    p[role="alert"] {
-        background-color: $uva-accent-orange;
+    > span {
+
+        display:         inline-flex;
+        justify-content: center;
+        align-items:     center;
+        height:          0;
+        overflow-y:      visible;
+        flex:            1 1 auto;
+
+        .uppy-Informer-animated {
+
+            // The actual message popup.
+            p[role="alert"] {
+                max-width:        100%;
+                background-color: $uva-accent-orange;
+            }
+        }
     }
 }
+
+//=============================================================================
+// Overrides of Uppy styles (node_modules/@uppy/status-bar/src/style.scss)
+//=============================================================================
 
 // The container for the upload status bar (a heavy-weight alternative to
 // .uppy-ProgressBar).
@@ -78,6 +107,10 @@
     .uppy-StatusBar-actions {}
 
 }
+
+//=============================================================================
+// Overrides of Uppy styles (node_modules/@uppy/progress-bar/src/style.scss)
+//=============================================================================
 
 // The container for the upload progress bar (a minimalistic alternative to
 // .uppy-StatusBar.
@@ -143,5 +176,4 @@
             }
         }
     }
-
 }
