@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/lookup-response.js
 
 
-import { BaseClass }           from './base-class'
-import { deepDup, deepFreeze } from './objects'
+import { ChannelResponse } from './channel-response'
+import { deepFreeze }      from './objects'
 
 
 // ============================================================================
@@ -26,21 +26,15 @@ import { deepDup, deepFreeze } from './objects'
  */
 
 /**
- * LookupResponseObject
+ * LookupResponsePayload
  *
- * @typedef {{
- *     status?:   string,
+ * @typedef {ChannelResponsePayload & {
  *     service?:  string|string[],
- *     user?:     string,
- *     time?:     string,
  *     duration?: number,
  *     count?:    number,
  *     discard?:  string|string[],
- *     job_id?:   string,
- *     class?:    string,
  *     data?:     LookupResponseItemsData|LookupResponseBlendData,
- *     data_url?: string,
- * }} LookupResponseObject
+ * }} LookupResponsePayload
  */
 
 // ============================================================================
@@ -50,9 +44,9 @@ import { deepDup, deepFreeze } from './objects'
 /**
  * A lookup response message.
  *
- * @extends LookupResponseObject
+ * @extends LookupResponsePayload
  */
-export class LookupResponse extends BaseClass {
+export class LookupResponse extends ChannelResponse {
 
     static CLASS_NAME = 'LookupResponse';
 
@@ -60,29 +54,12 @@ export class LookupResponse extends BaseClass {
     // Constants
     // ========================================================================
 
-    // noinspection JSUnusedGlobalSymbols
-    /**
-     * @readonly
-     * @enum {string}
-     */
-    static JOB_STATUS = deepFreeze([
-        'WORKING',
-        'LATE',
-        'DONE',
-        'WAITING',
-        'COMPLETE',
-        'PARTIAL',
-        'TIMEOUT',
-    ]);
-
-    static FINAL_STATES = deepFreeze(['COMPLETE', 'PARTIAL', 'TIMEOUT']);
-
     /**
      * A blank object containing an array value for every key defined by
      * {@link REQUEST_TYPE}.
      *
      * @readonly
-     * @type {LookupResponseObject}
+     * @type {LookupResponsePayload}
      *
      * @see "LookupChannel::LookupResponse::TEMPLATE"
      */
@@ -101,52 +78,32 @@ export class LookupResponse extends BaseClass {
     });
 
     // ========================================================================
-    // Fields
-    // ========================================================================
-
-    /** @type {LookupResponseObject} */ object = {};
-
-    // ========================================================================
     // Constructor
     // ========================================================================
 
     /**
      * Create a new instance.
      *
-     * @param {LookupResponse|LookupResponseObject} [msg_obj]
+     * @param {LookupResponse|LookupResponsePayload} [msg_obj]
      */
     constructor(msg_obj) {
-        super();
-        if (msg_obj instanceof this.constructor) {
-            this.object = msg_obj.objectCopy;
-        } else if (typeof msg_obj === 'object') {
-            this.object = deepDup(msg_obj);
-        }
+        super(msg_obj);
     }
 
     // ========================================================================
     // Properties
     // ========================================================================
 
-    get status()    { return this.object.status }
-    get service()   { return this.object.service }
-    get user()      { return this.object.user }
-    get time()      { return this.object.time }
-    get duration()  { return this.object.duration }
-    get count()     { return this.object.count }
-    get discard()   { return this.object.discard }
-    get job_id()    { return this.object.job_id }
-    get class()     { return this.object.class }
-    get data()      { return this.object.data }
-    get data_url()  { return this.object.data_url }
+    /** @returns {LookupResponsePayload} */
+    get payload()     { return this._payload }
 
-    get final() {
-        return this.constructor.FINAL_STATES.includes(this.status);
-    }
+    get service()     { return this.payload.service }
+    get duration()    { return this.payload.duration }
+    get count()       { return this.payload.count }
+    get discard()     { return this.payload.discard }
 
-    get objectCopy() {
-        return deepDup(this.object);
-    }
+    /** @returns {LookupResponsePayload} */
+    get payloadCopy() { return super.payloadCopy }
 
     // ========================================================================
     // Class methods
@@ -155,12 +112,13 @@ export class LookupResponse extends BaseClass {
     /**
      * Return the item if it is an instance or create one if not.
      *
-     * @param {LookupResponse|LookupResponseObject|object} item
+     * @param {LookupResponse|LookupResponsePayload|object} item
      *
      * @returns {LookupResponse}
      */
     static wrap(item) {
-        return (item instanceof this) ? item : new this(item);
+        // noinspection JSValidateTypes
+        return super.wrap(item);
     }
 
 }

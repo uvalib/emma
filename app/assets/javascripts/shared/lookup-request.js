@@ -3,10 +3,10 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { arrayWrap }                        from './arrays'
-import { BaseClass }                        from './base-class'
-import { isDefined, isPresent, notDefined } from './definitions'
-import { deepFreeze, toObject }             from './objects'
+import { arrayWrap }             from './arrays'
+import { ChannelRequest }        from './channel-request'
+import { isPresent, notDefined } from './definitions'
+import { deepFreeze, toObject }  from './objects'
 
 
 // ============================================================================
@@ -14,13 +14,13 @@ import { deepFreeze, toObject }             from './objects'
 // ============================================================================
 
 /**
- * LookupRequestObject
+ * LookupRequestPayload
  *
- * @typedef {{
+ * @typedef {ChannelRequestPayload & {
  *     ids?:   string[],
  *     query?: string[],
  *     limit?: string[],
- * }} LookupRequestObject
+ * }} LookupRequestPayload
  */
 
 // ============================================================================
@@ -30,7 +30,7 @@ import { deepFreeze, toObject }             from './objects'
 /**
  * A lookup request message formed by parsing one or more term strings.
  */
-export class LookupRequest extends BaseClass {
+export class LookupRequest extends ChannelRequest {
 
     static CLASS_NAME = 'LookupRequest';
 
@@ -78,7 +78,7 @@ export class LookupRequest extends BaseClass {
      * Each request type and the valid search term prefixes associated with it.
      *
      * @readonly
-     * @type {LookupRequestObject}
+     * @type {LookupRequestPayload}
      */
     static REQUEST_TYPE = deepFreeze({
         ids:    this.ID_TYPES,
@@ -90,16 +90,15 @@ export class LookupRequest extends BaseClass {
     static DEF_QUERY_TYPE   = 'keyword';
     static DEF_REQUEST_TYPE = 'query';
 
-    // noinspection JSUnusedLocalSymbols
     /**
      * A blank object containing an array value for every key defined by
      * {@link REQUEST_TYPE}.
      *
      * @readonly
-     * @type {LookupRequestObject}
+     * @type {LookupRequestPayload}
      */
     static TEMPLATE = deepFreeze(
-        toObject(Object.keys(this.REQUEST_TYPE), k => [])
+        toObject(Object.keys(this.REQUEST_TYPE), _key => [])
     );
 
     /**
@@ -126,8 +125,7 @@ export class LookupRequest extends BaseClass {
     // Fields
     // ========================================================================
 
-    /** @type {string} */              separators;
-    /** @type {LookupRequestObject} */ parts;
+    /** @type {string} */ separators;
 
     // ========================================================================
     // Constructor
@@ -136,20 +134,22 @@ export class LookupRequest extends BaseClass {
     /**
      * Create a new instance.
      *
-     * @param {string|string[]|LookupRequest|LookupRequestObject} [terms]
+     * @param {string|string[]|LookupRequest|LookupRequestPayload} [terms]
      * @param {string|string[]} [chars]     Separator character(s).
      */
     constructor(terms, chars) {
         super();
-        const separators = Array.isArray(chars) ? chars.join('') : chars;
-        this.separators  = separators || this.constructor.DEF_SEPARATORS;
-        this.parts       = this._blankParts();
+        this.separators   = Array.isArray(chars) ? chars.join('') : chars;
+        this.separators ||= this.constructor.DEF_SEPARATORS;
         this.add(terms);
     }
 
     // ========================================================================
     // Properties
     // ========================================================================
+
+    /** @returns {LookupRequestPayload} */
+    get parts()  { return super.parts }
 
     get ids()    { return this.parts.ids   || [] }
     get query()  { return this.parts.query || [] }
@@ -159,13 +159,11 @@ export class LookupRequest extends BaseClass {
      * A request object with only the terms that would actually be used for a
      * request.
      *
-     * @returns {LookupRequestObject}
+     * @returns {LookupRequestPayload}
      */
-    get requestParts() {
-        const result = this._blankParts();
+    get requestPayload() {
         const source = isPresent(this.ids) ? { ids: this.ids } : this.parts;
-        $.extend(true, result, source);
-        return result;
+        return $.extend(true, this._blankParts(), source);
     }
 
     /**
@@ -201,36 +199,20 @@ export class LookupRequest extends BaseClass {
     // ========================================================================
 
     /**
-     * Clear all terms.
-     */
-    clear() {
-        this.parts = this._blankParts();
-    }
-
-    /**
      * Add one or more terms.
      *
-     * @param {string|string[]|LookupRequest|LookupRequestObject} [term]
-     * @param {string}                                            [prefix]
+     * @param {string|string[]|LookupRequest|LookupRequestPayload} [term]
+     * @param {string}                                             [prefix]
      */
     add(term, prefix) {
-        let req;
-        if (Array.isArray(term) || (typeof term === 'string')) {
-            req = this.parse(term, prefix);
-        } else {
-            req = term;
-            if (prefix) {
-                this._warn(
-                    `prefix "${prefix}" ignored for ${typeof(term)} term`
-                );
-            }
+        if (notDefined(term)) { return }
+        const type  = typeof(term);
+        const obj   = (type !== 'string') && !Array.isArray(term);
+        const value = obj ? term : this.parse(term, prefix);
+        if (prefix && !obj) {
+            this._warn(`prefix "${prefix}" ignored for ${type} term`);
         }
-        if (isPresent(req)) {
-            const req_parts = req.parts || req;
-            this._appendParts(this.parts, req_parts);
-        } else if (isDefined(req)) {
-            this._warn('nothing to add');
-        }
+        super.add(value);
     }
 
     /**
@@ -239,7 +221,7 @@ export class LookupRequest extends BaseClass {
      * @param {string|string[]} term_values
      * @param {string}          [term_prefix]
      *
-     * @returns {LookupRequestObject}
+     * @returns {LookupRequestPayload}
      */
     parse(term_values, term_prefix) {
         const str = (typeof term_values === 'string');
@@ -291,6 +273,8 @@ export class LookupRequest extends BaseClass {
      * @param {string} terms
      *
      * @returns {[string,string][]}
+     *
+     * @note The method signature differs from ChannelRequest.extractParts.
      */
     extractParts(terms) {
         const ID_TYPE    = this.constructor.DEF_ID_TYPE;
@@ -337,13 +321,13 @@ export class LookupRequest extends BaseClass {
     }
 
     /**
-     * Generate a new empty request object.
+     * Generate a new empty request payload.
      *
-     * @returns {LookupRequestObject}
+     * @returns {LookupRequestPayload}
      * @protected
      */
     _blankParts() {
-        return this.constructor.blankParts();
+        return super._blankParts();
     }
 
     /**
@@ -434,18 +418,18 @@ export class LookupRequest extends BaseClass {
     }
 
     /**
-     * Generate a new empty request object.
+     * Generate a new empty request payload.
      *
-     * @returns {LookupRequestObject}
+     * @returns {LookupRequestPayload}
      */
     static blankParts() {
-        return $.extend(true, {}, this.TEMPLATE);
+        return super.blankParts();
     }
 
     /**
      * Return the item if it is an instance or create one if not.
      *
-     * @param {string|string[]|LookupRequest|LookupRequestObject} item
+     * @param {string|string[]|LookupRequest|LookupRequestPayload} item
      * @param {string|string[]} [chars] Passed to constructor (if required).
      *
      * @returns {LookupRequest}

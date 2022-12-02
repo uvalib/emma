@@ -3170,10 +3170,7 @@ $(document).on('turbolinks:load', function() {
      */
     function setupLookupButton(form) {
         const $button = lookupButtonInitialize(form);
-        LookupModal.setup($button, onLookupStart, onLookupComplete).then(
-            result => _debug('lookup loaded:', (result || 'OK')),
-            reason => console.warn('lookup failed:', reason)
-        );
+        LookupModal.setup($button, onLookupStart, onLookupComplete);
         handleClickAndKeypress($button, clearFlashMessages);
     }
 

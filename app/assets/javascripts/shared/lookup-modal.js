@@ -2,9 +2,10 @@
 //
 // Bibliographic Lookup
 //
-// noinspection JSUnusedGlobalSymbols
+// noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
+import { LookupChannel }                   from '../channels/lookup-channel'
 import { arrayWrap }                       from './arrays'
 import { selector }                        from './css'
 import { turnOffAutocomplete }             from './form'
@@ -36,19 +37,6 @@ import {
 // Class LookupModal
 // ============================================================================
 
-/**
- * NOTE: This JSDoc arrangement became necessary starting with RubyMine 2022.2
- *
- * @typedef {import('../channels/lookup-channel')} LookupChannel
- *
- * @property {function(?boolean)}                 disconnectOnPageExit
- * @property {function(...(function|function[]))} addCallback
- * @property {function(...(function|function[]))} setErrorCallback
- * @property {function(...(function|function[]))} setDiagnosticCallback
- * @property {function(string|string[]|LookupRequest|LookupRequestObject)} request
- */
-
-// noinspection LocalVariableNamingConventionJS
 export class LookupModal extends ModalDialog {
 
     static CLASS_NAME = 'LookupModal';
@@ -411,13 +399,13 @@ export class LookupModal extends ModalDialog {
      * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
      * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
      *
-     * @returns {Promise}
+     * @returns {LookupChannel}
      */
     static async setup(toggle, show_hooks, hide_hooks) {
         this._debug('CLASS setup', toggle);
 
         // One-time setup of the communication channel.
-        this.channel ||= await import('../channels/lookup-channel');
+        this.channel ||= await LookupChannel.newInstance();
 
         const $toggle  = $(toggle);
         /** @type {LookupModal|undefined} instance */
@@ -619,7 +607,7 @@ export class LookupModal extends ModalDialog {
     /**
      * Set the current lookup request.
      *
-     * @param {string|string[]|LookupRequest|LookupRequestObject} data
+     * @param {string|string[]|LookupRequest|LookupRequestPayload} data
      *
      * @returns {LookupRequest}       The current request object.
      */
@@ -654,7 +642,7 @@ export class LookupModal extends ModalDialog {
      * Lookup results are stored as a table of job identifiers mapped on to
      * their associated responses.
      *
-     * @typedef {{[job_id: string]: LookupResponseObject}} LookupResults
+     * @typedef {{[job_id: string]: LookupResponsePayload}} LookupResults
      */
 
     /**
@@ -696,7 +684,7 @@ export class LookupModal extends ModalDialog {
         this._debug('updateSearchResultsData:', message);
         const key = message.job_id || randomizeName('response');
         const obj = this.searchResultsData || this.resetSearchResultsData();
-        obj[key] = message.objectCopy;
+        obj[key]  = message.payloadCopy;
     }
 
     /**
@@ -2357,10 +2345,10 @@ export class LookupModal extends ModalDialog {
     /**
      * Update the main display element.
      *
-     * @param {LookupResponse|LookupResponseObject} message
+     * @param {LookupResponse|LookupResponsePayload} message
      */
     updateResultDisplay(message) {
-        const data = message?.object || message || {};
+        const data = message?.payload || message || {};
         this.updateDisplay(this.resultDisplay, data);
     }
 

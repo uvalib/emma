@@ -5,6 +5,7 @@
 // noinspection JSUnusedLocalSymbols
 
 
+import { LookupChannel }                  from '../channels/lookup-channel'
 import { arrayWrap }                      from '../shared/arrays'
 import { turnOffAutocomplete }            from '../shared/form'
 import { HTML_BREAK }                     from '../shared/html'
@@ -44,7 +45,7 @@ import {
  * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
  * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
  *
- * @returns {Promise}
+ * @returns {void}
  */
 export async function setup(base, show_hooks, hide_hooks) {
 
@@ -73,7 +74,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     // Channel
     // ========================================================================
 
-    const channel = await import('../channels/lookup-channel');
+    const channel = await LookupChannel.newInstance();
 
     channel.disconnectOnPageExit(_debugging());
 
@@ -304,7 +305,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Set the current lookup request.
      *
-     * @param {string|string[]|LookupRequest|LookupRequestObject} data
+     * @param {string|string[]|LookupRequest|LookupRequestPayload} data
      *
      * @returns {LookupRequest}       The current request object.
      */
@@ -339,7 +340,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Lookup results are stored as a table of job identifiers mapped on to
      * their associated responses.
      *
-     * @typedef {{[job_id: string]: LookupResponseObject}} LookupResults
+     * @typedef {{[job_id: string]: LookupResponsePayload}} LookupResults
      */
 
     /**
@@ -384,7 +385,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         _debug('updateSearchResultsData:', message);
         const key = message.job_id || randomizeName('response');
         const obj = getSearchResultsData() || resetSearchResultsData();
-        obj[key] = message.objectCopy;
+        obj[key]  = message.payloadCopy;
     }
 
     /**
@@ -2030,10 +2031,10 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Update the main display element.
      *
-     * @param {LookupResponse|LookupResponseObject} message
+     * @param {LookupResponse|LookupResponsePayload} message
      */
     function updateResultDisplay(message) {
-        const data = message?.object || message || {};
+        const data = message?.payload || message || {};
         updateDisplay(resultDisplay(), data);
     }
 

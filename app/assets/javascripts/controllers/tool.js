@@ -34,10 +34,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     if ($body.hasClass('lookup')) {
-        Lookup.setup($body).then(
-            result => console.log('lookup loaded:', (result || 'OK')),
-            reason => console.warn('lookup failed:', reason)
-        );
+        Lookup.setup($body);
     }
 
 });
