@@ -144,6 +144,12 @@ class ManifestItemController < ApplicationController
   #
   def finish_edit: () -> void
 
+  # == POST /manifest_item/finish_edit/:id
+  #
+  # Clear :editing state and respond with item and validity information.
+  #
+  def row_update: () -> void
+
   # == POST /manifest_item/upload
   #
   # Invoked from 'Uppy.XHRUpload'.

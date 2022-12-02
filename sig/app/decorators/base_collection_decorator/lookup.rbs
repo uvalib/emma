@@ -1,0 +1,11 @@
+# Methods supporting bibliographic lookup and related elements.
+#
+module BaseCollectionDecorator::Lookup
+  include BaseDecorator::Lookup
+
+  include BaseCollectionDecorator::Common
+
+  private
+
+  def self.included: (Module base) -> void
+end

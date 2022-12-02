@@ -21,6 +21,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
     include BaseCollectionDecorator::Hierarchy
     include BaseCollectionDecorator::Links
     include BaseCollectionDecorator::List
+    include BaseCollectionDecorator::Lookup
     include BaseCollectionDecorator::Menu
     include BaseCollectionDecorator::Pagination
     include BaseCollectionDecorator::Table

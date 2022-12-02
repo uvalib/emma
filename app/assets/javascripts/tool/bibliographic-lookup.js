@@ -7,6 +7,7 @@
 
 import { LookupChannel }                  from '../channels/lookup-channel'
 import { arrayWrap }                      from '../shared/arrays'
+import { toggleHidden }                   from '../shared/css'
 import { turnOffAutocomplete }            from '../shared/form'
 import { HTML_BREAK }                     from '../shared/html'
 import { renderJson }                     from '../shared/json'
@@ -160,9 +161,9 @@ export async function setup(base, show_hooks, hide_hooks) {
         handleEvent(inputText(), 'keyup', manualSubmission);
         handleClickAndKeypress(inputSubmit(), manualSubmission);
         turnOffAutocomplete(inputText());
-        queryPanel().addClass(LookupModal.HIDDEN_MARKER);
+        toggleHidden(queryPanel(), true);
     } else {
-        inputPrompt().addClass(LookupModal.HIDDEN_MARKER);
+        toggleHidden(inputPrompt(), true);
     }
 
     if (output) {
@@ -170,15 +171,15 @@ export async function setup(base, show_hooks, hide_hooks) {
         initializeDisplay(errorDisplay());
         initializeDisplay(diagnosticDisplay());
     } else {
-        outputHeading().addClass(LookupModal.HIDDEN_MARKER);
-        outputDisplay().addClass(LookupModal.HIDDEN_MARKER);
+        toggleHidden(outputHeading(), true);
+        toggleHidden(outputDisplay(), true);
     }
 
     if (isModal()) {
         ModalShowHooks.set($popup_button, show_hooks, onShowModal);
         ModalHideHooks.set($popup_button, onHideModal, hide_hooks);
     } else {
-        entriesDisplay().addClass(LookupModal.HIDDEN_MARKER);
+        toggleHidden(entriesDisplay(), true);
     }
 
     // ========================================================================
@@ -266,9 +267,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function onHideModal($target, check_only, halted) {
         _debug('onHideModal:', $target, check_only, halted);
-        if (check_only || halted) {
-            // do nothing
-        } else if ($target.is(LookupModal.COMMIT)) {
+        if (check_only || halted) { return }
+        if ($target.is(LookupModal.COMMIT)) {
             commitFieldValuesEntry();
         } else {
             clearFieldResultsData();
@@ -1450,14 +1450,14 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Show the placeholder indicating that loading is occurring.
      */
     function showLoading() {
-        loadingPlaceholder().toggleClass(LookupModal.HIDDEN_MARKER, false);
+        toggleHidden(loadingPlaceholder(), false);
     }
 
     /**
      * Hide the placeholder indicating that loading is occurring.
      */
     function hideLoading() {
-        loadingPlaceholder().toggleClass(LookupModal.HIDDEN_MARKER, true);
+        toggleHidden(loadingPlaceholder(), true);
     }
 
     // ========================================================================
@@ -1624,10 +1624,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function makeLoadingPlaceholder(visible, css_class) {
         const css    = css_class || LookupModal.LOADING_CLASS;
-        const hidden = visible ? '' : LookupModal.HIDDEN_MARKER;
-        const $line  = $('<div>').addClass(`${css} ${hidden}`);
+        const hidden = (visible !== true);
         const $image = $('<div>'); // @see stylesheets/controllers/_entry.scss
-        return $line.append($image);
+        const $line  = $('<div>').addClass(css).append($image);
+        return toggleHidden($line, hidden);
     }
 
     /**

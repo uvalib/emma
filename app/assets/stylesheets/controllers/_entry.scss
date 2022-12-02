@@ -866,7 +866,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
     max-width: calc(100% - 1.25rem);
 }
 
-// @see EntryDecorator#lookup_popup
+// @see BaseDecorator::Lookup#lookup_control
 .modal-popup.lookup-popup,
 .inline-popup.lookup-popup .popup-panel {
 
@@ -1016,9 +1016,6 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             padding-right: 0.5rem;
             word-break:    break-word;
 
-            // noinspection CssBrowserCompatibilityForProperties
-            overscroll-behavior: contain;
-
             @media #{$not-wide-screen} {
                 max-width: unset;
                 width:     max-content;
@@ -1080,11 +1077,6 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 .row {
 
                     display: contents;
-
-                    // noinspection CssBrowserCompatibilityForProperties
-                    > * {
-                        overscroll-behavior: contain;
-                    }
 
                     .selection {        // .col-0
                     }
@@ -1235,17 +1227,19 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
                     > *:not(.col-0) {
 
+                        display:    flex;
                         min-height: $row-height;
                         max-height: $row-height * 2;
                         padding:    $cell-pad-y $cell-pad-x;
                         overflow-y: auto;
                         border:     1px solid gray;
 
+                        // noinspection CssBrowserCompatibilityForProperties
                         .text {
-                            display: block;
-                            height:  calc(100% - (2 * #{$cell-pad-y}));
-                            width:   calc(100% - (2 * #{$cell-pad-x}));
-                            margin:  0;
+                            max-height:          max-content;
+                            margin:              0;
+                            overscroll-behavior: contain;
+                            flex:                1 1 100%;
                         }
                     }
                 }

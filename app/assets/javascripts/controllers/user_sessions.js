@@ -28,7 +28,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @see file:app/assets/stylesheets/controllers/_user_sessions.scss .sign-in-form.inline.obscured
      */
-    const HIDDEN_MARKER = 'obscured';
+    const INVISIBLE_MARKER = 'obscured';
 
     // ========================================================================
     // Variables
@@ -53,7 +53,7 @@ $(document).on('turbolinks:load', function() {
     function toggleInlineForm(event) {
         const $control = $(event.currentTarget || event.target);
         const $form    = $control.parent();
-        $form.toggleClass(HIDDEN_MARKER);
+        $form.toggleClass(INVISIBLE_MARKER);
     }
 
     // ========================================================================

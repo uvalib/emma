@@ -25,6 +25,7 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Hierarchy
     include BaseDecorator::Links
     include BaseDecorator::List
+    include BaseDecorator::Lookup
     include BaseDecorator::Menu
     include BaseDecorator::Pagination
     include BaseDecorator::Table
@@ -159,6 +160,7 @@ class BaseDecorator < Draper::Decorator
       include BaseDecorator::Hierarchy
       include BaseDecorator::Links
       include BaseDecorator::List
+      include BaseDecorator::Lookup
       include BaseDecorator::Menu
       include BaseDecorator::Pagination
       include BaseDecorator::Table

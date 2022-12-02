@@ -24,6 +24,10 @@
     border-radius:   50%;
     z-index:         $z-scroll-to-top;
 
+    &.scroll-down-to-top {
+        padding-bottom: 0;
+    }
+
     &.icon {
         font-size:       x-large;
         border-radius:   50%;

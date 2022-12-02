@@ -295,14 +295,18 @@ body.manifest.edit {
         }
     }
 
-    // NOTE: This variant may go away...
-    .uploader-feedback.floating {
+    // Style flash message caused by the return from bibliographic lookup.
+    // @see file:javascripts/controllers/manifest-edit.js *onLookupComplete()*
+    .flash-messages .notice {
 
-        @include popup.center-float-vertical($popup-width);
+        .text {
 
-        &:not(.visible) {
-            @include invisible;
-            z-index: $z-hidden;
+            display:               grid;
+            gap:                   0.25rem;
+            grid-template-columns: [type] max-content [list] 1fr;
+
+            .type { } // TODO: ?
+            .list { } // TODO: ?
         }
     }
 }

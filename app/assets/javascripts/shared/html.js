@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/html.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { cssClass }  from './css'
@@ -72,6 +74,73 @@ export function htmlDecode(text) {
     const str = text.toString().trim();
     const doc = str && new DOMParser().parseFromString(str, 'text/html');
     return doc?.documentElement?.textContent;
+}
+
+// ============================================================================
+// Functions
+// ============================================================================
+
+/**
+ * Return all elements and descendents which match.
+ *
+ * @param {Selector} target
+ * @param {Selector} match
+ *
+ * @returns {jQuery}
+ */
+export function allMatching(target, match) {
+    //console.log(`allMatching: match = "${match}"; target =`, target);
+    const $target = $(target);
+    return $target.filter(match).add($target.find(match));
+}
+
+/**
+ * Return the target if it matches or all descendents that match.
+ *
+ * @param {Selector} target
+ * @param {Selector} match
+ *
+ * @returns {jQuery}
+ */
+export function selfOrDescendents(target, match) {
+    //console.log(`selfOrDescendents: match = "${match}"; target =`, target);
+    const $target = $(target);
+    return $target.is(match) ? $target : $target.find(match);
+}
+
+/**
+ * Return the target if it matches or the first parent that matches.
+ *
+ * @param {Selector} target
+ * @param {Selector} match
+ * @param {string}   [caller]     Name of caller (for diagnostics).
+ *
+ * @returns {jQuery}
+ */
+export function selfOrParent(target, match, caller) {
+    //console.log(`selfOrParent: match = "${match}"; target =`, target);
+    const func = caller || 'selfOrParent';
+    const $t   = $(target);
+    return $t.is(match) ? single($t, func) : $t.parents(match).first();
+}
+
+/**
+ * Ensure that the target resolves to exactly one element.
+ *
+ * @param {Selector} target
+ * @param {string}   [caller]     Name of caller (for diagnostics).
+ *
+ * @returns {jQuery}
+ */
+export function single(target, caller) {
+    const $element = $(target);
+    const count    = $element.length;
+    if (count === 1) {
+        return $element;
+    } else {
+        console.warn(`${caller}: ${count} results; 1 expected`);
+        return $element.first();
+    }
 }
 
 // ============================================================================

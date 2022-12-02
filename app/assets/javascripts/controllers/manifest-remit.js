@@ -3,9 +3,10 @@
 
 import { removeFrom }                          from '../shared/arrays'
 import { BaseClass }                           from '../shared/base-class'
-import { selector }                            from '../shared/css'
+import { selector, toggleHidden }              from '../shared/css'
 import { handleClickAndKeypress, handleEvent } from '../shared/events'
 import { flashError, flashMessage }            from '../shared/flash'
+import { selfOrDescendents, selfOrParent }     from '../shared/html'
 import { fromJSON }                            from '../shared/objects'
 import { asString }                            from '../shared/strings'
 import {
@@ -23,8 +24,6 @@ import {
     buttonFor,
     enableButton,
     initializeButtonSet,
-    selfOrDescendents,
-    selfOrParent,
     serverBulkSend as serverManifestSend,
 } from '../shared/manifests'
 
@@ -58,7 +57,6 @@ $(document).on('turbolinks:load', function() {
     const REMOTE_FILE_CLASS         = 'remote-file';
     const LOCAL_FILE_CLASS          = 'local-file';
     const FILE_BUTTON_CLASS         = 'file-button';
-    const HIDDEN_MARKER             = 'hidden';
 
     const SUBMISSION_COUNTS_CLASS   = 'submission-counts'
     const TOTAL_COUNT_CLASS         = 'total';
@@ -94,7 +92,6 @@ $(document).on('turbolinks:load', function() {
     const REMOTE_FILE           = selector(REMOTE_FILE_CLASS);
     const LOCAL_FILE            = selector(LOCAL_FILE_CLASS);
     const FILE_BUTTON           = selector(FILE_BUTTON_CLASS);
-    const HIDDEN                = selector(HIDDEN_MARKER);
 
     const SUBMISSION_COUNTS     = selector(SUBMISSION_COUNTS_CLASS);
     const TOTAL_COUNT           = selector(TOTAL_COUNT_CLASS);
@@ -487,13 +484,13 @@ $(document).on('turbolinks:load', function() {
 
     function updateLocalFilesReady(setting) {
         const ready = isDefined(setting) ? setting : isEmpty(local_to_go);
-        $local_file.toggleClass(HIDDEN_MARKER, ready);
+        toggleHidden($local_file, ready);
         return ready;
     }
 
     function updateRemoteFilesReady(setting) {
         const ready = isDefined(setting) ? setting : isEmpty(remote_to_go);
-        $remote_file.toggleClass(HIDDEN_MARKER, ready);
+        toggleHidden($remote_file, ready);
         return ready;
     }
 
@@ -1043,9 +1040,8 @@ $(document).on('turbolinks:load', function() {
             } else {
                 $text.text(label);
             }
-            $text.toggleClass(HIDDEN_MARKER, details);
-            $details.toggleClass(HIDDEN_MARKER, !details);
-
+            toggleHidden($text,    details);
+            toggleHidden($details, !details);
         }
         return value;
     }
@@ -1087,8 +1083,8 @@ $(document).on('turbolinks:load', function() {
             $name.text(name);
         }
 
-        $text.toggleClass(HIDDEN_MARKER, !!name);
-        $details.toggleClass(HIDDEN_MARKER, !name);
+        toggleHidden($text,    !!name);
+        toggleHidden($details, !name);
     }
 
     // ========================================================================

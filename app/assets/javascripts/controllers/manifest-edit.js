@@ -1,18 +1,17 @@
 // app/assets/javascripts/controllers/manifest-edit.js
 
 
-import { arrayWrap }           from '../shared/arrays'
-import { Emma }                from '../shared/assets'
-import { selector }            from '../shared/css'
-import * as Field              from '../shared/field'
-import { uniqAttrs }           from '../shared/html'
-import { InlinePopup }         from '../shared/inline-popup'
-import { LookupModal }         from '../shared/lookup-modal'
-import { ModalShowHooks }      from '../shared/modal_hooks'
-import { compact, deepFreeze } from '../shared/objects'
-import { randomizeName }       from '../shared/random'
-import { MultiUploader }       from '../shared/uploader'
-import { cancelAction }        from '../shared/url'
+import { arrayWrap }                      from '../shared/arrays'
+import { Emma }                           from '../shared/assets'
+import { HIDDEN, selector, toggleHidden } from '../shared/css'
+import * as Field                         from '../shared/field'
+import { InlinePopup }                    from '../shared/inline-popup'
+import { LookupModal }                    from '../shared/lookup-modal'
+import { LookupRequest }                  from '../shared/lookup-request'
+import { ModalShowHooks }                 from '../shared/modal_hooks'
+import { randomizeName }                  from '../shared/random'
+import { MultiUploader }                  from '../shared/uploader'
+import { cancelAction }                   from '../shared/url'
 import {
     isDefined,
     isEmpty,
@@ -35,6 +34,18 @@ import {
     flashMessage,
 } from '../shared/flash'
 import {
+    selfOrDescendents,
+    selfOrParent,
+    single,
+    uniqAttrs,
+} from '../shared/html'
+import {
+    compact,
+    deepDup,
+    deepFreeze,
+    toObject,
+} from '../shared/objects'
+import {
     ITEM_ATTR,
     ITEM_MODEL,
     MANIFEST_ATTR,
@@ -46,11 +57,8 @@ import {
     buttonFor,
     enableButton,
     initializeButtonSet,
-    selfOrDescendents,
-    selfOrParent,
     serverBulkSend,
     serverSend,
-    single,
 } from '../shared/manifests'
 
 
@@ -196,7 +204,7 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * FinishEditResponse
+     * UpdateResponse
      *
      * @see "ManifestItemConcern#finish_editing"
      *
@@ -204,7 +212,13 @@ $(document).on('turbolinks:load', function() {
      *     items:     ManifestItemTable|null|undefined,
      *     pending?:  ManifestItemTable|null|undefined,
      *     problems?: MessageTable|null|undefined,
-     * }} FinishEditResponse
+     * }} UpdateResponse
+     */
+
+    /**
+     * FinishEditResponse
+     *
+     * @typedef {UpdateResponse} FinishEditResponse
      */
 
     /**
@@ -257,7 +271,6 @@ $(document).on('turbolinks:load', function() {
     const GRID_CLASS            = 'manifest_item-grid';
     const CTRL_EXPANDED_MARKER  = 'controls-expanded';
     const HEAD_EXPANDED_MARKER  = 'head-expanded';
-    const HIDDEN_MARKER         = 'hidden';
     const TO_DELETE_MARKER      = 'deleting';
     const ROW_CLASS             = 'manifest_item-grid-item';
     const HEADER_CLASS          = 'head';
@@ -294,7 +307,6 @@ $(document).on('turbolinks:load', function() {
     const EXPORT        = selector(EXPORT_CLASS);
     const COMM_STATUS   = selector(COMM_STATUS_CLASS);
     const GRID          = selector(GRID_CLASS);
-    const HIDDEN        = selector(HIDDEN_MARKER);
     const TO_DELETE     = selector(TO_DELETE_MARKER);
     const ROW           = selector(ROW_CLASS);
     const HEADER        = selector(HEADER_CLASS);
@@ -480,9 +492,9 @@ $(document).on('turbolinks:load', function() {
     function initializeEditForm() {
         _debug('initializeEditForm');
         setTimeout(scrollToTop, 0);
-        initializeControlButtons();
-        initializeAllDataRows();
         initializeGrid();
+        initializeAllDataRows();
+        initializeControlButtons();
     }
 
     // ========================================================================
@@ -568,9 +580,8 @@ $(document).on('turbolinks:load', function() {
      * @see "ManifestConcern#save_changes!"
      */
     function saveUpdates(event) {
-        const func     = 'saveUpdates';
+        const func     = 'saveUpdates'; _debug(`${func}: event =`, event);
         const manifest = manifestId();
-        _debug(`${func}: event =`, event);
 
         cancelActiveCell();             // Abandon any active edit.
         finalizeDataRows('original');   // Update "original" cell values.
@@ -622,10 +633,9 @@ $(document).on('turbolinks:load', function() {
      * @see "ManifestConcern#cancel_changes!"
      */
     function cancelUpdates(event) {
-        const func     = 'cancelUpdates';
+        const func     = 'cancelUpdates'; _debug(`${func}: event =`, event);
         const manifest = manifestId();
         const finalize = () => cancelAction($cancel);
-        _debug(`${func}: event =`, event);
 
         cancelActiveCell();             // Abandon any active edit.
         deleteRows(blankDataRows());    // Eliminate rows unseen by the server.
@@ -656,8 +666,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery.Event|UIEvent} event
      */
     function importRows(event) {
-        const func = 'importRows';
-        _debug(`${func}: event =`, event);
+        const func = 'importRows'; _debug(`${func}: event =`, event);
         let input, file;
         if (!(input = $import[0])) {
             _error(`${func}: no $import element`);
@@ -771,6 +780,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function formChanged() {
+        //_debug('formChanged');
         return checkFormChanged();
     }
 
@@ -1257,6 +1267,7 @@ $(document).on('turbolinks:load', function() {
         });
         if (changed) {
             updateRowChanged($row, true);
+            updateLookupCondition($row);
             updateFormChanged();
         }
 
@@ -1295,18 +1306,18 @@ $(document).on('turbolinks:load', function() {
         initializeDbRowValue($row);
         initializeDbRowDelta($row);
         initializeRowIndicators($row);
-        setupRowEventHandlers($row);
+        setupRowFunctionality($row);
         return $row;
     }
 
     /**
-     * setupRowEventHandlers
+     * Setup event handlers for a single data row.
      *
-     * @param {Selector} [target]     Default: {@link allDataRows}.
+     * @param {Selector} target
      */
-    function setupRowEventHandlers(target) {
-        _debug('setupRowEventHandlers: target =', target);
-        const $row = target && dataRow(target);
+    function setupRowFunctionality(target) {
+        _debug('setupRowFunctionality: target =', target);
+        const $row = dataRow(target);
         setupLookup($row);
         setupUploader($row);
         setupRowOperations($row);
@@ -1692,7 +1703,7 @@ $(document).on('turbolinks:load', function() {
     function destroyGridRowElements($rows, renumber) {
         //_debug('destroyGridRowElements: $rows =', $rows);
         const row_count = $rows.length;
-        $rows.addClass(HIDDEN_MARKER);
+        toggleHidden($rows, true);
         $rows.each((_, row) => removeFromControlsColumnToggle(row));
         $rows.remove();
         if (renumber !== false) {
@@ -1715,17 +1726,14 @@ $(document).on('turbolinks:load', function() {
     /**
      * Invoke bibliographic lookup for the row associated with the target.
      *
+     * @note This is here for consistency however it doesn't actually do
+     *  anything -- activation of the feature is performed by the LookupModal
+     *  instance initialized in {@link setupLookup}.
+     *
      * @param {Selector} target
      */
     function lookupRow(target) {
         _debug('lookupRow: target =', target);
-        const lookup = getLookup(target);
-        if (lookup) {
-            lookup.toggleModal();
-        } else {
-            console.error('No LookupModal for', target);
-        }
-        _error('LOOKUP - TO BE IMPLEMENTED'); // TODO: bibliographic lookup
     }
 
     /**
@@ -1736,41 +1744,33 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function lookupButton(row) {
-        return rowControls(row).filter(`[${ACTION_ATTR}="lookup"]`);
+        const match = `[${ACTION_ATTR}="lookup"]`;
+        const $row  = $(row);
+        return $row.is(match) ? $row : rowControls($row).filter(match);
     }
 
     /**
-     * Get the lookup instance for the row.
+     * Initialize bibliographic lookup for a data row.
      *
      * @param {Selector} row
-     *
-     * @returns {LookupModal|undefined}
      */
-    function getLookup(row) {
+    function setupLookup(row) {
+        _debug('setupLookup: row =', row);
+
         const $row    = dataRow(row);
         const $button = lookupButton($row);
-        return LookupModal.instanceFor($button);
-    }
 
-    /**
-     * Create a new lookup instance.
-     *
-     * @param {Selector} row
-     *
-     * @returns {LookupModal|undefined}
-     */
-    function newLookup(row) {
-        //_debug('newLookup: row =', row);
-        const $button = lookupButton(row);
-        LookupModal.setup($button, onLookupStart, onLookupComplete).then(
-            result => _debug('lookup loaded:', (result || 'OK')),
-            reason => console.warn('lookup failed:', reason)
-        );
+        updateLookupCondition($row);
+        clearSearchResultsData($row);
+        clearSearchTermsData($row);
+
+        LookupModal.setup($button, onLookupStart, onLookupComplete);
+        handleClickAndKeypress($button, function() { clearFlash() });
 
         /**
          * Invoked to update search terms when the popup opens.
          *
-         * @param {jQuery}  $toggle
+         * @param {jQuery}  $activator
          * @param {boolean} check_only
          * @param {boolean} [halted]
          *
@@ -1778,19 +1778,18 @@ $(document).on('turbolinks:load', function() {
          *
          * @see onShowModalHook
          */
-        function onLookupStart($toggle, check_only, halted) {
-            _debug('LOOKUP START for $toggle', $toggle);
+        function onLookupStart($activator, check_only, halted) {
+            _debug('LOOKUP START | $activator =', $activator);
             if (check_only || halted) { return }
-            //clearSearchResultsData($toggle);
-            //setSearchTermsData($toggle);
-            //setOriginalValues($toggle);
-            _debug('TODO: bibliographic lookup'); // TODO: bibliographic lookup
+            clearSearchResultsData($row);
+            setSearchTermsData($row);
+            setOriginalValues($row);
         }
 
         /**
          * Invoked to update form fields when the popup closes.
          *
-         * @param {jQuery}  $toggle
+         * @param {jQuery}  $activator
          * @param {boolean} check_only
          * @param {boolean} [halted]
          *
@@ -1798,38 +1797,487 @@ $(document).on('turbolinks:load', function() {
          *
          * @see onHideModalHook
          */
-        function onLookupComplete($toggle, check_only, halted) {
-            _debug('LOOKUP COMPLETE for $toggle', $toggle);
+        function onLookupComplete($activator, check_only, halted) {
+            _debug('LOOKUP COMPLETE | $activator =', $activator);
             if (check_only || halted) { return }
-            _error('TODO: bibliographic lookup'); // TODO: bibliographic lookup
+            const func  = 'onLookupComplete';
+            let message = 'No fields changed.'; // TODO: I18n
+            const data  = getFieldResultsData($row);
+
+            if (isPresent(data)) {
+                const $cells  = dataCells($row);
+                const updates = { Added: [], Changed: [], Removed: [] };
+                $.each(data, (field, value) => {
+                    const $field = dataField($cells, field, func);
+                    if (isMissing($field)) {
+                        // No addition to updates.
+                    } else if (!value) {
+                        updates.Removed.push(field);
+                    } else if (cellCurrentValue($field)?.nonBlank) {
+                        updates.Changed.push(field);
+                    } else {
+                        updates.Added.push(field);
+                    }
+                });
+                message = $.map(compact(updates), (fields, update_type) => {
+                    const s     = (fields.length === 1) ? '' : 's';
+                    const label = `${update_type} item${s}`; // TODO: I18n
+                    const names = dataFields($cells, fields)
+                        .toArray()
+                        .map(c => $(c).find('.label .text').text())
+                        .sort()
+                        .join(', ');
+                    const type  = `<span class="type">${label}:</span>`;
+                    const list  = `<span class="list">${names}.</span>`;
+                    return `${type} ${list}`;
+                }).join("\n");
+
+                // NOTE: This is a hack due to the way that publication date is
+                //  handled versus copyright year.
+/*
+            if (Object.keys(data).includes('emma_publicationDate')) {
+                const $input = formField('emma_publicationDate', $row);
+                const $label = $input.siblings(`[for="${$input.attr('id')}"]`);
+                $input.attr('title', $label.attr('title'));
+                $input.prop({ readonly: false, disabled: false });
+                [$input, $label].forEach($e => {
+                    $e.css('display','revert').toggleClass('disabled', false)
+                });
+            }
+*/
+
+                // Update the ManifestItem with the updated data.
+                // noinspection JSCheckFunctionSignatures
+                postRowUpdate($row, data);
+            }
+
+            flashMessage(message);
         }
     }
 
     /**
-     * initializeLookup
+     * Enable bibliographic lookup.
      *
      * @param {Selector} row
+     * @param {boolean}  [enable]     If *false* run {@link disableLookup}.
+     * @param {boolean}  [forbid]     If *false* run {@link disableLookup}.
+     *
+     * @returns {jQuery}              The submit button.
      */
-    function initializeLookup(row) {
-        //_debug('initializeLookup: row =', row);
-        const $row = dataRow(row);
-        if (!getLookup($row)) {
-            newLookup($row);
+    function enableLookup(row, enable, forbid) {
+        const func = 'enableLookup'; _debug(`${func}: row =`, row);
+        if (enable === false) {
+            return disableLookup(row, forbid);
         }
+        if (forbid) {
+            console.error(`${func}: cannot enable and forbid`);
+        }
+        const $button = lookupButton(row);
+        $button.prop('disabled', false);
+        $button.removeClass('forbidden disabled');
+        $button.attr('title', Emma.Lookup.enabled.tooltip);
+        return $button;
     }
 
     /**
-     * Initialize bibliographic lookup for each grid row.
+     * Disable bibliographic lookup.
      *
-     * @param {Selector} [target]
+     * @param {Selector} row
+     * @param {boolean}  [forbid]     If *true* add '.forbidden'.
+     *
+     * @returns {jQuery}              The submit button.
      */
-    function setupLookup(target) {
-        _debug('setupLookup: target =', target);
-        if (target) {
-            dataRows(target).each((_, row) => initializeLookup(row));
+    function disableLookup(row, forbid) {
+        _debug('disableLookup: row =', row);
+        const $button = lookupButton(row);
+        $button.prop('disabled', true);
+        $button.addClass('disabled');
+        let tip;
+        if (forbid) {
+            $button.addClass('forbidden');
+            tip = "Bibliographic metadata is inherited from\n" + // TODO: I18n
+                'the original repository entry.';
         } else {
-            LookupModal.initializeAll();
+            tip = Emma.Lookup.disabled.tooltip;
         }
+        $button.attr('title', tip);
+        return $button;
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - conditions
+    // ========================================================================
+
+    const LOOKUP_CONDITION_DATA = LookupRequest.LOOKUP_CONDITION_DATA;
+
+    /**
+     * Get the field value(s) for bibliographic lookup.
+     *
+     * @param {Selector} row
+     *
+     * @returns {LookupCondition}
+     */
+    function getLookupCondition(row) {
+        const condition = lookupButton(row).data(LOOKUP_CONDITION_DATA);
+        return condition || setLookupCondition(row);
+    }
+
+    /**
+     * Set the field value(s) for bibliographic lookup.
+     *
+     * @param {Selector}        row
+     * @param {LookupCondition} [value] Def.: {@link evaluateLookupCondition}
+     *
+     * @returns {LookupCondition}
+     */
+    function setLookupCondition(row, value) {
+        _debug('setLookupCondition: row =', row);
+        const condition = value || evaluateLookupCondition(row);
+        lookupButton(row).data(LOOKUP_CONDITION_DATA, condition);
+        return condition;
+    }
+
+    /**
+     * Set the field value(s) for bibliographic lookup to the initial state.
+     *
+     * @param {Selector} row
+     *
+     * @returns {LookupCondition}
+     */
+    function clearLookupCondition(row) {
+        _debug('clearLookupCondition: row =', row);
+        return setLookupCondition(row, LookupRequest.blankLookupCondition());
+    }
+
+    /**
+     * Update the internal condition values for the Lookup button based on the
+     * state of form values, and change the button's enabled/disabled state if
+     * appropriate.
+     *
+     * @param {Selector} row
+     * @param {boolean}  [permit]
+     */
+    function updateLookupCondition(row, permit) {
+        _debug('updateLookupCondition: row =', row);
+        const $row    = dataRow(row);
+        const $button = lookupButton($row);
+        let allow, enable = false;
+        if (isDefined(permit)) {
+            allow = permit;
+        } else {
+            allow = defaultRepository(repositoryFor($row));
+        }
+        if (allow) {
+            const condition = evaluateLookupCondition($row);
+            enable ||= Object.values(condition.or).some(v => v);
+            enable ||= Object.values(condition.and).every(v => v);
+        }
+        if (enable) {
+            clearSearchTermsData($button);
+        }
+        enableLookup($button, enable, !allow);
+    }
+
+    /**
+     * Determine the readiness of a row for bibliographic lookup.
+     *
+     * @param {Selector} row
+     *
+     * @returns {LookupCondition}
+     */
+    function evaluateLookupCondition(row) {
+        const func      = 'evaluateLookupCondition';
+        _debug(`${func}: row =`, row);
+        const $row      = dataRow(row);
+        const $cells    = dataCells($row);
+        _debug(`${func}: $cells =`, $cells);
+        const condition = LookupRequest.blankLookupCondition();
+        $.each(condition, (logical_op, entry) => {
+            $.each(entry, (field, _) => {
+                const $field = dataField($cells, field, func);
+                if ($field) {
+                    condition[logical_op][field] = cellValid($field);
+                }
+            });
+        });
+        return condition;
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - original field values
+    // ========================================================================
+
+    /**
+     * Set the original field values.
+     *
+     * @param {Selector} row
+     * @param {EmmaData} [data]
+     */
+    function setOriginalValues(row, data) {
+        const func = 'setOriginalValues'; _debug(`${func}: row =`, row);
+        const $row = dataRow(row);
+        let values;
+        if (data) {
+            values = deepDup(data);
+        } else {
+            const $cells = dataCells($row);
+            values = toObject(LookupModal.DATA_COLUMNS, field => {
+                const $field = dataField($cells, field, func);
+                return $field && cellCurrentValue($field)?.value;
+            });
+        }
+        lookupButton($row).data(LookupModal.ENTRY_ITEM_DATA, values);
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - search terms
+    // ========================================================================
+
+    /**
+     * Get the search terms to be provided for lookup.
+     *
+     * @param {Selector} row
+     *
+     * @returns {LookupRequest|undefined}
+     */
+    function getSearchTermsData(row) {
+        return lookupButton(row).data(LookupModal.SEARCH_TERMS_DATA);
+    }
+
+    /**
+     * Update the search terms to be provided for lookup.
+     *
+     * @param {Selector}                      row
+     * @param {LookupRequest|LookupCondition} [value]
+     *
+     * @returns {LookupRequest}     The data object assigned to the button.
+     */
+    function setSearchTermsData(row, value) {
+        _debug('setSearchTermsData:', row, (value || '-'));
+        let request;
+        if (value instanceof LookupRequest) {
+            request = value;
+        } else {
+            request = generateLookupRequest(row, value);
+        }
+        lookupButton(row).data(LookupModal.SEARCH_TERMS_DATA, request);
+        return request;
+    }
+
+    /**
+     * Clear the search terms to be provided for lookup.
+     *
+     * @param {Selector} row
+     *
+     * @returns {jQuery}
+     */
+    function clearSearchTermsData(row) {
+        _debug('clearSearchTermsData: row =', row);
+        return lookupButton(row).removeData(LookupModal.SEARCH_TERMS_DATA);
+    }
+
+    // noinspection JSUnusedLocalSymbols
+    /**
+     * Update data on the Lookup button if required.
+     *
+     * To avoid excessive work, {@link setSearchTermsData} will only be run
+     * if truly required to regenerate the data.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function updateSearchTermsData(event) {
+        _debug('updateSearchTermsData: event =', event);
+        const $button = $(event.currentTarget || event.target);
+        if ($button.prop('disabled')) { return }
+        if (isPresent(getSearchTermsData($button))) { return }
+        clearSearchResultsData($button);
+        setSearchTermsData($button);
+    }
+
+    /**
+     * Create a LookupRequest instance.
+     *
+     * @param {Selector}        row
+     * @param {LookupCondition} [value]     Def: {@link getLookupCondition}
+     *
+     * @returns {LookupRequest}
+     */
+    function generateLookupRequest(row, value) {
+        const func      = 'generateLookupRequest'; _debug(func, row, value);
+        const request   = new LookupRequest;
+        const $row      = dataRow(row);
+        const $cells    = dataCells($row);
+        const condition = value || getLookupCondition(row);
+        $.each(condition, function(_logical_op, entry) {
+            $.each(entry, function(field, active) {
+                if (active) {
+                    const $field = dataField($cells, field, func);
+                    const values = $field && cellCurrentValue($field)?.value;
+                    if (isPresent(values)) {
+                        const prefix = LookupRequest.LOOKUP_PREFIX[field];
+                        if (prefix === '') {
+                            request.add(values);
+                        } else {
+                            request.add(values, (prefix || 'keyword'));
+                        }
+                    }
+                }
+            });
+        });
+        return request;
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - search results
+    // ========================================================================
+
+    /**
+     * Clear the search terms from the button.
+     *
+     * @param {Selector} row
+     *
+     * @returns {jQuery}
+     */
+    function clearSearchResultsData(row) {
+        _debug('clearSearchResultsData: row =', row);
+        return lookupButton(row).removeData(LookupModal.SEARCH_RESULT_DATA);
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - user-selected values
+    // ========================================================================
+
+    /**
+     * Get the user-selected field values from lookup.
+     *
+     * @param {Selector} row
+     *
+     * @returns {LookupResponseItem|undefined}
+     */
+    function getFieldResultsData(row) {
+        return lookupButton(row).data(LookupModal.FIELD_RESULTS_DATA);
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - database update
+    // ========================================================================
+
+    /**
+     * Inform the server of updated values for a row associated with a
+     * ManifestItem record.
+     *
+     * @param {Selector} changed_row
+     * @param {EmmaData} new_values
+     *
+     * @see "ManifestItemController#start_edit"
+     */
+    function postRowUpdate(changed_row, new_values) {
+        const func = 'postRowUpdate';
+        if (isEmpty(new_values)) {
+            _error(`${func}: no data field changes`);
+            return;
+        }
+        const $row   = dataRow(changed_row);
+        const db_id  = databaseId($row);
+        const action = `row_update/${db_id}`;
+        const row    = dbRowValue($row);
+        const delta  = dbRowDelta($row);
+        const data   = { row: row, delta: delta, ...new_values };
+        serverItemSend(action, {
+            caller:     func,
+            params:     { manifest_item: data },
+            onSuccess:  (body => parseUpdateResponse($row, body)),
+        });
+    }
+
+    /**
+     * Receive updated fields for the item, plus problem reports, plus invalid
+     * fields for each item that would prevent a save from occurring.
+     *
+     * @param {Selector}                                  row
+     * @param {UpdateResponse|{response: UpdateResponse}} body
+     *
+     * @see "ManifestItemConcern#finish_editing"
+     * @see "Manifest::ItemMethods#pending_items_hash"
+     * @see "ActiveModel::Errors"
+     */
+    function parseUpdateResponse(row, body) {
+        _debug('parseUpdateResponse: body =', body);
+        /** @type {UpdateResponse} */
+        const data     = body?.response || body || {};
+        const items    = presence(data.items);
+        const pending  = presence(data.pending);
+        const problems = presence(data.problems);
+
+        // Update fields(s) echoed back from the server.  This may also include
+        // 'file_status' and/or 'data_status'
+        // @see "ManifestItemConcern#finish_editing"
+        const $row   = dataRow(row);
+        const db_id  = databaseId($row);
+        const record = items && items[db_id];
+        if (isPresent(record)) {
+            updateDataRow($row, record);
+            if (pending && isPresent(statusData(record))) {
+                delete pending[db_id];
+            }
+        }
+
+        // Update status indicators
+        // @see "Manifest::ItemMethods#pending_items_hash"
+        if (pending) {
+            const $rows = allDataRows();
+            $.each(pending, (id, record) => {
+                const $row = isPresent(record) && rowForDatabaseId(id, $rows);
+                if ($row) { updateRowIndicators($row, record) }
+            });
+        }
+
+        // Error message(s) to display.
+        // @see "ActiveModel::Errors"
+        if (problems) {
+            let count = 0;
+            $.each(problems, (type, lines) => {
+                const message =
+                    (!Array.isArray(lines) && `${type}: ${lines}`)    ||
+                    ((lines.length === 1)  && `${type}: ${lines[0]}`) ||
+                    (                         [type, ...lines])
+                if (count++) {
+                    addFlashError(message);
+                } else {
+                    flashError(message);
+                }
+            });
+        }
+    }
+
+    // ========================================================================
+    // Functions - bibliographic lookup - other
+    // ========================================================================
+
+    /**
+     * The repository selected for the given row.
+     *
+     * @param {Selector} row
+     *
+     * @returns {string|undefined}
+     */
+    function repositoryFor(row) {
+        const func  = 'repositoryFor';
+        const field = ['repository', 'emma_repository'];
+        const $cell = dataField(row, field, func);
+        return $cell && cellCurrentValue($cell)?.value;
+    }
+
+    /**
+     * Indicate whether the given repository is the default (local) repository
+     * or an (external) member repository.
+     *
+     * @param {string} [repo]
+     *
+     * @returns {boolean}
+     */
+    function defaultRepository(repo) {
+        return !repo || (repo === PAGE_PROPERTIES.Repo.default);
     }
 
     // ========================================================================
@@ -1943,7 +2391,7 @@ $(document).on('turbolinks:load', function() {
         //_debug('newUploader: row =', row);
         // noinspection JSUnusedGlobalSymbols
         const cbs      = { onSelect, onStart, onError, onSuccess };
-        const $row     = $(row);
+        const $row     = dataRow(row);
         const instance = new MultiUploader($row, ITEM_MODEL, FEATURES, cbs);
         const exists   = instance.isUppyInitialized();
         const func     = 'uploader';
@@ -2086,8 +2534,8 @@ $(document).on('turbolinks:load', function() {
                   $lines = $cell.find(MultiUploader.FILE_NAME).children();
             $(container).each((_, element) => {
                 const popup   = new InlinePopup(element);
-                const $toggle = popup.popupControl;
-                const $panel  = popup.popupPanel;
+                const $toggle = popup.modalControl;
+                const $panel  = popup.modalPanel;
                 const $submit = $panel.find('button.input-submit');
                 const $cancel = $panel.find('button.input-cancel');
 
@@ -2147,11 +2595,10 @@ $(document).on('turbolinks:load', function() {
                  */
                 function onShow($target, check_only, halted) {
                     _debug('onShow:', $target, check_only, halted);
-                    if (!check_only && !halted) {
-                        const value = $type.text()?.trim();
-                        if (value) {
-                            $input.val(value);
-                        }
+                    if (check_only || halted) { return }
+                    const value = $type.text()?.trim();
+                    if (value) {
+                        $input.val(value);
                     }
                 }
 
@@ -2162,7 +2609,7 @@ $(document).on('turbolinks:load', function() {
                  * @param {Event} event
                  */
                 function hoverToggle(event) {
-                    _debug('hoverToggle: event =', event);
+                    //_debug('hoverToggle: event =', event);
                     $cell.attr(HOVER_ATTR, type);
                 }
 
@@ -2173,7 +2620,7 @@ $(document).on('turbolinks:load', function() {
                  * @param {Event} event
                  */
                 function unhoverToggle(event) {
-                    _debug('unhoverToggle: event =', event);
+                    //_debug('unhoverToggle: event =', event);
                     if ($cell.attr(HOVER_ATTR) === type) {
                         $cell.removeAttr(HOVER_ATTR);
                     }
@@ -2729,7 +3176,7 @@ $(document).on('turbolinks:load', function() {
      */
     function updateRowChanged(target, setting) {
         _debug(`updateRowChanged: "${setting}"; target =`, target);
-        const $row    = dataRow(target)
+        const $row   = dataRow(target)
         const change = isDefined(setting) ? setting : evaluateRowChanged($row);
         setRowChanged($row, change);
         $row.toggleClass(CHANGED_MARKER, change);
@@ -2829,7 +3276,7 @@ $(document).on('turbolinks:load', function() {
 
         // If the row is being inserted after an inserted row, look to the
         // original row for information.
-        const row   = dbRowValue($row) || 0;
+        const row   = dbRowValue($row);
         const delta = nextDeltaCounter(row);
         setDbRowValue($copy, row);
         setDbRowDelta($copy, delta);
@@ -2838,10 +3285,10 @@ $(document).on('turbolinks:load', function() {
         // of the elements within it.
         uniqAttrs($copy, delta);
         $copy.find('*').each((_, element) => uniqAttrs(element, delta));
-        $copy.removeClass(HIDDEN_MARKER);
+        toggleHidden($copy, false);
 
         // Hook up event handlers.
-        setupRowEventHandlers($copy);
+        setupRowFunctionality($copy);
 
         return $copy;
     }
@@ -2888,28 +3335,68 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * All matching grid data cells for the given target.
+     *
+     * @param {Selector}        target
+     * @param {string|string[]} fields  Value(s) of {@link FIELD_ATTR}.
+     *
+     * @returns {jQuery}
+     */
+    function dataFields(target, fields) {
+        const selectors = arrayWrap(fields).map(f => `[${FIELD_ATTR}="${f}"]`);
+        return dataCells(target).filter(selectors.join(', '));
+    }
+
+    /**
+     * Get the single matching grid data cell associated with the target.
+     *
+     * @param {Selector}        target
+     * @param {string|string[]} field     Value for {@link FIELD_ATTR}.
+     * @param {string|null}     [caller]  For diagnostics; null for no warning.
+     *
+     * @returns {jQuery|undefined}
+     */
+    function dataField(target, field, caller) {
+        let $cell, match;
+        if (Array.isArray(field)) {
+            match = `${FIELD_ATTR} in ${field}`;
+            $cell = dataFields(target, field);
+        } else {
+            match = `[${FIELD_ATTR}="${field}"]`;
+            $cell = dataCells(target).filter(match);
+        }
+        if (isPresent($cell)) { return $cell }
+        if (caller === null)  { return }
+        const func = caller || 'dataField';
+        console.warn(`${func}: no dataCell with ${match} in target =`, target);
+    }
+
+    /**
      * Get the database ManifestItem table column associated with the target.
      * *
-     * @param {Selector} target
+     * @param {Selector} cell
      * *
      * @returns {string}
      */
-    function cellDbColumn(target) {
-        return dataCell(target).attr(FIELD_ATTR);
+    function cellDbColumn(cell) {
+        return dataCell(cell).attr(FIELD_ATTR);
     }
 
     /**
      * Get the properties of the field associated with the target.
      * *
-     * @param {Selector} target
+     * @param {Selector} cell
      * *
      * @returns {Properties}
      */
-    function cellProperties(target) {
-        const field  = cellDbColumn(target);
-        const result = fieldProperty()[field];
-        if (!result) {
-            _error(`cellProperties: no entry for "${field}"`);
+    function cellProperties(cell) {
+        const func   = 'cellProperties';
+        const field  = cellDbColumn(cell);
+        const result = field && fieldProperty()[field];
+        if (!field) {
+            console.error(`${func}: no ${FIELD_ATTR} for`, cell);
+        } else if (!result) {
+            console.error(`${func}: no entry for "${field}"`);
         }
         return result || {};
     }
@@ -2917,15 +3404,15 @@ $(document).on('turbolinks:load', function() {
     /**
      * Use received data to update cell(s) associated with data values.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    value
      * @param {boolean}  [change]   Default: check {@link cellOriginalValue}
      *
      * @returns {boolean}           Whether the cell value changed.
      */
-    function updateDataCell(target, value, change) {
-        _debug('updateDataCell: value =', value, target);
-        const $cell = dataCell(target);
+    function updateDataCell(cell, value, change) {
+        _debug('updateDataCell: value =', value, cell);
+        const $cell = dataCell(cell);
         setCellCurrentValue($cell, value);
         setCellDisplayValue($cell, value);
         let changed = change;
@@ -2954,13 +3441,13 @@ $(document).on('turbolinks:load', function() {
     /**
      * Prepare the single data cell associated with the target.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      *
      * @returns {jQuery}
      */
-    function initializeDataCell(target) {
-        //_debug('initializeDataCell: target =', target);
-        const $cell = dataCell(target).removeClass(STATUS_MARKERS);
+    function initializeDataCell(cell) {
+        //_debug('initializeDataCell: cell =', cell);
+        const $cell = dataCell(cell).removeClass(STATUS_MARKERS);
         if ($cell.is(MultiUploader.UPLOADER)) {
             $cell.find(MultiUploader.FILE_NAME).children().each((_, line) => {
                 const $line = $(line);
@@ -3039,25 +3526,25 @@ $(document).on('turbolinks:load', function() {
      *
      * An undefined result means that the cell hasn't been evaluated.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      *
      * @returns {boolean|undefined}
      */
-    function cellChanged(target) {
-        return dataCell(target).data(VALUE_CHANGED_DATA);
+    function cellChanged(cell) {
+        return dataCell(cell).data(VALUE_CHANGED_DATA);
     }
 
     /**
      * Set the related data cell's changed state.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {boolean}  [setting]    Default: *true*.
      *
      * @returns {boolean}
      */
-    function setCellChanged(target, setting) {
-        _debug(`setCellChanged: "${setting}"; target =`, target);
-        const $cell   = dataCell(target);
+    function setCellChanged(cell, setting) {
+        _debug(`setCellChanged: "${setting}"; cell =`, cell);
+        const $cell   = dataCell(cell);
         const changed = (setting !== false);
         $cell.data(VALUE_CHANGED_DATA, changed);
         return changed;
@@ -3066,24 +3553,24 @@ $(document).on('turbolinks:load', function() {
     /**
      * Set the related data cell's changed state to 'undefined'.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      */
-    function clearCellChanged(target) {
-        _debug('clearCellChanged: target =', target);
-        dataCell(target).removeData(VALUE_CHANGED_DATA);
+    function clearCellChanged(cell) {
+        _debug('clearCellChanged: cell =', cell);
+        dataCell(cell).removeData(VALUE_CHANGED_DATA);
     }
 
     /**
      * Change the related data cell's changed status.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {boolean}  setting
      *
      * @returns {boolean}
      */
-    function updateCellChanged(target, setting) {
-        _debug(`updateCellChanged: "${setting}"; target =`, target);
-        const $cell   = dataCell(target);
+    function updateCellChanged(cell, setting) {
+        _debug(`updateCellChanged: "${setting}"; cell =`, cell);
+        const $cell   = dataCell(cell);
         const changed = setCellChanged($cell, setting);
         $cell.toggleClass(CHANGED_MARKER, changed);
         return changed;
@@ -3092,13 +3579,13 @@ $(document).on('turbolinks:load', function() {
     /**
      * Refresh the related data cell's changed status.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      *
      * @returns {boolean}
      */
-    function evaluateCellChanged(target) {
-        _debug('evaluateCellChanged: target =', target);
-        const $cell = dataCell(target);
+    function evaluateCellChanged(cell) {
+        _debug('evaluateCellChanged: cell =', cell);
+        const $cell = dataCell(cell);
         let changed = cellChanged($cell);
         if (notDefined(changed)) {
             const original = cellOriginalValue($cell);
@@ -3122,27 +3609,27 @@ $(document).on('turbolinks:load', function() {
     /**
      * Indicate whether the related cell's data is currently valid.
      *
-     * An undefined result means that the row hasn't been evaluated.
+     * @param {Selector} cell
      *
-     * @param {Selector} target
-     *
-     * @returns {boolean|undefined}
+     * @returns {boolean}
      */
-    function cellValid(target) {
-        return dataCell(target).data(CELL_VALID_DATA);
+    function cellValid(cell) {
+        const $cell = dataCell(cell);
+        const valid = $cell.data(CELL_VALID_DATA);
+        return isDefined(valid) ? valid : updateCellValid($cell);
     }
 
     /**
      * Set the related data cell's valid state.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {boolean}  [setting]    If *false*, make invalid.
      *
      * @returns {boolean}             True if set to valid.
      */
-    function setCellValid(target, setting) {
-        //_debug(`setCellValid: "${setting}"; target =`, target);
-        const $cell = dataCell(target);
+    function setCellValid(cell, setting) {
+        //_debug(`setCellValid: "${setting}"; cell =`, cell);
+        const $cell = dataCell(cell);
         const valid = (setting !== false);
         $cell.data(CELL_VALID_DATA, valid);
         return valid;
@@ -3151,14 +3638,14 @@ $(document).on('turbolinks:load', function() {
     /**
      * Change the related data cell's validity status.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {boolean}  [setting]    Default: {@link evaluateCellValid}
      *
      * @returns {boolean}             True if valid.
      */
-    function updateCellValid(target, setting) {
-        //_debug(`updateCellValid: "${setting}"; target =`, target);
-        const $cell = dataCell(target);
+    function updateCellValid(cell, setting) {
+        //_debug(`updateCellValid: "${setting}"; cell =`, cell);
+        const $cell = dataCell(cell);
         const valid = isDefined(setting) ? setting : evaluateCellValid($cell);
         setCellValid($cell, valid);
         $cell.toggleClass(ERROR_MARKER, !valid);
@@ -3171,14 +3658,14 @@ $(document).on('turbolinks:load', function() {
      *
      * (No changes are made to element attributes or data.)
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    [current]    Default: {@link cellCurrentValue}.
      *
      * @returns {boolean}
      */
-    function evaluateCellValid(target, current) {
-        //_debug('evaluateCellValid: target =', target);
-        const $cell = dataCell(target);
+    function evaluateCellValid(cell, current) {
+        //_debug('evaluateCellValid: cell =', cell);
+        const $cell = dataCell(cell);
         const prop  = cellProperties($cell);
         if (!prop.required) {
             return true;
@@ -3207,25 +3694,25 @@ $(document).on('turbolinks:load', function() {
     /**
      * The original value of the associated cell.
      * *
-     * @param {Selector} target
+     * @param {Selector} cell
      * *
      * @returns {Value|undefined}
      */
-    function cellOriginalValue(target) {
-        return dataCell(target).data(ORIGINAL_VALUE_DATA);
+    function cellOriginalValue(cell) {
+        return dataCell(cell).data(ORIGINAL_VALUE_DATA);
     }
 
     /**
      * Assign the original value for the associated cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value|*}  new_value
      *
      * @returns {Value}
      */
-    function setCellOriginalValue(target, new_value) {
-        //_debug('setCellOriginalValue: new_value =', new_value, target);
-        const $cell = dataCell(target);
+    function setCellOriginalValue(cell, new_value) {
+        //_debug('setCellOriginalValue: new_value =', new_value, cell);
+        const $cell = dataCell(cell);
         const value = $cell.makeValue(new_value);
         $cell.data(ORIGINAL_VALUE_DATA, value);
         return value;
@@ -3234,14 +3721,14 @@ $(document).on('turbolinks:load', function() {
     /**
      * Initialize the original value for the associated cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    value
      *
      * @returns {Value}
      */
-    function initCellOriginalValue(target, value) {
-        //_debug('initCellOriginalValue: value =', value, target);
-        const $cell = dataCell(target);
+    function initCellOriginalValue(cell, value) {
+        //_debug('initCellOriginalValue: value =', value, cell);
+        const $cell = dataCell(cell);
         return cellOriginalValue($cell) || setCellOriginalValue($cell, value);
     }
 
@@ -3259,25 +3746,25 @@ $(document).on('turbolinks:load', function() {
     /**
      * The current value of the associated cell.
      * *
-     * @param {Selector} target
+     * @param {Selector} cell
      * *
      * @returns {Value|undefined}
      */
-    function cellCurrentValue(target) {
-        return dataCell(target).data(CURRENT_VALUE_DATA);
+    function cellCurrentValue(cell) {
+        return dataCell(cell).data(CURRENT_VALUE_DATA);
     }
 
     /**
      * Assign the current value for the associated cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value|*}  new_value
      *
      * @returns {Value}
      */
-    function setCellCurrentValue(target, new_value) {
-        //_debug('setCellCurrentValue: new_value =', new_value, target);
-        const $cell = dataCell(target);
+    function setCellCurrentValue(cell, new_value) {
+        //_debug('setCellCurrentValue: new_value =', new_value, cell);
+        const $cell = dataCell(cell);
         const value = $cell.makeValue(new_value);
         $cell.data(CURRENT_VALUE_DATA, value);
         return value;
@@ -3286,14 +3773,14 @@ $(document).on('turbolinks:load', function() {
     /**
      * Initialize the current value for the associated cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    value
      *
      * @returns {Value}
      */
-    function initCellCurrentValue(target, value) {
-        //_debug('initCellCurrentValue: value =', value, target);
-        const $cell = dataCell(target);
+    function initCellCurrentValue(cell, value) {
+        //_debug('initCellCurrentValue: value =', value, cell);
+        const $cell = dataCell(cell);
         return cellCurrentValue($cell) || setCellCurrentValue($cell, value);
     }
 
@@ -3356,12 +3843,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Get the displayed value for a data cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * *
      * @returns {Value}
      */
-    function cellDisplayValue(target) {
-        const $cell = dataCell(target);
+    function cellDisplayValue(cell) {
+        const $cell = dataCell(cell);
         const text  = cellDisplay($cell).text();
         const value = $cell.makeValue(text);
         initCellOriginalValue($cell, value);
@@ -3372,12 +3859,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Set the displayed value for a data cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    new_value
      */
-    function setCellDisplayValue(target, new_value) {
-        //_debug('setCellDisplayValue: new_value =', new_value, target);
-        const $cell  = dataCell(target);
+    function setCellDisplayValue(cell, new_value) {
+        //_debug('setCellDisplayValue: new_value =', new_value, cell);
+        const $cell  = dataCell(cell);
         const $value = cellDisplay($cell);
         if (notDefined(new_value)) {
             $value.text('');
@@ -3391,12 +3878,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Refresh the cell display according to the data type.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    [new_value]    Default: from {@link cellDisplay}.
      */
-    function updateCellDisplayValue(target, new_value) {
-        //_debug('updateCellDisplayValue: new_value =', new_value, target);
-        const $cell = dataCell(target);
+    function updateCellDisplayValue(cell, new_value) {
+        //_debug('updateCellDisplayValue: new_value =', new_value, cell);
+        const $cell = dataCell(cell);
         let value;
         if (isDefined(new_value)) {
             value = $cell.makeValue(new_value);
@@ -3426,23 +3913,23 @@ $(document).on('turbolinks:load', function() {
     /**
      * Remove content from a data cell edit element.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      */
-    function clearCellEdit(target) {
-        //_debug('clearCellEdit: target =', target);
-        const $edit = cellEdit(target);
+    function clearCellEdit(cell) {
+        //_debug('clearCellEdit:', cell);
+        const $edit = cellEdit(cell);
         editClear($edit);
     }
 
     /**
      * Get the input value for a data cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * *
      * @returns {Value}
      */
-    function cellEditValue(target) {
-        const $edit = cellEdit(target);
+    function cellEditValue(cell) {
+        const $edit = cellEdit(cell);
         const value = editGet($edit);
         return $edit.makeValue(value);
     }
@@ -3450,12 +3937,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Set the input value for a data cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    [new_value]  Default from displayed value.
      */
-    function setCellEditValue(target, new_value) {
-        //_debug('setCellEditValue: new_value =', new_value, target);
-        const $cell = dataCell(target);
+    function setCellEditValue(cell, new_value) {
+        //_debug('setCellEditValue: new_value =', new_value, cell);
+        const $cell = dataCell(cell);
         const $edit = cellEdit($cell);
         let value;
         if (isDefined(new_value)) {
@@ -3473,12 +3960,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Combine {@link startValueEdit} and {@link finishValueEdit}.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {*}        new_value
      */
-    function atomicEdit(target, new_value) {
-        const func  = 'atomicEdit'; _debug(`${func}:`, target);
-        const $cell = dataCell(target)
+    function atomicEdit(cell, new_value) {
+        const func  = 'atomicEdit';
+        const $cell = dataCell(cell)
         if (inCellEditMode($cell)) {
             _debug(`--- ${func}: already editing $cell =`, $cell);
         } else {
@@ -3501,8 +3988,7 @@ $(document).on('turbolinks:load', function() {
      */
     function onStartValueEdit(event) {
         _debug('onStartValueEdit: event =', event);
-        const target = event.currentTarget || event.target;
-        const $cell  = dataCell(target);
+        const $cell = dataCell(event.currentTarget || event.target);
         startValueEdit($cell);
         cellEdit($cell).focus();
         // TODO: move the caret to the perceived location of the mouse click
@@ -3511,11 +3997,11 @@ $(document).on('turbolinks:load', function() {
     /**
      * Begin editing a cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      */
-    function startValueEdit(target) {
+    function startValueEdit(cell) {
         const func  = 'startValueEdit';
-        const $cell = dataCell(target);
+        const $cell = dataCell(cell);
         if (inCellEditMode($cell)) {
             _debug(`--- ${func}: already editing $cell =`, $cell);
         } else {
@@ -3530,11 +4016,11 @@ $(document).on('turbolinks:load', function() {
      * Inform the server that a row associated with a ManifestItem record is
      * being edited.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      *
      * @see "ManifestItemController#start_edit"
      */
-    function postStartEdit(target) {
+    function postStartEdit(cell) {
         const func = 'postStartEdit';
         if (!manifestId()) {
             _debug(`${func}: triggering manifest creation`);
@@ -3542,7 +4028,7 @@ $(document).on('turbolinks:load', function() {
             return;
         }
 
-        const $cell = dataCell(target);
+        const $cell = dataCell(cell);
         const $row  = dataRow($cell);
         const db_id = databaseId($row);
         if (!db_id) {
@@ -3563,11 +4049,11 @@ $(document).on('turbolinks:load', function() {
     /**
      * End editing a cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      */
-    function finishValueEdit(target) {
+    function finishValueEdit(cell) {
         const func  = 'finishValueEdit';
-        const $cell = dataCell(target);
+        const $cell = dataCell(cell);
         if (inCellEditMode($cell)) {
             _debug(`<<< ${func}: $cell =`, $cell);
             const new_value = cellEditEnd($cell);
@@ -3581,12 +4067,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Transition a data cell into edit mode.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {Value}    [new_value]  Default from displayed value.
      */
-    function cellEditBegin(target, new_value) {
-        _debug('cellEditBegin: new_value =', new_value, target);
-        const $cell = dataCell(target);
+    function cellEditBegin(cell, new_value) {
+        _debug('cellEditBegin: new_value =', new_value, cell);
+        const $cell = dataCell(cell);
         setCellEditValue($cell, new_value);
         registerActiveCell($cell);
     }
@@ -3594,14 +4080,14 @@ $(document).on('turbolinks:load', function() {
     /**
      * Transition a data cell out of edit mode.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      *
      * @returns {Value|undefined}
      */
-    function cellEditEnd(target) {
-        _debug('cellEditEnd: target =', target);
-        const $cell     = dataCell(target);
-        const old_value = cellCurrentValue($cell); // || cellOriginalValue($cell);
+    function cellEditEnd(cell) {
+        _debug('cellEditEnd:', cell);
+        const $cell     = dataCell(cell);
+        const old_value = cellCurrentValue($cell);
         const new_value = cellEditValue($cell);
         if (new_value.differsFrom(old_value)) {
             const $row        = dataRow($cell);
@@ -3622,14 +4108,14 @@ $(document).on('turbolinks:load', function() {
      * If a value is supplied, the associated record field is updated (or used
      * to create a new record).
      *
-     * @param {Selector}        target
+     * @param {Selector}        cell
      * @param {Value|undefined} new_value
      *
      * @see "ManifestItemController#start_edit"
      */
-    function postFinishEdit(target, new_value) {
+    function postFinishEdit(cell, new_value) {
         const func     = 'postFinishEdit';
-        const $cell    = dataCell(target);
+        const $cell    = dataCell(cell);
         const $row     = dataRow($cell);
         const db_id    = databaseId($row);
         const manifest = manifestId();
@@ -3640,7 +4126,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         /** @type {SendOptions} */
-        const options  = {};
+        const options = {};
         let action, params;
         if (isDefined(new_value)) {
             const field = cellDbColumn($cell);
@@ -3883,16 +4369,16 @@ $(document).on('turbolinks:load', function() {
     /**
      * Remember the active cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      */
-    function setActiveCell(target) {
-        const func = 'setActiveCell';
-        const cell = dataCell(target)[0];
-        if (cell) {
-            _debug(`${func}: target =`, target);
-            $grid.data(ACTIVE_CELL_DATA, cell);
+    function setActiveCell(cell) {
+        const func   = 'setActiveCell';
+        const active = dataCell(cell)[0];
+        if (active) {
+            _debug(`${func}: target =`, cell);
+            $grid.data(ACTIVE_CELL_DATA, active);
         } else {
-            console.error(`${func}: empty target =`, target);
+            console.error(`${func}: empty:`, cell);
             clearActiveCell();
         }
     }
@@ -3908,12 +4394,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Indicate that the related data cell is being edited.
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      */
-    function registerActiveCell(target) {
-        _debug('registerActiveCell: target =', target);
+    function registerActiveCell(cell) {
+        _debug('registerActiveCell: cell =', cell);
         deregisterActiveCell();
-        setActiveCell(target);
+        setActiveCell(cell);
     }
 
     /**
@@ -3970,24 +4456,24 @@ $(document).on('turbolinks:load', function() {
     /**
      * setCellEditMode
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      * @param {boolean}  [setting]    If *false*, unset edit mode.
      */
-    function setCellEditMode(target, setting) {
-        //_debug(`setCellEditMode: setting = "${setting}"; target =`, target);
-        const editing = (setting !== false)
-        dataCell(target).toggleClass(EDITING_MARKER, editing);
+    function setCellEditMode(cell, setting) {
+        //_debug(`setCellEditMode: setting = "${setting}"; cell =`, cell);
+        const editing = (setting !== false);
+        dataCell(cell).toggleClass(EDITING_MARKER, editing);
     }
 
     /**
      * inCellEditMode
      *
-     * @param {Selector} target
+     * @param {Selector} cell
      *
      * @returns {boolean}
      */
-    function inCellEditMode(target) {
-        return dataCell(target).is(EDITING);
+    function inCellEditMode(cell) {
+        return dataCell(cell).is(EDITING);
     }
 
     // ========================================================================
@@ -4900,6 +5386,10 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Actions
     // ========================================================================
+
+    // Setup bibliographic lookup first so that linkages are in place before
+    // setupLookup() executes.
+    LookupModal.initializeAll();
 
     initializeEditForm();
 

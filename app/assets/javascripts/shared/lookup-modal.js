@@ -7,7 +7,7 @@
 
 import { LookupChannel }                   from '../channels/lookup-channel'
 import { arrayWrap }                       from './arrays'
-import { selector }                        from './css'
+import { selector, toggleHidden }          from './css'
 import { turnOffAutocomplete }             from './form'
 import { HTML_BREAK }                      from './html'
 import { renderJson }                      from './json'
@@ -40,7 +40,7 @@ import {
 export class LookupModal extends ModalDialog {
 
     static CLASS_NAME = 'LookupModal';
-    static DEBUGGING  = false;
+    static DEBUGGING  = true;
 
     // ========================================================================
     // Constants - .data() names
@@ -325,6 +325,9 @@ export class LookupModal extends ModalDialog {
 
         super(modal);
 
+        this._debug(`ctor: manual = "${manual}"; output = "${output}"`);
+        this._debug(`ctor: modal =`, modal);
+
         this.$modal ||= this.setupPanel(`body > ${this.constructor.MODAL}`);
         this.manual   = isDefined(manual) && manual;
         this.output   = isDefined(output) ? output : this.manual;
@@ -340,9 +343,9 @@ export class LookupModal extends ModalDialog {
             handleClickAndKeypress(this.inputSubmit, submit);
             handleEvent(this.inputText, 'keyup', submit);
             turnOffAutocomplete(this.inputText);
-            this.queryPanel.addClass(this.constructor.HIDDEN_MARKER);
+            toggleHidden(this.queryPanel, true);
         } else {
-            this.inputPrompt.addClass(this.constructor.HIDDEN_MARKER);
+            toggleHidden(this.inputPrompt, true);
         }
 
         if (this.output) {
@@ -350,8 +353,8 @@ export class LookupModal extends ModalDialog {
             this.initializeDisplay(this.errorDisplay);
             this.initializeDisplay(this.diagnosticDisplay);
         } else {
-            this.outputHeading.addClass(this.constructor.HIDDEN_MARKER);
-            this.outputDisplay.addClass(this.constructor.HIDDEN_MARKER);
+            toggleHidden(this.outputHeading, true);
+            toggleHidden(this.outputDisplay, true);
         }
     }
 
@@ -373,6 +376,7 @@ export class LookupModal extends ModalDialog {
      * @type {LookupChannel}
      */
     static get channel() {
+        this._debug('CLASS get channel', this._channel);
         return this._channel;
     }
 
@@ -402,7 +406,9 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupChannel}
      */
     static async setup(toggle, show_hooks, hide_hooks) {
-        this._debug('CLASS setup', toggle);
+        this._debug('CLASS setup: toggle =', toggle);
+        this._debug('CLASS setup: show_hooks =', show_hooks);
+        this._debug('CLASS setup: hide_hooks =', hide_hooks);
 
         // One-time setup of the communication channel.
         this.channel ||= await LookupChannel.newInstance();
@@ -410,6 +416,7 @@ export class LookupModal extends ModalDialog {
         const $toggle  = $(toggle);
         /** @type {LookupModal|undefined} instance */
         const instance = this.instanceFor($toggle);
+        this._debug('CLASS setup: instance =', instance);
         if (instance) {
             instance.channel = this.channel;
             instance._setHooksFor($toggle, show_hooks, hide_hooks);
@@ -428,6 +435,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupChannel}
      */
     get channel() {
+        this._debug('get channel', this._channel);
         return this._channel;
     }
 
@@ -504,7 +512,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get dataElement() {
-        return this.$toggle || this.$modal;
+        return this.modalControl || this.modalPanel;
     }
 
     // ========================================================================
@@ -535,7 +543,7 @@ export class LookupModal extends ModalDialog {
     /**
      * Submit the query automatically when the popup is opened.
      *
-     * @param {jQuery}  _$target      Unused.
+     * @param {jQuery}  $target       Sets the owning control.
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
@@ -543,8 +551,8 @@ export class LookupModal extends ModalDialog {
      *
      * @see onShowModalHook
      */
-    onShowModal(_$target, check_only, halted) {
-        this._debug('onShowModal:', _$target, check_only, halted);
+    onShowModal($target, check_only, halted) {
+        this._debug('onShowModal:', $target, check_only, halted);
         if (check_only || halted) { return }
         this.resetSearchResultsData();
         this.clearFieldResultsData();
@@ -568,9 +576,8 @@ export class LookupModal extends ModalDialog {
      */
     onHideModal($target, check_only, halted) {
         this._debug('onHideModal:', $target, check_only, halted);
-        if (check_only || halted) {
-            // do nothing
-        } else if ($target.is(this.constructor.COMMIT)) {
+        if (check_only || halted) { return }
+        if ($target.is(this.constructor.COMMIT)) {
             this.commitFieldValuesEntry();
         } else {
             this.clearFieldResultsData();
@@ -772,7 +779,7 @@ export class LookupModal extends ModalDialog {
      */
     get queryPanel() {
         return this.$query_panel ||=
-            presence(this.$modal.find(this.constructor.QUERY_PANEL));
+            presence(this.modalPanel.find(this.constructor.QUERY_PANEL));
     }
 
     /**
@@ -796,7 +803,7 @@ export class LookupModal extends ModalDialog {
      */
     get statusPanel() {
         this.$status_panel ||=
-            presence(this.$modal.find(this.constructor.STATUS_PANEL));
+            presence(this.modalPanel.find(this.constructor.STATUS_PANEL));
         this.$status_panel ||=
             this.makeStatusPanel().insertAfter(this.inputPrompt);
         return this.$status_panel;
@@ -1011,7 +1018,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get commitButton() {
-        return this.$modal.find(this.constructor.COMMIT);
+        return this.modalPanel.find(this.constructor.COMMIT);
     }
 
     /**
@@ -1620,10 +1627,20 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get entriesDisplay() {
+        let dbg = this.debugging && !this.$entries_display;
         this.$entries_display ||=
-            presence(this.$modal.find(this.constructor.ENTRIES));
+            presence(this.modalPanel.find(this.constructor.ENTRIES));
+        if (dbg && this.$entries_display) {
+            this._debug('*** entriesDisplay [1] ->', this.$entries_display);
+            dbg = false;
+        }
         this.$entries_display ||=
             this.makeEntriesDisplay().insertAfter(this.statusPanel);
+        if (dbg && this.$entries_display) {
+            this._debug('*** entriesDisplay [2] ->', this.$entries_display);
+        } else if (dbg) {
+            this._debug('*** entriesDisplay [2] - FAILED TO FIND OR CREATE');
+        }
         return this.$entries_display;
     }
 
@@ -1757,16 +1774,14 @@ export class LookupModal extends ModalDialog {
      * Show the placeholder indicating that loading is occurring.
      */
     showLoading() {
-        const hidden = this.constructor.HIDDEN_MARKER;
-        this.loadingPlaceholder.toggleClass(hidden, false);
+        toggleHidden(this.loadingPlaceholder, false);
     }
 
     /**
      * Hide the placeholder indicating that loading is occurring.
      */
     hideLoading() {
-        const hidden = this.constructor.HIDDEN_MARKER;
-        this.loadingPlaceholder.toggleClass(hidden, true);
+        toggleHidden(this.loadingPlaceholder, true);
     }
 
     // ========================================================================
@@ -1935,10 +1950,10 @@ export class LookupModal extends ModalDialog {
      */
     makeLoadingPlaceholder(visible, css_class) {
         const css    = css_class || this.constructor.LOADING_CLASS;
-        const hidden = visible ? '' : this.constructor.HIDDEN_MARKER;
-        const $line  = $('<div>').addClass(`${css} ${hidden}`);
+        const hidden = (visible !== true)
         const $image = $('<div>'); // @see stylesheets/controllers/_entry.scss
-        return $line.append($image);
+        const $line  = $('<div>').addClass(css).append($image);
+        return toggleHidden($line, hidden);
     }
 
     /**
@@ -2146,7 +2161,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get inputPrompt() {
-        return this.$prompt ||= this.$modal.find(this.constructor.PROMPT);
+        return this.$prompt ||= this.modalPanel.find(this.constructor.PROMPT);
     }
 
     /**
@@ -2275,7 +2290,8 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get outputHeading() {
-        return this.$heading ||= this.$modal.find(this.constructor.HEADING);
+        return this.$heading ||=
+            this.modalPanel.find(this.constructor.HEADING);
     }
 
     /**
@@ -2284,7 +2300,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get outputDisplay() {
-        return this.$output ||= this.$modal.find(this.constructor.OUTPUT);
+        return this.$output ||= this.modalPanel.find(this.constructor.OUTPUT);
     }
 
     /**

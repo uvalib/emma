@@ -97,22 +97,23 @@ module PopupHelper
 
   # Create a popup toggle control.
   #
-  # @param [Hash] opt                 Passed to element method except for:
-  #
-  # @option opt [ActiveSupport::SafeBuffer, Hash]   :button
-  # @option opt [ActiveSupport::SafeBuffer, String] :text
-  # @option opt [String]                            :label
+  # @param [Hash, String, nil] button
+  # @param [String, nil]       text
+  # @param [String, nil]       label
+  # @param [Symbol, nil]       type     Specify :icon, :text, or :button.
+  # @param [Hash]              opt      Passed to element method.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def make_popup_toggle(button: nil, text: nil, label: nil, **opt)
-    type = (button && 'button') || (text && 'text') || 'icon'
+  def make_popup_toggle(button: nil, text: nil, label: nil, type: nil, **opt)
+    type                  ||= (:button if button) || (:text if text) || :icon
     opt[:tabindex]        ||= 0
     opt[:role]            ||= 'button'
     opt[:'aria-label']    ||= opt[:title]
     opt[:'aria-haspopup'] ||= 'dialog'
     prepend_css!(opt, POPUP_TOGGLE_CLASS, type)
     if button.is_a?(Hash)
+      # noinspection RubyMismatchedArgumentType
       merge_html_options!(opt, button)
       label = opt.delete(:label) || label || text || 'Popup' # TODO: I18n
       html_button(label, opt)

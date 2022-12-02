@@ -192,6 +192,7 @@ Rails.application.routes.draw do
 
   post   '/manifest_item/start_edit/:id',         to: 'manifest_item#start_edit'
   post   '/manifest_item/finish_edit/:id',        to: 'manifest_item#finish_edit'
+  post   '/manifest_item/row_update/:id',         to: 'manifest_item#row_update'
   post   '/manifest_item/upload',                 to: 'manifest_item#upload',       as: 'manifest_item_upload'        # Invoked from file-upload.js
 
   get    '/manifest_item/bulk/new/:manifest',     to: 'manifest_item#bulk_new',     as: 'bulk_new_manifest_item'

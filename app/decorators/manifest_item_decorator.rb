@@ -131,6 +131,7 @@ class ManifestItemDecorator < BaseDecorator
 
     include BaseDecorator::SharedGenericMethods
     include BaseDecorator::Grid
+    include BaseDecorator::Lookup
 
     # =========================================================================
     # :section: BaseDecorator::Configuration overrides
@@ -206,13 +207,54 @@ class ManifestItemDecorator < BaseDecorator
       id_parts = opt[:id] || ['control', action, opt[:row]]
       opt[:id] = unique_id(*id_parts, index: index, unique: unique)
       opt[:'aria-labelledby'] = l_id = "label-#{opt[:id]}"
-      opt[:'data-action']     = action
-      button = super(action, **opt) or return
+
+      if action == :lookup
+        button = lookup_control(ACTION_ATTR => action, button: opt) or return
+      else
+        button = super(action, **opt) or return
+      end
 
       label  = action.to_s.titlecase # TODO: cfg lookup
       label  = html_tag(:label, label, id: l_id)
 
       button << label
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Lookup overrides
+    # =========================================================================
+
+    public
+
+    # Bibliographic lookup control which engages #lookup_modal.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_control(**opt)
+      opt[:type] ||= :icon
+      super
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Lookup overrides
+    # =========================================================================
+
+    protected
+
+    # The options to create a toggle button to activate the bibliographic
+    # lookup popup.
+    #
+    # @param [Hash] opt
+    #
+    # @option opt [Hash] :label       Override the default button label.
+    #
+    # @return [Hash]
+    #
+    def lookup_button_options(**opt)
+      opt[:label] ||= ICONS.dig(:lookup, :icon)
+      super
     end
 
     # =========================================================================

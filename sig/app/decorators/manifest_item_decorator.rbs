@@ -43,6 +43,16 @@ class ManifestItemDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
+    include BaseDecorator::Grid
+
+    include BaseDecorator::Lookup
+
+    # Get all configured record fields for the model.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def model_form_fields: (**untyped _ignored) -> Hash[Symbol,symHash]
+
     # Control icon definitions.
     #
     # @type [Hash{Symbol=>Hash{Symbol=>*}}]
@@ -66,7 +76,26 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer, nil]
     #
-    def control_icon_button: (Symbol action, ?unique: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+    def control_icon_button: (Symbol action, ?index: BaseDecorator::Grid::GridIndex|Integer|nil, ?unique: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+    # Bibliographic lookup control which engages #lookup_modal.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def lookup_control: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+    # The options to create a toggle button to activate the bibliographic
+    # lookup popup.
+    #
+    # @param [Hash] opt
+    #
+    # @option opt [Hash] :label       Override the default button label.
+    #
+    # @return [Hash]
+    #
+    def lookup_button_options: (**untyped opt) -> symHash
 
     # Render a single entry for use within a list of items.
     #

@@ -1,21 +1,25 @@
 // app/assets/javascripts/shared/uploader.js
 
 
-import { toggleVisibility }                            from './accessibility'
-import { Emma }                                        from './assets'
-import { BaseClass }                                   from './base-class'
-import { pageAction }                                  from './controller'
-import { selector }                                    from './css'
-import { isDefined, isMissing, isPresent, notDefined } from './definitions'
-import { handleClickAndKeypress }                      from './events'
-import { extractFlashMessage }                         from './flash'
-import { ID_ATTRIBUTES, uniqAttrs }                    from './html'
-import { percent }                                     from './math'
-import { compact, deepFreeze, fromJSON }               from './objects'
-import { camelCase }                                   from './strings'
-import { MINUTES, SECONDS }                            from './time'
-import { makeUrl }                                     from './url'
-import { Rails }                                       from '../vendor/rails'
+import { toggleVisibility }                 from './accessibility'
+import { Emma }                             from './assets'
+import { BaseClass }                        from './base-class'
+import { pageAction }                       from './controller'
+import { isHidden, selector, toggleHidden } from './css'
+import { isDefined, isMissing, isPresent }  from './definitions'
+import { handleClickAndKeypress }           from './events'
+import { extractFlashMessage }              from './flash'
+import { percent }                          from './math'
+import { compact, deepFreeze, fromJSON }    from './objects'
+import { camelCase }                        from './strings'
+import { MINUTES, SECONDS }                 from './time'
+import { makeUrl }                          from './url'
+import { Rails }                            from '../vendor/rails'
+import {
+    ID_ATTRIBUTES,
+    selfOrDescendents,
+    uniqAttrs,
+} from './html'
 import {
     Uppy,
     AwsS3,
@@ -274,7 +278,6 @@ class BaseUploader extends BaseClass {
     static INFORMER_CLASS       = 'uppy-Informer';
     static PROGRESS_BAR_CLASS   = 'uppy-ProgressBar';
     static FILE_NAME_CLASS      = 'uploaded-filename';
-    static HIDDEN_MARKER        = 'hidden';
 
     static UPLOADER     = selector(this.UPLOADER_CLASS);
     static UPPY_ROOT    = selector(this.UPPY_ROOT_CLASS);
@@ -284,7 +287,6 @@ class BaseUploader extends BaseClass {
     static INFORMER     = selector(this.INFORMER_CLASS);
     static PROGRESS_BAR = selector(this.PROGRESS_BAR_CLASS);
     static FILE_NAME    = selector(this.FILE_NAME_CLASS);
-    static HIDDEN       = selector(this.HIDDEN_MARKER);
 
     // ========================================================================
     // Fields
@@ -402,9 +404,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _selfOrDescendent(target, match) {
-        const $target = target && $(target);
-        if ($target?.is(match)) { return $target }
-        const $result = $target.find(match).first();
+        const $result = selfOrDescendents(target, match).first();
         return isPresent($result) ? $result : undefined;
     }
 
@@ -418,8 +418,8 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _selfOrDescendentElement(target, match) {
-        const result = this._selfOrDescendent(target, match);
-        return result && result[0];
+        const $result = this._selfOrDescendent(target, match);
+        return $result && $result[0];
     }
 
     // ========================================================================
@@ -1221,12 +1221,12 @@ class BaseUploader extends BaseClass {
     /**
      * Hide the selected file name.
      *
-     * @param {boolean} [hidden]      If *false*, un-hide.
+     * @param {boolean} [hide]        If *false*, un-hide.
      */
-    hideFilename(hidden) {
-        const marker = this.constructor.HIDDEN_MARKER;
-        const hide   = notDefined(hidden) || hidden;
-        this.uploadedFilenameDisplay().toggleClass(marker, hide);
+    hideFilename(hide) {
+        this._debug('hideFilename: hide =', hide);
+        const hidden = (hide !== false);
+        toggleHidden(this.uploadedFilenameDisplay(), hidden);
     }
 
     /**
@@ -1235,9 +1235,8 @@ class BaseUploader extends BaseClass {
      * @returns {boolean}
      */
     isFilenameDisplayed() {
-        const $element = this.uploadedFilenameDisplay();
-        const hidden   = this.constructor.HIDDEN;
-        return isPresent($element.text()) && !$element.is(hidden);
+        if (!this._filenameValue()) { return false }
+        return !isHidden(this.uploadedFilenameDisplay());
     }
 
     /**
@@ -1247,6 +1246,30 @@ class BaseUploader extends BaseClass {
      */
     uploadedFilenameDisplay() {
         return this.$root.find(this.constructor.FILE_NAME);
+    }
+
+    /**
+     * Get the element that holds the selected file name.
+     *
+     * @param {string} [inner]        Interior element holding the name.
+     *
+     * @returns {jQuery}
+     * @protected
+     */
+    _uploadedFilenameElement(inner = '.filename') {
+        const $element = this.uploadedFilenameDisplay()
+        const $inner   = $element.find(inner);
+        return isPresent($inner) ? $inner : $element;
+    }
+
+    /**
+     * Get the value of the selected file name.
+     *
+     * @returns {string|undefined}
+     * @protected
+     */
+    _filenameValue() {
+        return this._uploadedFilenameElement().text() || undefined;
     }
 
     // ========================================================================
@@ -1784,7 +1807,7 @@ export class MultiUploader extends BaseUploader {
             }
         }
         // Just to be sure (although this should already be the case):
-        $element.toggleClass(this.constructor.HIDDEN_MARKER, true);
+        toggleHidden($element, true);
         return $clones;
     }
 
@@ -1817,6 +1840,18 @@ export class MultiUploader extends BaseUploader {
             $line.toggleClass('active', active);
         });
         return true;
+    }
+
+    /**
+     * Get the element that holds the selected file name.
+     *
+     * @param {string} [inner]        Interior element holding the name.
+     *
+     * @returns {jQuery}
+     * @protected
+     */
+    _uploadedFilenameElement(inner = this.constructor.FILE_TYPE) {
+        return super._uploadedFilenameElement(inner);
     }
 
     // ========================================================================

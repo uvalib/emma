@@ -18,7 +18,7 @@ import { ModalBase } from './modal-base'
 export class ModalDialog extends ModalBase {
 
     static CLASS_NAME = 'ModalDialog';
-    static DEBUGGING  = false;
+    static DEBUGGING  = true;
 
     static MODAL_CLASS = 'modal-popup';
     static MODAL       = selector(this.MODAL_CLASS);
@@ -65,9 +65,6 @@ export class ModalDialog extends ModalBase {
     // Properties
     // ========================================================================
 
-    get modalPanel()    { return this.$modal }
-    get activeControl() { return this.$toggle }
-
     /**
      * The self-identification of the popup element which is used to match
      * toggle control(s) to this modal.
@@ -75,7 +72,7 @@ export class ModalDialog extends ModalBase {
      * @returns {Selector}
      */
     get selector() {
-        return this.$modal.attr(this.constructor.SELECTOR_ATTR);
+        return this.modalPanel.attr(this.constructor.SELECTOR_ATTR);
     }
 
     /**
@@ -114,43 +111,12 @@ export class ModalDialog extends ModalBase {
      * @returns {boolean}
      */
     open(no_halt) {
-        if (this.$toggle) {
+        if (this.modalControl) {
             return super.open(no_halt);
         } else {
-            this._error('cannot open - this.toggleControl not set');
+            this._error('cannot open - this.modalControl not set');
             return false;
         }
-    }
-
-    /**
-     * Toggle visibility of the associated popup.
-     *
-     * On any given cycle, the first execution of this method should be due to
-     * the user pressing a toggle button.  That button is set here as the
-     * current "owner" of the modal dialog.
-     *
-     * @param {Selector} [target]     Default: {@link $toggle}.
-     */
-    toggleModal(target) {
-        const $target = target && $(target);
-        this.$toggle ||= $target;
-        super.toggleModal($target);
-    }
-
-    /**
-     * Close the popup element.
-     *
-     * @param {Selector} [target]     Event target causing the action.
-     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
-     *
-     * @returns {boolean}
-     */
-    hidePopup(target, no_halt) {
-        const hidden = super.hidePopup(target, no_halt);
-        if (hidden) {
-            this.$toggle = undefined;
-        }
-        return hidden;
     }
 
     // ========================================================================
@@ -165,6 +131,7 @@ export class ModalDialog extends ModalBase {
      * @returns {jQuery}              The provided or discovered toggles.
      */
     associateAll(toggles) {
+        this._debug('associateAll: toggles =', toggles);
         const $toggles = toggles ? $(toggles) : this.allToggles;
         const active   = $toggles.map((_, toggle) => this.associate(toggle));
         return $(active);
@@ -193,23 +160,21 @@ export class ModalDialog extends ModalBase {
      * @returns {jQuery}              The provided or discovered toggles.
      */
     static initializeAll() {
-        let $toggles    = $();
-        const type_data = this.CLASS_ATTR;
-        const this_type = this.CLASS_NAME;
-        const link_data = this.MODAL_INSTANCE_DATA;
-        this.$modals.each((_, element) => {
-            const $modal = $(element);
-            let instance, type;
-            if ((type = $modal.data(type_data)) && (type !== this_type)) {
+        let instance, $all_toggles = $();
+        this.$modals.each((_, modal) => {
+            const $modal = $(modal);
+            const type   = $modal.attr(this.CLASS_ATTR);
+            if (type && (type !== this.CLASS_NAME)) {
                 this._debug(`skipping modal for ${type}`);
-            } else if ((instance = $modal.data(link_data))) {
+            } else if ((instance = $modal.data(this.MODAL_INSTANCE_DATA))) {
                 this._debug('modal already linked to', instance);
             } else {
-                // noinspection JSUnresolvedFunction
-                $.merge($toggles, this.new($modal).associateAll());
+                const dialog   = new this($modal);
+                const $toggles = dialog.associateAll();
+                $all_toggles   = $.merge($all_toggles, $toggles);
             }
         });
-        return $toggles;
+        return $all_toggles;
     }
 
 }

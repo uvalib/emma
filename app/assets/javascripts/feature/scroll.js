@@ -2,7 +2,7 @@
 
 
 import { Emma }                                from '../shared/assets'
-import { selector }                            from '../shared/css'
+import { selector, toggleHidden }              from '../shared/css'
 import { isMissing }                           from '../shared/definitions'
 import { handleClickAndKeypress, handleEvent } from '../shared/events'
 import { deepFreeze }                          from '../shared/objects'
@@ -37,7 +37,6 @@ $(document).on('turbolinks:load', function() {
      */
     const SCROLL_DOWN_PROP  = Emma.Scroll.down;
     const SCROLL_DOWN_CLASS = SCROLL_DOWN_PROP.class;
-    const HIDDEN_MARKER     = 'hidden';
 
     /**
      * CSS class for the element which is scrolled to the top.
@@ -117,7 +116,7 @@ $(document).on('turbolinks:load', function() {
                 $scroll_button.toggleClass(SCROLL_DOWN_CLASS, down);
             }
         }
-        $scroll_button.toggleClass(HIDDEN_MARKER, !visible);
+        toggleHidden($scroll_button, !visible);
     }
 
     /**

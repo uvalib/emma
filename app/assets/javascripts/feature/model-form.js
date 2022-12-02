@@ -6,7 +6,6 @@ import { arrayWrap }                        from '../shared/arrays'
 import { Emma }                             from '../shared/assets'
 import { pageLoadType }                     from '../shared/browser'
 import { pageController }                   from '../shared/controller'
-import { selector, toggleClass }            from '../shared/css'
 import { turnOffAutocomplete }              from '../shared/form'
 import { htmlDecode, scrollIntoView }       from '../shared/html'
 import { HTTP }                             from '../shared/http'
@@ -19,6 +18,11 @@ import { SingleUploader }                   from '../shared/uploader'
 import { cancelAction, makeUrl }            from '../shared/url'
 import { transientError }                   from '../shared/xhr'
 import { Rails }                            from '../vendor/rails'
+import {
+    selector,
+    toggleClass,
+    toggleHidden,
+} from '../shared/css'
 import {
     isDefined,
     isEmpty,
@@ -526,7 +530,6 @@ $(document).on('turbolinks:load', function() {
     const CANCEL_BUTTON_CLASS   = 'cancel-button';
     const FIELD_GROUP_CLASS     = 'field-group';
     const FIELD_CONTAINER_CLASS = 'form-fields';
-    const HIDDEN_MARKER         = Emma.Popup.hidden.class;
     const VALID_MARKER          = 'valid';
     const INVALID_MARKER        = 'invalid';
     const REQUIRED_MARKER       = 'required';
@@ -536,7 +539,6 @@ $(document).on('turbolinks:load', function() {
     const CANCEL_BUTTON         = selector(CANCEL_BUTTON_CLASS);
     const FIELD_GROUP           = selector(FIELD_GROUP_CLASS);
     const FIELD_CONTAINER       = selector(FIELD_CONTAINER_CLASS);
-  //const HIDDEN                = selector(HIDDEN_MARKER);
     const VALID                 = selector(VALID_MARKER);
     const INVALID               = selector(INVALID_MARKER);
   //const REQUIRED              = selector(REQUIRED_MARKER);
@@ -647,57 +649,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Constants - bibliographic lookup
     // ========================================================================
-
-    /**
-     * LookupCondition
-     *
-     * @typedef {{
-     *     or:  Object.<string,(boolean|undefined)>,
-     *     and: Object.<string,(boolean|undefined)>,
-     * }} LookupCondition
-     */
-
-    /**
-     * LookupTerms
-     *
-     * @typedef {{
-     *     or:  Object.<string,(string|string[])>,
-     *     and: Object.<string,(string|string[])>,
-     * }} LookupTerms
-     */
-
-    /**
-     * A mappings of data field to search term prefix for each grouping of
-     * terms.
-     *
-     * @readonly
-     * @type {LookupTerms}
-     */
-    const LOOKUP_TERMS = deepFreeze({
-        or:  { dc_identifier: '' },
-        and: { dc_title: 'title', dc_creator: 'author' }
-    });
-
-    /**
-     * A table of field name mapped on to lookup prefix.
-     *
-     * @readonly
-     * @type {{[field: string]: string}}
-     */
-    const LOOKUP_PREFIX = deepFreeze(
-        Object.fromEntries(
-            Object.values(LOOKUP_TERMS).map(obj => Object.entries(obj)).flat(1)
-        )
-    );
-
-    /**
-     * For the data() item noting which lookup-related fields have valid
-     * values.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const LOOKUP_CONDITION_DATA = 'lookupCondition';
 
     const LOOKUP_BUTTON_CLASS = 'lookup-button';
     const LOOKUP_BUTTON       = selector(LOOKUP_BUTTON_CLASS);
@@ -970,8 +921,9 @@ $(document).on('turbolinks:load', function() {
         const $results = bulkOpResults().empty().addClass(OLD_DATA_MARKER);
         const previous = getBulkOpTrace();
         if (previous && showBulkOpResults($results, previous)) {
-            $results.toggleClass(HIDDEN_MARKER, false);
-            bulkOpResultsLabel($results).toggleClass(HIDDEN_MARKER, false);
+            const $label = bulkOpResultsLabel($results);
+            toggleHidden($label,   false);
+            toggleHidden($results, false);
         }
 
         // When the bulk manifest is submitted, begin a running tally of
@@ -1110,8 +1062,8 @@ $(document).on('turbolinks:load', function() {
         $results.removeClass(OLD_DATA_MARKER).empty();
         addBulkOpResult($results, TMP_LINE, TMP_LINE_CLASS);
         $label.text('Upload results:'); // TODO: I18n
-        $label.toggleClass(HIDDEN_MARKER, false);
-        $results.toggleClass(HIDDEN_MARKER, false);
+        toggleHidden($label,   false);
+        toggleHidden($results, false);
 
         clearBulkOpTrace();
         fetchEntryList('$', null, startMonitoring);
@@ -3023,7 +2975,7 @@ $(document).on('turbolinks:load', function() {
     function showParentEntrySelect(form) {
         const $form = parentEntrySelect(form);
         parentEntrySearchInput($form).prop('disabled', false);
-        return $form.toggleClass(HIDDEN_MARKER, false);
+        return toggleHidden($form, false);
     }
 
     /**
@@ -3036,7 +2988,7 @@ $(document).on('turbolinks:load', function() {
     function hideParentEntrySelect(form) {
         const $form = parentEntrySelect(form);
         parentEntrySearchInput($form).prop('disabled', true);
-        return $form.toggleClass(HIDDEN_MARKER, true);
+        return toggleHidden($form, true);
     }
 
     /**
@@ -3151,8 +3103,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @returns {jQuery}
      *
-     * @see "UploadDecorator::Methods#lookup_popup"
-     * @see "EntryDecorator::Methods#lookup_popup"
+     * @see "BaseDecorator::Lookup#lookup_control"
      */
     function lookupButton(form) {
         const $element = form && $(form);
@@ -3319,6 +3270,8 @@ $(document).on('turbolinks:load', function() {
     // Functions - bibliographic lookup - conditions
     // ========================================================================
 
+    const LOOKUP_CONDITION_DATA = LookupRequest.LOOKUP_CONDITION_DATA;
+
     /**
      * Get the field value(s) for bibliographic lookup.
      *
@@ -3351,7 +3304,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {LookupCondition}
      */
     function clearLookupCondition(form) {
-        return setLookupCondition(form, blankLookupCondition());
+        return setLookupCondition(form, LookupRequest.blankLookupCondition());
     }
 
     /**
@@ -3428,22 +3381,6 @@ $(document).on('turbolinks:load', function() {
             }
         }
         enableLookup($button, enable, forbid);
-    }
-
-    /**
-     * Generate an empty lookup conditions object.
-     *
-     * @returns {LookupCondition}
-     */
-    function blankLookupCondition() {
-        // noinspection JSValidateTypes
-        return Object.fromEntries(
-            Object.entries(LOOKUP_TERMS).map(kv => {
-                const [condition, entry] = kv;
-                const fields = Object.keys(entry).map(fld => [fld, undefined]);
-                return [condition, Object.fromEntries(fields)];
-            })
-        );
     }
 
     // ========================================================================
@@ -3548,7 +3485,7 @@ $(document).on('turbolinks:load', function() {
                     const $field = $fields.filter(`[data-field="${field}"]`);
                     const values = $field.val();
                     if (isPresent(values)) {
-                        const prefix = LOOKUP_PREFIX[field];
+                        const prefix = LookupRequest.LOOKUP_PREFIX[field];
                         if (prefix === '') {
                             request.add(values);
                         } else {

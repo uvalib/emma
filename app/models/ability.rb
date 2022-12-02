@@ -551,6 +551,7 @@ class Ability
     # == Record modification
     can :start_edit,   model, **with_constraints
     can :finish_edit,  model, **with_constraints
+    can :row_update,   model, **with_constraints
     can :reedit,       model, **with_constraints
 
   end

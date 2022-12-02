@@ -3,10 +3,10 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { selector }    from './css'
-import { isPresent }   from './definitions'
-import { handleEvent } from './events'
-import { ModalBase }   from './modal-base'
+import { HIDDEN, selector } from './css'
+import { isPresent }        from './definitions'
+import { handleEvent }      from './events'
+import { ModalBase }        from './modal-base'
 
 
 // ============================================================================
@@ -50,13 +50,6 @@ export class InlinePopup extends ModalBase {
     }
 
     // ========================================================================
-    // Properties
-    // ========================================================================
-
-    get popupPanel()   { return this.$modal }
-    get popupControl() { return this.$toggle }
-
-    // ========================================================================
     // Class properties
     // ========================================================================
 
@@ -79,7 +72,7 @@ export class InlinePopup extends ModalBase {
      *
      * @returns {jQuery}
      */
-    static get $open_popups() { return this.$popups.not(this.HIDDEN) }
+    static get $open_popups() { return this.$popups.not(HIDDEN) }
 
     // ========================================================================
     // Class methods
@@ -92,12 +85,13 @@ export class InlinePopup extends ModalBase {
      * @returns {jQuery}              The discovered inline popup toggles.
      */
     static initializeAll() {
-        const $toggles = $();
-        const $popups  = this.$enclosures;
+        let $toggles  = $();
+        const $popups = this.$enclosures;
         if (isPresent($popups)) {
             $popups.each((_, enclosure) => {
-                // noinspection JSUnresolvedVariable
-                $.merge($toggles, this.new(enclosure).popupControl);
+                const popup   = new this(enclosure);
+                const $toggle = popup.modalControl;
+                if ($toggle) { $toggles = $.merge($toggles, $toggle) }
             });
             this._attachWindowEventHandlers();
         }
@@ -180,11 +174,11 @@ export class InlinePopup extends ModalBase {
         const key = event.key;
         if (key === 'Escape') {
             const $target  = $(event.target);
-            const $popup   = this.findPopup($target).not(this.HIDDEN);
+            const $popup   = this.findPopup($target).not(HIDDEN);
             const instance = this.instanceFor($popup);
             if (instance) {
                 this._debug('> ESC pressed - close the open popup');
-                if (instance.hidePopup($target)) {
+                if (instance._hidePopup($target)) {
                     return false;
                 }
             } else {

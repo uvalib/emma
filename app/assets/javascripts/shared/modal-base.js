@@ -5,11 +5,16 @@
 
 import { Emma }                                from './assets'
 import { BaseClass }                           from './base-class'
-import { elementSelector, selector }           from './css'
 import { decodeObject }                        from './decode'
 import { handleClickAndKeypress, handleEvent } from './events'
 import { findTabbable, scrollIntoView }        from './html'
 import { ModalHideHooks, ModalShowHooks }      from './modal_hooks'
+import {
+    elementSelector,
+    isHidden,
+    selector,
+    toggleHidden,
+} from './css'
 import {
     isDefined,
     isEmpty,
@@ -28,7 +33,7 @@ import {
  * The signature of a callback function that can be provided via
  * `.data('ModalShowHooks') on the popup toggle button.
  *
- * If the function returns *false* then {@link showPopup} will not allow the
+ * If the function returns *false* then {@link _showPopup} will not allow the
  * popup to open (and will avoid fetching any related deferred content if
  * applicable).
  *
@@ -39,7 +44,7 @@ import {
  * The signature of a callback function that can be provided via
  * `.data('ModalHideHooks') on the popup toggle button.
  *
- * If then function returns *false* then {@link hidePopup} will not allow the
+ * If then function returns *false* then {@link _hidePopup} will not allow the
  * popup to close.
  *
  * @typedef {CallbackChainFunction} onHideModalHook
@@ -52,19 +57,17 @@ import {
 export class ModalBase extends BaseClass {
 
     static CLASS_NAME = 'ModalBase';
-    static DEBUGGING  = false;
+    static DEBUGGING  = true;
 
     // ========================================================================
     // Constants
     // ========================================================================
 
-    static HIDDEN_MARKER   = Emma.Popup.hidden.class;
     static COMPLETE_MARKER = 'complete';
     static Z_ORDER_MARKER  = 'z-order-capture';
     static PANEL_CLASS     = Emma.Popup.panel.class;
     static CLOSER_CLASS    = Emma.Popup.closer.class;
 
-    static HIDDEN          = selector(this.HIDDEN_MARKER);
     static COMPLETE        = selector(this.COMPLETE_MARKER);
     static PANEL           = selector(this.PANEL_CLASS);
     static DEFERRED        = selector(Emma.Popup.deferred.class);
@@ -144,6 +147,8 @@ export class ModalBase extends BaseClass {
      */
     constructor(control, modal) {
         super();
+        this._debug(`ModalBase ctor: control =`, control);
+        this._debug(`ModalBase ctor: modal =`, modal);
         this.$toggle = control && this.associate(control);
         this.$modal  = modal   && this.setupPanel(modal);
     }
@@ -152,9 +157,13 @@ export class ModalBase extends BaseClass {
     // Properties
     // ========================================================================
 
+    get modalPanel()         { return this.$modal }
+    get modalControl()       { return this.$toggle }
+    set modalControl(toggle) { this.$toggle = toggle ? $(toggle) : undefined }
+
     get isOpen()   { return !this.isClosed }
-    get isClosed() { return this.$modal.is(this.constructor.HIDDEN) }
-    get closers()  { return this.$modal.find(this.constructor.CLOSER) }
+    get isClosed() { return isHidden(this.modalPanel) }
+    get closers()  { return this.modalPanel.find(this.constructor.CLOSER) }
 
     // ========================================================================
     // Methods
@@ -168,8 +177,9 @@ export class ModalBase extends BaseClass {
      * @returns {boolean}
      */
     open(no_halt) {
+        this._debug('open: no_halt =', no_halt);
         if (this.isClosed) {
-            return this.showPopup(undefined, no_halt);
+            return this._showPopup(undefined, no_halt);
         } else {
             this._warn('modal popup already open');
             return true;
@@ -184,8 +194,9 @@ export class ModalBase extends BaseClass {
      * @returns {boolean}
      */
     close(no_halt) {
+        this._debug('close: no_halt =', no_halt);
         if (this.isOpen) {
-            return this.hidePopup(undefined, no_halt);
+            return this._hidePopup(undefined, no_halt);
         } else {
             this._warn('modal popup already closed');
             return true;
@@ -206,19 +217,33 @@ export class ModalBase extends BaseClass {
     onToggleModal(event) {
         event.stopPropagation();
         this._debugEvent('onToggleModal', event);
-        this.toggleModal(event.target);
+        this.toggleModal(event.currentTarget || event.target);
         return false;
     }
 
     /**
      * Toggle visibility of the associated popup.
      *
-     * @param {Selector} [target]     Default: {@link $toggle}.
+     * On any given cycle, the first execution of this method should be due to
+     * the user pressing a toggle button.  That button is set here as the
+     * current "owner" of the modal dialog.
+     *
+     * @param {Selector} [target]     Default: {@link modalControl}.
      */
     toggleModal(target) {
-        const func    = 'toggleModal:';
-        const $target = target ? $(target) : this.$toggle;
-        if (this.$modal.children().is('.iframe, .img')) {
+        const func  = 'toggleModal';
+        this._debug(`${func}: target =`, target);
+        let $target = target && $(target);
+        if ($target) {
+            const instance = this.constructor.instanceFor($target);
+            if (instance === this) {
+                this.modalControl = $target;
+            } else if (instance) {
+                this._warn('instanceFor($target) !== this', instance, this);
+            }
+        }
+        $target ||= this.modalControl;
+        if (this.modalPanel.children().is('.iframe, .img')) {
             this._togglePopupIframe($target, func);
         } else {
             this._togglePopupContent($target, func);
@@ -234,17 +259,18 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _togglePopupIframe(target, caller) {
-        let func = caller ? `${caller} IFRAME` : '_togglePopupIframe';
+        let func = caller ? `${caller}: IFRAME` : '_togglePopupIframe';
 
-        const $target      = $(target);
-        const $iframe      = this.$modal.children('iframe');
-        const $placeholder = this.$modal.children(this.constructor.DEFERRED);
-        const opening      = this.$modal.is(this.constructor.HIDDEN);
-        const complete     = this.$modal.is(this.constructor.COMPLETE);
+        const $target      = target ? $(target) : this.modalControl;
+        const $modal       = this.modalPanel;
+        const $iframe      = $modal.children('iframe');
+        const $placeholder = $modal.children(this.constructor.DEFERRED);
+        const complete     = $modal.is(this.constructor.COMPLETE);
+        const opening      = this.isClosed;
 
         // Include the ID of the iframe for logging.
         if (this.debugging) {
-            let id = this.$modal.data('id') || $iframe.attr('id');
+            let id = $modal.data('id') || $iframe.attr('id');
             // noinspection JSUnresolvedVariable
             id ||= decodeObject($placeholder.attr('data-attr')).id;
             id ||= 'unknown';
@@ -265,16 +291,16 @@ export class ModalBase extends BaseClass {
             // fully visible and the contents are scrolled to the indicated
             // anchor.
             this._debug(`${func}: RE-OPENING`);
-            if (this.showPopup($target)) {
+            if (this._showPopup($target)) {
                 this.scrollIntoView();
-                this.scrollFrameDocument($iframe, this.$modal.data('topic'));
+                this.scrollFrameDocument($iframe, $modal.data('topic'));
             }
 
         } else if (opening) {
             // Fetch deferred content when the popup is unhidden the first time
             // (or after being deleted below after closing).
             this._debug(`${func}: LOADING`);
-            if (this.showPopup($target)) {
+            if (this._showPopup($target)) {
                 $placeholder.each((_, p) => this._loadDeferredContent(p));
             }
 
@@ -283,24 +309,24 @@ export class ModalBase extends BaseClass {
             // original then remove it in order to re-fetch the original the
             // next time it is opened.
             if (this._checkHidePopup($target)) {
-                const refetch       = this.$modal.hasClass('refetch');
-                const expected_page = this.$modal.data('page');
+                const refetch       = $modal.hasClass('refetch');
+                const expected_page = $modal.data('page');
                 const content       = $iframe[0].contentDocument;
                 const current_page  = content?.location?.pathname;
                 if (!refetch && (expected_page === current_page)) {
                     this._debug(`${func}: CLOSING`, current_page);
                 } else {
                     this._debug(`${func}: CLOSING - REMOVING`, current_page);
-                    $placeholder.removeClass(this.constructor.HIDDEN_MARKER);
+                    toggleHidden($placeholder, false);
                     $iframe.remove();
-                    this.$modal.removeClass(this.constructor.COMPLETE_MARKER);
+                    $modal.removeClass(this.constructor.COMPLETE_MARKER);
                 }
-                this.hidePopup($target, true);
+                this._hidePopup($target, true);
             }
 
         } else {
             this._warn(`${func}: CLOSING - INCOMPLETE POPUP`);
-            this.hidePopup($target);
+            this._hidePopup($target);
         }
     }
 
@@ -317,13 +343,12 @@ export class ModalBase extends BaseClass {
         const func            = '_loadDeferredContent';
         const _warn           = this._warn.bind(this);
         const _debug          = this._debug.bind(this);
-        const showPopup       = this.showPopup.bind(this);
-        const hidePopup       = this.hidePopup.bind(this);
+        const showPopup       = this._showPopup.bind(this);
+        const hidePopup       = this._hidePopup.bind(this);
         const scrollIntoView  = this.scrollIntoView.bind(this);
         const scrollFrame     = this.scrollFrameDocument.bind(this);
-        const HIDDEN_MARKER   = this.constructor.HIDDEN_MARKER;
         const COMPLETE_MARKER = this.constructor.COMPLETE_MARKER;
-        const $modal          = this.$modal;
+        const $modal          = this.modalPanel;
         const $placeholder    = $(placeholder);
         const source_url      = $placeholder.attr('data-path');
         const attributes      = $placeholder.attr('data-attr');
@@ -348,7 +373,7 @@ export class ModalBase extends BaseClass {
         // then fetch it.  The element will appear only if successfully loaded.
         const $content = $(`<${type}>`);
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
-        $content.addClass(HIDDEN_MARKER);
+        toggleHidden($content, true);
         $content.insertAfter($placeholder);
         handleEvent($content, 'error', onError);
         handleEvent($content, 'load',  onLoad);
@@ -399,8 +424,8 @@ export class ModalBase extends BaseClass {
                 $modal.addClass(COMPLETE_MARKER);
 
                 // Replace the placeholder with the downloaded content.
-                $placeholder.addClass(HIDDEN_MARKER);
-                $content.removeClass(HIDDEN_MARKER);
+                toggleHidden($placeholder, true);
+                toggleHidden($content, false);
 
                 // Prepare to handle key presses that are directed to the
                 // <iframe>.
@@ -445,16 +470,17 @@ export class ModalBase extends BaseClass {
      */
     _togglePopupContent(target, caller) {
         const func         = caller || '_togglePopupContent';
-        const $target      = $(target);
-        const $placeholder = this.$modal.children('.placeholder');
-        const opening      = this.$modal.is(this.constructor.HIDDEN);
-        const complete     = this.$modal.is(this.constructor.COMPLETE);
+        const $target      = target ? $(target) : this.modalControl;
+        const $modal       = this.modalPanel;
+        const $placeholder = $modal.children('.placeholder');
+        const complete     = $modal.is(this.constructor.COMPLETE);
+        const opening      = this.isClosed;
 
         if (opening && complete) {
             // If the existing hidden popup can be re-used, ensure that it is
             // fully visible.
             this._debug(`${func}: RE-OPENING`);
-            if (this.showPopup($target)) {
+            if (this._showPopup($target)) {
                 this.scrollIntoView();
             }
 
@@ -462,24 +488,23 @@ export class ModalBase extends BaseClass {
             // Initialize content when the popup is unhidden the first time
             // (or after being deleted below after closing).
             this._debug(`${func}: INITIALIZING`);
-            if (this.showPopup($target)) {
-                const load_direct = this._loadDirectContent.bind(this);
-                $placeholder.each((_, p) => load_direct(p));
+            if (this._showPopup($target)) {
+                $placeholder.each((_, p) => this._loadDirectContent(p));
             }
 
         } else if (opening) {
             this._debug(`${func}: OPENING`);
-            if (this.showPopup($target)) {
-                this.$modal.addClass(this.constructor.COMPLETE_MARKER);
+            if (this._showPopup($target)) {
+                $modal.addClass(this.constructor.COMPLETE_MARKER);
             }
 
         } else if (complete) {
             this._debug(`${func}: CLOSING`);
-            this.hidePopup($target);
+            this._hidePopup($target);
 
         } else {
             this._warn(`${func}: CLOSING - INCOMPLETE POPUP`);
-            this.hidePopup($target);
+            this._hidePopup($target);
         }
     }
 
@@ -495,11 +520,10 @@ export class ModalBase extends BaseClass {
         const func            = '_loadDirectContent';
         const _warn           = this._warn.bind(this);
         const _debug          = this._debug.bind(this);
-        const showPopup       = this.showPopup.bind(this);
+        const showPopup       = this._showPopup.bind(this);
         const scrollIntoView  = this.scrollIntoView.bind(this);
-        const HIDDEN_MARKER   = this.constructor.HIDDEN_MARKER;
         const COMPLETE_MARKER = this.constructor.COMPLETE_MARKER;
-        const $modal          = this.$modal;
+        const $modal          = this.modalPanel;
         const $placeholder    = $(placeholder);
         const source_url      = $placeholder.attr('data-path');
         const attributes      = $placeholder.attr('data-attr');
@@ -514,7 +538,7 @@ export class ModalBase extends BaseClass {
         // then fetch it.  The element will appear only if successfully loaded.
         const $content = $('<embed>');
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
-        $content.addClass(HIDDEN_MARKER);
+        toggleHidden($content, true);
         $content.insertAfter($placeholder);
         handleEvent($content, 'error', onError);
         handleEvent($content, 'load',  onLoad);
@@ -556,8 +580,8 @@ export class ModalBase extends BaseClass {
                 $modal.addClass(COMPLETE_MARKER);
 
                 // Replace the placeholder with the downloaded content.
-                $placeholder.addClass(HIDDEN_MARKER);
-                $content.removeClass(HIDDEN_MARKER);
+                toggleHidden($placeholder, true);
+                toggleHidden($content, false);
 
                 // Make sure the associated popup element is displayed and
                 // scrolled into position.
@@ -573,7 +597,7 @@ export class ModalBase extends BaseClass {
      * @returns {jQuery}
      */
     scrollIntoView() {
-        return scrollIntoView(this.$modal);
+        return scrollIntoView(this.modalPanel);
     }
 
     /**
@@ -630,13 +654,14 @@ export class ModalBase extends BaseClass {
      * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
+     * @protected
      */
-    showPopup(target, no_halt) {
-        const func = 'showPopup';
+    _showPopup(target, no_halt) {
+        const func = '_showPopup';
         this._debugPopups(func);
         if ((this._invokeOnShowPopup(target) !== false) || no_halt) {
             this._zOrderCapture();
-            this._toggleHidden(false);
+            this._setPopupHidden(false);
             this.setTabCycle();
             return true;
         } else {
@@ -652,12 +677,13 @@ export class ModalBase extends BaseClass {
      * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
+     * @protected
      */
-    hidePopup(target, no_halt) {
-        const func = 'hidePopup';
+    _hidePopup(target, no_halt) {
+        const func = '_hidePopup';
         this._debugPopups(func);
         if ((this._invokeOnHidePopup(target) !== false) || no_halt) {
-            this._toggleHidden(true);
+            this._setPopupHidden(true);
             this._zOrderRelease();
             this.clearTabCycle();
             return true;
@@ -670,14 +696,13 @@ export class ModalBase extends BaseClass {
     /**
      * Show/hide the popup element.
      *
-     * @param {boolean} [hide]        If *true*, un-hide.
+     * @param {boolean} [hide]        If *false*, un-hide.
      *
      * @protected
      */
-    _toggleHidden(hide) {
-        const hidden = notDefined(hide) || hide;
-        this.$modal.attr('aria-hidden', hidden);
-        this.$modal.toggleClass(this.constructor.HIDDEN_MARKER, hidden);
+    _setPopupHidden(hide) {
+        const hidden = (hide !== false);
+        toggleHidden(this.modalPanel, hidden);
     }
 
     // ========================================================================
@@ -747,7 +772,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _invokePopupHook(data_name, target, check_only) {
-        const $toggle = this.$toggle;
+        const $toggle = this.modalControl;
         const chain   = $toggle?.data(data_name);
         return chain?.invoke((target || $toggle), check_only);
     }
@@ -764,7 +789,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     get _zOrderCapturing() {
-        return this.$modal.hasClass(this.constructor.Z_ORDER_MARKER)
+        return this.modalPanel.hasClass(this.constructor.Z_ORDER_MARKER)
     }
 
     /**
@@ -778,11 +803,11 @@ export class ModalBase extends BaseClass {
     _zOrderCapture() {
         const Z_CAPTURES_DATA = this.constructor.Z_CAPTURES_DATA;
         const Z_RESTORE_DATA  = this.constructor.Z_RESTORE_DATA;
-        if (!this._zOrderCapturing || this.$modal.data(Z_CAPTURES_DATA)) {
+        if (!this._zOrderCapturing || this.modalPanel.data(Z_CAPTURES_DATA)) {
             return;
         }
         let z_captures = [];
-        $('*:visible').not(this.$modal).each((_, element) => {
+        $('*:visible').not(this.modalPanel).each((_, element) => {
             const $element = $(element);
             const z = $element.css('z-index');
             if (z > 0) {
@@ -797,7 +822,7 @@ export class ModalBase extends BaseClass {
         if (isEmpty(z_captures)) {
             z_captures = false;
         }
-        this.$modal.data(Z_CAPTURES_DATA, z_captures);
+        this.modalPanel.data(Z_CAPTURES_DATA, z_captures);
     }
 
     /**
@@ -812,7 +837,7 @@ export class ModalBase extends BaseClass {
         }
         const Z_CAPTURES_DATA = this.constructor.Z_CAPTURES_DATA;
         const Z_RESTORE_DATA  = this.constructor.Z_RESTORE_DATA;
-        const z_captures      = this.$modal.data(Z_CAPTURES_DATA);
+        const z_captures      = this.modalPanel.data(Z_CAPTURES_DATA);
         if (isPresent(z_captures)) {
             z_captures.forEach($element => {
                 const z = $element.data(Z_RESTORE_DATA);
@@ -822,7 +847,7 @@ export class ModalBase extends BaseClass {
                 );
             });
         }
-        this.$modal.data(Z_CAPTURES_DATA, false);
+        this.modalPanel.data(Z_CAPTURES_DATA, false);
     }
 
     // ========================================================================
@@ -903,7 +928,7 @@ export class ModalBase extends BaseClass {
      * @param {jQuery} [$tabbables]
      */
     setTabCycle($tabbables) {
-        const $items = $tabbables || findTabbable(this.$modal);
+        const $items = $tabbables || findTabbable(this.modalPanel);
         this._setTabCycleFirst($items);
         this._setTabCycleLast($items);
     }
@@ -931,7 +956,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _setTabCycleFirst($tabbables) {
-        const $items = $tabbables || findTabbable(this.$modal);
+        const $items = $tabbables || findTabbable(this.modalPanel);
         const $item  = presence($items.first());
         if ($item) {
             this._handleEvent($item, 'keydown', this._onKeydownTabCycleFirst);
@@ -948,7 +973,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _setTabCycleLast($tabbables) {
-        const $items = $tabbables || findTabbable(this.$modal);
+        const $items = $tabbables || findTabbable(this.modalPanel);
         const $item  = presence($items.last());
         if ($item) {
             this._handleEvent($item, 'keydown', this._onKeydownTabCycleLast);
@@ -1006,6 +1031,7 @@ export class ModalBase extends BaseClass {
      * @return {jQuery|undefined}
      */
     associate(toggle) {
+        this._debug('associate: toggle =', toggle);
         const name    = this.constructor.MODAL_INSTANCE_DATA;
         const $toggle = $(toggle);
         const modal   = $toggle.data(name);
@@ -1027,13 +1053,14 @@ export class ModalBase extends BaseClass {
      * @return {jQuery}
      */
     setupPanel(panel) {
+        this._debug('setupPanel: panel =', panel);
         const name  = this.constructor.MODAL_INSTANCE_DATA;
         this.$modal = $(panel);
         if (this.$modal.data(name)) {
             this._error('modal panel already linked', this.$modal);
         } else {
             this.$modal.data(name, this);
-            this._toggleHidden(true);
+            this._setPopupHidden(true); // Just in case...
             this._handleClickAndKeypress(this.closers, this.onToggleModal);
         }
         return this.$modal;
@@ -1077,23 +1104,14 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Create new instance of the current class.
-     *
-     * @returns {ModalBase}
-     */
-    static new(...args) {
-        return new this(...args);
-    }
-
-    /**
      * Extract the associated ModalBase instance.
      *
-     * @param {Selector} target
+     * @param {Selector|undefined} target
      *
      * @returns {ModalBase|undefined}
      */
     static instanceFor(target) {
-        return $(target).data(this.MODAL_INSTANCE_DATA);
+        return target && $(target).data(this.MODAL_INSTANCE_DATA);
     }
 
     // ========================================================================
@@ -1111,8 +1129,8 @@ export class ModalBase extends BaseClass {
     _debugPopups(label, popup) {
         if (!this.debugging) { return }
         const func    = label.endsWith(':') ? label : `${label}:`;
-        const $modal  = this.$modal;
-        const $toggle = this.$toggle;
+        const $modal  = this.modalPanel;
+        const $toggle = this.modalControl;
         this._debug(func,
             '| id',             ($modal?.data('id')              || '-'),
             '| page',           ($modal?.data('page')            || '-'),

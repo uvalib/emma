@@ -54,6 +54,18 @@ module BaseDecorator::Controls
     },
   }.deep_freeze
 
+  # The name of the attribute indicating the action of a control button.
+  #
+  # @type [Symbol]
+  #
+  ACTION_ATTR = :'data-action'
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Control icon definitions.
   #
   # @param [Hash{Symbol=>Hash{Symbol=>*}}] icons
@@ -113,15 +125,9 @@ module BaseDecorator::Controls
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def control_icon_button(action, index: nil, unique: nil, css: '.icon', **opt)
     prop = extract_hash!(opt, *ICON_PROPERTIES)
     enabled, path, tip, icon = prop.values_at(:enabled, :path, :tip, :icon)
-
-    u_opt = { index: index, unique: unique }.compact
-    opt[:id] = unique_id(opt[:id], **u_opt) if u_opt.present?
 
     case enabled
       when nil         then # Enabled if not specified otherwise.
@@ -136,7 +142,10 @@ module BaseDecorator::Controls
     end
     return if path.blank?
 
+    uniq_opt = { index: index, unique: unique }.compact
+    opt[:id] = unique_id(*opt[:id], **uniq_opt) if uniq_opt.present?
     opt[:title] ||= tip&.include?('%') ? (tip % { item: model_type }) : tip
+    opt[ACTION_ATTR] ||= action
 
     return yield(path, opt) if block_given?
 

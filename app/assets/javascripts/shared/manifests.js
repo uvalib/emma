@@ -6,6 +6,7 @@ import { Emma }                       from './assets'
 import { pageAction, pageController } from './controller'
 import { isDefined, isMissing }       from './definitions'
 import { flashError, flashMessage }   from './flash'
+import { selfOrParent }               from './html'
 import { compact }                    from './objects'
 import { camelCase, singularize }     from './strings'
 
@@ -88,33 +89,6 @@ export const DISABLED_MARKER = 'disabled';
 // ============================================================================
 
 /**
- * Return all elements and descendents which match.
- *
- * @param {Selector} target
- * @param {Selector} match
- *
- * @returns {jQuery}
- */
-export function allMatching(target, match) {
-    const $target = $(target);
-    return $target.filter(match).add($target.find(match));
-}
-
-/**
- * Return the target if it matches or all descendents that match.
- *
- * @param {Selector} target
- * @param {Selector} match
- *
- * @returns {jQuery}
- */
-export function selfOrDescendents(target, match) {
-    //_debug(`selfOrDescendents: match = "${match}"; target =`, target);
-    const $target = $(target);
-    return $target.is(match) ? $target : $target.find(match);
-}
-
-/**
  * The attribute value which applies to the given target (either directly
  * or from a parent element).
  *
@@ -127,40 +101,6 @@ export function attribute(target, name) {
     const func = 'attribute';
     //_debug(`${func}: name = ${name}; target =`, target);
     return selfOrParent(target, `[${name}]`, func).attr(name);
-}
-
-/**
- * Return the target if it matches or the first parent that matches.
- *
- * @param {Selector} target
- * @param {Selector} match
- * @param {string}   [caller]     Name of caller (for diagnostics).
- *
- * @returns {jQuery}
- */
-export function selfOrParent(target, match, caller) {
-    const func = caller || 'selfOrParent';
-    const $t   = $(target);
-    return $t.is(match) ? single($t, func) : $t.parents(match).first();
-}
-
-/**
- * Ensure that the target resolves to exactly one element.
- *
- * @param {Selector} target
- * @param {string}   [caller]     Name of caller (for diagnostics).
- *
- * @returns {jQuery}
- */
-export function single(target, caller) {
-    const $element = $(target);
-    const count    = $element.length;
-    if (count === 1) {
-        return $element;
-    } else {
-        console.warn(`${caller}: ${count} results; 1 expected`);
-        return $element.first();
-    }
 }
 
 // ============================================================================

@@ -586,18 +586,35 @@ module ManifestItemConcern
   #
   # @return [Hash]
   #
-  # @see file:javascripts/controllers/manifest-edit.js *parseFinishEditResponse*
+  # @see file:controllers/manifest-edit.js *parseFinishEditResponse*
   #
   def finish_editing(item = nil, **opt)
-    opt.merge!(editing: false)
-    meth   = opt.delete(:meth) || __method__
+    meth = opt.delete(:meth) || __method__
+    item = edit_manifest_item(item)
+    Log.warn { "#{meth}: not editing: #{item.inspect}" } unless item.editing
+    editing_update(item, **opt)
+  end
+
+  # Update with provided fields (if any) and clear :editing state.
+  #
+  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
+  # @param [Hash]              opt    Field values.
+  #
+  # @raise [Record::NotFound]               Record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
+  #
+  # @return [Hash]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *postRowUpdate*
+  #
+  def editing_update(item = nil, expect_editing: false, **opt)
     rec    = edit_manifest_item(item)
-    Log.warn { "#{meth}: not editing: #{rec.inspect}" } unless rec.editing
     file   = opt.key?(:file_status)  || opt.key?(:file_data)
     data   = opt.key?(:data_status)  || opt.except(*RECORD_KEYS).present?
     ready  = opt.key?(:ready_status) || file || data
     us_opt = { file: file, data: data, ready: ready, overwrite: true }
-    update_manifest_item(rec, **us_opt, **opt)
+    update_manifest_item(rec, **us_opt, **opt, editing: false)
     {
       items:    { rec.id => rec.fields.except(*NON_DATA_KEYS) },
       pending:  (rec.manifest.pending_items_hash if file || data || ready),

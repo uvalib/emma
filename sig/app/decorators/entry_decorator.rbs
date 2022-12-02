@@ -159,46 +159,6 @@ class EntryDecorator < BaseDecorator
     #
     def items_menu_prompt: (?user: User|Symbol|nil) -> String
 
-    # The CSS class selector associated with bibliographic lookup buttons.
-    #
-    # @type [String]
-    #
-    # @see file:javascripts/shared/modal-dialog.js ModalDialog.SELECTOR_ATTR
-    #
-    LOOKUP_CLASS: String
-
-    # The JavaScript ModalDialog subclass for bibliographic lookup popups.
-    #
-    # @type [String]
-    #
-    # @see file:javascripts/shared/modal-dialog.js ModalDialog.CLASS_ATTR
-    # @see file:javascripts/shared/lookup-modal.js LookupModal
-    #
-    LOOKUP_JS_CLASS: String
-
-    # Bibliographic lookup control which engages #lookup_modal.
-    #
-    # In addition to creating the control, this method also adds the modal to
-    # the page modals (unless it already has been added).
-    #
-    # @param [String] css             Characteristic CSS class/selector.
-    # @param [Hash]   opt             Passed to #lookup_modal except for:
-    #
-    # @option opt [Hash] :button      Options for #lookup_button_options.
-    #
-    # @see LayoutHelper::PageModals#add_page_modal
-    #
-    def lookup_control: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-    # A modal popup for bibliographic lookup.
-    #
-    # @param [String] css             Characteristic CSS class/selector.
-    # @param [Hash]   opt             Passed to #modal_popup except for:
-    #
-    # @option opt [Hash] :container   Options for #lookup_container.
-    #
-    def lookup_modal: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
     # @private
     FILE_NAME_CLASS: String
 
@@ -210,66 +170,6 @@ class EntryDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def uploaded_filename_display: (?leader: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-    # Bibliographic lookup popup.
-    #
-    # @param [String] css             Characteristic CSS class/selector.
-    # @param [Hash]   opt             Passed to #inline_popup except for:
-    #
-    # @option opt [Hash] :button      Options for #lookup_button_options.
-    # @option opt [Hash] :container   Options for #lookup_container.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    # @see file:app/assets/javascripts/feature/model-form.js *lookupButton()*
-    #
-    def lookup_popup: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-    # lookup_commit_button
-    #
-    # @param [String] css             Characteristic CSS class/selector.
-    # @param [Hash]   opt
-    #
-    # @option opt [Hash] :label       Override the default button label.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def lookup_commit_button: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-    # lookup_cancel_options
-    #
-    # @param [Hash] opt
-    #
-    # @return [Hash]
-    #
-    def lookup_cancel_options: (**untyped opt) -> symHash
-
-    # The options to create a toggle button to activate the bibliographic
-    # lookup popup.
-    #
-    # @param [String] css             Characteristic CSS class/selector.
-    # @param [Hash]   opt
-    #
-    # @option opt [Hash] :label       Override the default button label.
-    #
-    # @return [Hash]
-    #
-    # @see PopupHelper#inline_popup
-    #
-    def lookup_button_options: (?css: String|nil, **untyped opt) -> symHash
-
-    # The content element of the bibliographic lookup popup.
-    #
-    # @param [String] css             Characteristic CSS class/selector.
-    # @param [Hash]   opt             Passed to the outermost #html_div.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    # @note This does not address dynamic results entries.
-    #
-    # @see file:app/assets/javascripts/shared/lookup-modal.js *LookupModal*
-    #
-    def lookup_container: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Form action button configuration.
     #

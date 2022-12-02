@@ -316,9 +316,24 @@ module ManifestItemConcern
   #
   # @return [Hash]
   #
-  # @see file:javascripts/controllers/manifest-edit.js *parseFinishEditResponse*
+  # @see file:controllers/manifest-edit.js *parseFinishEditResponse*
   #
   def finish_editing: (?(ManifestItem|nil) item, **untyped opt) -> { :fields => Hash[Integer,symHash], :problems => symHash, :pending => Hash[Integer,symHash]|nil }
+
+  # Update with provided fields (if any) and clear :editing state.
+  #
+  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
+  # @param [Hash]              opt    Field values.
+  #
+  # @raise [Record::NotFound]               Record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
+  #
+  # @return [Hash]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *postRowUpdate*
+  #
+  def editing_update: (?(ManifestItem|nil) item, **untyped opt) -> { :fields => Hash[Integer,symHash], :problems => symHash, :pending => Hash[Integer,symHash]|nil }
 
   # Upload a file to the AWS S3 Shrine :cache and update record :file_data with
   # the response.

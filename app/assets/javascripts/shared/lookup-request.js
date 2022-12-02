@@ -23,6 +23,24 @@ import { deepFreeze, toObject }  from './objects'
  * }} LookupRequestPayload
  */
 
+/**
+ * LookupCondition
+ *
+ * @typedef {{
+ *     or:  Object.<string,(boolean|undefined)>,
+ *     and: Object.<string,(boolean|undefined)>,
+ * }} LookupCondition
+ */
+
+/**
+ * LookupTerms
+ *
+ * @typedef {{
+ *     or:  Object.<string,(string|string[])>,
+ *     and: Object.<string,(string|string[])>,
+ * }} LookupTerms
+ */
+
 // ============================================================================
 // Class LookupRequest
 // ============================================================================
@@ -120,6 +138,44 @@ export class LookupRequest extends ChannelRequest {
      * @type {string}
      */
     static DEF_SEPARATORS = '|';
+
+    // ========================================================================
+    // Constants - lookup conditions
+    // ========================================================================
+
+    /**
+     * A mappings of data field to search term prefix for each grouping of terms.
+     *
+     * @readonly
+     * @type {LookupTerms}
+     */
+    static LOOKUP_TERMS = deepFreeze({
+        or:  { dc_identifier: '' },
+        and: { dc_title: 'title', dc_creator: 'author' }
+    });
+
+    /**
+     * A table of field name mapped on to lookup prefix.
+     *
+     * @readonly
+     * @type {{[field: string]: string}}
+     */
+    static LOOKUP_PREFIX = deepFreeze(
+        Object.fromEntries(
+            Object.values(this.LOOKUP_TERMS).map(
+                obj => Object.entries(obj)
+            ).flat(1)
+        )
+    );
+
+    /**
+     * For the data() item noting which lookup-related fields have valid
+     * values.
+     *
+     * @readonly
+     * @type {string}
+     */
+    static LOOKUP_CONDITION_DATA = 'lookupCondition';
 
     // ========================================================================
     // Fields
@@ -415,6 +471,21 @@ export class LookupRequest extends ChannelRequest {
      */
     static validPrefix(prefix) {
         return this.allPrefixes.includes(prefix);
+    }
+
+    /**
+     * Generate an empty lookup conditions object.
+     *
+     * @returns {LookupCondition}
+     */
+    static blankLookupCondition() {
+        // noinspection JSValidateTypes
+        return Object.fromEntries(
+            Object.entries(this.LOOKUP_TERMS).map(([logical_op, entry]) => {
+                const fields = Object.keys(entry).map(fld => [fld, undefined]);
+                return [logical_op, Object.fromEntries(fields)];
+            })
+        );
     }
 
     /**

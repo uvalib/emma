@@ -1,0 +1,163 @@
+# Methods supporting bibliographic lookup and related elements.
+#
+module BaseDecorator::Lookup
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
+  # @private
+  ACTION_ATTR: Symbol
+
+  # The CSS class selector associated with bibliographic lookup buttons.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/shared/modal-dialog.js ModalDialog.SELECTOR_ATTR
+  #
+  LOOKUP_CLASS: String
+
+  # The JavaScript ModalDialog subclass for bibliographic lookup popups.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/shared/modal-dialog.js ModalDialog.CLASS_ATTR
+  # @see file:javascripts/shared/lookup-modal.js LookupModal
+  #
+  LOOKUP_JS_CLASS: String
+
+  # Bibliographic lookup control which engages #lookup_modal.
+  #
+  # In addition to creating the control, this method also adds the modal to
+  # the page modals (unless it already has been added).
+  #
+  # @param [String] js              ModalDialog subclass.
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to #lookup_modal except for:
+  #
+  # @option opt [Hash]          :button         To #lookup_button_options.
+  # @option opt [Symbol]        :type           Passed to #make_popup_toggle.
+  # @option opt [Symbol,String] :'data-action'  Passed to #make_popup_toggle.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see LayoutHelper::PageModals#add_page_modal
+  #
+  def lookup_control: (?js: String, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A modal popup for bibliographic lookup.
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to #modal_popup except for:
+  #
+  # @option opt [Hash] :container   Options for #lookup_container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def lookup_modal: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # lookup_commit_button
+  #
+  # @param [String] label
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @option opt [Hash] :label       Override the default button label.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def lookup_commit_button: (?label: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # lookup_cancel_options
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def lookup_cancel_options: (**untyped opt) -> symHash
+
+  # The options to create a toggle button to activate the bibliographic
+  # lookup popup.
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @option opt [Hash] :label       Override the default button label.
+  #
+  # @return [Hash]
+  #
+  # @see PopupHelper#inline_popup
+  #
+  def lookup_button_options: (?css: String|nil, **untyped opt) -> symHash
+
+  # Methods called by #lookup_container.
+  #
+  # @type [Array<Symbol>]
+  #
+  LOOKUP_PARTS: symArray
+
+  # The content element of the bibliographic lookup popup.
+  #
+  # @param [String] unique          Default: `#hex_rand`.
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outermost #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @note This does not address dynamic results entries.
+  #
+  # @see file:app/assets/javascripts/shared/lookup-modal.js *LookupModal*
+  #
+  def lookup_container: (?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Display of lookup query terms.
+  #
+  # @param [String] unique          Ignored
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/shared/lookup-modal.js *queryPanel*
+  #
+  def lookup_query: (?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Input prompt for lookup query terms.
+  #
+  # @param [String] unique
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/shared/lookup-modal.js *inputPrompt*
+  #
+  def lookup_input: (?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Container for lookup statuses.
+  #
+  # @param [String] unique          Ignored
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/shared/lookup-modal.js *statusPanel*
+  #
+  def lookup_status: (?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Container for lookup raw output, errors, and diagnostics.
+  #
+  # @param [String] unique
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/shared/lookup-modal.js *outputDisplay*
+  #
+  def lookup_results: (?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

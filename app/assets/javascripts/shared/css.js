@@ -1,10 +1,18 @@
 // app/assets/javascripts/shared/css.js
 
 
-import { arrayWrap }          from './arrays'
-import { isEmpty, isPresent } from './definitions'
-import { compact }            from './objects'
+import { arrayWrap }                     from './arrays'
+import { Emma }                          from './assets'
+import { isDefined, isEmpty, isPresent } from './definitions'
+import { compact }                       from './objects'
 
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+export const HIDDEN_MARKER = Emma.Popup.hidden.class;
+export const HIDDEN        = selector(HIDDEN_MARKER);
 
 // ============================================================================
 // Functions
@@ -13,13 +21,43 @@ import { compact }            from './objects'
 /**
  * Toggle the presence of a CSS class for one or more disjoint elements.
  *
- * @param {Selector|Selector[]} sel
+ * @param {Selector|Selector[]} target
  * @param {string}              cls
  * @param {boolean}             [setting]
  */
-export function toggleClass(sel, cls, setting) {
-    arrayWrap(sel).forEach(element => $(element).toggleClass(cls, setting));
+export function toggleClass(target, cls, setting) {
+    arrayWrap(target).forEach(element => $(element).toggleClass(cls, setting));
 }
+
+/**
+ * Hide/show an element.
+ *
+ * @param {Selector} target
+ * @param {boolean}  [hide]       Default: toggle state.
+ *
+ * @returns {jQuery}
+ */
+export function toggleHidden(target, hide) {
+    const $target = $(target);
+    $target.toggleClass(HIDDEN_MARKER, hide);
+    $target.attr('aria-hidden', (isDefined(hide) ? hide : isHidden($target)));
+    return $target;
+}
+
+/**
+ * Indicate whether an element has the {@link HIDDEN_MARKER} class.
+ *
+ * @param target
+ *
+ * @returns {boolean}
+ */
+export function isHidden(target) {
+    return $(target).is(HIDDEN);
+}
+
+// ============================================================================
+// Functions
+// ============================================================================
 
 /**
  * Normalize singletons and/or arrays of CSS class names.

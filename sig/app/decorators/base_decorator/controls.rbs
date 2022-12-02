@@ -26,6 +26,12 @@ module BaseDecorator::Controls
   #
   ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
+  # The name of the attribute indicating the action of a control button.
+  #
+  # @type [Symbol]
+  #
+  ACTION_ATTR: Symbol
+
   # Control icon definitions.
   #
   # @param [Hash{Symbol=>Hash{Symbol=>*}}] icons

@@ -57,15 +57,15 @@ module PopupHelper
 
   # Create a popup toggle control.
   #
-  # @param [Hash] opt                 Passed to element method except for:
-  #
-  # @option opt [ActiveSupport::SafeBuffer, Hash]   :button
-  # @option opt [ActiveSupport::SafeBuffer, String] :text
-  # @option opt [String]                            :label
+  # @param [Hash, String, nil] button
+  # @param [String, nil]       text
+  # @param [String, nil]       label
+  # @param [Symbol, nil]       type     Specify :icon, :text, or :button.
+  # @param [Hash]              opt      Passed to element method.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def make_popup_toggle: (?button: untyped|nil, ?text: untyped|nil, ?label: untyped|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def make_popup_toggle: (?button: symHash|String|nil, ?text: String|nil, ?label: String|nil, ?type: Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # @private
   POPUP_PANEL_OPT: symArray
