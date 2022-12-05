@@ -167,19 +167,19 @@ module LookupService::Crossref::Request::Work
       Array.wrap(terms).each { |term| req.add_term(term, **OPT) }
     end
     query&.each { |term| req.add_term(term, **OPT) }
-    other&.each { |prm, value| req.add_term(QUERY_PREFIX[prm], value, **OPT) }
+    other&.each { |prm, value| req.add_term(prm, value, **OPT) }
     result = {}
     req.terms.each do |term|
       prefix, value = term.split(':', 2)
-      if !value
-        key   = :query
-        value = prefix
-      elsif ID_TYPES.include?(prefix.to_sym)
-        key   = :"#{prefix}"
-        value = term
-      else
-        key   = :"query.#{prefix}"
+      next if prefix.blank?
+      key = nil
+      if value.blank?
+        prefix, value = [nil, prefix]
+      elsif !ID_TYPES.include?((prefix = prefix.to_sym))
+        prefix = QUERY_PREFIX[prefix] || prefix
+        prefix = "query.#{prefix}"
       end
+      key = prefix || :query
       result[key] = [*result[key], value]
     end
     result

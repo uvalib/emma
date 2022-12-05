@@ -143,8 +143,12 @@ module LookupService::GoogleBooks::Request::Volumes
       Array.wrap(terms).each { |term| req.add_term(term, **OPT) }
     end
     query&.each { |term| req.add_term(term, **OPT) }
-    other&.each { |prm, value| req.add_term(QUERY_PREFIX[prm], value, **OPT) }
-    req.terms
+    other&.each { |prm, value| req.add_term(prm, value, **OPT) }
+    req.terms.map do |term|
+      prefix, value = term.split(':', 2)
+      prefix = value.present? && QUERY_PREFIX[prefix.to_sym]
+      prefix ? "#{prefix}:#{value}" : term
+    end
   end
 
   # Combine terms to make a Google Books query string.

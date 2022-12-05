@@ -144,14 +144,19 @@ export class LookupRequest extends ChannelRequest {
     // ========================================================================
 
     /**
-     * A mappings of data field to search term prefix for each grouping of terms.
+     * A mappings of data field to search term prefix for each grouping of
+     * terms.
+     *
+     * Bibliographic lookup is permitted if any of the "or" fields have a value
+     * -OR- if all of the "and" fields have a value.
      *
      * @readonly
      * @type {LookupTerms}
      */
     static LOOKUP_TERMS = deepFreeze({
         or:  { dc_identifier: '' },
-        and: { dc_title: 'title', dc_creator: 'author' }
+        and: { dc_title: 'title' },
+        //and: { dc_title: 'title', dc_creator: 'author' },
     });
 
     /**
