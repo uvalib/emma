@@ -269,7 +269,7 @@ export class ModalBase extends BaseClass {
         const opening      = this.isClosed;
 
         // Include the ID of the iframe for logging.
-        if (this.debugging) {
+        if (this._debugging) {
             let id = $modal.data('id') || $iframe.attr('id');
             // noinspection JSUnresolvedVariable
             id ||= decodeObject($placeholder.attr('data-attr')).id;
@@ -1127,7 +1127,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _debugPopups(label, popup) {
-        if (!this.debugging) { return }
+        if (!this._debugging) { return }
         const func    = label.endsWith(':') ? label : `${label}:`;
         const $modal  = this.modalPanel;
         const $toggle = this.modalControl;

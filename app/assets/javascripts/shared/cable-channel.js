@@ -3,14 +3,14 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { Api }                           from './api'
-import { BaseClass }                     from './base-class'
-import { ChannelRequest }                from './channel-request'
-import { ChannelResponse }               from './channel-response'
-import { isDefined, isEmpty, isPresent } from './definitions'
-import { onPageExit }                    from './events'
-import { hexRand }                       from './random'
-import { asString }                      from './strings'
+import { Api }                from './api'
+import { BaseClass }          from './base-class'
+import { ChannelRequest }     from './channel-request'
+import { ChannelResponse }    from './channel-response'
+import { isDefined, isEmpty } from './definitions'
+import { onPageExit }         from './events'
+import { hexRand }            from './random'
+import { asString }           from './strings'
 
 
 export class CableChannel extends BaseClass {
@@ -52,9 +52,6 @@ export class CableChannel extends BaseClass {
     // ========================================================================
 
     /** @type {Subscription} */ _channel;
-
-    /** @type {string} */       _channel_name;
-    /** @type {string} */       _channel_action;
     /** @type {string} */       _stream_id;
 
     /** @type {object} */       _dat;
@@ -66,53 +63,17 @@ export class CableChannel extends BaseClass {
     /** @type {function[]} */   _dia_cb;
 
     // ========================================================================
-    // Constructor
-    // ========================================================================
-
-    /**
-     * Create a new channel instance.
-     *
-     * @param {string} [action]
-     * @param {string} [name]
-     * @param {string} [id]
-     */
-    constructor(action, name, id) {
-        super();
-        this._channel_action = action;
-        this._channel_name   = name;
-        this._stream_id      = id;
-    }
-
-    // ========================================================================
     // Properties - channel management
     // ========================================================================
 
-    /**
-     * The channel.
-     *
-     * @returns {Subscription}
-     */
-    get channel() {
-        return this._channel;
-    }
+    /** @returns {Subscription} */
+    get channel() { return this._channel }
 
-    /**
-     * channelName
-     *
-     * @returns {string}
-     */
-    get channelName() {
-        return this._channel_name ||= this.constructor.CHANNEL_NAME;
-    }
+    /** @returns {string} */
+    get channelName() { return this.constructor.channelName }
 
-    /**
-     * channelAction
-     *
-     * @returns {string}
-     */
-    get channelAction() {
-        return this._channel_action ||= this.constructor.CHANNEL_ACTION;
-    }
+    /** @returns {string} */
+    get channelAction() { return this.constructor.channelAction }
 
     /**
      * A unique identifier to differentiate this channel.
@@ -143,10 +104,8 @@ export class CableChannel extends BaseClass {
      * @returns {string}
      */
     get streamLabel() {
-        const name = this.streamName;
-        const chan = name.channel;
-        const sid  = name.stream_id;
-        return sid ? `${chan}[${sid}]` : chan;
+        const stream = this.streamName;
+        return `${stream.channel}[${stream.stream_id}]`;
     }
 
     // ========================================================================
@@ -171,7 +130,7 @@ export class CableChannel extends BaseClass {
      */
     disconnectOnPageExit(debug) {
         const disconnect = this.disconnect.bind(this);
-        const debugging  = isDefined(debug) ? debug : this.debugging;
+        const debugging  = isDefined(debug) ? debug : this._debugging;
         onPageExit(disconnect, debugging);
     }
 
@@ -267,14 +226,14 @@ export class CableChannel extends BaseClass {
 
     get data() { return this._dat }
     set data(v) {
-        this._debug('set data:', v);
+        this._debug('set data', v);
         this._dat = this._createResponse(v);
         this.callbacks.forEach(cb => cb(this._dat));
     }
 
     get callbacks() { return this._dat_cb ||= [] }
     set callbacks(callbacks) {
-        this._debug('set callbacks');
+        this._debug('set callbacks', callbacks);
         this._dat_cb = [...callbacks].flat();
     }
 
@@ -303,6 +262,7 @@ export class CableChannel extends BaseClass {
      * @param {...(function|function[])} callbacks
      */
     setCallback(...callbacks) {
+        this._debug('setCallback: callbacks =', callbacks);
         this.callbacks = callbacks;
     }
 
@@ -316,7 +276,7 @@ export class CableChannel extends BaseClass {
      * @param {...(function|function[])} callbacks
      */
     addCallback(...callbacks) {
-        this._debug('addCallback');
+        this._debug('addCallback: callbacks =', callbacks);
         this.callbacks = [...this.callbacks, ...callbacks];
     }
 
@@ -326,14 +286,14 @@ export class CableChannel extends BaseClass {
 
     get error() { return this._err }
     set error(text) {
-        this._debug('set error:', text);
+        this._debug('set error', text);
         this._err = text
         this.error_callbacks.forEach(cb => cb(this._err));
     }
 
     get error_callbacks() { return this._err_cb ||= [] }
     set error_callbacks(callbacks) {
-        this._debug('set error callbacks');
+        this._debug('set error callbacks', callbacks);
         this._err_cb = [...callbacks].flat();
     }
 
@@ -364,7 +324,8 @@ export class CableChannel extends BaseClass {
      * @param {...(function|function[])} callbacks
      */
     setErrorCallback(...callbacks) {
-         this.error_callbacks = callbacks;
+        this._debug('setErrorCallback: callbacks =', callbacks);
+        this.error_callbacks = callbacks;
     }
 
     /**
@@ -373,7 +334,7 @@ export class CableChannel extends BaseClass {
      * @param {...(function|function[])} callbacks
      */
     addErrorCallback(...callbacks) {
-        this._debug('addErrorCallback');
+        this._debug('addErrorCallback: callbacks =', callbacks);
         this.error_callbacks = [...this.error_callbacks, ...callbacks];
     }
 
@@ -383,14 +344,14 @@ export class CableChannel extends BaseClass {
 
     get diagnostic() { return this._dia }
     set diagnostic(text) {
-        this._debug('set diagnostic:', text);
+        this._debug('set diagnostic', text);
         this._dia = `${this.streamLabel} ${text}`;
-        this.diagnostic_callback.forEach(cb => cb(this._dia));
+        this.diagnostic_callbacks.forEach(cb => cb(this._dia));
     }
 
-    get diagnostic_callback() { return this._dia_cb ||= [] }
-    set diagnostic_callback(callbacks) {
-        this._debug('set diagnostic callbacks');
+    get diagnostic_callbacks() { return this._dia_cb ||= [] }
+    set diagnostic_callbacks(callbacks) {
+        this._debug('set diagnostic callbacks', callbacks);
         this._dia_cb = [...callbacks].flat();
     }
 
@@ -411,6 +372,7 @@ export class CableChannel extends BaseClass {
      */
     setDiagnostic(text, ...log_extra) {
         this._debug(`setDiagnostic: ${text}`, ...log_extra);
+        this._warn(`setDiagnostic: ${text}`, ...log_extra); // TODO: remove
         const data = log_extra.map(v => asString(v)).join(', ');
         this.diagnostic = data ? `${text}: ${data}` : text;
     }
@@ -422,7 +384,8 @@ export class CableChannel extends BaseClass {
      * @param {...(function|function[])} callbacks
      */
     setDiagnosticCallback(...callbacks) {
-        this.diagnostic_callback = callbacks;
+        this._debug('setDiagnosticCallback: callbacks =', callbacks);
+        this.diagnostic_callbacks = callbacks;
     }
 
     /**
@@ -431,8 +394,9 @@ export class CableChannel extends BaseClass {
      * @param {...(function|function[])} callbacks
      */
     addDiagnosticCallback(...callbacks) {
-        this._debug('addDiagnosticCallback');
-        this.diagnostic_callback = [...this.diagnostic_callback, ...callbacks];
+        this._debug('addDiagnosticCallback: callbacks =', callbacks);
+        this.diagnostic_callbacks =
+            [...this.diagnostic_callbacks, ...callbacks];
     }
 
     // ========================================================================
@@ -444,22 +408,22 @@ export class CableChannel extends BaseClass {
      *
      * @returns {CableChannel}
      */
-    async setupInstance() {
+    setupInstance() {
         if (this._channel) { this._error('_channel is already set') }
-        this._channel = await this._createChannel();
+        this._createChannel();
         return this;
     }
 
     /**
      * Setup a channel.
      *
-     * @param {boolean} [verbose]     Default: {@link debugging}.
+     * @param {boolean} [verbose]     Default: {@link _debugging}.
      *
      * @returns {Subscription}
      * @protected
      */
     async _createChannel(verbose) {
-        const dia            = isDefined(verbose) ? verbose : this.debugging;
+        const dia            = isDefined(verbose) ? verbose : this._debugging;
         const set_diagnostic = dia ? this.setDiagnostic.bind(this) : undefined;
         const make_response  = this.response.bind(this);
         const warning        = this._warn.bind(this);
@@ -482,21 +446,26 @@ export class CableChannel extends BaseClass {
             functions.disconnected = () => set_diagnostic('disconnected');
             functions.rejected     = () => set_diagnostic('rejected');
         }
-        return import('../channels/consumer').then(
+        this._channel = await import('../channels/consumer').then(
             module => module.createChannel(identity, functions),
             reason => warning('import failed:', reason)
         );
+        return this._channel;
     }
+
+    // ========================================================================
+    // Properties - internal
+    // ========================================================================
+
+    get _log_prefix() { return this.streamLabel }
 
     // ========================================================================
     // Class properties
     // ========================================================================
 
-    static get instance()    { return this._instance ||= new this() }
-    static get channelName() { return this.instance.channelName }
-    static get streamId()    { return this.instance.streamId }
-    static get streamName()  { return this.instance.streamName }
-    static get streamLabel() { return this.instance.streamLabel }
+    static get instance()      { return this._instance ||= new this() }
+    static get channelName()   { return this.CHANNEL_NAME }
+    static get channelAction() { return this.CHANNEL_ACTION }
 
     // ========================================================================
     // Class methods
@@ -507,36 +476,7 @@ export class CableChannel extends BaseClass {
      *
      * @returns {CableChannel}
      */
-    static async newInstance() {
+    static newInstance() {
         return this.instance.setupInstance();
-    }
-
-    // ========================================================================
-    // Class methods - internal
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    static get debugging() {
-        return window.DEBUG.activeFor(this.CHANNEL_NAME, false);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {string} text
-     * @param {...*}   [extra]
-     */
-    static _debug(text, ...extra) {
-        if (!this.debugging) { return }
-        const note = `${this.streamLabel} ${text}`;
-        if (isPresent(extra)) {
-            super._debug(`${note}:`, ...extra)
-        } else {
-            super._debug(note);
-        }
     }
 }

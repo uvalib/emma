@@ -105,7 +105,7 @@ class ModalHooks extends BaseClass {
     // ========================================================================
 
     static _check(func, $toggle, callbacks) {
-        if (!this.debugging) { return }
+        if (!this._debugging) { return }
         isPresent($toggle)   || this._warn(`${func}: empty/missing toggle`);
         isPresent(callbacks) || this._warn(`${func}: empty/missing callbacks`);
     }

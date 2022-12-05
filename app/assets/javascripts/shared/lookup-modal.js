@@ -300,6 +300,14 @@ export class LookupModal extends ModalDialog {
     _channel;
 
     /**
+     * The control for the current lookup.
+     *
+     * @type {jQuery|undefined}
+     * @protected
+     */
+    _channel_owner;
+
+    /**
      * Whether the source implements manual input of search terms.
      *
      * @type {boolean}
@@ -391,7 +399,7 @@ export class LookupModal extends ModalDialog {
      */
     static set channel(channel) {
         this._debug('CLASS set channel', channel);
-        channel.disconnectOnPageExit(this.debugging);
+        channel.disconnectOnPageExit(this._debugging);
         this._channel = channel;
     }
 
@@ -408,13 +416,11 @@ export class LookupModal extends ModalDialog {
      *
      * @returns {LookupChannel}
      */
-    static async setup(toggle, show_hooks, hide_hooks) {
+    static setup(toggle, show_hooks, hide_hooks) {
         this._debug('CLASS setup: toggle =', toggle);
-        this._debug('CLASS setup: show_hooks =', show_hooks);
-        this._debug('CLASS setup: hide_hooks =', hide_hooks);
 
         // One-time setup of the communication channel.
-        this.channel ||= await LookupChannel.newInstance();
+        this.channel ||= LookupChannel.newInstance();
 
         const $toggle  = $(toggle);
         /** @type {LookupModal|undefined} instance */
@@ -433,32 +439,49 @@ export class LookupModal extends ModalDialog {
     // ========================================================================
 
     /**
-     * Get the communication channel for this class.
+     * Get the communication channel for this instance.
      *
      * @returns {LookupChannel}
      */
     get channel() {
-        this._debug('get channel', this._channel);
         return this._channel;
     }
 
     /**
-     * Register callbacks with the communication channel for this class.
+     * Set the communication channel for this instance.
      *
      * @param {LookupChannel} channel
      */
     set channel(channel) {
-        this._debug('set channel', channel);
+        this._channel = channel;
+    }
+
+    /**
+     * Indicate whether the current modal control has reserved the channel.
+     *
+     * @returns {boolean}
+     */
+    get ownsChannel() {
+        return this.modalControl === this._channel_owner;
+    }
+
+    /**
+     * Register callbacks with the communication channel for this instance.
+     *
+     * @returns {LookupChannel}
+     */
+    _reserveChannel() {
+        const channel = this._channel;
+        const owner   = this.modalControl;
+        this._debug('_reserveChannel for ', owner);
 
         const _cbSearchResultsData  = this.updateSearchResultsData.bind(this);
         const _cbStatusPanel        = this.updateStatusPanel.bind(this);
         const _cbEntries            = this.updateEntries.bind(this);
 
-        channel.addCallback(_cbSearchResultsData);
-        channel.addCallback(_cbStatusPanel);
-        channel.addCallback(_cbEntries);
+        channel.setCallback(_cbSearchResultsData, _cbStatusPanel, _cbEntries);
 
-        if (this.output) {
+        if (this.output && isEmpty(channel.error_callbacks)) {
 
             const _cbResult     = this.updateResultDisplay.bind(this);
             const _cbError      = this.updateErrorDisplay.bind(this);
@@ -469,7 +492,8 @@ export class LookupModal extends ModalDialog {
             channel.setDiagnosticCallback(_cbDiagnostic);
         }
 
-        this._channel = channel;
+        this._channel_owner = owner;
+        return channel;
     }
 
     // ========================================================================
@@ -602,6 +626,10 @@ export class LookupModal extends ModalDialog {
      */
     performRequest() {
         this._debug('performRequest');
+        if (!this.ownsChannel && !this._reserveChannel()) {
+            this._error('Could not acquire lookup channel');
+            return;
+        }
         this.initializeStatusPanel();
         if (this.output) {
             this.clearResultDisplay();

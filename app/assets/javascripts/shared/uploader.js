@@ -356,8 +356,8 @@ class BaseUploader extends BaseClass {
     }
 
     /** @returns {boolean} */
-    get debugging() {
-        return this.feature.debugging && super.debugging;
+    get _debugging() {
+        return (this.feature?.debugging !== false) && super._debugging;
     }
 
     // ========================================================================
@@ -1473,7 +1473,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _debugUppy(...args) {
-        if (this.debugging) { console.log('Uppy:', ...args) }
+        if (this._debugging) { console.log('Uppy:', ...args) }
     }
 
 }
