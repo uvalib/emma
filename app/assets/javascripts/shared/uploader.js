@@ -709,6 +709,7 @@ class BaseUploader extends BaseClass {
                     // noinspection JSCheckFunctionSignatures
                     upload.setOptions({ endpoint: makeUrl(url, params) });
                 }
+                uppyInfoClear();
                 showProgressBar();
             }
         }
@@ -744,9 +745,7 @@ class BaseUploader extends BaseClass {
          */
         function onFileUploadSuccess(file, response) {
             debugUppy('upload-success', file, response);
-            if (feature.popup_messages) {
-                uppyInfoClear();
-            }
+            uppyInfoClear();
             onSuccess(file, response);
         }
 

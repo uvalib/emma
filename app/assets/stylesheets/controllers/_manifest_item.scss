@@ -1008,8 +1008,7 @@ table.manifest_item-grid {
             // Data cell for item file data.
             > .cell.file-uploader {
 
-                padding:        $value-pad * 4;
-                padding-top:    $value-pad * 5;
+                padding:        ($value-pad * 5) ($value-pad * 4);
                 column-gap:     $value-pad * 4;
                 flex-direction: row;
 
