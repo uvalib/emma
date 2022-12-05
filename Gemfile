@@ -109,8 +109,13 @@ gem 'sanitize'
 gem 'workflow', '< 3.0'
 
 # == Temporary
+
 # NOTE: Apparently version 0.1.1 was removed.
 gem 'declarative-option', '~> 0.1.0' # TODO: remove with representable >= 3.1
+
+# NOTE: version 2.8.0 causes load failure for 'mail/indifferent_hash'
+# @see https://github.com/mikel/mail/pull/1472#issuecomment-1197111589
+gem 'mail', '2.7.1'
 
 # =============================================================================
 # Production
