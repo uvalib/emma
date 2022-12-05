@@ -18,9 +18,13 @@ import { isMissing } from './definitions'
 export function turnOffAutocomplete(input) {
     $(input).each(function() {
         if (this instanceof HTMLInputElement) {
-            const $element   = $(this);
-            const last_pass  = $element.attr('data-lpignore');
-            let autocomplete = $element.attr('autocomplete');
+            const $element    = $(this);
+            const spell_check = $element.attr('spellcheck');
+            const last_pass   = $element.attr('data-lpignore');
+            let autocomplete  = $element.attr('autocomplete');
+            if (isMissing(spell_check)) {
+                $element.attr('spellcheck', 'false');
+            }
             if (isMissing(autocomplete)) {
                 $element.attr('autocomplete', (autocomplete = 'off'));
             }

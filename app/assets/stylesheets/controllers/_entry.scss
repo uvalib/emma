@@ -8,6 +8,7 @@
 @use 'shared/controls/panels'  as panel;
 @use 'shared/controls/shapes'  as shape;
 @use 'shared/feature/model'    as model;
+@use 'shared/layouts/overlay'  as overlay;
 
 @use 'layouts/controls/panels' as panel-classes;
 @use 'layouts/controls/popup'  as popup-classes;
@@ -941,6 +942,24 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             @include button.basic;
         }
 
+        // Overlay while loading.
+        > .loading-in-progress {
+
+            $img-width:  4rem;
+            $img-height: 1rem;
+
+            @include overlay.image(
+                $img-path:   'loading-balls.gif',
+                $img-width:  $img-width,
+                $img-height: $img-height,
+                $fill:       false
+            );
+
+            position: absolute;
+            top:      calc(50% - ($img-height * 0.5));
+            left:     calc(50% - ($img-width  * 0.5));
+        }
+
         .lookup-query {
 
             $color:             lighter($uva-blue, 95%);
@@ -1253,54 +1272,6 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 .row.field-locks {
                     > .col-0 {
                         z-index: 1;
-                    }
-                }
-
-                //=============================================================
-                // Placeholder line while loading.
-                //=============================================================
-
-                .loading {
-
-                    @include grid.column-span;
-
-                    display:         inline-flex;
-                    flex-direction:  row;
-                    flex-wrap:       nowrap;
-                    justify-content: center;
-                    position:        relative;
-
-                    @media #{$not-wide-screen} {
-                        max-width: 90vw;
-                    }
-
-                    // Image appears above the next line.
-                    > * {
-
-                        position:            absolute;
-                        height:              $row-height;
-                        width:               $row-height;
-                        background-image:    url('loading-balls.gif');
-                        background-repeat:   no-repeat;
-                        background-size:     contain;
-                        background-position: center;
-
-                        @media #{$narrow-screen} {
-                            top: -15vh;
-                        }
-                    }
-                }
-
-                // To avoid the fact that the container for the image takes up
-                // some vertical space...
-                .loading:not(.hidden) + .row {
-
-                    > * {
-                        margin-top: -0.5rem;
-                    }
-
-                    > .col-0 {
-                        margin-top: 0;
                     }
                 }
             }

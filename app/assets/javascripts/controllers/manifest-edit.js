@@ -753,7 +753,7 @@ $(document).on('turbolinks:load', function() {
         const func     = 'reImportData';
         const manifest = manifestId();
         const action   = `bulk/update/${manifest}`;
-        _error(`${func}: ${action} TO BE IMPLEMENTED`); // TODO: reimport
+        _error(`${func}: ${action} NOT YET IMPLEMENTED`); // TODO: reimport
     }
 
     // ========================================================================
@@ -767,7 +767,7 @@ $(document).on('turbolinks:load', function() {
      */
     function exportRows(event) {
         _debug('exportRows: event =', event);
-        flashMessage('EXPORT - TO BE IMPLEMENTED'); // TODO: exportRows
+        flashMessage('EXPORT - NOT YET IMPLEMENTED'); // TODO: exportRows
     }
 
     // ========================================================================
@@ -1252,9 +1252,10 @@ $(document).on('turbolinks:load', function() {
             let different;
             const $cell = $(cell);
             const field = cellDbColumn($cell);
-            if (field && data.hasOwnProperty(field)) {
+            const [data_value, data_field] = valueAndField(data, field);
+            if (data_field) {
                 const old_value = cellCurrentValue($cell);
-                const new_value = $cell.makeValue(data[field]);
+                const new_value = $cell.makeValue(data_value);
                 if ((different = new_value.differsFrom(old_value))) {
                     updateDataCell($cell, new_value, true);
                     changed = true;
@@ -1267,12 +1268,12 @@ $(document).on('turbolinks:load', function() {
         });
         if (changed) {
             updateRowChanged($row, true);
-            updateLookupCondition($row);
             updateFormChanged();
         }
 
         updateRowIndicators($row, data);
         updateRowDetails($row, data);
+        updateLookupCondition($row);
     }
 
     // ========================================================================
@@ -1860,7 +1861,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} row
      * @param {boolean}  [enable]     If *false* run {@link disableLookup}.
-     * @param {boolean}  [forbid]     If *false* run {@link disableLookup}.
+     * @param {boolean}  [forbid]     If *true* add '.forbidden' if disabled.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -1995,9 +1996,9 @@ $(document).on('turbolinks:load', function() {
         $.each(condition, (logical_op, entry) => {
             $.each(entry, (field, _) => {
                 const $field = dataField($cells, field, func);
-                if ($field) {
-                    condition[logical_op][field] = cellValid($field);
-                }
+                const valid  = isPresent($field) && cellValid($field);
+                const value  = valid && cellCurrentValue($field);
+                condition[logical_op][field] = value && value.nonBlank;
             });
         });
         return condition;
@@ -4851,7 +4852,7 @@ $(document).on('turbolinks:load', function() {
      * @typedef {Object.<string,Properties>} PropertiesTable
      */
 
-    let field_property; //, field_map;
+    let field_property;
 
     /**
      * All field names and properties
@@ -4882,6 +4883,39 @@ $(document).on('turbolinks:load', function() {
             _error('no field names could be extracted from the grid');
         }
         return result;
+    }
+
+    /**
+     * Mapping of database field to related EMMA data field.
+     *
+     * @type {Object.<string,string>}
+     */
+    const FIELD_MAP = {
+        repository: 'emma_repository',
+    }
+
+    /**
+     * Extract a field value from a data object, translating between
+     * database field and EMMA data field if necessary.
+     *
+     * @param {object} data
+     * @param {string} field
+     *
+     * @returns {[*,string]|[]}
+     */
+    function valueAndField(data, field) {
+        if (isMissing(data) || isMissing(field)) { return [] }
+        if (data.hasOwnProperty(field)) { return [data[field], field] }
+        let fld;
+        $.each(FIELD_MAP, (name1, name2) => {
+            if ((field === name1) && data.hasOwnProperty(name2)) {
+                fld = name2;
+            } else if ((field === name2) && data.hasOwnProperty(name1)) {
+                fld = name1;
+            }
+            return !fld; // break loop if a data field was identified
+        });
+        return fld ? [data[fld], fld] : [];
     }
 
     // ========================================================================

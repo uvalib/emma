@@ -152,8 +152,13 @@ module BaseDecorator::Lookup
   #
   # @type [Array<Symbol>]
   #
-  LOOKUP_PARTS =
-    %i[lookup_query lookup_input lookup_status lookup_results].freeze
+  LOOKUP_PARTS = %i[
+    lookup_in_progress
+    lookup_query
+    lookup_input
+    lookup_status
+    lookup_results
+  ].freeze
 
   # The content element of the bibliographic lookup popup.
   #
@@ -327,6 +332,22 @@ module BaseDecorator::Lookup
 
     # == Output heading and display elements
     heading << output
+  end
+
+  # Initially hidden in-progress overlay.
+  #
+  # @param [String] unique          Ignored
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def lookup_in_progress(unique: nil, css: '.loading-in-progress', **opt)
+    unique # NOTE: unused
+    prepend_css!(opt, css, 'hidden')
+    html_div(opt) do
+      html_div(class: 'content')
+    end
   end
 
   # ===========================================================================

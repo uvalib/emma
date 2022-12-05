@@ -111,6 +111,9 @@ export async function setup(base, show_hooks, hide_hooks) {
         $popup_button?.siblings(ModalDialog.PANEL) ||
         $('body');
 
+    /** @type {jQuery} */
+    let $container, $loading_overlay;
+
     /**
      * Operational status elements.
      *
@@ -123,7 +126,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @type {jQuery}
      */
-    let $entries_display, $entries_list, $loading;
+    let $entries_display, $entries_list;
 
     /**
      * Result entry elements.
@@ -206,6 +209,15 @@ export async function setup(base, show_hooks, hide_hooks) {
         return $popup_button || $root;
     }
 
+    /**
+     * The element containing all of the lookup-specific functional elements.
+     *
+     * @returns {jQuery}
+     */
+    function container() {
+        return $container ||= $root.find('main');
+    }
+
     // ========================================================================
     // Functions
     // ========================================================================
@@ -250,8 +262,8 @@ export async function setup(base, show_hooks, hide_hooks) {
         updateSearchTerms();
         disableCommit();
         resetEntries();
-        showLoading();
         performRequest();
+        showLoadingOverlay();
     }
 
     /**
@@ -443,7 +455,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Store the user-selected field values on the data object.
      *
-     * @param {LookupResponseItem|undefined} [value]
+     * @param {LookupResponseItem|undefined} value
      */
     function setFieldResultsData(value) {
         _debug('setFieldResultsData:', value);
@@ -471,7 +483,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function queryPanel() {
-        return $query_panel ||= presence($root.find(LookupModal.QUERY_PANEL));
+        return $query_panel ||=
+            presence(container().find(LookupModal.QUERY_PANEL));
     }
 
     /**
@@ -493,9 +506,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function statusPanel() {
-        $status_panel ||= presence($root.find(LookupModal.STATUS_PANEL));
-        $status_panel ||= makeStatusPanel().insertAfter(inputPrompt());
-        return $status_panel;
+        return $status_panel ||=
+            presence(container().find(LookupModal.STATUS_PANEL)) ||
+            makeStatusPanel().insertAfter(inputPrompt());
     }
 
     /**
@@ -613,7 +626,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         }
         if (notice) { statusNotice(notice, n_tip) }
         if (status) { serviceStatuses().find(`.${srv}`).addClass(status) }
-        if (finish) { hideLoading() }
+        if (finish) { hideLoadingOverlay() }
     }
 
     // ========================================================================
@@ -634,39 +647,36 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Generate the element displaying the state of the parallel requests.
      *
-     * @param {string} [css_class]  Def: {@link LookupModal.STATUS_PANEL_CLASS}
+     * @param {string} [css]        Def: {@link LookupModal.STATUS_PANEL_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeStatusPanel(css_class) {
-        const css        = css_class || LookupModal.STATUS_PANEL_CLASS;
-        const $container = $('<div>').addClass(css);
-        const $services  = makeServiceStatuses();
-        const $notice    = makeStatusNotice();
-        return $container.append($services, $notice);
+    function makeStatusPanel(css = LookupModal.STATUS_PANEL_CLASS) {
+        const $panel    = $('<div>').addClass(css);
+        const $services = makeServiceStatuses();
+        const $notice   = makeStatusNotice();
+        return $panel.append($services, $notice);
     }
 
     /**
      * Generate the element for displaying textual status information.
      *
-     * @param {string} [css_class]  Default: {@link LookupModal.NOTICE_CLASS}
+     * @param {string} [css]          Default: {@link LookupModal.NOTICE_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeStatusNotice(css_class) {
-        const css = css_class || LookupModal.NOTICE_CLASS;
+    function makeStatusNotice(css = LookupModal.NOTICE_CLASS) {
         return $('<div>').addClass(css);
     }
 
     /**
      * Generate the element containing the dynamic set of external services.
      *
-     * @param {string} [css_class]  Default: {@link LookupModal.SERVICES_CLASS}
+     * @param {string} [css]        Default: {@link LookupModal.SERVICES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeServiceStatuses(css_class) {
-        const css = css_class || LookupModal.SERVICES_CLASS;
+    function makeServiceStatuses(css = LookupModal.SERVICES_CLASS) {
         return $('<div>').addClass(css);
     }
 
@@ -674,13 +684,12 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Generate an element for displaying the status of an external service.
      *
      * @param {string} [name]         Service name; default: 'unknown'.
-     * @param {string} [css_class]    Default: 'service'
+     * @param {string} [css]          Default: 'service'
      *
      * @returns {jQuery}
      */
-    function makeServiceStatus(name, css_class) {
-        const css     = css_class || 'service';
-        const service = name      || 'unknown';
+    function makeServiceStatus(name, css = 'service') {
+        const service = name || 'unknown';
         const classes = `${css} ${service}`;
         const label   = camelCase(service);
         return $('<div>').addClass(classes).text(label);
@@ -834,8 +843,8 @@ export async function setup(base, show_hooks, hide_hooks) {
         $entry.find('textarea').each((_, column) => {
             const $field = $(column);
             const lock   = !!getValue($field);
-            this.lockFor($field).prop('checked', lock);
-            this.lockFieldValue($field, lock);
+            lockFor($field).prop('checked', lock);
+            lockFieldValue($field, lock);
         });
         return $entry;
     }
@@ -844,8 +853,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Invoked when the user commits to the new field values.
      */
     function commitFieldValuesEntry() {
-        const func     = 'commitFieldValuesEntry';
-        _debug(func);
+        const func     = 'commitFieldValuesEntry'; _debug(func);
         const original = getOriginalFieldValues(func);
         const current  = getColumnValues(getFieldValuesEntry());
         const result   = {};
@@ -1172,6 +1180,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function selectEntry(event) {
         _debug('selectEntry:', event);
+        hideLoadingOverlay();
         /** @type {jQuery} */
         const $target = $(event.currentTarget || event.target),
               $entry  = $target.parents('.row').first();
@@ -1314,9 +1323,9 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function entriesDisplay() {
-        $entries_display ||= presence($root.find(LookupModal.ENTRIES));
-        $entries_display ||= makeEntriesDisplay().insertAfter(statusPanel());
-        return $entries_display;
+        return $entries_display ||=
+            presence(container().find(LookupModal.ENTRIES)) ||
+            makeEntriesDisplay().insertAfter(statusPanel());
     }
 
     /**
@@ -1437,29 +1446,6 @@ export async function setup(base, show_hooks, hide_hooks) {
         refreshFieldValuesEntry(func);
     }
 
-    /**
-     * The placeholder indicating that loading is occurring.
-     *
-     * @returns {jQuery}
-     */
-    function loadingPlaceholder() {
-        return $loading ||= entriesList().children(LookupModal.LOADING);
-    }
-
-    /**
-     * Show the placeholder indicating that loading is occurring.
-     */
-    function showLoading() {
-        toggleHidden(loadingPlaceholder(), false);
-    }
-
-    /**
-     * Hide the placeholder indicating that loading is occurring.
-     */
-    function hideLoading() {
-        toggleHidden(loadingPlaceholder(), true);
-    }
-
     // ========================================================================
     // Functions - entry display
     // ========================================================================
@@ -1467,12 +1453,11 @@ export async function setup(base, show_hooks, hide_hooks) {
     /**
      * Generate the container including the initially-empty list of entries.
      *
-     * @param {string} [css_class] Default: {@link LookupModal.ENTRIES_CLASS}
+     * @param {string} [css]         Default: {@link LookupModal.ENTRIES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeEntriesDisplay(css_class) {
-        const css      = css_class || LookupModal.ENTRIES_CLASS;
+    function makeEntriesDisplay(css = LookupModal.ENTRIES_CLASS) {
         const $display = $('<div>').addClass(css);
         const $list    = makeEntriesList();
         return $display.append($list);
@@ -1482,12 +1467,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Generate the list of entries containing only the "reserved" non-entry
      * rows (column headers, field values, and field locks).
      *
-     * @param {string} [css_class]    Default: 'list'
+     * @param {string} [css]          Default: 'list'
      *
      * @returns {jQuery}
      */
-    function makeEntriesList(css_class) {
-        const css        = css_class || 'list';
+    function makeEntriesList(css = 'list') {
         const cols       = LookupModal.ALL_COLUMNS.length;
         const $list      = $('<div>').addClass(`${css} columns-${cols}`);
         let row          = 0;
@@ -1495,20 +1479,18 @@ export async function setup(base, show_hooks, hide_hooks) {
         const $values    = makeFieldValuesEntry(row++);
         const $locks     = makeFieldLocksEntry(row++);
         const $originals = makeOriginalValuesEntry(row++);
-        const $loading   = makeLoadingPlaceholder();
-        return $list.append($heads, $values, $locks, $originals, $loading);
+        return $list.append($heads, $values, $locks, $originals);
     }
 
     /**
      * Generate a lookup results entries heading row.
      *
      * @param {number} row
-     * @param {string} [css_class]   Def.: {@link LookupModal.HEAD_ENTRY_CLASS}
+     * @param {string} [css]         Def.: {@link LookupModal.HEAD_ENTRY_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeHeadEntry(row, css_class) {
-        const css    = css_class || LookupModal.HEAD_ENTRY_CLASS;
+    function makeHeadEntry(row, css = LookupModal.HEAD_ENTRY_CLASS) {
         const fields = LookupModal.ALL_COLUMNS;
         const cols   = fields.map(label => makeHeadColumn(label));
         return makeEntry(row, cols, css);
@@ -1519,12 +1501,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * user-selected lookup result entry.
      *
      * @param {number} row
-     * @param {string} [css_class] Def.: {@link LookupModal.FIELD_VALUES_CLASS}
+     * @param {string} [css]       Def.: {@link LookupModal.FIELD_VALUES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeFieldValuesEntry(row, css_class) {
-        const css     = css_class || LookupModal.FIELD_VALUES_CLASS;
+    function makeFieldValuesEntry(row, css = LookupModal.FIELD_VALUES_CLASS) {
         const fields  = LookupModal.DATA_COLUMNS;
         const $select = makeBlankColumn();
         const $label  = makeTagColumn();
@@ -1542,12 +1523,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * head row.
      *
      * @param {number} row
-     * @param {string} [css_class]  Def.: {@link LookupModal.FIELD_LOCKS_CLASS}
+     * @param {string} [css]        Def.: {@link LookupModal.FIELD_LOCKS_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeFieldLocksEntry(row, css_class) {
-        const css     = css_class || LookupModal.FIELD_LOCKS_CLASS;
+    function makeFieldLocksEntry(row, css = LookupModal.FIELD_LOCKS_CLASS) {
         const fields  = LookupModal.DATA_COLUMNS;
         const TABLE   = LookupModal.ENTRY_TABLE;
         const $select = makeBlankColumn(TABLE['selection'].label);
@@ -1561,14 +1541,13 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Generate the field contents of the original values row element.
      *
      * @param {number} row
-     * @param {string} [css_class]  Def.: {@link LookupModal.ORIG_VALUES_CLASS}
+     * @param {string} [css]        Def.: {@link LookupModal.ORIG_VALUES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeOriginalValuesEntry(row, css_class) {
+    function makeOriginalValuesEntry(row, css=LookupModal.ORIG_VALUES_CLASS) {
         const func = 'makeOriginalValuesEntry';
         const tag  = 'ORIGINAL'; // TODO: I18n
-        const css  = css_class || LookupModal.ORIG_VALUES_CLASS;
         setOriginalValuesEntry(makeResultEntry(row, tag, css));
         return refreshOriginalValuesEntry(func);
     }
@@ -1578,12 +1557,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @param {number} row
      * @param {string} tag
-     * @param {string} [css_class] Default: {@link LookupModal.RESULT_CLASS}
+     * @param {string} [css]          Default: {@link LookupModal.RESULT_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeResultEntry(row, tag, css_class) {
-        const css    = css_class || LookupModal.RESULT_CLASS;
+    function makeResultEntry(row, tag, css = LookupModal.RESULT_CLASS) {
         const fields = LookupModal.DATA_COLUMNS;
         const label  = tag || 'Result'; // TODO: I18n
         const $radio = makeSelectColumn();
@@ -1606,28 +1584,10 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeEntry(row, columns, css_class) {
-        const css    = 'row';
-        const $entry = $('<div>').addClass(`${css} row-${row}`);
-        if (css_class) {
-            $entry.addClass(css_class);
-        }
-        let col    = 0;
-        const cols = columns.map($c => $c.addClass(`row-${row} col-${col++}`));
-        return $entry.append(cols);
-    }
-
-    /**
-     * Generate the element containing the loading placeholder image.
-     *
-     * @param {boolean} [visible]     If *true* do not create hidden.
-     * @param {string}  [css_class]   Def.: {@link LookupModal.LOADING_CLASS}.
-     */
-    function makeLoadingPlaceholder(visible, css_class) {
-        const css    = css_class || LookupModal.LOADING_CLASS;
-        const hidden = (visible !== true);
-        const $image = $('<div>'); // @see stylesheets/controllers/_entry.scss
-        const $line  = $('<div>').addClass(css).append($image);
-        return toggleHidden($line, hidden);
+        const css    = `row row-${row} ${css_class}`.trim();
+        const $entry = $('<div>').addClass(css);
+        columns.forEach(($c, col) => $c.addClass(`row-${row} col-${col}`));
+        return $entry.append(columns);
     }
 
     /**
@@ -1641,10 +1601,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function makeFieldInputColumn(field, value, css_class) {
         const $cell = $('<textarea>').attr('data-field', field);
+        if (css_class) { $cell.addClass(css_class) }
         $cell.val(toInputValue(value));
-        if (css_class) {
-            $cell.addClass(css_class);
-        }
         monitorEditing($cell);
         return $cell;
     }
@@ -1660,10 +1618,8 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function makeFieldLockColumn(field, value, css_class) {
         const $cell = $('<div>').attr('data-field', field);
-        if (css_class) {
-            $cell.addClass(css_class);
-        }
         const parts = makeLockControl(`lock-${field}`);
+        if (css_class) { $cell.addClass(css_class) }
         return $cell.append(parts);
     }
 
@@ -1672,17 +1628,16 @@ export async function setup(base, show_hooks, hide_hooks) {
      *
      * @param {string}  [name]
      * @param {boolean} [checked]
-     * @param {string}  [css_class] Default: {@link LookupModal.LOCK_CLASS}.
+     * @param {string}  [css]         Default: {@link LookupModal.LOCK_CLASS}.
      *
      * @returns {[jQuery,jQuery]}
      */
-    function makeLockControl(name, checked, css_class) {
-        const css      = css_class || LookupModal.LOCK_CLASS;
+    function makeLockControl(name, checked, css = LookupModal.LOCK_CLASS) {
         let $slider    = $('<div>').addClass('slider');
         let $indicator = $('<div>').addClass('lock-indicator').append($slider);
         let $checkbox  = $('<input>').attr('type', 'checkbox').addClass(css);
-        isDefined(name)    && $checkbox.attr('name',    name);
-        isDefined(checked) && $checkbox.prop('checked', checked);
+        if (isDefined(name))    { $checkbox.attr('name',    name) }
+        if (isDefined(checked)) { $checkbox.prop('checked', checked) }
         handleEvent($checkbox, 'change', toggleFieldLock);
         return [$checkbox, $indicator];
     }
@@ -1691,12 +1646,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Generate a radio button for selecting the associated entry.
      *
      * @param {boolean} [active]
-     * @param {string}  [css_class]   Default: 'selection'.
+     * @param {string}  [css]         Default: 'selection'.
      *
      * @returns {jQuery}
      */
-    function makeSelectColumn(active, css_class) {
-        const css   = css_class || 'selection';
+    function makeSelectColumn(active, css = 'selection') {
         const $cell = $('<div>').addClass(css);
         const parts = makeSelectControl(active);
         return $cell.append(parts);
@@ -1715,9 +1669,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         const $inner     = $('<div>').addClass('inner');
         const $indicator = $('<div>').addClass('select-indicator');
         const $radio     = $('<input>').attr('type', 'radio');
-        if (css_class) {
-            $radio.addClass(css_class);
-        }
+        if (css_class) { $radio.addClass(css_class) }
         $radio.prop('checked', (active === true));
         handleEvent($radio, 'change', selectEntry);
         $start_tabbable ||= $radio;
@@ -1741,12 +1693,11 @@ export async function setup(base, show_hooks, hide_hooks) {
      * Generate an element for holding a designation for the related entry.
      *
      * @param {string} [label]
-     * @param {string} [css_class]    Default: 'tag'.
+     * @param {string} [css]          Default: 'tag'.
      *
      * @returns {jQuery}
      */
-    function makeTagColumn(label, css_class) {
-        const css = css_class || 'tag';
+    function makeTagColumn(label, css = 'tag') {
         return makeBlankColumn(label).addClass(css);
     }
 
@@ -1762,9 +1713,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function makeDataColumn(field, value, css_class) {
         const $cell = makeBlankColumn(value).attr('data-field', field);
-        if (css_class) {
-            $cell.addClass(css_class);
-        }
+        if (css_class) { $cell.addClass(css_class) }
         handleClickAndKeypress($cell, selectEntry);
         return $cell;
     }
@@ -1780,9 +1729,7 @@ export async function setup(base, show_hooks, hide_hooks) {
     function makeBlankColumn(label, css_class) {
         const $content = $('<span class="text">').text(label || '');
         const $cell    = $('<div>');
-        if (css_class) {
-            $cell.addClass(css_class);
-        }
+        if (css_class) { $cell.addClass(css_class) }
         return $cell.append($content);
     }
 
@@ -1834,7 +1781,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function inputPrompt() {
-        return $prompt ||= $root.find(LookupModal.PROMPT);
+        return $prompt ||= container().find(LookupModal.PROMPT);
     }
 
     /**
@@ -1893,7 +1840,7 @@ export async function setup(base, show_hooks, hide_hooks) {
         const $query = queryTerms();
         if (isPresent($query)) {
             const query_parts =
-                parts.map(function(part) {
+                parts.map(part => {
                     const words  = part.split(':');
                     const prefix = words.shift();
                     let value    = words.join(':');
@@ -1964,7 +1911,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function outputHeading() {
-        return $heading ||= $root.find(LookupModal.HEADING);
+        return $heading ||= container().find(LookupModal.HEADING);
     }
 
     /**
@@ -1973,7 +1920,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function outputDisplay() {
-        return $output ||= $root.find(LookupModal.OUTPUT);
+        return $output ||= container().find(LookupModal.OUTPUT);
     }
 
     /**
@@ -2084,6 +2031,50 @@ export async function setup(base, show_hooks, hide_hooks) {
             $element.attr('readonly', 'true');
         }
         $element.text('');
+    }
+
+    // ========================================================================
+    // Functions - in-progress overlay
+    // ========================================================================
+
+    /**
+     * The overlay indicating that loading is occurring.
+     *
+     * @returns {jQuery}
+     */
+   function getLoadingOverlay() {
+        return $loading_overlay ||=
+            presence(container().children(LookupModal.LOADING)) ||
+            makeLoadingOverlay().prependTo(container());
+    }
+
+    /**
+     * Generate the element containing the loading overlay image.
+     *
+     * @param {boolean} [visible]     If *true* do not create hidden.
+     * @param {string}  [css]         Def: {@link LookupModal.LOADING_CLASS}
+     *
+     * @returns {jQuery}
+     */
+    function makeLoadingOverlay(visible, css = LookupModal.LOADING_CLASS) {
+        const hidden = (visible !== true);
+        const $image = $('<div>').addClass('content');
+        const $line  = $('<div>').addClass(css).append($image);
+        return toggleHidden($line, hidden);
+    }
+
+    /**
+     * Show the overlay indicating that loading is occurring.
+     */
+    function showLoadingOverlay() {
+        toggleHidden(getLoadingOverlay(), false);
+    }
+
+    /**
+     * Hide the overlay indicating that loading is occurring.
+     */
+    function hideLoadingOverlay() {
+        toggleHidden(getLoadingOverlay(), true);
     }
 
     // ========================================================================

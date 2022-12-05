@@ -157,6 +157,16 @@ module BaseDecorator::Lookup
   #
   def lookup_results: (?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Initially hidden in-progress overlay.
+  #
+  # @param [String] unique          Ignored
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def lookup_in_progress: (?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
   private
 
   def self.included: (Module base) -> void
