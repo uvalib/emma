@@ -295,7 +295,6 @@ class ManifestController < ApplicationController
   def remit
     __log_activity
     __debug_route
-    account_index_path
     @item = (remit_manifest unless show_menu?)
   rescue => error
     failure_status(error)

@@ -10,17 +10,15 @@ import { deepDup, deepFreeze } from './objects'
 // ============================================================================
 
 /**
- * ChannelResponsePayload
+ * @typedef ChannelResponsePayload
  *
- * @typedef {{
- *     status?:   string,
- *     user?:     string,
- *     time?:     string,
- *     job_id?:   string,
- *     class?:    string,
- *     data?:     *,
- *     data_url?: string,
- * }} ChannelResponsePayload
+ * @property {string} [status]
+ * @property {string} [user]
+ * @property {string} [time]
+ * @property {string} [job_id]
+ * @property {string} [class]
+ * @property {*}      [data]
+ * @property {string} [data_url]
  */
 
 // ============================================================================
@@ -35,6 +33,7 @@ import { deepDup, deepFreeze } from './objects'
 export class ChannelResponse extends BaseClass {
 
     static CLASS_NAME = 'ChannelResponse';
+    static DEBUGGING  = true;
 
     // ========================================================================
     // Constants
@@ -93,7 +92,7 @@ export class ChannelResponse extends BaseClass {
     /**
      * Create a new instance.
      *
-     * @param {ChannelResponse|ChannelResponsePayload} [msg_obj]
+     * @param {ChannelResponse|ChannelResponsePayload|object} [msg_obj]
      */
     constructor(msg_obj) {
         super();

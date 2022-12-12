@@ -21,6 +21,8 @@ en:
           hidden:       'The indicated content cannot be accessed'
           corrupt:      'The indicated content is invalid or corrupt'
           bad_read:     'A network problem prevented acquiring the content'
+          name_only:    'A content file name has been identified'
+          url_only:     'A content network locator has been identified'
           complete:     'Remediated content has been provided'
 
         data_status:

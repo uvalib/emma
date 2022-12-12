@@ -9,18 +9,30 @@ class LookupChannel < ApplicationCable::Channel
 
   include_submodules(self)
 
+  # @see file:javascripts/channels/lookup-channel.js *DEFAULT_ACTION*
+  DEFAULT_ACTION = 'lookup_request'
+
   # ===========================================================================
   # :section: ApplicationCable::Channel overrides
   # ===========================================================================
 
-  public
+  protected
 
   # stream_name
   #
   # @return [String]
   #
   def stream_name
-    @stream_name ||= super('lookup_request')
+    @stream_name ||= super(DEFAULT_ACTION)
+  end
+
+  # Any cleanup needed when channel is unsubscribed.
+  #
+  # @return [void]
+  #
+  def unsubscribed
+    super
+    # TODO: abort any pending lookup requests
   end
 
   # ===========================================================================
@@ -29,13 +41,16 @@ class LookupChannel < ApplicationCable::Channel
 
   public
 
+  delegate :lookup_response, to: :class
+
   # Receive a lookup request from the client.
   #
   # @param [Hash{String=>*}] payload
   #
   # @return [void]
   #
-  # @see app/assets/javascripts/channels/lookup-channel.js *request()*
+  # @see file:javascripts/shared/cable-channel.js    *request()*
+  # @see file:javascripts/channels/lookup-channel.js *_createRequest()*
   #
   def lookup_request(payload)
     data = stream_recv(payload, meth: __method__)
@@ -43,6 +58,7 @@ class LookupChannel < ApplicationCable::Channel
     LookupService.request(data, channel: self)
   end
 
+=begin
   # Push acquired data back to the client.
   #
   # @param [Hash{Symbol=>*}] payload
@@ -53,10 +69,9 @@ class LookupChannel < ApplicationCable::Channel
   # @note Currently unused.
   #
   def lookup_response(payload, **opt)
-    payload = LookupChannel::LookupResponse.cast(payload, **opt)
-    payload.convert_to_data_url! if invalid_payload_size(payload)
-    stream_send(payload, meth: __method__, **opt)
+    self.class.send(__method__, payload, **opt)
   end
+=end
 
   # ===========================================================================
   # :section: Class methods
@@ -75,8 +90,8 @@ class LookupChannel < ApplicationCable::Channel
   # This response is intentionally small; payload size is not checked to avoid
   # masking an exception due to an unexpected condition.
   #
-  def self.lookup_start_response(payload, **opt)
-    payload = LookupChannel::StartResponse.cast(payload, **opt)
+  def self.lookup_initial_response(payload, **opt)
+    payload = LookupChannel::InitialResponse.cast(payload, **opt)
     stream_send(payload, meth: __method__, **opt)
   end
 
@@ -86,6 +101,9 @@ class LookupChannel < ApplicationCable::Channel
   # @param [Hash]            opt
   #
   # @return [void]
+  #
+  # @see file:javascripts/shared/cable-channel.js    *response()*
+  # @see file:javascripts/channels/lookup-channel.js *_createResponse()*
   #
   def self.lookup_response(payload, **opt)
     payload = LookupChannel::LookupResponse.cast(payload, **opt)

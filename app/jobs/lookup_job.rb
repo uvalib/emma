@@ -221,7 +221,7 @@ class LookupJob < ActiveJob::Base
       job_id:  job_id,
       data:    request
     }
-    LookupChannel.lookup_start_response(payload, **opt)
+    LookupChannel.lookup_initial_response(payload, **opt)
 
     # Spawn worker tasks.
     job_opt  = opt.merge(local, role: :worker, no_raise: true)

@@ -14,31 +14,25 @@ import { deepFreeze, toObject }  from './objects'
 // ============================================================================
 
 /**
- * LookupRequestPayload
+ * @typedef {ChannelRequestPayload} LookupRequestPayload
  *
- * @typedef {ChannelRequestPayload & {
- *     ids?:   string[],
- *     query?: string[],
- *     limit?: string[],
- * }} LookupRequestPayload
+ * @property {string[]} [ids]         One or more identifiers.
+ * @property {string[]} [query]       One or more query terms.
+ * @property {string[]} [limit]
  */
 
 /**
- * LookupCondition
+ * @typedef LookupCondition
  *
- * @typedef {{
- *     or:  Object.<string,(boolean|undefined)>,
- *     and: Object.<string,(boolean|undefined)>,
- * }} LookupCondition
+ * @property {Object.<string,(boolean|undefined)>} [or]
+ * @property {Object.<string,(boolean|undefined)>} [and]
  */
 
 /**
- * LookupTerms
+ * @typedef LookupTerms
  *
- * @typedef {{
- *     or:  Object.<string,(string|string[])>,
- *     and: Object.<string,(string|string[])>,
- * }} LookupTerms
+ * @property {Object.<string,(string|string[])>} [or]
+ * @property {Object.<string,(string|string[])>} [and]
  */
 
 // ============================================================================
@@ -47,6 +41,8 @@ import { deepFreeze, toObject }  from './objects'
 
 /**
  * A lookup request message formed by parsing one or more term strings.
+ *
+ * @extends LookupRequestPayload
  */
 export class LookupRequest extends ChannelRequest {
 
@@ -285,6 +281,7 @@ export class LookupRequest extends ChannelRequest {
      * @returns {LookupRequestPayload}
      */
     parse(term_values, term_prefix) {
+        this._debug('parse', term_values);
         const str = (typeof term_values === 'string');
         let terms = str ? term_values.split("\n") : arrayWrap(term_values);
         let parts = this._blankParts();
@@ -338,6 +335,7 @@ export class LookupRequest extends ChannelRequest {
      * @note The method signature differs from ChannelRequest.extractParts.
      */
     extractParts(terms) {
+        this._debug('extractParts', terms);
         const ID_TYPE    = this.constructor.DEF_ID_TYPE;
         const QUERY_TYPE = this.constructor.DEF_QUERY_TYPE;
         const parts      = terms.matchAll(this._termMatcher);
@@ -389,25 +387,6 @@ export class LookupRequest extends ChannelRequest {
      */
     _blankParts() {
         return super._blankParts();
-    }
-
-    /**
-     * Append the elements from *src* to *dst*.
-     *
-     * @param {object} dst
-     * @param {object} src
-     *
-     * @returns {object}
-     * @protected
-     */
-    _appendParts(dst, src) {
-        let src_val;
-        $.each(dst, (key, val) => {
-            if (isPresent(src_val = src[key])) {
-                dst[key] = Array.from(new Set([...val, ...src_val]));
-            }
-        });
-        return dst;
     }
 
     /**

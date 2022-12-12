@@ -4,6 +4,7 @@
 import { CableChannel }   from '../shared/cable-channel'
 import { LookupRequest }  from '../shared/lookup-request'
 import { LookupResponse } from '../shared/lookup-response'
+import { hexRand }        from '../shared/random'
 
 
 const CHANNEL = 'LookupChannel';
@@ -11,8 +12,11 @@ const CHANNEL = 'LookupChannel';
 export class LookupChannel extends CableChannel {
 
     static CLASS_NAME     = CHANNEL;
+    static DEBUGGING      = true;
+
     static CHANNEL_NAME   = CHANNEL;
-    static CHANNEL_ACTION = 'lookup_request';
+    static STREAM_ID      = hexRand();
+    static DEFAULT_ACTION = 'lookup_request';
 
     // ========================================================================
     // CableChannel overrides
@@ -39,6 +43,8 @@ export class LookupChannel extends CableChannel {
      *
      * @returns {LookupResponse}
      * @protected
+     *
+     * @see "LookupChannel#lookup_response"
      */
     _createResponse(data) {
         return LookupResponse.wrap(data);

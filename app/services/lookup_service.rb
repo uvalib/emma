@@ -83,12 +83,11 @@ class LookupService
       when Numeric then timeout = DEFAULT_TIMEOUT unless timeout&.positive?
       else              timeout = DEFAULT_TIMEOUT
     end
+    opt = { timeout: timeout }
     if channel
-      # noinspection RubyNilAnalysis
-      get_async(request, timeout: timeout, stream_name: channel.stream_name)
+      get_async(request, stream_name: channel.send(:stream_name), **opt)
     else
-      # noinspection RubyMismatchedArgumentType
-      get_sync(request, timeout: timeout)
+      get_sync(request, **opt)
     end
   end
 

@@ -3099,7 +3099,7 @@ appSetup(MODULE, function() {
      */
     function setupLookupButton(form) {
         const $button = lookupButtonInitialize(form);
-        LookupModal.setup($button, onLookupStart, onLookupComplete);
+        LookupModal.setupFor($button, onLookupStart, onLookupComplete);
         handleClickAndKeypress($button, clearFlashMessages);
     }
 

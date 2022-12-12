@@ -27,7 +27,7 @@ appSetup('controllers/tool', function() {
     // ========================================================================
 
     if ($body.hasClass('md')) {
-        MathDetective.setup($body);
+        MathDetective.setupFor($body);
     }
 
     // ========================================================================
@@ -35,7 +35,7 @@ appSetup('controllers/tool', function() {
     // ========================================================================
 
     if ($body.hasClass('lookup')) {
-        Lookup.setup($body);
+        Lookup.setupFor($body);
     }
 
 });

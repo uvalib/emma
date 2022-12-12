@@ -18,23 +18,25 @@ import { deepFreeze }      from './objects'
  */
 
 /**
- * @typedef {{ items: LookupResponseItems }} LookupResponseItemsData
- */
-
-/**
- * @typedef {{ blend: LookupResponseItem }} LookupResponseBlendData
- */
-
-/**
- * LookupResponsePayload
+ * @typedef LookupResponseItemsData
  *
- * @typedef {ChannelResponsePayload & {
- *     service?:  string|string[],
- *     duration?: number,
- *     count?:    number,
- *     discard?:  string|string[],
- *     data?:     LookupResponseItemsData|LookupResponseBlendData,
- * }} LookupResponsePayload
+ * @property {LookupResponseItems} items
+ */
+
+/**
+ * @typedef LookupResponseBlendData
+ *
+ * @property {LookupResponseItem} blend
+ */
+
+/**
+ * @typedef {ChannelResponsePayload} LookupResponsePayload
+ *
+ * @property {string|string[]} [service]
+ * @property {number}          [duration]
+ * @property {number}          [count]
+ * @property {string|string[]} [discard]
+ * @property {LookupResponseItemsData|LookupResponseBlendData} [data]
  */
 
 // ============================================================================
@@ -84,7 +86,7 @@ export class LookupResponse extends ChannelResponse {
     /**
      * Create a new instance.
      *
-     * @param {LookupResponse|LookupResponsePayload} [msg_obj]
+     * @param {LookupResponse|LookupResponsePayload|object} [msg_obj]
      */
     constructor(msg_obj) {
         super(msg_obj);

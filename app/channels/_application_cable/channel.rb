@@ -21,13 +21,13 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # :section:
   # ===========================================================================
 
-  public
+  protected
 
   # stream_id
   #
   # @return [String, nil]
   #
-  # @see file:app/assets/javascripts/channels/lookup-channel.js *streamId*
+  # @see file:javascripts/shared/cable-channel.js *streamId()*
   #
   def stream_id
     params[:stream_id]
@@ -39,10 +39,39 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @return [String]
   #
-  # @see file:app/assets/javascripts/channels/lookup-channel.js *streamName*
+  # @see file:javascripts/shared/cable-channel.js *streamName()*
   #
   def stream_name(base = channel_name)
     [base, stream_id].compact.join('_')
+  end
+
+  # ===========================================================================
+  # :section: ActionCable::Channel::Base overrides
+  # ===========================================================================
+
+  protected
+
+  # Setup for a subscription called when the consumer has successfully become a
+  # subscriber to this channel.
+  #
+  # @return [void]
+  #
+  # @see file:javascripts/shared/cable-consumer.js *createChannel()*
+  #
+  def subscribed
+    __debug_cable(__method__)
+    stream_from stream_name
+  end
+
+  # Any cleanup needed when the channel is unsubscribed.
+  #
+  # @return [void]
+  #
+  # @see file:javascripts/shared/cable-channel.js  *disconnect()*
+  # @see file:javascripts/shared/cable-consumer.js *closeChannel()*
+  #
+  def unsubscribed
+    __debug_cable(__method__)
   end
 
   # ===========================================================================
@@ -50,35 +79,6 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # ===========================================================================
 
   protected
-
-  # Setup for a subscription.
-  #
-  # @return [void]
-  #
-  # @see file:app/assets/javascripts/channels/consumer.js *createChannel*
-  #
-  def subscribed
-    __debug_cable(__method__)
-    stream_from stream_name
-  end
-
-  # Any cleanup needed when channel is unsubscribed.
-  #
-  # @return [void]
-  #
-  # @see file:app/assets/javascripts/channels/lookup-channel.js  *disconnect*
-  # @see file:app/assets/javascripts/channels/consumer.js        *closeChannel*
-  #
-  def unsubscribed
-    __debug_cable(__method__)
-    # TODO: abort any pending lookup requests
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
 
   # Receive data from the client.
   #

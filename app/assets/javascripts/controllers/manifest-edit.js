@@ -765,7 +765,7 @@ appSetup(MODULE, function() {
      */
     function exportRows(event) {
         _debug('exportRows: event =', event);
-        flashMessage('EXPORT - NOT YET IMPLEMENTED'); // TODO: exportRows
+        flashMessage('EXPORT - FUTURE ENHANCEMENT'); // TODO: exportRows
     }
 
     // ========================================================================
@@ -1759,11 +1759,11 @@ appSetup(MODULE, function() {
         const $row    = dataRow(row);
         const $button = lookupButton($row);
 
-        updateLookupCondition($row);
         clearSearchResultsData($row);
         clearSearchTermsData($row);
+        updateLookupCondition($row);
 
-        LookupModal.setup($button, onLookupStart, onLookupComplete);
+        LookupModal.setupFor($button, onLookupStart, onLookupComplete);
         handleClickAndKeypress($button, function() { clearFlash() });
 
         /**
@@ -2498,7 +2498,8 @@ appSetup(MODULE, function() {
 
             /** @type {jQuery} */
             const $cell  = $row.find(MultiUploader.UPLOADER),
-                  $lines = $cell.find(MultiUploader.FILE_NAME).children();
+                  $name  = $cell.find(MultiUploader.FILE_NAME),
+                  $lines = $name.children();
             $(container).each((_, element) => {
                 const popup   = new InlinePopup(element);
                 const $toggle = popup.modalControl;
@@ -2526,6 +2527,7 @@ appSetup(MODULE, function() {
                  */
                 function onSubmit(event) {
                     _debug('onSubmit: event =', event);
+                    let show_name = false;
                     const value = $input.val()?.trim();
                     if (value) {
                         $lines.each((_, line) => {
@@ -2533,6 +2535,7 @@ appSetup(MODULE, function() {
                             const found = $file.is(from_type);
                             if (found) {
                                 $file.text(value);
+                                show_name = true;
                             }
                             $file.toggleClass('active', found);
                             $file.attr('aria-hidden', !found);
@@ -2540,6 +2543,7 @@ appSetup(MODULE, function() {
                         const file_data = { [type]: value };
                         atomicEdit($cell, file_data);
                     }
+                    $name.toggleClass('complete', show_name);
                     popup.close();
                 }
 
@@ -3427,7 +3431,6 @@ appSetup(MODULE, function() {
             clearCellEdit($cell);
         }
         updateCellDisplayValue($cell);
-        updateCellValid($cell);
         return $cell;
     }
 
@@ -3858,6 +3861,7 @@ appSetup(MODULE, function() {
             value = cellDisplayValue($cell);
         }
         setCellDisplayValue($cell, value);
+        updateCellValid($cell);
     }
 
     // ========================================================================

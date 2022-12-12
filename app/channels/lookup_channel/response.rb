@@ -40,7 +40,7 @@ class LookupChannel::Response < ApplicationCable::Response
 
 end
 
-class LookupChannel::StartResponse < LookupChannel::Response
+class LookupChannel::InitialResponse < LookupChannel::Response
 
   DEFAULT_STATUS = 'STARTING'
 

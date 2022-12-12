@@ -147,7 +147,19 @@ export class ModalDialog extends ModalBase {
      *
      * @type {jQuery}
      */
-    static get $modals() { return $('body').children(this.MODAL) }
+    static get $all_modals() {
+        return $('body').children(this.MODAL);
+    }
+
+    /**
+     * The modal popups associated with the subclass.
+     *
+     * @type {jQuery}
+     */
+    static get $modal() {
+        const match = `[${this.CLASS_ATTR}="${this.CLASS_NAME}"]`;
+        return this.$all_modals.filter(match);
+    }
 
     // ========================================================================
     // Class methods
@@ -156,12 +168,11 @@ export class ModalDialog extends ModalBase {
     /**
      * Create a ModalDialog instance for each modal popup and associate it with
      * all related modal toggle controls.
-     *
-     * @returns {jQuery}              The provided or discovered toggles.
      */
     static initializeAll() {
-        let instance, $all_toggles = $();
-        this.$modals.each((_, modal) => {
+        this._debug('initializeAll');
+        this.$all_modals.each((_, modal) => {
+            let instance;
             const $modal = $(modal);
             const type   = $modal.attr(this.CLASS_ATTR);
             if (type && (type !== this.CLASS_NAME)) {
@@ -169,12 +180,9 @@ export class ModalDialog extends ModalBase {
             } else if ((instance = $modal.data(this.MODAL_INSTANCE_DATA))) {
                 this._debug('modal already linked to', instance);
             } else {
-                const dialog   = new this($modal);
-                const $toggles = dialog.associateAll();
-                $all_toggles   = $.merge($all_toggles, $toggles);
+                (new this($modal)).associateAll();
             }
         });
-        return $all_toggles;
     }
 
 }

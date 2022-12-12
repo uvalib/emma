@@ -7,11 +7,17 @@
 class ApplicationCable::Connection < ActionCable::Connection::Base
   include ApplicationCable::Common
 
-  # The method called when the WebSocket connection is opened.
+  # The method called before the WebSocket connection is opened.
   #
   # @return [void]
   #
   def connect: () -> void
+
+  # The method called after the WebSocket connection is closed.
+  #
+  # @return [void]
+  #
+  def disconnect: () -> void
 
   # Return the Devise-authenticated user.
   #

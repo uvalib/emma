@@ -1,4 +1,6 @@
 class LookupChannel < ApplicationCable::Channel
+  # @see file:javascripts/channels/lookup-channel.js *DEFAULT_ACTION*
+  DEFAULT_ACTION: String
 
   # stream_name
   #
@@ -8,13 +10,20 @@ class LookupChannel < ApplicationCable::Channel
 
   @stream_name: String
 
+  # Any cleanup needed when channel is unsubscribed.
+  #
+  # @return [void]
+  #
+  def unsubscribed: () -> void
+
   # Receive a lookup request from the client.
   #
   # @param [Hash{String=>*}] payload
   #
   # @return [void]
   #
-  # @see app/assets/javascripts/channels/lookup-channel.js *request()*
+  # @see file:javascripts/shared/cable-channel.js    *request()*
+  # @see file:javascripts/channels/lookup-channel.js *_createRequest()*
   #
   def lookup_request: (strHash payload) -> void
 
@@ -27,7 +36,7 @@ class LookupChannel < ApplicationCable::Channel
   #
   # @note Currently unused.
   #
-  def lookup_response: (symHash payload, **untyped opt) -> void
+  #def lookup_response: (symHash payload, **untyped opt) -> void
 
   # Invoked from another thread to push an initial response back to the client.
   #
@@ -40,7 +49,7 @@ class LookupChannel < ApplicationCable::Channel
   # This response is intentionally small; payload size is not checked to avoid
   # masking an exception due to an unexpected condition.
   #
-  def self.lookup_start_response: ((symHash|Array[Class]) payload, **untyped opt) -> void
+  def self.lookup_initial_response: ((symHash|Array[Class]) payload, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
@@ -48,6 +57,9 @@ class LookupChannel < ApplicationCable::Channel
   # @param [Hash]            opt
   #
   # @return [void]
+  #
+  # @see file:javascripts/shared/cable-channel.js    *response()*
+  # @see file:javascripts/channels/lookup-channel.js *_createResponse()*
   #
   def self.lookup_response: (symHash payload, **untyped opt) -> void
 end

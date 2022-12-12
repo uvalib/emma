@@ -52,7 +52,7 @@ const DEBUG  = true;
  *
  * @returns {void}
  */
-export async function setup(base, show_hooks, hide_hooks) {
+export async function setupFor(base, show_hooks, hide_hooks) {
 
     const $base = $(base);
 
@@ -1328,8 +1328,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      */
     function entriesDisplay() {
         return $entries_display ||=
-            presence(container().find(LookupModal.ENTRIES)) ||
-            makeEntriesDisplay().insertAfter(statusPanel());
+            presence(container().find(LookupModal.ENTRIES)) || $(null);
     }
 
     /**

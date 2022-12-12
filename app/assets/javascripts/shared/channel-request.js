@@ -27,6 +27,7 @@ import { deepFreeze, fromJSON }  from './objects'
 export class ChannelRequest extends BaseClass {
 
     static CLASS_NAME = 'ChannelRequest';
+    static DEBUGGING  = true;
 
     // ========================================================================
     // Constants
@@ -88,6 +89,7 @@ export class ChannelRequest extends BaseClass {
      * Clear all request parts.
      */
     clear() {
+        this._debug('clear');
         this._parts = this._blankParts();
     }
 
@@ -98,6 +100,7 @@ export class ChannelRequest extends BaseClass {
      * @param {*} [_args]
      */
     add(item, ..._args) {
+        this._debug('add', item);
         if (notDefined(item)) { return }
         const type  = typeof(item);
         const obj   = (type !== 'string') && !Array.isArray(item);
@@ -119,6 +122,7 @@ export class ChannelRequest extends BaseClass {
      * @returns {ChannelRequestPayload}
      */
     parse(v, ..._args) {
+        this._debug('parse', v);
         const items = (typeof v === 'string') ? v.split("\n") : arrayWrap(v);
         return Object.fromEntries(
             $.map(items, (item, idx) => [[idx, this.extractParts(item)]])
@@ -134,6 +138,7 @@ export class ChannelRequest extends BaseClass {
      * @returns {object}
      */
     extractParts(item) {
+        this._debug('extractParts', item);
         return { ...this._blankParts(), ...fromJSON(item) };
     }
 
@@ -161,6 +166,7 @@ export class ChannelRequest extends BaseClass {
      * @protected
      */
     _appendParts(dst, src) {
+        this._debug('_appendParts', src);
         let src_val;
         $.each(dst, function(key, val) {
             if (isPresent(src_val = src[key])) {

@@ -75,7 +75,7 @@ function endpoint(path, proxy) {
  *
  * @param {Selector} [root]
  */
-export function setup(root) {
+export function setupFor(root) {
 
     const HIDDEN_MARKER      = 'hidden';
     const COPY_NOTE_CLASS    = 'copy-note';

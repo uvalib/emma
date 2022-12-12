@@ -7,7 +7,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @return [String, nil]
   #
-  # @see file:app/assets/javascripts/channels/lookup-channel.js *streamId*
+  # @see file:javascripts/shared/cable-channel.js *streamId()*
   #
   def stream_id: () -> (String | nil)
 
@@ -17,24 +17,25 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @return [String]
   #
-  # @see file:app/assets/javascripts/channels/lookup-channel.js *streamName*
+  # @see file:javascripts/shared/cable-channel.js *streamName()*
   #
   def stream_name: (?(String|nil) base) -> String
 
-  # Setup for a subscription.
+  # Setup for a subscription called when the consumer has successfully become a
+  # subscriber to this channel.
   #
   # @return [void]
   #
-  # @see file:app/assets/javascripts/channels/consumer.js *createChannel*
+  # @see file:javascripts/shared/cable-consumer.js *createChannel()*
   #
   def subscribed: () -> void
 
-  # Any cleanup needed when channel is unsubscribed.
+  # Any cleanup needed when the channel is unsubscribed.
   #
   # @return [void]
   #
-  # @see file:app/assets/javascripts/channels/lookup-channel.js  *disconnect*
-  # @see file:app/assets/javascripts/channels/consumer.js        *closeChannel*
+  # @see file:javascripts/shared/cable-channel.js  *disconnect()*
+  # @see file:javascripts/shared/cable-consumer.js *closeChannel()*
   #
   def unsubscribed: () -> void
 

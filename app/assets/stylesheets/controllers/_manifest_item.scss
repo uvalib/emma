@@ -401,6 +401,8 @@ table.manifest_item-grid {
                         &.value-hidden      { @extend .error; }
                         &.value-corrupt     { @extend .error; }
                         &.value-bad_read    { @extend .error; }
+                        &.value-name_only   { @extend .warning; }
+                        &.value-url_only    { @extend .warning; }
 
                         // @see "en.emma.manifest_item.type.data_status"
                         &.value-minimal     { @extend .warning; }

@@ -81,10 +81,13 @@ module ManifestItem::StatusMethods
   def evaluate_file_status(item = nil, symbol: true, **added)
     if (stat = added[:file_status]&.to_sym).blank?
       item ||= default_to_self
-      # noinspection RubyNilAnalysis
-      data = item.is_a?(ManifestItem) ? item.fields : item.symbolize_keys
-      data = data.merge!(added)[:file_data]
-      stat = (:missing if data.nil?) || (:invalid if data.blank?) || :complete
+      data   = item.is_a?(ManifestItem) ? item.fields : item.symbolize_keys
+      data   = data.merge!(added)[:file_data]
+      stat   = (:missing   if data.nil?)
+      stat ||= (:url_only  if data[:url].present?)
+      stat ||= (:name_only if data[:name].present?)
+      stat ||= (:complete  if data[:storage].present?)
+      stat ||= :invalid
     end
     symbol ? stat : FileStatus(stat)
   end

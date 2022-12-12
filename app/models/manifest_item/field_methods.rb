@@ -42,11 +42,11 @@ module ManifestItem::FieldMethods
     last_submit:  client | timestamp,
     created_at:   server | timestamp,
     updated_at:   server,
-    file_data:    client | file_data,
+    file_data:             file_data,
     file_status:  server | synthetic,
     data_status:  server | synthetic,
     ready_status: server | synthetic,
-    repository:   nil,
+    repository:            nil,
     backup:       server | transient,
   }.tap { |table|
 

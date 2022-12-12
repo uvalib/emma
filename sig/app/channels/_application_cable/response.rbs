@@ -52,7 +52,7 @@ class ApplicationCable::Response < Hash[Symbol,untyped]
   #
   # @return [self]
   #
-  # @see file:app/assets/javascripts/channels/lookup-channel.js  *response*
+  # @see file:app/assets/javascripts/channels/lookup-channel.js  *response()*
   #
   def convert_to_data_url!: (?base_path: String, ?data_path: Array[Symbol|String]|nil, **untyped opt) -> self
 

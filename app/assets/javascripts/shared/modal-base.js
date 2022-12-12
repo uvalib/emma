@@ -1032,17 +1032,19 @@ export class ModalBase extends BaseClass {
      */
     associate(toggle) {
         this._debug('associate: toggle =', toggle);
-        const name    = this.constructor.MODAL_INSTANCE_DATA;
-        const $toggle = $(toggle);
-        const modal   = $toggle.data(name);
-        if (modal) {
-            this._warn('toggle', toggle);
-            this._warn('already associated with', modal);
+        let $toggle = $(toggle);
+        const name  = this.constructor.MODAL_INSTANCE_DATA;
+        const modal = $toggle.data(name);
+        if (modal === this) {
+            this._debug('this modal already associated with toggle', toggle);
+        } else if (modal) {
+            this._warn('toggle', toggle, 'already associated with', modal);
+            $toggle = undefined;
         } else {
             $toggle.data(name, this);
             this._handleClickAndKeypress($toggle, this.onToggleModal);
-            return $toggle;
         }
+        return $toggle;
     }
 
     /**

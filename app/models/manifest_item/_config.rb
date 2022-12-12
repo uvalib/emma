@@ -29,7 +29,7 @@ module ManifestItem::Config
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   STATUS_VALID = {
-    file_status:  %i[complete],
+    file_status:  %i[complete name_only url_only],
     data_status:  %i[complete min_bib min_rem],
     ready_status: %i[ready complete],
   }.deep_freeze
