@@ -3,5 +3,9 @@ module CodeStatisticsExt
 
   FILE_REGEX: Regexp
 
-  def calculate_directory_statistics: (String directory, ?(String|Regexp) pattern) -> void
+  NON_CODE: Array[Regexp|String]
+
+  def calculate_directory_statistics: (String directory, ?(Regexp|String) pattern) -> CodeStatisticsCalculator
+
+  def calculate_code: () -> Integer
 end

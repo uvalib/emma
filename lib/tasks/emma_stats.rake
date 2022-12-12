@@ -37,6 +37,7 @@ EMMA_STATS_DIRECTORIES ||= [
   %w(Libraries          lib),
   %w(APIs               app/apis),
 
+  %w(Views              app/views),
   %w(Stylesheets        app/assets/stylesheets),
   %w(JavaScripts        app/assets/javascripts),
 # %w(JavaScript         app/javascript),

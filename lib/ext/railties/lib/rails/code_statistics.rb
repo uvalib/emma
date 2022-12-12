@@ -15,9 +15,23 @@ module CodeStatisticsExt
 
   EXTENSIONS = CodeStatisticsCalculatorExt::PATTERNS.keys
   FILE_REGEX = Regexp.new('^(?!\.).*?\.(%s)$' % EXTENSIONS.join('|'))
+  NON_CODE   = [
+    /^config/i,
+    /script/i,
+    /stylesheet/i,
+    /^test /i,
+    /tests?$/i,
+    /views?$/i,
+  ].freeze
 
   def calculate_directory_statistics(directory, pattern = FILE_REGEX)
     super
+  end
+
+  def calculate_code
+    @statistics.sum do |label, stats|
+      NON_CODE.any? { |pattern| label.match?(pattern) } ? 0 : stats.code_lines
+    end
   end
 
 end

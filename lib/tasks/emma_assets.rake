@@ -29,7 +29,6 @@ namespace 'emma:assets' do
     $stderr.puts
     backup_css_sources if BACKUP_CSS_SOURCES
     edit_source_map    if FIX_CSS_MAP
-    $stderr.puts
   end
 
   # ===========================================================================
@@ -113,6 +112,7 @@ namespace 'emma:assets' do
     command  = "(#{command})" if subshell
     command  = "#{command} &" if async
     sh(command)
+    $stderr.puts
   end
 
 end

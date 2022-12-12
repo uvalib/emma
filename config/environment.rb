@@ -10,7 +10,7 @@
 # Verify required environment variables
 # =============================================================================
 
-if rails_application?
+if respond_to?(:rails_application?) && rails_application?
   vars = [
     # === Bookshare authentication
     :BOOKSHARE_AUTH_URL,
