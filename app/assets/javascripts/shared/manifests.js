@@ -1,6 +1,7 @@
 // app/assets/javascripts/shared/manifests.js
 
 
+import { AppDebug }                   from '../application/debug'
 import { Api }                        from './api'
 import { Emma }                       from './assets'
 import { pageAction, pageController } from './controller'
@@ -10,6 +11,9 @@ import { selfOrParent }               from './html'
 import { compact }                    from './objects'
 import { camelCase, singularize }     from './strings'
 
+
+const MODULE = 'Manifest';
+const DEBUG  = true;
 
 // ============================================================================
 // Constants
@@ -365,8 +369,8 @@ export function serverSend(ctr_act, send_options) {
  *
  * @returns {boolean}
  */
-export function _debugging() {
-    return window.DEBUG.activeFor('Manifest', true);
+function _debugging() {
+    return AppDebug.activeFor(MODULE, DEBUG);
 }
 
 /**
@@ -374,7 +378,7 @@ export function _debugging() {
  *
  * @param {...*} args
  */
-export function _debug(...args) {
+function _debug(...args) {
     _debugging() && console.log(...args);
 }
 
@@ -384,7 +388,7 @@ export function _debug(...args) {
  * @param {string} caller
  * @param {string} [message]
  */
-export function _error(caller, message) {
+function _error(caller, message) {
     const msg = isDefined(message) ? `${caller}: ${message}` : caller;
     console.error(msg);
     _debugging() && flashError(msg);

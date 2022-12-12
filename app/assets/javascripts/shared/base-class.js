@@ -3,7 +3,7 @@
 // noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
 
 
-// No imports
+import { AppDebug } from '../application/debug'
 
 
 // ============================================================================
@@ -69,7 +69,7 @@ export class BaseClass {
     _debug(...args) { this._debugging && this._log(...args) }
 
     // ========================================================================
-    // Class properties
+    // Class properties - internal
     // ========================================================================
 
     /**
@@ -77,14 +77,11 @@ export class BaseClass {
      * its instances.
      *
      * @returns {boolean}
+     * @protected
      */
     static get _debugging() {
-        return window.DEBUG.activeFor(this.CLASS_NAME, this.DEBUGGING);
+        return AppDebug.activeFor(this.CLASS_NAME, this.DEBUGGING);
     }
-
-    // ========================================================================
-    // Class properties - internal
-    // ========================================================================
 
     /**
      * Leading text for class console messages.

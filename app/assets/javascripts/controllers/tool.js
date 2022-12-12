@@ -1,13 +1,14 @@
 // app/assets/javascripts/controllers/tool.js
 
 
+import { appSetup }       from '../application/setup'
 import { isMissing }      from '../shared/definitions'
 import * as Lookup        from '../tool/bibliographic-lookup'
 import * as MathDetective from '../tool/math-detective'
 
 
 // noinspection SpellCheckingInspection
-$(document).on('turbolinks:load', function() {
+appSetup('controllers/tool', function() {
 
     /**
      * Standalone Utilities pages.

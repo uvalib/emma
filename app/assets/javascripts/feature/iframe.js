@@ -1,11 +1,16 @@
 // app/assets/javascripts/feature/iframe.js
 
 
+import { AppDebug }               from '../application/debug'
+import { appSetup }               from '../application/setup'
 import { isMissing }              from '../shared/definitions'
 import { handleClickAndKeypress } from '../shared/events'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'Iframe';
+const DEBUG  = true;
+
+appSetup(MODULE, function() {
 
     const $iframe_body = $('body.modal');
 
@@ -71,7 +76,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('Iframe', false);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**

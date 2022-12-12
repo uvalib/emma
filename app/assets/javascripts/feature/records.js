@@ -1,6 +1,8 @@
 // app/assets/javascripts/feature/records.js
 
 
+import { AppDebug }                             from '../application/debug'
+import { appSetup }                             from '../application/setup'
 import { delegateInputClick, toggleVisibility } from '../shared/accessibility'
 import { Emma }                                 from '../shared/assets'
 import { pageController }                       from '../shared/controller'
@@ -14,7 +16,10 @@ import {
 } from '../shared/events'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'Records';
+const DEBUG  = true;
+
+appSetup(MODULE, function() {
 
     /**
      * Current controller.
@@ -380,7 +385,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('Records', false);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**

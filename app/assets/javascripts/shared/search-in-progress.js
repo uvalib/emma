@@ -46,8 +46,8 @@ export class SearchInProgress extends Overlay {
     // ========================================================================
 
     // noinspection JSUnusedGlobalSymbols
-    static set showOnPageExit(v) { this._show_on_exit = !!v; }
-    static get showOnPageExit()  { return this._show_on_exit; }
+    static set showOnPageExit(v) { this._show_on_exit = !!v }
+    static get showOnPageExit()  { return this._show_on_exit }
 
     // ========================================================================
     // Class methods

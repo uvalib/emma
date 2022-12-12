@@ -2,9 +2,8 @@
 //
 // Load jQuery.
 //
-// NOTE: This must be included as the first import in the 'application.js'
-//  manifest so that 'jQuery' and '$' are available globally to all subsequent
-//  modules.
+// NOTE: This must be included near the start of the 'application.js' load
+//  sequence so that 'jQuery' and '$' are available to all subsequent modules.
 
 
 import jquery from 'jquery'

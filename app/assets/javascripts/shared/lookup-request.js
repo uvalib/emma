@@ -361,8 +361,8 @@ export class LookupRequest extends ChannelRequest {
     // Properties - internal
     // ========================================================================
 
-    get _prefixMatch() { return `[^${this.separators}"']+`; }
-    get _valueMatch()  { return `[^${this.separators}]+`; }
+    get _prefixMatch() { return `[^${this.separators}"']+` }
+    get _valueMatch()  { return `[^${this.separators}]+` }
     get _termMatcher() { return this.term_regex ||= this._makeTermMatcher() }
 
     // ========================================================================

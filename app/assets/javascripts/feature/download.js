@@ -1,6 +1,8 @@
 // app/assets/javascripts/feature/download.js
 
 
+import { AppDebug }               from '../application/debug'
+import { appSetup }               from '../application/setup'
 import { Emma }                   from '../shared/assets'
 import { cssClass, selector }     from '../shared/css'
 import { isMissing, isPresent }   from '../shared/definitions'
@@ -16,7 +18,10 @@ import {
 } from '../shared/events'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'Download';
+const DEBUG  = true;
+
+appSetup(MODULE, function() {
 
     /**
      * Selector for links which are not currently enabled.
@@ -496,7 +501,7 @@ $(document).on('turbolinks:load', function() {
         // Construct the member selection group.
         const $fields = create(MEMBER_POPUP.fields);
         const $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
-        let row     = 0;
+        let row       = 0;
         $.each(member_table, function(account_id, name) {
             const row_id = `${id}-row${row++}`;
             const $input = $radio.clone().attr('value', account_id);
@@ -1005,7 +1010,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('Download', true);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**

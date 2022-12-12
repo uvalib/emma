@@ -78,7 +78,7 @@ export class SessionState extends BaseClass {
     // Properties
     // ========================================================================
 
-    get keyPrefix() { return this.constructor.keyPrefix; }
+    get keyPrefix() { return this.constructor.keyPrefix }
 
     /**
      * Get the raw value from sessionStorage.

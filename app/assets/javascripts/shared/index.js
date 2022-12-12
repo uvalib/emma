@@ -1,7 +1,8 @@
 // app/assets/javascripts/shared/index.js
 //
-// Modules from this directory that need to be imported in the 'application.js'
-// manifest.  (All others are imported on an as-needed basis.)
+// In general, modules in this directory are only loaded by import on an
+// as-needed basis.  However, if a future module does need to be loaded in the
+// initial application.js, then this is where its import statement would be.
 
-import './fonts'
-import './session'
+
+// No imports

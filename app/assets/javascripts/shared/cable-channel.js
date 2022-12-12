@@ -457,7 +457,10 @@ export class CableChannel extends BaseClass {
     // Properties - internal
     // ========================================================================
 
-    get _log_prefix() { return this.streamLabel }
+    get _log_prefix() {
+        //return this._stream_id ? this.streamLabel : super._log_prefix;
+        return this.streamLabel
+    }
 
     // ========================================================================
     // Class properties

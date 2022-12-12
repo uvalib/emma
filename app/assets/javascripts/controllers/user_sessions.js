@@ -1,11 +1,12 @@
 // app/assets/javascripts/controllers/user_sessions.js
 
 
+import { appSetup }               from '../application/setup'
 import { isMissing }              from '../shared/definitions'
 import { handleClickAndKeypress } from '../shared/events'
 
 
-$(document).on('turbolinks:load', function() {
+appSetup('controllers/user_sessions', function() {
 
     /** @type {jQuery} */
     const $inline_forms = $('.sign-in-form.inline');

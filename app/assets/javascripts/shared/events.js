@@ -1,8 +1,9 @@
 // app/assets/javascripts/shared/events.js
 
 
-import { handleKeypressAsClick } from './accessibility'
-import { ensureTabbable }        from './html'
+import { appEventListener, DOC_KEY, WIN_KEY } from '../application/setup'
+import { handleKeypressAsClick }              from './accessibility'
+import { ensureTabbable }                     from './html'
 
 
 // ============================================================================
@@ -121,26 +122,44 @@ export function handleHoverAndFocus($element, funcEnter, funcLeave) {
     }
 }
 
+// ============================================================================
+// Functions - window/document events
+// ============================================================================
+
 /**
- * Invoke a callback when leaving the page.
+ * Set a window event handler without concern that it may already set.
  *
- * @param {function} callback
- * @param {boolean}  [debug]        If *true* show console warnings on events.
+ * @param {string}                                  type
+ * @param {EventListenerOrEventListenerObject|null} callback
+ * @param {EventListenerOptionsExt|boolean}         [options]
+ */
+export function windowEvent(type, callback, options) {
+    appEventListener(WIN_KEY, type, callback, options);
+}
+
+/**
+ * Set a document event handler without concern that it may already set.
+ *
+ * @param {string}                                  type
+ * @param {EventListenerOrEventListenerObject|null} callback
+ * @param {EventListenerOptionsExt|boolean}         [options]
+ */
+export function documentEvent(type, callback, options) {
+    appEventListener(DOC_KEY, type, callback, options);
+}
+
+/**
+ * Invoke a callback when leaving the page, either
+ * [1] via history.back() or history.forward(), or
+ * [2] due to clicking on a link.
+ *
+ * @param {EventListener|function():void} callback
+ * @param {boolean} [debug] If *true* show console warnings on events.
  */
 export function onPageExit(callback, debug) {
-    if (debug) {
-        handleEvent($(document), 'turbolinks:click', function() {
-            // Leaving the page due to clicking on a link.
-            console.warn('>>>>> turbolinks:click EVENT <<<<<');
-            callback();
-        });
-        handleEvent($(window), 'beforeunload', function() {
-            // Leaving the page via history.back() or history.forward().
-            console.warn('>>>>> window beforeunload EVENT <<<<<');
-            callback();
-        });
-    } else {
-        handleEvent($(document), 'turbolinks:click', callback);
-        handleEvent($(window),   'beforeunload',     callback);
-    }
+    const cb = debug ? (
+        e => { console.warn(`>>>>> ${e.type} EVENT <<<<<`, e); callback(e) }
+    ) : callback;
+    windowEvent('beforeunload', cb);        // [1]
+    documentEvent('turbolinks:click', cb);  // [2]
 }

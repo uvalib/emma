@@ -1,14 +1,19 @@
 // app/assets/javascripts/feature/scroll.js
 
 
+import { AppDebug }                            from '../application/debug'
+import { appSetup }                            from '../application/setup'
 import { Emma }                                from '../shared/assets'
 import { selector, toggleHidden }              from '../shared/css'
 import { isMissing }                           from '../shared/definitions'
-import { handleClickAndKeypress, handleEvent } from '../shared/events'
+import { handleClickAndKeypress, windowEvent } from '../shared/events'
 import { deepFreeze }                          from '../shared/objects'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'Scroll';
+const DEBUG  = true;
+
+appSetup(MODULE, function() {
 
     /**
      * Properties of the "scroll-to-top" button.
@@ -23,7 +28,7 @@ $(document).on('turbolinks:load', function() {
     const $scroll_button = $(SCROLL_BUTTON).not('.for-example');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($scroll_button)) { return; }
+    if (isMissing($scroll_button)) { return }
 
     // ========================================================================
     // Constants
@@ -218,7 +223,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('Scroll', false);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**
@@ -237,7 +242,8 @@ $(document).on('turbolinks:load', function() {
     handleClickAndKeypress($scroll_button, scrollToTop);
     handleClickAndKeypress($prev_buttons,  scrollToPrev);
     handleClickAndKeypress($next_buttons,  scrollToNext);
-    handleEvent($(window), 'scroll', updateScrollButton);
+
+    windowEvent('scroll', updateScrollButton);
 
     // ========================================================================
     // Actions

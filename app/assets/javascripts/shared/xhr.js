@@ -1,12 +1,16 @@
 // app/assets/javascripts/shared/xhr.js
 
 
+import { AppDebug }     from '../application/debug'
 import { isMissing }    from './definitions'
 import { HTTP }         from './http'
 import { fromJSON }     from './objects'
 import { secondsSince } from './time'
 import { makeUrl }      from './url'
 
+
+const MODULE = 'XHR';
+const DEBUG  = true;
 
 // ============================================================================
 // Type definitions
@@ -91,7 +95,7 @@ import { makeUrl }      from './url'
  * @returns {boolean}
  */
 function _debugging() {
-    return window.DEBUG.activeFor('XHR', true);
+    return AppDebug.activeFor(MODULE, DEBUG);
 }
 
 /**
@@ -100,7 +104,7 @@ function _debugging() {
  * @param {...*} args
  */
 function _debug(...args) {
-    _debugging() && console.log('XHR:', ...args);
+    _debugging() && console.log(`${MODULE}:`, ...args);
 }
 
 // ============================================================================
@@ -255,7 +259,7 @@ export function xmit(method, path, prm, opt, cb) {
     function onComplete(xhr, status) {
         _debug(`${func}: completed in`, secondsSince(start), 'sec.');
         if (result) {
-            // _debug(`${func}: data from server:`, record);
+            //_debug(`${func}: data from server:`, record);
         } else if (warning) {
             console.warn(`${func}: ${settings.url}:`, warning);
         } else {

@@ -1,13 +1,18 @@
 // app/assets/javascripts/feature/images.js
 
 
+import { AppDebug }     from '../application/debug'
+import { appSetup }     from '../application/setup'
 import { Emma }         from '../shared/assets'
 import { selector }     from '../shared/css'
 import { isMissing }    from '../shared/definitions'
 import { secondsSince } from '../shared/time'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'Images';
+const DEBUG  = true;
+
+appSetup(MODULE, function() {
 
     /**
      * Placeholder elements for images that are to be loaded asynchronously.
@@ -17,7 +22,7 @@ $(document).on('turbolinks:load', function() {
     const $placeholders = $('*:not(.complete) > .placeholder:not(.hidden)');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($placeholders)) { return; }
+    if (isMissing($placeholders)) { return }
 
     // ========================================================================
     // Constants
@@ -135,7 +140,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function urlProxyPath(url) {
-        return '/bs_api/image?url=' + encodeURIComponent(url);
+        const encoded_url = encodeURIComponent(url);
+        return `/bs_api/image?url=${encoded_url}`;
     }
 
     /**
@@ -146,8 +152,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function imageId(url) {
-        const file_name = url.replace(/^.*\//, '');
-        return 'img-' + encodeURIComponent(file_name);
+        const file_name    = url.replace(/^.*\//, '');
+        const encoded_name = encodeURIComponent(file_name);
+        return `img-${encoded_name}`;
     }
 
     /**
@@ -170,7 +177,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function makeImage(src, alt) {
-        return $(`<img alt="${alt || ''}" src="${src}">`);
+        const alt_text = alt || '';
+        return $(`<img src="${src}" alt="${alt_text}">`);
     }
 
     // ========================================================================
@@ -183,7 +191,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('Images', true);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**

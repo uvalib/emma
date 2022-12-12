@@ -1159,7 +1159,8 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get fieldValuesEntry() {
-        return this.$field_values;
+        return this.$field_values ||=
+            this.entriesList.find(this.constructor.FIELD_VALUES);
     }
 
     /**
@@ -1309,7 +1310,8 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get fieldLocksEntry() {
-        return this.$field_locks;
+        return this.$field_locks ||=
+            this.entriesList.find(this.constructor.FIELD_LOCKS);
     }
 
     /**
@@ -1431,7 +1433,8 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get originalValuesEntry() {
-        return this.$original_values;
+        return this.$original_values ||=
+            this.entriesList.find(this.constructor.ORIG_VALUES);
     }
 
     /**

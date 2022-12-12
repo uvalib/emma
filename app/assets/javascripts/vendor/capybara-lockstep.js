@@ -6,9 +6,12 @@
 // @note An override was required to accommodate Turbolinks.
 // @see file:app/lib/ext/capybara-lockstep "Capybara::Lockstep::HelperExt"
 
+
+import { AppDebug } from '../application/debug'
+import { appSetup } from '../application/setup'
+
+
 if (window.CapybaraLockstep) {
-    $(document).on('turbolinks:load', function() {
-        CapybaraLockstep.track();
-    });
-    window.DEBUG.active = false;
+    AppDebug.active = false;
+    appSetup('vendor/capybara-lockstep', () => CapybaraLockstep.track());
 }

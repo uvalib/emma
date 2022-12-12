@@ -5,7 +5,7 @@
 
 import { HIDDEN, selector } from './css'
 import { isPresent }        from './definitions'
-import { handleEvent }      from './events'
+import { windowEvent }      from './events'
 import { ModalBase }        from './modal-base'
 
 
@@ -26,6 +26,7 @@ import { ModalBase }        from './modal-base'
 export class InlinePopup extends ModalBase {
 
     static CLASS_NAME      = 'InlinePopup';
+    static DEBUGGING       = false;
 
     static ENCLOSURE_CLASS = 'inline-popup';
     static ENCLOSURE       = selector(this.ENCLOSURE_CLASS);
@@ -41,12 +42,12 @@ export class InlinePopup extends ModalBase {
      * @param {Selector} [modal]
      */
     constructor(control, modal) {
-        let [_control, _modal] = [$(control), modal];
-        if (_control.is(InlinePopup.ENCLOSURE)) {
-            _modal   = _control.children(InlinePopup.PANEL);
-            _control = _control.children(InlinePopup.TOGGLE);
+        let [$control, _modal] = [$(control), modal];
+        if ($control.is(InlinePopup.ENCLOSURE)) {
+            _modal   = $control.children(InlinePopup.PANEL);
+            $control = $control.children(InlinePopup.TOGGLE);
         }
-        super(_control, _modal);
+        super($control, _modal);
     }
 
     // ========================================================================
@@ -81,21 +82,14 @@ export class InlinePopup extends ModalBase {
     /**
      * Create an InlinePopup instance for each inline popup on the current
      * page.
-     *
-     * @returns {jQuery}              The discovered inline popup toggles.
      */
     static initializeAll() {
-        let $toggles  = $();
+        this._debug('initializeAll');
         const $popups = this.$enclosures;
         if (isPresent($popups)) {
-            $popups.each((_, enclosure) => {
-                const popup   = new this(enclosure);
-                const $toggle = popup.modalControl;
-                if ($toggle) { $toggles = $.merge($toggles, $toggle) }
-            });
+            $popups.each((_, enclosure) => new this(enclosure));
             this._attachWindowEventHandlers();
         }
-        return $toggles;
     }
 
     /**
@@ -151,11 +145,8 @@ export class InlinePopup extends ModalBase {
      * @protected
      */
     static _attachWindowEventHandlers() {
-        const $window   = $(window);
-        const on_key_up = this._onKeyUp.bind(this);
-        const on_click  = this._onClick.bind(this);
-        handleEvent($window, 'keyup', on_key_up);
-        handleEvent($window, 'click', on_click);
+        windowEvent('keyup', this._onKeyUp.bind(this));
+        windowEvent('click', this._onClick.bind(this));
     }
 
     /**
@@ -170,9 +161,10 @@ export class InlinePopup extends ModalBase {
      * @protected
      */
     static _onKeyUp(event) {
-        // this._debugEvent('_onKeyUp', event);
+        //this._debug(`_onKeyUp: key "${key}"`, event);
         const key = event.key;
         if (key === 'Escape') {
+            this._debug(`_onKeyUp: key "${key}"`, event);
             const $target  = $(event.target);
             const $popup   = this.findPopup($target).not(HIDDEN);
             const instance = this.instanceFor($popup);
@@ -199,7 +191,7 @@ export class InlinePopup extends ModalBase {
      * @protected
      */
     static _onClick(event) {
-        // this._debugEvent('_onClick', event);
+        //this._debug('_onClick', event);
         let inside = undefined;
 
         // Clicked directly on a popup control or panel.

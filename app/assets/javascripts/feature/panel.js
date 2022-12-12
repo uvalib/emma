@@ -1,12 +1,17 @@
 // app/assets/javascripts/feature/panel.js
 
 
+import { AppDebug }               from '../application/debug'
+import { appSetup }               from '../application/setup'
 import { Emma }                   from '../shared/assets'
 import { isMissing, isPresent }   from '../shared/definitions'
 import { handleClickAndKeypress } from '../shared/events'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'Panel';
+const DEBUG  = true;
+
+appSetup(MODULE, function() {
 
     /** @type {jQuery} */
     const $toggle_buttons = $('.toggle.for-panel').not('.for-example');
@@ -122,8 +127,8 @@ $(document).on('turbolinks:load', function() {
     function setState(target, opening) {
         let panel = target;
         let state = opening;
-        if (typeof panel !== 'string') { panel = getPanelSelector(panel); }
-        if (typeof state !== 'string') { state = state ? OPEN : CLOSED; }
+        if (typeof panel !== 'string') { panel = getPanelSelector(panel) }
+        if (typeof state !== 'string') { state = state ? OPEN : CLOSED }
         sessionStorage.setItem(panel, state);
     }
 
@@ -136,7 +141,7 @@ $(document).on('turbolinks:load', function() {
      */
     function getState(target) {
         let panel = target;
-        if (typeof panel !== 'string') { panel = getPanelSelector(panel); }
+        if (typeof panel !== 'string') { panel = getPanelSelector(panel) }
         return sessionStorage.getItem(panel);
     }
 
@@ -202,7 +207,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('Panel', true);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**

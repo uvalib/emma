@@ -1,20 +1,24 @@
 // app/assets/javascripts/controllers/search.js
 
 
-import { Emma }                                from '../shared/assets'
-import { selector }                            from '../shared/css'
-import { handleClickAndKeypress, handleEvent } from '../shared/events'
-import { makeUrl, urlParameters }              from '../shared/url'
+import { appSetup }               from '../application/setup'
+import { cloneTitle }             from '../feature/search-analysis'
+import { Emma }                   from '../shared/assets'
+import { selector }               from '../shared/css'
+import { makeUrl, urlParameters } from '../shared/url'
 import {
     isDefined,
     isEmpty,
     isMissing,
     notDefined,
 } from '../shared/definitions'
-import { cloneTitle } from '../feature/search-analysis'
+import {
+    handleClickAndKeypress,
+    handleEvent,
+} from '../shared/events'
 
 
-$(document).on('turbolinks:load', function() {
+appSetup('controllers/search', function() {
 
     /**
      * Search page <body>.

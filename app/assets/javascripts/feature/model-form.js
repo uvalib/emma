@@ -1,10 +1,11 @@
 // app/assets/javascripts/feature/model-form.js
 
 
+import { AppDebug }                         from '../application/debug'
+import { appSetup }                         from '../application/setup'
 import { delegateInputClick }               from '../shared/accessibility'
 import { arrayWrap }                        from '../shared/arrays'
 import { Emma }                             from '../shared/assets'
-import { pageLoadType }                     from '../shared/browser'
 import { pageController }                   from '../shared/controller'
 import { turnOffAutocomplete }              from '../shared/form'
 import { htmlDecode, scrollIntoView }       from '../shared/html'
@@ -57,8 +58,11 @@ import {
 } from '../shared/time'
 
 
+const MODULE = 'ModelForm';
+const DEBUG  = true;
+
 // noinspection FunctionTooLongJS
-$(document).on('turbolinks:load', function() {
+appSetup(MODULE, function() {
 
     /**
      * CSS class for single-entry form elements.
@@ -408,38 +412,11 @@ $(document).on('turbolinks:load', function() {
     // Constants
     // ========================================================================
 
-    /**
-     * Flag controlling overall console debug output.
-     *
-     * @readonly
-     * @type {boolean|undefined}
-     */
-    const DEBUGGING = true;
+    /* Show flash info messages */   const FLASH_MESSAGES = true;
+    /* Show flash error messages */  const FLASH_ERRORS   = true;
 
-    /**
-     * Flags controlling console debug output for specific purposes.
-     *
-     * @readonly
-     * @type {{INPUT: boolean, XHR: boolean, UPLOAD: boolean, SUBMIT: boolean}}
-     */
-    const DEBUG = (DEBUGGING === false) ? {} : {
-        INPUT:  false,  // Log low-level keystrokes
-        SUBMIT: true,   // Submission
-        UPLOAD: true,   // File upload
-        XHR:    true,   // External communication
-    };
-
-    /**
-     * Uppy plugin selection plus other optional settings.
-     *
-     * @readonly
-     * @type {UppyFeatures}
-     */
-    const FEATURES = deepFreeze({
-        flash_messages: true,
-        flash_errors:   true,
-        debugging:      DEBUG.UPLOAD
-    });
+    /* Log low-level keystrokes */   const DEBUG_INPUT    = false;
+    /* Log external communication */ const DEBUG_XHR      = true;
 
     /**
      * How long to wait after the user enters characters into a field before
@@ -768,7 +745,8 @@ $(document).on('turbolinks:load', function() {
             edit:   isUpdateForm($form),
             bulk:   isBulkOpForm($form),
         };
-        const instance = new SingleUploader($form, MODEL, FEATURES, state, cb);
+        const features = { debugging: DEBUG };
+        const instance = new SingleUploader($form, MODEL, features, state, cb);
         // noinspection JSValidateTypes
         return instance.initialize();
 
@@ -858,7 +836,7 @@ $(document).on('turbolinks:load', function() {
                 if (!emma_data.dc_format) {
                     const mime = file_data.metadata?.mime_type;
                     const fmt  = PROPERTIES.Mime.to_fmt[mime] || [];
-                    if (fmt[0]) { emma_data.dc_format = fmt[0]; }
+                    if (fmt[0]) { emma_data.dc_format = fmt[0] }
                 }
             }
 
@@ -1262,10 +1240,10 @@ $(document).on('turbolinks:load', function() {
 
         const func = 'fetchEntryList';
         let range;
-        if (min && max) { range = `${min}-${max}`; }
-        else if (max)   { range = `1-${max}`; }
-        else if (min)   { range = `${min}`; }
-        else            { range = '*'; }
+        if (min && max) { range = `${min}-${max}` }
+        else if (max)   { range = `1-${max}` }
+        else if (min)   { range = `${min}` }
+        else            { range = '*' }
         const base = `${PROPERTIES.Path.index}.json`;
         const url  = makeUrl(base, { selected: range });
 
@@ -1293,7 +1271,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // _debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -1467,7 +1445,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // _debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -1507,7 +1485,7 @@ $(document).on('turbolinks:load', function() {
         function onComplete(xhr, status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (record) {
-                // _debugXhr(`${func}: data from server:`, record);
+                //_debugXhr(`${func}: data from server:`, record);
             } else if (warning) {
                 console.warn(`${func}: ${url}:`, warning);
             } else {
@@ -1539,7 +1517,7 @@ $(document).on('turbolinks:load', function() {
 
         // Prevent password managers from incorrectly interpreting any of the
         // fields as something that might pertain to user information.
-        inputFields($form).each(function() { turnOffAutocomplete(this); });
+        inputFields($form).each(function() { turnOffAutocomplete(this) });
 
         // Broaden click targets for radio buttons and checkboxes that are
         // paired with labels.
@@ -1568,7 +1546,7 @@ $(document).on('turbolinks:load', function() {
 
         // Cancel the current submission if the user leaves the page before
         // submitting.
-        onPageExit(function() { abortSubmission($form) }, _debugging());
+        onPageExit((() => abortSubmission($form)), _debugging());
     }
 
     /**
@@ -1791,7 +1769,7 @@ $(document).on('turbolinks:load', function() {
         // Enumerate the valid inputs and update the fieldset.
         values = [];
         $inputs.each(function() {
-            if (this.value) { values.push(this.value); }
+            if (this.value) { values.push(this.value) }
         });
         updateFieldAndLabel($fieldset, values);
     }
@@ -1837,7 +1815,7 @@ $(document).on('turbolinks:load', function() {
         // Enumerate the checked items and update the fieldset.
         const checked = [];
         $checkboxes.each(function() {
-            if (this.checked) { checked.push(this.value); }
+            if (this.checked) { checked.push(this.value) }
         });
         updateFieldAndLabel($fieldset, checked);
     }
@@ -2474,7 +2452,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // _debugXhr(`${func}: received data:`, data);
+            //_debugXhr(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -2881,7 +2859,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest}             xhr
          */
         function onSuccess(data, status, xhr) {
-            // _debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -3567,7 +3545,7 @@ $(document).on('turbolinks:load', function() {
          * @param {jQuery.Event} event
          */
         function onChange(event) {
-            DEBUG.INPUT && _debug('*** CHANGE ***');
+            DEBUG_INPUT && _debug('*** CHANGE ***');
             validateInputField(event);
         }
 
@@ -3582,7 +3560,7 @@ $(document).on('turbolinks:load', function() {
          */
         function onInput(event) {
             const type = (event?.originalEvent || event).inputType || '';
-            DEBUG.INPUT && _debug(`*** INPUT ${type} ***`);
+            DEBUG_INPUT && _debug(`*** INPUT ${type} ***`);
             if (!type.startsWith('format')) {
                 validateInputField(event, undefined, false);
             }
@@ -4741,9 +4719,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string|string[]} text
      */
     function showFlashMessage(text) {
-        if (FEATURES.flash_messages) {
-            flashMessage(text);
-        }
+        FLASH_MESSAGES && flashMessage(text);
     }
 
     /**
@@ -4752,9 +4728,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string} text
      */
     function showFlashError(text) {
-        if (FEATURES.flash_errors) {
-            flashError(text);
-        }
+        FLASH_ERRORS && flashError(text);
     }
 
     /**
@@ -4776,7 +4750,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('ModelForm', DEBUGGING);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**
@@ -4789,21 +4763,12 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debugSection(...args) {
-        _debugging() && console.warn('>>>>>', ...args, '<<<<<');
-    }
-
-    /**
      * Emit a console message if debugging communications.
      *
      * @param {...*} args
      */
     function _debugXhr(...args) {
-        if (DEBUG.XHR && _debugging()) { console.log('XHR:', ...args) }
+        DEBUG_XHR && _debug('XHR:', ...args);
     }
 
     // ========================================================================
@@ -4814,30 +4779,8 @@ $(document).on('turbolinks:load', function() {
     // setupLookupButton() executes.
     LookupModal.initializeAll();
 
-    // Setup Uppy for any <input type="file"> elements (unless this page is
-    // being reached via browser history).
-    $model_form.each(function() {
-        const $form = $(this);
-
-        let refreshed;
-        switch (pageLoadType()) {
-            case 'back_forward':
-                _debugSection('HISTORY BACK/FORWARD');
-                refreshed = refreshRecord($form);
-                break;
-            case 'reload':
-                _debugSection('PAGE REFRESH');
-                // TODO: this causes a junk record to be created for /new.
-                refreshed = refreshRecord($form);
-                break;
-            default:
-                refreshed = null;
-                break;
-        }
-        if (!refreshed) {
-            initializeModelForm($form);
-        }
-    });
+    // Setup Uppy for any <input type="file"> elements.
+    $model_form.each((_, form) => initializeModelForm(form));
 
     // Setup handlers for bulk operation pages.
     $bulk_op_form.each((_, form) => initializeBulkOpForm(form));

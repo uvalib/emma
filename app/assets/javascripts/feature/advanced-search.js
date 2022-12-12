@@ -1,6 +1,8 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
+import { AppDebug }                      from '../application/debug'
+import { appSetup }                      from '../application/setup'
 import { toggleVisibility }              from '../shared/accessibility'
 import { arrayWrap, maxSize }            from '../shared/arrays'
 import { Emma }                          from '../shared/assets'
@@ -22,7 +24,10 @@ import {
 } from '../shared/events'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'AdvancedSearch';
+const DEBUG  = true;
+
+appSetup(MODULE, function() {
 
     /**
      * All search sections.
@@ -376,7 +381,7 @@ $(document).on('turbolinks:load', function() {
         // noinspection FunctionWithInconsistentReturnsJS
         $.each(SEARCH_TYPES, function(_index, type) {
             let param = compact(arrayWrap(params[type]));
-            if (isEmpty(param)) { return true; } // continue
+            if (isEmpty(param)) { return true } // continue
 
             const $matching_rows = $rows.has(`input[name="${type}"]`);
             // noinspection FunctionWithInconsistentReturnsJS
@@ -386,10 +391,10 @@ $(document).on('turbolinks:load', function() {
                 if (isEmpty($input.val())) {
                     setSearchInput($row, param.shift(), func, true);
                     $row.removeClass('hidden');
-                    if (isEmpty(param)) { return false; } // break inner loop
+                    if (isEmpty(param)) { return false } // break inner loop
                 }
             });
-            if (isEmpty(param)) { return true; } // continue outer loop
+            if (isEmpty(param)) { return true } // continue outer loop
 
             /** @type {jQuery[]} */
             const remaining_rows = [];
@@ -536,8 +541,8 @@ $(document).on('turbolinks:load', function() {
 
         // Make sure that if a name is repeated, each element will be included
         // in the form parameters.
-        $rows.each(function()   { adjustInputName(getSearchInput(this)); });
-        $hidden.each(function() { adjustInputName(this); });
+        $rows.each(function()   { adjustInputName(getSearchInput(this)) });
+        $hidden.each(function() { adjustInputName(this) });
 
         // Disregard any filter which has the default value to avoid adding a
         // URL parameter that is unneeded.
@@ -558,7 +563,7 @@ $(document).on('turbolinks:load', function() {
          */
         function checkInput($input, skip) {
             const name  = $input.attr('name');
-            if (!name) { return; }
+            if (!name) { return }
             const type  = name.replace('[]', '');
             count[type] = count[type] || 0;
             const text  = ($input.val() || '').trim();
@@ -577,7 +582,7 @@ $(document).on('turbolinks:load', function() {
          */
         function adjustInputName($input) {
             const curr = $input.attr('name');
-            if (!curr) { return; }
+            if (!curr) { return }
             const type = curr.replace('[]', '');
             let name;
             switch (count[type]) {
@@ -846,8 +851,8 @@ $(document).on('turbolinks:load', function() {
         /** @type {jQuery} */
         let $hidden     = $this_row.siblings('.hidden');
         const available = $hidden.length;
-        if (available >= 1) { $hidden.first().removeClass('hidden'); }
-        if (available <= 1) { toggleVisibility($row_show_buttons, false); }
+        if (available >= 1) { $hidden.first().removeClass('hidden') }
+        if (available <= 1) { toggleVisibility($row_show_buttons, false) }
         updateSearchReady();
     }
 
@@ -913,7 +918,7 @@ $(document).on('turbolinks:load', function() {
                 .filter(term => term)
                 .map(term => decodeURIComponent(term.replace(/\+/g, ' ')))
                 .join(' ');
-        if (terms === '*') { terms = ''; }
+        if (terms === '*') { terms = '' }
 
         $input.val(terms);
         updateSearchClear($input);
@@ -1386,7 +1391,7 @@ $(document).on('turbolinks:load', function() {
                         function(args) {
                             const overage = args.input.length - args.maximum;
                             let result    = value.replace(/{n}/, overage);
-                            if (overage !== 1) { result += 's'; }
+                            if (overage !== 1) { result += 's' }
                             return result;
                         };
                     break;
@@ -1402,12 +1407,12 @@ $(document).on('turbolinks:load', function() {
                         function(args) {
                             const limit = args.maximum;
                             let result  = value.replace(/{n}/, limit);
-                            if (limit !== 1) { result += 's'; }
+                            if (limit !== 1) { result += 's' }
                             return result;
                         };
                     break;
                 default:
-                    translations[name] = function() { return value; };
+                    translations[name] = function() { return value };
                     break;
             }
         });
@@ -1475,14 +1480,14 @@ $(document).on('turbolinks:load', function() {
         const evt    = type + ' '.repeat(spaces);
         const menu   = event.currentTarget || event.target;
         let target   = '';
-      //if (menu.localName) { target += menu.localName; }
-        if (menu.id)        { target += '#' + menu.id; }
-      //if (menu.className) { target += '.' + menu.className; }
-      //if (menu.type)      { target += `[${menu.type}]`; }
+      //if (menu.localName) { target += menu.localName }
+        if (menu.id)        { target += '#' + menu.id }
+      //if (menu.className) { target += '.' + menu.className }
+      //if (menu.type)      { target += `[${menu.type}]` }
         // noinspection JSCheckFunctionSignatures
         const $selected = $(menu).siblings().find('[aria-activedescendant]');
         const selected  = $selected.attr('aria-activedescendant');
-        if (selected) { target += ' ' + selected; }
+        if (selected) { target += ' ' + selected }
         _debug('SELECT2', evt, target);
     }
 
@@ -1578,9 +1583,9 @@ $(document).on('turbolinks:load', function() {
     function setSearchFilterParamsFromFilters(src) {
         let $controls = src ? $(src) : $search_filters;
         $controls.each(function() {
-            let $this = getSearchFilter(this);
-            let $menu = getSearchFilterMenu($this);
-            let $dst  = $controls.not($this);
+            const $this = getSearchFilter(this);
+            const $menu = getSearchFilterMenu($this);
+            const $dst  = $controls.not($this);
             updateHiddenInputs($dst, $menu);
         });
     }
@@ -1611,8 +1616,8 @@ $(document).on('turbolinks:load', function() {
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
      */
     function setSearchFilterHiddenInputs(control, new_type, new_value) {
-        let $control = getSearchFilter(this);
-        let $menu    = getSearchFilterMenu($control);
+        const $control = getSearchFilter(control);
+        const $menu    = getSearchFilterMenu($control);
         updateHiddenInputs($control, $menu, new_type, new_value);
     }
 
@@ -1629,9 +1634,9 @@ $(document).on('turbolinks:load', function() {
      * @param {string}             [new_value]
      */
     function updateHiddenInputs(dst, menu, new_type, new_value) {
-        const func = 'updateHiddenInputs';
-        let $menu  = menu && $(menu);
-        const base = $menu?.attr('name')?.replace('[]', '') || 'input';
+        const func  = 'updateHiddenInputs';
+        const $menu = menu && $(menu);
+        const base  = $menu?.attr('name')?.replace('[]', '') || 'input';
         let values;
         if (typeof new_type === 'object') {
             values = new_type;
@@ -1644,8 +1649,8 @@ $(document).on('turbolinks:load', function() {
             return;
         }
         $(dst).each(function() {
-            let $dst      = $(this);
-            let $hidden   = $dst.find('input[type="hidden"]');
+            const $dst    = $(this);
+            const $hidden = $dst.find('input[type="hidden"]');
             const base_id = $dst.attr('id') || randomizeName(base);
             $.each(values, function(name, value) {
                 const type     = name.replace('[]', '');
@@ -1654,7 +1659,7 @@ $(document).on('turbolinks:load', function() {
                 if ((type !== name) || Array.isArray(value)) {
                     // Blow away any matching hidden inputs and re-create.
                     $hidden.filter(selector + `, [name="${type}[]"]`).remove();
-                    let attr = { name: `${type}[]` };
+                    const attr = { name: `${type}[]` };
                     compact(arrayWrap(value)).forEach(function(v, i) {
                         attr.id = `${input_id}-${i}`;
                         addHiddenInputTo($dst, v, attr);
@@ -1689,10 +1694,10 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function addHiddenInputTo(dst, value, attributes) {
-        let $input = $('<input type="hidden">');
-        if (isDefined(attributes)) { $input.attr(attributes); }
-        if (isDefined(value))      { $input.val(value); }
-        if (isDefined(dst))        { $input.prependTo($(dst)); }
+        const $input = $('<input type="hidden">');
+        if (isDefined(attributes)) { $input.attr(attributes) }
+        if (isDefined(value))      { $input.val(value) }
+        if (isDefined(dst))        { $input.prependTo($(dst)) }
         return $input;
     }
 
@@ -1786,7 +1791,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('AdvancedSearch', false);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**

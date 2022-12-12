@@ -108,8 +108,8 @@ export class Overlay extends BaseClass {
     static get instance()  { return this._instance  ||= new this() }
     static get container() { return this._container ||= this.findContainer() }
 
-    static set suppressed(v)  { this._suppressed = !!v; }
-    static get suppressed()   { return this._suppressed; }
+    static set suppressed(v)  { this._suppressed = !!v }
+    static get suppressed()   { return this._suppressed }
 
     // ========================================================================
     // Class methods

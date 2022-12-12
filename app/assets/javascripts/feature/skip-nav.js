@@ -1,20 +1,17 @@
 // app/assets/javascripts/feature/skip-nav.js
 
 
+import { AppDebug }             from '../application/debug'
+import { appSetup }             from '../application/setup'
+import { selector }             from '../shared/css'
 import { isMissing, isPresent } from '../shared/definitions'
+import { selfOrParent }         from '../shared/html'
 
 
-$(document).on('turbolinks:load', function() {
+const MODULE = 'SkipNav';
+const DEBUG  = true;
 
-    /** @type {jQuery} */
-    let $nav = $('.skip-nav');
-
-    // Only perform these actions on the appropriate pages.
-    if (isMissing($nav)) { return; }
-
-    // ========================================================================
-    // Constants
-    // ========================================================================
+appSetup(MODULE, function() {
 
     /**
      * CSS class indicating a "skip navigation" container.
@@ -22,7 +19,14 @@ $(document).on('turbolinks:load', function() {
      * @readonly
      * @type {string}
      */
-    const SKIP_MENU = 'skip-nav';
+    const SKIP_MENU_CLASS = 'skip-nav';
+    const SKIP_MENU       = selector(SKIP_MENU_CLASS);
+
+    /** @type {jQuery} */
+    const $nav = $(SKIP_MENU);
+
+    // Only perform these actions on the appropriate pages.
+    if (isMissing($nav)) { return }
 
     // ========================================================================
     // Functions
@@ -38,19 +42,11 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}             Menu visibility.
      */
     function toggleSkipMenu(target, new_state) {
-        let $this = $(target);
-        let $menu =
-            $this.hasClass(SKIP_MENU) ? $this : $this.parents('.' + SKIP_MENU);
+        const $menu = selfOrParent(target, SKIP_MENU);
         if (_debugging()) {
-            let change;
-            if (new_state === true) {
-                change = 'SHOW';
-            } else if (new_state === false) {
-                change = 'HIDE';
-            } else {
-                change = 'TOGGLE';
-            }
-            _debug(`${change} skip menu`);
+            if (new_state === true)  { _debug('SHOW skip menu') } else
+            if (new_state === false) { _debug('HIDE skip menu') } else
+                                     { _debug('TOGGLE skip menu') }
         }
         return $menu.toggleClass('visible', new_state).hasClass('visible');
     }
@@ -65,7 +61,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('SkipNav', false);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**
@@ -84,8 +80,8 @@ $(document).on('turbolinks:load', function() {
     // Make the hidden navigation menu visible when one of its links receives
     // focus.
     $nav.find('a')
-        .focus(function() { toggleSkipMenu(this, true);  })
-        .blur( function() { toggleSkipMenu(this, false); });
+        .focus(function() { toggleSkipMenu(this, true)  })
+        .blur( function() { toggleSkipMenu(this, false) });
 
     // ========================================================================
     // Actions
@@ -98,7 +94,7 @@ $(document).on('turbolinks:load', function() {
     // To make it immediately available to screen readers, it needs to be moved
     // so that it is the first element that is encountered when tabbing.
     //
-    let $main_skip_nav = $nav.filter('.main');
+    const $main_skip_nav = $nav.filter('.main');
     if (isPresent($main_skip_nav)) {
         $main_skip_nav.prependTo('body');
     }

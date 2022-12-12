@@ -222,9 +222,9 @@ export function create(element, properties) {
     prop.type    && $element.attr('type',  prop.type);
     prop.tooltip && $element.attr('title', prop.tooltip);
 
-    if      (typeof prop.html  === 'string') { $element.html(prop.html);  }
-    else if (typeof prop.label === 'string') { $element.text(prop.label); }
-    else if (typeof prop.text  === 'string') { $element.text(prop.text);  }
+    if      (typeof prop.html  === 'string') { $element.html(prop.html)  }
+    else if (typeof prop.label === 'string') { $element.text(prop.label) }
+    else if (typeof prop.text  === 'string') { $element.text(prop.text)  }
     return $element;
 }
 

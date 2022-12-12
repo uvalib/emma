@@ -1,6 +1,8 @@
 // app/assets/javascripts/controllers/manifest-edit.js
 
 
+import { AppDebug }                       from '../application/debug'
+import { appSetup }                       from '../application/setup'
 import { arrayWrap }                      from '../shared/arrays'
 import { Emma }                           from '../shared/assets'
 import { HIDDEN, selector, toggleHidden } from '../shared/css'
@@ -9,6 +11,7 @@ import { InlinePopup }                    from '../shared/inline-popup'
 import { LookupModal }                    from '../shared/lookup-modal'
 import { LookupRequest }                  from '../shared/lookup-request'
 import { ModalShowHooks }                 from '../shared/modal_hooks'
+import { compact, deepDup, toObject }     from '../shared/objects'
 import { randomizeName }                  from '../shared/random'
 import { MultiUploader }                  from '../shared/uploader'
 import { cancelAction }                   from '../shared/url'
@@ -26,6 +29,7 @@ import {
     handleEvent,
     handleHoverAndFocus,
     onPageExit,
+    windowEvent,
 } from '../shared/events'
 import {
     addFlashError,
@@ -40,19 +44,10 @@ import {
     uniqAttrs,
 } from '../shared/html'
 import {
-    compact,
-    deepDup,
-    deepFreeze,
-    toObject,
-} from '../shared/objects'
-import {
     ITEM_ATTR,
     ITEM_MODEL,
     MANIFEST_ATTR,
     PAGE_PROPERTIES,
-    _debug,
-    _debugging,
-    _error,
     attribute,
     buttonFor,
     enableButton,
@@ -62,8 +57,11 @@ import {
 } from '../shared/manifests'
 
 
+const MODULE = 'ManifestEdit';
+const DEBUG  = true;
+
 // noinspection SpellCheckingInspection, FunctionTooLongJS
-$(document).on('turbolinks:load', function() {
+appSetup(MODULE, function() {
 
     /**
      * Manifest creation page.
@@ -2315,44 +2313,11 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * Flag controlling overall console debug output.
-     *
-     * @readonly
-     * @type {boolean|undefined}
-     */
-    const DEBUGGING = true;
-
-    /**
      * Name of the data() entry for a row's uploader instance.
      *
      * @type {string}
      */
     const UPLOADER_DATA = 'uploader';
-
-    /**
-     * Flags controlling console debug output for specific purposes.
-     *
-     * @readonly
-     * @type {{INPUT: boolean, XHR: boolean, UPLOAD: boolean, SUBMIT: boolean}}
-     */
-    const DEBUG = (DEBUGGING === false) ? {} : {
-        INPUT:  false,  // Log low-level keystrokes
-        SUBMIT: true,   // Submission
-        UPLOAD: true,   // File upload
-        XHR:    true,   // External communication
-    };
-
-    /**
-     * Uppy plugin selection plus other optional settings.
-     *
-     * @readonly
-     * @type {UppyFeatures}
-     */
-    const FEATURES = deepFreeze({
-        flash_messages: true,
-        flash_errors:   true,
-        debugging:      DEBUG.UPLOAD
-    });
 
     /**
      * Get the uploader instance for the row.
@@ -2393,7 +2358,8 @@ $(document).on('turbolinks:load', function() {
         // noinspection JSUnusedGlobalSymbols
         const cbs      = { onSelect, onStart, onError, onSuccess };
         const $row     = dataRow(row);
-        const instance = new MultiUploader($row, ITEM_MODEL, FEATURES, cbs);
+        const features = { debugging: DEBUG };
+        const instance = new MultiUploader($row, ITEM_MODEL, features, cbs);
         const exists   = instance.isUppyInitialized();
         const func     = 'uploader';
         let name_shown;
@@ -5330,6 +5296,37 @@ $(document).on('turbolinks:load', function() {
     // Functions - diagnostics
     // ========================================================================
 
+    /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return AppDebug.activeFor(MODULE, DEBUG);
+    }
+
+    /**
+     * Emit a console message if debugging.
+     *
+     * @param {...*} args
+     */
+    function _debug(...args) {
+        _debugging() && console.log(`${MODULE}:`, ...args);
+    }
+
+    /**
+     * Emit a console error and display as a flash error if debugging.
+     *
+     * @param {string} caller
+     * @param {string} [message]
+     */
+    function _error(caller, message) {
+        const tag = `${MODULE}: ${caller}`
+        const msg = isDefined(message) ? `${tag}: ${message}` : tag;
+        console.error(msg);
+        _debugging() && flashError(msg);
+    }
+
     // noinspection JSUnusedLocalSymbols
     /**
      * This is a convenience function that can be added to check all data()
@@ -5413,8 +5410,8 @@ $(document).on('turbolinks:load', function() {
     handleClickAndKeypress(controlsColumnToggle(), onToggleControlsColumn);
 
     // Cell editing.
-    window.addEventListener('focus',     deregisterActiveCell, true);
-    window.addEventListener('mousedown', deregisterActiveCell, true);
+    windowEvent('focus',     deregisterActiveCell, true);
+    windowEvent('mousedown', deregisterActiveCell, true);
     onPageExit(deregisterActiveCell, _debugging());
 
     // ========================================================================

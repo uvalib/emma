@@ -71,11 +71,11 @@ function alignKeys(item) {
  */
 function stringifyReplacer(_this, item) {
     const type = typeof(item);
-    if (type === 'undefined')      { return '(undefined)'; }
-    else if (item === null)        { return '(null)'; }
-    else if (item instanceof Date) { return asDateTime(item); }
-    else if (isEmpty(item))        { return item; }
-    else if (type === 'object')    { return possiblyInlined(item); }
+    if (type === 'undefined')      { return '(undefined)' }
+    else if (item === null)        { return '(null)' }
+    else if (item instanceof Date) { return asDateTime(item) }
+    else if (isEmpty(item))        { return item }
+    else if (type === 'object')    { return possiblyInlined(item) }
     return item;
 }
 

@@ -5,6 +5,7 @@
 // noinspection JSUnusedLocalSymbols
 
 
+import { AppDebug }                       from '../application/debug'
 import { LookupChannel }                  from '../channels/lookup-channel'
 import { arrayWrap }                      from '../shared/arrays'
 import { toggleHidden }                   from '../shared/css'
@@ -33,6 +34,9 @@ import {
     isEvent,
 } from '../shared/events'
 
+
+const MODULE = 'BibliographicLookup';
+const DEBUG  = true;
 
 // ============================================================================
 // Functions
@@ -2087,7 +2091,7 @@ export async function setup(base, show_hooks, hide_hooks) {
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor('BibliographicLookup', false);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     /**

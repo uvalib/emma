@@ -4,9 +4,8 @@
 // that the required initialization is in place to respond to 'turbolinks:load'
 
 
-import select2 from 'select2'
+import { appSetup } from '../application/setup'
+import select2      from 'select2'
 
 
-$(document).on('turbolinks:load', function() {
-    select2($);
-});
+appSetup('vendor/select2', () => select2($));

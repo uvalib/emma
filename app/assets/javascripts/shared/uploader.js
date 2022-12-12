@@ -1,25 +1,21 @@
 // app/assets/javascripts/shared/uploader.js
 
 
-import { toggleVisibility }                 from './accessibility'
-import { Emma }                             from './assets'
-import { BaseClass }                        from './base-class'
-import { pageAction }                       from './controller'
-import { isHidden, selector, toggleHidden } from './css'
-import { isDefined, isMissing, isPresent }  from './definitions'
-import { handleClickAndKeypress }           from './events'
-import { extractFlashMessage }              from './flash'
-import { percent }                          from './math'
-import { compact, deepFreeze, fromJSON }    from './objects'
-import { camelCase }                        from './strings'
-import { MINUTES, SECONDS }                 from './time'
-import { makeUrl }                          from './url'
-import { Rails }                            from '../vendor/rails'
-import {
-    ID_ATTRIBUTES,
-    selfOrDescendents,
-    uniqAttrs,
-} from './html'
+import { toggleVisibility }                            from './accessibility'
+import { Emma }                                        from './assets'
+import { BaseClass }                                   from './base-class'
+import { pageAction }                                  from './controller'
+import { isHidden, selector, toggleHidden }            from './css'
+import { isDefined, isMissing, isPresent }             from './definitions'
+import { handleClickAndKeypress }                      from './events'
+import { extractFlashMessage }                         from './flash'
+import { ID_ATTRIBUTES, selfOrDescendents, uniqAttrs } from './html'
+import { percent }                                     from './math'
+import { compact, deepFreeze, fromJSON }               from './objects'
+import { camelCase }                                   from './strings'
+import { MINUTES, SECONDS }                            from './time'
+import { makeUrl }                                     from './url'
+import { Rails }                                       from '../vendor/rails'
 import {
     Uppy,
     AwsS3,
@@ -140,12 +136,12 @@ import {
 // ============================================================================
 
 /**
- * Flag controlling overall console debug output.
+ * Flag controlling Uppy console debug output.
  *
  * @readonly
  * @type {boolean|undefined}
  */
-const DEBUGGING = true;
+const DEBUG = true;
 
 /**
  * Uppy plugin selection plus other optional settings.
@@ -209,7 +205,7 @@ const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
 class BaseUploader extends BaseClass {
 
     static CLASS_NAME = 'BaseUploader';
-    static DEBUGGING  = DEBUGGING;
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Type definitions
@@ -332,7 +328,7 @@ class BaseUploader extends BaseClass {
         this.onError    = callbacks?.onError;
         this.onSuccess  = callbacks?.onSuccess;
         this.property   = Emma[camelCase(model)] || {};
-        this.feature    = { debugging: DEBUGGING, ...FEATURES, ...features };
+        this.feature    = { debugging: DEBUG, ...FEATURES, ...features };
     }
 
     // ========================================================================
@@ -724,6 +720,7 @@ class BaseUploader extends BaseClass {
          */
         function onFileUploadError(file, error, response) {
             console.warn('Uppy:', 'upload-error', file, error, response);
+            uppyInfoClear();
             onError(file, error, response);
             uppy.getFiles().forEach(file => uppy.removeFile(file.id));
         }
@@ -1089,10 +1086,6 @@ class BaseUploader extends BaseClass {
         // the original should not be displayed.
         if (OLD_INPUT) { this.$root.find(OLD_INPUT).css('display', 'none') }
 
-        // Reposition it so that it comes before the display of the uploaded
-        // filename.
-        $container.insertBefore(this.uploadedFilenameDisplay());
-
         // This hidden element is inappropriately part of the tab order.
         const input_attr = { tabindex: -1, 'aria-hidden': true };
         if (label_id) { input_attr['aria-labelledby'] = label_id }
@@ -1100,6 +1093,11 @@ class BaseUploader extends BaseClass {
 
         // Set the tooltip for the file select button.
         $container.find('button,label').attr('title', tooltip);
+
+        // Reposition it so that it comes before the display of the uploaded
+        // filename.
+        $container.insertBefore(this.uploadedFilenameDisplay());
+        $container.addClass('initialized');
     }
 
     /**
@@ -1473,7 +1471,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _debugUppy(...args) {
-        if (this._debugging) { console.log('Uppy:', ...args) }
+        this._debugging && console.log('Uppy:', ...args);
     }
 
 }
@@ -1484,7 +1482,6 @@ class BaseUploader extends BaseClass {
 export class SingleUploader extends BaseUploader {
 
     static CLASS_NAME = 'SingleUploader';
-    static DEBUGGING  = DEBUGGING;
 
     // ========================================================================
     // Type definitions
@@ -1532,6 +1529,22 @@ export class SingleUploader extends BaseUploader {
     /** @returns {boolean} */ get isCreateForm() { return this.state.new  }
     /** @returns {boolean} */ get isUpdateForm() { return this.state.edit }
     /** @returns {boolean} */ get isBulkOpForm() { return this.state.bulk }
+
+    // ========================================================================
+    // Methods - initialization
+    // ========================================================================
+
+    /**
+     * Initialize Uppy file uploader.
+     *
+     * @param {UploaderOptions} [options]
+     */
+    initializeUppy(options) {
+        // If re-initializing a Turbolinks-cached page, this will already exist
+        // and Uppy will create a new one unless it's discarded now.
+        this.fileSelectContainer().remove();
+        super.initializeUppy(options);
+    }
 
     // ========================================================================
     // Methods - file selection
@@ -1637,7 +1650,6 @@ export class SingleUploader extends BaseUploader {
 export class MultiUploader extends BaseUploader {
 
     static CLASS_NAME = 'MultiUploader';
-    static DEBUGGING  = DEBUGGING;
 
     // ========================================================================
     // Constants

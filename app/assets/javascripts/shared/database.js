@@ -1,11 +1,15 @@
 // app/assets/javascripts/shared/database.js
 
 
+import { AppDebug }                     from '../application/debug'
 import { arrayWrap }                    from './arrays'
 import { isDefined, isEmpty, notEmpty } from './definitions'
 import { fromJSON }                     from './objects'
 import { asString }                     from './strings'
 
+
+const MODULE = 'DB';
+const DEBUG  = false;
 
 // ============================================================================
 // Type definitions
@@ -239,15 +243,13 @@ export const DB = (function() {
     // Functions - internal
     // ========================================================================
 
-    const MODULE = 'DB';
-
     /**
      * Indicate whether console debugging is active.
      *
      * @returns {boolean}
      */
     function _debugging() {
-        return window.DEBUG.activeFor(MODULE, false);
+        return AppDebug.activeFor(MODULE, DEBUG);
     }
 
     function dbError(...args) {
@@ -524,7 +526,7 @@ export const DB = (function() {
             const func  = caller || 'dbCloseDatabase';
             dbLog(func, 'closing database', tgt_db.name);
             tgt_db.close();
-            if (clear) { db_handle = undefined; }
+            if (clear) { db_handle = undefined }
         }
     }
 
@@ -543,10 +545,10 @@ export const DB = (function() {
     function dbTransaction(func, ...args) {
         let db, tr, tr_mode, store_name;
         args.forEach(function(arg) {
-            if      (arg instanceof IDBDatabase)     { db         = arg; }
-            else if (arg instanceof IDBTransaction)  { tr         = arg; }
-            else if (TRANSACTION_MODE.includes(arg)) { tr_mode    = arg; }
-            else if (typeof arg === 'string')        { store_name = arg; }
+            if      (arg instanceof IDBDatabase)     { db         = arg }
+            else if (arg instanceof IDBTransaction)  { tr         = arg }
+            else if (TRANSACTION_MODE.includes(arg)) { tr_mode    = arg }
+            else if (typeof arg === 'string')        { store_name = arg }
             else { dbWarn(func, 'dbTransaction', 'unexpected', asString(arg)) }
         });
         if (!tr) {
@@ -572,9 +574,9 @@ export const DB = (function() {
     function dbObjectStore(func, ...args) {
         let store, transaction, store_name;
         args.forEach(function(arg) {
-            if      (arg instanceof IDBObjectStore) { store       = arg; }
-            else if (arg instanceof IDBTransaction) { transaction = arg; }
-            else if (typeof arg === 'string')       { store_name  = arg; }
+            if      (arg instanceof IDBObjectStore) { store       = arg }
+            else if (arg instanceof IDBTransaction) { transaction = arg }
+            else if (typeof arg === 'string')       { store_name  = arg }
             // Anything else would be passed to dbTransaction.
         });
         if (!store) {
@@ -752,7 +754,7 @@ export const DB = (function() {
         const name     = dbName();
         const version  = dbVersion();
         const database = `${name} (v${version})`;
-        if (store_name) { defaultStore(store_name); }
+        if (store_name) { defaultStore(store_name) }
         dbLog(`${func}: store_name: ${default_store}; database: ${database}`);
         openDatabase(name, version, callback, func);
     }
@@ -770,7 +772,7 @@ export const DB = (function() {
         const store = dbObjectStore(func, store_name)
         const req   = store.clear();
         const cb    = () => callback?.(req.transaction.db);
-        const if_ok = () => { dbLog(func, `"${store_name}" cleared`); cb(); }
+        const if_ok = () => { dbLog(func, `"${store_name}" cleared`); cb() }
         dbRequest(func, req, if_ok, cb);
     }
 

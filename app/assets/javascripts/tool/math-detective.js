@@ -694,10 +694,10 @@ export class MathDetectiveApi extends Api {
     get running()   { return (this.md_status === 'running') }
     get completed() { return this.started && !this.running }
 
-    get handle()    { return this.result.sha256_sum; }
-    get mathml()    { return this.result.mathml; }
-    get latex()     { return this.result.latex; }
-    get spoken()    { return this.result.spokentext; }
+    get handle()    { return this.result.sha256_sum }
+    get mathml()    { return this.result.mathml }
+    get latex()     { return this.result.latex }
+    get spoken()    { return this.result.spokentext }
     get noResults() { return !(this.mathml || this.latex || this.spoken) }
 
     /**

@@ -1,14 +1,16 @@
-// app/assets/javascripts/shared/session.js
+// app/assets/javascripts/feature/session.js
 
 
-import { focusable }             from './accessibility'
-import { isInternetExplorer }    from './browser'
-import { isPresent, notDefined } from './definitions'
-import { SearchInProgress }      from './search-in-progress'
-import { urlFrom }               from './url'
+import { appSetup }              from '../application/setup'
+import { focusable }             from '../shared/accessibility'
+import { isInternetExplorer }    from '../shared/browser'
+import { isPresent, notDefined } from '../shared/definitions'
+import { documentEvent }         from '../shared/events'
+import { SearchInProgress }      from '../shared/search-in-progress'
+import { urlFrom }               from '../shared/url'
 
 
-$(document).on('turbolinks:load', function() {
+appSetup('feature/session', function() {
 
     /**
      * @readonly
@@ -21,7 +23,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     // Ignore Turbolinks on anchor links.
-    document.addEventListener('turbolinks:click', clickInPageAnchor);
+    documentEvent('turbolinks:click', checkInPageAnchor);
 
     // ========================================================================
     // Actions
@@ -111,7 +113,7 @@ $(document).on('turbolinks:load', function() {
      * NOTE: The combination of Turbolinks and Firefox is still problematic.
      * Because I couldn't get a "hashchange" event to fire in a way that
      * Firefox would respond consistently, this function is not being used as
-     * event handler but is being invoked "manually" from clickInPageAnchor().
+     * event handler but is being invoked "manually" from checkInPageAnchor().
      *
      * @param {Event|Location|string} [event]  Default: `window.location.hash`.
      *
@@ -119,6 +121,7 @@ $(document).on('turbolinks:load', function() {
     function focusAnchor(event) {
         const anchor  = getInPageAnchor(event);
         const $anchor = anchor && $(anchor);
+        console.log('focusAnchor', $anchor);
         if (isPresent($anchor) && focusable($anchor)) {
             $anchor.first().focus();
         }
@@ -134,10 +137,11 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Event} event
      */
-    function clickInPageAnchor(event) {
-        console.warn('clickInPageAnchor', event);
+    function checkInPageAnchor(event) {
+        const func   = 'checkInPageAnchor';
         const anchor = getInPageAnchor(event);
         if (anchor) {
+            console.log(`${func}: anchor "${anchor}" for`, event);
             // noinspection JSUnresolvedVariable
             updatePageUrl(event.data.url);
             event.preventDefault();
@@ -145,6 +149,8 @@ $(document).on('turbolinks:load', function() {
                 focusAnchor(anchor);
                 SearchInProgress.hide();
             }, FOCUS_DELAY);
+        } else {
+            console.log(`${func}: no anchor for`, event);
         }
     }
 

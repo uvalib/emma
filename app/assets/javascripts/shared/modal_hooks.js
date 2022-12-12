@@ -23,7 +23,7 @@ class ModalHooks extends BaseClass {
     // Constructor
     // ========================================================================
 
-    constructor(..._) { super(); this._error('INVALID CALL TO CONSTRUCTOR'); }
+    constructor(..._) { super(); this._error('INVALID CALL TO CONSTRUCTOR') }
 
     // ========================================================================
     // Class methods

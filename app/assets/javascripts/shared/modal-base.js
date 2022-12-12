@@ -216,7 +216,7 @@ export class ModalBase extends BaseClass {
      */
     onToggleModal(event) {
         event.stopPropagation();
-        this._debugEvent('onToggleModal', event);
+        this._debug('onToggleModal', event);
         this.toggleModal(event.currentTarget || event.target);
         return false;
     }
@@ -658,7 +658,7 @@ export class ModalBase extends BaseClass {
      */
     _showPopup(target, no_halt) {
         const func = '_showPopup';
-        this._debugPopups(func);
+        this._debugPopup(func);
         if ((this._invokeOnShowPopup(target) !== false) || no_halt) {
             this._zOrderCapture();
             this._setPopupHidden(false);
@@ -681,7 +681,7 @@ export class ModalBase extends BaseClass {
      */
     _hidePopup(target, no_halt) {
         const func = '_hidePopup';
-        this._debugPopups(func);
+        this._debugPopup(func);
         if ((this._invokeOnHidePopup(target) !== false) || no_halt) {
             this._setPopupHidden(true);
             this._zOrderRelease();
@@ -992,7 +992,7 @@ export class ModalBase extends BaseClass {
      */
     _onKeydownTabCycleFirst(event) {
         const key = event.key;
-        this._debugEvent(`_onKeydownTabCycleFirst | key = ${key}`, event);
+        this._debug(`_onKeydownTabCycleFirst: key = ${key}`, event);
         if ((key === 'Tab') && event.shiftKey) { // Shift-TAB
             event.preventDefault();
             this.tabCycleLast?.focus();
@@ -1011,7 +1011,7 @@ export class ModalBase extends BaseClass {
      */
     _onKeydownTabCycleLast(event) {
         const key = event.key;
-        this._debugEvent(`_onKeydownTabCycleLast | key = ${key}`, event);
+        this._debug(`_onKeydownTabCycleLast: key = ${key}`, event);
         if ((key === 'Tab') && !event.shiftKey) { // TAB
             event.preventDefault();
             this.tabCycleFirst?.focus();
@@ -1126,7 +1126,7 @@ export class ModalBase extends BaseClass {
      *
      * @protected
      */
-    _debugPopups(label, popup) {
+    _debugPopup(label, popup) {
         if (!this._debugging) { return }
         const func    = label.endsWith(':') ? label : `${label}:`;
         const $modal  = this.modalPanel;
@@ -1139,19 +1139,6 @@ export class ModalBase extends BaseClass {
             '| ModalHideHooks', ($toggle?.data('ModalHideHooks') || '-'),
             '| $toggle',        ($toggle                         || '-')
         );
-    }
-
-    /**
-     * Report on an event.
-     *
-     * @param {string}             label
-     * @param {jQuery.Event|Event} event
-     *
-     * @returns {undefined}
-     * @protected
-     */
-    _debugEvent(label, event) {
-        this._debug(`*** ${label} ***`, event);
     }
 
 }

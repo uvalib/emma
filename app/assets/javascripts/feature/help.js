@@ -1,11 +1,12 @@
 // app/assets/javascripts/feature/help.js
 
 
+import { appSetup }   from '../application/setup'
 import { isMissing }  from '../shared/definitions'
 import { deepFreeze } from '../shared/objects'
 
 
-$(document).on('turbolinks:load', function() {
+appSetup('feature/help', function() {
 
     /** @type {jQuery} */
     let $help_content = $('.help-section');

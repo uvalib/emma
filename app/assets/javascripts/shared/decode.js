@@ -42,12 +42,12 @@ export function decodeJSON(arg) {
  * @returns {Array}
  */
 export function decodeArray(arg, separator = ',') {
-    if (!arg)                    { return []; }
-    if (Array.isArray(arg))      { return arg; }
-    if (typeof arg === 'object') { return Object.values(arg);  }
-    if (typeof arg !== 'string') { return [arg];  }
+    if (!arg)                    { return [] }
+    if (Array.isArray(arg))      { return arg }
+    if (typeof arg === 'object') { return Object.values(arg)  }
+    if (typeof arg !== 'string') { return [arg]  }
     const string = arg.trim();
-    if (string.startsWith('['))  { return decodeJSON(string); }
+    if (string.startsWith('['))  { return decodeJSON(string) }
     return string.split(separator).map(v => v.trim());
 }
 

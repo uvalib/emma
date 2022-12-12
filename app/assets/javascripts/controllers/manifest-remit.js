@@ -1,6 +1,8 @@
 // app/assets/javascripts/controllers/manifest-remit.js
 
 
+import { AppDebug }                            from '../application/debug'
+import { appSetup }                            from '../application/setup'
 import { removeFrom }                          from '../shared/arrays'
 import { BaseClass }                           from '../shared/base-class'
 import { selector, toggleHidden }              from '../shared/css'
@@ -18,8 +20,6 @@ import {
 } from '../shared/definitions'
 import {
     MANIFEST_ATTR,
-    _debug,
-    _error,
     attribute,
     buttonFor,
     enableButton,
@@ -28,8 +28,11 @@ import {
 } from '../shared/manifests'
 
 
+const MODULE = 'ManifestRemit';
+const DEBUG  = true;
+
 // noinspection SpellCheckingInspection, FunctionTooLongJS
-$(document).on('turbolinks:load', function() {
+appSetup(MODULE, function() {
 
     /**
      * Manifest creation page.
@@ -1510,6 +1513,41 @@ $(document).on('turbolinks:load', function() {
             _debug(`${func}: no manifest ID`);
         }
         return id || manifest_id;
+    }
+
+    // ========================================================================
+    // Functions - diagnostics
+    // ========================================================================
+
+    /**
+     * Indicate whether console debugging is active.
+     *
+     * @returns {boolean}
+     */
+    function _debugging() {
+        return AppDebug.activeFor(MODULE, DEBUG);
+    }
+
+    /**
+     * Emit a console message if debugging.
+     *
+     * @param {...*} args
+     */
+    function _debug(...args) {
+        _debugging() && console.log(`${MODULE}:`, ...args);
+    }
+
+    /**
+     * Emit a console error and display as a flash error if debugging.
+     *
+     * @param {string} caller
+     * @param {string} [message]
+     */
+    function _error(caller, message) {
+        const tag = `${MODULE}: ${caller}`
+        const msg = isDefined(message) ? `${tag}: ${message}` : tag;
+        console.error(msg);
+        _debugging() && flashError(msg);
     }
 
     // ========================================================================

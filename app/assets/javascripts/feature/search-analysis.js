@@ -1,6 +1,7 @@
 // app/assets/javascripts/feature/search-analysis.js
 
 
+import { appSetup }                     from '../application/setup'
 import { arrayWrap }                    from '../shared/arrays'
 import { Emma }                         from '../shared/assets'
 import { BaseClass }                    from '../shared/base-class'
@@ -65,7 +66,7 @@ export function cloneTitle(item, title) {
 // ============================================================================
 
 // noinspection FunctionTooLongJS
-Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
+Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Search page <body>.
@@ -1917,7 +1918,7 @@ Emma.SEARCH_ANALYSIS && $(document).on('turbolinks:load', function() {
             if (error) {
                 $t_tag = $(`<a href="#${identity}">`).addClass(ERROR_MARKER);
                 $t_tag.attr('title', ERROR_JUMP_TOOLTIP);
-                if (exile) { $t_tag.addClass(EXILE_MARKER); }
+                if (exile) { $t_tag.addClass(EXILE_MARKER) }
             } else if (exile) {
                 $t_tag = $('<div>').addClass(EXILE_MARKER);
             } else if (position) {

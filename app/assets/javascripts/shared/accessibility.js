@@ -136,26 +136,27 @@ export function handleKeypressAsClick(selector, direct, match, except) {
     // Attach the handler to any remaining elements, ensuring that the
     // handler is not added twice.
     return handleEvent($elements, 'keydown', handleKeypress);
+}
 
-    // noinspection FunctionWithInconsistentReturnsJS
-    /**
-     * Translate a carriage return to a click, except for links (where the
-     * key press will be handled by the browser itself).
-     *
-     * @param {jQuery.Event|KeyboardEvent} event
-     *
-     * @returns {boolean}
-     */
-    function handleKeypress(event) {
-        const key = event.key;
-        if (key === 'Enter') {
-            const $target = $(event.target);
-            const href    = $target.attr('href');
-            if (!href || (href === '#')) {
-                $target.click();
-                $target.focusin();
-                return false;
-            }
+/**
+ * Translate a carriage return to a click.
+ *
+ * Not intended for links (where the key press will be handled by the browser
+ * itself).
+ *
+ * @param {jQuery.Event|KeyboardEvent} event
+ *
+ * @returns {boolean|undefined}
+ */
+function handleKeypress(event) {
+    const key = event.key;
+    if (key === 'Enter') {
+        const $target = $(event.target);
+        const href    = $target.attr('href');
+        if (!href || (href === '#')) {
+            $target.click();
+            $target.focusin();
+            return false;
         }
     }
 }

@@ -1,13 +1,18 @@
 // app/assets/javascripts/shared/flash.js
 
 
-import { arrayWrap }                                    from './arrays'
-import { selector }                                     from './css'
-import { isDefined, isMissing, isPresent }              from './definitions'
-import { handleClickAndKeypress, handleEvent, isEvent } from './events'
-import { noScroll, scrollIntoView }                     from './html'
-import { SECONDS }                                      from './time'
-import { HEAVY_X }                                      from './unicode'
+import { arrayWrap }                       from './arrays'
+import { selector }                        from './css'
+import { isDefined, isMissing, isPresent } from './definitions'
+import { noScroll, scrollIntoView }        from './html'
+import { SECONDS }                         from './time'
+import { HEAVY_X }                         from './unicode'
+import {
+    handleClickAndKeypress,
+    handleEvent,
+    isEvent,
+    windowEvent,
+} from './events'
 
 
 // ============================================================================
@@ -63,8 +68,6 @@ const DEFAULT_SHOW = {
 // ============================================================================
 // Variables
 // ============================================================================
-
-const $window = $(window);
 
 /**
  * Control display of flash messages by type.
@@ -448,7 +451,9 @@ function closeFlashItem(event) {
  * @param {jQuery.Event|KeyboardEvent} event
  */
 function onKeyUpFlashItem(event) {
+    //console.log(`onKeyUpFlashItem: key = "${event.key}"; event =`, event);
     if (event.key === 'Escape') {
+        console.log(`onKeyUpFlashItem: key = "${event.key}"; event =`, event);
         event.stopImmediatePropagation();
         closeFlashItem(event);
     }
@@ -461,6 +466,7 @@ function onKeyUpFlashItem(event) {
  * @param {jQuery.Event|KeyboardEvent} event
  */
 function onMouseDownFlashItem(event) {
+    console.log('onMouseDownFlashItem: event =', event);
     event.stopPropagation();
 }
 
@@ -509,11 +515,11 @@ const WINDOW_EVENTS = {
  * messages from the display.
  *
  * @param {boolean} [on]
- * @param {boolean} [off]
  */
-function monitorWindowEvents(on = true, off = true) {
-    off && $.each(WINDOW_EVENTS, (event, func) => $window.off(event, func));
-    on  && $.each(WINDOW_EVENTS, (event, func) => $window.on(event,  func));
+function monitorWindowEvents(on = true) {
+    $.each(WINDOW_EVENTS,
+        (type, callback) => windowEvent(type, callback, { listen: on })
+    );
 }
 
 /**
@@ -585,7 +591,7 @@ export function extractFlashMessage(xhr) {
  * @see "EncodingHelper#xhr_encode"
  */
 export function xhrDecode(data) {
-    if (isMissing(data)) { return ''; }
+    if (isMissing(data)) { return '' }
     const string  = data.toString();
     const encoded = !!string.match(/%[0-9A-F][0-9A-F]/i);
     return (encoded ? decodeURIComponent(string) : string).trim();
