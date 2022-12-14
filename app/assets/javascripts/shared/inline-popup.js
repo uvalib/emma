@@ -3,10 +3,10 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { HIDDEN, selector } from './css'
-import { isPresent }        from './definitions'
-import { windowEvent }      from './events'
-import { ModalBase }        from './modal-base'
+import { HIDDEN, selector }     from './css'
+import { isMissing, isPresent } from './definitions'
+import { windowEvent }          from './events'
+import { ModalBase }            from './modal-base'
 
 
 // ============================================================================
@@ -32,6 +32,18 @@ export class InlinePopup extends ModalBase {
     static ENCLOSURE       = selector(this.ENCLOSURE_CLASS);
 
     // ========================================================================
+    // Class members.
+    // ========================================================================
+
+    /**
+     * Indicates whether {@link window} event handlers are currently set up.
+     *
+     * @type {boolean|undefined}
+     * @protected
+     */
+    static _handlers_attached;
+
+    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -48,6 +60,40 @@ export class InlinePopup extends ModalBase {
             $control = $control.children(InlinePopup.TOGGLE);
         }
         super($control, _modal);
+    }
+
+    // ========================================================================
+    // Methods
+    // ========================================================================
+
+    /**
+     * Open the popup element.
+     *
+     * @param {boolean} [no_halt]     If *true*, hooks cannot halt the chain.
+     *
+     * @returns {boolean}
+     */
+    open(no_halt) {
+        const result = super.open(no_halt);
+        if (isPresent(this.constructor.$open_popups)) {
+            this.constructor._attachWindowEventHandlers();
+        }
+        return result;
+    }
+
+    /**
+     * Close the popup element.
+     *
+     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
+     *
+     * @returns {boolean}
+     */
+    close(no_halt) {
+        const result = super.close(no_halt);
+        if (isMissing(this.constructor.$open_popups)) {
+            this.constructor._detachWindowEventHandlers();
+        }
+        return result;
     }
 
     // ========================================================================
@@ -140,13 +186,31 @@ export class InlinePopup extends ModalBase {
     // ========================================================================
 
     /**
-     * Set up event handlers on 'window'.
+     * Set up event handlers on {@link window}.
+     *
+     * @param {boolean} [attach]    Default *true*.
      *
      * @protected
      */
-    static _attachWindowEventHandlers() {
-        windowEvent('keyup', this._onKeyUp.bind(this));
-        windowEvent('click', this._onClick.bind(this));
+    static _attachWindowEventHandlers(attach) {
+        if (!this._handlers_attached) {
+            const options = (attach === false) ? { listen: false } : {};
+            windowEvent('keyup', this._onKeyUp.bind(this), options);
+            windowEvent('click', this._onClick.bind(this), options);
+            this._handlers_attached = true;
+        }
+    }
+
+    /**
+     * Remove event handlers from {@link window}.
+     *
+     * @protected
+     */
+    static _detachWindowEventHandlers() {
+        if (this._handlers_attached) {
+            this._attachWindowEventHandlers(false);
+            this._handlers_attached = false;
+        }
     }
 
     /**

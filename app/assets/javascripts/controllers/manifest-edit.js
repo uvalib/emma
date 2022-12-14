@@ -10,7 +10,7 @@ import * as Field                         from '../shared/field'
 import { InlinePopup }                    from '../shared/inline-popup'
 import { LookupModal }                    from '../shared/lookup-modal'
 import { LookupRequest }                  from '../shared/lookup-request'
-import { ModalShowHooks }                 from '../shared/modal_hooks'
+import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks'
 import { compact, deepDup, toObject }     from '../shared/objects'
 import { randomizeName }                  from '../shared/random'
 import { MultiUploader }                  from '../shared/uploader'
@@ -2504,20 +2504,39 @@ appSetup(MODULE, function() {
                 const popup   = new InlinePopup(element);
                 const $toggle = popup.modalControl;
                 const $panel  = popup.modalPanel;
+                const $input  = $panel.find('input');
                 const $submit = $panel.find('button.input-submit');
                 const $cancel = $panel.find('button.input-cancel');
 
+                handleEvent($input, 'keyup',    onInput);
                 handleClickAndKeypress($submit, onSubmit);
                 handleClickAndKeypress($cancel, onCancel);
 
-                ModalShowHooks.set($toggle, onShow);
                 handleHoverAndFocus($toggle, hoverToggle, unhoverToggle);
+                ModalShowHooks.set($toggle, onShow);
+                ModalHideHooks.set($toggle, onHide);
 
                 const $element  = $(element);
                 const type      = $element.attr('data-type');
                 const from_type = `.from-${type}`;
                 const $type     = $lines.filter(from_type);
-                const $input    = $panel.find('input');
+
+                /**
+                 * Make the "Enter" key a proxy for onSubmit.
+                 *
+                 * @param {jQuery.Event|KeyboardEvent} event
+                 *
+                 * @returns {boolean|undefined}
+                 */
+                function onInput(event) {
+                    //_debug('onInput: event =', event);
+                    const key = event.key;
+                    if (key === 'Enter') {
+                        event.stopImmediatePropagation();
+                        $submit.click();
+                        return false;
+                    }
+                }
 
                 /**
                  * If a value was given update the displayed file value and
@@ -2558,22 +2577,6 @@ appSetup(MODULE, function() {
                 }
 
                 /**
-                 * Initialize the input with the current value if there is one.
-                 *
-                 * @param {jQuery}  $target
-                 * @param {boolean} [check_only]
-                 * @param {boolean} [halted]
-                 */
-                function onShow($target, check_only, halted) {
-                    _debug('onShow:', $target, check_only, halted);
-                    if (check_only || halted) { return }
-                    const value = $type.text()?.trim();
-                    if (value) {
-                        $input.val(value);
-                    }
-                }
-
-                /**
                  * Add an attribute to the cell element indicating the button
                  * being hovered, allowing for CSS rules relative to the cell.
                  *
@@ -2594,6 +2597,68 @@ appSetup(MODULE, function() {
                     //_debug('unhoverToggle: event =', event);
                     if ($cell.attr(HOVER_ATTR) === type) {
                         $cell.removeAttr(HOVER_ATTR);
+                    }
+                }
+
+                /**
+                 * Initialize the input with the current value if there is one.
+                 *
+                 * @param {jQuery}  $target
+                 * @param {boolean} [check_only]
+                 * @param {boolean} [halted]
+                 */
+                function onShow($target, check_only, halted) {
+                    _debug('onShow:', $target, check_only, halted);
+                    if (check_only || halted) { return }
+                    const value = $type.text()?.trim();
+                    if (value) {
+                        $input.val(value);
+                    }
+                    debounce(adjustGridHeight, 50)();
+                }
+
+                /**
+                 * Restore grid height if {@link onShow} was forced to grow the
+                 * grid in order to display the whole popup.
+                 *
+                 * @param {jQuery}  $target
+                 * @param {boolean} [check_only]
+                 * @param {boolean} [halted]
+                 */
+                function onHide($target, check_only, halted) {
+                    _debug('onHide:', $target, check_only, halted);
+                    if (check_only || halted) { return }
+                    restoreGridHeight();
+                }
+
+                let grid_resize, grid_height;
+
+                /**
+                 * If the popup cannot be fully displayed at its current
+                 * position because it is clipped by the bottom of the grid,
+                 * temporarily grow the grid vertically to make room for it.
+                 */
+                function adjustGridHeight() {
+                    const panel_box = $panel[0].getBoundingClientRect();
+                    const grid_box  = $grid[0].getBoundingClientRect();
+                    const obscured  = panel_box.bottom - grid_box.bottom;
+                    if (obscured > 0) {
+                        grid_height = $grid.prop('style').height;
+                        grid_resize = true;
+                        const old_ht    = grid_box.height;
+                        const scrollbar = old_ht - $grid[0].clientHeight;
+                        $grid.css('height', (old_ht + obscured + scrollbar));
+                    }
+                }
+
+                /**
+                 * If the grid was temporarily resized, restore the element by
+                 * removing the fixed height value set above.
+                 */
+                function restoreGridHeight() {
+                    if (grid_resize) {
+                        $grid.prop('style').height = grid_height;
+                        grid_resize = grid_height = undefined;
                     }
                 }
             });
@@ -3223,7 +3288,6 @@ appSetup(MODULE, function() {
     function emptyDataRow(original) {
         _debug('emptyDataRow: original =', original);
         const $copy = cloneDataRow(original);
-        $copy.removeClass(STATUS_MARKERS);
         removeDatabaseId($copy);
         initializeDataCells($copy);
         resetRowIndicators($copy);
@@ -3599,8 +3663,18 @@ appSetup(MODULE, function() {
      */
     function setCellValid(cell, setting) {
         //_debug(`setCellValid: "${setting}"; cell =`, cell);
-        const $cell = dataCell(cell);
-        const valid = (setting !== false);
+        const $cell  = dataCell(cell);
+        const field  = $cell.attr('data-field');
+        const $input = $cell.find(`[name="${field}"]`);
+        const valid  = (setting !== false);
+        if (!valid) {
+            $input.attr('aria-invalid', true);
+        } else if ($input.attr('aria-required') === 'true') {
+            $input.attr('aria-invalid', false);
+        } else {
+            $input.removeAttr('aria-invalid');
+        }
+        $cell.toggleClass(ERROR_MARKER, !valid);
         $cell.data(CELL_VALID_DATA, valid);
         return valid;
     }
@@ -3617,9 +3691,7 @@ appSetup(MODULE, function() {
         //_debug(`updateCellValid: "${setting}"; cell =`, cell);
         const $cell = dataCell(cell);
         const valid = isDefined(setting) ? setting : evaluateCellValid($cell);
-        setCellValid($cell, valid);
-        $cell.toggleClass(ERROR_MARKER, !valid);
-        return valid;
+        return setCellValid($cell, valid);
     }
 
     /**
