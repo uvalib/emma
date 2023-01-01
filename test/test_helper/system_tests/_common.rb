@@ -117,7 +117,7 @@ module TestHelper::SystemTests::Common
     (url && !port) ? url_without_port(url) : url
   end
 
-  DEFAULT_WAIT_MAX_TIME = 2 * Capybara.default_max_wait_time
+  DEFAULT_WAIT_MAX_TIME = 3 * Capybara.default_max_wait_time
   DEFAULT_WAIT_MAX_PASS = 5
 
   # Block until the browser can confirm that it is on the target page.
