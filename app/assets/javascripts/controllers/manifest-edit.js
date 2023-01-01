@@ -701,46 +701,16 @@ appSetup(MODULE, function() {
      * @param {string} [filename]     For diagnostics only.
      */
     function importData(data, filename) {
-        const func     = 'importData';
-        const manifest = manifestId();
-        const action   = `bulk/create/${manifest}`;
-        const type     = dataType(data);
-        const content  = 'multipart/form-data';
-        const accept   = 'text/html';
+        const func   = 'importData';
+        const type   = dataType(data);
+        const params = { data: data, type: type, caller: func };
+        const $last  = allDataRows().last();
+        if (databaseId($last)) {
+            params.row   = dbRowValue($last);
+            params.delta = dbRowDelta($last);
+        }
         _debug(`${func}: from "${filename}": type = "${type}"; data =`, data);
-
-        if (!manifest) {
-            _error(`${func}: no manifest ID`);
-            return;
-        }
-
-        serverItemSend(action, {
-            caller:     func,
-            params:     { data: data, type: type },
-            headers:    { 'Content-Type': content, Accept: accept },
-            onSuccess:  processReceivedItems,
-        });
-
-        /**
-         * Append ManifestItems returned from the server.
-         *
-         * @param {ManifestRecordMessage} body
-         *
-         * @see "ManifestItemController#bulk_update_response"
-         * @see "SerializationConcern#index_values"
-         */
-        function processReceivedItems(body) {
-            _debug(`${func}: body =`, body);
-            const data = body?.items || body || {};
-            const list = data.list;
-            if (isEmpty(data)) {
-                _error(func, 'no response data');
-            } else if (isEmpty(list)) {
-                _error(func, 'no items present in response data');
-            } else {
-                appendRows(list);
-            }
-        }
+        sendCreateRecords(data, params);
     }
 
     /**
@@ -753,11 +723,11 @@ appSetup(MODULE, function() {
      * @param {string} [filename]     For diagnostics only.
      */
     function reImportData(data, filename) {
-        const func     = 'reImportData';
-        const manifest = manifestId();
-        const action   = `bulk/update/${manifest}`;
-        _error(`${func}: ${action} NOT YET IMPLEMENTED`); // TODO: reimport
-    }
+        const func   = 'reImportData';
+        const type   = dataType(data);
+        const params = { data: data, type: type, caller: func };
+        sendUpdateRecords(data, params);
+   }
 
     // ========================================================================
     // Functions - form - export
@@ -1556,8 +1526,9 @@ appSetup(MODULE, function() {
         } else if (isPresent($last)) {
             $last.remove(); // Discard empty row.
         }
-        const row = dbRowValue($row);
-        let delta = dbRowDelta($row);
+        let row   = $row ? dbRowValue($row) : 0;
+        let delta = $row ? dbRowDelta($row) : 0;
+        let mod   = {};
         items.forEach(record => {
             let r, d;
             $row  = insertRow($row, record, true);
@@ -1568,6 +1539,84 @@ appSetup(MODULE, function() {
         });
         if (!intermediate) {
             updateGridRowCount(items.length);
+        }
+        if (isPresent(mod)) {
+            sendUpdateRecords(mod);
+        }
+    }
+
+    /**
+     * Create multiple ManifestItem records.
+     *
+     * @param {object|string} items
+     * @param {object}        [opt]
+     */
+    function sendCreateRecords(items, opt = {}) {
+        const caller = opt?.caller || 'sendCreateRecords';
+        sendUpsertRecords(items, { caller, ...opt, create: true });
+    }
+
+    /**
+     * Update multiple ManifestItem records.
+     *
+     * @param {object|string} items
+     * @param {object}        [opt]
+     */
+    function sendUpdateRecords(items, opt = {}) {
+        const caller = opt?.caller || 'sendUpdateRecords';
+        sendUpsertRecords(items, { caller, ...opt, create: false });
+    }
+
+    /**
+     * Create/update multiple ManifestItem records.
+     *
+     * @param {object|string} items
+     * @param {object}        [opt]
+     */
+    function sendUpsertRecords(items, opt = {}) {
+        const func      = opt?.caller || 'sendUpsertRecords';
+        const manifest  = manifestId();
+        const operation = opt?.create ? 'create' : 'update';
+        const action    = `bulk/${operation}/${manifest}`;
+        const content   = 'multipart/form-data';
+        const accept    = 'text/html';
+        _debug(`${func}: items =`, items);
+
+        if (!manifest) {
+            _error(`${func}: no manifest ID`);
+            return;
+        }
+
+        const hdr = opt?.headers;
+        if (hdr) { delete opt.headers }
+        const prm = opt?.params || opt;
+
+        serverItemSend(action, {
+            caller:     func,
+            params:     { data: items, ...prm },
+            headers:    { 'Content-Type': content, Accept: accept, ...hdr },
+            onSuccess:  processReceivedItems,
+        });
+    }
+
+    /**
+     * Append ManifestItems returned from the server.
+     *
+     * @param {ManifestRecordMessage} body
+     *
+     * @see "ManifestItemController#bulk_update_response"
+     * @see "SerializationConcern#index_values"
+     */
+    function processReceivedItems(body) {
+        const func = 'processReceivedItems'; _debug(`${func}: body =`, body);
+        const data = body?.items || body || {};
+        const list = data.list;
+        if (isEmpty(data)) {
+            _error(func, 'no response data');
+        } else if (isEmpty(list)) {
+            _error(func, 'no items present in response data');
+        } else {
+            appendRows(list);
         }
     }
 
@@ -2994,8 +3043,10 @@ appSetup(MODULE, function() {
      */
     function setDbRowValue(target, setting) {
         //_debug(`setDbRowValue: setting = "${setting}"; target =`, target);
-        const $row  = dataRow(target, true);
-        const value = Number(setting) || 0;
+        const $row   = dataRow(target, true);
+        const number = Number(setting);
+        const value  = number || 0;
+        if (number) { $row.removeAttr(DB_ROW_ATTR) }
         $row.data(DB_ROW_DATA, value);
         return value;
     }
@@ -3013,12 +3064,7 @@ appSetup(MODULE, function() {
     function initializeDbRowValue(target) {
         const $row = dataRow(target, true);
         const attr = $row.attr(DB_ROW_ATTR);
-        if (attr) {
-            $row.removeAttr(DB_ROW_ATTR);
-            return setDbRowValue($row, attr);
-        } else {
-            return dbRowValue($row);
-        }
+        return attr ? setDbRowValue($row, attr) : dbRowValue($row);
     }
 
     /**
@@ -3050,8 +3096,10 @@ appSetup(MODULE, function() {
      */
     function setDbRowDelta(target, setting) {
         //_debug(`setDbRowDelta: setting = "${setting}"; target =`, target);
-        const $row  = dataRow(target, true);
-        const value = Number(setting) || 0;
+        const $row   = dataRow(target, true);
+        const number = Number(setting);
+        const value  = number || 0;
+        if (number) { $row.removeAttr(DB_DELTA_ATTR) }
         $row.data(DB_DELTA_DATA, value);
         return value;
     }
@@ -3069,12 +3117,7 @@ appSetup(MODULE, function() {
     function initializeDbRowDelta(target) {
         const $row = dataRow(target, true);
         const attr = $row.attr(DB_DELTA_ATTR);
-        if (attr) {
-            $row.removeAttr(DB_DELTA_ATTR);
-            return setDbRowDelta($row, attr);
-        } else {
-            return dbRowDelta($row);
-        }
+        return attr ? setDbRowDelta($row, attr) : dbRowDelta($row);
     }
 
     /**
@@ -4249,6 +4292,7 @@ appSetup(MODULE, function() {
      */
     function postStartEdit(cell) {
         const func = 'postStartEdit';
+
         if (!manifestId()) {
             _debug(`${func}: triggering manifest creation`);
             createManifest();
@@ -4264,12 +4308,14 @@ appSetup(MODULE, function() {
         }
 
         _debug(`${func}: $row = `, $row);
-        const row   = dbRowValue($row);
-        const delta = dbRowDelta($row);
-        serverItemSend(`start_edit/${db_id}`, {
+        const action = `start_edit/${db_id}`;
+        const row    = dbRowValue($row);
+        const delta  = dbRowDelta($row);
+
+        serverItemSend(action, {
+            caller:     func,
             params:     { row: row, delta: delta },
             onError:    () => finishValueEdit($cell),
-            caller:     func,
         });
     }
 
@@ -4352,29 +4398,31 @@ appSetup(MODULE, function() {
             return;
         }
 
-        /** @type {SendOptions} */
-        const options = {};
-        let action, params;
+        let data, action, on_success;
         if (isDefined(new_value)) {
             const field = cellDbColumn($cell);
-            const row   = dbRowValue($row);
-            const delta = dbRowDelta($row);
-            params = { row: row, delta: delta, [field]: new_value.toString() };
-            params = { manifest_item: params };
+            data        = { [field]: new_value.toString() };
+            data.row    = dbRowValue($row);
+            data.delta  = dbRowDelta($row);
         }
-        _debug(`${func}: params =`, params);
         if (db_id) {
-            action = `finish_edit/${db_id}`;
-            options.onSuccess = (body => parseFinishEditResponse($cell, body));
-        } else if (params) {
-            action = `create/${manifest}`;
-            options.onSuccess = (body => parseCreateResponse($cell, body));
+            action     = `finish_edit/${db_id}`;
+            on_success = parseFinishEditResponse;
+        } else if (data) {
+            action     = `create/${manifest}`;
+            on_success = parseCreateResponse;
+        } else {
+            _debug(`${func}: nothing to transmit`);
+            return;
         }
-        if (action) {
-            options.params = params || {};
-            options.caller = func;
-            serverItemSend(action, options);
-        }
+        const params = data ? { manifest_item: data } : {};
+        _debug(`${func}: params =`, params);
+
+        serverItemSend(action, {
+            caller:     func,
+            params:     params,
+            onSuccess:  body => on_success($cell, body),
+        });
     }
 
     /**

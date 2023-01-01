@@ -565,7 +565,7 @@ module ManifestItemConcern
   #
   # @see file:javascripts/controllers/manifest-edit.js *postRowUpdate*
   #
-  def editing_update(item = nil, expect_editing: false, **opt)
+  def editing_update(item = nil, **opt)
     rec    = edit_manifest_item(item)
     file   = opt.key?(:file_status)  || opt.key?(:file_data)
     data   = opt.key?(:data_status)  || opt.except(*RECORD_KEYS).present?
@@ -639,7 +639,7 @@ module ManifestItemConcern
     manifest_id ||= opt[:manifest_id] || opt[:manifest]
     manifest_id = manifest_id[:id] if manifest_id.is_a?(Hash)
     failure('No :manifest_id was provided') if manifest_id.blank?
-    ManifestItem.where(manifest_id: manifest_id).order('row, delta')
+    ManifestItem.where(manifest_id: manifest_id).in_row_order
   end
 
   # ===========================================================================
@@ -751,9 +751,12 @@ module ManifestItemConcern
   # @return [Array<Hash>]
   #
   def bulk_item_data(validate: false)
-    items = manifest_item_bulk_post_params[:data]
+    prm   = manifest_item_bulk_post_params
+    items = prm[:data]
     failure("not an Array: #{items.inspect}") unless items.is_a?(Array)
     failure('no item data')                   unless items.present?
+    row   = prm[:row].to_i
+    delta = prm[:delta].to_i
     items.map do |item|
       failure("not a Hash: #{item.inspect}") unless item.is_a?(Hash)
       item[:manifest_id] = item.delete(:manifest) if item.key?(:manifest)
@@ -762,8 +765,9 @@ module ManifestItemConcern
       elsif item[:manifest_id] != manifest_id
         failure("invalid manifest_id for #{item.inspect}")
       end
+      row   = (item[:row]   ||= row)
+      delta = (item[:delta] ||= delta + 1)
       ManifestItem.update_status!(item) if validate
-      # noinspection RubyMismatchedArgumentType
       ManifestItem.attribute_options(item)
     end
   end

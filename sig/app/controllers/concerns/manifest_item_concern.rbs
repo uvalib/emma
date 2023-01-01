@@ -294,7 +294,7 @@ module ManifestItemConcern
   #
   # @see file:controllers/manifest-edit.js *parseFinishEditResponse*
   #
-  def finish_editing: (?(ManifestItem|nil) item, **untyped opt) -> { :fields => Hash[Integer,symHash], :problems => symHash, :pending => Hash[Integer,symHash]|nil }
+  def finish_editing: (?(ManifestItem|nil) item, **untyped opt) -> { :items => Hash[Integer,symHash], :pending => Hash[Integer,symHash]|nil, :problems => symHash }
 
   # Update with provided fields (if any) and clear :editing state.
   #
@@ -309,7 +309,7 @@ module ManifestItemConcern
   #
   # @see file:javascripts/controllers/manifest-edit.js *postRowUpdate*
   #
-  def editing_update: (?(ManifestItem|nil) item, **untyped opt) -> { :fields => Hash[Integer,symHash], :problems => symHash, :pending => Hash[Integer,symHash]|nil }
+  def editing_update: (?(ManifestItem|nil) item, **untyped opt) -> { :items => Hash[Integer,symHash], :pending => Hash[Integer,symHash]|nil, :problems => symHash }
 
   # Upload a file to the AWS S3 Shrine :cache and update record :file_data with
   # the response.

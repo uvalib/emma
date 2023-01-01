@@ -73,22 +73,24 @@ class ManifestItem < ApplicationRecord
   #
   # ===========================================================================
 
-  scope :active,      -> { where('NOT deleting IS TRUE') }
-  scope :to_delete,   -> { where(deleting: true) }
+  scope :active,       -> { where('NOT deleting IS TRUE') }
+  scope :to_delete,    -> { where(deleting: true) }
 
-  scope :updated,     -> { where('last_saved >= updated_at') }
-  scope :unsaved,     -> { where('last_saved < updated_at') }
-  scope :never_saved, -> { where(last_saved: nil) }
-  scope :incomplete,  -> { unsaved.or(never_saved) }
+  scope :updated,      -> { where('last_saved >= updated_at') }
+  scope :unsaved,      -> { where('last_saved < updated_at') }
+  scope :never_saved,  -> { where(last_saved: nil) }
+  scope :incomplete,   -> { unsaved.or(never_saved) }
 
-  scope :saved,       -> { active.and(updated) }
-  scope :pending,     -> { active.and(incomplete) }
+  scope :saved,        -> { active.and(updated) }
+  scope :pending,      -> { active.and(incomplete) }
 
-  scope :data_valid,  -> { where(data_status: STATUS_VALID[:data_status]) }
-  scope :file_valid,  -> { where(file_status: STATUS_VALID[:file_status]) }
+  scope :data_valid,   -> { where(data_status: STATUS_VALID[:data_status]) }
+  scope :file_valid,   -> { where(file_status: STATUS_VALID[:file_status]) }
 
-  scope :submittable, -> { saved }
-  scope :auto_submit, -> { submittable.and(data_valid).and(file_valid) }
+  scope :submittable,  -> { saved }
+  scope :auto_submit,  -> { submittable.and(data_valid).and(file_valid) }
+
+  scope :in_row_order, -> { order(:row, :delta, :id) }
 
   # ===========================================================================
   # :section: ApplicationRecord overrides
