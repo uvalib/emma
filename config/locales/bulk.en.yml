@@ -207,6 +207,12 @@ en:
           upload:       'Storage Status'
           index:        'Indexing Status'
 
+        buttons:        # @see "en.emma.manifest.remit.*"
+          - start
+          - stop
+          - pause
+          - resume
+
         counts:
           total:        'Total'
           ready:        'Ready'
