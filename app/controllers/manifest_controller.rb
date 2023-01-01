@@ -95,7 +95,7 @@ class ManifestController < ApplicationController
     __debug_route
     prm    = paginator.initial_parameters
     redirect_to prm.merge!(action: :edit) if identifier.present?
-    result = find_or_match_manifests(**prm)
+    result = find_or_match_manifests(sort: { updated_at: :desc }, **prm)
     @list  = paginator.finalize(result, **prm)
     respond_to do |format|
       format.html

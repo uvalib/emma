@@ -29,14 +29,14 @@ module Record::Searchable
 
   # Name of the column on which pagination is based.
   #
-  # @return [Symbol]
+  # @return [Symbol, nil]
   #
   # == Implementation Notes
   # This has to be a column with unique values for every record which can be
   # ordered (that is, #minimum_id and #maximum_id have to be non-nil).
   #
   def pagination_column(*)
-    :id
+    id_column
   end
 
   # The database column currently associated with the workflow state of the
@@ -45,7 +45,7 @@ module Record::Searchable
   # @return [Symbol, nil]
   #
   def state_column(*)
-    Log.debug "#{__method__}: not defined for #{self.class}"
+    Log.debug "#{__method__}: not defined for #{self_class}"
   end
 
   # ===========================================================================
@@ -116,14 +116,15 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  SEARCH_RECORDS_OPTIONS = %i[offset limit page pages groups].freeze
+  SEARCH_RECORDS_OPTIONS = %i[offset limit page pages groups sort].freeze
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
   #
-  NON_SEARCH_PARAMS =
-    (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS).uniq.freeze
+  NON_SEARCH_PARAMS = (
+    SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS - %i[sort]
+  ).uniq.freeze
 
   # Get the records specified by either :id or :submission_id.
   #
@@ -132,14 +133,17 @@ module Record::Searchable
   # returns the matching records.
   #
   # @param [Array<Model, String, Integer, Array>] identifiers
-  # @param [Hash]                                  opt  Passed to #where except
+  # @param [Hash]                                 opt  To #get_relation except
+  #                                                    #SEARCH_RECORDS_OPTIONS:
   #
+  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
   # @option opt [Integer,nil]    :offset
   # @option opt [Integer,nil]    :limit
   # @option opt [Integer,nil]    :page
   # @option opt [Boolean]        :pages   Return array of arrays of record IDs.
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
+  # @option opt [String,Symbol]  :meth    Calling method for diagnostics.
   #
   # @raise [RangeError]                   If :page is not valid.
   #
@@ -149,6 +153,9 @@ module Record::Searchable
   #
   def search_records(*identifiers, **opt)                                       # NOTE: from Upload::LookupMethods
     prop   = extract_hash!(opt, *SEARCH_RECORDS_OPTIONS)
+    sort   = pagination_column || implicit_order_column
+    sort   = prop.key?(:sort) ? prop.delete(:sort) : sort
+    groups = prop.delete(:groups)
     result = SEARCH_RECORDS_TEMPLATE.dup
 
     # Handle the case where a range has been specified which resolves to an
@@ -159,48 +166,56 @@ module Record::Searchable
     end
 
     # Start by looking at results for all matches (without :limit or :offset).
-    all = get_relation(*identifiers, **opt, sort: false)
+    opt[:meth] ||= "#{self_class}.#{__method__}"
+    all = get_relation(*identifiers, **opt, sort: (identifiers.blank? && sort))
 
     # Handle the case where only a :groups summary is expected.
-    return result.merge!(groups: group_by_state(all)) if prop[:groups] == :only
+    return result.merge!(groups: group_by_state(all)) if groups == :only
 
-    # Group record IDs into pages.
-    all_ids = all.pluck(pagination_column)
-    limit   = positive(prop[:limit])
-    pg_size = limit || 10 # TODO: fall-back page size for grouping
-    pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
+    if pagination_column
 
-    if (page = prop[:page]&.to_i)
-      if page > 1
-        offset = pages[page - 2]&.last
-        raise RangeError, "Page #{page} is invalid" if offset.nil?
+      # Group record IDs into pages.
+      all_ids = all.pluck(pagination_column)
+      limit   = positive(prop[:limit])
+      pg_size = limit || 10 # TODO: fall-back page size for grouping
+      pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
+
+      result[:total]  = all_ids.size
+      result[:min_id] = all_ids.first
+      result[:max_id] = all_ids.last
+
+      if (page = prop[:page]&.to_i)
+        if page > 1
+          offset = pages[page - 2]&.last
+          raise RangeError, "Page #{page} is invalid" if offset.nil?
+        else
+          page   = 1
+          offset = nil
+        end
+        result[:page]   = page
+        result[:first]  = (page == 1)
+        result[:last]   = (page >= pages.size)
+        result[:limit]  = limit = pg_size
+        result[:offset] = (page - 1) * pg_size
       else
-        page   = 1
-        offset = nil
+        result[:limit]  = limit
+        result[:offset] = offset = prop[:offset]
       end
-      result[:page]   = page
-      result[:first]  = (page == 1)
-      result[:last]   = (page >= pages.size)
-      result[:limit]  = limit = pg_size
-      result[:offset] = (page - 1) * pg_size
+      opt.merge!(limit: limit, offset: offset)
+
+      # Include the array of arrays of database IDs if requested.
+      result[:pages] = pages if prop[:pages]
+
     else
-      result[:limit]  = limit
-      result[:offset] = offset = prop[:offset]
+      # The record type explicitly does not support pagination.
+      Log.info("#{opt[:meth]}: pagination not supported") if prop.present?
     end
 
-    result[:total]  = all_ids.size
-    result[:min_id] = all_ids.first
-    result[:max_id] = all_ids.last
-
-    # Include the array of arrays of database IDs if requested.
-    result[:pages]  = pages if prop[:pages]
-
     # Generate a :groups summary if requested.
-    result[:groups] = group_by_state(all) if prop[:groups]
+    result[:groups] = group_by_state(all) if groups
 
     # Finally, get the specific set of results.
-    opt.merge!(limit: limit, offset: offset, sort: pagination_column)
-    result[:list] = get_relation(*identifiers, **opt).records
+    result[:list] = get_relation(*identifiers, **opt, sort: sort).records
 
     result
   end
@@ -215,11 +230,12 @@ module Record::Searchable
   # @param [Array<Model, String, Integer, Array>] items
   # @param [Hash]                                 opt  Passed to #where except
   #
-  # @option opt [Symbol,Boolean,nil] :sort      No sort if explicitly *nil*.
-  # @option opt [Integer,nil]        :offset
-  # @option opt [Integer,nil]        :limit
-  # @option opt [Symbol,nil]         :id_key    Default: `#id_column`.
-  # @option opt [Symbol,nil]         :sid_key   Default: `#sid_column`.
+  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
+  # @option opt [Integer,nil]       :offset
+  # @option opt [Integer,nil]       :limit
+  # @option opt [Symbol,nil]        :id_key   Default: `#id_column`.
+  # @option opt [Symbol,nil]        :sid_key  Default: `#sid_column`.
+  # @option opt [String,Symbol,nil] :meth     Calling method for diagnostics.
   #
   # @return [ActiveRecord::Relation]
   #
@@ -227,6 +243,7 @@ module Record::Searchable
   # @see ActiveRecord::Relation#where
   #
   def get_relation(*items, **opt)                                               # NOTE: from Upload::LookupMethods
+    meth    = opt.delete(:meth) || "#{self_class}.#{__method__}"
     id_opt  = extract_hash!(opt, :id_key, :sid_key).transform_values!(&:to_sym)
     id_key  = id_opt[:id_key]  ||= id_column
     sid_key = id_opt[:sid_key] ||= sid_column
@@ -253,14 +270,16 @@ module Record::Searchable
     # the default sort order ascending; :desc as shorthand for the default sort
     # order descending.
     if (sort = opt.key?(:sort) ? opt.delete(:sort) : (ids || sids).blank?)
-      dir = sort.to_s.upcase
-      col = nil
-      unless %W(ASC DESC).include?(dir)
-        dir = nil
-        col = sort unless sort.is_a?(TrueClass)
+      case sort
+        when Hash                 then col, dir = sort.first
+        when TrueClass            then col, dir = [nil, nil]
+        when /^ASC$/i, /^DESC$/i  then col, dir = [nil, sort]
+        else                           col, dir = [sort, nil]
       end
       col ||= implicit_order_column || pagination_column
-      sort = "#{col} #{dir}".squish
+      dir &&= dir.to_s.upcase
+      sort  = col && "#{col} #{dir}".squish
+      Log.info { "#{meth}: no default sort" } unless sort
     end
 
     user_opt = opt.extract!(:user, :user_id)
@@ -275,7 +294,11 @@ module Record::Searchable
 
     limit  = positive(opt.delete(:limit))
     offset = positive(opt.delete(:offset))
-    terms << "#{pagination_column} > #{offset}" if offset
+    if offset && pagination_column
+      terms << "#{pagination_column} > #{offset}"
+    elsif offset
+      Log.warn { "#{meth}: pagination not supported" }
+    end
 
     query  = sql_terms(opt, *terms, join: :and)
     where(query).tap do |result|

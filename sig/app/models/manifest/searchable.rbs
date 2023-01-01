@@ -1,0 +1,15 @@
+module Manifest::Searchable
+  # :nocov:
+  #include Record::Searchable
+
+  # Because UUIDs are not ordered, Manifests can't support pagination as it is
+  # currently implemented.
+  #
+  # @return [nil]
+  #
+  def pagination_column: () -> nil
+
+  private
+
+  def self.included: (Module base) -> void
+end
