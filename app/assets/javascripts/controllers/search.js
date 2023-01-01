@@ -3,10 +3,10 @@
 
 import { AppDebug }               from '../application/debug';
 import { appSetup }               from '../application/setup'
-import { cloneTitle }             from '../feature/search-analysis'
-import { Emma }                   from '../shared/assets'
-import { selector }               from '../shared/css'
-import { makeUrl, urlParameters } from '../shared/url'
+import { cloneTitle }             from '../feature/search-analysis';
+import { Emma }                   from '../shared/assets';
+import { selector, toggleHidden } from '../shared/css';
+import { makeUrl, urlParameters } from '../shared/url';
 import {
     isDefined,
     isEmpty,
@@ -45,7 +45,6 @@ appSetup(MODULE, function() {
     const TOGGLE_CLASS    = 'toggle';
     const CONTROL_CLASS   = `${TOGGLE_CLASS} for-item`;
     const OPEN_MARKER     = 'open';
-    const HIDDEN_MARKER   = 'hidden';
     const DISABLED_MARKER = 'disabled';
 
     /**
@@ -59,7 +58,6 @@ appSetup(MODULE, function() {
     const TOGGLE     = selector(TOGGLE_CLASS);
     const CONTROL    = selector(CONTROL_CLASS);
     const OPEN       = selector(OPEN_MARKER);
-    //const HIDDEN   = selector(HIDDEN_MARKER);
     const DISABLED   = selector(DISABLED_MARKER);
 
     // ========================================================================
@@ -360,13 +358,8 @@ appSetup(MODULE, function() {
      */
     function markAsVisible(element, visible) {
         const $element = $(element).not(DISABLED);
-        const hidden   = isDefined(visible) && !visible;
-        if (hidden) {
-            $element.attr('aria-hidden', true);
-        } else {
-            $element.removeAttr('aria-hidden');
-        }
-        $element.toggleClass(HIDDEN_MARKER, hidden);
+        const hidden   = (visible === false);
+        toggleHidden($element, hidden);
     }
 
     /**

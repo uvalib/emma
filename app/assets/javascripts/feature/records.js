@@ -1,14 +1,15 @@
 // app/assets/javascripts/feature/records.js
 
 
-import { AppDebug }                             from '../application/debug'
-import { appSetup }                             from '../application/setup'
-import { delegateInputClick, toggleVisibility } from '../shared/accessibility'
-import { Emma }                                 from '../shared/assets'
-import { pageController }                       from '../shared/controller'
-import { isMissing, isPresent }                 from '../shared/definitions'
-import { camelCase, singularize }               from '../shared/strings'
-import { asParams }                             from '../shared/url'
+import { AppDebug }                             from '../application/debug';
+import { appSetup }                             from '../application/setup';
+import { delegateInputClick, toggleVisibility } from '../shared/accessibility';
+import { Emma }                                 from '../shared/assets';
+import { pageController }                       from '../shared/controller';
+import { toggleHidden }                         from '../shared/css';
+import { isMissing, isPresent }                 from '../shared/definitions';
+import { camelCase, singularize }               from '../shared/strings';
+import { asParams }                             from '../shared/url';
 import {
     handleEvent,
     handleHoverAndFocus,
@@ -372,9 +373,9 @@ appSetup(MODULE, function() {
             $pag_controls = $list_filter_controls.filter(only);
             any_checked   = initializeFilterOptions();
         }
-        $sel_controls.toggleClass('hidden', !enable);
-        $pag_controls.toggleClass('hidden', !enable);
-        $list_filter_panel.toggleClass('hidden', !any_checked);
+        toggleHidden($sel_controls,      !enable);
+        toggleHidden($pag_controls,      !enable);
+        toggleHidden($list_filter_panel, !any_checked);
     }
 
     // ========================================================================

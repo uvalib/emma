@@ -1,14 +1,15 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
-import { AppDebug }                      from '../application/debug'
-import { appSetup }                      from '../application/setup'
-import { toggleVisibility }              from '../shared/accessibility'
-import { arrayWrap, maxSize }            from '../shared/arrays'
-import { Emma }                          from '../shared/assets'
-import { compact, deepFreeze, toObject } from '../shared/objects'
-import { randomizeName }                 from '../shared/random'
-import { urlParameters }                 from '../shared/url'
+import { AppDebug }                      from '../application/debug';
+import { appSetup }                      from '../application/setup';
+import { toggleVisibility }              from '../shared/accessibility';
+import { arrayWrap, maxSize }            from '../shared/arrays';
+import { Emma }                          from '../shared/assets';
+import { HIDDEN, toggleHidden }          from '../shared/css';
+import { compact, deepFreeze, toObject } from '../shared/objects';
+import { randomizeName }                 from '../shared/random';
+import { urlParameters }                 from '../shared/url';
 import {
     isDefined,
     isEmpty,
@@ -308,8 +309,8 @@ appSetup(MODULE, function() {
      */
     function initializeAdvancedSearch() {
         if (isMissing($filter_controls)) {
-            $advanced_toggle.toggleClass('hidden', true);
-            $reset_button.toggleClass('hidden', true);
+            toggleHidden($advanced_toggle, true);
+            toggleHidden($reset_button,    true);
         } else {
 
             guaranteeSearchButton();
@@ -320,7 +321,7 @@ appSetup(MODULE, function() {
             let was_open;
             if (isMissing($search_filters.filter('.row-2'))) {
                 $advanced_toggle.toggleClass('visible', false);
-                $advanced_toggle.toggleClass('hidden',  true);
+                toggleHidden($advanced_toggle, true);
                 was_open = true;
             } else {
                 was_open = getFilterPanelState();
@@ -392,7 +393,7 @@ appSetup(MODULE, function() {
                 const $input = getSearchInput($row);
                 if (isEmpty($input.val())) {
                     setSearchInput($row, param.shift(), func, true);
-                    $row.removeClass('hidden');
+                    toggleHidden($row, false);
                     if (isEmpty(param)) { return false } // break inner loop
                 }
             });
@@ -423,7 +424,7 @@ appSetup(MODULE, function() {
                 const $row = remaining_rows.shift();
                 setSearchType($row,  type, func, true);
                 setSearchInput($row, term, func, true);
-                $row.removeClass('hidden');
+                toggleHidden($row, false);
             });
         });
     }
@@ -473,11 +474,9 @@ appSetup(MODULE, function() {
                 $search_button.attr('value', 'Search'); // TODO: I18n
                 $search_button.css('row-gap', '0.5rem');
             }
-            $filter_sb.toggleClass('visible', true);
-            $filter_sb.toggleClass('hidden',  false);
+            toggleHidden($filter_sb, false).toggleClass('visible', true);
         } else if ($filter_sb.is(':visible')) {
-            $filter_sb.toggleClass('visible', false);
-            $filter_sb.toggleClass('hidden',  true);
+            toggleHidden($filter_sb, true ).toggleClass('visible', false);
         }
     }
 
@@ -530,7 +529,7 @@ appSetup(MODULE, function() {
         $rows.each(function() {
             const $row      = $(this);
             const $input    = getSearchInput($row);
-            const ignore_if = $row.hasClass('hidden');
+            const ignore_if = $row.is(HIDDEN);
             checkInput($input, ignore_if);
         });
 
@@ -762,7 +761,7 @@ appSetup(MODULE, function() {
      * @see file:app/assets/stylesheets/shared/_header.scss .menu-button.reset
      */
     function setResetButton(opening) {
-        $reset_button.toggleClass('hidden', !opening);
+        toggleHidden($reset_button, !opening);
     }
 
     // ========================================================================
@@ -849,11 +848,10 @@ appSetup(MODULE, function() {
      */
     function showNextRow(event) {
         const func      = 'showNextRow';
-        let $this_row   = getSearchRow(event, func);
-        /** @type {jQuery} */
-        let $hidden     = $this_row.siblings('.hidden');
+        const $this_row = getSearchRow(event, func);
+        const $hidden   = $this_row.siblings(HIDDEN);
         const available = $hidden.length;
-        if (available >= 1) { $hidden.first().removeClass('hidden') }
+        if (available >= 1) { toggleHidden($hidden.first(), false) }
         if (available <= 1) { toggleVisibility($row_show_buttons, false) }
         updateSearchReady();
     }
@@ -866,12 +864,12 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function hideThisRow(event) {
-        const func    = 'hideThisRow';
-        let $this_row = getSearchRow(event, func);
+        const func      = 'hideThisRow';
+        const $this_row = getSearchRow(event, func);
         if ($this_row.is('.first')) {
             console.error(`${func}: cannot hide first row`);
         } else {
-            $this_row.addClass('hidden');
+            toggleHidden($this_row, true);
             toggleVisibility($row_show_buttons, true);
             updateSearchReady();
         }
@@ -1028,7 +1026,7 @@ appSetup(MODULE, function() {
             let $row     = $(this);
             let $input   = getSearchInput($row);
             let $menu    = getSearchInputSelect($row);
-            const hidden = $row.hasClass('hidden');
+            const hidden = $row.is(HIDDEN);
             const name   = $input.attr('name') || '';
             const type   = isPresent($menu) ? searchType($menu) : name;
             const value  = $input.val().trim();
@@ -1216,7 +1214,7 @@ appSetup(MODULE, function() {
             let skip;
             if (!name) {
                 skip = 'ignored';
-            } else if ($control.hasClass('hidden')) {
+            } else if ($control.is(HIDDEN)) {
                 skip = 'hidden';
             } else if (new_only) {
                 let original = $menu.attr('data-original');
@@ -1654,7 +1652,7 @@ appSetup(MODULE, function() {
             const $dst    = $(this);
             const $hidden = $dst.find('input[type="hidden"]');
             const base_id = $dst.attr('id') || randomizeName(base);
-            $.each(values, function(name, value) {
+            $.each(values, (name, value) => {
                 const type     = name.replace('[]', '');
                 const selector = `[name="${type}"]`;
                 const input_id = `${base_id}-${type}`;
@@ -1662,12 +1660,12 @@ appSetup(MODULE, function() {
                     // Blow away any matching hidden inputs and re-create.
                     $hidden.filter(selector + `, [name="${type}[]"]`).remove();
                     const attr = { name: `${type}[]` };
-                    compact(arrayWrap(value)).forEach(function(v, i) {
+                    compact(arrayWrap(value)).forEach((v, i) => {
                         attr.id = `${input_id}-${i}`;
                         addHiddenInputTo($dst, v, attr);
                     });
                 } else {
-                    let $input = $hidden.filter(selector);
+                    const $input = $hidden.filter(selector);
                     if (isPresent($input)) {
                         if (value) {
                             $input.val(value);

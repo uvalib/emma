@@ -3,19 +3,19 @@
 
 import { AppDebug }                     from '../application/debug';
 import { appSetup }                     from '../application/setup'
-import { arrayWrap }                    from '../shared/arrays'
-import { Emma }                         from '../shared/assets'
-import { BaseClass }                    from '../shared/base-class'
-import { rgbColor, rgbColorInverse }    from '../shared/color'
-import { selector }                     from '../shared/css'
-import { DB }                           from '../shared/database'
-import { handleClickAndKeypress }       from '../shared/events'
-import { compact }                      from '../shared/objects'
-import { CallbackQueue }                from '../shared/queue'
-import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random'
-import { SessionState, removeByPrefix } from '../shared/session-state'
-import { NNBS }                         from '../shared/unicode'
-import { makeUrl, urlParameters }       from '../shared/url'
+import { arrayWrap }                    from '../shared/arrays';
+import { Emma }                         from '../shared/assets';
+import { BaseClass }                    from '../shared/base-class';
+import { rgbColor, rgbColorInverse }    from '../shared/color';
+import { selector, toggleHidden }       from '../shared/css';
+import { DB }                           from '../shared/database';
+import { handleClickAndKeypress }       from '../shared/events';
+import { compact }                      from '../shared/objects';
+import { CallbackQueue }                from '../shared/queue';
+import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random';
+import { SessionState, removeByPrefix } from '../shared/session-state';
+import { NNBS }                         from '../shared/unicode';
+import { makeUrl, urlParameters }       from '../shared/url';
 import {
     isDefined,
     isMissing,
@@ -59,7 +59,7 @@ export function cloneTitle(item, title) {
     $title.attr('data-mode', 'btn');
     $title.attr('role',      'button');
     $title.attr('tabindex',  0);
-    $title.addClass('hidden disabled');
+    toggleHidden($title, true).toggleClass('disabled', true);
 
     return title_id;
 }
@@ -359,8 +359,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         $titles.filter('[data-mode="txt"]').each(function() {
             const $text   = $(this);
             const $button = $text.siblings('.title'); //.not($text);
-            $text.addClass('hidden disabled');
-            $button.removeClass('hidden disabled');
+            toggleHidden($text,   true ).toggleClass('disabled', true);
+            toggleHidden($button, false).toggleClass('disabled', false);
         });
     }
 
@@ -372,8 +372,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         $titles.filter('[data-mode="btn"]').each(function() {
             const $button = $(this);
             const $text   = $button.siblings('.title'); //.not($button);
-            $button.addClass('hidden disabled');
-            $text.removeClass('hidden disabled');
+            toggleHidden($button, true ).toggleClass('disabled', true);
+            toggleHidden($text,   false).toggleClass('disabled', false);
         });
     }
 
@@ -1509,7 +1509,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
          */
         activate(arg) {
             buttonTitles();
-            $result_items.children().not('.disabled').removeClass('hidden');
+            toggleHidden($result_items.children().not('.disabled'), false);
             $result_items.removeClass('open');
             super.activate(arg);
         }
@@ -1519,7 +1519,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
          */
         deactivate() {
             textTitles();
-            $result_items.children().not('.disabled').removeClass('hidden');
+            toggleHidden($result_items.children().not('.disabled'), false);
             $result_items.removeClass('open');
             super.deactivate();
         }

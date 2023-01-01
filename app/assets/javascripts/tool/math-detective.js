@@ -8,11 +8,11 @@
 
 import { AppDebug }                       from '../application/debug';
 import { Api }                            from '../shared/api'
-import { selector }                       from '../shared/css'
-import { isDefined, isMissing, isPresent} from '../shared/definitions'
-import { HTTP }                           from '../shared/http'
-import { encodeImageOrUrl }               from '../shared/image'
-import { SECONDS }                        from '../shared/time'
+import { selector, toggleHidden }         from '../shared/css';
+import { isDefined, isMissing, isPresent} from '../shared/definitions';
+import { HTTP }                           from '../shared/http';
+import { encodeImageOrUrl }               from '../shared/image';
+import { SECONDS }                        from '../shared/time';
 import {
     handleClickAndKeypress,
     handleEvent,
@@ -83,7 +83,6 @@ function endpoint(path, proxy) {
  */
 export function setupFor(root) {
 
-    const HIDDEN_MARKER      = 'hidden';
     const COPY_NOTE_CLASS    = 'copy-note';
     const COPY_NOTE_SELECTOR = selector(COPY_NOTE_CLASS);
 
@@ -165,7 +164,7 @@ export function setupFor(root) {
             } else {
                 console.warn(`${func}:`, (message || 'unknown error'));
             }
-            $clip_prompt.addClass(HIDDEN_MARKER);
+            toggleHidden($clip_prompt, true);
         });
 
         function check() {
@@ -258,7 +257,8 @@ export function setupFor(root) {
     function showClipboardNote(note, caller) {
         if ($clip_note) {
             if (note) {
-                $clip_note.text(note).removeClass(HIDDEN_MARKER);
+                $clip_note.text(note);
+                toggleHidden($clip_note, false);
             } else {
                 resetClipboardNote();
             }
@@ -270,7 +270,8 @@ export function setupFor(root) {
      */
     function resetClipboardNote() {
         if ($clip_note) {
-            $clip_note.text('').addClass(HIDDEN_MARKER);
+            $clip_note.text('');
+            toggleHidden($clip_note, true);
         }
     }
 
@@ -372,12 +373,15 @@ export function setupFor(root) {
      * @param {boolean} no_equations?
      */
     function showError(message, no_equations) {
-        const $message = $error.find('.error-message').addClass(HIDDEN_MARKER);
-        const $no_eqs  = $error.find('.no-equations').addClass(HIDDEN_MARKER);
+        const $message      = $error.find('.error-message');
+        const $no_equations = $error.find('.no-equations');
+        toggleHidden($message,      true);
+        toggleHidden($no_equations, true);
         if (message) {
-            $message.text(message).removeClass(HIDDEN_MARKER);
+            $message.text(message);
+            toggleHidden($message,      false);
         } else if (no_equations) {
-            $no_eqs.removeClass(HIDDEN_MARKER);
+            toggleHidden($no_equations, false);
         }
         showContainer($error);
     }
@@ -401,8 +405,7 @@ export function setupFor(root) {
      * @param {string}   [selector]
      */
     function showContainer(container, output, selector = '.output') {
-        const $container = $(container);
-        $container.removeClass(HIDDEN_MARKER);
+        const $container = toggleHidden(container, false);
         if (output) {
             const $output = $container.find(selector);
             $output.text(output);
@@ -418,7 +421,7 @@ export function setupFor(root) {
      */
     function hideContainers(container) {
         const $target = container ? $(container) : $containers;
-        $target.addClass(HIDDEN_MARKER);
+        toggleHidden($target, true);
     }
 
     /**
@@ -459,7 +462,8 @@ export function setupFor(root) {
         const $icon = $(icon);
         let $note   = $icon.siblings(COPY_NOTE_SELECTOR);
         if (isMissing($note)) {
-            $note = $(`<span class="${COPY_NOTE_CLASS} ${HIDDEN_MARKER}">`);
+            $note = $('<span>').addClass(COPY_NOTE_CLASS);
+            toggleHidden($note, true);
             $note.insertBefore($icon);
         }
         return $note;
@@ -478,8 +482,8 @@ export function setupFor(root) {
         let $note  = $btn.siblings(COPY_NOTE_SELECTOR);
         const text = $btn.parents('.container').first().find('.output').text();
         navigator.clipboard.writeText(text).then(
-            () => $note.text('(copied)').removeClass(HIDDEN_MARKER),
-            () => $note.text('(failed)').removeClass(HIDDEN_MARKER)
+            () => toggleHidden($note.text('(copied)'), false),
+            () => toggleHidden($note.text('(failed)'), false),
         );
         return true;
     }
@@ -490,8 +494,7 @@ export function setupFor(root) {
      */
     function resetCopyNotes() {
         const $notes = $copy_icons.siblings(COPY_NOTE_SELECTOR);
-        $notes.addClass(HIDDEN_MARKER);
-        $notes.text('');
+        toggleHidden($notes, true).text('');
     }
 }
 

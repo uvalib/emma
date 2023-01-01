@@ -1,12 +1,12 @@
 // app/assets/javascripts/feature/images.js
 
 
-import { AppDebug }     from '../application/debug'
-import { appSetup }     from '../application/setup'
-import { Emma }         from '../shared/assets'
-import { selector }     from '../shared/css'
-import { isMissing }    from '../shared/definitions'
-import { secondsSince } from '../shared/time'
+import { AppDebug }                       from '../application/debug';
+import { appSetup }                       from '../application/setup';
+import { Emma }                           from '../shared/assets';
+import { HIDDEN, selector, toggleHidden } from '../shared/css';
+import { isMissing }                      from '../shared/definitions';
+import { secondsSince }                   from '../shared/time';
 
 
 const MODULE = 'Images';
@@ -21,7 +21,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $placeholders = $('*:not(.complete) > .placeholder:not(.hidden)');
+    const $placeholders = $(`*:not(.complete) > .placeholder:not(${HIDDEN})`);
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return }
@@ -117,8 +117,8 @@ appSetup(MODULE, function() {
             // ignore hidden images).
             const $container = $img.parent();
             if ($img.is(PLACEHOLDER)) {
+                toggleHidden($img, true);
                 $img.attr('alt', 'Downloading...'); // TODO: I18n
-                $img.addClass('hidden');
             } else {
                 $container.empty();
             }

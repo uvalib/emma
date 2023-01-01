@@ -43,7 +43,11 @@ export function toggleClass(target, cls, setting) {
 export function toggleHidden(target, hide) {
     const $target = $(target);
     $target.toggleClass(HIDDEN_MARKER, hide);
-    $target.attr('aria-hidden', (isDefined(hide) ? hide : isHidden($target)));
+    if (isDefined(hide) ? hide : $target.is(HIDDEN)) {
+        $target.attr('aria-hidden', true);
+    } else {
+        $target.removeAttr('aria-hidden');
+    }
     return $target;
 }
 

@@ -1,17 +1,22 @@
 // app/assets/javascripts/feature/download.js
 
 
-import { AppDebug }               from '../application/debug'
-import { appSetup }               from '../application/setup'
-import { Emma }                   from '../shared/assets'
-import { cssClass, selector }     from '../shared/css'
-import { isMissing, isPresent }   from '../shared/definitions'
-import { create, scrollIntoView } from '../shared/html'
-import { compact, deepFreeze }    from '../shared/objects'
-import { randomizeName }          from '../shared/random'
-import { SearchInProgress }       from '../shared/search-in-progress'
-import { SECOND, secondsSince }   from '../shared/time'
-import { urlParameters }          from '../shared/url'
+import { AppDebug }               from '../application/debug';
+import { appSetup }               from '../application/setup';
+import { Emma }                   from '../shared/assets';
+import { isMissing, isPresent }   from '../shared/definitions';
+import { create, scrollIntoView } from '../shared/html';
+import { compact, deepFreeze }    from '../shared/objects';
+import { randomizeName }          from '../shared/random';
+import { SearchInProgress }       from '../shared/search-in-progress';
+import { SECOND, secondsSince }   from '../shared/time';
+import { urlParameters }          from '../shared/url';
+import {
+    cssClass,
+    HIDDEN,
+    selector,
+    toggleHidden,
+} from '../shared/css';
 import {
     handleClickAndKeypress,
     handleEvent
@@ -328,7 +333,7 @@ appSetup(MODULE, function() {
             manageDownloadState($link);
         } else if (isPresent($panel)) {
             hideFailureMessage($link);
-            $panel.removeClass('hidden');
+            toggleHidden($panel, false);
             scrollIntoView($panel);
         } else {
             hideFailureMessage($link);
@@ -367,7 +372,7 @@ appSetup(MODULE, function() {
                 members.push(this.value);
                 this.checked = false; // Reset for later iteration.
             });
-            $panel.addClass('hidden');
+            toggleHidden($panel, true);
             if (setLinkMember($link, members)) {
                 manageDownloadState($link);
             } else {
@@ -817,8 +822,8 @@ appSetup(MODULE, function() {
     function showProgressIndicator($link) {
         //_debug('showProgressIndicator: $link =', $link);
         const $indicator = $link.siblings(PROGRESS);
-        if ($indicator.hasClass('hidden')) {
-            $indicator.removeClass('hidden').on('click', cancelRequest);
+        if ($indicator.is(HIDDEN)) {
+            toggleHidden($indicator, false).on('click', cancelRequest);
         }
     }
 
@@ -830,7 +835,7 @@ appSetup(MODULE, function() {
     function hideProgressIndicator($link) {
         //_debug('hideProgressIndicator: $link =', $link);
         const $indicator = $link.siblings(PROGRESS);
-        $indicator.addClass('hidden').off('click', cancelRequest);
+        toggleHidden($indicator, true).off('click', cancelRequest);
     }
 
     // ========================================================================
@@ -861,7 +866,7 @@ appSetup(MODULE, function() {
         const $failure = $link.siblings(FAILURE);
         $failure.text(message);
         $failure.attr('title', message);
-        $failure.toggleClass('hidden', false);
+        toggleHidden($failure, false);
     }
 
     /**
@@ -872,7 +877,7 @@ appSetup(MODULE, function() {
     function hideFailureMessage($link) {
         //_debug('hideFailureMessage: $link =', $link);
         const $failure = $link.siblings(FAILURE);
-        $failure.toggleClass('hidden', true);
+        toggleHidden($failure, true);
     }
 
     // ========================================================================
@@ -900,7 +905,8 @@ appSetup(MODULE, function() {
         }
         $link.addClass('disabled').attr('tabindex', -1);
         const $button = $link.siblings(BUTTON);
-        $button.attr('href', url).removeClass('hidden');
+        $button.attr('href', url);
+        toggleHidden($button, false);
     }
 
     /**
@@ -918,7 +924,7 @@ appSetup(MODULE, function() {
         $link.removeData('path');
         $link.removeClass('disabled').removeAttr('tabindex');
         const $button = $link.siblings(BUTTON);
-        $button.addClass('hidden');
+        toggleHidden($button, true);
     }
 
     // ========================================================================
