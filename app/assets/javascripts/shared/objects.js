@@ -145,34 +145,57 @@ export function dupObject(item, shallow) {
  * Create an Object from array of key-value pairs, or from an array of keys
  * and a mapper function which returns a value for the given key.
  *
+ * If *src* is an object or an array of key-value pairs, *map_fn* is optional.
+ * If *pair_out* is set to *false*, *map_fn* is assumed to emit a value only;
+ * otherwise *map_fn* is assumed to return a key-value pair.
+ *
+ * If *src* is an array of single values, *map_fn* is required.  If *pair_out*
+ * is set to *true*, *map_fn* is assumed to return a key-value pair; otherwise
+ * *map_fn* is assume to emit a value only.
+ *
  * Invalid pairs elements are silently discarded.
  *
- * @param {Array}            array
- * @param {function(string)} [mapper]
+ * @param {string[]|[string,*][]|object}        src
+ * @param {function(string)|function(string,*)} [map_fn]
+ * @param {boolean}                             [pair_out]
  *
  * @returns {object}
- *
- * @overload toObject(array, mapper)
- *  @param {string[]}         array
- *  @param {function(string)} mapper
- *  @returns {object}
- *
- * @overload toObject(array)
- *  @param {[string,*][]}     array
- *  @returns {object}
  */
-export function toObject(array, mapper) {
-    let obj, prs;
-    if (Array.isArray(array)) {
-        prs = mapper ? array.map(k => k && [k, mapper(k)]) : array;
-        prs = prs.filter(v => Array.isArray(v) && (v.length === 2));
-        obj = Object.fromEntries(prs);
-    } else if (typeof array === 'object') {
-        obj = array;
+export function toObject(src, map_fn, pair_out) {
+    const func   = 'toObject';
+    const array  = Array.isArray(src);
+    const object = !array && (typeof src === 'object');
+    const mapper = (typeof map_fn === 'function') ? map_fn : undefined;
+    const arity  = mapper?.length || -1;
+    let result;
+    if (!array && !object) {
+        console.warn(`${func}: not an array or object:`, src);
+    } else if (mapper && (arity < 1)) {
+        console.error(`${func}: mapper must take 1 or 2 args:`, mapper);
     } else {
-        console.warn('toObject: not an array or object:', array);
+        const pair = kv => Array.isArray(kv) && (kv.length === 2) && !!kv[0];
+        const in1  = (arity === 1);
+        const in2  = (arity >=  2);
+        const out1 = (pair_out === false);
+        const out2 = (pair_out === true);
+        let fn     = undefined;
+        if (object || pair(src[0])) {
+            fn ||= in2  &&  out1 && (([k,v]) => [k, mapper(k,v)]);
+            fn ||= in1  && !out2 && (([k,_]) => [k, mapper(k)]);
+            fn ||= in2           && (([k,v]) => mapper(k,v));
+            fn ||= in1           && (([k,_]) => mapper(k));
+            fn ||=                  (([k,v]) => [k, v]);
+        } else {
+            fn ||= out2 && mapper;
+            fn ||= in2  && ((k,idx) => [idx, mapper(k,idx)]);
+            fn ||= in1  && ((k)     => [k,   mapper(k)]);
+            fn ||=         ((k)     => [k,   k]);
+        }
+        result = object ? Object.entries(src) : src;
+        result = result.map(fn).filter(pair);
+        result = Object.fromEntries(result);
     }
-    return obj || {};
+    return result || {};
 }
 
 // ============================================================================

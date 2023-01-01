@@ -118,9 +118,7 @@ export class LookupRequest extends ChannelRequest {
      * @readonly
      * @type {LookupRequestPayload}
      */
-    static TEMPLATE = deepFreeze(
-        toObject(Object.keys(this.REQUEST_TYPE), _key => [])
-    );
+    static TEMPLATE = deepFreeze(toObject(this.REQUEST_TYPE, _key => []));
 
     /**
      * Selective URL encoding.

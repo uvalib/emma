@@ -2989,8 +2989,7 @@ appSetup(MODULE, function() {
      */
     function statusData(data) {
         if (isEmpty(data)) { return {} }
-        const pairs = STATUS_TYPES.map(type => [type, presence(data[type])]);
-        return compact(Object.fromEntries(pairs));
+        return compact(toObject(STATUS_TYPE_VALUES, t => presence(data[t])));
     }
 
     /**
@@ -5399,8 +5398,7 @@ appSetup(MODULE, function() {
      * @param {string} [message]
      */
     function _error(caller, message) {
-        const tag = `${MODULE}: ${caller}`
-        const msg = isDefined(message) ? `${tag}: ${message}` : tag;
+        const msg = compact([MODULE, caller, message]).join(': ');
         console.error(msg);
         _debugging() && flashError(msg);
     }

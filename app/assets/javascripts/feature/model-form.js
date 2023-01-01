@@ -45,6 +45,7 @@ import {
 } from '../shared/flash'
 import {
     compact,
+    deepDup,
     deepFreeze,
     dup,
     fromJSON,
@@ -3375,10 +3376,9 @@ appSetup(MODULE, function() {
      */
     function setOriginalValues(form, value) {
         const $if = !value && inputFields(form).filter('.valid');
-        const dat = toObject(LookupModal.DATA_COLUMNS, f => {
-            let v = value ? value[f] : $if.filter(`[data-field="${f}"]`).val();
-            return v && dup(v, true);
-        });
+        const dat = toObject(LookupModal.DATA_COLUMNS, f => deepDup(
+            value ? value[f] : $if.filter(`[data-field="${f}"]`).val()
+        ));
         lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA, dat);
     }
 

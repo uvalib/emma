@@ -1,16 +1,16 @@
 // app/assets/javascripts/controllers/manifest-remit.js
 
 
-import { AppDebug }                            from '../application/debug'
-import { appSetup }                            from '../application/setup'
-import { removeFrom }                          from '../shared/arrays'
-import { BaseClass }                           from '../shared/base-class'
-import { selector, toggleHidden }              from '../shared/css'
-import { handleClickAndKeypress, handleEvent } from '../shared/events'
-import { flashError, flashMessage }            from '../shared/flash'
-import { selfOrDescendents, selfOrParent }     from '../shared/html'
-import { fromJSON }                            from '../shared/objects'
-import { asString }                            from '../shared/strings'
+import { AppDebug }                            from '../application/debug';
+import { appSetup }                            from '../application/setup';
+import { removeFrom }                          from '../shared/arrays';
+import { BaseClass }                           from '../shared/base-class';
+import { selector, toggleHidden }              from '../shared/css';
+import { handleClickAndKeypress, handleEvent } from '../shared/events';
+import { flashError, flashMessage }            from '../shared/flash';
+import { selfOrDescendents, selfOrParent }     from '../shared/html';
+import { compact, fromJSON, toObject }         from '../shared/objects';
+import { asString }                            from '../shared/strings';
 import {
     isDefined,
     isEmpty,
@@ -302,10 +302,8 @@ appSetup(MODULE, function() {
      *
      * @type {Object.<string,function(enable?: boolean)>}
      */
-    const SUBMISSION_ENABLE = Object.fromEntries(
-        Object.keys(SUBMISSION_BUTTONS).map(
-            name => [name, (v => enableSubmissionButton(name, v))]
-        )
+    const SUBMISSION_ENABLE = toObject(SUBMISSION_BUTTONS,
+        name => (v => enableSubmissionButton(name, v))
     );
 
     // ========================================================================
@@ -1546,8 +1544,7 @@ appSetup(MODULE, function() {
      * @param {string} [message]
      */
     function _error(caller, message) {
-        const tag = `${MODULE}: ${caller}`
-        const msg = isDefined(message) ? `${tag}: ${message}` : tag;
+        const msg = compact([MODULE, caller, message]).join(': ');
         console.error(msg);
         _debugging() && flashError(msg);
     }

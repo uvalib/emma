@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/channel-request.js
 
 
-import { AppDebug }              from '../application/debug';
-import { arrayWrap }             from './arrays'
-import { BaseClass }             from './base-class'
-import { isPresent, notDefined } from './definitions'
-import { deepFreeze, fromJSON }  from './objects'
+import { AppDebug }                       from '../application/debug';
+import { arrayWrap }                      from './arrays'
+import { BaseClass }                      from './base-class';
+import { isPresent, notDefined }          from './definitions';
+import { deepFreeze, fromJSON, toObject } from './objects';
 
 
 const MODULE = 'ChannelRequest';
@@ -130,9 +130,7 @@ export class ChannelRequest extends BaseClass {
     parse(v, ..._args) {
         this._debug('parse', v);
         const items = (typeof v === 'string') ? v.split("\n") : arrayWrap(v);
-        return Object.fromEntries(
-            $.map(items, (item, idx) => [[idx, this.extractParts(item)]])
-        );
+        return toObject(items, (item, _idx) => this.extractParts(item));
     }
 
     /**
