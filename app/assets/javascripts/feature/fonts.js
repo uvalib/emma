@@ -3,9 +3,12 @@
 // Load Typekit fonts, adding the script if it is not already present.
 
 
-import { presence }    from '../shared/definitions'
-import { handleEvent } from '../shared/events'
+import { AppDebug }    from '../application/debug';
+import { presence }    from '../shared/definitions';
+import { handleEvent } from '../shared/events';
 
+
+AppDebug.file('feature/fonts');
 
 const TYPEKIT_HOST = 'use.typekit.net';
 const TYPEKIT_URL  = `https://${TYPEKIT_HOST}/tgy5tlj.js`;

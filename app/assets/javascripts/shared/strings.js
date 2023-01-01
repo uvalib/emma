@@ -3,9 +3,12 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { objectEntries } from './objects'
-import { asDateTime }    from './time'
+import { AppDebug }      from '../application/debug';
+import { objectEntries } from './objects';
+import { asDateTime }    from './time';
 
+
+AppDebug.file('shared/strings');
 
 // ============================================================================
 // Functions

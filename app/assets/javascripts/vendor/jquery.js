@@ -6,8 +6,11 @@
 //  sequence so that 'jQuery' and '$' are available to all subsequent modules.
 
 
-import jquery from 'jquery'
+import { AppDebug } from '../application/debug';
+import jquery       from 'jquery';
 
+
+AppDebug.file('vendor/jquery');
 
 window.jQuery = jquery;
 window.$      = jquery;

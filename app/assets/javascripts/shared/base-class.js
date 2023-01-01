@@ -3,8 +3,13 @@
 // noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug } from '../application/debug'
+import { AppDebug } from '../application/debug';
 
+
+const MODULE = 'BaseClass';
+const DEBUG  = false;
+
+AppDebug.file('shared/base-class', MODULE, DEBUG);
 
 // ============================================================================
 // Class BaseClass
@@ -28,7 +33,7 @@ export class BaseClass {
      *
      * @type {boolean}
      */
-    static DEBUGGING = false;
+    static DEBUGGING = DEBUG;
 
     // ========================================================================
     // Constructor

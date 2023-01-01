@@ -1,9 +1,15 @@
 // app/assets/javascripts/shared/lookup-response.js
 
 
-import { ChannelResponse } from './channel-response'
-import { deepFreeze }      from './objects'
+import { AppDebug }        from '../application/debug';
+import { ChannelResponse } from './channel-response';
+import { deepFreeze }      from './objects';
 
+
+const MODULE = 'LookupResponse';
+const DEBUG  = true;
+
+AppDebug.file('shared/lookup-response', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -51,6 +57,7 @@ import { deepFreeze }      from './objects'
 export class LookupResponse extends ChannelResponse {
 
     static CLASS_NAME = 'LookupResponse';
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants

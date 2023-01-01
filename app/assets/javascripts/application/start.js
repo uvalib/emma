@@ -5,9 +5,12 @@
 // is ready.
 
 
-import { pageSetup, pageTeardown } from './setup'
-import '../vendor/turbolinks'
+import { AppDebug }                from './debug';
+import { pageSetup, pageTeardown } from './setup';
+import '../vendor/turbolinks';
 
+
+AppDebug.file('application/start');
 
 document.addEventListener('turbolinks:load',          pageSetup);
 document.addEventListener('turbolinks:before-render', pageTeardown);

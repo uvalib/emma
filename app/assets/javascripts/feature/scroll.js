@@ -1,17 +1,19 @@
 // app/assets/javascripts/feature/scroll.js
 
 
-import { AppDebug }                            from '../application/debug'
-import { appSetup }                            from '../application/setup'
-import { Emma }                                from '../shared/assets'
-import { selector, toggleHidden }              from '../shared/css'
-import { isMissing }                           from '../shared/definitions'
-import { handleClickAndKeypress, windowEvent } from '../shared/events'
-import { deepFreeze }                          from '../shared/objects'
+import { AppDebug }                            from '../application/debug';
+import { appSetup }                            from '../application/setup';
+import { Emma }                                from '../shared/assets';
+import { selector, toggleHidden }              from '../shared/css';
+import { isMissing }                           from '../shared/definitions';
+import { handleClickAndKeypress, windowEvent } from '../shared/events';
+import { deepFreeze }                          from '../shared/objects';
 
 
 const MODULE = 'Scroll';
 const DEBUG  = true;
+
+AppDebug.file('feature/scroll', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -232,7 +234,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

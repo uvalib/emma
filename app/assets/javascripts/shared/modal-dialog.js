@@ -3,9 +3,15 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { selector }  from './css'
-import { ModalBase } from './modal-base'
+import { AppDebug }  from '../application/debug';
+import { selector }  from './css';
+import { ModalBase } from './modal-base';
 
+
+const MODULE = 'ModalDialog';
+const DEBUG  = true;
+
+AppDebug.file('shared/modal-dialog', MODULE, DEBUG);
 
 // ============================================================================
 // Class ModalDialog
@@ -18,7 +24,7 @@ import { ModalBase } from './modal-base'
 export class ModalDialog extends ModalBase {
 
     static CLASS_NAME = 'ModalDialog';
-    static DEBUGGING  = true;
+    static DEBUGGING  = DEBUG;
 
     static MODAL_CLASS = 'modal-popup';
     static MODAL       = selector(this.MODAL_CLASS);

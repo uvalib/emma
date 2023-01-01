@@ -5,10 +5,15 @@
 // in place.
 
 
-import { pageLoadType } from '../shared/browser'
+import { AppDebug }      from '../application/debug';
+import { pageLoadType }  from '../shared/browser';
+import { documentEvent } from '../shared/events';
 
 
-const DEBUG  = true;
+const DEBUG = true;
+
+AppDebug.file('vendor/turbolinks', DEBUG);
+
 const EVENTS = [
     'click',
     'before-visit',
@@ -27,7 +32,7 @@ if (DEBUG) {
         const load = pageLoadType();
         console.warn(`${tag} [${load}]`, window.location);
     };
-    EVENTS.forEach(ev => document.addEventListener(`turbolinks:${ev}`, show));
+    EVENTS.forEach(ev => documentEvent(`turbolinks:${ev}`, show));
 }
 
 // noinspection JSUnresolvedFunction

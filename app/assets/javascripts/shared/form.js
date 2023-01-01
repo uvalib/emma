@@ -1,8 +1,11 @@
 // app/assets/javascripts/shared/form.js
 
 
+import { AppDebug }  from '../application/debug';
 import { isMissing } from './definitions'
 
+
+AppDebug.file('shared/form');
 
 // ============================================================================
 // Functions

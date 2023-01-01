@@ -1,11 +1,14 @@
 // app/assets/javascripts/shared/accessibility.js
 
 
-import { isDefined, isPresent, notDefined }    from './definitions'
-import { handleClickAndKeypress, handleEvent } from './events'
-import { attributeSelector }                   from './html'
-import { deepFreeze }                          from './objects'
+import { AppDebug }                            from '../application/debug';
+import { isDefined, isPresent, notDefined }    from './definitions';
+import { handleClickAndKeypress, handleEvent } from './events';
+import { attributeSelector }                   from './html';
+import { deepFreeze }                          from './objects';
 
+
+AppDebug.file('shared/accessibility');
 
 // ============================================================================
 // Constants

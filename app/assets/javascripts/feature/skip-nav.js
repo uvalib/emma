@@ -1,15 +1,17 @@
 // app/assets/javascripts/feature/skip-nav.js
 
 
-import { AppDebug }             from '../application/debug'
-import { appSetup }             from '../application/setup'
-import { selector }             from '../shared/css'
-import { isMissing, isPresent } from '../shared/definitions'
-import { selfOrParent }         from '../shared/html'
+import { AppDebug }             from '../application/debug';
+import { appSetup }             from '../application/setup';
+import { selector }             from '../shared/css';
+import { isMissing, isPresent } from '../shared/definitions';
+import { selfOrParent }         from '../shared/html';
 
 
 const MODULE = 'SkipNav';
 const DEBUG  = true;
+
+AppDebug.file('feature/skip-nav', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -70,7 +72,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

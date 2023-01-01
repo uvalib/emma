@@ -6,6 +6,7 @@
 // @see https://api-docs.dev.mathdetective.ai Documentation
 
 
+import { AppDebug }                       from '../application/debug';
 import { Api }                            from '../shared/api'
 import { selector }                       from '../shared/css'
 import { isDefined, isMissing, isPresent} from '../shared/definitions'
@@ -16,9 +17,14 @@ import {
     handleClickAndKeypress,
     handleEvent,
     handleHoverAndFocus,
-    isEvent
-} from '../shared/events'
+    isEvent,
+} from '../shared/events';
 
+
+const MODULE = 'MathDetectiveApi';
+const DEBUG  = false;
+
+AppDebug.file('tool/math-detective', MODULE, DEBUG);
 
 // ============================================================================
 // Constants
@@ -496,6 +502,7 @@ export function setupFor(root) {
 export class MathDetectiveApi extends Api {
 
     static CLASS_NAME = 'MathDetectiveApi';
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Type definitions

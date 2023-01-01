@@ -5,34 +5,40 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { appTeardown }                     from '../application/setup'
-import { LookupChannel }                   from '../channels/lookup-channel'
-import { arrayWrap }                       from './arrays'
-import { selector, toggleHidden }          from './css'
-import { turnOffAutocomplete }             from './form'
-import { HTML_BREAK }                      from './html'
-import { renderJson }                      from './json'
-import { LookupRequest }                   from './lookup-request'
-import { ModalDialog }                     from './modal-dialog'
-import { ModalHideHooks, ModalShowHooks }  from './modal_hooks'
-import { deepFreeze, dupObject, toObject } from './objects'
-import { randomizeName }                   from './random'
-import { camelCase }                       from './strings'
+import { AppDebug }                        from '../application/debug';
+import { appTeardown }                     from '../application/setup';
+import { LookupChannel }                   from '../channels/lookup-channel';
+import { arrayWrap }                       from './arrays';
+import { selector, toggleHidden }          from './css';
+import { turnOffAutocomplete }             from './form';
+import { HTML_BREAK }                      from './html';
+import { renderJson }                      from './json';
+import { LookupRequest }                   from './lookup-request';
+import { ModalDialog }                     from './modal-dialog';
+import { ModalHideHooks, ModalShowHooks }  from './modal_hooks';
+import { deepFreeze, dupObject, toObject } from './objects';
+import { randomizeName }                   from './random';
+import { camelCase }                       from './strings';
 import {
     isDefined,
     isEmpty,
     isMissing,
     isPresent,
     presence,
-} from './definitions'
+} from './definitions';
 import {
     debounce,
     handleClickAndKeypress,
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-} from './events'
+} from './events';
 
+
+const MODULE = 'LookupModal';
+const DEBUG  = true;
+
+AppDebug.file('shared/lookup-modal', MODULE, DEBUG);
 
 // ============================================================================
 // Class LookupModal
@@ -41,7 +47,7 @@ import {
 export class LookupModal extends ModalDialog {
 
     static CLASS_NAME = 'LookupModal';
-    static DEBUGGING  = true;
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants - .data() names

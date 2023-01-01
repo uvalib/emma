@@ -15,13 +15,16 @@
 // noinspection JSFileReferences, ES6UnusedImports, LongLine
 
 
-import { deepFreeze } from '../javascripts/shared/objects'
+import { AppDebug }   from '../javascripts/application/debug';
+import { deepFreeze } from '../javascripts/shared/objects';
 import {
     decodeArray   as a$,
     decodeBoolean as b$,
     decodeObject  as o$,
-} from '../javascripts/shared/decode'
+} from '../javascripts/shared/decode';
 
+
+AppDebug.file('shared/assets.js.erb');
 
 // ============================================================================
 // Type definitions

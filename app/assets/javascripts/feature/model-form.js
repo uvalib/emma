@@ -23,20 +23,20 @@ import {
     selector,
     toggleClass,
     toggleHidden,
-} from '../shared/css'
+} from '../shared/css';
 import {
     isDefined,
     isEmpty,
     isMissing,
     isPresent,
     notDefined,
-} from '../shared/definitions'
+} from '../shared/definitions';
 import {
     debounce,
     handleClickAndKeypress,
     handleEvent,
     onPageExit,
-} from '../shared/events'
+} from '../shared/events';
 import {
     clearFlash,
     extractFlashMessage,
@@ -55,11 +55,13 @@ import {
     asDateTime,
     secondsSince,
     timeOf,
-} from '../shared/time'
+} from '../shared/time';
 
 
 const MODULE = 'ModelForm';
 const DEBUG  = true;
+
+AppDebug.file('feature/model-form', MODULE, DEBUG);
 
 // noinspection FunctionTooLongJS
 appSetup(MODULE, function() {
@@ -4759,7 +4761,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     /**

@@ -1,8 +1,14 @@
 // app/assets/javascripts/shared/callbacks.js
 
 
-import { BaseClass } from './base-class'
+import { AppDebug }  from '../application/debug';
+import { BaseClass } from './base-class';
 
+
+const MODULE = 'CallbackChain';
+const DEBUG  = false;
+
+AppDebug.file('shared/callbacks', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions

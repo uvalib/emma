@@ -3,8 +3,15 @@
 // Application-wide debugging control.
 
 
-import { isDefined, notDefined } from '../shared/definitions'
+// No imports
 
+
+/**
+ * Default setting for emitting console log output as each module file is read.
+ *
+ * @type {boolean}
+ */
+const FILE_DEBUG = true;
 
 // noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
 /**
@@ -50,23 +57,21 @@ export class AppDebug {
      * settings injected into <head> so that debugging is off by default when
      * deployed and on by default otherwise.
      *
-     * @param {BooleanValue} [active]
+     * @param {BooleanValue} [setting]
      */
-    constructor(active) {
-        if (notDefined(active)) {
+    constructor(setting) {
+        let active = setting;
+        if (typeof active === 'undefined') {
             // noinspection JSUnresolvedVariable
             const settings = window.ASSET_OVERRIDES?.OverrideScriptSettings;
-            const debug    = settings?.APP_DEBUG;
-            if (notDefined(debug)) {
+            active = settings?.APP_DEBUG;
+            if (typeof active === 'undefined') {
                 const deployed = settings ? settings.DEPLOYED : true;
                 const in_test  = (settings?.RAILS_ENV === 'test');
-                this.active = !deployed && !in_test;
-            } else {
-                this.active = debug;
+                active = !deployed && !in_test;
             }
-        } else {
-            this.active = active;
         }
+        this.active = active;
     }
 
     // ========================================================================
@@ -151,7 +156,7 @@ export class AppDebug {
      * @param {BooleanValue} setting
      */
     static set active(setting) {
-        const unset = (setting === null) || notDefined(setting);
+        const unset = (typeof setting === 'undefined') || (setting === null);
         const value = unset ? false : setting;
         this._set(this.GLOBAL_STORE_KEY, value);
     }
@@ -197,7 +202,7 @@ export class AppDebug {
      */
     static set(mod, active) {
         const key = this._keyFor(mod);
-        const val = notDefined(active) || active;
+        const val = (typeof active === 'undefined') || active;
         return this._set(key, val);
     }
 
@@ -249,7 +254,7 @@ export class AppDebug {
     static isActive(mod) {
         if (!this.active) { return false }
         const active = this.get(mod);
-        if (isDefined(active)) { return active === 'true' }
+        if (typeof active !== 'undefined') { return active === 'true' }
     }
 
     /**
@@ -263,7 +268,11 @@ export class AppDebug {
      */
     static activeFor(mod, mod_default) {
         const active = this.isActive(mod);
-        return isDefined(active) ? active : (mod_default || false);
+        if (typeof active === 'undefined') {
+            return mod_default || false;
+        } else {
+            return active;
+        }
     }
 
     /**
@@ -289,16 +298,31 @@ export class AppDebug {
     static format(text, css, ...args) {
         let styles;
         if (typeof css === 'string') {
-            styles = css;
+            styles = css.split(/;+\s+/);
         } else if (Array.isArray(css)) {
-            styles = css.map(e => e.replace(/[;\s]+$/, '')).join('; ');
+            styles = css.map(v => v.replace(/[;\s]+$/, ''));
         } else if (typeof css === 'object') {
-            styles = css.map(([k,v]) => `${k}: ${v}`).join('; ');
+            styles = Object.entries(css).map(([k,v]) => `${k}: ${v}`);
         }
         if (styles) {
-            return [`%c ${text} `, styles, ...args];
+            return [`%c ${text} `, styles.join('; '), ...args];
         } else {
             return [text, ...args];
+        }
+    }
+
+    /**
+     * Console log output for indicating when a module file is read.
+     *
+     * @param {string} name
+     * @param {...*}   args
+     */
+    static file(name, ...args) {
+        const mod = 'FILE';
+        if (this.activeFor(mod, FILE_DEBUG)) {
+            const fmt = 'color: white; background: red; font-size: larger';
+            const tag = this.format(mod, fmt);
+            console.log(...tag, name, ...args);
         }
     }
 
@@ -331,6 +355,9 @@ export class AppDebug {
     activeFor(mod, def) { return this.constructor.activeFor(mod, def) }
     resetAll()          { return this.constructor.resetAll() }
     format(...args)     { return this.constructor.format(...args) }
+    file(name, ...args) { return this.constructor.file(name, ...args) }
 }
 
 window.APP_DEBUG ||= new AppDebug();
+
+AppDebug.file('application/debug');

@@ -1,11 +1,17 @@
 // app/assets/javascripts/shared/channel-request.js
 
 
+import { AppDebug }              from '../application/debug';
 import { arrayWrap }             from './arrays'
 import { BaseClass }             from './base-class'
 import { isPresent, notDefined } from './definitions'
 import { deepFreeze, fromJSON }  from './objects'
 
+
+const MODULE = 'ChannelRequest';
+const DEBUG  = true;
+
+AppDebug.file('shared/channel-request', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -27,7 +33,7 @@ import { deepFreeze, fromJSON }  from './objects'
 export class ChannelRequest extends BaseClass {
 
     static CLASS_NAME = 'ChannelRequest';
-    static DEBUGGING  = true;
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants

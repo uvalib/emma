@@ -1,18 +1,22 @@
 // app/assets/javascripts/channels/lookup-channel.js
 
 
-import { CableChannel }   from '../shared/cable-channel'
-import { LookupRequest }  from '../shared/lookup-request'
-import { LookupResponse } from '../shared/lookup-response'
-import { hexRand }        from '../shared/random'
+import { AppDebug }       from '../application/debug';
+import { CableChannel }   from '../shared/cable-channel';
+import { LookupRequest }  from '../shared/lookup-request';
+import { LookupResponse } from '../shared/lookup-response';
+import { hexRand }        from '../shared/random';
 
 
 const CHANNEL = 'LookupChannel';
+const DEBUG   = true;
+
+AppDebug.file('channels/lookup-channel', CHANNEL, DEBUG);
 
 export class LookupChannel extends CableChannel {
 
     static CLASS_NAME     = CHANNEL;
-    static DEBUGGING      = true;
+    static DEBUGGING      = DEBUG;
 
     static CHANNEL_NAME   = CHANNEL;
     static STREAM_ID      = hexRand();

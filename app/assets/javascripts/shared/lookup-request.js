@@ -3,11 +3,17 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { arrayWrap }             from './arrays'
-import { ChannelRequest }        from './channel-request'
-import { isPresent, notDefined } from './definitions'
-import { deepFreeze, toObject }  from './objects'
+import { AppDebug }              from '../application/debug';
+import { arrayWrap }             from './arrays';
+import { ChannelRequest }        from './channel-request';
+import { isPresent, notDefined } from './definitions';
+import { deepFreeze, toObject }  from './objects';
 
+
+const MODULE = 'LookupRequest';
+const DEBUG  = true;
+
+AppDebug.file('shared/lookup-request', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -47,6 +53,7 @@ import { deepFreeze, toObject }  from './objects'
 export class LookupRequest extends ChannelRequest {
 
     static CLASS_NAME = 'LookupRequest';
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants

@@ -3,14 +3,17 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { arrayWrap }         from './arrays'
-import { Emma }              from './assets'
-import { BaseClass }         from './base-class'
-import { isEmpty }           from './definitions'
-import { htmlEncode }        from './html'
-import { compact, fromJSON } from './objects'
-import { asString }          from './strings'
+import { AppDebug }          from '../application/debug';
+import { arrayWrap }         from './arrays';
+import { Emma }              from './assets';
+import { BaseClass }         from './base-class';
+import { isEmpty }           from './definitions';
+import { htmlEncode }        from './html';
+import { compact, fromJSON } from './objects';
+import { asString }          from './strings';
 
+
+AppDebug.file('shared/field');
 
 // ============================================================================
 // Type definitions

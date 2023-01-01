@@ -3,10 +3,16 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { flatten }   from './arrays'
-import { BaseClass } from './base-class'
-import { isEmpty }   from './definitions'
+import { AppDebug }  from '../application/debug';
+import { flatten }   from './arrays';
+import { BaseClass } from './base-class';
+import { isEmpty }   from './definitions';
 
+
+const MODULE = 'Queue';
+const DEBUG  = false;
+
+AppDebug.file('shared/queue', MODULE, DEBUG);
 
 // ============================================================================
 // Class Queue
@@ -18,6 +24,7 @@ import { isEmpty }   from './definitions'
 export class Queue extends BaseClass {
 
     static CLASS_NAME = 'Queue';
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Fields

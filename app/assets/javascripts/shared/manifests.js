@@ -1,19 +1,21 @@
 // app/assets/javascripts/shared/manifests.js
 
 
-import { AppDebug }                   from '../application/debug'
-import { Api }                        from './api'
-import { Emma }                       from './assets'
-import { pageAction, pageController } from './controller'
-import { isDefined, isMissing }       from './definitions'
-import { flashError, flashMessage }   from './flash'
-import { selfOrParent }               from './html'
-import { compact }                    from './objects'
-import { camelCase, singularize }     from './strings'
+import { AppDebug }                   from '../application/debug';
+import { Api }                        from './api';
+import { Emma }                       from './assets';
+import { pageAction, pageController } from './controller';
+import { isDefined, isMissing }       from './definitions';
+import { flashError, flashMessage }   from './flash';
+import { selfOrParent }               from './html';
+import { compact }                    from './objects';
+import { camelCase, singularize }     from './strings';
 
 
 const MODULE = 'Manifest';
 const DEBUG  = true;
+
+AppDebug.file('shared/manifests', MODULE, DEBUG);
 
 // ============================================================================
 // Constants
@@ -379,7 +381,7 @@ function _debugging() {
  * @param {...*} args
  */
 function _debug(...args) {
-    _debugging() && console.log(...args);
+    _debugging() && console.log(`${MODULE}:`, ...args);
 }
 
 /**

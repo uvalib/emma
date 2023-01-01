@@ -1,15 +1,17 @@
 // app/assets/javascripts/feature/panel.js
 
 
-import { AppDebug }               from '../application/debug'
-import { appSetup }               from '../application/setup'
-import { Emma }                   from '../shared/assets'
-import { isMissing, isPresent }   from '../shared/definitions'
-import { handleClickAndKeypress } from '../shared/events'
+import { AppDebug }               from '../application/debug';
+import { appSetup }               from '../application/setup';
+import { Emma }                   from '../shared/assets';
+import { isMissing, isPresent }   from '../shared/definitions';
+import { handleClickAndKeypress } from '../shared/events';
 
 
 const MODULE = 'Panel';
 const DEBUG  = true;
+
+AppDebug.file('feature/panel', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -216,7 +218,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

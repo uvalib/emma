@@ -1,8 +1,11 @@
 // app/assets/javascripts/shared/color.js
 
 
-import { DEF_HEX_DIGITS, HEX_BASE, hexString } from './random'
+import { AppDebug }                            from '../application/debug';
+import { DEF_HEX_DIGITS, HEX_BASE, hexString } from './random';
 
+
+AppDebug.file('shared/color');
 
 // ============================================================================
 // Functions

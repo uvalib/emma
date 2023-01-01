@@ -3,10 +3,15 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { BaseClass }             from './base-class'
-import { isPresent, notDefined } from './definitions'
-import { fromJSON }              from './objects'
+import { AppDebug }              from '../application/debug';
+import { BaseClass }             from './base-class';
+import { isPresent, notDefined } from './definitions';
+import { fromJSON }              from './objects';
 
+
+const MODULE = 'SessionState';
+
+AppDebug.file('shared/session-state', MODULE);
 
 // ============================================================================
 // Functions

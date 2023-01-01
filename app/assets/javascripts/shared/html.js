@@ -3,9 +3,12 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { cssClass }  from './css'
-import { isDefined } from './definitions'
+import { AppDebug }  from '../application/debug';
+import { cssClass }  from './css';
+import { isDefined } from './definitions';
 
+
+AppDebug.file('shared/html');
 
 // ============================================================================
 // Type definitions

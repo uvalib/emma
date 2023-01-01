@@ -4,8 +4,13 @@
 // that the required initialization is in place to respond to 'turbolinks:load'
 
 
-import { appSetup } from '../application/setup'
-import select2      from 'select2'
+import { AppDebug } from '../application/debug';
+import { appSetup } from '../application/setup';
+import select2      from 'select2';
 
 
-appSetup('vendor/select2', () => select2($));
+const MODULE = 'vendor/select2';
+
+AppDebug.file(MODULE);
+
+appSetup(MODULE, () => select2($));

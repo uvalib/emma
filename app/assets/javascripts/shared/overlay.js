@@ -1,10 +1,16 @@
 // app/assets/javascripts/shared/overlay.js
 
 
-import { BaseClass } from './base-class'
-import { selector }  from './css'
-import { isMissing } from './definitions'
+import { AppDebug }  from '../application/debug';
+import { BaseClass } from './base-class';
+import { selector }  from './css';
+import { isMissing } from './definitions';
 
+
+const MODULE = 'Overlay';
+const DEBUG  = false;
+
+AppDebug.file('shared/overlay', MODULE, DEBUG);
 
 // ============================================================================
 // Class Overlay
@@ -13,6 +19,7 @@ import { isMissing } from './definitions'
 export class Overlay extends BaseClass {
 
     static CLASS_NAME = 'Overlay';
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants

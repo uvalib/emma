@@ -17,7 +17,7 @@ import {
     isMissing,
     isPresent,
     notDefined,
-} from '../shared/definitions'
+} from '../shared/definitions';
 import {
     MANIFEST_ATTR,
     attribute,
@@ -25,11 +25,13 @@ import {
     enableButton,
     initializeButtonSet,
     serverBulkSend as serverManifestSend,
-} from '../shared/manifests'
+} from '../shared/manifests';
 
 
 const MODULE = 'ManifestRemit';
 const DEBUG  = true;
+
+AppDebug.file('controllers/manifest-remit', MODULE, DEBUG);
 
 // noinspection SpellCheckingInspection, FunctionTooLongJS
 appSetup(MODULE, function() {

@@ -1,8 +1,10 @@
 // app/assets/javascripts/shared/http.js
 
 
-// No imports
+import { AppDebug } from '../application/debug';
 
+
+AppDebug.file('shared/http');
 
 // ============================================================================
 // Constants

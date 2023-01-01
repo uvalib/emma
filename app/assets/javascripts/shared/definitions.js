@@ -1,8 +1,10 @@
 // app/assets/javascripts/shared/definitions.js
 
 
-// No imports
+import { AppDebug } from '../application/debug';
 
+
+AppDebug.file('shared/definitions');
 
 // ============================================================================
 // Functions - Element values

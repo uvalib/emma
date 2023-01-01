@@ -1,21 +1,26 @@
 // app/assets/javascripts/shared/uploader.js
 
 
-import { toggleVisibility }                            from './accessibility'
-import { Emma }                                        from './assets'
-import { BaseClass }                                   from './base-class'
-import { pageAction }                                  from './controller'
-import { isHidden, selector, toggleHidden }            from './css'
-import { isDefined, isMissing, isPresent }             from './definitions'
-import { handleClickAndKeypress }                      from './events'
-import { extractFlashMessage }                         from './flash'
-import { ID_ATTRIBUTES, selfOrDescendents, uniqAttrs } from './html'
-import { percent }                                     from './math'
-import { compact, deepFreeze, fromJSON }               from './objects'
-import { camelCase }                                   from './strings'
-import { MINUTES, SECONDS }                            from './time'
-import { makeUrl }                                     from './url'
-import { Rails }                                       from '../vendor/rails'
+import { AppDebug }                         from '../application/debug';
+import { toggleVisibility }                 from './accessibility';
+import { Emma }                             from './assets';
+import { BaseClass }                        from './base-class';
+import { pageAction }                       from './controller';
+import { isHidden, selector, toggleHidden } from './css';
+import { isDefined, isMissing, isPresent }  from './definitions';
+import { handleClickAndKeypress }           from './events';
+import { extractFlashMessage }              from './flash';
+import { percent }                          from './math';
+import { compact, deepFreeze, fromJSON }    from './objects';
+import { camelCase }                        from './strings';
+import { MINUTES, SECONDS }                 from './time';
+import { makeUrl }                          from './url';
+import { Rails }                            from '../vendor/rails';
+import {
+    ID_ATTRIBUTES,
+    selfOrDescendents,
+    uniqAttrs,
+} from './html';
 import {
     Uppy,
     AwsS3,
@@ -32,8 +37,13 @@ import {
     ThumbnailGenerator,
     Url,
     XHRUpload,
-} from '../vendor/uppy'
+} from '../vendor/uppy';
 
+
+const MODULE = 'BaseUploader';
+const DEBUG  = true;
+
+AppDebug.file('shared/uploader', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -120,14 +130,6 @@ import {
 // ============================================================================
 // Constants
 // ============================================================================
-
-/**
- * Flag controlling Uppy console debug output.
- *
- * @readonly
- * @type {boolean|undefined}
- */
-const DEBUG = true;
 
 /**
  * Uppy plugin selection plus other optional settings.

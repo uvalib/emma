@@ -1,12 +1,17 @@
 // app/assets/javascripts/controllers/user_sessions.js
 
 
-import { appSetup }               from '../application/setup'
-import { isMissing }              from '../shared/definitions'
-import { handleClickAndKeypress } from '../shared/events'
+import { AppDebug }               from '../application/debug';
+import { appSetup }               from '../application/setup';
+import { isMissing }              from '../shared/definitions';
+import { handleClickAndKeypress } from '../shared/events';
 
 
-appSetup('controllers/user_sessions', function() {
+const MODULE = 'controllers/user_sessions';
+
+AppDebug.file(MODULE);
+
+appSetup(MODULE, function() {
 
     /** @type {jQuery} */
     const $inline_forms = $('.sign-in-form.inline');

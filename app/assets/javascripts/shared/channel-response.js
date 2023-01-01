@@ -1,9 +1,15 @@
 // app/assets/javascripts/shared/channel-response.js
 
 
-import { BaseClass }           from './base-class'
-import { deepDup, deepFreeze } from './objects'
+import { AppDebug }            from '../application/debug';
+import { BaseClass }           from './base-class';
+import { deepDup, deepFreeze } from './objects';
 
+
+const MODULE = 'ChannelResponse';
+const DEBUG  = true;
+
+AppDebug.file('shared/channel-response', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -33,7 +39,7 @@ import { deepDup, deepFreeze } from './objects'
 export class ChannelResponse extends BaseClass {
 
     static CLASS_NAME = 'ChannelResponse';
-    static DEBUGGING  = true;
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants

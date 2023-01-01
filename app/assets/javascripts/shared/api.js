@@ -1,12 +1,15 @@
 // app/assets/javascripts/shared/api.js
 
 
-import { BaseClass } from './base-class'
-import { HTTP }      from './http'
-import { makeUrl }   from './url'
-import * as xhr      from './xhr'
-import { Rails }     from '../vendor/rails'
+import { AppDebug }  from '../application/debug';
+import { BaseClass } from './base-class';
+import { HTTP }      from './http';
+import { makeUrl }   from './url';
+import * as xhr      from './xhr';
+import { Rails }     from '../vendor/rails';
 
+
+AppDebug.file('shared/api');
 
 // ============================================================================
 // Class API

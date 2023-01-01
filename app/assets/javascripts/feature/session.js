@@ -1,16 +1,21 @@
 // app/assets/javascripts/feature/session.js
 
 
-import { appSetup }              from '../application/setup'
-import { focusable }             from '../shared/accessibility'
-import { isInternetExplorer }    from '../shared/browser'
-import { isPresent, notDefined } from '../shared/definitions'
-import { documentEvent }         from '../shared/events'
-import { SearchInProgress }      from '../shared/search-in-progress'
-import { urlFrom }               from '../shared/url'
+import { AppDebug }              from '../application/debug';
+import { appSetup }              from '../application/setup';
+import { focusable }             from '../shared/accessibility';
+import { isInternetExplorer }    from '../shared/browser';
+import { isPresent, notDefined } from '../shared/definitions';
+import { documentEvent }         from '../shared/events';
+import { SearchInProgress }      from '../shared/search-in-progress';
+import { urlFrom }               from '../shared/url';
 
 
-appSetup('feature/session', function() {
+const MODULE = 'feature/session';
+
+AppDebug.file(MODULE);
+
+appSetup(MODULE, function() {
 
     /**
      * @readonly

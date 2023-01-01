@@ -1,10 +1,13 @@
 // app/assets/javascripts/shared/events.js
 
 
-import { appEventListener, DOC_KEY, WIN_KEY } from '../application/setup'
-import { handleKeypressAsClick }              from './accessibility'
-import { ensureTabbable }                     from './html'
+import { AppDebug }                           from '../application/debug';
+import { appEventListener, DOC_KEY, WIN_KEY } from '../application/setup';
+import { handleKeypressAsClick }              from './accessibility';
+import { ensureTabbable }                     from './html';
 
+
+AppDebug.file('shared/events');
 
 // ============================================================================
 // Type definitions
@@ -157,9 +160,15 @@ export function documentEvent(type, callback, options) {
  * @param {boolean} [debug] If *true* show console warnings on events.
  */
 export function onPageExit(callback, debug) {
+/*
     const cb = debug ? (
         e => { console.warn(`>>>>> ${e.type} EVENT <<<<<`, e); callback(e) }
     ) : callback;
     windowEvent('beforeunload', cb);        // [1]
     documentEvent('turbolinks:click', cb);  // [2]
+*/
+    // TODO: Generating an internal callback function makes it impossible to
+    //  teardown these handlers
+    windowEvent('beforeunload', callback);        // [1]
+    documentEvent('turbolinks:click', callback);  // [2]
 }

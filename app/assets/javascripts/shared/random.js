@@ -1,8 +1,10 @@
 // app/assets/javascripts/shared/random.js
 
 
-// No imports
+import { AppDebug } from '../application/debug';
 
+
+AppDebug.file('shared/random');
 
 // ============================================================================
 // Constants

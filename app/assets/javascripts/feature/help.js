@@ -1,12 +1,17 @@
 // app/assets/javascripts/feature/help.js
 
 
-import { appSetup }   from '../application/setup'
-import { isMissing }  from '../shared/definitions'
-import { deepFreeze } from '../shared/objects'
+import { AppDebug }   from '../application/debug';
+import { appSetup }   from '../application/setup';
+import { isMissing }  from '../shared/definitions';
+import { deepFreeze } from '../shared/objects';
 
 
-appSetup('feature/help', function() {
+const MODULE = 'feature/help';
+
+AppDebug.file(MODULE);
+
+appSetup(MODULE, function() {
 
     /** @type {jQuery} */
     let $help_content = $('.help-section');

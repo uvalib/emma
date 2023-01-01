@@ -15,11 +15,13 @@ import { urlParameters }          from '../shared/url'
 import {
     handleClickAndKeypress,
     handleEvent
-} from '../shared/events'
+} from '../shared/events';
 
 
 const MODULE = 'Download';
 const DEBUG  = true;
+
+AppDebug.file('feature/download', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -1019,7 +1021,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

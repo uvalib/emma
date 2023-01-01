@@ -1,11 +1,14 @@
 // app/assets/javascripts/shared/css.js
 
 
-import { arrayWrap }                     from './arrays'
-import { Emma }                          from './assets'
-import { isDefined, isEmpty, isPresent } from './definitions'
-import { compact }                       from './objects'
+import { AppDebug }                      from '../application/debug';
+import { arrayWrap }                     from './arrays';
+import { Emma }                          from './assets';
+import { isDefined, isEmpty, isPresent } from './definitions';
+import { compact }                       from './objects';
 
+
+AppDebug.file('shared/css');
 
 // ============================================================================
 // Constants

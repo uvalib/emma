@@ -22,7 +22,7 @@ import {
     isPresent,
     notDefined,
     presence,
-} from '../shared/definitions'
+} from '../shared/definitions';
 import {
     debounce,
     handleClickAndKeypress,
@@ -30,19 +30,19 @@ import {
     handleHoverAndFocus,
     onPageExit,
     windowEvent,
-} from '../shared/events'
+} from '../shared/events';
 import {
     addFlashError,
     clearFlash,
     flashError,
     flashMessage,
-} from '../shared/flash'
+} from '../shared/flash';
 import {
     selfOrDescendents,
     selfOrParent,
     single,
     uniqAttrs,
-} from '../shared/html'
+} from '../shared/html';
 import {
     ITEM_ATTR,
     ITEM_MODEL,
@@ -54,11 +54,13 @@ import {
     initializeButtonSet,
     serverBulkSend,
     serverSend,
-} from '../shared/manifests'
+} from '../shared/manifests';
 
 
 const MODULE = 'ManifestEdit';
 const DEBUG  = true;
+
+AppDebug.file('controllers/manifest-edit', MODULE, DEBUG);
 
 // noinspection SpellCheckingInspection, FunctionTooLongJS
 appSetup(MODULE, function() {

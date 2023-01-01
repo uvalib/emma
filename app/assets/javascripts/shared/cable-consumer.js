@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/cable-consumer.js
 
 
-import { AppDebug }               from '../application/debug'
-import { appTeardown }            from '../application/setup'
-import { camelCase }              from './strings'
-import { createConsumer, logger } from '@rails/actioncable'
+import { AppDebug }                         from '../application/debug';
+import { appTeardown }                      from '../application/setup';
+import { camelCase }                        from './strings';
+import { Consumer, createConsumer, logger } from '@rails/actioncable';
 
 
 // ============================================================================
@@ -14,6 +14,8 @@ import { createConsumer, logger } from '@rails/actioncable'
 const MODULE   = 'WebSocket';
 const DEBUG    = true;
 logger.enabled = DEBUG;
+
+AppDebug.file('shared/cable-consumer', MODULE, DEBUG);
 
 /** @type {Consumer} */
 let instance;

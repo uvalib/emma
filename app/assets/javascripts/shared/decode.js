@@ -3,9 +3,12 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { isDefined } from './definitions'
-import { fromJSON }  from './objects'
+import { AppDebug }  from '../application/debug';
+import { isDefined } from './definitions';
+import { fromJSON }  from './objects';
 
+
+AppDebug.file('shared/decode');
 
 // ============================================================================
 // Functions - Type conversions

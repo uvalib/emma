@@ -1,6 +1,7 @@
 // app/assets/javascripts/feature/search-analysis.js
 
 
+import { AppDebug }                     from '../application/debug';
 import { appSetup }                     from '../application/setup'
 import { arrayWrap }                    from '../shared/arrays'
 import { Emma }                         from '../shared/assets'
@@ -20,8 +21,10 @@ import {
     isMissing,
     isPresent,
     notDefined,
-} from '../shared/definitions'
+} from '../shared/definitions';
 
+
+AppDebug.file('feature/search-analysis');
 
 // ============================================================================
 // Exported functions

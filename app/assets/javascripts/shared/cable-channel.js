@@ -3,19 +3,25 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { Api }                from './api'
-import { BaseClass }          from './base-class'
-import { ChannelRequest }     from './channel-request'
-import { ChannelResponse }    from './channel-response'
-import { isDefined, isEmpty } from './definitions'
-import { onPageExit }         from './events'
-import { asString }           from './strings'
+import { AppDebug }           from '../application/debug';
+import { Api }                from './api';
+import { BaseClass }          from './base-class';
+import { ChannelRequest }     from './channel-request';
+import { ChannelResponse }    from './channel-response';
+import { isDefined, isEmpty } from './definitions';
+import { onPageExit }         from './events';
+import { asString }           from './strings';
 
+
+const MODULE = 'CableChannel';
+const DEBUG  = true;
+
+AppDebug.file('shared/cable-channel', MODULE, DEBUG);
 
 export class CableChannel extends BaseClass {
 
     static CLASS_NAME = 'CableChannel';
-    static DEBUGGING  = true;
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants

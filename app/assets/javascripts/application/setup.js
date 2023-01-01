@@ -6,13 +6,15 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }  from './debug'
-import { BaseClass } from '../shared/base-class'
-import { isEmpty }   from '../shared/definitions'
+import { AppDebug }  from './debug';
+import { BaseClass } from '../shared/base-class';
+import { isEmpty }   from '../shared/definitions';
 
 
 const MODULE = 'Setup';
 const DEBUG  = true;
+
+AppDebug.file('application/setup', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions

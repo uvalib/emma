@@ -1,9 +1,17 @@
 // app/assets/javascripts/shared/url.js
 
 
-import { isDefined, isEmpty, isPresent, notDefined } from './definitions'
-import { compact }                                   from './objects'
+import { AppDebug } from '../application/debug';
+import { compact }  from './objects';
+import {
+    isDefined,
+    isEmpty,
+    isPresent,
+    notDefined,
+} from './definitions';
 
+
+AppDebug.file('shared/url');
 
 // ============================================================================
 // Functions

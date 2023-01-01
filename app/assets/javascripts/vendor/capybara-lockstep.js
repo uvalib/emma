@@ -7,9 +7,11 @@
 // @see file:app/lib/ext/capybara-lockstep "Capybara::Lockstep::HelperExt"
 
 
-import { AppDebug } from '../application/debug'
-import { appSetup } from '../application/setup'
+import { AppDebug } from '../application/debug';
+import { appSetup } from '../application/setup';
 
+
+AppDebug.file('vendor/capybara-lockstep');
 
 if (window.CapybaraLockstep) {
     AppDebug.active = false;

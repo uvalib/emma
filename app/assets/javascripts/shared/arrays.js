@@ -3,9 +3,12 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { isDefined, notDefined } from './definitions'
-import { dup }                   from './objects'
+import { AppDebug }              from '../application/debug';
+import { isDefined, notDefined } from './definitions';
+import { dup }                   from './objects';
 
+
+AppDebug.file('shared/arrays');
 
 // ============================================================================
 // Functions - returning Array

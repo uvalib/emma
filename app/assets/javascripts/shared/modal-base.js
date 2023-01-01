@@ -3,18 +3,19 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { Emma }                                from './assets'
-import { BaseClass }                           from './base-class'
-import { decodeObject }                        from './decode'
-import { handleClickAndKeypress, handleEvent } from './events'
-import { findTabbable, scrollIntoView }        from './html'
-import { ModalHideHooks, ModalShowHooks }      from './modal_hooks'
+import { AppDebug }                            from '../application/debug';
+import { Emma }                                from './assets';
+import { BaseClass }                           from './base-class';
+import { decodeObject }                        from './decode';
+import { handleClickAndKeypress, handleEvent } from './events';
+import { findTabbable, scrollIntoView }        from './html';
+import { ModalHideHooks, ModalShowHooks }      from './modal_hooks';
 import {
     elementSelector,
     isHidden,
     selector,
     toggleHidden,
-} from './css'
+} from './css';
 import {
     isDefined,
     isEmpty,
@@ -22,8 +23,13 @@ import {
     isPresent,
     notDefined,
     presence
-} from './definitions'
+} from './definitions';
 
+
+const MODULE = 'ModalBase';
+const DEBUG  = true;
+
+AppDebug.file('shared/modal-base', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -57,7 +63,7 @@ import {
 export class ModalBase extends BaseClass {
 
     static CLASS_NAME = 'ModalBase';
-    static DEBUGGING  = true;
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants

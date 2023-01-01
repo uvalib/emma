@@ -5,38 +5,40 @@
 // noinspection JSUnusedLocalSymbols
 
 
-import { AppDebug }                       from '../application/debug'
-import { LookupChannel }                  from '../channels/lookup-channel'
-import { arrayWrap }                      from '../shared/arrays'
-import { toggleHidden }                   from '../shared/css'
-import { turnOffAutocomplete }            from '../shared/form'
-import { HTML_BREAK }                     from '../shared/html'
-import { renderJson }                     from '../shared/json'
-import { LookupModal }                    from '../shared/lookup-modal'
-import { LookupRequest }                  from '../shared/lookup-request'
-import { ModalDialog }                    from '../shared/modal-dialog'
-import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks'
-import { dupObject, toObject }            from '../shared/objects'
-import { randomizeName }                  from '../shared/random'
-import { camelCase }                      from '../shared/strings'
+import { AppDebug }                       from '../application/debug';
+import { LookupChannel }                  from '../channels/lookup-channel';
+import { arrayWrap }                      from '../shared/arrays';
+import { toggleHidden }                   from '../shared/css';
+import { turnOffAutocomplete }            from '../shared/form';
+import { HTML_BREAK }                     from '../shared/html';
+import { renderJson }                     from '../shared/json';
+import { LookupModal }                    from '../shared/lookup-modal';
+import { LookupRequest }                  from '../shared/lookup-request';
+import { ModalDialog }                    from '../shared/modal-dialog';
+import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
+import { dupObject, toObject }            from '../shared/objects';
+import { randomizeName }                  from '../shared/random';
+import { camelCase }                      from '../shared/strings';
 import {
     isDefined,
     isEmpty,
     isMissing,
     isPresent,
     presence,
-} from '../shared/definitions'
+} from '../shared/definitions';
 import {
     debounce,
     handleClickAndKeypress,
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-} from '../shared/events'
+} from '../shared/events';
 
 
 const MODULE = 'BibliographicLookup';
 const DEBUG  = true;
+
+AppDebug.file('tool/bibliographic-lookup', MODULE, DEBUG);
 
 // ============================================================================
 // Functions
@@ -2099,7 +2101,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
 }

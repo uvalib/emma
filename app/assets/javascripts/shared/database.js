@@ -1,15 +1,17 @@
 // app/assets/javascripts/shared/database.js
 
 
-import { AppDebug }                     from '../application/debug'
-import { arrayWrap }                    from './arrays'
-import { isDefined, isEmpty, notEmpty } from './definitions'
-import { fromJSON }                     from './objects'
-import { asString }                     from './strings'
+import { AppDebug }                     from '../application/debug';
+import { arrayWrap }                    from './arrays';
+import { isDefined, isEmpty, notEmpty } from './definitions';
+import { fromJSON }                     from './objects';
+import { asString }                     from './strings';
 
 
 const MODULE = 'DB';
 const DEBUG  = false;
+
+AppDebug.file('shared/database', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -243,6 +245,30 @@ export const DB = (function() {
     // Functions - internal
     // ========================================================================
 
+    function dbError(...args) {
+        const tag = `${MODULE} ERROR`;
+        const msg = _debugArgs(...args);
+        console.error(tag, ...msg);
+        //addFlashError(msg || tag);
+    }
+
+    function dbWarn(...args) {
+        const tag = `${MODULE} ERROR`;
+        const msg = _debugArgs(...args);
+        console.warn(tag, ...msg);
+        //addFlashMessage(msg || tag);
+    }
+
+    function dbLog(...args) {
+        const tag = MODULE;
+        const msg = _debugArgs(...args);
+        console.log(tag, ...msg);
+    }
+
+    function dbDebug(...args) {
+        _debugging() && dbLog(...args);
+    }
+
     /**
      * Indicate whether console debugging is active.
      *
@@ -252,28 +278,21 @@ export const DB = (function() {
         return AppDebug.activeFor(MODULE, DEBUG);
     }
 
-    function dbError(...args) {
-        const tag = `${MODULE} ERROR`;
-        const msg = args.join(': ');
-        console.error(tag, msg);
-        //addFlashError(msg || tag);
-    }
-
-    function dbWarn(...args) {
-        const tag = `${MODULE} ERROR`;
-        const msg = args.join(': ');
-        console.warn(tag, msg);
-        //addFlashMessage(msg || tag);
-    }
-
-    function dbLog(...args) {
-        const tag = MODULE;
-        const msg = args.join(': ') || 'EMPTY MESSAGE';
-        console.log(tag, msg);
-    }
-
-    function dbDebug(...args) {
-        _debugging() && dbLog(...args);
+    /**
+     * Handle console logging arguments.
+     *
+     * @param {...*} args
+     *
+     * @returns {array|string}
+     */
+    function _debugArgs(...args) {
+        const final  = args.length - 1;
+        const result = args.reduce((array, arg, index) => {
+            const tag = (typeof arg === 'string') && (index < final);
+            array.push(tag ? `${arg}:` : arg);
+            return array;
+        }, []);
+        return isEmpty(result) ? '' : result;
     }
 
     // ========================================================================
@@ -434,7 +453,7 @@ export const DB = (function() {
             }
 
             function onGenericError(event) {
-                dbError(func, 'OPERATION ERROR', asString(event));
+                dbError(func, 'OPERATION ERROR', event);
                 dbDebug(event);
             }
         }
@@ -549,7 +568,7 @@ export const DB = (function() {
             else if (arg instanceof IDBTransaction)  { tr         = arg }
             else if (TRANSACTION_MODE.includes(arg)) { tr_mode    = arg }
             else if (typeof arg === 'string')        { store_name = arg }
-            else { dbWarn(func, 'dbTransaction', 'unexpected', asString(arg)) }
+            else { dbWarn(func, 'dbTransaction', 'unexpected', arg) }
         });
         if (!tr) {
             db         ||= dbDatabase();
@@ -716,7 +735,7 @@ export const DB = (function() {
         const name     = new_name    || dbName();
         const version  = new_version || dbVersion();
         const database = `${name} (v${version})`;
-        dbLog(`${func}: ${database}`);
+        dbLog(func, database);
 
         const request = window.indexedDB.open(name, version);
         request.onupgradeneeded = event => dbSetupDatabase(event, func);
@@ -734,7 +753,7 @@ export const DB = (function() {
         }
 
         function onOpenError(event) {
-            dbError(func, database, 'load error', asString(event));
+            dbError(func, database, 'load error', event);
         }
 
         function onOpenSuccess(event) {
@@ -830,7 +849,7 @@ export const DB = (function() {
             const cursor = event.target.result;
             item_cb?.(cursor, number);
             if (cursor) {
-                dbDebug(func, `item ${++number}`, asString(cursor.value));
+                dbDebug(func, `item ${++number}`, cursor.value);
                 cursor.continue();
             } else {
                 dbDebug(func, 'all DB items processed');

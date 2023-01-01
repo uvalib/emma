@@ -1,8 +1,11 @@
 // app/assets/javascripts/shared/objects.js
 
 
-import { isDefined, isPresent } from './definitions'
+import { AppDebug }             from '../application/debug';
+import { isDefined, isPresent } from './definitions';
 
+
+AppDebug.file('shared/objects');
 
 // ============================================================================
 // Functions

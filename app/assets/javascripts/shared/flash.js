@@ -1,19 +1,22 @@
 // app/assets/javascripts/shared/flash.js
 
 
-import { arrayWrap }                       from './arrays'
-import { selector }                        from './css'
-import { isDefined, isMissing, isPresent } from './definitions'
-import { noScroll, scrollIntoView }        from './html'
-import { SECONDS }                         from './time'
-import { HEAVY_X }                         from './unicode'
+import { AppDebug }                        from '../application/debug';
+import { arrayWrap }                       from './arrays';
+import { selector }                        from './css';
+import { isDefined, isMissing, isPresent } from './definitions';
+import { noScroll, scrollIntoView }        from './html';
+import { SECONDS }                         from './time';
+import { HEAVY_X }                         from './unicode';
 import {
     handleClickAndKeypress,
     handleEvent,
     isEvent,
     windowEvent,
-} from './events'
+} from './events';
 
+
+AppDebug.file('shared/flash');
 
 // ============================================================================
 // Constants

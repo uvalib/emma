@@ -12,6 +12,8 @@ import { secondsSince } from '../shared/time'
 const MODULE = 'Images';
 const DEBUG  = true;
 
+AppDebug.file('feature/images', MODULE, DEBUG);
+
 appSetup(MODULE, function() {
 
     /**
@@ -200,7 +202,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

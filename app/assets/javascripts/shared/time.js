@@ -1,8 +1,11 @@
 // app/assets/javascripts/shared/time.js
 
 
-import { compact } from './objects'
+import { AppDebug } from '../application/debug';
+import { compact }  from './objects';
 
+
+AppDebug.file('shared/time');
 
 // ============================================================================
 // Constants

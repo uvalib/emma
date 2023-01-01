@@ -1,14 +1,19 @@
 // app/assets/javascripts/controllers/tool.js
 
 
-import { appSetup }       from '../application/setup'
-import { isMissing }      from '../shared/definitions'
-import * as Lookup        from '../tool/bibliographic-lookup'
-import * as MathDetective from '../tool/math-detective'
+import { AppDebug }       from '../application/debug';
+import { appSetup }       from '../application/setup';
+import { isMissing }      from '../shared/definitions';
+import * as Lookup        from '../tool/bibliographic-lookup';
+import * as MathDetective from '../tool/math-detective';
 
+
+const MODULE = 'controllers/tool';
+
+AppDebug.file(MODULE);
 
 // noinspection SpellCheckingInspection
-appSetup('controllers/tool', function() {
+appSetup(MODULE, function() {
 
     /**
      * Standalone Utilities pages.

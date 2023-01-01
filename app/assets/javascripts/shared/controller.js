@@ -3,8 +3,10 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-// No imports
+import { AppDebug } from '../application/debug';
 
+
+AppDebug.file('shared/controller');
 
 // ============================================================================
 // Functions - Controller/Action

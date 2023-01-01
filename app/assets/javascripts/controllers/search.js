@@ -1,6 +1,7 @@
 // app/assets/javascripts/controllers/search.js
 
 
+import { AppDebug }               from '../application/debug';
 import { appSetup }               from '../application/setup'
 import { cloneTitle }             from '../feature/search-analysis'
 import { Emma }                   from '../shared/assets'
@@ -11,14 +12,18 @@ import {
     isEmpty,
     isMissing,
     notDefined,
-} from '../shared/definitions'
+} from '../shared/definitions';
 import {
     handleClickAndKeypress,
     handleEvent,
-} from '../shared/events'
+} from '../shared/events';
 
 
-appSetup('controllers/search', function() {
+const MODULE = 'controllers/search';
+
+AppDebug.file(MODULE);
+
+appSetup(MODULE, function() {
 
     /**
      * Search page <body>.

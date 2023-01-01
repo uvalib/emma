@@ -1,16 +1,18 @@
 // app/assets/javascripts/shared/xhr.js
 
 
-import { AppDebug }     from '../application/debug'
-import { isMissing }    from './definitions'
-import { HTTP }         from './http'
-import { fromJSON }     from './objects'
-import { secondsSince } from './time'
-import { makeUrl }      from './url'
+import { AppDebug }     from '../application/debug';
+import { isMissing }    from './definitions';
+import { HTTP }         from './http';
+import { fromJSON }     from './objects';
+import { secondsSince } from './time';
+import { makeUrl }      from './url';
 
 
 const MODULE = 'XHR';
 const DEBUG  = true;
+
+AppDebug.file('shared/xhr', MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions

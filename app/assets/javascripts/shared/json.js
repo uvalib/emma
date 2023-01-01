@@ -1,10 +1,13 @@
 // app/assets/javascripts/shared/json.js
 
 
-import { maxSize }    from './arrays'
-import { isEmpty }    from './definitions'
-import { asDateTime } from './time'
+import { AppDebug }   from '../application/debug';
+import { maxSize }    from './arrays';
+import { isEmpty }    from './definitions';
+import { asDateTime } from './time';
 
+
+AppDebug.file('shared/json');
 
 // ============================================================================
 // Constants

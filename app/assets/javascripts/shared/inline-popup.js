@@ -3,11 +3,17 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { HIDDEN, selector }     from './css'
-import { isMissing, isPresent } from './definitions'
-import { windowEvent }          from './events'
-import { ModalBase }            from './modal-base'
+import { AppDebug }             from '../application/debug';
+import { HIDDEN, selector }     from './css';
+import { isMissing, isPresent } from './definitions';
+import { windowEvent }          from './events';
+import { ModalBase }            from './modal-base';
 
+
+const MODULE = 'InlinePopup';
+const DEBUG  = false;
+
+AppDebug.file('shared/inline-popup', MODULE, DEBUG);
 
 // ============================================================================
 // Class InlinePopup
@@ -26,7 +32,7 @@ import { ModalBase }            from './modal-base'
 export class InlinePopup extends ModalBase {
 
     static CLASS_NAME      = 'InlinePopup';
-    static DEBUGGING       = false;
+    static DEBUGGING       = DEBUG;
 
     static ENCLOSURE_CLASS = 'inline-popup';
     static ENCLOSURE       = selector(this.ENCLOSURE_CLASS);

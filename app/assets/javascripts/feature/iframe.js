@@ -1,14 +1,16 @@
 // app/assets/javascripts/feature/iframe.js
 
 
-import { AppDebug }               from '../application/debug'
-import { appSetup }               from '../application/setup'
-import { isMissing }              from '../shared/definitions'
-import { handleClickAndKeypress } from '../shared/events'
+import { AppDebug }               from '../application/debug';
+import { appSetup }               from '../application/setup';
+import { isMissing }              from '../shared/definitions';
+import { handleClickAndKeypress } from '../shared/events';
 
 
 const MODULE = 'Iframe';
 const DEBUG  = true;
+
+AppDebug.file('feature/iframe', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -85,7 +87,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

@@ -1,10 +1,16 @@
 // app/assets/javascripts/shared/modal_hooks.js
 
 
-import { BaseClass }     from './base-class'
-import { CallbackChain } from './callbacks'
-import { isPresent }     from './definitions'
+import { AppDebug }      from '../application/debug';
+import { BaseClass }     from './base-class';
+import { CallbackChain } from './callbacks';
+import { isPresent }     from './definitions';
 
+
+const MODULE = 'ModalHooks';
+const DEBUG  = false;
+
+AppDebug.file('shared/modal_hooks', MODULE, DEBUG);
 
 // ============================================================================
 // Class ModalHooks
@@ -17,7 +23,7 @@ import { isPresent }     from './definitions'
 class ModalHooks extends BaseClass {
 
     static CLASS_NAME = 'ModalHooks';
-    static DEBUGGING  = false;
+    static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constructor

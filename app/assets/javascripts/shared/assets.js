@@ -5,4 +5,8 @@
 // by the "emma:assets:erb" Rake task.
 
 
-export { Emma } from '../../builds/javascripts-shared-assets'
+import { AppDebug } from '../application/debug';
+export { Emma }     from '../../builds/javascripts-shared-assets';
+
+
+AppDebug.file('shared/assets');

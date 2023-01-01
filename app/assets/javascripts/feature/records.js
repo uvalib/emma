@@ -13,11 +13,13 @@ import {
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-} from '../shared/events'
+} from '../shared/events';
 
 
 const MODULE = 'Records';
 const DEBUG  = true;
+
+AppDebug.file('feature/records', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -394,7 +396,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

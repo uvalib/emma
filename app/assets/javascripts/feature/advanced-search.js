@@ -15,17 +15,19 @@ import {
     isMissing,
     isPresent,
     notDefined,
-} from '../shared/definitions'
+} from '../shared/definitions';
 import {
     debounce,
     handleClickAndKeypress,
     handleEvent,
     isEvent,
-} from '../shared/events'
+} from '../shared/events';
 
 
 const MODULE = 'AdvancedSearch';
 const DEBUG  = true;
+
+AppDebug.file('feature/advanced-search', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -1800,7 +1802,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debug(...args) {
-        _debugging() && console.log(...args);
+        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================
