@@ -149,6 +149,22 @@
             @media #{$narrow-screen} {
                 margin: 0.5rem 0 0;
             }
+
+            //=================================================================
+            // Variations
+            //=================================================================
+
+            &.single-page {
+                > *:not(.single-page) {
+                    @include hidden;
+                }
+            }
+
+            &.multi-page {
+                > *:not(.multi-page) {
+                    @include hidden;
+                }
+            }
         }
     }
 }

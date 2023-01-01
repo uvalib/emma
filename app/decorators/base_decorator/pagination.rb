@@ -213,21 +213,21 @@ module BaseDecorator::Pagination
     **opt
   )
     count = positive(count).to_i
-    total = positive(total).to_i
-    num   = ->(n, c) { html_span(h.number_with_delimiter(n), class: c) }
+    total = positive(total)&.to_i || count
+    found = get_page_count_label(count: total, item: unit)
+    txt   = ->(t, *c) { html_span(t, class: css_classes(*c)) }
+    num   = ->(n, *c) { txt.(h.number_with_delimiter(n), *c) }
+    label = [
+      txt.('(',         'left-side',    'single-page'),
+      num.(count,       'page-items',   'multi-page'),
+      txt.(' of ',      'text',         'multi-page'),
+      num.(total,       'total-items',  'multi-page', 'single-page'),
+      txt.(" #{found}", 'text',         'multi-page', 'single-page'),
+      txt.(')',         'right-side',   'single-page'),
+    ]
     # noinspection RubyMismatchedArgumentType
-    if total > count
-      found = get_page_count_label(count: total, item: unit)
-      count = num.call(count, 'page-items')
-      total = num.call(total, 'total-items')
-      label = "#{count} of #{total} #{found}"
-    else
-      found = get_page_count_label(count: count, item: unit)
-      count = num.call(count, 'page-items total-items')
-      label = "(#{count} #{found})"
-    end
-    prepend_css!(opt, css)
-    html_div(label.html_safe, opt)
+    prepend_css!(opt, css, ((total > count) ? 'multi-page' : 'single-page'))
+    html_div(opt.merge!(separator: '')) { label }
   end
 
   # Placeholder for an item that would have been a link if it had a path.

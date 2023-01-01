@@ -1413,6 +1413,93 @@ appSetup(MODULE, function() {
         return selfOrDescendents(tgt, CONTROLS_CELL);
     }
 
+    /**
+     * A operation button for the given row.
+     *
+     * @param {Selector} row
+     * @param {string}   action
+     *
+     * @returns {jQuery}
+     */
+    function rowButton(row, action) {
+        const match = `[${ACTION_ATTR}="${action}"]`;
+        const $row  = $(row);
+        return $row.is(match) ? $row : rowControls($row).filter(match);
+    }
+
+    /**
+     * Enable operation button for the given row.
+     *
+     * @param {Selector} row
+     * @param {string}   action
+     * @param {boolean}  [enable]     If *false* then disable.
+     * @param {boolean}  [forbid]     If *true* add '.forbidden' if disabled.
+     *
+     * @returns {jQuery}              The submit button.
+     */
+    function enableRowButton(row, action, enable, forbid) {
+        _debug(`enableRowButton: ${action}: row =`, row);
+        return toggleRowButton(row, action, (enable !== false), forbid);
+    }
+
+    /**
+     * Enable/disable operation button for the given row.
+     *
+     * @param {Selector} row
+     * @param {string}   action
+     * @param {boolean}  [enable]
+     * @param {boolean}  [forbid]     If *true* add '.forbidden' if disabled.
+     *
+     * @returns {jQuery}              The submit button.
+     */
+    function toggleRowButton(row, action, enable, forbid) {
+        /** @type {ActionProperties} */
+        let config    = Emma.Grid.Icons[action];
+        const func    = `toggleRowButton: ${action}`;
+        const $button = rowButton(row, action);
+        //_debug(`${func}: row =`, row);
+        if (!config) {
+            console.error(`${func}: invalid action`);
+            return $button;
+        }
+
+        const is_forbidden      = $button.hasClass('forbidden');
+        const old_was_forbidden = $button.hasClass('was-forbidden');
+        let now_disabled, now_forbidden, new_was_forbidden;
+        if (enable === true) {
+            config            = { ...config, ...config.enabled };
+            now_disabled      = false;
+            now_forbidden     = false;
+            new_was_forbidden = is_forbidden || old_was_forbidden;
+            if (forbid) { console.warn(`${func}: cannot enable and forbid`) }
+        } else if (enable === false) {
+            config            = { ...config, ...config.disabled };
+            now_disabled      = true;
+            now_forbidden     = forbid || false;
+            new_was_forbidden = false;
+        } else if ($button.hasClass('disabled')) { // Toggle to enabled
+            now_disabled      = false;
+            now_forbidden     = false;
+            new_was_forbidden = is_forbidden || old_was_forbidden;
+        } else { // Toggle to disabled
+            now_disabled      = true;
+            now_forbidden     = forbid || old_was_forbidden;
+            new_was_forbidden = !old_was_forbidden;
+        }
+
+        const tooltip = (action === 'lookup') && now_forbidden && (
+            "Bibliographic metadata is inherited from\n" + // TODO: I18n
+            'the original repository entry.'
+        );
+        $button.attr('title', (tooltip || config.tooltip || ''));
+
+        $button.prop('disabled', now_disabled);
+        $button.toggleClass('disabled',      now_disabled);
+        $button.toggleClass('forbidden',     now_forbidden);
+        $button.toggleClass('was-forbidden', new_was_forbidden);
+        return $button;
+    }
+
     // ========================================================================
     // Functions - row - insert
     // ========================================================================
@@ -1427,11 +1514,11 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}     [after]        Default: prepend to tbody.
      * @param {ManifestItem} [data]
-     * @param {boolean}      [renumber]     Default: *true*.
+     * @param {boolean}      [intermediate] If more row changes coming.
      *
      * @returns {jQuery}                    The new row.
      */
-    function insertRow(after, data, renumber) {
+    function insertRow(after, data, intermediate) {
         _debug('insertRow after', after);
         let $new_row;
         if (after) {
@@ -1446,9 +1533,8 @@ appSetup(MODULE, function() {
         if (isPresent(data)) {
             updateDataRow($new_row, data);
         }
-        if (renumber !== false) {
-            incrementItemCount();
-            updateGridRowIndexes();
+        if (!intermediate) {
+            updateGridRowCount(1);
         }
         return $new_row;
     }
@@ -1457,9 +1543,9 @@ appSetup(MODULE, function() {
      * Insert new row(s) after the last row in the grid.
      *
      * @param {ManifestItem[]} list
-     * @param {boolean}        [renumber]   Default: *true*.
+     * @param {boolean}        [intermediate]   If more row changes coming.
      */
-    function appendRows(list, renumber) {
+    function appendRows(list, intermediate) {
         _debug('appendRows: list =', list);
         const items = arrayWrap(list);
         const $last = allDataRows().last();
@@ -1473,14 +1559,15 @@ appSetup(MODULE, function() {
         const row = dbRowValue($row);
         let delta = dbRowDelta($row);
         items.forEach(record => {
-            $row = insertRow($row, record, false);
-            setRowChanged($row);
-            setDbRowValue($row, row);
-            setDbRowDelta($row, ++delta);
+            let r, d;
+            $row  = insertRow($row, record, true);
+            row   = dbRowValue($row) || (r = setDbRowValue($row, row));
+            delta = dbRowDelta($row) || (d = setDbRowDelta($row, ++delta));
+            setRowChanged($row, true);
+            if (r || d) { mod[databaseId($row)] = { row: r, delta: d } }
         });
-        if (renumber !== false) {
-            incrementItemCount(items.length);
-            updateGridRowIndexes();
+        if (!intermediate) {
+            updateGridRowCount(items.length);
         }
     }
 
@@ -1491,33 +1578,53 @@ appSetup(MODULE, function() {
     /**
      * Mark the indicated row for deletion.
      *
-     * If it is a blank row (not yet associated with a ManifestItem) then it is
-     * removed directly; otherwise request that the associated ManifestItem
-     * record be marked for deletion.
-     *
      * @param {Selector} target
-     * @param {boolean}  [commit]     If *false* do not update database.
-     * @param {boolean}  [renumber]   Default: *true*.
+     *
+     * @returns {jQuery}
      */
-    function deleteRow(target, commit, renumber) {
-        const func = 'deleteRow'; _debug(`${func}: target =`, target);
+    function markRow(target) {
+        const func = 'markRow'; //_debug(`${func}: target =`, target);
         const $row = dataRow(target);
-
-        // Mark row for deletion.
         if ($row.is(TO_DELETE)) {
             _debug(`${func}: already marked ${TO_DELETE} -`, $row);
         } else {
             $row.addClass(TO_DELETE_MARKER);
         }
+        return $row;
+    }
 
-        if (commit !== false) {
-            const db_id = databaseId($row);
-            if (db_id) {
-                sendDeleteRecords(db_id, renumber);
-            } else {
-                _debug(`${func}: removing blank row -`, $row);
-                removeGridRow($row, renumber);
+    /**
+     * Mark the indicated row for deletion.
+     *
+     * If it is a blank row (not yet associated with a ManifestItem) then it is
+     * removed directly; otherwise request that the associated ManifestItem
+     * record be marked for deletion.
+     *
+     * @param {Selector} target
+     * @param {boolean}  [intermediate]     If more row changes coming.
+     */
+    function deleteRow(target, intermediate) {
+        const func = 'deleteRow'; _debug(`${func}: target =`, target);
+        const $row = dataRow(target);
+
+        // Avoid removing the final row of the grid.
+        if (allDataRows().length <= 1) {
+            _debug(`${func}: cannot delete the final row`);
+            if ($row.is(TO_DELETE)) {
+                _debug(`${func}: un-marking for deletion -`, $row);
+                $row.removeClass(TO_DELETE_MARKER);
             }
+            return;
+        }
+
+        // Mark row for deletion then update the grid and/or database.
+        markRow($row);
+        const db_id = databaseId($row);
+        if (db_id) {
+            sendDeleteRecords(db_id, intermediate);
+        } else {
+            _debug(`${func}: removing blank row -`, $row);
+            removeGridRow($row, intermediate);
         }
     }
 
@@ -1529,10 +1636,10 @@ appSetup(MODULE, function() {
      * records be marked for deletion.
      *
      * @param {number|ManifestItem|jQuery|HTMLElement|array} list
-     * @param {boolean}                 [commit]    If *false* do not update db
-     * @param {boolean}                 [renumber]  Default: *true*.
+     * @param {boolean} [preserve_last]     Default: *true*.
+     * @param {boolean} [intermediate]      If more row changes coming.
      */
-    function deleteRows(list, commit, renumber) {
+    function deleteRows(list, preserve_last, intermediate) {
         const func   = 'deleteRows'; _debug(`${func}: list =`, list);
         const $rows  = allDataRows();
         const blanks = [];
@@ -1556,27 +1663,42 @@ appSetup(MODULE, function() {
             }).filter(v => v);
 
         // Mark rows for deletion.
-        blanks.forEach($row => deleteRow($row, false));
+        blanks.forEach($row => markRow($row));
         db_ids.forEach(db_id => {
             const $row = rowForDatabaseId(db_id, $rows);
             if ($row) {
-                deleteRow($row, false);
+                markRow($row);
             } else {
                 _debug(`${func}: no row for db_id ${db_id}`);
             }
         });
 
-        if (commit !== false) {
-            if (isPresent(blanks)) {
-                _debug(`${func}: removing blank rows -`, blanks);
-                removeGridRows($(blanks), renumber);
+        // Avoid deleting all rows of the grid unless directed.
+        let b_size = blanks.length;
+        let d_size = db_ids.length;
+        if ((preserve_last !== false) && ((b_size + d_size) >= $rows.length)) {
+            let $row;
+            if (d_size && !b_size) {
+                $row   = db_ids.shift();
+                d_size = db_ids.length;
+            } else {
+                $row   = blanks.shift();
+                b_size = blanks.length;
             }
-            if (isPresent(db_ids)) {
-                sendDeleteRecords(db_ids, renumber);
-            }
-            if (_debugging() && isEmpty([...blanks, ...db_ids])) {
-                _debug(`${func}: nothing to do`);
-            }
+            _debug(`${func}: cannot delete the final row`);
+            _debug(`${func}: un-marking for deletion -`, $row);
+            $row?.removeClass(TO_DELETE_MARKER);
+        }
+
+        if (b_size) {
+            _debug(`${func}: removing blank rows -`, blanks);
+            removeGridRows($(blanks), intermediate);
+        }
+        if (d_size) {
+            sendDeleteRecords(db_ids, intermediate);
+        }
+        if (!b_size && !d_size) {
+            _debug(`${func}: nothing to do`);
         }
     }
 
@@ -1584,9 +1706,9 @@ appSetup(MODULE, function() {
      * Cause the server to delete the indicated ManifestItem records.
      *
      * @param {number|number[]} items
-     * @param {boolean}         [renumber]   Default: *true*.
+     * @param {boolean}         [intermediate]  If more row changes coming.
      */
-    function sendDeleteRecords(items, renumber) {
+    function sendDeleteRecords(items, intermediate) {
         const func     = 'sendDeleteRecords';
         const manifest = manifestId();
         const action   = `bulk/destroy/${manifest}`;
@@ -1625,7 +1747,7 @@ appSetup(MODULE, function() {
             } else if (isEmpty(list)) {
                 _error(func, 'no items present in response data');
             } else {
-                removeDeletedRows(list, renumber);
+                removeDeletedRows(list, intermediate);
             }
         }
     }
@@ -1634,9 +1756,9 @@ appSetup(MODULE, function() {
      * Respond to deletion of ManifestItems by removing their associated rows.
      *
      * @param {(ManifestItem|number)[]} list
-     * @param {boolean}                 [renumber]  Default: *true*.
+     * @param {boolean}                 [intermediate]
      */
-    function removeDeletedRows(list, renumber) {
+    function removeDeletedRows(list, intermediate) {
         const func    = 'removeDeletedRows'; _debug(`${func}: list =`, list);
         const $rows   = allDataRows();
         const $marked = $rows.filter(TO_DELETE);
@@ -1669,31 +1791,31 @@ appSetup(MODULE, function() {
 
         // It is assumed that any blank rows have already been marked (or have
         // already been removed).
-        removeGridRows($rows.filter(TO_DELETE), renumber);
+        removeGridRows($rows.filter(TO_DELETE), intermediate);
     }
 
     /**
      * Delete the indicated grid rows.
      *
      * @param {Selector} rows
-     * @param {boolean}  [renumber]   Default: *true*.
+     * @param {boolean}  [intermediate]     If more row changes coming.
      */
-    function removeGridRows(rows, renumber) {
+    function removeGridRows(rows, intermediate) {
         _debug('removeGridRows: rows =', rows);
         const $rows = dataRows(rows);
-        destroyGridRowElements($rows, renumber);
+        destroyGridRowElements($rows, intermediate);
     }
 
     /**
      * Remove the indicated single grid data row.
      *
      * @param {Selector} target
-     * @param {boolean}  [renumber]   Default: *true*.
+     * @param {boolean}  [intermediate]     If more row changes coming.
      */
-    function removeGridRow(target, renumber) {
+    function removeGridRow(target, intermediate) {
         _debug('removeGridRow: item =', target);
         const $row = dataRow(target);
-        destroyGridRowElements($row, renumber);
+        destroyGridRowElements($row, intermediate);
     }
 
     /**
@@ -1703,17 +1825,65 @@ appSetup(MODULE, function() {
      * all at once.
      *
      * @param {jQuery}  $rows
-     * @param {boolean} [renumber]    Default: *true*.
+     * @param {boolean} [intermediate]      If more row changes coming.
      */
-    function destroyGridRowElements($rows, renumber) {
+    function destroyGridRowElements($rows, intermediate) {
         //_debug('destroyGridRowElements: $rows =', $rows);
         const row_count = $rows.length;
         toggleHidden($rows, true);
         $rows.each((_, row) => removeFromControlsColumnToggle(row));
         $rows.remove();
-        if (renumber !== false) {
-            decrementItemCount(row_count);
-            updateGridRowIndexes();
+        if (!intermediate) {
+            updateGridRowCount(-row_count);
+        }
+    }
+
+    /**
+     * The delete button for the given row.
+     *
+     * @param {Selector} row
+     *
+     * @returns {jQuery}
+     */
+    function deleteButton(row) {
+        return rowButton(row, 'delete');
+    }
+
+    /**
+     * Enable the delete button for the given row.
+     *
+     * @param {Selector} row
+     * @param {boolean}  [enable]     If *false* run {@link disableDelete}.
+     * @param {boolean}  [forbid]     If *true* add '.forbidden' if disabled.
+     *
+     * @returns {jQuery}              The submit button.
+     */
+    function enableDelete(row, enable, forbid) {
+        return enableRowButton(row, 'delete', enable, forbid);
+    }
+
+    /**
+     * Disable operation button for the given row.
+     *
+     * @param {Selector} row
+     * @param {boolean}  [forbid]     If *true* add '.forbidden'.
+     *
+     * @returns {jQuery}              The submit button.
+     */
+    function disableDelete(row, forbid) {
+        return enableDelete(row, false, forbid);
+    }
+
+    /**
+     * If there is only one grid row, disable
+     */
+    function updateDeleteButtons() {
+        _debug('updateDeleteButtons');
+        const $rows = allDataRows();
+        if ($rows.length > 1) {
+            $rows.each((_, row) => enableDelete(row));
+        } else if ($rows.length === 1) {
+            disableDelete($rows.first(), true);
         }
     }
 
@@ -1749,9 +1919,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function lookupButton(row) {
-        const match = `[${ACTION_ATTR}="lookup"]`;
-        const $row  = $(row);
-        return $row.is(match) ? $row : rowControls($row).filter(match);
+        return rowButton(row, 'lookup');
     }
 
     /**
@@ -1870,18 +2038,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}              The submit button.
      */
     function enableLookup(row, enable, forbid) {
-        const func = 'enableLookup'; _debug(`${func}: row =`, row);
-        if (enable === false) {
-            return disableLookup(row, forbid);
-        }
-        if (forbid) {
-            console.error(`${func}: cannot enable and forbid`);
-        }
-        const $button = lookupButton(row);
-        $button.prop('disabled', false);
-        $button.removeClass('forbidden disabled');
-        $button.attr('title', Emma.Lookup.enabled.tooltip);
-        return $button;
+        return enableRowButton(row, 'lookup', enable, forbid);
     }
 
     /**
@@ -1893,20 +2050,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}              The submit button.
      */
     function disableLookup(row, forbid) {
-        _debug('disableLookup: row =', row);
-        const $button = lookupButton(row);
-        $button.prop('disabled', true);
-        $button.addClass('disabled');
-        let tip;
-        if (forbid) {
-            $button.addClass('forbidden');
-            tip = "Bibliographic metadata is inherited from\n" + // TODO: I18n
-                'the original repository entry.';
-        } else {
-            tip = Emma.Lookup.disabled.tooltip;
-        }
-        $button.attr('title', tip);
-        return $button;
+        return enableLookup(row, false, forbid);
     }
 
     // ========================================================================
@@ -2800,6 +2944,18 @@ appSetup(MODULE, function() {
         });
         $rows.first().addClass(first_c);
         $rows.last().addClass(last_c);
+    }
+
+    /**
+     * updateGridRowCount
+     *
+     * @param {number} by
+     */
+    function updateGridRowCount(by) {
+        const func = 'updateGridRowCount'; _debug(`${func}: by`, by);
+        changeItemCount(by);
+        updateDeleteButtons();
+        updateGridRowIndexes();
     }
 
     // ========================================================================
@@ -5051,7 +5207,17 @@ appSetup(MODULE, function() {
     // Functions - page - pagination values
     // ========================================================================
 
-    let $page_items, $total_items;
+    let $item_counts, $page_items, $total_items;
+
+    /**
+     * The container for display of the number of rows on this page and the
+     * total number of rows.
+     *
+     * @returns {jQuery}
+     */
+    function itemCounts() {
+        return $item_counts ||= $container.find('.search-count');
+    }
 
     /**
      * The element(s) displaying the number of rows on this page.
@@ -5059,7 +5225,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function pageItems() {
-        return $page_items ||= $container.find('.search-count .page-items');
+        return $page_items ||= itemCounts().find('.page-items');
     }
 
     /**
@@ -5068,7 +5234,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function totalItems() {
-        return $total_items ||= $container.find('.search-count .total-items');
+        return $total_items ||= itemCounts().find('.total-items');
     }
 
     /**
@@ -5126,34 +5292,21 @@ appSetup(MODULE, function() {
      *
      * @param {number} increment
      */
-    function stepItemCount(increment) {
-        //_debug('stepItemCount: increment =', increment);
-        const page_count  = getPageItemCount();
-        const total_count = getTotalItemCount();
-        setPageItemCount(page_count + increment);
-        setTotalItemCount(total_count + increment);
-    }
-
-    /**
-     * Increase the number of rows displayed on the page.
-     *
-     * @param {number} [by]           Default: 1
-     */
-    function incrementItemCount(by) {
-        _debug('incrementItemCount: by =', by);
-        const step = by && Number(by) || 1;
-        stepItemCount(step);
-    }
-
-    /**
-     * Decrease the number of rows displayed on the page.
-     *
-     * @param {number} [by]           Default: 1
-     */
-    function decrementItemCount(by) {
-        _debug('decrementItemCount: by =', by);
-        const step = by && Number(by) || 1;
-        stepItemCount((step > 0) ? -step : step);
+    function changeItemCount(increment) {
+        const func  = 'changeItemCount';
+        //_debug(`${func}: increment =`, increment);
+        let count  = getPageItemCount();
+        let total  = getTotalItemCount();
+        const step = Number(increment);
+        if (step) {
+            setPageItemCount( count += step);
+            setTotalItemCount(total += step);
+        } else {
+            console.error(`${func}: invalid:`, increment);
+        }
+        const single = !(total > count);
+        itemCounts().toggleClass('multi-page', !single);
+        itemCounts().toggleClass('single-page', single);
     }
 
     // ========================================================================
