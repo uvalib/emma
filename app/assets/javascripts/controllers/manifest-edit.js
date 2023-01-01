@@ -966,7 +966,7 @@ appSetup(MODULE, function() {
         const $button   = button ? $(button) : headerRowToggle();
         const $target   = selfOrParent($button, HEAD_ROW, func);
         const expanding = isDefined(expand) ? !!expand : !$target.is(EXPANDED);
-        const config    = Emma.Grid.row;
+        const config    = Emma.Grid.Headers.row;
         const mode      = expanding ? config.closer : config.opener;
 
         $button.attr('aria-expanded', expanding);
@@ -1010,7 +1010,7 @@ appSetup(MODULE, function() {
         const $button   = button ? $(button) : controlsColumnToggle();
         const $target   = selfOrParent($button, CONTROLS_CELL, func);
         const expanding = isDefined(expand) ? !!expand : !$target.is(EXPANDED);
-        const config    = Emma.Grid.column;
+        const config    = Emma.Grid.Headers.column;
         const mode      = expanding ? config.closer : config.opener;
 
         $button.attr('aria-expanded', expanding);

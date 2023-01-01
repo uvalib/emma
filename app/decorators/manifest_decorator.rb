@@ -80,6 +80,21 @@ class ManifestDecorator < BaseDecorator
     include BaseDecorator::SharedGenericMethods
 
     # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Bulk submission configuration values.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    #--
+    # noinspection RailsI18nInspection
+    #++
+    BULK_SUBMIT_CFG = I18n.t('emma.bulk.submit', default: {}).deep_freeze
+
+    # =========================================================================
     # :section: BaseDecorator::Controls overrides
     # =========================================================================
 
@@ -94,8 +109,9 @@ class ManifestDecorator < BaseDecorator
     ICONS =
       BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
         v.dup.tap do |entry|
-          entry[:tip] %= { item: 'Manifest' } if entry[:tip]&.include?('%')
-          entry[:enabled] = true
+          tip = entry[:tooltip]
+          entry[:tooltip] %= { item: 'Manifest' } if tip&.include?('%')
+          entry[:active] = true
         end
       }.deep_freeze
 
@@ -203,21 +219,6 @@ class ManifestDecorator < BaseDecorator
 
     public
 
-    # Bulk submission configuration values.
-    #
-    # @type [Hash{Symbol=>Hash}]
-    #
-    #--
-    # noinspection RailsI18nInspection
-    #++
-    BULK_SUBMIT_CFG = I18n.t('emma.bulk.submit', default: {}).deep_freeze
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
     # The element displayed when the user has no Manifests to list.
     #
     # @param [String] css             Characteristic CSS class/selector.
@@ -313,6 +314,9 @@ class ManifestDecorator < BaseDecorator
 
 end
 
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class ManifestDecorator
 
   include SharedDefinitions
@@ -578,6 +582,12 @@ class ManifestDecorator
 
   public
 
+  # Submission button types.
+  #
+  # @type [Array<Symbol>]
+  #
+  SUBMISSION_BUTTONS = BULK_SUBMIT_CFG[:buttons].map(&:to_sym).freeze
+
   # ManifestItem entries to be submitted.
   #
   # @return [ActiveRecord::Relation<ManifestItem>]
@@ -586,35 +596,52 @@ class ManifestDecorator
     object.manifest_items.scope.submittable
   end
 
-  # Submission button types.
+  # Primary submission controls plus #submisson_counts.
   #
-  # @type [Array<Symbol>]
-  #
-  SUBMISSION_BUTTONS = %i[start stop pause resume].freeze
-
-  # submission_button_tray
-  #
-  # @param [Array<Symbol,ActiveSupport::SafeBuffer>] buttons
+  # @param [Array<ActiveSupport::SafeBuffer>] added
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               To #form_button_tray
+  # @param [Hash]   opt               To #form_button
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_button_tray(*buttons, css: '.submission-buttons', **opt)
-    opt.reverse_merge!('data-manifest': object.id)
-    buttons = [*SUBMISSION_BUTTONS, *buttons, submission_counts]
-    buttons.map!{ |b| b.is_a?(Symbol) ? form_button(b) : b }
+  def submission_button_tray(*added, css: '.submission-controls', **opt)
     prepend_css!(opt, css)
-    form_button_tray(*buttons, **opt)
+    opt[:'data-manifest'] ||= object.id
+    buttons = SUBMISSION_BUTTONS.map { |type| submission_control(type) }
+    form_button_tray(*buttons, *added, submission_counts, **opt)
   end
+
+  # Submission process control button.
+  #
+  # @param [Symbol] type
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_button
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_control(type, css: '.submission-control', **opt)
+    prepend_css!(opt, css)
+    form_button(type, **opt)
+  end
+
+  # ===========================================================================
+  # :section: Item forms (remit page)
+  # ===========================================================================
+
+  public
 
   # Submission count types.
   #
   # @type [Hash{Symbol=>String}]
   #
-  SUBMISSION_COUNTS = BULK_SUBMIT_CFG[:counts]
+  SUBMISSION_COUNTS =
+    BULK_SUBMIT_CFG[:counts].map { |type, entry|
+      lbl = entry.is_a?(Hash) && entry[:label] || entry || type.to_s
+      lbl = lbl.downcase
+      [type, lbl.freeze]
+    }.compact.to_h.freeze
 
-  # submission_counts
+  # Submission counts display.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -625,36 +652,58 @@ class ManifestDecorator
     prepend_css!(opt, css)
     html_div(opt) do
       SUBMISSION_COUNTS.map do |type, label|
-        label  = (label || type).downcase
-        label  = ERB::Util.h("- #{label}")
         number = (type == :total) ? submit_items.size : 0
-        number = html_span(number, class: 'value')
-        html_span(class: "#{type} count") do
-          number << label
-        end
+        submission_count(type, number, label: label)
       end
     end
   end
 
+  # Submission count.
+  #
+  # @param [Symbol]       type
+  # @param [Integer, nil] count
+  # @param [String, nil]  label       Default: from #SUBMISSION_COUNTS.
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt         To #html_span
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_count(type, count = nil, label: nil, css: '.count', **opt)
+    count   = positive(count) || 0
+    count   = html_span(count, class: 'value')
+    label ||= SUBMISSION_COUNTS[type]
+    prepend_css!(opt, type, css)
+    html_span(opt) do
+      count << ERB::Util.h("- #{label}")
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item forms (remit page)
+  # ===========================================================================
+
+  public
+
+  # Submission auxiliary buttons.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SUBMISSION_AUXILIARY = BULK_SUBMIT_CFG[:auxiliary]
+
   # auxiliary_button_tray
   #
-  # @param [Array<ActiveSupport::SafeBuffer>] buttons
+  # @param [Array<ActiveSupport::SafeBuffer>] added
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               To #form_button_tray
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def auxiliary_button_tray(*buttons, css: '.auxiliary-buttons', **opt)
-    opt.reverse_merge!('data-manifest': object.id)
+  def auxiliary_button_tray(*added, css: '.auxiliary-buttons', **opt)
     prepend_css!(opt, css)
-    form_button_tray(submission_local, *buttons, **opt)
+    opt[:'data-manifest'] ||= object.id
+    buttons = [submission_local, submission_remote]
+    form_button_tray(*buttons, *added, **opt)
   end
-
-  # @private TODO: I18n
-  FILE_NEEDED_TEXT = <<~HEREDOC
-    Use the file chooser to identify all of the files on your machine that are
-    referenced in the items below.
-  HEREDOC
 
   # A button and text panel to display to resolve items whose :file_data
   # indicates a local file that needs to be acquired in order to proceed with
@@ -666,6 +715,8 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def submission_local(hidden: true, css: '.local-file', **)
+    config = SUBMISSION_AUXILIARY[:local]
+
     b_opt  = { multiple: true }
     append_css!(b_opt, 'best-choice', css)
     append_css!(b_opt, 'hidden') if hidden
@@ -674,10 +725,44 @@ class ManifestDecorator
     n_opt  = {}
     append_css!(n_opt, 'panel', css)
     append_css!(n_opt, 'hidden') if hidden
-    notice = html_div(FILE_NEEDED_TEXT, n_opt)
+    notice = config[:description_html]&.html_safe || config[:description]
+    notice = html_div(notice, n_opt)
 
     button << notice
   end
+
+  # A button and text panel to display to resolve items whose :file_data
+  # indicates a remote file that needs to be acquired in order to proceed with
+  # automated batch submission.
+  #
+  # @param [Boolean] hidden           If *false* show initially.
+  # @param [String]  css              Characteristic CSS class/selector.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_remote(hidden: true, css: '.remote-file', **)
+    config = SUBMISSION_AUXILIARY[:remote]
+
+    b_opt  = { multiple: true }
+    append_css!(b_opt, 'best-choice', css)
+    append_css!(b_opt, 'hidden') if hidden
+    append_css!(b_opt, 'disabled') # TODO: Files via URL
+    button = form_button(:file, **b_opt)
+
+    n_opt  = {}
+    append_css!(n_opt, 'panel', css)
+    append_css!(n_opt, 'hidden') if hidden
+    notice = config[:description_html]&.html_safe || config[:description]
+    notice = html_div(notice, n_opt)
+
+    button << notice
+  end
+
+  # ===========================================================================
+  # :section: Item forms (remit page)
+  # ===========================================================================
+
+  public
 
   # @private
   STATUS_COLUMN_COUNT = ManifestItemDecorator::SUBMIT_STATUS_COLUMNS.size

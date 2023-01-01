@@ -934,10 +934,11 @@ module BaseDecorator::Form
     l_id  = "label-#{i_id}"
 
     i_opt = extract_hash!(opt, :accept, :multiple, :value, :title)
-    i_opt.merge!('aria-labelledby': l_id, id: i_id)
+    i_opt.merge!(id: i_id, 'aria-labelledby': l_id, class: 'file-input')
     input = h.file_field_tag(type, i_opt)
 
-    label = html_tag(:label, label, id: l_id)
+    l_opt = { id: l_id, class: 'label' }
+    label = html_div(label, l_opt)
 
     html_div(opt) do
       input << label

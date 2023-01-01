@@ -256,6 +256,7 @@ class Options
     # @type [Hash, nil]
     fields = json_parse(prm.delete(model), **opt) or return
     model_data_params.each_pair do |hash_key, url_param|
+      next unless fields.key?(hash_key)
       prm[url_param] = json_parse(fields.delete(hash_key), **opt)
     end
     prm.merge!(fields)

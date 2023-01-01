@@ -23,6 +23,12 @@ class ManifestDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
+    # Bulk submission configuration values.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    BULK_SUBMIT_CFG: Hash[Symbol,symHash]
+
     # Control icon definitions.
     #
     # @type [Hash{Symbol=>Hash{Symbol=>*}}]
@@ -84,12 +90,6 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu_label: (Manifest item, ?label: String|nil) -> ActiveSupport::SafeBuffer
-
-    # Bulk submission configuration values.
-    #
-    # @type [Hash{Symbol=>Hash}]
-    #
-    BULK_SUBMIT_CFG: Hash[Symbol,symHash]
 
     # The element displayed when the user has no Manifests to list.
     #
@@ -305,27 +305,37 @@ class ManifestDecorator
   #
   def comm_status: (?css: String|nil, ?status: Symbol|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # ManifestItem entries to be submitted.
-  #
-  # @return [ActiveRecord::Relation<ManifestItem>]
-  #
-  def submit_items: () -> ActiveRecord::Relation
-
   # Submission button types.
   #
   # @type [Array<Symbol>]
   #
   SUBMISSION_BUTTONS: symArray
 
-  # submission_button_tray
+  # ManifestItem entries to be submitted.
   #
-  # @param [Array<Symbol,ActiveSupport::SafeBuffer>] buttons
+  # @return [ActiveRecord::Relation<ManifestItem>]
+  #
+  def submit_items: () -> ActiveRecord::Relation
+
+  # Primary submission controls.
+  #
+  # @param [Array<ActiveSupport::SafeBuffer>] added
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               To #form_button_tray
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_button_tray: (?Array[Symbol|ActiveSupport::SafeBuffer] buttons, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def submission_button_tray: (*ActiveSupport::SafeBuffer added, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Submission process control button.
+  #
+  # @param [Symbol] type
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_button
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_control: (Symbol `type`, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Submission count types.
   #
@@ -333,7 +343,7 @@ class ManifestDecorator
   #
   SUBMISSION_COUNTS: Hash[Symbol,String]
 
-  # submission_counts
+  # Submission counts display.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -342,18 +352,33 @@ class ManifestDecorator
   #
   def submission_counts: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Submission count.
+  #
+  # @param [Symbol]      type
+  # @param [Integer]     count
+  # @param [String, nil] label        Default: from #SUBMISSION_COUNTS.
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          To #form_button
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_count: (Symbol `type`, ?(Integer|nil) count, ?label: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Submission auxiliary buttons.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SUBMISSION_AUXILIARY: Hash[Symbol,symHash]
+
   # auxiliary_button_tray
   #
-  # @param [Array<ActiveSupport::SafeBuffer>] buttons
+  # @param [Array<ActiveSupport::SafeBuffer>] added
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               To #form_button_tray
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def auxiliary_button_tray: (?Array[ActiveSupport::SafeBuffer] buttons, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # @private TODO: I18n
-  FILE_NEEDED_TEXT: String
+  def auxiliary_button_tray: (*ActiveSupport::SafeBuffer added, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # A button and text panel to display to resolve items whose :file_data
   # indicates a local file that needs to be acquired in order to proceed with
@@ -365,6 +390,17 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def submission_local: (?hidden: bool, ?css: String, **untyped _ignored) -> ActiveSupport::SafeBuffer
+
+  # A button and text panel to display to resolve items whose :file_data
+  # indicates a remote file that needs to be acquired in order to proceed with
+  # automated batch submission.
+  #
+  # @param [Boolean] hidden           If *false* show initially.
+  # @param [String]  css              Characteristic CSS class/selector.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_remote: (?hidden: bool, ?css: String, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # @private
   STATUS_COLUMN_COUNT: Integer

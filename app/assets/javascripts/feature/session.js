@@ -30,6 +30,9 @@ appSetup(MODULE, function() {
     // Ignore Turbolinks on anchor links.
     documentEvent('turbolinks:click', checkInPageAnchor);
 
+    // Monitor page visibility.
+    documentEvent('visibilitychange', pageVisibility);
+
     // ========================================================================
     // Actions
     // ========================================================================
@@ -157,6 +160,21 @@ appSetup(MODULE, function() {
         } else {
             console.log(`${func}: no anchor for`, event);
         }
+    }
+
+    /**
+     * Monitor the visibility of the browser tab containing the current page.
+     *
+     * If the browser in minimized or a different browser tab gets focus then
+     * the page is not visible.
+     *
+     * @param {Event} event
+     */
+    function pageVisibility(event) {
+        const state  = document.visibilityState;
+        const change = (state === 'visible') ? 'VISIBLE NOW' : 'NOT VISIBLE';
+        const target = event.target.URL;
+        console.warn(`PAGE ${change} ${target}`);
     }
 
 });

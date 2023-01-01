@@ -134,6 +134,29 @@ class ManifestItemDecorator < BaseDecorator
     include BaseDecorator::Lookup
 
     # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Bulk grid configuration values.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    #--
+    # noinspection RailsI18nInspection
+    #++
+    BULK_GRID_CFG = I18n.t('emma.bulk.grid', default: {}).deep_freeze
+
+    # @private
+    # @type [Hash{Symbol=>Hash}]
+    FILE_TYPE_CFG = BULK_GRID_CFG[:file]
+
+    # @private
+    # @type [Array<Symbol>]
+    FILE_TYPES = FILE_TYPE_CFG.keys.freeze
+
+    # =========================================================================
     # :section: BaseDecorator::Configuration overrides
     # =========================================================================
 
@@ -162,29 +185,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
-    ICONS = {
-      lookup: {
-        icon:    STAR,
-        tip:     'Lookup bibliographic metadata for this item',
-        path:    :button,
-        auto:    true,
-        enabled: true,
-      },
-      delete: {
-        icon:    HEAVY_X,
-        tip:     'Delete this item',
-        path:    :button,
-        auto:    true,
-        enabled: true,
-      },
-      insert: {
-        icon:    HEAVY_PLUS,
-        tip:     'Insert a row after this item',
-        path:    :button,
-        auto:    true,
-        enabled: true,
-      },
-    }.deep_freeze
+    ICONS = BULK_GRID_CFG[:icons]
 
     # Control icon definitions.
     #
@@ -328,15 +329,6 @@ class ManifestItemDecorator < BaseDecorator
     # =========================================================================
 
     public
-
-    # Bulk grid configuration values.
-    #
-    # @type [Hash{Symbol=>Hash}]
-    #
-    #--
-    # noinspection RailsI18nInspection
-    #++
-    BULK_GRID_CFG = I18n.t('emma.bulk.grid', default: {}).deep_freeze
 
     IDENTITY_FIELDS  = ManifestItem::ID_COLS
     GRID_ROWS_FIELDS = ManifestItem::GRID_COLS
@@ -568,14 +560,13 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>String}]
     #
-    SUBMIT_STATUS_TYPE = BULK_GRID_CFG.dig(:status, :type)
+    SUBMIT_PHASE = BULK_GRID_CFG.dig(:status, :type)
 
     # Submission status grid column names.
     #
     # @type [Array<Symbol>]
     #
-    SUBMIT_STATUS_COLUMNS =
-      [:controls, :item_name, *SUBMIT_STATUS_TYPE.keys].freeze
+    SUBMIT_STATUS_COLUMNS = [:controls, :item_name, *SUBMIT_PHASE.keys].freeze
 
     # Submission status value CSS classes and labels.
     #
@@ -590,6 +581,24 @@ class ManifestItemDecorator < BaseDecorator
     SUBMIT_STATUS_LABELS =
       SUBMIT_STATUS.map { |_, entry| [entry[:css], entry[:label]] }.to_h.freeze
 
+    S_OK           = :ok
+    S_BLANK        = :blank
+    S_FILE_NEEDED  = :file_needed
+    S_FILE_MISSING = :file_missing
+    S_DATA_MISSING = :data_missing
+
+    # Statuses whose displays show an Edit button.
+    #
+    # @type [Array<Symbol>]
+    #
+    STATUS_SHOW_EDIT = [S_FILE_NEEDED, S_FILE_MISSING, S_DATA_MISSING].freeze
+
+    # Statuses whose label is a <details> instead of a <div>.
+    #
+    # @type [Array<Symbol>]
+    #
+    STATUS_SHOW_DETAILS = [S_FILE_NEEDED].freeze
+
     # =========================================================================
     # :section: Item forms (remit page)
     # =========================================================================
@@ -598,20 +607,20 @@ class ManifestItemDecorator < BaseDecorator
 
     # submission_status_header
     #
-    # @param [Integer, nil] row
-    # @param [String]       css
-    # @param [Hash]         opt
+    # @param [Integer] row
+    # @param [String]  css
+    # @param [Hash]    opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
     # @see #submit_status_element
     #
-    def submission_status_header(row: nil, css: '.head', **opt)
+    def submission_status_header(row: 0, css: '.head', **opt)
       ctrl = nil
       name = 'Item Name' # TODO: I18n
-      stat = SUBMIT_STATUS_TYPE
+      stat = SUBMIT_PHASE
       prepend_css!(opt, css)
-      submit_status_element(ctrl, name, stat, row: row, head: true, **opt)
+      submit_status_element(ctrl, name, stat, row: row, **opt)
     end
 
     # =========================================================================
@@ -624,8 +633,8 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @param [String, nil]     ctrl
     # @param [String]          name
-    # @param [Hash{Symbol=>*}] status
-    # @param [Integer, nil]    row
+    # @param [Hash{Symbol=>*}] statuses
+    # @param [Integer]         row
     # @param [Integer]         col
     # @param [String]          css
     # @param [Hash]            opt
@@ -635,21 +644,40 @@ class ManifestItemDecorator < BaseDecorator
     def submit_status_element(
       ctrl,
       name,
-      status,
-      row:    nil,
-      col:    0,
-      css:    '.submission-status',
+      statuses,
+      row:      1,
+      col:      0,
+      css:      '.submission-status',
       **opt
     )
-      col += 1; ctrl&.html_safe? or (ctrl = submit_status_ctls(ctrl, col: col))
-      col += 1; name&.html_safe? or (name = submit_status_item(name, col: col))
-      opt.delete(:index)          # Just in cause this slipped in.
-      opt[:'aria-rowindex'] = row if row
-      opt[:separator]       = ''  unless opt.key?(:separator)
+      opt.delete(:index) # Just in cause this slipped in.
+      heading = (row == 1)
+      col_opt = { col: col, role: (heading ? 'columnheader' : 'cell') }
+
+      # Item selection column.
+      col_opt[:col] += 1
+      ctrl = submit_status_ctls(ctrl, **col_opt) unless ctrl&.html_safe?
+
+      # Item name column.
+      col_opt[:col] += 1
+      name = submit_status_item(name, **col_opt) unless name&.html_safe?
+
+      # Status value columns.
+      values =
+        statuses.map do |type, stat|
+          col_opt[:col] += 1
+          stat = S_OK        if stat.is_a?(TrueClass)
+          stat = S_BLANK     if stat.is_a?(FalseClass) || stat.nil?
+          stat = stat.to_sym if stat.is_a?(String)
+          # noinspection RubyMismatchedArgumentType
+          submit_status_value(type, stat, **col_opt)
+        end
+
+      opt[:role] ||= 'row'
+      opt[:'aria-rowindex'] = row
+      opt[:separator] = '' unless opt.key?(:separator)
       prepend_css!(opt, css)
-      html_div(ctrl, name, opt) do
-        status.map { |k, v| submit_status_value(k, v, col: (col += 1)) }
-      end
+      html_div(ctrl, name, *values, opt)
     end
 
     # submit_status_ctls
@@ -669,6 +697,7 @@ class ManifestItemDecorator < BaseDecorator
           id   = css_randomize(cls)
           h.check_box_tag(id) << h.label_tag(id, name)
         end
+      opt[:role] ||= 'cell'
       opt[:'aria-colindex'] = col if col
       prepend_css!(opt, css)
       html_div(ctrl, opt)
@@ -685,6 +714,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def submit_status_item(name, col: nil, css: '.item-name', **opt)
       name = html_div(name, class: 'text') unless name&.html_safe?
+      opt[:role] ||= 'cell'
       opt[:'aria-colindex'] = col if col
       prepend_css!(opt, css)
       html_div(name, opt)
@@ -692,19 +722,19 @@ class ManifestItemDecorator < BaseDecorator
 
     # submit_status_value
     #
-    # @param [Symbol]                    type
-    # @param [String,Symbol,Boolean,nil] status
-    # @param [Integer, nil]              col
-    # @param [String]                    css
-    # @param [Hash]                      opt
+    # @param [Symbol]       type
+    # @param [Symbol]       status
+    # @param [Integer, nil] col
+    # @param [String]       css
+    # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
     def submit_status_value(type, status, col:, css: '.status', **opt)
-      status = status ? :ok : :blank if status.nil? || status.is_a?(BoolType)
-      entry  = status.is_a?(Symbol) && SUBMIT_STATUS[status] || {}
+      entry  = SUBMIT_STATUS[status] || {}
       text   = submit_status_text(type, status, entry)
-      button = submit_status_link(type, status)
+      button = (submit_status_link(type, status) if respond_to?(:object))
+      opt[:role] ||= 'cell'
       opt[:'aria-colindex'] = col if col
       prepend_css!(opt, css, "#{type}-status", entry[:css])
       html_div(text, button, opt)
@@ -712,37 +742,49 @@ class ManifestItemDecorator < BaseDecorator
 
     # The text on the status element.
     #
-    # @param [Symbol]                    _type
-    # @param [String,Symbol,Boolean,nil] status
-    # @param [Hash]                      entry
-    # @param [String]                    css
-    # @param [Hash]                      opt
+    # @param [Symbol] _type
+    # @param [Symbol] status
+    # @param [Hash]   entry
+    # @param [String] css
+    # @param [Hash]   opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
     def submit_status_text(_type, status, entry = {}, css: '.text', **opt)
       prepend_css!(opt, css)
-      html_div(opt) { entry.is_a?(Hash) && entry[:text] || status }
+      label   = entry[:text] || status.to_s
+      details = STATUS_SHOW_DETAILS.include?(status)
+
+      # Simple label.
+      p_opt   = !details ? opt : append_css(opt, 'hidden')
+      plain   = html_div(label, p_opt)
+
+      # Expandable label.
+      d_opt   = details ? opt : append_css(opt, 'hidden')
+      details = html_tag(:summary, label) << html_div(class: 'name')
+      details = html_tag(:details, details, d_opt)
+
+      plain << details
     end
 
     # Control for fixing a condition resulting in a given status.
     #
-    # @param [Symbol]                    _type
-    # @param [String,Symbol,Boolean,nil] status
-    # @param [String]                    css
-    # @param [Hash]                      opt
+    # @param [Symbol] _type
+    # @param [Symbol] status
+    # @param [String] css
+    # @param [Hash]   opt
     #
     # @return [ActiveSupport::SafeBuffer, nil]
     #
     # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
     #
     def submit_status_link(_type, status, css: '.fix', **opt)
-      return unless status == :data # Only one with a control for now.
       label = 'Edit' # TODO: I18n
       row   = "data-item-id=#{object.id}"
       path  = h.edit_manifest_path(id: object.manifest_id, anchor: row)
       opt[:title] ||= 'Go to this item' # TODO: I18n
       prepend_css!(opt, css)
+      append_css!(opt, 'hidden') unless STATUS_SHOW_EDIT.include?(status)
       make_link(label, path, **opt, 'data-turbolinks': false)
     end
 
@@ -1078,10 +1120,6 @@ class ManifestItemDecorator
   #
   UPLOADER_DISPLAY_CLASS = 'uploader-feedback'
 
-  # @private
-  # @type [Hash{Symbol=>Hash}]
-  FILE_TYPE_CFG = BULK_GRID_CFG[:file]
-
   # Render a single label/value pair in a grid cell.
   #
   # @param [String, Symbol, nil] label
@@ -1101,7 +1139,7 @@ class ManifestItemDecorator
       opt[:'data-value'] = value.to_json if value
       file_name, file_type = value && ManifestItem.file_name_type(value)
       file_type_entries =
-        FILE_TYPE_CFG.keys.map do |t|
+        FILE_TYPES.map do |t|
           if t == file_type
             html_div(file_name, class: "from-#{t} active")
           else
@@ -1138,8 +1176,7 @@ class ManifestItemDecorator
 
   protected
 
-  INPUT_CONTROL_CFG = BULK_GRID_CFG[:controls]
-  FILE_INPUT_TYPES  = INPUT_CONTROL_CFG.select { |_, v| v[:panel] }.keys.freeze
+  FILE_INPUT_TYPES = FILE_TYPE_CFG.select { |_, v| v[:panel] }.keys.freeze
 
   PREPEND_CONTROLS_CLASS = 'uppy-FileInput-container-prepend'
   APPEND_CONTROLS_CLASS  = 'uppy-FileInput-container-append'
@@ -1176,11 +1213,10 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def file_input_popup(src:, css: '.inline-popup', **opt)
-    config     = INPUT_CONTROL_CFG[src] || {}
-    type       = config[:type]
+    config     = FILE_TYPE_CFG[src] || {}
+    type       = config[:type]  || src
     type_class = config[:class] || "from-#{type}"
     prepend_css!(opt, type_class)
-    raise "en.emma.bulk.grid.controls.#{src}" if config.blank?
 
     id     = opt.delete(:id) || unique_id
     button = file_input_ctrl(src: src, id: id, **opt)
@@ -1201,7 +1237,7 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def file_input_ctrl(src:, css: PopupHelper::POPUP_TOGGLE_CLASS, **opt)
-    config = INPUT_CONTROL_CFG[src] || {}
+    config = FILE_TYPE_CFG[src] || {}
     label  = config[:label]
     prepend_css!(opt, css)
     html_button(label, opt)
@@ -1217,25 +1253,25 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def file_input_panel(id:, src:, css: PopupHelper::POPUP_PANEL_CLASS, **opt)
-    config       = INPUT_CONTROL_CFG[src] || {}
-    type         = config[:type]
-    type_class   = config[:class] || "from-#{type}"
-    panel_config = config[:panel] || {}
+    config      = FILE_TYPE_CFG[src] || {}
+    type        = config[:type]  || src
+    type_class  = config[:class] || "from-#{type}"
+    panel_cfg   = config[:panel] || {}
 
-    desc_opt     = append_css(opt, 'description').merge!(for: id)
-    description  = config[:description]
-    description  = h.label_tag(nil, description, desc_opt)
+    desc_opt    = append_css(opt, 'description').merge!(for: id)
+    description = config[:description]
+    description = h.label_tag(nil, description, desc_opt)
 
-    label        = panel_config[:label]
-    name         = html_id(type || label)
-    input_id     = "#{name}-#{id}"
-    input_opt    = append_css(opt, 'input')
-    input_label  = h.label_tag(name, label, input_opt.merge(for: input_id))
-    input_field  = h.text_field_tag(name, nil, input_opt.merge(id: input_id))
+    label       = panel_cfg[:label]
+    name        = html_id(type || label)
+    input_id    = "#{name}-#{id}"
+    input_opt   = append_css(opt, 'input')
+    input_label = h.label_tag(name, label, input_opt.merge(for: input_id))
+    input_field = h.text_field_tag(name, nil, input_opt.merge(id: input_id))
 
     input_submit, input_cancel =
       %i[submit cancel].map do |key|
-        b_lbl = panel_config[key]
+        b_lbl = panel_cfg[key]
         b_opt = append_css(input_opt, "input-#{key}", "#{type_class}-#{key}")
         html_button(b_lbl, b_opt)
       end
@@ -1304,11 +1340,12 @@ class ManifestItemDecorator
   def submission_status(row: nil, col: 1, **opt)
     ctrl = submit_status_ctls(col: col)
     name = [*object.dc_title, *object.dc_creator].take(2).join(' / ')
-    stat = SUBMIT_STATUS_TYPE.transform_values { nil }
+    stat = SUBMIT_PHASE.transform_values { nil }
     stat[:index]  = object.in_index?
     stat[:upload] = object.file_uploaded?
-    stat[:file]   = stat[:upload] || object.file_literal? || :file
-    stat[:db]     = object.data_ok? || :data
+    stat[:file]   = stat[:upload]   || object.file_literal?
+    stat[:file] ||= object.file_ok?  ? S_FILE_NEEDED : S_FILE_MISSING
+    stat[:db]     = object.data_ok? || S_DATA_MISSING
     if Log.debug? && (skipped = stat.select { |_, v| v.nil? }).present?
       Log.debug { "#{__method__}: not handling status types: #{skipped.keys}" }
     end

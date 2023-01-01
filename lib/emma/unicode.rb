@@ -65,7 +65,7 @@ module Emma::Unicode
   REVERSE_DELTA     = "\u25BD"    # ▽ WHITE DOWN-POINTING TRIANGLE
   LEFT_TRIANGLE     = "\u25C0"    # ◀ BLACK LEFT-POINTING TRIANGLE
   BLACK_CIRCLE      = "\u25CF"    # ● BLACK CIRCLE
-  STAR              = "\u2605"    # ★ BLACK STAR
+  BLACK_STAR        = "\u2605"    # ★ BLACK STAR
   WARNING_SIGN      = "\u26A0"    # ⚠ WARNING SIGN
   CHECK_MARK        = "\u2714"    # ✔ HEAVY CHECK MARK
   HEAVY_X           = "\u2716"    # ✖ HEAVY MULTIPLICATION X

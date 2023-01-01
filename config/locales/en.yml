@@ -415,21 +415,18 @@ en:
 
       show:
         icon:         "\u2605" # ★ BLACK STAR
-        label:        "\u2605" # ★ BLACK STAR
         tooltip:      'View this %{item}'
-        enabled:      false
+        active:       false
 
       edit:
         icon:         "\u25B3" # △ WHITE UP-POINTING TRIANGLE
-        label:        "\u25B3" # △ WHITE UP-POINTING TRIANGLE
         tooltip:      'Modify this %{item}'
-        enabled:      false
+        active:       false
 
       delete:
         icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
-        label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
-        tooltip:      'Modify this %{item}'
-        enabled:      false
+        tooltip:      'Remove this %{item}'
+        active:       false
 
     field_group:      &FIELD_GROUP
 

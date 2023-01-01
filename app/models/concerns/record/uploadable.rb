@@ -151,7 +151,8 @@ module Record::Uploadable
   # @return [nil]
   #
   def file_attacher_load(data = nil)                                          # NOTE: from Upload::FileMethods#attached_file
-    data = make_file_record(data)
+    data ||= file_data
+    data &&= make_file_record(data)
     file_attacher.load_data(data) if data.present?
   end
 
@@ -385,7 +386,7 @@ module Record::Uploadable
   #     Shrine::Attacher::InstanceMethods#destroy
   #
   def note_cb(type)                                                             # NOTE: from Upload::FileMethods
-    __debug_line("*** SHRINE CALLBACK #{type} ***")
+    __debug_line("*** SHRINE CALLBACK #{type} *** | #{file_data.inspect}")
   end
 
   # Finalize a file upload by promoting the :cache file to a :store file.

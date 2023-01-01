@@ -52,7 +52,7 @@ appSetup(MODULE, function() {
     // Constants
     // ========================================================================
 
-    const SUBMISSION_TRAY_CLASS     = 'submission-buttons';
+    const SUBMISSION_TRAY_CLASS     = 'submission-controls';
     const START_BUTTON_CLASS        = 'start-button';
     const STOP_BUTTON_CLASS         = 'stop-button';
     const PAUSE_BUTTON_CLASS        = 'pause-button';
@@ -80,6 +80,7 @@ appSetup(MODULE, function() {
     const INDEX_STATUS_CLASS        = 'index-status';
     const ACTIVE_MARKER             = 'active';
     const NOT_STARTED_MARKER        = 'not-started';
+    const FILE_NEEDED_MARKER        = 'file-needed';
     const FILE_MISSING_MARKER       = 'file-missing';
     const DATA_MISSING_MARKER       = 'data-missing';
     const BLOCKED_MARKER            = 'blocked';
@@ -116,8 +117,12 @@ appSetup(MODULE, function() {
     const INDEX_STATUS          = selector(INDEX_STATUS_CLASS);
     const ACTIVE                = selector(ACTIVE_MARKER);
     const NOT_STARTED           = selector(NOT_STARTED_MARKER);
+    const FILE_NEEDED           = selector(FILE_NEEDED_MARKER);
     const FILE_MISSING          = selector(FILE_MISSING_MARKER);
+    const FILE_PROBLEMATIC      = `${FILE_MISSING}, ${FILE_NEEDED}`;
     const DATA_MISSING          = selector(DATA_MISSING_MARKER);
+    const DATA_PROBLEMATIC      = DATA_MISSING;
+    const PROBLEMATIC           = `${FILE_PROBLEMATIC}, ${DATA_PROBLEMATIC}`;
     const BLOCKED               = selector(BLOCKED_MARKER);
     const FAILED                = selector(FAILED_MARKER);
     const SUCCEEDED             = selector(SUCCEEDED_MARKER);
@@ -320,7 +325,6 @@ appSetup(MODULE, function() {
         initializeLocalFilesResolution();
         initializeRemoteFilesResolution();
         updateSubmitReady();
-        Counter.resetAll();
     }
 
     /**
@@ -476,24 +480,41 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     const $auxiliary_tray = $(AUXILIARY_TRAY);
-    const $remote_file    = $auxiliary_tray.find(REMOTE_FILE);
-    const $local_file     = $auxiliary_tray.find(LOCAL_FILE);
-    const $file_input     = $local_file.find('input[type="file"]');
 
-    let local_files  = [];
-    let remote_files = [];
-    let local_to_go  = [];
-    let remote_to_go = [];
+    const $remote_prompt  = $auxiliary_tray.find(REMOTE_FILE);
+    const $remote_button  = $remote_prompt.filter(FILE_BUTTON);
+    const $remote_input   = $remote_button.find('input[type="file"]');
 
-    function updateLocalFilesReady(setting) {
-        const ready = isDefined(setting) ? setting : isEmpty(local_to_go);
-        toggleHidden($local_file, ready);
+    const $local_prompt   = $auxiliary_tray.find(LOCAL_FILE);
+    const $local_button   = $local_prompt.filter(FILE_BUTTON);
+    const $local_input    = $local_button.find('input[type="file"]');
+
+    const file_references = { local: [], remote: [] };
+    const files_remaining = { local: [], remote: [] };
+
+    /**
+     * updateLocalFilesReady
+     *
+     * @param {boolean} [now]
+     *
+     * @returns {boolean}
+     */
+    function updateLocalFilesReady(now) {
+        const ready = isDefined(now) ? now : isEmpty(files_remaining.local);
+        toggleHidden($local_prompt, ready);
         return ready;
     }
 
-    function updateRemoteFilesReady(setting) {
-        const ready = isDefined(setting) ? setting : isEmpty(remote_to_go);
-        toggleHidden($remote_file, ready);
+    /**
+     * updateRemoteFilesReady
+     *
+     * @param {boolean} [now]
+     *
+     * @returns {boolean}
+     */
+    function updateRemoteFilesReady(now) {
+        const ready = isDefined(now) ? now : isEmpty(files_remaining.remote);
+        toggleHidden($remote_prompt, ready);
         return ready;
     }
 
@@ -544,6 +565,11 @@ appSetup(MODULE, function() {
         _error(`${func}: ${action}: invalid`);
     }
 
+    /**
+     * Begin submitting all items marked for submission.
+     *
+     * @param {object} _data          Currently unused.
+     */
     function startSubmissions(_data) {
         _debug('START SUBMISSIONS');
         if (isMissing(submissionsWhere(isChecked))) {
@@ -553,16 +579,31 @@ appSetup(MODULE, function() {
         submissionsActive(true);
     }
 
+    /**
+     * Terminate the current round of submissions.
+     *
+     * @param {object} _data          Currently unused.
+     */
     function stopSubmissions(_data) {
         _debug('STOP SUBMISSIONS');
         submissionsActive(false);
     }
 
+    /**
+     * Pause the current round of submissions.
+     *
+     * @param {object} _data          Currently unused.
+     */
     function pauseSubmissions(_data) {
         _debug('PAUSE SUBMISSIONS');
         submissionsPaused(true);
     }
 
+    /**
+     * Un-pause the current round of submissions.
+     *
+     * @param {object} _data          Currently unused.
+     */
     function resumeSubmissions(_data) {
         _debug('RESUME SUBMISSIONS');
         submissionsPaused(false);
@@ -617,12 +658,13 @@ appSetup(MODULE, function() {
     // Functions - submission items
     // ========================================================================
 
-    const SUBMIT_BLOCKED   = `${DATA_MISSING}, ${FILE_MISSING}, ${BLOCKED}`;
+    const CANT_SUBMIT = `${PROBLEMATIC}, ${BLOCKED}`;
+
     const NOT_READY_VALUES = {
-        [DB_STATUS]:     `${SUBMIT_BLOCKED}, ${FAILED}`,
-        [FILE_STATUS]:   `${SUBMIT_BLOCKED}, ${FAILED}`,
-        [UPLOAD_STATUS]: `${SUBMIT_BLOCKED}`,
-        [INDEX_STATUS]:  `${SUBMIT_BLOCKED}, ${SUCCEEDED}, ${DONE}`,
+        [DB_STATUS]:     `${CANT_SUBMIT}, ${FAILED}`,
+        [FILE_STATUS]:   `${CANT_SUBMIT}, ${FAILED}`,
+        [UPLOAD_STATUS]: `${CANT_SUBMIT}`,
+        [INDEX_STATUS]:  `${CANT_SUBMIT}, ${SUCCEEDED}, ${DONE}`,
     };
 
     const STATUS_SELECTORS = Object.keys(NOT_READY_VALUES);
@@ -639,25 +681,23 @@ appSetup(MODULE, function() {
      */
     function initializeSubmissions() {
         _debug('initializeSubmissions');
-        local_files  = [];
-        remote_files = [];
-        local_to_go  = [];
-        remote_to_go = [];
-        let changed  = false;
+        Object.keys(file_references).forEach(k => file_references[k] = []);
+        Object.keys(files_remaining).forEach(k => files_remaining[k] = []);
+        let changed = false;
         $submissions.each((_, item) => {
             const $item = $(item);
             STATUS_SELECTORS.forEach(status_selector => {
                 const $status = $item.find(status_selector);
                 if (isPresent($status)) {
                     let name;
-                    if ($status.is(FILE_MISSING)) {
+                    if ($status.is(FILE_NEEDED)) {
                         const path = $item.attr(FILE_NAME_ATTR) || '';
                         if ((name = path.split('\\').pop().split('/').pop())) {
-                            local_files.push(name);
-                            local_to_go.push(name);
+                            file_references.local.push(name);
+                            files_remaining.local.push(name);
                         } else if ((name = $item.attr(FILE_URL_ATTR))) {
-                            remote_files.push(name);
-                            remote_to_go.push(name);
+                            file_references.remote.push(name);
+                            files_remaining.remote.push(name);
                         }
                     }
                     initializeStatusFor($item, status_selector, name);
@@ -665,8 +705,8 @@ appSetup(MODULE, function() {
             });
             changed = updateItemSelect($item) || changed;
         });
-        _debug(`INITIAL local_files  =`, local_files);
-        _debug(`INITIAL remote_files =`, remote_files);
+        _debug(`INITIAL local_files  =`, file_references.local);
+        _debug(`INITIAL remote_files =`, file_references.remote);
     }
 
     function submissionsMissingFile(name) {
@@ -708,7 +748,7 @@ appSetup(MODULE, function() {
 
     function isBlocked(item, selectors = STATUS_SELECTORS) {
         const $item = $(item);
-        return selectors.some(status => $item.find(status).is(SUBMIT_BLOCKED));
+        return selectors.some(status => $item.find(status).is(CANT_SUBMIT));
     }
 
     function isTransmitting(item, selectors = STATUS_SELECTORS) {
@@ -1013,8 +1053,8 @@ appSetup(MODULE, function() {
         //_debug(`getStatusValueFor "${status}" for item =` item);
         const $item   = submission(item);
         const $status = $item.find(selector(status));
-        const classes = Array.from($status[0].classList).reverse();
-        return classes.find(cls => statusValues().has(cls))
+        const classes = Array.from($status[0]?.classList || []);
+        return classes.findLast(cls => statusValues().has(cls));
     }
 
     /**
@@ -1034,17 +1074,7 @@ appSetup(MODULE, function() {
         if (!$status.hasClass(value)) {
             $status.removeClass(Array.from(statusValues()));
             $status.addClass(value);
-            const label    = statusValueLabels()[value];
-            const $text    = $status.find('div.text');
-            const $details = $status.find('details.text');
-            const details  = $status.is(`${DATA_MISSING}, ${FILE_MISSING}`);
-            if (details) {
-                $details.children('summary').text(label);
-            } else {
-                $text.text(label);
-            }
-            toggleHidden($text,    details);
-            toggleHidden($details, !details);
+            setStatusDetails($status, statusValueLabels()[value]);
         }
         return value;
     }
@@ -1059,35 +1089,36 @@ appSetup(MODULE, function() {
     function initializeStatusFor(item, status, name) {
         //_debug(`initializeStatusFor "${status}" for item =` item);
         const $item   = submission(item);
-        const label   = statusLabelFor($item, status);
         const $status = $item.find(selector(status));
-        let $text     = $status.find('div.text');
-        let $details  = $status.find('details.text');
-        let $summary  = $details.children('summary');
-        let $name     = $details.children('.name');
+        const label   = statusLabelFor($item, status);
+        setStatusDetails($status, label, name);
+    }
 
-        if (isMissing($text)) {
-            $text = $('<div>').addClass('text').prependTo($status);
+    /**
+     * setStatusDetails
+     *
+     * @param {jQuery} $status
+     * @param {string} label
+     * @param {string} [name]
+     */
+    function setStatusDetails($status, label, name) {
+        const $text    = $status.find('div.text');
+        const $details = $status.find('details.text');
+        const $edit    = $status.find('.fix');
+        const fixable  = $status.is(PROBLEMATIC);
+        const needed   = $status.is(FILE_NEEDED);
+        if (needed) {
+            const $name = $details.children('.name');
+            let file = name;
+            if (file) { $name.text(file) } else { file = $name.text() }
+            if (file) { $details.attr('title', `${label}: ${file}`) }
+            $details.children('summary').text(label);
+        } else {
+            $text.text(label);
         }
-        $text.text(label);
-
-        if (name) {
-            if (isMissing($details)) {
-                $details = $('<details>').addClass('text').insertAfter($text);
-            }
-            if (isMissing($summary)) {
-                $summary = $('<summary>').prependTo($details);
-            }
-            if (isMissing($name)) {
-                $name = $('<div>').addClass('name').appendTo($details);
-            }
-            $details.attr('title', `${label}: ${name}`);
-            $summary.text(label);
-            $name.text(name);
-        }
-
-        toggleHidden($text,    !!name);
-        toggleHidden($details, !name);
+        toggleHidden($text,    needed);
+        toggleHidden($details, !needed);
+        toggleHidden($edit,    !fixable);
     }
 
     // ========================================================================
@@ -1183,8 +1214,14 @@ appSetup(MODULE, function() {
         _debug('initializeLocalFilesResolution');
         clearLocalFileReaders();
         clearLocalFileSelection();
-        handleClickAndKeypress($file_input, beforeLocalFilesSelected);
-        handleEvent($file_input, 'change', afterLocalFilesSelected);
+
+        // Set up the visible button to proxy for the non-visible <input>.
+        $local_button.attr('tabindex', 0);
+        handleClickAndKeypress($local_button, beforeLocalFilesSelected);
+
+        // The <input> is made non-visible.
+        $local_input.attr('tabindex', -1).attr('aria-hidden', true);
+        handleEvent($local_input, 'change', afterLocalFilesSelected);
     }
 
     /**
@@ -1215,7 +1252,7 @@ appSetup(MODULE, function() {
      * Clear any previous file selection.
      */
     function clearLocalFileSelection() {
-        $file_input.val(null);
+        $local_input.val(null);
         local_file_selection = undefined;
     }
 
@@ -1226,7 +1263,10 @@ appSetup(MODULE, function() {
      */
     function beforeLocalFilesSelected(event) {
         _debug('*** beforeLocalFilesSelected: event =', event);
-        clearLocalFileSelection();
+        if (event.currentTarget === event.target) {
+            clearLocalFileSelection();
+            $local_input.click();
+        }
     }
 
     /**
@@ -1262,9 +1302,9 @@ appSetup(MODULE, function() {
             const name = file?.name;
             if (!name) {
                 _debug(`IGNORING nameless file[${i}]:`, file);
-            } else if (!local_files.includes(name)) {
+            } else if (!file_references.local.includes(name)) {
                 _debug(`IGNORING unrequested file "${name}":`, file);
-            } else if (!local_to_go.includes(name)) {
+            } else if (!files_remaining.local.includes(name)) {
                 _debug(`IGNORING already handled file "${name}":`, file);
             } else {
                 addLocalFile(file);
@@ -1290,7 +1330,7 @@ appSetup(MODULE, function() {
             const name = fr.file.name;
             const size = fr.file.size;
             const item = `${name} : ${size} bytes`;
-            if (!removeFrom(local_to_go, name)) {
+            if (!removeFrom(files_remaining.local, name)) {
                 _debug(`${func}: ${item} -- ALREADY PROCESSED`);
             } else {
                 _debug(`${func}: ${item}`);
@@ -1301,7 +1341,7 @@ appSetup(MODULE, function() {
         });
         const resolved    = good.length;
         const problematic = bad.length;
-        const remaining   = local_to_go.length;
+        const remaining   = files_remaining.local.length;
 
         if (resolved) {
             let sel_changed = false;
@@ -1309,8 +1349,8 @@ appSetup(MODULE, function() {
             $submissions.each((_, item) => {
                 const $item   = $(item);
                 const $status = $item.find(FILE_STATUS);
-                const missing = $status.is(FILE_MISSING);
-                const name    = missing && $status.find('.name').text();
+                const needed  = $status.is(FILE_NEEDED);
+                const name    = needed && $status.find('.name').text();
                 if (name && fulfilled.has(name)) {
                     setStatusFor($item, FILE_STATUS, SUCCEEDED);
                     sel_changed = updateItemSelect($item) || sel_changed;
@@ -1327,7 +1367,7 @@ appSetup(MODULE, function() {
         }
 
         if (remaining) {
-            lines.push(remainingLabel(remaining), ...local_to_go);
+            lines.push(remainingLabel(remaining), ...files_remaining.local);
         } else {
             updateSubmitReady();
             lines.push(allResolvedLabel());
@@ -1379,7 +1419,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function allResolvedLabel() {
-        return 'ALL FILES RESOLVED - READY FOR SUBMISSION';
+        return 'ALL FILES RESOLVED - ALL SELECTED ITEMS READY FOR SUBMISSION';
     }
 
     // ========================================================================
@@ -1468,7 +1508,7 @@ appSetup(MODULE, function() {
         clearSelectedRemoteFiles();
         // TODO: cloud-based storage
         _debug(`${func}: remote_selected =`, remote_file_selection);
-        _debug(`${func}: remote_to_go    =`, remote_to_go);
+        _debug(`${func}: remote_to_go    =`, files_remaining.remote);
     }
 
     /**
@@ -1566,5 +1606,6 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     initializeSubmissionForm();
+    Counter.resetAll();
 
 });

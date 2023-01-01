@@ -106,8 +106,9 @@ class AccountDecorator < BaseDecorator
     ICONS =
       BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
         v.dup.tap do |entry|
-          entry[:tip] %= { item: 'account' } if entry[:tip]&.include?('%')
-          entry[:enabled] = true
+          tip = entry[:tooltip]
+          entry[:tooltip] %= { item: 'account' } if tip&.include?('%')
+          entry[:active] = true
         end
       }.deep_freeze
 

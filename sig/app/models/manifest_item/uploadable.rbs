@@ -4,6 +4,23 @@ module ManifestItem::Uploadable
   # :nocov:
   #include Record::Uploadable
 
+  # Full name of the file.
+  #
+  # @return [String]
+  # @return [nil]                     If :file_data is blank.
+  #
+  def filename: () -> (String | nil)
+
+  @filename: String | nil
+
+  # Return the cached file unless :file_data contains an indirect reference to
+  # the actual file.
+  #
+  # @return [FileUploader::UploadedFile]
+  # @return [nil]
+  #
+  def attach_cached: () -> (FileUploader::UploadedFile | nil)
+
   # Indicate whether the attached file is valid.
   #
   # If the :file_data field does not contain uploader information then this

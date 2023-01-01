@@ -19,24 +19,32 @@ module ManifestItem::Uploadable
   # :section: Record::Uploadable overrides
   # ===========================================================================
 
+  public
+
+  # Full name of the file.
+  #
+  # @return [String]
+  # @return [nil]                     If :file_data is blank.
+  #
+  def filename
+    @filename ||= file_reference || super
+  end
+
+  # ===========================================================================
+  # :section: Record::Uploadable overrides
+  # ===========================================================================
+
   protected
 
-=begin
-  # Possibly temporary method to ensure that :file_data is being fed back as a
-  # Hash since Shrine is expected that because the associated column is :json.
-  #
-  # @param [Hash, String, nil] data   Default: `#file_data`.
+  # Return the cached file unless :file_data contains an indirect reference to
+  # the actual file.
   #
   # @return [FileUploader::UploadedFile]
   # @return [nil]
   #
-  def file_attacher_load(data = nil)
-    __debug "=== file_attacher_load ManifestItem === | data = #{data.inspect}"
-    data = make_file_record(data)
-    __debug "=== file_attacher_load ManifestItem === | data -> #{data.inspect} | call stack\n#{caller.join("\n")}"
-    file_attacher.load_data(data) if data.present?
+  def attach_cached
+    super unless file_reference.present?
   end
-=end
 
   # Indicate whether the attached file is valid.
   #

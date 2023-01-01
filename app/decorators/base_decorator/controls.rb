@@ -23,12 +23,14 @@ module BaseDecorator::Controls
   # Valid properties for entries under #ICONS.
   #
   # * :icon     [String]                Unicode character.
-  # * :tip      [String]                Tooltip on hover.
+  # * :tooltip  [String]                Tooltip on hover.
   # * :path     [String, Symbol, Proc]  Activation action (see below).
-  # * :auto     [Boolean]               If *true* available for anon user.
-  # * :enabled  [Boolean, Proc]         If *false* do not show.
+  # * :auto     [Boolean]               If *true* authorization is not checked.
+  # * :active   [Boolean, Proc]         If *false* do not show.
+  # * :enabled  [Hash]                  Overrides if active.
+  # * :disabled [Hash]                  Overrides if not active.
   #
-  ICON_PROPERTIES = %i[icon tip path auto enabled].freeze
+  ICON_PROPERTIES = %i[icon tooltip path auto active enabled disabled].freeze
 
   # Control icon definitions.
   #
@@ -36,23 +38,10 @@ module BaseDecorator::Controls
   #
   # @see BaseDecorator::Controls#ICON_PROPERTIES
   #
-  ICONS = {
-    show: {
-      icon:    STAR,
-      tip:     'View this %{item}',
-      enabled: false,
-    },
-    edit: {
-      icon:    DELTA,
-      tip:     'Modify this %{item}',
-      enabled: false,
-    },
-    delete: {
-      icon:    HEAVY_X,
-      tip:     'Delete this %{item}',
-      enabled: false,
-    },
-  }.deep_freeze
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  ICONS = I18n.t('emma.control_icons', default: {}).deep_freeze
 
   # The name of the attribute indicating the action of a control button.
   #
@@ -127,21 +116,20 @@ module BaseDecorator::Controls
   #
   def control_icon_button(action, index: nil, unique: nil, css: '.icon', **opt)
     prop = extract_hash!(opt, *ICON_PROPERTIES)
-    enabled, path, tip, icon = prop.values_at(:enabled, :path, :tip, :icon)
-
-    case enabled
+    case (active = prop[:active])
       when nil         then # Enabled if not specified otherwise.
-      when true, false then return unless enabled
-      when Proc        then return unless enabled.call(object)
-      else                  return unless true?(enabled)
+      when true, false then return unless active
+      when Proc        then return unless active.call(object)
+      else                  return unless true?(active)
     end
-    case path
+    case (path = prop[:path])
       when Symbol then # deferred
       when Proc   then path = path.call(object)
       else             path ||= path_for(object, action: action)
     end
     return if path.blank?
 
+    tip      = prop[:tooltip]
     uniq_opt = { index: index, unique: unique }.compact
     opt[:id] = unique_id(*opt[:id], **uniq_opt) if uniq_opt.present?
     opt[:title] ||= tip&.include?('%') ? (tip % { item: model_type }) : tip
@@ -149,7 +137,7 @@ module BaseDecorator::Controls
 
     return yield(path, opt) if block_given?
 
-    icon ||= STAR
+    icon = prop[:icon] || BLACK_STAR
     prepend_css!(opt, css, action)
     if path == :button
       html_button(icon, **opt)

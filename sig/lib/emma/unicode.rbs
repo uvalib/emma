@@ -48,7 +48,7 @@ module Emma::Unicode
 
   BLACK_CIRCLE: String
 
-  STAR: String
+  BLACK_STAR: String
 
   WARNING_SIGN: String
 

@@ -260,14 +260,15 @@ class UploadDecorator < BaseDecorator
     ICONS =
       BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
         v.dup.tap do |entry|
-          entry[:tip] %= { item: 'EMMA entry' } if entry[:tip]&.include?('%')
-          entry[:enabled] = true
+          tip = entry[:tooltip]
+          entry[:tooltip] %= { item: 'EMMA entry' } if tip&.include?('%')
+          entry[:active] = true
         end
       }.reverse_merge!(
         check: {
           icon:    BANG,
-          tip:     'Check for an update to the status of this submission',
-          enabled: ->(item) { item.try(:in_process?) },
+          tooltip: 'Check for an update to the status of this submission',
+          active:  ->(item) { item.try(:in_process?) },
         }
       ).deep_freeze
 

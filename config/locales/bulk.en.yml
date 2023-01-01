@@ -8,6 +8,59 @@ en:
 
     bulk:
 
+      # =======================================================================
+      # Common definitions
+      # =======================================================================
+
+      _template:
+
+        icons:
+
+          # @see BaseDecorator::Controls::ICON_PROPERTIES
+          _generic:       &ICON_TEMPLATE
+            icon:         "\u25CF"            # Default: ● BLACK CIRCLE
+            tooltip:      ~                   # Tooltip on hover.
+            path:         !ruby/symbol button # Activation action.
+            auto:         false               # Def: authorization is checked.
+            active:       true                # Control enabled.
+
+          _anonymous:     &FOR_ANY_USER
+            auto:         true                # Available for any user.
+
+          _authorized:    &FOR_AUTHORIZED_USER
+            auto:         true                # Assume authorized user.
+
+        file:
+
+          uploader:       &UPLOADER_CONTROL
+            label:        'Upload'
+            description:  'Direct upload of remediated content'
+            enabled:      ~
+
+          name:           &FILE_NAME_CONTROL
+            label:        'File Name'
+            description:  'Remediated content file name.'
+            enabled:      ~
+
+          url:            &FILE_URL_CONTROL
+            label:        'File URL'
+            description:  'Remediated content file network location'
+            enabled:      ~
+
+          data:           &FILE_DATA_CONTROL
+            label:        'File Data'
+            description:  'Remediated content as literal encoded file data'
+            enabled:      ~
+
+        file_panel:       &FILE_PANEL
+          label:          'TO BE OVERRIDDEN'
+          submit:         'OK'
+          cancel:         'Cancel'
+
+      # =======================================================================
+      # manifest/new and manifest/edit
+      # =======================================================================
+
       grid:
 
         headers:
@@ -28,15 +81,49 @@ en:
             # When CONTROLS_ROTATE is true (with "transform:rotate(0.25turn)"):
             label: "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
 
+        icons:
+
+          lookup:
+            <<:           *ICON_TEMPLATE
+            <<:           *FOR_AUTHORIZED_USER
+            enabled:
+              tooltip:    'Lookup bibliographic metadata for this item'
+            disabled:
+              tooltip:    |
+                Please supply either a standard identifier (ISBN, DOI, etc) or
+                a title and an author
+            icon:         "\u2605" # ★ BLACK STAR
+
+          delete:
+            <<:           *ICON_TEMPLATE
+            <<:           *FOR_AUTHORIZED_USER
+            enabled:
+              tooltip:    'Delete this item'
+            disabled:
+              tooltip:    |
+                Cannot delete the last item of a manifest.
+                If this item really needs to be deleted, insert an empty item
+                before deleting this one.
+            icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
+
+          insert:
+            <<:           *ICON_TEMPLATE
+            <<:           *FOR_AUTHORIZED_USER
+            enabled:
+              tooltip:    'Insert a row after this item'
+            disabled:
+              tooltip:    'Unable to insert a row after this item'
+            icon:         "\u2795" # ➕ HEAVY PLUS SIGN
+
         status:
 
-          type:
+          type:           # @see ManifestItemDecorator::SUBMIT_PHASE
             db:           'Database Status'
             file:         'File Status'
             upload:       'Storage Status'
             index:        'Indexing Status'
 
-          value:
+          value:           # @see ManifestItemDecorator::SUBMIT_STATUS
 
             blank:
               css:        'not-started'
@@ -50,11 +137,14 @@ en:
 
             # == Pre-submit conditions
 
-            data:
+            data_missing:
               css:        'data-missing'
-              label:      'DATA NEEDED'
-            file:
+              label:      'DATA MISSING'
+            file_missing:
               css:        'file-missing'
+              label:      'FILE MISSING'
+            file_needed:
+              css:        'file-needed'
               label:      'FILE NEEDED'
             blocked:
               css:        'blocked'
@@ -75,64 +165,47 @@ en:
         file:
 
           uploader:
-            label:        'Upload'
+            <<:           *UPLOADER_CONTROL
             description:  |
               You can choose to pre-load your remediated content file now
               if that is more convenient.
+            enabled:      true
 
           name:
-            label:        'File Name'
+            <<:           *FILE_NAME_CONTROL
+            panel:
+              <<:         *FILE_PANEL
+              label:      'Filename'
             description:  |
               Provide the name of a file accessible from your web browser
               to be acquired at the start of the bulk upload process.
+            enabled:      true
 
           url:
-            label:        'File URL'
+            <<:           *FILE_URL_CONTROL
+            panel:
+              <<:         *FILE_PANEL
+              label:      'URL'
             description:  |
               Provide the location of a file on the Internet
               to be acquired at the start of the bulk upload process.
+            enabled:      true
 
           data:
-            label:        'File Data'
-            description:  |
-              Literal encoded file data.
-              (NOT CURRENTLY IMPLEMENTED)
+            <<:           *FILE_DATA_CONTROL
+            enabled:      false
 
-        controls:
-
-          uploader:
-            label:        'Upload'
-            type:         uploader
-            class:        'from-uploader'
-            description:  |
-              You can choose to pre-load your remediated content file now
-              if that is more convenient.
-
-          local_file:
-            label:        'File Name'
-            type:         name
-            class:        'from-name'
-            description:  |
-              Provide the name of a file accessible from your web browser
-              to be acquired at the start of the bulk upload process.
-            panel:
-              label:      'Filename'
-              submit:     'OK'
-              cancel:     'Cancel'
-
-          remote_file:
-            label:        'File URL'
-            type:         url
-            class:        'from-url'
-            description:  |
-              Provide the location of a file on the Internet
-              to be acquired at the start of the bulk upload process.
-            panel:
-              label:      'URL'
-              submit:     'OK'
-              cancel:     'Cancel'
+      # =======================================================================
+      # manifest/remit
+      # =======================================================================
 
       submit:
+
+        phase:          # @see ManifestItemDecorator::SUBMIT_PHASE
+          db:           'Database Status'
+          file:         'File Status'
+          upload:       'Storage Status'
+          index:        'Indexing Status'
 
         counts:
           total:        'Total'
@@ -140,3 +213,20 @@ en:
           transmitting: 'Transmitting'
           succeeded:    'Succeeded'
           failed:       'Failed'
+
+        auxiliary:
+
+          local:
+            label:       'Files'
+            description: |
+              Use the file chooser to identify all of the files on your machine
+              referenced by "FILE NEEDED" in the items below.
+            active:      true
+
+          remote:
+            label:       'URLs'
+            description_html: |
+              Use this to gather all of the remote files
+              referenced by "FILE NEEDED" in the items below.
+              <em>NOTE: NOT YET IMPLEMENTED</em>
+            active:      true

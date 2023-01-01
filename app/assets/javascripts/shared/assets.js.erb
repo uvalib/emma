@@ -12,7 +12,7 @@
 // @see file:lib/tasks/emma_assets.rake
 // @see HeadHelper::Scripts#page_script_settings
 //
-// noinspection JSFileReferences, ES6UnusedImports, LongLine
+// noinspection JSFileReferences, ES6UnusedImports, LongLine, LocalVariableNamingConventionJS
 
 
 import { AppDebug }   from '../javascripts/application/debug';
@@ -217,15 +217,17 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * GridProperties
+ * @typedef GridHeaderProperties
  *
- * - column:            Properties for column toggle.
- * - row:               Properties for header row toggle.
+ * @property {ToggleProperties} column
+ * @property {ToggleProperties} row
+ */
+
+/**
+ * @typedef GridProperties
  *
- * @typedef {{
- *    column:           ToggleProperties,
- *    row:              ToggleProperties,
- *  }} GridProperties
+ * @property {GridHeaderProperties}  Headers
+ * @property {ActionPropertiesTable} Icons
  */
 
 /**
@@ -488,137 +490,167 @@ export const Emma = (function() {
     const image_placeholder = ASSET_OVERRIDES.Image_placeholder_asset || '';
 
     // ========================================================================
+    // General settings (at the time of asset creation).
+    // ========================================================================
+
+    /** @type {string} */
+    const RAILS_ENV =       "<%= Rails.env.to_s %>",
+          SESSION_ID =      '';
+
+    /** @type {boolean} */
+    const DEPLOYED =        b$("<%= application_deployed? %>"),
+          SEARCH_ANALYSIS = b$("<%= SearchesDecorator::SEARCH_ANALYSIS %>"),
+          APP_DEBUG =       false;
+
+    // ========================================================================
+    // Feature settings
+    // ========================================================================
+
+    /** @type {ImageProperties} */
+    const Image = {
+        placeholder: {
+            alt:        "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
+            class:      "<%= ImageHelper::PLACEHOLDER_IMAGE_CLASS %>",
+            asset:      image_placeholder,
+        }
+    };
+
+    /** @type {PanelProperties} */
+    const Panel = {
+        opener: {
+            label:      "<%= PanelHelper::PANEL_OPENER_LABEL %>",
+            tooltip:    "<%= PanelHelper::PANEL_OPENER_TIP %>",
+        },
+        closer: {
+            label:      "<%= PanelHelper::PANEL_CLOSER_LABEL %>",
+            tooltip:    "<%= PanelHelper::PANEL_CLOSER_TIP %>",
+        },
+    };
+
+    /** @type {TreeProperties} */
+    const Tree = {
+        opener: {
+            label:      "<%= TreeHelper::TREE_OPENER_LABEL %>",
+            tooltip:    "<%= TreeHelper::TREE_OPENER_TIP %>",
+        },
+        closer: {
+            label:      "<%= TreeHelper::TREE_CLOSER_LABEL %>",
+            tooltip:    "<%= TreeHelper::TREE_CLOSER_TIP %>",
+        },
+    };
+
+    /** @type {GridProperties} */
+    const Grid = {
+        Headers:        o$('<%= js ManifestItemDecorator::GRID_HEADER %>'),
+        Icons:          o$('<%= js ManifestItemDecorator::ICONS %>'),
+    };
+
+    /** @type {PopupProperties} */
+    const Popup = {
+        button: {
+            class:      "<%= PopupHelper::POPUP_TOGGLE_CLASS %>",
+        },
+        panel: {
+            class:      "<%= PopupHelper::POPUP_PANEL_CLASS %>",
+        },
+        closer: {
+            class:      "<%= PopupHelper::POPUP_CLOSER_CLASS %>",
+        },
+        controls: {
+            class:      "<%= PopupHelper::POPUP_CONTROLS_CLASS %>",
+        },
+        deferred: {
+            class:      "<%= PopupHelper::POPUP_DEFERRED_CLASS %>",
+        },
+        hidden: {
+            class:      "<%= PopupHelper::POPUP_HIDDEN_MARKER %>",
+        },
+    };
+
+    /** @type {ScrollProperties} */
+    const Scroll = {
+        target:         o$('<%= js ScrollHelper::SCROLL_TARGET %>'),
+        button:         o$('<%= js ScrollHelper::SCROLL_TOP_BUTTON %>'),
+        down:           o$('<%= js ScrollHelper::SCROLL_DOWN_BUTTON %>'),
+    };
+
+    /** @type {SearchProperties} */
+    const Search = {
+        type:           o$('<%= js SearchTermsHelper::SEARCH_TYPE %>'),
+        Filter: {
+            control:    o$('<%= js LayoutHelper::SearchFilters::ADV_SEARCH%>'),
+        },
+        Style: {
+            container: {
+                class:  "<%= SearchDecorator::STYLE_CONTAINER %>",
+            },
+            control: {
+                template:
+                        o$('<%= js SearchDecorator::STYLE_BUTTON_TEMPLATE %>'),
+                buttons:
+                        o$('<%= js SearchDecorator::STYLE_BUTTONS %>'),
+            },
+        },
+    };
+
+    /** @type {DownloadProperties} */
+    const Download = {
+        button: {
+            class:      "<%= ArtifactDecorator::DOWNLOAD_BUTTON_CLASS %>",
+        },
+        progress: {
+            class:      "<%= ArtifactDecorator::DOWNLOAD_PROGRESS_CLASS %>",
+        },
+        failure: {
+            class:      "<%= ArtifactDecorator::DOWNLOAD_FAILURE_CLASS %>",
+            prefix:     "<%= I18n.t('emma.download.failure.prefix') %>",
+            canceled:   "<%= I18n.t('emma.download.failure.canceled') %>",
+            sign_in:    "<%= I18n.t('emma.download.failure.sign_in') %>",
+            unknown:    "<%= I18n.t('emma.download.failure.unknown') %>",
+        },
+    };
+
+    /** @type {ActionProperties} */
+    const Lookup =      o$('<%= js I18n.t(%q(emma.lookup)) %>');
+
+    /** @type {ModelProperties} */
+    const Account =     o$('<%= js AccountDecorator.js_properties %>'),
+          User =        o$('<%= js UserDecorator.js_properties %>'),
+          Entry =       o$('<%= js EntryDecorator.js_properties %>'),
+          Upload =      o$('<%= js UploadDecorator.js_properties %>'),
+          Manifest =    o$('<%= js ManifestDecorator.js_properties %>'),
+          ManifestItem= o$('<%= js ManifestItemDecorator.js_properties %>');
+
+    // ========================================================================
     // Application settings
     // ========================================================================
 
     const settings = {
-
-        // ====================================================================
-        // General settings (at the time of asset creation).
-        // ====================================================================
-
-        RAILS_ENV:       "<%= Rails.env.to_s %>",
-        DEPLOYED:        b$("<%= application_deployed? %>"),
-        SESSION_ID:      '',
-        SEARCH_ANALYSIS: b$("<%= SearchesDecorator::SEARCH_ANALYSIS %>"),
-        APP_DEBUG:       undefined,
-
-        // ====================================================================
-        // Feature settings
-        // ====================================================================
-
-        Image: {
-            placeholder: {
-                alt:     "<%= ImageHelper::PLACEHOLDER_IMAGE_ALT %>",
-                class:   "<%= ImageHelper::PLACEHOLDER_IMAGE_CLASS %>",
-                asset:   image_placeholder,
-            }
-        },
-
-        Panel: {
-            opener: {
-                label:   "<%= PanelHelper::PANEL_OPENER_LABEL %>",
-                tooltip: "<%= PanelHelper::PANEL_OPENER_TIP %>",
-            },
-            closer: {
-                label:   "<%= PanelHelper::PANEL_CLOSER_LABEL %>",
-                tooltip: "<%= PanelHelper::PANEL_CLOSER_TIP %>",
-            },
-        },
-
-        Tree: {
-            opener: {
-                label:   "<%= TreeHelper::TREE_OPENER_LABEL %>",
-                tooltip: "<%= TreeHelper::TREE_OPENER_TIP %>",
-            },
-            closer: {
-                label:   "<%= TreeHelper::TREE_CLOSER_LABEL %>",
-                tooltip: "<%= TreeHelper::TREE_CLOSER_TIP %>",
-            },
-        },
-
-        Grid:           o$('<%= js ManifestItemDecorator::GRID_HEADER %>'),
-
-        Popup: {
-            button: {
-                class:   "<%= PopupHelper::POPUP_TOGGLE_CLASS %>",
-            },
-            panel: {
-                class:   "<%= PopupHelper::POPUP_PANEL_CLASS %>",
-            },
-            closer: {
-                class:   "<%= PopupHelper::POPUP_CLOSER_CLASS %>",
-            },
-            controls: {
-                class:   "<%= PopupHelper::POPUP_CONTROLS_CLASS %>",
-            },
-            deferred: {
-                class:   "<%= PopupHelper::POPUP_DEFERRED_CLASS %>",
-            },
-            hidden: {
-                class:   "<%= PopupHelper::POPUP_HIDDEN_MARKER %>",
-            },
-        },
-
-        Scroll: {
-            target: o$('<%= js ScrollHelper::SCROLL_TARGET %>'),
-            button: o$('<%= js ScrollHelper::SCROLL_TOP_BUTTON %>'),
-            down:   o$('<%= js ScrollHelper::SCROLL_DOWN_BUTTON %>'),
-        },
-
-        Search: {
-            type:   o$('<%= js SearchTermsHelper::SEARCH_TYPE %>'),
-            Filter: {
-                control:
-                    o$('<%= js LayoutHelper::SearchFilters::ADV_SEARCH %>'),
-            },
-            Style: {
-                container: {
-                    class: "<%= SearchDecorator::STYLE_CONTAINER %>",
-                },
-                control: {
-                    template:
-                        o$('<%= js SearchDecorator::STYLE_BUTTON_TEMPLATE %>'),
-                    buttons:
-                        o$('<%= js SearchDecorator::STYLE_BUTTONS %>'),
-                },
-            },
-        },
-
-        Download: {
-            button: {
-                class:    "<%= ArtifactDecorator::DOWNLOAD_BUTTON_CLASS %>",
-            },
-            progress: {
-                class:    "<%= ArtifactDecorator::DOWNLOAD_PROGRESS_CLASS %>",
-            },
-            failure: {
-                class:    "<%= ArtifactDecorator::DOWNLOAD_FAILURE_CLASS %>",
-                prefix:   "<%= I18n.t('emma.download.failure.prefix') %>",
-                canceled: "<%= I18n.t('emma.download.failure.canceled') %>",
-                sign_in:  "<%= I18n.t('emma.download.failure.sign_in') %>",
-                unknown:  "<%= I18n.t('emma.download.failure.unknown') %>",
-            },
-        },
-
-        Lookup:         o$('<%= js I18n.t(%q(emma.lookup)) %>'),
-
-        // ====================================================================
-        // Model properties
-        // ====================================================================
-
-        Account:        o$('<%= js AccountDecorator.js_properties %>'),
-        User:           o$('<%= js UserDecorator.js_properties %>'),
-        Entry:          o$('<%= js EntryDecorator.js_properties %>'),
-        Upload:         o$('<%= js UploadDecorator.js_properties %>'),
-        Manifest:       o$('<%= js ManifestDecorator.js_properties %>'),
-        ManifestItem:   o$('<%= js ManifestItemDecorator.js_properties %>'),
-
+        APP_DEBUG,
+        RAILS_ENV,
+        DEPLOYED,
+        SESSION_ID,
+        SEARCH_ANALYSIS,
+        Image,
+        Panel,
+        Tree,
+        Grid,
+        Popup,
+        Scroll,
+        Search,
+        Download,
+        Lookup,
+        Account,
+        User,
+        Entry,
+        Upload,
+        Manifest,
+        ManifestItem,
     };
 
     // Update with any configuration values injected from the server.
     const tag = 'OverrideScriptSettings';
-    $.each(setting_overrides, function(key, value) {
+    $.each(setting_overrides, (key, value) => {
         const current = settings[key];
         const type    = typeof value;
         if (type === 'undefined') {

@@ -11,10 +11,12 @@ module BaseDecorator::Controls
   # Valid properties for entries under #ICONS.
   #
   # * :icon     [String]                Unicode character.
-  # * :tip      [String]                Tooltip on hover.
+  # * :tooltip  [String]                Tooltip on hover.
   # * :path     [String, Symbol, Proc]  Activation action (see below).
-  # * :auto     [Boolean]               If *true* available for anon user.
-  # * :enabled  [Boolean, Proc]         If *false* do not show.
+  # * :auto     [Boolean]               If *true* authorization is not checked.
+  # * :active   [Boolean, Proc]         If *false* do not show.
+  # * :enabled  [Hash]                  Overrides if active.
+  # * :disabled [Hash]                  Overrides if not active.
   #
   ICON_PROPERTIES: symArray
 

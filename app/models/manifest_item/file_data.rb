@@ -22,16 +22,33 @@ module ManifestItem::FileData
   # Top-level :file_data Hash keys for each data variant that can appear in the
   # :file_data record column.
   #
-  # @type [Hash{Symbol=>String}]
+  # @type [Hash{Symbol=>Hash}]
   #
-  # TODO: Might not be needed.
-  #
-  FILE_DATA_KEYS = {
-    url:      'Remote File',
-    name:     'Local File',
-    data:     'Literal File Data',
-    uploader: 'Uploader Data',
+  FILE_DATA_TYPES = {
+    url:      { type: :reference, description: 'Remote File' },
+    name:     { type: :reference, description: 'Local File' },
+    data:     { type: :storage,   description: 'Immediate Data File' },
+    uploader: { type: :storage,   description: 'Uploader Data' },
   }.freeze
+
+  FILE_DATA_REFERENCE =
+    FILE_DATA_TYPES.select { |_, v| v[:type] == :reference }.keys.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Name of the file referenced by :file_data if it does not contain Shrine
+  # uploader metadata.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def file_reference
+    file_data[:name] || file_data[:url] if file_data.present?
+  end
 
   # ===========================================================================
   # :section: Record::FileData overrides
