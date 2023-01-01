@@ -3452,7 +3452,7 @@ appSetup(MODULE, function() {
      * @returns {LookupRequest}
      */
     function generateLookupRequest(form, value) {
-        const request   = new LookupRequest;
+        const request   = new LookupRequest();
         const $button   = lookupButton(form);
         const $form     = formElement($button);
         const $fields   = inputFields($form).filter('.valid');

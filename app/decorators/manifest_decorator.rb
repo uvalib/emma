@@ -398,6 +398,10 @@ class ManifestDecorator
     :manifest_item
   end
 
+  # The class of individual associated items for iteration.
+  #
+  # @return [Class]
+  #
   def row_model_class
     ManifestItem
   end

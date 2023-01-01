@@ -2103,7 +2103,7 @@ appSetup(MODULE, function() {
      */
     function generateLookupRequest(row, value) {
         const func      = 'generateLookupRequest'; _debug(func, row, value);
-        const request   = new LookupRequest;
+        const request   = new LookupRequest();
         const $row      = dataRow(row);
         const $cells    = dataCells($row);
         const condition = value || getLookupCondition(row);

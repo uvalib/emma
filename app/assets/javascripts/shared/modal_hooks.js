@@ -95,7 +95,7 @@ class ModalHooks extends BaseClass {
      * @returns {CallbackChain}
      */
     static clear(toggle) {
-        const hooks = new CallbackChain;
+        const hooks = new CallbackChain();
         $(toggle).data(this.dataName, hooks);
         return hooks;
     }

@@ -212,6 +212,7 @@ module Emma::Rake
         # No database for "rake assets:precompile" in Dockerfile, so default
         # to setting up a fake user in a way that the database will not be
         # accessed.
+        # noinspection RbsMissingTypeSignature
         Struct.new(:id, :email) {
           def developer?;     true; end
           def administrator?; true; end

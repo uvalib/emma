@@ -321,12 +321,8 @@ class LookupJob < ActiveJob::Base
   # @return [Hash]
   # @return [nil]                     If the requested data was not found.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def self.job_result(job_id:, column: nil, path: nil, **)
     column = column&.to_sym || DEFAULT_DATA_COLUMN
-    # noinspection RubyMismatchedArgumentType
     raise "#{column}: invalid" unless DATA_COLUMNS.include?(column)
 
     result = JobResult.where(active_job_id: job_id).pluck(column).first

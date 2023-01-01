@@ -32,204 +32,185 @@ import {
  */
 
 /**
- * ElementProperties
+ * @typedef ElementProperties
  *
- * @typedef {{
- *     active?:         boolean|null|undefined,
- *     tag?:            string|null|undefined,
- *     type?:           string|null|undefined,
- *     class?:          string|null|undefined,
- *     tooltip?:        string|null|undefined,
- *     label?:          string|null|undefined,
- *     text?:           string|null|undefined,
- *     html?:           string|null|undefined,
- *     func?:           function|null|undefined,
- * }} ElementProperties
+ * @property {string|null}      [tag]
+ * @property {string|null}      [type]
+ * @property {string|null}      [class]
+ * @property {string|null}      [icon]
+ * @property {string|null}      [label]
+ * @property {string|null}      [text]
+ * @property {string|null}      [html]
+ * @property {string|null}      [tooltip]
+ * @property {function|null}    [func]
+ * @property {boolean|null}     [active]
  */
 
 /**
- * ToggleProperties
+ * @typedef {ElementProperties} ToggleProperties
  *
- * - opener:            Label/tooltip for a button to open a collapsed element.
- * - closer:            Label/tooltip for a button to close an expanded element.
+ * @property {ElementProperties} opener
  *
- * @typedef {{
- *     opener:          ElementProperties,
- *     closer:          ElementProperties,
- * }} ToggleProperties
+ *  Label/tooltip for a button to open a collapsed element. <p/>
+ *
+ * @property {ElementProperties} closer
+ *
+ *  Label/tooltip for a button to close an expanded element. <p/>
  */
 
 /**
- * ActionProperties
+ * @typedef {ElementProperties} ActionProperties
  *
- * @typedef {{
- *     tag?:            string|null|undefined,
- *     type?:           string|null|undefined,
- *     class?:          string|null|undefined,
- *     tooltip?:        string|null|undefined,
- *     label?:          string|null|undefined,
- *     text?:           string|null|undefined,
- *     html?:           string|null|undefined,
- *     enabled?:        ElementProperties|null|undefined,
- *     disabled?:       ElementProperties|null|undefined,
- * }} ActionProperties
+ * @property {ElementProperties|null} [enabled]
+ *
+ *  Property values that apply only if the action is enabled. <p/>
+ *
+ * @property {ElementProperties|null} [disabled]
+ *
+ *  Property values that apply only if the action is disabled. <p/>
  */
 
 /**
- * EndpointProperties
- *
- * @typedef {{
- *     submit:          ActionProperties,
- *     cancel:          ActionProperties,
- *     select?:         ActionProperties,
- *     import?:         ActionProperties,
- *     export?:         ActionProperties,
- *     start?:          ActionProperties,
- *     stop?:           ActionProperties,
- *     pause?:          ActionProperties,
- *     resume?:         ActionProperties,
- * }} EndpointProperties
+ * @typedef {Object.<string,ActionProperties>} ActionPropertiesTable
  */
 
 /**
- * ControllerActionProperties
+ * @typedef EndpointProperties
  *
- * @typedef {{
- *    new:              EndpointProperties,
- *    edit:             EndpointProperties,
- *    delete:           EndpointProperties,
- *    bulk_new?:        EndpointProperties,
- *    bulk_edit?:       EndpointProperties,
- *    bulk_delete?:     EndpointProperties,
- *    remit?:           EndpointProperties,
- * }} ControllerActionProperties
+ * @property {ActionProperties} submit
+ * @property {ActionProperties} cancel
+ * @property {ActionProperties} [select]
+ * @property {ActionProperties} [import]
+ * @property {ActionProperties} [export]
+ * @property {ActionProperties} [start]
+ * @property {ActionProperties} [stop]
+ * @property {ActionProperties} [pause]
+ * @property {ActionProperties} [resume]
  */
 
 /**
- * FieldGroupProperties
+ * @typedef ControllerActionProperties
  *
- * @typedef {{
- *     label?:          string|null,
- *     tooltip?:        string|null,
- *     enabled?:        boolean|string|null,
- *     default?:        boolean|string|null,
- * }} FieldGroupProperties
+ * Form action label/tooltips for controller actions.
+ *
+ * @property {EndpointProperties} new
+ * @property {EndpointProperties} edit
+ * @property {EndpointProperties} delete
+ * @property {EndpointProperties} [bulk_new]
+ * @property {EndpointProperties} [bulk_edit]
+ * @property {EndpointProperties} [bulk_delete]
+ * @property {EndpointProperties} [remit]
  */
 
 /**
- * FilterProperties
+ * @typedef FieldGroupProperties
  *
- * @typedef {{
- *    available:        FieldGroupProperties,
- *    filled:           FieldGroupProperties,
- *    invalid:          FieldGroupProperties,
- *    all:              FieldGroupProperties,
- * }} FilterProperties
+ * @property {string|null}          [label]
+ * @property {string|null}          [tooltip]
+ * @property {boolean|string|null}  [enabled]
+ * @property {boolean|string|null}  [default]
  */
 
 /**
- * StatusProperties
+ * @typedef FilterProperties
  *
- * @typedef {{
- *    required:         ElementProperties,
- *    invalid:          ElementProperties,
- *    valid:            ElementProperties,
- *    disabled:         ElementProperties,
- *    blank:            ElementProperties,
- * }} StatusProperties
+ * Form action label/tooltips for form field filter selections.
+ *
+ * @property {FieldGroupProperties} available
+ * @property {FieldGroupProperties} filled
+ * @property {FieldGroupProperties} invalid
+ * @property {FieldGroupProperties} all
  */
 
 /**
- * MimeProperties
+ * @typedef StatusProperties
  *
- * - to_fmt:            A table mapping MIME type to file format.
+ * Status marker label/tooltips.
  *
- * @typedef {{
- *    to_fmt:           Object.<string,string[]>,
- * }} MimeProperties
+ * @property {ElementProperties} required
+ * @property {ElementProperties} invalid
+ * @property {ElementProperties} valid
+ * @property {ElementProperties} disabled
+ * @property {ElementProperties} blank
  */
 
 /**
- * FieldProperties
+ * @typedef MimeProperties
  *
- * - empty:             Blank field value indicator.
+ * @property {Object.<string,string[]>} to_fmt
  *
- * @typedef {{
- *    empty:            string,
- * }} FieldProperties
+ *  A table mapping MIME type to file format. <p/>
  */
 
 /**
- * RepositoryProperties
+ * @typedef FieldProperties
  *
- * - name:              A mapping of repository name to displayable label.
- * - default:           The name of the default repository.
+ * @property {string} empty
  *
- * @typedef {{
- *    name:             StringTable,
- *    default:          string,
- * }} RepositoryProperties
+ *  Blank field value indicator. <p/>
  */
 
 /**
- * UploaderProperties
+ * @typedef RepositoryProperties
  *
- * - drag_target:       CSS class for an Uppy drag-and-drop target.
- * - preview:           CSS class for an Uppy preview thumbnail image.
+ * @property {StringTable} name
  *
- * @typedef {{
- *    drag_target:      string,
- *    preview:          string,
- * }} UploaderProperties
+ *  A mapping of repository name to displayable label. <p/>
+ *
+ * @property {string} default
+ *
+ *  The name of the default repository. <p/>
  */
 
 /**
- * StyleControlProperties
+ * @typedef UploaderProperties
+ *
+ * @property {string} drag_target
+ *
+ *  CSS class for an Uppy drag-and-drop target. <p/>
+ *
+ * @property {string} preview
+ *
+ *  CSS class for an Uppy preview thumbnail image. <p/>
+ */
+
+/**
+ * @typedef StyleControlProperties
  *
  * @see "en.emma.search.styles"
  *
- * @typedef {{
- *     label?:          string|null|undefined,
- *     class?:          string|null|undefined,
- *     tooltip?:        string|null|undefined,
- *     field?:          string|null|undefined,
- *     active?:         boolean|string|null|undefined,
- *     func?:           function|null|undefined,
- * }} StyleControlProperties
+ * @property {string|null}          [field]
+ * @property {string|null}          [label]
+ * @property {string|null}          [class]
+ * @property {string|null}          [tooltip]
+ * @property {function|null}        [func]
+ * @property {boolean|string|null}  [active]
  */
 
 /**
- * ImageProperties
+ * @typedef AssetProperties
  *
- * - placeholder.alt:   Placeholder image alt text.
- * - placeholder.class: Placeholder image CSS class.
- * - placeholder.asset: Asset path for the animated "downloading" GIF.
- *
- * @typedef {{
- *    placeholder: {
- *        alt:          string,
- *        class:        string,
- *        asset:        string,
- *    },
- * }} ImageProperties
+ * @property {string} alt           Image alt text.
+ * @property {string} class         Image CSS class.
+ * @property {string} asset         Asset path to the image file.
  */
 
 /**
- * PanelProperties
+ * @typedef ImageProperties
  *
- * - opener:            Label/tooltip for a button to open a collapsible panel
- * - closer:            Label/tooltip for a button to close a collapsible panel
- *
+ * @property {AssetProperties} placeholder
+ */
+
+/**
  * @typedef {ToggleProperties} PanelProperties
+ *
+ *  Properties for a collapsible panel and its opener/closer control.
  */
 
 /**
- * TreeProperties
- *
- * - opener:            Label/tooltip for a button to open a collapsed tree.
- * - closer:            Label/tooltip for a button to close an expanded tree.
- *
  * @typedef {ToggleProperties} TreeProperties
+ *
+ *  Properties for a collapsible tree and its opener/closer control.
  */
 
 /**
@@ -245,37 +226,47 @@ import {
  */
 
 /**
- * PopupProperties
+ * @typedef PopupProperties
  *
- * - button.class:      Popup activator CSS class.
- * - panel.class:       Popup panel CSS class.
- * - closer.class:      CSS class signifying a panel close control.
- * - controls.class:    CSS class for controls below the panel.
- * - deferred.class:    CSS class signifying deferred content.
- * - hidden.class:      CSS class indicating a hidden element.
+ * @property {ElementProperties} button
  *
- * @typedef {{
- *    button:           ElementProperties,
- *    panel:            ElementProperties,
- *    closer:           ElementProperties,
- *    controls:         ElementProperties,
- *    deferred:         ElementProperties,
- *    hidden:           ElementProperties,
- * }} PopupProperties
+ *  Popup activators. <p/>
+ *
+ * @property {ElementProperties} panel
+ *
+ *  Popup panel. <p/>
+ *
+ * @property {ElementProperties} closer
+ *
+ *  Popup panel closer control. <p/>
+ *
+ * @property {ElementProperties} controls
+ *
+ *  Popup controls below the panel. <p/>
+ *
+ * @property {ElementProperties} deferred
+ *
+ *  deferred.class: CSS class signifying deferred content. <p/>
+ *
+ * @property {ElementProperties} hidden
+ *
+ *  hidden.class: CSS class indicating a hidden element. <p/>
  */
 
 /**
- * ScrollProperties
+ * @typedef ScrollProperties
  *
- * - target:            Properties for an element which is scrolled to the top.
- * - button:            Properties for the scroll-to-top button.
- * - down:              Properties for the scroll-down-to-top variant.
+ * @property {ElementProperties} target
  *
- * @typedef {{
- *     target:          ElementProperties,
- *     button:          ElementProperties,
- *     down:            ElementProperties,
- * }} ScrollProperties
+ *  Properties for an element which is scrolled to the top. <p/>
+ *
+ * @property {ElementProperties} button
+ *
+ *  Properties for the scroll-to-top button. <p/>
+ *
+ * @property {ElementProperties} down
+ *
+ *  Properties for the scroll-down-to-top variant. <p/>
  */
 
 /**
@@ -362,67 +353,81 @@ import {
  */
 
 /**
- * PathProperties
+ * @typedef PathProperties
  *
- * - index:             The endpoint for listing submissions.
- * - show:              Display a single item.
- * - new:               The new entry creation form.
- * - create:            The POST endpoint for creating a database entry for the uploaded file.
- * - edit:              The existing entry modification form.
- * - update:            The POST endpoint for modifying a database entry for the uploaded file.
- * - renew:             The POST endpoint for generating a fresh database entry.
- * - reedit:            The POST endpoint for re-starting an edit workflow on an existing database entry.
- * - cancel:            The endpoint for canceling a submission.
- * - upload:            Shrine's upload endpoint (the server route to which uploads are directed).
+ *  General controller endpoints.
  *
- * @typedef {{
- *    index:            string,
- *    show:             string,
- *    new?:             string,
- *    create?:          string,
- *    edit?:            string,
- *    update?:          string,
- *    delete?:          string,
- *    destroy?:         string,
- *    renew?:           string,
- *    reedit?:          string,
- *    cancel?:          string,
- *    upload?:          string,
- * }} PathProperties
+ * @property {string} index
+ *
+ *  The endpoint for listing submissions. <p/>
+ *
+ * @property {string} show
+ *
+ *  Display a single item. <p/>
+ *
+ * @property {string} [new]
+ *
+ *  The new entry creation form. <p/>
+ *
+ * @property {string} [create]
+ *
+ *  The POST endpoint for creating a database entry for the uploaded file. <p/>
+ *
+ * @property {string} [edit]
+ *
+ *  The existing entry modification form. <p/>
+ *
+ * @property {string} [update]
+ *
+ *  The POST endpoint for modifying a database entry for the uploaded file. <p/>
+ *
+ * @property {string} [delete]
+ *
+ *  <p/>
+ *
+ * @property {string} [destroy]
+ *
+ *  <p/>
+ *
+ * @property {string} [renew]
+ *
+ *  The POST endpoint for generating a fresh database entry. <p/>
+ *
+ * @property {string} [reedit]
+ *
+ *  The POST endpoint for re-starting an edit workflow on an existing database
+ *  entry. <p/>
+ *
+ * @property {string} [cancel]
+ *
+ *  The endpoint for canceling a submission. <p/>
+ *
+ * @property {string} [upload]
+ *
+ *  Shrine's upload endpoint (the server route to which uploads are
+ *  directed). <p/>
  */
 
 /**
- * ModelProperties
+ * @typedef ModelProperties
  *
- * - Uploader.*:        CSS classes for elements used to hold an Uppy plugin targets.
- * - Action:            Form action label/tooltips for controller actions.
- * - Filter:            Form action label/tooltips for form field filter selections.
- * - Status:            Status marker label/tooltips.
- * - Mime.to_fmt:       A table mapping MIME type to file format.
- * - Field.empty:       Blank field value indicator.
- * - Repo.default:      The name of the default repository.
- *
- * @typedef {{
- *    Path:             PathProperties,
- *    Uploader:         UploaderProperties,
- *    Action:           ControllerActionProperties,
- *    Filter:           FilterProperties,
- *    Status:           StatusProperties,
- *    Mime:             MimeProperties,
- *    Field:            FieldProperties,
- *    Repo:             RepositoryProperties,
- *    Record:           RecordProperties,
- *    Label?:           Object.<string,StringTable>,
- * }} ModelProperties
+ * @property {PathProperties}               Path
+ * @property {UploaderProperties}           Uploader
+ * @property {ControllerActionProperties}   Action
+ * @property {FilterProperties}             Filter
+ * @property {StatusProperties}             Status
+ * @property {MimeProperties}               Mime
+ * @property {FieldProperties}              Field
+ * @property {RepositoryProperties}         Repo
+ * @property {RecordProperties}             Record
+ * @property {Object.<string,StringTable>}  [Label]
  */
 
 /**
- * AssetOverrides
+ * @typedef AssetOverrides
  *
- * @typedef {{
- *     OverrideScriptSettings:  object,
- *     Image_placeholder_asset: string
- * }} AssetOverrides
+ * @property {object} OverrideScriptSettings
+ * @property {string} Image_placeholder_asset
  */
 
 // ============================================================================
@@ -437,6 +442,7 @@ import {
  *
  * @type {object}
  *
+ * @property {boolean}  APP_DEBUG
  * @property {string}   RAILS_ENV
  * @property {boolean}  DEPLOYED
  * @property {string}   SESSION_ID

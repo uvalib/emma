@@ -1,4 +1,4 @@
-# app/services/concerns/ia_download_service/status.rb
+# app/services/ia_download_service/status.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true

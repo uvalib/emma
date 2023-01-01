@@ -100,9 +100,6 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
-    # -
-    # noinspection RubyMismatchedArgumentType
-    # +
     def inspect_all: (?(symHash|nil) values, **untyped opt) -> String
 
     # Preserve symbols for resolution with #decode_symbols.

@@ -34,7 +34,7 @@ en:
           - new
           - edit_select
           - delete_select
-          #- admin
+         #- admin
 
       # =======================================================================
       # Controls

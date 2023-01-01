@@ -40,66 +40,52 @@ import {
 // ============================================================================
 
 /**
+ * @typedef UppyFeatures
+ *
  * Uppy plugin selection plus other optional settings.
  *
- * replace_input:       Hide the <input type="file"> present in the container.
- * progress_bar:        Minimal upload progress bar.
- * status_bar:          Heftier progress and control bar.
- * popup_messages:      Popup event/status messages.
- * dashboard:           Uppy dashboard.
- * drag_and_drop:       Drag-and-drop file selection enabled.
- * image_preview:       Image preview thumbnail.
- * flash_messages       Display flash messages.
- * flash_errors         Display flash errors.
- * upload_to_aws:       Cloud upload enabled.
- * upload_to_box:       Upload to Box enabled.
- * upload_to_dropbox:   Upload to Dropbox enabled.
- * upload_to_google:    Upload to Google Drive enabled.
- * upload_to_onedrive:  Upload to Microsoft OneDrive enabled.
- * url:                 TODO: ...
- * debugging:           Turn on Uppy debugging.
- *
- * @typedef {{
- *      replace_input?:         boolean,
- *      popup_messages?:        boolean,
- *      progress_bar?:          boolean,
- *      status_bar?:            boolean,
- *      dashboard?:             boolean,
- *      drag_and_drop?:         boolean,
- *      image_preview?:         boolean,
- *      flash_messages?:        boolean,
- *      flash_errors?:          boolean,
- *      upload_to_aws?:         boolean,
- *      upload_to_box?:         boolean,
- *      upload_to_dropbox?:     boolean,
- *      upload_to_google?:      boolean,
- *      upload_to_onedrive?:    boolean,
- *      url?:                   boolean,
- *      debugging?:             boolean,
- * }} UppyFeatures
+ * @property {boolean} [replace_input]      Hide the **<input type="file">**
+ *                                              present in the container. <p/>
+ * @property {boolean} [popup_messages]     Popup event/status messages. <p/>
+ * @property {boolean} [progress_bar]       Minimal upload progress bar. <p/>
+ * @property {boolean} [status_bar]         Heftier progress and control bar. <p/>
+ * @property {boolean} [dashboard]          Uppy dashboard. <p/>
+ * @property {boolean} [drag_and_drop]      Drag-and-drop file selection enabled. <p/>
+ * @property {boolean} [image_preview]      Image preview thumbnail. <p/>
+ * @property {boolean} [flash_messages]     Display flash messages. <p/>
+ * @property {boolean} [flash_errors]       Display flash error messages. <p/>
+ * @property {boolean} [upload_to_aws]      Cloud upload enabled. <p/>
+ * @property {boolean} [upload_to_box]      Upload to Box enabled. <p/>
+ * @property {boolean} [upload_to_dropbox]  Upload to Dropbox enabled. <p/>
+ * @property {boolean} [upload_to_google]   Upload to Google Drive enabled. <p/>
+ * @property {boolean} [upload_to_onedrive] Upload to Microsoft OneDrive enabled. <p/>
+ * @property {boolean} [url]                TODO: ... <p/>
+ * @property {boolean} [xhr]                Upload to server enabled. <p/>
+ * @property {boolean} [debugging]          Turn on Uppy debugging. <p/>
  */
 
 /**
+ * @typedef {UppyFeatures} UppyFeatureSettings
+ *
  * A live copy of Uppy features.
  *
- * @typedef {{
- *      replace_input:      boolean,
- *      progress_bar:       boolean,
- *      status_bar:         boolean,
- *      popup_messages:     boolean,
- *      dashboard:          boolean,
- *      drag_and_drop:      boolean|HTMLElement|undefined,
- *      image_preview:      boolean|HTMLElement|undefined,
- *      flash_messages:     boolean,
- *      flash_errors:       boolean,
- *      upload_to_aws:      boolean,
- *      upload_to_box:      boolean,
- *      upload_to_dropbox:  boolean,
- *      upload_to_google:   boolean,
- *      upload_to_onedrive: boolean,
- *      url?:               boolean,
- *      debugging:          boolean,
- * }} UppyFeatureSettings
+ * @property {boolean}                       replace_input
+ * @property {boolean}                       popup_messages
+ * @property {boolean}                       progress_bar
+ * @property {boolean}                       status_bar
+ * @property {boolean}                       dashboard
+ * @property {boolean|HTMLElement|undefined} drag_and_drop
+ * @property {boolean|HTMLElement|undefined} image_preview
+ * @property {boolean}                       flash_messages
+ * @property {boolean}                       flash_errors
+ * @property {boolean}                       upload_to_aws
+ * @property {boolean}                       upload_to_box
+ * @property {boolean}                       upload_to_dropbox
+ * @property {boolean}                       upload_to_google
+ * @property {boolean}                       upload_to_onedrive
+ * @property {boolean}                       url
+ * @property {boolean}                       xhr
+ * @property {boolean}                       debugging
  */
 
 /**
@@ -291,10 +277,10 @@ class BaseUploader extends BaseClass {
     /** @type {string}              */ model;
     /** @type {string}              */ controller;
     /** @type {string}              */ action;
-    /** @type {Callback|undefined}  */ onSelect
-    /** @type {Callback|undefined}  */ onStart
-    /** @type {Callback|undefined}  */ onError
-    /** @type {Callback|undefined}  */ onSuccess
+    /** @type {Callback|undefined}  */ onSelect;
+    /** @type {Callback|undefined}  */ onStart;
+    /** @type {Callback|undefined}  */ onError;
+    /** @type {Callback|undefined}  */ onSuccess;
     /** @type {number}              */ //upload_timeout = UPLOAD_TIMEOUT;
     /** @type {number}              */ message_duration = MESSAGE_DURATION;
     /** @type {string}              */ upload_error     = UPLOAD_ERROR_MESSAGE;

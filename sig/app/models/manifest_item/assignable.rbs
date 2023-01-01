@@ -11,9 +11,6 @@ module ManifestItem::Assignable
   #
   # @return [Hash{Symbol=>Any}]
   #
-  # -
-  # noinspection RubyNilAnalysis
-  # +
   def attribute_options: (symHash attr, ?(symHash|nil) opt) -> symHash
 
   private

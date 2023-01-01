@@ -35,7 +35,7 @@ en:
           - edit_select
           - delete_select
           - remit_select
-          #- admin
+         #- admin
 
       # =======================================================================
       # Controls
@@ -217,14 +217,14 @@ en:
         directions:     ~
         notes:          ~
 
-        submit:         #&NEW_SUBMIT
+        submit:
           <<:           *GENERIC_SUBMIT
           enabled:
             tooltip:    'Save the new manifest'
           disabled:
             tooltip:    'No valid items have been created yet'
 
-        cancel:         #&NEW_CANCEL
+        cancel:
           <<:           *GENERIC_CANCEL
           enabled:
             tooltip:    'Discard this manifest and associated items'
@@ -261,12 +261,12 @@ en:
         directions:     ~
         notes:          ~
 
-        submit:         &EDIT_SUBMIT
+        submit:
           <<:           *GENERIC_SUBMIT
           enabled:
             tooltip:    'Keep all changes made since the last save'
 
-        cancel:         &EDIT_CANCEL
+        cancel:
           <<:           *GENERIC_CANCEL
           enabled:
             tooltip:    'Discard all changes made since the last save'

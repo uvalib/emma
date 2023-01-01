@@ -172,7 +172,6 @@ module LookupService::Crossref::Request::Work
     req.terms.each do |term|
       prefix, value = term.split(':', 2)
       next if prefix.blank?
-      key = nil
       if value.blank?
         prefix, value = [nil, prefix]
       elsif !ID_TYPES.include?((prefix = prefix.to_sym))

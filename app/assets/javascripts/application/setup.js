@@ -286,6 +286,7 @@ export function appEventTestOrSet(target, type, callback, options, caller) {
 }
 
 /**
+ * Return default event options if none were provided.
  *
  * @param {EventListenerOptionsExt|boolean} [options]
  *
@@ -378,7 +379,7 @@ function _debug(...args) {
  * @param {string}             action       'remember', 'remove', or 'listen'.
  * @param {string}             type         Event type.
  * @param {string|EventTarget} [target]
- * @param {function}           [callback]
+ * @param {function|EventListenerOrEventListenerObject} [callback]
  * @param {EventTarget}        [node]
  */
 function _debugEvent(caller, action, type, target, callback, node) {

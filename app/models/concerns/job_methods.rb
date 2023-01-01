@@ -49,7 +49,7 @@ module JobMethods
   #
   # @return [ActiveRecord::Relation]
   #
-  def outdated_list(sort_order: { created_at: :desc})
+  def outdated_list(sort_order: { created_at: :desc })
     outdated.order(sort_order)
   end
 

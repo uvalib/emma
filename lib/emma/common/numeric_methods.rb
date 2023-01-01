@@ -15,7 +15,7 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as a positive integer.
   #
-  # @param [String, Symbol, Numeric, Any] value
+  # @param [String, Symbol, Numeric, *] value
   #
   # @return [Integer]
   # @return [nil]                     If *value* <= 0 or not a number.
@@ -33,7 +33,7 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as zero or a positive integer.
   #
-  # @param [String, Symbol, Numeric, Any] value
+  # @param [String, Symbol, Numeric, *] value
   #
   # @return [Integer]
   # @return [nil]                     If *value* < 0 or not a number.
@@ -51,8 +51,8 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as a positive floating-point number.
   #
-  # @param [String, Symbol, Numeric, Any] value
-  # @param [Float]                        epsilon
+  # @param [String, Symbol, Numeric, *] value
+  # @param [Float]                      epsilon
   #
   # @return [Float]
   # @return [nil]                     If *value* <= 0 or not a number.
@@ -74,8 +74,8 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as zero or a positive floating-point number.
   #
-  # @param [String, Symbol, Numeric, Any] value
-  # @param [Float]                        epsilon
+  # @param [String, Symbol, Numeric, *] value
+  # @param [Float]                      epsilon
   #
   # @return [Float]
   # @return [nil]                     If *value* <= 0 or not a number.
