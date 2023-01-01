@@ -1181,7 +1181,59 @@ class EnumType < ScalarType
 
   public
 
+  module Comparable
+
+    # Transform a value into a string for liberal case-insensitive comparison
+    # where non-alphanumeric are disregarded.
+    #
+    # @param [String, Symbol, nil] key
+    #
+    # @return [String]
+    #
+    def comparable(key)
+      key.to_s.downcase.remove!(/[_\W]/)
+    end
+
+    # Create a mapping of comparable values to original values.
+    #
+    # @param [Array, Hash]         keys
+    # @param [String, Symbol, nil] caller   For diagnostics.
+    #
+    # @return [Hash{String=>String,Symbol}]
+    #
+    def comparable_map(keys, caller = nil)
+      keys = keys.keys if keys.is_a?(Hash)
+      keys.map { |k| [comparable(k), k] }.to_h.tap do |result|
+        unless (rs = result.size) == (ks = keys.size)
+          # This is a "can't happen" situation where two original values
+          # transform to the same comparable value.
+          caller ||= __method__
+          Log.error { "#{caller}: #{rs} map keys != #{ks} original keys" }
+          Log.info  { "#{caller}: map keys: #{result.keys.inspect}" }
+          Log.info  { "#{caller}: original: #{keys.inspect}" }
+        end
+      end
+    end
+
+  end
+
+  extend Comparable
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   module Enumerations
+
+    include Comparable
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
 
     # Add enumeration values from configuration entries.
     #
@@ -1262,8 +1314,10 @@ class EnumType < ScalarType
             values  = Array.wrap(cfg).map(&:to_s)
             pairs   = values.map { |v| [v, v] }.to_h
           end
-          entry = { values: values, pairs: pairs, default: default }.compact
           name  = name.to_s.camelize.to_sym
+          map   = comparable_map(values, "Enumeration #{name}")
+          entry = { values: values, pairs: pairs, mapping: map }
+          entry.merge!(default: default) unless default.nil?
           [name, entry]
         }.to_h
       enumerations.merge!(entries)
@@ -1352,6 +1406,7 @@ class EnumType < ScalarType
   module Methods
 
     include ScalarType::Methods
+    include Comparable
     extend Enumerations
 
     # =========================================================================
@@ -1376,6 +1431,16 @@ class EnumType < ScalarType
     #
     def valid?(v)
       values.include?(normalize(v))
+    end
+
+    # Transform *v* into a valid form.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize(v)
+      (v = super).presence && mapping[comparable(v)] || v
     end
 
     # =========================================================================
@@ -1406,6 +1471,14 @@ class EnumType < ScalarType
     #
     def pairs
       enumerations.dig(type, :pairs)
+    end
+
+    # Mapping of comparable values to enumeration values.
+    #
+    # @return [Hash]
+    #
+    def mapping
+      enumerations.dig(type, :mapping)
     end
 
     # =========================================================================

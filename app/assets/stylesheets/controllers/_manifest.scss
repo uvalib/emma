@@ -88,7 +88,21 @@ body.manifest.new,
 body.manifest.edit {
 
     .layout-content {
+
         margin-right: 1.5rem;
+
+        // NOTE: Hiding overflow here prevents a problem with >= 10 rows.
+        // - In this situation (for unidentified reasons) scrollHeight is being
+        //   added to the document which leads to a significant blank area
+        //   below the footer.
+        // - Replacing part of the left margin with padding is required to keep
+        //   the Save button box shadow from being clipped when it is hovered.
+
+        $half-left:   calc(#{$page-padding-x} / 2);
+        margin-left:  $half-left;
+        padding-left: $half-left;
+        overflow:     hidden;
+
     }
 
     // @see ManifestDecorator#manifest_page_heading

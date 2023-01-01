@@ -492,6 +492,17 @@ class ManifestDecorator
     block_given? ? yield(buttons) : buttons
   end
 
+  # Form submit button.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submit_button(**opt)
+    opt[:state] ||= (:enabled if object.manifest_items.pending.present?)
+    super
+  end
+
   # ===========================================================================
   # :section: Item forms (new/edit/delete pages)
   # ===========================================================================

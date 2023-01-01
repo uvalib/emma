@@ -52,6 +52,15 @@ module ManifestItem::StatusMethods
   def evaluate_data_status: (?(ManifestItem|symHash|nil) item, ?symbol: true,  **untyped added) -> Symbol
                           | (?(ManifestItem|symHash|nil) item,  symbol: false, **untyped added) -> DataStatus
 
+  # Return indicated field values.
+  #
+  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
+  # @param [Hash, nil]             added  Additional field values to use.
+  #
+  # @return [Hash]
+  #
+  def item_fields: (?(ManifestItem|symHash|nil) item, ?(symHash|nil) added) -> symHash
+
   # Evaluate field values for readiness.
   #
   # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).

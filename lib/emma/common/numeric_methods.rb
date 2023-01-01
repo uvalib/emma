@@ -7,11 +7,26 @@ __loading_begin(__FILE__)
 
 module Emma::Common::NumericMethods
 
+  NUMBER_PATTERN = /\A\s*[-+]?\d*(_\d+)*\.?\d+(_\d+)*(e[-+]?[0-9]+)?\s*\z/i
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # Interpret *value* as an integer.
+  #
+  # @param [String, Symbol, Numeric, *] value
+  #
+  # @return [Integer]
+  # @return [nil]                     If *value* does not represent a number.
+  #
+  def to_integer(value)
+    return value.round if value.is_a?(Numeric)
+    value = value.to_s if value.is_a?(Symbol)
+    value.to_i         if value.is_a?(String) && value.match?(NUMBER_PATTERN)
+  end
 
   # Interpret *value* as a positive integer.
   #
@@ -21,13 +36,7 @@ module Emma::Common::NumericMethods
   # @return [nil]                     If *value* <= 0 or not a number.
   #
   def positive(value)
-    result =
-      case value
-        when Integer        then value
-        when Numeric        then value.round
-        when String, Symbol then value.to_s.to_i
-        else                     0
-      end
+    result = to_integer(value) or return
     result if result.positive?
   end
 
@@ -39,14 +48,27 @@ module Emma::Common::NumericMethods
   # @return [nil]                     If *value* < 0 or not a number.
   #
   def non_negative(value)
-    result =
-      case value
-        when Integer        then value
-        when Numeric        then value.round
-        when String, Symbol then value.to_s.to_i
-        else                     0
-      end
+    result = to_integer(value) or return
     result unless result.negative?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Interpret *value* as a positive floating-point number.
+  #
+  # @param [String, Symbol, Numeric, *] value
+  #
+  # @return [Float]
+  # @return [nil]                     If *value* does not represent a number.
+  #
+  def to_float(value)
+    return value.to_f  if value.is_a?(Numeric)
+    value = value.to_s if value.is_a?(Symbol)
+    value.to_f         if value.is_a?(String) && value.match?(NUMBER_PATTERN)
   end
 
   # Interpret *value* as a positive floating-point number.
@@ -58,18 +80,8 @@ module Emma::Common::NumericMethods
   # @return [nil]                     If *value* <= 0 or not a number.
   #
   def positive_float(value, epsilon: nil)
-    # noinspection RubyUnusedLocalVariable
-    result = nil
-    case value
-      when Numeric        then result = value.to_f
-      when String, Symbol then result = value.to_s.to_f
-      else                     return
-    end
-    if epsilon
-      result if result > epsilon
-    else
-      result if result.positive?
-    end
+    result = to_float(value) or return
+    result if epsilon ? (result > +epsilon) : result.positive?
   end
 
   # Interpret *value* as zero or a positive floating-point number.
@@ -81,17 +93,8 @@ module Emma::Common::NumericMethods
   # @return [nil]                     If *value* <= 0 or not a number.
   #
   def non_negative_float(value, epsilon: nil)
-    result =
-      case value
-        when Numeric        then value.to_f
-        when String, Symbol then value.to_s.to_f
-        else                     0.0
-      end
-    if epsilon
-      result unless result < -epsilon
-    else
-      result unless result.negative?
-    end
+    result = to_float(value) or return
+    result unless epsilon ? (result < -epsilon) : result.negative?
   end
 
   # ===========================================================================

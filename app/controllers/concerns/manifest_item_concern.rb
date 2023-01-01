@@ -141,7 +141,7 @@ module ManifestItemConcern
   # :section: ImportConcern overrides
   # ===========================================================================
 
-  protected
+  public
 
   # Interpret data as JSON.
   #
@@ -169,7 +169,7 @@ module ManifestItemConcern
   # :section:
   # ===========================================================================
 
-  public
+  protected
 
   # Transform import data into ManifestItem field values.
   #
@@ -179,8 +179,6 @@ module ManifestItemConcern
   #
   def import_transform!(item)
     normalize_import_name!(item)
-    transform_identifiers!(item)
-    reject_unknown!(item)
   end
 
   # Transform ManifestItem field values for export.
@@ -198,47 +196,6 @@ module ManifestItemConcern
   # ===========================================================================
 
   protected
-
-  # Retain only data which is usable to update a ManifestItem.
-  #
-  # @param [Hash{Symbol=>*}] item
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def reject_unknown!(item)
-    item.slice!(*ManifestItem.field_names)
-    item
-  end
-
-  # Normalized column names which are allowed as a source of :dc_identifier
-  # values.
-  #
-  # @type [Hash{Symbol=>Class}]
-  #
-  ID_COLUMN = {
-    isbn: Isbn,
-    issn: Issn,
-    doi:  Doi,
-    oclc: Oclc,
-    lccn: Lccn,
-  }.freeze
-
-  # Transform standard identifier values into non-ambiguous form (if necessary)
-  # and allow columns named for a specific identifier type to be accepted.
-  #
-  # @param [Hash{Symbol=>*}] item
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def transform_identifiers!(item)
-    id_columns = extract_hash!(item, *ID_COLUMN.keys)
-    return item unless id_columns.present? || item.key?(:dc_identifier)
-    ids = Array.wrap(item[:dc_identifier])
-    ids.map! { |v| PublicationIdentifier.cast(v, invalid: true) }
-    ids += id_columns.map { |k, v| ID_COLUMN[k].cast(v, invalid: true) }
-    ids.map!(&:to_s).compact_blank!.uniq!
-    item.merge!(dc_identifier: ids)
-  end
 
   # Restoration of ManifestItem fields on import.
   #
@@ -258,8 +215,8 @@ module ManifestItemConcern
   # @return [Hash{Symbol=>*}]
   #
   def normalize_import_name!(item)
-    item.transform_keys! { |k| k.to_s.gsub(/\s+/, '_').underscore.to_sym }
     item.transform_keys! { |k| IMPORT_FIELD[k] || k }
+    item.replace(ManifestItem.attribute_options(item))
   end
 
   # Transformation of ManifestItem fields on export.

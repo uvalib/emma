@@ -226,7 +226,6 @@ en:
               content which is being submitted for the given manifest item.
             </p>
           type:         json
-          origin:       system
 
         # =====================================================================
         # Database record field with Unified Search metadata in JSON format

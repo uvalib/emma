@@ -120,30 +120,6 @@ module ManifestItemConcern
   #
   def export_transform!: (symHash item) -> symHash
 
-  # Retain only data which is usable to update a ManifestItem.
-  #
-  # @param [Hash{Symbol=>*}] item
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def reject_unknown!: (symHash item) -> symHash
-
-  # Normalized column names which are allowed as a source of :dc_identifier
-  # values.
-  #
-  # @type [Hash{Symbol=>Class}]
-  #
-  ID_COLUMN: Hash[Symbol, Class]
-
-  # Transform standard identifier values into non-ambiguous form (if necessary)
-  # and allow columns named for a specific identifier type to be accepted.
-  #
-  # @param [Hash{Symbol=>*}] item
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def transform_identifiers!: (symHash item) -> symHash
-
   # Restoration of ManifestItem fields on import.
   #
   # @type [Hash{Symbol=>Symbol}]

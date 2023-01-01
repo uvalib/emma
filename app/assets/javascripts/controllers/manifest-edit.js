@@ -1,20 +1,21 @@
 // app/assets/javascripts/controllers/manifest-edit.js
 
 
-import { AppDebug }                       from '../application/debug'
-import { appSetup }                       from '../application/setup'
-import { arrayWrap }                      from '../shared/arrays'
-import { Emma }                           from '../shared/assets'
-import { HIDDEN, selector, toggleHidden } from '../shared/css'
-import * as Field                         from '../shared/field'
-import { InlinePopup }                    from '../shared/inline-popup'
-import { LookupModal }                    from '../shared/lookup-modal'
-import { LookupRequest }                  from '../shared/lookup-request'
-import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks'
-import { compact, deepDup, toObject }     from '../shared/objects'
-import { randomizeName }                  from '../shared/random'
-import { MultiUploader }                  from '../shared/uploader'
-import { cancelAction }                   from '../shared/url'
+import { AppDebug }                       from '../application/debug';
+import { appSetup }                       from '../application/setup';
+import { arrayWrap }                      from '../shared/arrays';
+import { Emma }                           from '../shared/assets';
+import { HIDDEN, selector, toggleHidden } from '../shared/css';
+import * as Field                         from '../shared/field';
+import { turnOffAutocompleteIn }          from '../shared/form';
+import { InlinePopup }                    from '../shared/inline-popup';
+import { LookupModal }                    from '../shared/lookup-modal';
+import { LookupRequest }                  from '../shared/lookup-request';
+import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
+import { compact, deepDup, toObject }     from '../shared/objects';
+import { randomizeName }                  from '../shared/random';
+import { MultiUploader }                  from '../shared/uploader';
+import { cancelAction }                   from '../shared/url';
 import {
     isDefined,
     isEmpty,
@@ -515,11 +516,13 @@ appSetup(MODULE, function() {
 
     /**
      * initializeControlButtons
+     *
+     * @see "ManifestDecorator#submit_button"
      */
     function initializeControlButtons() {
         const func = 'initializeControlButtons'; //_debug(func);
         initializeButtonSet(CONTROL_BUTTONS, func);
-        enableSave(false);
+        // enableSave(false); // NOTE: State determined by server render.
         enableExport();
     }
 
@@ -793,10 +796,10 @@ appSetup(MODULE, function() {
      */
     function updateFormChanged(setting) {
         _debug(`updateFormChanged: setting = ${setting}`);
-        const ready = isDefined(setting) ? setting : checkFormChanged();
-        enableSave(ready);
+        const changed = isDefined(setting) ? setting : checkFormChanged();
+        enableSave(changed);
         enableExport();
-        return ready;
+        return changed;
     }
 
     /**
@@ -932,6 +935,7 @@ appSetup(MODULE, function() {
             const value = $cell.makeValue(data);
             setCellOriginalValue($cell, value);
             setCellCurrentValue($cell, value);
+            setCellDisplayValue($cell, value);
         });
     }
 
@@ -2551,16 +2555,7 @@ appSetup(MODULE, function() {
                     let show_name = false;
                     const value = $input.val()?.trim();
                     if (value) {
-                        $lines.each((_, line) => {
-                            const $file = $(line);
-                            const found = $file.is(from_type);
-                            if (found) {
-                                $file.text(value);
-                                show_name = true;
-                            }
-                            $file.toggleClass('active', found);
-                            $file.attr('aria-hidden', !found);
-                        });
+                        setUploaderDisplayValue($cell, value, type);
                         const file_data = { [type]: value };
                         atomicEdit($cell, file_data);
                     }
@@ -3484,17 +3479,9 @@ appSetup(MODULE, function() {
     function initializeDataCell(cell) {
         //_debug('initializeDataCell: cell =', cell);
         const $cell = dataCell(cell).removeClass(STATUS_MARKERS);
-        if ($cell.is(MultiUploader.UPLOADER)) {
-            $cell.find(MultiUploader.FILE_NAME).children().each((_, line) => {
-                const $line = $(line);
-                $line.text('');
-                $line.attr('aria-hidden', true);
-                $line.toggleClass('active', false);
-            });
-        } else {
-            clearCellDisplay($cell);
-            clearCellEdit($cell);
-        }
+        turnOffAutocompleteIn($cell);
+        clearCellDisplay($cell);
+        clearCellEdit($cell);
         updateCellDisplayValue($cell);
         return $cell;
     }
@@ -3876,7 +3863,12 @@ appSetup(MODULE, function() {
      */
     function clearCellDisplay(target) {
         //_debug('clearCellDisplay: target =', target);
-        cellDisplay(target).empty();
+        const $cell = dataCell(target);
+        if ($cell.is(MultiUploader.UPLOADER)) {
+            setUploaderDisplayValue($cell);
+        } else {
+            cellDisplay($cell).empty();
+        }
     }
 
     // ========================================================================
@@ -3907,14 +3899,18 @@ appSetup(MODULE, function() {
      */
     function setCellDisplayValue(cell, new_value) {
         //_debug('setCellDisplayValue: new_value =', new_value, cell);
-        const $cell  = dataCell(cell);
-        const $value = cellDisplay($cell);
-        if (notDefined(new_value)) {
-            $value.text('');
+        const $cell = dataCell(cell);
+        if ($cell.is(MultiUploader.UPLOADER)) {
+            setUploaderDisplayValue(cell, new_value);
         } else {
-            const value = $cell.makeValue(new_value);
-            const list  = $cell.is('.textbox');
-            $value.html(list ? value.toHtml() : value.forDisplay(true));
+            const $value = cellDisplay($cell);
+            if (notDefined(new_value)) {
+                $value.text('');
+            } else {
+                const value = $cell.makeValue(new_value);
+                const list  = $cell.is('.textbox');
+                $value.html(list ? value.toHtml() : value.forDisplay(true));
+            }
         }
     }
 
@@ -3935,6 +3931,37 @@ appSetup(MODULE, function() {
         }
         setCellDisplayValue($cell, value);
         updateCellValid($cell);
+    }
+
+    // ========================================================================
+    // Functions - cell - display - file_data
+    // ========================================================================
+
+    function setUploaderDisplayValue(cell, new_value, data_type) {
+        const $cell = dataCell(cell);
+        const $name = $cell.find(MultiUploader.FILE_NAME);
+        let file, type;
+        if (typeof new_value === 'string') {
+            file = new_value;
+            type = data_type;
+        } else {
+            const value = new_value ? $cell.makeValue(new_value).value : {};
+            type =
+                ((file = value.metadata?.filename) && 'uploader') ||
+                ((file = value.name)               && 'name') ||
+                ((file = value.url)                && 'url');
+        }
+        const from_type = `.from-${type}`;
+        let show_name   = false;
+        $name.children().each((_, line) => {
+            const $line  = $(line);
+            const active = $line.is(from_type);
+            $line.text(active && file || '');
+            $line.attr('aria-hidden', !active);
+            $line.toggleClass('active', active);
+            show_name = active || show_name;
+        });
+        $name.toggleClass('complete', show_name);
     }
 
     // ========================================================================
@@ -4252,6 +4279,7 @@ appSetup(MODULE, function() {
                 const $row = isPresent(record) && rowForDatabaseId(id, $rows);
                 if ($row) { updateRowIndicators($row, record) }
             });
+            enableSave(true);
         }
 
         // Error message(s) to display.
@@ -4461,10 +4489,8 @@ appSetup(MODULE, function() {
         const $active = activeCell();
         if ($active) {
             const func  = 'deregisterActiveCell';
-            const $cell = event?.target && dataCell(event.target);
-            // If focus is going somewhere other than within the data cell
-            // currently being edited then that editing instance is done.
-            if ($cell && ($cell[0] === $active[0])) {
+            const $cell = event?.target ? dataCell(event.target) : $(null);
+            if ($cell[0] === $active[0]) {
                 _debug(`${func}: inside active data cell; event =`, event);
             } else {
                 _debug(`${func}: outside of active data cell; event =`, event);

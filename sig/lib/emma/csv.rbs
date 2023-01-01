@@ -15,8 +15,9 @@ module Emma::Csv
   #
   # @param [String, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] no_empty         If *false*, allow data will all nils.
   # @param [Boolean] utf8
-  # @param [Hash]    opt
+  # @param [Hash]    opt              Passed to CSV#parse.
   #
   # @return [Array<Hash>]
   # @return [nil]                     Only if *no_raise* is *true*.
@@ -31,8 +32,8 @@ module Emma::Csv
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
   # encoding.  NOTE: This might not be necessary any longer though.
   #
-  def csv_parse: (nil                         arg, ?no_raise: bool, ?utf8: bool, **untyped opt) -> nil
-               | (String|IO|StringIO|IO::Like arg, ?no_raise: bool, ?utf8: bool, **untyped opt) -> Array[anyHash]
+  def csv_parse: (nil                         arg, ?no_raise: bool, ?no_empty: bool, ?utf8: bool, **untyped opt) -> nil
+               | (String|IO|StringIO|IO::Like arg, ?no_raise: bool, ?no_empty: bool, ?utf8: bool, **untyped opt) -> Array[anyHash]
 
   # force_utf8
   #

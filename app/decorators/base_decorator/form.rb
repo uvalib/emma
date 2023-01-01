@@ -837,7 +837,7 @@ module BaseDecorator::Form
   # @see file:app/assets/stylesheets/feature/_model_form.scss ".submit-button"
   #
   def submit_button(**opt)
-    opt[:state] = :disabled unless opt.key?(:state)
+    opt[:state] ||= :disabled
     form_button(:submit, **opt)
   end
 

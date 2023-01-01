@@ -1,8 +1,22 @@
 module ManifestItem::Assignable
+  include ManifestItem::Validatable
+
   # :nocov:
   #include Record::Assignable
 
   #include Record::InstanceMethods
+
+  # Pattern by which strings are split into arrays.
+  #
+  # @type [String,Regexp]
+  #
+  LINE_SPLIT: String | Regexp
+
+  # String by which arrays are combined into strings.
+  #
+  # @type [String,RegExp]
+  #
+  LINE_JOIN: String
 
   # Ensure that blanks are allowed and that input values are normalized.
   #
@@ -12,6 +26,101 @@ module ManifestItem::Assignable
   # @return [Hash{Symbol=>Any}]
   #
   def attribute_options: (symHash attr, ?(symHash|nil) opt) -> symHash
+
+  # A mapping of key comparison value to actual database column name.
+  #
+  # @return [Hash{String=>Symbol}]
+  #
+  def key_mapping: () -> Hash[String,Symbol]
+
+  @key_mapping: Hash[String,Symbol]
+
+  # normalize_file
+  #
+  # @param [Hash, String, *] data
+  #
+  # @return [Hash, nil]
+  #
+  def normalize_file: (anyHash|String data) -> symHash
+                    | (untyped        data) -> nil
+
+  # normalize_single
+  #
+  # @param [*]     v
+  # @param [Class] type
+  #
+  # @return [*]
+  #
+  def normalize_single: (untyped v) -> (untyped | nil)
+
+  # normalize_bool
+  #
+  # @param [BoolType, String, *] v
+  #
+  # @return [true, false, nil]
+  #
+  def normalize_bool: (String  v) -> (bool | nil)
+                    | (bool    v) -> bool
+                    | (untyped v) -> nil
+
+  # normalize_number
+  #
+  # @param [String, Numeric, *] v
+  #
+  # @return [Numeric, nil]
+  #
+  def normalize_number: (String  v) -> (Numeric | nil)
+                      | (Numeric v) -> Numeric
+                      | (untyped v) -> nil
+
+  # normalize_date
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [Date, String, nil]
+  #
+  def normalize_date: (String|Numeric v) -> (Date | String)
+                    | (Date           v) -> Date
+                    | (untyped        v) -> nil
+
+  # normalize_enum
+  #
+  # @param [Array, String, Symbol, *] v
+  # @param [Class]                    type
+  #
+  # @return [Array, String, nil]
+  #
+  def normalize_enum: (anyArray      v, Class `type`) -> strArray
+                    | (String|Symbol v, Class `type`) -> String
+                    | (untyped       v, Class `type`) -> nil
+
+  # normalize_json
+  #
+  # @param [Array<Hash,String>, Hash, String, *] v
+  #
+  # @return [Array<Hash>, Hash, nil]
+  #
+  def normalize_json: (anyHash  v) -> symHash
+                    | (anyArray v) -> Array[symHash]
+                    | (untyped  v) -> (symHash | nil)
+
+  # normalize_text
+  #
+  # @param [Array, String, Symbol, *] v
+  #
+  # @return [String, *]
+  #
+  def normalize_text:     (anyArray|String|Symbol v) -> String
+                    | [T] (T                      v) -> T
+
+  # normalize_copyright
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [String, nil]
+  #
+  def normalize_copyright: (Date|String|Numeric v) -> String
+                         | (untyped             v) -> nil
 
   private
 

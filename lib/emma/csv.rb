@@ -19,6 +19,20 @@ module Emma::Csv
 
   public
 
+  # The default :symbol converter transforms to lowercase first, which is
+  # problematic for headers that are intended to match database field names.
+  # (While the database *column* names are technically case-insensitive, many
+  # parts of the code expect to access values by *field* name.)
+
+  CSV::HeaderConverters[:pure_symbol] ||=
+    lambda do |hc|
+      hc.encode(CSV::ConverterEncoding)
+        .strip
+        .gsub(/\s+/, '_')
+        .remove!(/\W/)
+        .to_sym
+    end
+
   # Default CSV options used by #csv_parse.
   #
   # @type [Hash{Symbol=>*}]
@@ -26,12 +40,12 @@ module Emma::Csv
   # @see CSV#DEFAULT_OPTIONS
   #
   CSV_DEFAULTS = {
-    converters:        :all,
-    empty_value:       nil,
-    header_converters: :symbol,
-    headers:           true,
+    converters:        nil,             # NOTE: values will be String or nil.
+    empty_value:       nil,             # Blank column values reported as nil.
+    header_converters: %i[pure_symbol],
+    headers:           true,            # Data must have column headers.
     strip:             true,
-    skip_blanks:       true,
+    skip_blanks:       true,            # Input lines without data are ignored.
   }.freeze
 
   # ===========================================================================
@@ -44,8 +58,9 @@ module Emma::Csv
   #
   # @param [String, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] no_empty         If *false*, allow data will all nils.
   # @param [Boolean] utf8
-  # @param [Hash]    opt
+  # @param [Hash]    opt              Passed to CSV#parse.
   #
   # @return [Array<Hash>]
   # @return [nil]                     Only if *no_raise* is *true*.
@@ -60,11 +75,13 @@ module Emma::Csv
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
   # encoding.  NOTE: This might not be necessary any longer though.
   #
-  def csv_parse(arg, no_raise: true, utf8: true, **opt)
+  def csv_parse(arg, no_raise: true, no_empty: true, utf8: true, **opt)
     return if arg.nil? || arg.is_a?(Puma::NullIO)
-    CSV.parse(arg, **CSV_DEFAULTS, **opt).map(&:to_h).tap do |rows|
-      rows.each { |row| row.transform_values! { |v| force_utf8(v) } } if utf8
-    end
+    CSV.parse(arg, **CSV_DEFAULTS, **opt).map { |row|
+      row = row.to_h
+      next if no_empty && row.values.all?(&:nil?)
+      utf8 ? row.transform_values! { |v| force_utf8(v) } : row
+    }.compact
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" }
     re_raise_if_internal_exception(error)

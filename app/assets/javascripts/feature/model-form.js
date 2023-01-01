@@ -1,24 +1,22 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import { AppDebug }                         from '../application/debug'
-import { appSetup }                         from '../application/setup'
-import { delegateInputClick }               from '../shared/accessibility'
-import { arrayWrap }                        from '../shared/arrays'
-import { Emma }                             from '../shared/assets'
-import { pageController }                   from '../shared/controller'
-import { turnOffAutocomplete }              from '../shared/form'
-import { htmlDecode, scrollIntoView }       from '../shared/html'
-import { HTTP }                             from '../shared/http'
-import { LookupModal }                      from '../shared/lookup-modal'
-import { LookupRequest }                    from '../shared/lookup-request'
-import { K, asSize }                        from '../shared/math'
-import { SearchInProgress }                 from '../shared/search-in-progress'
-import { asString, camelCase, singularize } from '../shared/strings'
-import { SingleUploader }                   from '../shared/uploader'
-import { cancelAction, makeUrl }            from '../shared/url'
-import { transientError }                   from '../shared/xhr'
-import { Rails }                            from '../vendor/rails'
+import { AppDebug }                   from '../application/debug';
+import { appSetup }                   from '../application/setup';
+import { delegateInputClick }         from '../shared/accessibility';
+import { arrayWrap }                  from '../shared/arrays';
+import { Emma }                       from '../shared/assets';
+import { pageController }             from '../shared/controller';
+import { htmlDecode, scrollIntoView } from '../shared/html';
+import { HTTP }                       from '../shared/http';
+import { LookupModal }                from '../shared/lookup-modal';
+import { LookupRequest }              from '../shared/lookup-request';
+import { K, asSize }                  from '../shared/math';
+import { SearchInProgress }           from '../shared/search-in-progress';
+import { SingleUploader }             from '../shared/uploader';
+import { cancelAction, makeUrl }      from '../shared/url';
+import { transientError }             from '../shared/xhr';
+import { Rails }                      from '../vendor/rails';
 import {
     selector,
     toggleClass,
@@ -42,7 +40,11 @@ import {
     extractFlashMessage,
     flashError,
     flashMessage,
-} from '../shared/flash'
+} from '../shared/flash';
+import {
+    FORM_FIELD,
+    turnOffAutocomplete,
+} from '../shared/form';
 import {
     compact,
     deepDup,
@@ -50,7 +52,12 @@ import {
     dup,
     fromJSON,
     toObject,
-} from '../shared/objects'
+} from '../shared/objects';
+import {
+    asString,
+    camelCase,
+    singularize,
+} from '../shared/strings';
 import {
     SECONDS,
     asDateTime,
@@ -472,38 +479,6 @@ appSetup(MODULE, function() {
      * @type {string}
      */
     const FORM_SELECTOR = MODEL_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
-
-    /**
-     * Selectors for input fields.
-     *
-     * @readonly
-     * @type {string[]}
-     */
-    const FORM_FIELD_TYPES = deepFreeze([
-        'select',
-        'textarea',
-        'input[type="checkbox"]',
-        'input[type="date"]',
-        'input[type="datetime-local"]',
-        'input[type="email"]',
-        'input[type="month"]',
-        'input[type="number"]',
-        'input[type="password"]',
-        'input[type="range"]',
-        'input[type="tel"]',
-        'input[type="text"]',
-        'input[type="time"]',
-        'input[type="url"]',
-        'input[type="week"]',
-    ]);
-
-    /**
-     * Selector for input fields.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const FORM_FIELDS = FORM_FIELD_TYPES.join(', ');
 
     const BUTTON_TRAY_CLASS     = 'button-tray';
     const SUBMIT_BUTTON_CLASS   = 'submit-button';
@@ -1520,7 +1495,7 @@ appSetup(MODULE, function() {
 
         // Prevent password managers from incorrectly interpreting any of the
         // fields as something that might pertain to user information.
-        inputFields($form).each(function() { turnOffAutocomplete(this) });
+        turnOffAutocomplete(inputFields($form));
 
         // Broaden click targets for radio buttons and checkboxes that are
         // paired with labels.
@@ -4394,7 +4369,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function inputFields(form) {
-        return fieldContainer(form).find(FORM_FIELDS);
+        return fieldContainer(form).find(FORM_FIELD);
     }
 
     /**

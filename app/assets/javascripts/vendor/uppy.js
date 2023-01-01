@@ -27,21 +27,21 @@
 //import Url                from '@uppy/url';
   import XHRUpload          from '@uppy/xhr-upload';
 
-//const Uppy                = () => undefined;
-  const AwsS3               = () => undefined;
-  const Box                 = () => undefined;
-  const Dashboard           = () => undefined;
-  const DragDrop            = () => undefined;
-  const Dropbox             = () => undefined;
-//const FileInput           = () => undefined;
-  const GoogleDrive         = () => undefined;
-//const Informer            = () => undefined;
-  const OneDrive            = () => undefined;
-//const ProgressBar         = () => undefined;
-  const StatusBar           = () => undefined;
-  const ThumbnailGenerator  = () => undefined;
-  const Url                 = () => undefined;
-//const XHRUpload           = () => undefined;
+//const Uppy                = undefined;
+  const AwsS3               = undefined;
+  const Box                 = undefined;
+  const Dashboard           = undefined;
+  const DragDrop            = undefined;
+  const Dropbox             = undefined;
+//const FileInput           = undefined;
+  const GoogleDrive         = undefined;
+//const Informer            = undefined;
+  const OneDrive            = undefined;
+//const ProgressBar         = undefined;
+  const StatusBar           = undefined;
+  const ThumbnailGenerator  = undefined;
+  const Url                 = undefined;
+//const XHRUpload           = undefined;
 
 export {
     Uppy,

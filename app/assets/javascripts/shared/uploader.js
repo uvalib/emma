@@ -138,19 +138,20 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
  * @type {UppyFeatures}
  */
 const FEATURES = deepFreeze({
-    replace_input:      true,   // Requires '@uppy/file-input'
-    popup_messages:     true,   // Requires '@uppy/informer'
-    progress_bar:       true,   // Requires '@uppy/progress-bar'
-    status_bar:         false,  // Requires '@uppy/status-bar'
-    dashboard:          false,  // Requires '@uppy/dashboard'
-    drag_and_drop:      false,  // Requires '@uppy/drag-drop'
-    image_preview:      false,  // Requires '@uppy/thumbnail-generator'
-    upload_to_aws:      false,  // Requires '@uppy/aws-s3'
-    upload_to_box:      false,  // Requires '@uppy/box'
-    upload_to_dropbox:  false,  // Requires '@uppy/dropbox'
-    upload_to_google:   false,  // Requires '@uppy/google-drive'
-    upload_to_onedrive: false,  // Requires '@uppy/onedrive'
-    url:                false,  // Requires '@uppy/url'
+    replace_input:      true  && !!FileInput,
+    popup_messages:     true  && !!Informer,
+    progress_bar:       true  && !!ProgressBar,
+    status_bar:         false && !!StatusBar,
+    dashboard:          false && !!Dashboard,
+    drag_and_drop:      false && !!DragDrop,
+    image_preview:      false && !!ThumbnailGenerator,
+    upload_to_aws:      false && !!AwsS3,
+    upload_to_box:      false && !!Box,
+    upload_to_dropbox:  false && !!Dropbox,
+    upload_to_google:   false && !!GoogleDrive,
+    upload_to_onedrive: false && !!OneDrive,
+    url:                false && !!Url,
+    xhr:                true  && !!XHRUpload, // NOTE: Always used.
 });
 
 /**
@@ -316,7 +317,7 @@ class BaseUploader extends BaseClass {
         this.onError    = callbacks?.onError;
         this.onSuccess  = callbacks?.onSuccess;
         this.property   = Emma[camelCase(model)] || {};
-        this.feature    = { debugging: DEBUG, ...FEATURES, ...features };
+        this.feature    = { ...FEATURES, debugging: DEBUG, ...features };
     }
 
     // ========================================================================
@@ -516,8 +517,12 @@ class BaseUploader extends BaseClass {
             ...options?.uppy
         });
 
-        // Table of keys whose value is the activation setting of the related
-        // Uppy plugin.  If active the table value is the plugin class.
+        /**
+         * Table of keys whose value is the activation setting of the related
+         * Uppy plugin.  If active the table value is the plugin class.
+         *
+         * @type {Object.<string,(Uppy.BasePlugin|false|undefined)>}
+         */
         const plugin = {
             db:  this.feature.dashboard             && Dashboard,
             fi:  this.feature.replace_input         && FileInput,
@@ -532,7 +537,7 @@ class BaseUploader extends BaseClass {
             gdr: this.feature.upload_to_google      && GoogleDrive,
             odr: this.feature.upload_to_onedrive    && OneDrive,
             url: this.feature.url                   && Url,
-            xhr: XHRUpload, // Always used.
+            xhr: this.feature.xhr                   && XHRUpload,
         };
 
         const load_plugin = (p_key, p_opt = {}) => {
@@ -542,6 +547,7 @@ class BaseUploader extends BaseClass {
             const plugin_opt = { target: opt[k_tgt], ...p_opt, ...opt[k_opt] };
             plugin_opt.target &&= this._locateTarget(plugin_opt.target);
             plugin_opt.target ||= this._defaultTarget(p_key);
+            // noinspection JSCheckFunctionSignatures
             uppy.use(plugin_class, plugin_opt);
             return true;
         };
@@ -1708,15 +1714,18 @@ export class MultiUploader extends BaseUploader {
      * @protected
      */
     _locateDisplay(target) {
-        const match   = this.constructor.DISPLAY;
-        const $target = target ? $(target) : this.$root;
-        let $display  = this._selfOrDescendent($target, match);
-        if (isPresent($display)) { return $display }
-        $display = $(match);
-        if (isPresent($display)) { return $display }
-        $display = $('<div>').addClass(this.constructor.DISPLAY_CLASS);
-        $('body').append($display);
-        return $display;
+        const match = this.constructor.DISPLAY;
+        let $result = target && this._selfOrDescendent(target, match);
+        $result ||= this._selfOrDescendent(this.$root, match);
+        $result ||= $(match);
+        if (isMissing($result)) {
+            $result = $('<div>').addClass(this.constructor.DISPLAY_CLASS);
+            $('body').append($result);
+            this._debug('_locateDisplay append to body ->', $result);
+        } else {
+            this._debug('_locateDisplay ->', $result);
+        }
+        return $result;
     }
 
     // ========================================================================

@@ -106,13 +106,12 @@ appSetup(MODULE, function() {
     function updateScrollButton() {
         //_debug('updateScrollButton');
         let visible;
+        const target   = $scroll_target[0].getBoundingClientRect();
         const html     = document.documentElement;
         const max_y    = html.scrollHeight - html.clientHeight;
-        const target   = $scroll_target[0].getBoundingClientRect();
-        const body     = $('body')[0].getBoundingClientRect();
+        const body     = html.getBoundingClientRect();
         const needed_y = Math.abs(target.y - body.y);
         if (needed_y <= max_y) {
-            const target  = $scroll_target[0].getBoundingClientRect();
             const epsilon = 1; // pixel
             const up      = (target.y < -epsilon);
             const down    = (target.y > +epsilon);

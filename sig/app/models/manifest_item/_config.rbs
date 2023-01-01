@@ -5,7 +5,7 @@ module ManifestItem::Config
   #
   # @see file:config/locales/types/manifest_item.en.yml
   #
-  CONFIGURATION: Hash[Symbol,symHash]
+  MANIFEST_ITEM_TYPES: Hash[Symbol,symHash]
 
   # Values for each status column which indicate an "OK" status.
   #

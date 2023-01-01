@@ -1,4 +1,15 @@
 module Emma::Common::NumericMethods
+  NUMBER_PATTERN: Regexp
+
+  # Interpret *value* as an integer.
+  #
+  # @param [String, Symbol, Numeric, *] value
+  #
+  # @return [Integer]
+  # @return [nil]                     If *value* does not represent a number.
+  #
+  def to_integer: (untyped value) -> (Integer | nil)
+
   # Interpret *value* as a positive integer.
   #
   # @param [String, Symbol, Numeric, *] value
@@ -16,6 +27,15 @@ module Emma::Common::NumericMethods
   # @return [nil]                     If *value* < 0 or not a number.
   #
   def non_negative: (untyped value) -> (Integer | nil)
+
+  # Interpret *value* as a positive floating-point number.
+  #
+  # @param [String, Symbol, Numeric, *] value
+  #
+  # @return [Float]
+  # @return [nil]                     If *value* does not represent a number.
+  #
+  def to_float: (untyped value) -> (Float | nil)
 
   # Interpret *value* as a positive floating-point number.
   #

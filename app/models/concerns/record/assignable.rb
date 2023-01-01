@@ -37,14 +37,16 @@ module Record::Assignable
   # * :except   Ignore these fields (default: []).
   # * :only     Not limited if *false* (default: `#field_name`).
   # * :compact  If *false*, allow blanks (default: *true*).
+  # * :key_norm If *true*, transform provided keys to the real column name.
   # * :options  An Options instance.
   #
-  ATTRIBUTE_OPTIONS_OPTS = %i[from user force except only compact options]
+  ATTRIBUTE_OPTIONS_OPTS =
+    %i[from user force except only compact key_norm options].freeze
 
   # Called to prepare values to be used for assignment to record attributes.
   #
   # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil]                                      opt
+  # @param [Hash, nil] opt      Added pairs except for #ATTRIBUTE_OPTIONS_OPTS:
   #
   # @option attr [ApplicationRecord]            :from
   # @option attr [User, String, Integer]        :user
@@ -52,46 +54,55 @@ module Record::Assignable
   # @option attr [Symbol, Array<Symbol>]        :except
   # @option attr [Symbol, Array<Symbol>, false] :only
   # @option attr [Boolean]                      :compact
+  # @option attr [Boolean]                      :key_norm
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
   # @return [Hash{Symbol=>Any}]
   #
-  # @see #ATTRIBUTE_OPTIONS_OPTS
-  #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def attribute_options(attr, opt = nil)
     return {} if attr.blank?
-    attr = attr.params      if attr.respond_to?(:params)
-    attr = attr.to_unsafe_h if attr.respond_to?(:to_unsafe_h)
+
     if attr.is_a?(ApplicationRecord)
       unless attr.is_a?(record_class)
         Log.warn { "#{record_class}: assigning from a #{attr.class} record" }
       end
       attr = attr.fields.except!(*ignored_keys)
-    elsif attr.is_a?(Hash)
-      attr = attr.symbolize_keys
     else
-      raise "#{attr.class}: unexpected"
+      attr = attr.dup         if attr.is_a?(Hash)
+      attr = attr.params      if attr.respond_to?(:params)
+      attr = attr.to_unsafe_h if attr.respond_to?(:to_unsafe_h)
+      raise "#{attr.class}: unexpected" unless attr.is_a?(Hash)
     end
-    attr.merge!(opt) if opt.present?
 
-    opt     = extract_hash!(attr, *ATTRIBUTE_OPTIONS_OPTS)
+    opt, added = partition_hash!(opt, *ATTRIBUTE_OPTIONS_OPTS)
+
     from    = opt[:from] && attribute_options(opt[:from], except: ignored_keys)
-    user    = (opt[:user] unless attr.key?(:user_id) || from&.dig(:user_id))
+    user    = from&.extract!(:user, :user_id)&.compact&.values&.first
+    user    = attr.extract!(:user, :user_id).compact.values.first || user
+    user    = opt.extract!(:user, :user_id).compact.values.first || user
     force   = Array.wrap(opt[:force])
-    excp    = Array.wrap(opt[:except])
+    excp    = Array.wrap(opt[:except]) - force
     only    = !false?(opt[:only]) && Array.wrap(opt[:only] || allowed_keys)
     compact = !false?(opt[:compact])
     options = [opt[:options], from&.delete(:options)].compact.first
 
     attr.reverse_merge!(from)     if from.present?
+    attr.merge!(added)            if added.present?
+
+    attr.transform_keys! { |k| k.to_s.delete_suffix('[]').to_sym }
+    attr.transform_keys! { |k| normalize_key(k) } if true?(opt[:key_norm])
+
     attr.merge!(user_id: user)    if (user &&= User.id_value(user))
     attr.slice!(*(only + force))  if only.present?
-    attr.except!(*(excp - force)) if excp.present?
-    attr.merge!(options: options) if options
+    attr.except!(*excp)           if excp.present?
+
+    attr.select! do |k, v|
+      error   = ("blank key for #{v.inspect}"      if k.blank?)
+      error ||= ("ignoring non-field #{k.inspect}" unless database_columns[k])
+      error.blank? or Log.warn("#{__method__}: #{error}")
+    end
+    attr.merge!(options: options) if options.present?
 
     # noinspection RubyMismatchedReturnType
     compact ? reject_blanks(attr) : attr
@@ -112,6 +123,25 @@ module Record::Assignable
   #
   def ignored_keys
     [id_column, :created_at, :updated_at]
+  end
+
+  # Return with the key name for the given value.
+  #
+  # @param [String, Symbol] key
+  #
+  # @return [Symbol]
+  #
+  def normalize_key(key)
+    key_mapping[EnumType.comparable(key)] || key.to_sym
+  end
+
+  # A mapping of key comparison value to actual database column name.
+  #
+  # @return [Hash{String=>Symbol}]
+  #
+  def key_mapping
+    # noinspection RubyMismatchedReturnType
+    EnumType.comparable_map(database_columns.keys)
   end
 
   # ===========================================================================

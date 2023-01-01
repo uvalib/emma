@@ -20,6 +20,7 @@ module Record::Assignable
   # * :except   Ignore these fields (default: []).
   # * :only     Not limited if *false* (default: `#field_name`).
   # * :compact  If *false*, allow blanks (default: *true*).
+  # * :key_norm If *true*, transform provided keys to the real column name.
   # * :options  An Options instance.
   #
   ATTRIBUTE_OPTIONS_OPTS: symArray
@@ -27,7 +28,7 @@ module Record::Assignable
   # Called to prepare values to be used for assignment to record attributes.
   #
   # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil]                                      opt
+  # @param [Hash, nil] opt      Added pairs except for #ATTRIBUTE_OPTIONS_OPTS:
   #
   # @option attr [ApplicationRecord]            :from
   # @option attr [User, String, Integer]        :user
@@ -35,12 +36,11 @@ module Record::Assignable
   # @option attr [Symbol, Array<Symbol>]        :except
   # @option attr [Symbol, Array<Symbol>, false] :only
   # @option attr [Boolean]                      :compact
+  # @option attr [Boolean]                      :key_norm
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
   # @return [Hash{Symbol=>Any}]
-  #
-  # @see #ATTRIBUTE_OPTIONS_OPTS
   #
   def attribute_options: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
 
@@ -56,6 +56,20 @@ module Record::Assignable
   # @return [Array<Symbol>]
   #
   def ignored_keys: () -> symArray
+
+  # Return with the key name for the given value.
+  #
+  # @param [String, Symbol] key
+  #
+  # @return [Symbol]
+  #
+  def normalize_key: (String|Symbol key) -> Symbol
+
+  # A mapping of key comparison value to actual database column name.
+  #
+  # @return [Hash{String=>Symbol}]
+  #
+  def key_mapping: () -> Hash[String,Symbol]
 
   # Class methods automatically added to the including record class.
   #

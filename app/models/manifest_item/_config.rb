@@ -22,7 +22,7 @@ module ManifestItem::Config
   #--
   # noinspection RailsI18nInspection
   #++
-  CONFIGURATION = I18n.t('emma.manifest_item.type').deep_freeze
+  MANIFEST_ITEM_TYPES = I18n.t('emma.manifest_item.type').deep_freeze
 
   # Values for each status column which indicate an "OK" status.
   #
@@ -44,7 +44,7 @@ module ManifestItem::Config
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
-  STATUS = CONFIGURATION.slice(*STATUS_COLUMNS).freeze
+  STATUS = MANIFEST_ITEM_TYPES.slice(*STATUS_COLUMNS).freeze
 
   # ===========================================================================
   # :section:
@@ -53,7 +53,7 @@ module ManifestItem::Config
   public
 
   # noinspection RubyMismatchedArgumentType
-  EnumType.add_enumerations(CONFIGURATION)
+  EnumType.add_enumerations(MANIFEST_ITEM_TYPES)
 
   # ===========================================================================
   # :section:

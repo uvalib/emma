@@ -209,7 +209,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
       # @type [Hash{Symbol=>Array,String,nil}]
       part = { ids: ids&.to_a, values: values }
       part.transform_values! { |v| v&.map(&:inspect)&.join(', ') }
-      part[:ids].tr!('()', '') if part[:ids]
+      part[:ids]&.remove!('()')
       part.transform_values! { |v| v || '---' }
       '<%{ids} | %{values} | GroupingCriteria>' % part
     end

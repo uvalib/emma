@@ -59,14 +59,11 @@ module ManifestItem::StatusMethods
   # @return [Symbol]
   #
   def evaluate_ready_status(item = nil, symbol: true, **added)
-    if (stat = added[:ready_status]&.to_sym).blank?
-      item ||= default_to_self
-      # noinspection RubyNilAnalysis
-      data = item.is_a?(ManifestItem) ? item.fields : item.symbolize_keys
-      data = data.merge!(added)
+    unless (stat = added[:ready_status].presence)
+      data = item_fields(item, added)
       stat = ready?(data) ? :ready : :missing
     end
-    symbol ? stat : ReadyStatus(stat)
+    symbol ? stat.to_sym : ReadyStatus(stat)
   end
 
   # Evaluate the readiness of the file upload associated with a ManifestItem.
@@ -79,17 +76,16 @@ module ManifestItem::StatusMethods
   # @return [Symbol]
   #
   def evaluate_file_status(item = nil, symbol: true, **added)
-    if (stat = added[:file_status]&.to_sym).blank?
-      item ||= default_to_self
-      data   = item.is_a?(ManifestItem) ? item.fields : item.symbolize_keys
-      data   = data.merge!(added)[:file_data]
+    unless (stat = added[:file_status].presence)
+      data   = added[:file_data] || item_fields(item)[:file_data]
+      data &&= ManifestItem.normalize_file(data)&.compact_blank!
       stat   = (:missing   if data.nil?)
-      stat ||= (:url_only  if data[:url].present?)
-      stat ||= (:name_only if data[:name].present?)
-      stat ||= (:complete  if data[:storage].present?)
+      stat ||= (:url_only  if data[:url])
+      stat ||= (:name_only if data[:name])
+      stat ||= (:complete  if data[:storage])
       stat ||= :invalid
     end
-    symbol ? stat : FileStatus(stat)
+    symbol ? stat.to_sym : FileStatus(stat)
   end
 
   # Evaluate the readiness of ManifestItem metadata.
@@ -103,32 +99,29 @@ module ManifestItem::StatusMethods
   #
   def evaluate_data_status(item = nil, symbol: true, **added)
 
-    status = ->(v) { symbol ? v : DataStatus(v) }
-    value  = added[:data_status]&.to_sym&.presence and return status.(value)
+    status = ->(stat) { symbol ? stat.to_sym : DataStatus(stat) }
+    value  = added[:data_status].presence and return status.(value)
 
-    item ||= default_to_self
-    # noinspection RubyNilAnalysis
-    data   = item.is_a?(ManifestItem) ? item.fields : item.symbolize_keys
-    data.merge!(added).delete_if { |_, v| v.blank? unless v.is_a?(FalseClass) }
+    data   = item_fields(item, added).keep_if { |_, v| v || (v == false) }
 
     fields       = ManifestItem.database_fields
     rem_fields   = fields.select { |_, v| v[:category]&.start_with?('rem') }
     bib_fields   = fields.select { |_, v| v[:category]&.start_with?('bib') }
 
-    rem_data     = data.slice(*rem_fields.keys).keys.presence
-    bib_data     = data.slice(*bib_fields.keys).keys.presence
+    rem_data     = (data.keys & rem_fields.keys).presence
+    bib_data     = (data.keys & bib_fields.keys).presence
 
-    return status.(:missing)  unless rem_data && bib_data
+    return status.(:missing)  unless rem_data || bib_data
     return status.(:no_rem)   unless rem_data
     return status.(:no_bib)   unless bib_data
 
     rem_required = rem_fields.select { |_, v| v[:required] }.keys
     bib_required = bib_fields.select { |_, v| v[:required] }.keys
 
-    adequate_rem = rem_required.difference(rem_data).blank?
-    adequate_bib = bib_required.difference(bib_data).blank?
-    extra_rem    = rem_data.difference(rem_required).present?
-    extra_bib    = bib_data.difference(bib_required).present?
+    adequate_rem = (rem_required - rem_data).blank?
+    adequate_bib = (bib_required - bib_data).blank?
+    extra_rem    = (rem_data - rem_required).present?
+    extra_bib    = (bib_data - bib_required).present?
     complete_rem = adequate_rem && extra_rem
     complete_bib = adequate_bib && extra_bib
 
@@ -137,6 +130,25 @@ module ManifestItem::StatusMethods
     return status.(:min_rem)  if adequate_rem && adequate_bib
 
     status.(:invalid)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Return indicated field values.
+  #
+  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
+  # @param [Hash, nil]             added  Additional field values to use.
+  #
+  # @return [Hash]
+  #
+  def item_fields(item, added = nil)
+    item ||= default_to_self
+    result = item.is_a?(ManifestItem) ? item.fields : item.symbolize_keys
+    added ? result.merge!(added) : result
   end
 
   # ===========================================================================

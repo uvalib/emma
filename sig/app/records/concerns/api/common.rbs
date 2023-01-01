@@ -608,7 +608,32 @@ end
 # Base class for enumeration scalar types.
 #
 class EnumType < ScalarType
+  module Comparable
+
+    # Transform a value into a string for liberal case-insensitive comparison
+    # where non-alphanumeric are disregarded.
+    #
+    # @param [String, Symbol, nil] key
+    #
+    # @return [String]
+    #
+    def comparable: ((String|Symbol|nil) v) -> String
+
+    # Create a mapping of comparable values to original values.
+    #
+    # @param [Array, Hash] keys
+    # @param [String, Symbol, nil] caller   For diagnostics.
+    #
+    # @return [Hash{String=>String,Symbol}]
+    #
+    def comparable_map: (strArray|strHash  keys, ?(String|Symbol|nil) caller) -> Hash[String,String]
+                      | (symArray|symHash  keys, ?(String|Symbol|nil) caller) -> Hash[String,Symbol]
+  end
+
+  extend Comparable
+
   module Enumerations
+    include Comparable
 
     @@enumerations: Hash[Symbol,symHash]
 
@@ -712,6 +737,10 @@ class EnumType < ScalarType
   module Methods
     include ScalarType::Methods
 
+    include Comparable
+
+    extend Enumerations
+
     # The default value associated with this enumeration type.  If no default
     # is explicitly defined the initial value is returned.
     #
@@ -724,6 +753,14 @@ class EnumType < ScalarType
     # @param [Any, nil] v
     #
     def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [Any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
 
     # The name of the represented enumeration type.
     #
@@ -742,6 +779,12 @@ class EnumType < ScalarType
     # @return [Hash]
     #
     def pairs: () -> symHash
+
+    # Mapping of comparable values to enumeration values.
+    #
+    # @return [Hash]
+    #
+    def mapping: () -> Hash[String,String]
 
     private
 
