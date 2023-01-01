@@ -285,7 +285,7 @@ class LookupJob < ActiveJob::Base
   def __debug_job(*args, **opt)
     opt[:separator] ||= "\n\t"
     tid   = Thread.current.name
-    name  = self.is_a?(Class) ? self.name : self.class.name
+    name  = self_class
     args  = args.join(Emma::Debug::DEBUG_SEPARATOR)
     added = block_given? ? yield : {}
     __debug_items("#{name} #{args}", **opt) do

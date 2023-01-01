@@ -106,8 +106,7 @@ class PublicationIdentifier < ScalarType
     # @return [Class<PublicationIdentifier>]
     #
     def identifier_subclass
-      # noinspection RubyMismatchedReturnType
-      self.is_a?(Class) ? self : self.class
+      self_class
     end
 
     # class_type

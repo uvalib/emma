@@ -199,7 +199,7 @@ module Serializable
     # @return [nil]         If there was a problem.
     #
     def serializer_class(base = nil)
-      base ||= self.is_a?(Class) ? self : self.class
+      base ||= self_class
       serializer = base.safe_const_get(:Serializer, false)
       unless serializer
         base.class_eval <<~HERE_DOC

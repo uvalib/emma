@@ -7,6 +7,22 @@ module Emma::Common::ExceptionMethods
   #
   INTERNAL_EXCEPTION: Array[Class]
 
+  private
+
+  # This allows `self_class(nil)` to return NilClass.
+  module SelfContext
+  end
+
+  public
+
+  # Report on the class associated with "self".
+  #
+  # @param [*] this                   Default: self.
+  #
+  # @return [Class]
+  #
+  def self_class: (?untyped this) -> Class
+
   # Indicate whether *error* is an exception which matches or is derived from
   # one of the exceptions listed in #INTERNAL_EXCEPTION.
   #

@@ -140,7 +140,7 @@ module TestHelper::Common
   #
   def this_controller
     # noinspection RubyMismatchedReturnType
-    controller_name(self.is_a?(Class) ? self : self.class)
+    controller_name(self_class)
   end
 
   # Derive the name of the model/controller from the given source.

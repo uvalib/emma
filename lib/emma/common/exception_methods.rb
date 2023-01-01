@@ -39,11 +39,28 @@ module Emma::Common::ExceptionMethods
     ZeroDivisionError,
   ].freeze
 
+  private
+
+  # This allows `self_class(nil)` to return NilClass.
+  module SelfContext; end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # Report on the class associated with "self".
+  #
+  # @param [*] this                   Default: self.
+  #
+  # @return [Class]
+  #
+  def self_class(this = SelfContext)
+    this = self if this == SelfContext
+    # noinspection RubyMismatchedReturnType
+    this.is_a?(Class) ? this : this.class
+  end
 
   # Indicate whether *error* is an exception which matches or is derived from
   # one of the exceptions listed in #INTERNAL_EXCEPTION.
@@ -51,7 +68,7 @@ module Emma::Common::ExceptionMethods
   # @param [Exception, Any, nil] error
   #
   def internal_exception?(error)
-    ancestors = (error.is_a?(Class) ? error : error.class)&.ancestors || []
+    ancestors = self_class(error).ancestors || []
     ancestors.intersect?(INTERNAL_EXCEPTION)
   end
 
@@ -61,7 +78,7 @@ module Emma::Common::ExceptionMethods
   # @param [Exception, Any, nil] error
   #
   def operational_exception?(error)
-    ancestors = (error.is_a?(Class) ? error : error.class)&.ancestors || []
+    ancestors = self_class(error).ancestors || []
     ancestors.include?(Exception) && !ancestors.intersect?(INTERNAL_EXCEPTION)
   end
 

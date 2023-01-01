@@ -1454,7 +1454,7 @@ class EnumType < ScalarType
     # @return [Symbol]
     #
     def type
-      (self.is_a?(Class) ? self : self.class).to_s.to_sym
+      self_class.to_s.to_sym
     end
 
     # The enumeration values associated with the subclass.

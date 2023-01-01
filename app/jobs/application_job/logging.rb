@@ -36,7 +36,7 @@ module ApplicationJob::Logging
   public
 
   def job_name
-    @job_name ||= 'JOB %s' % (self.is_a?(Class) ? name : self.class.name)
+    @job_name ||= "JOB #{self_class}"
   end
 
   def job_leader(job)

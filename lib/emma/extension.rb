@@ -176,7 +176,7 @@ module Emma::Extension
       # @return [String]
       #
       def __ext_class
-        self.is_a?(Class) && name || self.class.name || '???'
+        self_class.name || '???'
       end
 
     end
