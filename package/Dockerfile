@@ -9,8 +9,7 @@
 # For build-base:
 # @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
-#FROM ruby:3.1-alpine
-FROM public.ecr.aws/docker/library/ruby:3.1.2-alpine
+FROM public.ecr.aws/docker/library/ruby:3.2.0-alpine
 
 RUN apk upgrade && \
     apk add --no-cache \

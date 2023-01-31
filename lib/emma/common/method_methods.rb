@@ -118,7 +118,7 @@ module Emma::Common::MethodMethods
     only   = Array.wrap(only).presence
     except = Array.wrap(except).presence
     meth.parameters.flat_map { |type, name|
-      next if (type == :block) || name.blank?
+      next if (type == :block) || name.blank? || %i[* **].include?(name)
       next if only && !only.include?(name) || except&.include?(name)
       next unless bind.local_variable_defined?(name)
       next unless (value = bind.local_variable_get(name))

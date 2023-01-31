@@ -6,8 +6,7 @@
 rm -f "$APP_HOME"/tmp/pids/* > /dev/null 2>&1
 
 # Set options for Ruby 3+
-ruby -e '' --yjit 2>/dev/null &&
-    export RUBYOPT='--yjit --yjit-exec-mem-size=16MB'
+export RUBYOPT='--yjit'
 
 # Run migrations if necessary.
 bundle exec rake db:prepare
