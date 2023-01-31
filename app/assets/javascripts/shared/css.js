@@ -5,7 +5,7 @@ import { AppDebug }                      from '../application/debug';
 import { arrayWrap }                     from './arrays';
 import { Emma }                          from './assets';
 import { isDefined, isEmpty, isPresent } from './definitions';
-import { compact }                       from './objects';
+import { compact, isObject }             from './objects';
 
 
 AppDebug.file('shared/css');
@@ -75,16 +75,16 @@ export function isHidden(target) {
  */
 export function cssClasses(...args) {
     const result = [];
-    args.forEach(function(arg) {
+    args.forEach(arg => {
         let values = undefined;
         if (typeof arg === 'string') {
             values = arg.trim().replace(/[.\s]+/g, ' ').split(' ');
         } else if (Array.isArray(arg)) {
             values = cssClasses(...arg);
-        } else if (typeof arg === 'object') {
-            values = cssClasses(arg['class']);
+        } else if (isObject(arg)) {
+            values = arg['class'] && cssClasses(arg['class']);
         }
-        values = compact(values);
+        values &&= compact(values);
         if (isPresent(values)) {
             result.push(...values);
         }
@@ -113,7 +113,7 @@ export function cssClass(...args) {
 export function selector(...args) {
     const func   = 'selector';
     const result = [];
-    args.forEach(function(arg) {
+    args.forEach(arg => {
         let entry;
         if (isEmpty(arg)) {
             console.warn(`${func}: skipping empty ${typeof arg} = ${arg}`);
@@ -124,7 +124,7 @@ export function selector(...args) {
             entry = entry.join(', ');
 
         } else if (typeof arg === 'object') {
-            entry = selector(arg['class']);
+            entry = arg['class'] && selector(arg['class']);
 
         } else if (typeof arg !== 'string') {
             console.warn(`${func}: ignored ${typeof arg} = ${arg}`);

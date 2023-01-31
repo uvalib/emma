@@ -1,10 +1,11 @@
 // app/assets/javascripts/shared/json.js
 
 
-import { AppDebug }   from '../application/debug';
-import { maxSize }    from './arrays';
-import { isEmpty }    from './definitions';
-import { asDateTime } from './time';
+import { AppDebug }           from '../application/debug';
+import { maxSize }            from './arrays';
+import { isEmpty }            from './definitions';
+import { isObject, toObject } from './objects';
+import { asDateTime }         from './time';
 
 
 AppDebug.file('shared/json');
@@ -48,19 +49,18 @@ export function renderJson(data, indent = DEF_INDENT) {
  * @returns {array|object|*}
  */
 function alignKeys(item) {
-    if (typeof item !== 'object') {
-        return item;
+    if (isObject(item)) {
+        const max_width = maxSize(Object.keys(item));
+        return toObject(item, (k, v) => {
+            const space = Math.max(0, (max_width - k.length));
+            const key   = `${k}` + ' '.repeat(space);
+            const value = alignKeys(v);
+            return [key, value];
+        });
     } else if (Array.isArray(item)) {
         return item.map(element => alignKeys(element));
     } else {
-        const max_width = maxSize(Object.keys(item));
-        const result    = {};
-        $.each(item, function(k, v) {
-            const space = Math.max(0, (max_width - k.length));
-            const key   = '' + k + ' '.repeat(space);
-            result[key] = alignKeys(v);
-        });
-        return result;
+        return item;
     }
 }
 

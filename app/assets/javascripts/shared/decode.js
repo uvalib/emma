@@ -3,9 +3,9 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }  from '../application/debug';
-import { isDefined } from './definitions';
-import { fromJSON }  from './objects';
+import { AppDebug }           from '../application/debug';
+import { isDefined }          from './definitions';
+import { fromJSON, isObject } from './objects';
 
 
 AppDebug.file('shared/decode');
@@ -62,11 +62,8 @@ export function decodeArray(arg, separator = ',') {
  * @returns {object}
  */
 export function decodeObject(arg) {
-    switch (typeof arg) {
-        case 'object':  return arg;
-        case 'string':  return decodeJSON(arg);
-        default:        return {};
-    }
+    const result = (typeof arg === 'string') ? decodeJSON(arg) : arg;
+    return isObject(result) ? result : {};
 }
 
 /**

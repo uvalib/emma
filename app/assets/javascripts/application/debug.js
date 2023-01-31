@@ -301,7 +301,7 @@ export class AppDebug {
             styles = css.split(/;+\s+/);
         } else if (Array.isArray(css)) {
             styles = css.map(v => v.replace(/[;\s]+$/, ''));
-        } else if (typeof css === 'object') {
+        } else if (css && (typeof css === 'object')) {
             styles = Object.entries(css).map(([k,v]) => `${k}: ${v}`);
         }
         if (styles) {

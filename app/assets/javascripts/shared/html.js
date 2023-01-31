@@ -6,6 +6,7 @@
 import { AppDebug }  from '../application/debug';
 import { cssClass }  from './css';
 import { isDefined } from './definitions';
+import { isObject }  from './objects';
 
 
 AppDebug.file('shared/html');
@@ -215,7 +216,7 @@ export function noScroll(callback) {
  * @returns {jQuery}
  */
 export function create(element, properties) {
-    const obj  = (typeof element === 'object');
+    const obj  = isObject(element);
     const prop = (obj ? element     : properties) || {};
     const tag  = (obj ? element.tag : element)    || 'div';
 

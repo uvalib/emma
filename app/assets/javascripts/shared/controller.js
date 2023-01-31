@@ -4,6 +4,7 @@
 
 
 import { AppDebug } from '../application/debug';
+import { isObject } from './objects';
 
 
 AppDebug.file('shared/controller');
@@ -13,9 +14,10 @@ AppDebug.file('shared/controller');
 // ============================================================================
 
 /**
- * Return the controller indicated by the given path.
+ * Return the controller indicated by the given path, defaulting to
+ * `window.location.pathname`.
  *
- * @param {string} [path]             Default: `window.location.pathname`.
+ * @param {string|string[],{controller:string,action?:string}} [path]
  *
  * @returns {string}
  */
@@ -24,9 +26,10 @@ export function pageController(path) {
 }
 
 /**
- * Return the action indicated by the given path.
+ * Return the action indicated by the given path, defaulting to
+ * `window.location.pathname`.
  *
- * @param {string} [path]             Default: `window.location.pathname`.
+ * @param {string|string[],{controller:string,action?:string}} [path]
  *
  * @returns {string}
  */
@@ -35,16 +38,18 @@ export function pageAction(path) {
 }
 
 /**
- * Return the controller/action indicated by the given path.
+ * Return the controller/action indicated by the given path, defaulting to
+ * `window.location.pathname`.
  *
- * @param {string} [path]             Default: `window.location.pathname`.
+ * @param {string|string[],{controller:string,action?:string}} [path]
  *
  * @returns {{controller: string, action: string}}
  */
 export function pageControllerAction(path) {
     let ctrlr, action;
-    if (typeof path === 'object') {
-        // noinspection JSUnresolvedVariable
+    if (Array.isArray(path)) {
+        [ctrlr, action] = path;
+    } else if (isObject(path)) {
         [ctrlr, action] = [path.controller, path.action];
     } else {
         let url = (typeof path === 'string') ? path : undefined;

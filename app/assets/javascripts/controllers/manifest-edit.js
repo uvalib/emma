@@ -4525,7 +4525,7 @@ appSetup(MODULE, function() {
      */
     const EDIT = {
         multi_select: {
-            clr: ($e)    => checkboxes($e).removeProp('checked'),
+            clr: ($e)    => checkboxes($e).prop('checked', false),
             get: ($e)    => checkboxes($e, true).toArray().map(e => e.value),
             set: ($e, v) => {
                 const cbs = checkboxes($e).toArray();
@@ -4534,7 +4534,7 @@ appSetup(MODULE, function() {
             },
         },
         checkbox: {
-            clr: ($e)    => $e.removeProp('checked'),
+            clr: ($e)    => $e.prop('checked', false),
             get: ($e)    => $e.prop('checked'),
             set: ($e, v) => $e.prop('checked', (v.value === $e.prop('value'))),
         },

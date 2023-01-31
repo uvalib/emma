@@ -1,8 +1,8 @@
 // app/assets/javascripts/shared/url.js
 
 
-import { AppDebug } from '../application/debug';
-import { compact }  from './objects';
+import { AppDebug }          from '../application/debug';
+import { compact, isObject } from './objects';
 import {
     isDefined,
     isEmpty,
@@ -28,7 +28,7 @@ export function urlFrom(arg) {
     let result = undefined;
     if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
         result = arg;
-    } else if ((typeof arg !== 'object') || Array.isArray(arg)) {
+    } else if (!isObject(arg)) {
         // Skipping invalid argument.
     } else if (isDefined(arg.target)) { // Event or jQuery.Event
         const event = isDefined(arg.originalEvent) && arg.originalEvent || arg;
@@ -70,7 +70,7 @@ export function asParams(item) {
                 }
             }
         });
-    } else if (typeof item !== 'object') {
+    } else if (!isObject(item)) {
         console.error(`${func}: cannot handle ${typeof item}: ${item}`);
     } else if (isDefined(item.search)) {
         result = item.search; // E.g., `window.location`.
@@ -121,7 +121,7 @@ export function makeUrl(...parts) {
             part = arg.trim();
         } else if (Array.isArray(arg)) {
             return arg.forEach(processPart);
-        } else if (typeof arg === 'object') {
+        } else if (isObject(arg)) {
             return $.extend(params, arg);
         }
         if (!part) {

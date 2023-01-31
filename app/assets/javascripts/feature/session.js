@@ -1,14 +1,14 @@
 // app/assets/javascripts/feature/session.js
 
 
-import { AppDebug }              from '../application/debug';
-import { appSetup }              from '../application/setup';
-import { focusable }             from '../shared/accessibility';
-import { isInternetExplorer }    from '../shared/browser';
-import { isPresent, notDefined } from '../shared/definitions';
-import { documentEvent }         from '../shared/events';
-import { SearchInProgress }      from '../shared/search-in-progress';
-import { urlFrom }               from '../shared/url';
+import { AppDebug }           from '../application/debug';
+import { appSetup }           from '../application/setup';
+import { focusable }          from '../shared/accessibility';
+import { isInternetExplorer } from '../shared/browser';
+import { isPresent }          from '../shared/definitions';
+import { documentEvent }      from '../shared/events';
+import { SearchInProgress }   from '../shared/search-in-progress';
+import { urlFrom }            from '../shared/url';
 
 
 const MODULE = 'feature/session';
@@ -66,15 +66,20 @@ appSetup(MODULE, function() {
      * **Usage Notes**
      * Local URLs are assumedly to be relative.
      *
-     * @param {Event|Location|string} [arg]       Def.: `window.location.hash`.
-     * @param {boolean}               [add_hash]  Def.: *true*.
+     * @param {Event|Location|string} [arg]     Def.: `window.location.hash`.
+     * @param {boolean}               [bare]    Prefix with '#' unless *true*
      *
      * @returns {string}
      */
-    function getInPageAnchor(arg, add_hash) {
-        if (notDefined(arg)) { return window.location.hash }
-        if ((typeof arg === 'string') && arg.startsWith('#')) { return arg }
-        let path = urlFrom(arg);
+    function getInPageAnchor(arg, bare) {
+        let path;
+        if (typeof arg === 'string') {
+            path = arg;
+        } else if (isPresent(arg)) {
+            path = urlFrom(arg);
+        } else {
+            path = window.location.hash;
+        }
         if (path.startsWith('http')) {
             let in_page = false;
             if (path.includes('#')) {
@@ -84,9 +89,8 @@ appSetup(MODULE, function() {
             }
             path = in_page && path.replace(/^.*#/, '');
         }
-        path &&= path.split('#').pop();
-        const hash = path && (add_hash !== false);
-        return hash && `#${path}` || path || '';
+        const anchor = path.split('#').pop();
+        return (anchor && !bare) ? `#${anchor}` : anchor;
     }
 
     /**

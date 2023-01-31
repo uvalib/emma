@@ -53,15 +53,15 @@ export function fromJSON(item, caller, reviver) {
  * @returns {T}
  */
 export function compact(item, trim) {
-    if (typeof item === 'string') {
-        return (trim === false) ? item : item.trim();
-
-    } else if (Array.isArray(item)) {
+    if (Array.isArray(item)) {
         return item.map(v => compact(v, trim)).filter(v => isPresent(v));
 
-    } else if (typeof item === 'object') {
+    } else if (isObject(item)) {
         const pr = objectEntries(item).map(([k,v]) => [k, compact(v, trim)]);
         return Object.fromEntries(pr.filter(([_,v]) => isPresent(v)));
+
+    } else if (typeof item === 'string') {
+        return (trim === false) ? `${item}` : item.trim();
 
     } else {
         return item;
@@ -81,9 +81,11 @@ export function deepFreeze(item) {
     let new_item;
     if (Array.isArray(item)) {
         new_item = item.map(v => deepFreeze(v));
-    } else if (typeof item === 'object') {
+
+    } else if (isObject(item)) {
         const pr = objectEntries(item).filter(([k,v]) => [k, deepFreeze(v)]);
         new_item = Object.fromEntries(pr);
+
     } else {
         new_item = item;
     }
@@ -116,18 +118,31 @@ export function deepDup(item) {
 export function dup(item, deep) {
     if (Array.isArray(item)) {
         return deep ? item.map(v => dup(v, deep)) : [...item];
-    } else if (typeof item === 'object') {
+
+    } else if (isObject(item)) {
         return deep ? $.extend(true, {}, item) : { ...item };
-    } else if (typeof item === 'string') {
-        return '' + item;
+
     } else {
-        return item;
+        return (typeof item === 'string') ? `${item}` : item;
     }
 }
 
 // ============================================================================
 // Functions - returning Object
 // ============================================================================
+
+/**
+ * Indicate whether the item is an actual object (and not null or an array).
+ *
+ * @param {*}       item
+ * @param {boolean} [or_array]        If *true*, return *true* for an array.
+ *
+ * @returns {boolean}
+ */
+export function isObject(item, or_array) {
+    return !!item && (typeof item === 'object') &&
+        (!!or_array || !Array.isArray(item));
+}
 
 /**
  * Make a duplicate of the given object.
@@ -138,7 +153,7 @@ export function dup(item, deep) {
  * @returns {object}
  */
 export function dupObject(item, shallow) {
-    return (typeof item === 'object') ? dup(item, !shallow) : {};
+    return isObject(item, true) ? dup(item, !shallow) : {};
 }
 
 /**
@@ -163,12 +178,11 @@ export function dupObject(item, shallow) {
  */
 export function toObject(src, map_fn, pair_out) {
     const func   = 'toObject';
-    const array  = Array.isArray(src);
-    const object = !array && (typeof src === 'object');
+    const object = isObject(src);
     const mapper = (typeof map_fn === 'function') ? map_fn : undefined;
     const arity  = mapper?.length || -1;
     let result;
-    if (!array && !object) {
+    if (!object && !Array.isArray(src)) {
         console.warn(`${func}: not an array or object:`, src);
     } else if (mapper && (arity < 1)) {
         console.error(`${func}: mapper must take 1 or 2 args:`, mapper);
@@ -191,9 +205,9 @@ export function toObject(src, map_fn, pair_out) {
             fn ||= in1  && ((k)     => [k,   mapper(k)]);
             fn ||=         ((k)     => [k,   k]);
         }
-        result = object ? Object.entries(src) : src;
-        result = result.map(fn).filter(pair);
-        result = Object.fromEntries(result);
+        const src_pairs = object ? Object.entries(src) : src;
+        const dst_pairs = src_pairs.map(fn).filter(pair);
+        result = Object.fromEntries(dst_pairs);
     }
     return result || {};
 }
@@ -210,7 +224,7 @@ export function toObject(src, map_fn, pair_out) {
  * @returns {[string, any][]}
  */
 export function objectEntries(item) {
-    if (item && (typeof item === 'object')) {
+    if (isObject(item)) {
         return Object.entries(item).filter(([k,_]) => item.hasOwnProperty(k));
     } else {
         return [];
@@ -230,12 +244,8 @@ export function objectEntries(item) {
  * @returns {boolean}
  */
 export function equivalent(item1, item2) {
-    const a1 = Array.isArray(item1);
-    const a2 = Array.isArray(item2);
-    const o1 = !a1 && (typeof item1 === 'object');
-    const o2 = !a2 && (typeof item2 === 'object');
     let result;
-    if (o1 && o2) {
+    if (isObject(item1) && isObject(item2)) {
         const keys1 = Object.keys(item1);
         const keys2 = Object.keys(item2);
         if ((result = equivalent(keys1, keys2))) {
@@ -243,7 +253,7 @@ export function equivalent(item1, item2) {
                 return !(result &&= equivalent(value1, item2[key]));
             });
         }
-    } else if (a1 && a2) {
+    } else if (Array.isArray(item1) && Array.isArray(item2)) {
         if ((result = (item1.length === item2.length))) {
             const array1 = [...item1].sort();
             const array2 = [...item2].sort();
