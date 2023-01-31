@@ -305,17 +305,17 @@ class ManifestItemDecorator < BaseDecorator
 
     # submit_status_element
     #
-    # @param [String, nil]     ctrl
-    # @param [String]          name
-    # @param [Hash{Symbol=>*}] statuses
-    # @param [Integer]         row
-    # @param [Integer]         col
-    # @param [String]          css
-    # @param [Hash]            opt
+    # @param [String, nil]          ctrl
+    # @param [String, ManifestItem] item
+    # @param [Hash{Symbol=>*}]      statuses
+    # @param [Integer]              row
+    # @param [Integer]              col
+    # @param [String]               css
+    # @param [Hash]                 opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_element: ((String|nil) ctrl, String name, Hash[Symbol,(String|Symbol|bool|nil)] statuses, ?row: Integer, ?col: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_element: ((String|nil) ctrl, (String|ManifestItem) item, Hash[Symbol,(String|Symbol|bool|nil)] statuses, ?row: Integer, ?col: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # submit_status_ctls
     #
@@ -330,14 +330,14 @@ class ManifestItemDecorator < BaseDecorator
 
     # submit_status_item
     #
-    # @param [String]       name
-    # @param [Integer, nil] col
-    # @param [String]       css
-    # @param [Hash]         opt
+    # @param [String, ManifestItem] item
+    # @param [Integer, nil]         col
+    # @param [String]               css
+    # @param [Hash]                 opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_item: (String name, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_item: ((String|ManifestItem) item, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # submit_status_value
     #

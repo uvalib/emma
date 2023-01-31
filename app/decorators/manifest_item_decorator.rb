@@ -628,19 +628,19 @@ class ManifestItemDecorator < BaseDecorator
 
     # submit_status_element
     #
-    # @param [String, nil]     ctrl
-    # @param [String]          name
-    # @param [Hash{Symbol=>*}] statuses
-    # @param [Integer]         row
-    # @param [Integer]         col
-    # @param [String]          css
-    # @param [Hash]            opt
+    # @param [String, nil]          ctrl
+    # @param [String, ManifestItem] item
+    # @param [Hash{Symbol=>*}]      statuses
+    # @param [Integer]              row
+    # @param [Integer]              col
+    # @param [String]               css
+    # @param [Hash]                 opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
     def submit_status_element(
       ctrl,
-      name,
+      item,
       statuses,
       row:      1,
       col:      0,
@@ -657,7 +657,7 @@ class ManifestItemDecorator < BaseDecorator
 
       # Item name column.
       col_opt[:col] += 1
-      name = submit_status_item(name, **col_opt) unless name&.html_safe?
+      item = submit_status_item(item, **col_opt) unless item&.html_safe?
 
       # Status value columns.
       values =
@@ -674,7 +674,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:'aria-rowindex'] = row
       opt[:separator] = '' unless opt.key?(:separator)
       prepend_css!(opt, css)
-      html_div(ctrl, name, *values, opt)
+      html_div(ctrl, item, *values, opt)
     end
 
     # submit_status_ctls
@@ -702,19 +702,37 @@ class ManifestItemDecorator < BaseDecorator
 
     # submit_status_item
     #
-    # @param [String]       name
-    # @param [Integer, nil] col
-    # @param [String]       css
-    # @param [Hash]         opt
+    # @param [String, ManifestItem] item
+    # @param [Integer, nil]         col
+    # @param [String]               css
+    # @param [Hash]                 opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_item(name, col: nil, css: '.item-name', **opt)
-      name = html_div(name, class: 'text') unless name&.html_safe?
+    def submit_status_item(item, col: nil, css: '.item-name', **opt)
+      if item.is_a?(ManifestItem)
+        part = {
+          identifier: :dc_identifier,
+          title:      :dc_title,
+          author:     :dc_creator,
+        }.transform_values! { |field|
+          item[field].to_s.split("\n").map! { |s|
+            s.strip.delete_suffix(';')
+          }.compact_blank!.presence
+        }.compact_blank!
+        sep   = ' / '
+        first = [*part[:title], *part[:author], *part[:identifier]].take(2)
+        first = first.join(sep)
+        r_opt = { separator: sep, no_format: true, no_help: true }
+        lines = part.map { |k, v| render_pair(k.capitalize, v, **r_opt) } # TODO: I18n
+        item  = html_details(first, *lines, class: 'text')
+      else
+        item  = html_div(item, class: 'text') unless item&.html_safe?
+      end
       opt[:role] ||= 'cell'
       opt[:'aria-colindex'] = col if col
       prepend_css!(opt, css)
-      html_div(name, opt)
+      html_div(item, opt)
     end
 
     # submit_status_value
@@ -779,7 +797,7 @@ class ManifestItemDecorator < BaseDecorator
       label = 'Edit' # TODO: I18n
       row   = "data-item-id=#{object.id}"
       path  = h.edit_manifest_path(id: object.manifest_id, anchor: row)
-      opt[:title] ||= 'Go to this item' # TODO: I18n
+      opt[:title] ||= 'Modify this manifest item' # TODO: I18n
       prepend_css!(opt, css)
       append_css!(opt, 'hidden') unless STATUS_SHOW_EDIT.include?(status)
       make_link(label, path, **opt, 'data-turbolinks': false)
@@ -1336,7 +1354,6 @@ class ManifestItemDecorator
   #
   def submission_status(row: nil, col: 1, **opt)
     ctrl = submit_status_ctls(col: col)
-    name = [*object.dc_title, *object.dc_creator].take(2).join(' / ')
     stat = SUBMIT_PHASE.transform_values { nil }
     stat[:index]  = object.in_index?
     stat[:upload] = object.file_uploaded?
@@ -1350,7 +1367,7 @@ class ManifestItemDecorator
     opt[:'data-manifest']  ||= object.manifest_id
     opt[:'data-file-name'] ||= object.pending_file_name
     opt[:'data-file-url']  ||= object.pending_file_url
-    submit_status_element(ctrl, name, stat, row: row, **opt)
+    submit_status_element(ctrl, object, stat, row: row, **opt)
   end
 
   # ===========================================================================

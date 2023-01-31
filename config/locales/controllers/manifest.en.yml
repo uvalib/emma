@@ -128,7 +128,7 @@ en:
             tooltip:    'Not able to export at this point'
 
         start:          &GENERIC_START
-          label:        'Submit'
+          label:        'Start'
           enabled:
             tooltip:    'Submit manifest items to become EMMA entries'
           disabled:

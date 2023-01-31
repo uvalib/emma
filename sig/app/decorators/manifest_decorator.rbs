@@ -384,23 +384,34 @@ class ManifestDecorator
   # indicates a local file that needs to be acquired in order to proceed with
   # automated batch submission.
   #
-  # @param [Boolean] hidden           If *false* show initially.
   # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #submission_files.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_local: (?hidden: bool, ?css: String, **untyped _ignored) -> ActiveSupport::SafeBuffer
+  def submission_local: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # A button and text panel to display to resolve items whose :file_data
   # indicates a remote file that needs to be acquired in order to proceed with
   # automated batch submission.
   #
-  # @param [Boolean] hidden           If *false* show initially.
   # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #submission_files.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_remote: (?hidden: bool, ?css: String, **untyped _ignored) -> ActiveSupport::SafeBuffer
+  def submission_remote: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A button and text panel.
+  #
+  # @param [Boolean] hidden           If *false* show initially.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    config           Configuration properties.
+  # @param [Hash]    opt              Button options.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_files: (?hidden: bool, ?css: String|nil, ?config: symHash, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # @private
   STATUS_COLUMN_COUNT: Integer

@@ -19,6 +19,7 @@ import {
     notDefined,
 } from '../shared/definitions';
 import {
+    DISABLED_MARKER,
     MANIFEST_ATTR,
     attribute,
     buttonFor,
@@ -62,6 +63,7 @@ appSetup(MODULE, function() {
     const REMOTE_FILE_CLASS         = 'remote-file';
     const LOCAL_FILE_CLASS          = 'local-file';
     const FILE_BUTTON_CLASS         = 'file-button';
+    const BEST_CHOICE_MARKER        = 'best-choice';
 
     const SUBMISSION_COUNTS_CLASS   = 'submission-counts'
     const TOTAL_COUNT_CLASS         = 'total';
@@ -98,6 +100,7 @@ appSetup(MODULE, function() {
     const REMOTE_FILE           = selector(REMOTE_FILE_CLASS);
     const LOCAL_FILE            = selector(LOCAL_FILE_CLASS);
     const FILE_BUTTON           = selector(FILE_BUTTON_CLASS);
+  //const BEST_CHOICE           = selector(BEST_CHOICE_MARKER);
 
     const SUBMISSION_COUNTS     = selector(SUBMISSION_COUNTS_CLASS);
     const TOTAL_COUNT           = selector(TOTAL_COUNT_CLASS);
@@ -165,25 +168,42 @@ appSetup(MODULE, function() {
         /**
          * The counter display element.
          *
-         * @type {jQuery}
+         * @type {jQuery|undefined}
          */
         $element;
 
         /**
          * The counter value display element.
          *
-         * @type {jQuery}
+         * @type {jQuery|undefined}
          */
         $target;
+
+        /**
+         * The current counter value.
+         *
+         * @type {number}
+         * @protected
+         */
+        _value = 0;
 
         // ====================================================================
         // Constructor
         // ====================================================================
 
-        constructor(selector) {
+        constructor(selector, initial) {
             super();
-            this.$element = $submit_counts.find(selector);
-            this.$target  = selfOrDescendents(this.$element, '.value');
+            let sel, val;
+            if (typeof selector === 'number') {
+                [sel, val] = [undefined, selector.toString()];
+            } else if (isDefined(initial)) {
+                [sel, val] = [selector,  initial.toString()];
+            } else {
+                [sel, val] = [selector,  undefined];
+            }
+            this.$element = sel && $submit_counts.find(sel);
+            this.$target  = sel && selfOrDescendents(this.$element, '.value');
+            this.value    = val || this.$target?.text();
             this.constructor._all.push(this);
         }
 
@@ -191,21 +211,30 @@ appSetup(MODULE, function() {
         // Properties
         // ====================================================================
 
-        get value()  { return Number(this.$target.text() || 0) }
-        set value(v) { this.$target.text(Number(v || 0)) }
+        get value()  { return this._value }
+        set value(v) { this.update(v) }
 
         // ====================================================================
         // Methods
         // ====================================================================
 
-        clear() { this.value = 0 }
-        reset(v = this.constructor.current) { this.value = v }
+        clear()      { return this.update(0) }
+        reset()      { return this.update(this.constructor.current) }
+        increment(v) { return this.update(this.value + Number(v || 0)) }
+        decrement(v) { return this.update(this.value - Number(v || 0)) }
+
+        update(v) {
+            this._value = Number(v || 0);
+            this.$target?.text(this._value);
+            return this._value;
+        }
 
         // ====================================================================
         // Class properties
         // ====================================================================
 
-        static get current() { return 0 }
+        static get current() { return this.$items.length }
+        static get $items()  { return $(null) }
 
         // ====================================================================
         // Class methods
@@ -220,8 +249,8 @@ appSetup(MODULE, function() {
      */
     class TotalCounter extends Counter {
         static CLASS_NAME = 'TotalCounter';
-        constructor()        { super(TOTAL_COUNT) }
-        static get current() { return $submissions.length }
+        constructor()       { super(TOTAL_COUNT) }
+        static get $items() { return allItems() }
     }
 
     /**
@@ -229,8 +258,8 @@ appSetup(MODULE, function() {
      */
     class ReadyCounter extends Counter {
         static CLASS_NAME = 'ReadyCounter';
-        constructor()        { super(READY_COUNT) }
-        static get current() { return submissionsWhere(isReady).length }
+        constructor()       { super(READY_COUNT) }
+        static get $items() { return itemsReady() }
     }
 
     /**
@@ -238,8 +267,8 @@ appSetup(MODULE, function() {
      */
     class TransmitCounter extends Counter {
         static CLASS_NAME = 'TransmitCounter';
-        constructor()        { super(TRANSMITTING_COUNT) }
-        static get current() { return submissionsWhere(isTransmitting).length }
+        constructor()       { super(TRANSMITTING_COUNT) }
+        static get $items() { return itemsTransmitting() }
     }
 
     /**
@@ -247,8 +276,8 @@ appSetup(MODULE, function() {
      */
     class FailedCounter extends Counter {
         static CLASS_NAME = 'FailedCounter';
-        constructor()        { super(FAILED_COUNT) }
-        static get current() { return submissionsWhere(isFailed).length }
+        constructor()       { super(FAILED_COUNT) }
+        static get $items() { return itemsFailed() }
     }
 
     /**
@@ -256,8 +285,8 @@ appSetup(MODULE, function() {
      */
     class SucceededCounter extends Counter {
         static CLASS_NAME = 'SucceededCounter';
-        constructor()        { super(SUCCEEDED_COUNT) }
-        static get current() { return submissionsWhere(isSucceeded).length }
+        constructor()       { super(SUCCEEDED_COUNT) }
+        static get $items() { return itemsSucceeded() }
     }
 
     // ========================================================================
@@ -321,7 +350,7 @@ appSetup(MODULE, function() {
     function initializeSubmissionForm() {
         _debug('initializeSubmissionForm');
         initializeSubmissionButtons();
-        initializeSubmissions();
+        initializeItems();
         initializeLocalFilesResolution();
         initializeRemoteFilesResolution();
         updateSubmitReady();
@@ -334,7 +363,7 @@ appSetup(MODULE, function() {
      *
      * @returns {jQuery}
      */
-    function submission(item) {
+    function itemRow(item) {
         return selfOrParent(item, SUBMISSION);
     }
 
@@ -493,38 +522,14 @@ appSetup(MODULE, function() {
     const files_remaining = { local: [], remote: [] };
 
     /**
-     * updateLocalFilesReady
-     *
-     * @param {boolean} [now]
-     *
-     * @returns {boolean}
-     */
-    function updateLocalFilesReady(now) {
-        const ready = isDefined(now) ? now : isEmpty(files_remaining.local);
-        toggleHidden($local_prompt, ready);
-        return ready;
-    }
-
-    /**
-     * updateRemoteFilesReady
-     *
-     * @param {boolean} [now]
-     *
-     * @returns {boolean}
-     */
-    function updateRemoteFilesReady(now) {
-        const ready = isDefined(now) ? now : isEmpty(files_remaining.remote);
-        toggleHidden($remote_prompt, ready);
-        return ready;
-    }
-
-    /**
      * Submit button tooltip override. # TODO: I18n
      *
      * @type {string}
      */
     const SUBMISSION_BLOCKED_TOOLTIP =
         'Files must be resolved before the submission process can begin';
+    const NOTHING_TO_SUBMIT_TOOLTIP =
+        'None of the items in the manifest have been completed and saved';
 
     /**
      * Change whether the Submit button is enabled based on conditions.
@@ -532,13 +537,54 @@ appSetup(MODULE, function() {
      * If not ready, a custom tooltip is provided to indicate the reason.
      */
     function updateSubmitReady() {
-        const local_ready  = updateLocalFilesReady();
-        const remote_ready = updateRemoteFilesReady();
-        const blocked      = !local_ready || !remote_ready;
-        const prop         = {};
-        if (blocked) { prop.tooltip = SUBMISSION_BLOCKED_TOOLTIP }
+        _debug('updateSubmitReady');
+
+        const remote_needed = isPresent(files_remaining.remote);
+        const local_needed  = isPresent(files_remaining.local);
+
+        showRemoteFilesPrompt(remote_needed, remote_needed);
+        showLocalFilesPrompt(local_needed, !remote_needed);
+
+        let blocked;
+        const prop = {};
+        if ((blocked = remote_needed || local_needed)) {
+            prop.tooltip = SUBMISSION_BLOCKED_TOOLTIP;
+        } else if ((blocked = !counter.ready.reset())) {
+            prop.tooltip = NOTHING_TO_SUBMIT_TOOLTIP;
+        }
         enableSubmissionButton('start', !blocked, prop);
-        counter.ready.reset();
+    }
+
+    /**
+     * showRemoteFilesPrompt
+     *
+     * @param {boolean} visible
+     * @param {boolean} first
+     */
+    function showRemoteFilesPrompt(visible, first) {
+        //_debug('showRemoteFilesPrompt:', visible, first);
+        if (visible) {
+            $remote_button.toggleClass(BEST_CHOICE_MARKER, first);
+            $remote_button.toggleClass(DISABLED_MARKER, !first);
+            $remote_input.prop('disabled', !first);
+        }
+        toggleHidden($remote_prompt, !visible);
+    }
+
+    /**
+     * showLocalFilesPrompt
+     *
+     * @param {boolean} visible
+     * @param {boolean} first
+     */
+    function showLocalFilesPrompt(visible, first) {
+        //_debug('showLocalFilesPrompt:', visible, first);
+        if (visible) {
+            $local_button.toggleClass(BEST_CHOICE_MARKER, first);
+            $local_button.toggleClass(DISABLED_MARKER, !first);
+            $local_input.prop('disabled', !first);
+        }
+        toggleHidden($local_prompt, !visible);
     }
 
     // ========================================================================
@@ -572,8 +618,8 @@ appSetup(MODULE, function() {
      */
     function startSubmissions(_data) {
         _debug('START SUBMISSIONS');
-        if (isMissing(submissionsWhere(isChecked))) {
-            submissionsWhere(isReady).each((_, item) => selectItem(item));
+        if (isMissing(itemsChecked())) {
+            itemsReady().each((_, item) => selectItem(item));
             updateGroupSelect();
         }
         submissionsActive(true);
@@ -623,7 +669,7 @@ appSetup(MODULE, function() {
         if (isDefined(now)) {
             started = !!now;
             _debug('SUBMISSION', (started ? 'STARTED' : 'STOPPED'));
-            SUBMISSION_ENABLE.start(!started);
+            SUBMISSION_ENABLE.start(!started && !!itemsReady().length);
             SUBMISSION_ENABLE.stop(started);
             SUBMISSION_ENABLE.pause(started);
             SUBMISSION_ENABLE.resume(false);
@@ -673,66 +719,105 @@ appSetup(MODULE, function() {
     const FILE_NAME_ATTR   = 'data-file-name';
     const FILE_URL_ATTR    = 'data-file-url';
 
-    const $submission_list = $(SUBMISSION_LIST);
-    const $submissions     = $submission_list.find(SUBMISSION);
+    const $item_container  = $(SUBMISSION_LIST);
+    const $items           = $item_container.find(SUBMISSION);
 
     /**
-     * initializeSubmissions
+     * All item rows.
+     *
+     * @returns {jQuery}
      */
-    function initializeSubmissions() {
-        _debug('initializeSubmissions');
-        Object.keys(file_references).forEach(k => file_references[k] = []);
-        Object.keys(files_remaining).forEach(k => files_remaining[k] = []);
+    function allItems() {
+        return $items;
+    }
+
+    /**
+     * initializeItems
+     */
+    function initializeItems() {
+        _debug('initializeItems');
         let changed = false;
-        $submissions.each((_, item) => {
+        const local = [], remote = [];
+        allItems().each((_, item) => {
             const $item = $(item);
-            STATUS_SELECTORS.forEach(status_selector => {
-                const $status = $item.find(status_selector);
-                if (isPresent($status)) {
-                    let name;
-                    if ($status.is(FILE_NEEDED)) {
-                        const path = $item.attr(FILE_NAME_ATTR) || '';
-                        if ((name = path.split('\\').pop().split('/').pop())) {
-                            file_references.local.push(name);
-                            files_remaining.local.push(name);
-                        } else if ((name = $item.attr(FILE_URL_ATTR))) {
-                            file_references.remote.push(name);
-                            files_remaining.remote.push(name);
-                        }
+            STATUS_SELECTORS.forEach(status => {
+                let name;
+                if (status === FILE_NEEDED) {
+                    const path = $item.attr(FILE_NAME_ATTR) || '';
+                    if ((name = path.split('\\').pop().split('/').pop())) {
+                        local.push(name);
+                    } else if ((name = $item.attr(FILE_URL_ATTR))) {
+                        remote.push(name);
                     }
-                    initializeStatusFor($item, status_selector, name);
                 }
+                initializeStatusFor($item, status, name);
             });
             changed = updateItemSelect($item) || changed;
         });
+        file_references.local  = [...local];
+        files_remaining.local  = [...local];
+        file_references.remote = [...remote];
+        files_remaining.remote = [...remote];
         _debug(`INITIAL local_files  =`, file_references.local);
         _debug(`INITIAL remote_files =`, file_references.remote);
     }
 
-    function submissionsMissingFile(name) {
-        return submissionsWhere(isMissingFile, name);
+    function itemsReady() {
+        return itemsWhere(isReady);
+    }
+
+    function itemsSelected() {
+        return itemsWhere(isSelected);
+    }
+
+    function itemsChecked() {
+        return itemsWhere(isChecked);
+    }
+
+    function itemsTransmitting() {
+        return itemsWhere(isTransmitting);
+    }
+
+    function itemsSucceeded() {
+        return itemsWhere(isSucceeded);
+    }
+
+    function itemsFailed() {
+        return itemsWhere(isFailed);
+    }
+
+    function itemsMissingFile(name) {
+        return itemsWhere(isMissingFile, name);
     }
 
     /**
      * Return the matching submission items.
      *
-     * @param {function(Selector,...) : boolean} has_property
+     * @param {function(Selector,...) : boolean} has_condition
      * @param {...}                              [args]
      *
      * @returns {jQuery}
      */
-    function submissionsWhere(has_property, ...args) {
-        return $submissions.filter((_, item) => has_property(item, ...args));
+    function itemsWhere(has_condition, ...args) {
+        return allItems().filter((_, item) => has_condition(item, ...args));
     }
 
     function isChecked(item) {
-        const $item = submission(item);
-        return !!checkbox($item)?.checked;
+        const $item = itemRow(item);
+        const cb    = checkbox($item);
+        return !!cb && cb.checked && !cb.indeterminate;
     }
 
     function isDisabled(item) {
-        const $item = submission(item);
-        return !!checkbox($item)?.disabled;
+        const $item = itemRow(item);
+        const cb    = checkbox($item);
+        return !!cb && (cb.disabled || cb.indeterminate);
+    }
+
+    function isSelected(item) {
+        const $item = itemRow(item);
+        const cb    = checkbox($item);
+        return !!cb && cb.checked && !cb.disabled && !cb.indeterminate;
     }
 
     function isReady(item) {
@@ -740,62 +825,67 @@ appSetup(MODULE, function() {
     }
 
     function isNotReady(item) {
-        const $item = $(item);
-        return Object.entries(NOT_READY_VALUES).some(
-            ([status, invalid]) => $item.find(status).is(invalid)
-        );
+        const $item    = itemRow(item);
+        const statuses = Object.entries(NOT_READY_VALUES);
+        return statuses.some(([s, invalid]) => $item.find(s).is(invalid));
     }
 
-    function isBlocked(item, selectors = STATUS_SELECTORS) {
-        const $item = $(item);
-        return selectors.some(status => $item.find(status).is(CANT_SUBMIT));
+    function isBlocked(item) {
+        return hasCondition(item, CANT_SUBMIT);
     }
 
-    function isTransmitting(item, selectors = STATUS_SELECTORS) {
-        const $item = $(item);
-        return selectors.some(status => $item.find(status).is(ACTIVE));
+    function isTransmitting(item) {
+        return hasCondition(item, ACTIVE);
     }
 
-    function isFailed(item, selectors = STATUS_SELECTORS) {
-        const $item = $(item);
-        return selectors.some(status => $item.find(status).is(FAILED));
+    function isFailed(item) {
+        return hasCondition(item, FAILED);
     }
 
-    function isSucceeded(item, selectors = STATUS_SELECTORS) {
-        const $item = $(item);
-        return selectors.every(status => $item.find(status).is(SUCCEEDED));
+    function isSucceeded(item) {
+        return isExclusively(item, SUCCEEDED);
     }
 
     function isMissingFile(item, name) {
-        const $status = $(item).find(FILE_STATUS);
+        const $item   = itemRow(item);
+        const $status = $item.find(FILE_STATUS);
         if (!$status.is(FILE_MISSING)) { return false }
         if (!name)                     { return true }
         return $status.find('.name').text() === name;
+    }
+
+    function hasCondition(item, matching, selectors = STATUS_SELECTORS) {
+        const $item = itemRow(item);
+        return selectors.some(status => $item.find(status).is(matching));
+    }
+
+    function isExclusively(item, matching, selectors = STATUS_SELECTORS) {
+        const $item = itemRow(item);
+        return selectors.every(status => $item.find(status).is(matching));
     }
 
     // ========================================================================
     // Functions - submission selection
     // ========================================================================
 
-    const $submission_head = $submission_list.find(SUBMISSION_HEAD);
-    const $group_checkbox  = $submission_head.find(`${CONTROLS} ${CHECKBOX}`);
-    const $item_checkboxes = $submissions.find(`${CONTROLS} ${CHECKBOX}`);
+    const $head_row        = $item_container.find(SUBMISSION_HEAD);
+    const $group_checkbox  = $head_row.find(`${CONTROLS} ${CHECKBOX}`);
+    const $item_checkboxes = $items.find(`${CONTROLS} ${CHECKBOX}`);
 
     /**
      * checkbox
      *
      * @param {Selector} item
-     * @param {boolean}  [check]      Check/uncheck
+     * @param {boolean}  [check]            Check/uncheck
+     * @param {boolean}  [indeterminate]
      *
      * @returns {HTMLInputElement|undefined}
      */
-    function checkbox(item, check) {
+    function checkbox(item, check, indeterminate) {
         const cb = selfOrDescendents(item, CHECKBOX)[0];
-        if (!cb) {
-            console.warn('checkbox: missing for item', item);
-        } else if (isDefined(check)) {
-            cb.checked = !!check;
-        }
+        if (!cb) { console.warn('checkbox: missing for item', item); return }
+        if (isDefined(check))         { cb.checked       = !!check }
+        if (isDefined(indeterminate)) { cb.indeterminate = !!indeterminate }
         return cb;
     }
 
@@ -803,24 +893,29 @@ appSetup(MODULE, function() {
      * selectItem
      *
      * @param {Selector} item
-     * @param {boolean}  [check]      If *false*, uncheck.
+     * @param {boolean}  [check]            If *false*, uncheck.
+     * @param {boolean}  [indeterminate]
      */
-    function selectItem(item, check) {
-        const $item   = submission(item);
-        const checked = notDefined(check) || !!check;
-        checkbox($item, checked);
+    function selectItem(item, check, indeterminate) {
+        const $item = itemRow(item);
+        if (indeterminate || (notDefined(indeterminate) && isUnsaved($item))) {
+            checkbox($item, false, true);
+        } else {
+            const checked = notDefined(check) || !!check;
+            checkbox($item, checked, indeterminate);
+        }
     }
 
     /**
      * deselectItem
      *
      * @param {Selector} item
-     * @param {boolean}  [uncheck]    If *false*, check.
+     * @param {boolean}  [uncheck]          If *false*, check.
+     * @param {boolean}  [indeterminate]
      */
-    function deselectItem(item, uncheck) {
-        const $item     = submission(item);
-        const unchecked = notDefined(uncheck) || !!uncheck;
-        checkbox($item, !unchecked);
+    function deselectItem(item, uncheck, indeterminate) {
+        const check = isDefined(uncheck) ? !uncheck : undefined;
+        selectItem(item, check, indeterminate);
     }
 
     /**
@@ -831,25 +926,28 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function isItemSelectable(item) {
-        const $item = submission(item);
+        const $item = itemRow(item);
         const cb    = checkbox($item);
-        return cb ? !cb.disabled : false;
+        return !!cb && !cb.disabled;
     }
 
     /**
      * Allow user selection of an item.
      *
      * @param {Selector} item
-     * @param {boolean}  [enable]     If *false*, disable.
+     * @param {boolean}  [enable]           If *false*, disable.
+     * @param {boolean}  [indeterminate]
      *
-     * @returns {boolean}             If selectability changed.
+     * @returns {boolean}                   If selectability changed.
      */
-    function enableItemSelect(item, enable) {
-        const $item = submission(item);
-        const cb    = checkbox($item);
-        if (!cb) { return false }
+    function enableItemSelect(item, enable, indeterminate) {
+        const $item = itemRow(item);
+        const cb    = checkbox($item); if (!cb) { return false }
+        const ind   =
+            isDefined(indeterminate) ? indeterminate : isUnsaved($item);
         const was_enabled = !cb.disabled;
-        const now_enabled = notDefined(enable) || !!enable;
+        const now_enabled = ind ? !!enable : (notDefined(enable) || !!enable);
+        cb.indeterminate  = ind;
         cb.disabled       = !now_enabled;
         return (was_enabled !== now_enabled);
     }
@@ -858,13 +956,14 @@ appSetup(MODULE, function() {
      * Prevent user selection of an item.
      *
      * @param {Selector} item
-     * @param {boolean}  [disable]    If *false*, enable.
+     * @param {boolean}  [disable]          If *false*, enable.
+     * @param {boolean}  [indeterminate]
      *
-     * @returns {boolean}             If selectability changed.
+     * @returns {boolean}                   If selectability changed.
      */
-    function disableItemSelect(item, disable) {
-        const disabled = notDefined(disable) || !!disable;
-        return enableItemSelect(item, !disabled);
+    function disableItemSelect(item, disable, indeterminate) {
+        const enable = isDefined(disable) ? !disable : undefined;
+        return enableItemSelect(item, enable, indeterminate);
     }
 
     /**
@@ -875,7 +974,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}             If selectability changed.
      */
     function updateItemSelect(item) {
-        const $item       = submission(item);
+        const $item       = itemRow(item);
         const was_enabled = isItemSelectable($item);
         const old_tooltip = $item.attr('title');
         if (old_tooltip) {
@@ -905,10 +1004,10 @@ appSetup(MODULE, function() {
         const func     = 'updateGroupSelect'; _debug(func);
         const group_cb = checkbox($group_checkbox);
         if (!group_cb) { return }
-        const all      = $item_checkboxes.length;
-        const checked  = $item_checkboxes.filter((_, cb) => cb.checked).length;
+        const count    = $item_checkboxes.filter((_, cb) => cb.checked).length;
+        const checked  = !!count;
         group_cb.checked       = checked;
-        group_cb.indeterminate = checked && (checked < all);
+        group_cb.indeterminate = checked && (count < $item_checkboxes.length);
     }
 
     /**
@@ -917,16 +1016,16 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function onGroupCheckboxChange(event) {
-        const func     = 'onGroupCheckboxChange';
-        const group_cb = event.currentTarget || event.target;
+        const func          = 'onGroupCheckboxChange';
+        const group_cb      = event.currentTarget || event.target;
+        const $all_items    = $item_checkboxes;
+        const checked_items = $all_items.filter((_, cb) => cb.checked).length;
         _debug(`${func}: event =`, event);
-        const checked  = $item_checkboxes.filter((_, cb) => cb.checked).length;
-        if (group_cb.checked && checked) {
-            group_cb.indeterminate = (checked < $item_checkboxes.length);
+        if (group_cb.checked && checked_items) {
+            group_cb.indeterminate = (checked_items < $all_items.length);
         } else {
-            const check_all = group_cb.checked;
-            $item_checkboxes.toArray().forEach(cb => (cb.checked = check_all));
             group_cb.indeterminate = false;
+            $all_items.each((_, cb) => selectItem(cb, group_cb.checked));
         }
     }
 
@@ -947,6 +1046,7 @@ appSetup(MODULE, function() {
     const DEFAULT_LABEL = '???';
     const LABELS_ATTR   = 'data-labels';
     const STATUS_DATA   = 'status';
+    const SAVED_DATA    = 'statusInitial';
 
     /** @type {Object.<string,string>} */
     let status_value_labels;
@@ -970,7 +1070,7 @@ appSetup(MODULE, function() {
      */
     function getStatusValueLabels() {
         const func = 'getStatusValueLabels'; //_debug(func);
-        const src  = $submission_list.attr(LABELS_ATTR);
+        const src  = $item_container.attr(LABELS_ATTR);
         let result;
         if (isMissing(src)) {
             console.warn(`${func}: ${LABELS_ATTR}: missing or empty`);
@@ -1013,11 +1113,25 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}    Key into {@link statusValueLabels}.
      */
     function statusFor(item, status) {
-        //_debug(`statusFor "${status}" for item =` item);
-        const $item = submission(item);
+        //_debug(`statusFor "${status}" for item =`, item);
+        const $item = itemRow(item);
         const data  = $item.data(STATUS_DATA);
         const key   = status.replace(/^\./, '');
         return data && data[key] || setStatusFor($item, key);
+    }
+
+    /**
+     * Restore a status display to its original state.
+     *
+     * @param {Selector} item
+     * @param {string}   status       Status type class or selector.
+     */
+    function resetStatusFor(item, status) {
+        //_debug(`resetStatusFor "${status}" for item =`, item);
+        const $item    = itemRow(item);
+        const $status  = $item.find(selector(status));
+        const original = $status.data(SAVED_DATA);
+        setStatusFor($item, status, original.value, original.note);
     }
 
     /**
@@ -1026,16 +1140,17 @@ appSetup(MODULE, function() {
      * @param {Selector} item
      * @param {string}   status       Status type class or selector.
      * @param {string}   [new_value]
+     * @param {string}   [new_note]
      *
      * @return {string|undefined}
      */
-    function setStatusFor(item, status, new_value) {
-        //_debug(`setStatusFor "${new_value}" -> "${status}" for item =` item);
-        const $item = submission(item);
-        const key   = status.replace(/^\./, '');
+    function setStatusFor(item, status, new_value, new_note) {
+        _debug(`setStatusFor "${new_value}" -> "${status}" for item =`, item);
+        const $item = itemRow(item);
         const data  = $item.data(STATUS_DATA);
+        const key   = status.replace(/^\./, '');
         let value   = new_value;
-        value &&= setStatusValueFor($item, key, value);
+        value &&= setStatusValueFor($item, key, value, new_note);
         value ||= getStatusValueFor($item, key);
         $item.data(STATUS_DATA, { ...data, [key]: value });
         return value;
@@ -1050,8 +1165,8 @@ appSetup(MODULE, function() {
      * @return {string|undefined}
      */
     function getStatusValueFor(item, status) {
-        //_debug(`getStatusValueFor "${status}" for item =` item);
-        const $item   = submission(item);
+        //_debug(`getStatusValueFor "${status}" for item =`, item);
+        const $item   = itemRow(item);
         const $status = $item.find(selector(status));
         const classes = Array.from($status[0]?.classList || []);
         return classes.findLast(cls => statusValues().has(cls));
@@ -1063,18 +1178,20 @@ appSetup(MODULE, function() {
      * @param {Selector} item
      * @param {string}   status       Status type class or selector.
      * @param {string}   new_value
+     * @param {string}   [new_note]   Filename or other note text.
      *
      * @return {string}
      */
-    function setStatusValueFor(item, status, new_value) {
+    function setStatusValueFor(item, status, new_value, new_note) {
         //_debug(`setStatusValueFor "${new_value}" -> "${status}"`);
-        const value   = new_value.replace(/^\./, '');
-        const $item   = submission(item);
+        const $item   = itemRow(item);
         const $status = $item.find(selector(status));
+        const value   = new_value.replace(/^\./, '');
         if (!$status.hasClass(value)) {
+            const label = statusValueLabels()[value];
             $status.removeClass(Array.from(statusValues()));
             $status.addClass(value);
-            setStatusDetails($status, statusValueLabels()[value]);
+            setStatusDetails($status, label, new_note);
         }
         return value;
     }
@@ -1083,15 +1200,17 @@ appSetup(MODULE, function() {
      * initializeStatusFor
      *
      * @param {Selector} item
-     * @param {string}   status      Status type class or selector.
-     * @param {string}   [name]
+     * @param {string}   status       Status type class or selector.
+     * @param {string}   [note]       Filename or other note text.
      */
-    function initializeStatusFor(item, status, name) {
-        //_debug(`initializeStatusFor "${status}" for item =` item);
-        const $item   = submission(item);
+    function initializeStatusFor(item, status, note) {
+        //_debug(`initializeStatusFor "${status}" for item =`, item);
+        const $item   = itemRow(item);
         const $status = $item.find(selector(status));
         const label   = statusLabelFor($item, status);
-        setStatusDetails($status, label, name);
+        const value   = statusFor($item, status);
+        setStatusDetails($status, label, note);
+        $status.data(SAVED_DATA, { value: value, note: note });
     }
 
     /**
@@ -1099,25 +1218,26 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery} $status
      * @param {string} label
-     * @param {string} [name]
+     * @param {string} [note]         Filename or other note text.
      */
-    function setStatusDetails($status, label, name) {
+    function setStatusDetails($status, label, note) {
         const $text    = $status.find('div.text');
         const $details = $status.find('details.text');
         const $edit    = $status.find('.fix');
-        const fixable  = $status.is(PROBLEMATIC);
         const needed   = $status.is(FILE_NEEDED);
-        if (needed) {
-            const $name = $details.children('.name');
-            let file = name;
-            if (file) { $name.text(file) } else { file = $name.text() }
+        const fixable  = !needed && $status.is(PROBLEMATIC);
+        const details  = needed || isDefined(note);
+        if (details) {
+            const $note = $details.children('.name');
+            let file = note;
+            if (file) { $note.text(file) } else { file = $note.text() }
             if (file) { $details.attr('title', `${label}: ${file}`) }
             $details.children('summary').text(label);
         } else {
             $text.text(label);
         }
-        toggleHidden($text,    needed);
-        toggleHidden($details, !needed);
+        toggleHidden($text,    details);
+        toggleHidden($details, !details);
         toggleHidden($edit,    !fixable);
     }
 
@@ -1208,13 +1328,19 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Setup handlers for $file_input.
+     * Setup handlers for local file selection.
      */
     function initializeLocalFilesResolution() {
         _debug('initializeLocalFilesResolution');
         clearLocalFileReaders();
         clearLocalFileSelection();
+        setupLocalFilePrompt();
+    }
 
+    /**
+     * Setup control for local file selection.
+     */
+    function setupLocalFilePrompt() {
         // Set up the visible button to proxy for the non-visible <input>.
         $local_button.attr('tabindex', 0);
         handleClickAndKeypress($local_button, beforeLocalFilesSelected);
@@ -1346,7 +1472,7 @@ appSetup(MODULE, function() {
         if (resolved) {
             let sel_changed = false;
             const fulfilled = new Set(names);
-            $submissions.each((_, item) => {
+            allItems().each((_, item) => {
                 const $item   = $(item);
                 const $status = $item.find(FILE_STATUS);
                 const needed  = $status.is(FILE_NEEDED);
@@ -1419,7 +1545,30 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function allResolvedLabel() {
-        return 'ALL FILES RESOLVED - ALL SELECTED ITEMS READY FOR SUBMISSION';
+        const total = allItems().length;
+        const ready = itemsReady().length;
+        let count, submittable;
+        if (ready) {
+            if (ready === total) {
+                count = (total > 1) ? 'ALL' : 'THE';
+            } else {
+                const selected = itemsSelected().length;
+                if (!selected) {
+                    count = ready.toString();
+                } else if (ready >= selected) {
+                    count = 'ALL SELECTED';
+                } else {
+                    count = 'SOME SELECTED';
+                }
+            }
+            const items = (ready > 1) ? 'ITEMS'   : 'ITEM';
+            submittable = `${count} ${items} READY FOR SUBMISSION`;
+        } else {
+            const items = (total > 1) ? 'ITEMS'   : 'ITEM';
+            const need  = (total > 1) ? 'REQUIRE' : 'REQUIRES';
+            submittable = `${items} STILL ${need} ATTENTION`;
+        }
+        return `ALL FILES RESOLVED - ${submittable}`;
     }
 
     // ========================================================================
@@ -1443,7 +1592,7 @@ appSetup(MODULE, function() {
         } else if (isEmpty(promises)) {
             console.warn(`${func}: No files to read`);
         } else {
-            Promise.all(promises).then(processFulfilled);
+            Promise.all(promises).then(fulfilledLocalFiles);
         }
     }
 
@@ -1483,8 +1632,8 @@ appSetup(MODULE, function() {
      *
      * @param {FileReaderExt[]} readers
      */
-    function processFulfilled(readers) {
-        const func = 'processFulfilled';
+    function fulfilledLocalFiles(readers) {
+        const func = 'fulfilledLocalFiles';
         _debug(`${func}: readers =`, readers);
         // NOTE: This gets run after all selected files have been read.
         //  Maybe this is the place to batch up FileReader content for upload
@@ -1496,26 +1645,197 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
+     * Setup for acquiring files from cloud-based storage.
+     */
+    function initializeRemoteFilesResolution() {
+        const func = 'initializeRemoteFilesResolution'; _debug(func);
+        //clearRemoteFileReaders();
+        clearRemoteFileSelection();
+        setupRemoteFilePrompt();
+    }
+
+    /**
+     * Setup control for remote file selection. // TODO: cloud-based storage
+     */
+    function setupRemoteFilePrompt() {
+        // Set up the visible button to proxy for the non-visible <input>.
+        $remote_button.attr('tabindex', 0);
+        handleClickAndKeypress($remote_button, beforeRemoteFilesSelected);
+
+        // The <input> is made non-visible.
+        $remote_input.attr('tabindex', -1).attr('aria-hidden', true);
+        handleEvent($remote_input, 'change', afterRemoteFilesSelected);
+    }
+
+    /**
      * @type {File[]|undefined}
      */
     let remote_file_selection;
 
     /**
-     * Setup for acquiring files from cloud-based storage.
+     * Remote files selected by the user.
+     *
+     * @returns {File[]}
      */
-    function initializeRemoteFilesResolution() {
-        const func = 'initializeRemoteFilesResolution'; _debug(func);
-        clearSelectedRemoteFiles();
-        // TODO: cloud-based storage
-        _debug(`${func}: remote_selected =`, remote_file_selection);
-        _debug(`${func}: remote_to_go    =`, files_remaining.remote);
+    function remoteFileSelection() {
+        return remote_file_selection ||= [];
+    }
+
+    /**
+     * Include a remote file.
+     *
+     * @param {File} file
+     */
+    function addRemoteFile(file) {
+        _debug(`Queueing remote file "${file.name}":`, file);
+        remoteFileSelection().push(file);
     }
 
     /**
      * Clear any previous file selection.
      */
-    function clearSelectedRemoteFiles() {
+    function clearRemoteFileSelection() {
+        $remote_input.val(null);
         remote_file_selection = undefined;
+    }
+
+    /**
+     * Respond before the file chooser is invoked.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function beforeRemoteFilesSelected(event) {
+        _debug('*** beforeRemoteFilesSelected: event =', event);
+        if (event.currentTarget === event.target) {
+            clearRemoteFileSelection();
+            $remote_input.click();
+        }
+    }
+
+    /**
+     * Respond after the file chooser returns.
+     *
+     * @param {jQuery.Event|Event} event
+     */
+    function afterRemoteFilesSelected(event) {
+        const func  = 'afterRemoteFilesSelected';
+        const files = event.currentTarget?.files || event.target?.files;
+        //_debug(`*** ${func}: event =`, event);
+        if (!files) {
+            console.warn(`${func}: no event target`);
+        } else if (isEmpty(files)) {
+            console.warn(`${func}: no files selected`);
+        } else {
+            _debug(`${func}: ${files.length} files`);
+            queueRemoteFiles(files);
+            preProcessRemoteFiles();
+        }
+    }
+
+    /**
+     * Replace the current list of selected files.
+     *
+     * @param {File[]|FileList} files
+     */
+    function queueRemoteFiles(files) {
+        _debug(`queueRemoteFiles: ${files.length} files =`, files);
+        const count = files?.length || 0;
+        for (let i = 0; i < count; i++) {
+            const file = files[i];
+            const name = file?.name;
+            if (!name) {
+                _debug(`IGNORING nameless file[${i}]:`, file);
+            } else if (!file_references.remote.includes(name)) {
+                _debug(`IGNORING unrequested file "${name}":`, file);
+            } else if (!files_remaining.remote.includes(name)) {
+                _debug(`IGNORING already handled file "${name}":`, file);
+            } else {
+                addRemoteFile(file);
+            }
+        }
+        // NOTE: For testing purposes, make it look like the selected file(s)
+        //  were needed.
+        for (let i = 0; i < count; i++) {
+            const file = files[i];
+            const name = file?.name;
+            let add;
+            if (!file_references.remote.includes(name)) {
+                add = file_references.remote.push(name);
+            }
+            if (!files_remaining.remote.includes(name)) {
+                add = files_remaining.remote.push(name);
+            }
+            if (add) {
+                addRemoteFile(file);
+            }
+        }
+    }
+
+    /**
+     * Update submission statuses and report the result of pre-processing
+     * remote files.
+     *
+     * @param {File[]} [files]
+     */
+    function preProcessRemoteFiles(files = remoteFileSelection()) {
+        const func = 'preProcessRemoteFiles';
+        _debug(`${func}: ${files.length} files =`, files);
+        const lines = [];
+        const names = [];
+        const good  = [];
+        const bad   = []; // TODO: are there "badness" criteria at this stage?
+        files.forEach(file => {
+            const fr   = new FileReaderExt(file);
+            const name = fr.file.name;
+            const size = fr.file.size;
+            const item = `${name} : ${size} bytes`;
+            if (!removeFrom(files_remaining.remote, name)) {
+                _debug(`${func}: ${item} -- ALREADY PROCESSED`);
+            } else {
+                _debug(`${func}: ${item}`);
+            }
+            //addRemoteFileReader(fr, func); // TODO: ???
+            names.push(name);
+            good.push(item);
+        });
+        files_remaining.remote = []; // NOTE: simulate all resolved
+        const resolved    = good.length;
+        const problematic = bad.length;
+        const remaining   = files_remaining.remote.length;
+
+        if (resolved) {
+            let sel_changed = false;
+            const fulfilled = new Set(names);
+            allItems().each((_, item) => {
+                const $item   = $(item);
+                const $status = $item.find(FILE_STATUS);
+                const needed  = $status.is(FILE_NEEDED);
+                const name    = needed && $status.find('.name').text();
+                if (name && (fulfilled.has(name) || name.startsWith('http'))) {
+                    setStatusFor($item, FILE_STATUS, SUCCEEDED);
+                    sel_changed = updateItemSelect($item) || sel_changed;
+                }
+            });
+            if (sel_changed) {
+                updateGroupSelect();
+            }
+            //lines.push(resolvedLabel(resolved), ...good, '');
+        }
+
+        if (problematic) {
+            lines.push(problematicLabel(problematic), ...bad, '');
+        }
+
+        if (remaining) {
+            //lines.push(remainingLabel(remaining), ...files_remaining.remote);
+        } else {
+            updateSubmitReady();
+            //lines.push(allResolvedLabel());
+        }
+
+        if (isPresent(lines)) {
+            flashMessage(lines.join("\n"));
+        }
     }
 
     // ========================================================================

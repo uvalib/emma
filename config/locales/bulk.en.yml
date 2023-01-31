@@ -224,6 +224,7 @@ en:
 
           local:
             label:       'Files'
+            tooltip:     'Identify local files from your workstation'
             description: |
               Use the file chooser to identify all of the files on your machine
               referenced by "FILE NEEDED" in the items below.
@@ -231,8 +232,9 @@ en:
 
           remote:
             label:       'URLs'
+            tooltip:     'Identify remote files from the network'
             description_html: |
-              Use this to gather all of the remote files
-              referenced by "FILE NEEDED" in the items below.
+              Provide access to the remote files referenced by "FILE NEEDED" in
+              the items below.
               <em>NOTE: NOT YET IMPLEMENTED</em>
             active:      true

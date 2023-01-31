@@ -488,6 +488,7 @@ appSetup(MODULE, function() {
     const VALID_MARKER          = 'valid';
     const INVALID_MARKER        = 'invalid';
     const REQUIRED_MARKER       = 'required';
+    const BEST_CHOICE_MARKER    = 'best-choice';
 
     const BUTTON_TRAY           = selector(BUTTON_TRAY_CLASS);
     const SUBMIT_BUTTON         = selector(SUBMIT_BUTTON_CLASS);
@@ -497,6 +498,7 @@ appSetup(MODULE, function() {
     const VALID                 = selector(VALID_MARKER);
     const INVALID               = selector(INVALID_MARKER);
   //const REQUIRED              = selector(REQUIRED_MARKER);
+  //const BEST_CHOICE           = selector(BEST_CHOICE_MARKER);
 
     /**
      * Interrelated elements.  For example:
@@ -900,7 +902,7 @@ appSetup(MODULE, function() {
                 const files    = event.target.files || [];
                 const filename = (files[0] || {}).name;
                 if (uploader.displayFilename(filename)) {
-                    uploader.fileSelectButton().removeClass('best-choice');
+                    uploader.fileSelectButton().removeClass(BEST_CHOICE_MARKER)
                     enableSubmit($form);
                 }
             }
@@ -3603,7 +3605,7 @@ appSetup(MODULE, function() {
         const $form = formElement(form);
         const tip   = submitReadyTooltip($form);
         return submitButton($form)
-            .addClass('best-choice')
+            .addClass(BEST_CHOICE_MARKER)
             .removeClass('forbidden disabled')
             .prop('disabled', false)
             .attr('title', tip)
@@ -3621,7 +3623,7 @@ appSetup(MODULE, function() {
         const $form = formElement(form);
         const tip   = submitNotReadyTooltip($form);
         return submitButton($form)
-            .removeClass('best-choice')
+            .removeClass(BEST_CHOICE_MARKER)
             .addClass('forbidden')
             .prop('disabled', true)
             .attr('title', tip)
@@ -4465,7 +4467,7 @@ appSetup(MODULE, function() {
         inputFields($form).attr(tooltip).each(function() {
             this.disabled = true;
         });
-        cancelButton($form).addClass('best-choice');
+        cancelButton($form).addClass(BEST_CHOICE_MARKER);
     }
 
     /**

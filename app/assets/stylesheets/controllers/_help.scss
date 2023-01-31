@@ -167,7 +167,7 @@
             flex:    1 1 auto;
         }
         .control-button + .text::before {
-            content: "#{$NNBS}#{$EM_DASH}#{$NNBS}";
+            content: "#{$NNBS}#{$EN_DASH}#{$NNBS}";
         }
 
         // Repository logo.

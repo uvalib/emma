@@ -268,6 +268,7 @@ appSetup(MODULE, function() {
     const CANCEL_CLASS          = 'cancel-button';
     const IMPORT_CLASS          = 'import-button';
     const EXPORT_CLASS          = 'export-button';
+    const SUBMISSION_CLASS      = 'submission-button';
     const COMM_STATUS_CLASS     = 'comm-status';
     const GRID_CLASS            = 'manifest_item-grid';
     const CTRL_EXPANDED_MARKER  = 'controls-expanded';
@@ -306,6 +307,7 @@ appSetup(MODULE, function() {
     const CANCEL        = selector(CANCEL_CLASS);
     const IMPORT        = selector(IMPORT_CLASS);
     const EXPORT        = selector(EXPORT_CLASS);
+    const SUBMISSION    = selector(SUBMISSION_CLASS);
     const COMM_STATUS   = selector(COMM_STATUS_CLASS);
     const GRID          = selector(GRID_CLASS);
     const TO_DELETE     = selector(TO_DELETE_MARKER);
@@ -391,6 +393,13 @@ appSetup(MODULE, function() {
      * @type {jQuery}
      */
     const $export = $container.find(EXPORT);
+
+    /**
+     * Submit manifest button.
+     *
+     * @type {jQuery}
+     */
+    const $submission = $container.find(SUBMISSION);
 
     /**
      * The element holding transient communication status.
@@ -508,10 +517,11 @@ appSetup(MODULE, function() {
      * @type {Object.<string,jQuery>}
      */
     const CONTROL_BUTTONS = {
-        submit: $save,
-        cancel: $cancel,
-        import: $import,
-        export: $export,
+        submit:     $save,
+        cancel:     $cancel,
+        import:     $import,
+        export:     $export,
+        submission: $submission,
     };
 
     /**
@@ -524,6 +534,7 @@ appSetup(MODULE, function() {
         initializeButtonSet(CONTROL_BUTTONS, func);
         // enableSave(false); // NOTE: Initial state determined by server.
         enableExport();
+        enableSubmission();
     }
 
     /**
@@ -550,6 +561,19 @@ appSetup(MODULE, function() {
         //_debug(`enableExport: setting = "${setting}"`);
         const yes = isDefined(setting) ? setting : isPresent(activeDataRows());
         return enableControlButton('export', yes);
+    }
+
+    /**
+     * Enable/disable the Submit button.
+     *
+     * @param {boolean} [setting]     Def.: presence of {@link activeDataRows}.
+     *
+     * @returns {jQuery|undefined}
+     */
+    function enableSubmission(setting) {
+        //_debug(`enableSubmission: setting = "${setting}"`);
+        const yes = isDefined(setting) ? setting : isPresent(activeDataRows());
+        return enableControlButton('submission', yes);
     }
 
     /**
@@ -769,6 +793,7 @@ appSetup(MODULE, function() {
         const changed = isDefined(setting) ? setting : checkFormChanged();
         enableSave(changed);
         enableExport();
+        enableSubmission();
         return changed;
     }
 

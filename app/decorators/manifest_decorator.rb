@@ -483,6 +483,7 @@ class ManifestDecorator
   def form_buttons(**opt)
     opt.reverse_merge!('data-manifest': object.id)
     buttons = super
+    buttons << submission_button(**opt)
     buttons << export_button(**opt)
     buttons << import_button(**opt)
     buttons << comm_status(**opt)
@@ -558,6 +559,17 @@ class ManifestDecorator
     form_button(:export, **opt)
   end
 
+  # Submit this manifest.
+  #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_button(**opt)
+    opt[:url] ||= path_for(object, action: :remit)
+    form_button(:submission, **opt)
+  end
+
   # Pre-defined status messages for #comm_status.
   #
   # @type [Hash{Symbol=>String}]
@@ -598,10 +610,15 @@ class ManifestDecorator
 
   # ManifestItem entries to be submitted.
   #
+  # By default, all items are selected -- given the client the responsibility
+  # of prevent submission of non-submittable items.
+  #
+  # @param [Boolean] limit            If *true* select only eligible items.
+  #
   # @return [ActiveRecord::Relation<ManifestItem>]
   #
-  def submit_items
-    object.manifest_items.scope.submittable
+  def submit_items(limit: false)
+    limit ? object.manifest_items.could_submit : object.manifest_items.active
   end
 
   # Primary submission controls plus #submisson_counts.
@@ -677,12 +694,11 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def submission_count(type, count = nil, label: nil, css: '.count', **opt)
-    count   = positive(count) || 0
-    count   = html_span(count, class: 'value')
-    label ||= SUBMISSION_COUNTS[type]
+    lbl = html_span(class: 'label') { label || SUBMISSION_COUNTS[type] }
+    val = html_span(class: 'value') { positive(count) || 0 }
     prepend_css!(opt, type, css)
     html_span(opt) do
-      count << ERB::Util.h("- #{label}")
+      lbl << val
     end
   end
 
@@ -709,7 +725,7 @@ class ManifestDecorator
   def auxiliary_button_tray(*added, css: '.auxiliary-buttons', **opt)
     prepend_css!(opt, css)
     opt[:'data-manifest'] ||= object.id
-    buttons = [submission_local, submission_remote]
+    buttons = [submission_remote, submission_local]
     form_button_tray(*buttons, *added, **opt)
   end
 
@@ -717,49 +733,53 @@ class ManifestDecorator
   # indicates a local file that needs to be acquired in order to proceed with
   # automated batch submission.
   #
-  # @param [Boolean] hidden           If *false* show initially.
   # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #submission_files.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_local(hidden: true, css: '.local-file', **)
-    config = SUBMISSION_AUXILIARY[:local]
-
-    b_opt  = { multiple: true }
-    append_css!(b_opt, 'best-choice', css)
-    append_css!(b_opt, 'hidden') if hidden
-    button = form_button(:file, **b_opt)
-
-    n_opt  = {}
-    append_css!(n_opt, 'panel', css)
-    append_css!(n_opt, 'hidden') if hidden
-    notice = config[:description_html]&.html_safe || config[:description]
-    notice = html_div(notice, n_opt)
-
-    button << notice
+  def submission_local(css: '.local-file', **opt)
+    opt[:config] ||= SUBMISSION_AUXILIARY[:local]
+    submission_files(css: css, multiple: true, **opt)
   end
 
   # A button and text panel to display to resolve items whose :file_data
   # indicates a remote file that needs to be acquired in order to proceed with
   # automated batch submission.
   #
-  # @param [Boolean] hidden           If *false* show initially.
   # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #submission_files.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_remote(hidden: true, css: '.remote-file', **)
-    config = SUBMISSION_AUXILIARY[:remote]
+  def submission_remote(css: '.remote-file', **opt)
+    opt[:config] ||= SUBMISSION_AUXILIARY[:remote]
+    submission_files(css: css, multiple: true, **opt)
+  end
 
-    b_opt  = { multiple: true }
-    append_css!(b_opt, 'best-choice', css)
-    append_css!(b_opt, 'hidden') if hidden
-    append_css!(b_opt, 'disabled') # TODO: Files via URL
-    button = form_button(:file, **b_opt)
+  # ===========================================================================
+  # :section: Item forms (remit page)
+  # ===========================================================================
 
-    n_opt  = {}
-    append_css!(n_opt, 'panel', css)
-    append_css!(n_opt, 'hidden') if hidden
+  protected
+
+  # A button and text panel.
+  #
+  # @param [Boolean] hidden           If *false* show initially.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    config           Configuration properties.
+  # @param [Hash]    opt              Button options.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_files(hidden: true, css: nil, config: {}, **opt)
+    b_opt  = { label: config[:label], title: config[:tooltip] }.merge!(opt)
+    b_opt  = append_css!(b_opt, 'best-choice', css)
+    b_opt  = append_css!(b_opt, 'hidden') if hidden
+    button = form_button(:file, **b_opt.compact)
+
+    n_opt  = append_css!({}, 'panel', css)
+    n_opt  = append_css!(n_opt, 'hidden') if hidden
     notice = config[:description_html]&.html_safe || config[:description]
     notice = html_div(notice, n_opt)
 
