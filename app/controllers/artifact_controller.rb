@@ -101,7 +101,7 @@ class ArtifactController < ApplicationController
   # Get metadata for an existing artifact.
   #
   # @see #artifact_path               Route helper
-  # @see BookshareService::Request::Titles#get_artifact_metadata
+  # @see BookshareService::Action::Titles#get_artifact_metadata
   #
   def show
     __log_activity
@@ -194,7 +194,7 @@ class ArtifactController < ApplicationController
   # Download an artifact of the indicated Bookshare format type.
   #
   # @see #bs_download_path            Route helper
-  # @see BookshareService::Request::Titles#download_title
+  # @see BookshareService::Action::Titles#download_title
   #
   def download
     __log_activity
@@ -210,7 +210,7 @@ class ArtifactController < ApplicationController
   # Unified Search results).
   #
   # @see #bs_retrieval_path           Route helper
-  # @see BookshareService::Request::Titles#get_retrieval
+  # @see BookshareService::Action::Titles#get_retrieval
   #
   def retrieval
     __log_activity

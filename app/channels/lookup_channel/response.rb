@@ -7,26 +7,21 @@ __loading_begin(__FILE__)
 
 class LookupChannel::Response < ApplicationCable::Response
 
-  TEMPLATE =
-    make_response_template {{
-      status:  nil,
-      service: nil,
-      user:    nil,
-      time:    nil,
-      job_id:  nil,
-      class:   nil,
-      data:    nil,
-    }}.freeze
+  # @see file://app/assets/javascripts/shared/lookup-response.js *TEMPLATE*
+  TEMPLATE = {
+    status:  nil,
+    service: nil,           # Originating external lookup service.
+    **superclass::TEMPLATE,
+    discard: nil,           # List of late or erroneous jobs.
+  }.freeze
 
   # ===========================================================================
-  # :section:
+  # :section: ApplicationCable::Response::Payload overrides
   # ===========================================================================
 
-  protected
+  public
 
-  def initialize(values = nil, **opt)
-    super
-  end
+  def self.template = TEMPLATE
 
   # ===========================================================================
   # :section: ApplicationCable::Response overrides
@@ -34,18 +29,17 @@ class LookupChannel::Response < ApplicationCable::Response
 
   public
 
-  def self.template
-    TEMPLATE
-  end
+  def self.data_url_base_path = 'tool/get_job_result'
 
 end
 
-class LookupChannel::InitialResponse < LookupChannel::Response
+class LookupChannel::LookupResponse < LookupChannel::Response
+end
 
-  DEFAULT_STATUS = 'STARTING'
+class LookupChannel::StatusResponse < LookupChannel::Response
 
   # ===========================================================================
-  # :section:
+  # :section: LookupChannel::Response overrides
   # ===========================================================================
 
   public
@@ -57,60 +51,33 @@ class LookupChannel::InitialResponse < LookupChannel::Response
   #
   def initialize(values = nil, **opt)
     values = { service: values } unless values.nil? || values.is_a?(Hash)
-    super(values, **opt)
-    self[:status] ||= DEFAULT_STATUS
+    super
   end
 
   # ===========================================================================
-  # :section: ApplicationCable::Response overrides
+  # :section: ApplicationCable::Response::Payload overrides
   # ===========================================================================
 
   protected
 
-  def normalize(value)
+  def payload_normalize(value)
     value     = super
     service   = value.delete(:services) || value[:service]
     service &&= Array.wrap(service).map { |v| v.to_s.demodulize }
     service ? value.merge!(service: service) : value
   end
 
-  # ===========================================================================
-  # :section: ApplicationCable::Response overrides
-  # ===========================================================================
-
-  public
-
-  def self.default_status
-    DEFAULT_STATUS
-  end
-
 end
 
-class LookupChannel::LookupResponse < LookupChannel::Response
-
-  TEMPLATE =
-    make_response_template {{
-      status:   nil,
-      service:  nil,
-      user:     nil,
-      time:     nil,
-      duration: nil,
-      count:    nil,
-      discard:  nil,
-      job_id:   nil,
-      class:    nil,
-      data:     nil,
-    }}.freeze
+class LookupChannel::InitialResponse < LookupChannel::StatusResponse
 
   # ===========================================================================
-  # :section: ApplicationCable::Response overrides
+  # :section: ApplicationCable::Response::Payload overrides
   # ===========================================================================
 
   public
 
-  def self.template
-    TEMPLATE
-  end
+  def self.default_status = 'STARTING'
 
 end
 

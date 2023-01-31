@@ -1,0 +1,150 @@
+# BookshareService::Action::MembershipActiveTitles
+#
+# == Usage Notes
+#
+# === From Membership Management API 2.3 (Membership Assistant - Active Titles)
+# Membership Assistant users are able to manage active titles on behalf of a
+# given user account.
+#
+module BookshareService::Action::MembershipActiveTitles
+  include BookshareService::Common
+
+  include BookshareService::Testing
+
+  # == GET /v2/accounts/(userIdentifier)/activeBooks
+  #
+  # == 2.3.1. Get active books for a user
+  # Get a list of active books for a specific user that are ready to read.
+  #
+  # @param [User, String, nil] user   Default: `@user`.
+  # @param [Hash]              opt    Passed to #api.
+  #
+  # @option opt [String]              :start
+  # @option opt [Integer]             :limit      Default: 10
+  # @option opt [BsAssignedSortOrder] :sortOrder  Default: 'title'
+  # @option opt [BsSortDirection]     :direction  Default: 'asc'
+  #
+  # @return [Bs::Message::ActiveBookList]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_user-active-books
+  #
+  def get_active_books: (?user: User|String|nil, **untyped opt) -> Bs::Message::ActiveBookList
+
+  # == POST /v2/accounts/(userIdentifier)/activeBooks
+  #
+  # == 2.3.2. Add active book for a user
+  # Add a book to a specific user’s active books list.
+  #
+  # @param [User, String, nil] user         Default: `@user`.
+  # @param [String]            bookshareId
+  # @param [String]            format
+  # @param [Hash]              opt          Passed to #api.
+  #
+  # @return [Bs::Message::ActiveBookList]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_user-active-books-add
+  #
+  def create_active_book: (bookshareId: String, format: String, ?user: User|String|nil, **untyped opt) -> Bs::Message::ActiveBookList
+
+  # == DELETE /v2/accounts/(userIdentifier)/activeBooks/(activeTitleId)
+  #
+  # == 2.3.3. Remove an active book
+  # Remove one of the entries from a specific user’s list of active books.
+  #
+  # @param [User, String, nil] user           Default: `@user`.
+  # @param [String]            activeTitleId
+  # @param [Hash]              opt            Passed to #api.
+  #
+  # @return [Bs::Message::ActiveBookList]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_user-active-books-remove
+  #
+  def delete_active_book: (activeTitleId: String, ?user: User|String|nil, **untyped opt) -> Bs::Message::ActiveBookList
+
+  # == GET /v2/accounts/(userIdentifier)/activePeriodicals
+  #
+  # == 2.3.4. Get active periodicals for a user
+  # Get a list of active periodicals for a specific user that are ready to
+  # read.
+  #
+  # @param [User, String, nil] user   Default: `@user`.
+  # @param [Hash]              opt    Passed to #api.
+  #
+  # @option opt [String]              :start
+  # @option opt [Integer]             :limit      Default: 10
+  # @option opt [BsAssignedSortOrder] :sortOrder  Default: 'title'
+  # @option opt [BsSortDirection]     :direction  Default: 'asc'
+  #
+  # @return [Bs::Message::ActivePeriodicalList]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_user-active-periodicals
+  #
+  def get_active_periodicals: (?user: User|String|nil, **untyped opt) -> Bs::Message::ActivePeriodicalList
+
+  # == POST /v2/accounts/(userIdentifier)/activePeriodicals
+  #
+  # == 2.3.5. Add active periodical for a user
+  # Add a periodical to a specific user’s active periodicals list.
+  #
+  # @param [User, String, nil] user         Default: `@user`.
+  # @param [String]            editionId
+  # @param [String]            format
+  # @param [Hash]              opt          Passed to #api.
+  #
+  # @return [Bs::Message::ActivePeriodicalList]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_user-active-periodicals-add
+  #
+  def create_active_periodical: (editionId: String, format: String, ?user: User|String|nil, **untyped opt) -> Bs::Message::ActivePeriodicalList
+
+  # == DELETE /v2/accounts/(userIdentifier)/activePeriodicals/(activeTitleId)
+  #
+  # == 2.3.6. Remove an active periodical
+  # Remove one of the entries from a specific user’s list of active
+  # periodicals.
+  #
+  # @param [User, String, nil] user           Default: `@user`.
+  # @param [String]            activeTitleId
+  # @param [Hash]              opt            Passed to #api.
+  #
+  # @return [Bs::Message::ActivePeriodicalList]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_user-active-periodicals-remove
+  #
+  def delete_active_periodical: (activeTitleId: String, ?user: User|String|nil, **untyped opt) -> Bs::Message::ActivePeriodicalList
+
+  # == GET /v2/accounts/(userIdentifier)/activeBooksProfile
+  #
+  # == 2.3.7. Get active books profile
+  # Get a particular user’s choices of properties that guide how titles are
+  # added by the system to a user’s active books list.
+  #
+  # @param [User, String, nil] user   Default: `@user`.
+  # @param [Hash]              opt    Passed to #api.
+  #
+  # @return [Bs::Message::ActiveBookProfile]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_get-active-book-profile
+  #
+  def get_active_books_profile: (?user: User|String|nil, **untyped opt) -> Bs::Message::ActiveBookProfile
+
+  # == PUT /v2/accounts/(userIdentifier)/activeBooksProfile
+  #
+  # == 2.3.8. Update active books profile
+  # Update a particular user’s choices of properties that guide how titles are
+  # added by the system to a user’s active books list.
+  #
+  # @param [User, String, nil] user   Default: `@user`.
+  # @param [Hash]              opt    Passed to #api.
+  #
+  # @option opt [Boolean] :useRecommendations
+  # @option opt [Boolean] :useRequestList
+  # @option opt [Integer] :maxContributions
+  # @option opt [String]  :readingListId
+  #
+  # @return [Bs::Message::ActiveBookProfile]
+  #
+  # @see https://apidocs.bookshare.org/membership/index.html#_put-active-book-profile
+  #
+  def update_active_books_profile: (?user: User|String|nil, **untyped opt) -> Bs::Message::ActiveBookProfile
+end

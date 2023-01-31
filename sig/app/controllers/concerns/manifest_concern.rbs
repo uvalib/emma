@@ -119,9 +119,9 @@ module ManifestConcern
   # @raise [Record::StatementInvalid]   If :id not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
-  def get_manifest: (?(String|Manifest|anyHash|nil) item, **untyped opt) -> (Manifest | nil)
+  def get_manifest: (?(String|Manifest|anyHash|nil) item, **untyped opt) -> Manifest
 
   # Locate related ManifestItem records.
   #
@@ -152,12 +152,12 @@ module ManifestConcern
 
   # Start editing an existing manifest.
   #
-  # @param [Manifest, Hash, nil] item   If present, used as a template.
-  # @param [Hash, nil]           opt    Default: `#manifest_request_params`.
+  # @raise [Record::StatementInvalid]   If :id not given.
+  # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
-  def edit_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  def edit_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Persist changes to an existing manifest.
   #
@@ -170,7 +170,7 @@ module ManifestConcern
   #
   # @return [Manifest, nil]
   #
-  def update_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  def update_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # For the 'delete' endpoint...
   #
@@ -192,7 +192,7 @@ module ManifestConcern
   #
   # @return [Array]                   Destroyed entries.
   #
-  def destroy_manifest: (?(Manifest|String|strArray|nil) items, ?(symHash|nil) opt) -> (Manifest | nil)
+  def destroy_manifest: (?(Manifest|String|strArray|nil) items, ?(symHash|nil) opt) -> strArray
 
   # Persist changes to an existing manifest and update the saved state of all
   # associated rows.
@@ -204,11 +204,11 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
   #
-  def save_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  def save_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Back out of provisional changes to associated rows.
   #
@@ -223,7 +223,7 @@ module ManifestConcern
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *cancelUpdates()*
   #
-  def cancel_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  def cancel_changes: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Validate readiness of a manifest to start transmission.
   #
@@ -234,9 +234,9 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
-  def remit_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  def remit_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Start transmission of a manifest.
   #
@@ -247,9 +247,9 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
-  def start_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  #def start_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Terminate transmission of a manifest.
   #
@@ -260,9 +260,9 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
-  def stop_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  #def stop_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Pause transmission of a manifest.
   #
@@ -273,9 +273,9 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
-  def pause_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  #def pause_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Resume transmission of a paused manifest.
   #
@@ -286,9 +286,9 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
-  def resume_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> (Manifest | nil)
+  #def resume_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Generate a response to a POST.
   #

@@ -67,7 +67,7 @@ class ReadingListController < ApplicationController
   # or organization list to which the user is subscribed).
   #
   # @see #reading_list_index_path     Route helper
-  # @see BookshareService::Request::ReadingLists#get_reading_lists_list
+  # @see BookshareService::Action::ReadingLists#get_reading_lists_list
   #
   def index
     __log_activity
@@ -95,8 +95,8 @@ class ReadingListController < ApplicationController
   # Display details of a reading list.
   #
   # @see #reading_list_path           Route helper
-  # @see BookshareService::Request::ReadingLists#get_reading_list
-  # @see BookshareService::Request::ReadingLists#get_reading_list_titles
+  # @see BookshareService::Action::ReadingLists#get_reading_list
+  # @see BookshareService::Action::ReadingLists#get_reading_list_titles
   #
   def show
     __log_activity

@@ -1,0 +1,18 @@
+# SubmissionService::Action::Check
+#
+module SubmissionService::Action::Check
+  include SubmissionService::Common
+
+  include SubmissionService::Definition
+
+  # Receive a request to list associated jobs.
+  #
+  # @param [SubmissionService::ControlRequest, nil] request
+  # @param [Manifest, String, nil]           manifest
+  # @param [SubmitJob, String, nil]          job
+  # @param [Hash]                            opt      To #post_flight
+  #
+  # @return [SubmissionService::StatusResponse]
+  #
+  def list_jobs: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::StatusResponse
+end

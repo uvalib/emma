@@ -127,6 +127,13 @@ en:
           disabled:
             tooltip:    'Not able to export at this point'
 
+        submission:     &GENERIC_SUBMISSION
+          label:        'Submit'
+          enabled:
+            tooltip:    'Submit these items to EMMA'
+          disabled:
+            tooltip:    'Not able to submit these items at this point'
+
         start:          &GENERIC_START
           label:        'Start'
           enabled:
@@ -184,7 +191,7 @@ en:
           - item_count
           - saved_item_count
           - pending_item_count
-         #- updated_item_count
+         #- completed_item_count
          #- unsaved_item_count
          #- never_saved_item_count
          #- incomplete_item_count
@@ -235,6 +242,9 @@ en:
         export:
           <<:           *GENERIC_EXPORT
 
+        submission:
+          <<:           *GENERIC_SUBMISSION
+
         success:        'Saved manifest'
         failure:        'Could not save manifest: %{error}'
 
@@ -276,6 +286,9 @@ en:
 
         export:
           <<:           *GENERIC_EXPORT
+
+        submission:
+          <<:           *GENERIC_SUBMISSION
 
         success:        'Saved changes to the manifest'
         failure:        'Could not save changes: %{error}'
@@ -331,8 +344,8 @@ en:
 
       remit:            &REMIT_ACTION
         label:          'Submit'
-        title:          'Submit Manifest'
-        tooltip:        'Submit multiple items from a manifest at one time.'
+        title:          'Submit Manifest Items'
+        tooltip:        'Submit multiple items from a manifest in bulk.'
 
         start:
           <<:           *GENERIC_START
@@ -345,6 +358,13 @@ en:
 
         resume:
           <<:           *GENERIC_RESUME
+
+        monitor:
+          label:        'Results'
+          enabled:
+            tooltip:    'See details of submission results'
+          disabled:
+            tooltip:    'Not able to view details right now'
 
         file:
           <<:           *GENERIC_FILE

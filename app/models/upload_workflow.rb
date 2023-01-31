@@ -1157,7 +1157,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] items
   # @param [Boolean]       atomic
   #
-  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
   #
   # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
   #                                         msgs, and records to roll back.
@@ -1187,7 +1187,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] items
   # @param [Boolean]       atomic
   #
-  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
   #
   # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
   #                                         msgs, and records to roll back.
@@ -1211,7 +1211,7 @@ module UploadWorkflow::External
   # @param [Array<Upload, String>] items
   # @param [Boolean]               atomic
   #
-  # @raise [Api::Error] @see IngestService::Request::Submissions#delete_records
+  # @raise [Api::Error] @see IngestService::Action::Submissions#delete_records
   #
   # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #

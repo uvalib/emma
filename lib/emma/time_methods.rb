@@ -41,6 +41,15 @@ module Emma::TimeMethods
   MINUTES      = MINUTES_PER_SECOND
   HOURS        = HOURS_PER_SECOND
 
+  # The resolution of the clock in fractional seconds.
+  #
+  # @type [Float]
+  #
+  #--
+  # noinspection SpellCheckingInspection, RubyMismatchedConstantType
+  #++
+  EPSILON = Process.clock_getres(:TIMES_BASED_CLOCK_PROCESS_CPUTIME_ID)
+
   # ===========================================================================
   # :section:
   # ===========================================================================

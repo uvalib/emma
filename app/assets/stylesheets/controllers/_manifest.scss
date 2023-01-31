@@ -3,10 +3,13 @@
 // Bulk operation manifests
 
 @use 'shared/variables'        as *;
+@use 'shared/functions'        as *;
 @use 'shared/mixins'           as *;
 @use 'shared/controls/buttons' as button;
+@use 'shared/controls/grids'   as grid;
 @use 'shared/controls/popup'   as popup;
 @use 'shared/feature/model'    as model;
+@use 'shared/layouts/overlay'  as overlay;
 
 @use 'controllers/entry';
 
@@ -408,10 +411,11 @@ body.manifest.remit {
 
         @include button.control;
 
-        &.start-button {}
-        &.stop-button {}
-        &.pause-button {}
-        &.resume-button {}
+        &.start-button   {}
+        &.stop-button    { display: none; } // TODO: ???
+        &.pause-button   { display: none; } // TODO: ???
+        &.resume-button  { display: none; } // TODO: ???
+        &.monitor-button {}
 
         &.file-button {
 
@@ -739,7 +743,7 @@ body.manifest.remit {
                 }
 
                 @mixin failure {
-                    @include colors($fg-clear, $uva-emergency-red);
+                    @include colors($fg-clear, $uva-accent-magenta);
                     @include outline;
                 }
 
@@ -752,6 +756,7 @@ body.manifest.remit {
                 &.active       { @include started; }
                 &.busy         { @include started; }
 
+                &.unsaved      { @include failure; }
                 &.data-missing { @include stopped; }
                 &.file-missing { @include stopped; }
                 &.file-needed  { @include stopped; }
@@ -770,6 +775,10 @@ body.manifest.remit {
                     height:     100%;
                     box-shadow: 0 0 1.25rem 1.5rem $bg-clear;
                 }
+            }
+
+            .status.unsaved ~ .status {
+                opacity: 0.5;
             }
         }
 
@@ -964,6 +973,176 @@ body.manifest.remit {
                         padding:  1px 4px;
                     }
                 }
+            }
+        }
+    }
+}
+
+//=============================================================================
+// NOTE: based on .lookup-popup definitions in ./_entry.scss
+//=============================================================================
+
+.modal-popup.monitor-popup {
+    max-width: calc(100% - 1.25rem);
+}
+
+// @see BaseDecorator::Submission#monitor_control
+.modal-popup.monitor-popup {
+
+    @media #{$wide-screen} {
+        position: fixed;
+        top:      2.5vh;
+        bottom:   2.5vh;
+        left:     1.25vw;
+        right:    6.25vw;
+    }
+
+    @media #{$medium-width} {
+        position: fixed;
+        top:      2rem;
+        bottom:   2rem;
+        left:     2rem;
+        right:    2rem;
+    }
+
+    @media #{$narrow-screen} {
+        padding: 0;
+    }
+
+    .popup-controls {
+        @media #{$narrow-screen} {
+            padding: 0.5rem;
+        }
+    }
+}
+
+.modal-popup {
+
+    $lookup-accent-fg: lighter($uva-accent-blue, 50%);
+
+    // noinspection CssReplaceWithShorthandSafely
+    .monitor-container {
+
+        $item-gap:    0.5rem;
+        $section-gap: $item-gap * 2;
+
+        display:        flex;
+        flex-direction: column;
+        gap:            $section-gap;
+        margin:         0;
+        margin-top:     0.5rem;
+        margin-left:    0.5rem;
+        font-size:      medium;
+        flex:           1 1 0;
+
+        // noinspection CssBrowserCompatibilityForProperties
+        overscroll-behavior: contain;
+
+        @media #{$not-wide-screen} {
+            max-width:  inherit;
+            overflow-x: auto;
+        }
+
+        > * {
+            max-width: inherit;
+        }
+
+        .monitor-heading {
+            margin: 0;
+            flex:   0 0 auto;
+        }
+
+        .monitor-status {
+
+            display:         flex;
+            flex-direction:  row;
+            flex:            0 0 auto;
+
+            @media #{$narrow-screen} {
+                margin-left: 0.5rem;
+            }
+
+            > * {
+                @media #{$narrow-screen} {
+                    width: 100%;
+                }
+            }
+
+            .notice {
+                flex-basis: auto;
+                min-height: 2rem;
+            }
+
+        }
+
+        // noinspection CssBrowserCompatibilityForProperties
+        .monitor-output {
+
+            display:               grid;
+            grid-template-columns: [success] 1fr [failure] 1fr;
+            overflow:              auto;
+            overscroll-behavior:   contain;
+            flex:                  1 0 auto;
+
+            .success,
+            .failure {
+                display:        flex;
+                flex-direction: column;
+                flex:           1 1 auto;
+            }
+
+            h2 {
+                margin:      0;
+                flex:        0 0 auto;
+            }
+
+            .display {
+                min-height:  15vh;
+                line-height: 1.25;
+                white-space: pre-wrap;
+                flex:        1 0 auto;
+            }
+        }
+
+        .monitor-log {
+
+            display:        flex;
+            flex-direction: column;
+            gap:            1rem;
+            margin-right:   0.5rem;
+            flex:           1 1 100%;
+
+            .pair {
+                display:               grid;
+                grid-template-columns: 10% 1fr;
+                flex:                  1 1 auto;
+            }
+
+            .label {
+                font-weight: bold;
+            }
+
+            // noinspection CssBrowserCompatibilityForProperties
+            .value {
+                resize:              vertical;
+                overscroll-behavior: contain;
+            }
+        }
+
+        //=====================================================================
+        // Variations
+        //=====================================================================
+
+        &.with-log {
+            .monitor-output {
+                margin-right: 0.5rem;
+                flex:         1 1 50%;
+            }
+        }
+
+        &:not(.with-log) {
+            .monitor-log {
+                display: none;
             }
         }
     }

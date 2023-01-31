@@ -15,6 +15,8 @@ class ManifestItem < ApplicationRecord
 
   include Record::Searchable
 
+  include Record::Updatable
+
   include Record::Uploadable
 
   include Record::Validatable

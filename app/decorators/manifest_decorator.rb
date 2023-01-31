@@ -50,6 +50,7 @@ class ManifestDecorator < BaseDecorator
       path_for(item, **opt, action: :remit)
     end
 
+=begin
     def start_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :start)
@@ -69,6 +70,7 @@ class ManifestDecorator < BaseDecorator
       opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :resume)
     end
+=end
 
   end
 
@@ -442,6 +444,14 @@ class ManifestDecorator
     ManifestItemDecorator.send(__method__)
   end
 
+  # The names of each grid data column which is rendered but not visible.
+  #
+  # @return [Array<Symbol>]
+  #
+  def grid_row_undisplayed_columns
+    ManifestItemDecorator.send(__method__)
+  end
+
   # Show a button for expanding/contracting the controls column in the top
   # left grid cell.
   #
@@ -646,6 +656,7 @@ class ManifestDecorator
   #
   def submission_control(type, css: '.submission-control', **opt)
     prepend_css!(opt, css)
+    opt[:control] = ->(**o) { monitor_control(button: o) } if type == :monitor
     form_button(type, **opt)
   end
 
@@ -873,10 +884,12 @@ class ManifestDecorator
     path_properties = {
       upload: upload_path,
       remit:  remit_path(id: JS_ID),
+=begin
       start:  start_path(id: JS_ID),
       stop:   stop_path(id: JS_ID),
       pause:  pause_path(id: JS_ID),
       resume: resume_path(id: JS_ID),
+=end
     }
     super.deep_merge!(Path: path_properties)
   end

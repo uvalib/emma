@@ -7,6 +7,7 @@ __loading_begin(__FILE__)
 
 module ManifestItem::Assignable
 
+  include ManifestItem::Config
   include ManifestItem::Validatable
 
   # Non-functional hints for RubyMine type checking.
@@ -49,9 +50,10 @@ module ManifestItem::Assignable
   # @return [Hash{Symbol=>Any}]
   #
   def attribute_options(attr, opt = nil)
-    return {} if attr.blank?
-    opt = { compact: false, key_norm: true }.merge!(opt || {})
-    super(attr, opt).map { |k, v|
+    opt  = { compact: false, key_norm: true }.merge!(opt || {})
+    attr = super(attr, opt)
+    attr = default_attributes(attr)
+    attr.map { |k, v|
       next [k, nil] unless v.present? || v.is_a?(FalseClass)
 
       column = database_columns[k]
@@ -61,10 +63,12 @@ module ManifestItem::Assignable
 
       if column.array || field[:array] || (type == 'textarea')
         case v
-          when Array          then v = v.dup
-          when String, Symbol then v = v.to_s.split(LINE_SPLIT)
-          else Log.warn("#{__method__}: type #{v.class} unexpected"); v = [v]
+          when Array  then v = v.dup
+          when Symbol then v = v.to_s
+          when String then v = v.strip.split(LINE_SPLIT)
+          else             Log.warn "#{__method__}: type #{v.class} unexpected"
         end
+        v = Array.wrap(v)
         v.map! { |e|
           e = normalize_single(e, type)
           e.is_a?(FalseClass) ? e : e.presence
@@ -101,6 +105,19 @@ module ManifestItem::Assignable
 
   public
 
+  # Include the default repository value if not specified.
+  #
+  # @param [Hash, nil] attr
+  #
+  # @return [Hash]
+  #
+  def default_attributes(attr = nil)
+    attr = attr&.dup || {}
+    attr[:repository] ||= EmmaRepository.default unless ALLOW_NIL_REPOSITORY
+    # noinspection RubyMismatchedReturnType
+    attr
+  end
+
   # normalize_file
   #
   # @param [Hash, String, *] data
@@ -123,12 +140,13 @@ module ManifestItem::Assignable
   #
   def normalize_single(v, type)
     case
-      when type == 'json'    then normalize_json(v)
-      when type == 'date'    then normalize_date(v)
-      when type == 'number'  then normalize_number(v)
-      when type == TrueFalse then normalize_bool(v)
-      when type.is_a?(Class) then normalize_enum(v, type)
-      else                        normalize_text(v)
+      when type == 'json'     then normalize_json(v)
+      when type == 'date'     then normalize_date(v)
+      when type == 'datetime' then normalize_datetime(v)
+      when type == 'number'   then normalize_number(v)
+      when type == TrueFalse  then normalize_bool(v)
+      when type.is_a?(Class)  then normalize_enum(v, type)
+      else                         normalize_text(v)
     end
   end
 
@@ -149,9 +167,9 @@ module ManifestItem::Assignable
   # @return [Numeric, nil]
   #
   def normalize_number(v)
-    result = v.is_a?(String) ? v.to_i : v
+    v = v.to_i if v.is_a?(String)
     # noinspection RubyMismatchedReturnType
-    result if result.is_a?(Numeric)
+    v if v.is_a?(Numeric)
   end
 
   # normalize_date
@@ -161,9 +179,19 @@ module ManifestItem::Assignable
   # @return [Date, String, nil]
   #
   def normalize_date(v)
-    return v                   if v.is_a?(Date)
-    v = v.to_s                 if v.is_a?(Numeric)
-    v = Date.parse(v) rescue v if v.is_a?(String)
+    v = v.to_s if v.is_a?(Numeric)
+    v.is_a?(String) ? (v.to_date rescue v) : v.try(:to_date)
+  end
+
+  # normalize_datetime
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [DateTime, String, nil]
+  #
+  def normalize_datetime(v)
+    v = v.to_s if v.is_a?(Numeric)
+    v.is_a?(String) ? (v.to_datetime rescue v) : v.try(:to_datetime)
   end
 
   # normalize_enum

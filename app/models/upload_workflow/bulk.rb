@@ -464,7 +464,7 @@ module UploadWorkflow::Bulk::External
   # @param [Boolean]       atomic
   # @param [Hash]          opt        Passed to #batch_upload_operation.
   #
-  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
   #
   # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
   #                                         msgs, and records to roll back.
@@ -479,7 +479,7 @@ module UploadWorkflow::Bulk::External
   # @param [Array<Upload>] items
   # @param [Hash]          opt        Passed to #batch_upload_operation.
   #
-  # @raise [Api::Error] @see IngestService::Request::Submissions#put_records
+  # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
   #
   # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
   #                                         msgs, and records to roll back.
@@ -494,7 +494,7 @@ module UploadWorkflow::Bulk::External
   # @param [Array<Upload, String>] items
   # @param [Hash]                  opt    Passed to #batch_upload_operation.
   #
-  # @raise [Api::Error] @see IngestService::Request::Submissions#delete_records
+  # @raise [Api::Error] @see IngestService::Action::Submissions#delete_records
   #
   # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #

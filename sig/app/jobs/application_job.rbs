@@ -7,22 +7,24 @@ class ApplicationJob < ActiveJob::Base
 
   include Emma::Debug
 
-  # :nocov:
-  #include ApplicationJob::Properties
+  include ApplicationJob::Properties
 
-  #include ApplicationJob::Logging
+  include ApplicationJob::Methods
 
-  def initialize: (*untyped arguments, **untyped opt) -> void
+  include ApplicationJob::Logging
 
-  def perform: (*untyped _ignored) -> untyped
+  def initialize: (*untyped args, **untyped opt) -> void
+
+  def perform: (*untyped) -> void
 
   # Run the job immediately.
   #
-  # @param [Array] args               Ignored.
+  # @param [Array] args               Assigned to ActiveJob::Core#arguments.
+  # @param [Hash]  opt
   #
   # @return [Any]                     Return value of #perform.
   #
-  def perform_now: (*untyped args) -> untyped
+  def perform_now: (*untyped args, **untyped opt) -> untyped
 
   # Queue the job to be run asynchronously.
   #

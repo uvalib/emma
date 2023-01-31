@@ -68,7 +68,7 @@ class CategoryController < ApplicationController
   # List all categories.
   #
   # @see #category_index_path         Route helper
-  # @see BookshareService::Request::Titles#get_categories
+  # @see BookshareService::Action::Titles#get_categories
   #
   def index
     __log_activity(anonymous: true)

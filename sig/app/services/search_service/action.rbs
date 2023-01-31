@@ -1,0 +1,5 @@
+# Namespace for API requests.
+#
+module SearchService::Action
+  include SearchService::Action::Records
+end

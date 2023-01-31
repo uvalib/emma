@@ -4,4 +4,16 @@ class SearchService < ApiService
   DESTRUCTIVE_TESTING: bool
 
   include Search
+
+  include SearchService::Properties
+
+  include SearchService::Action
+
+  include SearchService::Common
+
+  include SearchService::Definition
+
+  include SearchService::Status
+
+  include SearchService::Testing
 end

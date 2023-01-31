@@ -65,6 +65,12 @@ module ManifestItem::StatusMethods
   #
   def item_fields: (?(ManifestItem|symHash|nil) item, ?(symHash|nil) added) -> symHash
 
+  # Indicate the item represents unsaved data.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def unsaved?: (?(ManifestItem|symHash|nil) item) -> bool
+
   # Evaluate field values for readiness.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.

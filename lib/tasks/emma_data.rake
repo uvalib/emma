@@ -41,7 +41,7 @@ namespace 'emma:data' do
       db_commit  = commit
       idx_commit = commit && production_deployment?
       subtask('emma:data:data_migrate', version: version, commit: db_commit)
-      subtask('emma:data:reindex', version: version, commit: idx_commit)
+      subtask('emma:data:reindex',      version: version, commit: idx_commit)
       EmmaStatus.api_version = version if db_commit
     else
       show "Skipping data migration for API version '#{current}'." unless quiet # TODO: I18n
@@ -114,7 +114,7 @@ namespace 'emma:data' do
     updated = commit ? 're-indexed' : 'would have been re-indexed' # TODO: I18n
     message = "#{count} #{entries} #{updated}"
     if debug && count.positive?
-      show "#{message}:", result.pluck(:submission_id)
+      show "#{message}: #{result.inspect}"
       show if failed.present?
     else
       show "#{message}."
@@ -135,64 +135,8 @@ namespace 'emma:data' do
 
   # ===========================================================================
 
-  namespace :outdated do
-
-    desc 'List databases unchanged since the last reboot'
-    task list: :load_models do
-      # @type [JobMethods] rc
-      record_classes.each do |rc|
-        if (count = rc.outdated_count)
-          $stdout.puts "#{count}\t#{rc.name}"
-        end
-      end
-    end
-
-    desc 'Remove records from select databases unchanged since the last reboot'
-    task clean: :load_models do
-      # @type [JobMethods] rc
-      record_classes.each do |rc|
-        if (count = rc.outdated_count)
-          result = rc.try(:outdated_delete)
-          if result == count
-            result = "#{result} records deleted"
-          elsif result
-            result = "response: #{result}"
-          else
-            result = 'unchanged: no :outdated_delete defined'
-          end
-          $stdout.puts "#{rc.name} - #{result}"
-        end
-      end
-    end
-
-    # desc 'Required prerequisites for tasks in this namespace.'
-    task load_models: :prerequisites do
-      require_subdirs Rails.root.join('app/models')
-    end
-
-    # =========================================================================
-    # Methods
-    # =========================================================================
-
-    public
-
-    # All ActiveRecord classes that respond to :outdated.
-    #
-    # @return [Array<Class>]
-    #
-    def record_classes(c = ActiveRecord::Base)
-      # noinspection RubyNilAnalysis, SpellCheckingInspection
-      return []  if c.name.nil? || c.name.start_with?('HABTM_')
-      return [c] if c.ancestors.include?(JobMethods)
-      c.subclasses.flat_map { |sc| record_classes(sc) }.compact
-    end
-
-  end
-
-  # ===========================================================================
-
   # desc 'Required prerequisites for tasks in this namespace.'
-  task prerequisites: %w(environment db:load_config)
+  task prerequisites: 'emma:db:prerequisites'
 
 end
 
@@ -201,6 +145,3 @@ task 'emma:api_migrate' => 'emma:data:data_migrate'
 
 # desc 'An alias for "rake emma:data:reindex".'
 task 'emma:bulk_reindex' => 'emma:data:reindex'
-
-# desc 'An alias for "rake emma:data:outdated:list".'
-task 'emma:outdated' => 'emma:data:outdated:list'

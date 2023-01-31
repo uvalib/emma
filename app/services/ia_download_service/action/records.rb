@@ -1,16 +1,16 @@
-# app/services/ia_download_service/request/records.rb
+# app/services/ia_download_service/action/records.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# IaDownloadService::Request::Records
+# IaDownloadService::Action::Records
 #
 #--
 # noinspection RubyParameterNamingConvention
 #++
-module IaDownloadService::Request::Records
+module IaDownloadService::Action::Records
 
   include IaDownloadService::Common
 

@@ -24,6 +24,8 @@ class LookupService
 
   include Lookup
 
+  include LookupService::Common
+
   # @type [Numeric]
   DEFAULT_TIMEOUT: Numeric
 

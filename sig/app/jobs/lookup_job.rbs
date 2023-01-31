@@ -1,15 +1,7 @@
 class LookupJob < ActiveJob::Base
-  include Emma::TimeMethods
+  include ApplicationJob::Methods
 
-  include Emma::Debug
-
-  extend Emma::Debug
-
-  # initialize
-  #
-  # @param [*] arguments              Assigned to ActiveJob::Core#arguments.
-  #
-  def initialize: (*untyped arguments) -> void
+  include ApplicationJob::Logging
 
   # Lookup the provided identifier(s) and transmit the result to the client.
   #
@@ -18,7 +10,7 @@ class LookupJob < ActiveJob::Base
   # * argument[1]   Array of identifier strings or Hash table of arrays.
   # * argument[2]   Options:
   #
-  # @option argument[2] [Symbol]  :role
+  # @option argument[2] [Symbol]  :job_type
   # @option argument[2] [Boolean] :no_raise
   #
   # @return [Hash]
@@ -27,24 +19,28 @@ class LookupJob < ActiveJob::Base
   # == Variations
   # +
   #
-  # @overload perform_later(services, request, opt)
+  # @overload perform_later(services, request, **opt)
   #   The "waiter" task invoked via `LookupJob.perform_later`.
   #   @param [Array<Class,LookupService::RemoteService>]  services
   #   @param [LookupService::Request]                     request
   #   @param [Hash]                                       opt
   #   @return [Hash]
   #
-  # @overload perform_later(service, request, opt, role: :worker)
+  # @overload perform_later(service, request, **opt, job_type: :worker)
   #   A "worker" task invoked from within #waiter_task.
   #   @param [Class,LookupService::RemoteService]         service
   #   @param [LookupService::Request]                     request
   #   @param [Hash]                                       opt
   #   @return [Hash]  From LookupService::RemoteService#lookup_metadata
   #
-  def perform: () -> symHash
+  def perform: (*untyped args, **untyped opt) -> symHash
 
   # @type [Hash{Symbol=>Hash{Symbol,nil=>String}}]
   JOB_STATUS: Hash[Symbol,Hash[(Symbol|nil),String]]
+
+  JOB_TYPES: symArray
+
+  JOB_OPTIONS: symArray
 
   # If *true*, each worker will send a response back to the client.  Otherwise,
   # the only response the client should expect is the one from the waiter task
@@ -67,14 +63,6 @@ class LookupJob < ActiveJob::Base
   #
   def worker_task: (JobResult record, Class|LookupService::RemoteService service, LookupService::Request items, **untyped opt) -> symHash
 
-  # The instrumentation notification which causes the waiter task to update its
-  # tally of results and send a response back to the client if all tasks have
-  # either completed or timed-out.
-  #
-  # @type [String]
-  #
-  WAITER_NOTIFICATION: String
-
   # waiter_task
   #
   # @param [JobResult]                                 record
@@ -84,29 +72,5 @@ class LookupJob < ActiveJob::Base
   #
   # @return [Hash]
   #
-  def waiter_task: (JobResult record, Class|LookupService::RemoteService services, LookupService::Request items, **untyped opt) -> symHash
-
-  def __debug_job: (*untyped args, **untyped opt) ?{ () -> untyped } -> void
-
-  # @private
-  # @type [Array<Symbol>]
-  DATA_COLUMNS: symArray
-
-  # @private
-  # @type [Symbol]
-  DEFAULT_DATA_COLUMN: Symbol
-
-  # Extract job results from the 'job_results' database table.
-  #
-  # @param [String]                  job_id   The :active_job_id column value
-  #                                             for the record to get.
-  # @param [Symbol,String,nil]       column   The data column to get; default:
-  #                                             #DEFAULT_DATA_COLUMN.
-  # @param [Array,Symbol,String,nil] path     If provided, the path into the
-  #                                             JSON hierarchy.
-  #
-  # @return [Hash]
-  # @return [nil]                     If the requested data was not found.
-  #
-  def self.job_result: (job_id: String, ?column: Symbol|String|nil, ?path: anyArray|Symbol|String|nil) -> (symHash | nil)
+  def waiter_task: (JobResult record, Array[Class|LookupService::RemoteService] services, LookupService::Request items, **untyped opt) -> symHash
 end

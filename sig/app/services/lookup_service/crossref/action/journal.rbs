@@ -1,0 +1,30 @@
+# LookupService::Crossref::Action::Work
+#
+# @see https://api.crossref.org/swagger-ui/index.html#/Journals
+#
+module LookupService::Crossref::Action::Journal
+  include Emma::Constants
+
+  include LookupService::Crossref::Common
+
+  # == GET https://api.crossref.org/journals/ISSN
+  #
+  # @param [String] issn
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Lookup::Crossref::Message::Journal]
+  #
+  # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals__issn_
+  #
+  def get_journal: (String issn, **untyped opt) -> Lookup::Crossref::Message::Journal
+
+  # == GET https://api.crossref.org/journals?query=...
+  #
+  # @param [Hash] opt
+  #
+  # @return [Lookup::Crossref::Message::JournalResults]
+  #
+  # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals
+  #
+  def get_journal_list: (**untyped opt) -> Lookup::Crossref::Message::JournalResults
+end

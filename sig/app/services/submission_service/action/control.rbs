@@ -1,0 +1,29 @@
+# SubmissionService::Action::Control
+#
+module SubmissionService::Action::Control
+  include SubmissionService::Common
+
+  include SubmissionService::Definition
+
+  # Receive a request to pause a batch job.
+  #
+  # @param [SubmissionService::ControlRequest, nil] request
+  # @param [Manifest, String, nil]           manifest
+  # @param [SubmitJob, String, nil]          job
+  # @param [Hash]                            opt      To #post_flight
+  #
+  # @return [SubmissionService::ControlResponse] The value assigned to @result.
+  #
+  def batch_pause: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
+
+  # Receive a request to resume a paused batch job.
+  #
+  # @param [SubmissionService::ControlRequest, nil] request
+  # @param [Manifest, String, nil]           manifest
+  # @param [SubmitJob, String, nil]          job
+  # @param [Hash]                            opt      To #post_flight
+  #
+  # @return [SubmissionService::ControlResponse] The value assigned to @result.
+  #
+  def batch_resume: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
+end

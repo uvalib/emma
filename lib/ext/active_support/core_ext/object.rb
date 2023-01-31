@@ -25,6 +25,35 @@ class Object
     duplicable? ? dup : self
   end
 
+  # A stand-in for #inspect for more limited output.
+  #
+  # @param [*]       item             Default: `self`.
+  # @param [Integer] max
+  #
+  # @return [String]
+  #
+  def summary(item = :self, max: 100)
+    item = self if item.is_a?(Symbol) && (item === :self)
+    case item
+      when ActiveSupport::TimeWithZone then vars = item.to_s
+      when ActiveRecord::Relation      then vars = {}
+      when Model                       then vars = item.fields
+    end
+    vars ||= item.instance_variables.presence
+    if vars.is_a?(Enumerable)
+      h    = vars.is_a?(Hash)
+      vars = vars.map { |k| [k, item.instance_variable_get(k)] }.to_h unless h
+      vars = vars.map { |k, v| "#{k}: %s" % summary(v, max: max) }
+      "#{item.class}<%s>" % vars.join(', ').truncate(max * 3)
+    elsif (str = item.inspect).size < max
+      str
+    elsif item.is_a?(Enumerable)
+      "#{item.class}(#{item.size})"
+    else
+      str.truncate(max, omission: "...#{str.last}")
+    end
+  end
+
 end
 
 __loading_end(__FILE__)

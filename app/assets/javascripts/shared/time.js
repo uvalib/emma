@@ -48,6 +48,24 @@ export const MINUTES = 1 * MINUTE;
 // ============================================================================
 
 /**
+ * Interpret *value* as a time and return milliseconds into the epoch or 0 if
+ * *value* does not express a time value.
+ *
+ * @param {*} value
+ *
+ * @returns {number}
+ */
+export function timestamp(value) {
+    let date;
+    if (typeof value === 'string') {
+        date = new Date(value.trim().replace(/\s*UTC\s*/, ''));
+    } else {
+        date = (value instanceof Date) ? value : new Date(value);
+    }
+    return date?.getTime() || 0;
+}
+
+/**
  * Interpret *value* as a time and return milliseconds into the epoch.  If
  * *value* is missing or invalid, the current time value is returned.
  *
@@ -56,13 +74,7 @@ export const MINUTES = 1 * MINUTE;
  * @returns {number}
  */
 export function timeOf(value) {
-    let result;
-    switch (typeof value) {
-        case 'object': result = value.getTime(); break;
-        case 'number': result = value;           break;
-        default:       result = Date.now();      break;
-    }
-    return result;
+    return value && timestamp(value) || Date.now();
 }
 
 /**

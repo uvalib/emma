@@ -1,0 +1,52 @@
+# SubmissionService::Common
+#
+module SubmissionService::Common
+  include ApiService::Common
+
+  include SubmissionService::Properties
+
+  # @return [SubmissionService::Request]
+  attr_accessor request: SubmissionService::Request
+
+  # @return [SubmissionService::Response, nil]
+  attr_accessor result: SubmissionService::Request | nil
+
+  # @return [Float, nil]
+  attr_accessor start_time: Float | nil
+
+  # @return [Float, nil]
+  attr_accessor end_time: Float | nil
+
+  def request: () -> SubmissionService::Request
+
+  def result: () -> (SubmissionService::Request | nil)
+
+  def start_time: () -> (Float | nil)
+
+  def end_time: () -> (Float | nil)
+
+  # Indicate whether the request sequence has begun.
+  #
+  def started?: () -> bool
+
+  # Indicate whether the request sequence has finished.
+  #
+  def finished?: () -> bool
+
+  # How long the total request sequence took.
+  #
+  # @param [Integer] precision        Digits after the decimal point.
+  #
+  # @return [Float] Wall clock time in seconds; zero if not finished.
+  #
+  def duration: (?precision: Integer) -> Float
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

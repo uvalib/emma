@@ -13,5 +13,5 @@ class Attachment::PromoteJob < ApplicationJob
   #
   # @note Currently unused
   #
-  def perform: (untyped record, untyped name, untyped data) -> untyped
+  def perform: (Model record, Symbol name, untyped data) -> void
 end

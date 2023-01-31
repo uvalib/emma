@@ -6,6 +6,14 @@
 # @see https://www.crossref.org/documentation/retrieve-metadata/rest-api/
 #
 class LookupService::Crossref < LookupService::RemoteService
+  include LookupService::Crossref::Properties
+
+  include LookupService::Crossref::Common
+
+  include LookupService::Crossref::Definition
+
+  include LookupService::Crossref::Action
+
   # Fetch results from Crossref.
   #
   # @param [LookupService::Request] req  Def.: `@request`.

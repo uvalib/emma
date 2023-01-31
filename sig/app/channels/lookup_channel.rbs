@@ -1,6 +1,6 @@
 class LookupChannel < ApplicationCable::Channel
   # @see file:javascripts/channels/lookup-channel.js *DEFAULT_ACTION*
-  DEFAULT_ACTION: String
+  DEFAULT_ACTION: Symbol
 
   # stream_name
   #
@@ -27,20 +27,10 @@ class LookupChannel < ApplicationCable::Channel
   #
   def lookup_request: (strHash payload) -> void
 
-  # Push acquired data back to the client.
-  #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
-  #
-  # @return [void]
-  #
-  # @note Currently unused.
-  #
-  #def lookup_response: (symHash payload, **untyped opt) -> void
-
   # Invoked from another thread to push an initial response back to the client.
   #
   # @param [Hash{Symbol=>*}, Array<Class>] payload
+  # @param [Boolean, nil]                  no_raise   Passed to #stream_send.
   # @param [Hash]                          opt
   #
   # @return [void]
@@ -49,11 +39,12 @@ class LookupChannel < ApplicationCable::Channel
   # This response is intentionally small; payload size is not checked to avoid
   # masking an exception due to an unexpected condition.
   #
-  def self.lookup_initial_response: ((symHash|Array[Class]) payload, **untyped opt) -> void
+  def self.initial_response: ((symHash|Array[Class]) payload, ?no_raise: bool|nil, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
   # @param [Hash{Symbol=>*}] payload
+  # @param [Boolean, nil]    no_raise   Passed to #stream_send.
   # @param [Hash]            opt
   #
   # @return [void]
@@ -61,5 +52,5 @@ class LookupChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/lookup-channel.js *_createResponse()*
   #
-  def self.lookup_response: (symHash payload, **untyped opt) -> void
+  def self.lookup_response: (symHash payload, ?no_raise: bool|nil, **untyped opt) -> void
 end

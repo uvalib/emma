@@ -32,6 +32,7 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Controls
     include BaseDecorator::Grid
     include BaseDecorator::Row
+    include BaseDecorator::Submission
     # :nocov:
   end
 

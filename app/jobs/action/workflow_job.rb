@@ -66,6 +66,7 @@ class Action::WorkflowJob < Model::WorkflowJob
     __debug_items(binding)
     super
   end
+    .tap { |meth| ruby2_keywords(meth) }
 
 end
 

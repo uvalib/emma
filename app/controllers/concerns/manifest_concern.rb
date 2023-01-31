@@ -26,6 +26,7 @@ module ManifestConcern
   include OptionsConcern
   include PaginationConcern
   include ResponseConcern
+  include SubmissionConcern
 
   # ===========================================================================
   # :section:
@@ -239,7 +240,7 @@ module ManifestConcern
   # @raise [Record::StatementInvalid]   If :id not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   def get_manifest(item = nil, **opt)
     # noinspection RubyMismatchedReturnType
@@ -298,15 +299,14 @@ module ManifestConcern
   # @param [Manifest, Hash, nil] item   If present, used as a template.
   # @param [Hash, nil]           opt    Default: `#manifest_request_params`.
   #
-  # @return [Manifest, nil]
+  # @raise [Record::StatementInvalid]   If :id not given.
+  # @raise [Record::NotFound]           If *item* was not found.
+  #
+  # @return [Manifest]
   #
   def edit_manifest(item = nil, opt = nil)
-    item, opt = manifest_request_params(item, opt)
-    get_manifest(item, **opt).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      end
-    end
+    item, _ = manifest_request_params(item, opt)
+    get_manifest(item)
   end
 
   # Persist changes to an existing manifest.
@@ -318,16 +318,12 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   def update_manifest(item = nil, opt = nil)
     item, opt = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        manifest.update!(opt)
-      end
+      manifest.update!(opt)
     end
   end
 
@@ -361,17 +357,17 @@ module ManifestConcern
     opt.reverse_merge!(model_options.all)
     ids   = extract_hash!(opt, :ids, :id).values.first
     items = [*items, *ids].map! { |item| item.try(:id) || item }
-    succeeded = []
-    failed    = []
+    success = []
+    failure = []
     Manifest.where(id: items).each do |item|
       if item.destroy
-        succeeded << item.id
+        success << item.id
       else
-        failed << item.id
+        failure << item.id
       end
     end
-    failure(:destroy, failed.uniq) if failed.present?
-    succeeded
+    failure(:destroy, failure.uniq) if failure.present?
+    success
   end
 
   # ===========================================================================
@@ -390,18 +386,14 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
   #
   def save_changes(item = nil, opt = nil)
     item, opt = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        manifest.save_changes!(**opt)
-      end
+      manifest.save_changes!(**opt)
     end
   end
 
@@ -414,18 +406,14 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *cancelUpdates()*
   #
   def cancel_changes(item = nil, opt = nil)
     item, opt = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        manifest.cancel_changes!(**opt)
-      end
+      manifest.cancel_changes!(**opt)
     end
   end
 
@@ -444,19 +432,14 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   def remit_manifest(item = nil, opt = nil)
-    item, opt = manifest_request_params(item, opt)
-    get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        # TODO: validate readiness to start transmission
-      end
-    end
+    item, _ = manifest_request_params(item, opt)
+    get_manifest(item)
   end
 
+=begin
   # Start transmission of a manifest.
   #
   # @param [Manifest, Hash, nil] item       If present, used as a template.
@@ -466,26 +449,12 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   def start_manifest(item = nil, opt = nil)
-    item, opt = manifest_request_params(item, opt)
+    item, _  = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        # TODO: start manifest transmission
-        # TODO: create Bulk record
-        #   - id          UUID      Unique identifier
-        #   - manifest_id UUID      Owning manifest
-        #   - created_at  DateTime  Start time
-        #   - updated_at  DateTime  ...
-        #   - finished_at DateTime  Time completed or canceled
-        #   - canceled    Boolean   Canceled state (manual)
-        #   - paused      Boolean   Paused state (manual)
-        #   - halted      Boolean   Halted due to failures
-        # TODO: Bulk.create(manifest_id: manifest.id, created_at: Time.now)
-      end
+      start_submission(manifest)
     end
   end
 
@@ -498,17 +467,12 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   def stop_manifest(item = nil, opt = nil)
-    item, opt = manifest_request_params(item, opt)
+    item, _  = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        # TODO: abort manifest transmission
-        # TODO: Bulk.find(manifest_id: manifest.id).update!(canceled: true)
-      end
+      stop_submission(manifest) if manifest
     end
   end
 
@@ -521,16 +485,12 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   def pause_manifest(item = nil, opt = nil)
-    item, opt = manifest_request_params(item, opt)
+    item, _  = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        # TODO: Bulk.find(manifest_id: manifest.id).update!(paused: true)
-      end
+      pause_submission(manifest)
     end
   end
 
@@ -543,18 +503,15 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]
   #
   def resume_manifest(item = nil, opt = nil)
-    item, opt = manifest_request_params(item, opt)
+    item, _  = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      if manifest.nil?
-        Log.debug { "#{__method__}: not found: item: #{item.inspect}" }
-      else
-        # TODO: Bulk.find(manifest_id: manifest.id).update!(paused: false)
-      end
+      resume_submission(manifest)
     end
   end
+=end
 
   # ===========================================================================
   # :section: ResponseConcern overrides

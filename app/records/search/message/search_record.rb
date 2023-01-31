@@ -41,7 +41,7 @@ class Search::Message::SearchRecord < Search::Api::Message
   # @param [Faraday::Response, Model, Hash, String, nil] src
   # @param [Hash, nil]                                   opt
   #
-  # @see SearchService::Request::Records#get_record
+  # @see SearchService::Action::Records#get_record
   #
   def initialize(src, opt = nil)
     opt = opt&.dup || {}

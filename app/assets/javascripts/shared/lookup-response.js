@@ -38,10 +38,8 @@ AppDebug.file('shared/lookup-response', MODULE, DEBUG);
 /**
  * @typedef {ChannelResponsePayload} LookupResponsePayload
  *
- * @property {string|string[]} [service]
- * @property {number}          [duration]
- * @property {number}          [count]
- * @property {string|string[]} [discard]
+ * @property {string|string[]}                                 [service]
+ * @property {string|string[]}                                 [discard]
  * @property {LookupResponseItemsData|LookupResponseBlendData} [data]
  */
 
@@ -73,17 +71,10 @@ export class LookupResponse extends ChannelResponse {
      * @see "LookupChannel::LookupResponse::TEMPLATE"
      */
     static TEMPLATE = deepFreeze({
-        status:   undefined,
-        service:  undefined,
-        user:     undefined,
-        time:     undefined,
-        duration: undefined,
-        count:    undefined,
-        discard:  undefined,
-        job_id:   undefined,
-        class:    undefined,
-        data:     undefined,
-        data_url: undefined,
+        status:  undefined,
+        service: undefined,
+        ...super.TEMPLATE,
+        discard: undefined,
     });
 
     // ========================================================================
@@ -107,8 +98,6 @@ export class LookupResponse extends ChannelResponse {
     get payload()     { return this._payload }
 
     get service()     { return this.payload.service }
-    get duration()    { return this.payload.duration }
-    get count()       { return this.payload.count }
     get discard()     { return this.payload.discard }
 
     /** @returns {LookupResponsePayload} */

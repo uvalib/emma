@@ -1,0 +1,164 @@
+# SubmissionService::Action::Submit
+#
+module SubmissionService::Action::Submit
+  include SubmissionService::Common
+
+  include SubmissionService::Definition
+
+  SUBMIT_STEPS_TABLE: Hash[Symbol, Hash[Symbol,String]]
+
+  SUBMIT_STEPS: symArray
+
+  # Within a given batch of ManifestItems being submitted, this value specifies
+  # how many will be transmitted together to each subsystem.
+  #
+  # If *true*, all items of a batch will be transmitted together if possible.
+  # If *false* then no slicing will be performed by default.
+  #
+  # @type [Integer, Boolean]
+  #
+  DEF_SLICE: Integer | bool
+
+  MIN_SLICE: Integer
+
+  MAX_SLICE: Integer
+
+  # Receive a request to start batch creation of EMMA entries.
+  #
+  # @param [SubmissionService::Request, nil] request
+  # @param [Manifest, String]                manifest
+  # @param [Array<ManifestItem>, nil]        items
+  # @param [Hash]                            opt      To #post_flight
+  #
+  # @return [SubmissionService::SubmitResponse] The value assigned to @result.
+  #
+  def batch_create: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::SubmitResponse
+
+  # Receive a request to start batch modification of EMMA entries.
+  #
+  # @param [SubmissionService::Request, nil] request
+  # @param [Manifest, String]                manifest
+  # @param [Array<ManifestItem>, nil]        items
+  # @param [Hash]                            opt      To #post_flight
+  #
+  # @return [SubmissionService::SubmitResponse] The value assigned to @result.
+  #
+  def batch_update: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::SubmitResponse
+
+  # Submit a set of items...
+  #
+  # @param [SubmissionService::Request] req  Def.: `@request`.
+  # @param [Hash]                       opt
+  #
+  # @return [*]
+  #
+  def submit_batch: (?SubmissionService::Request req, **untyped opt) -> (Array[symHash] | symHash)
+
+  # Submit a set of items one at a time.
+  #
+  # @param [SubmissionService::Request] req  Def.: `@request`.
+  # @param [Hash]                       opt
+  #
+  # @return [Array<Hash>]
+  #
+  def submit_by_item: (?SubmissionService::Request req, **untyped of) -> Array[symHash]
+
+  # submit_manifest_item
+  #
+  # @param [String] item
+  # @param [Hash]   opt
+  #
+  # @raise [RuntimeError] If a step failed.
+  #
+  # @return [true]        If all steps succeeded.
+  #
+  def submit_manifest_item
+    : (String item,  no_raise: true,  **untyped opt) -> (true | Hash[String,String])
+    | (String item, ?no_raise: false, **untyped opt) ->  true
+
+  #def submit_db_step
+  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
+  #  | (String item, ?no_raise: false, **untyped opt) ->  String
+
+  #def submit_cache_step
+  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
+  #  | (String item, ?no_raise: false, **untyped opt) ->  String
+
+  #def submit_promote_step
+  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
+  #  | (String item, ?no_raise: false, **untyped opt) ->  String
+
+  #def submit_index_step
+  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
+  #  | (String item, ?no_raise: false, **untyped opt) ->  String
+
+  # Submit a set of items in slices to each step.
+  #
+  # @param [SubmissionService::Request] req  Def.: `@request`.
+  # @param [Integer]                    slice
+  # @param [Hash]                       opt
+  #
+  # @return [Hash]
+  #
+  def submit_by_slice: (?SubmissionService::Request req, slice: Integer, **untyped of) -> symHash
+
+  # submit_manifest_items
+  #
+  # @param [Array<String>] items
+  # @param [Boolean]       sort
+  # @param [Boolean]       no_raise
+  # @param [Hash]          opt
+  #
+  # @return [(Array<String>, Array<Array<(String,String)>>)]
+  #
+  def submit_manifest_items: (strArray items, ?sort: bool, ?no_raise: bool, **untyped opt) -> [strArray, Array[[String,String]]]
+
+  #def submit_db_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
+
+  #def submit_cache_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
+
+  #def submit_promote_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
+
+  #def submit_index_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
+
+  # manifest_item_id
+  #
+  # @param [ManifestItem, Hash, String, Integer, *] item
+  #
+  # @return [String]    If valid
+  # @return [Hash]      If invalid
+  #
+  def manifest_item_id: (untyped item) -> (String | symHash)
+
+  # submit_manifest_item_step
+  #
+  # @param [String, Array<String>] item
+  # @param [Symbol, nil]           step
+  # @param [String, nil]           msg
+  # @param [String, nil]           err
+  # @param [Float, nil]            start_time
+  # @param [String, nil]           tid
+  # @param [String, nil]           tag
+  # @param [Symbol, nil]           meth
+  # @param [Boolean]               no_raise
+  # @param [Proc, nil]             callback
+  # @param [Numeric, Range]        delay
+  # @param [Numeric, Range]        work
+  # @param [Numeric]               scale
+  # @param [Numeric]               band
+  # @param [Numeric, Range]        range
+  # @param [Numeric, Range]        state
+  # @param [Hash]                  opt
+  #
+  # @option opt [String] manifest_id
+  # @option opt [String] job_id
+  #
+  # @return [String, Array<String>]       Success(es)
+  # @return [Hash,   Array<String,Hash>]  Failure(s)
+  #
+  def submit_manifest_item_step
+    : (String   item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil,  no_raise: true, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> (String   | Hash[String,String])
+    | (strArray item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil,  no_raise: true, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> (strArray | Hash[String,(Symbol|String)])
+    | (String   item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil, ?no_raise: bool, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> String
+    | (strArray item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil, ?no_raise: bool, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> strArray
+end

@@ -87,6 +87,12 @@ class ApiService
   #
   def self.api_logger: () -> Logger
 
+  # Represent the instance as a Hash.
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  def to_h: () -> Hash[Symbol,any]
+
   # Each subclass gets its own distinct set of service state variables.
   #
   # @param [ApiService] subclass
@@ -184,6 +190,15 @@ class ApiService
   #     functionality not directly supported by the API) are also included.
   # - If :synthetic is :only then only the "fake" methods are returned.
   #
-  def self.api_methods: (?(symHash|nil)  arg) -> Hash[Symbol,symHash]
-                      | ((Symbol|String) arg) -> (symHash | nil)
+  def self.api_methods
+    : (?(symHash|nil)  arg) -> Hash[Symbol,symHash]
+    | ((Symbol|String) arg) -> (symHash | nil)
+
+  # Create a serializer for this class and any subclasses derived from it.
+  #
+  # @param [Class] this_class
+  #
+  # @see Serializer::Base#serialize?
+  #
+  def self.make_serializers: (Class this_class) -> void
 end

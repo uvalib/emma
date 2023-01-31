@@ -121,7 +121,7 @@ export class LookupModal extends ModalDialog {
     static LOADING_CLASS        = 'loading-in-progress';
     static QUERY_PANEL_CLASS    = 'lookup-query';
     static QUERY_TERMS_CLASS    = 'terms';
-    static STATUS_PANEL_CLASS   = 'lookup-status';
+    static STATUS_DISPLAY_CLASS = 'lookup-status';
     static NOTICE_CLASS         = 'notice';
     static SERVICES_CLASS       = 'services';
     static ENTRIES_CLASS        = 'lookup-entries';
@@ -139,7 +139,7 @@ export class LookupModal extends ModalDialog {
     static LOADING              = selector(this.LOADING_CLASS);
     static QUERY_PANEL          = selector(this.QUERY_PANEL_CLASS);
     static QUERY_TERMS          = selector(this.QUERY_TERMS_CLASS);
-    static STATUS_PANEL         = selector(this.STATUS_PANEL_CLASS);
+    static STATUS_DISPLAY       = selector(this.STATUS_DISPLAY_CLASS);
     static NOTICE               = selector(this.NOTICE_CLASS);
     static SERVICES             = selector(this.SERVICES_CLASS);
     static ENTRIES              = selector(this.ENTRIES_CLASS);
@@ -281,7 +281,7 @@ export class LookupModal extends ModalDialog {
 
     /** @type {jQuery} */ $query_panel;
     /** @type {jQuery} */ $query_terms;
-    /** @type {jQuery} */ $status_panel;
+    /** @type {jQuery} */ $status_display;
     /** @type {jQuery} */ $notice;
     /** @type {jQuery} */ $services;
 
@@ -376,7 +376,7 @@ export class LookupModal extends ModalDialog {
             this.initializeDisplay(this.errorDisplay);
             this.initializeDisplay(this.diagnosticDisplay);
         } else {
-            toggleHidden(this.outputHeading, true);
+            toggleHidden(this.panelHeading,  true);
             toggleHidden(this.outputDisplay, true);
         }
     }
@@ -461,7 +461,7 @@ export class LookupModal extends ModalDialog {
      * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
      * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
      *
-     * @returns {LookupChannel}
+     * @returns {LookupChannel|undefined}
      */
     static async setupFor(toggle, show_hooks, hide_hooks) {
         const func = 'CLASS setupFor';
@@ -487,15 +487,17 @@ export class LookupModal extends ModalDialog {
     /**
      * Setup a new channel for this subclass.
      *
-     * @returns {LookupChannel}
+     * @param {ChannelCallbacks} [callbacks]
+     *
+     * @returns {LookupChannel|undefined}
      */
-    static async setupChannel() {
+    static async setupChannel(callbacks) {
         console.warn('*** LookupModal CHANNEL SETUP ***');
-        const channel  = await LookupChannel.newInstance();
-        const teardown = this.teardownChannel.bind(this);
-        appTeardown(this.CLASS_NAME, teardown);
-        // noinspection JSValidateTypes
-        return channel;
+        const channel = await LookupChannel.newInstance(callbacks);
+        if (channel) {
+            appTeardown(this.CLASS_NAME, this.teardownChannel.bind(this));
+            return channel;
+        }
     }
 
     /**
@@ -537,7 +539,7 @@ export class LookupModal extends ModalDialog {
 
         channel.setCallback(
             this.updateSearchResultsData.bind(this),
-            this.updateStatusPanel.bind(this),
+            this.updateStatusDisplay.bind(this),
             this.updateEntries.bind(this),
         );
 
@@ -690,7 +692,7 @@ export class LookupModal extends ModalDialog {
             this._error('Could not acquire lookup channel');
             return;
         }
-        this.initializeStatusPanel();
+        this.initializeStatusDisplay();
         if (this.output) {
             this.clearResultDisplay();
             this.clearErrorDisplay();
@@ -902,10 +904,10 @@ export class LookupModal extends ModalDialog {
      *
      * @returns {jQuery}
      */
-    get statusPanel() {
-        return this.$status_panel ||=
-            presence(this.container.find(this.constructor.STATUS_PANEL)) ||
-            this.makeStatusPanel().insertAfter(this.inputPrompt);
+    get statusDisplay() {
+        return this.$status_display ||=
+            presence(this.container.find(this.constructor.STATUS_DISPLAY)) ||
+            this.makeStatusDisplay().insertAfter(this.inputPrompt);
     }
 
     /**
@@ -914,7 +916,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get statusNotice() {
-        return this.$notice ||= this.statusPanel.find(this.constructor.NOTICE);
+        return this.$notice ||= this.statusDisplay.find(this.constructor.NOTICE);
     }
 
     /**
@@ -939,7 +941,7 @@ export class LookupModal extends ModalDialog {
      */
     get serviceStatuses() {
         return this.$services ||=
-            this.statusPanel.find(this.constructor.SERVICES);
+            this.statusDisplay.find(this.constructor.SERVICES);
     }
 
     /**
@@ -983,8 +985,8 @@ export class LookupModal extends ModalDialog {
      *
      * @param {LookupResponse} message
      */
-    updateStatusPanel(message) {
-        const func  = 'updateStatusPanel';
+    updateStatusDisplay(message) {
+        const func  = 'updateStatusDisplay';
         this._debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
         const srv   = message.service;
@@ -1044,8 +1046,8 @@ export class LookupModal extends ModalDialog {
      * Put the status panel into the default state with any previous service
      * status elements removed.
      */
-    initializeStatusPanel() {
-        this._debug('initializeStatusPanel');
+    initializeStatusDisplay() {
+        this._debug('initializeStatusDisplay');
         this.serviceStatuses.removeClass('invisible');
         this.clearServiceStatuses();
         this.setStatusNotice('Starting...');
@@ -1054,11 +1056,11 @@ export class LookupModal extends ModalDialog {
     /**
      * Generate the element displaying the state of the parallel requests.
      *
-     * @param {string} [css]          Default: {@link STATUS_PANEL_CLASS}
+     * @param {string} [css]          Default: {@link STATUS_DISPLAY_CLASS}
      *
      * @returns {jQuery}
      */
-    makeStatusPanel(css = this.constructor.STATUS_PANEL_CLASS) {
+    makeStatusDisplay(css = this.constructor.STATUS_DISPLAY_CLASS) {
         const $panel    = $('<div>').addClass(css);
         const $services = this.makeServiceStatuses();
         const $notice   = this.makeStatusNotice();
@@ -1726,7 +1728,7 @@ export class LookupModal extends ModalDialog {
     get entriesDisplay() {
         return this.$entries_display ||=
             presence(this.container.find(this.constructor.ENTRIES)) ||
-            this.makeEntriesDisplay().insertAfter(this.statusPanel);
+            this.makeEntriesDisplay().insertAfter(this.statusDisplay);
     }
 
     /**
@@ -2304,7 +2306,7 @@ export class LookupModal extends ModalDialog {
      *
      * @returns {jQuery}
      */
-    get outputHeading() {
+    get panelHeading() {
         return this.$heading ||= this.container.find(this.constructor.HEADING);
     }
 

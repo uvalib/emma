@@ -11,5 +11,5 @@ class Attachment::DestroyJob < ApplicationJob
   #
   # @note Currently unused
   #
-  def perform: (untyped data) -> untyped
+  def perform: (untyped data) -> void
 end

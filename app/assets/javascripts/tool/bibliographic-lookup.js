@@ -83,17 +83,20 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
     const channel = await LookupChannel.newInstance();
 
-    channel.disconnectOnPageExit(_debugging());
+    if (channel) {
 
-    channel.setCallback(updateResultDisplay);
-    channel.setErrorCallback(updateErrorDisplay);
-    channel.setDiagnosticCallback(updateDiagnosticDisplay);
+        channel.disconnectOnPageExit(_debugging());
 
-    channel.addCallback(updateStatusPanel);
+        channel.setCallback(updateResultDisplay);
+        channel.setErrorCallback(updateErrorDisplay);
+        channel.setDiagnosticCallback(updateDiagnosticDisplay);
 
-    if ($popup_button) {
-        channel.addCallback(updateSearchResultsData);
-        channel.addCallback(updateEntries);
+        channel.addCallback(updateStatusDisplay);
+
+        if ($popup_button) {
+            channel.addCallback(updateSearchResultsData);
+            channel.addCallback(updateEntries);
+        }
     }
 
     // ========================================================================
@@ -125,7 +128,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * @type {jQuery}
      */
-    let $query_panel, $query_terms, $status_panel, $notice, $services;
+    let $query_panel, $query_terms, $status_display, $notice, $services;
 
     /**
      * Result entry elements.
@@ -180,7 +183,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         initializeDisplay(errorDisplay());
         initializeDisplay(diagnosticDisplay());
     } else {
-        toggleHidden(outputHeading(), true);
+        toggleHidden(panelHeading(),  true);
         toggleHidden(outputDisplay(), true);
     }
 
@@ -298,12 +301,12 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function performRequest() {
         _debug('performRequest');
-        initializeStatusPanel();
+        initializeStatusDisplay();
         if (output) {
             clearResultDisplay();
             clearErrorDisplay();
         }
-        channel.request(getRequestData());
+        channel?.request(getRequestData());
     }
 
     // ========================================================================
@@ -511,10 +514,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * @returns {jQuery}
      */
-    function statusPanel() {
-        return $status_panel ||=
-            presence(container().find(LookupModal.STATUS_PANEL)) ||
-            makeStatusPanel().insertAfter(inputPrompt());
+    function statusDisplay() {
+        return $status_display ||=
+            presence(container().find(LookupModal.STATUS_DISPLAY)) ||
+            makeStatusDisplay().insertAfter(inputPrompt());
     }
 
     /**
@@ -526,7 +529,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function statusNotice(value, tooltip) {
-        $notice ||= statusPanel().find(LookupModal.NOTICE);
+        $notice ||= statusDisplay().find(LookupModal.NOTICE);
         if (isDefined(value)) {
             $notice.text(value);
             if (tooltip) {
@@ -546,7 +549,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function serviceStatuses(services) {
-        $services ||= statusPanel().find(LookupModal.SERVICES);
+        $services ||= statusDisplay().find(LookupModal.SERVICES);
         if (isDefined(services)) {
             _debug('serviceStatuses:', services);
             if (isMissing($services.children('label'))) {
@@ -582,8 +585,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * @param {LookupResponse} message
      */
-    function updateStatusPanel(message) {
-        const func  = 'updateStatusPanel';
+    function updateStatusDisplay(message) {
+        const func  = 'updateStatusDisplay';
         _debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
         const srv   = message.service;
@@ -643,8 +646,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Put the status panel into the default state with any previous service
      * status elements removed.
      */
-    function initializeStatusPanel() {
-        _debug('initializeStatusPanel');
+    function initializeStatusDisplay() {
+        _debug('initializeStatusDisplay');
         serviceStatuses().removeClass('invisible');
         clearServiceStatuses();
         statusNotice('Starting...');
@@ -653,11 +656,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Generate the element displaying the state of the parallel requests.
      *
-     * @param {string} [css]        Def: {@link LookupModal.STATUS_PANEL_CLASS}
+     * @param {string} [css]        Def: {@link LookupModal.STATUS_DISPLAY_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeStatusPanel(css = LookupModal.STATUS_PANEL_CLASS) {
+    function makeStatusDisplay(css = LookupModal.STATUS_DISPLAY_CLASS) {
         const $panel    = $('<div>').addClass(css);
         const $services = makeServiceStatuses();
         const $notice   = makeStatusNotice();
@@ -1915,7 +1918,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * @returns {jQuery}
      */
-    function outputHeading() {
+    function panelHeading() {
         return $heading ||= container().find(LookupModal.HEADING);
     }
 

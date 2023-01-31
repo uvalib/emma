@@ -13,6 +13,15 @@ module ManifestItem::Config
 
   public
 
+  # To avoid complications for the initial release of bulk submissions, there
+  # is no selection of destination repository -- it is implicitly 'EMMA'.
+  #
+  # To support repository selection, set this value to *true*.
+  #
+  # @type [Boolean]
+  #
+  ALLOW_NIL_REPOSITORY = false
+
   # Status values and labels for the metadata associated with the item.
   #
   # @type [Hash{Symbol=>Hash}]
@@ -20,6 +29,16 @@ module ManifestItem::Config
   # @see file:config/locales/types/manifest_item.en.yml
   #
   MANIFEST_ITEM_TYPES = I18n.t('emma.manifest_item.type').deep_freeze
+
+  # Values for each status column which indicate an unblocked status.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  STATUS_READY = {
+    file_status:  %i[complete name_only],
+    data_status:  %i[complete min_bib min_rem],
+    ready_status: %i[ready],
+  }.deep_freeze
 
   # Values for each status column which indicate an "OK" status.
   #

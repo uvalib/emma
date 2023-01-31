@@ -10,6 +10,32 @@ module JobMethods
   #
   def activity_column: () -> Symbol
 
+  # Select the records for jobs that have not yet completed.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def incomplete: () -> ActiveRecord::Relation
+
+  # Indicate how many jobs have not yet completed.
+  #
+  # @return [Integer]
+  #
+  def incomplete_count: () -> Integer
+
+  # Select the records for jobs that have not yet completed.
+  #
+  # @param [String,Symbol,Hash] sort_order
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def incomplete_list: (?sort_order: String|Symbol|anyHash) -> ActiveRecord::Relation
+
+  # Remove the records for jobs that have not yet completed.
+  #
+  # @return [Integer]
+  #
+  def incomplete_delete: () -> Integer
+
   # Select the records that have not been updated since the last reboot.
   #
   # @return [ActiveRecord::Relation]
@@ -35,6 +61,75 @@ module JobMethods
   # @return [Integer]
   #
   def outdated_delete: () -> Integer
+
+  # Times before this are considered "outdated".
+  #
+  # NOTE: This currently is only correct from within the Rails application.
+  #   For Rake tasks it's not because there needs to be a mechanism for
+  #   persisting the last boot time.
+  #
+  # @return [Time]
+  #
+  def outdated_last_reboot: () -> Time
+
+  # Select only the 'good_jobs' records involving this client request.
+  #
+  # @param [String] stream
+  #
+  # @return [ActiveRecord::Relation<LookupJobRecord>]
+  #
+  def for: (String stream) -> ActiveRecord::Relation
+
+  # SQL fragment representing the lookup service in the data.
+  #
+  # In context, this will yield a SQL string value.
+  #
+  # @return [String]
+  #
+  def service: () -> String
+
+  # SQL fragment representing the stream name in the data.
+  #
+  # In context, this will yield a SQL string value.
+  #
+  # @return [String]
+  #
+  def stream_name: () -> String
+
+  # SQL fragment representing the items being looked up.
+  #
+  # In context, this will yield a SQL JSON object.
+  #
+  # @return [String]
+  #
+  def job_service: () -> String
+
+  # SQL fragment representing the items being looked up.
+  #
+  # In context, this will yield a SQL JSON object.
+  #
+  # @return [String]
+  #
+  def job_items: () -> String
+
+  # SQL fragment representing the ActiveJob options for the record.
+  #
+  # In context, this will yield a SQL JSON object.
+  #
+  # @return [String]
+  #
+  def job_options: () -> String
+
+  # SQL fragment extracting ActiveJob arguments for the record or selecting a
+  # specific argument value.
+  #
+  # @param [Integer, nil] index
+  #
+  # In context, this will yield a SQL JSON object.
+  #
+  # @return [String]
+  #
+  def job_arguments: (?(Integer|nil) index) -> String
 
   private
 

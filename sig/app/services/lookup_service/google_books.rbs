@@ -3,6 +3,13 @@
 # @see "en.emma.service.lookup.google_books"
 #
 class LookupService::GoogleBooks < LookupService::RemoteService
+  include LookupService::GoogleBooks::Properties
+
+  include LookupService::GoogleBooks::Common
+
+  include LookupService::GoogleBooks::Definition
+
+  include LookupService::GoogleBooks::Action
 
   # Fetch results from Google Books.
   #

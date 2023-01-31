@@ -1,0 +1,174 @@
+# Methods supporting bulk submission.
+#
+module BaseDecorator::Submission
+  include BaseDecorator::Common
+
+  include BaseDecorator::Configuration
+
+  # @private
+  ACTION_ATTR: Symbol
+
+  # The CSS class selector associated with the button for displaying the
+  # usually-hidden submission modal.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/shared/modal-dialog.js ModalDialog.SELECTOR_ATTR
+  #
+  MONITOR_CLASS: String
+
+  # The JavaScript ModalDialog subclass for the bulk submission monitor popup.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/shared/modal-dialog.js ModalDialog.CLASS_ATTR
+  # @see file:javascripts/shared/submit-modal.js SubmitModal
+  #
+  MONITOR_JS_CLASS: String
+
+  # A control which engages #monitor_modal display.
+  #
+  # In addition to creating the control, this method also adds the modal to
+  # the page modals (unless it already has been added).
+  #
+  # @param [String] js                ModalDialog subclass.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #monitor_modal except for:
+  #
+  # @option opt [Hash]          :button         To #monitor_button_options.
+  # @option opt [Symbol]        :type           Passed to #make_popup_toggle.
+  # @option opt [Symbol,String] :'data-action'  Passed to #make_popup_toggle.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see LayoutHelper::PageModals#add_page_modal
+  #
+  def monitor_control: (?js: String, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A modal popup for viewing submission communication details.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #modal_popup except for:
+  #
+  # @option opt [Hash] :container     Options for #monitor_container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def monitor_modal: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The options to create a toggle button for the submission monitor popup.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @option opt [Hash] :label         Override the default button label.
+  #
+  # @return [Hash]
+  #
+  # @see PopupHelper#inline_popup
+  #
+  def monitor_button_options: (?css: String, **untyped opt) -> symHash
+
+  # monitor_cancel_options
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def monitor_cancel_options: (**untyped opt) -> symHash
+
+  # monitor_log_toggle
+  #
+  # @param [String] label
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def monitor_log_toggle: (?label: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Methods called by #monitor_container.
+  #
+  # @type [Array<Symbol>]
+  #
+  MONITOR_PARTS: symArray
+
+  # The content element of the bulk submission monitor popup.
+  #
+  # @param [String] unique            Default: `#hex_rand`.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to the outermost #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/shared/submit-modal.js *SubmitModal*
+  #
+  def monitor_container: (?unique: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # monitor_heading
+  #
+  # @param [String] unique
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def monitor_heading: (unique: String, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # monitor_status
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/shared/submit-modal.js *statusDisplay*
+  #
+  def monitor_status: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # monitor_output
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def monitor_output: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # output_part
+  #
+  # @param [String] label
+  # @param [String] css
+  # @param [Hash]   opt               Passed to the outermost #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def output_part: (String label, css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Container for bulk submission raw output, errors, and diagnostics.
+  #
+  # @param [String]  unique
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/shared/submit-modal.js *outputDisplay*
+  #
+  def monitor_log: (unique: String, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # log_part
+  #
+  # @param [String] label
+  # @param [Symbol] type
+  # @param [String] unique
+  # @param [Hash]   opt               Passed to the input area.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def log_part: (String label, type: Symbol, unique: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

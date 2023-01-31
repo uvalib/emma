@@ -1,0 +1,55 @@
+class SubmitChannel::Response < ApplicationCable::Response
+  TEMPLATE: symHash
+
+  def self.template: () -> symHash
+
+  def self.data_url_base_path: () -> String
+end
+
+class SubmitChannel::SubmitResponse < SubmitChannel::Response
+  TEMPLATE: symHash
+
+  def self.template: () -> symHash
+end
+
+class SubmitChannel::InitialResponse < SubmitChannel::SubmitResponse
+  def self.default_status: () -> String
+end
+
+class SubmitChannel::FinalResponse < SubmitChannel::SubmitResponse
+  def self.default_status: () -> String
+end
+
+class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
+  TEMPLATE: symHash
+
+  def self.template: () -> symHash
+
+  def self.default_status: () -> String
+end
+
+class SubmitChannel::ControlResponse < SubmitChannel::Response
+  TEMPLATE: symHash
+
+  # Create a new instance.
+  #
+  # @param [Symbol, *] status
+  # @param [Hash]      opt
+  #
+  def initialize: (?untyped? values, **untyped opt) -> void
+
+  def self.template: () -> symHash
+end
+
+class SubmitChannel::StatusResponse < SubmitChannel::Response
+  TEMPLATE: symHash
+
+  # Create a new instance.
+  #
+  # @param [*]    values
+  # @param [Hash] opt
+  #
+  def initialize: (?untyped? values, **untyped opt) -> void
+
+  def self.template: () -> symHash
+end

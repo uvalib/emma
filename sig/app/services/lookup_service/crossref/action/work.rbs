@@ -1,0 +1,56 @@
+# LookupService::Crossref::Action::Work
+#
+# @see https://api.crossref.org/swagger-ui/index.html#/Works
+#
+module LookupService::Crossref::Action::Work
+  include LookupService::Crossref::Common
+
+  # @private
+  QUERY_PREFIX: Hash[Symbol,String]
+
+  # @private
+  QUERY_ALIAS: symArray
+
+  # @private
+  ID_TYPES: symArray
+
+  # @private
+  AUTHOR_TYPES: symArray
+
+  # == GET https://api.crossref.org/works/DOI
+  #
+  # @param [String] doi
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Lookup::Crossref::Message::Work]
+  #
+  # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works__doi_
+  #
+  def get_work: (String doi, **untyped opt) -> Lookup::Crossref::Message::Work
+
+  # == GET https://api.crossref.org/works?query=...
+  #
+  # @param [LookupService::Request, Array<String>, String] terms
+  # @param [Hash]                                          opt
+  #
+  # @option opt [Array,Boolean,nil] :fields   Alias for :select
+  #
+  # @return [Lookup::Crossref::Message::WorkResults]
+  #
+  # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works
+  #
+  def get_work_list: ((LookupService::Request|strArray|String) terms, **untyped opt) -> Lookup::Crossref::Message::WorkResults
+
+  # Options for LookupService::Request#add_term.
+  # @private
+  OPT: symHash
+
+  # query_terms!
+  #
+  # @param [LookupService::Request, Array<String>, String] terms
+  # @param [Hash]                                          opt
+  #
+  # @return [Hash]
+  #
+  def query_terms!: ((LookupService::Request|strArray|String) terms, symHash opt) -> symHash
+end

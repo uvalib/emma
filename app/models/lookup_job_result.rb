@@ -15,28 +15,17 @@ class LookupJobResult < JobResult
   self.implicit_order_column = :updated_at
 
   # ===========================================================================
-  # :section: Class methods
+  # :section: JobMethods overrides
   # ===========================================================================
 
   public
 
-  # Return the 'job_results' records involving the given client request.
+  # The associated subclass of GoodJob::Job.
   #
-  # @param [String] stream
+  # @return [Class]
   #
-  # @return [ActiveRecord::Relation<JobResult>]
-  #
-  def self.for(stream)
-    job_key     = :active_job_id
-    job_class   = LookupJobRecord
-    job_table   = job_class.table_name
-    stream_name = job_class.stream_name
-
-    joins(<<~HEREDOC.squish).order(:updated_at)
-      INNER JOIN #{job_table}
-        ON #{job_table}.#{job_key} = #{table_name}.#{job_key}
-        WHERE #{job_table}.#{stream_name} = '#{stream}'
-    HEREDOC
+  def self.job_record_class
+    LookupJobRecord
   end
 
 end

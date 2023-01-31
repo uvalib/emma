@@ -1,19 +1,10 @@
 # A collection of identifiers transformed into PublicationIdentifier and
 # grouped by type.
 #
-# == Implementation Notes
-# This class can't be implemented as a subclass of Hash because the ActiveJob
-# serializer will fail to distinguish it from a simple Hash (and thereby fail
-# to engage its custom serializer/deserializer).
-#
-class LookupService::Response
+class LookupService::Response < ApplicationJob::Response
   include LookupService::Common
 
-  include Serializable
-
-  DEF_STATUS:  String
-
-  DEF_SERVICE: String
+  DEFAULT_SERVICE: String
 
   # Response data value entries.
   #
@@ -21,64 +12,12 @@ class LookupService::Response
   #
   TEMPLATE: symHash
 
-  # Response data values.
-  #
-  # At a minimum, this includes the entries defined by #TEMPLATE.
-  #
-  # @return [Hash]
-  #
-  attr_reader table: symHash
-
-  # Out-of-band error information.
-  #
-  # @return [Hash,nil]
-  #
-  attr_reader error: symHash | nil
-
-  # Out-of-band diagnostic information.
-  #
-  # @return [Hash,nil]
-  #
-  attr_reader diagnostic: symHash | nil
-
   # Create a new instance.
   #
   # @param [LookupService::Response, Hash, *] items
   # @param [Hash, nil]                        opt
   #
-  def initialize: (?(LookupService::Response|symHash|nil) items                   ) -> void
-                | ( (LookupService::Response|symHash|nil) items, (symHash|nil) opt) -> void
+  def initialize: ((LookupService::Response|symHash|nil) items, **untyped opt) -> void
 
-  # Return all except out-of-band information.
-  #
-  # @return [Hash]
-  #
-  def to_h: () -> anyHash
-
-  # Fetch a stored value, allowing access to #error and #diagnostic as
-  # :error and :diagnostic, respectively.
-  #
-  # @param [Symbol] key
-  #
-  # @return [*]
-  #
-  def []: (Symbol key) -> untyped
-
-  # Update a stored value, allowing access to #error and #diagnostic as
-  # :error and :diagnostic, respectively.
-  #
-  # @param [Symbol] key
-  # @param [*]      value
-  #
-  # @return [*]
-  #
-  def []=: (Symbol key, untyped value) -> untyped
-
-  # Create a new instance from *item* if it is not already an instance.
-  #
-  # @param [LookupService::Response, *] item
-  #
-  # @return [LookupService::Response]
-  #
-  def self.wrap: (untyped item) -> LookupService::Response
+  def self.template: () -> symHash
 end

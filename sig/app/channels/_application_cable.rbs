@@ -1,2 +1,4 @@
 module ApplicationCable
+  include ApplicationCable::Common
+  include ApplicationCable::Payload
 end

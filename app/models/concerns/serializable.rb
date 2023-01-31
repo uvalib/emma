@@ -203,7 +203,7 @@ module Serializable
       serializer = base.safe_const_get(:Serializer, false)
       unless serializer
         base.class_eval <<~HERE_DOC
-          class Serializer < Serializable::Base
+          class #{base.name}::Serializer < Serializable::Base
             def klass
               #{base.name}
             end

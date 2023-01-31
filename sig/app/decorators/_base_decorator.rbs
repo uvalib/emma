@@ -29,6 +29,8 @@ class BaseDecorator < Draper::Decorator
 
   include BaseDecorator::Row
 
+  include BaseDecorator::Submission
+
   # Generic path helper methods.
   #
   module SharedPathMethods

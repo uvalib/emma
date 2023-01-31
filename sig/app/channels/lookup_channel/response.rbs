@@ -1,14 +1,16 @@
 class LookupChannel::Response < ApplicationCable::Response
+  # @see file://app/assets/javascripts/shared/lookup-response.js *TEMPLATE*
   TEMPLATE: symHash
 
-  def initialize: (?untyped values, **untyped opt) -> void
-
   def self.template: () -> symHash
+
+  def self.data_url_base_path: () -> String
 end
 
-class LookupChannel::InitialResponse < LookupChannel::Response
-  DEFAULT_STATUS: String
+class LookupChannel::LookupResponse < LookupChannel::Response
+end
 
+class LookupChannel::StatusResponse < LookupChannel::Response
   # Create a new instance.
   #
   # @param [*]    values
@@ -16,13 +18,9 @@ class LookupChannel::InitialResponse < LookupChannel::Response
   #
   def initialize: (?untyped values, **untyped opt) -> void
 
-  def normalize: (untyped value) -> symHash
-
-  def self.default_status: () -> String
+  def payload_normalize: (untyped value) -> symHash
 end
 
-class LookupChannel::LookupResponse < LookupChannel::Response
-  TEMPLATE: symHash
-
-  def self.template: () -> symHash
+class LookupChannel::InitialResponse < LookupChannel::StatusResponse
+  def self.default_status: () -> String
 end

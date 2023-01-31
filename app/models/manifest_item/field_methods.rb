@@ -28,6 +28,9 @@ module ManifestItem::FieldMethods
 
   # Fields which are not directly related to :emma_data values.
   #
+  # (These are the "en.manifest_item.record" fields with 'origin' == :system
+  # plus the :file_data field.)
+  #
   # @type [Array<Symbol>]
   #
   RECORD_COLUMNS = {
@@ -37,7 +40,7 @@ module ManifestItem::FieldMethods
     delta:                 grid_rows,
     editing:      client | transient,
     deleting:     client | transient,
-    last_saved:   client | timestamp,
+    last_saved:            timestamp,
     last_lookup:  client | timestamp,
     last_submit:  client | timestamp,
     created_at:   server | timestamp,
@@ -58,8 +61,9 @@ module ManifestItem::FieldMethods
     DATE_COLS       = keys_for.(timestamp)
     TRANSIENT_COLS  = keys_for.(transient)
     CLIENT_COLS     = keys_for.(client)
-    NON_DATA_COLS   = combine.(TRANSIENT_COLS, CLIENT_COLS)
-    NON_BACKUP_COLS = combine.(ID_COLS, GRID_COLS, DATE_COLS, TRANSIENT_COLS)
+    NON_DATA_COLS   = combine.(CLIENT_COLS, TRANSIENT_COLS)
+    NON_EDIT_COLS   = combine.(ID_COLS, DATE_COLS, TRANSIENT_COLS)
+    NON_BACKUP_COLS = combine.(GRID_COLS, ID_COLS, DATE_COLS, TRANSIENT_COLS)
 
   }.keys.freeze
 

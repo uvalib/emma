@@ -1,0 +1,6 @@
+# Namespace for API requests.
+#
+module LookupService::Crossref::Action
+  include LookupService::Crossref::Action::Journal
+  include LookupService::Crossref::Action::Work
+end

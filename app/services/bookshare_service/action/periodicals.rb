@@ -1,11 +1,11 @@
-# app/services/bookshare_service/request/periodicals.rb
+# app/services/bookshare_service/action/periodicals.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# BookshareService::Request::Periodicals
+# BookshareService::Action::Periodicals
 #
 # == Usage Notes
 #
@@ -18,7 +18,7 @@ __loading_begin(__FILE__)
 #--
 # noinspection RubyParameterNamingConvention
 #++
-module BookshareService::Request::Periodicals
+module BookshareService::Action::Periodicals
 
   include BookshareService::Common
   include BookshareService::Testing

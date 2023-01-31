@@ -327,25 +327,31 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
-    IDENTITY_FIELDS  = ManifestItem::ID_COLS
-    GRID_ROWS_FIELDS = ManifestItem::GRID_COLS
-    TRANSIENT_FIELDS = ManifestItem::TRANSIENT_COLS
-    STATUS_FIELDS    = ManifestItem::STATUS.keys.freeze
-    DETAILS_FIELDS   = %i[
+    SKIPPED_FIELDS = [
+      *ManifestItem::ID_COLS,
+      *ManifestItem::GRID_COLS,
+      *ManifestItem::TRANSIENT_COLS,
+    ].freeze
+
+    DETAILS_FIELDS = %i[
       created_at
       updated_at
       last_saved
       last_lookup
       last_submit
     ].freeze
-    HIDDEN_FIELDS = (STATUS_FIELDS + DETAILS_FIELDS).freeze
+    HIDDEN_FIELDS = [*ManifestItem::STATUS_COLUMNS, *DETAILS_FIELDS].freeze
 
-    # The names of each ManifestItem column which is not displayed.
+    UNDISPLAYED_FIELDS = [
+      (:repository unless ManifestItem::ALLOW_NIL_REPOSITORY)
+    ].compact.freeze
+
+    # The names of ManifestItem columns that are not rendered.
     #
     # @return [Array<Symbol>]
     #
     def row_skipped_columns
-      IDENTITY_FIELDS + GRID_ROWS_FIELDS + TRANSIENT_FIELDS
+      super + SKIPPED_FIELDS
     end
 
     # =========================================================================
@@ -354,12 +360,20 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
-    # The names of each grid data column which is not displayed.
+    # The names of each grid data column which is not rendered.
     #
     # @return [Array<Symbol>]
     #
     def grid_row_skipped_columns
       super + HIDDEN_FIELDS
+    end
+
+    # The names of each grid data column which is rendered but not visible.
+    #
+    # @return [Array<Symbol>]
+    #
+    def grid_row_undisplayed_columns
+      super + UNDISPLAYED_FIELDS
     end
 
     # Show a button for expanding/contracting the controls column in the top
@@ -580,6 +594,7 @@ class ManifestItemDecorator < BaseDecorator
 
     S_OK           = :ok
     S_BLANK        = :blank
+    S_UNSAVED      = :unsaved
     S_FILE_NEEDED  = :file_needed
     S_FILE_MISSING = :file_missing
     S_DATA_MISSING = :data_missing
@@ -588,7 +603,8 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @type [Array<Symbol>]
     #
-    STATUS_SHOW_EDIT = [S_FILE_NEEDED, S_FILE_MISSING, S_DATA_MISSING].freeze
+    STATUS_SHOW_EDIT =
+      [S_UNSAVED, S_FILE_NEEDED, S_FILE_MISSING, S_DATA_MISSING].freeze
 
     # Statuses whose label is a <details> instead of a <div>.
     #
@@ -819,6 +835,8 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
+    # @see file:assets/javascripts/controllers/manifest-edit.js *statusData()*
+    #
     def row_indicators(item, row: nil, unique: nil, css: '.indicators', **opt)
       index    = opt.delete(:index)
       unique ||= index || hex_rand
@@ -829,7 +847,10 @@ class ManifestItemDecorator < BaseDecorator
           s_id   = "#{field}-indicator-#{id_base}"
           l_id   = "label-#{s_id}"
 
-          value  = (item[field].presence || 'missing').to_sym
+          value  = item[field]&.to_sym || :missing
+          if (field == :ready_status) && (value == :ready) && item.unsaved?
+            value = :unsaved
+          end
           s_opt  = { 'data-field': field, id: s_id, 'aria-labelledby': l_id }
           status = row_indicator(value, **s_opt)
 
@@ -1191,7 +1212,8 @@ class ManifestItemDecorator
 
   protected
 
-  FILE_INPUT_TYPES = FILE_TYPE_CFG.select { |_, v| v[:panel] }.keys.freeze
+  FILE_INPUT_TYPES =
+    FILE_TYPE_CFG.select { |_, v| v[:panel] && v[:enabled] }.keys.freeze
 
   PREPEND_CONTROLS_CLASS = 'uppy-FileInput-container-prepend'
   APPEND_CONTROLS_CLASS  = 'uppy-FileInput-container-append'
@@ -1359,7 +1381,8 @@ class ManifestItemDecorator
     stat[:upload] = object.file_uploaded?
     stat[:file]   = stat[:upload]   || object.file_literal?
     stat[:file] ||= object.file_ok?  ? S_FILE_NEEDED : S_FILE_MISSING
-    stat[:db]     = object.data_ok? || S_DATA_MISSING
+    stat[:db]     = object.unsaved? && S_UNSAVED
+    stat[:db]   ||= object.data_ok? || S_DATA_MISSING
     if Log.debug? && (skipped = stat.select { |_, v| v.nil? }).present?
       Log.debug { "#{__method__}: not handling status types: #{skipped.keys}" }
     end

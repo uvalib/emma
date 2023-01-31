@@ -1,0 +1,48 @@
+# Interface to the shared data structure which holds the definition of the API
+# requests and parameters.
+#
+module SubmissionService::Definition
+  include SubmissionService::Properties
+
+  # Find the ID of the waiter job associated with the indicated Manifest.
+  #
+  # @param [SubmitJob, Manifest, String, *] target
+  # @param [Hash]                           opt     To #jobs_for
+  #
+  # @return [String, nil]
+  #
+  def waiter_job_id: (Manifest|String|nil target, **untyped opt) -> (String | nil)
+
+  # Find the job(s) associated with the indicated Manifest.
+  #
+  # @param [SubmitJob, Manifest, String, *] target
+  # @param [Boolean]                        raise
+  #
+  # @return [ActiveRecord::Relation<SubmitJobRecord>, nil]
+  #
+  def jobs_for: (Manifest|String|nil target, ?raise: bool) -> (ActiveRecord::Relation | nil)
+
+  # Marshal data in preparation for the remote request.
+  #
+  # @param [SubmissionService::Request, Symbol, nil]           meth
+  # @param [SubmissionService::Request, Manifest, String, nil] arg
+  # @param [Array<String>, nil]                                items
+  # @param [Hash]                                              opt
+  #
+  # @return [SubmissionService::Request]   The value for @request.
+  #
+  def pre_flight: (SubmissionService::Request|Symbol|nil meth, ?(SubmissionService::Request|Manifest|String|nil) arg, ?(strArray|nil) items, **untyped opt) -> SubmissionService::Request
+
+  # Extract results from the remote response.
+  #
+  # @param [SubmissionService::Response, SubmissionService::Request, *] obj
+  # @param [Boolean] extended         If *true*, include :diagnostic.
+  #
+  # @return [SubmissionService::Response] The value for @result.
+  #
+  def post_flight: (?untyped obj, ?extended: bool, **untyped opt) -> SubmissionService::Response
+
+  private
+
+  def self.included: (Module base) -> void
+end

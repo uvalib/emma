@@ -101,4 +101,12 @@ class LookupService::Request
   # @return [LookupService::Request]
   #
   def self.wrap: (untyped item) -> LookupService::Request
+
+  # Create a serializer for this class and any subclasses derived from it.
+  #
+  # @param [Class] this_class
+  #
+  # @see Serializer::Base#serialize?
+  #
+  def self.make_serializers: (Class this_class) -> void
 end

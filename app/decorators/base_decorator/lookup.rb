@@ -130,8 +130,6 @@ module BaseDecorator::Lookup
   # @param [String] css             Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
-  # @option opt [Hash] :label       Override the default button label.
-  #
   # @return [ActiveSupport::SafeBuffer]
   #
   def lookup_commit_button(label: nil, css: '.commit', **opt)
@@ -263,7 +261,7 @@ module BaseDecorator::Lookup
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/shared/lookup-modal.js *statusPanel*
+  # @see file:app/assets/javascripts/shared/lookup-modal.js *statusDisplay*
   #
   def lookup_status(unique: nil, css: '.lookup-status', **opt)
     unique # NOTE: unused

@@ -609,23 +609,24 @@ class Ability
     can_manage(model, **with_constraints)
 
     # == Record creation
-    can :new,           model
-    can :create,        model
-    can :renew,         model
-    can :bulk_new,      model
-    can :bulk_create,   model
+    can :new,             model
+    can :create,          model
+    can :renew,           model
+    can :bulk_new,        model
+    can :bulk_create,     model
 
     # == Record workflow
-    can :remit,         model
-    can :remit_select,  model
-    can :start,         model
-    can :stop,          model
-    can :pause,         model
-    can :resume,        model
+    can :remit,           model
+    can :remit_select,    model
+    can :start,           model
+    can :stop,            model
+    can :pause,           model
+    can :resume,          model
+    can :get_job_result,  model
 
     # == Other
-    can :upload,        model
-    can :check,         model
+    can :upload,          model
+    can :check,           model
 
   end
 

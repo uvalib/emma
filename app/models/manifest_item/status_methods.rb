@@ -102,7 +102,8 @@ module ManifestItem::StatusMethods
     status = ->(stat) { symbol ? stat.to_sym : DataStatus(stat) }
     value  = added[:data_status].presence and return status.(value)
 
-    data   = item_fields(item, added).keep_if { |_, v| v || (v == false) }
+    data   = item_fields(item, added)
+    data.keep_if { |_, v| v.present? || v.is_a?(FalseClass) }
 
     fields       = ManifestItem.database_fields
     rem_fields   = fields.select { |_, v| v[:category]&.start_with?('rem') }
@@ -156,6 +157,17 @@ module ManifestItem::StatusMethods
   # ===========================================================================
 
   public
+
+  # Indicate the item represents unsaved data.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def unsaved?(item = nil)
+    item     ||= default_to_self
+    last_saved = item[:last_saved]
+    updated_at = item[:updated_at]
+    last_saved.blank? || (updated_at.present? && (last_saved < updated_at))
+  end
 
   # Evaluate field values for readiness.
   #

@@ -1,3 +1,20 @@
 class JobResult < ApplicationRecord
   include JobMethods
+
+  # :nocov:
+  #extend JobMethods
+
+  # The associated subclass of GoodJob::Job.
+  #
+  # @return [Class]
+  #
+  def self.job_record_class: () -> Class
+
+  # Return the 'job_results' records involving the given client request.
+  #
+  # @param [String] stream
+  #
+  # @return [ActiveRecord::Relation<JobResult>]
+  #
+  def self.for: (String stream) -> ActiveRecord::Relation
 end

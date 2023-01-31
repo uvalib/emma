@@ -11,10 +11,10 @@ class ManifestDecorator < BaseDecorator
     def upload_path:        (*untyped _ignored,         **untyped opt)  -> String
     def remit_select_path:  (?(Model|anyHash|nil) item, **untyped opt)  -> String
     def remit_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
-    def start_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
-    def stop_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
-    def pause_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
-    def resume_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    #def start_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    #def stop_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    #def pause_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    #def resume_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
   end
 
   # Definitions available to both classes and instances of either this
@@ -235,6 +235,12 @@ class ManifestDecorator
   #
   def grid_row_skipped_columns: () -> symArray
 
+  # The names of each grid data column which is rendered but not visible.
+  #
+  # @return [Array<Symbol>]
+  #
+  def grid_row_undisplayed_columns: () -> symArray
+
   # Show a button for expanding/contracting the controls column in the top
   # left grid cell.
   #
@@ -288,6 +294,14 @@ class ManifestDecorator
   #
   def export_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Submit this manifest.
+  #
+  # @param [Hash] opt                 Passed to #form_button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
   # Pre-defined status messages for #comm_status.
   #
   # @type [Hash{Symbol=>String}]
@@ -313,9 +327,11 @@ class ManifestDecorator
 
   # ManifestItem entries to be submitted.
   #
+  # @param [Boolean] limit            If *true* select only eligible items.
+  #
   # @return [ActiveRecord::Relation<ManifestItem>]
   #
-  def submit_items: () -> ActiveRecord::Relation
+  def submit_items: (?limit: bool) -> ActiveRecord::Relation
 
   # Primary submission controls.
   #

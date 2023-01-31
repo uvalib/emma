@@ -66,7 +66,7 @@ class PeriodicalController < ApplicationController
   # List all periodicals.
   #
   # @see #periodical_index_path       Route helper
-  # @see BookshareService::Request::Periodicals#get_periodicals
+  # @see BookshareService::Action::Periodicals#get_periodicals
   #
   def index
     __log_activity(anonymous: true)
@@ -93,8 +93,8 @@ class PeriodicalController < ApplicationController
   # Display details of an existing periodical.
   #
   # @see #periodical_path             Route helper
-  # @see BookshareService::Request::Periodicals#get_periodical
-  # @see BookshareService::Request::Periodicals#get_periodical_editions
+  # @see BookshareService::Action::Periodicals#get_periodical
+  # @see BookshareService::Action::Periodicals#get_periodical_editions
   #
   def show
     __log_activity(anonymous: true)

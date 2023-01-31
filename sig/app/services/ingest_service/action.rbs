@@ -1,0 +1,4 @@
+# Namespace for API requests.
+#
+module IngestService::Action
+end

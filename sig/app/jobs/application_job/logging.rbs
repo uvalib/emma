@@ -10,6 +10,49 @@ module ApplicationJob::Logging
 
   include Emma::Debug
 
+  #include ActiveJob::Core
+
+  #include ActiveJob::Execution
+
+  #include ActiveJob::Logging
+
+  # initialize
+  #
+  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
+  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
+  #
+  def initialize: (*untyped args, **untyped opt) -> void
+
+  # Run the job asynchronously.
+  #
+  # @note The subclass *must* define its own #perform method; that definition
+  #   *may* call this via `super` (but does not have to).
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  #
+  # @return [Any]                     Return value of #perform.
+  #
+  def perform: (*untyped args, **untyped opt) -> untyped
+
+  # Run the job immediately.
+  #
+  # @param [Array] args               Assigned to ActiveJob::Core#arguments.
+  # @param [Hash]  opt
+  #
+  # @return [Any]                     Return value of #perform.
+  #
+  def perform_now: (*untyped args, **untyped opt) -> untyped
+
+  # set_arguments
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  #
+  # @return [Array]                   New value of #arguments.
+  #
+  def set_arguments: (*untyped args, **untyped opt) -> anyArray
+
   def job_warn: (*untyped args, ?meth: Symbol|nil) { () -> String } -> (true | nil)
 
   def job_name: () -> String
@@ -17,8 +60,6 @@ module ApplicationJob::Logging
   @job_name: String
 
   def job_leader: (ApplicationJob job) -> String
-
-  @job_leader: String
 
   def job_inspect: (ApplicationJob job) -> String
 

@@ -37,6 +37,7 @@ en:
 
         ready_status:
           missing:      'This record is not ready for submission'
+          unsaved:      'This record still needs to be saved to make it submittable'
           ready:        'This record is ready for submission'
           db_fail:      'Database failure prevented completion'
           store_fail:   'File upload failure prevented completion'

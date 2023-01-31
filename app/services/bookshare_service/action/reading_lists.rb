@@ -1,11 +1,11 @@
-# app/services/bookshare_service/request/reading_lists.rb
+# app/services/bookshare_service/action/reading_lists.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# BookshareService::Request::ReadingLists
+# BookshareService::Action::ReadingLists
 #
 # == Usage Notes
 #
@@ -20,7 +20,7 @@ __loading_begin(__FILE__)
 #--
 # noinspection RubyParameterNamingConvention
 #++
-module BookshareService::Request::ReadingLists
+module BookshareService::Action::ReadingLists
 
   include BookshareService::Common
   include BookshareService::Testing

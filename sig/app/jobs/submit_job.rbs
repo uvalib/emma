@@ -1,0 +1,61 @@
+class SubmitJob < ActiveJob::Base
+  include ApplicationJob::Methods
+
+  include ApplicationJob::Logging
+
+  attr_accessor manifest_id: String
+
+  # queue_for
+  #
+  # @param [SubmitJob, Manifest, String, *] manifest
+  #
+  # @return [String, nil]
+  #
+  def self.queue_for: (untyped manifest) -> (String | nil)
+
+  # Perform submission task(s), invoking #waiter_task if the job arguments
+  # contain a SubmissionService::BatchSubmitRequest, or invoking #worker_task
+  # otherwise.
+  #
+  # Expected ActiveJob arguments:
+  # * argument[0]   request
+  # * argument[1]   options:
+  #
+  # @option argument[2] [Symbol]  :job_type
+  # @option argument[2] [Boolean] :no_raise
+  #
+  # @return [Hash]
+  #
+  def perform: (*untyped args, **untyped opt) -> symHash
+
+  # @type [Hash{Symbol=>Hash{Symbol,nil=>String}}]
+  JOB_STATUS:  Hash[Symbol,Hash[(Symbol|nil),String]]
+
+  JOB_TYPES: symArray
+
+  JOB_OPTIONS: symArray
+
+  # worker_task
+  #
+  # @param [JobResult]                             record
+  # @param [SubmissionService::BatchSubmitRequest] request
+  # @param [SubmissionService]                     service  Service instance
+  # @param [Hash]                                  opt
+  #
+  # @return [Hash]
+  #
+  # @see SubmitChannel::Response#TEMPLATE
+  #
+  def worker_task: (JobResult record, SubmissionService::Request request, service: SubmissionService, **untyped opt) -> symHash
+
+  # waiter_task
+  #
+  # @param [JobResult]                  record
+  # @param [SubmissionService::Request] request
+  # @param [SubmissionService]          service   Service instance
+  # @param [Hash]                       opt
+  #
+  # @return [Hash]
+  #
+  def waiter_task: (JobResult record, SubmissionService::Request request, service: SubmissionService, **untyped opt) -> symHash
+end

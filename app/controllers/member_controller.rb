@@ -71,7 +71,7 @@ class MemberController < ApplicationController
   # List all organization members.
   #
   # @see #member_index_path           Route helper
-  # @see BookshareService::Request::Organization#get_my_organization_members
+  # @see BookshareService::Action::Organization#get_my_organization_members
   #
   def index
     __log_activity

@@ -1,0 +1,36 @@
+# Current EMMA Unified Search API version.
+#
+# @type [String]
+#
+API_VERSION: String
+
+class Object
+  # All ActiveRecord classes that respond to :outdated.
+  #
+  # @return [Array<Class>]
+  #
+  def record_classes: (?Class c) -> Array[Class]
+
+  # list_count
+  #
+  # @param [Class]   table
+  # @param [Integer] count
+  #
+  def list_count: (Class table, Integer count) -> void
+
+  # list_records
+  #
+  # @param [Class]                  table
+  # @param [ActiveRecord::Relation] list
+  # @param [Proc]                   block   Applied to each record
+  #
+  def list_records: (Class table, ActiveRecord::Relation list) ?{ (ActiveRecord::Base) -> (ActiveRecord::Base|strArray|String) } -> void
+
+  # delete_records
+  #
+  # @param [Class]   table
+  # @param [Integer] count            Number of records to be deleted.
+  # @param [Symbol]  meth             Method on *table*.
+  #
+  def delete_records: (Class table, Integer count, Symbol meth) -> void
+end

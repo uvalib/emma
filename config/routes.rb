@@ -168,10 +168,15 @@ Rails.application.routes.draw do
   get    '/manifest/remit_select',  to: 'manifest#remit',       as: 'remit_select_manifest',  defaults: { id: 'SELECT' }
   get    '/manifest/remit/:id',     to: 'manifest#remit',       as: 'remit_manifest'
 
+  get    '/manifest/get_job_result/:job_id',       to: 'manifest#get_job_result'
+  get    '/manifest/get_job_result/:job_id/*path', to: 'manifest#get_job_result'
+
+=begin
   post   '/manifest/start/:id',     to: 'manifest#start',       as: 'start_manifest'
   post   '/manifest/stop/:id',      to: 'manifest#stop',        as: 'stop_manifest'
   post   '/manifest/pause/:id',     to: 'manifest#pause',       as: 'pause_manifest'
   post   '/manifest/resume/:id',    to: 'manifest#resume',      as: 'resume_manifest'
+=end
 
   get    '/manifest/show/:id',      to: 'manifest#show',        as: 'show_manifest'
   get    '/manifest/:id',           to: redirect('/manifest/update/%{id}'),                   via: %i[get post put patch]
@@ -393,8 +398,8 @@ Rails.application.routes.draw do
   match '/tool/md_proxy', to: 'tool#md_proxy', as: 'md_proxy', via: %i[get post]
   get   '/tool/lookup',   to: 'tool#lookup',   as: 'bib_lookup'
 
-  get   '/tool/lookup_result/:job_id',       to: 'tool#lookup_result', as: 'bib_lookup_result'
-  get   '/tool/lookup_result/:job_id/*path', to: 'tool#lookup_result', as: 'bib_lookup_result_path'
+  get   '/tool/get_job_result/:job_id',        to: 'tool#get_job_result'
+  get   '/tool/get_job_result/:job_id/*path',  to: 'tool#get_job_result'
 
 end
 

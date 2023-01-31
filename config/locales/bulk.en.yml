@@ -137,6 +137,9 @@ en:
 
             # == Pre-submit conditions
 
+            unsaved:
+              css:        'unsaved'
+              label:      'UNSAVED'
             data_missing:
               css:        'data-missing'
               label:      'DATA MISSING'
@@ -189,7 +192,7 @@ en:
             description:  |
               Provide the location of a file on the Internet
               to be acquired at the start of the bulk upload process.
-            enabled:      true
+            enabled:      false
 
           data:
             <<:           *FILE_DATA_CONTROL
@@ -212,12 +215,13 @@ en:
           - stop
           - pause
           - resume
+          - monitor
 
         counts:
           total:        'Total'
           ready:        'Ready'
           transmitting: 'Transmitting'
-          succeeded:    'Succeeded'
+          succeeded:    'Submitted'
           failed:       'Failed'
 
         auxiliary:

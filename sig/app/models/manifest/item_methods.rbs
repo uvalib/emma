@@ -1,6 +1,12 @@
 module Manifest::ItemMethods
   include Manifest::Config
 
+  # Default ManifestItem status columns for methods based on #items_hash.
+  #
+  # @type [Array<Symbol>]
+  #
+  PENDING_ITEM_COLS: symArray
+
   # Return a table of all pending ManifestItem ID's and their status values.
   #
   # @param [Manifest, String, nil] manifest   Default: self
@@ -60,7 +66,7 @@ module Manifest::ItemMethods
   #
   def pending_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
-  def updated_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
+  def completed_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
   def unsaved_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
@@ -79,6 +85,16 @@ module Manifest::ItemMethods
   # @return [ActiveRecord::Associations::Association<ManifestItem>, nil]
   #
   def items_related_to: (untyped manifest) -> (ActiveRecord::Associations::Association | nil)
+
+  # The number of ManifestItems for the given Manifest that are included in the
+  # given scope.
+  #
+  # @param [Manifest, String, *] manifest   Default: self
+  # @param [Symbol]              scope
+  #
+  # @return [Integer]
+  #
+  def related_items_count: (untyped manifest, Symbol scope) -> Integer
 
   private
 

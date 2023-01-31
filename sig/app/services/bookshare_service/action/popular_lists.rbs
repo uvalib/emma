@@ -1,0 +1,50 @@
+# BookshareService::Action::Periodicals
+#
+# == Usage Notes
+#
+# === From API section 2.10 (Popular Lists):
+# Popular Lists represents several collections of titles that are most popular
+# on Bookshare. These include the most popular titles over the last year, over
+# the last month, and by category.
+#
+module BookshareService::Action::PopularLists
+  include BookshareService::Common
+
+  include BookshareService::Testing
+
+  # == GET /v2/popularLists
+  #
+  # == 2.10.1 Get the popular lists
+  # Get the list of all available popular lists.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [String]  :start
+  # @option opt [Integer] :limit      Default: 10
+  #
+  # @return [Bs::Message::PopularListList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-popular-lists
+  #
+  # == Usage Notes
+  # This request can be made without an Authorization header.
+  #
+  def get_popular_lists: (**untyped opt) -> Bs::Message::PopularListList
+
+  # == GET /v2/popularLists/(popularListId)
+  #
+  # == 2.10.2. Get a list of popular titles
+  # Get metadata for the specified Bookshare periodical.
+  #
+  # @param [String] popularListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Bs::Message::PopularList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-popular-list
+  #
+  # == Usage Notes
+  # This request can be made without an Authorization header.
+  #
+  def get_popular_list: (popularListId: String, **untyped opt) -> Bs::Message::PopularList
+end

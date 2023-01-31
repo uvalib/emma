@@ -518,7 +518,7 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         }
 
         // noinspection CssBrowserCompatibilityForProperties
-        textarea {
+        .value {
             overscroll-behavior: contain;
         }
 
@@ -542,7 +542,7 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
                 font-weight: bold;
             }
 
-            .value.item-errors {
+            .item-errors {
 
                 height:      5vh;
 
@@ -551,7 +551,7 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
                 }
             }
 
-            .value.item-diagnostics {
+            .item-diagnostics {
                 height:      10vh;
                 white-space: pre;
 

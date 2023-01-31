@@ -1,0 +1,94 @@
+# Base class for message objects that include job information.
+#
+# == Implementation Notes
+# This class can't be implemented as a subclass of Hash because the ActiveJob
+# serializer will fail to distinguish it from a simple Hash (and thereby fail
+# to engage its custom serializer/deserializer).
+#
+# @see ApplicationCable::Response
+#
+class ApplicationJob::Response
+  include ApplicationCable::Payload
+
+  include Serializable
+
+  DEFAULT_STATUS: String | nil
+
+  TEMPLATE: symHash
+
+  # Response data values.
+  #
+  # At a minimum, this includes the entries defined by #template.
+  #
+  # @return [Hash]
+  #
+  attr_reader table: symHash
+
+  # Out-of-band error information.
+  #
+  # @return [Hash,nil]
+  #
+  attr_reader error: symHash | nil
+
+  # Out-of-band diagnostic information.
+  #
+  # @return [Hash,nil]
+  #
+  attr_reader diagnostic: symHash | nil
+
+  # Create a new instance.
+  #
+  # @param [ApplicationJob::Response, Hash, *] values
+  # @param [Hash, nil]                         opt
+  #
+  def initialize: ((ApplicationJob::Response|symHash|nil) values, ?error: symHash|nil, ?diagnostic: symHash|nil, **untyped opt) -> void
+
+  # Return all except out-of-band information.
+  #
+  # @return [Hash]
+  #
+  def to_h: () -> anyHash
+
+  # Fetch a stored value, allowing access to #error and #diagnostic as
+  # :error and :diagnostic, respectively.
+  #
+  # @param [Symbol] key
+  #
+  # @return [*]
+  #
+  def []: (Symbol key) -> untyped
+
+  # Update a stored value, allowing access to #error and #diagnostic as
+  # :error and :diagnostic, respectively.
+  #
+  # @param [Symbol] key
+  # @param [*]      value
+  #
+  # @return [*]
+  #
+  def []=: (Symbol key, untyped value) -> untyped
+
+  # Create a new instance from *item* if it is not already an instance.
+  #
+  # @param [ApplicationJob::Response, *] item
+  #
+  # @return [ApplicationJob::Response]
+  #
+  def self.wrap: (untyped item) -> ApplicationJob::Response
+
+  def self.template: () -> symHash
+
+  def self.default_status: () -> (String | nil)
+
+  def template: () -> symHash
+
+  def default_status: () -> (String | nil)
+
+  # Create a serializer for this class and any subclasses derived from it.
+  #
+  # @param [Class] this_class
+  #
+  # @see Serializer::Base#serialize?
+  #
+  def self.make_serializers: (Class this_class) -> void
+end

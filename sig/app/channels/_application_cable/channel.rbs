@@ -3,6 +3,8 @@
 class ApplicationCable::Channel < ActionCable::Channel::Base
   include ApplicationCable::Common
 
+  include ApplicationCable::Payload
+
   # stream_id
   #
   # @return [String, nil]
@@ -13,13 +15,13 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
 
   # stream_name
   #
-  # @param [String, nil] base
+  # @param [String, Symbol, nil] base
   #
   # @return [String]
   #
   # @see file:javascripts/shared/cable-channel.js *streamName()*
   #
-  def stream_name: (?(String|nil) base) -> String
+  def stream_name: (?(String|Symbol|nil) base) -> String
 
   # Setup for a subscription called when the consumer has successfully become a
   # subscriber to this channel.
@@ -53,6 +55,8 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # @param [ApplicationCable::Response] payload
   # @param [Hash]                       opt
   #
+  # @option opt [Boolean] :no_raise     Passed to #stream_send.
+  #
   # @return [void]
   #
   def stream_send: (ApplicationCable::Response payload, **untyped opt) -> void
@@ -60,11 +64,12 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # Push data to the client.
   #
   # @param [ApplicationCable::Response] payload
+  # @param [Boolean, nil]               no_raise
   # @param [Hash]                       opt
   #
   # @return [void]
   #
-  def self.stream_send: (ApplicationCable::Response payload, **untyped opt) -> void
+  def self.stream_send: (ApplicationCable::Response payload, ?no_raise: bool|nil, **untyped opt) -> void
 
   def deliver_error_message: (Exception e) -> void
 end

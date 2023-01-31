@@ -1,9 +1,7 @@
 class LookupJobResult < JobResult
-  # Return the 'job_results' records involving the given client request.
+  # The associated subclass of GoodJob::Job.
   #
-  # @param [String] stream
+  # @return [Class]
   #
-  # @return [ActiveRecord::Relation<JobResult>]
-  #
-  def self.for: (String stream) -> ActiveRecord::Relation
+  def self.job_record_class: () -> Class
 end

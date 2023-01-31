@@ -94,10 +94,10 @@ en:
             type:         number
             origin:       system
 
-          updated_item_count:
+          completed_item_count:
             min:          1
             max:          1
-            label:        'Updated Items'
+            label:        'Complete Items'
             tooltip:      |
               Items that are up-to-date.
               NOTE: This total also includes items marked for deletion.

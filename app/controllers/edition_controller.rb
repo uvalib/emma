@@ -74,7 +74,7 @@ class EditionController < ApplicationController
   # List all editions for a periodical.
   #
   # @see #edition_index_path          Route helper
-  # @see BookshareService::Request::Periodicals#get_periodical_editions
+  # @see BookshareService::Action::Periodicals#get_periodical_editions
   #
   def index
     __log_activity(anonymous: true)
@@ -102,7 +102,7 @@ class EditionController < ApplicationController
   # Display details of an existing edition.
   #
   # @see #edition_path                Route helper
-  # @see BookshareService::Request::Periodicals#get_periodical_edition
+  # @see BookshareService::Action::Periodicals#get_periodical_edition
   #
   def show
     __log_activity(anonymous: true)
@@ -197,7 +197,7 @@ class EditionController < ApplicationController
   # Download a periodical edition.
   #
   # @see #edition_download_path
-  # @see BookshareService::Request::Periodicals#download_periodical_edition
+  # @see BookshareService::Action::Periodicals#download_periodical_edition
   #
   def download
     __log_activity

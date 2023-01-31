@@ -1,0 +1,11 @@
+# Methods supporting bulk submission.
+#
+module BaseCollectionDecorator::Submission
+  include BaseDecorator::Submission
+
+  include BaseCollectionDecorator::Common
+
+  private
+
+  def self.included: (Module base) -> void
+end

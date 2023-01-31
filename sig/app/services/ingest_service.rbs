@@ -4,4 +4,16 @@ class IngestService < ApiService
   DESTRUCTIVE_TESTING: bool
 
   include Ingest
+
+  include IngestService::Properties
+
+  include IngestService::Action
+
+  include IngestService::Common
+
+  include IngestService::Definition
+
+  include IngestService::Status
+
+  include IngestService::Testing
 end

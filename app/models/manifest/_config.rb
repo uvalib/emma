@@ -13,8 +13,8 @@ module Manifest::Config
 
   public
 
-  STATUS_COLUMNS = ManifestItem::STATUS_COLUMNS
-  STATUS_VALID   = ManifestItem::STATUS_VALID
+  ITEM_STATUS_COLUMNS = ManifestItem::STATUS_COLUMNS
+  ITEM_STATUS_VALID   = ManifestItem::STATUS_VALID
 
   # ===========================================================================
   # :section:

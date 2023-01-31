@@ -1,0 +1,168 @@
+# Batch submission service.
+#
+class SubmissionService < ApiService
+  include Emma::Json
+
+  include SubmissionService::Properties
+
+  include SubmissionService::Action
+
+  include SubmissionService::Common
+
+  include SubmissionService::Definition
+
+  include SubmissionService::Status
+
+  # Initialize a new remote service instance.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Integer]       :priority   Def.: PRIORITY defined by subclass.
+  # @option opt [Float]         :timeout    Def.: TIMEOUT defined by subclass.
+  #
+  def initialize: (**untyped opt) -> void
+
+  # How important the external service is as an authority for the type(s) of
+  # identifiers it can search.
+  #
+  # @type [Integer]
+  #
+  def priority: () -> Integer
+
+  # How long to wait for a response from the external service.
+  #
+  # @return [Float]
+  #
+  def timeout: () -> Float
+
+  # Indicate whether the request has been sent and a response received.
+  #
+  def request_sent?: () -> bool
+
+  # Indicate whether the external service reported a successful request.
+  #
+  def succeeded?: () -> bool
+
+  # Indicate whether the request was not successful.
+  #
+  def failed?: () -> bool
+
+  # Indicate whether the request has been sent but a response has not yet
+  # been received.
+  #
+  def in_progress?: () -> bool
+
+  # Receive a request to start batch creation of EMMA entries.
+  #
+  # @param [SubmissionService::Request, Symbol, nil] request
+  # @param [Symbol, nil]                             meth
+  # @param [Manifest, String, nil]                   manifest
+  # @param [Hash]                                    opt
+  #
+  # @option opt [SubmitChannel] :channel
+  #
+  # @return [Array<SubmissionService::Response>]
+  # @return [Array<Hash>]
+  # @return [Array<SubmitJob,nil>]
+  # @return [SubmissionService::Response]
+  # @return [Hash]
+  # @return [SubmitJob, nil]
+  #
+  def make_request
+    : ( SubmissionService::Request request, ?meth: nil,   ?manifest: nil,             **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil] | SubmissionService::Response | symHash | SubmitJob | nil)
+    | ( Symbol                     request, ?meth: nil,    manifest: Manifest|String, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil] | SubmissionService::Response | symHash | SubmitJob | nil)
+    | (?nil                        request,  meth: Symbol, manifest: Manifest|String, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil] | SubmissionService::Response | symHash | SubmitJob | nil)
+
+  # Process submitted items.
+  #
+  # @param [SubmissionService::Request] request
+  # @param [SubmitChannel, nil]         channel
+  # @param [SubmissionService, nil]     service     Service instance
+  # @param [User, String, nil]          user        Def.: service.user
+  # @param [Integer, Boolean, nil]      batch       Def.: #DEF_BATCH_SIZE
+  # @param [Numeric, Boolean, nil]      timeout     Def.: #DEFAULT_TIMEOUT
+  # @param [Boolean]                    no_job
+  # @param [Boolean]                    no_async
+  # @param [Hash]                       opt
+  #
+  # @return [Array<SubmissionService::Response>]
+  # @return [Array<Hash>]
+  # @return [Array<SubmitJob,nil>]
+  # @return [SubmissionService::Response]
+  # @return [Hash]
+  # @return [SubmitJob, nil]
+  #
+  def self.make_request
+    : (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?batch: Integer|bool|nil, ?timeout: Numeric|bool|nil,  no_job: true,  ?no_async: bool,  **untyped opt) -> (SubmissionService::Response | Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil])
+    | (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?batch: Integer|bool|nil, ?timeout: Numeric|bool|nil, ?no_job: false,  no_async: true,  **untyped opt) -> symHash
+    | (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?batch: Integer|bool|nil, ?timeout: Numeric|bool|nil, ?no_job: false, ?no_async: false, **untyped opt) -> (SubmitJob | nil)
+
+  # Perform operation asynchronously.
+  #
+  # @param [SubmissionService::Request] request
+  # @param [Hash]                       opt     Passed to SubmitJob#perform
+  #
+  # @option opt [Numeric, nil] :timeout
+  #
+  # @return [SubmitJob, nil]
+  #
+  def self.schedule_async: (SubmissionService::Request request, **untyped opt) -> (SubmitJob | nil)
+
+  # Perform operation immediately.
+  #
+  # @param [SubmissionService::Request] request
+  # @param [Hash]                       opt     Passed to SubmitJob#perform.
+  #
+  # @return [Hash]
+  #
+  def self.schedule_sync: (SubmissionService::Request request, **untyped opt) -> symHash
+
+  # Perform operation immediately without passing through job control logic.
+  #
+  # @param [SubmissionService::Request] request
+  # @param [SubmissionService]          service
+  # @param [Hash]                       opt
+  #
+  # @return [SubmissionService::Response]
+  # @return [Array<SubmissionService::Response>]
+  # @return [Array<Hash>]
+  # @return [Array<SubmitJob,nil>]
+  #
+  def self.process: (SubmissionService::Request request, service: SubmissionService, **untyped opt) -> (SubmissionService::Response | Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil])
+
+  # Called to directly perform an operation.
+  #
+  # @param [SubmissionService::Request] request
+  # @param [Integer, Boolean]           batch
+  # @param [Hash]                       opt
+  #
+  # @return [SubmissionService::Response]
+  # @return [Array<SubmissionService::Response>]
+  # @return [Array<Hash>]
+  # @return [Array<SubmitJob,nil>]
+  #
+  def process
+    : (SubmissionService::BatchSubmitRequest request, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil])
+    | (SubmissionService::Request            request, **untyped opt) -> SubmissionService::Response
+
+  # process_batch
+  #
+  # @param [SubmissionService::BatchSubmitRequest] request
+  # @param [Hash]                                  opt
+  #
+  # @return [Array<SubmissionService::SubmitResponse>]
+  # @return [Array<Hash>]
+  # @return [Array<SubmitJob,nil>]
+  #
+  def process_batch: (SubmissionService::BatchSubmitRequest request, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil])
+
+  # process_all
+  #
+  # @param [SubmissionService::Request] request
+  # @param [Integer, Boolean]           batch
+  # @param [Hash]                       opt
+  #
+  # @return [SubmissionService::Response]
+  #
+  def process_all: (SubmissionService::Request request, **untyped opt) -> SubmissionService::Response
+end

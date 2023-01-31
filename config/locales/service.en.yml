@@ -40,6 +40,26 @@ en:
           staging:      'https://api.staging.bookshareunifiedsearch.org'
           qa:           'https://api.qa.bookshareunifiedsearch.org'
 
+      submission:
+        name:           'Batch submission service'
+
+        _template:      &SUBMISSION_SUB_SERVICE
+          name:         ~ # Short name for the service.
+          priority:     100 # high = 1; medium = 10; low = 100
+          timeout:      60 # seconds
+
+        db:
+          <<:           *SUBMISSION_SUB_SERVICE
+          name:         'Batch submission database sub-service'
+
+        aws_s3:
+          <<:           *SUBMISSION_SUB_SERVICE
+          name:         'Batch submission storage sub-service'
+
+        ingest:
+          <<:           *SUBMISSION_SUB_SERVICE
+          name:         'Batch submission indexing sub-service'
+
       lookup:
 
         _template:      &LOOKUP_SERVICE

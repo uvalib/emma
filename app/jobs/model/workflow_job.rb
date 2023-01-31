@@ -114,6 +114,7 @@ class Model::WorkflowJob < ApplicationJob
     Log.error { "#{job_name}: error: #{error.message} [#{error.class}]" }
     raise error
   end
+    .tap { |meth| ruby2_keywords(meth) }
 
 end
 

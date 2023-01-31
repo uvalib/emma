@@ -182,23 +182,28 @@ export class CableChannel extends BaseClass {
      *
      * @note {@link setCallback} is expected to have been called first.
      *
-     * @param {*} data
+     * @param {*}      data
+     * @param {string} [action]
      *
      * @returns {boolean}
      *
      * @see "LookupChannel#lookup_request"
      */
-    request(data) {
+    request(data, action = this.channelAction) {
         this._debug('request', data);
-        const request = data && this._createRequest(data).requestPayload;
-        if (isEmpty(data)) {
+        const channel = this.channel;
+        const payload = channel && data;
+        const request = payload && this._createRequest(payload).requestPayload;
+        if (!channel) {
+            this.setError('Channel not open');
+        } else if (isEmpty(data)) {
             this.setError('No input');
         } else if (isEmpty(request)) {
             this.setError('Empty payload');
         } else if (isEmpty(this._res_cb)) {
             this.setError('No request callback set');
         } else {
-            return !!this.channel.perform(this.channelAction, request);
+            return !!channel.perform(action, request);
         }
         return false;
     }
@@ -446,56 +451,63 @@ export class CableChannel extends BaseClass {
     /**
      * Attach the instance to a channel.
      *
-     * @returns {CableChannel}
+     * @param {ChannelCallbacks} [callbacks]
+     *
+     * @returns {CableChannel|undefined}
      */
-    async setupInstance() {
+    async setupInstance(callbacks) {
         this._debug('setupInstance: this =', this);
         if (this.channel) {
             this._log('_channel is already set');
         } else {
-            await this._createChannel();
+            this.channel = await this._createChannel(callbacks);
         }
-        return this;
+        return this.channel && this;
     }
 
     /**
      * Setup a channel.
      *
-     * @param {boolean} [verbose]     Default: {@link _debugging}.
+     * @param {ChannelCallbacks} [callbacks]
+     * @param {boolean}          [verbose]      Default: {@link _debugging}.
      *
-     * @returns {Subscription}
+     * @returns {Subscription|undefined}
      * @protected
      */
-    async _createChannel(verbose) {
+    async _createChannel(callbacks, verbose) {
         this._debug('_createChannel: this =', this);
         const dia            = isDefined(verbose) ? verbose : this._debugging;
         const set_diagnostic = dia ? this.setDiagnostic.bind(this) : undefined;
         const make_response  = this.response.bind(this);
         const warning        = this._warn.bind(this);
         const stream_name    = this.streamName;
-        const functions      = {
-            /**
-             * Called when there's incoming data on the websocket for this
-             * channel.
-             *
-             * @param {object} data
-             */
-            received(data) {
-                set_diagnostic?.('received', data);
-                make_response(data);
-            }
+        const functions      = { ...callbacks };
+        const received_cb    = functions.received;
+
+        /**
+         * Called when there's incoming data on the WebSocket for this channel.
+         * If a 'received' callback was supplied, it will be called first.
+         * Note that this is the raw data on the channel (before 'data_url' is
+         * resolved if in the data).
+         *
+         * @param {object} data
+         */
+        functions.received = function(data) {
+            received_cb?.(data);
+            make_response(data);
         };
+
         if (set_diagnostic) {
-            functions.initialized  = () => set_diagnostic('initialized');
-            functions.connected    = () => set_diagnostic('connected');
-            functions.disconnected = () => set_diagnostic('disconnected');
-            functions.rejected     = () => set_diagnostic('rejected');
+            functions.initialized  ||= () => set_diagnostic('initialized');
+            functions.rejected     ||= () => set_diagnostic('rejected');
+            functions.connected    ||= () => set_diagnostic('connected');
+            functions.disconnected ||= () => set_diagnostic('disconnected');
+            functions.received     ||= () => set_diagnostic('received');
         }
-        this.channel = await import('./cable-consumer').then(
+        return import('./cable-consumer').then(
             module => module.createChannel(stream_name, functions),
             reason => warning('import failed:', reason)
         );
-        return this.channel;
     }
 
     // ========================================================================
@@ -522,11 +534,14 @@ export class CableChannel extends BaseClass {
     /**
      * Return a connected instance of the channel.
      *
-     * @param {string} [stream_id]
+     * @param {string|ChannelCallbacks} [arg1]
+     * @param {ChannelCallbacks}        [arg2]
      *
-     * @returns {CableChannel}
+     * @returns {CableChannel|undefined}
      */
-    static async newInstance(stream_id) {
-        return (new this(stream_id)).setupInstance();
+    static async newInstance(arg1, arg2) {
+        const str = (typeof arg1 === 'string');
+        const [stream_id, callbacks] = str ? [arg1, arg2] : [undefined, arg1];
+        return (new this(stream_id)).setupInstance(callbacks);
     }
 }

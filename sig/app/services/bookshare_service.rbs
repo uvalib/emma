@@ -11,4 +11,16 @@ class BookshareService < ApiService
   DESTRUCTIVE_TESTING: bool
 
   include Bs
+
+  include BookshareService::Properties
+
+  include BookshareService::Action
+
+  include BookshareService::Common
+
+  include BookshareService::Definition
+
+  include BookshareService::Status
+
+  include BookshareService::Testing
 end

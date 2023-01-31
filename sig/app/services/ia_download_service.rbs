@@ -3,6 +3,16 @@
 class IaDownloadService < ApiService
   DESTRUCTIVE_TESTING: bool
 
+  include IaDownloadService::Properties
+
+  include IaDownloadService::Action
+
+  include IaDownloadService::Common
+
+  include IaDownloadService::Definition
+
+  include IaDownloadService::Status
+
   # Initialize a new instance
   #
   # @param [User, nil]   user         User instance which includes a

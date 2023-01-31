@@ -1,0 +1,5 @@
+# Namespace for API requests.
+#
+module AwsS3Service::Action
+  include AwsS3Service::Action::Submissions
+end

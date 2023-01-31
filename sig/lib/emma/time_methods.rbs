@@ -41,6 +41,12 @@ module Emma::TimeMethods
 
   HOURS: Float
 
+  # The resolution of the clock in fractional seconds.
+  #
+  # @type [Float]
+  #
+  EPSILON: Float
+
   # The current time in seconds.
   #
   # @param [Symbol] unit

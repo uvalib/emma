@@ -14,6 +14,7 @@ import { LookupRequest }                  from '../shared/lookup-request';
 import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
 import { compact, deepDup, toObject }     from '../shared/objects';
 import { randomizeName }                  from '../shared/random';
+import { timestamp }                      from '../shared/time';
 import { MultiUploader }                  from '../shared/uploader';
 import { cancelAction }                   from '../shared/url';
 import {
@@ -335,6 +336,13 @@ appSetup(MODULE, function() {
     const CELL_DISPLAY  = selector(CELL_DISPLAY_CLASS);
     const CELL_EDIT     = selector(CELL_EDIT_CLASS);
 
+    /**
+     * CSS classes for the data cell which indicate the status of the data.
+     *
+     * @type {string[]}
+     */
+    const STATUS_MARKERS = [EDITING_MARKER, CHANGED_MARKER, ERROR_MARKER];
+
     // ========================================================================
     // Variables
     // ========================================================================
@@ -507,6 +515,16 @@ appSetup(MODULE, function() {
         initializeControlButtons();
     }
 
+    /**
+     * Update the condition of the grid and controls.
+     */
+    function refreshEditForm() {
+        refreshGrid();
+        enableSave();
+        enableExport();
+        enableSubmission();
+    }
+
     // ========================================================================
     // Functions - form - buttons
     // ========================================================================
@@ -540,13 +558,13 @@ appSetup(MODULE, function() {
     /**
      * Enable/disable the Save button.
      *
-     * @param {boolean} [setting]     Default: {@link formChanged}.
+     * @param {boolean} [setting]     Default: {@link checkFormChanged}.
      *
      * @returns {jQuery|undefined}
      */
     function enableSave(setting) {
         //_debug(`enableSave: setting = "${setting}"`);
-        const enable = isDefined(setting) ? setting : formChanged();
+        const enable = isDefined(setting) ? setting : checkFormChanged();
         return enableControlButton('submit', enable);
     }
 
@@ -644,10 +662,9 @@ appSetup(MODULE, function() {
             } else if (isEmpty(data)) {
                 _error(func, 'no items present in response data');
             } else {
-                enableSave(false);
-                updateDbRowValues(data);
-                allDataCells().removeClass(STATUS_MARKERS);
                 flashMessage('Changes saved.');
+                updateRowValues(data);
+                refreshEditForm();
             }
         }
     }
@@ -770,16 +787,6 @@ appSetup(MODULE, function() {
     // ========================================================================
     // Functions - form - changed state
     // ========================================================================
-
-    /**
-     * Indicate whether the form is in a state where a save is permitted.
-     *
-     * @returns {boolean}
-     */
-    function formChanged() {
-        //_debug('formChanged');
-        return checkFormChanged();
-    }
 
     /**
      * Update form controls based on form changed state.
@@ -932,6 +939,14 @@ appSetup(MODULE, function() {
             setCellCurrentValue($cell, value);
             setCellDisplayValue($cell, value);
         });
+    }
+
+    /**
+     * Refresh all grid rows.
+     */
+    function refreshGrid() {
+        _debug('refreshGrid');
+        allDataRows().each((_, row) => refreshDataRow(row));
     }
 
     // ========================================================================
@@ -1296,13 +1311,13 @@ appSetup(MODULE, function() {
     /**
      * Prepare a single data row.
      *
-     * @param {Selector} target
+     * @param {Selector} row
      *
      * @returns {jQuery}
      */
-    function initializeDataRow(target) {
-        //_debug('initializeDataRow: target =', target);
-        const $row = dataRow(target);
+    function initializeDataRow(row) {
+        //_debug('initializeDataRow: row =', row);
+        const $row = dataRow(row);
         initializeDbRowValue($row);
         initializeDbRowDelta($row);
         initializeRowIndicators($row);
@@ -1313,11 +1328,11 @@ appSetup(MODULE, function() {
     /**
      * Setup event handlers for a single data row.
      *
-     * @param {Selector} target
+     * @param {Selector} row
      */
-    function setupRowFunctionality(target) {
-        _debug('setupRowFunctionality: target =', target);
-        const $row = dataRow(target);
+    function setupRowFunctionality(row) {
+        _debug('setupRowFunctionality: row =', row);
+        const $row = dataRow(row);
         setupLookup($row);
         setupUploader($row);
         setupRowOperations($row);
@@ -1342,6 +1357,26 @@ appSetup(MODULE, function() {
     }
 
     // ========================================================================
+    // Functions - row - refresh
+    // ========================================================================
+
+    /**
+     * Reset cell stored data values and cell displays.
+     *
+     * @param {Selector} row
+     *
+     * @returns {jQuery}
+     */
+    function refreshDataRow(row) {
+        _debug('refreshDataRow: row =', row);
+        const $row = dataRow(row);
+        clearRowChanged($row);
+        clearLookupCondition($row);
+        dataCells($row).each((_, cell) => resetDataCell(cell));
+        return $row;
+    }
+
+    // ========================================================================
     // Functions - row - controls
     // ========================================================================
 
@@ -1355,11 +1390,11 @@ appSetup(MODULE, function() {
     /**
      * Attach handlers for row control icon buttons.
      *
-     * @param {Selector} [target]     Default: all {@link rowControls}.
+     * @param {Selector} [row]     Default: all {@link rowControls}.
      */
-    function setupRowOperations(target) {
-        _debug('setupRowOperations: target =', target);
-        const $cell     = controlsColumn(target);
+    function setupRowOperations(row) {
+        _debug('setupRowOperations: row =', row);
+        const $cell     = controlsColumn(row);
         const $controls = rowControls($cell);
         handleClickAndKeypress($controls, rowOperation);
         addToControlsColumnToggle($cell);
@@ -3148,13 +3183,35 @@ appSetup(MODULE, function() {
     /**
      * Replace item row/delta values.
      *
+     * @param {Selector}            target
+     * @param {ManifestItem|number} data
+     *
+     * @see "ManifestController#row_table"
+     */
+    function updateDbRowDelta(target, data) {
+        const func = 'updateDbRowDelta';
+        const $row = $(target);
+        _debug(`${func}: target = `, target, `data =`, data);
+        if (isEmpty(data)) {
+            _debug(`${func}: no data supplied`);
+        } else if (typeof data === 'number') {
+            setDbRowValue($row, data);
+            setDbRowDelta($row, 0);
+        } else {
+            setDbRowValue($row, data.row);
+            setDbRowDelta($row, data.delta);
+        }
+    }
+
+    /**
+     * Update derived row values.
+     *
      * @param {ManifestItemTable} table
      *
      * @see "ManifestController#row_table"
      */
-    function updateDbRowValues(table) {
-        const func = 'updateDbRowValues';
-        _debug(`${func}: table =`, table);
+    function updateRowValues(table) {
+        const func = 'updateRowValues'; _debug(`${func}: table =`, table);
         allDataRows().each((_, row) => {
             const $row  = $(row);
             const db_id = databaseId($row);
@@ -3163,12 +3220,9 @@ appSetup(MODULE, function() {
                 _debug(`${func}: no db_id for $row =`, $row);
             } else if (isEmpty(entry)) {
                 _debug(`${func}: no response data for db_id ${db_id}`);
-            } else if (typeof entry === 'number') {
-                setDbRowValue($row, entry);
-                setDbRowDelta($row, 0);
             } else {
-                setDbRowValue($row, entry.row);
-                setDbRowDelta($row, entry.delta);
+                updateDbRowDelta($row, entry);
+                updateRowIndicators($row, entry);
             }
         });
     }
@@ -3205,9 +3259,26 @@ appSetup(MODULE, function() {
      * @param {object|undefined} data
      *
      * @returns {object}
+     *
+     * @see "ManifestItemDecorator#row_indicators"
      */
     function statusData(data) {
         if (isEmpty(data)) { return {} }
+        if (data.hasOwnProperty('last_saved')) {
+            if (data.ready_status === 'ready') {
+                const last_saved = timestamp(data.last_saved);
+                const updated_at = timestamp(data.updated_at);
+                if (!last_saved || (last_saved < updated_at)) {
+                    data.ready_status = 'unsaved';
+                }
+            } else if (!data.hasOwnProperty('ready_status')) {
+                const last_saved = timestamp(data.last_saved);
+                const updated_at = timestamp(data.updated_at);
+                if (last_saved > updated_at) {
+                    data.ready_status = 'ready';
+                }
+            }
+        }
         return compact(toObject(STATUS_TYPE_VALUES, t => presence(data[t])));
     }
 
@@ -3398,25 +3469,25 @@ appSetup(MODULE, function() {
      *
      * An undefined result means that the row hasn't been evaluated.
      *
-     * @param {Selector} target
+     * @param {Selector} row
      *
      * @returns {boolean|undefined}
      */
-    function rowChanged(target) {
-        return dataRow(target).data(ROW_CHANGED_DATA);
+    function rowChanged(row) {
+        return dataRow(row).data(ROW_CHANGED_DATA);
     }
 
     /**
      * Set the related data row's changed state.
      *
-     * @param {Selector} target
+     * @param {Selector} row
      * @param {boolean}  [setting]    If *false*, set as unchanged.
      *
      * @returns {boolean}
      */
-    function setRowChanged(target, setting) {
-        //_debug(`setRowChanged: "${setting}"; target =`, target);
-        const $row    = dataRow(target)
+    function setRowChanged(row, setting) {
+        //_debug(`setRowChanged: "${setting}"; row =`, row);
+        const $row    = dataRow(row)
         const changed = (setting !== false);
         $row.data(ROW_CHANGED_DATA, changed);
         return changed;
@@ -3425,14 +3496,14 @@ appSetup(MODULE, function() {
     /**
      * Modify the related data row's changed state.
      *
-     * @param {Selector} target
+     * @param {Selector} row
      * @param {boolean}  [setting]    Default: {@link evaluateRowChanged}
      *
      * @returns {boolean}
      */
-    function updateRowChanged(target, setting) {
-        _debug(`updateRowChanged: "${setting}"; target =`, target);
-        const $row   = dataRow(target)
+    function updateRowChanged(row, setting) {
+        _debug(`updateRowChanged: "${setting}"; row =`, row);
+        const $row   = dataRow(row)
         const change = isDefined(setting) ? setting : evaluateRowChanged($row);
         setRowChanged($row, change);
         $row.toggleClass(CHANGED_MARKER, change);
@@ -3444,13 +3515,13 @@ appSetup(MODULE, function() {
      *
      * (No changes are made to element attributes or data.)
      *
-     * @param {Selector} target
+     * @param {Selector} row
      *
      * @returns {boolean}
      */
-    function evaluateRowChanged(target) {
-        _debug('evaluateRowChanged: target =', target);
-        const $row    = dataRow(target);
+    function evaluateRowChanged(row) {
+        _debug('evaluateRowChanged: row =', row);
+        const $row    = dataRow(row);
         const changed = (change, cell) => evaluateCellChanged(cell) || change;
         return dataCells($row).toArray().reduce(changed, false);
     }
@@ -3461,13 +3532,13 @@ appSetup(MODULE, function() {
      *
      * (No changes are made to element attributes or data.)
      *
-     * @param {Selector} target
+     * @param {Selector} row
      *
      * @returns {boolean}
      */
-    function checkRowChanged(target) {
-        //_debug('checkRowChanged: target =', target);
-        const $row  = dataRow(target);
+    function checkRowChanged(row) {
+        //_debug('checkRowChanged: row =', row);
+        const $row  = dataRow(row);
         let changed = rowChanged($row);
         if (notDefined(changed)) {
             const check = (change, cell) => change || cellChanged(cell);
@@ -3476,16 +3547,19 @@ appSetup(MODULE, function() {
         return changed;
     }
 
+    /**
+     * Remove the original value data item for the associated cell.
+     *
+     * @param {Selector} row
+     */
+    function clearRowChanged(row) {
+        //_debug('clearRowChanged: row =', row);
+        dataRow(row).removeData(ROW_CHANGED_DATA);
+    }
+
     // ========================================================================
     // Functions - row - creation
     // ========================================================================
-
-    /**
-     * CSS classes for the data cell which indicate the status of the data.
-     *
-     * @type {string[]}
-     */
-    const STATUS_MARKERS = [EDITING_MARKER, CHANGED_MARKER, ERROR_MARKER];
 
     /**
      * Hidden row which is used as a template when there are no actual data
@@ -3702,10 +3776,42 @@ appSetup(MODULE, function() {
      */
     function initializeDataCell(cell) {
         //_debug('initializeDataCell: cell =', cell);
-        const $cell = dataCell(cell).removeClass(STATUS_MARKERS);
+        const $cell = dataCell(cell);
         turnOffAutocompleteIn($cell);
         clearCellDisplay($cell);
         clearCellEdit($cell);
+        refreshDataCell($cell);
+        return $cell;
+    }
+
+    /**
+     * Reset cell stored data values and refresh cell display.
+     *
+     * @param {Selector} cell
+     *
+     * @returns {jQuery}
+     */
+    function resetDataCell(cell) {
+        //_debug('resetDataCell: cell =', cell);
+        const $cell = dataCell(cell);
+        clearCellOriginalValue($cell);
+        clearCellCurrentValue($cell);
+        clearCellChanged($cell);
+        refreshDataCell($cell);
+        return $cell;
+    }
+
+    /**
+     * Refresh cell display.
+     *
+     * @param {Selector} cell
+     *
+     * @returns {jQuery}
+     */
+    function refreshDataCell(cell) {
+        //_debug('refreshDataCell: cell =', cell);
+        const $cell = dataCell(cell);
+        $cell.removeClass(STATUS_MARKERS);
         updateCellDisplayValue($cell);
         return $cell;
     }
@@ -3986,6 +4092,16 @@ appSetup(MODULE, function() {
         return cellOriginalValue($cell) || setCellOriginalValue($cell, value);
     }
 
+    /**
+     * Remove the original value data item for the associated cell.
+     *
+     * @param {Selector} cell
+     */
+    function clearCellOriginalValue(cell) {
+        //_debug('clearCellOriginalValue: cell =', cell);
+        dataCell(cell).removeData(ORIGINAL_VALUE_DATA);
+    }
+
     // ========================================================================
     // Functions - cell - current value
     // ========================================================================
@@ -4036,6 +4152,16 @@ appSetup(MODULE, function() {
         //_debug('initCellCurrentValue: value =', value, cell);
         const $cell = dataCell(cell);
         return cellCurrentValue($cell) || setCellCurrentValue($cell, value);
+    }
+
+    /**
+     * Remove the current value data item for the associated cell.
+     *
+     * @param {Selector} cell
+     */
+    function clearCellCurrentValue(cell) {
+        //_debug('clearCellCurrentValue: cell =', cell);
+        dataCell(cell).removeData(CURRENT_VALUE_DATA);
     }
 
     // ========================================================================
@@ -4508,7 +4634,6 @@ appSetup(MODULE, function() {
                 const $row = isPresent(record) && rowForDatabaseId(id, $rows);
                 if ($row) { updateRowIndicators($row, record) }
             });
-            enableSave(true);
         }
 
         // Error message(s) to display.

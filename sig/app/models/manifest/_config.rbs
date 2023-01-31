@@ -1,7 +1,7 @@
 module Manifest::Config
-  STATUS_COLUMNS: symArray
+  ITEM_STATUS_COLUMNS: symArray
 
-  STATUS_VALID: Hash[Symbol,symArray]
+  ITEM_STATUS_VALID: Hash[Symbol,symArray]
 
   # Used by methods defined in modules to allow the primary argument to be
   # missing/nil when used as a record instance method.

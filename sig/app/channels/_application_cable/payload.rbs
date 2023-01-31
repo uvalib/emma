@@ -1,0 +1,71 @@
+# Common logic for all channels.
+#
+module ApplicationCable::Payload
+  include Emma::Common
+
+  # @type [Array<Symbol>]
+  CHANNEL_PARAMS: symArray
+
+  # @see https://www.postgresql.org/docs/11/sql-notify.html
+  MAX_PAYLOAD_SIZE: Integer
+
+  # Determine the serialized size of the given item.
+  #
+  # @param [*] payload
+  #
+  # @return [Integer]
+  #
+  def payload_size: (untyped payload) -> Integer
+
+  # If the payload would cause a PG::InvalidValueException return its size.
+  #
+  # @param [*] payload
+  #
+  # @return [Integer]                 The size that would result in failure.
+  # @return [nil]                     The payload is not too large.
+  #
+  def invalid_payload_size: (untyped payload) -> (Integer | nil)
+
+  # template
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def template: () -> symHash
+
+  # default_status
+  #
+  # @return [String, nil]
+  #
+  def default_status: () -> (String | nil)
+
+  # Hash keys which should not be included with the data stored in the class
+  # instance.
+  #
+  # @type [Array<Symbol>]
+  #
+  def ignored_keys: () -> symArray
+
+  # Setup stored request values.
+  #
+  # @param [Hash, nil] store
+  # @param [*]         values
+  # @param [Hash]      opt
+  #
+  def set_payload: (?(symHash|nil) store, ?untyped values, **untyped opt) -> symHash
+
+  # normalize
+  #
+  # @param [*] value
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # == Implementation Notes
+  # Message classes based on a Hash data item require #to_h in order to avoid
+  # propagating out-of-band data.
+  #
+  def payload_normalize: (untyped value, ?except: symArray|Symbol|nil) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

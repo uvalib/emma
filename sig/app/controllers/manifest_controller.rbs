@@ -125,29 +125,39 @@ class ManifestController < ApplicationController
   #
   def remit: () -> void
 
+  # == GET /manifest/get_job_result/:job_id[?column=(output|diagnostic|error)]
+  # == GET /manifest/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
+  #
+  # Return a value from the 'job_results' table, where :job_id is the value for
+  # the matching :active_job_id.
+  #
+  # @see ApplicationJob::Methods#job_result
+  #
+  def get_job_result: () -> void
+
   # == POST /manifest/start/:id
   #
   # @see #start_manifest_path         Route helper
   #
-  def start: () -> void
+  #def start: () -> void
 
   # == POST /manifest/stop/:id
   #
   # @see #stop_manifest_path          Route helper
   #
-  def stop: () -> void
+  #def stop: () -> void
 
   # == POST /manifest/pause/:id
   #
   # @see #pause_manifest_path         Route helper
   #
-  def pause: () -> void
+  #def pause: () -> void
 
   # == POST /manifest/resume/:id
   #
   # @see #resume_manifest_path        Route helper
   #
-  def resume: () -> void
+  #def resume: () -> void
 
   # Indicate whether URL parameters require that a menu should be shown rather
   # than operating on an explicit set of identifiers.
@@ -167,15 +177,24 @@ class ManifestController < ApplicationController
   #
   def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
 
+  # ManifestItem values returned upon save.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *updateRowValues()*
+  #
+  ITEM_SAVE_COLS: symArray
+
   # A table of the Manifest's items.
   #
-  # @param [Manifest, nil]       item
+  # @param [Manifest, nil]       manifest
   # @param [Symbol, String, nil] wrap
-  # @param [Hash]                opt            Passed to Manifest#items_hash.
+  # @param [Array<Symbol>]       columns        Passed to Manifest#items_hash.
   #
   # @return [Hash{Symbol=>Hash{Integer=>Hash}}]
   # @return [Hash{Integer=>Hash}]               If *wrap* is *nil*.
   #
-  def save_response: (?(Manifest|nil) item, ?wrap: Symbol|String, **untyped opt) -> Hash[Symbol, Hash[Integer,symHash]]
-                   | (?(Manifest|nil) item,  wrap: nil,           **untyped opt) -> Hash[Integer,symHash]
+  def save_response
+    : (?(Manifest|nil) manifest, ?wrap: Symbol|String, ?columns: symArray) -> Hash[Symbol, Hash[Integer,symHash]]
+    | (?(Manifest|nil) manifest,  wrap: nil,           ?columns: symArray) -> Hash[Integer,symHash]
 end

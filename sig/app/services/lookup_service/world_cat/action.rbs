@@ -1,0 +1,5 @@
+# Namespace for API requests.
+#
+module LookupService::WorldCat::Action
+  include LookupService::WorldCat::Action::Records
+end

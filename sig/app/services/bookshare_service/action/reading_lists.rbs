@@ -1,0 +1,194 @@
+# BookshareService::Action::ReadingLists
+#
+# == Usage Notes
+#
+# === From API section 2.3 (Reading Lists):
+# Reading lists are a way for members to organize titles. Reading lists can be
+# created and deleted by individual members and sponsors, and titles can be
+# added and removed from them. For sponsors, these lists can also be shared
+# with student members to serve as a type of class syllabus. To do so, a
+# sponsor can add a member from their organization to the reading list, and
+# that member will be able to use that list but will not be able to modify it.
+#
+module BookshareService::Action::ReadingLists
+  include BookshareService::Common
+
+  include BookshareService::Testing
+
+  # == GET /v2/mylists
+  #
+  # == 2.3.1. Get my reading lists
+  # Get the reading lists visible to the current user (private lists, shared
+  # lists, or organization lists that the user is subscribed to).
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [String]                   :start
+  # @option opt [Integer]                  :limit       Default: 10
+  # @option opt [BsMyReadingListSortOrder] :sortOrder   Default: 'name'
+  # @option opt [BsSortDirection]          :direction   Default: 'asc'
+  #
+  # @return [Bs::Message::ReadingListList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-my-readinglists-list
+  #
+  def get_my_reading_lists: (**untyped opt) -> Bs::Message::ReadingListList
+
+  # == POST /v2/mylists
+  #
+  # == 2.3.2. Create a reading list
+  # Create an empty reading list that will be owned by the current user, with
+  # the properties provided.
+  #
+  # @param [String]   name
+  # @param [BsAccess] access
+  # @param [Hash]     opt             Passed to #api.
+  #
+  # @option opt [String] :description
+  #
+  # @return [Bs::Message::ReadingList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-create
+  #
+  def create_my_reading_list: (name: String, access: BsAccess, **untyped opt) -> Bs::Message::ReadingList
+
+  # == PUT /v2/mylists/(readingListId)/subscription
+  #
+  # == 2.3.8. Subscribe to or unsubscribe from a reading list
+  # Subscribe to a reading list (that the user does not own).
+  #
+  # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [Boolean] :enabled    Default: *true*.
+  #
+  # @return [Bs::Message::ReadingListUserView]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
+  #
+  def subscribe_my_reading_list: (readingListId: String, **untyped opt) -> Bs::Message::ReadingListUserView
+
+  # == PUT /v2/mylists/(readingListId)/subscription
+  #
+  # == 2.3.8. Subscribe to or unsubscribe from a reading list
+  # Unsubscribe from a reading list (that the user does not own).
+  #
+  # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [Boolean] :enabled    Default: *false*.
+  #
+  # @return [Bs::Message::ReadingListUserView]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
+  #
+  def unsubscribe_my_reading_list: (readingListId: String, **untyped opt) -> Bs::Message::ReadingListUserView
+
+  # == GET /v2/lists
+  #
+  # == 2.3.3. Search for reading lists
+  # Search for reading lists by keyword.
+  #
+  # Whereas "/v2/mylists" only works for "emmadso@bookshare.org", this call
+  # works for "emmacollection@bookshare.org" (and for "emmadso" it yields the
+  # same result as "/v2/mylists").
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [String]                   :keyword
+  # @option opt [BsListAccess]             :access
+  # @option opt [String]                   :start
+  # @option opt [Integer]                  :limit       Default: 10
+  # @option opt [BsMyReadingListSortOrder] :sortOrder   Default: 'name'
+  # @option opt [BsSortDirection]          :direction   Default: 'asc'
+  #
+  # @return [Bs::Message::ReadingListList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-readinglists-list
+  #
+  def get_reading_lists_list: (**untyped opt) -> Bs::Message::ReadingListList
+
+  # == GET /v2/lists/(readingListId)
+  #
+  # Get metadata for an existing reading list.
+  #
+  # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Bs::Message::ReadingListUserView]
+  #
+  # @note This is not a real Bookshare API call.
+  #
+  def get_reading_list: (readingListId: String, **untyped opt) -> Bs::Message::ReadingListUserView
+
+  # == PUT /v2/lists/(readingListId)
+  #
+  # == 2.3.4. Edit reading list metadata
+  # Edit the metadata of an existing reading list.
+  #
+  # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [String]   :name
+  # @option opt [String]   :description
+  # @option opt [BsAccess] :access
+  #
+  # @return [Bs::Message::ReadingList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-edit-metadata
+  #
+  def update_reading_list: (readingListId: String, **untyped opt) -> Bs::Message::ReadingList
+
+  # == GET /v2/lists/(readingListId)/titles
+  #
+  # == 2.3.5. Get reading list titles
+  # Get a listing of the Bookshare titles in the specified reading list.
+  #
+  # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [String]                 :start
+  # @option opt [Integer]                :limit       Default: 10
+  # @option opt [BsReadingListSortOrder] :sortOrder   Default: 'title'
+  # @option opt [BsSortDirection]        :direction   Default: 'asc'
+  #
+  # @return [Bs::Message::ReadingListTitlesList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-readinglist-titles
+  #
+  def get_reading_list_titles: (readingListId: String, **untyped opt) -> Bs::Message::ReadingListTitlesList
+
+  # == POST /v2/lists/(readingListId)/titles
+  #
+  # == 2.3.6. Add a title to a reading list
+  # Add a title to the specified reading list. The reading list must be one
+  # that the user created, or that they have rights to as an organization
+  # sponsor or membership assistant.
+  #
+  # @param [String] readingListId
+  # @param [String] bookshareId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Bs::Message::ReadingListTitlesList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-title
+  #
+  def create_reading_list_title: (readingListId: String, bookshareId: String, **untyped opt) -> Bs::Message::ReadingListTitlesList
+
+  # == DELETE /v2/lists/(readingListId)/titles/(bookshareId)
+  #
+  # == 2.3.7. Remove a title from a reading list
+  # Remove a title from the specified reading list. The reading list must be
+  # one that the user created, or that they have rights to as an organization
+  # sponsor or membership assistant.
+  #
+  # @param [String] readingListId
+  # @param [String] bookshareId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Bs::Message::ReadingListTitlesList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_delete-readinglist-title
+  #
+  def remove_reading_list_title: (readingListId: String, bookshareId: String, **untyped opt) -> Bs::Message::ReadingListTitlesList
+end

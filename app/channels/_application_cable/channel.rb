@@ -10,12 +10,37 @@ __loading_begin(__FILE__)
 class ApplicationCable::Channel < ActionCable::Channel::Base
 
   include ApplicationCable::Common
+  include ApplicationCable::Payload
 
   # ===========================================================================
   # :section: Exceptions
   # ===========================================================================
 
   rescue_from 'MyError', with: :deliver_error_message # TODO: ???
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  if DEBUG_CABLE
+
+    before_subscribe do |*args|
+      __debug_cable(*args) { "--->>> CABLE SUB #{params.inspect}" }
+    end
+
+    after_subscribe do |*args|
+      __debug_cable(*args) { "<<<--- CABLE SUB #{params.inspect}" }
+    end
+
+    before_unsubscribe do |*args|
+      __debug_cable(*args) { "--->>> CABLE UNSUB #{params.inspect}" }
+    end
+
+    after_unsubscribe do |*args|
+      __debug_cable(*args) { "<<<--- CABLE UNSUB #{params.inspect}" }
+    end
+
+  end
 
   # ===========================================================================
   # :section:
@@ -35,7 +60,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
 
   # stream_name
   #
-  # @param [String, nil] base
+  # @param [String, Symbol, nil] base
   #
   # @return [String]
   #
@@ -60,6 +85,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   def subscribed
     __debug_cable(__method__)
+    reject unless Ability.new(current_user).can?(:get_job_result, Manifest)
     stream_from stream_name
   end
 
@@ -88,7 +114,9 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # @param [Hash{Symbol=>*}]
   #
   def stream_recv(payload, **opt)
-    opt[:meth] ||= __method__
+    opt[:stream_name] ||= stream_name
+    opt[:user]        ||= current_user&.to_s
+    opt[:meth]        ||= __method__
     normalize_inbound(payload, **opt)
   end
 
@@ -97,11 +125,13 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # @param [ApplicationCable::Response] payload
   # @param [Hash]                       opt
   #
+  # @option opt [Boolean] :no_raise     Passed to #stream_send.
+  #
   # @return [void]
   #
   def stream_send(payload, **opt)
     opt[:stream_name] ||= stream_name
-    opt[:user]        ||= current_user
+    opt[:user]        ||= current_user&.to_s
     opt[:meth]        ||= __method__
     self.class.stream_send(payload, **opt)
   end
@@ -115,17 +145,22 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # Push data to the client.
   #
   # @param [ApplicationCable::Response] payload
+  # @param [Boolean, nil]               no_raise
   # @param [Hash]                       opt
   #
   # @return [void]
   #
-  def self.stream_send(payload, **opt)
-    meth   = opt.delete(:meth) || __method__
+  def self.stream_send(payload, no_raise: false, **opt)
+    meth   = opt[:meth] ||= __method__
     s_id   = opt.delete(:stream_id)
     stream = opt.delete(:stream_name) || (s_id && "#{channel_name}_#{s_id}")
-    raise "#{meth}: No stream given" unless stream.present?
-    data   = normalize_outbound(payload, meth: meth, **opt)
-    ActionCable.server.broadcast(stream, data)
+    if stream.present?
+      data = normalize_outbound(payload, **opt)
+      ActionCable.server.broadcast(stream, data)
+    else
+      __debug_cable(meth, (error = "#{meth}: No stream given"))
+      raise(error) unless no_raise
+    end
   end
 
   # ===========================================================================

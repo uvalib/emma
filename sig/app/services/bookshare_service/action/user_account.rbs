@@ -1,0 +1,140 @@
+# BookshareService::Action::UserAccount
+#
+# == Usage Notes
+#
+# === From API section 2.6 (User Account):
+# A user account represents a specific user who is known about by the
+# Bookshare system.  Users may have various roles and other characteristics,
+# which define the scope of possible features they have access to.  In general,
+# a user will need to a have an active subscription to access titles, and in
+# most cases will also need a proof of disability.
+#
+# Users can update certain information about themselves, while Membership
+# Assistants or administrators will have access to see and modify the
+# information about a larger collection of users; these are the endpoints that
+# start with "/v2/accounts".  On those endpoints, a Membership Assistant is
+# allowed to see and manage only those user accounts that are associated with
+# their site, while administrators are allowed access to users across all
+# sites.
+#
+module BookshareService::Action::UserAccount
+  include BookshareService::Common
+
+  include BookshareService::Testing
+
+  # == GET /v2/me
+  #
+  # == 2.6.1. Get user identity
+  # Request basic information about the current user.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @return [Bs::Message::UserIdentity]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_me
+  #
+  def get_user_identity: (**untyped opt) -> Bs::Message::UserIdentity
+
+  # == GET /v2/myaccount
+  #
+  # == 2.6.2. Get my account summary
+  # Get an account summary of the current user.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @return [Bs::Message::MyAccountSummary]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-summary
+  #
+  def get_my_account: (**untyped opt) -> Bs::Message::MyAccountSummary
+
+  # == GET /v2/myaccount/history
+  #
+  # == 2.6.3. Get my account downloads
+  # Get a listing of downloads made by the current user.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [Integer]            :limit
+  # @option opt [BsHistorySortOrder] :sortOrder   Default: 'title'
+  # @option opt [BsSortDirectionRev] :direction   Default: 'desc'
+  #
+  # @return [Bs::Message::TitleDownloadList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-downloads
+  #
+  def get_my_download_history: (**untyped opt) -> Bs::Message::TitleDownloadList
+
+  # == GET /v2/myaccount/preferences
+  #
+  # == 2.6.4. Get my account preferences
+  # Get the account preferences associated with the current user.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @return [Bs::Message::MyAccountPreferences]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-preferences
+  #
+  def get_my_preferences: (**untyped opt) -> Bs::Message::MyAccountPreferences
+
+  # == PUT /v2/myaccount/preferences
+  #
+  # == 2.6.5. Update my account preferences
+  # Update the account preferences associated with the current user.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [Boolean]        :allowAdultContent
+  # @option opt [Boolean]        :showAllBooks          Default: *false*
+  # @option opt [IsoLanguage]    :language
+  # @option opt [BsFormatType]   :format
+  # @option opt [BsBrailleGrade] :brailleGrade
+  # @option opt [BsBrailleFmt]   :brailleFormat
+  # @option opt [Integer]        :brailleCellLineWidth
+  # @option opt [Boolean]        :useUeb                Default: *false*
+  #
+  # @return [Bs::Message::MyAccountPreferences]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-myaccount-preferences
+  #
+  def update_my_preferences: (**untyped opt) -> Bs::Message::MyAccountPreferences
+
+  # == GET /v2/myaccount/recommendationProfile
+  #
+  # == 2.6.6. Get my recommendation profile
+  # Get property choices that guide title recommendations for the current user.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @return [Bs::Message::RecommendationProfile]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-my-recommendation-profile
+  #
+  def get_my_recommendation_profile: (**untyped opt) -> Bs::Message::RecommendationProfile
+
+  # == PUT /v2/myaccount/recommendationProfile
+  #
+  # == 2.6.7. Update my recommendation profile
+  # Update property choices that guide title recommendations for the current
+  # user.
+  #
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @option opt [Boolean]                 :includeGlobalCollection  Def: *false*.
+  # @option opt [BsNarratorType]          :narratorType
+  # @option opt [BsGender]                :narratorGender
+  # @option opt [Integer]                 :readingAge
+  # @option opt [Array<BsContentWarning>] :excludedContentWarnings
+  # @option opt [Array<BsContentWarning>] :includedContentWarnings
+  # @option opt [String, Array<String>]   :excludedCategories
+  # @option opt [String, Array<String>]   :includedCategories
+  # @option opt [String, Array<String>]   :excludedAuthors
+  # @option opt [String, Array<String>]   :includedAuthors
+  #
+  # @return [Bs::Message::RecommendationProfile]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-my-recommendation-profile
+  #
+  def update_my_recommendation_profile: (**untyped opt) -> Bs::Message::RecommendationProfile
+end

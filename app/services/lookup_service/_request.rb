@@ -55,30 +55,20 @@ class LookupService::Request
   #
   def initialize(items = nil)
     @table = TEMPLATE.deep_dup
-    if items.present?
-      # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-      if items.is_a?(self.class)
-        @table.merge!(items.deep_dup)
-      elsif !items.is_a?(Hash)
-        @table[:request][:ids] = items.deep_dup
-      elsif items.key?(:request)
-        items = items[:request]&.deep_dup
-        @table[:request].merge!(items) if items.present?
-      else
-        items = items.slice(*TEMPLATE[:request].keys).deep_dup
-        @table[:request].merge!(items) if items.present?
-      end
+    return if items.blank?
+    if items.is_a?(self.class)
+      @table.merge!(items.deep_dup)
+    elsif items.is_a?(Hash)
+      items = items[:request] || items.slice(*TEMPLATE[:request].keys)
+      @table[:request].merge!(items.deep_dup)
+    else
+      @table[:request].merge!(ids: items.deep_dup)
     end
-    if items.present?
-      TEMPLATE[:request].each_key do |k|
-        if k == :ids
-          @table[:request][k].map! { |term| fix_term(term) }
-          @table[:request][k] = id_list(@table[:request][k])
-        else
-          @table[:request][k].map! do |term|
-            fix_term(term, author: term.start_with?('author:'))
-          end
-        end
+    @table[:request].each_pair do |k, v|
+      if k == :ids
+        v.replace(id_list(v.map! { |term| fix_term(term) }))
+      else
+        v.map! { |term| fix_term(term, author: term.start_with?('author:')) }
       end
     end
   end
@@ -219,11 +209,11 @@ class LookupService::Request
   protected
 
   def dup
-    new(self)
+    self.class.new(self)
   end
 
   def deep_dup
-    new(self)
+    self.class.new(self)
   end
 
   # ===========================================================================
@@ -246,15 +236,33 @@ class LookupService::Request
   # :section: LookupService::Request::Serializer
   # ===========================================================================
 
-  public
+  protected
 
-  serializer :serialize do |item|
-    item.to_h
+  # Create a serializer for this class and any subclasses derived from it.
+  #
+  # @param [Class] this_class
+  #
+  # @see Serializer::Base#serialize?
+  #
+  def self.make_serializers(this_class)
+    this_class.class_exec do
+
+      serializer :serialize do |instance|
+        instance.to_h
+      end
+
+      serializer :deserialize do |hash|
+        new(re_symbolize_keys(hash))
+      end
+
+      def self.inherited(subclass)
+        make_serializers(subclass)
+      end
+
+    end
   end
 
-  serializer :deserialize do |value|
-    re_symbolize_keys(value)
-  end
+  make_serializers(self)
 
 end
 

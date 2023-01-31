@@ -89,7 +89,7 @@ module SearchConcern
   #
   # @return [Search::Message::SearchRecord]
   #
-  # @see SearchService::Request::Records#get_record
+  # @see SearchService::Action::Records#get_record
   #
   def index_record(**opt)
     search_api.get_record(**opt)

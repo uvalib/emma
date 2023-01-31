@@ -406,7 +406,7 @@ module ManifestItemConcern
     opt[:backup] ||= {}
     opt[:row]    ||= 1 + all_manifest_items(**opt)&.last&.row.to_i
     us_opt = extract_hash!(opt, *ManifestItem::UPDATE_STATUS_OPTS)
-    ManifestItem.update_status!(opt, **us_opt, **opt)
+    ManifestItem.update_status!(opt, **us_opt)
     ManifestItem.create!(opt)
   end
 
@@ -439,9 +439,18 @@ module ManifestItemConcern
   def update_manifest_item(item = nil, **opt)
     __debug_items("MANIFEST ITEM WF #{__method__}", binding)
     edit_manifest_item(item).tap do |record|
-      us_opt = extract_hash!(opt, *ManifestItem::UPDATE_STATUS_OPTS)
+      us_opt     = extract_hash!(opt, *ManifestItem::UPDATE_STATUS_OPTS)
+      keep_date  = (!us_opt[:overwrite] unless us_opt[:overwrite].nil?)
+      new_fields = keep_date.nil? && opt.except(*NON_EDIT_KEYS).keys.presence
+      old_values = new_fields && record.fields.slice(*new_fields)
+      updated_at = record[:updated_at]
       record.update_status!(**us_opt, **opt)
-      record.update!(opt)
+      record.update!(opt).tap do
+        if keep_date.nil?
+          keep_date = old_values.all? { |k, v| record[k].to_s == v.to_s }
+        end
+        record.dynamic_set_field(:updated_at, updated_at) if keep_date
+      end
     end
   end
 
@@ -476,16 +485,16 @@ module ManifestItemConcern
     opt.reverse_merge!(model_options.all)
     ids   = extract_hash!(opt, :ids, :id).compact.values.first
     items = [*items, *ids].map! { |row| row.try(:id) || row }
-    succeeded, failed = [[], []]
+    success, failure = [[], []]
     ManifestItem.where(id: items).each do |record|
       if record.destroy
-        succeeded << record.id
+        success << record.id
       else
-        failed << record.id
+        failure << record.id
       end
     end
-    failure(:destroy, failed.uniq) if failed.present?
-    succeeded
+    failure(:destroy, failure.uniq) if failure.present?
+    success
   end
 
   # ===========================================================================
@@ -496,6 +505,7 @@ module ManifestItemConcern
 
   RECORD_KEYS   = ManifestItem::RECORD_COLUMNS.excluding(:repository).freeze
   NON_DATA_KEYS = ManifestItem::NON_DATA_COLS
+  NON_EDIT_KEYS = ManifestItem::NON_EDIT_COLS
 
   # Set :editing state (along with any other fields if they are provided).
   #
@@ -512,19 +522,18 @@ module ManifestItemConcern
     opt.merge!(editing: true)
     meth = opt.delete(:meth) || __method__
     if (rec = edit_manifest_item(item, no_raise: true))
-      warn  = ("already editing #{rec.inspect}" if rec.editing)
-      debug = nil
+      if rec.editing
+        Log.warn { "#{meth}: #{rec.id}: already editing #{rec.inspect}" }
+      end
       if opt[:backup].present?
-        debug = 'already backed up' if rec.backup
+        Log.debug { "#{meth}: #{rec.id}: already backed up" } if rec.backup
       elsif opt.key?(:backup)
-        debug = 'clearing backup'
+        Log.debug { "#{meth}: #{rec.id}: clearing backup" }
         opt[:backup] = nil
       elsif !rec.backup && (backup = rec.get_backup).present?
-        debug = 'making backup'
+        Log.debug { "#{meth}: #{rec.id}: making backup" }
         opt[:backup] = backup
       end
-      Log.warn  { "#{meth}: #{rec.id}: #{warn}"  } if warn
-      Log.debug { "#{meth}: #{rec.id}: #{debug}" } if debug
       us_opt = { overwrite: false }
       update_manifest_item(rec, **us_opt, **opt)
     else
@@ -570,7 +579,7 @@ module ManifestItemConcern
     file   = opt.key?(:file_status)  || opt.key?(:file_data)
     data   = opt.key?(:data_status)  || opt.except(*RECORD_KEYS).present?
     ready  = opt.key?(:ready_status) || file || data
-    us_opt = { file: file, data: data, ready: ready, overwrite: true }
+    us_opt = { file: file, data: data, ready: ready }
     update_manifest_item(rec, **us_opt, **opt, editing: false)
     {
       items:    { rec.id => rec.fields.except(*NON_DATA_KEYS) },
@@ -606,7 +615,6 @@ module ManifestItemConcern
     record.upload_file(env: env).tap do |_, _, body|
       body.map! do |entry|
         if (file_data = safe_json_parse(entry)).is_a?(Hash)
-          # noinspection RubyNilAnalysis
           emma_data = file_data.delete(:emma_data) || {}
           update_manifest_item(record, file_data: file_data, editing: false)
           emma_data = record.fields.merge(emma_data).except!(*NON_DATA_KEYS)
@@ -844,7 +852,6 @@ module ManifestItemConcern
   # @return [ManifestItem::Options]
   #
   def set_model_options
-    # noinspection RubyMismatchedVariableType, RubyMismatchedReturnType
     @model_options = ManifestItem::Options.new(request_parameters)
   end
 

@@ -27,15 +27,15 @@ class ApplicationCable::Connection < ActionCable::Connection::Base
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # The method called before the WebSocket connection is opened.
   #
   # @return [void]
   #
   def connect
-    __debug_cable(__method__)
     self.current_user = get_verified_user
+    __debug_cable(__method__) { { user: current_user&.to_s } }
   end
 
   # The method called after the WebSocket connection is closed.
@@ -43,7 +43,7 @@ class ApplicationCable::Connection < ActionCable::Connection::Base
   # @return [void]
   #
   def disconnect
-    __debug_cable(__method__)
+    __debug_cable(__method__) { { user: current_user&.to_s } }
   end
 
   # ===========================================================================

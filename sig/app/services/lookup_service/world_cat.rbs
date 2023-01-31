@@ -3,6 +3,14 @@
 # @see "en.emma.service.lookup.world_cat"
 #
 class LookupService::WorldCat < LookupService::RemoteService
+  include LookupService::WorldCat::Properties
+
+  include LookupService::WorldCat::Common
+
+  include LookupService::WorldCat::Definition
+
+  include LookupService::WorldCat::Action
+
   # Fetch results from WorldCat.
   #
   # @param [LookupService::Request] req  Def.: `@request`.

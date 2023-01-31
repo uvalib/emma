@@ -95,12 +95,20 @@ module BaseDecorator::Grid
     grid_row_fields.keys - grid_row_skipped_columns
   end
 
-  # The names of each grid data column which is not displayed.
+  # The names of each grid data column which is not rendered.
   #
   # @return [Array<Symbol>]
   #
   def grid_row_skipped_columns
     row_skipped_columns
+  end
+
+  # The names of each grid data column which is rendered but not visible.
+  #
+  # @return [Array<Symbol>]
+  #
+  def grid_row_undisplayed_columns
+    []
   end
 
   # This is the number of <tr> rows within <thead>.
@@ -216,8 +224,9 @@ module BaseDecorator::Grid
 
     opt[:role] ||= 'table'
     opt[:'aria-rowcount'] = 1 + grid_row_items_total
-    opt[:'aria-colcount'] = total_columns = 1 + cols.size
-    prepend_css!(opt, "columns-#{total_columns}") if table
+    opt[:'aria-colcount'] = 1 + cols.size
+    visible_columns       = 1 + visible(cols).size
+    prepend_css!(opt, "columns-#{visible_columns}") if table
     prepend_css!(opt, css)
     html_tag(tag, opt) do
       head << rows
@@ -404,6 +413,7 @@ module BaseDecorator::Grid
     opt[:'data-field'] ||= col
     prepend_css!(opt, "row-#{row}") if row
     prepend_css!(opt, css)
+    append_css!(opt, 'undisplayed') if undisplayed?(col)
     html_tag(tag, label, opt, &block)
   end
 
@@ -536,6 +546,7 @@ module BaseDecorator::Grid
       label = prop[:label]
       value = render_value(prop[:value], field: field, **value_opt)
       p_opt = { field: field, prop: prop, col: col, **opt }
+      append_css!(p_opt, 'undisplayed') if undisplayed?(field)
       grid_data_cell_render_pair(label, value, **p_opt)
     }.unshift(nil).join(separator).html_safe
   end
@@ -591,6 +602,24 @@ module BaseDecorator::Grid
   # ===========================================================================
 
   protected
+
+  # Indicate whether the field is one whose elements should be invisible.
+  #
+  # @param [*] field
+  #
+  def undisplayed?(field)
+    grid_row_undisplayed_columns.include?(field)
+  end
+
+  # Return the fields which contribute to the count of visible grid columns.
+  #
+  # @param [Array<Symbol>, Symbol] fields
+  #
+  # @return [Array<Symbol>]
+  #
+  def visible(fields)
+    Array.wrap(fields).reject { |field| undisplayed?(field) }
+  end
 
   # Create an object that can be used to unambiguously indicate whether an
   # index value has been adjusted from its original raw value.

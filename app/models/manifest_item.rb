@@ -16,6 +16,7 @@ class ManifestItem < ApplicationRecord
   include Record::Authorizable
   include Record::Describable
   include Record::Searchable
+  include Record::Updatable
   include Record::Uploadable
   include Record::Validatable
 
@@ -57,7 +58,7 @@ class ManifestItem < ApplicationRecord
   # active:       Records not marked for deletion.
   # to_delete:    Records marked for deletion.
   #
-  # updated:      Records which have been saved.
+  # completed:    Records which have not been changed since the last save.
   # unsaved:      Records which have been changed since the last save.
   # never_saved:  Records which have been created since the last save.
   # incomplete:   New or changed records.
@@ -68,27 +69,30 @@ class ManifestItem < ApplicationRecord
   # data_valid:   Records with sufficient bibliographic and remediation data.
   # file_valid:   Records with resolved file data.
   #
-  # submittable:  Records that can appear in "/manifest/remit".
-  # auto_submit:  Records can be submitted en masse without human intervention.
+  # could_submit: Records that can appear in "/manifest/remit".
+  # submittable:  Records can be submitted en masse without human intervention.
   #
   # ===========================================================================
 
   scope :active,       -> { where('NOT deleting IS TRUE') }
   scope :to_delete,    -> { where(deleting: true) }
 
-  scope :updated,      -> { where('last_saved >= updated_at') }
+  scope :completed,    -> { where('last_saved >= updated_at') }
   scope :unsaved,      -> { where('last_saved < updated_at') }
   scope :never_saved,  -> { where(last_saved: nil) }
   scope :incomplete,   -> { unsaved.or(never_saved) }
 
-  scope :saved,        -> { active.and(updated) }
+  scope :saved,        -> { active.and(completed) }
   scope :pending,      -> { active.and(incomplete) }
 
   scope :data_valid,   -> { where(data_status: STATUS_VALID[:data_status]) }
   scope :file_valid,   -> { where(file_status: STATUS_VALID[:file_status]) }
 
-  scope :submittable,  -> { saved }
-  scope :auto_submit,  -> { submittable.and(data_valid).and(file_valid) }
+  scope :data_ready,   -> { where(data_status: STATUS_READY[:data_status]) }
+  scope :file_ready,   -> { where(file_status: STATUS_READY[:file_status]) }
+
+  scope :could_submit, -> { saved.and(data_valid).and(file_valid) }
+  scope :submittable,  -> { saved.and(data_ready).and(file_ready) }
 
   scope :in_row_order, -> { order(:row, :delta, :id) }
 

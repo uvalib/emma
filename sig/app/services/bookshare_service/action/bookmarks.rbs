@@ -1,0 +1,67 @@
+# BookshareService::Action::Bookmarks
+#
+# == Usage Notes
+#
+# === From API section 2.11 (Bookmarks):
+# A bookmark represents a location in a title that a user wants to save.
+#
+module BookshareService::Action::Bookmarks
+  include BookshareService::Common
+
+  include BookshareService::Testing
+
+  # == GET /v2/myBookmarks
+  #
+  # == 2.11.1. Get bookmarks for a title
+  # Get the bookmarks made by the current user on the given title and format.
+  #
+  # @param [String] bookshareId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [String]  format      One of `BsFormatType#values`
+  #
+  # @return [Bs::Message::BookmarkList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-bookmarks
+  #
+  def get_bookmark: (bookshareId: String, **untyped opt) -> Bs::Message::BookmarkList
+
+  # == POST /v2/myBookmarks
+  #
+  # == 2.11.1. Submit a bookmark
+  # Submit a new or updated bookmark to save a location within a title.
+  #
+  # @param [String]  bookshareId
+  # @param [String]  location
+  # @param [Hash]    opt                    Passed to #api.
+  #
+  # @option opt [String]  format            One of `BsFormatType#values`
+  # @option opt [String]  text
+  # @option opt [Integer] position
+  # @option opt [Float]   progression
+  # @option opt [Float]   totalProgression
+  #
+  # @return [Bs::Message::StatusModel]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_post-bookmark
+  #
+  def submit_bookmark: (bookshareId: String, location: String, **untyped opt) -> Bs::Message::StatusModel
+
+  # == DELETE /v2/myBookmarks
+  #
+  # == 2.11.3. Delete a bookmark for a title
+  # Delete a bookmark made by the current user on the given title and format at
+  # the given location.
+  #
+  # @param [String]  bookshareId
+  # @param [String]  location
+  # @param [Hash]    opt                    Passed to #api.
+  #
+  # @option opt [String]  format            One of `BsFormatType#values`
+  #
+  # @return [Bs::Message::BookmarkList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_delete-bookmark
+  #
+  def delete_bookmark: (bookshareId: String, location: String, **untyped opt) -> Bs::Message::BookmarkList
+end

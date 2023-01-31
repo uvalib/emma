@@ -1,0 +1,4 @@
+# Namespace for API requests.
+#
+module BookshareService::Action
+end

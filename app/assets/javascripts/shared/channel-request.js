@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/channel-request.js
 
 
-import { AppDebug }                       from '../application/debug';
-import { arrayWrap }                      from './arrays'
-import { BaseClass }                      from './base-class';
-import { isPresent, notDefined }          from './definitions';
-import { deepFreeze, fromJSON, toObject } from './objects';
+import { AppDebug }              from '../application/debug';
+import { arrayWrap }             from './arrays'
+import { BaseClass }             from './base-class';
+import { isPresent, notDefined } from './definitions';
+import { fromJSON, toObject }    from './objects';
 
 
 const MODULE = 'ChannelRequest';
@@ -45,9 +45,7 @@ export class ChannelRequest extends BaseClass {
      * @readonly
      * @type {ChannelRequestPayload}
      */
-    static TEMPLATE = deepFreeze(
-        {}
-    );
+    static TEMPLATE = Object.freeze({});
 
     // ========================================================================
     // Fields
@@ -112,8 +110,7 @@ export class ChannelRequest extends BaseClass {
         const obj   = (type !== 'string') && !Array.isArray(item);
         const value = obj ? item : this.parse(item, ..._args);
         if (isPresent(value)) {
-            const req_parts = value.parts || value;
-            this._appendParts(this.parts, req_parts);
+            this._appendParts(value.parts || value);
         } else {
             this._warn('nothing to add');
         }
@@ -130,7 +127,7 @@ export class ChannelRequest extends BaseClass {
     parse(v, ..._args) {
         this._debug('parse', v);
         const items = (typeof v === 'string') ? v.split("\n") : arrayWrap(v);
-        return toObject(items, (item, _idx) => this.extractParts(item));
+        return toObject(items, (item) => this.extractParts(item));
     }
 
     /**
@@ -161,23 +158,26 @@ export class ChannelRequest extends BaseClass {
     }
 
     /**
-     * Append the elements from *src* to *dst*.
+     * Append the elements from *src* to this._parts.
      *
-     * @param {object} dst
      * @param {object} src
      *
-     * @returns {object}
      * @protected
      */
-    _appendParts(dst, src) {
+    _appendParts(src) {
         this._debug('_appendParts', src);
-        let src_val;
-        $.each(dst, function(key, val) {
-            if (isPresent(src_val = src[key])) {
-                dst[key] = Array.from(new Set([...val, ...src_val]));
+        const template = this.constructor.TEMPLATE;
+        Object.keys(template).forEach(key => {
+            const src_v = src[key];
+            if (isPresent(src_v)) {
+                let new_v = src_v;
+                if (Array.isArray(template[key])) {
+                    const dst_v = this.parts[key];
+                    new_v = Array.from(new Set([...dst_v, ...new_v]));
+                }
+                this.parts[key] = new_v;
             }
         });
-        return dst;
     }
 
     // ========================================================================

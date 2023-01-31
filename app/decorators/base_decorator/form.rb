@@ -870,6 +870,7 @@ module BaseDecorator::Form
   # @param [Symbol]              state    Start state (:enabled/:disabled).
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url      Invokes #make_link if present.
+  # @param [Proc]                control  Optional button creator.
   # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #submit_tag.
   #
@@ -884,11 +885,12 @@ module BaseDecorator::Form
   #++
   def form_button(
     type,
-    action: nil,
-    state:  nil,
-    label:  nil,
-    url:    nil,
-    css:    '.form-button',
+    action:   nil,
+    state:    nil,
+    label:    nil,
+    url:      nil,
+    control:  nil,
+    css:      '.form-button',
     **opt
   )
     action = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
@@ -904,7 +906,9 @@ module BaseDecorator::Form
 
     prepend_css!(opt, css, "#{type}-button")
     input_type = opt[:type] || type
-    if input_type == :submit
+    if control.is_a?(Proc)
+      control.call(label: label, **opt)
+    elsif input_type == :submit
       h.submit_tag(label, opt)
     elsif input_type == :file
       file_input_button(label, **opt)

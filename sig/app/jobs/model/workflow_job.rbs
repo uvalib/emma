@@ -46,5 +46,5 @@ class Model::WorkflowJob < ApplicationJob
   #   @option opt [Model, nil]    :from       Passed to *meth*.
   #   @option opt [AsyncCallback] :callback   Optional.
   #
-  def perform: (*untyped args) -> untyped
+  def perform: (*untyped args) -> void
 end

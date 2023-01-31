@@ -20,8 +20,12 @@ AppDebug.file('shared/channel-response', MODULE, DEBUG);
  *
  * @property {string} [status]
  * @property {string} [user]
- * @property {string} [time]
  * @property {string} [job_id]
+ * @property {string} [job_type]
+ * @property {string} [time]
+ * @property {number} [duration]
+ * @property {number} [late]
+ * @property {number} [count]
  * @property {string} [class]
  * @property {*}      [data]
  * @property {string} [data_url]
@@ -35,6 +39,9 @@ AppDebug.file('shared/channel-response', MODULE, DEBUG);
  * A channel response message.
  *
  * @extends ChannelResponsePayload
+ *
+ * @see "ApplicationCable::Response"
+ * @see "ApplicationJob::Response"
  */
 export class ChannelResponse extends BaseClass {
 
@@ -73,13 +80,13 @@ export class ChannelResponse extends BaseClass {
      */
     static TEMPLATE = deepFreeze({
         status:   undefined,
-      //service:  undefined,
         user:     undefined,
-        time:     undefined,
-      //duration: undefined,
-      //count:    undefined,
-      //discard:  undefined,
         job_id:   undefined,
+        job_type: undefined,
+        time:     undefined,
+        duration: undefined,
+        late:     undefined,
+        count:    undefined,
         class:    undefined,
         data:     undefined,
         data_url: undefined,
@@ -119,27 +126,19 @@ export class ChannelResponse extends BaseClass {
     // ========================================================================
 
     get status()    { return this.payload.status }
-  //get service()   { return this.payload.service }
     get user()      { return this.payload.user }
-    get time()      { return this.payload.time }
-  //get duration()  { return this.payload.duration }
-  //get count()     { return this.payload.count }
-  //get discard()   { return this.payload.discard }
     get job_id()    { return this.payload.job_id }
+    get job_type()  { return this.payload.job_type }
+    get time()      { return this.payload.time }
+    get duration()  { return this.payload.duration }
+    get late()      { return this.payload.late }
+    get count()     { return this.payload.count }
     get class()     { return this.payload.class }
     get data()      { return this.payload.data }
     get data_url()  { return this.payload.data_url }
 
-    get payload()   { return this._payload }
-
-    /**
-     * An independent copy of the response payload.
-     *
-     * @returns {ChannelResponsePayload}
-     */
-    get payloadCopy() {
-        return deepDup(this.payload);
-    }
+    get payload()     { return this._payload }
+    get payloadCopy() { return this.toObject() }
 
     /**
      * Indicate whether the response represents the completion of the original
@@ -149,6 +148,19 @@ export class ChannelResponse extends BaseClass {
      */
     get final() {
         return this.constructor.FINAL_STATES.includes(this.status);
+    }
+
+    // ========================================================================
+    // Methods
+    // ========================================================================
+
+    /**
+     * An independent copy of the response payload.
+     *
+     * @returns {ChannelResponsePayload}
+     */
+    toObject() {
+        return deepDup(this.payload);
     }
 
     // ========================================================================

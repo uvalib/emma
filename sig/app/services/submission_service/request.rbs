@@ -1,0 +1,184 @@
+# SubmissionService::Request
+#
+# == Implementation Notes
+# This class can't be implemented as a subclass of Hash because the ActiveJob
+# serializer will fail to distinguish it from a simple Hash (and thereby fail
+# to engage its custom serializer/deserializer).
+#
+class SubmissionService::Request
+  include SubmissionService::Common
+
+  include Serializable
+
+  DEFAULT_COMMAND: Symbol
+
+  # The format of a request object.
+  #
+  # @type [Hash]
+  #
+  TEMPLATE: symHash
+
+  # @return [Hash]
+  attr_reader table: symHash
+
+  # Create a new instance.
+  #
+  # @param [SubmissionService::Request, Hash, Array, String, nil] arg
+  # @param [Hash]                                                 opt
+  #
+  def initialize: (?(SubmissionService::Request|anyArray|symHash|String|nil) arg, **untyped opt) -> void
+
+  def dup: () -> SubmissionService::Request
+
+  def deep_dup: () -> SubmissionService::Request
+
+  # command
+  #
+  # @return [Symbol]
+  #
+  def command: () -> Symbol
+
+  # manifest_id
+  #
+  # @return [String]
+  #
+  def manifest_id: () -> String
+
+  # items
+  #
+  # @return [Array<String>]
+  #
+  def items: () -> strArray
+
+  # Present the entire request structure as a Hash.
+  #
+  # @return [Hash]
+  #
+  def to_h: () -> symHash
+
+  # Create a new instance from *item* if it is not already an instance.
+  #
+  # @param [SubmissionService::Request, *] item
+  #
+  # @return [SubmissionService::Request]
+  #
+  def self.wrap: (untyped item) -> SubmissionService::Request
+
+  def self.batch?: (*untyped _ignored) -> bool
+
+  def self.request_method: (*untyped _ignored) -> (Symbol | nil)
+
+  def self.response_class: (*untyped _ignored) -> Class
+
+  def self.template: (*untyped _ignored) -> symHash
+
+  def batch?: (*untyped _ignored) -> bool
+
+  def request_method: (*untyped _ignored) -> (Symbol | nil)
+
+  def response_class: (*untyped _ignored) -> Class
+
+  def template: (*untyped _ignored) -> symHash
+
+  # Create a serializer for this class and any subclasses derived from it.
+  #
+  # @param [Class] this_class
+  #
+  # @see Serializer::Base#serialize?
+  #
+  def self.make_serializers: (Class this_class) -> void
+end
+
+# SubmissionService::SubmitRequest
+#
+# @see file:javascripts/shared/submit-request.js *SubmitRequest*
+#
+class SubmissionService::SubmitRequest < SubmissionService::Request
+  # Create a new instance.
+  #
+  # @param [SubmissionService::Request, Hash, Array, String, Symbol, nil] arg
+  # @param [Hash]                                                         opt
+  #
+  def initialize: (?(SubmissionService::Request|anyArray|symHash|String|nil) arg, **untyped opt) -> void
+
+  def self.request_method: () -> Symbol
+
+  def self.response_class: () -> Class
+end
+
+# SubmissionService::BatchSubmitRequest
+#
+# @see file:javascripts/shared/submit-request.js *SubmitRequest*
+#
+class SubmissionService::BatchSubmitRequest < SubmissionService::Request
+  # Create a new instance.
+  #
+  # @param [SubmissionService::Request, Hash, Array, String, nil] arg
+  # @param [Hash]                                                 opt
+  #
+  def initialize: (?(SubmissionService::Request|anyArray|symHash|String|nil) arg, **untyped opt) -> void
+
+  # items
+  #
+  # @return [Array<SubmissionService::SubmitRequest>]
+  #
+  def items: () -> Array[SubmissionService::SubmitRequest]
+
+  alias requests items
+
+  def self.batch?: () -> true
+
+  def self.response_class: () -> Class
+
+  # Create sub-requests for a set of manifest items.
+  #
+  # @param [SubmissionService::SubmitRequest, Array, nil] arg
+  # @param [Hash]                                         opt
+  #
+  # @return [Array<SubmissionService::SubmitRequest>]
+  #
+  def self.make_sub_requests: (?(SubmissionService::Request|anyArray|symHash|String|nil) arg, **untyped opt) -> Array[SubmissionService::SubmitRequest]
+
+  def make_sub_requests: (?(SubmissionService::Request|anyArray|symHash|String|nil) arg, **untyped opt) -> Array[SubmissionService::SubmitRequest]
+end
+
+# SubmissionService::ControlRequest
+#
+# @see file:javascripts/shared/submit-request.js *SubmitControlRequest*
+#
+class SubmissionService::ControlRequest < SubmissionService::Request
+  TEMPLATE: symHash
+
+  # Create a new instance.
+  #
+  # @param [SubmissionService::Request, Hash, Array, String, Symbol, nil] items
+  # @param [Hash]                                                         opt
+  #
+  def initialize: (?(SubmissionService::Request|anyArray|symHash|String|nil) items, **untyped opt) -> void
+
+  # command
+  #
+  # @return [Symbol]
+  #
+  def command: () -> Symbol
+
+  # job_id
+  #
+  # @return [String,nil]
+  #
+  def job_id: () -> (String | nil)
+
+  def request_method: (?untyped? switch) -> Symbol
+
+  def self.response_class: () -> Class
+
+  def self.template: () -> symHash
+end
+
+# SubmissionService::StatusRequest
+#
+class SubmissionService::StatusRequest < SubmissionService::Request
+  def self.request_method: () -> Symbol
+
+  def self.response_class: () -> Class
+end

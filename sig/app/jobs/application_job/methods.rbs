@@ -1,0 +1,72 @@
+module ApplicationJob::Methods
+  extend ActiveSupport::Concern
+
+  include Emma::TimeMethods
+
+  # JobResult table columns with information.
+  #
+  # @type [Array<Symbol>]
+  #
+  JOB_RESULT_COLUMNS: symArray
+
+  # JobResult table column with result data.
+  #
+  # @type [Symbol]
+  #
+  MAIN_JOB_RESULT_COLUMN: Symbol
+
+  # Extract job results from the 'job_results' database table.
+  #
+  # @param [String]                  job_id   The :active_job_id column value
+  #                                             for the record to get.
+  # @param [Array,Symbol,String,nil] path     If provided, the path into the
+  #                                             JSON hierarchy.
+  # @param [Symbol]                  column   The data column to get.
+  #
+  # @return [Hash]
+  # @return [nil]                     If the requested data was not found.
+  #
+  def job_result: (job_id: String, ?path: anyArray|Symbol|String|nil, ?column: Symbol, **untyped _ignored) -> (symHash | nil)
+
+  # The time elapsed past the given deadline.
+  #
+  # @param [Numeric]      deadline
+  # @param [Numeric, nil] current   Default `#timestamp`.
+  # @param [Float]        epsilon
+  #
+  # @return [Float, nil]
+  #
+  def past_due: (Numeric deadline, ?(Numeric|nil) current, ?epsilon: Float) -> (Float | nil)
+
+  # The instrumentation notification which causes the waiter task to update its
+  # tally of results and send a response back to the client if all tasks have
+  # either completed or timed-out.
+  #
+  # @type [String]
+  #
+  TASK_END_NOTIFICATION: String
+
+  attr_accessor subscriber: ActiveSupport::Notifications::Fanout::Subscribers::Evented
+
+  # Listen for task completion.
+  #
+  # @return [ActiveSupport::Notifications::Fanout::Subscribers::Evented]
+  #
+  # @yield Event details
+  # @yieldparam [String] event_name
+  # @yieldparam [Time]   event_start
+  # @yieldparam [Time]   event_finish
+  # @yieldparam [String] event_id
+  # @yieldparam [Hash]   event_payload
+  #
+  def notifications_subscribe: () { (String event_name, Time event_start, Time event_finish, String event_id, anyHash event_payload) -> void } -> ActiveSupport::Notifications::Fanout::Subscribers::Evented
+
+  # Undo previous #notifications_subscribe.
+  #
+  # @param [ActiveSupport::Notifications::Fanout::Subscribers::Evented, nil] subscriber
+  #
+  def notifications_unsubscribe: (?ActiveSupport::Notifications::Fanout::Subscribers::Evented? subscriber) -> void
+  private
+
+  THIS_MODULE: Module
+end

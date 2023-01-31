@@ -143,19 +143,15 @@ class ManifestItemDecorator < BaseDecorator
     #
     def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
 
-    IDENTITY_FIELDS: symArray
-
-    GRID_ROWS_FIELDS: symArray
-
-    TRANSIENT_FIELDS: symArray
-
-    STATUS_FIELDS: symArray
+    SKIPPED_FIELDS: symArray
 
     DETAILS_FIELDS: symArray
 
     HIDDEN_FIELDS: symArray
 
-    # The names of each ManifestItem column which is not displayed.
+    UNDISPLAYED_FIELDS: symArray
+
+    # The names of ManifestItem columns that are not rendered.
     #
     # @return [Array<Symbol>]
     #
@@ -166,6 +162,12 @@ class ManifestItemDecorator < BaseDecorator
     # @return [Array<Symbol>]
     #
     def grid_row_skipped_columns: () -> symArray
+
+    # The names of each grid data column which is rendered but not visible.
+    #
+    # @return [Array<Symbol>]
+    #
+    def grid_row_undisplayed_columns: () -> symArray
 
     # Show a button for expanding/contracting the controls column in the top
     # left grid cell.
@@ -272,6 +274,8 @@ class ManifestItemDecorator < BaseDecorator
     S_OK: Symbol
 
     S_BLANK: Symbol
+
+    S_UNSAVED: Symbol
 
     S_FILE_NEEDED: Symbol
 
@@ -385,6 +389,8 @@ class ManifestItemDecorator < BaseDecorator
     # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see file:assets/javascripts/controllers/manifest-edit.js *statusData()*
     #
     def row_indicators: (ManifestItem item, ?row: Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 

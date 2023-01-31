@@ -1,0 +1,58 @@
+# Job table for waiter tasks.
+#
+class ApplicationJob::Table < Concurrent::Hash
+  include ApplicationJob::Methods
+
+  include Emma::Common
+
+  # Create a new instance.
+  #
+  # @param [Array<ActiveJob::Base>] job_list
+  #
+  def initialize: (Array[ActiveJob::Base] job_list) -> void
+
+  # Update job entry.
+  #
+  # @param [String]    job_id
+  # @param [Hash, nil] data
+  #
+  # @return [*]
+  #
+  def []=
+    : (String job_id, nil     data) -> nil
+    | (String job_id, symHash data) -> symHash
+
+  # Indicate whether the job (or all jobs) have been completed.
+  #
+  # @param [String, nil] job_id
+  #
+  def completed?: (?(String|nil) job_id) -> bool
+
+  # Indicate whether the job (or all jobs) have not been completed.
+  #
+  # @param [String, nil] job_id
+  #
+  def pending?: (?(String|nil) job_id) -> bool
+
+  # Indicate whether all jobs have been completed.
+  #
+  def all_completed?: () -> bool
+
+  # Indicate whether all jobs have not been completed.
+  #
+  def all_pending?: () -> bool
+
+  # Get all given job result values.
+  #
+  # @param [Symbol] result_key
+  #
+  # @return [Array<Hash>]
+  #
+  def result_values: (Symbol result_key) -> Array[symHash]
+
+  # Extract overall table information.
+  #
+  # @return [Hash]
+  #
+  def summarize: () -> symHash
+end

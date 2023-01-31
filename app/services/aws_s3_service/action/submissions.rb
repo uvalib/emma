@@ -1,13 +1,13 @@
-# app/services/aws_s3_service/request/submissions.rb
+# app/services/aws_s3_service/action/submissions.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# AwsS3Service::Request::Submissions
+# AwsS3Service::Action::Submissions
 #
-module AwsS3Service::Request::Submissions
+module AwsS3Service::Action::Submissions
 
   include AwsS3Service::Common
   include AwsS3Service::Testing

@@ -1,11 +1,11 @@
-# app/services/bookshare_service/request/organization.rb
+# app/services/bookshare_service/action/organization.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# BookshareService::Request::Organization
+# BookshareService::Action::Organization
 #
 # == Usage Notes
 #
@@ -18,7 +18,7 @@ __loading_begin(__FILE__)
 # administrative abilities in their organizations, to add, update and remove
 # individual members.
 #
-module BookshareService::Request::Organization
+module BookshareService::Action::Organization
 
   include BookshareService::Common
   include BookshareService::Testing

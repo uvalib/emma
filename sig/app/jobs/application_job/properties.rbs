@@ -92,6 +92,8 @@ module ApplicationJob::Properties
   end
 
   module InstanceMethods
+    extend ActiveSupport::Concern
+
     include ApplicationJob::Properties
 
     # The queue key for the current job.

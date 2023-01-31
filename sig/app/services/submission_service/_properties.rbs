@@ -1,0 +1,153 @@
+# SubmissionService::Properties
+#
+module SubmissionService::Properties
+  include ApiService::Properties
+
+  include Record::Properties
+
+  include Emma::TimeMethods
+
+  COMMANDS: symArray
+
+  # Configuration for all submission services.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  CONFIGURATION: symHash
+
+  # How important an external service is as an authority for the type(s) of
+  # identifiers it can search.  For example:
+  #
+  # * 1   High
+  # * 10  Medium
+  # * 100 Low
+  #
+  # @type [Integer]
+  #
+  # @see SubmissionService#SERVICE_TABLE
+  #
+  DEFAULT_PRIORITY: Integer
+
+  # How long to wait for a response from the external service.
+  #
+  # @type [Float]
+  #
+  DEFAULT_TIMEOUT: Float
+
+  # How many manifest items to process in a single job.
+  #
+  # If *true*, items will be partitioned into batches - as few as possible.
+  # If *false* then items will be submitted sequentially.
+  #
+  # @type [Integer, Boolean]
+  #
+  DEF_BATCH_SIZE: Integer | bool
+
+  # Batching is not actually performed if the number of manifest items is less
+  # than this number.
+  #
+  # @type [Integer]
+  #
+  MIN_BATCH_SIZE: Integer
+
+  # The configuration key for the service.
+  #
+  # @return [Symbol]
+  #
+  def service_key: () -> Symbol
+
+  # Configuration for the API service.
+  #
+  # @type [Hash{Symbol=>Any}]
+  #
+  def configuration: () -> symHash
+
+  # How important the external service is as an authority for the type(s) of
+  # identifiers it can search.
+  #
+  # @type [Integer]
+  #
+  # @see SubmissionService::Properties#DEFAULT_PRIORITY
+  #
+  def priority: () -> Integer
+
+  # How long to wait for a response from the external service.
+  #
+  # @return [Float]
+  #
+  # @see SubmissionService::Properties#DEFAULT_TIMEOUT
+  #
+  def timeout: () -> Float
+
+  # batch_option
+  #
+  # @param [Numeric, Boolean, nil] value
+  # @param [Integer, Boolean, nil] default
+  #
+  # @return [Integer, nil]
+  #
+  def batch_option
+    : (Numeric|nil value, Integer|true     default) -> Integer
+    | (true        value, Integer|bool|nil default) -> Integer
+    | (false       value, Integer|bool|nil default) -> nil
+    | (nil         value, false|nil        default) -> nil
+
+  # timeout_option
+  #
+  # @param [Numeric, Boolean, nil] value
+  # @param [Float]                 default
+  #
+  # @return [Float, nil]
+  #
+  def timeout_option
+    : (Numeric|true|nil value, Float default) -> Float
+    | (false            value, Float default) -> nil
+
+  # numeric_option
+  #
+  # @param [Numeric, Boolean, nil] val
+  # @param [Integer, Float, nil]   default
+  #
+  # @return [Integer, Float, nil]
+  #
+  def numeric_option
+    : (Numeric|true|nil val,  Integer             default) -> Integer
+    | (Numeric|true|nil val,  Float               default) -> Float
+    | (Integer          val, ?nil                 default) -> Integer
+    | (Float            val, ?nil                 default) -> Float
+    | (false            val, ?(Integer|Float|nil) default) -> nil
+
+  # Return the batch size indicated by the value.
+  #
+  # The result will be *nil* or in the range [#MIN_BATCH_SIZE..#MAX_BATCH_SIZE]
+  #
+  # @param [Numeric, Boolean, nil] value
+  # @param [Array, nil]            items
+  #
+  # @return [Integer, nil]
+  #
+  def batch_size_for: ((Numeric|bool|nil) value, ?(anyArray|nil) items) -> (Integer | nil)
+
+  # extract_manifest_id
+  #
+  # @param [*]    arg
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def extract_manifest_id: (?untyped arg, **untyped opt) -> (String | nil)
+
+  # extract_items
+  #
+  # @param [*]           arg
+  # @param [Symbol, nil] scope
+  # @param [Hash]        opt
+  #
+  # @return [Array<String>]
+  #
+  def extract_items: (?untyped arg, ?scope: Symbol|nil, **untyped opt) -> strArray
+
+  private
+
+  def self.included: (Module base) -> void
+end

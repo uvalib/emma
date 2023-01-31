@@ -250,7 +250,7 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     @item = save_changes
-    render_json save_response(columns: :row)
+    render_json save_response
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -300,12 +300,25 @@ class ManifestController < ApplicationController
     failure_status(error)
   end
 
+  # == GET /manifest/get_job_result/:job_id[?column=(output|diagnostic|error)]
+  # == GET /manifest/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
+  #
+  # Return a value from the 'job_results' table, where :job_id is the value for
+  # the matching :active_job_id.
+  #
+  # @see ApplicationJob::Methods#job_result
+  #
+  def get_job_result
+    render json: SubmitJob.job_result(**normalize_hash(params))
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
 
+=begin
   # == POST /manifest/start/:id
   #
   # @see #start_manifest_path         Route helper
@@ -369,6 +382,7 @@ class ManifestController < ApplicationController
   rescue => error
     post_response(error)
   end
+=end
 
   # ===========================================================================
   # :section:
@@ -405,20 +419,25 @@ class ManifestController < ApplicationController
     end
   end
 
+  # ManifestItem values returned upon save.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *updateRowValues()*
+  #
+  ITEM_SAVE_COLS = %i[row ready_status last_saved updated_at].freeze
+
   # A table of the Manifest's items transmitted when saving.
   #
-  # @param [Manifest, nil]       item
+  # @param [Manifest, nil]       manifest
   # @param [Symbol, String, nil] wrap
-  # @param [Hash]                opt            Passed to Manifest#items_hash.
+  # @param [Array<Symbol>]       columns        Passed to Manifest#items_hash.
   #
   # @return [Hash{Symbol=>Hash{Integer=>Hash}}]
   # @return [Hash{Integer=>Hash}]               If *wrap* is *nil*.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def save_response(item = @item, wrap: :items, **opt)
-    result = item.items_hash(**opt)
+  def save_response(manifest = @item, wrap: :items, columns: ITEM_SAVE_COLS)
+    result = manifest.items_hash(columns: columns)
     result = { wrap.to_sym => result } if wrap
     result
   end

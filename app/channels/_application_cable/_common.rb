@@ -9,46 +9,8 @@ __loading_begin(__FILE__)
 #
 module ApplicationCable::Common
 
+  include ApplicationCable::Payload
   include Emma::Debug
-
-  extend self
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # @see https://www.postgresql.org/docs/11/sql-notify.html
-  MAX_PAYLOAD_SIZE = 8000
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Determine the serialized size of the given item.
-  #
-  # @param [*] payload
-  #
-  # @return [Integer]
-  #
-  def payload_size(payload)
-    ActiveJob::Arguments.serialize([payload]).first.to_json.size
-  end
-
-  # If the payload would cause a PG::InvalidValueException return its size.
-  #
-  # @param [*] payload
-  #
-  # @return [Integer]                 The size that would result in failure.
-  # @return [nil]                     The payload is not too large.
-  #
-  def invalid_payload_size(payload)
-    size = payload_size(payload)
-    size unless size < MAX_PAYLOAD_SIZE
-  end
 
   # ===========================================================================
   # :section:
@@ -65,15 +27,10 @@ module ApplicationCable::Common
   # @return [Hash{Symbol=>*}]
   #
   def normalize_inbound(payload, meth: nil, **opt)
-    __debug_cable(meth || __method__) do
-      "#{payload.class} = #{payload.inspect.truncate(512)}"
-    end
-    case payload
-      when nil  then payload = {}
-      when Hash then payload = payload.dup
-      else           payload = { data: payload }
-    end
-    payload.merge!(opt).deep_symbolize_keys!
+    __debug_cable_data((meth || __method__), payload)
+    payload = { data: payload } unless payload.nil? || payload.is_a?(Hash)
+    payload = payload&.deep_symbolize_keys || {}
+    payload.merge!(opt.deep_symbolize_keys)
   end
 
   # Normalize stream payload data.
@@ -85,10 +42,8 @@ module ApplicationCable::Common
   # @return [Hash{Symbol=>*}]
   #
   def normalize_outbound(payload, meth: nil, **opt)
-    __debug_cable(meth || __method__) do
-      "#{payload.class} = #{payload.inspect.truncate(512)}"
-    end
-    ApplicationCable::Response.cast(payload, **opt).to_h
+    __debug_cable_data((meth || __method__), payload)
+    ApplicationCable::Response.wrap(payload, **opt).to_h
   end
 
   # ===========================================================================
@@ -112,6 +67,20 @@ module ApplicationCable::Common
     added = block_given? ? yield : {}
     __debug_items("#{name} #{args}", **opt) do
       added.is_a?(Hash) ? added.merge(thread: t) : [*added, "thread #{t}"]
+    end
+  end
+    .tap { |meth| neutralize(meth) unless DEBUG_CABLE }
+
+  # Send sent/received WebSocket data to the console.
+  #
+  # @param [Symbol] meth
+  # @param [*]      data
+  #
+  # @return [void]
+  #
+  def __debug_cable_data(meth, data)
+    __debug_cable(meth) do
+      "#{data.class} = #{data.inspect.truncate(512)}"
     end
   end
     .tap { |meth| neutralize(meth) unless DEBUG_CABLE }

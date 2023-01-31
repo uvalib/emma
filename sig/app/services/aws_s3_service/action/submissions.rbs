@@ -1,0 +1,156 @@
+# AwsS3Service::Action::Submissions
+#
+module AwsS3Service::Action::Submissions
+  include AwsS3Service::Common
+
+  include AwsS3Service::Testing
+
+  # Uploads one or more submissions into AWS S3 for the creation of new entries
+  # in the member repository.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest, Model, Hash>] records
+  # @param [Hash] opt                 Passed to #put_records.
+  #
+  # @return [AwsS3::Message::Response]
+  #
+  def creation_request: (*(AwsS3::Message::SubmissionRequest|Model|symHash) records, **untyped opt) -> AwsS3::Message::Response
+
+  # Uploads one or more requests into AWS S3 for the modification of existing
+  # member repository entries.
+  #
+  # @param [Array<AwsS3::Message::ModificationRequest, Model, Hash>] records
+  # @param [Hash] opt                 Passed to #put_records.
+  #
+  # @return [AwsS3::Message::Response]
+  #
+  def modification_request: (*(AwsS3::Message::SubmissionRequest|Model|symHash) records, **untyped opt) -> AwsS3::Message::Response
+
+  # Uploads one or more requests into AWS S3 for the removal of existing member
+  # repository entries.
+  #
+  # @param [Array<AwsS3::Message::RemovalRequest, Model, Hash>] records
+  # @param [Hash] opt                 Passed to #put_records.
+  #
+  # @return [AwsS3::Message::Response]
+  #
+  def removal_request: (*(AwsS3::Message::SubmissionRequest|Model|symHash) records, **untyped opt) -> AwsS3::Message::Response
+
+  # Remove request(s) from a member repository queue.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest, Model, String>] records
+  # @param [Hash] opt                 Passed to #delete_records.
+  #
+  # @return [AwsS3::Message::Response]
+  #
+  def dequeue: (*(AwsS3::Message::SubmissionRequest|Model|String) records, **untyped opt) -> AwsS3::Message::Response
+
+  # Uploads one or more submissions into AWS S3.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest>] items
+  # @param [Hash] opt                 Passed to #aws_create.
+  #
+  # @return [Array<AwsS3::Message::SubmissionRequest>]  Submitted records.
+  #
+  def put_records: (*AwsS3::Message::SubmissionRequest items, **untyped opt) -> Array[AwsS3::Message::SubmissionRequest]
+
+  # Retrieves one or more submissions from AWS S3.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
+  # @param [Hash] opt                 Passed to #aws_get.
+  #
+  # @return [Hash{String=>String}]    File contents.
+  #
+  # @see #api_operation
+  #
+  def get_records: (*(AwsS3::Message::SubmissionRequest|Model|symHash|String) items, **untyped opt) -> Hash[String,String]
+
+  # Removes one or more submissions from AWS S3.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
+  # @param [Hash] opt                 Passed to #aws_delete.
+  #
+  # @return [Array<String>]           Succeeded deletions.
+  #
+  # @see #api_operation
+  #
+  def delete_records: (*(AwsS3::Message::SubmissionRequest|Model|symHash|String) items, **untyped opt) -> strArray
+
+  # Lists the files present in AWS S3 associated with one or more submissions.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
+  # @param [Hash] opt                 Passed to #aws_list.
+  #
+  # @return [Hash{String=>Array}]     The objects for each submission key.
+  #
+  # @see #api_operation
+  #
+  def list_records: (*(AwsS3::Message::SubmissionRequest|Model|symHash|String) items, **untyped opt) -> Hash[String,strArray]
+
+  # Upload the submission file and content file related to each submission ID.
+  #
+  # @param [Array<AwsS3::Message::SubmissionRequest>] records
+  # @param [String]  bucket
+  # @param [Boolean] atomic
+  # @param [Hash]    opt              Passed to Aws::S3::Client#initialize or:
+  #
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
+  #
+  # @raise [ApiService::RequestError]       If bucket is invalid.
+  #
+  # @return [Array<AwsS3::Message::SubmissionRequest>]  Submitted records.
+  #
+  # @see Aws::S3::Object#put
+  #
+  # OR USE THE API:
+  # @see https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html
+  #
+  def aws_create: (*AwsS3::Message::SubmissionRequest records, ?bucket: String|nil, ?atomic: bool, **untyped opt) -> Array[AwsS3::Message::SubmissionRequest]
+
+  # Get the files associated with each submission ID.
+  #
+  # @param [Array<String>] sids
+  # @param [String]        bucket
+  # @param [Boolean]       atomic
+  # @param [Hash]          opt        Passed to Aws::S3::Client#initialize or:
+  #
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
+  #
+  # @return [Hash{String=>String}]    Mapping of object key to related content.
+  #
+  # @see #aws_get_file
+  #
+  def aws_get: (*String sids, bucket: String, ?atomic: bool, **untyped opt) -> Hash[String,String]
+
+  # Remove the files associated with each submission ID.
+  #
+  # @param [Array<String>] sids
+  # @param [String]        bucket
+  # @param [Boolean]       atomic
+  # @param [Hash]          opt        Passed to Aws::S3::Client#initialize or:
+  #
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
+  #
+  # @return [Array<String>]           Object keys of deleted files.
+  #
+  # @see Aws::S3::Client#delete_objects
+  #
+  def aws_delete: (*String sids, bucket: String, ?atomic: bool, **untyped opt) -> strArray
+
+  # List the object keys associated with each submission ID.
+  #
+  # @param [Array<String>] sids
+  # @param [String]        bucket
+  # @param [Hash]          opt        Passed to Aws::S3::Client#initialize or:
+  #
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
+  #
+  # @return [Hash{String=>Array}]     Mapping of IDs and related object keys.
+  #
+  # @see #aws_get_file
+  #
+  def aws_list: (*String sids, bucket: String, **untyped opt) -> Hash[String,strArray]
+end

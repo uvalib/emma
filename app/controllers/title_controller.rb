@@ -66,7 +66,7 @@ class TitleController < ApplicationController
   # List all catalog titles.
   #
   # @see #title_index_path            Route helper
-  # @see BookshareService::Request::Titles#get_titles
+  # @see BookshareService::Action::Titles#get_titles
   #
   def index
     __log_activity(anonymous: true)
@@ -119,7 +119,7 @@ class TitleController < ApplicationController
   # Display details of an existing catalog title.
   #
   # @see #title_path                  Route helper
-  # @see BookshareService::Request::Titles#get_title
+  # @see BookshareService::Action::Titles#get_title
   #
   def show
     __log_activity(anonymous: true)

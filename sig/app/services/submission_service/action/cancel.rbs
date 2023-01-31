@@ -1,0 +1,18 @@
+# SubmissionService::Action::Submit
+#
+module SubmissionService::Action::Cancel
+  include SubmissionService::Common
+
+  include SubmissionService::Definition
+
+  # Receive a request to stop a batch job.
+  #
+  # @param [SubmissionService::ControlRequest, nil] request
+  # @param [Manifest, String]                manifest
+  # @param [SubmitJob, String, nil]          job
+  # @param [Hash]                            opt      To #post_flight
+  #
+  # @return [SubmissionService::ControlResponse] The value assigned to @result.
+  #
+  def batch_cancel: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
+end

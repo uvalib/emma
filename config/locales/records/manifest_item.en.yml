@@ -210,9 +210,6 @@ en:
 
         # =====================================================================
         # Database record field with upload data in JSON format
-        #
-        # TODO: Needs to be augmented to include URI and/or other information
-        # required to get a copy of the content during submission.
         # =====================================================================
 
         file_data:
@@ -228,10 +225,7 @@ en:
           type:         json
 
         # =====================================================================
-        # Database record field with Unified Search metadata in JSON format
-        # based on Search::Record::MetadataRecord with additional fields that
-        # relate to the "FRAME Metadata Worksheet" but are not currently
-        # defined by the Unified Search index.
+        # Selection of destination repository not currently supported.
         # =====================================================================
 
         repository:
@@ -244,31 +238,15 @@ en:
               This field indicates the repository which will receive the
               manifest item when it is submitted.
             </p>
-            <div><strong>DEVELOPMENT NOTE:</strong></div>
+            <div><strong>NOTE:</strong></div>
             <p>
-              This will probably change for practical reasons so that a given
-              manifest will be dedicated to a specific repository.
+              Selection of destination repository is not currently supported.
+              All items eligible for bulk submission are implicitly assumed to
+              be EMMA items.
+              Items remediated from files acquired from other repositories may
+              be submitted through the single-submission form interface.
             </p>
           type:         !ruby/symbol EmmaRepository
-
-        # =====================================================================
-        # Repository information (emma_data)
-        # =====================================================================
-
-        emma_publicationDate:
-          min:          0
-          max:          1
-          label:        'Publication Date'
-          tooltip:      |
-            Copyright or publication date of the creative work represented
-            by the remediated content file.
-          notes_html:   |
-            <p>
-              Copyright or publication date of the creative work represented
-              by the remediated content file.
-            </p>
-          type:         date
-          category:     bibliographic
 
         # =====================================================================
         # Bibliographic information (emma_data)
@@ -300,6 +278,21 @@ en:
               For book content, the edition or version of the book.
             </p>
           placeholder:  'Edition, version, etc.'
+          category:     bibliographic
+
+        emma_publicationDate:
+          min:          0
+          max:          1
+          label:        'Publication Date'
+          tooltip:      |
+                        Copyright or publication date of the creative work represented
+                        by the remediated content file.
+          notes_html:   |
+                        <p>
+                          Copyright or publication date of the creative work represented
+                          by the remediated content file.
+                        </p>
+          type:         date
           category:     bibliographic
 
         bib_seriesType:

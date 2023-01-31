@@ -20,6 +20,7 @@ class ApplicationJob < ActiveJob::Base
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
     include ApplicationJob::Properties
+    include ApplicationJob::Methods
     include ApplicationJob::Logging
     # :nocov:
   end
@@ -42,14 +43,13 @@ class ApplicationJob < ActiveJob::Base
 
   public
 
-  def initialize(*arguments, **opt)
+  def initialize(*args, **opt)
     cb     = opt.delete(:callback)
     cb_opt = opt.slice(:cb_receiver, :cb_method).presence
     job_warn { "ignoring #{cb_opt.inspect}" } if cb && cb_opt
     opt[:callback] = AsyncCallback.new(cb)    if (cb ||= cb_opt)
     opt.except!(*cb_opt.keys)                 if cb_opt
-    arguments << opt                          if opt.present?
-    super(*arguments)
+    super(*args, **opt)
   end
 
   # ===========================================================================
@@ -58,20 +58,8 @@ class ApplicationJob < ActiveJob::Base
 
   public
 
-  def perform(*)
+  def perform(...)
     not_implemented 'to be overridden by the subclass'
-  end
-
-  # Run the job immediately.
-  #
-  # @param [Array] args               Ignored.
-  #
-  # @return [Any]                     Return value of #perform.
-  #
-  def perform_now(*args)
-    __debug_job(__method__) { "`arguments` = #{arguments_inspect}" } # TODO: remove
-    job_warn { "ignoring method args #{args.inspect}" } if args.present?
-    super()
   end
 
   # ===========================================================================

@@ -17,6 +17,107 @@ module ApplicationJob::Logging
   include Emma::Common
   include Emma::Debug
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include ActiveJob::Core
+    include ActiveJob::Execution
+    include ActiveJob::Logging
+    # :nocov:
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # initialize
+  #
+  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
+  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
+  #
+  def initialize(*args, **opt)
+    __debug_job(__method__) { { args: args, opt: opt } }
+    super()
+    set_arguments(*args, **opt)
+  end
+
+  # ===========================================================================
+  # :section: ActiveJob::Execution overrides
+  # ===========================================================================
+
+  public
+
+  # Run the job asynchronously.
+  #
+  # @note The subclass *must* define its own #perform method; that definition
+  #   *may* call this via `super` (but does not have to).
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  #
+  # @return [Any]                     Return value of #perform.
+  #
+  def perform(*args, **opt)
+    if is_a?(Class)
+      job_warn { "not a class method | args = #{args.inspect}"}
+    else
+      set_arguments(*args, **opt)
+    end
+  end
+
+  # Run the job immediately.
+  #
+  # @param [Array] args               Assigned to ActiveJob::Core#arguments.
+  # @param [Hash]  opt
+  #
+  # @return [Any]                     Return value of #perform.
+  #
+  def perform_now(*args, **opt)
+    if is_a?(Class)
+      # noinspection RubyArgCount
+      super(*args, **opt)
+    else
+      set_arguments(*args, **opt) if args.present?
+      super()
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # set_arguments
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  #
+  # @return [Array]                   New value of #arguments.
+  #
+  def set_arguments(*args, **opt)
+    meth = opt.delete(:meth) || __method__
+    unless respond_to?(:arguments)
+      job_warn(meth: meth) { "not a class method | args = #{args.inspect}" }
+      return []
+    end
+    if arguments.blank?
+      args << opt if (opt = opt.presence && args.extract_options!.merge(opt))
+      job_warn(meth: meth) { "arguments being set to #{args.inspect}" }
+      return self.arguments = args
+    end
+    # noinspection RubyMismatchedArgumentType
+    __debug_job(meth) { "`arguments` = #{arguments_inspect(self)}" }
+    if (extra = args - arguments).present?
+      job_warn(meth: meth) { "ignoring extra method args #{extra.inspect}" }
+    elsif args.present?
+      job_warn(meth: meth) { 'ignoring duplicate method args' }
+    end
+    arguments
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -40,11 +141,15 @@ module ApplicationJob::Logging
   end
 
   def job_leader(job)
-    @job_leader ||= "#{job.job_name} [#{job.job_id}]"
+    job.is_a?(Class) ? "CLASS #{job}" : "#{job.job_name} [#{job.job_id}]"
   end
 
   def job_inspect(job)
-    "#{job_leader(job)} arguments: #{arguments_inspect(job)}"
+    if job.is_a?(Class)
+      job_leader(job)
+    else
+      "#{job_leader(job)} arguments: #{arguments_inspect(job)}"
+    end
   end
 
   def arguments_inspect(job)
@@ -80,12 +185,19 @@ module ApplicationJob::Logging
 
   public
 
-  def __debug_job(job, *args, **opt, &block)
-    unless opt.key?(:leader) || !args.first.is_a?(ApplicationJob)
+  def __debug_job(*args, **opt)
+    unless opt.key?(:leader) || !args.first.is_a?(ActiveJob::Base)
       # noinspection RubyMismatchedArgumentType
       opt[:leader] = "#{job_leader(args.first)}:"
     end
-    __debug_line(*args, **opt, &block)
+    opt[:separator] ||= "\n\t"
+    tid   = Thread.current.name
+    name  = self_class
+    args  = args.join(Emma::Debug::DEBUG_SEPARATOR)
+    added = block_given? ? yield : {}
+    __debug_items("#{name} #{args}", **opt) do
+      added.is_a?(Hash) ? added.merge(thread: tid) : [*added, "thread #{tid}"]
+    end
   end
     .tap { |meth| neutralize(meth) unless DEBUG_JOB }
 
@@ -126,7 +238,9 @@ module ApplicationJob::Logging
     public
 
     def __debug_job(*args, **opt, &block)
-      args.prepend(self) unless args.first.is_a?(ApplicationJob)
+      unless args.first.is_a?(ActiveJob::Base) || !is_a?(ActiveJob::Base)
+        args.prepend(self)
+      end
       super(*args, **opt, &block)
     end
       .tap { |meth| neutralize(meth) unless DEBUG_JOB }
@@ -141,29 +255,31 @@ module ApplicationJob::Logging
 
   included do
 
-    include InstanceMethods
+    if respond_to?(:before_enqueue)
 
-    # =========================================================================
-    # :section: ActiveJob callbacks
-    # =========================================================================
+      # =======================================================================
+      # :section: ActiveJob callbacks
+      # =======================================================================
 
-    before_enqueue do |job|
-      __debug_job(job) { "ENQUEUE START --->>> #{job_inspect(job)}" }
-      # TODO: possible mechanism for making a job conditional; e.g.:
-      # user = job.arguments.first
-      # throw :abort unless user.wants_notification?
-    end
+      before_enqueue do |job|
+        __debug_job(job) { "--->>> ENQUEUE START #{job_inspect(job)}" }
+        # TODO: possible mechanism for making a job conditional; e.g.:
+        # user = job.arguments.first
+        # throw :abort unless user.wants_notification?
+      end
 
-    after_enqueue do |job|
-      __debug_job(job) { "ENQUEUE END   <<<--- #{job_inspect(job)}" }
-    end
+      after_enqueue do |job|
+        __debug_job(job) { "<<<--- ENQUEUE END   #{job_inspect(job)}" }
+      end
 
-    before_perform do |job|
-      __debug_job(job) { "PERFORM START --->>> #{job_inspect(job)}" }
-    end
+      before_perform do |job|
+        __debug_job(job) { "--->>> PERFORM START #{job_inspect(job)}" }
+      end
 
-    after_perform do |job|
-      __debug_job(job) { "PERFORM END   <<<--- #{job_inspect(job)}" }
+      after_perform do |job|
+        __debug_job(job) { "<<<--- PERFORM END   #{job_inspect(job)}" }
+      end
+
     end
 
   end

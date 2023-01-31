@@ -29,6 +29,8 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   include BaseCollectionDecorator::Row
 
+  include BaseCollectionDecorator::Submission
+
   # Methods for each collection decorator class instance.
   #
   # @!attribute [r] object_class

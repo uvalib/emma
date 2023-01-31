@@ -28,6 +28,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
     include BaseCollectionDecorator::Controls
     include BaseCollectionDecorator::Grid
     include BaseCollectionDecorator::Row
+    include BaseCollectionDecorator::Submission
     # :nocov:
   end
 

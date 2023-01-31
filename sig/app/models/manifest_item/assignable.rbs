@@ -1,4 +1,6 @@
 module ManifestItem::Assignable
+  include ManifestItem::Config
+
   include ManifestItem::Validatable
 
   # :nocov:
@@ -34,6 +36,14 @@ module ManifestItem::Assignable
   def key_mapping: () -> Hash[String,Symbol]
 
   @key_mapping: Hash[String,Symbol]
+
+  # Include the default repository value if not specified.
+  #
+  # @param [Hash, nil] attr
+  #
+  # @return [Hash]
+  #
+  def default_attributes: (?(symHash|nil) attr) -> symHash
 
   # normalize_file
   #
@@ -85,6 +95,17 @@ module ManifestItem::Assignable
   def normalize_date
     : (String|Numeric v) -> (Date | String)
     | (Date           v) -> Date
+    | (untyped        v) -> nil
+
+  # normalize_datetime
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [DateTime, String, nil]
+  #
+  def normalize_datetime
+    : (String|Numeric v) -> (DateTime | String)
+    | (Date           v) -> DateTime
     | (untyped        v) -> nil
 
   # normalize_enum

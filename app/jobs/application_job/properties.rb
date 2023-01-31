@@ -206,6 +206,8 @@ module ApplicationJob::Properties
 
   module InstanceMethods
 
+    extend ActiveSupport::Concern
+
     include ApplicationJob::Properties
 
     # =========================================================================
@@ -236,20 +238,11 @@ module ApplicationJob::Properties
 
     public
 
-    def default_queue_key
-      self.class.send(__method__)
-    end
-
-    def default_queue_name
-      self.class.send(__method__)
-    end
-
-    def default_priority
-      self.class.send(__method__)
-    end
-
-    def queue_name_from_part(part_name)
-      self.class.send(__method__, part_name)
+    included do
+      delegate :default_queue_key,    to: :class
+      delegate :default_queue_name,   to: :class
+      delegate :default_priority,     to: :class
+      delegate :queue_name_from_part, to: :class
     end
 
   end

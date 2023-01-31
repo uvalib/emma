@@ -3,6 +3,9 @@ module ManifestItem::FieldMethods
 
   # Fields which are not directly related to :emma_data values.
   #
+  # (These are the "en.manifest_item.record" fields with 'origin' == :system
+  # plus the :file_data field.)
+  #
   # @type [Array<Symbol>]
   #
   RECORD_COLUMNS: symArray
@@ -18,6 +21,8 @@ module ManifestItem::FieldMethods
   CLIENT_COLS: symArray
 
   NON_DATA_COLS: symArray
+
+  NON_EDIT_COLS: symArray
 
   NON_BACKUP_COLS: symArray
 

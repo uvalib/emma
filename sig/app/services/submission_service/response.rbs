@@ -1,0 +1,75 @@
+# Base class for SubmissionService responses.
+#
+# @see SubmitChannel::Response
+#
+class SubmissionService::Response < ApplicationJob::Response
+  include SubmissionService::Common
+
+  TEMPLATE: symHash
+
+  # Create a new instance.
+  #
+  # @param [SubmissionService::Response, Hash, Array, *] values
+  # @param [Hash]                                        opt
+  #
+  def initialize: (?untyped? values, **untyped opt) -> void
+
+  def self.template: () -> symHash
+
+  def self.batch?: () -> bool
+
+  def batch?: () -> bool
+end
+
+# Response object for a submission request.
+#
+# @see file:javascripts/shared/submit-response.js *SubmitResponse*
+#
+class SubmissionService::SubmitResponse < SubmissionService::Response
+  TEMPLATE: symHash
+
+  def self.template: () -> symHash
+
+  def self.default_status: () -> String
+end
+
+class SubmissionService::StepResponse < SubmissionService::SubmitResponse
+  TEMPLATE: symHash
+
+  def self.template: () -> symHash
+
+  def self.default_status: () -> String
+end
+
+# Response object for a submission request.
+#
+class SubmissionService::BatchSubmitResponse < SubmissionService::SubmitResponse
+  def self.default_status: () -> String
+
+  def self.batch?: () -> bool
+end
+
+# Response object for a control request.
+#
+# @see file:javascripts/shared/submit-response.js *SubmitControlResponse*
+#
+class SubmissionService::ControlResponse < SubmissionService::Response
+  TEMPLATE: symHash
+
+  def self.template: () -> symHash
+end
+
+# Response object for a list request.
+#
+class SubmissionService::StatusResponse < SubmissionService::Response
+  TEMPLATE: symHash
+
+  # Create a new instance.
+  #
+  # @param [SubmissionService::StatusResponse, Hash, Array, *] values
+  # @param [Hash]                                              opt
+  #
+  def initialize: (?untyped? values, **untyped opt) -> void
+
+  def self.template: () -> symHash
+end

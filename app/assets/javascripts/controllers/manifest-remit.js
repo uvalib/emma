@@ -1,16 +1,16 @@
 // app/assets/javascripts/controllers/manifest-remit.js
 
 
-import { AppDebug }                            from '../application/debug';
-import { appSetup }                            from '../application/setup';
-import { removeFrom }                          from '../shared/arrays';
-import { BaseClass }                           from '../shared/base-class';
-import { selector, toggleHidden }              from '../shared/css';
-import { handleClickAndKeypress, handleEvent } from '../shared/events';
-import { flashError, flashMessage }            from '../shared/flash';
-import { selfOrDescendents, selfOrParent }     from '../shared/html';
-import { compact, fromJSON, toObject }         from '../shared/objects';
-import { asString }                            from '../shared/strings';
+import { AppDebug }                              from '../application/debug';
+import { appSetup }                              from '../application/setup';
+import { arrayWrap, removeFrom }                 from '../shared/arrays';
+import { BaseClass }                             from '../shared/base-class';
+import { selector, toggleHidden }                from '../shared/css';
+import { handleClickAndKeypress, handleEvent }   from '../shared/events';
+import { flashError, flashMessage }              from '../shared/flash';
+import { selfOrDescendents, selfOrParent }       from '../shared/html';
+import { compact, fromJSON, isObject, toObject } from '../shared/objects';
+import { SubmitModal }                           from '../shared/submit-modal';
 import {
     isDefined,
     isEmpty,
@@ -21,12 +21,15 @@ import {
 import {
     DISABLED_MARKER,
     MANIFEST_ATTR,
+    ITEM_ATTR,
     attribute,
     buttonFor,
     enableButton,
     initializeButtonSet,
-    serverBulkSend as serverManifestSend,
 } from '../shared/manifests';
+import {
+    SubmitStepResponse,
+} from '../shared/submit-response';
 
 
 const MODULE = 'ManifestRemit';
@@ -58,6 +61,7 @@ appSetup(MODULE, function() {
     const STOP_BUTTON_CLASS         = 'stop-button';
     const PAUSE_BUTTON_CLASS        = 'pause-button';
     const RESUME_BUTTON_CLASS       = 'resume-button';
+    const MONITOR_BUTTON_CLASS      = 'monitor-button';
 
     const AUXILIARY_TRAY_CLASS      = 'auxiliary-buttons';
     const REMOTE_FILE_CLASS         = 'remote-file';
@@ -82,6 +86,7 @@ appSetup(MODULE, function() {
     const INDEX_STATUS_CLASS        = 'index-status';
     const ACTIVE_MARKER             = 'active';
     const NOT_STARTED_MARKER        = 'not-started';
+    const UNSAVED_MARKER            = 'unsaved';
     const FILE_NEEDED_MARKER        = 'file-needed';
     const FILE_MISSING_MARKER       = 'file-missing';
     const DATA_MISSING_MARKER       = 'data-missing';
@@ -95,6 +100,7 @@ appSetup(MODULE, function() {
     const STOP_BUTTON           = selector(STOP_BUTTON_CLASS);
     const PAUSE_BUTTON          = selector(PAUSE_BUTTON_CLASS);
     const RESUME_BUTTON         = selector(RESUME_BUTTON_CLASS);
+    const MONITOR_BUTTON        = selector(MONITOR_BUTTON_CLASS);
 
     const AUXILIARY_TRAY        = selector(AUXILIARY_TRAY_CLASS);
     const REMOTE_FILE           = selector(REMOTE_FILE_CLASS);
@@ -120,11 +126,12 @@ appSetup(MODULE, function() {
     const INDEX_STATUS          = selector(INDEX_STATUS_CLASS);
     const ACTIVE                = selector(ACTIVE_MARKER);
     const NOT_STARTED           = selector(NOT_STARTED_MARKER);
+    const UNSAVED               = selector(UNSAVED_MARKER);
     const FILE_NEEDED           = selector(FILE_NEEDED_MARKER);
     const FILE_MISSING          = selector(FILE_MISSING_MARKER);
     const FILE_PROBLEMATIC      = `${FILE_MISSING}, ${FILE_NEEDED}`;
     const DATA_MISSING          = selector(DATA_MISSING_MARKER);
-    const DATA_PROBLEMATIC      = DATA_MISSING;
+    const DATA_PROBLEMATIC      = `${DATA_MISSING}, ${UNSAVED}`;
     const PROBLEMATIC           = `${FILE_PROBLEMATIC}, ${DATA_PROBLEMATIC}`;
     const BLOCKED               = selector(BLOCKED_MARKER);
     const FAILED                = selector(FAILED_MARKER);
@@ -318,6 +325,7 @@ appSetup(MODULE, function() {
     const $stop        = $submit_tray.find(STOP_BUTTON);
     const $pause       = $submit_tray.find(PAUSE_BUTTON);
     const $resume      = $submit_tray.find(RESUME_BUTTON);
+    const $monitor     = $submit_tray.find(MONITOR_BUTTON);
 
     /**
      * Table of symbolic names for button elements.
@@ -349,6 +357,7 @@ appSetup(MODULE, function() {
      */
     function initializeSubmissionForm() {
         _debug('initializeSubmissionForm');
+        initializeSubmissionMonitor();
         initializeSubmissionButtons();
         initializeItems();
         initializeLocalFilesResolution();
@@ -407,7 +416,8 @@ appSetup(MODULE, function() {
         if (submissionsActive()) {
             _error(`${fail} - already submitting`);
         } else {
-            submissionRequest('start', func, fail);
+            const action = startSubmissions();
+            submissionRequest(action, func, fail);
         }
     }
 
@@ -422,7 +432,8 @@ appSetup(MODULE, function() {
         if (!submissionsActive()) {
             _error(`${fail} - not submitting`);
         } else {
-            submissionRequest('stop', func, fail);
+            const action = stopSubmissions();
+            submissionRequest(action, func, fail);
         }
     }
 
@@ -439,7 +450,8 @@ appSetup(MODULE, function() {
         } else if (submissionsPaused()) {
             _error(`${fail} - already paused`);
         } else {
-            submissionRequest('pause', func, fail);
+            const action = pauseSubmissions();
+            submissionRequest(action, func, fail);
         }
     }
 
@@ -456,7 +468,8 @@ appSetup(MODULE, function() {
         } else if (!submissionsPaused()) {
             _error(`${fail} - not paused`);
         } else {
-            submissionRequest('resume', func, fail);
+            const action = resumeSubmissions();
+            submissionRequest(action, func, fail);
         }
     }
 
@@ -468,39 +481,12 @@ appSetup(MODULE, function() {
      * @param {string} [fail]
      */
     function submissionRequest(action, caller, fail) {
-        const func     = caller || 'submissionRequest';
-        const manifest = manifestId();
-        if (!manifest) {
-            _error(`${func}: no manifest ID`);
-            return;
-        }
-
-        serverManifestSend(`${action}/${manifest}`, {
-            caller:    func,
-            onError:   onError,
-            onSuccess: onSuccess,
-        });
-
-        /**
-         * Process a Manifest submission action error response from the server.
-         *
-         * @param {object} [data]
-         */
-        function onError(data) {
-            const tag = fail || `${action} failed`;
-            const msg = data ? `${tag} - ${asString(data)}` : tag;
-            flashError(msg);
-        }
-
-        /**
-         * Respond to a Manifest submission action received from the server.
-         *
-         * @param {object} [data]
-         */
-        function onSuccess(data) {
-            _debug(`${func}: data =`, data);
-            controlSubmissions(action, data, func);
-            Counter.resetAll();
+        const func = caller || 'submissionRequest';
+        _debug(`${func}: ${action}`);
+        if (!submissionMonitor().command(action)) {
+            const tag  = fail || `${action} failed`;
+            const note = 'Refresh this page to re-authenticate.';
+            flashError(`${tag}: ${note}`);
         }
     }
 
@@ -592,67 +578,52 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * controlSubmissions
-     *
-     * @param {string} action
-     * @param {object} [data]
-     * @param {string} [caller]
-     *
-     * @returns {void}
-     */
-    function controlSubmissions(action, data, caller) {
-        switch (action) {
-            case 'start':  return startSubmissions(data);
-            case 'stop':   return stopSubmissions(data);
-            case 'pause':  return pauseSubmissions(data);
-            case 'resume': return resumeSubmissions(data);
-        }
-        const func = caller || 'controlSubmissions';
-        _error(`${func}: ${action}: invalid`);
-    }
-
-    /**
      * Begin submitting all items marked for submission.
      *
-     * @param {object} _data          Currently unused.
+     * @returns {string}              Submission action.
      */
-    function startSubmissions(_data) {
+    function startSubmissions() {
         _debug('START SUBMISSIONS');
         if (isMissing(itemsChecked())) {
             itemsReady().each((_, item) => selectItem(item));
             updateGroupSelect();
         }
+        setSubmissionRequest();
         submissionsActive(true);
+        return 'start';
     }
 
     /**
      * Terminate the current round of submissions.
      *
-     * @param {object} _data          Currently unused.
+     * @returns {string}              Submission action.
      */
-    function stopSubmissions(_data) {
+    function stopSubmissions() {
         _debug('STOP SUBMISSIONS');
         submissionsActive(false);
+        return 'stop';
     }
 
     /**
      * Pause the current round of submissions.
      *
-     * @param {object} _data          Currently unused.
+     * @returns {string}              Submission action.
      */
-    function pauseSubmissions(_data) {
+    function pauseSubmissions() {
         _debug('PAUSE SUBMISSIONS');
         submissionsPaused(true);
+        return 'pause';
     }
 
     /**
      * Un-pause the current round of submissions.
      *
-     * @param {object} _data          Currently unused.
+     * @returns {string}              Submission action.
      */
-    function resumeSubmissions(_data) {
+    function resumeSubmissions() {
         _debug('RESUME SUBMISSIONS');
         submissionsPaused(false);
+        return 'resume';
     }
 
     let started = false;
@@ -762,6 +733,34 @@ appSetup(MODULE, function() {
         _debug(`INITIAL remote_files =`, file_references.remote);
     }
 
+    /**
+     * Restore the status values of selected items to their original state in
+     * preparation for resubmitting.
+     */
+    function resetItems() {
+        _debug('resetItems');
+        itemsToTransmit().each((_, item) => {
+            const $item = $(item);
+            STATUS_SELECTORS.forEach(status => resetStatusFor($item, status));
+        });
+    }
+
+    /**
+     * The submission entry associated with the given ManifestItem ID.
+     *
+     * @param {string, number} id
+     *
+     * @returns {jQuery}
+     */
+    function itemFor(id) {
+        return allItems().filter(`[${ITEM_ATTR}="${id}"]`);
+    }
+
+    function itemsToTransmit() {
+        const $selected = itemsSelected();
+        return isPresent($selected) ? $selected : allItems();
+    }
+
     function itemsReady() {
         return itemsWhere(isReady);
     }
@@ -828,6 +827,10 @@ appSetup(MODULE, function() {
         const $item    = itemRow(item);
         const statuses = Object.entries(NOT_READY_VALUES);
         return statuses.some(([s, invalid]) => $item.find(s).is(invalid));
+    }
+
+    function isUnsaved(item) {
+        return hasCondition(item, UNSAVED);
     }
 
     function isBlocked(item) {
@@ -1239,6 +1242,320 @@ appSetup(MODULE, function() {
         toggleHidden($text,    details);
         toggleHidden($details, !details);
         toggleHidden($edit,    !fixable);
+    }
+
+    // ========================================================================
+    // Functions - submission steps
+    // ========================================================================
+
+    /**
+     * Mapping of submission step name to the status column that it updates.
+     *
+     * @type {Object.<string,string>}
+     */
+    const SUBMIT_STEP_TO_STATUS = {
+        db:      FILE_STATUS_CLASS,
+        cache:   UPLOAD_STATUS_CLASS,
+        promote: UPLOAD_STATUS_CLASS,
+        index:   INDEX_STATUS_CLASS,
+    };
+
+    const SUBMITTING_DATA = 'submitIds';
+
+    /**
+     * getSubmissionList
+     *
+     * @returns {Object.<string,string>|undefined}
+     */
+    function getSubmissionList() {
+        return $body.data(SUBMITTING_DATA);
+    }
+
+    /**
+     * setSubmissionList
+     *
+     * @param {string[]|object} ids
+     *
+     * @returns {Object.<string,string>}
+     */
+    function setSubmissionList(ids) {
+        _debug('setSubmissionList: ids =', ids);
+        // noinspection JSUnusedLocalSymbols
+        const table = isObject(ids) ? ids : toObject(ids, id => 'STARTING');
+        $body.data(SUBMITTING_DATA, table);
+        return table;
+    }
+
+    /**
+     * Process a message sent back from the server as part of a bulk submission
+     * sequence.
+     *
+     * @param {SubmitResponseSubclass} message
+     */
+    function onSubmissionResponse(message) {
+        if (message.isInitial) {
+            onInitialResponse(message);
+        } else if (message.step) {
+            onStepResponse(message);
+        } else if (message.isIntermediate) {
+            onBatchResponse(message);
+        } else if (message.isFinal) {
+            onFinalResponse(message);
+        } else {
+            console.warn('onSubmissionResponse: unexpected:', message);
+        }
+    }
+
+    /**
+     * Process the message which indicates the start of a bulk submission.
+     *
+     * @param {SubmitResponse} message
+     */
+    function onInitialResponse(message) {
+        _debug('onInitialResponse: message =', message);
+        resetItems();
+        let items = message.items;
+        items = items.map(id => isObject(id) ? id.items : id).flat();
+        items = items.map(id => (typeof id === 'number') ? `${id}` : id);
+        setSubmissionList(items);
+        counter.failed.clear();
+        counter.succeeded.clear();
+        counter.transmitting.value = items.length;
+    }
+
+    /**
+     * onStepResponse
+     *
+     * @param {SubmitStepResponse} message
+     */
+    function onStepResponse(message) {
+        const func    = 'onStepResponse';
+        const total   = message.submitted.length;
+        const success = message.success;
+        const failure = message.failure;
+        const invalid = message.invalid;
+        const step    = message.step;
+        const status  = SUBMIT_STEP_TO_STATUS[step];
+        const list    = getSubmissionList() || {};
+        let changed   = false;
+        _debug(`${func}: message =`, message);
+
+        success.forEach(id => {
+            const value  = SUCCEEDED_MARKER;
+            const $item  = itemFor(id);
+            setStatusFor($item, status, value);
+            list[id] = value;
+            changed  = true;
+        });
+        for (const [id, error] of Object.entries(failure)) {
+            const value  = FAILED_MARKER;
+            const $item  = itemFor(id);
+            setStatusFor($item, status, value, error);
+            list[id] = `${value}: ${error}`;
+            changed  = true;
+        }
+        if (isPresent(invalid)) {
+            console.warn(`${func}: invalid:`, invalid);
+        }
+
+        const successes = success.length;
+        const failures  = Object.keys(failure).length;
+        const count     = successes + failures + invalid.length;
+        if (count !== total) {
+            console.warn(`${func}: ${count} entries but ${total} submitted`);
+        }
+
+        if (changed) {
+            setSubmissionList(list);
+        }
+    }
+
+    /**
+     * onBatchResponse
+     *
+     * @param {SubmitStepResponse} message
+     */
+    function onBatchResponse(message) {
+        const func    = 'onBatchResponse';
+        const total   = message.submitted.length;
+        const success = message.success;
+        const failure = message.failure;
+        const invalid = message.invalid;
+        const list    = getSubmissionList() || {};
+        let changed   = false;
+        _debug(`${func}: message =`, message);
+
+        success.forEach(id => {
+            if (!list[id]) {
+                const value  = SUCCEEDED_MARKER;
+                const status = SUBMIT_STEP_TO_STATUS.index;
+                const $item  = itemFor(id);
+                setStatusFor($item, status, value);
+                list[id] = value;
+                changed  = true;
+            }
+        });
+        for (const [id, error] of Object.entries(failure)) {
+            if (!list[id]) {
+                const value  = FAILED_MARKER;
+                const status = SUBMIT_STEP_TO_STATUS.index;
+                const $item  = itemFor(id);
+                setStatusFor($item, status, value, error);
+                list[id] = `${value}: ${error}`;
+                changed  = true;
+            }
+        }
+        if (isPresent(invalid)) {
+            console.warn(`${func}: invalid:`, invalid);
+        }
+
+        const successes = success.length;
+        const failures  = Object.keys(failure).length;
+        const count     = successes + failures + invalid.length;
+        if (count !== total) {
+            console.warn(`${func}: ${count} entries but ${total} submitted`);
+        }
+
+        counter.failed.increment(failures);
+        counter.succeeded.increment(successes);
+        counter.transmitting.decrement(successes + failures);
+
+        if (changed) {
+            setSubmissionList(list);
+        }
+    }
+
+    /**
+     * onFinalResponse
+     *
+     * @param {SubmitResponse} message
+     */
+    function onFinalResponse(message) {
+        const func = 'onFinalResponse';
+        const list = getSubmissionList() || {};
+        const data = message.data || {};
+        _debug(`${func}: message =`, message);
+
+        let total = 0;
+        let count = 0;
+        for (const [_job, entry] of Object.entries(data)) {
+            /** @type {SubmitStepResponseData} */
+            const message = entry;
+            const success = message.success || [];
+            const failure = message.failure || {};
+            const invalid = message.invalid || [];
+            success.forEach(id => {
+                const value = SUCCEEDED_MARKER;
+                const was   = `"${list[id]}"`;
+                const now   = `"${value}"`;
+                if (was !== now) {
+                    console.warn(`${func}: ${id}: was ${was}; now ${now}`);
+                }
+                count++;
+            });
+            for (const [id, error] of Object.entries(failure)) {
+                const value = FAILED_MARKER;
+                const was   = `"${list[id]}"`;
+                const now   = `"${value}: ${error}"`;
+                if (was !== now) {
+                    console.warn(`${func}: ${id}: was ${was}; now ${now}`);
+                }
+                count++;
+            }
+            if (isPresent(invalid)) {
+                console.warn(`${func}: invalid:`, invalid);
+                count += invalid.length;
+            }
+            total += (message.submitted?.length || 0);
+        }
+        if (count !== total) {
+            console.warn(`${func}: ${count} entries but ${total} submitted`);
+        }
+
+        submissionsActive(false);
+    }
+
+    /**
+     * Called when the server does not accept the WebSocket subscription
+     * attempt (probably because reauthorization is required).
+     */
+    function onSubmissionRejected() {
+        _debug('onSubmissionRejected');
+        const note = 'Refresh this page to re-authenticate.';
+        flashError(`Connection error: ${note}`);
+        submissionsActive(false);
+    }
+
+    // ========================================================================
+    // Functions - submission monitor
+    // ========================================================================
+
+    let submission_monitor;
+
+    /**
+     * submissionMonitor
+     *
+     * @returns {SubmitModal}
+     */
+    function submissionMonitor() {
+        return submission_monitor ||= SubmitModal.instanceFor($monitor);
+    }
+
+    /**
+     * Get the current submission request, creating it if necessary.
+     *
+     * @returns {SubmitRequest}
+     */
+    function getSubmissionRequest() {
+        //_debug('getSubmissionRequest');
+        return submissionMonitor().getRequestData() || setSubmissionRequest();
+    }
+
+    /**
+     * Set the current submission request to the currently checked items
+     * by default.
+     *
+     * @param {string|string[]|SubmitRequest|SubmitRequestPayload} [values]
+     *
+     * @returns {SubmitRequest}
+     */
+    function setSubmissionRequest(values) {
+        _debug('setSubmissionRequest:', values);
+        let data = values;
+        if (notDefined(data)) {
+            data = itemsChecked().toArray();
+            data = { items: data.map(item => $(item).attr(ITEM_ATTR)) };
+        } else if (Array.isArray(data)) {
+            data = { items: data };
+        } else if (typeof data !== 'object') {
+            data = { items: arrayWrap(data) };
+        }
+        data = { manifest_id: manifestId(), ...data };
+        return submissionMonitor().setRequestData(data);
+    }
+
+    /**
+     * Open a channel for making and controlling submissions.
+     */
+    function initializeSubmissionMonitor() {
+        _debug('initializeSubmissionMonitor');
+
+        SubmitModal.setupFor($monitor, {
+            rejected:   onSubmissionRejected,
+            onResponse: onSubmissionResponse,
+            onOpen:     onOpen,
+            onClose:    onClose,
+        });
+
+        function onOpen($activator, check_only, halted) {
+            _debug('onOpen SubmitModal', halted, check_only, $activator);
+            // TODO: ?
+        }
+
+        function onClose($activator, check_only, halted) {
+            _debug('onClose SubmitModal', halted, check_only, $activator);
+            // TODO: ?
+        }
     }
 
     // ========================================================================
@@ -1925,6 +2242,7 @@ appSetup(MODULE, function() {
     // Actions
     // ========================================================================
 
+    SubmitModal.initializeAll();
     initializeSubmissionForm();
     Counter.resetAll();
 

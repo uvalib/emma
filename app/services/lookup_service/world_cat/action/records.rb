@@ -1,13 +1,13 @@
-# app/services/lookup_service/world_cat/request/records.rb
+# app/services/lookup_service/world_cat/action/records.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# LookupService::WorldCat::Request::Records
+# LookupService::WorldCat::Action::Records
 #
-module LookupService::WorldCat::Request::Records
+module LookupService::WorldCat::Action::Records
 
   include LookupService::WorldCat::Common
 
@@ -253,7 +253,7 @@ module LookupService::WorldCat::Request::Records
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #
-  # @return [Hash{Symbol=>LookupService::WorldCat::Request::Records::Terms}]
+  # @return [Hash{Symbol=>LookupService::WorldCat::Action::Records::Terms}]
   #
   # @see LookupService::Request#TEMPLATE
   #
@@ -479,7 +479,7 @@ module LookupService::WorldCat::Request::Records
     }.freeze
 
     # =========================================================================
-    # :section: LookupService::WorldCat::Request::Records::Terms overrides
+    # :section: LookupService::WorldCat::Action::Records::Terms overrides
     # =========================================================================
 
     public
@@ -529,7 +529,7 @@ module LookupService::WorldCat::Request::Records
     }.freeze
 
     # =========================================================================
-    # :section: LookupService::WorldCat::Request::Records::Terms overrides
+    # :section: LookupService::WorldCat::Action::Records::Terms overrides
     # =========================================================================
 
     public
@@ -553,7 +553,7 @@ module LookupService::WorldCat::Request::Records
     ID_PREFIXES = %i[isbn oclc lccn issn].freeze
 
     # =========================================================================
-    # :section: LookupService::WorldCat::Request::Records::Terms overrides
+    # :section: LookupService::WorldCat::Action::Records::Terms overrides
     # =========================================================================
 
     public

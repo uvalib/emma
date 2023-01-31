@@ -1,4 +1,0 @@
-# Namespace for API requests.
-#
-module LookupService::GoogleBooks::Request
-end

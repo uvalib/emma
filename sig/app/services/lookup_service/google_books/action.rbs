@@ -1,0 +1,5 @@
+# Namespace for API requests.
+#
+module LookupService::GoogleBooks::Action
+  include LookupService::GoogleBooks::Action::Volumes
+end

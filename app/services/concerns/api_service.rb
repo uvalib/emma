@@ -15,6 +15,7 @@ require 'middleware'
 class ApiService
 
   include Emma::Common
+  include Serializable
 
   include Api
 
@@ -127,6 +128,20 @@ class ApiService
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Represent the instance as a Hash.
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  def to_h
+    { user: user, base_url: @base_url, options: options }.compact
+  end
+
+  # ===========================================================================
   # :section: Per-service class methods
   # ===========================================================================
 
@@ -137,10 +152,11 @@ class ApiService
   # @param [ApiService] subclass
   #
   def self.inherited(subclass)
-
-    # == Maintain a distinct instance of each service in ApiService#table
-
     subclass.class_exec do
+
+      # =======================================================================
+      # Maintain a distinct instance of each service in ApiService#table
+      # =======================================================================
 
       # The single instance of this class.
       #
@@ -176,11 +192,9 @@ class ApiService
         ApiService.table(**opt).delete(self)
       end
 
-    end
-
-    # == Each service maintains a tables its request methods
-
-    subclass.class_exec do
+      # =======================================================================
+      # Each service maintains a tables its request methods
+      # =======================================================================
 
       # Add a method name and its properties to #api_methods.
       #
@@ -275,8 +289,40 @@ class ApiService
         end
       end
 
-    end
+      # =======================================================================
+      # Serializers
+      # =======================================================================
 
+      protected
+
+      # Create a serializer for this class and any subclasses derived from it.
+      #
+      # @param [Class] this_class
+      #
+      # @see Serializer::Base#serialize?
+      #
+      def self.make_serializers(this_class)
+        this_class.class_exec do
+
+          serializer :serialize do |instance|
+            instance.to_h
+          end
+
+          serializer :deserialize do |hash|
+            new(**re_symbolize_keys(hash))
+          end
+
+          def self.inherited(subclass)
+            # noinspection RubyMismatchedArgumentType
+            make_serializers(subclass)
+          end
+
+        end
+      end
+
+      make_serializers(self)
+
+    end
   end
 
 end

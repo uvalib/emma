@@ -1,29 +1,9 @@
 # Common logic for all channels.
 #
 module ApplicationCable::Common
+  include ApplicationCable::Payload
+
   include Emma::Debug
-
-  extend ::ApplicationCable::Common
-
-  # @see https://www.postgresql.org/docs/11/sql-notify.html
-  MAX_PAYLOAD_SIZE: Integer
-
-  # Determine the serialized size of the given item.
-  #
-  # @param [*] payload
-  #
-  # @return [Integer]
-  #
-  def payload_size: (untyped payload) -> Integer
-
-  # If the payload would cause a PG::InvalidValueException return its size.
-  #
-  # @param [*] payload
-  #
-  # @return [Integer]                 The size that would result in failure.
-  # @return [nil]                     The payload is not too large.
-  #
-  def invalid_payload_size: (untyped payload) -> (Integer | nil)
 
   # Normalize received stream data.
   #
@@ -53,6 +33,15 @@ module ApplicationCable::Common
   # @return [void]
   #
   def __debug_cable: (*untyped args, **untyped opt) ?{ () -> untyped } -> void
+
+  # Send sent/received WebSocket data to the console.
+  #
+  # @param [Symbol] meth
+  # @param [*]      data
+  #
+  # @return [void]
+  #
+  def __debug_cable_data: (Symbol meth, untyped data) -> void
 
   private
 

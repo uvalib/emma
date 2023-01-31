@@ -62,11 +62,17 @@ module BaseDecorator::Grid
   #
   def grid_row_columns: () -> symArray
 
-  # The names of each grid data column which is not displayed.
+  # The names of each grid data column which is not rendered.
   #
   # @return [Array<Symbol>]
   #
   def grid_row_skipped_columns: () -> symArray
+
+  # The names of each grid data column which is rendered but not visible.
+  #
+  # @return [Array<Symbol>]
+  #
+  def grid_row_undisplayed_columns: () -> symArray
 
   # This is the number of <tr> rows within <thead>.
   #
@@ -330,6 +336,20 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def grid_data_cell_edit: (Symbol field, untyped value, (symHash|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Indicate whether the field is one whose elements should be invisible.
+  #
+  # @param [*] field
+  #
+  def undisplayed?: (untyped field) -> bool
+
+  # Return the fields which contribute to the count of visible grid columns.
+  #
+  # @param [Array<Symbol>, Symbol] fields
+  #
+  # @return [Array<Symbol>]
+  #
+  def visible: (symArray|Symbol fields) -> symArray
 
   # Create an object that can be used to unambiguously indicate whether an
   # index value has been adjusted from its original raw value.

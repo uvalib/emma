@@ -1280,15 +1280,20 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
             width: 100%;
 
+            // noinspection CssBrowserCompatibilityForProperties
+            .value {
+                overscroll-behavior: contain;
+            }
+
             .item-results {
                 height: 45vh;
             }
 
             .pair {
-                .value.item-errors {
+                .item-errors {
                     height: 87.5%;
                 }
-                .value.item-diagnostics {
+                .item-diagnostics {
                     height: 150%;
                 }
             }

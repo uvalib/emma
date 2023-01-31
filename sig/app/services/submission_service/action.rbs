@@ -1,0 +1,11 @@
+# Namespace for API requests.
+#
+module SubmissionService::Action
+  include SubmissionService::Action::Cancel
+
+  include SubmissionService::Action::Check
+
+  include SubmissionService::Action::Control
+
+  include SubmissionService::Action::Submit
+end

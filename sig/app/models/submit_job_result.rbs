@@ -1,0 +1,7 @@
+class SubmitJobResult < JobResult
+  # The associated subclass of GoodJob::Job.
+  #
+  # @return [Class]
+  #
+  def self.job_record_class: () -> Class
+end
