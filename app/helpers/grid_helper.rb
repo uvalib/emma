@@ -114,7 +114,9 @@ module GridHelper
   # @note Currently unused.
   #
   def append_grid_cell_classes(html_opt, *classes, **opt)
-    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
+    unless html_opt
+      Log.debug { "#{__method__}: nil html_opt from #{calling_method}" }
+    end
     html_opt = html_opt&.deep_dup || {}
     append_grid_cell_classes!(html_opt, *classes, **opt)
   end
@@ -143,7 +145,9 @@ module GridHelper
   # @note Currently unused.
   #
   def prepend_grid_cell_classes(html_opt, *classes, **opt)
-    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
+    unless html_opt
+      Log.debug { "#{__method__}: nil html_opt from #{calling_method}" }
+    end
     html_opt = html_opt&.deep_dup || {}
     prepend_grid_cell_classes!(html_opt, *classes, **opt)
   end

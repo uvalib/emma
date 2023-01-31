@@ -33,7 +33,8 @@ module Manifest::Config
   def default_to_self(item = nil, from: nil)
     return item if item
     return self if self.is_a?(Manifest)
-    raise "#{from || caller} not being used as a record instance method"
+    meth = from || calling_method
+    raise "#{meth} not being used as a record instance method"
   end
 
 end

@@ -180,7 +180,7 @@ module CssHelper
       html_opt = dup_options(html_opt)
       remove_css!(html_opt, *classes)
     else
-      Log.debug { "#{__method__}: nil html_opt from #{caller}" }
+      Log.debug { "#{__method__}: nil html_opt from #{calling_method}" }
       {}
     end
   end
