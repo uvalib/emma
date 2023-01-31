@@ -339,7 +339,6 @@ class AppSettings < AppGlobal
         v.is_a?(Array) && (v.intersection(spacer) == spacer)
       }
       if only && spacers
-        # noinspection RubyNilAnalysis
         values.select { |k, v| is_spacer.call(v) || only.include?(k) }
       elsif only
         values.slice(*only)
@@ -537,7 +536,7 @@ class AppSettings < AppGlobal
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

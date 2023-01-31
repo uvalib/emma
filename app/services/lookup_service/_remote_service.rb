@@ -136,14 +136,12 @@ class LookupService::RemoteService < ApiService
   # Indicate whether the external service reported a successful request.
   #
   def succeeded?
-    # noinspection RubyNilAnalysis
     request_sent? && response.success?
   end
 
   # Indicate whether the request was not successful.
   #
   def failed?
-    # noinspection RubyNilAnalysis
     request_sent? && !response.success?
   end
 
@@ -191,7 +189,7 @@ class LookupService::RemoteService < ApiService
     LookupService::Request.wrap(items)
   end
 
-  # Send the request to the remove service.
+  # Send the request to the remote service.
   #
   # @param [LookupService::Request] req  Def.: `@request`.
   #
@@ -230,9 +228,6 @@ class LookupService::RemoteService < ApiService
   # @return [LookupService::Data]
   # @return [nil]                     If *msg* is *nil*.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def transform(msg, extended: false)
     return if msg.nil?
     case msg

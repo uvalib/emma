@@ -33,7 +33,7 @@ module ApiService::Status
   private
 
   def self.included(base)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

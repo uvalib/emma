@@ -48,8 +48,9 @@ module TestHelper::Utility
   #
   # @return [String]
   #
-  def record_id: ( SearchResult item, ?repo: String|nil, ?rid: String|nil, ?format: String|nil, ?ver: String|nil) -> String
-               | (?nil          item,  repo: String,      rid: String,      format: String,     ?ver: String|nil) -> String
+  def record_id
+    : ( SearchResult item, ?repo: String|nil, ?rid: String|nil, ?format: String|nil, ?ver: String|nil) -> String
+    | (?nil          item,  repo: String,      rid: String,      format: String,     ?ver: String|nil) -> String
 
   # Note in the output that a test was skipped because it was not applicable.
   #
@@ -71,6 +72,7 @@ module TestHelper::Utility
   # @return [true]                    If the test should proceed.
   # @return [false]                   If the test should be skipped.
   #
-  def allowed_format: ((Symbol|symArray|nil) fmt, ?(String|nil) note, only: Symbol|symArray|nil) -> bool
-                    | (                           ?(String|nil) note, only: Symbol|symArray|nil) -> bool
+  def allowed_format
+    : ((Symbol|symArray|nil) fmt, ?(String|nil) note, only: Symbol|symArray|nil) -> bool
+    | (                           ?(String|nil) note, only: Symbol|symArray|nil) -> bool
 end

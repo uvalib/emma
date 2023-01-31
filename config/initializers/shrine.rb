@@ -111,7 +111,6 @@ Shrine.storages = {
     }.compact.reverse_merge(Rails.application.credentials.s3 || {})
 
     storages.transform_values! do |prefix|
-      # noinspection RubyMismatchedReturnType
       Shrine::Storage::S3.new(prefix: prefix, **s3_options)
     end
 
@@ -121,7 +120,6 @@ Shrine.storages = {
     storage_dir = ENV.fetch('STORAGE_DIR', 'storage')
 
     storages.transform_values! do |subdir|
-      # noinspection RubyMismatchedReturnType
       Shrine::Storage::FileSystem.new("#{storage_dir}/#{subdir}")
     end
 

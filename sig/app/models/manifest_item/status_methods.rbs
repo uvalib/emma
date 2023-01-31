@@ -4,58 +4,62 @@ module ManifestItem::StatusMethods
 
   # Update status field values.
   #
-  # @param [ManifestItem,Hash,nil] item   Default: self
-  # @param [Boolean]       file
-  # @param [Boolean]       data
-  # @param [Boolean]       ready
-  # @param [Boolean]       overwrite  If *false* only add status values.
-  # @param [Hash]          added      Fields that will be added to the item
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean] file
+  # @param [Boolean] data
+  # @param [Boolean] ready
+  # @param [Boolean] overwrite        If *false* only add status values.
+  # @param [Hash]    added            Fields that will be added to the item
   #
   # @return [ManifestItem, Hash]
   #
-  def update_status!: ( (symHash)          item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> symHash
-                    | (?(ManifestItem|nil) item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> ManifestItem
+  def update_status!
+    : ( (symHash)          item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> symHash
+    | (?(ManifestItem|nil) item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> ManifestItem
 
   # Evaluate the readiness of ManifestItem for being included in a submission.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  # @param [Boolean]               symbol
-  # @param [Hash]                  added  Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean]                 symbol
+  # @param [Hash]                    added  Additional field values to use.
   #
   # @return [ReadyStatus]                 If *symbol* is *false*.
   # @return [Symbol]
   #
-  def evaluate_ready_status: (?(ManifestItem|symHash|nil) item, ?symbol: true,  **untyped added) -> Symbol
-                           | (?(ManifestItem|symHash|nil) item,  symbol: false, **untyped added) -> ReadyStatus
+  def evaluate_ready_status
+    : (?(ManifestItem|symHash|nil) item, ?symbol: true,  **untyped added) -> Symbol
+    | (?(ManifestItem|symHash|nil) item,  symbol: false, **untyped added) -> ReadyStatus
 
   # Evaluate the readiness of the file upload associated with a ManifestItem.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  # @param [Boolean]               symbol
-  # @param [Hash]                  added  Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean]                 symbol
+  # @param [Hash]                    added  Additional field values to use.
   #
   # @return [DataStatus]                  If *symbol* is *false*.
   # @return [Symbol]
   #
-  def evaluate_file_status: (?(ManifestItem|symHash|nil) item, ?symbol: true,  **untyped added) -> Symbol
-                          | (?(ManifestItem|symHash|nil) item,  symbol: false, **untyped added) -> FileStatus
+  def evaluate_file_status
+    : (?(ManifestItem|symHash|nil) item, ?symbol: true,  **untyped added) -> Symbol
+    | (?(ManifestItem|symHash|nil) item,  symbol: false, **untyped added) -> FileStatus
 
   # Evaluate the readiness of ManifestItem metadata.
   #
-  # @param [ManifestItem, Hash] item    The source of current field values.
-  # @param [Boolean]            symbol
-  # @param [Hash]               added   Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean]                 symbol
+  # @param [Hash]                    added  Additional field values to use.
   #
   # @return [DataStatus]                If *symbol* is *false*.
   # @return [Symbol]
   #
-  def evaluate_data_status: (?(ManifestItem|symHash|nil) item, ?symbol: true,  **untyped added) -> Symbol
-                          | (?(ManifestItem|symHash|nil) item,  symbol: false, **untyped added) -> DataStatus
+  def evaluate_data_status
+    : (?(ManifestItem|symHash|nil) item, ?symbol: true,  **untyped added) -> Symbol
+    | (?(ManifestItem|symHash|nil) item,  symbol: false, **untyped added) -> DataStatus
 
   # Return indicated field values.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  # @param [Hash, nil]             added  Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Hash, nil]               added  Additional field values to use.
   #
   # @return [Hash]
   #
@@ -63,25 +67,19 @@ module ManifestItem::StatusMethods
 
   # Evaluate field values for readiness.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  #
-  # @return [Boolean]
+  # @param [ManifestItem, Hash, nil] item   Default: self.
   #
   def ready?: (?(ManifestItem|symHash|nil) item) -> bool
 
   # Indicate whether the item has been associated with a file.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  #
-  # @return [Boolean]
+  # @param [ManifestItem, Hash, nil] item   Default: self.
   #
   def file_ok?: (?(ManifestItem|symHash|nil) item) -> bool
 
   # Indicate whether the item has valid data.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  #
-  # @return [Boolean]
+  # @param [ManifestItem, Hash, nil] item   Default: self.
   #
   def data_ok?: (?(ManifestItem|symHash|nil) item) -> bool
 

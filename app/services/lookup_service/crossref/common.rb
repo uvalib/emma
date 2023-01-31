@@ -59,7 +59,7 @@ module LookupService::Crossref::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, LookupService::Crossref::Definition)
+    base.include(LookupService::Crossref::Definition)
   end
 
 end

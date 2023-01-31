@@ -51,8 +51,9 @@ module Representable
     #
     # @see #__output_impl
     #
-    def __debug_show: ((:input|:output|nil) mode, *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
-                    | (                           *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
+    def __debug_show
+      : ((:input|:output|nil) mode, *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
+      | (                           *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
 
     # Override one or more lambdas in order to "inject" a debug statement
     # before invoking the original definition.
@@ -78,8 +79,9 @@ module Representable
     #
     # @see #__debug_show
     #
-    def __debug_lambda: ((:input|:output|nil) mode, *Symbol constants) -> nil
-                      | (                           *Symbol constants) -> nil
+    def __debug_lambda
+      : ((:input|:output|nil) mode, *Symbol constants) -> nil
+      | (                           *Symbol constants) -> nil
 
     # Override one or more methods in order to "inject" a debug statement
     # before invoking the original definition.
@@ -108,8 +110,9 @@ module Representable
     #
     # @see #__debug_show
     #
-    def __debug_method: ((:input|:output|nil) mode, String label, *Symbol methods) -> nil
-                      | (                           String label, *Symbol methods) -> nil
+    def __debug_method
+      : ((:input|:output|nil) mode, String label, *Symbol methods) -> nil
+      | (                           String label, *Symbol methods) -> nil
   end
 
   module CreateObject

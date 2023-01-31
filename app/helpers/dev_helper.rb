@@ -42,7 +42,6 @@ module DevHelper
   # @return [Boolean]
   #
   def remember_dev(user = nil)
-    # noinspection RubyNilAnalysis
     (user.nil? || user.developer?) && set_cookie(DEV_COOKIE)
   end
 

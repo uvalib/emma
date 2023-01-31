@@ -49,14 +49,13 @@ module Emma::TimeMethods
 
   # The current time in seconds.
   #
-  # @param [Symbol, nil] unit
+  # @param [Symbol] unit
   #
   # @return [Float]
   #
   # @see Process#clock_gettime
   #
   def timestamp(unit = :float_second)
-    # noinspection RubyMismatchedArgumentType
     Process.clock_gettime(Process::CLOCK_MONOTONIC, unit)
   end
 

@@ -17,7 +17,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   TEST_USER    = :emmadso
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @readers = find_users(*TEST_READERS)
   end

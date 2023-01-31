@@ -92,7 +92,6 @@ module SearchConcern
   # @see SearchService::Request::Records#get_record
   #
   def index_record(**opt)
-    # noinspection RubyMismatchedReturnType
     search_api.get_record(**opt)
   end
 
@@ -134,7 +133,6 @@ module SearchConcern
     attr[:action]     ||= :index
     attr[:user]       ||= user
     attr[:result]     ||= result || @list
-    # noinspection RubyMismatchedReturnType
     SearchCall.create(attr)
   end
 
@@ -355,7 +353,6 @@ module SearchConcern
       end
     end
     if (value &&= value.to_s.strip.presence&.underscore&.to_sym)
-      # noinspection RubyMismatchedArgumentType
       if EngineConcern::RESET_KEYS.include?(value)
         value = nil
       elsif !valid_values.include?(value)

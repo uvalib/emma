@@ -241,7 +241,6 @@ module UploadWorkflow::Single::Simulation
     def set_params(params = nil)
       @params = params
       @items  = @data = @id = nil
-      # noinspection RubyCaseWithoutElseBlockInspection
       case @params
         when Array  then @items = @params
         when Upload then @data  = @params

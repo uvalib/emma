@@ -61,9 +61,6 @@ module UploadWorkflow::Bulk::External
   # == Implementation Notes
   # Compare with UploadWorkflow::External#upload_create
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def bulk_upload_create(entries, index: true, atomic: true, **opt)
     __debug_items("UPLOAD WF #{__method__}", binding)
 
@@ -105,9 +102,6 @@ module UploadWorkflow::Bulk::External
   # == Implementation Notes
   # Compare with UploadWorkflow::External#upload_edit
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def bulk_upload_edit(entries, index: true, atomic: true, **opt)
     __debug_items("UPLOAD WF #{__method__}", binding)
 

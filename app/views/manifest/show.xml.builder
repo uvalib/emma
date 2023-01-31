@@ -9,7 +9,6 @@ item ||= @item
 
 xml.instruct!
 xml.manifests do
-  # noinspection RubyMismatchedArgumentType
   xml.timestamp DateTime.now
   xml << render('manifest/details', manifest: item)
 end

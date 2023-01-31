@@ -67,8 +67,9 @@ module Api::Shared::CommonMethods
   #
   # @return [String, *]
   #
-  def clean: [T] (T   value, ?allowed: String|nil, ?regexp: Regexp|nil) -> T
-           |     (nil value, ?allowed: String|nil, ?regexp: Regexp|nil) -> nil
+  def clean
+    : [T] (T   value, ?allowed: String|nil, ?regexp: Regexp|nil) -> T
+    |     (nil value, ?allowed: String|nil, ?regexp: Regexp|nil) -> nil
 
   # clean_regexp
   #

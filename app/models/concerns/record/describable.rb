@@ -86,7 +86,6 @@ module Record::Describable
   #
   def process_note(note = nil, model, **opt)
     opt_note = opt.delete(:note)
-    # noinspection RubyNilAnalysis
     case (note ||= opt_note)
       when nil    then return
       when String then # Use *note* as-is.

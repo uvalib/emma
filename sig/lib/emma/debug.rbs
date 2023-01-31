@@ -240,8 +240,9 @@ module Emma::Debug
     #   @param [Hash]                    opt
     #   @return [nil]
     #
-    def __debug_request: (Symbol meth, *untyped args, ?req: ActionDispatch::Request|nil, **untyped opt) ?{ () -> untyped } -> nil
-                       | (             *untyped args, ?req: ActionDispatch::Request|nil, **untyped opt) ?{ () -> untyped } -> nil
+    def __debug_request
+      : (Symbol meth, *untyped args, ?req: ActionDispatch::Request|nil, **untyped opt) ?{ () -> untyped } -> nil
+      | (             *untyped args, ?req: ActionDispatch::Request|nil, **untyped opt) ?{ () -> untyped } -> nil
 
     # Output a box which highlights the given text.
     #

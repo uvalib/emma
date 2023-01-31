@@ -39,8 +39,9 @@ class IngestService::Error < ApiService::Error
     # @see #parse_create_errors
     # @see #parse_delete_errors
     #
-    def extract_json: (anyHash src)              -> strArray
-                    | (symHash|anyArray|nil src) -> anyArray
+    def extract_json
+      : (anyHash              src) -> strArray
+      | (symHash|anyArray|nil src) -> anyArray
 
     # Ingest creation error messages.
     #

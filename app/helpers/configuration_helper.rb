@@ -134,7 +134,6 @@ module ConfigurationHelper
       config_lookup_paths(ctrlr, action, *path).find do |full_path|
         item = full_path.pop
         cfg  = controller_configuration.dig(*full_path)
-        # noinspection RubyMismatchedArgumentType
         break cfg[item] if cfg.is_a?(Hash) && cfg.key?(item)
       end
     raise(CONFIG_FAIL) if entry.nil? && fatal
@@ -147,7 +146,6 @@ module ConfigurationHelper
       vals = %i[many one]
       mode = mode.to_sym unless mode.nil? || true?(mode)
       mode = nil if mode == :auto
-      # noinspection RubyMismatchedArgumentType
       mode = vals.find { |v| true?(opt[v]) } unless vals.include?(mode)
       mode ||=
         if (count = i_opt[:count].to_i).zero?
@@ -178,7 +176,6 @@ module ConfigurationHelper
   # @return [Array<Array<Symbol>>]
   #
   def config_lookup_paths(ctrlr, action, *path)
-    # noinspection RubyMismatchedReturnType
     base_paths = config_lookup_order(ctrlr, action).map! { |v| v.join('.') }
     config_flatten_order(base_paths, *path)
   end
@@ -199,7 +196,6 @@ module ConfigurationHelper
       unless part.is_a?(Symbol) || (part.is_a?(String) && part.include?('.'))
         part = part.to_s.to_sym
       end
-      # noinspection RubyMismatchedArgumentType
       result << part
     end
     if (branches = path.shift)
@@ -241,9 +237,6 @@ module ConfigurationHelper
   #
   # @return [Hash, Array, String, Integer, Boolean, nil]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def apply_config_interpolations(item, units:, **)
     if item.is_a?(Hash)
       item.transform_values { |v| send(__method__, v, units: units) }
@@ -340,7 +333,7 @@ module ConfigurationHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

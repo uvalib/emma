@@ -43,9 +43,6 @@ class Search::Message::SearchRecord < Search::Api::Message
   #
   # @see SearchService::Request::Records#get_record
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def initialize(src, opt = nil)
     opt = opt&.dup || {}
     rid = opt.delete(:record_id)

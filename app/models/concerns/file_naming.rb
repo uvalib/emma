@@ -37,7 +37,6 @@ module FileNaming
     #
     def format_class_instance(type, handle = nil)
       if FileHandle.compatible?(handle)
-        # noinspection RubyCaseWithoutElseBlockInspection
         case type.to_sym
           when :daisy, :daisyAudio
             # This heuristic assumes that only distinction between "Daisy" and
@@ -57,7 +56,6 @@ module FileNaming
     #
     def format_class(type)
       fmt = type.to_s.upcase_first
-      # noinspection RubyMismatchedReturnType
       "FileObject::#{fmt}".safe_constantize
     end
 
@@ -146,7 +144,6 @@ module FileNaming
   # @return [nil]
   #
   def fmt_to_ext(fmt)
-    # noinspection RubyNilAnalysis
     FileNaming.file_extensions[fmt.to_sym]&.first if fmt.present?
   end
 
@@ -158,7 +155,6 @@ module FileNaming
   # @return [nil]
   #
   def mime_to_fmt(mime)
-    # noinspection RubyNilAnalysis
     mime = mime.content_type if mime.respond_to?(:content_type)
     FileNaming.mime_to_fmt[mime]&.first if mime.present?
   end
@@ -171,7 +167,6 @@ module FileNaming
   # @return [nil]
   #
   def fmt_to_mime(fmt)
-    # noinspection RubyNilAnalysis
     FileNaming.mime_types[fmt.to_sym]&.first if fmt.present?
   end
 

@@ -24,8 +24,9 @@ module HeadHelper::Scripts
   # @yield To supply source(s) to #set_page_javascripts.
   # @yieldreturn [String, Array<String>]
   #
-  def page_javascripts: () { () -> (String | strArray) } -> strArray
-                      | ()                               -> ActiveSupport::SafeBuffer
+  def page_javascripts
+    : () { () -> (String | strArray) } -> strArray
+    | ()                               -> ActiveSupport::SafeBuffer
 
   # Set the script(s) for this page, eliminating any previous value(s).
   #
@@ -36,8 +37,9 @@ module HeadHelper::Scripts
   # @yield To supply additional source(s) to @page_javascript.
   # @yieldreturn [String, Array<String>]
   #
-  def set_page_javascripts: ()                          { () -> (String | strArray) } -> strArray
-                          | (*(String|strArray) values)                               -> strArray
+  def set_page_javascripts
+    : ()                          { () -> (String | strArray) } -> strArray
+    | (*(String|strArray) values)                               -> strArray
 
   # Add to the script(s) for this page.
   #
@@ -48,8 +50,9 @@ module HeadHelper::Scripts
   # @yield To supply additional source(s) to @page_javascript.
   # @yieldreturn [String, Array<String>]
   #
-  def append_page_javascripts: ()                          { () -> (String | strArray) } -> strArray
-                             | (*(String|strArray) values)                               -> strArray
+  def append_page_javascripts
+    : ()                          { () -> (String | strArray) } -> strArray
+    | (*(String|strArray) values)                               -> strArray
 
   # Emit the '<script>' tag(s) appropriate for the current page.
   #

@@ -31,7 +31,7 @@ module Representable
 
     # @private
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
     private
@@ -89,9 +89,6 @@ module Representable
       #
       # @see #__output_impl
       #
-      #--
-      # noinspection RubyMismatchedArgumentType
-      #++
       def __debug_show(mode, *args, leader: nil, separator: nil, **opt)
         mode =
           case mode
@@ -117,7 +114,6 @@ module Representable
                   when :represented then meth = :class
                   else                   meth = :inspect
                 end
-                # noinspection RubyCaseWithoutElseBlockInspection
                 case meth
                   when :class   then "#{k0} = <#{v0.class}>"
                   when :inspect then "#{k0} = #{v0.inspect}"
@@ -164,7 +160,6 @@ module Representable
       # @see #__debug_show
       #
       def __debug_lambda(mode, *constants)
-        # noinspection RubyMismatchedArgumentType
         case mode
           when :input  then return unless DEBUG_INPUT
           when :output then return unless DEBUG_OUTPUT

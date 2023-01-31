@@ -200,9 +200,6 @@ class AccountDecorator < BaseDecorator
     #
     # @type [String, nil]
     #
-    #--
-    # noinspection RailsI18nInspection
-    #++
     PASSWORD_PLACEHOLDER =
       I18n.t('emma.user.registrations.edit.password').freeze
 
@@ -518,7 +515,6 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def current_password_note(note = nil, **opt)
-    # noinspection RailsI18nInspection
     note ||= I18n.t('emma.user.registrations.edit.current')
     form_input_note(note, **opt) if note
   end

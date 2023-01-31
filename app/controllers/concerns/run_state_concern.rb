@@ -38,9 +38,6 @@ module RunStateConcern
   #
   # @type [Array<String>]
   #
-  #--
-  # noinspection RubyArgCount
-  #++
   RUN_STATE_EXEMPT_CONTROLLER =
     NO_RUN_STATE_REDIRECT.select { |item| item.is_a?(String) }.deep_freeze
 
@@ -73,9 +70,6 @@ module RunStateConcern
   # @param [String, Symbol, nil] ctrlr    Default: `params[:controller]`
   # @param [String, Symbol, nil] action   Default: `params[:action]`
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def run_state_redirect?(ctrlr = nil, action = nil)
     ctrlr, action = ctrlr_action_to_names(ctrlr, action)
     exempt_ctrlr  = RUN_STATE_EXEMPT_CONTROLLER.include?(ctrlr)
@@ -127,7 +121,6 @@ module RunStateConcern
     # :section: Callbacks
     # =========================================================================
 
-    # noinspection RubyMismatchedArgumentType
     if (this_controller = controller_to_name(base)).nil?
       # === Including class is not a controller ===
 

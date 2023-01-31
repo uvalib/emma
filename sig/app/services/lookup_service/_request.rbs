@@ -49,9 +49,10 @@ class LookupService::Request
   #
   # @return [PublicationIdentifier, String, nil]
   #
-  def add_term: (PublicationIdentifier               value, **untyped opt) -> PublicationIdentifier
-              | (String|Symbol                       value, **untyped opt) -> String
-              | (String|Symbol prefix, ?(String|nil) value, **untyped opt) -> (String | nil)
+  def add_term
+    : (PublicationIdentifier               value, **untyped opt) -> PublicationIdentifier
+    | (String|Symbol                       value, **untyped opt) -> String
+    | (String|Symbol prefix, ?(String|nil) value, **untyped opt) -> (String | nil)
 
   # Remove quotes surround a term and provide a prefix if needed.
   #
@@ -60,9 +61,10 @@ class LookupService::Request
   #
   # @return [PublicationIdentifier, String, nil]
   #
-  def fix_term: (PublicationIdentifier term, ?(bool|strArray) author) -> PublicationIdentifier
-              | (String                term, ?(bool|strArray) author) -> String
-              | (nil                   term, ?(bool|strArray) author) -> nil
+  def fix_term
+    : (PublicationIdentifier term, ?(bool|strArray) author) -> PublicationIdentifier
+    | (String                term, ?(bool|strArray) author) -> String
+    | (nil                   term, ?(bool|strArray) author) -> nil
 
   # Identifiers to lookup grouped by type.
   #

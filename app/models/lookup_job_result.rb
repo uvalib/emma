@@ -11,7 +11,6 @@ class LookupJobResult < JobResult
   # :section: ActiveRecord ModelSchema
   # ===========================================================================
 
-  # noinspection RubyNilAnalysis
   self.table_name = superclass.table_name
   self.implicit_order_column = :updated_at
 

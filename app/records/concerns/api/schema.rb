@@ -252,9 +252,6 @@ module Api::Schema
   #
   # @param [Class, String, Symbol, nil] type
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def scalar_type?(type)
     return false unless type.is_a?(Class)
     return true  if type.module_parent == Object
@@ -271,7 +268,6 @@ module Api::Schema
   # @return [Any]
   #
   def scalar_default(type)
-    # noinspection RubyNilAnalysis
     type &&= type.to_s.demodulize.to_sym
     scalar_defaults[type] || enumeration_defaults[type]
   end

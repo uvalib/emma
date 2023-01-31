@@ -37,8 +37,9 @@ module ManifestItem::FieldMethods
   #
   # @return [ManifestItem, Hash]
   #
-  def set_backup!: ( (symHash)          item, **untyped added) -> symHash
-                 | (?(ManifestItem|nil) item, **untyped added) -> ManifestItem
+  def set_backup!
+    : ( (symHash)          item, **untyped added) -> symHash
+    | (?(ManifestItem|nil) item, **untyped added) -> ManifestItem
 
   private
 

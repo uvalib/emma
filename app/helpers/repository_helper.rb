@@ -89,7 +89,6 @@ module RepositoryHelper
   #
   def url_repository(url)
     return unless url.present?
-    # noinspection RubyCaseWithoutElseBlockInspection
     case
       when emma_link?(url) then :emma
       when bs_link?(url)   then :bookshare

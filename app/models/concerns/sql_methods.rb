@@ -296,9 +296,6 @@ module SqlMethods
   #
   # @return [String]                  Blank if no valid field assertions.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def sql_where_clause(field_map: nil, param_map: nil, **matches)
     fm_valid    = field_map.is_a?(Hash)
     pm_valid    = param_map.is_a?(Hash)
@@ -655,8 +652,8 @@ module SqlMethods
 
   def self.included(base)
     return unless Record.record_class?(base)
-    base.send(:include, InstanceMethods)
-    base.send(:extend,  ClassMethods)
+    base.include(InstanceMethods)
+    base.extend(ClassMethods)
   end
 
 end

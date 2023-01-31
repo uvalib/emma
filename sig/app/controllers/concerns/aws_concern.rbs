@@ -66,6 +66,8 @@ module AwsConcern
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
   # @param [AwsS3Service, nil]   service      Def: `AwsS3Service.instance`.
   #
+  # @raise [ApiService::RequestError]         If bucket is invalid.
+  #
   # @return [String]
   #
   def repo_bucket: ((Symbol|String) repository, ?(Symbol|String|nil) deployment, ?service: AwsS3Service|nil, **untyped _ignored) -> String
@@ -77,6 +79,8 @@ module AwsConcern
   # @param [Hash]   opt                       Passed to #get_s3_bucket
   #
   # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`
+  #
+  # @raise [ApiService::RequestError]         If bucket is invalid.
   #
   # @return [Aws::S3::Bucket]
   #
@@ -92,6 +96,8 @@ module AwsConcern
   #
   # @option opt [AwsS3Service] :service       Default: `AwsS3Service.instance`
   #
+  # @raise [ApiService::RequestError]         If bucket is invalid.
+  #
   # @return [Array<Aws::S3::Object>]
   #
   # @note Currently unused.
@@ -104,6 +110,8 @@ module AwsConcern
   #
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
+  # @raise [ApiService::RequestError]         If bucket is invalid.
+  #
   # @return [Hash{String=>Aws::S3::Bucket}]
   #
   # @note Currently unused.
@@ -115,6 +123,8 @@ module AwsConcern
   # @param [Hash] opt
   #
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
+  #
+  # @raise [ApiService::RequestError]         If bucket is invalid.
   #
   # @return [Hash{String=>Array<Aws::S3::Object>}]
   #

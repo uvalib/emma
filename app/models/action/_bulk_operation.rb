@@ -50,7 +50,6 @@ class Action::BulkOperation < Action
   #
   def initialize(attr = nil, opt = nil, &block)
     data = (opt[:targets] if opt.is_a?(Hash))
-    # noinspection RubyNilAnalysis
     if attr && !attr.is_a?(ApplicationRecord) && attr.key?(:targets)
       data ||= attr[:targets]
       attr = attr.except(:targets)

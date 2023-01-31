@@ -52,10 +52,11 @@ module AwsS3Service::Common
   # @param [AwsS3::Message::SubmissionRequest, Model, Hash, String, Symbol, nil] item
   # @param [Symbol, String, nil] deployment     Def: `#aws_deployment`.
   #
-  # @return [String]
-  # @return [nil]
+  # @raise [ApiService::RequestError]
   #
-  def bucket_for: ((AwsS3::Message::SubmissionRequest | Model | symHash | String | Symbol | nil) item, ?(Symbol|String|nil) deployment) -> (String | nil)
+  # @return [String]
+  #
+  def bucket_for: ((AwsS3::Message::SubmissionRequest | Model | symHash | String | Symbol | nil) item, ?(Symbol|String|nil) deployment) -> String
 
   # Generate an array of submission package identifiers (AWS S3 object keys).
   #

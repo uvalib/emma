@@ -23,7 +23,7 @@ AppDebug.file('shared/decode');
  *
  * @param {string} arg
  *
- * @returns {Array|Object|undefined}
+ * @returns {array|object|undefined}
  *
  * @see file:config/boot.rb "#js"
  */
@@ -42,7 +42,7 @@ export function decodeJSON(arg) {
  * @param {*}      arg
  * @param {string} [separator]
  *
- * @returns {Array}
+ * @returns {array}
  */
 export function decodeArray(arg, separator = ',') {
     if (!arg)                    { return [] }

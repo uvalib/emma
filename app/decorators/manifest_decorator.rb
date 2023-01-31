@@ -89,9 +89,6 @@ class ManifestDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    #--
-    # noinspection RailsI18nInspection
-    #++
     BULK_SUBMIT_CFG = I18n.t('emma.bulk.submit', default: {}).deep_freeze
 
     # =========================================================================
@@ -540,7 +537,7 @@ class ManifestDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/controllers/_manifest.js *importRows()*
+  # @see file:app/assets/javascripts/controllers/manifest-edit.js *importRows*
   # @see file:app/assets/stylesheets/feature/_model_form.scss ".import-button"
   #
   def import_button(**opt)
@@ -554,7 +551,7 @@ class ManifestDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/controllers/_manifest.js *exportRows()*
+  # @see file:app/assets/javascripts/controllers/manifest-edit.js *exportRows*
   # @see file:app/assets/stylesheets/feature/_model_form.scss ".export-button"
   #
   def export_button(**opt)

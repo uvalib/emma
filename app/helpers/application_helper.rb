@@ -27,9 +27,6 @@ module ApplicationHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyArgCount
-  #++
   CONTROLLER_CONFIGURATION =
     I18n.t('emma').select { |k, config|
       next true if k == :generic
@@ -51,9 +48,6 @@ module ApplicationHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   APP_CONFIG = I18n.t('emma.application', default: {}).deep_freeze
 
   # The controllers for the application.

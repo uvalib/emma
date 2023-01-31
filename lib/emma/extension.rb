@@ -75,14 +75,12 @@ module Emma::Extension
 
         args += Array.wrap(yield) if block_given?
         if opt.present?
-          # noinspection RubyNilAnalysis
           opt = args.pop.merge(opt) if args.last.is_a?(Hash)
           args << opt
         end
 
         part  = []
         part << [ldr, tag].compact.join(' ')
-        # noinspection RubyMismatchedArgumentType
         part << meth
         args.each do |a|
           case a
@@ -188,8 +186,8 @@ module Emma::Extension
     private
 
     def self.included(base)
-      base.send(:include, Methods)
-      base.send(:extend,  Methods)
+      base.include(Methods)
+      base.extend(Methods)
     end
 
   end
@@ -213,8 +211,8 @@ module Emma::Extension
     private
 
     def self.included(base)
-      base.send(:include, Methods)
-      base.send(:extend,  Methods)
+      base.include(Methods)
+      base.extend(Methods)
     end
 
   end

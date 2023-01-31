@@ -315,9 +315,6 @@ module CssHelper
   #
   # @return [String]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def unique_id(*parts, unique: nil, index: nil, **opt)
     unique = hex_rand if unique.nil? || unique.is_a?(TrueClass)
     parts << unique   if unique
@@ -334,7 +331,7 @@ module CssHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

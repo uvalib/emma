@@ -50,8 +50,9 @@ module TestHelper::SystemTests::Common
   #
   # @return [true]
   #
-  def assert_json: (anyHash|anyArray|String value, ?exact: bool|nil, **untyped _ignored) -> true
-                 | (?nil _ignored,                 ?exact: bool|nil, **untyped pairs)    -> true
+  def assert_json
+    : (anyHash|anyArray|String value, ?exact: bool|nil, **untyped _ignored) -> true
+    | (?nil _ignored,                 ?exact: bool|nil, **untyped pairs)    -> true
 
   # Return the given URL without its HTTP port.
   #
@@ -59,8 +60,9 @@ module TestHelper::SystemTests::Common
   #
   # @return [String, nil]
   #
-  def url_without_port: (String url) -> String
-                      | (nil    url) -> nil
+  def url_without_port
+    : (String url) -> String
+    | (nil    url) -> nil
 
   # Block until the browser can report its 'window.location'.
   #

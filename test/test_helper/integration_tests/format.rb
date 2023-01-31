@@ -37,7 +37,6 @@ module TestHelper::IntegrationTests::Format
   # @return [Symbol, nil]
   #
   def format_type(type)
-    # noinspection RubyNilAnalysis
     if type.is_a?(String) && type.include?('/')
       REVERSE_MEDIA_TYPE[type]
     else

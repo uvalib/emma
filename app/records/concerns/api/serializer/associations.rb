@@ -207,7 +207,7 @@ module Api::Serializer::Associations
     # Compare with Api::Record::Associations#make_default
     #
     #--
-    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType
     #++
     def get_type_class(type, **opt)
       type   = extract_type_option!(opt) || type || String

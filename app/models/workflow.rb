@@ -37,9 +37,6 @@ class Workflow::Base
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   CONFIGURATION = I18n.t('emma.workflow').deep_freeze
 
   # The state which indicates that the item associated with the workflow has
@@ -159,7 +156,6 @@ module Workflow::Base::Roles
   def get_role(user)
     # noinspection RubyMismatchedReturnType
     return user if user.nil? || user.is_a?(Symbol)
-    # noinspection RubyNilAnalysis
     user = user.bookshare_uid if user.is_a?(User)
     # TODO: role mapping
     (user == BookshareService::TEST_ACCOUNT) ? :developer : :user
@@ -543,7 +539,6 @@ module Workflow::Base::Events
   # @return [Integer]             On error, -1 is returned.
   #
   def event_number(event)
-    # noinspection RubyNilAnalysis
     event && EVENTS.index(event.to_sym) || -1
   end
 
@@ -900,7 +895,7 @@ module Workflow::Base::States
   # @return [Workflow::State]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+  # noinspection RubyMismatchedReturnType
   #++
   def state_object(state = nil)
     state = state.to_sym       if state.is_a?(String)
@@ -915,7 +910,6 @@ module Workflow::Base::States
   # @return [Integer]             On error, -1 is returned.
   #
   def state_number(state)
-    # noinspection RubyNilAnalysis
     STATES.index(state.to_sym) if state
   end
 
@@ -1053,9 +1047,6 @@ class Workflow::Base
   # @option opt [User, String] :user
   # @option opt [Boolean]      :no_sim
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def initialize(data, **opt)
     @params        = opt[:params]  || {}
     @model_options = opt[:options] || Upload::Options.new(@params)
@@ -1305,7 +1296,6 @@ class Workflow::Base
   # @param [Symbol, String, nil] value
   #
   def self.variant?(value)
-    # noinspection RubyNilAnalysis
     variant_types.include?(value.to_sym) if value.present?
   end
 

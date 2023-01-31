@@ -295,7 +295,6 @@ class Paginator
   # @return [Hash{String=>*}]
   #
   def env
-    # noinspection RubyMismatchedReturnType
     request.env
   end
 
@@ -321,7 +320,6 @@ class Paginator
     # @return [Integer]
     #
     def get_page_size(c = nil, a = nil)
-      # noinspection RubyNilAnalysis
       c, a = c.values_at(:controller, :action) if c.is_a?(Hash)
       keys = []
       keys << :"emma.#{c}.#{a}.pagination.page_size" if c && a
@@ -342,7 +340,7 @@ class Paginator
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -383,7 +381,7 @@ class Paginator
     # @return [Integer]               Zero indicates unknown count.
     #
     #--
-    # noinspection RubyNilAnalysis, RailsParamDefResolve
+    # noinspection RailsParamDefResolve
     #++
     def item_count(value, default: 0)
       result   = (value.size if value.is_a?(Hash) || value.is_a?(Array))
@@ -401,7 +399,7 @@ class Paginator
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -445,7 +443,7 @@ class Paginator
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

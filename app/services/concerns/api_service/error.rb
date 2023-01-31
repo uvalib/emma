@@ -256,7 +256,6 @@ class ApiService::Error < Api::Error
           msg.remove(/\\"/)
         }.compact_blank.presence
       result ||= src['message'].presence
-      # noinspection RubyNilAnalysis
       result ||= src.values.flat_map { |v| v if v.is_a?(Array) }
       Array.wrap(result || src).compact
     end
@@ -268,7 +267,7 @@ class ApiService::Error < Api::Error
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

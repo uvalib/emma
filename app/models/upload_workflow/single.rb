@@ -201,7 +201,6 @@ module UploadWorkflow::Single::Data
   #
   def reset_record(data = nil)
     id = sid = nil
-    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
     case data
       when Upload
         (id = data.id) or (sid = data.submission_id)
@@ -1334,9 +1333,6 @@ class UploadWorkflow::Single < UploadWorkflow
   # @param [Upload, Hash, String, nil] data
   # @param [Hash]                      opt    Passed to #initialize_state
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def initialize(data, **opt)
     __debug("UPLOAD WF initialize UploadWorkflow::Single | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect} | data = #{data.class}")
     opt[:user] ||= (User.id_value(data[:user_id]) if data.is_a?(Hash))

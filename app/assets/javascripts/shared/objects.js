@@ -146,12 +146,12 @@ export function dupObject(item, shallow) {
  * and a mapper function which returns a value for the given key.
  *
  * If *src* is an object or an array of key-value pairs, *map_fn* is optional.
- * If *pair_out* is set to *false*, *map_fn* is assumed to emit a value only;
- * otherwise *map_fn* is assumed to return a key-value pair.
+ * By default, *map_fn* is assumed to return a key-value pair;  if *pair_out*
+ * is set to *false* then *map_fn* is assumed to emit a value only.
  *
- * If *src* is an array of single values, *map_fn* is required.  If *pair_out*
- * is set to *true*, *map_fn* is assumed to return a key-value pair; otherwise
- * *map_fn* is assume to emit a value only.
+ * If *src* is an array of single values, *map_fn* is required.  By default,
+ * *map_fn* is assumed to emit a value only; if *pair_out* is set to *true*
+ * then *map_fn* is assumed to return a key-value pair.
  *
  * Invalid pairs elements are silently discarded.
  *

@@ -30,27 +30,33 @@ module Manifest::ItemMethods
 
   # The number of ManifestItems for the given Manifest.
   #
-  # @param [Manifest, String, *]        manifest  Default: self
+  # @param [Manifest, String, *] manifest   Default: self
   #
   # @return [Integer]
+  #
+  # @see "en.emma.manifest.index.display_fields"
   #
   def item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
   # The number of ManifestItems for the given Manifest (not including records
   # marked for deletion).
   #
-  # @param [Manifest, String, *]        manifest  Default: self
+  # @param [Manifest, String, *] manifest   Default: self
   #
   # @return [Integer]
+  #
+  # @see "en.emma.manifest.index.display_fields"
   #
   def saved_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
   # The number of ManifestItems for the given Manifest that have been created
   # or changed but not yet saved.
   #
-  # @param [Manifest, String, *]        manifest  Default: self
+  # @param [Manifest, String, *] manifest   Default: self
   #
   # @return [Integer]
+  #
+  # @see "en.emma.manifest.index.display_fields"
   #
   def pending_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
@@ -70,7 +76,7 @@ module Manifest::ItemMethods
   #
   # @param [Manifest, String, *] manifest   Default: self
   #
-  # @return [ActiveRecord::Associations::Association, nil]
+  # @return [ActiveRecord::Associations::Association<ManifestItem>, nil]
   #
   def items_related_to: (untyped manifest) -> (ActiveRecord::Associations::Association | nil)
 

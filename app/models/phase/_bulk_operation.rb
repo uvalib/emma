@@ -71,7 +71,6 @@ class Phase::BulkOperation < Phase
   #
   def initialize(attr = nil, opt = nil, &block)
     data = (opt[:manifest] if opt.is_a?(Hash))
-    # noinspection RubyNilAnalysis
     if attr && !attr.is_a?(ApplicationRecord) && attr.key?(:manifest)
       data ||= attr[:manifest]
       attr = attr.except(:manifest)

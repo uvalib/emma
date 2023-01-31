@@ -17,7 +17,6 @@ class Lookup::Crossref::Record::Reference < Lookup::Crossref::Api::Record
   # :section:
   # ===========================================================================
 
-  # noinspection DuplicatedCode
   schema do
     has_one :article_title
     has_one :author

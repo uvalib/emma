@@ -96,7 +96,6 @@ module BaseDecorator::Fields
       if value.present?
         root = opt[:field_root]
         opt[:no_format] ||= :dc_description
-        # noinspection RubyNilAnalysis
         pairs =
           value.map { |k, v|
             if v.is_a?(Hash)
@@ -125,7 +124,7 @@ module BaseDecorator::Fields
   # @return [Hash]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+  # noinspection RubyMismatchedReturnType
   #++
   def field_values(item = nil)
     item ||= object
@@ -199,7 +198,6 @@ module BaseDecorator::Fields
         config ||= field_configuration(field, action)
       end
 
-      # noinspection RubyNilAnalysis
       next if except&.include?(field) || only && !only.include?(field)
 
       prop = field_properties(field, config)
@@ -232,7 +230,6 @@ module BaseDecorator::Fields
     year:     [IsoYear],
   }.transform_values! { |types|
     types.flat_map { |type|
-      # noinspection RubyMismatchedArgumentType
       [type].tap do |related|
         name = (type == BigDecimal) ? 'Decimal' : type
         related << safe_const_get("Axiom::Types::#{name}")

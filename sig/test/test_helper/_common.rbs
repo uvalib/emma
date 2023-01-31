@@ -25,8 +25,9 @@ module TestHelper::Common
   #
   # @return [*]
   #
-  def property: [T] (Symbol|String|Class|Model|nil model, *Symbol traversal,  default: T)   -> T
-              |     (Symbol|String|Class|Model|nil model, *Symbol traversal, ?default: nil) -> (untyped | nil)
+  def property
+    : [T] (Symbol|String|Class|Model|nil model, *Symbol traversal,  default: T)   -> T
+    |     (Symbol|String|Class|Model|nil model, *Symbol traversal, ?default: nil) -> (untyped | nil)
 
   # The title (:h1 text value) for the given parameters.
   #

@@ -213,7 +213,6 @@ class PeriodicalDecorator
   #
   def render_value(value, field:, **opt)
     if present?
-      # noinspection RubyCaseWithoutElseBlockInspection
       case field_category(field || value)
         when :latestEdition then latest_edition_link(**opt)
       end

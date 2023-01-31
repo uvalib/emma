@@ -81,8 +81,9 @@ class Paginator
   # @param [ActionDispatch::Request]    request
   # @param [Hash]                       opt         From `#request_parameters`.
   #
-  def initialize: (ApplicationController ctrlr, ?request: ActionDispatch::Request|nil, **untyped opt) -> void
-                | (?nil                  ctrlr,  request: ActionDispatch::Request,     **untyped opt) -> void
+  def initialize
+    : (ApplicationController ctrlr, ?request: ActionDispatch::Request|nil, **untyped opt) -> void
+    | (?nil                  ctrlr,  request: ActionDispatch::Request,     **untyped opt) -> void
 
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
@@ -110,8 +111,9 @@ class Paginator
   #   @param [Hash]               opt     Passed to #next_page_path.
   #   @return [Array]                     The value of #page_items.
   #
-  def finalize: (symHash              result,                     **untyped search) -> anyArray
-              | (Api::Record|anyArray result, ?(Symbol|nil) meth, **untyped search) -> anyArray
+  def finalize
+    : (symHash              result,                     **untyped search) -> anyArray
+    | (Api::Record|anyArray result, ?(Symbol|nil) meth, **untyped search) -> anyArray
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.
@@ -144,8 +146,9 @@ class Paginator
     #
     # @return [Integer]
     #
-    def get_page_size: (symHash)                                        -> Integer
-                     | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+    def get_page_size
+      : (symHash)                                        -> Integer
+      | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
 
     def self.included: (Module base) -> void
   end
@@ -218,8 +221,9 @@ class Paginator
   #
   # @return [Integer]
   #
-  def get_page_size: (symHash)                                        -> Integer
-                   | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+  def get_page_size
+    : (symHash)                                        -> Integer
+    | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
 
   # Determine the number of records reported by an object.
   #

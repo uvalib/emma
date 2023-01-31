@@ -63,8 +63,9 @@ class LookupService
   #   @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
   #   @return [Hash{String=>LookupService::Response}]
   #
-  def self.request: (lookupArg items, ?channel: nil,           ?timeout: Numeric|bool|nil) -> Hash[String,LookupService::Response]
-                  | (lookupArg items,  channel: LookupChannel, ?timeout: Numeric|bool|nil) -> nil
+  def self.request
+    : (lookupArg items, ?channel: nil,           ?timeout: Numeric|bool|nil) -> Hash[String,LookupService::Response]
+    | (lookupArg items,  channel: LookupChannel, ?timeout: Numeric|bool|nil) -> nil
 
   # Synchronously get bibliographic information via the given service.
   #

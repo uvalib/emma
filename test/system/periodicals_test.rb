@@ -128,7 +128,6 @@ class PeriodicalsTest < ApplicationSystemTestCase
       assert_not_first_page
 
       # Visit the first entry.
-      # noinspection RubyNilAnalysis
       visit_show_page(CONTROLLER) do |title|
         parts = title.downcase.split(/[[:space:][:punct:]]+/)
         term  = strip_quotes(terms.values.first.downcase)

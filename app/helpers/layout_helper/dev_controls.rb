@@ -94,9 +94,6 @@ module LayoutHelper::DevControls
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def dev_controls(css: '.control', **opt)
     prepend_css!(opt, css)
     controls = []
@@ -130,7 +127,6 @@ module LayoutHelper::DevControls
       %Q(NOTE: DOES NOT AFFECT session['app.debug']),
       '(Toggle this off first to remove all dev-only enhancements.)'
     ].join("\n")
-    # noinspection RubyNilAnalysis
     link = opt.delete(:params).merge(param => false)
     make_link(label, link, **opt, title: tip)
   end
@@ -157,7 +153,6 @@ module LayoutHelper::DevControls
   #
   def dev_toggle_controller_debug(ctrlr: nil, state: nil, **opt)
     ctrlr ||= opt.dig(:params, :controller)&.to_sym
-    # noinspection RubyMismatchedArgumentType
     return unless ParamsConcern::SPECIAL_DEBUG_CONTROLLERS.include?(ctrlr)
     param = "app.#{ctrlr}.debug"
     dev_toggle_debug(ctrlr: ctrlr, state: state, param: param, **opt)
@@ -179,7 +174,6 @@ module LayoutHelper::DevControls
     state = session_debug?(ctrlr) if state.nil?
     label = ctrlr ? "#{ctrlr.to_s.titleize} debug" : 'Debug'
     label = "#{label} %s" % (state ? 'ON' : 'OFF')
-    # noinspection RubyNilAnalysis
     link  = opt.delete(:params).merge(param => !state)
     tip   = 'Click to turn %s' % (state ? 'off' : 'on')
     make_link(label, link, **opt, title: tip)

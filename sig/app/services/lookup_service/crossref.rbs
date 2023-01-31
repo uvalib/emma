@@ -27,8 +27,9 @@ class LookupService::Crossref < LookupService::RemoteService
   # @return [LookupService::Data]
   # @return [nil]                     If *msg* is *nil*.
   #
-  def transform: ((Lookup::Crossref::Api::Message|LookupService::Data|symHash) msg, ?extended: bool) -> LookupService::Data
-               | (nil                                                          msg, ?extended: bool) -> nil
+  def transform
+    : ((Lookup::Crossref::Api::Message|LookupService::Data|symHash) msg, ?extended: bool) -> LookupService::Data
+    | (nil                                                          msg, ?extended: bool) -> nil
 
   # transform_single
   #

@@ -149,7 +149,6 @@ module BaseDecorator::Links
     table   ||= action_links(**opt)
     html_tag(:ul, prepend_css(css)) do
       link_opt = { current: current, table: table }
-      # noinspection RubyNilAnalysis
       links = table.keys.map { |action| action_link(action, **link_opt) }
       first = links.index { |link| link.include?(ANOTHER) }
       first ? [links.delete_at(first), *links] : links

@@ -43,7 +43,7 @@ module Emma::TimeMethods
 
   # The current time in seconds.
   #
-  # @param [Symbol, nil] unit
+  # @param [Symbol] unit
   #
   # @return [Float]
   #

@@ -1223,6 +1223,7 @@ table.manifest_item-grid {
                 // Variations
                 //=============================================================
 
+                // @see file:manifest-edit.js *initializeAddedControls()*
                 @each $type-name, $type-class in $file-type-map {
                     &[data-hover="#{$type-name}"] {
                         .uploaded-filename {

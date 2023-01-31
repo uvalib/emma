@@ -72,7 +72,6 @@ module TestHelper::SystemTests::Common
   # @return [true]
   #
   def assert_json(value = nil, exact: nil, **pairs)
-    # noinspection RubyNilAnalysis
     if value.nil?
       value = pairs
     elsif value.is_a?(String) || value.is_a?(Array)
@@ -155,7 +154,6 @@ module TestHelper::SystemTests::Common
       current  = url_without_port(current || current_url).inspect
       expected = targets.many? ? targets.map(&:inspect) : targets.pop.inspect
       if expected.is_a?(Array)
-        # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
         expected = [] << expected[0...-1].join(', ') << 'or' << expected.last
         expected = 'any of expected pages %s' % expected.join(' ')
       else

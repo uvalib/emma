@@ -30,9 +30,10 @@ module BsDownloadConcern
   #
   # @return [Hash{Symbol=>String}]
   #
-  def bs_download_values: (?(String|nil) url)                                           -> Hash[Symbol,String]
-                        | ( (String|nil) url, ?(String|nil) state)                      -> Hash[Symbol,String]
-                        | ( (String|nil) url,  (String|nil) state, ?(String|nil) error) -> Hash[Symbol,String]
+  def bs_download_values
+    : (?(String|nil) url)                                           -> Hash[Symbol,String]
+    | ( (String|nil) url, ?(String|nil) state)                      -> Hash[Symbol,String]
+    | ( (String|nil) url,  (String|nil) state, ?(String|nil) error) -> Hash[Symbol,String]
 
   private
 

@@ -66,9 +66,6 @@ module Emma::Json
   # If opt[:symbolize_keys] is explicitly *false* then this causes all result
   # keys to be converted to strings.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def json_parse(arg, log: true, no_raise: true, **opt)
     return if arg.nil?
     str = false?(opt[:symbolize_keys])
@@ -83,7 +80,7 @@ module Emma::Json
       else
         raise "#{arg.class} unexpected"
     end
-    # noinspection RubyCaseWithoutElseBlockInspection, RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType
     case res
       when Hash  then str ? res.deep_stringify_keys : res
       when Array then res.map { |v| str && v.try(:deep_stringify_keys) || v }
@@ -252,7 +249,7 @@ module Emma::Json
   private
 
   def self.included(base)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

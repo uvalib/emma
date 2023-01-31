@@ -35,8 +35,9 @@ module XmlHelper
   #
   # @note The result has UTF-8 encoding (even if no truncation was performed).
   #
-  def html_truncate: (ActiveSupport::SafeBuffer str, ?(Integer|nil) length, **untyped opt) -> ActiveSupport::SafeBuffer
-                   | (String                    str, ?(Integer|nil) length, **untyped opt) -> String
+  def html_truncate
+    : (ActiveSupport::SafeBuffer str, ?(Integer|nil) length, **untyped opt) -> ActiveSupport::SafeBuffer
+    | (String                    str, ?(Integer|nil) length, **untyped opt) -> String
 
   # Truncate XML so that the rendered result is limited to the given length.
   #

@@ -222,6 +222,7 @@ class Phase < ApplicationRecord
   # @return [Action, nil]
   #
   def newest_action
+    # noinspection RubyMismatchedReturnType
     actions.order(:created_at).last
   end
 
@@ -231,6 +232,7 @@ class Phase < ApplicationRecord
   # @return [Action, nil]
   #
   def current_action
+    # noinspection RubyMismatchedReturnType
     actions.order(:updated_at).last
   end
 
@@ -239,6 +241,7 @@ class Phase < ApplicationRecord
   # @return [Action, nil]
   #
   def failed_action
+    # noinspection RubyMismatchedReturnType
     actions.where(condition: :failed).order(:created_at).last
   end
 
@@ -264,6 +267,7 @@ class Phase < ApplicationRecord
   #
   def action_scope(action_type = nil, **opt)
     opt[:type] = Action.type(action_type || opt[:type] || current_action)
+    # noinspection RubyMismatchedReturnType
     actions.where(**opt)
   end
 
@@ -406,7 +410,6 @@ class Phase < ApplicationRecord
     def describe_parts(phase = nil, **opt)
       unless (group = opt[:bulk_id])
         phase ||= self_for_instance_method(__method__)
-        # noinspection RubyCaseWithoutElseBlockInspection
         case phase
           when Phase::BulkPart      then group = phase.bulk.id
           when Phase::BulkOperation then group = phase.id

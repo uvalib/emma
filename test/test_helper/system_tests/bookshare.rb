@@ -295,7 +295,6 @@ module TestHelper::SystemTests::Bookshare
 
       else
         type = record_type(type)
-        # noinspection RubyMismatchedArgumentType
         type = "Bs::Record::#{type}" unless API_ENUMERATIONS.key?(type)
         type
     end
@@ -353,7 +352,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [String]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+  # noinspection RubyMismatchedReturnType
   #++
   def model_field_type(type)
     type = type.call rescue '?' if type.is_a?(Proc)
@@ -590,7 +589,6 @@ module TestHelper::SystemTests::Bookshare
     lines += Array.wrap(yield) if block_given?
     lines.flatten!
     if lines.present?
-      # noinspection RubyMismatchedArgumentType
       lines.unshift(header)  if header
       show(lines.join("\n")) if output
     end
@@ -612,7 +610,7 @@ module TestHelper::SystemTests::Bookshare
   # @yieldreturn [Hash, Array]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def show_subsection(
     header,

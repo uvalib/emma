@@ -298,8 +298,9 @@ module ManifestConcern
   #
   # @return [void]
   #
-  def post_response: ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
-                   | (                              Exception     item, **untyped opt) -> void
+  def post_response
+    : ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
+    | (                              Exception     item, **untyped opt) -> void
 
   # Raise an exception.
   #

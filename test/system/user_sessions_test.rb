@@ -9,7 +9,6 @@ class UserSessionsTest < ApplicationSystemTestCase
 
   TEST_USER = :emmadso
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @user = find_user(TEST_USER)
   end

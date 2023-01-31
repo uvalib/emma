@@ -175,10 +175,11 @@ class Api::Record
   #
   # @return [Array, Any]
   #
-  def make_hierarchy: (anyHash     value) -> anyHash
-                    | (anyArray    value) -> anyArray
-                    | (Api::Record value) -> symHash
-                    | (untyped     value) -> untyped
+  def make_hierarchy
+    :     (anyHash     value) -> anyHash
+    |     (anyArray    value) -> anyArray
+    |     (Api::Record value) -> symHash
+    | [T] (T           value) -> T
 
   # The fields defined in the schema for this record.
   #
@@ -221,6 +222,7 @@ class Api::Record
   #
   # @return [Hash, String]            Same type as *data*.
   #
-  def wrap_outer: (data: anyHash, ?fmt: Symbol|nil, ?name: String|nil, ?template:String|nil) -> anyHash
-                | (data: String,  ?fmt: Symbol|nil, ?name: String|nil, ?template:String|nil) -> String
+  def wrap_outer
+    : (data: anyHash, ?fmt: Symbol|nil, ?name: String|nil, ?template:String|nil) -> anyHash
+    | (data: String,  ?fmt: Symbol|nil, ?name: String|nil, ?template:String|nil) -> String
 end

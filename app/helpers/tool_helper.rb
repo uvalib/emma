@@ -19,9 +19,6 @@ module ToolHelper
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   TOOL_ITEMS =
     I18n.t('emma.tool').map { |k, v|
       next unless v.is_a?(Hash) && v[:_endpoint] && (k != :index)

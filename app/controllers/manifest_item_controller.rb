@@ -249,7 +249,6 @@ class ManifestItemController < ApplicationController
     @list = destroy_manifest_item(**manifest_item_params)
     post_response(:ok, @list, redirect: :back)
   rescue => error
-    # noinspection RubyScope
     post_response(error, redirect: :back)
   end
 

@@ -307,7 +307,6 @@ class Phase::Create < Phase::BulkPart
   def self.start_submission(**opt)
     opt[:submission_id] ||= generate_submission_id(opt[:created_at])
     opt[:state]         ||= :started
-    # noinspection RubyMismatchedReturnType
     create!(opt)
   end
 

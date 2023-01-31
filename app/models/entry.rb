@@ -154,6 +154,7 @@ class Entry < ApplicationRecord
   # @return [Phase, nil]
   #
   def current_phase
+    # noinspection RubyMismatchedReturnType
     phases.order(:updated_at).last
   end
 
@@ -181,6 +182,7 @@ class Entry < ApplicationRecord
   #
   def phase_scope(phase_type = nil, **opt)
     opt[:type] = Phase.type(phase_type || opt[:type] || current_phase)
+    # noinspection RubyMismatchedReturnType
     phases.where(**opt)
   end
 

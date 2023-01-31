@@ -46,7 +46,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @param [Hash{Symbol=>*}]
   #
-  def stream_recv: (untyped payload, **untyped opt) -> untyped
+  def stream_recv: (untyped payload, **untyped opt) -> symHash
 
   # Push data to the client.
   #
@@ -66,5 +66,5 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   def self.stream_send: (ApplicationCable::Response payload, **untyped opt) -> void
 
-  def deliver_error_message: (Exception e) -> untyped
+  def deliver_error_message: (Exception e) -> void
 end

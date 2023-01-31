@@ -20,7 +20,6 @@ module Model
   # @return [String]
   #
   def identifier
-    # noinspection RubyMismatchedReturnType
     (respond_to?(:id) ? id : object_id).to_s
   end
 
@@ -422,9 +421,6 @@ module Model
   #
   # @return [Class, nil]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def self.class_for(item)
     item = item.class             if item.is_a?(Model)
     item = item.base_class        if item.respond_to?(:base_class)
@@ -442,9 +438,6 @@ module Model
   #
   # @return [Symbol, nil]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def self.model_for(item)
     item = item.to_s                    if item.is_a?(Symbol)
     item = item.remove(CONFIG_PREFIX)   if item.is_a?(String)

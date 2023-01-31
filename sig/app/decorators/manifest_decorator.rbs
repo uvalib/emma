@@ -272,7 +272,7 @@ class ManifestDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/controllers/_manifest.js *importRows()*
+  # @see file:app/assets/javascripts/controllers/manifest-edit.js *importRows*
   # @see file:app/assets/stylesheets/feature/_model_form.scss ".import-button"
   #
   def import_button: (**untyped opt) -> ActiveSupport::SafeBuffer
@@ -283,7 +283,7 @@ class ManifestDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/controllers/_manifest.js *exportRows()*
+  # @see file:app/assets/javascripts/controllers/manifest-edit.js *exportRows*
   # @see file:app/assets/stylesheets/feature/_model_form.scss ".export-button"
   #
   def export_button: (**untyped opt) -> ActiveSupport::SafeBuffer

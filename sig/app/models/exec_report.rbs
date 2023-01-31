@@ -48,8 +48,9 @@ class ExecReport
   # @overload initialize(*src)
   #   @param [Array<ExecReport,Hash,Array<String>,String,nil>] src
   #
-  def initialize: (ApplicationRecord base, *errorArgs src) -> void
-                | (*(ExecReport|symHash|strArray|String|nil) src) -> void
+  def initialize
+    : (ApplicationRecord base, *errorArgs                                src) -> void
+    | (                        *(ExecReport|symHash|strArray|String|nil) src) -> void
 
   # Clear the instance.
   #

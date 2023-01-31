@@ -71,11 +71,12 @@ module Serializable
     def deserialize: (anyHash hash) ?{ (untyped) -> untyped } -> untyped
 
     module Methods
-      def serialize_argument: (ActiveSupport::HashWithIndifferentAccess[untyped,untyped] item) -> strHash
-                            | (GlobalID::Identification                                  item) -> Hash[String,String]
-                            | (anyHash                                                   item) -> strHash
-                            | (anyArray                                                  item) -> anyArray
-                            | (untyped                                                   item) -> untyped
+      def serialize_argument
+        :     (ActiveSupport::HashWithIndifferentAccess[untyped,untyped] item) -> strHash
+        |     (GlobalID::Identification                                  item) -> Hash[String,String]
+        |     (anyHash                                                   item) -> strHash
+        |     (anyArray                                                  item) -> anyArray
+        | [T] (T                                                         item) -> T
 
       def deserialize_argument: (untyped item) -> untyped
 
@@ -130,7 +131,8 @@ module Serializable
   #   @param [Symbol] mode
   #   @param [Proc]   block         Passed to Base#serialize.
   #
-  def serializer: ()                                      -> (Class | nil)
-                | (:serialize)   { (untyped) -> untyped } -> (Class | nil)
-                | (:deserialize) { (untyped) -> untyped } -> (Class | nil)
+  def serializer
+    : ()                                      -> (Class | nil)
+    | (:serialize)   { (untyped) -> untyped } -> (Class | nil)
+    | (:deserialize) { (untyped) -> untyped } -> (Class | nil)
 end

@@ -100,8 +100,9 @@ module Record::FileData
     #
     # @note Currently unused.
     #
-    def set_file_data: (String|anyHash data, ?bool allow_blank) -> String
-                     | (nil            data, ?bool allow_blank) -> nil
+    def set_file_data
+      : (String|anyHash data, ?bool allow_blank) -> String
+      | (nil            data, ?bool allow_blank) -> nil
 
     # Selectively modify the :file_data field value (if not #FILE_DATA_HASH).
     #

@@ -33,8 +33,9 @@ module BaseCollectionDecorator::Table
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
   #
-  def table_entries: (?row: Integer, ?separator: String, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
-                   | (?row: Integer,  separator: nil,    **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
+  def table_entries
+    : (?row: Integer, ?separator: String, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+    | (?row: Integer,  separator: nil,    **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
 
   # Render column headings for a table of model items.
   #
@@ -58,9 +59,10 @@ module BaseCollectionDecorator::Table
   #
   # @see #DARK_HEAD
   #
-  def table_headings: (?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
-                    | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
-                    | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[String]
+  def table_headings
+    : (?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+    | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
+    | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[String]
 
   # The collection of items to be presented in tabular form.
   #
@@ -75,8 +77,6 @@ module BaseCollectionDecorator::Table
   # @return [Symbol]
   #
   # @see BaseCollectionDecorator::SharedClassMethods#decorator_class
-  #
-  # @note Not currently used.
   #
   def table_row_model_type: () -> Symbol
 

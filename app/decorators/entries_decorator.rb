@@ -321,7 +321,6 @@ class EntriesDecorator < BaseCollectionDecorator
     rids    = list.select { |e| e.is_a?(String) && e.match?(/^[^\d]/) }
     recs, _ = find_in_index(*rids)
     lookup  = record_map(recs)
-    # noinspection RubyNilAnalysis
     items   = list.map { |item| lookup[item] || item }
     items.select { |item| item.is_a?(Model) || item.include?('-') }
   end

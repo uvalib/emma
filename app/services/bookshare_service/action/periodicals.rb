@@ -160,7 +160,6 @@ module BookshareService::Request::Periodicals
     opt[:seriesId] = seriesId
     opt[:limit]    = :max
     periodical = get_periodical_editions(**opt)
-    # noinspection RubyMismatchedReturnType
     periodical.periodicalEditions&.find { |pe| editionId == pe.editionId }
   end
     .tap do |method|

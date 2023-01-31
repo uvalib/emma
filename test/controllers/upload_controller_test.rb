@@ -19,7 +19,6 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   READ_FORMATS  = :all
   WRITE_FORMATS = :html
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @readers = find_users(*TEST_READERS)
     @writers = find_users(*TEST_WRITERS)

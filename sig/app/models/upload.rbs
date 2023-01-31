@@ -250,9 +250,10 @@ class Upload < ApplicationRecord
   #
   # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
   #
-  def self.matching_sid: (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil,                  **untyped opt) -> ActiveRecord::Relation
-                       | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: false, **untyped opt) -> ActiveRecord::Relation
-                       | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: true,  **untyped opt) -> (ActiveRecord::Relation | nil)
+  def self.matching_sid
+    : (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil,                  **untyped opt) -> ActiveRecord::Relation
+    | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: false, **untyped opt) -> ActiveRecord::Relation
+    | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: true,  **untyped opt) -> (ActiveRecord::Relation | nil)
 
   # Get the latest record matching the submission ID given as either *sid* or
   # `opt[:submission_id]`.

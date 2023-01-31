@@ -104,7 +104,6 @@ class Action::Store < Action::BulkPart
       elsif (data = json_parse(body&.first)).blank?
         'invalid response body'
       else
-        # noinspection RubyNilAnalysis
         self.emma_data = data.delete(:emma_data)
         self.file_data = data
         __output "++++++++++++++++++++++++ #{CLASS}.upload! | action.file_data #{file_data.class} | action.emma_data #{emma_data.class}"

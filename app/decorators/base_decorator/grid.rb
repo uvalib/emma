@@ -267,9 +267,6 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def render_grid_data_rows(items = nil, row: nil, index: nil, **opt)
     opt[:cols] ||= grid_row_columns
 
@@ -535,7 +532,6 @@ module BaseDecorator::Grid
     fp_opt        = extract_hash!(opt, *FIELD_PAIRS_OPTIONS)
     value_opt     = opt.slice(:index, :no_format)
 
-    # noinspection RubyMismatchedArgumentType
     field_pairs(pairs, **fp_opt).map.with_index(start) { |(field, prop), col|
       label = prop[:label]
       value = render_value(prop[:value], field: field, **value_opt)
@@ -652,7 +648,6 @@ module BaseDecorator::Grid
     # @param [Integer, nil]                            starting_offset
     #
     def initialize(item, starting_offset = nil)
-      # noinspection RubyNilAnalysis
       if (@none = (item == NONE))
         @base, @offset = 0, 0
       elsif item.is_a?(GridIndex)
@@ -672,7 +667,6 @@ module BaseDecorator::Grid
 
     # @return [String]
     def to_s
-      # noinspection RubyMismatchedReturnType
       value.to_s
     end
 

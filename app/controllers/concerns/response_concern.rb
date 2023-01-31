@@ -78,9 +78,6 @@ module ResponseConcern
   #   @param [Symbol, Integer]    status
   #   @param [Array, Any, nil]    items
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def post_response(
     status,
     item =    nil,

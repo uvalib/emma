@@ -111,7 +111,6 @@ class ArtifactDecorator < BookshareDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def artifact_links(item = nil, **opt)
-      # noinspection RubyNilAnalysis
       if item&.respond_to?(:download_links)
         item.download_links(**opt)
       elsif item
@@ -161,9 +160,6 @@ class ArtifactDecorator
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   DOWNLOAD_CONFIG = I18n.t('emma.download', default: {}).deep_freeze
 
   # Default link tooltip.
@@ -262,7 +258,6 @@ class ArtifactDecorator
     end
     return if url.blank?
 
-    # noinspection RubyNilAnalysis
     fmt_name  = format.is_a?(Bs::Record::Format) ? format.label : object.label
     fmt_name  = I18n.t(cfg, default: fmt_name)
     repo_name = EmmaRepository.pairs[repo]

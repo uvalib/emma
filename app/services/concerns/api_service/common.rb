@@ -89,7 +89,7 @@ module ApiService::Common
   #   @param [Symbol, String] http_method
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def update_request?(http_method = nil)
     http_method = http_method.downcase.to_sym if http_method.is_a?(String)
@@ -115,9 +115,6 @@ module ApiService::Common
   #   @param [Hash]    hash           Parameters to check instead of @params.
   #   @param [Boolean] complete       If *true* return :api_key parameter.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def latest_endpoint(prm = nil)
     prm = (prm || @params).dup
     prm.delete(:api_key) unless prm.delete(:complete)
@@ -264,7 +261,7 @@ module ApiService::Common
   # If overridden, this should be called first via 'super'.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def api_options(params = nil)
     params ||= @params
@@ -285,9 +282,6 @@ module ApiService::Common
   # @return [Array<(Hash,Hash,String)>] Message body plus headers for GET.
   # @return [Array<(Hash,Hash,Hash)>]   Query plus headers for PUT, POST, PATCH
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def api_headers(params = nil, headers = nil, body = nil)
     params  ||= @params
     headers ||= {}
@@ -682,7 +676,7 @@ module ApiService::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, ApiService::Definition)
+    base.include(ApiService::Definition)
   end
 
 end

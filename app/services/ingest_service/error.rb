@@ -65,7 +65,7 @@ class IngestService::Error < ApiService::Error
     def extract_json(src)
       result   = ([] if src.blank?)
       result ||= (src unless src.is_a?(Hash))
-      # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+      # noinspection RubyMismatchedArgumentType
       result ||=
         case src.keys.first.to_s.downcase
           when /^document-\d+/      then parse_create_errors(src)
@@ -193,7 +193,7 @@ class IngestService::Error < ApiService::Error
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

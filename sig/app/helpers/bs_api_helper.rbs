@@ -29,8 +29,9 @@ module BsApiHelper
   #   @param [Array<String,Symbol>] names
   #   @return [Array<String>]
   #
-  def bookshare_user: ((String|Symbol)      name)  -> String
-                    | (Array[String|Symbol] names) -> strArray
+  def bookshare_user
+    : ((String|Symbol)      name)  -> String
+    | (Array[String|Symbol] names) -> strArray
 
   # Generate a URL to an external (Bookshare-related) site, refactored so that
   # it passes through the application's "Bookshare API Explorer" endpoint.

@@ -97,7 +97,7 @@ class ScalarType
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -395,7 +395,7 @@ class IsoDuration < ScalarType
         when IsoDuration             then return v.to_s
         else                              v = v.to_s
       end
-      # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+      # noinspection RubyMismatchedReturnType
       MATCH_PATTERN.any? { |_, pattern| v.match?(pattern) } ? v : ''
     end
 
@@ -476,7 +476,7 @@ class IsoDuration < ScalarType
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -840,7 +840,7 @@ class IsoDate < ScalarType
       # something like "2021-12" but will correctly interpret "2021/12" as
       # "December 2021", '/' is used as the date separator.
       result = []
-      # noinspection RubyResolve, RubyMismatchedArgumentType
+      # noinspection RubyResolve
       value.sub!(ASN_1_DATETIME) do
         result << [$1, $3, $5 ].compact_blank.join('/') # Date parts
         result << [$7, $9, $10].compact_blank.join(':') # Time parts
@@ -886,7 +886,7 @@ class IsoDate < ScalarType
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -982,7 +982,7 @@ class IsoYear < IsoDate
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1051,7 +1051,7 @@ class IsoDay < IsoDate
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1148,7 +1148,7 @@ class IsoLanguage < ScalarType
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1488,7 +1488,7 @@ class EnumType < ScalarType
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1587,9 +1587,6 @@ module Api::Common
   #
   # @see file:config/locales/en.yml *en.emma.application.deployment*
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   DEPLOYMENT = I18n.t('emma.application.deployment').deep_freeze
 
   # Table of deployment names.
@@ -1611,9 +1608,6 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Any}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   REPOSITORY_CONFIG = I18n.t('emma.repository', default: {}).deep_freeze
 
   # The default repository for uploads.
@@ -1658,9 +1652,6 @@ module Api::Common
   #
   # @see file:config/locales/types.en.yml *en.emma.categories*
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   CATEGORY = I18n.t('emma.categories', default: {}).deep_freeze
 
   # Table of Bookshare category names.
@@ -1681,9 +1672,6 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Any}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   LANGUAGE_CONFIG = I18n.t('emma.language', default: {}).deep_freeze
 
   # All language codes and labels.

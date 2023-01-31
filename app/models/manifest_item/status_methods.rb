@@ -21,12 +21,12 @@ module ManifestItem::StatusMethods
 
   # Update status field values.
   #
-  # @param [ManifestItem,Hash,nil] item   Default: self
-  # @param [Boolean]       file
-  # @param [Boolean]       data
-  # @param [Boolean]       ready
-  # @param [Boolean]       overwrite  If *false* only add status values.
-  # @param [Hash]          added      Fields that will be added to the item
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean] file
+  # @param [Boolean] data
+  # @param [Boolean] ready
+  # @param [Boolean] overwrite        If *false* only add status values.
+  # @param [Hash]    added            Fields that will be added to the item
   #
   # @return [ManifestItem, Hash]
   #
@@ -38,7 +38,7 @@ module ManifestItem::StatusMethods
     overwrite:  true,
     **added
   )
-    item ||= default_to_self
+    item  ||= default_to_self
     file  &&= !item[:file_status]  unless overwrite
     data  &&= !item[:data_status]  unless overwrite
     ready &&= !item[:ready_status] unless overwrite
@@ -51,9 +51,9 @@ module ManifestItem::StatusMethods
 
   # Evaluate the readiness of ManifestItem for being included in a submission.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  # @param [Boolean]               symbol
-  # @param [Hash]                  added  Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean]                 symbol
+  # @param [Hash]                    added  Additional field values to use.
   #
   # @return [ReadyStatus]                 If *symbol* is *false*.
   # @return [Symbol]
@@ -68,9 +68,9 @@ module ManifestItem::StatusMethods
 
   # Evaluate the readiness of the file upload associated with a ManifestItem.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  # @param [Boolean]               symbol
-  # @param [Hash]                  added  Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean]                 symbol
+  # @param [Hash]                    added  Additional field values to use.
   #
   # @return [FileStatus]                  If *symbol* is *false*.
   # @return [Symbol]
@@ -90,9 +90,9 @@ module ManifestItem::StatusMethods
 
   # Evaluate the readiness of ManifestItem metadata.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  # @param [Boolean]               symbol
-  # @param [Hash]                  added  Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Boolean]                 symbol
+  # @param [Hash]                    added  Additional field values to use.
   #
   # @return [DataStatus]                  If *symbol* is *false*.
   # @return [Symbol]
@@ -140,8 +140,8 @@ module ManifestItem::StatusMethods
 
   # Return indicated field values.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  # @param [Hash, nil]             added  Additional field values to use.
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  # @param [Hash, nil]               added  Additional field values to use.
   #
   # @return [Hash]
   #
@@ -159,9 +159,7 @@ module ManifestItem::StatusMethods
 
   # Evaluate field values for readiness.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  #
-  # @return [Boolean]
+  # @param [ManifestItem, Hash, nil] item   Default: self.
   #
   def ready?(item = nil)
     item ||= default_to_self
@@ -170,9 +168,7 @@ module ManifestItem::StatusMethods
 
   # Indicate whether the item has been associated with a file.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  #
-  # @return [Boolean]
+  # @param [ManifestItem, Hash, nil] item   Default: self.
   #
   def file_ok?(item = nil)
     status_ok?(item, column: :file_status)
@@ -180,9 +176,7 @@ module ManifestItem::StatusMethods
 
   # Indicate whether the item has valid data.
   #
-  # @param [ManifestItem,Hash,nil] item   Source of field values (def: self).
-  #
-  # @return [Boolean]
+  # @param [ManifestItem, Hash, nil] item   Default: self.
   #
   def data_ok?(item = nil)
     status_ok?(item, column: :data_status)
@@ -365,7 +359,7 @@ module ManifestItem::StatusMethods
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

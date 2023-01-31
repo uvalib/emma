@@ -334,7 +334,6 @@ class MemberDecorator
         def render_value(value, field:, **opt)
           opt[:no_link] = true
           if present?
-            # noinspection RubyCaseWithoutElseBlockInspection
             case field_category(field || value)
               when :title then super(value, field: :downloaded_title, **opt)
             end

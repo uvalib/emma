@@ -127,7 +127,6 @@ module LayoutHelper::SearchFilters
           when String
             path = values
             path = "emma.#{path}" unless path.start_with?('emma.')
-            # noinspection RubyNilAnalysis
             I18n.t(path, default: {}).invert
           when Symbol
             EnumType.pairs_for(values)&.invert
@@ -268,7 +267,7 @@ module LayoutHelper::SearchFilters
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -286,9 +285,6 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   SEARCH_FILTERS_ROOT = I18n.t('emma.search_filters').deep_freeze
 
   # The value 'en.emma.search_filters._default' contains each of the properties
@@ -297,9 +293,6 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   SEARCH_MENU_DEFAULT = SEARCH_FILTERS_ROOT[:_default].compact.deep_freeze
 
   # Properties for the "filter reset" button.
@@ -381,7 +374,6 @@ module LayoutHelper::SearchFilters
       periodicals = %i[periodical edition].include?(controller)
       search_param_menu_configs =
         menu_configs.map { |menu_name, menu_config|
-          # noinspection RubyCaseWithoutElseBlockInspection
           case menu_name
             when :layout            then next
             when :format            then next if periodicals
@@ -409,9 +401,6 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   ADV_SEARCH_CONFIG = I18n.t('emma.search_bar.advanced').deep_freeze
 
   # Labels/tooltips for expanding and contracting search filters.
@@ -442,7 +431,6 @@ module LayoutHelper::SearchFilters
   def show_search_filters?(opt = nil)
     opt   ||= request_parameters
     target  = search_target(**opt)
-    # noinspection RubyMismatchedArgumentType
     enabled = SEARCH_FILTERS_CONFIG.dig(target, :enabled)
     enabled = enabled.include?(opt[:action].to_s) if enabled.is_a?(Array)
     enabled.present?
@@ -663,9 +651,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def generic_menu(menu_name, **opt)
     menu_container(menu_name, **opt)
   end
@@ -686,9 +671,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]     HTML label and control elements.
   # @return [nil]                           Menu is not available for *target*.
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def menu_container(menu_name, label: nil, target: nil, **opt)
     opt[:target]   = search_input_target(target)
     opt[:config] ||= current_menu_config(menu_name, **opt)
@@ -735,9 +717,6 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def menu_control(
     menu_name,
     target:   nil,
@@ -805,9 +784,6 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def menu_label(menu_name, css: '.menu-label', **opt)
     append_css!(opt, css)
     control_label(menu_name, **opt)
@@ -821,9 +797,6 @@ module LayoutHelper::SearchFilters
   # @return [String]                    Tooltip text.
   # @return [nil]                       If no tooltip was defined.
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def menu_tooltip(menu_name, **opt)
     config_tooltip(menu_name, **opt)
   end
@@ -842,9 +815,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
   # @return [nil]                       If menu is not available.
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def before_menu(menu_name, **opt)
     date_container(menu_name, **opt)
   end
@@ -857,9 +827,6 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
   # @return [nil]                       If menu is not available.
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def after_menu(menu_name, **opt)
     date_container(menu_name, **opt)
   end
@@ -882,9 +849,6 @@ module LayoutHelper::SearchFilters
   #
   # @see #menu_container
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def date_container(menu_name, label: nil, target: nil, **opt)
     opt[:target]   = search_input_target(target)
     opt[:config] ||= current_menu_config(menu_name, **opt)
@@ -960,9 +924,6 @@ module LayoutHelper::SearchFilters
   # @return [String]                  Tooltip text.
   # @return [nil]                     If no tooltip was defined.
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def date_tooltip(menu_name, **opt)
     config_tooltip(menu_name, **opt)
   end

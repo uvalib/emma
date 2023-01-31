@@ -1,8 +1,6 @@
 # Class methods for accessing Upload records.
 #
 module Upload::LookupMethods
-  def included: (Module base) -> void
-
   include Upload::WorkflowMethods
 
   extend ::Upload::LookupMethods
@@ -106,4 +104,8 @@ module Upload::LookupMethods
   # @return [Hash{Symbol=>Integer}]
   #
   def group_by_state: (ActiveRecord::Relation relation) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
 end

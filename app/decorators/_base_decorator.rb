@@ -452,7 +452,6 @@ class BaseDecorator < Draper::Decorator
     #
     def same_request?(opt = nil)
       opt ||= request_values(:referrer, :url, :fullpath)
-      # noinspection RubyNilAnalysis
       (ref = opt[:referrer]).present? &&
         opt.values_at(:url, :fullpath).any? { |u| u&.sub(/\?.*$/, '') == ref }
     end
@@ -470,7 +469,7 @@ class BaseDecorator < Draper::Decorator
     def back_path(opt = nil, fallback: 'javascript:history.back();')
       opt ||= request_values(:referrer, :url, :fullpath)
       ref = referrer(opt).presence
-      # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+      # noinspection RubyMismatchedArgumentType
       if ref && same_request?(opt)
         uri = URI(ref)
         uri.path = '/' + uri.path.delete_prefix('/').split('/').shift
@@ -850,7 +849,7 @@ class BaseDecorator
   #
   def self.set_model_type(mt)
     raise 'Nil model_type' unless mt
-    # noinspection RubyMismatchedVariableType, RubyNilAnalysis
+    # noinspection RubyMismatchedVariableType
     if mt.is_a?(Symbol)
       @model_type = mt
     elsif mt.respond_to?(:model_name)
@@ -1134,7 +1133,7 @@ class BaseDecorator
   # @return [Any, nil]
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
+  # noinspection RubyMismatchedArgumentType
   #++
   def self.fetch_property(item)
     return fetch_properties(item) if item.is_a?(Hash)

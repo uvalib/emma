@@ -23,9 +23,6 @@ module Upload::RenderMethods
   #
   # @see BaseDecorator::Menu#items_menu_label
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def menu_label(item = nil)                                                    # NOTE: to Record::Rendering
     item ||= self
     name   = item.submission_id.presence

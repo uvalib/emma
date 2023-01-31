@@ -169,16 +169,17 @@ module Emma::Common::HashMethods
   #     !b[:c].new.is_a?(User)
   #   ```
   #
-  def _remove_blanks: (anyArray array,  squeeze: true, ?dup: bool) -> (anyArray | untyped | nil)
-                    | (nil      item,  ?squeeze: bool, ?dup: bool) -> nil
-                    | (bool     item,  ?squeeze: bool, ?dup: bool) -> bool
-                    | (Symbol   item,  ?squeeze: bool, ?dup: bool) -> Symbol
-                    | (Numeric  item,  ?squeeze: bool, ?dup: bool) -> Numeric
-                    | (Proc     item,  ?squeeze: bool, ?dup: bool) -> Proc
-                    | (Method   item,  ?squeeze: bool, ?dup: bool) -> Method
-                    | (Module   item,  ?squeeze: bool, ?dup: bool) -> Module
-                    | (String   item,  ?squeeze: bool, ?dup: bool) -> (String   | nil)
-                    | (anyHash  hash,  ?squeeze: bool, ?dup: bool) -> (anyHash  | nil)
-                    | (anyArray array, ?squeeze: bool, ?dup: bool) -> (anyArray | nil)
-                    | (untyped  item,  ?squeeze: bool, ?dup: bool) -> (untyped  | nil)
+  def _remove_blanks
+    :     (anyArray array,  squeeze: true, ?dup: bool) -> (anyArray | untyped | nil)
+    |     (nil      item,  ?squeeze: bool, ?dup: bool) -> nil
+    |     (bool     item,  ?squeeze: bool, ?dup: bool) -> bool
+    |     (Symbol   item,  ?squeeze: bool, ?dup: bool) -> Symbol
+    |     (Numeric  item,  ?squeeze: bool, ?dup: bool) -> Numeric
+    |     (Proc     item,  ?squeeze: bool, ?dup: bool) -> Proc
+    |     (Method   item,  ?squeeze: bool, ?dup: bool) -> Method
+    |     (Module   item,  ?squeeze: bool, ?dup: bool) -> Module
+    |     (String   item,  ?squeeze: bool, ?dup: bool) -> (String   | nil)
+    |     (anyHash  hash,  ?squeeze: bool, ?dup: bool) -> (anyHash  | nil)
+    |     (anyArray array, ?squeeze: bool, ?dup: bool) -> (anyArray | nil)
+    | [T] (T        item,  ?squeeze: bool, ?dup: bool) -> (T        | nil)
 end

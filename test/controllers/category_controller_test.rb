@@ -16,7 +16,6 @@ class CategoryControllerTest < ActionDispatch::IntegrationTest
 
   READ_FORMATS = :all
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @readers = find_users(*TEST_READERS)
   end

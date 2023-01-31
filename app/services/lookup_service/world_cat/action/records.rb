@@ -104,9 +104,6 @@ module LookupService::WorldCat::Request::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-oclcnumber
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def get_oclc(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content', term, **opt)
@@ -132,9 +129,6 @@ module LookupService::WorldCat::Request::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-isbn
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def get_isbn(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/isbn', term, **opt)
@@ -160,9 +154,6 @@ module LookupService::WorldCat::Request::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-issn
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def get_issn(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/issn', term, **opt)
@@ -195,9 +186,6 @@ module LookupService::WorldCat::Request::Records
   # https://www.loc.gov/standards/sourcelist/standard-identifier.html (where
   # LCCN is only one of the possibilities).
   #
-  #--
-  # noinspection DuplicatedCode
-  #++
   def get_lccn(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/sn', term, **opt)
@@ -395,7 +383,6 @@ module LookupService::WorldCat::Request::Records
     # @return [self, nil]
     #
     def add(prefix, value = :missing)
-      # noinspection RubyNilAnalysis
       prefix, value = prefix.to_s.split(':', 2) if value == :missing
       return unless (code  = table[prefix&.to_sym])
       return unless (value = Array.wrap(value).compact_blank).present?

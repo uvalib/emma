@@ -27,7 +27,6 @@ class LookupService::Data
   #
   def initialize(src = nil)
     tab = dia = nil
-    # noinspection RubyNilAnalysis
     if src.is_a?(LookupService::Data)
       tab = src.table&.deep_dup || {}
     elsif src.is_a?(Hash) && src.key?(:items)
@@ -80,9 +79,6 @@ class LookupService::Data
   #
   # @return [Hash{Symbol=>Array<LookupService::Data::Item>}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def make_table(items)
     case items
       when Hash  then items = items.values.flatten
@@ -184,9 +180,6 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
   # @option opt [Hash] :diagnostic    Out-of-band information to include with
   #                                     the return of #item_values.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def initialize(src = nil, opt = nil)
     @diagnostic = nil
     if src.is_a?(LookupService::Data::Item)

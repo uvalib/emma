@@ -254,8 +254,9 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def thumbnail: (?link: bool|String, ?placeholder: true,  ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-               | (?link: bool|String,  placeholder: false, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def thumbnail
+    : (?link: bool|String, ?placeholder: true,  ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    | (?link: bool|String,  placeholder: false, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   @thumbnail: String | nil
 
@@ -272,8 +273,9 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def cover: (?link: bool|String, ?placeholder: true,  ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-           | (?link: bool|String,  placeholder: false, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def cover
+    : (?link: bool|String, ?placeholder: true,  ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    | (?link: bool|String,  placeholder: false, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   @cover_image: String | nil
 

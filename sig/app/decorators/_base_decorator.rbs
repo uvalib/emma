@@ -185,8 +185,9 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [String, nil]
     #
-    def page_value: (String|Symbol|nil item, ?default: true|String, **untyped opt) -> String
-                  | (String|Symbol|nil item,  default: false|nil,   **untyped opt) -> (String | nil)
+    def page_value
+      : (String|Symbol|nil item, ?default: true|String, **untyped opt) -> String
+      | (String|Symbol|nil item,  default: false|nil,   **untyped opt) -> (String | nil)
   end
 
   # Methods for every decorator class.
@@ -303,9 +304,10 @@ class BaseDecorator < Draper::Decorator
   #
   # @return [void]
   #
-  def self.decorator_for: (Hash[Symbol,Class]) -> void
-                        | (Symbol, ?Class)     -> void
-                        | (Class)              -> void
+  def self.decorator_for
+    : (Hash[Symbol,Class]) -> void
+    | (Symbol, ?Class)     -> void
+    | (Class)              -> void
 
 
   @ar_class:    Class | nil

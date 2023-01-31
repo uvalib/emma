@@ -40,7 +40,6 @@ module IngestService::Common
   #
   def api_headers(params = nil, headers = nil, body = nil)
     params, headers, body = super
-    # noinspection RubyNilAnalysis
     headers = headers.merge('X-API-Key' => api_key) if api_key
     return params, headers, body
   end
@@ -76,7 +75,6 @@ module IngestService::Common
   def transmit(verb, action, params, headers, **opt)
     super.tap do |resp|
       if resp.is_a?(Faraday::Response)
-        # noinspection RubyCaseWithoutElseBlockInspection
         case resp.status
           when 202
             # NOTE: *May* erroneously be the status for some bad conditions.
@@ -105,7 +103,7 @@ module IngestService::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, IngestService::Definition)
+    base.include(IngestService::Definition)
   end
 
 end

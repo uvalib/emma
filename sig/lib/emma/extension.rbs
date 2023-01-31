@@ -47,8 +47,9 @@ module Emma::Extension
       #   @param [Hash]        opt
       #   @return [nil]
       #
-      def __ext_log: (Symbol meth, *untyped args, ?leader: String|nil, ?tag: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
-                   | (             *untyped args, ?leader: String|nil, ?tag: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
+      def __ext_log
+        : (Symbol meth, *untyped args, ?leader: String|nil, ?tag: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
+        | (             *untyped args, ?leader: String|nil, ?tag: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
 
       # Debug method for the including class.
       #
@@ -81,8 +82,9 @@ module Emma::Extension
       #   @param [Proc]   block
       #   @return [nil]
       #
-      def __ext_debug: (Symbol meth, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
-                     | (             *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+      def __ext_debug
+        : (Symbol meth, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+        | (             *untyped args, **untyped opt) ?{ () -> untyped } -> nil
 
       # Log output tag for the extended gem.
       #

@@ -117,7 +117,7 @@ module UploadWorkflow::Errors
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1794,7 +1794,6 @@ class UploadWorkflow < Workflow::Base
   # @return [Symbol]
   #
   def self.workflow_type
-    # noinspection RubyNilAnalysis
     name.underscore.remove(/_+workflow|workflow_*/i).tr('/', '_').to_sym
   end
 
@@ -1912,7 +1911,7 @@ class UploadWorkflow < Workflow::Base
           # @see Workflow::Base#variant_type
           #
           def self.variant_type
-            # noinspection RubyNilAnalysis, RbsMissingTypeSignature
+            # noinspection RbsMissingTypeSignature
             @variant_type ||= name.demodulize.to_s.underscore.to_sym
           end
 

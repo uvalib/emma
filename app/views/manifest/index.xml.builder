@@ -9,7 +9,6 @@ list ||= @list || {}
 
 xml.instruct!
 xml.manifests do
-  # noinspection RubyMismatchedArgumentType
   xml.timestamp DateTime.now
   xml.count     list.size
   list.each do |manifest|

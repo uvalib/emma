@@ -9,10 +9,6 @@ __loading_begin(__FILE__)
 #
 module Upload::IdentifierMethods
 
-  def included(base)
-    base.send(:extend, self)
-  end
-
   include Emma::Common
 
   extend self
@@ -116,9 +112,6 @@ module Upload::IdentifierMethods
   # Leading with a non-hex-digit guarantees that submission ID's are distinct
   # from database ID's (which are only decimal digits).
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def generate_submission_id(time = nil, prefix: true)                          # NOTE: to Record::EmmaIdentification
     prefix  = SID_PREFIX if prefix.is_a?(TrueClass)
     time    = time.is_a?(DateTime) ? time.to_time : (time || Time.now)
@@ -160,7 +153,6 @@ module Upload::IdentifierMethods
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
   def id_term(v)                                                                # NOTE: to Record::EmmaIdentification
-    # noinspection RubyNilAnalysis
     id, sid =
       case v
         when Integer then [v, nil]
@@ -323,7 +315,6 @@ module Upload::IdentifierMethods
   #
   def expand_id_range(id, **opt)                                                # NOTE: to Record::EmmaIdentification and Record::Identification
     min = max = nil
-    # noinspection RubyCaseWithoutElseBlockInspection
     case id
       when Numeric, /^\d+$/, '$'           then min = id
       when Upload                          then min = id.id
@@ -345,6 +336,16 @@ module Upload::IdentifierMethods
       min ||= id
       Array.wrap(min&.to_s)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.extend(self)
   end
 
 end

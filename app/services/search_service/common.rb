@@ -154,7 +154,7 @@ module SearchService::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, SearchService::Definition)
+    base.include(SearchService::Definition)
   end
 
 end

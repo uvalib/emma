@@ -241,7 +241,7 @@ module Record::Uploadable
   def upload_file(**opt)
     fault!(opt) # @see Record::Testing
     FileUploader.upload_response(:cache, opt[:env]).tap do |stat, _hdrs, body|
-      # noinspection RubyScope, RubyCaseWithoutElseBlockInspection
+      # noinspection RubyScope
       err =
         case
           when stat.nil?          then 'missing request env data'

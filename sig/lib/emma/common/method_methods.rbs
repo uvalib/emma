@@ -48,9 +48,10 @@ module Emma::Common::MethodMethods
   #   @param [Method] meth
   #   @return [Method]
   #
-  def get_method: (Symbol meth, Binding bind, *untyped _ignored) -> (Method | nil)
-                | (             Binding bind, *untyped _ignored) -> (Method | nil)
-                | (Method meth,               *untyped _ignored) -> Method
+  def get_method
+    : (Symbol meth, Binding bind, *untyped _ignored) -> (Method | nil)
+    | (             Binding bind, *untyped _ignored) -> (Method | nil)
+    | (Method meth,               *untyped _ignored) -> Method
 
   # Return a table of a method's parameters and their values given a Binding
   # from that method invocation.
@@ -79,6 +80,7 @@ module Emma::Common::MethodMethods
   #   @param [Symbol, Array<Symbol>] except
   #   @return [Hash{Symbol=>Any}]
   #
-  def get_params: ((Symbol|Method) meth, Binding bind, *untyped _ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
-                | (                      Binding bind, *untyped _ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
+  def get_params
+    : ((Symbol|Method) meth, Binding bind, *untyped _ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
+    | (                      Binding bind, *untyped _ignored, ?only: Symbol|symArray, ?except: Symbol|symArray, **untyped _ignored) -> symHash
 end

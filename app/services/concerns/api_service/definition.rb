@@ -28,9 +28,6 @@ module ApiService::Definition
   #
   # @see ApiService#add_api
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def add_api(prop)
     class_name   = is_a?(Module) ? name : self.class.name
     name_parts   = class_name.split('::')
@@ -124,7 +121,7 @@ module ApiService::Definition
   private
 
   def self.included(base)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

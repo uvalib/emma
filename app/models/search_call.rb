@@ -331,11 +331,9 @@ class SearchCall < ApplicationRecord
   #
   # @note - for dev traceability
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  #++
   def assign_attributes(attr, opt = nil)
     #__debug_items(binding)
+    # noinspection RubyMismatchedArgumentType
     attr = attr.is_a?(SearchCall) ? attr.fields : map_parameters(attr)
     attr.delete(:id)
     #__debug_items(__method__, attr)
@@ -373,9 +371,6 @@ class SearchCall < ApplicationRecord
   #
   # @return [Hash{Symbol=>String,Array<String>}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def map_parameters(params)
     result = JSON_COLUMN_CONFIG.transform_values { Hash.new }
     params = params.params      if params.respond_to?(:params)

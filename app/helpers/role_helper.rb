@@ -51,7 +51,6 @@ module RoleHelper
     end
     return false unless user.is_a?(User)
     role = role.to_s.strip.to_sym if role.is_a?(String)
-    # noinspection RubyNilAnalysis
     case role
       when :developer     then user.developer?
       when :administrator then user.administrator?

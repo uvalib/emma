@@ -23,8 +23,9 @@ module HeadHelper::Favicon
   # @yield To supply a value to #set_page_favicon.
   # @yieldreturn [String]
   #
-  def page_favicon: () { () -> String } -> String
-                  | ()                  -> ActiveSupport::SafeBuffer
+  def page_favicon
+    : () { () -> String } -> String
+    | ()                  -> ActiveSupport::SafeBuffer
 
   # Set the favicon for this page, eliminating any previous value.
   #
@@ -35,8 +36,9 @@ module HeadHelper::Favicon
   # @yield To supply a value to @page_favicon.
   # @yieldreturn [String]
   #
-  def set_page_favicon: ( String src)                  -> String
-                      | (?nil    src) { () -> String } -> String
+  def set_page_favicon
+    : ( String src)                  -> String
+    | (?nil    src) { () -> String } -> String
 
   # Emit the shortcut icon '<link>' tag appropriate for the current page.
   #

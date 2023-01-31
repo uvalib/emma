@@ -51,8 +51,9 @@ module Field
   #   @param [Symbol, String, Hash, nil]  model
   #   @param [Symbol, String, nil]        action
   #
-  def self.configuration_for: ((Symbol|String|nil)                                 field, ?(Symbol|String|nil) model, ?(Symbol|String|nil) action) -> symHash
-                            | ([Array[Symbol|String]|Symbol|String, Symbol|String] field, ?(Symbol|String|nil) model, ?(Symbol|String|nil) action) -> symHash
+  def self.configuration_for
+    : ((Symbol|String|nil)                                 field, ?(Symbol|String|nil) model, ?(Symbol|String|nil) action) -> symHash
+    | ([Array[Symbol|String]|Symbol|String, Symbol|String] field, ?(Symbol|String|nil) model, ?(Symbol|String|nil) action) -> symHash
 
   # Find the field whose configuration entry has a matching label.
   #
@@ -97,8 +98,9 @@ module Field
   # set of checkboxes to create within a '<fieldset>' element.  Any other value
   # indicates '<textarea>' or the '<input>' type attribute to use.
   #
-  def self.normalize: (Symbol entry)                                -> symHash
-                    | ((String|symHash) entry, ?(Symbol|nil) field) -> symHash
+  def self.normalize
+    : (Symbol           entry)                      -> symHash
+    | ((String|symHash) entry, ?(Symbol|nil) field) -> symHash
 
   # Generate derived fields for an entry.
   #

@@ -10,7 +10,6 @@ class MembersTest < ApplicationSystemTestCase
   CONTROLLER = :member
   TEST_USER  = :emmadso
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @user = find_user(TEST_USER)
   end

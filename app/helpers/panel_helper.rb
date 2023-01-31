@@ -21,9 +21,6 @@ module PanelHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   PANEL_CTRL_CFG = I18n.t('emma.panel.control', default: {}).deep_freeze
 
   # Label for button to open a collapsible panel.
@@ -91,7 +88,6 @@ module PanelHelper
     open = nil    unless open.is_a?(String)
     opt[:'aria-expanded'] = !!open
     if context
-      # noinspection RubyNilAnalysis
       context = "for-#{context}" unless context.start_with?('for-')
     elsif css_class_array(opt[:class]).none? { |c| c.start_with?('for-') }
       context = 'for-panel'

@@ -74,9 +74,6 @@ module SerializationConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def index_values(list = nil, **opt)
     wrap_name = opt.key?(:wrap) ? opt.delete(:wrap) : :response
     list_name = opt.key?(:name) ? opt.delete(:name) : :list

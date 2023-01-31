@@ -93,9 +93,6 @@ module BaseDecorator::Form
   # Special handling for :effective_id based on the Hash value set up in
   # AccountDecorator#form_fields.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def render_form_fields(action: nil, pairs: nil, separator: nil, **opt)
     return ''.html_safe unless pairs || object
     action    ||= context[:action]
@@ -126,6 +123,7 @@ module BaseDecorator::Form
       opt[:required] = config[:required].present?
 
       value = render_value(value, field: field, index: opt[:index])
+      # noinspection RubyMismatchedArgumentType
       render_form_pair(label, value, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end
@@ -155,9 +153,6 @@ module BaseDecorator::Form
   # == Implementation Notes
   # Compare with BaseDecorator::List#render_pair
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def render_form_pair(
     label,
     value,

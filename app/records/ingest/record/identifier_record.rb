@@ -93,7 +93,6 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   # @return [String]                  Can be *nil* if *no_version*.
   #
   def identifier(no_version: false)
-    # noinspection RubyMismatchedReturnType
     return emma_recordId if emma_recordId.present?
     parts = [emma_repository, emma_repositoryRecordId, dc_format]
     parts << emma_formatVersion unless no_version

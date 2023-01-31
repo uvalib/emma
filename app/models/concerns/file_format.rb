@@ -31,9 +31,6 @@ module FileFormat
   #
   # @see file:config/locales/types.en.yml
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   TYPES = I18n.t('emma.format').keys.map(&:to_sym).freeze
 
   # Placeholder for an unknown format.
@@ -381,7 +378,6 @@ module FileFormat
   #
   def self.metadata_fmt(fmt)
     type = fmt&.downcase
-    # noinspection RubyMismatchedArgumentType
     TYPES.include?(type) ? type : fmt
   end
 
@@ -393,7 +389,6 @@ module FileFormat
   #
   def self.normalize_language(value)
     return value.map { |v| send(__method__, v) }.uniq if value.is_a?(Array)
-    # noinspection RubyMismatchedArgumentType
     IsoLanguage.find(value)&.alpha3 || value
   end
 
@@ -434,13 +429,9 @@ module FileFormat
     #
     # @return [Hash{Symbol=>String,Array,Hash}]
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def configuration_section(section)
       section = section.to_s
       section = "emma.#{section}" unless section.start_with?('emma.')
-      # noinspection RubyMismatchedReturnType
       I18n.t(section).deep_dup.tap do |hash|
         %i[mimes exts].each do |key|
           hash[key] ||= []

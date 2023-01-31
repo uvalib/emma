@@ -342,7 +342,6 @@ module EntryConcern
   #
   def new_entry(item = nil, opt = nil)
     entry, opt = entry_request_params(item, opt)
-    # noinspection RubyNilAnalysis
     opt   = opt.merge(from: entry) if entry
     phase = Phase::Create.start_submission(**opt)
     Entry.new(from: phase)
@@ -362,9 +361,6 @@ module EntryConcern
   #
   # @return [Entry]                         New persisted Entry instance.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def create_entry(item = nil, opt = nil)
     __debug_items("ENTRY WF #{__method__}", binding)
     entry, opt = entry_request_params(item, opt)
@@ -426,9 +422,6 @@ module EntryConcern
   #
   # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def delete_entry(entries = nil, opt = nil)
     entries, opt = entry_request_params(entries, opt)
     id_opt    = extract_hash!(opt, :ids, :id)
@@ -446,9 +439,6 @@ module EntryConcern
   #
   # @return [Array]                   Destroyed entries.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def destroy_entry(entries = nil, opt = nil)                                   # NOTE: from UploadWorkflow::Actions#wf_remove_items
     entries, opt = entry_request_params(entries, opt)
     opt.reverse_merge!(model_options.all)
@@ -494,9 +484,6 @@ module EntryConcern
   #
   # @return [Entry]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def reedit_entry(item = nil, opt = nil)
     entry, opt = entry_request_params(item, opt)
     sid   = Entry.sid_value((entry || identifier), **opt)
@@ -542,9 +529,6 @@ module EntryConcern
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyNilAnalysis
-  #++
   def check_entry(item = nil, opt = nil)                                        # NOTE: from UploadWorkflow::Single::Actions#wf_check_status
     entry, opt = entry_request_params(item, opt)
     local, opt = partition_hash(opt, :html)
@@ -869,7 +853,6 @@ module EntryConcern
   # @return [Entry::Options]
   #
   def set_model_options
-    # noinspection RubyMismatchedVariableType, RubyMismatchedReturnType
     @model_options = Entry::Options.new(request_parameters)
   end
 

@@ -319,9 +319,6 @@ class User < ApplicationRecord
   #
   # @return [String, nil]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def self.uid_value(user)
     user = user.to_s  if user.is_a?(Symbol)
     user = user.to_i  if digits_only?(user)
@@ -544,7 +541,6 @@ class User < ApplicationRecord
   def self.from_omniauth(data, update: true)
     return unless data.is_a?(Hash)
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
-    # noinspection RubyNilAnalysis
     attr = {
       email:         data.uid.downcase,
       first_name:    data.info&.first_name,

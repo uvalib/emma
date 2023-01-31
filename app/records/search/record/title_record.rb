@@ -143,7 +143,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     # noinspection RubyUnusedLocalVariable
     #++
     def number_value(item)
-      # noinspection RubyNilAnalysis
       return item.number_value if item.respond_to?(:number_value)
       factor = nil
       # noinspection RailsParamDefResolve
@@ -265,7 +264,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     def item_number(rec)
       return if rec.blank?
       value = rec.try(:bib_seriesPosition).presence
-      # noinspection RubyCaseWithoutElseBlockInspection
       value ||=
         case repository(rec)&.to_sym
           when :internetArchive, :ace
@@ -283,9 +281,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [String, nil]
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def item_date(rec)
       return if rec.blank?
       year = get_year(rec.dcterms_dateCopyright) and return year
@@ -391,18 +386,13 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Hash, Array, String, Any]  Same type as original type of *value*
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def make_comparable(value, field = nil)
       if Log.debug?
-        # noinspection RubyCaseWithoutElseBlockInspection
         case value
           when Number, Model, Hash
             Log.debug { "#{__method__}: ignoring field = #{field.inspect}" }
         end
       end
-      # noinspection RubyMismatchedArgumentType
       id_fld = field && IDENTIFIER_FIELDS.include?(field)
       case value
         when Number
@@ -454,9 +444,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Any]
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def sort_key_value(item, exact = true)
       if item.is_a?(Array)
         item.map { |v| sort_key_value(v, exact) }.join(' ')
@@ -541,7 +528,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -727,9 +714,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, Integer, Hash, nil] term
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def initialize(term = nil)
       @level = {}
       case term
@@ -899,7 +883,6 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   def initialize(src, opt = nil)
     opt = opt&.dup || {}
-    # noinspection RubyNilAnalysis
     @canonical = opt.delete(:canonical).present?
     # noinspection RubyMismatchedVariableType
     @hierarchy = @exemplar = nil
@@ -1169,9 +1152,6 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   FIELD_HIERARCHY =
     symbolize_values(I18n.t('emma.search.field_hierarchy')).deep_freeze
 
@@ -1179,9 +1159,6 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @type [Hash{Symbol=>Array<Symbol,Integer>}]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   HIERARCHY_PATHS = hierarchy_paths(FIELD_HIERARCHY).to_h.deep_freeze
 
   # ===========================================================================
@@ -1330,9 +1307,6 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Hash, Any]               The (possibly modified) *value*.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def wrap_array!(value, *keys)
     return value unless value.is_a?(Hash)
     keys.map!(&:to_sym)

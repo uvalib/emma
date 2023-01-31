@@ -127,7 +127,7 @@ def include_submodules(base, filename = nil)
     mod = "#{self}::#{name}".safe_constantize
     next unless mod.is_a?(Module) && !mod.is_a?(Class)
     next unless !block_given? || yield(name, mod)
-    base.send(:include, mod)
+    base.include(mod)
     mod
   }.compact
 end

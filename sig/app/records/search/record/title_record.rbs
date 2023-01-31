@@ -592,10 +592,11 @@ class Search::Record::TitleRecord < Search::Api::Record
   #   @param [Hash, Array, Any] non_string
   #   @return [Hash, Array, Any] Same type, possibly a modified copy.
   #
-  def self.symbolize_values: (anyHash  item) -> symHash
-                           | (anyArray item) -> symArray
-                           | (String   item) -> Symbol
-                           | (untyped  item) -> untyped
+  def self.symbolize_values
+    :     (anyHash  item) -> symHash
+    |     (anyArray item) -> symArray
+    |     (String   item) -> Symbol
+    | [T] (T        item) -> T
 
   # hierarchy_paths
   #

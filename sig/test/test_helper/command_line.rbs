@@ -27,6 +27,7 @@ module TestHelper::CommandLine
   #
   # @return [Array<Symbol>, nil]
   #
-  def cli_env_value: (?(Array[String|Symbol]|String|Symbol|nil) value, var: String, default: symArray) -> symArray
-                   | (?(Array[String|Symbol]|String|Symbol|nil) value, var: String, default: nil)      -> (symArray | nil)
+  def cli_env_value
+    : (?(Array[String|Symbol]|String|Symbol|nil) value, var: String, default: symArray) -> symArray
+    | (?(Array[String|Symbol]|String|Symbol|nil) value, var: String, default: nil)      -> (symArray | nil)
 end

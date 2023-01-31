@@ -23,8 +23,9 @@ module ApiHelper
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   # @return [String]                    If *html* is *false*.
   #
-  def format_api_result: ((Api::Record|Faraday::Response|Exception|Integer|String|nil) value, ?indent: Integer|String|nil, ?separator: String, ?html: true)  -> ActiveSupport::SafeBuffer
-                       | ((Api::Record|Faraday::Response|Exception|Integer|String|nil) value, ?indent: Integer|String|nil, ?separator: String, ?html: false) -> String
+  def format_api_result
+    : ((Api::Record|Faraday::Response|Exception|Integer|String|nil) value, ?indent: Integer|String|nil, ?separator: String, ?html: true)  -> ActiveSupport::SafeBuffer
+    | ((Api::Record|Faraday::Response|Exception|Integer|String|nil) value, ?indent: Integer|String|nil, ?separator: String, ?html: false) -> String
 
   private
 
@@ -72,8 +73,9 @@ module ApiHelper
   #
   # @return [Hash, String, Any]
   #
-  def safe_exception_parse: (Exception arg, ?default: untyped) -> (symHash | String)
-                          | (untyped arg,   ?default: untyped) -> untyped
+  def safe_exception_parse
+  : (Exception arg, ?default: untyped) -> (symHash | String)
+  | (untyped arg,   ?default: untyped) -> untyped
 
   private
 

@@ -46,7 +46,7 @@ class Lookup::WorldCat::Record::Response < Lookup::WorldCat::Api::Record
   # @return [Integer]
   #
   #--
-  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
+  # noinspection RubyInstanceMethodNamingConvention
   #++
   def totalResults
     numberOfRecords

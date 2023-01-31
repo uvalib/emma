@@ -18,7 +18,6 @@ class BsApiControllerTest < ActionDispatch::IntegrationTest
 
   TEST_API_PATH = 'titles'
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @readers = find_users(*TEST_READERS)
   end

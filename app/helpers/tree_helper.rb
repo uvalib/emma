@@ -21,9 +21,6 @@ module TreeHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   TREE_CTRL_CFG = I18n.t('emma.tree.control', default: {}).deep_freeze
 
   # Label for button to open a collapsed tree.

@@ -111,8 +111,9 @@ class ApiService::Error < Api::Error
     # @return [Array<String>]         If *src* was a Hash.
     # @return [Array<Any>]            Otherwise.
     #
-    def extract_json: (anyHash src) -> strArray
-                    | (untyped src) -> anyArray
+    def extract_json
+      : (anyHash src) -> strArray
+      | (untyped src) -> anyArray
 
     private
 

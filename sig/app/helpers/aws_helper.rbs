@@ -197,8 +197,9 @@ module AwsHelper
   #
   # @return [Any]
   #
-  def value_format: ((anyArray|Integer|_DateTime|bool|String) item, ?(Symbol|nil) hint) -> String
-                  | (untyped item,                                  ?(Symbol|nil) hint) -> untyped
+  def value_format
+    :     ((anyArray|Integer|_DateTime|bool|String) item, ?(Symbol|nil) hint) -> String
+    | [T] (T                                        item, ?(Symbol|nil) hint) -> T
 
   # Return the prefix of the given object key.
   #

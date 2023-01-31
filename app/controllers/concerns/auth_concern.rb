@@ -212,7 +212,6 @@ module AuthConcern
   #
   def update_auth_data(user = nil)
     user = User.find_record(user || current_user) or return
-    # noinspection RubyNilAnalysis
     if user.is_bookshare_user?
       # noinspection RubyMismatchedReturnType
       session['app.local.auth'] = nil
@@ -234,7 +233,6 @@ module AuthConcern
   #
   def delete_auth_data(no_revoke: false)
     token = session.delete('omniauth.auth')
-    # noinspection RubyCaseWithoutElseBlockInspection
     no_revoke_reason =
       case
         when token.blank?           then 'NO TOKEN'
@@ -326,7 +324,6 @@ module AuthConcern
   #
   def auth_debug_user?(user = nil)
     uid = User.uid_value(user || current_user)
-    # noinspection RubyMismatchedArgumentType
     session.key?('app.debug') && stored_auth.key?(uid)
   end
 

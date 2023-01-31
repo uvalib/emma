@@ -10,7 +10,6 @@ class ReadingListsTest < ApplicationSystemTestCase
   CONTROLLER = :reading_list
   TEST_USER  = :emmadso
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @user = find_user(TEST_USER)
   end

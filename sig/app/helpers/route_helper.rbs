@@ -18,9 +18,10 @@ module RouteHelper
   #
   # @return [String, nil]
   #
-  def get_path_for: ((Symbol|String|nil) controller, (Symbol|String|nil) action, ?warn: bool, **untyped opt) -> (String | nil)
-                  | ((Symbol|String|nil) controller,                             ?warn: bool, **untyped opt) -> (String | nil)
-                  | (                                                            ?warn: bool, **untyped opt) -> (String | nil)
+  def get_path_for
+    : ((Symbol|String|nil) controller, (Symbol|String|nil) action, ?warn: bool, **untyped opt) -> (String | nil)
+    | ((Symbol|String|nil) controller,                             ?warn: bool, **untyped opt) -> (String | nil)
+    | (                                                            ?warn: bool, **untyped opt) -> (String | nil)
 
   private
 

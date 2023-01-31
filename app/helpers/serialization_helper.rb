@@ -109,7 +109,6 @@ module SerializationHelper
         value = make_xml(v, **make_opt)
         next if value.nil? && !serializer.render_nil?
         name  = serializer.element_render_name(k)
-        # noinspection RubyNilAnalysis
         value = "#{separator}#{value}#{separator}" if value.end_with?('>')
         "<#{name}>#{value}</#{name}>"
       }.compact.join(separator)

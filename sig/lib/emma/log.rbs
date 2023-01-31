@@ -138,8 +138,9 @@ module Emma::Log
   # == Implementation Notes
   # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level=
   #
-  def self.local_level=: ((Integer|Symbol|String) value) -> Integer
-                       | (nil                     value) -> nil
+  def self.local_level=
+    : ((Integer|Symbol|String) value) -> Integer
+    | (nil                     value) -> nil
 
   # Thread-safe log level.
   #

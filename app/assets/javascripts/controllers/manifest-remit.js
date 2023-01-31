@@ -73,7 +73,7 @@ appSetup(MODULE, function() {
     const SUBMISSION_LIST_CLASS     = 'submission-status-list';
     const SUBMISSION_CLASS          = 'submission-status';
     const CONTROLS_CLASS            = 'controls';
-    //const CHECKBOX_CLASS          = 'checkbox';
+  //const CHECKBOX_CLASS            = 'checkbox';
     const DB_STATUS_CLASS           = 'db-status';
     const FILE_STATUS_CLASS         = 'file-status';
     const UPLOAD_STATUS_CLASS       = 'upload-status';
@@ -163,14 +163,14 @@ appSetup(MODULE, function() {
         // ====================================================================
 
         /**
-         * The counter element.
+         * The counter display element.
          *
          * @type {jQuery}
          */
         $element;
 
         /**
-         * The counter value element.
+         * The counter value display element.
          *
          * @type {jQuery}
          */
@@ -264,7 +264,7 @@ appSetup(MODULE, function() {
     // Variables - counts
     // ========================================================================
 
-    const $submit_counts  = $(SUBMISSION_COUNTS);
+    const $submit_counts = $(SUBMISSION_COUNTS);
 
     // @see "en.emma.bulk.submit.counts"
     const counter = {

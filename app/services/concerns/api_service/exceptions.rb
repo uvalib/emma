@@ -75,9 +75,6 @@ module ApiService::Exceptions
   #
   # @return [ApiService::Error]       New value of @exception.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def set_error(error, **opt)
     error = error_classes[error] if error.is_a?(Symbol)
     error = error.new(**opt)     if error.is_a?(Class)
@@ -294,9 +291,6 @@ module ApiService::Exceptions
   #
   # @see ApiService::Error#error_classes
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def get_error_classes(service = nil)
     service ||= self
     service   = service.class if service.is_a?(ApiService)

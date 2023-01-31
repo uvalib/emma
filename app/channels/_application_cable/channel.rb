@@ -82,7 +82,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
 
   # Receive data from the client.
   #
-  # @param [*]   payload
+  # @param [*]    payload
   # @param [Hash] opt
   #
   # @param [Hash{Symbol=>*}]

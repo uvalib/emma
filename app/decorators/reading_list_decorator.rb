@@ -168,7 +168,6 @@ class ReadingListDecorator
   #
   def render_value(value, field:, **opt)
     if present?
-      # noinspection RubyCaseWithoutElseBlockInspection
       case field_category(field || value)
         when :name         then link(**opt)
         when :label        then link(**opt)

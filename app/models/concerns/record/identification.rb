@@ -75,7 +75,6 @@ module Record::Identification
   # @return [String]
   #
   def record_name_for(item)
-    # noinspection RubyNilAnalysis
     record_class_for(item).name.demodulize.to_s
   end
 
@@ -154,7 +153,6 @@ module Record::Identification
   #
   def get_value(item, key, default: nil, **)                                    # NOTE: from Upload
     return if key.blank?
-    # noinspection RubyNilAnalysis
     if key.is_a?(Array)
       key.find { |k| (v = get_value(item, k)) and break v }
     elsif item.respond_to?(key)
@@ -209,7 +207,6 @@ module Record::Identification
 
     id_key = opt.key?(:id_key) ? opt[:id_key] : id_column
     if id_key
-      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       opt.reverse_merge!(id_term(item, **opt))
       id = opt[id_key] || opt[alt_id_key(opt)]
@@ -254,7 +251,6 @@ module Record::Identification
   #
   def find_records(*items, id_key: nil, alt_id_key: nil, **opt)                 # NOTE: from UploadWorkflow::External
     id_key ||= id_column
-    # noinspection RubyMismatchedArgumentType
     unless opt[:all]
       opt_items = id_key     && opt.delete(id_key)
       opt_items = alt_id_key && opt.delete(alt_id_key) || opt_items
@@ -501,7 +497,6 @@ module Record::Identification
     id_key  = opt[:id_key]&.to_sym || id_column
     sid_key = opt[:sid_key]
     min = max = nil
-    # noinspection RubyCaseWithoutElseBlockInspection
     case id
       when Numeric, /^\d+$/, '$'       then min = id
       when Model                       then min = id.id

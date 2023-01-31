@@ -86,7 +86,6 @@ module TestHelper::Utility
   # @return [String]
   #
   def record_id(item = nil, repo: nil, rid: nil, format: nil, ver: nil)
-    # noinspection RubyNilAnalysis
     if item.is_a?(SearchResult)
       repo   ||= item.repository
       rid    ||= item.repositoryRecordId
@@ -94,7 +93,6 @@ module TestHelper::Utility
       ver    ||= item.formatVersion
     end
     [repo, rid, format].compact_blank!.tap { |parts|
-      # noinspection RubyMismatchedArgumentType
       parts << ver if ver && (parts.size == 3)
     }.join('-')
   end
@@ -122,9 +120,6 @@ module TestHelper::Utility
   # @return [true]                    If the test should proceed.
   # @return [false]                   If the test should be skipped.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def allowed_format(fmt = nil, note = nil, only:)
     fmt, note = [nil, fmt] if fmt.is_a?(String)
     only = Array.wrap(only).compact
@@ -140,7 +135,6 @@ module TestHelper::Utility
       msg << "ONLY APPLICABLE for #{only.inspect} #{format}"
 
     elsif only.is_a?(Array)
-      # noinspection RubyNilAnalysis
       format = format.pluralize if fmt.is_a?(Array) && fmt.many?
       msg << 'NOT APPLICABLE'
       msg << "#{format} #{fmt.inspect} not in #{only.inspect}"
@@ -165,7 +159,7 @@ module TestHelper::Utility
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend,  self)
+    base.extend(self)
   end
 
 end

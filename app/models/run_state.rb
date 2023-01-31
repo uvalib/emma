@@ -56,9 +56,6 @@ class RunState < Hash
   # If further states are added, they should be added between :available and
   # :unavailable so that they maintain their first/last positions.
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   STATE =
     I18n.t('emma.health.run_state.state', default: {}).map { |state, entry|
       values = { state: state.to_s }.merge!(entry[:property] || {})

@@ -55,7 +55,6 @@ module AdminHelper
     append_css!(v_opt, value) if empty
     value = html_div(value, v_opt)
 
-    # noinspection RubyMismatchedReturnType
     label << value
   end
 

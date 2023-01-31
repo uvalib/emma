@@ -32,7 +32,6 @@ module IaDownloadService::Request::Records
   #
   def download(url, **opt)
     api(:get, url, **opt)
-    # noinspection RubyNilAnalysis
     data = response.body
     type = response['Content-Type']
     disp = response['Content-Disposition']

@@ -195,9 +195,6 @@ module Record::EmmaIdentification
   # Leading with a non-hex-digit guarantees that submission ID's are distinct
   # from database ID's (which are only decimal digits).
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def generate_submission_id(time = nil, prefix: true)                          # NOTE: from Upload::IdentifierMethods
     prefix  = SID_PREFIX if prefix.is_a?(TrueClass)
     time    = time.is_a?(DateTime) ? time.to_time : (time || Time.now)

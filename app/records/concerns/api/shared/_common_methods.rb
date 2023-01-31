@@ -70,7 +70,6 @@ module Api::Shared::CommonMethods
   #
   def empty?(rec = nil)
     rec ||= self
-    # noinspection RubyNilAnalysis
     if (contained = rec.try(:elements)).nil?
       rec.fields.values.all?(&:blank?)
     else
@@ -364,7 +363,6 @@ module Api::Shared::CommonMethods
   #
   def set_field_value!(data, field, value)
     value = value.presence
-    # noinspection RubyNilAnalysis
     if !data.is_a?(Hash)
       try("#{field}=", value)
     elsif value
@@ -412,7 +410,6 @@ module Api::Shared::CommonMethods
   # @return [Array]
   #
   def get_field_values(data, *fields)
-    # noinspection RubyNilAnalysis
     v = data.is_a?(Hash) ? data.values_at(*fields) : fields.map { |f| try(f) }
     v.map(&:presence)
   end
@@ -424,9 +421,6 @@ module Api::Shared::CommonMethods
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def set_field_values!(data, values)
     if data.is_a?(Hash)
       deletions = values.select { |_, v| v.blank? }.keys.presence

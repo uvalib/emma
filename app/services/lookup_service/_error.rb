@@ -52,7 +52,7 @@ class LookupService::Error < ApiService::Error
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

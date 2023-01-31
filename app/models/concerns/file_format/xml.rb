@@ -101,7 +101,6 @@ module FileFormat::Xml
     return unless element.element?
     name, value = get_properties(element)
     attrs = get_attributes(element)
-    # noinspection RubyCaseWithoutElseBlockInspection
     case (key = make_key(name))
       when :author, :creator, :contributor
         key = role_type(attrs[:role]) || key
@@ -178,6 +177,7 @@ module FileFormat::Xml
   #
   def get_attributes(elem)
     return {} unless elem.respond_to?(:attribute_nodes)
+    # noinspection RubyResolve
     elem.attribute_nodes.map { |node|
       k = node.node_name.to_sym
       v = node.try(:value)&.to_s&.strip
@@ -308,7 +308,6 @@ module FileFormat::Xml
       __debug_line(*args, **opt) do
         parts = [meth, filename]
         if element
-          # noinspection RubyNilAnalysis
           name = element.try(:name)&.inspect || element.class.name.demodulize
           parts << "element #{name}"
         end

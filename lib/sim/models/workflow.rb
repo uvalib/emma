@@ -48,7 +48,6 @@ module Workflow::Base::Simulation
     def initialize(
       name: nil, result: true, reps: 3, started: nil, restart: nil
     )
-      # noinspection RubyNilAnalysis
       a =
         case name
           when Array  then name.dup
@@ -273,10 +272,9 @@ module Workflow::Base::Transitions
   #
   def __debug_hook(label, from, to = nil)
     __debug_line do
-      line = "WORKFLOW       TRANS #{label}".rstrip
-      from = state_label(from)
-      to   = to ? " -> #{state_label(to)}" : ''
-      # noinspection RubyNilAnalysis
+      line   = "WORKFLOW       TRANS #{label}".rstrip
+      from   = state_label(from)
+      to     = to ? " -> #{state_label(to)}" : ''
       chars  = line.size + from.size + to.size
       # noinspection RubyMismatchedArgumentType
       spaces = ' ' * [1, (80 - chars)].max

@@ -9,10 +9,6 @@ __loading_begin(__FILE__)
 #
 module Upload::LookupMethods
 
-  def included(base)
-    base.send(:extend, self)
-  end
-
   include Upload::WorkflowMethods
 
   extend self
@@ -252,6 +248,16 @@ module Upload::LookupMethods
     end
     group_count[:all] = group_count.values.sum
     group_count
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.extend(self)
   end
 
 end

@@ -66,7 +66,6 @@ module AwsS3Service::Common
       raise request_error('no records') if items.blank? # TODO: I18n
     else
       opt[:bucket] ||= bucket_for(repo || items.first)
-      raise request_error('no AWS S3 bucket') if opt[:bucket].blank?
       items = items.map { |key| submission_id(key) }.compact
       raise request_error('no submission IDs') if items.blank? # TODO: I18n
     end
@@ -107,13 +106,22 @@ module AwsS3Service::Common
   # @param [AwsS3::Message::SubmissionRequest, Model, Hash, String, Symbol, nil] item
   # @param [Symbol, String, nil] deployment     Def: `#aws_deployment`.
   #
+  # @raise [ApiService::RequestError]
+  #
   # @return [String]
-  # @return [nil]
   #
   def bucket_for(item, deployment = nil)
-    repository = Upload.repository_of(item)&.to_sym or return
+    repository = Upload.repository_of(item)&.to_sym
     deployment = deployment&.to_sym || aws_deployment
-    S3_BUCKET.dig(repository, deployment) if EmmaRepository.valid?(repository)
+    S3_BUCKET.dig(repository, deployment).tap do |bucket|
+      unless bucket
+        if EmmaRepository.valid?(repository)
+          raise request_error("no bucket for deployment #{deployment.inspect}")
+        else
+          raise request_error("no repository for #{item.inspect}")
+        end
+      end
+    end
   end
 
   # Generate an array of submission package identifiers (AWS S3 object keys).
@@ -304,9 +312,6 @@ module AwsS3Service::Common
   # @return [Array<Aws::S3::Object>]
   # @return [nil]                     If the operation failed.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def aws_list_objects(bucket, filter = nil, **opt)
     __debug_items(binding)
     meth     = opt.delete(:meth) || calling_method
@@ -346,9 +351,6 @@ module AwsS3Service::Common
   # actual key names -- use #aws_list_objects directly when checking on the
   # presence of the files themselves.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def aws_list_object_keys(bucket, filter = nil, **opt)
     unless filter.blank? || (filter == '*') || filter.match?(/\.\*?$/)
       return [filter] if filter.remove(%r{^.*/}).include?('.')
@@ -368,7 +370,7 @@ module AwsS3Service::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, AwsS3Service::Definition)
+    base.include(AwsS3Service::Definition)
   end
 
 end

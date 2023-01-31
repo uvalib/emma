@@ -31,7 +31,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     SCREEN_SIZE = HEADLESS ? [1920, 1080].freeze : [1024, 768].freeze
 
     driven_by :selenium, using: BROWSER, screen_size: SCREEN_SIZE do |drv_opt|
-      if BROWSER.match?(/Firefox/i)
+      if BROWSER.to_s.match?(/Firefox/i)
         drv_opt.add_preference('devtools.jsonview.enabled', false)
       end
     end
@@ -44,12 +44,10 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   public
 
-  # noinspection RbsMissingTypeSignature
   setup do
     CapybaraLockstep.active = true
   end
 
-  # noinspection RbsMissingTypeSignature
   teardown do
     CapybaraLockstep.active = false
   end

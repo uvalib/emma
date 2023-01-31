@@ -293,7 +293,6 @@ module Record::Sti::Root
     #
     def self.type(t = nil, no_raise: false)
       t ||= self
-      # noinspection RubyNilAnalysis
       if t.is_a?(Symbol) || t.is_a?(String)
         t.to_s
       elsif t.is_a?((base = base_class))

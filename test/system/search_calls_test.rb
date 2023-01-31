@@ -10,7 +10,6 @@ class SearchCallsTest < ApplicationSystemTestCase
   CONTROLLER = :search_call
   TEST_USER  = :developer
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @user = find_user(TEST_USER)
   end

@@ -62,8 +62,9 @@ module CssHelper
   #   @param [Proc]               block
   #   @return [Hash]
   #
-  def append_css: ((symHash|nil) html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
-                | (                        *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+  def append_css
+    : ((symHash|nil) html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+    | (                        *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
 
   # Replace `html_opt[:class]` with a new string containing the original
   # classes followed by the added classes.
@@ -103,8 +104,9 @@ module CssHelper
   #   @param [Proc]                       block
   #   @return [Hash]
   #
-  def prepend_css: ((symHash|nil) html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
-                 | (                        *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+  def prepend_css
+    : ((symHash|nil) html_opt, *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
+    | (                        *(Array[_ToS]|_ToS|nil) classes) { (strArray) -> void } -> symHash
 
   # Replace `html_opt[:class]` with a new string containing the added classes
   # followed by the original classes.

@@ -72,7 +72,6 @@ module Emma::Debug
     # @return [String]
     #
     def __debug_label(call_class: nil, call_method: nil, **)
-      # noinspection RubyNilAnalysis
       call_method = call_method.name if call_method.is_a?(Method)
       if call_class.is_a?(Binding)
         call_method ||= call_class.eval('__method__')
@@ -96,7 +95,6 @@ module Emma::Debug
       controller ||= prm[:controller] || self.class.name
       controller =
         controller.to_s.underscore.split('_').tap { |parts|
-          # noinspection RubyNilAnalysis
           parts.pop if !controller.include?('_') && (parts.size > 1)
         }.map!(&:upcase).join('_')
       __debug_label(call_class: controller, call_method: action)
@@ -319,7 +317,7 @@ module Emma::Debug
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -511,12 +509,10 @@ module Emma::Debug
         'request.body':    req.body
       }.each_pair do |item, entry|
         prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
-        # noinspection RubyCaseWithoutElseBlockInspection
         case value
           when Proc   then value = value.call(req)
           when Symbol then value = send(value, req)
         end
-        # noinspection RubyMismatchedArgumentType
         lines = __debug_inspect_item(value, **opt)
         lines.map! { |line| "[#{prefix}] #{line}" } if prefix
         item = +"== #{item} "

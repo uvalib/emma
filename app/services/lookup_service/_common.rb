@@ -22,9 +22,6 @@ module LookupService::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   CONFIGURATION =
     I18n.t('emma.service.lookup').transform_values { |service_config|
       service_config.dup.tap do |cfg|
@@ -79,7 +76,7 @@ module LookupService::Common
   # @return [PublicationIdentifier, nil]
   #
   def id_obj(type, id = nil, copy: false, **)
-    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType
     if type.is_a?(PublicationIdentifier)
       Log.warn("#{__method__}: ignoring id #{id.inspect}") if id
       copy ? type.dup : type

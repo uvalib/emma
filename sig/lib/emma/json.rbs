@@ -50,9 +50,10 @@ module Emma::Json
   # If opt[:symbolize_keys] is explicitly *false* then this causes all result
   # keys to be converted to strings.
   #
-  def json_parse: (nil                         arg, ?log: bool, ?no_raise: bool, **untyped opt) -> nil
-                | (anyHash                     arg, ?log: bool, ?no_raise: bool, **untyped opt) -> anyHash
-                | (String|IO|StringIO|IO::Like arg, ?log: bool, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | anyHash | nil)
+  def json_parse
+    : (nil                         arg, ?log: bool, ?no_raise: bool, **untyped opt) -> nil
+    | (anyHash                     arg, ?log: bool, ?no_raise: bool, **untyped opt) -> anyHash
+    | (String|IO|StringIO|IO::Like arg, ?log: bool, ?no_raise: bool, **untyped opt) -> (Array[anyHash] | anyHash | nil)
 
   # Attempt to interpret *arg* as JSON if it is a string.
   #
@@ -63,9 +64,10 @@ module Emma::Json
   #
   # @return [Hash, Array<Hash>, Any, nil]
   #
-  def safe_json_parse: (nil     arg, ?default: untyped|:original, **untyped opt) -> nil
-                     | (anyHash arg, ?default: untyped|:original, **untyped opt) -> anyHash
-                     | [T] (T   arg, ?default: untyped|:original, **untyped opt) -> (Array[anyHash] | anyHash | T | nil)
+  def safe_json_parse
+    :     (nil     arg, ?default: untyped|:original, **untyped opt) -> nil
+    |     (anyHash arg, ?default: untyped|:original, **untyped opt) -> anyHash
+    | [T] (T       arg, ?default: untyped|:original, **untyped opt) -> (Array[anyHash] | anyHash | T | nil)
 
   # json_render
   #
@@ -109,9 +111,10 @@ module Emma::Json
   #
   # @return [Array<Hash>, Hash, nil]
   #
-  def hash_parse: (nil     arg) -> nil
-                | (anyHash arg) -> anyHash
-                | (untyped arg) -> (Array[anyHash] | anyHash | nil)
+  def hash_parse
+    : (nil     arg) -> nil
+    | (anyHash arg) -> anyHash
+    | (untyped arg) -> (Array[anyHash] | anyHash | nil)
 
   # Translate from Hash#to_s output to JSON.
   #

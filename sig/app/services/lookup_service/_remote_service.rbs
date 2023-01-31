@@ -109,7 +109,7 @@ class LookupService::RemoteService < ApiService
   #
   def pre_flight: (lookupArg items) -> LookupService::Request
 
-  # Send the request to the remove service.
+  # Send the request to the remote service.
   #
   # @param [LookupService::Request] req  Def.: `@request`.
   #
@@ -136,8 +136,9 @@ class LookupService::RemoteService < ApiService
   # @return [LookupService::Data]
   # @return [nil]                     If *msg* is *nil*.
   #
-  def transform: ((Api::Message|LookupService::Data|symHash) msg, ?extended: bool) -> LookupService::Data
-               | (nil                                        msg, ?extended: bool) -> nil
+  def transform
+    : ((Api::Message|LookupService::Data|symHash) msg, ?extended: bool) -> LookupService::Data
+    | (nil                                        msg, ?extended: bool) -> nil
 
   # transform_multiple
   #

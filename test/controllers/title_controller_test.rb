@@ -19,7 +19,6 @@ class TitleControllerTest < ActionDispatch::IntegrationTest
   READ_FORMATS  = :all
   WRITE_FORMATS = :all
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @readers = find_users(*TEST_READERS)
     @writers = find_users(*TEST_WRITERS)

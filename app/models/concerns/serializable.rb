@@ -64,7 +64,7 @@ module Serializable
     BASIC_TYPES = [*PERMITTED_TYPES, *ENUMERABLE_TYPES, *OTHER_TYPES].freeze
 
     # =========================================================================
-    # :section:
+    # :section: ActiveJob::Serializers::ObjectSerializer overrides
     # =========================================================================
 
     public
@@ -161,7 +161,7 @@ module Serializable
 
       def self.included(base)
         __included(base, self)
-        base.send(:extend,  self)
+        base.extend(self)
       end
 
     end
@@ -245,7 +245,7 @@ module Serializable
     #   @param [Proc]   block         Passed to Base#serialize.
     #
     #--
-    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+    # noinspection RubyMismatchedArgumentType
     #++
     def serializer(mode = nil, &block)
       serializer_class.tap do |serializer|

@@ -44,9 +44,6 @@ module Record::EmmaData
   #
   # @type [Hash]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   EMMA_DATA_CONFIG =
     I18n.t('emma.entry.record.emma_data').select { |_, v|
       v[:max].nil? || positive(v[:max]) if v.is_a?(Hash)
@@ -120,7 +117,6 @@ module Record::EmmaData
     result = result.as_json if result.is_a?(Search::Record::MetadataRecord)
     result = json_parse(result, no_raise: false)
     result = reject_blanks(result) unless allow_blank
-    # noinspection RubyNilAnalysis
     result.map { |k, v|
       v     = Array.wrap(v)
       prop  = Field.configuration_for(k, :entry) # TODO: should vary by record_class ???
@@ -167,7 +163,7 @@ module Record::EmmaData
   # @return [Hash]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def generate_emma_data(data, attr)                                            # NOTE: from Upload#assign_attributes (sorta)
     data  = data&.dup || {}

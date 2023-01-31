@@ -11,7 +11,7 @@ module Emma::Common
 
   # @private
   def self.included(base)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
   require_submodules(__FILE__)

@@ -35,6 +35,8 @@ module Manifest::ItemMethods
   #
   # @return [Hash{Integer=>Hash}]
   #
+  # @note Not currently used.
+  #
   def invalid_items_hash(manifest = nil, columns: STATUS_COLUMNS, **)
     items    = items_related_to(manifest) or return {}
     edited   = items.pending
@@ -64,9 +66,11 @@ module Manifest::ItemMethods
   # The number of ManifestItems for the given Manifest (not including records
   # marked for deletion).
   #
-  # @param [Manifest, String, *]        manifest  Default: self
+  # @param [Manifest, String, *] manifest   Default: self
   #
   # @return [Integer]
+  #
+  # @see "en.emma.manifest.index.display_fields"
   #
   def item_count(manifest = nil, **)
     items_related_to(manifest)&.active&.size || 0
@@ -74,9 +78,11 @@ module Manifest::ItemMethods
 
   # The number of ManifestItems for the given Manifest that are valid.
   #
-  # @param [Manifest, String, *]        manifest  Default: self
+  # @param [Manifest, String, *] manifest   Default: self
   #
   # @return [Integer]
+  #
+  # @see "en.emma.manifest.index.display_fields"
   #
   def saved_item_count(manifest = nil, **)
     items_related_to(manifest)&.saved&.size || 0
@@ -85,9 +91,11 @@ module Manifest::ItemMethods
   # The number of ManifestItems for the given Manifest that have been created
   # or changed but not yet saved.
   #
-  # @param [Manifest, String, *]        manifest  Default: self
+  # @param [Manifest, String, *] manifest   Default: self
   #
   # @return [Integer]
+  #
+  # @see "en.emma.manifest.index.display_fields"
   #
   def pending_item_count(manifest = nil, **)
     items_related_to(manifest)&.pending&.size || 0
@@ -140,7 +148,7 @@ module Manifest::ItemMethods
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

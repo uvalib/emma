@@ -342,7 +342,6 @@ module Api::Shared::TitleMethods
   #
   def contents
     return unless (text = get_value(*contents_fields)).present?
-    # noinspection RubyNilAnalysis
     text.gsub!(/(?<![&])(#\d{1,5};)/,    '&\1')             # [1]
     text.gsub!(/([[:space:]]*\n)+/,      '<br/><br/>')      # [2]
     text.gsub!(/[[:space:]]/,            ' ')               # [3]

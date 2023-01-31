@@ -32,10 +32,11 @@ module ApplicationJob::Logging
 
   def item_inspect: (untyped v) -> untyped
 
-  def __debug_job: (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
-                 | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
-                 | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
-                 | (                                   **untyped opt)  { () -> untyped } -> nil
+  def __debug_job
+    : (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+    | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
+    | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+    | (                                   **untyped opt)  { () -> untyped } -> nil
 
   module ClassMethods
     include ApplicationJob::Logging
@@ -48,10 +49,11 @@ module ApplicationJob::Logging
 
     def arguments_inspect: (?(ApplicationJob|nil) job) -> String
 
-    def __debug_job: (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
-                   | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
-                   | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
-                   | (                                   **untyped opt)  { () -> untyped } -> nil
+    def __debug_job
+      : (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+      | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
+      | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+      | (                                   **untyped opt)  { () -> untyped } -> nil
   end
 
   private

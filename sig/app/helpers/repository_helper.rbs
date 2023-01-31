@@ -68,10 +68,11 @@ module RepositoryHelper
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If not associated with any repository.
   #
-  def repository_for: (Model|symHash obj,  ?(String|nil)           url)  -> (String | nil)
-                    | (String        url,  ?(Model|symHash|nil)    obj)  -> (String | nil)
-                    | (nil           arg1,  (Model|symHash|String) arg2) -> (String | nil)
-                    | (nil           arg1, ?nil                    arg2) -> nil
+  def repository_for
+    : (Model|symHash obj,  ?(String|nil)           url)  -> (String | nil)
+    | (String        url,  ?(Model|symHash|nil)    obj)  -> (String | nil)
+    | (nil           arg1,  (Model|symHash|String) arg2) -> (String | nil)
+    | (nil           arg1, ?nil                    arg2) -> nil
 
   # Produce a link to retrieve an EMMA file.
   #

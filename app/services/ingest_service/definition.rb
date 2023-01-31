@@ -17,7 +17,7 @@ module IngestService::Definition
   private
 
   def self.included(base)
-    base.send(:include, ApiService::Definition)
+    base.include(ApiService::Definition)
   end
 
 end

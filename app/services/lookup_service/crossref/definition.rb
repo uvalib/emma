@@ -17,7 +17,7 @@ module LookupService::Crossref::Definition
   private
 
   def self.included(base)
-    base.send(:include, LookupService::RemoteService::Definition)
+    base.include(LookupService::RemoteService::Definition)
   end
 
 end

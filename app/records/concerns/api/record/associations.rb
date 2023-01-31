@@ -202,9 +202,6 @@ module Api::Record::Associations
     # == Implementation Notes
     # Compare with Api::Serializer::Associations#get_type_class
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def make_default(type, **opt)
       type = extract_type_option(opt) || type || 'String'
       type = type.to_s.classify if type.is_a?(Symbol)

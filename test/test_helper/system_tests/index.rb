@@ -168,7 +168,6 @@ module TestHelper::SystemTests::Index
       show_url
     end
     model ||= target || this_controller
-    # noinspection RubyMismatchedArgumentType
     assert_valid_index_page(model, **opt)
     success_screenshot
   end

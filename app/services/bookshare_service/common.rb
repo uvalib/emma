@@ -44,7 +44,7 @@ module BookshareService::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, BookshareService::Definition)
+    base.include(BookshareService::Definition)
   end
 
 end

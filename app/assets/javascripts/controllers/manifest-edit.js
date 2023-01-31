@@ -522,7 +522,7 @@ appSetup(MODULE, function() {
     function initializeControlButtons() {
         const func = 'initializeControlButtons'; //_debug(func);
         initializeButtonSet(CONTROL_BUTTONS, func);
-        // enableSave(false); // NOTE: State determined by server render.
+        // enableSave(false); // NOTE: Initial state determined by server.
         enableExport();
     }
 

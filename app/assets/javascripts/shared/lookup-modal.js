@@ -618,7 +618,7 @@ export class LookupModal extends ModalDialog {
     /**
      * Submit the query terms as a lookup request.
      *
-     * @param {|jQuery.Event|Event|KeyboardEvent} event
+     * @param {jQuery.Event|Event|KeyboardEvent} event
      */
     manualSubmission(event) {
         if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
@@ -1016,7 +1016,7 @@ export class LookupModal extends ModalDialog {
             // Worker states
 
             case 'WORKING':
-                notice =`${this.statusNotice.text()}.`;
+                notice = `${this.statusNotice.text()}.`;
                 break;
             case 'LATE':
                 status = 'late';

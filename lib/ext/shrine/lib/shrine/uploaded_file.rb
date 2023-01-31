@@ -54,7 +54,6 @@ class Shrine
       fmt ||= (FileNaming.ext_to_fmt[ext]&.first   if ext)
       if fmt
         # Any failure will be addressed in the 'rescue' section.
-        # noinspection RubyNilAnalysis
         FileUploader.with_file(io) do |handle|
           fmt_class    = FileNaming.format_class_instance(fmt, handle)
           fmt_instance = fmt_class.new(handle)

@@ -408,7 +408,6 @@ module OmniAuth
         prms = token_params.to_hash(symbolize_keys: true)
         # noinspection RubyResolve
         opts = deep_symbolize(options.auth_token_params)
-        # noinspection RubyMismatchedArgumentType
         client.auth_code.get_token(code, prms, opts)
           .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
@@ -434,9 +433,6 @@ module OmniAuth
       #
       # @return [Hash{Symbol=>Any}]
       #
-      #--
-      # noinspection RubyNilAnalysis
-      #++
       def url_parameters(params = nil)
         params ||= request
         params   = params.params      if params.respond_to?(:params)

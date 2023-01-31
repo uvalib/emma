@@ -36,7 +36,6 @@ module TestHelper::CommandLine
   def cli_env_test_bookshare(default: %i[methods requests records])
     cli_env_value(var: 'TEST_BOOKSHARE', default: nil) ||
       $*.map { |arg|
-        # noinspection RubyCaseWithoutElseBlockInspection
         case arg
           when /test.bookshare.*method/i  then :methods
           when /test.bookshare.*request/i then :requests

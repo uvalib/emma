@@ -64,7 +64,7 @@ class ApiService
     # @return [Hash{Class=>ApiService}]
     #
     #--
-    # noinspection RubyNilAnalysis, RbsMissingTypeSignature
+    # noinspection RbsMissingTypeSignature
     #++
     def self.table(user)
       user = user.uid if user.is_a?(User)
@@ -266,7 +266,6 @@ class ApiService
       def self.api_methods(arg = nil)
         @all_methods  ||= {}
         @true_methods ||= {}
-        # noinspection RubyNilAnalysis
         if arg.is_a?(String) || arg.is_a?(Symbol)
           @all_methods[arg.to_sym]
         elsif (synthetic = (arg.is_a?(Hash) && arg[:synthetic])) == :only

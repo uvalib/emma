@@ -41,7 +41,7 @@ class Lookup::GoogleBooks::Message::List < Lookup::GoogleBooks::Api::Message
   # @return [Integer]
   #
   #--
-  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
+  # noinspection RubyInstanceMethodNamingConvention
   #++
   def totalResults
     totalItems

@@ -36,9 +36,6 @@ module BaseDecorator::Hierarchy
   # @see #item_lines
   # @see Search::Record::TitleRecord#field_hierarchy
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  #++
   def render_field_hierarchy(action: nil, pairs: nil, separator: nil, **opt)
     return ''.html_safe if blank?
     separator  ||= DEFAULT_ELEMENT_SEPARATOR

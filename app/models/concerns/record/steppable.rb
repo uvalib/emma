@@ -50,9 +50,6 @@ module Record::Steppable
   #
   # @see file:config/locales/state_table.en.yml *en.emma.state_table*
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   STATE_TABLES =
     I18n.t('emma.state_table', default: {}).transform_values { |leaf_classes|
       leaf_classes.transform_values do |states|
@@ -90,9 +87,6 @@ module Record::Steppable
   #
   # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   STATE_GROUP =
     I18n.t('emma.entry.state_group', default: {}).transform_values { |entry|
       states = Array.wrap(entry[:states]).map(&:to_sym)
@@ -186,7 +180,6 @@ module Record::Steppable
   #
   def state_value(item)
     return if item.blank?
-    # noinspection RubyNilAnalysis
     if item.is_a?(Symbol) || item.is_a?(String)
       item.to_sym
     elsif item.respond_to?(:state_value)
@@ -255,7 +248,6 @@ module Record::Steppable
   # @return [Symbol]  Defaults to :all if *target_state* is invalid.
   #
   def state_group(item)                                                         # NOTE: from Upload::WorkflowMethods
-    # noinspection RubyNilAnalysis
     if item.is_a?(String) || item.is_a?(Symbol)
       state = item.to_sym
     else
@@ -273,7 +265,6 @@ module Record::Steppable
   #
   def state_group_label(group)                                                  # NOTE: from Upload::WorkflowMethods
     if group.is_a?(String) || group.is_a?(Symbol)
-      # noinspection RubyNilAnalysis
       group = group.to_sym
     else
       group = state_group(group)
@@ -506,9 +497,6 @@ module Record::Steppable
     # This is best put at the very end of the class definition so that any
     # methods specified in the table definitions will have been defined.
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def validate_state_table(table = nil)
       table ||= get_state_table(no_raise: false)
       meths  = self.is_a?(Module) ? instance_methods : self.class.methods
@@ -881,9 +869,6 @@ module Record::Steppable
     #
     # @return [Array<Symbol>]
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def transitions(curr_state = nil, **)
       curr_state  = state_value(curr_state)
       next_states = state_table.dig(curr_state, :next)
@@ -915,7 +900,6 @@ module Record::Steppable
     def can_transition_to?(new_state, **)
       curr_state = state_value
       new_state  = state_value(new_state)
-      # noinspection RubyMismatchedArgumentType
       (curr_state == new_state) || transitions(curr_state).include?(new_state)
     end
 
@@ -943,7 +927,6 @@ module Record::Steppable
       new_state  = state_value(new_state)
       unless curr_state == new_state
         next_states = transitions(curr_state)
-        # noinspection RubyMismatchedArgumentType
         error =
           if next_states.blank?
             "#{curr_state} is terminal"

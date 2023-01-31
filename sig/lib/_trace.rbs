@@ -120,8 +120,9 @@ class Object
   # $stderr so that the overall trace output doesn't switch forms as soon as
   # `Log.add` starts working.
   #
-  def __output_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
-                   | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+  def __output_impl
+    : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+    | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Write indented line(s) to $stderr if CONSOLE_OUTPUT is *true*.
   #
@@ -136,8 +137,9 @@ class Object
   # == Usage Notes
   # The method is only functional if #CONSOLE_OUTPUT is true.
   #
-  def __output: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
-              | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+  def __output
+    : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+    | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   public
 
@@ -151,8 +153,9 @@ class Object
   #
   # @see #__output_impl
   #
-  def __debug_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
-                  | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+  def __debug_impl
+    : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+    | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
   #
@@ -164,8 +167,9 @@ class Object
   #
   # @see #__debug_impl
   #
-  def __debug: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
-             | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+  def __debug
+    : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+    | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Output a trace line which always goes to $stderr.
   #
@@ -177,8 +181,9 @@ class Object
   #
   # @see #__output_impl
   #
-  def __trace_impl: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
-                  | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+  def __trace_impl
+    : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+    | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Output a trace line which always goes to $stderr.
   #
@@ -190,8 +195,9 @@ class Object
   #
   # @see #__trace_impl
   #
-  def __trace: (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
-             | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
+  def __trace
+    : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
+    | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
 
   # Loading level and indentation.
   #

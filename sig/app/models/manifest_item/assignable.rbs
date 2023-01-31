@@ -41,8 +41,9 @@ module ManifestItem::Assignable
   #
   # @return [Hash, nil]
   #
-  def normalize_file: (anyHash|String data) -> symHash
-                    | (untyped        data) -> nil
+  def normalize_file
+    : (anyHash|String data) -> symHash
+    | (untyped        data) -> nil
 
   # normalize_single
   #
@@ -59,9 +60,10 @@ module ManifestItem::Assignable
   #
   # @return [true, false, nil]
   #
-  def normalize_bool: (String  v) -> (bool | nil)
-                    | (bool    v) -> bool
-                    | (untyped v) -> nil
+  def normalize_bool
+    : (String  v) -> (bool | nil)
+    | (bool    v) -> bool
+    | (untyped v) -> nil
 
   # normalize_number
   #
@@ -69,9 +71,10 @@ module ManifestItem::Assignable
   #
   # @return [Numeric, nil]
   #
-  def normalize_number: (String  v) -> (Numeric | nil)
-                      | (Numeric v) -> Numeric
-                      | (untyped v) -> nil
+  def normalize_number
+    : (String  v) -> (Numeric | nil)
+    | (Numeric v) -> Numeric
+    | (untyped v) -> nil
 
   # normalize_date
   #
@@ -79,9 +82,10 @@ module ManifestItem::Assignable
   #
   # @return [Date, String, nil]
   #
-  def normalize_date: (String|Numeric v) -> (Date | String)
-                    | (Date           v) -> Date
-                    | (untyped        v) -> nil
+  def normalize_date
+    : (String|Numeric v) -> (Date | String)
+    | (Date           v) -> Date
+    | (untyped        v) -> nil
 
   # normalize_enum
   #
@@ -90,9 +94,10 @@ module ManifestItem::Assignable
   #
   # @return [Array, String, nil]
   #
-  def normalize_enum: (anyArray      v, Class `type`) -> strArray
-                    | (String|Symbol v, Class `type`) -> String
-                    | (untyped       v, Class `type`) -> nil
+  def normalize_enum
+    : (anyArray      v, Class `type`) -> strArray
+    | (String|Symbol v, Class `type`) -> String
+    | (untyped       v, Class `type`) -> nil
 
   # normalize_json
   #
@@ -100,9 +105,10 @@ module ManifestItem::Assignable
   #
   # @return [Array<Hash>, Hash, nil]
   #
-  def normalize_json: (anyHash  v) -> symHash
-                    | (anyArray v) -> Array[symHash]
-                    | (untyped  v) -> (symHash | nil)
+  def normalize_json
+    : (anyHash  v) -> symHash
+    | (anyArray v) -> Array[symHash]
+    | (untyped  v) -> (symHash | nil)
 
   # normalize_text
   #
@@ -110,8 +116,9 @@ module ManifestItem::Assignable
   #
   # @return [String, *]
   #
-  def normalize_text:     (anyArray|String|Symbol v) -> String
-                    | [T] (T                      v) -> T
+  def normalize_text
+    :     (anyArray|String|Symbol v) -> String
+    | [T] (T                      v) -> T
 
   # normalize_copyright
   #
@@ -119,8 +126,9 @@ module ManifestItem::Assignable
   #
   # @return [String, nil]
   #
-  def normalize_copyright: (Date|String|Numeric v) -> String
-                         | (untyped             v) -> nil
+  def normalize_copyright
+    : (Date|String|Numeric v) -> String
+    | (untyped             v) -> nil
 
   private
 

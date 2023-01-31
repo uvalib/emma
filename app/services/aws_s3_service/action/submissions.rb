@@ -199,6 +199,8 @@ module AwsS3Service::Request::Submissions
   # @option opt [Aws::S3::Client] :client
   # @option opt [Symbol]          :meth     Calling method for logging
   #
+  # @raise [ApiService::RequestError]       If bucket is invalid.
+  #
   # @return [Array<AwsS3::Message::SubmissionRequest>]  Submitted records.
   #
   # @see Aws::S3::Object#put

@@ -11,8 +11,9 @@ module AuthHelper
   #
   # @return [OmniAuth::AuthHash, nil]
   #
-  def auth_hash: (User user) -> OmniAuth::AuthHash
-               | (nil  user) -> nil
+  def auth_hash
+    : (User user) -> OmniAuth::AuthHash
+    | (nil  user) -> nil
 
   # Generate an auth hash based on fixed information.
   #
@@ -92,8 +93,9 @@ module AuthHelper
   #   @param [String]                        user   User to add.
   #   @param [String, ::OAuth2::AccessToken] token  Associated token.
   #
-  def stored_auth_update_user: (OmniAuth::AuthHash user, ?nil token                          ) -> (Hash[String,anyHash] | nil)
-                             | (String             user, (String|::OAuth2::AccessToken) token) -> (Hash[String,anyHash] | nil)
+  def stored_auth_update_user
+    : (OmniAuth::AuthHash user, ?nil token                          ) -> (Hash[String,anyHash] | nil)
+    | (String             user, (String|::OAuth2::AccessToken) token) -> (Hash[String,anyHash] | nil)
 
   private
 

@@ -25,8 +25,9 @@ module ImportConcern
   # or `params[:data]` then `params[:type]` must be present to indicate the
   # media type of the source being supplied via `request.body` (or `req.body`).
   #
-  def fetch_data: ( src: String|ActionDispatch::Http::UploadedFile, ?data: nil,                                              ?type: Symbol|nil, **untyped _ignored) -> (Array[symHash] | nil)
-                | (?src: nil,                                        data: String|ActionDispatch::Request|Faraday::Response, ?type: Symbol|nil, **untyped _ignored) -> (Array[symHash] | nil)
+  def fetch_data
+    : ( src: String|ActionDispatch::Http::UploadedFile, ?data: nil,                                              ?type: Symbol|nil, **untyped _ignored) -> (Array[symHash] | nil)
+    | (?src: nil,                                        data: String|ActionDispatch::Request|Faraday::Response, ?type: Symbol|nil, **untyped _ignored) -> (Array[symHash] | nil)
 
   # Interpret data as JSON.
   #
@@ -55,9 +56,10 @@ module ImportConcern
   # @return [Array<(String, nil)>]
   # @return [Array<(nil, nil)>]
   #
-  def extract_from: (ActionDispatch::Http::UploadedFile src)        ->  [IO,         String]
-                  | (ActionDispatch::Request|Faraday::Response src) ->  [String|nil, nil]
-                  | (String                                    src) -> ([String|nil, String] | [IO, String])
+  def extract_from
+    : (ActionDispatch::Http::UploadedFile        src) ->  [IO,         String]
+    | (ActionDispatch::Request|Faraday::Response src) ->  [String|nil, nil]
+    | (String                                    src) -> ([String|nil, String] | [IO, String])
 
   private
 

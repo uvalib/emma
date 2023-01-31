@@ -272,7 +272,6 @@ module AccountConcern
       message = [message, *Array.wrap(error)]
       message = safe_join(message, HTML_BREAK)
     end
-    # noinspection RubyCaseWithoutElseBlockInspection
     redirect ||=
       case action
         when :new,    :create  then { action: :new }
@@ -397,8 +396,7 @@ module AccountConcern
     private
 
     def self.included(base)
-      # noinspection RailsParamDefResolve
-      base.try(:helper, self)
+      base.helper(self) if base.respond_to?(:helper)
     end
 
   end

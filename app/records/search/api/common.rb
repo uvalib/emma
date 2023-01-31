@@ -25,9 +25,6 @@ module Search::Api::Common
   #
   # @see file:config/locales/types/search.en.yml *en.emma.search.type*
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   CONFIGURATION = I18n.t('emma.search.type').deep_freeze
 
   # Enumeration scalar type names and properties.
@@ -62,7 +59,6 @@ module Search::Api::Common
   # :section:
   # ===========================================================================
 
-  # noinspection RubyMismatchedArgumentType
   EnumType.add_enumerations(CONFIGURATION)
 
 end
@@ -275,7 +271,7 @@ class PublicationIdentifier < ScalarType
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -333,7 +329,6 @@ class PublicationIdentifier < ScalarType
   # @return [String]
   #
   def set(v)
-    # noinspection RubyNilAnalysis
     @value = (v.blank? || (!prefix?(v) && v.include?(':'))) ? '' : normalize(v)
   end
 
@@ -385,8 +380,7 @@ class PublicationIdentifier < ScalarType
   # @return [Class<PublicationIdentifier>, nil]
   #
   def self.subclass(type = nil)
-    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
-    # noinspection RubyCaseWithoutElseBlockInspection
+    # noinspection RubyMismatchedReturnType
     case type
       when Symbol, String then subclass_map[type.to_sym]
       when Class          then type if type < PublicationIdentifier
@@ -441,7 +435,6 @@ end
 #
 class Isbn < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -754,7 +747,6 @@ class Isbn < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = total % 10
-      # noinspection RubyMismatchedReturnType
       ((10 - remainder) % 10).to_s
     end
 
@@ -775,7 +767,6 @@ class Isbn < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = total % 11
-      # noinspection RubyMismatchedReturnType
       (remainder == 10) ? 'X' : remainder.to_s
     end
 
@@ -786,7 +777,7 @@ class Isbn < PublicationIdentifier
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -829,7 +820,6 @@ end
 #
 class Issn < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1015,7 +1005,6 @@ class Issn < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = 11 - (total % 11)
-      # noinspection RubyMismatchedReturnType
       (remainder == 10) ? 'X' : remainder.to_s
     end
 
@@ -1026,7 +1015,7 @@ class Issn < PublicationIdentifier
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1055,7 +1044,6 @@ end
 #
 class Oclc < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1247,7 +1235,7 @@ class Oclc < PublicationIdentifier
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1276,7 +1264,6 @@ end
 #
 class Lccn < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1441,7 +1428,7 @@ class Lccn < PublicationIdentifier
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1468,7 +1455,6 @@ end
 #
 class Upc < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1653,7 +1639,6 @@ class Upc < PublicationIdentifier
           digits[index].to_i * weight
         end
       remainder = total % 10
-      # noinspection RubyMismatchedReturnType
       ((10 - remainder) % 10).to_s
     end
 
@@ -1664,7 +1649,7 @@ class Upc < PublicationIdentifier
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1697,7 +1682,6 @@ end
 #
 class Doi < PublicationIdentifier
 
-  # noinspection RubyNilAnalysis
   PREFIX = name.underscore
   TYPE   = PREFIX.to_sym
 
@@ -1841,7 +1825,7 @@ class Doi < PublicationIdentifier
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

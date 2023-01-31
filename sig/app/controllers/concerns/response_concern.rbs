@@ -18,8 +18,9 @@ module ResponseConcern
   # @return [Integer, Symbol]         HTTP status.
   # @return [nil]                     If *error* is nil.
   #
-  def failure_status: (nil     error, ?status: Integer|Symbol|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil, **untyped _ignored) -> nil
-                    | (untyped error, ?status: Integer|Symbol|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil, **untyped _ignored) -> (Integer | Symbol)
+  def failure_status
+    : (nil     error, ?status: Integer|Symbol|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil, **untyped _ignored) -> nil
+    | (untyped error, ?status: Integer|Symbol|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil, **untyped _ignored) -> (Integer | Symbol)
 
   # Generate a response to a POST.
   #
@@ -48,8 +49,9 @@ module ResponseConcern
   #   @param [Symbol, Integer]    status
   #   @param [Array, Any, nil]    items
   #
-  def post_response: ((Symbol|Integer|nil) status, ?(untyped|nil) item, ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil, ?tag: String|nil, ?fallback: String|nil) -> void
-                   | (                              Exception     item, ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil, ?tag: String|nil, ?fallback: String|nil) -> void
+  def post_response
+    : ((Symbol|Integer|nil) status, ?(untyped|nil) item, ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil, ?tag: String|nil, ?fallback: String|nil) -> void
+    | (                              Exception     item, ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil, ?tag: String|nil, ?fallback: String|nil) -> void
 
   # Render an item for display in a message.
   #

@@ -231,7 +231,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Submit the query terms as a lookup request.
      *
-     * @param {|jQuery.Event|Event|KeyboardEvent} event
+     * @param {jQuery.Event|Event|KeyboardEvent} event
      */
     function manualSubmission(event) {
         if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {

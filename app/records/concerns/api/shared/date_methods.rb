@@ -94,7 +94,6 @@ module Api::Shared::DateMethods
   # @return [Array<String>]
   #
   def normalize_dates(values)
-    # noinspection RubyNilAnalysis
     values = values.split(date_separator) if values.is_a?(String)
     Array.wrap(values).map { |value| normalize_date(value) }.compact
   end

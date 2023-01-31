@@ -57,7 +57,7 @@ class Api::Error < ExecError
     end
     args.flatten!
     args.compact!
-    # noinspection RubyNilAnalysis, RailsParamDefResolve
+    # noinspection RailsParamDefResolve
     case @cause
       when nil
         # Ignore
@@ -193,7 +193,6 @@ class Api::Error < ExecError
     def error_config
       @error_config ||=
         [:api, service].compact.reduce({}) do |result, config_section|
-          # noinspection RubyMismatchedArgumentType
           result.merge!(I18n.t("emma.error.#{config_section}", default: {}))
         end
     end
@@ -270,7 +269,7 @@ class Api::Error < ExecError
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

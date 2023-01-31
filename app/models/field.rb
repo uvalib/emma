@@ -95,7 +95,6 @@ module Field
   #   @param [Symbol, String, nil]        action
   #
   def self.configuration_for(field, model = nil, action = nil)
-    # noinspection RubyNilAnalysis
     if field.is_a?(Array)
       sub_sections = field[...-1] || []
       field        = field.last
@@ -185,9 +184,6 @@ module Field
   # set of checkboxes to create within a '<fieldset>' element.  Any other value
   # indicates '<textarea>' or the '<input>' type attribute to use.
   #
-  #--
-  # noinspection RubyCaseWithoutElseBlockInspection
-  #++
   def self.normalize(entry, field = nil)
     entry = entry.to_s.titleize            if entry.is_a?(Symbol)
     entry = { label: entry }               if entry.is_a?(String)

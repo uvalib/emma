@@ -67,6 +67,13 @@ module ActionMailer
   end
 end
 
+# NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
+module ActiveSupport
+  class SafeBuffer < String
+    def concat: (untyped value) -> ActiveSupport::SafeBuffer
+  end
+end
+
 # NOTE: overrides .gem_rbs_collection/actionview/6.0/actionview-generated.rbs
 module ActionView
   module Helpers
@@ -120,36 +127,41 @@ module ActiveRecord
       end
     end
   end
-  # NOTE: overrides .gem_rbs_collection/activerecord/6.1/activerecord-generated.rbs
+  # NOTE: overrides .gem_rbs_collection/activerecord/7.0/activerecord-generated.rbs
   module FinderMethods
-    def take: (?nil    limit) -> (untyped | nil)
-            | (Integer limit) -> anyArray
-    def first: (?nil    limit) -> (untyped | nil)
-             | (Integer limit) -> anyArray
-    def last: (?nil    limit) -> (untyped | nil)
-            | (Integer limit) -> anyArray
+    def take
+      : (?nil    limit) -> (untyped | nil)
+      | (Integer limit) -> anyArray
+    def first
+      : (?nil    limit) -> (untyped | nil)
+      | (Integer limit) -> anyArray
+    def last
+      : (?nil    limit) -> (untyped | nil)
+      | (Integer limit) -> anyArray
   end
 end
 
 class Array[unchecked out Elem] < Object
 
-  # NOTE: overrides gems/rbs-2.8.1/core/array.rbs
+  # NOTE: overrides gems/rbs-*/core/array.rbs
 
   def join: (?(string|nil) separator) -> String
 
-  # NOTE: overrides .gem_rbs_collection/activesupport/6.0/activesupport-generated.rbs
+  # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 
   def extract_options!: () -> anyHash
 
-  def delete_if: () { (Elem item) -> top } -> self
-               | () -> ::Enumerator[Elem, self]
+  def delete_if
+    : () { (Elem item) -> top } -> self
+    | ()                        -> ::Enumerator[Elem, self]
 
-  def collect!: () { (Elem item) -> untyped } -> anyArray
-              | () -> ::Enumerator[Elem, self]
+  def collect!
+    : () { (Elem item) -> untyped } -> anyArray
+    | ()                            -> ::Enumerator[Elem, self]
 
-  def all?: () -> bool
-          | (_Pattern[Elem] pattern) -> bool
-          | () { (Elem obj) -> top } -> bool
+  def all?
+    : (_Pattern[Elem] pattern)  -> bool
+    | () ?{ (Elem obj) -> top } -> bool
 end
 
 module CanCan
@@ -252,10 +264,11 @@ end
 
 module Enumerable[unchecked out Elem] : _Each[Elem]
 
-  def find:     ()                    { (Elem) -> top } -> Elem?
-          |     ()                                      -> ::Enumerator[Elem, Elem?]
-          | [T] (_NotFound[T] ifnone) { (Elem) -> top } -> (Elem | T)
-          | [T] (_NotFound[T] ifnone)                   -> ::Enumerator[Elem, Elem | T]
+  def find
+    :     ()                    { (Elem) -> top } -> Elem?
+    |     ()                                      -> ::Enumerator[Elem, Elem?]
+    | [T] (_NotFound[T] ifnone) { (Elem) -> top } -> (Elem | T)
+    | [T] (_NotFound[T] ifnone)                   -> ::Enumerator[Elem, Elem | T]
 
 end
 
@@ -289,32 +302,38 @@ module GoodJob
   end
 end
 
-# NOTE: overrides .gem_rbs_collection/activesupport/6.0/activesupport-generated.rbs
+# NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 class Hash[unchecked out K, unchecked out V] < Object
 
   def deep_dup: () -> self
 
-  def any?: () -> bool
-          | (untyped pattern) -> bool
-          | () { (K, V) -> top } -> bool
+  def any?
+    : () ?{ (K, V) -> top } -> bool
+    | (untyped pattern)     -> bool
 
-  def transform_keys!: () -> Enumerator[K, self]
-                     | () { (K) -> untyped } -> Hash[untyped, V]
+  def transform_keys!
+    : ()                    -> Enumerator[K, self]
+    | () { (K) -> untyped } -> Hash[untyped, V]
 
-  def transform_values!: () -> Enumerator[V, self]
-                       | () { (V) -> untyped } -> Hash[K, untyped]
+  def transform_values!
+    : ()                    -> Enumerator[V, self]
+    | () { (V) -> untyped } -> Hash[K, untyped]
 
-  def deep_transform_keys: () -> Enumerator[K, self]
-                         | () { (K) -> untyped } -> Hash[untyped, V]
+  def deep_transform_keys
+    : ()                    -> Enumerator[K, self]
+    | () { (K) -> untyped } -> Hash[untyped, V]
 
-  def deep_transform_keys!: () -> Enumerator[K, self]
-                          | () { (K) -> untyped } -> Hash[untyped, V]
+  def deep_transform_keys!
+    : ()                    -> Enumerator[K, self]
+    | () { (K) -> untyped } -> Hash[untyped, V]
 
-  def deep_transform_values: () -> Enumerator[V, self]
-                           | () { (V) -> untyped } -> Hash[K, untyped]
+  def deep_transform_values
+    : ()                    -> Enumerator[V, self]
+    | () { (V) -> untyped } -> Hash[K, untyped]
 
-  def deep_transform_values!: () -> Enumerator[V, self]
-                            | () { (V) -> untyped } -> Hash[K, untyped]
+  def deep_transform_values!
+    : ()                    -> Enumerator[V, self]
+    | () { (V) -> untyped } -> Hash[K, untyped]
 
 end
 
@@ -328,8 +347,9 @@ end
 # NOTE: overrides .gem_rbs_collection/i18n/1.10/i18n.rbs
 module I18n
   module Base
-    def translate: (String|Symbol        key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> (untyped | nil)
-                 | (Array[String|Symbol] key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> Array[untyped|nil]
+    def translate
+      : (String|Symbol        key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> (untyped | nil)
+      | (Array[String|Symbol] key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> Array[untyped|nil]
   end
 end
 
@@ -337,9 +357,10 @@ module IO::Like
   extend _ToIO
 end
 
-# NOTE: overrides gems/rbs-2.7.0/core/kernel.rbs
+# NOTE: overrides gems/rbs-*/core/kernel.rbs
 module Kernel
 
+  def self?.__dir__: () -> String
   def self?.__method__: () -> Symbol
 
 end
@@ -467,7 +488,7 @@ class Shrine
   end
 end
 
-# NOTE: overrides gems/rbs-2.8.2/core/string.rbs
+# NOTE: overrides gems/rbs-*/core/string.rbs
 class String
   def start_with?: (*(string|Regexp) prefixes) -> bool
 end

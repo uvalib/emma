@@ -17,8 +17,9 @@ module Emma::Common::FormatMethods
   # @see #INFLECT_SINGULAR
   # @see #INFLECT_PLURAL
   #
-  def inflection: (ActiveSupport::SafeBuffer text, ?(Integer|nil) count, ?(Symbol|nil) inflect) -> ActiveSupport::SafeBuffer
-                | (String text,                    ?(Integer|nil) count, ?(Symbol|nil) inflect) -> String
+  def inflection
+    : (ActiveSupport::SafeBuffer text, ?(Integer|nil) count, ?(Symbol|nil) inflect) -> ActiveSupport::SafeBuffer
+    | (String text,                    ?(Integer|nil) count, ?(Symbol|nil) inflect) -> String
 
   # Render text that will not break on word boundaries.
   #
@@ -89,10 +90,11 @@ module Emma::Common::FormatMethods
   #   @param [String]                       separator
   #   @return [ActiveSupport::SafeBuffer]
   #
-  def quote: (Array[ActiveSupport::SafeBuffer] terms, ?quote: String, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
-           | (Array[String] terms,                    ?quote: String, ?separator: String) -> Array[String]
-           | (ActiveSupport::SafeBuffer term,         ?quote: String, ?separator: String) -> ActiveSupport::SafeBuffer
-           | (String term,                            ?quote: String, ?separator: String) -> String
+  def quote
+    : (Array[ActiveSupport::SafeBuffer] terms, ?quote: String, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
+    | (Array[String] terms,                    ?quote: String, ?separator: String) -> Array[String]
+    | (ActiveSupport::SafeBuffer term,         ?quote: String, ?separator: String) -> ActiveSupport::SafeBuffer
+    | (String term,                            ?quote: String, ?separator: String) -> String
 
   # Remove pairs of surrounding quotation marks from a term.
   #
@@ -125,10 +127,11 @@ module Emma::Common::FormatMethods
   #   @param [String]                       separator
   #   @return [ActiveSupport::SafeBuffer]
   #
-  def strip_quotes: (Array[ActiveSupport::SafeBuffer] terms, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
-                  | (Array[String] terms,                    ?separator: String) -> Array[String]
-                  | (ActiveSupport::SafeBuffer term,         ?separator: String) -> ActiveSupport::SafeBuffer
-                  | (String term,                            ?separator: String) -> String
+  def strip_quotes
+    : (Array[ActiveSupport::SafeBuffer] terms, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
+    | (Array[String] terms,                    ?separator: String) -> Array[String]
+    | (ActiveSupport::SafeBuffer term,         ?separator: String) -> ActiveSupport::SafeBuffer
+    | (String term,                            ?separator: String) -> String
 
   # Match a named reference like "%{name}" for a #sprintf argument.
   #

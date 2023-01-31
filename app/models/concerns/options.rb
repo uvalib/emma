@@ -105,9 +105,6 @@ class Options
   #
   # @return [Any, nil]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def get(key, log: true)
     key = key&.to_sym
     if @value.key?(key)

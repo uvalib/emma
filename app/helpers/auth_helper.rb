@@ -152,7 +152,6 @@ module AuthHelper
     if user.is_a?(OmniAuth::AuthHash)
       user, token = [user.uid, user.credentials.token]
     elsif token.is_a?(OAuth2::AccessToken)
-      # noinspection RubyNilAnalysis
       token = token.token
     end
     if user.blank? || token.blank?
@@ -189,7 +188,7 @@ module AuthHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

@@ -432,7 +432,6 @@ class Upload < ApplicationRecord
       edit_file:          edit_file.presence,
       edit_file_attacher: edit_file_attacher.class,
     }
-    # noinspection RubyNilAnalysis
     attr = attr.transform_values { |v| v.is_a?(String) ? v.truncate(1024) : v }
     pretty_json(attr)
   end

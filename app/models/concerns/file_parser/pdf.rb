@@ -61,7 +61,6 @@ class FileParser::Pdf < FileParser
       pdf_reader.send(name, *args)
     elsif pdf_reader.present?
       __debug_items(binding) { "#{name} [via pdf_reader.info]" }
-      # noinspection RubyNilAnalysis
       pdf_reader.info[name.to_s.camelize.to_sym]
     else
       __debug_items(binding) { "#{name} [FAILED - no pdf_reader]" }

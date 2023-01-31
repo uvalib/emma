@@ -26,9 +26,6 @@ class ApiMigrate
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   CONFIGURATION_ENTRY =
     I18n.t('emma.api_migrate').map { |name, entries|
       next if name.start_with?('_')
@@ -570,7 +567,6 @@ class ApiMigrate
     def normalize_boolean(value)
       return              if value.nil?
       return true?(value) unless value.is_a?(Array)
-      # noinspection RubyNilAnalysis
       value.flat_map { |v| normalize_boolean(v) }
     end
 
@@ -808,7 +804,6 @@ class ApiMigrate
     #
     def find_field(emma_data, fields)
       if fields.is_a?(Array)
-        # noinspection RubyNilAnalysis
         fields.find { |f| emma_data[f] } || fields.last
       else
         fields&.to_sym
@@ -822,7 +817,7 @@ class ApiMigrate
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -871,7 +866,6 @@ class ApiMigrate
     @log    = log.present?
     # noinspection RubyMismatchedVariableType
     @name   = key ? migration_name(key) : CONFIGURATION_ENTRY.keys.last
-    # noinspection RubyMismatchedArgumentType
     error   =
       if !@name
         "invalid configuration name #{key.inspect}"
@@ -971,7 +965,6 @@ class ApiMigrate
   def transform!(record, column:, **opt)
     log, rpt = opt.values_at(:log, :report)
     if rpt
-      # noinspection RubyNilAnalysis
       rpt[:table]  ||= record_class.name.tableize
       rpt[:record] ||= {}
       opt[:report] = rpt = rpt[:record][record[:id]] ||= {}

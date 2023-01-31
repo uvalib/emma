@@ -43,8 +43,9 @@ module SearchConcern
   # If :titles is *true* then :canonical defaults to *true* on the production
   # service and *false* everywhere else.
   #
-  def index_search: (?titles: true|nil, ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchTitleList
-                  | ( titles: false,    ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchRecordList
+  def index_search
+    : (?titles: true|nil, ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchTitleList
+    | ( titles: false,    ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchRecordList
 
   # index_record
   #
@@ -87,10 +88,11 @@ module SearchConcern
   #
   # @return [Any]                     Same type as *value*.
   #
-  def sanitize_keys:     (anyHash  value) -> anyHash
-                   |     (anyArray value) -> (anyArray | untyped)
-                   |     (String   value) -> (String | strArray)
-                   | [T] (T        value) -> T
+  def sanitize_keys
+    :     (anyHash  value) -> anyHash
+    |     (anyArray value) -> (anyArray | untyped)
+    |     (String   value) -> (String | strArray)
+    | [T] (T        value) -> T
 
   # Indicate whether the argument contains only valid identifiers.
   #

@@ -216,7 +216,6 @@ module AwsHelper
 
     # Generate a heading if a bucket (name) was provided.
     if html && (title || bucket)
-      # noinspection RubyNilAnalysis
       name    = bucket.is_a?(Aws::S3::Bucket) ? bucket.name : bucket
       title ||= name
       parts <<

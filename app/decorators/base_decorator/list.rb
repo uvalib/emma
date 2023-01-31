@@ -75,7 +75,6 @@ module BaseDecorator::List
     opt[:row]   = 0
     separator ||= DEFAULT_ELEMENT_SEPARATOR
 
-    # noinspection RubyMismatchedArgumentType
     field_pairs(pairs, **fp_opt).map { |field, prop|
       opt[:row] += 1
       label = prop[:label]
@@ -142,7 +141,7 @@ module BaseDecorator::List
   # and ".value" elements.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def render_pair(
     label,
@@ -179,7 +178,6 @@ module BaseDecorator::List
     no_format = [no_format]               if no_format.is_a?(Symbol)
     no_format = no_format.include?(field) if no_format.is_a?(Array)
     unless no_format
-      # noinspection RubyCaseWithoutElseBlockInspection
       case field
         when :dc_description
           value = lines = format_description(value)
@@ -319,7 +317,6 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_empty_value(message = nil, **)
-    # noinspection RubyMismatchedReturnType
     render_pair(nil, (message || NO_RESULTS))
   end
 
@@ -361,7 +358,7 @@ module BaseDecorator::List
   # @return [nil]                     If executed method returned *nil*.
   #
   #--
-  # noinspection RubyNilAnalysis, RailsParamDefResolve
+  # noinspection RailsParamDefResolve
   #++
   def access(item, m, opt = nil)
     item ||= object

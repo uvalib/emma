@@ -21,9 +21,6 @@ module LogoHelper
   #
   # @type [Array<Symbol>]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   LOGO_TYPE = I18n.t('emma.repository._template.logo').keys.freeze
 
   # ===========================================================================
@@ -98,9 +95,6 @@ module LogoHelper
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def normalize_repository(src)
     return EmmaRepository.default if src.blank?
     src  = src.to_s               if src.is_a?(Symbol)

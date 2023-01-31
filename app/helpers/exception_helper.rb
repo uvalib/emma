@@ -26,9 +26,6 @@ module ExceptionHelper
   #
   # @type [Hash{Symbol=>Hash{Symbol=>(String,Class)}}]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   MODEL_ERROR =
     I18n.t('emma.error').map { |key, entry|
       next if key.start_with?('_') || !entry.is_a?(Hash)
@@ -65,9 +62,6 @@ module ExceptionHelper
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def failure(problem, value = nil, model:)
     model = model.to_sym
     __debug_items("#{model.upcase} WF #{__method__}", binding)

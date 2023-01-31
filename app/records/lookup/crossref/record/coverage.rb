@@ -17,7 +17,6 @@ class Lookup::Crossref::Record::Coverage < Lookup::Crossref::Api::Record
   # :section:
   # ===========================================================================
 
-  # noinspection DuplicatedCode
   schema do
     has_one :abstracts,               Float
     has_one :affiliations,            Float

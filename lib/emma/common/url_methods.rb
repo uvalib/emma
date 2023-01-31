@@ -46,9 +46,6 @@ module Emma::Common::UrlMethods
   #
   # @return [String]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def make_path(*args, **opt)
     opt.reverse_merge!(args.extract_options!) if args.last.is_a?(Hash)
     url = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '')

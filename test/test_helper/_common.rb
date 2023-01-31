@@ -55,7 +55,6 @@ module TestHelper::Common
         emma.generic.unit.brief
       ]
       unit = I18n.t(unit.shift, default: [*unit, model.to_s])
-      # noinspection RubyNilAnalysis
       endpoints =
         I18n.t(path, default: {}).map { |endpoint, config|
           next unless config.is_a?(Hash) && config[:_endpoint]
@@ -86,7 +85,6 @@ module TestHelper::Common
   # @return [*]
   #
   def property(model, *traversal, default: nil)
-    # noinspection RubyMismatchedArgumentType
     model = controller_name(model || self)
     PROPERTY.dig(model, *traversal) || default
   end

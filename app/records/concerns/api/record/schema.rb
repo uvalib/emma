@@ -78,7 +78,6 @@ module Api::Record::Schema
           type  = key.to_s.capitalize
           const = serializer_name(type)
           base  = serializer_base(type).constantize
-          # noinspection RubyMismatchedArgumentType
           serializer = Class.new(base, &block)
           remove_const(const) if const_defined?(const, false)
           [key, const_set(const, serializer)]

@@ -127,18 +127,12 @@ class SearchDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>String,Symbol}]
     #
-    #--
-    # noinspection RailsI18nInspection
-    #++
     STYLE_BUTTON_TEMPLATE = I18n.t('emma.search.styles._colorize').deep_freeze
 
     # Colorization buttons.
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    #--
-    # noinspection RailsI18nInspection, RubyNilAnalysis
-    #++
     STYLE_BUTTONS =
       I18n.t('emma.search.styles').map { |style, prop|
         next if style.start_with?('_')
@@ -147,7 +141,6 @@ class SearchDecorator < BaseDecorator
 
         css = prop[:class].presence || STYLE_BUTTON_TEMPLATE[:class]
         css = css_class_array(css)
-        # noinspection RubyMismatchedArgumentType
         css << style if css.include?(STYLE_BUTTON_TEMPLATE[:class])
         prop[:class] = css_classes(css)
 
@@ -169,9 +162,6 @@ class SearchDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    #--
-    # noinspection RailsI18nInspection, RubyNilAnalysis
-    #++
     RESULT_TYPES =
       I18n.t('emma.search.results').map { |style, prop|
         next if style.start_with?('_')

@@ -218,7 +218,6 @@ module Emma::Log
   #
   def self.local_level=(value)
     if value
-      # noinspection RubyMismatchedArgumentType
       local_levels[local_log_id] = log_level(value)
     else
       local_levels.delete(local_log_id) and nil

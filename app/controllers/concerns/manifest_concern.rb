@@ -357,9 +357,7 @@ module ManifestConcern
   # @return [Array]                   Destroyed entries.
   #
   def destroy_manifest(items = nil, opt = nil)
-    # noinspection RubyMismatchedArgumentType
     items, opt = manifest_request_params(items, opt)
-    # noinspection RubyNilAnalysis
     opt.reverse_merge!(model_options.all)
     ids   = extract_hash!(opt, :ids, :id).values.first
     items = [*items, *ids].map! { |item| item.try(:id) || item }

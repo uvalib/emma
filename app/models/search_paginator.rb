@@ -22,9 +22,6 @@ class SearchPaginator < Paginator
   # @return [String]                  Path to generate next page of results.
   # @return [nil]                     If there is no next page.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def next_page_path(list: nil, **url_params)
     items = list&.try(:records) || list || page_items
     return if (items.size < page_size) || (last = items.last).blank?

@@ -17,7 +17,6 @@ class Lookup::Crossref::Record::Flags < Lookup::Crossref::Api::Record
   # :section:
   # ===========================================================================
 
-  # noinspection DuplicatedCode
   schema do
     has_one :deposits,                          Boolean
     has_one :deposits_abstracts_backfile,       Boolean

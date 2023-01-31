@@ -4,6 +4,7 @@
 # warn_indent:           true
 
 require 'rake'
+# noinspection RubyResolve
 require 'rake/dsl_definition'
 
 require 'emma'
@@ -56,9 +57,6 @@ module Emma::Rake
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def subtask(name, args = nil)
     hash =
       case args
@@ -259,7 +257,7 @@ module Emma::Rake
   private
 
   def self.included(base)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

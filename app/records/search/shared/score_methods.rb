@@ -101,7 +101,6 @@ module Search::Shared::ScoreMethods
       types = SCORE_TYPES - %i[keyword]
     end
     types = Array.wrap(opt.delete(:for))    if opt.key?(:for)
-    # noinspection RubyNilAnalysis
     types = (types-%i[keyword]) << :keyword if types[0...-1].include?(:keyword)
     types.map do |type|
       value = send("calculate_#{type}_score", terms, **opt)

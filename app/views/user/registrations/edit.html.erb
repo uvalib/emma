@@ -21,7 +21,6 @@
 
   # noinspection RailsParamDefResolve
   awaiting   = (user.try(:unconfirmed_email) if devise_mapping.confirmable?)
-  # noinspection RailsI18nInspection
   awaiting &&= t('emma.user.registrations.edit.awaiting', email: awaiting)
   awaiting &&= html_div(awaiting)
 

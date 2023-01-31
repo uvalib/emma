@@ -57,9 +57,6 @@ module Upload::WorkflowMethods
   #
   # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   STATE_GROUP =
     I18n.t('emma.upload.state_group', default: {}).transform_values { |entry|
       states = Array.wrap(entry[:states]).map(&:to_sym)
@@ -429,7 +426,6 @@ module Upload::WorkflowMethods
   # @return [nil]                     If *group* is invalid.
   #
   def self.state_group_label(group)                                             # NOTE: to Record::Steppable
-    # noinspection RubyMismatchedArgumentType
     STATE_GROUP.dig(group&.to_sym, :label)
   end
 

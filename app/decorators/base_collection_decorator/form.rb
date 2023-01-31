@@ -136,9 +136,6 @@ module BaseCollectionDecorator::Form
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def item_ids(items = nil, **)
     items   = Array.wrap(items).presence
     items &&= items.map { |i| positive(i) || i.try(:id) || i.try(:[], :id) }

@@ -361,8 +361,9 @@ module BaseDecorator::Grid
     attr_reader base: Integer
     attr_reader offset: Integer
     attr_reader none: bool
-    def initialize: ((String|Integer|nil) item, ?(Integer|nil) starting_offset) -> void
-                  | ((GridIndex|Symbol)   item                                ) -> void
+    def initialize
+      : ((String|Integer|nil) item, ?(Integer|nil) starting_offset) -> void
+      | ((GridIndex|Symbol)   item                                ) -> void
     def value: () -> Integer
     alias to_i value
     def to_s: () -> String

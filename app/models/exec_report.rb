@@ -258,7 +258,7 @@ class ExecReport
     # @return [Array<Hash>, Hash, nil]
     #
     #--
-    # noinspection RubyNilAnalysis, RubyMismatchedReturnType
+    # noinspection RubyMismatchedReturnType
     #++
     def serialize_filter(part)
       case part
@@ -330,9 +330,6 @@ class ExecReport
     #
     # @return [Array, String, Any, nil]
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def normalized_value(value)
       case value
         when Array
@@ -362,7 +359,6 @@ class ExecReport
     #
     def extract_status(src)
       return if src.nil?
-      # noinspection RubyNilAnalysis
       src = src.exception if src.is_a?(ExecReport)
       # noinspection RailsParamDefResolve
       src.try(:http_status) || src.try(:status) || src.try(:code) ||
@@ -376,12 +372,8 @@ class ExecReport
     #
     # @return [Array<Hash{Symbol=>Array}>]
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def extract_message_hashes(src, meth = nil)
       meth ||= __method__
-      # noinspection RubyCaseWithoutElseBlockInspection
       case src
         when ExecReport then src = src.parts
         when String     then src = safe_json_parse(src, log: false)
@@ -404,7 +396,6 @@ class ExecReport
       return {} if src.blank?
       meth ||= __method__
       src    = safe_json_parse(src, log: false) if src.is_a?(String)
-      # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
       parts  =
         case src
           when Array               then src
@@ -434,9 +425,6 @@ class ExecReport
     #
     # @return [Hash{Symbol=>Array}]
     #
-    #--
-    # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-    #++
     def make_message_hash(src, meth = nil)
       return {} if src.blank?
       case src
@@ -446,6 +434,7 @@ class ExecReport
           result[HTML_KEY] = src.html_safe? unless result.key?(HTML_KEY)
 
         when Exception
+          # noinspection RubyMismatchedArgumentType
           src    = ExecError.new(src) unless src.is_a?(ExecError)
           result = { TOPIC_KEY => src.message&.dup }
           result[DETAILS_KEY]   = src.messages[1..]&.deep_dup
@@ -583,7 +572,7 @@ class ExecReport
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -644,7 +633,6 @@ class ExecReport
     # @see #error_table_hash
     #
     def error_messages(src, html: nil, **opt)
-      # noinspection RubyNilAnalysis
       src  = src.exec_report      if src.respond_to?(:exec_report)
       html = src.try(:html_safe?) if html.nil?
       error_table_hash(src, **opt).map { |k, v|
@@ -732,7 +720,7 @@ class ExecReport
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1113,7 +1101,7 @@ class ExecReport::Part
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1169,7 +1157,6 @@ class ExecReport::Part
     #
     def render_line(src, separator: TOPIC_SEP, **opt)
       src   = Array.wrap(src)
-      # noinspection RubyMismatchedArgumentType
       label = render_topic(src.first, **opt)
       parts = render_details((src[1..] || src), **opt)
       line  = [label, parts].compact_blank!.presence or return
@@ -1191,7 +1178,6 @@ class ExecReport::Part
     def render_topic(src, **opt)
       opt[:separator] ||= opt[:t_sep] || TOPIC_SEP
       src = extract_topic(src)   unless src.is_a?(String)
-      # noinspection RubyMismatchedArgumentType
       render_portion(src, **opt) if src.present?
     end
 
@@ -1211,7 +1197,6 @@ class ExecReport::Part
       opt[:separator] ||= opt[:d_sep] || DETAILS_SEP
       src = [src]                if src.is_a?(String)
       src = extract_details(src) unless src.is_a?(Array)
-      # noinspection RubyMismatchedArgumentType
       render_portion(src, **opt) if src.present?
     end
 
@@ -1253,7 +1238,7 @@ class ExecReport::Part
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end
@@ -1395,7 +1380,6 @@ class ExecReport::FlashPart < ExecReport::Part
   #   @param [ExecReport::Part, Hash, String, Array]   details
   #
   def initialize(topic, details = nil)
-    # noinspection RubyMismatchedArgumentType
     if details
       super(TOPIC_KEY => topic, DETAILS_KEY => details)
     else
@@ -1501,7 +1485,7 @@ class ExecReport::FlashPart < ExecReport::Part
     private
 
     def self.included(base)
-      base.send(:extend, self)
+      base.extend(self)
     end
 
   end

@@ -23,7 +23,9 @@ module LookupService::WorldCat::Common
   WORLDCAT_PRINCIPAL_ID = ENV['WORLDCAT_PRINCIPAL']
   WORLDCAT_WSKEY        = ENV['WORLDCAT_API_KEY']
 
+  #--
   # noinspection SpellCheckingInspection
+  #++
   WORLDCAT_SCHEMA = {
     marc:   (WORLDCAT_MARCXML     = 'info:srw/schema/1/marcxml'),
     dc:     (WORLDCAT_DUBLIN_CORE = 'info:srw/schema/1/dc'),
@@ -61,7 +63,7 @@ module LookupService::WorldCat::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, LookupService::WorldCat::Definition)
+    base.include(LookupService::WorldCat::Definition)
   end
 
 end

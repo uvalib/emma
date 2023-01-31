@@ -243,7 +243,6 @@ module Upload::EmmaDataMethods
     result = result.as_json if result.is_a?(Search::Record::MetadataRecord)
     result = json_parse(result, no_raise: false)
     result = reject_blanks(result) unless allow_blank
-    # noinspection RubyNilAnalysis
     result.map { |k, v|
       v     = Array.wrap(v)
       prop  = Field.configuration_for(k, :upload)

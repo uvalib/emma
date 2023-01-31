@@ -67,7 +67,7 @@ module LookupService::GoogleBooks::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, LookupService::GoogleBooks::Definition)
+    base.include(LookupService::GoogleBooks::Definition)
   end
 
 end

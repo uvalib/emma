@@ -122,7 +122,6 @@ module XmlHelper
           if opt[:content] || ((html = xml.to_s) == text)
             # No HTML entities, just simple characters.
             last = text.rindex(separator, last) || last if separator
-            # noinspection RubyMismatchedArgumentType
             text.slice(0, last)
           else
             # Do not break within an HTML entity.  HTML entities have to be
@@ -189,7 +188,6 @@ module XmlHelper
         elsif (child = xml_truncate(child, remaining, **opt)).nil?
           return
         else
-          # noinspection RubyNilAnalysis
           content   = child.content
           child_len = (opt[:content] ? content : child.to_s).bytesize
           break if (child_len > remaining) && node.children.present?
@@ -228,7 +226,7 @@ module XmlHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend,  self)
+    base.extend(self)
   end
 
 end

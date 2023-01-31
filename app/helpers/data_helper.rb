@@ -23,9 +23,6 @@ module DataHelper
   #
   # @type [Array<Symbol>]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   EMMA_DATA_FIELDS =
     I18n.t('emma.upload.record.emma_data').except(*Field::PROPERTY_KEYS)
         .keys.freeze
@@ -303,7 +300,6 @@ module DataHelper
   def html_db_record(fields, row: nil, start_col: 1, **opt)
     css    = '.database-record'
     fields = :empty if fields.blank?
-    # noinspection RubyCaseWithoutElseBlockInspection
     type =
       case fields
         when Array  then :array
@@ -345,7 +341,6 @@ module DataHelper
   #
   def html_db_column(field, row: nil, col: nil, first: nil, last: nil, **opt)
     css = '.database-column'
-    # noinspection RubyCaseWithoutElseBlockInspection
     type =
       case field
         when Array  then :array

@@ -81,7 +81,7 @@ module ManifestItem::FileData
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

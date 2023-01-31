@@ -198,7 +198,6 @@ class BookshareDecorator < BaseDecorator
         tip   = 'View on the Bookshare website.' # TODO: I18n
       end
       path = bookshare_url(path, **path_opt)
-      # noinspection RubyMismatchedArgumentType
       external_link(label, path, title: tip) if path.present?
     end
 
@@ -223,9 +222,6 @@ class BookshareDecorator < BaseDecorator
     #   @param [Hash]        hash       Controller/action.
     #   @param [Hash]        prm
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def bookshare_url(path, **prm)
 
       # If *path* was not given, get a #BOOKSHARE_ACTION reference based on the
@@ -310,7 +306,6 @@ class BookshareDecorator < BaseDecorator
     #
     def bookshare_url(path, **prm)
       if path.is_a?(Hash) && !path[:action] && context[:action]
-        # noinspection RubyNilAnalysis
         path = path.merge(action: context[:action])
       end
       super(path, **prm)
@@ -498,7 +493,6 @@ class BookshareDecorator
     values.map! { |record|
       link_opt = html_opt
       if check_link
-        # noinspection RubyCaseWithoutElseBlockInspection
         no_link  =
           case field
             when :categories then !record.bookshare_category
@@ -689,7 +683,6 @@ class BookshareDecorator
   #
   def render_value(value, field:, **opt)
     if present?
-      # noinspection RubyCaseWithoutElseBlockInspection
       case field_category(field || value)
         when :artifact    then artifact_links(**opt)
         when :author      then author_links(**opt)

@@ -305,7 +305,6 @@ class Phase::Review < Phase::Single
       action = opt[:action] || phase.current_action
       state  = action&.state_value || phase.state_value
     end
-    # noinspection RubyCaseWithoutElseBlockInspection
     case state
       when :reviewing then 'is now being reviewed'
       when :rejected  then 'was reviewed and rejected'

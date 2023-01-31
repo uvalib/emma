@@ -14,7 +14,6 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
 
   READ_FORMATS = :all
 
-  # noinspection RbsMissingTypeSignature
   setup do
     @user = find_user(TEST_USER)
   end

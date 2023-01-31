@@ -8,6 +8,5 @@
 list ||= @list
 name ||= nil
 
-# noinspection RubyMismatchedArgumentType
 json.timestamp DateTime.now
 json.partial! 'data/details', list: list, name: name

@@ -75,7 +75,6 @@ module Record::Submittable
       __debug_items("ENTRY WF #{__method__}", binding)
       record_class.new(data).tap do |record|
         prefix = model_options.title_prefix
-        # noinspection RubyMismatchedArgumentType
         add_title_prefix(record, prefix: prefix) if prefix
       end
     end
@@ -682,7 +681,6 @@ module Record::Submittable
           items  = (items.is_a?(Array) ? items.flatten : [items]).compact_blank
           result = items.group_by { |request| repository_value(request) }
         when Hash
-          # noinspection RubyNilAnalysis
           result = items.transform_values { |requests| Array.wrap(requests) }
         else
           result = {}
@@ -736,7 +734,6 @@ module Record::Submittable
       # items can be successfully removed from the index.
       opt[:requests] ||= {} if model_options.repo_remove
       opt.merge!(index: index, atomic: atomic, force: force)
-      # noinspection RubyMismatchedArgumentType
       succeeded, failed = batch_entry_operation(:entry_remove, items, **opt)
 
       # After all batch operations have completed, truncate the database table

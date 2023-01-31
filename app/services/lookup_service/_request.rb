@@ -113,9 +113,6 @@ class LookupService::Request
   #
   # @return [PublicationIdentifier, String, nil]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def add_term(prefix, value = nil, **opt)
     prefix, value = [nil, prefix] if value.nil?
     return if prefix.blank? && value.blank?
@@ -158,7 +155,6 @@ class LookupService::Request
   #
   def fix_term(term, author: false, **)
     return term unless term.is_a?(String)
-    # noinspection RubyNilAnalysis
     value = term.strip
 
     # Strip quote mistakenly surrounding the whole term.

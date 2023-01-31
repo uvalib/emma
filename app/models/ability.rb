@@ -119,9 +119,6 @@ class Ability
   #
   # @type [Array<Symbol>]
   #
-  #--
-  # noinspection RailsI18nInspection, RubyNilAnalysis
-  #++
   MODEL_NAMES = I18n.t('unauthorized.manage').except(:all).keys.freeze
 
   # ===========================================================================

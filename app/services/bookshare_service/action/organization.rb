@@ -85,7 +85,6 @@ module BookshareService::Request::Organization
       get_my_organization_members(**opt).userAccounts.find do |acct|
         (acct.userAccountId.to_s == acct_id) || (acct.identifier == username)
       end
-    # noinspection RubyMismatchedArgumentType
     Bs::Message::UserAccount.new(member)
   end
     .tap do |method|

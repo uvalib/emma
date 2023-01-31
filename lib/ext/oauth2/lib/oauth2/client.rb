@@ -132,7 +132,6 @@ module OAuth2
       prms = opts[:params]
       url  = connection.build_url(url).to_s
 
-      # noinspection RubyMismatchedArgumentType
       response =
         connection.run_request(verb, url, body, hdrs) do |req|
           req.params.update(prms) if prms.present?
@@ -219,11 +218,7 @@ module OAuth2
     # @return [OAuth2::Response]
     # @return [nil]                   If no token was provided or found.
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def revoke_token(token, params = nil, opts = nil)
-      # noinspection RubyCaseWithoutElseBlockInspection
       case token
         when OAuth2::AccessToken
           token = token.token

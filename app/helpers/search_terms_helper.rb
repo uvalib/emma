@@ -131,7 +131,6 @@ module SearchTermsHelper
   #
   def search_target(target = nil, **opt)
     opt = request_parameters if target.blank? && opt.blank?
-    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
     case target
       when Hash           then opt.merge!(target.symbolize_keys)
       when Symbol, String then opt[:target] = target.to_sym
@@ -220,7 +219,7 @@ module SearchTermsHelper
   # @return [String]
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def list_search_terms(term_list = nil)
     separator = LIST_SEARCH_SEPARATOR

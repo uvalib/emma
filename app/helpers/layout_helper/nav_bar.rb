@@ -24,9 +24,6 @@ module LayoutHelper::NavBar
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   NAV_BAR_CONFIG = I18n.t('emma.nav_bar', default: {}).deep_freeze
 
   # The controllers included on the nav bar.
@@ -68,9 +65,6 @@ module LayoutHelper::NavBar
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   DASHBOARD_CONFIG = I18n.t('emma.home.dashboard', default: {}).deep_freeze
 
   # Controller link labels.

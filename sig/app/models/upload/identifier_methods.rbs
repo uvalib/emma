@@ -1,8 +1,6 @@
 # Upload record utility methods related to identifiers.
 #
 module Upload::IdentifierMethods
-  def included: (Module base) -> void
-
   include Emma::Common
 
   extend ::Upload::IdentifierMethods
@@ -209,4 +207,8 @@ module Upload::IdentifierMethods
   # @see #expand_ids
   #
   def expand_id_range: ((String|Integer|Upload) id, **untyped opt) -> strArray
+
+  private
+
+  def self.included: (Module base) -> void
 end

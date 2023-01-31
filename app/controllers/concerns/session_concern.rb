@@ -120,9 +120,6 @@ module SessionConcern
   #
   # @return [String]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def status_message(status:, action: nil, user: nil)
     action ||= params[:action]
     user   ||= resource
@@ -295,7 +292,6 @@ module SessionConcern
     __debug_exception('RESCUE_FROM', exception)
     redirect_back(fallback_location: root_path, alert: exception.message)
   rescue => error
-    # noinspection RubyMismatchedArgumentType
     error_handler_deep_fallback(__method__, error)
   end
 
@@ -315,7 +311,6 @@ module SessionConcern
       render
     end
   rescue => error
-    # noinspection RubyMismatchedArgumentType
     error_handler_deep_fallback(__method__, error)
   end
 
@@ -336,7 +331,6 @@ module SessionConcern
       redirect_back(fallback_location: root_path, alert: exception.message)
     end
   rescue => error
-    # noinspection RubyMismatchedArgumentType
     error_handler_deep_fallback(__method__, error)
   end
 
@@ -373,7 +367,6 @@ module SessionConcern
   #
   def cleanup_session
     return unless request.get?
-    # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller]
       when 'artifact' then return if params[:action] == 'show'
       when 'bs_api'   then return if params[:action] == 'image'

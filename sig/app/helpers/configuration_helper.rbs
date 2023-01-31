@@ -20,9 +20,10 @@ module ConfigurationHelper
   #
   # @return [Array<Symbol>]
   #
-  def config_path: ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> symArray
-                 | ((String|Symbol|nil) ctrlr)                             -> symArray
-                 | ()                                                      -> symArray
+  def config_path
+    : ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> symArray
+    | ((String|Symbol|nil) ctrlr)                             -> symArray
+    | ()                                                      -> symArray
 
   # controller_configuration
   #
@@ -31,9 +32,10 @@ module ConfigurationHelper
   #
   # @return [Hash{Symbol=>*}]
   #
-  def controller_configuration: ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> symHash
-                              | ((String|Symbol|nil) ctrlr)                             -> symHash
-                              | ()                                                      -> symHash
+  def controller_configuration
+    : ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> symHash
+    | ((String|Symbol|nil) ctrlr)                             -> symHash
+    | ()                                                      -> symHash
 
   # config_lookup_order
   #
@@ -42,9 +44,10 @@ module ConfigurationHelper
   #
   # @return [Array<Array<Symbol>>]
   #
-  def config_lookup_order: ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> Array[symArray]
-                         | ((String|Symbol|nil) ctrlr)                             -> Array[symArray]
-                         | ()                                                      -> Array[symArray]
+  def config_lookup_order
+    : ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> Array[symArray]
+    | ((String|Symbol|nil) ctrlr)                             -> Array[symArray]
+    | ()                                                      -> Array[symArray]
 
   # Find the best match from config/locales for the given partial path, first
   # looking under "en.emma.(ctrlr)", then under 'en.emma.generic'.
@@ -114,9 +117,10 @@ module ConfigurationHelper
   #
   # @return [Hash, Array, String, Integer, Boolean, nil]
   #
-  def apply_config_interpolations: (anyHash  item, units: symHash, **untyped _ignored) -> anyHash
-                                 | (anyArray item, units: symHash, **untyped _ignored) -> anyArray
-                                 | (untyped  item, units: symHash, **untyped _ignored) -> untyped
+  def apply_config_interpolations
+  :     (anyHash  item, units: symHash, **untyped _ignored) -> anyHash
+  |     (anyArray item, units: symHash, **untyped _ignored) -> anyArray
+  | [T] (T        item, units: symHash, **untyped _ignored) -> T
 
   # The variations on the description of a model item managed by a controller.
   #

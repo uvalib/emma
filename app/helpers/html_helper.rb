@@ -306,10 +306,10 @@ module HtmlHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:include, ActionView::Helpers::TagHelper)
-    base.send(:extend,  ActionView::Helpers::TagHelper)
-    base.send(:extend,  ActionView::Helpers::UrlHelper)
-    base.send(:extend,  self)
+    base.include(ActionView::Helpers::TagHelper)
+    base.extend(ActionView::Helpers::TagHelper)
+    base.extend(ActionView::Helpers::UrlHelper)
+    base.extend(self)
   end
 
 end

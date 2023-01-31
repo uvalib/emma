@@ -30,9 +30,6 @@ module HelpHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   HELP_CONFIG = I18n.t('emma.help', default: {}).deep_freeze
 
   # Help topics and values.
@@ -45,9 +42,6 @@ module HelpHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   HELP_ENTRY =
     HELP_CONFIG[:topic].map { |topic, entry|
 
@@ -380,7 +374,7 @@ module HelpHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:include, Emma::Unicode)
+    base.include(Emma::Unicode)
   end
 
 end

@@ -43,9 +43,9 @@ export function renderJson(data, indent = DEF_INDENT) {
  * names appended with zero or more spaces in order to make each key the same
  * length.
  *
- * @param {object|array|*} item
+ * @param {array|object|*} item
  *
- * @returns {object|array|*}
+ * @returns {array|object|*}
  */
 function alignKeys(item) {
     if (typeof item !== 'object') {

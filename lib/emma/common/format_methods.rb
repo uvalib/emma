@@ -34,7 +34,6 @@ module Emma::Common::FormatMethods
   # @see #INFLECT_PLURAL
   #
   def inflection(text, count = nil, inflect: nil)
-    # noinspection RubyMismatchedArgumentType
     if (count == 1) || INFLECT_SINGULAR.include?(inflect)
       text.to_s.singularize
     elsif count.is_a?(Integer) || INFLECT_PLURAL.include?(inflect)

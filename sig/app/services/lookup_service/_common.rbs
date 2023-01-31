@@ -36,10 +36,11 @@ module LookupService::Common
   #
   # @return [PublicationIdentifier, nil]
   #
-  def id_obj: (PublicationIdentifier `type`, ?untyped              id, ?copy: bool) -> PublicationIdentifier
-            | (untyped               `type`, PublicationIdentifier id, ?copy: bool) -> PublicationIdentifier
-            | (strArray              `type`, ?untyped              id, ?copy: bool) -> (PublicationIdentifier | nil)
-            | (String|Symbol|nil     `type`, ?(String|nil)         id, ?copy: bool) -> (PublicationIdentifier | nil)
+  def id_obj
+    : (PublicationIdentifier `type`, ?untyped              id, ?copy: bool) -> PublicationIdentifier
+    | (untyped               `type`, PublicationIdentifier id, ?copy: bool) -> PublicationIdentifier
+    | (strArray              `type`, ?untyped              id, ?copy: bool) -> (PublicationIdentifier | nil)
+    | (String|Symbol|nil     `type`, ?(String|nil)         id, ?copy: bool) -> (PublicationIdentifier | nil)
 
   def __debug_job: (*untyped args, **untyped opt) ?{ () -> untyped } -> void
 

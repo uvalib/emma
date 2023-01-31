@@ -93,7 +93,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [String, nil]
     #
     #--
-    # noinspection RubyNilAnalysis, RailsParamDefResolve
+    # noinspection RailsParamDefResolve
     #++
     def manifest_for(item = nil, **opt)
       return opt[:manifest] if opt[:manifest]
@@ -143,9 +143,6 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    #--
-    # noinspection RailsI18nInspection
-    #++
     BULK_GRID_CFG = I18n.t('emma.bulk.grid', default: {}).deep_freeze
 
     # @private
@@ -844,8 +841,8 @@ class ManifestItemDecorator < BaseDecorator
       summary = 'Item Details' # TODO: I18n
       content =
         DETAILS_FIELDS.map do |field|
-          v_id   = "#{field}-detail-#{id_base}"
-          l_id   = "label-#{v_id}"
+          v_id  = "#{field}-detail-#{id_base}"
+          l_id  = "label-#{v_id}"
 
           v_opt = { 'data-field': field, id: v_id, 'aria-labelledby': l_id }
           value = item[field] || EMPTY_VALUE

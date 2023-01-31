@@ -30,7 +30,6 @@ module FileFormat::Zip
   #
   def get_archive_entry(zip_path, file, recurse: false)
     return if zip_path.blank? || file.blank?
-    # noinspection RubyNilAnalysis
     zip_path = find_zip_path(zip_path, file) if zip_path.start_with?('.')
     Archive::Zip.open(file) do |archive|
       archive.each do |entry|
@@ -55,7 +54,6 @@ module FileFormat::Zip
   #
   def find_zip_path(ext, file)
     return if ext.blank? || file.blank?
-    # noinspection RubyNilAnalysis
     ext = ".#{ext}" unless ext.start_with?('.')
     Archive::Zip.open(file) do |archive|
       archive.each do |entry|

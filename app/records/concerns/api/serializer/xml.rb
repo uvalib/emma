@@ -56,7 +56,6 @@ class Api::Serializer::Xml < Api::Serializer
   # @see Representable::XML#to_xml
   #
   def serialize(method: :to_xml, **opt)
-    # noinspection RubyNilAnalysis
     opt[:wrap] = represented.class.name.demodulize
     xml = add_xml_namespaces(super)
     xml.start_with?(XML_PROLOG) ? xml : "#{XML_PROLOG}\n#{xml}"

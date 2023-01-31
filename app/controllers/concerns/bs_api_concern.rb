@@ -135,7 +135,6 @@ module BsApiConcern
           topic = 'ReadingLists' if name.match?('reading_list')
           order =
             TOPICS.index { |t|
-              # noinspection RubyMismatchedReturnType
               t.is_a?(Regexp) ? (topic =~ t) : (topic == t)
             } || TOPICS.size
           [order, name]
@@ -190,7 +189,6 @@ module BsApiConcern
     def self.run_trials(user: nil, methods: nil)
       service = BookshareService.new(user: user, no_raise: true)
       methods = trial_methods(service: service) if methods.blank?
-      # noinspection RubyNilAnalysis
       methods.map { |meth, opts|
         begin
           value = service.send(meth, **opts)

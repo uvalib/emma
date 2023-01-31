@@ -25,9 +25,6 @@ module Bs::Api::Common
   #
   # @see file:config/locales/types/bookshare.en.yml *en.emma.bookshare.type*
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   CONFIGURATION = I18n.t('emma.bookshare.type').deep_freeze
 
   # Enumeration scalar type names and properties.
@@ -62,7 +59,6 @@ module Bs::Api::Common
   # :section:
   # ===========================================================================
 
-  # noinspection RubyMismatchedArgumentType
   EnumType.add_enumerations(CONFIGURATION)
 
 end

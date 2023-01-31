@@ -78,9 +78,6 @@ module DataConcern
   #
   # @return [Array<String>, nil]      *nil* if *value* is *nil*.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def array_param(value)
     value = value.split(',')                        if value.is_a?(String)
     value.map { |s| s.to_s.strip.presence }.compact if value.is_a?(Array)
@@ -175,7 +172,6 @@ module DataConcern
     records = get_submission_records(**opt).last || []
     records.each do |record|
       next unless (emma_data = safe_json_parse(record[:emma_data])).is_a?(Hash)
-      # noinspection RubyNilAnalysis
       emma_data.each_pair do |field, data|
         next unless all || EMMA_DATA_FIELDS.include?(field)
         entry = fields[field] ||= {}
@@ -289,7 +285,6 @@ module DataConcern
   def submission_result_indices(columns = nil)
     columns = submission_result_columns(columns)
     SUBMISSION_COLUMNS.map.with_index { |col, idx|
-      # noinspection RubyNilAnalysis
       idx if columns.include?(col)
     }.compact
   end

@@ -523,7 +523,7 @@ module FlashHelper
   #   @param [Hash]                    opt
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # noinspection RubyMismatchedArgumentType
   #++
   def flash_format(*args, topic: nil, **opt)
     prop = extract_hash!(opt, :meth, :status, :inspect, :log, :trace)
@@ -543,7 +543,6 @@ module FlashHelper
     arg_sep = ', '
 
     # Lead with the message derived from an Exception.
-    # noinspection RubyNilAnalysis
     msg = rpt.render(html: html)
 
     # Log exceptions or messages.
@@ -774,7 +773,7 @@ module FlashHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

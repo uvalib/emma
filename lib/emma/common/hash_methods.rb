@@ -22,9 +22,6 @@ module Emma::Common::HashMethods
   #
   # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def partition_hash(hash, *keys, &block)
     keys = gather_keys(*keys, &block)
     hash = normalize_hash(hash)
@@ -43,9 +40,6 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def remainder_hash!(hash, *keys, &block)
     keys = gather_keys(*keys, &block)
     hash = normalize_hash(hash) unless hash.class == ::Hash
@@ -63,9 +57,6 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def extract_hash!(hash, *keys, &block)
     keys = gather_keys(*keys, &block)
     hash = normalize_hash(hash) unless hash.class == ::Hash
@@ -110,7 +101,6 @@ module Emma::Common::HashMethods
   #
   def normalize_hash!(item)
     new_item = normalize_hash(item)
-    # noinspection RubyNilAnalysis
     (item.class == ::Hash) ? item.replace(new_item) : new_item
   end
 

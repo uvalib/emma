@@ -49,7 +49,6 @@ module LookupService::RemoteService::Properties
   # @return [Symbol]
   #
   def service_key
-    # noinspection RubyNilAnalysis
     (is_a?(Module) ? name : self.class.name).demodulize.underscore.to_sym
   end
 
@@ -119,7 +118,7 @@ module LookupService::RemoteService::Properties
   private
 
   def self.included(base)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

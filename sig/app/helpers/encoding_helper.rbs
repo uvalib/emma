@@ -17,8 +17,9 @@ module EncodingHelper
   # @see #to_utf8
   # @see #xhr_encode
   #
-  def to_utf: (ActiveSupport::SafeBuffer value, ?xhr: bool|nil) -> ActiveSupport::SafeBuffer
-            | ((String|nil)              value, ?xhr: bool|nil) -> String
+  def to_utf
+    : (ActiveSupport::SafeBuffer value, ?xhr: bool|nil) -> ActiveSupport::SafeBuffer
+    | ((String|nil)              value, ?xhr: bool|nil) -> String
 
   # Encode a string for use in HTTP message headers passed back to the client
   # as flash messages.
@@ -45,8 +46,9 @@ module EncodingHelper
   # should minimize the impact of encoding on the size of the transmitted
   # string.  (The '%' character is also encoded to avoid ambiguity.)
   #
-  def xhr_encode: (ActiveSupport::SafeBuffer value) -> ActiveSupport::SafeBuffer
-                | (untyped                   value) -> String
+  def xhr_encode
+    : (ActiveSupport::SafeBuffer value) -> ActiveSupport::SafeBuffer
+    | (untyped                   value) -> String
 
   private
 

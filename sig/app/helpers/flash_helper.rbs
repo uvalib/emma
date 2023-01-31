@@ -301,9 +301,10 @@ module FlashHelper
   # @return [String]                    If *html* is *false*.
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   #
-  def flash_omission: (?(Integer|nil) count, ?html: bool,  **untyped ingored) -> (ActiveSupport::SafeBuffer | String)
-                    | (?(Integer|nil) count,  html: false, **untyped ingored) -> String
-                    | (?(Integer|nil) count,  html: true,  **untyped ingored) -> ActiveSupport::SafeBuffer
+  def flash_omission
+    : (?(Integer|nil) count, ?html: bool,  **untyped ingored) -> (ActiveSupport::SafeBuffer | String)
+    | (?(Integer|nil) count,  html: false, **untyped ingored) -> String
+    | (?(Integer|nil) count,  html: true,  **untyped ingored) -> ActiveSupport::SafeBuffer
 
   # Create item(s) to be included in the flash display.
   #
@@ -384,8 +385,9 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer,String>]
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
-  def flash_item: (Array[String|FlashPart] array,  **untyped opt) -> Array[ActiveSupport::SafeBuffer|String]
-                | ((String|FlashPart)      string, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
+  def flash_item
+    : (Array[String|FlashPart] array,  **untyped opt) -> Array[ActiveSupport::SafeBuffer|String]
+    | ((String|FlashPart)      string, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
 
   # An item's actual impact toward the total flash size.
   #

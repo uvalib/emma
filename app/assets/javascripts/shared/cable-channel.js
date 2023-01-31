@@ -204,7 +204,7 @@ export class CableChannel extends BaseClass {
     }
 
     /**
-     * Handle a request response.
+     * Process a request response.
      *
      * If the entire response can't be sent back at one time, the response
      * will hold the URL from which the missing data can be acquired.

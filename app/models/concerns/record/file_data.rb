@@ -94,7 +94,6 @@ module Record::FileData
     # noinspection RubyMismatchedArgumentType
     data = parse_file_data(data)
     afd  = parse_file_data(attr&.dig(:file_data))
-    # noinspection RubyNilAnalysis
     data.merge!(afd)
   end
 

@@ -171,7 +171,6 @@ class BsApiController < ApplicationController
         if response.is_a?(Hash)
           response =
             response.map { |k, v|
-              # noinspection RubyCaseWithoutElseBlockInspection
               case k
                 when :parameters then v = v.to_s.sub(/^\((.*)\)$/, '\1')
                 when :status     then v = v.presence&.upcase || 'MISSING'

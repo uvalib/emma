@@ -63,9 +63,6 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr  Default: params[:controller].
   # @param [Hash, nil]           opt    Default: `#request_parameters`.
   #
-  #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
-  #++
   def show_search_bar?(ctrlr = nil, opt = nil)
     ctrlr, opt = [nil, ctrlr] if ctrlr.is_a?(Hash)
     opt = opt&.symbolize_keys || request_parameters
@@ -106,7 +103,7 @@ module LayoutHelper::SearchBar
   # @return [nil]                             Search unavailable for *target*.
   #
   #--
-  # noinspection RubyNilAnalysis, RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType
   #++
   def search_bar_container(
     target:   nil,
@@ -166,7 +163,6 @@ module LayoutHelper::SearchBar
       row_opt[:first] = row.zero?
       row_opt[:index] = (row += 1)
       row_opt[:last]  = (row == rows.size)
-      # noinspection RubyMismatchedReturnType
       search_bar_row(field, value, **row_opt)
     end
 
@@ -307,7 +303,6 @@ module LayoutHelper::SearchBar
   #
   def search_bar_label(ctrlr = nil, target: nil, **opt)
     target = search_input_target(ctrlr || target) or return
-    # noinspection RubyMismatchedReturnType
     config_lookup('search_bar.label', controller: target, **opt)
   end
 
@@ -413,7 +408,6 @@ module LayoutHelper::SearchBar
   #
   def search_input_types(ctrlr = nil, target: nil, **opt)
     ctrlr = search_input_target(ctrlr || target)
-    # noinspection RubyMismatchedReturnType
     config_lookup('search_type', controller: ctrlr, **opt) || {}
   end
 
@@ -571,7 +565,6 @@ module LayoutHelper::SearchBar
     prepend_css!(opt, css)
     html_div(opt) do
       buttons.map do |key|
-        # noinspection RubyCaseWithoutElseBlockInspection
         case key
           when :toggle then advanced_search_button
           when :reset  then reset_button
@@ -608,9 +601,6 @@ module LayoutHelper::SearchBar
   #
   # @return [Array]                   The original object, possibly modified.
   #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
   def filter!(array, only: nil, except: nil, **)
     only   &&= Array.wrap(only).map { |v| v&.to_sym }.compact
     except &&= Array.wrap(except).map { |v| v&.to_sym }.compact

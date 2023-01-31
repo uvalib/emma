@@ -54,7 +54,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @option opt [Boolean, nil] :canonical   Passed to #aggregate.
   #
   def initialize(src, opt = nil)
-    # noinspection RubyScope, RubyMismatchedArgumentType, RubyNilAnalysis
+    # noinspection RubyScope, RubyMismatchedArgumentType
     create_message_wrapper(opt) do |opt|
       @canonical  = opt.delete(:canonical)
       apply_wrap!(opt)
@@ -88,7 +88,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @return [Integer]
   #
   def item_count
-    # noinspection RubyMismatchedReturnType
     titles.size
   end
 
@@ -174,9 +173,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
     #
     # @param [Any] other
     #
-    #--
-    # noinspection RubyNilAnalysis
-    #++
     def match?(other)
       return false unless other.is_a?(GroupingCriteria)
       return true  if ids && other.ids && ids.intersect?(other.ids)

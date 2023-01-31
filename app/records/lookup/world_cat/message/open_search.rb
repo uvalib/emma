@@ -51,7 +51,7 @@ class Lookup::WorldCat::Message::OpenSearch < Lookup::WorldCat::Api::Message
   # @return [Integer]
   #
   #--
-  # noinspection RubyInstanceMethodNamingConvention, RubyMismatchedReturnType
+  # noinspection RubyInstanceMethodNamingConvention
   #++
   def totalResults
     opensearch_totalResults

@@ -65,8 +65,9 @@ module DataHelper
   # @return [Array<Hash>]
   # @return [Array<Array<String>,Hash>]         If *html* is *true*.
   #
-  def table_records: (untyped name, *(String|Symbol) cols, ?headings: bool,  html: true, ?no_raise: bool, ?raise_blank: bool) -> Array[strArray|symHash]
-                   | (untyped name, *(String|Symbol) cols, ?headings: bool, ?html: bool, ?no_raise: bool, ?raise_blank: bool) -> Array[symHash]
+  def table_records
+    : (untyped name, *(String|Symbol) cols, ?headings: bool,  html: true, ?no_raise: bool, ?raise_blank: bool) -> Array[strArray|symHash]
+    | (untyped name, *(String|Symbol) cols, ?headings: bool, ?html: bool, ?no_raise: bool, ?raise_blank: bool) -> Array[symHash]
 
   private
 
@@ -85,8 +86,9 @@ module DataHelper
   # @return [String]
   # @return [nil]                     If no columns are given.
   #
-  def blank_columns: (*(String|Symbol) columns) -> String
-                   | ()                         -> nil
+  def blank_columns
+    : (*(String|Symbol) columns) -> String
+    | ()                         -> nil
 
   # Error message for invalid column(s).
   #
@@ -95,8 +97,9 @@ module DataHelper
   # @return [String]
   # @return [nil]                     If no columns are given.
   #
-  def invalid_columns: (*(String|Symbol) columns) -> String
-                     | ()                         -> nil
+  def invalid_columns
+    : (*(String|Symbol) columns) -> String
+    | ()                         -> nil
 
   # db_connection
   #

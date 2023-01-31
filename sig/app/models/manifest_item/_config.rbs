@@ -33,8 +33,9 @@ module ManifestItem::Config
   #
   # @return [*, self]
   #
-  def default_to_self:     (nil item, ?from: Symbol|nil) -> ManifestItem
-                     | [T] (T   item, ?from: Symbol|nil) -> T
+  def default_to_self
+    :     (nil item, ?from: Symbol|nil) -> ManifestItem
+    | [T] (T   item, ?from: Symbol|nil) -> T
 end
 
 # Status values for the remediated file associated with the item.

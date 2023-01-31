@@ -324,8 +324,9 @@ class IsoDate < ScalarType
     #
     # @return [*]
     #
-    def strip_copyright:     (String  v) -> String
-                       | [T] (T       v) -> T
+    def strip_copyright
+      :     (String  v) -> String
+      | [T] (T       v) -> T
 
     # Transform *v* into a ISO 8601 form.
     #
@@ -626,8 +627,9 @@ class EnumType < ScalarType
     #
     # @return [Hash{String=>String,Symbol}]
     #
-    def comparable_map: (strArray|strHash  keys, ?(String|Symbol|nil) caller) -> Hash[String,String]
-                      | (symArray|symHash  keys, ?(String|Symbol|nil) caller) -> Hash[String,Symbol]
+    def comparable_map
+      : (strArray|strHash keys, ?(String|Symbol|nil) caller) -> Hash[String,String]
+      | (symArray|symHash keys, ?(String|Symbol|nil) caller) -> Hash[String,Symbol]
   end
 
   extend Comparable
@@ -666,8 +668,9 @@ class EnumType < ScalarType
     #   @param [Symbol, String, nil] name
     #   @return [Hash{Symbol=>Hash}]
     #
-    def add_enumeration: (anyHash arg,  (Symbol|String)     name) -> Hash[Symbol,symHash]
-                       | (String  arg, ?(Symbol|String|nil) name) -> Hash[Symbol,symHash]
+    def add_enumeration
+      : (anyHash arg,  (Symbol|String)     name) -> Hash[Symbol,symHash]
+      | (String  arg, ?(Symbol|String|nil) name) -> Hash[Symbol,symHash]
 
     # add_enumerations_from
     #
@@ -818,8 +821,9 @@ class EnumType < ScalarType
   #
   # @see #add_enumeration
   #
-  def self.[]: (symHash arg,  (Symbol|String)     name) -> Class
-             | (String  arg, ?(Symbol|String|nil) name) -> Class
+  def self.[]
+    : (symHash arg,  (Symbol|String)     name) -> Class
+    | (String  arg, ?(Symbol|String|nil) name) -> Class
 
   private
 

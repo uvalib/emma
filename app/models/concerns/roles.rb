@@ -247,7 +247,6 @@ module Roles
   #
   def role_prototype_for(user = nil, *roles)
     if user.is_a?(User)
-      # noinspection RubyNilAnalysis
       roles = user.role_list
     else
       roles.prepend(user) if user.is_a?(Symbol)

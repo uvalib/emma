@@ -38,9 +38,6 @@ module BaseDecorator::Controls
   #
   # @see BaseDecorator::Controls#ICON_PROPERTIES
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   ICONS = I18n.t('emma.control_icons', default: {}).deep_freeze
 
   # The name of the attribute indicating the action of a control button.

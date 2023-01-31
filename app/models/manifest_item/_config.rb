@@ -19,9 +19,6 @@ module ManifestItem::Config
   #
   # @see file:config/locales/types/manifest_item.en.yml
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   MANIFEST_ITEM_TYPES = I18n.t('emma.manifest_item.type').deep_freeze
 
   # Values for each status column which indicate an "OK" status.
@@ -52,7 +49,6 @@ module ManifestItem::Config
 
   public
 
-  # noinspection RubyMismatchedArgumentType
   EnumType.add_enumerations(MANIFEST_ITEM_TYPES)
 
   # ===========================================================================

@@ -19,9 +19,6 @@ module EmmaHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   EMMA_PARTNER = I18n.t('emma.grant.partner').deep_freeze
 
   # EMMA grant partner categories.
@@ -56,13 +53,11 @@ module EmmaHelper
     if mode == :brief
       list.join(separator)
     elsif list.size < 3
-      # noinspection RubyMismatchedArgumentType
       final = ' ' + final if final && !final.start_with?(/\s/)
       final = final + ' ' if final && !final.match?(/\s$/)
       list.join(final || separator)
     else
       final += ' ' if final && !final.end_with?(' ')
-      # noinspection RubyNilAnalysis
       list[0...-1].join(separator) << separator << final << list[-1]
     end
   end
@@ -74,7 +69,6 @@ module EmmaHelper
   # @return [Hash{Symbol=>Hash}]
   #
   def emma_partners(type = :all)
-    # noinspection RubyMismatchedArgumentType
     if type.nil? || (type == :all)
       {}.merge!(*EMMA_PARTNER.values)
     elsif EMMA_PARTNER.key?(type)
@@ -93,7 +87,7 @@ module EmmaHelper
 
   def self.included(base)
     __included(base, self)
-    base.send(:extend, self)
+    base.extend(self)
   end
 
 end

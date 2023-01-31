@@ -563,8 +563,9 @@ module UploadWorkflow::External
   # the returned list of items may contain a mixture of Upload and String
   # elements.
   #
-  def collect_records: (*(Upload|String|Array[Upload|String]) items, ?all: bool,  force: true, **untyped opt) -> [Array[Upload|String], []]
-                     | (*(Upload|String|Array[Upload|String]) items, ?all: bool, ?force: bool, **untyped opt) -> [Array[Upload], Array[String|UploadWorkflow::Errors::FlashPart]]
+  def collect_records
+    : (*(Upload|String|Array[Upload|String]) items, ?all: bool,  force: true, **untyped opt) -> [Array[Upload|String], []]
+    | (*(Upload|String|Array[Upload|String]) items, ?all: bool, ?force: bool, **untyped opt) -> [Array[Upload], Array[String|UploadWorkflow::Errors::FlashPart]]
 
   # If a prefix was specified, apply it to the record's title.
   #

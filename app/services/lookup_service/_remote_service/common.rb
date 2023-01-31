@@ -25,7 +25,7 @@ module LookupService::RemoteService::Common
   # @param [Module] base
   #
   def self.included(base)
-    base.send(:include, LookupService::RemoteService::Definition)
+    base.include(LookupService::RemoteService::Definition)
   end
 
 end

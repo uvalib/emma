@@ -210,10 +210,10 @@ module Record
   private
 
   def self.included(base)
-    base.send(:extend,  self)
+    base.extend(self)
     return unless record_class?(base)
-    base.send(:include, InstanceMethods)
-    base.send(:extend,  ClassMethods)
+    base.include(InstanceMethods)
+    base.extend(ClassMethods)
   end
 
 end

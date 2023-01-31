@@ -161,7 +161,6 @@ module SearchService::Testing
     def inject_exception(meth, ex = nil, *args)
       return unless FORCED_EXCEPTION
       return unless (de = meth ? EXCEPTION_METHOD[meth] : DEFAULT_EXCEPTION)
-      # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
       case (ex ||= de)
         when Class  then ex = ex.new(*args)
         when String then ex = error_classes[de].new(ex, *args)

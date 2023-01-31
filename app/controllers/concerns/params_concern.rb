@@ -125,7 +125,6 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
-    # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller].to_s.downcase
       when 'artifact'   then return if params[:action] == 'show'
       when 'bs_api'     then return if params[:action] == 'image'
