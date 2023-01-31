@@ -51,8 +51,7 @@ module LayoutHelper::NavBar
   UNRELEASED_CONTROLLERS =
     Array.wrap(NAV_BAR_CONFIG[:unreleased]).compact.map!(&:to_sym).freeze
 
-  # Desktop-only validations.
-  unless application_deployed?
+  if sanity_check?
     if (invalid = PRIMARY_CONTROLLERS - NAV_BAR_CONTROLLERS).present?
       raise "Invalid PRIMARY_CONTROLLERS: #{invalid.inspect}"
     end

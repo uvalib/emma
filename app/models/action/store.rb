@@ -184,7 +184,7 @@ class Action::Store < Action::BulkPart
   # :section:
   # ===========================================================================
 
-  validate_state_table unless application_deployed?
+  validate_state_table if sanity_check?
 
 end
 

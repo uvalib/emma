@@ -26,7 +26,7 @@ module SessionDebugHelper
   #
   def session_debug?(controller = nil)
     dev     = developer?
-    local   = !application_deployed?
+    local   = not_deployed?
     setting =
       if controller
         session["app.#{controller}.debug"]

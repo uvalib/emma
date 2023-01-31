@@ -18,7 +18,7 @@ namespace 'emma:assets' do
   #
   # @note This should only be done on the desktop.
   #
-  BACKUP_CSS_SOURCES = !application_deployed?
+  BACKUP_CSS_SOURCES = not_deployed?
 
   # ===========================================================================
   # Tasks

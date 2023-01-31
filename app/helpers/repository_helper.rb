@@ -137,7 +137,7 @@ module RepositoryHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def emma_retrieval_link(_item, label, url, **opt)
-    url = url.sub(%r{localhost:\d+}, 'localhost') unless application_deployed?
+    url = url.sub(%r{localhost:\d+}, 'localhost') if not_deployed?
     retrieval_link(label, url, **opt)
   end
 

@@ -179,8 +179,7 @@ class Paginator
       on_first = (current == first)
     end
 
-    # Sanity check.
-    unless application_deployed?
+    if sanity_check?
       if on_first
         raise "on_first for opt = #{opt.inspect}" if page.to_i > 1
       else

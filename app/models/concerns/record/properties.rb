@@ -36,7 +36,7 @@ module Record::Properties                                                       
   #
   # @see #title_prefix
   #
-  TITLE_PREFIX = (DEV_TITLE_PREFIX unless application_deployed?)
+  TITLE_PREFIX = (DEV_TITLE_PREFIX if not_deployed?)
 
   # A fractional number of seconds to pause between iterations.
   #

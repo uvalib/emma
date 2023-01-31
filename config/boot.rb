@@ -101,6 +101,12 @@ def application_deployed?
   !!ENV['AWS_DEFAULT_REGION'] || !ENV['DEPLOYMENT'].to_s.casecmp?('local')
 end
 
+# Indicate whether this is a desktop instance.
+#
+def not_deployed?
+  !application_deployed?
+end
+
 # The true deployment type.
 #
 # @return [Symbol]
@@ -151,7 +157,7 @@ end
 # development machine.
 #
 def in_local_docker?
-  (ENV['USER'] == 'docker') && !application_deployed?
+  (ENV['USER'] == 'docker') && not_deployed?
 end
 
 # For use within initialization code to branch between code that is intended
@@ -185,6 +191,12 @@ def rake_task?
       !%w(-h -H --help -D --describe -T --tasks -n --dry-run).intersect?($*)
   end
   @in_rake
+end
+
+# Indicate whether desktop-only validations are appropriate.
+#
+def sanity_check?
+  rails_application? && not_deployed?
 end
 
 # =============================================================================
@@ -250,6 +262,6 @@ end
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 
 require 'bundler/setup' # Set up gems listed in the Gemfile.
-require 'bootsnap/setup' unless application_deployed?
+require 'bootsnap/setup' if not_deployed?
 
 STDERR.puts 'Starting Rails...' if rails_application?

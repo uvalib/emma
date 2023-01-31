@@ -235,10 +235,10 @@ module AuthConcern
     token = session.delete('omniauth.auth')
     no_revoke_reason =
       case
-        when token.blank?           then 'NO TOKEN'
-        when no_revoke              then 'no_revoke=true'
-        when auth_debug_user?       then "USER #{current_user.uid} DEBUGGING"
-        when !application_deployed? then 'localhost'
+        when token.blank?     then 'NO TOKEN'
+        when no_revoke        then 'no_revoke=true'
+        when auth_debug_user? then "USER #{current_user.uid} DEBUGGING"
+        when not_deployed?    then 'localhost'
       end
     if no_revoke_reason
       __debug { "#{__method__}: NOT REVOKING TOKEN - #{no_revoke_reason}" }

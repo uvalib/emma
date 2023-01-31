@@ -151,6 +151,6 @@ require 'ext'
 # Desktop-only affordances
 # =============================================================================
 
-require '_desktop' unless application_deployed?
+require '_desktop' if not_deployed?
 
 __loading_end(__FILE__)

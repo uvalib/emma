@@ -99,7 +99,7 @@ Shrine.storages = {
   if SHRINE_CLOUD_STORAGE
 
     # Prepend a distinguishing prefix for desktop development.
-    storages.transform_values! { |v| "rwl_#{v}" } unless application_deployed?
+    storages.transform_values! { |v| "rwl_#{v}" } if not_deployed?
 
     # S3 options are kept in encrypted credentials but can be overridden by
     # environment variables.

@@ -117,7 +117,7 @@ module Emma
     #   ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
     # Do not dump schema after migrations in the deployed application.
-    config.active_record.dump_schema_after_migration = !application_deployed?
+    config.active_record.dump_schema_after_migration = not_deployed?
 
     # =========================================================================
     # ActionCable
@@ -171,7 +171,7 @@ module Emma
     config.log_formatter = Emma::Logger::Formatter.new
 
     # Don't colorize AWS logs.
-    config.colorize_logging = !application_deployed?
+    config.colorize_logging = not_deployed?
 
     # Use a different logger when logging to $stdout.
     config.logger = Emma::Logger.new(STDOUT) if LOG_TO_STDOUT
