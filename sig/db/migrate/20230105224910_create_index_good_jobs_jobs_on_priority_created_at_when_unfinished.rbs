@@ -1,0 +1,3 @@
+class CreateIndexGoodJobsJobsOnPriorityCreatedAtWhenUnfinished < ActiveRecord::Migration
+  def change: () -> untyped
+end
