@@ -166,7 +166,7 @@ class Api::Error < ExecError
     #
     def service
       @service ||=
-        if (c = is_a?(Class) ? self : self.class)
+        if (c = self_class)
           name = c.safe_const_get(:SERVICE_NAME)
           name ||= c.module_parent_name.underscore.remove(/_service$/)
           name&.to_sym || super
@@ -179,7 +179,7 @@ class Api::Error < ExecError
     #
     def error_type
       @error_type ||=
-        if (c = is_a?(Class) ? self : self.class)
+        if (c = self_class)
           type = c.safe_const_get(:ERROR_TYPE)
           type ||= c.name&.demodulize&.to_s&.underscore&.remove(/_error$/)
           type&.to_sym

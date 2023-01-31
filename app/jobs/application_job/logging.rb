@@ -26,7 +26,7 @@ module ApplicationJob::Logging
   def job_warn(*args, meth: nil, &block)
     return unless Log.warn?
     meth ||= calling_method
-    Log.warn("#{self.class}::#{meth}", *args, &block)
+    Log.warn("#{self_class}::#{meth}", *args, &block)
   end
 
   # ===========================================================================

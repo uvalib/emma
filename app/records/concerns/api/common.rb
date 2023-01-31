@@ -71,7 +71,7 @@ class ScalarType
     # @return [superclass, nil]
     #
     def cast(v)
-      c = is_a?(Class) ? self : self.class
+      c = self_class
       v.is_a?(c) ? v : create(v)
     end
 
@@ -82,7 +82,7 @@ class ScalarType
     # @return [superclass, nil]
     #
     def create(v, *)
-      c = is_a?(Class) ? self : self.class
+      c = self_class
       if v.is_a?(c)
         v.dup
       elsif (v = normalize(v)).present?
@@ -588,7 +588,7 @@ class IsoDate < ScalarType
     # @return [IsoDate, nil]
     #
     def cast(v)
-      c = is_a?(Class) ? self : self.class
+      c = self_class
       v.is_a?(c) ? v : create(v)
     end
 
@@ -599,8 +599,7 @@ class IsoDate < ScalarType
     # @return [IsoDate, nil]
     #
     def create(v, *)
-      c = is_a?(Class) ? self : self.class
-      # noinspection RubyMismatchedReturnType
+      c = self_class
       if v.is_a?(c)
         v.dup
       elsif (v = normalize(v)).present?

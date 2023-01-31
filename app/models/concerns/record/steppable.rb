@@ -142,7 +142,7 @@ module Record::Steppable
   #
   def get_state_table(item, no_raise: true)
     return unless item
-    cls = item.is_a?(Class) ? item : item.class
+    cls = self_class(item)
     if cls.respond_to?(:type_value)
       result = cls.safe_const_get(:STATE_TABLE, false) and return result
       base   = cls.module_parent.type_value
@@ -385,7 +385,7 @@ module Record::Steppable
   # @return [Class<ApplicationJob>]
   #
   def job_class(item)
-    cls = item.is_a?(Class) ? item : item.class
+    cls = self_class(item)
     "#{cls.name}::WorkflowJob".safe_constantize ||
       "#{cls.base_class}::WorkflowJob".safe_constantize ||
       Model::WorkflowJob
