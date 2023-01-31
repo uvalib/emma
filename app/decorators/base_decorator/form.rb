@@ -631,14 +631,14 @@ module BaseDecorator::Form
     end
   end
 
-  # Label for mini-form update button. # TODO: I18n
+  # Label for line-editor update button. # TODO: I18n
   #
   # @type [String]
   #
   UPDATE_LABEL = 'Change'
   UPDATE_CSS   = 'update'
 
-  # Label for mini-form cancel button. # TODO: I18n
+  # Label for line-editor cancel button. # TODO: I18n
   #
   # @type [String]
   #
@@ -654,7 +654,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def model_mini_form(pairs: nil, action: nil, css: '.mini-form', **opt)
+  def model_line_editor(pairs: nil, action: nil, css: '.line-editor', **opt)
     pairs ||= model_form_fields
     prepend_css!(opt, css)
     model_form_options!(opt, action: action)

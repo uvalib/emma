@@ -82,14 +82,12 @@
 // Manifest new/edit pages
 //=============================================================================
 
-$popup-width: 75vw;
-
 body.manifest.new,
 body.manifest.edit {
 
-    .layout-content {
+    $hdg-gap: calc($gap * 2);
 
-        margin-right: 1.5rem;
+    .layout-content {
 
         // NOTE: Hiding overflow here prevents a problem with >= 10 rows.
         // - In this situation (for unidentified reasons) scrollHeight is being
@@ -103,13 +101,17 @@ body.manifest.edit {
         padding-left: $half-left;
         overflow:     hidden;
 
+        @media #{$narrow-screen} {
+            padding-left:  0;
+            padding-right: $half-left;
+        }
     }
 
     // @see ManifestDecorator#manifest_page_heading
     .heading-bar {
 
         margin:      $page-padding 0;
-        gap:         1rem;
+        gap:         $hdg-gap;
         align-items: center;
 
         //=====================================================================
@@ -119,10 +121,19 @@ body.manifest.edit {
         .heading {
 
             margin: 0;
-            gap:    1rem;
+            gap:    $hdg-gap;
+
+            //=================================================================
+            // Components
+            //=================================================================
 
             .text.label {
+
                 word-break: keep-all;
+
+                @media #{$not-wide-screen} {
+                    @include sr-only;
+                }
             }
 
             .text.name {
@@ -133,15 +144,19 @@ body.manifest.edit {
             }
         }
 
-        .mini-form {
+        .line-editor {
 
             display:               inline-grid;
             grid-template-columns: 1fr min-content min-content;
-            gap:                   0.75rem;
+            gap:                   $hdg-gap;
             font-size:             $h1-font-size;
             background:            ghostwhite;
             box-shadow:            0 0 0 0.75rem ghostwhite;
             border-radius:         1px;
+
+            //=================================================================
+            // Components
+            //=================================================================
 
             // Title input
             input[type="text"] {
@@ -179,26 +194,53 @@ body.manifest.edit {
 
         &:not(.editing) {
 
-            grid-template-columns:
-                [heading]    minmax(auto, max-content)
-                [title-edit] min-content
-                [help-popup] min-content;
+            .line-editor { @include hidden; }
 
-            .mini-form {
-                @include hidden;
+            @media #{$not-narrow-screen} {
+                grid-template-columns:
+                    [heading]    minmax(auto, max-content)
+                    [title-edit] min-content
+                    [help-popup] min-content;
+            }
+
+            @media #{$narrow-screen} {
+
+                grid-template-areas:
+                    'heading title-edit'
+                    'heading help-popup';
+
+                .heading    { grid-area: heading; }
+                .title-edit { grid-area: title-edit; }
+                .help-popup { grid-area: help-popup; }
             }
         }
 
         &.editing {
 
-            grid-template-columns:
-                [heading]    auto
-                [mini-form]  1fr
-                [help-popup] min-content;
+            .text.name  { @include hidden; }
+            .title-edit { @include hidden; }
 
-            .text.name,
-            .title-edit {
-                @include hidden;
+            @media #{$not-narrow-screen} {
+                grid-template-columns:
+                    [heading]     auto
+                    [line-editor] 1fr
+                    [help-popup]  min-content;
+            }
+
+            @media #{$narrow-screen} {
+
+                .line-editor {
+
+                    grid-template-areas:
+                        'input update'
+                        'input cancel';
+
+                    input   { grid-area: input; height: max-content; }
+                    .update { grid-area: update; }
+                    .cancel { grid-area: cancel; }
+                }
+
+                .help-popup { @include hidden; }
             }
         }
     }
@@ -207,7 +249,7 @@ body.manifest.edit {
 
         display:        flex;
         flex-direction: row;
-        gap:            1vw;
+        gap:            $hdg-gap;
 
         //=====================================================================
         // Components
@@ -230,9 +272,12 @@ body.manifest.edit {
                 justify-content: center;
                 align-items:     center;
                 position:        relative;
-                padding-left:    0;
-                padding-right:   0;
                 overflow:        clip;
+
+                @media #{$wide-screen} {
+                    padding-left:  0;
+                    padding-right: 0;
+                }
 
                 // The actual input positioned so that the transparent file
                 // chooser button fills the available area of the button.
@@ -290,6 +335,11 @@ body.manifest.edit {
             margin-bottom: model.$list-item-gap-y;
             align-items:   baseline;
             flex-wrap:     nowrap;
+            gap:           calc($flex-gap * 2);
+
+            @media #{$narrow-screen} {
+                align-items: center;
+            }
 
             .button-tray {
                 flex:           1 1 100%;
@@ -299,13 +349,18 @@ body.manifest.edit {
 
                 flex-direction: row-reverse;
                 gap:            1rem;
-                margin-left:    0;
-                margin-right:   1.5rem;
+                margin:         0;
                 flex:           1 0 auto;
 
                 .search-count {
                     margin: auto 0;
                 }
+            }
+        }
+
+        .pagination-bottom {
+            @media #{$narrow-screen} {
+                display: flex;
             }
         }
     }

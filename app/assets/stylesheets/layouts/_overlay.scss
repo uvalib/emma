@@ -36,7 +36,7 @@
     // An indicator that is presented during a time-consuming search.
     .search-in-progress {
 
-        @include overlay.image('loading-balls.gif', $img-height: 1rem);
+        @include overlay.image('loading-balls.gif', $width: max(5vw,2cm));
 
         .content {
             filter: saturate(1.5) drop-shadow(2px 2px 2px #444);

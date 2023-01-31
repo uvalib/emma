@@ -124,25 +124,25 @@ $default-height: 100vh;     // Enough to cover the viewport.
 
 /// Make a dynamic overlay featuring an image.
 ///
-/// @param {String}  $img-path        Path to image file.
-/// @param {Numeric} $img-width       Width of image element.
-/// @param {Numeric} $img-height      Height of image element.
-/// @param {Numeric} $img-y-pos       Distance of image from top of screen.
-/// @param {Numeric} $img-x-pos       Distance of image from left of screen.
+/// @param {String}  $path            Path to image file.
+/// @param {Numeric} $width           Width of image element.
+/// @param {Numeric} $height          Height of image element.
+/// @param {Numeric} $y-pos           Distance of image from top of screen.
+/// @param {Numeric} $x-pos           Distance of image from left of screen.
 ///
 @mixin image(
-    $img-path,
-    $img-width:  5vw,
-    $img-height: 5vh,
-    $img-y-pos:  50vh,
-    $img-x-pos:  unset,
-    $fill:       true,
+    $path,
+    $width:  unset,
+    $height: unset,
+    $y-pos:  50vh,
+    $x-pos:  unset,
+    $fill:   true,
 ) {
     @include base(
-        $width:  $img-width,
-        $height: $img-height,
-        $y-pos:  $img-y-pos,
-        $x-pos:  $img-x-pos,
+        $width:  $width,
+        $height: $height,
+        $y-pos:  $y-pos,
+        $x-pos:  $x-pos,
         $fill:   $fill,
     );
 
@@ -151,7 +151,7 @@ $default-height: 100vh;     // Enough to cover the viewport.
     }
 
     .content {
-        background-image:    url($img-path);
+        background-image:    url($path);
         background-repeat:   no-repeat;
         background-size:     contain;
         background-position: center;
@@ -160,25 +160,25 @@ $default-height: 100vh;     // Enough to cover the viewport.
 
 /// Make a dynamic overlay featuring text.
 ///
-/// @param {Color}   $txt-bg          Color flare surrounding text.
-/// @param {Numeric} $txt-width       Width of text element.
-/// @param {Numeric} $txt-height      Height of text element.
-/// @param {Numeric} $txt-y-pos       Distance of text from top of screen.
-/// @param {Numeric} $txt-x-pos       Distance of text from left of screen.
+/// @param {Color}   $bg              Color flare surrounding text.
+/// @param {Numeric} $width           Width of text element.
+/// @param {Numeric} $height          Height of text element.
+/// @param {Numeric} $y-pos           Distance of text from top of screen.
+/// @param {Numeric} $x-pos           Distance of text from left of screen.
 ///
 @mixin text(
-    $txt-bg:     f.lighter(v.$uva-blue, 75%),
-    $txt-width:  max-content,
-    $txt-height: max-content,
-    $txt-y-pos:  50vh,
-    $txt-x-pos:  unset,
-    $fill:       true,
+    $bg:     f.lighter(v.$uva-blue, 75%),
+    $width:  max-content,
+    $height: max-content,
+    $y-pos:  50vh,
+    $x-pos:  unset,
+    $fill:   true,
 ) {
     @include base(
-        $width:  $txt-width,
-        $height: $txt-height,
-        $y-pos:  $txt-y-pos,
-        $x-pos:  $txt-x-pos,
+        $width:  $width,
+        $height: $height,
+        $y-pos:  $y-pos,
+        $x-pos:  $x-pos,
         $fill:   $fill,
     );
 
@@ -187,9 +187,9 @@ $default-height: 100vh;     // Enough to cover the viewport.
         padding:       1rem;
         font-size:     xx-large;
         color:         white;
-        background:    $txt-bg;
-        border:        1px solid $txt-bg;
+        background:    $bg;
+        border:        1px solid $bg;
         border-radius: 50%;
-        box-shadow:    0 0 3rem 3rem $txt-bg;
+        box-shadow:    0 0 3rem 3rem $bg;
     }
 }

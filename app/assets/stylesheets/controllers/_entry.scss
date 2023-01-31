@@ -948,10 +948,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             $img-height: 1rem;
 
             @include overlay.image(
-                $img-path:   'loading-balls.gif',
-                $img-width:  $img-width,
-                $img-height: $img-height,
-                $fill:       false
+                $path:  'loading-balls.gif',
+                $width:  $img-width,
+                $height: $img-height,
+                $fill:   false
             );
 
             position: absolute;

@@ -173,12 +173,6 @@ $max-cell-height: 25vh;
 //
 $controls-rotate: true;
 
-@mixin setup-columns($data-cols: auto-fill, $data-col-template: 1fr) {
-    grid-template-columns:
-        [controls] repeat($ctrl-cols, $ctrl-col-width)
-        [data]     repeat($data-cols, $data-col-template);
-}
-
 @mixin vertical-list {
     display:        flex;
     flex-direction: column;
@@ -223,16 +217,14 @@ table.manifest_item-grid {
     // Variations
     //=========================================================================
 
-    $data-col-template: minmax(max-content,$data-col-width);
+    $data-col-template: minmax(max-content, $data-col-width);
 
-    @include setup-columns(auto-fill, $data-col-template);
-
-    @media #{$not-narrow-screen} {
-        @for $n from 2 through $max-columns {
-            $data-cols: $n - $ctrl-cols;
-            &.columns-#{$n} {
-                @include setup-columns($data-cols, $data-col-template);
-            }
+    @for $n from 2 through $max-columns {
+        $data-cols: $n - $ctrl-cols;
+        &.columns-#{$n} {
+            grid-template-columns:
+                [controls] repeat($ctrl-cols, $ctrl-col-width)
+                [data]     repeat($data-cols, $data-col-template);
         }
     }
 
@@ -447,6 +439,10 @@ table.manifest_item-grid {
 
             padding: $cell-pad;
 
+            @media #{$narrow-screen} {
+                padding-right: $cell-pad * 3;
+            }
+
             *:focus {
                 outline-offset: 1px;
             }
@@ -455,11 +451,6 @@ table.manifest_item-grid {
                 outline-offset: 0;
                 outline-width:  3px;
             }
-        }
-
-        // Column for item file data (header and .file-uploader)
-        > .cell[data-field="file_data"] {
-            max-width:    $max-file-column-width;
         }
 
         // Last column.
@@ -477,7 +468,7 @@ table.manifest_item-grid {
                 position:            sticky;
                 top:                 0;
                 z-index:             1;
-                line-height:         3;
+                line-height:         1.5;
                 font-weight:         bold;
                 background:          $grid-head-bg;
                 border-bottom-width: $controls-border-width;
@@ -544,12 +535,14 @@ table.manifest_item-grid {
             // Data column headings (subsequent columns).
             > .cell {
 
-                padding:    0 ($cell-pad * 2);
                 box-shadow: inset 0 -1rem 1rem -1.5rem gray;
+
+                > * {
+                    padding: 0 $cell-pad;
+                }
 
                 details {
 
-                    margin-bottom: $cell-pad * 4;
                     line-height:   1.25;
 
                     //=========================================================
@@ -602,7 +595,6 @@ table.manifest_item-grid {
                         dl {
 
                             display:               grid;
-                            margin-right:          $cell-pad * 2;
                             column-gap:            $cell-pad * 4;
                             align-items:           baseline;
                             grid-template-columns: [dt] 1fr [dd] 2fr;
@@ -633,15 +625,17 @@ table.manifest_item-grid {
                 }
 
                 details[open] {
-
-                    max-width: inherit;
-
                     summary {
                         margin-bottom:  $value-pad * 2;
                         padding-bottom: $value-pad;
                         border-bottom:  1px solid black;
                     }
                 }
+            }
+
+            // Column heading for item file data.
+            > .cell[data-field="file_data"] {
+                max-width: unset;
             }
 
             //=================================================================
@@ -651,8 +645,11 @@ table.manifest_item-grid {
             // noinspection CssBrowserCompatibilityForProperties
             &.expanded {
                 > .cell {
-                    text-align:          left;
+                    padding-top:         $cell-pad * 2.5;
+                    padding-bottom:      $cell-pad * 2.5;
+                    gap:                 $cell-pad * 2.5;
                     max-height:          33vh;
+                    text-align:          left;
                     overflow:            auto;
                     overscroll-behavior: contain;
                 }
@@ -660,6 +657,12 @@ table.manifest_item-grid {
 
             &:not(.expanded) {
                 > .cell {
+
+                    > * {
+                        margin-top:    auto;
+                        margin-bottom: auto;
+                    }
+
                     details {
                         display: none;
                     }
@@ -772,9 +775,6 @@ table.manifest_item-grid {
                 }
 
                 details[open] {
-
-                    max-width: inherit;
-
                     summary {
                         padding-bottom: $value-pad;
                         border-bottom:  1px solid black;
@@ -787,7 +787,6 @@ table.manifest_item-grid {
 
                 &.expanded {
 
-                    min-width:  12.5vw;
                     text-align: start;
 
                     .icon-tray {
@@ -1001,7 +1000,8 @@ table.manifest_item-grid {
 
                     background: ghostwhite;
 
-                    > .value {
+                    > .value,
+                    .uploaded-filename {
                         @include hover-bold;
                     }
                 }
@@ -1010,9 +1010,14 @@ table.manifest_item-grid {
             // Data cell for item file data.
             > .cell.file-uploader {
 
+                max-width:      $max-file-column-width;
                 padding:        ($value-pad * 5) ($value-pad * 4);
                 column-gap:     $value-pad * 4;
                 flex-direction: row;
+
+                @media #{$narrow-screen} {
+                    max-width:  unset;
+                }
 
                 //=============================================================
                 // Components
@@ -1102,6 +1107,29 @@ table.manifest_item-grid {
                                 padding: 0.1875rem 0.375rem;
                                 flex:    0 1 max-content;
                             }
+
+                            //=================================================
+                            // Variations
+                            //=================================================
+
+                            @media #{$medium-width} {
+                                position:   absolute;
+                                top:        unset;
+                                bottom:     unset;
+                                left:       unset;
+                                right:      unset;
+                                min-width:  66vw;
+                            }
+
+                            @media #{$narrow-screen} {
+
+                                align-content: center;
+                                gap:           1rem;
+
+                                label.input {
+                                    flex-basis: 100%;
+                                }
+                            }
                         }
                     }
                 }
@@ -1150,9 +1178,13 @@ table.manifest_item-grid {
                     // Component variations
                     //=========================================================
 
+                    // noinspection CssReplaceWithShorthandSafely
                     > .active {
-                        padding:     ($value-pad * 0.5) $value-pad;
-                        line-height: 1.125;
+                        padding-top:    $value-pad * 0.5;
+                        padding-bottom: $value-pad * 0.5;
+                        padding-left:   $value-pad;
+                        padding-right:  $value-pad * 1.5;
+                        line-height:    1.125;
                         box-shadow:
                             0  0   0 1px $root-bg-color,    // sides
                             0 -1px 0 1px,                   // top
@@ -1228,7 +1260,7 @@ table.manifest_item-grid {
                     &[data-hover="#{$type-name}"] {
                         .uploaded-filename {
                             #{$type-class}.active {
-                                box-shadow: 0 0 0 2px;
+                                box-shadow: 0 0 1px 1px;
                             }
                         }
                     }
@@ -1432,10 +1464,13 @@ table.manifest_item-grid {
             }
 
             &.head {
-                > .cell:not([data-field="file_data"]) {
+                > .cell {
                     details[open] {
                         .content {
-                            max-width: $max-file-column-width;
+                            > * {
+                                max-width: $max-column-width;
+                                min-width: fit-content;
+                            }
                         }
                     }
                 }
@@ -1469,6 +1504,12 @@ table.manifest_item-grid {
         }
 
         tr.manifest_item-grid-item {
+
+            > .controls {
+                @media #{$wide-screen}   { min-width: 12.5vw; }
+                @media #{$medium-width}  { min-width: 25vw; }
+                @media #{$narrow-screen} { min-width: 33vw; }
+            }
 
             &:not(.head) {
                 > .controls,

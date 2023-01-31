@@ -2,6 +2,26 @@
 //
 // Definitions supporting pop-up elements.
 
+@use 'shared/variables' as *;
+
+//=============================================================================
+// Responsive breakpoint values
+//=============================================================================
+
+:root {
+    @media #{$wide-screen}   { --popup-max-width: 50vw; }
+    @media #{$medium-width}  { --popup-max-width: 75vw; }
+    @media #{$narrow-screen} { --popup-max-width: 90vw; }
+}
+
+:root {
+    @media #{$wide-screen}   { --popup-max-height: 50vh; }
+    @media #{$medium-width}  { --popup-max-height: 75vw; }
+    @media #{$narrow-screen} { --popup-max-height: 90vw; }
+}
+
+$max-width:  var(--popup-max-width);
+$max-height: var(--popup-max-height);
 
 //=============================================================================
 // Floating elements
@@ -12,10 +32,10 @@
 /// @param {Numeric} $width           Must be in 'vw' units.
 /// @param {Numeric} $height          Must be in 'vh' units.
 ///
-@mixin center-float($width: 50vw, $height: 50vh) {
+@mixin center-float($width: $max-width, $height: $max-height) {
     position: sticky;
-    top:      (100vh - $height) * 0.5;
-    left:     (100vw - $width)  * 0.5;
+    top:      if(($height == 0), (100vh * 0.5), calc((100vh - $height) * 0.5));
+    left:     if(($width  == 0), (100vw * 0.5), calc((100vw - $width)  * 0.5));
     display:  block;
     height:   $height;
     width:    $width;
@@ -42,12 +62,17 @@
 ///
 /// @param {Numeric} $width           Must be in 'vw' units.
 ///
-@mixin center-float-vertical($width: 50vw) {
+@mixin center-float-vertical($width: $max-width) {
 
     @include center-float-container($width, 0);
 
     flex-direction:  column;
     justify-content: center;
+
+    @media #{$not-wide-screen} {
+        min-width: $width;
+        max-width: $width;
+    }
 }
 
 /// Used to make a floating container element that expands horizontally around
@@ -55,7 +80,7 @@
 ///
 /// @param {Numeric} $height          Must be in 'vh' units.
 ///
-@mixin center-float-horizontal($height: 50vw) {
+@mixin center-float-horizontal($height: $max-height) {
 
     @include center-float-container(0, $height);
 

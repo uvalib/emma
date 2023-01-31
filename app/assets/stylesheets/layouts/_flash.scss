@@ -10,7 +10,7 @@
 // Flash message display.
 //=============================================================================
 
-$flash-width: 50vw;
+$flash-width: popup.$max-width;
 
 // @see file:app/views/layouts/_flash.html.erb
 .flash-messages {
@@ -106,7 +106,7 @@ $flash-width: 50vw;
     // Providing a wide box-shadow let the flash container appear as though
     // it's displayed above an overlay without needing an additional element.
 
-    @include popup.center-float-vertical($flash-width);
+    @include popup.center-float-vertical;
 
     z-index:    $z-flash;
     border:     none;

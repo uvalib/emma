@@ -259,7 +259,7 @@ appSetup(MODULE, function() {
     const HEADING_CLASS         = 'heading-bar';
     const TITLE_TEXT_CLASS      = `text.name`;
     const TITLE_EDIT_CLASS      = `title-edit`;
-    const TITLE_FORM_CLASS      = `mini-form`;
+    const TITLE_EDITOR_CLASS    = `line-editor`;
     const TITLE_UPDATE_CLASS    = `update`;
     const TITLE_CANCEL_CLASS    = `cancel`;
 
@@ -297,7 +297,7 @@ appSetup(MODULE, function() {
     const HEADING       = selector(HEADING_CLASS);
     const TITLE_TEXT    = selector(TITLE_TEXT_CLASS);
     const TITLE_EDIT    = selector(TITLE_EDIT_CLASS);
-    const TITLE_FORM    = selector(TITLE_FORM_CLASS);
+    const TITLE_EDITOR  = selector(TITLE_EDITOR_CLASS);
     const TITLE_UPDATE  = selector(TITLE_UPDATE_CLASS);
     const TITLE_CANCEL  = selector(TITLE_CANCEL_CLASS);
 
@@ -345,10 +345,10 @@ appSetup(MODULE, function() {
     const $title_heading = $(HEADING);
     const $title_text    = $title_heading.find(TITLE_TEXT);
     const $title_edit    = $title_heading.find(TITLE_EDIT);
-    const $title_form    = $title_heading.find(TITLE_FORM);
-    const $title_input   = $title_form.find('input[name="name"]');
-    const $title_update  = $title_form.find(TITLE_UPDATE);
-    const $title_cancel  = $title_form.find(TITLE_CANCEL)
+    const $title_editor  = $title_heading.find(TITLE_EDITOR);
+    const $title_input   = $title_editor.find('input[name="name"]');
+    const $title_update  = $title_editor.find(TITLE_UPDATE);
+    const $title_cancel  = $title_editor.find(TITLE_CANCEL)
 
     /**
      * The container for the grid and pagination controls.

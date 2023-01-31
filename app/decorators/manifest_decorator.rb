@@ -524,7 +524,7 @@ class ManifestDecorator
     edit  = 'Click to change the title of this manifest' # TODO: I18n
     edit  = html_button('Edit', class: 'title-edit', title: edit)
 
-    input = model_mini_form(pairs: { name: name })
+    input = model_line_editor(pairs: { name: name })
 
     help  = h.page_heading_help(help)
 

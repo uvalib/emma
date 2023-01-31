@@ -293,7 +293,7 @@ module BaseDecorator::Form
   #
   def model_form: (?label: String|nil, ?action: String|Symbol|nil, ?cancel: String|nil, ?uploader: bool|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Label for mini-form update button. # TODO: I18n
+  # Label for line-editor update button. # TODO: I18n
   #
   # @type [String]
   #
@@ -301,7 +301,7 @@ module BaseDecorator::Form
 
   UPDATE_CSS: String
 
-  # Label for mini-form cancel button. # TODO: I18n
+  # Label for line-editor cancel button. # TODO: I18n
   #
   # @type [String]
   #
@@ -318,7 +318,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def model_mini_form: (?pairs: symHash|nil, ?action: String|Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def model_line_editor: (?pairs: symHash|nil, ?action: String|Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Modify a form options hash based on form action.
   #
