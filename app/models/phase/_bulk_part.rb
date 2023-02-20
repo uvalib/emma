@@ -26,19 +26,19 @@ class Phase::BulkPart < Phase
   #
   def set_callback!(opt, meth = nil)
     inner_cb = opt.delete(:callback)
-    if inner_cb && !inner_cb.is_a?(ApplicationJob::AsyncCallback)
-      inner_cb = ApplicationJob::AsyncCallback.new(inner_cb)
+    if inner_cb && !inner_cb.is_a?(Model::AsyncCallback)
+      inner_cb = Model::AsyncCallback.new(inner_cb)
     end
     if (inner_opt = opt.slice(:cb_receiver, :cb_method)).present?
       if inner_cb
         Log.warn { "#{__method__}: ignored #{inner_opt.inspect}" }
       else
-        inner_cb = ApplicationJob::AsyncCallback.new(inner_opt)
+        inner_cb = Model::AsyncCallback.new(inner_opt)
       end
       opt.except!(*inner_opt.keys)
     end
     meth ||= calling_method&.sub(/!$/, '_cb')&.to_sym
-    cb = ApplicationJob::AsyncCallback.new(self, meth, inner_cb)
+    cb = Model::AsyncCallback.new(self, meth, inner_cb)
     opt.merge!(callback: cb)
   end
 

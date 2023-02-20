@@ -5,10 +5,15 @@
 
 __loading_begin(__FILE__)
 
-class SubmitJob < ActiveJob::Base
+class SubmitJob < ApplicationJob
 
-  include ApplicationJob::Methods
-  include ApplicationJob::Logging
+  include GoodJob::ActiveJobExtensions::Batches
+
+  # ===========================================================================
+  # :section: ActiveJob properties
+  # ===========================================================================
+
+  self.queue_name_prefix = 'submit'
 
   # ===========================================================================
   # :section:
@@ -16,28 +21,8 @@ class SubmitJob < ActiveJob::Base
 
   public
 
-  self.queue_name_prefix = 'submit'
-
-  queue_as { manifest_id }
-
+  # @return [String]
   attr_accessor :manifest_id
-
-  # ===========================================================================
-  # :section: Class Methods
-  # ===========================================================================
-
-  public
-
-  # queue_for
-  #
-  # @param [SubmitJob, Manifest, String, *] manifest
-  #
-  # @return [String, nil]
-  #
-  def self.queue_for(manifest)
-    id = manifest.try(:manifest_id) || manifest.try(:id) || manifest
-    queue_name_from_part(id) if id.is_a?(String)
-  end
 
   # ===========================================================================
   # :section: ActiveJob::Execution overrides
@@ -46,8 +31,11 @@ class SubmitJob < ActiveJob::Base
   public
 
   # Perform submission task(s), invoking #waiter_task if the job arguments
-  # contain a SubmissionService::BatchSubmitRequest, or invoking #worker_task
-  # otherwise.
+  # contain a SubmissionService::BatchSubmitRequest.
+  #
+  # Unlike the (current) implementation of LookupJob, the "worker task" is not
+  # defined as an instance method.  Instead #perform_later is overridden to
+  # create a GoodJob::Batch which handles that functionality.
   #
   # Expected ActiveJob arguments:
   # * argument[0]   request
@@ -79,7 +67,7 @@ class SubmitJob < ActiveJob::Base
     if opt[:job_type] == :worker
       worker_task(record, request, **opt)
     else
-      waiter_task(record, request, **opt)
+      raise "#{opt[:job_type]} job_type unexpected"
     end
 
   rescue => error
@@ -99,16 +87,12 @@ class SubmitJob < ActiveJob::Base
   JOB_STATUS = {
     worker: {
       nil =>    'WORKING',
-      spawn:    'SPAWNING',
-      step:     'STEP',
-      late:     'LATE',
-      done:     'DONE',
+      step:     SubmitChannel::Response::STATUS_STEP,
+      done:     SubmitChannel::Response::STATUS_INTERMEDIATE,
     },
     waiter: {
       nil =>    'WAITING',
-      complete: 'COMPLETE', # All services replied.
-      partial:  'PARTIAL',  # Some services timed out.
-      timeout:  'TIMEOUT',  # All services timed out.
+      complete: SubmitChannel::Response::STATUS_FINAL,
     }
   }.deep_freeze
 
@@ -137,7 +121,6 @@ class SubmitJob < ActiveJob::Base
     job_opt  = extract_hash!(opt, *JOB_OPTIONS)
     meth     = job_opt[:meth]     || __method__
     start    = job_opt[:start]    || timestamp
-    status   = job_opt[:status]
     timeout  = job_opt[:timeout]
     deadline = job_opt[:deadline] || (timeout && (start + timeout))
     job_type = job_opt[:job_type] || :worker
@@ -152,14 +135,13 @@ class SubmitJob < ActiveJob::Base
     response =
       service.process(request, **opt, callback: step_callback).tap do |rsp|
         # noinspection RubyMismatchedArgumentType
-        late     = deadline && past_due(deadline)
-        status   = :late if late
-        status ||= rsp.batch? ? :spawn : :done
+        overtime = deadline && past_due(deadline)
+        status   = :done
         rsp[:class]    = rsp.class.name
         rsp[:job_id]   = job_id
         rsp[:job_type] = job_type
-        rsp[:late]     = late if late
-        rsp[:status]   = JOB_STATUS[job_type][status]
+        rsp[:late]     = overtime if overtime
+        rsp[:status]   = JOB_STATUS.dig(job_type, status) || '???'
       end
     result = response.to_h
     error  = response.error
@@ -171,7 +153,7 @@ class SubmitJob < ActiveJob::Base
     end
 
     # Report results.
-    __debug_job("#{meth} OUTPUT") { result }
+    __debug_job(meth, 'OUTPUT') { result }
     record.update(output: result, error: error, diagnostic: diag)
     SubmitChannel.final_response(result, **opt)
 
@@ -180,101 +162,150 @@ class SubmitJob < ActiveJob::Base
   end
 
   # ===========================================================================
+  # :section: ActiveJob::Execution overrides
+  # ===========================================================================
+
+  public
+
+  # Process SubmissionService::BatchSubmitRequest jobs through
+  # GoodJob::Batch#enqueue; all other request jobs are queued the normal way
+  # via ActiveJob::Enqueuing#enqueue.
+  #
+  # @param [Array] args               Assigned to ActiveJob::Core#arguments.
+  # @param [Hash]  opt
+  #
+  # @return [GoodJob::BatchRecord]
+  # @return [SubmitJob, false]
+  #
+  def self.perform_later(*args, **opt)
+    __debug_job(__method__) { { args: args, opt: opt } } # TODO: remove
+    return super unless args.first.is_a?(SubmissionService::BatchSubmitRequest)
+
+    # Extract batch sub-requests.
+    request  = args.shift
+    requests = request.requests
+    count    = requests&.size
+
+    # Extract job-related options.
+    opt.except!(:meth, :job_type)
+    job_opt  = extract_hash!(opt, *JOB_OPTIONS)
+    start    = job_opt[:start]       ||= timestamp
+    job_type = job_opt[:job_type]    ||= :waiter
+    manifest = job_opt[:manifest_id] ||= request.manifest_id
+    job_opt.merge!(opt)
+
+    # Spawn a job for each batch.
+    properties = job_opt.merge(count: count, on_finish: SubmitJobCallbackJob)
+    properties[:on_success] = properties[:on_finish] # NOTE: trial; may go away
+    properties[:on_discard] = properties[:on_finish] # NOTE: trial; may go away
+    GoodJob::Batch.enqueue(**properties) {
+      requests.each do |req|
+        perform_later(req, *args, **job_opt, job_type: :worker)
+      end
+    }.tap { |batch|
+      # Send an initial response back to the client.
+      payload = {
+        data:        requests,
+        job_id:      batch.id, # NOTE: not correlated with ActiveJob identity
+        job_type:    job_type,
+        manifest_id: manifest,
+        start_time:  start,
+      }
+      SubmitChannel.initial_response(payload, **opt)
+    }
+  end
+
+end
+
+# The job invoked when the batch job queued in SubmitJob::perform_later is run.
+#
+# GoodJob::Batch allows for distinct job classes to handle the :discard,
+# :success, and :finish events, but also supports the ability of a single class
+# to be defined to handle any of them.
+#
+class SubmitJobCallbackJob < ApplicationJob
+
+  JOB_TYPE = :waiter
+
+  # ===========================================================================
+  # :section: ActiveJob::Execution overrides
+  # ===========================================================================
+
+  public
+
+  # Invoked when the batch job enqueued in SubmitJob#perform_later is run.
+  #
+  # The *options* argument has only one entry: the :event which indicates the
+  # nature of this execution (which allows a single job class to be defined to
+  # handle each of these events).
+  #
+  # @param {GoodJob::Batch} batch
+  # @param {Hash}           options
+  #
+  # @see GoodJob::BatchRecord#_continue_discard_or_finish
+  #
+  def perform(batch, options)
+    __debug_job(__method__) { { batch: batch, options: options } }
+    case options[:event]
+      when :finish  then on_finish(batch)
+      when :success then on_success(batch)
+      when :discard then on_discard(batch)
+      else Log.warn { "#{self.class}: unexpected #{options.inspect}" }
+    end
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 
   protected
 
-  # waiter_task
+  # Invoked when the batch job enqueued in SubmitJob#perform_later is run,
+  # indicating that all sub-requests have finished.
   #
-  # @param [JobResult]                             record
-  # @param [SubmissionService::BatchSubmitRequest] request
-  # @param [SubmissionService]                     service  Service instance
-  # @param [Hash]                                  opt
+  # NOTE: `batch.properties` must include :stream_name (or :stream_id) in
+  #   order to direct the ActionCable response to the client.
   #
-  # @return [Hash]
+  # @param {GoodJob::Batch} batch
   #
-  def waiter_task(record, request, service:, **opt)
-    job_opt   = extract_hash!(opt, *JOB_OPTIONS)
-    timeout   = job_opt.delete(:timeout)
-    _meth     = job_opt[:meth]     ||= __method__
-    start     = job_opt[:start]    ||= timestamp
-    deadline  = job_opt[:deadline] ||= timeout && (start + timeout)
-    job_type  = job_opt[:job_type] || :waiter
-    waiter_id = job_id
-
-    # Send an initial response back to the client.
-    payload  = {
-      data:        request,
-      job_id:      waiter_id,
-      job_type:    job_type,
-      manifest_id: manifest_id,
-      start_time:  start,
-    }
-    SubmitChannel.initial_response(payload, **opt)
-
-    # Spawn worker task jobs.
-    job_opt.merge!(job_type: :worker)
-    response = service.process(request, **opt, **job_opt)
-    job_list, results = response.partition { |r| r.is_a?(SubmitJob) }
-
-    # Await task completions (unless opt[:no_async] is true).
-    if job_list.present?
-
-      # noinspection RubyMismatchedArgumentType
-      job_table = ApplicationJob::Table.new(job_list)
-
-      notifications_subscribe do |_, _, _, _, event_payload|
-
-        data   = event_payload&.dig(:result)&.try(:value)
-        job_id = data&.dig(:active_job_id)
-
-        # Because this block will be invoked by the completion of any GoodJob
-        # job, only pay attention to the completion of a job that was started
-        # by this waiter instance.
-        if job_table.include?(job_id)
-
-          # Update the table with information about the completed job.
-          end_time = timestamp
-          overtime = deadline && positive_float(end_time - deadline)
-          job_table[job_id] = data.except(:active_job_id)
-          job_table[job_id][:late] ||= overtime if overtime
-
-          # If all jobs spawned by this waiter have completed then send the
-          # final response back to the client and remove this waiter instance
-          # from the list of event subscribers.
-          if job_table.completed?
-            notifications_unsubscribe
-            total, error = job_table.summarize.values_at(:total, :error)
-            status = overtime ? :timeout : :complete
-            result =
-              SubmitChannel::SubmitResponse.new(**opt).tap do |rsp|
-                rsp[:count]       = total
-                rsp[:data]        = job_table.map { |k,v| [k, v[:data]] }.to_h
-                rsp[:discard]     = error if error
-                rsp[:job_id]      = waiter_id
-                rsp[:job_type]    = job_type
-                rsp[:manifest_id] = manifest_id
-                rsp[:status]      = JOB_STATUS[job_type][status]
-                rsp[:start_time]  = start
-                rsp[:end_time]    = end_time
-                rsp[:duration]    = (end_time - start)
-              end
-            record.update(output: result, error: error)
-            SubmitChannel.final_response(result, **opt)
-          end
-        end
-      end
+  def on_finish(batch)
+    __debug_job('*** BATCH FINISHED - all jobs have finished') do
+      { properties: batch.properties }
     end
+    opt        = batch.properties
+    opt, prop  = partition_hash(opt,  *ApplicationCable::CHANNEL_PARAMS)
+    job, resp  = partition_hash(prop, *SubmitJob::JOB_OPTIONS)
+    end_time   = timestamp
+    start_time = job[:start]    || end_time
+    timeout    = job[:timeout]
+    deadline   = job[:deadline] || (timeout && (start_time + timeout))
+    # noinspection RubyMismatchedArgumentType
+    overtime   = deadline && past_due(deadline, end_time)
 
-    # Update the 'job_results' entry for this waiter.  If opt[:no_async] is
-    # true, this appears only after all workers have completed.  Otherwise,
-    # this initial information will be overwritten by the notification
-    # subscriber block.
-    error = { _: 'WAITER', opt: opt, response: response.class.name }
-    record.update(output: results, error: error)
+    resp[:job_id]     = batch.id
+    resp[:job_type]   = JOB_TYPE
+    resp[:data]       = nil # {}              # TODO: ???
+    resp[:late]       = overtime if overtime
+    resp[:start_time] = start_time
+    resp[:end_time]   = end_time
+    resp[:duration]   = end_time - start_time
+    SubmitChannel.final_response(resp, **opt)
+  end
 
-    payload.merge!(data: results)
+  # Invoked if no GoodJob jobs were discarded.
+  #
+  # @param {GoodJob::Batch} batch
+  #
+  def on_success(batch)
+    __debug_job('*** BATCH SUCCESS - all jobs have succeeded') { batch }
+  end
+
+  # Invoked when GoodJob job(s) are discarded.
+  #
+  # @param {GoodJob::Batch} batch
+  #
+  def on_discard(batch)
+    __debug_job('*** BATCH DISCARD - job(s) have been discarded') { batch }
   end
 
 end

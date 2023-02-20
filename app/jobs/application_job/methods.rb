@@ -71,13 +71,14 @@ module ApplicationJob::Methods
 
   # The time elapsed past the given deadline.
   #
-  # @param [Numeric]      deadline
-  # @param [Numeric, nil] current   Default `#timestamp`.
-  # @param [Float]        epsilon
+  # @param [Float, Integer, nil] deadline
+  # @param [Float, Integer, nil] current   Default `#timestamp`.
+  # @param [Float]               epsilon
   #
   # @return [Float, nil]
   #
   def past_due(deadline, current = nil, epsilon: EPSILON)
+    return unless deadline
     current  = current&.to_f || timestamp
     overtime = current - deadline.to_f
     positive_float(overtime, epsilon: epsilon)

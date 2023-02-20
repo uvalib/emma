@@ -211,11 +211,11 @@ export class LookupRequest extends ChannelRequest {
     // ========================================================================
 
     /** @returns {LookupRequestPayload} */
-    get parts()  { return super.parts }
+    get parts() { return super.parts }
 
-    get ids()    { return this.parts.ids   || [] }
-    get query()  { return this.parts.query || [] }
-    get limit()  { return this.parts.limit || [] }
+    get ids()   { return this.parts.ids   || [] }
+    get query() { return this.parts.query || [] }
+    get limit() { return this.parts.limit || [] }
 
     /**
      * A request object with only the terms that would actually be used for a

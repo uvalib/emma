@@ -38,6 +38,7 @@ if DEBUG_SPROCKETS
   # TODO: Work into Emma::Extension::Debugging
   class DebugTiming
 
+    extend Emma::ThreadMethods
     extend Emma::TimeMethods
 
     def self.start
@@ -69,10 +70,6 @@ if DEBUG_SPROCKETS
 
     def self.pop_level
       @level = level.positive? ? (level - 1) : 0
-    end
-
-    def self.thread_name
-      Thread.current.name || Thread.current.to_s
     end
 
     def self.indent(depth = level)

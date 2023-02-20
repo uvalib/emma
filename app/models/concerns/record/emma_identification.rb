@@ -66,8 +66,9 @@ module Record::EmmaIdentification
   #
   def sid_value(item, **opt)                                                    # NOTE: from Upload::IdentifierMethods#sid_for
     # noinspection RubyMismatchedReturnType
-    return item if valid_sid?(item)
-    return unless (key = opt[:sid_key] || sid_column)
+    return item               if valid_sid?(item)
+    return item.submission_id if item.respond_to?(:submission_id)
+    return                    unless (key = opt[:sid_key] || sid_column)
     opt  = item.merge(opt) if item.is_a?(Hash)
     item = opt unless item.is_a?(Model)
     get_value(item, key) || get_value(item, :sid) if item.present?

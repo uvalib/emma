@@ -1,5 +1,8 @@
 # SubmissionService::Action::Control
 #
+# @note The original approach for these methods is incompatible with the use of
+#   GoodJob::Batch as the "waiter task".
+#
 module SubmissionService::Action::Control
   include SubmissionService::Common
 
@@ -14,7 +17,7 @@ module SubmissionService::Action::Control
   #
   # @return [SubmissionService::ControlResponse] The value assigned to @result.
   #
-  def batch_pause: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
+  #def batch_pause: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
 
   # Receive a request to resume a paused batch job.
   #
@@ -25,5 +28,5 @@ module SubmissionService::Action::Control
   #
   # @return [SubmissionService::ControlResponse] The value assigned to @result.
   #
-  def batch_resume: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
+  #def batch_resume: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
 end

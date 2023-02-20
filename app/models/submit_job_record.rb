@@ -25,23 +25,6 @@ class SubmitJobRecord < GoodJob::Job
 
   default_scope { job_class(SubmitJob) }
 
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # active_for
-  #
-  # @param [SubmitJob, Manifest, String, *] manifest
-  #
-  # @return [ActiveRecord::Relation<SubmitJobRecord>, nil]
-  #
-  def self.active_for(manifest)
-    queue = SubmitJob.queue_for(manifest)
-    where(queue_name: queue).and(running) unless queue.blank?
-  end
-
 end
 
 __loading_end(__FILE__)

@@ -108,6 +108,12 @@ module Record::Properties
   #
   BATCH_SIZE_DEFAULT: Integer
 
+  # Batches larger than this number are not possible.
+  #
+  # @type [Integer]
+  #
+  BATCH_UPPER_BOUND: Integer
+
   # Batches larger than this number are not permitted.
   #
   # @type [Integer]

@@ -58,6 +58,8 @@ export class ChannelResponse extends BaseClass {
      * @enum {string}
      */
     static JOB_STATUS = deepFreeze([
+        'STARTING',
+        'STEP',
         'WORKING',
         'LATE',
         'DONE',
@@ -110,7 +112,7 @@ export class ChannelResponse extends BaseClass {
     constructor(msg_obj) {
         super();
         if (msg_obj instanceof this.constructor) {
-            this._payload = msg_obj.payloadCopy;
+            this._payload = msg_obj.toObject();
         } else if (typeof msg_obj === 'object') {
             this._payload = deepDup(msg_obj);
         } else if (msg_obj) {
@@ -125,20 +127,18 @@ export class ChannelResponse extends BaseClass {
     // Properties
     // ========================================================================
 
-    get status()    { return this.payload.status }
-    get user()      { return this.payload.user }
-    get job_id()    { return this.payload.job_id }
-    get job_type()  { return this.payload.job_type }
-    get time()      { return this.payload.time }
-    get duration()  { return this.payload.duration }
-    get late()      { return this.payload.late }
-    get count()     { return this.payload.count }
-    get class()     { return this.payload.class }
-    get data()      { return this.payload.data }
-    get data_url()  { return this.payload.data_url }
-
-    get payload()     { return this._payload }
-    get payloadCopy() { return this.toObject() }
+    get payload()  { return this._payload }
+    get status()   { return this.payload.status }
+    get user()     { return this.payload.user }
+    get job_id()   { return this.payload.job_id }
+    get job_type() { return this.payload.job_type }
+    get time()     { return this.payload.time }
+    get duration() { return this.payload.duration }
+    get late()     { return this.payload.late }
+    get count()    { return this.payload.count }
+    get class()    { return this.payload.class }
+    get data()     { return this.payload.data }
+    get data_url() { return this.payload.data_url }
 
     /**
      * Indicate whether the response represents the completion of the original

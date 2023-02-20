@@ -406,7 +406,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         _debug('updateSearchResultsData:', message);
         const key = message.job_id || randomizeName('response');
         const obj = getSearchResultsData() || resetSearchResultsData();
-        obj[key]  = message.payloadCopy;
+        obj[key]  = message.toObject();
     }
 
     /**
@@ -591,6 +591,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const state = message.status?.toUpperCase();
         const srv   = message.service;
         const data  = message.data;
+
         let finish, notice, n_tip, status;
         switch (state) {
 

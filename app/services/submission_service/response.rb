@@ -43,6 +43,19 @@ class SubmissionService::Response < ApplicationJob::Response
     end
     opt[:manifest_id] ||= extract_manifest_id(values, **opt)
     super
+    opt[:simulation] = opt[:simulation]
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether this response is part of a simulation.
+  #
+  def simulation?
+    self[:simulation].present?
   end
 
   # ===========================================================================
@@ -68,8 +81,6 @@ end
 # Response object for a submission request.
 #
 # @see SubmitChannel::SubmitResponse
-# @see SubmitChannel::InitialResponse
-# @see SubmitChannel::FinalResponse
 # @see file:javascripts/shared/submit-response.js *SubmitResponse*
 #
 class SubmissionService::SubmitResponse < SubmissionService::Response
@@ -88,7 +99,23 @@ class SubmissionService::SubmitResponse < SubmissionService::Response
 
   public
 
-  def self.template       = TEMPLATE
+  def self.template = TEMPLATE
+
+end
+
+# Initial response object for a submission request.
+#
+# @see SubmitChannel::InitialResponse
+# @see file:javascripts/shared/submit-response.js *SubmitInitialResponse*
+#
+class SubmissionService::InitialResponse < SubmissionService::SubmitResponse
+
+  # ===========================================================================
+  # :section: ApplicationCable::Response::Payload overrides
+  # ===========================================================================
+
+  public
+
   def self.default_status = SubmitChannel::InitialResponse.default_status
 
 end
@@ -121,6 +148,9 @@ end
 
 # Response object for a submission request.
 #
+# @see SubmitChannel::StepResponse
+# @see file:javascripts/shared/submit-response.js *SubmitStepResponse*
+#
 class SubmissionService::BatchSubmitResponse < SubmissionService::SubmitResponse
 
   # ===========================================================================
@@ -129,7 +159,7 @@ class SubmissionService::BatchSubmitResponse < SubmissionService::SubmitResponse
 
   public
 
-  def self.default_status = 'BATCHING'
+  def self.default_status = 'WAITING'
 
   # ===========================================================================
   # :section: SubmissionService::Response overrides
@@ -138,6 +168,23 @@ class SubmissionService::BatchSubmitResponse < SubmissionService::SubmitResponse
   public
 
   def self.batch? = true
+
+end
+
+# Final response object for a submission request.
+#
+# @see SubmitChannel::FinalResponse
+# @see file:javascripts/shared/submit-response.js *SubmitFinalResponse*
+#
+class SubmissionService::FinalResponse < SubmissionService::StepResponse
+
+  # ===========================================================================
+  # :section: ApplicationCable::Response::Payload overrides
+  # ===========================================================================
+
+  public
+
+  def self.default_status = SubmitChannel::FinalResponse.default_status
 
 end
 
@@ -162,53 +209,8 @@ class SubmissionService::ControlResponse < SubmissionService::Response
 
   public
 
-  def self.template = TEMPLATE
-
-end
-
-# Response object for a list request.
-#
-# @see SubmitChannel::StatusResponse
-# @see file:javascripts/shared/submit-response.js *SubmitStatusResponse*
-#
-class SubmissionService::StatusResponse < SubmissionService::Response
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  TEMPLATE = SubmitChannel::StatusResponse::TEMPLATE
-
-  # ===========================================================================
-  # :section: SubmissionService::Response overrides
-  # ===========================================================================
-
-  public
-
-  # Create a new instance.
-  #
-  # @param [SubmissionService::StatusResponse, Hash, Array, *] values
-  # @param [Hash]                                              opt
-  #
-  def initialize(values = nil, **opt)
-    jobs = extract_hash!(opt, :job, :job_id).values.first
-    opt[:manifest_id] ||= extract_manifest_id(values, **opt)
-    if values.nil?
-      jobs   = jobs ? Array.wrap(jobs) : jobs_for(opt[:manifest_id])
-      values = jobs.map { |j| [(j.try(:active_job_id) || j), j] }.to_h
-    end
-    super
-  end
-
-  # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
-  # ===========================================================================
-
-  public
-
-  def self.template = TEMPLATE
+  def self.template       = TEMPLATE
+  def self.default_status = SubmitChannel::ControlResponse.default_status
 
 end
 

@@ -95,13 +95,16 @@ export class LookupResponse extends ChannelResponse {
     // ========================================================================
 
     /** @returns {LookupResponsePayload} */
-    get payload()     { return this._payload }
+    get payload() { return super.payload }
+    get service() { return this.payload.service }
+    get discard() { return this.payload.discard }
 
-    get service()     { return this.payload.service }
-    get discard()     { return this.payload.discard }
+    // ========================================================================
+    // Methods
+    // ========================================================================
 
     /** @returns {LookupResponsePayload} */
-    get payloadCopy() { return super.payloadCopy }
+    toObject() { return super.toObject() }
 
     // ========================================================================
     // Class methods

@@ -7,40 +7,20 @@ __loading_begin(__FILE__)
 
 # Definitions for job logging.
 #
-# == Usage Notes
-# Include in each job class definition to resolve #job_name properly.
-#
 module ApplicationJob::Logging
 
   extend ActiveSupport::Concern
 
   include Emma::Common
   include Emma::Debug
+  include Emma::ThreadMethods
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include ActiveJob::Core
     include ActiveJob::Execution
     include ActiveJob::Logging
     # :nocov:
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # initialize
-  #
-  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
-  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
-  #
-  def initialize(*args, **opt)
-    __debug_job(__method__) { { args: args, opt: opt } }
-    super()
-    set_arguments(*args, **opt)
   end
 
   # ===========================================================================
@@ -99,22 +79,20 @@ module ApplicationJob::Logging
   #
   def set_arguments(*args, **opt)
     meth = opt.delete(:meth) || __method__
-    unless respond_to?(:arguments)
+    args << args.extract_options!.merge(opt) if opt.present?
+    if !respond_to?(:arguments)
       job_warn(meth: meth) { "not a class method | args = #{args.inspect}" }
       return []
-    end
-    if arguments.blank?
-      args << opt if (opt = opt.presence && args.extract_options!.merge(opt))
-      job_warn(meth: meth) { "arguments being set to #{args.inspect}" }
-      return self.arguments = args
-    end
-    # noinspection RubyMismatchedArgumentType
-    __debug_job(meth) { "`arguments` = #{arguments_inspect(self)}" }
-    if (extra = args - arguments).present?
+    elsif arguments.blank?
+      self.arguments = args
+    elsif args.blank?
+      job_warn(meth: meth) { 'ignoring empty method args' }
+    elsif (extra = args - arguments).present?
       job_warn(meth: meth) { "ignoring extra method args #{extra.inspect}" }
-    elsif args.present?
-      job_warn(meth: meth) { 'ignoring duplicate method args' }
+    else
+      __debug_job(meth, 'ignoring duplicate method args')
     end
+    __debug_job(meth, "(#{arguments.size} args)") { arguments_inspect }
     arguments
   end
 
@@ -136,24 +114,29 @@ module ApplicationJob::Logging
 
   public
 
-  def job_name
-    @job_name ||= "JOB #{self_class}"
+  TAG_LEADER = 'JOB'
+
+  def job_tag(arg = nil, tag: nil, tid: nil, **)
+    arg ||= self
+    name  = arg.is_a?(Class) ? arg     : arg.class
+    tag ||= arg.is_a?(Class) ? 'CLASS' : arg.job_id
+    tid ||= thread_name
+    "#{TAG_LEADER} #{name} [#{tid}] [#{tag}]"
   end
 
-  def job_leader(job)
-    job.is_a?(Class) ? "CLASS #{job}" : "#{job.job_name} [#{job.job_id}]"
-  end
-
-  def job_inspect(job)
+  def job_inspect(job = nil)
+    job ||= self
     if job.is_a?(Class)
-      job_leader(job)
+      job_tag(job)
     else
-      "#{job_leader(job)} arguments: #{arguments_inspect(job)}"
+      # noinspection RubyMismatchedArgumentType
+      "#{job_tag(job)} arguments: #{arguments_inspect(job)}"
     end
   end
 
-  def arguments_inspect(job)
-    job.arguments.map { |v| item_inspect(v) }.join(' | ')
+  def arguments_inspect(job = nil)
+    # noinspection RailsParamDefResolve
+    (job || self).try(:arguments)&.map { |v| item_inspect(v) }&.join(' | ')
   end
 
   # ===========================================================================
@@ -175,13 +158,11 @@ module ApplicationJob::Logging
   end
 
   def item_inspect(v)
-    # noinspection RubyMismatchedArgumentType
     case v
-      when ApplicationJob::AsyncCallback then "#{v.class} #{hash_inspect(v)}"
-      when ApplicationRecord             then record_inspect(v)
-      when Array                         then array_inspect(v)
-      when Hash                          then hash_inspect(v)
-      else                                    v.inspect
+      when ApplicationRecord then record_inspect(v)
+      when Array             then array_inspect(v)
+      when Hash              then hash_inspect(v)
+      else                        v.inspect
     end
   end
 
@@ -191,19 +172,26 @@ module ApplicationJob::Logging
 
   public
 
-  def __debug_job(*args, **opt)
-    unless opt.key?(:leader) || !args.first.is_a?(ActiveJob::Base)
-      # noinspection RubyMismatchedArgumentType
-      opt[:leader] = "#{job_leader(args.first)}:"
+  # Send debugging output to the console.
+  #
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block           Passed to #__debug_items
+  #
+  # @return [nil]
+  #
+  def __debug_job(*args, **opt, &block)
+    args.compact!
+    case args.first
+      when ActiveJob::Base, Class then job = args.shift
+      when /^#{TAG_LEADER} /      then job = args.shift
+      else                             job = self
     end
-    opt[:separator] ||= "\n\t"
-    tid   = Thread.current.name
-    name  = self_class
-    args  = args.join(Emma::Debug::DEBUG_SEPARATOR)
-    added = block_given? ? yield : {}
-    __debug_items("#{name} #{args}", **opt) do
-      added.is_a?(Hash) ? added.merge(thread: tid) : [*added, "thread #{tid}"]
-    end
+    # noinspection RubyMismatchedArgumentType
+    opt[:leader]    = "#{job_tag(job)}:" unless opt.key?(:leader)
+    opt[:compact]   = true               unless opt.key?(:compact)
+    opt[:separator] = "\n\t"             unless opt.key?(:separator)
+    __debug_items(args.join(DEBUG_SEPARATOR), **opt, &block)
   end
     .tap { |meth| neutralize(meth) unless DEBUG_JOB }
 
@@ -215,79 +203,6 @@ module ApplicationJob::Logging
 
   module ClassMethods
     include ApplicationJob::Logging
-  end
-
-  module InstanceMethods
-
-    include ApplicationJob::Logging
-
-    # =========================================================================
-    # :section: ApplicationJob::Logging overrides
-    # =========================================================================
-
-    public
-
-    def job_inspect(job = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(job || self)
-    end
-
-    def arguments_inspect(job = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(job || self)
-    end
-
-    # =========================================================================
-    # :section: ApplicationJob::Logging overrides
-    # =========================================================================
-
-    public
-
-    def __debug_job(*args, **opt, &block)
-      unless args.first.is_a?(ActiveJob::Base) || !is_a?(ActiveJob::Base)
-        args.prepend(self)
-      end
-      super(*args, **opt, &block)
-    end
-      .tap { |meth| neutralize(meth) unless DEBUG_JOB }
-
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  private
-
-  included do
-
-    if respond_to?(:before_enqueue)
-
-      # =======================================================================
-      # :section: ActiveJob callbacks
-      # =======================================================================
-
-      before_enqueue do |job|
-        __debug_job(job) { "--->>> ENQUEUE START #{job_inspect(job)}" }
-        # TODO: possible mechanism for making a job conditional; e.g.:
-        # user = job.arguments.first
-        # throw :abort unless user.wants_notification?
-      end
-
-      after_enqueue do |job|
-        __debug_job(job) { "<<<--- ENQUEUE END   #{job_inspect(job)}" }
-      end
-
-      before_perform do |job|
-        __debug_job(job) { "--->>> PERFORM START #{job_inspect(job)}" }
-      end
-
-      after_perform do |job|
-        __debug_job(job) { "<<<--- PERFORM END   #{job_inspect(job)}" }
-      end
-
-    end
-
   end
 
 end

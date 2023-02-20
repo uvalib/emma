@@ -18,35 +18,6 @@ module SubmissionService::Definition
 
   protected
 
-  # Find the ID of the waiter job associated with the indicated Manifest.
-  #
-  # @param [SubmitJob, Manifest, String, *] target
-  # @param [Hash]                           opt     To #jobs_for
-  #
-  # @return [String, nil]
-  #
-  def waiter_job_id(target, **opt)
-    jobs_for(target, **opt)&.first&.active_job_id
-  end
-
-  # Find the job(s) associated with the indicated Manifest.
-  #
-  # @param [SubmitJob, Manifest, String, *] target
-  # @param [Boolean]                        raise
-  #
-  # @return [ActiveRecord::Relation<SubmitJobRecord>, nil]
-  #
-  def jobs_for(target, raise: true)
-    SubmitJobRecord.active_for(target) or
-      (raise "No jobs for #{target.inspect}" if raise)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
   # Marshal data in preparation for the remote request.
   #
   # @param [SubmissionService::Request, Symbol, nil]           meth
@@ -98,7 +69,7 @@ module SubmissionService::Definition
       when SubmissionService::Request
         rsp = obj.response_class.new(obj, **opt)
       else
-        obj = { data: obj } if obj && !obj.is_a?(Hash)
+        obj = obj.is_a?(Hash) ? obj.compact : { data: obj } if obj
         rsp = self.request.response_class.new(obj, **opt)
     end
     t_start = rsp[:start_time] ||= obj[:start_time] || self.start_time

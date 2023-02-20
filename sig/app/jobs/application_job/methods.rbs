@@ -30,13 +30,15 @@ module ApplicationJob::Methods
 
   # The time elapsed past the given deadline.
   #
-  # @param [Numeric]      deadline
-  # @param [Numeric, nil] current   Default `#timestamp`.
-  # @param [Float]        epsilon
+  # @param [Float, Integer, nil] deadline
+  # @param [Float, Integer, nil] current   Default `#timestamp`.
+  # @param [Float]               epsilon
   #
   # @return [Float, nil]
   #
-  def past_due: (Numeric deadline, ?(Numeric|nil) current, ?epsilon: Float) -> (Float | nil)
+  def past_due
+    : (nil           deadline, ?(Float|Integer|nil) current, ?epsilon: Float) -> nil
+    | (Float|Integer deadline, ?(Float|Integer|nil) current, ?epsilon: Float) -> (Float | nil)
 
   # The instrumentation notification which causes the waiter task to update its
   # tally of results and send a response back to the client if all tasks have

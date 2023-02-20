@@ -71,7 +71,7 @@ module Upload::IdentifierMethods
   #
   def sid_for(item)
     return item               if valid_sid?(item)
-    return item.submission_id if item.is_a?(Upload)
+    return item.submission_id if item.respond_to?(:submission_id)
     _, rid, _ = Upload.record_id(item)&.split('-')
     rid if valid_sid?(rid)
   end

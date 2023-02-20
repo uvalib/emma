@@ -62,21 +62,20 @@ class LookupService
   # == Variations
   #++
   #
-  # @overload request(items, channel:, timeout: nil)
+  # @overload make_request(items, channel:, timeout: nil)
   #   Access remote services asynchronously.
   #   @param [LookupService::Request] request
   #   @param [LookupChannel]          channel
   #   @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
   #   @return [nil]
   #
-  # @overload request(items, timeout: nil)
+  # @overload make_request(items, timeout: nil)
   #   Access remote services one at a time.
   #   @param [LookupService::Request] request
   #   @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
   #   @return [Hash{String=>LookupService::Response}]
   #
-  def self.request(request, channel: nil, timeout: nil)
-    __debug_job(__method__) { { channel: channel, timeout: timeout } }
+  def self.make_request(request, channel: nil, timeout: nil)
     case timeout
       when false   then timeout = nil
       when Numeric then timeout = DEFAULT_TIMEOUT unless timeout&.positive?

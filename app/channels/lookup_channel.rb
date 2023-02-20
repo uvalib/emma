@@ -57,7 +57,7 @@ class LookupChannel < ApplicationCable::Channel
   def lookup_request(payload)
     data = stream_recv(payload, meth: __method__)
     data = LookupService::Request.wrap(data)
-    LookupService.request(data, channel: self)
+    LookupService.make_request(data, channel: self)
   end
 
   # ===========================================================================

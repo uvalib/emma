@@ -190,10 +190,10 @@ export class CableChannel extends BaseClass {
      * @see "LookupChannel#lookup_request"
      */
     request(data, action = this.channelAction) {
-        this._debug('request', data);
+        this._debug(`request: action ${action}; data =`, data);
         const channel = this.channel;
         const payload = channel && data;
-        const request = payload && this._createRequest(payload).requestPayload;
+        const request = payload && this._createRequest(payload).toObject();
         if (!channel) {
             this.setError('Channel not open');
         } else if (isEmpty(data)) {

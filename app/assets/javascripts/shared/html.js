@@ -58,26 +58,27 @@ export const HTML_ENTITY = {
 /**
  * Transform a string into one that can be used wherever HTML is expected.
  *
- * @param {string} text
+ * @param {*} arg
  *
  * @returns {string}
  */
-export function htmlEncode(text) {
-    const str = text.toString().trim();
-    return [...str].map(c => HTML_ENTITY[c] || c).join('');
+export function htmlEncode(arg) {
+    const txt = arg?.toString()?.trim() || '';
+    const str = txt.includes('&') ? htmlDecode(txt) : txt;
+    return str ? [...str].map(c => HTML_ENTITY[c] || c).join('') : '';
 }
 
 /**
  * Safely transform HTML-encoded text.
  *
- * @param {string} text
+ * @param {*} arg
  *
  * @returns {string}
  */
-export function htmlDecode(text) {
-    const str = text.toString().trim();
+export function htmlDecode(arg) {
+    const str = arg?.toString()?.trim() || '';
     const doc = str && new DOMParser().parseFromString(str, 'text/html');
-    return doc?.documentElement?.textContent;
+    return doc?.documentElement?.textContent || '';
 }
 
 // ============================================================================

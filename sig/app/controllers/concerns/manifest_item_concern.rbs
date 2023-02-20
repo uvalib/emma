@@ -107,6 +107,7 @@ module ManifestItemConcern
   # Transform import data into ManifestItem field values.
   #
   # @param [Hash{Symbol=>*}] item
+  # @param [Boolean]         invalid  Allow invalid values to be imported.
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -321,12 +322,15 @@ module ManifestItemConcern
   # grid item and thus the first opportunity for the client to learn what
   # database entry is associated with that item.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item         Def.: record for #manifest_item_id.
+  # @param [Boolean]           update_time  If *false* update :file_data only.
+  # @param [Hash]              opt          Field values.
   #
   # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
-  def upload_file: (?(ManifestItem|nil) item, **untyped opt) -> httpResult
+  # @note If update_time is *false* the associated record must already exist.
+  #
+  def upload_file: (?(ManifestItem|nil) item, update_time: bool, **untyped opt) -> httpResult
 
   # A relation for all rows of the indicated Manifest ordered by row.
   #
@@ -348,12 +352,14 @@ module ManifestItemConcern
 
   # bulk_create_manifest_items
   #
+  # @param [Array<Symbol>] returning  Returned result columns.
+  #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array<Hash>]             Created rows.
   #
-  def bulk_create_manifest_items: () -> Array[symHash]
+  def bulk_create_manifest_items: (?returning: symArray) -> Array[symHash]
 
   # bulk_edit_manifest_items
   #
@@ -363,12 +369,14 @@ module ManifestItemConcern
 
   # bulk_update_manifest_items
   #
+  # @param [Array<Symbol>] returning  Returned result columns.
+  #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array<Hash>]             Modified rows.
   #
-  def bulk_update_manifest_items: () -> Array[symHash]
+  def bulk_update_manifest_items: (?returning: symArray) -> Array[symHash]
 
   # bulk_delete_manifest_items
   #
@@ -389,9 +397,12 @@ module ManifestItemConcern
 
   # Data for one or more manifest items from parameters.
   #
+  # @param [Boolean] validate       If *true*, update status fields.
+  # @param [Boolean] nil_default    If *true*, make invalid values *nil*.
+  #
   # @return [Array<Hash>]
   #
-  def bulk_item_data: () -> Array[symHash]
+  def bulk_item_data: (?validate: bool, ?nil_default: bool) -> Array[symHash]
 
   # Transform a :returning result into an array of data hashes.
   #

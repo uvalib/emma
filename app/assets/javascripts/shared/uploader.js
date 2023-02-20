@@ -1,21 +1,22 @@
 // app/assets/javascripts/shared/uploader.js
 
 
-import { AppDebug }                         from '../application/debug';
-import { toggleVisibility }                 from './accessibility';
-import { Emma }                             from './assets';
-import { BaseClass }                        from './base-class';
-import { pageAction }                       from './controller';
-import { isHidden, selector, toggleHidden } from './css';
-import { isDefined, isMissing, isPresent }  from './definitions';
-import { handleClickAndKeypress }           from './events';
-import { extractFlashMessage }              from './flash';
-import { percent }                          from './math';
-import { compact, deepFreeze, fromJSON }    from './objects';
-import { camelCase }                        from './strings';
-import { MINUTES, SECONDS }                 from './time';
-import { makeUrl }                          from './url';
-import { Rails }                            from '../vendor/rails';
+import { AppDebug }                              from '../application/debug';
+import { toggleVisibility }                      from './accessibility';
+import { arrayWrap }                             from './arrays';
+import { Emma }                                  from './assets';
+import { BaseClass }                             from './base-class';
+import { pageAction }                            from './controller';
+import { isHidden, selector, toggleHidden }      from './css';
+import { isDefined, isMissing, isPresent }       from './definitions';
+import { handleClickAndKeypress }                from './events';
+import { extractFlashMessage }                   from './flash';
+import { percent }                               from './math';
+import { compact, deepFreeze, fromJSON, hasKey } from './objects';
+import { camelCase }                             from './strings';
+import { MINUTES, SECONDS }                      from './time';
+import { makeUrl }                               from './url';
+import { Rails }                                 from '../vendor/rails';
 import {
     ID_ATTRIBUTES,
     selfOrDescendents,
@@ -201,54 +202,77 @@ class BaseUploader extends BaseClass {
     // ========================================================================
 
     /**
-     * UppyCallbacks
+     * @typedef UppyCallbacks
      *
-     * @typedef {{
-     *     onSelect?:   Callback,
-     *     onStart?:    Callback,
-     *     onError?:    Callback,
-     *     onSuccess?:  Callback,
-     * }} UppyCallbacks
+     * @property {Callback} [onSelect]
+     * @property {Callback} [onStart]
+     * @property {Callback} [onProgress]
+     * @property {Callback} [onError]
+     * @property {Callback} [onSuccess]
      */
 
     /**
-     * UppyPluginOptions
-     *
-     * @typedef {{
-     *     db_target?:  Selector,
-     *     fi_target?:  Selector,
-     *     dd_target?:  Selector,
-     *     pb_target?:  Selector,
-     *     sb_target?:  Selector,
-     *     pm_target?:  Selector,
-     *     db_opt?:     object,
-     *     fi_opt?:     object,
-     *     dd_opt?:     object,
-     *     pb_opt?:     object,
-     *     sb_opt?:     object,
-     *     pm_opt?:     object,
-     *     ip_opt?:     object,
-     *     aws_opt?:    object,
-     *     box_opt?:    object,
-     *     dbx_opt?:    object,
-     *     gdr_opt?:    object,
-     *     odr_opt?:    object,
-     *     url_opt?:    object,
-     *     xhr_opt?:    object,
-     *     xhr_hdr?:    object,
-     *     fi_string?:  StringTable,
-     * }} UppyPluginOptions
+     * @typedef {Uppy.BasePlugin|false|undefined} UppyPluginTableEntry
      */
 
     /**
-     * @typedef {{
-     *     force?:      boolean,
-     *     controller?: string,
-     *     action?:     string,
-     *     uppy?:       Uppy.UppyOptions,
-     *     plugin?:     UppyPluginOptions,
-     *     added?:      function(Selector),
-     * }} UploaderOptions
+     * Table of keys whose value is the activation setting of the related
+     * Uppy plugin.  If active, the table value is the plugin class.
+     *
+     * @typedef UppyPluginTable
+     *
+     * @property {UppyPluginTableEntry} db      dashboard
+     * @property {UppyPluginTableEntry} fi      replace_input
+     * @property {UppyPluginTableEntry} dd      drag_and_drop
+     * @property {UppyPluginTableEntry} pb      progress_bar
+     * @property {UppyPluginTableEntry} pm      progress_bar
+     * @property {UppyPluginTableEntry} sb      status_bar
+     * @property {UppyPluginTableEntry} ip      image_preview
+     * @property {UppyPluginTableEntry} aws     upload_to_aws
+     * @property {UppyPluginTableEntry} box     upload_to_box
+     * @property {UppyPluginTableEntry} dbx     upload_to_dropbox
+     * @property {UppyPluginTableEntry} gdr     upload_to_google
+     * @property {UppyPluginTableEntry} odr     upload_to_onedrive
+     * @property {UppyPluginTableEntry} url     url
+     * @property {UppyPluginTableEntry} xhr     xhr
+     */
+
+    /**
+     * @typedef UppyPluginOptions
+     *
+     * @property {Selector}     [db_target]
+     * @property {Selector}     [fi_target]
+     * @property {Selector}     [dd_target]
+     * @property {Selector}     [pb_target]
+     * @property {Selector}     [sb_target]
+     * @property {Selector}     [pm_target]
+     * @property {object}       [db_opt]
+     * @property {object}       [fi_opt]
+     * @property {object}       [dd_opt]
+     * @property {object}       [pb_opt]
+     * @property {object}       [sb_opt]
+     * @property {object}       [pm_opt]
+     * @property {object}       [ip_opt]
+     * @property {object}       [aws_opt]
+     * @property {object}       [box_opt]
+     * @property {object}       [dbx_opt]
+     * @property {object}       [gdr_opt]
+     * @property {object}       [odr_opt]
+     * @property {object}       [url_opt]
+     * @property {object}       [xhr_opt]
+     * @property {object}       [xhr_hdr]
+     * @property {StringTable}  [fi_string]
+     */
+
+    /**
+     * @typedef UploaderOptions
+     *
+     * @property {boolean}              [force]
+     * @property {string}               [controller]
+     * @property {string}               [action]
+     * @property {Uppy.UppyOptions}     [uppy]
+     * @property {UppyPluginOptions}    [plugin]
+     * @property {function(Selector)}   [added]
      */
 
     // ========================================================================
@@ -282,6 +306,7 @@ class BaseUploader extends BaseClass {
     /** @type {string}              */ action;
     /** @type {Callback|undefined}  */ onSelect;
     /** @type {Callback|undefined}  */ onStart;
+    /** @type {Callback|undefined}  */ onProgress;
     /** @type {Callback|undefined}  */ onError;
     /** @type {Callback|undefined}  */ onSuccess;
     /** @type {number}              */ //upload_timeout = UPLOAD_TIMEOUT;
@@ -293,6 +318,16 @@ class BaseUploader extends BaseClass {
     /** @type {jQuery}              */ _root;
     /** @type {jQuery}              */ _display;
     /** @type {Uppy.Uppy}           */ _uppy;
+
+    /**
+     * Default options for the Uppy instance.
+     *
+     * @type {Uppy.UppyOptions}
+     */
+    _options = {
+        debug:       this.feature.debugging,
+        autoProceed: true,
+    };
 
     // ========================================================================
     // Constructor
@@ -308,12 +343,13 @@ class BaseUploader extends BaseClass {
      */
     constructor(root, model, features, callbacks) {
         super();
-        this._root      = this._locateUploader(root);
+        this._root      = this._locateUploader(root) || $(root);
         this.model      = model;
         this.controller = model;
         this.action     = pageAction();
         this.onSelect   = callbacks?.onSelect;
         this.onStart    = callbacks?.onStart;
+        this.onProgress = callbacks?.onProgress;
         this.onError    = callbacks?.onError;
         this.onSuccess  = callbacks?.onSuccess;
         this.property   = Emma[camelCase(model)] || {};
@@ -338,6 +374,36 @@ class BaseUploader extends BaseClass {
      */
     get $display() {
         return this._display ||= this._locateDisplay(this._root);
+    }
+
+    // ========================================================================
+    // Protected properties
+    // ========================================================================
+
+    /**
+     * Table of keys whose value is the activation setting of the related
+     * Uppy plugin.  If active, the table value is the plugin class.
+     *
+     * @returns {UppyPluginTable}
+     * @protected
+     */
+    get _plugin() {
+        return {
+            db:  this.feature.dashboard             && Dashboard,
+            fi:  this.feature.replace_input         && FileInput,
+            dd:  this.feature.drag_and_drop         && DragDrop,
+            pb:  this.feature.progress_bar          && ProgressBar,
+            sb:  this.feature.status_bar            && StatusBar,
+            pm:  this.feature.popup_messages        && Informer,
+            ip:  this.feature.image_preview         && ThumbnailGenerator,
+            aws: this.feature.upload_to_aws         && AwsS3,
+            box: this.feature.upload_to_box         && Box,
+            dbx: this.feature.upload_to_dropbox     && Dropbox,
+            gdr: this.feature.upload_to_google      && GoogleDrive,
+            odr: this.feature.upload_to_onedrive    && OneDrive,
+            url: this.feature.url                   && Url,
+            xhr: this.feature.xhr                   && XHRUpload,
+        };
     }
 
     /** @returns {boolean} */
@@ -510,52 +576,24 @@ class BaseUploader extends BaseClass {
 
         /** @type {UppyPluginOptions} */
         const opt  = { ...options?.plugin };
-        const uppy = new Uppy.Uppy({
-            id:          `uppy-${this.$root[0].id}`,
-            debug:       this.feature.debugging,
-            autoProceed: true,
-            ...options?.uppy
-        });
-
-        /**
-         * Table of keys whose value is the activation setting of the related
-         * Uppy plugin.  If active the table value is the plugin class.
-         *
-         * @type {Object.<string,(Uppy.BasePlugin|false|undefined)>}
-         */
-        const plugin = {
-            db:  this.feature.dashboard             && Dashboard,
-            fi:  this.feature.replace_input         && FileInput,
-            dd:  this.feature.drag_and_drop         && DragDrop,
-            pb:  this.feature.progress_bar          && ProgressBar,
-            sb:  this.feature.status_bar            && StatusBar,
-            pm:  this.feature.popup_messages        && Informer,
-            ip:  this.feature.image_preview         && ThumbnailGenerator,
-            aws: this.feature.upload_to_aws         && AwsS3,
-            box: this.feature.upload_to_box         && Box,
-            dbx: this.feature.upload_to_dropbox     && Dropbox,
-            gdr: this.feature.upload_to_google      && GoogleDrive,
-            odr: this.feature.upload_to_onedrive    && OneDrive,
-            url: this.feature.url                   && Url,
-            xhr: this.feature.xhr                   && XHRUpload,
-        };
+        const uppy = new Uppy.Uppy(this._uppyOptions(options));
 
         const load_plugin = (p_key, p_opt = {}) => {
-            const plugin_class = plugin[p_key];
-            if (!plugin_class) { return false }
-            const [k_tgt, k_opt] = [`${p_key}_target`, `${p_key}_opt`];
-            const plugin_opt = { target: opt[k_tgt], ...p_opt, ...opt[k_opt] };
+            const plugin = this._plugin[p_key];
+            if (!plugin) { return false }
+            const [tgt, tgt_opt] = [`${p_key}_target`, `${p_key}_opt`];
+            const plugin_opt = { target: opt[tgt], ...p_opt, ...opt[tgt_opt] };
             plugin_opt.target &&= this._locateTarget(plugin_opt.target);
             plugin_opt.target ||= this._defaultTarget(p_key);
             // noinspection JSCheckFunctionSignatures
-            uppy.use(plugin_class, plugin_opt);
+            uppy.use(plugin, plugin_opt);
             return true;
         };
 
-        if (plugin.db) {
+        if (this._plugin.db) {
             load_plugin('db', { inline: true });
         } else {
-            if (plugin.fi) {
+            if (this._plugin.fi) {
                 const fi_label  = this.fileSelectLabel(true);
                 const fi_string = { chooseFiles: fi_label, ...opt.fi_string };
                 load_plugin('fi', { locale: { strings: fi_string } });
@@ -567,7 +605,7 @@ class BaseUploader extends BaseClass {
         load_plugin('pm');
         load_plugin('ip', { thumbnailWidth: 400 });
 
-        if (plugin.aws) {
+        if (this._plugin.aws) {
             const aws_opt = {
                 // limit:     2,
                 timeout:      this.upload.timeout,
@@ -581,42 +619,9 @@ class BaseUploader extends BaseClass {
         load_plugin('odr');
         load_plugin('url');
 
-        if (plugin.xhr) {
-            const xhr_tag = 'Uppy.XHRUpload';
-            const xhr_msg = this.upload_error;
-            const xhr_opt = { ...opt.xhr_opt };
-            xhr_opt.endpoint  ||= this._pathProperty.upload;
-            xhr_opt.fieldName ||= 'file';
-            xhr_opt.timeout   ||= 0; // this.upload_timeout; // NOTE: none for now
-            xhr_opt.limit     ||= 1; // NOTE: just to silence warning
-            xhr_opt.headers     = { ...xhr_opt.headers, ...opt.xhr_hdr };
-            xhr_opt.headers['X-CSRF-Token'] ||= Rails.csrfToken();
-
-            xhr_opt.getResponseData ||=
-                function(body, xhr) {
-                    const obj = xhr['responseObj'] = fromJSON(body, xhr_tag);
-                    return obj || {};
-                }
-
-            xhr_opt.getResponseError ||=
-                function(body, xhr) {
-                    const flash = compact(extractFlashMessage(xhr));
-                    const obj   = xhr['responseObj'];
-                    const res   = obj || fromJSON(body, xhr_tag);
-                    let message = (res?.message || body)?.trim() || xhr_msg;
-                    if (isPresent(flash)) {
-                        message = message.replace(/([^:])$/, '$1:');
-                        if (flash.length > 1) {
-                            message += "\n" + flash.join("\n");
-                        } else {
-                            message += ' ' + flash[0];
-                        }
-                    } else {
-                        message = message.replace(/:$/, '');
-                    }
-                    return new Error(message);
-                };
-
+        if (this._plugin.xhr) {
+            const xhr_opt = this._xhrOptions(opt.xhr_opt, opt.xhr_hdr);
+            delete opt.xhr_opt;
             load_plugin('xhr', xhr_opt);
         }
 
@@ -624,7 +629,94 @@ class BaseUploader extends BaseClass {
     }
 
     // ========================================================================
-    // Protected methods - initialization
+    // Protected methods - initialization - options
+    // ========================================================================
+
+    /**
+     * Options for Uppy.
+     *
+     * @param {UploaderOptions} [options]
+     *
+     * @returns {Uppy.UppyOptions}
+     * @protected
+     */
+    _uppyOptions(options) {
+        /** @type {Uppy.UppyOptions} */
+        const opt = { ...this._options, ...options?.uppy };
+        opt.id ||= `uppy-${this.$root[0].id}`;
+        return opt;
+    }
+
+    /**
+     * Options for the XHRUpload plugin.
+     *
+     * @param {object} [opt]
+     * @param {object} [headers]
+     *
+     * @returns {object}    Uppy.XHRUploadOptions
+     * @protected
+     */
+    _xhrOptions(opt, headers) {
+        const xhr_opt = { ...opt };
+
+        xhr_opt.headers  = { ...xhr_opt.headers, ...headers };
+        xhr_opt.headers['X-CSRF-Token'] ||= Rails.csrfToken();
+
+        xhr_opt.endpoint         ||= this._pathProperty.upload;
+        xhr_opt.fieldName        ||= 'file';
+        xhr_opt.getResponseData  ||= this._xhrGetResponseData.bind(this);
+        xhr_opt.getResponseError ||= this._xhrGetResponseError.bind(this);
+        xhr_opt.limit            ||= 1; // NOTE: just to silence warning
+        xhr_opt.timeout          ||= 0; // this.upload_timeout; // NOTE: none for now
+
+        return xhr_opt;
+    }
+
+    /**
+     * Called to extract response data from the upload endpoint.
+     *
+     * @param {text}           body
+     * @param {XMLHttpRequest} xhr
+     *
+     * @returns {object}
+     * @protected
+     *
+     * @see https://uppy.io/docs/xhr-upload/#getResponseData-responseText-response
+     */
+    _xhrGetResponseData(body, xhr) {
+        this._debug('_xhrGetResponseData; xhr =', xhr, 'body =', body);
+        const caller = 'Uppy.XHRUpload';
+        return (xhr['responseObj'] = fromJSON(body, caller) || {});
+    }
+
+    /**
+     * Called if the upload endpoint responds with a non-2xx status code.
+     *
+     * @param {text}           body
+     * @param {XMLHttpRequest} xhr
+     *
+     * @returns {Error}
+     * @protected
+     *
+     * @see https://uppy.io/docs/xhr-upload/#getResponseError-responseText-response
+     */
+    _xhrGetResponseError(body, xhr) {
+        this._debug('_xhrGetResponseError; xhr =', xhr, 'body =', body);
+        const caller = 'Uppy.XHRUpload';
+        const flash  = compact(extractFlashMessage(xhr));
+        const resp   = xhr['responseObj'] || fromJSON(body, caller);
+        let message  = (resp?.message || body)?.trim() || this.upload_error;
+        if (isPresent(flash)) {
+            const nl = (flash.length > 1) ? "\n" : ' ';
+            message  = message.replace(/([^:])$/, '$1:') + nl + flash.join(nl);
+        } else {
+            message  = message.replace(/:$/, '');
+        }
+        return new Error(message);
+    }
+
+    // ========================================================================
+    // Protected methods - initialization - handlers
     // ========================================================================
 
     /**
@@ -636,122 +728,154 @@ class BaseUploader extends BaseClass {
     _setupHandlers() {
         this._debug('_setupHandlers');
 
-        const uppy            = this._uppy;
-        const feature         = this.feature;
-        const debugUppy       = this._debugUppy.bind(this);
-        const uppyInfoClear   = this._uppyInfoClear.bind(this);
-        const showProgressBar = this.showProgressBar.bind(this);
-
-        const onStart   = this.onStart   || (() => debugUppy('onStart'));
-        const onError   = this.onError   || (() => debugUppy('onError'));
-        const onSuccess = this.onSuccess || (() => debugUppy('onSuccess'));
+        const onFileUploadStart    = this._onFileUploadStart.bind(this);
+        const onFileUploadProgress = this._onFileUploadProgress.bind(this);
+        const onFileUploadError    = this._onFileUploadError.bind(this);
+        const onFileUploadSuccess  = this._onFileUploadSuccess.bind(this);
+        const onThumbnailGenerated = this._onThumbnailGenerated.bind(this);
 
         // Events for these features are also applicable to Uppy.Dashboard.
-        if (feature.dashboard) {
-            feature.replace_input = true;
-          //feature.drag_and_drop = true; // NOTE: not currently using d&d
-            feature.progress_bar  = true;
-            feature.status_bar    = true;
+        if (this.feature.dashboard) {
+            this.feature.replace_input = true;
+          //this.feature.drag_and_drop = true; // NOTE: not currently using d&d
+            this.feature.progress_bar  = true;
+            this.feature.status_bar    = true;
         }
 
-        uppy.on('upload',         onFileUploadStart);
-        uppy.on('upload-error',   onFileUploadError);
-        uppy.on('upload-success', onFileUploadSuccess);
+        this._uppy.on('upload',          onFileUploadStart);
+        this._uppy.on('upload-progress', onFileUploadProgress);
+        this._uppy.on('upload-error',    onFileUploadError);
+        this._uppy.on('upload-success',  onFileUploadSuccess);
 
-        if (feature.image_preview) {
+        if (this.feature.image_preview) {
             // noinspection JSCheckFunctionSignatures
-            uppy.on('thumbnail:generated', onThumbnailGenerated);
-        }
-
-        // ====================================================================
-        // Handlers
-        // ====================================================================
-
-        /**
-         * UppyFileUploadStartParams
-         *
-         * @typedef {{
-         *     id:      string,
-         *     fileIDs: string[],
-         * }} UppyFileUploadStartData
-         */
-
-        /**
-         * This event occurs between the 'file-added' and 'upload-started'
-         * events.
-         *
-         * The current value of the submission's database ID applied to the
-         * upload endpoint URL in order to correlate the upload with the
-         * appropriate workflow.
-         *
-         * @param {UppyFileUploadStartData} data
-         */
-        function onFileUploadStart(data) {
-            debugUppy('upload', data);
-            const params = onStart(data);
-            const upload = uppy.getPlugin('XHRUpload');
-            // noinspection JSUnresolvedFunction
-            const url    = upload.getOptions({}).endpoint;
-            if (isMissing(url)) {
-                console.error('No endpoint for upload');
-            } else {
-                if (isPresent(params)) {
-                    // noinspection JSCheckFunctionSignatures
-                    upload.setOptions({ endpoint: makeUrl(url, params) });
-                }
-                uppyInfoClear();
-                showProgressBar();
-            }
-        }
-
-        /**
-         * This event occurs when the response from POST /entry/upload is
-         * received with a failure status (4xx).
-         *
-         * @param {UppyFile}                       file
-         * @param {Error}                          error
-         * @param {{status: number, body: string}} [response]
-         */
-        function onFileUploadError(file, error, response) {
-            console.warn('Uppy:', 'upload-error', file, error, response);
-            uppyInfoClear();
-            onError(file, error, response);
-            uppy.getFiles().forEach(file => uppy.removeFile(file.id));
-        }
-
-        /**
-         * This event occurs when the response from POST /entry/upload is
-         * received with success status (200).  At this point, the file has
-         * been uploaded by Shrine, but has not yet been validated.
-         *
-         * **Implementation Notes**
-         * The normal Shrine response has been augmented to include an
-         * 'emma_data' object in addition to the fields associated with
-         * 'file_data'.
-         *
-         * @param {UppyFile}            file
-         * @param {UppyResponseMessage} response
-         *
-         * @see "Shrine::UploadEndpointExt#make_response"
-         */
-        function onFileUploadSuccess(file, response) {
-            debugUppy('upload-success', file, response);
-            uppyInfoClear();
-            onSuccess(file, response);
-        }
-
-        /**
-         * This event occurs when a thumbnail of an uploaded image is
-         * available.
-         *
-         * @param {UppyFile} file
-         * @param {string}   image
-         */
-        function onThumbnailGenerated(file, image) {
-            debugUppy('thumbnail:generated', file, image);
-            feature.image_preview.src = image;
+            this._uppy.on('thumbnail:generated', onThumbnailGenerated);
         }
     }
+
+    /**
+     * @typedef UppyFileUploadStartData
+     *
+     * @property {string}   id          For the overall upload session.
+     * @property {string[]} fileIDs
+     */
+
+    /**
+     * This event occurs between the 'file-added' and 'upload-started'
+     * events.
+     *
+     * The current value of the submission's database ID applied to the
+     * upload endpoint URL in order to correlate the upload with the
+     * appropriate workflow.
+     *
+     * @param {UppyFileUploadStartData} data
+     *
+     * @protected
+     */
+    _onFileUploadStart(data) {
+        this._debugUppy('upload START', data);
+        // noinspection JSValidateTypes
+        const params = this.onStart?.(data);
+        const upload = this._uppy.getPlugin('XHRUpload');
+        // noinspection JSUnresolvedFunction
+        const url    = upload.getOptions({}).endpoint;
+        if (isMissing(url)) {
+            console.error('No endpoint for upload');
+        } else {
+            if (isPresent(params)) {
+                // noinspection JSCheckFunctionSignatures
+                upload.setOptions({ endpoint: makeUrl(url, params) });
+            }
+            this._uppyInfoClear();
+            this.showProgressBar();
+        }
+    }
+
+    /**
+     * Uppy generates this event one or more times for each file as it is
+     * uploaded.
+     *
+     * This event is observed concurrent with the 'progress' event (which
+     * indicates the total percentage complete over all files being uploaded).
+     *
+     * @param {UppyFile}     file
+     * @param {FileProgress} progress
+     *
+     * @protected
+     */
+    _onFileUploadProgress(file, progress) {
+        const bytes = progress.bytesUploaded;
+        const total = progress.bytesTotal;
+        const pct   = percent(bytes, total);
+        const parts = [bytes, 'of', total, `bytes (${pct}%)`];
+        if (progress.uploadComplete) { parts.push('[DONE]') }
+        this._debugUppy('upload-progress:', ...parts);
+        // noinspection JSValidateTypes
+        if (this.onProgress?.(file, progress) === false) {
+            this._uppy.removeFile(file.id);
+            this._debugUppy('upload-progress: canceled', file.id);
+        }
+    }
+
+    /**
+     * This event occurs when the response from POST /entry/upload is
+     * received with a failure status (4xx).
+     *
+     * @param {UppyFile}                       file
+     * @param {Error}                          error
+     * @param {{status: number, body: string}} [response]
+     *
+     * @protected
+     */
+    _onFileUploadError(file, error, response) {
+        console.warn('Uppy:', 'upload-error', file, error, response);
+        this._uppyInfoClear();
+        // noinspection JSValidateTypes
+        this.onError?.(file, error, response);
+        this._uppy.getFiles().forEach(file => this._uppy.removeFile(file.id));
+    }
+
+    /**
+     * This event occurs when the response from POST /entry/upload is
+     * received with success status (200).  At this point, the file has
+     * been uploaded by Shrine, but has not yet been validated.
+     *
+     * **Implementation Notes**
+     * The normal Shrine response has been augmented to include an
+     * 'emma_data' object in addition to the fields associated with
+     * 'file_data'.
+     *
+     * @param {UppyFile}            file
+     * @param {UppyResponseMessage} response
+     *
+     * @protected
+     *
+     * @see "Shrine::UploadEndpointExt#make_response"
+     */
+    _onFileUploadSuccess(file, response) {
+        this._debugUppy('upload-success', file, response);
+        this._uppyInfoClear();
+        // noinspection JSValidateTypes
+        this.onSuccess?.(file, response);
+    }
+
+    /**
+     * This event occurs when a thumbnail of an uploaded image is
+     * available.
+     *
+     * @param {UppyFile} file
+     * @param {string}   image
+     *
+     * @protected
+     */
+    _onThumbnailGenerated(file, image) {
+        this._debugUppy('thumbnail:generated', file, image);
+        this.feature.image_preview.src = image;
+    }
+
+    // ========================================================================
+    // Protected methods - initialization - output
+    // ========================================================================
 
     /**
      * Setup handlers for Uppy events that should trigger popup messages.
@@ -854,7 +978,8 @@ class BaseUploader extends BaseClass {
             'reset-progress',
             'restored',
           //'state-update',         // Redundant and too frequent to be useful.
-          //'upload-progress',      // Handled below.
+          //'upload-progress',      // Handled via _onFileUploadProgress().
+            'upload-stalled',
         ];
         if (this.feature.dashboard) {
             events.push(
@@ -876,7 +1001,6 @@ class BaseUploader extends BaseClass {
             events.push('s3-multipart:part-uploaded');
         }
 
-        const uppy  = this._uppy;
         const debug = this._debugUppy.bind(this);
 
         // Echo the included Uppy events on the console.
@@ -884,15 +1008,7 @@ class BaseUploader extends BaseClass {
             const evt = event.toUpperCase().replace(/:/, ': ');
             const tag = '*** ' + evt.replaceAll(/-/g, ' ');
             // noinspection JSCheckFunctionSignatures
-            uppy.on(event, (...args) => debug(tag, ...compact(args)));
-        });
-
-        // This event is observed concurrent with the 'progress' event.
-        uppy.on('upload-progress', (file, progress) => {
-            const bytes = progress.bytesUploaded;
-            const total = progress.bytesTotal;
-            const pct   = percent(bytes, total);
-            debug('uploading', bytes, 'of', total, `(${pct}%)`);
+            this._uppy.on(event, (...args) => debug(tag, ...compact(args)));
         });
     }
 
@@ -952,6 +1068,7 @@ class BaseUploader extends BaseClass {
      */
     _uppyInfo(text, duration, info_level) {
         this._debug(`_uppyInfo: ${info_level}:`, text);
+        if (!this.feature.popup_messages) { return }
         const level = info_level || 'info';
         const time  = duration   || 1000 * MINUTES;
         this._uppy.info(text, level, time);
@@ -964,6 +1081,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _uppyInfoClear() {
+        if (!this.feature.popup_messages) { return }
         this._debug('_uppyInfoClear');
         this.hideInfo();
     }
@@ -973,7 +1091,7 @@ class BaseUploader extends BaseClass {
      */
     showInfo() {
         this._debug('showInfo');
-        this.toggleInfo(true);
+        this._toggleInfo(true);
     }
 
     /**
@@ -982,7 +1100,7 @@ class BaseUploader extends BaseClass {
     hideInfo() {
         this._debug('hideInfo');
         this._uppy.hideInfo();
-        this.toggleInfo(false);
+        this._toggleInfo(false);
     }
 
     /**
@@ -990,8 +1108,10 @@ class BaseUploader extends BaseClass {
      * "invisible" class.
      *
      * @param {boolean} [visible]
+     *
+     * @protected
      */
-    toggleInfo(visible) {
+    _toggleInfo(visible) {
         //this._debug('toggleInfo: visible =', visible);
         const $control = this.$display.find(this.constructor.INFORMER);
         toggleVisibility($control, visible);
@@ -1011,6 +1131,7 @@ class BaseUploader extends BaseClass {
      * @see file:app/assets/stylesheets/vendor/_uppy.scss .uppy-ProgressBar
      */
     _initializeProgressBar() {
+        if (!this.feature.progress_bar) { return }
         this._debug('_initializeProgressBar');
         this.hideProgressBar();
     }
@@ -1020,7 +1141,7 @@ class BaseUploader extends BaseClass {
      */
     showProgressBar() {
         this._debug('showProgressBar');
-        this.toggleProgressBar(true);
+        this._toggleProgressBar(true);
     }
 
     /**
@@ -1031,7 +1152,7 @@ class BaseUploader extends BaseClass {
      */
     hideProgressBar() {
         this._debug('hideProgressBar');
-        this.toggleProgressBar(false);
+        this._toggleProgressBar(false);
     }
 
     /**
@@ -1039,9 +1160,12 @@ class BaseUploader extends BaseClass {
      * "invisible" class.
      *
      * @param {boolean} [visible]
+     *
+     * @protected
      */
-    toggleProgressBar(visible) {
+    _toggleProgressBar(visible) {
         this._debug('toggleProgressBar: visible =', visible);
+        if (!this.feature.progress_bar) { return }
         const $control = this.$display.find(this.constructor.PROGRESS_BAR);
         toggleVisibility($control, visible);
     }
@@ -1742,7 +1866,7 @@ export class MultiUploader extends BaseUploader {
     }
 
     // ========================================================================
-    // Protected methods - initialization
+    // Protected methods - initialization - handlers
     // ========================================================================
 
     /**
@@ -1866,16 +1990,225 @@ export class MultiUploader extends BaseUploader {
     // Methods
     // ========================================================================
 
-    openDisplay()  { this.toggleDisplay(true) }
-    closeDisplay() { this.toggleDisplay(false) }
+    openDisplay()  { this._toggleDisplay(true) }
+    closeDisplay() { this._toggleDisplay(false) }
 
     /**
      * Toggle the state of the informational display elements.
      *
      * @param {boolean} [open]
+     *
+     * @protected
      */
-    toggleDisplay(open) {
+    _toggleDisplay(open) {
         this._debug('toggleDisplay open =', open);
         this.$display.toggleClass(this.constructor.VISIBLE_MARKER, open);
+    }
+}
+
+/**
+ * An uploader for uploading multiple items in parallel.
+ */
+export class BulkUploader extends BaseUploader {
+
+    static CLASS_NAME = 'BulkUploader';
+
+    // ========================================================================
+    // Type definitions
+    // ========================================================================
+
+    /**
+     *  @typedef {File} FileExt
+     *
+     *  A File object augmented with Uppy metadata.
+     *
+     *  @property {object} meta
+     */
+
+    // ========================================================================
+    // Constants
+    // ========================================================================
+
+    /**
+     * The number of uploads that Uppy will perform simultaneously.
+     *
+     * @type {number}
+     *
+     * @see "SubmissionService::DEF_BATCH"
+     *
+     * TODO: pass in via assets.js.erb.
+     */
+    static DEF_BATCH = 6;
+
+    // ========================================================================
+    // Fields
+    // ========================================================================
+
+    _batch_size  = this.constructor.DEF_BATCH;
+    _in_progress = false;
+
+    // ========================================================================
+    // Constructor
+    // ========================================================================
+
+    /**
+     * Create a new instance.
+     *
+     * @param {Selector}            root
+     * @param {string}              model
+     * @param {UppyFeatures|object} features
+     * @param {UppyCallbacks}       [callbacks]
+     */
+    constructor(root, model, features, callbacks) {
+        super(root, model, features, callbacks);
+        this.feature.popup_messages = false;
+        this.feature.progress_bar   = false;
+        this._options.autoProceed   = false;
+    }
+
+    // ========================================================================
+    // Protected methods - initialization - options
+    // ========================================================================
+
+    /**
+     * Options for the XHRUpload plugin, including the 'X-Update-FileData-Only'
+     * header to specify that the record's **:file_data** column should be
+     * updated without modifying **:update_time** or other columns.
+     *
+     * @param {object} [opt]
+     * @param {object} [headers]
+     *
+     * @returns {object}    Uppy.XHRUploadOptions
+     * @protected
+     *
+     * @see "ManifestItemController#upload"
+     */
+    _xhrOptions(opt, headers) {
+        const xhr_opt = super._xhrOptions(opt, headers);
+        xhr_opt.limit = this.batchSize;
+        xhr_opt.headers['X-Update-FileData-Only'] = true;
+        return xhr_opt;
+    }
+
+    // ========================================================================
+    // Properties
+    // ========================================================================
+
+    get inProgress() { return this._in_progress }
+    get batchSize()  { return this._batch_size }
+  //set batchSize(v) { this._batch_size = Number(v || 0) }
+
+    // ========================================================================
+    // Methods
+    // ========================================================================
+
+    /**
+     * Queue one or more file objects.
+     *
+     * @param {FileExt|FileExt[]} files
+     */
+    addFiles(files) {
+        this._debug('addFile', files);
+        arrayWrap(files).forEach(file_item => {
+            let file = file_item;
+            if ((file instanceof File) && hasKey(file, 'meta')) {
+                file = {
+                    meta: file.meta,
+                    name: file.name,
+                    type: file.type,
+                    size: file.size,
+                    data: file,
+                };
+            }
+            this._uppy.addFile(file);
+        });
+    }
+
+    /**
+     * Transmit the file object(s) queued since the last upload.
+     */
+    upload() {
+        const files = this._uppy.getFiles();
+        if (this._in_progress) {
+            this._debug('upload - ignored; already uploading');
+        } else if (isMissing(files)) {
+            this._debug('upload - ignored; no files queued');
+        } else {
+            this._debug(`upload - ${files.length} files:`, files);
+            this._in_progress = true;
+            this._uppy.upload().then(
+                result => {
+                    this._debug(`Uppy.upload final result:`, result);
+                    const log = [];
+                    const err = [];
+                    if (result) {
+                        const succeeded = result.successful.length;
+                        const failed    = result.failed.length;
+                        if (succeeded && failed) {
+                            log.push(`${succeeded} uploads succeeded`);
+                            log.push(`${failed} uploads failed:`);
+                        } else if (succeeded) {
+                            log.push(`all ${succeeded} uploads succeeded`);
+                        } else if (failed) {
+                            log.push(`all ${failed} uploads failed:`);
+                        }
+                        err.push(...result.failed);
+                    } else {
+                        log.push('server failure');
+                    }
+                    log.forEach(line => this._log(line));
+                    err.forEach(fail => this._warn(fail.error));
+                    this._in_progress = false;
+                },
+                error => {
+                    this._debug(`upload - error:`, error);
+                    this._in_progress = false;
+                },
+            );
+        }
+    }
+
+    // ========================================================================
+    // Methods - actions
+    // ========================================================================
+
+    /**
+     * Actively cancel the current upload.
+     */
+    cancel() {
+        if (this.inProgress) {
+            this._debug('cancel');
+            this._uppy.cancelAll();
+        } else {
+            this._debug('cancel - ignored; not uploading');
+        }
+    }
+
+    /**
+     * Pause uploading.
+     *
+     * @note Not clear whether/how this works.
+     */
+    pause() {
+        if (this.inProgress) {
+            this._debug('pause');
+            this._uppy.pauseAll();
+        } else {
+            this._debug('pause - ignored; not uploading');
+        }
+    }
+
+    /**
+     * Resume uploading.
+     *
+     * @note Not clear whether/how this works.
+     */
+    resume() {
+        if (this.inProgress) {
+            this._debug('resume');
+            this._uppy.resumeAll();
+        } else {
+            this._debug('resume - ignored; not uploading');
+        }
     }
 }

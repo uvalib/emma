@@ -7,7 +7,26 @@ __loading_begin(__FILE__)
 
 class SubmitChannel::Response < ApplicationCable::Response
 
+  # Allowed status values.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  STATUS = {
+    INITIAL:      'STARTING',
+    STEP:         'STEP',
+    INTERMEDIATE: 'DONE',
+    FINAL:        'COMPLETE',
+    ACK:          'ACK',
+  }.freeze
+
+  STATUS_INITIAL      = STATUS[:INITIAL]
+  STATUS_STEP         = STATUS[:STEP]
+  STATUS_INTERMEDIATE = STATUS[:INTERMEDIATE]
+  STATUS_FINAL        = STATUS[:FINAL]
+  STATUS_ACK          = STATUS[:ACK]
+
   TEMPLATE = {
+    simulation:  nil,
     status:      nil,
     manifest_id: nil,
     **superclass::TEMPLATE,
@@ -28,6 +47,23 @@ class SubmitChannel::Response < ApplicationCable::Response
   public
 
   def self.data_url_base_path = 'manifest/get_job_result'
+
+  # ===========================================================================
+  # :section: ApplicationCable::Response overrides
+  # ===========================================================================
+
+  public
+
+  def initialize(values = nil, **opt)
+    super
+    self[:simulation] = opt[:simulation]
+  end
+
+  # Indicate whether this response is part of a simulation.
+  #
+  def simulation?
+    self[:simulation].present?
+  end
 
 end
 
@@ -56,34 +92,23 @@ class SubmitChannel::InitialResponse < SubmitChannel::SubmitResponse
 
   public
 
-  def self.default_status = 'STARTING'
-
-end
-
-class SubmitChannel::FinalResponse < SubmitChannel::SubmitResponse
-
-  # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
-  # ===========================================================================
-
-  public
-
-  def self.default_status = 'COMPLETE'
+  def self.default_status = STATUS_INITIAL
 
 end
 
 class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
 
   TEMPLATE = {
-    status: nil,
-    step:   nil,
+    simulation: nil,
+    status:     nil,
+    step:       nil,
     **superclass::TEMPLATE,
     data: {
       count:     0,
-      submitted: [],
-      success:   [],
-      failure:   {},
       invalid:   [],
+      submitted: [],
+      success:   {},
+      failure:   {},
     },
   }.deep_freeze
 
@@ -93,18 +118,39 @@ class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
 
   public
 
-  def self.template = TEMPLATE
+  def self.template       = TEMPLATE
+  def self.default_status = STATUS_STEP
 
-  def self.default_status = 'STEP'
+end
+
+class SubmitChannel::FinalResponse < SubmitChannel::StepResponse
+
+  # ===========================================================================
+  # :section: ApplicationCable::Response::Payload overrides
+  # ===========================================================================
+
+  public
+
+  def self.default_status = STATUS_FINAL
 
 end
 
 class SubmitChannel::ControlResponse < SubmitChannel::Response
 
   TEMPLATE = {
-    command: nil,
+    simulation: nil,
+    command:    nil,
     **superclass::TEMPLATE,
   }.deep_freeze
+
+  # ===========================================================================
+  # :section: ApplicationCable::Response::Payload overrides
+  # ===========================================================================
+
+  public
+
+  def self.template       = TEMPLATE
+  def self.default_status = STATUS_ACK
 
   # ===========================================================================
   # :section: SubmitChannel::Response overrides
@@ -112,65 +158,13 @@ class SubmitChannel::ControlResponse < SubmitChannel::Response
 
   public
 
-  # Create a new instance.
-  #
-  # @param [Symbol, *] status
-  # @param [Hash]      opt
-  #
-  def initialize(status = nil, **opt)
-    if status.is_a?(Symbol)
-      super(nil, **opt, status: status)
+  def initialize(values = nil, **opt)
+    if values.is_a?(Symbol)
+      super(nil, **opt, command: values)
     else
       super
     end
   end
-
-  # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
-  # ===========================================================================
-
-  public
-
-  def self.template = TEMPLATE
-
-end
-
-class SubmitChannel::StatusResponse < SubmitChannel::Response
-
-  TEMPLATE = {
-    **superclass::TEMPLATE,
-    data: {
-      count:     nil,
-      submitted: nil,
-      success:   nil,
-      failure:   nil,
-      invalid:   nil,
-    },
-  }.deep_freeze
-
-  # ===========================================================================
-  # :section: SubmitChannel::Response overrides
-  # ===========================================================================
-
-  public
-
-  # Create a new instance.
-  #
-  # @param [*]    values
-  # @param [Hash] opt
-  #
-  def initialize(values = nil, **opt)
-    #values = { service: values } unless values.nil? || values.is_a?(Hash)
-    super
-  end
-
-  # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
-  # ===========================================================================
-
-  public
-
-  def self.template = TEMPLATE
 
 end
 

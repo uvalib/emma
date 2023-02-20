@@ -9,52 +9,13 @@ __loading_begin(__FILE__)
 #
 module SubmissionService::Action::Submit
 
+  include IngestConcern
+  include ExecReport::Constants
+  include FileNaming
+
   include SubmissionService::Common
   include SubmissionService::Definition
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  SUBMIT_STEPS_TABLE = {
-    db: {
-      msg:  'mark ManifestItem as being submitted',
-      err:  'DB',
-    },
-    cache: {
-      msg:  'upload file to AWS cache',
-      err:  'AWS upload',
-    },
-    promote: {
-      msg:  'promote file to AWS storage',
-      err:  'AWS storage',
-    },
-    index: {
-      msg:  'update index',
-      err:  'index',
-    },
-  }.deep_freeze
-
-  SUBMIT_STEPS = SUBMIT_STEPS_TABLE.keys.freeze
-
-  # Within a given batch of ManifestItems being submitted, this value specifies
-  # how many will be transmitted together to each subsystem.
-  #
-  # If *true*, all items of a batch will be transmitted together if possible.
-  # If *false* then no slicing will be performed by default.
-  #
-  # @type [Integer, Boolean]
-  #
-  DEF_SLICE = 4
-  MIN_SLICE = MIN_BATCH_SIZE
-  MAX_SLICE = MAX_BATCH_SIZE
-
-  if sanity_check? && DEF_SLICE.is_a?(Integer)
-    raise 'DEF_SLICE < MIN_SLICE' if DEF_SLICE < MIN_SLICE
-    raise 'DEF_SLICE > MAX_SLICE' if DEF_SLICE > MAX_SLICE
-  end
+  include SubmissionService::Properties
 
   # ===========================================================================
   # :section:
@@ -114,29 +75,76 @@ module SubmissionService::Action::Submit
 
   protected
 
-  # Submit a set of items...
+  # Process a request to submit a set of ManifestItems.
   #
   # @param [SubmissionService::Request] req  Def.: `@request`.
   # @param [Hash]                       opt
   #
-  # @return [Array<Hash>, Hash]
+  # @return [StepResult]
+  #
+  # == Usage Notes
+  # The validity of :simulation and :sim_opt is determined here only; called
+  # methods assume that `opt[:simulation]` and `opt[:sim_opt]` have been
+  # set/unset appropriately.
   #
   def submit_batch(req = self.request, **opt)
-    opt[:tid] = Thread.current.name.sub(/^GoodJob.*\)-thread/, 'GoodJob')
-    opt[:manifest_id] = req.manifest_id
+    opt[:manifest_id] ||= req.manifest_id
+
+    # Handle validation/creation of simulation options (if configured).
+    if SIMULATION_ALLOWED
+      opt[:simulation] = true if SIMULATION_ONLY
+    elsif opt[:simulation]
+      raise "#{__method__}: simulation is disallowed"
+    elsif opt[:sim_opt]
+      Log.warn { "#{__method__}: ignoring sim_opt = #{opt[:sim_opt].inspect}" }
+    end
+    if opt[:simulation]
+      opt[:sim_opt] ||= SimulationOptions.new
+    else
+      opt.delete(:sim_opt)
+    end
+
+    # Identify any supplied items that don't map on to a valid ManifestItem.
+    valid_ids, invalid_ids = [], []
+    items =
+      req.items.map { |item|
+        if (id = manifest_item_id(item)).is_a?(Hash)
+          invalid_ids << id[:error]
+          next
+        elsif valid_ids.include?(id)
+          Log.warn { "#{__method__}: duplicate item #{item.inspect}" }
+        else
+          valid_ids << id
+          item
+        end
+      }.compact.sort_by! { |item| manifest_item_id(item) }
+
+    # Claim submission IDs for the items that will persist through the point
+    # that the item becomes associated with an EMMA entry.
+    now  = DateTime.now
+    recs = manifest_items(items)
+    recs.each do |rec|
+      attrs = { submission_id: ManifestItem.generate_submission_id(now) }
+      attrs.merge!(last_indexed: nil, last_submit: nil) if opt[:simulation]
+      rec.update_columns(attrs)
+    end
 
     slice = opt.delete(:slice)
-    slice = DEF_SLICE      if slice.nil?
-    slice = req.items.size if slice.is_a?(TrueClass)
-    slice = false          if slice && (slice < MIN_SLICE)
-    slice = MAX_SLICE      if slice && (slice > MAX_SLICE)
+    slice = DEF_SLICE if slice.nil?
+    slice = recs.size if slice.is_a?(TrueClass)
+    slice = false     if slice && (slice < MIN_SLICE)
+    slice = MAX_SLICE if slice && (slice > MAX_SLICE)
+    slice = positive(slice)
 
-    # noinspection RubyMismatchedArgumentType
     if slice
-      submit_by_slice(req, **opt, slice: slice)
+      result = submit_by_slice(recs, **opt, slice: slice)
     else
-      submit_by_item(req, **opt)
+      result = submit_by_item(recs, **opt)
     end
+    result[:count]     = req.items.size
+    result[:submitted] = valid_ids.sort
+    result[:invalid]   = invalid_ids if invalid_ids.present?
+    result.finalize
   end
 
   # ===========================================================================
@@ -145,90 +153,65 @@ module SubmissionService::Action::Submit
 
   protected
 
-  # Submit a set of items one at a time.
+  # Process a request to submit a set of ManifestItems sequentially.
   #
-  # @param [SubmissionService::Request] req  Def.: `@request`.
-  # @param [Hash]                       opt
+  # Each item submission may succeed or fail independently without impact to
+  # the other items.
   #
-  # @return [Array<Hash>]
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
+  # @param [Hash]                                                opt
   #
-  def submit_by_item(req = self.request, **opt)
-    sleep rand(0.1..0.3)
-    opt[:no_raise] = true
-    req.items.map do |item|
-      # noinspection RubyMismatchedArgumentType
-      if (id = manifest_item_id(item)).is_a?(Hash)
-        err = id[:error]
-        id  = 'missing'
-      else
-        err = submit_manifest_item(id, **opt)
-        err = (err.values.last if err.is_a?(Hash))
-      end
-      if err
-        { id: id, status: '(FAIL)', error: err }
-      else
-        { id: id, status: '(OK)' }
+  # @return [StepResult]
+  #
+  def submit_by_item(items, **opt)
+    sim = opt[:sim_opt]
+    sim&.new_slice
+    success, failure = {}, {}
+    manifest_items(items).each do |rec|
+      result = submit_manifest_item(rec, **opt, no_raise: true)
+      result.success_failure.tap do |s, f|
+        success.merge!(s) if s
+        failure.merge!(f) if f
       end
     end
+    StepResult.new(success: success, failure: failure)
   end
 
-  # submit_manifest_item
+  # Submit a single ManifestItem by passing it through each of the submission
+  # steps in sequence.
   #
-  # @param [String]  item
-  # @param [Boolean] no_raise
-  # @param [Hash]    opt
+  # Failure at any step results in the failure of the item to be submitted.
   #
-  # @raise [RuntimeError] If a step failed.
+  # @param [String, ManifestItem] item
+  # @param [Boolean]              no_raise
+  # @param [Hash]                 opt
   #
-  # @return [true]        If all steps succeeded.
-  # @return [Hash]        If *no_raise* and a step failed.
+  # @raise [RuntimeError]             If a submission step failed.
+  #
+  # @return [StepResult]
   #
   def submit_manifest_item(item, no_raise: false, **opt)
-    scale = opt[:scale] ||= 100
-    band  = opt[:band]  ||= scale / 10
-    opt[:state] ||= rand * scale
-    opt[:work]  ||= 0.05..0.15
-    opt[:meth]  ||= __method__
-
-    delay = opt.delete(:delay) || 0.1..0.3
-    delay = rand(delay) if delay.is_a?(Range)
-    sleep delay if delay
-
-    SUBMIT_STEPS.each_with_index do |step, i|
-      range = (i*band)...((i+1)*band)
-      submit_manifest_item_step(item, **opt, range: range, step: step)
+    recs, success, failure = [], {}, {}
+    recs = manifest_items(item)
+    sim  = opt[:sim_opt]
+    sim&.new_item
+    opt[:meth] ||= __method__
+    SERVER_STEPS.each do |step|
+      break if recs.empty?
+      sim&.new_step
+      result = submission_step(recs, **opt, step: step)
+      result.success_failure.tap do |s, f|
+        success.merge!(s) if s
+        failure.merge!(f) if f
+        recs.reject! { |r| f.key?(manifest_item_id(r)) } if f
+      end
     end
-
-    opt.merge!(msg: 'unmark ManifestItem as being submitted', err: nil)
-    submit_manifest_item_step(item, **opt)
-    true
-
-  rescue error
+  rescue => error
+    update_failures!(failure, error, recs)
     raise error unless no_raise
-    { item => error.to_s }
+  ensure
+    return StepResult.new(success: success, failure: failure)
   end
-
-=begin
-  def submit_db_step(item, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_item_step(item, **opt, step: :db)
-  end
-
-  def submit_cache_step(item, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_item_step(item, **opt, step: :cache)
-  end
-
-  def submit_promote_step(item, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_item_step(item, **opt, step: :promote)
-  end
-
-  def submit_index_step(item, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_item_step(item, **opt, step: :index)
-  end
-=end
 
   # ===========================================================================
   # :section:
@@ -236,97 +219,62 @@ module SubmissionService::Action::Submit
 
   protected
 
-  # Submit a set of items in slices to each step.
+  # Process a request to submit a set of ManifestItems by aggregating them into
+  # "slices" which pass through submission steps together.
   #
-  # @param [SubmissionService::Request] req  Def.: `@request`.
-  # @param [Integer]                    slice
-  # @param [Hash]                       opt
+  # The up side is that this reduces the number of transmissions to external
+  # services; the down side is that a failure at any step results in the
+  # failure of all items in that "slice".
   #
-  # @return [Hash]
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
+  # @param [Integer]                                             slice
+  # @param [Hash]                                                opt
   #
-  def submit_by_slice(req = self.request, slice:, **opt)
-    opt[:delay] ||= 0.1..0.3
-    opt[:work]  ||= 0.2..0.4
-
-    items = req.items.map { |item| manifest_item_id(item) }
-    valid_items, invalid_items = items.partition { |item| item.is_a?(String) }
-    valid_items.sort!.uniq!
-    invalid_items.map! { |entry| entry[:error] }
-
-    success_items, failure_items = [], []
-    valid_items.each_slice(slice) do |succeeded|
-      SUBMIT_STEPS.each do |step|
-        next if succeeded.blank?
-        # noinspection RubyMismatchedArgumentType
-        succeeded, failed = submit_manifest_items(succeeded, **opt, step: step)
-        success_items += succeeded
-        failure_items += failed
+  # @return [StepResult]
+  #
+  def submit_by_slice(items, slice:, **opt)
+    success, failure = {}, {}
+    sim = opt[:sim_opt]
+    manifest_items(items).each_slice(slice) do |recs|
+      sim&.new_slice
+      SERVER_STEPS.each do |step|
+        break if recs.empty?
+        sim&.new_step
+        result = submit_manifest_items(recs, **opt, step: step)
+        result.success_failure.tap do |s, f|
+          success.merge!(s) if s
+          failure.merge!(f) if f
+          recs.reject! { |r| f.key?(manifest_item_id(r)) } if f
+        end
       end
     end
-    success_items.sort!.uniq!
-    failure_items  = failure_items.sort!.to_h
-    success_items -= failure_items.keys
-
-    # NOTE: SubmissionService::StepResponse::TEMPLATE[:data]
-    {
-      count:      items.size,
-      submitted:  valid_items,
-      success:    success_items,
-      failure:    failure_items.presence,
-      invalid:    invalid_items.presence,
-    }.compact
+    success.except!(*failure.keys)
+    StepResult.new(success: success, failure: failure)
   end
 
   # submit_manifest_items
   #
-  # @param [Array<String>] items
-  # @param [Boolean]       sort
-  # @param [Boolean]       no_raise
-  # @param [Hash]          opt
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
+  # @param [Symbol]                                              step
+  # @param [Boolean]                                             no_raise
+  # @param [Hash]                                                opt
   #
-  # @return [(Array<String>, Array<Array<(String,String)>>)]
+  # @return [StepResult]
   #
-  def submit_manifest_items(items, sort: false, no_raise: true, **opt)
-    success, failure = [], []
-    if items.present?
-      result = submit_manifest_item_step(items, no_raise: no_raise, **opt)
-      if result.is_a?(Hash)
-        success = result.map { |k, v| k if v == :success }.compact
-        failure = result.except(*success).map { |k, v| [k, v.to_s] }
-      else
-        success = result
-      end
+  def submit_manifest_items(items, step:, no_raise: true, **opt)
+    recs, success, failure = [], {}, {}
+    recs   = manifest_items(items)
+    result = submission_step(recs, no_raise: no_raise, **opt, step: step)
+    result.success_failure.tap do |s, f|
+      success.merge!(s) if s
+      failure.merge!(f) if f
     end
   rescue => error
+    update_failures!(failure, error, recs)
     raise error unless no_raise
-    notice = error.to_s
-    failure += items.map { |item| [item, notice] }
   ensure
-    [success, failure].each(&:sort!) if sort
-    return success, failure
+    return StepResult.new(success: success, failure: failure)
   end
-
-=begin
-  def submit_db_slice(items, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_items(items, **opt, step: :db)
-  end
-
-  def submit_cache_slice(items, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_items(items, **opt, step: :cache)
-  end
-
-  def submit_promote_slice(items, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_items(items, **opt, step: :promote)
-  end
-
-  def submit_index_slice(items, **opt)
-    opt[:meth] ||= __method__
-    submit_manifest_items(items, **opt, step: :index)
-  end
-=end
 
   # ===========================================================================
   # :section:
@@ -334,9 +282,26 @@ module SubmissionService::Action::Submit
 
   protected
 
-  # manifest_item_id
+  # Get the array of ManifestItem expressed or implied by *items*.
   #
-  # @param [ManifestItem, Hash, String, Integer, *] item
+  # @param [String|ManifestItem|Array|ActiveRecord::Relation] items
+  #
+  # @return [Array<ManifestItem>]
+  #
+  def manifest_items(items)
+    case (items.is_a?(Array) ? items.first : items).presence
+      when nil                    then []
+      when ActiveRecord::Relation then items.to_a
+      when ManifestItem           then Array.wrap(items)
+      else                             ManifestItem.where(id: items).to_a
+    end
+  end
+
+  # Extract the ManifestItem identifier from *item* if possible.
+  #
+  # (For use in contexts where *item* may already be an identifier.)
+  #
+  # @param [ManifestItem, Hash, Integer, String, *] item
   #
   # @return [String]    If valid
   # @return [Hash]      If invalid
@@ -344,125 +309,542 @@ module SubmissionService::Action::Submit
   def manifest_item_id(item)
     result = error = nil
     case item
-      when ManifestItem, Hash then result = item[:id]
-      when String, Integer    then result = item
-      else                         error  = "invalid item #{item.inspect}"
+      when ManifestItem then result = item.id
+      when Hash         then result = item[:manifest_item_id] || item[:id]
+      when Integer      then result = item.to_s
+      when String       then result = item
+      else                   error  = "invalid item #{item.inspect}"
     end
     result&.to_s&.presence || { error: (error || "no ID for #{item.inspect}") }
   end
 
-  # submit_manifest_item_step
+  # Update all entries of a table of failure results with the given error.
   #
-  # @param [String, Array<String>] item
-  # @param [Symbol, nil]           step
-  # @param [String, nil]           msg
-  # @param [String, nil]           err
-  # @param [Float, nil]            start_time
-  # @param [String, nil]           tid
-  # @param [String, nil]           tag
-  # @param [Symbol, nil]           meth
-  # @param [Boolean]               no_raise
-  # @param [Proc, nil]             callback
-  # @param [Numeric, Range]        delay
-  # @param [Numeric, Range]        work
-  # @param [Numeric]               scale
-  # @param [Numeric]               band
-  # @param [Numeric, Range]        range
-  # @param [Numeric, Range]        state
-  # @param [Hash]                  opt
+  # @param [Hash]                     failure
+  # @param [Exception, String]        error
+  # @param [Array<ManifestItem>, nil] recs
   #
-  # @option opt [String] manifest_id
-  # @option opt [String] job_id
+  # @return [void]
   #
-  # @return [String, Array<String>]       Success(es)
-  # @return [Hash,   Array<String,Hash>]  Failure(s)
+  def update_failures!(failure, error, recs = nil)
+    msg = error.to_s
+    ids = recs&.map { |rec| manifest_item_id(rec) } || failure.keys
+    ids.each do |id|
+      if !failure[id]
+        failure[id] = { error: msg }
+      elsif !failure[id].is_a?(Hash)
+        failure[id] = { error: [*failure[id], msg].join('; ') }
+      else
+        failure[id][:error] = [*failure[id][:error], msg].join('; ')
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # submission_step
   #
-  def submit_manifest_item_step(
-    item,
-    step:       nil,
-    msg:        nil,
-    err:        nil,
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
+  # @param [Symbol]                 step
+  # @param [Float, nil]             start_time
+  # @param [Boolean]                no_raise
+  # @param [Proc, nil]              callback
+  # @param [Hash]                   opt
+  #
+  # @option opt [String]            :manifest_id
+  # @option opt [String]            :job_id
+  # @option opt [SimulationOptions] :sim_opt
+  # @option opt [Symbol]            :meth         If opt[:sim_opt]
+  # @option opt [String]            :msg          If opt[:sim_opt]
+  # @option opt [String]            :err          If opt[:sim_opt]
+  #
+  # @return [StepResult]
+  #
+  #--
+  # noinspection RubyScope
+  #++
+  def submission_step(
+    items,
+    step:,
     start_time: nil,
-    tid:        nil,
-    tag:        nil,
-    meth:       nil,
     no_raise:   false,
     callback:   nil,
-    delay:      nil,
-    work:       nil,
-    scale:      1,
-    band:       0.1,
-    range:      nil,
-    state:      nil,
     **opt
   )
-    result = success = failure = nil
-    if (entry = step && SUBMIT_STEPS_TABLE[step])
-      msg ||= entry[:msg]
-      err ||= entry[:err]
-    else
-      raise "invalid step #{step.inspect}" if step
-    end
-    if err
-      range ||= ((scale - band) / 2)...((scale + band) / 2)
-      state ||= rand * scale
-      err     = ("simulated #{err} failure".upcase if range.include?(state))
-    end
-    delay &&= rand(delay) if delay.is_a?(Range)
-    work  &&= rand(work)  if work.is_a?(Range) # TODO: simulated work time
-    msg   &&= "TODO: #{msg}"
-    meth  ||= __method__
-    tag   ||= ["*** SUBMIT --- #{self_class}.#{meth}"].tap { |parts|
-      parts << "step = #{step}" if step
-      parts << "tid = #{tid}"   if tid
-      parts << (item.is_a?(Array) ? item.join(', ') : item)
-    }.join(' | ')
-    sleep delay if delay
+    # noinspection RubyUnusedLocalVariable
+    result = success = nil
+    recs   = manifest_items(items)
     start_time ||= timestamp
+    opt[:meth] ||= __method__
 
-    $stderr.puts "#{tag} | t = #{start_time} | #{err || msg}"
-    raise err   if err   # NOTE: simulates operational failure
-    sleep work  if work  # NOTE: simulates working time
+    sim = (opt[:sim_opt] if opt[:simulation] && SIMULATION_ALLOWED)
+    tag = sim && "*** SUBMIT --- #{self_class}.#{opt[:meth]}"
+    sim&.simulate_work(recs, tag, time: start_time, step: step, **opt)
 
-    result = success = item
+    case step
+      when :cache   then result = await_upload(recs, **opt)
+      when :promote then result = promote_file(recs, **opt)
+      when :index   then result = add_to_index(recs, **opt)
+      when :entry   then result = create_entry(recs, **opt)
+      else               raise %Q("#{step}" step: no submission method)
+    end
+    success = recs
 
   rescue => error
+    # NOTE: *success* is assumed to be *nil* in this case.
     notice = error.to_s
-    result =
-      if item.is_a?(Array)
-        success = Array.wrap(success)
-        failure = Array.wrap(failure)
-        item.map { |unit|
-          state   = (:success if success.include?(unit))
-          state ||= (:failure if failure.include?(unit))
-          [unit, (state || notice)]
-        }.to_h
-      else
-        { item => notice }
-      end
+    result = recs.map { |rec| [manifest_item_id(rec), notice] }.to_h
     raise error unless no_raise
 
   ensure
+    if result.is_a?(Hash)
+      # == Result of the final submission step or a rescued exception.
+      result.transform_values! { |v| v.is_a?(Hash) ? v : { error: v } }
+    else
+      # == Result of any submission step except the final one.
+      success = Array.wrap(success).map { |v| manifest_item_id(v) }
+      notice  = opt[:meth].to_s
+      result  =
+        Array.wrap(result).map { |item|
+          k = manifest_item_id(item)
+          v = success.include?(k) ? {} : { error: notice }
+          [k, v]
+        }.to_h
+    end
+    failure = result.select { |_, v| v[:error] }
+    success = result.except(*failure.keys)
+    result  = StepResult.new(success: success, failure: failure)
     if callback
-      if result.is_a?(Hash)
-        success = result.map { |k, v| k if v == :success }.compact
-        failure = result.except(*success)
-      else
-        success = Array.wrap(result)
-        failure = []
-      end
-      items   = Array.wrap(item)
-      message = opt.slice(:manifest_id, :job_id)
-      message[:step]           = step
-      message[:start_time]     = t_start = start_time
-      message[:end_time]       = t_end   = timestamp
-      message[:duration]       = duration(t_end, t_start, precision: 4)
-      message[:data]           = { count: items.size, submitted: items }
-      message[:data][:success] = success if success.present?
-      message[:data][:failure] = failure if failure.present?
+      message = opt.slice(:simulation, :manifest_id, :job_id)
+      message[:step]       = step
+      message[:data]       = result.deep_dup.finalize.compact
+      message[:start_time] = t_start = start_time
+      message[:end_time]   = t_end   = timestamp
+      message[:duration]   = duration(t_end, t_start, precision: 4)
       callback.(message)
     end
     return result
+  end
+
+  # ===========================================================================
+  # :section: AWS steps
+  # ===========================================================================
+
+  protected
+
+  # Return when the records contain Shrine metadata indicating their associated
+  # files have been uploaded to cache.
+  #
+  # Conceptually the item is (or will enter) the :upload step on the client
+  # side, which represents the actual upload to AWS cache.  The :cache step
+  # obtains on the server side once the upload has caused the :file_data column
+  # of the ManifestItem record to be updated.
+  #
+  # @param [Array<ManifestItem>] records
+  # @param [Integer, Float]      wait
+  #
+  # @return [Array<ManifestItem>]
+  #
+  def await_upload(records, wait: 1, **)
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
+    sleep(wait) until records.all?(&:file_uploaded_now?)
+    records
+  end
+
+  # Move the associated files into permanent storage.
+  #
+  # @param [Array<ManifestItem>] records
+  #
+  # @return [Array<ManifestItem>]
+  #
+  def promote_file(records, **)
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
+    records.each { |rec| rec.promote_file(no_raise: false) }
+  end
+
+  # ===========================================================================
+  # :section: Indexing step
+  # ===========================================================================
+
+  protected
+
+  # Add entries to the index.
+  #
+  # @param [Array<ManifestItem>] records
+  #
+  # @return [Array<ManifestItem>]
+  #
+  # == Usage Notes
+  # This is the step where the submission ID associated with the ManifestItem
+  # instance is generated/regenerated.
+  #
+  def add_to_index(records, **)
+    fields = records.map(&:emma_metadata)
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
+    result = ingest_api.put_records(*fields)
+    succeeded, failed = process_ingest_errors(result, *records)
+    ExceptionHelper.failure(failed, model: :manifest_item) if failed.present?
+    now = DateTime.now
+    succeeded.each { |rec| rec.update_columns(last_indexed: now) }
+  end
+
+  # Interpret error message(s) generated by Federated Ingest to determine which
+  # item(s) failed.
+  #
+  # @param [Ingest::Message::Response] result
+  # @param [Array<ManifestItem>]       records
+  # @param [Hash]                      opt
+  #
+  # @return [Array<(Array<ManifestItem>,ExecReport)>]
+  # @return [Array<(Array<ManifestItem>,nil)>]
+  #
+  # @see ExecReport#error_table
+  #
+  # == Implementation Notes
+  # It's not clear whether there would ever be situations where there was a mix
+  # of errors by index, errors by submission ID, and/or general errors, but
+  # this method was written to be able to cope with the possibility.
+  #
+  def process_ingest_errors(result, *records, **opt)
+
+    # If there were no errors then indicate that all items succeeded.
+    errors = ExecReport[result].error_table(**opt).dup
+    return records, nil if errors.blank?
+
+    # Otherwise, all items will be assumed to have failed.
+    failed = []
+
+    # Errors associated with the position of the item in the request.
+    by_index = errors.select { |k| k.is_a?(Integer) }
+    if by_index.present?
+      errors.except!(*by_index.keys)
+      by_index.transform_keys! { |idx| records[idx-1].sid_value }
+      failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+    end
+
+    # Errors associated with item submission ID.
+    by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
+    if by_sid.present?
+      errors.except!(*by_sid.keys)
+      failed += by_sid.map { |sid, msg| FlashPart.new(sid, msg) }
+    end
+
+    # Remaining (general) errors indicate that there was a problem with the
+    # request and that all items have failed.
+    if errors.present?
+      failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
+    end
+
+    return [], ExecReport.new(*failed)
+  end
+
+  # ===========================================================================
+  # :section: EMMA entry step
+  # ===========================================================================
+
+  protected
+
+  COLUMN_KEY_MAP = {
+    id:             :upload_id,
+    submission_id:  :submission_id,
+  }.freeze
+  ENTRY_COLUMNS = COLUMN_KEY_MAP.keys.freeze
+  RESULT_KEYS   = COLUMN_KEY_MAP.values.freeze
+
+  # Create an Upload record for the entries that have made it through all of
+  # the steps through index ingest.
+  #
+  # @param [Array<ManifestItem>] records
+  #
+  # @return [Hash{String=>Hash}]
+  #
+  def create_entry(records, **)
+    # Create matching EMMA entries from the values extracted/derived from each
+    # item record.
+    sid_rec = records.map { |rec| [rec.submission_id, rec] }.to_h
+    fields  = records.map { |rec| entry_fields(rec) }
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
+    rows    = Upload.insert_all(fields, returning: ENTRY_COLUMNS).rows
+
+    # Add successful submissions to the method result, and update and persist
+    # the new values to the item record.
+    result = {}
+    submit = DateTime.now
+    rows.each do |row|
+      col = RESULT_KEYS.zip(row).to_h
+      sid = col[:submission_id] or raise "no sid in returned #{row.inspect}"
+      rec = sid_rec[sid]        or raise "sid #{sid.inspect} unexpected"
+      sid_rec[sid]   = nil
+      result[rec.id] = col
+      rec.update_columns(last_submit: submit)
+    end
+
+    # Note any items that were not confirmed as having created a matching EMMA
+    # entry record.
+    sid_rec.compact!
+    if sid_rec.present?
+      error  = "#{__method__}: unknown database error" # TODO: I18n
+      failed = sid_rec.values.map { |rec| [rec.id, { error: error }] }.to_h
+      result.merge!(failed)
+    end
+    result.stringify_keys
+  end
+
+  # Required if the target records are in the 'uploads' table because that
+  # schema does not use 'json' fields.
+  #
+  # @type [Boolean]
+  #
+  JSON_SERIALIZE = true
+
+  # Generate a row of fields for #insert_all.
+  #
+  # If *sid* is a string, this has the side-effect of setting rec.submission_id
+  # (without persisting)
+  #
+  # @param [ManifestItem] rec
+  # @param [Boolean]      serialize   If *true*, serialize Hash values.
+  #
+  # @return [Hash]
+  #
+  def entry_fields(rec, serialize: JSON_SERIALIZE)
+    ed   = rec.emma_metadata(refresh: true)
+    fd   = rec.file_data
+    mime = fd&.dig(:metadata, :mime_type)
+    fmt  = mime_to_fmt(mime)
+    ext  = fmt_to_ext(fmt)
+    {
+      repository:     ed[:emma_repository],
+      submission_id:  ed[:emma_repositoryRecordId],
+      fmt:            ed[:dc_format] || FileFormat.metadata_fmt(fmt),
+      ext:            ext,
+      state:          'completed',
+      phase:          'create',
+      file_data:      (serialize ? fd.to_json : fd),
+      emma_data:      (serialize ? ed.to_json : ed),
+    }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  class StepResult < ::Hash
+
+    include Emma::Common
+
+    TEMPLATE = {
+      count:     0,
+      invalid:   nil,
+      submitted: nil,
+      success:   nil,
+      failure:   nil,
+    }.freeze
+
+    def initialize(arg = nil, **opt)
+      replace(TEMPLATE)
+      valid = opt.delete(:valid)
+      opt[:submitted] ||= valid unless valid.nil?
+      arg = (arg.presence if arg.is_a?(Hash))
+      opt = (arg&.merge(opt) || opt).presence
+      update(normalize!(opt)) if opt
+    end
+
+    def count     = self[:count] || 0
+    def valid     = submitted
+    def invalid   = self[:invalid] || []
+    def submitted = self[:submitted] || []
+    def success   = self[:success] || {}
+    def failure   = self[:failure] || {}
+
+    def success_failure = [success.presence, failure.presence]
+
+    def finalize(**opt)
+      normalize!(opt).each_pair do |key, val|
+        if key == :count
+          self[key] = val
+        elsif self[key].is_a?(Hash)
+          self[key].rmerge!(val)
+        else
+          self[key] = [*self[key], *val]
+        end
+      end
+      self[:submitted] ||= [*ids(self[:success]), *ids(self[:failure])]
+      self[:count]     ||= [*self[:submitted], *self[:invalid]].size
+      each_pair do |key, val|
+        next if val.nil?
+        case val
+          when Array
+            case val.first
+              when nil  then next
+              when Hash then val = val.sort_by { |v| v.keys.first.to_s }
+              else           val = val.sort_by(&:to_s).uniq
+            end
+          when Hash
+            val = val.sort_by { |k, _| k.to_s }.to_h
+          else
+            val = Array.wrap(val) unless key == :count
+        end
+        self[key] = val
+      end
+    end
+
+    protected
+
+    def ids(arg) = arg.is_a?(Hash) ? arg.keys : Array.wrap(arg)
+
+    def normalize!(opt)
+      opt.slice!(*TEMPLATE.keys)
+      opt.compact!
+      opt.each_pair do |k, v|
+        if k == :count
+          opt[k] = non_negative(v)
+        elsif v.is_a?(Hash)
+          opt[k] = v.deep_dup
+        else
+          opt[k] = Array.wrap(v).deep_dup
+        end
+      end
+      opt
+    end
+
+  end
+
+  class SimulationOptions < ::Hash
+
+    include SubmissionService::Action::Submit
+    include Emma::ThreadMethods
+    include Emma::TimeMethods
+
+    #STEP_FAILURE_PROBABILITY = 7.5 / 100.0
+    STEP_FAILURE_PROBABILITY = 15 / 100.0
+
+    def initialize(**opt)
+      super
+      self[:tid] ||= thread_name
+    end
+
+    def tid
+      self[__method__]
+    end
+
+    def value
+      self[__method__] ||= rand * scale
+    end
+
+    def scale
+      self[__method__] ||= 100.0
+    end
+
+    def percentile
+      self[__method__] ||= scale * STEP_FAILURE_PROBABILITY
+    end
+
+    def index(i = nil)
+      self[__method__] = i if i
+      self[__method__]
+    end
+
+    def min_max
+      # noinspection RubyMismatchedArgumentType
+      min = index ? (percentile * index) : ((scale - percentile) / 2)
+      min...(min + percentile)
+    end
+
+    def slice_delay
+      self[__method__] ||= 0.1..0.3
+    end
+
+    def item_delay
+      self[__method__] ||= 0.1..0.3
+    end
+
+    def work
+      self[__method__] ||= 0.05..0.15
+    end
+
+    # Called to prepare simulation values for a new set of items.
+    #
+    def new_slice
+      pause(slice_delay) if slice_delay
+      self[:index] = nil
+      self[:value] = nil
+    end
+
+    # Called to prepare simulation values for a new item.
+    #
+    def new_item
+      pause(item_delay) if item_delay
+      self[:index] = nil
+      self[:value] = nil
+    end
+
+    # Called prior to performing a new submission step on one or more items.
+    #
+    # @return [Integer]
+    #
+    def new_step
+      # noinspection RubyMismatchedReturnType
+      index(index&.succ || 0)
+    end
+
+    # Called to simulate work.
+    #
+    # @param [String, ManifestItem, Array] item
+    # @param [String, Array<String>]       tag
+    # @param [Float, nil]                  time
+    # @param [Symbol, nil]                 step
+    # @param [String, nil]                 msg
+    # @param [String, nil]                 err
+    #
+    def simulate_work(item, tag, time: nil, step: nil, msg: nil, err: nil, **)
+      entry = step && SUBMIT_STEPS_TABLE[step] || {}
+      raise "invalid step #{step.inspect}" if step && entry.blank?
+      msg ||= entry[:msg] || entry[:sim_msg]
+      err ||= entry[:err] || entry[:sim_err]
+      msg &&= "TODO: #{msg}"
+      err &&= ("SIMULATED #{err} FAILURE".upcase if min_max.include?(value))
+      item  = Array.wrap(item).map { |v| manifest_item_id(v) }
+      line  = Array.wrap(tag).tap { |parts|
+        parts << "step = #{step}" if step
+        parts << "tid = #{tid}"
+        parts << item.join(', ')
+        parts << "t = #{time || timestamp}"
+        parts << (err || msg)
+      }.join(' | ')
+      $stderr.puts line
+      # noinspection RubyMismatchedArgumentType
+      raise err              if err
+      pause(work, item.size) if work
+    end
+
+    # Sleep for a fixed time or randomly within a range of times.
+    #
+    # @param [Float,Range<Float>] time
+    # @param [Numeric, nil]       factor
+    #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
+    def pause(time, factor = nil)
+      if factor && (factor != 1)
+        if time.is_a?(Range)
+          min  = time.first * factor
+          max  = time.last  * factor
+          time = Range.new(min, max, time.exclude_end?)
+        else
+          time = time * factor
+        end
+      end
+      sleep(time.is_a?(Range) ? rand(time) : time)
+    end
+
   end
 
 end

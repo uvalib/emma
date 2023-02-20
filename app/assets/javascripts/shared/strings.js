@@ -162,3 +162,14 @@ export function asString(item, limit) {
     }
     return left + result + right;
 }
+
+/**
+ * Indicate whether *item* is a String.
+ *
+ * @param {*} item
+ *
+ * @returns {boolean}
+ */
+export function isString(item) {
+    return typeof(item) === 'string';
+}

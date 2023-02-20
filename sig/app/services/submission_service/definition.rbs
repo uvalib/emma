@@ -4,24 +4,6 @@
 module SubmissionService::Definition
   include SubmissionService::Properties
 
-  # Find the ID of the waiter job associated with the indicated Manifest.
-  #
-  # @param [SubmitJob, Manifest, String, *] target
-  # @param [Hash]                           opt     To #jobs_for
-  #
-  # @return [String, nil]
-  #
-  def waiter_job_id: (Manifest|String|nil target, **untyped opt) -> (String | nil)
-
-  # Find the job(s) associated with the indicated Manifest.
-  #
-  # @param [SubmitJob, Manifest, String, *] target
-  # @param [Boolean]                        raise
-  #
-  # @return [ActiveRecord::Relation<SubmitJobRecord>, nil]
-  #
-  def jobs_for: (Manifest|String|nil target, ?raise: bool) -> (ActiveRecord::Relation | nil)
-
   # Marshal data in preparation for the remote request.
   #
   # @param [SubmissionService::Request, Symbol, nil]           meth

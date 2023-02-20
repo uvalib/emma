@@ -137,6 +137,12 @@ module ManifestItem::StatusMethods
   #
   def file_uploaded?: (?(ManifestItem|symHash|nil) item) -> bool
 
+  # Dynamically check the item's :file_data field by reloading.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def file_uploaded_now?: (?(ManifestItem|symHash|nil) item) -> bool
+
   # Return with the local filename that has been associated with the item.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.

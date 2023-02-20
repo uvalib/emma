@@ -52,13 +52,14 @@ module ManifestItem::Assignable
   # @return [Hash, nil]
   #
   def normalize_file
-    : (anyHash|String data) -> symHash
-    | (untyped        data) -> nil
+    : (anyHash|String data, **untyped _ignored) -> symHash
+    | (untyped        data, **untyped _ignored) -> nil
 
   # normalize_single
   #
   # @param [*]     v
   # @param [Class] type
+  # @param [Hash]  opt                Passed to normalization method.
   #
   # @return [*]
   #
@@ -67,13 +68,14 @@ module ManifestItem::Assignable
   # normalize_bool
   #
   # @param [BoolType, String, *] v
+  # @param [Boolean]             invalid  Allow invalid values to be imported.
   #
   # @return [true, false, nil]
   #
   def normalize_bool
-    : (String  v) -> (bool | nil)
-    | (bool    v) -> bool
-    | (untyped v) -> nil
+    : (String  v, ?invalid: bool, **untyped _ignored) -> (bool | nil)
+    | (bool    v, ?invalid: bool, **untyped _ignored) -> bool
+    | (untyped v, ?invalid: bool, **untyped _ignored) -> nil
 
   # normalize_number
   #
@@ -82,9 +84,9 @@ module ManifestItem::Assignable
   # @return [Numeric, nil]
   #
   def normalize_number
-    : (String  v) -> (Numeric | nil)
-    | (Numeric v) -> Numeric
-    | (untyped v) -> nil
+    : (String  v, ?invalid: bool, **untyped _ignored) -> (Numeric | nil)
+    | (Numeric v, ?invalid: bool, **untyped _ignored) -> Numeric
+    | (untyped v, ?invalid: bool, **untyped _ignored) -> nil
 
   # normalize_date
   #
@@ -93,9 +95,9 @@ module ManifestItem::Assignable
   # @return [Date, String, nil]
   #
   def normalize_date
-    : (String|Numeric v) -> (Date | String)
-    | (Date           v) -> Date
-    | (untyped        v) -> nil
+    : (String|Numeric v, **untyped _ignored) -> (Date | String)
+    | (Date           v, **untyped _ignored) -> Date
+    | (untyped        v, **untyped _ignored) -> nil
 
   # normalize_datetime
   #
@@ -104,21 +106,22 @@ module ManifestItem::Assignable
   # @return [DateTime, String, nil]
   #
   def normalize_datetime
-    : (String|Numeric v) -> (DateTime | String)
-    | (Date           v) -> DateTime
-    | (untyped        v) -> nil
+    : (String|Numeric v, **untyped _ignored) -> (DateTime | String)
+    | (Date           v, **untyped _ignored) -> DateTime
+    | (untyped        v, **untyped _ignored) -> nil
 
   # normalize_enum
   #
   # @param [Array, String, Symbol, *] v
-  # @param [Class]                    type
+  # @param [Class]                    type  EnumType subclass
+  # @param [Hash]                     opt   Passed to #cast method.
   #
   # @return [Array, String, nil]
   #
   def normalize_enum
-    : (anyArray      v, Class `type`) -> strArray
-    | (String|Symbol v, Class `type`) -> String
-    | (untyped       v, Class `type`) -> nil
+    : (anyArray      v, Class `type`, **untyped opt) -> strArray
+    | (String|Symbol v, Class `type`, **untyped opt) -> String
+    | (untyped       v, Class `type`, **untyped opt) -> nil
 
   # normalize_json
   #
@@ -127,9 +130,9 @@ module ManifestItem::Assignable
   # @return [Array<Hash>, Hash, nil]
   #
   def normalize_json
-    : (anyHash  v) -> symHash
-    | (anyArray v) -> Array[symHash]
-    | (untyped  v) -> (symHash | nil)
+    : (anyHash  v, **untyped _ignored) -> symHash
+    | (anyArray v, **untyped _ignored) -> Array[symHash]
+    | (untyped  v, **untyped _ignored) -> (symHash | nil)
 
   # normalize_text
   #
@@ -138,8 +141,8 @@ module ManifestItem::Assignable
   # @return [String, *]
   #
   def normalize_text
-    :     (anyArray|String|Symbol v) -> String
-    | [T] (T                      v) -> T
+    :     (anyArray|String|Symbol v, **untyped _ignored) -> String
+    | [T] (T                      v, **untyped _ignored) -> T
 
   # normalize_copyright
   #
@@ -148,8 +151,8 @@ module ManifestItem::Assignable
   # @return [String, nil]
   #
   def normalize_copyright
-    : (Date|String|Numeric v) -> String
-    | (untyped             v) -> nil
+    : (Date|String|Numeric v, **untyped _ignored) -> String
+    | (untyped             v, **untyped _ignored) -> nil
 
   private
 

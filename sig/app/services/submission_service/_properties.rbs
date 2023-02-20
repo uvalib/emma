@@ -15,6 +15,12 @@ module SubmissionService::Properties
   #
   CONFIGURATION: symHash
 
+  # Service default property configuration.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  SERVICE_PROPERTY: symHash
+
   # How important an external service is as an authority for the type(s) of
   # identifiers it can search.  For example:
   #
@@ -34,6 +40,25 @@ module SubmissionService::Properties
   #
   DEFAULT_TIMEOUT: Float
 
+  # Batching is not actually performed if the number of manifest items is less
+  # than this number.
+  #
+  # @type [Integer]
+  #
+  # @see "en.emma.service.submission.batch_min"
+  # @see "en.emma.service.submission._template.batch_min"
+  #
+  MIN_BATCH: Integer
+
+  # Batches larger than this number are not permitted.
+  #
+  # @type [Integer]
+  #
+  # @see "en.emma.service.submission.batch_max"
+  # @see "en.emma.service.submission._template.batch_max"
+  #
+  MAX_BATCH: Integer
+
   # How many manifest items to process in a single job.
   #
   # If *true*, items will be partitioned into batches - as few as possible.
@@ -41,14 +66,53 @@ module SubmissionService::Properties
   #
   # @type [Integer, Boolean]
   #
-  DEF_BATCH_SIZE: Integer | bool
+  DEF_BATCH: Integer | bool
 
-  # Batching is not actually performed if the number of manifest items is less
-  # than this number.
+  # Minimum slice size.
   #
   # @type [Integer]
   #
-  MIN_BATCH_SIZE: Integer
+  # @see "en.emma.service.submission.slice_min"
+  # @see "en.emma.service.submission._template.slice_min"
+  #
+  MIN_SLICE: Integer
+
+  # Maximum slice size.
+  #
+  # @type [Integer]
+  #
+  # @see "en.emma.service.submission.slice_max"
+  # @see "en.emma.service.submission._template.slice_max"
+  #
+  MAX_SLICE: Integer
+
+  # Within a given batch of ManifestItems being submitted, this value specifies
+  # how many will be transmitted together to each subsystem.
+  #
+  # If *true*, all items of a batch will be transmitted together if possible.
+  # If *false* then no slicing will be performed by default.
+  #
+  # @type [Integer, Boolean]
+  #
+  # @see "en.emma.service.submission.slice_size"
+  # @see "en.emma.service.submission._template.slice_size"
+  #
+  DEF_SLICE: Integer | bool
+
+  SIMULATION_ALLOWED: bool
+
+  SIMULATION_ONLY: bool
+
+  # All bulk submission steps, including non-actionable "pseudo steps" and
+  # client-side-only steps.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SUBMIT_STEPS_TABLE: Hash[Symbol,symHash]
+
+  #CLIENT_STEPS: symArray
+
+  SERVER_STEPS: symArray
 
   # The configuration key for the service.
   #
@@ -92,6 +156,19 @@ module SubmissionService::Properties
     | (false       value, Integer|bool|nil default) -> nil
     | (nil         value, false|nil        default) -> nil
 
+  # slice_option
+  #
+  # @param [Numeric, Boolean, nil] value
+  # @param [Integer, Boolean, nil] default
+  #
+  # @return [Integer, nil]
+  #
+  def slice_option
+    : (Numeric|nil value, Integer|true     default) -> Integer
+    | (true        value, Integer|bool|nil default) -> Integer
+    | (false       value, Integer|bool|nil default) -> nil
+    | (nil         value, false|nil        default) -> nil
+
   # timeout_option
   #
   # @param [Numeric, Boolean, nil] value
@@ -119,7 +196,7 @@ module SubmissionService::Properties
 
   # Return the batch size indicated by the value.
   #
-  # The result will be *nil* or in the range [#MIN_BATCH_SIZE..#MAX_BATCH_SIZE]
+  # The result will be *nil* or in the range [#MIN_BATCH..#MAX_BATCH].
   #
   # @param [Numeric, Boolean, nil] value
   # @param [Array, nil]            items

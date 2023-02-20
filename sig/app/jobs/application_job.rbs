@@ -1,11 +1,9 @@
 # Common base for Active Job classes.
 #
-# @!method job_name
-#
 class ApplicationJob < ActiveJob::Base
-  include Emma::Common
+  include ApplicationJob::Logging
 
-  include Emma::Debug
+  include ApplicationJob::Methods
 
   include ApplicationJob::Properties
 
@@ -15,8 +13,6 @@ class ApplicationJob < ActiveJob::Base
   # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
   #
   def initialize: (*untyped args, **untyped opt) -> void
-
-  def perform: (*untyped) -> void
 
   # Run the job immediately.
   #
@@ -36,20 +32,9 @@ class ApplicationJob < ActiveJob::Base
   # @return [ApplicationJob]          Otherwise *self* is returned.
   #
   def perform_later: (*untyped args, **untyped options) -> untyped
-
-  # Called from #perform to initiate a callback if one was supplied via the job
-  # arguments.
-  #
-  # @param [AsyncCallback, nil] callback
-  # @param [Hash]               opt       Passed to #cb_schedule.
-  #
-  # @option opt [AsyncCallback] :callback
-  #
-  # @return [void]
-  #
-  def perform_callback: (untyped callback, **untyped opt) -> untyped
 end
 
 # Namespace for app/jobs/attachment.
+# @note Currently unused
 module Attachment
 end

@@ -47,10 +47,13 @@ module ManifestItem::Assignable
   # @param [Hash, nil] attr
   # @param [Hash, nil] opt
   #
+  # @option opt [Boolean] :invalid    Allow invalid values.
+  #
   # @return [Hash{Symbol=>Any}]
   #
   def attribute_options(attr, opt = nil)
-    opt  = { compact: false, key_norm: true }.merge!(opt || {})
+    n_opt, opt = partition_hash(opt, :invalid, :nil_default)
+    opt.reverse_merge!(compact: false, key_norm: true)
     attr = super(attr, opt)
     attr = default_attributes(attr)
     attr.map { |k, v|
@@ -70,16 +73,16 @@ module ManifestItem::Assignable
         end
         v = Array.wrap(v)
         v.map! { |e|
-          e = normalize_single(e, type)
+          e = normalize_single(e, type, **n_opt)
           e.is_a?(FalseClass) ? e : e.presence
         }.compact!
         v = v.join(LINE_JOIN) unless column.array
       elsif k == :file_data
-        v = normalize_file(v).presence
+        v = normalize_file(v, **n_opt).presence
       elsif k == :dcterms_dateCopyright
-        v = normalize_copyright(v)
+        v = normalize_copyright(v, **n_opt)
       else
-        v = normalize_single(v, type)
+        v = normalize_single(v, type, **n_opt)
       end
 
       Log.warn {
@@ -124,7 +127,7 @@ module ManifestItem::Assignable
   #
   # @return [Hash, nil]
   #
-  def normalize_file(data)
+  def normalize_file(data, **)
     return unless data.present?
     hash = json_parse(data, log: false) and return hash
     return unless data.is_a?(String)
@@ -135,41 +138,44 @@ module ManifestItem::Assignable
   #
   # @param [*]     v
   # @param [Class] type
+  # @param [Hash]  opt                Passed to normalization method.
   #
   # @return [*]
   #
-  def normalize_single(v, type)
+  def normalize_single(v, type, **opt)
     case
-      when type == 'json'     then normalize_json(v)
-      when type == 'date'     then normalize_date(v)
-      when type == 'datetime' then normalize_datetime(v)
-      when type == 'number'   then normalize_number(v)
-      when type == TrueFalse  then normalize_bool(v)
-      when type.is_a?(Class)  then normalize_enum(v, type)
-      else                         normalize_text(v)
+      when type == 'json'     then normalize_json(v, **opt)
+      when type == 'date'     then normalize_date(v, **opt)
+      when type == 'datetime' then normalize_datetime(v, **opt)
+      when type == 'number'   then normalize_number(v, **opt)
+      when type == TrueFalse  then normalize_bool(v, **opt)
+      when type.is_a?(Class)  then normalize_enum(v, type, **opt)
+      else                         normalize_text(v, **opt)
     end
   end
 
   # normalize_bool
   #
   # @param [BoolType, String, *] v
+  # @param [Boolean]             invalid  Allow invalid values to be imported.
   #
   # @return [true, false, nil]
   #
-  def normalize_bool(v)
-    true?(v) || (false if false?(v))
+  def normalize_bool(v, invalid: true, **)
+    true?(v) || (false if invalid || false?(v))
   end
 
   # normalize_number
   #
   # @param [String, Numeric, *] v
+  # @param [Boolean]            invalid   Allow invalid values to be imported.
   #
   # @return [Numeric, nil]
   #
-  def normalize_number(v)
+  def normalize_number(v, invalid: true, **)
     v = v.to_i if v.is_a?(String)
     # noinspection RubyMismatchedReturnType
-    v if v.is_a?(Numeric)
+    v if invalid || v.is_a?(Numeric)
   end
 
   # normalize_date
@@ -178,7 +184,7 @@ module ManifestItem::Assignable
   #
   # @return [Date, String, nil]
   #
-  def normalize_date(v)
+  def normalize_date(v, **)
     v = v.to_s if v.is_a?(Numeric)
     v.is_a?(String) ? (v.to_date rescue v) : v.try(:to_date)
   end
@@ -189,7 +195,7 @@ module ManifestItem::Assignable
   #
   # @return [DateTime, String, nil]
   #
-  def normalize_datetime(v)
+  def normalize_datetime(v, **)
     v = v.to_s if v.is_a?(Numeric)
     v.is_a?(String) ? (v.to_datetime rescue v) : v.try(:to_datetime)
   end
@@ -197,14 +203,17 @@ module ManifestItem::Assignable
   # normalize_enum
   #
   # @param [Array, String, Symbol, *] v
-  # @param [Class]                    type
+  # @param [Class]                    type  EnumType subclass
+  # @param [Hash]                     opt   Passed to #cast method.
   #
   # @return [Array, String, nil]
   #
-  def normalize_enum(v, type)
-    return v.map { |e| normalize_enum(type, e) }.compact if v.is_a?(Array)
-    v = v.to_s                                           if v.is_a?(Symbol)
-    type.cast(v)&.to_s || v                              if v.is_a?(String)
+  def normalize_enum(v, type, **opt)
+    if v.is_a?(Array)
+      v.map { |e| normalize_enum(type, e, **opt) }.compact
+    else
+      type.cast(v, **opt)&.to_s
+    end
   end
 
   # normalize_json
@@ -213,7 +222,7 @@ module ManifestItem::Assignable
   #
   # @return [Array<Hash>, Hash, nil]
   #
-  def normalize_json(v)
+  def normalize_json(v, **)
     v.is_a?(Array) ? v.flat_map { |h| json_parse(h) }.compact : json_parse(v)
   end
 
@@ -223,7 +232,7 @@ module ManifestItem::Assignable
   #
   # @return [String, *]
   #
-  def normalize_text(v)
+  def normalize_text(v, **)
     # noinspection RubyMismatchedReturnType
     case v
       when Array  then v.compact.map { |e| normalize_text(e) }.join(LINE_JOIN)
@@ -239,7 +248,7 @@ module ManifestItem::Assignable
   #
   # @return [String, nil]
   #
-  def normalize_copyright(v)
+  def normalize_copyright(v, **)
     v = normalize_date(v)
     v = v.year.to_s if v.is_a?(Date)
     # noinspection RubyMismatchedReturnType

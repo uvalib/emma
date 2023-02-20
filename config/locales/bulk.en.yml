@@ -9,6 +9,77 @@ en:
     bulk:
 
       # =======================================================================
+      # Submission steps
+      # =======================================================================
+
+      step:           # @see SubmissionService::Properties::SUBMIT_STEPS_TABLE
+
+        start:        &INITIAL_PSEUDO_STEP
+          label:      ~
+          css:        'not-started' # TODO: not like the others
+          client:     false
+          server:     false
+          sim_msg:    'initial pseudo step'
+
+        data:         &DATA_VALIDATION_PHASE
+          label:      'Validation'
+          css:        'data-status'
+          client:     true
+          server:     false
+          sim_msg:    'client-side item validation'
+
+        file:         &FILE_DATA_PHASE
+          label:      'File Status'
+          css:        'file-status'
+          client:     true
+          server:     false
+          sim_msg:    'client-side file acquisition'
+
+        upload:       &FILE_UPLOAD_PHASE
+          label:      'Storage Status'
+          css:        'upload-status'
+          client:     true
+          server:     false
+          sim_msg:    'client-side file upload'
+
+        cache:        &FILE_CACHE_PHASE
+          <<:         *FILE_UPLOAD_PHASE
+          client:     false
+          server:     true
+          sim_msg:    'upload file to AWS cache'
+          sim_err:    'AWS upload'
+
+        promote:      &FILE_PROMOTE_PHASE
+          <<:         *FILE_UPLOAD_PHASE
+          client:     false
+          server:     true
+          sim_msg:    'promote file to AWS storage'
+          sim_err:    'AWS storage'
+
+        index:        &ENTRY_INDEX_PHASE
+          label:      'Indexing Status'
+          css:        'index-status'
+          client:     false
+          server:     true
+          sim_msg:    'update index'
+          sim_err:    'index'
+
+        entry:        &ENTRY_DATABASE_PHASE
+          label:      'Entry Status'
+          css:        'entry-status'
+          client:     false
+          server:     true
+          sim_msg:    'finalize EMMA entry'
+          sim_err:    'entry'
+
+        end:          &TERMINAL_PSEUDO_STEP
+          label:      ~
+          css:        'done' # TODO: not like the others
+          client:     false
+          server:     false
+          sim_msg:    'terminal pseudo step'
+
+      # =======================================================================
       # Common definitions
       # =======================================================================
 
@@ -117,11 +188,12 @@ en:
 
         status:
 
-          type:           # @see ManifestItemDecorator::SUBMIT_PHASE
-            db:           'Database Status'
+          type:           # @see ManifestItemDecorator::SUBMIT_STEPS
+            data:         'Validation'
             file:         'File Status'
             upload:       'Storage Status'
             index:        'Indexing Status'
+            entry:        'Entry Status'
 
           value:           # @see ManifestItemDecorator::SUBMIT_STATUS
 
@@ -204,12 +276,6 @@ en:
 
       submit:
 
-        phase:          # @see ManifestItemDecorator::SUBMIT_PHASE
-          db:           'Database Status'
-          file:         'File Status'
-          upload:       'Storage Status'
-          index:        'Indexing Status'
-
         buttons:        # @see "en.emma.manifest.remit.*"
           - start
           - stop
@@ -220,7 +286,7 @@ en:
         counts:
           total:        'Total'
           ready:        'Ready'
-          transmitting: 'Transmitting'
+          transmitting: 'Queued'
           succeeded:    'Submitted'
           failed:       'Failed'
 

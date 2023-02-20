@@ -87,7 +87,7 @@ appSetup(MODULE, function() {
                 const new_url  = path.replace(/#.*$/, '');
                 in_page = (new_url === curr_url);
             }
-            path = in_page && path.replace(/^.*#/, '');
+            path = in_page ? path.replace(/^.*#/, '') : '';
         }
         const anchor = path.split('#').pop();
         return (anchor && !bare) ? `#${anchor}` : anchor;

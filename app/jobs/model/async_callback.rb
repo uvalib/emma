@@ -1,4 +1,4 @@
-# app/jobs/application_job/async_callback.rb
+# app/jobs/model/async_callback.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -6,7 +6,7 @@
 __loading_begin(__FILE__)
 
 # @note This class may go away...
-class ApplicationJob::AsyncCallback
+class Model::AsyncCallback
 
   include Emma::Debug
   extend  Emma::Debug
@@ -26,7 +26,7 @@ class ApplicationJob::AsyncCallback
   # @return [Symbol]
   attr_reader :meth
 
-  # @return [ApplicationJob::AsyncCallback, nil]
+  # @return [Model::AsyncCallback, nil]
   attr_reader :callback
 
   # ===========================================================================

@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # SubmissionService::Action::Control
 #
+# @note The original approach for these methods is incompatible with the use of
+#   GoodJob::Batch as the "waiter task".
+#
 module SubmissionService::Action::Control
 
   include SubmissionService::Common
@@ -18,6 +21,7 @@ module SubmissionService::Action::Control
 
   public
 
+=begin
   # Receive a request to pause a batch job.
   #
   # @param [SubmissionService::ControlRequest, nil] request
@@ -43,7 +47,9 @@ module SubmissionService::Action::Control
     self.end_time     = timestamp
     self.result       = post_flight(response)
   end
+=end
 
+=begin
   # Receive a request to resume a paused batch job.
   #
   # @param [SubmissionService::ControlRequest, nil] request
@@ -69,6 +75,7 @@ module SubmissionService::Action::Control
     self.end_time     = timestamp
     self.result       = post_flight(response)
   end
+=end
 
 end
 

@@ -1,9 +1,27 @@
 class SubmitChannel::Response < ApplicationCable::Response
+  STATUS: Hash[Symbol,String]
+
+  STATUS_INITIAL: String
+
+  STATUS_STEP: String
+
+  STATUS_INTERMEDIATE: String
+
+  STATUS_FINAL: String
+
+  STATUS_ACK: String
+
   TEMPLATE: symHash
 
   def self.template: () -> symHash
 
   def self.data_url_base_path: () -> String
+
+  def initialize: (?untyped values, **untyped opt) -> void
+
+  # Indicate whether this response is part of a simulation.
+  #
+  def simulation?: () -> bool
 end
 
 class SubmitChannel::SubmitResponse < SubmitChannel::Response
@@ -16,10 +34,6 @@ class SubmitChannel::InitialResponse < SubmitChannel::SubmitResponse
   def self.default_status: () -> String
 end
 
-class SubmitChannel::FinalResponse < SubmitChannel::SubmitResponse
-  def self.default_status: () -> String
-end
-
 class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
   TEMPLATE: symHash
 
@@ -28,28 +42,16 @@ class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
   def self.default_status: () -> String
 end
 
+class SubmitChannel::FinalResponse < SubmitChannel::StepResponse
+  def self.default_status: () -> String
+end
+
 class SubmitChannel::ControlResponse < SubmitChannel::Response
   TEMPLATE: symHash
 
-  # Create a new instance.
-  #
-  # @param [Symbol, *] status
-  # @param [Hash]      opt
-  #
-  def initialize: (?untyped? values, **untyped opt) -> void
-
   def self.template: () -> symHash
-end
 
-class SubmitChannel::StatusResponse < SubmitChannel::Response
-  TEMPLATE: symHash
+  def self.default_status: () -> String
 
-  # Create a new instance.
-  #
-  # @param [*]    values
-  # @param [Hash] opt
-  #
-  def initialize: (?untyped? values, **untyped opt) -> void
-
-  def self.template: () -> symHash
+  def initialize: (?untyped values, **untyped opt) -> void
 end

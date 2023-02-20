@@ -30,19 +30,21 @@ class ScalarType
 
     # Type-cast an object to an instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v                 Value to use or transform.
+    # @param [Hash] opt               Options passed to #create.
     #
     # @return [superclass, nil]
     #
-    def cast: (untyped v) -> (self | nil)
+    def cast: (untyped v, **untyped opt) -> (self | nil)
 
     # Create a new instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v
+    # @param [Hash] opt               Options passed to #initialize.
     #
     # @return [superclass, nil]
     #
-    def create: (untyped v, *untyped _ignored) -> (self | nil)
+    def create: (untyped v, **untyped opt) -> (self | nil)
 
     private
 
@@ -59,9 +61,10 @@ class ScalarType
 
   # Initialize a new instance.
   #
-  # @param [Any, nil] v               Optional initial value.
+  # @param [*]    v                   Optional initial value.
+  # @param [Hash] opt                 Options passed to #set.
   #
-  def initialize: (?(untyped|nil) v) -> void
+  def initialize: (?untyped v, **untyped opt) -> void
 
   # Assign a new value to the instance.
   #
@@ -73,11 +76,13 @@ class ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [Any, nil] v
+  # @param [*]       v
+  # @param [Boolean] invalid          If *true* allow invalid value.
+  # @param [Boolean] nil_default      If *true* do not use #default.
   #
   # @return [String]
   #
-  def set: (untyped v) -> String
+  def set: (untyped v, ?invalid: bool, ?nil_default: bool, **untyped _ignored) -> String
 
   # Indicate whether the instance is valid, or indicate whether *v* would be a
   # valid value.
@@ -304,19 +309,21 @@ class IsoDate < ScalarType
 
     # Type-cast an object to an instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v                 Value to use or transform.
+    # @param [Hash] opt               Options passed to #create.
     #
     # @return [IsoDate, nil]
     #
-    def cast: (untyped v) -> (IsoDate | nil)
+    def cast: (untyped v, **untyped opt) -> (IsoDate | nil)
 
     # Create a new instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v
+    # @param [Hash] opt               Options passed to #initialize.
     #
     # @return [IsoDate, nil]
     #
-    def create: (untyped v) -> (IsoDate | nil)
+    def create: (untyped v, **untyped opt) -> (IsoDate | nil)
 
     # Prepare a date string for normalization.
     #
@@ -798,11 +805,13 @@ class EnumType < ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [Any] v
+  # @param [*]       v
+  # @param [Boolean] invalid          If *true* allow invalid value.
+  # @param [Boolean] nil_default      If *true* do not use #default.
   #
   # @return [String]
   #
-  def set: (untyped v) -> String
+  def set: (untyped v, ?invalid: bool, ?nil_default: bool, **untyped _ignored) -> String
 
   # Indicate whether the instance is valid.
   #

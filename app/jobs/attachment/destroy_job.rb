@@ -39,10 +39,10 @@ class Attachment::DestroyJob < ApplicationJob
     end
 
   rescue ActiveRecord::RecordNotFound => error
-    Log.warn { "#{job_name}: skipped: #{error.message} [RecordNotFound]" }
+    Log.warn { "#{job_tag}: skipped: #{error.message} [RecordNotFound]" }
 
   rescue => error
-    Log.error { "#{job_name}: error: #{error.message} [#{error.class}]" }
+    Log.error { "#{job_tag}: error: #{error.message} [#{error.class}]" }
   end
 
 end

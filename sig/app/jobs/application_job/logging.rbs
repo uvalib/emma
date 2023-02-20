@@ -1,8 +1,5 @@
 # Definitions for job logging.
 #
-# == Usage Notes
-# Include in each job class definition to resolve #job_name properly.
-#
 module ApplicationJob::Logging
   extend ActiveSupport::Concern
 
@@ -10,18 +7,11 @@ module ApplicationJob::Logging
 
   include Emma::Debug
 
-  #include ActiveJob::Core
+  include Emma::ThreadMethods
 
   #include ActiveJob::Execution
 
   #include ActiveJob::Logging
-
-  # initialize
-  #
-  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
-  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
-  #
-  def initialize: (*untyped args, **untyped opt) -> void
 
   # Run the job asynchronously.
   #
@@ -55,15 +45,13 @@ module ApplicationJob::Logging
 
   def job_warn: (*untyped args, ?meth: Symbol|nil) { () -> String } -> (true | nil)
 
-  def job_name: () -> String
+  TAG_LEADER: String
 
-  @job_name: String
+  def job_tag: (?(ApplicationJob|Class)? arg, ?tag: String|nil, ?tid: String|nil, **untyped _ignored) -> String
 
-  def job_leader: (ApplicationJob job) -> String
+  def job_inspect: (?ApplicationJob? job) -> String
 
-  def job_inspect: (ApplicationJob job) -> String
-
-  def arguments_inspect: (ApplicationJob job) -> String
+  def arguments_inspect: (?ApplicationJob? job) -> (String | nil)
 
   def record_inspect: (ApplicationRecord r) -> String
 
@@ -73,6 +61,14 @@ module ApplicationJob::Logging
 
   def item_inspect: (untyped v) -> String
 
+  # Send debugging output to the console.
+  #
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block           Passed to #__debug_items
+  #
+  # @return [nil]
+  #
   def __debug_job
     : (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
     | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
@@ -82,22 +78,4 @@ module ApplicationJob::Logging
   module ClassMethods
     include ApplicationJob::Logging
   end
-
-  module InstanceMethods
-    include ApplicationJob::Logging
-
-    def job_inspect: (?(ApplicationJob|nil) job) -> String
-
-    def arguments_inspect: (?(ApplicationJob|nil) job) -> String
-
-    def __debug_job
-      : (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
-      | (ApplicationJob job,                **untyped opt)  { () -> untyped } -> nil
-      | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
-      | (                                   **untyped opt)  { () -> untyped } -> nil
-  end
-
-  private
-
-  include InstanceMethods
 end

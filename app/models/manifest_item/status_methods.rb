@@ -266,6 +266,16 @@ module ManifestItem::StatusMethods
     file_upload_data(item).present?
   end
 
+  # Dynamically check the item's :file_data field by reloading.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def file_uploaded_now?(item = nil)
+    item ||= default_to_self
+    item.reload if item.is_a?(ActiveRecord::Base)
+    file_uploaded?(item)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -310,7 +320,7 @@ module ManifestItem::StatusMethods
   #
   def file_upload_data(item = nil)
     fd = get_file_data(item)
-    fd = (fd[:uploader] || fd[:shrine] || fd).symbolize_keys
+    fd = fd[:uploader]     if fd[:uploader].is_a?(Hash)
     fd.deep_symbolize_keys if fd[:storage].present?
   end
 

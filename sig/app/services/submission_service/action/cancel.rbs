@@ -1,5 +1,8 @@
 # SubmissionService::Action::Cancel
 #
+# @note The original approach for these methods is incompatible with the use of
+#   GoodJob::Batch as the "waiter task".
+#
 module SubmissionService::Action::Cancel
   include SubmissionService::Common
 
@@ -14,5 +17,5 @@ module SubmissionService::Action::Cancel
   #
   # @return [SubmissionService::ControlResponse] The value assigned to @result.
   #
-  def batch_cancel: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
+  #def batch_cancel: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::ControlResponse
 end

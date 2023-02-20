@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 class Model::WorkflowJob < ApplicationJob
 
-  include ApplicationJob::Logging
-
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -26,6 +24,31 @@ class Model::WorkflowJob < ApplicationJob
   queue_as do
     __output ">>> #{CLASS} queue_as | args = #{arguments_inspect(self)}"
     arguments.first.try(:bulk?) ? :bulk : :normal
+  end
+
+  # ===========================================================================
+  # :section: ApplicationJob overrides
+  # ===========================================================================
+
+  public
+
+  def initialize(*args, **opt)
+    cb     = opt.delete(:callback)
+    cb_opt = opt.slice(:cb_receiver, :cb_method).presence
+    job_warn { "ignoring #{cb_opt.inspect}" } if cb && cb_opt
+    opt[:callback] = AsyncCallback.new(cb)    if (cb ||= cb_opt)
+    opt.except!(*cb_opt.keys)                 if cb_opt
+    super(*args, **opt)
+  end
+
+  # ===========================================================================
+  # :section: Application::Logging overrides
+  # ===========================================================================
+
+  protected
+
+  def item_inspect(v)
+    v.is_a?(Model::AsyncCallback) ? "#{v.class} #{hash_inspect(v)}" : super
   end
 
   # ===========================================================================
@@ -103,18 +126,39 @@ class Model::WorkflowJob < ApplicationJob
     else
       fail = 'missing model/method'
     end
-    Log.info { "#{job_name}: #{warn}" } if warn
+    Log.info { "#{job_tag}: #{warn}" } if warn
     raise fail if fail
 
   rescue ActiveRecord::RecordNotFound => error
-    Log.warn { "#{job_name}: skipped: #{error.message} [RecordNotFound]" }
+    Log.warn { "#{job_tag}: skipped: #{error.message} [RecordNotFound]" }
     raise error
 
   rescue => error
-    Log.error { "#{job_name}: error: #{error.message} [#{error.class}]" }
+    Log.error { "#{job_tag}: error: #{error.message} [#{error.class}]" }
     raise error
   end
     .tap { |meth| ruby2_keywords(meth) }
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Called from #perform to initiate a callback if one was supplied via the job
+  # arguments.
+  #
+  # @param [AsyncCallback, nil] callback
+  # @param [Hash]               opt       Passed to #cb_schedule.
+  #
+  # @option opt [AsyncCallback] :callback
+  #
+  # @return [void]
+  #
+  def perform_callback(callback, **opt)
+    job_warn { 'ignoring blank callback' } unless callback
+    callback&.cb_schedule(**opt)
+  end
 
 end
 

@@ -4,6 +4,12 @@ class ManifestItem::Options < Options
   # @private
   MODEL_TYPE: Symbol
 
+  # URL parameters associated with item/entry identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  IDENTIFIER_PARAMS: symArray
+
   # URL parameters associated with POST data.
   #
   # @type [Array<Symbol>]

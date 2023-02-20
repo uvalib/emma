@@ -300,9 +300,19 @@ class GlobalID
 end
 
 module GoodJob
+  module ActiveJobExtensions
+    module Batches
+      def batch: () -> (GoodJob::Batch | nil)
+      alias batch? batch
+    end
+  end
+  class Batch
+  end
   class BaseRecord
   end
   class Job < BaseRecord
+  end
+  class BatchRecord < BaseRecord
   end
 end
 

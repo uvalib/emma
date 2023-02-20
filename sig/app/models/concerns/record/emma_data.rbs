@@ -55,7 +55,7 @@ module Record::EmmaData
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def make_emma_record: (symHash data) -> Search::Record::MetadataRecord
+  def make_emma_record: (symHash data, **untyped _ignored) -> Search::Record::MetadataRecord
 
   # parse_emma_data
   #
@@ -97,17 +97,21 @@ module Record::EmmaData
 
     # Present :emma_data as a structured object (if it is present).
     #
+    # @param [Boolean] refresh        If *true*, force regeneration.
+    #
     # @return [Search::Record::MetadataRecord]
     #
-    def emma_record: () -> Search::Record::MetadataRecord
+    def emma_record: (?refresh: bool) -> Search::Record::MetadataRecord
 
     @emma_record: Search::Record::MetadataRecord | nil
 
     # Present :emma_data as a hash (if it is present).
     #
+    # @param [Boolean] refresh        If *true*, force regeneration.
+    #
     # @return [Hash{Symbol=>Any}]
     #
-    def emma_metadata: () -> symHash
+    def emma_metadata: (?refresh: bool) -> symHash
 
     @emma_metadata: symHash | nil
 

@@ -42,8 +42,6 @@ module LookupService::Common
     | (strArray              `type`, ?untyped              id, ?copy: bool) -> (PublicationIdentifier | nil)
     | (String|Symbol|nil     `type`, ?(String|nil)         id, ?copy: bool) -> (PublicationIdentifier | nil)
 
-  def __debug_job: (*untyped args, **untyped opt) ?{ () -> untyped } -> void
-
   private
 
   def self.included: (Module base) -> void

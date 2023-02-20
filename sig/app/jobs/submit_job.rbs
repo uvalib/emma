@@ -1,21 +1,15 @@
-class SubmitJob < ActiveJob::Base
-  include ApplicationJob::Methods
+class SubmitJob < ApplicationJob
+  include GoodJob::ActiveJobExtensions::Batches
 
-  include ApplicationJob::Logging
-
+  # @return [String]
   attr_accessor manifest_id: String
 
-  # queue_for
-  #
-  # @param [SubmitJob, Manifest, String, *] manifest
-  #
-  # @return [String, nil]
-  #
-  def self.queue_for: (untyped manifest) -> (String | nil)
-
   # Perform submission task(s), invoking #waiter_task if the job arguments
-  # contain a SubmissionService::BatchSubmitRequest, or invoking #worker_task
-  # otherwise.
+  # contain a SubmissionService::BatchSubmitRequest.
+  #
+  # Unlike the (current) implementation of LookupJob, the "worker task" is not
+  # defined as an instance method.  Instead #perform_later is overridden to
+  # create a GoodJob::Batch which handles that functionality.
   #
   # Expected ActiveJob arguments:
   # * argument[0]   request
@@ -48,14 +42,62 @@ class SubmitJob < ActiveJob::Base
   #
   def worker_task: (JobResult record, SubmissionService::Request request, service: SubmissionService, **untyped opt) -> symHash
 
-  # waiter_task
+  # Process SubmissionService::BatchSubmitRequest jobs through
+  # GoodJob::Batch#enqueue; all other request jobs are queued the normal way
+  # via ActiveJob::Enqueuing#enqueue.
   #
-  # @param [JobResult]                  record
-  # @param [SubmissionService::Request] request
-  # @param [SubmissionService]          service   Service instance
-  # @param [Hash]                       opt
+  # @param [Array] args               Assigned to ActiveJob::Core#arguments.
+  # @param [Hash]  opt
   #
-  # @return [Hash]
+  # @return [GoodJob::BatchRecord]
+  # @return [SubmitJob, false]
   #
-  def waiter_task: (JobResult record, SubmissionService::Request request, service: SubmissionService, **untyped opt) -> symHash
+  def self.perform_later
+    : (SubmissionService::BatchSubmitRequest first, *untyped rest, **untyped opt) -> GoodJob::BatchRecord
+    | (                                             *untyped args, **untyped opt) -> (SubmitJob | false)
+end
+
+# The job invoked when the batch job queued in SubmitJob::perform_later is run.
+#
+# GoodJob::Batch allows for distinct job classes to handle the :discard,
+# :success, and :finish events, but also supports the ability of a single class
+# to be defined to handle any of them.
+#
+class SubmitJobCallbackJob < ApplicationJob
+  JOB_TYPE: Symbol
+
+  # Invoked when the batch job enqueued in SubmitJob#perform_later is run.
+  #
+  # The *options* argument has only one entry: the :event which indicates the
+  # nature of this execution (which allows a single job class to be defined to
+  # handle each of these events).
+  #
+  # @param {GoodJob::Batch} batch
+  # @param {Hash}           options
+  #
+  # @see GoodJob::BatchRecord#_continue_discard_or_finish
+  #
+  def perform: (GoodJob::Batch batch, symHash options) -> void
+
+  # Invoked when the batch job enqueued in SubmitJob#perform_later is run,
+  # indicating that all sub-requests have finished.
+  #
+  # NOTE: `batch.properties` must include :stream_name (or :stream_id) in
+  #   order to direct the ActionCable response to the client.
+  #
+  # @param {GoodJob::Batch} batch
+  #
+  def on_finish: (GoodJob::Batch batch) -> void
+
+  # Invoked if no GoodJob jobs were discarded.
+  #
+  # @param {GoodJob::Batch} batch
+  #
+  def on_success: (GoodJob::Batch batch) -> void
+
+  # Invoked when GoodJob job(s) are discarded.
+  #
+  # @param {GoodJob::Batch} batch
+  #
+  def on_discard: (GoodJob::Batch batch) -> void
 end

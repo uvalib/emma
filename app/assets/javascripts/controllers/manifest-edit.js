@@ -767,7 +767,7 @@ appSetup(MODULE, function() {
         const type   = dataType(data);
         const params = { data: data, type: type, caller: func };
         const $last  = allDataRows().last();
-        if (databaseId($last)) {
+        if (manifestItemId($last)) {
             params.row   = dbRowValue($last);
             params.delta = dbRowDelta($last);
         }
@@ -1213,7 +1213,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function activeDataRow(target) {
-        return databaseId(target);
+        return manifestItemId(target);
     }
 
     /**
@@ -1236,7 +1236,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function blankDataRow(target) {
-        return !databaseId(target);
+        return !manifestItemId(target);
     }
 
     /**
@@ -1266,7 +1266,8 @@ appSetup(MODULE, function() {
         const $row = dataRow(target);
 
         if (isPresent(data.id)) {
-            const db_id = databaseId($row) || setDatabaseId($row, data.id);
+            const db_id =
+                manifestItemId($row) || setManifestItemId($row, data.id);
             if (db_id !== data.id) {
                 _error(func,`row item ID = ${db_id} but data.id = ${data.id}`);
                 return;
@@ -1602,7 +1603,7 @@ appSetup(MODULE, function() {
         const $last = allDataRows().last();
 
         let $row; // When undefined, first insertRow starts with $template_row.
-        if (databaseId($last)) {
+        if (manifestItemId($last)) {
             $row = $last;   // Insert after last row.
         } else if (isPresent($last)) {
             $last.remove(); // Discard empty row.
@@ -1616,7 +1617,7 @@ appSetup(MODULE, function() {
             row   = dbRowValue($row) || (r = setDbRowValue($row, row));
             delta = dbRowDelta($row) || (d = setDbRowDelta($row, ++delta));
             setRowChanged($row, true);
-            if (r || d) { mod[databaseId($row)] = { row: r, delta: d } }
+            if (r || d) { mod[manifestItemId($row)] = { row: r, delta: d } }
         });
         if (!intermediate) {
             updateGridRowCount(items.length);
@@ -1749,7 +1750,7 @@ appSetup(MODULE, function() {
 
         // Mark row for deletion then update the grid and/or database.
         markRow($row);
-        const db_id = databaseId($row);
+        const db_id = manifestItemId($row);
         if (db_id) {
             sendDeleteRecords(db_id, intermediate);
         } else {
@@ -1785,7 +1786,7 @@ appSetup(MODULE, function() {
                 } else {
                     return item;
                 }
-                const db_id = databaseId($row);
+                const db_id = manifestItemId($row);
                 if (!db_id) {
                     blanks.push($row);
                 }
@@ -1795,7 +1796,7 @@ appSetup(MODULE, function() {
         // Mark rows for deletion.
         blanks.forEach($row => markRow($row));
         db_ids.forEach(db_id => {
-            const $row = rowForDatabaseId(db_id, $rows);
+            const $row = rowForManifestItem(db_id, $rows);
             if ($row) {
                 markRow($row);
             } else {
@@ -1892,12 +1893,12 @@ appSetup(MODULE, function() {
         const func    = 'removeDeletedRows'; _debug(`${func}: list =`, list);
         const $rows   = allDataRows();
         const $marked = $rows.filter(TO_DELETE);
-        const marked  = compact($marked.toArray().map(e => databaseId(e)));
+        const marked  = compact($marked.toArray().map(e => manifestItemId(e)));
         const db_ids  = arrayWrap(list).map(r => isDefined(r?.id) ? r.id : r);
 
         // Mark rows for deletion if not already marked.
         db_ids.forEach(db_id => {
-            const $row = rowForDatabaseId(db_id, $rows);
+            const $row = rowForManifestItem(db_id, $rows);
             if (!$row) {
                 _debug(`${func}: no row for db_id ${db_id}`);
             } else if (!$row.is(TO_DELETE)) {
@@ -1913,7 +1914,7 @@ appSetup(MODULE, function() {
         const undeleted = marked.filter(id => !db_ids.includes(id));
         if (isPresent(undeleted)) {
             undeleted.forEach(db_id => {
-                const $row = rowForDatabaseId(db_id, $rows);
+                const $row = rowForManifestItem(db_id, $rows);
                 $row?.removeClass(TO_DELETE_MARKER);
             });
             console.warn(`${func}: not deleted:`, undeleted);
@@ -2457,7 +2458,7 @@ appSetup(MODULE, function() {
             return;
         }
         const $row   = dataRow(changed_row);
-        const db_id  = databaseId($row);
+        const db_id  = manifestItemId($row);
         const action = `row_update/${db_id}`;
         const row    = dbRowValue($row);
         const delta  = dbRowDelta($row);
@@ -2492,7 +2493,7 @@ appSetup(MODULE, function() {
         // 'file_status' and/or 'data_status'
         // @see "ManifestItemConcern#finish_editing"
         const $row   = dataRow(row);
-        const db_id  = databaseId($row);
+        const db_id  = manifestItemId($row);
         const record = items && items[db_id];
         if (isPresent(record)) {
             updateDataRow($row, record);
@@ -2505,9 +2506,9 @@ appSetup(MODULE, function() {
         // @see "Manifest::ItemMethods#pending_items_hash"
         if (pending) {
             const $rows = allDataRows();
-            $.each(pending, (id, record) => {
-                const $row = isPresent(record) && rowForDatabaseId(id, $rows);
-                if ($row) { updateRowIndicators($row, record) }
+            $.each(pending, (id, item) => {
+                const $row = isPresent(item) && rowForManifestItem(id, $rows);
+                if ($row) { updateRowIndicators($row, item) }
             });
         }
 
@@ -2662,7 +2663,7 @@ appSetup(MODULE, function() {
             name_shown = instance.isFilenameDisplayed();
             instance.hideFilename(); // Make room for .uploader-feedback
             return compact({
-                id:          databaseId($row),
+                id:          manifestItemId($row),
                 row:         dbRowValue($row),
                 delta:       dbRowDelta($row),
                 manifest_id: manifestId(),
@@ -3210,7 +3211,7 @@ appSetup(MODULE, function() {
         const func = 'updateRowValues'; _debug(`${func}: table =`, table);
         allDataRows().each((_, row) => {
             const $row  = $(row);
-            const db_id = databaseId($row);
+            const db_id = manifestItemId($row);
             const entry = db_id && table[db_id];
             if (isMissing(db_id)) {
                 _debug(`${func}: no db_id for $row =`, $row);
@@ -3578,7 +3579,7 @@ appSetup(MODULE, function() {
     function emptyDataRow(original) {
         _debug('emptyDataRow: original =', original);
         const $copy = cloneDataRow(original);
-        removeDatabaseId($copy);
+        removeManifestItemId($copy);
         initializeDataCells($copy);
         resetRowIndicators($copy);
         resetRowDetails($copy);
@@ -4448,7 +4449,7 @@ appSetup(MODULE, function() {
 
         const $cell = dataCell(cell);
         const $row  = dataRow($cell);
-        const db_id = databaseId($row);
+        const db_id = manifestItemId($row);
         if (!db_id) {
             _debug(`${func}: no db_id for $row =`, $row);
             return;
@@ -4537,7 +4538,7 @@ appSetup(MODULE, function() {
         const func     = 'postFinishEdit';
         const $cell    = dataCell(cell);
         const $row     = dataRow($cell);
-        const db_id    = databaseId($row);
+        const db_id    = manifestItemId($row);
         const manifest = manifestId();
 
         if (!manifest) {
@@ -4613,7 +4614,7 @@ appSetup(MODULE, function() {
         // 'file_status' and/or 'data_status'
         // @see "ManifestItemConcern#finish_editing"
         const $row   = dataRow($cell);
-        const db_id  = databaseId($row);
+        const db_id  = manifestItemId($row);
         const record = items && items[db_id];
         if (isPresent(record)) {
             updateDataRow($row, record);
@@ -4626,9 +4627,9 @@ appSetup(MODULE, function() {
         // @see "Manifest::ItemMethods#pending_items_hash"
         if (pending) {
             const $rows = allDataRows();
-            $.each(pending, (id, record) => {
-                const $row = isPresent(record) && rowForDatabaseId(id, $rows);
-                if ($row) { updateRowIndicators($row, record) }
+            $.each(pending, (id, item) => {
+                const $row = isPresent(item) && rowForManifestItem(id, $rows);
+                if ($row) { updateRowIndicators($row, item) }
             });
         }
 
@@ -5214,7 +5215,7 @@ appSetup(MODULE, function() {
      *
      * @returns {number|undefined}
      */
-    function databaseId(target) {
+    function manifestItemId(target) {
         const value = attribute(target, ITEM_ATTR);
         return Number(value) || undefined;
     }
@@ -5227,8 +5228,8 @@ appSetup(MODULE, function() {
      *
      * @returns {number|undefined}
      */
-    function setDatabaseId(target, value) {
-        const func = 'setDatabaseId';
+    function setManifestItemId(target, value) {
+        const func = 'setManifestItemId';
         _debug(`${func}: value = "${value}"; target =`, target);
         const db_id = Number(value);
         if (db_id) {
@@ -5244,22 +5245,23 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} target
      */
-    function removeDatabaseId(target) {
-        const func = 'removeDatabaseId'; _debug(`${func}: target =`, target);
+    function removeManifestItemId(target) {
+        const func = 'removeManifestItemId';
+        _debug(`${func}: target =`, target);
         selfOrParent(target, `[${ITEM_ATTR}]`, func).removeAttr(ITEM_ATTR);
     }
 
     /**
      * Return the row associated with the given database ID.
      *
-     * @param {string|number} value
+     * @param {string|number} id
      * @param {Selector}      [rows]    Default: {@link allDataRows}.
      *
      * @returns {jQuery|undefined}
      */
-    function rowForDatabaseId(value, rows) {
+    function rowForManifestItem(id, rows) {
         const $rows = rows ? $(rows) : allDataRows();
-        const $row  = $rows.filter(`[${ITEM_ATTR}="${value}"]`);
+        const $row  = $rows.filter(`[${ITEM_ATTR}="${id}"]`);
         if (isPresent($row)) { return $row }
     }
 

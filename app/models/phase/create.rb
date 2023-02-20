@@ -275,7 +275,7 @@ class Phase::Create < Phase::BulkPart
       promote!(**opt) and index!(**opt) # NOTE: if async, this is going to get launched right away -- want to chain it...
 =end
 =begin
-      opt[:callback] = ApplicationJob::AsyncCallback.new(self, :index!)
+      opt[:callback] = Model::AsyncCallback.new(self, :index!)
       promote!(**opt)
 =end
       transition_sequence(**opt) {{

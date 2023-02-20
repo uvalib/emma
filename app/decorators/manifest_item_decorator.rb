@@ -570,15 +570,21 @@ class ManifestItemDecorator < BaseDecorator
 
     # Submission status type keys and column labels.
     #
-    # @type [Hash{Symbol=>String}]
+    # (The steps associated with the unique labels of #SUBMIT_STEPS_TABLE.)
     #
-    SUBMIT_PHASE = BULK_GRID_CFG.dig(:status, :type)
+    # @type [Hash{Symbol=>Hash}]
+    #
+    SUBMIT_STEPS =
+      SubmissionService::Properties::SUBMIT_STEPS_TABLE
+        .select { |_, entry| entry[:client] || entry[:server] }
+        .uniq   { |_, entry| entry[:label] }.to_h
+        .freeze
 
     # Submission status grid column names.
     #
     # @type [Array<Symbol>]
     #
-    SUBMIT_STATUS_COLUMNS = [:controls, :item_name, *SUBMIT_PHASE.keys].freeze
+    SUBMIT_COLUMNS = [:controls, :item_name, *SUBMIT_STEPS.keys].freeze
 
     # Submission status value CSS classes and labels.
     #
@@ -632,7 +638,7 @@ class ManifestItemDecorator < BaseDecorator
     def submission_status_header(row: 0, css: '.head', **opt)
       ctrl = nil
       name = 'Item Name' # TODO: I18n
-      stat = SUBMIT_PHASE
+      stat = SUBMIT_STEPS
       prepend_css!(opt, css)
       submit_status_element(ctrl, name, stat, row: row, **opt)
     end
@@ -683,6 +689,7 @@ class ManifestItemDecorator < BaseDecorator
           stat = S_OK        if stat.is_a?(TrueClass)
           stat = S_BLANK     if stat.is_a?(FalseClass) || stat.nil?
           stat = stat.to_sym if stat.is_a?(String)
+          col_opt[:label] = (stat[:label] if stat.is_a?(Hash))
           # noinspection RubyMismatchedArgumentType
           submit_status_value(type, stat, **col_opt)
         end
@@ -755,7 +762,7 @@ class ManifestItemDecorator < BaseDecorator
     # submit_status_value
     #
     # @param [Symbol]       type
-    # @param [Symbol]       status
+    # @param [Symbol, nil]  status
     # @param [Integer, nil] col
     # @param [String]       css
     # @param [Hash]         opt
@@ -763,29 +770,33 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def submit_status_value(type, status, col:, css: '.status', **opt)
-      entry  = SUBMIT_STATUS[status] || {}
-      text   = submit_status_text(type, status, entry)
+      text   = submit_status_text(type, status, label: opt.delete(:label))
       button = (submit_status_link(type, status) if respond_to?(:object))
       opt[:role] ||= 'cell'
       opt[:'aria-colindex'] = col if col
-      prepend_css!(opt, css, "#{type}-status", entry[:css])
+      step_css  = SUBMIT_STEPS.dig(type, :css)
+      value_css = SUBMIT_STATUS.dig(status, :css)
+      prepend_css!(opt, css, step_css, value_css)
       html_div(text, button, opt)
     end
 
     # The text on the status element.
     #
-    # @param [Symbol] _type
-    # @param [Symbol] status
-    # @param [Hash]   entry
-    # @param [String] css
-    # @param [Hash]   opt
+    # @param [Symbol]      type
+    # @param [Symbol, nil] status
+    # @param [String]      css
+    # @param [Hash]        opt
+    #
+    # @option opt [String] :label
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_text(_type, status, entry = {}, css: '.text', **opt)
+    def submit_status_text(type, status, css: '.text', **opt)
       prepend_css!(opt, css)
-      label   = entry[:text] || status.to_s
       details = STATUS_SHOW_DETAILS.include?(status)
+      label   = opt[:label]
+      label ||= SUBMIT_STATUS.dig(status, :label)
+      label ||= (status || type).to_s.titleize
 
       # Simple label.
       p_opt   = !details ? opt : append_css(opt, 'hidden')
@@ -801,10 +812,10 @@ class ManifestItemDecorator < BaseDecorator
 
     # Control for fixing a condition resulting in a given status.
     #
-    # @param [Symbol] _type
-    # @param [Symbol] status
-    # @param [String] css
-    # @param [Hash]   opt
+    # @param [Symbol]     _type
+    # @param [Symbol,nil] status
+    # @param [String]     css
+    # @param [Hash]       opt
     #
     # @return [ActiveSupport::SafeBuffer, nil]
     #
@@ -1377,16 +1388,14 @@ class ManifestItemDecorator
   #
   def submission_status(row: nil, col: 1, **opt)
     ctrl = submit_status_ctls(col: col)
-    stat = SUBMIT_PHASE.transform_values { nil }
+    stat = SUBMIT_STEPS.transform_values { nil }
+    stat[:entry]  = object.submitted?
     stat[:index]  = object.in_index?
     stat[:upload] = object.file_uploaded?
     stat[:file]   = stat[:upload]   || object.file_literal?
     stat[:file] ||= object.file_ok?  ? S_FILE_NEEDED : S_FILE_MISSING
-    stat[:db]     = object.unsaved? && S_UNSAVED
-    stat[:db]   ||= object.data_ok? || S_DATA_MISSING
-    if Log.debug? && (skipped = stat.select { |_, v| v.nil? }).present?
-      Log.debug { "#{__method__}: not handling status types: #{skipped.keys}" }
-    end
+    stat[:data]   = object.unsaved? && S_UNSAVED
+    stat[:data] ||= object.data_ok? || S_DATA_MISSING
     opt[:'data-item-id']   ||= object.id
     opt[:'data-manifest']  ||= object.manifest_id
     opt[:'data-file-name'] ||= object.pending_file_name

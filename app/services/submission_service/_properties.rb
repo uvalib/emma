@@ -37,6 +37,16 @@ module SubmissionService::Properties
       end
     }.deep_freeze
 
+  # Service default property configuration.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  SERVICE_PROPERTY =
+    CONFIGURATION
+      .reject { |_, v| v.is_a?(Hash) }
+      .reverse_merge!(CONFIGURATION[:_template] || {})
+      .freeze
+
   # How important an external service is as an authority for the type(s) of
   # identifiers it can search.  For example:
   #
@@ -48,13 +58,38 @@ module SubmissionService::Properties
   #
   # @see SubmissionService#SERVICE_TABLE
   #
-  DEFAULT_PRIORITY = CONFIGURATION.dig(:_template, :priority)
+  DEFAULT_PRIORITY = SERVICE_PROPERTY[:priority]
 
   # How long to wait for a response from the external service.
   #
   # @type [Float]
   #
-  DEFAULT_TIMEOUT = CONFIGURATION.dig(:_template, :timeout)
+  DEFAULT_TIMEOUT = SERVICE_PROPERTY[:timeout]
+
+  # ===========================================================================
+  # :section: Configuration - batch size
+  # ===========================================================================
+
+  public
+
+  # Batching is not actually performed if the number of manifest items is less
+  # than this number.
+  #
+  # @type [Integer]
+  #
+  # @see "en.emma.service.submission.batch_min"
+  # @see "en.emma.service.submission._template.batch_min"
+  #
+  MIN_BATCH = SERVICE_PROPERTY[:batch_min] || 1
+
+  # Batches larger than this number are not permitted.
+  #
+  # @type [Integer]
+  #
+  # @see "en.emma.service.submission.batch_max"
+  # @see "en.emma.service.submission._template.batch_max"
+  #
+  MAX_BATCH = SERVICE_PROPERTY[:batch_max] || MAX_BATCH_SIZE
 
   # How many manifest items to process in a single job.
   #
@@ -63,19 +98,111 @@ module SubmissionService::Properties
   #
   # @type [Integer, Boolean]
   #
-  DEF_BATCH_SIZE = 8 # TODO: remove - testing
-=begin
-  DEF_BATCH_SIZE = BATCH_SIZE_DEFAULT
-=end
+  DEF_BATCH = SERVICE_PROPERTY[:batch_size].then do |v|
+    case v
+      when Integer then v
+      when nil     then BATCH_SIZE_DEFAULT
+      else              true?(v)
+    end
+  end
 
-  # Batching is not actually performed if the number of manifest items is less
-  # than this number.
+  if sanity_check?
+    def_batch = DEF_BATCH.is_a?(Integer) ? DEF_BATCH : MIN_BATCH
+    raise 'MIN_BATCH > MAX_BATCH'         if MIN_BATCH > MAX_BATCH
+    raise 'MAX_BATCH > BATCH_UPPER_BOUND' if MAX_BATCH > BATCH_UPPER_BOUND
+    raise 'DEF_BATCH < MIN_BATCH'         if def_batch < MIN_BATCH
+    raise 'DEF_BATCH > MAX_BATCH'         if def_batch > MAX_BATCH
+  end
+
+  # ===========================================================================
+  # :section: Configuration - slice size
+  # ===========================================================================
+
+  public
+
+  # Minimum slice size.
   #
   # @type [Integer]
   #
-  MIN_BATCH_SIZE = 2
+  # @see "en.emma.service.submission.slice_min"
+  # @see "en.emma.service.submission._template.slice_min"
+  #
+  MIN_SLICE = SERVICE_PROPERTY[:slice_min] || MIN_BATCH
 
-  MAX_BATCH_SIZE = 10 # TODO: remove - testing
+  # Maximum slice size.
+  #
+  # @type [Integer]
+  #
+  # @see "en.emma.service.submission.slice_max"
+  # @see "en.emma.service.submission._template.slice_max"
+  #
+  MAX_SLICE = SERVICE_PROPERTY[:slice_max] || MAX_BATCH
+
+  # Within a given batch of ManifestItems being submitted, this value specifies
+  # how many will be transmitted together to each subsystem.
+  #
+  # If *true*, all items of a batch will be transmitted together if possible.
+  # If *false* then no slicing will be performed by default.
+  #
+  # @type [Integer, Boolean]
+  #
+  # @see "en.emma.service.submission.slice_size"
+  # @see "en.emma.service.submission._template.slice_size"
+  #
+  DEF_SLICE = SERVICE_PROPERTY[:slice_size].then do |v|
+    case v
+      when Integer then v
+      when nil     then !DEF_BATCH.is_a?(Integer) || (DEF_BATCH / 2)
+      else              true?(v)
+    end
+  end
+
+  if sanity_check?
+    def_slice = DEF_SLICE.is_a?(Integer) ? DEF_SLICE : MIN_SLICE
+    raise 'MIN_SLICE < MIN_BATCH' if MIN_SLICE < MIN_BATCH
+    raise 'MAX_SLICE > MAX_BATCH' if MAX_SLICE > MAX_BATCH
+    raise 'DEF_SLICE < MIN_SLICE' if def_slice < MIN_SLICE
+    raise 'DEF_SLICE > MAX_SLICE' if def_slice > MAX_SLICE
+  end
+
+  # ===========================================================================
+  # :section: Configuration - simulation
+  # ===========================================================================
+
+  public
+
+  SIMULATION_ALLOWED = true
+  SIMULATION_ONLY    = false
+
+  if sanity_check?
+    raise 'SIMULATION_ONLY invalid' if SIMULATION_ONLY && !SIMULATION_ALLOWED
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # All bulk submission steps, including non-actionable "pseudo steps" and
+  # client-side-only steps.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SUBMIT_STEPS_TABLE =
+    I18n.t('emma.bulk.step', default: {}).map { |step, entry|
+      entry = entry.dup
+      entry[:label]   ||= "#{step} status".titleize
+      entry[:css]     ||= "#{step}-status"
+      entry[:client]    = !false?(entry[:client])
+      entry[:server]    = !false?(entry[:server])
+      entry[:sim_msg] ||= step.to_s
+      entry[:sim_err] ||= step.to_s
+      [step.to_sym, entry]
+    }.compact.to_h.deep_freeze
+
+ #CLIENT_STEPS = SUBMIT_STEPS_TABLE.select { |_, v| v[:client] }.keys.freeze
+  SERVER_STEPS = SUBMIT_STEPS_TABLE.select { |_, v| v[:server] }.keys.freeze
 
   # ===========================================================================
   # :section:
@@ -145,10 +272,23 @@ module SubmissionService::Properties
   #
   # @return [Integer, nil]
   #
-  def batch_option(value, default = DEF_BATCH_SIZE)
-    return                if value == false
-    return MAX_BATCH_SIZE if value == true
-    positive(value) || ((default == true) ? MAX_BATCH_SIZE : positive(default))
+  def batch_option(value, default = DEF_BATCH)
+    return           if value == false
+    return MAX_BATCH if value == true
+    positive(value) || positive(default) || (MAX_BATCH if default)
+  end
+
+  # slice_option
+  #
+  # @param [Numeric, Boolean, nil] value
+  # @param [Integer, Boolean, nil] default
+  #
+  # @return [Integer, nil]
+  #
+  def slice_option(value, default = DEF_SLICE)
+    return           if value == false
+    return MAX_SLICE if value == true
+    positive(value) || positive(default) || (MAX_SLICE if default)
   end
 
   # timeout_option
@@ -182,7 +322,7 @@ module SubmissionService::Properties
 
   # Return the batch size indicated by the value.
   #
-  # The result will be *nil* or in the range [#MIN_BATCH_SIZE..#MAX_BATCH_SIZE]
+  # The result will be *nil* or in the range [#MIN_BATCH..#MAX_BATCH].
   #
   # @param [Numeric, Boolean, nil] value
   # @param [Array, nil]            items
@@ -191,9 +331,9 @@ module SubmissionService::Properties
   #
   def batch_size_for(value, items = nil)
     batch = batch_option(value) or return
-    batch = [batch, MAX_BATCH_SIZE].min
+    batch = [batch, MAX_BATCH].min
     batch = [batch, items.size].min if (items &&= extract_items(items))
-    batch unless batch < MIN_BATCH_SIZE
+    batch unless batch < MIN_BATCH
   end
 
   # extract_manifest_id
@@ -210,8 +350,8 @@ module SubmissionService::Properties
     arg = arg.first               if arg.is_a?(Array)
     # noinspection RubyMismatchedReturnType
     case arg
-      when SubmissionService::Request  then arg[:manifest_id]
-      when SubmissionService::Response then arg.manifest_id
+      when SubmissionService::Response then arg[:manifest_id]
+      when SubmissionService::Request  then arg.manifest_id
       when ManifestItem                then arg.manifest_id
       when Manifest                    then arg.id
       when String                      then arg unless positive(arg)
@@ -247,8 +387,8 @@ module SubmissionService::Properties
     return arg.map { |a| extract_items(a) }.flatten.compact if arg.is_a?(Array)
 
     case arg
-      when SubmissionService::Request  then Array.wrap(arg[:manifest_id])
-      when SubmissionService::Response then Array.wrap(arg.manifest_id)
+      when SubmissionService::Response then Array.wrap(arg[:manifest_id])
+      when SubmissionService::Request  then Array.wrap(arg.manifest_id)
       when ManifestItem                then Array.wrap(arg.id)
       when Hash                        then Array.wrap(arg[:id])
       else                                  Array.wrap(positive(arg))

@@ -1,16 +1,15 @@
 // app/assets/javascripts/controllers/manifest-remit.js
 
 
-import { AppDebug }                              from '../application/debug';
-import { appSetup }                              from '../application/setup';
-import { arrayWrap, removeFrom }                 from '../shared/arrays';
-import { BaseClass }                             from '../shared/base-class';
-import { selector, toggleHidden }                from '../shared/css';
-import { handleClickAndKeypress, handleEvent }   from '../shared/events';
-import { flashError, flashMessage }              from '../shared/flash';
-import { selfOrDescendents, selfOrParent }       from '../shared/html';
-import { compact, fromJSON, isObject, toObject } from '../shared/objects';
-import { SubmitModal }                           from '../shared/submit-modal';
+import { AppDebug }                             from '../application/debug';
+import { appSetup }                             from '../application/setup';
+import { arrayWrap, uniq }                      from '../shared/arrays';
+import { BaseClass }                            from '../shared/base-class';
+import { selector, toggleHidden }               from '../shared/css';
+import { handleClickAndKeypress, handleEvent }  from '../shared/events';
+import { clearFlash, flashError, flashMessage } from '../shared/flash';
+import { SubmitModal }                          from '../shared/submit-modal';
+import { BulkUploader }                         from '../shared/uploader';
 import {
     isDefined,
     isEmpty,
@@ -19,15 +18,32 @@ import {
     notDefined,
 } from '../shared/definitions';
 import {
+    htmlDecode,
+    selfOrDescendents,
+    selfOrParent
+} from '../shared/html';
+import {
+    BEST_CHOICE_MARKER,
     DISABLED_MARKER,
-    MANIFEST_ATTR,
     ITEM_ATTR,
+    ITEM_MODEL,
+    MANIFEST_ATTR,
     attribute,
     buttonFor,
     enableButton,
     initializeButtonSet,
 } from '../shared/manifests';
 import {
+    compact,
+    dup,
+    fromJSON,
+    invert,
+    isObject,
+    remove,
+    toObject,
+} from '../shared/objects';
+import {
+    SubmitControlResponse,
     SubmitStepResponse,
 } from '../shared/submit-response';
 
@@ -67,7 +83,6 @@ appSetup(MODULE, function() {
     const REMOTE_FILE_CLASS         = 'remote-file';
     const LOCAL_FILE_CLASS          = 'local-file';
     const FILE_BUTTON_CLASS         = 'file-button';
-    const BEST_CHOICE_MARKER        = 'best-choice';
 
     const SUBMISSION_COUNTS_CLASS   = 'submission-counts'
     const TOTAL_COUNT_CLASS         = 'total';
@@ -80,10 +95,11 @@ appSetup(MODULE, function() {
     const SUBMISSION_CLASS          = 'submission-status';
     const CONTROLS_CLASS            = 'controls';
   //const CHECKBOX_CLASS            = 'checkbox';
-    const DB_STATUS_CLASS           = 'db-status';
+    const DATA_STATUS_CLASS         = 'data-status';
     const FILE_STATUS_CLASS         = 'file-status';
     const UPLOAD_STATUS_CLASS       = 'upload-status';
     const INDEX_STATUS_CLASS        = 'index-status';
+    const ENTRY_STATUS_CLASS        = 'entry-status';
     const ACTIVE_MARKER             = 'active';
     const NOT_STARTED_MARKER        = 'not-started';
     const UNSAVED_MARKER            = 'unsaved';
@@ -106,7 +122,6 @@ appSetup(MODULE, function() {
     const REMOTE_FILE           = selector(REMOTE_FILE_CLASS);
     const LOCAL_FILE            = selector(LOCAL_FILE_CLASS);
     const FILE_BUTTON           = selector(FILE_BUTTON_CLASS);
-  //const BEST_CHOICE           = selector(BEST_CHOICE_MARKER);
 
     const SUBMISSION_COUNTS     = selector(SUBMISSION_COUNTS_CLASS);
     const TOTAL_COUNT           = selector(TOTAL_COUNT_CLASS);
@@ -120,12 +135,13 @@ appSetup(MODULE, function() {
     const SUBMISSION            = selector(SUBMISSION_CLASS) + ':not(.head)';
     const CONTROLS              = selector(CONTROLS_CLASS);
     const CHECKBOX              = 'input[type="checkbox"]';
-    const DB_STATUS             = selector(DB_STATUS_CLASS);
+    const DATA_STATUS           = selector(DATA_STATUS_CLASS);
     const FILE_STATUS           = selector(FILE_STATUS_CLASS);
     const UPLOAD_STATUS         = selector(UPLOAD_STATUS_CLASS);
     const INDEX_STATUS          = selector(INDEX_STATUS_CLASS);
+    const ENTRY_STATUS          = selector(ENTRY_STATUS_CLASS);
     const ACTIVE                = selector(ACTIVE_MARKER);
-    const NOT_STARTED           = selector(NOT_STARTED_MARKER);
+  //const NOT_STARTED           = selector(NOT_STARTED_MARKER);
     const UNSAVED               = selector(UNSAVED_MARKER);
     const FILE_NEEDED           = selector(FILE_NEEDED_MARKER);
     const FILE_MISSING          = selector(FILE_MISSING_MARKER);
@@ -333,19 +349,26 @@ appSetup(MODULE, function() {
      * @type {Object.<string,jQuery>}
      */
     const SUBMISSION_BUTTONS = {
-        start:  $start,
-        stop:   $stop,
-        pause:  $pause,
-        resume: $resume,
+        start:   $start,
+        stop:    $stop,
+        pause:   $pause,
+        resume:  $resume,
+        monitor: $monitor,
     };
+
+    /**
+     * @typedef {
+     *      function(enable?: boolean, prop?: ActionPropertiesExt)
+     * } ButtonEnableFunction
+     */
 
     /**
      * Table of button enabling functions.
      *
-     * @type {Object.<string,function(enable?: boolean)>}
+     * @type {Object.<string,ButtonEnableFunction>}
      */
     const SUBMISSION_ENABLE = toObject(SUBMISSION_BUTTONS,
-        name => (v => enableSubmissionButton(name, v))
+        name => ((v, prop) => enableSubmissionButton(name, v, prop))
     );
 
     // ========================================================================
@@ -360,6 +383,7 @@ appSetup(MODULE, function() {
         initializeSubmissionMonitor();
         initializeSubmissionButtons();
         initializeItems();
+        initializeUploader();
         initializeLocalFilesResolution();
         initializeRemoteFilesResolution();
         updateSubmitReady();
@@ -392,9 +416,9 @@ appSetup(MODULE, function() {
     /**
      * Change submission button state.
      *
-     * @param {string}           type       A {@link SUBMISSION_BUTTONS} key.
-     * @param {boolean}          [enable]
-     * @param {ActionProperties} [prop]     Overrides configured properties.
+     * @param {string}              type       A {@link SUBMISSION_BUTTONS} key
+     * @param {boolean}             [enable]
+     * @param {ActionPropertiesExt} [prop]     Overrides configured properties.
      *
      * @returns {jQuery|undefined}
      */
@@ -416,8 +440,10 @@ appSetup(MODULE, function() {
         if (submissionsActive()) {
             _error(`${fail} - already submitting`);
         } else {
-            const action = startSubmissions();
-            submissionRequest(action, func, fail);
+            uploader.upload();
+            const action  = startSubmissions();
+            const options = { caller: func, fail: fail };
+            submissionRequest(action, options);
         }
     }
 
@@ -432,8 +458,10 @@ appSetup(MODULE, function() {
         if (!submissionsActive()) {
             _error(`${fail} - not submitting`);
         } else {
-            const action = stopSubmissions();
-            submissionRequest(action, func, fail);
+            uploader.cancel();
+            const action  = stopSubmissions();
+            const options = { caller: func, fail: fail };
+            submissionRequest(action, options);
         }
     }
 
@@ -450,8 +478,10 @@ appSetup(MODULE, function() {
         } else if (submissionsPaused()) {
             _error(`${fail} - already paused`);
         } else {
-            const action = pauseSubmissions();
-            submissionRequest(action, func, fail);
+            uploader.pause();
+            const action  = pauseSubmissions();
+            const options = { caller: func, fail: fail };
+            submissionRequest(action, options);
         }
     }
 
@@ -468,23 +498,24 @@ appSetup(MODULE, function() {
         } else if (!submissionsPaused()) {
             _error(`${fail} - not paused`);
         } else {
-            const action = resumeSubmissions();
-            submissionRequest(action, func, fail);
+            uploader.resume();
+            const action  = resumeSubmissions();
+            const options = { caller: func, fail: fail };
+            submissionRequest(action, options);
         }
     }
 
     /**
      * Perform a Manifest submission action on the server.
      *
-     * @param {string} action
-     * @param {string} [caller]
-     * @param {string} [fail]
+     * @param {string}                                       action
+     * @param {{caller?:string, fail?:string, data?:object}} [options]
      */
-    function submissionRequest(action, caller, fail) {
-        const func = caller || 'submissionRequest';
+    function submissionRequest(action, options) {
+        const func = options?.caller || 'submissionRequest';
         _debug(`${func}: ${action}`);
-        if (!submissionMonitor().command(action)) {
-            const tag  = fail || `${action} failed`;
+        if (!submissionMonitor().command(action, options?.data)) {
+            const tag  = options?.fail || `${action} failed`;
             const note = 'Refresh this page to re-authenticate.';
             flashError(`${tag}: ${note}`);
         }
@@ -504,8 +535,8 @@ appSetup(MODULE, function() {
     const $local_button   = $local_prompt.filter(FILE_BUTTON);
     const $local_input    = $local_button.find('input[type="file"]');
 
-    const file_references = { local: [], remote: [] };
-    const files_remaining = { local: [], remote: [] };
+    const file_references = { local: {}, remote: {} };
+    const files_remaining = { local: {}, remote: {} };
 
     /**
      * Submit button tooltip override. # TODO: I18n
@@ -538,7 +569,8 @@ appSetup(MODULE, function() {
         } else if ((blocked = !counter.ready.reset())) {
             prop.tooltip = NOTHING_TO_SUBMIT_TOOLTIP;
         }
-        enableSubmissionButton('start', !blocked, prop);
+        prop.highlight = !blocked;
+        SUBMISSION_ENABLE.start(!blocked, prop);
     }
 
     /**
@@ -640,10 +672,12 @@ appSetup(MODULE, function() {
         if (isDefined(now)) {
             started = !!now;
             _debug('SUBMISSION', (started ? 'STARTED' : 'STOPPED'));
-            SUBMISSION_ENABLE.start(!started && !!itemsReady().length);
+            const prop = started ? { highlight: false } : {};
+            SUBMISSION_ENABLE.start(!started, prop);
             SUBMISSION_ENABLE.stop(started);
             SUBMISSION_ENABLE.pause(started);
             SUBMISSION_ENABLE.resume(false);
+            SUBMISSION_ENABLE.monitor(true, prop);
             if (!started) {
                 const no_submission = $stop.attr('title');
                 $pause.attr( 'title', no_submission);
@@ -678,10 +712,11 @@ appSetup(MODULE, function() {
     const CANT_SUBMIT = `${PROBLEMATIC}, ${BLOCKED}`;
 
     const NOT_READY_VALUES = {
-        [DB_STATUS]:     `${CANT_SUBMIT}, ${FAILED}`,
+        [DATA_STATUS]:   `${CANT_SUBMIT}, ${FAILED}`,
         [FILE_STATUS]:   `${CANT_SUBMIT}, ${FAILED}`,
         [UPLOAD_STATUS]: `${CANT_SUBMIT}`,
-        [INDEX_STATUS]:  `${CANT_SUBMIT}, ${SUCCEEDED}, ${DONE}`,
+        [INDEX_STATUS]:  `${CANT_SUBMIT}`,
+        [ENTRY_STATUS]:  `${CANT_SUBMIT}, ${SUCCEEDED}, ${DONE}`,
     };
 
     const STATUS_SELECTORS = Object.keys(NOT_READY_VALUES);
@@ -707,41 +742,44 @@ appSetup(MODULE, function() {
      */
     function initializeItems() {
         _debug('initializeItems');
-        let changed = false;
-        const local = [], remote = [];
+        const local = {}, remote = {};
         allItems().each((_, item) => {
-            const $item = $(item);
+            const $item   = $(item);
+            const item_id = manifestItemId($item);
             STATUS_SELECTORS.forEach(status => {
                 let name;
-                if (status === FILE_NEEDED) {
+                const $status = $item.find(status);
+                if ($status.is(FILE_NEEDED)) {
                     const path = $item.attr(FILE_NAME_ATTR) || '';
                     if ((name = path.split('\\').pop().split('/').pop())) {
-                        local.push(name);
+                        local[item_id] = name;
                     } else if ((name = $item.attr(FILE_URL_ATTR))) {
-                        remote.push(name);
+                        remote[item_id] = name;
                     }
                 }
                 initializeStatusFor($item, status, name);
             });
-            changed = updateItemSelect($item) || changed;
+            updateItemSelect($item);
         });
-        file_references.local  = [...local];
-        files_remaining.local  = [...local];
-        file_references.remote = [...remote];
-        files_remaining.remote = [...remote];
-        _debug(`INITIAL local_files  =`, file_references.local);
-        _debug(`INITIAL remote_files =`, file_references.remote);
+        file_references.local  = local;
+        files_remaining.local  = dup(local);
+        file_references.remote = remote;
+        files_remaining.remote = dup(remote);
+        _debug(`INITIAL file_references.local  =`, file_references.local);
+        _debug(`INITIAL file_references.remote =`, file_references.remote);
     }
 
     /**
      * Restore the status values of selected items to their original state in
      * preparation for resubmitting.
+     *
+     * @param {boolean} [total]       If *true*, allow FILE_NEEDED.
      */
-    function resetItems() {
+    function resetItems(total) {
         _debug('resetItems');
         itemsToTransmit().each((_, item) => {
             const $item = $(item);
-            STATUS_SELECTORS.forEach(status => resetStatusFor($item, status));
+            STATUS_TYPES.forEach(stat => resetStatusFor($item, stat, total));
         });
     }
 
@@ -1128,13 +1166,18 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} item
      * @param {string}   status       Status type class or selector.
+     * @param {boolean}  [total]      If *true*, allow FILE_NEEDED.
      */
-    function resetStatusFor(item, status) {
+    function resetStatusFor(item, status, total) {
         //_debug(`resetStatusFor "${status}" for item =`, item);
         const $item    = itemRow(item);
         const $status  = $item.find(selector(status));
         const original = $status.data(SAVED_DATA);
-        setStatusFor($item, status, original.value, original.note);
+        if (!total && (original.value === FILE_NEEDED_MARKER)) {
+            //setStatusFor($item, status, NOT_STARTED_MARKER);
+        } else {
+            setStatusFor($item, status, original.value, original.note);
+        }
     }
 
     /**
@@ -1259,36 +1302,80 @@ appSetup(MODULE, function() {
      * TODO: pass in via assets.js.erb.
      */
     const SUBMIT_STEP_TO_STATUS = {
-        db:      FILE_STATUS_CLASS,
-        cache:   UPLOAD_STATUS_CLASS,
-        promote: UPLOAD_STATUS_CLASS,
-        index:   INDEX_STATUS_CLASS,
+        start:   NOT_STARTED_MARKER,    // Pseudo step (internal use only).
+        data:    DATA_STATUS_CLASS,     // First true step (client-side).
+        file:    FILE_STATUS_CLASS,     // Client-side file acquisition.
+        upload:  UPLOAD_STATUS_CLASS,   // Client-side file upload.
+        cache:   UPLOAD_STATUS_CLASS,   // Server-side upload to AWS cache.
+        promote: UPLOAD_STATUS_CLASS,   // Server-side promote to AWS storage.
+        index:   INDEX_STATUS_CLASS,    // Server-side index ingest.
+        entry:   ENTRY_STATUS_CLASS,    // Last true step (server-side).
+        end:     DONE_MARKER,           // Pseudo step (internal use only).
     };
+    const ALL_SUBMIT_STEPS  = Object.keys(SUBMIT_STEP_TO_STATUS);
+    const BEFORE_FIRST_STEP = ALL_SUBMIT_STEPS[0];
+    const [FINAL_STEP, AFTER_FINAL_STEP] = ALL_SUBMIT_STEPS.slice(-2);
 
     const SUBMITTING_DATA = 'submitIds';
 
     /**
-     * getSubmissionList
+     * @typedef SubmissionTableEntry
      *
-     * @returns {Object.<string,string>|undefined}
+     * @property {string} type
+     * @property {string} status
+     * @property {string} [message]
      */
-    function getSubmissionList() {
+
+    /**
+     * @typedef {Object.<string,SubmissionTableEntry>} SubmissionTable
+     */
+
+    /**
+     * getSubmissionTable
+     *
+     * @returns {SubmissionTable|undefined}
+     */
+    function getSubmissionTable() {
         return $body.data(SUBMITTING_DATA);
     }
 
     /**
-     * setSubmissionList
+     * setSubmissionTable
      *
-     * @param {string[]|object} ids
+     * @param {string[]|SubmissionTable} arg
      *
-     * @returns {Object.<string,string>}
+     * @returns {SubmissionTable}
      */
-    function setSubmissionList(ids) {
-        _debug('setSubmissionList: ids =', ids);
-        // noinspection JSUnusedLocalSymbols
-        const table = isObject(ids) ? ids : toObject(ids, id => 'STARTING');
+    function setSubmissionTable(arg) {
+        _debug('setSubmissionTable: arg =', arg);
+        let table;
+        if (isObject(arg)) {
+            table = arg;
+        } else {
+            const ids   = uniq(arg);
+            const step  = BEFORE_FIRST_STEP;
+            const value = SUBMIT_STEP_TO_STATUS[step];
+            table = toObject(ids, _id => ({ step, value }));
+        }
         $body.data(SUBMITTING_DATA, table);
         return table;
+    }
+
+    /**
+     * updateSubmissionTable
+     *
+     * @param {string[]|SubmissionTable} replacement
+     *
+     * @returns {SubmissionTable}
+     */
+    function updateSubmissionTable(replacement) {
+        _debug('updateSubmissionTable: replacement =', replacement);
+        const item_table = setSubmissionTable(replacement);
+        const item_done  = (item) => (item.step === AFTER_FINAL_STEP);
+        if (Object.values(item_table).every(item_done)) {
+            submissionsEnded();
+        }
+        return item_table;
     }
 
     /**
@@ -1298,7 +1385,11 @@ appSetup(MODULE, function() {
      * @param {SubmitResponseSubclass} message
      */
     function onSubmissionResponse(message) {
-        if (message.isInitial) {
+        const func = 'onSubmissionResponse';
+        _debug(`${func}: message =`, message);
+        if (message.isAck) {
+            onAcknowledgement(message);
+        } else if (message.isInitial) {
             onInitialResponse(message);
         } else if (message.step) {
             onStepResponse(message);
@@ -1307,7 +1398,22 @@ appSetup(MODULE, function() {
         } else if (message.isFinal) {
             onFinalResponse(message);
         } else {
-            console.warn('onSubmissionResponse: unexpected:', message);
+            console.warn(`${func}: unexpected:`, message);
+        }
+    }
+
+    /**
+     * Process a message indicating bulk submission command response.
+     *
+     * @param {SubmitResponseSubclass} message
+     */
+    function onAcknowledgement(message) {
+        _debug('onAcknowledgement');
+        if (message instanceof SubmitControlResponse) {
+            const command = message.command;
+            _debug('onAcknowledgement: TODO: command =', command);
+        } else {
+            console.warn('onAcknowledgement: UNEXPECTED:', message);
         }
     }
 
@@ -1318,15 +1424,21 @@ appSetup(MODULE, function() {
      * @param {SubmitResponse} message
      */
     function onInitialResponse(message) {
-        _debug('onInitialResponse: message =', message);
+        const func = 'onInitialResponse'; _debug(func);
+        let items  = message.items;
+        // noinspection JSUnresolvedVariable
+        items = items.map(v => isObject(v) ? v.items : v).flat();
+        items = items.map(v => (typeof v === 'number') ? `${v}` : v);
+
+        const table = setSubmissionTable(items);
+        if (isEmpty(table)) {
+            console.warn(`${func}: no items indicated:`, message);
+        }
+
         resetItems();
-        let items = message.items;
-        items = items.map(id => isObject(id) ? id.items : id).flat();
-        items = items.map(id => (typeof id === 'number') ? `${id}` : id);
-        setSubmissionList(items);
         counter.failed.clear();
         counter.succeeded.clear();
-        counter.transmitting.value = items.length;
+        counter.transmitting.value = Object.keys(table).length;
     }
 
     /**
@@ -1336,150 +1448,180 @@ appSetup(MODULE, function() {
      * @param {SubmitStepResponse} message
      */
     function onStepResponse(message) {
-        const func    = 'onStepResponse';
+        const func  = 'onStepResponse'; _debug(func);
+        const table = { ...getSubmissionTable() };
+
+        if (isEmpty(table)) {
+            console.warn(`${func}: ignoring late response:`, message);
+            return;
+        }
+
         const total   = message.submitted.length;
         const success = message.success;
         const failure = message.failure;
         const invalid = message.invalid;
         const step    = message.step;
         const status  = SUBMIT_STEP_TO_STATUS[step];
-        const list    = getSubmissionList() || {};
-        let changed   = false;
-        _debug(`${func}: message =`, message);
 
-        success.forEach(id => {
-            const value  = SUCCEEDED_MARKER;
-            const $item  = itemFor(id);
-            setStatusFor($item, status, value);
-            list[id] = value;
-            changed  = true;
-        });
-        for (const [id, error] of Object.entries(failure)) {
-            const value  = FAILED_MARKER;
-            const $item  = itemFor(id);
-            setStatusFor($item, status, value, error);
-            list[id] = `${value}: ${error}`;
-            changed  = true;
+        const success_step = (step === FINAL_STEP) ? AFTER_FINAL_STEP : step;
+        const success_stat = SUBMIT_STEP_TO_STATUS[success_step];
+        for (const [id, info] of Object.entries(success)) {
+            const current = table[id]; // TODO: remove
+            setStatusFor(itemFor(id), status, SUCCEEDED_MARKER);
+            table[id] = { step: success_step, value: success_stat };
+            console.log('*** RESP STEP', success_step, 'success | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
         }
+
+        const failed = FAILED_MARKER;
+        for (const [id, info] of Object.entries(failure)) {
+            const current = table[id]; // TODO: remove
+            const error   = htmlDecode(info.error);
+            setStatusFor(itemFor(id), status, failed, error);
+            table[id] = { step: step, value: failed, message: error };
+            console.log('*** RESP STEP', step, 'FAILURE | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
+        }
+
         if (isPresent(invalid)) {
             console.warn(`${func}: invalid:`, invalid);
         }
 
-        const successes = success.length;
+        const successes = Object.keys(success).length;
         const failures  = Object.keys(failure).length;
         const count     = successes + failures + invalid.length;
         if (count !== total) {
             console.warn(`${func}: ${count} entries but ${total} submitted`);
         }
 
-        if (changed) {
-            setSubmissionList(list);
+        if (successes || failures) {
+            updateSubmissionTable(table);
         }
     }
 
     /**
-     * onBatchResponse
+     * Process a response message indicating the overall success/failure of the
+     * submission of one or more ManifestItem entries, updating displayed
+     * counters accordingly.
+     *
+     * If messages are being sent for submission steps then this function
+     * won't be updating the SubmissionTable or the individual status lines
+     * assuming that each associated ManifestItem has already been represented
+     * in a submission step response for the final submission step.
+     *
+     * If submission steps are not set up to generate real-time responses then
+     * batch responses would be mandatory in order to invoke this function to
+     * update the status of each associated ManifestItem submission.
      *
      * @param {SubmitStepResponse} message
      */
     function onBatchResponse(message) {
-        const func    = 'onBatchResponse';
-        const total   = message.submitted.length;
-        const success = message.success;
-        const failure = message.failure;
-        const invalid = message.invalid;
-        const list    = getSubmissionList() || {};
-        let changed   = false;
-        _debug(`${func}: message =`, message);
+        const func  = 'onBatchResponse'; _debug(func);
+        const table = { ...getSubmissionTable() };
 
-        success.forEach(id => {
-            if (!list[id]) {
-                const value  = SUCCEEDED_MARKER;
-                const status = SUBMIT_STEP_TO_STATUS.index;
-                const $item  = itemFor(id);
-                setStatusFor($item, status, value);
-                list[id] = value;
-                changed  = true;
-            }
-        });
-        for (const [id, error] of Object.entries(failure)) {
-            if (!list[id]) {
-                const value  = FAILED_MARKER;
-                const status = SUBMIT_STEP_TO_STATUS.index;
-                const $item  = itemFor(id);
-                setStatusFor($item, status, value, error);
-                list[id] = `${value}: ${error}`;
-                changed  = true;
+        if (isEmpty(table)) {
+            console.warn(`${func}: ignoring late response:`, message);
+            return;
+        }
+
+        const total     = message.submitted.length;
+        const success   = message.success;
+        const failure   = message.failure;
+        const invalid   = message.invalid;
+        const this_step = FINAL_STEP;
+        const status    = SUBMIT_STEP_TO_STATUS[this_step];
+        const end_step  = AFTER_FINAL_STEP;
+
+        const succeeded = SUCCEEDED_MARKER;
+        for (const [id, info] of Object.entries(success)) {
+            const current = table[id] || {};
+            if (current.step !== end_step) {
+                setStatusFor(itemFor(id), status, succeeded);
+                table[id] = { step: end_step, value: succeeded };
+                console.log('*** RESP BATCH success | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
             }
         }
+
+        const failed = FAILED_MARKER;
+        for (const [id, info] of Object.entries(failure)) {
+            const current = table[id];
+            if ((current?.step !== end_step) && (current?.value !== failed)) {
+                const error = htmlDecode(info.error);
+                setStatusFor(itemFor(id), status, failed, error);
+                table[id] = { step: end_step, value: failed, message: error };
+                console.log('*** RESP BATCH FAILURE | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
+            }
+        }
+
         if (isPresent(invalid)) {
             console.warn(`${func}: invalid:`, invalid);
         }
 
-        const successes = success.length;
+        const successes = Object.keys(success).length;
         const failures  = Object.keys(failure).length;
         const count     = successes + failures + invalid.length;
         if (count !== total) {
             console.warn(`${func}: ${count} entries but ${total} submitted`);
         }
 
-        counter.failed.increment(failures);
-        counter.succeeded.increment(successes);
-        counter.transmitting.decrement(successes + failures);
-
-        if (changed) {
-            setSubmissionList(list);
+        if (successes || failures) {
+            counter.failed.increment(failures);
+            counter.succeeded.increment(successes);
+            counter.transmitting.decrement(successes + failures);
+            updateSubmissionTable(table);
         }
     }
 
     /**
      * onFinalResponse
      *
-     * @param {SubmitResponse} message
+     * @param {SubmitFinalResponse} message
      */
     function onFinalResponse(message) {
-        const func = 'onFinalResponse';
-        const list = getSubmissionList() || {};
-        const data = message.data || {};
-        _debug(`${func}: message =`, message);
+        const func  = 'onFinalResponse'; _debug(func);
+        const data  = message.data || {};
+        const table = getSubmissionTable() || {};
 
         let total = 0;
         let count = 0;
-        for (const [_job, entry] of Object.entries(data)) {
+        for (const [_job, job_entry] of Object.entries(data)) {
             /** @type {SubmitStepResponseData} */
-            const message = entry;
-            const success = message.success || [];
-            const failure = message.failure || {};
-            const invalid = message.invalid || [];
-            success.forEach(id => {
-                const value = SUCCEEDED_MARKER;
-                const was   = `"${list[id]}"`;
-                const now   = `"${value}"`;
-                if (was !== now) {
-                    console.warn(`${func}: ${id}: was ${was}; now ${now}`);
-                }
-                count++;
-            });
-            for (const [id, error] of Object.entries(failure)) {
-                const value = FAILED_MARKER;
-                const was   = `"${list[id]}"`;
-                const now   = `"${value}: ${error}"`;
+            const entry    = job_entry;
+            const subtotal = entry.submitted?.length || 0;
+            const invalid  = entry.invalid || [];
+            const success  = entry.success || {};
+            const failure  = entry.failure || {};
+
+            const succeeded = SUCCEEDED_MARKER;
+            for (const [id, _info] of Object.entries(success)) {
+                const was = `"${table[id]}"`;
+                const now = `"${succeeded}"`;
                 if (was !== now) {
                     console.warn(`${func}: ${id}: was ${was}; now ${now}`);
                 }
                 count++;
             }
+
+            const failed = FAILED_MARKER;
+            for (const [id, info] of Object.entries(failure)) {
+                const was = `"${table[id]}"`;
+                const now = `"${failed}: ${htmlDecode(info.error)}"`;
+                if (was !== now) {
+                    console.warn(`${func}: ${id}: was ${was}; now ${now}`);
+                }
+                count++;
+            }
+
             if (isPresent(invalid)) {
                 console.warn(`${func}: invalid:`, invalid);
                 count += invalid.length;
             }
-            total += (message.submitted?.length || 0);
+
+            total += subtotal;
         }
         if (count !== total) {
             console.warn(`${func}: ${count} entries but ${total} submitted`);
         }
 
-        submissionsActive(false);
+        submissionsEnded();
     }
 
     /**
@@ -1490,7 +1632,17 @@ appSetup(MODULE, function() {
         _debug('onSubmissionRejected');
         const note = 'Refresh this page to re-authenticate.';
         flashError(`Connection error: ${note}`);
+        submissionsEnded();
+    }
+
+    /**
+     * Update buttons after a submission sequence has terminated.
+     */
+    function submissionsEnded() {
+        _debug('submissionsEnded');
         submissionsActive(false);
+        $start.toggleClass(BEST_CHOICE_MARKER, false);
+        $monitor.toggleClass(BEST_CHOICE_MARKER, true);
     }
 
     // ========================================================================
@@ -1566,85 +1718,117 @@ appSetup(MODULE, function() {
     }
 
     // ========================================================================
-    // Functions - file resolution
+    // Functions - uploader
     // ========================================================================
 
+    /** @type {BulkUploader} */
+    let uploader;
+
     /**
-     * A FileReader along with the original File object.
+     * Initialize the file uploader.
+     *
+     * @returns {BulkUploader}
      */
-    class FileReaderExt extends FileReader {
+    function initializeUploader() {
+        return uploader ||= newUploader($local_button);
+    }
 
-        /** @param {File} file */
-        file;
+    /**
+     * Create a new uploader instance.
+     *
+     * @param {Selector} owner
+     *
+     * @returns {BulkUploader}
+     */
+    function newUploader(owner) {
+        //_debug('newUploader: owner =', owner);
+        // noinspection JSUnusedGlobalSymbols
+        const cbs      = { onSelect, onStart, onProgress, onError, onSuccess };
+        const func     = 'uploader';
+        const $owner   = $(owner);
+        const features = { debugging: DEBUG };
+        const instance = new BulkUploader($owner, ITEM_MODEL, features, cbs);
 
-        /** @param {File} file */
-        constructor(file) { super(); this.file = file }
+        // noinspection JSValidateTypes
+        return instance.initialize();
 
-        /** @param {Blob} [blob] */
-        readAsBinaryString(blob = this.file) { super.readAsBinaryString(blob) }
+        /**
+         * Callback invoked when the file select button is pressed.
+         *
+         * @param {jQuery.Event} [event]    Ignored.
+         */
+        function onSelect(event) {
+            _debug(`${func}: onSelect: event =`, event);
+            clearFlash();
+        }
 
-        read() { this.readAsBinaryString() }
+        /**
+         * @see BaseUploader._onFileUploadStart
+         *
+         * @param {UppyFileUploadStartData} data
+         *
+         * @returns {object}          URL parameters for the remote endpoint.
+         */
+        function onStart(data) {
+            _debug(`${func}: onStart: data =`, data);
+            clearFlash();
+            const item_id  = manifestItemId($owner);
+            const manifest = manifestId();
+            return compact({ id: item_id, manifest_id: manifest });
+        }
 
-        get stateLabel() {return this.constructor.stateLabel(this.readyState)}
-
-        static stateLabel(state) {
-            switch (state) {
-                case this.DONE:    return 'DONE';
-                case this.EMPTY:   return 'EMPTY';
-                case this.LOADING: return 'LOADING';
-                default:           return state?.toString?.() || '-';
+        /**
+         * @see BaseUploader._onFileUploadProgress
+         *
+         * @param {UppyFile}     file
+         * @param {FileProgress} progress
+         *
+         * @returns {boolean}
+         */
+        function onProgress(file, progress) {
+            const tag     = `${func}: onProgress`;
+            const item_id = file?.meta?.manifest_item_id;
+            const $item   = itemFor(item_id);
+            const status  = statusFor($item, UPLOAD_STATUS);
+            _debug(`${tag}: item = ${item_id} | status =`, status, '| uploadStarted =', progress.uploadStarted, '| uploadComplete =', progress.uploadComplete, '| bytesTotal = ', progress.bytesTotal, '| bytesUploaded = ', progress.bytesUploaded, '| percentage = ', progress.percentage);
+            if (status === FAILED_MARKER) {
+                _debug(`${tag}: CANCEL: ${item_id} | file =`, file);
+                return false;
             }
+            _debug(`${tag}: item = ${item_id} | file =`, file);
+            if (progress.uploadStarted) {
+                setStatusFor($item, UPLOAD_STATUS, ACTIVE);
+            }
+            return true;
         }
-    }
 
-    /**
-     * @type {Object.<string,FileReaderExt>}
-     */
-    let local_readers;
-
-    /**
-     * Local files selected by the user.
-     *
-     * @returns {Object.<string,FileReaderExt>}
-     */
-    function localFileReaders() {
-        return local_readers ||= {};
-    }
-
-    /**
-     * Local files selected by the user.
-     *
-     * @param {string} file_name
-     *
-     * @returns {FileReaderExt|undefined}
-     */
-    function localFileReaderFor(file_name) {
-        return localFileReaders()[file_name];
-    }
-
-    /**
-     * Include a local file.
-     *
-     * @param {File|FileReaderExt} f
-     * @param {string}             [caller]     For diagnostics.
-     *
-     * @returns {FileReaderExt}
-     */
-    function addLocalFileReader(f, caller) {
-        const fr   = (f instanceof FileReader) ? f : new FileReaderExt(f);
-        const name = fr.file.name;
-        if (localFileReaderFor(name)) {
-            const func = caller || 'addLocalFileReader';
-            _debug(`${func}: replacing reader for "${name}"`);
+        /**
+         * @see BaseUploader._onFileUploadError
+         *
+         * @param {UppyFile}                       file
+         * @param {Error}                          error
+         * @param {{status: number, body: string}} [response]
+         */
+        function onError(file, error, response) {
+            const item_id = file?.meta?.manifest_item_id;
+            const $item   = itemFor(item_id);
+            const note    = error?.message || error;
+            setStatusFor($item, UPLOAD_STATUS, FAILED, note);
+            _debug(`${func}: onError: item = ${item_id} | file =`, file);
         }
-        return localFileReaders()[name] = fr;
-    }
 
-    /**
-     * Initialize local file readers.
-     */
-    function clearLocalFileReaders() {
-        local_readers = undefined;
+        /**
+         * @see BaseUploader._onFileUploadSuccess
+         *
+         * @param {UppyFile}            file
+         * @param {UppyResponseMessage} response
+         */
+        function onSuccess(file, response) {
+            const item_id = file?.meta?.manifest_item_id;
+            const $item   = itemFor(item_id);
+            setStatusFor($item, UPLOAD_STATUS, SUCCEEDED);
+            _debug(`${func}: onSuccess: item = ${item_id} | file =`, file);
+        }
     }
 
     // ========================================================================
@@ -1656,7 +1840,6 @@ appSetup(MODULE, function() {
      */
     function initializeLocalFilesResolution() {
         _debug('initializeLocalFilesResolution');
-        clearLocalFileReaders();
         clearLocalFileSelection();
         setupLocalFilePrompt();
     }
@@ -1675,14 +1858,14 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * @type {File[]|undefined}
+     * @type {FileExt[]|undefined}
      */
     let local_file_selection;
 
     /**
      * Local files selected by the user.
      *
-     * @returns {File[]}
+     * @returns {FileExt[]}
      */
     function localFileSelection() {
         return local_file_selection ||= [];
@@ -1691,11 +1874,18 @@ appSetup(MODULE, function() {
     /**
      * Include a local file.
      *
-     * @param {File} file
+     * @param {FileExt}       obj
+     * @param {string|number} [item_id]
      */
-    function addLocalFile(file) {
-        _debug(`Queueing local file "${file.name}":`, file);
+    function addLocalFile(obj, item_id) {
+        _debug(`Queueing local file "${obj.name}" for item ${item_id}`, obj);
+        let file = obj;
+        if (item_id) {
+            file.meta ||= {}
+            file.meta.manifest_item_id = item_id.toString();
+        }
         localFileSelection().push(file);
+        uploader.addFiles(file);
     }
 
     /**
@@ -1712,7 +1902,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function beforeLocalFilesSelected(event) {
-        _debug('*** beforeLocalFilesSelected: event =', event);
+        _debug('beforeLocalFilesSelected: event =', event);
         if (event.currentTarget === event.target) {
             clearLocalFileSelection();
             $local_input.click();
@@ -1731,7 +1921,7 @@ appSetup(MODULE, function() {
         if (!files) {
             console.warn(`${func}: no event target`);
         } else if (isEmpty(files)) {
-            console.warn(`${func}: no files selected`);
+            console.warn(`${func}: no files provided`);
         } else {
             _debug(`${func}: ${files.length} files`);
             queueLocalFiles(files);
@@ -1742,22 +1932,29 @@ appSetup(MODULE, function() {
     /**
      * Replace the current list of selected files.
      *
-     * @param {File[]|FileList} files
+     * @param {FileExt[]|FileList} files
      */
     function queueLocalFiles(files) {
         _debug(`queueLocalFiles: ${files.length} files =`, files);
-        const count = files?.length || 0;
+        const remaining = new Set(Object.values(files_remaining.local));
+        const count     = files?.length || 0;
+        let lookup      = undefined;
         for (let i = 0; i < count; i++) {
-            const file = files[i];
-            const name = file?.name;
+            const file  = files[i];
+            const name  = file?.name;
+            let item_id = file?.meta?.manifest_item_id;
+            if (name && !item_id) {
+                lookup ||= invert(file_references.local);
+                item_id = lookup[name];
+            }
             if (!name) {
                 _debug(`IGNORING nameless file[${i}]:`, file);
-            } else if (!file_references.local.includes(name)) {
+            } else if (!item_id) {
                 _debug(`IGNORING unrequested file "${name}":`, file);
-            } else if (!files_remaining.local.includes(name)) {
+            } else if (!remaining.has(name)) {
                 _debug(`IGNORING already handled file "${name}":`, file);
             } else {
-                addLocalFile(file);
+                addLocalFile(file, item_id);
             }
         }
     }
@@ -1766,7 +1963,7 @@ appSetup(MODULE, function() {
      * Update submission statuses and report the result of pre-processing local
      * files.
      *
-     * @param {File[]} [files]
+     * @param {FileExt[]} [files]
      */
     function preProcessLocalFiles(files = localFileSelection()) {
         const func = 'preProcessLocalFiles';
@@ -1776,18 +1973,17 @@ appSetup(MODULE, function() {
         const good  = [];
         const bad   = []; // TODO: are there "badness" criteria at this stage?
         files.forEach(file => {
-            const fr   = new FileReaderExt(file);
-            const name = fr.file.name;
-            const size = fr.file.size;
-            const item = `${name} : ${size} bytes`;
-            if (!removeFrom(files_remaining.local, name)) {
-                _debug(`${func}: ${item} -- ALREADY PROCESSED`);
+            const id   = file.meta.manifest_item_id;
+            const name = file.name;
+            const size = file.size;
+            const line = `${id} : ${name} : ${size} bytes`;
+            if (remove(files_remaining.local, id)) {
+                _debug(`${func}: ${line}`);
             } else {
-                _debug(`${func}: ${item}`);
+                _debug(`${func}: ${line} -- ALREADY PROCESSED`);
             }
-            addLocalFileReader(fr, func);
             names.push(name);
-            good.push(item);
+            good.push(line);
         });
         const resolved    = good.length;
         const problematic = bad.length;
@@ -1796,13 +1992,14 @@ appSetup(MODULE, function() {
         if (resolved) {
             let sel_changed = false;
             const fulfilled = new Set(names);
+            const status    = FILE_STATUS;
             allItems().each((_, item) => {
                 const $item   = $(item);
-                const $status = $item.find(FILE_STATUS);
+                const $status = $item.find(status);
                 const needed  = $status.is(FILE_NEEDED);
                 const name    = needed && $status.find('.name').text();
                 if (name && fulfilled.has(name)) {
-                    setStatusFor($item, FILE_STATUS, SUCCEEDED);
+                    setStatusFor($item, status, SUCCEEDED);
                     sel_changed = updateItemSelect($item) || sel_changed;
                 }
             });
@@ -1886,82 +2083,13 @@ appSetup(MODULE, function() {
                 }
             }
             const items = (ready > 1) ? 'ITEMS'   : 'ITEM';
-            submittable = `${count} ${items} READY FOR SUBMISSION`;
+            submittable = `${count} ${items} READY FOR UPLOAD`;
         } else {
             const items = (total > 1) ? 'ITEMS'   : 'ITEM';
             const need  = (total > 1) ? 'REQUIRE' : 'REQUIRES';
             submittable = `${items} STILL ${need} ATTENTION`;
         }
         return `ALL FILES RESOLVED - ${submittable}`;
-    }
-
-    // ========================================================================
-    // Functions - file resolution - local
-    // ========================================================================
-
-    /**
-     * Make use of the file readers stored in {@link preProcessLocalFiles}.
-     *
-     * @param {jQuery.Event|UIEvent} [event]
-     */
-    function processLocalFiles(event) {
-        const func     = 'processLocalFiles';
-        _debug(`${func}: event =`, event);
-        _debug(`${func}: local_readers =`, local_readers);
-        const readers  = local_readers && Object.values(local_readers);
-        /** @type {Promise<FileReaderExt>[]} */
-        const promises = readers?.map(reader => asyncLocalFileRead(reader));
-        if (!promises) {
-            console.warn(`${func}: No files have ever been selected`);
-        } else if (isEmpty(promises)) {
-            console.warn(`${func}: No files to read`);
-        } else {
-            Promise.all(promises).then(fulfilledLocalFiles);
-        }
-    }
-
-    /**
-     * Generate a new Promise for accessing a file.
-     *
-     * @param {File|FileReaderExt} f
-     *
-     * @returns {Promise<FileReaderExt>}
-     */
-    function asyncLocalFileRead(f) {
-        // NOTE: maybe this should have a callback that is run when the file
-        //  has been read -- this callback could perform the next step of
-        //  uploaded the FileReader content, then progressing with the
-        //  submission of that ManifestItem.
-        _debug('asyncLocalFileRead', f);
-        return new Promise((resolve, reject) => {
-            /** @param {ProgressEvent} ev */
-            const fr_log = (ev) => {
-                const state = ev.target?.stateLabel || '???';
-                console.log(`*** FR ${ev.type} | ${state} | ev =`, ev);
-                return true;
-            };
-            const fr = (f instanceof FileReader) ? f : new FileReaderExt(f);
-            fr.onabort     = ev => fr_log(ev);
-            fr.onerror     = ev => fr_log(ev) && reject(fr);
-            fr.onload      = ev => fr_log(ev) && resolve(fr);
-            fr.onloadend   = ev => fr_log(ev);
-            fr.onloadstart = ev => fr_log(ev);
-            fr.onprogress  = ev => fr_log(ev);
-            fr.read();
-        });
-    }
-
-    /**
-     * Called after the content from all FileReaders has been acquired.
-     *
-     * @param {FileReaderExt[]} readers
-     */
-    function fulfilledLocalFiles(readers) {
-        const func = 'fulfilledLocalFiles';
-        _debug(`${func}: readers =`, readers);
-        // NOTE: This gets run after all selected files have been read.
-        //  Maybe this is the place to batch up FileReader content for upload
-        //  and then progressing with batch submission of related ManifestItems
     }
 
     // ========================================================================
@@ -1973,7 +2101,6 @@ appSetup(MODULE, function() {
      */
     function initializeRemoteFilesResolution() {
         const func = 'initializeRemoteFilesResolution'; _debug(func);
-        //clearRemoteFileReaders();
         clearRemoteFileSelection();
         setupRemoteFilePrompt();
     }
@@ -1992,14 +2119,14 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * @type {File[]|undefined}
+     * @type {string[]|undefined}
      */
     let remote_file_selection;
 
     /**
      * Remote files selected by the user.
      *
-     * @returns {File[]}
+     * @returns {string[]}
      */
     function remoteFileSelection() {
         return remote_file_selection ||= [];
@@ -2008,11 +2135,22 @@ appSetup(MODULE, function() {
     /**
      * Include a remote file.
      *
-     * @param {File} file
+     * @param {string}        obj
+     * @param {string|number} [item_id]
      */
-    function addRemoteFile(file) {
-        _debug(`Queueing remote file "${file.name}":`, file);
+    function addRemoteFile(obj, item_id) {
+        _debug(`Queueing remote file "${obj}" for item ${item_id}:`, obj);
+        let file = obj;
+/*
+        if (item_id) {
+            file.meta ||= {}
+            file.meta.manifest_item_id = item_id.toString();
+        }
+*/
         remoteFileSelection().push(file);
+/*
+        uploader.addFiles(file);
+*/
     }
 
     /**
@@ -2042,16 +2180,16 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function afterRemoteFilesSelected(event) {
-        const func  = 'afterRemoteFilesSelected';
-        const files = event.currentTarget?.files || event.target?.files;
+        const func = 'afterRemoteFilesSelected';
+        const urls = []; // event.currentTarget?.files || event.target?.files;
         //_debug(`*** ${func}: event =`, event);
-        if (!files) {
+        if (!urls) {
             console.warn(`${func}: no event target`);
-        } else if (isEmpty(files)) {
-            console.warn(`${func}: no files selected`);
+        } else if (isEmpty(urls)) {
+            console.warn(`${func}: no URLs provided`);
         } else {
-            _debug(`${func}: ${files.length} files`);
-            queueRemoteFiles(files);
+            _debug(`${func}: ${urls.length} URLs`);
+            queueRemoteFiles(urls);
             preProcessRemoteFiles();
         }
     }
@@ -2059,38 +2197,29 @@ appSetup(MODULE, function() {
     /**
      * Replace the current list of selected files.
      *
-     * @param {File[]|FileList} files
+     * @param {string[]} urls
      */
-    function queueRemoteFiles(files) {
-        _debug(`queueRemoteFiles: ${files.length} files =`, files);
-        const count = files?.length || 0;
+    function queueRemoteFiles(urls) {
+        _debug(`queueRemoteFiles: ${urls.length} URLs =`, urls);
+        const remaining = new Set(Object.values(files_remaining.remote));
+        const count     = urls?.length || 0;
+        let lookup      = undefined;
         for (let i = 0; i < count; i++) {
-            const file = files[i];
-            const name = file?.name;
+            const url   = urls[i];
+            const name  = url;       // url?.name;
+            let item_id = undefined; // url?.meta?.manifest_item_id;
+            if (name && !item_id) {
+                lookup ||= invert(file_references.remote);
+                item_id = lookup[name];
+            }
             if (!name) {
-                _debug(`IGNORING nameless file[${i}]:`, file);
-            } else if (!file_references.remote.includes(name)) {
-                _debug(`IGNORING unrequested file "${name}":`, file);
-            } else if (!files_remaining.remote.includes(name)) {
-                _debug(`IGNORING already handled file "${name}":`, file);
+                _debug(`IGNORING nameless url[${i}]:`, url);
+            } else if (!item_id) {
+                _debug(`IGNORING unrequested URL "${name}":`, url);
+            } else if (!remaining.has(name)) {
+                _debug(`IGNORING already handled URL "${name}":`, url);
             } else {
-                addRemoteFile(file);
-            }
-        }
-        // NOTE: For testing purposes, make it look like the selected file(s)
-        //  were needed.
-        for (let i = 0; i < count; i++) {
-            const file = files[i];
-            const name = file?.name;
-            let add;
-            if (!file_references.remote.includes(name)) {
-                add = file_references.remote.push(name);
-            }
-            if (!files_remaining.remote.includes(name)) {
-                add = files_remaining.remote.push(name);
-            }
-            if (add) {
-                addRemoteFile(file);
+                addRemoteFile(url, item_id);
             }
         }
     }
@@ -2099,28 +2228,26 @@ appSetup(MODULE, function() {
      * Update submission statuses and report the result of pre-processing
      * remote files.
      *
-     * @param {File[]} [files]
+     * @param {string[]} [urls]
      */
-    function preProcessRemoteFiles(files = remoteFileSelection()) {
+    function preProcessRemoteFiles(urls = remoteFileSelection()) {
         const func = 'preProcessRemoteFiles';
-        _debug(`${func}: ${files.length} files =`, files);
+        _debug(`${func}: ${urls.length} URLs =`, urls);
         const lines = [];
         const names = [];
         const good  = [];
         const bad   = []; // TODO: are there "badness" criteria at this stage?
-        files.forEach(file => {
-            const fr   = new FileReaderExt(file);
-            const name = fr.file.name;
-            const size = fr.file.size;
-            const item = `${name} : ${size} bytes`;
-            if (!removeFrom(files_remaining.remote, name)) {
-                _debug(`${func}: ${item} -- ALREADY PROCESSED`);
+        urls.forEach(url => {
+            const id   = 0;   // url.meta.manifest_item_id;
+            const name = url; // url.name;
+            const line = `${id} : ${name}`;
+            if (remove(files_remaining.remote, id)) {
+                _debug(`${func}: ${line}`);
             } else {
-                _debug(`${func}: ${item}`);
+                _debug(`${func}: ${line} -- ALREADY PROCESSED`);
             }
-            //addRemoteFileReader(fr, func); // TODO: ???
             names.push(name);
-            good.push(item);
+            good.push(line);
         });
         files_remaining.remote = []; // NOTE: simulate all resolved
         const resolved    = good.length;
@@ -2130,13 +2257,14 @@ appSetup(MODULE, function() {
         if (resolved) {
             let sel_changed = false;
             const fulfilled = new Set(names);
+            const status    = FILE_STATUS;
             allItems().each((_, item) => {
                 const $item   = $(item);
-                const $status = $item.find(FILE_STATUS);
+                const $status = $item.find(status);
                 const needed  = $status.is(FILE_NEEDED);
                 const name    = needed && $status.find('.name').text();
                 if (name && (fulfilled.has(name) || name.startsWith('http'))) {
-                    setStatusFor($item, FILE_STATUS, SUCCEEDED);
+                    setStatusFor($item, status, SUCCEEDED);
                     sel_changed = updateItemSelect($item) || sel_changed;
                 }
             });
@@ -2160,6 +2288,22 @@ appSetup(MODULE, function() {
         if (isPresent(lines)) {
             flashMessage(lines.join("\n"));
         }
+    }
+
+    // ========================================================================
+    // Functions - database - ManifestItem
+    // ========================================================================
+
+    /**
+     * The database ID for the ManifestItem associated with the target.
+     *
+     * @param {Selector} item
+     *
+     * @returns {number|undefined}
+     */
+    function manifestItemId(item) {
+        const value = itemRow(item).attr(ITEM_ATTR);
+        return Number(value) || undefined;
     }
 
     // ========================================================================

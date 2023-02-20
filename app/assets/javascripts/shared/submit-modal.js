@@ -5,19 +5,22 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug }                            from '../application/debug';
-import { appTeardown }                         from '../application/setup';
-import { selector }                            from './css';
-import { isEmpty, isPresent }                  from './definitions';
-import { renderJson }                          from './json';
-import { ModalDialog }                         from './modal-dialog';
-import { ModalHideHooks, ModalShowHooks }      from './modal_hooks';
-import { isObject }                            from './objects';
-import { SubmitControlRequest, SubmitRequest } from './submit-request';
-import { SubmitStepResponse }                  from './submit-response';
+import { AppDebug }                       from '../application/debug';
+import { appTeardown }                    from '../application/setup';
+import { SubmitChannel }                  from '../channels/submit-channel';
+import { selector }                       from './css';
+import { isEmpty, isPresent }             from './definitions';
+import { htmlDecode }                     from './html';
+import { renderJson }                     from './json';
+import { ModalDialog }                    from './modal-dialog';
+import { ModalHideHooks, ModalShowHooks } from './modal_hooks';
+import { isObject }                       from './objects';
+import { asString, isString }             from './strings';
+import { SubmitStepResponse }             from './submit-response';
 import {
-    SubmitChannel,
-} from '../channels/submit-channel';
+    SubmitControlRequest,
+    SubmitRequest,
+} from './submit-request';
 
 
 const MODULE = 'SubmitModal';
@@ -515,16 +518,13 @@ export class SubmitModal extends ModalDialog {
         this.initializeStatusDisplay();
         this.clearOutputDisplay();
         this.clearLogDisplay();
-        let performed = false;
         const channel = this._reserveChannel();
-        if (!channel) {
-            this._error('Could not acquire submission channel');
-        } else if (request instanceof SubmitControlRequest) {
-            performed = channel.request(request, 'submission_control');
+        if (channel) {
+            return channel.request(request);
         } else {
-            performed = channel.request(request);
+            this._error('Could not acquire submission channel');
+            return false;
         }
-        return performed;
     }
 
     // ========================================================================
@@ -580,7 +580,7 @@ export class SubmitModal extends ModalDialog {
     /**
      * The reported overall bulk submission status.
      *
-     * @returns {SubmitResponseBasePayload}
+     * @returns {BaseSubmitResponsePayload}
      */
     get submitStatus() {
         return this.getSubmitStatus() || {};
@@ -589,7 +589,7 @@ export class SubmitModal extends ModalDialog {
     /**
      * The reported overall bulk submission status.
      *
-     * @returns {SubmitResponseBasePayload|undefined}
+     * @returns {BaseSubmitResponsePayload|undefined}
      */
     getSubmitStatus() {
         return this.dataElement.data(this.constructor.STATUS_DATA);
@@ -598,9 +598,9 @@ export class SubmitModal extends ModalDialog {
     /**
      * Update the reported overall bulk submission status.
      *
-     * @param {SubmitResponseBasePayload} value
+     * @param {BaseSubmitResponsePayload} value
      *
-     * @return {SubmitResponseBasePayload}
+     * @return {BaseSubmitResponsePayload}
      */
     setSubmitStatus(value) {
         this._debug('setSubmitStatus:', value);
@@ -615,7 +615,7 @@ export class SubmitModal extends ModalDialog {
      */
     updateStatusValue(message) {
         this._debug('updateStatusValue:', message);
-        const payload = message.payloadCopy;
+        const payload = message.toObject();
         this.setSubmitStatus(payload);
     }
 
@@ -680,8 +680,8 @@ export class SubmitModal extends ModalDialog {
         const func  = 'updateStatusDisplay';
         this._debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
-        const data  = message.data;
-        let finish, notice, n_tip, status;
+
+        let notice;
         switch (state) {
 
             // Waiter states
@@ -689,19 +689,8 @@ export class SubmitModal extends ModalDialog {
             case 'STARTING':
                 notice = 'Working';
                 break;
-            case 'TIMEOUT':
-                notice = 'Completed';
-                n_tip  = 'Some searches took longer than expected';
-                finish = true;
-                break;
-            case 'PARTIAL':
-                notice = 'Completed';
-                n_tip  = 'Partial results received';
-                finish = true;
-                break;
             case 'COMPLETE':
                 notice = 'Completed';
-                finish = true;
                 break;
 
             // Worker states
@@ -709,20 +698,11 @@ export class SubmitModal extends ModalDialog {
             case 'WORKING':
                 notice = `${this.statusNotice.text()}.`;
                 break;
-            case 'SPAWNING':
-                notice = 'Spawning worker';
-                break;
             case 'STEP':
                 notice = `Submission step "${message.step}"`;
                 break;
-            case 'LATE':
-                notice = 'Worker done';
-                n_tip  = 'Exceeded time limit';
-                status = 'late';
-                break;
             case 'DONE':
                 notice = 'Worker done';
-                status = isEmpty(data) ? ['done', 'empty'] : 'done';
                 break;
 
             // Other
@@ -731,7 +711,7 @@ export class SubmitModal extends ModalDialog {
                 this._warn(`${func}: ${message.status}: unexpected`);
                 break;
         }
-        if (notice) { this.setStatusNotice(notice, n_tip) }
+        if (notice) { this.setStatusNotice(notice) }
     }
 
     /**
@@ -822,11 +802,25 @@ export class SubmitModal extends ModalDialog {
      * @param {string}       gap
      */
     updateOutputDisplayPart($element, data, gap = "\n") {
+        const fmt = (v) => {
+            let line;
+            if (isObject(v)) {
+                const [sid, err] = [v.submission_id, v.error];
+                if (sid && !err) {
+                    line = `submitted as entry ${sid}`; // TODO: I18n
+                } else if (err && !sid) {
+                    line = err;
+                }
+            }
+            line ||= isString(v) ? v : asString(v);
+            return htmlDecode(line) || line || '';
+        };
+        const val = (v) => Array.isArray(v) ? v.map(fmt).join('; ') : fmt(v);
         let added;
         if (Array.isArray(data)) {
-            added = data.map(k => `${k}: submitted`); // TODO: I18n
+            added = data.map(k => isString(k) ? `${k}: submitted` : val(k)); // TODO: I18n
         } else {
-            added = Object.entries(data).map(([k, v]) => `${k}: ${v}`);
+            added = Object.entries(data).map(([k, v]) => `${k}: ${val(v)}`);
         }
         const current = $element.text()?.trimEnd()?.split(gap) || [];
         const result  = [...current, ...added].sort().join(gap);

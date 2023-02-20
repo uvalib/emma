@@ -74,20 +74,21 @@ export class ChannelRequest extends BaseClass {
     // Properties
     // ========================================================================
 
-    get parts() { return this._parts }
-
-    /**
-     * Request payload object.
-     *
-     * @returns {ChannelRequestPayload}
-     */
-    get requestPayload() {
-        return $.extend(true, this._blankParts(), this.parts);
-    }
+    get parts()  { return this._parts }
+    get length() { return Object.keys(this._parts).length }
 
     // ========================================================================
     // Methods
     // ========================================================================
+
+    /**
+     * A copy of the request payload object.
+     *
+     * @returns {ChannelRequestPayload}
+     */
+    toObject() {
+        return $.extend(true, this._blankParts(), this.parts);
+    }
 
     /**
      * Clear all request parts.
@@ -148,16 +149,6 @@ export class ChannelRequest extends BaseClass {
     // ========================================================================
 
     /**
-     * Generate a new empty request payload.
-     *
-     * @returns {ChannelRequestPayload}
-     * @protected
-     */
-    _blankParts() {
-        return this.constructor.blankParts();
-    }
-
-    /**
      * Append the elements from *src* to this._parts.
      *
      * @param {object} src
@@ -178,6 +169,16 @@ export class ChannelRequest extends BaseClass {
                 this.parts[key] = new_v;
             }
         });
+    }
+
+    /**
+     * Generate a new empty request payload.
+     *
+     * @returns {ChannelRequestPayload}
+     * @protected
+     */
+    _blankParts() {
+        return this.constructor.blankParts();
     }
 
     // ========================================================================
@@ -205,7 +206,7 @@ export class ChannelRequest extends BaseClass {
         if ((item instanceof this) && notDefined(args)) {
             return item;
         } else {
-            return new this(item, args);
+            return new this(item, ...args);
         }
     }
 }

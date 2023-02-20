@@ -60,7 +60,7 @@ class LookupChannel::StatusResponse < LookupChannel::Response
 
   protected
 
-  def payload_normalize(value)
+  def payload_normalize(value, except: nil)
     value     = super
     service   = value.delete(:services) || value[:service]
     service &&= Array.wrap(service).map { |v| v.to_s.demodulize }

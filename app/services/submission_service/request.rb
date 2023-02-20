@@ -33,8 +33,9 @@ class SubmissionService::Request
   # @type [Hash]
   #
   TEMPLATE = {
-    manifest_id: nil,
-    items:       [],
+    simulation:   nil,
+    manifest_id:  nil,
+    items:        [],
   }.deep_freeze
 
   # ===========================================================================
@@ -85,6 +86,12 @@ class SubmissionService::Request
   # ===========================================================================
 
   public
+
+  # Indicate whether this request is part of a simulation.
+  #
+  def simulation?
+    table[:simulation].present?
+  end
 
   # command
   #
@@ -278,7 +285,7 @@ class SubmissionService::BatchSubmitRequest < SubmissionService::Request
     arg   = arg[:items]             if arg.is_a?(Hash) && arg[:items]
     arg   = arg.items               if arg.respond_to?(:items)
     items = Array.wrap(arg)
-    batch = batch_size_for(opt[:batch], items)
+    batch = batch_size_for(opt[:batch], items) || 1
     m_id  = opt[:manifest_id]
     items.each_slice(batch).map do |subset|
       SubmissionService::SubmitRequest.new(subset, manifest_id: m_id)
@@ -355,6 +362,7 @@ class SubmissionService::ControlRequest < SubmissionService::Request
       when :resume then :batch_resume
       else              raise "#{__method__}: #{switch}: invalid"
     end
+    .tap { |meth| raise "#{__method__}: #{switch}: #{meth}: not implemented" }
   end
 
   # ===========================================================================
@@ -365,21 +373,6 @@ class SubmissionService::ControlRequest < SubmissionService::Request
 
   def self.response_class = SubmissionService::ControlResponse
   def self.template       = TEMPLATE
-
-end
-
-# SubmissionService::StatusRequest
-#
-class SubmissionService::StatusRequest < SubmissionService::Request
-
-  # ===========================================================================
-  # :section: SubmissionService::Request overrides
-  # ===========================================================================
-
-  public
-
-  def self.request_method = :list_jobs
-  def self.response_class = SubmissionService::StatusResponse
 
 end
 

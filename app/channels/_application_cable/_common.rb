@@ -9,8 +9,31 @@ __loading_begin(__FILE__)
 #
 module ApplicationCable::Common
 
-  include ApplicationCable::Payload
-  include Emma::Debug
+  include ApplicationCable::Logging
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # @type [Array<Symbol>]
+  CHANNEL_PARAMS = %i[stream_id stream_name meth].freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Hash keys which should not be included with the data stored in the class
+  # instance.
+  #
+  # @type [Array<Symbol>]
+  #
+  def ignored_keys
+    CHANNEL_PARAMS
+  end
 
   # ===========================================================================
   # :section:
@@ -45,45 +68,6 @@ module ApplicationCable::Common
     __debug_cable_data((meth || __method__), payload)
     ApplicationCable::Response.wrap(payload, **opt).to_h
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Send debugging output to the console.
-  #
-  # @param [Array<*>] args
-  # @param [Hash]     opt
-  #
-  # @return [void]
-  #
-  def __debug_cable(*args, **opt)
-    opt[:separator] ||= "\n\t"
-    t     = Thread.current.name
-    name  = self_class
-    args  = args.compact.join(Emma::Debug::DEBUG_SEPARATOR)
-    added = block_given? ? yield : {}
-    __debug_items("#{name} #{args}", **opt) do
-      added.is_a?(Hash) ? added.merge(thread: t) : [*added, "thread #{t}"]
-    end
-  end
-    .tap { |meth| neutralize(meth) unless DEBUG_CABLE }
-
-  # Send sent/received WebSocket data to the console.
-  #
-  # @param [Symbol] meth
-  # @param [*]      data
-  #
-  # @return [void]
-  #
-  def __debug_cable_data(meth, data)
-    __debug_cable(meth) do
-      "#{data.class} = #{data.inspect.truncate(512)}"
-    end
-  end
-    .tap { |meth| neutralize(meth) unless DEBUG_CABLE }
 
   # ===========================================================================
   # :section:

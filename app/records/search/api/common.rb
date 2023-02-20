@@ -202,7 +202,7 @@ class PublicationIdentifier < ScalarType
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
     #
-    def cast(v, invalid: false)
+    def cast(v, invalid: false, **)
       v = create(v) unless v.is_a?(identifier_subclass)
       v if invalid || v&.valid?
     end
@@ -215,7 +215,7 @@ class PublicationIdentifier < ScalarType
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
     #
-    def create(v, type = nil, *)
+    def create(v, type = nil, **)
       prefix, value = type ? [type, v] : parts(v)
       return                       if value.blank?
       value = "#{prefix}:#{value}" if prefix.present?

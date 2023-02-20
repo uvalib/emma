@@ -2,12 +2,4 @@
 #
 class SubmitJobRecord < GoodJob::Job
   include JobMethods
-
-  # active_for
-  #
-  # @param [SubmitJob, Manifest, String, *] manifest
-  #
-  # @return [ActiveRecord::Relation<SubmitJobRecord>, nil]
-  #
-  def self.active_for: (untyped manifest) -> (ActiveRecord::Relation | nil)
 end

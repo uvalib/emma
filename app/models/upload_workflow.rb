@@ -311,11 +311,17 @@ module UploadWorkflow::Properties                                               
   #
   BATCH_SIZE_DEFAULT = 10
 
+  # Batches larger than this number are not possible.
+  #
+  # @type [Integer]
+  #
+  BATCH_UPPER_BOUND = INGEST_MAX_SIZE - 1
+
   # Batches larger than this number are not permitted.
   #
   # @type [Integer]
   #
-  MAX_BATCH_SIZE = INGEST_MAX_SIZE - 1
+  MAX_BATCH_SIZE = BATCH_UPPER_BOUND
 
   # Break sets of submissions into chunks of this size.
   #
@@ -328,9 +334,11 @@ module UploadWorkflow::Properties                                               
   # noinspection RubyMismatchedConstantType
   #++
   BATCH_SIZE = [
-    (ENV['BATCH_SIZE']&.to_i || BATCH_SIZE_DEFAULT || MAX_BATCH_SIZE),
-    MAX_BATCH_SIZE
-  ].min
+    ENV['BATCH_SIZE']&.to_i,
+    BATCH_SIZE_DEFAULT,
+    MAX_BATCH_SIZE,
+    BATCH_UPPER_BOUND,
+  ].compact.min
 
   # URL parameter names and default values.
   #

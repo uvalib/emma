@@ -804,7 +804,7 @@ class ManifestDecorator
   public
 
   # @private
-  STATUS_COLUMN_COUNT = ManifestItemDecorator::SUBMIT_STATUS_COLUMNS.size
+  STATUS_COLUMN_COUNT = ManifestItemDecorator::SUBMIT_COLUMNS.size
 
   # @private
   STATUS_LABELS = ManifestItemDecorator::SUBMIT_STATUS_LABELS.to_json.freeze

@@ -70,7 +70,7 @@ module ApplicationJob::Properties
   #
   def queue_key
     result = queue_name
-    result = arguments.presence && result.call if result.is_a?(Proc)
+    result = try(:arguments).presence && result.call if result.is_a?(Proc)
     result&.to_sym
   end
 
@@ -149,17 +149,12 @@ module ApplicationJob::Properties
 
     public
 
-    def queue_as(part_name = nil, &block)
-      if block
-        blk = -> { queue_name_from_part(queue_key_for(instance_exec(&block))) }
-        super(&blk)
-        queue_with_priority(&blk) if priority.blank?
-      else
-        #part_name = queue_key_for(part_name)
-        #super(part_name)
-        super(queue_key_for(part_name))
-        queue_with_priority(queue_name) if priority.blank?
-      end
+    def queue_name_from_part(part_name)
+      queue_name = part_name || default_queue_name
+      name_parts = queue_name.to_s.split(queue_name_delimiter)
+      prefix     = queue_name_prefix.presence
+      prefix     = nil if name_parts.first == prefix
+      -[prefix, *name_parts].compact.join(queue_name_delimiter)
     end
 
     # =========================================================================

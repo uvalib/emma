@@ -14,6 +14,10 @@ class SubmissionService::Response < ApplicationJob::Response
   #
   def initialize: (?untyped? values, **untyped opt) -> void
 
+  # Indicate whether this response is part of a simulation.
+  #
+  def simulation?: () -> bool
+
   def self.template: () -> symHash
 
   def self.batch?: () -> bool
@@ -23,16 +27,28 @@ end
 
 # Response object for a submission request.
 #
+# @see SubmitChannel::SubmitResponse
 # @see file:javascripts/shared/submit-response.js *SubmitResponse*
 #
 class SubmissionService::SubmitResponse < SubmissionService::Response
   TEMPLATE: symHash
 
   def self.template: () -> symHash
+end
 
+# Initial response object for a submission request.
+#
+# @see SubmitChannel::InitialResponse
+#
+class SubmissionService::InitialResponse < SubmissionService::SubmitResponse
   def self.default_status: () -> String
 end
 
+# Response object for a submission request.
+#
+# @see SubmitChannel::StepResponse
+# @see file:javascripts/shared/submit-response.js *SubmitStepResponse*
+#
 class SubmissionService::StepResponse < SubmissionService::SubmitResponse
   TEMPLATE: symHash
 
@@ -43,33 +59,32 @@ end
 
 # Response object for a submission request.
 #
+# @see SubmitChannel::StepResponse
+# @see file:javascripts/shared/submit-response.js *SubmitStepResponse*
+#
 class SubmissionService::BatchSubmitResponse < SubmissionService::SubmitResponse
   def self.default_status: () -> String
 
   def self.batch?: () -> bool
 end
 
+# Final response object for a submission request.
+#
+# @see SubmitChannel::FinalResponse
+#
+class SubmissionService::FinalResponse < SubmissionService::StepResponse
+  def self.default_status: () -> String
+end
+
 # Response object for a control request.
 #
+# @see SubmitChannel::ControlResponse
 # @see file:javascripts/shared/submit-response.js *SubmitControlResponse*
 #
 class SubmissionService::ControlResponse < SubmissionService::Response
   TEMPLATE: symHash
 
   def self.template: () -> symHash
-end
 
-# Response object for a list request.
-#
-class SubmissionService::StatusResponse < SubmissionService::Response
-  TEMPLATE: symHash
-
-  # Create a new instance.
-  #
-  # @param [SubmissionService::StatusResponse, Hash, Array, *] values
-  # @param [Hash]                                              opt
-  #
-  def initialize: (?untyped? values, **untyped opt) -> void
-
-  def self.template: () -> symHash
+  def self.default_status: () -> String
 end

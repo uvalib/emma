@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 # Common base for Active Job classes.
 #
-# @!method job_name
-#
 class ApplicationJob < ActiveJob::Base
 
   include ApplicationJob::Logging
@@ -28,6 +26,30 @@ class ApplicationJob < ActiveJob::Base
   end
 
   # ===========================================================================
+  # :section: ActiveJob callbacks
+  # ===========================================================================
+
+  if DEBUG_JOB
+
+    before_enqueue do
+      __debug_job('--->>> ENQUEUE START', arguments_inspect)
+    end
+
+    after_enqueue do
+      __debug_job('<<<--- ENQUEUE END  ', arguments_inspect)
+    end
+
+    before_perform do
+      __debug_job('--->>> PERFORM START', arguments_inspect)
+    end
+
+    after_perform do
+      __debug_job('<<<--- PERFORM END  ', arguments_inspect)
+    end
+
+  end
+
+  # ===========================================================================
   # :section: ActiveJob::Core overrides
   # ===========================================================================
 
@@ -39,22 +61,9 @@ class ApplicationJob < ActiveJob::Base
   # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
   #
   def initialize(*args, **opt)
-    cb     = opt.delete(:callback)
-    cb_opt = opt.slice(:cb_receiver, :cb_method).presence
-    job_warn { "ignoring #{cb_opt.inspect}" } if cb && cb_opt
-    opt[:callback] = AsyncCallback.new(cb)    if (cb ||= cb_opt)
-    opt.except!(*cb_opt.keys)                 if cb_opt
-    super(*args, **opt)
-  end
-
-  # ===========================================================================
-  # :section: ActiveJob::Execution overrides
-  # ===========================================================================
-
-  public
-
-  def perform(...)
-    not_implemented 'to be overridden by the subclass'
+    __debug_job(__method__) { { args: args, opt: opt } }
+    super()
+    set_arguments(*args, **opt)
   end
 
   # ===========================================================================
@@ -75,22 +84,6 @@ class ApplicationJob < ActiveJob::Base
     __debug_job(__method__) { "`options` = #{item_inspect(options)}" } # TODO: remove
     job_warn { "ignoring method args #{args.inspect}" } if args.present?
     enqueue(options)
-  end
-
-  # Called from #perform to initiate a callback if one was supplied via the job
-  # arguments.
-  #
-  # @param [AsyncCallback, nil] callback
-  # @param [Hash]               opt       Passed to #cb_schedule.
-  #
-  # @option opt [AsyncCallback] :callback
-  #
-  # @return [void]
-  #
-  def perform_callback(callback, **opt)
-    __output "..................... #{self.class}.perform_callback | callback = #{callback.inspect}"
-    job_warn { 'ignoring blank callback' } unless callback
-    callback&.cb_schedule(**opt)
   end
 
 end

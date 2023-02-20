@@ -8,7 +8,7 @@ import { pageAction, pageController } from './controller';
 import { isDefined, isMissing }       from './definitions';
 import { flashError, flashMessage }   from './flash';
 import { selfOrParent }               from './html';
-import { compact }                    from './objects';
+import { compact, hasKey }            from './objects';
 import { camelCase, singularize }     from './strings';
 
 
@@ -16,6 +16,16 @@ const MODULE = 'Manifest';
 const DEBUG  = true;
 
 AppDebug.file('shared/manifests', MODULE, DEBUG);
+
+// ============================================================================
+// Type definitions
+// ============================================================================
+
+/**
+ * @typedef {ActionProperties} ActionPropertiesExt
+ *
+ * @property {boolean} [highlight]  If true add BEST_CHOICE_MARKER.
+ */
 
 // ============================================================================
 // Constants
@@ -90,6 +100,8 @@ export const ITEM_ATTR = 'data-item-id';
 
 export const DISABLED_MARKER = 'disabled';
 
+export const BEST_CHOICE_MARKER = 'best-choice';
+
 // ============================================================================
 // Functions
 // ============================================================================
@@ -161,7 +173,7 @@ export function buttonFor(type, buttons, caller) {
  * @param {Selector}                button
  * @param {boolean}                 [enable]
  * @param {string|ActionProperties} [config]
- * @param {ActionProperties}        [override]  Overrides to *config*.
+ * @param {ActionPropertiesExt}     [override]  Overrides to *config*.
  *
  * @returns {jQuery|undefined}
  */
@@ -175,6 +187,9 @@ export function enableButton(button, enable, config, override) {
     if (override)     { prop = { ...prop, ...properties(override, enabling) } }
     if (prop.label)   { $button.text(prop.label) }
     if (prop.tooltip) { $button.attr('title', prop.tooltip) }
+    if (hasKey(prop, 'highlight')) {
+        $button.toggleClass(BEST_CHOICE_MARKER, prop.highlight);
+    }
     $button.attr('aria-disabled', !enabling);
     $button.toggleClass(DISABLED_MARKER, !enabling);
     return $button;
@@ -191,7 +206,7 @@ export function enableButton(button, enable, config, override) {
  * @param {boolean} [enabled]
  * @param {string}  [action]          Default: {@link PAGE_ACTION}
  *
- * @returns {ActionProperties}
+ * @returns {ActionPropertiesExt}
  */
 export function configFor(type, enabled, action = PAGE_ACTION) {
     //_debug(`configFor: type = "${type}"; action = "${action}"`);
@@ -206,7 +221,7 @@ export function configFor(type, enabled, action = PAGE_ACTION) {
  * @param {ActionProperties} [config]
  * @param {boolean}          [enabled]
  *
- * @returns {ActionProperties}
+ * @returns {ActionPropertiesExt}
  */
 export function properties(config, enabled = undefined) {
     switch (enabled) {

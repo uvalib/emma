@@ -1,10 +1,9 @@
 # Common logic for all channels.
 #
 module ApplicationCable::Payload
-  include Emma::Common
+  include ApplicationCable::Common
 
-  # @type [Array<Symbol>]
-  CHANNEL_PARAMS: symArray
+  include Emma::ThreadMethods
 
   # @see https://www.postgresql.org/docs/11/sql-notify.html
   MAX_PAYLOAD_SIZE: Integer
@@ -38,13 +37,6 @@ module ApplicationCable::Payload
   #
   def default_status: () -> (String | nil)
 
-  # Hash keys which should not be included with the data stored in the class
-  # instance.
-  #
-  # @type [Array<Symbol>]
-  #
-  def ignored_keys: () -> symArray
-
   # Setup stored request values.
   #
   # @param [Hash, nil] store
@@ -55,7 +47,8 @@ module ApplicationCable::Payload
 
   # normalize
   #
-  # @param [*] value
+  # @param [*]                  value
+  # @param [Array, Symbol, nil] except    Default: `#ignored_keys`.
   #
   # @return [Hash{Symbol=>*}]
   #

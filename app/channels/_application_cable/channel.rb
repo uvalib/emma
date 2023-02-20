@@ -24,20 +24,20 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
 
   if DEBUG_CABLE
 
-    before_subscribe do |*args|
-      __debug_cable(*args) { "--->>> CABLE SUB #{params.inspect}" }
+    before_subscribe do
+      __debug_cable('--->>> CABLE SUB', params.inspect)
     end
 
-    after_subscribe do |*args|
-      __debug_cable(*args) { "<<<--- CABLE SUB #{params.inspect}" }
+    after_subscribe do
+      __debug_cable('<<<--- CABLE SUB', params.inspect)
     end
 
-    before_unsubscribe do |*args|
-      __debug_cable(*args) { "--->>> CABLE UNSUB #{params.inspect}" }
+    before_unsubscribe do
+      __debug_cable('--->>> CABLE UNSUB', params.inspect)
     end
 
-    after_unsubscribe do |*args|
-      __debug_cable(*args) { "<<<--- CABLE UNSUB #{params.inspect}" }
+    after_unsubscribe do
+      __debug_cable('<<<--- CABLE UNSUB', params.inspect)
     end
 
   end

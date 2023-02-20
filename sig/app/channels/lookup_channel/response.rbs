@@ -18,7 +18,7 @@ class LookupChannel::StatusResponse < LookupChannel::Response
   #
   def initialize: (?untyped values, **untyped opt) -> void
 
-  def payload_normalize: (untyped value) -> symHash
+  def payload_normalize: (untyped value, ?except: symArray|Symbol|nil) -> symHash
 end
 
 class LookupChannel::InitialResponse < LookupChannel::StatusResponse

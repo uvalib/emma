@@ -73,17 +73,22 @@ class SubmissionService < ApiService
     | ( Symbol                     request, ?meth: nil,    manifest: Manifest|String, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil] | SubmissionService::Response | symHash | SubmitJob | nil)
     | (?nil                        request,  meth: Symbol, manifest: Manifest|String, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil] | SubmissionService::Response | symHash | SubmitJob | nil)
 
+  REQUEST_OPTIONS: symArray
+
   # Process submitted items.
   #
   # @param [SubmissionService::Request] request
   # @param [SubmitChannel, nil]         channel
   # @param [SubmissionService, nil]     service     Service instance
   # @param [User, String, nil]          user        Def.: service.user
-  # @param [Integer, Boolean, nil]      batch       Def.: #DEF_BATCH_SIZE
-  # @param [Numeric, Boolean, nil]      timeout     Def.: #DEFAULT_TIMEOUT
   # @param [Boolean]                    no_job
   # @param [Boolean]                    no_async
   # @param [Hash]                       opt
+  #
+  # @option opt [Integer, Boolean, nil] :batch        Def.: #DEF_BATCH
+  # @option opt [Integer, Boolean, nil] :slice        Def.: #DEF_SLICE
+  # @option opt [Numeric, Boolean, nil] :timeout      Def.: #DEFAULT_TIMEOUT
+  # @option opt [Boolean]               :simulation   Def.: #SIMULATION_ONLY
   #
   # @return [Array<SubmissionService::Response>]
   # @return [Array<Hash>]
@@ -93,9 +98,9 @@ class SubmissionService < ApiService
   # @return [SubmitJob, nil]
   #
   def self.make_request
-    : (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?batch: Integer|bool|nil, ?timeout: Numeric|bool|nil,  no_job: true,  ?no_async: bool,  **untyped opt) -> (SubmissionService::Response | Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil])
-    | (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?batch: Integer|bool|nil, ?timeout: Numeric|bool|nil, ?no_job: false,  no_async: true,  **untyped opt) -> symHash
-    | (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?batch: Integer|bool|nil, ?timeout: Numeric|bool|nil, ?no_job: false, ?no_async: false, **untyped opt) -> (SubmitJob | nil)
+    : (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil,  no_job: true,  ?no_async: bool,  **untyped opt) -> (SubmissionService::Response | Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil])
+    | (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?no_job: false,  no_async: true,  **untyped opt) -> symHash
+    | (SubmissionService::Request request, ?channel: SubmitChannel|nil, ?service: SubmissionService|nil, ?user: User|String|nil, ?no_job: false, ?no_async: false, **untyped opt) -> (SubmitJob | nil)
 
   # Perform operation asynchronously.
   #

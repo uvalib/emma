@@ -100,24 +100,6 @@ module LookupService::Common
   # :section:
   # ===========================================================================
 
-  protected
-
-  def __debug_job(*args, **opt)
-    opt[:separator] ||= "\n\t"
-    tid   = Thread.current.name
-    name  = self_class
-    args  = args.join(Emma::Debug::DEBUG_SEPARATOR)
-    added = block_given? && yield || {}
-    __debug_items("#{name} #{args}", **opt) do
-      added.is_a?(Hash) ? added.merge(thread: tid) : [*added, "thread #{tid}"]
-    end
-  end
-    .tap { |meth| neutralize(meth) unless DEBUG_JOB }
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
   private
 
   def self.included(base)

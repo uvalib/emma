@@ -9,16 +9,15 @@ __loading_begin(__FILE__)
 #
 module ApplicationCable::Payload
 
-  include Emma::Common
+  include ApplicationCable::Common
+
+  include Emma::ThreadMethods
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
-
-  # @type [Array<Symbol>]
-  CHANNEL_PARAMS = %i[stream_id stream_name meth].freeze
 
   # @see https://www.postgresql.org/docs/11/sql-notify.html
   MAX_PAYLOAD_SIZE = 8000
@@ -72,15 +71,6 @@ module ApplicationCable::Payload
   def default_status
   end
 
-  # Hash keys which should not be included with the data stored in the class
-  # instance.
-  #
-  # @type [Array<Symbol>]
-  #
-  def ignored_keys
-    CHANNEL_PARAMS
-  end
-
   # Setup stored request values.
   #
   # @param [Hash, nil] store
@@ -89,8 +79,8 @@ module ApplicationCable::Payload
   #
   def set_payload(store = nil, values = nil, **opt)
     store, values = [nil, store] if values.nil?
-    store   ||= {}
-    opt     = payload_normalize(opt, except: nil)
+    store ||= {}
+    opt     = payload_normalize(opt, except: [])
     payload = extract_hash!(opt, *template.keys)
     if values.is_a?(store.class)
       store.update(values)
@@ -99,19 +89,17 @@ module ApplicationCable::Payload
       payload = payload_normalize(values).merge!(payload) if values.present?
     end
     store.update(payload) if payload.present?
-    store[:time]    ||= Time.now
-    store[:class]   ||= store.class.name
-    store[:status]  ||= default_status if default_status
-    store[:options] ||= {}
-    store[:options].merge!(opt)
-    store[:options][:thread_id] ||= Thread.current.name
-    # noinspection RubyMismatchedReturnType
-    store
+    store[:time]      ||= Time.now
+    store[:class]     ||= store.class.name
+    store[:status]    ||= default_status if default_status
+    store[:thread_id] ||= thread_name
+    store.except!(SubmissionService::REQUEST_OPTIONS)
   end
 
   # payload_normalize
   #
-  # @param [*] value
+  # @param [*]                  value
+  # @param [Array, Symbol, nil] except    Default: `#ignored_keys`.
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -119,8 +107,9 @@ module ApplicationCable::Payload
   # Message classes based on a Hash data item require #to_h in order to avoid
   # propagating out-of-band data.
   #
-  def payload_normalize(value, except: ignored_keys)
+  def payload_normalize(value, except: nil)
     return {} if value.nil?
+    except ||= ignored_keys
     value =
       case value
         when ApplicationCable::Response, ApplicationJob::Response
@@ -131,15 +120,10 @@ module ApplicationCable::Payload
           { data: value }.deep_symbolize_keys
       end
     value.except!(*except) if except.present?
-    value.deep_transform_values! do |v|
-      case v
-        when Proc, Method then nil
-        when Hash, Array  then v.compact
-        else                   v.respond_to?(:to_h) ? v.to_h.compact : v
-      end
-    end
-    value.compact!
-    value
+    value.deep_transform_values { |v|
+      next if v.is_a?(Proc) || v.is_a?(Method)
+      v.respond_to?(:to_h) ? v.to_h.compact : v
+    }.compact
   end
 
   # ===========================================================================

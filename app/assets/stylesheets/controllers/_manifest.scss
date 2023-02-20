@@ -397,6 +397,11 @@ body.manifest.remit {
     // Elements
     //=========================================================================
 
+    // NOTE: for now not attempting to make use of Uppy feedback.
+    .uppy-Root {
+        display: none;
+    }
+
     // Add to a button to accent it as the next best action to perform.
     .best-choice:not(:hover) {
 
@@ -649,10 +654,11 @@ body.manifest.remit {
             grid-template-columns:
                 [controls]      minmax(auto, 1rem)
                 [item-name]     minmax(auto, 33vw)
-                [db-status]     1fr
+                [data-status]   1fr
                 [file-status]   1fr
                 [upload-status] 1fr
-                [index-status]  1fr;
+                [index-status]  1fr
+                [entry-status]  1fr;
 
             //=================================================================
             // Components
@@ -686,10 +692,11 @@ body.manifest.remit {
                 background:      ghostwhite;
             }
 
-            //.db-status,
+            //.data-status,
             //.file-status,
             //.upload-status,
             //.index-status,
+            //.entry-status,
             .status {
 
                 display:         inline-flex;
@@ -868,10 +875,11 @@ body.manifest.remit {
                 }
             }
 
-            //.db-status,
+            //.data-status,
             //.file-status,
             //.upload-status,
             //.index-status,
+            //.entry-status,
             .status {
 
                 $status-pad-right: 0.375rem;
@@ -1116,6 +1124,10 @@ body.manifest.remit {
                 display:               grid;
                 grid-template-columns: 10% 1fr;
                 flex:                  1 1 auto;
+            }
+
+            .pair.results {
+                flex-basis: 100%;
             }
 
             .label {

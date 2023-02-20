@@ -66,27 +66,29 @@ class ScalarType
 
     # Type-cast an object to an instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v                 Value to use or transform.
+    # @param [Hash] opt               Options passed to #create.
     #
     # @return [superclass, nil]
     #
-    def cast(v)
+    def cast(v, **opt)
       c = self_class
-      v.is_a?(c) ? v : create(v)
+      v.is_a?(c) ? v : create(v, **opt)
     end
 
     # Create a new instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v
+    # @param [Hash] opt               Options passed to #initialize.
     #
     # @return [superclass, nil]
     #
-    def create(v, *)
+    def create(v, **opt)
       c = self_class
       if v.is_a?(c)
         v.dup
       elsif (v = normalize(v)).present?
-        c.new(v)
+        c.new(v, **opt)
       end
     end
 
@@ -126,10 +128,11 @@ class ScalarType
 
   # Initialize a new instance.
   #
-  # @param [Any, nil] v               Optional initial value.
+  # @param [*]    v                   Optional initial value.
+  # @param [Hash] opt                 Options passed to #set.
   #
-  def initialize(v = nil, *)
-    set(v)
+  def initialize(v = nil, **opt)
+    set(v, **opt)
   end
 
   # Assign a new value to the instance.
@@ -144,16 +147,18 @@ class ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [Any, nil] v
+  # @param [*]       v
+  # @param [Boolean] invalid          If *true* allow invalid value.
+  # @param [Boolean] nil_default      If *true* do not use #default.
   #
   # @return [String]
   #
-  def set(v)
+  def set(v, invalid: false, nil_default: false, **)
     unless v.nil?
       @value = normalize(v)
       @value = nil unless valid?(@value)
     end
-    @value ||= default
+    @value ||= (v if invalid) || (default unless nil_default)
   end
 
   # ===========================================================================
@@ -579,27 +584,29 @@ class IsoDate < ScalarType
 
     # Type-cast an object to an instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v                 Value to use or transform.
+    # @param [Hash] opt               Options passed to #create.
     #
     # @return [IsoDate, nil]
     #
-    def cast(v)
+    def cast(v, **opt)
       c = self_class
-      v.is_a?(c) ? v : create(v)
+      v.is_a?(c) ? v : create(v, **opt)
     end
 
     # Create a new instance of this type.
     #
-    # @param [Any, nil] v
+    # @param [*]    v
+    # @param [Hash] opt               Options passed to #initialize.
     #
     # @return [IsoDate, nil]
     #
-    def create(v, *)
+    def create(v, **opt)
       c = self_class
       if v.is_a?(c)
         v.dup
       elsif (v = normalize(v)).present?
-        c.new(v)
+        c.new(v, **opt)
       end
     end
 
@@ -1498,17 +1505,19 @@ class EnumType < ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [Any] v
+  # @param [*]       v
+  # @param [Boolean] invalid          If *true* allow invalid value.
+  # @param [Boolean] nil_default      If *true* do not use #default.
   #
   # @return [String]
   #
-  def set(v)
+  def set(v, invalid: false, nil_default: false, **)
     unless v.nil?
       @value = normalize(v)
       @value = nil unless valid?(@value)
       Log.warn { "#{type}: #{v.inspect}: not in #{values}" } if @value.nil?
     end
-    @value ||= default
+    @value ||= (v if invalid) || (default unless nil_default)
   end
 
   # ===========================================================================

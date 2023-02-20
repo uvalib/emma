@@ -1,27 +1,17 @@
 # SubmissionService::Action::Submit
 #
 module SubmissionService::Action::Submit
+  include IngestConcern
+
+  include ExecReport::Constants
+
+  include FileNaming
+
   include SubmissionService::Common
 
   include SubmissionService::Definition
 
-  SUBMIT_STEPS_TABLE: Hash[Symbol, Hash[Symbol,String]]
-
-  SUBMIT_STEPS: symArray
-
-  # Within a given batch of ManifestItems being submitted, this value specifies
-  # how many will be transmitted together to each subsystem.
-  #
-  # If *true*, all items of a batch will be transmitted together if possible.
-  # If *false* then no slicing will be performed by default.
-  #
-  # @type [Integer, Boolean]
-  #
-  DEF_SLICE: Integer | bool
-
-  MIN_SLICE: Integer
-
-  MAX_SLICE: Integer
+  include SubmissionService::Properties
 
   # Receive a request to start batch creation of EMMA entries.
   #
@@ -45,120 +35,286 @@ module SubmissionService::Action::Submit
   #
   def batch_update: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::SubmitResponse
 
-  # Submit a set of items...
+  # Process a request to submit a set of ManifestItems.
   #
   # @param [SubmissionService::Request] req  Def.: `@request`.
   # @param [Hash]                       opt
   #
-  # @return [*]
+  # @return [StepResult]
   #
-  def submit_batch: (?SubmissionService::Request req, **untyped opt) -> (Array[symHash] | symHash)
+  # == Usage Notes
+  # The validity of :simulation and :sim_opt is determined here only; called
+  # methods assume that `opt[:simulation]` and `opt[:sim_opt]` have been
+  # set/unset appropriately.
+  #
+  def submit_batch: (?SubmissionService::Request req, **untyped opt) -> StepResult
 
-  # Submit a set of items one at a time.
+  # Process a request to submit a set of ManifestItems sequentially.
   #
-  # @param [SubmissionService::Request] req  Def.: `@request`.
-  # @param [Hash]                       opt
+  # Each item submission may succeed or fail independently without impact to
+  # the other items.
   #
-  # @return [Array<Hash>]
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
+  # @param [Hash]                                                opt
   #
-  def submit_by_item: (?SubmissionService::Request req, **untyped of) -> Array[symHash]
+  # @return [StepResult]
+  #
+  def submit_by_item: (String|ManifestItem|Array[String]|Array[ManifestItem]|ActiveRecord::Relation items, **untyped opt) -> StepResult
 
-  # submit_manifest_item
+  # Submit a single ManifestItem by passing it through each of the submission
+  # steps in sequence.
   #
-  # @param [String] item
-  # @param [Hash]   opt
+  # Failure at any step results in the failure of the item to be submitted.
   #
-  # @raise [RuntimeError] If a step failed.
+  # @param [String, ManifestItem] item
+  # @param [Boolean]              no_raise
+  # @param [Hash]                 opt
   #
-  # @return [true]        If all steps succeeded.
+  # @raise [RuntimeError]             If a submission step failed.
   #
-  def submit_manifest_item
-    : (String item,  no_raise: true,  **untyped opt) -> (true | Hash[String,String])
-    | (String item, ?no_raise: false, **untyped opt) ->  true
+  # @return [StepResult]
+  #
+  def submit_manifest_item: (String|ManifestItem item, ?no_raise: bool, **untyped opt) -> StepResult
 
-  #def submit_db_step
-  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
-  #  | (String item, ?no_raise: false, **untyped opt) ->  String
-
-  #def submit_cache_step
-  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
-  #  | (String item, ?no_raise: false, **untyped opt) ->  String
-
-  #def submit_promote_step
-  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
-  #  | (String item, ?no_raise: false, **untyped opt) ->  String
-
-  #def submit_index_step
-  #  : (String item,  no_raise: true,  **untyped opt) -> (String | Hash[String,String])
-  #  | (String item, ?no_raise: false, **untyped opt) ->  String
-
-  # Submit a set of items in slices to each step.
+  # Process a request to submit a set of ManifestItems by aggregating them into
+  # "slices" which pass through submission steps together.
   #
-  # @param [SubmissionService::Request] req  Def.: `@request`.
-  # @param [Integer]                    slice
-  # @param [Hash]                       opt
+  # The up side is that this reduces the number of transmissions to external
+  # services; the down side is that a failure at any step results in the
+  # failure of all items in that "slice".
   #
-  # @return [Hash]
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
+  # @param [Integer]                                             slice
+  # @param [Hash]                                                opt
   #
-  def submit_by_slice: (?SubmissionService::Request req, slice: Integer, **untyped of) -> symHash
+  # @return [StepResult]
+  #
+  def submit_by_slice: (String|ManifestItem|Array[String]|Array[ManifestItem]|ActiveRecord::Relation items, slice: Integer, **untyped opt) -> StepResult
 
   # submit_manifest_items
   #
-  # @param [Array<String>] items
-  # @param [Boolean]       sort
-  # @param [Boolean]       no_raise
-  # @param [Hash]          opt
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
+  # @param [Symbol]                                              step
+  # @param [Boolean]                                             no_raise
+  # @param [Hash]                                                opt
   #
-  # @return [(Array<String>, Array<Array<(String,String)>>)]
+  # @return [StepResult]
   #
-  def submit_manifest_items: (strArray items, ?sort: bool, ?no_raise: bool, **untyped opt) -> [strArray, Array[[String,String]]]
+  def submit_manifest_items: (String|ManifestItem|Array[String]|Array[ManifestItem]|ActiveRecord::Relation items, step: Symbol, ?no_raise: bool, **untyped opt) -> StepResult
 
-  #def submit_db_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
-
-  #def submit_cache_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
-
-  #def submit_promote_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
-
-  #def submit_index_slice: (strArray items, **untyped opt) -> [strArray, Array[[String,String]]]
-
-  # manifest_item_id
+  # Get the array of ManifestItem expressed or implied by *items*.
   #
-  # @param [ManifestItem, Hash, String, Integer, *] item
+  # @param [String|ManifestItem|Array|ActiveRecord::Relation] items
+  #
+  # @return [Array<ManifestItem>]
+  #
+  def manifest_items: (untyped items) -> Array[ManifestItem]
+
+  # Extract the ManifestItem identifier from *item* if possible.
+  #
+  # (For use in contexts where *item* may already be an identifier.)
+  #
+  # @param [ManifestItem, Hash, Integer, String, *] item
   #
   # @return [String]    If valid
   # @return [Hash]      If invalid
   #
   def manifest_item_id: (untyped item) -> (String | symHash)
 
-  # submit_manifest_item_step
+  # Update all entries of a table of failure results with the given error.
   #
-  # @param [String, Array<String>] item
-  # @param [Symbol, nil]           step
-  # @param [String, nil]           msg
-  # @param [String, nil]           err
-  # @param [Float, nil]            start_time
-  # @param [String, nil]           tid
-  # @param [String, nil]           tag
-  # @param [Symbol, nil]           meth
-  # @param [Boolean]               no_raise
-  # @param [Proc, nil]             callback
-  # @param [Numeric, Range]        delay
-  # @param [Numeric, Range]        work
-  # @param [Numeric]               scale
-  # @param [Numeric]               band
-  # @param [Numeric, Range]        range
-  # @param [Numeric, Range]        state
-  # @param [Hash]                  opt
+  # @param [Hash]                     failure
+  # @param [Exception, String]        error
+  # @param [Array<ManifestItem>, nil] recs
   #
-  # @option opt [String] manifest_id
-  # @option opt [String] job_id
+  # @return [void]
   #
-  # @return [String, Array<String>]       Success(es)
-  # @return [Hash,   Array<String,Hash>]  Failure(s)
+  def update_failures!(strHash failure, Exception|String error, ?(Array[ManifestItem]|nil) recs) -> void
+
+  # submission_step
   #
-  def submit_manifest_item_step
-    : (String   item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil,  no_raise: true, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> (String   | Hash[String,String])
-    | (strArray item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil,  no_raise: true, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> (strArray | Hash[String,(Symbol|String)])
-    | (String   item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil, ?no_raise: bool, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> String
-    | (strArray item, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, ?start_time: Float|nil, ?tid: String|nil, ?tag: String|nil, ?meth: Symbol|nil, ?no_raise: bool, ?callback: Proc|nil, ?delay: Numeric|Range[Numeric]|nil, ?work: Numeric|Range[Numeric]|nil, ?scale: Numeric, ?band: Numeric, ?range: Numeric|Range[Numeric]|nil, ?state: Numeric|Range[Numeric]|nil, **untyped opt) -> strArray
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] item
+  # @param [Symbol]                 step
+  # @param [Float, nil]             start_time
+  # @param [Boolean]                no_raise
+  # @param [Proc, nil]              callback
+  # @param [Hash]                   opt
+  #
+  # @option opt [String]            :manifest_id
+  # @option opt [String]            :job_id
+  # @option opt [SimulationOptions] :sim_opt
+  # @option opt [Symbol]            :meth         If opt[:sim_opt]
+  # @option opt [String]            :msg          If opt[:sim_opt]
+  # @option opt [String]            :err          If opt[:sim_opt]
+  #
+  # @return [StepResult]
+  #
+  def submission_step: (String|strArray|Array[ManifestItem]|ActiveRecord::Relation item, step: Symbol, ?start_time: Float|nil, ?no_raise: bool, ?callback: Proc|nil, **untyped opt) -> StepResult
+
+  # Return when the records contain Shrine metadata indicating their associated
+  # files have been uploaded to cache.
+  #
+  # Conceptually the item is (or will enter) the :upload step on the client
+  # side, which represents the actual upload to AWS cache.  The :cache step
+  # obtains on the server side once the upload has caused the :file_data column
+  # of the ManifestItem record to be updated.
+  #
+  # @param [Array<ManifestItem>] records
+  # @param [Integer, Float]      wait
+  #
+  # @return [Array<ManifestItem>]
+  #
+  def await_upload: (Array[ManifestItem] records, ?wait: Integer|Float, **untyped _ignored) -> Array[ManifestItem]
+
+  # Move the associated files into permanent storage.
+  #
+  # @param [Array<ManifestItem>] records
+  #
+  # @return [Array<ManifestItem>]
+  #
+  def promote_file: (Array[ManifestItem] records, **untyped _ignored) -> Array[ManifestItem]
+
+  # Add entries to the index.
+  #
+  # @param [Array<ManifestItem>] records
+  #
+  # @return [Array<ManifestItem>]
+  #
+  def add_to_index: (Array[ManifestItem] records, **untyped _ignored) -> Array[ManifestItem]
+
+  # Interpret error message(s) generated by Federated Ingest to determine which
+  # item(s) failed.
+  #
+  # @param [Ingest::Message::Response] result
+  # @param [Array<ManifestItem>]       records
+  # @param [Hash]                      opt
+  #
+  # @return [Array<(Array<ManifestItem>,ExecReport)>]
+  # @return [Array<(Array<ManifestItem>,nil)>]
+  #
+  # @see ExecReport#error_table
+  #
+  # == Implementation Notes
+  # It's not clear whether there would ever be situations where there was a mix
+  # of errors by index, errors by submission ID, and/or general errors, but
+  # this method was written to be able to cope with the possibility.
+  #
+  def process_ingest_errors: (Ingest::Message::Response result, *ManifestItem records, **untyped opt) -> [Array[ManifestItem], (ExecReport | nil)]
+
+  COLUMN_KEY_MAP: Hash[Symbol,Symbol]
+
+  ENTRY_COLUMNS: symArray
+
+  RESULT_KEYS: symArray
+
+  # Create an Upload record for the entries that have made it through all of
+  # the steps through index ingest.
+  #
+  # @param [Array<ManifestItem>] records
+  #
+  # @return [Hash{String=>Hash}]
+  #
+  def create_entry: (Array[ManifestItem] records, **untyped _ignored) -> Hash[String,symHash]
+
+  # Required if the target records are in the 'uploads' table because that
+  # schema does not use 'json' fields.
+  #
+  # @type [Boolean]
+  #
+  JSON_SERIALIZE: bool
+
+  # Generate a row of fields for #insert_all.
+  #
+  # @param [ManifestItem] rec
+  # @param [Boolean]      serialize   If *true*, serialize Hash values.
+  #
+  # @return [Hash]
+  #
+  def entry_fields: (ManifestItem rec, ?serialize: bool) -> symHash
+
+  class StepResult < ::Hash[Symbol,untyped]
+    include Emma::Common
+
+    TEMPLATE: symHash
+
+    def initialize: (?untyped arg, **untyped opt) -> void
+
+    def count:     () -> Integer
+    def valid:     () -> strArray
+    def invalid:   () -> strArray
+    def submitted: () -> strArray
+    def success:   () -> strHash
+    def failure:   () -> strHash
+
+    def success_failure:  () -> [(strHash|nil), (strHash|nil)]
+
+    def finalize: (**untyped opt) -> self
+
+    def ids: (untyped arg) -> (symArray | strArray)
+
+    def normalize!: (symHash opt) -> symHash
+
+  end
+
+  class SimulationOptions < ::Hash[Symbol,untyped]
+    include SubmissionService::Action::Submit
+
+    include Emma::ThreadMethods
+
+    include Emma::TimeMethods
+
+    STEP_FAILURE_PROBABILITY: Float
+
+    def initialize: (**untyped opt) -> void
+
+    def tid: () -> String
+
+    def value: () -> Float
+
+    def scale: () -> Float
+
+    def percentile: () -> Float
+
+    def index: (?(Integer|nil) i) -> (Integer | nil)
+
+    def min_max: () -> Range[Float]
+
+    def slice_delay: () -> (Range[Float] | Float)
+
+    def item_delay: () -> (Range[Float] | Float)
+
+    def work: () -> (Range[Float] | Float)
+
+    # Called to prepare simulation values for a new set of items.
+    #
+    def new_slice: () -> void
+
+    # Called to prepare simulation values for a new item.
+    #
+    def new_item: () -> void
+
+    # Called prior to performing a new submission step on one or more items.
+    #
+    # @return [Integer]
+    #
+    def new_step: () -> Integer
+
+    # Called to simulate work.
+    #
+    # @param [String, ManifestItem, Array] item
+    # @param [String, Array<String>]       tag
+    # @param [Float, nil]                  time
+    # @param [Symbol, nil]                 step
+    # @param [String, nil]                 msg
+    # @param [String, nil]                 err
+    #
+    def simulate_work: (String|ManifestItem|strArray|Array[ManifestItem] item, String|strArray tag, ?time: Float|nil, ?step: Symbol|nil, ?msg: String|nil, ?err: String|nil, **untyped _ignored) -> void
+
+    # Sleep for a fixed time or randomly within a range of times.
+    #
+    # @param [Float,Range<Float>] time
+    # @param [Numeric, nil]       factor
+    #
+    def pause: (Float|Range[Float] time, ?(Numeric|nil) factor) -> void
+  end
 end

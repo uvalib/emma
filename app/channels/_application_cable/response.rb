@@ -121,7 +121,7 @@ class ApplicationCable::Response < Hash
   # @return [ApplicationCable::Response]
   #
   def self.wrap(payload, **opt)
-    if payload.is_a?(self) && opt.except(*CHANNEL_PARAMS).blank?
+    if payload.is_a?(self) && opt.except(*ignored_keys).blank?
       payload
     else
       new(payload, **opt)

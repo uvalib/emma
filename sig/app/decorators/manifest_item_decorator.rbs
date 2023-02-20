@@ -249,15 +249,17 @@ class ManifestItemDecorator < BaseDecorator
 
     # Submission status type keys and column labels.
     #
-    # @type [Hash{Symbol=>String}]
+    # (The steps associated with the unique labels of #SUBMIT_STEPS_TABLE.)
     #
-    SUBMIT_PHASE: Hash[Symbol,String]
+    # @type [Hash{Symbol=>Hash}]
+    #
+    SUBMIT_STEPS: Hash[Symbol,symHash]
 
     # Submission status grid column names.
     #
     # @type [Array<Symbol>]
     #
-    SUBMIT_STATUS_COLUMNS: symArray
+    SUBMIT_COLUMNS: symArray
 
     # Submission status value CSS classes and labels.
     #
@@ -346,39 +348,38 @@ class ManifestItemDecorator < BaseDecorator
     # submit_status_value
     #
     # @param [Symbol]       type
-    # @param [Symbol]       status
+    # @param [Symbol, nil]  status
     # @param [Integer, nil] col
     # @param [String]       css
     # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_value: (Symbol `type`, Symbol status, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_value: (Symbol `type`, Symbol|nil status, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # The text on the status element.
     #
-    # @param [Symbol] _type
-    # @param [Symbol] status
-    # @param [Hash]   entry
-    # @param [String] css
-    # @param [Hash]   opt
+    # @param [Symbol]      type
+    # @param [Symbol, nil] status
+    # @param [String]      css
+    # @param [Hash]        opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_text: (Symbol _type, Symbol status, ?symHash entry, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_text: (Symbol `type`, Symbol|nil status, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Control for fixing a condition resulting in a given status.
     #
-    # @param [Symbol] _type
-    # @param [Symbol] status
-    # @param [String] css
-    # @param [Hash]   opt
+    # @param [Symbol]     _type
+    # @param [Symbol,nil] status
+    # @param [String]     css
+    # @param [Hash]       opt
     #
     # @return [ActiveSupport::SafeBuffer, nil]
     #
     # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
     #
-    def submit_status_link: (Symbol _type, Symbol status, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+    def submit_status_link: (Symbol _type, Symbol|nil status, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
     # row_indicators
     #

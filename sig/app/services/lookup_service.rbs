@@ -52,20 +52,20 @@ class LookupService
   # == Variations
   # +
   #
-  # @overload request(items, channel:, timeout: nil)
+  # @overload make_request(items, channel:, timeout: nil)
   #   Access remote services asynchronously.
   #   @param [LookupService::Request] request
   #   @param [LookupChannel]          channel
   #   @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
   #   @return [nil]
   #
-  # @overload request(items, timeout: nil)
+  # @overload make_request(items, timeout: nil)
   #   Access remote services one at a time.
   #   @param [LookupService::Request] request
   #   @param [Numeric, Boolean, nil]  timeout   Default: `#DEFAULT_TIMEOUT`.
   #   @return [Hash{String=>LookupService::Response}]
   #
-  def self.request
+  def self.make_request
     : (lookupArg items, ?channel: nil,           ?timeout: Numeric|bool|nil) -> Hash[String,LookupService::Response]
     | (lookupArg items,  channel: LookupChannel, ?timeout: Numeric|bool|nil) -> nil
 

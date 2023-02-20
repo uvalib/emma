@@ -23,20 +23,21 @@ class ManifestItem < ApplicationRecord
   include Record::Testing
   include Record::Debugging
 
-  # Include modules from "app/models/manifest_item/**.rb".
-  include_submodules(self)
+  include ManifestItem::Config
+  include ManifestItem::Assignable
+  include ManifestItem::EmmaData
+  include ManifestItem::EmmaIdentification
+  include ManifestItem::FieldMethods
+  include ManifestItem::FileData
+  include ManifestItem::Identification
+  include ManifestItem::StatusMethods
+  include ManifestItem::Uploadable
+  include ManifestItem::Validatable
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
     extend  Record::Describable::ClassMethods
-    include ManifestItem::Config
-    include ManifestItem::Assignable
-    include ManifestItem::EmmaIdentification
-    include ManifestItem::FieldMethods
-    include ManifestItem::Identification
-    include ManifestItem::StatusMethods
-    include ManifestItem::Validatable
     # :nocov:
   end
 

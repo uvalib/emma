@@ -1,8 +1,4 @@
-class LookupJob < ActiveJob::Base
-  include ApplicationJob::Methods
-
-  include ApplicationJob::Logging
-
+class LookupJob < ApplicationJob
   # Lookup the provided identifier(s) and transmit the result to the client.
   #
   # Expected ActiveJob arguments:

@@ -43,6 +43,18 @@ export function arrayWrap(item) {
 }
 
 /**
+ * Return a copy with no more than one of any element.
+ *
+ * @param {*[]} items
+ *
+ * @returns {*[]}
+ */
+export function uniq(items) {
+    const array = arrayWrap(items);
+    return [...new Set(array)];
+}
+
+/**
  * Flatten one or more nested arrays.
  *
  * @param {...*} args

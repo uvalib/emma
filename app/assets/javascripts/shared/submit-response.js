@@ -20,37 +20,39 @@ AppDebug.file('shared/submit-response', MODULE, DEBUG);
  */
 
 /**
- * @typedef {SubmitResponseItem[]} SubmitResponseItems
+ * @typedef {SubmitResponseItem[]} SubmitResponseData
  */
 
 /**
- * @typedef SubmitStepResponseData
+ * @typedef {object} SubmitStepResponseItem
  *
- * @property {number}                 count
- * @property {string[]}               submitted
- * @property {string[]}               [success]
- * @property {Object.<number,string>} [failure]
- * @property {string[]}               [invalid]
+ * @property {string} [note]
+ * @property {string} [error]
  */
 
 /**
- * @typedef SubmitStatusResponseData
+ * @typedef {Object.<string,SubmitStepResponseItem>} SubmitStepResponseItems
+ */
+
+/**
+ * @typedef {object} SubmitStepResponseData
  *
- * @property {number}                 count
- * @property {string[]}               submitted
- * @property {string[]}               [success]
- * @property {Object.<number,string>} [failure]
- * @property {string[]}               [invalid]
+ * @property {number}                  count
+ * @property {string[]}                submitted
+ * @property {string[]}                [invalid]
+ * @property {SubmitStepResponseItems} [success]
+ * @property {SubmitStepResponseItems} [failure]
  */
 
 /**
  * SubmitResponseSubclass
  *
  * @typedef {
- *      SubmitControlResponse|
- *      SubmitStatusResponse|
+ *      SubmitResponse|
+ *      SubmitInitialResponse|
  *      SubmitStepResponse|
- *      SubmitResponse
+ *      SubmitFinalResponse|
+ *      SubmitControlResponse
  * } SubmitResponseSubclass
  */
 
@@ -59,44 +61,46 @@ AppDebug.file('shared/submit-response', MODULE, DEBUG);
 // ============================================================================
 
 /**
- * @typedef {ChannelResponsePayload} SubmitResponseBasePayload
+ * @typedef {ChannelResponsePayload} BaseSubmitResponsePayload
  *
- * @property {string} manifest_id
+ * @property {boolean} [simulation]
+ * @property {string}  manifest_id
+ *
+ * @see "SubmissionService::Response::TEMPLATE"
  */
 
 /**
- * @typedef {SubmitResponseBasePayload} SubmitResponsePayload
+ * @typedef {BaseSubmitResponsePayload} SubmitResponsePayload
  *
- * @property {SubmitResponseItems} data
+ * @property {SubmitResponseData} data
+ *
+ * @see "SubmissionService::SubmitResponse::TEMPLATE"
  */
 
 /**
- * @typedef {SubmitResponseBasePayload} SubmitStepResponsePayload
+ * @typedef {BaseSubmitResponsePayload} SubmitStepResponsePayload
  *
  * @property {string}                 step
  * @property {SubmitStepResponseData} data
+ *
+ * @see "SubmissionService::StepResponse::TEMPLATE"
  */
 
 /**
- * @typedef {SubmitResponseBasePayload} SubmitControlResponsePayload
+ * @typedef {BaseSubmitResponsePayload} SubmitControlResponsePayload
  *
  * @property {string} command
- */
-
-/**
- * @typedef {SubmitResponseBasePayload} SubmitStatusResponsePayload
  *
- * @property {SubmitStatusResponseData} data
+ * @see "SubmissionService::ControlResponse::TEMPLATE"
  */
 
 /**
  * SubmitResponseSubclassPayload
  *
  * @typedef {
- *      SubmitStatusResponsePayload|
- *      SubmitControlResponsePayload|
+ *      SubmitResponsePayload|
  *      SubmitStepResponsePayload|
- *      SubmitResponsePayload
+ *      SubmitControlResponsePayload
  * } SubmitResponseSubclassPayload
  */
 
@@ -107,7 +111,7 @@ AppDebug.file('shared/submit-response', MODULE, DEBUG);
 /**
  * A SubmitChannel response message.
  *
- * @extends SubmitResponseBasePayload
+ * @extends BaseSubmitResponsePayload
  *
  * @see "SubmitChannel::Response"
  * @see "SubmissionService::Response"
@@ -125,15 +129,36 @@ export class SubmitResponseBase extends ChannelResponse {
      * A blank payload object.
      *
      * @readonly
-     * @type {SubmitResponseBasePayload}
-     *
-     * @see "SubmitChannel::Response::TEMPLATE"
+     * @type {BaseSubmitResponsePayload}
      */
     static TEMPLATE = deepFreeze({
+        simulation:  undefined,
         status:      undefined,
         manifest_id: undefined,
         ...super.TEMPLATE,
     });
+
+    /**
+     * Allowed status values.
+     *
+     * @readonly
+     * @type {Object.<string,string>}
+     *
+     * @see "SubmitChannel::Response#STATUS"
+     */
+    static STATUS = deepFreeze({
+        INITIAL:      'STARTING',
+        STEP:         'STEP',
+        INTERMEDIATE: 'DONE',
+        FINAL:        'COMPLETE',
+        ACK:          'ACK',
+    });
+
+    /**
+     * @readonly
+     * @type {Object.<string,string>}
+     */
+    STATUS = this.constructor.STATUS;
 
     // ========================================================================
     // Constructor
@@ -152,17 +177,23 @@ export class SubmitResponseBase extends ChannelResponse {
     // Properties
     // ========================================================================
 
+    /** @returns {BaseSubmitResponsePayload} */
+    get payload()        { return super.payload }
+
+    get simulation()     { return !!this.payload.simulation }
     get manifest_id()    { return this.payload.manifest_id }
 
-    get isInitial()      { return this.status === 'STARTING' }
-    get isFinal()        { return this.status === 'COMPLETE' }
-    get isIntermediate() { return this.status === 'DONE' }
+    get isAck()          { return this.status === this.STATUS.ACK }
+    get isInitial()      { return this.status === this.STATUS.INITIAL }
+    get isIntermediate() { return this.status === this.STATUS.INTERMEDIATE }
+    get isFinal()        { return this.status === this.STATUS.FINAL }
 
-    /** @returns {SubmitResponseBasePayload} */
-    get payload() { return this._payload }
+    // ========================================================================
+    // Methods
+    // ========================================================================
 
-    /** @returns {SubmitResponseBasePayload} */
-    get payloadCopy() { return super.payloadCopy }
+    /** @returns {BaseSubmitResponsePayload} */
+    toObject() { return super.toObject() }
 
     // ========================================================================
     // Class methods
@@ -171,21 +202,24 @@ export class SubmitResponseBase extends ChannelResponse {
     /**
      * Return the item if it is an instance or create one if not.
      *
-     * @param {SubmitResponseBase|SubmitResponseBasePayload|object} item
+     * @param {SubmitResponseBase|BaseSubmitResponsePayload|object} item
      *
      * @returns {SubmitResponseSubclass}
      */
     static wrap(item) {
-        return (item instanceof this) && item ||
+        // noinspection OverlyComplexBooleanExpressionJS
+        return ((item instanceof this) && item)   ||
             SubmitControlResponse.candidate(item) ||
-            SubmitStepResponse.candidate(item) ||
-            SubmitResponse.candidate(item);
+            SubmitFinalResponse.candidate(item)   ||
+            SubmitStepResponse.candidate(item)    ||
+            SubmitResponse.candidate(item)        ||
+            super.wrap(item);
     }
 
     /**
      * Indicate whether the item is a candidate payload for the current class.
      *
-     * @param {SubmitResponseBase|SubmitResponseBasePayload|object} item
+     * @param {SubmitResponseBase|BaseSubmitResponsePayload|object} item
      *
      * @returns {SubmitResponseSubclass|SubmitResponseBase|undefined}
      */
@@ -236,22 +270,56 @@ export class SubmitResponse extends SubmitResponseBase {
      */
     static TEMPLATE = deepFreeze({
         ...super.TEMPLATE,
-        data: {},
+        data: [],
     });
 
     // ========================================================================
     // Properties
     // ========================================================================
 
-    get items() { return this.data?.items || [] }
-
-    // noinspection JSCheckFunctionSignatures
     /** @returns {SubmitResponsePayload} */
-    get payload() { return this._payload }
+    get payload() { return super.payload }
 
-    // noinspection JSCheckFunctionSignatures
+    /** @returns {SubmitResponseData} */
+    get data()    { return this.payload.data || [] }
+
+    /** @returns {SubmitResponseItem[]} */
+    get items()   { return this.data }
+
+    // ========================================================================
+    // Methods
+    // ========================================================================
+
     /** @returns {SubmitResponsePayload} */
-    get payloadCopy() { return super.payloadCopy }
+    toObject() { return super.toObject() }
+
+}
+
+/**
+ * The initial bulk submission response message.
+ *
+ * @see "SubmitChannel::InitialResponse"
+ * @see "SubmissionService::InitialResponse"
+ */
+export class SubmitInitialResponse extends SubmitResponse {
+
+    static CLASS_NAME = 'SubmitInitialResponse';
+    static DEBUGGING  = DEBUG;
+
+    // ========================================================================
+    // Class methods
+    // ========================================================================
+
+    /**
+     * Indicate whether the item is a candidate payload for the current class.
+     *
+     * @param {*} item
+     *
+     * @returns {boolean}
+     */
+    static isCandidate(item) {
+        return isObject(item) && (item.status === this.STATUS.INITIAL);
+    }
 
 }
 
@@ -260,6 +328,7 @@ export class SubmitResponse extends SubmitResponseBase {
  * A response message with results from a bulk submission step.
  *
  * @extends SubmitStepResponsePayload
+ * @extends SubmitStepResponseData
  *
  * @see "SubmitChannel::StepResponse"
  * @see "SubmissionService::StepResponse"
@@ -281,15 +350,16 @@ export class SubmitStepResponse extends SubmitResponseBase {
      * @type {SubmitStepResponsePayload}
      */
     static TEMPLATE = deepFreeze({
-        status: undefined,
-        step:   undefined,
+        simulation: undefined,
+        status:     undefined,
+        step:       undefined,
         ...super.TEMPLATE,
         data: {
             count:     0,
-            submitted: [],
-            success:   [],
-            failure:   {},
             invalid:   [],
+            submitted: [],
+            success:   {},
+            failure:   {},
         },
     });
 
@@ -297,19 +367,25 @@ export class SubmitStepResponse extends SubmitResponseBase {
     // Properties
     // ========================================================================
 
+    /** @returns {SubmitStepResponsePayload} */
+    get payload()   { return super.payload }
+
+    /** @returns {SubmitStepResponseData} */
+    get data()      { return this._payload.data  || {} }
+    get count()     { return this.payload.count  || 0 }
     get step()      { return this.payload.step }
-    get submitted() { return this.payload.data?.submitted || [] }
-    get success()   { return this.payload.data?.success   || [] }
-    get failure()   { return this.payload.data?.failure   || {} }
-    get invalid()   { return this.payload.data?.invalid   || [] }
 
-    // noinspection JSCheckFunctionSignatures
-    /** @returns {SubmitStepResponsePayload} */
-    get payload() { return this._payload }
+    get invalid()   { return this.data.invalid   || [] }
+    get submitted() { return this.data.submitted || [] }
+    get success()   { return this.data.success   || {} }
+    get failure()   { return this.data.failure   || {} }
 
-    // noinspection JSCheckFunctionSignatures
+    // ========================================================================
+    // Methods
+    // ========================================================================
+
     /** @returns {SubmitStepResponsePayload} */
-    get payloadCopy() { return super.payloadCopy }
+    toObject() { return super.toObject() }
 
     // ========================================================================
     // Class methods
@@ -328,8 +404,39 @@ export class SubmitStepResponse extends SubmitResponseBase {
      * @returns {boolean}
      */
     static isCandidate(item) {
-        if (!isObject(item)) { return false }
-        return item.hasOwnProperty('step') || (item.status === 'DONE');
+        return isObject(item) && (
+            !!item.step ||
+            (item.status === this.STATUS.STEP) ||
+            (item.status === this.STATUS.INTERMEDIATE)
+        );
+    }
+
+}
+
+/**
+ * The last bulk submission response message.
+ *
+ * @see "SubmitChannel::FinalResponse"
+ * @see "SubmissionService::FinalResponse"
+ */
+export class SubmitFinalResponse extends SubmitStepResponse {
+
+    static CLASS_NAME = 'SubmitFinalResponse';
+    static DEBUGGING  = DEBUG;
+
+    // ========================================================================
+    // Class methods
+    // ========================================================================
+
+    /**
+     * Indicate whether the item is a candidate payload for the current class.
+     *
+     * @param {*} item
+     *
+     * @returns {boolean}
+     */
+    static isCandidate(item) {
+        return isObject(item) && (item.status === this.STATUS.FINAL);
     }
 
 }
@@ -365,7 +472,8 @@ export class SubmitControlResponse extends SubmitResponseBase {
      * @type {SubmitControlResponsePayload}
      */
     static TEMPLATE = deepFreeze({
-        command: undefined,
+        simulation: undefined,
+        command:    undefined,
         ...super.TEMPLATE
     });
 
@@ -391,15 +499,17 @@ export class SubmitControlResponse extends SubmitResponseBase {
     // Properties
     // ========================================================================
 
+    /** @returns {SubmitControlResponsePayload} */
+    get payload() { return super.payload }
+
     get command() { return this.payload.command }
 
-    // noinspection JSCheckFunctionSignatures
-    /** @returns {SubmitControlResponsePayload} */
-    get payload() { return this._payload }
+    // ========================================================================
+    // Methods
+    // ========================================================================
 
-    // noinspection JSCheckFunctionSignatures
     /** @returns {SubmitControlResponsePayload} */
-    get payloadCopy() { return super.payloadCopy }
+    toObject() { return super.toObject() }
 
     // ========================================================================
     // Class methods
@@ -413,70 +523,7 @@ export class SubmitControlResponse extends SubmitResponseBase {
      * @returns {boolean}
      */
     static isCandidate(item) {
-        return isObject(item) && item.hasOwnProperty('command');
+        return isObject(item) && !!item.command;
     }
-
-}
-
-/**
- * A bulk submission status response.
- *
- * @extends SubmitStatusResponsePayload
- *
- * @see "SubmitChannel::StatusResponse"
- * @see "SubmissionService::StatusResponse"
- */
-export class SubmitStatusResponse extends SubmitResponseBase {
-
-    static CLASS_NAME = 'SubmitStatusResponse';
-    static DEBUGGING  = DEBUG;
-
-    // ========================================================================
-    // Constants
-    // ========================================================================
-
-    /**
-     * A blank payload object.
-     *
-     * @readonly
-     * @type {SubmitStatusResponsePayload}
-     *
-     * @see "SubmitChannel::StatusResponse::TEMPLATE"
-     */
-    static TEMPLATE = deepFreeze({
-        ...super.TEMPLATE,
-        data: {
-            count:     undefined,
-            submitted: undefined,
-            success:   undefined,
-            failure:   undefined,
-            invalid:   undefined,
-        },
-    });
-
-    // ========================================================================
-    // Constructor
-    // ========================================================================
-
-    /**
-     * Create a new instance.
-     *
-     * @param {SubmitStatusResponse|SubmitStatusResponsePayload} item
-     */
-    constructor(item) {
-        super(item);
-    }
-
-    // ========================================================================
-    // Properties
-    // ========================================================================
-
-    // noinspection JSCheckFunctionSignatures
-    /** @returns {SubmitStatusResponsePayload} */
-    get payload() { return this._payload }
-
-    // noinspection JSCheckFunctionSignatures
-    /** @returns {SubmitStatusResponsePayload} */
-    get payloadCopy() { return super.payloadCopy }
 
 }

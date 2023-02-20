@@ -5,10 +5,7 @@
 
 __loading_begin(__FILE__)
 
-class LookupJob < ActiveJob::Base
-
-  include ApplicationJob::Methods
-  include ApplicationJob::Logging
+class LookupJob < ApplicationJob
 
   # ===========================================================================
   # :section: ActiveJob::Execution overrides
@@ -140,21 +137,21 @@ class LookupJob < ActiveJob::Base
     response =
       LookupService.get_from(service, request).tap do |rsp|
         # noinspection RubyMismatchedArgumentType
-        late     = deadline && past_due(deadline)
-        status   = :late if late
+        overtime = deadline && past_due(deadline)
+        status   = :late if overtime
         status ||= :done
         rsp[:class]    = rsp.class.name
         rsp[:job_id]   = job_id
         rsp[:job_type] = job_type
-        rsp[:late]     = late if late
-        rsp[:status]   = JOB_STATUS[job_type][status]
+        rsp[:late]     = overtime if overtime
+        rsp[:status]   = JOB_STATUS.dig(job_type, status) || '???'
       end
     result = response.to_h
     error  = response.error
     diag   = response.diagnostic
 
     # Report results.
-    __debug_job("#{meth} OUTPUT") { result }
+    __debug_job(meth, 'OUTPUT') { result }
     record.update(output: result, error: error, diagnostic: diag)
     LookupChannel.lookup_response(result, **opt) if WORKER_RESPONSE
 
@@ -218,7 +215,9 @@ class LookupJob < ActiveJob::Base
       if job_table.include?(job_id)
 
         # Update the table with information about the completed job.
-        overtime      = deadline && positive_float(timestamp - deadline)
+        finish = timestamp
+        # noinspection RubyMismatchedArgumentType
+        overtime = deadline && past_due(deadline, finish)
         job_table[job_id] = data.except(:active_job_id)
         job_table[job_id][:late] ||= overtime if overtime
 
@@ -232,13 +231,16 @@ class LookupJob < ActiveJob::Base
           status = overtime ? :timeout : :complete
           result =
             LookupChannel::LookupResponse.new(**opt).tap { |rsp|
-              rsp[:count]    = total
-              rsp[:data]     = LookupService.merge_data(job_table, request)
-              rsp[:discard]  = error if error
-              rsp[:job_id]   = waiter_id
-              rsp[:job_type] = job_type
-              rsp[:service]  = from
-              rsp[:status]   = JOB_STATUS[job_type][status]
+              rsp[:count]      = total
+              rsp[:data]       = LookupService.merge_data(job_table, request)
+              rsp[:discard]    = error if error
+              rsp[:job_id]     = waiter_id
+              rsp[:job_type]   = job_type
+              rsp[:service]    = from
+              rsp[:status]     = JOB_STATUS.dig(job_type, status) || '???'
+              rsp[:start_time] = start
+              rsp[:end_time]   = finish
+              rsp[:duration]   = finish - start
             }.compact_blank!
           record.update(output: result)
           LookupChannel.lookup_response(result, **opt)

@@ -1,5 +1,5 @@
 # @note This class may go away...
-class ApplicationJob::AsyncCallback
+class Model::AsyncCallback
   include Emma::Debug
 
   extend Emma::Debug
@@ -13,8 +13,8 @@ class ApplicationJob::AsyncCallback
   # @return [Symbol]
   attr_reader meth: Symbol
 
-  # @return [ApplicationJob::AsyncCallback, nil]
-  attr_reader callback: ApplicationJob::AsyncCallback | nil
+  # @return [Model::AsyncCallback, nil]
+  attr_reader callback: Model::AsyncCallback | nil
 
   # initialize
   #
@@ -53,7 +53,7 @@ class ApplicationJob::AsyncCallback
   #   @option opt [ApplicationRecord]  :cb_receiver   Required.
   #   @option opt [Symbol]             :cb_method     Required.
   #
-  def initialize: (?(symHash|ApplicationRecord|ApplicationJob::AsyncCallback|nil) src, ?(Symbol|nil) meth, ?(ApplicationJob::AsyncCallback|nil) callback, **untyped opt) -> void
+  def initialize: (?(symHash|ApplicationRecord|Model::AsyncCallback|nil) src, ?(Symbol|nil) meth, ?(Model::AsyncCallback|nil) callback, **untyped opt) -> void
 
   # Enqueue or run the callback as a job.
   #
@@ -80,16 +80,16 @@ class ApplicationJob::AsyncCallback
   #
   def cb_perform_later: (**untyped opt) -> bool
 
-  def to_h: () -> { cb_receiver: ApplicationRecord, cb_method: Symbol, callback: ApplicationJob::AsyncCallback? }
+  def to_h: () -> { cb_receiver: ApplicationRecord, cb_method: Symbol, callback: Model::AsyncCallback? }
 
   alias to_hash to_h
 
-  def self.cb_values: (untyped source, *untyped ingored) -> ([ApplicationRecord, Symbol, ApplicationJob::AsyncCallback?] | nil)
+  def self.cb_values: (untyped source, *untyped ingored) -> ([ApplicationRecord, Symbol, Model::AsyncCallback?] | nil)
 
   class Serializer < ActiveJob::Serializers::ObjectSerializer
     def serialize: (untyped item) -> anyHash
 
-    def deserialize: (anyHash hash) -> ApplicationJob::AsyncCallback
+    def deserialize: (anyHash hash) -> Model::AsyncCallback
 
     private
 

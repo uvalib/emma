@@ -59,14 +59,16 @@ module BaseDecorator::Menu
     user   ||= (current_user&.administrator? ? :all : current_user)
     prompt ||= items_menu_prompt(user: user)
 
-    items =
-      if user == :all
-        model.all
-      elsif (user_id = user&.id)
-        column = (model <= User) ? :id : :user_id
-        model.where(column => user_id).reverse_order!
-      end
-    menu = items&.map { |it| [items_menu_label(it), it.id] } || []
+    items = sort = nil
+    u_col = (model <= User) ? :id : :user_id
+    if user == :all
+      items = model.all
+      sort  = { u_col => :asc, created_at: :desc }
+    elsif (user_id = user&.id)
+      items = model.where(u_col => user_id)
+      sort  = { updated_at: :desc, created_at: :desc }
+    end
+    menu = items&.order(sort)&.map { |it| [items_menu_label(it), it.id] } || []
 
     ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }
     select_opt = ujs.merge!(prompt: prompt)

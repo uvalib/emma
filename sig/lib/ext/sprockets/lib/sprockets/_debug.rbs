@@ -10,6 +10,8 @@ end
 
 # TODO: Work into Emma::Extension::Debugging
 class DebugTiming
+  extend Emma::ThreadMethods
+
   extend Emma::TimeMethods
 
   def self.start: () -> Float
@@ -29,8 +31,6 @@ class DebugTiming
   def self.push_level: () -> Integer
 
   def self.pop_level: () -> Integer
-
-  def self.thread_name: () -> String
 
   def self.indent: (?Integer depth) -> String
 

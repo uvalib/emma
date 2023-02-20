@@ -1,6 +1,4 @@
 class Model::WorkflowJob < ApplicationJob
-  include ApplicationJob::Logging
-
   # :nocov:
   #extend ActiveJob::Core
 
@@ -8,6 +6,8 @@ class Model::WorkflowJob < ApplicationJob
   CLASS: Class
 
   PERFORM_OPTS: symArray
+
+  def initialize: (*untyped args, **untyped opt) -> void
 
   # Run the command(s) specified by the Action.
   #
@@ -47,4 +47,18 @@ class Model::WorkflowJob < ApplicationJob
   #   @option opt [AsyncCallback] :callback   Optional.
   #
   def perform: (*untyped args) -> void
+
+  def item_inspect: (untyped v) -> String
+
+  # Called from #perform to initiate a callback if one was supplied via the job
+  # arguments.
+  #
+  # @param [AsyncCallback, nil] callback
+  # @param [Hash]               opt       Passed to #cb_schedule.
+  #
+  # @option opt [AsyncCallback] :callback
+  #
+  # @return [void]
+  #
+  def perform_callback: ((Model::AsyncCallback|nil) callback, **untyped opt) -> void
 end

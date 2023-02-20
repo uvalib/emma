@@ -62,17 +62,23 @@ module Upload::EmmaDataMethods
 
   # Present :emma_data as a structured object (if it is present).
   #
+  # @param [Boolean] refresh          If *true*, force regeneration.
+  #
   # @return [Search::Record::MetadataRecord]
   #
-  def emma_record                                                               # NOTE: to Record::EmmaData::InstanceMethods
-    @emma_record ||= make_emma_record(emma_metadata)
+  def emma_record(refresh: false)
+    @emma_record = nil if refresh
+    @emma_record ||= make_emma_record(emma_metadata(refresh: true))
   end
 
   # Present :emma_data as a hash (if it is present).
   #
+  # @param [Boolean] refresh          If *true*, force regeneration.
+  #
   # @return [Hash]
   #
-  def emma_metadata                                                             # NOTE: to Record::EmmaData::InstanceMethods
+  def emma_metadata(refresh: false)
+    @emma_metadata = nil if refresh
     @emma_metadata ||= parse_emma_data(emma_data, true)
   end
 
@@ -226,7 +232,7 @@ module Upload::EmmaDataMethods
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def make_emma_record(data)                                                    # NOTE: to Record::EmmaData
+  def make_emma_record(data, **)                                                    # NOTE: to Record::EmmaData
     Search::Record::MetadataRecord.new(data)
   end
 
@@ -239,8 +245,15 @@ module Upload::EmmaDataMethods
   #
   def parse_emma_data(data, allow_blank = false)                                # NOTE: to Record::EmmaData
     return {} if data.blank?
-    result = data
-    result = result.as_json if result.is_a?(Search::Record::MetadataRecord)
+    result =
+      case data
+        when Search::Record::MetadataRecord
+          data.as_json
+        when Model
+          data.as_json(only: Search::Record::MetadataRecord.field_names)
+        else
+          data
+      end
     result = json_parse(result, no_raise: false)
     result = reject_blanks(result) unless allow_blank
     result.map { |k, v|

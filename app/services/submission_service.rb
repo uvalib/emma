@@ -123,17 +123,22 @@ class SubmissionService < ApiService
 
   public
 
+  REQUEST_OPTIONS = %i[service batch slice no_job no_async].freeze
+
   # Process submitted items.
   #
   # @param [SubmissionService::Request] request
   # @param [SubmitChannel, nil]         channel
   # @param [SubmissionService, nil]     service     Service instance
   # @param [User, String, nil]          user        Def.: service.user
-  # @param [Integer, Boolean, nil]      batch       Def.: #DEF_BATCH_SIZE
-  # @param [Numeric, Boolean, nil]      timeout     Def.: #DEFAULT_TIMEOUT
   # @param [Boolean]                    no_job
   # @param [Boolean]                    no_async
   # @param [Hash]                       opt
+  #
+  # @option opt [Integer, Boolean, nil] :batch        Def.: #DEF_BATCH
+  # @option opt [Integer, Boolean, nil] :slice        Def.: #DEF_SLICE
+  # @option opt [Numeric, Boolean, nil] :timeout      Def.: #DEFAULT_TIMEOUT
+  # @option opt [Boolean]               :simulation   Def.: #SIMULATION_ONLY
   #
   # @return [Array<SubmissionService::Response>]
   # @return [Array<Hash>]
@@ -147,24 +152,20 @@ class SubmissionService < ApiService
     channel:  nil,
     service:  nil,
     user:     nil,
-    batch:    true,
-    timeout:  true,
     no_job:   false,
     no_async: false,
     **opt
   )
-    service  ||= new(**opt)
-    user     ||= service.user
-    no_async ||= channel.nil?
-    opt  = {
-      service:     service,
-      user:        user&.to_s,
-      batch:       batch_option(batch),
-      timeout:     timeout_option(timeout),
-      no_job:      no_job,
-      no_async:    no_async,
-      stream_name: channel&.send(:stream_name),
-    }.compact
+    opt[:service]     = service ||= new(**opt)
+    opt[:user]        = (user || service.user).to_s
+    opt[:batch]       = batch_option(opt[:batch])
+    opt[:slice]       = slice_option(opt[:slice])
+    opt[:timeout]     = timeout_option(opt[:timeout])
+    opt[:no_job]      = no_job
+    opt[:no_async]    = no_async ||= channel.nil?
+    opt[:stream_name] = channel&.send(:stream_name)
+    opt[:simulation]  = true if SIMULATION_ONLY && !opt.key?(:simulation)
+    opt.compact!
     request = pre_flight(request, **opt)
     # noinspection RubyMismatchedArgumentType
     case
@@ -262,14 +263,12 @@ class SubmissionService < ApiService
   # @return [Array<SubmitJob,nil>]
   #
   def process_batch(request, **opt)
-    no_job   = opt[:no_job]
-    no_async = opt[:no_async]
     requests = request.requests
     # noinspection RubyMismatchedReturnType
     case
-      when no_job   then requests.map { |r| process_all(r, **opt) }
-      when no_async then requests.map { |r| schedule_sync(r, **opt) }
-      else               requests.map { |r| schedule_async(r, **opt) }
+      when opt[:no_job]   then requests.map { |r| process_all(r, **opt) }
+      when opt[:no_async] then requests.map { |r| schedule_sync(r, **opt) }
+      else                     requests.map { |r| schedule_async(r, **opt) }
     end
   end
 

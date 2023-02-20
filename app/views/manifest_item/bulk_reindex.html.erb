@@ -15,6 +15,6 @@
 
 <ul>
   <%- list.each do |item| -%>
-    <li><%= ManifestItem.sid_for(item) -%></li>
+    <li><%= ManifestItem.sid_value(item) -%></li>
   <%- end -%>
 </ul>

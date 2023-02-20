@@ -74,7 +74,7 @@ module ApplicationJob::Properties
 
     #include ActiveJob::QueuePriority::ClassMethods
 
-    def queue_as: (?(String|Symbol|Integer|Class|ApplicationJob|nil) part_name) { () -> (String|Symbol|Integer|Class|ApplicationJob|nil) } -> void
+    def queue_name_from_part: ((String|Symbol|Integer|Class|ApplicationJob|nil) part_name) -> String
 
     def queue_with_priority: (?(String|Symbol|Integer|Class|ApplicationJob|nil) pri) { () -> (String|Symbol|Integer|Class|ApplicationJob|nil) } -> void
 
@@ -114,7 +114,7 @@ module ApplicationJob::Properties
 
     def default_priority: () -> Integer
 
-    def queue_name_from_part: ((String|Symbol|Integer|Class|ApplicationJob|nil) part_name) -> untyped
+    def queue_name_from_part: ((String|Symbol|Integer|Class|ApplicationJob|nil) part_name) -> String
   end
 
   private

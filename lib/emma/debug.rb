@@ -213,7 +213,10 @@ module Emma::Debug
           "#{k} = #{__debug_inspect(v, **opt)}"
         }.compact
       else
-        Array.wrap(value).map { |v| __debug_inspect(v, **opt) }
+        Array.wrap(value).map { |v|
+          next if compact && v.blank? && !v.is_a?(FalseClass)
+          __debug_inspect(v, **opt)
+        }.compact
       end
     end
 

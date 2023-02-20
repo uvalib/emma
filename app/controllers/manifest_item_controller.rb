@@ -296,13 +296,20 @@ class ManifestItemController < ApplicationController
 
   # == POST /manifest_item/upload
   #
-  # Invoked from 'Uppy.XHRUpload'.
+  # Invoked from 'Uppy.XHRUpload'.  If the 'X-Update-FileData-Only' header is
+  # *true* then the record's :file_data column is updated without modifying
+  # :update_time or other columns.
+  #
+  # @see file:javascripts/shared/uploader.js *BulkUploader._xhrOptions*
   #
   def upload
     __log_activity
     __debug_route
     __debug_request
-    stat, hdrs, body = upload_file(**manifest_item_params)
+    prm = manifest_item_params.dup
+    id  = extract_hash!(prm, *IDENTIFIER_PARAMS).values.first.presence
+    fd  = true?(request.headers['X-Update-FileData-Only'])
+    stat, hdrs, body = upload_file(**prm, id: id, update_time: !fd)
     self.status = stat        if stat.present?
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?

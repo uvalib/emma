@@ -9,8 +9,6 @@ __loading_begin(__FILE__)
 
 class Action::WorkflowJob < Model::WorkflowJob
 
-  include ApplicationJob::Logging
-
 =begin
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -51,11 +49,11 @@ class Action::WorkflowJob < Model::WorkflowJob
     __debug_job('END') { { result: result } }
 
   rescue ActiveRecord::RecordNotFound => error
-    Log.warn { "#{job_name}: skipped: #{error.message} [RecordNotFound]" }
+    Log.warn { "#{job_tag}: skipped: #{error.message} [RecordNotFound]" }
     raise error
 
   rescue => error
-    Log.error { "#{job_name}: error: #{error.message} [#{error.class}]" }
+    Log.error { "#{job_tag}: error: #{error.message} [#{error.class}]" }
     raise error
   end
 =end

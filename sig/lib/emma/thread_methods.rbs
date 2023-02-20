@@ -1,0 +1,13 @@
+# Thread utilities.
+#
+module Emma::ThreadMethods
+  extend ::Emma::ThreadMethods
+
+  # Normalize thread name representation.
+  #
+  # @param [Thread, nil] thread       Default: `Thread#current`
+  #
+  # @return [String]
+  #
+  def thread_name: (?Thread? thread) -> String
+end

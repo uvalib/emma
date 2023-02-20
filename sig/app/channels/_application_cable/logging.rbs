@@ -1,0 +1,45 @@
+type cableObject = ActionCable::Connection::Base | ActionCable::Channel::Base
+
+# Definitions for ActionCable logging.
+#
+module ApplicationCable::Logging
+
+  extend ActiveSupport::Concern
+
+  include Emma::Common
+
+  include Emma::Debug
+
+  include Emma::ThreadMethods
+
+  TAG_LEADER: String
+
+  def cable_tag: (?(cableObject|Class)? arg, ?tag: String|nil, ?tid: String|nil, **untyped _ignored) -> String
+
+  # Send debugging output to the console.
+  #
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  # @param [Proc]     block           Passed to #__debug_items
+  #
+  # @return [nil]
+  #
+  def __debug_cable
+    : (cableObject caller, *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+    | (cableObject caller,                **untyped opt)  { () -> untyped } -> nil
+    | (                    *untyped args, **untyped opt) ?{ () -> untyped } -> nil
+    | (                                   **untyped opt)  { () -> untyped } -> nil
+
+  # Send sent/received WebSocket data to the console.
+  #
+  # @param [Symbol] meth
+  # @param [*]      data
+  #
+  # @return [nil]
+  #
+  def __debug_cable_data: (Symbol meth, untyped data) -> nil
+
+  module ClassMethods
+    include ApplicationCable::Logging
+  end
+end

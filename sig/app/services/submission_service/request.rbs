@@ -32,6 +32,10 @@ class SubmissionService::Request
 
   def deep_dup: () -> SubmissionService::Request
 
+  # Indicate whether this request is part of a simulation.
+  #
+  def simulation?: () -> bool
+
   # command
   #
   # @return [Symbol]
@@ -173,12 +177,4 @@ class SubmissionService::ControlRequest < SubmissionService::Request
   def self.response_class: () -> Class
 
   def self.template: () -> symHash
-end
-
-# SubmissionService::StatusRequest
-#
-class SubmissionService::StatusRequest < SubmissionService::Request
-  def self.request_method: () -> Symbol
-
-  def self.response_class: () -> Class
 end

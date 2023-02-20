@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # SubmissionService::Action::Cancel
 #
+# @note The original approach for these methods is incompatible with the use of
+#   GoodJob::Batch as the "waiter task".
+#
 module SubmissionService::Action::Cancel
 
   include SubmissionService::Common
@@ -18,6 +21,7 @@ module SubmissionService::Action::Cancel
 
   public
 
+=begin
   # Receive a request to stop a batch job.
   #
   # @param [SubmissionService::ControlRequest, nil] request
@@ -44,6 +48,7 @@ module SubmissionService::Action::Cancel
     self.end_time     = timestamp
     self.result       = post_flight(response)
   end
+=end
 
 end
 

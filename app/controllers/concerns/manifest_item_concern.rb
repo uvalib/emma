@@ -174,11 +174,13 @@ module ManifestItemConcern
   # Transform import data into ManifestItem field values.
   #
   # @param [Hash{Symbol=>*}] item
+  # @param [Boolean]         invalid  Allow invalid values to be imported.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def import_transform!(item)
+  def import_transform!(item, invalid: true)
     normalize_import_name!(item)
+    item.replace(ManifestItem.attribute_options(item, invalid: invalid))
   end
 
   # Transform ManifestItem field values for export.
@@ -216,7 +218,6 @@ module ManifestItemConcern
   #
   def normalize_import_name!(item)
     item.transform_keys! { |k| IMPORT_FIELD[k] || k }
-    item.replace(ManifestItem.attribute_options(item))
   end
 
   # Transformation of ManifestItem fields on export.
@@ -602,27 +603,38 @@ module ManifestItemConcern
   # grid item and thus the first opportunity for the client to learn what
   # database entry is associated with that item.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item         Def.: record for #manifest_item_id.
+  # @param [Boolean]           update_time  If *false* update :file_data only.
+  # @param [Hash]              opt          Field values.
   #
   # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
-  def upload_file(item = nil, **opt)
-    meth   = opt.delete(:meth) || __method__
-    env    = opt.delete(:env)  || request
-    env    = env.env if env.is_a?(ActionDispatch::Request)
-    record = start_editing(item, **opt, meth: meth)
+  # @note If update_time is *false* the associated record must already exist.
+  #
+  def upload_file(item = nil, update_time: true, **opt)
+    meth = opt.delete(:meth) || __method__
+    env  = opt.delete(:env)  || request
+    env  = env.env if env.is_a?(ActionDispatch::Request)
+    if update_time
+      record = start_editing(item, meth: meth, **opt)
+    else
+      record = edit_manifest_item(item, meth: meth, id: opt[:id])
+    end
     record.upload_file(env: env).tap do |_, _, body|
       body.map! do |entry|
-        if (file_data = safe_json_parse(entry)).is_a?(Hash)
-          emma_data = file_data.delete(:emma_data) || {}
-          update_manifest_item(record, file_data: file_data, editing: false)
-          emma_data = record.fields.merge(emma_data).except!(*NON_DATA_KEYS)
-          file_data.merge!(emma_data: emma_data).to_json
-        else
+        file_data = safe_json_parse(entry)
+        file_data = nil unless file_data.is_a?(Hash)
+        emma_data = file_data&.delete(:emma_data)&.presence
+        if !file_data
           Log.debug { "#{meth}: unexpected response item #{entry.inspect}" }
-          entry
+        elsif !update_time
+          record.set_field_direct(:file_data, file_data)
+        else
+          update_manifest_item(record, file_data: file_data, editing: false)
+          emma_data &&= record.fields.merge(emma_data).except!(*NON_DATA_KEYS)
+          entry = file_data.merge!(emma_data: emma_data).to_json if emma_data
         end
+        entry
       end
     end
   end
@@ -671,15 +683,16 @@ module ManifestItemConcern
 
   # bulk_create_manifest_items
   #
+  # @param [Array<Symbol>] returning  Returned result columns.
+  #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array<Hash>]             Created items.
   #
-  def bulk_create_manifest_items
-    items = bulk_item_data(validate: true)
-    res   = ManifestItem.insert_all(items, returning: ManifestItem.field_names)
-    bulk_returning(res)
+  def bulk_create_manifest_items(returning: ManifestItem.field_names)
+    result = ManifestItem.insert_all(bulk_item_data, returning: returning)
+    bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
     failure(error)
   end
@@ -699,15 +712,16 @@ module ManifestItemConcern
 
   # bulk_update_manifest_items
   #
+  # @param [Array<Symbol>] returning  Returned result columns.
+  #
   # @raise [RuntimeError]             If both :src and :data are present.
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array<Hash>]             Modified items.
   #
-  def bulk_update_manifest_items
-    items = bulk_item_data(validate: true)
-    res   = ManifestItem.upsert_all(items, returning: ManifestItem.field_names)
-    bulk_returning(res)
+  def bulk_update_manifest_items(returning: ManifestItem.field_names)
+    result = ManifestItem.upsert_all(bulk_item_data, returning: returning)
+    bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
     failure(error)
   end
@@ -754,11 +768,12 @@ module ManifestItemConcern
 
   # Data for one or more manifest items from parameters.
   #
-  # @param [Boolean] validate     If *true*, update status fields.
+  # @param [Boolean] validate       If *true*, update status fields.
+  # @param [Boolean] nil_default    If *true*, make invalid values *nil*.
   #
   # @return [Array<Hash>]
   #
-  def bulk_item_data(validate: false)
+  def bulk_item_data(validate: true, nil_default: true)
     prm   = manifest_item_bulk_post_params
     items = prm[:data]
     failure("not an Array: #{items.inspect}") unless items.is_a?(Array)
@@ -776,7 +791,7 @@ module ManifestItemConcern
       row   = (item[:row]   ||= row)
       delta = (item[:delta] ||= delta + 1)
       ManifestItem.update_status!(item) if validate
-      ManifestItem.attribute_options(item)
+      ManifestItem.attribute_options(item, nil_default: nil_default)
     end
   end
 

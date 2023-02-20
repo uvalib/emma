@@ -1,0 +1,40 @@
+module ManifestItem::EmmaData
+  extend ActiveSupport::Concern
+
+  include Record::EmmaData
+
+  module InstanceMethods
+    include ManifestItem::EmmaData
+
+    # Present EMMA data as a structured object.
+    #
+    # @param [Boolean, nil] refresh   If *false* avoid regeneration.
+    #
+    # @return [Search::Record::MetadataRecord]
+    #
+    def emma_record: (?refresh: bool|nil) -> Search::Record::MetadataRecord
+
+    @emma_record: Search::Record::MetadataRecord | nil
+
+    # Present EMMA data as a hash.
+    #
+    # @param [Boolean, nil] refresh   If *false* avoid regeneration.
+    #
+    # @return [Hash{Symbol=>Any}]
+    #
+    def emma_metadata: (?refresh: bool|nil) -> symHash
+
+    @emma_metadata: symHash | nil
+
+    # emma_repository
+    #
+    # @return [EmmaRepository]
+    #
+    def emma_repository: () -> EmmaRepository
+
+  end
+
+  private
+
+  THIS_MODULE: Module
+end

@@ -4,8 +4,11 @@
 import { AppDebug }           from '../application/debug';
 import { CableChannel }       from '../shared/cable-channel';
 import { hexRand }            from '../shared/random';
-import { SubmitRequest }      from '../shared/submit-request';
 import { SubmitResponseBase } from '../shared/submit-response';
+import {
+    SubmitControlRequest,
+    SubmitRequest,
+} from '../shared/submit-request';
 
 
 const CHANNEL = 'SubmitChannel';
@@ -25,6 +28,28 @@ export class SubmitChannel extends CableChannel {
     // ========================================================================
     // CableChannel overrides
     // ========================================================================
+
+    /**
+     * Create a request object from the provided terms then invoke the server
+     * method defined in lookup_channel.rb.
+     *
+     * @note {@link setCallback} is expected to have been called first.
+     *
+     * @param {*}      data
+     * @param {string} [action]
+     *
+     * @returns {boolean}
+     *
+     * @see "SubmitChannel#submission_request"
+     * @see "SubmitChannel#submission_control"
+     */
+    request(data, action) {
+        if (data instanceof SubmitControlRequest) {
+            return super.request(data, 'submission_control');
+        } else {
+            return super.request(data, action);
+        }
+    }
 
     /**
      * _createRequest

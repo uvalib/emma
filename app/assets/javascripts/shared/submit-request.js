@@ -20,6 +20,7 @@ AppDebug.file('shared/submit-request', MODULE, DEBUG);
 /**
  * @typedef {ChannelRequestPayload} SubmitRequestPayload
  *
+ * @property {boolean}  [simulation]
  * @property {string}   manifest_id
  * @property {string[]} items           IDs of ManifestItems to submit.
  *
@@ -63,6 +64,7 @@ export class SubmitRequest extends ChannelRequest {
      * @type {SubmitRequestPayload}
      */
     static TEMPLATE = deepFreeze({
+        simulation:  undefined,
         manifest_id: undefined,
         items:       [],
     });
@@ -85,18 +87,19 @@ export class SubmitRequest extends ChannelRequest {
     // Properties
     // ========================================================================
 
-    get manifest_id() { return this.requestPayload.manifest_id }
-    get items()       { return this.requestPayload.items }
-
     /** @returns {SubmitRequestPayload} */
     get parts() { return this._parts }
 
-    /** @returns {SubmitRequestPayload} */
-    get requestPayload() { return super.requestPayload }
+    get simulation()  { return !!this.parts.simulation }
+    get manifest_id() { return this.parts.manifest_id }
+    get items()       { return this.parts.items }
 
     // ========================================================================
     // Methods
     // ========================================================================
+
+    /** @returns {SubmitRequestPayload} */
+    toObject() { return super.toObject() }
 
     /**
      * Add one or more items.
@@ -167,9 +170,10 @@ export class SubmitRequest extends ChannelRequest {
      * @returns {SubmitControlRequest|SubmitRequest}
      */
     static wrap(item, ...args) {
-        return (item instanceof this) && item ||
+        return ((item instanceof this) && item)  ||
             SubmitControlRequest.candidate(item) ||
-            SubmitRequest.candidate(item);
+            SubmitRequest.candidate(item)        ||
+            super.wrap(item, ...args);
     }
 
     /**
@@ -196,7 +200,11 @@ export class SubmitRequest extends ChannelRequest {
      * @returns {boolean}
      */
     static isCandidate(item) {
-        return isObject(item);
+        const obj   = isObject(item);
+        if (obj && item.manifest_id) { return true }
+        const items = obj ? item.items : item;
+        const first = Array.isArray(items) && typeof(items[0]);
+        return (first === 'string') || (first === 'number');
     }
 
 }
@@ -232,8 +240,9 @@ export class SubmitControlRequest extends SubmitRequest {
      * @type {SubmitControlRequestPayload}
      */
     static TEMPLATE = deepFreeze({
-        command: undefined,
-        job_id:  undefined,
+        simulation: undefined,
+        command:    undefined,
+        job_id:     undefined,
         ...super.TEMPLATE,
     });
 
@@ -259,30 +268,26 @@ export class SubmitControlRequest extends SubmitRequest {
     // Properties
     // ========================================================================
 
-    get command() { return this.payload.command }
-    get job_id()  { return this.requestPayload.job_id }
-
-    // noinspection JSCheckFunctionSignatures
     /** @returns {SubmitControlRequestPayload} */
-    get parts() { return super.parts }
+    get parts()   { return super.parts }
+    get length()  { return this.command ? (1 + super.length) : 0 }
 
-    // noinspection JSCheckFunctionSignatures
+    get command() { return this.parts.command }
+    get job_id()  { return this.parts.job_id }
+
+    // ========================================================================
+    // Methods
+    // ========================================================================
+
     /** @returns {SubmitControlRequestPayload} */
-    get requestPayload() { return super.requestPayload }
+    toObject() { return super.toObject() }
 
     // ========================================================================
     // Class methods
     // ========================================================================
 
-    /**
-     * Indicate whether the item is a candidate payload for the current class.
-     *
-     * @param {*} item
-     *
-     * @returns {boolean}
-     */
     static isCandidate(item) {
-        return isObject(item) && item.hasOwnProperty('command');
+        return isObject(item) && !!item.command;
     }
 
 }

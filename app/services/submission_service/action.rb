@@ -8,7 +8,9 @@ __loading_begin(__FILE__)
 # Namespace for API requests.
 #
 module SubmissionService::Action
-  include_submodules(self)
+  include SubmissionService::Action::Cancel
+  include SubmissionService::Action::Control
+  include SubmissionService::Action::Submit
 end
 
 __loading_end(__FILE__)
