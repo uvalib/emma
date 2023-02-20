@@ -17,8 +17,7 @@ class LookupService
 
   include Lookup
 
-  # Include remote service modules from "app/services/lookup_service/**.rb".
-  include_submodules(self)
+  include LookupService::Common
 
   # ===========================================================================
   # :section:

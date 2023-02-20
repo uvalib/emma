@@ -20,8 +20,13 @@ class BookshareService < ApiService
 
   include Bs
 
-  # Include send/receive modules from "app/services/bookshare_service/**.rb".
-  include_submodules(self)
+  include BookshareService::Properties
+  include BookshareService::Action
+  include BookshareService::Common
+  include BookshareService::Definition
+  include BookshareService::Identity
+  include BookshareService::Status
+  include BookshareService::Testing
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

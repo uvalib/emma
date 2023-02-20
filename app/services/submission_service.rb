@@ -11,15 +11,11 @@ class SubmissionService < ApiService
 
   include Emma::Json
 
-  # Include send/receive modules from "submission_service/**.rb".
-  include_submodules(self)
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include SubmissionService::Common
-    # :nocov:
-  end
+  include SubmissionService::Properties
+  include SubmissionService::Action
+  include SubmissionService::Common
+  include SubmissionService::Definition
+  include SubmissionService::Status
 
   # ===========================================================================
   # :section:

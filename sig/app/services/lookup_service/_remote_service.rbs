@@ -3,10 +3,11 @@
 class LookupService::RemoteService < ApiService
   include Emma::Json
 
-  # :nocov:
-  #include LookupService::RemoteService::Properties
+  include LookupService::RemoteService::Properties
 
-  #include LookupService::RemoteService::Common
+  include LookupService::RemoteService::Common
+
+  include LookupService::RemoteService::Definition
 
   attr_reader response: Faraday::Response | nil # From Api::Common
 

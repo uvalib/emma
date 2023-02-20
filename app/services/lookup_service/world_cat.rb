@@ -11,8 +11,10 @@ __loading_begin(__FILE__)
 #
 class LookupService::WorldCat < LookupService::RemoteService
 
-  # Include send/receive modules from "lookup_service/world_cat/**.rb".
-  include_submodules(self)
+  include LookupService::WorldCat::Properties
+  include LookupService::WorldCat::Action
+  include LookupService::WorldCat::Common
+  include LookupService::WorldCat::Definition
 
   # ===========================================================================
   # :section: LookupService::RemoteService overrides

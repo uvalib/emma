@@ -9,28 +9,22 @@ __loading_begin(__FILE__)
 #
 class BaseCollectionDecorator < Draper::CollectionDecorator
 
-  include_submodules(self)
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include BaseCollectionDecorator::Configuration
-    include BaseCollectionDecorator::Fields
-    include BaseCollectionDecorator::Form
-    include BaseCollectionDecorator::Helpers
-    include BaseCollectionDecorator::Hierarchy
-    include BaseCollectionDecorator::Links
-    include BaseCollectionDecorator::List
-    include BaseCollectionDecorator::Lookup
-    include BaseCollectionDecorator::Menu
-    include BaseCollectionDecorator::Pagination
-    include BaseCollectionDecorator::Table
-    include BaseCollectionDecorator::Controls
-    include BaseCollectionDecorator::Grid
-    include BaseCollectionDecorator::Row
-    include BaseCollectionDecorator::Submission
-    # :nocov:
-  end
+  include BaseCollectionDecorator::Common
+  include BaseCollectionDecorator::Configuration
+  include BaseCollectionDecorator::Controls
+  include BaseCollectionDecorator::Fields
+  include BaseCollectionDecorator::Form
+  include BaseCollectionDecorator::Grid
+  include BaseCollectionDecorator::Helpers
+  include BaseCollectionDecorator::Hierarchy
+  include BaseCollectionDecorator::Links
+  include BaseCollectionDecorator::List
+  include BaseCollectionDecorator::Lookup
+  include BaseCollectionDecorator::Menu
+  include BaseCollectionDecorator::Pagination
+  include BaseCollectionDecorator::Row
+  include BaseCollectionDecorator::Submission
+  include BaseCollectionDecorator::Table
 
   # ===========================================================================
   # :section:

@@ -15,14 +15,16 @@ class Manifest < ApplicationRecord
 
   include Record::Debugging
 
-  # :nocov:
-  #extend Record::Describable::ClassMethods
-
   include Manifest::Config
 
   include Manifest::EmmaIdentification
 
   include Manifest::ItemMethods
+
+  include Manifest::Searchable
+
+  # :nocov:
+  #extend Record::Describable::ClassMethods
 
   # Create a new instance.
   #

@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Namespace for API requests.
 #
 module LookupService::GoogleBooks::Action
-  include_submodules(self)
+  include LookupService::GoogleBooks::Action::Volumes
 end
 
 __loading_end(__FILE__)

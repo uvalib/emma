@@ -11,8 +11,10 @@ __loading_begin(__FILE__)
 #
 class LookupService::GoogleBooks < LookupService::RemoteService
 
-  # Include send/receive modules from "lookup_service/google_books/**.rb".
-  include_submodules(self)
+  include LookupService::GoogleBooks::Properties
+  include LookupService::GoogleBooks::Action
+  include LookupService::GoogleBooks::Common
+  include LookupService::GoogleBooks::Definition
 
   # ===========================================================================
   # :section: LookupService::RemoteService overrides

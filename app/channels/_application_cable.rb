@@ -6,7 +6,9 @@
 __loading_begin(__FILE__)
 
 module ApplicationCable
-  include_submodules(self)
+  include ApplicationCable::Common
+  include ApplicationCable::Logging
+  include ApplicationCable::Payload
 end
 
 __loading_end(__FILE__)

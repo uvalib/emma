@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Namespace for API requests.
 #
 module IngestService::Action
-  include_submodules(self)
+  include IngestService::Action::Submissions
 end
 
 __loading_end(__FILE__)

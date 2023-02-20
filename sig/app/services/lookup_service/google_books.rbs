@@ -5,11 +5,11 @@
 class LookupService::GoogleBooks < LookupService::RemoteService
   include LookupService::GoogleBooks::Properties
 
+  include LookupService::GoogleBooks::Action
+
   include LookupService::GoogleBooks::Common
 
   include LookupService::GoogleBooks::Definition
-
-  include LookupService::GoogleBooks::Action
 
   # Fetch results from Google Books.
   #

@@ -11,16 +11,9 @@ class LookupService::RemoteService < ApiService
 
   include Emma::Json
 
-  # Include send/receive modules from "lookup_service/_remote_service/**.rb".
-  include_submodules(self)
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include LookupService::RemoteService::Properties
-    include LookupService::RemoteService::Common
-    # :nocov:
-  end
+  include LookupService::RemoteService::Properties
+  include LookupService::RemoteService::Common
+  include LookupService::RemoteService::Definition
 
   # ===========================================================================
   # :section:

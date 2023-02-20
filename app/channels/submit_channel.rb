@@ -9,7 +9,11 @@ class SubmitChannel < ApplicationCable::Channel
 
   include SubmissionConcern
 
-  include_submodules(self)
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # @see file:javascripts/channels/submit-channel.js *DEFAULT_ACTION*
   DEFAULT_ACTION = :submission_request

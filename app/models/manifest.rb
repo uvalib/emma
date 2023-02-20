@@ -18,16 +18,15 @@ class Manifest < ApplicationRecord
   include Record::Testing
   include Record::Debugging
 
-  # Include modules from "app/models/manifest/**.rb".
-  include_submodules(self)
+  include Manifest::Config
+  include Manifest::EmmaIdentification
+  include Manifest::ItemMethods
+  include Manifest::Searchable
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
     extend  Record::Describable::ClassMethods
-    include Manifest::Config
-    include Manifest::EmmaIdentification
-    include Manifest::ItemMethods
     # :nocov:
   end
 

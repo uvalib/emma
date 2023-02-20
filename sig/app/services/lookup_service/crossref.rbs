@@ -8,11 +8,11 @@
 class LookupService::Crossref < LookupService::RemoteService
   include LookupService::Crossref::Properties
 
+  include LookupService::Crossref::Action
+
   include LookupService::Crossref::Common
 
   include LookupService::Crossref::Definition
-
-  include LookupService::Crossref::Action
 
   # Fetch results from Crossref.
   #

@@ -1,4 +1,5 @@
 # Namespace for API requests.
 #
 module IaDownloadService::Action
+  include IaDownloadService::Action::Records
 end

@@ -13,8 +13,12 @@ class SearchService < ApiService
 
   include Search
 
-  # Include send/receive modules from "app/services/search_service/**.rb".
-  include_submodules(self)
+  include SearchService::Properties
+  include SearchService::Action
+  include SearchService::Common
+  include SearchService::Definition
+  include SearchService::Status
+  include SearchService::Testing
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

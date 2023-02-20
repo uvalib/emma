@@ -15,7 +15,17 @@ module Emma::Common
   end
 
   require_submodules(__FILE__)
-  include_submodules(self)
+
+  include Emma::Common::BooleanMethods
+  include Emma::Common::ExceptionMethods
+  include Emma::Common::FormatMethods
+  include Emma::Common::HashMethods
+  include Emma::Common::HtmlMethods
+  include Emma::Common::MethodMethods
+  include Emma::Common::NumericMethods
+  include Emma::Common::ObjectMethods
+  include Emma::Common::StringMethods
+  include Emma::Common::UrlMethods
 
 end
 

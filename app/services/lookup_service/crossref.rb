@@ -14,8 +14,10 @@ __loading_begin(__FILE__)
 #
 class LookupService::Crossref < LookupService::RemoteService
 
-  # Include send/receive modules from "lookup_service/crossref/**.rb".
-  include_submodules(self)
+  include LookupService::Crossref::Properties
+  include LookupService::Crossref::Action
+  include LookupService::Crossref::Common
+  include LookupService::Crossref::Definition
 
   # ===========================================================================
   # :section: LookupService::RemoteService overrides

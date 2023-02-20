@@ -7,7 +7,11 @@ __loading_begin(__FILE__)
 
 class LookupChannel < ApplicationCable::Channel
 
-  include_submodules(self)
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # @see file:javascripts/channels/lookup-channel.js *DEFAULT_ACTION*
   DEFAULT_ACTION = :lookup_request

@@ -13,28 +13,22 @@ __loading_begin(__FILE__)
 #
 class BaseDecorator < Draper::Decorator
 
-  include_submodules(self)
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include BaseDecorator::Configuration
-    include BaseDecorator::Fields
-    include BaseDecorator::Form
-    include BaseDecorator::Helpers
-    include BaseDecorator::Hierarchy
-    include BaseDecorator::Links
-    include BaseDecorator::List
-    include BaseDecorator::Lookup
-    include BaseDecorator::Menu
-    include BaseDecorator::Pagination
-    include BaseDecorator::Table
-    include BaseDecorator::Controls
-    include BaseDecorator::Grid
-    include BaseDecorator::Row
-    include BaseDecorator::Submission
-    # :nocov:
-  end
+  include BaseDecorator::Common
+  include BaseDecorator::Configuration
+  include BaseDecorator::Controls
+  include BaseDecorator::Fields
+  include BaseDecorator::Form
+  include BaseDecorator::Grid
+  include BaseDecorator::Helpers
+  include BaseDecorator::Hierarchy
+  include BaseDecorator::Links
+  include BaseDecorator::List
+  include BaseDecorator::Lookup
+  include BaseDecorator::Menu
+  include BaseDecorator::Pagination
+  include BaseDecorator::Row
+  include BaseDecorator::Submission
+  include BaseDecorator::Table
 
   # ===========================================================================
   # :section:

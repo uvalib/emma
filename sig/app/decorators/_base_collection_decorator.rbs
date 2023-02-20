@@ -1,11 +1,17 @@
 # Common base for collection decorator classes.
 #
 class BaseCollectionDecorator < Draper::CollectionDecorator
+  include BaseCollectionDecorator::Common
+
   include BaseCollectionDecorator::Configuration
+
+  include BaseCollectionDecorator::Controls
 
   include BaseCollectionDecorator::Fields
 
   include BaseCollectionDecorator::Form
+
+  include BaseCollectionDecorator::Grid
 
   include BaseCollectionDecorator::Helpers
 
@@ -21,15 +27,11 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   include BaseCollectionDecorator::Pagination
 
-  include BaseCollectionDecorator::Table
-
-  include BaseCollectionDecorator::Controls
-
-  include BaseCollectionDecorator::Grid
-
   include BaseCollectionDecorator::Row
 
   include BaseCollectionDecorator::Submission
+
+  include BaseCollectionDecorator::Table
 
   # Methods for each collection decorator class instance.
   #

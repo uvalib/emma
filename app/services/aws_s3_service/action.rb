@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Namespace for API requests.
 #
 module AwsS3Service::Action
-  include_submodules(self)
+  include AwsS3Service::Action::Submissions
 end
 
 __loading_end(__FILE__)

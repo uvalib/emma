@@ -8,7 +8,8 @@ __loading_begin(__FILE__)
 # Namespace for API requests.
 #
 module LookupService::Crossref::Action
-  include_submodules(self)
+  include LookupService::Crossref::Action::Journal
+  include LookupService::Crossref::Action::Work
 end
 
 __loading_end(__FILE__)

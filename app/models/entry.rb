@@ -61,9 +61,6 @@ class Entry < ApplicationRecord
   include Record::Testing
   include Record::Debugging
 
-  # Include modules from "app/models/entry/**.rb".
-  include_submodules(self)
-
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:

@@ -20,6 +20,8 @@ class BookshareService < ApiService
 
   include BookshareService::Definition
 
+  include BookshareService::Identity
+
   include BookshareService::Status
 
   include BookshareService::Testing

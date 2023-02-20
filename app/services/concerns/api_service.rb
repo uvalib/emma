@@ -19,7 +19,12 @@ class ApiService
 
   include Api
 
-  include_submodules(self)
+  include ApiService::Properties
+  include ApiService::Common
+  include ApiService::Definition
+  include ApiService::Exceptions
+  include ApiService::Identity
+  include ApiService::Status
 
   # ===========================================================================
   # :section:

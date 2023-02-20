@@ -1,11 +1,17 @@
 # Common base for decorator classes.
 #
 class BaseDecorator < Draper::Decorator
+  include BaseDecorator::Common
+
   include BaseDecorator::Configuration
+
+  include BaseDecorator::Controls
 
   include BaseDecorator::Fields
 
   include BaseDecorator::Form
+
+  include BaseDecorator::Grid
 
   include BaseDecorator::Helpers
 
@@ -21,15 +27,11 @@ class BaseDecorator < Draper::Decorator
 
   include BaseDecorator::Pagination
 
-  include BaseDecorator::Table
-
-  include BaseDecorator::Controls
-
-  include BaseDecorator::Grid
-
   include BaseDecorator::Row
 
   include BaseDecorator::Submission
+
+  include BaseDecorator::Table
 
   # Generic path helper methods.
   #

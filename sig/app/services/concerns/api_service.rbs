@@ -20,12 +20,6 @@ class ApiService
 
   include ApiService::Status
 
-  extend ApiService::Properties
-
-  extend ApiService::Definition
-
-  extend ApiService::Status
-
   # Internal service options along with connection options.
   #
   # @return [Hash]

@@ -13,8 +13,12 @@ class IngestService < ApiService
 
   include Ingest
 
-  # Include send/receive modules from "app/services/ingest_service/**.rb".
-  include_submodules(self)
+  include IngestService::Properties
+  include IngestService::Action
+  include IngestService::Common
+  include IngestService::Definition
+  include IngestService::Status
+  include IngestService::Testing
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

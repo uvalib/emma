@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Namespace for API requests.
 #
 module LookupService::WorldCat::Action
-  include_submodules(self)
+  include LookupService::WorldCat::Action::Records
 end
 
 __loading_end(__FILE__)

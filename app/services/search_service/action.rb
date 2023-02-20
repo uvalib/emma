@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Namespace for API requests.
 #
 module SearchService::Action
-  include_submodules(self)
+  include SearchService::Action::Records
 end
 
 __loading_end(__FILE__)

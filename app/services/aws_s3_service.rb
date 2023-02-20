@@ -13,8 +13,12 @@ class AwsS3Service < ApiService
 
   include AwsS3
 
-  # Include send/receive modules from "app/services/aws_s3_service/**.rb".
-  include_submodules(self)
+  include AwsS3Service::Properties
+  include AwsS3Service::Action
+  include AwsS3Service::Common
+  include AwsS3Service::Definition
+  include AwsS3Service::Status
+  include AwsS3Service::Testing
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

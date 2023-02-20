@@ -13,12 +13,15 @@ class Upload < ApplicationRecord
 
   include ActiveModel::Validations
 
-  include Emma::Common
-
   include Model
 
-  # Include modules from "app/models/upload/**.rb".
-  include_submodules(self)
+  include Upload::BulkMethods
+  include Upload::EmmaDataMethods
+  include Upload::FileMethods
+  include Upload::IdentifierMethods
+  include Upload::LookupMethods
+  include Upload::RenderMethods
+  include Upload::WorkflowMethods
 
   # ===========================================================================
   # :section: ActiveRecord ModelSchema
