@@ -16,7 +16,7 @@ import { compact, deepDup, hasKey, toObject } from '../shared/objects';
 import { randomizeName }                      from '../shared/random';
 import { timestamp }                          from '../shared/time';
 import { MultiUploader }                      from '../shared/uploader';
-import { cancelAction }                       from '../shared/url';
+import { asParams, cancelAction, makeUrl }    from '../shared/url';
 import {
     isDefined,
     isEmpty,
@@ -5190,6 +5190,7 @@ appSetup(MODULE, function() {
             const current = manifestId();
             if (!current) {
                 $grid.attr(MANIFEST_ATTR, data.id);
+                manifestIdChanged(data.id);
             } else if (data.id !== current) {
                 _error(`${func}: id ${data.id} !== current ${current}`);
                 return;
@@ -5198,6 +5199,35 @@ appSetup(MODULE, function() {
         if (data.name) {
             $title_text.text(data.name);
         }
+    }
+
+    /**
+     * Update the Submit button URL.
+     *
+     * @param {string} [id]           Default: {@link manifestId}.
+     * @param {string} [action]       Base server controller endpoint name.
+     */
+    function manifestIdChanged(id, action = 'remit') {
+        const new_id  = id || manifestId();
+        const current = $submission.attr('href') || '';
+        const [path, ...params] = current.split('?');
+
+        const parts   = path.split('/');
+        if ([`${action}_select`, 'SELECT'].includes(parts.at(-1))) {
+            parts.pop();
+        }
+        if (parts.at(-1) !== action) {
+            parts.push(action);
+        }
+        parts.push(new_id);
+        const new_path = parts.join('/');
+
+        const new_params = asParams(params.join('?'));
+        delete new_params.selected;
+        delete new_params.id;
+
+        const new_url = makeUrl(new_path, new_params);
+        $submission.attr('href', new_url);
     }
 
     // ========================================================================

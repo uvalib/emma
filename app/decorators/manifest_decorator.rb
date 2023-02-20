@@ -576,7 +576,10 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def submission_button(**opt)
-    opt[:url] ||= path_for(object, action: :remit)
+    unless opt[:url]
+      id = opt[:'data-manifest'] || object.id
+      opt[:url] = id ? remit_path(id: id) : remit_select_path
+    end
     form_button(:submission, **opt)
   end
 

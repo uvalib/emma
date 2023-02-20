@@ -1033,7 +1033,7 @@ appSetup(MODULE, function() {
          * @param {SubmissionRecords} list
          */
         function startMonitoring(list) {
-            const record = list.slice(-1)[0] || {};
+            const record = list.at(-1) || {};
             bulkOpResultsNextId($results, record);
             bulkOpResultsStartTime($results);
             scheduleCheckBulkOpResults($results);
