@@ -9,7 +9,8 @@
 # For build-base:
 # @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
-FROM public.ecr.aws/docker/library/ruby:3.2.1-alpine3.17
+# NOTE: The Ruby version is intentionally clamped to this point release.
+FROM public.ecr.aws/docker/library/ruby:3.2.0-alpine3.17
 
 RUN apk upgrade && \
     apk add --no-cache \
