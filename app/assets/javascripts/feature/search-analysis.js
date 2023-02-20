@@ -10,7 +10,7 @@ import { rgbColor, rgbColorInverse }    from '../shared/color';
 import { selector, toggleHidden }       from '../shared/css';
 import { DB }                           from '../shared/database';
 import { handleClickAndKeypress }       from '../shared/events';
-import { compact }                      from '../shared/objects';
+import { compact, hasKey }              from '../shared/objects';
 import { CallbackQueue }                from '../shared/queue';
 import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random';
 import { SessionState, removeByPrefix } from '../shared/session-state';
@@ -720,13 +720,13 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         const name = DB_NAME;
         const db   = DB.getProperties();
 
-        if (!DB_STORES.hasOwnProperty(store)) {
+        if (!hasKey(DB_STORES, store)) {
             console.error(`${func}: invalid store name "${store}"`);
 
         } else if (db.name !== name) {
             console.error(`${func}: must run setupDatabase() first`);
 
-        } else if (!(db.template || {}).hasOwnProperty(store)) {
+        } else if (!hasKey(db.template, store)) {
             console.error(`${func}: "${store}" not in database "${name}"`);
 
         } else {

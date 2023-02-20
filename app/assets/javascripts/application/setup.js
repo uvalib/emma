@@ -9,6 +9,7 @@
 import { AppDebug }  from './debug';
 import { BaseClass } from '../shared/base-class';
 import { isEmpty }   from '../shared/definitions';
+import { hasKey }    from '../shared/objects';
 
 
 const MODULE = 'Setup';
@@ -241,9 +242,9 @@ export function appEventListener(target, type, callback, options) {
     const func = 'appEventListener';
     const obj  = (typeof options === 'object') && { ...options };
     let listen = true;
-    if (obj?.hasOwnProperty('listen')) {
-        listen = obj['listen'];
-        delete obj['listen'];
+    if (hasKey(obj, 'listen')) {
+        listen = obj.listen;
+        delete obj.listen;
     }
     const ev_options     = appEventOptions(obj || options);
     const [ev_key, node] = appEventTarget(target, func);

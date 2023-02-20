@@ -1,22 +1,22 @@
 // app/assets/javascripts/controllers/manifest-edit.js
 
 
-import { AppDebug }                       from '../application/debug';
-import { appSetup }                       from '../application/setup';
-import { arrayWrap }                      from '../shared/arrays';
-import { Emma }                           from '../shared/assets';
-import { HIDDEN, selector, toggleHidden } from '../shared/css';
-import * as Field                         from '../shared/field';
-import { turnOffAutocompleteIn }          from '../shared/form';
-import { InlinePopup }                    from '../shared/inline-popup';
-import { LookupModal }                    from '../shared/lookup-modal';
-import { LookupRequest }                  from '../shared/lookup-request';
-import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
-import { compact, deepDup, toObject }     from '../shared/objects';
-import { randomizeName }                  from '../shared/random';
-import { timestamp }                      from '../shared/time';
-import { MultiUploader }                  from '../shared/uploader';
-import { cancelAction }                   from '../shared/url';
+import { AppDebug }                           from '../application/debug';
+import { appSetup }                           from '../application/setup';
+import { arrayWrap }                          from '../shared/arrays';
+import { Emma }                               from '../shared/assets';
+import { HIDDEN, selector, toggleHidden }     from '../shared/css';
+import * as Field                             from '../shared/field';
+import { turnOffAutocompleteIn }              from '../shared/form';
+import { InlinePopup }                        from '../shared/inline-popup';
+import { LookupModal }                        from '../shared/lookup-modal';
+import { LookupRequest }                      from '../shared/lookup-request';
+import { ModalHideHooks, ModalShowHooks }     from '../shared/modal_hooks';
+import { compact, deepDup, hasKey, toObject } from '../shared/objects';
+import { randomizeName }                      from '../shared/random';
+import { timestamp }                          from '../shared/time';
+import { MultiUploader }                      from '../shared/uploader';
+import { cancelAction }                       from '../shared/url';
 import {
     isDefined,
     isEmpty,
@@ -1249,10 +1249,10 @@ appSetup(MODULE, function() {
                 return;
             }
         }
-        if (data.hasOwnProperty('row')) {
+        if (hasKey(data, 'row')) {
             setDbRowValue($row, data.row);
         }
-        if (data.hasOwnProperty('delta')) {
+        if (hasKey(data, 'delta')) {
             setDbRowDelta($row, data.delta);
         }
         if (data.deleting) {
@@ -3262,14 +3262,14 @@ appSetup(MODULE, function() {
      */
     function statusData(data) {
         if (isEmpty(data)) { return {} }
-        if (data.hasOwnProperty('last_saved')) {
+        if (hasKey(data, 'last_saved')) {
             if (data.ready_status === 'ready') {
                 const last_saved = timestamp(data.last_saved);
                 const updated_at = timestamp(data.updated_at);
                 if (!last_saved || (last_saved < updated_at)) {
                     data.ready_status = 'unsaved';
                 }
-            } else if (!data.hasOwnProperty('ready_status')) {
+            } else if (!hasKey(data, 'ready_status')) {
                 const last_saved = timestamp(data.last_saved);
                 const updated_at = timestamp(data.updated_at);
                 if (last_saved > updated_at) {
@@ -3434,7 +3434,7 @@ appSetup(MODULE, function() {
         rowDetailsItems(target).each((_, item) => {
             const $item = $(item);
             const field = $item.attr(FIELD_ATTR);
-            if (field && data.hasOwnProperty(field)) {
+            if (hasKey(data, field)) {
                 const value = data[field] || BLANK_DETAIL_VALUE;
                 $item.text(value);
             }
@@ -5326,12 +5326,12 @@ appSetup(MODULE, function() {
      */
     function valueAndField(data, field) {
         if (isMissing(data) || isMissing(field)) { return [] }
-        if (data.hasOwnProperty(field)) { return [data[field], field] }
+        if (hasKey(data, field)) { return [data[field], field] }
         let fld;
         $.each(FIELD_MAP, (name1, name2) => {
-            if ((field === name1) && data.hasOwnProperty(name2)) {
+            if ((field === name1) && hasKey(data, name2)) {
                 fld = name2;
-            } else if ((field === name2) && data.hasOwnProperty(name1)) {
+            } else if ((field === name2) && hasKey(data, name1)) {
                 fld = name1;
             }
             return !fld; // break loop if a data field was identified

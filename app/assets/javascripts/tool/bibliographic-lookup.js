@@ -16,7 +16,7 @@ import { LookupModal }                    from '../shared/lookup-modal';
 import { LookupRequest }                  from '../shared/lookup-request';
 import { ModalDialog }                    from '../shared/modal-dialog';
 import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
-import { dupObject, toObject }            from '../shared/objects';
+import { dupObject, hasKey, toObject }    from '../shared/objects';
 import { randomizeName }                  from '../shared/random';
 import { camelCase }                      from '../shared/strings';
 import {
@@ -868,7 +868,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const result   = {};
         $.each(current, (field, value) => {
             let use_value = true;
-            if (original.hasOwnProperty(field)) {
+            if (hasKey(original, field)) {
                 const orig = toInputValue(original[field]);
                 const curr = toInputValue(value);
                 use_value  = (curr !== orig);

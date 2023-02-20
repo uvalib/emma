@@ -3,9 +3,9 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }      from '../application/debug';
-import { objectEntries } from './objects';
-import { asDateTime }    from './time';
+import { AppDebug }              from '../application/debug';
+import { hasKey, objectEntries } from './objects';
+import { asDateTime }            from './time';
 
 
 AppDebug.file('shared/strings');
@@ -137,7 +137,7 @@ export function asString(item, limit) {
                 result = item.map(v => asString(v)).join(', ');
                 [left, right] = ['[',']'];
 
-            } else if (item.hasOwnProperty('originalEvent')) {
+            } else if (hasKey(item, 'originalEvent')) {
                 // JSON.stringify fails with "cyclic object value" for jQuery
                 // events.
                 result = asString(item.originalEvent);

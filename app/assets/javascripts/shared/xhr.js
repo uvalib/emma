@@ -1,12 +1,12 @@
 // app/assets/javascripts/shared/xhr.js
 
 
-import { AppDebug }     from '../application/debug';
-import { isMissing }    from './definitions';
-import { HTTP }         from './http';
-import { fromJSON }     from './objects';
-import { secondsSince } from './time';
-import { makeUrl }      from './url';
+import { AppDebug }         from '../application/debug';
+import { isMissing }        from './definitions';
+import { HTTP }             from './http';
+import { fromJSON, hasKey } from './objects';
+import { secondsSince }     from './time';
+import { makeUrl }          from './url';
 
 
 const MODULE = 'XHR';
@@ -141,19 +141,19 @@ export function xmit(method, path, prm, opt, cb) {
     let params = prm;
     if (typeof prm === 'object') {
         params = { ...prm };
-        if (params.hasOwnProperty('settings')) {
+        if (hasKey(params, 'settings')) {
             settings = { ...settings, ...params.settings };
             delete params.settings;
         }
     }
 
     let ignore_body;
-    if (settings.hasOwnProperty('_ignoreBody')) {
+    if (hasKey(settings, '_ignoreBody')) {
         ignore_body = settings._ignoreBody;
         delete settings._ignoreBody;
     }
 
-    if (settings.hasOwnProperty('method')) {
+    if (hasKey(settings, 'method')) {
         settings.type ||= settings.method;
         delete settings.method;
     }

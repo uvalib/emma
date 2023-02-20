@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/json.js
 
 
-import { AppDebug }           from '../application/debug';
-import { maxSize }            from './arrays';
-import { isEmpty }            from './definitions';
-import { isObject, toObject } from './objects';
-import { asDateTime }         from './time';
+import { AppDebug }                     from '../application/debug';
+import { maxSize }                      from './arrays';
+import { isEmpty }                      from './definitions';
+import { asObject, isObject, toObject } from './objects';
+import { asDateTime }                   from './time';
 
 
 AppDebug.file('shared/json');
@@ -50,8 +50,9 @@ export function renderJson(data, indent = DEF_INDENT) {
  */
 function alignKeys(item) {
     if (isObject(item)) {
-        const max_width = maxSize(Object.keys(item));
-        return toObject(item, (k, v) => {
+        const object    = asObject(item);
+        const max_width = maxSize(Object.keys(object));
+        return toObject(object, (k, v) => {
             const space = Math.max(0, (max_width - k.length));
             const key   = `${k}` + ' '.repeat(space);
             const value = alignKeys(v);

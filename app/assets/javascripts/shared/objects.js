@@ -116,14 +116,14 @@ export function deepDup(item) {
  * @returns {T}
  */
 export function dup(item, deep) {
-    if (Array.isArray(item)) {
+    if (typeof item === 'string') { return `${item}` }
+    if (typeof item !== 'object') { return item }
+    if (typeof item.toObject === 'function') {
+        return item.toObject(); // @note Expected to be a deep copy.
+    } else if (Array.isArray(item)) {
         return deep ? item.map(v => dup(v, deep)) : [...item];
-
-    } else if (isObject(item)) {
-        return deep ? $.extend(true, {}, item) : { ...item };
-
     } else {
-        return (typeof item === 'string') ? `${item}` : item;
+        return deep ? $.extend(true, {}, item) : { ...item };
     }
 }
 
@@ -145,6 +145,18 @@ export function isObject(item, or_array) {
 }
 
 /**
+ * If *item* is a class instance return the value of its toObject() method
+ * (if it exists) or the item itself otherwise.
+ *
+ * @param {object} item
+ *
+ * @returns {object|undefined}
+ */
+export function asObject(item) {
+    return isObject(item) ? (item.toObject?.() || item) : undefined;
+}
+
+/**
  * Make a duplicate of the given object.
  *
  * @param {object|undefined} item
@@ -160,24 +172,25 @@ export function dupObject(item, shallow) {
  * Create an Object from array of key-value pairs, or from an array of keys
  * and a mapper function which returns a value for the given key.
  *
- * If *src* is an object or an array of key-value pairs, *map_fn* is optional.
+ * If *arg* is an object or an array of key-value pairs, *map_fn* is optional.
  * By default, *map_fn* is assumed to return a key-value pair;  if *pair_out*
  * is set to *false* then *map_fn* is assumed to emit a value only.
  *
- * If *src* is an array of single values, *map_fn* is required.  By default,
+ * If *arg* is an array of single values, *map_fn* is required.  By default,
  * *map_fn* is assumed to emit a value only; if *pair_out* is set to *true*
  * then *map_fn* is assumed to return a key-value pair.
  *
  * Invalid pairs elements are silently discarded.
  *
- * @param {string[]|[string,*][]|object}        src
+ * @param {string[]|[string,*][]|object}        arg
  * @param {function(string)|function(string,*)} [map_fn]
  * @param {boolean}                             [pair_out]
  *
  * @returns {object}
  */
-export function toObject(src, map_fn, pair_out) {
+export function toObject(arg, map_fn, pair_out) {
     const func   = 'toObject';
+    const src    = asObject(arg) || arg;
     const object = isObject(src);
     const mapper = (typeof map_fn === 'function') ? map_fn : undefined;
     const arity  = mapper?.length || -1;
@@ -187,7 +200,7 @@ export function toObject(src, map_fn, pair_out) {
     } else if (mapper && (arity < 1)) {
         console.error(`${func}: mapper must take 1 or 2 args:`, mapper);
     } else {
-        const pair = kv => Array.isArray(kv) && (kv.length === 2) && !!kv[0];
+        const pair = (kv) => Array.isArray(kv) && (kv.length === 2) && !!kv[0];
         const in1  = (arity === 1);
         const in2  = (arity >=  2);
         const out1 = (pair_out === false);
@@ -212,6 +225,17 @@ export function toObject(src, map_fn, pair_out) {
     return result || {};
 }
 
+/**
+ * Create a new object with keys/values swapped.
+ *
+ * @param {object} obj
+ *
+ * @returns {object}
+ */
+export function invert(obj) {
+    return toObject(obj, (k,v) => [v,k]);
+}
+
 // ============================================================================
 // Functions - returning Array
 // ============================================================================
@@ -224,11 +248,7 @@ export function toObject(src, map_fn, pair_out) {
  * @returns {[string, any][]}
  */
 export function objectEntries(item) {
-    if (isObject(item)) {
-        return Object.entries(item).filter(([k,_]) => item.hasOwnProperty(k));
-    } else {
-        return [];
-    }
+    return Object.entries(asObject(item) || {});
 }
 
 // ============================================================================
@@ -265,4 +285,33 @@ export function equivalent(item1, item2) {
         result = (item1 === item2);
     }
     return result;
+}
+
+/**
+ * Indicate whether the object has an entry with the given key.
+ *
+ * @param {object}        obj
+ * @param {string|number} key
+ *
+ * @returns {boolean}
+ */
+export function hasKey(obj, key) {
+    return !!obj && !!key && Object.hasOwn(obj, key);
+}
+
+/**
+ * Remove the *key* entry from *obj* and return its value.
+ *
+ * @param {object} obj
+ * @param {*}      key
+ *
+ * @returns {*|undefined}
+ */
+export function remove(obj, key) {
+    let value;
+    if (hasKey(obj, key)) {
+        value = obj[key];
+        delete obj[key];
+    }
+    return value;
 }

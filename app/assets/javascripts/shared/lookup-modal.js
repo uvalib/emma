@@ -16,7 +16,6 @@ import { renderJson }                      from './json';
 import { LookupRequest }                   from './lookup-request';
 import { ModalDialog }                     from './modal-dialog';
 import { ModalHideHooks, ModalShowHooks }  from './modal_hooks';
-import { deepFreeze, dupObject, toObject } from './objects';
 import { randomizeName }                   from './random';
 import { camelCase }                       from './strings';
 import {
@@ -33,6 +32,12 @@ import {
     handleHoverAndFocus,
     isEvent,
 } from './events';
+import {
+    deepFreeze,
+    dupObject,
+    hasKey,
+    toObject,
+} from './objects';
 
 
 const MODULE = 'LookupModal';
@@ -1266,7 +1271,7 @@ export class LookupModal extends ModalDialog {
         const result   = {};
         $.each(current, (field, value) => {
             let use_value = true;
-            if (original.hasOwnProperty(field)) {
+            if (hasKey(original, field)) {
                 const orig = this.toInputValue(original[field]);
                 const curr = this.toInputValue(value);
                 use_value  = (curr !== orig);

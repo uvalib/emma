@@ -4,7 +4,7 @@
 import { AppDebug }                     from '../application/debug';
 import { arrayWrap }                    from './arrays';
 import { isDefined, isEmpty, notEmpty } from './definitions';
-import { fromJSON }                     from './objects';
+import { fromJSON, hasKey }             from './objects';
 import { asString }                     from './strings';
 
 
@@ -671,7 +671,7 @@ export const DB = (function() {
      * @returns {string|undefined}
      */
     function defaultStore(new_name) {
-        if (new_name && !store_template.hasOwnProperty(new_name)) {
+        if (new_name && !hasKey(store_template, new_name)) {
             dbError('defaultStore', `invalid store name "${new_name}"`);
         } else if (new_name) {
             default_store = new_name;
