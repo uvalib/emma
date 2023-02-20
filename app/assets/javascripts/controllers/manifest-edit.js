@@ -94,66 +94,89 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * ManifestItem
+     * @typedef {EmmaData} ManifestItemData
      *
-     * @note rem_complete is not passed as a boolean
+     * @see ManifestItem
+     *
+     * @property {number}  [id]
+     * @property {string}  [manifest_id]
+     * @property {number}  row
+     * @property {number}  delta
+     * @property {boolean} editing
+     * @property {boolean} deleting
+     * @property {string}  last_saved
+     * @property {string}  last_lookup
+     * @property {string}  last_submit
+     * @property {string}  created_at
+     * @property {string}  updated_at
+     * @property {string}  data_status
+     * @property {string}  file_status
+     * @property {string}  ready_status
+     * @property {string}  repository
+     * @property {object}  backup
+     * @property {string}  last_indexed
+     * @property {string}  submission_id
+     */
+
+    /**
+     * @typedef {object} ManifestItem
      *
      * @see ManifestItemData
      *
-     * @typedef {{
-     *      id:                     number,
-     *      manifest_id:            string,
-     *      row:                    number,
-     *      delta:                  number,
-     *      editing:                boolean,
-     *      deleting:               boolean,
-     *      last_saved?:            string,
-     *      last_lookup?:           string,
-     *      last_submit?:           string,
-     *      created_at:             string,
-     *      updated_at:             string,
-     *      data_status:            string,
-     *      file_status:            string,
-     *      ready_status:           string,
-     *      file_data?:             object,
-     *      repository:             string,
-     *      emma_publicationDate:   singleString,
-     *      emma_formatFeature:     multiString,
-     *      emma_version:           singleString,
-     *      bib_series:             singleString,
-     *      bib_seriesType:         singleString,
-     *      bib_seriesPosition:     singleString,
-     *      dc_title:               singleString,
-     *      dc_creator:             multiString,
-     *      dc_identifier:          multiString,
-     *      dc_publisher:           singleString,
-     *      dc_relation:            multiString,
-     *      dc_language:            multiString,
-     *      dc_rights:              singleString,
-     *      dc_description:         singleString,
-     *      dc_format:              singleString,
-     *      dc_type:                singleString,
-     *      dc_subject:             multiString,
-     *      dcterms_dateAccepted:   singleString,
-     *      dcterms_dateCopyright:  singleString,
-     *      s_accessibilityFeature: multiString,
-     *      s_accessibilityControl: multiString,
-     *      s_accessibilityHazard:  multiString,
-     *      s_accessMode:           multiString,
-     *      s_accessModeSufficient: multiString,
-     *      s_accessibilitySummary: singleString,
-     *      rem_source:             singleString,
-     *      rem_metadataSource:     multiString,
-     *      rem_remediatedBy:       multiString,
-     *      rem_complete:           singleString,
-     *      rem_coverage:           singleString,
-     *      rem_remediatedAspects:  multiString,
-     *      rem_textQuality:        singleString,
-     *      rem_status:             singleString,
-     *      rem_remediationDate:    singleString,
-     *      rem_comments:           singleString,
-     *      backup?:                object,
-     * }} ManifestItem
+     * @property {number}       id
+     * @property {string}       manifest_id
+     * @property {number}       row
+     * @property {number}       delta
+     * @property {boolean}      editing
+     * @property {boolean}      deleting
+     * @property {string}       [last_saved]
+     * @property {string}       [last_lookup]
+     * @property {string}       [last_submit]
+     * @property {string}       created_at
+     * @property {string}       updated_at
+     * @property {string}       data_status
+     * @property {string}       file_status
+     * @property {string}       ready_status
+     * @property {object}       [file_data]
+     * @property {string}       repository
+     * @property {singleString} emma_publicationDate
+     * @property {multiString}  emma_formatFeature
+     * @property {singleString} emma_version
+     * @property {singleString} bib_series
+     * @property {singleString} bib_seriesType
+     * @property {singleString} bib_seriesPosition
+     * @property {singleString} dc_title
+     * @property {multiString}  dc_creator
+     * @property {multiString}  dc_identifier
+     * @property {singleString} dc_publisher
+     * @property {multiString}  dc_relation
+     * @property {multiString}  dc_language
+     * @property {singleString} dc_rights
+     * @property {singleString} dc_description
+     * @property {singleString} dc_format
+     * @property {singleString} dc_type
+     * @property {multiString}  dc_subject
+     * @property {singleString} dcterms_dateAccepted
+     * @property {singleString} dcterms_dateCopyright
+     * @property {multiString}  s_accessibilityFeature
+     * @property {multiString}  s_accessibilityControl
+     * @property {multiString}  s_accessibilityHazard
+     * @property {multiString}  s_accessMode
+     * @property {multiString}  s_accessModeSufficient
+     * @property {singleString} s_accessibilitySummary
+     * @property {singleString} rem_source
+     * @property {multiString}  rem_metadataSource
+     * @property {multiString}  rem_remediatedBy
+     * @property {singleString} rem_complete            NOTE: not boolean
+     * @property {singleString} rem_coverage
+     * @property {multiString}  rem_remediatedAspects
+     * @property {singleString} rem_textQuality
+     * @property {singleString} rem_status
+     * @property {singleString} rem_remediationDate
+     * @property {singleString} rem_comments
+     * @property {object}       [backup]
+     * @property {string}       [last_indexed]
+     * @property {string}       [submission_id]
      */
 
     /**
@@ -2539,31 +2562,6 @@ appSetup(MODULE, function() {
     // ========================================================================
     // Functions - row - uploader
     // ========================================================================
-
-    /**
-     * ManifestItemData
-     *
-     * @see ManifestItem
-     *
-     * @typedef {{
-     *      id?:            number,
-     *      manifest_id?:   string,
-     *      row?:           number,
-     *      delta?:         number,
-     *      editing?:       boolean,
-     *      deleting?:      boolean,
-     *      last_saved?:    string,
-     *      last_lookup?:   string,
-     *      last_submit?:   string,
-     *      created_at?:    string,
-     *      updated_at?:    string,
-     *      data_status?:   string,
-     *      file_status?:   string,
-     *      ready_status?:  string,
-     *      repository?:    string,
-     *      backup?:        object,
-     * } & EmmaData} ManifestItemData
-     */
 
     /**
      * @typedef { ManifestItemData | {error: string} } ManifestItemDataOrError

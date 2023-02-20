@@ -338,6 +338,7 @@ class ManifestItemDecorator < BaseDecorator
       updated_at
       last_saved
       last_lookup
+      last_indexed
       last_submit
     ].freeze
     HIDDEN_FIELDS = [*ManifestItem::STATUS_COLUMNS, *DETAILS_FIELDS].freeze

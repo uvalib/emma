@@ -192,6 +192,12 @@ module ManifestItem::StatusMethods
   #
   def in_index?: (?(ManifestItem|symHash|nil) item) -> bool
 
+  # Indicate whether the item is now associated with an EMMA entry.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def submitted?: (?(ManifestItem|symHash|nil) item) -> bool
+
   private
 
   def self.included: (Module base) -> void

@@ -360,7 +360,21 @@ module ManifestItem::StatusMethods
   #
   def in_index?(item = nil)
     item ||= default_to_self
-    false # TODO: How does the ManifestItem know it's in the index?
+    last_saved   = item[:last_saved]
+    last_indexed = item[:last_indexed]
+    last_indexed.present? && last_saved.present? && (last_indexed > last_saved)
+  end
+
+  # Indicate whether the item is now associated with an EMMA entry.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  def submitted?(item = nil)
+    item ||= default_to_self
+    item[:submission_id].present? &&
+      (last_submit  = item[:last_submit]).present? &&
+      (last_indexed = item[:last_indexed]).present? &&
+      (last_submit > last_indexed)
   end
 
   # ===========================================================================

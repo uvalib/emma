@@ -798,3 +798,30 @@ en:
           label:        'Record Backup'
           tooltip:      'A copy of record fields to support row editing'
           type:         json
+
+        last_indexed:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Indexed'
+          tooltip:      'Time of index ingest when this item was submitted'
+          notes_html:   |
+            <p>
+              This is an internal record value holding the last time
+              (in ISO 8601 format)
+              that the record was presented to index ingest.
+            </p>
+          type:         datetime
+
+        submission_id:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Submission ID'
+          tooltip:      'The EMMA entry created by submission of this item'
+          notes_html:   |
+            <p>
+              This is an internal record value holding the SID (submission ID)
+              of the EMMA entry created from this manifest item.
+            </p>
+          type:         datetime

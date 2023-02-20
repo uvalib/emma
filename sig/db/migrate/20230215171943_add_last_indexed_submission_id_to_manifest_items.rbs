@@ -1,0 +1,3 @@
+class AddLastIndexedSubmissionIdToManifestItems
+  def change: () -> untyped
+end
