@@ -154,7 +154,7 @@ module Upload::WorkflowMethods
   #
   # @return [*]
   #
-  def dynamic_get_field: ((Symbol|String) column) -> untyped
+  def get_field_direct: ((Symbol|String) column) -> untyped
 
   # Directly update a database column, by-passing validations and other
   # callbacks.
@@ -168,7 +168,7 @@ module Upload::WorkflowMethods
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #
-  def dynamic_set_field: ((Symbol|String) column, untyped new_value) -> untyped
+  def set_field_direct: ((Symbol|String) column, untyped new_value) -> untyped
 
   # Directly update multiple database columns, by-passing validations and
   # other callbacks.
@@ -181,7 +181,7 @@ module Upload::WorkflowMethods
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #
-  def dynamic_set_fields: (symHash values) -> void
+  def set_fields_direct: (symHash values) -> void
 
   # Indicate whether this record is involved in a workflow step related to
   # the creation of a new EMMA entry.

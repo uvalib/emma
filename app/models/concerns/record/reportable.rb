@@ -118,7 +118,7 @@ module Record::Reportable
   # @return [*]
   #
   def get_report_column(*, col: REPORT_COLUMN, **)
-    dynamic_get_field(col)
+    get_field_direct(col)
   end
 
   # Directly update the contents of the current record's #REPORT_COLUMN.
@@ -133,7 +133,7 @@ module Record::Reportable
   # @return [Boolean]
   #
   def set_report_column(value, meth: nil, no_raise: true, col: REPORT_COLUMN)
-    result = dynamic_set_field(col, value) and return result
+    result = set_field_direct(col, value) and return result
     result = result.nil?
     err = result ? 'record deleted' : "failed to update with #{value.inspect}"
     Log.warn do

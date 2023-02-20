@@ -449,7 +449,7 @@ module ManifestItemConcern
         if keep_date.nil?
           keep_date = old_values.all? { |k, v| record[k].to_s == v.to_s }
         end
-        record.dynamic_set_field(:updated_at, updated_at) if keep_date
+        record.set_field_direct(:updated_at, updated_at) if keep_date
       end
     end
   end

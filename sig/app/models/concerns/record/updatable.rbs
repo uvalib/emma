@@ -51,7 +51,7 @@ module Record::Updatable
     # NOTE: The imperative methods update an entry that exists in the database
     # immediately without needing to use #save.
     #
-    # @see #dynamic_set_fields
+    # @see #set_fields_direct
     #
     def enum_methods: ((symHash|Symbol|String) cols, ?(Array[Symbol|String]|nil) vals) -> void
   end
@@ -76,7 +76,7 @@ module Record::Updatable
     #
     # @return [*]
     #
-    def dynamic_get_field: ((Symbol|String) column) -> untyped
+    def get_field_direct: ((Symbol|String) column) -> untyped
 
     # Directly update a database column, by-passing validations and other
     # callbacks.
@@ -88,7 +88,7 @@ module Record::Updatable
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
     #
-    def dynamic_set_field: ((Symbol|String) column, untyped new_value) -> (bool | nil)
+    def set_field_direct: ((Symbol|String) column, untyped new_value) -> (bool | nil)
 
     # Directly update multiple database columns, by-passing validations and
     # other callbacks.
@@ -103,7 +103,7 @@ module Record::Updatable
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
     #
-    def dynamic_set_fields: (symHash pairs) -> (bool | nil)
+    def set_fields_direct: (symHash pairs) -> (bool | nil)
   end
 
   private

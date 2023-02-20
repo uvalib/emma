@@ -72,7 +72,7 @@ module Record::Updatable
     # NOTE: The imperative methods update an entry that exists in the database
     # immediately without needing to use #save.
     #
-    # @see #dynamic_set_fields
+    # @see #set_fields_direct
     #
     def enum_methods(cols, vals = nil)
       columns_and_values = cols.is_a?(Hash) ? cols : { cols => vals }
@@ -102,7 +102,7 @@ module Record::Updatable
           end
 
           def set_#{column}!(value, **)
-            dynamic_set_fields(#{column}: value).present?
+            set_fields_direct(#{column}: value).present?
           end
 
           def clear_#{column}?(...)
@@ -154,7 +154,7 @@ module Record::Updatable
     #
     # @return [*]
     #
-    def dynamic_get_field(column)                                               # NOTE: from Upload::WorkflowMethods
+    def get_field_direct(column)                                               # NOTE: from Upload::WorkflowMethods
       if new_record?
         self[column]
       else
@@ -172,8 +172,8 @@ module Record::Updatable
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
     #
-    def dynamic_set_field(column, new_value)                                    # NOTE: from Upload::WorkflowMethods
-      dynamic_set_fields(column => new_value)
+    def set_field_direct(column, new_value)                                    # NOTE: from Upload::WorkflowMethods
+      set_fields_direct(column => new_value)
     end
 
     # Directly update multiple database columns, by-passing validations and
@@ -189,7 +189,7 @@ module Record::Updatable
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
     #
-    def dynamic_set_fields(pairs)                                               # NOTE: from Upload::WorkflowMethods
+    def set_fields_direct(pairs)                                               # NOTE: from Upload::WorkflowMethods
       if readonly?
         send(:_raise_readonly_record_error)
       elsif destroyed?

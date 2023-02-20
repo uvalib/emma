@@ -190,7 +190,7 @@ module Upload::WorkflowMethods
   # @return [Symbol]  If the field was *nil* it will come back as :''.
   #
   def get_phase                                                                 # NOTE: not relevant to Entry/Phase/Action.
-    dynamic_get_field(phase_column).to_s.to_sym
+    get_field_direct(phase_column).to_s.to_sym
   end
 
   # Set the current real-time value of the record's workflow phase.
@@ -210,7 +210,7 @@ module Upload::WorkflowMethods
       "Upload##{__method__}: #{old_phase.inspect} -> #{new_phase.inspect}"
     end
     unless new_phase == old_phase
-      dynamic_set_field(phase_column, new_phase.presence)
+      set_field_direct(phase_column, new_phase.presence)
     end
     new_phase.to_sym
   end
@@ -222,7 +222,7 @@ module Upload::WorkflowMethods
   # @return [Symbol]  If the field was *nil* it will come back as :''.
   #
   def get_state(column = nil)                                                   # NOTE: not relevant to Entry/Phase/Action.
-    dynamic_get_field(column || PRIMARY_STATE_COLUMN).to_s.to_sym
+    get_field_direct(column || PRIMARY_STATE_COLUMN).to_s.to_sym
   end
 
   # Set the current real-time value of the indicated workflow state field.
@@ -246,7 +246,7 @@ module Upload::WorkflowMethods
     end
     unless new_state == old_state
       # noinspection RubyMismatchedArgumentType
-      dynamic_set_field(column, new_state.presence)
+      set_field_direct(column, new_state.presence)
     end
     new_state.to_sym
   end
@@ -267,7 +267,7 @@ module Upload::WorkflowMethods
   #
   # @return [*]
   #
-  def dynamic_get_field(column)                                                 # NOTE: to Record::Updatable::InstanceMethods
+  def get_field_direct(column)                                                 # NOTE: to Record::Updatable::InstanceMethods
     if new_record?
       self[column]
     else
@@ -287,7 +287,7 @@ module Upload::WorkflowMethods
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #
-  def dynamic_set_field(column, new_value)                                      # NOTE: to Record::Updatable::InstanceMethods
+  def set_field_direct(column, new_value)                                      # NOTE: to Record::Updatable::InstanceMethods
     if new_record?
       self[column] = new_value
     else
@@ -307,7 +307,7 @@ module Upload::WorkflowMethods
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #
-  def dynamic_set_fields(values)                                                # NOTE: to Record::Updatable::InstanceMethods
+  def set_fields_direct(values)                                                # NOTE: to Record::Updatable::InstanceMethods
     if new_record?
       values.each_pair { |column, value| self[column] = value }
     else
@@ -474,7 +474,7 @@ module Upload::WorkflowMethods
     __debug_items(binding)
     opt[:edit_file_data] ||= nil
     opt[:edit_emma_data] ||= emma_data&.dup
-    dynamic_set_fields(opt)
+    set_fields_direct(opt)
   end
 
   # Finishing an editing session by updating fields with the information in
