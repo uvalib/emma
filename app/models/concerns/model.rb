@@ -295,7 +295,7 @@ module Model
   #
   # @type [Array<Symbol>]
   #
-  BASE_DIRECTIVE = %i[base base_config base_configuration].freeze,
+  BASE_DIRECTIVE = %i[base base_config base_configuration].freeze
 
   # Keys under "emma.*.record" beginning with an underscore, which define
   # display fields which are filled dynamically.
