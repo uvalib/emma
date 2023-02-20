@@ -4,17 +4,17 @@ module Emma::Common::HashMethods
   # - Second, a copy of the original *hash* without the those keys/values.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol>]                           keys
+  # @param [Array<Symbol,String,Array>]              keys
   #
   # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
-  def partition_hash: ((prmHash|nil) hash, *Symbol keys) ?{ () -> untyped } -> [symHash, symHash]
+  def partition_hash: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]) keys) -> [symHash, symHash]
 
   # Retain the elements identified by *keys* in *hash* (that is, extract all
   # elements except the ones matching those keys).
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol>]                           keys
+  # @param [Array<Symbol,String,Array>]              keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -22,12 +22,12 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  def remainder_hash!: ((prmHash|nil) hash, *Symbol keys) ?{ () -> untyped } -> symHash
+  def remainder_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]) keys) -> symHash
 
   # Extract the elements identified by *keys* from *hash*.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol>]                           keys
+  # @param [Array<Symbol,String,Array>]              keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -35,14 +35,11 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  def extract_hash!: ((prmHash|nil) hash, *Symbol keys) ?{ () -> untyped } -> symHash
-
-  # Extract the elements identified by *keys* from *hash*.
-  alias partition_hash! extract_hash!
+  def extract_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]) keys) -> symHash
 
   private
 
-  def gather_keys: (*Symbol) ?{ () -> (Symbol|String|Array[Symbol|String]) } -> symArray
+  def gather_keys: (*(Symbol|String|Array[Symbol|String]) keys) ?{ () -> (Symbol|String|Array[Symbol|String]) } -> symArray
 
   public
 

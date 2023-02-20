@@ -18,12 +18,12 @@ module Emma::Common::HashMethods
   # - Second, a copy of the original *hash* without the those keys/values.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol>]                           keys
+  # @param [Array<Symbol,String,Array>]              keys
   #
   # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
-  def partition_hash(hash, *keys, &block)
-    keys = gather_keys(*keys, &block)
+  def partition_hash(hash, *keys)
+    keys = gather_keys(*keys)
     hash = normalize_hash(hash)
     return (matched = hash.slice(*keys)), hash.except(*matched.keys)
   end
@@ -32,7 +32,7 @@ module Emma::Common::HashMethods
   # elements except the ones matching those keys).
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol>]                           keys
+  # @param [Array<Symbol,String,Array>]              keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -40,8 +40,8 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  def remainder_hash!(hash, *keys, &block)
-    keys = gather_keys(*keys, &block)
+  def remainder_hash!(hash, *keys)
+    keys = gather_keys(*keys)
     hash = normalize_hash(hash) unless hash.class == ::Hash
     hash.slice!(*keys)
   end
@@ -49,7 +49,7 @@ module Emma::Common::HashMethods
   # Extract the elements identified by *keys* from *hash*.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol>]                           keys
+  # @param [Array<Symbol,String,Array>]              keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -57,14 +57,11 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  def extract_hash!(hash, *keys, &block)
-    keys = gather_keys(*keys, &block)
+  def extract_hash!(hash, *keys)
+    keys = gather_keys(*keys)
     hash = normalize_hash(hash) unless hash.class == ::Hash
     hash.slice(*keys).tap { |matches| hash.except!(*matches.keys) }
   end
-
-  # Extract the elements identified by *keys* from *hash*.
-  alias partition_hash! extract_hash!
 
   # ===========================================================================
   # :section:

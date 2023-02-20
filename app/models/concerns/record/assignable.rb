@@ -75,7 +75,7 @@ module Record::Assignable
       raise "#{attr.class}: unexpected" unless attr.is_a?(Hash)
     end
 
-    opt, added = partition_hash!(opt, *ATTRIBUTE_OPTIONS_OPTS)
+    opt, added = partition_hash(opt, *ATTRIBUTE_OPTIONS_OPTS)
 
     from    = opt[:from] && attribute_options(opt[:from], except: ignored_keys)
     user    = from&.extract!(:user, :user_id)&.compact&.values&.first
