@@ -23,7 +23,7 @@ module Bs::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/types/bookshare.en.yml *en.emma.bookshare.type*
+  # @see file:config/locales/types/bookshare.en.yml
   #
   CONFIGURATION = I18n.t('emma.bookshare.type').deep_freeze
 

@@ -82,7 +82,7 @@ class Paginator
 
     # Empty copy of data values in the preferred order (for debug output).
     #
-    # @type [Hash{Symbol=>any}]
+    # @type [Hash{Symbol=>*}]
     #
     TEMPLATE = {
       page_number:      nil,
@@ -102,7 +102,7 @@ class Paginator
       current_index:    nil,
 
       first_position:   nil,
-      final_position:    nil,
+      final_position:   nil,
       current_position: nil,
     }.freeze
 

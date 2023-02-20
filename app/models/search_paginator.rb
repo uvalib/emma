@@ -55,7 +55,7 @@ class SearchPaginator < Paginator
     end
     if title || date
       prm[:prev_id]    = url_escape(last.emma_recordId)
-      prm[:prev_value] = url_escape(title || IsoDay.cast(date))
+      prm[:prev_value] = url_escape(title || IsoDay.cast(date).to_s)
     end
 
     make_path(request.path, **prm)

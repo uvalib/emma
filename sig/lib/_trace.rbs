@@ -87,11 +87,13 @@ class Object
 
   # Convert a string to UTF-8 encoding.
   #
-  # @param [String, Any] v
+  # @param [String, *] v
   #
-  # @return [String, Any]
+  # @return [String, *]
   #
-  def to_utf8: (untyped v) -> untyped
+  def to_utf8
+    :     (String v) -> String
+    | [T] (T      v) -> T
 
   public
 

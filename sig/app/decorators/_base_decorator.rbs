@@ -99,7 +99,7 @@ class BaseDecorator < Draper::Decorator
     #include BaseDecorator::Row
 
     def list_css_class:  () -> String
-    def can?: (Symbol action, ?(untyped|nil) target) -> bool
+    def can?: (Symbol action, ?untyped target) -> bool
     def config_button_values: ((String|Symbol) action) -> Hash[Symbol,Hash[Symbol,String|symHash]]
     def link_to_action: ((String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
   end
@@ -279,7 +279,7 @@ class BaseDecorator < Draper::Decorator
   # @param [Any, nil] obj
   # @param [Hash]     opt
   #
-  def initialize: (?(untyped|nil) obj, **untyped opt) -> void
+  def initialize: (?untyped obj, **untyped opt) -> void
 
   # In this scheme #decorates is required for any subclass that is not
   # abstract.
@@ -417,7 +417,7 @@ class BaseDecorator < Draper::Decorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>Any}]
+  # @param [Hash{Symbol=>*}]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #

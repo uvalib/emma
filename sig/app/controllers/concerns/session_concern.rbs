@@ -31,41 +31,41 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_in_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [Any]         message      Passed to #set_flash_notice.
+  # @param [*]           message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
-  def auth_success_redirect: (?(String|nil) path, ?user: User|nil, ?message: untyped|nil, **untyped opt) -> void
+  def auth_success_redirect: (?(String|nil) path, ?user: User|nil, ?message: flashArgs, **untyped opt) -> void
 
   # Redirect after a failed authorization operation.
   #
   # @param [String, nil] path         Default: `#after_sign_out_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [Any]         message      Passed to #set_flash_alert.
+  # @param [*]           message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
-  def auth_failure_redirect: (?(String|nil) path, ?user: User|nil, ?message: untyped|nil, **untyped opt) -> void
+  def auth_failure_redirect: (?(String|nil) path, ?user: User|nil, ?message: flashArgs, **untyped opt) -> void
 
   # Set `flash[:notice]` based on the current action and user name.
   #
-  # @param [String, nil]             message
+  # @param [String, *]               message
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_notice.
   #
   # @return [void]
   #
-  def set_flash_notice: (?(String|nil) message, ?action: Symbol|nil, ?user: String|anyHash|User|nil, **untyped opt) -> void
+  def set_flash_notice: (?flashArgs message, ?action: Symbol|nil, ?user: String|anyHash|User|nil, **untyped opt) -> void
 
   # Set `flash[:alert]` based on the current action and user name.
   #
-  # @param [String, nil]             message
+  # @param [String, *]               message
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_alert.
   #
   # @return [void]
   #
-  def set_flash_alert: (?(String|nil) message, ?action: Symbol|nil, ?user: String|anyHash|User|nil, **untyped opt) -> void
+  def set_flash_alert: (?flashArgs message, ?action: Symbol|nil, ?user: String|anyHash|User|nil, **untyped opt) -> void
 
   # Configured success or failure message.
   #
@@ -82,7 +82,7 @@ module SessionConcern
   # @param [Time]   time              Default: `Time.now`.
   # @param [String] path              Default: `request.path`.
   #
-  # @return [Hash{String=>Any}]
+  # @return [Hash{String=>*}, nil]
   #
   def last_operation_update: (?time: Time|nil, ?path: String|nil) -> (strHash | nil)
 
@@ -161,9 +161,10 @@ module SessionConcern
   #
   # @param [CanCan::AccessDenied] exception
   #
-  # @return [Any]
+  # @return [nil]                     If not handled.
+  # @return [*]                       Otherwise.
   #
-  def access_denied_handler: (CanCan::AccessDenied exception) -> void
+  def access_denied_handler: (CanCan::AccessDenied exception) -> (untyped | nil)
 
   # Respond to page failures due to a failure to communicate with a remote
   # service.
@@ -171,18 +172,18 @@ module SessionConcern
   # @param [ExecError, Faraday::Error] exception
   #
   # @return [nil]                     If not handled.
-  # @return [Any]                     Otherwise.
+  # @return [*]                       Otherwise.
   #
-  def connection_error_handler: (ExecError|Faraday::Error exception) -> void
+  def connection_error_handler: (ExecError|Faraday::Error exception) -> (untyped | nil)
 
   # Respond to general page failures.
   #
   # @param [Exception] exception
   #
   # @return [nil]                     If not handled.
-  # @return [Any]                     Otherwise.
+  # @return [*]                       Otherwise.
   #
-  def fallback_error_handler: (Exception exception) -> void
+  def fallback_error_handler: (Exception exception) -> (untyped | nil)
 
   # If there is an error in the error handler it's probably due to a missing
   # template, so this method renders a safe page so that flash messages can
@@ -191,9 +192,7 @@ module SessionConcern
   # @param [Symbol]    meth           Failed error handler.
   # @param [Exception] error
   #
-  # @return [void]
-  #
-  def error_handler_deep_fallback: (Symbol meth, ?(Exception|nil) error) -> void
+  def error_handler_deep_fallback: (Symbol meth, ?(Exception|nil) error) -> untyped
 
   # Clean out empty session values.
   #

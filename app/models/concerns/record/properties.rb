@@ -141,9 +141,6 @@ module Record::Properties                                                       
   #
   # @type [Integer]
   #
-  # @see #set_bulk_batch
-  # @see #MAX_BATCH_SIZE
-  #
   #--
   # noinspection RubyMismatchedConstantType
   #++
@@ -295,8 +292,6 @@ module Record::Properties                                                       
   #
   # @return [Integer]                 Bulk batch size.
   # @return [FalseClass]              Bulk operations should not be batched.
-  #
-  # @see #set_bulk_batch
   #
   def batch_size
     key   = OPTION_PARAMETER_MAP[__method__]

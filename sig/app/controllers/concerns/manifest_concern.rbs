@@ -67,9 +67,12 @@ module ManifestConcern
   # @param [Hash{Symbol=>*}, nil]         prm
   #
   # @return [Array<(Manifest, Hash{Symbol=>*})>]
-  # @return [Array<(Any, Hash{Symbol=>*})>]
+  # @return [Array<(*,        Hash{Symbol=>*})>]
   #
-  def manifest_request_params: ((Manifest|untyped|nil) manifest, ?(symHash|nil) prm) -> ([Manifest, symHash] | [untyped, symHash])
+  def manifest_request_params
+    :     (Manifest manifest, ?(symHash|nil) prm) -> [Manifest, symHash]
+    | [T] (T        manifest, ?(symHash|nil) prm) -> [T,        symHash]
+    |     (                     symHash      prm) -> [nil,      symHash]
 
   # extract_identifier
   #
@@ -299,20 +302,20 @@ module ManifestConcern
   # @return [void]
   #
   def post_response
-    : ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
-    | (                              Exception     item, **untyped opt) -> void
+    : ((Symbol|Integer|nil) status, ?untyped   item, **untyped opt) -> void
+    | (                              Exception item, **untyped opt) -> void
 
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#failure
   #
-  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 
   # Create a @model_options instance from the current parameters.
   #

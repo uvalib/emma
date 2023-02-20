@@ -9,10 +9,11 @@ class ApplicationJob < ActiveJob::Base
 
   include ApplicationJob::Properties
 
-  include ApplicationJob::Methods
-
-  include ApplicationJob::Logging
-
+  # initialize
+  #
+  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
+  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
+  #
   def initialize: (*untyped args, **untyped opt) -> void
 
   def perform: (*untyped) -> void

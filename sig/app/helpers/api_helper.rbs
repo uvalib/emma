@@ -59,23 +59,25 @@ module ApiHelper
 
   # Format data objects for Explorer display.
   #
-  # @param [Api::Record, Exception, Numeric, String, nil] value
+  # @param [Api::Record, Exception, Numeric, String, *] value
   #
   # @return [String]
   #
-  def pretty_format: ((Api::Record|Exception|Numeric|String|nil) value) -> String
+  def pretty_format: (untyped value) -> String
 
   # Attempt to interpret *arg* as an exception or a record with an exception.
   #
-  # @param [Bs::Api::Record, Exception, Any] arg
-  # @param [Any] default              On parse failure, return this if provided
+  # @param [Bs::Api::Record, Exception, *] arg
+  # @param [*] default                On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
   #
-  # @return [Hash, String, Any]
+  # @return [Hash, String, *]
   #
   def safe_exception_parse
-  : (Exception arg, ?default: untyped) -> (symHash | String)
-  | (untyped arg,   ?default: untyped) -> untyped
+    :     (Faraday::Error arg, ?default: untyped)   -> symHash
+    |     (Exception      arg, ?default: untyped)   -> String
+    | [T] (T              arg, ?default: :original) -> T
+    | [T] (untyped        arg,  default: T )        -> T
 
   private
 

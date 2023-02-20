@@ -1249,9 +1249,14 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Mapping of submission step name to the status column that it updates.
+     * Mapping of submission step name to the status column that it updates
+     * (not including pseudo states).
      *
      * @type {Object.<string,string>}
+     *
+     * @see "en.emma.bulk.step"
+     *
+     * TODO: pass in via assets.js.erb.
      */
     const SUBMIT_STEP_TO_STATUS = {
         db:      FILE_STATUS_CLASS,
@@ -1307,7 +1312,8 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Process the message which indicates the start of a bulk submission.
+     * Process a response message indicating the start of a bulk submission of
+     * ManifestItem entries.
      *
      * @param {SubmitResponse} message
      */
@@ -1324,7 +1330,8 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * onStepResponse
+     * Process a response message indicating the success/failure of one or more
+     * ManifestItem entries at the given submission step.
      *
      * @param {SubmitStepResponse} message
      */

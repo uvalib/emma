@@ -160,14 +160,15 @@ module UploadConcern
   # @option opt [Symbol] :from        Default: `#calling_method`.
   # @option opt [Symbol] :event
   #
-  # @return [Any]                     @see UploadWorkflow::Single#results
+  # @return [*]                       @see UploadWorkflow::Single#results
   #
   # @see UploadWorkflow::Single#generate
   #
-  def wf_single: (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> untyped
-  #def wf_single: (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> httpResult           # For :validating, :replacing
-  #             | (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> Array[String|Upload] # For :removing, :removed
-  #             | (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, **untyped opt) -> Upload?              # For all other states
+  def wf_single
+    : (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil,  event: :create|:edit,                  **untyped opt) -> Upload
+    | (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil,  event: :remove|:removing|:removed,     **untyped opt) -> Array[String|Upload]
+    | (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil,  event: :upload|:validating|:replacing, **untyped opt) -> httpResult
+    | (?rec: String|Integer|:unset|nil, ?data: String|anyHash|:unset|nil, ?event: Symbol,                         **untyped opt) -> (Upload | nil)
 
   # Determine whether the workflow state of the indicated item can be advanced.
   #
@@ -251,8 +252,8 @@ module UploadConcern
   # @return [void]
   #
   def post_response
-    : ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
-    | (                              Exception     item, **untyped opt) -> void
+    : ((Symbol|Integer|nil) status, ?untyped   item, **untyped opt) -> void
+    | (                              Exception item, **untyped opt) -> void
 
   # Render an item for display in a message.
   #
@@ -265,14 +266,14 @@ module UploadConcern
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#failure
   #
-  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 
   # Create a @model_options instance from the current parameters.
   #

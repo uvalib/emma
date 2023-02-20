@@ -285,7 +285,8 @@ class SubmissionService < ApiService
   # @return [SubmissionService::Response]
   #
   def process_all(request, **opt)
-    meth = request.request_method or raise "no method for #{request.inspect}"
+    meth = request&.request_method&.presence or
+      raise "#{self_class}: #{__method__}: no method for #{request.inspect}"
     send(meth, request, **opt)
   end
 

@@ -19,7 +19,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   rescue_from 'MyError', with: :deliver_error_message # TODO: ???
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: ActionCable callbacks
   # ===========================================================================
 
   if DEBUG_CABLE

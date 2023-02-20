@@ -24,7 +24,7 @@ class PeriodicalController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  @list: Bs::Message::PeriodicalSeriesMetadataSummaryList
+  @list: Bs::Message::PeriodicalSeriesMetadataSummaryList | Bs::Message::PeriodicalEditionList
   @item: Bs::Message::PeriodicalSeriesMetadataSummary
 
   # == GET /periodical

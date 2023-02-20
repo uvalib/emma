@@ -166,7 +166,7 @@ module Field
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.
   #
-  def self.for: (untyped item, Symbol field, ?(Symbol|String|nil) model, ?value: untyped|nil, ?config: symHash|nil) -> (Field::Type | nil)
+  def self.for: (untyped item, Symbol field, ?(Symbol|String|nil) model, ?value: untyped, ?config: symHash|nil) -> (Field::Type | nil)
 
   # Base class for field type descriptions.
   #
@@ -215,7 +215,7 @@ module Field
     # @param [Symbol, String, nil] model
     # @param [*]                   value
     #
-    def initialize: (untyped src, ?(Symbol|nil) field, ?(Symbol|String|nil) model, ?(untyped|nil) value) -> void
+    def initialize: (untyped src, ?(Symbol|nil) field, ?(Symbol|String|nil) model, ?untyped value) -> void
 
     # The resolved value for this field instance.
     #

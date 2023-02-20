@@ -27,9 +27,9 @@ end
 
 # Convert a string to UTF-8 encoding.
 #
-# @param [String, Any] v
+# @param [String, *] v
 #
-# @return [String, Any]
+# @return [String, *]
 #
 def to_utf8(v)
   return v unless v.is_a?(String)

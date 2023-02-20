@@ -88,7 +88,7 @@ module Record::Identification
   #
   # @return [*]
   #
-  def get_value: (untyped item, untyped key, ?default: untyped|nil) -> (untyped | nil)
+  def get_value: (untyped item, untyped key, ?default: untyped) -> (untyped | nil)
 
   # A foreign-key reference to the current record.
   #
@@ -314,7 +314,7 @@ module Record::Identification
 
     # @see Record::Identification#id_value
     #
-    def id_value: (?(untyped|nil) item, **untyped opt) -> (String | nil)
+    def id_value: (?untyped item, **untyped opt) -> (String | nil)
 
     # @see Record::Identification#get_value
     #

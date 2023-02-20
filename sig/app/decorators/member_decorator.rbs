@@ -23,7 +23,7 @@ class MemberDecorator < BookshareDecorator
     #
     # @return [ActiveSupport::SafeBuffer, nil]
     #
-    def render_pair: ((String|Symbol|nil) label, (untyped|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+    def render_pair: ((String|Symbol|nil) label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
     # Render a metadata listing of a member account.
     #

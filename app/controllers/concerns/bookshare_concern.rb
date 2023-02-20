@@ -164,7 +164,7 @@ module BookshareConcern
   # @param [Array<Symbol>] keys   Required Bookshare API keys.
   # @param [Hash]          prm    Other parameters.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def bs_params(*keys, **prm)
     keys.map! { |k| BS_PARAMETERS[k]&.first || k } if keys.intersect?(BS_KEYS)

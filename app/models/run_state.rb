@@ -262,6 +262,9 @@ class RunState < Hash
   #
   # @type [Hash{String=>String}]
   #
+  #--
+  # noinspection RubyMismatchedConstantType
+  #++
   ABBREV_UNIT = {
     sec: 'second',
     min: 'minute',

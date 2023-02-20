@@ -104,7 +104,7 @@ module Record::Assignable
     end
     attr.merge!(options: options) if options.present?
 
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     compact ? reject_blanks(attr) : attr
   end
 

@@ -596,7 +596,7 @@ class ManifestItemDecorator
   #
   # @see file:javascripts/controllers/manifest-edit.js *updateFileUploaderCols*
   #
-  def grid_data_cell_render_pair: ((String|Symbol|nil) label, (untyped|nil) value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The edit element for a grid data cell.
   #
@@ -630,7 +630,7 @@ class ManifestItemDecorator
   #
   # @see file:controllers/manifest-edit.js  *initializeAddedControls*
   #
-  def render_grid_file_input: (String _name, (any|nil) _value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_grid_file_input: (String _name, untyped _value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate an alternate file input control as a button with a hidden popup.
   #
@@ -701,7 +701,7 @@ class ManifestItemDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>Any}]
+  # @param [Hash{Symbol=>*}]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.ManifestItem*
   #

@@ -8,14 +8,14 @@ module Record::Exceptions
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#failure
   #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?(untyped|nil) value) -> void
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 
   # Methods which are only appropriate if the including class is an
   # ApplicationRecord.

@@ -876,7 +876,7 @@ class ManifestDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>Any}]
+  # @param [Hash{Symbol=>*}]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Manifest*
   #

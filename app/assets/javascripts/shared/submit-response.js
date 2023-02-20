@@ -210,6 +210,7 @@ export class SubmitResponseBase extends ChannelResponse {
 
 }
 
+// noinspection JSCheckFunctionSignatures
 /**
  * A bulk submission response message.
  *
@@ -232,8 +233,6 @@ export class SubmitResponse extends SubmitResponseBase {
      *
      * @readonly
      * @type {SubmitResponsePayload}
-     *
-     * @see "SubmitChannel::SubmitResponse::TEMPLATE"
      */
     static TEMPLATE = deepFreeze({
         ...super.TEMPLATE,
@@ -256,6 +255,7 @@ export class SubmitResponse extends SubmitResponseBase {
 
 }
 
+// noinspection JSCheckFunctionSignatures
 /**
  * A response message with results from a bulk submission step.
  *
@@ -263,6 +263,7 @@ export class SubmitResponse extends SubmitResponseBase {
  *
  * @see "SubmitChannel::StepResponse"
  * @see "SubmissionService::StepResponse"
+ * @see "SubmissionService::BatchSubmitResponse"
  */
 export class SubmitStepResponse extends SubmitResponseBase {
 
@@ -278,8 +279,6 @@ export class SubmitStepResponse extends SubmitResponseBase {
      *
      * @readonly
      * @type {SubmitStepResponsePayload}
-     *
-     * @see "SubmitChannel::StepResponse::TEMPLATE"
      */
     static TEMPLATE = deepFreeze({
         status: undefined,
@@ -335,8 +334,15 @@ export class SubmitStepResponse extends SubmitResponseBase {
 
 }
 
+// noinspection JSCheckFunctionSignatures
 /**
  * A bulk submission job control response.
+ *
+ * COMMANDS =
+ *  'start'
+ *  'stop'
+ *  'pause'
+ *  'resume'
  *
  * @extends SubmitControlResponsePayload
  *
@@ -357,20 +363,11 @@ export class SubmitControlResponse extends SubmitResponseBase {
      *
      * @readonly
      * @type {SubmitControlResponsePayload}
-     *
-     * @see "SubmitChannel::ControlResponse::TEMPLATE"
      */
     static TEMPLATE = deepFreeze({
         command: undefined,
         ...super.TEMPLATE
     });
-
-    static COMMANDS = [
-        'start',
-        'stop',
-        'pause',
-        'resume',
-    ];
 
     // ========================================================================
     // Constructor

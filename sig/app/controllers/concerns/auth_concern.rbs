@@ -118,7 +118,7 @@ module AuthConcern
   #
   # @return [OmniAuth::AuthHash, nil]
   #
-  def update_auth_data: (?(User|String|Integer|untyped|nil) user) -> (OmniAuth::AuthHash | nil)
+  def update_auth_data: (?untyped user) -> (OmniAuth::AuthHash | nil)
 
   # Terminate the local login session ('omniauth.auth') and the session with
   # the OAuth2 provider (if appropriate)

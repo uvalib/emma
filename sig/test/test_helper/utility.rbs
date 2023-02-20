@@ -15,12 +15,12 @@ module TestHelper::Utility
 
   # Return a User instance from the given identification.
   #
-  # @param [String, Symbol, User, Any, nil] user
+  # @param [String, Symbol, User, *] user
   #
   # @return [User]
   # @return [nil]                     If *user* could not be converted.
   #
-  def find_user: (String|Symbol|User|untyped|nil user) -> (User | nil)
+  def find_user: (untyped user) -> (User | nil)
 
   # Return multiple User instances.
   #
@@ -28,7 +28,7 @@ module TestHelper::Utility
   #
   # @return [Array<User>]
   #
-  def find_users: (*(anyArray|String|Symbol|User|untyped|nil) users) -> Array[User|nil]
+  def find_users: (*untyped users) -> Array[User|nil]
 
   # The number of fixture records for the given model.
   #

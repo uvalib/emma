@@ -84,7 +84,7 @@ module Emma::Common::HtmlMethods
 
   # Combine an array containing a mix of items into an HTML-safe result.
   #
-  # @param [Array, any]  items
+  # @param [Array, *]    items
   # @param [String, nil] separator
   #
   # @return [ActiveSupport::SafeBuffer]

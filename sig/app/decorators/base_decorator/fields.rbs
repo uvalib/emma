@@ -296,7 +296,7 @@ module BaseDecorator::Fields
   # @overload mark_invalid_languages(value, code: false)
   #   @param [String]        value
   #   @param [Boolean]       code
-  #   @return [String, ActiveSupport::SafeBuffer, nil]
+  #   @return [String, ActiveSupport::SafeBuffer]
   #
   # @overload mark_invalid_languages(array, code: false)
   #   @param [Array<String>] array
@@ -304,8 +304,9 @@ module BaseDecorator::Fields
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
   def mark_invalid_languages
-    : (String   value, ?code: bool) -> (ActiveSupport::SafeBuffer | String | nil)
-    | (strArray value, ?code: bool) -> Array[ActiveSupport::SafeBuffer|String]
+    : (anyArray value, ?code: bool) -> Array[String|ActiveSupport::SafeBuffer]
+    | (String   value, ?code: bool) -> (String | ActiveSupport::SafeBuffer)
+    | (untyped  value, ?code: bool) -> ActiveSupport::SafeBuffer
 
   # Wrap invalid identifier values in a *span*.
   #
@@ -326,8 +327,9 @@ module BaseDecorator::Fields
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
   def mark_invalid_identifiers
-    : (String   value) -> (ActiveSupport::SafeBuffer | String | nil)
-    | (strArray value) -> Array[ActiveSupport::SafeBuffer|String]
+    : (anyArray value) -> Array[String|ActiveSupport::SafeBuffer]
+    | (String   value) -> (String | ActiveSupport::SafeBuffer)
+    | (untyped  value) -> ActiveSupport::SafeBuffer
 
   private
 

@@ -103,5 +103,5 @@ class EditionDecorator
   #
   # @return [String]
   #
-  def form_target_description: (?action: untyped|nil, **untyped _ignored) -> String
+  def form_target_description: (?action: untyped, **untyped _ignored) -> String
 end

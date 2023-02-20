@@ -31,23 +31,23 @@ class AppGlobal
 
     # Set a global value.
     #
-    # @param [any, nil] value         Default: `#default`.
-    # @param [Hash]     opt           Passed to #cache_write.
+    # @param [*]    value             Default: `#default`.
+    # @param [Hash] opt               Passed to #cache_write.
     #
     # @return [any]                   The new current value.
     # @return [nil]                   If the write failed.
     #
-    def set_item: (?(untyped|nil) value, **untyped opt) -> (untyped | nil)
+    def set_item: (?untyped value, **untyped opt) -> (untyped | nil)
 
     # Initialize a global value.
     #
-    # @param [any, nil] value         Replacement value (if given).
-    # @param [Hash]     opt           Passed to #cache_write.
+    # @param [*]    value             Replacement value (if given).
+    # @param [Hash] opt               Passed to #cache_write.
     #
     # @return [any]                   The new current value.
     # @return [nil]                   If the write failed.
     #
-    def reset_item: (?(untyped|nil) value, **untyped opt) -> (untyped | nil)
+    def reset_item: (?untyped value, **untyped opt) -> (untyped | nil)
 
     # Remove a global value.
     #
@@ -104,7 +104,7 @@ class AppGlobal
 
     private
 
-    def self.included: (untyped base) -> untyped
+    def self.included: (Module base) -> void
   end
 
   include Methods

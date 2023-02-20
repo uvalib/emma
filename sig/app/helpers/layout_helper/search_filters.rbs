@@ -527,7 +527,7 @@ module LayoutHelper::SearchFilters
   #
   # @return [Hash]
   #
-  def reset_parameters: (?(untyped|nil) opt) -> symHash
+  def reset_parameters: (?untyped opt) -> symHash
 
   # A blank element used for occupying "voids" in the search control panel.
   #

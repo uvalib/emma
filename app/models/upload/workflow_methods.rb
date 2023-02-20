@@ -55,7 +55,7 @@ module Upload::WorkflowMethods
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
+  # @see file:config/locales/controllers/upload.en.yml
   #
   STATE_GROUP =
     I18n.t('emma.upload.state_group', default: {}).transform_values { |entry|
@@ -257,11 +257,15 @@ module Upload::WorkflowMethods
 
   protected
 
-  # Get the current real-time value of a database field.
+  # Get the current value of a database column.
+  #
+  # @note This does not currently get the "real-time" value.  In the absence of
+  #   a strategy for plucking the current column value a reload of the database
+  #   record is required first.
   #
   # @param [Symbol, String] column    Database field name.
   #
-  # @return [Any]
+  # @return [*]
   #
   def dynamic_get_field(column)                                                 # NOTE: to Record::Updatable::InstanceMethods
     if new_record?
@@ -271,7 +275,8 @@ module Upload::WorkflowMethods
     end
   end
 
-  # Set the current real-time value of a database record field.
+  # Directly update a database column, by-passing validations and other
+  # callbacks.
   #
   # @param [Symbol, String] column    Database field name.
   # @param [Any]            new_value
@@ -291,7 +296,8 @@ module Upload::WorkflowMethods
     new_value
   end
 
-  # Set one or more database record fields in real-time.
+  # Directly update multiple database columns, by-passing validations and
+  # other callbacks.
   #
   # @param [Hash] values
   #

@@ -135,7 +135,7 @@ class ApiService
 
   # Represent the instance as a Hash.
   #
-  # @return [Hash{Symbol=>any}]
+  # @return [Hash{Symbol=>any}]       (no *nil* values)
   #
   def to_h
     { user: user, base_url: @base_url, options: options }.compact

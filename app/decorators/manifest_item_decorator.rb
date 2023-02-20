@@ -663,7 +663,7 @@ class ManifestItemDecorator < BaseDecorator
       css:      '.submission-status',
       **opt
     )
-      opt.delete(:index) # Just in cause this slipped in.
+      opt.delete(:index) # Just in case this slipped in.
       heading = (row == 1)
       col_opt = { col: col, role: (heading ? 'columnheader' : 'cell') }
 
@@ -1401,7 +1401,7 @@ class ManifestItemDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>Any}]
+  # @param [Hash{Symbol=>*}]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.ManifestItem*
   #

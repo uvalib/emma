@@ -64,8 +64,8 @@ class AppGlobal
 
     # Set a global value.
     #
-    # @param [any, nil] value         Default: `#default`.
-    # @param [Hash]     opt           Passed to #cache_write.
+    # @param [*]    value             Default: `#default`.
+    # @param [Hash] opt               Passed to #cache_write.
     #
     # @return [any]                   The new current value.
     # @return [nil]                   If the write failed.
@@ -77,8 +77,8 @@ class AppGlobal
 
     # Initialize a global value.
     #
-    # @param [any, nil] value         Replacement value (if given).
-    # @param [Hash]     opt           Passed to #cache_write.
+    # @param [*]    value             Replacement value (if given).
+    # @param [Hash] opt               Passed to #cache_write.
     #
     # @return [any]                   The new current value.
     # @return [nil]                   If the write failed.

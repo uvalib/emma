@@ -30,6 +30,10 @@ interface _DateTime
   def strftime: (String fmt) -> String
 end
 
+interface _ToH
+  def to_h: () -> anyHash
+end
+
 # =============================================================================
 # Shorthand notation for decorator-related RBS definitions
 # =============================================================================

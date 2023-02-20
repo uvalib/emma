@@ -90,14 +90,14 @@ module UploadWorkflow::Errors
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#failure
   #
-  def failure: (Exception|ExecReport|Symbol|String|strArray|nil problem, ?(untyped|nil) value) -> void
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 end
 
 # Workflow properties that can be set via URL parameters.
@@ -228,9 +228,6 @@ module UploadWorkflow::Properties
   #
   # @type [Integer]
   #
-  # @see #set_bulk_batch
-  # @see #MAX_BATCH_SIZE
-  #
   BATCH_SIZE: Integer
 
   # URL parameter names and default values.
@@ -325,8 +322,6 @@ module UploadWorkflow::Properties
   #
   # @return [Integer]                 Bulk batch size.
   # @return [FalseClass]              Bulk operations should not be batched.
-  #
-  # @see #set_bulk_batch
   #
   def batch_size: () -> (Integer | false)
 
@@ -582,7 +577,7 @@ module UploadWorkflow::External
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #

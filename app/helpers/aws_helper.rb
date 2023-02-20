@@ -418,7 +418,7 @@ module AwsHelper
 
   # Extract values from an item.
   #
-  # @param [Any, nil]      item
+  # @param [*]             item
   # @param [Array<Symbol>] methods
   #
   # @return [Hash]
@@ -448,10 +448,10 @@ module AwsHelper
 
   # Format a value for display.
   #
-  # @param [Any]         item
+  # @param [*]           item
   # @param [Symbol, nil] hint
   #
-  # @return [Any]
+  # @return [*]
   #
   def value_format(item, hint = nil)
     if item.is_a?(Array)

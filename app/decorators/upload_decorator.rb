@@ -122,7 +122,7 @@ class UploadDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
+    # @see file:config/locales/controllers/upload.en.yml
     #
     STATE_GROUP =
       Upload::WorkflowMethods::STATE_GROUP.transform_values do |entry|
@@ -792,7 +792,7 @@ class UploadDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>Any}]
+  # @param [Hash{Symbol=>*}]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Upload*
   #

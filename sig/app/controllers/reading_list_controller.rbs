@@ -24,7 +24,7 @@ class ReadingListController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  @list: Bs::Message::ReadingListList
+  @list: Bs::Message::ReadingListList | Bs::Message::ReadingListTitlesList
   @item: Bs::Message::ReadingListUserView
 
   # == GET /reading_list
@@ -90,12 +90,12 @@ class ReadingListController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Bs::Message::ReadingListList] list
-  # @param [Hash]                         opt
+  # @param [Bs::Api::Message] list
+  # @param [Hash]             opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values: (?Bs::Message::ReadingListList list, **untyped opt) -> symHash
+  def index_values: (?Bs::Api::Message list, **untyped opt) -> symHash
 
   # Response values for de-serializing the show page to JSON or XML.
   #

@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/flash.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { AppDebug }                        from '../application/debug';

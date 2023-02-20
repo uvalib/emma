@@ -283,7 +283,7 @@ class BaseDecorator < Draper::Decorator
     # @param [String, Array] path     Partial I18n path.
     # @param [Hash]          opt      To ConfigurationHelper#config_lookup
     #
-    # @return [Any]
+    # @return [*]
     #
     def config_lookup(*path, **opt)
       opt[:action] ||= context[:action]
@@ -809,6 +809,9 @@ class BaseDecorator
   #
   # @return [void]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def self.decorator_for(*args)
     other = []
     if args.first.is_a?(Hash)
@@ -823,7 +826,6 @@ class BaseDecorator
       mod, obj = args
     end
 
-    # noinspection RubyMismatchedArgumentType
     set_model_type(mod)
     set_object_class(obj, *other)&.include(Draper::Decoratable)
 
@@ -1067,7 +1069,7 @@ class BaseDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>Any}]
+  # @param [Hash{Symbol=>*}]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #

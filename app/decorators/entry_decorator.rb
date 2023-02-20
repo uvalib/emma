@@ -122,7 +122,7 @@ class EntryDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
+    # @see file:config/locales/controllers/entry.en.yml
     #
     STATE_GROUP =
       Record::Steppable::STATE_GROUP.transform_values do |entry|
@@ -770,7 +770,7 @@ class EntryDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>Any}]
+  # @param [Hash{Symbol=>*}]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Entry*
   #

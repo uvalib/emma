@@ -153,6 +153,9 @@ class AccountController < ApplicationController
   # @see #show_menu?
   # @see AccountConcern#get_account
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def edit
     __log_activity
     __debug_route
@@ -213,6 +216,7 @@ class AccountController < ApplicationController
     unless show_menu?((ids = id_params))
       @list = find_accounts(ids)
       unless @list.present? || last_operation_path&.include?('/destroy')
+        # noinspection RubyMismatchedArgumentType
         flash_now_alert("No records match #{quote(ids)}") # TODO: I18n
       end
     end

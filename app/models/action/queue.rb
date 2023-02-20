@@ -66,8 +66,9 @@ class Action::Queue < Action::BulkPart
   # @param [String, nil] sid          Default: `#sid_value`
   #
   def not_in_queue?(sid = nil, **opt)
-    sid  = sid_value(sid || opt.presence)
+    sid  = sid_value(sid || opt.presence) or return false
     repo = repository_value(opt.presence)
+    # noinspection RubyMismatchedArgumentType
     aws_api.list_records(sid, repo: repo).values_at(sid).flatten.blank?
   end
 

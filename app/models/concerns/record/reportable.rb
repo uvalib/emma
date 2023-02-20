@@ -111,17 +111,17 @@ module Record::Reportable
 
   protected
 
-  # Dynamically get the contents of the current record's #REPORT_COLUMN.
+  # Get the contents of the current record's #REPORT_COLUMN.
   #
   # @param [Symbol] col               Default: `#REPORT_COLUMN`.
   #
-  # @return [Any]
+  # @return [*]
   #
   def get_report_column(*, col: REPORT_COLUMN, **)
     dynamic_get_field(col)
   end
 
-  # Dynamically update the contents of the current record's #REPORT_COLUMN.
+  # Directly update the contents of the current record's #REPORT_COLUMN.
   #
   # @param [Any, nil]    value
   # @param [Symbol, nil] meth         Default: `#calling_method`.

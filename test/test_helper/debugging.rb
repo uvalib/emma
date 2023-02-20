@@ -208,7 +208,7 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   # @yield To supply additional items.
-  # @yieldreturn [Array, String, Any]
+  # @yieldreturn [Array, String, *]
   #
   def show(*items, **opt)
     model_opt = extract_hash!(opt, *SHOW_MODEL_OPT)

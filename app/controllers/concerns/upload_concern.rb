@@ -294,7 +294,7 @@ module UploadConcern
   # @option opt [Symbol] :from        Default: `#calling_method`.
   # @option opt [Symbol] :event
   #
-  # @return [Any]                     @see UploadWorkflow::Single#results
+  # @return [*]                       @see UploadWorkflow::Single#results
   #
   # @see UploadWorkflow::Single#generate
   #
@@ -555,7 +555,7 @@ module UploadConcern
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]

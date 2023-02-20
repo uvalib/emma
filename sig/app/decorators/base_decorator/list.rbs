@@ -54,7 +54,7 @@ module BaseDecorator::List
   # == Implementation Notes
   # Compare with BaseDecorator::Grid#grid_data_cell_render_pair
   #
-  def render_field_value_pair: ((String|Symbol|nil) label, (untyped|nil) value, field: Symbol, prop: symHash, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_field_value_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, **untyped opt) -> ActiveSupport::SafeBuffer
 
   DEFAULT_LABEL_CLASS: String
 
@@ -63,7 +63,7 @@ module BaseDecorator::List
   # Render a single label/value pair.
   #
   # @param [String, Symbol, nil]  label
-  # @param [Any, nil]             value
+  # @param [*]                    value
   # @param [Hash, nil]            prop      Default: from field/model.
   # @param [Symbol, nil]          field
   # @param [String, Integer]      index     Offset to make unique element IDs.
@@ -94,7 +94,7 @@ module BaseDecorator::List
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
-  def render_pair: ((String|Symbol|nil) label, (untyped|nil) value, ?prop: symHash|nil, ?field: Symbol|nil, ?index: String|Integer|nil, ?row: Integer|nil, ?separator: String|nil, ?wrap: String|nil, ?tag: Symbol|nil, ?no_format: symArray|Symbol|bool|nil, ?no_code: bool|nil, ?no_label: bool|nil, ?no_help: bool|nil, ?label_css: String|nil, ?value_css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_pair: ((String|Symbol|nil) label, untyped value, ?prop: symHash|nil, ?field: Symbol|nil, ?index: String|Integer|nil, ?row: Integer|nil, ?separator: String|nil, ?wrap: String|nil, ?tag: Symbol|nil, ?no_format: symArray|Symbol|bool|nil, ?no_code: bool|nil, ?no_label: bool|nil, ?no_help: bool|nil, ?label_css: String|nil, ?value_css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Displayed in place of a results list. # TODO: I18n
   #

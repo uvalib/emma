@@ -21,11 +21,11 @@ module ExceptionHelper
   # Otherwise, error message(s) are extracted from *problem*.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   # @param [Symbol]                                                    model
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?(untyped|nil) value, model: Symbol) -> void
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, model: Symbol) -> void
 end

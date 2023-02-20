@@ -323,7 +323,7 @@ module BaseDecorator::Grid
   # == Implementation Notes
   # Compare with BaseDecorator::List#render_field_value_pair
   #
-  def grid_data_cell_render_pair: ((String|Symbol|nil) label, (untyped|nil) value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The edit element for a grid data cell.
   #

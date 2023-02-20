@@ -11,7 +11,7 @@ module SubmissionService::Properties
 
   # Configuration for all submission services.
   #
-  # @type [Hash{Symbol=>Hash}]
+  # @type [Hash{Symbol=>*}]
   #
   CONFIGURATION: symHash
 

@@ -21,7 +21,7 @@ module Upload::LookupMethods
 
   # Get the Upload record by either :id or :submission_id.
   #
-  # @param [String, Symbol, Integer, Hash, Upload] identifier
+  # @param [String, Symbol, Integer, Hash, Upload, nil] identifier
   #
   # @return [Upload, nil]
   #

@@ -117,9 +117,12 @@ module EntryConcern
   # @param [Hash{Symbol=>*}, nil]      prm
   #
   # @return [Array<(Entry, Hash{Symbol=>*})>]
-  # @return [Array<(Any, Hash{Symbol=>*})>]
+  # @return [Array<(*,     Hash{Symbol=>*})>]
   #
-  def entry_request_params: ((Entry|untyped|nil) entry, ?(symHash|nil) prm) -> ([Entry, symHash] | [untyped, symHash])
+  def entry_request_params
+    :     (Entry   entry, ?(symHash|nil) prm) -> [Entry, symHash]
+    | [T] (T       entry, ?(symHash|nil) prm) -> [T,     symHash]
+    |     (                 symHash      prm) -> [nil,   symHash]
 
   # URL parameters associated with item/entry identification.                   # NOTE: from UploadConcern
   #
@@ -342,7 +345,7 @@ module EntryConcern
   #
   # @raise [Record::SubmitError]      If the record could not be found.
   #
-  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Phase::Create#upload!
   # @see Phase::Edit#upload!
@@ -351,7 +354,7 @@ module EntryConcern
 
   # bulk_new_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_new_entries: () -> untyped
 
@@ -366,7 +369,7 @@ module EntryConcern
 
   # bulk_edit_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_edit_entries: () -> untyped
 
@@ -381,7 +384,7 @@ module EntryConcern
 
   # bulk_delete_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_delete_entries: () -> untyped
 
@@ -396,7 +399,7 @@ module EntryConcern
 
   # bulk_check_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   # @note Currently unused.
   #
@@ -441,20 +444,20 @@ module EntryConcern
   # @return [void]
   #
   def post_response
-    : ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
-    | (                              Exception     item, **untyped opt) -> void
+    : ((Symbol|Integer|nil) status, ?untyped   item, **untyped opt) -> void
+    | (                              Exception item, **untyped opt) -> void
 
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#failure
   #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?(untyped|nil) value) -> void
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 
   # Create a @model_options instance from the current parameters.
   #

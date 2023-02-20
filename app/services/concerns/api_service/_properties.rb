@@ -192,7 +192,7 @@ module ApiService::Properties
 
   # engine_url
   #
-  # @param [Symbol, String] value   Engine name or URL.
+  # @param [Symbol, String, *] value  Engine name or URL.
   #
   # @return [String, nil]
   #

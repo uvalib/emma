@@ -55,7 +55,7 @@ module ConfigurationHelper
   # @param [String, Array]       path       Partial I18n path.
   # @param [Symbol, String, nil] ctrlr
   # @param [Symbol, String, nil] action
-  # @param [Any]                 default  Returned on failure.
+  # @param [*]                   default  Returned on failure.
   # @param [Boolean]             fatal    If *true* then raise exceptions.
   # @param [Hash]                opt      To #config_interpolations except:
   #
@@ -88,7 +88,7 @@ module ConfigurationHelper
   #   * "en.emma.generic.button1.label"
   #   * "en.emma.generic.button2.label"
   #
-  def config_lookup: (*(String|Symbol|Array[String|Symbol]) path, ?ctrlr: String|Symbol|nil, ?action: String|Symbol|nil, ?default: untyped|nil, ?fatal: bool, **untyped opt) -> untyped
+  def config_lookup: (*(String|Symbol|Array[String|Symbol]) path, ?ctrlr: String|Symbol|nil, ?action: String|Symbol|nil, ?default: untyped, ?fatal: bool, **untyped opt) -> untyped
 
   # config_lookup_paths
   #
@@ -112,15 +112,15 @@ module ConfigurationHelper
 
   # Recursively apply supplied unit interpolations.
   #
-  # @param [Hash, Array, String, Integer, Boolean, nil] item
-  # @param [Hash]                                       units
+  # @param [Hash, Array, String, Integer, Boolean, *] item
+  # @param [Hash]                                     units
   #
-  # @return [Hash, Array, String, Integer, Boolean, nil]
+  # @return [*]
   #
   def apply_config_interpolations
-  :     (anyHash  item, units: symHash, **untyped _ignored) -> anyHash
-  |     (anyArray item, units: symHash, **untyped _ignored) -> anyArray
-  | [T] (T        item, units: symHash, **untyped _ignored) -> T
+    : (anyHash  item, units: symHash, **untyped _ignored) -> anyHash
+    | (anyArray item, units: symHash, **untyped _ignored) -> anyArray
+    | (untyped  item, units: symHash, **untyped _ignored) -> (untyped | nil)
 
   # The variations on the description of a model item managed by a controller.
   #

@@ -74,7 +74,7 @@ module Serializable
     # associated with the base class of that hierarchy rather than the
     # serializer for the specific subclass.
     #
-    # @param [any] argument
+    # @param [*] argument
     #
     def serialize?(argument)
       argument.class == klass
@@ -83,13 +83,13 @@ module Serializable
     # To be consistent, serialized values will always be rooted at the same
     # place in the serialization hash.
     #
-    # @param [any] item
+    # @param [*] item
     #
     # @return [Hash]
     #
     # @yield [item] Return data from *item* that will be needed to recreate it.
     # @yieldparam [self] item An instance of the class.
-    # @yieldreturn [any]      The data from *item*.
+    # @yieldreturn [*]        The data from *item*.
     #
     def serialize(item)
       item = yield(item)              if block_given?
@@ -102,11 +102,11 @@ module Serializable
     #
     # @param [Hash] hash        Generated via serialization.
     #
-    # @return [any]             An instance of the associated class.
+    # @return [*]               An instance of the associated class.
     #
     # @yield [value]
-    # @yieldparam [any] value   Data produced by #serialize.
-    # @yieldreturn [self,any]   An item instance or data to create a new one.
+    # @yieldparam [*] value     Data produced by #serialize.
+    # @yieldreturn [self,*]     An item instance or data to create a new one.
     #
     def deserialize(hash)
       value = hash.values_at(*VALUE_KEYS).first

@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/cable-consumer.js
+//
+// noinspection JSUnusedGlobalSymbols
 
 
 import { AppDebug }                         from '../application/debug';
@@ -86,7 +88,6 @@ export function createChannel(stream, functions) {
     return consumer().subscriptions.create(params, functions);
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Close a channel (same as `channel.unsubscribe()`).
  *

@@ -84,15 +84,13 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Manifest
+     * @typedef {object} Manifest
      *
-     * @typedef {{
-     *      id:         string,
-     *      user_id:    string,
-     *      name:       string,
-     *      created_at: string,
-     *      updated_at: string,
-     * }} Manifest
+     * @property {string} id
+     * @property {string} user_id
+     * @property {string} name
+     * @property {string} created_at
+     * @property {string} updated_at
      */
 
     /**
@@ -2568,7 +2566,7 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef { ManifestItemData | { error: string } } ManifestItemDataOrError
+     * @typedef { ManifestItemData | {error: string} } ManifestItemDataOrError
      */
 
     /**
@@ -3256,7 +3254,7 @@ appSetup(MODULE, function() {
     /**
      * Extract status data fields.
      *
-     * @param {object|undefined} data
+     * @param {ManifestItem|undefined} data
      *
      * @returns {object}
      *

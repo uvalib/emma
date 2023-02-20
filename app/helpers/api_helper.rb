@@ -145,7 +145,7 @@ module ApiHelper
 
   # Format data objects for Explorer display.
   #
-  # @param [Api::Record, Exception, Numeric, String, nil] value
+  # @param [Api::Record, Exception, Numeric, String, *] value
   #
   # @return [String]
   #
@@ -184,11 +184,11 @@ module ApiHelper
 
   # Attempt to interpret *arg* as an exception or a record with an exception.
   #
-  # @param [Bs::Api::Record, Exception, Any] arg
-  # @param [Any] default              On parse failure, return this if provided
+  # @param [Bs::Api::Record, Exception, *] arg
+  # @param [*] default                On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
   #
-  # @return [Hash, String, Any]
+  # @return [Hash, String, *]
   #
   def safe_exception_parse(arg, default: :original)
     case (ex = arg.try(:exception))

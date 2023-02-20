@@ -59,7 +59,7 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_in_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [Any]         message      Passed to #set_flash_notice.
+  # @param [*]           message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
   def auth_success_redirect(path = nil, user: nil, message: nil, **opt)
@@ -72,7 +72,7 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_out_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [Any]         message      Passed to #set_flash_alert.
+  # @param [*]           message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
   def auth_failure_redirect(path = nil, user: nil, message: nil, **opt)
@@ -86,7 +86,7 @@ module SessionConcern
 
   # Set `flash[:notice]` based on the current action and user name.
   #
-  # @param [String, nil]             message
+  # @param [String, *]               message
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_notice.
@@ -100,7 +100,7 @@ module SessionConcern
 
   # Set `flash[:alert]` based on the current action and user name.
   #
-  # @param [String, nil]             message
+  # @param [String, *]               message
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_alert.
@@ -141,7 +141,7 @@ module SessionConcern
   # @param [Time]   time              Default: `Time.now`.
   # @param [String] path              Default: `request.path`.
   #
-  # @return [Hash{String=>Any}]
+  # @return [Hash{String=>*}, nil]
   #
   def last_operation_update(time: nil, path: nil)
     return if (params[:controller] == 'bs_api') && (params[:action] == 'image')
@@ -286,7 +286,8 @@ module SessionConcern
   #
   # @param [CanCan::AccessDenied] exception
   #
-  # @return [Any]
+  # @return [nil]                     If not handled.
+  # @return [*]                       Otherwise.
   #
   def access_denied_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
@@ -301,7 +302,7 @@ module SessionConcern
   # @param [ExecError, Faraday::Error] exception
   #
   # @return [nil]                     If not handled.
-  # @return [Any]                     Otherwise.
+  # @return [*]                       Otherwise.
   #
   def connection_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
@@ -319,7 +320,7 @@ module SessionConcern
   # @param [Exception] exception
   #
   # @return [nil]                     If not handled.
-  # @return [Any]                     Otherwise.
+  # @return [*]                       Otherwise.
   #
   def fallback_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception, trace: true)
@@ -346,8 +347,6 @@ module SessionConcern
   #
   # @param [Symbol]    meth           Failed error handler.
   # @param [Exception] error
-  #
-  # @return [void]
   #
   def error_handler_deep_fallback(meth, error = nil)
     Log.error { "#{meth} FAILED: #{error.inspect}" } if error

@@ -27,7 +27,7 @@ module Record::Steppable
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/state_table.en.yml *en.emma.state_table*
+  # @see file:config/locales/state_table.en.yml
   #
   STATE_TABLES: Hash[Symbol,symHash]
 
@@ -35,7 +35,7 @@ module Record::Steppable
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
+  # @see file:config/locales/controllers/entry.en.yml
   #
   STATE_GROUP: Hash[Symbol,symHash]
 

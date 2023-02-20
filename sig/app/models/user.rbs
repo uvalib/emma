@@ -134,7 +134,7 @@ class User < ApplicationRecord
   # @return [String]
   # @return [nil]                     If no matching record was found.
   #
-  def id_value: (?(untyped|nil) user, **untyped opt) -> (String | nil)
+  def id_value: (?untyped user, **untyped opt) -> (String | nil)
 
   # Value of :id for the indicated record.
   #
@@ -176,7 +176,7 @@ class User < ApplicationRecord
   #
   # @return [String, nil]
   #
-  def uid_value: (?(untyped|nil) user) -> (String | nil)
+  def uid_value: (?untyped user) -> (String | nil)
 
   # Return the account ID of *user*.
   #

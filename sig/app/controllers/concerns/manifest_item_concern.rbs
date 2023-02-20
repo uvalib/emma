@@ -342,7 +342,7 @@ module ManifestItemConcern
 
   # bulk_new_manifest_items
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_new_manifest_items: () -> untyped
 
@@ -357,7 +357,7 @@ module ManifestItemConcern
 
   # bulk_edit_manifest_items
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_edit_manifest_items: () -> untyped
 
@@ -372,7 +372,7 @@ module ManifestItemConcern
 
   # bulk_delete_manifest_items
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_delete_manifest_items: () -> untyped
 
@@ -410,20 +410,20 @@ module ManifestItemConcern
   # @return [void]
   #
   def post_response
-    : ((Symbol|Integer|nil) status, ?(untyped|nil) item, **untyped opt) -> void
-    | (                              Exception     item, **untyped opt) -> void
+    : ((Symbol|Integer|nil) status, ?untyped   item, **untyped opt) -> void
+    | (                              Exception item, **untyped opt) -> void
 
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#failure
   #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?(untyped|nil) value) -> void
+  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 
   # Create a @model_options instance from the current parameters.
   #

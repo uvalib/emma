@@ -46,7 +46,7 @@ class Phase::Create < Phase::BulkPart
   # @raise [ActiveRecord::RecordInvalid]    Action record creation failed.
   # @raise [ActiveRecord::RecordNotSaved]   Action record creation halted.
   #
-  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Action::Store#upload!
   #

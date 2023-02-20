@@ -98,6 +98,9 @@ class ReadingListController < ApplicationController
   # @see BookshareService::Action::ReadingLists#get_reading_list
   # @see BookshareService::Action::ReadingLists#get_reading_list_titles
   #
+  #--
+  # noinspection RubyArgCount
+  #++
   def show
     __log_activity
     __debug_route
@@ -164,6 +167,9 @@ class ReadingListController < ApplicationController
   #
   # @see #reading_list_path           Route helper
   #
+  #--
+  # noinspection RubyArgCount
+  #++
   def update
     __log_activity
     __debug_route
@@ -199,8 +205,8 @@ class ReadingListController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Bs::Message::ReadingListList] list
-  # @param [Hash]                         opt
+  # @param [Bs::Api::Message] list
+  # @param [Hash]             opt
   #
   # @return [Hash{Symbol=>Hash}]
   #

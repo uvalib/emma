@@ -87,7 +87,8 @@ class Action::Index < Action::BulkPart
   # @param [Hash]        opt
   #
   def in_index?(sid = nil, **opt)
-    sid = sid_value(sid || opt.presence)
+    sid = sid_value(sid || opt.presence) or return false
+    # noinspection RubyMismatchedArgumentType
     ingest_api.get_records(sid).present?
   end
 

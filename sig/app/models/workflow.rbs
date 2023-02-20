@@ -647,7 +647,7 @@ class Workflow::Base
   #
   # @return [Symbol]
   #
-  def self.workflow_column: (?(untyped|nil) column_name) -> Symbol
+  def self.workflow_column: (?untyped column_name) -> Symbol
 
   # Workflow model configuration.
   #

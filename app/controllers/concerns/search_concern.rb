@@ -147,13 +147,15 @@ module SearchConcern
   #
   # @param [*] value
   #
-  # @return [*]                       Same type as *value*.
+  # @return [*]
   #
   def sanitize_keys(value)
     if value.is_a?(Hash)
-      value
-        .transform_keys   { |k| k.to_s.downcase.tr('^a-z0-9_', '_') }
-        .transform_values { |v| sanitize_keys(v) }
+      value.map { |k, v|
+        k = k.to_s.downcase.tr('^a-z0-9_', '_').to_sym
+        v = sanitize_keys(v)
+        [k, v]
+      }.to_h
     elsif value.is_a?(Array) && (value.size > 1)
       value.map { |v| sanitize_keys(v) }
     elsif value.is_a?(Array)

@@ -218,7 +218,7 @@ module Api::Shared::CommonMethods
   # @param [Symbol] field
   # @param [Hash]   opt               Passed to #find_item.
   #
-  # @return [any,nil]
+  # @return [any, nil]
   #
   def find_record_item(field, **opt)
     find_item(*item_record_path, field, **opt)
@@ -270,7 +270,7 @@ module Api::Shared::CommonMethods
   # @param [Boolean]       clean      If *true* run result through #clean.
   # @param [Hash]          opt        Passed to #clean.
   #
-  # @return [any,nil]
+  # @return [any, nil]
   #
   def find_item(*path, field, target: nil, clean: false, **opt)
     target ||= self

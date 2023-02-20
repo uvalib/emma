@@ -69,8 +69,8 @@ class Options
 
   # Create a new options object.
   #
-  # @param [Symbol, any] model
-  # @param [Hash, nil]   prm
+  # @param [Symbol, *] model
+  # @param [Hash, nil] prm
   #
   def initialize(model, prm = nil)
     unless model.is_a?(Symbol)

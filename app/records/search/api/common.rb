@@ -23,7 +23,7 @@ module Search::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/types/search.en.yml *en.emma.search.type*
+  # @see file:config/locales/types/search.en.yml
   #
   CONFIGURATION = I18n.t('emma.search.type').deep_freeze
 
@@ -196,8 +196,8 @@ class PublicationIdentifier < ScalarType
 
     # Type-cast a value to a PublicationIdentifier.
     #
-    # @param [Any, nil] v             Value to use or transform.
-    # @param [Boolean]  invalid
+    # @param [*]       v              Value to use or transform.
+    # @param [Boolean] invalid        If *true* allow invalid value.
     #
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
@@ -1218,14 +1218,12 @@ class Oclc < PublicationIdentifier
       OCLC_FORMAT.find do |p, minmax|
         min, max = minmax if p.to_s.casecmp?(prefix)
       end
-      digits    = identifier(v)&.delete('^0-9')
-      zero_fill = digits && positive(min.to_i - digits.size)
-      digits.prepend('0' * zero_fill) if zero_fill
-      if digits&.match?(/^\d{#{min},#{max}}$/)
-        digits
-      elsif log
-        Log.info { "#{__method__}: #{v.inspect} is not a valid OCN" }
+      if (digits = identifier(v)&.delete('^0-9')&.presence)
+        zero_fill = min.to_i - digits.size
+        digits.prepend('0' * zero_fill) if zero_fill > 0
+        return digits if digits.match?(/^\d{#{min},#{max}}$/)
       end
+      Log.info { "#{__method__}: #{v.inspect} is not a valid OCN" } if log
     end
 
     # =========================================================================

@@ -58,7 +58,7 @@ class Paginator
 
     # Empty copy of data values in the preferred order (for debug output).
     #
-    # @type [Hash{Symbol=>any}]
+    # @type [Hash{Symbol=>*}]
     #
     TEMPLATE: symHash
 
@@ -161,7 +161,7 @@ class Paginator
     #
     # @return [Integer]               Zero indicates unknown count.
     #
-    def record_count: (?(untyped|nil) value, ?default: Integer) -> Integer
+    def record_count: (?untyped value, ?default: Integer) -> Integer
 
     # Extract the number of "items" reported by an object.
     #
@@ -173,7 +173,7 @@ class Paginator
     #
     # @return [Integer]               Zero indicates unknown count.
     #
-    def item_count: (?(untyped|nil) value, ?default: Integer) -> Integer
+    def item_count: (?untyped value, ?default: Integer) -> Integer
 
     def self.included: (Module base) -> void
   end
@@ -232,7 +232,7 @@ class Paginator
   #
   # @return [Integer]               Zero indicates unknown count.
   #
-  def record_count: (?(untyped|nil) value, **untyped opt) -> Integer
+  def record_count: (?untyped value, **untyped opt) -> Integer
 
   # Extract the number of "items" reported by an object.
   #
@@ -241,7 +241,7 @@ class Paginator
   #
   # @return [Integer]               Zero indicates unknown count.
   #
-  def item_count: (?(untyped|nil) value, **untyped opt) -> Integer
+  def item_count: (?untyped value, **untyped opt) -> Integer
 
   # Get the current page of result items.
   #

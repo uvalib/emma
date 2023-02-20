@@ -121,9 +121,6 @@ module Record::Properties
   #
   # @type [Integer]
   #
-  # @see #set_bulk_batch
-  # @see #MAX_BATCH_SIZE
-  #
   BATCH_SIZE: Integer
 
   # URL parameter names and default values.
@@ -218,8 +215,6 @@ module Record::Properties
   #
   # @return [Integer]                 Bulk batch size.
   # @return [FalseClass]              Bulk operations should not be batched.
-  #
-  # @see #set_bulk_batch
   #
   def batch_size: () -> (Integer | false)
 

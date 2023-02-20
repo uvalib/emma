@@ -131,7 +131,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @yieldparam  [Array<Search::Record::MetadataRecord>] recs
   # @yieldreturn [Search::Record::TitleRecord, nil]
   #
-  def recursive_group_records: (Array[Search::Record::MetadataRecord] recs, ?level: Integer, ?fields: untyped|nil) { (Array[Search::Record::MetadataRecord] recs) -> (Search::Record::TitleRecord | nil) } -> (Array[Search::Record::TitleRecord] | Search::Record::TitleRecord | nil)
+  def recursive_group_records: (Array[Search::Record::MetadataRecord] recs, ?level: Integer, ?fields: untyped) { (Array[Search::Record::MetadataRecord] recs) -> (Search::Record::TitleRecord | nil) } -> (Array[Search::Record::TitleRecord] | Search::Record::TitleRecord | nil)
 
   # This functions as an alternative to Enumerable#group_by, but grouping by
   # similarity rather than identity.

@@ -136,13 +136,13 @@ module UploadWorkflow::Single::Simulation
     #
     # @param [Upload, Hash, String, Array, nil] params
     #
-    def initialize: (?(untyped|nil) params) -> void
+    def initialize: (?untyped params) -> void
 
     # set_params
     #
     # @param [Upload, Hash, String, Array, nil] params
     #
-    def set_params: (?(untyped|nil) params) -> untyped
+    def set_params: (?untyped params) -> untyped
 
     # Apply simulation settings based on the primary workflow type.
     #
@@ -154,7 +154,7 @@ module UploadWorkflow::Single::Simulation
     #
     # @param [Upload, Hash, nil] values
     #
-    def set_item: (?(untyped|nil) values) -> untyped
+    def set_item: (?untyped values) -> untyped
 
     def empty?: () -> untyped
 

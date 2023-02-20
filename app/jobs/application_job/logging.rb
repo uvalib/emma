@@ -57,11 +57,11 @@ module ApplicationJob::Logging
   # @param [Array] args
   # @param [Hash]  opt
   #
-  # @return [Any]                     Return value of #perform.
+  # @return [*]                       Return value of #perform.
   #
   def perform(*args, **opt)
     if is_a?(Class)
-      job_warn { "not a class method | args = #{args.inspect}"}
+      job_warn { "not a class method | args = #{args.inspect}" }
     else
       set_arguments(*args, **opt)
     end
@@ -72,7 +72,7 @@ module ApplicationJob::Logging
   # @param [Array] args               Assigned to ActiveJob::Core#arguments.
   # @param [Hash]  opt
   #
-  # @return [Any]                     Return value of #perform.
+  # @return [*]                       Return value of #perform.
   #
   def perform_now(*args, **opt)
     if is_a?(Class)
@@ -155,6 +155,12 @@ module ApplicationJob::Logging
   def arguments_inspect(job)
     job.arguments.map { |v| item_inspect(v) }.join(' | ')
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
 
   def record_inspect(r)
     "#{r.class.name}(id=#{r.id})"

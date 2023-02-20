@@ -213,7 +213,7 @@ class Upload < ApplicationRecord
   #
   # @return [Any]
   #
-  def self.get_value: ((Upload|anyHash) item, (String|Symbol) key, ?default: untyped|nil) -> untyped
+  def self.get_value: ((Upload|anyHash) item, (String|Symbol) key, ?default: untyped) -> untyped
 
   # Create a URL for use with :emma_retrievalLink.
   #

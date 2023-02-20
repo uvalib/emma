@@ -46,8 +46,8 @@ class Options
 
   # Create a new options object.
   #
-  # @param [Symbol, any] model
-  # @param [Hash, nil]   prm
+  # @param [Symbol, *] model
+  # @param [Hash, nil] prm
   #
   def initialize: (untyped model, ?(symHash|nil) prm) -> void
 

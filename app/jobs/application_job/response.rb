@@ -25,7 +25,7 @@ class ApplicationJob::Response
 
   public
 
-  DEFAULT_STATUS  = 'INITIALIZING'
+  DEFAULT_STATUS = 'INITIALIZING'
 
   TEMPLATE = ApplicationCable::Response::TEMPLATE
 

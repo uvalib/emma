@@ -50,7 +50,7 @@ class Action::Store < Action::BulkPart
   # @option opt [Any]     :env            From *request* by default.
   # @option opt [Symbol]  :meth           Name of caller (for logging).
   #
-  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Record::Uploadable#upload_file
   #

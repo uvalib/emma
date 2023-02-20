@@ -47,22 +47,22 @@ class Model::WorkflowJob < ApplicationJob
   #++
   #
   # @overload perform(model, meth, callback, **opt)
-  #   @param [Model]            model
-  #   @param [Symbol]           meth
-  #   @param [AsyncCallback]    callback
-  #   @param [Hash]             opt
+  #   @param [Model]         model
+  #   @param [Symbol]        meth
+  #   @param [AsyncCallback] callback
+  #   @param [Hash]          opt
   #   @option opt [Model, nil]    :from       Passed to *meth*.
   #   @option opt [AsyncCallback] :callback   Ignored.
   #
   # @overload perform(model, meth, **opt)
-  #   @param [Model]            model
-  #   @param [Symbol]           meth
-  #   @param [Hash]             opt
+  #   @param [Model]         model
+  #   @param [Symbol]        meth
+  #   @param [Hash]          opt
   #   @option opt [Model, nil]    :from       Passed to *meth*.
   #   @option opt [AsyncCallback] :callback   Optional.
   #
   # @overload perform(model, **opt)
-  #   @param [Model]            model
+  #   @param [Model]         model
   #   @option opt [Symbol]        :meth
   #   @option opt [Model, nil]    :from       Passed to *meth*.
   #   @option opt [AsyncCallback] :callback   Optional.

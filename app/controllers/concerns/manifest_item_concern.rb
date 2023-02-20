@@ -658,7 +658,7 @@ module ManifestItemConcern
 
   # bulk_new_manifest_items
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_new_manifest_items
     prm = manifest_item_params
@@ -686,7 +686,7 @@ module ManifestItemConcern
 
   # bulk_edit_manifest_items
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_edit_manifest_items
     prm = manifest_item_params
@@ -714,7 +714,7 @@ module ManifestItemConcern
 
   # bulk_delete_manifest_items
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_delete_manifest_items
     prm = manifest_item_params
@@ -832,7 +832,7 @@ module ManifestItemConcern
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]

@@ -196,7 +196,7 @@ module BaseDecorator::Configuration
   # @param [String, Array] path       Partial I18n path.
   # @param [Hash]          opt        To ConfigurationHelper#config_lookup
   #
-  # @return [Any]
+  # @return [*]
   #
   def config_lookup(*path, **opt)
     opt[:ctrlr]  ||= opt.delete(:controller) || controller_config_key

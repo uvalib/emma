@@ -84,14 +84,14 @@ module SearchConcern
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
   #
-  # @param [Any] value
+  # @param [*] value
   #
-  # @return [Any]                     Same type as *value*.
+  # @return [*]
   #
   def sanitize_keys
-    :     (anyHash  value) -> anyHash
+    :     (anyHash  value) -> symHash
     |     (anyArray value) -> (anyArray | untyped)
-    |     (String   value) -> (String | strArray)
+    |     (String   value) -> (strArray | String)
     | [T] (T        value) -> T
 
   # Indicate whether the argument contains only valid identifiers.

@@ -13,5 +13,5 @@ module Lookup::RemoteService::Api::Message
   # @param [Faraday::Response, Exception Model, Hash, String, nil] src
   # @param [Hash, nil]                                             opt
   #
-  def initialize: (untyped src, ?(untyped|nil) opt) -> void
+  def initialize: (untyped src, ?untyped opt) -> void
 end

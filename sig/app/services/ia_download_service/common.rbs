@@ -27,10 +27,10 @@ module IaDownloadService::Common
   # @option opt [Boolean]      :no_redirect
   # @option opt [Integer, nil] :redirection
   #
-  # @raise [ApiService::EmptyResultError]
-  # @raise [ApiService::HtmlResultError]
-  # @raise [ApiService::RedirectionError]
-  # @raise [ApiService::Error]
+  # @raise [IaDownloadService::EmptyResultError]
+  # @raise [IaDownloadService::HtmlResultError]
+  # @raise [IaDownloadService::RedirectionError]
+  # @raise [IaDownloadService::Error]
   #
   # @return [Faraday::Response]
   # @return [nil]

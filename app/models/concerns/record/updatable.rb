@@ -144,11 +144,15 @@ module Record::Updatable
 
     public
 
-    # Get the current real-time value of a database field.
+    # Get the current value of a database column.
+    #
+    # @note This does not currently get the "real-time" value.  In the absence
+    #   of a strategy for plucking the current column value a reload of the
+    #   database record is required first.
     #
     # @param [Symbol, String] column  Database field name.
     #
-    # @return [Any]
+    # @return [*]
     #
     def dynamic_get_field(column)                                               # NOTE: from Upload::WorkflowMethods
       if new_record?
@@ -158,7 +162,8 @@ module Record::Updatable
       end
     end
 
-    # Dynamically update a database column.
+    # Directly update a database column, by-passing validations and other
+    # callbacks.
     #
     # @param [String, Symbol] column
     # @param [Any, nil]       new_value
@@ -171,7 +176,8 @@ module Record::Updatable
       dynamic_set_fields(column => new_value)
     end
 
-    # Dynamically update multiple database columns.
+    # Directly update multiple database columns, by-passing validations and
+    # other callbacks.
     #
     # If the record does not yet exist in the database, only the model object
     # is updated.  If the record does exist then it is updated dynamically in

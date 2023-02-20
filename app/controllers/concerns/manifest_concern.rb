@@ -97,7 +97,7 @@ module ManifestConcern
   # @param [Hash{Symbol=>*}, nil]         prm
   #
   # @return [Array<(Manifest, Hash{Symbol=>*})>]
-  # @return [Array<(Any, Hash{Symbol=>*})>]
+  # @return [Array<(*,        Hash{Symbol=>*})>]
   #
   def manifest_request_params(manifest, prm = nil)
     manifest, prm = [nil, manifest] if manifest.is_a?(Hash)
@@ -543,7 +543,7 @@ module ManifestConcern
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]

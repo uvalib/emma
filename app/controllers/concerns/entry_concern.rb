@@ -173,7 +173,7 @@ module EntryConcern
   # @param [Hash{Symbol=>*}, nil]      prm
   #
   # @return [Array<(Entry, Hash{Symbol=>*})>]
-  # @return [Array<(Any, Hash{Symbol=>*})>]
+  # @return [Array<(*,     Hash{Symbol=>*})>]
   #
   def entry_request_params(entry, prm = nil)                                    # NOTE: from UploadConcern#workflow_parameters (sorta)
     entry, prm = [nil, entry] if entry.is_a?(Hash)
@@ -575,7 +575,7 @@ module EntryConcern
   #
   # @raise [Record::SubmitError]      If the record could not be found.
   #
-  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Phase::Create#upload!
   # @see Phase::Edit#upload!
@@ -599,7 +599,7 @@ module EntryConcern
 
   # bulk_new_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_new_entries
     prm = get_entry_params
@@ -631,7 +631,7 @@ module EntryConcern
 
   # bulk_edit_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_edit_entries
     prm = get_entry_params
@@ -663,7 +663,7 @@ module EntryConcern
 
   # bulk_delete_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   def bulk_delete_entries
     prm = get_entry_params
@@ -695,7 +695,7 @@ module EntryConcern
 
   # bulk_check_entries
   #
-  # @return [Any]
+  # @return [*]
   #
   # @note Currently unused.
   #
@@ -831,7 +831,7 @@ module EntryConcern
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]

@@ -1,4 +1,4 @@
-# SubmissionService::Action::Submit
+# SubmissionService::Action::Cancel
 #
 module SubmissionService::Action::Cancel
   include SubmissionService::Common

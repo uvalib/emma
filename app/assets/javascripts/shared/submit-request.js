@@ -22,6 +22,8 @@ AppDebug.file('shared/submit-request', MODULE, DEBUG);
  *
  * @property {string}   manifest_id
  * @property {string[]} items           IDs of ManifestItems to submit.
+ *
+ * @see "SubmissionService::Request::TEMPLATE"
  */
 
 /**
@@ -29,6 +31,8 @@ AppDebug.file('shared/submit-request', MODULE, DEBUG);
  *
  * @property {string} command
  * @property {string} job_id
+ *
+ * @see "SubmissionService::ControlRequest::TEMPLATE"
  */
 
 // ============================================================================
@@ -169,7 +173,8 @@ export class SubmitRequest extends ChannelRequest {
     }
 
     /**
-     * Indicate whether the item is a candidate payload for the current class.
+     * Return an instance of the current class which is *item* or, if possible,
+     * based on the contents of *item*.
      *
      * @param {SubmitRequest|SubmitRequestPayload|object} item
      *
@@ -196,6 +201,7 @@ export class SubmitRequest extends ChannelRequest {
 
 }
 
+// noinspection JSCheckFunctionSignatures
 /**
  * A bulk submission job control message.
  *
@@ -224,8 +230,6 @@ export class SubmitControlRequest extends SubmitRequest {
      *
      * @readonly
      * @type {SubmitControlRequestPayload}
-     *
-     * @see "SubmitChannel::ControlResponse::TEMPLATE"
      */
     static TEMPLATE = deepFreeze({
         command: undefined,

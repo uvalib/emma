@@ -11,6 +11,8 @@ module AwsS3Service::Common
   # @param [Array<AwsS3::Message::SubmissionRequest,Model,Hash,String>] items
   # @param [Hash]   opt               Passed to *operation*.
   #
+  # @raise [AwsS3Service::RequestError]
+  #
   # @return [Any]                     Depends on *operation*.
   #
   # -
@@ -52,7 +54,7 @@ module AwsS3Service::Common
   # @param [AwsS3::Message::SubmissionRequest, Model, Hash, String, Symbol, nil] item
   # @param [Symbol, String, nil] deployment     Def: `#aws_deployment`.
   #
-  # @raise [ApiService::RequestError]
+  # @raise [AwsS3Service::RequestError]
   #
   # @return [String]
   #

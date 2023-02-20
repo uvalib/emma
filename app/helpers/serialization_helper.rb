@@ -79,7 +79,7 @@ module SerializationHelper
 
   # Serialize an item to JSON format.
   #
-  # @param [Any]  item
+  # @param [*]    item
   # @param [Hash] opt                 Passed to #to_json.
   #
   # @return [String]
@@ -90,7 +90,7 @@ module SerializationHelper
 
   # Serialize an item to XML format.
   #
-  # @param [Any]             item
+  # @param [*]               item
   # @param [String]          separator
   # @param [String]          name       Node name if item.respond_to?(:to_xml).
   # @param [Api::Serializer] serializer
@@ -133,7 +133,7 @@ module SerializationHelper
 
   # add_xml_prolog
   #
-  # @param [String, nil] item
+  # @param [String, *] item
   #
   # @return [String]
   #
@@ -144,8 +144,8 @@ module SerializationHelper
 
   # remove_xml_prolog
   #
-  # @param [String, nil] item
-  # @param [Boolean]     aggressive   If *true*, check all lines.
+  # @param [String, *] item
+  # @param [Boolean]   aggressive     If *true*, check all lines.
   #
   # @return [String]
   #

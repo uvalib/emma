@@ -31,7 +31,7 @@ module ApplicationJob::Logging
   # @param [Array] args
   # @param [Hash]  opt
   #
-  # @return [Any]                     Return value of #perform.
+  # @return [*]                       Return value of #perform.
   #
   def perform: (*untyped args, **untyped opt) -> untyped
 
@@ -40,7 +40,7 @@ module ApplicationJob::Logging
   # @param [Array] args               Assigned to ActiveJob::Core#arguments.
   # @param [Hash]  opt
   #
-  # @return [Any]                     Return value of #perform.
+  # @return [*]                       Return value of #perform.
   #
   def perform_now: (*untyped args, **untyped opt) -> untyped
 
@@ -67,11 +67,11 @@ module ApplicationJob::Logging
 
   def record_inspect: (ApplicationRecord r) -> String
 
-  def hash_inspect: (anyHash h) -> String
+  def hash_inspect: (anyHash|_ToH h) -> String
 
-  def array_inspect: (anyArray a) -> String
+  def array_inspect: (anyArray|_ToA[untyped] a) -> String
 
-  def item_inspect: (untyped v) -> untyped
+  def item_inspect: (untyped v) -> String
 
   def __debug_job
     : (ApplicationJob job, *untyped args, **untyped opt) ?{ () -> untyped } -> nil

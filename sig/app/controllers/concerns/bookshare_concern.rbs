@@ -105,7 +105,7 @@ module BookshareConcern
   # @param [Array<Symbol>] keys   Required Bookshare API keys.
   # @param [Hash]          prm    Other parameters.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def bs_params: (*Symbol keys, **untyped prm) -> symHash
 

@@ -30,7 +30,7 @@ class ArtifactController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  @item: Bs::Record::ArtifactMetadata
+  @item: Bs::Record::ArtifactMetadata | nil
 
   # == GET /artifact/:id?fmt=:fmt
   # == GET /artifact/:bookshareId?fmt=:fmt
@@ -124,5 +124,5 @@ class ArtifactController < ApplicationController
   #
   # @return [Hash{Symbol=>Bs::Record::ArtifactMetadata,Hash}]
   #
-  def show_values: (?(Bs::Record::ArtifactMetadata|anyHash) item, **untyped opt) -> Hash[Symbol, (Bs::Record::ArtifactMetadata|anyHash)]
+  def show_values: (?(Bs::Record::ArtifactMetadata|anyHash|nil) item, **untyped opt) -> Hash[Symbol, (Bs::Record::ArtifactMetadata|anyHash)]
 end

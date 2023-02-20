@@ -11,19 +11,9 @@ __loading_begin(__FILE__)
 #
 class ApplicationJob < ActiveJob::Base
 
-  include Emma::Common
-  include Emma::Debug
-
-  include_submodules(self)
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include ApplicationJob::Properties
-    include ApplicationJob::Methods
-    include ApplicationJob::Logging
-    # :nocov:
-  end
+  include ApplicationJob::Logging
+  include ApplicationJob::Methods
+  include ApplicationJob::Properties
 
   # ===========================================================================
   # :section: ActiveJob exceptions
@@ -43,6 +33,11 @@ class ApplicationJob < ActiveJob::Base
 
   public
 
+  # initialize
+  #
+  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
+  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
+  #
   def initialize(*args, **opt)
     cb     = opt.delete(:callback)
     cb_opt = opt.slice(:cb_receiver, :cb_method).presence
@@ -101,6 +96,7 @@ class ApplicationJob < ActiveJob::Base
 end
 
 # Namespace for app/jobs/attachment.
+# @note Currently unused
 module Attachment
 end
 

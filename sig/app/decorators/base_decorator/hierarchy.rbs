@@ -200,7 +200,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def new_section: ((Symbol|String) `type`, untyped name, (untyped|nil) data_value, (untyped|nil) details, untyped index, symHash prop, symHash opt) -> ActiveSupport::SafeBuffer
+  def new_section: ((Symbol|String) `type`, untyped name, untyped data_value, (untyped|nil) details, untyped index, symHash prop, symHash opt) -> ActiveSupport::SafeBuffer
 
   # list_item_toggle
   #
@@ -221,7 +221,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_line: ((String|Symbol|nil) label, (untyped|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_line: ((String|Symbol|nil) label, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Indicate whether a section should be ignored, either because its name
   # starts with an underscore (indicating "out-of-band" information) or because

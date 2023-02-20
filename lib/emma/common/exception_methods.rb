@@ -84,7 +84,7 @@ module Emma::Common::ExceptionMethods
 
   # Re-raise an exception which indicates a likely programming error.
   #
-  # @param [Exception, Any, nil] error
+  # @param [Exception, *] error
   #
   # @return [nil]
   #

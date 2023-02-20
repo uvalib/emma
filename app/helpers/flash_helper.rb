@@ -200,7 +200,7 @@ module FlashHelper
 
     # A short-cut for creating a FlashHelper::FlashPart only if required.
     #
-    # @param [FlashPart, Any] other
+    # @param [FlashPart, *] other
     #
     # @return [FlashPart]
     #
@@ -218,8 +218,8 @@ module FlashHelper
 
   # Success flash notice.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash notice messages.
   #
@@ -233,8 +233,8 @@ module FlashHelper
 
   # Failure flash notice.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash alert messages.
   #
@@ -248,9 +248,9 @@ module FlashHelper
 
   # Flash notice.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Symbol, nil]                                         topic
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Symbol, nil]                                             topic
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash notice messages.
   #
@@ -264,9 +264,9 @@ module FlashHelper
 
   # Flash alert.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Symbol, nil]                                         topic
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Symbol, nil]                                             topic
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash alert messages.
   #
@@ -280,7 +280,7 @@ module FlashHelper
 
   # Flash notification, which appears on the next page to be rendered.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
   # @param [Symbol]      type         :alert or :notice
   # @param [Symbol, nil] topic
   # @param [Boolean]     clear        If *true* clear flash first.
@@ -306,8 +306,8 @@ module FlashHelper
 
   # Success flash now.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash.now notice messages.
   #
@@ -323,8 +323,8 @@ module FlashHelper
 
   # Failure flash now.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash.now alert messages.
   #
@@ -338,9 +338,9 @@ module FlashHelper
 
   # Flash now notice.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Symbol, nil]                                         topic
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Symbol, nil]                                             topic
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash.now notice messages.
   #
@@ -354,9 +354,9 @@ module FlashHelper
 
   # Flash now alert.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Symbol, nil]                                         topic
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Symbol, nil]                                             topic
+  # @param [Hash]                                                    opt
   #
   # @return [Array<String>]           Current flash.now alert messages.
   #
@@ -371,7 +371,7 @@ module FlashHelper
   # Flash now notification, which appears on the current page when it is
   # rendered.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
   # @param [Symbol]      type         :alert or :notice
   # @param [Symbol, nil] topic
   # @param [Hash]        opt
@@ -396,8 +396,8 @@ module FlashHelper
   # Create items(s) to be included in the 'X-Flash-Message' header to support
   # the ability of the client to update the flash display.
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
-  # @param [Hash]                                                opt
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
+  # @param [Hash]                                                    opt
   #
   # @return [String]
   #
@@ -480,7 +480,7 @@ module FlashHelper
   # exception and its stack trace (to avoid "eating" the exception when this
   # method is called from an exception handler block).
   #
-  # @param [Array<Symbol,ExecReport,Exception,FlashPart,String>] args
+  # @param [Array<String,Symbol,ExecReport,Exception,FlashPart,nil>] args
   # @param [Symbol, nil] topic
   # @param [Hash]        opt          To #flash_template except for:
   #
@@ -526,6 +526,7 @@ module FlashHelper
   # noinspection RubyMismatchedArgumentType
   #++
   def flash_format(*args, topic: nil, **opt)
+    args.compact!
     prop = extract_hash!(opt, :meth, :status, :inspect, :log, :trace)
     meth = args.first.is_a?(Symbol) && args.shift || prop[:meth] || __method__
     item = args.shift
@@ -755,7 +756,7 @@ module FlashHelper
 
   # Build an I18n path.
   #
-  # @param [Array<String,Symbol,Array,nil>] parts
+  # @param [Array<String,Symbol,nil,Array>] parts
   #
   # @return [Symbol]
   #

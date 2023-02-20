@@ -123,7 +123,7 @@ module TestHelper::Common
       fail "#{meth}: cannot interpolate #{value.inspect} - #{error}" if error
       value %= refs.map { |k| [k, item.send(k)] }.to_h
     end
-    value
+    value.to_s
   end
 
   # ===========================================================================

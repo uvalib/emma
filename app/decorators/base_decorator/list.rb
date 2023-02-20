@@ -109,7 +109,7 @@ module BaseDecorator::List
   # Render a single label/value pair.
   #
   # @param [String, Symbol, nil]  label
-  # @param [Any, nil]             value
+  # @param [*]                    value
   # @param [Hash, nil]            prop      Default: from field/model.
   # @param [Symbol, nil]          field
   # @param [String, Integer]      index     Offset to make unique element IDs.

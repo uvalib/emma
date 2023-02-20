@@ -170,7 +170,7 @@ module UploadWorkflow::Errors
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [Any, nil]                                                  value
+  # @param [*]                                                         value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
@@ -324,9 +324,6 @@ module UploadWorkflow::Properties                                               
   #
   # @type [Integer]
   #
-  # @see #set_bulk_batch
-  # @see #MAX_BATCH_SIZE
-  #
   #--
   # noinspection RubyMismatchedConstantType
   #++
@@ -478,8 +475,6 @@ module UploadWorkflow::Properties                                               
   #
   # @return [Integer]                 Bulk batch size.
   # @return [FalseClass]              Bulk operations should not be batched.
-  #
-  # @see #set_bulk_batch
   #
   def batch_size
     key   = OPTION_PARAMETER_MAP[__method__]
@@ -1054,7 +1049,7 @@ module UploadWorkflow::External
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #

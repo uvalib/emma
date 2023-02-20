@@ -134,10 +134,7 @@ module Record::Uploadable
 =begin # TODO: remove when :json resolved
     file_attacher.load_data(file_data)
 =end
-    __output "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached"
-    __output "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached | action.file_data #{file_data.class} | BAD | at start" if file_data.is_a?(String)
     file_attacher_load
-    __output "++++++++++++++++++++++++ promote! | #{self.class} | attach_cached | action.file_data #{file_data.class} | BAD | after file_attacher_load" if file_data.is_a?(String)
     file_attacher.set(nil) unless file_attacher.cached?
     file_attacher.file
   end
@@ -172,8 +169,6 @@ module Record::Uploadable
   # @return [void]
   #
   def promote_file(no_raise: true)                                              # NOTE: from Upload::FileMethods
-    __output "++++++++++++++++++++++++ promote! | #{self.class} | promote_file"
-    __output "++++++++++++++++++++++++ promote! | #{self.class} | promote_file | action.file_data #{file_data.class} | BAD | at start" if file_data.is_a?(String)
     __debug_items(binding)
     promote_cached_file(no_raise: no_raise)
   end
@@ -234,7 +229,7 @@ module Record::Uploadable
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [Array<(Integer, Hash{String=>Any}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #

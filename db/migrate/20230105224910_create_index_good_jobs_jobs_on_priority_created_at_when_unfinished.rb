@@ -1,4 +1,4 @@
-# db/migrate/*_create_index_good_jobs_jobs_on_priority_created_at_when_unfinished.rb.rb
+# db/migrate/*_create_index_good_jobs_jobs_on_priority_created_at_when_unfinished.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true

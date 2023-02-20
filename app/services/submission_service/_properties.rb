@@ -10,11 +10,11 @@ __loading_begin(__FILE__)
 module SubmissionService::Properties
 
   include ApiService::Properties
-  include Record::Properties # TODO: This may need to change...
+  include Record::Properties
   include Emma::TimeMethods
 
   # ===========================================================================
-  # :section:
+  # :section: Configuration
   # ===========================================================================
 
   public
@@ -23,7 +23,7 @@ module SubmissionService::Properties
 
   # Configuration for all submission services.
   #
-  # @type [Hash{Symbol=>Hash}]
+  # @type [Hash{Symbol=>*}]
   #
   CONFIGURATION =
     I18n.t('emma.service.submission').transform_values { |config|

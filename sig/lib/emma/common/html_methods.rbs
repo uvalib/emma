@@ -41,11 +41,11 @@ module Emma::Common::HtmlMethods
   #
   # @return [String]
   #
-  def html_id: (*(ActiveSupport::SafeBuffer|String) parts, ?separator: String, ?underscore: bool, ?camelize: bool) -> String
+  def html_id: (*(ActiveSupport::SafeBuffer|_ToS) parts, ?separator: String, ?underscore: bool, ?camelize: bool) -> String
 
   # Combine an array containing a mix of items into an HTML-safe result.
   #
-  # @param [Array, any]  items
+  # @param [Array, *]    items
   # @param [String, nil] separator
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -58,5 +58,5 @@ module Emma::Common::HtmlMethods
   # This is basically ActionView::Helpers::OutputSafetyHelper#safe_join but
   # without the dependence on Rails.
   #
-  def html_join: (untyped? items, ?(String|nil) separator) ?{ (strArray) -> (String|strArray|nil) } -> ActiveSupport::SafeBuffer
+  def html_join: (untyped items, ?(String|nil) separator) ?{ (strArray) -> (String|strArray|nil) } -> ActiveSupport::SafeBuffer
 end

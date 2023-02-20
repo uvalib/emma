@@ -221,7 +221,7 @@ module ManifestItem::StatusMethods
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
   #
-  # @example File at a local location
+  # @example File at a local (client-side) location
   #   { "name" => "my_file.zip", ... }
   #
   def file_name?(item = nil)
@@ -256,11 +256,11 @@ module ManifestItem::StatusMethods
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
   #
-  # @example Original syntax
+  # @example Uploaded file
   #   { "id" => "...", "storage" => "cache", ... }
   #
-  # @example New syntax # TODO: alternate :file_data format
-  #   { "shrine" => { "id" => "...", "storage" => "cache", ... } ... }
+  # @example Alternate form (not currently used)
+  #   { "uploader" => { "id" => "...", "storage" => "cache", ... } ... }
   #
   def file_uploaded?(item = nil)
     file_upload_data(item).present?

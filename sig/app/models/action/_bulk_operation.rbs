@@ -21,5 +21,5 @@ class Action::BulkOperation < Action
   #
   def initialize: (?(Model|prmHash|nil) attr, ?(symHash|nil) opt) ?{ () -> untyped } -> void
 
-  def describe_targets: (?(untyped|nil) action) -> String
+  def describe_targets: (?untyped action) -> String
 end

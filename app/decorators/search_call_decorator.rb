@@ -148,6 +148,7 @@ class SearchCallDecorator
   #
   def model_field_values(item = nil, **opt)
     v_opt = nil
+    # noinspection RubyMismatchedReturnType
     super.transform_values! do |attr_value|
       if attr_value.blank? && !attr_value.is_a?(FalseClass)
         EM_DASH

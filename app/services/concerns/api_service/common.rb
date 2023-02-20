@@ -118,6 +118,7 @@ module ApiService::Common
   def latest_endpoint(prm = nil)
     prm = (prm || @params).dup
     prm.delete(:api_key) unless prm.delete(:complete)
+    # noinspection RubyMismatchedArgumentType
     prm = url_query(prm).presence
     [@action, prm].compact.join('?')
   end
@@ -308,9 +309,8 @@ module ApiService::Common
   #
   def api_body(obj)
     obj = obj.as_json unless obj.is_a?(String)
-    obj = reject_blanks(obj) if obj.is_a?(Hash)
-    # noinspection RubyMismatchedReturnType
-    obj
+    # noinspection RubyMismatchedArgumentType
+    obj.is_a?(Hash) ? reject_blanks(obj) : obj
   end
 
   # ===========================================================================

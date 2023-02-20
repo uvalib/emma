@@ -28,7 +28,7 @@ module CookieHelper
   # Set the cookie in the request and the response.
   #
   # @param [Symbol, String] key
-  # @param [Any, nil]       value     Defaults to *true*.
+  # @param [*]              value     Defaults to *true*.
   #
   # @return [Any]                     The cookie value.
   # @return [nil]                     If the cookie could not be set.

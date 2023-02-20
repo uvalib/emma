@@ -54,7 +54,7 @@ module ResponseConcern
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status
-  # @param [Array, Any, nil]                 item
+  # @param [Array, *]                        item
   # @param [String, FalseClass]              redirect
   # @param [Boolean]                         xhr        Override `request.xhr?`
   # @param [Symbol]                          meth       Calling method.
@@ -68,15 +68,15 @@ module ResponseConcern
   #++
   #
   # @overload post_response(error, ...)
-  #   @param [Exception]          error
+  #   @param [Exception]        error
   #
   # @overload post_response(status, error, ...)
-  #   @param [Symbol, Integer]    status
-  #   @param [Exception]          error
+  #   @param [Symbol, Integer]  status
+  #   @param [Exception]        error
   #
   # @overload post_response(status, items, ...)
-  #   @param [Symbol, Integer]    status
-  #   @param [Array, Any, nil]    items
+  #   @param [Symbol, Integer]  status
+  #   @param [Array, *]         items
   #
   def post_response(
     status,

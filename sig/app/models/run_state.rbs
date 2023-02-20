@@ -112,7 +112,7 @@ class RunState < Hash[untyped, untyped]
   #
   # @param [String, Boolean, Hash, RunState, Any, nil] source
   #
-  def initialize: (?(untyped|nil) source) -> void
+  def initialize: (?untyped source) -> void
 
   # Override Hash#merge! to set/update attributes.
   #

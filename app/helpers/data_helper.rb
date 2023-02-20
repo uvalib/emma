@@ -43,7 +43,7 @@ module DataHelper
 
   # Indicate whether *name* is a valid table name.
   #
-  # @param [String, Symbol, Any] name
+  # @param [String, Symbol, *] name
   #
   def table_name?(name)
     table_names.include?(name.to_s)
@@ -51,7 +51,7 @@ module DataHelper
 
   # table_columns
   #
-  # @param [String, Symbol, Any] table_name
+  # @param [String, Symbol, *] table_name
   #
   # @return [Array<ActiveRecord::ConnectionAdapters::Column>]
   #
@@ -61,7 +61,7 @@ module DataHelper
 
   # table_column_names
   #
-  # @param [String, Symbol, Any]  table_name
+  # @param [String, Symbol, *]    table_name
   # @param [Array<String,Symbol>] cols          Column names; default: "*".
   #
   # @return [Array<String>]
@@ -74,7 +74,7 @@ module DataHelper
 
   # table_column_types
   #
-  # @param [String, Symbol, Any]  table_name
+  # @param [String, Symbol, *]    table_name
   # @param [Array<String,Symbol>] cols          Column names; default: "*".
   #
   # @return [Hash{Symbol=>Symbol}]
@@ -89,7 +89,7 @@ module DataHelper
 
   # table_records
   #
-  # @param [String, Symbol, Any]  name          Database table name.
+  # @param [String, Symbol, *]    name          Database table name.
   # @param [Array<String,Symbol>] cols          Column names; default: "*".
   # @param [Boolean]              headings      If *false*, don't include the
   #                                               database schema.
@@ -173,7 +173,7 @@ module DataHelper
 
   # Error message for an invalid table name.
   #
-  # @param [String, Symbol] name
+  # @param [String, Symbol, *] name
   #
   # @return [String]
   #
@@ -216,7 +216,7 @@ module DataHelper
 
   # db_connection
   #
-  # @return [Any]                     Return value of block.
+  # @return [*]                       Return value of block.
   #
   # @yield [db]
   # @yieldparam [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
@@ -228,7 +228,7 @@ module DataHelper
   # db_columns
   #
   # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
-  # @param [String, Symbol, Any]        table   Database table name.
+  # @param [String, Symbol, *]          table   Database table name.
   #
   # @return [Array<ActiveRecord::ConnectionAdapters::Column>]
   #
@@ -239,9 +239,9 @@ module DataHelper
   # db_select
   #
   # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
-  # @param [String, Symbol, Any]        table   Database table name.
+  # @param [String, Symbol, *]          table   Database table name.
   # @param [Array<String,Symbol>]       cols    Column names; default: "*".
-  # @param [String, Symbol, Array, Any] sort
+  # @param [String, Symbol, Array, nil] sort
   #
   # @return [Array<Hash>]
   #
@@ -330,7 +330,7 @@ module DataHelper
 
   # Generate HTML to display a database record.
   #
-  # @param [Any]          field
+  # @param [*]            field
   # @param [Integer, nil] row
   # @param [Integer, nil] col
   # @param [Integer, nil] first       Index value of the first column.

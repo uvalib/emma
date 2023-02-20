@@ -11,11 +11,11 @@ class Periodical < ApplicationRecord
   #
   # @param [Artifact, String, *] item
   #
-  def include?: ((Artifact|String|untyped) item) -> bool
+  def include?: (untyped item) -> bool
 
   # Indicate whether the periodical includes the indicated artifact.
   #
   # @param [Artifact, String, *] item
   #
-  def has_artifact?: ((Artifact|String|untyped) item) -> bool
+  def has_artifact?: (untyped item) -> bool
 end

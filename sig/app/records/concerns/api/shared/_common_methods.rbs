@@ -121,9 +121,10 @@ module Api::Shared::CommonMethods
   # @param [Symbol] field
   # @param [Hash]   opt               Passed to #find_item.
   #
-  # @return [any,nil]
+  # @return [any, nil]
   #
   def find_record_item: (Symbol field, **untyped opt) -> (untyped | nil)
+
   # find_record_items
   #
   # @param [Symbol] field
@@ -158,7 +159,7 @@ module Api::Shared::CommonMethods
   # @param [Boolean]       clean      If *true* run result through #clean.
   # @param [Hash]          opt        Passed to #clean.
   #
-  # @return [any,nil]
+  # @return [any, nil]
   #
   def find_item: (*Symbol path, Symbol field, ?target: Api::Record|nil, ?clean: bool, **untyped opt) -> (untyped | nil)
 

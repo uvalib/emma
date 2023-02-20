@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SubmissionService::Action::Submit
+# SubmissionService::Action::Cancel
 #
 module SubmissionService::Action::Cancel
 

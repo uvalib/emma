@@ -27,6 +27,7 @@ module Record::FileData
   # Generate a record to express structured file data.
   #
   # @param [Hash, String, nil] data
+  # @param [Hash]              opt    Passed to #json_parse
   #
   # @return [Hash{String=>Any}]
   #

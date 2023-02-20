@@ -87,7 +87,7 @@ module ConfigurationHelper
   # @param [String, Array]       path       Partial I18n path.
   # @param [Symbol, String, nil] ctrlr
   # @param [Symbol, String, nil] action
-  # @param [Any]                 default  Returned on failure.
+  # @param [*]                   default  Returned on failure.
   # @param [Boolean]             fatal    If *true* then raise exceptions.
   # @param [Hash]                opt      To #config_interpolations except:
   #
@@ -232,10 +232,10 @@ module ConfigurationHelper
 
   # Recursively apply supplied unit interpolations.
   #
-  # @param [Hash, Array, String, Integer, Boolean, nil] item
-  # @param [Hash]                                       units
+  # @param [Hash, Array, String, Integer, Boolean, *] item
+  # @param [Hash]                                     units
   #
-  # @return [Hash, Array, String, Integer, Boolean, nil]
+  # @return [*]
   #
   def apply_config_interpolations(item, units:, **)
     if item.is_a?(Hash)

@@ -244,6 +244,7 @@ class BookshareDecorator < BaseDecorator
 
       # If the path contains format references (e.g., "%{id}") then they should
       # be satisfied by the options passed in to the method.
+      # noinspection RubyMismatchedArgumentType
       if (ref_keys = named_references(path, SPRINTF_NAMED_REFERENCE)).present?
         ref_opt = extract_hash!(prm, *ref_keys).compact_blank!
         ref_opt.transform_values! { |v| v.is_a?(String) ? url_escape(v) : v }
@@ -399,6 +400,9 @@ class BookshareDecorator
   # @return [ActiveSupport::SafeBuffer]       An HTML link element.
   # @return [nil]                             If no *terms* were provided.
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def search_link(terms, **opt)
     html_opt = remainder_hash!(opt, *SEARCH_LINK_OPTIONS)
     terms = terms.to_s.strip.presence or return

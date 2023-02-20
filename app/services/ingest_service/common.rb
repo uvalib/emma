@@ -61,10 +61,10 @@ module IngestService::Common
   # @option opt [Boolean]      :no_redirect
   # @option opt [Integer, nil] :redirection
   #
-  # @raise [ApiService::EmptyResultError]
-  # @raise [ApiService::HtmlResultError]
-  # @raise [ApiService::RedirectionError]
-  # @raise [ApiService::Error]
+  # @raise [IngestService::EmptyResultError]
+  # @raise [IngestService::HtmlResultError]
+  # @raise [IngestService::RedirectionError]
+  # @raise [IngestService::Error]
   #
   # @return [Faraday::Response]
   # @return [nil]

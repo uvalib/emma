@@ -646,12 +646,12 @@ module BaseDecorator::Fields
   # @overload mark_invalid_languages(value, code: false)
   #   @param [String]        value
   #   @param [Boolean]       code
-  #   @return [String, ActiveSupport::SafeBuffer, nil]
+  #   @return [ActiveSupport::SafeBuffer, String, nil]
   #
   # @overload mark_invalid_languages(array, code: false)
   #   @param [Array<String>] array
   #   @param [Boolean]       code
-  #   @return [Array<String, ActiveSupport::SafeBuffer>]
+  #   @return [Array<ActiveSupport::SafeBuffer, String>]
   #
   def mark_invalid_languages(value, code: false)
     if value.is_a?(Array)
@@ -688,7 +688,7 @@ module BaseDecorator::Fields
   #
   def mark_invalid_identifiers(value)
     return value.map { |v| send(__method__, v) } if value.is_a?(Array)
-    type, id_part = value.split(':', 2)
+    type, id_part = value.to_s.split(':', 2)
     if id_part.nil? # No type prefix.
       value
     elsif (identifier = PublicationIdentifier.create(id_part, type))&.valid?

@@ -48,7 +48,7 @@ module Record::Steppable
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/state_table.en.yml *en.emma.state_table*
+  # @see file:config/locales/state_table.en.yml
   #
   STATE_TABLES =
     I18n.t('emma.state_table', default: {}).transform_values { |leaf_classes|
@@ -85,7 +85,7 @@ module Record::Steppable
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/controllers/entry.en.yml *en.emma.entry.state_group*
+  # @see file:config/locales/controllers/entry.en.yml
   #
   STATE_GROUP =
     I18n.t('emma.entry.state_group', default: {}).transform_values { |entry|

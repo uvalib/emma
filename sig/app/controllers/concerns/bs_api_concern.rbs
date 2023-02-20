@@ -19,9 +19,9 @@ module BsApiConcern
   # @param [String] path
   # @param [Hash]   opt               Passed to #api.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>Any}]       (no *nil* values)
   #
-  def bs_api_explorer: (Symbol meth, String path, **untyped opt) -> symHash
+  def bs_api_explorer: (Symbol meth, String path, **untyped opt) -> Hash[Symbol,any]
 
   # To support API testing.
   #
