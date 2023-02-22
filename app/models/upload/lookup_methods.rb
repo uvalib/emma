@@ -221,8 +221,7 @@ module Upload::LookupMethods
     # opt[:sort] was explicitly *nil* or *false*. Permit :asc as shorthand for
     # the default sort order ascending; :desc as shorthand for the default sort
     # order descending.
-    sort = opt.key?(:sort) ? opt.delete(:sort) : (:id unless ids || sids)
-    if (sort = opt.key?(:sort) ? opt.delete(:sort) : (ids || sids).blank?)
+    if (sort = opt.key?(:sort) ? opt.delete(:sort) : (:id unless ids || sids))
       case sort
         when Hash                 then col, dir = sort.first
         when TrueClass            then col, dir = [nil, nil]

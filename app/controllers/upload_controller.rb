@@ -56,6 +56,8 @@ class UploadController < ApplicationController
 
   skip_authorization_check only: ANON_ROUTES
 
+  authorize_resource
+
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
