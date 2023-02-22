@@ -152,6 +152,15 @@ module AwsConcern
   #
   def get_s3_objects: ((String|Aws::S3::Bucket) bucket, **untyped opt) -> Array[Aws::S3::Object]
 
+  # The URL to the associated object in AWS S3.
+  #
+  # @param [Upload, Record::Uploadable, Aws::S3::Object] item
+  # @param [Hash]                                        opt
+  #
+  # @return [String, nil]
+  #
+  def get_s3_public_url: ((Upload|Record::Uploadable|Aws::S3::Object) item, **untyped opt) -> (String | nil)
+
   private
 
   THIS_MODULE: Module

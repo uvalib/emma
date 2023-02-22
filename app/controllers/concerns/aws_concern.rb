@@ -292,6 +292,24 @@ module AwsConcern
   # :section:
   # ===========================================================================
 
+  public
+
+  # The URL to the associated object in AWS S3.
+  #
+  # @param [Upload, Record::Uploadable, Aws::S3::Object] item
+  # @param [Hash]                                        opt
+  #
+  # @return [String, nil]
+  #
+  def get_s3_public_url(item, **opt)
+    obj = item.try(:s3_object) || item
+    obj.public_url(opt) if obj.is_a?(Aws::S3::Object)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   private
 
   THIS_MODULE = self

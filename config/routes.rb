@@ -80,6 +80,7 @@ Rails.application.routes.draw do
   # === Administration
 
   get    '/upload/admin',           to: 'upload#admin',         as: 'admin_upload'
+  get    '/upload/records',         to: 'upload#records'
 
   # === Other
 

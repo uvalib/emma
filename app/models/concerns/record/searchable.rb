@@ -231,11 +231,15 @@ module Record::Searchable
   # @param [Hash]                                 opt  Passed to #where except
   #
   # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
-  # @option opt [Integer,nil]       :offset
-  # @option opt [Integer,nil]       :limit
-  # @option opt [Symbol,nil]        :id_key   Default: `#id_column`.
-  # @option opt [Symbol,nil]        :sid_key  Default: `#sid_column`.
-  # @option opt [String,Symbol,nil] :meth     Calling method for diagnostics.
+  # @option opt [Integer, nil]      :offset
+  # @option opt [Integer, nil]      :limit
+  # @option opt [String, Date]      :start_date   Earliest :updated_at.
+  # @option opt [String, Date]      :end_date     Latest :updated_at.
+  # @option opt [String, Date]      :after        All :updated_at after this.
+  # @option opt [String, Date]      :before       All :updated_at before this.
+  # @option opt [Symbol, nil]       :id_key       Default: `#id_column`.
+  # @option opt [Symbol, nil]       :sid_key      Default: `#sid_column`.
+  # @option opt [String,Symbol,nil] :meth         Caller for diagnostics.
   #
   # @return [ActiveRecord::Relation]
   #
@@ -243,20 +247,22 @@ module Record::Searchable
   # @see ActiveRecord::Relation#where
   #
   def get_relation(*items, **opt)                                               # NOTE: from Upload::LookupMethods
+    terms   = []
     meth    = opt.delete(:meth) || "#{self_class}.#{__method__}"
     id_opt  = extract_hash!(opt, :id_key, :sid_key).transform_values!(&:to_sym)
     id_key  = id_opt[:id_key]  ||= id_column
     sid_key = id_opt[:sid_key] ||= sid_column
-    ids     = id_key  ? Array.wrap(opt.delete(id_key))  : []
-    sids    = sid_key ? Array.wrap(opt.delete(sid_key)) : []
+
+    # == Record specifiers
+    ids  = id_key  ? Array.wrap(opt.delete(id_key))  : []
+    sids = sid_key ? Array.wrap(opt.delete(sid_key)) : []
     if items.present?
-      items = expand_ids(*items).map { |term| id_term(term, **id_opt) }
-      ids   = items.map { |term| term[id_key]  } + ids  if id_key
-      sids  = items.map { |term| term[sid_key] } + sids if sid_key
+      recs = expand_ids(*items).map { |term| id_term(term, **id_opt) }
+      ids  = recs.map { |rec| rec[id_key]  } + ids  if id_key
+      sids = recs.map { |rec| rec[sid_key] } + sids if sid_key
     end
-    ids   = ids.compact_blank!.uniq.presence
-    sids  = sids.compact_blank!.uniq.presence
-    terms = []
+    ids  = ids.compact_blank!.uniq.presence
+    sids = sids.compact_blank!.uniq.presence
     if ids && sids
       terms << sql_terms(id_key => ids, sid_key => sids, join: :or)
     elsif ids
@@ -265,6 +271,7 @@ module Record::Searchable
       opt[sid_key] = sids
     end
 
+    # == Sort order
     # Avoid applying a sort order if identifiers were specified or if
     # opt[:sort] was explicitly *nil* or *false*. Permit :asc as shorthand for
     # the default sort order ascending; :desc as shorthand for the default sort
@@ -282,6 +289,7 @@ module Record::Searchable
       Log.info { "#{meth}: no default sort" } unless sort
     end
 
+    # == Filter by user
     user_opt = opt.extract!(:user, :user_id)
     if user_column && user_opt.present?
       users = user_opt.values.flatten.map { |u| User.id_value(u) }.uniq
@@ -289,9 +297,35 @@ module Record::Searchable
       terms << sql_terms(user_column => users, join: :or)
     end
 
+    # == Limit by state
     state_opt = state_column && opt.extract!(state_column)
     terms << sql_terms(state_opt, join: :or) if state_opt.present?
 
+    # == Update time lower bound
+    exclusive, inclusive = [opt.delete(:after), opt.delete(:start_date)]
+    lower = exclusive || inclusive
+    day, month, year = day_string(lower)
+    lower = day if day
+    if (lower &&= (lower.to_datetime rescue nil))
+      lower += 1.month if exclusive && month
+      lower += 1.year  if exclusive && year
+      on_or_after = (exclusive && !month && !year) ? '>' : '>='
+      terms << "updated_at #{on_or_after} '#{lower}'::date"
+    end
+
+    # == Update time upper bound
+    exclusive, inclusive = [opt.delete(:before), opt.delete(:end_date)]
+    upper = exclusive || inclusive
+    day, month, year = day_string(upper)
+    upper = day if day
+    if (upper &&= (upper.to_datetime rescue nil))
+      upper += 1.month - 1.day if inclusive && month
+      upper += 1.year  - 1.day if inclusive && year
+      on_or_before = exclusive ? '<' : '<='
+      terms << "updated_at #{on_or_before} '#{upper}'::date"
+    end
+
+    # == Record limit/offset
     limit  = positive(opt.delete(:limit))
     offset = positive(opt.delete(:offset))
     if offset && pagination_column
@@ -300,7 +334,8 @@ module Record::Searchable
       Log.warn { "#{meth}: pagination not supported" }
     end
 
-    query  = sql_terms(opt, *terms, join: :and)
+    # == Generate the relation
+    query = sql_terms(opt, *terms, join: :and)
     where(query).tap do |result|
       result.order!(sort)  if sort.present?
       result.limit!(limit) if limit.present?
@@ -331,6 +366,30 @@ module Record::Searchable
     end
     group_count[:all] = group_count.values.sum
     group_count
+  end
+
+  # Generate a Date-parseable string from a string that indicates either a day,
+  # (YYYYMMDD), a month (YYYYMM), or a year (YYYY) -- with or without date
+  # separator punctuation.
+  #
+  # @param [*] value
+  #
+  # @return [nil,    false, false]    If *value* is not a date string.
+  # @return [String, false, false]    If *value* specifies a day.
+  # @return [String, true,  false]    If *value* specifies a month.
+  # @return [String, false, true]     If *value* specifies a year
+  #
+  def day_string(value)
+    day = month = year = nil
+    if value.is_a?(String)
+      case (value = value.strip)
+        when /^\d{4}$/           then day = year  = "#{value}-01-01"
+        when /^\d{4}(\D?)\d{2}$/ then day = month = "#{value}#{$1}01"
+        else                          day = value
+      end
+    end
+    # noinspection RubyMismatchedReturnType
+    return day, !!month, !!year
   end
 
   # ===========================================================================

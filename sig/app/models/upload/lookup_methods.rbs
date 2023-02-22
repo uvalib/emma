@@ -86,9 +86,14 @@ module Upload::LookupMethods
   # @param [Array<Upload, String, Integer, Array>] items
   # @param [Hash]                                  opt  Passed to #where except
   #
-  # @option opt [Symbol, nil] :sort     No sort if explicitly *nil*.
-  # @option opt [Integer,nil] :offset
-  # @option opt [Integer,nil] :limit
+  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
+  # @option opt [Integer, nil]      :offset
+  # @option opt [Integer, nil]      :limit
+  # @option opt [String, Date]      :start_date   Earliest :updated_at.
+  # @option opt [String, Date]      :end_date     Latest :updated_at.
+  # @option opt [String, Date]      :after        All :updated_at after this.
+  # @option opt [String, Date]      :before       All :updated_at before this.
+  # @option opt [String,Symbol,nil] :meth         Caller for diagnostics.
   #
   # @return [ActiveRecord::Relation]
   #
@@ -104,6 +109,21 @@ module Upload::LookupMethods
   # @return [Hash{Symbol=>Integer}]
   #
   def group_by_state: (ActiveRecord::Relation relation) -> symHash
+
+  # Generate a Date-parseable string from a string that indicates either a day,
+  # (YYYYMMDD), a month (YYYYMM), or a year (YYYY) -- with or without date
+  # separator punctuation.
+  #
+  # @param [*] value
+  #
+  # @return [nil,    false, false]    If *value* is not a date string.
+  # @return [String, false, false]    If *value* specifies a day.
+  # @return [String, true,  false]    If *value* specifies a month.
+  # @return [String, false, true]     If *value* specifies a year
+  #
+  def day_string
+    : (String  value) -> ([String, bool, bool] | [nil, false, false])
+    | (untyped value) -> [nil, false, false]
 
   private
 

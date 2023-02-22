@@ -43,15 +43,18 @@ class UploadController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
+  ADMIN_ROUTES = %i[api_migrate bulk_reindex]
+  ANON_ROUTES  = %i[show records]
+
   before_action :update_user
-  before_action :authenticate_admin!, only:   %i[api_migrate bulk_reindex]
-  before_action :authenticate_user!,  except: %i[api_migrate bulk_reindex show]
+  before_action :authenticate_admin!, only:   ADMIN_ROUTES
+  before_action :authenticate_user!,  except: (ADMIN_ROUTES + ANON_ROUTES)
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  authorize_resource
+  skip_authorization_check only: ANON_ROUTES
 
   # ===========================================================================
   # :section: Callbacks
@@ -665,6 +668,27 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
+  # == GET /upload/records[?start_date=DATE&end_date=DATE]
+  #
+  # Generate record information for APTrust backup.
+  #
+  def records
+    __log_activity
+    __debug_route
+    prm = upload_params
+    opt = { repository: EmmaRepository.default, state: :completed }.merge(prm)
+    @list = Upload.get_relation(**opt).map { |rec| record_value(rec) }
+    respond_to do |format|
+      format.html { redirect_to prm.merge!(format: :json) }
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values(item: :entry) }
+    end
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
+    show_search_failure(error)
+  rescue => error
+    show_search_failure(error, root_path)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -741,6 +765,25 @@ class UploadController < ApplicationController
       flash_failure(error, meth: meth)
       redirect_back(fallback_location: (fallback || upload_index_path))
     end
+  end
+
+  # A record representation including URL of the remediated content file.
+  #
+  # @param [Upload] rec
+  #
+  # @return [Hash]
+  #
+  def record_value(rec)
+    {
+      submission_id: rec.submission_id,
+      created_at:    rec.created_at,
+      updated_at:    rec.updated_at,
+      user_id:       rec.user_id,
+      user:          User.uid_value(rec.user_id),
+      file_url:      get_s3_public_url(rec),
+      file_data:     safe_json_parse(rec.file_data),
+      emma_data:     rec.emma_metadata,
+    }
   end
 
   # ===========================================================================

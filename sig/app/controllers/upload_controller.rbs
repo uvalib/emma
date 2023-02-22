@@ -38,6 +38,10 @@ class UploadController < ApplicationController
 
   #extend CanCan::ControllerAdditions::ClassMethods
 
+  ADMIN_ROUTES: symArray
+
+  ANON_ROUTES: symArray
+
   # Results for :index.
   #
   # @return [Array<Upload, String>]
@@ -333,6 +337,12 @@ class UploadController < ApplicationController
   #
   def admin: () -> void
 
+  # == GET /upload/records[?start_date=DATE&end_date=DATE]
+  #
+  # Generate record information for APTrust backup.
+  #
+  def records: () -> void
+
   # == GET /upload/api_migrate?(v|version)=[0.0.]5(&verbose=true&dryrun=false)
   #
   # Modify :emma_data fields and content.
@@ -368,6 +378,14 @@ class UploadController < ApplicationController
   # @return [void]
   #
   def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
+
+  # A record representation including URL of the remediated content file.
+  #
+  # @param [Upload] rec
+  #
+  # @return [Hash]
+  #
+  def record_value: (Upload rec) -> symHash
 
   # If the :show endpoint is given an :id which is actually a specification for
   # multiple items then there is a redirect to :index.
