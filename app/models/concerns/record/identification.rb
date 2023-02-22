@@ -128,8 +128,6 @@ module Record::Identification
   #
   # @return [Symbol]
   #
-  # @note Currently unused
-  #
   def user_column
     USER_COLUMN
   end
