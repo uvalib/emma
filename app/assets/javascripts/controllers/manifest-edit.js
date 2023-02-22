@@ -311,7 +311,7 @@ appSetup(MODULE, function() {
     const EDITING_MARKER        = 'editing';
     const CHANGED_MARKER        = 'changed';
     const ERROR_MARKER          = 'error';
-    //const REQUIRED_MARKER     = 'required';
+  //const REQUIRED_MARKER       = 'required';
     const ROW_FIELD_CLASS       = 'value';
     const CELL_VALUE_CLASS      = ROW_FIELD_CLASS;
     const CELL_DISPLAY_CLASS    = CELL_VALUE_CLASS;
@@ -349,11 +349,11 @@ appSetup(MODULE, function() {
     const INDICATOR     = selector(INDICATOR_CLASS);
     const DATA_CELL     = selector(DATA_CELL_CLASS);
     const EDITING       = selector(EDITING_MARKER);
-    //const CHANGED     = selector(CHANGED_MARKER);
-    //const ERROR       = selector(ERROR_MARKER);
-    //const REQUIRED    = selector(REQUIRED_MARKER);
+  //const CHANGED       = selector(CHANGED_MARKER);
+  //const ERROR         = selector(ERROR_MARKER);
+  //const REQUIRED      = selector(REQUIRED_MARKER);
     const ROW_FIELD     = selector(`${ROW_FIELD_CLASS}[${FIELD_ATTR}]`);
-    //const CELL_VALUE  = selector(CELL_VALUE_CLASS);
+  //const CELL_VALUE    = selector(CELL_VALUE_CLASS);
     const CELL_DISPLAY  = selector(CELL_DISPLAY_CLASS);
     const CELL_EDIT     = selector(CELL_EDIT_CLASS);
 
