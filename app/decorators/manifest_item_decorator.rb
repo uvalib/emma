@@ -269,22 +269,18 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item(pairs: nil, **opt)
-      opt[:pairs] = model_index_fields.merge(pairs || {})
-      outer, tag, index = opt.values_at(:outer, :tag, :index)
-      outer = outer&.dup || {}
-      outer.reverse_merge!(
-        'data-item-id':    object.id,
-        'data-item-row':   object.row,
-        'data-item-delta': object.delta,
-      )
-      outer[:id] ||= "#{model_type}-item-#{index}" if index
-      if tag.nil? || !TABLE_TAGS.include?(tag)
-        outer_classes = outer[:class] ? css_class_array(*outer[:class]) : []
-        if outer_classes.none? { |c| c.start_with?('columns-') }
-          append_css!(outer, "columns-#{opt[:pairs].size}")
-        end
+      index = opt[:index]
+      pairs = opt[:pairs] = model_index_fields.merge(pairs || {})
+      outer = opt[:outer] = opt[:outer]&.dup || {}
+      outer[:id]                ||= "#{model_type}-item-#{index}" if index
+      outer[:'data-item-id']    ||= object.id
+      outer[:'data-item-row']   ||= object.row
+      outer[:'data-item-delta'] ||= object.delta
+      unless TABLE_TAGS.include?(opt[:tag])
+        outer_class  = css_class_array(*outer[:class])
+        need_columns = outer_class.none? { |c| c.start_with?('columns-') }
+        append_css!(outer, "columns-#{pairs.size}") if need_columns
       end
-      opt[:outer] = outer unless outer.blank?
       super(**opt)
     end
 
@@ -327,22 +323,16 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
-    SKIPPED_FIELDS = [
-      *ManifestItem::ID_COLS,
-      *ManifestItem::GRID_COLS,
-      *ManifestItem::TRANSIENT_COLS,
-    ].freeze
+    SKIPPED_FIELDS = ManifestItem::NO_SHOW_COLS
 
     # The fields which are displayed in the expandable "Item Details" panel.
     #
     # @param [Array<Symbol>]
     #
     DETAILS_FIELDS = %i[
-      created_at
+      field_error
       updated_at
       last_saved
-      last_lookup
-      last_indexed
       last_submit
     ].freeze
 
@@ -901,7 +891,7 @@ class ManifestItemDecorator < BaseDecorator
           l_id  = "label-#{v_id}"
 
           v_opt = { 'data-field': field, id: v_id, 'aria-labelledby': l_id }
-          value = item[field] || EMPTY_VALUE
+          value = item[field].presence || EMPTY_VALUE
           value = row_detail_value(value, **v_opt)
 
           l_opt = { 'data-field': field, id: l_id }
@@ -958,23 +948,6 @@ class ManifestItemDecorator < BaseDecorator
       html_div(label, opt)
     end
 
-    # row_detail_value
-    #
-    # @param [String,Symbol] value
-    # @param [String]        css
-    # @param [Hash]          opt
-    #
-    # @option opt [String]        :id                 Required
-    # @option opt [String,Symbol] :'data-field'       Required
-    # @option opt [String]        :'aria-labelledby'  Required
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def row_detail_value(value, css: VALUE_CLASS, **opt)
-      append_css!(opt, css)
-      html_div(value, opt)
-    end
-
     # row_detail_value_label
     #
     # @param [String,Symbol] label
@@ -988,6 +961,57 @@ class ManifestItemDecorator < BaseDecorator
     def row_detail_value_label(label, css: LABEL_CLASS, **opt)
       append_css!(opt, css)
       html_div(label, opt)
+    end
+
+    # row_detail_value
+    #
+    # @param [Hash,Array,String,nil] value
+    # @param [String]                css
+    # @param [Hash]                  opt
+    #
+    # @option opt [String]        :id                 Required
+    # @option opt [String,Symbol] :'data-field'       Required
+    # @option opt [String]        :'aria-labelledby'  Required
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_detail_value(value, css: VALUE_CLASS, **opt)
+      # noinspection RubyMismatchedArgumentType
+      value = row_field_error_details(value, **opt) if value.is_a?(Hash)
+      opt[:separator] = HTML_BREAK unless opt.key?(:separator)
+      append_css!(opt, css)
+      html_div(value, opt)
+    end
+
+    # row_field_error_details
+    #
+    # @param [Hash]   value
+    # @param [String] css
+    # @param [Hash]   opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see file:javascripts/controllers/manifest-edit.js *updateRowDetails*
+    #
+    def row_field_error_details(value, css: '.field-errors', **opt)
+      append_css!(opt, css)
+      html_tag(:dl, opt) do
+        value.map do |fld, errs|
+          if errs.is_a?(Hash)
+            errs =
+              errs.map do |k, v|
+                item  = html_span(k, class: 'quoted')
+                issue = html_span(v)
+                html_div { "#{item}: #{issue}".html_safe }
+              end
+          elsif errs.is_a?(Array)
+            errs = safe_join(errs, HTML_BREAK)
+          else
+            errs = ERB::Util.h(errs)
+          end
+          html_tag(:dt, fld) << html_tag(:dd, *errs)
+        end
+      end
     end
 
   end
@@ -1154,7 +1178,8 @@ class ManifestItemDecorator
   #
   def grid_item(**opt)
     # noinspection RailsParamDefResolve
-    opt[:group] ||= object.try(:state_group)
+    opt[:group]       ||= object.try(:state_group)
+    opt[:field_error] ||= object.field_error unless opt[:template]
     super
   end
 

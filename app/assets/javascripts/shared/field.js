@@ -3,14 +3,14 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug }          from '../application/debug';
-import { arrayWrap }         from './arrays';
-import { Emma }              from './assets';
-import { BaseClass }         from './base-class';
-import { isEmpty }           from './definitions';
-import { htmlEncode }        from './html';
-import { compact, fromJSON } from './objects';
-import { asString }          from './strings';
+import { AppDebug }                    from '../application/debug';
+import { arrayWrap }                   from './arrays';
+import { Emma }                        from './assets';
+import { BaseClass }                   from './base-class';
+import { isEmpty }                     from './definitions';
+import { htmlEncode }                  from './html';
+import { compact, fromJSON, isObject } from './objects';
+import { asString }                    from './strings';
 
 
 AppDebug.file('shared/field');
@@ -291,6 +291,14 @@ export class Value extends BaseClass {
      */
     _map = {};
 
+    /**
+     * Mapping of invalid values to their error messages.
+     *
+     * @type {StringTable}
+     * @protected
+     */
+    _error = {};
+
     // ========================================================================
     // Constructor
     // ========================================================================
@@ -300,14 +308,16 @@ export class Value extends BaseClass {
      *
      * @param {*}                                 [arg]
      * @param {string|Properties|FieldProperties} [type]
+     * @param {Object.<string,(string|string[])>} [errs]
      */
-    constructor(arg, type) {
+    constructor(arg, type, errs) {
         super();
         if (arg instanceof this.constructor) {
             this._setFromValue(arg);
         } else {
             this._setFrom(arg, type);
         }
+        this._error = { ...errs };
     }
 
     // ========================================================================
@@ -536,16 +546,52 @@ export class Value extends BaseClass {
     // Properties
     // ========================================================================
 
-    get value()    { return this._value }
-    get type()     { return this._type }
-    get unset()    { return this._unset }
-    get lines()    { return this.toArray() }
+    get value() { return this._value }
+    get type()  { return this._type }
+    get unset() { return this._unset }
+    get lines() { return this.toArray() }
+
+    get valid()   { return !this.invalid }
+    get invalid() {
+        if (this.blank) { return false }
+        const invalid = Object.keys(this.errorTable);
+        if (isEmpty(invalid)) { return false }
+        return !!this.toArray().find(v => invalid.includes(v));
+    }
+
     get blank()    { return this.unset || isEmpty(this.value) }
     get nonBlank() { return !this.blank }
+
+    get errorTable()    { return this._error }
+    set errorTable(arg) { this._error = { ...arg } }
 
     // ========================================================================
     // Methods
     // ========================================================================
+
+    /**
+     * Add entry/entries to the error table.
+     *
+     * @param {string|Object.<string,(string|string[])>} key
+     * @param {string|string[]}                          [val]
+     */
+    addErrorTable(key, val) {
+        /** @type {[string, (string|string[])][]} */
+        const entries = isObject(key) ? Object.entries(key) : [[key, val]];
+        const table   = this._error;
+        entries.forEach(([k,v]) => {
+            const msg = [];
+            if (table[k]) {
+                msg.push(table[k]);
+            }
+            if (Array.isArray(v)) {
+                msg.push(...v);
+            } else {
+                msg.push(v || 'invalid'); // TODO: I18n
+            }
+            table[k] = msg.join('; ');
+        });
+    }
 
     /**
      * Indicate whether the instance has the same value.

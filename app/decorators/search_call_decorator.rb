@@ -55,11 +55,11 @@ class SearchCallDecorator < BaseDecorator
     # @see #model_field_values
     #
     def details(pairs: nil, **opt)
-      fv_opt      = extract_hash!(opt, :columns, :filter)
-      opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
-      count       = opt[:pairs].size
+      fv_opt = extract_hash!(opt, :columns, :filter)
+      pairs  = model_field_values(**fv_opt).merge!(pairs || {})
+      count  = pairs.size
       append_css!(opt, "columns-#{count}") if count.positive?
-      super(**opt)
+      super(pairs: pairs, **opt)
     end
 
     # Render a single entry for use within a list of items.

@@ -52,7 +52,7 @@ module Emma::Unicode
 
   WARNING_SIGN: String
 
-  CHECK_MARK: String
+  CHECK: String
 
   HEAVY_X: String
 

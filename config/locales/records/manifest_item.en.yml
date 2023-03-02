@@ -825,3 +825,11 @@ en:
               of the EMMA entry created from this manifest item.
             </p>
           type:         datetime
+
+        field_error:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Import Errors'
+          tooltip:      'One or more error messages per problematic field'
+          type:         json

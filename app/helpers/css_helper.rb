@@ -111,7 +111,7 @@ module CssHelper
   # Compare with #prepend_css!
   #
   def append_css!(html_opt, *classes, &block)
-    result = css_class_array(html_opt[:class], *classes, &block).join(' ')
+    result = css_class_array(*html_opt[:class], *classes, &block).join(' ')
     html_opt.merge!(class: result)
   end
 
@@ -163,7 +163,7 @@ module CssHelper
   # Compare with #append_css!
   #
   def prepend_css!(html_opt, *classes, &block)
-    result = css_class_array(*classes, html_opt[:class], &block).join(' ')
+    result = css_class_array(*classes, *html_opt[:class], &block).join(' ')
     html_opt.merge!(class: result)
   end
 
@@ -194,7 +194,7 @@ module CssHelper
   # @return [Hash]                        The modified *html_opt* hash.
   #
   def remove_css!(html_opt, *classes)
-    if (current = css_class_array(html_opt[:class])).blank?
+    if (current = css_class_array(*html_opt[:class])).blank?
       html_opt.except!(:class)
     elsif (removed = css_class_array(*classes)).blank?
       html_opt

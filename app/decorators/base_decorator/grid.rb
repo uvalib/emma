@@ -325,10 +325,11 @@ module BaseDecorator::Grid
   #
   def render_grid_template_row(model = nil, **opt)
     model      ||= grid_row_model_class.new
-    opt[:row]  &&= 0
-    opt[:id]     = unique_id(opt[:id])
-    opt[:index]  = GridIndex::NONE
-    opt[:outer]  = append_css(opt[:outer], 'hidden')
+    opt[:row]    &&= 0
+    opt[:id]       = unique_id(opt[:id])
+    opt[:index]    = GridIndex::NONE
+    opt[:outer]    = append_css(opt[:outer], 'hidden')
+    opt[:template] = true
     # noinspection RubyMismatchedArgumentType
     render_grid_data_row(model, **opt)
   end
@@ -503,7 +504,7 @@ module BaseDecorator::Grid
     opt[:only]   = cols if cols
     opt[:except] = grid_row_skipped_columns unless cols
     opt[:index]  = grid_index(opt[:index])
-    opt[:outer]  = { role: 'row' }.merge!(opt[:outer]&.except(:unique) || {})
+    opt[:outer]  = (opt[:outer]&.except(:unique) || {}).merge!(role: 'row')
     opt[:render] = :grid_data_cell
     list_item(**opt)
   end
@@ -541,8 +542,10 @@ module BaseDecorator::Grid
     start         = positive(opt.delete(:'aria-colindex')) || 1
     fp_opt        = extract_hash!(opt, *FIELD_PAIRS_OPTIONS)
     value_opt     = opt.slice(:index, :no_format)
+    template      = opt.delete(:template)
 
     field_pairs(pairs, **fp_opt).map.with_index(start) { |(field, prop), col|
+      prop.delete(:required) if template
       label = prop[:label]
       value = render_value(prop[:value], field: field, **value_opt)
       p_opt = { field: field, prop: prop, col: col, **opt }

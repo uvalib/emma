@@ -41,18 +41,15 @@ class Action::BulkOperation < Action
 
   # Create a new instance.
   #
-  # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil]                                      opt
-  # @param [Proc, nil]                                      block
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
   #
   # @option attr [Array] :targets     If *attr* is a Hash or Hash-like.
-  # @option opt  [Array] :targets     If *opt* hash is provided.
   #
-  def initialize(attr = nil, opt = nil, &block)
-    data = (opt[:targets] if opt.is_a?(Hash))
+  def initialize(attr = nil, &block)
+    data = nil
     if attr && !attr.is_a?(ApplicationRecord) && attr.key?(:targets)
       data ||= attr[:targets]
-      attr = attr.except(:targets)
+      attr   = attr.except(:targets)
     end
     super(attr, &block)
     @targets = Array.wrap(data).compact_blank

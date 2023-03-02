@@ -442,20 +442,6 @@ class ManifestItemDecorator < BaseDecorator
     #
     def row_indicator_label: (String|Symbol label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-    # row_detail_value
-    #
-    # @param [String,Symbol] value
-    # @param [String]        css
-    # @param [Hash]          opt
-    #
-    # @option opt [String]        :id                 Required
-    # @option opt [String,Symbol] :'data-field'       Required
-    # @option opt [String]        :'aria-labelledby'  Required
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def row_detail_value: (String|Symbol value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
     # row_detail_value_label
     #
     # @param [String,Symbol] label
@@ -467,6 +453,32 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def row_detail_value_label: (String|Symbol label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_detail_value
+    #
+    # @param [Hash,Array,String,nil] value
+    # @param [String]                css
+    # @param [Hash]                  opt
+    #
+    # @option opt [String]        :id                 Required
+    # @option opt [String,Symbol] :'data-field'       Required
+    # @option opt [String]        :'aria-labelledby'  Required
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def row_detail_value: (symHash|strArray|String|nil value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # row_field_error_details
+    #
+    # @param [Hash]   value
+    # @param [String] css
+    # @param [Hash]   opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see file:javascripts/controllers/manifest-edit.js *updateRowDetails*
+    #
+    def row_field_error_details: (symHash value, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   end
 

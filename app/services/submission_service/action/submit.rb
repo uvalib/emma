@@ -107,7 +107,7 @@ module SubmissionService::Action::Submit
     # Identify any supplied items that don't map on to a valid ManifestItem.
     valid_ids, invalid_ids = [], []
     items =
-      req.items.map { |item|
+      req.items.map do |item|
         if (id = manifest_item_id(item)).is_a?(Hash)
           invalid_ids << id[:error]
           next
@@ -117,7 +117,10 @@ module SubmissionService::Action::Submit
           valid_ids << id
           item
         end
-      }.compact.sort_by! { |item| manifest_item_id(item) }
+      end
+    items.compact!
+    # noinspection RubyMismatchedReturnType
+    items.sort_by! { |item| manifest_item_id(item) }
 
     # Claim submission IDs for the items that will persist through the point
     # that the item becomes associated with an EMMA entry.

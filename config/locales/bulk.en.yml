@@ -214,7 +214,7 @@ en:
               label:      'UNSAVED'
             data_missing:
               css:        'data-missing'
-              label:      'DATA MISSING'
+              label:      'DATA ERROR'
             file_missing:
               css:        'file-missing'
               label:      'FILE MISSING'

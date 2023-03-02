@@ -1,22 +1,21 @@
 // app/assets/javascripts/controllers/manifest-edit.js
 
 
-import { AppDebug }                           from '../application/debug';
-import { appSetup }                           from '../application/setup';
-import { arrayWrap }                          from '../shared/arrays';
-import { Emma }                               from '../shared/assets';
-import { HIDDEN, selector, toggleHidden }     from '../shared/css';
-import * as Field                             from '../shared/field';
-import { turnOffAutocompleteIn }              from '../shared/form';
-import { InlinePopup }                        from '../shared/inline-popup';
-import { LookupModal }                        from '../shared/lookup-modal';
-import { LookupRequest }                      from '../shared/lookup-request';
-import { ModalHideHooks, ModalShowHooks }     from '../shared/modal_hooks';
-import { compact, deepDup, hasKey, toObject } from '../shared/objects';
-import { randomizeName }                      from '../shared/random';
-import { timestamp }                          from '../shared/time';
-import { MultiUploader }                      from '../shared/uploader';
-import { asParams, cancelAction, makeUrl }    from '../shared/url';
+import { AppDebug }                        from '../application/debug';
+import { appSetup }                        from '../application/setup';
+import { arrayWrap }                       from '../shared/arrays';
+import { Emma }                            from '../shared/assets';
+import { HIDDEN, selector, toggleHidden }  from '../shared/css';
+import * as Field                          from '../shared/field';
+import { turnOffAutocompleteIn }           from '../shared/form';
+import { InlinePopup }                     from '../shared/inline-popup';
+import { LookupModal }                     from '../shared/lookup-modal';
+import { LookupRequest }                   from '../shared/lookup-request';
+import { ModalHideHooks, ModalShowHooks }  from '../shared/modal_hooks';
+import { randomizeName }                   from '../shared/random';
+import { timestamp }                       from '../shared/time';
+import { MultiUploader }                   from '../shared/uploader';
+import { asParams, cancelAction, makeUrl } from '../shared/url';
 import {
     isDefined,
     isEmpty,
@@ -40,6 +39,7 @@ import {
     flashMessage,
 } from '../shared/flash';
 import {
+    htmlEncode,
     selfOrDescendents,
     selfOrParent,
     single,
@@ -57,6 +57,13 @@ import {
     serverBulkSend,
     serverSend,
 } from '../shared/manifests';
+import {
+    compact,
+    deepDup,
+    hasKey,
+    isObject,
+    toObject,
+} from '../shared/objects';
 
 
 const MODULE = 'ManifestEdit';
@@ -116,6 +123,7 @@ appSetup(MODULE, function() {
      * @property {object}  backup
      * @property {string}  last_indexed
      * @property {string}  submission_id
+     * @property {object}  field_error
      */
 
     /**
@@ -177,6 +185,7 @@ appSetup(MODULE, function() {
      * @property {object}       [backup]
      * @property {string}       [last_indexed]
      * @property {string}       [submission_id]
+     * @property {object}       [field_error]
      */
 
     /**
@@ -354,7 +363,7 @@ appSetup(MODULE, function() {
     const DATA_CELL     = selector(DATA_CELL_CLASS);
     const EDITING       = selector(EDITING_MARKER);
   //const CHANGED       = selector(CHANGED_MARKER);
-  //const ERROR         = selector(ERROR_MARKER);
+    const ERROR         = selector(ERROR_MARKER);
   //const REQUIRED      = selector(REQUIRED_MARKER);
     const ROW_FIELD     = selector(`${ROW_FIELD_CLASS}[${FIELD_ATTR}]`);
   //const CELL_VALUE    = selector(CELL_VALUE_CLASS);
@@ -366,7 +375,8 @@ appSetup(MODULE, function() {
      *
      * @type {string[]}
      */
-    const STATUS_MARKERS = [EDITING_MARKER, CHANGED_MARKER, ERROR_MARKER];
+    const STATUS_MARKERS     = [EDITING_MARKER, CHANGED_MARKER];
+    const ALL_STATUS_MARKERS = [...STATUS_MARKERS, ERROR_MARKER];
 
     // ========================================================================
     // Variables
@@ -1286,24 +1296,53 @@ appSetup(MODULE, function() {
         if (data.deleting) {
             console.error(`${func}: received deleted item:`, data);
         }
+        const error = { ...data.field_error };
 
         let changed;
         dataCells($row).each((_, cell) => {
-            let different;
             const $cell = $(cell);
             const field = cellDbColumn($cell);
             const [data_value, data_field] = valueAndField(data, field);
             if (data_field) {
+                // If this field is associated with one or more error values
+                // then, even if data_value is present, it is either invalid or
+                // contains one or more invalid values.
+                const err = presence(error[data_field]);
+                let value = data_value;
+                if (err && !Array.isArray(value)) {
+                    const errors = Object.keys(err);
+                    value = (errors.length > 1) ? errors : errors[0];
+                }
+                const new_value = $cell.makeValue(value, undefined, err);
                 const old_value = cellCurrentValue($cell);
-                const new_value = $cell.makeValue(data_value);
-                if ((different = new_value.differsFrom(old_value))) {
-                    updateDataCell($cell, new_value, true);
+                if (!old_value || new_value.differsFrom(old_value)) {
+                    updateDataCell($cell, new_value, true, new_value.valid);
+                    changed = true;
+                } else if (new_value.valid) {
+                    updateCellValid($cell, true);
+                    changed = true;
+                } else if (err) {
+                    old_value.addErrorTable(err);
+                    updateCellValid($cell);
+                    changed = true;
+                } else if (cellChanged($cell)) {
+                    updateCellValid($cell);
                     changed = true;
                 }
-            }
-            if (!different && cellChanged($cell)) {
-                updateCellValid($cell);
-                changed = true;
+
+                let tooltip = '';
+                if (err) {
+                    const tag = 'ERROR'; // TODO: I18n
+                    let parts;
+                    if (isObject(err)) {
+                        parts = Object.entries(err);
+                        parts = parts.map(([k,v]) => `"${k}": ${v}`);
+                    } else {
+                        parts = arrayWrap(err);
+                    }
+                    tooltip = `${tag}: ` + parts.join('; ');
+                }
+                cellDisplay($cell).attr('title', tooltip);
             }
         });
         if (changed) {
@@ -1576,17 +1615,16 @@ appSetup(MODULE, function() {
      */
     function insertRow(after, data, intermediate) {
         _debug('insertRow after', after);
-        let $new_row;
-        if (after) {
-            const $row = dataRow(after);
-            $new_row = emptyDataRow($row);
-            $new_row.insertAfter($row);
+        const with_data = isPresent(data);
+        const $old_row  = after ? dataRow(after) : undefined;
+        const $new_row  = emptyDataRow($old_row, with_data);
+        if ($old_row) {
+            $new_row.insertAfter($old_row);
         } else {
-            $new_row = emptyDataRow();
             $new_row.attr('id', 'manifest_item-item-1');
             $grid.children('tbody').prepend($new_row);
         }
-        if (isPresent(data)) {
+        if (with_data) {
             updateDataRow($new_row, data);
         }
         if (!intermediate) {
@@ -3227,7 +3265,8 @@ appSetup(MODULE, function() {
                 _debug(`${func}: no response data for db_id ${db_id}`);
             } else {
                 updateDbRowDelta($row, entry);
-                updateRowIndicators($row, entry);
+                // noinspection JSCheckFunctionSignatures
+                updateDataRow($row, entry);
             }
         });
     }
@@ -3434,6 +3473,9 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}                          target
      * @param {ManifestItemData|object|undefined} data
+     *
+     * @see "ManifestItemDecorator#row_details"
+     * @see "ManifestItemDecorator#row_field_error_details"
      */
     function updateRowDetails(target, data) {
         //_debug('updateRowDetails: target =', target);
@@ -3442,8 +3484,34 @@ appSetup(MODULE, function() {
             const $item = $(item);
             const field = $item.attr(FIELD_ATTR);
             if (hasKey(data, field)) {
-                const value = data[field] || BLANK_DETAIL_VALUE;
-                $item.text(value);
+                $item.empty();
+                const value = presence(data[field]) || BLANK_DETAIL_VALUE;
+                if (isObject(value)) {
+                    const $list = $('<dl>').appendTo($item);
+                    Object.entries(value).forEach(([fld,errs]) => {
+                        let parts;
+                        if (isObject(errs)) {
+                            // noinspection JSCheckFunctionSignatures
+                            parts =
+                                Object.entries(errs).map(kv => {
+                                    let [k, v] = kv.map(s => htmlEncode(s));
+                                    k = `<span class="quoted">${k}</span>`;
+                                    v = `<span>${v}</span>`;
+                                    return `<div>${k}: ${v}</div>`;
+                                });
+                        } else {
+                            parts = arrayWrap(errs).map(s => htmlEncode(s));
+                        }
+                        $list.append($('<dt>').text(fld));
+                        $list.append($('<dd>').html(parts.join("\n")));
+                    });
+                    $item.append($list);
+                } else if (Array.isArray(value)) {
+                    const parts = value.map(s => htmlEncode(s));
+                    $item.html(parts.join("<br/>\n"));
+                } else {
+                    $item.text(value || BLANK_DETAIL_VALUE);
+                }
             }
         });
     }
@@ -3455,7 +3523,8 @@ appSetup(MODULE, function() {
      */
     function resetRowDetails(target) {
         //_debug('resetRowDetails: target =', target);
-        rowDetailsItems(target).each((_, i) =>  $(i).text(BLANK_DETAIL_VALUE));
+        const $items = rowDetailsItems(target);
+        $items.each((_, item) => $(item).empty().text(BLANK_DETAIL_VALUE));
     }
 
     // ========================================================================
@@ -3580,15 +3649,16 @@ appSetup(MODULE, function() {
      * The {@link ITEM_ATTR} attribute is removed so that editing logic knows
      * this is a row unrelated to any ManifestItem record.
      *
-     * @param {Selector} [original]   Source data row.
+     * @param {Selector} [original]         Source data row.
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      *
      * @returns {jQuery}
      */
-    function emptyDataRow(original) {
+    function emptyDataRow(original, clear_errors) {
         _debug('emptyDataRow: original =', original);
         const $copy = cloneDataRow(original);
         removeManifestItemId($copy);
-        initializeDataCells($copy);
+        initializeDataCells($copy, clear_errors);
         resetRowIndicators($copy);
         resetRowDetails($copy);
         return $copy;
@@ -3740,22 +3810,22 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} cell
      * @param {Value}    value
-     * @param {boolean}  [change]   Default: check {@link cellOriginalValue}
+     * @param {boolean}  [changed]   Default: check {@link cellOriginalValue}
+     * @param {boolean}  [valid]
      *
      * @returns {boolean}           Whether the cell value changed.
      */
-    function updateDataCell(cell, value, change) {
+    function updateDataCell(cell, value, changed, valid) {
         _debug('updateDataCell: value =', value, cell);
         const $cell = dataCell(cell);
         setCellCurrentValue($cell, value);
         setCellDisplayValue($cell, value);
-        let changed = change;
-        if (notDefined(changed)) {
-            changed = value.differsFrom(cellOriginalValue($cell));
+        let was_changed = changed;
+        if (notDefined(was_changed)) {
+            was_changed = value.differsFrom(cellOriginalValue($cell));
         }
-        updateCellChanged($cell, changed);
-        updateCellValid($cell);
-        return changed;
+        updateCellValid($cell, valid);
+        return was_changed;
     }
 
     // ========================================================================
@@ -3766,26 +3836,29 @@ appSetup(MODULE, function() {
      * Prepare all of the data cells within the target data row.
      *
      * @param {Selector} target
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      */
-    function initializeDataCells(target) {
+    function initializeDataCells(target, clear_errors) {
         _debug('initializeDataCells: target =', target);
-        dataCells(target).each((_, cell) => initializeDataCell(cell));
+        const $cells = dataCells(target);
+        $cells.each((_, cell) => initializeDataCell(cell, clear_errors));
     }
 
     /**
      * Prepare the single data cell associated with the target.
      *
      * @param {Selector} cell
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      *
      * @returns {jQuery}
      */
-    function initializeDataCell(cell) {
+    function initializeDataCell(cell, clear_errors) {
         //_debug('initializeDataCell: cell =', cell);
         const $cell = dataCell(cell);
         turnOffAutocompleteIn($cell);
-        clearCellDisplay($cell);
         clearCellEdit($cell);
-        refreshDataCell($cell);
+        clearCellDisplay($cell, clear_errors);
+        refreshDataCell($cell, clear_errors);
         return $cell;
     }
 
@@ -3793,16 +3866,19 @@ appSetup(MODULE, function() {
      * Reset cell stored data values and refresh cell display.
      *
      * @param {Selector} cell
+     * @param {boolean}  [reset_uploader]   If *true* also reset uploader cell.
      *
      * @returns {jQuery}
      */
-    function resetDataCell(cell) {
+    function resetDataCell(cell, reset_uploader) {
         //_debug('resetDataCell: cell =', cell);
         const $cell = dataCell(cell);
-        clearCellOriginalValue($cell);
-        clearCellCurrentValue($cell);
-        clearCellChanged($cell);
-        refreshDataCell($cell);
+        if (reset_uploader || !$cell.is(MultiUploader.UPLOADER)) {
+            clearCellOriginalValue($cell);
+            clearCellCurrentValue($cell);
+            clearCellChanged($cell);
+            refreshDataCell($cell);
+        }
         return $cell;
     }
 
@@ -3810,14 +3886,19 @@ appSetup(MODULE, function() {
      * Refresh cell display.
      *
      * @param {Selector} cell
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      *
      * @returns {jQuery}
      */
-    function refreshDataCell(cell) {
+    function refreshDataCell(cell, clear_errors) {
         //_debug('refreshDataCell: cell =', cell);
         const $cell = dataCell(cell);
-        $cell.removeClass(STATUS_MARKERS);
-        updateCellDisplayValue($cell);
+        if (clear_errors) {
+            $cell.removeClass(ALL_STATUS_MARKERS);
+        } else {
+            $cell.removeClass(STATUS_MARKERS);
+            updateCellDisplayValue($cell);
+        }
         return $cell;
     }
 
@@ -3913,7 +3994,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell
      */
     function clearCellChanged(cell) {
-        _debug('clearCellChanged: cell =', cell);
+        //_debug('clearCellChanged: cell =', cell);
         dataCell(cell).removeData(VALUE_CHANGED_DATA);
     }
 
@@ -4030,19 +4111,23 @@ appSetup(MODULE, function() {
      */
     function evaluateCellValid(cell, current) {
         //_debug('evaluateCellValid: cell =', cell);
-        const $cell = dataCell(cell);
-        const prop  = cellProperties($cell);
-        if (!prop.required) {
-            return true;
-        }
         /** @type {Value|undefined} */
         let value;
+        const $cell = dataCell(cell);
+        if ($cell.is(ERROR)) {
+            return false;
+        }
+        const prop  = cellProperties($cell);
         if (isDefined(current)) {
             value = $cell.makeValue(current, prop);
         } else {
             value = cellCurrentValue($cell);
         }
-        return !!value?.nonBlank;
+        if (prop.required) {
+            return !!value && value.nonBlank;
+        } else {
+            return !value || value.valid;
+        }
     }
 
     // ========================================================================
@@ -4215,14 +4300,15 @@ appSetup(MODULE, function() {
      * Remove content from a data cell display element.
      *
      * @param {Selector} target
+     * @param {boolean}  [skip_uploader]    If *true*, remove error status.
      */
-    function clearCellDisplay(target) {
+    function clearCellDisplay(target, skip_uploader) {
         //_debug('clearCellDisplay: target =', target);
         const $cell = dataCell(target);
-        if ($cell.is(MultiUploader.UPLOADER)) {
-            setUploaderDisplayValue($cell);
-        } else {
+        if (!$cell.is(MultiUploader.UPLOADER)) {
             cellDisplay($cell).empty();
+        } else if (!skip_uploader) {
+            setUploaderDisplayValue($cell);
         }
     }
 
@@ -5765,19 +5851,19 @@ appSetup(MODULE, function() {
      *
      * @param {*}          v
      * @param {Properties} [prop]     Def: element's associated properties
+     * @param {Object.<string,(string|string[])>} [errs]
      *
      * @returns {Value}
      */
-    jQuery.fn.makeValue = function(v, prop) {
-        let field;
+    jQuery.fn.makeValue = function(v, prop, errs) {
         if (v instanceof Field.Value) {
+            if (errs) { v.errorTable = errs }
             return v;
-        } else if (prop) {
-            return new Field.Value(v, prop);
-        } else if ((field = this.attr(FIELD_ATTR))) {
-            return new Field.Value(v, fieldProperty()[field]);
         } else {
-            return new Field.Value(v, cellProperties(this));
+            let f, p = prop;
+            p ||= (f = this.attr(FIELD_ATTR)) && fieldProperty()[f];
+            p ||= cellProperties(this);
+            return new Field.Value(v, p, errs);
         }
     };
 

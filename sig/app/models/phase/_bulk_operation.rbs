@@ -43,14 +43,11 @@ class Phase::BulkOperation < Phase
 
   # Create a new instance.
   #
-  # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil]                                      opt
-  # @param [Proc, nil]                                      block
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
   #
   # @option attr [String|Array] :manifest   If *attr* is a Hash or Hash-like.
-  # @option opt  [String|Array] :manifest   If *opt* hash is provided.
   #
-  def initialize: (?(Model|prmHash|nil) attr, ?(symHash|nil) opt) ?{ () -> untyped } -> void
+  def initialize: (?(Model|prmHash|nil) attr) ?{ () -> untyped } -> void
 
   # The #type_value of BulkPart elements associated with this BulkOperation.
   #

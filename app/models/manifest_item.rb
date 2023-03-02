@@ -108,14 +108,28 @@ class ManifestItem < ApplicationRecord
   # @param [ManifestItem,Manifest,Hash] attr    To #assign_attributes via super
   #
   def initialize(attr = nil, &block)
-    __debug_items(binding)
-    case attr
-      when Manifest     then attr = { manifest_id: attr.id }
-      when ManifestItem then attr = attr.fields
-      else raise "#{attr.inspect} invalid" if attr && !attr.is_a?(Hash)
-    end
+    attr = { manifest_id: attr.id } if attr.is_a?(Manifest)
     super(attr, &block)
-    __debug_items(leader: 'new MANIFEST ITEM') { self }
+  end
+
+  # Override to regenerate the :field_error field if indicated.
+  #
+  # @param [Model, Hash, ActionController::Parameters, nil] attributes
+  #
+  # @option attributes [Boolean] :re_validate
+  #
+  # @return [void]
+  #
+  def assign_attributes(attributes)
+    attr = normalize_attributes(attributes)
+    opt  = attr[:attr_opt]&.dup || {}
+    super(attr)
+    if opt[:re_validate]
+      data_columns = fields.except(*NON_BACKUP_COLS)
+      data_values  = normalize_attributes(data_columns)
+      self.field_error = data_values[:field_error]
+      update_status!(**opt.slice(*UPDATE_STATUS_OPTS))
+    end
   end
 
   # ===========================================================================
@@ -145,6 +159,7 @@ class ManifestItem < ApplicationRecord
     opt[:deleting]   = false            unless opt.key?(:deleting)  if deleting
     opt[:editing]    = false            unless opt.key?(:editing)   if editing
     opt[:backup]     = nil              unless opt.key?(:backup)    if backup
+    opt[:attr_opt]   = { re_validate: true }
     update!(opt)
     self
   end

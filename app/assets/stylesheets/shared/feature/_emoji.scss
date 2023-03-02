@@ -109,21 +109,27 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
 ///
 @mixin red($char: false, $base: yellow) {
     $hue: map-get((
+        green:  245deg,
         orange: 320deg,
         red:    0,
         yellow: 305deg,
     ), $base);
     $saturate: map-get((
+        green:  75%,
         orange: 200%,
         red:    75%,
         yellow: 150%,
     ), $base);
     $brightness: map-get((
+        green:  90%,
         orange: 90%,
         red:    150%,
         yellow: 100%,
     ), $base);
-    @include color-emoji($base, $char, $hue, $saturate, $brightness);
+    $contrast: map-get((
+        green:  200%,
+    ), $base);
+    @include color-emoji($base, $char, $hue, $saturate, $brightness, $contrast);
 }
 
 /// Make a colored emoji orange.

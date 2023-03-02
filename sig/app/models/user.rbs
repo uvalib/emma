@@ -120,11 +120,11 @@ class User < ApplicationRecord
 
   # Update database fields.
   #
-  # @param [Hash, User] attr
+  # @param [User, Hash, nil] attributes
   #
   # @return [void]
   #
-  def assign_attributes: ((User|symHash) attr) -> void
+  def assign_attributes: ((User|symHash|nil) attributes) -> void
 
   # Value of :id for the indicated record.
   #

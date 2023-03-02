@@ -107,7 +107,6 @@ module ManifestItemConcern
   # Transform import data into ManifestItem field values.
   #
   # @param [Hash{Symbol=>*}] item
-  # @param [Boolean]         invalid  Allow invalid values to be imported.
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -201,15 +200,15 @@ module ManifestItemConcern
   # Create a new un-persisted ManifestItem, using *item* as a template if
   # provided, for the '/new' model form.
   #
-  # @param [Hash] opt                       Field values.
+  # @param [Hash] attr                      Field values.
   #
   # @return [ManifestItem]                  Un-persisted ManifestItem instance.
   #
-  def new_manifest_item: (**untyped opt) -> ManifestItem
+  def new_manifest_item: (**untyped attr) -> ManifestItem
 
   # Create and persist a new ManifestItem.
   #
-  # @param [Hash] opt                       Field values.
+  # @param [Hash] attr                      Field values.
   #
   # @raise [Record::SubmitError]            Invalid workflow transition.
   # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
@@ -217,7 +216,7 @@ module ManifestItemConcern
   #
   # @return [ManifestItem]                   A new ManifestItem instance.
   #
-  def create_manifest_item: (**untyped opt) -> ManifestItem
+  def create_manifest_item: (**untyped attr) -> ManifestItem
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
   #
@@ -397,12 +396,9 @@ module ManifestItemConcern
 
   # Data for one or more manifest items from parameters.
   #
-  # @param [Boolean] validate       If *true*, update status fields.
-  # @param [Boolean] nil_default    If *true*, make invalid values *nil*.
-  #
   # @return [Array<Hash>]
   #
-  def bulk_item_data: (?validate: bool, ?nil_default: bool) -> Array[symHash]
+  def bulk_item_data: () -> Array[symHash]
 
   # Transform a :returning result into an array of data hashes.
   #

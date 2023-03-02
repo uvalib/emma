@@ -91,7 +91,7 @@
 
             // Annotate currently-selected values with a checkmark.
             &::after {
-                content: $CHECK_MARK;
+                content: $CHECK;
             }
 
             // When hovering over a selected value indicate that clicking will
@@ -113,7 +113,7 @@
             // When hovering over an unselected value indicate that clicking
             // will add it.
             &.select2-results__option--highlighted::after {
-                content: $CHECK_MARK;
+                content: $CHECK;
             }
         }
     }

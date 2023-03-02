@@ -177,7 +177,9 @@ class ManifestController < ApplicationController
   #
   def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
 
-  # ManifestItem values returned upon save.
+  # The minimal set of ManifestItem values returned upon save.
+  #
+  # Any columns referenced in `manifest.field_error` will also be included.
   #
   # @type [Array<Symbol>]
   #

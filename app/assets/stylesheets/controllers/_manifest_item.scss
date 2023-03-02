@@ -757,8 +757,8 @@ table.manifest_item-grid {
 
                 details {
 
-                    margin-top:    $value-pad * 4;
-                    margin-bottom: $value-pad * 4;
+                    margin-top:    $cell-pad * 2;
+                    margin-bottom: $cell-pad * 2;
                     padding:       $value-pad;
                     border-top:    2px solid black;
                     border-bottom: 2px solid black;
@@ -771,16 +771,45 @@ table.manifest_item-grid {
 
                         display:        flex;
                         flex-direction: column;
-                        gap:            $value-pad * 2;
-                        margin-top:     $value-pad * 2;
-                        margin-bottom:  $value-pad * 4;
+                        gap:            $cell-pad;
+                        margin-top:     $cell-pad;
+                        margin-bottom:  $cell-pad * 2;
 
                         .label {
                             margin-top:  $value-pad * 2;
                             font-weight: bold;
                         }
+
                         .value {
-                            // TODO: ?
+
+                            // noinspection CssReplaceWithShorthandSafely
+                            dl {
+                                margin:      0;
+                                margin-left: $cell-pad * 3;
+                            }
+
+                            dt {
+                                font-weight:   bold;
+                                margin-top:    $value-pad * 2;
+                                margin-bottom: $value-pad * 2;
+                            }
+
+                            dd {
+                                margin-left:   $cell-pad * 4;
+                            }
+                        }
+
+                        .value[data-field="field_error"] {
+                            dl {
+                                margin-top:     $value-pad;
+                                margin-right:   $value-pad;
+                                padding-bottom: $value-pad;
+                                padding-left:   $value-pad;
+                                border-radius:  1px;
+                                box-shadow:
+                                    0 0 0 2px $controls-bg,
+                                    0 0 0 4px $uva-emergency-red;
+                            }
                         }
                     }
                 }
@@ -919,13 +948,15 @@ table.manifest_item-grid {
 
                             @include emoji.blue($base: green);
 
-                            content:        $WHITE_CHECK_MARK;
-                            font-size:      x-small;
+                            content:        $CHECK_MARK;
+                            display:        inline-block;
+                            line-height:    1;
                             margin-right:   $value-pad * 2;
-                            vertical-align: text-top;
+                            vertical-align: middle;
+                            transform:      scale(0.75);
 
                             @include Firefox-only {
-                                vertical-align: middle;
+                                vertical-align: text-top;
                             }
                         }
                     }
@@ -972,13 +1003,13 @@ table.manifest_item-grid {
 
                             display:        flex;
                             flex-direction: column;
-                            gap:            $value-pad * 2;
+                            gap:            $cell-pad;
                             background:     white;
 
                             .single.checkbox {
 
                                 display:     inline-flex;
-                                column-gap:  $value-pad * 2;
+                                column-gap:  $cell-pad;
                                 white-space: nowrap;
                                 overflow-x:  hidden;
 
@@ -1314,30 +1345,30 @@ table.manifest_item-grid {
                         flex:    1 0 auto;
 
                         &.input.single.date {
-                            margin-top:     $value-pad * 2;
-                            margin-left:    $value-pad * 2;
+                            margin-top:     $cell-pad;
+                            margin-left:    $cell-pad;
                             width:          min-content;
                             flex:           0 1 auto;
                         }
 
                         &.input.single:not(.date) {
-                            padding-top:    $value-pad * 2;
-                            padding-left:   $value-pad * 2;
+                            padding-top:    $cell-pad;
+                            padding-left:   $cell-pad;
                         }
 
                         &.input.multi {
-                            padding-left:   $value-pad;
-                            padding-bottom: $value-pad * 2;
+                            padding-left:   $cell-pad * 0.5;
+                            padding-bottom: $cell-pad;
                         }
 
                         &.menu.single {
-                            margin-top:     $value-pad;
+                            margin-top:     $cell-pad * 0.5;
                             flex:           0 1 auto;
                         }
 
                         &.menu.multi {
 
-                            padding-top:    $value-pad * 2;
+                            padding-top:    $cell-pad;
                             min-height:     $max-cell-height;
 
                             > * { // NOTE: .edit.menu.multi > div.menu.multi
@@ -1345,8 +1376,8 @@ table.manifest_item-grid {
                                 .single.checkbox {
                                     input {
                                         margin:       0;
-                                        margin-left:  $value-pad * 2;
-                                        margin-right: $value-pad;
+                                        margin-left:  $cell-pad;
+                                        margin-right: $cell-pad * 0.5;
                                     }
                                 }
                             }
@@ -1383,7 +1414,7 @@ table.manifest_item-grid {
                         }
 
                         &.array.multi {
-                            gap:            $value-pad * 2;
+                            gap:            $cell-pad;
                         }
 
                         &.array.enum {
@@ -1417,7 +1448,7 @@ table.manifest_item-grid {
                     // so that the column does not have to change width when
                     // editing.
                     &.date {
-                        padding-right: $value-pad * 6;
+                        padding-right: $cell-pad * 3;
                     }
 
                     &.changed {
@@ -1434,6 +1465,37 @@ table.manifest_item-grid {
                 // Allow the entire last column to be scrolled into view.
                 @if $scroll-snap {
                     scroll-snap-align: end;
+                }
+            }
+
+            > .cell.error {
+
+                %bad-item {
+                    text-decoration: line-through;
+                    color:           $uva-emergency-red;
+                }
+
+                > .value {
+
+                    &.array.enum.multi {
+                        .item::before {
+
+                            @include emoji.red($base: green);
+
+                            content: $CROSS_MARK;
+                        }
+                    }
+
+                    &.array {
+                        .item {
+                            @extend %bad-item;
+                        }
+                    }
+
+                    &:not(.array),
+                    &.array.enum:not(.multi) {
+                        @extend %bad-item;
+                    }
                 }
             }
 

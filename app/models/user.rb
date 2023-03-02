@@ -200,11 +200,11 @@ class User < ApplicationRecord
 
   # Update database fields.
   #
-  # @param [Hash, User] attr
+  # @param [User, Hash, nil] attributes
   #
   # @return [void]
   #
-  def assign_attributes(attr, *)
+  def assign_attributes(attributes)
     old_eid = self[:effective_id]
     super
     new_eid = self[:effective_id]

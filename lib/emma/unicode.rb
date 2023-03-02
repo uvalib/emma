@@ -67,7 +67,7 @@ module Emma::Unicode
   BLACK_CIRCLE      = "\u25CF"    # ● BLACK CIRCLE
   BLACK_STAR        = "\u2605"    # ★ BLACK STAR
   WARNING_SIGN      = "\u26A0"    # ⚠ WARNING SIGN
-  CHECK_MARK        = "\u2714"    # ✔ HEAVY CHECK MARK
+  CHECK             = "\u2714"    # ✔ HEAVY CHECK MARK
   HEAVY_X           = "\u2716"    # ✖ HEAVY MULTIPLICATION X
   ASTERISK          = "\u2731"    # ✱ HEAVY ASTERISK
   QUESTION          = "\u2754"    # ❔ WHITE QUESTION MARK ORNAMENT

@@ -200,15 +200,29 @@ module BaseDecorator::List
     delta[:array] = true       if enum && !multi && !prop[:array]
     prop = prop.merge(delta)   if delta.present?
 
+    # Special for ManifestItem
+    error   = opt.delete(:field_error)&.dig(field.to_s)&.presence
+    err_val = error&.keys&.then { |err| err.many? ? err : err.first }
+
     # Pre-process value(s).
     if no_format
-      value = safe_join(value, separator) if value.is_a?(Array)
+      value = err_val if err_val && !value.is_a?(Array)
+      value = safe_join(value, (separator || "\n")) if value.is_a?(Array)
     elsif prop[:array]
-      value = value.is_a?(Array) ? value.dup : [value]
-      value.map!.with_index(1) { |v, i| html_div(v, class: "item item-#{i}") }
-      value = safe_join(value, separator)
-    elsif value.is_a?(Array)
-      value = safe_join(value, (separator || HTML_BREAK))
+      case value
+        when Array  then value = value.dup
+        when String then value = value.split("\n")
+        else             value = [value]
+      end
+      value.map!.with_index(1) do |v, i|
+        v_opt = { class: "item item-#{i}" }
+        append_css!(v_opt, 'error') if error&.key?(v.to_s)
+        html_div(v, v_opt)
+      end
+      value = safe_join(value, (separator || "\n"))
+    else
+      value = err_val if err_val && !value.is_a?(Array)
+      value = safe_join(value, (separator || HTML_BREAK)) if value.is_a?(Array)
     end
 
     # Extract attributes that are appropriate for the wrapper element which
@@ -291,13 +305,12 @@ module BaseDecorator::List
     if wrap
       wrap  = PAIR_WRAPPER if wrap.is_a?(TrueClass)
       w_opt = prepend_css(opt, wrap)
-      w_opt.reverse_merge!(
-        id:               make_id.call(wrap),
-        role:             role,
-        title:            tooltip,
-        'aria-level':     lvl,
-        'aria-colindex':  col,
-      )
+      w_opt[:id]              ||= make_id.call(wrap)
+      w_opt[:role]            ||= role
+      w_opt[:title]           ||= tooltip
+      w_opt[:'aria-level']    ||= lvl
+      w_opt[:'aria-colindex'] ||= col
+      append_css!(w_opt, 'error') if error
       html_tag(tag, *parts, w_opt)
     else
       safe_join(parts)
@@ -610,18 +623,18 @@ module BaseDecorator::List
   )
     css   ||= ".#{model_type}-list-item"
     row     = positive(opt[:row])
+    role    = opt.delete(:role)
     group   = opt[:group] ||= state_group
-    role    = opt.delete(:role) || ('heading' if level)
-    classes = [css] << ("row-#{row}" if row) << ('empty' if blank?)
-    row_opt = prepend_css(outer, *classes).except!(:'aria-colindex')
-    row_opt.reverse_merge!(
-      id:               id || model_item_id(**opt),
-      role:             role,
-      'data-group':     group,
-      'data-title_id':  title_id_values,
-      'aria-level':     level,
-      'aria-rowindex':  opt[:index]&.next,
-    )
+    row_opt = prepend_css(outer, css)
+    row_opt[:id]              ||= id   || model_item_id(**opt)
+    row_opt[:role]            ||= role || ('heading' if level)
+    row_opt[:'data-group']    ||= group
+    row_opt[:'data-title_id'] ||= title_id_values
+    row_opt[:'aria-level']    ||= level
+    row_opt[:'aria-rowindex'] ||= opt[:index]&.next
+    row_opt.delete(:'aria-colindex')
+    append_css!(row_opt, "row-#{row}") if row
+    append_css!(row_opt, 'empty')      if blank?
     html_tag(tag, row_opt) do
       leading  &&= Array.wrap(leading).compact.map  { |v| ERB::Util.h(v) }
       trailing &&= Array.wrap(trailing).compact.map { |v| ERB::Util.h(v) }

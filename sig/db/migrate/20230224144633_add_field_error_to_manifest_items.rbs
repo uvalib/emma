@@ -1,0 +1,3 @@
+class AddFieldErrorToManifestItems
+  def change: () -> void
+end

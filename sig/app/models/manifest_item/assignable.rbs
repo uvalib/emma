@@ -1,6 +1,8 @@
 module ManifestItem::Assignable
   include ManifestItem::Config
 
+  include ManifestItem::StatusMethods
+
   include ManifestItem::Validatable
 
   # :nocov:
@@ -22,12 +24,15 @@ module ManifestItem::Assignable
 
   # Ensure that blanks are allowed and that input values are normalized.
   #
-  # @param [Hash, nil] attr
-  # @param [Hash, nil] opt
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash, nil]                                      opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @option opt [Boolean] :invalid    Allow invalid values.
+  # @option opt [Symbol]  :meth       Caller (for diagnostics).
   #
-  def attribute_options: (symHash attr, ?(symHash|nil) opt) -> symHash
+  # @return [Hash{Symbol=>*}]
+  #
+  def normalize_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
 
   # A mapping of key comparison value to actual database column name.
   #
@@ -36,6 +41,31 @@ module ManifestItem::Assignable
   def key_mapping: () -> Hash[String,Symbol]
 
   @key_mapping: Hash[String,Symbol]
+
+  # The phrase indicating a problematic value. # TODO: I18n
+  #
+  # @type [String]
+  #
+  INVALID_FIELD: String
+
+  # Indicate whether the value is valid for *type*.
+  #
+  # @param [*] v
+  # @param [*] type
+  #
+  def is_invalid?: (untyped v, String|Class `type`) -> bool
+
+  # add_field_error!
+  #
+  # @param [Hash, String, Symbol] field
+  # @param [any, nil]             value
+  # @param [Hash, nil]            target  Default: `#field_error`.
+  #
+  # @return [Hash{Symbol=>Hash{String=>String}}]
+  #
+  def add_field_error!
+    : (String|Symbol field,  ?untyped value, ?(anyHash|nil) target) -> Hash[Symbol, Hash[String,String]]
+    | (symHash       errors,                 ?(anyHash|nil) target) -> Hash[Symbol, Hash[String,String]]
 
   # Include the default repository value if not specified.
   #
@@ -68,14 +98,13 @@ module ManifestItem::Assignable
   # normalize_bool
   #
   # @param [BoolType, String, *] v
-  # @param [Boolean]             invalid  Allow invalid values to be imported.
   #
   # @return [true, false, nil]
   #
   def normalize_bool
-    : (String  v, ?invalid: bool, **untyped _ignored) -> (bool | nil)
-    | (bool    v, ?invalid: bool, **untyped _ignored) -> bool
-    | (untyped v, ?invalid: bool, **untyped _ignored) -> nil
+    : (String  v, **untyped _ignored) -> (bool | nil)
+    | (bool    v, **untyped _ignored) -> bool
+    | (untyped v, **untyped _ignored) -> nil
 
   # normalize_number
   #
@@ -84,9 +113,9 @@ module ManifestItem::Assignable
   # @return [Numeric, nil]
   #
   def normalize_number
-    : (String  v, ?invalid: bool, **untyped _ignored) -> (Numeric | nil)
-    | (Numeric v, ?invalid: bool, **untyped _ignored) -> Numeric
-    | (untyped v, ?invalid: bool, **untyped _ignored) -> nil
+    : (String  v, **untyped _ignored) -> (Numeric | nil)
+    | (Numeric v, **untyped _ignored) -> Numeric
+    | (untyped v, **untyped _ignored) -> nil
 
   # normalize_date
   #

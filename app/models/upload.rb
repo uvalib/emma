@@ -144,23 +144,14 @@ class Upload < ApplicationRecord
   # Update database fields, including the structured contents of the :emma_data
   # field.
   #
-  # @param [Hash, Upload] opt
+  # @param [Upload, Hash, nil] attributes
   #
-  # @option opt [Integer, String, User] :user_id
-  # @option opt [String, Symbol]        :repository
-  # @option opt [String]                :submission_id
-  # @option opt [String, Symbol]        :fmt
-  # @option opt [String]                :ext
-  # @option opt [String, Symbol]        :state
-  # @option opt [String, Hash]          :file_data
-  # @option opt [String, Hash]          :emma_data
-  #
-  # @option opt [String]         :base_url
-  # @option opt [Module, String] :importer
-  # @option opt [Boolean]        :defer
-  # @option opt [Boolean]        :initializing
-  # @option opt [Boolean]        :finishing_edit
-  # @option opt [Boolean]        :reset
+  # @option attributes [String]         :base_url
+  # @option attributes [Module, String] :importer
+  # @option attributes [Boolean]        :defer
+  # @option attributes [Boolean]        :initializing
+  # @option attributes [Boolean]        :finishing_edit
+  # @option attributes [Boolean]        :reset
   #
   # == Options
   #
@@ -201,10 +192,10 @@ class Upload < ApplicationRecord
   #
   # @return [self]
   #
-  def assign_attributes(opt, *)                                                 # NOTE: to Record::EmmaData#generate_emma_data (sorta)
+  def assign_attributes(attributes)                                                 # NOTE: to Record::EmmaData#generate_emma_data (sorta)
     __debug_items(binding)
-    opt = opt.fields if opt.is_a?(Upload)
-    control, fields = partition_hash(opt, *ASSIGN_CONTROL_OPTIONS)
+    attributes = attributes.fields if attributes.is_a?(Upload)
+    control, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPTIONS)
     mode = ASSIGN_MODES.find { |m| control[m].present? }
 
     set_model_options(control[:options])

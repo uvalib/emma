@@ -10,15 +10,19 @@ module ManifestItem::FieldMethods
   #
   RECORD_COLUMNS: symArray
 
-  ID_COLS: symArray
-
-  GRID_COLS: symArray
+  CLIENT_COLS: symArray
 
   DATE_COLS: symArray
 
-  TRANSIENT_COLS: symArray
+  GRID_COLS: symArray
 
-  CLIENT_COLS: symArray
+  ID_COLS: symArray
+
+  NO_SHOW_COLS: symArray
+
+  STATUS_COLS: symArray
+
+  TRANSIENT_COLS: symArray
 
   NON_DATA_COLS: symArray
 

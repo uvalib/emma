@@ -64,23 +64,14 @@ class Upload < ApplicationRecord
   # Update database fields, including the structured contents of the :emma_data
   # field.
   #
-  # @param [Hash, Upload] opt
+  # @param [Upload, Hash, nil] attributes
   #
-  # @option opt [Integer, String, User] :user_id
-  # @option opt [String, Symbol]        :repository
-  # @option opt [String]                :submission_id
-  # @option opt [String, Symbol]        :fmt
-  # @option opt [String]                :ext
-  # @option opt [String, Symbol]        :state
-  # @option opt [String, Hash]          :file_data
-  # @option opt [String, Hash]          :emma_data
-  #
-  # @option opt [String]         :base_url
-  # @option opt [Module, String] :importer
-  # @option opt [Boolean]        :defer
-  # @option opt [Boolean]        :initializing
-  # @option opt [Boolean]        :finishing_edit
-  # @option opt [Boolean]        :reset
+  # @option attributes [String]         :base_url
+  # @option attributes [Module, String] :importer
+  # @option attributes [Boolean]        :defer
+  # @option attributes [Boolean]        :initializing
+  # @option attributes [Boolean]        :finishing_edit
+  # @option attributes [Boolean]        :reset
   #
   # == Options
   #
@@ -121,7 +112,7 @@ class Upload < ApplicationRecord
   #
   # @return [self]
   #
-  def assign_attributes: ((Upload|symHash) opt) -> self
+  def assign_attributes: ((Upload|symHash|nil) attributes) -> self
 
   # Formatted record contents.
   #

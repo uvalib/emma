@@ -67,11 +67,19 @@ module Manifest::ItemMethods
   def items_hash(manifest = nil, columns: nil, **)
     rows = items_related_to(manifest) or return {}
     cols = Array.wrap(columns)
-    if cols.present?
-      # noinspection RailsParamDefResolve
-      rows.pluck(:id, *cols).map { |id, *vals| [id, cols.zip(vals).to_h] }.to_h
-    else
+    if cols.empty?
       rows.map { |row| [row.id, row.fields] }.to_h
+    else
+      # noinspection RailsParamDefResolve
+      rows.pluck(:id, *cols).map { |id, *vals|
+        attrs = cols.zip(vals).to_h
+        if (err_cols = attrs[:field_error]&.keys&.excluding(*cols)).present?
+          added = ManifestItem.where(id: id).pluck(*err_cols)
+          added = added.map! { |*err_vals| err_cols.zip(err_vals).to_h }.first
+          attrs.merge!(added) if added.present?
+        end
+        [id, attrs]
+      }.to_h
     end
   end
 

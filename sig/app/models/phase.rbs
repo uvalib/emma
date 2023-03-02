@@ -94,14 +94,13 @@ class Phase < ApplicationRecord
   # Update database fields, including the structured contents of the :emma_data
   # field.
   #
-  # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil]                                      opt
+  # @param [Model, Hash, ActionController::Parameters, nil] attributes
   #
   # @return [void]
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> void
+  def assign_attributes: ((Model|prmHash|nil) attributes) -> void
 
   def running?: () -> bool
 

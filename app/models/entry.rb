@@ -64,7 +64,8 @@ class Entry < ApplicationRecord
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    extend Record::Describable::ClassMethods
+    include Record::Assignable::InstanceMethods
+    extend  Record::Describable::ClassMethods
     # :nocov:
   end
 
@@ -124,19 +125,19 @@ class Entry < ApplicationRecord
   # Update database fields, including the structured contents of the :emma_data
   # field.
   #
-  # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil]                                      opt
+  # @param [Model, Hash, ActionController::Parameters, nil] attributes
   #
   # @return [void]
   #
   # @see Record::EmmaData#EMMA_DATA_KEYS
   #
-  def assign_attributes(attr, opt = nil)
+  def assign_attributes(attributes)
     __debug_items(binding)
+    attr = normalize_attributes(attributes)
+    opt  = attr.delete(:attr_opt) || {}
     data = extract_hash!(attr, *EMMA_DATA_KEYS)
-    attr = attribute_options(attr, opt)
     attr[:emma_data] = generate_emma_data(data, attr)
-    super(attr, opt)
+    super(attr.merge!(opt))
   end
 
   # ===========================================================================

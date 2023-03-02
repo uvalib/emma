@@ -433,6 +433,13 @@
     font-weight:    inherit;
 }
 
+/// Surround the contents of the element with quotation marks.
+///
+@mixin quoted {
+    &::before { content: open-quote; }
+    &::after  { content: close-quote; }
+}
+
 // ============================================================================
 // Platform-specific
 // ============================================================================

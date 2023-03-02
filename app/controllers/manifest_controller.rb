@@ -419,13 +419,17 @@ class ManifestController < ApplicationController
     end
   end
 
-  # ManifestItem values returned upon save.
+  # The minimal set of ManifestItem values returned upon save.
+  #
+  # Any columns referenced in `manifest.field_error` will also be included.
   #
   # @type [Array<Symbol>]
   #
   # @see file:javascripts/controllers/manifest-edit.js *updateRowValues()*
   #
-  ITEM_SAVE_COLS = %i[row ready_status last_saved updated_at].freeze
+  ITEM_SAVE_COLS = %i[
+    row ready_status last_saved updated_at field_error
+  ].freeze
 
   # A table of the Manifest's items transmitted when saving.
   #

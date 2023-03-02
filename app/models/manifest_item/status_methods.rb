@@ -39,9 +39,9 @@ module ManifestItem::StatusMethods
     **added
   )
     item  ||= default_to_self
-    file  &&= !item[:file_status]  unless overwrite
-    data  &&= !item[:data_status]  unless overwrite
-    ready &&= !item[:ready_status] unless overwrite
+    file  &&= overwrite || item[:file_status].nil?
+    data  &&= overwrite || item[:data_status].nil?
+    ready &&= overwrite || item[:ready_status].nil?
     item[:file_status]  = evaluate_file_status(item, **added)  if file
     item[:data_status]  = evaluate_data_status(item, **added)  if data
     item[:ready_status] = evaluate_ready_status(item, **added) if ready
@@ -59,11 +59,11 @@ module ManifestItem::StatusMethods
   # @return [Symbol]
   #
   def evaluate_ready_status(item = nil, symbol: true, **added)
-    unless (stat = added[:ready_status].presence)
-      data = item_fields(item, added)
-      stat = ready?(data) ? :ready : :missing
+    if (value = added[:ready_status]).blank?
+      data  = item_fields(item, added)
+      value = ready?(data) ? :ready : :missing
     end
-    symbol ? stat.to_sym : ReadyStatus(stat)
+    symbol ? value.to_sym : ReadyStatus(value)
   end
 
   # Evaluate the readiness of the file upload associated with a ManifestItem.
@@ -76,16 +76,17 @@ module ManifestItem::StatusMethods
   # @return [Symbol]
   #
   def evaluate_file_status(item = nil, symbol: true, **added)
-    unless (stat = added[:file_status].presence)
-      data   = added[:file_data] || item_fields(item)[:file_data]
-      data &&= ManifestItem.normalize_file(data)&.compact_blank!
-      stat   = (:missing   if data.nil?)
-      stat ||= (:url_only  if data[:url])
-      stat ||= (:name_only if data[:name])
-      stat ||= (:complete  if data[:storage])
-      stat ||= :invalid
+    if (value = added[:file_status]).blank?
+      data, err = item_fields(item, added).values_at(:file_data, :field_error)
+      data  &&= ManifestItem.normalize_file(data)&.compact_blank!
+      value   = (:missing   if data.blank?)
+      value ||= (:invalid   if err&.dig(:file_data)&.present?)
+      value ||= (:url_only  if data[:url])
+      value ||= (:name_only if data[:name])
+      value ||= (:complete  if data[:storage])
+      value ||= :invalid
     end
-    symbol ? stat.to_sym : FileStatus(stat)
+    symbol ? value.to_sym : FileStatus(value)
   end
 
   # Evaluate the readiness of ManifestItem metadata.
@@ -100,10 +101,11 @@ module ManifestItem::StatusMethods
   def evaluate_data_status(item = nil, symbol: true, **added)
 
     status = ->(stat) { symbol ? stat.to_sym : DataStatus(stat) }
-    value  = added[:data_status].presence and return status.(value)
+    return status.(added[:data_status]) if added[:data_status].present?
 
-    data   = item_fields(item, added)
-    data.keep_if { |_, v| v.present? || v.is_a?(FalseClass) }
+    data   = item_fields(item, added).keep_if { |_, v| v || (v == false) }
+    errors = data[:field_error]&.except(:file_data)
+    return status.(:invalid) if errors.present?
 
     fields       = ManifestItem.database_fields
     rem_fields   = fields.select { |_, v| v[:category]&.start_with?('rem') }

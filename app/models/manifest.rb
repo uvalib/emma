@@ -57,10 +57,7 @@ class Manifest < ApplicationRecord
   # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
-    __debug_items(binding)
-    attr = attr.fields if attr.is_a?(Manifest)
     super(attr, &block)
-    __debug_items(leader: 'new MANIFEST') { self }
   end
 
   # ===========================================================================

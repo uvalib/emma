@@ -13,8 +13,7 @@ class SearchResult < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
-  # @param [Proc, nil] block
+  # @param [SearchResult, Hash, ActionController::Parameters, nil] attr
   #
   # @note - for dev traceability
   #
@@ -22,10 +21,9 @@ class SearchResult < ApplicationRecord
 
   # Update database fields...
   #
-  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
-  # @param [Hash, nil]                                             opt
+  # @param [SearchResult, Hash, ActionController::Parameters, nil] attributes
   #
   # @return [void]
   #
-  def assign_attributes: ((SearchResult|prmHash|nil) attr, ?untyped opt) -> void
+  def assign_attributes: ((SearchResult|prmHash|nil) attributes) -> void
 end

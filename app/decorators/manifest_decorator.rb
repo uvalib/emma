@@ -80,6 +80,7 @@ class ManifestDecorator < BaseDecorator
   module SharedGenericMethods
 
     include BaseDecorator::SharedGenericMethods
+    include BaseDecorator::Grid
 
     # =========================================================================
     # :section:
@@ -136,13 +137,12 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item(pairs: nil, **opt)
-      opt[:pairs] = model_index_fields.merge(pairs || {})
-      unless (tag = opt[:tag]) && BaseDecorator::Grid::TABLE_TAGS.include?(tag)
-        outer_classes = opt.dig(:outer, :class) || []
-        outer_classes = css_class_array(*outer_classes)
-        if outer_classes.none? { |c| c.start_with?('columns-') }
-          opt[:outer] = append_css(opt[:outer], "columns-#{opt[:pairs].size}")
-        end
+      pairs = opt[:pairs] = model_index_fields.merge(pairs || {})
+      outer = opt[:outer] = opt[:outer]&.dup || {}
+      unless TABLE_TAGS.include?(opt[:tag])
+        outer_class  = css_class_array(*outer[:class])
+        need_columns = outer_class.none? { |c| c.start_with?('columns-') }
+        append_css!(outer, "columns-#{pairs.size}") if need_columns
       end
       super(**opt)
     end

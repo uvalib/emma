@@ -23,6 +23,8 @@ class ManifestDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
+    include BaseDecorator::Grid
+
     # Bulk submission configuration values.
     #
     # @type [Hash{Symbol=>Hash}]

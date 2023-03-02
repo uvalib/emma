@@ -31,13 +31,11 @@ class SearchResult < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
-  # @param [Proc, nil] block
+  # @param [SearchResult, Hash, ActionController::Parameters, nil] attr
   #
   # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
-    __debug_items(binding)
     super(attr, &block)
   end
 
@@ -49,12 +47,11 @@ class SearchResult < ApplicationRecord
 
   # Update database fields...
   #
-  # @param [Hash, ActionController::Parameters, SearchResult, nil] attr
-  # @param [Hash, nil]                                             opt
+  # @param [SearchResult, Hash, ActionController::Parameters, nil] attributes
   #
   # @return [void]
   #
-  def assign_attributes(attr, opt = nil)
+  def assign_attributes(attributes)
     __debug_items(binding)
     super
   end

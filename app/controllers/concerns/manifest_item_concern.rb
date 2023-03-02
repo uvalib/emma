@@ -174,13 +174,12 @@ module ManifestItemConcern
   # Transform import data into ManifestItem field values.
   #
   # @param [Hash{Symbol=>*}] item
-  # @param [Boolean]         invalid  Allow invalid values to be imported.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def import_transform!(item, invalid: true)
+  def import_transform!(item)
     normalize_import_name!(item)
-    item.replace(ManifestItem.attribute_options(item, invalid: invalid))
+    item.replace(ManifestItem.normalize_attributes(item).except!(:attr_opt))
   end
 
   # Transform ManifestItem field values for export.
@@ -394,7 +393,7 @@ module ManifestItemConcern
 
   # Create and persist a new ManifestItem.
   #
-  # @param [Hash] opt                       Field values.
+  # @param [Hash] attr                      Field values.
   #
   # @raise [Record::SubmitError]            Invalid workflow transition.
   # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
@@ -402,13 +401,11 @@ module ManifestItemConcern
   #
   # @return [ManifestItem]                  A new ManifestItem instance.
   #
-  def create_manifest_item(**opt)
+  def create_manifest_item(**attr)
     __debug_items("MANIFEST ITEM WF #{__method__}", binding)
-    opt[:backup] ||= {}
-    opt[:row]    ||= 1 + all_manifest_items(**opt)&.last&.row.to_i
-    us_opt = extract_hash!(opt, *ManifestItem::UPDATE_STATUS_OPTS)
-    ManifestItem.update_status!(opt, **us_opt)
-    ManifestItem.create!(opt)
+    attr[:backup] ||= {}
+    attr[:row]    ||= 1 + all_manifest_items(**attr)&.last&.row.to_i
+    ManifestItem.create!(attr)
   end
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
@@ -440,12 +437,12 @@ module ManifestItemConcern
   def update_manifest_item(item = nil, **opt)
     __debug_items("MANIFEST ITEM WF #{__method__}", binding)
     edit_manifest_item(item).tap do |record|
-      us_opt     = extract_hash!(opt, *ManifestItem::UPDATE_STATUS_OPTS)
-      keep_date  = (!us_opt[:overwrite] unless us_opt[:overwrite].nil?)
+      attr_opt   = extract_hash!(opt, *ManifestItem::UPDATE_STATUS_OPTS)
+      keep_date  = (!attr_opt[:overwrite] unless attr_opt[:overwrite].nil?)
       new_fields = keep_date.nil? && opt.except(*NON_EDIT_KEYS).keys.presence
       old_values = new_fields && record.fields.slice(*new_fields)
       updated_at = record[:updated_at]
-      record.update_status!(**us_opt, **opt)
+      opt[:attr_opt] = { re_validate: true, **attr_opt }
       record.update!(opt).tap do
         if keep_date.nil?
           keep_date = old_values.all? { |k, v| record[k].to_s == v.to_s }
@@ -505,7 +502,7 @@ module ManifestItemConcern
   public
 
   RECORD_KEYS   = ManifestItem::RECORD_COLUMNS.excluding(:repository).freeze
-  NON_DATA_KEYS = ManifestItem::NON_DATA_COLS
+  NON_DATA_KEYS = ManifestItem::NON_DATA_COLS.excluding(:field_error).freeze
   NON_EDIT_KEYS = ManifestItem::NON_EDIT_COLS
 
   # Set :editing state (along with any other fields if they are provided).
@@ -535,8 +532,8 @@ module ManifestItemConcern
         Log.debug { "#{meth}: #{rec.id}: making backup" }
         opt[:backup] = backup
       end
-      us_opt = { overwrite: false }
-      update_manifest_item(rec, **us_opt, **opt)
+      opt[:attr_opt] = { overwrite: false }
+      update_manifest_item(rec, **opt)
     else
       create_manifest_item(**opt)
     end
@@ -576,12 +573,12 @@ module ManifestItemConcern
   # @see file:javascripts/controllers/manifest-edit.js *postRowUpdate*
   #
   def editing_update(item = nil, **opt)
-    rec    = edit_manifest_item(item)
-    file   = opt.key?(:file_status)  || opt.key?(:file_data)
-    data   = opt.key?(:data_status)  || opt.except(*RECORD_KEYS).present?
-    ready  = opt.key?(:ready_status) || file || data
-    us_opt = { file: file, data: data, ready: ready }
-    update_manifest_item(rec, **us_opt, **opt, editing: false)
+    rec   = edit_manifest_item(item)
+    file  = opt.key?(:file_status)  || opt.key?(:file_data)
+    data  = opt.key?(:data_status)  || opt.except(*RECORD_KEYS).present?
+    ready = opt.key?(:ready_status) || file || data
+    opt[:attr_opt] = { file: file, data: data, ready: ready }
+    update_manifest_item(rec, **opt, editing: false)
     {
       items:    { rec.id => rec.fields.except(*NON_DATA_KEYS) },
       pending:  (rec.manifest.pending_items_hash if file || data || ready),
@@ -768,12 +765,9 @@ module ManifestItemConcern
 
   # Data for one or more manifest items from parameters.
   #
-  # @param [Boolean] validate       If *true*, update status fields.
-  # @param [Boolean] nil_default    If *true*, make invalid values *nil*.
-  #
   # @return [Array<Hash>]
   #
-  def bulk_item_data(validate: true, nil_default: true)
+  def bulk_item_data
     prm   = manifest_item_bulk_post_params
     items = prm[:data]
     failure("not an Array: #{items.inspect}") unless items.is_a?(Array)
@@ -790,8 +784,7 @@ module ManifestItemConcern
       end
       row   = (item[:row]   ||= row)
       delta = (item[:delta] ||= delta + 1)
-      ManifestItem.update_status!(item) if validate
-      ManifestItem.attribute_options(item, nil_default: nil_default)
+      ManifestItem.normalize_attributes(item).except!(:attr_opt)
     end
   end
 

@@ -12,45 +12,34 @@ module Record::Assignable
   # :nocov:
   #include ActiveRecord::Core
 
-  # Option parameters for #attribute_options:
-  #
-  # * :from     A record used to provide initial field values.
-  # * :user     Transformed into a :user_id value.
-  # * :force    Allow these fields unconditionally.
-  # * :except   Ignore these fields (default: []).
-  # * :only     Not limited if *false* (default: `#field_name`).
-  # * :compact  If *false*, allow blanks (default: *true*).
-  # * :key_norm If *true*, transform provided keys to the real column name.
-  # * :options  An Options instance.
-  #
-  ATTRIBUTE_OPTIONS_OPTS: symArray
-
   # Called to prepare values to be used for assignment to record attributes.
   #
-  # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil] opt      Added pairs except for #ATTRIBUTE_OPTIONS_OPTS:
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash, nil]                                      opt
   #
-  # @option attr [ApplicationRecord]            :from
-  # @option attr [User, String, Integer]        :user
-  # @option attr [Symbol, Array<Symbol>]        :force
-  # @option attr [Symbol, Array<Symbol>]        :except
-  # @option attr [Symbol, Array<Symbol>, false] :only
-  # @option attr [Boolean]                      :compact
-  # @option attr [Boolean]                      :key_norm
+  # @option opt [ApplicationRecord]            :from        A record used to provide initial field values.
+  # @option opt [User, String, Integer]        :user        Transformed into a :user_id value.
+  # @option opt [Symbol, Array<Symbol>]        :force       Allow these fields unconditionally.
+  # @option opt [Symbol, Array<Symbol>]        :except      Ignore these fields (default: []).
+  # @option opt [Symbol, Array<Symbol>, false] :only        Not limited if *false* (default: `#field_name`).
+  # @option opt [Boolean]                      :compact     If *false*, allow blanks (default: *true*).
+  # @option opt [Boolean]                      :key_norm    If *true*, transform provided keys to the real column name.
+  # @option opt [Boolean]                      :normalized  If *attr* already processed by #normalize_attributes.
+  # @option opt [Hash]                         :attr_opt    A hash containing any of the above values.
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def attribute_options: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
+  def normalize_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
 
-  # The fields that will be accepted by #attribute_options.
+  # The fields that will be accepted by #normalize_attributes.
   #
   # @return [Array<Symbol>]
   #
   def allowed_keys: () -> symArray
 
-  # The fields that will be ignored by #attribute_options from a source
+  # The fields that will be ignored by #normalize_attributes from a source
   # passed in via the :from parameter.
   #
   # @return [Array<Symbol>]
@@ -86,6 +75,8 @@ module Record::Assignable
     # :nocov:
     #include ActiveRecord::AttributeAssignment
 
+    #include Record::Debugging::InstanceMethods
+
     # Model/controller options passed in through the constructor.
     #
     # @return [Entry::Options]
@@ -100,17 +91,26 @@ module Record::Assignable
     #
     def set_model_options: ((Entry::Options|symHash|nil) options) -> (Entry::Options | nil)
 
-    # Update database fields, including the structured contents of JSON fields.
+    # Create a new instance.
     #
-    # @param [Hash, ActionController::Parameters, Model, nil] attr
-    # @param [Hash, nil]                                      opt
+    # @param [Model, Hash, ActionController::Parameters, nil] attr
     #
     # @return [void]
     #
-    # @see #attribute_options
+    # @note - for dev traceability
+    #
+    def initialize: (?(Model|prmHash|nil) attr) ?{ () -> untyped } -> void
+
+    # Update database fields, including the structured contents of JSON fields.
+    #
+    # @param [Model, Hash, ActionController::Parameters, nil] attributes
+    #
+    # @return [void]
+    #
+    # @see #normalize_attributes
     # @see ActiveModel::AttributeAssignment#assign_attributes
     #
-    def assign_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> void
+    def assign_attributes: ((Model|prmHash|nil) attributes) -> void
   end
 
   private

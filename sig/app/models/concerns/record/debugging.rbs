@@ -62,8 +62,7 @@ module Record::Debugging
 
     # Create a new instance.
     #
-    # @param [Hash, ActionController::Parameters, Model, nil] attr
-    # @param [Proc, nil] block
+    # @param [Model, Hash, ActionController::Parameters, nil] attr
     #
     def initialize: (?(Model|prmHash|nil) attr) ?{ () -> untyped } -> void
   end

@@ -278,13 +278,11 @@ class SearchCall < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
-  # @param [Proc, nil] block
+  # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
   #
   # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
-    #__debug_items(binding)
     super(attr, &block)
   end
 
@@ -324,23 +322,14 @@ class SearchCall < ApplicationRecord
 
   # Update database fields, including the structured contents of JSON fields.
   #
-  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
-  # @param [Hash, nil]                                           opt
+  # @param [SearchCall, Hash, ActionController::Parameters, nil] attributes
   #
   # @return [void]
   #
-  # @note - for dev traceability
-  #
-  def assign_attributes(attr, opt = nil)
-    #__debug_items(binding)
-    # noinspection RubyMismatchedArgumentType
-    attr = attr.is_a?(SearchCall) ? attr.fields : map_parameters(attr)
-    attr.delete(:id)
-    #__debug_items(__method__, attr)
-    super(attr, opt)
-  rescue => error # TODO: remove - testing
-    Log.warn { "#{__method__}: #{error.class}: #{error.message}" }
-    raise error
+  def assign_attributes(attributes)
+    attr = normalize_attributes(attributes)
+    attr.except!(:id)
+    super(attr)
   end
 
   # Called to prepare values to be used for assignment to record attributes.
@@ -351,12 +340,13 @@ class SearchCall < ApplicationRecord
   # @return [Hash{Symbol=>*}]
   #
   # @see #map_parameters
-  # @see Record::Assignable#attribute_options
+  # @see Record::Assignable#normalize_attributes
   #
-  def attribute_options(attr, opt = nil)
+  def normalize_attributes(attr, opt = nil)
     return {}    if attr.blank?
     return super if attr.is_a?(ApplicationRecord)
-    map_parameters(super(attr, only: false))
+    opt = (opt&.dup || {}).merge!(only: false)
+    map_parameters(super(attr, opt))
   end
 
   # ===========================================================================

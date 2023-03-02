@@ -63,19 +63,17 @@ class Phase::BulkOperation < Phase
   # Create a new instance.
   #
   # @param [Hash, ActionController::Parameters, Model, nil] attr
-  # @param [Hash, nil]                                      opt
-  # @param [Proc, nil]                                      block
   #
   # @option attr [String|Array] :manifest   If *attr* is a Hash or Hash-like.
-  # @option opt  [String|Array] :manifest   If *opt* hash is provided.
   #
-  def initialize(attr = nil, opt = nil, &block)
-    data = (opt[:manifest] if opt.is_a?(Hash))
+  def initialize(attr = nil, &block)
+    data = nil
     if attr && !attr.is_a?(ApplicationRecord) && attr.key?(:manifest)
       data ||= attr[:manifest]
-      attr = attr.except(:manifest)
+      attr   = attr.except(:manifest)
     end
     super(attr, &block)
+    # noinspection RubyMismatchedArgumentType
     load_manifest(data) if data
   end
 
