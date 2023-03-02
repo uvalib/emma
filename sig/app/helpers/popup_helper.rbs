@@ -31,7 +31,7 @@ module PopupHelper
   #
   # @see file:app/assets/javascripts/shared/modal-base.js
   #
-  def modal_popup: (?css: String|nil, **untyped opt) { () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+  def modal_popup: (?css: String|nil, **untyped opt) ?{ () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
   # Render a popup control and associated popup element.
   #

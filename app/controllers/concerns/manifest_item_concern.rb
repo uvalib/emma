@@ -383,13 +383,13 @@ module ManifestItemConcern
   # Create a new un-persisted ManifestItem, using *item* as a template if
   # provided, for the '/new' model form.
   #
-  # @param [Hash] opt                       Field values.
+  # @param [Hash] attr                      Field values.
   #
   # @return [ManifestItem]                  Un-persisted ManifestItem instance.
   #
-  def new_manifest_item(**opt)
+  def new_manifest_item(**attr)
     __debug_items("MANIFEST ITEM WF #{__method__}", binding)
-    ManifestItem.new(opt)
+    ManifestItem.new(attr)
   end
 
   # Create and persist a new ManifestItem.

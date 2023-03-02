@@ -44,12 +44,12 @@ module ManifestItem::Assignable
 
   # Ensure that blanks are allowed and that input values are normalized.
   #
-  # @param [Hash, nil] attr
-  # @param [Hash, nil] opt
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash, nil]                                      opt
   #
   # @option opt [Boolean] :invalid    Allow invalid values.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def attribute_options(attr, opt = nil)
     n_opt, opt = partition_hash(opt, :invalid, :nil_default)
@@ -136,9 +136,9 @@ module ManifestItem::Assignable
 
   # normalize_single
   #
-  # @param [*]     v
-  # @param [Class] type
-  # @param [Hash]  opt                Passed to normalization method.
+  # @param [*]            v
+  # @param [String|Class] type
+  # @param [Hash]         opt         Passed to normalization method.
   #
   # @return [*]
   #

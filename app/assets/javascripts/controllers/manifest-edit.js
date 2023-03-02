@@ -196,64 +196,68 @@ appSetup(MODULE, function() {
      */
 
     /**
+     * @typedef {object} ManifestRecordItem
+     *
+     * @property {RecordMessageProperties} properties
+     * @property {ManifestItem[]}          list
+     */
+
+    /**
+     * @typedef {object} ManifestRecordMessage
+     *
      * JSON format of a response message containing a list of ManifestItems.
      *
      * @see "ManifestItemController#bulk_update_response"
      *
-     * @typedef {{
-     *      items: {
-     *          properties: RecordMessageProperties,
-     *          list:       ManifestItem[],
-     *      }
-     * }} ManifestRecordMessage
+     * @property {ManifestRecordItem[]} items
      */
 
     /**
+     * @typedef {object} ManifestItemIdMessage
+     *
      * JSON format of a response message containing a list of ManifestItems.
      *
-     * @typedef {{
-     *      items: {
-     *          list:       number[],
-     *      }
-     * }} ManifestItemIdMessage
+     * @property {list: number[]} items
      */
 
     /**
-     * CreateResponse
+     * @typedef {ManifestItem|{response: ManifestItem}} CreateResponse
      *
      * @see "ManifestItemConcern#create_manifest_item"
-     *
-     * @typedef {ManifestItem} CreateResponse
      */
 
     /**
-     * UpdateResponse
+     * @typedef {object} ItemResponse
      *
      * @see "ManifestItemConcern#finish_editing"
      *
-     * @typedef {{
-     *     items:     ManifestItemTable|null|undefined,
-     *     pending?:  ManifestItemTable|null|undefined,
-     *     problems?: MessageTable|null|undefined,
-     * }} UpdateResponse
+     * @property {ManifestItemTable|null} items
+     * @property {ManifestItemTable|null} [pending]
+     * @property {MessageTable|null}      [problems]
      */
 
     /**
-     * FinishEditResponse
-     *
-     * @typedef {UpdateResponse} FinishEditResponse
+     * @typedef {ItemResponse|{response: ItemResponse}} UpdateResponse
      */
 
     /**
-     * JSON format of a response from "/manifest/create" or "/manifest/update".
-     *
+     * @typedef {ItemResponse|{response: ItemResponse}} FinishEditResponse
+     */
+
+    /**
      * @typedef {Manifest} ManifestMessage
+     *
+     * JSON format of a response from "/manifest/create" or "/manifest/update".
      */
 
     /**
-     * JSON format of a response message from "/manifest/save.
+     * @typedef {object} ManifestSaveMessage
      *
-     * @typedef {{ items: ManifestItemTable }} ManifestSaveMessage
+     * JSON format of a response message from "/manifest/save".
+     *
+     * @see "ManifestController#save_response"
+     *
+     * @property {ManifestItemTable} items
      */
 
     // ========================================================================
@@ -643,7 +647,7 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery.Event|UIEvent} event
      *
-     * @see "ManifestConcern#save_changes!"
+     * @see "ManifestConcern#save_changes"
      */
     function saveUpdates(event) {
         const func     = 'saveUpdates'; _debug(`${func}: event =`, event);
@@ -671,12 +675,12 @@ appSetup(MODULE, function() {
          * Process the response to replace the provisional row/delta values
          * with the real row numbers (and no deltas).
          *
-         * @param {ManifestSaveMessage|undefined} body
+         * @param {ManifestSaveMessage|ManifestItemTable|undefined} body
+         *
+         * @see "ManifestController#save_response"
          */
         function onSuccess(body) {
             _debug(`${func}: body =`, body);
-            // noinspection JSValidateTypes
-            /** @type {ManifestItemTable} */
             const data = body?.items || body;
             if (isEmpty(body)) {
                 _error(func, 'no response data');
@@ -695,7 +699,7 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery.Event|UIEvent} event
      *
-     * @see "ManifestConcern#cancel_changes!"
+     * @see "ManifestConcern#cancel_changes"
      */
     function cancelUpdates(event) {
         const func     = 'cancelUpdates'; _debug(`${func}: event =`, event);
@@ -930,7 +934,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Records that have a non-empty :file_data column when rendered on the
+     * Records that have a non-empty file_data column when rendered on the
      * server have the contents of that field put into a 'data-value' attribute
      * which needs to be processed here in order to associate the data with the
      * cell.
@@ -1599,6 +1603,7 @@ appSetup(MODULE, function() {
      */
     function appendRows(list, intermediate) {
         _debug('appendRows: list =', list);
+        /** @type {ManifestItem[]} */
         const items = arrayWrap(list);
         const $last = allDataRows().last();
 
@@ -1632,6 +1637,8 @@ appSetup(MODULE, function() {
      *
      * @param {object|string} items
      * @param {object}        [opt]
+     *
+     * @see "ManifestItemController#bulk_create"
      */
     function sendCreateRecords(items, opt = {}) {
         const caller = opt?.caller || 'sendCreateRecords';
@@ -1643,6 +1650,8 @@ appSetup(MODULE, function() {
      *
      * @param {object|string} items
      * @param {object}        [opt]
+     *
+     * @see "ManifestItemController#bulk_update"
      */
     function sendUpdateRecords(items, opt = {}) {
         const caller = opt?.caller || 'sendUpdateRecords';
@@ -1684,7 +1693,7 @@ appSetup(MODULE, function() {
     /**
      * Append ManifestItems returned from the server.
      *
-     * @param {ManifestRecordMessage} body
+     * @param {ManifestRecordMessage|ManifestRecordItem} body
      *
      * @see "ManifestItemController#bulk_update_response"
      * @see "SerializationConcern#index_values"
@@ -2474,8 +2483,8 @@ appSetup(MODULE, function() {
      * Receive updated fields for the item, plus problem reports, plus invalid
      * fields for each item that would prevent a save from occurring.
      *
-     * @param {Selector}                                  row
-     * @param {UpdateResponse|{response: UpdateResponse}} body
+     * @param {Selector}       row
+     * @param {UpdateResponse} body
      *
      * @see "ManifestItemConcern#finish_editing"
      * @see "Manifest::ItemMethods#pending_items_hash"
@@ -2483,7 +2492,6 @@ appSetup(MODULE, function() {
      */
     function parseUpdateResponse(row, body) {
         _debug('parseUpdateResponse: body =', body);
-        /** @type {UpdateResponse} */
         const data     = body?.response || body || {};
         const items    = presence(data.items);
         const pending  = presence(data.pending);
@@ -2796,7 +2804,7 @@ appSetup(MODULE, function() {
 
                 /**
                  * If a value was given update the displayed file value and
-                 * send the new :file_data value to the server.
+                 * send the new file_data value to the server.
                  *
                  * @param {Event} event
                  */
@@ -3183,7 +3191,7 @@ appSetup(MODULE, function() {
      * @param {Selector}            target
      * @param {ManifestItem|number} data
      *
-     * @see "ManifestController#row_table"
+     * @see "ManifestController#save_response"
      */
     function updateDbRowDelta(target, data) {
         const func = 'updateDbRowDelta';
@@ -3205,7 +3213,7 @@ appSetup(MODULE, function() {
      *
      * @param {ManifestItemTable} table
      *
-     * @see "ManifestController#row_table"
+     * @see "ManifestController#save_response"
      */
     function updateRowValues(table) {
         const func = 'updateRowValues'; _debug(`${func}: table =`, table);
@@ -3424,7 +3432,7 @@ appSetup(MODULE, function() {
     /**
      * Update row details entries from supplied field values.
      *
-     * @param {Selector}                         target
+     * @param {Selector}                          target
      * @param {ManifestItemData|object|undefined} data
      */
     function updateRowDetails(target, data) {
@@ -4576,15 +4584,15 @@ appSetup(MODULE, function() {
     /**
      * Receive updated fields for the item.
      *
-     * @param {jQuery}                                    $cell
-     * @param {CreateResponse|{response: CreateResponse}} body
+     * @param {jQuery}         $cell
+     * @param {CreateResponse} body
      *
      * @see "ManifestItemConcern#create_manifest_item"
      */
     function parseCreateResponse($cell, body) {
         _debug('parseCreateResponse: body =', body);
         // noinspection JSValidateTypes
-        /** @type {CreateResponse} */
+        /** @type {ManifestItem} */
         const data = body?.response || body;
         if (isPresent(data)) {
             updateDataRow($cell, data);
@@ -4595,8 +4603,8 @@ appSetup(MODULE, function() {
      * Receive updated fields for the item, plus problem reports, plus invalid
      * fields for each item that would prevent a save from occurring.
      *
-     * @param {jQuery}                                            $cell
-     * @param {FinishEditResponse|{response: FinishEditResponse}} body
+     * @param {jQuery}             $cell
+     * @param {FinishEditResponse} body
      *
      * @see "ManifestItemConcern#finish_editing"
      * @see "Manifest::ItemMethods#pending_items_hash"
@@ -4604,7 +4612,6 @@ appSetup(MODULE, function() {
      */
     function parseFinishEditResponse($cell, body) {
         _debug('parseFinishEditResponse: body =', body);
-        /** @type {FinishEditResponse} */
         const data     = body?.response || body || {};
         const items    = presence(data.items);
         const pending  = presence(data.pending);

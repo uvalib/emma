@@ -73,7 +73,10 @@ export class SubmitChannel extends CableChannel {
      * @returns {SubmitResponseBase}
      * @protected
      *
-     * @see "SubmitChannel#submission_response"
+     * @see "SubmitChannel#initial_response"
+     * @see "SubmitChannel#final_response"
+     * @see "SubmitChannel#step_response"
+     * @see "SubmitChannel#control_response"
      */
     _createResponse(data) {
         return SubmitResponseBase.wrap(data);

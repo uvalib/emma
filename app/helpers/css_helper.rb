@@ -103,7 +103,7 @@ module CssHelper
   #
   # @param [Hash]               html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #css_classes.
+  # @param [Proc]               block     Passed to #css_class_array.
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
@@ -155,7 +155,7 @@ module CssHelper
   #
   # @param [Hash]               html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #css_classes.
+  # @param [Proc]               block     Passed to #css_class_array.
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #

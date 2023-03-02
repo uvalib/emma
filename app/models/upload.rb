@@ -88,8 +88,7 @@ class Upload < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, Upload] attr        Passed to #assign_attributes via super.
-  # @param [Proc]         block       Passed to super.
+  # @param [Upload, Hash, nil] attr   Passed to #assign_attributes via super.
   #
   def initialize(attr = nil, &block)
     __debug_items(binding)
@@ -118,7 +117,7 @@ class Upload < ApplicationRecord
   # @return [Upload::Options, nil]
   #
   def set_model_options(options)
-    options = options[:options]  if options.is_a?(Hash)
+    options = options[:options] if options.is_a?(Hash)
     # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
     @model_options = (options.dup if options.is_a?(Options))
   end

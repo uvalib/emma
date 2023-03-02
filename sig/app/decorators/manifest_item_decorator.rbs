@@ -145,6 +145,11 @@ class ManifestItemDecorator < BaseDecorator
 
     SKIPPED_FIELDS: symArray
 
+    # The fields which are displayed in the expandable "Item Details" panel and
+    # the HTML element type used to contain its value(s).
+    #
+    # @param [Array<Symbol>]
+    #
     DETAILS_FIELDS: symArray
 
     HIDDEN_FIELDS: symArray
@@ -683,7 +688,6 @@ class ManifestItemDecorator
   # @param [Array]         added      Optional elements after the details.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt        Passed to super
-  # @param [Proc]          block      Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #

@@ -70,10 +70,9 @@ class Entry < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, Entry] attr         Passed to #assign_attributes via super.
-  # @param [Proc]        block        Passed to super.
+  # @param [Entry, Hash, nil] attr    Passed to #assign_attributes via super.
   #
-  def initialize: (?(Entry|symHash|nil) attr) { (self) -> untyped } -> void
+  def initialize: (?(Entry|symHash|nil) attr) ?{ (self) -> untyped } -> void
 
   # Update database fields, including the structured contents of the :emma_data
   # field.

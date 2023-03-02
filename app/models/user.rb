@@ -170,7 +170,7 @@ class User < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, nil] attr
+  # @param [User, Hash, nil] attr
   #
   # @note - for dev traceability
   #
@@ -555,6 +555,7 @@ class User < ApplicationRecord
       attr.delete(:last_name)  if user.last_name.present?
       user.update(attr) if attr.delete_if { |k, v| user[k] == v }.present?
     end
+    # noinspection RubyMismatchedReturnType
     user || create(attr)
   end
 

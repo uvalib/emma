@@ -349,6 +349,7 @@ class ManifestItemController < ApplicationController
   # @see #bulk_create_manifest_item_path           Route helper
   # @see ManifestItemConcern#bulk_create_manifest_items
   # @see ManifestItemController#bulk_new
+  # @see file:javascripts/controllers/manifest-edit.js *sendUpsertRecords*
   #
   def bulk_create
     __debug_route
@@ -384,6 +385,7 @@ class ManifestItemController < ApplicationController
   # @see #bulk_update_manifest_item_path           Route helper
   # @see ManifestItemConcern#bulk_update_manifest_items
   # @see ManifestItemController#bulk_edit
+  # @see file:javascripts/controllers/manifest-edit.js *sendUpsertRecords*
   #
   def bulk_update
     __debug_route
@@ -456,6 +458,8 @@ class ManifestItemController < ApplicationController
   # @param [Hash]    opt              Passed to #index_values.
   #
   # @return [Hash{Symbol=>Hash}]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *processReceivedItems*
   #
   def bulk_update_response(list = @list, **opt)
     index_values(list, **opt)

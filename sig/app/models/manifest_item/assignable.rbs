@@ -57,9 +57,9 @@ module ManifestItem::Assignable
 
   # normalize_single
   #
-  # @param [*]     v
-  # @param [Class] type
-  # @param [Hash]  opt                Passed to normalization method.
+  # @param [*]            v
+  # @param [String|Class] type
+  # @param [Hash]         opt         Passed to normalization method.
   #
   # @return [*]
   #
@@ -119,8 +119,8 @@ module ManifestItem::Assignable
   # @return [Array, String, nil]
   #
   def normalize_enum
-    : (anyArray      v, Class `type`, **untyped opt) -> strArray
-    | (String|Symbol v, Class `type`, **untyped opt) -> String
+    : (anyArray      v, Class `type`, **untyped opt) -> Array[EnumType]
+    | (String|Symbol v, Class `type`, **untyped opt) -> EnumType
     | (untyped       v, Class `type`, **untyped opt) -> nil
 
   # normalize_json

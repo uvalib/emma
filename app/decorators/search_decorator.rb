@@ -574,7 +574,6 @@ class SearchDecorator
   # @param [Array]         added      Optional elements after the details.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt        Passed to super
-  # @param [Proc]          block      Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #

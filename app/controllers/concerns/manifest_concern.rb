@@ -273,25 +273,25 @@ module ManifestConcern
 
   # Start a new (un-persisted) manifest.
   #
-  # @param [Hash, nil] opt            Default: `#get_manifest_params`.
+  # @param [Hash, nil] attr           Default: `#get_manifest_params`.
   #
   # @return [Manifest]                Un-persisted Manifest instance.
   #
-  def new_manifest(opt = nil)
-    opt ||= get_manifest_params
-    opt[:name] ||= Manifest.default_name
-    Manifest.new(opt)
+  def new_manifest(attr = nil)
+    attr ||= get_manifest_params
+    attr[:name] ||= Manifest.default_name
+    Manifest.new(attr)
   end
 
   # Create and persist a new manifest.
   #
-  # @param [Hash, nil] opt              Default: `#get_manifest_params`.
+  # @param [Hash, nil] attr           Default: `#get_manifest_params`.
   #
-  # @return [Manifest]                  New persisted Manifest instance.
+  # @return [Manifest]                New persisted Manifest instance.
   #
-  def create_manifest(opt = nil)
-    opt ||= get_manifest_params
-    Manifest.create!(opt)
+  def create_manifest(attr = nil)
+    attr ||= get_manifest_params
+    Manifest.create!(attr)
   end
 
   # Start editing an existing manifest.
@@ -321,9 +321,9 @@ module ManifestConcern
   # @return [Manifest]
   #
   def update_manifest(item = nil, opt = nil)
-    item, opt = manifest_request_params(item, opt)
+    item, attr = manifest_request_params(item, opt)
     get_manifest(item).tap do |manifest|
-      manifest.update!(opt)
+      manifest.update!(attr)
     end
   end
 

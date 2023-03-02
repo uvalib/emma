@@ -106,7 +106,6 @@ class ManifestItem < ApplicationRecord
   # Create a new instance.
   #
   # @param [ManifestItem,Manifest,Hash] attr    To #assign_attributes via super
-  # @param [Proc]                       block   Passed to super.
   #
   def initialize(attr = nil, &block)
     __debug_items(binding)

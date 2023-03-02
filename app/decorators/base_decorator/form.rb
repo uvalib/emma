@@ -734,7 +734,6 @@ module BaseDecorator::Form
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
   # @param [Hash]                                  opt
-  # @param [Proc]                                  block
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -769,7 +768,6 @@ module BaseDecorator::Form
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
   # @param [Hash]                                  opt
-  # @param [Proc]                                  block
   #
   # @return [ActiveSupport::SafeBuffer]
   #

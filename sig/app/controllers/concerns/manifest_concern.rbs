@@ -139,19 +139,19 @@ module ManifestConcern
 
   # Start a new (un-persisted) manifest.
   #
-  # @param [Hash, nil] opt            Default: `#get_manifest_params`.
+  # @param [Hash, nil] attr           Default: `#get_manifest_params`.
   #
   # @return [Manifest]                Un-persisted Manifest instance.
   #
-  def new_manifest: (?(symHash|nil) opt) -> Manifest
+  def new_manifest: (?(symHash|nil) attr) -> Manifest
 
   # Create and persist a new manifest.
   #
-  # @param [Hash, nil] opt              Default: `#get_manifest_params`.
+  # @param [Hash, nil] attr           Default: `#get_manifest_params`.
   #
-  # @return [Manifest]                  New persisted Manifest instance.
+  # @return [Manifest]                New persisted Manifest instance.
   #
-  def create_manifest: (?(symHash|nil) opt) -> Manifest
+  def create_manifest: (?(symHash|nil) attr) -> Manifest
 
   # Start editing an existing manifest.
   #

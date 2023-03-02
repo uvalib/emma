@@ -74,10 +74,10 @@ class SearchCall < ApplicationRecord
 
   # Called to prepare values to be used for assignment to record attributes.
   #
-  # @param [Hash, ActionController::Parameters, SearchCall, nil] attr
+  # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
   # @param [Hash, nil]                                           opt
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # @see #map_parameters
   # @see Record::Assignable#attribute_options

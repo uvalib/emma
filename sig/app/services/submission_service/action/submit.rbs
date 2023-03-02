@@ -129,7 +129,7 @@ module SubmissionService::Action::Submit
   #
   # @return [void]
   #
-  def update_failures!(strHash failure, Exception|String error, ?(Array[ManifestItem]|nil) recs) -> void
+  def update_failures!: (strHash failure, Exception|String error, ?(Array[ManifestItem]|nil) recs) -> void
 
   # submission_step
   #

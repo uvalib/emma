@@ -43,7 +43,6 @@ module LogoHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source_logo(item = nil, css: '.repository.logo', **opt)
-    item, opt     = [nil, item] if item.is_a?(Hash) && opt.nil?
     opt, html_opt = partition_hash(opt, :source, :name, :logo, :type)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)

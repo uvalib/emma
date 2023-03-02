@@ -170,7 +170,6 @@ module BaseDecorator::Helpers
   # @param [String, Hash, nil]    url
   # @param [Symbol, String, nil]  format
   # @param [Hash]                 opt
-  # @param [Proc]                 block
   #
   # @option opt [Hash] :html
   # @option opt [Hash] :data

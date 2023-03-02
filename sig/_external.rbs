@@ -91,10 +91,12 @@ module ActionView
 end
 
 module ActiveRecord
+
   module Callbacks
     module ClassMethods
     end
   end
+
   module ConnectionAdapters
     module PostgreSQL
       module ColumnMethods
@@ -131,6 +133,7 @@ module ActiveRecord
       end
     end
   end
+
   # NOTE: overrides .gem_rbs_collection/activerecord/7.0/activerecord-generated.rbs
   module FinderMethods
     def take
@@ -143,6 +146,33 @@ module ActiveRecord
       : (?nil    limit) -> (untyped | nil)
       | (Integer limit) -> anyArray
   end
+
+  # NOTE: overrides .gem_rbs_collection/activerecord/7.0/activerecord-generated.rbs
+  module Persistence
+    module ClassMethods
+      def create
+        : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
+        | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+      def create!
+        : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
+        | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+      def update
+        : (?:all     id, Array[anyHash] attributes) -> Array[instance]
+        | ( anyArray id, Array[anyHash] attributes) -> Array[instance]
+        | ( untyped  id, anyHash        attributes) -> instance
+    end
+  end
+
+  # NOTE: overrides .gem_rbs_collection/activerecord/7.0/activerecord.rbs
+  class Base
+    def self.create
+      : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
+      | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+    def self.create!
+      : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
+      | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+  end
+
 end
 
 class Array[unchecked out Elem] < Object
@@ -150,6 +180,16 @@ class Array[unchecked out Elem] < Object
   # NOTE: overrides gems/rbs-*/core/array.rbs
 
   def join: (?(string|nil) separator) -> String
+
+  def sort!
+    : () -> self
+    | () { (Elem a, Elem b) -> ::Integer } -> self
+
+  # NOTE: overrides gems/rbs-3.0.0/core/enumerable.rbs
+
+  def sort_by!
+    : () { (Elem arg0) -> (Comparable | ::Array[untyped]) } -> ::Array[Elem]
+    | () -> ::Enumerator[Elem, ::Array[Elem]]
 
   # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 
@@ -274,6 +314,10 @@ module Enumerable[unchecked out Elem] : _Each[Elem]
     | [T] (_NotFound[T] ifnone) { (Elem) -> top } -> (Elem | T)
     | [T] (_NotFound[T] ifnone)                   -> ::Enumerator[Elem, Elem | T]
 
+  # NOTE: overrides gems/rbs-3.0.0/core/enumerable.rbs
+
+  def include?: (untyped) -> bool
+
 end
 
 module Faraday
@@ -349,6 +393,17 @@ class Hash[unchecked out K, unchecked out V] < Object
     : ()                    -> Enumerator[V, self]
     | () { (V) -> untyped } -> Hash[K, untyped]
 
+  # NOTE: overrides /gems/rbs-3.0.0/core/enumerable.rbs
+
+  def compact: () -> instance
+
+  def select
+    : () { (K,V) -> boolish } -> instance
+    | () -> Enumerator[K, instance]
+
+  def reject
+    : () { (K,V) -> boolish } -> instance
+    | () -> Enumerator[K, instance]
 end
 
 module Hashie

@@ -52,8 +52,9 @@ class Manifest < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, Manifest] attr      Passed to #assign_attributes via super.
-  # @param [Proc]           block     Passed to super.
+  # @param [Manifest, Hash, nil] attr   Passed to #assign_attributes via super.
+  #
+  # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
     __debug_items(binding)

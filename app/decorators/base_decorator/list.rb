@@ -427,7 +427,7 @@ module BaseDecorator::List
   # @param [String, Symbol, nil] role
   # @param [String, nil]         css    Default: "#(model_type)-container"
   # @param [Hash]                opt    Passed to #details.
-  # @param [Proc]                block  Passed to #capture.
+  # @param [Proc, nil]           block  Passed to #capture.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

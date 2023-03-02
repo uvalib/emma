@@ -29,8 +29,7 @@ class Upload < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, Upload] attr        Passed to #assign_attributes via super.
-  # @param [Proc]         block       Passed to super.
+  # @param [Upload, Hash, nil] attr   Passed to #assign_attributes via super.
   #
   def initialize: (?(Upload|symHash|nil) attr) ?{ () -> untyped } -> void
 

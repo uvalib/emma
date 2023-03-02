@@ -141,7 +141,6 @@ module LinkHelper
   # @param [String] label
   # @param [String] path
   # @param [Hash]   opt
-  # @param [Proc]   block
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -158,7 +157,6 @@ module LinkHelper
   # @param [String] path
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
-  # @param [Proc]   block
   #
   # @return [ActiveSupport::SafeBuffer]
   #

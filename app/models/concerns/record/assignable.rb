@@ -58,7 +58,7 @@ module Record::Assignable
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def attribute_options(attr, opt = nil)
     return {} if attr.blank?

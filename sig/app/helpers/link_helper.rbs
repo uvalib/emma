@@ -61,13 +61,12 @@ module LinkHelper
   # @param [String] label
   # @param [String] path
   # @param [Hash]   opt
-  # @param [Proc]   block
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #make_link
   #
-  def external_link: (String label, String path, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer
+  def external_link: (String label, String path, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 
   # Produce a link to download an item to the client's browser.
   #
@@ -75,13 +74,12 @@ module LinkHelper
   # @param [String] path
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
-  # @param [Proc]   block
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #external_link
   #
-  def download_link: (String label, String path, ?css: String|nil, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer
+  def download_link: (String label, String path, ?css: String|nil, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 
   # If *text* is a URL return it directly; if *text* is HTML, locate the first
   # "href" and return the indicated value.

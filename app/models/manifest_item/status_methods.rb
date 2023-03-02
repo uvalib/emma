@@ -22,10 +22,10 @@ module ManifestItem::StatusMethods
   # Update status field values.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
-  # @param [Boolean] file
-  # @param [Boolean] data
-  # @param [Boolean] ready
-  # @param [Boolean] overwrite        If *false* only add status values.
+  # @param [Boolean] file             If *false* preserve :file_status.
+  # @param [Boolean] data             If *false* preserve :data_status.
+  # @param [Boolean] ready            If *false* preserve :ready_status.
+  # @param [Boolean] overwrite        If *false* only set null status values.
   # @param [Hash]    added            Fields that will be added to the item
   #
   # @return [ManifestItem, Hash]

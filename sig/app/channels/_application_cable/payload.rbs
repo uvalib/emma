@@ -39,11 +39,13 @@ module ApplicationCable::Payload
 
   # Setup stored request values.
   #
-  # @param [Hash, nil] store
+  # @param [Hash, nil] target
   # @param [*]         values
   # @param [Hash]      opt
   #
-  def set_payload: (?(symHash|nil) store, ?untyped values, **untyped opt) -> symHash
+  # @return [Hash{Symbol=>*}]
+  #
+  def set_payload: (?(symHash|nil) target, ?untyped values, **untyped opt) -> symHash
 
   # normalize
   #

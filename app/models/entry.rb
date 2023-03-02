@@ -105,8 +105,7 @@ class Entry < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, Entry] attr         Passed to #assign_attributes via super.
-  # @param [Proc]        block        Passed to super.
+  # @param [Entry, Hash, nil] attr    Passed to #assign_attributes via super.
   #
   def initialize(attr = nil, &block)
     __debug_items(binding)

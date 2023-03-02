@@ -333,6 +333,10 @@ class ManifestItemDecorator < BaseDecorator
       *ManifestItem::TRANSIENT_COLS,
     ].freeze
 
+    # The fields which are displayed in the expandable "Item Details" panel.
+    #
+    # @param [Array<Symbol>]
+    #
     DETAILS_FIELDS = %i[
       created_at
       updated_at
@@ -341,6 +345,7 @@ class ManifestItemDecorator < BaseDecorator
       last_indexed
       last_submit
     ].freeze
+
     HIDDEN_FIELDS = [*ManifestItem::STATUS_COLUMNS, *DETAILS_FIELDS].freeze
 
     UNDISPLAYED_FIELDS = [
@@ -1068,7 +1073,7 @@ class ManifestItemDecorator
   include SharedDefinitions
 
   # ===========================================================================
-  # :section: BaseDecorator::List overrides
+  # :section:
   # ===========================================================================
 
   public
@@ -1360,7 +1365,6 @@ class ManifestItemDecorator
   # @param [Array]         added      Optional elements after the details.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt        Passed to super
-  # @param [Proc]          block      Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #

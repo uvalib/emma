@@ -73,12 +73,14 @@ module ApplicationCable::Payload
 
   # Setup stored request values.
   #
-  # @param [Hash, nil] store
+  # @param [Hash, nil] target
   # @param [*]         values
   # @param [Hash]      opt
   #
-  def set_payload(store = nil, values = nil, **opt)
-    store, values = [nil, store] if values.nil?
+  # @return [Hash{Symbol=>*}]
+  #
+  def set_payload(target = nil, values = nil, **opt)
+    store, values = values ? [target, values] : [nil, target]
     store ||= {}
     opt     = payload_normalize(opt, except: [])
     payload = extract_hash!(opt, *template.keys)
