@@ -654,6 +654,7 @@ class Ability
     can :edit_select,   model, **with_constraints
     can :bulk_edit,     model, **with_constraints
     can :bulk_update,   model, **with_constraints
+    can :bulk_fields,   model, **with_constraints
 
     # == Remove resource
     can :destroy,       model, **with_constraints

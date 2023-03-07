@@ -524,7 +524,7 @@ class AppSettings < AppGlobal
     # @return [Hash, nil]
     #
     def update(values)
-      values = safe_json_parse(values, default: nil) if values.is_a?(String)
+      values = json_parse(values) if values.is_a?(String)
       # noinspection RubyMismatchedArgumentType
       set_item(values, replace: false)
     end

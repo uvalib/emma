@@ -172,10 +172,8 @@ module SubmissionService::Action::Submit
     success, failure = {}, {}
     manifest_items(items).each do |rec|
       result = submit_manifest_item(rec, **opt, no_raise: true)
-      result.success_failure.tap do |s, f|
-        success.merge!(s) if s
-        failure.merge!(f) if f
-      end
+      s = result.success.presence and success.merge!(s)
+      f = result.failure.presence and failure.merge!(f)
     end
     StepResult.new(success: success, failure: failure)
   end
@@ -203,11 +201,9 @@ module SubmissionService::Action::Submit
       break if recs.empty?
       sim&.new_step
       result = submission_step(recs, **opt, step: step)
-      result.success_failure.tap do |s, f|
-        success.merge!(s) if s
-        failure.merge!(f) if f
-        recs.reject! { |r| f.key?(manifest_item_id(r)) } if f
-      end
+      s = result.success.presence and success.merge!(s)
+      f = result.failure.presence and failure.merge!(f)
+      recs.reject! { |rec| f.key?(manifest_item_id(rec)) } if f
     end
   rescue => error
     update_failures!(failure, error, recs)
@@ -244,11 +240,9 @@ module SubmissionService::Action::Submit
         break if recs.empty?
         sim&.new_step
         result = submit_manifest_items(recs, **opt, step: step)
-        result.success_failure.tap do |s, f|
-          success.merge!(s) if s
-          failure.merge!(f) if f
-          recs.reject! { |r| f.key?(manifest_item_id(r)) } if f
-        end
+        s = result.success.presence and success.merge!(s)
+        f = result.failure.presence and failure.merge!(f)
+        recs.reject! { |rec| f.key?(manifest_item_id(rec)) } if f
       end
     end
     success.except!(*failure.keys)
@@ -266,11 +260,10 @@ module SubmissionService::Action::Submit
   #
   def submit_manifest_items(items, step:, no_raise: true, **opt)
     recs, success, failure = [], {}, {}
-    recs   = manifest_items(items)
-    result = submission_step(recs, no_raise: no_raise, **opt, step: step)
-    result.success_failure.tap do |s, f|
-      success.merge!(s) if s
-      failure.merge!(f) if f
+    recs = manifest_items(items)
+    submission_step(recs, no_raise: no_raise, **opt, step: step).tap do |res|
+      s = res.success.presence and success.merge!(s)
+      f = res.failure.presence and failure.merge!(f)
     end
   rescue => error
     update_failures!(failure, error, recs)
@@ -336,9 +329,9 @@ module SubmissionService::Action::Submit
       if !failure[id]
         failure[id] = { error: msg }
       elsif !failure[id].is_a?(Hash)
-        failure[id] = { error: [*failure[id], msg].join('; ') }
+        failure[id] = { error: [*failure[id], msg].uniq.join('; ') }
       else
-        failure[id][:error] = [*failure[id][:error], msg].join('; ')
+        failure[id][:error] = [*failure[id][:error], msg].uniq.join('; ')
       end
     end
   end
@@ -378,14 +371,13 @@ module SubmissionService::Action::Submit
     callback:   nil,
     **opt
   )
-    # noinspection RubyUnusedLocalVariable
-    result = success = nil
+    result = nil
+    meth   = opt.delete(:meth) || __method__
     recs   = manifest_items(items)
     start_time ||= timestamp
-    opt[:meth] ||= __method__
 
     sim = (opt[:sim_opt] if opt[:simulation] && SIMULATION_ALLOWED)
-    tag = sim && "*** SUBMIT --- #{self_class}.#{opt[:meth]}"
+    tag = sim && "*** SUBMIT --- #{self_class}.#{meth}"
     sim&.simulate_work(recs, tag, time: start_time, step: step, **opt)
 
     case step
@@ -395,7 +387,6 @@ module SubmissionService::Action::Submit
       when :entry   then result = create_entry(recs, **opt)
       else               raise %Q("#{step}" step: no submission method)
     end
-    success = recs
 
   rescue => error
     # NOTE: *success* is assumed to be *nil* in this case.
@@ -404,23 +395,17 @@ module SubmissionService::Action::Submit
     raise error unless no_raise
 
   ensure
-    if result.is_a?(Hash)
+    if result.is_a?(StepResult)
+      # == Result of any submission step except the final one.
+      result.failure.transform_values! { |v| v.is_a?(Hash) ? v : { error: v } }
+      result.success.transform_values! { |v| v.is_a?(Hash) ? v : {} }
+    else
       # == Result of the final submission step or a rescued exception.
       result.transform_values! { |v| v.is_a?(Hash) ? v : { error: v } }
-    else
-      # == Result of any submission step except the final one.
-      success = Array.wrap(success).map { |v| manifest_item_id(v) }
-      notice  = opt[:meth].to_s
-      result  =
-        Array.wrap(result).map { |item|
-          k = manifest_item_id(item)
-          v = success.include?(k) ? {} : { error: notice }
-          [k, v]
-        }.to_h
+      failure = result.select { |_, v| v[:error] }
+      success = result.except(*failure.keys)
+      result  = StepResult.new(success: success, failure: failure)
     end
-    failure = result.select { |_, v| v[:error] }
-    success = result.except(*failure.keys)
-    result  = StepResult.new(success: success, failure: failure)
     if callback
       message = opt.slice(:simulation, :manifest_id, :job_id)
       message[:step]       = step
@@ -449,24 +434,33 @@ module SubmissionService::Action::Submit
   #
   # @param [Array<ManifestItem>] records
   # @param [Integer, Float]      wait
+  # @param [Hash]                opt      @see #run_step
   #
-  # @return [Array<ManifestItem>]
+  # @return [StepResult]
   #
-  def await_upload(records, wait: 1, **)
+  def await_upload(records, wait: 1, **opt)
     $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
-    sleep(wait) until records.all?(&:file_uploaded_now?)
-    records
+    opt[:success] = 'uploaded' # TODO: I18n
+    opt[:meth]    = __method__
+    run_step(records, wait: wait, **opt) do |_id, rec|
+      rec.file_uploaded_now?
+    end
   end
 
   # Move the associated files into permanent storage.
   #
   # @param [Array<ManifestItem>] records
+  # @param [Hash]                opt      @see #run_step
   #
-  # @return [Array<ManifestItem>]
+  # @return [StepResult]
   #
-  def promote_file(records, **)
+  def promote_file(records, **opt)
     $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
-    records.each { |rec| rec.promote_file(no_raise: false) }
+    opt[:success] = 'stored' # TODO: I18n
+    opt[:meth]    = __method__
+    run_step(records, **opt) do |_id, rec|
+      rec.promote_file(no_raise: false)
+    end
   end
 
   # ===========================================================================
@@ -478,21 +472,28 @@ module SubmissionService::Action::Submit
   # Add entries to the index.
   #
   # @param [Array<ManifestItem>] records
+  # @param [Hash]                opt      @see #run_step
   #
-  # @return [Array<ManifestItem>]
+  # @return [StepResult]
   #
   # == Usage Notes
   # This is the step where the submission ID associated with the ManifestItem
   # instance is generated/regenerated.
   #
-  def add_to_index(records, **)
+  def add_to_index(records, **opt)
     fields = records.map(&:emma_metadata)
     $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
     result = ingest_api.put_records(*fields)
-    succeeded, failed = process_ingest_errors(result, *records)
-    ExceptionHelper.failure(failed, model: :manifest_item) if failed.present?
+    remaining, failure = process_ingest_errors(result, *records)
+
+    opt[:success] = 'indexed' # TODO: I18n
+    opt[:meth]    = __method__
+    opt[:initial] = { failure: failure }
+
     now = DateTime.now
-    succeeded.each { |rec| rec.update_columns(last_indexed: now) }
+    run_step(remaining, **opt) do |_id, rec|
+      rec.update_columns(last_indexed: now)
+    end
   end
 
   # Interpret error message(s) generated by Federated Ingest to determine which
@@ -502,8 +503,7 @@ module SubmissionService::Action::Submit
   # @param [Array<ManifestItem>]       records
   # @param [Hash]                      opt
   #
-  # @return [Array<(Array<ManifestItem>,ExecReport)>]
-  # @return [Array<(Array<ManifestItem>,nil)>]
+  # @return [Array<(Array<ManifestItem>,Hash)>]
   #
   # @see ExecReport#error_table
   #
@@ -515,34 +515,40 @@ module SubmissionService::Action::Submit
   def process_ingest_errors(result, *records, **opt)
 
     # If there were no errors then indicate that all items succeeded.
-    errors = ExecReport[result].error_table(**opt).dup
-    return records, nil if errors.blank?
+    errors = ExecReport[result].error_table(**opt)
+    return records, {} if errors.blank?
 
     # Otherwise, all items will be assumed to have failed.
-    failed = []
+    errors = errors.dup
+    failed = {}
 
     # Errors associated with the position of the item in the request.
     by_index = errors.select { |k| k.is_a?(Integer) }
     if by_index.present?
       errors.except!(*by_index.keys)
-      by_index.transform_keys! { |idx| records[idx-1].sid_value }
-      failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+      errors_by_index = by_index.transform_keys! { |idx| records[idx-1].id }
+      failed.rmerge!(errors_by_index)
     end
 
     # Errors associated with item submission ID.
     by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
     if by_sid.present?
       errors.except!(*by_sid.keys)
-      failed += by_sid.map { |sid, msg| FlashPart.new(sid, msg) }
+      sid_to_id     = records.map { |rec| [rec.submission_id, rec.id] }.to_h
+      errors_by_sid = by_sid.transform_keys! { |sid| sid_to_id[sid] }
+      failed.rmerge!(errors_by_sid)
     end
 
     # Remaining (general) errors indicate that there was a problem with the
     # request and that all items have failed.
-    if errors.present?
-      failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
+    if errors.present? || failed.blank?
+      general_errors = errors.values.presence || 'unknown error' # TODO: I18n
+      general_errors = records.map { |rec| [rec.id, general_errors] }.to_h
+      failed.rmerge!(general_errors)
     end
 
-    return [], ExecReport.new(*failed)
+    return [], failed.transform_values! { |msg| Array.wrap(msg) }
+
   end
 
   # ===========================================================================
@@ -577,26 +583,36 @@ module SubmissionService::Action::Submit
 
     # Add successful submissions to the method result, and update and persist
     # the new values to the item record.
-    result = {}
-    submit = DateTime.now
+    result  = {}
+    submit  = DateTime.now
     rows.each do |row|
-      col = RESULT_KEYS.zip(row).to_h
-      sid = col[:submission_id] or raise "no sid in returned #{row.inspect}"
-      rec = sid_rec[sid]        or raise "sid #{sid.inspect} unexpected"
-      sid_rec[sid]   = nil
-      result[rec.id] = col
-      rec.update_columns(last_submit: submit)
+      begin
+        rec = nil
+        col = RESULT_KEYS.zip(row).to_h
+        sid = col[:submission_id] or raise "no sid in returned #{row.inspect}"
+        rec = sid_rec.delete(sid) or raise "sid #{sid.inspect} unexpected"
+        rec.update_columns(last_submit: submit)
+        result[rec.id] = col
+      rescue => error
+        result[rec.id] = error.message if rec
+        Log.warn { "#{__method__}: #{error.message}" }
+      end
     end
 
     # Note any items that were not confirmed as having created a matching EMMA
     # entry record.
-    sid_rec.compact!
     if sid_rec.present?
       error  = "#{__method__}: unknown database error" # TODO: I18n
       failed = sid_rec.values.map { |rec| [rec.id, { error: error }] }.to_h
       result.merge!(failed)
     end
-    result.stringify_keys
+
+    result.stringify_keys!
+
+  rescue => error
+    notice = error.to_s
+    Log.warn { "#{__method__}: #{notice}" }
+    records.map { |rec| [rec.id.to_s, { error: notice }] }.to_h
   end
 
   # Required if the target records are in the 'uploads' table because that
@@ -621,7 +637,7 @@ module SubmissionService::Action::Submit
     user = user_id(user) unless user.is_a?(Integer)
     ed   = rec.emma_metadata(refresh: true)
     fd   = rec.file_data
-    mime = fd&.dig(:metadata, :mime_type)
+    mime = fd&.deep_symbolize_keys&.dig(:metadata, :mime_type)
     fmt  = mime_to_fmt(mime)
     ext  = fmt_to_ext(fmt)
     {
@@ -646,6 +662,92 @@ module SubmissionService::Action::Submit
   def user_id(user)
     # noinspection RubyMismatchedReturnType
     user.is_a?(Integer) ? user : User.id_value(user)&.to_i
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  DEF_MSG = {
+    success: 'succeeded',
+    failure: '%{meth} failed',
+    timeout: 'timed out',
+  }
+
+  # Perform a submission step on the given record(s) accumulating successes and
+  # failures.
+  #
+  # If *wait* is given, the block is assumed to test a record condition which
+  # will be changed externally; items that do not return *true* will be checked
+  # again after the next wait.
+  #
+  # @param [Array<ManifestItem>] records
+  # @param [Float, Integer, nil] wait
+  # @param [Hash]                opt
+  #
+  # @option opt [String] :success   Default entry value for a succeeded item.
+  # @option opt [String] :failure   Default entry value for a failed item.
+  # @option opt [String] :timeout   Default entry value for a timed-out item.
+  # @option opt [Float]  :max_time  Maximum run time per item.
+  # @option opt [Hash]   :initial   Initial :success and/or :failure hashes.
+  #
+  # @return [StepResult]
+  #
+  # @yield [id, rec] Apply step-specific logic to the given record.
+  # @yieldparam  [String]       id    The hash key for the record.
+  # @yieldparam  [ManifestItem] rec   The record itself.
+  # @yieldreturn [*]                  False or *nil* to indicate failure.
+  #
+  def run_step(records, wait: nil, **opt, &block)
+
+    max_time  = (opt[:max_time] || DEFAULT_TIMEOUT) * records.size
+    max_time += records.map { |r| r.file_size.to_i / 1.megabyte }.sum if wait
+    deadline  = timestamp + max_time
+
+    meth      = opt[:meth] || __method__
+    msg       = opt.slice(*DEF_MSG.keys).reverse_merge!(DEF_MSG)
+    msg.transform_values! { |v| v.include?('%') ? (v % { meth: meth }) : v }
+
+    records   = records.map { |rec| [manifest_item_id(rec), rec] }.to_h
+    remaining = records.dup
+    failure   = opt.dig(:initial, :failure) || {}
+    success   = opt.dig(:initial, :success) || records
+
+    if wait
+      while remaining.present? && sleep(wait)
+        done = []
+        remaining.each_pair do |id, rec|
+          begin
+            id = nil unless block.call(id, rec)
+          rescue => error
+            failure[id] = error.message
+            Log.warn { "#{meth}: #{error.message}" }
+          end
+          done << id if id
+          break if timestamp > deadline
+        end
+        remaining.except!(*done)
+      end
+    else
+      done = []
+      remaining.each_pair do |id, rec|
+        begin
+          failure[id] = msg[:failure] unless block.call(id, rec)
+        rescue => error
+          failure[id] = error.message
+          Log.warn { "#{meth}: #{error.message}" }
+        end
+        done << id
+        break if timestamp > deadline
+      end
+      remaining.except!(*done)
+    end
+
+    failure.merge!(remaining.transform_values { msg[:timeout] })
+    success.except!(*failure.keys).transform_values! { msg[:success] }
+    StepResult.new(success: success, failure: failure)
   end
 
   # ===========================================================================
@@ -681,8 +783,6 @@ module SubmissionService::Action::Submit
     def submitted = self[:submitted] || []
     def success   = self[:success] || {}
     def failure   = self[:failure] || {}
-
-    def success_failure = [success.presence, failure.presence]
 
     def finalize(**opt)
       normalize!(opt).each_pair do |key, val|

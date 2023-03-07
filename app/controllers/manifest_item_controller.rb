@@ -426,6 +426,24 @@ class ManifestItemController < ApplicationController
     post_response(error, xhr: false)
   end
 
+  # == PUT   /manifest_item/bulk/fields/:manifest
+  # == PATCH /manifest_item/bulk/fields/:manifest
+  #
+  # Modify selected ManifestItem fields of one or more items.
+  #
+  # @see #bulk_fields_manifest_item_path           Route helper
+  # @see ManifestItemConcern#bulk_fields_manifest_items
+  # @see file:javascripts/controllers/manifest-edit.js *sendFieldUpdates*
+  #
+  def bulk_fields
+    __debug_route
+    __debug_request
+    @list = bulk_fields_manifest_items
+    render_json bulk_update_response
+  rescue => error
+    post_response(error)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

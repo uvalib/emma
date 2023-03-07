@@ -225,6 +225,18 @@ class ManifestItemController < ApplicationController
   #
   def bulk_destroy: () -> void
 
+  # == PUT   /manifest_item/bulk/fields/:manifest
+  # == PATCH /manifest_item/bulk/fields/:manifest
+  #
+  # Modify selected ManifestItem fields of one or more items.
+  #
+  # @see #bulk_update_manifest_item_path           Route helper
+  # @see ManifestItemConcern#bulk_update_manifest_items
+  # @see ManifestItemController#bulk_edit
+  # @see file:javascripts/controllers/manifest-edit.js *sendUpsertRecords*
+  #
+  def bulk_fields: () -> void
+
   # Display the failure on the screen -- immediately if modal, or after a
   # redirect otherwise.
   #

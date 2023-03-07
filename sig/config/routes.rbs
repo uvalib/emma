@@ -94,6 +94,10 @@ class Object
 
   def bulk_entry_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def bulk_fields_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def bulk_fields_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def bulk_new_entry_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def bulk_new_entry_url: (*untyped _ignored) ?{ () -> untyped } -> String

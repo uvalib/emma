@@ -19,6 +19,13 @@ module ManifestItem::FileData
   #
   def file_reference: () -> (String | nil)
 
+  # Return the reported size of the file, either as determined by the uploader
+  # or initialized by the client-side prior to bulk submission.
+  #
+  # @return [Integer, nil]
+  #
+  def file_size: () -> (Integer | nil)
+
   # Generate a record to express structured file data.
   #
   # @param [Hash, String, nil] data

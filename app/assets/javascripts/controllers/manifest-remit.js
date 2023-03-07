@@ -32,6 +32,7 @@ import {
     buttonFor,
     enableButton,
     initializeButtonSet,
+    serverSend,
 } from '../shared/manifests';
 import {
     compact,
@@ -1972,12 +1973,14 @@ appSetup(MODULE, function() {
         const names = [];
         const good  = [];
         const bad   = []; // TODO: are there "badness" criteria at this stage?
+        const pairs = {};
         files.forEach(file => {
             const id   = file.meta.manifest_item_id;
             const name = file.name;
             const size = file.size;
             const line = `${id} : ${name} : ${size} bytes`;
             if (remove(files_remaining.local, id)) {
+                pairs[id] = file;
                 _debug(`${func}: ${line}`);
             } else {
                 _debug(`${func}: ${line} -- ALREADY PROCESSED`);
@@ -2007,6 +2010,7 @@ appSetup(MODULE, function() {
                 updateGroupSelect();
             }
             lines.push(resolvedLabel(resolved), ...good, '');
+            sendFileSizes(pairs);
         }
 
         if (problematic) {
@@ -2021,6 +2025,19 @@ appSetup(MODULE, function() {
         }
 
         flashMessage(lines.join("\n"));
+    }
+
+    /**
+     * Add file size to the :file_data column value of each item.
+     *
+     * @param {Object.<string,File>} pairs
+     */
+    function sendFileSizes(pairs) {
+        const items = {};
+        Object.entries(pairs).forEach(([id,file]) => {
+            items[id] = { file_data: { name: file.name, size: file.size } };
+        });
+        sendFieldUpdates(items);
     }
 
     /**
@@ -2288,6 +2305,44 @@ appSetup(MODULE, function() {
         if (isPresent(lines)) {
             flashMessage(lines.join("\n"));
         }
+    }
+
+    // ========================================================================
+    // Functions - page - server interface
+    // ========================================================================
+
+    /**
+     * Update field(s) of multiple ManifestItem records.
+     *
+     * @param {object|string} items
+     * @param {object}        [opt]
+     *
+     * @see "ManifestItemController#bulk_fields"
+     */
+    function sendFieldUpdates(items, opt = {}) {
+        const func     = opt?.caller || 'sendFieldUpdates';
+        const manifest = manifestId();
+        const method   = 'PUT';
+        const action   = `bulk/fields/${manifest}`;
+        const content  = 'multipart/form-data';
+        const accept   = 'text/html';
+        _debug(`${func}: items =`, items);
+
+        if (!manifest) {
+            _error(`${func}: no manifest ID`);
+            return;
+        }
+
+        const hdr = opt?.headers;
+        if (hdr) { delete opt.headers }
+        const prm = opt?.params || opt;
+
+        serverSend(action, {
+            caller:  func,
+            method:  method,
+            params:  { data: items, ...prm },
+            headers: { 'Content-Type': content, Accept: accept, ...hdr },
+        });
     }
 
     // ========================================================================

@@ -617,13 +617,16 @@ module ManifestItemConcern
     else
       record = edit_manifest_item(item, meth: meth, id: opt[:id])
     end
-    record.upload_file(env: env).tap do |_, _, body|
+    status, headers, body = record.upload_file(env: env)
+    if status == 200
       body.map! do |entry|
-        file_data = safe_json_parse(entry)
-        file_data = nil unless file_data.is_a?(Hash)
+        file_data = json_parse(entry)
         emma_data = file_data&.delete(:emma_data)&.presence
         if !file_data
+          # NOTE: Should not happen normally if status is 200...
           Log.debug { "#{meth}: unexpected response item #{entry.inspect}" }
+          entry  = 'unknown uploader error' # TODO: I18n
+          status = 400
         elsif !update_time
           record.set_field_direct(:file_data, file_data)
         else
@@ -634,6 +637,7 @@ module ManifestItemConcern
         entry
       end
     end
+    return status, headers, body
   end
 
   # ===========================================================================
@@ -755,6 +759,28 @@ module ManifestItemConcern
       ManifestItem.where(id: ids).update_all(deleting: true)
     end
     ids
+  end
+
+  # bulk_fields_manifest_items
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array<Hash>]             Modified items.
+  #
+  def bulk_fields_manifest_items
+    manifest_item_post_params[:data].map { |id, updates|
+      id = id.to_s.to_i
+      ManifestItem.find(id).set_fields_direct(updates) rescue next
+      { id: id }
+    }.compact
+=begin # TODO: why doesn't this work with JSON columns?
+    items  = manifest_item_post_params[:data] or return
+    items  = items.map { |id, updates| { id: id.to_s.to_i, **updates } }
+    result = ManifestItem.upsert_all(items)
+    bulk_returning(result)
+=end
+  rescue ActiveRecord::ActiveRecordError => error
+    failure(error)
   end
 
   # ===========================================================================

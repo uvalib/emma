@@ -47,7 +47,17 @@ module ManifestItem::FileData
   # @return [nil]
   #
   def file_reference
-    file_data[:name] || file_data[:url] if file_data.present?
+    file_data&.presence&.symbolize_keys&.values_at(:name, :url)&.compact&.first
+  end
+
+  # Return the reported size of the file, either as determined by the uploader
+  # or initialized by the client-side prior to bulk submission.
+  #
+  # @return [Integer, nil]
+  #
+  def file_size
+    fd = file_data&.presence&.symbolize_keys
+    fd.dig(:metadata, :size) || fd[:size] if fd
   end
 
   # ===========================================================================

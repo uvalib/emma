@@ -206,6 +206,7 @@ Rails.application.routes.draw do
 
   get    '/manifest_item/bulk/edit/:manifest',    to: 'manifest_item#bulk_edit',    as: 'bulk_edit_manifest_item'
   match  '/manifest_item/bulk/update/:manifest',  to: 'manifest_item#bulk_update',  as: 'bulk_update_manifest_item',  via: %i[put patch]
+  match  '/manifest_item/bulk/fields/:manifest',  to: 'manifest_item#bulk_fields',  as: 'bulk_fields_manifest_item',  via: %i[put patch]
 
   get    '/manifest_item/bulk/delete/:manifest',  to: 'manifest_item#bulk_delete',  as: 'bulk_delete_manifest_item'
   delete '/manifest_item/bulk/destroy/:manifest', to: 'manifest_item#bulk_destroy', as: 'bulk_destroy_manifest_item'
@@ -454,6 +455,8 @@ unless ONLY_FOR_DOCUMENTATION
   def bulk_edit_upload_url(...);                   end
   def bulk_entry_index_path(...);                  end
   def bulk_entry_index_url(...);                   end
+  def bulk_fields_manifest_item_path(...);         end
+  def bulk_fields_manifest_item_url(...);          end
   def bulk_new_entry_path(...);                    end
   def bulk_new_entry_url(...);                     end
   def bulk_new_manifest_item_path(...);            end
