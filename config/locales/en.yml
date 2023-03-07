@@ -46,6 +46,10 @@ en:
     # =========================================================================
 
     logo:
+      link:
+        label:          'Return to the main page'
+      text:
+        label:          'EMMA'
       image:
         alt:            'EMMA logo'
         asset:          'EMMA-logo-UVAbg.png'
@@ -560,35 +564,35 @@ en:
       index:
         label:          '%{Items}'
         title:          '%{Item} Index'
-        tooltip:        'Find more %{items} with %{terms}.'
+        tooltip:        'Find more %{items} with %{terms}'
         _endpoint:      true
 
       show:
         label:          '%{Item}'
         title:          '%{Item}'
-        tooltip:        'See details about this %{item}.'
+        tooltip:        'See details about this %{item}'
         _endpoint:      true
 
       new:
         label:          'Add'
         title:          'Add %{Item}'
-        tooltip:        'Create a new %{item}.'
+        tooltip:        'Create a new %{item}'
         _endpoint:      true
 
       edit:
         label:          'Modify'
         title:          'Modify %{Item}'
-        tooltip:        'Make changes to this %{item}.'
+        tooltip:        'Make changes to this %{item}'
         _endpoint:      true
 
       delete:
         label:          'Remove'
         title:          'Remove %{Item}'
-        tooltip:        'Remove this %{item}.'
+        tooltip:        'Remove this %{item}'
         _endpoint:      true
 
       history:
         label:          'History'
         title:          '%{Item} History'
-        tooltip:        'View modifications for this %{item}.'
+        tooltip:        'View modifications for this %{item}'
         _endpoint:      true

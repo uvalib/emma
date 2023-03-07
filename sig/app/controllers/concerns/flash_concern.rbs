@@ -5,6 +5,8 @@ module FlashConcern
 
   include FlashHelper
 
+  include LinkHelper
+
   # flash_link
   #
   # @param [String]       label

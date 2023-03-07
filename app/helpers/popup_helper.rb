@@ -174,26 +174,21 @@ module PopupHelper
     merge_html_options!(controls_opt, controls) if controls.is_a?(Hash)
     controls = controls.compact_blank           if controls.is_a?(Array)
     controls = [controls]                       if controls.is_a?(String)
-    if controls.is_a?(Array)
-      controls.map! { |control|
-        if control.is_a?(Hash)
-          tag = control[:tag]   || :button
-          lbl = control[:label] || 'Button' # TODO: I18n
-          html_tag(tag, lbl, control.except(:tag, :label))
-        else
-          ERB::Util.h(control)
-        end
-      }.compact!
-      add_close = controls.none? { |control| control.include?(closer_css) }
-    else
-      controls  = []
-      add_close = true
-    end
-    if add_close
+    controls = []                               unless controls.is_a?(Array)
+    controls.map! { |control|
+      if control.is_a?(Hash)
+        tag = control[:tag]   || :button
+        lbl = control[:label] || 'Button' # TODO: I18n
+        html_tag(tag, lbl, control.except(:tag, :label))
+      else
+        ERB::Util.h(control)
+      end
+    }.compact!
+    if controls.none? { |ctl| ctl.include?(closer_css) }
       b_opt = prepend_css(close, closer_css, 'text')
       label = b_opt.delete(:label) || 'Close' # TODO: I18n
       b_opt[:title]        ||= closer_opt[:title]
-      b_opt[:'aria-label'] ||= b_opt[:title]
+      b_opt[:'aria-label'] ||= b_opt[:title] if label.html_safe?
       controls << html_button(label, b_opt)
     end
     panel_controls = html_div(controls, controls_opt)

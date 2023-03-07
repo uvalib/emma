@@ -82,8 +82,9 @@ module BaseDecorator::Submission
   #
   def monitor_modal(css: MONITOR_CLASS, **opt)
     c_opt = opt.delete(:container) || {}
-    opt[:close]    = monitor_cancel_options
-    opt[:controls] = monitor_log_toggle
+    opt[:close]        = monitor_cancel_options
+    opt[:controls]     = monitor_log_toggle
+    opt[:'aria-label'] = 'Listing of completed submission attempts' # TODO: I18n
     prepend_css!(opt, css)
     h.modal_popup(**opt) do
       monitor_container(**c_opt)

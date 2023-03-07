@@ -84,12 +84,13 @@ module BaseCollectionDecorator::List
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
   def index_controls(row: nil, **opt)
-    opt[:list] ||= object || []
-    opt[:unit] ||= 'title' if opt[:list].first&.aggregate? # TODO: I18n
+    list   = opt.delete(:list) || object || []
+    unit   = opt.delete(:unit) || 'title' # TODO: I18n
+    unit   = nil unless list.first&.aggregate?
 
     ctrls  = list_controls(**opt)
     links  = pagination_controls
-    counts = page_count_and_number(**opt)
+    counts = page_count_and_number(list: list, unit: unit, **opt)
 
     top    = pagination_top(links, counts, *ctrls, row: row)
     bottom = pagination_bottom(links)

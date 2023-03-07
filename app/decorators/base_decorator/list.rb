@@ -330,7 +330,7 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_empty_value(message = nil, **)
-    render_pair(nil, (message || NO_RESULTS))
+    render_pair(nil, (message || NO_RESULTS), index: hex_rand)
   end
 
   # Transform a field value for HTML rendering.
@@ -473,11 +473,11 @@ module BaseDecorator::List
   #
   def list_row(add: nil, skip: [], **opt)
     opt[:id]              ||= model_item_id
-    opt[:'aria-rowindex'] ||= opt[:index] + 1 if opt[:index]
+    l     = opt.delete(:level)
     skip  = Array.wrap(skip)
     parts = []
-    parts << list_item_number(**opt)      unless skip.include?(:number)
-    parts << thumbnail(link: true, **opt) unless skip.include?(:thumbnail)
+    parts << list_item_number(level: l, **opt) unless skip.include?(:number)
+    parts << thumbnail(link: true, **opt)      unless skip.include?(:thumbnail)
     parts << list_item(pairs: add, **opt)
     safe_join(parts)
   end
@@ -554,10 +554,12 @@ module BaseDecorator::List
 
     # Wrap parts in a container for group positioning:
     inner_opt = prepend_css(opt, 'container')
+    inner_opt[:id] &&= "#{inner_opt[:id]}-container"
     container = html_tag(level, inner_parts, inner_opt)
 
     # Wrap the container in the actual number grid element.
-    outer_opt = append_css(css)
+    outer_opt = append_css(opt.slice(:id), css)
+    outer_opt[:id] &&= "#{outer_opt[:id]}-number"
     append_css!(outer_opt, 'empty')      if blank?
     append_css!(outer_opt, "row-#{row}") if row
     outer_opt[:'data-group']    = group  if group
@@ -604,7 +606,6 @@ module BaseDecorator::List
   # @param [Hash]          opt        Passed to the render method.
   #
   # @option opt [Integer] :row        Sets "row-#{row}" in :outer div.
-  # @option opt [Integer] :index      May set :'aria-rowindex' for :outer div.
   # @option opt [Symbol]  :group      May set :'data-group' for :outer div.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -631,7 +632,7 @@ module BaseDecorator::List
     row_opt[:'data-group']    ||= group
     row_opt[:'data-title_id'] ||= title_id_values
     row_opt[:'aria-level']    ||= level
-    row_opt[:'aria-rowindex'] ||= opt[:index]&.next
+    row_opt.delete(:'aria-rowindex')
     row_opt.delete(:'aria-colindex')
     append_css!(row_opt, "row-#{row}") if row
     append_css!(row_opt, 'empty')      if blank?

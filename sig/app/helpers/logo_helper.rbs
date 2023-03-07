@@ -11,6 +11,9 @@ module LogoHelper
 
   # Make a logo for a repository source.
   #
+  # For accessibility purposes, logos are treated as decorative unless a
+  # non-blank `opt[:alt]` is provided.
+  #
   # @param [Model, Hash, String, Symbol, nil] item
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #html_span wrapper except for:
@@ -19,6 +22,7 @@ module LogoHelper
   # @option opt [String] :name        To be displayed instead of the source.
   # @option opt [String] :logo        Logo asset name.
   # @option opt [Symbol] :type        One of #LOGO_TYPE.
+  # @option opt [String] :alt         Image text for screen-reader visibility.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

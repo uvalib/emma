@@ -80,10 +80,6 @@
     h5 { margin-top: 2rem; font-size: 1.10em; }
     h6 { margin-top: 2rem; font-size: 1.05em; }
 
-    a:focus {
-        outline-color: $text-focus;
-    }
-
     p {
         @include help-text;
 

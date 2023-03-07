@@ -201,9 +201,10 @@ $entry-form-gap:  1.5rem;
 
     .popup-toggle.icon {
 
-        padding:      1px 5px;
-        background:   transparent;
-        border-color: transparent;
+        padding-top:    0.125rem;
+        padding-bottom: 0.125rem;
+        background:     transparent;
+        border-color:   transparent;
 
         .symbol {
             text-shadow: 0 0 0.5rem $uva-accent-orange;
@@ -287,7 +288,7 @@ form.select-entry {
         max-width:     100%;
         padding:       2px;
         font-size:     large;
-        background:    lighter($focus-accent, 90%);
+        background:    lighter($button-accent, 90%);
         border:        1px solid #14457f;
         border-radius: 0.125rem;
 
@@ -636,7 +637,7 @@ form.select-entry {
             @media #{$narrow-screen} { min-width: 100%; }
 
             &.valid:not(.disabled):not(.sealed) {
-                background: $focus-accent;
+                background: $button-accent;
             }
         }
 

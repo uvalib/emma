@@ -81,8 +81,9 @@ module BaseDecorator::Lookup
   #
   def lookup_modal(css: LOOKUP_CLASS, **opt)
     c_opt = opt.delete(:container) || {}
-    opt[:close]    = lookup_cancel_options
-    opt[:controls] = lookup_commit_button
+    opt[:close]        = lookup_cancel_options
+    opt[:controls]     = lookup_commit_button
+    opt[:'aria-label'] = 'Search for additional bibliographic details' # TODO: I18n
     prepend_css!(opt, css)
     h.modal_popup(**opt) do
       lookup_container(**c_opt)

@@ -71,34 +71,37 @@ class BaseDecorator < Draper::Decorator
   # Methods available to every decorator class and decorator class instance.
   #
   module SharedGenericMethods
+    include BaseDecorator::Common
+
     include BaseDecorator::Configuration
 
-    # :nocov:
-    #include BaseDecorator::Fields
+    include BaseDecorator::Controls
 
-    #include BaseDecorator::Form
+    include BaseDecorator::Fields
 
-    #include BaseDecorator::Helpers
+    include BaseDecorator::Form
 
-    #include BaseDecorator::Hierarchy
+    include BaseDecorator::Grid
 
-    #include BaseDecorator::Links
+    include BaseDecorator::Helpers
 
-    #include BaseDecorator::List
+    include BaseDecorator::Hierarchy
 
-    #include BaseDecorator::Lookup
+    include BaseDecorator::Links
 
-    #include BaseDecorator::Menu
+    include BaseDecorator::List
 
-    #include BaseDecorator::Pagination
+    include BaseDecorator::Lookup
 
-    #include BaseDecorator::Table
+    include BaseDecorator::Menu
 
-    #include BaseDecorator::Controls
+    include BaseDecorator::Pagination
 
-    #include BaseDecorator::Grid
+    include BaseDecorator::Row
 
-    #include BaseDecorator::Row
+    include BaseDecorator::Submission
+
+    include BaseDecorator::Table
 
     def list_css_class:  () -> String
     def can?: (Symbol action, ?untyped target) -> bool

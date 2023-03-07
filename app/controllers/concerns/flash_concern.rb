@@ -12,6 +12,7 @@ module FlashConcern
   extend ActiveSupport::Concern
 
   include FlashHelper
+  include LinkHelper
 
   # ===========================================================================
   # :section:
@@ -35,8 +36,8 @@ module FlashConcern
     opt[:title] = ERB::Util.h(ti_opt.values.first) if ti_opt.present?
     full = path.is_a?(String) && path.start_with?('http')
     path = make_path(request.fullpath, path) unless full
-    attr = { href: path }.merge!(opt).map { |k, v| %Q(#{k}="#{v}") }.join(' ')
-    "<a #{attr}>#{label}</a>".html_safe
+    # noinspection RubyMismatchedArgumentType
+    make_link(label, path, **opt)
   end
 
   # ===========================================================================

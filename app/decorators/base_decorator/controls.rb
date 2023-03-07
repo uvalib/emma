@@ -52,6 +52,14 @@ module BaseDecorator::Controls
 
   public
 
+  # Icon definitions relative to the decorator subclass.
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def icon_definitions
+    ICONS
+  end
+
   # Control icon definitions.
   #
   # @param [Hash{Symbol=>Hash{Symbol=>*}}] icons
@@ -59,7 +67,7 @@ module BaseDecorator::Controls
   #
   # @return [Hash{Symbol=>Hash{Symbol=>*}}]
   #
-  def control_icons(icons: ICONS, authorized: false)
+  def control_icons(icons: icon_definitions, authorized: false)
     if authorized.blank?
       icons.select { |act_on, prop| prop[:auto] || can?(act_on, object) }
     elsif authorized.is_a?(Array)
@@ -101,7 +109,7 @@ module BaseDecorator::Controls
   # If :path is :button then the generated item is a button (which is expected
   # to be handled client-side.)
   #
-  # @param [Symbol]             action    One of #ICONS.keys.
+  # @param [Symbol]             action    One of #icon_definitions.keys.
   # @param [GridIndex, Integer] index
   # @param [String]             unique
   # @param [String]             css       Characteristic CSS class/selector.
@@ -126,15 +134,22 @@ module BaseDecorator::Controls
     end
     return if path.blank?
 
-    tip      = prop[:tooltip]
     uniq_opt = { index: index, unique: unique }.compact
     opt[:id] = unique_id(*opt[:id], **uniq_opt) if uniq_opt.present?
-    opt[:title] ||= tip&.include?('%') ? (tip % { item: model_type }) : tip
+
+    if opt[:title].blank? && (tip = prop[:tooltip]).present?
+      tip = tip.include?('%') ? (tip % { item: model_type }) : tip.dup
+      tip = "#{tip} #{index.next}" if index && tip.sub!(' this ', ' ')
+      opt[:title] = tip
+    end
+
     opt[ACTION_ATTR] ||= action
 
     return yield(path, opt) if block_given?
 
     icon = prop[:icon] || BLACK_STAR
+    icon = symbol_icon(icon)
+
     prepend_css!(opt, css, action)
     if path == :button
       html_button(icon, **opt)
@@ -180,6 +195,22 @@ module BaseDecorator::Controls
     icon_control(:delete, **opt)
   end
 
+  # Make a Unicode character (sequence) into a decorative element that is not
+  # pronounced by screen readers.
+  #
+  # @param [String|Symbol] icon       Unicode character or #ICON key.
+  # @param [String]        css        Characteristic CSS class/selector.
+  # @param [Hash]          opt        Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def symbol_icon(icon, css: '.symbol', **opt)
+    icon = icon_definitions.dig(icon, :icon) if icon.is_a?(Symbol)
+    opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
+    prepend_css!(opt, css)
+    html_span(icon, opt)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -196,7 +227,7 @@ module BaseDecorator::Controls
   #
   def icon_control(type, css: '.icon', **opt)
     opt[:path]         ||= send("#{type}_path")
-    opt[:label]        ||= ICONS.dig(type.to_sym, :icon)
+    opt[:label]        ||= symbol_icon(type)
     opt[:'aria-label'] ||= type.to_s.capitalize # TODO: I18n
     button_link(css: css, **opt)
   end

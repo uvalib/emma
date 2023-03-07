@@ -261,7 +261,8 @@ module LayoutHelper::SearchBar
 
     prepend_css!(opt, css)
     opt[:id]           ||= unique_id(css, **id_opt) if id_opt.present?
-    opt[:'aria-label'] ||= 'Search Type' # TODO: I18n
+    opt[:title]        ||= 'Search Type' # TODO: I18n
+    opt[:'aria-label'] ||= opt[:title]
     # NOTE: Blank name so that it is not included with form submission data.
     select_tag('', option_tags, opt)
   end

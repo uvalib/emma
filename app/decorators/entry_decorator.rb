@@ -275,12 +275,12 @@ class EntryDecorator < BaseDecorator
         }
       ).deep_freeze
 
-    # Control icon definitions.
+    # Icon definitions for this decorator.
     #
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    def control_icons
-      super(icons: ICONS)
+    def icon_definitions
+      ICONS
     end
 
     # =========================================================================
@@ -327,7 +327,7 @@ class EntryDecorator < BaseDecorator
     #
     def list_item_number(**opt)
       super(**opt) do
-        control_icon_buttons
+        control_icon_buttons(**opt.slice(:index))
       end
     end
 

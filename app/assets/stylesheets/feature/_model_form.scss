@@ -244,6 +244,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
                 background:      $input-sealed-bg;
             }
 
+            &.disabled:focus, &.forbidden:focus {
+                outline-style:   dashed;
+            }
+
             .label {
                 @include user-select(none);
             }

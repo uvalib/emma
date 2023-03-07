@@ -7,7 +7,7 @@ import { delegateInputClick, toggleVisibility } from '../shared/accessibility';
 import { Emma }                                 from '../shared/assets';
 import { pageController }                       from '../shared/controller';
 import { toggleHidden }                         from '../shared/css';
-import { isMissing, isPresent }                 from '../shared/definitions';
+import { isMissing, isPresent, notDefined }     from '../shared/definitions';
 import { camelCase, singularize }               from '../shared/strings';
 import { asParams }                             from '../shared/url';
 import {
@@ -238,6 +238,23 @@ appSetup(MODULE, function() {
         toggleVisibility($group_select_note, false);
     }
 
+    /**
+     * Prevent a disabled link from being clicked.
+     *
+     * @param {jQuery.Event|MouseEvent|KeyboardEvent} ev
+     */
+    function onClickGroupNote(ev) {
+        const target  = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
+        const $target = $(target);
+        const key     = ev.key;
+        if (notDefined(key) || (key === 'Enter') || (key === ' ')) {
+            if ($target.is('.disabled')) {
+                ev.preventDefault();
+                ev.stopImmediatePropagation();
+            }
+        }
+    }
+
     // ========================================================================
     // Functions - list filter
     // ========================================================================
@@ -425,6 +442,8 @@ appSetup(MODULE, function() {
     // When hovering/focusing on a group selection button, display its
     // description below the group selection panel.
     handleHoverAndFocus($group_select_links, showGroupNote, hideGroupNote);
+    handleEvent($group_select_links, 'click',   onClickGroupNote);
+    handleEvent($group_select_links, 'keydown', onClickGroupNote);
 
     // Initialize controls and the initial record filtering.
     initializeFilterOptions();

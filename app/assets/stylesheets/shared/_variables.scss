@@ -74,7 +74,6 @@ $uppy-file-input:       darken($uppy-blue, 20%); // #14457f;
 // Text colors.
 $error-fg:              $uva-emergency-red;
 $alert-fg:              $uva-emergency-red;
-$debug-fg:              hotpink;
 
 // Status backgrounds.
 $failure-bg:            f.lighter($uva-accent-magenta, 50%);
@@ -96,6 +95,7 @@ $input-disabled-fg:     $input-readonly-fg;
 // Control colors.
 $control-text:          $uppy-file-input;
 $control-accent:        $control-text;
+$button-accent:         f.lighter($uva-accent-teal,   35%);
 
 // Flash backgrounds.
 $alert-bg:              $failure-bg;
@@ -110,19 +110,28 @@ $failure-accent:        $alert-accent;
 $success-accent:        $notice-accent;
 
 // Other colors.
-$debug-bg:              f.lighter($debug-fg,          75%);
-$header-bg:             $uva-blue;
+$text-fg:               black;
+$text-bg:               white;
+$text-focus:            f.darker($uva-accent-teal,    20%);
 
+$header-fg:             white;
+$header-bg:             $uva-blue;
+$header-border:         $header-fg;
+$header-accent:         $header-fg;
+$header-focus:          $button-accent;
+
+$panel-fg:              $text-fg;
 $panel-bg:              f.lighter($uva-accent-orange, 90%);
 $panel-border:          f.lighter($uva-accent-orange, 50%);
 $panel-accent:          $uva-accent-orange;
+$panel-focus:           f.darker($uva-accent-teal,    25%);
 
-$button-accent:         f.lighter($uva-accent-teal,   35%);
-$focus-accent:          $button-accent;
-$text-focus:            f.darker($uva-accent-teal,    10%);
-
+$table-fg:              $text-fg;
 $table-border:          $uva-blue;
 $table-header-bg:       f.lighter($uva-accent-teal,   80%);
+
+$debug-fg:              hotpink;
+$debug-bg:              f.lighter($debug-fg,          75%);
 
 //=============================================================================
 // Box shadow components.

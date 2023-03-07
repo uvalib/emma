@@ -184,17 +184,17 @@ class ManifestItemDecorator < BaseDecorator
     #
     ICONS = BULK_GRID_CFG[:icons]
 
-    # Control icon definitions.
+    # Icon definitions for this decorator.
     #
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    def control_icons
-      super(icons: ICONS)
+    def icon_definitions
+      ICONS
     end
 
     # control_icon_button
     #
-    # @param [Symbol]             action    One of #ICONS.keys.
+    # @param [Symbol]             action    One of #icon_definitions.keys.
     # @param [GridIndex, Integer] index
     # @param [String]             unique
     # @param [Hash]               opt       Passed to super.
@@ -251,7 +251,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [Hash]
     #
     def lookup_button_options(**opt)
-      opt[:label] ||= ICONS.dig(:lookup, :icon)
+      opt[:label] ||= symbol_icon(:lookup)
       super
     end
 
@@ -292,7 +292,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def list_item_number(**opt)
       super(**opt) do
-        control_icon_buttons
+        control_icon_buttons(**opt.slice(:index))
       end
     end
 

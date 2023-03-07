@@ -112,12 +112,12 @@ class AccountDecorator < BaseDecorator
         end
       }.deep_freeze
 
-    # Control icon definitions.
+    # Icon definitions for this decorator.
     #
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    def control_icons
-      super(icons: ICONS)
+    def icon_definitions
+      ICONS
     end
 
     # =========================================================================

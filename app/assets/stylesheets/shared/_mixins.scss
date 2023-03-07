@@ -183,8 +183,8 @@
     cursor:          $cursor #{$important};
 
     &:active { pointer-events:  none #{$important}; }
-    &:focus  { outline:         none #{$important}; }
     &:hover  { text-decoration: none #{$important}; }
+    &:focus  { outline-style: dashed #{$important}; }
 }
 
 /// Include to "de-activate" an active element because it is an invalid choice.
@@ -199,7 +199,7 @@
 /// Make focus outline more easily seen.
 ///
 @mixin focus {
-    outline:        2px solid v.$focus-accent;
+    outline:        2px solid var(--focus-color);
     outline-offset: 2px;
 }
 
@@ -241,6 +241,9 @@
     user-select: none;
 
     &:focus {
+
+        @include focus;
+
         text-decoration: underline;
     }
 
@@ -284,6 +287,8 @@
     color:            var(--rev-fg-color);
     background-color: var(--rev-bg-color);
 
+    --focus-color:    var(--rev-focus-color);
+
     @media #{v.$not-wide-screen} {
         padding-top:    calc(2 * #{v.$page-padding-y});
         padding-bottom: calc(2 * #{v.$page-padding-y});
@@ -312,11 +317,14 @@
 /// A panel for highlighting content.
 ///
 @mixin panel {
+
     display:          block;
     padding:          0.5rem;
     background-color: v.$panel-bg;
     border:           2px solid v.$panel-border;
     border-radius:    0.625rem;
+
+    --focus-color:    #{v.$panel-focus};
 }
 
 /// Definitions for elements within a %panel.

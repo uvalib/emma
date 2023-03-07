@@ -76,15 +76,15 @@ class ManifestItemDecorator < BaseDecorator
     #
     ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
-    # Control icon definitions.
+    # Icon definitions for this decorator.
     #
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    def control_icons: () -> Hash[Symbol, symHash]
+    def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
     # control_icon_button
     #
-    # @param [Symbol]             action    One of #ICONS.keys.
+    # @param [Symbol]             action    One of #icon_definitions.keys.
     # @param [GridIndex, Integer] index
     # @param [String]             unique
     # @param [Hash]               opt       Passed to super.

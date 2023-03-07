@@ -40,6 +40,8 @@
 
     &:focus {
         text-decoration: none;
+        outline-offset:  3px;
+        outline-width:   3px;
     }
 
     &:hover {

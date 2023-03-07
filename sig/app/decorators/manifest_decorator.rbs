@@ -39,11 +39,11 @@ class ManifestDecorator < BaseDecorator
     #
     ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
-    # Control icon definitions.
+    # Icon definitions for this decorator.
     #
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    def control_icons: () -> Hash[Symbol,symHash]
+    def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
     # Render a single entry for use within a list of items.
     #

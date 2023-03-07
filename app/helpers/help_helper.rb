@@ -119,9 +119,15 @@ module HelpHelper
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
 
     opt[:'data-iframe'] = attr[:id] = id
-    opt[:title]          ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
-    opt[:control]        ||= {}
-    opt[:control][:icon] ||= QUESTION
+    opt[:title]       ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
+    unless opt.dig(:control, :icon)
+      opt[:control] = opt[:control]&.dup || {}
+      opt[:control].merge!(icon: QUESTION)
+    end
+    unless opt.dig(:panel, :'aria-label')
+      opt[:panel] = opt[:panel]&.dup || {}
+      opt[:panel].merge!('aria-label': 'Help contents') # TODO: I18n
+    end
 
     prepend_css!(opt, css)
     inline_popup(**opt) do

@@ -107,6 +107,7 @@ module LinkHelper
   # This method assumes that local paths are always relative.
   #
   def make_link(label, path, **opt, &block)
+    label    = opt.delete(:label) || label if opt.key?(:label)
     sign_in  = has_class?(opt, 'sign-in-required')
     disabled = has_class?(opt, 'disabled', 'forbidden')
     if sign_in
@@ -123,6 +124,9 @@ module LinkHelper
         opt[:title] = "#{opt[:title]}\n(#{note})"
       end
     end
+    unless !label.html_safe? || opt.key?(:'aria-labelledby')
+      opt[:'aria-label'] ||= opt[:title] if opt[:title]
+    end
     unless opt.key?(:rel)
       opt[:rel] = 'noopener' if path.is_a?(String) && path.start_with?('http')
     end
@@ -132,7 +136,6 @@ module LinkHelper
     unless opt.key?(:'aria-hidden')
       opt[:'aria-hidden'] = true if opt[:tabindex] == -1
     end
-    label = opt.delete(:label) || label
     link_to(label, path, html_options!(opt), &block)
   end
 

@@ -46,11 +46,8 @@ $sticky-top-narrow: 3.125rem;
 
 // Background color for the title (the fixed portion) of collapsible entries.
 
-body.search {
-    --title-bg: #{lighter($uva-accent-teal, 92.5%)};
-}
-
-$title-bg: var(--title-bg);
+$title-bg:    lighter($uva-accent-teal, 92.5%);
+$title-focus: darker( $uva-accent-teal, 27.5%);
 
 //=============================================================================
 // Internal mixins
@@ -1348,6 +1345,10 @@ $title-scroll-mask:
                         border-top:    $medium-open-pad solid transparent;
                         border-bottom: $medium-open-pad solid transparent;
                     }
+
+                    &:focus {
+                        outline-color: $title-focus;
+                    }
                 }
 
                 .repository {
@@ -2316,7 +2317,12 @@ body.search.title_results {
 
                 // Section label
                 .text {
+
                     cursor: default;
+
+                    &:focus {
+                        outline-color: $title-focus;
+                    }
                 }
             }
 

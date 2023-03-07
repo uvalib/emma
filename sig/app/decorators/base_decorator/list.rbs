@@ -234,7 +234,6 @@ module BaseDecorator::List
   # @param [Hash]          opt        Passed to the render method.
   #
   # @option opt [Integer] :row        Sets "row-#{row}" in :outer div.
-  # @option opt [Integer] :index      May set :'aria-rowindex' for :outer div.
   # @option opt [Symbol]  :group      May set :'data-group' for :outer div.
   #
   # @return [ActiveSupport::SafeBuffer]

@@ -25,37 +25,27 @@
   actions_menu      = 'Upload Actions'
 
   signed_in         = help_jump('signed in', :sign_in)
-  delta             = UploadDecorator::ICONS.dig(:edit, :icon)
+  delta             = UploadDecorator.symbol_icon(:edit)
   delta             = html_span(delta, 'aria-label': 'triangle')
-  x                 = UploadDecorator::ICONS.dig(:delete, :icon)
+  x                 = UploadDecorator.symbol_icon(:delete)
   x                 = html_span(x, 'aria-label': 'X')
-  edit_tip          = UploadDecorator::ICONS.dig(:edit, :tip)
-  delete_tip        = UploadDecorator::ICONS.dig(:delete, :tip)
+  edit_tip          = UploadDecorator.icon_definitions.dig(:edit,   :tooltip)
+  delete_tip        = UploadDecorator.icon_definitions.dig(:delete, :tooltip)
 
   panel_opener      = PanelHelper::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')
 
-  create_config     = UploadDecorator.form_actions[:new]
-  create_select     = create_config.dig(:select, :enabled, :label)
-  create_select     = help_span(create_select, **btn_opt)
-  create_submit     = create_config.dig(:submit, :enabled, :label)
-  create_submit     = help_span(create_submit, **btn_opt)
-  create_cancel     = create_config.dig(:cancel, :enabled, :label)
-  create_cancel     = help_span(create_cancel, **btn_opt)
+  buttons_for = -> (action) {
+    %i[select submit cancel].map { |button|
+      cfg = UploadDecorator.form_actions.dig(action, button).presence
+      lbl = cfg&.dig(:enabled, :label) || cfg&.dig(:label)
+      help_span(lbl, **btn_opt) if lbl
+    }
+  }
 
-  edit_config       = UploadDecorator.form_actions[:edit]
-  edit_select       = edit_config.dig(:select, :enabled, :label)
-  edit_select       = help_span(edit_select, **btn_opt)
-  edit_submit       = edit_config.dig(:submit, :enabled, :label)
-  edit_submit       = help_span(edit_submit, **btn_opt)
-  edit_cancel       = edit_config.dig(:cancel, :enabled, :label)
-  edit_cancel       = help_span(edit_cancel, **btn_opt)
-
-  delete_config     = UploadDecorator.form_actions[:delete]
-  delete_submit     = delete_config.dig(:submit, :enabled, :label)
-  delete_submit     = help_span(delete_submit, **btn_opt)
-  delete_cancel     = delete_config.dig(:cancel, :enabled, :label)
-  delete_cancel     = help_span(delete_cancel, **btn_opt)
+  create_select, create_submit, create_cancel = buttons_for.(:new)
+  edit_select,   edit_submit,   edit_cancel   = buttons_for.(:edit)
+  _,             delete_submit, delete_cancel = buttons_for.(:delete)
 
   menu_opt          = { class: 'wide' }
   source_menu       = help_image(:source_menu,            **menu_opt)

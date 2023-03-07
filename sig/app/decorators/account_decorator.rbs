@@ -34,11 +34,11 @@ class AccountDecorator < BaseDecorator
     #
     ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
-    # Control icon definitions.
+    # Icon definitions for this decorator.
     #
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
-    def control_icons: () -> Hash[Symbol, symHash]
+    def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
     # Render details of an account.
     #

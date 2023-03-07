@@ -60,6 +60,7 @@
         .select2-search--inline {
             display:    block;
             max-height: 0;
+            overflow:   hidden;
         }
     }
 }

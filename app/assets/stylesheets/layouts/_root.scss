@@ -87,10 +87,13 @@
 
     // Color scheme.
 
-    --bg-color:          white;
-    --fg-color:          black;
+    --fg-color:          #{$text-fg};
+    --bg-color:          #{$text-bg};
+    --focus-color:       #{$text-focus};
+
+    --rev-fg-color:      #{$header-fg};
     --rev-bg-color:      #{$header-bg};
-    --rev-fg-color:      white;
+    --rev-focus-color:   #{$header-focus};
 }
 
 //=============================================================================

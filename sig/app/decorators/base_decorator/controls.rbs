@@ -34,6 +34,12 @@ module BaseDecorator::Controls
   #
   ACTION_ATTR: Symbol
 
+  # Icon definitions relative to the decorator subclass.
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
+
   # Control icon definitions.
   #
   # @param [Hash{Symbol=>Hash{Symbol=>*}}] icons
@@ -61,7 +67,7 @@ module BaseDecorator::Controls
   # If :path is :button then the generated item is a button (which is expected
   # to be handled client-side.)
   #
-  # @param [Symbol]             action    One of #ICONS.keys.
+  # @param [Symbol]             action    One of #icon_definitions.keys.
   # @param [GridIndex, Integer] index
   # @param [String]             unique
   # @param [String]             css       Characteristic CSS class/selector.
@@ -96,6 +102,17 @@ module BaseDecorator::Controls
   # @return [ActiveSupport::SafeBuffer]
   #
   def delete_control: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Make a Unicode character (sequence) into a decorative element that is not
+  # pronounced by screen readers.
+  #
+  # @param [String|Symbol] icon       Unicode character or #ICON key.
+  # @param [String]        css        Characteristic CSS class/selector.
+  # @param [Hash]          opt        Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def symbol_icon: (String|Symbol icon, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Create an icon button link.
   #

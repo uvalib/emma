@@ -142,7 +142,7 @@ export function handleKeypressAsClick(selector, direct, match, except) {
 }
 
 /**
- * Translate a carriage return to a click.
+ * Translate a carriage return or space bar press to a click.
  *
  * Not intended for links (where the key press will be handled by the browser
  * itself).
@@ -153,7 +153,7 @@ export function handleKeypressAsClick(selector, direct, match, except) {
  */
 function handleKeypress(event) {
     const key = event.key;
-    if (key === 'Enter') {
+    if ((key === 'Enter') || (key === ' ')) {
         const $target = $(event.target);
         const href    = $target.attr('href');
         if (!href || (href === '#')) {
