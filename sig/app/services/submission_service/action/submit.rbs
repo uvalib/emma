@@ -210,11 +210,12 @@ module SubmissionService::Action::Submit
   # Create an Upload record for the entries that have made it through all of
   # the steps through index ingest.
   #
-  # @param [Array<ManifestItem>] records
+  # @param [Array<ManifestItem>]   records
+  # @param [User, String, Integer] user
   #
   # @return [Hash{String=>Hash}]
   #
-  def create_entry: (Array[ManifestItem] records, **untyped _ignored) -> Hash[String,symHash]
+  def create_entry: (Array[ManifestItem] records, user: User|String|Integer, **untyped _ignored) -> Hash[String,symHash]
 
   # Required if the target records are in the 'uploads' table because that
   # schema does not use 'json' fields.
@@ -225,12 +226,21 @@ module SubmissionService::Action::Submit
 
   # Generate a row of fields for #insert_all.
   #
-  # @param [ManifestItem] rec
-  # @param [Boolean]      serialize   If *true*, serialize Hash values.
+  # @param [ManifestItem]          rec
+  # @param [User, String, Integer] user
+  # @param [Boolean]               serialize  If *true*, serialize Hash values.
   #
   # @return [Hash]
   #
-  def entry_fields: (ManifestItem rec, ?serialize: bool) -> symHash
+  def entry_fields: (ManifestItem rec, user: User|String|Integer, ?serialize: bool) -> symHash
+
+  # Return the indicated user record ID.
+  #
+  # @param [User, String, Integer, *] user
+  #
+  # @return [Integer, nil]
+  #
+  def user_id: (User|String|Integer|nil user) -> (Integer | nil)
 
   class StepResult < ::Hash[Symbol,untyped]
     include Emma::Common

@@ -561,15 +561,17 @@ module SubmissionService::Action::Submit
   # Create an Upload record for the entries that have made it through all of
   # the steps through index ingest.
   #
-  # @param [Array<ManifestItem>] records
+  # @param [Array<ManifestItem>]   records
+  # @param [User, String, Integer] user
   #
   # @return [Hash{String=>Hash}]
   #
-  def create_entry(records, **)
+  def create_entry(records, user:, **)
     # Create matching EMMA entries from the values extracted/derived from each
     # item record.
+    user    = user_id(user) unless user.is_a?(Integer)
     sid_rec = records.map { |rec| [rec.submission_id, rec] }.to_h
-    fields  = records.map { |rec| entry_fields(rec) }
+    fields  = records.map { |rec| entry_fields(rec, user: user) }
     $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
     rows    = Upload.insert_all(fields, returning: ENTRY_COLUMNS).rows
 
@@ -609,18 +611,21 @@ module SubmissionService::Action::Submit
   # If *sid* is a string, this has the side-effect of setting rec.submission_id
   # (without persisting)
   #
-  # @param [ManifestItem] rec
-  # @param [Boolean]      serialize   If *true*, serialize Hash values.
+  # @param [ManifestItem]          rec
+  # @param [User, String, Integer] user
+  # @param [Boolean]               serialize  If *true*, serialize Hash values.
   #
   # @return [Hash]
   #
-  def entry_fields(rec, serialize: JSON_SERIALIZE)
+  def entry_fields(rec, user:, serialize: JSON_SERIALIZE)
+    user = user_id(user) unless user.is_a?(Integer)
     ed   = rec.emma_metadata(refresh: true)
     fd   = rec.file_data
     mime = fd&.dig(:metadata, :mime_type)
     fmt  = mime_to_fmt(mime)
     ext  = fmt_to_ext(fmt)
     {
+      user_id:        user,
       repository:     ed[:emma_repository],
       submission_id:  ed[:emma_repositoryRecordId],
       fmt:            ed[:dc_format] || FileFormat.metadata_fmt(fmt),
@@ -630,6 +635,17 @@ module SubmissionService::Action::Submit
       file_data:      (serialize ? fd.to_json : fd),
       emma_data:      (serialize ? ed.to_json : ed),
     }
+  end
+
+  # Return the indicated user record ID.
+  #
+  # @param [User, String, Integer, *] user
+  #
+  # @return [Integer, nil]
+  #
+  def user_id(user)
+    # noinspection RubyMismatchedReturnType
+    user.is_a?(Integer) ? user : User.id_value(user)&.to_i
   end
 
   # ===========================================================================
