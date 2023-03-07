@@ -400,6 +400,7 @@ class Search::Record::TitleRecord < Search::Api::Record
         when Model
           make_comparable(value.fields)
         when Hash
+          # noinspection RubyMismatchedReturnType
           value.map { |k, v|
             v = make_comparable(v, k)
             [k, v] if v.present?

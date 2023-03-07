@@ -187,8 +187,7 @@ module Upload::FileMethods
 
   # Return the cached file, attaching it if necessary (and possible).
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def attach_cached                                                             # NOTE: to Record::Uploadable
     return file_attacher.file if file_attacher.cached?
@@ -200,8 +199,7 @@ module Upload::FileMethods
 
   # Return the cached file, attaching it if necessary (and possible).
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def edit_attach_cached                                                        # NOTE: not relevant to Entry/Phase/Action.
     return edit_file_attacher.file if edit_file_attacher.cached?
@@ -213,8 +211,7 @@ module Upload::FileMethods
 
   # Return the cached file currently associated with the record.
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def active_attach_cached                                                      # NOTE: not relevant to Entry/Phase/Action.
     edit_phase ? edit_attach_cached : attach_cached
@@ -233,7 +230,7 @@ module Upload::FileMethods
   #
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   #
-  # @return [void]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def promote_file(no_raise: true)                                              # NOTE: to Record::Uploadable
     __debug_items(binding)

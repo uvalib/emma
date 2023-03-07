@@ -127,22 +127,19 @@ module Upload::FileMethods
 
   # Return the cached file, attaching it if necessary (and possible).
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def attach_cached: () -> (FileUploader::UploadedFile | nil)
 
   # Return the cached file, attaching it if necessary (and possible).
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def edit_attach_cached: () -> (FileUploader::UploadedFile | nil)
 
   # Return the cached file currently associated with the record.
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def active_attach_cached: () -> (FileUploader::UploadedFile | nil)
 
@@ -153,9 +150,9 @@ module Upload::FileMethods
   #
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   #
-  # @return [void]
+  # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_file: (?no_raise: bool) -> void
+  def promote_file: (?no_raise: bool) -> (FileUploader::UploadedFile | nil)
 
   # Remove the uploaded file from storage (either :store or :cache).
   #

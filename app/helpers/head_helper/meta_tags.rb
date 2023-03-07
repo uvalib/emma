@@ -198,6 +198,7 @@ module HeadHelper::MetaTags
     # The tag content is formed from the value(s) accumulated for this item.
     html_opt[:content] =
       normalized_list(value, **opt).join(separator).tap do |content|
+        # noinspection RubyMismatchedArgumentType
         if (prefix = META_TAG_PREFIX[key]) && !content.start_with?(prefix)
           prefix = "#{prefix} - " unless prefix.end_with?(' ')
           content.prepend(prefix)

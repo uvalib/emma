@@ -125,8 +125,7 @@ module Record::Uploadable
 
   # Return the cached file, attaching it if necessary (and possible).
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def attach_cached                                                             # NOTE: from Upload::FileMethods
     return file_attacher.file if file_attacher.cached?
@@ -144,8 +143,7 @@ module Record::Uploadable
   #
   # @param [Hash, String, nil] data   Default: `#file_data`.
   #
-  # @return [FileUploader::UploadedFile]
-  # @return [nil]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def file_attacher_load(data = nil)                                          # NOTE: from Upload::FileMethods#attached_file
     data ||= file_data
@@ -166,7 +164,7 @@ module Record::Uploadable
   #
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   #
-  # @return [void]
+  # @return [FileUploader::UploadedFile, nil]
   #
   def promote_file(no_raise: true)                                              # NOTE: from Upload::FileMethods
     __debug_items(binding)

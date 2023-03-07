@@ -34,9 +34,9 @@
     .last {
 
         // Increase the click target size.
-        margin:          -0.125rem;
-        padding:         0.125rem 0.25rem;
-        text-decoration: none;
+        margin:             -0.125rem;
+        padding:            0.125rem 0.25rem;
+        text-decoration:    none;
 
         &:focus {
             outline:        2px solid $button-accent;
@@ -46,10 +46,10 @@
         .icon,
         .label {
 
-            font-weight: bold;
+            font-weight:    bold;
 
             @media #{$not-narrow-screen} {
-                font-size: small;
+                font-size:  small;
             }
         }
 

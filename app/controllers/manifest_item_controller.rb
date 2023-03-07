@@ -283,7 +283,7 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == POST /manifest_item/finish_edit/:id
+  # == POST /manifest_item/row_update/:id
   #
   # Clear :editing state and respond with item and validity information.
   #
