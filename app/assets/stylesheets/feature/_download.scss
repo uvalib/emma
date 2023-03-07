@@ -34,7 +34,7 @@
     // @see ArtifactDecorator#link
     .link {
         &.complete {
-            color: $root-fg-color;
+            color: var(--fg-color);
         }
     }
 

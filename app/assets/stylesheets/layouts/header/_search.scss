@@ -200,7 +200,7 @@ $search-button-width:    6rem;
             height:         34px;
             max-height:     34px;
             overflow:       hidden;
-            border:         1px solid $root-bg-color;
+            border:         1px solid var(--bg-color);
             border-radius:  4px;
             pointer-events: none;
 
@@ -214,8 +214,8 @@ $search-button-width:    6rem;
             option::before {
                 display:        block;
                 color:          $uva-text-gray;
-                background:     $root-bg-color;
-                border:         6px solid $root-bg-color;
+                background:     var(--bg-color);
+                border:         6px solid var(--bg-color);
                 content:        "...";
                 content:        $HORIZONTAL_ELLIPSIS;
                 outline:        3px solid white;
@@ -431,7 +431,7 @@ $search-button-width:    6rem;
             margin-right: 0.5rem;
             margin-left:  calc(#{$gap-x} / 2);
             font-size:    large;
-            color:        $root-fg-color;
+            color:        var(--fg-color);
 
             // noinspection CssReplaceWithShorthandSafely
             @media #{$narrow-screen} {

@@ -8,8 +8,8 @@
 
 $database-table-max-columns: 25;
 
-$side-scroll-shadow: -1.5rem  0  0  0.5rem  $root-bg-color;
-$vert-scroll-shadow:  0       0  0  0.5rem  $root-bg-color;
+$side-scroll-shadow: -1.5rem  0  0  0.5rem  var(--bg-color);
+$vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 
 //=============================================================================
 // DataController index page
@@ -68,7 +68,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  $root-bg-color;
         // @see DataHelper#html_db_column
         .database-column {
 
-            background: $root-bg-color;
+            background: var(--bg-color);
 
             &.hierarchy {
                 max-height:  25vh;
@@ -95,7 +95,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  $root-bg-color;
                 padding:        0 1px;
                 font-weight:    bold;
                 text-transform: uppercase;
-                border-bottom:  2px solid $root-fg-color;
+                border-bottom:  2px solid var(--fg-color);
 
                 &.col-first {
                     z-index:    $z-raised;

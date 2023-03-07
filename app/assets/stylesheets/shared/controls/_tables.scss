@@ -11,9 +11,9 @@
 
 $gap:        1.75rem;
 $narrow-gap: 1rem;
-$bg-color:   v.$root-bg-color;
-$border-bg:  v.$root-rev-bg-color;
-$border-fg:  v.$root-rev-fg-color;
+$bg-color:   var(--bg-color);
+$border-bg:  var(--rev-bg-color);
+$border-fg:  var(--rev-fg-color);
 
 // ============================================================================
 // Mixins

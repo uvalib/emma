@@ -95,7 +95,7 @@ body.bs_api-v2 {
 
         .success {
             color:            blue;
-            background-color: $root-bg-color;
+            background-color: var(--bg-color);
         }
 
         .error {
@@ -145,7 +145,7 @@ body.bs_api-v2 {
             @extend %api-panel;
 
             &.success {
-                background-color: $root-bg-color;
+                background-color: var(--bg-color);
             }
 
             &.error {

@@ -207,7 +207,7 @@
 /// width of the text.
 ///
 @mixin hover-bold {
-    text-shadow: 0 0 1px v.$root-fg-color;
+    text-shadow: 0 0 1px var(--fg-color);
 }
 
 /// A pop-out effect for panels.
@@ -281,8 +281,8 @@
     width:            inherit;
     margin:           0;
     padding:          v.$page-padding-y v.$page-padding-x;
-    color:            v.$root-rev-fg-color;
-    background-color: v.$root-rev-bg-color;
+    color:            var(--rev-fg-color);
+    background-color: var(--rev-bg-color);
 
     @media #{v.$not-wide-screen} {
         padding-top:    calc(2 * #{v.$page-padding-y});
@@ -292,7 +292,7 @@
 
     * {
         margin: auto 0;
-        color:  v.$root-rev-fg-color;
+        color:  var(--rev-fg-color);
     }
 
     a {

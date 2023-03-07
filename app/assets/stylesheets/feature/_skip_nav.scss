@@ -27,9 +27,9 @@ $sn-entry-gap: 0.1rem;
     left:             $sn-margin;
     margin:           0;
     padding:          $sn-padding;
-    background-color: $root-bg-color;
-    border:           1px solid $root-fg-color;
-    box-shadow:       0 0 0 1px $root-bg-color;
+    background-color: var(--bg-color);
+    border:           1px solid var(--fg-color);
+    box-shadow:       0 0 0 1px var(--bg-color);
 
     &         { z-index: $z-hidden }
     &.visible { z-index: $z-popup; }
@@ -51,7 +51,7 @@ $sn-entry-gap: 0.1rem;
         padding-top: $sn-entry-gap;
 
         a, a:visited {
-            color:           $root-fg-color;
+            color:           var(--fg-color);
             text-decoration: none;
         }
 

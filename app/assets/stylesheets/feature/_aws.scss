@@ -7,8 +7,8 @@
 // Internal constants
 //=============================================================================
 
-$aws-bucket-bg:          $root-rev-bg-color;
-$aws-bucket-fg:          $root-rev-fg-color;
+$aws-bucket-fg:          var(--rev-fg-color);
+$aws-bucket-bg:          var(--rev-bg-color);
 $aws-bucket-padding:     0.5rem;
 $aws-admin-section-gap:  calc(2 * #{$page-padding});
 $aws-admin-column-space: 0.75rem;

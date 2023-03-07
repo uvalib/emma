@@ -320,7 +320,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     display:         flex;
     padding:         1rem;
-    background:      $root-bg-color;
+    background:      var(--bg-color);
     border:          0.5rem solid $uva-accent-orange;
     border-radius:   0.75rem;
     flex-wrap:       wrap;
@@ -559,7 +559,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         position:   sticky;
         top:        1rem;
-        background: $root-bg-color;
+        background: var(--bg-color);
 
         // noinspection CssReplaceWithShorthandSafely
         @media #{$narrow-screen} {
@@ -589,9 +589,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         position:      sticky;
         top:           calc(2 * #{$form-gap});
         margin-bottom: calc(2 * #{$form-gap});
-        background:    $root-bg-color;
-        box-shadow:    0 -0.5rem 0      1.0rem $root-bg-color,
-                       0  0.5rem 0.5rem 0.5rem $root-bg-color;
+        background:    var(--bg-color);
+        box-shadow:    0 -0.5rem 0      1.0rem var(--bg-color),
+                       0  0.5rem 0.5rem 0.5rem var(--bg-color);
         z-index:       $z-controls;
 
         grid-template-columns: 1fr;
@@ -802,7 +802,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         p {
             font-weight: bold;
             word-break:  break-word;
-            box-shadow:  0 0 0.5rem 0.25rem $root-bg-color;
+            box-shadow:  0 0 0.5rem 0.25rem var(--bg-color);
         }
     }
 }

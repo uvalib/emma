@@ -606,12 +606,12 @@ body.manifest.remit {
 
         $limit-height: false;
 
-        $bg-clear:  $root-bg-color;
-        $bg-solid:  $root-rev-bg-color;
+        $bg-clear:  var(--bg-color);
+        $bg-solid:  var(--rev-bg-color);
 
         $fg-clear:  $bg-clear;
         $fg-light:  $uva-text-gray;
-        $fg-dark:   $root-fg-color;
+        $fg-dark:   var(--fg-color);
 
         grid-template-columns: 1fr;
         gap:                   0.75rem 1rem;

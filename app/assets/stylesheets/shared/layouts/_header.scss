@@ -48,7 +48,7 @@ $enclosure-pad-narrow:      0.75rem;
 
     padding:        0.5rem;
     padding-right:  0;
-    border:         0.125rem dotted v.$root-rev-fg-color;
+    border:         0.125rem dotted var(--rev-fg-color);
     border-radius:  0.75rem;
 
     @media #{v.$not-narrow-screen} {
@@ -60,7 +60,7 @@ $enclosure-pad-narrow:      0.75rem;
 ///
 @mixin control-interior {
     * {
-        color:     v.$root-fg-color;
+        color:     var(--fg-color);
         font-size: large;
     }
 }

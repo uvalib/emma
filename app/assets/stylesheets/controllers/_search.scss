@@ -69,7 +69,7 @@ $title-bg: var(--title-bg);
     padding:       1px 0.5rem;
     font-size:     medium;
     font-weight:   normal;
-    color:         $root-rev-fg-color;
+    color:         var(--rev-fg-color);
     background:    $panel-accent;
     border:        1px solid transparent;
     border-radius: 0.5rem;
@@ -291,7 +291,9 @@ $title-bg: var(--title-bg);
     .value {
 
         &.textbox {
-            box-shadow: 0 0 0 0.25rem $root-bg-color, 0 0 0 0.375rem lightgray;
+            box-shadow:
+                0 0 0 0.25rem  var(--bg-color),
+                0 0 0 0.375rem lightgray;
         }
 
         &.array {
@@ -549,10 +551,10 @@ $title-bg: var(--title-bg);
                 align-items:	flex-start;
                 margin:		    0;
                 padding-top:    1.25rem;
-                background:	    $root-bg-color;
+                background:	    var(--bg-color);
                 box-shadow:
-                    0.5rem  -0.5rem  0       0.5rem $root-bg-color,
-                    0.25rem -0.25rem 0.75rem 0.5rem $root-bg-color;
+                    0.5rem  -0.5rem  0       0.5rem var(--bg-color),
+                    0.25rem -0.25rem 0.75rem 0.5rem var(--bg-color);
             }
         }
 
@@ -675,7 +677,7 @@ $title-bg: var(--title-bg);
             line-height:   unset;
             font-size:     x-large;
             font-weight:   bold;
-            background:	   $root-bg-color;
+            background:	   var(--bg-color);
             border-bottom: 1px solid darkgray;
 
             @if $title-spans-entry {
@@ -685,16 +687,16 @@ $title-bg: var(--title-bg);
             @media #{$wide-screen} {
                 top:        $sticky-top-wide;
                 box-shadow:
-                     0.50rem -2.00rem  1.00rem  2.00rem  $root-bg-color,
-                     0        0        0.25rem  0.50rem  $root-bg-color;
+                     0.50rem -2.00rem  1.00rem  2.00rem  var(--bg-color),
+                     0        0        0.25rem  0.50rem  var(--bg-color);
             }
 
             @media #{$medium-width} {
                 top:        $sticky-top-medium;
                 column-gap: calc(3 * #{$flex-gap-x});
                 box-shadow:
-                     0       -1.00rem  0        0.50rem  $root-bg-color,
-                     0        0        0.25rem  0.25rem  $root-bg-color;
+                     0       -1.00rem  0        0.50rem  var(--bg-color),
+                     0        0        0.25rem  0.25rem  var(--bg-color);
             }
 
             @media #{$narrow-screen} {
@@ -703,10 +705,10 @@ $title-bg: var(--title-bg);
 
                 top:            $sticky-top-narrow;
                 padding-bottom: 0.5rem;
-                border-color:   $root-fg-color;
+                border-color:   var(--fg-color);
                 box-shadow:
-                     0       -0.50rem  0        0.25rem  $root-bg-color,
-                     0        0.25rem  0.25rem  0        $root-bg-color;
+                     0       -0.50rem  0        0.25rem  var(--bg-color),
+                     0        0.25rem  0.25rem  0        var(--bg-color);
             }
 
             // @see SearchDecorator#title_and_source
@@ -983,8 +985,8 @@ $title-bg: var(--title-bg);
             margin-bottom:  0;
             padding:        0;
             text-align:     center;
-            background:     $root-bg-color;
-            box-shadow:     0 0 0 0.75rem $root-bg-color;
+            background:     var(--bg-color);
+            box-shadow:     0 0 0 0.75rem var(--bg-color);
         }
 
         .container {
@@ -1124,8 +1126,8 @@ $title-bg: var(--title-bg);
 
 // Box shadow sections preventing scrolled text from appearing above the title.
 $title-scroll-mask:
-    0.25rem  -0.25rem  0         0.5rem  $root-bg-color,
-    0.125rem  0        0.125rem  0.5rem  $root-bg-color;
+    0.25rem  -0.25rem  0         0.5rem  var(--bg-color),
+    0.125rem  0        0.125rem  0.5rem  var(--bg-color);
 
 @mixin collapsible-search-list {
 
@@ -2016,15 +2018,15 @@ body.search.dev-style {
 
                         @media #{$wide-screen} {
                             box-shadow:
-                                -0.875rem  0 0 1.125rem  $root-bg-color;
+                                -0.875rem  0 0 1.125rem  var(--bg-color);
                         }
                         @media #{$medium-width} {
                             box-shadow:
-                                -0.3125rem 0 0 0.9375rem $root-bg-color;
+                                -0.3125rem 0 0 0.9375rem var(--bg-color);
                         }
                         @media #{$narrow-screen} {
                             box-shadow:
-                                -0.625rem  0 0 0.625rem  $root-bg-color;
+                                -0.625rem  0 0 0.625rem  var(--bg-color);
                         }
                     }
                 }
@@ -2453,7 +2455,7 @@ body.search.title_results {
                     margin-top:   -1.25rem;
                     min-height:   4rem;
                     font-size:    small;
-                    box-shadow:   0 -0.25rem 0.5rem 0.25rem $root-bg-color;
+                    box-shadow:   0 -0.25rem 0.5rem 0.25rem var(--bg-color);
                 }
 
                 @media #{$wide-screen} {

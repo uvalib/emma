@@ -8,11 +8,8 @@
 // Constants
 //=============================================================================
 
-$border-width:      1px;
-$border-color:      gray;
-
-$thumbnail-max-x:   var(--thumbnail-max-x);
-$thumbnail-max-y:   var(--thumbnail-max-y);
+$border-width: 1px;
+$border-color: gray;
 
 //=============================================================================
 // Mixins
@@ -20,9 +17,9 @@ $thumbnail-max-y:   var(--thumbnail-max-y);
 
 @mixin thumbnail-dimensions {
 
-    max-width:  $thumbnail-max-x;
-    max-height: $thumbnail-max-y;
-    height:     $thumbnail-max-y;
+    max-width:  var(--thumbnail-max-x);
+    max-height: var(--thumbnail-max-y);
+    height:     var(--thumbnail-max-y);
 
     @media #{v.$narrow-screen} {
         max-height: unset;

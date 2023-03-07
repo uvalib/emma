@@ -1100,7 +1100,7 @@ table.manifest_item-grid {
                         }
 
                         &:not(.hover) {
-                            background-color: $root-bg-color;
+                            background-color: var(--bg-color);
                         }
                     }
 
@@ -1228,9 +1228,9 @@ table.manifest_item-grid {
                         padding-right:  $value-pad * 1.5;
                         line-height:    1.125;
                         box-shadow:
-                            0  0   0 1px $root-bg-color,    // sides
-                            0 -1px 0 1px,                   // top
-                            0  1px 0 1px;                   // bottom
+                            0  0   0 1px var(--bg-color), // sides
+                            0 -1px 0 1px,                 // top
+                            0  1px 0 1px;                 // bottom
                     }
 
                     > :not(.active) {
