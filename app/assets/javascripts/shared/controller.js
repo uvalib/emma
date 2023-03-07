@@ -3,15 +3,44 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug } from '../application/debug';
-import { isObject } from './objects';
+import { AppDebug }               from '../application/debug';
+import { Emma }                   from './assets';
+import { isObject }               from './objects';
+import { camelCase, singularize } from './strings';
 
 
 AppDebug.file('shared/controller');
 
 // ============================================================================
+// Type definitions
+// ============================================================================
+
+/**
+ * @typedef {object} PageAttributes
+ *
+ * @property {string}          controller
+ * @property {string}          action
+ * @property {string}          model
+ * @property {ModelProperties} properties
+ */
+
+// ============================================================================
 // Functions - Controller/Action
 // ============================================================================
+
+/**
+ * Attributes of the current (or given) page.
+ *
+ * @param {string|string[],{controller:string,action?:string}} [path]
+ *
+ * @returns {PageAttributes}
+ */
+export function pageAttributes(path) {
+    const { controller, action } = pageControllerAction(path);
+    const model      = singularize(controller);
+    const properties = Emma[camelCase(model)];
+    return { controller, action, model, properties };
+}
 
 /**
  * Return the controller indicated by the given path, defaulting to

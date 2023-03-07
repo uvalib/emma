@@ -3,13 +3,11 @@
 
 import { AppDebug }                   from '../application/debug';
 import { Api }                        from './api';
-import { Emma }                       from './assets';
-import { pageAction, pageController } from './controller';
+import { pageAction, pageAttributes } from './controller';
 import { isDefined, isMissing }       from './definitions';
 import { flashError, flashMessage }   from './flash';
 import { selfOrParent }               from './html';
 import { compact, hasKey }            from './objects';
-import { camelCase, singularize }     from './strings';
 
 
 const MODULE = 'Manifest';
@@ -30,38 +28,6 @@ AppDebug.file('shared/manifests', MODULE, DEBUG);
 // ============================================================================
 // Constants
 // ============================================================================
-
-/**
- * Current action.
- *
- * @readonly
- * @type {string}
- */
-export const PAGE_ACTION = pageAction();
-
-/**
- * Current controller.
- *
- * @readonly
- * @type {string}
- */
-export const PAGE_CONTROLLER = pageController();
-
-/**
- * Base name (singular of the related database table).
- *
- * @readonly
- * @type {string}
- */
-export const PAGE_MODEL = singularize(PAGE_CONTROLLER);
-
-/**
- * Page assets.js properties.
- *
- * @readonly
- * @type {ModelProperties}
- */
-export const PAGE_PROPERTIES = Emma[camelCase(PAGE_MODEL)];
 
 /**
  * Base name (singular of the related database table).
@@ -204,15 +170,17 @@ export function enableButton(button, enable, config, override) {
  *
  * @param {string}  type
  * @param {boolean} [enabled]
- * @param {string}  [action]          Default: {@link PAGE_ACTION}
+ * @param {string}  [page_action]     Default: {@link pageAction}
  *
  * @returns {ActionPropertiesExt}
  */
-export function configFor(type, enabled, action = PAGE_ACTION) {
+export function configFor(type, enabled, page_action) {
     //_debug(`configFor: type = "${type}"; action = "${action}"`);
-    const ctrlr_config  = PAGE_PROPERTIES.Action || {};
-    const action_config = ctrlr_config[action] || ctrlr_config.new || {};
-    return properties(action_config[type], enabled);
+    const page       = pageAttributes();
+    const action     = page_action || page.action;
+    const ctrlr_cfg  = page.properties.Action || {};
+    const action_cfg = ctrlr_cfg[action] || ctrlr_cfg.new || {};
+    return properties(action_cfg[type], enabled);
 }
 
 /**
