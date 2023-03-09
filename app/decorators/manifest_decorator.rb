@@ -566,6 +566,7 @@ class ManifestDecorator
   # @see file:app/assets/stylesheets/feature/_model_form.scss ".export-button"
   #
   def export_button(**opt)
+    append_css!(opt, 'hidden') # TODO: remove after implementing Manifest export
     form_button(:export, **opt)
   end
 
