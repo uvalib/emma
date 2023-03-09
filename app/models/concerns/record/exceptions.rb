@@ -32,7 +32,7 @@ module Record::Exceptions
   # @note From UploadWorkflow::Errors::RenderMethods#failure
   #
   def failure(problem, value = nil)
-    ExceptionHelper.failure(problem, value, model: :entry)
+    ExceptionHelper.failure(problem, value, model: :upload)
   end
 
   # ===========================================================================

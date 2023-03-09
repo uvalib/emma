@@ -132,7 +132,7 @@ module Record::EmmaData
     result = reject_blanks(result) unless allow_blank
     result.map { |k, v|
       v     = Array.wrap(v)
-      prop  = Field.configuration_for(k, :entry) # TODO: should vary by record_class ???
+      prop  = Field.configuration_for(k, :upload)
       array = prop[:array]
       type  = prop[:type]
       join  = "\n"
