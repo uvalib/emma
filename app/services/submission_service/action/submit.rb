@@ -523,31 +523,32 @@ module SubmissionService::Action::Submit
     failed = {}
 
     # Errors associated with the position of the item in the request.
-    by_index = errors.select { |k| k.is_a?(Integer) }
+    by_index = errors.select { |idx| idx.is_a?(Integer) && records[idx-1] }
     if by_index.present?
       errors.except!(*by_index.keys)
-      errors_by_index = by_index.transform_keys! { |idx| records[idx-1].id }
-      failed.rmerge!(errors_by_index)
+      by_index.transform_keys!   { |idx| manifest_item_id(records[idx-1]) }
+      by_index.transform_values! { |msg| Array.wrap(msg) }
+      failed.rmerge!(by_index)
     end
 
     # Errors associated with item submission ID.
-    by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
+    by_sid = errors.extract!(*records.map(&:submission_id))
     if by_sid.present?
-      errors.except!(*by_sid.keys)
-      sid_to_id     = records.map { |rec| [rec.submission_id, rec.id] }.to_h
-      errors_by_sid = by_sid.transform_keys! { |sid| sid_to_id[sid] }
-      failed.rmerge!(errors_by_sid)
+      sid_id = records.map { |rec| [rec.submission_id, rec] }.to_h
+      by_sid.transform_keys!   { |sid| manifest_item_id(sid_id[sid]) }
+      by_sid.transform_values! { |msg| Array.wrap(msg) }
+      failed.rmerge!(by_sid)
     end
 
     # Remaining (general) errors indicate that there was a problem with the
     # request and that all items have failed.
-    if errors.present? || failed.blank?
-      general_errors = errors.values.presence || 'unknown error' # TODO: I18n
-      general_errors = records.map { |rec| [rec.id, general_errors] }.to_h
-      failed.rmerge!(general_errors)
+    if errors.present?
+      general = errors.values.presence || ['unknown error'] # TODO: I18n
+      general = records.map { |rec| [manifest_item_id(rec), general] }.to_h
+      failed.rmerge!(general)
     end
 
-    return [], failed.transform_values! { |msg| Array.wrap(msg) }
+    return [], failed
 
   end
 
