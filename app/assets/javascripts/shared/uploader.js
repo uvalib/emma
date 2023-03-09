@@ -818,7 +818,7 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * This event occurs when the response from POST /entry/upload is
+     * This event occurs when the response from POST /upload/upload is
      * received with a failure status (4xx).
      *
      * @param {UppyFile}                       file
@@ -836,7 +836,7 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * This event occurs when the response from POST /entry/upload is
+     * This event occurs when the response from POST /upload/upload is
      * received with success status (200).  At this point, the file has
      * been uploaded by Shrine, but has not yet been validated.
      *

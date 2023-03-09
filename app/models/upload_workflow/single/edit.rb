@@ -78,7 +78,7 @@ module UploadWorkflow::Single::Edit::Actions
   # @see Upload#finish_editing
   # @see UploadWorkflow::External#repository_modify
   #
-  def wf_finalize_submission(*event_args)                                       # NOTE: to Action#member_repository_action via Action::Queue#submit! (sorta)
+  def wf_finalize_submission(*event_args)
     __debug_items(binding)
     assert_record_present
     record.finish_editing

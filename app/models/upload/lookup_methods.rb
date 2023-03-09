@@ -25,7 +25,7 @@ module Upload::LookupMethods
   #
   # @return [Upload, nil]
   #
-  def get_record(identifier)                                                    # NOTE: to Record::Searchable
+  def get_record(identifier)
     find_by(**id_term(identifier))
   end
 
@@ -36,7 +36,7 @@ module Upload::LookupMethods
   #
   # @return [Array<Upload>]
   #
-  def get_records(*identifiers, **opt)                                          # NOTE: to Record::Searchable
+  def get_records(*identifiers, **opt)
     get_relation(*identifiers, **opt).records
   end
 
@@ -46,7 +46,7 @@ module Upload::LookupMethods
 
   public
 
-  # The #search_records method returns a hash with these fields in this order.  # NOTE: to Record::Searchable
+  # The #search_records method returns a hash with these fields in this order.
   #
   #   :offset   The list offset for display purposes (not the SQL OFFSET).
   #   :limit    The page size.
@@ -76,7 +76,7 @@ module Upload::LookupMethods
     list:   [],
   }.freeze
 
-  # Local options consumed by #search_records.                                  # NOTE: to Record::Searchable
+  # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
   #
@@ -111,7 +111,7 @@ module Upload::LookupMethods
   #
   # @see ActiveRecord::Relation#where
   #
-  def search_records(*identifiers, **opt)                                       # NOTE: to Record::Searchable
+  def search_records(*identifiers, **opt)
     prop   = extract_hash!(opt, *SEARCH_RECORDS_OPTIONS)
     result = SEARCH_RECORDS_TEMPLATE.dup
 
@@ -194,7 +194,7 @@ module Upload::LookupMethods
   # @see Upload#expand_ids
   # @see ActiveRecord::Relation#where
   #
-  def get_relation(*items, **opt)                                               # NOTE: to Record::Searchable
+  def get_relation(*items, **opt)
     terms = []
     meth  = opt.delete(:meth) || "#{self_class}.#{__method__}"
 
@@ -291,7 +291,7 @@ module Upload::LookupMethods
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  def group_by_state(relation)                                                  # NOTE: to Record::Searchable
+  def group_by_state(relation)
     group_count = {}
     relation.group(*STATE_COLUMNS).count.each_pair do |states, count|
       # Use :edit_state if present; use :state otherwise.

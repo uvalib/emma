@@ -61,7 +61,9 @@ module Record::Searchable
   #
   # @return [Model, nil]
   #
-  def get_record(item, **opt)                                                   # NOTE: from Upload::LookupMethods
+  # @note From Upload::LookupMethods#get_record
+  #
+  def get_record(item, **opt)
     find_by(**id_term(item, **opt))
   end
 
@@ -72,7 +74,9 @@ module Record::Searchable
   #
   # @return [Array<Model>]
   #
-  def get_records(*identifiers, **opt)                                          # NOTE: from Upload::LookupMethods
+  # @note From Upload::LookupMethods#get_records
+  #
+  def get_records(*identifiers, **opt)
     get_relation(*identifiers, **opt).records
   end
 
@@ -82,7 +86,7 @@ module Record::Searchable
 
   public
 
-  # The #search_records method returns a hash with these fields in this order.  # NOTE: from Upload::LookupMethods
+  # The #search_records method returns a hash with these fields in this order.
   #
   #   :offset   The list offset for display purposes (not the SQL OFFSET).
   #   :limit    The page size.
@@ -98,6 +102,8 @@ module Record::Searchable
   #
   # @type [Hash{Symbol=>Any}]
   #
+  # @note From Upload::LookupMethods#SEARCH_RECORDS_TEMPLATE
+  #
   SEARCH_RECORDS_TEMPLATE = {
     offset: 0,
     limit:  0,
@@ -112,15 +118,19 @@ module Record::Searchable
     list:   [],
   }.freeze
 
-  # Local options consumed by #search_records.                                  # NOTE: from Upload::LookupMethods
+  # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
+  #
+  # @note From Upload::LookupMethods#SEARCH_RECORDS_OPTIONS
   #
   SEARCH_RECORDS_OPTIONS = %i[offset limit page pages groups sort].freeze
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
+  #
+  # @note From Upload::LookupMethods#NON_SEARCH_PARAMS
   #
   NON_SEARCH_PARAMS = (
     SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS - %i[sort]
@@ -151,7 +161,9 @@ module Record::Searchable
   #
   # @see ActiveRecord::Relation#where
   #
-  def search_records(*identifiers, **opt)                                       # NOTE: from Upload::LookupMethods
+  # @note From Upload::LookupMethods#search_records
+  #
+  def search_records(*identifiers, **opt)
     prop   = extract_hash!(opt, *SEARCH_RECORDS_OPTIONS)
     sort   = pagination_column || implicit_order_column
     sort   = prop.key?(:sort) ? prop.delete(:sort) : sort
@@ -246,7 +258,9 @@ module Record::Searchable
   # @see Record::EmmaIdentification#expand_ids
   # @see ActiveRecord::Relation#where
   #
-  def get_relation(*items, **opt)                                               # NOTE: from Upload::LookupMethods
+  # @note From Upload::LookupMethods#get_relation
+  #
+  def get_relation(*items, **opt)
     terms   = []
     meth    = opt.delete(:meth) || "#{self_class}.#{__method__}"
     id_opt  = extract_hash!(opt, :id_key, :sid_key).transform_values!(&:to_sym)
@@ -357,7 +371,9 @@ module Record::Searchable
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  def group_by_state(relation, column = state_column)                           # NOTE: from Upload::LookupMethods
+  # @note From Upload::LookupMethods#group_by_state
+  #
+  def group_by_state(relation, column = state_column)
     raise "no :state_column for #{self.class}" unless column
     group_count = {}
     relation.group(column).count.each_pair do |state, count|
@@ -378,6 +394,8 @@ module Record::Searchable
   # @return [String, false, false]    If *value* specifies a day.
   # @return [String, true,  false]    If *value* specifies a month.
   # @return [String, false, true]     If *value* specifies a year
+  #
+  # @note From Upload::LookupMethods#day_string
   #
   def day_string(value)
     day = month = year = nil
@@ -424,6 +442,8 @@ module Record::Searchable
     #
     # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
     #
+    # @note From Upload#matching_sid
+    #
     def matching_sid(sid = nil, max: nil, meth: nil, no_raise: false, **opt)
       sid = opt[:submission_id] = sid_value(sid || opt)
       if sid.blank?
@@ -457,6 +477,8 @@ module Record::Searchable
     # @raise [Record::NotFound]           If record not found.
     #
     # @return [Model]                     Or *nil* on error if *no_raise*.
+    #
+    # @note From Upload#latest_for_sid
     #
     def latest_for_sid(sid = nil, sort: nil, **opt)
       result = matching_sid(sid, **opt) or return

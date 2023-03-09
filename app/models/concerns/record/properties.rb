@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-module Record::Properties                                                       # NOTE: from UploadWorkflow::Properties
+# @note From UploadWorkflow::Properties
+module Record::Properties
 
   # ===========================================================================
   # :section: Constants
@@ -322,7 +323,7 @@ module Record::Properties                                                       
   #
   # @return [Hash{Symbol=>Any}]
   #
-  # @see Entry::Options#model_params
+  # @see ::Options#model_params
   #
   def parameters
     # noinspection RailsParamDefResolve

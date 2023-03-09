@@ -20,21 +20,25 @@ module Record::Uploadable
 
   #include Record::Testing
 
-  # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: from Upload::FileMethods
+  # The maximum age (in seconds) allowed for download links which are meant to
   # be valid only for a single time.
   #
   # This should be generous to allow for network delays.
   #
   # @type [Integer]
   #
+  # @note From Upload::FileMethods#ONE_TIME_USE_EXPIRATION
+  #
   ONE_TIME_USE_EXPIRATION: Integer
 
-  # The maximum age (in seconds) allowed for download links.                    # NOTE: from Upload::FileMethods
+  # The maximum age (in seconds) allowed for download links.
   #
   # This allows the link to be reused for a while, but not long enough to allow
   # sharing of content URLs for distribution.
   #
   # @type [Integer]
+  #
+  # @note From Upload::FileMethods#DOWNLOAD_EXPIRATION
   #
   DOWNLOAD_EXPIRATION: Integer
 
@@ -61,6 +65,8 @@ module Record::Uploadable
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
+  # @note From Upload::FileMethods#filename
+  #
   def filename: () -> (String | nil)
 
   @filename: String | nil
@@ -70,11 +76,15 @@ module Record::Uploadable
   # @return [FileUploader::UploadedFile]
   # @return [nil]                     If :file_data is blank.
   #
+  # @note From Upload::FileMethods#attached_file
+  #
   def attached_file: () -> (FileUploader::UploadedFile | nil)
 
   # Return the cached file, attaching it if necessary (and possible).
   #
   # @return [FileUploader::UploadedFile, nil]
+  #
+  # @note From Upload::FileMethods#attach_cached
   #
   def attach_cached: () -> (FileUploader::UploadedFile | nil)
 
@@ -84,6 +94,8 @@ module Record::Uploadable
   # @param [Hash, String, nil] data   Default: `#file_data`.
   #
   # @return [FileUploader::UploadedFile, nil]
+  #
+  # @note From Upload::FileMethods#attached_file
   #
   def file_attacher_load: (?(symHash|String|nil) data) -> (FileUploader::UploadedFile | nil)
 
@@ -96,6 +108,8 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile, nil]
   #
+  # @note From Upload::FileMethods#promote_file
+  #
   def promote_file: (?no_raise: bool) -> (FileUploader::UploadedFile | nil)
 
   # Remove the uploaded file from storage (either :store or :cache).
@@ -103,6 +117,8 @@ module Record::Uploadable
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   #
   # @return [void]
+  #
+  # @note From Upload::FileMethods#delete_file
   #
   def delete_file: (?no_raise: bool) -> void
 
@@ -114,15 +130,19 @@ module Record::Uploadable
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
+  # @note From Upload::FileMethods#download_url
+  #
   def download_url: (**untyped opt) -> (String | nil)
 
   # The AWS S3 object for the file.
   #
   # @return [Aws::S3::Object, nil]
   #
+  # @note From Upload::FileMethods#s3_object
+  #
   def s3_object: () -> (Aws::S3::Object | nil)
 
-  # Upload file via Shrine.                                                     # NOTE: from UploadWorkflow::External
+  # Upload file via Shrine.
   #
   # @param [Hash] opt
   #
@@ -131,6 +151,8 @@ module Record::Uploadable
   # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
+  #
+  # @note From UploadWorkflow::External#upload_file
   #
   def upload_file: (**untyped opt) -> httpResult
 
@@ -144,6 +166,8 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile]
   #
+  # @note From Upload::FileMethods#fetch_and_upload_file
+  #
   # == Usage Notes
   # This method is not necessary for an Entry instance which is persisted to
   # the database because Shrine adds event handlers which cause the file to be
@@ -153,7 +177,7 @@ module Record::Uploadable
   #
   def fetch_and_upload_file: (String file, **untyped opt) -> FileUploader::UploadedFile
 
-  # Options for Down#open.                                                      # NOTE: from Upload::FileMethods
+  # Options for Down#open.
   #
   # @type [Hash]
   #
@@ -161,9 +185,11 @@ module Record::Uploadable
   # @see Down::NetHttp#open
   # @see Down::NetHttp#create_net_http
   #
+  # @note From Upload::FileMethods#DOWN_OPEN_OPTIONS
+  #
   DOWN_OPEN_OPTIONS: symHash
 
-  # Acquire a remote file and copy it to storage.                               # NOTE: from Upload::FileMethods#upload_remote_file
+  # Acquire a remote file and copy it to storage.
   #
   # @param [String] url
   # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:
@@ -171,6 +197,8 @@ module Record::Uploadable
   # @option opt [Integer] :read_retry
   #
   # @return [FileUploader::UploadedFile]
+  #
+  # @note From Upload::FileMethods#upload_remote_file
   #
   def upload_remote: (String url, **untyped opt) -> FileUploader::UploadedFile
 
@@ -181,9 +209,13 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile]
   #
+  # @note From Upload::FileMethods#upload_local_file
+  #
   def upload_local: (String path, **untyped opt) -> FileUploader::UploadedFile
 
   # Indicate whether the attached file is valid.
+  #
+  # @note From Upload::FileMethods#attached_file_valid?
   #
   def attached_file_valid?: () -> bool
 
@@ -192,6 +224,8 @@ module Record::Uploadable
   # @param [Symbol] type
   #
   # @return [void]
+  #
+  # @note From Upload::FileMethods#note_cb
   #
   # == Usage Notes
   #
@@ -222,6 +256,8 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile, nil]
   #
+  # @note From Upload::FileMethods#promote_cached_file
+  #
   def promote_cached_file: (?no_raise: bool, ?keep_cached: bool) -> (FileUploader::UploadedFile | nil)
 
   # Finalize a deletion by the removing the file from :cache and/or :store.
@@ -229,6 +265,8 @@ module Record::Uploadable
   # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
   #
   # @return [TrueClass, nil]
+  #
+  # @note From Upload::FileMethods#delete_cached_file
   #
   def delete_cached_file: (?no_raise: bool) -> (true | nil)
 
@@ -240,6 +278,8 @@ module Record::Uploadable
   # @param [Symbol]    meth           Calling method.
   #
   # @return [nil]
+  #
+  # @note From Upload::FileMethods#log_exception
   #
   def log_exception: (Exception excp, ?(Symbol|nil) meth) -> nil
 
@@ -253,14 +293,4 @@ module Record::Uploadable
   #include ActiveRecord::Validations
 
   #include ActiveRecord::Callbacks::ClassMethods
-
-  public
-
-  # Action subclasses that operate on AWS S3 member repository queues need
-  # to be given the submission ID dynamically since it will not be included
-  # in the data that they carry.
-  #
-  # @return [String]
-  #
-  attr_accessor submission_id: String
 end

@@ -25,7 +25,6 @@ en:
       title:          'You are not authorized to %{action} Bookshare catalog metadata.'
       upload:         'You are not authorized to %{action} EMMA submissions.'
       user:           'You are not authorized to %{action} EMMA local accounts.'
-      entry:          'You are not authorized to %{action} EMMA submissions.'
       manifest:       'You are not authorized to %{action} manifests.'
       manifest_item:  'You are not authorized to %{action} manifest items.'
 
@@ -40,7 +39,6 @@ en:
       title:          'You are not authorized to list Bookshare catalog metadata.'
       upload:         'You are not authorized to list EMMA submissions.'
       user:           'You are not authorized to list EMMA local accounts.'
-      entry:          'You are not authorized to list EMMA submissions.'
       manifest:       'You are not authorized to list manifests.'
       manifest_item:  'You are not authorized to list manifest items.'
 
@@ -55,7 +53,6 @@ en:
       title:          'You are not authorized to view Bookshare catalog metadata.'
       upload:         'You are not authorized to view EMMA submissions.'
       user:           'You are not authorized to view EMMA local accounts.'
-      entry:          'You are not authorized to view EMMA submissions.'
       manifest:       'You are not authorized to view manifests.'
       manifest_item:  'You are not authorized to view manifest items.'
 
@@ -70,7 +67,6 @@ en:
       title:          'You are not authorized to create Bookshare catalog metadata.'
       upload:         'You are not authorized to create EMMA submissions.'
       user:           'You are not authorized to create EMMA local accounts.'
-      entry:          'You are not authorized to create EMMA submissions.'
       manifest:       'You are not authorized to create manifests.'
       manifest_item:  'You are not authorized to create manifest items.'
 
@@ -85,7 +81,6 @@ en:
       title:          'You are not authorized to modify Bookshare catalog metadata.'
       upload:         'You are not authorized to modify EMMA submissions.'
       user:           'You are not authorized to modify EMMA local accounts.'
-      entry:          'You are not authorized to modify EMMA submissions.'
       manifest:       'You are not authorized to modify manifests.'
       manifest_item:  'You are not authorized to modify manifest items.'
 
@@ -100,7 +95,6 @@ en:
       title:          'You are not authorized to remove Bookshare catalog metadata.'
       upload:         'You are not authorized to remove EMMA submissions.'
       user:           'You are not authorized to remove EMMA local accounts.'
-      entry:          'You are not authorized to remove EMMA submissions.'
       manifest:       'You are not authorized to remove manifests.'
       manifest_item:  'You are not authorized to remove manifest items.'
 
@@ -109,7 +103,6 @@ en:
       artifact:       'You are not authorized to upload artifacts.'
       edition:        'You are not authorized to upload Bookshare periodical editions.'
       upload:         'You are not authorized to upload EMMA submissions.'
-      entry:          'You are not authorized to upload EMMA submissions.'
       manifest:       'You are not authorized to upload manifests.'
       manifest_item:  'You are not authorized to upload manifest items.'
 
@@ -118,7 +111,6 @@ en:
       artifact:       'You are not authorized to download artifacts.'
       edition:        'You are not authorized to download Bookshare periodical editions.'
       upload:         'You are not authorized to download EMMA submissions.'
-      entry:          'You are not authorized to download EMMA submissions.'
       manifest:       'You are not authorized to download manifests.'
       manifest_item:  'You are not authorized to download manifest items.'
 

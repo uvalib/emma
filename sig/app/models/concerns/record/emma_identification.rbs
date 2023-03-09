@@ -11,19 +11,19 @@ module Record::EmmaIdentification
 
   SID_COLUMN: Symbol
 
-  # @type [String]                                                              # NOTE: from Upload::IdentifierMethods
+  # @type [String]
   SID_PREFIX: String
 
-  # @type [(Integer,Integer)]                                                   # NOTE: from Upload::IdentifierMethods
+  # @type [(Integer,Integer)]
   SID_LETTERS: [Integer, Integer]
 
-  # @type [Integer]                                                             # NOTE: from Upload::IdentifierMethods
+  # @type [Integer]
   SID_LETTER_SPAN: Integer
 
-  # @type [String]                                                              # NOTE: from Upload::IdentifierMethods
+  # @type [String]
   SID_LETTER_MATCH: String
 
-  # @type [Regexp]                                                              # NOTE: from Upload::IdentifierMethods
+  # @type [Regexp]
   SID_PATTERN: Regexp
 
   # Column name for the submission ID.
@@ -42,17 +42,23 @@ module Record::EmmaIdentification
   # @return [String]                  The submission ID.
   # @return [nil]                     No submission ID could be determined.
   #
+  # @note From Upload::IdentifierMethods#sid_value
+  #
   def sid_value: (untyped item, **untyped opt) -> (String | nil)
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
-  # @param [Any] value                Must be a String.
+  # @param [*] value                  Must be a String.
+  #
+  # @note From Upload::IdentifierMethods#valid_sid?
   #
   def valid_sid?: (untyped value) -> bool
 
   # Indicate whether the record is an EMMA-native item.
   #
   # @param [Model, Hash, String, Symbol, nil] item
+  #
+  # @note From Upload#emma_native?
   #
   def emma_native?: (untyped item) -> bool
 
@@ -62,6 +68,8 @@ module Record::EmmaIdentification
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *item* did not indicate a repository.
+  #
+  # @note From Upload#repository_of
   #
   # == Usage Notes
   # Depending on the context, the caller may need to validate the result with
@@ -76,6 +84,8 @@ module Record::EmmaIdentification
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
+  # @note From Upload#repository_name
+  #
   def repository_name: (untyped item) -> (String | nil)
 
   # Extract the EMMA index entry identifier from the item.
@@ -84,6 +94,8 @@ module Record::EmmaIdentification
   #
   # @return [String]
   # @return [nil]
+  #
+  # @note From Upload#record_id
   #
   # == Usage Notes
   # If *item* is a String, it is assumed to be good.  Depending on the context,
@@ -97,6 +109,8 @@ module Record::EmmaIdentification
   # @param [String, Array<String>]            add_repo
   # @param [String, Array<String>]            add_fmt
   #
+  # @note From Upload#valid_record_id?
+  #
   def valid_record_id?: (untyped item, ?add_repo: String|strArray|nil, ?add_fmt: String|strArray|nil) -> bool
 
   # Create a unique submission item identifier.
@@ -109,6 +123,8 @@ module Record::EmmaIdentification
   # @return [String]
   #
   # @see #sid_counter
+  #
+  # @note From Upload::IdentifierMethods#generate_submission_id
   #
   # == Implementation Notes
   # The result is a (single-character) prefix followed by 8 hexadecimal digits
@@ -131,6 +147,8 @@ module Record::EmmaIdentification
   #
   # @return [Integer]
   #
+  # @note From Upload::IdentifierMethods#sid_counter
+  #
   def sid_counter: () -> Integer
 
   # Return with the specified record or *nil* if one could not be found.
@@ -142,12 +160,14 @@ module Record::EmmaIdentification
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   # @option opt [Symbol] :sid_key     Default: `#sid_column`.
-  # @option opt [Symbol] :alt_id_key  E.g. :entry_id, :phase_id, :action_id
+  # @option opt [Symbol] :alt_id_key  E.g. :entry_id
   #
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
   # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
+  #
+  # @note From UploadWorkflow::External#get_record
   #
   def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> ApplicationRecord
 
@@ -165,6 +185,8 @@ module Record::EmmaIdentification
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
+  # @note From Upload::IdentifierMethods#id_term
+  #
   def id_term: (?untyped v, **untyped opt) -> Hash[Symbol,(String|Integer|nil)]
 
   # Interpret an ID string as a range of IDs if possible.
@@ -177,6 +199,8 @@ module Record::EmmaIdentification
   # @param [Hash]                   opt
   #
   # @return [Array<String>]
+  #
+  # @note From Upload::IdentifierMethods#expand_id_range
   #
   def expand_id_range: ((String|Integer|Model) id, **untyped opt) -> strArray
 

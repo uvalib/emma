@@ -14,9 +14,11 @@ module Record::Validatable
   #
   # @type [Boolean]
   #
+  # @note From Upload::FIELD_VALIDATION
+  #
   FIELD_VALIDATION: bool
 
-  # Configured requirements for Entry fields.
+  # Configured requirements for Upload fields.
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -24,18 +26,24 @@ module Record::Validatable
 
   # Indicate whether all required fields have valid values.
   #
+  # @note From Upload#required_fields_valid?
+  #
   def required_fields_valid?: () -> bool
 
   # Indicate whether all required fields have valid values.
+  #
+  # @note From Upload#emma_data_valid?
   #
   def emma_data_valid?: () -> bool
 
   # Compare the source fields against configured requirements.
   #
-  # @param [Hash, nil]        required_fields   Default: `#database_fields`
-  # @param [Entry, Hash, nil] source            Default: self.
+  # @param [Hash, nil]         required_fields  Default: `#database_fields`
+  # @param [Record, Hash, nil] source           Default: self.
   #
   # @return [void]
+  #
+  # @note From Upload#check_required
   #
   # -
   # == Variations
@@ -43,18 +51,18 @@ module Record::Validatable
   #
   # @overload check_required
   #   Check that all configured fields are present in the current record.
-  #   @param [Hash]        required_fields
+  #   @param [Hash]         required_fields
   #
   # @overload check_required(required_fields)
   #   Check that the given fields are present in the current record.
-  #   @param [Hash]        required_fields
+  #   @param [Hash]         required_fields
   #
   # @overload check_required(required_fields, source)
   #   Check that the given fields are present in the given source object.
-  #   @param [Hash]        required_fields
-  #   @param [Entry, Hash] source
+  #   @param [Hash]         required_fields
+  #   @param [Record, Hash] source
   #
-  def check_required: (?(symHash|nil) required_fields, ?(Entry|symHash|nil) source) -> void
+  def check_required: (?(symHash|nil) required_fields, ?(Record|symHash|nil) source) -> void
 
   private
 

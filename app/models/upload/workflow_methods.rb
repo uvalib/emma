@@ -29,13 +29,13 @@ module Upload::WorkflowMethods
 
   public
 
-  # The table column associated generally associated with workflow state.       # NOTE: not relevant to Entry/Phase/Action.
+  # The table column associated generally associated with workflow state.
   #
   # @type [Symbol]
   #
   WORKFLOW_PHASE_COLUMN = :phase
 
-  # The table columns associated with workflow state in general and workflow    # NOTE: to Record::Steppable::STATE_COLUMN
+  # The table columns associated with workflow state in general and workflow
   # state in the context of modifying an existing EMMA entry.
   #
   # @type [Array<Symbol>]
@@ -45,13 +45,13 @@ module Upload::WorkflowMethods
     SECONDARY_STATE_COLUMN = :edit_state
   ].freeze
 
-  # The table columns associated with the active workflow user.                 # NOTE: not relevant to Entry/Phase/Action.
+  # The table columns associated with the active workflow user.
   #
   # @type [Array<Symbol>]
   #
   USER_COLUMNS = %i[user_id edit_user review_user].freeze
 
-  # Groupings of states related by theme.                                       # NOTE: to Record::Steppable
+  # Groupings of states related by theme.
   #
   # @type [Hash{Symbol=>Hash}]
   #
@@ -63,7 +63,7 @@ module Upload::WorkflowMethods
       entry.merge(states: states)
     }.deep_freeze
 
-  # Mapping of workflow state to category.                                      # NOTE: to Record::Steppable
+  # Mapping of workflow state to category.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -83,7 +83,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]
   #
-  def state_column                                                              # NOTE: to Record::Steppable
+  def state_column
     edit_phase ? SECONDARY_STATE_COLUMN : PRIMARY_STATE_COLUMN
   end
 
@@ -126,7 +126,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]
   #
-  def phase_column                                                              # NOTE: not relevant to Entry/Phase/Action.
+  def phase_column
     WORKFLOW_PHASE_COLUMN
   end
 
@@ -134,7 +134,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol, nil]
   #
-  def workflow_phase                                                            # NOTE: not relevant to Entry/Phase/Action.
+  def workflow_phase
     self[phase_column]&.to_sym
   end
 
@@ -142,7 +142,7 @@ module Upload::WorkflowMethods
   #
   # @return [Boolean]
   #
-  def edit_phase                                                                # NOTE: not relevant to Entry/Phase/Action.
+  def edit_phase
     workflow_phase == :edit
   end
 
@@ -150,7 +150,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol, nil]
   #
-  def active_state                                                              # NOTE: not relevant to Entry/Phase/Action.
+  def active_state
     self[state_column]&.to_sym
   end
 
@@ -158,7 +158,7 @@ module Upload::WorkflowMethods
   #
   # @return [String, nil]
   #
-  def active_user                                                               # NOTE: not relevant to Entry/Phase/Action.
+  def active_user
     User.uid_value(self[user_column])
   end
 
@@ -166,7 +166,7 @@ module Upload::WorkflowMethods
   #
   # @return [Boolean]
   #
-  def existing_entry?                                                           # NOTE: to Record::Steppable::InstanceMethods
+  def existing_entry?
     p = workflow_phase
     p.present? && (p != :create) || (active_state == :completed)
   end
@@ -175,7 +175,7 @@ module Upload::WorkflowMethods
   #
   # @return [Boolean]
   #
-  def new_submission?                                                           # NOTE: to Record::Steppable::InstanceMethods
+  def new_submission?
     !existing_entry?
   end
 
@@ -189,7 +189,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]  If the field was *nil* it will come back as :''.
   #
-  def get_phase                                                                 # NOTE: not relevant to Entry/Phase/Action.
+  def get_phase
     get_field_direct(phase_column).to_s.to_sym
   end
 
@@ -203,7 +203,7 @@ module Upload::WorkflowMethods
   # Entering #edit_state also requires execution of #begin_editing in order
   # to set up the record.
   #
-  def set_phase(new_value)                                                      # NOTE: not relevant to Entry/Phase/Action.
+  def set_phase(new_value)
     old_phase = phase.to_s
     new_phase = new_value.to_s
     Log.debug do
@@ -221,7 +221,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]  If the field was *nil* it will come back as :''.
   #
-  def get_state(column = nil)                                                   # NOTE: not relevant to Entry/Phase/Action.
+  def get_state(column = nil)
     get_field_direct(column || PRIMARY_STATE_COLUMN).to_s.to_sym
   end
 
@@ -236,7 +236,7 @@ module Upload::WorkflowMethods
   # Leaving #edit_state also requires execution of #finish_editing in order
   # to update the record with information that may have changed.
   #
-  def set_state(new_value, column = nil)                                        # NOTE: not relevant to Entry/Phase/Action.
+  def set_state(new_value, column = nil)
     column    = column&.to_sym || PRIMARY_STATE_COLUMN
     old_state = self[column].to_s
     new_state = new_value.to_s
@@ -267,7 +267,7 @@ module Upload::WorkflowMethods
   #
   # @return [*]
   #
-  def get_field_direct(column)                                                 # NOTE: to Record::Updatable::InstanceMethods
+  def get_field_direct(column)
     if new_record?
       self[column]
     else
@@ -287,7 +287,7 @@ module Upload::WorkflowMethods
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #
-  def set_field_direct(column, new_value)                                      # NOTE: to Record::Updatable::InstanceMethods
+  def set_field_direct(column, new_value)
     if new_record?
       self[column] = new_value
     else
@@ -307,7 +307,7 @@ module Upload::WorkflowMethods
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #
-  def set_fields_direct(values)                                                # NOTE: to Record::Updatable::InstanceMethods
+  def set_fields_direct(values)
     if new_record?
       values.each_pair { |column, value| self[column] = value }
     else
@@ -324,70 +324,70 @@ module Upload::WorkflowMethods
   # Indicate whether this record is involved in a workflow step related to
   # the creation of a new EMMA entry.
   #
-  def being_created?                                                            # NOTE: to Record::Steppable::InstanceMethods
+  def being_created?
     state_group == :create
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # the modification of an existing EMMA entry.
   #
-  def being_modified?                                                           # NOTE: to Record::Steppable::InstanceMethods
+  def being_modified?
     state_group == :edit
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # the removal of an existing EMMA entry.
   #
-  def being_removed?                                                            # NOTE: to Record::Steppable::InstanceMethods
+  def being_removed?
     state_group == :remove
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # the review process.
   #
-  def under_review?                                                             # NOTE: to Record::Steppable::InstanceMethods
+  def under_review?
     state_group == :review
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # transmission to a member repository.
   #
-  def being_submitted?                                                          # NOTE: to Record::Steppable::InstanceMethods
+  def being_submitted?
     state_group == :submission
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # ingest into the EMMA Unified Index.
   #
-  def being_indexed?                                                            # NOTE: to Record::Steppable::InstanceMethods
+  def being_indexed?
     state_group == :finalization
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # ingest into the EMMA Unified Index.
   #
-  def completed?                                                                # NOTE: to Record::Steppable::InstanceMethods
+  def completed?
     state_group == :done
   end
 
   # Indicate whether this record is involved in a workflow step which leads
   # to a change in the associated EMMA index entry.
   #
-  def in_process?                                                               # NOTE: to Record::Steppable::InstanceMethods
+  def in_process?
     being_submitted? || being_indexed?
   end
 
   # Indicate whether this record is involved in a workflow step where
   # non-administrative data (EMMA or file data) could be changed.
   #
-  def unsealed?                                                                 # NOTE: to Record::Steppable::InstanceMethods
+  def unsealed?
     being_created? || being_modified? || being_removed?
   end
 
   # Indicate whether this record is *not* involved in a workflow step where
   # non-administrative data (EMMA or file data) could be changed.
   #
-  def sealed?                                                                   # NOTE: to Record::Steppable::InstanceMethods
+  def sealed?
     !unsealed?
   end
 
@@ -403,7 +403,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]
   #
-  def state_group(target_state = nil)                                           # NOTE: to Record::Steppable::InstanceMethods
+  def state_group(target_state = nil)
     target_state ||= active_state
     Upload::WorkflowMethods.state_group(target_state)
   end
@@ -420,7 +420,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]  Defaults to :create if *target_state* is invalid.
   #
-  def self.state_group(target_state)                                            # NOTE: to Record::Steppable
+  def self.state_group(target_state)
     REVERSE_STATE_GROUP[target_state&.to_sym] || :create
   end
 
@@ -431,7 +431,7 @@ module Upload::WorkflowMethods
   # @return [String]
   # @return [nil]                     If *group* is invalid.
   #
-  def self.state_group_label(group)                                             # NOTE: to Record::Steppable
+  def self.state_group_label(group)
     STATE_GROUP.dig(group&.to_sym, :label)
   end
 
@@ -470,7 +470,7 @@ module Upload::WorkflowMethods
   #
   # @return [Boolean, nil]
   #
-  def begin_editing(**opt)                                                      # NOTE: not relevant to Entry/Phase/Action.
+  def begin_editing(**opt)
     __debug_items(binding)
     opt[:edit_file_data] ||= nil
     opt[:edit_emma_data] ||= emma_data&.dup
@@ -484,7 +484,7 @@ module Upload::WorkflowMethods
   #
   # @return [Boolean, nil]
   #
-  def finish_editing(**opt)                                                     # NOTE: not relevant to Entry/Phase/Action.
+  def finish_editing(**opt)
     __debug_items(binding)
     data = { file_data: edit_file_data, emma_data: edit_emma_data }
     data = reject_blanks(data)
@@ -505,7 +505,7 @@ module Upload::WorkflowMethods
 
   public
 
-  # Extra information communicated to the Upload form to support reverting      # NOTE: not relevant to Entry/Phase/Action.
+  # Extra information communicated to the Upload form to support reverting
   # the record when backing out of edit changes.
   #
   # @return [Hash{Symbol=>Any}]
@@ -513,16 +513,16 @@ module Upload::WorkflowMethods
   attr_accessor :revert_data
 
   # @type [Array<Symbol>]
-  REVERT_DATA_FIELDS = [                                                        # NOTE: not relevant to Entry/Phase/Action.
-    REVERT_FIELDS      = %i[phase state updated_at].freeze,                     # NOTE: not relevant to Entry/Phase/Action.
-    REVERT_EDIT_FIELDS = %i[edit_user edit_state edited_at].freeze,             # NOTE: not relevant to Entry/Phase/Action.
+  REVERT_DATA_FIELDS = [
+    REVERT_FIELDS      = %i[phase state updated_at].freeze,
+    REVERT_EDIT_FIELDS = %i[edit_user edit_state edited_at].freeze,
   ].flatten.uniq.freeze
 
   # Set @revert_data.
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def set_revert_data                                                           # NOTE: not relevant to Entry/Phase/Action.
+  def set_revert_data
     @revert_data = fields.slice(*REVERT_DATA_FIELDS).compact
   end
 
@@ -530,7 +530,7 @@ module Upload::WorkflowMethods
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def get_revert_data                                                           # NOTE: not relevant to Entry/Phase/Action.
+  def get_revert_data
     @revert_data || {}
   end
 

@@ -62,7 +62,7 @@ module UploadWorkflow::Single::Create::Actions
   #
   # @see UploadWorkflow::External#repository_create
   #
-  def wf_finalize_submission(*event_args)                                       # NOTE: to Action#member_repository_action via Action::Queue#submit! (sorta)
+  def wf_finalize_submission(*event_args)
     __debug_items(binding)
     assert_record_present
     if record.emma_native?

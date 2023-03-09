@@ -22,7 +22,7 @@ module Upload::LookupMethods
   #
   def get_records: (*(symHash|Symbol|String|Integer|Upload) identifiers, **untyped opt) -> Array[Upload]
 
-  # The #search_records method returns a hash with these fields in this order.  # NOTE: to Record::Searchable
+  # The #search_records method returns a hash with these fields in this order.
   #
   #   :offset   The list offset for display purposes (not the SQL OFFSET).
   #   :limit    The page size.
@@ -40,7 +40,7 @@ module Upload::LookupMethods
   #
   SEARCH_RECORDS_TEMPLATE: symHash
 
-  # Local options consumed by #search_records.                                  # NOTE: to Record::Searchable
+  # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
   #

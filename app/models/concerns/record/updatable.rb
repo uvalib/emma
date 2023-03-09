@@ -154,7 +154,9 @@ module Record::Updatable
     #
     # @return [*]
     #
-    def get_field_direct(column)                                               # NOTE: from Upload::WorkflowMethods
+    # @note From Upload::WorkflowMethods#get_field_direct
+    #
+    def get_field_direct(column)
       if new_record?
         self[column]
       else
@@ -172,7 +174,9 @@ module Record::Updatable
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
     #
-    def set_field_direct(column, new_value)                                    # NOTE: from Upload::WorkflowMethods
+    # @note From Upload::WorkflowMethods#set_field_direct
+    #
+    def set_field_direct(column, new_value)
       set_fields_direct(column => new_value)
     end
 
@@ -189,7 +193,9 @@ module Record::Updatable
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
     #
-    def set_fields_direct(pairs)                                               # NOTE: from Upload::WorkflowMethods
+    # @note From Upload::WorkflowMethods#set_fields_direct
+    #
+    def set_fields_direct(pairs)
       if readonly?
         send(:_raise_readonly_record_error)
       elsif destroyed?

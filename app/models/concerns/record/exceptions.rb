@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-module Record::Exceptions                                                       # NOTE: from UploadWorkflow::Errors
+# @note From UploadWorkflow::Errors
+module Record::Exceptions
 
   extend ActiveSupport::Concern
 
@@ -28,7 +29,9 @@ module Record::Exceptions                                                       
   #
   # @see ExceptionHelper#failure
   #
-  def failure(problem, value = nil)                                             # NOTE: from UploadWorkflow::Errors
+  # @note From UploadWorkflow::Errors::RenderMethods#failure
+  #
+  def failure(problem, value = nil)
     ExceptionHelper.failure(problem, value, model: :entry)
   end
 
@@ -132,7 +135,9 @@ class Record::Exceptions::FlashPart < FlashHelper::FlashPart
   #
   # @return [ActiveSupport::SafeBuffer, String, nil]
   #
-  def render_topic(src, **opt)                                                  # NOTE: from UploadWorkflow::Errors::FlashPart
+  # @note From UploadWorkflow::Errors::FlashPart#render_topic
+  #
+  def render_topic(src, **opt)
     src = make_label(src, default: '').presence || src
     super(src, **opt)
   end
@@ -158,7 +163,9 @@ end
 
 # Exception raised when a submission is incomplete or invalid.
 #
-class Record::SubmitError < Record::Error                                       # NOTE: from UploadWorkflow::Errors
+# @note Analogous to UploadWorkflow::Errors::SubmitError
+#
+class Record::SubmitError < Record::Error
 end
 
 __loading_end(__FILE__)

@@ -32,9 +32,11 @@ module Record::Steppable
 
   public
 
-  # The default state column name.                                              # NOTE: from Upload::WorkflowMethods::STATE_COLUMNS
+  # The default state column name.
   #
   # @type [Symbol]
+  #
+  # @note From Upload::WorkflowMethods#STATE_COLUMNS
   #
   STATE_COLUMN = :state
 
@@ -81,21 +83,25 @@ module Record::Steppable
       end
     }.deep_freeze
 
-  # Groupings of states related by theme.                                       # NOTE: from Upload::WorkflowMethods
+  # Groupings of states related by theme.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/controllers/entry.en.yml
+  # @see file:config/locales/controllers/upload.en.yml
+  #
+  # @note From Upload::WorkflowMethods#STATE_GROUP
   #
   STATE_GROUP =
-    I18n.t('emma.entry.state_group', default: {}).transform_values { |entry|
+    I18n.t('emma.upload.state_group', default: {}).transform_values { |entry|
       states = Array.wrap(entry[:states]).map(&:to_sym)
       entry.merge(states: states)
     }.deep_freeze
 
-  # Mapping of workflow state to category.                                      # NOTE: from Upload::WorkflowMethods
+  # Mapping of workflow state to category.
   #
   # @type [Hash{Symbol=>Symbol}]
+  #
+  # @note From Upload::WorkflowMethods#REVERSE_STATE_GROUP
   #
   REVERSE_STATE_GROUP =
     STATE_GROUP.flat_map { |group, entry|
@@ -113,7 +119,9 @@ module Record::Steppable
   #
   # @return [Symbol]
   #
-  def state_column(*)                                                           # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#state_column
+  #
+  def state_column(*)
     STATE_COLUMN
   end
 
@@ -223,7 +231,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def existing_entry?(item)                                                     # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#existing_entry?
+  #
+  def existing_entry?(item)
     state_value(item) == :completed
   end
 
@@ -231,7 +241,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def new_submission?(item)                                                     # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#new_submission?
+  #
+  def new_submission?(item)
     !existing_entry?(item)
   end
 
@@ -247,7 +259,9 @@ module Record::Steppable
   #
   # @return [Symbol]  Defaults to :all if *target_state* is invalid.
   #
-  def state_group(item)                                                         # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#state_group
+  #
+  def state_group(item)
     if item.is_a?(String) || item.is_a?(Symbol)
       state = item.to_sym
     else
@@ -263,7 +277,9 @@ module Record::Steppable
   # @return [String]
   # @return [nil]                     If *group* is invalid.
   #
-  def state_group_label(group)                                                  # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#state_group_label
+  #
+  def state_group_label(group)
     if group.is_a?(String) || group.is_a?(Symbol)
       group = group.to_sym
     else
@@ -285,7 +301,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def being_created?(item)                                                      # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#being_created?
+  #
+  def being_created?(item)
     state_group(item) == :create
   end
 
@@ -294,7 +312,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def being_modified?(item)                                                     # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#being_modified?
+  #
+  def being_modified?(item)
     state_group(item) == :edit
   end
 
@@ -303,7 +323,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def being_removed?(item)                                                      # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#being_removed?
+  #
+  def being_removed?(item)
     state_group(item) == :remove
   end
 
@@ -312,7 +334,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def under_review?(item)                                                       # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#under_review?
+  #
+  def under_review?(item)
     state_group(item) == :review
   end
 
@@ -321,7 +345,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def being_submitted?(item)                                                    # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#being_submitted?
+  #
+  def being_submitted?(item)
     state_group(item) == :submission
   end
 
@@ -330,7 +356,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def being_indexed?(item)                                                      # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#being_indexed?
+  #
+  def being_indexed?(item)
     state_group(item) == :finalization
   end
 
@@ -339,7 +367,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def completed?(item)                                                          # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#completed?
+  #
+  def completed?(item)
     state_group(item) == :done
   end
 
@@ -348,7 +378,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def in_process?(item)                                                         # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#in_process?
+  #
+  def in_process?(item)
     item = state_group(item)
     being_submitted?(item) || being_indexed?(item)
   end
@@ -358,7 +390,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def unsealed?(item)                                                           # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#unsealed?
+  #
+  def unsealed?(item)
     item = state_group(item)
     being_created?(item) || being_modified?(item) || being_removed?(item)
   end
@@ -368,7 +402,9 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
-  def sealed?(item)                                                             # NOTE: from Upload::WorkflowMethods
+  # @note From Upload::WorkflowMethods#sealed?
+  #
+  def sealed?(item)
     !unsealed?(item)
   end
 
@@ -891,181 +927,6 @@ module Record::Steppable
     #
     def final_state?(curr_state = nil, **)
       next_state(curr_state).blank?
-    end
-
-    # Indicate whether the current record can transition to the given state.
-    #
-    # @param [Symbol, String] new_state
-    #
-    def can_transition_to?(new_state, **)
-      curr_state = state_value
-      new_state  = state_value(new_state)
-      (curr_state == new_state) || transitions(curr_state).include?(new_state)
-    end
-
-    # Indicate whether the current record can't transition to the given state.
-    #
-    # @param [Symbol, String] new_state
-    #
-    def cannot_transition_to?(new_state, **)
-      !can_transition_to?(new_state)
-    end
-
-    # Transition to a new state.
-    #
-    # @param [Symbol, String] new_state
-    # @param [Symbol]         meth        For error messages.
-    # @param [Boolean]        no_raise    If *false* raise on error.
-    #
-    # @raise [Record::SubmitError]    If !*no_raise* and invalid transition.
-    #
-    # @return [nil]                   If *no_raise* and invalid transition.
-    # @return [Symbol]                The state before the transition.
-    #
-    def transition_to(new_state, meth: nil, no_raise: nil, **)
-      curr_state = state_value
-      new_state  = state_value(new_state)
-      unless curr_state == new_state
-        next_states = transitions(curr_state)
-        error =
-          if next_states.blank?
-            "#{curr_state} is terminal"
-          elsif !next_states.include?(new_state)
-            "next states #{next_states.inspect}"
-          end
-        if error
-          meth ||= "#{self.class}##{__method__}"
-          error = "#{meth}: '#{curr_state}->#{new_state}' is invalid: #{error}"
-          Log.warn(error)
-          false?(no_raise) and failure(error) or return
-        end
-        send("#{new_state}!")
-      end
-      curr_state
-    end
-
-    # For each state/action pair of the sequence, transition to the state and
-    # perform the action.  An action which is not a proc or a the name of a
-    # method then it represents the end of the sequence and the value is used
-    # as the return value of this method.
-    #
-    # @param [Hash{Symbol=>Proc,Symbol,Boolean}, nil] sequence
-    # @param [Symbol] meth            For error reporting.
-    #
-    # @raise [Record::SubmitError]    If !*no_raise* and invalid transition.
-    #
-    # @return [Boolean]
-    #
-    # @yield To supply additional state/action pairs.
-    # @yieldreturn [Hash{Symbol=>Proc,Symbol,Boolean}]
-    #
-    def transition_sequence(sequence: nil, meth:, **)
-      result = nil
-      steps  = sequence || {}
-      steps  = steps.merge(yield.to_hash) if block_given?
-      steps.each_pair do |new_state, action|
-        if cannot_transition_to?(new_state)
-          result = nil
-          Log.error { "#{meth}: #{__method__}: bad steps: #{steps.inspect}" }
-          break
-        elsif action.is_a?(Proc) || action.is_a?(Symbol)
-          result, new_state = execute_step(action, new_state)
-          transition_to(new_state) if new_state
-          break if result.nil?
-        elsif !action.nil?
-          result = action
-          transition_to(new_state)
-          break
-        end
-      end
-      !!result
-    end
-
-    # Execute a sequence step.
-    #
-    # @param [Proc, Symbol] step        Action to perform.
-    # @param [Symbol, nil]  new_state   Target state after *action*.
-    # @param [Boolean]      auto_retry
-    #
-    # @return [Array<(Any,Symbol)>]     Action result and new effective state.
-    #
-    # == Usage Notes
-    # Ensures that if the action raises an exception then that is captured in
-    # the instance's :report column.
-    #
-    def execute_step(step, new_state = nil, auto_retry: false, **)
-      # noinspection RubyUnusedLocalVariable
-      result = aborting = no_state = nil
-      begin
-        initial  = state_value
-        result   = step.is_a?(Proc) ? step.call : send(step)
-        no_state = (state_value != initial) # The action already set the state.
-        aborting = failed?
-      rescue => error
-        aborting = true
-        set_error(error)
-        # noinspection RubyMismatchedArgumentType
-        set_exec_report(error)
-      end
-      if aborting
-        case self
-          when Action
-            self.state     = auto_retry ? :started : :aborted
-            self.command   = :retry if auto_retry
-            self.condition = :failed
-          when Phase
-            self.state     = auto_retry ? :restarting : :aborted
-          else
-            Log.warn { "#{__method__}: #{self.class} unexpected" }
-        end
-        save
-      end
-      new_state = nil if no_state || aborting # State already set.
-      return result, new_state
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Schedule a method to be run asynchronously (unless :async is *false*).
-    #
-    # @param [Symbol]  meth
-    # @param [Array]   args           Arguments to *meth*.
-    # @param [Boolean] async          If *false* do not run asynchronously.
-    # @param [Hash]    opt
-    #
-    # @return [Boolean]               False if the job could not be processed.
-    #
-    #--
-    # noinspection RubyUnusedLocalVariable
-    #++
-    def job_run(meth, *args, async: true, **opt)
-      async = false # TODO: remove when implementing async jobs
-      if false?(async)
-        job_class.perform_now(self, meth, *args, **opt)
-        exec_report.blank?
-      else
-        job_class.perform_later(self, meth, *args, **opt).present?
-      end
-    end
-
-    # If the option hash includes a :callback then invoke it.
-    #
-    # @param [Hash] opt               Passed to #cb_schedule.
-    #
-    # @return [Boolean]               False if the job could not be processed.
-    #
-    def run_callback(**opt)
-      callback     = opt.delete(:callback) or return true
-      meth         = opt.delete(:meth) || calling_method
-      opt[:from] ||= self
-      __debug_items("#{self.class}::#{meth}", __method__) do
-        { from: opt[:from], callback: callback }
-      end
-      callback.cb_schedule(**opt)
     end
 
   end

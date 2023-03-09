@@ -1,11 +1,13 @@
-# Utility methods for reporting on records.                                     # NOTE: from UploadWorkflow::Errors::RenderMethods
+# Utility methods for reporting on records.
+#
+# @note From UploadWorkflow::Errors::RenderMethods
 #
 module Record::Rendering
   include Emma::Common
 
   extend ::Record::Rendering
 
-  # Default label. TODO: I18n                                                   # NOTE: from UploadWorkflow::Errors::RenderMethods
+  # Default label. TODO: I18n
   #
   # @type [String]
   #
@@ -17,6 +19,9 @@ module Record::Rendering
   # @param [String]                        default
   #
   # @return [String]
+  #
+  # @note From Upload::RenderMethods#make_label
+  # @note From Upload::Errors::RenderMethods#make_label
   #
   def make_label: (untyped item, ?default: String) -> String
 

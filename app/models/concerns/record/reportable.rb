@@ -17,13 +17,6 @@ module Record::Reportable
   include Record::Exceptions
   include Record::Updatable::InstanceMethods
 
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include Record::Controllable::ConditionMethods
-    # :nocov:
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================

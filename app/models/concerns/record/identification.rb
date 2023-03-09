@@ -34,7 +34,7 @@ module Record::Identification
 
   # The type of record for the current context.
   #
-  # (This will be Entry unless within an instance of another type of Record.)
+  # (This will be Upload unless within an instance of another type of Record.)
   #
   # @return [Class<ApplicationRecord>]
   #
@@ -65,7 +65,7 @@ module Record::Identification
   def record_class_for(item)
     return item       if Record.model_class?(item)
     return item.class if Record.model_class?(item.class)
-    Entry
+    Upload
   end
 
   # Name of the type of record for the given item.
@@ -96,6 +96,8 @@ module Record::Identification
   #
   # @param [*] value
   #
+  # @note From Upload::IdentifierMethods#valid_id?
+  #
   def valid_id?(value)
       digits_only?(value)
   end
@@ -110,7 +112,9 @@ module Record::Identification
   # @return [String]                  Record ID Array<(:id)>.
   # @return [nil]                     No valid :id specified.
   #
-  def id_value(item, **opt)                                                     # NOTE: from Upload::IdentifierMethods#id_for
+  # @note From Upload::IdentifierMethods#id_for
+  #
+  def id_value(item, **opt)
     if valid_id?(item)
       item.to_s
     elsif valid_id?((item = get_value(item, (opt[:id_key] || id_column))))
@@ -149,13 +153,15 @@ module Record::Identification
   #
   # @return [*]
   #
-  def get_value(item, key, default: nil, **)                                    # NOTE: from Upload
+  # @note From Upload#get_value
+  #
+  def get_value(item, key, default: nil, **)
     return if key.blank?
     if key.is_a?(Array)
       key.find { |k| (v = get_value(item, k)) and break v }
     elsif item.respond_to?(key)
       item.send(key)
-    elsif item.respond_to?(:emma_metadata) # Entry, Phase, etc.
+    elsif item.respond_to?(:emma_metadata) # Upload, etc.
       item.emma_metadata&.dig(key.to_sym)
     elsif item.is_a?(Hash)
       item[key.to_sym] || item[key.to_s]
@@ -190,14 +196,16 @@ module Record::Identification
   # @param [Hash]        opt          Used if *item* is *nil* except for:
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
-  # @option opt [Symbol] :alt_id_key  E.g. :entry_id, :phase_id, :action_id
+  # @option opt [Symbol] :alt_id_key  E.g. :entry_id
   #
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
   # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
   #
-  def find_record(item, no_raise: false, meth: nil, **opt)                      # NOTE: from UploadWorkflow::External#get_record
+  # @note From UploadWorkflow::External#get_record
+  #
+  def find_record(item, no_raise: false, meth: nil, **opt)
     # noinspection RubyMismatchedReturnType
     return item if item.nil? || item.is_a?(record_class)
     meth  ||= __method__
@@ -240,14 +248,16 @@ module Record::Identification
   #
   # @param [Array<Model,String,Array>] items
   # @param [Symbol]                    id_key       Default: `#id_column`.
-  # @param [Symbol, nil]               alt_id_key   E.g. :entry_id, :phase_id
+  # @param [Symbol, nil]               alt_id_key   E.g. :entry_id
   # @param [Hash]                      opt          Passed to #collect_records
   #
   # @option opt []
   #
   # @return [Array<Model>]
   #
-  def find_records(*items, id_key: nil, alt_id_key: nil, **opt)                 # NOTE: from UploadWorkflow::External
+  # @note From UploadWorkflow::External#find_records
+  #
+  def find_records(*items, id_key: nil, alt_id_key: nil, **opt)
     id_key ||= id_column
     unless opt[:all]
       opt_items = id_key     && opt.delete(id_key)
@@ -283,12 +293,14 @@ module Record::Identification
   #
   # @see Record::Searchable#get_records
   #
+  # @note From UploadWorkflow::External#collect_records
+  #
   # == Usage Notes
   # If *force* is true, the returned list of failed records will be empty but
   # the returned list of items may contain a mixture of Model and String
   # elements.
   #
-  def collect_records(*items, all: false, force: false, type: nil, **opt)       # NOTE: from UploadWorkflow::External
+  def collect_records(*items, all: false, force: false, type: nil, **opt)
     raise 'If :all is true then no items are allowed'  if all && items.present?
     opt = items.pop if items.last.is_a?(Hash) && opt.blank?
     Log.warn { "#{__method__}: no criteria supplied" } if all && opt.blank?
@@ -338,7 +350,9 @@ module Record::Identification
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
-  def id_term(v = nil, **opt)                                                         # NOTE: from Upload::IdentifierMethods
+  # @note From Upload::IdentifierMethods#id_term
+  #
+  def id_term(v = nil, **opt)
     id_key  = opt.key?(:id_key) ? opt.delete(:id_key) : id_column
     sid_key = opt.delete(:sid_key)
     v = opt     if v.nil? && opt.present?
@@ -368,7 +382,9 @@ module Record::Identification
   #
   # @return [Array<String>]
   #
-  def compact_ids(*items, **opt)                                                # NOTE: from Upload::IdentifierMethods
+  # @note From Upload::IdentifierMethods#compact_ids
+  #
+  def compact_ids(*items, **opt)
     ids, non_ids = expand_ids(*items, **opt).partition { |v| valid_id?(v) }
     group_ids(*ids, **opt) + non_ids.sort!.uniq
   end
@@ -388,6 +404,8 @@ module Record::Identification
   # @option opt [Integer] :max_id     Default: `#maximum_id`
   #
   # @return [Array<String>]
+  #
+  # @note From Upload::IdentifierMethods#id_term
   #
   # == Examples
   #
@@ -422,7 +440,7 @@ module Record::Identification
   #   expand_ids('$')   -> %w(6)
   #   expand_ids('$-$') -> %w(6)
   #
-  def expand_ids(*ids, **opt)                                                   # NOTE: from Upload::IdentifierMethods
+  def expand_ids(*ids, **opt)
     opt[:min_id] ||= minimum_id
     opt[:max_id] ||= maximum_id
     # noinspection RubyMismatchedReturnType
@@ -443,6 +461,8 @@ module Record::Identification
   # @param [Integer, nil]  max_id     Default: `#maximum_id`
   #
   # @return [Array<String>]
+  #
+  # @note From Upload::IdentifierMethods#group_ids
   #
   def group_ids(*ids, min_id: nil, max_id: nil, **)
     min = (min_id ||= minimum_id).to_s
@@ -467,9 +487,11 @@ module Record::Identification
 
   public
 
-  # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
+  # A valid ID range term for interpolation into a Regexp.
   #
   # @type [String]
+  #
+  # @note From Upload::IdentifierMethods#RANGE_TERM
   #
   RNG_TERM = '(\d+|\$|\*)'
 
@@ -491,7 +513,9 @@ module Record::Identification
   #
   # @see #expand_ids
   #
-  def expand_id_range(id, **opt)                                                # NOTE: from Upload::IdentifierMethods
+  # @note From Upload::IdentifierMethods#expand_id_range
+  #
+  def expand_id_range(id, **opt)
     id_key  = opt[:id_key]&.to_sym || id_column
     sid_key = opt[:sid_key]
     min = max = nil
@@ -529,7 +553,9 @@ module Record::Identification
   # @return [Integer]                 If 0 then the table is empty.
   # @return [nil]                     Not supported by the current schema.
   #
-  def minimum_id(id_key: nil)                                                   # NOTE: from Upload::IdentifierMethods
+  # @note From Upload::IdentifierMethods#minimum_id
+  #
+  def minimum_id(id_key: nil)
     record_class.minimum(id_key || id_column)&.to_i
   end
 
@@ -540,7 +566,9 @@ module Record::Identification
   # @return [Integer]                 If 0 then the table is empty.
   # @return [nil]                     Not supported by the current schema.
   #
-  def maximum_id(id_key: nil)                                                   # NOTE: from Upload::IdentifierMethods
+  # @note From Upload::IdentifierMethods#maximum_id
+  #
+  def maximum_id(id_key: nil)
     record_class.maximum(id_key || id_column)&.to_i
   end
 

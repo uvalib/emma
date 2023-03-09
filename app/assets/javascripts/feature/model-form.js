@@ -225,7 +225,7 @@ appSetup(MODULE, function() {
      * @property {singleString} bib_seriesType
      * @property {singleString} bib_seriesPosition
      *
-     * @see "en.emma.entry.record.emma_data"
+     * @see "en.emma.upload.record.emma_data"
      * @see "AwsS3::Record::SubmissionRequest"
      */
 
@@ -270,30 +270,11 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * A complete submission database record.
-     *
-     * @typedef {{
-     *      id:             number,
-     *      file_data:      FileData,
-     *      emma_data:      EmmaData,
-     *      user_id:        number,
-     *      repository:     string,
-     *      submission_id:  string,
-     *      fmt:            string,
-     *      ext:            string,
-     *      created_at:     string,
-     *      updated_at:     string,
-     * }} EntryRecord
-     *
-     * @see "en.emma.entry.record"
+     * @typedef {UploadRecord} SubmissionRecord
      */
 
     /**
-     * @typedef {UploadRecord|EntryRecord} SubmissionRecord
-     */
-
-    /**
-     * @typedef {UploadRecord[]|EntryRecord[]} SubmissionRecords
+     * @typedef {UploadRecord[]} SubmissionRecords
      */
 
     /**
@@ -312,30 +293,11 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * JSON format of a response message containing a list of submissions.
-     *
-     * @typedef {{
-     *      entries: {
-     *          properties: RecordMessageProperties,
-     *          list:       EntryRecord[],
-     *      }
-     * }} EntryRecordMessage
+     * @typedef {UploadRecordMessage} SubmissionRecordMessage
      */
 
     /**
-     * SubmissionRecordMessage
-     *
-     * @typedef {
-     *      UploadRecordMessage | EntryRecordMessage
-     * } SubmissionRecordMessage
-     */
-
-    /**
-     * SubmissionRecordsCB
-     *
-     * @typedef {
-     *      function(UploadRecord[]) | function(EntryRecord[])
-     * } SubmissionRecordsCB
+     * @typedef {function(UploadRecord[])} SubmissionRecordsCB
      */
 
     /**
@@ -760,7 +722,7 @@ appSetup(MODULE, function() {
         }
 
         /**
-         * This event occurs when the response from POST /entry/upload is
+         * This event occurs when the response from POST /upload/upload is
          * received with a failure status (4xx).
          *
          * @param {UppyFile}                       file
@@ -773,7 +735,7 @@ appSetup(MODULE, function() {
         }
 
         /**
-         * This event occurs when the response from POST /entry/upload is
+         * This event occurs when the response from POST /upload/upload is
          * received with success status (200).  At this point, the file has
          * been uploaded by Shrine, but has not yet been validated.
          *
@@ -1130,7 +1092,7 @@ appSetup(MODULE, function() {
             // A generic object.
             data = asString(entry, (K / 2));
         } else {
-            // An object which is a de-serialized Entry record.
+            // An object which is a de-serialized Upload record.
             const start = bulkOpResultsStartTime($results);
             const date  = time            || new Date();
             const fd    = entry.file_data || {};

@@ -1,5 +1,0 @@
-class Phase::WorkflowJob < Model::WorkflowJob
-  # Run the command(s) specified by the Phase. # TODO: needed?
-  #
-  def perform: (*untyped args) -> void
-end

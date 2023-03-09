@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
-# Utility methods for reporting on records.                                     # NOTE: from UploadWorkflow::Errors::RenderMethods
+# Utility methods for reporting on records.
+#
+# @note From UploadWorkflow::Errors::RenderMethods
 #
 module Record::Rendering
 
@@ -19,9 +21,11 @@ module Record::Rendering
 
   public
 
-  # Default label. TODO: I18n                                                   # NOTE: from UploadWorkflow::Errors::RenderMethods
+  # Default label. TODO: I18n
   #
   # @type [String]
+  #
+  # @note From UploadWorkflow::Errors::RenderMethods#DEFAULT_LABEL
   #
   DEFAULT_LABEL = '(missing)'
 
@@ -38,7 +42,10 @@ module Record::Rendering
   #
   # @return [String]
   #
-  def make_label(item, default: DEFAULT_LABEL)                                  # NOTE: from UploadWorkflow::Errors::RenderMethods
+  # @note From Upload::RenderMethods#make_label
+  # @note From Upload::Errors::RenderMethods#make_label
+  #
+  def make_label(item, default: DEFAULT_LABEL)
     # noinspection RailsParamDefResolve
     file  = item.try(:filename)
     ident = item.try(:identifier) || item_identity(item) || default

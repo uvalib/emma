@@ -1,5 +1,0 @@
-class Action::WorkflowJob < Model::WorkflowJob
-  # Run the command(s) specified by the Action. # TODO: needed?
-  #
-  def perform: (*untyped args) -> untyped
-end

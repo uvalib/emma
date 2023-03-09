@@ -23,7 +23,7 @@ module Upload::RenderMethods
   #
   # @see BaseDecorator::Menu#items_menu_label
   #
-  def menu_label(item = nil)                                                    # NOTE: to Record::Rendering
+  def menu_label(item = nil)
     item ||= self
     name   = item.submission_id.presence
     file   = item.filename.presence

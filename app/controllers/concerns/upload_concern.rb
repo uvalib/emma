@@ -33,7 +33,7 @@ module UploadConcern
 
   public
 
-  MIME_REGISTRATION =                                                           # NOTE: to EntryConcern
+  MIME_REGISTRATION =
     FileNaming.format_classes.values.each(&:register_mime_types)
 
   # ===========================================================================
@@ -42,7 +42,7 @@ module UploadConcern
 
   public
 
-  # URL parameters associated with item/entry identification.                   # NOTE: to EntryConcern
+  # URL parameters associated with item/entry identification.
   #
   # @type [Array<Symbol>]
   #
@@ -70,15 +70,15 @@ module UploadConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  def upload_params                                                             # NOTE: to EntryConcern#entry_params
+  def upload_params
     @upload_params ||= get_upload_params
   end
 
-  # Get URL parameters relevant to the current operation.                       # NOTE: method now unused
+  # Get URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def get_upload_params                                                         # NOTE: to EntryConcern#get_entry_params
+  def get_upload_params
     model_options.get_model_params.tap do |prm|
       id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
       @identifier ||= sel || sid || id
@@ -99,7 +99,7 @@ module UploadConcern
   # submission where metadata is being changed but the uploaded file is not
   # being replaced.
   #
-  def upload_post_params                                                        # NOTE: to EntryConcern#entry_post_params
+  def upload_post_params
     model_options.model_post_params.tap do |prm|
       prm[:base_url] = request.base_url
       id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
@@ -117,7 +117,7 @@ module UploadConcern
   #
   # @see ImportConcern#fetch_data
   #
-  def upload_bulk_post_params                               # NOTE: to EntryConcern#entry_bulk_post_params
+  def upload_bulk_post_params
     prm = upload_post_params
     opt = extract_hash!(prm, :src, :source, :data)
     opt[:src]  = opt.delete(:source) if opt.key?(:source)
@@ -130,7 +130,7 @@ module UploadConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  def workflow_parameters                                                       # NOTE: to EntryConcern#entry_request_params (sorta)
+  def workflow_parameters
     result = { id: db_id, user_id: @user&.id }
     result.compact!
     result.merge!(upload_post_params)
@@ -143,19 +143,19 @@ module UploadConcern
 
   public
 
-  # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
+  # Parameters used by Upload#search_records.
   #
   # @type [Array<Symbol>]
   #
   SEARCH_RECORDS_PARAMS = Upload::SEARCH_RECORDS_OPTIONS
 
-  # Upload#search_records parameters that specify a distinct search query.      # NOTE: to EntryConcern
+  # Upload#search_records parameters that specify a distinct search query.
   #
   # @type [Array<Symbol>]
   #
   SEARCH_ONLY_PARAMS = (SEARCH_RECORDS_PARAMS - %i[offset limit]).freeze
 
-  # Parameters used by #find_by_match_records or passed on to                   # NOTE: to EntryConcern
+  # Parameters used by #find_by_match_records or passed on to
   # Upload#search_records.
   #
   # @type [Array<Symbol>]
@@ -175,7 +175,7 @@ module UploadConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  def find_or_match_records(*items, **opt)                                      # NOTE: to EntryConcern#find_or_match_entries
+  def find_or_match_records(*items, **opt)
     items = items.flatten.compact
     items << identifier if items.blank? && identifier.present?
 
@@ -252,7 +252,7 @@ module UploadConcern
   #
   # @see Upload#get_record
   #
-  def get_record(id = nil)                                                            # NOTE: to EntryConcern#get_entry
+  def get_record(id = nil)
     id ||= identifier
     if (result = Upload.get_record(id))
       result
@@ -272,7 +272,7 @@ module UploadConcern
   # @return [Upload]                  Object created from received data.
   # @return [nil]                     Bad data and/or no object created.
   #
-  def proxy_get_record(sid, host)                                               # NOTE: to EntryConcern#proxy_get_entry
+  def proxy_get_record(sid, host)
     data = sid && Faraday.get("#{host}/upload/show/#{sid}.json").body
     data = json_parse(data) || {}
     data = data[:response]  || data

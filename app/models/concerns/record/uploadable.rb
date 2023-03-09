@@ -36,21 +36,25 @@ module Record::Uploadable
 
   public
 
-  # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: from Upload::FileMethods
+  # The maximum age (in seconds) allowed for download links which are meant to
   # be valid only for a single time.
   #
   # This should be generous to allow for network delays.
   #
   # @type [Integer]
   #
+  # @note From Upload::FileMethods#ONE_TIME_USE_EXPIRATION
+  #
   ONE_TIME_USE_EXPIRATION = 10
 
-  # The maximum age (in seconds) allowed for download links.                    # NOTE: from Upload::FileMethods
+  # The maximum age (in seconds) allowed for download links.
   #
   # This allows the link to be reused for a while, but not long enough to allow
   # sharing of content URLs for distribution.
   #
   # @type [Integer]
+  #
+  # @note From Upload::FileMethods#DOWNLOAD_EXPIRATION
   #
   DOWNLOAD_EXPIRATION = 1800
 
@@ -63,7 +67,7 @@ module Record::Uploadable
   # Shrine attachment for :file_data.
   #
   # noinspection RubyResolve
-  include FileUploader::Attachment(:file)                                       # NOTE: from Upload::FileMethods
+  include FileUploader::Attachment(:file)
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -101,7 +105,9 @@ module Record::Uploadable
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
-  def filename                                                                  # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#filename
+  #
+  def filename
     @filename ||= attached_file&.original_filename&.dup
   end
 
@@ -110,7 +116,9 @@ module Record::Uploadable
   # @return [FileUploader::UploadedFile]
   # @return [nil]                     If :file_data is blank.
   #
-  def attached_file                                                             # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#attached_file
+  #
+  def attached_file
 =begin # TODO: remove when :json resolved
     file || (file_attacher.load_data(file_data) if file_data.present?)
 =end
@@ -127,7 +135,9 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def attach_cached                                                             # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#attach_cached
+  #
+  def attach_cached
     return file_attacher.file if file_attacher.cached?
     return if file_attacher.stored? || file_data.blank?
 =begin # TODO: remove when :json resolved
@@ -145,7 +155,9 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def file_attacher_load(data = nil)                                          # NOTE: from Upload::FileMethods#attached_file
+  # @note From Upload::FileMethods#attached_file
+  #
+  def file_attacher_load(data = nil)
     data ||= file_data
     data &&= make_file_record(data)
     file_attacher.load_data(data) if data.present?
@@ -166,7 +178,9 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_file(no_raise: true)                                              # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#promote_file
+  #
+  def promote_file(no_raise: true)
     __debug_items(binding)
     promote_cached_file(no_raise: no_raise)
   end
@@ -177,7 +191,9 @@ module Record::Uploadable
   #
   # @return [void]
   #
-  def delete_file(no_raise: true)                                               # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#delete_file
+  #
+  def delete_file(no_raise: true)
     __debug_items(binding)
     return if destroyed? || attached_file.nil?
     file_attacher.destroy
@@ -202,7 +218,9 @@ module Record::Uploadable
   # @return [String]
   # @return [nil]                     If :file_data is blank.
   #
-  def download_url(**opt)                                                       # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#download_url
+  #
+  def download_url(**opt)
     opt[:expires_in] ||= ONE_TIME_USE_EXPIRATION
     attached_file&.url(**opt)
   end
@@ -211,7 +229,9 @@ module Record::Uploadable
   #
   # @return [Aws::S3::Object, nil]
   #
-  def s3_object                                                                 # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#s3_object
+  #
+  def s3_object
     attached_file&.storage&.object(file.id)
   end
 
@@ -221,7 +241,7 @@ module Record::Uploadable
 
   public
 
-  # Upload file via Shrine.                                                     # NOTE: from UploadWorkflow::External
+  # Upload file via Shrine.
   #
   # @param [Hash] opt
   #
@@ -230,6 +250,8 @@ module Record::Uploadable
   # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
+  #
+  # @note From UploadWorkflow::External#upload_file
   #
   def upload_file(**opt)
     fault!(opt) # @see Record::Testing
@@ -255,6 +277,8 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile]
   #
+  # @note From Upload::FileMethods#fetch_and_upload_file
+  #
   # == Usage Notes
   # This method is not necessary for an Entry instance which is persisted to
   # the database because Shrine adds event handlers which cause the file to be
@@ -262,7 +286,7 @@ module Record::Uploadable
   # Entry instance (without needing to execute #save in order to engage Shrine
   # event handlers to copy the file to storage).
   #
-  def fetch_and_upload_file(file, **opt)                                        # NOTE: from Upload::FileMethods
+  def fetch_and_upload_file(file, **opt)
     meth   = opt.delete(:meth) || __method__
     remote = file.match?(/^https?:/)
     result = remote ? upload_remote(file, **opt) : upload_local(file, **opt)
@@ -281,7 +305,7 @@ module Record::Uploadable
 
   protected
 
-  # Options for Down#open.                                                      # NOTE: from Upload::FileMethods
+  # Options for Down#open.
   #
   # @type [Hash]
   #
@@ -289,9 +313,11 @@ module Record::Uploadable
   # @see Down::NetHttp#open
   # @see Down::NetHttp#create_net_http
   #
+  # @note From Upload::FileMethods#DOWN_OPEN_OPTIONS
+  #
   DOWN_OPEN_OPTIONS = { read_timeout: 60 }.deep_freeze
 
-  # Acquire a remote file and copy it to storage.                               # NOTE: from Upload::FileMethods#upload_remote_file
+  # Acquire a remote file and copy it to storage.
   #
   # @param [String] url
   # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:
@@ -299,6 +325,8 @@ module Record::Uploadable
   # @option opt [Integer] :read_retry
   #
   # @return [FileUploader::UploadedFile]
+  #
+  # @note From Upload::FileMethods#upload_remote_file
   #
   def upload_remote(url, **opt)
     # @type [Down::ChunkedIO] io
@@ -321,7 +349,9 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile]
   #
-  def upload_local(path, **opt)                                                 # NOTE: from Upload::FileMethods#upload_local_file
+  # @note From Upload::FileMethods#upload_local_file
+  #
+  def upload_local(path, **opt)
     File.open(path) do |io|
       file_attacher.attach(io, **opt)
     end
@@ -338,7 +368,9 @@ module Record::Uploadable
 
   # Indicate whether the attached file is valid.
   #
-  def attached_file_valid?                                                      # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#attached_file_valid?
+  #
+  def attached_file_valid?
     return false if file.nil?
     file_attacher.validate
     file_attacher.errors.each { |e|
@@ -357,6 +389,8 @@ module Record::Uploadable
   # @param [Symbol] type
   #
   # @return [void]
+  #
+  # @note From Upload::FileMethods#note_cb
   #
   # == Usage Notes
   #
@@ -378,7 +412,7 @@ module Record::Uploadable
   #   Shrine::Attacher::InstanceMethods#destroy_attached
   #     Shrine::Attacher::InstanceMethods#destroy
   #
-  def note_cb(type)                                                             # NOTE: from Upload::FileMethods
+  def note_cb(type)
     __debug_line("*** SHRINE CALLBACK #{type} *** | #{file_data.inspect}")
   end
 
@@ -389,7 +423,9 @@ module Record::Uploadable
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_cached_file(no_raise: false, keep_cached: false)                  # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#promote_cached_file
+  #
+  def promote_cached_file(no_raise: false, keep_cached: false)
     __debug_items(binding)
     return unless attach_cached
     old_file   = !keep_cached
@@ -408,7 +444,9 @@ module Record::Uploadable
   #
   # @return [TrueClass, nil]
   #
-  def delete_cached_file(no_raise: false)                                       # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#delete_cached_file
+  #
+  def delete_cached_file(no_raise: false)
     __debug_items(binding)
     return unless attach_cached
     file_attacher.destroy
@@ -433,7 +471,9 @@ module Record::Uploadable
   #
   # @return [nil]
   #
-  def log_exception(excp, meth = nil)                                           # NOTE: from Upload::FileMethods
+  # @note From Upload::FileMethods#log_exception
+  #
+  def log_exception(excp, meth = nil)
     error = warning = nil
     case excp
       when Shrine::FileNotFound      then warning = 'FILE_NOT_FOUND'
@@ -465,7 +505,7 @@ module Record::Uploadable
     # Non-functional hints for RubyMine type checking.
     unless ONLY_FOR_DOCUMENTATION
       # :nocov:
-      include Record::Uploadable # TODO: remove after upload -> entry
+      include Record::Uploadable
       include ActiveRecord::Validations
       include ActiveRecord::Callbacks::ClassMethods
       # :nocov:
@@ -502,25 +542,6 @@ module Record::Uploadable
 
     after_destroy do
       delete_file
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # noinspection RailsParamDefResolve, RbsMissingTypeSignature
-    if try(:base_class) == Action
-
-      # Action subclasses that operate on AWS S3 member repository queues need
-      # to be given the submission ID dynamically since it will not be included
-      # in the data that they carry.
-      #
-      # @return [String]
-      #
-      attr_accessor :submission_id
-
     end
 
   end

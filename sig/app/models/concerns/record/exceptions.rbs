@@ -1,3 +1,4 @@
+# @note From UploadWorkflow::Errors
 module Record::Exceptions
   extend ActiveSupport::Concern
 
@@ -14,6 +15,8 @@ module Record::Exceptions
   # @raise [ExecError]
   #
   # @see ExceptionHelper#failure
+  #
+  # @note From UploadWorkflow::Errors::RenderMethods#failure
   #
   def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 
@@ -60,6 +63,8 @@ class Record::Exceptions::FlashPart < FlashHelper::FlashPart
   #
   # @return [ActiveSupport::SafeBuffer, String, nil]
   #
+  # @note From UploadWorkflow::Errors::FlashPart#render_topic
+  #
   def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 end
 
@@ -81,6 +86,8 @@ class Record::StatementInvalid < Record::Error
 end
 
 # Exception raised when a submission is incomplete or invalid.
+#
+# @note Analogous to UploadWorkflow::Errors::SubmitError
 #
 class Record::SubmitError < Record::Error
 end

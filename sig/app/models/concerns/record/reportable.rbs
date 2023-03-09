@@ -11,9 +11,6 @@ module Record::Reportable
 
   include Record::Updatable::InstanceMethods
 
-  # :nocov:
-  #include Record::Controllable::ConditionMethods
-
   # The default name for the column that holds error report(s).
   #
   # @type [Symbol]

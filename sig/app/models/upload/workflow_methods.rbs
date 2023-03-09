@@ -7,13 +7,13 @@ module Upload::WorkflowMethods
 
   DEFAULT_AUTO_REVIEWABLE: bool
 
-  # The table column associated generally associated with workflow state.       # NOTE: not relevant to Entry/Phase/Action.
+  # The table column associated generally associated with workflow state.
   #
   # @type [Symbol]
   #
   WORKFLOW_PHASE_COLUMN: Symbol
 
-  # The table columns associated with workflow state in general and workflow    # NOTE: to Record::Steppable::STATE_COLUMN
+  # The table columns associated with workflow state in general and workflow
   # state in the context of modifying an existing EMMA entry.
   #
   # @type [Array<Symbol>]
@@ -23,13 +23,13 @@ module Upload::WorkflowMethods
   PRIMARY_STATE_COLUMN:   Symbol # @note: Added manually; rbs can't see this.
   SECONDARY_STATE_COLUMN: Symbol # @note: Added manually; rbs can't see this.
 
-  # The table columns associated with the active workflow user.                 # NOTE: not relevant to Entry/Phase/Action.
+  # The table columns associated with the active workflow user.
   #
   # @type [Array<Symbol>]
   #
   USER_COLUMNS: symArray
 
-  # Groupings of states related by theme.                                       # NOTE: to Record::Steppable
+  # Groupings of states related by theme.
   #
   # @type [Hash{Symbol=>Hash}]
   #
@@ -37,7 +37,7 @@ module Upload::WorkflowMethods
   #
   STATE_GROUP: Hash[Symbol,symHash]
 
-  # Mapping of workflow state to category.                                      # NOTE: to Record::Steppable
+  # Mapping of workflow state to category.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -288,7 +288,7 @@ module Upload::WorkflowMethods
   #
   def finish_editing: (**untyped opt) -> (bool | nil)
 
-  # Extra information communicated to the Upload form to support reverting      # NOTE: not relevant to Entry/Phase/Action.
+  # Extra information communicated to the Upload form to support reverting
   # the record when backing out of edit changes.
   #
   # @return [Hash{Symbol=>Any}]

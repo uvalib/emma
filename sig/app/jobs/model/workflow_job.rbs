@@ -9,7 +9,7 @@ class Model::WorkflowJob < ApplicationJob
 
   def initialize: (*untyped args, **untyped opt) -> void
 
-  # Run the command(s) specified by the Action.
+  # Run the command(s) specified by the model.
   #
   # @param [Array] args
   #

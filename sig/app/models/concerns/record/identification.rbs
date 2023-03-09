@@ -15,7 +15,7 @@ module Record::Identification
 
   # The type of record for the current context.
   #
-  # (This will be Entry unless within an instance of another type of Record.)
+  # (This will be Upload unless within an instance of another type of Record.)
   #
   # @return [Class<ApplicationRecord>]
   #
@@ -57,6 +57,8 @@ module Record::Identification
   #
   # @param [*] value
   #
+  # @note From Upload::IdentifierMethods#valid_id?
+  #
   def valid_id?: (untyped value) -> bool
 
   # Extract the database ID from the given item.
@@ -68,6 +70,8 @@ module Record::Identification
   #
   # @return [String]                  Record ID Array<(:id)>.
   # @return [nil]                     No valid :id specified.
+  #
+  # @note From Upload::IdentifierMethods#id_for
   #
   def id_value: (untyped item, **untyped opt) -> (String | nil)
 
@@ -87,6 +91,8 @@ module Record::Identification
   # @param [Any]                                  default
   #
   # @return [*]
+  #
+  # @note From Upload#get_value
   #
   def get_value: (untyped item, untyped key, ?default: untyped) -> (untyped | nil)
 
@@ -108,12 +114,14 @@ module Record::Identification
   # @param [Hash]        opt          Used if *item* is *nil* except for:
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
-  # @option opt [Symbol] :alt_id_key  E.g. :entry_id, :phase_id, :action_id
+  # @option opt [Symbol] :alt_id_key  E.g. :entry_id
   #
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
   # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
+  #
+  # @note From UploadWorkflow::External#get_record
   #
   def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> ApplicationRecord
 
@@ -121,12 +129,14 @@ module Record::Identification
   #
   # @param [Array<Model,String,Array>] items
   # @param [Symbol]                    id_key       Default: `#id_column`.
-  # @param [Symbol, nil]               alt_id_key   E.g. :entry_id, :phase_id
+  # @param [Symbol, nil]               alt_id_key   E.g. :entry_id
   # @param [Hash]                      opt          Passed to #collect_records
   #
   # @option opt []
   #
   # @return [Array<Model>]
+  #
+  # @note From UploadWorkflow::External#find_records
   #
   def find_records: (*(Model|String|strArray) items, ?id_key: Symbol|nil, ?alt_id_key: Symbol|nil, **untyped opt) -> Array[Model]
 
@@ -145,6 +155,8 @@ module Record::Identification
   # @return [Array<(Array<Model,String>,[])>]  If *force* is *true*.
   #
   # @see Record::Searchable#get_records
+  #
+  # @note From UploadWorkflow::External#collect_records
   #
   # == Usage Notes
   # If *force* is true, the returned list of failed records will be empty but
@@ -167,6 +179,8 @@ module Record::Identification
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
   #
+  # @note From Upload::IdentifierMethods#id_term
+  #
   def id_term: (?untyped v, **untyped opt) -> Hash[Symbol,(Integer|String|nil)]
 
   # Transform a mixture of ID representations into a set of one or more
@@ -179,6 +193,8 @@ module Record::Identification
   # @option opt [Integer] :max_id     Default: `#maximum_id`
   #
   # @return [Array<String>]
+  #
+  # @note From Upload::IdentifierMethods#compact_ids
   #
   def compact_ids: (*(String|Integer|Model|Array[String|Integer|Model]) items, **untyped opt) -> strArray
 
@@ -197,6 +213,8 @@ module Record::Identification
   # @option opt [Integer] :max_id     Default: `#maximum_id`
   #
   # @return [Array<String>]
+  #
+  # @note From Upload::IdentifierMethods#id_term
   #
   # == Examples
   #
@@ -244,11 +262,15 @@ module Record::Identification
   #
   # @return [Array<String>]
   #
+  # @note From Upload::IdentifierMethods#group_ids
+  #
   def group_ids: (*String ids, ?min_id: Integer|nil, ?max_id: Integer|nil, **untyped _ignored) -> strArray
 
-  # A valid ID range term for interpolation into a Regexp.                      # NOTE: from Upload::IdentifierMethods::RANGE_TERM
+  # A valid ID range term for interpolation into a Regexp.
   #
   # @type [String]
+  #
+  # @note From Upload::IdentifierMethods#RANGE_TERM
   #
   RNG_TERM: String
 
@@ -270,6 +292,8 @@ module Record::Identification
   #
   # @see #expand_ids
   #
+  # @note From Upload::IdentifierMethods#expand_id_range
+  #
   def expand_id_range: ((String|Integer|Model) id, **untyped opt) -> strArray
 
   # The database ID of the first record associated with the including class.
@@ -279,6 +303,8 @@ module Record::Identification
   # @return [Integer]                 If 0 then the table is empty.
   # @return [nil]                     Not supported by the current schema.
   #
+  # @note From Upload::IdentifierMethods#minimum_id
+  #
   def minimum_id: (?id_key: Symbol|nil) -> (Integer | nil)
 
   # The database ID of the last record associated with the including class.
@@ -287,6 +313,8 @@ module Record::Identification
   #
   # @return [Integer]                 If 0 then the table is empty.
   # @return [nil]                     Not supported by the current schema.
+  #
+  # @note From Upload::IdentifierMethods#maximum_id
   #
   def maximum_id: (?id_key: Symbol|nil) -> (Integer | nil)
 

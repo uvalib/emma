@@ -523,14 +523,14 @@ DEBUG_VIEW = true?(ENV['DEBUG_VIEW'])
 #
 # @type [Boolean]
 #
-DEBUG_WORKFLOW = true?(ENV['DEBUG_WORKFLOW']) # TODO: remove after upload -> entry
+DEBUG_WORKFLOW = true?(ENV['DEBUG_WORKFLOW'])
 
 # Debug workflow steps.
 #
 # @type [Boolean]
 #
 DEBUG_RECORD = true?(ENV['DEBUG_RECORD'] || ENV['DEBUG_WORKFLOW'] || true) # TODO: remove - testing
-#DEBUG_RECORD = true?(ENV['DEBUG_RECORD'])
+#DEBUG_RECORD = true?(ENV['DEBUG_RECORD'] || ENV['DEBUG_WORKFLOW'])
 
 # Set to show low-level XML parse logging.
 #

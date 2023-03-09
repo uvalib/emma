@@ -67,7 +67,7 @@ class SearchDecorator < BaseDecorator
     public
 
     # Bridge the gap between "emma.search.record" (which defines the order of
-    # display of data fields) and "emma.entry.record.emma_data" (which holds
+    # display of data fields) and "emma.upload.record.emma_data" (which holds
     # the details about each data field).
     #
     # @param [Symbol]    field
@@ -684,10 +684,7 @@ class SearchDecorator
       decorator.controls_for(object, context: context)
     else
       Log.warn("#{__method__}: no decorator for model type #{type.inspect}")
-    end ||
-      if (decorator = ModelTypeMap.get((type == :upload) ? :entry : :upload)) # TODO: remove after upload -> entry
-        decorator.controls_for(object, context: context)
-      end
+    end
   end
 
   # ===========================================================================

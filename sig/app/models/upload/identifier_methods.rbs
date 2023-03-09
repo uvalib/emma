@@ -5,19 +5,19 @@ module Upload::IdentifierMethods
 
   extend ::Upload::IdentifierMethods
 
-  # @type [String]                                                              # NOTE: to Record::EmmaIdentification
+  # @type [String]
   SID_PREFIX: String
 
-  # @type [(Integer,Integer)]                                                   # NOTE: to Record::EmmaIdentification
+  # @type [(Integer,Integer)]
   SID_LETTERS: [Integer, Integer]
 
-  # @type [Integer]                                                             # NOTE: to Record::EmmaIdentification
+  # @type [Integer]
   SID_LETTER_SPAN: Integer
 
-  # @type [String]                                                              # NOTE: to Record::EmmaIdentification
+  # @type [String]
   SID_LETTER_MATCH: String
 
-  # @type [Regexp]                                                              # NOTE: to Record::EmmaIdentification
+  # @type [Regexp]
   SID_PATTERN: Regexp
 
   # Indicate whether the value could be a valid #id_column value.
@@ -35,7 +35,7 @@ module Upload::IdentifierMethods
   #
   def id_for: (untyped item) -> (String | nil)
 
-  # Extract the submission ID from the given item.                              # NOTE: to Record::EmmaIdentification#sid_value
+  # Extract the submission ID from the given item.
   #
   # @param [Api::Record, Upload, Hash, String, *] item
   #
@@ -46,7 +46,7 @@ module Upload::IdentifierMethods
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
-  # @param [Any] value                Must be a String.
+  # @param [*] value                  Must be a String.
   #
   def valid_sid?: (untyped value) -> bool
 
@@ -184,7 +184,7 @@ module Upload::IdentifierMethods
   #
   def group_ids: (*String ids, ?min_id: Integer|nil, ?max_id: Integer|nil, **untyped _ignored) -> strArray
 
-  # A valid ID range term for interpolation into a Regexp.                      # NOTE: to Record::Identification::RNG_TERM
+  # A valid ID range term for interpolation into a Regexp.
   #
   # @type [String]
   #

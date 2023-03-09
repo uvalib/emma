@@ -76,6 +76,8 @@ module Record::Updatable
     #
     # @return [*]
     #
+    # @note From Upload::WorkflowMethods#get_field_direct
+    #
     def get_field_direct: ((Symbol|String) column) -> untyped
 
     # Directly update a database column, by-passing validations and other
@@ -87,6 +89,8 @@ module Record::Updatable
     # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
+    #
+    # @note From Upload::WorkflowMethods#set_field_direct
     #
     def set_field_direct: ((Symbol|String) column, untyped new_value) -> (bool | nil)
 
@@ -102,6 +106,8 @@ module Record::Updatable
     # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
     #
     # @return [Boolean, nil]            Nil if the record has been deleted.
+    #
+    # @note From Upload::WorkflowMethods#set_fields_direct
     #
     def set_fields_direct: (symHash pairs) -> (bool | nil)
   end

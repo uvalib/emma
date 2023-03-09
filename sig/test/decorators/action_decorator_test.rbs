@@ -1,2 +1,0 @@
-class ActionDecoratorTest < Draper::TestCase
-end

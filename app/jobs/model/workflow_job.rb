@@ -59,7 +59,7 @@ class Model::WorkflowJob < ApplicationJob
 
   PERFORM_OPTS = %i[receiver meth callback].freeze
 
-  # Run the command(s) specified by the Action.
+  # Run the command(s) specified by the model.
   #
   # @param [Array] args
   #

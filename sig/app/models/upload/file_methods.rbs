@@ -24,7 +24,7 @@ module Upload::FileMethods
 
   #include ActiveRecord::Validations
 
-  # Represents a file that was uploaded to a storage.                         # NOTE: to Record::Uploadable
+  # Represents a file that was uploaded to a storage.
   #
   # @return [FileUploader::UploadedFile]
   #
@@ -32,7 +32,7 @@ module Upload::FileMethods
   #
   attr_reader file: FileUploader::UploadedFile
 
-  # Saves information about the uploaded file as an attachment to a record    # NOTE: to Record::Uploadable
+  # Saves information about the uploaded file as an attachment to a record
   # (saving the file data to the :file_data database column).
   #
   # The attaching process requires a temporary and a permanent storage to be
@@ -63,7 +63,7 @@ module Upload::FileMethods
   #
   attr_reader edit_file_attacher: FileUploader::Attacher
 
-  # The maximum age (in seconds) allowed for download links which are meant to  # NOTE: to Record::Uploadable
+  # The maximum age (in seconds) allowed for download links which are meant to
   # be valid only for a single time.
   #
   # This should be generous to allow for network delays.
@@ -72,7 +72,7 @@ module Upload::FileMethods
   #
   ONE_TIME_USE_EXPIRATION: Integer
 
-  # The maximum age (in seconds) allowed for download links.                    # NOTE: to Record::Uploadable
+  # The maximum age (in seconds) allowed for download links.
   #
   # This allows the link to be reused for a while, but not long enough to allow
   # sharing of content URLs for distribution.
@@ -200,7 +200,7 @@ module Upload::FileMethods
   #
   def fetch_and_upload_file: (String file_path, **untyped opt) -> FileUploader::UploadedFile
 
-  # Options for Down#open.                                                      # NOTE: to Record::Uploadable
+  # Options for Down#open.
   #
   # @type [Hash]
   #
@@ -210,7 +210,7 @@ module Upload::FileMethods
   #
   DOWN_OPEN_OPTIONS: symHash
 
-  # Acquire a remote file and copy it to storage.                               # NOTE: to Record::Uploadable#upload_remote
+  # Acquire a remote file and copy it to storage.
   #
   # @param [String] url
   # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:

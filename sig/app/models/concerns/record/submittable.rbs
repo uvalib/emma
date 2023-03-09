@@ -28,11 +28,15 @@ module Record::Submittable
     # @see Record::EmmaIdentification#valid_sid?
     # @see Record::EmmaIdentification#emma_native?
     #
+    # @note From UploadWorkflow::External#emma_item?
+    #
     def emma_item?: (untyped item) -> bool
 
     # Indicate whether the item does not represent an existing EMMA entry.
     #
     # @param [Model, String, Any] item
+    #
+    # @note From UploadWorkflow::External#incomplete?
     #
     def incomplete?: (untyped item) -> bool
 
@@ -44,6 +48,8 @@ module Record::Submittable
     #
     # @see #add_title_prefix
     #
+    # @note From UploadWorkflow::External#new_record
+    #
     def new_record: (?(symHash|Model|nil) data) -> Model
 
     # If a prefix was specified, apply it to the record's title.
@@ -52,6 +58,8 @@ module Record::Submittable
     # @param [String] prefix
     #
     # @return [void]
+    #
+    # @note From UploadWorkflow::External#add_title_prefix
     #
     def add_title_prefix: (Model record, prefix: String) -> void
   end
@@ -63,9 +71,11 @@ module Record::Submittable
 
     # Add a single record to the database.
     #
-    # @param [Model, Hash] data       @see Entry#assign_attributes.
+    # @param [Model, Hash] data       @see Upload#assign_attributes.
     #
     # @return [ApplicationRecord<Model>]
+    #
+    # @note From UploadWorkflow::External#db_insert
     #
     def db_insert: ((symHash|Model) data) -> ApplicationRecord
 
@@ -81,6 +91,8 @@ module Record::Submittable
     #
     # @return [ApplicationRecord<Model>]
     #
+    # @note From UploadWorkflow::External#db_update
+    #
     def db_update: ((symHash|Model|String) item, ?(symHash|nil) data) -> ApplicationRecord
 
     # Remove a single existing record from the database.
@@ -93,6 +105,8 @@ module Record::Submittable
     #
     # @return [Any]
     # @return [nil]                   If the record was not found or removed.
+    #
+    # @note From UploadWorkflow::External#db_delete
     #
     def db_delete: ((symHash|Model|String) item) -> (untyped | nil)
   end
@@ -109,12 +123,16 @@ module Record::Submittable
     #
     # @return [IngestService]
     #
+    # @note From UploadWorkflow::External#ingest_api
+    #
     def ingest_api: () -> IngestService
 
-    # As a convenience for testing, sending to the Federated Search Ingest API  # NOTE: from UploadWorkflow::External
+    # As a convenience for testing, sending to the Federated Search Ingest API
     # can be short-circuited here.  The value should be *false* normally.
     #
     # @type [Boolean]
+    #
+    # @note From UploadWorkflow::External#DISABLE_UPLOAD_INDEX_UPDATE
     #
     DISABLE_UPLOAD_INDEX_UPDATE: bool
 
@@ -123,31 +141,37 @@ module Record::Submittable
     #
     # @type [Array<String,Regexp>]
     #
+    # @note From UploadWorkflow::External#IGNORED_REMOVE_ERRORS
+    #
     IGNORED_REMOVE_ERRORS: Array[String|Regexp]
 
     # Add the indicated items from the EMMA Unified Index.
     #
-    # @param [Array<Entry>] items                                               # TODO: NOTE: by usage must be Entry not Model
-    # @param [Boolean]      atomic
+    # @param [Array<Upload>] items
+    # @param [Boolean]       atomic
     #
     # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
     #
     # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
     #                                         msgs, and records to roll back.
     #
-    def add_to_index: (*Entry items, ?atomic: bool) -> [Array[Entry], Array[Record::Exceptions::FlashPart], Array[Entry]]
+    # @note From UploadWorkflow::External#add_to_index
+    #
+    def add_to_index: (*Upload items, ?atomic: bool) -> [Array[Upload], Array[Record::Exceptions::FlashPart], Array[Upload]]
 
     # Add/modify the indicated items from the EMMA Unified Index.
     #
-    # @param [Array<Entry>] items                                               # TODO: NOTE: by usage must be Entry not Model
-    # @param [Boolean]      atomic
+    # @param [Array<Upload>] items
+    # @param [Boolean]       atomic
     #
     # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
     #
     # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
     #                                         msgs, and records to roll back.
     #
-    def update_in_index: (*Entry items, ?atomic: bool) -> [Array[Entry], Array[Record::Exceptions::FlashPart], Array[Entry]]
+    # @note From UploadWorkflow::External#update_in_index
+    #
+    def update_in_index: (*Upload items, ?atomic: bool) -> [Array[Upload], Array[Record::Exceptions::FlashPart], Array[Upload]]
 
     # Remove the indicated items from the EMMA Unified Index.
     #
@@ -158,11 +182,13 @@ module Record::Submittable
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
-    def remove_from_index: (*(Model|String) items, ?atomic: bool) -> [Array[Entry], Array[Record::Exceptions::FlashPart]]
+    # @note From UploadWorkflow::External#remove_from_index
+    #
+    def remove_from_index: (*(Model|String) items, ?atomic: bool) -> [Array[Upload], Array[Record::Exceptions::FlashPart]]
 
-    def skip_index_ingest: (Symbol meth, *(Entry|Model|String) items) -> ([Array[Entry], []] | [Array[Model|String], []])
+    def skip_index_ingest: (Symbol meth, *(Upload|Model|String) items) -> ([Array[Upload], []] | [Array[Model|String], []])
 
-    # Interpret error message(s) generated by Federated Ingest to determine     # NOTE: from UploadWorkflow::External
+    # Interpret error message(s) generated by Federated Ingest to determine
     # which item(s) failed.
     #
     # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
@@ -174,24 +200,28 @@ module Record::Submittable
     #
     # @see ExecReport#error_table
     #
+    # @note From UploadWorkflow::External#process_ingest_errors
+    #
     # == Implementation Notes
     # It's not clear whether there would ever be situations where there was a
     # mix of errors by index, errors by submission ID, and/or general errors,
     # but this method was written to be able to cope with the possibility.
     #
-    def process_ingest_errors: ((Ingest::Message::Response|Hash[(String|Integer),String]) result, *(Model|String) items, **untyped opt) -> [Array[Entry], Array[Record::Exceptions::FlashPart], Array[Entry]]
+    def process_ingest_errors: ((Ingest::Message::Response|Hash[(String|Integer),String]) result, *(Model|String) items, **untyped opt) -> [Array[Upload], Array[Record::Exceptions::FlashPart], Array[Upload]]
 
     # Return a flatten array of items.
     #
-    # @param [Array<Entry, String, Array>] items                                # TODO: NOTE: based on usage Entry not Model
-    # @param [Symbol, nil]                 meth   The calling method.
-    # @param [Integer]                     max    Maximum number to ingest.
+    # @param [Array<Upload, String, Array>] items
+    # @param [Symbol, nil]                  meth    The calling method.
+    # @param [Integer]                      max     Maximum number to ingest.
     #
     # @raise [Record::SubmitError]  If item count is too large to be ingested.
     #
     # @return [Array]
     #
-    def normalize_index_items: (*(Entry|String|Array[Entry|String]) items, ?meth: Symbol|nil, ?max: Integer) -> Array[Entry|String]
+    # @note From UploadWorkflow::External#normalize_index_items
+    #
+    def normalize_index_items: (*(Upload|String|Array[Upload|String]) items, ?meth: Symbol|nil, ?max: Integer) -> Array[Upload|String]
   end
 
   module MemberRepositoryMethods
@@ -203,11 +233,15 @@ module Record::Submittable
     #
     # @return [AwsS3Service]
     #
+    # @note From UploadWorkflow::External#aws_api
+    #
     def aws_api: () -> AwsS3Service
 
-    # Failure messages for member repository requests. # TODO: I18n             # NOTE: from UploadWorkflow::External
+    # Failure messages for member repository requests. # TODO: I18n
     #
     # @type [Hash{Symbol=>String}]
+    #
+    # @note From UploadWorkflow::External#REPO_FAILURE
     #
     REPO_FAILURE: Hash[Symbol,String]
 
@@ -217,6 +251,8 @@ module Record::Submittable
     # @param [Hash]         opt
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    # @note From UploadWorkflow::External#repository_create
     #
     def repository_create: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
@@ -230,6 +266,8 @@ module Record::Submittable
     #
     # @note This capability is not yet supported by any member repository.
     #
+    # @note From UploadWorkflow::External#repository_modify
+    #
     def repository_modify: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
     # Request deletion of a prior submission to a member repository.
@@ -240,6 +278,8 @@ module Record::Submittable
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     # @note This capability is not yet supported by any member repository.
+    #
+    # @note From UploadWorkflow::External#repository_remove
     #
     def repository_remove: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
@@ -252,9 +292,11 @@ module Record::Submittable
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
+    # @note From UploadWorkflow::External#repository_dequeue
+    #
     def repository_dequeue: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
-    # Interpret error message(s) generated by AWS S3.                           # NOTE: from UploadWorkflow::External
+    # Interpret error message(s) generated by AWS S3.
     #
     # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
     # @param [Array<String,Model>]                                    items
@@ -262,6 +304,8 @@ module Record::Submittable
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     # @see ExecReport#error_table
+    #
+    # @note From UploadWorkflow::External#process_aws_errors
     #
     def process_aws_errors: ((AwsS3::Message::Response|Hash[(String|Integer),String]) result, *(String|Model) items) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
@@ -271,6 +315,8 @@ module Record::Submittable
     # @param [Hash]               opt     Passed to #repository_remove.
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    #
+    # @note From UploadWorkflow::External#repository_removals
     #
     # -
     # == Variations
@@ -361,6 +407,8 @@ module Record::Submittable
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
+    # @note From UploadWorkflow::External#batch_upload_remove
+    #
     def batch_entry_remove: ((Array[symHash|String|Integer|Model]|nil) ids, ?index: bool, ?atomic: bool, ?force: bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
     # Process *entries* in batches by calling *op* on successive subsets.
@@ -378,6 +426,8 @@ module Record::Submittable
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
+    # @note From UploadWorkflow::External#batch_upload_operation
+    #
     def batch_entry_operation: (Symbol op, Array[symHash|String|Integer|Model] items, ?size: Integer|bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
     # Release the current thread to the scheduler.
@@ -387,6 +437,8 @@ module Record::Submittable
     # @param [Float,Boolean] pause      Default: `#THROTTLE_PAUSE`.
     #
     # @return [void]
+    #
+    # @note From UploadWorkflow::External#throttle
     #
     def throttle: (Integer counter, ?frequency: Integer, ?pause: bool|Float) -> Integer
   end
@@ -404,47 +456,56 @@ module Record::Submittable
 
     include Record::Submittable::BatchMethods
 
+    # Add a new submission to the database, upload its file to storage, and add
     # a new index entry for it (if explicitly requested).
     #
     # @param [Boolean] index          If *true*, update index.
     # @param [Boolean] atomic         Passed to #add_to_index.
-    # @param [Hash]    data           @see Entry#assign_attributes.
+    # @param [Hash]    data           @see Upload#assign_attributes.
     #
-    # @return [Array<(Entry,Array>)]  Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
-    # @return [Array<(nil,Array)>]    No record; one or more error messages.
+    # @return [Array<(Upload,Array>)]  Record instance; zero or more messages.
+    # @return [Array<(nil,Array)>]     No record; one or more error messages.
     #
     # @see #db_insert
     # @see #add_to_index
     #
+    # @note Currently unused.
+    #
+    # @note From UploadWorkflow::External#upload_create
+    #
     # == Implementation Notes
     # Compare with #bulk_entry_create
     #
-    def entry_create: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Entry | nil), Array[Record::Exceptions::FlashPart]]
+    def entry_create: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Upload | nil), Array[Record::Exceptions::FlashPart]]
 
-    # Update an existing database Entry record and update its associated index  # TODO: NOTE: currently unused; @see EntryConcern#edit_entry
+    # Update an existing database Upload record and update its associated index
     # entry (if explicitly requested).
     #
     # @param [Boolean] index          If *true*, update index.
     # @param [Boolean] atomic         Passed to #update_in_index.
-    # @param [Hash]    data           @see Entry#assign_attributes
+    # @param [Hash]    data           @see Upload#assign_attributes
     #
-    # @return [Array<(Entry,Array>)]  Record instance; zero or more messages.   # TODO: NOTE: Entry not Model
+    # @return [Array<(Upload,Array>)] Record instance; zero or more messages.
     # @return [Array<(nil,Array)>]    No record; one or more error messages.
     #
     # @see #db_update
     # @see #update_in_index
     #
+    # @note Currently unused.
+    #
+    # @note From UploadWorkflow::External#upload_edit
+    #
     # == Implementation Notes
     # Compare with #bulk_entry_edit
     #
-    def entry_edit: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Entry | nil), Array[Record::Exceptions::FlashPart]]
+    def entry_edit: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Upload | nil), Array[Record::Exceptions::FlashPart]]
 
-    # Remove records from the database and from the index.                      # TODO: NOTE: used by #add_to_index and #batch_entry_remove
+    # Remove records from the database and from the index.
     #
-    # @param [Array<Entry,String,Array>] items   @see #collect_records          # TODO: NOTE: Entry not Model
-    # @param [Boolean]                   index   *false* -> no index update
-    # @param [Boolean]                   atomic  *true* == all-or-none
-    # @param [Boolean]                   force   Force removal of index entries
+    # @param [Array<Upload,String,Array>] items   @see #collect_records
+    # @param [Boolean]                    index  *false* -> no index update
+    # @param [Boolean]                    atomic *true* == all-or-none
+    # @param [Boolean]                    force  Force removal of index entries
     #                                             even if the related database
     #                                             entries do not exist.
     #
@@ -452,13 +513,17 @@ module Record::Submittable
     #
     # @see #remove_from_index
     #
+    # @note Used by #add_to_index and #batch_entry_remove
+    #
+    # @note From UploadWorkflow::External#upload_remove
+    #
     # == Usage Notes
     # Atomicity of the record removal phase rests on the assumption that any
     # database problem(s) would manifest with the very first destruction
     # attempt.  If a later item fails, the successfully-destroyed items will
     # still be removed from the index.
     #
-    def entry_remove: (*(Entry|String|Array[Entry|String]) items, ?index: bool|nil, ?atomic: bool|nil, ?force: bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
+    def entry_remove: (*(Upload|String|Array[Upload|String]) items, ?index: bool|nil, ?atomic: bool|nil, ?force: bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
     private
 

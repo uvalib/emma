@@ -45,7 +45,7 @@ module Record::EmmaData
   # @type [Hash]
   #
   EMMA_DATA_CONFIG =
-    I18n.t('emma.entry.record.emma_data').select { |_, v|
+    I18n.t('emma.upload.record.emma_data').select { |_, v|
       v[:max].nil? || positive(v[:max]) if v.is_a?(Hash)
     }.deep_freeze
 
@@ -75,15 +75,17 @@ module Record::EmmaData
   # Create a URL for use with :emma_retrievalLink.
   #
   # @param [String, nil]      rid       EMMA repository record ID.
-  # @param [String, Hash nil] base_url  Default: `Record::Bulk#BULK_BASE_URL`.
+  # @param [String, Hash nil] base_url  Default: `Upload#BULK_BASE_URL`.
   #
   # @return [String]
   # @return [nil]                       If no repository ID was given.
   #
-  def make_retrieval_link(rid, base_url = nil)                                  # NOTE: from Upload
+  # @note From Upload#make_retrieval_link
+  #
+  def make_retrieval_link(rid, base_url = nil)
     return if rid.blank?
     base_url   = base_url[:base_url] if base_url.is_a?(Hash)
-    base_url ||= Record::Bulk::BULK_BASE_URL
+    base_url ||= Upload::BULK_BASE_URL
     # noinspection RubyMismatchedArgumentType
     File.join(base_url, 'download', rid).to_s
   end
@@ -100,7 +102,9 @@ module Record::EmmaData
   #
   # @return [Search::Record::MetadataRecord]
   #
-  def make_emma_record(data, **)                                                # NOTE: from Upload::EmmaDataMethods
+  # @note From Upload::EmmaDataMethods#make_emma_record
+  #
+  def make_emma_record(data, **)
     Search::Record::MetadataRecord.new(data)
   end
 
@@ -111,7 +115,9 @@ module Record::EmmaData
   #
   # @return [Hash]
   #
-  def parse_emma_data(data, allow_blank = false)                                # NOTE: from Upload::EmmaDataMethods
+  # @note From Upload::EmmaDataMethods#parse_emma_data
+  #
+  def parse_emma_data(data, allow_blank = false)
     return {} if data.blank?
     result =
       case data
@@ -169,10 +175,12 @@ module Record::EmmaData
   #
   # @return [Hash]
   #
+  # @note From Upload#assign_attributes (sorta)
+  #
   #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def generate_emma_data(data, attr)                                            # NOTE: from Upload#assign_attributes (sorta)
+  def generate_emma_data(data, attr)
     data  = data&.dup || {}
     utime = attr&.dig(:updated_at) || DateTime.now
 
@@ -245,6 +253,8 @@ module Record::EmmaData
     #
     # @return [Search::Record::MetadataRecord]
     #
+    # @note From Upload::EmmaDataMethods#emma_record
+    #
     def emma_record(refresh: false)
       @emma_record = nil if refresh
       @emma_record ||= make_emma_record(emma_metadata(refresh: refresh))
@@ -255,6 +265,8 @@ module Record::EmmaData
     # @param [Boolean] refresh        If *true*, force regeneration.
     #
     # @return [Hash{Symbol=>Any}]
+    #
+    # @note From Upload::EmmaDataMethods#emma_metadata
     #
     def emma_metadata(refresh: false)
       @emma_metadata = nil if refresh
@@ -269,7 +281,9 @@ module Record::EmmaData
     # @return [String]                New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data(data, allow_blank = true)                                 # NOTE: from Upload::EmmaDataMethods
+    # @note From Upload::EmmaDataMethods#set_emma_data
+    #
+    def set_emma_data(data, allow_blank = true)
       @emma_record     = nil # Force regeneration.
       @emma_metadata   = parse_emma_data(data, allow_blank)
       self[:emma_data] =
@@ -288,7 +302,9 @@ module Record::EmmaData
     # @return [String]                New value of :emma_data.
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data(data, allow_blank = true)                              # NOTE: from Upload::EmmaDataMethods
+    # @note From Upload::EmmaDataMethods#modify_emma_data
+    #
+    def modify_emma_data(data, allow_blank = true)
       if (new_metadata = parse_emma_data(data, allow_blank)).present?
         @emma_record     = nil # Force regeneration.
         @emma_metadata   = emma_metadata.merge(new_metadata)
@@ -309,7 +325,7 @@ module Record::EmmaData
     # @return [Hash{String=>Any}]     New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data(data, allow_blank = true)                                 # NOTE: from Upload::EmmaDataMethods
+    def set_emma_data(data, allow_blank = true)
       @emma_record     = nil # Force regeneration.
       @emma_metadata   = parse_emma_data(data, allow_blank)
       self[:emma_data] = data && @emma_metadata.deep_stringify_keys
@@ -323,7 +339,7 @@ module Record::EmmaData
     # @return [Hash{String=>Any}]     New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data(data, allow_blank = true)                              # NOTE: from Upload::EmmaDataMethods
+    def modify_emma_data(data, allow_blank = true)
       if (new_metadata = parse_emma_data(data, allow_blank)).present?
         @emma_record     = nil # Force regeneration.
         @emma_metadata   = emma_metadata.merge(new_metadata)

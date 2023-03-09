@@ -182,15 +182,15 @@ module Record::Assignable
 
     # Model/controller options passed in through the constructor.
     #
-    # @return [Entry::Options]
+    # @return [::Options]
     #
     attr_reader :model_options
 
     # set_model_options
     #
-    # @param [Entry::Options, Hash, nil] options
+    # @param [::Options, Hash, nil] options
     #
-    # @return [Entry::Options, nil]
+    # @return [::Options, nil]
     #
     def set_model_options(options)
       options = options[:options]  if options.is_a?(Hash)

@@ -114,10 +114,7 @@ class User < ApplicationRecord
   has_many :members
   has_many :reading_lists
   has_many :search_calls
-  has_many :uploads # TODO: remove after upload -> entry
-  has_many :entries
-  has_many :phases
-  has_many :actions
+  has_many :uploads
 
   # ===========================================================================
   # :section: Authentication

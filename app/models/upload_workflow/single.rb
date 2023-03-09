@@ -399,7 +399,7 @@ module UploadWorkflow::Single::Actions
   #
   # @see UploadWorkflow::Single::External#upload_file
   #
-  def wf_upload_file(*event_args)                                               # NOTE: to Action::Store#upload!
+  def wf_upload_file(*event_args)
     __debug_items(binding)
     opt = event_args.extract_options!.presence || event_args.first || {}
     opt[:meth] ||= calling_method
@@ -433,7 +433,7 @@ module UploadWorkflow::Single::Actions
   #
   # @return [void]
   #
-  def wf_check_status(*event_args)                                              # NOTE: to EntryConcern#check_entry
+  def wf_check_status(*event_args)
     opt  = event_args.extract_options!
     html = !false?(opt[:html])
     user = record.active_user
@@ -501,7 +501,7 @@ module UploadWorkflow::Single::Actions
   #
   # @return [String]
   #
-  def wf_check_retrieved                                                        # NOTE: to Action::Queue#check_retrieved
+  def wf_check_retrieved
     sid  = record.submission_id
     data = aws_api.list_records(record).values_at(sid).flatten
 
@@ -525,7 +525,7 @@ module UploadWorkflow::Single::Actions
   #
   # @return [String]
   #
-  def wf_check_indexed                                                          # NOTE: to Action::Index#check_indexed
+  def wf_check_indexed
     sid  = record.submission_id
     rid  = record.emma_metadata[:emma_recordId]
     data = ingest_api.get_records(rid)

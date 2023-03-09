@@ -5,7 +5,7 @@ module Upload::EmmaDataMethods
 
   include Upload::WorkflowMethods
 
-  # Core table columns.                                                         # NOTE: not relevant to Entry/Phase/Action.
+  # Core table columns.
   #
   # @type [Array<Symbol>]
   #

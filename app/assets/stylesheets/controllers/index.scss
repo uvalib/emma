@@ -1,7 +1,6 @@
 // app/assets/stylesheets/controllers/index.scss
 
 @use 'account';
-@use 'action';
 @use 'admin';
 @use 'artifact';
 @use 'bs_api';
@@ -15,7 +14,6 @@
 @use 'manifest_item';
 @use 'member';
 @use 'periodical';
-@use 'phase';
 @use 'reading_list';
 @use 'search';
 @use 'search_call';

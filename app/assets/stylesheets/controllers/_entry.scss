@@ -1,4 +1,10 @@
 // app/assets/stylesheets/controllers/_entry.scss
+//
+// NOTE: This file reflects the fact that Entry was going to be the replacement
+//  for the Upload model.  Although that model was abandoned, it continues to
+//  live on here as the basis for styling of similar controller pages.  At some
+//  point this should be restructured to move these definitions into ../shared
+//  and/or ../feature.
 
 @use 'shared/variables'        as *;
 @use 'shared/functions'        as *;
@@ -192,7 +198,7 @@ $entry-form-gap: 1.5rem;
     }
 }
 
-// @see EntryDecorator#check_status_popup
+// @see UploadDecorator#check_status_popup
 .inline-popup.check-status-popup {
 
     @media #{$medium-width} {
@@ -245,11 +251,11 @@ $entry-form-gap: 1.5rem;
 }
 
 // Style the appearance of the contents of the check status popup.
-body.entry-check.modal {
-    .heading {
-        font-size: large;
-    }
-}
+//body.entry-check.modal {
+//    .heading {
+//        font-size: large;
+//    }
+//}
 
 //=============================================================================
 // Entry show page
@@ -303,7 +309,6 @@ form.select-entry {
 }
 
 // @see file:app/views/account/_selected.html.erb
-// @see file:app/views/entry/_selected.html.erb
 // @see file:app/views/upload/_selected.html.erb
 .selected-item {
 
@@ -683,11 +688,11 @@ form.select-entry {
 
 // When not actively downloading, the element for .uppy-ProgressBar creates a
 // visible gap between the directions and the top of the form.
-body.entry {
-    .page-text-section.directions {
-        margin-bottom: 0;
-    }
-}
+//body.entry {
+//    .page-text-section.directions {
+//        margin-bottom: 0;
+//    }
+//}
 
 //=============================================================================
 // Bibliographic lookup modal
@@ -1306,11 +1311,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 // Entry admin page
 //=============================================================================
 
-body.entry-admin {
-    h2 {
-        font-size: $h1-font-size;
-    }
-    h3 {
-        font-size: x-large;
-    }
-}
+//body.entry-admin {
+//    h2 {
+//        font-size: $h1-font-size;
+//    }
+//    h3 {
+//        font-size: x-large;
+//    }
+//}

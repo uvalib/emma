@@ -117,10 +117,10 @@ en:
         bulk_delete:
           message:      'Failed to delete items'
 
-      entry:            &ENTRY
+      upload:
         <<: *MODEL
 
-        # @see EntryConcern
+        # @see UploadConcern
 
         _name:          'EMMA submission'
 
@@ -155,12 +155,6 @@ en:
 
         bulk_delete:
           message:      'Failed to delete entries'
-
-      upload: # TODO: remove after upload -> entry
-
-        # @see UploadConcern
-
-        <<: *ENTRY
 
       manifest:
         <<: *MODEL

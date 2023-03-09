@@ -34,6 +34,8 @@ module Record::Searchable
   #
   # @return [Model, nil]
   #
+  # @note From Upload::LookupMethods#get_record
+  #
   def get_record: ((symHash|String|Symbol|Integer|Model|nil) item, **untyped opt) -> (Model | nil)
 
   # Get records specified by either :id or :submission_id.
@@ -43,9 +45,11 @@ module Record::Searchable
   #
   # @return [Array<Model>]
   #
+  # @note From Upload::LookupMethods#get_records
+  #
   def get_records: (*(String|Symbol|Integer|Model|nil) identifiers, **untyped opt) -> Array[Model]
 
-  # The #search_records method returns a hash with these fields in this order.  # NOTE: from Upload::LookupMethods
+  # The #search_records method returns a hash with these fields in this order.
   #
   #   :offset   The list offset for display purposes (not the SQL OFFSET).
   #   :limit    The page size.
@@ -61,17 +65,23 @@ module Record::Searchable
   #
   # @type [Hash{Symbol=>Any}]
   #
+  # @note From Upload::LookupMethods#SEARCH_RECORDS_TEMPLATE
+  #
   SEARCH_RECORDS_TEMPLATE: symHash
 
-  # Local options consumed by #search_records.                                  # NOTE: from Upload::LookupMethods
+  # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
+  #
+  # @note From Upload::LookupMethods#SEARCH_RECORDS_OPTIONS
   #
   SEARCH_RECORDS_OPTIONS: symArray
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
+  #
+  # @note From Upload::LookupMethods#NON_SEARCH_PARAMS
   #
   NON_SEARCH_PARAMS: symArray
 
@@ -99,6 +109,8 @@ module Record::Searchable
   # @return [Hash{Symbol=>Any}]           @see #SEARCH_RECORDS_TEMPLATE
   #
   # @see ActiveRecord::Relation#where
+  #
+  # @note From Upload::LookupMethods#search_records
   #
   def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) identifiers, **untyped opt) -> symHash
 
@@ -128,6 +140,8 @@ module Record::Searchable
   # @see Record::EmmaIdentification#expand_ids
   # @see ActiveRecord::Relation#where
   #
+  # @note From Upload::LookupMethods#get_relation
+  #
   def get_relation: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> ActiveRecord::Relation
 
   # group_by_state
@@ -138,6 +152,8 @@ module Record::Searchable
   # @raise [RuntimeError] If the current model does not have a :state_column.
   #
   # @return [Hash{Symbol=>Integer}]
+  #
+  # @note From Upload::LookupMethods#group_by_state
   #
   def group_by_state: (ActiveRecord::Relation relation, ?(Symbol|nil) column) -> Hash[Symbol,Integer]
 
@@ -151,6 +167,8 @@ module Record::Searchable
   # @return [String, false, false]    If *value* specifies a day.
   # @return [String, true,  false]    If *value* specifies a month.
   # @return [String, false, true]     If *value* specifies a year
+  #
+  # @note From Upload::LookupMethods#day_string
   #
   def day_string
     : (String  value) -> ([String, bool, bool] | [nil, false, false])
@@ -175,6 +193,8 @@ module Record::Searchable
     #
     # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
     #
+    # @note From Upload#matching_sid
+    #
     def matching_sid: (?(symHash|String|Symbol|Model|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, ?no_raise: bool, **untyped opt) -> ActiveRecord::Relation
 
     # Get the latest record matching the submission ID given as either *sid* or
@@ -190,6 +210,8 @@ module Record::Searchable
     # @raise [Record::NotFound]           If record not found.
     #
     # @return [Model]                     Or *nil* on error if *no_raise*.
+    #
+    # @note From Upload#latest_for_sid
     #
     def latest_for_sid: (?(symHash|String|Symbol|Model|nil) sid, ?sort: Symbol|String|nil, **untyped opt) -> (Model | nil)
   end

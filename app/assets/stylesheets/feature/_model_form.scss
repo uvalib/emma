@@ -409,12 +409,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         @include hidden;
 
         // Invisible file data holder.
-        &[name="upload[file]"]#upload_file_data { }         // TODO: remove after upload -> entry
-        &[name="entry[file]"]#entry_file_data { }
+        &[name="upload[file]"]#upload_file_data { }
 
         // Invisible EMMA data holder.
-        &[name="upload[emma_data]"]#upload_emma_data { }    // TODO: remove after upload -> entry
-        &[name="entry[emma_data]"]#entry_emma_data { }
+        &[name="upload[emma_data]"]#upload_emma_data { }
     }
 
     //=========================================================================
@@ -429,13 +427,13 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         max-height: 2.25rem;
     }
 
-    // ERB-provided submit to '/entry/create' or '/entry/update'.
+    // ERB-provided submit to '/upload/create' or '/upload/update'.
     .submit-button { // input[type="submit"].uppy-FileInput-btn
         @include button.control;
         @extend %grid-control;
     }
 
-    // ERB-provided cancel (back to '/entry/new' or '/entry/edit').
+    // ERB-provided cancel (back to '/upload/new' or '/upload/edit').
     .cancel-button { // button[type="cancel"].uppy-FileInput-btn
         @include button.control;
         @extend %grid-control;
@@ -443,8 +441,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     // ERB-provided file chooser.
     // JavaScript will hide this in favor of the Uppy-supplied button.
-    input[type="file"][name="upload[file]"]#upload_file { } // TODO: remove after upload -> entry
-    input[type="file"][name="entry[file]"]#entry_file { }
+    input[type="file"][name="upload[file]"]#upload_file { }
 
     // Appended to .model-form and moved into place via model-form.js.
     .uppy-FileInput-container {

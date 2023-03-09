@@ -42,10 +42,12 @@ module Record::EmmaData
   # Create a URL for use with :emma_retrievalLink.
   #
   # @param [String, nil]      rid       EMMA repository record ID.
-  # @param [String, Hash nil] base_url  Default: `Record::Bulk#BULK_BASE_URL`.
+  # @param [String, Hash nil] base_url  Default: `Upload#BULK_BASE_URL`.
   #
   # @return [String]
   # @return [nil]                       If no repository ID was given.
+  #
+  # @note From Upload#make_retrieval_link
   #
   def make_retrieval_link: (String? rid, ?(symHash|String|nil) base_url) -> (String | nil)
 
@@ -54,6 +56,8 @@ module Record::EmmaData
   # @param [Hash] data
   #
   # @return [Search::Record::MetadataRecord]
+  #
+  # @note From Upload::EmmaDataMethods#make_emma_record
   #
   def make_emma_record: (symHash data, **untyped _ignored) -> Search::Record::MetadataRecord
 
@@ -64,6 +68,8 @@ module Record::EmmaData
   #
   # @return [Hash]
   #
+  # @note From Upload::EmmaDataMethods#parse_emma_data
+  #
   def parse_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> symHash
 
   # generate_emma_data
@@ -72,6 +78,8 @@ module Record::EmmaData
   # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] attr
   #
   # @return [Hash]
+  #
+  # @note From Upload#assign_attributes (sorta)
   #
   def generate_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, (prmHash|String|Model|Search::Record::MetadataRecord|nil) attr) -> symHash
 
@@ -101,6 +109,8 @@ module Record::EmmaData
     #
     # @return [Search::Record::MetadataRecord]
     #
+    # @note From Upload::EmmaDataMethods#emma_record
+    #
     def emma_record: (?refresh: bool) -> Search::Record::MetadataRecord
 
     @emma_record: Search::Record::MetadataRecord | nil
@@ -110,6 +120,8 @@ module Record::EmmaData
     # @param [Boolean] refresh        If *true*, force regeneration.
     #
     # @return [Hash{Symbol=>Any}]
+    #
+    # @note From Upload::EmmaDataMethods#emma_metadata
     #
     def emma_metadata: (?refresh: bool) -> symHash
 
@@ -123,6 +135,8 @@ module Record::EmmaData
     # @return [String]                New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
+    # @note From Upload::EmmaDataMethods#set_emma_data
+    #
     def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
 
     # Selectively modify the :emma_data field value (if not #EMMA_DATA_HASH).
@@ -132,6 +146,8 @@ module Record::EmmaData
     #
     # @return [String]                New value of :emma_data.
     # @return [nil]                   If no change and :emma_data was *nil*.
+    #
+    # @note From Upload::EmmaDataMethods#modify_emma_data
     #
     def modify_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
   end

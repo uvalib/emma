@@ -17,25 +17,25 @@ module Upload::BulkMethods
 
   public
 
-  # Fallback URL base. TODO: ?                                                  # NOTE: to Record::Bulk
+  # Fallback URL base. TODO: ?
   #
   # @type [String]
   #
   BULK_BASE_URL = PRODUCTION_BASE_URL
 
-  # Default user for bulk uploads. # TODO: ?                                    # NOTE: to Record::Bulk
+  # Default user for bulk uploads. # TODO: ?
   #
   # @type [String]
   #
   BULK_USER = 'emmadso@bookshare.org'
 
-  # Fields that used within the instance but are not persisted to the database. # NOTE: to Record::Bulk
+  # Fields that used within the instance but are not persisted to the database.
   #
   # @type [Array<Symbol>]
   #
   LOCAL_FIELDS = %i[file_path].freeze
 
-  # Fields that are expected to be included in :emma_data.                      # NOTE: to Record::Bulk
+  # Fields that are expected to be included in :emma_data.
   #
   # @type [Array<Symbol>]
   #
@@ -47,7 +47,7 @@ module Upload::BulkMethods
 
   public
 
-  # Bulk upload URL.                                                            # NOTE: to Record::Bulk::Operation#manifest_path
+  # Bulk upload URL.
   #
   # @return [String, nil]
   #
@@ -67,7 +67,7 @@ module Upload::BulkMethods
   #
   # @return [Hash]
   #
-  def import_transform(fields, importer_name)                                   # NOTE: to Record::Bulk
+  def import_transform(fields, importer_name)
     importer = Import.get_importer(importer_name)
     Log.error { "#{__method__}: #{importer_name}: invalid" } if importer.blank?
     return fields if fields.blank? || importer.blank?

@@ -36,8 +36,7 @@
 }
 
 // Reduce unneeded whitespace at the top of the modal page inside an <iframe>.
-body.upload.modal, // TODO: remove after upload -> entry
-body.entry.modal {
+body.upload.modal {
     .layout-content {
         margin-top: -1rem;
     }

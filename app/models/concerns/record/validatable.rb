@@ -26,11 +26,13 @@ module Record::Validatable
 
   public
 
-  # Control whether field validation should occur.                              # NOTE: from Upload
+  # Control whether field validation should occur.
   #
   # NOTE: Not currently supported
   #
   # @type [Boolean]
+  #
+  # @note From Upload::FIELD_VALIDATION
   #
   FIELD_VALIDATION = false
 
@@ -40,24 +42,28 @@ module Record::Validatable
 
   public
 
-  # Configured requirements for Entry fields.
+  # Configured requirements for Upload fields.
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def database_fields                                                           # NOTE: from Upload
-    Model.database_fields(:entry)
+  def database_fields
+    Model.database_fields(:upload)
   end
 
   # Indicate whether all required fields have valid values.
   #
-  def required_fields_valid?                                                    # NOTE: from Upload
+  # @note From Upload#required_fields_valid?
+  #
+  def required_fields_valid?
     check_required
     errors.empty?
   end
 
   # Indicate whether all required fields have valid values.
   #
-  def emma_data_valid?                                                          # NOTE: from Upload
+  # @note From Upload#emma_data_valid?
+  #
+  def emma_data_valid?
     if emma_data.blank?
       error(:emma_data, :missing)
     else
@@ -68,10 +74,12 @@ module Record::Validatable
 
   # Compare the source fields against configured requirements.
   #
-  # @param [Hash, nil]        required_fields   Default: `#database_fields`
-  # @param [Entry, Hash, nil] source            Default: self.
+  # @param [Hash, nil]         required_fields  Default: `#database_fields`
+  # @param [Record, Hash, nil] source           Default: self.
   #
   # @return [void]
+  #
+  # @note From Upload#check_required
   #
   #--
   # == Variations
@@ -79,18 +87,18 @@ module Record::Validatable
   #
   # @overload check_required
   #   Check that all configured fields are present in the current record.
-  #   @param [Hash]        required_fields
+  #   @param [Hash]         required_fields
   #
   # @overload check_required(required_fields)
   #   Check that the given fields are present in the current record.
-  #   @param [Hash]        required_fields
+  #   @param [Hash]         required_fields
   #
   # @overload check_required(required_fields, source)
   #   Check that the given fields are present in the given source object.
-  #   @param [Hash]        required_fields
-  #   @param [Entry, Hash] source
+  #   @param [Hash]         required_fields
+  #   @param [Record, Hash] source
   #
-  def check_required(required_fields = nil, source = nil)                       # NOTE: from Upload
+  def check_required(required_fields = nil, source = nil)
     source ||= self
     (required_fields || database_fields).each_pair do |field, config|
       value      = source[field]

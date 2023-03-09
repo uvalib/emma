@@ -1,5 +1,0 @@
-# Base class for phases that are not part of bulk operations.
-#
-class Phase::Single < Phase
-  include Record::Sti::Branch
-end

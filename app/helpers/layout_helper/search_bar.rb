@@ -445,7 +445,6 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @note Used by EntryDecorator#parent_entry_select
   # @note Used by UploadDecorator#parent_entry_select
   #
   def search_input(field, ctrlr = nil, target: nil, value: nil, **opt)
@@ -512,7 +511,6 @@ module LayoutHelper::SearchBar
   # @return [String]                      The specified value.
   # @return [nil]                         No non-empty value was found.
   #
-  # @note Used by EntryDecorator#parent_entry_select
   # @note Used by UploadDecorator#parent_entry_select
   #
   def search_button_label(ctrlr = nil, target: nil, **opt)

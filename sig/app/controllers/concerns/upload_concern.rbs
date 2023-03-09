@@ -28,7 +28,7 @@ module UploadConcern
 
   MIME_REGISTRATION: Array[Class]
 
-  # URL parameters associated with item/entry identification.                   # NOTE: to EntryConcern
+  # URL parameters associated with item/entry identification.
   #
   # @type [Array<Symbol>]
   #
@@ -60,7 +60,7 @@ module UploadConcern
 
   @upload_params: symHash
 
-  # Get URL parameters relevant to the current operation.                       # NOTE: method now unused
+  # Get URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -97,19 +97,19 @@ module UploadConcern
   #
   def workflow_parameters: () -> symHash
 
-  # Parameters used by Upload#search_records.                                   # NOTE: to EntryConcern
+  # Parameters used by Upload#search_records.
   #
   # @type [Array<Symbol>]
   #
   SEARCH_RECORDS_PARAMS: symArray
 
-  # Upload#search_records parameters that specify a distinct search query.      # NOTE: to EntryConcern
+  # Upload#search_records parameters that specify a distinct search query.
   #
   # @type [Array<Symbol>]
   #
   SEARCH_ONLY_PARAMS: symArray
 
-  # Parameters used by #find_by_match_records or passed on to                   # NOTE: to EntryConcern
+  # Parameters used by #find_by_match_records or passed on to
   # Upload#search_records.
   #
   # @type [Array<Symbol>]

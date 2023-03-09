@@ -1,3 +1,4 @@
+# @note From UploadWorkflow::Properties
 module Record::Properties
   # The Federated Ingest API cannot accept more than 1000 items; this puts a
   # hard upper-bound on batch sizes and the size of input values that certain
@@ -230,7 +231,7 @@ module Record::Properties
   #
   # @return [Hash{Symbol=>Any}]
   #
-  # @see Entry::Options#model_params
+  # @see ::Options#model_params
   #
   def parameters: () -> symHash
 

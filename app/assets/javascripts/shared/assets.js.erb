@@ -480,7 +480,6 @@ AppDebug.file('shared/assets.js.erb');
  * @property {ActionProperties}   Lookup
  * @property {ModelProperties}    Account
  * @property {ModelProperties}    User
- * @property {ModelProperties}    Entry
  * @property {ModelProperties}    Upload
  * @property {ModelProperties}    Manifest
  * @property {ModelProperties}    ManifestItem
@@ -632,7 +631,6 @@ export const Emma = (function() {
     /** @type {ModelProperties} */
     const Account =     o$('<%= js AccountDecorator.js_properties %>'),
           User =        o$('<%= js UserDecorator.js_properties %>'),
-          Entry =       o$('<%= js EntryDecorator.js_properties %>'),
           Upload =      o$('<%= js UploadDecorator.js_properties %>'),
           Manifest =    o$('<%= js ManifestDecorator.js_properties %>'),
           ManifestItem= o$('<%= js ManifestItemDecorator.js_properties %>');
@@ -658,7 +656,6 @@ export const Emma = (function() {
         Lookup,
         Account,
         User,
-        Entry,
         Upload,
         Manifest,
         ManifestItem,

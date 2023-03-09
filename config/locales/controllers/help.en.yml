@@ -78,10 +78,6 @@ en:
           tooltip:      'Help with uploading files to EMMA.'
           content:      ~ # @see file:app/views/help/topic/_upload.html.erb
 
-        entry:
-          <<:           *SUBMISSION_TOPIC
-          enabled:      debug
-
         lookup_tool:
           <<:           *TOPIC_TEMPLATE
           topic:        'lookup tool'
