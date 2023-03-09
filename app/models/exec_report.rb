@@ -651,7 +651,7 @@ class ExecReport
 
     # error_table_hash
     #
-    # @param [Array<ExecReport,Exception,Hash,Array,*>] entries
+    # @param [Array<ExecReport,Exception,Hash,Array,*>] src
     # @param [String, Regexp, Array, nil]               ignore
     #
     # @return [Hash{String,Integer=>String}]
