@@ -109,16 +109,6 @@ module BaseDecorator::Grid
   #
   def grid_controls: (?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
 
-  # HTML tags indicating construction of a <table>.
-  #
-  # For use with the :tag named option, any of these tags may be passed in to
-  # indicate participation in a table; the method will replace it with the
-  # appropriate tag as needed.
-  #
-  # @type [Array<Symbol>]
-  #
-  TABLE_TAGS: symArray
-
   # Render associated items in a grid based on <table>.
   #
   # @param [Hash] opt                 Passed to #render_grid.

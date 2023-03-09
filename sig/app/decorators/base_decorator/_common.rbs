@@ -14,4 +14,14 @@ module BaseDecorator::Common
   include Emma::Unicode
 
   include Emma::Json
+
+  # HTML tags indicating construction of a <table>.
+  #
+  # For use with the :tag named option, any of these tags may be passed in to
+  # indicate participation in a table; the method will replace it with the
+  # appropriate tag as needed.
+  #
+  # @type [Array<Symbol>]
+  #
+  TABLE_TAGS: symArray
 end

@@ -175,16 +175,6 @@ module BaseDecorator::Grid
 
   public
 
-  # HTML tags indicating construction of a <table>.
-  #
-  # For use with the :tag named option, any of these tags may be passed in to
-  # indicate participation in a table; the method will replace it with the
-  # appropriate tag as needed.
-  #
-  # @type [Array<Symbol>]
-  #
-  TABLE_TAGS = %i[table thead tbody th tr td].freeze
-
   # Render associated items in a grid based on <table>.
   #
   # @param [Hash] opt                 Passed to #render_grid.
@@ -504,7 +494,8 @@ module BaseDecorator::Grid
     opt[:only]   = cols if cols
     opt[:except] = grid_row_skipped_columns unless cols
     opt[:index]  = grid_index(opt[:index])
-    opt[:outer]  = (opt[:outer]&.except(:unique) || {}).merge!(role: 'row')
+    opt[:outer]  = opt[:outer]&.except(:unique) || {}
+    opt[:outer].merge!(role: 'row', 'aria-rowindex': (opt[:index] + 1))
     opt[:render] = :grid_data_cell
     list_item(**opt)
   end

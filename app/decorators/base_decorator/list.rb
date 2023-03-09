@@ -116,7 +116,7 @@ module BaseDecorator::List
   # @param [Integer, nil]         row       Display row.
   # @param [String, nil]          separator Between parts if *value* is array.
   # @param [String, nil]          wrap      Class for outer wrapper.
-  # @param [Symbol]               tag       @see BaseDecorator::Grid#TABLE_TAGS
+  # @param [Symbol]               tag       @see #TABLE_TAGS
   # @param [Boolean,Symbol,Array] no_format
   # @param [Boolean]              no_code
   # @param [Boolean]              no_label
@@ -632,7 +632,7 @@ module BaseDecorator::List
     row_opt[:'data-group']    ||= group
     row_opt[:'data-title_id'] ||= title_id_values
     row_opt[:'aria-level']    ||= level
-    row_opt.delete(:'aria-rowindex')
+    row_opt.delete(:'aria-rowindex')   unless TABLE_TAGS.include?(tag)
     row_opt.delete(:'aria-colindex')
     append_css!(row_opt, "row-#{row}") if row
     append_css!(row_opt, 'empty')      if blank?

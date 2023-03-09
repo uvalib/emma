@@ -70,7 +70,7 @@ module BaseDecorator::List
   # @param [Integer, nil]         row       Display row.
   # @param [String, nil]          separator Between parts if *value* is array.
   # @param [String, nil]          wrap      Class for outer wrapper.
-  # @param [Symbol]               tag       @see BaseDecorator::Grid#TABLE_TAGS
+  # @param [Symbol]               tag       @see #TABLE_TAGS
   # @param [Boolean,Symbol,Array] no_format
   # @param [Boolean]              no_code
   # @param [Boolean]              no_label
