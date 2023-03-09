@@ -5,13 +5,13 @@
   "dependencies": {
     "@rails/actioncable": "^7.0.4",
     "@rails/ujs":         "^7.0.4",
-    "@uppy/core":         "^3.0.6",
+    "@uppy/core":         "^3.1.1",
     "@uppy/file-input":   "^3.0.1",
     "@uppy/informer":     "^3.0.1",
     "@uppy/progress-bar": "^3.0.1",
     "@uppy/xhr-upload":   "^3.1.0",
     "esbuild":            "^0.17.11",
-    "jquery":             "^3.6.3",
+    "jquery":             "^3.6.4",
     "sass":               "^1.58.3",
     "select2":            "^4.1.0-rc.0",
     "turbolinks":         "^5.2.0"
