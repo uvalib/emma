@@ -50,73 +50,64 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Linkage
+     * @typedef {object} Linkage
      *
-     * @typedef {{
-     *      href:   string,
-     *      rel:    string,
-     * }} Linkage
+     * @property {string}       href
+     * @property {string}       rel
      */
 
     /**
-     * MemberName
+     * @typedef {object} MemberName
      *
-     * @typedef {{
-     *      firstName:  string,
-     *      lastName:   string,
-     *      middle?:    string,
-     *      prefix?:    string,
-     *      suffix?:    string,
-     * }} MemberName
+     * @property {string}       firstName
+     * @property {string}       lastName
+     * @property {string}       [middle]
+     * @property {string}       [prefix]
+     * @property {string}       [suffix]
      */
 
     /**
-     * Member
+     * @typedef {object} Member
      *
-     * @typedef {{
-     *      allowAdultContent:          boolean,
-     *      canDownload:                boolean,
-     *      dateOfBirth:                string,
-     *      deleted:                    boolean,
-     *      emailAddress?:              string,
-     *      hasAgreement:               boolean,
-     *      language:                   string,
-     *      links:                      Linkage[],
-     *      locked:                     boolean,
-     *      name:                       MemberName,
-     *      phoneNumber:                string,
-     *      proofOfDisabilityStatus:    string,
-     *      roles:                      string[],
-     *      site:                       string,
-     *      subscriptionStatus:         string,
-     *      userAccountId:              string,
-     * }} Member
+     * @property {boolean}      allowAdultContent
+     * @property {boolean}      canDownload
+     * @property {string}       dateOfBirth
+     * @property {boolean}      boolean
+     * @property {string}       [emailAddress]
+     * @property {boolean}      hasAgreement
+     * @property {string}       language
+     * @property {Linkage[]}    links
+     * @property {boolean}      locked
+     * @property {MemberName}   name
+     * @property {string}       phoneNumber
+     * @property {string}       proofOfDisabilityStatus
+     * @property {string[]}     roles
+     * @property {string}       site
+     * @property {string}       subscriptionStatus
+     * @property {string}       userAccountId
      */
 
     /**
-     * MessageProperties
+     * @typedef {object} MessageProperties
      *
-     * - list_type: only present with session_debug
-     * - item_type: only present with session_debug
-     *
-     * @typedef {{
-     *      total:      number,
-     *      limit:      number|undefined,
-     *      links:      Linkage[]|undefined,
-     *      list_type?: string|null|undefined,
-     *      item_type?: string|null|undefined,
-     * }} MessageProperties
+     * @property {number}       total
+     * @property {number}       [limit]
+     * @property {Linkage[]}    [links]
+     * @property {string}       [list_type]     Only present with session_debug
+     * @property {string}       [item_type]     Only present with session_debug
      */
 
     /**
-     * MemberMessage
+     * @typedef {object} MemberMessageTable
      *
-     * @typedef {{
-     *      members: {
-     *          properties: MessageProperties,
-     *          list:       Member[],
-     *      }
-     * }} MemberMessage
+     * @property {MessageProperties} properties
+     * @property {Member[]}          list
+     */
+
+    /**
+     * @typedef {object} MemberMessage
+     *
+     * @property {MemberMessageTable} members
      */
 
     // ========================================================================

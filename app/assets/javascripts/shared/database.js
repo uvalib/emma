@@ -30,24 +30,20 @@ AppDebug.file('shared/database', MODULE, DEBUG);
  */
 
 /**
- * DbRecordProperties
+ * @typedef {object} DbRecordProperties
  *
  * @note The optional "default" entry is only used by the database client.
  *
- * @typedef {{
- *     default?: *,
- *     index?:   boolean|IDBIndexParameters,
- *     func?:    function:IDBValidKey,
- * }} DbRecordProperties
+ * @property {*}                          [default]
+ * @property {boolean|IDBIndexParameters} [index]
+ * @property {function:IDBValidKey}       [func]
  */
 
 /**
- * StoreTemplate
+ * @typedef {object} StoreTemplate
  *
- * @typedef {{
- *     options: IDBObjectStoreParameters,
- *     record:  Object.<string,DbRecordProperties>,
- * }} StoreTemplate
+ * @property {IDBObjectStoreParameters}           options
+ * @property {Object.<string,DbRecordProperties>} record,
  */
 
 /**
@@ -55,14 +51,12 @@ AppDebug.file('shared/database', MODULE, DEBUG);
  */
 
 /**
- * DatabaseProperties
+ * @typedef {object} DatabaseProperties
  *
- * @typedef {{
- *      name:     string,
- *      version:  number,
- *      store:    string,
- *      template: StoreTemplates,
- * }} DatabaseProperties
+ * @property {string}         name
+ * @property {number}         version
+ * @property {string}         store
+ * @property {StoreTemplates} template
  */
 
 /**
@@ -143,20 +137,16 @@ AppDebug.file('shared/database', MODULE, DEBUG);
 export const DB = (function() {
 
     /**
-     * IndexQueryValue
-     *
      * @typedef {IDBValidKey|IDBKeyRange} IndexQueryValue
      */
 
     /**
-     * IndexQueryArgs
+     * @typedef {object} IndexQueryArgs
      *
-     * @typedef {{
-     *     name:       string,
-     *     value?:     IndexQueryValue,
-     *     count?:     number,
-     *     direction?: IDBCursorDirection|undefined,
-     * }} IndexQueryArgs
+     * @property {string}             name
+     * @property {IndexQueryValue}    [value]
+     * @property {number}             [count]
+     * @property {IDBCursorDirection} [direction]
      */
 
     // ========================================================================

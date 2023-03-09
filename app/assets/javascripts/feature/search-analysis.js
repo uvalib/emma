@@ -501,26 +501,22 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
     // ========================================================================
 
     /**
-     * SearchDataRecord
+     * @typedef {object} SearchDataRecord
      *
-     * @typedef {{
-     *     page:         number,
-     *     title_text:   string,
-     *     title_id:     string,
-     *     record_id:    string,
-     *     repo_id:      string,
-     *     identifier:   string[],
-     *     db_timestamp: Date,
-     * }} SearchDataRecord
+     * @property {number}   page
+     * @property {string}   title_text
+     * @property {string}   title_id
+     * @property {string}   record_id
+     * @property {string}   repo_id
+     * @property {string[]} identifier
+     * @property {Date}     db_timestamp
      */
 
     /**
-     * PageItem
+     * @typedef {object} PageItem
      *
-     * @typedef {{
-     *     element: jQuery,
-     *     data:    SearchDataRecord,
-     * }} PageItem
+     * @property {jQuery}           element
+     * @property {SearchDataRecord} data
      */
 
     /**
@@ -1537,12 +1533,10 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         // ====================================================================
 
         /**
-         * ColorizeState
+         * @typedef {object} ColorizeState
          *
-         * @typedef {{
-         *     topic?:  string|null|undefined,
-         *     search?: object|null|undefined,
-         * }} ColorizeState
+         * @property {string} [topic]
+         * @property {object} [search]
          */
 
         // ====================================================================

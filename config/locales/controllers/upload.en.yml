@@ -641,8 +641,6 @@ en:
       # =======================================================================
 
       renew:
-
-        #
         label:          'Renew'
         title:          'Renew Record'
         description:    |

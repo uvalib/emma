@@ -80,23 +80,23 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
  *
  * A live copy of Uppy features.
  *
- * @property {boolean}                       replace_input
- * @property {boolean}                       popup_messages
- * @property {boolean}                       progress_bar
- * @property {boolean}                       status_bar
- * @property {boolean}                       dashboard
- * @property {boolean|HTMLElement|undefined} drag_and_drop
- * @property {boolean|HTMLElement|undefined} image_preview
- * @property {boolean}                       flash_messages
- * @property {boolean}                       flash_errors
- * @property {boolean}                       upload_to_aws
- * @property {boolean}                       upload_to_box
- * @property {boolean}                       upload_to_dropbox
- * @property {boolean}                       upload_to_google
- * @property {boolean}                       upload_to_onedrive
- * @property {boolean}                       url
- * @property {boolean}                       xhr
- * @property {boolean}                       debugging
+ * @property {boolean}             replace_input
+ * @property {boolean}             popup_messages
+ * @property {boolean}             progress_bar
+ * @property {boolean}             status_bar
+ * @property {boolean}             dashboard
+ * @property {boolean|HTMLElement} [drag_and_drop]
+ * @property {boolean|HTMLElement} [image_preview]
+ * @property {boolean}             flash_messages
+ * @property {boolean}             flash_errors
+ * @property {boolean}             upload_to_aws
+ * @property {boolean}             upload_to_box
+ * @property {boolean}             upload_to_dropbox
+ * @property {boolean}             upload_to_google
+ * @property {boolean}             upload_to_onedrive
+ * @property {boolean}             url
+ * @property {boolean}             xhr
+ * @property {boolean}             debugging
  */
 
 /**
@@ -106,26 +106,26 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
  */
 
 /**
+ * @typedef {object} ShrineResponseBody
+ *
  * Shrine upload response message.
  *
- * @see "Shrine::UploadEndpointExt#make_response"
+ * @property {EmmaDataOrError}  [emma_data]
+ * @property {string}           id
+ * @property {string}           storage
+ * @property {FileDataMetadata} metadata
  *
- * @typedef {{
- *      emma_data?: EmmaDataOrError,
- *      id:         string,
- *      storage:    string,
- *      metadata:   FileDataMetadata,
- * }} ShrineResponseBody
+ * @see "Shrine::UploadEndpointExt#make_response"
  */
 
 /**
+ * @typedef {object} UppyResponseMessage
+ *
  * Uppy upload response message.
  *
- * @typedef {{
- *      status:     number,
- *      body:       ShrineResponseBody,
- *      uploadURL:  string,
- * }} UppyResponseMessage
+ * @property {number}             status
+ * @property {ShrineResponseBody} body
+ * @property {string}             uploadURL
  */
 
 // ============================================================================
@@ -1175,13 +1175,11 @@ class BaseUploader extends BaseClass {
     // ========================================================================
 
     /**
-     * InitializeFileSelectOptions
+     * @typedef {object} InitializeFileSelectOptions
      *
-     * @typedef {{
-     *     input_id?: string,
-     *     label_id?: string,
-     *     added?:    function(jQuery),
-     * }} InitializeFileSelectOptions
+     * @property {string}           [input_id]
+     * @property {string}           [label_id]
+     * @property {function(jQuery)} [added]
      */
 
     /**

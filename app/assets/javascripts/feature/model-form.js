@@ -135,23 +135,23 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
+     * @typedef {object} FileDataMetadata
+     *
      * Shrine upload information for the submission.
      *
-     * @typedef {{
-     *      filename:   string,
-     *      size:       number,
-     *      mime_type:  string,
-     * }} FileDataMetadata
+     * @property {string} filename
+     * @property {number} size
+     * @property {string} mime_type
      */
 
     /**
+     * @typedef {object} FileData
+     *
      * Shrine upload information for the submission.
      *
-     * @typedef {{
-     *      id:         string,
-     *      storage:    string,
-     *      metadata:   FileDataMetadata,
-     * }} FileData
+     * @property {string}           id
+     * @property {string}           storage
+     * @property {FileDataMetadata} metadata
      *
      * @see "en.emma.upload.record.file_data"
      * @see "Shrine::InstanceMethods#upload"
@@ -170,106 +170,101 @@ appSetup(MODULE, function() {
      */
 
     /**
+     * @typedef {object} EmmaData
+     *
      * EMMA metadata for the submission.
      *
-     * @typedef {{
-     *      emma_recordId:                      string,
-     *      emma_titleId:                       string,
-     *      emma_repository:                    string,
-     *      emma_collection:                    multiString,
-     *      emma_repositoryRecordId:            string,
-     *      emma_retrievalLink:                 string,
-     *      emma_webPageLink:                   string,
-     *      emma_lastRemediationDate:           string,
-     *      emma_sortDate:                      string,
-     *      emma_repositoryUpdateDate:          string,
-     *      emma_repositoryMetadataUpdateDate:  string,
-     *      emma_publicationDate:               string,
-     *      emma_lastRemediationNote:           string,
-     *      emma_formatVersion:                 string,
-     *      emma_formatFeature:                 multiString,
-     *      dc_title:                           singleString,
-     *      dc_creator:                         multiString,
-     *      dc_identifier:                      multiString,
-     *      dc_publisher:                       singleString,
-     *      dc_relation:                        multiString,
-     *      dc_language:                        multiString,
-     *      dc_rights:                          singleString,
-     *      dc_description:                     singleString,
-     *      dc_format:                          singleString,
-     *      dc_type:                            singleString,
-     *      dc_subject:                         multiString,
-     *      dcterms_dateAccepted:               singleString,
-     *      dcterms_dateCopyright:              singleString,
-     *      s_accessibilityFeature:             multiString,
-     *      s_accessibilityControl:             multiString,
-     *      s_accessibilityHazard:              multiString,
-     *      s_accessMode:                       multiString,
-     *      s_accessModeSufficient:             multiString,
-     *      s_accessibilitySummary:             singleString,
-     *      rem_source:                         singleString,
-     *      rem_metadataSource:                 multiString,
-     *      rem_remediatedBy:                   multiString,
-     *      rem_complete:                       boolean,
-     *      rem_coverage:                       singleString,
-     *      rem_remediation:                    multiString,
-     *      rem_remediatedAspects:              multiString,
-     *      rem_textQuality:                    singleString,
-     *      rem_quality:                        singleString,
-     *      rem_status:                         singleString,
-     *      rem_remediationDate:                singleString,
-     *      rem_comments:                       singleString,
-     *      rem_remediationComments:            singleString,
-     *      bib_series:                         singleString,
-     *      bib_seriesType:                     singleString,
-     *      bib_seriesPosition:                 singleString,
-     * }} EmmaData
+     * @property {string}       emma_recordId
+     * @property {string}       emma_titleId
+     * @property {string}       emma_repository
+     * @property {multiString}  emma_collection
+     * @property {string}       emma_repositoryRecordId
+     * @property {string}       emma_retrievalLink
+     * @property {string}       emma_webPageLink
+     * @property {string}       emma_lastRemediationDate
+     * @property {string}       emma_sortDate
+     * @property {string}       emma_repositoryUpdateDate
+     * @property {string}       emma_repositoryMetadataUpdateDate
+     * @property {string}       emma_publicationDate
+     * @property {string}       emma_lastRemediationNote
+     * @property {string}       emma_formatVersion
+     * @property {multiString}  emma_formatFeature
+     * @property {singleString} dc_title
+     * @property {multiString}  dc_creator
+     * @property {multiString}  dc_identifier
+     * @property {singleString} dc_publisher
+     * @property {multiString}  dc_relation
+     * @property {multiString}  dc_language
+     * @property {singleString} dc_rights
+     * @property {singleString} dc_description
+     * @property {singleString} dc_format
+     * @property {singleString} dc_type
+     * @property {multiString}  dc_subject
+     * @property {singleString} dcterms_dateAccepted
+     * @property {singleString} dcterms_dateCopyright
+     * @property {multiString}  s_accessibilityFeature
+     * @property {multiString}  s_accessibilityControl
+     * @property {multiString}  s_accessibilityHazard
+     * @property {multiString}  s_accessMode
+     * @property {multiString}  s_accessModeSufficient
+     * @property {singleString} s_accessibilitySummary
+     * @property {singleString} rem_source
+     * @property {multiString}  rem_metadataSource
+     * @property {multiString}  rem_remediatedBy
+     * @property {boolean}      rem_complete
+     * @property {singleString} rem_coverage
+     * @property {multiString}  rem_remediation
+     * @property {multiString}  rem_remediatedAspects
+     * @property {singleString} rem_textQuality
+     * @property {singleString} rem_quality
+     * @property {singleString} rem_status
+     * @property {singleString} rem_remediationDate
+     * @property {singleString} rem_comments
+     * @property {singleString} rem_remediationComments
+     * @property {singleString} bib_series
+     * @property {singleString} bib_seriesType
+     * @property {singleString} bib_seriesPosition
      *
      * @see "en.emma.entry.record.emma_data"
      * @see "AwsS3::Record::SubmissionRequest"
      */
 
     /**
-     * RecordMessageProperties
+     * @typedef {object} RecordMessageProperties
      *
-     * - list_type: only present with session_debug
-     * - item_type: only present with session_debug
-     *
-     * @typedef {{
-     *      total:      number,
-     *      limit:      number|null|undefined,
-     *      links:      array|null|undefined,
-     *      list_type?: string|null|undefined,
-     *      item_type?: string|null|undefined,
-     * }} RecordMessageProperties
+     * @property {number} total
+     * @property {number} [limit]
+     * @property {array}  [links]
+     * @property {string} [list_type]   Only present with session_debug
+     * @property {string} [item_type]   Only present with session_debug
      */
 
     /**
+     * @typedef {object} UploadRecord
+     *
      * A complete submission database record.
      *
-     * @typedef {{
-     *      id:             number,
-     *      file_data:      FileData,
-     *      emma_data:      EmmaData,
-     *      user_id:        number,
-     *      repository:     string,
-     *      submission_id:  string,
-     *      fmt:            string,
-     *      ext:            string,
-     *      state:          string,
-     *      created_at:     string,
-     *      updated_at:     string,
-     *      phase:          string,
-     *      edit_state:     string,
-     *      edit_user:      string,
-     *      edit_file_data: FileData,
-     *      edit_emma_data: EmmaData,
-     *      edited_at:      string,
-     *      review_user:    string,
-     *      review_success: string,
-     *      review_comment: string,
-     *      reviewed_at:    string,
-     * }} UploadRecord
+     * @property {number}   id
+     * @property {FileData} file_data
+     * @property {EmmaData} emma_data
+     * @property {number}   user_id
+     * @property {string}   repository
+     * @property {string}   submission_id
+     * @property {string}   fmt
+     * @property {string}   ext
+     * @property {string}   state
+     * @property {string}   created_at
+     * @property {string}   updated_at
+     * @property {string}   phase
+     * @property {string}   edit_state
+     * @property {string}   edit_user
+     * @property {FileData} edit_file_data
+     * @property {EmmaData} edit_emma_data
+     * @property {string}   edited_at
+     * @property {string}   review_user
+     * @property {string}   review_success
+     * @property {string}   review_comment
+     * @property {string}   reviewed_at
      *
      * @see "en.emma.upload.record"
      */
@@ -302,14 +297,18 @@ appSetup(MODULE, function() {
      */
 
     /**
+     * @typedef {object} RecordMessageTable
+     *
+     * @property {RecordMessageProperties} properties
+     * @property {UploadRecord[]}          list
+     */
+
+    /**
+     * @typedef {object} UploadRecordMessage
+     *
      * JSON format of a response message containing a list of submissions.
      *
-     * @typedef {{
-     *      entries: {
-     *          properties: RecordMessageProperties,
-     *          list:       UploadRecord[],
-     *      }
-     * }} UploadRecordMessage
+     * @property {RecordMessageTable} entries
      */
 
     /**
@@ -340,82 +339,86 @@ appSetup(MODULE, function() {
      */
 
     /**
+     * @typedef {object} SearchResultEntry
+     *
      * A single search result entry.
      *
-     * @typedef {{
-     *      emma_recordId:                      string,
-     *      emma_titleId:                       string,
-     *      emma_repository:                    string,
-     *      emma_collection:                    string[],
-     *      emma_repositoryRecordId:            string,
-     *      emma_retrievalLink:                 string,
-     *      emma_webPageLink:                   string,
-     *      emma_lastRemediationDate?:          string,
-     *      emma_sortDate?:                     string,
-     *      emma_repositoryUpdateDate?:         string,
-     *      emma_repositoryMetadataUpdateDate?: string,
-     *      emma_publicationDate?:              string,
-     *      emma_lastRemediationNote?:          string,
-     *      emma_version?:                      string,
-     *      emma_formatVersion:                 string,
-     *      emma_formatFeature?:                string[],
-     *      dc_title:                           string,
-     *      dc_creator?:                        string[],
-     *      dc_identifier?:                     string[],
-     *      dc_relation?:                       string[],
-     *      dc_publisher?:                      string,
-     *      dc_language?:                       string[],
-     *      dc_rights?:                         string,
-     *      dc_description?:                    string,
-     *      dc_format?:                         string,
-     *      dc_type?:                           string,
-     *      dc_subject?:                        string[],
-     *      dcterms_dateAccepted?:              string,
-     *      dcterms_dateCopyright?:             string,
-     *      s_accessibilityFeature?:            string[],
-     *      s_accessibilityControl?:            string[],
-     *      s_accessibilityHazard?:             string[],
-     *      s_accessibilitySummary?:            string,
-     *      s_accessMode?:                      string[],
-     *      s_accessModeSufficient?:            string[],
-     *      rem_source?:                        string,
-     *      rem_metadataSource?:                string[],
-     *      rem_remediatedBy?:                  string[],
-     *      rem_complete?:                      boolean,
-     *      rem_coverage?:                      string,
-     *      rem_remediatedAspects?:             string[],
-     *      rem_textQuality?:                   string,
-     *      rem_quality?:                       string,
-     *      rem_status?:                        string,
-     *      rem_remediationDate?:               string,
-     *      rem_comments?:                      string,
-     *      rem_remediationComments?:           string,
-     * }} SearchResultEntry
+     * @property {string}   emma_recordId
+     * @property {string}   emma_titleId
+     * @property {string}   emma_repository
+     * @property {string[]} emma_collection
+     * @property {string}   emma_repositoryRecordId
+     * @property {string}   emma_retrievalLink
+     * @property {string}   emma_webPageLink
+     * @property {string}   [emma_lastRemediationDate]
+     * @property {string}   [emma_sortDate]
+     * @property {string}   [emma_repositoryUpdateDate]
+     * @property {string}   [emma_repositoryMetadataUpdateDate]
+     * @property {string}   [emma_publicationDate]
+     * @property {string}   [emma_lastRemediationNote]
+     * @property {string}   [emma_version]
+     * @property {string}   emma_formatVersion
+     * @property {string[]} [emma_formatFeature]
+     * @property {string}   dc_title
+     * @property {string[]} [dc_creator]
+     * @property {string[]} [dc_identifier]
+     * @property {string[]} [dc_relation]
+     * @property {string}   [dc_publisher]
+     * @property {string[]} [dc_language]
+     * @property {string}   [dc_rights]
+     * @property {string}   [dc_description]
+     * @property {string}   [dc_format]
+     * @property {string}   [dc_type]
+     * @property {string[]} [dc_subject]
+     * @property {string}   [dcterms_dateAccepted]
+     * @property {string}   [dcterms_dateCopyright]
+     * @property {string[]} [s_accessibilityFeature]
+     * @property {string[]} [s_accessibilityControl]
+     * @property {string[]} [s_accessibilityHazard]
+     * @property {string}   [s_accessibilitySummary]
+     * @property {string[]} [s_accessMode]
+     * @property {string[]} [s_accessModeSufficient]
+     * @property {string}   [rem_source]
+     * @property {string[]} [rem_metadataSource]
+     * @property {string[]} [rem_remediatedBy]
+     * @property {boolean}  [rem_complete]
+     * @property {string}   [rem_coverage]
+     * @property {string[]} [rem_remediatedAspects]
+     * @property {string}   [rem_textQuality]
+     * @property {string}   [rem_quality]
+     * @property {string}   [rem_status]
+     * @property {string}   [rem_remediationDate]
+     * @property {string}   [rem_comments]
+     * @property {string}   [rem_remediationComments]
      *
      * @see file:config/locales/records/search.en.yml "en.emma.search.record"
      */
 
     /**
-     * JSON format of a response message containing a list of search results.
+     * @typedef {object} SearchResultMessageTable
      *
-     * @typedef {{
-     *      response: {
-     *          properties: RecordMessageProperties,
-     *          records:    SearchResultEntry[],
-     *      }
-     * }} SearchResultMessage
+     * @property {RecordMessageProperties} properties
+     * @property {SearchResultEntry[]}     records
      */
 
     /**
+     * @typedef {object} SearchResultMessage
+     *
+     * JSON format of a response message containing a list of search results.
+     *
+     * @property {SearchResultMessageTable} response
+     */
+
+    /**
+     * @typedef {object} Relationship
+     *
      * Field relationship.
      *
-     * @typedef {{
-     *      name:           string,
-     *      required?:       boolean|function,
-     *      unrequired?:     boolean|function,
-     *      required_val?:   string,
-     *      unrequired_val?: string,
-     * }} Relationship
+     * @property {string}           name
+     * @property {boolean|function} [required]
+     * @property {boolean|function} [unrequired]
+     * @property {string}           [required_val]
+     * @property {string}           [unrequired_val]
      */
 
     // ========================================================================

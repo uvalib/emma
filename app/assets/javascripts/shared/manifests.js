@@ -233,23 +233,21 @@ export function server(controller, callback) {
 }
 
 /**
- * SendOptions
+ * @typedef {object} SendOptions
  *
  * Option values for the {@link serverSend} function.
  *
- * @typedef {{
- *      _ignoreBody?:   boolean,
- *      method?:        string,
- *      controller?:    string,
- *      action?:        string,
- *      params?:        Object.<string,any>,
- *      headers?:       StringTable,
- *      caller?:        string,
- *      onSuccess?:     XmitCallback,
- *      onError?:       XmitCallback,
- *      onComplete?:    XmitCallback,
- *      onCommStatus?:  XmitCallback,
- * }} SendOptions
+ * @property {boolean}            [_ignoreBody]
+ * @property {string}             [method]
+ * @property {string}             [controller]
+ * @property {string}             [action]
+ * @property {Object.<string,*>}  [params]
+ * @property {StringTable}        [headers]
+ * @property {string}             [caller]
+ * @property {XmitCallback}       [onSuccess]
+ * @property {XmitCallback}       [onError]
+ * @property {XmitCallback}       [onComplete]
+ * @property {XmitCallback}       [onCommStatus]
  */
 
 /**

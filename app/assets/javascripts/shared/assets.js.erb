@@ -35,7 +35,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef ElementProperties
+ * @typedef {object} ElementProperties
  *
  * @property {string|null}      [tag]
  * @property {string|null}      [type]
@@ -78,7 +78,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef EndpointProperties
+ * @typedef {object} EndpointProperties
  *
  * @property {ActionProperties} submit
  * @property {ActionProperties} cancel
@@ -92,7 +92,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef ControllerActionProperties
+ * @typedef {object} ControllerActionProperties
  *
  * Form action label/tooltips for controller actions.
  *
@@ -106,7 +106,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef FieldGroupProperties
+ * @typedef {object} FieldGroupProperties
  *
  * @property {string|null}          [label]
  * @property {string|null}          [tooltip]
@@ -115,7 +115,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef FilterProperties
+ * @typedef {object} FilterProperties
  *
  * Form action label/tooltips for form field filter selections.
  *
@@ -126,7 +126,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef StatusProperties
+ * @typedef {object} StatusProperties
  *
  * Status marker label/tooltips.
  *
@@ -138,7 +138,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef MimeProperties
+ * @typedef {object} MimeProperties
  *
  * @property {Object.<string,string[]>} to_fmt
  *
@@ -146,7 +146,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef FieldProperties
+ * @typedef {object} FieldProperties
  *
  * @property {string} empty
  *
@@ -154,7 +154,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef RepositoryProperties
+ * @typedef {object} RepositoryProperties
  *
  * @property {StringTable} name
  *
@@ -166,7 +166,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef UploaderProperties
+ * @typedef {object} UploaderProperties
  *
  * @property {string} drag_target
  *
@@ -178,7 +178,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef StyleControlProperties
+ * @typedef {object} StyleControlProperties
  *
  * @see "en.emma.search.styles"
  *
@@ -191,7 +191,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef AssetProperties
+ * @typedef {object} AssetProperties
  *
  * @property {string} alt           Image alt text.
  * @property {string} class         Image CSS class.
@@ -199,7 +199,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef ImageProperties
+ * @typedef {object} ImageProperties
  *
  * @property {AssetProperties} placeholder
  */
@@ -217,21 +217,21 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef GridHeaderProperties
+ * @typedef {object} GridHeaderProperties
  *
  * @property {ToggleProperties} column
  * @property {ToggleProperties} row
  */
 
 /**
- * @typedef GridProperties
+ * @typedef {object} GridProperties
  *
  * @property {GridHeaderProperties}  Headers
  * @property {ActionPropertiesTable} Icons
  */
 
 /**
- * @typedef PopupProperties
+ * @typedef {object} PopupProperties
  *
  * @property {ElementProperties} button
  *
@@ -259,7 +259,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef ScrollProperties
+ * @typedef {object} ScrollProperties
  *
  * @property {ElementProperties} target
  *
@@ -275,90 +275,106 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * SearchProperties
+ * @typedef {Object.<string,ElementProperties>} SearchPropertiesType
  *
- * - type:                      Label/tooltip/placeholder for each search type.
- * - Filter.control:            Button to expand/contract search filters.
- * - Style.container:           Properties for the style button tray.
- * - Style.control.template:    Default colorize button properties.
- * - Style.control.buttons:     Properties for each colorize button.
- *
- * @typedef {{
- *    type:             Object.<string,ElementProperties>,
- *    Filter: {
- *        control:      ToggleProperties,
- *    },
- *    Style: {
- *        container:    ElementProperties,
- *        control: {
- *            template: StyleControlProperties,
- *            buttons:  Object.<string,StyleControlProperties>,
- *        },
- *    },
- * }} SearchProperties
+ * Label/tooltip/placeholder for each search type.
  */
 
 /**
- * DownloadProperties
+ * @typedef {object} SearchPropertiesFilter
  *
- * - button.class:      Artifact download button element CSS class.
- * - progress.class:    Artifact download progress indicator element CSS class.
- * - failure.class:     Artifact download failure message element CSS class.
- * - failure.prefix:    Prefix for download failure message labels.
- * - failure.canceled:  Failure message for a user-canceled download.
- * - failure.sign_in:   Message for authentication failure.
- * - failure.unknown:   Unknown download failure.
+ * Button to expand/contract search filters.
  *
- * @typedef {{
- *    button:           ElementProperties,
- *    progress:         ElementProperties,
- *    failure: {
- *        class:        string,
- *        prefix:       string,
- *        canceled:     string,
- *        sign_in:      string,
- *        unknown:      string,
- *    },
- * }} DownloadProperties
+ * @property {ToggleProperties} control
  */
 
 /**
- * RecordProperties
+ * @typedef {object} SearchPropertiesStyleControl
  *
- * - GroupPanel:        Selection for type of Entry records to show.
- * - ListFilter:        Entry records filter radio button panel.
- * - FilterOptions:     Debug-only filter option panel.
- * - List:              Container for a listing of Entry records.
- * - StateGroup:        Workflow state groups.
+ * @property {StyleControlProperties} template
  *
- * @typedef {{
- *    GroupPanel: {
- *        class:        string,
- *        Control: {
- *            class:    string,
- *        },
- *    },
- *    ListFilter: {
- *        class:        string,
- *        Control: {
- *            class:    string,
- *        },
- *    },
- *    FilterOptions: {
- *        class:        string,
- *        Control: {
- *            class:    string,
- *        },
- *    },
- *    List: {
- *        class:        string,
- *    },
- *    StateGroup:       string[],
- * }} RecordProperties
+ *  Default colorize button properties. <p/>
+ *
+ * @property {Object.<string,StyleControlProperties>} buttons
+ *
+ *  Properties for each colorize button. <p/>
  */
 
 /**
- * @typedef PathProperties
+ * @typedef {object} SearchPropertiesStyle
+ *
+ * @property {ElementProperties} container
+ *
+ *  Properties for the style button tray. <p/>
+ *
+ * @property {SearchPropertiesStyleControl} control
+ */
+
+/**
+ * @typedef {object} SearchProperties
+ *
+ * @property {SearchPropertiesType}   type
+ * @property {SearchPropertiesFilter} Filter
+ * @property {SearchPropertiesStyle}  Style
+ */
+
+/**
+ * @typedef {object} DownloadFailureMsg
+ *
+ * @property {string} class
+ * @property {string} prefix    Prefix for download failure message labels.
+ * @property {string} canceled  Failure message for a user-canceled download.
+ * @property {string} sign_in   Message for authentication failure.
+ * @property {string} unknown   Unknown download failure.
+ */
+
+/**
+ * @typedef {object} DownloadProperties
+ *
+ * @property {ElementProperties}  button    Artifact download button.
+ * @property {ElementProperties}  progress  Artifact download progress.
+ * @property {DownloadFailureMsg} failure   Artifact download failure message.
+ */
+
+/**
+ * @typedef {object} RecordControl
+ *
+ * @property {string} class
+ */
+
+/**
+ * @typedef {object} RecordFeature
+ *
+ * @property {string}        class
+ * @property {RecordControl} Control
+ */
+
+/**
+ * @typedef {object} RecordProperties
+ *
+ * @property {RecordFeature} GroupPanel
+ *
+ *  Selection for type of model records to show. <p/>
+ *
+ * @property {RecordFeature} ListFilter
+ *
+ *  Model records filter radio button panel. <p/>
+ *
+ * @property {RecordFeature} FilterOptions
+ *
+ *  Debug-only filter option panel. <p/>
+ *
+ * @property {RecordControl} List
+ *
+ *  Container for a listing of model records. <p/>
+ *
+ * @property {string[]} StateGroup
+ *
+ *  Workflow state groups. <p/>
+ */
+
+/**
+ * @typedef {object} PathProperties
  *
  *  General controller endpoints.
  *
@@ -414,7 +430,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef ModelProperties
+ * @typedef {object} ModelProperties
  *
  * @property {PathProperties}               Path
  * @property {UploaderProperties}           Uploader
@@ -429,7 +445,7 @@ AppDebug.file('shared/assets.js.erb');
  */
 
 /**
- * @typedef AssetOverrides
+ * @typedef {object} AssetOverrides
  *
  * @property {object} OverrideScriptSettings
  * @property {string} Image_placeholder_asset

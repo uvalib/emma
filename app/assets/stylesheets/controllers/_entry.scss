@@ -19,9 +19,9 @@
 // Internal constants
 //=============================================================================
 
-$entry-padding:   0.5rem;
-$entry-entry-gap: 2rem;
-$entry-form-gap:  1.5rem;
+$entry-padding:  0.5rem;
+$entry-item-gap: 2rem;
+$entry-form-gap: 1.5rem;
 
 //=============================================================================
 // Entry index page
@@ -145,11 +145,11 @@ $entry-form-gap:  1.5rem;
 
     @extend .model-list;
 
-    row-gap: $entry-entry-gap;
+    row-gap: $entry-item-gap;
 
     .pagination-top {
 
-        margin-bottom: $entry-entry-gap * 0.5;
+        margin-bottom: $entry-item-gap * 0.5;
 
         .list-filter-panel {
 
@@ -187,7 +187,7 @@ $entry-form-gap:  1.5rem;
 
     .no-records {
         @media #{$not-narrow-screen} {
-            margin-bottom: $entry-entry-gap * 0.5;
+            margin-bottom: $entry-item-gap * 0.5;
         }
     }
 }

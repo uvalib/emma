@@ -512,151 +512,123 @@ export class MathDetectiveApi extends Api {
     // ========================================================================
 
     /**
-     * MD_ImageProcessingRequest
+     * @typedef {object} MD_ImageProcessingRequest
      *
-     * @typedef {{
-     *     name?:            string,
-     *     url:              string,
-     *     skip_ocr?:        boolean,
-     *     force_reprocess?: boolean,
-     * }} MD_ImageProcessingRequest
+     * @property {string}  [name]
+     * @property {string}  url
+     * @property {boolean} [skip_ocr]
+     * @property {boolean} [force_reprocess]
      */
 
     /**
-     * MD_Label
+     * @typedef {object} MD_Label
      *
-     * @typedef {{
-     *     name:       string,
-     *     confidence: number,
-     * }} MD_Label
+     * @property {string}  name
+     * @property {number}  confidence
      */
 
     /**
-     * MD_ImageProcessingResponse
+     * @typedef {object} MD_ImageProcessingResponse
      *
-     * @typedef {{
-     *     name:           string,
-     *     sha256_sum:     string,
-     *     labels:         MD_Label[],
-     *     ocr_confidence: number,
-     *     mathml:         string,
-     *     latex:          string,
-     *     error:          string,
-     *     status:         string,
-     *     spokentext:     string,
-     * }} MD_ImageProcessingResponse
+     * @property {string}      name
+     * @property {string}      sha256_sum
+     * @property {MD_Label[]}  labels
+     * @property {number}      ocr_confidence
+     * @property {string}      mathml
+     * @property {string}      latex
+     * @property {string}      error
+     * @property {string}      status
+     * @property {string}      spokentext
      */
 
     /**
-     * MD_HttpCallback - NOT USED
+     * @typedef {object} MD_HttpCallback - NOT USED
      *
-     * @typedef {{
-     *    url:     string,
-     *    headers: StringTable,
-     * }} MD_HttpCallback
+     * @property {string}      url
+     * @property {StringTable} headers
      */
 
     /**
-     * MD_BatchSubmissionRequest - NOT USED
+     * @typedef {object} MD_BatchSubmissionRequest - NOT USED
      *
-     * @typedef {{
-     *     images:           MD_ImageProcessingRequest[],
-     *     callback?:        MD_HttpCallback,
-     *     smoke_test_flag?: boolean,
-     *     skip_ocr?:        boolean,
-     *     force_reprocess?: boolean,
-     * }} MD_BatchSubmissionRequest
+     * @property {MD_ImageProcessingRequest[]}  images
+     * @property {MD_HttpCallback}              [callback]
+     * @property {boolean}                      [smoke_test_flag]
+     * @property {boolean}                      [skip_ocr]
+     * @property {boolean}                      [force_reprocess]
      */
 
     /**
-     * MD_BatchSubmissionResponse - NOT USED
+     * @typedef {object} MD_BatchSubmissionResponse - NOT USED
      *
-     * @typedef {{
-     *     batch_uuid: string,
-     *     status:     string,
-     *     output:     MD_ImageProcessingResponse[],
-     * }} MD_BatchSubmissionResponse
+     * @property {string}                       batch_uuid
+     * @property {string}                       status
+     * @property {MD_ImageProcessingResponse[]} output
      */
 
     /**
-     * MD_TextProcessingRequest - NOT USED
+     * @typedef {object} MD_TextProcessingRequest - NOT USED
      *
-     * @typedef {{
-     *     url:       string,
-     *     wrap_tag?: string,
-     * }} MD_TextProcessingRequest
+     * @property {string}   url
+     * @property {string}   [wrap_tag]
      */
 
     /**
-     * MD_TextProcessingResponse - NOT USED
+     * @typedef {object} MD_TextProcessingResponse - NOT USED
      *
-     * @typedef {{
-     *     text_sha256sum: string,
-     * }} MD_TextProcessingResponse
+     * @property {string}   text_sha256sum
      */
 
     /**
-     * MD_StringEquationResponseItem - NOT USED
+     * @typedef {object} MD_StringEquationResponseItem - NOT USED
      *
-     * @typedef {{
-     *     element:    string,
-     *     bounds:     number[],
-     *     conf_score: number,
-     *     mathml:     string,
-     *     spokentext: string,
-     *     tag_id:     string,
-     * }} MD_StringEquationResponseItem
+     * @property {string}   element
+     * @property {number[]} bounds
+     * @property {number}   conf_score
+     * @property {string}   mathml
+     * @property {string}   spokentext
+     * @property {string}   tag_id
      */
 
     /**
-     * MD_TextStatusResponseItem - NOT USED
+     * @typedef {object} MD_TextStatusResponseItem - NOT USED
      *
-     * @typedef {{
-     *     original_string: string,
-     *     equations:       MD_StringEquationResponseItem[],
-     *     sha256_sum:      string,
-     * }} MD_TextStatusResponseItem
+     * @property {string}                           original_string
+     * @property {MD_StringEquationResponseItem[]}  equations
+     * @property {string}                           sha256_sum
      */
 
     /**
-     * MD_TextStatusResponse - NOT USED
+     * @typedef {object} MD_TextStatusResponse - NOT USED
      *
-     * @typedef {{
-     *     status: string,
-     *     output: MD_TextStatusResponseItem[],
-     * }} MD_TextStatusResponse
+     * @property {string}                           status
+     * @property {MD_TextStatusResponseItem[]}      output
      */
 
     /**
-     * MD_StringProcessingRequest - NOT USED
+     * @typedef {object} MD_StringProcessingRequest - NOT USED
      *
-     * @typedef {{
-     *     math_string: string,
-     * }} MD_StringProcessingRequest
+     * @property {string} math_string
      */
 
     /**
-     * MD_StringProcessingResponse - NOT USED
+     * @typedef {object} MD_StringProcessingResponse - NOT USED
      *
-     * @typedef {{
-     *     status:          string,
-     *     original_string: string,
-     *     equations:       MD_StringEquationResponseItem[],
-     *     sha256_sum:      string,
-     * }} MD_StringProcessingResponse
+     * @property {string}                           status
+     * @property {string}                           original_string
+     * @property {MD_StringEquationResponseItem[]}  equations
+     * @property {string}                           sha256_sum
      */
 
     /** @typedef {function(MathDetectiveApi)} MathDetectiveApiCallback */
 
     /**
-     * MathDetectiveOptions
+     * @typedef {object} MathDetectiveOptions
      *
-     * @typedef {{
-     *     on_fetch?:   MathDetectiveApiCallback,
-     *     on_status?:  function(string),
-     *     recheck?:    number,
-     *     max_cycles?: number,
-     * }} MathDetectiveOptions
+     * @property {MathDetectiveApiCallback} [on_fetch]
+     * @property {function(string)}         [on_status]
+     * @property {number}                   [recheck]
+     * @property {number}                   [max_cycles]
      */
 
     // ========================================================================

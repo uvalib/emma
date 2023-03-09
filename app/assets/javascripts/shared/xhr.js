@@ -18,53 +18,53 @@ AppDebug.file('shared/xhr', MODULE, DEBUG);
 // Type definitions
 // ============================================================================
 
+/** @typedef {'xml'|'html'|'script'|'json'|'jsonp'|'text'} AjaxDataType */
+
 /** @typedef {function(any,string,XMLHttpRequest)}    AjaxSuccessCallback  */
 /** @typedef {function(XMLHttpRequest,string,string)} AjaxErrorCallback    */
 /** @typedef {function(XMLHttpRequest,string)}        AjaxCompleteCallback */
 
 /**
- * AjaxOptions
+ * @typedef {object} AjaxOptions
  *
  * Options beginning with an underscore are local to {@link xmit}().
  *
- * @typedef {{
- *      _ignoreBody?:   boolean,
- *      accepts?:       object,
- *      async?:         boolean,
- *      beforeSend?:    function(XMLHttpRequest,object),
- *      cache?:         boolean,
- *      complete?:      AjaxCompleteCallback,
- *      contents?:      object,
- *      contentType?:   string|boolean,
- *      context?:       object,
- *      converters?:    object,
- *      crossDomain?:   boolean,
- *      data?:          object|array|string,
- *      dataFilter?:    function(string,string),
- *      dataType?:      'xml'|'html'|'script'|'json'|'jsonp'|'text',
- *      error?:         AjaxErrorCallback,
- *      global?:        boolean,
- *      headers?:       object,
- *      ifModified?:    boolean,
- *      isLocal?:       boolean,
- *      jsonp?:         string|boolean,
- *      jsonpCallback?: string|function,
- *      method?:        string,
- *      mimeType?:      string,
- *      password?:      string,
- *      processData?:   boolean,
- *      scriptAttrs?:   object,
- *      scriptCharset?: string,
- *      statusCode?:    object,
- *      success?:       AjaxSuccessCallback,
- *      timeout?:       number,
- *      traditional?:   boolean,
- *      type?:          string,
- *      url?:           string,
- *      username?:      string,
- *      xhr?:           function:XMLHttpRequest,
- *      xhrFields?:     object,
- * }} AjaxOptions
+ * @property {boolean}                          [_ignoreBody]
+ * @property {object}                           [accepts]
+ * @property {boolean}                          [async]
+ * @property {function(XMLHttpRequest,object)}  [beforeSend]
+ * @property {boolean}                          [cache]
+ * @property {AjaxCompleteCallback}             [complete]
+ * @property {object}                           [contents]
+ * @property {string|boolean}                   [contentType]
+ * @property {object}                           [context]
+ * @property {object}                           [converters]
+ * @property {boolean}                          [crossDomain]
+ * @property {object|array|string}              [data]
+ * @property {function(string,string)}          [dataFilter]
+ * @property {AjaxDataType}                     [dataType]
+ * @property {AjaxErrorCallback}                [error]
+ * @property {boolean}                          [global]
+ * @property {object}                           [headers]
+ * @property {boolean}                          [ifModified]
+ * @property {boolean}                          [isLocal]
+ * @property {string|boolean}                   [jsonp]
+ * @property {string|function}                  [jsonpCallback]
+ * @property {string}                           [method]
+ * @property {string}                           [mimeType]
+ * @property {string}                           [password]
+ * @property {boolean}                          [processData]
+ * @property {object}                           [scriptAttrs]
+ * @property {string}                           [scriptCharset]
+ * @property {object}                           [statusCode]
+ * @property {AjaxSuccessCallback}              [success]
+ * @property {number}                           [timeout]
+ * @property {boolean}                          [traditional]
+ * @property {string}                           [type]
+ * @property {string}                           [url]
+ * @property {string}                           [username]
+ * @property {function:XMLHttpRequest}          [xhr]
+ * @property {object}                           [xhrFields]
  *
  * @see https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings
  */

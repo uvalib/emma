@@ -252,7 +252,7 @@ export class SubmitModal extends ModalDialog {
     // ========================================================================
 
     /**
-     * @typedef ChannelCallbacks
+     * @typedef {object} ChannelCallbacks
      *
      * WebSocket event handlers.
      *

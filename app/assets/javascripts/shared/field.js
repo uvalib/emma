@@ -20,34 +20,32 @@ AppDebug.file('shared/field');
 // ============================================================================
 
 /**
- * FieldProperties
+ * @typedef {object} FieldProperties
  *
  * Data type information for data cells of a given column as defined by the
  * attributes attached to that column's header.
  *
+ * @property {string}   [field]
+ * @property {string}   [label]
+ * @property {string}   [type]
+ * @property {number}   [min]
+ * @property {number}   [max]
+ * @property {string}   [tooltip]
+ * @property {string}   [notes]
+ * @property {string}   [notes_html]
+ * @property {string}   [placeholder]
+ * @property {string}   [origin]
+ * @property {boolean}  [ignored]
+ * @property {boolean}  [required]
+ * @property {boolean}  [readonly]
+ * @property {boolean}  [array]
+ * @property {string}   [role]
+ * @property {object}   [cond]
+ * @property {object}   [pairs]
+ *
  * @see "Field::PROPERTY_KEYS"
  * @see "Field::SYNTHETIC_KEYS"
  * @see "ManifestItemDecorator::SharedGenericMethods#grid_head_cell"
- *
- * @typedef {{
- *     field?:       string|null|undefined,
- *     label?:       string|null|undefined,
- *     type?:        string|null|undefined,
- *     min?:         number|null|undefined,
- *     max?:         number|null|undefined,
- *     tooltip?:     string|null|undefined,
- *     notes?:       string|null|undefined,
- *     notes_html?:  string|null|undefined,
- *     placeholder?: string|null|undefined,
- *     origin?:      string|null|undefined,
- *     ignored?:     boolean|null|undefined,
- *     required?:    boolean|null|undefined,
- *     readonly?:    boolean|null|undefined,
- *     array?:       boolean|null|undefined,
- *     role?:        string|null|undefined,
- *     cond?:        object|null|undefined,
- *     pairs?:       object|null|undefined,
- * }} FieldProperties
  */
 
 /**

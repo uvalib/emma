@@ -27,13 +27,11 @@ export class Api extends BaseClass {
     // ========================================================================
 
     /**
-     * Api_Options
+     * @typedef {object} Api_Options
      *
-     * @typedef {{
-     *     base_url?: string,
-     *     api_key?:  string,
-     *     callback?: XmitCallback,
-     * }} Api_Options
+     * @property {string}       [base_url]
+     * @property {string}       [api_key]
+     * @property {XmitCallback} [callback]
      */
 
     // ========================================================================

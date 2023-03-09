@@ -4752,13 +4752,11 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * EditElementOperations
+     * @typedef {object} EditElementOperations
      *
-     * @typedef {{
-     *     clr?: function(jQuery)        : void,
-     *     get?: function(jQuery)        : string[]|string|undefined,
-     *     set?: function(jQuery, Value) : void,
-     * }} EditElementOperations
+     * @property {function(jQuery)        : void}                      [clr]
+     * @property {function(jQuery)        : string[]|string|undefined} [get]
+     * @property {function(jQuery, Value) : void}                      [set]
      */
 
     /**
