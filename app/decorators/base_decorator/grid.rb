@@ -397,7 +397,7 @@ module BaseDecorator::Grid
     tag     = :th if table
     config  = opt.delete(:config) || (field_configuration(col) if col)
     label   = opt.delete(:label)  || config&.dig(:label) || col
-    label &&= html_span(label, class: 'text')
+    label &&= html_span(label, class: 'label text') unless label.html_safe?
     prop    = config&.slice(:pairs, *FIELD_PROPERTIES)&.compact_blank!
     opt.merge!(prop.transform_keys! { |k| :"data-#{k}" }) if prop.present?
     opt[:role] ||= 'columnheader' if table

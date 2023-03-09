@@ -546,6 +546,22 @@ table.manifest_item-grid {
                     padding: 0 $cell-pad;
                 }
 
+                .label {
+
+                    display:        inline-flex;
+                    flex-direction: row;
+                    flex-wrap:      nowrap;
+                    gap:            0.25rem;
+
+                    .required {
+                        line-height: 1;
+                        font-size:   x-large;
+                        color:       $uva-emergency-red;
+                        text-shadow: 0 0 1px white;
+                        cursor:      default;
+                    }
+                }
+
                 details {
 
                     line-height:   1.25;

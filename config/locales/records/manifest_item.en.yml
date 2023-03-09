@@ -280,21 +280,6 @@ en:
           placeholder:  'Edition, version, etc.'
           category:     bibliographic
 
-        emma_publicationDate:
-          min:          0
-          max:          1
-          label:        'Publication Date'
-          tooltip:      |
-                        Copyright or publication date of the creative work represented
-                        by the remediated content file.
-          notes_html:   |
-                        <p>
-                          Copyright or publication date of the creative work represented
-                          by the remediated content file.
-                        </p>
-          type:         date
-          category:     bibliographic
-
         bib_seriesType:
           min:          0
           max:          1
@@ -344,6 +329,36 @@ en:
           placeholder:  'Journal volume/issue/number'
           category:     bibliographic
 
+        dcterms_dateCopyright:
+          min:          0
+          max:          1
+          label:        'Copyright Date'
+          tooltip:      |
+                        The year of copyright (or publication) of the creative work
+                        represented by the remediated content file.
+          notes_html:   |
+                        <p>
+                          The year of copyright (or publication) of the creative work
+                          represented by the remediated content file.
+                        </p>
+          placeholder:  'Enter date of the creative work'
+          category:     bibliographic
+
+        emma_publicationDate:
+          min:          0
+          max:          1
+          label:        'Publication Date'
+          tooltip:      |
+                        Copyright or publication date of the creative work represented
+                        by the remediated content file.
+          notes_html:   |
+                        <p>
+                          Copyright or publication date of the creative work represented
+                          by the remediated content file.
+                        </p>
+          type:         date
+          category:     bibliographic
+
         dc_publisher:
           min:          0
           max:          1
@@ -389,7 +404,7 @@ en:
         dc_identifier:
           min:          0
           max:          ~
-          label:        'Identifier'
+          label:        'Identifiers'
           tooltip:      |
             Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
             creative work represented by the remediated content file.
@@ -404,7 +419,7 @@ en:
         dc_relation:
           min:          0
           max:          ~
-          label:        'Related'
+          label:        'Related Identifiers'
           tooltip:      |
             Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
             related edition of the creative work represented by the
@@ -543,21 +558,6 @@ en:
             </p>
           placeholder:  'Enter date file added to repository'
           type:         date
-          category:     bibliographic
-
-        dcterms_dateCopyright:
-          min:          0
-          max:          1
-          label:        'Copyright Date'
-          tooltip:      |
-            The year of copyright (or publication) of the creative work
-            represented by the remediated content file.
-          notes_html:   |
-            <p>
-              The year of copyright (or publication) of the creative work
-              represented by the remediated content file.
-            </p>
-          placeholder:  'Enter date of the creative work'
           category:     bibliographic
 
         # =====================================================================

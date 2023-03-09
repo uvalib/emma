@@ -282,6 +282,15 @@ export class Value extends BaseClass {
     _unset;
 
     /**
+     * Whether the instance must have a non-blank value in order to be
+     * considered valid.
+     *
+     * @type {boolean}
+     * @protected
+     */
+    _required;
+
+    /**
      * Mapping of enumeration values to their display representations.
      *
      * @type {StringTable}
@@ -373,6 +382,7 @@ export class Value extends BaseClass {
         if (prop) {
             // noinspection JSValidateTypes
             this._map   = { ...as_type.pairs };
+            this._required = !!as_type.required;
             type = as_type.array ? 'array' : as_type.type;
         } else {
             type = as_type || 'undefined';
@@ -551,7 +561,7 @@ export class Value extends BaseClass {
 
     get valid()   { return !this.invalid }
     get invalid() {
-        if (this.blank) { return false }
+        if (this.blank) { return this._required }
         const invalid = Object.keys(this.errorTable);
         if (isEmpty(invalid)) { return false }
         return !!this.toArray().find(v => invalid.includes(v));

@@ -408,6 +408,19 @@ class ManifestItemDecorator < BaseDecorator
         config = config.merge(pairs: pairs)
         opt[:config] = opt[:config].merge(pairs: pairs.to_json)
       end
+      if config[:required]
+        opt[:label] =
+          html_span(class: 'label') do
+            t_opt = { class: 'text' }
+            text  = opt[:label] || config&.dig(:label) || col
+            text  = html_span(text, t_opt) unless text.html_safe?
+            n_opt = { class: 'required' }
+            n_opt[:'aria-label'] = note = 'required' # TODO: I18n
+            n_opt[:title] = "(#{note})"
+            note  = html_span('*', n_opt)
+            text << note
+          end
+      end
       # noinspection RubyMismatchedArgumentType
       super(col, **opt) do
         parts << field_details(col, config)
