@@ -30,8 +30,6 @@ module SubmissionService::Properties
   #
   # @type [Integer]
   #
-  # @see SubmissionService#SERVICE_TABLE
-  #
   DEFAULT_PRIORITY: Integer
 
   # How long to wait for a response from the external service.

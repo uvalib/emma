@@ -795,37 +795,69 @@ appSetup(MODULE, function() {
         return allItems().filter(`[${ITEM_ATTR}="${id}"]`);
     }
 
+    /**
+     * Return all items which are to be transmitted.
+     *
+     * @returns {jQuery}
+     */
     function itemsToTransmit() {
         const $selected = itemsSelected();
         return isPresent($selected) ? $selected : allItems();
     }
 
+    /**
+     * Return all items which are eligible for transmission.
+     *
+     * @returns {jQuery}
+     */
     function itemsReady() {
         return itemsWhere(isReady);
     }
 
+    /**
+     * Return all items which have a checkmark and are not disabled.
+     *
+     * @returns {jQuery}
+     */
     function itemsSelected() {
         return itemsWhere(isSelected);
     }
 
+    /**
+     * Return all items which have a checkmark (whether or not they are
+     * disabled).
+     *
+     * @returns {jQuery}
+     */
     function itemsChecked() {
         return itemsWhere(isChecked);
     }
 
+    /**
+     * Return all items which are currently active.
+     *
+     * @returns {jQuery}
+     */
     function itemsTransmitting() {
         return itemsWhere(isTransmitting);
     }
 
+    /**
+     * Return all items which have been successfully submitted.
+     *
+     * @returns {jQuery}
+     */
     function itemsSucceeded() {
         return itemsWhere(isSucceeded);
     }
 
+    /**
+     * Return all items which have failed.
+     *
+     * @returns {jQuery}
+     */
     function itemsFailed() {
         return itemsWhere(isFailed);
-    }
-
-    function itemsMissingFile(name) {
-        return itemsWhere(isMissingFile, name);
     }
 
     /**
@@ -840,24 +872,40 @@ appSetup(MODULE, function() {
         return allItems().filter((_, item) => has_condition(item, ...args));
     }
 
+    /**
+     * Indicate whether the item's checkbox is checked (regardless of whether
+     * it is disabled or not).
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
     function isChecked(item) {
         const $item = itemRow(item);
         const cb    = checkbox($item);
         return !!cb && cb.checked && !cb.indeterminate;
     }
 
-    function isDisabled(item) {
-        const $item = itemRow(item);
-        const cb    = checkbox($item);
-        return !!cb && (cb.disabled || cb.indeterminate);
-    }
-
+    /**
+     * Indicate whether the item is checked and not disabled.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
     function isSelected(item) {
         const $item = itemRow(item);
         const cb    = checkbox($item);
         return !!cb && cb.checked && !cb.disabled && !cb.indeterminate;
     }
 
+    /**
+     * Indicate whether the item is eligible for transmission.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
     function isReady(item) {
         return !isNotReady(item);
     }
@@ -868,26 +916,82 @@ appSetup(MODULE, function() {
         return statuses.some(([s, invalid]) => $item.find(s).is(invalid));
     }
 
+    /**
+     * Indicate whether the associated manifest item is not saved.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
     function isUnsaved(item) {
         return hasCondition(item, UNSAVED);
     }
 
-    function isBlocked(item) {
-        return hasCondition(item, CANT_SUBMIT);
-    }
-
+    /**
+     * Indicate whether the item is currently active in a submission step.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
     function isTransmitting(item) {
         return hasCondition(item, ACTIVE);
     }
 
+    /**
+     * Indicate whether the item has a failed submission step.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
     function isFailed(item) {
         return hasCondition(item, FAILED);
     }
 
+    /**
+     * Indicate whether the item has been submitted (i.e., all submission steps
+     * have succeeded).
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
     function isSucceeded(item) {
         return isExclusively(item, SUCCEEDED);
     }
 
+    /**
+     * Indicate whether any submission steps for the item match the given
+     * criterion.
+     *
+     * @param {Selector} item
+     * @param {Selector} matching
+     * @param {string[]} [selectors]    The submission step statuses to check.
+     *
+     * @returns {boolean}
+     */
+    function hasCondition(item, matching, selectors = STATUS_SELECTORS) {
+        const $item = itemRow(item);
+        return selectors.some(status => $item.find(status).is(matching));
+    }
+
+    /**
+     * Indicate whether *all* submission steps for the item match the given
+     * criterion.
+     *
+     * @param {Selector} item
+     * @param {Selector} matching
+     * @param {string[]} [selectors]    The submission step statuses to check.
+     *
+     * @returns {boolean}
+     */
+    function isExclusively(item, matching, selectors = STATUS_SELECTORS) {
+        const $item = itemRow(item);
+        return selectors.every(status => $item.find(status).is(matching));
+    }
+
+/*
     function isMissingFile(item, name) {
         const $item   = itemRow(item);
         const $status = $item.find(FILE_STATUS);
@@ -895,16 +999,7 @@ appSetup(MODULE, function() {
         if (!name)                     { return true }
         return $status.find('.name').text() === name;
     }
-
-    function hasCondition(item, matching, selectors = STATUS_SELECTORS) {
-        const $item = itemRow(item);
-        return selectors.some(status => $item.find(status).is(matching));
-    }
-
-    function isExclusively(item, matching, selectors = STATUS_SELECTORS) {
-        const $item = itemRow(item);
-        return selectors.every(status => $item.find(status).is(matching));
-    }
+*/
 
     // ========================================================================
     // Functions - submission selection
@@ -946,18 +1041,6 @@ appSetup(MODULE, function() {
             const checked = notDefined(check) || !!check;
             checkbox($item, checked, indeterminate);
         }
-    }
-
-    /**
-     * deselectItem
-     *
-     * @param {Selector} item
-     * @param {boolean}  [uncheck]          If *false*, check.
-     * @param {boolean}  [indeterminate]
-     */
-    function deselectItem(item, uncheck, indeterminate) {
-        const check = isDefined(uncheck) ? !uncheck : undefined;
-        selectItem(item, check, indeterminate);
     }
 
     /**

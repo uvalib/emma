@@ -70,7 +70,7 @@ en:
           tooltip:      'Help with downloading files from EMMA.'
           content:      ~ # @see file:app/views/help/topic/_download.html.erb
 
-        upload:         &SUBMISSION_TOPIC
+        upload:
           <<:           *TOPIC_TEMPLATE
           topic:        'upload'
           Topic:        'Upload'

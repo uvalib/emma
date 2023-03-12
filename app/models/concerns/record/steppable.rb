@@ -151,6 +151,7 @@ module Record::Steppable
   def get_state_table(item, no_raise: true)
     return unless item
     cls = self_class(item)
+    # noinspection RubyResolve
     if cls.respond_to?(:type_value)
       result = cls.safe_const_get(:STATE_TABLE, false) and return result
       base   = cls.module_parent.type_value
