@@ -38,18 +38,6 @@ export class InlinePopup extends ModalBase {
     static ENCLOSURE       = selector(this.ENCLOSURE_CLASS);
 
     // ========================================================================
-    // Class members.
-    // ========================================================================
-
-    /**
-     * Indicates whether {@link window} event handlers are currently set up.
-     *
-     * @type {boolean|undefined}
-     * @protected
-     */
-    static _handlers_attached;
-
-    // ========================================================================
     // Constructor
     // ========================================================================
 
@@ -150,8 +138,8 @@ export class InlinePopup extends ModalBase {
      *
      * @param {Selector} [popups]     Default: `{@link $open_popups}`.
      */
-    static hideAllOpenPopups(popups) {
-        const func    = 'hideAllOpenPopups';
+    static closeAllOpenPopups(popups) {
+        const func    = 'closeAllOpenPopups';
         const $popups = popups ? $(popups) : this.$open_popups;
         $popups.each((_, p) =>
             this.instanceFor(p)?.close() ||
@@ -187,6 +175,16 @@ export class InlinePopup extends ModalBase {
             this.findPopup($target).data(this.MODAL_INSTANCE_DATA);
     }
 
+    /**
+     * Actions when leaving the page.
+     *
+     * @see appTeardown()
+     */
+    static teardown() {
+        this.closeAllOpenPopups();
+        this._detachWindowEventHandlers();
+    }
+
     // ========================================================================
     // Class methods - internal
     // ========================================================================
@@ -199,12 +197,10 @@ export class InlinePopup extends ModalBase {
      * @protected
      */
     static _attachWindowEventHandlers(attach) {
-        if (!this._handlers_attached) {
-            const options = (attach === false) ? { listen: false } : {};
-            windowEvent('keyup', this._onKeyUp.bind(this), options);
-            windowEvent('click', this._onClick.bind(this), options);
-            this._handlers_attached = true;
-        }
+        const detach  = (attach === false);
+        const options = detach ? { listen: false } : {};
+        windowEvent('keyup', this._onKeyUp.bind(this), options);
+        windowEvent('click', this._onClick.bind(this), options);
     }
 
     /**
@@ -213,10 +209,7 @@ export class InlinePopup extends ModalBase {
      * @protected
      */
     static _detachWindowEventHandlers() {
-        if (this._handlers_attached) {
-            this._attachWindowEventHandlers(false);
-            this._handlers_attached = false;
-        }
+        this._attachWindowEventHandlers(false);
     }
 
     /**
@@ -245,7 +238,7 @@ export class InlinePopup extends ModalBase {
                 }
             } else {
                 this._debug('> ESC pressed - close ALL open popups');
-                this.hideAllOpenPopups();
+                this.closeAllOpenPopups();
                 return false;
             }
         }
@@ -280,7 +273,7 @@ export class InlinePopup extends ModalBase {
             this._debug(`> CLICK ${inside}`);
         } else {
             this._debug('> CLICK outside of popup controls or panels');
-            this.hideAllOpenPopups();
+            this.closeAllOpenPopups();
         }
     }
 

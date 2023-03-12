@@ -85,8 +85,8 @@
 // Manifest new/edit pages
 //=============================================================================
 
-body.manifest.new,
-body.manifest.edit {
+body.manifest.new:not(.select),
+body.manifest.edit:not(.select) {
 
     $hdg-gap: calc($gap * 2);
 
