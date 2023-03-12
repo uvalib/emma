@@ -284,11 +284,11 @@ class ManifestItemDecorator < BaseDecorator
 
     S_UNSAVED: Symbol
 
-    S_FILE_NEEDED: Symbol
+    S_DATA_MISSING: Symbol
 
     S_FILE_MISSING: Symbol
 
-    S_DATA_MISSING: Symbol
+    S_FILE_NEEDED: Symbol
 
     # Statuses whose displays show an Edit button.
     #

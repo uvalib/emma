@@ -610,9 +610,9 @@ class ManifestItemDecorator < BaseDecorator
     S_OK           = :ok
     S_BLANK        = :blank
     S_UNSAVED      = :unsaved
-    S_FILE_NEEDED  = :file_needed
-    S_FILE_MISSING = :file_missing
     S_DATA_MISSING = :data_missing
+    S_FILE_MISSING = :file_missing
+    S_FILE_NEEDED  = :file_needed
 
     # Statuses whose displays show an Edit button.
     #

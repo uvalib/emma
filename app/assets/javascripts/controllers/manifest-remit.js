@@ -16,6 +16,7 @@ import {
     isMissing,
     isPresent,
     notDefined,
+    presence,
 } from '../shared/definitions';
 import {
     htmlDecode,
@@ -619,7 +620,7 @@ appSetup(MODULE, function() {
         _debug('START SUBMISSIONS');
         if (isMissing(itemsChecked())) {
             itemsReady().each((_, item) => selectItem(item));
-            updateGroupSelect();
+            updateGroupCheckbox();
         }
         setSubmissionRequest();
         submissionsActive(true);
@@ -762,12 +763,29 @@ appSetup(MODULE, function() {
             });
             updateItemSelect($item);
         });
+        _debug(`INITIAL file_references.local  =`, local);
+        _debug(`INITIAL file_references.remote =`, remote);
         file_references.local  = local;
-        files_remaining.local  = dup(local);
         file_references.remote = remote;
-        files_remaining.remote = dup(remote);
-        _debug(`INITIAL file_references.local  =`, file_references.local);
-        _debug(`INITIAL file_references.remote =`, file_references.remote);
+        setFilesRemaining();
+    }
+
+    /**
+     * Set the contents of {@link files_remaining} based on the current set of
+     * items to transmit.
+     */
+    function setFilesRemaining() {
+        /** @type {jQuery[]} */
+        const items   = itemsToTransmit().toArray();
+        const no_file = items.filter(item => isFileUnresolved(item));
+        const ids     = no_file.map(item => manifestItemId(item)?.toString());
+        const id_set  = new Set(compact(ids));
+        const ref_loc = Object.entries(file_references.local);
+        const ref_rem = Object.entries(file_references.remote);
+        const local   = ref_loc.filter(([id,_]) => id_set.has(id));
+        const remote  = ref_rem.filter(([id,_]) => id_set.has(id));
+        files_remaining.local  = Object.fromEntries(local);
+        files_remaining.remote = Object.fromEntries(remote);
     }
 
     /**
@@ -801,8 +819,16 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function itemsToTransmit() {
-        const $selected = itemsSelected();
-        return isPresent($selected) ? $selected : allItems();
+        return presence(itemsSelected()) || allItems();
+    }
+
+    /**
+     * Return all items which will be ready after file resolution.
+     *
+     * @returns {jQuery}
+     */
+    function itemsStartable() {
+        return itemsWhere(isStartable);
     }
 
     /**
@@ -900,6 +926,20 @@ appSetup(MODULE, function() {
     }
 
     /**
+     * Indicate whether the item is ready except for needing file resolution.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
+    function isStartable(item) {
+        const $item    = itemRow(item);
+        const entries  = dup(NOT_READY_VALUES); delete entries[FILE_STATUS];
+        const statuses = Object.entries(entries);
+        return !statuses.some(([s, invalid]) => $item.find(s).is(invalid));
+    }
+
+    /**
      * Indicate whether the item is eligible for transmission.
      *
      * @param {Selector} item
@@ -907,13 +947,9 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function isReady(item) {
-        return !isNotReady(item);
-    }
-
-    function isNotReady(item) {
         const $item    = itemRow(item);
         const statuses = Object.entries(NOT_READY_VALUES);
-        return statuses.some(([s, invalid]) => $item.find(s).is(invalid));
+        return !statuses.some(([s, invalid]) => $item.find(s).is(invalid));
     }
 
     /**
@@ -925,6 +961,17 @@ appSetup(MODULE, function() {
      */
     function isUnsaved(item) {
         return hasCondition(item, UNSAVED);
+    }
+
+    /**
+     * Indicate whether item's file has not yet been resolved.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
+    function isFileUnresolved(item) {
+        return hasCondition(item, FILE_NEEDED);
     }
 
     /**
@@ -1108,7 +1155,7 @@ appSetup(MODULE, function() {
                 $item.data(tip_data, old_tooltip);
             }
         }
-        const now_enabled = isReady($item);
+        const now_enabled = isStartable($item);
         const tip_data    = now_enabled ? 'enabledTip' : 'disabledTip';
         let new_tooltip   = $item.data(tip_data);
         if (notDefined(new_tooltip)) {
@@ -1125,8 +1172,8 @@ appSetup(MODULE, function() {
     /**
      * Update the state of the group select checkbox.
      */
-    function updateGroupSelect() {
-        const func     = 'updateGroupSelect'; _debug(func);
+    function updateGroupCheckbox() {
+        const func     = 'updateGroupCheckbox'; _debug(func);
         const group_cb = checkbox($group_checkbox);
         if (!group_cb) { return }
         const count    = $item_checkboxes.filter((_, cb) => cb.checked).length;
@@ -1161,7 +1208,16 @@ appSetup(MODULE, function() {
      */
     function onItemCheckboxChange(event) {
         _debug('onItemCheckboxChange: event =', event);
-        updateGroupSelect();
+        updateItemsSelected();
+    }
+
+    /**
+     * Update values dependent on the set of selected items.
+     */
+    function updateItemsSelected() {
+        updateGroupCheckbox();
+        setFilesRemaining();
+        updateSubmitReady();
     }
 
     // ========================================================================
@@ -2035,6 +2091,8 @@ appSetup(MODULE, function() {
                 _debug(`IGNORING nameless file[${i}]:`, file);
             } else if (!item_id) {
                 _debug(`IGNORING unrequested file "${name}":`, file);
+            } else if (!isStartable(itemFor(item_id))) {
+                _debug(`IGNORING item-not-ready file "${name}":`, file);
             } else if (!remaining.has(name)) {
                 _debug(`IGNORING already handled file "${name}":`, file);
             } else {
@@ -2073,13 +2131,12 @@ appSetup(MODULE, function() {
         });
         const resolved    = good.length;
         const problematic = bad.length;
-        const remaining   = files_remaining.local.length;
 
         if (resolved) {
             let sel_changed = false;
             const fulfilled = new Set(names);
             const status    = FILE_STATUS;
-            allItems().each((_, item) => {
+            itemsStartable().each((_, item) => {
                 const $item   = $(item);
                 const $status = $item.find(status);
                 const needed  = $status.is(FILE_NEEDED);
@@ -2090,7 +2147,7 @@ appSetup(MODULE, function() {
                 }
             });
             if (sel_changed) {
-                updateGroupSelect();
+                updateItemsSelected();
             }
             lines.push(resolvedLabel(resolved), ...good, '');
             sendFileSizes(pairs);
@@ -2100,8 +2157,9 @@ appSetup(MODULE, function() {
             lines.push(problematicLabel(problematic), ...bad, '');
         }
 
+        const remaining = files_remaining.local.length;
         if (remaining) {
-            lines.push(remainingLabel(remaining), ...files_remaining.local);
+            lines.push(remainingLabel(remaining), ...remaining);
         } else {
             updateSubmitReady();
             lines.push(allResolvedLabel());
@@ -2316,6 +2374,8 @@ appSetup(MODULE, function() {
                 _debug(`IGNORING nameless url[${i}]:`, url);
             } else if (!item_id) {
                 _debug(`IGNORING unrequested URL "${name}":`, url);
+            } else if (!isStartable(itemFor(item_id))) {
+                _debug(`IGNORING item-not-ready URL "${name}":`, url);
             } else if (!remaining.has(name)) {
                 _debug(`IGNORING already handled URL "${name}":`, url);
             } else {
@@ -2352,13 +2412,12 @@ appSetup(MODULE, function() {
         files_remaining.remote = []; // NOTE: simulate all resolved
         const resolved    = good.length;
         const problematic = bad.length;
-        const remaining   = files_remaining.remote.length;
 
         if (resolved) {
             let sel_changed = false;
             const fulfilled = new Set(names);
             const status    = FILE_STATUS;
-            allItems().each((_, item) => {
+            itemsStartable().each((_, item) => {
                 const $item   = $(item);
                 const $status = $item.find(status);
                 const needed  = $status.is(FILE_NEEDED);
@@ -2369,7 +2428,7 @@ appSetup(MODULE, function() {
                 }
             });
             if (sel_changed) {
-                updateGroupSelect();
+                updateItemsSelected();
             }
             //lines.push(resolvedLabel(resolved), ...good, '');
         }
@@ -2378,8 +2437,9 @@ appSetup(MODULE, function() {
             lines.push(problematicLabel(problematic), ...bad, '');
         }
 
+        const remaining = files_remaining.remote.length;
         if (remaining) {
-            //lines.push(remainingLabel(remaining), ...files_remaining.remote);
+            //lines.push(remainingLabel(remaining), ...remaining);
         } else {
             updateSubmitReady();
             //lines.push(allResolvedLabel());
