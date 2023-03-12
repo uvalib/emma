@@ -78,6 +78,14 @@ en:
           tooltip:      'Help with uploading files to EMMA.'
           content:      ~ # @see file:app/views/help/topic/_upload.html.erb
 
+        manifest:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'upload multiple items'
+          Topic:        'Bulk Upload'
+          title:        'EMMA Bulk Upload Manifests'
+          tooltip:      'Help with EMMA bulk uploads.'
+          content:      ~ # @see file:app/views/help/topic/_manifest.html.erb
+
         lookup_tool:
           <<:           *TOPIC_TEMPLATE
           topic:        'lookup tool'
@@ -127,6 +135,10 @@ en:
           alt:          'Search type menu (opened)'
           asset:        'help/search_type_opened.png'
 
+        # =====================================================================
+        # Single submission
+        # =====================================================================
+
         upload_actions:
           alt:          'Upload action buttons'
           asset:        'help/upload_actions.png'
@@ -146,6 +158,50 @@ en:
         source_selected_fields:
           alt:          'Example of fields acquired from a "parent" source entry'
           asset:        'help/source_selected_fields.png'
+
+        # =====================================================================
+        # Bulk submission
+        # =====================================================================
+
+        manifest_actions:
+          alt:          'Bulk upload action buttons'
+          asset:        'help/manifest_actions.png'
+
+        manifest_title:
+          alt:          'Manifest title with edit button'
+          asset:        'help/manifest_title.png'
+
+        manifest_title_edit:
+          alt:          'Manifest title edit with Change and Cancel buttons'
+          asset:        'help/manifest_title_edit.png'
+
+        submission_columns:
+          alt:          'Submission table column headers'
+          asset:        'help/submission_columns.png'
+
+        unsaved:
+          alt:          'UNSAVED status marker'
+          asset:        'help/unsaved.png'
+
+        data_missing:
+          alt:          'DATA ERROR status marker'
+          asset:        'help/data_missing.png'
+
+        file_missing:
+          alt:          'FILE MISSING status marker'
+          asset:        'help/file_needed.png' # TODO: don't have this yet
+
+        file_needed:
+          alt:          'FILE NEEDED status marker'
+          asset:        'help/file_needed.png'
+
+        not_started:
+          alt:          'NOT STARTED status marker'
+          asset:        'help/not_started.png'
+
+        succeeded:
+          alt:          'OK status marker'
+          asset:        'help/succeeded.png'
 
       # =======================================================================
       # Pages

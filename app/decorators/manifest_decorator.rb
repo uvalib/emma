@@ -287,6 +287,21 @@ class ManifestDecorator < BaseDecorator
       context[:options] || Manifest::Options.new
     end
 
+    # help_topic
+    #
+    # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
+    # @param [Symbol, nil] topic      Default: `model_type`.
+    #
+    # @return [Array<Symbol>]
+    #
+    def help_topic(sub_topic = nil, topic = nil)
+      case (sub_topic ||= context[:action])
+        when :edit  then sub_topic = :grid       if params[:selected]
+        when :remit then sub_topic = :submission if params[:selected]
+      end
+      super(sub_topic, topic)
+    end
+
   end
 
   # Definitions available to both this decorator class and the related

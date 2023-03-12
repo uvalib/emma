@@ -515,12 +515,16 @@ class BaseDecorator < Draper::Decorator
 
     # help_topic
     #
+    # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
+    # @param [Symbol, nil] topic      Default: `model_type`.
+    #
     # @return [Array<Symbol>]
     #
-    def help_topic
-      action = context[:action]
-      action = nil if action == :index
-      action ? [model_type, action] : [model_type]
+    def help_topic(sub_topic = nil, topic = nil)
+      topic     ||= model_type
+      sub_topic ||= context[:action]
+      sub_topic   = nil if sub_topic == :index
+      sub_topic ? [topic, sub_topic] : [topic]
     end
 
     # Title string for use with the '<head><title>' element.

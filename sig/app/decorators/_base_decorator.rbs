@@ -158,7 +158,7 @@ class BaseDecorator < Draper::Decorator
     def object_class:    () -> Class
     def decorate:        (Model item, **untyped opt) -> BaseDecorator
 
-    def help_topic:      () -> symArray
+    def help_topic:      (?(Symbol|nil) sub_topic, ?(Symbol|nil) topic) -> symArray
 
     # Title string for use with the '<head><title>' element.
     #

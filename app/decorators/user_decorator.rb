@@ -141,12 +141,13 @@ class UserDecorator < AccountDecorator
 
     # help_topic
     #
+    # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
+    # @param [Symbol, nil] topic      Default: `model_type`.
+    #
     # @return [Array<Symbol>]
     #
-    def help_topic
-      action = context[:action]
-      action = nil if action == :index
-      [:account, action].compact
+    def help_topic(sub_topic = nil, topic = nil)
+      super(sub_topic, (topic || :account))
     end
 
   end
