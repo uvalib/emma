@@ -195,6 +195,7 @@ class LookupJob < ApplicationJob
 
     # Spawn worker tasks.
     job_opt.merge!(job_type: :worker, no_raise: true)
+    job_opt[:stream_name] = opt[:stream_name]
     job_list =
       services.map { |service|
         LookupJob.perform_later(service, request, job_opt)&.job_id or

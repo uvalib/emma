@@ -29,15 +29,6 @@ class LookupService
   # @type [Numeric]
   DEFAULT_TIMEOUT: Numeric
 
-  # A table of defined external services and the bibliographic types they can
-  # handle.  The entries are in descending order of preference.
-  #
-  # @type [Hash{Class=>Array<Symbol>}]
-  #
-  # @see LookupService::RemoteService::Properties#priority
-  #
-  SERVICE_TABLE: Hash[Class,symArray]
-
   ADD_DIAGNOSTICS: bool
 
   # Get bibliographic information about the given items.
@@ -90,6 +81,15 @@ class LookupService
   # @return [Array<Class>]
   #
   def self.services_for: (lookupArg items, ?log: String|bool|nil) -> Array[Class]
+
+  # A table of defined external services and the bibliographic types they can
+  # handle.  The entries are in descending order of preference.
+  #
+  # @type [Hash{Class=>Array<Symbol>}]
+  #
+  # @see LookupService::RemoteService::Properties#priority
+  #
+  def self.service_table: () -> Hash[Class,symArray]
 
   # Access remote services asynchronously.
   #

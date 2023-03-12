@@ -28,7 +28,7 @@ module LookupService::RemoteService::Properties
   #
   # @type [Integer]
   #
-  # @see LookupService#SERVICE_TABLE
+  # @see LookupService#service_table
   #
   DEFAULT_PRIORITY = CONFIGURATION.dig(:_template, :priority)
 

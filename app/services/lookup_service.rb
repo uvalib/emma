@@ -28,20 +28,6 @@ class LookupService
   # @type [Numeric]
   DEFAULT_TIMEOUT = 2 * RemoteService::DEFAULT_TIMEOUT
 
-  # A table of defined external services and the bibliographic types they can
-  # handle.  The entries are in descending order of preference.
-  #
-  # @type [Hash{Class=>Array<Symbol>}]
-  #
-  # @see LookupService::RemoteService::Properties#priority
-  #
-  SERVICE_TABLE =
-    RemoteService.subclasses.select(&:enabled?).sort_by(&:name).map { |service|
-      [service, service.types]
-    }.sort_by { |service, types|
-      [service.priority, -(types.size), service.name]
-    }.to_h.deep_freeze
-
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -116,10 +102,27 @@ class LookupService
   def self.services_for(items, log: nil)
     log   = log.is_a?(TrueClass) ? __method__ : log.presence
     types = LookupService::Request.wrap(items).id_types.presence
-    SERVICE_TABLE.select { |service, service_types|
+    service_table.select { |service, service_types|
       service.enabled? && (types.nil? || types.intersect?(service_types)) or
         (Log.debug { "#{log}: #{service}: skipped" } if log)
     }.keys
+  end
+
+  # A table of defined external services and the bibliographic types they can
+  # handle.  The entries are in descending order of preference.
+  #
+  # @type [Hash{Class=>Array<Symbol>}]
+  #
+  # @see LookupService::RemoteService::Properties#priority
+  #
+  def self.service_table
+    # noinspection RbsMissingTypeSignature
+    @service_table ||=
+      RemoteService.subclasses.select(&:enabled?).sort_by(&:name).map { |srv|
+        [srv, srv.types]
+      }.sort_by { |service, types|
+        [service.priority, -(types.size), service.name]
+      }.to_h.deep_freeze
   end
 
   # ===========================================================================

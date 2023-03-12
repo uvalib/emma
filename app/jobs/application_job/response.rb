@@ -113,9 +113,9 @@ class ApplicationJob::Response
   #
   def []=(key, value)
     case key
-      when :diagnostic then self.diagnostic = value
-      when :error      then self.error      = value
-      else                  table[key]      = value
+      when :diagnostic then @diagnostic = value
+      when :error      then @error      = value
+      else                  table[key]  = value
     end
   end
 

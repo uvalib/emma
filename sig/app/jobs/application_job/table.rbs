@@ -7,9 +7,9 @@ class ApplicationJob::Table < Concurrent::Hash
 
   # Create a new instance.
   #
-  # @param [Array<ActiveJob::Base>] job_list
+  # @param [Array<ActiveJob::Base,String>] job_list   Jobs or job IDs.
   #
-  def initialize: (Array[ActiveJob::Base] job_list) -> void
+  def initialize: (Array[ActiveJob::Base|String] job_list) -> void
 
   # Update job entry.
   #
