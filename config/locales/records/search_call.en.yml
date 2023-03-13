@@ -56,7 +56,7 @@ en:
             label:      'Standard identifier'
             tooltip:    |
               Search for creative works or specific editions/issues by a
-              standard identifier (ISBN, ISSN, OCLC, UPC, etc.)
+              standard identifier (ISBN, DOI, OCLC, UPC, etc.)
 
           title:
             min:        0

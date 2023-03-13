@@ -114,10 +114,10 @@ en:
 
       identifier:
         url_param:      identifier
-        name:           'ISBN / ISSN / etc.'
+        name:           'ISBN / DOI / etc.'
         label:          'Standard identifier:'
-        tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, ISSN, OCLC, UPC, etc.)'
-        placeholder:    'Enter an identifier or title...'
+        tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, DOI, OCLC, UPC, etc.)'
+        placeholder:    'Enter an identifier...'
 
       title:
         url_param:      title
