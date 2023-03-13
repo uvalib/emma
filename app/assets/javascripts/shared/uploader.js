@@ -2106,7 +2106,7 @@ export class BulkUploader extends BaseUploader {
      * @param {FileExt|FileExt[]} files
      */
     addFiles(files) {
-        this._debug('addFile', files);
+        this._debug('addFiles', files);
         arrayWrap(files).forEach(file_item => {
             let file = file_item;
             if ((file instanceof File) && hasKey(file, 'meta')) {
@@ -2120,6 +2120,20 @@ export class BulkUploader extends BaseUploader {
             }
             this._uppy.addFile(file);
         });
+    }
+
+    /**
+     * De-queue one or more file objects.
+     *
+     * @param {FileExt|FileExt[]} [files]
+     */
+    removeFiles(files) {
+        this._debug('removeFiles', files);
+        let ids = Object.keys(this._uppy.getState()?.files || {});
+        if (files) {
+            ids = arrayWrap(files).filter(file => ids.includes(file));
+        }
+        ids.forEach(id => this._uppy.removeFile(id));
     }
 
     /**

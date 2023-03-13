@@ -1068,8 +1068,26 @@ appSetup(MODULE, function() {
     function checkbox(item, check, indeterminate) {
         const cb = selfOrDescendents(item, CHECKBOX)[0];
         if (!cb) { console.warn('checkbox: missing for item', item); return }
-        if (isDefined(check))         { cb.checked       = !!check }
-        if (isDefined(indeterminate)) { cb.indeterminate = !!indeterminate }
+        if (isDefined(check)) {
+            const was = cb.checked;
+            const now = !!check;
+            if (was === now) {
+                _debug(`checkbox: check "${was}" no change for`, item);
+            } else {
+                _debug('checkbox: check', was, '->', now, 'for', item);
+                cb.checked = now;
+            }
+        }
+        if (isDefined(indeterminate)) {
+            const was = cb.indeterminate;
+            const now = !!indeterminate;
+            if (was === now) {
+                _debug(`checkbox: indeterminate "${was}" no change for`, item);
+            } else {
+                _debug('checkbox: indeterminate', was, '->', now, 'for', item);
+                cb.indeterminate = now;
+            }
+        }
         return cb;
     }
 
@@ -1081,6 +1099,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [indeterminate]
      */
     function selectItem(item, check, indeterminate) {
+        _debug('selectItem:', item, check, indeterminate);
         const $item = itemRow(item);
         if (indeterminate || (notDefined(indeterminate) && isUnsaved($item))) {
             checkbox($item, false, true);
@@ -1113,6 +1132,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}                   If selectability changed.
      */
     function enableItemSelect(item, enable, indeterminate) {
+        _debug('enableItemSelect:', item, enable, indeterminate);
         const $item = itemRow(item);
         const cb    = checkbox($item); if (!cb) { return false }
         const ind   =
@@ -1134,7 +1154,8 @@ appSetup(MODULE, function() {
      * @returns {boolean}                   If selectability changed.
      */
     function disableItemSelect(item, disable, indeterminate) {
-        const enable = isDefined(disable) ? !disable : undefined;
+        _debug('disableItemSelect:', item, disable, indeterminate);
+        const enable = (disable === false);
         return enableItemSelect(item, enable, indeterminate);
     }
 
@@ -1602,21 +1623,28 @@ appSetup(MODULE, function() {
         const invalid = message.invalid;
         const step    = message.step;
         const status  = SUBMIT_STEP_TO_STATUS[step];
+        const final   = (step === FINAL_STEP);
 
-        const success_step = (step === FINAL_STEP) ? AFTER_FINAL_STEP : step;
+        const success_step = final ? AFTER_FINAL_STEP : step;
         const success_stat = SUBMIT_STEP_TO_STATUS[success_step];
         for (const [id, info] of Object.entries(success)) {
+            const $item   = itemFor(id);
             const current = table[id]; // TODO: remove
-            setStatusFor(itemFor(id), status, SUCCEEDED_MARKER);
+            setStatusFor($item, status, SUCCEEDED_MARKER);
+            if (final) {
+                selectItem($item, false);
+                disableItemSelect($item);
+            }
             table[id] = { step: success_step, value: success_stat };
             console.log('*** RESP STEP', success_step, 'success | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
         }
 
         const failed = FAILED_MARKER;
         for (const [id, info] of Object.entries(failure)) {
-            const current = table[id]; // TODO: remove
+            const $item   = itemFor(id);
             const error   = htmlDecode(info.error);
-            setStatusFor(itemFor(id), status, failed, error);
+            const current = table[id]; // TODO: remove
+            setStatusFor($item, status, failed, error);
             table[id] = { step: step, value: failed, message: error };
             console.log('*** RESP STEP', step, 'FAILURE | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
         }
@@ -1674,7 +1702,10 @@ appSetup(MODULE, function() {
         for (const [id, info] of Object.entries(success)) {
             const current = table[id] || {};
             if (current.step !== end_step) {
-                setStatusFor(itemFor(id), status, succeeded);
+                const $item = itemFor(id);
+                setStatusFor($item, status, succeeded);
+                selectItem($item, false);
+                disableItemSelect($item);
                 table[id] = { step: end_step, value: succeeded };
                 console.log('*** RESP BATCH success | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
             }
@@ -1684,8 +1715,9 @@ appSetup(MODULE, function() {
         for (const [id, info] of Object.entries(failure)) {
             const current = table[id];
             if ((current?.step !== end_step) && (current?.value !== failed)) {
+                const $item = itemFor(id);
                 const error = htmlDecode(info.error);
-                setStatusFor(itemFor(id), status, failed, error);
+                setStatusFor($item, status, failed, error);
                 table[id] = { step: end_step, value: failed, message: error };
                 console.log('*** RESP BATCH FAILURE | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
             }
@@ -1772,14 +1804,21 @@ appSetup(MODULE, function() {
         _debug('onSubmissionRejected');
         const note = 'Refresh this page to re-authenticate.';
         flashError(`Connection error: ${note}`);
-        submissionsEnded();
+        submissionsEnded(true);
     }
 
     /**
      * Update buttons after a submission sequence has terminated.
+     *
+     * @param {boolean} [preserve_files]    If *true* keep file selections.
      */
-    function submissionsEnded() {
-        _debug('submissionsEnded');
+    function submissionsEnded(preserve_files) {
+        _debug('submissionsEnded: preserve_files =', preserve_files);
+        if (!preserve_files) {
+            clearLocalFileSelection();
+            clearRemoteFileSelection();
+        }
+        updateItemsSelected();
         submissionsActive(false);
         $start.toggleClass(BEST_CHOICE_MARKER, false);
         $monitor.toggleClass(BEST_CHOICE_MARKER, true);
@@ -2032,7 +2071,9 @@ appSetup(MODULE, function() {
      * Clear any previous file selection.
      */
     function clearLocalFileSelection() {
+        _debug('clearLocalFileSelection');
         $local_input.val(null);
+        uploader.removeFiles();
         local_file_selection = undefined;
     }
 
@@ -2315,7 +2356,11 @@ appSetup(MODULE, function() {
      * Clear any previous file selection.
      */
     function clearRemoteFileSelection() {
+        _debug('clearRemoteFileSelection');
         $remote_input.val(null);
+/*
+        uploader.removeFiles();
+*/
         remote_file_selection = undefined;
     }
 
