@@ -11,7 +11,7 @@
 @use 'shared/feature/model'    as model;
 @use 'shared/layouts/overlay'  as overlay;
 
-@use 'controllers/entry';
+@use 'controllers/entry'       as entry-classes;
 
 //=============================================================================
 // Manifest index page

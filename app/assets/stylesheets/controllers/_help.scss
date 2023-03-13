@@ -241,7 +241,7 @@
     // A table of menu selections and descriptions.
     .choices {
 
-        @extend .label-value-pairs;
+        @include model.label-value-pairs;
 
         margin: model.$list-item-gap-y model.$list-item-gap-x;
 

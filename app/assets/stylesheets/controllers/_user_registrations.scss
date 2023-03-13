@@ -1,8 +1,8 @@
 // app/assets/stylesheets/controllers/_user_registrations.scss
 
-@use 'shared/variables' as *;
+@use 'shared/variables'    as *;
 
-@use 'controllers/account';
+@use 'controllers/account' as account-classes;
 
 //=============================================================================
 // New user page

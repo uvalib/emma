@@ -2,10 +2,11 @@
 //
 // Shared definitions supporting `feature/_model.scss`.
 
-@use 'shared/variables' as v;
+@use 'shared/variables'      as v;
+@use 'shared/controls/lists' as list;
 
 //=============================================================================
-// Definitions
+// Constants
 //=============================================================================
 
 $list-item-gap-x: v.$page-padding-x;
@@ -23,3 +24,96 @@ $tray-pad: 1.5 * $icon-pad;
 
 // For .model-list-item-panel and derivatives.
 $data-list-border-color: none;
+
+//=============================================================================
+// Mixins
+//=============================================================================
+
+/// Applied to elements which provide containment without interfering with flex
+/// or grid layout.
+///
+@mixin logical-grouping {
+    display: contents;
+}
+
+/// A collection of one or more label/value pairs.
+///
+// noinspection CssOverwrittenProperties
+@mixin label-value-pairs {
+
+    @include list.columns-2;
+
+    margin-bottom: $list-item-gap-y;
+    break-inside:  avoid;
+    break-inside:  avoid-column;
+    break-after:   left;
+    align-content: flex-start;
+
+    @media #{v.$narrow-screen} {
+        grid-template-columns: 100%;
+    }
+
+    //=========================================================================
+    // Classes
+    //=========================================================================
+
+    // Make focus outline follow the perimeter of the area of clickable text
+    // rather than the individual lines.
+    a {
+        display:   inline-block;
+        min-width: 48px; // Accessibility best practice. // TODO: reference
+        max-width: max-content;
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    // Used to group .label and .value grid elements to provide a logical
+    // pairing (for accessibility purposes) while not interfering with grid
+    // layout.
+    .pair {
+        @include logical-grouping;
+    }
+
+    .label,
+    .value {
+        margin-bottom: $list-item-margin-y;
+        word-break:    break-word;
+        break-inside:  avoid;
+        break-inside:  avoid-column;
+    }
+
+    .label {
+
+        font-weight: bold;
+        align-self:  baseline;
+
+        @media #{v.$narrow-screen} {
+            margin-bottom: v.$flex-gap-y;
+        }
+    }
+
+    .value {
+
+        @media #{v.$narrow-screen} {
+            margin-bottom: calc(3 * #{$list-item-gap-y} / 2);
+        }
+
+        &.field-Links {
+
+            word-break: break-all;
+            word-break: break-word;
+
+            > * {
+
+                display:    block;
+                margin-top: $list-item-margin-y;
+
+                &:first-child {
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+}

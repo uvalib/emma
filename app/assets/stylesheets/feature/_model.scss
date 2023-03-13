@@ -19,94 +19,6 @@
 }
 
 //=============================================================================
-// Item metadata
-//=============================================================================
-
-// A collection of one or more label/value pairs.
-//
-// noinspection CssOverwrittenProperties
-.label-value-pairs {
-
-    @include list.columns-2;
-
-    margin-bottom: model.$list-item-gap-y;
-    break-inside:  avoid;
-    break-inside:  avoid-column;
-    break-after:   left;
-    align-content: flex-start;
-
-    @media #{$narrow-screen} {
-        grid-template-columns: 100%;
-    }
-
-    //=========================================================================
-    // Classes
-    //=========================================================================
-
-    // Make focus outline follow the perimeter of the area of clickable text
-    // rather than the individual lines.
-    a {
-        display:   inline-block;
-        min-width: 48px; // Accessibility best practice. // TODO: reference
-        max-width: max-content;
-    }
-
-    //=========================================================================
-    // Components
-    //=========================================================================
-
-    // Used to group .label and .value grid elements to provide a logical
-    // pairing (for accessibility purposes) while not interfering with grid
-    // layout.
-    .pair {
-        @include logical-grouping;
-    }
-
-    // noinspection CssOverwrittenProperties
-    .label,
-    .value {
-        margin-bottom: model.$list-item-margin-y;
-        word-break:    break-word;
-        break-inside:  avoid;
-        break-inside:  avoid-column;
-    }
-
-    .label {
-
-        font-weight: bold;
-        align-self:  baseline;
-
-        @media #{$narrow-screen} {
-            margin-bottom: $flex-gap-y;
-        }
-    }
-
-    .value {
-
-        @media #{$narrow-screen} {
-            margin-bottom: calc(3 * #{model.$list-item-gap-y} / 2);
-        }
-
-        // noinspection CssOverwrittenProperties
-        &.field-Links {
-
-            word-break: break-all;
-            word-break: break-word;
-
-            > * {
-
-                display:    block;
-                margin-top: model.$list-item-margin-y;
-
-                &:first-child {
-                    margin-top: 0;
-                }
-            }
-        }
-    }
-}
-
-//=============================================================================
 // Item list (index page) support
 //=============================================================================
 
@@ -114,7 +26,7 @@
 // @see BaseDecorator::List#list_item
 .model-list-item {
 
-    @extend .label-value-pairs;
+    @include model.label-value-pairs;
 
     &.empty {
         margin-bottom:         0;
@@ -435,7 +347,7 @@
 // Metadata label/value pairs on show pages.
 .model-details {
 
-    @extend .label-value-pairs;
+    @include model.label-value-pairs;
 
     //=========================================================================
     // Components
@@ -493,18 +405,4 @@
             }
         }
     }
-}
-
-//=============================================================================
-// Hacks
-//=============================================================================
-
-// This was necessary because "@extend .label-value-pairs;" for
-// .search-label-value-pairs (controllers/_search.scss) was failing with
-// 'Use "@extend .label-value-pairs !optional" to avoid this error.'
-//
-// For unknown reasons, extending this works to achieve the intended result.
-//
-%label-value-pairs {
-    @extend .label-value-pairs;
 }

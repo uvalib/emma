@@ -12,7 +12,7 @@
 @use 'shared/feature/emoji'    as emoji;
 @use 'shared/feature/model'    as model;
 
-@use 'controllers/entry';
+@use 'controllers/entry'       as entry-classes;
 
 //=============================================================================
 // Manifest item index page
@@ -350,6 +350,39 @@ table.manifest_item-grid {
 
             .indicators {
 
+                @mixin emoji_before($color, $prop) {
+                    $base:  map.get($prop, 'base');
+                    $emoji: map.get($prop, 'emoji');
+                    $size:  map.get($prop, 'size');
+                    &::before {
+                        @if $color == red {
+                            @include emoji.red($base: $base);
+                        } @else if $color == green {
+                            @include emoji.green($base: $base);
+                        } @else if $color == gray {
+                            @include emoji.gray($base: $base);
+                        }
+                        content:   $emoji;
+                        font-size: $size;
+                    }
+                }
+
+                @mixin initial($prop) {
+                    @include emoji_before(gray, $prop);
+                }
+
+                @mixin error($prop) {
+                    @include emoji_before(red, $prop);
+                }
+
+                @mixin warning($prop) {
+                    @include emoji_before(green, $prop);
+                }
+
+                @mixin complete($prop) {
+                    @include emoji_before(green, $prop);
+                }
+
                 @each $indicator in $indicators {
 
                     .#{$indicator} {
@@ -358,57 +391,37 @@ table.manifest_item-grid {
                         aspect-ratio: 1/1;
 
                         $prop: map.get($indicator-icon, $indicator);
-                        $base: map.get($prop, 'base');
 
-                        &::before {
-
-                            @include emoji.gray($base: $base);
-
-                            content:   map.get($prop, 'emoji');
-                            font-size: map.get($prop, 'size');
-                        }
-
-                        &.initial {
-                            &::before { @include emoji.gray($base: $base); }
-                        }
-
-                        &.error {
-                            &::before { @include emoji.red($base: $base); }
-                        }
-
-                        &.warning {
-                            &::before { @include emoji.green($base: $base); }
-                        }
-
-                        &.complete {
-                            &::before { @include emoji.green($base: $base); }
-                        }
+                        &.initial           { @include initial  ($prop); }
+                        &.error             { @include error    ($prop); }
+                        &.warning           { @include warning  ($prop); }
+                        &.complete          { @include complete ($prop); }
 
                         // @see "en.emma.manifest_item.type.*"
-                        &.value-missing     { @extend .initial; }
-                        &.value-invalid     { @extend .error; }
-                        &.value-complete    { @extend .complete; }
+                        &.value-missing     { @include initial  ($prop); }
+                        &.value-invalid     { @include error    ($prop); }
+                        &.value-complete    { @include complete ($prop); }
 
                         // @see "en.emma.manifest_item.type.file_status"
-                        &.value-hidden      { @extend .error; }
-                        &.value-corrupt     { @extend .error; }
-                        &.value-bad_read    { @extend .error; }
-                        &.value-name_only   { @extend .warning; }
-                        &.value-url_only    { @extend .warning; }
+                        &.value-hidden      { @include error    ($prop); }
+                        &.value-corrupt     { @include error    ($prop); }
+                        &.value-bad_read    { @include error    ($prop); }
+                        &.value-name_only   { @include warning  ($prop); }
+                        &.value-url_only    { @include warning  ($prop); }
 
                         // @see "en.emma.manifest_item.type.data_status"
-                        &.value-minimal     { @extend .warning; }
-                        &.value-no_bib      { @extend .error; }
-                        &.value-min_bib     { @extend .warning; }
-                        &.value-no_rem      { @extend .error; }
-                        &.value-min_rem     { @extend .warning; }
+                        &.value-minimal     { @include warning  ($prop); }
+                        &.value-no_bib      { @include error    ($prop); }
+                        &.value-min_bib     { @include warning  ($prop); }
+                        &.value-no_rem      { @include error    ($prop); }
+                        &.value-min_rem     { @include warning  ($prop); }
 
                         // @see "en.emma.manifest_item.type.ready_status"
-                        &.value-unsaved     { @extend .initial; }
-                        &.value-ready       { @extend .complete; }
-                        &.value-db_fail     { @extend .error; }
-                        &.value-store_fail  { @extend .error; }
-                        &.value-index_fail  { @extend .error; }
+                        &.value-unsaved     { @include initial  ($prop); }
+                        &.value-ready       { @include complete ($prop); }
+                        &.value-db_fail     { @include error    ($prop); }
+                        &.value-store_fail  { @include error    ($prop); }
+                        &.value-index_fail  { @include error    ($prop); }
 
                         &.value-complete::after {
                             content:        $HEAVY_PLUS;

@@ -4,7 +4,7 @@
 @use 'shared/controls/grids'  as grid;
 @use 'shared/controls/panels' as panel;
 
-@use 'controllers/entry';
+@use 'controllers/entry'      as entry-classes;
 
 //=============================================================================
 // Upload index page

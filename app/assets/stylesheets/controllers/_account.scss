@@ -3,7 +3,7 @@
 @use 'shared/variables'      as *;
 @use 'shared/controls/grids' as grid;
 
-@use 'controllers/entry';
+@use 'feature/model'         as model-classes;
 
 //=============================================================================
 // Account index page

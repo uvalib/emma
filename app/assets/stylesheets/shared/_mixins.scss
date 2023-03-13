@@ -267,13 +267,6 @@
 // Layout
 // ============================================================================
 
-/// Applied to elements which provide containment without interfering with flex
-/// or grid layout.
-///
-@mixin logical-grouping {
-    display: contents;
-}
-
 /// An element that spans the entire width of the display.
 ///
 @mixin banner {

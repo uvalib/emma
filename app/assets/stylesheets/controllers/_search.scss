@@ -254,8 +254,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 // Label/value pairs appropriate for either .search-list-item or .file-info.
 .search-label-value-pairs {
 
-    // noinspection SassScssResolvedByNameOnly
-    @extend %label-value-pairs;
+    @include model.label-value-pairs;
 
     row-gap: $row-separation;
 
