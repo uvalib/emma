@@ -126,11 +126,13 @@ module IaDownloadService::Common
         # of the "ia" Python script when executing "ia download".)  If the
         # URL that was requested already contains "_encrypted" then there are
         # no more things to try.
+        base = File.basename(action)
+        ext  = base.sub!(/^.*(_[^.]*\.zip)$/, '\1') || File.extname(action)
         if action.include?('&type=')
           action = action.sub(/(#{ext})$/, '_encrypted\1')
           __debug_line(dbg, 'ERROR', 'on-the-fly failed') { { next: action } }
 
-        elsif !path.match?(/_encrypted[_.]/)
+        elsif !action.match?(/_encrypted[_.]/)
           action = action.sub(/(#{ext})$/, '_encrypted\1')
           __debug_line(dbg, 'ERROR', 'trying encrypted') { { next: action } }
 

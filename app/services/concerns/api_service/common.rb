@@ -176,6 +176,7 @@ module ApiService::Common
     transmit(@verb, @action, options, headers, **opt)
 
   rescue => error
+    re_raise_if_internal_exception(error)
     set_error(error)
 
   ensure
