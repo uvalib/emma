@@ -13,6 +13,7 @@ module BookshareService::Action
   include BookshareService::Action::Bookmarks
   include BookshareService::Action::CollectionPeriodicals
   include BookshareService::Action::CollectionTitles
+  include BookshareService::Action::Highlights
   include BookshareService::Action::MembershipActiveTitles
   include BookshareService::Action::MembershipMessages
   include BookshareService::Action::MembershipOrganizations

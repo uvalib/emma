@@ -8,6 +8,7 @@ __loading_begin(__FILE__)
 # Bs::Record::TitleDownload
 #
 # @attr [Array<Bs::Record::Name>] authors               *deprecated*
+# @attr [String]                  bookshareId
 # @attr [IsoDate]                 dateDownloaded
 # @attr [IsoDate]                 dateRequested
 # @attr [Bs::Record::StatusModel] downloadStatus
@@ -34,6 +35,7 @@ class Bs::Record::TitleDownload < Bs::Api::Record
 
   schema do
     has_many  :authors,         Bs::Record::Name        # NOTE: deprecated
+    has_one   :bookshareId
     has_one   :dateDownloaded,  IsoDate
     has_one   :dateRequested,   IsoDate
     has_one   :downloadStatus,  Bs::Record::StatusModel

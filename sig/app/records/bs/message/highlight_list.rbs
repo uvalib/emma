@@ -1,0 +1,17 @@
+# Bs::Message::HighlightList
+#
+# @attr [Array<BsAllowsType>]          allows
+# @attr [Array<Bs::Record::Highlight>] highlights
+# @attr [Integer]                      limit
+# @attr [Array<Bs::Record::Link>]      links
+# @attr [String]                       next
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_highlight_list
+#
+class Bs::Message::HighlightList < Bs::Api::Message
+  include Bs::Shared::CollectionMethods
+
+  include Bs::Shared::LinkMethods
+
+  LIST_ELEMENT: untyped
+end

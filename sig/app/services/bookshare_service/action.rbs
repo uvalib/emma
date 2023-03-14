@@ -11,6 +11,8 @@ module BookshareService::Action
 
   include BookshareService::Action::CollectionTitles
 
+  include BookshareService::Action::Highlights
+
   include BookshareService::Action::MembershipActiveTitles
 
   include BookshareService::Action::MembershipMessages

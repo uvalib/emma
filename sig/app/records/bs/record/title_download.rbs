@@ -1,6 +1,7 @@
 # Bs::Record::TitleDownload
 #
 # @attr [Array<Bs::Record::Name>] authors               *deprecated*
+# @attr [String]                  bookshareId
 # @attr [IsoDate]                 dateDownloaded
 # @attr [IsoDate]                 dateRequested
 # @attr [Bs::Record::StatusModel] downloadStatus
