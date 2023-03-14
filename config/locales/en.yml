@@ -92,7 +92,7 @@ en:
         # The subset of 'nav_bar.primary' which are not displayed in the
         # production deployment.  (This may safely be nil or empty.)
 
-        - 'manifest'
+        #- 'manifest'
 
     panel:
       control:          &PANEL_TOGGLE
