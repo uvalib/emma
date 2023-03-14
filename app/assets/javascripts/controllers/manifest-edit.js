@@ -1432,16 +1432,10 @@ appSetup(MODULE, function() {
      * Reset cell stored data values and cell displays.
      *
      * @param {Selector} row
-     *
-     * @returns {jQuery}
      */
     function refreshDataRow(row) {
         _debug('refreshDataRow: row =', row);
-        const $row = dataRow(row);
-        clearRowChanged($row);
-        clearLookupCondition($row);
-        dataCells($row).each((_, cell) => resetDataCell(cell));
-        return $row;
+        dataCells(row).each((_, cell) => resetDataCell(cell));
     }
 
     // ========================================================================
@@ -2114,8 +2108,6 @@ appSetup(MODULE, function() {
         const $row    = dataRow(row);
         const $button = lookupButton($row);
 
-        clearSearchResultsData($row);
-        clearSearchTermsData($row);
         updateLookupCondition($row);
 
         LookupModal.setupFor($button, onLookupStart, onLookupComplete);
@@ -2271,12 +2263,10 @@ appSetup(MODULE, function() {
      * Set the field value(s) for bibliographic lookup to the initial state.
      *
      * @param {Selector} row
-     *
-     * @returns {LookupCondition}
      */
     function clearLookupCondition(row) {
         _debug('clearLookupCondition: row =', row);
-        return setLookupCondition(row, LookupRequest.blankLookupCondition());
+        lookupButton(row).removeData(LOOKUP_CONDITION_DATA);
     }
 
     /**
@@ -2298,13 +2288,14 @@ appSetup(MODULE, function() {
             allow = defaultRepository(repositoryFor($row));
         }
         if (allow) {
-            const condition = evaluateLookupCondition($row);
+            const condition = setLookupCondition($row);
             enable ||= Object.values(condition.or).some(v => v);
             enable ||= Object.values(condition.and).every(v => v);
+        } else {
+            clearLookupCondition($row);
         }
-        if (enable) {
-            clearSearchTermsData($button);
-        }
+        clearSearchTermsData($button);
+        clearSearchResultsData($button);
         enableLookup($button, enable, !allow);
     }
 

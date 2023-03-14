@@ -77,12 +77,22 @@ export class ChannelRequest extends BaseClass {
     get parts()  { return this._parts }
     get length() { return Object.keys(this._parts).length }
 
+    /**
+     * A copy of the request payload object (possibly a subset of the payload
+     * data depending on the subclass).
+     *
+     * @returns {ChannelRequestPayload}
+     */
+    get requestPayload() {
+        return this.toObject();
+    }
+
     // ========================================================================
     // Methods
     // ========================================================================
 
     /**
-     * A copy of the request payload object.
+     * A copy of the request payload data.
      *
      * @returns {ChannelRequestPayload}
      */

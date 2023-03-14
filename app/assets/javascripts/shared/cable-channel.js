@@ -193,7 +193,7 @@ export class CableChannel extends BaseClass {
         this._debug(`request: action ${action}; data =`, data);
         const channel = this.channel;
         const payload = channel && data;
-        const request = payload && this._createRequest(payload).toObject();
+        const request = payload && this._createRequest(payload).requestPayload;
         if (!channel) {
             this.setError('Channel not open');
         } else if (isEmpty(data)) {

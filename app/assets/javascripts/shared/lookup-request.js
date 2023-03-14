@@ -218,17 +218,6 @@ export class LookupRequest extends ChannelRequest {
     get limit() { return this.parts.limit || [] }
 
     /**
-     * A request object with only the terms that would actually be used for a
-     * request.
-     *
-     * @returns {LookupRequestPayload}
-     */
-    get requestPayload() {
-        const source = isPresent(this.ids) ? { ids: this.ids } : this.parts;
-        return $.extend(true, this._blankParts(), source);
-    }
-
-    /**
      * The individual "prefix:value" terms that would actually be used for a
      * request.
      *
@@ -254,6 +243,17 @@ export class LookupRequest extends ChannelRequest {
      */
     get length() {
         return this.allTerms.length;
+    }
+
+    /**
+     * A request object with only the terms that would actually be used for a
+     * request.
+     *
+     * @returns {LookupRequestPayload}
+     */
+    get requestPayload() {
+        const source = isPresent(this.ids) ? { ids: this.ids } : this.parts;
+        return $.extend(true, this._blankParts(), source);
     }
 
     // ========================================================================
