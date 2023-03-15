@@ -341,6 +341,9 @@ class UploadController < ApplicationController
   #
   # Generate record information for APTrust backup.
   #
+  # Unless "logging=true" is given in the URL parameters, log output is
+  # suppressed within the method.
+  #
   def records: () -> void
 
   # == GET /upload/api_migrate?(v|version)=[0.0.]5(&verbose=true&dryrun=false)

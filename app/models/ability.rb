@@ -66,6 +66,7 @@ class Ability
     # == UploadController
 
     admin:          %i[manage],
+    backup:         %i[records],
     cancel:         [],
     check:          [],
     reedit:         [],
@@ -430,11 +431,12 @@ class Ability
   # @return [void]
   #
   def act_as_anonymous(...)
-    can :list, Artifact
-    can :read, Title
-    can :read, Periodical
-    can :read, Edition
-    can :view, Upload
+    can :list,    Artifact
+    can :read,    Title
+    can :read,    Periodical
+    can :read,    Edition
+    can :view,    Upload
+    can :backup,  Upload
   end
 
   # ===========================================================================

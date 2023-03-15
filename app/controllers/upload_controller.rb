@@ -674,12 +674,17 @@ class UploadController < ApplicationController
   #
   # Generate record information for APTrust backup.
   #
+  # Unless "logging=true" is given in the URL parameters, log output is
+  # suppressed within the method.
+  #
   def records
     __log_activity
     __debug_route
-    prm = upload_params
-    opt = { repository: EmmaRepository.default, state: :completed }.merge(prm)
-    @list = Upload.get_relation(**opt).map { |rec| record_value(rec) }
+    prm  = upload_params
+    opt  = { repository: EmmaRepository.default, state: :completed }.merge(prm)
+    log  = true?(opt.delete(:logging))
+    recs = ->(*) { Upload.get_relation(**opt).map { |rec| record_value(rec) } }
+    @list = log ? recs.() : Log.silence(&recs)
     respond_to do |format|
       format.html { redirect_to prm.merge!(format: :json) }
       format.json { render_json index_values }
