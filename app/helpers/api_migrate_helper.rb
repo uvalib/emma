@@ -79,7 +79,7 @@ module ApiMigrateHelper
     id    = unique_id(css, unique: rid)
     label = html_tag(level, css.capitalize, id: id, class: "#{css}-label")
     info  =
-      html_div(class: css, 'aria-labelledby': id) do
+      html_div(class: css, 'aria-describedby': id) do
         entry[part.to_sym].presence&.map do |column, field|
           send("api_field_#{part}", column, field, (level + 1))
         end || html_div('NO DATA', class: 'field') # TODO: I18n

@@ -7,6 +7,7 @@ import { AppDebug }  from '../application/debug';
 import { cssClass }  from './css';
 import { isDefined } from './definitions';
 import { isObject }  from './objects';
+import { hexRand }   from './random';
 
 
 AppDebug.file('shared/html');
@@ -305,12 +306,33 @@ export const ID_ATTRIBUTES = [
 ];
 
 /**
+ * Make attributes unique within an element and all of its descendents.
+ *
+ * @param {Selector}      root
+ * @param {string|number} [unique]
+ * @param {string[]}      [attributes]  Default: {@link ID_ATTRIBUTES}
+ * @param {boolean}       [append_only]
+ *
+ * @returns {jQuery}                    The element (for chaining).
+ */
+export function uniqAttrsTree(root, unique, attributes, append_only) {
+    const $root = $(root);
+    const uniq  = unique || hexRand();
+    const attr  = attributes;
+    const app   = append_only;
+    $root.find('*').each((_, elem) => uniqAttrs(elem, uniq, attr, app));
+    return uniqAttrs($root, uniq, attr, app);
+}
+
+/**
  * Make attributes unique within an element.
  *
  * @param {Selector}      element
  * @param {string|number} unique
  * @param {string[]}      [attributes]  Default: {@link ID_ATTRIBUTES}
  * @param {boolean}       [append_only]
+ *
+ * @returns {jQuery}                    The element (for chaining).
  */
 export function uniqAttrs(element, unique, attributes, append_only) {
     const $element = $(element);
@@ -322,6 +344,7 @@ export function uniqAttrs(element, unique, attributes, append_only) {
             $element.attr(name, new_attr);
         }
     });
+    return $element;
 }
 
 /**

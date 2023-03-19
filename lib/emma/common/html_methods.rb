@@ -69,6 +69,7 @@ module Emma::Common::HtmlMethods
     word_break = HTML_ID_WORD_BREAK + separator
     ignored    = HTML_ID_IGNORED.delete(separator)
     parts.map { |part|
+      next if part.blank?
       part = sanitized_string(part) if part.is_a?(ActiveSupport::SafeBuffer)
       part = part.to_s
       part = part.tr_s(word_break, ' ').strip.tr(' ', separator)

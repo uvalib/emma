@@ -116,9 +116,12 @@ appSetup(MODULE, function() {
             const up      = (target.y < -epsilon);
             const down    = (target.y > +epsilon);
             if ((visible = (down || up))) {
-                const prop = down ? SCROLL_DOWN_PROP : SCROLL_BUTTON_PROP;
-                $scroll_button.text(prop.label);
-                $scroll_button.attr('title', prop.tooltip);
+                const prop  = down ? SCROLL_DOWN_PROP : SCROLL_BUTTON_PROP;
+                const name  = prop.tooltip;
+                const icon  = prop.label;
+                const $icon = $('<span class="symbol" aria-hidden="true">');
+                $scroll_button.html($icon.text(icon));
+                $scroll_button.attr({ title: name, 'aria-label': name });
                 $scroll_button.toggleClass(SCROLL_DOWN_CLASS, down);
             }
         }

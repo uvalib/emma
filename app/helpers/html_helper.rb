@@ -42,12 +42,34 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<button>' element.
   #
+  # If the label (first argument) is HTML or an icon then an accessible name is
+  # expected to be provided via #ARIA_LABEL_ATTRS or derivable from :title.
+  #
   # @param [Array<*>] args            Passed to #html_tag.
   # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_button(*args, &block)
+    label = args.first.presence
+    html  = label&.is_a?(ActiveSupport::SafeBuffer)
+    icon  = !html && only_non_ascii?(label)
+
+    # Create an accessible name if necessary.
+    opt   = (args.last.presence if args.last.is_a?(Hash))
+    aria  = opt&.slice(*ARIA_LABEL_ATTRS)&.values&.first
+    name  = (label unless html || icon)
+    if aria.blank? && name.blank?
+      if (name = opt&.dig(:title)).present?
+        args << args.pop.dup.merge!('aria-label': name)
+      else
+        Log.warn { "#{__method__}: no accessible name for #{args.inspect}" }
+      end
+    end
+
+    # Ensure that a non-textual label is marked appropriately.
+    args[0] = symbol_icon(label) if icon
+
     html_tag(:button, *args, &block)
   end
 
@@ -158,6 +180,65 @@ module HtmlHelper
     html_tag(tag, opt) do
       "<!-- #{comment} -->".html_safe if comment.present?
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # HTML attributes which indicate specification of an accessible name.
+  #
+  # @type [Array<Symbol>]
+  #
+  ARIA_LABEL_ATTRS = %i[
+    aria-label
+    aria-labelledby
+    aria-describedby
+  ].freeze
+
+  # Return the text that will be used to identify the HTML element to be
+  # created with the given arguments.
+  #
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  #
+  # @return [String, nil]
+  #
+  def accessible_name(*args, **opt)
+    opt  = args.last if args.last.is_a?(Hash) && opt.blank?
+    lbl  = args.first
+    html = lbl.is_a?(ActiveSupport::SafeBuffer)
+    icon = !html && only_non_ascii?(lbl)
+    opt.slice(*ARIA_LABEL_ATTRS).values.first.presence ||
+      (lbl.presence unless html || icon) ||
+      opt[:title].presence ||
+      Log.warn { "#{__method__}: none for #{args.inspect} #{opt.inspect}" }
+  end
+
+  # Indicate whether the string contains only characters that fall outside the
+  # normal ASCII range.  Always false if *value* is not a string.
+  #
+  # @param [String, *] value
+  #
+  def only_non_ascii?(value)
+    value.is_a?(String) && value.tr(' -~', '').present?
+  end
+
+  # Make a Unicode character (sequence) into a decorative element that is not
+  # pronounced by screen readers.
+  #
+  # @param [String] icon              Unicode character(s).
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def symbol_icon(icon, css: '.symbol', **opt)
+    opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
+    prepend_css!(opt, css)
+    html_span(icon, opt)
   end
 
   # ===========================================================================

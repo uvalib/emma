@@ -28,9 +28,9 @@
 
   signed_in         = help_jump('signed in', :sign_in)
   delta             = UploadDecorator.symbol_icon(:edit)
-  delta             = html_span(delta, 'aria-label': 'triangle')
+  delta             = html_span(delta, title: 'triangle')
   x                 = UploadDecorator.symbol_icon(:delete)
-  x                 = html_span(x, 'aria-label': 'X')
+  x                 = html_span(x, title: 'X')
   edit_tip          = UploadDecorator.icon_definitions.dig(:edit,   :tooltip)
   delete_tip        = UploadDecorator.icon_definitions.dig(:delete, :tooltip)
 

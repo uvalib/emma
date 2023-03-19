@@ -267,6 +267,7 @@ $search-button-width:    6rem;
     .advanced-search-toggle {
 
         @include button.basic;
+        @include text-contrast;
 
         width:            $advanced-toggle-width;
         margin:           0;

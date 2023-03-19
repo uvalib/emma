@@ -745,6 +745,7 @@ appSetup(MODULE, function() {
     function initializeItems() {
         _debug('initializeItems');
         const local = {}, remote = {};
+        let unsaved = false;
         allItems().each((_, item) => {
             const $item   = $(item);
             const item_id = manifestItemId($item);
@@ -758,6 +759,12 @@ appSetup(MODULE, function() {
                     } else if ((name = $item.attr(FILE_URL_ATTR))) {
                         remote[item_id] = name;
                     }
+                }
+                if (unsaved) {
+                    $status.attr('aria-disabled', true);
+                } else {
+                    $status.removeAttr('aria-disabled');
+                    unsaved = $status.is(UNSAVED);
                 }
                 initializeStatusFor($item, status, name);
             });

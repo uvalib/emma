@@ -166,8 +166,9 @@ module BaseDecorator::List
     field ||= prop[:field]
 
     # Setup a lambda for creating related HTML identifiers.
+    group   = opt.delete(:group)
     id_base = model_html_id(field || label)
-    make_id = ->(v) { html_id(v, id_base, index, underscore: false) }
+    make_id = ->(v) { html_id(v, id_base, group, index, underscore: false) }
 
     # Extract range values.
     value   = value.content if value.is_a?(Field::Type)
@@ -290,14 +291,14 @@ module BaseDecorator::List
     v_tag = wrap ? :div : tag
     v_id  = make_id.call('value')
     v_opt = prepend_css(opt, value_css)
-    v_opt[:id]                = v_id    if v_id
-    v_opt[:title]             = tooltip if tooltip && !wrap
-    v_opt[:'aria-labelledby'] = l_id    if l_id
+    v_opt[:id]                 = v_id    if v_id
+    v_opt[:title]              = tooltip if tooltip && !wrap
+    v_opt[:'aria-describedby'] = l_id    if l_id
     parts << html_tag(v_tag, value, v_opt)
 
     # Optional additional element(s).
     if block_given?
-      b_opt = l_id ? opt.merge('aria-labelledby': l_id) : opt
+      b_opt = l_id ? opt.merge('aria-describedby': l_id) : opt
       parts += Array.wrap(yield(field, raw_val, prop, **b_opt))
     end
 

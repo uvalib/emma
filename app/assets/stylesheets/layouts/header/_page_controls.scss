@@ -104,6 +104,9 @@
                 }
 
                 &.current {
+
+                    @include text-contrast;
+
                     background-color:      $panel-accent;
                     border-color:          white;
                 }

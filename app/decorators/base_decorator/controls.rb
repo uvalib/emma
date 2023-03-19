@@ -198,17 +198,15 @@ module BaseDecorator::Controls
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String|Symbol] icon       Unicode character or #ICON key.
-  # @param [String]        css        Characteristic CSS class/selector.
-  # @param [Hash]          opt        Passed to #html_span.
+  # @param [String,Symbol] icon       Unicode character or #ICON key.
+  # @param [Hash]          opt        Passed to HtmlHelper#symbol_icon.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def symbol_icon(icon, css: '.symbol', **opt)
+  def symbol_icon(icon, **opt)
     icon = icon_definitions.dig(icon, :icon) if icon.is_a?(Symbol)
-    opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
-    prepend_css!(opt, css)
-    html_span(icon, opt)
+    # noinspection RubyMismatchedArgumentType
+    super(icon, **opt)
   end
 
   # ===========================================================================

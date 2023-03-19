@@ -121,10 +121,10 @@ module BaseDecorator::Form
       opt[:field]    = field
       opt[:disabled] = config[:readonly].present?
       opt[:required] = config[:required].present?
+      id_suffix      = (0 if opt[:disabled])
 
-      value = render_value(value, field: field, index: opt[:index])
-      # noinspection RubyMismatchedArgumentType
-      render_form_pair(label, value, **opt)
+      value = render_value(value, field: field)
+      render_form_pair(label, value, index: id_suffix, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end
 
@@ -292,7 +292,11 @@ module BaseDecorator::Form
   )
     # Encapsulate the text in its own element to ensure separation from added
     # icon(s).
-    unless label.is_a?(ActiveSupport::SafeBuffer)
+    if label.is_a?(ActiveSupport::SafeBuffer)
+      # noinspection RubyMismatchedArgumentType
+      text  = sanitized_string(label)
+    else
+      text  = (label || field).to_s
       label = labelize(field) unless label.is_a?(String)
       label = html_span(label, class: 'text')
     end
@@ -307,7 +311,7 @@ module BaseDecorator::Form
 
     # Include status marker icon.
     if status.present?
-      marker = status_marker(status: status, label: label)
+      marker = status_marker(status: status, label: text)
       label << marker
     end
 
@@ -400,13 +404,17 @@ module BaseDecorator::Form
 
     # Grouped checkboxes (Chrome problem with styling <fieldset>).
     gr_opt = html_opt.except(:'data-field', :'data-required')
-    gr_opt.merge!(role: 'listbox', multiple: true, name: name)
+    gr_opt[:role]     = 'listbox'
+    gr_opt[:name]     = name
+    gr_opt[:multiple] = true
     gr_opt[:tabindex] = -1
     group = html_div(*checkboxes, gr_opt)
 
-    field_opt = html_opt.merge(id: opt[:id], name: name)
-    field_opt[:disabled] = true if opt[:readonly]
-    html_div(field_opt) { group }
+    html_opt[:id]       = opt[:id]
+    html_opt[:name]     = name
+    html_opt[:disabled] = true if opt[:readonly]
+    html_opt.delete(:'aria-labelledby')
+    html_div(html_opt) { group }
   end
 
   # Multiple single-line inputs.
@@ -522,6 +530,7 @@ module BaseDecorator::Form
   # @type [Array<Symbol>]
   #
   RELATED_IGNORED_KEYS = %i[
+    aria-describedby
     aria-labelledby
     aria-required
     base

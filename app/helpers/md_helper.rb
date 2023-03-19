@@ -124,7 +124,7 @@ module MdHelper
     value     = html_span(value_txt, value_opt)
 
     prepend_css!(opt, css)
-    opt[:'aria-labelledby'] ||= label_id
+    opt[:'aria-describedby'] ||= label_id
     html_div(opt) do
       label << value
     end
@@ -234,7 +234,7 @@ module MdHelper
     output     = html_tag(output_tag, output_txt, output_opt)
 
     prepend_css!(opt, css)
-    opt[:'aria-labelledby'] ||= label_id
+    opt[:'aria-describedby'] ||= label_id
     html_div(opt) do
       label = html_div(class: 'label-line') { label << clipboard_icon }
       label << output

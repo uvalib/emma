@@ -41,10 +41,11 @@ import {
 } from '../shared/flash';
 import {
     htmlEncode,
+    ID_ATTRIBUTES,
     selfOrDescendents,
     selfOrParent,
     single,
-    uniqAttrs,
+    uniqAttrsTree,
 } from '../shared/html';
 import {
     ITEM_ATTR,
@@ -2791,18 +2792,24 @@ appSetup(MODULE, function() {
         function initializeAddedControls(container) {
             _debug(`${func}: initializeAddedControls: container =`, container);
             const HOVER_ATTR = 'data-hover';
+            const attrs      = [...ID_ATTRIBUTES, 'data-id'];
 
             /** @type {jQuery} */
             const $cell  = $row.find(MultiUploader.UPLOADER),
                   $name  = $cell.find(MultiUploader.FILE_NAME),
                   $lines = $name.children();
             $(container).each((_, element) => {
-                const popup   = new InlinePopup(element);
-                const $toggle = popup.modalControl;
-                const $panel  = popup.modalPanel;
-                const $input  = $panel.find('input');
-                const $submit = $panel.find('button.input-submit');
-                const $cancel = $panel.find('button.input-cancel');
+                const $element  = uniqAttrsTree(element, undefined, attrs);
+                const type      = $element.attr('data-type');
+                const from_type = `.from-${type}`;
+                const $type     = $lines.filter(from_type);
+
+                const popup     = new InlinePopup($element);
+                const $toggle   = popup.modalControl;
+                const $panel    = popup.modalPanel;
+                const $input    = $panel.find('input');
+                const $submit   = $panel.find('button.input-submit');
+                const $cancel   = $panel.find('button.input-cancel');
 
                 handleEvent($input, 'keyup',    onInput);
                 handleClickAndKeypress($submit, onSubmit);
@@ -2812,10 +2819,6 @@ appSetup(MODULE, function() {
                 ModalShowHooks.set($toggle, onShow);
                 ModalHideHooks.set($toggle, onHide);
 
-                const $element  = $(element);
-                const type      = $element.attr('data-type');
-                const from_type = `.from-${type}`;
-                const $type     = $lines.filter(from_type);
 
                 /**
                  * Make the "Enter" key a proxy for onSubmit.
@@ -3386,7 +3389,7 @@ appSetup(MODULE, function() {
 
         // Update status text description.
         const label = isDefined(text) ? text : statusLabel(type, value);
-        const l_id  = $indicator.attr('aria-labelledby');
+        const l_id  = $indicator.attr('aria-describedby');
         let $label;
         if (isPresent(l_id)) {
             $label  = $(`#${l_id}`);
@@ -3436,7 +3439,7 @@ appSetup(MODULE, function() {
         $panel.find(INDICATOR).each((_, indicator) => {
             const $indicator = $(indicator);
             const tooltip    = $indicator.attr('title');
-            const label_id   = $indicator.attr('aria-labelledby');
+            const label_id   = $indicator.attr('aria-describedby');
             if (label_id && !tooltip) {
                 const $label = $panel.find(`#${label_id}`);
                 $indicator.attr('title', $label.text());
@@ -3681,8 +3684,7 @@ appSetup(MODULE, function() {
 
         // Make numbered attributes unique for the row element itself and all
         // of the elements within it.
-        uniqAttrs($copy, delta);
-        $copy.find('*').each((_, element) => uniqAttrs(element, delta));
+        uniqAttrsTree($copy, delta);
         toggleHidden($copy, false);
 
         // Hook up event handlers.

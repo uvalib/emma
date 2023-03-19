@@ -758,7 +758,7 @@ class UploadDecorator
     b_opt  = { role: 'button', tabindex: 0 }
 
     # Directions.
-    t_id   = opt[:'aria-labelledby'] = "#{id}-title"
+    t_id   = opt[:'aria-describedby'] = "#{id}-title"
     title  =
       'Please indicate the EMMA entry for the original repository item. ' \
       'If possible, enter the standard identifier (ISBN, DOI, OCLC, etc.) ' \

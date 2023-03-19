@@ -755,7 +755,8 @@ class ManifestItemDecorator < BaseDecorator
         sep   = ' / '
         first = [*part[:title], *part[:author], *part[:identifier]].take(2)
         first = first.join(sep)
-        r_opt = { separator: sep, no_format: true, no_help: true }
+        uniq  = hex_rand
+        r_opt = { index: uniq, separator: sep, no_format: true, no_help: true }
         lines = part.map { |k, v| render_pair(k.capitalize, v, **r_opt) } # TODO: I18n
         item  = html_details(first, *lines, class: 'text')
       else
@@ -871,7 +872,7 @@ class ManifestItemDecorator < BaseDecorator
           if (field == :ready_status) && (value == :ready) && item.unsaved?
             value = :unsaved
           end
-          s_opt  = { 'data-field': field, id: s_id, 'aria-labelledby': l_id }
+          s_opt  = { 'data-field': field, id: s_id, 'aria-describedby': l_id }
           status = row_indicator(value, **s_opt)
 
           text   = config[value] || value
@@ -903,7 +904,7 @@ class ManifestItemDecorator < BaseDecorator
           v_id  = "#{field}-detail-#{id_base}"
           l_id  = "label-#{v_id}"
 
-          v_opt = { 'data-field': field, id: v_id, 'aria-labelledby': l_id }
+          v_opt = { 'data-field': field, id: v_id, 'aria-describedby': l_id }
           value = item[field].presence || EMPTY_VALUE
           value = row_detail_value(value, **v_opt)
 
@@ -934,7 +935,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @option opt [String]        :id                 Required
     # @option opt [String,Symbol] :'data-field'       Required
-    # @option opt [String]        :'aria-labelledby'  Required
+    # @option opt [String]        :'aria-describedby' Required
     #
     # @return [ActiveSupport::SafeBuffer]
     #
@@ -984,7 +985,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @option opt [String]        :id                 Required
     # @option opt [String,Symbol] :'data-field'       Required
-    # @option opt [String]        :'aria-labelledby'  Required
+    # @option opt [String]        :'aria-describedby' Required
     #
     # @return [ActiveSupport::SafeBuffer]
     #
@@ -1310,7 +1311,7 @@ class ManifestItemDecorator
     type_class = config[:class] || "from-#{type}"
     prepend_css!(opt, type_class)
 
-    id     = opt.delete(:id) || unique_id
+    id     = opt.delete(:id) || unique_id(type, index: 0)
     button = file_input_ctrl(src: src, id: id, **opt)
     panel  = file_input_panel(src: src, id: id, **opt)
 
@@ -1349,14 +1350,15 @@ class ManifestItemDecorator
     type        = config[:type]  || src
     type_class  = config[:class] || "from-#{type}"
     panel_cfg   = config[:panel] || {}
+    popup_id    = html_id(css, id, underscore: false)
 
-    desc_opt    = append_css(opt, 'description').merge!(for: id)
+    desc_opt    = append_css(opt, 'description').merge!(for: popup_id)
     description = config[:description]
     description = h.label_tag(nil, description, desc_opt)
 
     label       = panel_cfg[:label]
     name        = html_id(type || label)
-    input_id    = "#{name}-#{id}"
+    input_id    = html_id('input', id, underscore: false)
     input_opt   = append_css(opt, 'input')
     input_label = h.label_tag(name, label, input_opt.merge(for: input_id))
     input_field = h.text_field_tag(name, nil, input_opt.merge(id: input_id))
@@ -1368,7 +1370,7 @@ class ManifestItemDecorator
         html_button(b_lbl, b_opt)
       end
 
-    prepend_css!(opt, css).merge!('data-id': id)
+    prepend_css!(opt, css).merge!('data-id': popup_id)
     html_div(opt) do
       description << input_label << input_field << input_submit << input_cancel
     end

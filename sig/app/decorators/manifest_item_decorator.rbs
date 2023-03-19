@@ -424,7 +424,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @option opt [String]        :id                 Required
     # @option opt [String,Symbol] :'data-field'       Required
-    # @option opt [String]        :'aria-labelledby'  Required
+    # @option opt [String]        :'aria-describedby' Required
     #
     # @return [ActiveSupport::SafeBuffer]
     #
@@ -462,7 +462,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @option opt [String]        :id                 Required
     # @option opt [String,Symbol] :'data-field'       Required
-    # @option opt [String]        :'aria-labelledby'  Required
+    # @option opt [String]        :'aria-describedby' Required
     #
     # @return [ActiveSupport::SafeBuffer]
     #

@@ -736,6 +736,12 @@ body.manifest.remit {
                     box-shadow: inset 0 0 0.25rem 0 $color;
                 }
 
+                @mixin add-text-contrast {
+                    .text {
+                        @include text-contrast;
+                    }
+                }
+
                 @mixin neutral {
                     @include colors($fg-light, $bg-clear);
                     @include outline($uva-emergency-red);
@@ -753,6 +759,7 @@ body.manifest.remit {
                 @mixin failure {
                     @include colors($fg-clear, $uva-accent-magenta);
                     @include outline;
+                    @include add-text-contrast;
                 }
 
                 @mixin success {

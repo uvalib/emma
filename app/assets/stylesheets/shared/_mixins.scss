@@ -210,6 +210,20 @@
     text-shadow: 0 0 1px var(--fg-color);
 }
 
+/// Add to outline text so that it passes color contrast checks.
+///
+/// @param {String} $color
+/// @param {String} $width
+/// @param {String} $blur
+///
+@mixin text-contrast($color: var(--fg-color), $width: 1px, $blur: 1px) {
+    text-shadow:
+        ( $width) ( $width) $blur $color,
+        ( $width) (-$width) $blur $color,
+        (-$width) ( $width) $blur $color,
+        (-$width) (-$width) $blur $color;
+}
+
 /// A pop-out effect for panels.
 ///
 @mixin popup-shadow {

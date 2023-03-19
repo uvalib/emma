@@ -124,8 +124,8 @@ module LinkHelper
         opt[:title] = "#{opt[:title]}\n(#{note})"
       end
     end
-    unless !label.html_safe? || opt.key?(:'aria-labelledby')
-      opt[:'aria-label'] ||= opt[:title] if opt[:title]
+    unless accessible_name(label, **opt)
+      opt[:'aria-label'] = opt[:title] if opt[:title]
     end
     unless opt.key?(:rel)
       opt[:rel] = 'noopener' if path.is_a?(String) && path.start_with?('http')

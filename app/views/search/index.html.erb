@@ -39,10 +39,16 @@
 
   list_ctrls   = [top, dec.list_styles, dec.list_results]
   list_heading = page_heading(title, *list_ctrls, help: help)
-  list_footing = (bottom if title_results?)
+  list_footing = nil
 
-  bottom = top = nil if title_results?
-  opt[:row]   += 1   if top && opt[:row].is_a?(Integer)
+  if title_results?
+    list_footing = bottom
+    top = bottom = nil
+  else
+    # Re-create for unique identifier on 'results' mode menu.
+    top = dec.index_controls(**opt).first
+    opt[:row] += 1 if opt[:row].is_a?(Integer)
+  end
 
   opt.merge!(dec: dec, skip: :title)
 

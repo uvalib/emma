@@ -31,6 +31,9 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<button>' element.
   #
+  # If the label (first argument) is HTML or an icon then an accessible name is
+  # expected to be provided via #ARIA_LABEL_ATTRS or derivable from :title.
+  #
   # @param [Array<*>] args            Passed to #html_tag.
   # @param [Proc]     block           Passed to #html_tag.
   #
@@ -119,6 +122,41 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def placeholder_element: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # HTML attributes which indicate specification of an accessible name.
+  #
+  # @type [Array<Symbol>]
+  #
+  ARIA_LABEL_ATTRS: symArray
+
+  # Return the text that will be used to identify the HTML element to be
+  # created with the given arguments.
+  #
+  # @param [Array<*>] args
+  # @param [Hash]     opt
+  #
+  # @return [String, nil]
+  #
+  def accessible_name: (*untyped args, **untyped opt) -> (String | nil)
+
+  # Indicate whether the string contains only characters that fall outside the
+  # normal ASCII range.  Always false if *value* is not a string.
+  #
+  # @param [String, *] value
+  #
+  def only_non_ascii?: (String  value) -> bool
+                     | (untyped value) -> false
+
+  # Make a Unicode character (sequence) into a decorative element that is not
+  # pronounced by screen readers.
+  #
+  # @param [String] icon              Unicode character(s).
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def symbol_icon: (String icon, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Attributes that are expected for a given HTML tag and can be added
   # automatically.
