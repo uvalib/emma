@@ -156,8 +156,7 @@ export class LookupRequest extends ChannelRequest {
      */
     static LOOKUP_TERMS = deepFreeze({
         or:  { dc_identifier: '' },
-        and: { dc_title: 'title' },
-        //and: { dc_title: 'title', dc_creator: 'author' },
+        and: { dc_title: 'title', dc_creator: 'author' },
     });
 
     /**
