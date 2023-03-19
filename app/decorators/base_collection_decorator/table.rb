@@ -48,9 +48,10 @@ module BaseCollectionDecorator::Table
     append_css!(html_opt, "columns-#{count}") if count.positive?
     append_css!(html_opt, 'sticky-head')      if opt[:sticky]
     append_css!(html_opt, 'dark-head')        if opt[:dark]
-    html_tag(:table, html_opt) do
-      parts.map { |tag, content| html_tag(tag, content) if content }
-    end
+    scroll_to_top_target <<
+      html_tag(:table, html_opt) do
+        parts.map { |tag, content| html_tag(tag, content) if content }
+      end
   end
 
   # Render one or more entries for use within a *tbody*.

@@ -1733,7 +1733,7 @@ appSetup(MODULE, function() {
         /** @type {jQuery} */
         let $result, $inside, $outside;
         if (isMissing($target)) {
-            console.error(`${func}: target missing/empty`);
+            console.warn(`${func}: target missing/empty`);
         } else if ($target.is(selector)) {
             $result = $target;
         } else if (isPresent(($outside = $target.parents(selector)))) {

@@ -91,7 +91,7 @@ module BaseDecorator::Links
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
   def link(css: nil, **opt)
-    opt[:tooltip] = show_tooltip unless opt.key?(:tooltip)
+    opt[:title] = opt.delete(:tooltip) || opt[:title] || show_tooltip
     prepend_css!(opt, css) if css.present?
     model_link(object, **opt)
   end

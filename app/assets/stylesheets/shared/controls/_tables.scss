@@ -117,11 +117,14 @@ $border-fg:  var(--rev-fg-color);
     // @see BaseCollectionDecorator::Table::STICKY_HEAD
     &.sticky-head {
 
-        position:   sticky;
-        top:        $gap;
+        position:   relative;
         max-height: 95vh;
         overflow:   auto;
         background: $bg-color;
+        z-index:    v.$z-normal;
+
+        // noinspection CssBrowserCompatibilityForProperties
+        overscroll-behavior: contain;
 
         @media #{v.$narrow-screen} {
             top: $narrow-gap;

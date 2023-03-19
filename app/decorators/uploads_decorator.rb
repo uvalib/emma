@@ -493,7 +493,7 @@ class UploadsDecorator < BaseCollectionDecorator
     opt[:autocomplete] = 'off'
 
     prepend_css!(opt, css, action, model_type)
-    scroll_to_top_target!(opt)
+    make_scroll_to_top_target!(opt)
 
     outer_opt = prepend_css(outer, outer_css, action, model_type)
     html_div(outer_opt) do

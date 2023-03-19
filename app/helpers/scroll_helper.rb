@@ -55,6 +55,20 @@ module ScrollHelper
 
   public
 
+  # An empty element which will be the target for the scroll-to-top button.
+  # (For use just before the intended element if it requires a gap at the top
+  # of the viewport but can't have 'padding-top' set.
+  #
+  # @param [Hash] opt                 Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def scroll_to_top_target(**opt)
+    make_scroll_to_top_target!(opt)
+    opt[:role] = :none
+    html_span(HTML_SPACE, opt)
+  end
+
   # Modify the provided CSS options to indicate that the element is defined as
   # the target for the scroll-to-top button.
   #
@@ -62,7 +76,7 @@ module ScrollHelper
   #
   # @return [Hash]                    The modified *opt*.
   #
-  def scroll_to_top_target!(opt)
+  def make_scroll_to_top_target!(opt)
     append_css!(opt, SCROLL_TARGET[:class])
   end
 

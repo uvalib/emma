@@ -625,7 +625,7 @@ module BaseDecorator::Form
 
     prepend_css!(opt, css, *classes)
     model_form_options!(opt, action: action)
-    scroll_to_top_target!(opt)
+    make_scroll_to_top_target!(opt)
 
     buttons   = form_buttons(label: label, action: action, cancel: cancel)
     outer_opt = prepend_css(outer, outer_css, *classes)
