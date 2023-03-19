@@ -36,5 +36,8 @@
     "dev-build:css":  "sass app/assets/stylesheets/application.sass.scss app/assets/builds/application.css -I node_modules -I app/assets/stylesheets --source-map-urls=absolute",
     "prod-build":     "esbuild app/assets/javascripts/application.js --outdir=app/assets/builds --bundle --sourcemap --minify",
     "prod-build:css": "sass app/assets/stylesheets/application.sass.scss app/assets/builds/application.css -I node_modules -I app/assets/stylesheets --source-map-urls=absolute --style=compressed"
-  }
+  },
+  "development-notes": [
+    "@see 'en.emma.head.stylesheets' for CSS files added to page <head>"
+  ]
 }

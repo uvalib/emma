@@ -676,15 +676,16 @@ table.manifest_item-grid {
             // Variations
             //=================================================================
 
-            // noinspection CssBrowserCompatibilityForProperties
             &.expanded {
                 > .cell {
-                    padding-top:         $cell-pad * 2.5;
-                    padding-bottom:      $cell-pad * 2.5;
-                    gap:                 $cell-pad * 2.5;
-                    max-height:          33vh;
-                    text-align:          left;
-                    overflow:            auto;
+                    padding-top:    $cell-pad * 2.5;
+                    padding-bottom: $cell-pad * 2.5;
+                    gap:            $cell-pad * 2.5;
+                    max-height:     33vh;
+                    text-align:     left;
+                    overflow:       auto;
+
+                    // noinspection CssBrowserCompatibilityForProperties
                     overscroll-behavior: contain;
                 }
             }

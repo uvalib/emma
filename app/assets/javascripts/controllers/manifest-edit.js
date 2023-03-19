@@ -1,21 +1,21 @@
 // app/assets/javascripts/controllers/manifest-edit.js
 
 
-import { AppDebug }                       from '../application/debug';
-import { appSetup }                       from '../application/setup';
-import { arrayWrap }                      from '../shared/arrays';
-import { Emma }                           from '../shared/assets';
-import { pageAttributes }                 from '../shared/controller';
-import { HIDDEN, selector, toggleHidden } from '../shared/css';
-import * as Field                         from '../shared/field';
-import { turnOffAutocompleteIn }          from '../shared/form';
-import { InlinePopup }                    from '../shared/inline-popup';
-import { LookupModal }                    from '../shared/lookup-modal';
-import { LookupRequest }                  from '../shared/lookup-request';
-import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
-import { randomizeName }                  from '../shared/random';
-import { timestamp }                      from '../shared/time';
-import { MultiUploader }                  from '../shared/uploader';
+import { AppDebug }                        from '../application/debug';
+import { appSetup }                        from '../application/setup';
+import { arrayWrap }                       from '../shared/arrays';
+import { Emma }                            from '../shared/assets';
+import { pageAttributes }                  from '../shared/controller';
+import { HIDDEN, selector, toggleHidden }  from '../shared/css';
+import * as Field                          from '../shared/field';
+import { turnOffAutocompleteIn }           from '../shared/form';
+import { InlinePopup }                     from '../shared/inline-popup';
+import { LookupModal }                     from '../shared/lookup-modal';
+import { LookupRequest }                   from '../shared/lookup-request';
+import { ModalHideHooks, ModalShowHooks }  from '../shared/modal_hooks';
+import { randomizeName }                   from '../shared/random';
+import { timestamp }                       from '../shared/time';
+import { MultiUploader }                   from '../shared/uploader';
 import { asParams, cancelAction, makeUrl } from '../shared/url';
 import {
     isDefined,

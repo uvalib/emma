@@ -280,7 +280,7 @@ module SubmissionService::Action::Submit
 
   # Get the array of ManifestItem expressed or implied by *items*.
   #
-  # @param [String|ManifestItem|Array|ActiveRecord::Relation] items
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
   #
   # @return [Array<ManifestItem>]
   #

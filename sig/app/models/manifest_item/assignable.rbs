@@ -88,12 +88,12 @@ module ManifestItem::Assignable
   # normalize_single
   #
   # @param [*]            v
-  # @param [String|Class] type
+  # @param [String,Class] type
   # @param [Hash]         opt         Passed to normalization method.
   #
   # @return [*]
   #
-  def normalize_single: (untyped v) -> (untyped | nil)
+  def normalize_single: (untyped v, String|Class `type`, **untyped opt) -> (untyped | nil)
 
   # normalize_bool
   #

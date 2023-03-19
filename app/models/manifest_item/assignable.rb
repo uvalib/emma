@@ -217,12 +217,13 @@ module ManifestItem::Assignable
   # normalize_single
   #
   # @param [*]            v
-  # @param [String|Class] type
+  # @param [String,Class] type
   # @param [Hash]         opt         Passed to normalization method.
   #
   # @return [*]
   #
   def normalize_single(v, type, **opt)
+    # noinspection RubyMismatchedArgumentType
     case
       when type == 'json'     then normalize_json(v)
       when type == 'date'     then normalize_date(v)

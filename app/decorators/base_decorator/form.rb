@@ -319,7 +319,7 @@ module BaseDecorator::Form
   #
   # @param [String]      name
   # @param [Array]       value        Selected value(s) from `range#values`.
-  # @param [Class|Array] range        A class derived from EnumType whose
+  # @param [Class,Array] range        A class derived from EnumType whose
   #                                     #values method will be used to populate
   #                                     the menu.
   # @param [String]      css          Characteristic CSS class/selector.

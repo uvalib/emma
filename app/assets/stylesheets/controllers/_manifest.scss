@@ -620,10 +620,11 @@ body.manifest.remit {
         border:                0.25rem solid gray;
         border-radius:         0.25rem;
 
-        // noinspection CssBrowserCompatibilityForProperties
         @if $limit-height {
-            max-height:          67vh;
-            overflow:            auto;
+            max-height:        67vh;
+            overflow:          auto;
+
+            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior: contain;
         }
 
@@ -1083,14 +1084,15 @@ body.manifest.remit {
 
         }
 
-        // noinspection CssBrowserCompatibilityForProperties
         .monitor-output {
 
             display:               grid;
             grid-template-columns: [success] 1fr [failure] 1fr;
             overflow:              auto;
-            overscroll-behavior:   contain;
             flex:                  1 0 auto;
+
+            // noinspection CssBrowserCompatibilityForProperties
+            overscroll-behavior:   contain;
 
             .success,
             .failure {
@@ -1134,9 +1136,10 @@ body.manifest.remit {
                 font-weight: bold;
             }
 
-            // noinspection CssBrowserCompatibilityForProperties
             .value {
-                resize:              vertical;
+                resize: vertical;
+
+                // noinspection CssBrowserCompatibilityForProperties
                 overscroll-behavior: contain;
             }
         }

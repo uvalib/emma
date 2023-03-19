@@ -131,26 +131,27 @@ $flash-width: popup.$max-width;
         border-radius:  0.5rem;
         box-shadow:     $popup-shadow, 0 0 0 0.125rem white;
 
-        // noinspection CssBrowserCompatibilityForProperties
         .text {
-            max-height:          100%;
-            margin:              auto 0;
-            font-weight:         bold;
-            overflow:            auto;
+            max-height:     100%;
+            margin:         auto 0;
+            font-weight:    bold;
+            overflow:       auto;
+            flex:           1 1 100%;
+
+            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior: contain;
-            flex:                1 1 100%;
         }
 
         .closer {
 
             @include button.basic;
 
-            margin-top:    0;
-            font-weight:   bold;
-            background:    white;
-            border:        0.125rem solid black;
-            border-radius: 0.25rem;
-            flex:          0 0 auto;
+            margin-top:     0;
+            font-weight:    bold;
+            background:     white;
+            border:         0.125rem solid black;
+            border-radius:  0.25rem;
+            flex:           0 0 auto;
 
             &:focus {
                 outline-color: $uva-text-gray;

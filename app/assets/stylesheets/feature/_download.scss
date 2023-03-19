@@ -123,8 +123,10 @@
             padding:               0;
             border:                none;
             overflow:              auto;
-            overscroll-behavior:   contain;
             flex-grow:             1;
+
+            // noinspection CssBrowserCompatibilityForProperties
+            overscroll-behavior:   contain;
 
             // Because this is the only element that can grow, the height of
             // the panel can be constrained only by limiting the height of this

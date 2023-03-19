@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # View helper methods for setting/getting '<link rel="stylesheet">' meta-tags.
 #
+# @see "en.emma.head.stylesheets"
+#
 module HeadHelper::Stylesheets
 
   include HeadHelper::Common

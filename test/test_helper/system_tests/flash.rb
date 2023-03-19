@@ -25,7 +25,7 @@ module TestHelper::SystemTests::Flash
   # @param [String]         alert     Expect a flash alert with this.
   # @param [String]         notice    Expect a flash notice with this.
   # @param [String]         text      Expect a flash of any kind with this.
-  # @param [String|Boolean] without   Negate expectation.
+  # @param [String,Boolean] without   Negate expectation.
   # @param [Boolean]        assert    If not *true*, return Boolean.
   # @param [Hash]           opt       Passed to Capybara method.
   #
@@ -39,6 +39,7 @@ module TestHelper::SystemTests::Flash
     **opt
   )
     terms = [content, alert, notice, text].compact
+    # noinspection RubyMismatchedArgumentType
     if without.is_a?(String)
       terms << without
       text ||= without

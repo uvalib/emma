@@ -104,11 +104,11 @@ module SubmissionService::Action::Submit
 
   # Get the array of ManifestItem expressed or implied by *items*.
   #
-  # @param [String|ManifestItem|Array|ActiveRecord::Relation] items
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
   #
   # @return [Array<ManifestItem>]
   #
-  def manifest_items: (untyped items) -> Array[ManifestItem]
+  def manifest_items: (String|ManifestItem|Array[String]|Array[ManifestItem]|ActiveRecord::Relation items) -> Array[ManifestItem]
 
   # Extract the ManifestItem identifier from *item* if possible.
   #

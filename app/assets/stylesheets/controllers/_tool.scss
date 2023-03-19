@@ -517,8 +517,8 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             gap:                   0.5rem;
         }
 
-        // noinspection CssBrowserCompatibilityForProperties
         .value {
+            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior: contain;
         }
 

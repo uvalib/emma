@@ -117,7 +117,7 @@ module BaseDecorator::Form
   #
   # @param [String]      name
   # @param [Array]       value        Selected value(s) from `range#values`.
-  # @param [Class|Array] range        A class derived from EnumType whose
+  # @param [Class,Array] range        A class derived from EnumType whose
   #                                     #values method will be used to populate
   #                                     the menu.
   # @param [String]      css          Characteristic CSS class/selector.
@@ -132,7 +132,7 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *updateMenu()*
   #
-  def render_form_menu_single: (String name, anyArray value, range: Class, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_menu_single: (String name, anyArray value, range: Class|anyArray, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Multi-select menu - scrollable list of checkboxes.
   #

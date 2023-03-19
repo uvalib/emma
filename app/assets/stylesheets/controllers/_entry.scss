@@ -374,10 +374,11 @@ form.select-entry {
     // Basic components
     //=========================================================================
 
-    // noinspection CssBrowserCompatibilityForProperties
     %scrollable {
-        overflow-y:          auto;
-        resize:              vertical;
+        overflow-y: auto;
+        resize:     vertical;
+
+        // noinspection CssBrowserCompatibilityForProperties
         overscroll-behavior: contain;
     }
 
@@ -1258,12 +1259,13 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                         overflow-y: auto;
                         border:     1px solid gray;
 
-                        // noinspection CssBrowserCompatibilityForProperties
                         .text {
-                            max-height:          max-content;
-                            margin:              0;
+                            max-height: max-content;
+                            margin:     0;
+                            flex:       1 1 100%;
+
+                            // noinspection CssBrowserCompatibilityForProperties
                             overscroll-behavior: contain;
-                            flex:                1 1 100%;
                         }
                     }
                 }
@@ -1286,8 +1288,8 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
             width: 100%;
 
-            // noinspection CssBrowserCompatibilityForProperties
             .value {
+                // noinspection CssBrowserCompatibilityForProperties
                 overscroll-behavior: contain;
             }
 
