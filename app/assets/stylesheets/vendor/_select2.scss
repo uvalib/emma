@@ -9,7 +9,21 @@
 // Overrides of Select2 styles (node_modules/select2/dist/css/select2.css)
 //=============================================================================
 
+.select2-results__options {
+    // noinspection CssBrowserCompatibilityForProperties
+    overscroll-behavior: contain;
+}
+
 .select2-container--default {
+
+    // Although it's not present in select2.min.css, this wrapper is generated
+    // by Select2 and needs to be adjusted so that .select2-selection--multiple
+    // is sized according to the containing element.
+    .selection {
+        display: inline-block;
+        height:  inherit;
+        width:   inherit;
+    }
 
     // A multi-select control instance.
     .select2-selection--multiple {
@@ -22,45 +36,58 @@
         // way of the .select2-selection__rendered area.
         .select2-selection__clear {
             position:         absolute;
-            top:              0.75em;
-            right:            0.5em;
-            width:            1.5em;
+            top:              0.375em;
+            z-index:          1;
+            width:            25px; // matches padding-right of container
+            height:           auto;
             margin:           0;
             padding:          0;
+            line-height:      1.3125;
             font-size:        small !important;
             color:            gray !important;
-            background-color: inherit;
+            background-color: transparent;
             border:           none;
             border-radius:    50%; // for focus outline
-        }
-
-        // The default no-wrap style is a problem for constraining the width of
-        // the enclosing grid for narrow screens because of very long facet
-        // value labels.
-        .select2-selection__rendered {
-            padding-right: 1.5em;
-            white-space:   normal;
         }
 
         // Make the shape of the selection badges stand out a bit more.
         .select2-selection__choice {
             padding-left: 0;
             border-color: gray;
+            z-index:      1;
         }
 
         // Make the remove-selection control stand out from the selection text.
         .select2-selection__choice__remove {
-            margin-right:  4px;
-            padding-right: 3px;
-            border:        none;
-            border-right:  1px solid darkgray;
+            position:           unset;
+            margin:             0;
+            padding:            0 0.1875rem;
+            border-right-color: darkgray;
         }
 
         // Keep the <textarea> from taking up room at the bottom of the input.
         .select2-search--inline {
-            display:    block;
-            max-height: 0;
-            overflow:   hidden;
+
+            position: absolute;
+            top:      0;
+            left:     0;
+            display:  block;
+            height:   100%;
+            width:    100%;
+            margin:   0;
+            padding:  0;
+
+            .select2-search__field {
+
+                height:      inherit;
+                margin-top:  6px;
+                margin-left: 4px;
+                line-height: 1;
+
+                &::placeholder {
+                    opacity: 0.9;
+                }
+            }
         }
     }
 }

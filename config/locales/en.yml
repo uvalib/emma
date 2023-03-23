@@ -34,7 +34,7 @@ en:
 
       stylesheets:
         # NOTE: Handled via HeadHelper::Stylesheets#page_stylesheets
-        - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css'
+        - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css'
         - 'https://releases.transloadit.com/uppy/v1.31.0/uppy.min.css'
 
       javascripts:

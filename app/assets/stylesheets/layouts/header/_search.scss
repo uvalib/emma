@@ -13,10 +13,16 @@
 // Preferred button dimensions.
 $advanced-toggle-width:  5rem;
 $search-button-width:    6rem;
+$control-height:         2.25rem;
 
 //=============================================================================
 // Internal mixins
 //=============================================================================
+
+@mixin grid-cell {
+    display: block;
+    margin:  auto 0;
+}
 
 // When the advanced search grid is closed, each affected grid cell is
 // flattened to an invisible element which continues to contribute to
@@ -196,12 +202,10 @@ $search-button-width:    6rem;
          */
         select[multiple]:not(.select2-hidden-accessible) {
 
-            margin:         auto 0;
-            height:         34px;
-            max-height:     34px;
+            min-height:     $control-height;
+            margin:         2px 0 4px;
+            padding:        0;
             overflow:       hidden;
-            border:         1px solid var(--bg-color);
-            border-radius:  4px;
             pointer-events: none;
 
             /**
@@ -210,16 +214,22 @@ $search-button-width:    6rem;
              * native <select> elements.  This is required so that the original
              * is obscured until that point.
              */
-            // noinspection CssOverwrittenProperties
-            option::before {
-                display:        block;
-                color:          $uva-text-gray;
-                background:     var(--bg-color);
-                border:         6px solid var(--bg-color);
-                content:        "...";
-                content:        $HORIZONTAL_ELLIPSIS;
-                outline:        3px solid white;
-                outline-offset: -2px;
+            option {
+
+                width:       inherit;
+                height:      inherit;
+                padding:     0;
+                font-family: sans-serif;
+                color:       transparent;
+
+                &::before {
+                    display:     block;
+                    padding-top: 1px;
+                    color:       $uva-text-gray;
+                    background:  var(--bg-color);
+                    border:      3px solid var(--bg-color);
+                    content:     "(any)";
+                }
             }
         }
     }
@@ -430,7 +440,6 @@ $search-button-width:    6rem;
 
             height:       1.75rem;
             margin-right: 0.5rem;
-            margin-left:  calc(#{$gap-x} / 2);
             font-size:    large;
             color:        var(--fg-color);
 
@@ -545,6 +554,11 @@ $search-button-width:    6rem;
                         margin-top: $sb-row-narrow-vertical-gap;
                     }
                 }
+
+                @media #{$not-narrow-screen} {
+                    > :first-child { margin-left:  calc(#{$gap-x} / 2); }
+                    > :last-child  { margin-right: calc(#{$gap-x} / 2); }
+                }
             }
         }
     }
@@ -636,7 +650,8 @@ $search-button-width:    6rem;
         max-width:  unset;
         overflow-y: hidden;
         box-sizing: border-box;
-        gap:        0 $gap-x; // @see %grid-cell
+        row-gap:    calc(2 * #{$gap-y});
+        column-gap: $gap-x;
 
         // Maximum number of physical columns per width breakpoint.
 
@@ -660,17 +675,6 @@ $search-button-width:    6rem;
         }
 
         //=====================================================================
-        // Grid cell placeholder classes
-        //=====================================================================
-
-        // In order for hidden-grid-cell to work, vertical grid gap must be
-        // managed "manually" here rather than via grid-gap.
-        %grid-cell {
-            display: block;
-            margin:  0 0 $gap-y;
-        }
-
-        //=====================================================================
         // Elements
         //=====================================================================
 
@@ -679,7 +683,7 @@ $search-button-width:    6rem;
         // a pair of .menu-label/.menu-control.
         .menu-spacer {
 
-            @extend %grid-cell;
+            @include grid-cell;
 
             @media #{$not-wide-screen} {
                 display: none;
@@ -690,7 +694,7 @@ $search-button-width:    6rem;
         // left).
         .menu-button {
 
-            @extend %grid-cell;
+            @include grid-cell;
 
             @media #{$not-wide-screen} {
                 display: none;
@@ -698,7 +702,6 @@ $search-button-width:    6rem;
 
             $padding-x:    20px;
 
-            margin-bottom: auto;
             margin-left:   2 * $padding-x; // Needed to keep grid from growing.
             padding:       2px $padding-x;
             line-height:   1;
@@ -709,9 +712,9 @@ $search-button-width:    6rem;
         .menu-label,
         .date-label {
 
-            @extend %grid-cell;
+            @include grid-cell;
 
-            margin-top:   calc(3 * #{$gap-y} / 2);
+            margin-top:   $gap-y;
             margin-right: $gap-x;
             user-select:  none;
 
@@ -726,13 +729,13 @@ $search-button-width:    6rem;
         .menu-control,
         .date-control {
 
-            @extend %grid-cell;
+            @include grid-cell;
 
-            margin-top:   calc(#{$gap-y} / 2);
+            margin-top:   0;
             margin-right: calc(3 * #{$gap-x});
 
             > * {
-                min-height:  2.25rem;
+                min-height: $control-height;
             }
 
             select {
@@ -744,6 +747,12 @@ $search-button-width:    6rem;
                 height:      1.75rem;
                 width:       97.5%;
                 font-family: inherit;
+            }
+
+            .select2-selection--multiple {
+                min-height:    $control-height;
+                margin-top:    2px;
+                border-radius: 0;
             }
 
             .select2-search__field:focus {
@@ -760,6 +769,9 @@ $search-button-width:    6rem;
         // limited to the top row of controls (without a visible "reset"
         // button).
         &:not(.open) {
+
+            row-gap: 0;
+
             > * {
 
                 &.reset,
@@ -798,8 +810,7 @@ $search-button-width:    6rem;
 
         // noinspection CssReplaceWithShorthandSafely
         .search-filter-container {
-            padding:       1rem;
-            padding-left:  1.25rem;
+            padding:       1.25rem;
             padding-right: 0.25rem;
             border:        none;
             box-shadow:    inset 0 0 8px 1px $uva-accent-teal;
