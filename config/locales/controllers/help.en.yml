@@ -104,104 +104,164 @@ en:
       image:
 
         sign_in_links:
-          alt:          'Sign-in selections'
           asset:        'help/sign_in_links.png'
+          alt:          |
+            Sign-in option links including "Sign in with Bookshare".
 
         bookshare_login:
-          alt:          'Bookshare login page'
           asset:        'help/bookshare_login.png'
+          alt:          |
+            Bookshare login forms with inputs for Bookshare/EMMA user name and
+            password and a "Sign In" submit button.
 
         drop_down:
-          alt:          'Drop-down menu'
           asset:        'help/drop_down.png'
+          alt:          |
+            Opened search format drop-down menu with "DAISY" format selection
+            highlighted.
 
         ia_timeout:
-          alt:          'Close this browser tab and retry the original download link.'
           asset:        'help/ia_timeout.png'
+          alt:          |
+            Alert message with Internet Archive download service response:
+            "Sorry, we need more time to finish generating your ebook.
+            Please refresh this page after a few minutes."
+            And the EMMA note:
+            Close this browser tab and retry the original download link.
 
         one_selection:
-          alt:          'Multi-select menu with a single selection'
           asset:        'help/one_selection.png'
+          alt:          |
+            Multi-select "Format" menu with "DAISY" as the single selection.
 
         two_selections:
-          alt:          'Multi-select menu with two selections'
           asset:        'help/two_selections.png'
+          alt:          |
+            Multi-select "Format" menu with two selections: "DAISY" and "EPUB".
 
         search_type_closed:
-          alt:          'Search type menu (closed)'
           asset:        'help/search_type_closed.png'
+          alt:           |
+            Search type menu (closed) with "Keyword" selected.
 
         search_type_opened:
-          alt:          'Search type menu (opened)'
           asset:        'help/search_type_opened.png'
+          alt:          |
+            Search type menu (opened) with a drop-down list of search types
+            "ISBN/DOI/etc.", "Title", "Creator", "Publisher", and "Keyword".
 
         # =====================================================================
         # Single submission
         # =====================================================================
 
         upload_actions:
-          alt:          'Upload action buttons'
           asset:        'help/upload_actions.png'
+          alt:          |
+            Upload action button panel ("List All", "Create", "Change", and
+            "Remove") with "List All" highlighted, indicating that the current
+            page is the uploads index page.
 
         source_menu:
-          alt:          'Source Repository menu (closed)'
           asset:        'help/source_menu.png'
+          alt:          |
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, and with the Source Repository menu
+            in its initial closed state showing "(unset)".
 
         source_menu_opened:
-          alt:          'Source Repository menu (opened)'
           asset:        'help/source_menu_opened.png'
+          alt:          |
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, and with the Source Repository menu
+            opened to show selections "EMMA", "ACE", "Bookshare", "HathiTrust",
+            and "Internet Archive".
 
         source_menu_ht:
-          alt:          'HathiTrust selected in the Source Repository menu'
           asset:        'help/source_menu_ht.png'
+          alt:          |
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, with "HathiTrust" selected as the
+            "Source Repository", and a mini-form with an input for a standard
+            identifier or title, with "Search" and "Cancel" buttons.
 
         source_selected_fields:
-          alt:          'Example of fields acquired from a "parent" source entry'
           asset:        'help/source_selected_fields.png'
+          alt:          |
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, with "Fields with data" selected to
+            show that selecting the "parent" EMMA source entry has pre-filled
+            bibliographic fields for the submission derived from an original
+            item from HathiTrust.
 
         # =====================================================================
         # Bulk submission
         # =====================================================================
 
         manifest_actions:
-          alt:          'Bulk upload action buttons'
           asset:        'help/manifest_actions.png'
+          alt:          |
+            Bulk upload action button panel ("List All", "Create", "Change",
+            "Remove", and "Submit") with "List All" highlighted, indicating
+            that the current page is the bulk uploads index page.
 
         manifest_title:
-          alt:          'Manifest title with edit button'
           asset:        'help/manifest_title.png'
+          alt:          |
+            An example auto-generated manifest title, followed by an "Edit"
+            button and a help button for the page.
 
         manifest_title_edit:
-          alt:          'Manifest title edit with Change and Cancel buttons'
           asset:        'help/manifest_title_edit.png'
+          alt:          |
+            An example auto-generated manifest title being edited in a text
+            input, followed by "Change" and "Cancel" buttons.
 
         submission_columns:
-          alt:          'Submission table column headers'
           asset:        'help/submission_columns.png'
+          alt:          |
+            The heading row of the bulk upload submission grid showing a
+            checkbox which can be used to check/uncheck all items, and column
+            headers "Item Name", "Validation", "File Status", "Storage Status",
+            "Indexing Status", and "Entry Status".
 
         unsaved:
-          alt:          'UNSAVED status marker'
           asset:        'help/unsaved.png'
+          alt:          |
+            The UNSAVED submission status marker, which includes a convenience
+            "Edit" button to jump to that item in the manifest edit grid.
 
         data_missing:
-          alt:          'DATA ERROR status marker'
           asset:        'help/data_missing.png'
+          alt:          |
+            The DATA ERROR submission status marker, which includes a
+            convenience "Edit" button to jump to that item in the manifest edit
+            grid.
 
         file_missing:
-          alt:          'FILE MISSING status marker'
           asset:        'help/file_needed.png' # TODO: don't have this yet
+          alt:          |
+            The FILE MISSING submission status marker, which includes a
+            convenience "Edit" button to jump to that item in the manifest edit
+            grid.
 
         file_needed:
-          alt:          'FILE NEEDED status marker'
           asset:        'help/file_needed.png'
+          alt:          |
+            The FILE NEEDED submission status marker, with a "details" element
+            indicating the name of the remediated file that needs to be
+            supplied via the "Files" button.
 
         not_started:
-          alt:          'NOT STARTED status marker'
           asset:        'help/not_started.png'
+          alt:          |
+            The NOT STARTED status marker, which indicates a submission step
+            not yet reached for the given item.
 
         succeeded:
-          alt:          'OK status marker'
           asset:        'help/succeeded.png'
+          alt:          |
+            The OK status marker, which indicates a submission step that has
+            been successfully completed for the given item.
 
       # =======================================================================
       # Pages
