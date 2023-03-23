@@ -163,7 +163,7 @@ module PopupHelper
     closer_opt[:title]        ||= 'Close this popup' # TODO: I18n
     closer_opt[:'aria-label'] ||= closer_opt[:title]
     close_icon = closer_opt.delete(:icon) || 'X' # TODO: I18n
-    close_icon = html_span(close_icon, closer_opt)
+    close_icon = html_span(closer_opt) { symbol_icon(close_icon) }
 
     # Popup panel contents supplied by the block.
     panel_content = Array.wrap(block&.call)

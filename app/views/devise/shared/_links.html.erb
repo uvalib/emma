@@ -8,12 +8,12 @@
   m = devise_mapping
 
   links    = []
-  link_opt = { class: 'sign-in-link' }
+  link_opt = { class: 'sign-in-link', role: 'button' }
 
   unless c == 'sessions'
     label  = t('emma.user.sessions.sign_in.label')
     path   = sign_in_local_path
-    links << link_to(label, path, link_opt)
+    links << make_link(label, path, **link_opt)
   end
 
   registerable = m.registerable? && (c != 'registrations')
@@ -33,7 +33,7 @@
       ctrlr = devise_module.pluralize
       label = t("emma.user.#{ctrlr}.new.label")
       path  = send("new_user_#{devise_module}_path")
-      link_to(label, path, link_opt)
+      make_link(label, path, **link_opt)
     }
 
 -%>

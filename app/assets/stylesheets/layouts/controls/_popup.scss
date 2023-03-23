@@ -95,6 +95,7 @@
     // Temporary deferred-content placeholder.
     .deferred {
         font-size: large;
+        color:     var(--fg-color);
     }
 
     // Controls at the bottom of the popup panel (at minimum a "Close" button).

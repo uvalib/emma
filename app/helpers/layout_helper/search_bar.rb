@@ -167,7 +167,7 @@ module LayoutHelper::SearchBar
     end
 
     # Components.
-    input_group = html_div(rows, class: 'search-bar-group')
+    input_group = html_div(rows, class: 'search-bar-group', role: 'group')
     controls    = ''.html_safe # NOTE: moving search button...
 
     prepend_css!(form_opt, css)
@@ -201,7 +201,8 @@ module LayoutHelper::SearchBar
     ctrl &&= first ? search_row_add(**id_opt) : search_row_remove(**id_opt)
 
     # Row container.
-    opt[:id] ||= unique_id(css, **id_opt)
+    opt[:id]   ||= unique_id(css, **id_opt)
+    opt[:role] ||= 'group'
     prepend_css!(opt, css)
     append_css!(opt, 'first')  if first
     append_css!(opt, 'last')   if last

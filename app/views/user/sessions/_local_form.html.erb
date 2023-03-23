@@ -28,7 +28,7 @@
 
 <%= form_for(user, form_opt) do |f| -%>
 
-  <div class="form-fields user">
+  <fieldset class="form-fields user">
 
     <%= f.label          :email, label_opt %>
     <%= f.email_field    :email, email_opt %>
@@ -44,6 +44,6 @@
     <%= f.submit    submit_label, submit_opt %>
     <%= html_button cancel_label, cancel_opt %>
 
-  </div>
+  </fieldset>
 
 <%- end -%>

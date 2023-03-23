@@ -13,7 +13,8 @@
       [label, path]
     }
 
-  link_opt = { class: 'sign-in-link', 'data-turbolinks': false, method: :post }
+  link_opt = { class: 'sign-in-link', role: 'button', method: :post }
+  link_opt[:'data-turbolinks'] = false
 
 -%>
 
