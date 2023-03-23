@@ -269,17 +269,18 @@ class ArtifactDecorator
     # Set up the tooltip to be shown before the item has been requested.
     tip_key =
       if !has_class?(opt, 'disabled', 'sign-in-required')
-        'emma.download.link.tooltip'
+        'tooltip'
       elsif !h.signed_in?
-        'emma.download.link.sign_in.tooltip'
+        'sign_in.tooltip'
       else
-        'emma.download.link.disallowed.tooltip'
+        'disallowed.tooltip'
       end
+    tip_key = :"emma.download.link.#{tip_key}"
     tip_opt = { repo: repo_name, fmt: format_label(fmt_name) }
     opt[:title] = I18n.t(tip_key, **tip_opt, default: DOWNLOAD_TOOLTIP)
 
     # The tooltip to be shown when the item is actually available for download.
-    tip_key = 'emma.download.link.complete.tooltip'
+    tip_key = :'emma.download.link.complete.tooltip'
     tip_opt = { button: DOWNLOAD_BUTTON_LABEL, default: DOWNLOAD_COMPLETE_TIP }
     opt[:'data-complete-tooltip'] = I18n.t(tip_key, **tip_opt)
 

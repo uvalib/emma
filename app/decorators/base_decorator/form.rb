@@ -412,6 +412,7 @@ module BaseDecorator::Form
 
     html_opt[:id]       = opt[:id]
     html_opt[:name]     = name
+    html_opt[:role]     = 'group'
     html_opt[:disabled] = true if opt[:readonly]
     html_opt.delete(:'aria-labelledby')
     html_div(html_opt) { group }

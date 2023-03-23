@@ -230,7 +230,7 @@ body.tool.md {
             padding:       0.375rem 0.5rem;
             font-weight:   bold;
             color:         white;
-            background:    $uva-accent-green;
+            background:    $white-on-green-bg;
             border-radius: 0.25rem;
             flex:          0 0 max-content;
         }
@@ -264,7 +264,7 @@ body.tool.md {
 
         margin-top:  5rem;
         font-weight: bold;
-        color:       red;
+        color:       $uva-emergency-red;
 
         @mixin error-margins($h-value) {
             margin-top:    $h-value * 1.5;

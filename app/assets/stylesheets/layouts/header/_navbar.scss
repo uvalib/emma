@@ -19,6 +19,15 @@
         padding-right:  calc((#{$page-padding-x} / 2) + #{$scroll-easement});
     }
 
+    @media #{$not-narrow-screen} {
+        // @note Not available in Firefox without setting the flag
+        //  "layout.css.has-selector.enabled".
+        &:has(.dev-controls) {
+            padding-top:    calc(0.25 * #{$page-padding-y});
+            padding-bottom: calc(0.25 * #{$page-padding-y});
+        }
+    }
+
     //=========================================================================
     // Sections
     //=========================================================================

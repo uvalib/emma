@@ -229,7 +229,7 @@ module MdHelper
     output_tag = :textarea
     output_txt = 'NONE' # Placeholder
     output_css = 'output'
-    output_opt = { class: output_css }
+    output_opt = { class: output_css, 'aria-labelledby': label_id }
     output_opt[:spellcheck] = false if output_tag == :textarea
     output     = html_tag(output_tag, output_txt, output_opt)
 

@@ -106,8 +106,8 @@ module HeadHelper::Stylesheets
   # @return [ActiveSupport::SafeBuffer]
   #
   def app_stylesheet(**opt)
-    opt['media']                 ||= 'all'
-    opt['data-turbolinks-track'] ||= 'reload'
+    opt[:media]                   ||= 'all'
+    opt[:'data-turbolinks-track'] ||= 'reload'
     stylesheet_link_tag('application', opt).prepend("\n")
   end
 

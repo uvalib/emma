@@ -92,6 +92,12 @@ module LinkHelper
 
   public
 
+  # Added to the tooltip of external links. # TODO: I18n
+  #
+  # @type [String]
+  #
+  NEW_TAB = 'opens in a new window'
+
   # Produce a link with appropriate accessibility settings.
   #
   # @param [String]       label
@@ -108,34 +114,22 @@ module LinkHelper
   #
   def make_link(label, path, **opt, &block)
     label    = opt.delete(:label) || label if opt.key?(:label)
+    name     = accessible_name(label, **opt)
+    title    = opt[:title]
+    new_tab  = (opt[:target] == '_blank')
     sign_in  = has_class?(opt, 'sign-in-required')
-    disabled = has_class?(opt, 'disabled', 'forbidden')
-    if sign_in
-      opt[:tabindex] = 0 unless opt.key?(:tabindex)
-      disabled = true
-    end
-    if disabled
-      opt[:'aria-disabled'] = true
-    elsif opt[:target] == '_blank'
-      note = 'opens in a new window' # TODO: I18n
-      if opt[:title].blank?
-        opt[:title] = "(#{note.capitalize}.)"
-      elsif !opt[:title].to_s.downcase.include?(note)
-        opt[:title] = "#{opt[:title]}\n(#{note})"
-      end
-    end
-    unless accessible_name(label, **opt)
-      opt[:'aria-label'] = opt[:title] if opt[:title]
-    end
-    unless opt.key?(:rel)
-      opt[:rel] = 'noopener' if path.is_a?(String) && path.start_with?('http')
-    end
-    unless opt.key?(:tabindex)
-      opt[:tabindex] = -1 if opt[:'aria-hidden']
-    end
-    unless opt.key?(:'aria-hidden')
-      opt[:'aria-hidden'] = true if opt[:tabindex] == -1
-    end
+    http     = path.is_a?(String) && path.start_with?('http')
+
+    opt      = add_inferred_attributes(:a, opt)
+    hidden   = opt[:'aria-hidden']
+    disabled = opt[:'aria-disabled']
+
+    opt[:'aria-label'] = title      if title   && !name
+    opt[:tabindex]     = 0          if sign_in && !opt.key?(:tabindex)
+    opt[:tabindex]     = -1         if hidden  && !opt.key?(:tabindex)
+    opt[:rel]          = 'noopener' if http    && !opt.key?(:rel)
+    append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled
+
     link_to(label, path, html_options!(opt), &block)
   end
 

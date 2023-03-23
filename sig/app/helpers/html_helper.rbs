@@ -158,6 +158,40 @@ module HtmlHelper
   #
   def symbol_icon: (String icon, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # A line added to tooltips to indicate a .sign-in-required link.
+  #
+  # @type [String]
+  #
+  SIGN_IN: String
+
+  # Augment with options that should be set/unset according to the context
+  # (e.g. CSS classes present).
+  #
+  # @param [Symbol, String]  _tag
+  # @param [Hash{Symbol=>*}] options
+  #
+  # @return [Hash]
+  #
+  def add_inferred_attributes: (Symbol|String _tag, symHash options) -> symHash
+
+  # Append additional line(s) options[:title].
+  #
+  # @param [Hash{Symbol=>*}] options
+  # @param [Array<String>]   lines
+  #
+  # @return [Hash]                    The modified *options*.
+  #
+  def append_tooltip!: (symHash options, *String lines) -> symHash
+
+  # Create a multi-line tooltip.
+  #
+  # @param [String, nil]   title
+  # @param [Array<String>] lines
+  #
+  # @return [String]
+  #
+  def make_tooltip: ((String|nil) title, *String lines) -> String
+
   # Attributes that are expected for a given HTML tag and can be added
   # automatically.
   #
@@ -174,7 +208,7 @@ module HtmlHelper
   #
   # @return [Hash]
   #
-  def add_needed_attributes: (Symbol|String tag, symHash options) -> symHash
+  def add_required_attributes: (Symbol|String tag, symHash options) -> symHash
 
   # Attributes that are expected for a given HTML tag.
   #

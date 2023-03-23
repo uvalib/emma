@@ -455,6 +455,11 @@ appSetup(MODULE, function() {
     const REQUIRED_MARKER       = 'required';
     const BEST_CHOICE_MARKER    = 'best-choice';
 
+    const MENU_CLASS            = 'menu';
+    const INPUT_CLASS           = 'input';
+    const MULTI_CLASS           = 'multi';
+    const SINGLE_CLASS          = 'single';
+
     const BUTTON_TRAY           = selector(BUTTON_TRAY_CLASS);
     const SUBMIT_BUTTON         = selector(SUBMIT_BUTTON_CLASS);
     const CANCEL_BUTTON         = selector(CANCEL_BUTTON_CLASS);
@@ -464,6 +469,11 @@ appSetup(MODULE, function() {
     const INVALID               = selector(INVALID_MARKER);
   //const REQUIRED              = selector(REQUIRED_MARKER);
   //const BEST_CHOICE           = selector(BEST_CHOICE_MARKER);
+
+    const MENU_MULTI            = `.${MENU_CLASS}.${MULTI_CLASS}`;
+    const MENU_SINGLE           = `.${MENU_CLASS}.${SINGLE_CLASS}`;
+    const INPUT_MULTI           = `.${INPUT_CLASS}.${MULTI_CLASS}`;
+  //const INPUT_SINGLE          = `.${INPUT_CLASS}.${SINGLE_CLASS}`;
 
     /**
      * Interrelated elements.  For example:
@@ -1628,13 +1638,13 @@ appSetup(MODULE, function() {
     function updateInputField(field, new_value, trim, init) {
         const $field = $(field);
 
-        if ($field.is('fieldset.input.multi')) {
+        if ($field.is(`fieldset.${INPUT_MULTI}`)) {
             updateFieldsetInputs($field, new_value, trim, init);
 
-        } else if ($field.is('.menu.multi')) {
+        } else if ($field.is(MENU_MULTI)) {
             updateFieldsetCheckboxes($field, new_value, init);
 
-        } else if ($field.is('.menu.single')) {
+        } else if ($field.is(MENU_SINGLE)) {
             updateMenu($field, new_value, init);
 
         } else if ($field.is('[type="checkbox"]')) {
@@ -1879,7 +1889,7 @@ appSetup(MODULE, function() {
 
         // If this is one of a collection of text inputs under <fieldset> then
         // it has to be handled differently.
-        if ($input.parent().hasClass('multi')) {
+        if ($input.parent().hasClass(MULTI_CLASS)) {
             const $fieldset = $input.parents('fieldset').first();
             updateFieldsetInputs($fieldset, undefined, trim, init);
         } else {
@@ -2004,8 +2014,7 @@ appSetup(MODULE, function() {
             let changed   = false;
             const old_req = $other_input.attr('data-required')?.toString();
             if (old_req !== new_req?.toString()) {
-                $other_input.attr('data-required', new_req);
-                $other_input.attr('aria-required', new_req);
+                fieldRequired($other_input, new_req);
                 changed = true;
             }
             if (isDefined(new_val) && ($other_input.val() !== new_val)) {
@@ -2098,11 +2107,11 @@ appSetup(MODULE, function() {
 
                 // Update ARIA attributes on the input field.
                 if (required) {
-                    $input.attr('aria-required', required);
-                    $input.attr('aria-invalid',  invalid);
-                } else if ($input.attr('aria-required')) {
-                    $input.attr('aria-required', false);
-                    $input.removeAttr('aria-invalid');
+                    fieldAriaInvalid ($input, invalid);
+                    fieldAriaRequired($input, required);
+                } else if (fieldAriaRequired($input)) {
+                    fieldAriaInvalid ($input, false);
+                    fieldAriaRequired($input, false);
                 }
 
                 // Update CSS status classes on all parts of the field.
@@ -2115,6 +2124,80 @@ appSetup(MODULE, function() {
                 updateLookupCondition($input, field, is_valid);
             }
         }
+    }
+
+    /**
+     * The **'data-required'** is maintained on the top-level element
+     * associated with an input or group of inputs independent of the
+     * **'aria-required'** attribute.
+     *
+     * @param {Selector} target
+     * @param {boolean}  [setting]
+     *
+     * @returns {boolean}
+     */
+    function fieldRequired(target, setting) {
+        const $input = $(target);
+        switch (setting) {
+            case true:  $input.attr('data-required', true); break;
+            case false: $input.removeAttr('data-required'); break;
+            default:    return $input.attr('data-required') || false;
+        }
+        return fieldAriaRequired($input, setting);
+    }
+
+    /**
+     * In order to accommodate accessibility concerns, **'aria-required'** is
+     * maintained on the top-level element associated with an input or group
+     * of input except in the case of {@link MENU_MULTI} where the top-level
+     * value entry is actually a wrapper for the element to which the attribute
+     * must be applied.
+     *
+     * @param {Selector} target
+     * @param {boolean}  [setting]
+     *
+     * @returns {boolean}
+     */
+    function fieldAriaRequired(target, setting) {
+        const $target = fieldAriaTarget(target);
+        switch (setting) {
+            case true:  $target.attr('aria-required', true); return setting;
+            case false: $target.removeAttr('aria-required'); return setting;
+            default:    return $target.attr('aria-required') || false;
+        }
+    }
+
+    /**
+     * In order to accommodate accessibility concerns, **'aria-invalid'** is
+     * maintained on the top-level element associated with an input or group
+     * of input except in the case of {@link MENU_MULTI} where the top-level
+     * value entry is actually a wrapper for the element to which the attribute
+     * must be applied.
+     *
+     * @param {Selector} target
+     * @param {boolean}  [setting]
+     *
+     * @returns {boolean}
+     */
+    function fieldAriaInvalid(target, setting) {
+        const $target = fieldAriaTarget(target);
+        switch (setting) {
+            case true:  $target.attr('aria-invalid', true); return setting;
+            case false: $target.removeAttr('aria-invalid'); return setting;
+            default:    return $target.attr('aria-invalid') || false;
+        }
+    }
+
+    /**
+     * Return the element that should hold ARIA attributes for a field value.
+     *
+     * @param {Selector} target
+     *
+     * @returns {jQuery}
+     */
+    function fieldAriaTarget(target) {
+        const $input = $(target);
+        return $input.is('div') ? $input.children('[role]') : $input;
     }
 
     /**
@@ -2980,10 +3063,11 @@ appSetup(MODULE, function() {
     /**
      * Seal an element.
      *
-     * To allow .menu.multi (checkboxes) to be scrollable, 'pointer-events' on
-     * the content elements can be set to 'none' via CSS.  This strategy does
-     * not work for .menu.single (dropdowns) to be expandable, however,
-     * disabling the non-selected 'option' elements here does work.
+     * To allow {@link MENU_MULTI} (checkboxes) to be scrollable,
+     * 'pointer-events' on the content elements can be set to 'none' via CSS.
+     * This strategy does not work for {@link MENU_SINGLE} (dropdowns) to be
+     * expandable, however, disabling the non-selected 'option' elements here
+     * does work.
      *
      * @param {Selector} item
      * @param {boolean}  [disabled]
@@ -4358,7 +4442,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function menuMultiFields(form) {
-        return fieldContainer(form).find('.menu.multi.value[data-field]');
+        return fieldContainer(form).find(`${MENU_MULTI}.value[data-field]`);
     }
 
     // ========================================================================

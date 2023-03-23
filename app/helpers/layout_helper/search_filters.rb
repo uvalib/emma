@@ -680,7 +680,7 @@ module LayoutHelper::SearchFilters
     if opt[:disabled]
       append_css!(opt, :disabled)
       note  = 'NOTE: this value is fixed for results by title.' # TODO: I18n
-      m_opt = opt.merge(title: [opt[:title], note].compact.join("\n"))
+      m_opt = append_tooltip!(opt.dup, note)
     end
     menu  = menu_control(menu_name, label_id: l_id, **m_opt) or return
     label = menu_label(menu_name, label: label, id: l_id, **l_opt)

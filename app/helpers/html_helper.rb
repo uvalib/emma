@@ -62,7 +62,7 @@ module HtmlHelper
     if aria.blank? && name.blank?
       if (name = opt&.dig(:title)).present?
         args << args.pop.dup.merge!('aria-label': name)
-      else
+      elsif !html
         Log.warn { "#{__method__}: no accessible name for #{args.inspect}" }
       end
     end
@@ -134,7 +134,9 @@ module HtmlHelper
     level &&= [level, 6].min
     tag = "h#{level}" if level
     tag = 'div'       if tag.blank? || tag.is_a?(Integer)
-    options   = add_needed_attributes(tag, args.extract_options!)
+    options   = args.extract_options!
+    options   = add_inferred_attributes(tag, options)
+    options   = add_required_attributes(tag, options)
     separator = options.delete(:separator) || "\n"
     content   = [*args, *(yield if block_given?)].flatten.compact_blank!
     check_required_attributes(tag, options) if Log.debug?
@@ -247,6 +249,80 @@ module HtmlHelper
 
   public
 
+  # A line added to tooltips to indicate a .sign-in-required link.
+  #
+  # @type [String]
+  #
+  SIGN_IN = I18n.t('emma.download.failure.sign_in').freeze
+
+  # Augment with options that should be set/unset according to the context
+  # (e.g. CSS classes present).
+  #
+  # @param [Symbol, String]  tag
+  # @param [Hash{Symbol=>*}] options
+  #
+  # @return [Hash]
+  #
+  def add_inferred_attributes(tag, options)
+    css = css_class_array(options[:class])
+
+    # Attribute defaults which may be overridden in *options*.
+    opt = {}
+    css.each do |css_class|
+      case css_class.to_sym
+        when :hidden
+          opt[:'aria-hidden']   = true
+        when :disabled, :forbidden
+          opt[:'aria-disabled'] = true
+          opt[:disabled]        = true if %w(a button).include?(tag.to_s)
+      end
+    end
+    opt.merge!(options)
+
+    # Attribute replacements which will override *options*.
+    ovr = {}
+    css.each do |css_class|
+      case css_class
+        when 'sign-in-required'
+          ovr[:title]    = make_tooltip(options[:title], "(#{SIGN_IN})")
+          ovr[:disabled] = true
+      end
+    end
+    opt.merge!(ovr)
+
+    opt[:disabled] ? opt.reverse_merge!('aria-disabled': true) : opt
+  end
+
+  # Append additional line(s) options[:title].
+  #
+  # @param [Hash{Symbol=>*}] options
+  # @param [Array<String>]   lines
+  #
+  # @return [Hash]                    The modified *options*.
+  #
+  def append_tooltip!(options, *lines)
+    tooltip = make_tooltip(options[:title], *lines)
+    options.merge!(title: tooltip)
+  end
+
+  # Create a multi-line tooltip.
+  #
+  # @param [String, nil]   title
+  # @param [Array<String>] lines
+  #
+  # @return [String]
+  #
+  def make_tooltip(title, *lines)
+    title = title.to_s.split("\n").compact_blank!.presence
+    lines = lines.flat_map { |v| v.to_s.split("\n") }.compact_blank!.presence
+    if title && lines
+      norm = ->(v) { v.gsub(/[\s[:punct:]]+/, ' ').strip.downcase }
+      last = norm.(title.last)
+      lines.delete_if { |v| norm.(v) == last }
+    end
+    [*title, *lines].join("\n")
+  end
+
   # Attributes that are expected for a given HTML tag and can be added
   # automatically.
   #
@@ -272,7 +348,7 @@ module HtmlHelper
   #
   # @return [Hash]
   #
-  def add_needed_attributes(tag, options)
+  def add_required_attributes(tag, options)
     required = ADDED_HTML_ATTRIBUTES[tag&.to_sym] || {}
     required.merge(options)
   end

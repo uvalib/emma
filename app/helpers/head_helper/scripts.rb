@@ -92,7 +92,7 @@ module HeadHelper::Scripts
     result << javascript_include_tag(*@page_javascript, opt)
     result << app_javascript(**opt)
     if defined?(CapybaraLockstep) && CapybaraLockstep.active
-      result << capybara_lockstep
+      result << capybara_lockstep(opt)
     end
     safe_join(result, "\n")
   end
@@ -110,7 +110,7 @@ module HeadHelper::Scripts
   # @return [ActiveSupport::SafeBuffer]
   #
   def app_javascript(**opt)
-    opt['data-turbolinks-track'] ||= 'reload'
+    opt[:'data-turbolinks-track'] ||= 'reload'
     javascript_include_tag('application', opt).prepend("\n")
   end
 

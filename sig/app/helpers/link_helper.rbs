@@ -40,6 +40,12 @@ module LinkHelper
   #
   def icon_button: (?icon: String|nil, ?text: String|nil, ?url: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Added to the tooltip of external links. # TODO: I18n
+  #
+  # @type [String]
+  #
+  NEW_TAB: String
+
   # Produce a link with appropriate accessibility settings.
   #
   # @param [String]       label
