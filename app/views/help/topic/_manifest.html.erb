@@ -32,8 +32,10 @@
   action_icons      = 'action short-cuts'
 
   signed_in         = help_jump('signed in', :sign_in)
+  # noinspection RubyMismatchedArgumentType
   delta             = ManifestDecorator.symbol_icon(:edit)
   delta             = html_span(delta, title: 'triangle')
+  # noinspection RubyMismatchedArgumentType
   x                 = ManifestDecorator.symbol_icon(:delete)
   x                 = html_span(x, title: 'X')
   edit_tip          = ManifestDecorator.icon_definitions.dig(:edit,   :tooltip)

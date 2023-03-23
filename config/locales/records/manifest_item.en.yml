@@ -349,13 +349,13 @@ en:
           max:          1
           label:        'Publication Date'
           tooltip:      |
-                        Copyright or publication date of the creative work represented
-                        by the remediated content file.
+            Copyright or publication date of the creative work represented
+            by the remediated content file.
           notes_html:   |
-                        <p>
-                          Copyright or publication date of the creative work represented
-                          by the remediated content file.
-                        </p>
+            <p>
+              Copyright or publication date of the creative work represented
+              by the remediated content file.
+            </p>
           type:         date
           category:     bibliographic
 

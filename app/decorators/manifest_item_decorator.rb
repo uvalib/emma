@@ -251,6 +251,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [Hash]
     #
     def lookup_button_options(**opt)
+      # noinspection RubyMismatchedArgumentType
       opt[:label] ||= symbol_icon(:lookup)
       super
     end

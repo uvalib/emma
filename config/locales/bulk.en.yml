@@ -99,7 +99,7 @@ en:
             auto:         true                # Available for any user.
 
           _authorized:    &FOR_AUTHORIZED_USER
-            auto:         true                # Assume authorized user.
+            auto:         true                # Assumes user is authorized.
 
         file:
 
