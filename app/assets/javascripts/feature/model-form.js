@@ -1638,7 +1638,7 @@ appSetup(MODULE, function() {
     function updateInputField(field, new_value, trim, init) {
         const $field = $(field);
 
-        if ($field.is(`fieldset.${INPUT_MULTI}`)) {
+        if ($field.is(`fieldset${INPUT_MULTI}`)) {
             updateFieldsetInputs($field, new_value, trim, init);
 
         } else if ($field.is(MENU_MULTI)) {
