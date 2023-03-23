@@ -19,8 +19,25 @@ body.tool.index {
         gap:            1rem;
 
         .tool-item {
-            font-size:   larger;
-            font-weight: bold;
+
+            display:        flex;
+            flex-direction: row;
+            flex-wrap:      nowrap;
+            align-items:    center;
+            gap:            $flex-gap-x;
+
+            .action {
+                font-size:   larger;
+                font-weight: bold;
+            }
+
+            .action.sign-in-required {
+                cursor:      not-allowed;
+            }
+
+            .notice {
+                color: $uva-emergency-red
+            }
         }
     }
 }

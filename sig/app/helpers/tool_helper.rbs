@@ -9,27 +9,40 @@ module ToolHelper
 
   # Standalone tool list entry.
   #
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to outer :ul tag.
+  # @param [User, nil] user           Default: `current_user`
+  # @param [String]    css            Characteristic CSS class/selector.
+  # @param [Hash]      opt            Passed to outer :ul tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/search.js
   #
-  def tool_list: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def tool_list: (?user: User|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Standalone tool list entry.
   #
-  # @param [Symbol] action
-  # @param [Hash]   config
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #link_to.
+  # @param [Symbol]    action
+  # @param [Hash]      config
+  # @param [User, nil] user           Default: `current_user`
+  # @param [String]    css            Characteristic CSS class/selector.
+  # @param [Hash]      opt            Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/search.js
   #
-  def tool_list_item: (Symbol action, symHash config, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def tool_list_item: (Symbol action, symHash config, ?user: User|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Indicate whether the user is authorized to access the given tool page.
+  #
+  # @param [Symbol]    action
+  # @param [User, nil] user         Default: `current_user`
+  # @param [Hash, nil] config       Default: `TOOL_ITEMS[action]`
+  # @param [Boolean]   check        If *true* don't raise CanCan::AccessDenied.
+  #
+  # @raise [CanCan::AccessDenied]   User is not authorized.
+  #
+  def tool_authorized?: (Symbol action, ?user: User|nil, ?config: symHash|nil, ?check: bool) -> bool
 
   private
 

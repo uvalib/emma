@@ -3,7 +3,7 @@
 module ToolConcern
   extend ActiveSupport::Concern
 
-  include Emma::Json
+  include ToolHelper
 
   private
 

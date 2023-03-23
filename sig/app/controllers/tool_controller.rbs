@@ -58,4 +58,8 @@ class ToolController < ApplicationController
   # @see ApplicationJob::Methods#job_result
   #
   def get_job_result: () -> void
+
+  def md_auth: () -> void
+
+  def lookup_auth: () -> void
 end

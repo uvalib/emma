@@ -41,7 +41,8 @@ class ToolController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  # None
+  before_action :md_auth,     only:  %i[md md_proxy]
+  before_action :lookup_auth, only:  %i[lookup get_job_result]
 
   # ===========================================================================
   # :section:
@@ -73,7 +74,7 @@ class ToolController < ApplicationController
   # @see #md_trial_path               Route helper
   #
   def md
-    __log_activity(anonymous: true)
+    __log_activity
     __debug_route
   end
 
@@ -85,7 +86,7 @@ class ToolController < ApplicationController
   # @see #md_proxy_path               Route helper
   #
   def md_proxy
-    __log_activity(anonymous: true)
+    __log_activity
     __debug_route
     __debug_request unless request.get?
     meth     = request.request_method
@@ -109,7 +110,7 @@ class ToolController < ApplicationController
   # Lookup bibliographic information.
   #
   def lookup
-    __log_activity(anonymous: true)
+    __log_activity
     __debug_route
   end
 
@@ -124,6 +125,15 @@ class ToolController < ApplicationController
   def get_job_result
     render json: LookupJob.job_result(**normalize_hash(params))
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  def md_auth = tool_authorized?(:md)
+  def lookup_auth = tool_authorized?(:lookup)
 
 end
 

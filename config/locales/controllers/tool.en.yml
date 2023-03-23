@@ -27,6 +27,7 @@ en:
       index:
         label:            'Tools'
         title:            'Standalone Utilities'
+        authorization:    false
         _endpoint:        true
 
       # =======================================================================
@@ -45,6 +46,7 @@ en:
           EMMA submission process.
           Technical questions about the nature of Math Detective can be posed
           on the FRAME/EMMA Slack or forwarded to Benetech directly.
+        authorization:    true
         _endpoint:        true
 
       # =======================================================================
@@ -57,4 +59,5 @@ en:
           This page accesses on-going work which will be integrated into the
           individual EMMA submission form and the bulk manifest.
           What you see here is not the intended final form of the feature.
+        authorization:    true
         _endpoint:        true
