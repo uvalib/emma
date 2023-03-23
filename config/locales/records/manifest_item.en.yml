@@ -252,6 +252,21 @@ en:
         # Bibliographic information (emma_data)
         # =====================================================================
 
+        dc_identifier:
+          min:          0
+          max:          ~
+          label:        'Identifiers'
+          tooltip:      |
+            Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
+            creative work represented by the remediated content file.
+          notes_html:   |
+            <p>
+              Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
+              creative work represented by the remediated content file.
+            </p>
+          placeholder:  'ISBN/etc for the work'
+          category:     bibliographic
+
         dc_title:
           min:          1
           max:          1
@@ -265,6 +280,28 @@ en:
               file.
             </p>
           placeholder:  'Title of work'
+          category:     bibliographic
+
+        dc_creator:
+          min:          1
+          max:          ~
+          label:        'Author/Creator'
+          tooltip:      |
+            Author/editor/creator of the creative work represented by the
+            remediated content file.
+          notes_html:   |
+            <p>
+              Author/editor/creator of the creative work represented by the
+              remediated content file.
+            </p>
+            <div><strong>TIP:</strong></div>
+            <p>
+              Include authors, editors, translators, etc. of the creative work
+              itself.
+              Do not include names involved in the creation of the remediated
+              content file.
+            </p>
+          placeholder:  'Author(s) of the work'
           category:     bibliographic
 
         emma_version:
@@ -379,67 +416,6 @@ en:
           placeholder:  'Publisher of the work'
           category:     bibliographic
 
-        dc_creator:
-          min:          1
-          max:          ~
-          label:        'Author/Creator'
-          tooltip:      |
-            Author/editor/creator of the creative work represented by the
-            remediated content file.
-          notes_html:   |
-            <p>
-              Author/editor/creator of the creative work represented by the
-              remediated content file.
-            </p>
-            <div><strong>TIP:</strong></div>
-            <p>
-              Include authors, editors, translators, etc. of the creative work
-              itself.
-              Do not include names involved in the creation of the remediated
-              content file.
-            </p>
-          placeholder:  'Author(s) of the work'
-          category:     bibliographic
-
-        dc_identifier:
-          min:          0
-          max:          ~
-          label:        'Identifiers'
-          tooltip:      |
-            Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
-            creative work represented by the remediated content file.
-          notes_html:   |
-            <p>
-              Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
-              creative work represented by the remediated content file.
-            </p>
-          placeholder:  'ISBN/etc for the work'
-          category:     bibliographic
-
-        dc_relation:
-          min:          0
-          max:          ~
-          label:        'Related Identifiers'
-          tooltip:      |
-            Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
-            related edition of the creative work represented by the
-            remediated content file.
-          notes_html:   |
-            <p>
-              Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
-              related edition of the creative work represented by the
-              remediated content file.
-            </p>
-            <div><strong>TIP:</strong></div>
-            <p>
-              Include identifiers for related versions or printings.
-              Do not include identifiers for similar works -- only of
-              identifiers of publications that are essentially variations of
-              the same creative work title.
-            </p>
-          placeholder:  'ISBN/etc for a related edition of the work'
-          category:     bibliographic
-
         dc_language:
           min:          1
           max:          ~
@@ -499,6 +475,30 @@ en:
               the remediated content file.
             </p>
           placeholder:  'Enter keyword/subject term'
+          category:     bibliographic
+
+        dc_relation:
+          min:          0
+          max:          ~
+          label:        'Related Identifiers'
+          tooltip:      |
+            Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
+            related edition of the creative work represented by the
+            remediated content file.
+          notes_html:   |
+            <p>
+              Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
+              related edition of the creative work represented by the
+              remediated content file.
+            </p>
+            <div><strong>TIP:</strong></div>
+            <p>
+              Include identifiers for related versions or printings.
+              Do not include identifiers for similar works -- only of
+              identifiers of publications that are essentially variations of
+              the same creative work title.
+            </p>
+          placeholder:  'ISBN/etc for a related edition of the work'
           category:     bibliographic
 
         dc_type:
