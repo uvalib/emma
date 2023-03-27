@@ -138,7 +138,7 @@ module BaseCollectionDecorator::Table
     return fields unless (tag = outer_tag)
 
     parts = []
-    parts << html_tag(tag, '', class: 'spanner', role: 'presentation') if dark
+    parts << html_tag(tag, '', class: 'spanner', 'aria-hidden': true) if dark
     parts << html_tag(tag, fields, 'aria-rowindex': row)
     safe_join(parts)
   end

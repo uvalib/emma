@@ -217,6 +217,19 @@ appSetup(MODULE, function() {
         return false;
     }
 
+    /**
+     * For accessibility checkers, make it clear that the first and last
+     * entry scroll links are not supposed to be treated as real links.
+     *
+     * @param {Selector} button
+     */
+    function invalidPrevNext(button) {
+        const $button = $(button);
+        $button.attr('href', '#');
+        $button.attr('disabled', true);
+        $button.attr('aria-disabled', true);
+    }
+
     // ========================================================================
     // Functions - other
     // ========================================================================
@@ -254,5 +267,8 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     updateScrollButton();
+
+    invalidPrevNext($prev_buttons.first());
+    invalidPrevNext($next_buttons.last());
 
 });

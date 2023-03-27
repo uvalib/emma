@@ -40,7 +40,7 @@ class ApplicationController < ActionController::Base
 
   layout :current_layout
 
-  protect_from_forgery with: :exception
+  protect_from_forgery with: :reset_session
 
   # ===========================================================================
   # :section: Session management

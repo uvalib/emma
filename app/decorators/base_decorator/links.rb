@@ -134,8 +134,10 @@ module BaseDecorator::Links
   #
   ANOTHER = 'another'
 
-  # List controller actions.  If the current action is provided, the associated
-  # action link will be appear at the top of the list.
+  # A list of controller action links.  If the current action is provided,
+  # the associated action link will be appear at the top of the list, except
+  # for :edit_select and :delete_select where it is not displayed at all (since
+  # the link is redundant).
   #
   # @param [String, Symbol, nil]     current      Def: `context[:action]`
   # @param [Hash{Symbol=>Hash}, nil] table        Def: `#action_links`.
@@ -145,14 +147,21 @@ module BaseDecorator::Links
   # @return [ActiveSupport::SafeBuffer]
   #
   def action_list(current: nil, table: nil, css: '.page-actions', **opt)
+    prm       = current ? opt : params
     current ||= context[:action]
     table   ||= action_links(**opt)
-    html_tag(:ul, prepend_css(css)) do
-      link_opt = { current: current, table: table }
-      links = table.keys.map { |action| action_link(action, **link_opt) }
-      first = links.index { |link| link.include?(ANOTHER) }
-      first ? [links.delete_at(first), *links] : links
+
+    l_opt = { current: current, table: table }
+    links = table.keys.map { |action| action_link(action, **l_opt) }
+
+    first = links.index { |link| link.include?(ANOTHER) }
+    if (first &&= links.delete_at(first))
+      menu   = (prm[:id] == 'SELECT') || current.to_s.end_with?('_select')
+      menu &&= !prm[:selected]
+      links.prepend(first) unless menu
     end
+
+    html_tag(:ul, *links, prepend_css(css))
   end
 
   # ===========================================================================

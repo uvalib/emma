@@ -63,7 +63,7 @@ const FOCUS_SELECTOR =
  * @readonly
  * @type {string[]}
  */
-const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
+const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"', 'disabled']);
 
 /**
  * Selector for focusable elements that should not receive focus.
@@ -141,6 +141,7 @@ export function handleKeypressAsClick(selector, direct, match, except) {
     return handleEvent($elements, 'keydown', handleKeypress);
 }
 
+// noinspection OverlyComplexFunctionJS, FunctionTooLongJS
 /**
  * Translate a carriage return or space bar press to a click.
  *
@@ -151,17 +152,162 @@ export function handleKeypressAsClick(selector, direct, match, except) {
  *
  * @returns {boolean|undefined}
  */
-function handleKeypress(event) {
-    const key = event.key;
-    if ((key === 'Enter') || (key === ' ')) {
-        const $target = $(event.target);
-        const href    = $target.attr('href');
-        if (!href || (href === '#')) {
-            $target.click();
-            $target.focusin();
+export function handleKeypress(event) {
+    const key      = event.key;
+    const tab      = (key === 'Tab');
+    const up       = (key === 'ArrowUp');
+    const down     = (key === 'ArrowDown');
+    const activate = (key === 'Enter') || (key === ' ');
+    if (!tab && !up && !down && !activate) {
+        return; // Short-circuit if no interesting key has been pressed.
+    }
+    const shift    = !!event.shiftKey;
+    const $target  = $(event.target);
+    const href     = $target.attr('href');
+    const no_link  = !href || (href === '#');
+
+    if ($target.is('fieldset')) {
+
+        // Special handling for <fieldset> being used to group radio buttons or
+        // checkboxes.
+        if (activate) {
+            const $inputs = $target.find('input');
+            const $radio  = $target.filter('[type="radio"]:checked');
+            const $input  = isPresent($radio) ? $radio : $inputs.first();
+            $input.focus();
             return false;
         }
+        if (tab && shift) {
+            prevInTabOrder($target).focus();
+            return false;
+        }
+
+    } else if ($target.is('label.radio')) {
+
+        // Back tabbing from a radio button goes to its enclosing fieldset.
+        if (tab && shift) {
+            const $group = $target.parents('fieldset').first();
+            $group.focus();
+            return false;
+        }
+
+    } else if ($target.is('[type="checkbox"]')) {
+
+        // Focus on the previous option, or the last one if this is the first.
+        if (up) {
+            let $prev = prevInTabOrder($target);
+            if (!$prev.is('[type="checkbox"]')) {
+                const $group = $target.parents('fieldset').first();
+                $prev = $group.find('[type="checkbox"]').last();
+            }
+            $prev.focus();
+            return false;
+        }
+
+        // Focus on the next option, wrapping to the first if this is the last.
+        if (down) {
+            let $next = nextInTabOrder($target);
+            if (!$next.is('[type="checkbox"]')) {
+                const $group = $target.parents('fieldset').first();
+                $next = $group.find('[type="checkbox"]').first();
+            }
+            $next.focus();
+            return false;
+        }
+
+        // Back-tabbing focuses on the enclosing fieldset.
+        if (tab && shift) {
+            const $group = $target.parents('fieldset').first();
+            $group.focus();
+            return false;
+        }
+
+        // Forward tab focuses on the next field.
+        if (tab) {
+            const $group = $target.parents('fieldset').first();
+            nextInTabOrder($group).focus();
+            return false;
+        }
+
+        console.log('handleKeypress: fieldset radio other'); // TODO: remove
+
+    } else if (activate && no_link) {
+
+        // For anything else (that isn't a valid link), make an activation
+        // equivalent to a click.
+        $target.click();
+        $target.focusin();
+        return false;
+
     }
+}
+
+/**
+ * The next element that will receive focus in tab order.
+ *
+ * @param {Selector} from
+ *
+ * @returns {jQuery}
+ */
+export function nextInTabOrder(from) {
+    const $from = $(from);
+    let $next;
+    // noinspection FunctionWithInconsistentReturnsJS
+    $from.nextAll().each(function() {
+        const $sibling = $(this);
+        if ($sibling.css('display') === 'contents') {
+            // This will not be ':visible' and it will not be focusable but it
+            // may still have focusable descendent(s).
+        } else if (!$sibling.is(':visible')) {
+            // Otherwise, this is not focusable and it does not have any
+            // descendents that could be part of the tab order.
+            return;
+        } else if (focusable($sibling)) {
+            $next = $sibling;
+            return false;
+        }
+        const $focus  = $sibling.find(FOCUS_SELECTOR).filter(':visible');
+        const $within = $focus.not(NO_FOCUS_SELECTOR).first();
+        if (isPresent($within)) {
+            $next = $within;
+            return false;
+        }
+    });
+    return $next || nextInTabOrder($from.parent());
+}
+
+/**
+ * The element that will receive focus in tab order if tabbing backwards.
+ *
+ * @param {Selector} from
+ *
+ * @returns {jQuery}
+ */
+export function prevInTabOrder(from) {
+    const $from = $(from);
+    let $prev;
+    // noinspection FunctionWithInconsistentReturnsJS
+    $from.prevAll().each(function() {
+        const $sibling = $(this);
+        if ($sibling.css('display') === 'contents') {
+            // This will not be ':visible' and it will not be focusable but it
+            // may still have focusable descendent(s).
+        } else if (!$sibling.is(':visible')) {
+            // Otherwise, this is not focusable and it does not have any
+            // descendents that could be part of the tab order.
+            return;
+        } else if (focusable($sibling)) {
+            $prev = $sibling;
+            return false;
+        }
+        const $focus  = $sibling.find(FOCUS_SELECTOR).filter(':visible');
+        const $within = $focus.not(NO_FOCUS_SELECTOR).last();
+        if (isPresent($within)) {
+            $prev = $within;
+            return false;
+        }
+    });
+    return $prev || prevInTabOrder($from.parent());
 }
 
 /**

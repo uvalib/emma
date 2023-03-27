@@ -69,8 +69,10 @@ module BaseDecorator::Links
   #
   ANOTHER: String
 
-  # List controller actions.  If the current action is provided, the associated
-  # action link will be appear at the top of the list.
+  # A list of controller action links.  If the current action is provided,
+  # the associated action link will be appear at the top of the list, except
+  # for :edit_select and :delete_select where it is not displayed at all (since
+  # the link is redundant).
   #
   # @param [String, Symbol, nil]     current      Def: `context[:action]`
   # @param [Hash{Symbol=>Hash}, nil] table        Def: `#action_links`.

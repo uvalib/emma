@@ -822,6 +822,12 @@ class ManifestDecorator
 
   public
 
+  # The row number of the grid header.
+  #
+  # @type [Integer]
+  #
+  HEADER_ROW = 1
+
   # @private
   STATUS_COLUMN_COUNT = ManifestItemDecorator::SUBMIT_COLUMNS.size
 
@@ -838,12 +844,11 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def submission_status_list(
-    row:    nil,
+    row:    HEADER_ROW,
     index:  nil,
     css:    '.submission-status-list',
     **opt
   )
-    row   ||= 1
     index ||= paginator.first_index
 
     head = ManifestItemDecorator.submission_status_header(row: row)

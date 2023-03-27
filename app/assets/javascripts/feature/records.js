@@ -1,15 +1,15 @@
 // app/assets/javascripts/feature/records.js
 
 
-import { AppDebug }                             from '../application/debug';
-import { appSetup }                             from '../application/setup';
-import { delegateInputClick, toggleVisibility } from '../shared/accessibility';
-import { Emma }                                 from '../shared/assets';
-import { pageController }                       from '../shared/controller';
-import { toggleHidden }                         from '../shared/css';
-import { isMissing, isPresent, notDefined }     from '../shared/definitions';
-import { camelCase, singularize }               from '../shared/strings';
-import { asParams }                             from '../shared/url';
+import { AppDebug }                         from '../application/debug';
+import { appSetup }                         from '../application/setup';
+import { toggleVisibility }                 from '../shared/accessibility';
+import { Emma }                             from '../shared/assets';
+import { pageController }                   from '../shared/controller';
+import { toggleHidden }                     from '../shared/css';
+import { isMissing, isPresent, notDefined } from '../shared/definitions';
+import { camelCase, singularize }           from '../shared/strings';
+import { asParams }                         from '../shared/url';
 import {
     handleEvent,
     handleHoverAndFocus,
@@ -420,11 +420,6 @@ appSetup(MODULE, function() {
     // ========================================================================
     // Actions
     // ========================================================================
-
-    // Broaden click targets for radio buttons and checkboxes that are paired
-    // with labels.
-    $list_filter_controls.each((_, ctrl) => delegateInputClick(ctrl));
-    $filter_options_controls.each((_, ctrl) => delegateInputClick(ctrl));
 
     // Listen for a change to the record filter selection.
     handleEvent($list_filter_radio_buttons, 'change', (event) => {

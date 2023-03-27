@@ -1,5 +1,6 @@
 // app/assets/javascripts/feature/index.js
 
+import './accessibility';
 import './advanced-search';
 import './download';
 import './flash';

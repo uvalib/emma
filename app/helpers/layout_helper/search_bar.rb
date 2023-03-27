@@ -453,25 +453,26 @@ module LayoutHelper::SearchBar
     target   = search_input_target(ctrlr, target: target)
     field  ||= search_input_field(target)
     field    = field&.to_sym
-
     id_opt   = extract_hash!(opt, :unique, :index).presence
-    label_id = id_opt ? unique_id(css, 'label', **id_opt) : "#{field}_label"
-    input_id = id_opt ? unique_id(css, **id_opt)          : field
 
-    # Screen-reader-only label element.
-    label    = search_input_label(target, field: field)
-    label  &&= html_span(label, id: label_id, class: 'search-input-label')
-    label  ||= ''.html_safe
+    # Screen-reader-only label element (if required).
+    label    = nil
+    label_id = opt[:'aria-labelledby']
+    if label_id.nil? && (label = search_input_label(target, field: field))
+      label_id = opt[:'aria-labelledby'] =
+        id_opt ? unique_id(css, 'label', **id_opt) : "#{field}-label"
+      label = html_span(label, id: label_id, class: 'search-input-label')
+    end
+    label ||= ''.html_safe
 
     # Input field contents.
-    value  ||= request_parameters[field]
-    value    = '' if value == SearchTerm::NULL_SEARCH
+    value ||= request_parameters[field]
+    value   = '' if value == SearchTerm::NULL_SEARCH
 
     # Input field element.
     prepend_css!(opt, css)
-    opt[:'aria-labelledby'] = label_id
-    opt[:placeholder]     ||= search_input_placeholder(target, field: field)
-    opt[:id]              ||= input_id
+    opt[:id]          ||= id_opt ? unique_id(css, **id_opt) : field
+    opt[:placeholder] ||= search_input_placeholder(target, field: field)
     input = search_field_tag(field, value, opt)
 
     # Control for clearing search terms.

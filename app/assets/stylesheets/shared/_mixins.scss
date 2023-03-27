@@ -218,6 +218,7 @@
 ///
 @mixin text-contrast($color: var(--fg-color), $width: 1px, $blur: 1px) {
     text-shadow:
+          0         0       $blur $color,
         ( $width) ( $width) $blur $color,
         ( $width) (-$width) $blur $color,
         (-$width) ( $width) $blur $color,

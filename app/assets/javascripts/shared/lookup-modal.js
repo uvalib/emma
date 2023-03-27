@@ -959,8 +959,10 @@ export class LookupModal extends ModalDialog {
     addServiceStatuses(services) {
         this._debug('addServiceStatuses:', services);
         const $services = this.serviceStatuses;
-        if (isMissing($services.children('label'))) {
-            $('<label>').text('Searching:').prependTo($services);
+        const lbl_css   = 'label';
+        if (isMissing($services.children(selector(lbl_css)))) {
+            const $lbl = $('<span>').addClass(lbl_css).text('Searching:');
+            $lbl.prependTo($services);
         }
         let names = arrayWrap(services);
         let data  = $services.data('names');

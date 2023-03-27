@@ -302,6 +302,12 @@ class ManifestItemDecorator < BaseDecorator
     #
     STATUS_SHOW_DETAILS: symArray
 
+    # The row number of the grid header.
+    #
+    # @type [Integer]
+    #
+    HEADER_ROW: Integer
+
     # submission_status_header
     #
     # @param [Integer] row
@@ -375,16 +381,26 @@ class ManifestItemDecorator < BaseDecorator
 
     # Control for fixing a condition resulting in a given status.
     #
-    # @param [Symbol]     _type
-    # @param [Symbol,nil] status
-    # @param [String]     css
-    # @param [Hash]       opt
+    # @param [Symbol]       _type
+    # @param [Symbol, nil]  status
+    # @param [Integer, nil] row
+    # @param [String]       css
+    # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer, nil]
     #
     # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
     #
     def submit_status_link: (Symbol _type, Symbol|nil status, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+    # The URL path to the edit page scrolled to the indicated row.
+    #
+    # @param [Integer, nil] row
+    # @param [Hash]         opt       Options for #edit_manifest_path.
+    #
+    # @return [String]
+    #
+    def edit_row_path: (Integer|nil row, **untyped opt) -> String
 
     # row_indicators
     #

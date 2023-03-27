@@ -17,11 +17,12 @@ $form-gap:        var(--gap);
 $form-gap-narrow: calc(#{$form-gap} / 3);
 
 //=============================================================================
-// Internal placeholder classes
+// Internal mixins
 //=============================================================================
 
-// Template for a panel of radio buttons.
-%entry-radio-group {
+/// Template for a panel of radio buttons.
+///
+@mixin entry-radio-group {
 
     display:         flex;
     flex-direction:  row;
@@ -34,6 +35,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     @media #{$not-narrow-screen} {
         padding-right: 0.5rem;
+    }
+
+    &:hover:focus {
+        outline-color: transparent;
     }
 
     //=========================================================================
@@ -59,7 +64,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     }
 
     // A label/radio button pair.
-    .radio {
+    .radio:not(label) {
 
         input[type="radio"] {
             margin-right: 0;
@@ -80,6 +85,21 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
             label {
                 @include hover-bold;
             }
+        }
+    }
+
+    // A label/radio button pair where the <input> is contained within the
+    // <label> element.
+    label.radio {
+
+        margin:     0.75rem;
+        border:     none;
+        flex:       0 1 auto;
+        column-gap: 0.25rem;
+
+        &:hover,
+        &:focus-within {
+            @include hover-bold;
         }
     }
 }
@@ -122,7 +142,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
 // Control for filtering which entry form fields are displayed.
 .field-group {
-    @extend %entry-radio-group;
+    @include entry-radio-group;
 }
 
 // Controls for selecting the workflow state group.
@@ -268,7 +288,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     .filter-group {
 
-        @extend %entry-radio-group;
+        @include entry-radio-group;
 
         width:     max-content;
         max-width: inherit;
@@ -297,7 +317,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 // Debug-only control for enabling state groups.
 .filter-options-panel {
 
-    @extend %entry-radio-group;
+    @include entry-radio-group;
 
     margin:     $page-padding 0;
     padding:    0.25rem;

@@ -47,6 +47,7 @@
 
   unique            = hex_rand
   heading_id        = "#{heading}-#{unique}"
+  query_id          = "#{query_terms}-#{unique}"
   terms_id          = "#{terms}-#{unique}"
   separator_id      = "#{separator}-#{unique}"
   results_id        = "#{results}-#{unique}"
@@ -79,8 +80,8 @@
 <%= page_directions_section %>
 
 <div class="<%= query_panel_css -%>">
-  <label><%= query_label -%></label>
-  <div class="<%= query_terms_css -%>"></div>
+  <div class="label" id="<%= query_id -%>"><%= query_label -%></div>
+  <div class="<%= query_terms_css -%>" aria-describedby="<%= query_id -%>"></div>
 </div>
 
 <div class="<%= prompt_css -%>">
@@ -103,7 +104,7 @@
 
 <div class="<%= status_panel_css -%>">
   <div class="<%= services_css -%>">
-    <label><%= services_label -%></label>
+    <div class="label"><%= services_label -%></div>
   </div>
   <div class="<%= notice_css -%>"></div>
 </div>

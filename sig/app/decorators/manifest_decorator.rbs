@@ -440,6 +440,12 @@ class ManifestDecorator
   #
   def submission_files: (?hidden: bool, ?css: String|nil, ?config: symHash, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # The row number of the grid header.
+  #
+  # @type [Integer]
+  #
+  HEADER_ROW: Integer
+
   # @private
   STATUS_COLUMN_COUNT: Integer
 

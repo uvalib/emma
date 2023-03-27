@@ -758,7 +758,7 @@ class UploadDecorator
     b_opt  = { role: 'button', tabindex: 0 }
 
     # Directions.
-    t_id   = opt[:'aria-describedby'] = "#{id}-title"
+    t_id   = "#{id}-title"
     title  =
       'Please indicate the EMMA entry for the original repository item. ' \
       'If possible, enter the standard identifier (ISBN, DOI, OCLC, etc.) ' \
@@ -767,7 +767,7 @@ class UploadDecorator
 
     # Text input.
     ctrlr  = :search
-    input  = h.search_input(id, ctrlr)
+    input  = h.search_input(id, ctrlr, 'aria-labelledby': t_id)
 
     # Submit button.
     submit = h.search_button_label(ctrlr)
@@ -777,6 +777,7 @@ class UploadDecorator
     cancel = 'Cancel' # TODO: I18n
     cancel = html_div(cancel, b_opt.merge(class: 'search-cancel'))
 
+    opt[:'aria-describedby'] ||= t_id
     prepend_css!(opt, css, 'hidden')
     html_div(opt) do
       title << input << submit << cancel

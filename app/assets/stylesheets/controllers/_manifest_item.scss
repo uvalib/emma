@@ -860,7 +860,7 @@ table.manifest_item-grid {
                     text-align: start;
 
                     .icon-tray {
-                        label {
+                        .label {
                             font-weight: bold;
                         }
                     }
@@ -901,7 +901,6 @@ table.manifest_item-grid {
                             margin: auto;
                         }
 
-                        label,
                         .label {
                             @include sr-only;
                         }

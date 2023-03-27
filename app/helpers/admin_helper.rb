@@ -44,14 +44,15 @@ module AdminHelper
     empty = value.nil?
     value = value.inspect
     name  = key.to_s
-    id    = css_randomize(name)
+    v_id  = css_randomize(name)
+    l_id  = "label-#{v_id}"
 
-    l_opt = { for: id, class: 'setting line' }
+    l_opt = { id: l_id, class: 'setting line' }
     append_css!(l_opt, value)       if empty
     append_css!(l_opt, 'condensed') if name.size > 25
-    label = label_tag(name, name, l_opt)
+    label = html_span(name, l_opt)
 
-    v_opt = { id: id,  class: 'text' }
+    v_opt = { id: v_id, class: 'text', 'aria-describedby': l_id }
     append_css!(v_opt, value) if empty
     value = html_div(value, v_opt)
 

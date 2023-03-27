@@ -1477,10 +1477,10 @@ appSetup(MODULE, function() {
         // Broaden click targets for radio buttons and checkboxes that are
         // paired with labels.
         const $filter_panel = fieldDisplayFilterContainer($form);
-        $filter_panel.children('.radio, .control').each(function() {
+        $filter_panel.children('.radio, .control').not('label').each(function() {
             delegateInputClick(this);
         });
-        $form.find('.checkbox.single').each(function() {
+        $form.find('.checkbox.single').not('[role="option"]').each(function() {
             delegateInputClick(this);
         });
 
@@ -2044,10 +2044,9 @@ appSetup(MODULE, function() {
      */
     function updateFieldAndLabel(target, values) {
         const $input   = $(target);
-        const id       = $input.attr('id');
         const field    = $input.attr('data-field');
         /** @type {jQuery} */
-        const $label   = $input.siblings(`label[for="${id}"]`),
+        const $label   = fieldLabel($input),
               $status  = $label.find('.status-marker'),
               $related = $input.siblings(`[data-for="${field}"]`);
         const parts    = [$input, $label, $status, ...$related];
@@ -2124,6 +2123,22 @@ appSetup(MODULE, function() {
                 updateLookupCondition($input, field, is_valid);
             }
         }
+    }
+
+    /**
+     * The label of a top-level "value" element.
+     *
+     * @param {Selector} target
+     *
+     * @returns {jQuery}
+     *
+     * @see "BaseDecorator::Form#render_form_pair"
+     */
+    function fieldLabel(target) {
+        const $input = $(target);
+        const id     = $input.attr('id');
+        const match  = `[data-label-for="${id}"], label[for="${id}"]`;
+        return $input.siblings(match);
     }
 
     /**
@@ -2823,9 +2838,8 @@ appSetup(MODULE, function() {
             $.each(source_fields, function(field, value) {
                 if (value === FROM_PARENT) {
                     const $input = formField(field, $form);
-                    const id     = $input[0].id;
                     seal($input);
-                    seal($input.siblings(`label[for="${id}"]`));
+                    seal(fieldLabel($input));
                 }
             });
         }
@@ -2839,9 +2853,8 @@ appSetup(MODULE, function() {
             $.each(source_fields, function(field, value) {
                 if (value === FROM_PARENT) {
                     const $input = formField(field, $form);
-                    const id     = $input[0].id;
                     unseal($input);
-                    unseal($input.siblings(`label[for="${id}"]`));
+                    unseal(fieldLabel($input));
                 }
             });
         }
@@ -3200,7 +3213,7 @@ appSetup(MODULE, function() {
                 const attrs  = keys.map(fld => `[name="${fld}"]`).join(', ');
                 const inputs = $form.find(attrs).toArray();
                 const names  = inputs.map(i =>
-                    $(i).siblings(`[for="${i.id}"]`).children('.text').text()
+                    fieldLabel(i).children('.text').text()
                 ).sort().join(', ');
                 const type   = `<span class="type">${label}:</span>`;
                 const list   = `<span class="list">${names}.</span>`;
@@ -3211,7 +3224,7 @@ appSetup(MODULE, function() {
             //  handled versus copyright year.
             if (Object.keys(data).includes('emma_publicationDate')) {
                 const $input = formField('emma_publicationDate', $form);
-                const $label = $input.siblings(`[for="${$input.attr('id')}"]`);
+                const $label = fieldLabel($input);
                 $input.attr('title', $label.attr('title'));
                 $input.prop({ readonly: false, disabled: false });
                 [$input, $label].forEach($e => {

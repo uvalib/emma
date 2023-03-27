@@ -27,16 +27,12 @@ module MdHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def md_file_input(css: '.file-prompt', **opt)
+    id    = unique_id(css)
 
-    input_css = 'file-input'
-    input_id  = unique_id(input_css)
-    input_opt = { class: input_css, accept: 'image/*' }
-    input     = file_field_tag(input_id, input_opt)
+    l_txt = 'Image file' # TODO: I18n
+    label = label_tag(id, "#{l_txt}:", class: 'file-label')
 
-    label_txt = 'Image file' # TODO: I18n
-    label_css = 'file-label'
-    label_opt = { class: label_css }
-    label     = label_tag(input_id, "#{label_txt}:", label_opt)
+    input = file_field_tag(id, class: 'file-input', accept: 'image/*')
 
     prepend_css!(opt, css)
     html_div(opt) do
@@ -54,25 +50,24 @@ module MdHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def md_clipboard_input(css: '.clipboard-prompt', **opt)
+    id    = unique_id(css)
 
-    input_txt = 'Paste' # TODO: I18n
-    input_css = 'clipboard-input'
-    input_id  = unique_id(input_css)
-    input_opt = { class: input_css, id: input_id }
-    input     = html_tag(:button, input_txt, input_opt)
+    l_txt = 'Clipboard image' # TODO: I18n
+    l_id  = "label-#{id}"
+    l_opt = { class: 'clipboard-label', id: l_id }
+    label = html_span("#{l_txt}:", l_opt)
 
-    label_txt = 'Clipboard image' # TODO: I18n
-    label_css = 'clipboard-label'
-    label_opt = { class: label_css }
-    label     = label_tag(input_id, "#{label_txt}:", label_opt)
+    c_txt = 'Paste' # TODO: I18n
+    c_id  = "button-#{id}"
+    c_opt = { class: 'clipboard-input', id: c_id, 'aria-describedby': l_id }
+    ctrl  = html_tag(:button, c_txt, c_opt)
 
-    note_css  = 'clipboard-note'
-    note_opt  = { class: "#{note_css} hidden" }
-    note      = html_span('', note_opt)
+    n_opt = { class: 'clipboard-note hidden' }
+    note  = html_span('', n_opt)
 
     prepend_css!(opt, css)
     html_div(opt) do
-      label << input << note
+      label << ctrl << note
     end
   end
 
@@ -85,17 +80,16 @@ module MdHelper
   #
   def md_preview(css: '.preview-container.container', **opt)
 
-    label_tag = :h2
-    label_css = 'preview-label'
-    label_id  = unique_id(label_css)
-    label_txt = 'Selected Image' # TODO: I18n
-    label_opt = { class: label_css, id: label_id }
-    label     = html_tag(label_tag, label_txt, label_opt)
+    l_txt = 'Selected Image' # TODO: I18n
+    l_css = 'preview-label'
+    l_id  = unique_id(l_css)
+    l_opt = { class: l_css, id: l_id }
+    label = html_tag(:h2, l_txt, l_opt)
 
-    image_css = 'file-preview'
-    image_alt = 'Preview of selected file' # TODO: I18n
-    image_opt = { class: image_css, alt: image_alt }
-    image     = html_tag(:img, image_opt)
+    i_txt = 'Preview of selected file' # TODO: I18n
+    i_css = 'file-preview'
+    i_opt = { class: i_css, alt: i_txt }
+    image = html_tag(:img, i_opt)
 
     prepend_css!(opt, css)
     html_div(opt) do
@@ -112,19 +106,16 @@ module MdHelper
   #
   def md_status(css: '.status-container.container', **opt)
 
-    label_tag = :label
-    label_css = 'status-label'
-    label_id  = unique_id(label_css)
-    label_txt = 'Status' # TODO: I18n
-    label_opt = { class: label_css, id: label_id }
-    label     = html_tag(label_tag, "#{label_txt}:", label_opt)
+    l_txt = 'Status' # TODO: I18n
+    l_css = 'status-label'
+    l_id  = unique_id(l_css)
+    label = html_span("#{l_txt}:", class: l_css, id: l_id)
 
-    value_txt = 'NONE' # Placeholder
-    value_opt = { class: 'status' }
-    value     = html_span(value_txt, value_opt)
+    v_txt = 'NONE' # Placeholder
+    value = html_span(v_txt, class: 'status')
 
     prepend_css!(opt, css)
-    opt[:'aria-describedby'] ||= label_id
+    opt[:'aria-describedby'] ||= l_id
     html_div(opt) do
       label << value
     end
@@ -218,26 +209,26 @@ module MdHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def md_output_container(name, label, **opt)
-    css        = ".#{name}-container.container"
+    css   = ".#{name}-container.container"
 
-    label_tag  = :h2
-    label_css  = "#{name}-label"
-    label_id   = unique_id(label_css)
-    label_opt  = { class: "#{label_css} label-text", id: label_id }
-    label      = html_tag(label_tag, label, label_opt)
+    l_tag = :h2
+    l_css = "#{name}-label"
+    l_id  = unique_id(l_css)
+    l_opt = { class: "#{l_css} label-text", id: l_id }
+    label = html_tag(l_tag, label, l_opt)
 
-    output_tag = :textarea
-    output_txt = 'NONE' # Placeholder
-    output_css = 'output'
-    output_opt = { class: output_css, 'aria-labelledby': label_id }
-    output_opt[:spellcheck] = false if output_tag == :textarea
-    output     = html_tag(output_tag, output_txt, output_opt)
+    v_tag = :textarea
+    v_txt = 'NONE' # Placeholder
+    v_css = 'output'
+    v_opt = { class: v_css, 'aria-labelledby': l_id }
+    v_opt[:spellcheck] = false if v_tag == :textarea
+    value = html_tag(v_tag, v_txt, v_opt)
 
     prepend_css!(opt, css)
-    opt[:'aria-describedby'] ||= label_id
+    opt[:'aria-describedby'] ||= l_id
     html_div(opt) do
       label = html_div(class: 'label-line') { label << clipboard_icon }
-      label << output
+      label << value
     end
   end
 
@@ -252,10 +243,13 @@ module MdHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def clipboard_icon(css: '.clipboard-icon', **opt)
-    opt[:title] ||= 'Copy this output to clipboard' # TODO: I18n
-    opt[:role]  ||= 'button'
+    opt[:role]         ||= 'button'
+    opt[:title]        ||= 'Copy this output to clipboard' # TODO: I18n
+    opt[:'aria-label'] ||= opt[:title]
     prepend_css!(opt, css)
-    html_span(CLIPBOARD_ICON, opt)
+    html_span(opt) do
+      symbol_icon(CLIPBOARD_ICON)
+    end
   end
 
   # ===========================================================================

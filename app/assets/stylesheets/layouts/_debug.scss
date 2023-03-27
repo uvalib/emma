@@ -137,117 +137,19 @@
     }
 }
 
-// Display element information on hover.
-//main {
-//
-//    counter-reset: cnt;
-//
-//    // Element information marker.
-//    %element-number-marker {
-//        content:         counter(cnt);
-//        padding:         2px;
-//        line-height:     normal;
-//        text-align:      start;
-//        text-decoration: none;
-//        text-emphasis:   unset;
-//        text-indent:     unset;
-//        text-shadow:     unset;
-//        text-transform:  none;
-//        letter-spacing:  normal;
-//        white-space:     normal;
-//        font-family:     sans-serif;
-//        font-weight:     normal;
-//        font-size:       medium;
-//        color:           red;
-//        background:      ghostwhite;
-//        border:          1px solid gray;
-//        border-radius:   0.25rem;
-//        box-shadow:      none;
-//    }
-//
-//    // Display element number in the left gutter.
-//    %element-number-marker-before {
-//
-//        @extend %element-number-marker;
-//
-//        position: absolute;
-//        left:     -1.75rem;
-//    }
-//
-//    // Display element number after element.
-//    %element-number-marker-after {
-//
-//        @extend %element-number-marker;
-//
-//        position: relative;
-//        left:     -100%;
-//        width:    min-content;
-//        height:   min-content;
-//        margin:   auto 0;
-//    }
-//
-//    // Display element information at the bottom of the screen.
-//    %element-number-marker-fixed {
-//
-//        @extend %element-number-marker;
-//
-//        $marker-x: 1rem;
-//        $marker-y: 1rem;
-//        $marker-separator: "\00A0\00A0|\00A0\00A0";
-//
-//        content:       counter(cnt)              $marker-separator
-//                       'id="'    attr(id)    '"' $marker-separator
-//                       'name="'  attr(name)  '"' $marker-separator
-//                       'for="'   attr(for)   '"' $marker-separator
-//                       'href="'  attr(href)  '"' $marker-separator
-//                       'class="' attr(class) '"' $marker-separator
-//                       'title="' attr(title) '"' ;
-//        position:      fixed;
-//        bottom:        $marker-y;
-//        left:          $marker-x;
-//        width:         calc(100% - #{$page-padding-x} - (2 * #{$marker-x}));
-//        color:         white;
-//        background:    hotpink;
-//        border:        0.5rem solid lightgray;
-//        border-radius: 0;
-//    }
-//
-//    // Display element information on hover.
-//    h1, h2, h3, h4, h5, h6,
-//    p,
-//    span:not(.status-marker),
-//    label,
-//    div.label,
-//    div.value:not(.menu.multi),
-//    div.sign-in,
-//    div.search-count,
-//    li > a,
-//    button,
-//    select,
-//    input,
-//    textarea {
-//        &:not(.sr-only):not(.invisible):not(.hidden) {
-//
-//            counter-increment: cnt;
-//
-//            &:hover::after {
-//                @extend %element-number-marker-fixed;
-//            }
-//        }
-//    }
-//
-//    // Note that select, input, and textarea don't seem to honor ::before or
-//    // ::after.
-//    li > a,
-//    button,
-//    select,
-//    input,
-//    textarea {
-//        &:not(.sr-only):not(.invisible):not(.hidden) {
-//            &:focus::after,
-//            &:focus-within::after {
-//                @extend %element-number-marker-fixed;
-//            }
-//        }
-//    }
-//}
+//=============================================================================
+// WAVE
+//=============================================================================
+
+body > iframe#wave_sidebar_container {
+
+    // This prevents help icons and the scroll-to-top button from growing to a
+    // ridiculous size when the page is annotated by the WAVE plugin.
+    & ~ .scroll-to-top,
+    & ~ * .inline-popup,
+    & ~ * .inline-popup .popup-toggle {
+        height: 1em;
+        width:  1em;
+    }
+
+}

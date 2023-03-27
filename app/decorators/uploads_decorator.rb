@@ -235,10 +235,13 @@ class UploadsDecorator < BaseCollectionDecorator
         checked  = active_state_group?(group, properties, list) if checked.nil?
         cb_opt[:checked] = checked
         cb_opt[:label]   = %Q(Show "#{properties[:label]}") # TODO: I18n
+        cb_opt[:role]    = 'option'
         cb_opt[:id]      = "#{name}-#{cb_value}"
         render_check_box(cb_name, cb_value, **cb_opt)
       end
 
+    opt[:role]     = 'listbox'
+    opt[:tabindex] = 0
     prepend_css!(opt, css)
     html_tag(:fieldset, legend, *checkboxes, opt)
   end

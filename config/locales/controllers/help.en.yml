@@ -227,29 +227,26 @@ en:
         unsaved:
           asset:        'help/unsaved.png'
           alt:          |
-            The UNSAVED submission status marker, which includes a convenience
-            "Edit" button to jump to that item in the manifest edit grid.
+            The UNSAVED submission status marker, with an "Edit" button to jump
+            to that item in the manifest edit grid.
 
         data_missing:
           asset:        'help/data_missing.png'
           alt:          |
-            The DATA ERROR submission status marker, which includes a
-            convenience "Edit" button to jump to that item in the manifest edit
-            grid.
+            The DATA ERROR submission status marker, with an "Edit" button to
+            jump to that item in the manifest edit grid.
 
         file_missing:
           asset:        'help/file_needed.png' # TODO: don't have this yet
           alt:          |
-            The FILE MISSING submission status marker, which includes a
-            convenience "Edit" button to jump to that item in the manifest edit
-            grid.
+            The FILE MISSING submission status marker, with an "Edit" button to
+            jump to that item in the manifest edit grid.
 
         file_needed:
           asset:        'help/file_needed.png'
           alt:          |
-            The FILE NEEDED submission status marker, with a "details" element
-            indicating the name of the remediated file that needs to be
-            supplied via the "Files" button.
+            The FILE NEEDED submission status marker, including the name of the
+            remediated file that needs to be supplied.
 
         not_started:
           asset:        'help/not_started.png'

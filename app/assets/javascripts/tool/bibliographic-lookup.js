@@ -8,7 +8,7 @@
 import { AppDebug }                       from '../application/debug';
 import { LookupChannel }                  from '../channels/lookup-channel';
 import { arrayWrap }                      from '../shared/arrays';
-import { toggleHidden }                   from '../shared/css';
+import { selector, toggleHidden }         from '../shared/css';
 import { turnOffAutocomplete }            from '../shared/form';
 import { HTML_BREAK }                     from '../shared/html';
 import { renderJson }                     from '../shared/json';
@@ -552,8 +552,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         $services ||= statusDisplay().find(LookupModal.SERVICES);
         if (isDefined(services)) {
             _debug('serviceStatuses:', services);
-            if (isMissing($services.children('label'))) {
-                $('<label>').text('Searching:').prependTo($services);
+            const lbl_css = 'label';
+            if (isMissing($services.children(selector(lbl_css)))) {
+                const $lbl = $('<span>').addClass(lbl_css).text('Searching:');
+                $lbl.prependTo($services);
             }
             let names = arrayWrap(services);
             let data  = $services.data('names');

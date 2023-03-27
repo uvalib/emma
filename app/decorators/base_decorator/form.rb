@@ -153,6 +153,8 @@ module BaseDecorator::Form
   # == Implementation Notes
   # Compare with BaseDecorator::List#render_pair
   #
+  # @see file:javascripts/feature/model-form.js *fieldLabel()*
+  #
   def render_form_pair(
     label,
     value,
@@ -177,6 +179,7 @@ module BaseDecorator::Form
     base = model_html_id(field || label)
     name = field&.to_s || base
     type = "field-#{base}"
+    base = "form-#{type}"
     v_id = [type, index].compact.join('-')
 
     # Pre-process value.
@@ -214,6 +217,9 @@ module BaseDecorator::Form
     end
     placeholder ||= prop[:placeholder]
     render_method = opt.delete(:render) if opt.key?(:render)
+    fieldset      = (render_method == :render_form_menu_multi)
+    file_data     = (field == :file_data)
+    input         = !fieldset && !file_data
 
     # Update properties.
     disabled = prop[:readonly] if disabled.nil?
@@ -238,18 +244,20 @@ module BaseDecorator::Form
     parts = []
 
     # Label for input element.
-    l_id = nil
-    unless no_label
-      label = prop[:label] || label
-      l_id  = label_css || DEFAULT_LABEL_CLASS
-      l_id  = ["#{l_id}-#{base}", index].compact.join('-')
-      l_opt = prepend_css(opt, label_css)
-      l_opt.merge!(id: l_id, for: v_id, status: status)
-      l_opt[:help]    = help    if help
-      l_opt[:title] ||= tooltip if tooltip
-      # noinspection RubyMismatchedArgumentType
-      parts << render_form_pair_label(field, label, **l_opt)
-    end
+    label = prop[:label] || label.to_s.presence
+    l_id  = label_css || DEFAULT_LABEL_CLASS
+    l_id  = ["#{l_id}-#{base}", index].compact.join('-')
+    l_opt = prepend_css(opt, label_css)
+    l_opt[:id]               = l_id
+    l_opt[:status]           = status
+    l_opt[:help]             = help     if help
+    l_opt[:title]          ||= tooltip  if tooltip
+    l_opt[:for]              = v_id     if input
+    l_opt[:'data-label-for'] = v_id     if fieldset
+    l_opt[:tag]              = :div     if fieldset || file_data
+    append_css!(l_opt, 'sr-only')       if no_label
+    # noinspection RubyMismatchedArgumentType
+    parts << render_form_pair_label(field, label, **l_opt)
 
     # Input element pre-populated with value.
     v_opt = prepend_css(opt, value_css)
@@ -261,6 +269,7 @@ module BaseDecorator::Form
     v_opt[:'data-required']   = false        if optional
     v_opt[:'data-required']   = true         if required
     v_opt[:'aria-labelledby'] = l_id         if l_id
+    v_opt[:legend]            = label        if fieldset
     v_opt[:range]             = range        if range
     v_opt[:base]              = base
     parts << send(render_method, name, value, **v_opt)
@@ -275,6 +284,7 @@ module BaseDecorator::Form
   #
   # @param [Symbol]                field
   # @param [String, nil]           label
+  # @param [Symbol]                tag
   # @param [Symbol, Array<Symbol>] status
   # @param [Symbol, String, Array] help
   # @param [String]                css      Characteristic CSS class/selector.
@@ -285,6 +295,7 @@ module BaseDecorator::Form
   def render_form_pair_label(
     field,
     label,
+    tag:    :label,
     status: nil,
     help:   nil,
     css:    DEFAULT_LABEL_CLASS,
@@ -316,7 +327,11 @@ module BaseDecorator::Form
     end
 
     append_css!(opt, css)
-    h.label_tag(field, label, opt)
+    if tag == :label
+      h.label_tag(field, label, opt)
+    else
+      html_tag(tag, label, opt)
+    end
   end
 
   # Single-select menu - drop-down.
@@ -372,8 +387,11 @@ module BaseDecorator::Form
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #field_set_tag except for:
   #
-  # @option opt [String] :name        Overrides *name*
-  # @option opt [String] :base        Name and id for *select*; default: *name*
+  # @option opt [String]  :id
+  # @option opt [Boolean] :readonly
+  # @option opt [String]  :name       Overrides *name*
+  # @option opt [String]  :base       Name and id for *select*; default: *name*
+  # @option opt [String]  :legend
   #
   # @raise [RuntimeError]             If *range* is not an EnumType.
   #
@@ -384,10 +402,15 @@ module BaseDecorator::Form
   def render_form_menu_multi(name, value, range:, css: '.menu.multi', **opt)
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
-    html_opt = remainder_hash!(opt, :id, :readonly, :base, :name)
+    html_opt = remainder_hash!(opt, :id, :readonly, :name, :base, :legend)
     field    = html_opt[:'data-field']
     name     = opt[:name] || name || opt[:base] || field
     prepend_css!(html_opt, css)
+
+    # Fieldset legend.  This is "required", despite the fact that it's
+    # redundant for the label/value display scheme.
+    legend   = opt[:legend] || name.humanize
+    legend   = html_tag(:legend, legend, class: 'sr-only')
 
     # Checkbox elements.
     selected = Array.wrap(value).compact.presence
@@ -402,13 +425,13 @@ module BaseDecorator::Form
         render_check_box(cb_name, cb_value, **cb_opt)
       end
 
-    # Grouped checkboxes (Chrome problem with styling <fieldset>).
+    # Grouped checkboxes.
     gr_opt = html_opt.except(:'data-field', :'data-required')
     gr_opt[:role]     = 'listbox'
     gr_opt[:name]     = name
     gr_opt[:multiple] = true
-    gr_opt[:tabindex] = -1
-    group = html_div(*checkboxes, gr_opt)
+    gr_opt[:tabindex] = 0
+    group = html_tag(:fieldset, legend, *checkboxes, gr_opt)
 
     html_opt[:id]       = opt[:id]
     html_opt[:name]     = name
@@ -938,14 +961,12 @@ module BaseDecorator::Form
   #
   def file_input_button(label, id: nil, type: 'file', **opt)
     i_id  = id || unique_id(type)
-    l_id  = "label-#{i_id}"
 
     i_opt = extract_hash!(opt, :accept, :multiple, :value, :title)
-    i_opt.merge!(id: i_id, 'aria-labelledby': l_id, class: 'file-input')
+    i_opt.merge!(id: i_id, class: 'file-input')
     input = h.file_field_tag(type, i_opt)
 
-    l_opt = { id: l_id, class: 'label' }
-    label = html_div(label, l_opt)
+    label = h.label_tag(type, label, class: 'label', for: i_id)
 
     html_div(opt) do
       input << label
@@ -1025,6 +1046,7 @@ module BaseDecorator::Form
 
   # Control for filtering which fields are displayed.
   #
+  # @param [String] name              Element name for controls.
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #html_div for outer *div*.
   #
@@ -1034,9 +1056,7 @@ module BaseDecorator::Form
   # @see file:javascripts/feature/model-form.js *fieldDisplayFilterSelect()*
   # @see file:app/assets/stylesheets/layouts/_root.scss *.wide-screen*, etc.
   #
-  def field_group_controls(css: '.field-group', **opt)
-    name = FIELD_GROUP_NAME
-    opt[:role] = 'radiogroup'
+  def field_group_controls(name: FIELD_GROUP_NAME, css: '.field-group', **opt)
 
     # A label for the group (screen-reader only).
     legend = 'Filter input fields by state:' # TODO: I18n
@@ -1057,21 +1077,24 @@ module BaseDecorator::Form
 
         # One or more label variants, only one of which will be visible
         # depending on the display form factor.
-        l_name = "#{name}_#{group}"
         narrow, medium, wide =
           properties.values_at(:label_narrow, :label_medium, :label_wide)
-        parts << h.label_tag(l_name, narrow, class: 'narrow-screen') if narrow
-        parts << h.label_tag(l_name, medium, class: 'medium-width')  if medium
-        label = wide || properties[:label] || group.to_s
-        l_opt = {}
-        l_opt[:class] ||= ('wide-screen'       if wide || (narrow && medium))
-        l_opt[:class] ||= ('not-narrow-screen' if narrow)
-        parts << h.label_tag(l_name, label, l_opt)
+        l_cls   = ('wide-screen'       if wide || (narrow && medium))
+        l_cls ||= ('not-narrow-screen' if narrow)
+        wide  ||= properties[:label] || group.to_s
+        parts << html_span(wide,   class: l_cls)
+        parts << html_span(medium, class: 'medium-width')  if medium
+        parts << html_span(narrow, class: 'narrow-screen') if narrow
 
-        html_div(*parts, class: 'radio', title: properties[:tooltip])
+        # The <label> element enclosing the <input> and label text variants.
+        l_name = "#{name}_#{group}"
+        l_opt  = { class: 'radio', title: properties[:tooltip] }
+        h.label_tag(l_name, safe_join(parts), l_opt)
       end
     return ''.html_safe if controls.blank?
 
+    opt[:role]     = 'radiogroup'
+    opt[:tabindex] = 0
     prepend_css!(opt, css)
     html_tag(:fieldset, legend, *controls, opt)
   end

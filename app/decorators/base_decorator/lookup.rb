@@ -190,10 +190,10 @@ module BaseDecorator::Lookup
   # @see file:app/assets/javascripts/shared/lookup-modal.js *queryPanel*
   #
   def lookup_query(unique: nil, css: '.lookup-query', **opt)
-    unique # NOTE: unused
+    l_id   = unique_id('label', css, unique: unique || hex_rand)
     label  = 'Query' # TODO: I18n
-    label  = html_tag(:label, label)
-    terms  = html_div(class: 'terms')
+    label  = html_div(label, id: l_id)
+    terms  = html_div(class: 'terms', 'aria-describedby': l_id)
     prepend_css!(opt, css)
     html_div(opt) do
       label << terms
@@ -227,25 +227,25 @@ module BaseDecorator::Lookup
       end
 
     # == Separator type radio buttons
-    separator_label = 'Term Separators' # TODO: I18n
-    separator_css   = 'item-separator'
-    separator_id    = unique_id(separator_css, **uniq_opt)
-    separators = {
+    sep_label    = 'Term Separators' # TODO: I18n
+    sep_label    = html_tag(:legend, sep_label)
+    sep_css      = 'item-separator'
+    sep_id       = unique_id(sep_css, **uniq_opt)
+    sep_opt      = { id: sep_id, class: sep_css, tabindex: 0 }
+    sep_selected = :space
+    sep_types    = {
       space: 'Space, tab, and <strong>|</strong> (pipe)'.html_safe,
       pipe:  'Only <strong>|</strong> (pipe)'.html_safe
     }
-    selected = :space
-    separator_choices =
-      html_tag(:fieldset, id: separator_id, class: separator_css) do
-        name = 'separator'
-        separators.map.with_index { |(value, text), index|
-          id      = "#{separator_id}-#{index}"
-          checked = selected ? (value == selected) : index.zero?
-          button  = h.radio_button_tag(name, value, checked, id: id)
-          label   = h.label_tag(id, text)
-          button << label
-        }.unshift(html_tag(:legend, separator_label))
+    separators   =
+      sep_types.map.with_index do |(value, text), index|
+        id      = "#{sep_id}-#{index}"
+        checked = sep_selected ? (value == sep_selected) : index.zero?
+        button  = h.radio_button_tag('separator', value, checked, id: id)
+        label   = h.label_tag(id, text)
+        button << label
       end
+    separator_choices = html_tag(:fieldset, sep_label, *separators, sep_opt)
 
     # == Input prompt element
     prepend_css!(opt, css)
@@ -262,12 +262,13 @@ module BaseDecorator::Lookup
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/shared/lookup-modal.js *statusDisplay*
+  # @see file:javascripts/shared/lookup-modal.js *addServiceStatuses*
   #
   def lookup_status(unique: nil, css: '.lookup-status', **opt)
     unique # NOTE: unused
     label  = 'Searching:' # TODO: I18n
-    status = html_div(class: 'services invisible') { html_tag(:label, label) }
+    label  = html_span(label, class: 'label')
+    status = html_div(class: 'services invisible') { label }
     notice = html_div(class: 'notice')
     prepend_css!(opt, css)
     html_div(opt) do

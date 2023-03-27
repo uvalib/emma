@@ -29,6 +29,8 @@ $entry-padding:  0.5rem;
 $entry-item-gap: 2rem;
 $entry-form-gap: 1.5rem;
 
+$checkbox-x-gap: 0.675rem;
+
 //=============================================================================
 // Entry index page
 //=============================================================================
@@ -347,6 +349,27 @@ form.select-entry {
     }
 }
 
+//=============================================================================
+// Entry new/edit/delete pages - fields
+//=============================================================================
+
+/// Settings used for a vertically-scrollable field value.
+///
+@mixin scrollable-field {
+    overflow-y: auto;
+    resize:     vertical;
+
+    // noinspection CssBrowserCompatibilityForProperties
+    overscroll-behavior: contain;
+}
+
+/// Settings used to limit the growth of a vertically-scrollable field value.
+///
+@mixin scrollable-limits {
+    min-height: 1.5rem;
+    max-height: 66.7vh;
+}
+
 // @see BaseDecorator::Form#field_container
 .form-fields {
 
@@ -374,19 +397,6 @@ form.select-entry {
     // Basic components
     //=========================================================================
 
-    %scrollable {
-        overflow-y: auto;
-        resize:     vertical;
-
-        // noinspection CssBrowserCompatibilityForProperties
-        overscroll-behavior: contain;
-    }
-
-    %scrollable-limits {
-        min-height: 1.5rem;
-        max-height: 66.7vh;
-    }
-
     // Single-line text input.
     .input.single {
         padding:       0.5rem;
@@ -396,8 +406,8 @@ form.select-entry {
     // Single textarea input.
     textarea.input.single {
 
-        @extend %scrollable;
-        @extend %scrollable-limits;
+        @include scrollable-field;
+        @include scrollable-limits;
 
         height: 10vh;
     }
@@ -405,8 +415,8 @@ form.select-entry {
     // Scrollable container for multiple single-line text input entries.
     .input.multi {
 
-        @extend %scrollable;
-        @extend %scrollable-limits;
+        @include scrollable-field;
+        @include scrollable-limits;
 
         padding:       0.5rem;
         height:        8.5rem;
@@ -422,7 +432,7 @@ form.select-entry {
     .checkbox.single {
 
         label {
-            margin: 0 0.675rem;
+            margin: 0 $checkbox-x-gap;
         }
 
         &:not(.disabled):hover {
@@ -463,7 +473,7 @@ form.select-entry {
     // Scrollable container for multi-select checkboxes.
     .menu.multi {
 
-        @extend %scrollable-limits;
+        @include scrollable-limits;
 
         padding:        0.25rem;
         line-height:    1.5;
@@ -475,17 +485,40 @@ form.select-entry {
 
         > .multi {
 
-            @extend %scrollable;
+            @include scrollable-field;
+
+            display:               grid;
+            grid-template-columns: [checkbox] auto [label] 1fr;
+            align-items:           center;
+            column-gap:            $checkbox-x-gap;
 
             height:     auto;
             max-height: 20vh;
 
             &:focus {
-                outline-color: transparent;
+                outline-offset: 0.5rem;
+                border-radius:  0.25rem;
             }
 
             &.field-RemediatedAspects {
                 max-height: unset;
+            }
+
+            .checkbox.single {
+
+                display: contents;
+
+                input:focus {
+                    outline-offset: 3px;
+                }
+
+                label {
+                    margin: 0;
+                }
+
+                input:focus + label {
+                    @include hover-bold;
+                }
             }
         }
 

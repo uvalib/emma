@@ -212,8 +212,8 @@ class ManifestItemDecorator < BaseDecorator
         button = super(action, **opt) or return
       end
 
-      label  = action.to_s.titlecase # TODO: cfg lookup
-      label  = html_tag(:label, label, id: l_id)
+      label = action.to_s.titlecase # TODO: cfg lookup
+      label = html_span(label, id: l_id, class: 'label')
 
       button << label
     end
@@ -634,6 +634,12 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
+    # The row number of the grid header.
+    #
+    # @type [Integer]
+    #
+    HEADER_ROW = 1
+
     # submission_status_header
     #
     # @param [Integer] row
@@ -644,7 +650,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @see #submit_status_element
     #
-    def submission_status_header(row: 0, css: '.head', **opt)
+    def submission_status_header(row: HEADER_ROW, css: '.head', **opt)
       ctrl = nil
       name = 'Item Name' # TODO: I18n
       stat = SUBMIT_STEPS
@@ -674,13 +680,13 @@ class ManifestItemDecorator < BaseDecorator
       ctrl,
       item,
       statuses,
-      row:      1,
+      row:      HEADER_ROW,
       col:      0,
       css:      '.submission-status',
       **opt
     )
       opt.delete(:index) # Just in case this slipped in.
-      heading = (row == 1)
+      heading = (row == HEADER_ROW)
       col_opt = { col: col, role: (heading ? 'columnheader' : 'cell') }
 
       # Item selection column.
@@ -692,6 +698,7 @@ class ManifestItemDecorator < BaseDecorator
       item = submit_status_item(item, **col_opt) unless item&.html_safe?
 
       # Status value columns.
+      col_opt[:row] = row.pred unless heading
       values =
         statuses.map do |type, stat|
           col_opt[:col] += 1
@@ -774,14 +781,17 @@ class ManifestItemDecorator < BaseDecorator
     # @param [Symbol]       type
     # @param [Symbol, nil]  status
     # @param [Integer, nil] col
+    # @param [Integer, nil] row
     # @param [String]       css
     # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_value(type, status, col:, css: '.status', **opt)
-      text   = submit_status_text(type, status, label: opt.delete(:label))
-      button = (submit_status_link(type, status) if respond_to?(:object))
+    def submit_status_value(type, status, col:, row: nil, css: '.status', **opt)
+      text =
+        submit_status_text(type, status, label: opt.delete(:label))
+      button =
+        (submit_status_link(type, status, row: row) if respond_to?(:object))
       opt[:role] ||= 'cell'
       opt[:'aria-colindex'] = col if col
       step_css  = SUBMIT_STEPS.dig(type, :css)
@@ -822,23 +832,39 @@ class ManifestItemDecorator < BaseDecorator
 
     # Control for fixing a condition resulting in a given status.
     #
-    # @param [Symbol]     _type
-    # @param [Symbol,nil] status
-    # @param [String]     css
-    # @param [Hash]       opt
+    # @param [Symbol]       _type
+    # @param [Symbol, nil]  status
+    # @param [Integer, nil] row
+    # @param [String]       css
+    # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer, nil]
     #
     # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
     #
-    def submit_status_link(_type, status, css: '.fix', **opt)
+    def submit_status_link(_type, status, row: nil, css: '.fix', **opt)
       label = 'Edit' # TODO: I18n
-      row   = "data-item-id=#{object.id}"
-      path  = h.edit_manifest_path(id: object.manifest_id, anchor: row)
+      path  = edit_row_path(row)
       opt[:title] ||= 'Modify this manifest item' # TODO: I18n
       prepend_css!(opt, css)
       append_css!(opt, 'hidden') unless STATUS_SHOW_EDIT.include?(status)
       make_link(label, path, **opt, 'data-turbolinks': false)
+    end
+
+    # The URL path to the edit page scrolled to the indicated row.
+    #
+    # @param [Integer, nil] row
+    # @param [Hash]         opt       Options for #edit_manifest_path.
+    #
+    # @return [String]
+    #
+    def edit_row_path(row, **opt)
+      row  = positive(row)
+      page = row && positive((row - 1) / grid_page_size)
+      opt[:id]     ||= object.manifest_id
+      opt[:page]   ||= page + 1                    if page
+      opt[:anchor] ||= "#{model_type}-item-#{row}" if row
+      h.edit_manifest_path(**opt)
     end
 
     # =========================================================================
@@ -1353,9 +1379,10 @@ class ManifestItemDecorator
     panel_cfg   = config[:panel] || {}
     popup_id    = html_id(css, id, underscore: false)
 
-    desc_opt    = append_css(opt, 'description').merge!(for: popup_id)
+    desc_id     = "label-#{popup_id}"
+    desc_opt    = append_css(opt, 'description').merge!(id: desc_id)
     description = config[:description]
-    description = h.label_tag(nil, description, desc_opt)
+    description = html_span(description, desc_opt)
 
     label       = panel_cfg[:label]
     name        = html_id(type || label)
@@ -1371,7 +1398,9 @@ class ManifestItemDecorator
         html_button(b_lbl, b_opt)
       end
 
-    prepend_css!(opt, css).merge!('data-id': popup_id)
+    opt[:'data-id']          = popup_id
+    opt[:'aria-describedby'] = desc_id
+    prepend_css!(opt, css)
     html_div(opt) do
       description << input_label << input_field << input_submit << input_cancel
     end

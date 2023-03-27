@@ -76,7 +76,9 @@ module BaseDecorator::Menu
     prepend_css!(opt, css)
     opt[:method] ||= :get
     html_form(path, opt) do
-      h.select_tag(:selected, h.options_for_select(menu), select_opt)
+      label = h.label_tag(:selected, prompt, class: 'sr-only')
+      menu  = h.select_tag(:selected, h.options_for_select(menu), select_opt)
+      label << menu
     end
   end
 

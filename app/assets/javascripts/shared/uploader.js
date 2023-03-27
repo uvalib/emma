@@ -2059,6 +2059,7 @@ export class BulkUploader extends BaseUploader {
      */
     constructor(root, model, features, callbacks) {
         super(root, model, features, callbacks);
+        this.feature.replace_input  = false;
         this.feature.popup_messages = false;
         this.feature.progress_bar   = false;
         this._options.autoProceed   = false;
