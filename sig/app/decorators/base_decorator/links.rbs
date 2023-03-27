@@ -81,7 +81,7 @@ module BaseDecorator::Links
   #
   def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # action_entry
+  # An entry in a list of controller actions.
   #
   # @param [String, Symbol, nil]     action   The target controller action.
   # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
@@ -92,7 +92,7 @@ module BaseDecorator::Links
   #
   def action_entry: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> Hash[Symbol,String]
 
-  # action_link
+  # The URL link for an entry in a list of controller actions.
   #
   # @param [String, Symbol, nil] action   The target controller action.
   # @param [String, Symbol, nil] current  Def: current `params[:action]`.

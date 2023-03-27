@@ -161,7 +161,7 @@ module BaseDecorator::Links
 
   protected
 
-  # action_entry
+  # An entry in a list of controller actions.
   #
   # @param [String, Symbol, nil]     action   The target controller action.
   # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
@@ -179,7 +179,7 @@ module BaseDecorator::Links
     (action == current) ? entry.merge(article: ANOTHER) : entry.dup
   end
 
-  # action_link
+  # The URL link for an entry in a list of controller actions.
   #
   # @param [String, Symbol, nil] action   The target controller action.
   # @param [String, Symbol, nil] current  Def: current `params[:action]`.
