@@ -125,7 +125,10 @@ TMPDIR =
 #
 # @type [Array<Symbol>]
 #
-OAUTH2_PROVIDERS = %i[bookshare].freeze
+OAUTH2_PROVIDERS = %i[bookshare]
+if !production_deployment?
+  OAUTH2_PROVIDERS << :shibboleth
+end
 
 # =============================================================================
 # EMMA Federated Ingest API properties

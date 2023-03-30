@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/uvalib/omniauth-shibboleth.git
+  revision: e557ae5c96c35af10437dffb5444b2fa6e41ac86
+  branch: omniauth2
+  specs:
+    omniauth-shibboleth (2.0.0)
+      omniauth (~> 2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -213,6 +221,8 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.8)
+    nokogiri (1.14.2-arm64-darwin)
+      racc (~> 1.4)
     nokogiri (1.14.2-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.11)
@@ -228,6 +238,9 @@ GEM
       rack-protection
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
+      omniauth (>= 1.9, < 3)
+    omniauth-rails_csrf_protection (1.0.1)
+      actionpack (>= 4.2)
       omniauth (~> 2.0)
     orm_adapter (0.5.0)
     pdf-reader (2.11.0)
@@ -356,6 +369,7 @@ GEM
     zeitwerk (2.6.7)
 
 PLATFORMS
+  arm64-darwin-21
   x86_64-linux
 
 DEPENDENCIES
@@ -386,6 +400,8 @@ DEPENDENCIES
   oauth2 (~> 1.4)
   oj
   omniauth-oauth2 (~> 1.6)
+  omniauth-rails_csrf_protection
+  omniauth-shibboleth!
   pdf-reader
   pg
   prometheus-client

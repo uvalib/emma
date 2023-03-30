@@ -543,7 +543,8 @@ class User < ApplicationRecord
       first_name:    data.info&.first_name,
       last_name:     data.info&.last_name,
       access_token:  data.credentials&.token,
-      refresh_token: data.credentials&.refresh_token
+      refresh_token: data.credentials&.refresh_token,
+      provider:      data.provider
     }.compact_blank!
     user = find_by(email: attr[:email])
     if user && update

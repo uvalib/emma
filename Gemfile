@@ -75,7 +75,9 @@ gem 'jbuilder'
 gem 'cancancan'
 gem 'devise'
 gem 'oauth2', '~> 1.4'
+gem 'omniauth-rails_csrf_protection'
 gem 'omniauth-oauth2', '~> 1.6'
+gem 'omniauth-shibboleth', github: 'uvalib/omniauth-shibboleth', branch: 'omniauth2'
 gem 'rolify'
 
 # == Serialization

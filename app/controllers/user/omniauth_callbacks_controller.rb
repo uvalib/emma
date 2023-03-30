@@ -23,7 +23,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # @type [Array<Symbol>]
   #
-  PROVIDERS = %i[bookshare]
+  PROVIDERS = %i[bookshare shibboleth]
 
   # ===========================================================================
   # :section:
@@ -60,6 +60,26 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     self.resource = set_auth_data(request)
     last_operation_update
     set_flash_message(:notice, :success, kind: 'Bookshare')
+    sign_in_and_redirect(resource)
+  rescue => error
+    auth_failure_redirect(message: error)
+  end
+
+  # == GET  /users/auth/shibboleth/callback
+  # == POST /users/auth/shibboleth/callback
+  #
+  # Callback from Shibboleth to finalize authentication.
+  #
+  # @see #user_shibboleth_omniauth_callback_path   Route helper
+  # @see AuthConcern#set_auth_data
+  #
+  def shibboleth
+    __log_activity
+    __debug_route
+    __debug_request
+    self.resource = set_auth_data(request)
+    last_operation_update
+    set_flash_message(:notice, :success, kind: 'Shibboleth')
     sign_in_and_redirect(resource)
   rescue => error
     auth_failure_redirect(message: error)
