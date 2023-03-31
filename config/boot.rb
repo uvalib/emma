@@ -36,7 +36,7 @@ PRODUCTION_BASE_URL = 'https://emma.lib.virginia.edu'
 #
 # @type [String]
 #
-STAGING_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
+STAGING_BASE_URL = 'https://emma-dev.lib.virginia.edu'
 
 # =============================================================================
 # Support methods
