@@ -1,10 +1,10 @@
 GIT
   remote: https://github.com/uvalib/omniauth-shibboleth.git
-  revision: e557ae5c96c35af10437dffb5444b2fa6e41ac86
+  revision: 3947d3ea743c1b5e1423451986a378b63353d160
   branch: omniauth2
   specs:
     omniauth-shibboleth (2.0.0)
-      omniauth (~> 2.1)
+      omniauth (~> 2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -225,12 +225,13 @@ GEM
       racc (~> 1.4)
     nokogiri (1.14.2-x86_64-linux)
       racc (~> 1.4)
-    oauth2 (1.4.11)
+    oauth2 (2.0.9)
       faraday (>= 0.17.3, < 3.0)
       jwt (>= 1.0, < 3.0)
-      multi_json (~> 1.3)
       multi_xml (~> 0.5)
       rack (>= 1.2, < 4)
+      snaky_hash (~> 2.0)
+      version_gem (~> 1.1)
     oj (3.14.2)
     omniauth (2.1.1)
       hashie (>= 3.4.6)
@@ -238,7 +239,7 @@ GEM
       rack-protection
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
-      omniauth (>= 1.9, < 3)
+      omniauth (~> 2.0)
     omniauth-rails_csrf_protection (1.0.1)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
@@ -325,6 +326,9 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
+    snaky_hash (2.0.1)
+      hashie
+      version_gem (~> 1.1, >= 1.1.1)
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -342,6 +346,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
+    version_gem (1.1.2)
     virtus (1.0.5)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -397,9 +402,10 @@ DEPENDENCIES
   net-pop
   net-smtp
   nokogiri
-  oauth2 (~> 1.4)
+  oauth2 (~> 2.0)
   oj
-  omniauth-oauth2 (~> 1.6)
+  omniauth (~> 2.1)
+  omniauth-oauth2 (~> 1.0)
   omniauth-rails_csrf_protection
   omniauth-shibboleth!
   pdf-reader

@@ -74,9 +74,10 @@ gem 'jbuilder'
 # == AuthN/AuthZ
 gem 'cancancan'
 gem 'devise'
-gem 'oauth2', '~> 1.4'
+gem 'oauth2', '~> 2.0'
+gem 'omniauth', '~> 2.1'
 gem 'omniauth-rails_csrf_protection'
-gem 'omniauth-oauth2', '~> 1.6'
+gem 'omniauth-oauth2', '~>1.0'
 gem 'omniauth-shibboleth', github: 'uvalib/omniauth-shibboleth', branch: 'omniauth2'
 gem 'rolify'
 
