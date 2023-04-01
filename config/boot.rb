@@ -259,7 +259,11 @@ end
 # BOOT
 # =============================================================================
 
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
+if SHIBBOLETH
+  ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile-shibboleth', __dir__)
+else
+  ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
+end
 
 require 'bundler/setup' # Set up gems listed in the Gemfile.
 require 'bootsnap/setup' if not_deployed?
