@@ -121,14 +121,18 @@ TMPDIR =
     File.expand_path(Dir.tmpdir, File.absolute_path('..'))
   end.freeze
 
+# Temporary flag indicating whether Shibboleth authorization is active.
+#
+# @type [Boolean]
+#
+SHIBBOLETH = true?(ENV.fetch('SHIBBOLETH') { !production_deployment? })
+
 # OAuth2 providers for Devise.
 #
 # @type [Array<Symbol>]
 #
-OAUTH2_PROVIDERS = %i[bookshare]
-if !production_deployment?
-  OAUTH2_PROVIDERS << :shibboleth
-end
+OAUTH2_PROVIDERS =
+  (SHIBBOLETH ? %i[bookshare shibboleth] : %i[bookshare]).freeze
 
 # =============================================================================
 # EMMA Federated Ingest API properties

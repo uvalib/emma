@@ -278,7 +278,7 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   config.omniauth :bookshare, BOOKSHARE_API_KEY, ''
-  config.omniauth :shibboleth
+  config.omniauth :shibboleth if SHIBBOLETH
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

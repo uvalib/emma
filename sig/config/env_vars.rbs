@@ -6,6 +6,12 @@
 #
 TMPDIR: String
 
+# Temporary flag indicating whether Shibboleth authorization is active.
+#
+# @type [Boolean]
+#
+SHIBBOLETH: bool
+
 # OAuth2 providers for Devise.
 #
 # @type [Array<Symbol>]
