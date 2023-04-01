@@ -32,7 +32,7 @@ DEPLOY_TAG="tags/$APP.tag"
 
 # Service deployments.
 
-DEV_HOST='https://emmadev.internal.lib.virginia.edu'
+DEV_HOST='https://emma-dev.lib.virginia.edu'
 PROD_HOST='https://emma.lib.virginia.edu'
 
 # AWS pipelines.

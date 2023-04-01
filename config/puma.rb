@@ -68,11 +68,13 @@ end
 
 if DEBUG_PUMA
   debug
+  on_restart         { puts 'PUMA on_restart' }
   before_fork        { puts 'PUMA before_fork: starting workers' }
   on_worker_boot     { puts 'PUMA on_worker_boot' }
   on_worker_shutdown { puts 'PUMA on_worker_shutdown' }
   on_worker_fork     { puts 'PUMA on_worker_fork' }
   after_worker_fork  { puts 'PUMA after_worker_fork' }
+  on_booted          { puts 'PUMA on_booted' }
   on_refork          { puts 'PUMA on_refork' }
   out_of_band        { puts 'PUMA worker idle' }
 end
