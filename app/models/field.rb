@@ -442,6 +442,7 @@ module Field
             elsif src.respond_to?(:emma_record)
               src = src.emma_record
             end
+            # noinspection RubyMismatchedArgumentType
             src.try(@field)
           end
       end
@@ -586,14 +587,15 @@ module Field
 
     # Give the instance a value.
     #
-    # @param [Any, nil] new_value
+    # @param [*] new_value
     #
-    # @return [Array]   If mode == :multiple
-    # @return [Any]     If mode == :single
+    # @return [Array]                 If mode == :multiple
+    # @return [*]                     If mode == :single
     #
     def set(new_value)
       @valid = true
       if mode == :single
+        # noinspection RubyMismatchedReturnType
         @value = Array.wrap(new_value).first
       else
         @value ||= []

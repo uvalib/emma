@@ -542,9 +542,9 @@ function onKeyUpWindow(event) {
 /**
  * Allow mouse down outside of a flash item to close all flash items.
  *
- * @param {jQuery.Event|MouseEvent} event
+ * @param {jQuery.Event|MouseEvent} _event
  */
-function onMouseDownWindow(event) {
+function onMouseDownWindow(_event) {
     clearFlash();
 }
 

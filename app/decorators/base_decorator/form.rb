@@ -124,6 +124,7 @@ module BaseDecorator::Form
       id_suffix      = (0 if opt[:disabled])
 
       value = render_value(value, field: field)
+      # noinspection RubyMismatchedArgumentType
       render_form_pair(label, value, index: id_suffix, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end

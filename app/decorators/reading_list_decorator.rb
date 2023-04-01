@@ -127,6 +127,7 @@ class ReadingListDecorator
   # @return [Array<Bs::Record::ReadingListTitle>]
   #
   def titles
+    # noinspection RailsParamDefResolve
     @titles ||=
       titles_data.then { |titles| titles&.try(:lists) || Array.wrap(titles) }
   end

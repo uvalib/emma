@@ -173,10 +173,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             }
 
             @media #{$narrow-screen} {
-                margin:          0.5rem 0;
                 flex-direction:  row;
                 column-gap:      0.5rem;
                 align-items:     baseline;
+                margin:          0.5rem 0;
             }
         }
 
@@ -2482,17 +2482,14 @@ body.search.title_results {
                     grid-template-columns: repeat(3, 1fr 1fr);
                 }
 
-                .count,
-                .format {
-                    margin: auto 0;
-                }
-
                 .count {
-
+                    margin:     auto 0;
                     text-align: right;
                 }
 
                 .format {
+
+                    margin:     auto 0;
                     text-align: left;
 
                     @media #{$narrow-screen} {

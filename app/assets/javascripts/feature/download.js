@@ -404,10 +404,10 @@ appSetup(MODULE, function() {
          * names.
          *
          * @param {*}              data
-         * @param {string}         status
-         * @param {XMLHttpRequest} xhr
+         * @param {string}         _status
+         * @param {XMLHttpRequest} _xhr
          */
-        function onSuccess(data, status, xhr) {
+        function onSuccess(data, _status, _xhr) {
             // _debug(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
@@ -434,10 +434,10 @@ appSetup(MODULE, function() {
          * Actions after the request is completed.  Invoke the callback with
          * the member selection table unless there was an error.
          *
-         * @param {XMLHttpRequest} xhr
-         * @param {string}         status
+         * @param {XMLHttpRequest} _xhr
+         * @param {string}         _status
          */
-        function onComplete(xhr, status) {
+        function onComplete(_xhr, _status) {
             _debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
                 console.warn(`${func}: ${url}:`, error);
@@ -617,10 +617,10 @@ appSetup(MODULE, function() {
          * specify a state of 'SUBMITTED'.
          *
          * @param {object}         data
-         * @param {string}         status
-         * @param {XMLHttpRequest} xhr
+         * @param {string}         _status
+         * @param {XMLHttpRequest} _xhr
          */
-        function onSuccess(data, status, xhr) {
+        function onSuccess(data, _status, _xhr) {
             // _debug(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
@@ -659,10 +659,10 @@ appSetup(MODULE, function() {
          * error condition a failure message is displayed.  Otherwise, another
          * request is scheduled to be performed after a delay.
          *
-         * @param {XMLHttpRequest} xhr
-         * @param {string}         status
+         * @param {XMLHttpRequest} _xhr
+         * @param {string}         _status
          */
-        function onComplete(xhr, status) {
+        function onComplete(_xhr, _status) {
             _debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (target) {
                 $link.data('path', target);

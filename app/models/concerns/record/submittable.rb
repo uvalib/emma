@@ -131,7 +131,7 @@ module Record::Submittable
     #
     # @param [Model, Hash] data       @see Upload#assign_attributes.
     #
-    # @return [ApplicationRecord<Model>]
+    # @return [ApplicationRecord]
     #
     # @note From UploadWorkflow::External#db_insert
     #
@@ -153,14 +153,13 @@ module Record::Submittable
     # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
     # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
     #
-    # @return [ApplicationRecord<Model>]
+    # @return [ApplicationRecord]
     #
     # @note From UploadWorkflow::External#db_update
     #
     def db_update(item, data = nil)
       __debug_items("ENTRY WF #{__method__}", binding)
       item, data = [nil, item] if item.is_a?(Hash)
-      # @type [ApplicationRecord<Model>]
       record =
         if item.is_a?(record_class)
           item
@@ -178,6 +177,7 @@ module Record::Submittable
       elsif record.new_record?
         record.save!
       end
+      # noinspection RubyMismatchedReturnType
       record
     end
 

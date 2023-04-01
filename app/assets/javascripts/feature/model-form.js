@@ -722,11 +722,11 @@ appSetup(MODULE, function() {
          * upload endpoint URL in order to correlate the upload with the
          * appropriate workflow.
          *
-         * @param {UppyFileUploadStartData} data
+         * @param {UppyFileUploadStartData} _data
          *
          * @returns {object}          URL parameters for the remote endpoint.
          */
-        function onStart(data) {
+        function onStart(_data) {
             clearFlash();
             return submissionParams($form);
         }
@@ -737,9 +737,9 @@ appSetup(MODULE, function() {
          *
          * @param {UppyFile}                       file
          * @param {Error}                          error
-         * @param {{status: number, body: string}} [response]
+         * @param {{status: number, body: string}} [_response]
          */
-        function onError(file, error, response) {
+        function onError(file, error, _response) {
             showFlashError(error?.message || error);
             requireFormCancellation($form);
         }
@@ -1222,10 +1222,10 @@ appSetup(MODULE, function() {
          * Extract the list of EMMA entries returned as JSON.
          *
          * @param {object}         data
-         * @param {string}         status
-         * @param {XMLHttpRequest} xhr
+         * @param {string}         _status
+         * @param {XMLHttpRequest} _xhr
          */
-        function onSuccess(data, status, xhr) {
+        function onSuccess(data, _status, _xhr) {
             //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
@@ -1260,10 +1260,10 @@ appSetup(MODULE, function() {
          * Actions after the request is completed.  If there was no error, the
          * list of extracted entries is passed to the callback function.
          *
-         * @param {XMLHttpRequest} xhr
-         * @param {string}         status
+         * @param {XMLHttpRequest} _xhr
+         * @param {string}         _status
          */
-        function onComplete(xhr, status) {
+        function onComplete(_xhr, _status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
@@ -1396,10 +1396,10 @@ appSetup(MODULE, function() {
          * Extract the replacement Upload fields returned as JSON.
          *
          * @param {object}         data
-         * @param {string}         status
-         * @param {XMLHttpRequest} xhr
+         * @param {string}         _status
+         * @param {XMLHttpRequest} _xhr
          */
-        function onSuccess(data, status, xhr) {
+        function onSuccess(data, _status, _xhr) {
             //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
@@ -1434,10 +1434,10 @@ appSetup(MODULE, function() {
          * called (just without replacement values).  It remains to be seen
          * whether this is better than indicating a failure.
          *
-         * @param {XMLHttpRequest} xhr
-         * @param {string}         status
+         * @param {XMLHttpRequest} _xhr
+         * @param {string}         _status
          */
-        function onComplete(xhr, status) {
+        function onComplete(_xhr, _status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (record) {
                 //_debugXhr(`${func}: data from server:`, record);
@@ -2491,10 +2491,10 @@ appSetup(MODULE, function() {
          * Parse the validation reply.
          *
          * @param {object}         data
-         * @param {string}         status
-         * @param {XMLHttpRequest} xhr
+         * @param {string}         _status
+         * @param {XMLHttpRequest} _xhr
          */
-        function onSuccess(data, status, xhr) {
+        function onSuccess(data, _status, _xhr) {
             //_debugXhr(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
@@ -2524,10 +2524,10 @@ appSetup(MODULE, function() {
         /**
          * Invoke the callback with the reply.
          *
-         * @param {XMLHttpRequest} xhr
-         * @param {string}         status
+         * @param {XMLHttpRequest} _xhr
+         * @param {string}         _status
          */
-        function onComplete(xhr, status) {
+        function onComplete(_xhr, _status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
                 console.warn(`${func}: ${url}:`, error);
@@ -2896,10 +2896,10 @@ appSetup(MODULE, function() {
          * Extract the list of search result entries returned as JSON.
          *
          * @param {SearchResultMessage|object} data
-         * @param {string}                     status
-         * @param {XMLHttpRequest}             xhr
+         * @param {string}                     _status
+         * @param {XMLHttpRequest}             _xhr
          */
-        function onSuccess(data, status, xhr) {
+        function onSuccess(data, _status, _xhr) {
             //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
@@ -2934,10 +2934,10 @@ appSetup(MODULE, function() {
          * Actions after the request is completed.  If there was no error, the
          * search result list is passed to the callback function.
          *
-         * @param {XMLHttpRequest} xhr
-         * @param {string}         status
+         * @param {XMLHttpRequest} _xhr
+         * @param {string}         _status
          */
-        function onComplete(xhr, status) {
+        function onComplete(_xhr, _status) {
             _debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
@@ -3975,10 +3975,10 @@ appSetup(MODULE, function() {
         /**
          * Restore empty database fields at the end of the submission response.
          *
-         * @param {XMLHttpRequest} [xhr]
-         * @param {string}         [status]
+         * @param {XMLHttpRequest} [_xhr]
+         * @param {string}         [_status]
          */
-        function onCreateComplete(xhr, status) {
+        function onCreateComplete(_xhr, _status) {
             databaseInputFields($form).each(function() {
                 this.disabled = false;
             });
@@ -4476,11 +4476,11 @@ appSetup(MODULE, function() {
     /**
      * Indicate whether the form can be canceled.
      *
-     * @param {Selector} [form]       Passed to {@link cancelButton}.
+     * @param {Selector} [_form]      Passed to {@link cancelButton}.
      *
      * @returns {boolean}
      */
-    function canCancel(form) {
+    function canCancel(_form) {
         return true; // TODO: canCancel?
     }
 
@@ -4775,9 +4775,9 @@ appSetup(MODULE, function() {
     /**
      * Invoke clearFlash() and return void.
      *
-     * @param {jQuery.Event} [event]    Ignored.
+     * @param {jQuery.Event} [_event]    Ignored.
      */
-    function clearFlashMessages(event) {
+    function clearFlashMessages(_event) {
         clearFlash();
     }
 

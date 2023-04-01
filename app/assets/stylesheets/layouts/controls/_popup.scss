@@ -163,7 +163,7 @@
     vertical-align: middle;
 
     @media #{$not-narrow-screen} {
-        position: relative;
+        position:   relative;
     }
 
     // Activation area in the form of text/hyperlink.
@@ -199,7 +199,7 @@
         cursor:         pointer;
 
         @media #{$narrow-screen} {
-            display: inline-block;
+            display:    inline-block;
         }
 
         &:focus {

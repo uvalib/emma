@@ -456,6 +456,7 @@ module FileFormat
     # @return [Hash{Symbol=>Hash}]
     #
     def configuration_table
+      # noinspection RbsMissingTypeSignature
       @configuration_table ||= {}
     end
 

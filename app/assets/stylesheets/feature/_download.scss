@@ -21,7 +21,7 @@
     cursor:          pointer;
 
     @media #{$narrow-screen} {
-        margin: 0.5rem 0 0;
+        margin:      0.5rem 0 0;
     }
 }
 
@@ -84,7 +84,7 @@
         }
 
         @media #{$narrow-screen} {
-            padding: 0.5rem;
+            padding:    0.5rem;
         }
 
         //=====================================================================

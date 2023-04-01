@@ -203,9 +203,11 @@ module BaseDecorator::Controls
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def symbol_icon(icon, **opt)
     icon = icon_definitions.dig(icon, :icon) if icon.is_a?(Symbol)
-    # noinspection RubyMismatchedArgumentType
     super(icon, **opt)
   end
 

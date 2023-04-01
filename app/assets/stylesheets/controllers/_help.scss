@@ -168,6 +168,7 @@
 
         // Repository logo.
         .logo {
+
             display: block;
             flex:    0 1 auto;
 
@@ -265,14 +266,13 @@
 
             @include help-text;
 
-            &:last-of-type { margin-bottom: 0; }
-
             @media #{$not-narrow-screen} {
-
                 display:         list-item;
                 margin-left:     1.25rem;
                 list-style-type: disclosure-closed;
             }
+
+            &:last-of-type { margin-bottom: 0; }
         }
     }
 

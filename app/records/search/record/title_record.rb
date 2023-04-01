@@ -715,11 +715,13 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, Integer, Hash, nil] term
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def initialize(term = nil)
       @level = {}
       case term
         when Integer
-          # noinspection RubyMismatchedArgumentType
           add_level(nil, term)
         when String
           unless (term = term.strip).match?(YEAR_PATTERN)

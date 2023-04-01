@@ -45,10 +45,10 @@
         .icon,
         .label {
 
-            font-weight:    bold;
+            font-weight:   bold;
 
             @media #{$not-narrow-screen} {
-                font-size:  small;
+                font-size: small;
             }
         }
 

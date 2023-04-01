@@ -436,6 +436,7 @@ module BaseDecorator::Fields
   #
   def field_scopes(value)
     levels = value.is_a?(Array) ? value : field_levels[value&.to_sym]
+    # noinspection RubyArgCount
     levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
     levels.map! { |s| "scope-#{s}" }
   end

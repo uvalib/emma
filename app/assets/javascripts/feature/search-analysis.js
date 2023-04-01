@@ -1047,9 +1047,9 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
          * Derived classes extend this method to include the operations for
          * modifying the display.
          *
-         * @param {*} [arg]           Unused in the base class.
+         * @param {*} [_arg]           Unused in the base class.
          */
-        activate(arg) {
+        activate(_arg) {
             this.update();
         }
 
@@ -1372,11 +1372,11 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
          * Set up the control button(s) associated with the feature.
          *
          * @param {boolean} [refresh]       `this.enabled` by default.
-         * @param {string}  [prev_topic]    Ignored.
+         * @param {string}  [_prev_topic]   Ignored.
          *
          * @returns {jQuery|undefined}      The active button.
          */
-        initialize(refresh, prev_topic) {
+        initialize(refresh, _prev_topic) {
             const show = isDefined(refresh) ? refresh : this.enabled;
             return super.initialize(show);
         }
@@ -1726,11 +1726,11 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
          * order.
          *
          * @param {object[]} item_lists
-         * @param {string}   by_topic
+         * @param {string}   _by_topic
          *
          * @protected
          */
-        _validateLists(item_lists, by_topic) {
+        _validateLists(item_lists, _by_topic) {
             const mark_as_error = $item => this._markItemAsError($item);
             const mark_as_exile = $item => this._markItemAsExile($item);
             item_lists.forEach(function(item_list) {

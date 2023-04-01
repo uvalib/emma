@@ -1993,9 +1993,9 @@ appSetup(MODULE, function() {
          *
          * @param {UppyFile}                       file
          * @param {Error}                          error
-         * @param {{status: number, body: string}} [response]
+         * @param {{status: number, body: string}} [_response]
          */
-        function onError(file, error, response) {
+        function onError(file, error, _response) {
             const item_id = file?.meta?.manifest_item_id;
             const $item   = itemFor(item_id);
             const note    = error?.message || error;
@@ -2007,9 +2007,9 @@ appSetup(MODULE, function() {
          * @see BaseUploader._onFileUploadSuccess
          *
          * @param {UppyFile}            file
-         * @param {UppyResponseMessage} response
+         * @param {UppyResponseMessage} _response
          */
-        function onSuccess(file, response) {
+        function onSuccess(file, _response) {
             const item_id = file?.meta?.manifest_item_id;
             const $item   = itemFor(item_id);
             setStatusFor($item, UPLOAD_STATUS, SUCCEEDED);

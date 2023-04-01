@@ -539,7 +539,7 @@ body.manifest.remit {
         gap:            $page-padding-y;
 
         @media #{$not-wide-screen} {
-            gap: $page-padding;
+            gap:        $page-padding;
         }
 
         //=====================================================================
@@ -569,7 +569,7 @@ body.manifest.remit {
         gap:         $page-padding-y;
 
         @media #{$not-wide-screen} {
-            gap: $page-padding;
+            gap:     $page-padding;
         }
 
         grid-template-columns: [button] minmax(5vw,auto) [panel] 1fr;
@@ -970,23 +970,23 @@ body.manifest.remit {
 
                     @include button.basic;
 
-                    margin:      0;
-                    font-size:   smaller;
-                    font-weight: normal;
-                    text-align:  center;
-                    color:       $fg-dark;
-                    background:  $bg-clear;
-                    flex:        1 1 auto;
-
-                    &:hover {
-                        box-shadow: none;
-                    }
+                    margin:       0;
+                    font-size:    smaller;
+                    font-weight:  normal;
+                    text-align:   center;
+                    color:        $fg-dark;
+                    background:   $bg-clear;
+                    flex:         1 1 auto;
 
                     @media #{$not-wide-screen} {
                         position: absolute;
                         top:      $col-pad;
                         right:    $col-pad;
                         padding:  1px 4px;
+                    }
+
+                    &:hover {
+                        box-shadow: none;
                     }
                 }
             }
@@ -1024,6 +1024,10 @@ body.manifest.remit {
     @media #{$narrow-screen} {
         padding: 0;
     }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     .popup-controls {
         @media #{$narrow-screen} {

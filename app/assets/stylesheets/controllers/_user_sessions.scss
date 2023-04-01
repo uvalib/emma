@@ -32,7 +32,7 @@ body.user_sessions {
     @media #{$wide-screen} {
         gap: 1rem 3rem;
         grid-template-columns:
-            [label] auto [uid] 1fr [pwd] 1fr [actions] 1fr [options] 1fr;
+            [label] auto [uid] 1fr [pwd] 1fr [actions] 1fr  [options] 1fr;
     }
 
     @media #{$medium-width} {

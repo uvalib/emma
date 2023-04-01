@@ -289,18 +289,22 @@ module Field
   # A field based on a range of values defined by an EnumType.
   #
   class Range < Type
+    attr_reader value: anyArray | untyped | nil
+
+    @value: anyArray | untyped | nil
+
     # Indicate whether this instance is unassociated with any field values.
     #
     def empty?: () -> bool
 
     # Give the instance a value.
     #
-    # @param [Any, nil] new_value
+    # @param [*] new_value
     #
-    # @return [Array]   If mode == :multiple
-    # @return [Any]     If mode == :single
+    # @return [Array]                 If mode == :multiple
+    # @return [*]                     If mode == :single
     #
-    def set: (untyped new_value) -> (anyArray | untyped)
+    def set: (untyped new_value) -> (anyArray | untyped | nil)
   end
 
   # A field which may have multiple values from a range.

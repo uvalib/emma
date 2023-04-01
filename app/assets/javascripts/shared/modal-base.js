@@ -1130,11 +1130,11 @@ export class ModalBase extends BaseClass {
      * Report on the popup.
      *
      * @param {string}   label
-     * @param {Selector} [popup]
+     * @param {Selector} [_popup]
      *
      * @protected
      */
-    _debugPopup(label, popup) {
+    _debugPopup(label, _popup) {
         if (!this._debugging) { return }
         const func    = label.endsWith(':') ? label : `${label}:`;
         const $modal  = this.modalPanel;

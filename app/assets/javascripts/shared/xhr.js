@@ -256,9 +256,9 @@ export function xmit(method, path, prm, opt, cb) {
      * Actions after the request is completed.
      *
      * @param {XMLHttpRequest} xhr
-     * @param {string}         status
+     * @param {string}         _status
      */
-    function onComplete(xhr, status) {
+    function onComplete(xhr, _status) {
         _debug(`${func}: completed in`, secondsSince(start), 'sec.');
         if (result) {
             //_debug(`${func}: data from server:`, record);

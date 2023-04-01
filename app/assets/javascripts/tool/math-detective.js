@@ -252,9 +252,9 @@ export function setupFor(root) {
      * Display a note next to the clipboard select button.
      *
      * @param {string} note
-     * @param {string} [caller]
+     * @param {string} [_caller]
      */
-    function showClipboardNote(note, caller) {
+    function showClipboardNote(note, _caller) {
         if ($clip_note) {
             if (note) {
                 $clip_note.text(note);

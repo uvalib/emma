@@ -224,8 +224,8 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
             font-weight:    bold;
 
             @media #{$narrow-screen} {
-                padding:   0.5rem 0;
-                font-size: smaller;
+                padding:    0.5rem 0;
+                font-size:  smaller;
             }
 
             &.current {
@@ -355,8 +355,6 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     //=========================================================================
     // Elements
     //=========================================================================
-
-    $search-clear-inset: -1.5rem;
 
     .search-title {
         font-size: large;
@@ -540,9 +538,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
             @extend %tray-control;
 
-            margin:      0 0.25rem;
-            line-height: 2.15;
-            flex-grow:   1;
+            margin:        0 0.25rem;
+            line-height:   2.15;
+            flex-grow:     1;
 
             @media #{$wide-screen} {
                 max-width: 75vw;

@@ -19,6 +19,10 @@ en:
       password:
         length:         '%{min} character minimum'
 
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
       page_controls:
         label:          'EMMA Account Actions:'
         actions:

@@ -26,6 +26,7 @@ module FileNaming
   # @return [Class, nil]
   #
   def self.format_class_instance: ((Symbol|String) `type`, ?(FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> untyped
+  def      format_class_instance: ((Symbol|String) `type`, ?(FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> untyped
 
   # format_class
   #
@@ -34,36 +35,42 @@ module FileNaming
   # @return [Class, nil]
   #
   def self.format_class: ((Symbol|String) `type`) -> (Class | nil)
+  def      format_class: ((Symbol|String) `type`) -> (Class | nil)
 
   # format_classes
   #
   # @return [Hash{Symbol=>Class}]
   #
   def self.format_classes: () -> Hash[Symbol,Class]
+  def      format_classes: () -> Hash[Symbol,Class]
 
   # mime_types
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
   def self.mime_types: () -> Hash[Symbol,strArray]
+  def      mime_types: () -> Hash[Symbol,strArray]
 
   # file_extensions
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
   def self.file_extensions: () -> Hash[Symbol,strArray]
+  def      file_extensions: () -> Hash[Symbol,strArray]
 
   # mime_to_fmt
   #
   # @return [Hash{String=>Array<Symbol>}]
   #
   def self.mime_to_fmt: () -> Hash[String,symArray]
+  def      mime_to_fmt: () -> Hash[String,symArray]
 
   # ext_to_fmt
   #
   # @return [Hash{String=>Array<Symbol>}]
   #
   def self.ext_to_fmt: () -> Hash[String,symArray]
+  def      ext_to_fmt: () -> Hash[String,symArray]
 
   # Map extension to file format.
   #

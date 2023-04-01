@@ -155,6 +155,7 @@ module HtmlHelper
   #
   def html_form(url_or_path, *args)
     options   = args.last.is_a?(Hash) ? args.pop.dup : {}
+    # noinspection RubyMismatchedArgumentType
     separator = options.delete(:separator) || "\n"
     content   = args.flatten
     content  += Array.wrap(yield) if block_given?

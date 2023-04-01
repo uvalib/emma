@@ -1083,6 +1083,7 @@ module UploadWorkflow::External
     fault!(data) # @see UploadWorkflow::Testing
     record = data.is_a?(Upload) ? data : new_record(data)
     record.save if record.new_record?
+    # noinspection RubyMismatchedReturnType
     record
   end
 

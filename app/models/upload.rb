@@ -451,6 +451,7 @@ class Upload < ApplicationRecord
           when Date, Time then %Q("#{value.to_s(:inspect)}")
           else                 value.inspect
         end
+      # noinspection RubyMismatchedReturnType
       inspection_filter.filter_param(name, inspected_value)
     end
   end
@@ -619,6 +620,7 @@ class Upload < ApplicationRecord
   #
   def self.get_value(item, key, default: nil)
     key = key.to_sym
+    # noinspection RubyMismatchedArgumentType
     if item.respond_to?(key)
       item.send(key).presence
     elsif item.is_a?(Upload) && item.emma_metadata.key?(key)

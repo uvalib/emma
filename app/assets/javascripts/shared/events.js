@@ -157,9 +157,9 @@ export function documentEvent(type, callback, options) {
  * [2] due to clicking on a link.
  *
  * @param {EventListener|function():void} callback
- * @param {boolean} [debug] If *true* show console warnings on events.
+ * @param {boolean} [_debug] If *true* show console warnings on events.
  */
-export function onPageExit(callback, debug) {
+export function onPageExit(callback, _debug) {
 /*
     const cb = debug ? (
         e => { console.warn(`>>>>> ${e.type} EVENT <<<<<`, e); callback(e) }

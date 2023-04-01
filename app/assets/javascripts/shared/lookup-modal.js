@@ -2169,9 +2169,9 @@ export class LookupModal extends ModalDialog {
      *
      * @note This doesn't do anything yet...
      *
-     * @param {Selector|Selector[]} items
+     * @param {Selector|Selector[]} _items
      */
-    respondAsVisibleOnFocus(items) {
+    respondAsVisibleOnFocus(_items) {
         //const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
         //arrayWrap(items).forEach(i => handleEvent($(i), 'focus', scroll));
     }

@@ -349,6 +349,7 @@ module Emma::Log
     log.datetime_format = opt[:datetime_format] if opt[:datetime_format]
     log.formatter       = opt[:formatter]       if opt[:formatter]
     log.formatter       = log.formatter&.clone  unless opt[:formatter]
+    # noinspection RubyMismatchedReturnType
     log
   end
 

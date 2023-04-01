@@ -431,6 +431,11 @@ form.select-entry {
     // Container for a checkbox and label pair.
     .checkbox.single {
 
+        @media #{$narrow-screen} {
+            margin: 0 -0.25rem;
+            border: 0.25rem solid transparent;
+        }
+
         label {
             margin: 0 $checkbox-x-gap;
         }
@@ -442,11 +447,6 @@ form.select-entry {
             label {
                 @include hover-bold;
             }
-        }
-
-        @media #{$narrow-screen} {
-            margin: 0 -0.25rem;
-            border: 0.25rem solid transparent;
         }
     }
 
@@ -581,7 +581,6 @@ form.select-entry {
                 margin-bottom: 0.5rem;
                 font-size:     medium;
             }
-
         }
 
         // noinspection CssReplaceWithShorthandSafely
@@ -928,7 +927,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
     }
 
     @media #{$narrow-screen} {
-        padding: 0;
+        padding:  0;
     }
 
     .popup-controls {
@@ -1018,8 +1017,8 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             @media #{$narrow-screen} {
                 flex-direction: column;
                 gap:            0.5rem;
-                padding-top:    0.5rem;
                 margin:         0 0.5rem;
+                padding-top:    0.5rem;
             }
 
             .terms {

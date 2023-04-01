@@ -133,6 +133,7 @@ module Emma::Rake
   # @return [Array<String>]
   #
   def cli_task_options
+    # noinspection RubyMismatchedReturnType
     @cli_task_options ||= (start = $*.index('--')) ? $*[(start+1)..] : []
   end
 

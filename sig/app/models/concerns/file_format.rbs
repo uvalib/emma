@@ -249,12 +249,12 @@ module FileFormat
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
   def self.configuration_section: ((String|Symbol) section) -> symHash
-
-  attr_reader self.configuration_table: Hash[Symbol,symHash]
+  def      configuration_section: ((String|Symbol) section) -> symHash
 
   # Configured properties for each file format.
   #
   # @return [Hash{Symbol=>Hash}]
   #
   def self.configuration_table: () -> Hash[Symbol,symHash]
+  def      configuration_table: () -> Hash[Symbol,symHash]
 end

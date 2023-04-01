@@ -1611,8 +1611,8 @@ table.manifest_item-grid {
 
             > .controls {
                 @media #{$wide-screen}   { min-width: 12.5vw; }
-                @media #{$medium-width}  { min-width: 25vw; }
-                @media #{$narrow-screen} { min-width: 33vw; }
+                @media #{$medium-width}  { min-width: 25vw;   }
+                @media #{$narrow-screen} { min-width: 33vw;   }
             }
 
             &:not(.head) {

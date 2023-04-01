@@ -51,6 +51,7 @@ module Search::Shared::ScoreMethods
   #
   def total_score(precision: nil, **opt)
     result = get_scores(**opt).values.compact.sum
+    # noinspection RubyMismatchedArgumentType
     precision ? result.round(precision) : result
   end
 
@@ -198,7 +199,7 @@ module Search::Shared::ScoreMethods
         end
         [type, score]
       }.compact.to_h
-    scores.values.sum / types.values.sum
+    Float(scores.values.sum) / Float(types.values.sum)
   end
 
   # ===========================================================================

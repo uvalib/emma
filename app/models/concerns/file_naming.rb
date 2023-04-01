@@ -64,6 +64,7 @@ module FileNaming
     # @return [Hash{Symbol=>Class}]
     #
     def format_classes
+      # noinspection RbsMissingTypeSignature
       @format_classes ||=
         FileFormat::TYPES.map { |type|
           fmt = format_class(type)
@@ -76,6 +77,7 @@ module FileNaming
     # @return [Hash{Symbol=>Array<String>}]
     #
     def mime_types
+      # noinspection RbsMissingTypeSignature
       @mime_types ||= format_classes.transform_values(&:mime_types)
     end
 
@@ -84,6 +86,7 @@ module FileNaming
     # @return [Hash{Symbol=>Array<String>}]
     #
     def file_extensions
+      # noinspection RbsMissingTypeSignature
       @file_extensions ||= format_classes.transform_values(&:file_extensions)
     end
 
@@ -92,6 +95,7 @@ module FileNaming
     # @return [Hash{String=>Array<Symbol>}]
     #
     def mime_to_fmt
+      # noinspection RbsMissingTypeSignature
       @mime_to_fmt ||=
         Hash.new.tap { |hash|
           mime_types.each_pair do |type, mimes|
@@ -107,6 +111,7 @@ module FileNaming
     # @return [Hash{String=>Array<Symbol>}]
     #
     def ext_to_fmt
+      # noinspection RbsMissingTypeSignature
       @ext_to_fmt ||=
         Hash.new.tap { |hash|
           file_extensions.each_pair do |type, exts|

@@ -800,9 +800,9 @@ appSetup(MODULE, function() {
      *  that this use-case needs to be considered.
      *
      * @param {string} data
-     * @param {string} [filename]     For diagnostics only.
+     * @param {string} [_filename]     For diagnostics only.
      */
-    function reImportData(data, filename) {
+    function reImportData(data, _filename) {
         const func   = 'reImportData';
         const type   = dataType(data);
         const params = { data: data, type: type, caller: func };
@@ -2717,9 +2717,9 @@ appSetup(MODULE, function() {
          *
          * @param {UppyFile}                       file
          * @param {Error}                          error
-         * @param {{status: number, body: string}} [response]
+         * @param {{status: number, body: string}} [_response]
          */
-        function onError(file, error, response) {
+        function onError(file, error, _response) {
             _debug(`${func}: onError: file =`, file);
             flashError(error?.message || error);
             if (name_shown) { instance.hideFilename(false) }

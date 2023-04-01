@@ -66,10 +66,10 @@ appSetup(MODULE, function() {
          * Create an <img> from the supplied data and insert in $element.
          *
          * @param {object}         data
-         * @param {string}         status
-         * @param {XMLHttpRequest} xhr
+         * @param {string}         _status
+         * @param {XMLHttpRequest} _xhr
          */
-        function onSuccess(data, status, xhr) {
+        function onSuccess(data, _status, _xhr) {
             _debug(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error   = 'no data';
@@ -92,10 +92,10 @@ appSetup(MODULE, function() {
         /**
          * Actions after the request is completed.
          *
-         * @param {XMLHttpRequest} xhr
-         * @param {string}         status
+         * @param {XMLHttpRequest} _xhr
+         * @param {string}         _status
          */
-        function onComplete(xhr, status) {
+        function onComplete(_xhr, _status) {
             _debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
                 console.warn(`${func}: ${url}:`, error);

@@ -206,7 +206,7 @@ class LookupService::Request
   # :section: Object overrides
   # ===========================================================================
 
-  protected
+  public
 
   def dup
     self.class.new(self)
