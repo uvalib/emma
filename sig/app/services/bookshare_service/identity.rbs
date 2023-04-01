@@ -20,4 +20,18 @@ module BookshareService::Identity
   # @return [void]
   #
   def set_user: ((User|nil) u) -> void
+
+  # The current OAuth2 access bearer token.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no '@user'.
+  #
+  def access_token: () -> (String | nil)
+
+  # The current OAuth2 refresher token.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no '@user'.
+  #
+  def refresh_token: () -> (String | nil)
 end

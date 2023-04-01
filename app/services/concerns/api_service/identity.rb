@@ -56,24 +56,19 @@ module ApiService::Identity
     @user = u
   end
 
-  # The current OAuth2 access bearer token.
+  # The current OAuth2 access bearer token (if applicable).
   #
-  # @return [String]
-  # @return [nil]                     If there is no '@user'.
+  # @return [String, nil]
   #
   def access_token
-    @user&.access_token
   end
 
-  # The current OAuth2 refresher token.
+  # The current OAuth2 refresher token (if applicable).
   #
-  # @return [String]
-  # @return [nil]                     If there is no '@user'.
+  # @return [String, nil]
   #
   def refresh_token
-    @user&.refresh_token
   end
-
 
 end
 

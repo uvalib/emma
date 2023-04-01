@@ -246,8 +246,8 @@ module ApiService::Common
     path = path&.split('/')&.compact_blank!&.presence
     ver  = nil if ver && (base&.include?(ver) || path&.include?(ver))
     base = base&.join('/')
-    path = path&.join('/')&.delete_prefix("#{base}/")
-    path = [base, path].compact_blank!.join('/') unless rel
+    path = path&.join('/')
+    path = "#{base}/#{path}" if base && path && !path.start_with?(base)
     [url, ver, *path].compact_blank!.join('/').tap do |result|
       result << "?#{qry}" if qry
     end
@@ -411,38 +411,37 @@ module ApiService::Common
   # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
   #
   def transmit(verb, action, params, headers, **opt)
+    redirect  = nil
     @response = connection.send(verb, action, params, headers)
     raise empty_result_error if @response.nil?
 
     case @response.status
       when 202, 204
         # No response body expected.
-        action = nil
       when 200..299
         result = @response.body
         raise empty_result_error(@response) if result.blank?
         raise html_result_error(@response)  if result =~ /\A\s*<[^?]/
-        action = nil
       when 301, 303, 308, 302, 307
-        action = @response['Location'] || :missing
+        redirect = @response['Location'] || ''
       when 400..499
         raise request_error(@response)
       else
         raise response_error(@response)
     end
 
-    if action.nil? || opt[:no_redirect] || options[:no_redirect]
+    if redirect.nil? || opt[:no_redirect] || options[:no_redirect]
       @response
-    elsif action == :missing
+    elsif redirect.blank?
       raise redirect_error(@response)
     elsif (pass = opt[:redirection].to_i) >= max_redirects
       raise redirect_limit_error
     else
       opt[:redirection] = (pass += 1)
       __debug_line(leader: '!!!') do
-        [service_name] << "REDIRECT #{pass} TO #{action.inspect}"
+        [service_name] << "REDIRECT #{pass} TO #{redirect.inspect}"
       end
-      transmit(:get, action, params, headers, **opt)
+      transmit(:get, redirect, params, headers, **opt)
     end
   end
 

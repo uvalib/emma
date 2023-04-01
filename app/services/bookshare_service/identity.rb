@@ -47,6 +47,24 @@ module BookshareService::Identity
     @user = @user&.bookshare_user
   end
 
+  # The current OAuth2 access bearer token.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no '@user'.
+  #
+  def access_token
+    @user&.access_token&.presence
+  end
+
+  # The current OAuth2 refresher token.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no '@user'.
+  #
+  def refresh_token
+    @user&.refresh_token
+  end
+
 end
 
 __loading_end(__FILE__)

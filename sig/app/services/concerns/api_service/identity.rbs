@@ -25,17 +25,15 @@ module ApiService::Identity
   #
   def set_user: ((User|nil) u) -> void
 
-  # The current OAuth2 access bearer token.
+  # The current OAuth2 access bearer token (if applicable).
   #
-  # @return [String]
-  # @return [nil]                     If there is no '@user'.
+  # @return [String, nil]
   #
   def access_token: () -> (String | nil)
 
-  # The current OAuth2 refresher token.
+  # The current OAuth2 refresher token (if applicable).
   #
-  # @return [String]
-  # @return [nil]                     If there is no '@user'.
+  # @return [String, nil]
   #
   def refresh_token: () -> (String | nil)
 end

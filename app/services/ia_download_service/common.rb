@@ -92,12 +92,15 @@ module IaDownloadService::Common
     dbg  = +"... #{__method__} | #{pass}"
     __debug_line(dbg) { { action: action, params: params, headers: headers } }
 
+    redirect  = nil
     @response = connection.send(verb, action, params, headers)
     raise empty_result_error if @response.nil?
 
     case @response.status
+      when 202, 204
+        # No response body expected -- NOTE: not expected from archive.org
 
-      when 200, 201, 203..299
+      when 200..299
         # If the requested file is directly available from S3 then we arrive
         # here in pass 1.  In later passes, the requested file will have been
         # generated on-the-fly by the IA server.
@@ -105,55 +108,53 @@ module IaDownloadService::Common
         __debug_line(dbg, 'GOOD') { "#{result&.size || 0} bytes" }
         raise empty_result_error(@response) if result.blank?
         raise html_result_error(@response)  if result =~ /\A\s*</
-        action = nil
 
       when 301, 302, 303, 307, 308
         # If the requested file was not directly available, the redirect
         # should indicate the protected file if it exists.
-        action    = @response['Location'] || :missing
-        encrypted = action.match?(/_encrypted[_.]/)
-        action    = action.remove('_encrypted') if encrypted
+        redirect  = @response['Location'] || ''
+        encrypted = redirect.match?(/_encrypted[_.]/)
+        redirect  = redirect.remove('_encrypted') if encrypted
         __debug_line(dbg, 'REDIRECT') do
           parts = []
           parts << 'trying unencrypted first' if encrypted
-          parts << "next = #{action.inspect}"
+          parts << "next = #{redirect.inspect}"
         end
 
-      else
+      when 400..499
         # If the redirected URL failed there is still another possibility,
         # which is to request generation of an encrypted version of the file.
         # (The existence of this step was inferred by observing the behavior
         # of the "ia" Python script when executing "ia download".)  If the
         # URL that was requested already contains "_encrypted" then there are
         # no more things to try.
+        if action.include?('_encrypted')
+          __debug_line(dbg, 'FAIL', 'encrypted fallback failed')
+          raise request_error(@response)
+        end
         base = File.basename(action)
         ext  = base.sub!(/^.*(_[^.]*\.zip)$/, '\1') || File.extname(action)
-        if action.include?('&type=')
-          action = action.sub(/(#{ext})$/, '_encrypted\1')
-          __debug_line(dbg, 'ERROR', 'on-the-fly failed') { { next: action } }
+        otf  = action.include?('&type=')
+        err  = otf ? 'on-the-fly failed' : 'trying encrypted'
+        redirect = action.sub(/(#{ext})$/, '_encrypted\1')
+        __debug_line(dbg, 'ERROR', err) { { next: redirect } }
 
-        elsif !action.match?(/_encrypted[_.]/)
-          action = action.sub(/(#{ext})$/, '_encrypted\1')
-          __debug_line(dbg, 'ERROR', 'trying encrypted') { { next: action } }
-
-        else
-          __debug_line(dbg, 'FAIL', 'encrypted fallback failed')
-          raise response_error(@response)
-        end
+      else
+        raise response_error(@response)
     end
 
-    if action.nil? || opt[:no_redirect] || options[:no_redirect]
+    if redirect.nil? || opt[:no_redirect] || options[:no_redirect]
       @response
-    elsif action == :missing
+    elsif redirect.blank?
       raise redirect_error(@response)
     elsif pass >= max_redirects
       raise redirect_limit_error
     else
       opt[:redirection] = (pass += 1)
       __debug_line(leader: '!!!') do
-        [service_name] << "REDIRECT #{pass} TO #{action.inspect}"
+        [service_name] << "REDIRECT #{pass} TO #{redirect.inspect}"
       end
-      transmit(:get, action, params, headers, **opt)
+      transmit(:get, redirect, params, headers, **opt)
     end
   end
 
