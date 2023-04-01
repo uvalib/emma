@@ -33,7 +33,6 @@ $enclosure-pad-narrow:      0.75rem;
 
     @include section;
 
-    max-width:        calc(#{v.$lg-width} - (2 * #{v.$page-padding-x}));
     background-color: inherit;
 
     @media #{v.$narrow-screen} {

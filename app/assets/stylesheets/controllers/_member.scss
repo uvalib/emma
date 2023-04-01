@@ -68,11 +68,11 @@
         border-top:  1px solid gray;
 
         @media #{$wide-screen} {
-            grid-template-columns: [label] 0.1fr [value] 1fr;
+            grid-template-columns: [label] 0.1fr  [value] 1fr;
         }
 
         @media #{$medium-width} {
-            grid-template-columns: [label] 0.2fr [value] 1fr;
+            grid-template-columns: [label] 0.25fr [value] 1fr;
         }
 
         &:last-of-type {
@@ -102,6 +102,12 @@
             margin-top: -0.5rem;
         }
     }
+
+    .member-details + .member-preferences {
+        @media #{$not-wide-screen} {
+            margin-top: 2rem;
+        }
+    }
 }
 
 .member-container + .member-history {
@@ -112,12 +118,19 @@
 // "details column" a header that matches the "preferences column".
 .account.list-heading {
 
-    $member-details-gap: 3rem;
+    @media #{$wide-screen} {
 
-    margin-top:    4rem;
-    margin-bottom: -$member-details-gap;
+        $member-details-gap: 3rem;
 
-    & + .member-container .member-details {
-        margin-top: $member-details-gap;
+        margin-top:    4rem;
+        margin-bottom: -$member-details-gap;
+
+        & + .member-container .member-details {
+            margin-top: $member-details-gap;
+        }
+    }
+
+    @media #{$not-wide-screen} {
+        margin-top: 3rem;
     }
 }

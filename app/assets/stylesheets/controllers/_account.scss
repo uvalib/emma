@@ -104,8 +104,16 @@
 
 // @see file:app/views/account/_local.html.erb
 .account.local-heading {
-    margin-top:    4rem;
-    margin-bottom: 2rem;
+
+    @media #{$wide-screen} {
+        margin-top:    4rem;
+        margin-bottom: 2rem;
+    }
+
+    @media #{$not-wide-screen} {
+        margin-top:    3rem;
+        margin-bottom: 1rem;
+    }
 }
 
 // Account metadata values.

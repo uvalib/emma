@@ -160,7 +160,13 @@ $checkbox-x-gap: 0.675rem;
 
     .pagination-top {
 
-        margin-bottom: $entry-item-gap * 0.5;
+        @media #{$not-narrow-screen} {
+            margin-bottom: $entry-item-gap * 0.5;
+        }
+
+        @media #{$narrow-screen} {
+            margin-bottom: 0;
+        }
 
         .list-filter-panel {
 
@@ -517,8 +523,15 @@ form.select-entry {
 
                 display: contents;
 
-                input:focus {
-                    outline-offset: 3px;
+                input {
+                    @media #{$not-wide-screen} {
+                        transform: scale(1.375);
+                    }
+                    &:focus {
+                        @media #{$wide-screen} {
+                            outline-offset: 3px;
+                        }
+                    }
                 }
 
                 label {
@@ -614,7 +627,7 @@ form.select-entry {
             }
 
             @media #{$narrow-screen} {
-                margin-right: 0.25rem;
+                margin-right: 1rem;
                 font-size:    x-large;
             }
         }

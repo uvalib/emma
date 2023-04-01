@@ -1252,8 +1252,18 @@ $title-scroll-mask:
             }
 
             .toggle.for-item {
-                align-self:    flex-end;
-                margin-bottom: 0;
+
+                align-self: flex-end;
+
+                @media #{$not-narrow-screen} {
+                    margin-bottom: 0;
+                }
+
+                @media #{$narrow-screen} {
+                    margin-bottom: 0.5rem;
+                    margin-left:   0.25rem;
+                    transform:     scale(1.5);
+                }
             }
         }
 
@@ -1319,8 +1329,8 @@ $title-scroll-mask:
 
         @media #{$narrow-screen} {
             width:             92.5vw;
-            margin-left:       -(2rem + $narrow-left-pad);
-            margin-right:      (2rem + $narrow-left-pad);
+            margin-left:       -(1.25rem + $narrow-left-pad);
+            margin-right:      (1.25rem + $narrow-left-pad);
             margin-bottom:     $narrow-item-separation;
             grid-column-start: 2;
         }

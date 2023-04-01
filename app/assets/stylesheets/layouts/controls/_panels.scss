@@ -50,20 +50,28 @@
     display:        inline-flex;
     flex-direction: row;
 
-    @media #{$narrow-screen} {
+    @media #{$wide-screen} {
+        column-gap: $gap-x;
+    }
 
+    @media #{$medium-width} {
+        column-gap: calc(2 * #{$gap-x});
+    }
+
+    @media #{$narrow-screen} {
         margin-bottom: $page-padding;
         flex-wrap:     wrap;
+    }
 
-        .list-heading {
-            margin-bottom: 1rem;
+    .toggle {
+        @media #{$not-narrow-screen} {
+            margin-right: $gap-x;
         }
     }
 
-    @media #{$not-narrow-screen} {
-        .toggle {
-            margin-left:  $gap-x;
-            margin-right: $gap-x;
+    .list-heading {
+        @media #{$narrow-screen} {
+            margin-bottom: 1rem;
         }
     }
 }

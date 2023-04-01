@@ -25,6 +25,8 @@ body.home-dashboard {
     }
 
     .heading + .page-text-section {
-        margin-top: 3rem;
+        @media #{$wide-screen} {
+            margin-top: 3rem;
+        }
     }
 }
