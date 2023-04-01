@@ -19,10 +19,10 @@
         padding-right:  calc((#{$page-padding-x} / 2) + #{$scroll-easement});
     }
 
-    @media #{$not-narrow-screen} {
-        // @note Not available in Firefox without setting the flag
-        //  "layout.css.has-selector.enabled".
-        &:has(.dev-controls) {
+    // NOTE: only available in Firefox by setting the flag
+    //  "layout.css.has-selector.enabled".
+    &:has(.dev-controls) {
+        @media #{$not-narrow-screen} {
             padding-top:    calc(0.25 * #{$page-padding-y});
             padding-bottom: calc(0.25 * #{$page-padding-y});
         }
@@ -85,7 +85,6 @@
         $page-control-gap-y: calc(#{$gap-y} / 2);
 
         width:           max-content;
-        max-width:       100%;
         flex-wrap:       nowrap;
         justify-content: flex-start;
         align-items:     baseline;
@@ -94,6 +93,7 @@
 
         @media #{$wide-screen} {
             min-width:   max-content;
+            max-width:   100%;
         }
 
         @media #{$medium-width} {
@@ -146,11 +146,14 @@
                 @include button.basic;
 
                 margin:       0;
-                margin-right: $page-control-gap-x;
                 font-size:    larger;
                 color:        inherit;
                 border-color: $debug-fg;
                 border-width: 2px;
+
+                @media #{$not-narrow-screen} {
+                    margin-right:  $page-control-gap-x;
+                }
 
                 @media #{$narrow-screen} {
                     margin-top:    $page-control-gap-y;

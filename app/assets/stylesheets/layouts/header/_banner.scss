@@ -76,7 +76,9 @@
 
         > * {
 
-            margin: auto $flex-gap-x auto 0;
+            @media #{$not-narrow-screen} {
+                margin: auto $flex-gap-x auto 0;
+            }
 
             @media #{$narrow-screen} {
                 margin: $flex-gap-y 0 0;
@@ -139,12 +141,15 @@
     // the display regardless of the width of the display.
     .control-area {
 
-        flex-wrap:       wrap-reverse;
-        justify-content: flex-end;
-        max-width:       50%;
-        margin-top:      auto;
-        margin-left:     $page-padding-x;
-        flex:            0 1 auto;
+        flex-wrap:         wrap-reverse;
+        justify-content:   flex-end;
+        max-width:         50%;
+        margin-left:       $page-padding-x;
+        flex:              0 1 auto;
+
+        @media #{$not-narrow-screen} {
+            margin-top:    auto;
+        }
 
         @media #{$narrow-screen} {
             margin-top:    0;
@@ -153,7 +158,9 @@
 
         > * {
 
-            margin: auto 0 auto $flex-gap-x;
+            @media #{$not-narrow-screen} {
+                margin: auto 0 auto $flex-gap-x;
+            }
 
             @media #{$narrow-screen} {
                 margin: $flex-gap-y 0 0;
@@ -190,9 +197,12 @@
 
         margin-top: 0;
         min-height: 3rem;
-        max-height: 4rem;
         font-size:  xx-large;
         flex:       0 0 auto;
+
+        @media #{$not-narrow-screen} {
+            max-height: 4rem;
+        }
 
         @media #{$narrow-screen} {
             max-height: 5rem;
@@ -221,16 +231,19 @@
     //
     .tagline {
 
-        font-size:    smaller;
-        font-variant: small-caps;
-        flex:         0 1 auto;
+        font-variant:   small-caps;
+        flex:           0 1 auto;
+
+        @media #{$wide-screen} {
+            font-size:  smaller;
+        }
 
         @media #{$medium-width} {
-            font-size: small;
+            font-size:  small;
         }
 
         @media #{$narrow-screen} {
-            display: none;
+            display:    none;
         }
     }
 

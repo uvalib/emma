@@ -57,11 +57,14 @@
         $page-control-gap-y: calc(#{$gap-y} / 2);
 
         width:           max-content;
-        max-width:       100%;
         margin-bottom:   2vh;
         flex-wrap:       wrap;
         justify-content: flex-start;
         align-items:     baseline;
+
+        @media #{$wide-screen} {
+            max-width:     100%;
+        }
 
         @media #{$medium-width} {
             max-width:     98%;

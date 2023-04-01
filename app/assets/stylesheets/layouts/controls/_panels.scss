@@ -18,12 +18,11 @@
     @include width-fit-content;
     @include block-shadow;
 
-    min-width:   50%;
-    max-width:   50%;
-    padding:     1rem;
-    line-height: 1.375;
+    min-width:     50%;
+    padding:       1rem;
+    line-height:   1.375;
 
-    @media #{$medium-width} {
+    @media #{$not-narrow-screen} {
         max-width: 100%;
     }
 

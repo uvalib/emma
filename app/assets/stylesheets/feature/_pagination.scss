@@ -76,12 +76,15 @@
         margin:      -1px 0.375rem 3px;
         padding:     0;
         line-height: 0.75;
-        font-size:   large;
         font-weight: bold;
         color:       gray;
 
         @media #{$not-narrow-screen} {
             font-size: x-large;
+        }
+
+        @media #{$narrow-screen} {
+            font-size: large;
         }
     }
 }
@@ -89,13 +92,13 @@
 // @see BaseCollectionDecorator::List#index_controls
 .pagination-top {
 
-    display:        flex;
-    flex-wrap:      wrap;
-    flex-direction: row;
+    display:   flex;
+    flex-wrap: wrap;
 
     @media #{$not-narrow-screen} {
-        align-items: center;
-        max-width:   inherit;
+        flex-direction: row;
+        align-items:    center;
+        max-width:      inherit;
     }
 
     @media #{$narrow-screen} {
@@ -143,7 +146,10 @@
         .search-count {
 
             display: inline-block;
-            margin:  auto 0 auto 0.75rem;
+
+            @media #{$not-narrow-screen} {
+                margin: auto 0 auto 0.75rem;
+            }
 
             @media #{$narrow-screen} {
                 margin: 0.5rem 0 0;

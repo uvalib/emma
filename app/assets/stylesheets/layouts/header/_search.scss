@@ -316,14 +316,14 @@ $control-height:         2.25rem;
         &.top,
         &.complete {
 
-            margin-top: 2rem; // Keep shadow from being clipped.
-
             @media #{$wide-screen} {
                 padding-top: calc(#{header.$enclosure-pad-wide} + 0.5rem);
+                margin-top:  2rem; // Keep shadow from being clipped.
             }
 
             @media #{$medium-width} {
                 padding-top: calc(#{header.$enclosure-pad-medium} + 0.5rem);
+                margin-top:  2rem; // Keep shadow from being clipped.
             }
 
             @media #{$narrow-screen} {
@@ -375,9 +375,12 @@ $control-height:         2.25rem;
 .layout-section.search.bar.enclosure,
 .layout-section.search.bar > .enclosure {
 
-    display:               grid;
-    grid-template-columns: [container] 1fr [controls] auto;
-    column-gap:            1rem;
+    display:    grid;
+    column-gap: 1rem;
+
+    @media #{$not-narrow-screen} {
+        grid-template-columns: [container] 1fr [controls] auto;
+    }
 
     @media #{$narrow-screen} {
         grid-template-columns: 1fr;
@@ -423,8 +426,10 @@ $control-height:         2.25rem;
 
         @include header.section;
 
-        flex-wrap:       nowrap;
-        justify-content: flex-start;
+        @media #{$wide-screen} {
+            flex-wrap:       nowrap;
+            justify-content: flex-start;
+        }
 
         @media #{$not-wide-screen} {
             flex-wrap:       wrap;
@@ -438,10 +443,13 @@ $control-height:         2.25rem;
         // @see LayoutHelper::SearchBar#search_input_select
         .search-input-select {
 
-            height:       1.75rem;
-            margin-right: 0.5rem;
-            font-size:    large;
-            color:        var(--fg-color);
+            font-size: large;
+
+            @media #{$not-narrow-screen} {
+                height:       1.75rem;
+                margin-right: 0.5rem;
+                color:        var(--fg-color);
+            }
 
             // noinspection CssReplaceWithShorthandSafely
             @media #{$narrow-screen} {
@@ -467,18 +475,21 @@ $control-height:         2.25rem;
 
         .search-bar {
 
-            display:      flex;
-            flex-wrap:    nowrap;
-            margin-right: calc(2 * #{$gap-x});
-            flex:         1 1 auto;
+            display:          flex;
+            flex-wrap:        nowrap;
+            flex:             1 1 auto;
+
+            @media #{$wide-screen} {
+                margin-right: calc(2 * #{$gap-x});
+            }
 
             @media #{$medium-width} {
                 margin-right: calc(4 * #{$gap-x});
             }
 
             @media #{$narrow-screen} {
-                max-width: 80vw;
-                margin:    calc(2 * #{$gap-y}) 0;
+                max-width:    80vw;
+                margin:       calc(2 * #{$gap-y}) 0;
             }
         }
     }
@@ -533,9 +544,12 @@ $control-height:         2.25rem;
 
             @include header.section;
 
-            flex-direction:  column;
-            flex-wrap:       nowrap;
-            justify-content: flex-start;
+            flex-direction: column;
+
+            @media #{$wide-screen} {
+                flex-wrap:       nowrap;
+                justify-content: flex-start;
+            }
 
             @media #{$not-wide-screen} {
                 flex-wrap:       wrap;
@@ -548,7 +562,9 @@ $control-height:         2.25rem;
 
                 &:not(.first) {
 
-                    margin-top: $sb-row-vertical-gap;
+                    @media #{$not-narrow-screen} {
+                        margin-top: $sb-row-vertical-gap;
+                    }
 
                     @media #{$narrow-screen} {
                         margin-top: $sb-row-narrow-vertical-gap;
@@ -779,8 +795,8 @@ $control-height:         2.25rem;
                     @include hidden-grid-cell;
                 }
 
-                @media #{$narrow-screen} {
-                    &:not(.col-first) {
+                &:not(.col-first) {
+                    @media #{$narrow-screen} {
                         @include hidden-grid-cell;
                     }
                 }

@@ -84,14 +84,18 @@
             .value.field-Formats {
 
                 display:         inline-flex;
-                flex-direction:  row;
                 justify-content: space-between;
 
+                @media #{$not-narrow-screen} {
+                    flex-direction: row;
+                }
+
                 @media #{$narrow-screen} {
-
                     flex-direction: column;
+                }
 
-                    .artifact {
+                .artifact {
+                    @media #{$narrow-screen} {
                         margin-top: 0.5rem;
                     }
                 }

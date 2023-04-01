@@ -84,7 +84,9 @@
 
 .ability-debug {
 
-    width: 50%;
+    @media #{$wide-screen} {
+        width:      50%;
+    }
 
     @media #{$not-wide-screen} {
         width:      100%;

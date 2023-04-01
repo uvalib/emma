@@ -92,8 +92,11 @@
             .value {
 
                 margin-bottom: 1rem;
-                font-size:     large;
                 font-weight:   bold;
+
+                @media #{$not-narrow-screen} {
+                    font-size: large;
+                }
 
                 @media #{$narrow-screen} {
                     font-size: larger;
@@ -106,18 +109,20 @@
                 display:        flex;
                 flex-direction: column;
                 align-items:    center;
-                padding:        $tray-pad;
-                margin-left:    -$tray-pad;
-                margin-right:   -$tray-pad;
                 background:     whitesmoke;
                 border:         1px solid var(--fg-color);
                 border-radius:  0.25rem;
 
+                @media #{$not-narrow-screen} {
+                    margin-left:    -$tray-pad;
+                    margin-right:   -$tray-pad;
+                    padding:        $tray-pad;
+                }
+
                 @media #{$narrow-screen} {
-                    padding-left:  $icon-pad;
-                    padding-right: $icon-pad;
-                    margin-left:   0;
-                    margin-right:  -0.125rem;
+                    margin-left:    0;
+                    margin-right:   -0.125rem;
+                    padding:        $tray-pad $icon-pad;
                 }
             }
 
@@ -247,20 +252,12 @@
         // @see BaseDecorator::List#render_pair
         &.array {
 
-            display:        flex;
-            flex-direction: row;
-            flex-wrap:      wrap;
-            margin-bottom:  0;
+            display:   flex;
+            flex-wrap: wrap;
 
-            > * {
-
-                @include value-box(blue);
-
-                margin-right:   0.5rem;
-                margin-bottom:  0.5rem;
-                padding-top:    0.0625rem;
-                padding-bottom: 0.09375rem;
-                line-height:    1;
+            @media #{$not-narrow-screen} {
+                flex-direction: row;
+                margin-bottom:  0;
             }
 
             @media #{$narrow-screen} {
@@ -272,8 +269,22 @@
                 &:last-of-type {
                     margin-bottom: 0;
                 }
+            }
 
-                > * {
+            > * {
+
+                @include value-box(blue);
+
+                margin-bottom:  0.5rem;
+                padding-top:    0.0625rem;
+                padding-bottom: 0.09375rem;
+                line-height:    1;
+
+                @media #{$not-narrow-screen} {
+                    margin-right: 0.5rem;
+                }
+
+                @media #{$narrow-screen} {
                     margin-right: 0;
                 }
             }
@@ -292,21 +303,21 @@
         $wide-margin:   2rem;
         $medium-margin: 1rem;
         $narrow-margin: 0.5rem;
+        $narrow-left:   $narrow-margin;
+        $narrow-right:  $narrow-margin * 0.5;
 
-        margin:  0 $wide-margin;
         padding: $item-padding;
+
+        @media #{$wide-screen} {
+            margin: 0 $wide-margin;
+        }
 
         @media #{$medium-width} {
             margin: 0 $medium-margin;
         }
 
         @media #{$narrow-screen} {
-
-            $left:  $narrow-margin;
-            $right: 0.5 * $narrow-margin;
-
-            margin: 0 $right 0 $left;
-
+            margin: 0 $narrow-right 0 $narrow-left;
             grid-template-columns: 1fr;
         }
 
@@ -318,9 +329,14 @@
         // Adjustment for a hierarchical element which is itself a hierarchy.
         .data-list {
 
-            margin-top:   1.75rem;
-            margin-left:  -4rem;
-            margin-right: $wide-margin;
+            @media #{$not-narrow-screen} {
+                margin-top:   1.75rem;
+                margin-left:  -4rem;
+            }
+
+            @media #{$wide-screen} {
+                margin-right: $wide-margin;
+            }
 
             @media #{$medium-width} {
                 margin-right: $medium-margin * 1.25;
@@ -364,12 +380,15 @@
 // the right of the details listing.
 .model-container {
 
-    display:        flex;
-    flex-direction: column;
+    display: flex;
 
     @media #{$wide-screen} {
         margin-top:     $page-padding;
         flex-direction: row;
+    }
+
+    @media #{$not-wide-screen} {
+        flex-direction: column;
     }
 
     //=========================================================================

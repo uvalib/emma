@@ -29,7 +29,9 @@ $page-section-gap-small: $page-section-gap * 0.5;
     // Space between consecutive text sections.
     & + & {
 
-        margin-top: $page-section-gap;
+        @media #{$not-narrow-screen} {
+            margin-top: $page-section-gap;
+        }
 
         @media #{$narrow-screen} {
             margin-top: $page-section-gap-small;
@@ -61,7 +63,9 @@ $page-section-gap-small: $page-section-gap * 0.5;
 
         @extend .description;
 
-        margin: $page-section-gap 0;
+        @media #{$not-narrow-screen} {
+            margin: $page-section-gap 0;
+        }
 
         @media #{$narrow-screen} {
             margin: $page-section-gap-small 0;
@@ -91,21 +95,25 @@ ul.page-actions {
 
     li.page-action {
 
-        margin-top:          0.5rem;
         list-style-position: inside;
 
-        .control:focus {
-            outline-offset:  2.5px;
+        @media #{$not-narrow-screen} {
+            margin-top: 0.5rem;
         }
 
         @media #{$narrow-screen} {
-
             margin-top: 0.75rem;
+        }
 
-            .control {
+        .control {
+            @media #{$narrow-screen} {
                 margin: -0.25rem;
                 border: 0.25rem solid transparent;
             }
+        }
+
+        .control:focus {
+            outline-offset: 2.5px;
         }
     }
 }

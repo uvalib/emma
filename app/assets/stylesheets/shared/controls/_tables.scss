@@ -23,14 +23,9 @@ $border-fg:  var(--rev-fg-color);
 ///
 @mixin grid-table {
 
-    display:        grid;
-    position:       relative;
-    padding-bottom: $gap;
-    line-height:    1.25;
-
-    @media #{v.$narrow-screen} {
-        padding-bottom: $narrow-gap;
-    }
+    display:     grid;
+    position:    relative;
+    line-height: 1.25;
 
     //=========================================================================
     // Grid layout
@@ -38,13 +33,17 @@ $border-fg:  var(--rev-fg-color);
 
     $max-columns: 50;
 
-    gap: $gap;
-
     @include grid.column-classes($max-columns, 1fr);
     @include grid.cell-col-classes($max-columns);
 
+    @media #{v.$not-narrow-screen} {
+        gap:            $gap;
+        padding-bottom: $gap;
+    }
+
     @media #{v.$narrow-screen} {
-        gap: $narrow-gap;
+        gap:            $narrow-gap;
+        padding-bottom: $narrow-gap;
     }
 
     //=========================================================================
@@ -181,7 +180,9 @@ $border-fg:  var(--rev-fg-color);
 
         .row-last {
 
-            padding-bottom: $gap;
+            @media #{v.$not-narrow-screen} {
+                padding-bottom: $gap;
+            }
 
             @media #{v.$narrow-screen} {
                 padding-bottom: $narrow-gap;

@@ -99,10 +99,14 @@ body.manifest.edit:not(.select) {
         // - Replacing part of the left margin with padding is required to keep
         //   the Save button box shadow from being clipped when it is hovered.
 
-        $half-left:   calc(#{$page-padding-x} / 2);
-        margin-left:  $half-left;
-        padding-left: $half-left;
-        overflow:     hidden;
+        $half-left:  calc(#{$page-padding-x} / 2);
+
+        margin-left: $half-left;
+        overflow:    hidden;
+
+        @media #{$not-narrow-screen} {
+            padding-left:  $half-left;
+        }
 
         @media #{$narrow-screen} {
             padding-left:  0;
@@ -339,9 +343,12 @@ body.manifest.edit:not(.select) {
         .pagination-top {
 
             margin-bottom: model.$list-item-gap-y;
-            align-items:   baseline;
             flex-wrap:     nowrap;
             gap:           calc($flex-gap * 2);
+
+            @media #{$not-narrow-screen} {
+                align-items: baseline;
+            }
 
             @media #{$narrow-screen} {
                 align-items: center;
@@ -453,23 +460,22 @@ body.manifest.remit {
 
     .submission-counts {
 
-        display:         grid;
-        grid-auto-flow:  column;
-        align-content:   center;
-        gap:             0.5rem;
-        min-height:      2rem;
-        padding:         0.25rem;
-        border:          double;
-        background:      ghostwhite;
-        flex:            1 1 auto;
+        display:        grid;
+        grid-auto-flow: column;
+        align-content:  center;
+        gap:            0.5rem;
+        min-height:     2rem;
+        border:         double;
+        background:     ghostwhite;
+        flex:           1 1 auto;
 
         @media #{$wide-screen} {
-            justify-content: space-between;
-            padding-left:    1.25rem;
-            padding-right:   1.25rem;
+            padding:           0.25rem 1.25rem;
+            justify-content:   space-between;
         }
 
         @media #{$not-wide-screen} {
+            padding:           0.25rem;
             grid-auto-columns: 1fr;
         }
 
@@ -484,10 +490,13 @@ body.manifest.remit {
         //.failed.count,
         .count {
 
-            display:        flex;
-            flex-direction: row;
-            align-items:    center;
-            gap:            0.25rem;
+            display:     flex;
+            align-items: center;
+            gap:         0.25rem;
+
+            @media #{$wide-screen} {
+                flex-direction: row;
+            }
 
             @media #{$not-wide-screen} {
                 flex-direction: column;
@@ -497,8 +506,8 @@ body.manifest.remit {
 
                 text-transform: capitalize;
 
-                @media #{$wide-screen} {
-                    &::after {
+                &::after {
+                    @media #{$wide-screen} {
                         content: ": ";
                     }
                 }
@@ -536,7 +545,10 @@ body.manifest.remit {
         display:        flex;
         flex-direction: row;
         align-items:    center;
-        gap:            $page-padding-y;
+
+        @media #{$wide-screen} {
+            gap:        $page-padding-y;
+        }
 
         @media #{$not-wide-screen} {
             gap:        $page-padding;
@@ -554,9 +566,9 @@ body.manifest.remit {
             flex: 1 1 auto;
         }
 
-        @media #{$wide-screen} {
-            .form-button + .submission-counts,
-            .submission-counts + .form-button {
+        .form-button + .submission-counts,
+        .submission-counts + .form-button {
+            @media #{$wide-screen} {
                 margin-left: 2rem;
             }
         }
@@ -566,7 +578,10 @@ body.manifest.remit {
 
         display:     grid;
         align-items: center;
-        gap:         $page-padding-y;
+
+        @media #{$wide-screen} {
+            gap:     $page-padding-y;
+        }
 
         @media #{$not-wide-screen} {
             gap:     $page-padding;
@@ -589,7 +604,9 @@ body.manifest.remit {
     .submission-controls + .auxiliary-buttons,
     .auxiliary-buttons + .submission-controls {
 
-        margin-top: $page-padding-y;
+        @media #{$wide-screen} {
+            margin-top: $page-padding-y;
+        }
 
         @media #{$not-wide-screen} {
             margin-top: $page-padding;
@@ -855,14 +872,17 @@ body.manifest.remit {
                 details[open] {
                     .content {
 
-                        display:       grid;
-                        gap:           0.25rem 1rem;
-                        padding-top:   0.375rem;
-                        margin-top:    0.375rem;
-                        margin-left:   1rem;
-                        border-top:    1px solid black;
+                        display:     grid;
+                        padding-top: 0.375rem;
+                        margin-top:  0.375rem;
+                        border-top:  1px solid black;
 
                         grid-template-columns: auto 1fr;
+
+                        @media #{$wide-screen} {
+                            gap:         0.25rem 1rem;
+                            margin-left: 1rem;
+                        }
 
                         @media #{$not-wide-screen} {
                             gap:         0.125rem 0.5rem;

@@ -286,20 +286,24 @@
 ///
 @mixin banner {
 
-    display:          flex;
-    flex-direction:   row;
-    justify-content:  space-between;
-    width:            inherit;
-    margin:           0;
-    padding:          v.$page-padding-y v.$page-padding-x;
-    color:            var(--rev-fg-color);
-    background-color: var(--rev-bg-color);
+    display:            flex;
+    flex-direction:     row;
+    justify-content:    space-between;
+    width:              inherit;
+    margin:             0;
+    color:              var(--rev-fg-color);
+    background-color:   var(--rev-bg-color);
 
-    --focus-color:    var(--rev-focus-color);
+    --focus-color:      var(--rev-focus-color);
 
+    @media #{v.$wide-screen} {
+        padding:        v.$page-padding-y v.$page-padding-x;
+    }
+
+    // noinspection CssReplaceWithShorthandSafely
     @media #{v.$not-wide-screen} {
-        padding-top:    calc(2 * #{v.$page-padding-y});
-        padding-bottom: calc(2 * #{v.$page-padding-y});
+        padding:        calc(2 * #{v.$page-padding-y});
+        padding-left:   v.$page-padding-x;
         padding-right:  calc(#{v.$page-padding-x} + #{v.$scroll-easement});
     }
 

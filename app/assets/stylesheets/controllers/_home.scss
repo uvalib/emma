@@ -12,9 +12,12 @@ body.home-dashboard {
 
     .sign-in {
 
-        margin-top:    $page-padding;
-        margin-bottom: $page-padding;
-        font-weight:   bold;
+        margin-bottom:  $page-padding;
+        font-weight:    bold;
+
+        @media #{$wide-screen} {
+            margin-top: $page-padding;
+        }
 
         @media #{$not-wide-screen} {
             margin-top: calc(2 * #{$page-padding});

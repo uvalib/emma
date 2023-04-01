@@ -74,7 +74,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
             @include user-select(none);
 
-            padding-left: 0.5rem;
+            @media #{$wide-screen} {
+                padding-left: 0.5rem;
+            }
 
             @media #{$not-wide-screen} {
                 padding-left: 0.375rem;
@@ -92,10 +94,17 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     // <label> element.
     label.radio {
 
-        margin:     0.75rem;
-        border:     none;
         flex:       0 1 auto;
         column-gap: 0.25rem;
+        border:     none;
+
+        @media #{$not-narrow-screen} {
+            margin: 0.75rem;
+        }
+
+        @media #{$narrow-screen} {
+            margin: 0.25rem;
+        }
 
         &:hover,
         &:focus-within {
@@ -217,11 +226,14 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
             display:        flex;
             flex-direction: column;
-            padding:        0.375rem 0.875rem;
             line-height:    1.375;
             text-align:     center;
-            font-size:      medium;
             font-weight:    bold;
+
+            @media #{$not-narrow-screen} {
+                padding:    0.375rem 0.875rem;
+                font-size:  medium;
+            }
 
             @media #{$narrow-screen} {
                 padding:    0.5rem 0;
@@ -290,8 +302,11 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         @include entry-radio-group;
 
-        width:     max-content;
         max-width: inherit;
+
+        @media #{$not-narrow-screen} {
+            width: max-content;
+        }
 
         @media #{$narrow-screen} {
             width: 100%;
@@ -319,19 +334,23 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     @include entry-radio-group;
 
-    margin:     $page-padding 0;
     padding:    0.25rem;
     background: $debug-bg;
 
     justify-content: flex-start;
 
-    @media #{$medium-width} {
-        margin-top:    1.5rem;
-        margin-bottom: 1.5rem;
+    @media #{$wide-screen} {
+        margin: $page-padding 0;
     }
 
+    @media #{$medium-width} {
+        margin: 1.5rem 0;
+    }
+
+    // noinspection CssReplaceWithShorthandSafely
     @media #{$narrow-screen} {
         margin-top:    1.5rem;
+        margin-bottom: $page-padding;
         margin-left:   0.125rem;
         margin-right:  0.25rem;
     }
@@ -363,13 +382,15 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     .search-input {
 
-        line-height: 1.5;
-        flex:        1 1 auto;
+        @media #{$not-narrow-screen} {
+            line-height:    1.5;
+            flex:           1 1 auto;
+        }
 
         @media #{$narrow-screen} {
-            margin-bottom: 0.5rem;
-            line-height:   2;
-            flex:          1 1 100%;
+            margin-bottom:  0.5rem;
+            line-height:    2;
+            flex:           1 1 100%;
         }
     }
 
@@ -396,14 +417,17 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     display: grid;
 
-    grid-template-columns:
-        [submit] auto [cancel] auto [file] auto [selected] 1fr;
-    gap: $form-gap;
+    @media #{$not-narrow-screen} {
+        gap:          $form-gap;
+    }
 
     @media #{$narrow-screen} {
         margin-right: 0.25rem;
         gap:          $form-gap-narrow;
     }
+
+    grid-template-columns:
+        [submit] auto [cancel] auto [file] auto [selected] 1fr;
 
     // Uploader for a new EMMA entry.
     &.new {}
@@ -495,11 +519,14 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         display:         flex;
         flex-direction:  row;
-        flex-wrap:       nowrap;
         align-items:     baseline;
         justify-content: start;
         gap:             $form-gap;
         max-width:       inherit;
+
+        @media #{$not-narrow-screen} {
+            flex-wrap:   nowrap;
+        }
 
         @media #{$narrow-screen} {
             flex-wrap:   wrap;
@@ -551,10 +578,11 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
             }
 
             @media #{$narrow-screen} {
-
                 max-width: unset;
+            }
 
-                .filename {
+            .filename {
+                @media #{$narrow-screen} {
                     max-width: 85vw;
                 }
             }
@@ -705,7 +733,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     input[type="text"],
     input[type="number"] {
 
-        flex: 0 1 33%;
+        @media #{$not-narrow-screen} {
+            flex: 0 1 33%;
+        }
 
         @media #{$narrow-screen} {
             flex: 1 1 auto;

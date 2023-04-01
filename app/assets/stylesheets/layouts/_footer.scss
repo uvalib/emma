@@ -43,8 +43,10 @@ $footer-margin-top: 1rem;
         margin:  0;
         padding: 0;
 
-        grid-template-columns: 1fr 1fr;
-        gap:                   0.25rem 1rem;
+        @media #{$not-narrow-screen} {
+            grid-template-columns: 1fr 1fr;
+            gap:                   0.25rem 1rem;
+        }
 
         @media #{$narrow-screen} {
             grid-template-columns: 1fr;

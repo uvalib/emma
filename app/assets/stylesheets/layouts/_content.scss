@@ -18,6 +18,9 @@
     // Give a little extra clearance for the scroll bar.
     @media #{$not-wide-screen} {
         margin-right: calc(#{$page-padding-x} + #{$scroll-easement} );
+    }
+
+    @media #{$medium-width} {
         padding-top:  calc(#{$page-padding-y} / 2);
     }
 
@@ -32,12 +35,18 @@
     display:     flex;
     align-items: center;
     margin:      $page-padding 0;
-    word-break:  break-all;
     font-size:   $h1-font-size;
 
+    @media #{$wide-screen} {
+        word-break: break-all;
+    }
+
     @media #{$not-wide-screen} {
-        margin:     calc(2 * #{$page-padding}) auto;
         word-break: break-word;
+    }
+
+    @media #{$narrow-screen} {
+        margin:     calc(2 * #{$page-padding}) auto;
     }
 }
 
@@ -48,17 +57,17 @@
     gap:     $flex-gap-y $flex-gap-x;
     grid-template-columns: [text] 1fr [logo] auto;
 
+    @media #{$wide-screen} {
+        margin-top:    0;
+        margin-bottom: 0;
+    }
+
     > * {
         margin: auto 0;
     }
 
     .heading {
         word-break: break-word;
-    }
-
-    @media #{$wide-screen} {
-        margin-top:    0;
-        margin-bottom: 0;
     }
 
     @media #{$narrow-screen} {

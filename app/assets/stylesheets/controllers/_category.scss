@@ -32,7 +32,9 @@
 
     .value {
 
-        margin-left: $gap-x;
+        @media #{$not-narrow-screen} {
+            margin-left:  $gap-x;
+        }
 
         @media #{$narrow-screen} {
             margin-left:  calc(2 * #{$gap-x});

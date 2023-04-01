@@ -73,8 +73,11 @@
     // @see file:app/assets/javascripts/feature/download.js *createMemberPopup*
     .popup-panel {
 
-        padding: 1rem;
-        font:    revert;
+        font: revert;
+
+        @media #{$not-narrow-screen} {
+            padding:    1rem;
+        }
 
         @media #{$wide-screen} {
             top:        2rem;

@@ -1081,10 +1081,13 @@ table.manifest_item-grid {
             // Data cell for item file data.
             > .cell.file-uploader {
 
-                max-width:      $max-file-column-width;
                 padding:        ($value-pad * 5) ($value-pad * 4);
                 column-gap:     $value-pad * 4;
                 flex-direction: row;
+
+                @media #{$not-narrow-screen} {
+                    max-width:  $max-file-column-width;
+                }
 
                 @media #{$narrow-screen} {
                     max-width:  unset;

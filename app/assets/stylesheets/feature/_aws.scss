@@ -44,11 +44,14 @@ $aws-admin-column-space: 0.75rem;
     display:    grid;
     padding:    0 $aws-bucket-padding;
     column-gap: $aws-admin-column-space;
-    grid-template-columns:
-        [prefix] 0.5fr
-        [key]    1fr
-        [size]   0.5fr
-        [date]   1fr;
+
+    @media #{$wide-screen} {
+        grid-template-columns:
+            [prefix] 0.5fr
+            [key]    1fr
+            [size]   0.5fr
+            [date]   1fr;
+    }
 
     @media #{$medium-width} {
         grid-template-columns:
@@ -59,10 +62,10 @@ $aws-admin-column-space: 0.75rem;
     }
 
     @media #{$narrow-screen} {
-        grid-template-columns: 1fr;
         margin-bottom:         1rem;
         padding-bottom:        $aws-admin-column-space;
         border-bottom:         1px solid darkgray;
+        grid-template-columns: 1fr;
     }
 
     > * {

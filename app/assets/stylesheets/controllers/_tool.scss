@@ -57,24 +57,26 @@ body.tool.md {
 
     .grid-container {
 
-        display:               grid;
-        max-width:             95vw;
-        min-height:            25vh;
-        margin:                3rem 0;
-        grid-template-columns: 1fr;
-        align-content:         start;
+        display:        grid;
+        max-width:      95vw;
+        min-height:     25vh;
+        margin:         3rem 0;
+        align-content:  start;
 
         @media #{$wide-screen} {
-            row-gap:           $row-gap-wide;
+            row-gap:    $row-gap-wide;
         }
 
         @media #{$medium-width} {
-            row-gap:           $row-gap-medium;
+            row-gap:    $row-gap-medium;
         }
 
         @media #{$narrow-screen} {
-            row-gap:           $row-gap-narrow;
+            row-gap:    $row-gap-narrow;
         }
+
+        grid-template-columns: 1fr;
+
     }
 
     %input-prompt {
@@ -260,19 +262,22 @@ body.tool.md {
         //=====================================================================
 
         .preview-label {
-            display:       block;
-            margin-bottom: $label-v-gap;
+            display:        block;
+            margin-bottom:  $label-v-gap;
         }
 
         .file-preview {
 
-            max-width:   100%;
-            margin-top:  0.25rem;
-            border:      1px solid gray;
-            box-shadow:  0 0 0.25rem 0.25rem lightgray;
+            margin-top:     0.25rem;
+            border:         1px solid gray;
+            box-shadow:     0 0 0.25rem 0.25rem lightgray;
+
+            @media #{$not-narrow-screen} {
+                max-width:  100%;
+            }
 
             @media #{$narrow-screen} {
-                max-width: 97.5%;
+                max-width:  97.5%;
             }
         }
     }
@@ -382,23 +387,27 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             $color:  lighter($uva-blue, 75%);
 
             display:        flex;
-            flex-direction: row;
-            gap:            $pad;
-            padding:        $pad;
+            background:     $color;
             border:         $border solid $color;
             border-radius:  $border * 2;
-            background:     $color;
             flex:           1 1 auto;
+
+            @media #{$wide-screen} {
+                gap:            $pad;
+                padding:        $pad;
+                flex-direction: row;
+            }
 
             @media #{$medium-width} {
                 gap:            0.75rem;
                 padding:        0.75rem;
+                flex-direction: row;
             }
 
             @media #{$narrow-screen} {
-                flex-direction: column;
                 gap:            0.5rem;
                 padding:        0.5rem;
+                flex-direction: column;
             }
 
             > * {
@@ -449,13 +458,16 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
     .lookup-status {
 
         display:        flex;
-        flex-direction: row;
         flex-wrap:      wrap;
         align-items:    center;
-        gap:            $section-gap;
-        margin-top:     $section-gap * 2;
-        margin-bottom:  $section-gap * 2;
         font-size:      large;
+
+        @media #{$not-narrow-screen} {
+            flex-direction: row;
+            gap:            $section-gap;
+            margin-top:     $section-gap * 2;
+            margin-bottom:  $section-gap * 2;
+        }
 
         @media #{$narrow-screen} {
             flex-direction: column;
@@ -467,18 +479,25 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         .services {
 
             display:        flex;
-            flex-direction: row;
             flex-wrap:      wrap;
             align-items:    center;
-            gap:            $section-gap;
-            margin:         1rem auto;
             min-height:     2rem;
+            margin-left:    auto;
+            margin-right:   auto;
             font-weight:    bold;
             flex:           1 1 auto;
+
+            @media #{$not-narrow-screen} {
+                flex-direction: row;
+                gap:            $section-gap;
+                margin-top:     1rem;
+                margin-bottom:  1rem;
+            }
 
             @media #{$narrow-screen} {
                 flex-direction: column;
                 gap:            inherit;
+                margin-top:     1rem;
                 margin-bottom:  0.5rem;
             }
 
@@ -524,10 +543,13 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
     .lookup-output {
 
-        display:               grid;
-        grid-template-columns: minmax(max-content, 0.1fr) 1fr;
-        gap:                   $section-gap;
-        width:                 95vw;
+        display: grid;
+        width:   95vw;
+
+        @media #{$not-narrow-screen} {
+            grid-template-columns: minmax(max-content, 0.1fr) 1fr;
+            gap:                   $section-gap;
+        }
 
         @media #{$narrow-screen} {
             grid-template-columns: 1fr;
@@ -543,7 +565,9 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
             @include grid.column-span;
 
-            height: 50vh;
+            @media #{$not-narrow-screen} {
+                height:      50vh;
+            }
 
             @media #{$narrow-screen} {
                 height:      75vh;
@@ -561,7 +585,9 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
             .item-errors {
 
-                height:      5vh;
+                @media #{$not-narrow-screen} {
+                    height:  5vh;
+                }
 
                 @media #{$narrow-screen} {
                     height:  10vh;
@@ -569,8 +595,12 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             }
 
             .item-diagnostics {
-                height:      10vh;
+
                 white-space: pre;
+
+                @media #{$not-narrow-screen} {
+                    height:  10vh;
+                }
 
                 @media #{$narrow-screen} {
                     height:  20vh;

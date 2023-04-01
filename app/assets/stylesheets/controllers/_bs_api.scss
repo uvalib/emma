@@ -66,11 +66,14 @@ body.bs_api-v2 {
 
         padding:          1rem;
         column-count:     auto;
-        column-width:     27.5vw;
         background-color: $uva-light-gray;
 
         @media #{$wide-screen} {
             column-width: 15vw;
+        }
+
+        @media #{$medium-width} {
+            column-width: 27.5vw;
         }
 
         @media #{$narrow-screen} {
