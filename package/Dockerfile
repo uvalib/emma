@@ -62,8 +62,7 @@ ADD storage/yarnrc        $HOME/.yarnrc
 ADD storage/bundle-config $HOME/.bundle/config
 
 # Update bundler if needed then install required gems.
-ADD Gemfile Gemfile-shibboleth Gemfile.lock  ./
-# ADD Gemfile Gemfile.lock  ./
+ADD Gemfile Gemfile.lock  ./
 RUN bundle install
 
 # Create work directory and copy the application to it.
