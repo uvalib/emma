@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# The base class for outbound messages to the EMMA Federated Ingestion API.
+# The base class for outbound messages to the EMMA Unified Ingest API.
 #
 class Ingest::Api::Message < Ingest::Api::Record
 

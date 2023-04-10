@@ -13,7 +13,7 @@ en:
         long:           'manifest item'
       label:            'Items'
       title:            'Manifest Items'
-      tooltip:          'Work on a bulk operations manifest.'
+      tooltip:          'Work on a bulk operations manifest'
 
       # =======================================================================
       # Layout
@@ -84,10 +84,10 @@ en:
       generic:
         label:          'Manifest Item'
         title:          'Manifest Item'
-        tooltip:        '(A brief description of this operation.)'
-        description:    '(A more detailed description of this operation.)'
-        directions:     '(Brief guidance for using the operation form.)'
-        notes:          '(A more detailed description of this operation.)'
+        tooltip:        '(A brief description of this operation)'
+        description:    '(A more detailed description of this operation)'
+        directions:     '(Brief guidance for using the operation form)'
+        notes:          '(A more detailed description of this operation)'
 
         submit:         &GENERIC_SUBMIT
           label:        'Save'
@@ -125,7 +125,7 @@ en:
       index:
         label:          'List All'
         title:          'Manifest: %{name}'
-        tooltip:        ~ # 'All manifest items.'
+        tooltip:        ~ # 'All manifest items'
 
         # TODO: want to see 'id' and '-user_id' if administrator/developer.
         display_fields: # @see 'en.emma.manifest_item.record'
@@ -138,7 +138,7 @@ en:
       show:
         label:          'Manifest'
         title:          'Bulk Operation Manifest'
-        tooltip:        'Details of this manifest.'
+        tooltip:        'Details of this manifest'
 
         display_fields: # @see 'en.emma.manifest_item.record'
           - !ruby/symbol all
@@ -190,7 +190,7 @@ en:
       delete:           &DELETE_ACTION
         label:          'Remove Item'
         title:          'Remove a Manifest Item'
-        tooltip:        'Remove a manifest item.'
+        tooltip:        'Remove a manifest item'
 
         success:        'Item removed'
         failure:        'Could not remove item: %{error}'
@@ -207,12 +207,13 @@ en:
       bulk_new:         &BULK_NEW_ACTION
         label:          'Bulk Import'
         title:          'Import New Manifest Items'
-        tooltip:        |
-          Add new manifest items via a CSV or JSON control file.
+        tooltip:        'Add new manifest items via a CSV or JSON control file'
         description:    |
           Provide a *.csv or *.json data file to specify files and metadata to
           be used to create new EMMA entries.
+
           NOTE: Existing manifest entries will not be overwritten.
+
         directions:     ~
         notes:          'Some notes on bulk upload...'
 
@@ -246,12 +247,14 @@ en:
         label:          'Bulk Update'
         title:          'Import Manifest Modifications'
         tooltip:        |
-          Modify existing manifest items via a CSV or JSON control file.
+          Modify existing manifest items via a CSV or JSON control file
         description:    |
           Provide a *.csv or *.json data file to specify files and/or metadata
           to be used to update existing EMMA entries.
+
           NOTE: Only existing manifest entries will be changed;
           new entries will not be created.
+
         directions:     ~
         notes:          'Some notes on bulk edit...'
 
@@ -279,7 +282,7 @@ en:
       bulk_delete:      &BULK_DELETE_ACTION
         label:          'Bulk Delete'
         title:          'Remove Multiple Manifest Items'
-        tooltip:        'Delete multiple manifest items by identifier.'
+        tooltip:        'Delete multiple manifest items by identifier'
         description:    |
           Provide a comma-separated list of item numbers to specify which items
           to delete.
@@ -290,7 +293,7 @@ en:
           <<:           *BULK_SUBMIT
           label:        'Continue'
           enabled:
-            tooltip:    'Validate entries to be removed.'
+            tooltip:    'Validate entries to be removed'
           disabled:
             tooltip:    'Required information is still needed'
 

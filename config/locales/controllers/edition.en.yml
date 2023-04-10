@@ -17,7 +17,7 @@ en:
         long:           'periodical edition'
       label:            'Editions'
       title:            'Periodical Editions'
-      tooltip:          'List editions of this Bookshare periodical.'
+      tooltip:          'List editions of this Bookshare periodical'
 
       # =======================================================================
       # Search endpoint
@@ -33,7 +33,7 @@ en:
       index:
         label:          'Editions'
         title:          'Editions'
-        tooltip:        'Find more Bookshare periodical editions with %{terms}.'
+        tooltip:        'Find more Bookshare periodical editions with %{terms}'
 
         display_fields: # @see 'en.emma.edition.record'
           - !ruby/symbol all
@@ -45,7 +45,7 @@ en:
       show:
         label:          'Edition'
         title:          'Periodical Edition'
-        tooltip:        'See details about this Bookshare periodical edition.'
+        tooltip:        'See details about this Bookshare periodical edition'
 
         display_fields: # @see 'en.emma.edition.record'
           - !ruby/symbol all
@@ -56,7 +56,7 @@ en:
 
       new:              &NEW_ACTION
         title:          'Add Periodical Edition'
-        tooltip:        'Create an entry for a new Bookshare periodical edition.'
+        tooltip:        'Create an entry for a new Bookshare periodical edition'
         _endpoint:      true
 
       # =======================================================================
@@ -68,7 +68,7 @@ en:
 
       edit:             &EDIT_ACTION
         title:          'Modify Periodical Edition'
-        tooltip:        'Make changes to this Bookshare periodical edition.'
+        tooltip:        'Make changes to this Bookshare periodical edition'
         _endpoint:      true
 
       # =======================================================================
@@ -80,7 +80,7 @@ en:
 
       delete:           &DELETE_ACTION
         title:          'Remove Periodical Edition'
-        tooltip:        'Remove this edition from the Bookshare periodical.'
+        tooltip:        'Remove this edition from the Bookshare periodical'
         _endpoint:      true
 
       # =======================================================================
@@ -92,7 +92,7 @@ en:
 
       history:
         title:          'Periodical Edition History'
-        tooltip:        'View modifications for this Bookshare periodical edition.'
+        tooltip:        'View modifications for this Bookshare periodical edition'
         _endpoint:      true
 
       # =======================================================================

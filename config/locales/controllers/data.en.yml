@@ -20,7 +20,7 @@ en:
       index:
         label:          'Database'
         title:          'EMMA Database Records'
-        tooltip:        'View all database records for this deployment.'
+        tooltip:        'View all database records for this deployment'
         _endpoint:      true
 
       # =======================================================================
@@ -28,7 +28,7 @@ en:
       show:
         label:          'Record'
         title:          '%{table} Records'
-        tooltip:        'View records for this database table.'
+        tooltip:        'View records for this database table'
         _endpoint:      true
 
       # =======================================================================
@@ -36,7 +36,7 @@ en:
       submissions:
         label:          'Submissions'
         title:          'EMMA Submission Records'
-        tooltip:        'View information for all EMMA submissions.'
+        tooltip:        'View information for all EMMA submissions'
         text_html:      |
           <p>
             This page is constructed from selected parts of the EMMA
@@ -56,7 +56,7 @@ en:
       counts:
         label:          'Field Counts'
         title:          'EMMA Submission Field Value Counts'
-        tooltip:        'View field values for all EMMA submissions.'
+        tooltip:        'View field values for all EMMA submissions'
         text_html:      |
           <p>
             This page is constructed from selected parts of the EMMA

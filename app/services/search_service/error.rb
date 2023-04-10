@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Generic exception for Unified Search API problems.
+# Generic exception for EMMA Unified Search API problems.
 #
 # == Usage Notes
 # This is generally *not* the base class for exceptions in the SearchService

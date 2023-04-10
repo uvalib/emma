@@ -374,8 +374,8 @@ module Record::Steppable
     state_group(item) == :done
   end
 
-  # Indicate whether this record is involved in a workflow step which leads
-  # to a change in the associated EMMA index entry.
+  # Indicate whether this record is involved in a workflow step which leads to
+  # a change in the associated EMMA Unified Index entry.
   #
   # @param [Model, String, Symbol, nil] item
   #
@@ -855,7 +855,7 @@ module Record::Steppable
     end
 
     # Indicate whether this record is involved in a workflow step which leads
-    # to a change in the associated EMMA index entry.
+    # to a change in the associated EMMA Unified Index entry.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #

@@ -13,7 +13,7 @@ en:
         long:           'bulk operation manifest'
       label:            'Bulk Uploads'
       title:            'Bulk Operation Manifest'
-      tooltip:          'Manage bulk operations.'
+      tooltip:          'Manage bulk operations'
 
       # =======================================================================
       # Layout
@@ -94,10 +94,10 @@ en:
       generic:          &GENERIC
         label:          'Manifest'
         title:          'Manifest'
-        tooltip:        '(A brief description of this operation.)'
-        description:    '(A more detailed description of this operation.)'
-        directions:     '(Brief guidance for using the operation form.)'
-        notes:          '(A more detailed description of this operation.)'
+        tooltip:        '(A brief description of this operation)'
+        description:    '(A more detailed description of this operation)'
+        directions:     '(Brief guidance for using the operation form)'
+        notes:          '(A more detailed description of this operation)'
 
         submit:         &GENERIC_SUBMIT
           label:        'Save'
@@ -181,7 +181,7 @@ en:
       index:
         label:          'List All'
         title:          'Bulk Operation Manifests'
-        tooltip:        ~ # 'Your current bulk operation manifests.'
+        tooltip:        ~ # 'Your current bulk operation manifests'
 
         # TODO: want to see 'id' and 'user_id' if administrator/developer.
         display_fields: # @see 'en.emma.manifest.record'
@@ -206,7 +206,7 @@ en:
       show:
         label:          'Manifest'
         title:          'Manifest: %{name}'
-        tooltip:        'Details of this manifest.'
+        tooltip:        'Details of this manifest'
 
         display_fields: # @see 'en.emma.manifest.record'
           - !ruby/symbol all
@@ -219,7 +219,7 @@ en:
         <<:             *GENERIC
         label:          'Create'
         title:          'New Manifest: %{name}'
-        tooltip:        'Start a new bulk operation manifest.'
+        tooltip:        'Start a new bulk operation manifest'
         description:    ~
         directions:     ~
         notes:          ~
@@ -266,7 +266,7 @@ en:
         <<:             *GENERIC
         label:          'Change'
         title:          'Modify Manifest: %{name}'
-        tooltip:        'Modify a bulk operation manifest.'
+        tooltip:        'Modify a bulk operation manifest'
         description:    ~
         directions:     ~
         notes:          ~
@@ -310,7 +310,7 @@ en:
       delete:           &DELETE_ACTION
         label:          'Remove'
         title:          'Remove Manifest'
-        tooltip:        'Remove a bulk operation manifest.'
+        tooltip:        'Remove a bulk operation manifest'
 
         submit:
           <<:           *GENERIC_SUBMIT
@@ -345,7 +345,7 @@ en:
       remit:            &REMIT_ACTION
         label:          'Submit'
         title:          'Submit Manifest Items'
-        tooltip:        'Submit multiple items from a manifest in bulk.'
+        tooltip:        'Submit multiple items from a manifest in bulk'
 
         start:
           <<:           *GENERIC_START

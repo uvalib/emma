@@ -38,10 +38,10 @@ en:
       generic:
         label:          'Accounts [user]'
         title:          'Accounts [user]'
-        tooltip:        '(A brief description of this operation.)'
-        description:    '(A more detailed description of this operation.)'
-        directions:     '(Brief guidance for using the operation form.)'
-        notes:          '(A more detailed description of this operation.)'
+        tooltip:        '(A brief description of this operation)'
+        description:    '(A more detailed description of this operation)'
+        directions:     '(Brief guidance for using the operation form)'
+        notes:          '(A more detailed description of this operation)'
 
         submit:         &GENERIC_SUBMIT
           label:        'Submit'
@@ -53,7 +53,7 @@ en:
         cancel:         &GENERIC_CANCEL
           label:        'CANCEL'
           enabled:
-            tooltip:    'Do nothing and return to the previous screen.'
+            tooltip:    'Do nothing and return to the previous screen'
           disabled:
             tooltip:    'Not able to cancel at this point'
 
@@ -107,7 +107,7 @@ en:
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
-            tooltip:    'Discard these changes.'
+            tooltip:    'Discard these changes'
 
         _endpoint:      true
 
@@ -127,7 +127,7 @@ en:
         new:
           label:        'Sign in'
           title:        'Sign in with your Bookshare account'
-          tooltip:      'Authentication is required for full access.'
+          tooltip:      'Authentication is required for full access'
           submit:       'Sign in'
           cancel:       'Cancel'
           _endpoint:    true
@@ -145,7 +145,7 @@ en:
 
         destroy:
           label:        'Sign out'
-          tooltip:      'End your session.'
+          tooltip:      'End your session'
           success:      'User %{user} signed out.'
           failure:      'An unexpected error occurred.'
           _endpoint:    true

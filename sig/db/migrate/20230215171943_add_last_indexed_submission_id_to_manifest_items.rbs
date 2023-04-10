@@ -1,3 +1,3 @@
-class AddLastIndexedSubmissionIdToManifestItems
+class AddLastIndexedSubmissionIdToManifestItems < ActiveRecord::Migration
   def change: () -> untyped
 end

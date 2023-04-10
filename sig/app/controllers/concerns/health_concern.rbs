@@ -158,7 +158,7 @@ module HealthConcern
   #
   def storage_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
-  # Health status of the Unified Search service.
+  # Health status of the EMMA Unified Search service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
@@ -172,7 +172,7 @@ module HealthConcern
   #
   def bookshare_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
-  # Health status of the ingest service.
+  # Health status of the EMMA Unified Ingest service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]

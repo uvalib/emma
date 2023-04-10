@@ -192,7 +192,7 @@ module ManifestItem::StatusMethods
   #
   def get_file_data: (?(ManifestItem|symHash|nil) item) -> symHash
 
-  # Indicate whether the item is now in the Unified Index.
+  # Indicate whether the item is now in the EMMA Unified Index.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
   #

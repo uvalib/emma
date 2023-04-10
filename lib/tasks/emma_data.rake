@@ -13,7 +13,7 @@ require 'emma/rake'
 
 namespace 'emma:data' do
 
-  # Current EMMA Unified Search API version.
+  # Current version of EMMA Unified Index APIs.
   #
   # @type [String]
   #

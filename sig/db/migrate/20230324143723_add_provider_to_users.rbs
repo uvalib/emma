@@ -1,0 +1,3 @@
+class AddProviderToUsers < ActiveRecord::Migration
+  def change: () -> void
+end

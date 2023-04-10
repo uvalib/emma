@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Controller support methods for access to the Ingest API service.
+# Controller support methods for access to the EMMA Unified Ingest service.
 #
 module IngestConcern
 
@@ -20,7 +20,7 @@ module IngestConcern
 
   public
 
-  # Access the EMMA Federated Ingest API service.
+  # Access the EMMA Unified Ingest service.
   #
   # @return [IngestService]
   #

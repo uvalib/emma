@@ -299,7 +299,7 @@ module HealthConcern
     return healthy, message
   end
 
-  # Health status of the Unified Search service.
+  # Health status of the EMMA Unified Search service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]
@@ -317,7 +317,7 @@ module HealthConcern
     BookshareService.active_status
   end
 
-  # Health status of the ingest service.
+  # Health status of the EMMA Unified Ingest service.
   #
   # @return [Array<(Boolean,String)>]
   # @return [Array<(Boolean,nil)>]

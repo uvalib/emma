@@ -6,7 +6,7 @@
 # +
 # @attr [String]                        submission_id
 # -
-# === Fields not yet supported by the Unified Index
+# === Fields not yet supported by the EMMA Unified Index
 # +
 # @attr [String]                        bib_series
 # @attr [SeriesType]                    bib_seriesType

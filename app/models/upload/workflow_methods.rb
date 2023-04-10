@@ -370,8 +370,8 @@ module Upload::WorkflowMethods
     state_group == :done
   end
 
-  # Indicate whether this record is involved in a workflow step which leads
-  # to a change in the associated EMMA index entry.
+  # Indicate whether this record is involved in a workflow step which leads to
+  # a change in the associated EMMA Unified Index entry.
   #
   def in_process?
     being_submitted? || being_indexed?

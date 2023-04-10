@@ -17,7 +17,7 @@ en:
         long:           'metadata record'
       label:            'Search'
       title:            'Unified Search'
-      tooltip:          'Unified search for metadata records.'
+      tooltip:          'Unified search for metadata records'
 
       # =======================================================================
       # Search endpoint
@@ -82,7 +82,7 @@ en:
           class:        'restore-button'
           tooltip:      |
             Click to turn off debugging controls and return to normal display
-            of search results.
+            of search results
           field:        ~ # Indicates that this is not a topic button.
 
         by_repo_id:
@@ -243,7 +243,7 @@ en:
       index:            &INDEX
         label:          'Search'
         title:          'EMMA Unified Search'
-        tooltip:        'Find more metadata records with %{terms}.'
+        tooltip:        'Find more metadata records with %{terms}'
 
         display_fields: # @see 'en.emma.search.record'
           - !ruby/symbol all
@@ -260,7 +260,7 @@ en:
       show:
         label:          'Record'
         title:          'EMMA Index Record'
-        tooltip:        'See details about this metadata record.'
+        tooltip:        'See details about this metadata record'
 
         display_fields: # @see 'en.emma.search.record'
           - !ruby/symbol all
@@ -272,7 +272,7 @@ en:
       advanced:
         label:          'Advanced'
         title:          'EMMA Unified Search'
-        tooltip:        'Combine multiple search terms and search limiters.'
+        tooltip:        'Combine multiple search terms and search limiters'
         text_html:      |
           <p>
             A search term is required to begin.

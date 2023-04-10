@@ -8,7 +8,7 @@ en:
 
       label:            'Help'
       title:            'EMMA Help'
-      tooltip:          'EMMA system documentation.'
+      tooltip:          'EMMA system documentation'
 
       # =======================================================================
       # Layout
@@ -41,7 +41,7 @@ en:
         _template:      &TOPIC_TEMPLATE
           label:        'EMMA %{Topic} Help'
           title:        'EMMA %{Topic}'
-          tooltip:      'Help with EMMA %{topic}.'
+          tooltip:      'Help with EMMA %{topic}'
           intro:        'Information on how to %{topic} in EMMA.'
           content:      'COMING SOON...' # Use ~ to indicate an ERB template.
           enabled:      true
@@ -59,7 +59,7 @@ en:
           topic:        'search'
           Topic:        'Search'
           title:        'Searching in EMMA'
-          tooltip:      'Help with searching in EMMA.'
+          tooltip:      'Help with searching in EMMA'
           content:      ~ # @see file:app/views/help/topic/_search.html.erb
 
         download:
@@ -67,7 +67,7 @@ en:
           topic:        'download'
           Topic:        'Download'
           title:        'Downloading from EMMA'
-          tooltip:      'Help with downloading files from EMMA.'
+          tooltip:      'Help with downloading files from EMMA'
           content:      ~ # @see file:app/views/help/topic/_download.html.erb
 
         upload:
@@ -75,7 +75,7 @@ en:
           topic:        'upload'
           Topic:        'Upload'
           title:        'Uploading to EMMA'
-          tooltip:      'Help with uploading files to EMMA.'
+          tooltip:      'Help with uploading files to EMMA'
           content:      ~ # @see file:app/views/help/topic/_upload.html.erb
 
         manifest:
@@ -83,14 +83,14 @@ en:
           topic:        'upload multiple items'
           Topic:        'Bulk Upload'
           title:        'EMMA Bulk Upload Manifests'
-          tooltip:      'Help with EMMA bulk uploads.'
+          tooltip:      'Help with EMMA bulk uploads'
           content:      ~ # @see file:app/views/help/topic/_manifest.html.erb
 
         lookup_tool:
           <<:           *TOPIC_TEMPLATE
           topic:        'lookup tool'
           Topic:        'Bibliographic Lookup Tool'
-          tooltip:      'Help with this feature.'
+          tooltip:      'Help with this feature'
           intro:        |
             This is a temporary interface to code being developed to support
             improving the usefulness of EMMA submissions by making it easy to
@@ -267,7 +267,7 @@ en:
       index:
         label:          'Help'
         title:          'EMMA Help Topics'
-        tooltip:        'Get help on using the EMMA system.'
+        tooltip:        'Get help on using the EMMA system'
         intro:          ~ # TODO: 'EMMA Help Introduction' ???
         _endpoint:      true
 

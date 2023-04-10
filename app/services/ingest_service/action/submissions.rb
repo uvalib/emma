@@ -20,7 +20,7 @@ module IngestService::Action::Submissions
 
   # == PUT /records
   #
-  # Inserts or updates metadata records in the search index.
+  # Inserts or updates metadata records in the EMMA Unified Index.
   #
   # Inserts or updates one or more metadataRecords in the search index. For the
   # "upsert" operation, if no such record exists for the emma_repository,
@@ -164,7 +164,7 @@ module IngestService::Action::Submissions
 
   protected
 
-  # Send to the Ingest API unless no items were given.
+  # Send to the EMMA Unified Ingest API unless no items were given.
   #
   # @param [Symbol]      verb         One of :get, :post, :put, :delete
   # @param [String]      endpoint     Service path.
@@ -192,7 +192,7 @@ module IngestService::Action::Submissions
     end
   end
 
-  # Generate an array of ingest records.
+  # Generate an array of EMMA Unified Ingest records.
   #
   # @param [Ingest::Message::IngestionRecordList, Ingest::Record::IngestionRecord, Model, Hash] record
   #
@@ -226,7 +226,7 @@ module IngestService::Action::Submissions
     Array.wrap(result).compact
   end
 
-  # Generate an array of ingest identifiers.
+  # Generate an array of EMMA Unified Ingest identifier records.
   #
   # @param [Ingest::Message::IdentifierRecordList, Ingest::Record::IdentifierRecord, Model, Hash, String] item
   #
@@ -276,7 +276,7 @@ module IngestService::Action::Submissions
     dc_format
   ].freeze
 
-  # Generate records.
+  # Generate EMMA Unified Ingest identifier records.
   #
   # @param [Model, Hash, String] item
   #

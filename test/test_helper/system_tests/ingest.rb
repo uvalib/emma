@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-# Support for working directly with the Unified Index.
+# Support for working directly with the EMMA Unified Index.
 #
 module TestHelper::SystemTests::Ingest
 
@@ -17,7 +17,7 @@ module TestHelper::SystemTests::Ingest
 
   public
 
-  # Cause the identified items to be updated in the Unified Index.
+  # Cause the identified items to be updated in the EMMA Unified Index.
   #
   # @param [Array<Upload,String>] entries
   #

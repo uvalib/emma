@@ -97,7 +97,7 @@ en:
           delete_field:             true
 
       # =======================================================================
-      # Changes to emma_data fields for Search/Ingest API version 0.0.5
+      # Changes to emma_data fields for EMMA Unified Ingest API version 0.0.5
       # =======================================================================
 
       '0_0_5':

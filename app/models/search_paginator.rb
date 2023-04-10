@@ -44,7 +44,7 @@ class SearchPaginator < Paginator
     prm[:offset] = offset + size if offset
     prm[:limit]  = limit         if limit && (limit != default_page_size)
 
-    # Parameters specific to the Unified Search API.
+    # Parameters specific to the EMMA Unified Search API.
     title = date = nil
     case prm[:sort]&.to_sym
       when :title               then title = last.dc_title

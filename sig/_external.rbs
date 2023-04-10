@@ -237,12 +237,15 @@ class Array[unchecked out Elem] < Object
     : () { (Elem item) -> untyped } -> anyArray
     | ()                            -> ::Enumerator[Elem, self]
 
+  alias map! collect!
+
   def all?
     : (_Pattern[Elem] pattern)  -> bool
     | () ?{ (Elem obj) -> top } -> bool
 
   def self.wrap
-    : (nil)      -> anyArray
+    : (nil)      -> []
+    | (untyped)  -> anyArray
     | (anyArray) -> anyArray
 end
 

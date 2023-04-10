@@ -36,7 +36,7 @@ module IngestService::Properties
 
   public
 
-  # Configuration for the API service.
+  # Configuration for the EMMA Unified Ingest service.
   #
   # @type [Hash{Symbol=>Any}]
   #
@@ -44,7 +44,7 @@ module IngestService::Properties
     CONFIGURATION
   end
 
-  # Federated Ingest API key.
+  # EMMA Unified Ingest API key.
   #
   # @return [String, nil]
   #
@@ -60,7 +60,7 @@ module IngestService::Properties
 
   public
 
-  # Default search engine for this deployment.
+  # Default ingest engine for this deployment.
   #
   # @return [String]
   #
@@ -68,7 +68,7 @@ module IngestService::Properties
     INGEST_BASE_URL || super
   end
 
-  # The default service engine key.
+  # The default ingest engine API key.
   #
   # @return [Symbol]
   #

@@ -42,7 +42,7 @@ end
 # @note TODO: harmonize with existing roles
 #
 module Workflow::Base::Roles
-  # The default "user" if none was given.
+  # The default workflow role if none was given.
   #
   # @type [Symbol]
   #
@@ -94,7 +94,7 @@ module Workflow::Base::Roles
   #
   def set_current_user: (?(User|String|Symbol|nil) user) -> (User | String)
 
-  # Set the workflow user role.
+  # Set the workflow role for the current workflow user.
   #
   # @param [User, String, Symbol, nil] role
   #
@@ -102,7 +102,7 @@ module Workflow::Base::Roles
   #
   def set_current_role: (?(User|String|Symbol|nil) role) -> Symbol
 
-  # Get the "workflow user" based on the provided identity.
+  # Get the workflow role of the given identity.
   #
   # @param [User, String, Symbol, nil] user
   #
@@ -113,40 +113,40 @@ module Workflow::Base::Roles
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def user?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def submitter?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a reviewer.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def reviewer?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with an administrator user or
   # process.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def administrator?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with the system process.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def system?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a developer.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def developer?: (?(User|String|Symbol|nil) u) -> bool
 

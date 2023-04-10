@@ -20,8 +20,8 @@ module Ingest::Shared::TransformMethods
 
   public
 
-  # Because :dc_title is a required field for ingest into Unified Search, this
-  # value is supplied if the metadata does not include a title.
+  # Because :dc_title is a required field for EMMA Unified Ingest, this value
+  # is supplied if the metadata does not include a title.
   #
   # @type [String, nil] # TODO: MISSING_TITLE: I18n - keep?
   #

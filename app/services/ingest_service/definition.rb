@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Interface to the shared data structure which holds the definition of the API
-# requests and parameters.
+# Interface to the shared data structure which holds the definition of the EMMA
+# Unified Ingest API requests and parameters.
 #
 module IngestService::Definition
 

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Metadata record schema for EMMA Federated Search Index.
+# Metadata record schema for an EMMA Unified Search result.
 #
 # @see file:config/locales/records/upload.en.yml *en.emma.upload.record.emma_data*
 #
@@ -35,8 +35,8 @@ class Search::Message::SearchRecord < Search::Api::Message
 
   # Initialize a new instance.
   #
-  # @note The Unified Search API does not actually support returning a message
-  #   of this form.
+  # @note The EMMA Unified Search API does not actually support returning a
+  #   message of this form.
   #
   # @param [Faraday::Response, Model, Hash, String, nil] src
   # @param [Hash, nil]                                   opt

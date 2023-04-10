@@ -251,13 +251,13 @@ class User < ApplicationRecord
 
   @developer: bool
 
-  # Indicate whether the user has the developer role.
+  # Indicate whether the user has the :developer role.
   #
   def developer?: () -> bool
 
   @administrator: bool
 
-  # Indicate whether the user has the administrator role.
+  # Indicate whether the user has the :administrator role.
   #
   def administrator?: () -> bool
 
@@ -311,7 +311,7 @@ class User < ApplicationRecord
   #
   # @type [Array<(String,Integer)>]
   #
-  def self.test_user_menu: () -> Array[String|Integer]
+  def self.test_user_menu: () -> Array[[String|Integer]]
 
   # Get (or create) a database entry for the indicated user and update the
   # associated User object with additional information from the provider.

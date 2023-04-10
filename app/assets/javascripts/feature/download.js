@@ -59,6 +59,8 @@ appSetup(MODULE, function() {
     /**
      * @typedef {object} MemberName
      *
+     * Bookshare organization member name parts.
+     *
      * @property {string}       firstName
      * @property {string}       lastName
      * @property {string}       [middle]
@@ -68,6 +70,8 @@ appSetup(MODULE, function() {
 
     /**
      * @typedef {object} Member
+     *
+     * Bookshare organization member information.
      *
      * @property {boolean}      allowAdultContent
      * @property {boolean}      canDownload
@@ -115,7 +119,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Frequency for re-requesting a download link.
+     * Frequency for re-requesting a download link from the Bookshare API.
      *
      * @readonly
      * @type {number}
@@ -139,8 +143,8 @@ appSetup(MODULE, function() {
     const NO_RETRY = -1;
 
     /**
-     * Download link state.  Each key represents a state and each value is the
-     * CSS class indicating that state on the link element.
+     * Bookshare API download link state.  Each key represents a state and each
+     * value is the CSS class indicating that state on the link element.
      *
      * FAILED:     The request to generate an artifact failed.
      * REQUESTING: The request to generate an artifact is in progress.
@@ -164,7 +168,8 @@ appSetup(MODULE, function() {
     const BS_ACCOUNT_URL = 'https://www.bookshare.org/orgAccountMembers';
 
     /**
-     * Properties for the elements of the member selection popup panel.
+     * Properties for the elements of the Bookshare member selection popup
+     * panel.
      *
      * @readonly
      * @type {{
@@ -297,7 +302,7 @@ appSetup(MODULE, function() {
     const BUTTON = selector(Emma.Download.button.class);
 
     /**
-     * For the data() item holding the link's retry period.
+     * The data() item holding the Bookshare API download link retry period.
      *
      * @readonly
      * @type {string}
@@ -578,7 +583,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Asynchronously request an artifact download URL.
+     * Asynchronously request a Bookshare "artifact" download URL.
      *
      * @param {Selector} link
      */
@@ -755,7 +760,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Extract a member from URL parameters.
+     * Extract a Bookshare member from URL parameters.
      *
      * @param {string} url
      *
@@ -768,7 +773,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Get the member associated with the download link.
+     * Get the member associated with the Bookshare API download link.
      *
      * @param {jQuery} $link
      *
@@ -782,7 +787,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Set the member associated with the download link.
+     * Set the member associated with the Bookshare API download link.
      *
      * @param {jQuery}          $link
      * @param {string|string[]} [member]
@@ -876,7 +881,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Show the button to download the artifact.
+     * Show the button to download the Bookshare artifact.
      *
      * @param {Selector}      link
      * @param {string|jQuery} [target]
@@ -901,7 +906,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Hide the button to download the artifact.
+     * Hide the button to download the Bookshare artifact.
      *
      * @param {Selector} link
      */
@@ -955,7 +960,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Get the retry period for a download link.
+     * Get the retry period for a Bookshare API download link.
      *
      * @param {jQuery} $link
      *
@@ -966,7 +971,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Set the retry period for a download link.
+     * Set the retry period for a Bookshare API download link.
      *
      * @param {jQuery} $link
      * @param {number} [value]        Default: RETRY_PERIOD.
@@ -978,7 +983,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Clear the retry period for a download link.
+     * Clear the retry period for a Bookshare API download link.
      *
      * @param {jQuery} $link
      */

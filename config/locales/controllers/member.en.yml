@@ -13,7 +13,7 @@ en:
         long:           'organizational member'
       label:            'Members'
       title:            'Organization Members'
-      tooltip:          'Show Bookshare organization members.'
+      tooltip:          'Show Bookshare organization members'
 
       # =======================================================================
       # Search endpoint
@@ -75,7 +75,7 @@ en:
       index:
         label:          'Members'
         title:          'Bookshare Members'
-        tooltip:        'Show Bookshare organization members.'
+        tooltip:        'Show Bookshare organization members'
 
         display_fields: # @see 'en.emma.member.record'
           - member_link
@@ -88,7 +88,7 @@ en:
       show:
         label:          'Member'
         title:          'Bookshare Member'
-        tooltip:        'See details about this Bookshare member.'
+        tooltip:        'See details about this Bookshare member'
 
         display_fields: # @see 'en.emma.member.record'
           - name
@@ -116,7 +116,7 @@ en:
 
       new:              &NEW_ACTION
         title:          'Add Bookshare Member'
-        tooltip:        'Create an entry for a new Bookshare organization member.'
+        tooltip:        'Create an entry for a new Bookshare organization member'
         _endpoint:      true
 
       # =======================================================================
@@ -128,7 +128,7 @@ en:
 
       edit:             &EDIT_ACTION
         title:          'Modify Bookshare Member'
-        tooltip:        'Make changes to this Bookshare organization member.'
+        tooltip:        'Make changes to this Bookshare organization member'
         _endpoint:      true
 
       # =======================================================================
@@ -140,7 +140,7 @@ en:
 
       delete:           &DELETE_ACTION
         title:          'Remove Bookshare Member'
-        tooltip:        'Remove this Bookshare member from the organization.'
+        tooltip:        'Remove this Bookshare member from the organization'
         _endpoint:      true
 
       # =======================================================================
@@ -152,7 +152,7 @@ en:
 
       history:
         title:          'Bookshare Member History'
-        tooltip:        'View modifications for this Bookshare organization member.'
+        tooltip:        'View modifications for this Bookshare organization member'
 
         display_fields: # @see 'en.emma.member.record'
           - dateDownloaded
@@ -171,7 +171,7 @@ en:
 
         label:          'Preferences'
         title:          'Bookshare Member Preferences'
-        tooltip:        'View preference settings for this Bookshare member.'
+        tooltip:        'View preference settings for this Bookshare member'
 
         display_fields: # @see 'en.emma.member.record'
           - allowAdultContent

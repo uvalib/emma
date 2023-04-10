@@ -34,7 +34,7 @@ en:
       welcome:
         label:          'Welcome'
         title:          'Welcome to EMMA'
-        tooltip:        'Return to the home page.'
+        tooltip:        'Return to the home page'
         notice_html:    'You must %{sign_in} to upload or download files.'
         text_html:      |
           <p>
@@ -59,7 +59,7 @@ en:
       dashboard:
         label:          'Account'
         title:          'EMMA Account Dashboard'
-        tooltip:        'Return to your account dashboard.'
+        tooltip:        'Return to your account dashboard'
         text_html:      |
           Your EMMA account information is managed by Bookshare.
           To modify, visit the Bookshare

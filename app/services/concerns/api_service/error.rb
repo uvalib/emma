@@ -417,7 +417,7 @@ unless ONLY_FOR_DOCUMENTATION
   public
 
   # Exception raised to indicate a generic or unique issue with the request to
-  # the remote service API.
+  # the external service API.
   #
   # @see file:config/locales/error.en.yml *en.emma.error.api.request*
   #
@@ -441,7 +441,7 @@ unless ONLY_FOR_DOCUMENTATION
   public
 
   # Exception raised to indicate a generic or unique issue with the response
-  # from the remote service API.
+  # from the external service API.
   #
   # @see file:config/locales/error.en.yml *en.emma.error.api.response*
   #

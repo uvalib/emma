@@ -18,7 +18,7 @@ SHIBBOLETH: bool
 #
 OAUTH2_PROVIDERS: symArray
 
-# EMMA Federated Ingest API key.
+# EMMA Unified Ingest API key.
 #
 # This does not have a default and *must* be provided through the environment.
 #
@@ -26,9 +26,9 @@ OAUTH2_PROVIDERS: symArray
 #
 INGEST_API_KEY: String | nil
 
-# Current EMMA Federated Ingest API version.
+# Current EMMA Unified Ingest API version.
 #
-# This is informational only; search API URLs do not include it.
+# This is informational only; Ingest API URLs do not include it.
 #
 # @type [String]
 #
@@ -36,7 +36,7 @@ INGEST_API_KEY: String | nil
 #
 INGEST_API_VERSION: String
 
-# An override of the default EMMA Federated Ingest API request path.  If not
+# An override of the default EMMA Unified Ingest API request path.  If not
 # provided then IngestService#default_engine_url will be used.
 #
 # @type [String, nil]
@@ -45,7 +45,7 @@ INGEST_BASE_URL: String | nil
 
 # Current EMMA Unified Search API version.
 #
-# This is informational only; search API URLs do not include it.
+# This is informational only; Search API URLs do not include it.
 #
 # @type [String]
 #

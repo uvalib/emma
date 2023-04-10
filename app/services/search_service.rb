@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Receive messages through the EMMA Unified Search API.
+# Transmit messages through the EMMA Unified Search API.
 #
 class SearchService < ApiService
 

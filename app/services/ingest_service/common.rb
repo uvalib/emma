@@ -19,7 +19,7 @@ module IngestService::Common
 
   protected
 
-  # The ingest service actually takes its API key via headers.
+  # The EMMA Unified Ingest service actually takes its API key via headers.
   #
   # @param [Hash, nil] params         Default: @params.
   #

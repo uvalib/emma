@@ -31,7 +31,7 @@ en:
           min:            1
           max:            1
           label:          'Title'
-          tooltip:        'A name for this manifest.'
+          tooltip:        'A name for this manifest'
 
         # =====================================================================
         # Database record fields
@@ -41,14 +41,14 @@ en:
           min:            1
           max:            1
           label:          'User ID'
-          tooltip:        'The EMMA user who owns the manifest.'
+          tooltip:        'The EMMA user who owns the manifest'
           origin:         system
 
         created_at:
           min:            1
           max:            1
           label:          'Created'
-          tooltip:        'Date of manifest creation.'
+          tooltip:        'Date of manifest creation'
           type:           datetime
           origin:         system
 
@@ -56,7 +56,7 @@ en:
           min:            1
           max:            1
           label:          'Updated'
-          tooltip:        'Date of last manifest update.'
+          tooltip:        'Date of last manifest update'
           type:           datetime
           origin:         system
 
@@ -79,8 +79,8 @@ en:
             max:          1
             label:        'Saved Items'
             tooltip:      |
-              Items that have been created or changed since the last save.
-              These will persist even if the current manifest session is canceled.
+              Finalized items which are either submittable or have already been
+              submitted
             type:         number
             origin:       system
 
@@ -90,7 +90,8 @@ en:
             label:        'Pending Items'
             tooltip:      |
               Items that have been created or changed since the last save.
-              NOTE: These will be removed if the current manifest session is canceled.
+              NOTE: These will be removed if the current manifest session is
+              canceled.
             type:         number
             origin:       system
 
@@ -138,6 +139,6 @@ en:
             min:          1
             max:          1
             label:        'To-Delete Items'
-            tooltip:      'Items that have been marked for deletion.'
+            tooltip:      'Items that have been marked for deletion'
             type:         number
             origin:       system

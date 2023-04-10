@@ -60,7 +60,7 @@ public
 #
 module Workflow::Base::Roles
 
-  # The default "user" if none was given.
+  # The default workflow role if none was given.
   #
   # @type [Symbol]
   #
@@ -137,7 +137,7 @@ module Workflow::Base::Roles
     @current_user = user
   end
 
-  # Set the workflow user role.
+  # Set the workflow role for the current workflow user.
   #
   # @param [User, String, Symbol, nil] role
   #
@@ -147,7 +147,7 @@ module Workflow::Base::Roles
     @current_role = get_role(role) || DEFAULT_ROLE
   end
 
-  # Get the "workflow user" based on the provided identity.
+  # Get the workflow role of the given identity.
   #
   # @param [User, String, Symbol, nil] user
   #
@@ -170,7 +170,7 @@ module Workflow::Base::Roles
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def user?(u = nil)
     wf_roles(u).include?(:user)
@@ -179,7 +179,7 @@ module Workflow::Base::Roles
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def submitter?(u = nil)
     wf_roles(u).include?(:submitter)
@@ -188,7 +188,7 @@ module Workflow::Base::Roles
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a reviewer.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def reviewer?(u = nil)
     wf_roles(u).include?(:reviewer)
@@ -197,7 +197,7 @@ module Workflow::Base::Roles
   # Indicate whether the instance is associated with an administrator user or
   # process.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def administrator?(u = nil)
     wf_roles(u).include?(:administrator)
@@ -205,7 +205,7 @@ module Workflow::Base::Roles
 
   # Indicate whether the instance is associated with the system process.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def system?(u = nil)
     wf_roles(u).include?(:system)
@@ -213,7 +213,7 @@ module Workflow::Base::Roles
 
   # Indicate whether the instance is associated with a developer.
   #
-  # @param [User, String, Symbol, nil] u    @see Workflow::Base#wf_roles
+  # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
   def developer?(u = nil)
     wf_roles(u).include?(:developer)

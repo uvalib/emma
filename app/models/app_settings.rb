@@ -106,12 +106,12 @@ class AppSettings < AppGlobal
     :AWS_SECRET_KEY,
     nil,
 
-    # == Unified Search API
+    # == EMMA Unified Search API
     :SEARCH_API_VERSION,
     :SEARCH_BASE_URL,
     nil,
 
-    # == Bookshare Ingest API
+    # == EMMA Unified Ingest API
     :INGEST_API_VERSION,
     :INGEST_API_KEY,
     nil,

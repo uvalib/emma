@@ -42,8 +42,8 @@ en:
 
         search:
           <<:           *DEFAULT
-          degraded:     'Unified Search degraded'
-          failed:       'Unified Search unresponsive'
+          degraded:     'Unified Search service degraded'
+          failed:       'Unified Search service unresponsive'
 
         bookshare:
           <<:           *DEFAULT
@@ -52,8 +52,8 @@ en:
 
         ingest:
           <<:           *DEFAULT
-          degraded:     'Federated Ingest service degraded'
-          failed:       'Federated Ingest service failing'
+          degraded:     'Unified Ingest service degraded'
+          failed:       'Unified Ingest service failing'
 
       # =======================================================================
       # Pages

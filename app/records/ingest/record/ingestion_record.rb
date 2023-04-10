@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Metadata ingestion schema for EMMA Federated Search Index.
+# Metadata ingestion schema for EMMA Unified Index.
 #
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/IngestionRecord   JSON schema specification
 #

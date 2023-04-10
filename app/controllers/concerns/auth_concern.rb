@@ -155,8 +155,8 @@ module AuthConcern
   # @see #delete_auth_data
   #
   def local_sign_out
-    token = session.delete('omniauth.auth')
-    __debug { "#{__method__}: omniauth.auth was: #{token.inspect}" } if token
+    auth = session.delete('omniauth.auth')
+    __debug { "#{__method__}: omniauth.auth was: #{auth.inspect}" } if auth
     sign_out
   end
 
@@ -170,8 +170,8 @@ module AuthConcern
   # @note Currently unused.
   #
   def global_sign_out
-    token = session['omniauth.auth']
-    __debug { "#{__method__}: omniauth.auth is: #{token.inspect}" } if token
+    auth = session['omniauth.auth']
+    __debug { "#{__method__}: omniauth.auth is: #{auth.inspect}" } if auth
     sign_out
   end
 
@@ -329,7 +329,7 @@ module AuthConcern
 
   # revoke_access_token
   #
-  # @param [Hash, nil] token          Default: `session['omniauth.auth']`.
+  # @param [Hash, nil] auth           Default: `session['omniauth.auth']`.
   #
   # @return [OAuth2::Response]
   # @return [nil]                     If no token was provided or found.
@@ -337,10 +337,10 @@ module AuthConcern
   #--
   # noinspection RubyResolve
   #++
-  def revoke_access_token(token = nil)
-    token ||= session['omniauth.auth']
-    token   = OmniAuth::AuthHash.new(token) if token.is_a?(Hash)
-    token   = token&.credentials&.token     if token.is_a?(OmniAuth::AuthHash)
+  def revoke_access_token(auth = nil)
+    auth  ||= session['omniauth.auth']
+    auth    = OmniAuth::AuthHash.new(auth) if auth.is_a?(Hash)
+    token   = (auth&.credentials&.token if auth.is_a?(OmniAuth::AuthHash))
     return Log.warn { "#{__method__}: no token present" } if token.blank?
     Log.info { "#{__method__}: #{token.inspect}" }
 

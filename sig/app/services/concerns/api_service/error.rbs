@@ -219,7 +219,7 @@ class ApiService::ParseError < ApiService::Error
 end
 
 # Exception raised to indicate a generic or unique issue with the request to
-# the remote service API.
+# the external service API.
 #
 # @see file:config/locales/error.en.yml *en.emma.error.api.request*
 #
@@ -237,7 +237,7 @@ class ApiService::NoInputError < ApiService::Error
 end
 
 # Exception raised to indicate a generic or unique issue with the response
-# from the remote service API.
+# from the external service API.
 #
 # @see file:config/locales/error.en.yml *en.emma.error.api.response*
 #

@@ -154,8 +154,8 @@ class UploadController < ApplicationController
   #
   # If :id is "SELECT" then a menu of deletable items is presented.
   #
-  # Use :force to attempt to remove an item from the EMMA Unified Search index
-  # even if a database record was not found.
+  # Use :force to attempt to remove an item from the EMMA Unified Index even if
+  # a database record was not found.
   #
   # @see #delete_upload_path          Route helper
   # @see #delete_select_upload_path   Route helper
@@ -198,7 +198,7 @@ class UploadController < ApplicationController
   # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Create the specified Upload records, download and store the associated
-  # files, and post the new entries to the Federated Ingest API.
+  # files, and post the new entries to the EMMA Unified Ingest API.
   #
   # @see #bulk_create_upload_path     Route helper
   # @see UploadWorkflow::Bulk::Create::States#on_submitting_entry
@@ -222,7 +222,7 @@ class UploadController < ApplicationController
   #
   # Modify or create the specified Upload records, download and store the
   # associated files (if changed), and post the new/modified entries to the
-  # Federated Ingest API.
+  # EMMA Unified Ingest API.
   #
   # @see #bulk_update_upload_path     Route helper
   # @see UploadWorkflow::Bulk::Edit::States#on_modifying_entry
@@ -319,7 +319,8 @@ class UploadController < ApplicationController
 
   # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
   #
-  # Retrieve a file from a member repository.
+  # Retrieve a file from a member repository that supports proxying through the
+  # EMMA server.
   #
   # @raise [ExecError] @see IaDownloadConcern#ia_download_response
   #

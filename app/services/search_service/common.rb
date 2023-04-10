@@ -59,10 +59,10 @@ module SearchService::Common
 
   NON_PUBLISHER_SEARCH = [*NON_SEARCH, :publisher].freeze
 
-  # This override silently works around a limitation of the Unified Search
-  # index's handling of publisher searches.  The index treats this as a kind of
-  # hybrid between a search query and a search filter -- it does not accept a
-  # search which is only comprised of publisher search terms(s) alone.
+  # This override silently works around a limitation of the EMMA Unified Index
+  # handling of publisher searches.  The index treats this as a kind of hybrid
+  # between a search query and a search filter -- it does not accept a search
+  # which is only comprised of publisher search terms(s) alone.
   #
   # Its error message indicates that a publisher search can only be performed
   # in conjunction with another search type ("identifier", "title", "creator",

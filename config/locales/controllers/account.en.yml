@@ -92,10 +92,10 @@ en:
       generic:
         label:          'Accounts'
         title:          'Accounts'
-        tooltip:        '(A brief description of this operation.)'
-        description:    '(A more detailed description of this operation.)'
-        directions:     '(Brief guidance for using the operation form.)'
-        notes:          '(A more detailed description of this operation.)'
+        tooltip:        '(A brief description of this operation)'
+        description:    '(A more detailed description of this operation)'
+        directions:     '(Brief guidance for using the operation form)'
+        notes:          '(A more detailed description of this operation)'
 
         submit:         &GENERIC_SUBMIT
           label:        'Submit'
@@ -107,7 +107,7 @@ en:
         cancel:         &GENERIC_CANCEL
           label:        'CANCEL'
           enabled:
-            tooltip:    'Do nothing and return to the previous screen.'
+            tooltip:    'Do nothing and return to the previous screen'
           disabled:
             tooltip:    'Not able to cancel at this point'
 
@@ -222,7 +222,7 @@ en:
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
-            tooltip:    'Discard these changes.'
+            tooltip:    'Discard these changes'
 
         #success:        'Local EMMA account %{user} updated.'
         #failure:        'Could not update local EMMA account.'

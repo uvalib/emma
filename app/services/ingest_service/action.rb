@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for API requests.
+# Namespace for EMMA Unified Ingest API requests.
 #
 module IngestService::Action
   include IngestService::Action::Submissions

@@ -1,9 +1,3 @@
-# Current EMMA Unified Search API version.
-#
-# @type [String]
-#
-API_VERSION: String
-
 class Object
   # All ActiveRecord classes that respond to :outdated.
   #

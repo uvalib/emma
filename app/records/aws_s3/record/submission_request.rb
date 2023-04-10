@@ -114,8 +114,8 @@ class AwsS3::Record::SubmissionRequest < AwsS3::Api::Record
         data = remove_empty_values(data)
     end
 
-    # Make sure that emma_recordId is given the same value that index ingest
-    # will generate.
+    # Make sure that emma_recordId is given the same value that EMMA Unified
+    # Ingest will generate.
     data[:emma_recordId] ||= Upload.record_id(data)
 
     super(data, **opt)

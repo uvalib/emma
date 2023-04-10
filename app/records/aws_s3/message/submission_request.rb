@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #++
 # @attr [String]                        submission_id
 #--
-# === Fields not yet supported by the Unified Index
+# === Fields not yet supported by the EMMA Unified Index
 #++
 # @attr [String]                        bib_series
 # @attr [SeriesType]                    bib_seriesType
@@ -115,8 +115,8 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
         data = remove_empty_values(data)
     end
 
-    # Make sure that emma_recordId is given the same value that index ingest
-    # will generate.
+    # Make sure that emma_recordId is given the same value that EMMA Unified
+    # Ingest will generate.
     data[:emma_recordId] ||= Upload.record_id(data)
 
     super(data, **opt)

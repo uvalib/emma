@@ -27,7 +27,7 @@ en:
         max_redirects:  10
 
       ingest:
-        name:           'Bookshare Federated Ingest service'
+        name:           'EMMA Unified Ingest service'
         endpoint:       # @see IngestService::Properties#engines
           production:   'https://ingest.bookshareunifiedsearch.org'
           staging:      'https://ingest.staging.bookshareunifiedsearch.org'

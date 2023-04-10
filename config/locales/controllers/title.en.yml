@@ -17,7 +17,7 @@ en:
         long:           'catalog title'
       label:            'Titles'
       title:            'Catalog Titles'
-      tooltip:          'Search for Bookshare catalog items.'
+      tooltip:          'Search for Bookshare catalog items'
 
       # =======================================================================
       # Search endpoint
@@ -88,7 +88,7 @@ en:
       index:
         label:          'Titles'
         title:          'Bookshare Catalog Titles'
-        tooltip:        'Find more Bookshare catalog items with %{terms}.'
+        tooltip:        'Find more Bookshare catalog items with %{terms}'
 
         display_fields: # @see 'en.emma.title.record'
           - title
@@ -102,7 +102,7 @@ en:
       show:
         label:          'Title'
         title:          'Bookshare Catalog Title'
-        tooltip:        'See details about this Bookshare catalog title.'
+        tooltip:        'See details about this Bookshare catalog title'
 
         display_fields: # @see 'en.emma.title.record'
           - !ruby/symbol all
@@ -114,7 +114,7 @@ en:
       new:              &NEW_ACTION
         label:          'Add'
         title:          'Add Catalog Title'
-        tooltip:        'Create an entry for a new Bookshare catalog title.'
+        tooltip:        'Create an entry for a new Bookshare catalog title'
         _endpoint:      true
 
       # =======================================================================
@@ -126,7 +126,7 @@ en:
 
       edit:             &EDIT_ACTION
         title:          'Modify Catalog Title'
-        tooltip:        'Make changes to this Bookshare catalog title.'
+        tooltip:        'Make changes to this Bookshare catalog title'
         _endpoint:      true
 
       # =======================================================================
@@ -138,7 +138,7 @@ en:
 
       delete:           &DELETE_ACTION
         title:          'Remove Catalog Title'
-        tooltip:        'Remove this title from the Bookshare catalog.'
+        tooltip:        'Remove this title from the Bookshare catalog'
         _endpoint:      true
 
       # =======================================================================
@@ -150,7 +150,7 @@ en:
 
       history:
         title:          'Catalog Title History'
-        tooltip:        'View modifications for this Bookshare catalog title.'
+        tooltip:        'View modifications for this Bookshare catalog title'
         _endpoint:      true
 
       # =======================================================================

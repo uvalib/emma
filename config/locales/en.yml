@@ -117,35 +117,42 @@ en:
         url_param:      identifier
         name:           'ISBN / DOI / etc.'
         label:          'Standard identifier:'
-        tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, DOI, OCLC, UPC, etc.)'
+        tooltip:        |
+          Search for creative works or specific editions/issues by a standard
+          identifier (ISBN, DOI, OCLC, UPC, etc.)
         placeholder:    'Enter an identifier...'
 
       title:
         url_param:      title
         name:           'Title'
         label:          'Title terms:'
-        tooltip:        'Search for one or more terms matching the title of a work'
+        tooltip:        |
+          Search for one or more terms matching the title of a work
         placeholder:    'Enter title terms...'
 
       creator:
         url_param:      creator
         name:           'Creator'
         label:          'Creator terms:'
-        tooltip:        'Search for one or more terms matching the author or creator of a work'
+        tooltip:        |
+          Search for one or more terms matching the author or creator of a work
         placeholder:    'Enter author/creator terms...'
 
       publisher:
         url_param:      publisher
         name:           'Publisher'
         label:          'Publisher terms:'
-        tooltip:        'Search for one or more terms matching the publisher of a work'
+        tooltip:        |
+          Search for one or more terms matching the publisher of a work
         placeholder:    'Enter publisher terms...'
 
       q:
         url_param:      q
         name:           'Keyword'
         label:          'Search terms:'
-        tooltip:        'Search for one or more keywords matching anywhere in the description of entries'
+        tooltip:        |
+          Search for one or more keywords matching anywhere in the description
+          of entries
         placeholder:    'Enter search terms...'
 
     search_bar:         &SEARCH_BAR
@@ -269,7 +276,7 @@ en:
       size:
         url_param:      limit
         label:          'Page Size'
-        tooltip:        'Specify the number of search results per page.'
+        tooltip:        'Specify the number of search results per page'
         placeholder:    ~
         values:         [10, 25, 50, 100]
         default:        100
@@ -326,31 +333,31 @@ en:
 
       start_over:
         label:          'START'
-        tooltip:        'Clear all search terms.'
+        tooltip:        'Clear all search terms'
 
       first_page:
         label:          'FIRST'
-        tooltip:        'Go to the first page of results.'
+        tooltip:        'Go to the first page of results'
         no_link:
-          tooltip:      'Already on the first page of results.'
+          tooltip:      'Already on the first page of results'
 
       last_page:
         label:          'LAST'
-        tooltip:        'Go to the last page of results.'
+        tooltip:        'Go to the last page of results'
         no_link:
-          tooltip:      'Already on the last page of results.'
+          tooltip:      'Already on the last page of results'
 
       prev_page:
         label:          'PREV'
-        tooltip:        'Go to the previous page of results.'
+        tooltip:        'Go to the previous page of results'
         no_link:
-          tooltip:      'Currently on the first page of results.'
+          tooltip:      'Currently on the first page of results'
 
       next_page:
         label:          'NEXT'
-        tooltip:        'Go to the next page of results.'
+        tooltip:        'Go to the next page of results'
         no_link:
-          tooltip:      'Currently on the last page of results.'
+          tooltip:      'Currently on the last page of results'
 
     placeholder:
       format:           'this'
@@ -378,26 +385,26 @@ en:
 
       label:          'Download'
       title:          'Download'
-      tooltip:        'Get a copy of the item in this format.'
+      tooltip:        'Get a copy of the item in this format'
 
       complete:
-        tooltip:      'Click on the button to retrieve the file.'
+        tooltip:      'Click on the button to retrieve the file'
 
       error:
-        server:       'This item could not be downloaded.'
-        javascript:   'You must have JavaScript enabled.'
+        server:       'This item could not be downloaded'
+        javascript:   'You must have JavaScript enabled'
 
       link:
-        tooltip:      'Download this item in %{fmt} format.'
+        tooltip:      'Download this item in %{fmt} format'
         sign_in:
-          tooltip:    'You must sign in to download this item.'
+          tooltip:    'You must sign in to download this item'
         disallowed:
-          tooltip:    '%{repo} does not allow your account to download this item.'
+          tooltip:    '%{repo} does not allow your account to download this item'
         complete:
-          tooltip:    'Click on the "%{button}" button to retrieve the file.'
+          tooltip:    'Click on the "%{button}" button to retrieve the file'
 
       progress:
-        tooltip:      'Click here to cancel the download.'
+        tooltip:      'Click here to cancel the download'
         image:
           <<:         *PLACEHOLDER_IMAGE
           alt:        'Downloading...'
@@ -405,12 +412,12 @@ en:
       failure:
         prefix:       'Download failed: '
         canceled:     'Download canceled'
-        sign_in:      'You must sign in to EMMA first.'
+        sign_in:      'You must sign in to EMMA first'
         unknown:      'unknown error'
 
       button:
         label:        'Download'
-        tooltip:      'Click here to retrieve the %{fmt} file.'
+        tooltip:      'Click here to retrieve the %{fmt} file'
 
     action_links:     &ACTION_LINKS
       back:
@@ -438,37 +445,37 @@ en:
       available:
         label:        'All fields'
         label_narrow: 'All'
-        tooltip:      'Reveal all data fields.'
+        tooltip:      'Reveal all data fields'
 
       invalid:
         label:        'Incomplete fields'
         label_narrow: 'Incomplete'
-        tooltip:      'Show fields that require attention.'
+        tooltip:      'Show fields that require attention'
 
       filled:
         label:        'Completed fields'
         label_narrow: 'Completed'
-        tooltip:      'Show fields that have data.'
+        tooltip:      'Show fields that have data'
 
       all:
         label:        'All plus internal-use fields'
         label_narrow: 'All++'
-        tooltip:      'This is only for development purposes.'
+        tooltip:      'This is only for development purposes'
         enabled:      debug
 
     status_marker:    &STATUS_MARKER
 
       required:
         label:        "\u26A0" # ⚠ WARNING SIGN
-        tooltip:      '%{This} is a required field.'
+        tooltip:      '%{This} is a required field'
 
       invalid:
         label:        "\u26A0" # ⚠ WARNING SIGN
-        tooltip:      'The provided value is invalid.'
+        tooltip:      'The provided value is invalid'
 
       valid:
         label:        "\u2714" # ✔ HEAVY CHECK MARK
-        tooltip:      'The provided value is valid.'
+        tooltip:      'The provided value is valid'
 
       disabled:
         label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
@@ -501,7 +508,7 @@ en:
         long:           'item'
       label:            '%{Items}'
       title:            '%{Items}'
-      tooltip:          'Search for %{items}.'
+      tooltip:          'Search for %{items}'
 
       # =======================================================================
       # Layout

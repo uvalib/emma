@@ -14,7 +14,7 @@ module Record::Properties
 
   public
 
-  # The Federated Ingest API cannot accept more than 1000 items; this puts a
+  # The EMMA Unified Ingest API cannot accept more than 1000 items; this puts a
   # hard upper-bound on batch sizes and the size of input values that certain
   # methods can accept.
   #
@@ -53,8 +53,8 @@ module Record::Properties
 
   public
 
-  # Force deletions of Unified Index entries regardless of whether the item is
-  # in the "entries" table.
+  # Force deletions of EMMA Unified Index entries regardless of whether the
+  # item is in the "entries" table.
   #
   # When *false*, items that cannot be found in the "entries" table are treated
   # as failures.
@@ -68,15 +68,16 @@ module Record::Properties
   #
   FORCE_DELETE_DEFAULT = true
 
-  # Force deletions of Unified Index entries even if the record ID does not
-  # begin with "emma-".  (This is to support development during which sometimes
-  # fake member repository entries get into the index.)
+  # Force deletions of EMMA Unified Index entries even if the record ID does
+  # not begin with "emma-".  (This is to support development during which
+  # sometimes fake member repository entries get into the index.)
   #
   # When *false*, only items with :emma_repositoryRecordId values beginning
-  # with "emma-" will be submitted to Federated Search Ingest.  All other will
-  # result in generating a request for consideration by the member repository.
+  # with "emma-" will be submitted to the EMMA Unified Ingest service.  All
+  # others will result in generating a request for consideration by the member
+  # repository.
   #
-  # When *true*, all items will be submitted to Federated Search Ingest.
+  # When *true*, all items will be submitted to the Unified Ingest service.
   #
   # @type [Boolean]
   #
@@ -219,8 +220,8 @@ module Record::Properties
     value&.to_s || OPTION_PARAMETER_DEFAULT[key]
   end
 
-  # Force deletions of Unified Index entries regardless of whether the item is
-  # in the "entries" table.
+  # Force deletions of EMMA Unified Index entries regardless of whether the
+  # item is in the "entries" table.
   #
   # @return [Boolean]
   #
@@ -231,9 +232,9 @@ module Record::Properties
     parameter_setting(key)
   end
 
-  # Force deletions of Unified Index entries even if the record ID does not
-  # begin with "emma-".  (This is to support development during which sometimes
-  # fake member repository entries get into the index.)
+  # Force deletions of EMMA Unified Index entries even if the record ID does
+  # not begin with "emma-".  (This is to support development during which
+  # sometimes fake member repository entries get into the index.)
   #
   # @return [Boolean]
   #

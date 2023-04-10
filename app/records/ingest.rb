@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for objects serialized to the Federated Ingest API.
+# Namespace for objects serialized to the EMMA Unified Ingest API.
 #
 # @see https://app.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5          HTML API documentation
 # @see https://api.swaggerhub.com/apis/bus/emma-federated-ingestion-api/0.0.5          JSON API specification

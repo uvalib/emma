@@ -20,7 +20,7 @@ module RouteHelper
   # @param [Symbol, String]      controller
   # @param [Symbol, String, nil] action
   #
-  # @return [Symbol, Proc, String]
+  # @return [Symbol, String, Proc]
   #
   def route_helper(controller, action = nil)
     ctr = controller.to_s.underscore

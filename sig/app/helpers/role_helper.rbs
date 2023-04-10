@@ -5,18 +5,18 @@ module RoleHelper
 
   include Roles
 
-  # Indicate whether the current user has the developer role.
+  # Indicate whether the current user has the :developer role.
   #
   # == Implementation Notes
   # Currently the :developer role applies regardless of the model.
   #
   def developer?: () -> bool
 
-  # Indicate whether the current user has the administrator role.
+  # Indicate whether the current user has the :administrator role.
   #
   def administrator?: () -> bool
 
-  # Indicate whether the current user has the given role.
+  # Indicate whether the (current) user has the given role.
   #
   # If *role* is blank then the method always returns *true*.
   #

@@ -1,6 +1,6 @@
 # config/locales/types/search.en.yml
 #
-# Data type enumerations for the Unified Search API.
+# Data type enumerations for the EMMA Unified Search API.
 #
 # @see Search::Api::Common::CONFIGURATION
 # @see Search::Api::Common::ENUMERATIONS

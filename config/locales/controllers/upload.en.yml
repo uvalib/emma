@@ -297,10 +297,10 @@ en:
       generic:
         label:          'Upload'
         title:          'Upload'
-        tooltip:        '(A brief description of this operation.)'
-        description:    '(A more detailed description of this operation.)'
-        directions:     '(Brief guidance for using the operation form.)'
-        notes:          '(A more detailed description of this operation.)'
+        tooltip:        '(A brief description of this operation)'
+        description:    '(A more detailed description of this operation)'
+        directions:     '(Brief guidance for using the operation form)'
+        notes:          '(A more detailed description of this operation)'
 
         submit:         &GENERIC_SUBMIT
           label:        'Submit'
@@ -312,14 +312,14 @@ en:
         cancel:         &GENERIC_CANCEL
           label:        'CANCEL'
           enabled:
-            tooltip:    'Do nothing and return to the previous screen.'
+            tooltip:    'Do nothing and return to the previous screen'
           disabled:
             tooltip:    'Not able to cancel at this point'
 
         select:         &GENERIC_SELECT
           label:        'Select file'
           enabled:
-            tooltip:    'Choose a file from your workstation.'
+            tooltip:    'Choose a file from your workstation'
           disabled:
             tooltip:    'Cancel this upload before selecting a different file'
 
@@ -338,7 +338,7 @@ en:
       index:
         label:          'List All'
         title:          'Your EMMA Uploads'
-        tooltip:        'Review uploads of remediated content to EMMA.'
+        tooltip:        'Review uploads of remediated content to EMMA'
         description_html: |
           <p>
             This is a listing of all of your EMMA submissions.
@@ -361,7 +361,7 @@ en:
       show:
         label:          'Upload'
         title:          'Uploaded file "%{name}"'
-        tooltip:        'See details about this upload.'
+        tooltip:        'See details about this upload'
 
         display_fields: # @see 'en.emma.upload.record'
           - !ruby/symbol all
@@ -375,14 +375,17 @@ en:
       new:              &NEW_ACTION
         label:          'Create'
         title:          'Upload Remediated Content'
-        tooltip:        'Upload a file to create a new EMMA entry.'
+        tooltip:        'Upload a file to create a new EMMA entry'
         description:    |
           You may share a remediated work with the EMMA community by uploading
           here.
+
           Fields marked with a red triangle are required, but please include
           other identifying information where available.
+
           Hover your mouse over buttons or field names for additional
           information.
+
         directions:     |
           Choose a file to upload and provide any information about the entry
           that could not be determined from the contents of the file:
@@ -403,7 +406,9 @@ en:
         select:
           <<:           *GENERIC_SELECT
           enabled:
-            tooltip:    'As many fields as possible will be filled-in by information extracted from your file.'
+            tooltip:    |
+              As many fields as possible will be filled-in by information
+              extracted from your file
 
         success:        'Created EMMA entry for: %{file}'
         failure:        'Could not create entry: %{error}'
@@ -420,12 +425,15 @@ en:
       edit:             &EDIT_ACTION
         label:          'Change'
         title:          'Modify Your EMMA Submission'
-        tooltip:        'Upload a replacement file for an existing EMMA entry.'
+        tooltip:        'Upload a replacement file for an existing EMMA entry'
         description:    |
           An EMMA repository entry can be modified by the user who created the
-          entry or by an administrative user.  Modification may include either
-          changes to metadata (bibliographic information, etc.) and/or
-          replacement of the remediated file associated with the entry.
+          entry or by an administrative user.
+
+          Modification may include either changes to metadata (bibliographic
+          information, etc.) and/or replacement of the remediated file
+          associated with the entry.
+
         directions:     |
           Provide an update version of your file, or modify fields that need to
           be corrected:
@@ -441,13 +449,13 @@ en:
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
-            tooltip:    'Discard these changes.'
+            tooltip:    'Discard these changes'
 
         select:
           <<:           *GENERIC_SELECT
           label:        'Replacement file'
           enabled:
-            tooltip:    'Provide an updated version of this file.'
+            tooltip:    'Provide an updated version of this file'
 
         success:        'Updated EMMA entry for %{file}'
         failure:        'Could not update EMMA entry: %{error}'
@@ -464,30 +472,35 @@ en:
       delete:           &DELETE_ACTION
         label:          'Remove'
         title:          'Remove Your EMMA Submission'
-        tooltip:        'Delete an EMMA entry by removing a remediated file.'
+        tooltip:        'Delete an EMMA entry by removing a remediated file'
         description:    |
           An EMMA repository entry can be removed by the user who created the
-          entry or by an administrative user.  Removal of an entry causes the
-          deletion of the associated remediated file from EMMA storage as well
-          as removal of the entry from the EMMA search index.
+          entry or by an administrative user.
+
+          Removal of an entry causes the deletion of the associated remediated
+          file from EMMA storage as well as removal of the entry from the EMMA
+          Unified Index.
+
         directions:     |
           Click to remove the selected entry from the EMMA repository:
+
         notes:          |
           Content which resides outside of EMMA is under the purview of the
-          originating member repository and cannot be deleted here.  If there
-          is a compelling reason to omit an item from the EMMA search index,
-          please contact an EMMA administrator.
+          originating member repository and cannot be deleted here.
+
+          If there is a compelling reason to omit an item from the EMMA Unified
+          Index, please contact an EMMA administrator.
 
         submit:
           <<:           *GENERIC_SUBMIT
           label:        'Delete'
           enabled:
-            tooltip:    'Remove this entry from EMMA.'
+            tooltip:    'Remove this entry from EMMA'
 
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
-            tooltip:    'Keep this EMMA entry.'
+            tooltip:    'Keep this EMMA entry'
 
         success:        'Removed EMMA entry for %{file}'
         failure:        'Could not remove EMMA entry: %{error}'
@@ -528,8 +541,7 @@ en:
       bulk_new:         &BULK_NEW_ACTION
         label:          'Bulk Upload'
         title:          'Bulk creation of EMMA entries'
-        tooltip:        |
-          Create new EMMA entries via a CSV or JSON control file.
+        tooltip:        'Create new EMMA entries via CSV or JSON control file'
         description:    |
           Provide a *.csv or *.json data file to specify files and metadata to
           be used to create new EMMA entries.
@@ -564,7 +576,7 @@ en:
         label:          'Bulk Edit'
         title:          'Bulk modification of EMMA entries'
         tooltip:        |
-          Modify existing EMMA entries via a CSV or JSON control file.
+          Modify existing EMMA entries via a CSV or JSON control file
         description:    |
           Provide a *.csv or *.json data file to specify files and/or metadata
           to be used to update existing EMMA entries.
@@ -592,26 +604,33 @@ en:
       bulk_delete:
         label:          'Bulk Delete'
         title:          'Remove EMMA submission by database or submission ID'
-        tooltip:        'Delete multiple EMMA entries by identifier.'
+        tooltip:        'Delete multiple EMMA entries by identifier'
         description:    |
           Provide a comma-separated list of submission IDs to specify which
-          EMMA entries to delete.  Identifiers which are all decimal digits are
-          treated as EMMA database record identifiers, which will be used to
-          lookup the record containing the submission ID.
+          EMMA entries to delete.
+
+          Identifiers which are all decimal digits are treated as EMMA database
+          record identifiers, which will be used to lookup the record
+          containing the submission ID.
+
         directions:     ~
         notes:          |
-          An EMMA entry consists of three parts: (1) a record in the EMMA
-          database, (2) an associated file in cloud storage, and (3) a matching
-          entry in the Unified Index.  If an item identifier can be found in
-          the EMMA database then all three parts can be removed.  However, if
-          the checkbox above is checked, then submission IDs which are not
-          found in EMMA can still be removed from the index.
+          An EMMA entry consists of three parts:
+          (1) a record in the EMMA database,
+          (2) an associated file in cloud storage, and
+          (3) a matching entry in the EMMA Unified Index.
+
+          If an item identifier can be found in the EMMA database then all
+          three parts can be removed.
+
+          However, if the checkbox above is checked, then submission IDs which
+          are not found in EMMA can still be removed from the index.
 
         submit:
           <<:           *BULK_SUBMIT
           label:        'Continue'
           enabled:
-            tooltip:    'Validate entries to be removed.'
+            tooltip:    'Validate entries to be removed'
           disabled:
             tooltip:    'Required information is still needed'
 
@@ -627,7 +646,8 @@ en:
       bulk_reindex:
         label:          'Re-index'
         title:          'Bulk Re-indexing'
-        tooltip:        'Update submissions in the Unified Index'
+        tooltip:        |
+          Update submissions' entries in the EMMA Unified Index
         description:    'TODO: ???'
         _endpoint:      true
 
@@ -645,8 +665,9 @@ en:
         title:          'Renew Record'
         description:    |
           If you are seeing this page, this indicates a failure of the system
-          to refresh the form for creating a new Upload record.  Please inform
-          an administrator that you encountered this page.
+          to refresh the form for creating a new Upload record.
+
+          Please inform an EMMA administrator that you encountered this page.
 
         failure:        'Could not renew Upload record %{id}'
         _endpoint:      true
@@ -658,8 +679,9 @@ en:
         title:          'Re-edit Record'
         description:    |
           If you are seeing this page, this indicates a failure of the system
-          to refresh the form for updating a new Upload record.  Please inform
-          an administrator that you encountered this page.
+          to refresh the form for updating a new Upload record.
+
+          Please inform an EMMA administrator that you encountered this page.
 
         failure:        'Could not reedit Upload record %{id}'
         _endpoint:      true

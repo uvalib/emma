@@ -166,12 +166,12 @@ module AuthConcern
 
   # revoke_access_token
   #
-  # @param [Hash, nil] token          Default: `session['omniauth.auth']`.
+  # @param [Hash, nil] auth           Default: `session['omniauth.auth']`.
   #
   # @return [OAuth2::Response]
   # @return [nil]                     If no token was provided or found.
   #
-  def revoke_access_token: (?(anyHash|nil) token) -> (OAuth2::Response | nil)
+  def revoke_access_token: (?(anyHash|nil) auth) -> (OAuth2::Response | nil)
 
   private
 

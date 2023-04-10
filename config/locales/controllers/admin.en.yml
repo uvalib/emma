@@ -29,7 +29,7 @@ en:
       index:
         label:          'Main'
         title:          'EMMA Administration'
-        tooltip:        'EMMA administrative information.'
+        tooltip:        'EMMA administrative information'
         _endpoint:      true
 
       # =======================================================================
@@ -37,7 +37,7 @@ en:
       settings:
         label:          'Settings'
         title:          'Application Settings'
-        tooltip:        'Dynamic feature toggles and application settings.'
+        tooltip:        'Dynamic feature toggles and application settings'
         _endpoint:      true
 
       # =======================================================================
@@ -45,7 +45,7 @@ en:
       processes:
         label:          'Processes'
         title:          'Host Machine Processes'
-        tooltip:        'View the system processes on the host machine.'
+        tooltip:        'View the system processes on the host machine'
         _endpoint:      true
 
       # =======================================================================
@@ -53,7 +53,7 @@ en:
       disk_space:
         label:          'Disk Space'
         title:          'Host Machine Disk Space'
-        tooltip:        'View the system disk space on the host machine.'
+        tooltip:        'View the system disk space on the host machine'
         _endpoint:      true
 
       # =======================================================================
@@ -61,7 +61,7 @@ en:
       loggers:
         label:          'Loggers'
         title:          'Logger Instances'
-        tooltip:        'View live logger instances.'
+        tooltip:        'View live logger instances'
         _endpoint:      true
 
       # =======================================================================

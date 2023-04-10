@@ -13,7 +13,7 @@ en:
         long:           'reading list'
       label:            'Lists'
       title:            'Reading Lists'
-      tooltip:          'Show subscribed Bookshare reading lists.'
+      tooltip:          'Show subscribed Bookshare reading lists'
 
       # =======================================================================
       # Search endpoint
@@ -75,7 +75,7 @@ en:
       index:
         label:          'Lists'
         title:          'Bookshare Reading Lists'
-        tooltip:        'Bookshare reading lists to which you have access.'
+        tooltip:        'Bookshare reading lists to which you have access'
 
         display_fields: # @see 'en.emma.reading_list.record'
           - name
@@ -89,7 +89,7 @@ en:
       show:
         label:          'List'
         title:          'Bookshare Reading List'
-        tooltip:        'See details about this Bookshare reading list.'
+        tooltip:        'See details about this Bookshare reading list'
 
         display_fields: # @see 'en.emma.reading_list.record'
           - !ruby/symbol all
@@ -100,7 +100,7 @@ en:
 
       new:              &NEW_ACTION
         title:          'Add Reading List'
-        tooltip:        'Create a new Bookshare reading list.'
+        tooltip:        'Create a new Bookshare reading list'
         _endpoint:      true
 
       # =======================================================================
@@ -112,7 +112,7 @@ en:
 
       edit:             &EDIT_ACTION
         title:          'Modify Reading List'
-        tooltip:        'Make changes to this Bookshare reading list.'
+        tooltip:        'Make changes to this Bookshare reading list'
         _endpoint:      true
 
       # =======================================================================
@@ -125,7 +125,7 @@ en:
       delete:           &DELETE_ACTION
         label:          'Delete'
         title:          'Delete Reading List'
-        tooltip:        'Delete this Bookshare reading list.'
+        tooltip:        'Delete this Bookshare reading list'
         _endpoint:      true
 
       # =======================================================================
@@ -137,7 +137,7 @@ en:
 
       history:
         title:          'Reading List History'
-        tooltip:        'View modifications for this Bookshare reading list.'
+        tooltip:        'View modifications for this Bookshare reading list'
         _endpoint:      true
 
       # =======================================================================

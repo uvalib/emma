@@ -13,7 +13,7 @@ en:
         long:           'artifact'
       label:            'Artifacts'
       title:            'Artifacts (Remediated Content)'
-      tooltip:          'List Bookshare artifacts uploaded for this item.'
+      tooltip:          'List Bookshare artifacts uploaded for this item'
 
       # =======================================================================
       # Layout
@@ -35,7 +35,7 @@ en:
       index:
         label:          'Artifacts'
         title:          'Artifacts Index'
-        tooltip:        'List Bookshare artifacts.'
+        tooltip:        'List Bookshare artifacts'
 
         display_fields: # @see 'en.emma.artifact.record'
           - fmt
@@ -48,7 +48,7 @@ en:
       show:
         label:          'Artifact'
         title:          'Artifact Metadata'
-        tooltip:        'See details about this Bookshare artifact.'
+        tooltip:        'See details about this Bookshare artifact'
 
         display_fields: # @see 'en.emma.artifact.record'
           - !ruby/symbol all
@@ -60,7 +60,7 @@ en:
       new:              &NEW_ACTION
         label:          'Upload'
         title:          'Add Artifact'
-        tooltip:        'Upload a new Bookshare artifact.'
+        tooltip:        'Upload a new Bookshare artifact'
         _endpoint:      true
 
       # =======================================================================
@@ -73,7 +73,7 @@ en:
       edit:             &EDIT_ACTION
         label:          'Replace'
         title:          'Modify Artifact'
-        tooltip:        'Make changes to this Bookshare artifact entry.'
+        tooltip:        'Make changes to this Bookshare artifact entry'
         _endpoint:      true
 
       # =======================================================================
@@ -86,7 +86,7 @@ en:
       delete:           &DELETE_ACTION
         label:          'Delete'
         title:          'Delete Artifact'
-        tooltip:        'Delete an artifact.'
+        tooltip:        'Delete an artifact'
         _endpoint:      true
 
       # =======================================================================
@@ -98,7 +98,7 @@ en:
 
       history:
         title:          'Artifact History'
-        tooltip:        'View modifications for this Bookshare artifact entry.'
+        tooltip:        'View modifications for this Bookshare artifact entry'
         _endpoint:      true
 
       # =======================================================================

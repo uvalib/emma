@@ -17,7 +17,7 @@ en:
         long:           'search call record'
       label:            'Searches'
       title:            'Search Calls'
-      tooltip:          'List search call records.'
+      tooltip:          'List search call records'
 
       # =======================================================================
       # Search endpoint
@@ -61,7 +61,7 @@ en:
       index:
         label:          'Search Calls'
         title:          'Search Call Records'
-        tooltip:        'List search call records.'
+        tooltip:        'List search call records'
 
         display_fields: # @see 'en.emma.search_call.record'
           - !ruby/symbol all
@@ -73,7 +73,7 @@ en:
       show:
         label:          'Search Call'
         title:          'Search Call Record'
-        tooltip:        'See details about this search call record.'
+        tooltip:        'See details about this search call record'
 
         display_fields: # @see 'en.emma.search_call.record'
           - !ruby/symbol all

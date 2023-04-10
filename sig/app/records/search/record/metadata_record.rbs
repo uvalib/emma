@@ -1,16 +1,16 @@
-# Metadata record schema for EMMA Federated Search Index.
+# Metadata record schema for EMMA Unified Search results.
 #
 # == API description
-# Schema for JSON documents which are retrieved from the EMMA Federated Search
-# Index ingestion service.
+# Schema for JSON documents which are retrieved from the EMMA Unified Search
+# service.
 #
 # -
-# === Unified Index Fields
+# === EMMA Unified Index fields
 # +
 # @attr [String]      emma_recordId
 # @attr [String]      emma_titleId
 # -
-# === Fields not yet supported by the Unified Index
+# === Fields not yet supported by the EMMA Unified Index
 # +
 # @attr [String]      bib_series
 # @attr [SeriesType]  bib_seriesType

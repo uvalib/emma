@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Metadata to uniquely identify a record in the EMMA Federated Search Index.
+# Metadata to uniquely identify a record in the EMMA Unified Index.
 #
 # Either:
 #

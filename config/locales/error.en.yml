@@ -16,7 +16,7 @@ en:
 
         # @see ApiService::Error.error_classes
 
-        _name:          'remote service API'
+        _name:          'external service API'
         _default:       'Unknown %{service} error'
 
         # == Transmission errors
@@ -74,7 +74,7 @@ en:
 
         # @see IngestService::Error.error_classes
 
-        _name:          'Bookshare Federated Ingest service'
+        _name:          'EMMA Unified Ingest service'
 
       lookup:
 

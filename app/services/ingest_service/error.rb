@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Generic exception for Federated Ingest API problems.
+# Generic exception for EMMA Unified Ingest API problems.
 #
 # == Usage Notes
 # This is generally *not* the base class for exceptions in the IngestService
@@ -88,7 +88,7 @@ class IngestService::Error < ApiService::Error
     # @return [Array<String>]
     #
     # == Implementation Notes
-    # The ingest service returns JSON error messages in the response body which
+    # The service returns JSON error messages in the response body which
     # indicate one or more specific issues for each problematic item; e.g.:
     #
     #   {

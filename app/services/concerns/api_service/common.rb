@@ -231,7 +231,6 @@ module ApiService::Common
     qry  = uri.query.presence
     path = uri.path.presence
     host = uri.host.presence
-    rel  = host.nil?
     url  =
       if host
         rel      = (host == base_uri.host)

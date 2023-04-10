@@ -7,7 +7,7 @@ module IngestService::Action::Submissions
 
   # == PUT /records
   #
-  # Inserts or updates metadata records in the search index.
+  # Inserts or updates metadata records in the EMMA Unified Index.
   #
   # Inserts or updates one or more metadataRecords in the search index. For the
   # "upsert" operation, if no such record exists for the emma_repository,
@@ -115,7 +115,7 @@ module IngestService::Action::Submissions
   #
   def get_records: (*(Ingest::Message::IngestionRecordList|Ingest::Record::IngestionRecord|Model|symHash|String) items, **untyped opt) -> Search::Message::SearchRecordList
 
-  # Send to the Ingest API unless no items were given.
+  # Send to the EMMA Unified Ingest API unless no items were given.
   #
   # @param [Symbol]      verb         One of :get, :post, :put, :delete
   # @param [String]      endpoint     Service path.
@@ -131,7 +131,7 @@ module IngestService::Action::Submissions
   #
   def api_send: (Symbol verb, String endpoint, strArray body, **untyped opt) -> void
 
-  # Generate an array of ingest records.
+  # Generate an array of EMMA Unified Ingest records.
   #
   # @param [Ingest::Message::IngestionRecordList, Ingest::Record::IngestionRecord, Model, Hash] record
   #
@@ -152,7 +152,7 @@ module IngestService::Action::Submissions
   #
   def record_list: ((Ingest::Message::IngestionRecordList | Ingest::Record::IngestionRecord | Model | symHash) record) -> Array[Ingest::Record::IngestionRecord]
 
-  # Generate an array of ingest identifiers.
+  # Generate an array of EMMA Unified Ingest identifier records.
   #
   # @param [Ingest::Message::IdentifierRecordList, Ingest::Record::IdentifierRecord, Model, Hash, String] item
   #
@@ -180,7 +180,7 @@ module IngestService::Action::Submissions
 
   INGEST_ID_FIELDS: symArray
 
-  # Generate records.
+  # Generate EMMA Unified Ingest identifier records.
   #
   # @param [Model, Hash, String] item
   #

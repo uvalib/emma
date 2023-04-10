@@ -20,7 +20,7 @@ if respond_to?(:rails_application?) && rails_application?
     :BOOKSHARE_API_VERSION,
     :BOOKSHARE_BASE_URL,
 
-    # === EMMA Federated Ingest API
+    # === EMMA Unified Ingest API
     :INGEST_API_KEY,
 
     # === Internet Archive downloads

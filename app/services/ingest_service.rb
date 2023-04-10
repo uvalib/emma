@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Send messages through the EMMA Federated Ingestion API.
+# Transmit messages through the EMMA Unified Ingest API.
 #
 class IngestService < ApiService
 

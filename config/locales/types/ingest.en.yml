@@ -1,6 +1,6 @@
 # config/locales/types/ingest.en.yml
 #
-# Data type enumerations for the Federated Ingest API.
+# Data type enumerations for the EMMA Unified Ingest API.
 #
 # NOTE: Currently these are identical to those defined for the Search API.
 

@@ -267,7 +267,8 @@ class UploadsTest < ApplicationSystemTestCase
 
     start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
 
-    # Add Upload copy to be deleted and ensure that it is in the Unified Index.
+    # Add Upload copy to be deleted and ensure that it is in the EMMA Unified
+    # Index.
     item = uploads(:delete_example)
     item =
       Upload.new(item.fields.except(:id)).tap do |rec|

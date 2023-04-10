@@ -13,7 +13,8 @@ module Api::Shared::DateMethods
 
   # Policy for how date multiple date values are handled.
   #
-  # (Default is :forbidden because this is what Ingest requires.)
+  # (The default is :forbidden because this is what EMMA Unified Ingest
+  # requires.)
   #
   # @return [Symbol]                  One of #ARRAY_MODES.
   #

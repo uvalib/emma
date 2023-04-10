@@ -19,7 +19,8 @@ module Api::Shared::IdentifierMethods
 
   # Policy for how date multiple date values are handled.
   #
-  # (Default is :required because this is what Ingest requires.)
+  # (The default is :required because this is what EMMA Unified Ingest
+  # requires.)
   #
   # @return [Symbol]                  One of #ARRAY_MODES.
   #

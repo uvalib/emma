@@ -366,7 +366,7 @@ module ManifestItem::StatusMethods
 
   public
 
-  # Indicate whether the item is now in the Unified Index.
+  # Indicate whether the item is now in the EMMA Unified Index.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
   #

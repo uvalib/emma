@@ -1,4 +1,4 @@
-# Send messages through the EMMA Federated Ingestion API.
+# Transmit messages through the EMMA Unified Ingest API.
 #
 class IngestService < ApiService
   DESTRUCTIVE_TESTING: bool

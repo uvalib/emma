@@ -418,14 +418,14 @@ class User < ApplicationRecord
     TEST_USERS.include?(uid)
   end
 
-  # Indicate whether the user has the developer role.
+  # Indicate whether the user has the :developer role.
   #
   def developer?
     @developer = has_role?(:developer) if @developer.nil?
     @developer
   end
 
-  # Indicate whether the user has the administrator role.
+  # Indicate whether the user has the :administrator role.
   #
   def administrator?
     @administrator = has_role?(:administrator) if @administrator.nil?

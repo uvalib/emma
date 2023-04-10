@@ -15,13 +15,13 @@ module IngestService::Properties
   #
   DEFAULT_ENGINE: Symbol
 
-  # Configuration for the API service.
+  # Configuration for the EMMA Unified Ingest service.
   #
   # @type [Hash{Symbol=>Any}]
   #
   def configuration: () -> symHash
 
-  # Federated Ingest API key.
+  # EMMA Unified Ingest API key.
   #
   # @return [String, nil]
   #
@@ -29,13 +29,13 @@ module IngestService::Properties
   #
   def api_key: () -> (String | nil)
 
-  # Default search engine for this deployment.
+  # Default ingest engine for this deployment.
   #
   # @return [String]
   #
   def default_engine_url: () -> String
 
-  # The default service engine key.
+  # The default ingest engine API key.
   #
   # @return [Symbol]
   #

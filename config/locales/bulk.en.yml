@@ -172,9 +172,9 @@ en:
               tooltip:    'Delete this item'
             disabled:
               tooltip:    |
-                Cannot delete the last item of a manifest.
-                If this item really needs to be deleted, insert an empty item
-                before deleting this one.
+                Cannot delete the last item of a manifest.  If this item really
+                needs to be deleted, insert an empty item before deleting this
+                one.
             icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
 
           insert:
@@ -242,8 +242,8 @@ en:
           uploader:
             <<:           *UPLOADER_CONTROL
             description:  |
-              You can choose to pre-load your remediated content file now
-              if that is more convenient.
+              You can choose to pre-load your remediated content file now if
+              that is more convenient.
             enabled:      true
 
           name:

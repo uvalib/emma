@@ -184,7 +184,7 @@ module SearchService::Action::Records
   #
   # @return [Search::Message::SearchRecord]
   #
-  # @note This method is not actually functional because it depends on a
+  # @note This method is not actually functional because it depends on an EMMA
   #   Unified Search endpoint which does not exist.
   #
   def get_record(record_id:, **opt)

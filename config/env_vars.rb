@@ -135,10 +135,10 @@ OAUTH2_PROVIDERS =
   (SHIBBOLETH ? %i[bookshare shibboleth] : %i[bookshare]).freeze
 
 # =============================================================================
-# EMMA Federated Ingest API properties
+# EMMA Unified Ingest API properties
 # =============================================================================
 
-# EMMA Federated Ingest API key.
+# EMMA Unified Ingest API key.
 #
 # This does not have a default and *must* be provided through the environment.
 #
@@ -146,9 +146,9 @@ OAUTH2_PROVIDERS =
 #
 INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
 
-# Current EMMA Federated Ingest API version.
+# Current EMMA Unified Ingest API version.
 #
-# This is informational only; search API URLs do not include it.
+# This is informational only; Ingest API URLs do not include it.
 #
 # @type [String]
 #
@@ -156,7 +156,7 @@ INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
 #
 INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.5').freeze
 
-# An override of the default EMMA Federated Ingest API request path.  If not
+# An override of the default EMMA Unified Ingest API request path.  If not
 # provided then IngestService#default_engine_url will be used.
 #
 # @type [String, nil]
@@ -177,7 +177,7 @@ INGEST_BASE_URL =
 
 # Current EMMA Unified Search API version.
 #
-# This is informational only; search API URLs do not include it.
+# This is informational only; Search API URLs do not include it.
 #
 # @type [String]
 #

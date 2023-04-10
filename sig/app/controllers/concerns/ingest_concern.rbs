@@ -1,4 +1,4 @@
-# Controller support methods for access to the Ingest API service.
+# Controller support methods for access to the EMMA Unified Ingest service.
 #
 module IngestConcern
   extend ActiveSupport::Concern
@@ -7,7 +7,7 @@ module IngestConcern
 
   include EngineConcern
 
-  # Access the EMMA Federated Ingest API service.
+  # Access the EMMA Unified Ingest service.
   #
   # @return [IngestService]
   #
