@@ -22,7 +22,11 @@
     padding:       1rem;
     line-height:   1.375;
 
-    @media #{$not-narrow-screen} {
+    @media #{$wide-screen} {
+        max-width: 50%;
+    }
+
+    @media #{$medium-width} {
         max-width: 100%;
     }
 

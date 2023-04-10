@@ -503,7 +503,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         &, & + * { display: none; }
     }
     .pair.field-#{$new-name} + .pair.field-#{$old-name} {
-        &, & + * { display: none; }
+        display: none;
     }
 }
 

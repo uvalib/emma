@@ -172,9 +172,14 @@ $border-fg:  var(--rev-fg-color);
             }
 
             th {
+
                 line-height: 2.5;
                 padding-top: 0;
                 background:  none;
+
+                > * {
+                    background: $border-bg;
+                }
             }
         }
 
