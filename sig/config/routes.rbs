@@ -470,6 +470,18 @@ class Object
 
   def user_bookshare_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def user_bookshare_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_bookshare_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String

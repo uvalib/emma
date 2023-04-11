@@ -38,16 +38,10 @@ en:
           max:          1
           label:        'Local UID'
           tooltip:      |
-            This is the "user name" of the user account.  For normal EMMA user
-            accounts, which are authenticated via Bookshare, this must match
-            the user's Bookshare account user name.
-          type:         text
-
-        provider:
-          min:          1
-          max:          1
-          label:        "Authentication Provider"
-          tooltip:      "The strategy used for authentication to EMMA"
+            This is the "user name" of the EMMA user account
+          notes:        |
+            For EMMA accounts that are authenticated remotely, this must match
+            the account name of the remote authentication provider.
           type:         text
 
         first_name:
@@ -56,8 +50,11 @@ en:
           label:        'First Name'
           tooltip:      |
             Optional "given" name of the person associated with the EMMA user
-            account.  For automatically generated accounts, this is supplied
-            when the initial sign-on sequence via Bookshare is intercepted.
+            account
+          notes:        |
+            For remotely-authenticated accounts, if this value is not supplied
+            when the account is created, it will be filled automatically at the
+            user's first sign-in if it is supplied by the remote provider.
           type:         text
 
         last_name:
@@ -66,8 +63,11 @@ en:
           label:        'Last Name'
           tooltip:      |
             Optional "family" name of the person associated with the EMMA user
-            account.  For automatically generated accounts, this is supplied
-            when the initial sign-on sequence via Bookshare is intercepted.
+            account
+          notes:        |
+            For remotely-authenticated accounts, if this value is not supplied
+            when the account is created, it will be filled automatically at the
+            user's first sign-in if it is supplied by the remote provider.
           type:         text
 
         effective_id:
@@ -77,13 +77,35 @@ en:
           tooltip:      |
             A reference to the record of the user whose authorization
             information is used when connecting to Bookshare.
+            (UNUSED IF BOOKSHARE OAUTH2 AUTHENTICATION IS DISABLED)
           type:         number
           origin:       system
           role:         administrator
 
         # =====================================================================
+        # Omniauth fields
+        # =====================================================================
+
+        provider:
+          min:          0
+          max:          1
+          label:        'Auth Provider'
+          tooltip:      'The strategy used for authentication to EMMA'
+          type:         !ruby/symbol AuthProvider
+          role:         administrator
+
+        # =====================================================================
         # Devise fields
         # =====================================================================
+
+        sign_in_count:
+          min:          1
+          max:          1
+          label:        'Sign-in Count'
+          tooltip:      |
+            The number of times this user has signed in to EMMA
+          type:         number
+          origin:       system
 
         current_sign_in_at:
           min:          0
@@ -153,6 +175,7 @@ en:
           label:        'Access Token'
           tooltip:      |
             The user's most recent Bookshare OAuth2 token.
+            (UNUSED IF BOOKSHARE OAUTH2 AUTHENTICATION IS DISABLED)
           type:         text
           origin:       system
           role:         developer
@@ -163,6 +186,7 @@ en:
           label:        'Refresh Token'
           tooltip:      |
             The user's most recent Bookshare OAuth2 refresh token.
+            (UNUSED IF BOOKSHARE OAUTH2 AUTHENTICATION IS DISABLED)
           type:         text
           origin:       system
           role:         developer
@@ -176,7 +200,7 @@ en:
           max:          1
           label:        'Encrypted Password'
           tooltip:      |
-            For local (non-Bookshare) accounts only.
+            For local (EMMA authentication) accounts only
           type:         text
           origin:       system
           role:         developer
@@ -186,7 +210,7 @@ en:
           max:          1
           label:        'Remember Date'
           tooltip:      |
-            For local (non-Bookshare) accounts only.
+            For local (EMMA authentication) accounts only
           type:         datetime
           origin:       system
           role:         developer
@@ -196,7 +220,7 @@ en:
           max:          1
           label:        'Reset Password Token'
           tooltip:      |
-            For local (non-Bookshare) accounts only.
+            For local (EMMA authentication) accounts only
           type:         datetime
           origin:       system
           role:         developer
@@ -206,7 +230,7 @@ en:
           max:          1
           label:        'Reset Password Date'
           tooltip:      |
-            For local (non-Bookshare) accounts only.
+            For local (EMMA authentication) accounts only
           type:         datetime
           origin:       system
           role:         developer

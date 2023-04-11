@@ -210,7 +210,7 @@ Rails.application.routes.draw do
 
   # Synthetic login endpoint.
   devise_scope :user do
-    get '/users/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'
+    get '/users/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'          if SIGN_IN_AS
   end
 
   devise_scope :user do
@@ -233,8 +233,7 @@ Rails.application.routes.draw do
   match  '/account/create',         to: 'account#create',         as: 'create_account',         via: %i[post put patch]
 
   get    '/account/edit_select',    to: 'account#edit',           as: 'edit_select_account',    defaults: { id: 'SELECT' }
-  # noinspection RailsParamDefResolve
-  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: try(:current_user)&.id }
+  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: 'CURRENT_USER' }
   match  '/account/update/:id',     to: 'account#update',         as: 'update_account',         via: %i[put patch]
 
   get    '/account/delete_select',  to: 'account#delete',         as: 'delete_select_account',  defaults: { id: 'SELECT' }
@@ -509,8 +508,8 @@ unless ONLY_FOR_DOCUMENTATION
   def show_upload_url(...);                        end
   def show_user_registration_path(...);            end
   def show_user_registration_url(...);             end
-  def sign_in_as_path(...);                        end # /users/sign_in_as
-  def sign_in_as_url(...);                         end
+  def sign_in_as_path(...);                        end if SIGN_IN_AS
+  def sign_in_as_url(...);                         end if SIGN_IN_AS
   def sign_in_local_path(...);                     end # /users/sign_in_local
   def sign_in_local_url(...);                      end
   def system_unavailable_path(...);                end
@@ -533,8 +532,14 @@ unless ONLY_FOR_DOCUMENTATION
   def upload_index_url(...);                       end
   def upload_upload_path(...);                     end
   def upload_upload_url(...);                      end
-  def user_bookshare_omniauth_authorize_path(...); end
-  def user_bookshare_omniauth_authorize_url(...);  end
+  def user_bookshare_omniauth_authorize_path(...); end if BS_AUTH
+  def user_bookshare_omniauth_authorize_url(...);  end if BS_AUTH
+  def user_bookshare_omniauth_callback_path(...); end if BS_AUTH
+  def user_bookshare_omniauth_callback_url(...);  end if BS_AUTH
+  def user_shibboleth_omniauth_authorize_path(...); end if SHIBBOLETH
+  def user_shibboleth_omniauth_authorize_url(...);  end if SHIBBOLETH
+  def user_shibboleth_omniauth_callback_path(...); end if SHIBBOLETH
+  def user_shibboleth_omniauth_callback_url(...);  end if SHIBBOLETH
   def user_registration_path(...);                 end
   def user_registration_url(...);                  end
   def version_health_path(...);                    end
@@ -544,4 +549,23 @@ unless ONLY_FOR_DOCUMENTATION
   def welcome_path(...);                           end
   def welcome_url(...);                            end
   # :nocov:
+end
+
+unless SIGN_IN_AS
+  def sign_in_as_path(...) = not_implemented
+  def sign_in_as_url(...) = not_implemented
+end
+
+unless BS_AUTH
+  def user_bookshare_omniauth_authorize_path(...) = not_implemented
+  def user_bookshare_omniauth_authorize_url(...) = not_implemented
+  def user_bookshare_omniauth_callback_path(...) = not_implemented
+  def user_bookshare_omniauth_callback_url(...) = not_implemented
+end
+
+unless SHIBBOLETH
+  def user_shibboleth_omniauth_authorize_path(...) = not_implemented
+  def user_shibboleth_omniauth_authorize_url(...) = not_implemented
+  def user_shibboleth_omniauth_callback_path(...) = not_implemented
+  def user_shibboleth_omniauth_callback_url(...) = not_implemented
 end

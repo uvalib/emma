@@ -7,6 +7,7 @@ __loading_begin(__FILE__)
 
 # OAuth2 negotiation.
 #
+# @see AUTH_PROVIDERS
 # @see https://github.com/plataformatec/devise#omniauth
 #
 class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
@@ -19,24 +20,13 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   public
 
-  # OAuth2 providers recognized by this application.
-  #
-  # @type [Array<Symbol>]
-  #
-  PROVIDERS = %i[bookshare shibboleth]
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # == GET  /users/auth/bookshare
-  # == POST /users/auth/bookshare
+  # == GET  /users/auth/PROVIDER
+  # == POST /users/auth/PROVIDER
   #
   # Initiate authentication with the remote service.
   #
-  # @see #user_bookshare_omniauth_authorize_path  Route helper
+  # _see #user_bookshare_omniauth_authorize_path  Route helper                  # if BS_AUTH
+  # @see #user_shibboleth_omniauth_authorize_path Route helper
   #
   def passthru
     __log_activity
@@ -44,8 +34,9 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     __debug_request
     super
   end
+    .tap { |meth| disallow(meth) unless SHIBBOLETH || BS_AUTH }
 
-  # == GET  /users/auth/bookshare/callback
+  # == GET  /users/auth/bookshare/callback                                      # if BS_AUTH
   # == POST /users/auth/bookshare/callback
   #
   # Callback from the Bookshare auth service to finalize authentication.
@@ -64,6 +55,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   rescue => error
     auth_failure_redirect(message: error)
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # == GET  /users/auth/shibboleth/callback
   # == POST /users/auth/shibboleth/callback
@@ -84,8 +76,9 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   rescue => error
     auth_failure_redirect(message: error)
   end
+    .tap { |meth| disallow(meth) unless SHIBBOLETH }
 
-  # == GET /users/auth/bookshare/failure
+  # == GET /users/auth/PROVIDER/failure
   #
   # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
@@ -102,6 +95,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     set_flash_alert # TODO: remove? - testing
     super
   end
+    .tap { |meth| disallow(meth) unless SHIBBOLETH || BS_AUTH }
 
   # ===========================================================================
   # :section:
@@ -116,7 +110,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # @return [void]
   #
-  def set_flash_alert(message = nil, kind = 'Bookshare')
+  def set_flash_alert(message = nil, kind = nil)
     message ||= failure_message
     kind    ||= OmniAuth::Utils.camelize(failed_strategy.name)
     set_flash_message(:alert, :failure, kind: kind, reason: message)

@@ -190,7 +190,10 @@ class AccountDecorator
   #
   def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
 
-  # Render pre-populated form fields, manually adding password field(s) (which
+  # Render pre-populated form fields, manually adding password field(s) (which  # unless BS_AUTH
+  # are not in "emma.account.record").
+  #
+  # Render pre-populated form fields, manually adding password field(s) (which  # if BS_AUTH
   # are not in "emma.account.record") and overriding the :effective_id field
   # (which is) for the administrator to set/modify the effective Bookshare
   # account associated with the EMMA account.
@@ -221,9 +224,7 @@ class AccountDecorator
   #
   def render_form_password: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  DEFAULT_BOOKSHARE_ENTRY: String
-
-  # Generate data for :effective_id rendered as a menu instead of a fixed
+  # Generate data for :effective_id rendered as a menu instead of a fixed       # if BS_AUTH
   # value.
   #
   # @param [Integer, nil] selected    Default: `object.effective_id`

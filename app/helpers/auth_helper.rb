@@ -26,11 +26,22 @@ module AuthHelper
   # @return [OmniAuth::AuthHash, nil]
   #
   def auth_hash(user)
-    # noinspection RubyMismatchedArgumentType
-    OmniAuth::Strategies::Bookshare.auth_hash(user) if user.is_a?(User)
+    return unless user.is_a?(User)
+    if BS_AUTH
+      # noinspection RubyMismatchedArgumentType
+      OmniAuth::Strategies::Bookshare.auth_hash(user)
+    else
+      OmniAuth::AuthHash.new.tap do |auth|
+        auth.provider         = user.provider
+        auth.uid              = user.uid
+        auth.info!.first_name = user.first_name
+        auth.info!.last_name  = user.last_name
+        auth.info!.email      = user.email
+      end
+    end
   end
 
-  # Generate an auth hash based on fixed information.
+  # Generate an auth hash based on fixed information.                           # if BS_AUTH
   #
   # @param [User, String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
   # @param [String, nil] token
@@ -41,8 +52,9 @@ module AuthHelper
     # noinspection RubyMismatchedArgumentType
     OmniAuth::Strategies::Bookshare.synthetic_auth_hash(src, token)
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # Table of user names/tokens acquired for use in non-production deploys.
+  # Table of user names/tokens acquired for use in non-production deploys.      # if BS_AUTH
   #
   # Token are taken from the User table entries that have an :access_token
   # value.  If BOOKSHARE_TEST_AUTH is supplied, it is used to prime (or update)
@@ -62,8 +74,9 @@ module AuthHelper
     refresh = stored_auth_fetch if refresh.is_a?(TrueClass)
     OmniAuth::Strategies::Bookshare.stored_auth(refresh.presence)
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # Produce a stored_auth table entry value.
+  # Produce a stored_auth table entry value.                                    # if BS_AUTH
   #
   # @param [String] token
   #
@@ -72,14 +85,16 @@ module AuthHelper
   def stored_auth_entry_value(token)
     OmniAuth::Strategies::Bookshare.stored_auth_entry_value(token)
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # auth_default_options
+  # auth_default_options                                                        # if BS_AUTH
   #
   # @return [OmniAuth::Strategy::Options]
   #
   def auth_default_options
     OmniAuth::Strategies::Bookshare.default_options
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # ===========================================================================
   # :section:
@@ -87,7 +102,7 @@ module AuthHelper
 
   public
 
-  # Get user names/tokens from the database.
+  # Get user names/tokens from the database.                                    # if BS_AUTH
   #
   # @param [String, Array<String>] accounts   Default: `User#test_users`
   #
@@ -110,8 +125,9 @@ module AuthHelper
       end
     }
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # Add or update one or more user name/token entries.
+  # Add or update one or more user name/token entries.                          # if BS_AUTH
   #
   # @param [Hash{String=>String}, nil] pairs
   #
@@ -123,8 +139,9 @@ module AuthHelper
       User.update(user, token.slice(:access_token, :refresh_token))
     end
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # Add or update a user name/token entry.
+  # Add or update a user name/token entry.                                      # if BS_AUTH
   #
   # If input parameters were invalid then no change will be made.
   #
@@ -179,6 +196,7 @@ module AuthHelper
     User.find_or_create_by(email: user) { |u| u.access_token = token } if token
     stored_auth.slice(user)
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # ===========================================================================
   # :section:

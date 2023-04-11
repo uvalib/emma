@@ -25,6 +25,20 @@ def neutralize(*methods)
   end
 end
 
+# Used to neutralize method(s) and raise an exception if they are called.
+#
+# @param [Array<Symbol>] methods
+#
+# @return [void]
+#
+def disallow(*methods)
+  methods.each do |meth|
+    define_method(meth) do |*, **|
+      raise "#{meth} not expected to be called" if not_deployed?
+    end
+  end
+end
+
 # Convert a string to UTF-8 encoding.
 #
 # @param [String, *] v

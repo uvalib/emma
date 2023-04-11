@@ -1580,6 +1580,19 @@ public
 module Api::Common
 
   # ===========================================================================
+  # Common configuration values - Authentication Providers
+  # ===========================================================================
+
+  public
+
+  # Table of authentication provider names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  AUTH_PROVIDER_MAP =
+    AUTH_PROVIDERS.map { |auth| [auth, auth.to_s.titleize] }.to_h.deep_freeze
+
+  # ===========================================================================
   # Common configuration values - Deployments
   # ===========================================================================
 
@@ -1645,28 +1658,6 @@ module Api::Common
       .deep_freeze
 
   # ===========================================================================
-  # Common configuration values - CategoriesType
-  # ===========================================================================
-
-  public
-
-  # Bookshare category codes and names.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  # @see file:config/locales/types.en.yml
-  #
-  CATEGORY = I18n.t('emma.categories', default: {}).deep_freeze
-
-  # Table of Bookshare category names.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  # @see #CATEGORY
-  #
-  CATEGORY_MAP = CATEGORY.map { |_, v| [v.to_sym, v.to_s] }.to_h.deep_freeze
-
-  # ===========================================================================
   # Common configuration values - LanguageType
   # ===========================================================================
 
@@ -1711,9 +1702,9 @@ module Api::Common
   # :section:
   # ===========================================================================
 
+  EnumType.add_enumerations(AuthProvider:   AUTH_PROVIDER_MAP)
   EnumType.add_enumerations(Deployment:     DEPLOYMENT_MAP)
   EnumType.add_enumerations(EmmaRepository: REPOSITORY_MAP)
-  EnumType.add_enumerations(CategoriesType: CATEGORY_MAP)
   EnumType.add_enumerations(LanguageType:   LANGUAGE_MAP)
 
 end
@@ -1730,14 +1721,14 @@ end
 
 public
 
+# @see Api::Common#AUTH_PROVIDER_MAP
+class AuthProvider < EnumType; end
+
 # @see Api::Common#DEPLOYMENT_MAP
 class Deployment < EnumType; end
 
 # @see Api::Common#REPOSITORY_MAP
 class EmmaRepository < EnumType; end
-
-# @see Api::Common#CATEGORY_MAP
-class CategoriesType < EnumType; end
 
 # @see Api::Common#LANGUAGE_MAP
 class LanguageType < EnumType; end

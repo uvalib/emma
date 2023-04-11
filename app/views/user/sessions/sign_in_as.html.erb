@@ -1,6 +1,7 @@
 <%# app/views/user/sessions/sign_in_as.html.erb -%>
 <%-
   # Fall-back page for a failed sign-in-as.
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED') unless SIGN_IN_AS
   view_debug(__FILE__)
 -%>
 <%= render 'user/fallback', action: :sign_in_as %>

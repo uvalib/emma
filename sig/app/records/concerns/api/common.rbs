@@ -842,6 +842,12 @@ end
 # Shared values and methods.
 #
 module Api::Common
+  # Table of authentication provider names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  AUTH_PROVIDER_MAP: Hash[Symbol,String]
+
   # Values associated with each deployment type.
   #
   # @type [Hash{Symbol=>Hash}]
@@ -889,22 +895,6 @@ module Api::Common
   #
   REPOSITORY_MAP: Hash[Symbol,String]
 
-  # Bookshare category codes and names.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  # @see file:config/locales/types.en.yml
-  #
-  CATEGORY: Hash[Symbol,String]
-
-  # Table of Bookshare category names.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  # @see #CATEGORY
-  #
-  CATEGORY_MAP: Hash[Symbol,String]
-
   # Language configuration.
   #
   # @type [Hash{Symbol=>Any}]
@@ -942,16 +932,16 @@ end
 module Api::Shared
 end
 
+# @see Api::Common#AUTH_PROVIDER_MAP
+class AuthProvider < EnumType
+end
+
 # @see Api::Common#DEPLOYMENT_MAP
 class Deployment < EnumType
 end
 
 # @see Api::Common#REPOSITORY_MAP
 class EmmaRepository < EnumType
-end
-
-# @see Api::Common#CATEGORY_MAP
-class CategoriesType < EnumType
 end
 
 # @see Api::Common#LANGUAGE_MAP

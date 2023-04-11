@@ -14,6 +14,12 @@ class User::SessionsController < Devise::SessionsController
   # :nocov:
   #include AbstractController::Callbacks
 
+  NO_AUTH: symArray
+
+  PARAM_AUTH: symArray
+
+  NO_TIMEOUT: symArray
+
   # == GET /users/sign_in
   #
   # Prompt the user for login credentials.
@@ -35,7 +41,7 @@ class User::SessionsController < Devise::SessionsController
   #
   # End login session.
   #
-  # If the "no_revoke" parameter is missing or "false" then the local session
+  # If the "no_revoke" parameter is missing or "false" then the local session   # if BS_AUTH
   # is  ended _and_ its associated OAuth2 token is revoked.  If "no_revoke" is
   # "true" then only the local session is ended.
   #
@@ -61,7 +67,7 @@ class User::SessionsController < Devise::SessionsController
   # @see AuthConcern#local_sign_in
   #
   # == Usage Notes
-  # The initial request to this endpoint is redirected by Warden::Manager to
+  # The initial request to this endpoint is redirected by Warden::Manager to    # if BS_AUTH
   # OmniAuth::Strategies::Bookshare#request_call.  The second request is
   # performed from OmniAuth::Strategies::Bookshare#callback_phase which
   # provides the value for 'omniauth.auth'.

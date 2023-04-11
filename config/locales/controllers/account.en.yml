@@ -13,7 +13,7 @@ en:
         long:           'user account'
       label:            'Users'
       title:            'User Accounts'
-      tooltip:          'Show the local user account database table.'
+      tooltip:          'Show the EMMA user account database table'
 
       subsystem:
         database:       true
@@ -63,7 +63,7 @@ en:
 
         new:
           action:       new
-          label:        'Create %{article} new local user account'
+          label:        'Create %{article} new EMMA user account'
           article:      'a'
 
         edit:
@@ -85,8 +85,8 @@ en:
       # =======================================================================
 
       messages:
-        success:        'XXX Local EMMA account was successfully %{actioned}.'
-        failure:        'Could not %{action} local EMMA account.'
+        success:        'XXX EMMA user account was successfully %{actioned}.'
+        failure:        'Could not %{action} EMMA user account.'
 
       # =======================================================================
       # Pages
@@ -114,25 +114,18 @@ en:
           disabled:
             tooltip:    'Not able to cancel at this point'
 
-        #success:        'Local EMMA account was successfully %{actioned}.'
-        #failure:        'Failed to %{action} local EMMA account.'
+        #success:        'EMMA user account was successfully %{actioned}.'
+        #failure:        'Failed to %{action} EMMA user account.'
 
       # =======================================================================
 
       index:
         label:          'List All'
-        title:          'Local EMMA User Accounts'
-        tooltip:        'List user accounts maintained in the local database.'
+        title:          'EMMA User Accounts'
+        tooltip:        'List EMMA accounts maintained in the user database'
         role:           'administrator' # TODO: institutional groups
         description:    |
           This is a listing of the EMMA user account database.
-        notes:          |
-          All normal users have an EMMA local account which correlates with
-          exactly one Bookshare account.  However, certain EMMA internal
-          accounts which do not require access to Bookshare resources may not
-          relate to any Bookshare account.  Conversely, some EMMA
-          administrative accounts may be associated with one or more Bookshare
-          test accounts.
 
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all
@@ -143,8 +136,8 @@ en:
 
       show:
         label:          'Account'
-        title:          'Local EMMA User Account %{name}'
-        tooltip:        'User account details from the local database.'
+        title:          'EMMA User Account %{name}'
+        tooltip:        'EMMA account details from the user database'
 
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all
@@ -155,19 +148,15 @@ en:
 
       new:              &NEW_ACTION
         label:          'Create'
-        title:          'Create a Local EMMA User Account'
-        tooltip:        'Create a new user account in the EMMA database.'
+        title:          'Create an EMMA User Account'
+        tooltip:        'Create a new EMMA account in the user database'
         description:    |
-          A local EMMA account is authenticated through an encrypted password
-          stored in the EMMA account database record (and not via sign-in to
-          Bookshare).
-        notes:          |
-          If you find that you are not able to perform Bookshare operations,
-          then it's likely that the token for the associated Bookshare test
-          user has expired.  To refresh that token, open EMMA in another
-          browser tab, and sign on as that test user.  The token will be stored
-          in the EMMA account database and will be available the next time you
-          try to sign in with your local account.
+          If the EMMA account is associated with an account authenticated via
+          a remote authentication provider, sign-on is mediated by that
+          provider.
+
+          Otherwise a (local) EMMA account is authenticated through an
+          encrypted password stored in the EMMA account database record.
 
         term:
           action:       'create'
@@ -177,7 +166,7 @@ en:
           <<:           *GENERIC_SUBMIT
           label:        'Create'
           enabled:
-            tooltip:    'Create the new local EMMA user account'
+            tooltip:    'Create the new EMMA user account'
           disabled:
             tooltip:    'Required information is still needed'
 
@@ -186,8 +175,8 @@ en:
           enabled:
             tooltip:    'Do not create this entry (or start over)'
 
-        #success:        'Local EMMA account %{user} created.'
-        #failure:        'Could not create local EMMA account.'
+        #success:        'EMMA user account %{user} created.'
+        #failure:        'Could not create EMMA user account.'
 
         _endpoint:      true
 
@@ -200,15 +189,17 @@ en:
 
       edit:             &EDIT_ACTION
         label:          'Change'
-        title:          'Modify a Local EMMA User Account'
-        tooltip:        'Modify an existing user account in the local database.'
+        title:          'Modify an EMMA User Account'
+        tooltip:        'Modify an existing EMMA account in the user database'
         role:           'administrator' # TODO: institutional groups
         description:    |
-          You may change the details of the local representation of an account
-          (whether it is a local account or one authenticated via Bookshare).
-          However, in either case, these changes are only to the local account
+          You may change the local details of the EMMA account
+          (whether it is a local EMMA account or one authenticated via a
+          remote authentication provider).
+
+          However, in either case, these changes are only to the EMMA account
           database record -- nothing will be (or can be) changed about account
-          information maintained at Bookshare.
+          information maintained by the remote provider.
 
         term:
           action:       'update'
@@ -218,7 +209,7 @@ en:
           <<:           *GENERIC_SUBMIT
           label:        'Update'
           enabled:
-            tooltip:    'Modify this local EMMA user account'
+            tooltip:    'Modify this EMMA user account'
           disabled:
             tooltip:    'No valid changes have been made yet'
 
@@ -227,8 +218,8 @@ en:
           enabled:
             tooltip:    'Discard these changes'
 
-        #success:        'Local EMMA account %{user} updated.'
-        #failure:        'Could not update local EMMA account.'
+        #success:        'EMMA user account %{user} updated.'
+        #failure:        'Could not update EMMA user account.'
 
         _endpoint:      true
 
@@ -241,14 +232,11 @@ en:
 
       delete:           &DELETE_ACTION
         label:          'Remove'
-        title:          'Remove a Local EMMA User Account'
-        tooltip:        'Delete an existing user account from the local database.'
+        title:          'Remove an EMMA User Account'
+        tooltip:        'Delete an EMMA account from the user database'
         role:           'administrator' # TODO: institutional groups
         description:    |
           This removes the EMMA account database record for the given user.
-          For an account authenticated via Bookshare, this is only a temporary
-          removal because another database record will be created for that user
-          the next time they sign in.
         notes_html:     |
           Due to the nature of relational databases, this is not a recommended
           action for <b>any</b> user who has submitted EMMA content.
@@ -261,15 +249,15 @@ en:
           <<:           *GENERIC_SUBMIT
           label:        'Delete'
           enabled:
-            tooltip:    'Remove this local EMMA user account.'
+            tooltip:    'Remove this EMMA user account'
 
         cancel:
           <<:           *GENERIC_CANCEL
           enabled:
-            tooltip:    'Keep this local EMMA user account.'
+            tooltip:    'Keep this EMMA user account'
 
-        #success:        'Local EMMA account %{user} deleted.'
-        #failure:        'Could not delete local EMMA account.'
+        #success:        'EMMA user account %{user} deleted.'
+        #failure:        'Could not delete EMMA user account.'
 
         _endpoint:      true
 

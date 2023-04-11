@@ -90,9 +90,6 @@ module BaseDecorator::Form
   # == Implementation Notes
   # Compare with BaseDecorator::List#render_field_values
   #
-  # Special handling for :effective_id based on the Hash value set up in
-  # AccountDecorator#form_fields.
-  #
   def render_form_fields(action: nil, pairs: nil, separator: nil, **opt)
     return ''.html_safe unless pairs || object
     action    ||= context[:action]

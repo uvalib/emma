@@ -85,6 +85,14 @@ class Object
   #
   def neutralize: (*Symbol methods) -> void
 
+  # Used to neutralize method(s) and raise an exception if they are called.
+  #
+  # @param [Array<Symbol>] methods
+  #
+  # @return [void]
+  #
+  def disallow: (*Symbol methods) -> void
+
   # Convert a string to UTF-8 encoding.
   #
   # @param [String, *] v

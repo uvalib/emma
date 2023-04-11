@@ -386,7 +386,10 @@ class AccountDecorator
 
   public
 
-  # Render pre-populated form fields, manually adding password field(s) (which
+  # Render pre-populated form fields, manually adding password field(s) (which  # unless BS_AUTH
+  # are not in "emma.account.record").
+  #
+  # Render pre-populated form fields, manually adding password field(s) (which  # if BS_AUTH
   # are not in "emma.account.record") and overriding the :effective_id field
   # (which is) for the administrator to set/modify the effective Bookshare
   # account associated with the EMMA account.
@@ -401,7 +404,7 @@ class AccountDecorator
     admin = current_user&.administrator?
 
     get_password         = !edit ||  admin
-    get_effective_id     =  edit &&  admin
+    get_effective_id     =  edit &&  admin && BS_AUTH
     get_current_password =  edit && !admin
 
     fields = []
@@ -473,10 +476,7 @@ class AccountDecorator
 
   protected
 
-  # @private # TODO: I18n
-  DEFAULT_BOOKSHARE_ENTRY = 'Not applicable'
-
-  # Generate data for :effective_id rendered as a menu instead of a fixed
+  # Generate data for :effective_id rendered as a menu instead of a fixed       # if BS_AUTH
   # value.
   #
   # @param [Integer, nil] selected    Default: `object.effective_id`
@@ -484,7 +484,7 @@ class AccountDecorator
   #
   # @return [Hash]
   #
-  def bookshare_user_menu(selected: nil, default: DEFAULT_BOOKSHARE_ENTRY)
+  def bookshare_user_menu(selected: nil, default: 'Not applicable')
     label    = 'Equivalent Bookshare user' # TODO: I18n
     value    = selected || object&.effective_id
     choices  = []
@@ -492,6 +492,7 @@ class AccountDecorator
     choices += User.test_user_menu
     { label: label, value: value, range: choices.map! { |k, v| [v, k] } }
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # min_length_note
   #

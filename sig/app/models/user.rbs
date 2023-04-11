@@ -118,7 +118,7 @@ class User < ApplicationRecord
   #
   def to_s: () -> String
 
-  # Update database fields.
+  # Update database fields.                                                     # if BS_AUTH
   #
   # @param [User, Hash, nil] attributes
   #
@@ -186,14 +186,16 @@ class User < ApplicationRecord
   #
   def self.uid_value: (untyped user) -> (String | nil)
 
-  # The user ID is the same as the Bookshare ID, which is the same as the email
+  # The user ID is the same as the email address.                               # unless BS_AUTH
+  #
+  # The user ID is the same as the Bookshare ID, which is the same as the email # if BS_AUTH
   # address.
   #
   # @return [String]
   #
   def uid: () -> String
 
-  # Indicate whether this User is represented by a different Bookshare user.
+  # Indicate whether this User is represented by a different Bookshare user.    # if BS_AUTH
   #
   # The Bookshare ID associated with this account if different from *self*.
   #
@@ -202,7 +204,7 @@ class User < ApplicationRecord
   #
   def effective_uid: () -> (String | nil)
 
-  # The User who interacts with Bookshare on behalf of this account if
+  # The User who interacts with Bookshare on behalf of this account if          # if BS_AUTH
   # different from *self*.
   #
   # @return [User]
@@ -210,19 +212,19 @@ class User < ApplicationRecord
   #
   def effective_user: () -> (User | nil)
 
-  # Indicate whether this account directly maps on to a Bookshare account.
+  # Indicate whether this account directly maps on to a Bookshare account.      # if BS_AUTH
   #
   def is_bookshare_user?: () -> bool
 
-  # The Bookshare ID associated with this account.
+  # The Bookshare ID associated with this account.                              # if BS_AUTH
   #
   # @return [String]
   #
   def bookshare_uid: () -> String
 
-  @bookshare_user: User
+  @bookshare_user: User                                                         # if BS_AUTH
 
-  # The User who interacts with Bookshare on behalf of this account.
+  # The User who interacts with Bookshare on behalf of this account.            # if BS_AUTH
   #
   # This is *self* unless :effective_id is non-null.
   #
@@ -267,7 +269,7 @@ class User < ApplicationRecord
   # @return [void]
   #
   # == Implementation Notes
-  # A new User will be created the first time a new person authenticates via
+  # A new User will be created the first time a new person authenticates via    # if BS_AUTH
   # Bookshare -- this may be the place to query the Bookshare API for that
   # user's Bookshare role in order to map it onto EMMA "prototype user".
   #
@@ -291,14 +293,17 @@ class User < ApplicationRecord
   #
   def self.test_users: () -> Hash[String,Symbol]
 
-  # Pairs of current EMMA test Bookshare accounts with their "users" table
+  # Pairs of current EMMA test Bookshare accounts with their "users" table      # if BS_AUTH
   # record IDs.
   #
   # @type [Array<(String,Integer)>]
   #
   def self.test_user_menu: () -> Array[[String|Integer]]
 
-  # Get (or create) a database entry for the indicated user and update the
+  # Get the database entry for the indicated user and update it with additional # unless BS_AUTH
+  # information from the provider.
+  #
+  # Get (or create) a database entry for the indicated user and update the      # if BS_AUTH
   # associated User object with additional information from the provider.
   #
   # @param [OmniAuth::AuthHash, Hash, nil] data
