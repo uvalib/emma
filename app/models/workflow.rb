@@ -158,7 +158,7 @@ module Workflow::Base::Roles
     return user if user.nil? || user.is_a?(Symbol)
     user = user.bookshare_uid if user.is_a?(User)
     # TODO: role mapping
-    (user == BookshareService::TEST_ACCOUNT) ? :developer : :user
+    (user == 'emmadso@bookshare.org') ? :developer : :user
   end
 
   # ===========================================================================

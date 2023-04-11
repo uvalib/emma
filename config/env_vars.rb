@@ -234,11 +234,17 @@ BOOKSHARE_API_KEY = ENV.fetch('BOOKSHARE_API_KEY', nil).freeze
 
 # Current Bookshare API version.
 #
+# @note This is still required to detect and correct Bookshare API URLs that
+#   may arrive in search results.
+#
 # @type [String]
 #
 BOOKSHARE_API_VERSION = ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
 
 # Base Bookshare API request path.
+#
+# @note This is still required to detect and correct Bookshare API URLs that
+#   may arrive in search results.
 #
 # @type [String]
 #

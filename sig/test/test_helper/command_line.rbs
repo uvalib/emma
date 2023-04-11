@@ -11,14 +11,6 @@ module TestHelper::CommandLine
   #
   def cli_env_test_formats: (?default: symArray) -> symArray
 
-  # Get command-line argument "TEST_BOOKSHARE=..." or ENV['TEST_BOOKSHARE'].
-  #
-  # @param [Array<Symbol>] default
-  #
-  # @return [Array<Symbol>]
-  #
-  def cli_env_test_bookshare: (?default: symArray) -> symArray
-
   # Get a setting from command-line arguments or environment variable.
   #
   # @param [Array, String, Symbol, nil] value

@@ -1,8 +1,0 @@
-# Collection presenter for "/category" pages.
-#
-# @!attribute [r] object
-#   Set in Draper#initialize
-#   @return [Array<Bs::Record::CategorySummary>]
-#
-class CategoriesDecorator < BaseCollectionDecorator
-end

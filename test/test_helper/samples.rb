@@ -15,18 +15,12 @@ module TestHelper::Samples
   # noinspection NonAsciiCharacters
   #++
   SAMPLE_FIXTURE = {
-    artifact:       :brf,
-    edition:        :New_Yorker_1,
     job_result:     :example,
     manifest:       :example,
     manifest_item:  :example,
-    member:         :organization,
-    periodical:     :New_Yorker,
-    reading_list:   :A_Member_List,
     role:           :example,
     search_call:    :Mansfield_Park,
     search_result:  :Mansfield_Park_1,
-    title:          :Investigación,
     upload:         :emma_completed,
     user:           :developer,
   }.freeze
@@ -53,16 +47,10 @@ module TestHelper::Samples
   # Define methods which generate model instances from the appropriate
   # text/fixtures/*.yml data.
   #
-  # @!method sample_artifact
-  # @!method sample_edition
   # @!method sample_job_result
-  # @!method sample_member
-  # @!method sample_periodical
-  # @!method sample_reading_list
   # @!method sample_role
   # @!method sample_search_call
   # @!method sample_search_result
-  # @!method sample_title
   # @!method sample_user
   #
   SAMPLE_FIXTURE.each_pair do |model, fixture|
@@ -76,14 +64,6 @@ module TestHelper::Samples
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
 
-    # Generate a sample instance from text/fixtures/artifacts.yml.
-    # @return [Artifact]
-    def sample_artifact; end
-
-    # Generate a sample instance from text/fixtures/editions.yml.
-    # @return [Edition]
-    def sample_edition; end
-
     # Generate a sample instance from text/fixtures/jobs_results.yml.
     # @return [JobResult]
     def sample_job_result; end
@@ -96,18 +76,6 @@ module TestHelper::Samples
     # @return [ManifestItem]
     def sample_manifest_item; end
 
-    # Generate a sample instance from text/fixtures/members.yml.
-    # @return [Member]
-    def sample_member; end
-
-    # Generate a sample instance from text/fixtures/artifacts.yml.
-    # @return [Periodical]
-    def sample_periodical; end
-
-    # Generate a sample instance from text/fixtures/reading_lists.yml.
-    # @return [ReadingList]
-    def sample_reading_list; end
-
     # Generate a sample instance from text/fixtures/roles.yml.
     # @return [Role]
     def sample_role; end
@@ -119,10 +87,6 @@ module TestHelper::Samples
     # Generate a sample instance from text/fixtures/search_results.yml.
     # @return [SearchResult]
     def sample_search_result; end
-
-    # Generate a sample instance from text/fixtures/titles.yml.
-    # @return [Title]
-    def sample_title; end
 
     # Generate a sample instance from text/fixtures/uploads.yml.
     # @return [Upload]

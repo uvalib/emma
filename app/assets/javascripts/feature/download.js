@@ -1,4 +1,9 @@
 // app/assets/javascripts/feature/download.js
+//
+// A small portion of this module involves displaying the inline message that
+// indicates sign-in is required on download links in an anonymous session.
+// The rest involves the UI for downloading Bookshare artifacts via the
+// Bookshare API (which is no longer supported).
 
 
 import { AppDebug }               from '../application/debug';

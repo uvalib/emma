@@ -16,11 +16,11 @@ class Lookup::WorldCat::Message::OpenSearch < Lookup::WorldCat::Api::Message
 
   LIST_ELEMENT: untyped
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching items.
   #
   # @return [Integer]
   #
-  def totalResults: () -> Integer
+  def total_results: () -> Integer
 
   # api_records
   #

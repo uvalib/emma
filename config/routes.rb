@@ -160,50 +160,6 @@ Rails.application.routes.draw do
   get    '/manifest_item/:manifest',              to: 'manifest_item#index',        as: 'manifest_item_index'
 
   # ===========================================================================
-  # Category operations
-  # ===========================================================================
-
-  resources :category, only: %i[index]
-
-  # ===========================================================================
-  # Catalog Title operations
-  # ===========================================================================
-
-  resources :title do
-    member do
-      get :history
-    end
-  end
-
-  # ===========================================================================
-  # Periodical operations
-  # ===========================================================================
-
-  resources :periodical
-  resources :edition
-
-  get '/edition/:editionId/:fmt?seriesId=:seriesId', to: 'edition#download', as: 'edition_download'
-
-  # ===========================================================================
-  # Artifact operations
-  # ===========================================================================
-
-  get '/artifact/retrieval',          to: 'artifact#retrieval', as: 'bs_retrieval'
-  get '/artifact/:bookshareId/:fmt',  to: 'artifact#download',  as: 'bs_download'
-
-  resources :artifact, except: %i[index create]
-
-  post  '/artifact/create',     to: 'artifact#create', as: 'create_artifact'
-  match '/artifact/update/:id', to: 'artifact#update', as: 'update_artifact', via: %i[put patch]
-
-  # ===========================================================================
-  # Organization operations
-  # ===========================================================================
-
-  resources :member
-  resources :reading_list
-
-  # ===========================================================================
   # Help
   # ===========================================================================
 
@@ -233,15 +189,6 @@ Rails.application.routes.draw do
   # ===========================================================================
 
   get '/metrics/test', to: 'metrics#test'
-
-  # ===========================================================================
-  # API test routes
-  # ===========================================================================
-
-  resources :bs_api, only: %i[index]
-
-  match '/bs_api/v2/*api_path', to: 'bs_api#v2',    as: 'bs_api_v2',    via: ALL_METHODS
-  get   '/bs_api/image',        to: 'bs_api#image', as: 'bs_api_image'
 
   # ===========================================================================
   # Authentication
@@ -362,16 +309,6 @@ unless ONLY_FOR_DOCUMENTATION
   def advanced_search_url(...);                    end
   def api_migrate_path(...);                       end
   def api_migrate_url(...);                        end
-  def artifact_index_path(...);                    end
-  def artifact_index_url(...);                     end
-  def artifact_path(...);                          end
-  def artifact_url(...);                           end
-  def bs_api_index_path(...);                      end
-  def bs_api_index_url(...);                       end
-  def bs_download_path(...);                       end
-  def bs_download_url(...);                        end
-  def bs_retrieval_path(...);                      end
-  def bs_retrieval_url(...);                       end
   def bulk_create_manifest_item_path(...);         end
   def bulk_create_manifest_item_url(...);          end
   def bulk_create_upload_path(...);                end
@@ -408,8 +345,6 @@ unless ONLY_FOR_DOCUMENTATION
   def cancel_upload_url(...);                      end
   def cancel_user_registration_path(...);          end
   def cancel_user_registration_url(...);           end
-  def category_index_path(...);                    end
-  def category_index_url(...);                     end
   def check_health_path(...);                      end
   def check_health_url(...);                       end
   def check_subsystem_health_path(...);            end
@@ -420,8 +355,6 @@ unless ONLY_FOR_DOCUMENTATION
   def confirmation_url(...);                       end
   def create_account_path(...);                    end
   def create_account_url(...);                     end
-  def create_artifact_path(...);                   end
-  def create_artifact_url(...);                    end
   def create_manifest_item_path(...);              end
   def create_manifest_item_url(...);               end
   def create_manifest_path(...);                   end
@@ -474,20 +407,12 @@ unless ONLY_FOR_DOCUMENTATION
   def destroy_user_session_url(...);               end
   def edit_account_path(...);                      end
   def edit_account_url(...);                       end
-  def edit_artifact_path(...);                     end
-  def edit_artifact_url(...);                      end
-  def edit_edition_path(...);                      end
-  def edit_edition_url(...);                       end
   def edit_manifest_item_path(...);                end
   def edit_manifest_item_url(...);                 end
   def edit_manifest_path(...);                     end
   def edit_manifest_url(...);                      end
-  def edit_member_path(...);                       end
-  def edit_member_url(...);                        end
   def edit_password_path(...);                     end
   def edit_password_url(...);                      end
-  def edit_periodical_path(...);                   end
-  def edit_periodical_url(...);                    end
   def edit_select_account_path(...);               end
   def edit_select_account_url(...);                end
   def edit_select_manifest_path(...);              end
@@ -498,18 +423,12 @@ unless ONLY_FOR_DOCUMENTATION
   def edit_select_user_registration_path(...);     end
   def edit_select_user_registration_url(...);      end
   def edit_select_user_url(...);                   end
-  def edit_title_path(...);                        end
-  def edit_title_url(...);                         end
   def edit_upload_path(...);                       end
   def edit_upload_url(...);                        end
   def edit_user_path(...);                         end
   def edit_user_registration_path(...);            end # /users/edit
   def edit_user_registration_url(...);             end
   def edit_user_url(...);                          end
-  def edition_download_path(...);                  end
-  def edition_download_url(...);                   end
-  def edition_index_path(...);                     end
-  def edition_index_url(...);                      end
   def file_download_path(...);                     end
   def file_download_url(...);                      end
   def healthcheck_path(...);                       end
@@ -518,8 +437,6 @@ unless ONLY_FOR_DOCUMENTATION
   def help_index_url(...);                         end
   def help_path(...);                              end
   def help_url(...);                               end
-  def history_title_path(...);                     end
-  def history_title_url(...);                      end
   def home_path(...);                              end
   def home_url(...);                               end
   def manifest_index_path(...);                    end
@@ -532,28 +449,14 @@ unless ONLY_FOR_DOCUMENTATION
   def md_proxy_url(...);                           end
   def md_trial_path(...);                          end
   def md_trial_url(...);                           end
-  def member_index_path(...);                      end
-  def member_index_url(...);                       end
-  def member_path(...);                            end
-  def member_url(...);                             end
   def metrics_test_path(...);                      end
   def metrics_test_url(...);                       end
   def new_account_path(...);                       end
   def new_account_url(...);                        end
-  def new_artifact_path(...);                      end
-  def new_artifact_url(...);                       end
-  def new_edition_path(...);                       end
-  def new_edition_url(...);                        end
   def new_manifest_item_path(...);                 end
   def new_manifest_item_url(...);                  end
   def new_manifest_path(...);                      end
   def new_manifest_url(...);                       end
-  def new_member_path(...);                        end
-  def new_member_url(...);                         end
-  def new_periodical_path(...);                    end
-  def new_periodical_url(...);                     end
-  def new_title_path(...);                         end
-  def new_title_url(...);                          end
   def new_upload_path(...);                        end
   def new_upload_url(...);                         end
   def new_user_path(...);                          end
@@ -564,10 +467,6 @@ unless ONLY_FOR_DOCUMENTATION
   def new_user_url(...);                           end
   def password_path(...);                          end
   def password_url(...);                           end
-  def periodical_index_path(...);                  end
-  def periodical_index_url(...);                   end
-  def reading_list_index_path(...);                end
-  def reading_list_index_url(...);                 end
   def reedit_upload_path(...);                     end
   def reedit_upload_url(...);                      end
   def registration_path(...);                      end
@@ -616,18 +515,12 @@ unless ONLY_FOR_DOCUMENTATION
   def sign_in_local_url(...);                      end
   def system_unavailable_path(...);                end
   def system_unavailable_url(...);                 end
-  def title_index_path(...);                       end
-  def title_index_url(...);                        end
-  def title_path(...);                             end
-  def title_url(...);                              end
   def tool_index_path(...);                        end
   def tool_index_url(...);                         end
   def unlock_path(...);                            end
   def unlock_url(...);                             end
   def update_account_path(...);                    end
   def update_account_url(...);                     end
-  def update_artifact_path(...);                   end
-  def update_artifact_url(...);                    end
   def update_manifest_item_path(...);              end
   def update_manifest_item_url(...);               end
   def update_manifest_path(...);                   end

@@ -9,7 +9,6 @@ __loading_begin(__FILE__)
 #   that all subclasses of EnumType have been loaded from configuration so that
 #   their values can be used within the creation of constants in the helpers.
 
-require 'bookshare_service'
 require 'search_service'
 
 # Base class for all controllers.

@@ -9,10 +9,6 @@ class Object
 
   def run_serialization_tests: () -> void
 
-  def set_test_bookshare: (*(Symbol|symArray) values) -> void
-
-  def run_bs_api_tests: () -> void
-
   # Run the specified tests.
   #
   # @param [Array] test_files       Default: "test/**/*_test.rb"

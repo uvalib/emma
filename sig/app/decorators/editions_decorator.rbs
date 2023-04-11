@@ -1,8 +1,0 @@
-# Collection presenter for "/edition" pages.
-#
-# @!attribute [r] object
-#   Set in Draper#initialize
-#   @return [Array<Bs::Record::PeriodicalEdition>]
-#
-class EditionsDecorator < BaseCollectionDecorator
-end

@@ -56,21 +56,6 @@ end
 #
 TEST_FORMATS: symArray
 
-# Bookshare API aspects to test.
-#
-# The current test task may have already set this constant; if not the default
-# value set here will be used.
-#
-# @type [Array<Symbol>]
-#
-# @see file:lib/tasks/test_application.rake
-#
-# == Usage Notes
-# No Bookshare-specific tests are run unless specified by the test task or if
-# run explicitly from the IDE.
-#
-TEST_BOOKSHARE: symArray
-
 # Augment the base class for test cases.
 #
 class ActiveSupport::TestCase

@@ -29,19 +29,14 @@ module TestHelper::SystemTests::Show
   # @return [true]
   #
   def assert_valid_show_page(model, title: nil)
-    # Remove extra edition information for Bookshare catalog title.
     ctrlr    = controller_name(model)
-    bs_cat   = (ctrlr == :title)
-    title  &&= sanitized_string(title)
-    title  &&= bs_cat ? title&.sub(/\s*\(.*$/, '') : title
-    title  ||= property(ctrlr, :show, :title)
+    title    = title ? sanitized_string(title) : property(ctrlr, :show, :title)
     heading  = title ? { text: title } : {}
     body_css = property(ctrlr, :show, :body_css)
     assert_selector "body#{body_css}"
     assert_selector property(ctrlr, :show, :entry_css)
-    assert_title    title             if title
-    assert_selector COVER_IMAGE_CLASS if bs_cat
     assert_selector SHOW_HEADING_SELECTOR, **heading
+    assert_title title if title
   end
 
   # ===========================================================================

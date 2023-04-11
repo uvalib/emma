@@ -199,7 +199,6 @@ class AppSettings < AppGlobal
 
     # == Testing
     :PARALLEL_WORKERS,
-    :TEST_BOOKSHARE,
     :TEST_FORMATS,
     :EMMADSO_TOKEN,
     :EMMACOLLECTION_TOKEN,

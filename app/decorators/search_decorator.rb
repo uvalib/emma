@@ -542,11 +542,11 @@ class SearchDecorator
 
     opt[:context] ||= context
     case repo&.to_sym
-      when :emma            then emma_retrieval_link(object, label, url, **opt)
-      when :ace             then ia_retrieval_link(object, label, url, **opt)
-      when :internetArchive then ia_retrieval_link(object, label, url, **opt)
-      when :hathiTrust      then ht_retrieval_link(object, label, url, **opt)
-      when :bookshare       then bs_retrieval_link(object, label, url, **opt)
+      when :emma            then emma_retrieval_link(label, url, **opt)
+      when :ace             then ace_retrieval_link( label, url, **opt)
+      when :internetArchive then ia_retrieval_link(  label, url, **opt)
+      when :hathiTrust      then ht_retrieval_link(  label, url, **opt)
+      when :bookshare       then bs_retrieval_link(  label, url, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end

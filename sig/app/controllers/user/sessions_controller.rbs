@@ -11,8 +11,6 @@ class User::SessionsController < Devise::SessionsController
 
   include RunStateConcern
 
-  include BookshareConcern
-
   # :nocov:
   #include AbstractController::Callbacks
 
@@ -69,15 +67,6 @@ class User::SessionsController < Devise::SessionsController
   # provides the value for 'omniauth.auth'.
   #
   def sign_in_as: () -> void
-
-  # Trigger an exception if the signed-in user doesn't have a valid Bookshare
-  # OAuth2 token.
-  #
-  # @raise [RuntimeError]   If Bookshare account info was unavailable.
-  #
-  # @return [void]
-  #
-  def check_user_validity: () -> void
 
   # Called to avoid timing-out waiting for credentials.
   #

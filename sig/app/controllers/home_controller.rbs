@@ -21,9 +21,9 @@ class HomeController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  @item:         Bs::Message::MyAccountSummary     | nil
-  @preferences:  Bs::Message::MyAccountPreferences | nil
-  @history:      Bs::Message::TitleDownloadList    | nil
+  @item:         untyped | nil
+  @preferences:  untyped | nil
+  @history:      untyped | nil
 
   # == GET /home
   #

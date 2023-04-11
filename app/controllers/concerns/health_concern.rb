@@ -308,15 +308,6 @@ module HealthConcern
     SearchService.active_status
   end
 
-  # Health status of the Bookshare API service.
-  #
-  # @return [Array<(Boolean,String)>]
-  # @return [Array<(Boolean,nil)>]
-  #
-  def bookshare_status(...)
-    BookshareService.active_status
-  end
-
   # Health status of the EMMA Unified Ingest service.
   #
   # @return [Array<(Boolean,String)>]

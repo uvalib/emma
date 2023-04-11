@@ -70,20 +70,17 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
   public
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching records.
   #
   # NOTE: This reports the number of originating search result records.
   #
   # @return [Integer]
   #
-  #--
-  # noinspection RubyInstanceMethodNamingConvention
-  #++
-  def totalResults
+  def total_results
     records&.size || 0
   end
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching titles.
   #
   # @return [Integer]
   #

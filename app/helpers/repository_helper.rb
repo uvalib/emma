@@ -129,42 +129,40 @@ module RepositoryHelper
 
   # Produce a link to retrieve an EMMA file.
   #
-  # @param [Api::Record, nil] _item   Unused.
-  # @param [String]            label
-  # @param [String]            url
-  # @param [Hash]              opt    Passed to #retrieval_link
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emma_retrieval_link(_item, label, url, **opt)
+  def emma_retrieval_link(label, url, **opt)
     url = url.sub(%r{localhost:\d+}, 'localhost') if not_deployed?
     retrieval_link(label, url, **opt)
   end
 
-  # Produce a control to manage download of a Bookshare item artifact.
+  # Produce a link to open a new browser tab to retrieve a file from the
+  # Bookshare web site.
   #
-  # @param [Api::Record] item
-  # @param [String]      label
-  # @param [String]      url
-  # @param [Hash]        opt          To BookshareDecorator#artifact_links
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bs_retrieval_link(item, label, url, **opt)
-    BookshareDecorator.artifact_links(item, label: label, url: url, **opt)
+  def bs_retrieval_link(label, url, **opt)
+    retrieval_link(label, url, **opt)
   end
 
   # Produce a link to open a new browser tab to retrieve a file from the
   # HathiTrust web site.
   #
-  # @param [Api::Record, nil] _item   Unused.
-  # @param [String]            label
-  # @param [String]            url
-  # @param [Hash]              opt    Passed to #retrieval_link
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def ht_retrieval_link(_item, label, url, **opt)
+  def ht_retrieval_link(label, url, **opt)
     url_params    = url.split('?', 2)[1]
     has_ht_params = url_params&.split('&')&.include?(HT_URL_PARAMS)
     url += (url_params ? '&' : '?') + HT_URL_PARAMS unless has_ht_params
@@ -173,10 +171,9 @@ module RepositoryHelper
 
   # Produce a link to retrieve an Internet Archive file.
   #
-  # @param [Api::Record, nil] _item   Unused.
-  # @param [String]            label
-  # @param [String]            url
-  # @param [Hash]              opt    Passed to #retrieval_link
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -184,10 +181,22 @@ module RepositoryHelper
   # Encrypted DAISY files are handled differently; for an explanation:
   # @see IaDownloadConcern#ia_download_response
   #
-  def ia_retrieval_link(_item, label, url, **opt)
+  def ia_retrieval_link(label, url, **opt)
     direct = IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
     url    = retrieval_path(url: url) unless direct
     retrieval_link(label, url, **opt)
+  end
+
+  # Produce a link to retrieve an ACE file.
+  #
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #ia_retrieval_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ace_retrieval_link(label, url, **opt)
+    ia_retrieval_link(label, url, **opt)
   end
 
   # ===========================================================================

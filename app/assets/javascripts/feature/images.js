@@ -1,4 +1,10 @@
 // app/assets/javascripts/feature/images.js
+//
+// This supports the ability to asynchronously fill placeholders with images,
+// e.g. for thumbnails or cover images.  In the first iterations of the EMMA
+// application this was used to acquire thumbnails for Bookshare item listings.
+//
+// NOTE: Untested in the current version of the application.
 
 
 import { AppDebug }                       from '../application/debug';

@@ -371,14 +371,9 @@ module LayoutHelper::SearchFilters
   #
   SEARCH_PARAMETER_MENU_MAP =
     SEARCH_MENU_MAP.map { |controller, menu_configs|
-      periodicals = %i[periodical edition].include?(controller)
       search_param_menu_configs =
         menu_configs.map { |menu_name, menu_config|
-          case menu_name
-            when :layout            then next
-            when :format            then next if periodicals
-            when :periodical_format then next unless periodicals
-          end
+          next if menu_name == :layout
           url_param = menu_config[:url_param]&.to_sym
           [url_param, menu_config] if url_param.present?
         }.compact.to_h

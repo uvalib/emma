@@ -29,23 +29,20 @@ module Search::Shared::LinkMethods
 
   # URL of the associated work on the web site of the original repository.
   #
-  # If :emma_webPageLink is provided, that value is used.  Otherwise, a URL is
-  # manufactured from 'en.emma.repository.*.title_path'.
+  # @return [String, nil]
+  #
+  def record_title_url
+    emma_webPageLink.presence || generate_title_url
+  end
+
+  # Original repository content file download URL.
   #
   # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String, nil]
   #
-  def record_title_url
-    return emma_webPageLink if emma_webPageLink.present?
-    src   = emma_repository&.to_sym
-    entry = REPOSITORY[src].presence or raise 'invalid source'
-    path  = entry[:title_path]       or raise 'no title_path'
-    make_path(path, emma_repositoryRecordId)
-  rescue RuntimeError => error
-    # noinspection RubyScope
-    Log.warn { "#{__method__}: #{src}: #{error.message}" }
+  def record_download_url
+    emma_retrievalLink.presence || generate_download_url
   end
 
   # ===========================================================================
@@ -54,30 +51,46 @@ module Search::Shared::LinkMethods
 
   public
 
-  # Original repository artifact download URL.
+  # Create a URL manufactured from 'en.emma.repository.*.title_path' for the
+  # associated work on the web site of the original repository.
   #
   # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String, nil]
   #
-  def record_download_url
-    return emma_retrievalLink if emma_retrievalLink.present?
-    id    = emma_repositoryRecordId
-    dcfmt = dc_format&.to_sym
-    src   = emma_repository&.to_sym
-    entry = REPOSITORY[src].presence        or raise 'invalid source'
-    fmt   = entry.dig(:download_fmt, dcfmt) or raise "#{dcfmt}: invalid format"
-    tag   = 'TAG' # TODO: Bookshare tag
-    url   = entry[:download_url]
-    url   = url[fmt.to_sym] if url.is_a?(Hash)
-    path  = entry[:download_path]
+  def generate_title_url
+    id   = emma_repositoryRecordId&.presence or return
+    src  = emma_repository&.presence&.to_sym or return
+    cfg  = REPOSITORY[src].presence          or raise "#{src}: invalid source"
+    path = cfg[:title_path]                  or raise 'no title_path'
+    make_path(path, id)
+  rescue RuntimeError => error
+    # noinspection RubyScope
+    Log.warn { "#{__method__}: #{src}: #{error.message}" }
+  end
+
+  # Create a URL on the original repository for acquiring the content file
+  # associated with the item.
+  #
+  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  #
+  # @return [String, nil]
+  #
+  def generate_download_url
+    id   = emma_repositoryRecordId&.presence or return
+    src  = emma_repository&.presence&.to_sym or return
+    fmt  = dc_format&.presence&.to_sym       or return
+    cfg  = REPOSITORY[src].presence          or raise "#{src}: invalid source"
+    fmt  = cfg.dig(:download_fmt, fmt)       or raise "#{fmt}: invalid format"
+    url  = cfg[:download_url]
+    url  = url[fmt] if url.is_a?(Hash)
+    path = cfg[:download_path]
     if path.blank? && (src.to_s == EmmaRepository.default)
       path = request.base_url if respond_to?(:request)
     end
     raise 'no download_path' if path.blank?
     raise 'no download_url'  if url.blank?
-    url % { id: id, fmt: fmt, tag: tag, download_path: path }
+    url % { id: id, fmt: fmt, download_path: path }
   rescue RuntimeError => error
     # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{error.class}: #{error.message}" }

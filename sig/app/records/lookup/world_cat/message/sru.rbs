@@ -18,11 +18,11 @@ class Lookup::WorldCat::Message::Sru < Lookup::WorldCat::Api::Message
   #
   def initialize: (?(Faraday::Response|Model|String|anyHash|nil) src, **untyped opt) -> void
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching items.
   #
   # @return [Integer]
   #
-  def totalResults: () -> Integer
+  def total_results: () -> Integer
 
   # api_records
   #

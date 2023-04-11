@@ -111,8 +111,6 @@ class User < ApplicationRecord
   # :section: ActiveRecord associations
   # ===========================================================================
 
-  has_many :members
-  has_many :reading_lists
   has_many :search_calls
   has_many :uploads
   has_many :manifests
@@ -383,16 +381,6 @@ class User < ApplicationRecord
   #
   def bookshare_user
     @bookshare_user ||= effective_user || self
-  end
-
-  # Indicate whether the user is both an Organizational Member and an
-  # Institutional Member.
-  #
-  # @see Member#linked_account?
-  #
-  def linked_account?
-    as_member = Member.find_by(emailAddress: email)
-    as_member.present? && as_member.linked_account?
   end
 
   # ===========================================================================

@@ -97,6 +97,18 @@ module UploadConcern
   #
   def workflow_parameters: () -> symHash
 
+  # A remote URL path for retrieving a remediated resource.
+  #
+  # @return [String, nil]
+  #
+  attr_accessor item_download_url: String | nil
+
+  # Extract the URL parameter which indicates a remote URL path.
+  #
+  # @return [String, nil]
+  #
+  def set_item_download_url: () -> (String | nil)
+
   # Parameters used by Upload#search_records.
   #
   # @type [Array<Symbol>]

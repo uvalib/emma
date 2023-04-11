@@ -1,8 +1,0 @@
-# Base class for object-specific serializers that process data passed in as a
-# Ruby (hash) object representation.
-#
-class Bs::Api::Serializer::Obj < Api::Serializer::Obj
-  include Bs::Api::Serializer::Obj::Schema
-
-  include Bs::Api::Serializer::Obj::Associations
-end

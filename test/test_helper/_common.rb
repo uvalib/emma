@@ -24,18 +24,10 @@ module TestHelper::Common
   CONTROLLERS = %i[
     home
     account
-    artifact
-    bs_api
-    category
-    edition
     health
     manifest
-    member
-    periodical
-    reading_list
     search
     search_call
-    title
     upload
     user_sessions
   ].freeze

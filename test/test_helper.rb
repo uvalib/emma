@@ -89,21 +89,6 @@ public
 #
 TEST_FORMATS ||= TestHelper.cli_env_test_formats
 
-# Bookshare API aspects to test.
-#
-# The current test task may have already set this constant; if not the default
-# value set here will be used.
-#
-# @type [Array<Symbol>]
-#
-# @see file:lib/tasks/emma_test.rake
-#
-# == Usage Notes
-# No Bookshare-specific tests are run unless specified by the test task or if
-# run explicitly from the IDE.
-#
-TEST_BOOKSHARE ||= TestHelper.cli_env_test_bookshare
-
 # =============================================================================
 # Setup system test support classes
 # =============================================================================

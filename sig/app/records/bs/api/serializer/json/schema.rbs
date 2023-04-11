@@ -1,9 +1,0 @@
-# JSON-specific definition overrides for serialization.
-#
-# @see Api::Serializer::Json::Schema
-#
-module Bs::Api::Serializer::Json::Schema
-  include Bs::Api::Serializer::Schema
-
-  include Api::Serializer::Json::Schema
-end

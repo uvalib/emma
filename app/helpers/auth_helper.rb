@@ -89,12 +89,12 @@ module AuthHelper
 
   # Get user names/tokens from the database.
   #
-  # @param [String, Array<String>] accounts   Default: #TEST_USERS
+  # @param [String, Array<String>] accounts   Default: `User#test_users`
   #
   # @return [Hash{String=>Hash}]
   #
   def stored_auth_fetch(accounts: nil)
-    accounts = Array.wrap(accounts || BookshareService::TEST_USERS)
+    accounts = Array.wrap(accounts || User.test_users.keys)
     User.where(email: accounts).map { |u|
       token = u.access_token
       [u.uid, stored_auth_entry_value(token)] if token.present?

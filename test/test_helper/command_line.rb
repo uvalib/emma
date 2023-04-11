@@ -27,23 +27,6 @@ module TestHelper::CommandLine
     cli_env_value(var: 'TEST_FORMATS', default: default)
   end
 
-  # Get command-line argument "TEST_BOOKSHARE=..." or ENV['TEST_BOOKSHARE'].
-  #
-  # @param [Array<Symbol>] default
-  #
-  # @return [Array<Symbol>]
-  #
-  def cli_env_test_bookshare(default: %i[methods requests records])
-    cli_env_value(var: 'TEST_BOOKSHARE', default: nil) ||
-      $*.map { |arg|
-        case arg
-          when /test.bookshare.*method/i  then :methods
-          when /test.bookshare.*request/i then :requests
-          when /test.bookshare.*record/i  then :records
-        end
-      }.compact.presence || default
-  end
-
   # Get a setting from command-line arguments or environment variable.
   #
   # @param [Array, String, Symbol, nil] value

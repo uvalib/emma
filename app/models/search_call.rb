@@ -115,7 +115,7 @@ class SearchCall < ApplicationRecord
       f_params = json_columns[:filter][:params]
       LayoutHelper::SearchFilters::SEARCH_MENU_BASE.each_pair do |key, config|
         key = f_params[key] || key
-        next if reserved_keys.include?(key) || key.match?(/periodical/)
+        next if reserved_keys.include?(key)
         f_keys[key] = { type: (config[:multiple] ? :array : :string) }
         config[:url_param]&.then { |param| f_params[param.to_sym] = key }
       end
@@ -229,7 +229,6 @@ class SearchCall < ApplicationRecord
     LayoutHelper::SearchFilters::SEARCH_MENU_BASE.flat_map { |field, config|
       json_field = field.to_s.underscore.to_sym
       next if JSON_COLUMNS.include?(json_field)
-      next if json_field.match?(/periodical/)
       [field, config[:url_param]].map do |f|
         next if (f = f&.to_sym).blank?
         [f, [:filter, json_field]] unless NON_FILTER_PARAMETERS.include?(f)
@@ -409,7 +408,7 @@ class SearchCall < ApplicationRecord
       when String, Numeric then count = total = positive(src)
       else
         count = src.try(:records)&.size
-        total = src.try(:totalResults)
+        total = src.try(:total_results)
     end
     total ||= count
     count = nil if count == total

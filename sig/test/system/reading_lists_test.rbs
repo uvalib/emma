@@ -1,7 +1,0 @@
-class ReadingListsTest < ApplicationSystemTestCase
-  CONTROLLER: Symbol
-
-  TEST_USER: Symbol
-
-  @user: User
-end

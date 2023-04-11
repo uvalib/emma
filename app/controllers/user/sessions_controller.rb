@@ -15,7 +15,6 @@ class User::SessionsController < Devise::SessionsController
   include AuthConcern
   include SessionConcern
   include RunStateConcern
-  include BookshareConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -143,28 +142,10 @@ class User::SessionsController < Devise::SessionsController
     __debug_request
     local_sign_in
     __log_activity("LOGIN #{resource}")
-    check_user_validity
     set_flash_notice(action: :create)
     auth_success_redirect
   rescue => error
     auth_failure_redirect(message: error)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Trigger an exception if the signed-in user doesn't have a valid Bookshare
-  # OAuth2 token.
-  #
-  # @raise [RuntimeError]   If Bookshare account info was unavailable.
-  #
-  # @return [void]
-  #
-  def check_user_validity
-    bs_api.get_user_identity
   end
 
   # ===========================================================================

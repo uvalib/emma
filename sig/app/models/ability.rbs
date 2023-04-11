@@ -59,10 +59,6 @@ class Ability
   #
   # @param [User, nil] user
   #
-  # @see User#
-  # @see Member#
-  # @see Roles#role_prototype_for
-  #
   # == Usage Notes
   # Define abilities for the passed-in user here. For example:
   #
@@ -191,71 +187,6 @@ class Ability
   # download remediated content files).
   #
   def act_as_librarian: (User user) -> void
-
-  # Assign the ability to perform as a student with a Bookshare account.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  def act_as_member: (User user) -> void
-
-  # Assign the ability to perform as a student with a personal Bookshare
-  # account (i.e., an Individual Member).
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # From @see https://www.bookshare.org/cms/help-center/what-kind-account-should-my-students-use
-  #
-  # === Benefits
-  # * Search for and download books independently.
-  # * Download accessible formats (BRF, DAISY, Audio) from Bookshare.org.
-  # * Log in and download through Bookshare-integrated applications.
-  #
-  # === Drawbacks
-  # * Username & password hidden; for privacy reasons we only release login
-  #   information to parents.
-  # * No direct access to NIMAC books.
-  #
-  # @see https://www.bookshare.org/cms/help-center/access-nimac-books
-  #
-  def act_as_individual_member: (User user) -> void
-
-  # Assign the ability to perform as a student with a membership account
-  # through the organization (i.e., an Organizational Member).
-  #
-  # @param [User] user
-  #
-  # Organizational members do not have direct access to Bookshare; instead,
-  # artifacts must be acquired on their behalf by a "sponsor" (e.g. DSO staff).
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # From @see https://www.bookshare.org/myOrgAddIndividualMember:
-  #
-  # Individual Membership lets a user personally log into Bookshare and
-  # download books for their own use, including books you assign via shared
-  # Reading Lists. An Individual Member can access Bookshare through our
-  # website, mobile applications, and enabled partner devices.
-  #
-  # From @see https://www.bookshare.org/cms/help-center/what-kind-account-should-my-students-use
-  #
-  # === Benefits
-  # * Teachers manage account and can easily reset student's username/password.
-  # * Access to NIMAC books (K-12 textbooks).
-  # * Proof of Disability from school.
-  # * Log in and download through Bookshare-integrated applications.
-  #
-  # === Drawbacks
-  # * Can only read books shared on Reading Lists.
-  #
-  # @see https://www.bookshare.org/cms/help-center/access-nimac-books
-  #
-  def act_as_organization_member: (User user) -> void
 
   # Assign the ability to perform as a signed-in user.
   #

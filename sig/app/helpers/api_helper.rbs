@@ -37,8 +37,7 @@ module ApiHelper
   #
   def mask_later_exceptions: ((String|nil) html) -> String
 
-  # Transform URLs into links by translating Bookshare API hrefs into local
-  # paths.
+  # Transform URLs into links.
   #
   # @param [String, nil] html         An HTML-ready string.
   # @param [Hash]   opt               Passed to #make_link.

@@ -12,9 +12,6 @@ __loading_begin(__FILE__)
 # - The :read argument implies permission for the :index and :show endpoints.
 # - The controller manipulates instances of the Upload resource.
 #
-#--
-# noinspection RubyTooManyMethodsInspection
-#++
 class Ability
 
   include Emma::Common
@@ -79,15 +76,10 @@ class Ability
     bulk_update:    %i[bulk_edit],
     bulk_destroy:   %i[bulk_delete],
 
-    # == UploadController, ArtifactController, EditionController
+    # == UploadController
 
     download:       [],
     retrieval:      [],
-
-    # == MemberController, TitleController
-
-    history:        %i[manage],
-    show_history:   %i[history],
 
     # == AccountController, User::*Controller
 
@@ -132,10 +124,6 @@ class Ability
   #
   # @param [User, nil] user
   #
-  # @see User#
-  # @see Member#
-  # @see Roles#role_prototype_for
-  #
   # == Usage Notes
   # Define abilities for the passed-in user here. For example:
   #
@@ -174,7 +162,6 @@ class Ability
       when :administrator then act_as_administrator(user)
       when :dso           then act_as_dso(user)
       when :librarian     then act_as_librarian(user)
-      when :member        then act_as_member(user)
       when :guest         then act_as_guest(user)
       else                     act_as_anonymous
     end
@@ -314,92 +301,17 @@ class Ability
     act_as_authenticated(user)
     can_manage_own_entries(user)
     can_manage_group_entries(user)
-    can :create, Artifact
-    can :modify, Artifact
   end
 
-  # Assign the ability to perform as a student with a Bookshare account.
+  # Assign the ability to perform as a member organization staff (without permission
+  # to download).
   #
   # @param [User] user
   #
   # @return [void]
   #
-  def act_as_member(user)
-    if user.linked_account?
-      act_as_individual_member(user)
-    else
-      act_as_organization_member(user)
-    end
-  end
-
-  # Assign the ability to perform as a student with a personal Bookshare
-  # account (i.e., an Individual Member).
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # From @see https://www.bookshare.org/cms/help-center/what-kind-account-should-my-students-use
-  #
-  # === Benefits
-  # * Search for and download books independently.
-  # * Download accessible formats (BRF, DAISY, Audio) from Bookshare.org.
-  # * Log in and download through Bookshare-integrated applications.
-  #
-  # === Drawbacks
-  # * Username & password hidden; for privacy reasons we only release login
-  #   information to parents.
-  # * No direct access to NIMAC books.
-  #
-  # @see https://www.bookshare.org/cms/help-center/access-nimac-books
-  #
-  def act_as_individual_member(user)
-    act_as_authenticated(user)
-    can :retrieve, Artifact
-    can :retrieve, Upload
-  end
-
-  # Assign the ability to perform as a student with a membership account
-  # through the organization (i.e., an Organizational Member).
-  #
-  # @param [User] user
-  #
-  # Organizational members do not have direct access to Bookshare; instead,
-  # artifacts must be acquired on their behalf by a "sponsor" (e.g. DSO staff).
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # From @see https://www.bookshare.org/myOrgAddIndividualMember:
-  #
-  # Individual Membership lets a user personally log into Bookshare and
-  # download books for their own use, including books you assign via shared
-  # Reading Lists. An Individual Member can access Bookshare through our
-  # website, mobile applications, and enabled partner devices.
-  #
-  # From @see https://www.bookshare.org/cms/help-center/what-kind-account-should-my-students-use
-  #
-  # === Benefits
-  # * Teachers manage account and can easily reset student's username/password.
-  # * Access to NIMAC books (K-12 textbooks).
-  # * Proof of Disability from school.
-  # * Log in and download through Bookshare-integrated applications.
-  #
-  # === Drawbacks
-  # * Can only read books shared on Reading Lists.
-  #
-  # @see https://www.bookshare.org/cms/help-center/access-nimac-books
-  #
-  def act_as_organization_member(user)
-    act_as_authenticated(user)
-    can :retrieve, Artifact do |artifact|
-      ReadingList.any? { |list| list.has_artifact?(artifact) }
-    end
-    can :retrieve, Upload do |upload|
-      title = upload.emma_data&.dig(:dc_title)
-      title.present? && ReadingList.any? { |list| list.has_title?(title) }
-    end
+  def act_as_staff(user)
+    act_as_librarian(user)
   end
 
   # Assign the ability to perform as a signed-in user.
@@ -431,12 +343,8 @@ class Ability
   # @return [void]
   #
   def act_as_anonymous(...)
-    can :list,    Artifact
-    can :read,    Title
-    can :read,    Periodical
-    can :read,    Edition
-    can :view,    Upload
-    can :backup,  Upload
+    can :view,   Upload
+    can :backup, Upload
   end
 
   # ===========================================================================

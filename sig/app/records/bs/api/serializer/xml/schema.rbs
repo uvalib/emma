@@ -1,9 +1,0 @@
-# XML-specific definition overrides for serialization.
-#
-# @see Api::Serializer::Xml::Schema
-#
-module Bs::Api::Serializer::Xml::Schema
-  include Bs::Api::Serializer::Schema
-
-  include Api::Serializer::Xml::Schema
-end

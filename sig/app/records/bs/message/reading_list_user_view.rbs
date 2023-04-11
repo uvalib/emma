@@ -1,9 +1,0 @@
-# Bs::Message::ReadingListUserView
-#
-# @see Bs::Record::ReadingListUserView
-#
-class Bs::Message::ReadingListUserView < Bs::Api::Message
-  include Bs::Shared::LinkMethods
-
-  include Bs::Shared::ReadingListMethods
-end

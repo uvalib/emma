@@ -230,21 +230,6 @@ class User < ApplicationRecord
   #
   def bookshare_user: () -> User
 
-  # Indicate whether the user is both an Organizational Member and an
-  # Institutional Member.
-  #
-  # @see Member#linked_account?
-  #
-  def linked_account?: () -> bool
-
-  # Current EMMA test Bookshare accounts and their role prototypes.
-  #
-  # @type [Hash{String=>Symbol}]
-  #
-  # @see Roles#PROTOTYPE
-  #
-  TEST_USERS: Hash[String,Symbol]
-
   # Indicate whether the user is one of the known "fake" test user accounts.
   #
   def test_user?: () -> bool
@@ -300,7 +285,7 @@ class User < ApplicationRecord
 
   public
 
-  # Current EMMA test Bookshare accounts.
+  # Current EMMA test accounts.
   #
   # @type [Hash{String=>Symbol}]
   #

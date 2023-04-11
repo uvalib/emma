@@ -107,8 +107,7 @@ module ApiHelper
     end
   end
 
-  # Transform URLs into links by translating Bookshare API hrefs into local
-  # paths.
+  # Transform URLs into links.
   #
   # @param [String, nil] html         An HTML-ready string.
   # @param [Hash]   opt               Passed to #make_link.
@@ -120,13 +119,6 @@ module ApiHelper
     opt[:target] ||= '_blank' unless params[:action] == 'v2'
     html.to_s.gsub(%r{&quot;https?://.+&quot;}) do |s|
       url = href = s.split('&quot;')[1].html_safe
-      # noinspection RubyMismatchedArgumentType
-      if url.start_with?(BOOKSHARE_BASE_URL)
-        uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
-        path  = uri && File.join(bs_api_index_path, uri.path)
-        query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
-        href  = [path, query].compact.join('?')
-      end
       url = make_link(url, href, **opt) if href.present?
       "&quot;#{url}&quot;"
     end

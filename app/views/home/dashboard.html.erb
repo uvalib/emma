@@ -7,10 +7,6 @@
 
   view_debug(__FILE__)
 
-  item  ||= @item
-  pref  ||= @preferences
-  hist  ||= @history
-
   help  ||= nil # %i[home dashboard]
   title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
 
@@ -28,7 +24,6 @@
 
 <%= page_directions_section %>
 <%= render 'account/local' %>
-<%= render 'member/details', item: item, pref: pref, hist: hist %>
 
 <%= page_notes_section %>
 <%= render 'account/ability' if session_debug? %>
