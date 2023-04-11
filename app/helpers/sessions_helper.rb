@@ -108,14 +108,15 @@ module SessionsHelper
   # @return [String]
   #
   def get_sessions_label(action, provider = nil, **opt)
-    default = [:"emma.user.sessions.#{action}.label", *opt[:default]]
-    if (provider ||= opt[:provider])
-      opt[:provider] = OmniAuth::Utils.camelize(provider)
-      key = :"emma.user.omniauth_callbacks.#{action}.label"
-    else
-      key = default.shift
+    provider = provider.presence&.to_sym
+    default  = [*opt.delete(:default), :"emma.user.sessions.#{action}.label"]
+    case provider
+      when nil    then key = default.shift.to_sym
+      when :local then key = :"emma.user.sessions.#{action}.label"
+      else             key = :"emma.user.omniauth_callbacks.#{action}.label"
     end
-    opt[:default] = default
+    opt[:provider] = OmniAuth::Utils.camelize(provider) if provider
+    opt[:default]  = default
     t(key, **opt)
   end
 

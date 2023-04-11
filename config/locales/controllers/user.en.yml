@@ -158,6 +158,8 @@ en:
           title:        'Sign in with a local EMMA account'
           submit:       'Sign in'
           cancel:       'Cancel'
+          username:     'Account'
+          password:     'Password'
           _endpoint:    true
 
         sign_in_as:
@@ -242,5 +244,5 @@ en:
           _endpoint:    true
 
         destroy:
-          label:        'Sign out of %{provider}'
+          label:        'Sign out of EMMA (%{provider})'
           _endpoint:    true

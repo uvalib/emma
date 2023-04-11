@@ -129,6 +129,12 @@ en:
             And the EMMA note:
             Close this browser tab and retry the original download link.
 
+        local_login:
+          asset:        'help/local_login.png'
+          alt:          |
+            The "local sign-in" button with Account and Password fields and a
+            "Sign in" submit button.
+
         one_selection:
           asset:        'help/one_selection.png'
           alt:          |
@@ -149,6 +155,12 @@ en:
           alt:          |
             Search type menu (opened) with a drop-down list of search types
             "ISBN/DOI/etc.", "Title", "Creator", "Publisher", and "Keyword".
+
+        shibboleth_login:
+          asset:        'help/shibboleth_login.png'
+          alt:          |
+            The InCommon login form with a drop-down menu to select your
+            institution.
 
         # =====================================================================
         # Single submission
