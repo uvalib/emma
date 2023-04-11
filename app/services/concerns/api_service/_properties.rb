@@ -51,9 +51,6 @@ module ApiService::Properties
   #
   # @type [Array<Symbol>]
   #
-  # == Implementation Notes
-  # Compare with BsAllowsType#values.
-  #
   HTTP_METHODS =
     %w(GET PUT POST DELETE)
       .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze

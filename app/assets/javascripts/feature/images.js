@@ -143,7 +143,7 @@ appSetup(MODULE, function() {
      */
     function urlProxyPath(url) {
         const encoded_url = encodeURIComponent(url);
-        return `/bs_api/image?url=${encoded_url}`;
+        return `/search/image?url=${encoded_url}`;
     }
 
     /**

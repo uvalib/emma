@@ -380,7 +380,7 @@ en:
 
       # NOTE: Some of these definitions require parameters to be supplied:
       #
-      # %{fmt}        Name of an artifact export format.
+      # %{fmt}        Name of a content file export format.
       # %{button}     Label of a button.
 
       label:          'Download'

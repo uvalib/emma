@@ -7,10 +7,10 @@ __loading_begin(__FILE__)
 
 # Definitions for role-based authorization through CanCan.
 #
-# A method call like `can :read, :artifact` basically assumes a few things:
-# - There's an ArtifactController with typical CRUD endpoints.
+# A method call like `can :read, :upload` basically assumes a few things:
+# - There's an UploadController with typical CRUD endpoints.
 # - The :read argument implies permission for the :index and :show endpoints.
-# - The controller manipulates instances of the Artifact resource.
+# - The controller manipulates instances of the Upload resource.
 #
 #--
 # noinspection RubyTooManyMethodsInspection
@@ -308,7 +308,7 @@ class Ability
   # == Usage Notes
   # The current idea is that library staff might perform all of the entry
   # creation and maintenance functions that a DSO would (minus the ability to
-  # download artifacts).
+  # download remediated content files).
   #
   def act_as_librarian(user)
     act_as_authenticated(user)

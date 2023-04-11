@@ -11,9 +11,6 @@ __loading_begin(__FILE__)
 # @attr [Array<String>] messages
 # @attr [Array<String>] links
 #
-# == Implementation Notes
-# Compare with Bs::Record::StatusModel
-#
 class Search::Message::RetrievalResult < Search::Api::Message
 
   # ===========================================================================

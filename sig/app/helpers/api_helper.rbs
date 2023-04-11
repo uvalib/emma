@@ -67,7 +67,7 @@ module ApiHelper
 
   # Attempt to interpret *arg* as an exception or a record with an exception.
   #
-  # @param [Bs::Api::Record, Exception, *] arg
+  # @param [Api::Record, Exception, *] arg
   # @param [*] default                On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
   #

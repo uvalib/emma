@@ -24,7 +24,9 @@ module LayoutHelper::NavBar
   #
   # @type [Hash{Symbol=>*}]
   #
-  NAV_BAR_CONFIG = I18n.t('emma.nav_bar', default: {}).deep_freeze
+  NAV_BAR_CONFIG = I18n.t('emma.nav_bar', default: {}).transform_values { |cfg|
+    cfg.is_a?(Hash) ? cfg : Array.wrap(cfg).compact.map!(&:to_sym)
+  }.deep_freeze
 
   # The controllers included on the nav bar.
   #
@@ -33,23 +35,20 @@ module LayoutHelper::NavBar
   # == Implementation Notes
   # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
   #
-  NAV_BAR_CONTROLLERS =
-    Array.wrap(NAV_BAR_CONFIG[:controllers]).compact.map!(&:to_sym).freeze
+  NAV_BAR_CONTROLLERS = NAV_BAR_CONFIG[:controllers]
 
   # The important nav bar entries.
   #
   # @type [Array<Symbol>]
   #
-  PRIMARY_CONTROLLERS =
-    Array.wrap(NAV_BAR_CONFIG[:primary]).compact.map!(&:to_sym).freeze
+  PRIMARY_CONTROLLERS = NAV_BAR_CONFIG[:primary]
 
   # Nav bar primary entries that are not displayed in the production
   # deployment.
   #
   # @type [Array<Symbol>]
   #
-  UNRELEASED_CONTROLLERS =
-    Array.wrap(NAV_BAR_CONFIG[:unreleased]).compact.map!(&:to_sym).freeze
+  UNRELEASED_CONTROLLERS = NAV_BAR_CONFIG[:unreleased]
 
   if sanity_check?
     if (invalid = PRIMARY_CONTROLLERS - NAV_BAR_CONTROLLERS).present?

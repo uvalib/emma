@@ -6,17 +6,29 @@
 #
 TMPDIR: String
 
-# Temporary flag indicating whether Shibboleth authorization is active.
+# Indicate whether Shibboleth authorization is in use.
 #
 # @type [Boolean]
 #
 SHIBBOLETH: bool
 
-# OAuth2 providers for Devise.
+# Indicate whether Benetech OAuth2 authorization is in use.
+#
+# @type [Boolean]
+#
+BS_AUTH: bool
+
+# Omniauth providers for Devise.
 #
 # @type [Array<Symbol>]
 #
-OAUTH2_PROVIDERS: symArray
+AUTH_PROVIDERS: symArray
+
+# A special conditional for supporting test sign in.
+#
+# @type [Symbol, nil]
+#
+SIGN_IN_AS: Symbol | nil
 
 # EMMA Unified Ingest API key.
 #
@@ -76,7 +88,7 @@ BOOKSHARE_API_VERSION: String
 #
 # @type [String]
 #
-BOOKSHARE_BASE_URL: String
+BOOKSHARE_API_URL: String
 
 # Base Bookshare authentication service path.
 #

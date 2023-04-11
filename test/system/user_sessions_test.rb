@@ -25,7 +25,7 @@ class UserSessionsTest < ApplicationSystemTestCase
 
       # Start on the main page.
       visit url
-      click_on class: 'bookshare-login'
+      click_on class: 'session-login'
 
       # On sign-in page '/users/sign_in' (#new_user_session_path).
       show_url
@@ -53,8 +53,8 @@ class UserSessionsTest < ApplicationSystemTestCase
       sign_in_as @user
 
       # Go to a new page.
-      visit_index :title
-      click_on class: 'bookshare-logout'
+      visit_index :search, title: 'Advanced'
+      click_on class: 'session-logout'
       assert_flash notice: 'signed out'
 
     end

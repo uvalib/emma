@@ -408,7 +408,7 @@ class AccountDecorator
     fields << :password << :password_confirmation if get_password
     fields << :current_password                   if get_current_password
 
-    added = fields.map { |k| [k, k] }.to_h
+    added = fields.map { |k| [k.to_s.titleize, k] }.to_h
     added[:effective_id] = bookshare_user_menu    if get_effective_id
 
     opt[:pairs] = pairs&.merge(added) || added

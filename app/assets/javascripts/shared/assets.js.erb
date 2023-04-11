@@ -611,13 +611,13 @@ export const Emma = (function() {
     /** @type {DownloadProperties} */
     const Download = {
         button: {
-            class:      "<%= ArtifactDecorator::DOWNLOAD_BUTTON_CLASS %>",
+            class:      'button',
         },
         progress: {
-            class:      "<%= ArtifactDecorator::DOWNLOAD_PROGRESS_CLASS %>",
+            class:      'progress',
         },
         failure: {
-            class:      "<%= ArtifactDecorator::DOWNLOAD_FAILURE_CLASS %>",
+            class:      'failure',
             prefix:     "<%= I18n.t('emma.download.failure.prefix') %>",
             canceled:   "<%= I18n.t('emma.download.failure.canceled') %>",
             sign_in:    "<%= I18n.t('emma.download.failure.sign_in') %>",

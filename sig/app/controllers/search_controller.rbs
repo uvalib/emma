@@ -88,6 +88,18 @@ class SearchController < ApplicationController
   #
   def validate: () -> void
 
+  # == GET /search/image?url=...
+  #
+  # Get a thumbnail or cover image.
+  #
+  # @see file:app/assets/javascripts/feature/images.js *urlProxyPath*
+  #
+  # == Usage Notes
+  # This provides JavaScript with a way of asynchronously getting non-local
+  # images without having to contend with CSRF.
+  #
+  def image: () -> void
+
   # Response values for de-serializing the index page to JSON or XML.
   #
   # @param [Search::Message::SearchRecordList, Search::Message::SearchTitleList] list

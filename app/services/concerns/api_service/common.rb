@@ -390,25 +390,6 @@ module ApiService::Common
   # == Usage Notes
   # Sets @response as a side-effect.
   #
-  # == Implementation Notes
-  # === Bookshare API status codes
-  # 301 Moved Permanently
-  # 302 Found (typically, redirect to download location)
-  # 200 OK
-  # 201 Created
-  # 202 Accepted
-  # 400 Bad Request
-  # 401 Unauthorized
-  # 403 Forbidden
-  # 404 Not Found
-  # 405 Method Not Allowed
-  # 406 Not Acceptable
-  # 409 Conflict
-  # 415 Unsupported Media Type
-  # 500 Internal Server Error
-  #
-  # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
-  #
   def transmit(verb, action, params, headers, **opt)
     redirect  = nil
     @response = connection.send(verb, action, params, headers)

@@ -39,8 +39,7 @@ class IaDownloadService < ApiService
 
   # Initialize a new instance
   #
-  # @param [User, nil]   user         User instance which includes a
-  #                                     Bookshare user identity and token.
+  # @param [User, nil]   user
   # @param [String, nil] base_url     Base URL to the external service (instead
   #                                     of #BASE_URL defined by the subclass).
   # @param [Hash]        opt          Stored in @options

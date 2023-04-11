@@ -15,6 +15,9 @@ en:
       title:            'User Accounts'
       tooltip:          'Show the local user account database table.'
 
+      subsystem:
+        database:       true
+
       # =======================================================================
       # Search endpoint
       # =======================================================================

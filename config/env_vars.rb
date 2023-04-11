@@ -121,18 +121,40 @@ TMPDIR =
     File.expand_path(Dir.tmpdir, File.absolute_path('..'))
   end.freeze
 
-# Temporary flag indicating whether Shibboleth authorization is active.
+# =============================================================================
+# Authorization properties
+# =============================================================================
+
+# Indicate whether Shibboleth authorization is in use.
 #
 # @type [Boolean]
 #
 SHIBBOLETH = true?(ENV.fetch('SHIBBOLETH') { !production_deployment? })
 
-# OAuth2 providers for Devise.
+# Indicate whether Benetech OAuth2 authorization is in use.
+#
+# @type [Boolean]
+#
+BS_AUTH = true?(ENV.fetch('BS_AUTH', true))
+
+# Omniauth providers for Devise.
 #
 # @type [Array<Symbol>]
 #
-OAUTH2_PROVIDERS =
-  (SHIBBOLETH ? %i[bookshare shibboleth] : %i[bookshare]).freeze
+AUTH_PROVIDERS = [
+  (:bookshare  if BS_AUTH),
+  (:shibboleth if SHIBBOLETH),
+].compact.freeze
+
+if sanity_check?
+  raise 'Neither BS_AUTH nor SHIBBOLETH is true' if AUTH_PROVIDERS.empty?
+end
+
+# A special conditional for supporting test sign in.
+#
+# @type [Symbol, nil]
+#
+SIGN_IN_AS = (:sign_in_as if BS_AUTH || (ENV['RAILS_ENV'] == 'test'))
 
 # =============================================================================
 # EMMA Unified Ingest API properties
@@ -220,8 +242,8 @@ BOOKSHARE_API_VERSION = ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
 #
 # @type [String]
 #
-BOOKSHARE_BASE_URL =
-  ENV.fetch('BOOKSHARE_BASE_URL', 'https://api.bookshare.org')
+BOOKSHARE_API_URL =
+  ENV.fetch('BOOKSHARE_API_URL', 'https://api.bookshare.org')
      .strip
      .sub(%r{^(http:)?//}, 'https://')
      .sub(%r{/+$}, '')

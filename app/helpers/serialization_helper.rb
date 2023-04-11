@@ -100,9 +100,8 @@ module SerializationHelper
   #
   def make_xml(item, separator: "\n", name: nil, serializer: nil)
     if item.is_a?(Hash)
-      return if item.blank?
-      serializer ||= Bs::Api::Serializer::Xml.new
-      make_opt = { separator: separator, serializer: serializer }
+      serializer ||= Search::Api::Serializer::Xml.new
+      make_opt     = { separator: separator, serializer: serializer }
       # @type [Symbol] k
       # @type [Any]    v
       item.map { |k, v|
@@ -111,16 +110,17 @@ module SerializationHelper
         name  = serializer.element_render_name(k)
         value = "#{separator}#{value}#{separator}" if value.end_with?('>')
         "<#{name}>#{value}</#{name}>"
-      }.compact.join(separator)
+      }.compact.join(separator).presence
 
     elsif item.is_a?(Array)
-      return if item.blank?
-      make_opt = { separator: separator, serializer: serializer }
-      item.map { |v| make_xml(v, **make_opt) }.compact.join(separator)
+      serializer ||= Search::Api::Serializer::Xml.new
+      make_opt     = { separator: separator, serializer: serializer }
+      item.map { |v| make_xml(v, **make_opt) }.compact.join(separator).presence
 
     elsif item.respond_to?(:to_xml)
       return if item.blank?
-      name ||= (serializer || item.serializer(:xml)).element_render_name(item)
+      serializer ||= item.serializer(:xml)
+      name       ||= serializer.element_render_name(item)
       remove_xml_prolog(item.to_xml(wrap: name))
 
     elsif !item.nil?

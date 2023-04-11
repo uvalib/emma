@@ -142,7 +142,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
       # Change to the form page if coming in from the index page.
       unless direct
-        click_on 'Create'
+        click_on 'Create', match: :first
         wait_for_page form_url
       end
 

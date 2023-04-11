@@ -117,6 +117,7 @@ class AppSettings < AppGlobal
     nil,
 
     # == Bookshare API
+    :BOOKSHARE_API_URL,
     :BOOKSHARE_API_VERSION,
     :BOOKSHARE_API_KEY,
     nil,
@@ -124,12 +125,6 @@ class AppSettings < AppGlobal
     # == Bookshare OAuth2 service
     :BOOKSHARE_AUTH_URL,
     :BOOKSHARE_TEST_AUTH,
-    nil,
-
-    # == Bookshare application
-    :BOOKSHARE_BASE_URL,
-    :BOOKSHARE_SFTP_USER,
-    :BOOKSHARE_SFTP_PASSWD,
     nil,
 
     # == Internet Archive

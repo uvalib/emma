@@ -115,6 +115,7 @@ class User < ApplicationRecord
   has_many :reading_lists
   has_many :search_calls
   has_many :uploads
+  has_many :manifests
 
   # ===========================================================================
   # :section: Authentication

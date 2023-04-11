@@ -125,11 +125,10 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
-    case params[:controller].to_s.downcase
-      when 'artifact'   then return if params[:action] == 'show'
-      when 'bs_api'     then return if params[:action] == 'image'
-      when %r{^devise/} then return
-      when %r{^user/}   then return
+    case params.values_at(:controller, :action).join('/')
+      when 'search/image' then return
+      when %r{^devise/}   then return
+      when %r{^user/}     then return
     end
     if request.path == root_path
       session.delete('app.current_path')

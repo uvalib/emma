@@ -18,7 +18,7 @@ if respond_to?(:rails_application?) && rails_application?
     # === Bookshare API
     :BOOKSHARE_API_KEY,
     :BOOKSHARE_API_VERSION,
-    :BOOKSHARE_BASE_URL,
+    :BOOKSHARE_API_URL,
 
     # === EMMA Unified Ingest API
     :INGEST_API_KEY,

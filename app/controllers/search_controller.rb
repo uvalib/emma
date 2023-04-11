@@ -211,6 +211,25 @@ class SearchController < ApplicationController
     render json: validate_identifiers(ids) if ids
   end
 
+  # == GET /search/image?url=...
+  #
+  # Get a thumbnail or cover image.
+  #
+  # @see file:app/assets/javascripts/feature/images.js *urlProxyPath*
+  #
+  # == Usage Notes
+  # This provides JavaScript with a way of asynchronously getting non-local
+  # images without having to contend with CSRF.
+  #
+  def image
+    #__log_activity
+    # __debug_route
+    response   = Faraday.get(params[:url]) # TODO: caching
+    image_data = Base64.encode64(response.body)
+    mime_type  = response.headers['content-type']
+    render plain: image_data, format: mime_type, layout: false
+  end
+
   # ===========================================================================
   # :section: SerializationConcern overrides
   # ===========================================================================
