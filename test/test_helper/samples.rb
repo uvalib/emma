@@ -22,7 +22,7 @@ module TestHelper::Samples
     search_call:    :Mansfield_Park,
     search_result:  :Mansfield_Park_1,
     upload:         :emma_completed,
-    user:           :developer,
+    user:           :test_dev,
   }.freeze
 
   # A string added to the start of each title created on a non-production

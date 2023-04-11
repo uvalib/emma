@@ -15,47 +15,48 @@
 # Current existing users of interest
 # =============================================================================
 
-emmadso:
+test_dso:
   id:           1
-  email:        emmadso@bookshare.org
-  access_token: <%= ENV['EMMADSO_TOKEN'] %>
+  email:        test_dso@virginia.edu
+  first_name:   EMMA Automated
+  last_name:    Test DSO
+  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
   roles:
-    - catalog_search
-    - catalog_submit
-    - artifact_download
-    - artifact_submit
-    - membership_view
-    - membership_modify
+    - searcher
+    - submitter
+    - downloader
 
-emmacollection:
+test_lib:
   id:           2
-  email:        emmacollection@bookshare.org
-  access_token: <%= ENV['EMMACOLLECTION_TOKEN'] %>
+  email:        test_lib@virginia.edu
+  first_name:   EMMA Automated
+  last_name:    Test Librarian
+  access_token: <%= ENV['EMMACOLLECTION_TOKEN'] if BS_AUTH %>
   roles:
-    - catalog_search
-    - catalog_submit
+    - searcher
+    - submitter
 
-emmamembership:
-  id:           3
-  email:        emmamembership@bookshare.org
-  access_token: <%= ENV['EMMAMEMBERSHIP_TOKEN'] %>
+test_adm:
+  id:           10
+  email:        test_adm@virginia.edu
+  first_name:   EMMA Automated
+  last_name:    Test Administrator
+  effective_id: <%= 1 if BS_AUTH %>
   roles:
-    - catalog_search
-    - membership_view
-    - membership_modify
+    - searcher
+    - submitter
+    - downloader
+    - administrator
 
-developer:
-  id:           13
-  email:        rwl@virginia.edu
-  first_name:   Ray
-  last_name:    Lubinsky
-  effective_id: 1
+test_dev:
+  id:           11
+  email:        test_dev@virginia.edu
+  first_name:   EMMA Automated
+  last_name:    Test Developer
+  effective_id: <%= 1 if BS_AUTH %>
   roles:
-    - catalog_search
-    - catalog_submit
-    - artifact_download
-    - artifact_submit
-    - membership_view
-    - membership_modify
+    - searcher
+    - submitter
+    - downloader
     - administrator
     - developer

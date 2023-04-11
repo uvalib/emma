@@ -11,8 +11,6 @@ module RoleHelper
 
   include Emma::Common
 
-  include Roles
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -34,28 +32,19 @@ module RoleHelper
     current_user.present? && current_user.administrator?
   end
 
-  # Indicate whether the (current) user has the given role.
+  # Indicate whether the (current) user has the given role or role prototype.
   #
   # If *role* is blank then the method always returns *true*.
   #
   # @param [Symbol, String, nil] role
   # @param [User, nil]           user   Default: `current_user`.
   #
-  def has_role?(role, user = nil)
+  def user_has_role?(role, user = nil)
     return true if role.blank?
-    if user.nil?
-      unless defined?(current_user)
-        raise "#{__method__} invalid in this context"
-      end
-      user = current_user
-    end
-    return false unless user.is_a?(User)
-    role = role.to_s.strip.to_sym if role.is_a?(String)
-    case role
-      when :developer     then user.developer?
-      when :administrator then user.administrator?
-      else                     user.has_role?(role)
-    end
+    user = current_user if user.nil? && defined?(current_user)
+    raise "#{__method__}: invalid use" unless user.is_a?(User)
+    # noinspection RubyMismatchedArgumentType
+    user.has_role?(role)
   end
 
   # ===========================================================================

@@ -17,7 +17,6 @@ class Ability
   include Emma::Common
 
   include CanCan::Ability
-  include Roles
 
   # ===========================================================================
   # :section:
@@ -157,10 +156,11 @@ class Ability
       alias_action(*actions, to: name) unless actions.blank?
     end
     # noinspection RubyMismatchedArgumentType
-    case role_prototype_for(user)
+    case Role.prototype_for(user)
       when :developer     then act_as_developer(user)
       when :administrator then act_as_administrator(user)
       when :dso           then act_as_dso(user)
+      when :manager       then act_as_dso_delegate(user)
       when :librarian     then act_as_librarian(user)
       when :guest         then act_as_guest(user)
       else                     act_as_anonymous
@@ -196,10 +196,6 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
-  # This is not related to any Bookshare "role" -- it is exclusively for
-  # authorization to access local EMMA resources.
-  #
   #--
   # noinspection RubyUnusedLocalVariable
   #++
@@ -214,66 +210,12 @@ class Ability
   # @return [void]
   #
   def act_as_dso(user)
-    dso_type = nil # TODO: Distinguish between DSO types?
-    case dso_type&.to_sym
-      when :primary then act_as_dso_primary(user)
-      when :staff   then act_as_dso_staff(user)
-      else               act_as_dso_sponsor(user)
-    end
+    act_as_dso_delegate(user)
+    can :retrieve, Upload
   end
 
-  # Assign the ability to perform as a DSO Primary.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # Based on https://www.bookshare.org/orgAccountSponsors it would not appear
-  # that the "primary contact" for an organization has any special significance
-  # other than that "sponsor" cannot be removed.  (Another "sponsor" would need
-  # to be designated as the primary contact first.)
-  #
-  def act_as_dso_primary(user)
-    act_as_dso_staff(user)
-  end
-
-  # Assign the ability to perform as a DSO Staff member.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # There is currently no distinction between "DSO Staff" and "DSO Sponsor"
-  # (which is Bookshare's term for "DSO Staff").
-  #
-  def act_as_dso_staff(user)
-    act_as_dso_sponsor(user)
-    can_manage_group_account(user)
-  end
-
-  # Assign the ability to perform as an assistant to a DSO Sponsor.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # From https://www.bookshare.org/orgAccountSponsors:
-  # Sponsors must be staff or faculty, or professionals working with your
-  # organization.  Sponsors cannot be parents (unless employed by your
-  # organization) or volunteers.
-  #
-  def act_as_dso_sponsor(user)
-    act_as_individual_member(user)
-    can_manage_own_entries(user)
-    can :manage, Artifact
-    can :manage, Member
-    can :manage, ReadingList
-  end
-
-  # Assign the ability to perform as an assistant to a DSO Staff member.
+  # Assign the ability to perform as an assistant to a DSO (without permission
+  # to download).
   #
   # @param [User] user
   #
@@ -299,6 +241,7 @@ class Ability
   #
   def act_as_librarian(user)
     act_as_authenticated(user)
+    can_manage_group_account(user) if user.has_role?(:manager)
     can_manage_own_entries(user)
     can_manage_group_entries(user)
   end

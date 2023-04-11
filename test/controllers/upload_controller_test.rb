@@ -12,7 +12,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   PARAMS        = { controller: CONTROLLER }.freeze
   OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS    = %i[anonymous emmadso].freeze
+  TEST_USERS    = %i[anonymous test_dso].freeze
   TEST_READERS  = TEST_USERS
   TEST_WRITERS  = TEST_USERS
 

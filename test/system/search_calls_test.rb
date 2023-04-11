@@ -8,7 +8,7 @@ require 'application_system_test_case'
 class SearchCallsTest < ApplicationSystemTestCase
 
   CONTROLLER = :search_call
-  TEST_USER  = :developer
+  TEST_USER  = :test_dev
 
   setup do
     @user = find_user(TEST_USER)

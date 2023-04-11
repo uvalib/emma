@@ -10,8 +10,6 @@ class Ability
 
   include CanCan::Ability
 
-  include Roles
-
   # The standard CRUD actions controller presumed by CanCan.
   #
   # @type [Array<Symbol>]
@@ -110,10 +108,6 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
-  # This is not related to any Bookshare "role" -- it is exclusively for
-  # authorization to access local EMMA resources.
-  #
   def act_as_administrator: (User user) -> void
 
   # Assign the ability to perform as a Disability Service Officer.
@@ -124,47 +118,8 @@ class Ability
   #
   def act_as_dso: (User user) -> void
 
-  # Assign the ability to perform as a DSO Primary.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # Based on https://www.bookshare.org/orgAccountSponsors it would not appear
-  # that the "primary contact" for an organization has any special significance
-  # other than that "sponsor" cannot be removed.  (Another "sponsor" would need
-  # to be designated as the primary contact first.)
-  #
-  def act_as_dso_primary: (User user) -> void
-
-  # Assign the ability to perform as a DSO Staff member.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # There is currently no distinction between "DSO Staff" and "DSO Sponsor"
-  # (which is Bookshare's term for "DSO Staff").
-  #
-  def act_as_dso_staff: (User user) -> void
-
-  # Assign the ability to perform as an assistant to a DSO Sponsor.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # From https://www.bookshare.org/orgAccountSponsors:
-  # Sponsors must be staff or faculty, or professionals working with your
-  # organization.  Sponsors cannot be parents (unless employed by your
-  # organization) or volunteers.
-  #
-  def act_as_dso_sponsor: (User user) -> void
-
-  # Assign the ability to perform as an assistant to a DSO Staff member.
+  # Assign the ability to perform as an assistant to a DSO (without permission
+  # to download).
   #
   # @param [User] user
   #

@@ -7,7 +7,7 @@ require 'application_system_test_case'
 
 class UserSessionsTest < ApplicationSystemTestCase
 
-  TEST_USER = :emmadso
+  TEST_USER = :test_dso
 
   setup do
     @user = find_user(TEST_USER)

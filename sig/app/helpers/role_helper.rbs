@@ -3,8 +3,6 @@
 module RoleHelper
   include Emma::Common
 
-  include Roles
-
   # Indicate whether the current user has the :developer role.
   #
   # == Implementation Notes
@@ -16,14 +14,14 @@ module RoleHelper
   #
   def administrator?: () -> bool
 
-  # Indicate whether the (current) user has the given role.
+  # Indicate whether the (current) user has the given role or role prototype.
   #
   # If *role* is blank then the method always returns *true*.
   #
   # @param [Symbol, String, nil] role
   # @param [User, nil]           user   Default: `current_user`.
   #
-  def has_role?: ((Symbol|String|nil) role, ?(User|nil) user) -> bool
+  def user_has_role?: ((Symbol|String|nil) role, ?(User|nil) user) -> bool
 
   private
 

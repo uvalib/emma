@@ -171,7 +171,7 @@ module BaseDecorator::Form
     prop  ||= field_configuration(field)
     field ||= prop[:field]
     return if prop[:ignored]
-    return if prop[:role] && !has_role?(prop[:role])
+    return unless user_has_role?(prop[:role])
 
     # Pre-process label to derive names and identifiers.
     base = model_html_id(field || label)

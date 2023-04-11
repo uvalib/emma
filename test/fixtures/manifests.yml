@@ -4,12 +4,12 @@
 
 csv:            &CSV
   name:         'Sample from CSV data'
-  #user:         emmadso
+ #user:         test_dso
   user_id:      1
 
 json:           &JSON
   name:         'Sample from JSON data'
-  #user:         emmadso
+ #user:         test_dso
   user_id:      1
 
 # =============================================================================

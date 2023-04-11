@@ -64,13 +64,13 @@ module Workflow::Base::Roles
   #
   # @type [Symbol]
   #
-  DEFAULT_ROLE = application_deployed? ? :system : :developer
+  DEFAULT_WF_ROLE = application_deployed? ? :system : :developer
 
   # Workflow roles. # TODO: harmonize with existing roles
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  ROLE = {
+  WF_ROLE = {
     user:           %i[submitter],
     submitter:      [],
     reviewer:       [],
@@ -112,16 +112,16 @@ module Workflow::Base::Roles
   #
   # @return [User,String]
   #
-  def current_user
-    @current_user ||= set_current_user
+  def wf_user
+    @wf_user ||= set_wf_user
   end
 
   # The workflow role of the current workflow user.
   #
   # @return [Symbol]
   #
-  def current_role
-    @current_role ||= set_current_role
+  def wf_role
+    @wf_role ||= set_wf_role
   end
 
   # Set the workflow user.
@@ -130,11 +130,11 @@ module Workflow::Base::Roles
   #
   # @return [User, String]
   #
-  def set_current_user(user = nil)
-    set_current_role(user)
-    user = @current_role.to_s if user.nil? || user.is_a?(Symbol)
-    # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
-    @current_user = user
+  def set_wf_user(user = nil)
+    role = set_wf_role(user)
+    user = role.to_s if user.nil? || user.is_a?(Symbol)
+    # noinspection RubyMismatchedReturnType
+    @wf_user = user
   end
 
   # Set the workflow role for the current workflow user.
@@ -143,8 +143,8 @@ module Workflow::Base::Roles
   #
   # @return [Symbol]
   #
-  def set_current_role(role = nil)
-    @current_role = get_role(role) || DEFAULT_ROLE
+  def set_wf_role(role = nil)
+    @wf_role = get_wf_role(role) || DEFAULT_WF_ROLE
   end
 
   # Get the workflow role of the given identity.
@@ -153,7 +153,7 @@ module Workflow::Base::Roles
   #
   # @return [Symbol, nil]
   #
-  def get_role(user)
+  def get_wf_role(user)
     # noinspection RubyMismatchedReturnType
     return user                 if user.is_a?(Symbol)
     user = User.find(uid: user) if user.is_a?(String)
@@ -223,15 +223,15 @@ module Workflow::Base::Roles
 
   # The workflow role(s) for the given user.
   #
-  # @param [User, String, Symbol, nil] u  Default: WorkflowRoles#current_user
+  # @param [User, String, Symbol, nil] u    Default: #wf_user
   #
   # @return [Array<Symbol>]
   #
-  # @see #ROLE
+  # @see #WF_ROLE
   #
   def wf_roles(u = nil)
-    primary = u && get_role(u) || current_role
-    ROLE[primary] || Array.wrap(primary)
+    primary = get_wf_role(u) || wf_role
+    WF_ROLE[primary] || Array.wrap(primary)
   end
 
 end
@@ -656,8 +656,8 @@ module Workflow::Base::Events
               if current_state.events.first_applicable(event, self).nil?
                 c = self.class.name
                 e = event.inspect
-                r = current_role.inspect
-                u = current_user.to_s.inspect
+                r = wf_role.inspect
+                u = wf_user.to_s.inspect
                 s = curr_state.inspect
                 m = "#{c} event #{e} not valid for #{u} (#{r}) in state #{s}"
                 __debug_event(event, "ERROR: #{m}")
@@ -1053,7 +1053,7 @@ class Workflow::Base
     @params        = opt[:params]  || {}
     @model_options = opt[:options] || Upload::Options.new(@params)
     simulating(false) if opt[:no_sim] # TODO: remove?
-    set_current_user(opt[:user])
+    set_wf_user(opt[:user])
     initialize_state(data, **opt)
   end
 

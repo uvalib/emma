@@ -109,9 +109,9 @@ module LayoutHelper::PageControls
       end
       next log&.('no action')                        unless action.present?
       next log&.("#{action} not permitted for user") unless can?(action, subj)
-      role = config_lookup('role', controller: ctrlr, action: action)
-      ok   = role.blank? || has_role?(role, user)
-      next log&.("#{action} requires #{role} role")  unless ok
+      role    = config_lookup('role', controller: ctrlr, action: action)
+      allowed = user_has_role?(role, user)
+      next log&.("#{action} requires #{role} role")  unless allowed
       [ctrlr, action]
     }.compact
   end

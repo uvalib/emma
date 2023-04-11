@@ -322,7 +322,7 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def role_prototype(**opt)
-    prototype = Roles.role_prototype_for(object)
+    prototype = Role.prototype_for(object)
     prepend_css!(opt, 'role-prototype')
     html_div(opt) do
       (prototype == :dso) ? 'DSO' : prototype.to_s.titleize
@@ -371,7 +371,7 @@ class AccountDecorator
     pairs = super(item, **opt)
     model_show_fields.map { |field, config|
       next if config[:ignored]
-      next if config[:role] && !has_role?(config[:role])
+      next unless user_has_role?(config[:role])
       k = config[:label] || field
       v = pairs[field]
       v = table.find_record(v)&.uid || pairs[:email] if field == :effective_id

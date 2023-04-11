@@ -8,7 +8,7 @@ require 'test_helper'
 # noinspection RubyJumpError
 class AccountControllerTest < ActionDispatch::IntegrationTest
 
-  TEST_USER = :emmadso
+  TEST_USER = :test_dso
 
   setup do
     @user = find_user(TEST_USER)

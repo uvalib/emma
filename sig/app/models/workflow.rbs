@@ -46,13 +46,13 @@ module Workflow::Base::Roles
   #
   # @type [Symbol]
   #
-  DEFAULT_ROLE: Symbol
+  DEFAULT_WF_ROLE: Symbol
 
   # Workflow roles. # TODO: harmonize with existing roles
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  ROLE: Hash[Symbol,symArray]
+  WF_ROLE: Hash[Symbol,symArray]
 
   IF_USER: symHash
 
@@ -74,17 +74,17 @@ module Workflow::Base::Roles
   #
   # @return [User,String]
   #
-  def current_user: () -> (User | String)
+  def wf_user: () -> (User | String)
 
-  @current_user: User | String
+  @wf_user: User | String | nil
 
   # The workflow role of the current workflow user.
   #
   # @return [Symbol]
   #
-  def current_role: () -> Symbol
+  def wf_role: () -> Symbol
 
-  @current_role: Symbol
+  @wf_role: Symbol | nil
 
   # Set the workflow user.
   #
@@ -92,7 +92,7 @@ module Workflow::Base::Roles
   #
   # @return [User, String]
   #
-  def set_current_user: (?(User|String|Symbol|nil) user) -> (User | String)
+  def set_wf_user: (?(User|String|Symbol|nil) user) -> (User | String)
 
   # Set the workflow role for the current workflow user.
   #
@@ -100,7 +100,7 @@ module Workflow::Base::Roles
   #
   # @return [Symbol]
   #
-  def set_current_role: (?(User|String|Symbol|nil) role) -> Symbol
+  def set_wf_role: (?(User|String|Symbol|nil) role) -> Symbol
 
   # Get the workflow role of the given identity.
   #
@@ -108,7 +108,7 @@ module Workflow::Base::Roles
   #
   # @return [Symbol, nil]
   #
-  def get_role: ((User|String|Symbol|nil) user) -> (Symbol | nil)
+  def get_wf_role: ((User|String|Symbol|nil) user) -> (Symbol | nil)
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
@@ -152,11 +152,11 @@ module Workflow::Base::Roles
 
   # The workflow role(s) for the given user.
   #
-  # @param [User, String, Symbol, nil] u  Default: WorkflowRoles#current_user
+  # @param [User, String, Symbol, nil] u    Default: #wf_user
   #
   # @return [Array<Symbol>]
   #
-  # @see #ROLE
+  # @see #WF_ROLE
   #
   def wf_roles: (?(User|String|Symbol|nil) u) -> symArray
 end

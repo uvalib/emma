@@ -5,89 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Model for the representation of an EMMA/Bookshare user.
-#
-# == Implementation Notes
-# NOTE: There is still some friction between the concepts of User and Member.
-#
-# === Documented "types" of "users"
-# Section 2.6 of the API documentation mentions "Membership Assistants" and
-# "administrators" as being able to access "/v2/accounts" where:
-# - A Membership Assistant is allowed to see and manage only those user
-#   accounts that are associated with their site.
-# - Administrators are allowed access to users across all sites.
-#
-# @see https://www.bookshare.org/cms/help-center/how-do-i-use-bookshare-web-reader
-# This page mentions "Individual Member", "Student Member",
-# "Bookshare teacher", and "sponsor".
-#
-# @see https://www.bookshare.org/cms/help-center/what-kind-account-should-my-students-use
-# There are three main types of student Bookshare accounts: Individual
-# Memberships, Organizational Memberships, and Linked Accounts.
-#
-# @see https://www.bookshare.org/cms/help-center/how-do-i-create-individual-membership-my-student
-# [A] sponsor can set a limited access username and password to allow a
-# member to log in and access books shared on a Reading List. Once the member
-# logs in they can select the "Upgrade to an Individual membership" link
-# found on the left side of their My Bookshare page to learn how to upgrade
-# to a full Individual Membership.  Or a sponsor on the account can [...]
-# provide an 'Activation ID' to the student.
-#
-# @see https://www.bookshare.org/cms/help-center/what-activation-id
-# If you were originally registered for Bookshare as an Organizational Member
-# (e.g. a student at a school), your Bookshare Sponsor can provide you an
-# Activation ID that will link your new Individual Membership to the
-# Organization. With this Activation ID your Organization has verified you
-# Proof of Disability, and if you are over 18 your account would be
-# immediately active. Members who are under 18 will still need to submit an
-# Individual Agreement form to complete registration.
-#
-# === Prototypical users
-# Bookshare seems to merge the concepts of "role" and "prototypical user".
-# The test accounts that we were given seem to represent four "types" of users,
-# although it's not clear whether these are all the "types" that are meant to
-# exist.
-#
-# ==== EMMADSO@bookshare.org
-# The home page has button for "Add Students".
-#
-# In "My Bookshare", this user:
-# - has a link for "Members".
-# - has a link for "Sponsors".
-# - has a link for "My Requests".
-#
-# This user seems to be typical of current (DSO "sponsor") users that have
-# Bookshare accounts.
-#
-# ==== EmmaVolunteer@bookshare.org
-# The home page has links for "Checkout a Book" and "Submit a Book".
-#
-# In "My Bookshare", this user:
-# - has none of the sidebar-links that a DSO "sponsor" has.
-# - does not seem to be part of the same org as "EMMADSO@bookshare.org".
-#
-# This user seems to be typical of current "volunteer" Bookshare users which
-# are (often?) unassociated with any DSO.
-#
-# ==== emmacollection@bookshare.org
-# This user's home page says:
-# We are so excited to have you help us with the approval queue and introduce
-# this new account role.
-#
-# In "My Bookshare", this user:
-# - has a link for "Collection Admin" to catalog.bookshare.org.
-# - does not have a link for "Members".
-# - does not have a link for "Sponsors".
-# - does not have a link for "My Requests".
-# - does not seem to have visibility into organization reading lists.
-# - does not seem to be part of the same org as "EMMADSO@bookshare.org".
-#
-# Evidently, this "type" of user is completely new and not fully fleshed-out in
-# terms of what it is meant to do.
-#
-# ==== EmmaMembership@bookshare.org
-# This user cannot log in to www.bookshare.org or catalog.bookshare.org and
-# appears to be a "type" of user that is completely new.
+# Model for the representation of an EMMA user.
 #
 #--
 # noinspection RubyTooManyMethodsInspection
@@ -100,6 +18,20 @@ class User < ApplicationRecord
 
   include Record
   include Record::Identification
+
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Rolify
+    include Rolify::Role
+    include Devise::Models::DatabaseAuthenticatable
+    include Devise::Models::Rememberable
+    include Devise::Models::Trackable
+    include Devise::Models::Registerable
+    include Devise::Models::Omniauthable
+    extend  ActiveRecord::Validations
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section: ActiveRecord ModelSchema
@@ -123,18 +55,6 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :recoverable, :validatable
   devise :database_authenticatable, :rememberable, :trackable, :registerable,
          :omniauthable, omniauth_providers: AUTH_PROVIDERS
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include Devise::Models::DatabaseAuthenticatable
-    include Devise::Models::Rememberable
-    include Devise::Models::Trackable
-    include Devise::Models::Registerable
-    include Devise::Models::Omniauthable
-    extend  ActiveRecord::Validations
-    # :nocov:
-  end
 
   # ===========================================================================
   # :section: Authorization
@@ -470,18 +390,37 @@ class User < ApplicationRecord
 
   # Add EMMA role(s) to the current user based on its prototype.
   #
-  # @param [Symbol, nil] prototype    Default: `Roles#DEFAULT_PROTOTYPE`.
+  # @param [Symbol, nil] prototype    Default: `Role#DEFAULT_PROTOTYPE`.
   #
   # @return [Array<Role>]             Added role(s).
   #
   def add_roles(prototype = nil)
-    prototype ||= Roles::DEFAULT_PROTOTYPE
-    added_roles = Roles::PROTOTYPE[prototype]
+    prototype ||= Role::DEFAULT_PROTOTYPE
+    added_roles = Role::PROTOTYPE[prototype]
     if added_roles.blank?
       Log.error("#{__method__}: invalid prototype #{prototype.inspect}")
-      added_roles = Roles::PROTOTYPE[:anonymous]
+      added_roles = Role::PROTOTYPE[:anonymous]
     end
     added_roles.map { |role| add_role(role) }
+  end
+
+  # ===========================================================================
+  # :section: Rolify::Role overrides
+  # ===========================================================================
+
+  public
+
+  # Extend Rolify #has_role? to first check for role prototype.
+  #
+  # @param [String, Symbol] role      Role capability or role prototype.
+  # @param [Symbol, nil]    resource
+  #
+  def has_role?(role, resource = nil)
+    if resource.nil?
+      role = role.to_s.strip.to_sym if role.is_a?(String)
+      return true if role == Role.prototype_for(self)
+    end
+    super(role, resource)
   end
 
   # ===========================================================================
