@@ -49,21 +49,6 @@ en:
 
         _name:          'AWS S3 interface'
 
-      bookshare:
-
-        # @see BookshareService::Error.error_classes
-
-        _name:          'Bookshare service'
-
-        # == Request errors
-
-        account:        '%{Service} account request error'
-        subscription:   '%{Service} subscription request error'
-        title:          '%{Service} catalog title request error'
-        periodical:     '%{Service} periodical request error'
-        reading_list:   '%{Service} reading list request error'
-        organization:   '%{Service} organization request error'
-
       ia_download:
 
         # @see IaDownloadService::Error.error_classes

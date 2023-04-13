@@ -26,9 +26,7 @@ module TestHelper::SystemTests
   # @param [Module] base
   #
   def self.included(base)
-    include_submodules(base, __FILE__) do |name|
-      (name != :Bookshare) || TEST_BOOKSHARE.present?
-    end
+    include_submodules(base, __FILE__)
     base.extend(TestHelper::Common)
   end
 

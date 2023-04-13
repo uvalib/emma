@@ -1,6 +1,6 @@
 <%# app/views/user/sessions/_local_form.html.erb -%>
 <%-
-  # Sign in with a local EMMA account.
+  # Local (EMMA authentication) inline sign-in prompt.
 
   view_debug(__FILE__)
 
@@ -15,7 +15,10 @@
   label_opt    = { class: 'label' }
   value_opt    = { class: 'value' }
 
-  email_opt    = value_opt.merge(autocomplete: 'email')
+  usr_label    = t('emma.user.sessions.sign_in.username')
+  usr_opt      = value_opt.merge(autocomplete: 'email')
+
+  pwd_label    = t('emma.user.sessions.sign_in.password')
   pwd_opt      = value_opt.merge(autocomplete: 'current-password')
 
   submit_label = t('emma.user.sessions.new.submit')
@@ -30,10 +33,10 @@
 
   <fieldset class="form-fields user">
 
-    <%= f.label          :email, label_opt %>
-    <%= f.email_field    :email, email_opt %>
+    <%= f.label          :email,    usr_label, label_opt %>
+    <%= f.email_field    :email,    usr_opt %>
 
-    <%= f.label          :password, label_opt %>
+    <%= f.label          :password, pwd_label, label_opt %>
     <%= f.password_field :password, pwd_opt %>
 
     <%- if devise_mapping.rememberable? -%>

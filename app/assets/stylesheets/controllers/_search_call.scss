@@ -116,18 +116,11 @@
         min-width: max-content;
     }
 
-    .filter_ally_feature,
-    .filter_braille,
-    .filter_category,
-    .filter_content_type,
-    .filter_country,
+    .filter_a11y_feature,
     .filter_format,
     .filter_format_feature,
     .filter_language,
-    .filter_narrator,
-    .filter_repository,
-    .filter_warnings_exc,
-    .filter_warnings_inc {
+    .filter_repository {
         // min-width: min-content; // TODO: word wrap in table header
     }
 }

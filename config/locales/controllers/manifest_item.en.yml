@@ -15,6 +15,11 @@ en:
       title:            'Manifest Items'
       tooltip:          'Work on a bulk operations manifest'
 
+      subsystem:
+        database:       true
+        ingest:         true
+        storage:        true
+
       # =======================================================================
       # Layout
       # =======================================================================

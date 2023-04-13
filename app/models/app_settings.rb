@@ -117,20 +117,15 @@ class AppSettings < AppGlobal
     nil,
 
     # == Bookshare API
+    :BOOKSHARE_API_URL,
     :BOOKSHARE_API_VERSION,
     :BOOKSHARE_API_KEY,
     nil,
 
     # == Bookshare OAuth2 service
-    :BOOKSHARE_AUTH_URL,
-    :BOOKSHARE_TEST_AUTH,
-    nil,
-
-    # == Bookshare application
-    :BOOKSHARE_BASE_URL,
-    :BOOKSHARE_SFTP_USER,
-    :BOOKSHARE_SFTP_PASSWD,
-    nil,
+    (BS_AUTH ? :BOOKSHARE_AUTH_URL  : :skip),
+    (BS_AUTH ? :BOOKSHARE_TEST_AUTH : :skip),
+    (BS_AUTH ? nil                  : :skip),
 
     # == Internet Archive
     :IA_DOWNLOAD_BASE_URL,
@@ -204,11 +199,9 @@ class AppSettings < AppGlobal
 
     # == Testing
     :PARALLEL_WORKERS,
-    :TEST_BOOKSHARE,
     :TEST_FORMATS,
-    :EMMADSO_TOKEN,
-    :EMMACOLLECTION_TOKEN,
-    :EMMAMEMBERSHIP_TOKEN,
+    (BS_AUTH ? :EMMADSO_TOKEN        : :skip),
+    (BS_AUTH ? :EMMACOLLECTION_TOKEN : :skip),
     nil,
 
     # == System
@@ -229,7 +222,7 @@ class AppSettings < AppGlobal
     :SCHEDULER,
     :RUBYMINE_CONFIG,
 
-  ].freeze
+  ].excluding(:skip).freeze
 
   # Configuration field types.
   #

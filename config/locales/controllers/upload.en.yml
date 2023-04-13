@@ -19,6 +19,11 @@ en:
       title:            'Your Uploads'
       tooltip:          'Submit new items or review past uploads'
 
+      subsystem:
+        database:       true
+        ingest:         true
+        storage:        true
+
       # =======================================================================
       # Search endpoint
       # =======================================================================

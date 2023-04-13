@@ -12,11 +12,11 @@ class Lookup::GoogleBooks::Message::List < Lookup::GoogleBooks::Api::Message
 
   LIST_ELEMENT: Class
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching items.
   #
   # @return [Integer]
   #
-  def totalResults: () -> Integer
+  def total_results: () -> Integer
 
   # api_records
   #

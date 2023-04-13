@@ -1,4 +1,9 @@
 // app/assets/javascripts/feature/download.js
+//
+// A small portion of this module involves displaying the inline message that
+// indicates sign-in is required on download links in an anonymous session.
+// The rest involves the UI for downloading Bookshare artifacts via the
+// Bookshare API (which is no longer supported).
 
 
 import { AppDebug }               from '../application/debug';
@@ -124,7 +129,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {number}
      */
-    const RETRY_PERIOD = 1 * SECOND;
+    const BS_RETRY_PERIOD = 1 * SECOND;
 
     /**
      * Frequency for re-requesting a download link for DAISY_AUDIO.
@@ -132,7 +137,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {number}
      */
-    const RETRY_DAISY_AUDIO = 5 * RETRY_PERIOD;
+    const BS_RETRY_DAISY_AUDIO = 5 * BS_RETRY_PERIOD;
 
     /**
      * Retry period value which indicates the end of retrying.
@@ -140,7 +145,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {number}
      */
-    const NO_RETRY = -1;
+    const BS_NO_RETRY = -1;
 
     /**
      * Bookshare API download link state.  Each key represents a state and each
@@ -153,7 +158,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {StringTable}
      */
-    const STATE = deepFreeze({
+    const BS_DOWNLOAD_STATE = deepFreeze({
         FAILED:     'failed',
         REQUESTING: 'requesting',
         READY:      'complete'
@@ -195,8 +200,8 @@ appSetup(MODULE, function() {
      *  cancel:     ActionProperties
      * }}
      */
-    const MEMBER_POPUP = deepFreeze({
-        url:     '/member.json',
+    const BS_MEMBER_POPUP = deepFreeze({
+        url:     '/member.json', // NOTE: This endpoint no longer exists
         name:    'member-select',
         panel: {
             tag:     'form',
@@ -275,7 +280,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const PANEL = selector(MEMBER_POPUP.panel.class);
+    const BS_POPUP_PANEL = selector(BS_MEMBER_POPUP.panel.class);
 
     /**
      * Progress indicator element selector.
@@ -307,7 +312,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const RETRY_DATA = 'retry';
+    const BS_RETRY_DATA = 'retry';
 
     // ========================================================================
     // Functions
@@ -320,29 +325,29 @@ appSetup(MODULE, function() {
      *
      * @returns {boolean}             Always *false* to end event propagation.
      */
-    function getDownload(event) {
-        //_debug('getDownload: event =', event);
+    function getBsDownload(event) {
+        //_debug('getBsDownload: event =', event);
         const $link = $(event.currentTarget || event.target);
         const url   = $link.attr('href');
-        let $panel  = $link.siblings(PANEL);
-        if (setLinkMember($link, getUrlMember(url))) {
-            manageDownloadState($link);
+        let $panel  = $link.siblings(BS_POPUP_PANEL);
+        if (setLinkBsMember($link, getUrlBsMember(url))) {
+            manageBsDownloadState($link);
         } else if (isPresent($panel)) {
             hideFailureMessage($link);
             toggleHidden($panel, false);
             scrollIntoView($panel);
         } else {
             hideFailureMessage($link);
-            getMembers(function(member_table, error) {
+            getBsMembers(function(member_table, error) {
                 if (isPresent(member_table)) {
-                    $panel = createMemberPopup(member_table);
+                    $panel = createBsMemberPopup(member_table);
                     handleEvent($panel, 'submit', onSubmit);
                     $panel.insertAfter($link);
                     scrollIntoView($panel);
                 } else if (error) {
-                    endRequesting($link, error);
+                    endBsRequesting($link, error);
                 } else {
-                    endRequesting($link, Emma.Download.failure.unknown);
+                    endBsRequesting($link, Emma.Download.failure.unknown);
                 }
             });
         }
@@ -369,10 +374,10 @@ appSetup(MODULE, function() {
                 this.checked = false; // Reset for later iteration.
             });
             toggleHidden($panel, true);
-            if (setLinkMember($link, members)) {
-                manageDownloadState($link);
+            if (setLinkBsMember($link, members)) {
+                manageBsDownloadState($link);
             } else {
-                endRequesting($link, Emma.Download.failure.canceled);
+                endBsRequesting($link, Emma.Download.failure.canceled);
             }
             return false;
         }
@@ -384,9 +389,9 @@ appSetup(MODULE, function() {
      *
      * @param {function(object, string=)} callback
      */
-    function getMembers(callback) {
-        const func  = 'getMembers';
-        const url   = MEMBER_POPUP.url;
+    function getBsMembers(callback) {
+        const func  = 'getBsMembers';
+        const url   = BS_MEMBER_POPUP.url;
         const start = Date.now();
 
         _debug(`${func}: VIA`, url);
@@ -488,45 +493,45 @@ appSetup(MODULE, function() {
      *
      * @returns {jQuery}
      */
-    function createMemberPopup(member_table) {
-        //_debug('createMemberPopup: member_table =', member_table);
+    function createBsMemberPopup(member_table) {
+        //_debug('createBsMemberPopup: member_table =', member_table);
 
-        const $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
+        const $panel = create(BS_MEMBER_POPUP.panel).attr('href', '#0');
 
         // Start with a title.
-        const id     = randomizeName(MEMBER_POPUP.name);
-        const $title = create(MEMBER_POPUP.title).attr('for', id);
+        const id     = randomizeName(BS_MEMBER_POPUP.name);
+        const $title = create(BS_MEMBER_POPUP.title).attr('for', id);
         $panel.attr('id', id);
 
         // Follow with an explanatory note.
-        const $note = create(MEMBER_POPUP.note);
+        const $note = create(BS_MEMBER_POPUP.note);
 
         // Construct the member selection group.
-        const $fields = create(MEMBER_POPUP.fields);
-        const $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
+        const $fields = create(BS_MEMBER_POPUP.fields);
+        const $radio  = create(BS_MEMBER_POPUP.fields.row_input).attr('name', id);
         let row       = 0;
         $.each(member_table, function(account_id, name) {
             const row_id = `${id}-row${row++}`;
             const $input = $radio.clone().attr('value', account_id);
-            const $label = create(MEMBER_POPUP.fields.row_label).text(name);
+            const $label = create(BS_MEMBER_POPUP.fields.row_label).text(name);
             $input.attr('id',  row_id).appendTo($fields);
             $label.attr('for', row_id).appendTo($fields);
         });
 
         // Handle the edge case where the user has no members defined.
         if (row === 0) {
-            create(MEMBER_POPUP.fields.notice).appendTo($fields);
+            create(BS_MEMBER_POPUP.fields.notice).appendTo($fields);
         }
 
         // Construct the button tray for the bottom of the panel.
-        const $tray   = create(MEMBER_POPUP.buttons);
-        const $submit = create(MEMBER_POPUP.submit);
-        const $cancel = create(MEMBER_POPUP.cancel);
+        const $tray   = create(BS_MEMBER_POPUP.buttons);
+        const $submit = create(BS_MEMBER_POPUP.submit);
+        const $cancel = create(BS_MEMBER_POPUP.cancel);
         $tray.append($submit).append($cancel);
 
         // Implement the cancel button.
         $cancel.click(function() {
-            resetMemberPopup($panel);
+            resetBsMemberPopup($panel);
             $panel.submit();
         });
 
@@ -535,7 +540,7 @@ appSetup(MODULE, function() {
         $note.appendTo($panel);
         $fields.appendTo($panel);
         $tray.appendTo($panel);
-        return resetMemberPopup($panel);
+        return resetBsMemberPopup($panel);
     }
 
     /**
@@ -545,20 +550,20 @@ appSetup(MODULE, function() {
      *
      * @returns {jQuery}
      */
-    function resetMemberPopup(panel) {
-        //_debug('resetMemberPopup: panel =', panel);
-        const disabled = MEMBER_POPUP.submit.disabled.class;
+    function resetBsMemberPopup(panel) {
+        //_debug('resetBsMemberPopup: panel =', panel);
+        const disabled = BS_MEMBER_POPUP.submit.disabled.class;
         const $panel   = $(panel);
         const $submit  = $panel.find('[type="submit"]').addClass(disabled);
         const $fields  = $panel.find('.fields input');
         $fields.change(function() {
             if ($fields.is(':checked')) {
                 $submit.removeClass(disabled);
-                $submit.attr('title', MEMBER_POPUP.submit.enabled.tooltip);
+                $submit.attr('title', BS_MEMBER_POPUP.submit.enabled.tooltip);
                 $submit.attr('tabindex', 0);
             } else {
                 $submit.addClass(disabled);
-                $submit.attr('title', MEMBER_POPUP.submit.disabled.tooltip);
+                $submit.attr('title', BS_MEMBER_POPUP.submit.disabled.tooltip);
                 $submit.attr('tabindex', -1);
             }
         });
@@ -571,14 +576,14 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} link
      */
-    function manageDownloadState(link) {
-        //_debug('manageDownloadState: link =', link);
+    function manageBsDownloadState(link) {
+        //_debug('manageBsDownloadState: link =', link);
         const $link = $(link);
-        if ($link.hasClass(STATE.READY)) {
-            endRequesting($link);
-        } else if (!$link.hasClass(STATE.REQUESTING)) {
-            beginRequesting($link);
-            requestArtifact($link);
+        if ($link.hasClass(BS_DOWNLOAD_STATE.READY)) {
+            endBsRequesting($link);
+        } else if (!$link.hasClass(BS_DOWNLOAD_STATE.REQUESTING)) {
+            beginBsRequesting($link);
+            requestBsArtifact($link);
         }
     }
 
@@ -587,15 +592,15 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} link
      */
-    function requestArtifact(link) {
-        const func  = 'requestArtifact';
+    function requestBsArtifact(link) {
+        const func  = 'requestBsArtifact';
         const start = Date.now();
         const $link = $(link);
 
         // Update URL with Bookshare member if not already present.
         let url = $link.attr('href') || $link.data('path') || '';
-        if (!getUrlMember(url)) {
-            const member = getLinkMember($link);
+        if (!getUrlBsMember(url)) {
+            const member = getLinkBsMember($link);
             const append = url.includes('?') ? '&' : '?';
             url += `${append}member=${member}`;
         }
@@ -631,7 +636,7 @@ appSetup(MODULE, function() {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
                 error = `unexpected data type ${typeof data}`;
-            } else if ((delay = getRetryPeriod($link)) === NO_RETRY) {
+            } else if ((delay = getBsRetryPeriod($link)) === BS_NO_RETRY) {
                 error = Emma.Download.failure.canceled;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
@@ -671,12 +676,12 @@ appSetup(MODULE, function() {
             _debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (target) {
                 $link.data('path', target);
-                endRequesting($link);
+                endBsRequesting($link);
             } else if (error) {
                 console.warn(`${func}: ${url}:`, error);
-                endRequesting($link, error);
+                endBsRequesting($link, error);
             } else {
-                setTimeout(reRequestArtifact, delay);
+                setTimeout(reRequestBsArtifact, delay);
             }
         }
 
@@ -685,12 +690,12 @@ appSetup(MODULE, function() {
          * current browser tab is not visible.  In that case, do nothing but
          * reschedule another polling attempt.
          */
-        function reRequestArtifact() {
-            //_debug('reRequestArtifact');
+        function reRequestBsArtifact() {
+            //_debug('reRequestBsArtifact');
             if (document.hidden) {
-                setTimeout(reRequestArtifact, delay);
+                setTimeout(reRequestBsArtifact, delay);
             } else {
-                requestArtifact($link);
+                requestBsArtifact($link);
             }
         }
     }
@@ -701,13 +706,13 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery} $link
      */
-    function beginRequesting($link) {
-        //_debug('beginRequesting: $link =', $link);
-        showProgressIndicator($link);
+    function beginBsRequesting($link) {
+        //_debug('beginBsRequesting: $link =', $link);
+        showBsProgressIndicator($link);
         hideFailureMessage($link);
-        hideDownloadButton($link);
-        set(STATE.REQUESTING, $link);
-        setRetryPeriod($link);
+        hideBsDownloadButton($link);
+        set(BS_DOWNLOAD_STATE.REQUESTING, $link);
+        setBsRetryPeriod($link);
     }
 
     /**
@@ -717,21 +722,21 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      * @param {string} [error]
      */
-    function endRequesting($link, error) {
-        //_debug(`endRequesting: error = "${error}"; $link =`, $link);
-        hideProgressIndicator($link);
+    function endBsRequesting($link, error) {
+        //_debug(`endBsRequesting: error = "${error}"; $link =`, $link);
+        hideBsProgressIndicator($link);
         if (error) {
             const canceled = error.match(/cancell?ed/i);
             const prefix   = canceled ? '' : Emma.Download.failure.prefix;
             showFailureMessage($link, `${prefix}${error}`);
-            hideDownloadButton($link);
-            set(STATE.FAILED, $link);
+            hideBsDownloadButton($link);
+            set(BS_DOWNLOAD_STATE.FAILED, $link);
         } else {
             hideFailureMessage($link);
-            showDownloadButton($link);
-            set(STATE.READY, $link);
+            showBsDownloadButton($link);
+            set(BS_DOWNLOAD_STATE.READY, $link);
         }
-        clearRetryPeriod($link);
+        clearBsRetryPeriod($link);
     }
 
     /**
@@ -739,9 +744,9 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery.Event|Event} event
      */
-    function cancelRequest(event) {
-        //_debug('cancelRequest: event =', event);
-        const state = STATE.REQUESTING;
+    function cancelBsRequest(event) {
+        //_debug('cancelBsRequest: event =', event);
+        const state = BS_DOWNLOAD_STATE.REQUESTING;
         let $link   = $(event.currentTarget || event.target);
         if (!$link.hasClass(state)) {
             let selector = '.' + state;
@@ -751,8 +756,8 @@ appSetup(MODULE, function() {
             }
             $link = $element.first();
         }
-        endRequesting($link, Emma.Download.failure.canceled);
-        setRetryPeriod($link, NO_RETRY);
+        endBsRequesting($link, Emma.Download.failure.canceled);
+        setBsRetryPeriod($link, BS_NO_RETRY);
     }
 
     // ========================================================================
@@ -766,8 +771,8 @@ appSetup(MODULE, function() {
      *
      * @returns {string|undefined}
      */
-    function getUrlMember(url) {
-        //_debug('getUrlMember: url =', url);
+    function getUrlBsMember(url) {
+        //_debug('getUrlBsMember: url =', url);
         const params = urlParameters(url);
         return params['member'] || params['forUser'];
     }
@@ -779,8 +784,8 @@ appSetup(MODULE, function() {
      *
      * @returns {string}
      */
-    function getLinkMember($link) {
-        //_debug('getLinkMember: $link =', $link);
+    function getLinkBsMember($link) {
+        //_debug('getLinkBsMember: $link =', $link);
         const for_user = $link.attr('data-forUser');
         $link.removeAttr('data-forUser');
         return for_user || $link.attr('data-member') || '';
@@ -794,8 +799,8 @@ appSetup(MODULE, function() {
      *
      * @returns {string}
      */
-    function setLinkMember($link, member) {
-        //_debug(`setLinkMember: member = "${member}"; $link =`, $link);
+    function setLinkBsMember($link, member) {
+        //_debug(`setLinkBsMember: member = "${member}"; $link =`, $link);
         const value = Array.isArray(member) ? member.join(',') : member;
         if (value) {
             $link.attr('data-member', value);
@@ -815,11 +820,11 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery} $link
      */
-    function showProgressIndicator($link) {
-        //_debug('showProgressIndicator: $link =', $link);
+    function showBsProgressIndicator($link) {
+        //_debug('showBsProgressIndicator: $link =', $link);
         const $indicator = $link.siblings(PROGRESS);
         if ($indicator.is(HIDDEN)) {
-            toggleHidden($indicator, false).on('click', cancelRequest);
+            toggleHidden($indicator, false).on('click', cancelBsRequest);
         }
     }
 
@@ -828,10 +833,10 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery} $link
      */
-    function hideProgressIndicator($link) {
-        //_debug('hideProgressIndicator: $link =', $link);
+    function hideBsProgressIndicator($link) {
+        //_debug('hideBsProgressIndicator: $link =', $link);
         const $indicator = $link.siblings(PROGRESS);
-        toggleHidden($indicator, true).off('click', cancelRequest);
+        toggleHidden($indicator, true).off('click', cancelBsRequest);
     }
 
     // ========================================================================
@@ -886,8 +891,8 @@ appSetup(MODULE, function() {
      * @param {Selector}      link
      * @param {string|jQuery} [target]
      */
-    function showDownloadButton(link, target) {
-        const func  = 'showDownloadButton';
+    function showBsDownloadButton(link, target) {
+        const func  = 'showBsDownloadButton';
         const $link = $(link);
         const url   = target || $link.data('path');
         if (target) {
@@ -910,8 +915,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} link
      */
-    function hideDownloadButton(link) {
-        //_debug('hideDownloadButton: link =', link);
+    function hideBsDownloadButton(link) {
+        //_debug('hideBsDownloadButton: link =', link);
         const $link   = $(link);
         const old_tip = $link.attr('data-tooltip');
         if (old_tip) {
@@ -935,7 +940,7 @@ appSetup(MODULE, function() {
      */
     function set(new_state, $link) {
         //_debug(`set: new_state = "${new_state}"; $link =`, $link);
-        $.each(STATE, function(key, state) {
+        $.each(BS_DOWNLOAD_STATE, function(key, state) {
             if (state === new_state) {
                 $link.addClass(state);
             } else {
@@ -966,20 +971,20 @@ appSetup(MODULE, function() {
      *
      * @returns {number|undefined}
      */
-    function getRetryPeriod($link) {
-        return $link.data(RETRY_DATA);
+    function getBsRetryPeriod($link) {
+        return $link.data(BS_RETRY_DATA);
     }
 
     /**
      * Set the retry period for a Bookshare API download link.
      *
      * @param {jQuery} $link
-     * @param {number} [value]        Default: RETRY_PERIOD.
+     * @param {number} [value]        Default: BS_RETRY_PERIOD.
      */
-    function setRetryPeriod($link, value) {
-        //_debug(`setRetryPeriod: value = "${value}"; $link =`, $link);
-        const period = value || defaultRetryPeriod($link);
-        $link.data(RETRY_DATA, period);
+    function setBsRetryPeriod($link, value) {
+        //_debug(`setBsRetryPeriod: value = "${value}"; $link =`, $link);
+        const period = value || defaultBsRetryPeriod($link);
+        $link.data(BS_RETRY_DATA, period);
     }
 
     /**
@@ -987,9 +992,9 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery} $link
      */
-    function clearRetryPeriod($link) {
-        //_debug('clearRetryPeriod: $link =', $link);
-        $link.removeData(RETRY_DATA);
+    function clearBsRetryPeriod($link) {
+        //_debug('clearBsRetryPeriod: $link =', $link);
+        $link.removeData(BS_RETRY_DATA);
     }
 
     /**
@@ -999,9 +1004,10 @@ appSetup(MODULE, function() {
      *
      * @returns {number}
      */
-    function defaultRetryPeriod($link) {
-        const href = $link.attr('href') || '';
-        return href.match(/DAISY_AUDIO/) ? RETRY_DAISY_AUDIO : RETRY_PERIOD;
+    function defaultBsRetryPeriod($link) {
+        const href  = $link.attr('href') || '';
+        const audio = !!href.match(/DAISY_AUDIO/);
+        return audio ? BS_RETRY_DAISY_AUDIO : BS_RETRY_PERIOD;
     }
 
     // ========================================================================
@@ -1034,7 +1040,7 @@ appSetup(MODULE, function() {
     handleClickAndKeypress($no_auth_links, showNotAuthorized);
 
     // Override download links in order to get the artifact asynchronously.
-    handleClickAndKeypress($artifact_links, getDownload);
+    handleClickAndKeypress($artifact_links, getBsDownload);
 
     // Clicking on the download link causes a page navigation, which is set up
     // to cause a SearchInProgress overlay to display.  This is a problem

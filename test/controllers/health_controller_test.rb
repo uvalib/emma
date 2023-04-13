@@ -12,7 +12,7 @@ class HealthControllerTest < ActionDispatch::IntegrationTest
 
   READ_FORMATS   = :html
 
-  TEST_SUBSYSTEM = 'bookshare'
+  TEST_SUBSYSTEM = 'storage'
 
   # ===========================================================================
   # :section: Read tests

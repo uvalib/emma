@@ -200,13 +200,10 @@ module Emma::Rake
   #
   # @return [User, nil]
   #
-  # @note Needs to be a user mapped to the developer role in 'users_roles'.
-  #
   def current_user
-    # noinspection RubyMismatchedReturnType
     @current_user ||=
       begin
-        User.where(email: 'rwl@virginia.edu').first
+        User.with_role(:developer).first
       rescue
         # No database for "rake assets:precompile" in Dockerfile, so default
         # to setting up a fake user in a way that the database will not be

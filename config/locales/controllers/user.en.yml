@@ -23,6 +23,9 @@ en:
       # Layout
       # =======================================================================
 
+      subsystem:
+        database:       true
+
       page_controls:
         label:          'EMMA Account Actions:'
         actions:
@@ -126,7 +129,7 @@ en:
 
         new:
           label:        'Sign in'
-          title:        'Sign in with your Bookshare account'
+          title:        'Sign in with your authentication provider'
           tooltip:      'Authentication is required for full access'
           submit:       'Sign in'
           cancel:       'Cancel'
@@ -151,10 +154,12 @@ en:
           _endpoint:    true
 
         sign_in:
-          label:        'EMMA administrator sign-in'
+          label:        'EMMA local sign-in'
           title:        'Sign in with a local EMMA account'
           submit:       'Sign in'
           cancel:       'Cancel'
+          username:     'Account'
+          password:     'Password'
           _endpoint:    true
 
         sign_in_as:
@@ -239,5 +244,5 @@ en:
           _endpoint:    true
 
         destroy:
-          label:        'Sign out of %{provider}'
+          label:        'Sign out of EMMA (%{provider})'
           _endpoint:    true

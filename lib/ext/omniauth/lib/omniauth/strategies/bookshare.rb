@@ -217,7 +217,7 @@ module OmniAuth
       def get_account_info(opt = nil)
         __ext_debug
         opt = { raise_errors: false }.merge!(opt || {})
-        url = "#{BOOKSHARE_BASE_URL}/#{BOOKSHARE_API_VERSION}/me"
+        url = "#{BOOKSHARE_API_URL}/#{BOOKSHARE_API_VERSION}/me"
         rsp = access_token.get(url, opt)
         if (err = rsp.error)
           Log.warn { "#{__method__}: #{err.class} #{err.inspect}" }

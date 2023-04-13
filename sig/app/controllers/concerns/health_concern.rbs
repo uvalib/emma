@@ -165,13 +165,6 @@ module HealthConcern
   #
   def search_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
-  # Health status of the Bookshare API service.
-  #
-  # @return [Array<(Boolean,String)>]
-  # @return [Array<(Boolean,nil)>]
-  #
-  def bookshare_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
-
   # Health status of the EMMA Unified Ingest service.
   #
   # @return [Array<(Boolean,String)>]

@@ -144,7 +144,7 @@ module SessionConcern
   # @return [Hash{String=>*}, nil]
   #
   def last_operation_update(time: nil, path: nil)
-    return if (params[:controller] == 'bs_api') && (params[:action] == 'image')
+    return if (params[:controller] == 'search') && (params[:action] == 'image')
     last_operation.merge!(
       'time'   => (time || Time.now).to_i,
       'path'   => (path || request_path),
@@ -366,10 +366,7 @@ module SessionConcern
   #
   def cleanup_session
     return unless request.get?
-    case params[:controller]
-      when 'artifact' then return if params[:action] == 'show'
-      when 'bs_api'   then return if params[:action] == 'image'
-    end
+    return if (params[:controller] == 'search') && (params[:action] == 'image')
     session_keys.each do |key|
       value = session[key]
       session.delete(key) if value.try(:empty?) || value.nil?
@@ -404,8 +401,8 @@ module SessionConcern
   # The "ensure" block is executed before the ApplicationController
   # "rescue_from".  However, note that Rails is doing something with "$!" which
   # causes Faraday::ClientError to be the exception that's acted upon in that
-  # block, whereas :api_error_message shows the BookshareService::Error that is
-  # created in BookshareService::Common#api.
+  # block, whereas :api_error_message shows the ApiService::Error that is
+  # created in ApiService::Common#api.
   #
   #--
   # noinspection RubyMismatchedArgumentType

@@ -371,6 +371,16 @@ module Model
     all_fields.transform_values! { |entry| Field.finalize!(entry) }
     all_fields.delete_if { |_, entry| Field.unused?(entry) }
 
+    # Temporary revision of User fields to "disappear" the fields that only
+    # apply if Bookshare OAuth2 authentication is in use.
+    if %i[account user].include?(type)
+      if BS_AUTH
+        all_fields.except!(:provider) unless SHIBBOLETH
+      else
+        all_fields.except!(:access_token, :refresh_token, :effective_id)
+      end
+    end
+
     # Identify the fields which map on to database columns.
     database_fields = all_fields.except(*synthetic.keys)
 

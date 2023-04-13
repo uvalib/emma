@@ -90,9 +90,6 @@ module BaseDecorator::Form
   # == Implementation Notes
   # Compare with BaseDecorator::List#render_field_values
   #
-  # Special handling for :effective_id based on the Hash value set up in
-  # AccountDecorator#form_fields.
-  #
   def render_form_fields(action: nil, pairs: nil, separator: nil, **opt)
     return ''.html_safe unless pairs || object
     action    ||= context[:action]
@@ -174,7 +171,7 @@ module BaseDecorator::Form
     prop  ||= field_configuration(field)
     field ||= prop[:field]
     return if prop[:ignored]
-    return if prop[:role] && !has_role?(prop[:role])
+    return unless user_has_role?(prop[:role])
 
     # Pre-process label to derive names and identifiers.
     base = model_html_id(field || label)

@@ -12,11 +12,11 @@ class Search::Message::SearchRecordList < Search::Api::Message
   #
   def initialize: ((Faraday::Response|Model|String|symHash|nil) src, ?(symHash|nil) opt) -> void
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching items.
   #
   # @return [Integer]
   #
-  def totalResults: () -> Integer
+  def total_results: () -> Integer
 
   def calculate_scores!: (?(String|strArray|nil) terms, **untyped opt) -> void
 

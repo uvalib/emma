@@ -7,7 +7,7 @@ require 'application_system_test_case'
 
 class UserSessionsTest < ApplicationSystemTestCase
 
-  TEST_USER = :emmadso
+  TEST_USER = :test_dso
 
   setup do
     @user = find_user(TEST_USER)
@@ -25,12 +25,13 @@ class UserSessionsTest < ApplicationSystemTestCase
 
       # Start on the main page.
       visit url
-      click_on class: 'bookshare-login'
+      click_on class: 'session-login'
 
       # On sign-in page '/users/sign_in' (#new_user_session_path).
       show_url
       assert_valid_page 'Sign in'
-      assert_link href: user_bookshare_omniauth_authorize_path
+      assert_link href: user_bookshare_omniauth_authorize_path  if BS_AUTH
+      assert_link href: user_shibboleth_omniauth_authorize_path if SHIBBOLETH
       click_on "Sign in as #{@user}"
 
       # On dashboard page '/dashboard' (#dashboard_path).
@@ -53,8 +54,8 @@ class UserSessionsTest < ApplicationSystemTestCase
       sign_in_as @user
 
       # Go to a new page.
-      visit_index :title
-      click_on class: 'bookshare-logout'
+      visit_index :search, title: 'Advanced'
+      click_on class: 'session-logout'
       assert_flash notice: 'signed out'
 
     end

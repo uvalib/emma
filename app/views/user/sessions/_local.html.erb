@@ -1,27 +1,27 @@
 <%# app/views/user/sessions/_local.html.erb -%>
 <%-
-  # Local accounts (not backed directly by Bookshare accounts).
+  # Local (EMMA authentication) sign-in form.
 
   view_debug(__FILE__)
 
   user ||= resource || resource_class.new
 
-  fl_id           = css_randomize('form-label')
-  fl_opt          = { class: 'form-label', id: fl_id, 'aria-hidden': true }
-  form_label      = t('emma.user.sessions.sign_in.label')
-  form_label      = html_span(form_label, fl_opt)
+  fl_id        = css_randomize('form-label')
+  fl_opt       = { class: 'form-label', id: fl_id, 'aria-hidden': true }
+  form_label   = t('emma.user.sessions.sign_in.label')
+  form_label   = html_span(form_label, fl_opt)
 
-  label_opt       = { class: 'label' }
-  value_opt       = { class: 'value' }
+  label_opt    = { class: 'label' }
+  value_opt    = { class: 'value' }
 
-  email_label_opt = label_opt
-  email_value_opt = value_opt.merge(autocomplete: 'email')
+  usr_label    = t('emma.user.sessions.sign_in.username')
+  usr_opt      = value_opt.merge(autocomplete: 'email')
 
-  pwd_label_opt   = label_opt
-  pwd_value_opt   = value_opt.merge(autocomplete: 'current-password')
+  pwd_label    = t('emma.user.sessions.sign_in.password')
+  pwd_opt      = value_opt.merge(autocomplete: 'current-password')
 
-  submit_label    = t('emma.user.sessions.sign_in.submit')
-  submit_opt      = { class: 'form-button submit-button' }
+  submit_label = t('emma.user.sessions.sign_in.submit')
+  submit_opt   = { class: 'form-button submit-button' }
 
   form_opt = {
     as:   resource_name,
@@ -39,13 +39,13 @@
   <%= form_label %>
 
   <div class="field">
-    <%= f.label          :email,    email_label_opt %>
-    <%= f.email_field    :email,    email_value_opt %>
+    <%= f.label          :email,    usr_label, label_opt %>
+    <%= f.email_field    :email,    usr_opt %>
   </div>
 
   <div class="field">
-    <%= f.label          :password, pwd_label_opt %>
-    <%= f.password_field :password, pwd_value_opt %>
+    <%= f.label          :password, pwd_label, label_opt %>
+    <%= f.password_field :password, pwd_opt %>
   </div>
 
   <div class="actions">

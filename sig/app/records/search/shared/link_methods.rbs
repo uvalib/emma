@@ -15,22 +15,31 @@ module Search::Shared::LinkMethods
 
   # URL of the associated work on the web site of the original repository.
   #
-  # If :emma_webPageLink is provided, that value is used.  Otherwise, a URL is
-  # manufactured from 'en.emma.repository.*.title_path'.
-  #
-  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
-  #
-  # @return [String]
-  # @return [nil]
+  # @return [String, nil]
   #
   def record_title_url: () -> (String | nil)
 
-  # Original repository artifact download URL.
+  # Original repository content file download URL.
+  #
+  # @return [String, nil]
+  #
+  def record_download_url: () -> (String | nil)
+
+  # Create a URL manufactured from 'en.emma.repository.*.title_path' for the
+  # associated work on the web site of the original repository.
   #
   # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String, nil]
   #
-  def record_download_url: () -> (String | nil)
+  def generate_title_url: () -> (String | nil)
+
+  # Create a URL on the original repository for acquiring the content file
+  # associated with the item.
+  #
+  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  #
+  # @return [String, nil]
+  #
+  def generate_download_url: () -> (String | nil)
 end

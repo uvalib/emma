@@ -14,7 +14,7 @@ module AuthConcern
   # :nocov:
   #include Devise::Controllers::Helpers
 
-  # A table of pre-authorized user/token pairs for development purposes.
+  # A table of pre-authorized user/token pairs for development purposes.        # if BS_AUTH
   # (Not generated for non-Rails-application executions.)
   #
   # Tokens are taken from the User table entries that have an :access_token
@@ -112,23 +112,25 @@ module AuthConcern
   #
   def set_auth_data: ((ActionDispatch::Request|OmniAuth::AuthHash|anyHash) src) -> User
 
-  # Generate the authentication data to be associated with the given user.
+  # Generate the authentication data to be associated with the given user.      # if BS_AUTH
   #
-  # @param [User, String, Integer, *] user  Default: `#current_user`.
+  # @param [User, String, Integer, *] user  Default: `#current_user`.           # if BS_AUTH
   #
   # @return [OmniAuth::AuthHash, nil]
   #
   def update_auth_data: (?untyped user) -> (OmniAuth::AuthHash | nil)
 
-  # Terminate the local login session ('omniauth.auth') and the session with
+  # Terminate the local login session ('omniauth.auth').                        # unless BS_AUTH
+  #
+  # Terminate the local login session ('omniauth.auth') and the session with    # if BS_AUTH
   # the OAuth2 provider (if appropriate)
   #
-  # @param [Boolean] no_revoke        If *true*, do not revoke the token with
+  # @param [Boolean] no_revoke        If *true*, do not revoke the token with   # if BS_AUTH
   #                                     the OAuth2 provider.
   #
   # @return [void]
   #
-  # @see #revoke_access_token
+  # _see #revoke_access_token                                                   # if BS_AUTH
   #
   def delete_auth_data: (?no_revoke: bool) -> void
 
@@ -157,14 +159,14 @@ module AuthConcern
   #
   def user_from_session: () -> (User | nil)
 
-  # Indicate whether the user is one is capable of short-circuiting the
+  # Indicate whether the user is one is capable of short-circuiting the         # if BS_AUTH
   # authorization process.
   #
   # @param [User, String, nil] user   Default: `#current_user`
   #
   def auth_debug_user?: (?(User|String|nil) user) -> bool
 
-  # revoke_access_token
+  # revoke_access_token                                                         # if BS_AUTH
   #
   # @param [Hash, nil] auth           Default: `session['omniauth.auth']`.
   #

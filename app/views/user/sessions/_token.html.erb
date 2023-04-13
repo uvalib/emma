@@ -4,6 +4,7 @@
   # (copied from an independent browser tab which is logged-in to a deployed
   # instance of the service).
 
+  return unless SIGN_IN_AS
   return unless session_debug? || dev_client?
 
   view_debug(__FILE__)

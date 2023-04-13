@@ -12,7 +12,7 @@ class UploadsTest < ApplicationSystemTestCase
   PARAMS      = { controller: CONTROLLER }.freeze
   INDEX_TITLE = page_title(**PARAMS, action: :index).freeze
 
-  TEST_USER   = :emmadso
+  TEST_USER   = :test_dso
 
   setup do
     @user  = find_user(TEST_USER)

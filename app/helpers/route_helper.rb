@@ -29,16 +29,12 @@ module RouteHelper
     act = action&.to_sym
     if ctr.end_with?('_url', '_path')
       Log.warn("#{__method__}: #{controller}: ignoring action #{act}") if act
-      ctr
-    elsif act.nil? || (act == :index)
-      :"#{ctr}_index_path"
-    elsif act == :show
-      :"#{ctr}_path"
-    elsif BookshareDecorator::ACTION_MAPPING.keys.include?(ctr.to_sym)
-      path = { controller: ctr, action: act }
-      ->(**opt) { BookshareDecorator.bookshare_url(path, **opt) }
-    else
-      :"#{act}_#{ctr}_path"
+      return ctr
+    end
+    case act
+      when :index, nil then :"#{ctr}_index_path"
+      when :show       then :"#{ctr}_path"
+      else                  :"#{act}_#{ctr}_path"
     end
   end
 

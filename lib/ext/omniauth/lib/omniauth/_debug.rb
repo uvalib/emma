@@ -30,10 +30,7 @@ module OmniAuth
     end
 
     def __ext_log_tag
-      case self
-        when OmniAuth::Strategies::Bookshare  then 'BOOKSHARE'
-        else                                       super
-      end
+      is_a?(OmniAuth::Strategy) ? __ext_class.demodulize.upcase : super
     end
 
   end

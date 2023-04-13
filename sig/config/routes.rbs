@@ -18,26 +18,6 @@ class Object
 
   def api_migrate_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def artifact_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def artifact_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def bs_api_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def bs_api_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def bs_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def bs_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def bs_retrieval_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def bs_retrieval_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def bulk_create_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def bulk_create_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -110,10 +90,6 @@ class Object
 
   def cancel_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def category_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def category_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def check_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def check_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -133,10 +109,6 @@ class Object
   def create_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def create_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def create_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def create_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def create_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -242,14 +214,6 @@ class Object
 
   def edit_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edit_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edit_edition_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edit_edition_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def edit_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -258,17 +222,9 @@ class Object
 
   def edit_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_member_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edit_member_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def edit_password_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_password_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edit_periodical_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edit_periodical_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_select_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -290,10 +246,6 @@ class Object
 
   def edit_select_user_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def edit_title_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edit_title_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def edit_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -305,14 +257,6 @@ class Object
   def edit_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_user_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edition_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edition_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edition_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def edition_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def file_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -329,10 +273,6 @@ class Object
   def help_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def help_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def history_title_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def history_title_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def home_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -358,14 +298,6 @@ class Object
 
   def md_trial_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def member_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def member_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def member_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def member_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def metrics_test_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def metrics_test_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -374,14 +306,6 @@ class Object
 
   def new_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def new_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_edition_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_edition_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def new_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def new_manifest_item_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -389,18 +313,6 @@ class Object
   def new_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def new_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_member_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_member_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_periodical_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_periodical_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_title_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def new_title_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def new_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -421,14 +333,6 @@ class Object
   def password_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def password_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def periodical_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def periodical_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def reading_list_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def reading_list_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def reedit_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -526,14 +430,6 @@ class Object
 
   def system_unavailable_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def title_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def title_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def title_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def title_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def tool_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def tool_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -545,10 +441,6 @@ class Object
   def update_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def update_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def update_artifact_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def update_artifact_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def update_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -577,6 +469,18 @@ class Object
   def user_bookshare_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def user_bookshare_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_bookshare_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_bookshare_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 

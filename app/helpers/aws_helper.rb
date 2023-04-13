@@ -136,6 +136,8 @@ module AwsHelper
   # @return [String]                      Otherwise.
   #
   def xml_s3_bucket_table(table, **opt)
+    serializer = opt.delete(:serializer) || AwsS3::Api::Serializer::Xml.new
+    xml_opt    = { serializer: serializer }
     for_erb    = opt.delete(:erb)
     render_opt = remainder_hash!(opt, *AWS_RENDER_OPT)
     render_opt = s3_bucket_params if render_opt.blank?
@@ -145,7 +147,7 @@ module AwsHelper
         html_tag(:bucket, name: bucket) do
           render_s3_bucket(bucket, objects, **render_opt).map do |object|
             html_tag(:object, name: object[:key]) do
-              make_xml(object).html_safe
+              make_xml(object, **xml_opt).html_safe
             end
           end
         end

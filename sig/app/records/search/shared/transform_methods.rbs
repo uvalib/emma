@@ -1,6 +1,39 @@
 # Methods supporting transformations of data fields.
 #
 module Search::Shared::TransformMethods
+
   include Api::Shared::TransformMethods
-  include Search::Shared::IdentifierMethods
+
+  include Search::Shared::CommonMethods
+
+  include Search::Shared::LinkMethods
+
+  extend ::Search::Shared::TransformMethods
+
+  # Transform data fields.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  #
+  # @return [void]
+  #
+  def normalize_data_fields!: (?(symHash|nil) data) -> void
+
+  # Set the URL of the associated work on the web site of the original
+  # repository if not already present.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  # @param [Symbol]    field
+  #
+  # @return [void]
+  #
+  def normalize_title_url!: (?(symHash|nil) data, ?field: Symbol) -> void
+
+  # Set the original repository content download URL if not already present.
+  #
+  # @param [Hash, nil] data           Default: *self*.
+  # @param [Symbol]    field
+  #
+  # @return [void]
+  #
+  def normalize_download_url!: (?(symHash|nil) data, ?field: Symbol) -> void
 end

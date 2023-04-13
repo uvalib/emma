@@ -7,9 +7,6 @@ __loading_begin(__FILE__)
 
 # Manage user accounts as represented in the User table ("/account" pages).
 #
-# Note that these are not directly related to Bookshare accounts -- only to the
-# "reflections" of those accounts maintained in the local database.
-#
 # @see AccountDecorator
 # @see AccountsDecorator
 # @see file:app/views/account/**

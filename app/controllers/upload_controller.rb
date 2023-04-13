@@ -25,7 +25,6 @@ class UploadController < ApplicationController
   include SerializationConcern
   include ApiConcern
   include AwsConcern
-  include BookshareConcern
   include IngestConcern
   include IaDownloadConcern
   include UploadConcern
@@ -67,7 +66,6 @@ class UploadController < ApplicationController
     bulk_index    bulk_new      bulk_edit     bulk_delete   bulk_reindex
   ]
   before_action :index_redirect,        only: %i[show]
-  before_action :set_bs_member,         only: %i[retrieval]
   before_action :set_item_download_url, only: %i[retrieval]
   before_action :resolve_sort,          only: %i[admin]
 
@@ -625,7 +623,7 @@ class UploadController < ApplicationController
     post_response(error, xhr: true)
   end
 
-  # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
+  # == GET /retrieval?url=URL
   #
   # Retrieve a file from a member repository that supports proxying through the
   # EMMA server.
@@ -642,8 +640,6 @@ class UploadController < ApplicationController
     __debug_route
     if ia_link?(item_download_url)
       ia_download_response(item_download_url)
-    elsif bs_link?(item_download_url)
-      redirect_to bs_retrieval_path(url: item_download_url, forUser: bs_member)
     else
       Log.error { "/retrieval can't handle #{item_download_url.inspect}" }
     end

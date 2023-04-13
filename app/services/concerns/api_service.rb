@@ -43,8 +43,7 @@ class ApiService
 
   # Initialize a new instance
   #
-  # @param [User, nil]   user         User instance which includes a
-  #                                     Bookshare user identity and token.
+  # @param [User, nil]   user
   # @param [String, nil] base_url     Base URL to the external service (instead
   #                                     of #BASE_URL defined by the subclass).
   # @param [Hash]        opt          Stored in @options
@@ -215,8 +214,8 @@ class ApiService
       # a hash with a single entry whose key is the symbol for the method and
       # whose value is a Hash containing the properties.
       #
-      # All keys in the property hash are optional, however :reference_id must
-      # be included for methods that map on to documented API requests.
+      # All keys in the property hash are optional, however :synthetic must
+      # be included for methods that do not map on to documented API requests.
       #
       # :alias          One or more identifiers which associate a method named
       #                 argument with the name of the API parameter it
@@ -237,10 +236,9 @@ class ApiService
       #                 should succeed even if the current user is not logged
       #                 in.
       #
-      # :reference_id   This is the HTML element ID of the request on the
-      #                 Bookshare API documentation page.  If this is not
-      #                 provided then the method is not treated as a true API
-      #                 method.
+      # :synthetic      If *true*, then the method is not treated as a true API
+      #                 method (i.e., it is defined locally but does not map
+      #                 directly on to an endpoint defined by the API).
       #
       # :topic          The base of the module in which the method was defined
       #                 added by this method as a hint for the API Explorer.
@@ -251,7 +249,7 @@ class ApiService
       def self.add_api(prop, topic = nil)
         prop = prop.transform_values { |v| v.merge(topic: topic) } if topic
         (@all_methods  ||= {}).merge!(prop)
-        (@true_methods ||= {}).merge!(prop.select { |_, v| v[:reference_id] })
+        (@true_methods ||= {}).merge!(prop.reject { |_, v| v[:synthetic] })
       end
 
       # Properties for each method which implements an API request.

@@ -37,9 +37,6 @@ module ApiService::Properties
   #
   # @type [Array<Symbol>]
   #
-  # == Implementation Notes
-  # Compare with BsAllowsType#values.
-  #
   HTTP_METHODS: symArray
 
   # Engine key values which indicate that the engine should be returned to

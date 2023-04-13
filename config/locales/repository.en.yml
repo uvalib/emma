@@ -23,8 +23,8 @@ en:
           thumb:        ~  # ... image transformed for narrow fixed width.
           base:         ~  # ... unmodified original.
         title_path:     '' # Base URL to source pages for title-level entries.
-        download_path:  '' # Base URL for artifact downloads.
-        download_url:   '' # URL template for artifact downloads.
+        download_path:  '' # Base URL for content file downloads.
+        download_url:   '' # URL template for content file downloads.
         download_fmt:
           brf:          'brf'
           daisy:        'daisy'
@@ -82,7 +82,7 @@ en:
           thumb:        'thumb-Bookshare_logo.png'
           base:         'thumb-Bookshare_logo.png'
         title_path:     'https://www.bookshare.org/browse/book'
-        download_path:  'https://www.bookshare.org/bookHistory/download/book'
+        download_path:  'https://www.bookshare.org/downloadSponsor/book'
         download_fmt:
           brf:          'BRF'
           daisy:        'DAISY'
@@ -95,7 +95,7 @@ en:
           kurzweil:     'BRF'                 # TODO: Bookshare kurzweil
           rtf:          'TEXT'                # TODO: Bookshare rtf
           '???':        'HTML'                # NOTE: not in schema
-        download_url:   '%{download_path}?titleInstanceId=%{id}&downloadFormat=%{fmt}&tag=%{tag}'
+        download_url:   '%{download_path}/%{id}'
 
       hathiTrust:       # @see "en.emma.grant.partner.commercial.hathiTrust"
         <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats

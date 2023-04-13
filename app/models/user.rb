@@ -5,89 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Model for the representation of an EMMA/Bookshare user.
-#
-# == Implementation Notes
-# NOTE: There is still some friction between the concepts of User and Member.
-#
-# === Documented "types" of "users"
-# Section 2.6 of the API documentation mentions "Membership Assistants" and
-# "administrators" as being able to access "/v2/accounts" where:
-# - A Membership Assistant is allowed to see and manage only those user
-#   accounts that are associated with their site.
-# - Administrators are allowed access to users across all sites.
-#
-# @see https://www.bookshare.org/cms/help-center/how-do-i-use-bookshare-web-reader
-# This page mentions "Individual Member", "Student Member",
-# "Bookshare teacher", and "sponsor".
-#
-# @see https://www.bookshare.org/cms/help-center/what-kind-account-should-my-students-use
-# There are three main types of student Bookshare accounts: Individual
-# Memberships, Organizational Memberships, and Linked Accounts.
-#
-# @see https://www.bookshare.org/cms/help-center/how-do-i-create-individual-membership-my-student
-# [A] sponsor can set a limited access username and password to allow a
-# member to log in and access books shared on a Reading List. Once the member
-# logs in they can select the "Upgrade to an Individual membership" link
-# found on the left side of their My Bookshare page to learn how to upgrade
-# to a full Individual Membership.  Or a sponsor on the account can [...]
-# provide an 'Activation ID' to the student.
-#
-# @see https://www.bookshare.org/cms/help-center/what-activation-id
-# If you were originally registered for Bookshare as an Organizational Member
-# (e.g. a student at a school), your Bookshare Sponsor can provide you an
-# Activation ID that will link your new Individual Membership to the
-# Organization. With this Activation ID your Organization has verified you
-# Proof of Disability, and if you are over 18 your account would be
-# immediately active. Members who are under 18 will still need to submit an
-# Individual Agreement form to complete registration.
-#
-# === Prototypical users
-# Bookshare seems to merge the concepts of "role" and "prototypical user".
-# The test accounts that we were given seem to represent four "types" of users,
-# although it's not clear whether these are all the "types" that are meant to
-# exist.
-#
-# ==== EMMADSO@bookshare.org
-# The home page has button for "Add Students".
-#
-# In "My Bookshare", this user:
-# - has a link for "Members".
-# - has a link for "Sponsors".
-# - has a link for "My Requests".
-#
-# This user seems to be typical of current (DSO "sponsor") users that have
-# Bookshare accounts.
-#
-# ==== EmmaVolunteer@bookshare.org
-# The home page has links for "Checkout a Book" and "Submit a Book".
-#
-# In "My Bookshare", this user:
-# - has none of the sidebar-links that a DSO "sponsor" has.
-# - does not seem to be part of the same org as "EMMADSO@bookshare.org".
-#
-# This user seems to be typical of current "volunteer" Bookshare users which
-# are (often?) unassociated with any DSO.
-#
-# ==== emmacollection@bookshare.org
-# This user's home page says:
-# We are so excited to have you help us with the approval queue and introduce
-# this new account role.
-#
-# In "My Bookshare", this user:
-# - has a link for "Collection Admin" to catalog.bookshare.org.
-# - does not have a link for "Members".
-# - does not have a link for "Sponsors".
-# - does not have a link for "My Requests".
-# - does not seem to have visibility into organization reading lists.
-# - does not seem to be part of the same org as "EMMADSO@bookshare.org".
-#
-# Evidently, this "type" of user is completely new and not fully fleshed-out in
-# terms of what it is meant to do.
-#
-# ==== EmmaMembership@bookshare.org
-# This user cannot log in to www.bookshare.org or catalog.bookshare.org and
-# appears to be a "type" of user that is completely new.
+# Model for the representation of an EMMA user.
 #
 #--
 # noinspection RubyTooManyMethodsInspection
@@ -101,6 +19,20 @@ class User < ApplicationRecord
   include Record
   include Record::Identification
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Rolify
+    include Rolify::Role
+    include Devise::Models::DatabaseAuthenticatable
+    include Devise::Models::Rememberable
+    include Devise::Models::Trackable
+    include Devise::Models::Registerable
+    include Devise::Models::Omniauthable
+    extend  ActiveRecord::Validations
+    # :nocov:
+  end
+
   # ===========================================================================
   # :section: ActiveRecord ModelSchema
   # ===========================================================================
@@ -111,10 +43,9 @@ class User < ApplicationRecord
   # :section: ActiveRecord associations
   # ===========================================================================
 
-  has_many :members
-  has_many :reading_lists
   has_many :search_calls
   has_many :uploads
+  has_many :manifests
 
   # ===========================================================================
   # :section: Authentication
@@ -123,19 +54,7 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :recoverable, :validatable
   devise :database_authenticatable, :rememberable, :trackable, :registerable,
-         :omniauthable, omniauth_providers: OAUTH2_PROVIDERS
-
-  # Non-functional hints for RubyMine type checking.
-  unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-    include Devise::Models::DatabaseAuthenticatable
-    include Devise::Models::Rememberable
-    include Devise::Models::Trackable
-    include Devise::Models::Registerable
-    include Devise::Models::Omniauthable
-    extend  ActiveRecord::Validations
-    # :nocov:
-  end
+         :omniauthable, omniauth_providers: AUTH_PROVIDERS
 
   # ===========================================================================
   # :section: Authorization
@@ -195,7 +114,7 @@ class User < ApplicationRecord
 
   public
 
-  # Update database fields.
+  # Update database fields.                                                     # if BS_AUTH
   #
   # @param [User, Hash, nil] attributes
   #
@@ -206,7 +125,7 @@ class User < ApplicationRecord
     super
     new_eid = self[:effective_id]
     add_role(:administrator) if new_eid && (new_eid != old_eid)
-  end
+  end if BS_AUTH
 
   # ===========================================================================
   # :section: Record::Identification overrides
@@ -330,7 +249,9 @@ class User < ApplicationRecord
 
   public
 
-  # The user ID is the same as the Bookshare ID, which is the same as the email
+  # The user ID is the same as the email address.                               # unless BS_AUTH
+  #
+  # The user ID is the same as the Bookshare ID, which is the same as the email # if BS_AUTH
   # address.
   #
   # @return [String]
@@ -339,7 +260,7 @@ class User < ApplicationRecord
     email
   end
 
-  # Indicate whether this User is represented by a different Bookshare user.
+  # Indicate whether this User is represented by a different Bookshare user.    # if BS_AUTH
   #
   # The Bookshare ID associated with this account if different from *self*.
   #
@@ -349,8 +270,9 @@ class User < ApplicationRecord
   def effective_uid
     effective_user&.uid
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # The User who interacts with Bookshare on behalf of this account if
+  # The User who interacts with Bookshare on behalf of this account if          # if BS_AUTH
   # different from *self*.
   #
   # @return [User]
@@ -359,22 +281,25 @@ class User < ApplicationRecord
   def effective_user
     User.find(effective_id) if effective_id.present?
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # Indicate whether this account directly maps on to a Bookshare account.
+  # Indicate whether this account directly maps on to a Bookshare account.      # if BS_AUTH
   #
   def is_bookshare_user?
     effective_id.blank?
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # The Bookshare ID associated with this account.
+  # The Bookshare ID associated with this account.                              # if BS_AUTH
   #
   # @return [String]
   #
   def bookshare_uid
     bookshare_user.uid
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # The User who interacts with Bookshare on behalf of this account.
+  # The User who interacts with Bookshare on behalf of this account.            # if BS_AUTH
   #
   # This is *self* unless :effective_id is non-null.
   #
@@ -383,16 +308,7 @@ class User < ApplicationRecord
   def bookshare_user
     @bookshare_user ||= effective_user || self
   end
-
-  # Indicate whether the user is both an Organizational Member and an
-  # Institutional Member.
-  #
-  # @see Member#linked_account?
-  #
-  def linked_account?
-    as_member = Member.find_by(emailAddress: email)
-    as_member.present? && as_member.linked_account?
-  end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # ===========================================================================
   # :section:
@@ -400,22 +316,10 @@ class User < ApplicationRecord
 
   public
 
-  # Current EMMA test Bookshare accounts and their role prototypes.
-  #
-  # @type [Hash{String=>Symbol}]
-  #
-  # @see Roles#PROTOTYPE
-  #
-  TEST_USERS = {
-    'emmadso@bookshare.org'        => :dso,
-    'emmacollection@bookshare.org' => :librarian,
-    'emmamembership@bookshare.org' => :membership
-  }.freeze
-
   # Indicate whether the user is one of the known "fake" test user accounts.
   #
   def test_user?
-    TEST_USERS.include?(uid)
+    test_users.keys.include?(uid)
   end
 
   # Indicate whether the user has the :developer role.
@@ -469,12 +373,12 @@ class User < ApplicationRecord
   # @return [void]
   #
   # == Implementation Notes
-  # A new User will be created the first time a new person authenticates via
+  # A new User will be created the first time a new person authenticates via    # if BS_AUTH
   # Bookshare -- this may be the place to query the Bookshare API for that
   # user's Bookshare role in order to map it onto EMMA "prototype user".
   #
   def assign_default_role
-    prototype_user = uid.blank? ? :anonymous : TEST_USERS[uid]
+    prototype_user = uid.blank? ? :anonymous : test_users[uid]
     add_roles(prototype_user)
   end
 
@@ -486,18 +390,37 @@ class User < ApplicationRecord
 
   # Add EMMA role(s) to the current user based on its prototype.
   #
-  # @param [Symbol, nil] prototype    Default: `Roles#DEFAULT_PROTOTYPE`.
+  # @param [Symbol, nil] prototype    Default: `Role#DEFAULT_PROTOTYPE`.
   #
   # @return [Array<Role>]             Added role(s).
   #
   def add_roles(prototype = nil)
-    prototype ||= Roles::DEFAULT_PROTOTYPE
-    added_roles = Roles::PROTOTYPE[prototype]
+    prototype ||= Role::DEFAULT_PROTOTYPE
+    added_roles = Role::PROTOTYPE[prototype]
     if added_roles.blank?
       Log.error("#{__method__}: invalid prototype #{prototype.inspect}")
-      added_roles = Roles::PROTOTYPE[:anonymous]
+      added_roles = Role::PROTOTYPE[:anonymous]
     end
     added_roles.map { |role| add_role(role) }
+  end
+
+  # ===========================================================================
+  # :section: Rolify::Role overrides
+  # ===========================================================================
+
+  public
+
+  # Extend Rolify #has_role? to first check for role prototype.
+  #
+  # @param [String, Symbol] role      Role capability or role prototype.
+  # @param [Symbol, nil]    resource
+  #
+  def has_role?(role, resource = nil)
+    if resource.nil?
+      role = role.to_s.strip.to_sym if role.is_a?(String)
+      return true if role == Role.prototype_for(self)
+    end
+    super(role, resource)
   end
 
   # ===========================================================================
@@ -506,15 +429,26 @@ class User < ApplicationRecord
 
   public
 
-  # Current EMMA test Bookshare accounts.
+  delegate :test_users, to: :class
+
+  # Current EMMA test accounts.
   #
   # @type [Hash{String=>Symbol}]
   #
   def self.test_users
-    TEST_USERS
+    # noinspection RbsMissingTypeSignature
+    @test_users ||=
+      begin
+        test_names = %w(test\\_%@virginia.edu)
+        test_names << 'emma%@bookshare.org' if BS_AUTH
+        uid_like   = test_names.map { |p| 'email LIKE ?' }.join(' OR ')
+        where(uid_like, *test_names).map { |u|
+          [u.email, Role.prototype_for(u)]
+        }.to_h
+      end
   end
 
-  # Pairs of current EMMA test Bookshare accounts with their "users" table
+  # Pairs of current EMMA test Bookshare accounts with their "users" table      # if BS_AUTH
   # record IDs.
   #
   # @type [Array<(String,Integer)>]
@@ -523,8 +457,12 @@ class User < ApplicationRecord
     # noinspection RailsParamDefResolve
     where(email: test_users.keys).pluck(:email, :id)
   end
+    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # Get (or create) a database entry for the indicated user and update the
+  # Get the database entry for the indicated user and update it with additional # unless BS_AUTH
+  # information from the provider.
+  #
+  # Get (or create) a database entry for the indicated user and update the      # if BS_AUTH
   # associated User object with additional information from the provider.
   #
   # @param [OmniAuth::AuthHash, Hash, nil] data
@@ -542,9 +480,9 @@ class User < ApplicationRecord
       email:         data.uid.downcase,
       first_name:    data.info&.first_name,
       last_name:     data.info&.last_name,
-      access_token:  data.credentials&.token,
-      refresh_token: data.credentials&.refresh_token,
-      provider:      data.provider
+      access_token:  (data.credentials&.token         if BS_AUTH),
+      refresh_token: (data.credentials&.refresh_token if BS_AUTH),
+      provider:      data.provider,
     }.compact_blank!
     user = find_by(email: attr[:email])
     if user && update
@@ -553,8 +491,8 @@ class User < ApplicationRecord
       attr.delete(:last_name)  if user.last_name.present?
       user.update(attr) if attr.delete_if { |k, v| user[k] == v }.present?
     end
-    # noinspection RubyMismatchedReturnType
-    user || create(attr)
+    user ||= create(attr) if BS_AUTH
+    user
   end
 
 end

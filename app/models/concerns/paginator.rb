@@ -362,7 +362,7 @@ class Paginator
     def record_count(value, default: 0)
       default = positive(default) || 1 if value.is_a?(Array)
       Array.wrap(value).sum do |v|
-        res   = v.try(:totalResults)
+        res   = v.try(:total_results)
         res ||= v.try(:records).try(:size)
         res ||= v.try(:size) unless v.is_a?(Hash)
         res || default
@@ -384,7 +384,7 @@ class Paginator
     #++
     def item_count(value, default: 0)
       result   = (value.size if value.is_a?(Hash) || value.is_a?(Array))
-      result ||= value.try(:totalResults)
+      result ||= value.try(:total_results)
       result ||= value.try(:records).try(:size)
       result ||= value.try(:item_count)
       result ||= value.try(:titles).try(:size)

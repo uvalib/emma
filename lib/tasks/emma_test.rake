@@ -19,7 +19,7 @@ namespace 'emma:test' do
     task all: :default
 
     task default: 'test:prepare' do
-      run_interactive_tests(except: "#{SYSTEM_DIR}/bookshare_test.rb")
+      run_interactive_tests
     end
 
     # =========================================================================
@@ -117,63 +117,6 @@ namespace 'emma:test' do
 
     def run_serialization_tests
       run_tests('test/controllers')
-    end
-
-  end
-
-  # ===========================================================================
-  # Bookshare API tests
-  # ===========================================================================
-
-  desc 'Check code for Bookshare API compliance'
-  task bookshare_api: 'emma:test:bookshare_api:default'
-
-  namespace :bookshare_api do
-
-    desc 'Check implementation of Bookshare API requests and records'
-    task all: :complete
-
-    desc 'Check Bookshare API documentation'
-    task methods: 'test:prepare' do
-      set_test_bookshare(:methods)
-      run_bs_api_tests
-    end
-
-    desc 'Check implementation of Bookshare API requests'
-    task requests: 'test:prepare' do
-      set_test_bookshare(:requests)
-      run_bs_api_tests
-    end
-
-    desc 'Check implementation of Bookshare API records'
-    task records: 'test:prepare' do
-      set_test_bookshare(:records)
-      run_bs_api_tests
-    end
-
-    task complete: 'test:prepare' do
-      set_test_bookshare(:methods, :requests, :records)
-      run_bs_api_tests
-    end
-
-    task default: 'test:prepare' do
-      set_test_bookshare
-      run_bs_api_tests
-    end
-
-    # =========================================================================
-    # Support methods
-    # =========================================================================
-
-    def set_test_bookshare(*values)
-      $LOAD_PATH << 'test' unless $LOAD_PATH.include?('test')
-      require 'test_helper' unless defined?(TestHelper)
-      values = values.flatten.presence || TestHelper.cli_env_test_bookshare
-      silence_warnings { Object.const_set(:TEST_BOOKSHARE, values) }
-    end
-
-    def run_bs_api_tests
-      run_tests('test/system/bookshare_test.rb')
     end
 
   end

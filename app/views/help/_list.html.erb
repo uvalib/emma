@@ -28,7 +28,7 @@
       html_tag(level, label, class: classes, id: "#{topic}_help")
     }
 
-  skip = [*skip, :title].uniq
+  skip << :title
   opt  = { level: level, skip: skip }
 
 -%>

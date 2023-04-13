@@ -15,6 +15,11 @@ en:
       title:            'Bulk Operation Manifest'
       tooltip:          'Manage bulk operations'
 
+      subsystem:
+        database:       true
+        ingest:         true
+        storage:        true
+
       # =======================================================================
       # Layout
       # =======================================================================

@@ -1,5 +1,0 @@
-# General shared methods.
-#
-module Bs::Shared::CommonMethods
-  include Api::Shared::CommonMethods
-end

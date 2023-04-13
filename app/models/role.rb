@@ -9,8 +9,6 @@ __loading_begin(__FILE__)
 #
 class Role < ApplicationRecord
 
-  include Roles
-
   # ===========================================================================
   # :section: ActiveRecord ModelSchema
   # ===========================================================================
@@ -57,6 +55,75 @@ class Role < ApplicationRecord
   #
   def to_s
     name.to_s
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Current EMMA roles.
+  #
+  # A role "capability" aligns with a set of actions that a user's session
+  # would be permitted to perform in the system.  These are the roles that
+  # Rolify manages.
+  #
+  # @type [Array<Symbol>]
+  #
+  CAPABILITIES = %i[
+    searcher
+    submitter
+    downloader
+    manager
+    administrator
+    developer
+  ].tap { |roles|
+    old = %i[catalog_search catalog_submit artifact_download artifact_submit]
+    roles.push(*old) if BS_AUTH
+  }.freeze
+
+  # EMMA role(s) for prototypical users.
+  #
+  # A role "prototype" aligns with the nature of the user's institutional role.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  # == Usage Notes
+  # End-users are not a part of EMMA at this time.
+  #
+  PROTOTYPE = {
+    developer:     CAPABILITIES,
+    administrator: CAPABILITIES.excluding(:developer),
+    manager:       CAPABILITIES.excluding(:developer, :administrator),
+    dso:           %i[searcher submitter downloader],
+    librarian:     %i[searcher submitter],
+    guest:         %i[searcher],
+    anonymous:     %i[searcher],
+  }.deep_freeze
+
+  # The name of the default set of roles for a new user.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_PROTOTYPE = :dso
+
+  # Indicate the nature of the given user.
+  #
+  # @param [User, String, nil] user
+  #
+  # @return [Symbol]                  Best-match #PROTOTYPE key.
+  #
+  def self.prototype_for(user)
+    user  = User.find_by(uid: user) if user.is_a?(String)
+    roles = (user.role_list         if user.is_a?(User))
+    return :anonymous     if roles.nil?
+    return :developer     if roles.include?(:developer)
+    return :administrator if roles.include?(:administrator)
+    return :dso           if roles.include?(:downloader)
+    return :librarian     if roles.include?(:submitter)
+    return :manager       if roles.include?(:manager)
+    :guest
   end
 
 end

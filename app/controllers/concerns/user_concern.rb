@@ -45,7 +45,6 @@ module UserConcern
   include RoleHelper
 
   include AuthConcern
-  include BookshareConcern
 
   # ===========================================================================
   # :section:
@@ -59,7 +58,7 @@ module UserConcern
   # @param [Boolean]        fast      If *true*, don't get history/preferences.
   # @param [Symbol, String] meth      Calling method.
   #
-  # @return [Array<(
+  # _return [Array<(
   #   Bs::Message::MyAccountSummary,
   #   Bs::Message::MyAccountPreferences,
   #   Bs::Message::TitleDownloadList
@@ -67,59 +66,10 @@ module UserConcern
   # @return [Array<(nil,nil,nil)>]
   #
   def get_account_details(id: nil, fast: nil, meth: nil)
-    meth ||= calling_method
-    error  = []
-    warn   = []
-    opt    = { no_raise: true }
-
-    # Main account information.
-    if id.present?
-      opt[:user] = id
-      item = bs_api.get_account(**opt)
-      if item.error?
-        item = bs_api.get_my_organization_member(**opt)
-        opt[:user] = item.userAccountId.presence || item.identifier.presence
-      end
-    else
-      item = bs_api.get_my_account(**opt)
-      id   = item.identifier.presence
+    Log.debug do
+      "#{meth || __method__}: id = #{id.inspect}, fast = #{fast.inspect}"
     end
-
-    # Ancillary account information.
-    pref = hist = nil
-    if item.error?
-      error << item.exec_report
-    elsif opt[:user].present?
-      pref = bs_api.get_preferences(**opt)
-      warn << pref.exec_report if pref.error?
-      # hist = bs_api.get_download_history(**opt) # TODO: ...
-      # warn << hist.error_message if hist.error? # TODO: ...
-      hist = nil
-      warn << 'No API support for preferences or history'
-    elsif !fast
-      pref = bs_api.get_my_preferences(**opt)
-      error << pref.exec_report if pref.error?
-      hist = bs_api.get_my_download_history(**opt)
-      error << hist.exec_report if hist.error?
-    end
-
-    # Display error(s)/warning(s).
-    if error.present? || warn.present?
-      id ||= item.identifier.presence || current_user.try(:email)
-      tag = (" for #{id.inspect}" if id.present?)
-      tag = "Bookshare service error#{tag}:"
-      if error.present?
-        flash_now_alert(tag, *error, meth: meth)
-      elsif warn.present?
-        flash_now_notice(tag, *warn, meth: meth)
-      end
-    end
-
-    # Return no data unless main account information is valid.
-    item = nil if item.error?
-    pref = nil unless item && pref && !pref.error?
-    hist = nil unless item && hist && !hist.error?
-    return item, pref, hist
+    return nil, nil, nil # TODO: get_account_details ???
   end
 
   # ===========================================================================

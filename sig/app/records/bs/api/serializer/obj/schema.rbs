@@ -1,9 +1,0 @@
-# Obj-specific definition overrides for serialization.
-#
-# @see Api::Serializer::Obj::Schema
-#
-module Bs::Api::Serializer::Obj::Schema
-  include Bs::Api::Serializer::Schema
-
-  include Api::Serializer::Obj::Schema
-end

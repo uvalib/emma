@@ -522,7 +522,7 @@ class SearchDecorator
 
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
-    permitted = can?(:download, Artifact)
+    permitted = can?(:download, Upload)
     append_css!(opt, 'sign-in-required') unless permitted
 
     # Set up the tooltip to be shown before the item has been requested.
@@ -533,20 +533,20 @@ class SearchDecorator
         "Retrieve the #{fmt} source from #{origin}."        # TODO: I18n
       else
         tip_key = (h.signed_in?) ? 'disallowed' : 'sign_in'
-        tip_key = "emma.download.link.#{tip_key}.tooltip"
+        tip_key = :"emma.download.link.#{tip_key}.tooltip"
         fmt     = object.label
         origin  = repo || EmmaRepository.default
-        default = ArtifactDecorator::DOWNLOAD_TOOLTIP
+        default = %i[emma.download.tooltip]
         I18n.t(tip_key, fmt: fmt, repo: origin, default: default)
       end
 
     opt[:context] ||= context
     case repo&.to_sym
-      when :emma            then emma_retrieval_link(object, label, url, **opt)
-      when :ace             then ia_retrieval_link(object, label, url, **opt)
-      when :internetArchive then ia_retrieval_link(object, label, url, **opt)
-      when :hathiTrust      then ht_retrieval_link(object, label, url, **opt)
-      when :bookshare       then bs_retrieval_link(object, label, url, **opt)
+      when :emma            then emma_retrieval_link(label, url, **opt)
+      when :ace             then ace_retrieval_link( label, url, **opt)
+      when :internetArchive then ia_retrieval_link(  label, url, **opt)
+      when :hathiTrust      then ht_retrieval_link(  label, url, **opt)
+      when :bookshare       then bs_retrieval_link(  label, url, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end

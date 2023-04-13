@@ -45,11 +45,6 @@ en:
           degraded:     'Unified Search service degraded'
           failed:       'Unified Search service unresponsive'
 
-        bookshare:
-          <<:           *DEFAULT
-          degraded:     'Bookshare API degraded'
-          failed:       'Bookshare API unresponsive'
-
         ingest:
           <<:           *DEFAULT
           degraded:     'Unified Ingest service degraded'

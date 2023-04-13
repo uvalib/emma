@@ -12,7 +12,7 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
   PARAMS        = { controller: CONTROLLER }.freeze
   OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS   = %i[anonymous emmadso developer].freeze
+  TEST_USERS   = %i[anonymous test_dso test_dev].freeze
   TEST_READERS = TEST_USERS
 
   READ_FORMATS = :all

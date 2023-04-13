@@ -1,7 +1,0 @@
-# Bs::Message::Organization
-#
-# @see Bs::Record::Organization
-#
-class Bs::Message::Organization < Bs::Api::Message
-  include Bs::Shared::LinkMethods
-end

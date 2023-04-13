@@ -111,8 +111,6 @@ module Emma::Rake
   #
   # @return [User, nil]
   #
-  # @note Needs to be a user mapped to the developer role in 'users_roles'.
-  #
   def current_user: () -> User
 
   @current_user: User

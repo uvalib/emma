@@ -19,6 +19,10 @@ en:
       title:            'Search Calls'
       tooltip:          'List search call records'
 
+      subsystem:
+        database:       true
+        search:         true
+
       # =======================================================================
       # Search endpoint
       # =======================================================================

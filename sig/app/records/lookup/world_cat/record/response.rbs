@@ -12,9 +12,9 @@ class Lookup::WorldCat::Record::Response < Lookup::WorldCat::Api::Record
 
   LIST_ELEMENT: Class
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching items.
   #
   # @return [Integer]
   #
-  def totalResults: () -> Integer
+  def total_results: () -> Integer
 end

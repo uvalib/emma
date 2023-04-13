@@ -22,14 +22,6 @@ module TestHelper::Samples
 
   @sample: Hash[Symbol, Model]
 
-  # Generate a sample instance from text/fixtures/artifacts.yml.
-  # @return [Artifact]
-  def sample_artifact: () -> Artifact
-
-  # Generate a sample instance from text/fixtures/editions.yml.
-  # @return [Edition]
-  def sample_edition: () -> Edition
-
   # Generate a sample instance from text/fixtures/jobs_results.yml.
   # @return [JobResult]
   def sample_job_result: () -> JobResult
@@ -42,18 +34,6 @@ module TestHelper::Samples
   # @return [ManifestItem]
   def sample_manifest_item: () -> ManifestItem
 
-  # Generate a sample instance from text/fixtures/members.yml.
-  # @return [Member]
-  def sample_member: () -> Member
-
-  # Generate a sample instance from text/fixtures/artifacts.yml.
-  # @return [Periodical]
-  def sample_periodical: () -> Periodical
-
-  # Generate a sample instance from text/fixtures/reading_lists.yml.
-  # @return [ReadingList]
-  def sample_reading_list: () -> ReadingList
-
   # Generate a sample instance from text/fixtures/roles.yml.
   # @return [Role]
   def sample_role: () -> Role
@@ -65,10 +45,6 @@ module TestHelper::Samples
   # Generate a sample instance from text/fixtures/search_results.yml.
   # @return [SearchResult]
   def sample_search_result: () -> SearchResult
-
-  # Generate a sample instance from text/fixtures/titles.yml.
-  # @return [Title]
-  def sample_title: () -> Title
 
   # Generate a sample instance from text/fixtures/uploads.yml.
   # @return [Upload]

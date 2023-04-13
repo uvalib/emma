@@ -63,14 +63,11 @@ class Lookup::WorldCat::Message::Sru < Lookup::WorldCat::Api::Message
 
   public
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching items.
   #
   # @return [Integer]
   #
-  #--
-  # noinspection RubyInstanceMethodNamingConvention
-  #++
-  def totalResults
+  def total_results
     numberOfRecords
   end
 

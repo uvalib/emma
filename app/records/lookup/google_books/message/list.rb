@@ -36,14 +36,11 @@ class Lookup::GoogleBooks::Message::List < Lookup::GoogleBooks::Api::Message
 
   public
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching items.
   #
   # @return [Integer]
   #
-  #--
-  # noinspection RubyInstanceMethodNamingConvention
-  #++
-  def totalResults
+  def total_results
     totalItems
   end
 

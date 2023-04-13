@@ -28,15 +28,15 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   def initialize: ((Search::Message::SearchRecordList|nil) src, ?(bool|nil) opt) -> void
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching records.
   #
   # NOTE: This reports the number of originating search result records.
   #
   # @return [Integer]
   #
-  def totalResults: () -> Integer
+  def total_results: () -> Integer
 
-  # Simulates the :totalResults field of similar Bookshare API records.
+  # Overall total number of matching titles.
   #
   # @return [Integer]
   #

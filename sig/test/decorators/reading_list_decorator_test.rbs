@@ -1,2 +1,0 @@
-class ReadingListDecoratorTest < Draper::TestCase
-end

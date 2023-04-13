@@ -1,7 +1,0 @@
-# Common definitions for serialization.
-#
-module Bs::Api::Serializer::Schema
-  include Bs::Api::Schema
-
-  include Api::Serializer::Schema
-end

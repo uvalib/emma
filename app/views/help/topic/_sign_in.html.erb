@@ -4,15 +4,21 @@
 
   view_debug(__FILE__)
 
-  bookshare_title        = 'Sign-in via Bookshare'
-  test_title             = 'Test Users'
+  sign_in_label     = get_sessions_label(:new)
+  sign_in           = help_span(sign_in_label, class: 'sign-in-button')
+  sign_in_submit    = %Q("#{sign_in_label}")
 
-  sign_in                = get_sessions_label(:new)
-  sign_in                = help_span(sign_in, class: 'sign-in-button')
-  sign_in_with_bookshare = get_sessions_label(:new, :bookshare)
-  sign_in_with_bookshare = %Q("#{sign_in_with_bookshare}")
-  bookshare_login        = help_image(:bookshare_login)
-  bookshare_sign_in      = help_span('Sign in', class: 'bookshare-sign-in')
+  local_auth        = :local
+  local_auth_title  = get_sessions_label(:sign_in, local_auth)
+  local_sign_in     = %Q("#{local_auth_title}")
+  local_login_form  = help_image(:"#{local_auth}_login")
+
+  remote_auth       = BS_AUTH ? :bookshare : :shibboleth
+  remote_auth_title = get_sessions_label(:new, remote_auth)
+  remote_sign_in    = %Q("#{remote_auth_title}")
+  remote_login_form = help_image(:"#{remote_auth}_login")
+
+  bs_sign_in = (help_span('Sign in', class: 'bookshare-sign-in') if BS_AUTH)
 
 -%>
 
@@ -27,53 +33,93 @@
     Topics in this section:
   </div>
   <ul>
-    <li><a href="#sign_in_bookshare_help"><%= bookshare_title -%></a></li>
-    <li><a href="#sign_in_dev_help"><%=       test_title      -%></a></li>
+    <li><a href="#remote_sign_in_help"><%= remote_auth_title -%></a></li>
+    <li><a href="#local_sign_in_help"><%=  local_auth_title  -%></a></li>
   </ul>
 </nav>
 
-<section role="region" aria-labelledby="sign_in_bookshare_help">
+<section role="region" aria-labelledby="remote_sign_in_help">
 
-  <h2 class="section" id="sign_in_bookshare_help"><%= bookshare_title -%></h2>
+  <h2 class="section" id="remote_sign_in_help"><%= remote_auth_title -%></h2>
 
   <p>
     Pressing the <%= sign_in -%> button at the upper-right corner of the EMMA
     screen take you to a page of sign-in options.
+<%- if BS_AUTH -%>
     Currently the only option is via Bookshare authentication,
-    which is engaged when you click on the <%= sign_in_with_bookshare -%> link.
+    which is engaged when you click on the <%= remote_sign_in -%> link.
+<%- else -%>
+    If your institution is a member of
+    <a href="https://incommon.org">InCommon</a>,
+    you can use the <%= remote_sign_in -%> link to sign in to EMMA.
+<%- end -%>
   </p>
 
+<%- if BS_AUTH -%>
   <p>
     (You must have an active account with Bookshare in order to use EMMA.)
   </p>
+<%- end -%>
 
-  <%= bookshare_login %>
+  <%= remote_login_form %>
 
+<%- if BS_AUTH -%>
   <p>
-    When you click on the <%= sign_in_with_bookshare -%> link, EMMA redirects
+    When you click on the <%= remote_sign_in -%> link, EMMA redirects
     you to the Bookshare page (above) which prompts you for your Bookshare
     credentials.
   </p>
-
+<%- else -%>
   <p>
-    When you press <%= bookshare_sign_in -%> on that page, Bookshare redirects
+    When you click on the <%= remote_sign_in -%> link, EMMA redirects
+    you to the InCommon page (above) which prompts you for your institution in
+    order to redirect you to your institutional authentication provider.
+  </p>
+<%- end -%>
+
+<%- if BS_AUTH -%>
+  <p>
+    When you press <%= bs_sign_in -%> on that page, Bookshare redirects
     your browser back to the original EMMA page along with a hidden
     "bearer token".
     (This token will be attached to your requests to indicate your confirmed
     identity.)
   </p>
+<%- else -%>
+  <p>
+    After you complete your institutional sign-on, your institutional
+    authentication provider redirects your browser back to the original EMMA
+    page.
+  </p>
+<%- end -%>
 
 </section>
 
-<section role="region" aria-labelledby="sign_in_dev_help">
+<section role="region" aria-labelledby="local_sign_in_help">
 
-  <h2 class="section" id="sign_in_dev_help"><%= test_title -%></h2>
+  <h2 class="section" id="local_sign_in_help"><%= local_auth_title -%></h2>
 
+<%- if BS_AUTH -%>
   <p>
     Test accounts are available for EMMA testers.
     Please contact project managers or developers at the University of Virginia
     if you would like credentials for one of these accounts
     (<%= contact_email -%>).
   </p>
+<%- else -%>
+  <p>
+    If you have an EMMA account that is not tied to an institutional account,
+    you can use the <%= local_sign_in -%> link to sign in to EMMA.
+  </p>
+
+  <%= local_login_form %>
+
+  <p>
+    Clicking on <%= local_sign_in -%> presents fields for entering your EMMA
+    account name and EMMA password.
+    Fill these and click on the <%= sign_in_submit -%> button on that same line
+    to sign on with your local EMMA credentials.
+  </p>
+<%- end -%>
 
 </section>

@@ -1,5 +1,0 @@
-class BookshareTest < ApplicationSystemTestCase
-  API_REQUEST_ELEMENTS: String
-
-  API_RECORD_ELEMENTS: String
-end

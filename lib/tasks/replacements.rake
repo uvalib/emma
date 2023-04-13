@@ -12,13 +12,13 @@ end
 
 namespace :test do
 
-  desc ['Run all EMMA tests', '(except serialization and Bookshare API tests)']
+  desc ['Run all EMMA tests', '(except serialization)']
   task all: %w(system models controllers)
 
   desc 'Run all EMMA tests including serialization'
   task 'all+serialization' => %w(system models controllers+serialization)
 
-  desc ['Run all EMMA system tests', '(except Bookshare API tests)']
+  desc 'Run all EMMA system tests'
   task system: 'emma:test:interactive:default'
 
   desc 'Run all EMMA model tests'

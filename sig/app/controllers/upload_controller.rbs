@@ -23,8 +23,6 @@ class UploadController < ApplicationController
 
   include AwsConcern
 
-  include BookshareConcern
-
   include IngestConcern
 
   include IaDownloadConcern
@@ -317,7 +315,7 @@ class UploadController < ApplicationController
   #
   def download: () -> void
 
-  # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
+  # == GET /retrieval?url=URL
   #
   # Retrieve a file from a member repository that supports proxying through the
   # EMMA server.

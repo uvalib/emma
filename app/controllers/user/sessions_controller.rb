@@ -15,7 +15,6 @@ class User::SessionsController < Devise::SessionsController
   include AuthConcern
   include SessionConcern
   include RunStateConcern
-  include BookshareConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -28,10 +27,18 @@ class User::SessionsController < Devise::SessionsController
   # :section: Callbacks
   # ===========================================================================
 
-  prepend_before_action :require_no_authentication,    only: %i[new create sign_in_local sign_in_as]
-  prepend_before_action :allow_params_authentication!, only: %i[create sign_in_local sign_in_as]
+  NO_AUTH    = [:new, :create, :sign_in_local, *SIGN_IN_AS].freeze
+  PARAM_AUTH = [:create, :sign_in_local, *SIGN_IN_AS].freeze
+  NO_TIMEOUT = [:create, :destroy, *SIGN_IN_AS].freeze
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  prepend_before_action :require_no_authentication,    only: NO_AUTH
+  prepend_before_action :allow_params_authentication!, only: PARAM_AUTH
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]
-  prepend_before_action :no_devise_timeout,            only: %i[create destroy sign_in_as]
+  prepend_before_action :no_devise_timeout,            only: NO_TIMEOUT
 
   # ===========================================================================
   # :section: Session management
@@ -68,12 +75,12 @@ class User::SessionsController < Devise::SessionsController
   # Begin login session.
   #
   # @see #user_session_path           Route helper
-  # @see AuthConcern#update_auth_data
+  # _see AuthConcern#update_auth_data                                           # if BS_AUTH
   #
   def create
     __debug_route
     __debug_request
-    update_auth_data
+    update_auth_data if BS_AUTH
     self.resource = warden.authenticate!(auth_options)
     __log_activity("LOGIN #{resource}")
     remember_dev(resource)
@@ -87,7 +94,7 @@ class User::SessionsController < Devise::SessionsController
   #
   # End login session.
   #
-  # If the "no_revoke" parameter is missing or "false" then the local session
+  # If the "no_revoke" parameter is missing or "false" then the local session   # if BS_AUTH
   # is  ended _and_ its associated OAuth2 token is revoked.  If "no_revoke" is
   # "true" then only the local session is ended.
   #
@@ -99,13 +106,15 @@ class User::SessionsController < Devise::SessionsController
     __debug_route
     __debug_request
     user = current_user&.uid&.dup
-    delete_auth_data(no_revoke: true?(params[:no_revoke]))
+    opt  = BS_AUTH ? { no_revoke: true?(params[:no_revoke]) } : {}
+    delete_auth_data(**opt)
     super
     api_clear(user: user)
     set_flash_notice(user: user, clear: true)
   rescue => error
     auth_failure_redirect(message: error)
   end
+    .tap { |meth| disallow(meth) unless SIGN_IN_AS }
 
   # ===========================================================================
   # :section:
@@ -133,7 +142,7 @@ class User::SessionsController < Devise::SessionsController
   # @see AuthConcern#local_sign_in
   #
   # == Usage Notes
-  # The initial request to this endpoint is redirected by Warden::Manager to
+  # The initial request to this endpoint is redirected by Warden::Manager to    # if BS_AUTH
   # OmniAuth::Strategies::Bookshare#request_call.  The second request is
   # performed from OmniAuth::Strategies::Bookshare#callback_phase which
   # provides the value for 'omniauth.auth'.
@@ -143,28 +152,10 @@ class User::SessionsController < Devise::SessionsController
     __debug_request
     local_sign_in
     __log_activity("LOGIN #{resource}")
-    check_user_validity
     set_flash_notice(action: :create)
     auth_success_redirect
   rescue => error
     auth_failure_redirect(message: error)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Trigger an exception if the signed-in user doesn't have a valid Bookshare
-  # OAuth2 token.
-  #
-  # @raise [RuntimeError]   If Bookshare account info was unavailable.
-  #
-  # @return [void]
-  #
-  def check_user_validity
-    bs_api.get_user_identity
   end
 
   # ===========================================================================

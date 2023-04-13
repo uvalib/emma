@@ -15,7 +15,7 @@ module AuthHelper
     : (User user) -> OmniAuth::AuthHash
     | (nil  user) -> nil
 
-  # Generate an auth hash based on fixed information.
+  # Generate an auth hash based on fixed information.                           # if BS_AUTH
   #
   # @param [User, String, ActionController::Parameters, OmniAuth::AuthHash, Hash] src
   # @param [String, nil] token
@@ -24,7 +24,7 @@ module AuthHelper
   #
   def synthetic_auth_hash: ((User|String|OmniAuth::AuthHash|prmHash) src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
 
-  # Table of user names/tokens acquired for use in non-production deploys.
+  # Table of user names/tokens acquired for use in non-production deploys.      # if BS_AUTH
   #
   # Token are taken from the User table entries that have an :access_token
   # value.  If BOOKSHARE_TEST_AUTH is supplied, it is used to prime (or update)
@@ -42,7 +42,7 @@ module AuthHelper
   #
   def stored_auth: (?bool refresh) -> Hash[String,anyHash]
 
-  # Produce a stored_auth table entry value.
+  # Produce a stored_auth table entry value.                                    # if BS_AUTH
   #
   # @param [String] token
   #
@@ -50,21 +50,21 @@ module AuthHelper
   #
   def stored_auth_entry_value: (String token) -> Hash[Symbol,String]
 
-  # auth_default_options
+  # auth_default_options                                                        # if BS_AUTH
   #
   # @return [OmniAuth::Strategy::Options]
   #
   def auth_default_options: () -> OmniAuth::Strategy::Options
 
-  # Get user names/tokens from the database.
+  # Get user names/tokens from the database.                                    # if BS_AUTH
   #
-  # @param [String, Array<String>] accounts   Default: #TEST_USERS
+  # @param [String, Array<String>] accounts   Default: `User#test_users`
   #
   # @return [Hash{String=>Hash}]
   #
   def stored_auth_fetch: (?accounts: String|strArray|nil) -> Hash[String,anyHash]
 
-  # Add or update one or more user name/token entries.
+  # Add or update one or more user name/token entries.                          # if BS_AUTH
   #
   # @param [Hash{String=>String}, nil] pairs
   #
@@ -72,7 +72,7 @@ module AuthHelper
   #
   def stored_auth_update: ((Hash[String,String]|nil) pairs) -> void
 
-  # Add or update a user name/token entry.
+  # Add or update a user name/token entry.                                      # if BS_AUTH
   #
   # If input parameters were invalid then no change will be made.
   #

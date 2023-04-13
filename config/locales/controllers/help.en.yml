@@ -106,13 +106,13 @@ en:
         sign_in_links:
           asset:        'help/sign_in_links.png'
           alt:          |
-            Sign-in option links including "Sign in with Bookshare".
+            Sign-in options links.
 
         bookshare_login:
           asset:        'help/bookshare_login.png'
           alt:          |
-            Bookshare login forms with inputs for Bookshare/EMMA user name and
-            password and a "Sign In" submit button.
+            Bookshare login forms with inputs for Bookshare username/password
+            and a "Sign In" submit button.
 
         drop_down:
           asset:        'help/drop_down.png'
@@ -128,6 +128,12 @@ en:
             Please refresh this page after a few minutes."
             And the EMMA note:
             Close this browser tab and retry the original download link.
+
+        local_login:
+          asset:        'help/local_login.png'
+          alt:          |
+            The "local sign-in" button with Account and Password fields and a
+            "Sign in" submit button.
 
         one_selection:
           asset:        'help/one_selection.png'
@@ -149,6 +155,12 @@ en:
           alt:          |
             Search type menu (opened) with a drop-down list of search types
             "ISBN/DOI/etc.", "Title", "Creator", "Publisher", and "Keyword".
+
+        shibboleth_login:
+          asset:        'help/shibboleth_login.png'
+          alt:          |
+            The InCommon login form with a drop-down menu to select your
+            institution.
 
         # =====================================================================
         # Single submission

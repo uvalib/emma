@@ -12,7 +12,7 @@ class ManifestsTest < ApplicationSystemTestCase
   PARAMS      = { controller: CONTROLLER }.freeze
   INDEX_TITLE = page_title(**PARAMS, action: :index).freeze
 
-  TEST_USER   = :emmadso
+  TEST_USER   = :test_dso
 
   setup do
     @user  = find_user(TEST_USER)
@@ -142,7 +142,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
       # Change to the form page if coming in from the index page.
       unless direct
-        click_on 'Create'
+        click_on 'Create', match: :first
         wait_for_page form_url
       end
 

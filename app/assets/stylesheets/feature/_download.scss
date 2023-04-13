@@ -29,21 +29,22 @@
 // Artifact download controls
 //=============================================================================
 
+// @see RepositoryHelper#retrieval_link
 .artifact {
 
-    // @see ArtifactDecorator#link
+    // @see file:javascripts/feature/download.js *BS_DOWNLOAD_STATE*
     .link {
         &.complete {
             color: var(--fg-color);
         }
     }
 
-    // @see ArtifactDecorator#download_progress
+    // @see file:javascripts/feature/download.js *showBsProgressIndicator*
     .progress {
         @extend %transient-control;
     }
 
-    // @see ArtifactDecorator#download_failure
+    // @see file:javascripts/feature/download.js *showFailureMessage*
     .failure {
 
         @extend %transient-control;
@@ -55,7 +56,7 @@
         cursor:           default;
     }
 
-    // @see ArtifactDecorator#download_button
+    // @see file:javascripts/feature/download.js *showBsDownloadButton*
     .button {
 
         @extend %transient-control;
@@ -70,7 +71,7 @@
         }
     }
 
-    // @see file:app/assets/javascripts/feature/download.js *createMemberPopup*
+    // @see file:javascripts/feature/download.js *createBsMemberPopup*
     .popup-panel {
 
         font: revert;
