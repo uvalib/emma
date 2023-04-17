@@ -1,0 +1,38 @@
+<%# app/views/admin/processes.html.erb -%>
+<%-
+  # Request headers
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[admin headers]
+  title ||= t('emma.admin.headers.title')
+
+  unless modal?
+    label = t('emma.admin.headers.label', default: title)
+    set_page_meta_title("Admin - #{label}")
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= request_headers_section %>
+
+<h2>Rack session</h2>
+<%= request_session_section %>
+
+<h2>Rack options</h2>
+<%= request_options_section %>
+
+<h2>Rack::Request</h2>
+<%= rack_headers_section %>
+
+<h2>Rails</h2>
+<%= rails_headers_section %>
+
+<%= page_notes_section %>
+<%= render 'admin/menu' %>

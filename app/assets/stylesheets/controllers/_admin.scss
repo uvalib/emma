@@ -251,3 +251,48 @@ body.admin.loggers {
         .inspect {}
     }
 }
+
+//=============================================================================
+// Headers page
+//=============================================================================
+
+body.admin.headers {
+
+    .pairs {
+
+        display:               grid;
+        grid-template-columns: auto 1fr;
+        gap:                   0.375rem 1rem;
+
+        .blank {
+            color:       gray;
+        }
+
+        .present {
+            box-shadow:  0 0 1px white, 0 0 2px gray;
+        }
+
+        dt {
+
+            margin:      0;
+            padding:     0.25rem;
+            font-weight: bold;
+
+            &.present {
+                background: linen;
+            }
+        }
+
+        dd {
+            max-height:  5.5rem;
+            max-width:   max-content;
+            margin:      0;
+            padding:     0.25rem;
+            overflow:    auto;
+
+            .value {
+                word-break: break-all;
+            }
+        }
+    }
+}

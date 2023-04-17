@@ -540,6 +540,13 @@ end
 class OpenStruct
 end
 
+class Module < Object
+
+  # NOTE: overrides gems/rbs-*/core/module.rbs
+  def self.constants: () -> symArray
+
+end
+
 module PDF
   class Reader
   end

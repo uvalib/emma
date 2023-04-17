@@ -220,6 +220,7 @@ module LayoutHelper::PageControls
   def model_class(ctrlr)
     if ctrlr.is_a?(String) || ctrlr.is_a?(Symbol)
       case ctrlr.to_sym
+        when :admin          then return # without warning
         when :upload         then return Upload
         when :account, :home then return User
         else                      return User if ctrlr.start_with?('user/')

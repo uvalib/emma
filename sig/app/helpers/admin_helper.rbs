@@ -37,6 +37,85 @@ module AdminHelper
   #
   def emma_flag_checkbox: (Symbol|String flag, (bool|nil) value, on: bool) -> ActiveSupport::SafeBuffer
 
+  # Request header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_headers_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Rails header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def rails_headers_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Rack header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def rack_headers_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Request `session` values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_session_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Request `session_options` values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_options_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Translate Hash keys and values into an element containing pairs of
+  # dt and dd elements.
+  #
+  # @param [Array, Hash] hdrs
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dt_dd_section: ((anyHash|Array[String|Symbol]) hdrs, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Translate Hash keys and values into pairs of dt and dd elements.
+  #
+  # @param [Array, Hash] hdrs
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dt_dd_lines: ((anyHash|Array[String|Symbol]) hdrs) -> ActiveSupport::SafeBuffer
+
+  # Translate Hash keys and values into pairs of dt and dd elements.
+  #
+  # @param [Hash] hash
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def dt_dd_pairs: ((anyHash|Array[String|Symbol]) hdrs) -> Array[ActiveSupport::SafeBuffer]
+
+  private
+
+  # Return the values of the constants defined in the class or module which
+  # are strings.
+  #
+  # @param [Module]              mod
+  # @param [String, Regexp, nil] matching
+  #
+  # @return [Array<String>]
+  #
+  def string_constants: (Module mod, ?(String|Regexp|nil) matching) -> strArray
+
   private
 
   def self.included: (Module base) -> void

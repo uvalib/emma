@@ -24,6 +24,7 @@ en:
           - processes
           - disk_space
           - loggers
+          - headers
 
       # =======================================================================
       # Pages
@@ -31,8 +32,8 @@ en:
 
       index:
         label:          'Main'
-        title:          'EMMA Administration'
-        tooltip:        'EMMA administrative information'
+        title:          'EMMA System Administration'
+        tooltip:        'EMMA system information'
         _endpoint:      true
 
       # =======================================================================
@@ -65,6 +66,14 @@ en:
         label:          'Loggers'
         title:          'Logger Instances'
         tooltip:        'View live logger instances'
+        _endpoint:      true
+
+      # =======================================================================
+
+      headers:
+        label:          'Headers'
+        title:          'Request Headers'
+        tooltip:        'View request headers'
         _endpoint:      true
 
       # =======================================================================

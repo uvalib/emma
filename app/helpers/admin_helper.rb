@@ -95,6 +95,200 @@ module AdminHelper
   # :section:
   # ===========================================================================
 
+  public
+
+  # Request header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_headers_section(**opt)
+    hdrs = []
+
+    # From ActionDispatch::Request
+    hdrs += ActionDispatch::Request::ENV_METHODS
+    hdrs += %w(ORIGINAL_FULLPATH SERVER_SOFTWARE RAW_POST_DATA)
+    hdrs += %w(HTTP_AUTHORIZATION X-HTTP_AUTHORIZATION X_HTTP_AUTHORIZATION)
+    hdrs += %w(REDIRECT_X_HTTP_AUTHORIZATION HTTP_X_REQUESTED_WITH)
+
+    # From ActionDispatch::Http::Cache::Request
+    hdrs += %w(HTTP_IF_MODIFIED_SINCE HTTP_IF_NONE_MATCH)
+    hdrs += %w(Last-Modified Date)
+
+    # From Rack
+    hdrs += %w(HTTP_HOST HTTP_PORT PATH_INFO SERVER_PORT)
+    hdrs += %w(REQUEST_METHOD REQUEST_PATH QUERY_STRING SCRIPT_NAME)
+    hdrs += %w(Cache-Control Expires Content-Length Content-Type)
+    hdrs += %w(Transfer-Encoding ETag)
+    hdrs += %w(HTTP_COOKIE Set-Cookie)
+
+    # From Rack::Request
+    hdrs += string_constants(Rack::Request, 'HTTP_')
+    hdrs += %w(CONTENT_LENGTH HTTP_USER_AGENT HTTP_REFERER)
+
+    hdrs.sort!.uniq!
+    hdrs = [*hdrs.partition { |v| v.match?(/[a-z]/) }]
+
+    dt_dd_section(hdrs, **opt)
+  end
+
+  # Rails header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def rails_headers_section(**opt)
+    hdrs = %w(
+      action_controller.instance
+      action_dispatch.content_security_policy
+      action_dispatch.content_security_policy_nonce
+      action_dispatch.content_security_policy_nonce_directives
+      action_dispatch.content_security_policy_nonce_generator
+      action_dispatch.content_security_policy_report_only
+      action_dispatch.encrypted_cookie_salt
+      action_dispatch.encrypted_signed_cookie_salt
+      action_dispatch.exception
+      action_dispatch.http_auth_salt
+      action_dispatch.logger
+      action_dispatch.original_path
+      action_dispatch.parameter_filter
+      action_dispatch.permissions_policy
+      action_dispatch.redirect_filter
+      action_dispatch.remote_ip
+      action_dispatch.request.parameters
+      action_dispatch.request.path_parameters
+      action_dispatch.request_id
+      action_dispatch.routes
+      action_dispatch.show_detailed_exceptions
+      action_dispatch.show_exceptions
+    )
+    hdrs += string_constants(ActionDispatch::Cookies)
+    hdrs += string_constants(ActionDispatch::ContentSecurityPolicy::Request)
+    hdrs.delete('Set-Cookie')
+    hdrs.sort!.uniq!
+    dt_dd_section(hdrs, **opt)
+  end
+
+  # Rack header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def rack_headers_section(**opt)
+    hdrs  = string_constants(Rack, 'RACK_')
+    hdrs -= %w(rack.input rack.session rack.session.options)
+    hdrs.sort!.uniq!
+    dt_dd_section(hdrs, **opt)
+  end
+
+  # Request `session` values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_session_section(**opt)
+    dt_dd_section(request.session.to_hash, **opt)
+  end
+
+  # Request `session_options` values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_options_section(**opt)
+    dt_dd_section(request.session_options.to_hash, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Translate Hash keys and values into an element containing pairs of
+  # dt and dd elements.
+  #
+  # @param [Array, Hash] hdrs
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dt_dd_section(hdrs, css: '.pairs', **opt)
+    opt.reverse_merge!('data-turbolinks-cache': false)
+    prepend_css!(opt, css)
+    html_div(opt) do
+      # noinspection RubyMismatchedArgumentType
+      dt_dd_lines(hdrs)
+    end
+  end
+
+  # Translate Hash keys and values into pairs of dt and dd elements.
+  #
+  # @param [Array, Hash] hdrs
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dt_dd_lines(hdrs)
+    if hdrs.is_a?(Array)
+      hash = hdrs.flatten.map { |hdr| [hdr, request.get_header(hdr)] }.to_h
+    else
+      hash = hdrs
+    end
+    # noinspection RubyMismatchedArgumentType
+    dt_dd_pairs(hash).join("\n").html_safe
+  end
+
+  # Translate Hash keys and values into pairs of dt and dd elements.
+  #
+  # @param [Hash] hash
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def dt_dd_pairs(hash)
+    hash.map do |k, v|
+      css   = (v.present? || false?(v)) ? 'present' : 'blank'
+      opt   = { class: css }
+      label = html_tag(:dt, k, opt)
+      value = html_tag(:dd, opt) { html_div(v.inspect, class: 'value') }
+      label << value
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Return the values of the constants defined in the class or module which
+  # are strings.
+  #
+  # @param [Module]              mod
+  # @param [String, Regexp, nil] matching
+  #
+  # @return [Array<String>]
+  #
+  def string_constants(mod, matching = nil)
+    mod.constants.map { |constant|
+      case matching
+        when String then next unless constant.start_with?(matching)
+        when Regexp then next unless constant.to_s.match?(matching)
+      end
+      value = mod.const_get(constant)
+      value if value.is_a?(String)
+    }.compact
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   private
 
   def self.included(base)
