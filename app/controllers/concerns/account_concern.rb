@@ -64,10 +64,13 @@ module AccountConcern
   # @return [Array<String,Integer>]
   #
   def identifier_list(*ids, separator: /\s*,\s*/)
+    # noinspection RubyMismatchedReturnType
     ids.flat_map { |part|
-      part = part.strip.split(separator) if part.is_a?(String)
-      Array.wrap(part).map { |v| positive(v) || v.presence }
-    }.compact
+      part.is_a?(String) ? part.strip.split(separator) : part
+    }.map { |id|
+      positive(id) ||
+        ((id.is_a?(String) && id.casecmp?('CURRENT')) ? current_user&.id : id)
+    }.compact_blank!
   end
 
   # ===========================================================================

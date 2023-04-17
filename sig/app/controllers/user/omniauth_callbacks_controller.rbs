@@ -46,9 +46,9 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # Display a flash error message.
   #
   # @param [String, nil] message
-  # @param [String, nil] kind
+  # @param [String, nil] provider
   #
   # @return [void]
   #
-  def set_flash_alert: (?(String|nil) message, ?(String|nil) kind) -> void
+  def set_flash_alert: (?(String|nil) message, ?(String|nil) provider) -> void
 end

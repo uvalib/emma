@@ -114,7 +114,6 @@ class User::SessionsController < Devise::SessionsController
   rescue => error
     auth_failure_redirect(message: error)
   end
-    .tap { |meth| disallow(meth) unless SIGN_IN_AS }
 
   # ===========================================================================
   # :section:

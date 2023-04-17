@@ -233,7 +233,7 @@ Rails.application.routes.draw do
   match  '/account/create',         to: 'account#create',         as: 'create_account',         via: %i[post put patch]
 
   get    '/account/edit_select',    to: 'account#edit',           as: 'edit_select_account',    defaults: { id: 'SELECT' }
-  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: 'CURRENT_USER' }
+  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: 'CURRENT' }
   match  '/account/update/:id',     to: 'account#update',         as: 'update_account',         via: %i[put patch]
 
   get    '/account/delete_select',  to: 'account#delete',         as: 'delete_select_account',  defaults: { id: 'SELECT' }
