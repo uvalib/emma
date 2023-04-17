@@ -14,7 +14,7 @@
 
 public
 
-# Use cloud storage except for desktop development.
+# Use cloud storage under Rails unless explicitly turned off.
 #
 # Also avoid setting up AWS storage when running `rake assets:precompile` from
 # Dockerfile.
@@ -22,11 +22,7 @@ public
 # @type [Boolean]
 #
 SHRINE_CLOUD_STORAGE =
-  ENV.fetch('SHRINE_CLOUD_STORAGE') {
-    (application_deployed? || !development_build?) && rails_application?
-  }.then { |setting|
-    true?(setting)
-  }
+  rails_application? && !false?(ENV['SHRINE_CLOUD_STORAGE'])
 
 require 'shrine'
 require 'shrine/storage/s3'          if SHRINE_CLOUD_STORAGE

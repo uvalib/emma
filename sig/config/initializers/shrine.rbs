@@ -1,4 +1,4 @@
-# Use cloud storage except for desktop development.
+# Use cloud storage unless explicitly turned off.
 #
 # Also avoid setting up AWS storage when running `rake assets:precompile` from
 # Dockerfile.

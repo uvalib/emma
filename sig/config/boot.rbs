@@ -87,10 +87,6 @@ class Object
   #
   def staging_deployment?: () -> bool
 
-  # Indicate whether this is a development-build instance.
-  #
-  def development_build?: () -> bool
-
   # Indicate whether this instance is being run from the interactive debugger.
   #
   # == Usage Notes

@@ -138,12 +138,6 @@ def staging_deployment?
   application_deployed? && (application_deployment == :staging)
 end
 
-# Indicate whether this is a development-build instance.
-#
-def development_build?
-  ENV['RAILS_ENV'] != 'production'
-end
-
 # Indicate whether this instance is being run from the interactive debugger.
 #
 # == Usage Notes
@@ -208,6 +202,13 @@ require_relative 'env_vars'
 # =============================================================================
 # Pre-startup output.
 # =============================================================================
+
+# Load order has to be strictly controlled to allow Zeitwerk loading; this is
+# incompatible with lazy-loading so support for "development" had to be
+# abandoned.
+if ENV['RAILS_ENV'] == 'development'
+  raise %q(RAILS_ENV="development" disallowed; lazy-loading not supportable)
+end
 
 if rails_application?
 
