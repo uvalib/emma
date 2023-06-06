@@ -30,7 +30,15 @@ Rails.application.config.good_job = {
   execution_mode:
     ENV['GOOD_JOB_EXECUTION_MODE']&.to_sym || :async,
   poll_interval:
-    ENV['GOOD_JOB_POLL_INTERVAL']&.to_f || (application_deployed? ? 1.0 : 0.25)
+    ENV['GOOD_JOB_POLL_INTERVAL']&.to_f || (application_deployed? ? 1.0 : 0.25),
+  enable_cron: true,
+  cron: {
+    session_cleanup: {
+      cron: '0 0 * * *',
+      class: "SessionCleanupJob",
+      description: "Every day run rake db:sessions:trim"
+    }
+  }
 # max_threads:
 #   # NOTE: must be set from config/env_vars.rb
 # queue_string:

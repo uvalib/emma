@@ -106,6 +106,9 @@ gem 'rack-cors'
 # == Job scheduler
 gem 'good_job'
 
+# == Session store
+gem 'activerecord-session_store'
+
 # == Other
 gem 'draper'
 gem 'iso-639'

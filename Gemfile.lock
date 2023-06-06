@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/uvalib/omniauth-shibboleth.git
-  revision: 3947d3ea743c1b5e1423451986a378b63353d160
+  revision: 9fd262813991dee994752c8a33d2315a97ece3d0
   branch: omniauth2
   specs:
     omniauth-shibboleth (2.0.0)
@@ -67,6 +67,12 @@ GEM
     activerecord (7.0.4.3)
       activemodel (= 7.0.4.3)
       activesupport (= 7.0.4.3)
+    activerecord-session_store (2.0.0)
+      actionpack (>= 5.2.4.1)
+      activerecord (>= 5.2.4.1)
+      multi_json (~> 1.11, >= 1.11.2)
+      rack (>= 2.0.8, < 3)
+      railties (>= 5.2.4.1)
     activestorage (7.0.4.3)
       actionpack (= 7.0.4.3)
       activejob (= 7.0.4.3)
@@ -373,6 +379,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord-session_store
   archive-zip
   aws-sdk-s3
   bootsnap
