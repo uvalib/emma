@@ -478,8 +478,8 @@ class User < ApplicationRecord
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
     attr = {
       email:         data.uid.downcase,
-      first_name:    data.info&.first_name,
-      last_name:     data.info&.last_name,
+      first_name:    data.info&.first_name || data.info&.givenName,
+      last_name:     data.info&.last_name || data.info&.sn,
       access_token:  (data.credentials&.token         if BS_AUTH),
       refresh_token: (data.credentials&.refresh_token if BS_AUTH),
       provider:      data.provider,

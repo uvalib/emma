@@ -95,7 +95,7 @@ module Emma::Common::ExceptionMethods
     return unless internal_exception?(error)
     # noinspection RailsParamDefResolve
     if application_deployed? && try(:request)&.format&.html?
-      Log.warn { "EATING INTERNAL EXCEPTION #{error}" }
+      Log.warn { "CREATING INTERNAL EXCEPTION #{error}" }
     else
       Log.warn { "RE-RAISING INTERNAL EXCEPTION #{error}" }
       raise error
