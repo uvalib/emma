@@ -491,7 +491,8 @@ class User < ApplicationRecord
       attr.delete(:last_name)  if user.last_name.present?
       user.update(attr) if attr.delete_if { |k, v| user[k] == v }.present?
     end
-    user ||= create(attr) if BS_AUTH
+    # Disable automatic account creation
+    # user ||= create(attr) if BS_AUTH
     user
   end
 
