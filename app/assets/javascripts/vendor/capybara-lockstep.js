@@ -11,9 +11,11 @@ import { AppDebug } from '../application/debug';
 import { appSetup } from '../application/setup';
 
 
-AppDebug.file('vendor/capybara-lockstep');
+const PATH = 'vendor/capybara-lockstep';
+
+AppDebug.file(PATH);
 
 if (window.CapybaraLockstep) {
     AppDebug.active = false;
-    appSetup('vendor/capybara-lockstep', () => CapybaraLockstep.track());
+    appSetup(PATH, () => CapybaraLockstep.track());
 }

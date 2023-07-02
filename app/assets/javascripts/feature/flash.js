@@ -6,8 +6,8 @@ import { appSetup }                    from '../application/setup';
 import { flashInitialize, clearFlash } from '../shared/flash';
 
 
-const MODULE = 'feature/flash';
+const PATH = 'feature/flash';
 
-AppDebug.file(MODULE);
+AppDebug.file(PATH);
 
-appSetup(MODULE, () => flashInitialize(), () => clearFlash());
+appSetup(PATH, () => flashInitialize(), () => clearFlash());

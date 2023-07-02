@@ -8,7 +8,15 @@ import { attributeSelector }                   from './html';
 import { deepFreeze }                          from './objects';
 
 
-AppDebug.file('shared/accessibility');
+const MODULE = 'Accessibility';
+const DEBUG  = true;
+
+AppDebug.file('shared/accessibility', MODULE, DEBUG);
+
+/**
+ * Console output functions for this module.
+ */
+const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 
 // ============================================================================
 // Constants
@@ -325,6 +333,8 @@ export function prevInTabOrder(from) {
  * associated with the input element that the user intended to click.
  *
  * @param {Selector} element
+ *
+ * @returns {undefined}
  */
 export function delegateInputClick(element) {
 
@@ -334,11 +344,9 @@ export function delegateInputClick(element) {
     const count    = $input.length;
 
     if (count < 1) {
-        console.error(`${func}: no targets within:`);
-        console.log(element);
-        return;
+        return OUT.error(`${func}: no targets within element`, element);
     } else if (count > 1) {
-        console.warn(`${func}: ${count} targets`);
+        OUT.warn(`${func}: ${count} targets`);
     }
 
     handleClickAndKeypress($element, function(event) {

@@ -7,11 +7,11 @@ import { isMissing }              from '../shared/definitions';
 import { handleClickAndKeypress } from '../shared/events';
 
 
-const MODULE = 'controllers/user_sessions';
+const PATH = 'controllers/user_sessions';
 
-AppDebug.file(MODULE);
+AppDebug.file(PATH);
 
-appSetup(MODULE, function() {
+appSetup(PATH, function() {
 
     /** @type {jQuery} */
     const $inline_forms = $('.sign-in-form.inline');

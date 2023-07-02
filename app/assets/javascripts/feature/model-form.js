@@ -130,6 +130,11 @@ appSetup(MODULE, function() {
         return;
     }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Type definitions
     // ========================================================================
@@ -1152,7 +1157,7 @@ appSetup(MODULE, function() {
         } else if (typeof entry === 'string') {
             text = entry;
         } else {
-            console.error(`${func}: ${typeof entry} invalid`);
+            OUT.error(`${func}: ${typeof entry} invalid`);
         }
         if (html) {
             $line.html(html);
@@ -1268,11 +1273,11 @@ appSetup(MODULE, function() {
             if (records) {
                 callback(records);
             } else if (warning) {
-                console.warn(`${func}: ${url}: ${warning}`);
+                OUT.warn(`${func}: ${url}: ${warning}`);
                 callback([]);
             } else {
                 const failure = error || 'unknown failure';
-                console.error(`${func}: ${url}: ${failure} - aborting`);
+                OUT.error(`${func}: ${url}: ${failure} - aborting`);
             }
         }
     }
@@ -1443,9 +1448,9 @@ appSetup(MODULE, function() {
             if (record) {
                 //_debugXhr(`${func}: data from server:`, record);
             } else if (warning) {
-                console.warn(`${func}: ${url}:`, warning);
+                OUT.warn(`${func}: ${url}:`, warning);
             } else {
-                console.error(`${func}: ${url}:`, (error || 'unknown error'));
+                OUT.error(`${func}: ${url}:`, (error || 'unknown error'));
             }
             initializeModelForm($form, record);
         }
@@ -1502,7 +1507,7 @@ appSetup(MODULE, function() {
 
         // Cancel the current submission if the user leaves the page before
         // submitting.
-        onPageExit((() => abortSubmission($form)), _debugging());
+        onPageExit((() => abortSubmission($form)), OUT.debugging());
     }
 
     /**
@@ -1808,7 +1813,7 @@ appSetup(MODULE, function() {
         if (isDefined(checked)) {
             setChecked($input, checked, init);
         } else {
-            console.warn(`${func}: unexpected:`, setting);
+            OUT.warn(`${func}: unexpected:`, setting);
         }
 
         // Update the enclosing fieldset.
@@ -1929,9 +1934,9 @@ appSetup(MODULE, function() {
      */
     function updateRelatedField(name, other_name) {
         const func = 'updateRelatedField';
+
         if (isMissing(name)) {
-            console.error(`${func}: missing primary argument`);
-            return;
+            return OUT.error(`${func}: missing primary argument`);
         }
 
         // Determine the element for the named field.
@@ -1966,11 +1971,9 @@ appSetup(MODULE, function() {
             }
         }
         if (error) {
-            console.error(`${func}:`, error);
-            return;
+            return OUT.error(`${func}:`, error);
         } else if (warn) {
-            // console.warn(`${func}:`, warn);
-            return;
+            return; //OUT.warn(`${func}:`, warn);
         }
 
         // Toggle state of the related element.
@@ -2443,11 +2446,9 @@ appSetup(MODULE, function() {
         let url    = FIELD_VALIDATION[field];
 
         if (isMissing(callback)) {
-            console.error(`${func}: ${field}: no callback given`);
-            return false;
+            return OUT.error(`${func}: ${field}: no callback given`) || false;
         } else if (isMissing(url)) {
-            console.error(`${func}: ${field}: no URL given`);
-            return false;
+            return OUT.error(`${func}: ${field}: no URL given`) || false;
         }
 
         // Prepare value for inclusion in the URL.
@@ -2458,14 +2459,13 @@ appSetup(MODULE, function() {
         if (['dc_identifier', 'dc_relation'].includes(field)) {
             value = value.filter(v =>
                 !v.match(/https?:/) || v.includes('doi.org') ||
-                    console.log(`${func}: ignoring "${v}"`)
+                    OUT.log(`${func}: ignoring "${v}"`)
             );
             if (isEmpty(value)) {
                 return false;
             }
         } else if (isEmpty(value)) {
-            console.warn(`${func}: ${url}: no values given`);
-            return false;
+            return OUT.warn(`${func}: ${url}: no values given`) || false;
         }
         value = value.join(',');
 
@@ -2531,7 +2531,7 @@ appSetup(MODULE, function() {
         function onComplete(_xhr, _status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
-                console.warn(`${func}: ${url}:`, error);
+                OUT.warn(`${func}: ${url}:`, error);
                 callback(undefined, `system error: ${error}`);
             } else if (isPresent(reply.errors)) {
                 callback(reply.valid, reply.errors);
@@ -2714,11 +2714,11 @@ appSetup(MODULE, function() {
 
             if (!Array.isArray(list)) {
                 error = `${repo}: search error`;
-                console.error(`${func}: ${repo}: arg is not an array`);
+                OUT.error(`${func}: ${repo}: arg is not an array`);
             } else if (isEmpty(list)) {
                 const query = parentEntrySearchInput($form).val();
                 error = `${repo}: no match for "${query}"`;
-                console.warn(`${func}:`, error);
+                OUT.warn(`${func}:`, error);
             }
             if (error) {
                 return searchFailure(error);
@@ -2734,7 +2734,7 @@ appSetup(MODULE, function() {
                 error = 'PROBLEM: ';
                 error += `new_repo == "${repo}" but parent `;
                 error += `emma_repository == "${parent.emma_repository}"`;
-                console.warn(`${func}:`, error);
+                OUT.warn(`${func}:`, error);
             }
             const title_id = parent.emma_titleId;
             const mismatch = list.filter(e => (e.emma_titleId !== title_id));
@@ -2748,12 +2748,12 @@ appSetup(MODULE, function() {
                 );
                 const warn = (label, entry) => {
                     const id = entry.emma_titleId;
-                    console.warn(`${func}: ${label}: title_id = ${id}`, entry);
+                    OUT.warn(`${func}: ${label}: title_id = ${id}`, entry);
                 };
                 warn('parent', parent);
                 mismatch.forEach(e => warn('other', e));
             } else {
-                _debug(`${func}: parent:`, parent);
+                OUT.debug(`${func}: parent:`, parent);
             }
 
             // If control reaches here then the current selection is valid.
@@ -2808,7 +2808,7 @@ appSetup(MODULE, function() {
             } else {
                 new_repo = $menu.attr(REPO_DATA) || '';
             }
-            _debug(`${func}:`, (new_repo || 'cleared'));
+            OUT.debug(`${func}:`, (new_repo || 'cleared'));
             if (defaultRepository(new_repo)) {
                 unsealFields();
                 resetLookupCondition($form, true);
@@ -2872,7 +2872,7 @@ appSetup(MODULE, function() {
         const func = 'fetchIndexEntries';
         const url  = isPresent(params) && makeUrl('/search/direct', params);
         if (isEmpty(url)) {
-            console.error(`${func}: empty search terms`);
+            OUT.error(`${func}: empty search terms`);
             return;
         }
         const title = params.title?.replace(/^"(.*)"$/, '$1')?.toLowerCase();
@@ -2946,9 +2946,9 @@ appSetup(MODULE, function() {
                 const failure = error || warning || 'unknown failure'
                 const message = `${url}: ${failure}`;
                 if (warning) {
-                    console.warn(`${func}:`, message);
+                    OUT.warn(`${func}:`, message);
                 } else {
-                    console.error(`${func}:`, message);
+                    OUT.error(`${func}:`, message);
                 }
                 if (error_callback) {
                     error_callback(message);
@@ -3047,7 +3047,7 @@ appSetup(MODULE, function() {
         }
         if (error) {
             const func = caller || 'parentEntrySearchTerms';
-            console.warn(`${func}: ${error}`);
+            OUT.warn(`${func}: ${error}`);
         }
         return result;
     }
@@ -3254,7 +3254,7 @@ appSetup(MODULE, function() {
             return disableLookup(form, forbid);
         }
         if (forbid) {
-            console.error('enableLookup: cannot enable and forbid');
+            OUT.error('enableLookup: cannot enable and forbid');
         }
         const $button = lookupButton(form);
         $button.prop('disabled', false);
@@ -3587,7 +3587,7 @@ appSetup(MODULE, function() {
          * @param {jQuery.Event} event
          */
         function onChange(event) {
-            DEBUG_INPUT && _debug('*** CHANGE ***');
+            DEBUG_INPUT && OUT.debug('*** CHANGE ***');
             validateInputField(event);
         }
 
@@ -3602,7 +3602,7 @@ appSetup(MODULE, function() {
          */
         function onInput(event) {
             const type = (event?.originalEvent || event).inputType || '';
-            DEBUG_INPUT && _debug(`*** INPUT ${type} ***`);
+            DEBUG_INPUT && OUT.debug(`*** INPUT ${type} ***`);
             if (!type.startsWith('format')) {
                 validateInputField(event, undefined, false);
             }
@@ -3911,7 +3911,7 @@ appSetup(MODULE, function() {
             // noinspection JSUnusedLocalSymbols
             const [_resp, _status_text, xhr] = event.detail || [];
             const status = xhr.status;
-            console.error('ajax:error', status, 'error', error, 'xhr', xhr);
+            OUT.error('ajax:error', status, 'error', error, 'xhr', xhr);
             onCreateError(xhr, status, error);
         }
 
@@ -3941,7 +3941,7 @@ appSetup(MODULE, function() {
             if (isPresent(flash)) {
                 message += ' for: ' + flash.join(', ');
             }
-            _debug(`${func}:`, message);
+            OUT.debug(`${func}:`, message);
             showFlashMessage(message);
             setFormSubmitted($form);
         }
@@ -3968,7 +3968,7 @@ appSetup(MODULE, function() {
             } else {
                 message += ` ${status}: ${error}`;
             }
-            console.warn(`${func}:`, message);
+            OUT.warn(`${func}:`, message);
             showFlashError(message);
             requireFormCancellation($form);
         }
@@ -4098,7 +4098,7 @@ appSetup(MODULE, function() {
             case 'invalid':   fieldDisplayInvalid($form);   break;
             case 'filled':    fieldDisplayFilled($form);    break;
             case 'all':       fieldDisplayAll($form);       break;
-            default:          console.error(`${func}: invalid mode:`, mode);
+            default:          OUT.error(`${func}: invalid mode:`, mode);
         }
         // Scroll so that the first visible field is at the top of the display
         // beneath the field display controls.
@@ -4337,11 +4337,11 @@ appSetup(MODULE, function() {
         if (MODEL === 'entry') {
             const value = formField('submission_id', form).val();
             if (value) { return { submission_id: value } }
-            console.warn(`No submission ID for ${MODEL}`);
+            OUT.warn(`No submission ID for ${MODEL}`);
         } else {
             const value = formField('id', form).val();
             if (value) { return { id: value } }
-            console.warn(`No database record ID for ${MODEL}`);
+            OUT.warn(`No database record ID for ${MODEL}`);
         }
         return {};
     }
@@ -4724,8 +4724,8 @@ appSetup(MODULE, function() {
             switch (op_name) {
                 case 'submit': perform = canSubmit($form); break;
                 case 'cancel': perform = canCancel($form); break;
-                //case 'select': perform = canSelect($form); break;
-                default:       console.error(`${func}: invalid: "${op_name}"`);
+              //case 'select': perform = canSelect($form); break;
+                default:       OUT.error(`${func}: invalid: "${op_name}"`);
             }
         }
         const op = asset || endpointProperties($form)[op_name];
@@ -4787,30 +4787,12 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
-    }
-
-    /**
      * Emit a console message if debugging communications.
      *
      * @param {...*} args
      */
     function _debugXhr(...args) {
-        DEBUG_XHR && _debug('XHR:', ...args);
+        DEBUG_XHR && OUT.debug('XHR:', ...args);
     }
 
     // ========================================================================

@@ -50,6 +50,11 @@ appSetup(MODULE, function() {
     // Only perform these actions on the appropriate pages.
     if (isMissing($artifact_links) && isMissing($no_auth_links)) { return }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Type definitions
     // ========================================================================
@@ -326,7 +331,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}            Always **false** to end event propagation.
      */
     function getBsDownload(event) {
-        //_debug('getBsDownload: event =', event);
+        //OUT.debug('getBsDownload: event =', event);
         const $link = $(event.currentTarget || event.target);
         const url   = $link.attr('href');
         let $panel  = $link.siblings(BS_POPUP_PANEL);
@@ -365,7 +370,7 @@ appSetup(MODULE, function() {
          * @returns {boolean}
          */
         function onSubmit(event) {
-            //_debug('onSubmit: event =', event);
+            //OUT.debug('onSubmit: event =', event);
             event.preventDefault();
             const members = [];
             // noinspection JSCheckFunctionSignatures
@@ -394,7 +399,7 @@ appSetup(MODULE, function() {
         const url   = BS_MEMBER_POPUP.url;
         const start = Date.now();
 
-        _debug(`${func}: VIA`, url);
+        OUT.debug(`${func}: VIA`, url);
 
         /** @type {MemberMessage|object|undefined} */
         let message;
@@ -418,7 +423,7 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} _xhr
          */
         function onSuccess(data, _status, _xhr) {
-            // _debug(`${func}: received data:`, data);
+            //OUT.debug(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -448,9 +453,9 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(_xhr, _status) {
-            _debug(`${func}: completed in`, secondsSince(start), 'sec.');
+            OUT.debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
-                console.warn(`${func}: ${url}:`, error);
+                OUT.warn(`${func}: ${url}:`, error);
                 callback(null, error);
             } else {
                 callback(extractMemberData(message));
@@ -465,7 +470,7 @@ appSetup(MODULE, function() {
          * @returns {object}
          */
         function extractMemberData(data) {
-            //_debug('`${func}: extractMemberData: data =', data);
+            //OUT.debug('`${func}: extractMemberData: data =', data);
             const result  = {};
             const info    = data || message;
             /** @type {Member[]} */
@@ -494,7 +499,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function createBsMemberPopup(member_table) {
-        //_debug('createBsMemberPopup: member_table =', member_table);
+        //OUT.debug('createBsMemberPopup: member_table =', member_table);
 
         const $panel = create(BS_MEMBER_POPUP.panel).attr('href', '#0');
 
@@ -551,7 +556,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function resetBsMemberPopup(panel) {
-        //_debug('resetBsMemberPopup: panel =', panel);
+        //OUT.debug('resetBsMemberPopup: panel =', panel);
         const disabled = BS_MEMBER_POPUP.submit.disabled.class;
         const $panel   = $(panel);
         const $submit  = $panel.find('[type="submit"]').addClass(disabled);
@@ -577,7 +582,7 @@ appSetup(MODULE, function() {
      * @param {Selector} link
      */
     function manageBsDownloadState(link) {
-        //_debug('manageBsDownloadState: link =', link);
+        //OUT.debug('manageBsDownloadState: link =', link);
         const $link = $(link);
         if ($link.hasClass(BS_DOWNLOAD_STATE.READY)) {
             endBsRequesting($link);
@@ -605,7 +610,7 @@ appSetup(MODULE, function() {
             url += `${append}member=${member}`;
         }
 
-        _debug(`${func}: VIA`, url);
+        OUT.debug(`${func}: VIA`, url);
 
         /** @type {string} target */
         let target = undefined;
@@ -631,7 +636,7 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} _xhr
          */
         function onSuccess(data, _status, _xhr) {
-            // _debug(`${func}: received data:`, data);
+            //OUT.debug(`${func}: received data:`, data);
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -673,12 +678,12 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(_xhr, _status) {
-            _debug(`${func}: completed in`, secondsSince(start), 'sec.');
+            OUT.debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (target) {
                 $link.data('path', target);
                 endBsRequesting($link);
             } else if (error) {
-                console.warn(`${func}: ${url}:`, error);
+                OUT.warn(`${func}: ${url}:`, error);
                 endBsRequesting($link, error);
             } else {
                 setTimeout(reRequestBsArtifact, delay);
@@ -691,7 +696,7 @@ appSetup(MODULE, function() {
          * reschedule another polling attempt.
          */
         function reRequestBsArtifact() {
-            //_debug('reRequestBsArtifact');
+            //OUT.debug('reRequestBsArtifact');
             if (document.hidden) {
                 setTimeout(reRequestBsArtifact, delay);
             } else {
@@ -707,7 +712,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      */
     function beginBsRequesting($link) {
-        //_debug('beginBsRequesting: $link =', $link);
+        //OUT.debug('beginBsRequesting: $link =', $link);
         showBsProgressIndicator($link);
         hideFailureMessage($link);
         hideBsDownloadButton($link);
@@ -723,7 +728,7 @@ appSetup(MODULE, function() {
      * @param {string} [error]
      */
     function endBsRequesting($link, error) {
-        //_debug(`endBsRequesting: error = "${error}"; $link =`, $link);
+        //OUT.debug(`endBsRequesting: error = "${error}"; $link =`, $link);
         hideBsProgressIndicator($link);
         if (error) {
             const canceled = error.match(/cancell?ed/i);
@@ -745,7 +750,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function cancelBsRequest(event) {
-        //_debug('cancelBsRequest: event =', event);
+        //OUT.debug('cancelBsRequest: event =', event);
         const state = BS_DOWNLOAD_STATE.REQUESTING;
         let $link   = $(event.currentTarget || event.target);
         if (!$link.hasClass(state)) {
@@ -772,7 +777,7 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}
      */
     function getUrlBsMember(url) {
-        //_debug('getUrlBsMember: url =', url);
+        //OUT.debug('getUrlBsMember: url =', url);
         const params = urlParameters(url);
         return params['member'] || params['forUser'];
     }
@@ -785,7 +790,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function getLinkBsMember($link) {
-        //_debug('getLinkBsMember: $link =', $link);
+        //OUT.debug('getLinkBsMember: $link =', $link);
         const for_user = $link.attr('data-forUser');
         $link.removeAttr('data-forUser');
         return for_user || $link.attr('data-member') || '';
@@ -800,7 +805,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function setLinkBsMember($link, member) {
-        //_debug(`setLinkBsMember: member = "${member}"; $link =`, $link);
+        //OUT.debug(`setLinkBsMember: member = "${member}"; $link =`, $link);
         const value = Array.isArray(member) ? member.join(',') : member;
         if (value) {
             $link.attr('data-member', value);
@@ -821,7 +826,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      */
     function showBsProgressIndicator($link) {
-        //_debug('showBsProgressIndicator: $link =', $link);
+        //OUT.debug('showBsProgressIndicator: $link =', $link);
         const $indicator = $link.siblings(PROGRESS);
         if ($indicator.is(HIDDEN)) {
             toggleHidden($indicator, false).on('click', cancelBsRequest);
@@ -834,7 +839,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      */
     function hideBsProgressIndicator($link) {
-        //_debug('hideBsProgressIndicator: $link =', $link);
+        //OUT.debug('hideBsProgressIndicator: $link =', $link);
         const $indicator = $link.siblings(PROGRESS);
         toggleHidden($indicator, true).off('click', cancelBsRequest);
     }
@@ -849,7 +854,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function showNotAuthorized(event) {
-        //_debug('showNotAuthorized: event =', event);
+        //OUT.debug('showNotAuthorized: event =', event);
         event.preventDefault();
         const $link = $(event.currentTarget || event.target);
         showFailureMessage($link, Emma.Download.failure.sign_in);
@@ -862,7 +867,7 @@ appSetup(MODULE, function() {
      * @param {string} [error]
      */
     function showFailureMessage($link, error) {
-        //_debug(`showFailureMessage: error = "${error}"; $link =`, $link);
+        //OUT.debug(`showFailureMessage: error = "${error}"; $link =`, $link);
         const message  = error || Emma.Download.failure.unknown;
         const $failure = $link.siblings(FAILURE);
         $failure.text(message);
@@ -876,7 +881,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      */
     function hideFailureMessage($link) {
-        //_debug('hideFailureMessage: $link =', $link);
+        //OUT.debug('hideFailureMessage: $link =', $link);
         const $failure = $link.siblings(FAILURE);
         toggleHidden($failure, true);
     }
@@ -898,7 +903,7 @@ appSetup(MODULE, function() {
         if (target) {
             $link.data('path', url);
         }
-        _debug(`${func}: FROM`, url);
+        OUT.debug(`${func}: FROM`, url);
         const new_tip = $link.attr('data-complete-tooltip');
         if (new_tip) {
             $link.attr('data-tooltip', $link.attr('title'));
@@ -916,7 +921,7 @@ appSetup(MODULE, function() {
      * @param {Selector} link
      */
     function hideBsDownloadButton(link) {
-        //_debug('hideBsDownloadButton: link =', link);
+        //OUT.debug('hideBsDownloadButton: link =', link);
         const $link   = $(link);
         const old_tip = $link.attr('data-tooltip');
         if (old_tip) {
@@ -956,7 +961,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      */
     function clear(old_state, $link) {
-        //_debug(`clear: old_state = "${old_state}"; $link =`, $link);
+        //OUT.debug(`clear: old_state = "${old_state}"; $link =`, $link);
         $link.removeClass(old_state);
     }
 
@@ -982,7 +987,7 @@ appSetup(MODULE, function() {
      * @param {number} [value]        Default: BS_RETRY_PERIOD.
      */
     function setBsRetryPeriod($link, value) {
-        //_debug(`setBsRetryPeriod: value = "${value}"; $link =`, $link);
+        //OUT.debug(`setBsRetryPeriod: value = "${value}"; $link =`, $link);
         const period = value || defaultBsRetryPeriod($link);
         $link.data(BS_RETRY_DATA, period);
     }
@@ -993,7 +998,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      */
     function clearBsRetryPeriod($link) {
-        //_debug('clearBsRetryPeriod: $link =', $link);
+        //OUT.debug('clearBsRetryPeriod: $link =', $link);
         $link.removeData(BS_RETRY_DATA);
     }
 

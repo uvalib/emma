@@ -414,9 +414,9 @@ export class LookupModal extends ModalDialog {
     static set channel(channel) {
         if (channel) {
             channel.disconnectOnPageExit(this._debugging);
-            this._debug('CLASS set channel', channel);
+            this._info('set channel', channel);
         } else {
-            this._debug('CLASS clear channel');
+            this._info('clear channel');
         }
         this._channel = channel;
     }

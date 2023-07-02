@@ -75,6 +75,11 @@ appSetup(MODULE, function() {
         return;
     }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Variables - group select
     // ========================================================================
@@ -295,7 +300,7 @@ appSetup(MODULE, function() {
     function filterPageDisplay(new_group) {
         const func  = 'filterPageDisplay';
         const group = new_group || listFilterCurrent();
-        _debug(`${func}: arg = "${new_group}"; group = "${group}"`);
+        OUT.debug(`${func}: arg = "${new_group}"; group = "${group}"`);
         if (group === 'all') {
             filterPageDisplayAll();
         } else {
@@ -371,7 +376,7 @@ appSetup(MODULE, function() {
         const $option = $(checkbox);
         const enable  = $option.is(':checked');
         const group   = $option.val();
-        _debug(`${func}: group = "${group}"; enable = "${enable}"`);
+        OUT.debug(`${func}: group = "${group}"; enable = "${enable}"`);
         let $sel_controls, $pag_controls, any_checked;
         if (group === 'ALL_FILTERS') {
             $filter_options_checkboxes.each(function() {
@@ -395,28 +400,6 @@ appSetup(MODULE, function() {
         toggleHidden($sel_controls,      !enable);
         toggleHidden($pag_controls,      !enable);
         toggleHidden($list_filter_panel, !any_checked);
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

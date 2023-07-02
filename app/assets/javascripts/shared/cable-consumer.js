@@ -15,6 +15,15 @@ logger.enabled = DEBUG;
 
 AppDebug.file('shared/cable-consumer', MODULE, DEBUG);
 
+// ============================================================================
+// Functions - internal
+// ============================================================================
+
+/**
+ * Console output functions for this module.
+ */
+const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
 /** @type {Consumer} */
 let instance;
 
@@ -34,7 +43,7 @@ function consumer() {
  */
 function new_consumer() {
     const new_instance = createConsumer();
-    _debug('new_consumer:', new_instance);
+    OUT.debug('new_consumer:', new_instance);
     appTeardown(MODULE, () => disconnect());
     return new_instance;
 }
@@ -43,18 +52,18 @@ function new_consumer() {
 // Functions
 // ============================================================================
 
+/** @returns {undefined} */
 export function disconnect() {
     const func = 'disconnect';
     if (!instance) {
-        console.warn(`${MODULE}: ${func}: not connected`);
-        return;
+        return OUT.warn(`${MODULE}: ${func}: not connected`);
     }
-    _debug(`${func}: consumer:`, instance);
+    OUT.debug(`${func}: consumer:`, instance);
     const subs = instance.subscriptions;
     const list = [...subs.subscriptions];
-    _debug(`${func}: remove subscriptions`, list);
+    OUT.debug(`${func}: remove subscriptions`, list);
     list.forEach(s => subs.remove(s));
-    _debug(`${func}: terminate connection`);
+    OUT.debug(`${func}: terminate connection`);
     instance.disconnect();
     instance = null;
 }
@@ -74,7 +83,7 @@ export function disconnect() {
  * @see "ApplicationCable::Channel#subscribed"
  */
 export function createChannel(stream, functions) {
-    _debug('createChannel: stream =', stream);
+    OUT.debug('createChannel: stream =', stream);
     let params;
     if ((typeof stream === 'string') && !stream.endsWith('Channel')) {
         params = camelCase(stream) + 'Channel';
@@ -92,28 +101,6 @@ export function createChannel(stream, functions) {
  * @returns {Subscription}
  */
 export function closeChannel(channel) {
-    _debug('closeChannel: channel =', channel);
+    OUT.debug('closeChannel: channel =', channel);
     return consumer().subscriptions.remove(channel);
-}
-
-// ============================================================================
-// Functions - internal
-// ============================================================================
-
-/**
- * Indicate whether console debugging is active.
- *
- * @returns {boolean}
- */
-function _debugging() {
-    return AppDebug.activeFor(MODULE, DEBUG);
-}
-
-/**
- * Emit a console message if debugging.
- *
- * @param {...*} args
- */
-function _debug(...args) {
-    _debugging() && console.log(`${MODULE}:`, ...args);
 }

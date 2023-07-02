@@ -32,6 +32,11 @@ appSetup(MODULE, function() {
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Constants
     // ========================================================================
@@ -76,7 +81,7 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} _xhr
          */
         function onSuccess(data, _status, _xhr) {
-            _debug(`${func}: received`, (data?.length || 0), 'bytes.');
+            OUT.debug(`${func}: received`, (data?.length || 0), 'bytes.');
             if (isMissing(data)) {
                 error   = 'no data';
             } else {
@@ -102,9 +107,9 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(_xhr, _status) {
-            _debug(`${func}: completed in`, secondsSince(start), 'sec.');
+            OUT.debug(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
-                console.warn(`${func}: ${url}:`, error);
+                OUT.warn(`${func}: ${url}:`, error);
             } else {
                 insertImage(content);
             }
@@ -190,28 +195,6 @@ appSetup(MODULE, function() {
     }
 
     // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
-    }
-
-    // ========================================================================
     // Actions
     // ========================================================================
 
@@ -220,15 +203,15 @@ appSetup(MODULE, function() {
         const $image = $(this);
         let src;
         if ((src = $image.attr('data-path'))) {
-            _debug('FETCHING IMAGE data-path ==', src);
+            OUT.debug('FETCHING IMAGE data-path ==', src);
             loadImage($image, src);
         } else if ((src = $image.attr('src')) && src.match(/^http/)) {
-            _debug('REPLACING IMAGE src ==', src);
+            OUT.debug('REPLACING IMAGE src ==', src);
             // noinspection JSCheckFunctionSignatures
             $image.parent().append(imagePlaceholder());
             loadImage($image, src);
         } else {
-            _debug('USING IMAGE src ==', src);
+            OUT.debug('USING IMAGE src ==', src);
         }
     });
 

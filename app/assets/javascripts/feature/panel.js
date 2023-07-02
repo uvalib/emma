@@ -23,6 +23,11 @@ appSetup(MODULE, function() {
         return;
     }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Constants
     // ========================================================================
@@ -74,9 +79,9 @@ appSetup(MODULE, function() {
         const $panel  = getPanel($button);
         if (isPresent($panel)) {
             const opening = !$panel.hasClass(OPEN_MARKER);
-            if (_debugging()) {
+            if (OUT.debugging()) {
                 const action = opening ? 'SHOW' : 'HIDE';
-                _debug(action, getPanelId($button), 'panel');
+                OUT.debug(action, getPanelId($button), 'panel');
             }
             if (RESTORE_PANEL_STATE) {
                 setState($button, opening);
@@ -197,28 +202,6 @@ appSetup(MODULE, function() {
         $button.html(value.label);
         $button.attr('title', value.tooltip);
         $button.attr('aria-expanded', opening);
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

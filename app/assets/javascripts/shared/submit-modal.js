@@ -202,9 +202,9 @@ export class SubmitModal extends ModalDialog {
     static set channel(channel) {
         if (channel) {
             channel.disconnectOnPageExit(this._debugging);
-            this._debug('CLASS set channel', channel);
+            this._info('set channel', channel);
         } else {
-            this._debug('CLASS clear channel');
+            this._info('clear channel');
         }
         this._channel = channel;
     }
@@ -283,7 +283,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitChannel|undefined}
      */
     static async setupFor(toggle, callbacks) {
-        const func = 'CLASS setupFor';
+        const func = 'setupFor';
         this._debug(`${func}: toggle =`, toggle);
         this._debug(`${func}: existing toggle.data(modalInstance) =`, this.instanceFor(toggle));
         this._debug(`${func}: existing SubmitModal._channel =`, this._channel);

@@ -30,6 +30,11 @@ appSetup(MODULE, function() {
     // Only perform these actions on the appropriate pages.
     if (isMissing($nav)) { return }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Functions
     // ========================================================================
@@ -45,34 +50,14 @@ appSetup(MODULE, function() {
      */
     function toggleSkipMenu(target, new_state) {
         const $menu = selfOrParent(target, SKIP_MENU);
-        if (_debugging()) {
-            if (new_state === true)  { _debug('SHOW skip menu') } else
-            if (new_state === false) { _debug('HIDE skip menu') } else
-                                     { _debug('TOGGLE skip menu') }
+        if (OUT.debugging()) {
+            switch (new_state) {
+                case true:  OUT.debug('SHOW skip menu');   break;
+                case false: OUT.debug('HIDE skip menu');   break;
+                default:    OUT.debug('TOGGLE skip menu'); break;
+            }
         }
         return $menu.toggleClass('visible', new_state).hasClass('visible');
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

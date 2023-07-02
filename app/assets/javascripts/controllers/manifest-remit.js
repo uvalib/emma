@@ -70,6 +70,11 @@ appSetup(MODULE, function() {
         return;
     }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Constants
     // ========================================================================
@@ -393,7 +398,7 @@ appSetup(MODULE, function() {
      * Initialize the Manifest submission controls.
      */
     function initializeSubmissionForm() {
-        _debug('initializeSubmissionForm');
+        OUT.debug('initializeSubmissionForm');
         initializeSubmissionMonitor();
         initializeSubmissionButtons();
         initializeItems();
@@ -422,7 +427,7 @@ appSetup(MODULE, function() {
      * initializeSubmissionButtons
      */
     function initializeSubmissionButtons() {
-        const func = 'initializeSubmissionButtons'; //_debug(func);
+        const func = 'initializeSubmissionButtons'; //OUT.debug(func);
         initializeButtonSet(SUBMISSION_BUTTONS, func);
         submissionsActive(false);
     }
@@ -438,7 +443,7 @@ appSetup(MODULE, function() {
      */
     function enableSubmissionButton(type, enable, prop) {
         const func    = 'enableSubmissionButton';
-        _debug(`${func}: type = "${type}"; enable = "${enable}"`);
+        OUT.debug(`${func}: type = "${type}"; enable = "${enable}"`);
         const $button = buttonFor(type, SUBMISSION_BUTTONS, func);
         return enableButton($button, enable, type, prop);
     }
@@ -449,10 +454,10 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|UIEvent} [event]
      */
     function onSubmissionStart(event) {
-        const func = 'onSubmissionStart'; _debug(`${func}: event =`, event);
+        const func = 'onSubmissionStart'; OUT.debug(`${func}: event =`, event);
         const fail = 'Submission failed'; // TODO: I18n
         if (submissionsActive()) {
-            _error(`${fail} - already submitting`);
+            OUT.error(`${fail} - already submitting`);
         } else {
             uploader.upload();
             const action  = startSubmissions();
@@ -467,10 +472,10 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|UIEvent} event
      */
     function onSubmissionStop(event) {
-        const func = 'onSubmissionStop'; _debug(`${func}: event =`, event);
+        const func = 'onSubmissionStop'; OUT.debug(`${func}: event =`, event);
         const fail = 'Cancel failed'; // TODO: I18n
         if (!submissionsActive()) {
-            _error(`${fail} - not submitting`);
+            OUT.error(`${fail} - not submitting`);
         } else {
             uploader.cancel();
             const action  = stopSubmissions();
@@ -485,12 +490,12 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|UIEvent} event
      */
     function onSubmissionPause(event) {
-        const func = 'onSubmissionPause'; _debug(`${func}: event =`, event);
+        const func = 'onSubmissionPause'; OUT.debug(`${func}: event =`, event);
         const fail = 'Pause failed'; // TODO: I18n
         if (!submissionsActive()) {
-            _error(`${fail} - not submitting`);
+            OUT.error(`${fail} - not submitting`);
         } else if (submissionsPaused()) {
-            _error(`${fail} - already paused`);
+            OUT.error(`${fail} - already paused`);
         } else {
             uploader.pause();
             const action  = pauseSubmissions();
@@ -505,12 +510,12 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|UIEvent} event
      */
     function onSubmissionResume(event) {
-        const func = 'onSubmissionResume'; _debug(`${func}: event =`, event);
+        const func = 'onSubmissionResume'; OUT.debug(`${func}: event =`, event);
         const fail = 'Resume failed'; // TODO: I18n
         if (!submissionsActive()) {
-            _error(`${fail} - not submitting`);
+            OUT.error(`${fail} - not submitting`);
         } else if (!submissionsPaused()) {
-            _error(`${fail} - not paused`);
+            OUT.error(`${fail} - not paused`);
         } else {
             uploader.resume();
             const action  = resumeSubmissions();
@@ -527,7 +532,7 @@ appSetup(MODULE, function() {
      */
     function submissionRequest(action, options) {
         const func = options?.caller || 'submissionRequest';
-        _debug(`${func}: ${action}`);
+        OUT.debug(`${func}: ${action}`);
         if (!submissionMonitor().command(action, options?.data)) {
             const tag  = options?.fail || `${action} failed`;
             const note = 'Refresh this page to re-authenticate.';
@@ -568,7 +573,7 @@ appSetup(MODULE, function() {
      * If not ready, a custom tooltip is provided to indicate the reason.
      */
     function updateSubmitReady() {
-        _debug('updateSubmitReady');
+        OUT.debug('updateSubmitReady');
 
         const remote_needed = isPresent(files_remaining.remote);
         const local_needed  = isPresent(files_remaining.local);
@@ -594,7 +599,7 @@ appSetup(MODULE, function() {
      * @param {boolean} first
      */
     function showRemoteFilesPrompt(visible, first) {
-        //_debug('showRemoteFilesPrompt:', visible, first);
+        //OUT.debug('showRemoteFilesPrompt:', visible, first);
         if (visible) {
             $remote_button.toggleClass(BEST_CHOICE_MARKER, first);
             $remote_button.toggleClass(DISABLED_MARKER, !first);
@@ -610,7 +615,7 @@ appSetup(MODULE, function() {
      * @param {boolean} first
      */
     function showLocalFilesPrompt(visible, first) {
-        //_debug('showLocalFilesPrompt:', visible, first);
+        //OUT.debug('showLocalFilesPrompt:', visible, first);
         if (visible) {
             $local_button.toggleClass(BEST_CHOICE_MARKER, first);
             $local_button.toggleClass(DISABLED_MARKER, !first);
@@ -629,7 +634,7 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function startSubmissions() {
-        _debug('START SUBMISSIONS');
+        OUT.debug('START SUBMISSIONS');
         if (isMissing(itemsChecked())) {
             itemsReady().each((_, item) => selectItem(item));
             updateGroupCheckbox();
@@ -645,7 +650,7 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function stopSubmissions() {
-        _debug('STOP SUBMISSIONS');
+        OUT.debug('STOP SUBMISSIONS');
         submissionsActive(false);
         return 'stop';
     }
@@ -656,7 +661,7 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function pauseSubmissions() {
-        _debug('PAUSE SUBMISSIONS');
+        OUT.debug('PAUSE SUBMISSIONS');
         submissionsPaused(true);
         return 'pause';
     }
@@ -667,7 +672,7 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function resumeSubmissions() {
-        _debug('RESUME SUBMISSIONS');
+        OUT.debug('RESUME SUBMISSIONS');
         submissionsPaused(false);
         return 'resume';
     }
@@ -685,7 +690,7 @@ appSetup(MODULE, function() {
     function submissionsActive(now) {
         if (isDefined(now)) {
             started = !!now;
-            _debug('SUBMISSION', (started ? 'STARTED' : 'STOPPED'));
+            OUT.debug('SUBMISSION', (started ? 'STARTED' : 'STOPPED'));
             const prop = started ? { highlight: false } : {};
             SUBMISSION_ENABLE.start(!started, prop);
             SUBMISSION_ENABLE.stop(started);
@@ -712,7 +717,7 @@ appSetup(MODULE, function() {
     function submissionsPaused(now) {
         if (isDefined(now)) {
             paused = !!now;
-            _debug('SUBMISSION', (paused ? 'PAUSED' : 'RESUMED'));
+            OUT.debug('SUBMISSION', (paused ? 'PAUSED' : 'RESUMED'));
             SUBMISSION_ENABLE.pause(!paused);
             SUBMISSION_ENABLE.resume(paused);
         }
@@ -755,7 +760,7 @@ appSetup(MODULE, function() {
      * initializeItems
      */
     function initializeItems() {
-        _debug('initializeItems');
+        OUT.debug('initializeItems');
         const local = {}, remote = {};
         let unsaved = false;
         allItems().each((_, item) => {
@@ -782,8 +787,8 @@ appSetup(MODULE, function() {
             });
             updateItemSelect($item);
         });
-        _debug(`INITIAL file_references.local  =`, local);
-        _debug(`INITIAL file_references.remote =`, remote);
+        OUT.debug('INITIAL file_references.local  =', local);
+        OUT.debug('INITIAL file_references.remote =', remote);
         file_references.local  = local;
         file_references.remote = remote;
         setFilesRemaining();
@@ -814,7 +819,7 @@ appSetup(MODULE, function() {
      * @param {boolean} [total]       If **true**, allow FILE_NEEDED.
      */
     function resetItems(total) {
-        _debug('resetItems');
+        OUT.debug('resetItems');
         itemsToTransmit().each((_, item) => {
             const $item = $(item);
             STATUS_TYPES.forEach(stat => resetStatusFor($item, stat, total));
@@ -1118,7 +1123,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [indeterminate]
      */
     function selectItem(item, check, indeterminate) {
-        _debug('selectItem:', item, check, indeterminate);
+        OUT.debug('selectItem:', item, check, indeterminate);
         const $item = itemRow(item);
         if (indeterminate || (notDefined(indeterminate) && isUnsaved($item))) {
             checkbox($item, false, true);
@@ -1151,7 +1156,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}                   If selectability changed.
      */
     function enableItemSelect(item, enable, indeterminate) {
-        _debug('enableItemSelect:', item, enable, indeterminate);
+        OUT.debug('enableItemSelect:', item, enable, indeterminate);
         const $item = itemRow(item);
         const cb    = checkbox($item); if (!cb) { return false }
         const ind   =
@@ -1173,7 +1178,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}                   If selectability changed.
      */
     function disableItemSelect(item, disable, indeterminate) {
-        _debug('disableItemSelect:', item, disable, indeterminate);
+        OUT.debug('disableItemSelect:', item, disable, indeterminate);
         const enable = (disable === false);
         return enableItemSelect(item, enable, indeterminate);
     }
@@ -1213,7 +1218,7 @@ appSetup(MODULE, function() {
      * Update the state of the group select checkbox.
      */
     function updateGroupCheckbox() {
-        const func     = 'updateGroupCheckbox'; _debug(func);
+        const func     = 'updateGroupCheckbox'; OUT.debug(func);
         const group_cb = checkbox($group_checkbox);
         if (!group_cb) { return }
         const count    = $item_checkboxes.filter((_, cb) => cb.checked).length;
@@ -1232,7 +1237,7 @@ appSetup(MODULE, function() {
         const group_cb      = event.currentTarget || event.target;
         const $all_items    = $item_checkboxes;
         const checked_items = $all_items.filter((_, cb) => cb.checked).length;
-        _debug(`${func}: event =`, event);
+        OUT.debug(`${func}: event =`, event);
         if (group_cb.checked && checked_items) {
             group_cb.indeterminate = (checked_items < $all_items.length);
         } else {
@@ -1247,7 +1252,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function onItemCheckboxChange(event) {
-        _debug('onItemCheckboxChange: event =', event);
+        OUT.debug('onItemCheckboxChange: event =', event);
         updateItemsSelected();
     }
 
@@ -1294,7 +1299,7 @@ appSetup(MODULE, function() {
         const src  = $item_container.attr(LABELS_ATTR);
         let result;
         if (isMissing(src)) {
-            console.warn(`${func}: ${LABELS_ATTR}: missing or empty`);
+            OUT.warn(`${func}: ${LABELS_ATTR}: missing or empty`);
         } else {
             result = fromJSON(src, func);
         }
@@ -1334,7 +1339,7 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}    Key into {@link statusValueLabels}.
      */
     function statusFor(item, status) {
-        //_debug(`statusFor "${status}" for item =`, item);
+        //OUT.debug(`statusFor "${status}" for item =`, item);
         const $item = itemRow(item);
         const data  = $item.data(STATUS_DATA);
         const key   = status.replace(/^\./, '');
@@ -1349,7 +1354,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [total]      If **true**, allow FILE_NEEDED.
      */
     function resetStatusFor(item, status, total) {
-        //_debug(`resetStatusFor "${status}" for item =`, item);
+        //OUT.debug(`resetStatusFor "${status}" for item =`, item);
         const $item    = itemRow(item);
         const $status  = $item.find(selector(status));
         const original = $status.data(SAVED_DATA);
@@ -1371,7 +1376,7 @@ appSetup(MODULE, function() {
      * @return {string|undefined}
      */
     function setStatusFor(item, status, new_value, new_note) {
-        _debug(`setStatusFor "${new_value}" -> "${status}" for item =`, item);
+        OUT.debug(`setStatusFor "${new_value}" -> "${status}" for item =`, item);
         const $item = itemRow(item);
         const data  = $item.data(STATUS_DATA);
         const key   = status.replace(/^\./, '');
@@ -1391,7 +1396,7 @@ appSetup(MODULE, function() {
      * @return {string|undefined}
      */
     function getStatusValueFor(item, status) {
-        //_debug(`getStatusValueFor "${status}" for item =`, item);
+        //OUT.debug(`getStatusValueFor "${status}" for item =`, item);
         const $item   = itemRow(item);
         const $status = $item.find(selector(status));
         const classes = Array.from($status[0]?.classList || []);
@@ -1409,7 +1414,7 @@ appSetup(MODULE, function() {
      * @return {string}
      */
     function setStatusValueFor(item, status, new_value, new_note) {
-        //_debug(`setStatusValueFor "${new_value}" -> "${status}"`);
+        //OUT.debug(`setStatusValueFor "${new_value}" -> "${status}"`);
         const $item   = itemRow(item);
         const $status = $item.find(selector(status));
         const value   = new_value.replace(/^\./, '');
@@ -1430,7 +1435,7 @@ appSetup(MODULE, function() {
      * @param {string}   [note]       Filename or other note text.
      */
     function initializeStatusFor(item, status, note) {
-        //_debug(`initializeStatusFor "${status}" for item =`, item);
+        //OUT.debug(`initializeStatusFor "${status}" for item =`, item);
         const $item   = itemRow(item);
         const $status = $item.find(selector(status));
         const label   = statusLabelFor($item, status);
@@ -1527,7 +1532,7 @@ appSetup(MODULE, function() {
      * @returns {SubmissionTable}
      */
     function setSubmissionTable(arg) {
-        _debug('setSubmissionTable: arg =', arg);
+        OUT.debug('setSubmissionTable: arg =', arg);
         let table;
         if (isObject(arg)) {
             table = arg;
@@ -1549,7 +1554,7 @@ appSetup(MODULE, function() {
      * @returns {SubmissionTable}
      */
     function updateSubmissionTable(replacement) {
-        _debug('updateSubmissionTable: replacement =', replacement);
+        OUT.debug('updateSubmissionTable: replacement =', replacement);
         const item_table = setSubmissionTable(replacement);
         const item_done  = (item) => (item.step === AFTER_FINAL_STEP);
         if (Object.values(item_table).every(item_done)) {
@@ -1566,7 +1571,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionResponse(message) {
         const func = 'onSubmissionResponse';
-        _debug(`${func}: message =`, message);
+        OUT.debug(`${func}: message =`, message);
         if (message.isAck) {
             onAcknowledgement(message);
         } else if (message.isInitial) {
@@ -1578,7 +1583,7 @@ appSetup(MODULE, function() {
         } else if (message.isFinal) {
             onFinalResponse(message);
         } else {
-            console.warn(`${func}: unexpected:`, message);
+            OUT.warn(`${func}: unexpected:`, message);
         }
     }
 
@@ -1588,12 +1593,12 @@ appSetup(MODULE, function() {
      * @param {SubmitResponseSubclass} message
      */
     function onAcknowledgement(message) {
-        _debug('onAcknowledgement');
+        const func = 'onAcknowledgement'; OUT.debug(func);
         if (message instanceof SubmitControlResponse) {
             const command = message.command;
-            _debug('onAcknowledgement: TODO: command =', command);
+            OUT.debug(`${func}: TODO: command =`, command);
         } else {
-            console.warn('onAcknowledgement: UNEXPECTED:', message);
+            OUT.warn(`${func}: UNEXPECTED:`, message);
         }
     }
 
@@ -1604,7 +1609,7 @@ appSetup(MODULE, function() {
      * @param {SubmitResponse} message
      */
     function onInitialResponse(message) {
-        const func = 'onInitialResponse'; _debug(func);
+        const func = 'onInitialResponse'; OUT.debug(func);
         let items  = message.items;
         // noinspection JSUnresolvedVariable
         items = items.map(v => isObject(v) ? v.items : v).flat();
@@ -1612,7 +1617,7 @@ appSetup(MODULE, function() {
 
         const table = setSubmissionTable(items);
         if (isEmpty(table)) {
-            console.warn(`${func}: no items indicated:`, message);
+            OUT.warn(`${func}: no items indicated:`, message);
         }
 
         resetItems();
@@ -1628,11 +1633,11 @@ appSetup(MODULE, function() {
      * @param {SubmitStepResponse} message
      */
     function onStepResponse(message) {
-        const func  = 'onStepResponse'; _debug(func);
+        const func  = 'onStepResponse'; OUT.debug(func);
         const table = { ...getSubmissionTable() };
 
         if (isEmpty(table)) {
-            console.warn(`${func}: ignoring late response:`, message);
+            OUT.warn(`${func}: ignoring late response:`, message);
             return;
         }
 
@@ -1669,14 +1674,14 @@ appSetup(MODULE, function() {
         }
 
         if (isPresent(invalid)) {
-            console.warn(`${func}: invalid:`, invalid);
+            OUT.warn(`${func}: invalid:`, invalid);
         }
 
         const successes = Object.keys(success).length;
         const failures  = Object.keys(failure).length;
         const count     = successes + failures + invalid.length;
         if (count !== total) {
-            console.warn(`${func}: ${count} entries but ${total} submitted`);
+            OUT.warn(`${func}: ${count} entries but ${total} submitted`);
         }
 
         if (successes || failures) {
@@ -1701,11 +1706,11 @@ appSetup(MODULE, function() {
      * @param {SubmitStepResponse} message
      */
     function onBatchResponse(message) {
-        const func  = 'onBatchResponse'; _debug(func);
+        const func  = 'onBatchResponse'; OUT.debug(func);
         const table = { ...getSubmissionTable() };
 
         if (isEmpty(table)) {
-            console.warn(`${func}: ignoring late response:`, message);
+            OUT.warn(`${func}: ignoring late response:`, message);
             return;
         }
 
@@ -1743,14 +1748,14 @@ appSetup(MODULE, function() {
         }
 
         if (isPresent(invalid)) {
-            console.warn(`${func}: invalid:`, invalid);
+            OUT.warn(`${func}: invalid:`, invalid);
         }
 
         const successes = Object.keys(success).length;
         const failures  = Object.keys(failure).length;
         const count     = successes + failures + invalid.length;
         if (count !== total) {
-            console.warn(`${func}: ${count} entries but ${total} submitted`);
+            OUT.warn(`${func}: ${count} entries but ${total} submitted`);
         }
 
         if (successes || failures) {
@@ -1767,7 +1772,7 @@ appSetup(MODULE, function() {
      * @param {SubmitFinalResponse} message
      */
     function onFinalResponse(message) {
-        const func  = 'onFinalResponse'; _debug(func);
+        const func  = 'onFinalResponse'; OUT.debug(func);
         const data  = message.data || {};
         const table = getSubmissionTable() || {};
 
@@ -1786,7 +1791,7 @@ appSetup(MODULE, function() {
                 const was = `"${table[id]}"`;
                 const now = `"${succeeded}"`;
                 if (was !== now) {
-                    console.warn(`${func}: ${id}: was ${was}; now ${now}`);
+                    OUT.warn(`${func}: ${id}: was ${was}; now ${now}`);
                 }
                 count++;
             }
@@ -1796,20 +1801,20 @@ appSetup(MODULE, function() {
                 const was = `"${table[id]}"`;
                 const now = `"${failed}: ${htmlDecode(info.error)}"`;
                 if (was !== now) {
-                    console.warn(`${func}: ${id}: was ${was}; now ${now}`);
+                    OUT.warn(`${func}: ${id}: was ${was}; now ${now}`);
                 }
                 count++;
             }
 
             if (isPresent(invalid)) {
-                console.warn(`${func}: invalid:`, invalid);
+                OUT.warn(`${func}: invalid:`, invalid);
                 count += invalid.length;
             }
 
             total += subtotal;
         }
         if (count !== total) {
-            console.warn(`${func}: ${count} entries but ${total} submitted`);
+            OUT.warn(`${func}: ${count} entries but ${total} submitted`);
         }
 
         submissionsEnded();
@@ -1820,7 +1825,7 @@ appSetup(MODULE, function() {
      * attempt (probably because reauthorization is required).
      */
     function onSubmissionRejected() {
-        _debug('onSubmissionRejected');
+        OUT.debug('onSubmissionRejected');
         const note = 'Refresh this page to re-authenticate.';
         flashError(`Connection error: ${note}`);
         submissionsEnded(true);
@@ -1832,7 +1837,7 @@ appSetup(MODULE, function() {
      * @param {boolean} [preserve_files]    If **true** keep file selections.
      */
     function submissionsEnded(preserve_files) {
-        _debug('submissionsEnded: preserve_files =', preserve_files);
+        OUT.debug('submissionsEnded: preserve_files =', preserve_files);
         if (!preserve_files) {
             clearLocalFileSelection();
             clearRemoteFileSelection();
@@ -1864,7 +1869,7 @@ appSetup(MODULE, function() {
      * @returns {SubmitRequest}
      */
     function getSubmissionRequest() {
-        //_debug('getSubmissionRequest');
+        //OUT.debug('getSubmissionRequest');
         return submissionMonitor().getRequestData() || setSubmissionRequest();
     }
 
@@ -1877,7 +1882,7 @@ appSetup(MODULE, function() {
      * @returns {SubmitRequest}
      */
     function setSubmissionRequest(values) {
-        _debug('setSubmissionRequest:', values);
+        OUT.debug('setSubmissionRequest:', values);
         let data = values;
         if (notDefined(data)) {
             data = itemsChecked().toArray();
@@ -1895,7 +1900,7 @@ appSetup(MODULE, function() {
      * Open a channel for making and controlling submissions.
      */
     function initializeSubmissionMonitor() {
-        _debug('initializeSubmissionMonitor');
+        OUT.debug('initializeSubmissionMonitor');
 
         SubmitModal.setupFor($monitor, {
             rejected:   onSubmissionRejected,
@@ -1905,13 +1910,13 @@ appSetup(MODULE, function() {
         });
 
         function onOpen($activator, check_only, halted) {
-            _debug('onOpen SubmitModal', halted, check_only, $activator);
-            // TODO: ?
+            OUT.debug('onOpen SubmitModal', halted, check_only, $activator);
+            // TODO: SubmitModal.onOpen ?
         }
 
         function onClose($activator, check_only, halted) {
-            _debug('onClose SubmitModal', halted, check_only, $activator);
-            // TODO: ?
+            OUT.debug('onClose SubmitModal', halted, check_only, $activator);
+            // TODO: SubmitModal.onClose ?
         }
     }
 
@@ -1939,7 +1944,7 @@ appSetup(MODULE, function() {
      * @returns {BulkUploader}
      */
     function newUploader(owner) {
-        //_debug('newUploader: owner =', owner);
+        //OUT.debug('newUploader: owner =', owner);
         // noinspection JSUnusedGlobalSymbols
         const cbs      = { onSelect, onStart, onProgress, onError, onSuccess };
         const func     = 'uploader';
@@ -1956,7 +1961,7 @@ appSetup(MODULE, function() {
          * @param {jQuery.Event} [event]    Ignored.
          */
         function onSelect(event) {
-            _debug(`${func}: onSelect: event =`, event);
+            OUT.debug(`${func}: onSelect: event =`, event);
             clearFlash();
         }
 
@@ -1968,7 +1973,7 @@ appSetup(MODULE, function() {
          * @returns {object}          URL parameters for the remote endpoint.
          */
         function onStart(data) {
-            _debug(`${func}: onStart: data =`, data);
+            OUT.debug(`${func}: onStart: data =`, data);
             clearFlash();
             const item_id  = manifestItemId($owner);
             const manifest = manifestId();
@@ -1988,12 +1993,12 @@ appSetup(MODULE, function() {
             const item_id = file?.meta?.manifest_item_id;
             const $item   = itemFor(item_id);
             const status  = statusFor($item, UPLOAD_STATUS);
-            _debug(`${tag}: item = ${item_id} | status =`, status, '| uploadStarted =', progress.uploadStarted, '| uploadComplete =', progress.uploadComplete, '| bytesTotal = ', progress.bytesTotal, '| bytesUploaded = ', progress.bytesUploaded, '| percentage = ', progress.percentage);
+            OUT.debug(`${tag}: item = ${item_id} | status =`, status, '| uploadStarted =', progress.uploadStarted, '| uploadComplete =', progress.uploadComplete, '| bytesTotal = ', progress.bytesTotal, '| bytesUploaded = ', progress.bytesUploaded, '| percentage = ', progress.percentage);
             if (status === FAILED_MARKER) {
-                _debug(`${tag}: CANCEL: ${item_id} | file =`, file);
+                OUT.debug(`${tag}: CANCEL: ${item_id} | file =`, file);
                 return false;
             }
-            _debug(`${tag}: item = ${item_id} | file =`, file);
+            OUT.debug(`${tag}: item = ${item_id} | file =`, file);
             if (progress.uploadStarted) {
                 setStatusFor($item, UPLOAD_STATUS, ACTIVE);
             }
@@ -2012,7 +2017,7 @@ appSetup(MODULE, function() {
             const $item   = itemFor(item_id);
             const note    = error?.message || error;
             setStatusFor($item, UPLOAD_STATUS, FAILED, note);
-            _debug(`${func}: onError: item = ${item_id} | file =`, file);
+            OUT.debug(`${func}: onError: item = ${item_id} | file =`, file);
         }
 
         /**
@@ -2025,7 +2030,7 @@ appSetup(MODULE, function() {
             const item_id = file?.meta?.manifest_item_id;
             const $item   = itemFor(item_id);
             setStatusFor($item, UPLOAD_STATUS, SUCCEEDED);
-            _debug(`${func}: onSuccess: item = ${item_id} | file =`, file);
+            OUT.debug(`${func}: onSuccess: item = ${item_id} | file =`, file);
         }
     }
 
@@ -2037,7 +2042,7 @@ appSetup(MODULE, function() {
      * Setup handlers for local file selection.
      */
     function initializeLocalFilesResolution() {
-        _debug('initializeLocalFilesResolution');
+        OUT.debug('initializeLocalFilesResolution');
         clearLocalFileSelection();
         setupLocalFilePrompt();
     }
@@ -2076,7 +2081,7 @@ appSetup(MODULE, function() {
      * @param {string|number} [item_id]
      */
     function addLocalFile(obj, item_id) {
-        _debug(`Queueing local file "${obj.name}" for item ${item_id}`, obj);
+        OUT.debug(`Queueing local file "${obj.name}" for item ${item_id}`, obj);
         let file = obj;
         if (item_id) {
             file.meta ||= {}
@@ -2090,7 +2095,7 @@ appSetup(MODULE, function() {
      * Clear any previous file selection.
      */
     function clearLocalFileSelection() {
-        _debug('clearLocalFileSelection');
+        OUT.debug('clearLocalFileSelection');
         $local_input.val(null);
         uploader.removeFiles();
         local_file_selection = undefined;
@@ -2102,7 +2107,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function beforeLocalFilesSelected(event) {
-        _debug('beforeLocalFilesSelected: event =', event);
+        OUT.debug('beforeLocalFilesSelected: event =', event);
         if (event.currentTarget === event.target) {
             clearLocalFileSelection();
             $local_input.click();
@@ -2117,13 +2122,13 @@ appSetup(MODULE, function() {
     function afterLocalFilesSelected(event) {
         const func  = 'afterLocalFilesSelected';
         const files = event.currentTarget?.files || event.target?.files;
-        //_debug(`*** ${func}: event =`, event);
+        //OUT.debug(`*** ${func}: event =`, event);
         if (!files) {
-            console.warn(`${func}: no event target`);
+            OUT.warn(`${func}: no event target`);
         } else if (isEmpty(files)) {
-            console.warn(`${func}: no files provided`);
+            OUT.warn(`${func}: no files provided`);
         } else {
-            _debug(`${func}: ${files.length} files`);
+            OUT.debug(`${func}: ${files.length} files`);
             queueLocalFiles(files);
             preProcessLocalFiles();
         }
@@ -2135,7 +2140,7 @@ appSetup(MODULE, function() {
      * @param {FileExt[]|FileList} files
      */
     function queueLocalFiles(files) {
-        _debug(`queueLocalFiles: ${files.length} files =`, files);
+        OUT.debug(`queueLocalFiles: ${files.length} files =`, files);
         const remaining = new Set(Object.values(files_remaining.local));
         const count     = files?.length || 0;
         let lookup      = undefined;
@@ -2148,13 +2153,13 @@ appSetup(MODULE, function() {
                 item_id = lookup[name];
             }
             if (!name) {
-                _debug(`IGNORING nameless file[${i}]:`, file);
+                OUT.debug(`IGNORING nameless file[${i}]:`, file);
             } else if (!item_id) {
-                _debug(`IGNORING unrequested file "${name}":`, file);
+                OUT.debug(`IGNORING unrequested file "${name}":`, file);
             } else if (!isStartable(itemFor(item_id))) {
-                _debug(`IGNORING item-not-ready file "${name}":`, file);
+                OUT.debug(`IGNORING item-not-ready file "${name}":`, file);
             } else if (!remaining.has(name)) {
-                _debug(`IGNORING already handled file "${name}":`, file);
+                OUT.debug(`IGNORING already handled file "${name}":`, file);
             } else {
                 addLocalFile(file, item_id);
             }
@@ -2182,9 +2187,9 @@ appSetup(MODULE, function() {
             const line = `${id} : ${name} : ${size} bytes`;
             if (remove(files_remaining.local, id)) {
                 pairs[id] = file;
-                _debug(`${func}: ${line}`);
+                OUT.debug(`${func}: ${line}`);
             } else {
-                _debug(`${func}: ${line} -- ALREADY PROCESSED`);
+                OUT.debug(`${func}: ${line} -- ALREADY PROCESSED`);
             }
             names.push(name);
             good.push(line);
@@ -2318,7 +2323,7 @@ appSetup(MODULE, function() {
      * Setup for acquiring files from cloud-based storage.
      */
     function initializeRemoteFilesResolution() {
-        const func = 'initializeRemoteFilesResolution'; _debug(func);
+        const func = 'initializeRemoteFilesResolution'; OUT.debug(func);
         clearRemoteFileSelection();
         setupRemoteFilePrompt();
     }
@@ -2357,7 +2362,7 @@ appSetup(MODULE, function() {
      * @param {string|number} [item_id]
      */
     function addRemoteFile(obj, item_id) {
-        _debug(`Queueing remote file "${obj}" for item ${item_id}:`, obj);
+        OUT.debug(`Queueing remote file "${obj}" for item ${item_id}:`, obj);
         let file = obj;
 /*
         if (item_id) {
@@ -2375,7 +2380,7 @@ appSetup(MODULE, function() {
      * Clear any previous file selection.
      */
     function clearRemoteFileSelection() {
-        _debug('clearRemoteFileSelection');
+        OUT.debug('clearRemoteFileSelection');
         $remote_input.val(null);
 /*
         uploader.removeFiles();
@@ -2389,7 +2394,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|Event} event
      */
     function beforeRemoteFilesSelected(event) {
-        _debug('*** beforeRemoteFilesSelected: event =', event);
+        OUT.debug('*** beforeRemoteFilesSelected: event =', event);
         if (event.currentTarget === event.target) {
             clearRemoteFileSelection();
             $remote_input.click();
@@ -2404,13 +2409,13 @@ appSetup(MODULE, function() {
     function afterRemoteFilesSelected(_event) {
         const func = 'afterRemoteFilesSelected';
         const urls = []; // event.currentTarget?.files || event.target?.files;
-        //_debug(`*** ${func}: event =`, event);
+        //OUT.debug(`*** ${func}: event =`, _event);
         if (!urls) {
-            console.warn(`${func}: no event target`);
+            OUT.warn(`${func}: no event target`);
         } else if (isEmpty(urls)) {
-            console.warn(`${func}: no URLs provided`);
+            OUT.warn(`${func}: no URLs provided`);
         } else {
-            _debug(`${func}: ${urls.length} URLs`);
+            OUT.debug(`${func}: ${urls.length} URLs`);
             queueRemoteFiles(urls);
             preProcessRemoteFiles();
         }
@@ -2422,7 +2427,7 @@ appSetup(MODULE, function() {
      * @param {string[]} urls
      */
     function queueRemoteFiles(urls) {
-        _debug(`queueRemoteFiles: ${urls.length} URLs =`, urls);
+        OUT.debug(`queueRemoteFiles: ${urls.length} URLs =`, urls);
         const remaining = new Set(Object.values(files_remaining.remote));
         const count     = urls?.length || 0;
         let lookup      = undefined;
@@ -2435,13 +2440,13 @@ appSetup(MODULE, function() {
                 item_id = lookup[name];
             }
             if (!name) {
-                _debug(`IGNORING nameless url[${i}]:`, url);
+                OUT.debug(`IGNORING nameless url[${i}]:`, url);
             } else if (!item_id) {
-                _debug(`IGNORING unrequested URL "${name}":`, url);
+                OUT.debug(`IGNORING unrequested URL "${name}":`, url);
             } else if (!isStartable(itemFor(item_id))) {
-                _debug(`IGNORING item-not-ready URL "${name}":`, url);
+                OUT.debug(`IGNORING item-not-ready URL "${name}":`, url);
             } else if (!remaining.has(name)) {
-                _debug(`IGNORING already handled URL "${name}":`, url);
+                OUT.debug(`IGNORING already handled URL "${name}":`, url);
             } else {
                 addRemoteFile(url, item_id);
             }
@@ -2466,9 +2471,9 @@ appSetup(MODULE, function() {
             const name = url; // url.name;
             const line = `${id} : ${name}`;
             if (remove(files_remaining.remote, id)) {
-                _debug(`${func}: ${line}`);
+                OUT.debug(`${func}: ${line}`);
             } else {
-                _debug(`${func}: ${line} -- ALREADY PROCESSED`);
+                OUT.debug(`${func}: ${line} -- ALREADY PROCESSED`);
             }
             names.push(name);
             good.push(line);
@@ -2533,10 +2538,10 @@ appSetup(MODULE, function() {
         const action   = `bulk/fields/${manifest}`;
         const content  = 'multipart/form-data';
         const accept   = 'text/html';
-        _debug(`${func}: items =`, items);
+        OUT.debug(`${func}: items =`, items);
 
         if (!manifest) {
-            _error(`${func}: no manifest ID`);
+            OUT.error(`${func}: no manifest ID`);
             return;
         }
 
@@ -2593,14 +2598,14 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}
      */
     function manifestFor(target) {
-        const func = 'manifestFor'; //_debug(`${func}: target =`, target);
+        const func = 'manifestFor'; //OUT.debug(`${func}: target =`, target);
         let id;
         if (target) {
             (id = attribute(target, MANIFEST_ATTR)) ||
-            console.error(`${func}: no ${MANIFEST_ATTR} for`, target);
+            OUT.error(`${func}: no ${MANIFEST_ATTR} for`, target);
         } else {
             (id = attribute($start, MANIFEST_ATTR)) ||
-            _debug(`${func}: no manifest ID`);
+            OUT.debug(`${func}: no manifest ID`);
         }
         return id || manifest_id;
     }

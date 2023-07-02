@@ -14,6 +14,11 @@ const DEBUG  = true;
 
 AppDebug.file('shared/xhr', MODULE, DEBUG);
 
+/**
+ * Console output functions for this module.
+ */
+const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
 // ============================================================================
 // Type definitions
 // ============================================================================
@@ -86,28 +91,6 @@ AppDebug.file('shared/xhr', MODULE, DEBUG);
  */
 
 // ============================================================================
-// Functions - internal
-// ============================================================================
-
-/**
- * Indicate whether console debugging is active.
- *
- * @returns {boolean}
- */
-function _debugging() {
-    return AppDebug.activeFor(MODULE, DEBUG);
-}
-
-/**
- * Emit a console message if debugging communications.
- *
- * @param {...*} args
- */
-function _debug(...args) {
-    _debugging() && console.log(`${MODULE}:`, ...args);
-}
-
-// ============================================================================
 // Functions - send
 // ============================================================================
 
@@ -158,7 +141,7 @@ export function xmit(method, path, prm, opt, cb) {
         delete settings.method;
     }
     if (settings.type && (settings.type !== method)) {
-        console.warn(`xmit: "${settings.type}" conflicts with "${method}"`);
+        OUT.warn(`${func}: "${settings.type}" conflicts with "${method}"`);
         delete settings.type;
     }
     switch (settings.type ||= method) {
@@ -213,7 +196,7 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {XMLHttpRequest} xhr
      */
     function onSuccess(data, status, xhr) {
-        _debug(`${func}: received`, (data?.length || 0), 'bytes.');
+        OUT.debug(`${func}: received`, (data?.length || 0), 'bytes.');
         if (ignore_body) {
             result = data || {};
         } else if (isMissing(data)) {
@@ -239,12 +222,13 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {string}         message
      */
     function onError(xhr, status, message) {
-        _debug(`${func}: ${status}: ${message}`);
         let cb = callback.error;
         if ((status === 'parsererror') && (xhr.status < 400)) {
+            OUT.debug(`${func}: no response data`);
             cb = callback.success;
             result ||= {};
-        } else if (cb) {
+        } else {
+            OUT.debug(`${func}: ${status}: ${message}`);
             const transient = transientError(xhr.status);
             const failure   = `${status}: ${xhr.status} ${message}`;
             if (transient) { warning = failure } else { error = failure }
@@ -259,14 +243,14 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {string}         _status
      */
     function onComplete(xhr, _status) {
-        _debug(`${func}: completed in`, secondsSince(start), 'sec.');
+        OUT.debug(`${func}: completed in`, secondsSince(start), 'sec.');
         if (result) {
-            //_debug(`${func}: data from server:`, record);
+            //OUT.debug(`${func}: data from server:`, record);
         } else if (warning) {
-            console.warn(`${func}: ${settings.url}:`, warning);
+            OUT.warn(`${func}: ${settings.url}:`, warning);
         } else {
             error ||= 'unknown failure';
-            console.error(`${func}: ${settings.url}:`, error);
+            OUT.error(`${func}: ${settings.url}:`, error);
         }
         callback.complete?.(result, warning, error, xhr);
     }

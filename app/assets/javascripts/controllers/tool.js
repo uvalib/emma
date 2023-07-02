@@ -8,12 +8,12 @@ import * as Lookup        from '../tool/bibliographic-lookup';
 import * as MathDetective from '../tool/math-detective';
 
 
-const MODULE = 'controllers/tool';
+const PATH = 'controllers/tool';
 
-AppDebug.file(MODULE);
+AppDebug.file(PATH);
 
 // noinspection SpellCheckingInspection
-appSetup(MODULE, function() {
+appSetup(PATH, function() {
 
     /**
      * Standalone Utilities pages.

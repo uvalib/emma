@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/database.js
 
 
-import { AppDebug }                     from '../application/debug';
-import { arrayWrap }                    from './arrays';
-import { isDefined, isEmpty, notEmpty } from './definitions';
-import { fromJSON, hasKey }             from './objects';
-import { asString }                     from './strings';
+import { AppDebug }                               from '../application/debug';
+import { arrayWrap }                              from './arrays';
+import { isDefined, isEmpty, notEmpty, presence } from './definitions';
+import { fromJSON, hasKey }                       from './objects';
+import { asString }                               from './strings';
 
 
 const MODULE = 'DB';
@@ -235,28 +235,28 @@ export const DB = (function() {
     // Functions - internal
     // ========================================================================
 
-    function dbError(...args) {
+    function _error(...args) {
         const tag = `${MODULE} ERROR`;
-        const msg = _debugArgs(...args);
-        console.error(tag, ...msg);
+        const msg = _logArgs(...args);
+        console.error(`${tag} -`, ...msg);
         //addFlashError(msg || tag);
     }
 
-    function dbWarn(...args) {
+    function _warn(...args) {
         const tag = `${MODULE} ERROR`;
-        const msg = _debugArgs(...args);
-        console.warn(tag, ...msg);
+        const msg = _logArgs(...args);
+        console.warn(`${tag} -`, ...msg);
         //addFlashMessage(msg || tag);
     }
 
-    function dbLog(...args) {
+    function _log(...args) {
         const tag = MODULE;
-        const msg = _debugArgs(...args);
-        console.log(tag, ...msg);
+        const msg = _logArgs(...args);
+        console.log(`${tag} -`, ...msg);
     }
 
-    function dbDebug(...args) {
-        _debugging() && dbLog(...args);
+    function _debug(...args) {
+        _debugging() && _log(...args);
     }
 
     /**
@@ -275,14 +275,12 @@ export const DB = (function() {
      *
      * @returns {array|string}
      */
-    function _debugArgs(...args) {
-        const final  = args.length - 1;
-        const result = args.reduce((array, arg, index) => {
-            const tag = (typeof arg === 'string') && (index < final);
-            array.push(tag ? `${arg}:` : arg);
-            return array;
-        }, []);
-        return isEmpty(result) ? '' : result;
+    function _logArgs(...args) {
+        const i_max  = args.length - 1;
+        const result = args.map(
+            (v, i) => ((typeof v === 'string') && (i < i_max)) ? `${v}:` : v
+        );
+        return presence(result) || '';
     }
 
     // ========================================================================
@@ -433,18 +431,18 @@ export const DB = (function() {
             // ================================================================
 
             function onClose(event) {
-                dbLog(func, 'DATABASE CLOSING');
-                dbDebug(event);
+                _log(func, 'DATABASE CLOSING');
+                _debug(event);
             }
 
             function onGenericAbort(event) {
-                dbWarn(func, 'OPERATION ABORTED');
-                dbDebug(event);
+                _warn(func, 'OPERATION ABORTED');
+                _debug(event);
             }
 
             function onGenericError(event) {
-                dbError(func, 'OPERATION ERROR', event);
-                dbDebug(event);
+                _error(func, 'OPERATION ERROR', event);
+                _debug(event);
             }
         }
         return db_handle;
@@ -458,13 +456,14 @@ export const DB = (function() {
      * @param {string}     [caller]
      */
     function dbWithDatabase(callback, database, caller) {
-        const db = dbDatabase();
+        const func = 'dbWithDatabase';
+        const db   = dbDatabase();
         if (!db || (database && (database !== dbName()))) {
             openDatabase(database, null, callback, caller);
         } else if (db) {
             callback(db);
         } else {
-            dbError(`dbWithDatabase: no database name given`);
+            _error(func, 'no database name given');
         }
     }
 
@@ -472,16 +471,17 @@ export const DB = (function() {
      * Create the named object store and set up indices according to its
      * associated template's record properties.
      *
-     * @param {string} [store_name]
+     * @param {string} [store_name]   Default: {@link defaultStore}.
      */
-    function dbCreateObjectStore(store_name = defaultStore()) {
+    function dbCreateObjectStore(store_name) {
         const func     = 'dbCreateObjectStore';
-        const template = getStoreTemplate(store_name);
+        const name     = store_name || defaultStore();
+        const template = getStoreTemplate(name);
         try {
             const db    = dbDatabase();
-            dbLog(func, `creating "${store_name}" for database ${db.name}`);
-            const store = db.createObjectStore(store_name, template.options);
-            $.each(template.record, function(key, properties) {
+            _log(func, `creating "${name}" for database ${db.name}`);
+            const store = db.createObjectStore(name, template.options);
+            for (const [key, properties] of Object.entries(template.record)) {
                 let index_options;
                 if (typeof properties.index === 'object') {
                     index_options = properties.index;
@@ -489,14 +489,12 @@ export const DB = (function() {
                     index_options = { unique: false };
                 }
                 if (index_options) {
-                    dbLog(func, store_name, `creating index for "${key}"`);
+                    _log(func, name, `creating index for "${key}"`);
                     store.createIndex(key, key, index_options);
                 }
-            });
-        }
-        catch (error) {
-            dbError(func, `failed for object store ${store_name}`);
-            dbError(func, 'error', error);
+            }
+        } catch (error) {
+            _error(func, `failed for object store ${name}; err=`, error);
         }
     }
 
@@ -512,13 +510,11 @@ export const DB = (function() {
         const name   = `"${db.name}"`;
         const stores = Object.keys(store_template);
         try {
-            dbLog(`dbSetupDatabase: db = ${name}; object stores = ${stores}`);
+            _log('dbSetupDatabase', `db = ${name}; object stores = ${stores}`);
             dbDatabase(db);
             stores.forEach(store => dbCreateObjectStore(store));
-        }
-        catch (error) {
-            dbError(func, `failed for database ${name}`);
-            dbError(func, 'error', error);
+        } catch (error) {
+            _error(func, `failed for database ${name}; error =`, error);
         }
     }
 
@@ -533,7 +529,7 @@ export const DB = (function() {
         if (tgt_db) {
             const clear = (tgt_db === db_handle);
             const func  = caller || 'dbCloseDatabase';
-            dbLog(func, 'closing database', tgt_db.name);
+            _log(func, 'closing database', tgt_db.name);
             tgt_db.close();
             if (clear) { db_handle = undefined }
         }
@@ -558,16 +554,16 @@ export const DB = (function() {
             else if (arg instanceof IDBTransaction)  { tr         = arg }
             else if (TRANSACTION_MODE.includes(arg)) { tr_mode    = arg }
             else if (typeof arg === 'string')        { store_name = arg }
-            else { dbWarn(func, 'dbTransaction', 'unexpected', arg) }
+            else { _warn(func, 'dbTransaction', 'unexpected', arg) }
         });
         if (!tr) {
             db         ||= dbDatabase();
             store_name ||= defaultStore();
             tr_mode    ||= DEFAULT_TRANSACTION_MODE;
             tr = db.transaction(store_name, tr_mode);
-            tr.onabort    = _ => dbError(func, 'transaction aborted');
-            tr.onerror    = _ => dbError(func, 'transaction failed', tr.error);
-            tr.oncomplete = _ => dbDebug(func, 'transaction complete');
+            tr.onabort    = () => _error(func, 'transaction aborted');
+            tr.onerror    = () => _error(func, 'transaction failed', tr.error);
+            tr.oncomplete = () => _debug(func, 'transaction complete');
         }
         return tr;
     }
@@ -593,12 +589,12 @@ export const DB = (function() {
             store_name  ||= transaction.objectStoreNames[0] || defaultStore();
             store = transaction.objectStore(store_name);
             if (debug_store && _debugging()) {
-                dbLog(func, `object store "${store_name}" properties:`)
-                console.log(`    .name          =`, store.name);
-                console.log(`    .keyPath       =`, store.keyPath);
-                console.log(`    .indexNames    =`, store.indexNames);
-                console.log(`    .autoIncrement =`, store.autoIncrement);
-                console.log(`    .transaction   =`, store.transaction);
+                _log(func, `object store "${store_name}" properties:`)
+                console.log('    .name          =', store.name);
+                console.log('    .keyPath       =', store.keyPath);
+                console.log('    .indexNames    =', store.indexNames);
+                console.log('    .autoIncrement =', store.autoIncrement);
+                console.log('    .transaction   =', store.transaction);
                 debug_store = false;
             }
         }
@@ -616,11 +612,11 @@ export const DB = (function() {
      * @returns {*}
      */
     function dbRequest(func, request, on_success, on_error) {
-        const log_err = () => dbError(func, 'request failed', request.error);
+        const log_err = () => _error(func, 'request failed', request.error);
         request.onerror =
             on_error ? (ev => log_err() || on_error(ev)) : (() => log_err());
         request.onsuccess =
-            on_success || (() => dbDebug(func, 'request successful'));
+            on_success || (() => _debug(func, 'request successful'));
         return request;
     }
 
@@ -662,7 +658,7 @@ export const DB = (function() {
      */
     function defaultStore(new_name) {
         if (new_name && !hasKey(store_template, new_name)) {
-            dbError('defaultStore', `invalid store name "${new_name}"`);
+            _error('defaultStore', `invalid store name "${new_name}"`);
         } else if (new_name) {
             default_store = new_name;
         } else if (!default_store) {
@@ -678,8 +674,9 @@ export const DB = (function() {
      *
      * @returns {StoreTemplate}
      */
-    function getStoreTemplate(store_name = defaultStore()) {
-        return store_template[store_name];
+    function getStoreTemplate(store_name) {
+        const name = store_name || defaultStore();
+        return store_template[name];
     }
 
     /**
@@ -700,7 +697,7 @@ export const DB = (function() {
         }
         $.each(templates, function(name, properties) {
             if (store_template[name]) {
-                dbLog(func, `"${name}": already added`);
+                _log(func, `"${name}": already added`);
             } else {
                 store_template[name] = { ...properties };
             }
@@ -725,7 +722,7 @@ export const DB = (function() {
         const name     = new_name    || dbName();
         const version  = new_version || dbVersion();
         const database = `${name} (v${version})`;
-        dbLog(func, database);
+        _log(func, database);
 
         const request = window.indexedDB.open(name, version);
         request.onupgradeneeded = (event) => dbSetupDatabase(event, func);
@@ -738,12 +735,12 @@ export const DB = (function() {
         // ====================================================================
 
         function onOpenBlocked(_event) {
-            dbWarn(func, database, 'in use; cannot upgrade');
+            _warn(func, database, 'in use; cannot upgrade');
             // TODO: sleep and retry???
         }
 
         function onOpenError(event) {
-            dbError(func, database, 'load error', event);
+            _error(func, database, 'load error', event);
         }
 
         function onOpenSuccess(event) {
@@ -764,7 +761,7 @@ export const DB = (function() {
         const version  = dbVersion();
         const database = `${name} (v${version})`;
         if (store_name) { defaultStore(store_name) }
-        dbLog(`${func}: store_name: ${default_store}; database: ${database}`);
+        _log(`${func}: store_name: ${default_store}; database: ${database}`);
         openDatabase(name, version, callback, func);
     }
 
@@ -773,15 +770,16 @@ export const DB = (function() {
      *
      * @note This does not effect the autoIncrement sequence.
      *
-     * @param {optString}  store_name
+     * @param {optString}  store_name   Default: {@link defaultStore}.
      * @param {DbCallback} [callback]
      */
-    function clearObjectStore(store_name = defaultStore(), callback) {
+    function clearObjectStore(store_name, callback) {
         const func  = 'DB.clearObjectStore';
-        const store = dbObjectStore(func, store_name)
+        const name  = store_name || defaultStore();
+        const store = dbObjectStore(func, name)
         const req   = store.clear();
         const cb    = () => callback?.(req.transaction.db);
-        const if_ok = () => { dbLog(func, `"${store_name}" cleared`); cb() }
+        const if_ok = () => { _log(func, `"${name}" cleared`); cb() }
         dbRequest(func, req, if_ok, cb);
     }
 
@@ -839,10 +837,10 @@ export const DB = (function() {
             const cursor = event.target.result;
             item_cb?.(cursor, number);
             if (cursor) {
-                dbDebug(func, `item ${++number}`, cursor.value);
+                _debug(func, `item ${++number}`, cursor.value);
                 cursor.continue();
             } else {
-                dbDebug(func, 'all DB items processed');
+                _debug(func, 'all DB items processed');
             }
         }
         dbRequest(func, request, if_ok, if_err);
@@ -866,7 +864,7 @@ export const DB = (function() {
         const if_err  = callback && (() => callback([]));
         const if_ok   = function(event) {
             const items = event.target.result;
-            dbDebug(func, `${key}="${value}"`, `${items.length} items`);
+            _debug(func, `${key}="${value}"`, `${items.length} items`);
             callback?.(items);
         }
         dbRequest(func, request, if_ok, if_err);
@@ -890,7 +888,7 @@ export const DB = (function() {
         const if_err  = callback && (() => callback(-1));
         const if_ok   = function(event) {
             const number = event.target.result;
-            dbDebug(func, `${key}="${value}"`, `${number} items found`);
+            _debug(func, `${key}="${value}"`, `${number} items found`);
             callback?.(number);
         }
         dbRequest(func, request, if_ok, if_err);
@@ -915,7 +913,7 @@ export const DB = (function() {
         const if_err  = callback && (() => callback([]));
         const if_ok   = function(event) {
             const keys = event.target.result;
-            dbDebug(func, `${key}="${value}"`, `${keys.length} keys`);
+            _debug(func, `${key}="${value}"`, `${keys.length} keys`);
             callback?.(keys);
         }
         dbRequest(func, request, if_ok, if_err);
@@ -975,7 +973,7 @@ export const DB = (function() {
         if (db_handle) {
             dbCloseDatabase(func);
         } else {
-            dbLog(func, `database "${dbName()}" not open`);
+            _log(func, `database "${dbName()}" not open`);
         }
     }
 

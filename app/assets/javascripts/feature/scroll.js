@@ -32,6 +32,11 @@ appSetup(MODULE, function() {
     // Only perform these actions on the appropriate pages.
     if (isMissing($scroll_button)) { return }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Constants
     // ========================================================================
@@ -104,7 +109,7 @@ appSetup(MODULE, function() {
      * page is scrolled sufficiently far it presents as a "scroll-up" button.
      */
     function updateScrollButton() {
-        //_debug('updateScrollButton');
+        //OUT.debug('updateScrollButton');
         let visible;
         const target   = $scroll_target[0].getBoundingClientRect();
         const html     = document.documentElement;
@@ -132,7 +137,7 @@ appSetup(MODULE, function() {
      * Scroll so that the top of the target element is visible.
      */
     function scrollToTop() {
-        _debug('scrollToTop');
+        OUT.debug('scrollToTop');
         $scroll_target[0].scrollIntoView();
         //focusableIn($scroll_target).first().focus();
     }
@@ -148,7 +153,7 @@ appSetup(MODULE, function() {
      * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToPrev(event) {
-        _debug('scrollToPrev');
+        OUT.debug('scrollToPrev');
         return scrollToRecord(event, PREV);
     }
 
@@ -163,7 +168,7 @@ appSetup(MODULE, function() {
      * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToNext(event) {
-        _debug('scrollToNext');
+        OUT.debug('scrollToNext');
         return scrollToRecord(event, NEXT);
     }
 
@@ -228,28 +233,6 @@ appSetup(MODULE, function() {
         $button.attr('href', '#');
         $button.attr('disabled', true);
         $button.attr('aria-disabled', true);
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

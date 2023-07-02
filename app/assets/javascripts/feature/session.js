@@ -11,11 +11,11 @@ import { SearchInProgress }   from '../shared/search-in-progress';
 import { urlFrom }            from '../shared/url';
 
 
-const MODULE = 'feature/session';
+const PATH = 'feature/session';
 
-AppDebug.file(MODULE);
+AppDebug.file(PATH);
 
-appSetup(MODULE, function() {
+appSetup(PATH, function() {
 
     /**
      * @readonly

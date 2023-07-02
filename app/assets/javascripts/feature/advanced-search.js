@@ -44,6 +44,11 @@ appSetup(MODULE, function() {
         return;
     }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Constants
     // ========================================================================
@@ -408,14 +413,14 @@ appSetup(MODULE, function() {
                 }
             });
             if (isEmpty(remaining_rows)) {
-                console.error(`${func}: ignoring`, type, param.join(','));
+                OUT.error(`${func}: ignoring`, type, param.join(','));
                 return true; // continue outer loop
             }
 
             // If there aren't enough remaining rows, collapse the last two
             // param rows until there are.
             while (param.length > remaining_rows.length) {
-                _debug(`${func}: condensing ${type} param:`, param);
+                OUT.debug(`${func}: condensing ${type} param:`, param);
                 param = [...param.slice(0, -2), param.slice(-2).join(' ')];
             }
 
@@ -505,7 +510,7 @@ appSetup(MODULE, function() {
      * @param {Event} event
      */
     function performSearch(event) {
-        _debug('performSearch:', event);
+        OUT.debug('performSearch:', event);
         resolveFormFields();
     }
 
@@ -570,7 +575,7 @@ appSetup(MODULE, function() {
             const text  = ($input.val() || '').trim();
             if (!text || ((typeof skip === 'function') ? skip(text) : skip)) {
                 $input.attr('name', '');
-                _debug(`${func}: ignoring ${type} ("${text}")`);
+                OUT.debug(`${func}: ignoring ${type} ("${text}")`);
             } else {
                 count[type]++;
             }
@@ -662,7 +667,7 @@ appSetup(MODULE, function() {
          * @param {jQuery.Event} event
          */
         function onChange(event) {
-            // _debug('*** CHANGE ***');
+            //OUT.debug('*** CHANGE ***');
             updatedSearchTerm(event);
         }
 
@@ -677,7 +682,7 @@ appSetup(MODULE, function() {
          */
         function onInput(event) {
             const type = (event?.originalEvent || event).inputType || '';
-            // _debug(`*** INPUT ${type} ***`);
+            //OUT.debug(`*** INPUT ${type} ***`);
             if (!type.startsWith('format')) {
                 updatedSearchTerm(event);
             }
@@ -702,7 +707,7 @@ appSetup(MODULE, function() {
      */
     function toggleFilterPanel() {
         const opening = !isExpandedFilterPanel();
-        _debug((opening ? 'SHOW' : 'HIDE'), 'search filters');
+        OUT.debug((opening ? 'SHOW' : 'HIDE'), 'search filters');
         setFilterPanelState(opening);
         setFilterPanelDisplay(opening);
     }
@@ -867,7 +872,7 @@ appSetup(MODULE, function() {
         const func      = 'hideThisRow';
         const $this_row = getSearchRow(event, func);
         if ($this_row.is('.first')) {
-            console.error(`${func}: cannot hide first row`);
+            OUT.error(`${func}: cannot hide first row`);
         } else {
             toggleHidden($this_row, true);
             toggleVisibility($row_show_buttons, true);
@@ -907,8 +912,7 @@ appSetup(MODULE, function() {
     function setSearchInput(target, new_terms, caller, set_original) {
         if (!target) {
             const func = caller || 'setSearchInput';
-            console.error(`${func}: target: missing/empty`);
-            return;
+            return OUT.error(`${func}: target: missing/empty`);
         }
         let $row   = getSearchRow(target);
         let $input = getSearchInput($row);
@@ -1055,7 +1059,7 @@ appSetup(MODULE, function() {
             }
 
             if (skip) {
-                _debug(`${func}: skipping ${type}: ${skip}`);
+                OUT.debug(`${func}: skipping ${type}: ${skip}`);
             } else if (Array.isArray(queries[type])) {
                 queries[type].push(value);
             } else if (isDefined(queries[type])) {
@@ -1112,8 +1116,7 @@ appSetup(MODULE, function() {
     function setSearchType(target, new_type, caller, set_original) {
         if (!target) {
             const func = caller || 'setSearchType';
-            console.error(`${func}: target: missing/empty`);
-            return;
+            return OUT.error(`${func}: target: missing/empty`);
         }
         let $row     = getSearchRow(target);
         let $menu    = getSearchInputSelect($row);
@@ -1227,7 +1230,7 @@ appSetup(MODULE, function() {
             }
 
             if (skip) {
-                _debug(`${func}: skipping ${type}: ${skip}`);
+                OUT.debug(`${func}: skipping ${type}: ${skip}`);
             } else if (isDefined(filters[type])) {
                 let current = new Set(arrayWrap(filters[type]));
                 arrayWrap(value).forEach(v => current.add(v));
@@ -1289,14 +1292,14 @@ appSetup(MODULE, function() {
     function initializeMultiSelect() {
         let $menus = $multi_select_menus.not(SELECT2_MULTI_SELECT);
         if (isMissing($menus)) {
-            _debug('initializeMultiSelect: none found');
+            OUT.debug('initializeMultiSelect: none found');
             return;
         }
         initializeGenericMenu($menus);
         initializeSelect2Menu($menus);
 
-        if (_debugging()) {
-            MULTI_SELECT_EVENTS.forEach(function(type) {
+        if (OUT.debugging()) {
+            MULTI_SELECT_EVENTS.forEach(type => {
                 handleEvent($menus, type, logSelectEvent);
             });
         }
@@ -1347,8 +1350,8 @@ appSetup(MODULE, function() {
         $menus.select2({
             width:      '100%',
             allowClear: true,
-            debug:      _debugging(),
-            language:   select2Language()
+            debug:      OUT.debugging(),
+            language:   select2Language(),
         });
 
         // Nodes which Firefox Accessibility expects to be labelled:
@@ -1475,11 +1478,9 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event} event
      */
     function logSelectEvent(event) {
-        const type   = event.type;
-        const spaces = Math.max(0, (MULTI_SELECT_EVENTS_WIDTH - type.length));
-        const evt    = type + ' '.repeat(spaces);
-        const menu   = event.currentTarget || event.target;
-        let target   = '';
+        const type = `${event.type}`.padEnd(MULTI_SELECT_EVENTS_WIDTH);
+        const menu = event.currentTarget || event.target;
+        let target = '';
       //if (menu.localName) { target += menu.localName }
         if (menu.id)        { target += '#' + menu.id }
       //if (menu.className) { target += '.' + menu.className }
@@ -1488,7 +1489,7 @@ appSetup(MODULE, function() {
         const $selected = $(menu).siblings().find('[aria-activedescendant]');
         const selected  = $selected.attr('aria-activedescendant');
         if (selected) { target += ' ' + selected }
-        _debug('SELECT2', evt, target);
+        OUT.debug('SELECT2', type, target);
     }
 
     // ========================================================================
@@ -1645,7 +1646,7 @@ appSetup(MODULE, function() {
         } else if ($menu) {
             values = Object.fromEntries([[$menu.attr('name'), $menu.val()]]);
         } else {
-            console.error(`${func}: no menu selector given`);
+            OUT.error(`${func}: no menu selector given`);
             return;
         }
         $(dst).each(function() {
@@ -1733,7 +1734,7 @@ appSetup(MODULE, function() {
         /** @type {jQuery} */
         let $result, $inside, $outside;
         if (isMissing($target)) {
-            console.warn(`${func}: target missing/empty`);
+            OUT.warn(`${func}: target missing/empty`);
         } else if ($target.is(selector)) {
             $result = $target;
         } else if (isPresent(($outside = $target.parents(selector)))) {
@@ -1741,7 +1742,7 @@ appSetup(MODULE, function() {
         } else if (isPresent(($inside = $target.find(selector)))) {
             $result = $inside;
         } else {
-            console.error(`${func}: invalid target:`, target);
+            OUT.error(`${func}: invalid target:`, target);
         }
         return $result || $();
     }
@@ -1770,7 +1771,7 @@ appSetup(MODULE, function() {
         /** @type {jQuery} */
         let $result;
         if (isMissing($target)) {
-            console.error(`${func}: target missing/empty`);
+            OUT.error(`${func}: target missing/empty`);
         } else if ($target.is(selector)) {
             $result = $target;
         } else if (typeof container === 'function') {

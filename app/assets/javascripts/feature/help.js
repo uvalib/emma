@@ -7,9 +7,9 @@ import { isMissing }  from '../shared/definitions';
 import { deepFreeze } from '../shared/objects';
 
 
-const MODULE = 'feature/help';
+const MODULE = 'Help';
 
-AppDebug.file(MODULE);
+AppDebug.file('feature/help', MODULE);
 
 appSetup(MODULE, function() {
 

@@ -53,8 +53,7 @@ function alignKeys(item) {
         const object    = asObject(item);
         const max_width = maxSize(Object.keys(object));
         return toObject(object, (k, v) => {
-            const space = Math.max(0, (max_width - k.length));
-            const key   = `${k}` + ' '.repeat(space);
+            const key   = `${k}`.padEnd(max_width);
             const value = alignKeys(v);
             return [key, value];
         });

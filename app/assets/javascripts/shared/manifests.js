@@ -4,7 +4,7 @@
 import { AppDebug }                   from '../application/debug';
 import { Api }                        from './api';
 import { pageAction, pageAttributes } from './controller';
-import { isDefined, isMissing }       from './definitions';
+import { isMissing }                  from './definitions';
 import { flashError, flashMessage }   from './flash';
 import { selfOrParent }               from './html';
 import { compact, hasKey }            from './objects';
@@ -14,6 +14,11 @@ const MODULE = 'Manifest';
 const DEBUG  = true;
 
 AppDebug.file('shared/manifests', MODULE, DEBUG);
+
+/**
+ * Console output functions for this module.
+ */
+const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -82,8 +87,7 @@ export const BEST_CHOICE_MARKER = 'best-choice';
  * @returns {string}
  */
 export function attribute(target, name) {
-    const func = 'attribute';
-    //_debug(`${func}: name = ${name}; target =`, target);
+    const func = 'attribute'; //OUT.debug(`${func}: ${name}: target =`, target)
     return selfOrParent(target, `[${name}]`, func).attr(name);
 }
 
@@ -98,14 +102,14 @@ export function attribute(target, name) {
  * @param {string}                 [caller]
  */
 export function initializeButtonSet(buttons, caller) {
-    if (_debugging()) {
+    if (OUT.debugging()) {
         const func = caller || 'initializeButtonSet';
-        _debug(func);
-        $.each(buttons, (type, $button) => {
+        OUT.debug(func);
+        for (const [type, $button] of Object.entries(buttons)) {
             if (isMissing($button)) {
-                _error(`${func}: no button for "${type}"`);
+                OUT.error(`${func}: no button for "${type}"`);
             }
-        });
+        }
     }
 }
 
@@ -124,11 +128,10 @@ export function buttonFor(type, buttons, caller) {
         const func  = caller || 'buttonFor';
         const types = Object.keys(buttons);
         if (types.includes(type)) {
-            console.error(`${func}: no button for "${type}"`);
+            return OUT.error(`${func}: no button for "${type}"`);
         } else {
-            console.error(`${func}: "${type}" not in`, types);
+            return OUT.error(`${func}: "${type}" not in`, types);
         }
-        return;
     }
     return $button;
 }
@@ -144,7 +147,7 @@ export function buttonFor(type, buttons, caller) {
  * @returns {jQuery|undefined}
  */
 export function enableButton(button, enable, config, override) {
-    _debug(`enableButton: enable = "${enable}"`, button);
+    OUT.debug(`enableButton: enable = "${enable}"`, button);
     if (!button) { return }
     const $button  = $(button);
     const enabling = (enable !== false);
@@ -175,7 +178,7 @@ export function enableButton(button, enable, config, override) {
  * @returns {ActionPropertiesExt}
  */
 export function configFor(type, enabled, page_action) {
-    //_debug(`configFor: type = "${type}"; action = "${action}"`);
+    //OUT.debug(`configFor: type = "${type}"; action = "${action}"`);
     const page       = pageAttributes();
     const action     = page_action || page.action;
     const ctrlr_cfg  = page.properties.Action || {};
@@ -261,9 +264,9 @@ export function serverBulkSend(action, send_options) {
     const controller = BULK_CONTROLLER;
     const override   = send_options?.controller;
     if (typeof action !== 'string') {
-        console.error(`${func}: invalid action`, action);
+        OUT.error(`${func}: invalid action`, action);
     } else if (override && (override !== controller)) {
-        console.warn(`${func}: ignored controller override "${override}"`);
+        OUT.warn(`${func}: ignored controller override "${override}"`);
     }
     serverSend([controller, action], send_options);
 }
@@ -307,11 +310,11 @@ export function serverSend(ctr_act, send_options) {
     const cb_comm  = opt.onCommStatus;
     const caller   = compact([opt.caller, func]).join(': ');
     const callback = (result, warning, error, xhr) => {
-        if (_debugging()) {
-            _debug(`${caller}: result =`, result);
-            warning && _debug(`${caller}: warning =`, warning);
-            error   && _debug(`${caller}: error   =`, error);
-            xhr     && _debug(`${caller}: xhr     =`, xhr);
+        if (OUT.debugging()) {
+                       OUT.debug(`${caller}: result  =`, result);
+            warning && OUT.debug(`${caller}: warning =`, warning);
+            error   && OUT.debug(`${caller}: error   =`, error);
+            xhr     && OUT.debug(`${caller}: xhr     =`, xhr);
         }
         let [err, warn, offline] = [error, warning, !xhr.status];
         if (!err && !warn && !offline) {
@@ -328,51 +331,17 @@ export function serverSend(ctr_act, send_options) {
         cb_done?.(result, warn, err, xhr);
         cb_comm?.(!offline, warn, err, xhr);
     }
-    if (_debugging()) {
-        _debug(`${caller}: ctrlr   = "${ctrlr || apiController()}"`);
-        _debug(`${caller}: action  = "${action}"`);
-        _debug(`${caller}: params  =`, params);
-        _debug(`${caller}: options =`, options);
+    if (OUT.debugging()) {
+        OUT.debug(`${caller}: ctrlr   = "${ctrlr || apiController()}"`);
+        OUT.debug(`${caller}: action  = "${action}"`);
+        OUT.debug(`${caller}: params  =`, params);
+        OUT.debug(`${caller}: options =`, options);
     }
     if (action) {
         const method = opt.method?.toUpperCase() || 'POST';
         options._ignoreBody = opt._ignoreBody;
         server(ctrlr).xmit(method, action, params, options, callback);
     } else {
-        _error(`${caller}: no action given`);
+        OUT.error(`${caller}: no action given`);
     }
-}
-
-// ============================================================================
-// Functions - diagnostics
-// ============================================================================
-
-/**
- * Indicate whether console debugging is active.
- *
- * @returns {boolean}
- */
-function _debugging() {
-    return AppDebug.activeFor(MODULE, DEBUG);
-}
-
-/**
- * Emit a console message if debugging.
- *
- * @param {...*} args
- */
-function _debug(...args) {
-    _debugging() && console.log(`${MODULE}:`, ...args);
-}
-
-/**
- * Emit a console error and display as a flash error if debugging.
- *
- * @param {string} caller
- * @param {string} [message]
- */
-function _error(caller, message) {
-    const msg = isDefined(message) ? `${caller}: ${message}` : caller;
-    console.error(msg);
-    _debugging() && flashError(msg);
 }

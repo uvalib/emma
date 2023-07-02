@@ -77,6 +77,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     const output = true;
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Channel
     // ========================================================================
@@ -85,7 +90,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
     if (channel) {
 
-        channel.disconnectOnPageExit(_debugging());
+        channel.disconnectOnPageExit(OUT.debugging());
 
         channel.setCallback(updateResultDisplay);
         channel.setErrorCallback(updateErrorDisplay);
@@ -240,7 +245,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
             return;
         }
-        _debug('manualSubmission:', event);
+        OUT.debug('manualSubmission:', event);
         if (isModal()) {
             // Don't allow the manual submission to close the dialog.
             event.stopPropagation();
@@ -264,7 +269,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @see onShowModalHook
      */
     function onShowModal(_$target, check_only, halted) {
-        _debug('onShowModal:', _$target, check_only, halted);
+        OUT.debug('onShowModal:', _$target, check_only, halted);
         if (check_only || halted) { return }
         resetSearchResultsData();
         clearFieldResultsData();
@@ -287,7 +292,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @see onHideModalHook
      */
     function onHideModal($target, check_only, halted) {
-        _debug('onHideModal:', $target, check_only, halted);
+        OUT.debug('onHideModal:', $target, check_only, halted);
         if (check_only || halted) { return }
         if ($target.is(LookupModal.COMMIT)) {
             commitFieldValuesEntry();
@@ -300,7 +305,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Perform the lookup request.
      */
     function performRequest() {
-        _debug('performRequest');
+        OUT.debug('performRequest');
         initializeStatusDisplay();
         if (output) {
             clearResultDisplay();
@@ -331,7 +336,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {LookupRequest}       The current request object.
      */
     function setRequestData(data) {
-        _debug('setRequestData:', data);
+        OUT.debug('setRequestData:', data);
         let request;
         if (data instanceof LookupRequest) {
             request = data;
@@ -349,7 +354,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {void}
      */
     function clearRequestData() {
-        _debug('clearRequestData');
+        OUT.debug('clearRequestData');
         dataElement().removeData(LookupModal.REQUEST_DATA);
     }
 
@@ -381,7 +386,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {LookupResults}
      */
     function setSearchResultsData(value) {
-        _debug('setSearchResultsData:', value);
+        OUT.debug('setSearchResultsData:', value);
         const new_value = value || blankSearchResultsData();
         dataElement().data(LookupModal.SEARCH_RESULT_DATA, new_value);
         return new_value;
@@ -393,7 +398,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {LookupResults}
      */
     function resetSearchResultsData() {
-        _debug('resetSearchResultsData');
+        OUT.debug('resetSearchResultsData');
         return setSearchResultsData(blankSearchResultsData());
     }
 
@@ -403,7 +408,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {LookupResponse} message
      */
     function updateSearchResultsData(message) {
-        _debug('updateSearchResultsData:', message);
+        OUT.debug('updateSearchResultsData:', message);
         const key = message.job_id || randomizeName('response');
         const obj = getSearchResultsData() || resetSearchResultsData();
         obj[key]  = message.toObject();
@@ -443,7 +448,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (isMissing(data)) {
             const func = caller || 'getOriginalFieldValues';
             const name = LookupModal.ENTRY_ITEM_DATA;
-            console.warn(`${func}: toggle missing .data(${name})`);
+            OUT.warn(`${func}: toggle missing .data(${name})`);
         }
         return data;
     }
@@ -467,7 +472,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {LookupResponseItem|undefined} value
      */
     function setFieldResultsData(value) {
-        _debug('setFieldResultsData:', value);
+        OUT.debug('setFieldResultsData:', value);
         const new_value = value || {};
         dataElement().data(LookupModal.FIELD_RESULTS_DATA, new_value);
     }
@@ -478,7 +483,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {void}
      */
     function clearFieldResultsData() {
-        _debug('clearFieldResultsData');
+        OUT.debug('clearFieldResultsData');
         dataElement().removeData(LookupModal.FIELD_RESULTS_DATA);
     }
 
@@ -551,7 +556,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function serviceStatuses(services) {
         $services ||= statusDisplay().find(LookupModal.SERVICES);
         if (isDefined(services)) {
-            _debug('serviceStatuses:', services);
+            OUT.debug('serviceStatuses:', services);
             const lbl_css = 'label';
             if (isMissing($services.children(selector(lbl_css)))) {
                 const $lbl = $('<span>').addClass(lbl_css).text('Searching:');
@@ -578,7 +583,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Clear service status contents and data.
      */
     function clearServiceStatuses() {
-        _debug('clearServiceStatuses');
+        OUT.debug('clearServiceStatuses');
         serviceStatuses().removeData('names').find('.service').remove();
     }
 
@@ -588,8 +593,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {LookupResponse} message
      */
     function updateStatusDisplay(message) {
-        const func  = 'updateStatusDisplay';
-        _debug(`${func}:`, message);
+        const func  = 'updateStatusDisplay'; OUT.debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
         const srv   = message.service;
         const data  = message.data;
@@ -633,7 +637,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             // Other
 
             default:
-                console.warn(`${func}: ${message.status}: unexpected`);
+                OUT.warn(`${func}: ${message.status}: unexpected`);
                 break;
         }
         if (notice) { statusNotice(notice, n_tip) }
@@ -730,7 +734,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}              The commit button(s).
      */
     function enableCommit(enable) {
-        _debug('enableCommit:', enable);
+        OUT.debug('enableCommit:', enable);
         const $button = commitButton();
         const marker  = LookupModal.DISABLED_MARKER;
         const set     = (enable === false);
@@ -745,7 +749,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}              The commit button(s).
      */
     function disableCommit(disable) {
-        _debug('disableCommit:', disable);
+        OUT.debug('disableCommit:', disable);
         const $button = commitButton();
         const marker  = LookupModal.DISABLED_MARKER;
         const set     = (disable !== false);
@@ -865,7 +869,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Invoked when the user commits to the new field values.
      */
     function commitFieldValuesEntry() {
-        const func     = 'commitFieldValuesEntry'; _debug(func);
+        const func     = 'commitFieldValuesEntry'; OUT.debug(func);
         const original = getOriginalFieldValues(func);
         const current  = getColumnValues(getFieldValuesEntry());
         const result   = {};
@@ -899,7 +903,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             $result = $(field);
         }
         if (!$result.is('textarea[data-field]')) {
-            console.warn(`${func}: not a field value:`, field);
+            OUT.warn(`${func}: not a field value:`, field);
         }
         return $result;
     }
@@ -925,7 +929,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function lockIfChanged(event) {
-        _debug('lockIfChanged:', event);
+        OUT.debug('lockIfChanged:', event);
         const $textarea = $(event.target);
         const current   = getValue($textarea);
         const previous  = getLatestFieldValue($textarea);
@@ -1053,7 +1057,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function toggleFieldLock(event) {
-        _debug('toggleFieldLock:', event);
+        OUT.debug('toggleFieldLock:', event);
         const $target = $(event.target);
         const field   = fieldFor($target);
         const lock    = $target.is(':checked');
@@ -1161,7 +1165,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Reset the selected entry to the "ORIGINAL" entry.
      */
     function resetSelectedEntry() {
-        _debug('resetSelectedEntry');
+        OUT.debug('resetSelectedEntry');
         $selected_entry = null;
         getOriginalValuesEntry().find('[type="radio"]').click();
     }
@@ -1172,7 +1176,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {Selector} [entry]      Default: {@link getSelectedEntry}
      */
     function useSelectedEntry(entry) {
-        _debug('useSelectedEntry:', entry);
+        OUT.debug('useSelectedEntry:', entry);
         let $entry   = entry ? setSelectedEntry($(entry)) : getSelectedEntry();
         let values   = entryValues($entry);
         let $fields  = getFieldValuesEntry();
@@ -1191,7 +1195,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} event
      */
     function selectEntry(event) {
-        _debug('selectEntry:', event);
+        OUT.debug('selectEntry:', event);
         hideLoadingOverlay();
         /** @type {jQuery} */
         const $target = $(event.currentTarget || event.target),
@@ -1372,16 +1376,16 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const init = modal && !modal.tabCycleStart;
 
         if (message.status === 'STARTING') {
-            _debug(`${func}: ignoring STARTING message`);
+            OUT.debug(`${func}: ignoring STARTING message`);
 
         } else if (isMissing(data)) {
-            console.warn(`${func}: missing message.data`);
+            OUT.warn(`${func}: missing message.data`);
 
         } else if (data.blend) {
-            _debug(`${func}: ignoring empty message.data.blend`);
+            OUT.debug(`${func}: ignoring empty message.data.blend`);
 
         } else if (isMissing(data.items)) {
-            console.warn(`${func}: empty message.data.items`);
+            OUT.warn(`${func}: empty message.data.items`);
 
         } else {
             const request = getRequestData();
@@ -1409,7 +1413,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function addEntry(item, label, css_class) {
-        _debug('addEntry:', item, label, css_class);
+        OUT.debug('addEntry:', item, label, css_class);
         const $list  = entriesList();
         const row    = $list.children('.row').length;
         const $entry = makeResultEntry(row, label, css_class);
@@ -1444,7 +1448,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function resetEntries() {
         const func = 'resetEntries';
-        _debug(func);
+        OUT.debug(func);
         if ($entries_list) {
             const RESERVED_ROWS = LookupModal.RESERVED_ROWS;
             $entries_list.children().not(RESERVED_ROWS).remove();
@@ -1844,7 +1848,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function setSearchTerms(terms, separator) {
-        _debug('setSearchTerms:', terms, separator);
+        OUT.debug('setSearchTerms:', terms, separator);
         const chars  = (separator || getSeparators()).replaceAll('\\s', ' ');
         const sep    = chars[0];
         const parts  = arrayWrap(terms);
@@ -1872,7 +1876,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {jQuery.Event|Event} [event]
      */
     function updateSearchTerms(event) {
-        _debug('updateSearchTerms:', event);
+        OUT.debug('updateSearchTerms:', event);
         const $data_src = event ? $(event.target) : dataElement();
         const data      = $data_src.data(LookupModal.SEARCH_TERMS_DATA);
         const request   = setRequestData(data);

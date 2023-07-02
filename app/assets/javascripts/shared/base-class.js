@@ -36,6 +36,22 @@ export class BaseClass {
      */
     static DEBUGGING = DEBUG;
 
+    /**
+     * Right-aligned width of the leading class name in console output.
+     *
+     * @type {number}
+     */
+    static CLASS_ALIGN = AppDebug.MOD_ALIGN;
+    static IN_INSTANCE = Symbol('');
+    static IN_CLASS    = Symbol('CLASS');
+
+    /**
+     * If debugging, emit a log entry for the constructor.
+     *
+     * @type {boolean}
+     */
+    static DEBUG_CTOR = true;
+
     // ========================================================================
     // Constructor
     // ========================================================================
@@ -49,30 +65,45 @@ export class BaseClass {
     // ========================================================================
 
     get CLASS_NAME() { return this.constructor.CLASS_NAME }
-    get _debugging() { return this.constructor._debugging }
+    get CONTEXT()    { return this.constructor.IN_INSTANCE }
 
     // ========================================================================
     // Properties - internal
     // ========================================================================
 
-    /**
-     * Leading text for instance console messages.
-     *
-     * @returns {string}
-     * @protected
-     */
-    get _log_prefix() {
-        return this.constructor._log_prefix;
-    }
+    /** @returns {boolean} */
+    get _debugging() { return this.constructor._debugging }
+
+    /** @returns {string} */
+    get _logPrefix() { return this.constructor._logPrefix }
 
     // ========================================================================
     // Methods - internal
     // ========================================================================
 
-    _log(...args)   { console.log(this._log_prefix, ...args) }
-    _warn(...args)  { console.warn(this._log_prefix, ...args) }
-    _error(...args) { console.error(this._log_prefix, ...args) }
-    _debug(...args) { this._debugging && this._log(...args) }
+    /** @returns {undefined} */
+    _error(...args)  { this.constructor._error(this.CONTEXT, ...args) }
+
+    /** @returns {undefined} */
+    _warn(...args)   { this.constructor._warn(this.CONTEXT, ...args) }
+
+    /** @returns {undefined} */
+    _log(...args)    { this.constructor._log(this.CONTEXT, ...args) }
+
+    /** @returns {undefined} */
+    _info(...args)   { this.constructor._info(this.CONTEXT, ...args) }
+
+    /** @returns {undefined} */
+    _debug(...args)  { this.constructor._debug(this.CONTEXT, ...args) }
+
+    /** @returns {array} */
+    _prefix(...args) { return this.constructor._prefix(this.CONTEXT, ...args) }
+
+    // ========================================================================
+    // Class properties
+    // ========================================================================
+
+    static get CONTEXT() { return this.IN_CLASS }
 
     // ========================================================================
     // Class properties - internal
@@ -95,17 +126,61 @@ export class BaseClass {
      * @returns {string}
      * @protected
      */
-    static get _log_prefix() {
-        return this.CLASS_NAME;
+    static get _logPrefix() {
+        const class_name = this.CLASS_NAME.padEnd(this.CLASS_ALIGN);
+        return `${class_name} -`;
     }
 
     // ========================================================================
     // Class methods - internal
     // ========================================================================
 
-    static _log(...args)   { console.log(this._log_prefix, ...args) }
-    static _warn(...args)  { console.warn(this._log_prefix, ...args) }
-    static _error(...args) { console.error(this._log_prefix, ...args) }
-    static _debug(...args) { this._debugging && this._log(...args) }
+    /** @returns {undefined} */
+    static _error(...args) { console.error(...this._prefix(...args)) }
+
+    /** @returns {undefined} */
+    static _warn(...args)  { console.warn(...this._prefix(...args)) }
+
+    /** @returns {undefined} */
+    static _log(...args)   { console.log(...this._prefix(...args)) }
+
+    /** @returns {undefined} */
+    static _info(...args)  {
+        this._debugging && console.info(...this._prefix(...args));
+    }
+
+    /** @returns {undefined} */
+    static _debug(...args) {
+        this._debugging && console.debug(...this._prefix(...args));
+    }
+
+    /**
+     * Prepend {@link _logPrefix} to an argument list.
+     *
+     * @param {Symbol,array,*} first
+     * @param {...*}           [args]
+     *
+     * @returns {*[]}
+     * @protected
+     */
+    static _prefix(first, ...args) {
+        let start, context;
+        if (typeof first === 'symbol') {
+            start   = Array.isArray(args[0]) ? args.shift() : [];
+            context = first;
+        } else if (Array.isArray(first)) {
+            start   = first;
+            context = (typeof start[0] === 'symbol') && start.shift();
+        } else {
+            start   = [first];
+            context = (typeof args[0] === 'symbol') && args.shift();
+        }
+        if (!context) {
+            start = [this.CONTEXT.description, ...start]; // Def. class context
+        } else if (context.description) {
+            start = [context.description, ...start];
+        }
+        return AppDebug.consoleArgs(this._logPrefix, ...start, ...args);
+    }
 
 }

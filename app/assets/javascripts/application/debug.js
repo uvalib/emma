@@ -44,6 +44,18 @@ export class AppDebug {
      * @typedef {boolean|'true'|'false'} BooleanValue
      */
 
+    /**
+     * @typedef {object} LoggingFunctions
+     *
+     * @property {function():boolean}       debugging
+     * @property {function():string}        logPrefix
+     * @property {function(...*):undefined} error
+     * @property {function(...*):undefined} warn
+     * @property {function(...*):undefined} log
+     * @property {function(...*):undefined} info
+     * @property {function(...*):undefined} debug
+     */
+
     // ========================================================================
     // Constants
     // ========================================================================
@@ -51,6 +63,37 @@ export class AppDebug {
     static STORE_KEY        = 'DEBUG';
     static GLOBAL_STORE_KEY = this.STORE_KEY;
     static STORE_KEY_PREFIX = `${this.STORE_KEY}/`;
+
+    /**
+     * Console string substitution sequence.
+     *
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/console
+     *
+     * @type {RegExp}
+     */
+    static CONSOLE_FMT_MATCH = /%[cdfioOs]|%(\d+(\.\d+)?|\.\d+)[dfi]/;
+
+    /**
+     * For use with {@link consoleFmt}.
+     *
+     * @type {Object.<string,string>}
+     */
+    static CONSOLE_BOX_FMT = {
+        display:        'inline-block',
+        padding:        '0 0.25em',
+        margin:         '-0.375em 0',
+        'line-height':  '1.75',
+        'font-size':    'larger',
+        color:          'white',
+        background:     'red',
+    };
+
+    /**
+     * Right-aligned width of the leading module name in console output.
+     *
+     * @type {number}
+     */
+    static MOD_ALIGN = 15;
 
     // ========================================================================
     // Constructor
@@ -289,6 +332,47 @@ export class AppDebug {
         return true;
     }
 
+    // ========================================================================
+    // Class methods - console output
+    // ========================================================================
+
+    /**
+     * Resolve console arguments to support formatting substitutions.
+     *
+     * @param {...*} args
+     *
+     * @returns {*[]}
+     */
+    static consoleArgs(...args) {
+        let parts = Array.isArray(args[0]) ? args.shift() : [];
+            parts = [...parts, ...args];
+
+        // Formatting only applies to the first argument.
+        if (typeof parts[0] !== 'string') { return parts }
+
+        // First argument already has a substitution sequence.
+        if (parts[0].match(this.CONSOLE_FMT_MATCH)) { return parts }
+
+        // Look for a substitution sequence in a later argument.
+        let found    = -1;
+        const leader = [];
+        $.each(parts, (idx, part) => {
+            if (typeof part === 'string') {
+                if (part.match(this.CONSOLE_FMT_MATCH)) {
+                    found = idx;
+                }
+                leader.push(part);
+            }
+            return (found < 0); // break loop if found
+        });
+
+        if (found >= 0) {
+            return [leader.join(' '), ...parts.slice(found+1)];
+        } else {
+            return parts;
+        }
+    }
+
     /**
      * Generate console log arguments for formatted log output.
      *
@@ -298,35 +382,64 @@ export class AppDebug {
      *
      * @returns {[string, string, ...*]}
      */
-    static format(text, css, ...args) {
+    static consoleFmt(text, css, ...args) {
         let styles;
-        if (typeof css === 'string') {
-            styles = css.split(/;+\s+/);
-        } else if (Array.isArray(css)) {
+        if (Array.isArray(css)) {
             styles = css.map(v => v.replace(/[;\s]+$/, ''));
-        } else if (css && (typeof css === 'object')) {
+        } else if (typeof css === 'object') {
             styles = Object.entries(css).map(([k,v]) => `${k}: ${v}`);
-        }
-        if (styles) {
-            return [`%c ${text} `, styles.join('; '), ...args];
+        } else if (typeof css === 'string') {
+            styles = css.split(/;+\s+/);
         } else {
             return [text, ...args];
         }
+        return [`%c${text}`, styles.join('; '), ...args];
     }
 
     /**
      * Console log output for indicating when a module file is read.
      *
-     * @param {string} name
-     * @param {...*}   args
+     * @param {string}  path
+     * @param {string}  [name]
+     * @param {boolean} [debug]
+     * @param {...*}    args
      */
-    static file(name, ...args) {
+    static file(path, name, debug, ...args) {
         const mod = 'FILE';
         if (this.activeFor(mod, FILE_DEBUG)) {
-            const fmt = 'color: white; background: red; font-size: larger';
-            const tag = this.format(mod, fmt);
-            console.log(...tag, name, ...args);
+            const msg = this.consoleFmt(mod, this.CONSOLE_BOX_FMT, path);
+            if (name  !== undefined) { msg.push('|', name) }
+            if (debug !== undefined) { msg.push('|', 'DEBUG =', debug) }
+            console.log(...msg, ...args);
         }
+    }
+
+    // ========================================================================
+    // Class methods
+    // ========================================================================
+
+    /**
+     * Generate console logging functions for use in the executing module.
+     *
+     * @param {string}  mod
+     * @param {boolean} dbg
+     *
+     * @returns {LoggingFunctions}
+     */
+    static consoleLogging(mod, dbg) {
+        function debugging()   { return AppDebug.activeFor(mod, dbg) }
+        function logPrefix()   { return `${mod.padEnd(AppDebug.MOD_ALIGN)} -` }
+        function error(...arg) { console.error(..._prefix(arg)) }
+        function warn(...arg)  { console.warn(..._prefix(arg)) }
+        function log(...arg)   { console.log(..._prefix(arg)) }
+        function info(...a)    { debugging() && console.info(..._prefix(a)) }
+        function debug(...a)   { debugging() && console.debug(..._prefix(a)) }
+        function _prefix(args) {
+            const start = Array.isArray(args[0]) ? args.shift() : [];
+            return AppDebug.consoleArgs(logPrefix(), ...start, ...args);
+        }
+        // noinspection JSValidateTypes
+        return { debugging, logPrefix, error, warn, log, info, debug };
     }
 
     // ========================================================================
@@ -357,7 +470,7 @@ export class AppDebug {
     isActive(mod)       { return this.constructor.isActive(mod) }
     activeFor(mod, def) { return this.constructor.activeFor(mod, def) }
     resetAll()          { return this.constructor.resetAll() }
-    format(...args)     { return this.constructor.format(...args) }
+    consoleFmt(...args) { return this.constructor.consoleFmt(...args) }
     file(name, ...args) { return this.constructor.file(name, ...args) }
 }
 

@@ -24,7 +24,10 @@ import {
 } from '../shared/definitions';
 
 
-AppDebug.file('feature/search-analysis');
+const MODULE = 'SearchAnalysis';
+const DEBUG  = false;
+
+AppDebug.file('feature/search-analysis', MODULE, DEBUG);
 
 // ============================================================================
 // Exported functions
@@ -69,7 +72,7 @@ export function cloneTitle(item, title) {
 // ============================================================================
 
 // noinspection FunctionTooLongJS
-Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
+Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
 
     /**
      * Search page `<body>`.
@@ -944,7 +947,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
     class AdvancedFeature extends SessionState {
 
         static CLASS_NAME = 'AdvancedFeature';
-        static DEBUGGING  = false;
+        static DEBUGGING  = DEBUG;
 
         // ====================================================================
         // Fields
@@ -1176,24 +1179,20 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
             const button = config || BUTTON_CONFIG[t] || {};
 
             if (isMissing(button.class)) {
-                this._error(`${func}: invalid topic`);
-                return;
+                return this._error(`${func}: invalid topic`);
             } else if (!this._isControlButton(button.class)) {
-                this._debug(`${func}: skipping button '${button.class}'`);
-                return;
+                return this._debug(`${func}: skip button '${button.class}'`);
             } else if (!button.active) {
-                this._debug(`${func}: inactive topic`);
-                return;
+                return this._debug(`${func}: inactive topic`);
             }
 
             const $topic_buttons = this._findButton(button.class);
             if (isMissing($topic_buttons)) {
                 if (button.active === 'dev_only') {
-                    this._debug(`${func}: inactive topic`);
+                    return this._debug(`${func}: inactive topic`);
                 } else {
-                    this._warn(`${func}: no control button`);
+                    return this._warn(`${func}: no control button`);
                 }
-                return;
             }
 
             const $tray_buttons = this.$buttons;

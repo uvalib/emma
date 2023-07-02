@@ -17,6 +17,11 @@ const DEBUG  = true;
 
 AppDebug.file('application/setup', MODULE, DEBUG);
 
+/**
+ * Console output functions for this module.
+ */
+const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
 // ============================================================================
 // Type definitions
 // ============================================================================
@@ -181,15 +186,17 @@ export function appTeardown(name, teardown_action) {
  * @param {boolean}        setup
  * @param {ModuleKey}      name
  * @param {ModuleFunction} action
+ *
+ * @returns {undefined}
  */
 function storeAction(setup, name, action) {
+    const func = 'storeAction';
     if (!name) {
-        console.error('no name');
-        return;
+        return OUT.error(`${func}: no name`);
     }
     const entry = setup ? 'Setup' : 'Teardown';
     if (window.APP_PAGE[entry].has(name)) {
-        console.warn(name, `already in window.APP_PAGE.${entry}`);
+        OUT.warn(`${func}:`, name, `already in window.APP_PAGE.${entry}`);
     }
     let fn, klass;
     if (typeof action === 'function') {
@@ -202,9 +209,9 @@ function storeAction(setup, name, action) {
     if (fn ||= setup ? klass?.setup : klass?.teardown) {
         window.APP_PAGE[entry].set(name, fn);
     } else if (klass) {
-        console.error(name, `does not have a ${entry.toLowerCase()} function`);
+        OUT.error(`${func}:`, name, `missing ${entry.toLowerCase()} function`);
     } else {
-        console.error(name, 'action not a function');
+        OUT.error(`${func}:`, name, 'action not a function');
     }
 }
 
@@ -213,20 +220,21 @@ function storeAction(setup, name, action) {
  *
  * @param {AppModuleMap} store
  * @param {string}       [caller]
+ *
+ * @returns {undefined}
  */
 function runActions(store, caller) {
     const func = caller || 'runActions';
     if (isEmpty(store)) {
-        _debug(`${func}: empty store`);
-        return;
+        return OUT.debug(`${func}: empty store`);
     }
-    _debug(`${func}: BEGIN`);
-    if (_debugging()) {
-        store.forEach((action, key) => _debug(func, key) && action());
+    OUT.debug(`${func}: BEGIN`);
+    if (OUT.debugging()) {
+        store.forEach((action, key) => OUT.debug(func, key) || action());
     } else {
         store.forEach(action => action());
     }
-    _debug(`${func}: END`);
+    OUT.debug(`${func}: END`);
 }
 
 // ============================================================================
@@ -315,11 +323,13 @@ export function appEventOptions(options) {
  * @returns {[(string|EventTarget|undefined),(EventTarget|undefined)]}
  */
 export function appEventTarget(k, caller) {
-    const func = caller || 'appEventTarget'; //_debug(func);
-    if ((k === DOC_KEY) || (k === document))    { return [DOC_KEY, document] }
-    else if ((k === WIN_KEY) || (k === window)) { return [WIN_KEY, window] }
-    else if (k instanceof EventTarget)          { return [k, k] }
-    console.error(`${func}: "${k}" invalid`);     return [undefined, k];
+    const func = caller || 'appEventTarget'; //OUT.debug(func);
+    switch (true) {
+        case (k instanceof EventTarget):            return [k, k];
+        case (k === DOC_KEY) || (k === document):   return [DOC_KEY, document];
+        case (k === WIN_KEY) || (k === window):     return [WIN_KEY, window];
+        default: OUT.error(`${func}: "${k}" invalid`); return [undefined, k];
+    }
 }
 
 /**
@@ -328,17 +338,16 @@ export function appEventTarget(k, caller) {
  *
  * @param {AppEventMap} [event_map]
  * @param {string}      [caller]
+ *
+ * @returns {undefined}
  */
 function removeEvents(event_map = window.APP_PAGE.Event, caller) {
     const func = caller || 'removeEvents';
-    if (isEmpty(event_map)) {
-        _debug(`${func}: no events`);
-        return;
-    }
-    _debug(`${func}: BEGIN`);
+    if (isEmpty(event_map)) { return OUT.debug(`${func}: no events`) }
+    OUT.debug(`${func}: BEGIN`);
     for (const [ev_key, ev_target] of event_map) {
         const [_, node] = appEventTarget(ev_key, func);
-        _debug(`${func}: target =`, ev_key, 'node =', node);
+        OUT.debug(`${func}: target =`, ev_key, 'node =', node);
         for (const [type, ev_type] of ev_target) {
             for (const [callback, ev_callback] of ev_type) {
                 for (const [_options, ev_options] of ev_callback) {
@@ -348,7 +357,7 @@ function removeEvents(event_map = window.APP_PAGE.Event, caller) {
             }
         }
     }
-    _debug(`${func}: END`);
+    OUT.debug(`${func}: END`);
     event_map.clear();
 }
 
@@ -356,31 +365,6 @@ function removeEvents(event_map = window.APP_PAGE.Event, caller) {
 // Functions - internal
 // ============================================================================
 
-/**
- * Indicate whether console debugging is active.
- *
- * @returns {boolean}
- */
-function _debugging() {
-    return AppDebug.activeFor(MODULE, DEBUG);
-}
-
-/**
- * Emit a console message if debugging.
- *
- * @param {...*} args
- *
- * @returns {true}
- */
-function _debug(...args) {
-    if (_debugging()) {
-        const fmt = 'color: white; background: green; font-size: larger';
-        console.log(...AppDebug.format(MODULE, fmt), ...args);
-    }
-    return true;
-}
-
-// noinspection OverlyComplexFunctionJS
 /**
  * Log an occurrence of an action on an event.
  *
@@ -395,5 +379,5 @@ function _debugEvent(caller, action, type, target, callback, node) {
     const args  = { target: target, callback: callback, node: node };
     const parts = [];
     Object.entries(args).forEach(([k, v]) => v && parts.push(`; ${k} =`, v));
-    _debug(`${caller}: ${action} event '${type}'`, ...parts);
+    OUT.debug(`${caller}: ${action} event '${type}'`, ...parts);
 }

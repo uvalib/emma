@@ -19,9 +19,10 @@ import {
 } from '../shared/events';
 
 
-const MODULE = 'controllers/search';
+const MODULE = 'Search';
+const DEBUG  = false;
 
-AppDebug.file(MODULE);
+AppDebug.file('controllers/search', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -36,6 +37,11 @@ appSetup(MODULE, function() {
     if (isMissing($body)) {
         return;
     }
+
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 
     // ========================================================================
     // Constants
@@ -131,14 +137,14 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function onlyOne($item, caller, arg_name) {
-        if ($item.length === 1) {
-            return true;
+        const only_one = ($item.length === 1);
+        if (!only_one) {
+            const func    = caller   || 'onlyOne';
+            const arg     = arg_name || 'selector';
+            const problem = $item.length ? 'too many' : 'no';
+            OUT.warn(`${func}: ${arg}: ${problem} elements`);
         }
-        const func    = caller   || 'onlyOne';
-        const arg     = arg_name || 'selector';
-        const problem = $item.length ? 'too many' : 'no';
-        console.warn(`${func}: ${arg}: ${problem} elements`);
-        return false;
+        return only_one;
     }
 
     /**
@@ -151,6 +157,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function makeButton(items, controls, open) {
+        const func   = 'makeButton';
         const $items = $(items);
         const attrs  = {
             role:            'button',
@@ -159,7 +166,7 @@ appSetup(MODULE, function() {
             'aria-expanded': !!open,
         };
         if (isEmpty(controls)) {
-            console.error('makeButton: no id for aria-controls');
+            OUT.error(`${func}: no id for aria-controls`);
         }
         $items.each(function() {
             const $item = $(this);
@@ -290,7 +297,7 @@ appSetup(MODULE, function() {
         const classes = $number[0].classList;
         const row     = $.map(classes, cls => cls.match(/^row-\d+$/)).pop();
         if (isEmpty(row)) {
-            console.warn(`${func}: could not determine row for ${classes}`);
+            OUT.warn(`${func}: could not determine row for ${classes}`);
             return;
         }
 

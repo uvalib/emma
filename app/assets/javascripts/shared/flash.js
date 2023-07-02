@@ -18,7 +18,15 @@ import {
 } from './events';
 
 
-AppDebug.file('shared/flash');
+const MODULE = 'Flash';
+const DEBUG  = true;
+
+AppDebug.file('shared/flash', MODULE, DEBUG);
+
+/**
+ * Console output functions for this module.
+ */
+const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 
 // ============================================================================
 // Constants
@@ -112,6 +120,7 @@ export function flashContainer(selector) {
  * @see file:app/views/layouts/_flash.html.erb
  */
 export function flashInitialize(fc) {
+    //OUT.debug('flashInitialize: fc =', fc);
     const $fc    = flashContainer(fc);
     const $items = $fc.find(FLASH_ITEM);
     let $first_closer;
@@ -144,6 +153,7 @@ export function flashInitialize(fc) {
  * @param {Selector} [fc]             Default: {@link flashContainer}.
  */
 export function flashReset(fc) {
+    //OUT.debug('flashReset: fc =', fc);
     const $fc = flashContainer(fc);
     if (!flashEmpty($fc)) {
         if ($fc.is(NO_RESET)) {
@@ -165,6 +175,7 @@ export function flashReset(fc) {
  * @returns {void}
  */
 export function suppressFlash(all) {
+    //OUT.debug('suppressFlash: all =', all);
     switch (all) {
         case false: enableFlash(true);                                  break;
         case true:  show_flash.messages = show_flash.errors = false;    break;
@@ -180,6 +191,7 @@ export function suppressFlash(all) {
  * @returns {void}
  */
 export function enableFlash(all) {
+    //OUT.debug('enableFlash: all =', all);
     switch (all) {
         case false: suppressFlash(true);                                break;
         case true:  show_flash.messages = show_flash.errors = true;     break;
@@ -237,6 +249,7 @@ export function flashError(text, type, role, fc) {
  * @returns {jQuery}                  The flash container.
  */
 export function clearFlash(fc) {
+    //OUT.debug('clearFlash: fc =', fc);
     return hideFlash(fc).empty();
 }
 
@@ -289,6 +302,7 @@ function floating(fc) {
  * @returns {jQuery}                  The flash container.
  */
 function showFlash(fc, force) {
+    //OUT.debug('showFlash: fc =', fc, force);
     const $fc   = flashContainer(fc);
     const show  = force || flashHidden($fc);
     const float = floating($fc);
@@ -313,6 +327,7 @@ function showFlash(fc, force) {
  * @returns {jQuery}                  The flash container.
  */
 function hideFlash(fc, force) {
+    //OUT.debug('hideFlash: fc =', fc, force);
     const $fc = flashContainer(fc);
     if (force || !flashHidden($fc)) {
         if (floating($fc)) {
@@ -334,6 +349,7 @@ function hideFlash(fc, force) {
  * @return {jQuery}
  */
 function toggleFlashContainer($fc, show) {
+    //OUT.debug('toggleFlashContainer: fc =', fc, show);
     if (show) {
         $fc.removeAttr('aria-hidden');
     } else {
@@ -420,6 +436,7 @@ function addFlashItem(text, type, role, fc) {
  * @returns {jQuery}
  */
 function initializeFlashItem($item) {
+    //OUT.debug('initializeFlashItem:', $item);
     handleEvent($item, 'keyup',     onKeyUpFlashItem);
     handleEvent($item, 'mousedown', onMouseDownFlashItem);
     return $item;
@@ -443,6 +460,7 @@ function flashItem(arg) {
  * @param {jQuery.Event} event
  */
 function closeFlashItem(event) {
+    OUT.debug('closeFlashItem: event =', event);
     flashItem(event).remove();
     const $fc = flashContainer();
     if (flashEmpty($fc)) {
@@ -471,7 +489,7 @@ function onKeyUpFlashItem(event) {
  * @param {jQuery.Event|KeyboardEvent} event
  */
 function onMouseDownFlashItem(event) {
-    console.log('onMouseDownFlashItem: event =', event);
+    OUT.debug('onMouseDownFlashItem: event =', event);
     event.stopPropagation();
 }
 
@@ -485,6 +503,7 @@ function onMouseDownFlashItem(event) {
  * @returns {jQuery}
  */
 function makeCloser() {
+    //OUT.debug('makeCloser');
     const $closer = $('<button>').addClass('closer').text(HEAVY_X);
     return initializeCloser($closer);
 }
@@ -497,6 +516,7 @@ function makeCloser() {
  * @returns {jQuery}
  */
 function initializeCloser($closer) {
+    //OUT.debug('initializeCloser: closer =', $closer);
     handleClickAndKeypress($closer, closeFlashItem);
     return $closer;
 }
@@ -522,9 +542,10 @@ const WINDOW_EVENTS = {
  * @param {boolean} [on]
  */
 function monitorWindowEvents(on = true) {
-    $.each(WINDOW_EVENTS,
-        (type, callback) => windowEvent(type, callback, { listen: on })
-    );
+    OUT.debug('monitorWindowEvents: on =', on);
+    for (const [type, callback] of Object.entries(WINDOW_EVENTS)) {
+        windowEvent(type, callback, { listen: on });
+    }
 }
 
 /**
@@ -542,9 +563,10 @@ function onKeyUpWindow(event) {
 /**
  * Allow mouse down outside of a flash item to close all flash items.
  *
- * @param {jQuery.Event|MouseEvent} _event
+ * @param {jQuery.Event|MouseEvent} event
  */
-function onMouseDownWindow(_event) {
+function onMouseDownWindow(event) {
+    OUT.debug('onMouseDownWindow: event =', event);
     clearFlash();
 }
 
@@ -563,27 +585,25 @@ function onMouseDownWindow(_event) {
  * @see "UploadController#post_response"
  */
 export function extractFlashMessage(xhr) {
-    const func = 'extractFlashMessage';
-    let lines  = [];
-    let text   = xhr && xhr.getResponseHeader('X-Flash-Message') || '';
+    const func  = 'extractFlashMessage'; OUT.debug(`${func}: xhr =`, xhr);
+    const lines = [];
+    let text    = xhr?.getResponseHeader('X-Flash-Message') || '';
     text = text.startsWith('http') ? fetchFlashMessage(text) : xhrDecode(text);
     if (text.startsWith('{') || text.startsWith('[')) {
         try {
             const messages = JSON.parse(text);
             if (Array.isArray(messages)) {
-                messages.forEach(msg => lines.push(msg.toString()));
+                messages.forEach(msg => lines.push(`${msg}`));
             } else if (typeof messages === 'object') {
                 $.each(messages, (k, v) => lines.push(`${k}: ${v}`));
             } else {
-                lines.push(messages.toString());
+                lines.push(`${messages}`);
             }
-            text = undefined; // Indicate that *lines* is valid.
-        }
-        catch (err) {
-            console.warn(`${func}:`, err);
+        } catch (error) {
+            OUT.warn(`${func}:`, error);
         }
     }
-    return isDefined(text) ? text.split("\n") : lines;
+    return isPresent(lines) ? lines : text.split("\n");
 }
 
 /**
@@ -596,6 +616,7 @@ export function extractFlashMessage(xhr) {
  * @see "EncodingHelper#xhr_encode"
  */
 export function xhrDecode(data) {
+    //OUT.debug('xhrDecode: data =', data);
     if (isMissing(data)) { return '' }
     const string  = data.toString();
     const encoded = !!string.match(/%[0-9A-F][0-9A-F]/i);
@@ -611,7 +632,7 @@ export function xhrDecode(data) {
  * @returns {string}
  */
 export function fetchFlashMessage(url) {
-    const func = 'fetchFlash';
+    const func = 'fetchFlash'; //OUT.debug(`${func}: url =`, url);
     let error  = 'could not fetch message'; // TODO: I18n
     let content;
 
@@ -627,7 +648,7 @@ export function fetchFlashMessage(url) {
 
     function onError(xhr, status, message) {
         error = `${status}: ${xhr.status} ${message}`;
-        console.warn(`${func}:`, error);
+        OUT.warn(`${func}:`, error);
     }
 
     $.ajax({

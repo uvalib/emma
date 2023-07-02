@@ -185,7 +185,7 @@ export function scrollIntoView(element) {
             elem.scrollIntoView(false);
         }
     } else {
-        console.error('scrollIntoView: empty', element);
+        console.error('scrollIntoView: empty element:', element);
     }
     return $element;
 }

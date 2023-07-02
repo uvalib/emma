@@ -12,7 +12,7 @@ import { documentEvent } from '../shared/events';
 
 const DEBUG = true;
 
-AppDebug.file('vendor/turbolinks', DEBUG);
+AppDebug.file('vendor/turbolinks', undefined, DEBUG);
 
 const EVENTS = [
     'click',

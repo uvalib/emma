@@ -21,6 +21,11 @@ appSetup(MODULE, function() {
         return;
     }
 
+    /**
+     * Console output functions for this module.
+     */
+    const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
     // ========================================================================
     // Variables
     // ========================================================================
@@ -60,34 +65,12 @@ appSetup(MODULE, function() {
         if ($anchor) {
             event.preventDefault();
             const top = $anchor.offset().top;
-            _debug(`${func}: ${anchor} AT y =`, top);
+            OUT.debug(`${func}: ${anchor} AT y =`, top);
             window.scrollTo(0, top);
             return false;
         } else {
-            console.error(`${func}: NON ANCHOR LINK`, $link);
+            OUT.error(`${func}: NON ANCHOR LINK`, $link);
         }
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

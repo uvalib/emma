@@ -7,11 +7,11 @@ import { Emma }             from '../shared/assets';
 import { SearchInProgress } from '../shared/search-in-progress';
 
 
-const MODULE = 'feature/search-in-progress';
+const PATH = 'feature/search-in-progress';
 
-AppDebug.file(MODULE);
+AppDebug.file(PATH);
 
-appSetup(MODULE, function() {
+appSetup(PATH, function() {
     const no_on_page_exit = (Emma.RAILS_ENV === 'test');
     SearchInProgress.initialize(no_on_page_exit);
 });

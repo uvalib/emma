@@ -9,8 +9,8 @@ import { appSetup } from '../application/setup';
 import select2      from 'select2';
 
 
-const MODULE = 'vendor/select2';
+const PATH = 'vendor/select2';
 
-AppDebug.file(MODULE);
+AppDebug.file(PATH);
 
-appSetup(MODULE, () => select2($));
+appSetup(PATH, () => select2($));
