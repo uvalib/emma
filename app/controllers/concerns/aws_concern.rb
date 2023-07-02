@@ -69,11 +69,11 @@ module AwsConcern
     values = params_values(prm, *REPOSITORY_PARAMS)
     values = values.presence || Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
-      values = EmmaRepository.values.map(&:to_sym)
-      values.delete(:ace)
+      values = EmmaRepository.values.map(&:to_sym).excluding(:ace)
     else
       values.map! { |v|
         case v.to_s.downcase
+          when 'emma'                    then :emma
           when 'bs', /bookshare/         then :bookshare
           when 'ht', /hathi.*trust/      then :hathiTrust
           when 'ia', /internet.*archive/ then :internetArchive
