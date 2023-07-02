@@ -63,9 +63,9 @@
         }
 
         &.textbox {
-            height:         max-content;
-            margin-top:     0.25rem;
-            margin-left:    0.5rem;
+            height:      max-content;
+            margin-top:  0.25rem;
+            margin-left: 0.5rem;
         }
 
         .item {
@@ -110,7 +110,6 @@
 
     @extend .entry-list;
 
-    grid-template-columns: auto 1fr;
     gap:                   1rem;
     padding-bottom:        1rem;
     max-height:            85vh;
@@ -119,6 +118,8 @@
     border-right-width:    0.125rem;
     border-bottom-width:   0.125rem;
     overflow:              auto;
+
+    grid-template-columns: auto 1fr;
 
     .number {
         margin:  0 0 0.5rem 1rem;
@@ -192,7 +193,6 @@ table.manifest_item-grid {
     $bottom-wd: $border-wd * 0.75;
 
     display:                 grid;
-    grid-template-columns:   1fr;
     align-content:           flex-start;
     gap:                     0;
     margin:                  model.$list-item-gap-y 0;
@@ -204,8 +204,9 @@ table.manifest_item-grid {
     border-radius:           $border-wd $border-wd $bottom-wd $bottom-wd;
     box-shadow:              0.25rem 0.25rem 0.5rem -0.125rem gray;
 
-    // noinspection CssBrowserCompatibilityForProperties
     overscroll-behavior:     contain;
+
+    grid-template-columns:   1fr;
 
     @if $scroll-snap {
         scroll-snap-type:    both mandatory;
@@ -256,19 +257,19 @@ table.manifest_item-grid {
 
         $indicator-icon: (
             file_status: (
-                emoji: emoji.$OPEN_FILE_FOLDER,
-                base:  yellow,
-                size:  x-large,
+                emoji:  emoji.$OPEN_FILE_FOLDER,
+                base:   yellow,
+                size:   x-large,
             ),
             data_status: (
-                emoji: emoji.$SCROLL,
-                base:  orange,
-                size:  larger,
+                emoji:  emoji.$SCROLL,
+                base:   orange,
+                size:   larger,
             ),
             ready_status: (
-                emoji: emoji.$DELIVERY_TRUCK,
-                base:  red,
-                size:  x-large,
+                emoji:  emoji.$DELIVERY_TRUCK,
+                base:   red,
+                size:   x-large,
             ),
         );
 
@@ -279,10 +280,10 @@ table.manifest_item-grid {
         //=====================================================================
 
         $file-type-map: (
-            uploader: '.from-uploader',
-            name:     '.from-name',
-            url:      '.from-url',
-            data:     '.from-data',
+            uploader:   '.from-uploader',
+            name:       '.from-name',
+            url:        '.from-url',
+            data:       '.from-data',
         );
 
         //=====================================================================
@@ -292,15 +293,15 @@ table.manifest_item-grid {
         > .controls,
         > .cell {
 
-            display:            flex;
-            flex-direction:     column;
-            margin:             0;
-            max-width:          $max-column-width;
-            font-weight:        unset;
-            text-align:         match-parent;
-            word-break:         break-word;
-            border-right:       $cell-border-width solid $grid-border;
-            border-bottom:      $cell-border-width solid $grid-border;
+            display:        flex;
+            flex-direction: column;
+            margin:         0;
+            max-width:      $max-column-width;
+            font-weight:    unset;
+            text-align:     match-parent;
+            word-break:     break-word;
+            border-right:   $cell-border-width solid $grid-border;
+            border-bottom:  $cell-border-width solid $grid-border;
 
             @if $scroll-snap {
                 scroll-snap-align: start;
@@ -685,7 +686,6 @@ table.manifest_item-grid {
                     text-align:     left;
                     overflow:       auto;
 
-                    // noinspection CssBrowserCompatibilityForProperties
                     overscroll-behavior: contain;
                 }
             }
@@ -814,18 +814,18 @@ table.manifest_item-grid {
 
                             // noinspection CssReplaceWithShorthandSafely
                             dl {
-                                margin:      0;
-                                margin-left: $cell-pad * 3;
+                                margin:         0;
+                                margin-left:    $cell-pad * 3;
                             }
 
                             dt {
-                                font-weight:   bold;
-                                margin-top:    $value-pad * 2;
-                                margin-bottom: $value-pad * 2;
+                                font-weight:    bold;
+                                margin-top:     $value-pad * 2;
+                                margin-bottom:  $value-pad * 2;
                             }
 
                             dd {
-                                margin-left:   $cell-pad * 4;
+                                margin-left:    $cell-pad * 4;
                             }
                         }
 
@@ -912,19 +912,19 @@ table.manifest_item-grid {
                         margin-right: -$value-pad;
 
                         > * {
-                            margin-bottom: 0;
+                            margin-bottom:  0;
                         }
 
                         .file_status {
-                            line-height: 1.3125;
+                            line-height:    1.3125;
                         }
 
                         .data_status {
-                            line-height: 1.125;
+                            line-height:    1.125;
                         }
 
                         .ready_status {
-                            line-height: 1.125;
+                            line-height:    1.125;
                         }
                     }
 

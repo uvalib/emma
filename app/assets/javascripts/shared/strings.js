@@ -55,12 +55,12 @@ export function camelCase(item) {
 /**
  * Convert a plural to the singular form.
  *
+ * @note This isn't meant to be comprehensive; it's tuned to returning the
+ *  singular form of existing model/controller names.
+ *
  * @param {string} item
  *
  * @returns {string}
- *
- * @note This isn't meant to be comprehensive; it's tuned to returning the
- *  singular form of existing model/controller names.
  */
 export function singularize(item) {
     if (typeof item !== 'string') { return item }
@@ -87,7 +87,7 @@ export function interpolate(item, values) {
 }
 
 /**
- * Render an item as a string (used in place of `JSON.stringify`).
+ * Render an item as a string (used in place of {@link JSON.stringify}).
  *
  * @param {*}      item
  * @param {number} [limit]            Maximum length of result.

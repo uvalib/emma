@@ -98,12 +98,12 @@
             // noinspection CssReplaceWithShorthandSafely
             .control {
 
-                margin:       0;
-                margin-right: $page-control-gap-x;
+                margin:             0;
+                margin-right:       $page-control-gap-x;
 
                 @media #{$narrow-screen} {
-                    margin-top:    $page-control-gap-y;
-                    margin-bottom: $page-control-gap-y;
+                    margin-top:     $page-control-gap-y;
+                    margin-bottom:  $page-control-gap-y;
                 }
 
                 &.current {

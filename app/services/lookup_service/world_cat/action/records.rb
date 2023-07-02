@@ -17,7 +17,7 @@ module LookupService::WorldCat::Action::Records
 
   public
 
-  # == GET https://worldcat.org/webservices/catalog/search/worldcat/sru
+  # === GET https://worldcat.org/webservices/catalog/search/worldcat/sru
   #
   # Sometimes the service will return appropriate results when searching for an
   # ISBN but the returned record will not include any identifiers.
@@ -95,7 +95,7 @@ module LookupService::WorldCat::Action::Records
       }
     end
 
-  # == GET https://worldcat.org/webservices/catalog/content/(oclc_number)
+  # === GET https://worldcat.org/webservices/catalog/content/(oclc_number)
   #
   # @param [String, Oclc] term        Single OCLC identifier.
   # @param [Hash]         opt
@@ -120,7 +120,7 @@ module LookupService::WorldCat::Action::Records
       }
     end
 
-  # == GET https://worldcat.org/webservices/catalog/content/isbn/(isbn)
+  # === GET https://worldcat.org/webservices/catalog/content/isbn/(isbn)
   #
   # @param [String, Isbn] term        Single ISBN identifier.
   # @param [Hash]         opt
@@ -145,7 +145,7 @@ module LookupService::WorldCat::Action::Records
       }
     end
 
-  # == GET https://worldcat.org/webservices/catalog/content/issn/(issn)
+  # === GET https://worldcat.org/webservices/catalog/content/issn/(issn)
   #
   # @param [String, Issn] term        Single ISSN identifier.
   # @param [Hash]         opt
@@ -170,7 +170,7 @@ module LookupService::WorldCat::Action::Records
       }
     end
 
-  # == GET https://worldcat.org/webservices/catalog/content/sn/(lccn)
+  # === GET https://worldcat.org/webservices/catalog/content/sn/(lccn)
   #
   # @param [String, Lccn] term        Single LCCN identifier.
   # @param [Hash]         opt
@@ -179,7 +179,7 @@ module LookupService::WorldCat::Action::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-sn
   #
-  # == Usage Notes
+  # === Usage Notes
   # Strictly speaking, the API endpoint accepts a "Standard Number", which
   # according to https://www.loc.gov/marc/bibliographic/bd024.html might be
   # an identifier from any of the source code schemes listed in
@@ -202,7 +202,7 @@ module LookupService::WorldCat::Action::Records
       }
     end
 
-  # == GET https://worldcat.org/webservices/catalog/search/worldcat/opensearch
+  # === GET https://worldcat.org/webservices/catalog/search/worldcat/opensearch
   #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt

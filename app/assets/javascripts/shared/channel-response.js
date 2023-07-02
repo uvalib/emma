@@ -38,6 +38,7 @@ AppDebug.file('shared/channel-response', MODULE, DEBUG);
 /**
  * A channel response message.
  *
+ * @extends BaseClass
  * @extends ChannelResponsePayload
  *
  * @see "ApplicationCable::Response"
@@ -72,8 +73,7 @@ export class ChannelResponse extends BaseClass {
     static FINAL_STATES = deepFreeze(['COMPLETE', 'PARTIAL', 'TIMEOUT']);
 
     /**
-     * A blank object containing an array value for every key defined by
-     * {@link REQUEST_TYPE}.
+     * A blank payload object.
      *
      * @readonly
      * @type {ChannelResponsePayload}

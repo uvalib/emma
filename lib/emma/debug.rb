@@ -363,7 +363,7 @@ module Emma::Debug
     # @return [nil]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload __debug_items(meth, bind, *parts, **opt)
@@ -478,7 +478,7 @@ module Emma::Debug
     # @return [nil]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload __debug_request(meth, *args, req: nil, **opt)

@@ -50,7 +50,7 @@ require 'shrine'
 #   - Extended by all plugin AttacherClassMethods.
 #   @return [Shrine::Attacher]
 #
-# == Implementation Notes
+# === Implementation Notes
 # If #DEBUG_SHRINE is true then the overrides defined in Shrine::UploaderDebug
 # (lib/ext/shrine/lib/shrine.rb) apply to the methods inherited from Shrine.
 #

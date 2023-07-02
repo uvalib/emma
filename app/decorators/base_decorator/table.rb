@@ -149,7 +149,7 @@ module BaseDecorator::Table
     outer_tag ? html_tag(outer_tag, fields, 'aria-rowindex': row) : fields
   end
 
-  # table_columns
+  # Table values associated with the current decorator.
   #
   # @param [Hash] opt                 Passed to #model_field_values
   #

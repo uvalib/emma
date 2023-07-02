@@ -48,7 +48,7 @@ module DataConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Rails will set `params[:format]` if the URL is given with an extension
   # (even if a :format parameter was explicitly given); `data_params[:html]`
   # returns *true* if HTML was explicitly requested in either of these ways.

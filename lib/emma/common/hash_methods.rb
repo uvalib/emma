@@ -36,7 +36,7 @@ module Emma::Common::HashMethods
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
-  # == Usage Note
+  # === Usage Notes
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
@@ -53,7 +53,7 @@ module Emma::Common::HashMethods
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
-  # == Usage Note
+  # === Usage Notes
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
@@ -188,7 +188,7 @@ module Emma::Common::HashMethods
   # @return [Hash, Array, Any, nil]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload _remove_blanks(item)
@@ -221,7 +221,7 @@ module Emma::Common::HashMethods
   #   @param [Boolean] dup
   #   @return [Any, nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # * Empty strings and nils are considered blank, however an item or element
   #   with the explicit value of *false* is not considered blank.
   # * The *dup* option does not apply to items with type Proc or Module because

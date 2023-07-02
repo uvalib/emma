@@ -46,7 +46,7 @@ module XmlHelper
   # @return [ActiveSupport::SafeBuffer]     If *str* was html_safe.
   # @return [String]                        If *str* was not HTML.
   #
-  # == Usage Notes
+  # === Usage Notes
   # Since *str* may be a sequence of HTML elements or even just a text string
   # with HTML entities, it is wrapped in a '<div>' to make sure that the
   # Nokogiri parser is dealing with valid XML.
@@ -96,7 +96,7 @@ module XmlHelper
   # @return [Nokogiri::XML::Node]
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # May be problematic for small *len* values, depending on the nature of the
   # *xml* input, but generally the result will fit within *len* (even if it
   # is overly-aggressive in pruning the element hierarchy at the point where

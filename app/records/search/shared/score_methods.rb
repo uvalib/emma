@@ -47,7 +47,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Float,Integer]           Integer if *precision* <= 0.
   #
-  # == Usage Notes
+  # === Usage Notes
   #
   def total_score(precision: nil, **opt)
     result = get_scores(**opt).values.compact.sum
@@ -62,7 +62,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Hash{Symbol=>Float,nil}]
   #
-  # == Usage Notes
+  # === Usage Notes
   # * These are the current values of the search score attributes as assigned
   #   directly or via #calculate_scores!.
   # * If a non-zero :keyword_score is present then that is the *only* value
@@ -89,7 +89,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Array<Float>]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # If included :keyword is always placed last so that #calculate_keyword_score
   # can take advantage of the calculations of the other scores.  If no types
   # are specified all defined types *except* :keyword are calculated.
@@ -118,7 +118,7 @@ module Search::Shared::ScoreMethods
   #
   # @return [Float]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The actual relevancy seems to discount certain "stop words", but the actual
   # behavior cannot be easily inferred from the search results.
   #

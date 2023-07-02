@@ -98,9 +98,9 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Set visibility of the scroll-to-top button.
+     * Set visibility of the scroll-to-top button. <p/>
      *
-     * At the top of the page, it presents as a "scroll-down" button.  If the
+     * Near the top of the page, it presents as a "scroll-down" button.  If the
      * page is scrolled sufficiently far it presents as a "scroll-up" button.
      */
     function updateScrollButton() {
@@ -141,9 +141,9 @@ appSetup(MODULE, function() {
      * Scroll so that the previous list entry is fully displayed at the top of
      * the screen.
      *
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      *
-     * @returns {boolean}             Always *false* to end event propagation.
+     * @returns {boolean}            Always **false** to end event propagation.
      *
      * @see "SearchDecorator#prev_next_controls"
      */
@@ -156,9 +156,9 @@ appSetup(MODULE, function() {
      * Scroll so that the next list entry is fully displayed at the top of the
      * screen.
      *
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      *
-     * @returns {boolean}             Always *false* to end event propagation.
+     * @returns {boolean}            Always **false** to end event propagation.
      *
      * @see "SearchDecorator#prev_next_controls"
      */
@@ -171,10 +171,10 @@ appSetup(MODULE, function() {
      * Scroll so that the indicated list entry is fully displayed at the top of
      * the screen.
      *
-     * @param {jQuery.Event} event
-     * @param {Selector}     button_selector
+     * @param {jQuery.Event|Event} event
+     * @param {Selector}           button_selector
      *
-     * @returns {boolean}             Always *false* to end event propagation.
+     * @returns {boolean}            Always **false** to end event propagation.
      *
      * @see "SearchDecorator#prev_next_controls"
      */

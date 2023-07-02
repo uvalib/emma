@@ -95,7 +95,7 @@ class Paginator
   # @return [Array]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload finalize(result, **opt)

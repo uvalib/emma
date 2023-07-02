@@ -47,7 +47,7 @@ module ApiService::Definition
   # @return [Hash, nil]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload api_methods(arg)
@@ -82,7 +82,7 @@ module ApiService::Definition
   #
   # @return [Array<Symbol>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # By default, these are only the Query or FormData parameters that would be
   # the required parameters that are to be passed through the method's "**opt"
   # options hash.  If :all is *true*, the result will also include the method's
@@ -103,7 +103,7 @@ module ApiService::Definition
   #
   # @return [Array<Symbol>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # By default, the names are translated to the documented parameter names.
   # If :no_alias is *true* then the actual parameter names are returned.
   #

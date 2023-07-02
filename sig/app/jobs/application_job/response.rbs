@@ -1,6 +1,6 @@
 # Base class for message objects that include job information.
 #
-# == Implementation Notes
+# === Implementation Notes
 # This class can't be implemented as a subclass of Hash because the ActiveJob
 # serializer will fail to distinguish it from a simple Hash (and thereby fail
 # to engage its custom serializer/deserializer).

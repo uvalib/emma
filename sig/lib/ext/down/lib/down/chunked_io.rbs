@@ -3,7 +3,7 @@ module Down
   # (defined by the 'archive-zip' gem) so that files uploaded to AWS S3 can be
   # processed by Archive::Zip::Entry#parse.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # ChunkedIO does not care about 'lineno' (and neither does anything else in
   # the call chain of interest) so providing a dummy instance variable *should*
   # be harmless.

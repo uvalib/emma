@@ -381,7 +381,7 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#process_ingest_errors
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # It's not clear whether there would ever be situations where there was a
     # mix of errors by index, errors by submission ID, and/or general errors,
     # but this method was written to be able to cope with the possibility.
@@ -641,7 +641,7 @@ module Record::Submittable
     # @note From UploadWorkflow::External#repository_removals
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload repository_removals(requests, **opt)
@@ -674,7 +674,7 @@ module Record::Submittable
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload repository_dequeues(requests, **opt)
@@ -707,7 +707,7 @@ module Record::Submittable
     # @return [Hash{String=>Array<Model>}]  One or more requests per repo.
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload repository_requests(hash, empty_key: false)
@@ -921,7 +921,7 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#upload_create
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # Compare with #bulk_entry_create
     #
     def entry_create(index: nil, atomic: true, **data)
@@ -958,7 +958,7 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#upload_edit
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # Compare with #bulk_entry_edit
     #
     def entry_edit(index: nil, atomic: true, **data)
@@ -1000,7 +1000,7 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#upload_remove
     #
-    # == Usage Notes
+    # === Usage Notes
     # Atomicity of the record removal phase rests on the assumption that any
     # database problem(s) would manifest with the very first destruction
     # attempt.  If a later item fails, the successfully-destroyed items will

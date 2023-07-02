@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Encapsulates bibliographic metadata lookup.
 #
-# == Implementation Note
+# === Implementation Notes
 # Unlike other top-level classes in this directory, this is not a subclass of
 # ApiService -- instead, the classes defined within its namespace are.
 #
@@ -45,7 +45,7 @@ class LookupService
   # @return [nil, Hash{String=>LookupService::Response}]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload make_request(items, channel:, timeout: nil)

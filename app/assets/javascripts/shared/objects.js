@@ -12,11 +12,11 @@ AppDebug.file('shared/objects');
 // ============================================================================
 
 /**
- * Generate an object from JSON (used in place of `JSON.parse`).
+ * Generate an object from JSON (used in place of {@link JSON.parse}).
  *
  * @param {*}                 item
  * @param {string|false|null} [caller]  Null or false for no diagnostic message
- * @param {function}          [reviver] To JSON.parse.
+ * @param {function}          [reviver] To {@link JSON.parse}.
  *
  * @returns {object|undefined}
  */
@@ -32,9 +32,8 @@ export function fromJSON(item, caller, reviver) {
     } else if (type === 'string') {
         try {
             result = reviver ? JSON.parse(item, reviver) : JSON.parse(item);
-        }
-        catch (err) {
-            func && console.warn(`${func}: ${err} - item:\n`, item);
+        } catch (error) {
+            func && console.warn(`${func}: ${error} - item:\n`, item);
         }
     } else if (item) {
         console.warn(`${func}: unexpected type "${type}" for`, item);
@@ -48,7 +47,7 @@ export function fromJSON(item, caller, reviver) {
  * @template T
  *
  * @param {T}       item
- * @param {boolean} [trim]            If *false*, don't trim white space.
+ * @param {boolean} [trim]            If **false**, don't trim white space.
  *
  * @returns {T}
  */
@@ -83,8 +82,8 @@ export function deepFreeze(item) {
         new_item = item.map(v => deepFreeze(v));
 
     } else if (isObject(item)) {
-        const pr = objectEntries(item).filter(([k,v]) => [k, deepFreeze(v)]);
-        new_item = Object.fromEntries(pr);
+        const kv = objectEntries(item).filter(([k,v]) => [k, deepFreeze(v)]);
+        new_item = Object.fromEntries(kv);
 
     } else {
         new_item = item;
@@ -111,7 +110,7 @@ export function deepDup(item) {
  * @template T
  *
  * @param {T}       item
- * @param {boolean} [deep]            If *true* make a deep copy.
+ * @param {boolean} [deep]            If **true** make a deep copy.
  *
  * @returns {T}
  */
@@ -119,7 +118,7 @@ export function dup(item, deep) {
     if (typeof item === 'string') { return `${item}` }
     if (typeof item !== 'object') { return item }
     if (typeof item.toObject === 'function') {
-        return item.toObject(); // @note Expected to be a deep copy.
+        return item.toObject(); // NOTE: Expected to be a deep copy.
     } else if (Array.isArray(item)) {
         return deep ? item.map(v => dup(v, deep)) : [...item];
     } else {
@@ -135,7 +134,7 @@ export function dup(item, deep) {
  * Indicate whether the item is an actual object (and not null or an array).
  *
  * @param {*}       item
- * @param {boolean} [or_array]        If *true*, return *true* for an array.
+ * @param {boolean} [or_array]       If **true**, return **true** for an array.
  *
  * @returns {boolean}
  */
@@ -148,7 +147,7 @@ export function isObject(item, or_array) {
  * If *item* is a class instance return the value of its toObject() method
  * (if it exists) or the item itself otherwise.
  *
- * @param {object} item
+ * @param {*} item
  *
  * @returns {object|undefined}
  */
@@ -160,7 +159,7 @@ export function asObject(item) {
  * Make a duplicate of the given object.
  *
  * @param {object|undefined} item
- * @param {boolean}          [shallow]  If *true* make a shallow copy.
+ * @param {boolean}          [shallow]  If **true** make a shallow copy.
  *
  * @returns {object}
  */
@@ -170,15 +169,15 @@ export function dupObject(item, shallow) {
 
 /**
  * Create an Object from array of key-value pairs, or from an array of keys
- * and a mapper function which returns a value for the given key.
+ * and a mapper function which returns a value for the given key. <p/>
  *
  * If *arg* is an object or an array of key-value pairs, *map_fn* is optional.
  * By default, *map_fn* is assumed to return a key-value pair;  if *pair_out*
- * is set to *false* then *map_fn* is assumed to emit a value only.
+ * is set to **false** then *map_fn* is assumed to emit a value only. <p/>
  *
  * If *arg* is an array of single values, *map_fn* is required.  By default,
- * *map_fn* is assumed to emit a value only; if *pair_out* is set to *true*
- * then *map_fn* is assumed to return a key-value pair.
+ * *map_fn* is assumed to emit a value only; if *pair_out* is set to **true**
+ * then *map_fn* is assumed to return a key-value pair. <p/>
  *
  * Invalid pairs elements are silently discarded.
  *

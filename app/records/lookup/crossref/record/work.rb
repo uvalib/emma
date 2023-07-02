@@ -94,7 +94,7 @@ class Lookup::Crossref::Record::Work < Lookup::Crossref::Api::Record
     has_one  :url                                                                 if EXT
     has_one  :volume
 
-    # == Observed but not documented
+    # === Observed but not documented
 
 #   has_one  :resource,               Hash
 

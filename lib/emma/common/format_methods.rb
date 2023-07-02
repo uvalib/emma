@@ -65,7 +65,7 @@ module Emma::Common::FormatMethods
   # If *text* is already HTML-ready it is returned directly.
   #
   # @param [String, Symbol, nil]  text
-  # @param [Integer, nil]         count       Passed to #inflection.
+  # @param [Integer, nil]         count       To #inflection if present.
   # @param [Boolean]              breakable   If *false* replace spaces with
   #                                             '&nbsp;' so that the result is
   #                                             not word-breakable.
@@ -111,7 +111,7 @@ module Emma::Common::FormatMethods
   # @return [ActiveSupport::SafeBuffer, String, Array]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload quote(term, quote: '"', separator: ', ')
@@ -169,7 +169,7 @@ module Emma::Common::FormatMethods
   # @return [ActiveSupport::SafeBuffer, String, Array]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload strip_quotes(term, separator: ', ')

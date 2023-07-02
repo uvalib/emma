@@ -54,7 +54,7 @@ export function percent(part, total) {
  * Show the given value as a multiple of 1024.
  *
  * @param {number|string} value
- * @param {boolean}       [full]      If *true*, show full unit name.
+ * @param {boolean}       [full]      If **true**, show full unit name.
  *
  * @returns {string}                  Blank if *value* is not a number.
  */

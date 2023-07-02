@@ -213,7 +213,7 @@ class Paginator
   # @return [Array]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload finalize(result, **opt)
@@ -361,6 +361,7 @@ class Paginator
     #
     def record_count(value, default: 0)
       default = positive(default) || 1 if value.is_a?(Array)
+      # noinspection RubyMismatchedReturnType
       Array.wrap(value).sum do |v|
         res   = v.try(:total_results)
         res ||= v.try(:records).try(:size)

@@ -129,7 +129,6 @@
 
     &.modal {
         img {
-
             &:not(.wide) {
                 max-width: 75%;
             }
@@ -173,16 +172,16 @@
         // Repository logo.
         .logo {
 
-            display: block;
-            flex:    0 1 auto;
+            display:            block;
+            flex:               0 1 auto;
 
             @media #{$not-narrow-screen} {
-                margin: auto 0.5rem;
+                margin:         auto 0.5rem;
             }
 
             @media #{$narrow-screen} {
-                max-width:     90%;
-                margin-bottom: calc(2 * #{$flex-gap-y});
+                max-width:      90%;
+                margin-bottom:  calc(2 * #{$flex-gap-y});
             }
 
             img {
@@ -207,8 +206,8 @@
 
         @media #{$not-narrow-screen} {
 
-            display:        flex;
-            flex-direction: row;
+            display:            flex;
+            flex-direction:     row;
 
             @media #{$narrow-screen} {
                 flex-direction: column;
@@ -399,13 +398,12 @@ body.help {
         word-break: break-word;
     }
 
-    /**
-     * Help may contain normally-functional elements which are only for the
-     * purpose of illustration.
-     *
-     * @see HelpHelper#help_section
-     * @see file:app/assets/javascripts/feature/help.js
-     */
+    // Help may contain normally-functional elements which are only for the
+    // purpose of illustration.
+    //
+    // @see HelpHelper#help_section
+    // @see file:app/assets/javascripts/feature/help.js
+
     .layout-content {
 
         // An inline rendering of the panel "More/Less" toggle button.
@@ -509,9 +507,9 @@ body.help {
         // A form action button.
         .control-button,
         .uppy-FileInput-btn {
-            display:          inline;
-            padding:          4px 6px;
-            border-radius:    6px;
+            display:       inline;
+            padding:       4px 6px;
+            border-radius: 6px;
         }
     }
 }

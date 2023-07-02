@@ -44,7 +44,7 @@ class ManifestItemController < ApplicationController
 
   @group_counts: symHash
 
-  # == GET /manifest_item/:manifest[?id=(:id|RANGE_LIST)]
+  # === GET /manifest_item/:manifest[?id=(:id|RANGE_LIST)]
   #
   # Display the items for the given Manifest.
   #
@@ -53,7 +53,7 @@ class ManifestItemController < ApplicationController
   #
   def index: () -> nil
 
-  # == GET /manifest_item/show/:manifest/:id
+  # === GET /manifest_item/show/:manifest/:id
   #
   # Display the values of a single manifest item.
   #
@@ -62,7 +62,7 @@ class ManifestItemController < ApplicationController
   #
   def show: () -> void
 
-  # == GET /manifest_item/new/:manifest
+  # === GET /manifest_item/new/:manifest
   #
   # Initiate creation of a new ManifestItem by displaying the form which
   # prompts to upload a file and collects metadata for the new item.
@@ -74,9 +74,9 @@ class ManifestItemController < ApplicationController
   #
   def new: () -> void
 
-  # == POST  /manifest_item/create/:manifest
-  # == PUT   /manifest_item/create/:manifest
-  # == PATCH /manifest_item/create/:manifest
+  # === POST  /manifest_item/create/:manifest
+  # === PUT   /manifest_item/create/:manifest
+  # === PATCH /manifest_item/create/:manifest
   #
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new row.
@@ -87,7 +87,7 @@ class ManifestItemController < ApplicationController
   #
   def create: () -> void
 
-  # == GET /manifest_item/edit/:manifest/:id
+  # === GET /manifest_item/edit/:manifest/:id
   #
   # Initiate modification of an existing item by prompting for metadata
   # changes and/or upload of a replacement file.
@@ -99,8 +99,8 @@ class ManifestItemController < ApplicationController
   #
   def edit: () -> void
 
-  # == PUT   /manifest_item/update/:manifest/:id
-  # == PATCH /manifest_item/update/:manifest/:id
+  # === PUT   /manifest_item/update/:manifest/:id
+  # === PATCH /manifest_item/update/:manifest/:id
   #
   # Finalize modification of an existing item.
   #
@@ -110,8 +110,8 @@ class ManifestItemController < ApplicationController
   #
   def update: () -> void
 
-  # == GET /manifest_item/delete/:manifest/:id
-  # == GET /manifest_item/delete/:manifest/RANGE_LIST[?...]
+  # === GET /manifest_item/delete/:manifest/:id
+  # === GET /manifest_item/delete/:manifest/RANGE_LIST[?...]
   #
   # Initiate removal of an existing item along with its associated file.
   #
@@ -121,8 +121,8 @@ class ManifestItemController < ApplicationController
   #
   def delete: () -> void
 
-  # == DELETE /manifest_item/destroy/:manifest/:id
-  # == DELETE /manifest_item/destroy/:manifest/RANGE_LIST[?...]
+  # === DELETE /manifest_item/destroy/:manifest/:id
+  # === DELETE /manifest_item/destroy/:manifest/RANGE_LIST[?...]
   #
   # Finalize removal of an existing item.
   #
@@ -132,25 +132,25 @@ class ManifestItemController < ApplicationController
   #
   def destroy: () -> void
 
-  # == POST /manifest_item/start_edit/:id
+  # === POST /manifest_item/start_edit/:id
   #
   # Set :editing state and backup fields.
   #
   def start_edit: () -> void
 
-  # == POST /manifest_item/finish_edit/:id
+  # === POST /manifest_item/finish_edit/:id
   #
   # Clear :editing state and respond with item and validity information.
   #
   def finish_edit: () -> void
 
-  # == POST /manifest_item/row_update/:id
+  # === POST /manifest_item/row_update/:id
   #
   # Clear :editing state and respond with item and validity information.
   #
   def row_update: () -> void
 
-  # == POST /manifest_item/upload
+  # === POST /manifest_item/upload
   #
   # Invoked from 'Uppy.XHRUpload'.  If the 'X-Update-FileData-Only' header is
   # *true* then the record's :file_data column is updated without modifying
@@ -160,7 +160,7 @@ class ManifestItemController < ApplicationController
   #
   def upload: () -> void
 
-  # == GET /manifest_item/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === GET /manifest_item/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing a row/element for each item to add.
@@ -171,7 +171,7 @@ class ManifestItemController < ApplicationController
   #
   def bulk_new: () -> void
 
-  # == POST /manifest_item/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === POST /manifest_item/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Create the specified ManifestItem records, download and store the
   # associated files.
@@ -183,7 +183,7 @@ class ManifestItemController < ApplicationController
   #
   def bulk_create: () -> void
 
-  # == GET /manifest_item/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === GET /manifest_item/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing a row/element for each item to change.
@@ -194,8 +194,8 @@ class ManifestItemController < ApplicationController
   #
   def bulk_edit: () -> void
 
-  # == PUT   /manifest_item/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
-  # == PATCH /manifest_item/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === PUT   /manifest_item/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === PATCH /manifest_item/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Modify or create the specified ManifestItem records, download and store the
   # associated files (if changed).
@@ -207,7 +207,7 @@ class ManifestItemController < ApplicationController
   #
   def bulk_update: () -> void
 
-  # == GET /manifest_item/bulk_delete[?force=false]
+  # === GET /manifest_item/bulk_delete[?force=false]
   #
   # Specify items to delete by :id or RANGE_LIST.
   #
@@ -217,7 +217,7 @@ class ManifestItemController < ApplicationController
   #
   def bulk_delete: () -> void
 
-  # == DELETE /manifest_item/bulk[?force=true]
+  # === DELETE /manifest_item/bulk[?force=true]
   #
   # @see #bulk_destroy_manifest_item_path          Route helper
   # @see ManifestItemConcern#bulk_destroy_manifest_items
@@ -225,8 +225,8 @@ class ManifestItemController < ApplicationController
   #
   def bulk_destroy: () -> void
 
-  # == PUT   /manifest_item/bulk/fields/:manifest
-  # == PATCH /manifest_item/bulk/fields/:manifest
+  # === PUT   /manifest_item/bulk/fields/:manifest
+  # === PATCH /manifest_item/bulk/fields/:manifest
   #
   # Modify selected ManifestItem fields of one or more items.
   #

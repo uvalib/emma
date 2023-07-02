@@ -35,7 +35,7 @@ class MetricsController < ApplicationController
 
   public
 
-  # == GET /metrics/test
+  # === GET /metrics/test
   #
   # A temporary endpoint to test various Prometheus metrics.
   #

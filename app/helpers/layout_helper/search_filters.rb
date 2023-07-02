@@ -171,7 +171,7 @@ module LayoutHelper::SearchFilters
     #
     # @return [String]
     #
-    # == Usage Notes
+    # === Usage Notes
     # This method is only engaged for menus with values that are not backed by
     # configuration information that maps values to labels.
     #
@@ -556,7 +556,7 @@ module LayoutHelper::SearchFilters
   #
   # @see ParamsConcern#resolve_sort
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This method produces a URL parameter (:sort) which is translated into the
   # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
   #

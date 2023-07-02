@@ -112,7 +112,7 @@ module HtmlHelper
   # @see ActionView::Helpers::TagHelper#content_tag
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload html_tag(tag, content, *more_content, options = nil)

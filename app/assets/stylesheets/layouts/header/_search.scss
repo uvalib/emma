@@ -48,8 +48,8 @@ $control-height:         2.25rem;
 
     @include header.enclosure;
 
-    border-radius: 1rem;
     border:        2px solid whitesmoke;
+    border-radius: 1rem;
 
     $offset: 6px;
     $x:      $offset;
@@ -102,20 +102,20 @@ $control-height:         2.25rem;
 // Header sections whose content is a single .enclosure child element.
 .layout-section:not(.enclosure) {
 
-    display:    block;
-    margin:     0;
-    overflow-y: hidden;
+    display:        block;
+    margin:         0;
+    overflow-y:     hidden;
 
     @media #{$wide-screen} {
-        padding: 0 header.$enclosure-indent-wide;
+        padding:    0 header.$enclosure-indent-wide;
     }
 
     @media #{$medium-width} {
-        padding: 0 header.$enclosure-indent-medium;
+        padding:    0 header.$enclosure-indent-medium;
     }
 
     @media #{$narrow-screen} {
-        padding: 0 header.$enclosure-indent-narrow;
+        padding:    0 header.$enclosure-indent-narrow;
     }
 }
 
@@ -172,7 +172,7 @@ $control-height:         2.25rem;
     .menu-label,
     .date-label {
 
-        font-size: large;
+        font-size:      large;
 
         @media #{$not-narrow-screen} {
             text-align: right;
@@ -185,21 +185,20 @@ $control-height:         2.25rem;
 
         @include header.control-interior;
 
-        /**
-         * After Select2 initializes, multi-select <select> elements will be
-         * visually hidden in favor of the replacement that Select2 manages.
-         * Since there is a noticeable span of time between the initial page
-         * load and the completion of the Select2 initialization, these styles
-         * are applied to the <select> element to keep it from flashing into
-         * existence in a jarring way.
-         *
-         * If there is only one row of buttons in the control then this will
-         * have the effect of the selections disappearing briefly.
-         *
-         * Unfortunately, if there is more than one row of buttons, then the
-         * control will obviously shrink in size until Select2 can create the
-         * replacement control.
-         */
+        // After Select2 initializes, multi-select `<select>` elements will be
+        // visually hidden in favor of the replacement that Select2 manages.
+        // Since there is a noticeable span of time between the initial page
+        // load and the completion of the Select2 initialization, these styles
+        // are applied to the `<select>` element to keep it from flashing into
+        // existence in a jarring way.
+        //
+        // If there is only one row of buttons in the control then this will
+        // have the effect of the selections disappearing briefly.
+        //
+        // Unfortunately, if there is more than one row of buttons, then the
+        // control will obviously shrink in size until Select2 can create the
+        // replacement control.
+
         select[multiple]:not(.select2-hidden-accessible) {
 
             min-height:     $control-height;
@@ -208,12 +207,11 @@ $control-height:         2.25rem;
             overflow:       hidden;
             pointer-events: none;
 
-            /**
-             * On Chrome with 500 search results, it takes quite a while to get
-             * to the point where Select2 creates its replacements for the
-             * native <select> elements.  This is required so that the original
-             * is obscured until that point.
-             */
+            // On Chrome with 500 search results, it takes quite a while to get
+            // to the point where Select2 creates its replacements for the
+            // native `<select>` elements.  This is required so that the
+            // original is obscured until that point.
+
             option {
 
                 width:       inherit;
@@ -443,7 +441,7 @@ $control-height:         2.25rem;
         // @see LayoutHelper::SearchBar#search_input_select
         .search-input-select {
 
-            font-size: large;
+            font-size:          large;
 
             @media #{$not-narrow-screen} {
                 height:       1.75rem;
@@ -453,13 +451,13 @@ $control-height:         2.25rem;
 
             // noinspection CssReplaceWithShorthandSafely
             @media #{$narrow-screen} {
-                flex:         1 1 auto;
-                height:       2rem;
-                max-width:    80vw;
-                margin:       0;
-                margin-right: 0.5rem;
-                font-weight:  bold;
-                color:        #555;
+                flex:           1 1 auto;
+                height:         2rem;
+                max-width:      80vw;
+                margin:         0;
+                margin-right:   0.5rem;
+                font-weight:    bold;
+                color:          #555;
             }
 
             option {
@@ -475,9 +473,9 @@ $control-height:         2.25rem;
 
         .search-bar {
 
-            display:          flex;
-            flex-wrap:        nowrap;
-            flex:             1 1 auto;
+            display:       flex;
+            flex-wrap:     nowrap;
+            flex:          1 1 auto;
 
             @media #{$wide-screen} {
                 margin-right: calc(2 * #{$gap-x});
@@ -488,8 +486,8 @@ $control-height:         2.25rem;
             }
 
             @media #{$narrow-screen} {
-                max-width:    80vw;
-                margin:       calc(2 * #{$gap-y}) 0;
+                max-width: 80vw;
+                margin:    calc(2 * #{$gap-y}) 0;
             }
         }
     }
@@ -629,13 +627,13 @@ $control-height:         2.25rem;
 .layout-section.search.filters.enclosure,
 .layout-section.search.filters > .enclosure {
 
-    display:         grid;
-    padding-bottom:  3vh;
-    justify-content: space-between;
+    display:                    grid;
+    padding-bottom:             3vh;
+    justify-content:            space-between;
 
     @media #{$wide-screen} {
-        grid-template-columns: [container] 1fr [controls] auto;
-        column-gap:            1rem;
+        grid-template-columns:  [container] 1fr [controls] auto;
+        column-gap:             1rem;
     }
 
     @media #{$medium-width} {
@@ -644,8 +642,8 @@ $control-height:         2.25rem;
     }
 
     @media #{$narrow-screen} {
-        grid-template-columns: 1fr;
-        overflow-y:            hidden;
+        grid-template-columns:  1fr;
+        overflow-y:             hidden;
     }
 
     //=========================================================================

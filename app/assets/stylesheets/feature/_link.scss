@@ -98,11 +98,11 @@ ul.page-actions {
         list-style-position: inside;
 
         @media #{$not-narrow-screen} {
-            margin-top: 0.5rem;
+            margin-top:      0.5rem;
         }
 
         @media #{$narrow-screen} {
-            margin-top: 0.75rem;
+            margin-top:      0.75rem;
         }
 
         .control {

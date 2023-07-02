@@ -31,7 +31,7 @@ module Record::Searchable
   #
   # @return [Symbol, nil]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This has to be a column with unique values for every record which can be
   # ordered (that is, #minimum_id and #maximum_id have to be non-nil).
   #
@@ -267,7 +267,7 @@ module Record::Searchable
     id_key  = id_opt[:id_key]  ||= id_column
     sid_key = id_opt[:sid_key] ||= sid_column
 
-    # == Record specifiers
+    # === Record specifiers
     ids  = id_key  ? Array.wrap(opt.delete(id_key))  : []
     sids = sid_key ? Array.wrap(opt.delete(sid_key)) : []
     if items.present?
@@ -285,7 +285,7 @@ module Record::Searchable
       opt[sid_key] = sids
     end
 
-    # == Sort order
+    # === Sort order
     # Avoid applying a sort order if identifiers were specified or if
     # opt[:sort] was explicitly *nil* or *false*. Permit :asc as shorthand for
     # the default sort order ascending; :desc as shorthand for the default sort
@@ -303,7 +303,7 @@ module Record::Searchable
       Log.info { "#{meth}: no default sort" } unless sort
     end
 
-    # == Filter by user
+    # === Filter by user
     user_opt = opt.extract!(:user, :user_id)
     if user_column && user_opt.present?
       users = user_opt.values.flatten.map { |u| User.id_value(u) }.uniq
@@ -311,11 +311,11 @@ module Record::Searchable
       terms << sql_terms(user_column => users, join: :or)
     end
 
-    # == Limit by state
+    # === Limit by state
     state_opt = state_column && opt.extract!(state_column)
     terms << sql_terms(state_opt, join: :or) if state_opt.present?
 
-    # == Update time lower bound
+    # === Update time lower bound
     exclusive, inclusive = [opt.delete(:after), opt.delete(:start_date)]
     lower = exclusive || inclusive
     day, month, year = day_string(lower)
@@ -327,7 +327,7 @@ module Record::Searchable
       terms << "updated_at #{on_or_after} '#{lower}'::date"
     end
 
-    # == Update time upper bound
+    # === Update time upper bound
     exclusive, inclusive = [opt.delete(:before), opt.delete(:end_date)]
     upper = exclusive || inclusive
     day, month, year = day_string(upper)
@@ -339,7 +339,7 @@ module Record::Searchable
       terms << "updated_at #{on_or_before} '#{upper}'::date"
     end
 
-    # == Record limit/offset
+    # === Record limit/offset
     limit  = positive(opt.delete(:limit))
     offset = positive(opt.delete(:offset))
     if offset && pagination_column
@@ -348,7 +348,7 @@ module Record::Searchable
       Log.warn { "#{meth}: pagination not supported" }
     end
 
-    # == Generate the relation
+    # === Generate the relation
     query = sql_terms(opt, *terms, join: :and)
     where(query).tap do |result|
       result.order!(sort)  if sort.present?

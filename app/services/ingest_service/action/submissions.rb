@@ -18,7 +18,7 @@ module IngestService::Action::Submissions
 
   public
 
-  # == PUT /records
+  # === PUT /records
   #
   # Inserts or updates metadata records in the EMMA Unified Index.
   #
@@ -35,7 +35,7 @@ module IngestService::Action::Submissions
   # @return [Ingest::Message::Response]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload put_records(list, **opt)
@@ -46,7 +46,7 @@ module IngestService::Action::Submissions
   #   @param [Array<Ingest::Record::IngestionRecord, Model, Hash>] records
   #   @param [Hash] opt
   #
-  # == HTTP response codes
+  # === HTTP response codes
   #
   # 202 Accepted        Items accepted for update.
   # 207 Multi-Status    Some items inserted or updated.
@@ -67,7 +67,7 @@ module IngestService::Action::Submissions
       }
     end
 
-  # == POST /recordDeletes
+  # === POST /recordDeletes
   #
   # Deletes one or more metadataRecords from the search index. Records are
   # uniquely identified by the emma_repository, emma_repositoryRecordId,
@@ -81,7 +81,7 @@ module IngestService::Action::Submissions
   # @return [Ingest::Message::Response]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload delete_records(list, **opt)
@@ -113,7 +113,7 @@ module IngestService::Action::Submissions
       }
     end
 
-  # == POST /recordGets
+  # === POST /recordGets
   #
   # Retrieves one or more metadataRecords from the search index. Records are
   # uniquely identified by the emma_repository, emma_repositoryRecordId,
@@ -127,7 +127,7 @@ module IngestService::Action::Submissions
   # @return [Search::Message::SearchRecordList]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload get_records(list, **opt)
@@ -175,7 +175,7 @@ module IngestService::Action::Submissions
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Clears and/or sets @exception as a side-effect.
   #
   def api_send(verb, endpoint, body, **opt)
@@ -199,7 +199,7 @@ module IngestService::Action::Submissions
   # @return [Array<Ingest::Record::IngestionRecord>]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload record_list(list)
@@ -233,7 +233,7 @@ module IngestService::Action::Submissions
   # @return [Array<Ingest::Record::IdentifierRecord>]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload identifier_list(list)
@@ -282,7 +282,7 @@ module IngestService::Action::Submissions
   #
   # @return [Array<Ingest::Record::IdentifierRecord>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If the only piece of information available is the repository ID (and since
   # the repository is implicitly "emma"), this method will return with records
   # for each possible variation.  E.g. for item == "u5eed3496l10", will return

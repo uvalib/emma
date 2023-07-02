@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @see file:app/views/home/**
 #
-# == Usage Notes
+# === Usage Notes
 # The endpoints implemented by this controller do not require authentication of
 # the requester because the methods/views react according to the identity
 # associated with the current session.
@@ -54,14 +54,14 @@ class HomeController < ApplicationController
 
   public
 
-  # == GET /home
+  # === GET /home
   #
   # The main application page.
   #
   # @see #root_path                   Route helper
   # @see #home_path                   Route helper
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # There is no app/views/home/main.html.erb; this method renders the user
   # dashboard for an authenticated session or the welcome screen otherwise.
   #
@@ -74,7 +74,7 @@ class HomeController < ApplicationController
     end
   end
 
-  # == GET /home/welcome
+  # === GET /home/welcome
   #
   # The main application page for anonymous users.
   #
@@ -85,7 +85,7 @@ class HomeController < ApplicationController
     __debug_route
   end
 
-  # == GET /home/dashboard
+  # === GET /home/dashboard
   #
   # The main application page for authenticated users.
   #

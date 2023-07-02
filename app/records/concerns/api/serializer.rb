@@ -97,7 +97,7 @@ class Api::Serializer < ::Representable::Decorator
   #
   # @return [String]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This method must be overridden by the derived class to pass in :method.
   #
   #--
@@ -136,7 +136,7 @@ class Api::Serializer < ::Representable::Decorator
   # @return [Api::Record]
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The derived class must override this to pass in :method via the arguments
   # to `super`.
   #
@@ -180,7 +180,7 @@ class Api::Serializer < ::Representable::Decorator
   # @return [String]
   # @return [nil]                 If *data* is neither a String nor a Hash.
   #
-  # == Usage Notes
+  # === Usage Notes
   # This method will not be invoked (and @source_data will be *nil*) for an
   # instance where #error? is *true*.
   #

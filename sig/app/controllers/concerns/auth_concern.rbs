@@ -39,7 +39,7 @@ module AuthConcern
   #
   # @return [String]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This does not use Devise::Controllers::StoreLocation#store_location_for
   # to avoid the potential of overwhelming session store by copying
   # session['app.current_path'] into session['user_return_to']. This seems to

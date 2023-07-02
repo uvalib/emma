@@ -19,7 +19,7 @@ module OmniAuth
     #
     # @see https://github.com/omniauth/omniauth-oauth2
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # The base implementation of #uid, #info, #credentials, and #extra and
     # their use of associated blocks within the class definition seem to be
     # problematic used in conjunction with retrieving account information from
@@ -195,7 +195,7 @@ module OmniAuth
       #
       # @return [Hash]
       #
-      # == Implementation Notes
+      # === Implementation Notes
       # NOTE: Needs to relate to:
       # @see BookshareService::UserAccount#get_user_identity
       #
@@ -447,7 +447,7 @@ module OmniAuth
       # @return [::OAuth2::AccessToken, nil]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload synthetic_access_token(atoken)
@@ -487,7 +487,7 @@ module OmniAuth
       # @return [OmniAuth::AuthHash, nil]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload synthetic_auth_hash(uid)
@@ -574,7 +574,7 @@ module OmniAuth
       # @return [OmniAuth::AuthHash, nil]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload synthetic_auth_hash(uid, token = nil)
@@ -626,7 +626,7 @@ module OmniAuth
       #
       # @return [Hash{String=>Hash}]
       #
-      # == Usage Notes
+      # === Usage Notes
       # Because the logic is only performed once, direct changes to the User
       # table will not be reflected here, however changes made indirectly via
       # #stored_auth_update and/or #stored_auth_update_user will change both

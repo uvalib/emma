@@ -255,7 +255,7 @@ module ParamsHelper
   # @return [Array<(nil,nil)>]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload ctrlr_action_to_names

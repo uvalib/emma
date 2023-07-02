@@ -227,7 +227,7 @@ module Serializable
     # @param [Symbol, nil] mode
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload serializer

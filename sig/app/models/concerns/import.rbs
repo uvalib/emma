@@ -16,7 +16,7 @@ module Import
   #
   # @return [Hash]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The caller should take care to ensure that *fields* only contains import
   # fields; if database attributes, or :file_data/:emma_data fields appear here
   # they will be treated as import fields to which the default transformation

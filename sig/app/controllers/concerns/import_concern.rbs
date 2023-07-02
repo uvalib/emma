@@ -20,7 +20,7 @@ module ImportConcern
   # @return [Array<Hash{Symbol=>*}>]
   # @return [nil]                     If both *src* and *data* are missing.
   #
-  # == Usage Notes
+  # === Usage Notes
   # If the source is in the request body and not given by either `params[:src]`
   # or `params[:data]` then `params[:type]` must be present to indicate the
   # media type of the source being supplied via `request.body` (or `req.body`).

@@ -61,13 +61,13 @@ appSetup(MODULE, function() {
 
     /**
      * Return an anchor name based on the provided full or partial URL as long
-     * as it represents an in-page transition from the current location.
+     * as it represents an in-page transition from the current location. <p/>
      *
-     * **Usage Notes**
+     * **Usage Notes** <p/>
      * Local URLs are assumedly to be relative.
      *
-     * @param {Event|Location|string} [arg]     Def.: `window.location.hash`.
-     * @param {boolean}               [bare]    Prefix with '#' unless *true*
+     * @param {Event|Location|string} [arg]    Def.: `window.location.hash`.
+     * @param {boolean}               [bare]   Prefix with `#` unless **true**.
      *
      * @returns {string}
      */
@@ -114,13 +114,13 @@ appSetup(MODULE, function() {
 
     /**
      * When the browser moves to a named location on the page, focus on the
-     * element there (if it is focusable).
+     * element there (if it is focusable). <p/>
      *
      * This is done automatically in Webkit-based browsers (Chrome and even
      * MS Edge and MS IE 11) but not in Firefox (61.0.2).  When this function
      * is assigned to `//window.onhashchange` it forces the behavior in Firefox
      * while essentially having no effect on browsers where the anchor target
-     * already has the focus.
+     * already has the focus. <p/>
      *
      * NOTE: The combination of Turbolinks and Firefox is still problematic.
      * Because I couldn't get a "hashchange" event to fire in a way that
@@ -140,14 +140,17 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Per https://github.com/turbolinks/turbolinks/issues/75 in-page anchor
-     * links require special handling in order to avoid extraneous Turbolinks
-     * activity when all that is needed is to scroll to the anchor location.
+     * Per [Turbolinks](https://github.com/turbolinks/turbolinks/issues/75),
+     * in-page anchor links require special handling in order to avoid
+     * extraneous Turbolinks activity when all that is needed is to scroll to
+     * the anchor location. <p/>
      *
      * In addition, this triggers a delayed action to focus on the anchor; this
      * is needed for Firefox but should be harmless for other browser families.
      *
      * @param {Event} event
+     *
+     * @see https://github.com/turbolinks/turbolinks/issues/75
      */
     function checkInPageAnchor(event) {
         const func   = 'checkInPageAnchor';
@@ -168,6 +171,7 @@ appSetup(MODULE, function() {
 
     /**
      * Monitor the visibility of the browser tab containing the current page.
+     * <p/>
      *
      * If the browser in minimized or a different browser tab gets focus then
      * the page is not visible.

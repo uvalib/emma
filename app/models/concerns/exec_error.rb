@@ -44,7 +44,7 @@ class ExecError < RuntimeError
   # @param [Array<Exception, Hash, String, nil>] args
   # @param [Hash]                                opt
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Each element of @messages is duplicated in order to ensure that there are
   # no unexpected entanglements with the original message source(s).
   #

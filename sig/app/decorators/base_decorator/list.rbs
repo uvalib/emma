@@ -51,7 +51,7 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with BaseDecorator::Grid#grid_data_cell_render_pair
   #
   def render_field_value_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, **untyped opt) -> ActiveSupport::SafeBuffer
@@ -90,7 +90,7 @@ module BaseDecorator::List
   # @yieldparam [Hash]   o            Options for #html_div.
   # @yieldreturn [Array, ActiveSupport::SafeBuffer, nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #

@@ -36,6 +36,8 @@ AppDebug.file('shared/submit-modal', MODULE, DEBUG);
  * Despite its name, this class holds the bulk submission monitoring logic and
  * is only secondarily a modal that can be used to view the WebSocket responses
  * that underlie that logic.
+ *
+ * @extends ModalDialog
  */
 export class SubmitModal extends ModalDialog {
 
@@ -396,9 +398,9 @@ export class SubmitModal extends ModalDialog {
      * Merge the show/hide hooks defined on the toggle button with the ones
      * provided by the modal instance.
      *
-     * @param {jQuery}                                        $toggle
-     * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
-     * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
+     * @param {jQuery}                 $toggle
+     * @param {CallbackChainFunctions} [show_hooks]
+     * @param {CallbackChainFunctions} [hide_hooks]
      *
      * @protected
      */
@@ -447,7 +449,7 @@ export class SubmitModal extends ModalDialog {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onShowModalHook
      */
@@ -464,7 +466,7 @@ export class SubmitModal extends ModalDialog {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onHideModalHook
      */
@@ -624,7 +626,7 @@ export class SubmitModal extends ModalDialog {
     // ========================================================================
 
     /**
-     * The <h1> near the top of the panel.
+     * The `<h1>` near the top of the panel.
      *
      * @returns {jQuery}
      */
@@ -677,8 +679,7 @@ export class SubmitModal extends ModalDialog {
      * @param {SubmitResponseSubclass} message
      */
     updateStatusDisplay(message) {
-        const func  = 'updateStatusDisplay';
-        this._debug(`${func}:`, message);
+        const func  = 'updateStatusDisplay'; this._debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
 
         let notice;

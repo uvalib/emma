@@ -343,7 +343,7 @@ module FileFormat
   # @return [Array<String>, String]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload transform(meth, value)

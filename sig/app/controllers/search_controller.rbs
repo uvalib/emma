@@ -33,7 +33,7 @@ class SearchController < ApplicationController
   #
   attr_reader item: Search::Message::SearchRecord | nil
 
-  # == GET /search
+  # === GET /search
   #
   # Perform a search through the EMMA Unified Search API.
   #
@@ -42,7 +42,7 @@ class SearchController < ApplicationController
   #
   def index: () -> void
 
-  # == GET /search/:id
+  # === GET /search/:id
   #
   # Display details of an existing catalog title.
   #
@@ -54,7 +54,7 @@ class SearchController < ApplicationController
   #
   def show: () -> void
 
-  # == GET /search/advanced
+  # === GET /search/advanced
   #
   # Present the advanced search form.
   #
@@ -62,8 +62,8 @@ class SearchController < ApplicationController
   #
   def advanced: () -> void
 
-  # == GET /search/api?...
-  # == GET /search/direct?...
+  # === GET /search/api?...
+  # === GET /search/direct?...
   #
   # Perform a search directly through the EMMA Unified Search API.
   #
@@ -78,7 +78,7 @@ class SearchController < ApplicationController
   #
   def direct: () -> void
 
-  # == GET /search/validate?identifier=idval1[,idval2[,...]]
+  # === GET /search/validate?identifier=idval1[,idval2[,...]]
   #
   # Indicate whether the supplied value is a valid field value.
   #
@@ -88,13 +88,13 @@ class SearchController < ApplicationController
   #
   def validate: () -> void
 
-  # == GET /search/image?url=...
+  # === GET /search/image?url=...
   #
   # Get a thumbnail or cover image.
   #
   # @see file:app/assets/javascripts/feature/images.js *urlProxyPath*
   #
-  # == Usage Notes
+  # === Usage Notes
   # This provides JavaScript with a way of asynchronously getting non-local
   # images without having to contend with CSRF.
   #

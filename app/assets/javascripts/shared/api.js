@@ -17,6 +17,8 @@ AppDebug.file('shared/api');
 
 /**
  * A generic API interface.
+ *
+ * @extends BaseClass
  */
 export class Api extends BaseClass {
 

@@ -118,7 +118,7 @@ module OAuth2
     # @yieldparam [Faraday::Request] req  The Faraday request.
     # @yieldreturn [void]                 The block accesses *req* directly.
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # The original code had a problem in setting :logger here (repeatedly);
     # this has been moved to #connection so that it happens only once.
     #

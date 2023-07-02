@@ -282,7 +282,7 @@ module FileFormat::Xml
     # @see #get_properties
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload __debug_parse(element)

@@ -207,7 +207,7 @@ en:
               css:        'busy'
               label:      '[BUSY]'
 
-            # == Pre-submit conditions
+            # === Pre-submit conditions
 
             unsaved:
               css:        'unsaved'
@@ -225,7 +225,7 @@ en:
               css:        'blocked'
               label:      'BLOCKED'
 
-            # == Post-submit conditions
+            # === Post-submit conditions
 
             ok:
               css:        'succeeded'

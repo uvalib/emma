@@ -55,9 +55,10 @@
 
     .key-value-pair {
 
-        display:               grid;
+        display: grid;
+        gap:     0.375rem;
+
         grid-template-columns: min-content 1fr;
-        gap:                   0.375rem;
     }
 
     .key {

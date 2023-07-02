@@ -48,10 +48,15 @@ AppDebug.file('shared/field');
  * @see "ManifestItemDecorator::SharedGenericMethods#grid_head_cell"
  */
 
+// ============================================================================
+// Class Properties
+// ============================================================================
+
 /**
  * Data type information for data cells of a given column as defined by the
  * attributes attached to that column's header.
  *
+ * @extends BaseClass
  * @extends FieldProperties
  */
 export class Properties extends BaseClass {
@@ -123,17 +128,17 @@ export class Properties extends BaseClass {
             this._value = this._extractFromObject(arg);
 
         } else if (arg) {
-            this._error(`unexpected arg =`, arg);
+            this._error('unexpected arg =', arg);
         }
         this._value ||= {};
     }
 
     // ========================================================================
-    // Internal methods
+    // Methods - internal
     // ========================================================================
 
     /**
-     * Get values from an element's 'data-*' attributes.
+     * Get values from an element's `data-*` attributes.
      *
      * @param {NamedNodeMap} arg
      *
@@ -232,6 +237,11 @@ export class Properties extends BaseClass {
 // Class Value
 // ============================================================================
 
+/**
+ * Value
+ *
+ * @extends BaseClass
+ */
 export class Value extends BaseClass {
 
     static CLASS_NAME = 'Value';
@@ -328,7 +338,7 @@ export class Value extends BaseClass {
     }
 
     // ========================================================================
-    // Internal methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -406,7 +416,7 @@ export class Value extends BaseClass {
     }
 
     // ========================================================================
-    // Internal methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -471,7 +481,7 @@ export class Value extends BaseClass {
      *
      * @param {*}             value
      * @param {string}        [type]
-     * @param {string|RegExp} [separator]   Only applies for type === 'array'.
+     * @param {string|RegExp} [separator]   Only applies for type === "array".
      *
      * @returns {Array}
      * @protected
@@ -574,7 +584,7 @@ export class Value extends BaseClass {
     set errorTable(arg) { this._error = { ...arg } }
 
     // ========================================================================
-    // Methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -605,7 +615,7 @@ export class Value extends BaseClass {
      * Indicate whether the instance has the same value.
      *
      * @param {*}       value         A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If *true*, array order doesn't matter.
+     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
      *
      * @returns {boolean}             They represent the same value.
      */
@@ -617,7 +627,7 @@ export class Value extends BaseClass {
      * Indicate whether the instance has a different value.
      *
      * @param {*}       value         A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If *true*, array order doesn't matter.
+     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
      *
      * @returns {boolean}             They represent different values.
      */
@@ -628,7 +638,7 @@ export class Value extends BaseClass {
     /**
      * Return value as a String.
      *
-     * @param {string} [separator]    Only applies for type === 'array'.
+     * @param {string} [separator]    Only applies for type === "array".
      *
      * @returns {string}
      */
@@ -692,18 +702,18 @@ export class Value extends BaseClass {
     }
 
     /**
-     * Return a representation of the value for display.
+     * Return a representation of the value for display. <p/>
+     *
+     * The caller must determine how to handle the result.
+     * - For type === "array", the result is always HTML.
+     * - Otherwise the result is not HTML-safe without *encode* === **true**.
      *
      * @param {boolean} [encode]    Ensure the result is HTML.
      *
      * @returns {string|string[]}
      *
-     * @note The caller must determine how to handle the result.
-     *  For type = 'array', the result is always HTML.
-     *  Otherwise the result is not HTML-safe without *encode* = true.
-     *
      * @overload forDisplay()
-     *  Return either HTML or plain text per `this.type`.
+     *  Return either HTML or plain text per {@link type}.
      *  @returns {string}
      *
      * @overload forDisplay(true)
@@ -728,7 +738,7 @@ export class Value extends BaseClass {
     /**
      * Return a representation of the value for initializing an input.
      *
-     * @param {string} [separator]  Only for `this.type === 'array'`.
+     * @param {string} [separator]  Only for {@link type} === 'array'.
      *
      * @returns {string}
      */
@@ -737,7 +747,7 @@ export class Value extends BaseClass {
     }
 
     // ========================================================================
-    // Internal methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -770,13 +780,13 @@ export class Value extends BaseClass {
     /**
      * Return the item if it is an instance or create one if not.
      *
-     * @param {*}      [arg]
+     * @param {*}      [item]
      * @param {string} [type]
      *
      * @returns {Value}
      */
-    static wrap(arg, type) {
-        return (arg instanceof this) ? arg : new this(arg, type);
+    static wrap(item, type) {
+        return (item instanceof this) ? item : new this(item, type);
     }
 
     /**
@@ -784,8 +794,8 @@ export class Value extends BaseClass {
      *
      * @param {*}       value1        A Value or convertible to a Value.
      * @param {*}       value2        A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If *true*, array order doesn't matter.
-     * @param {boolean} [value_only]  If *true*, blank strings and undefined
+     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     * @param {boolean} [value_only]  If **true**, blank strings and undefined
      *                                  are treated as the same (not applied
      *                                  to array elements or object values).
      *
@@ -800,8 +810,8 @@ export class Value extends BaseClass {
      *
      * @param {*}       value1        A Value or convertible to a Value.
      * @param {*}       value2        A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If *true*, array order doesn't matter.
-     * @param {boolean} [value_only]  If *true*, blank strings and undefined
+     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     * @param {boolean} [value_only]  If **true**, blank strings and undefined
      *                                  are treated as the same (not applied
      *                                  to array elements or object values).
      *
@@ -825,7 +835,7 @@ export class Value extends BaseClass {
      *
      * @param {array}   a1
      * @param {array}   a2
-     * @param {boolean} [any_order]   If *true*, array order doesn't matter.
+     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
      *
      * @returns {boolean}
      * @protected
@@ -841,8 +851,8 @@ export class Value extends BaseClass {
      *
      * @param {object}  o1
      * @param {object}  o2
-     * @param {boolean} [any_order]   If *true*, array order doesn't matter.
-     *                                If *false*, object keys must be in the
+     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     *                                If **false**, object keys must be in the
      *                                  same order.
      *
      * @returns {boolean}

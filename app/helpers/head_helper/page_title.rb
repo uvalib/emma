@@ -110,7 +110,7 @@ module HeadHelper::PageTitle
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Emit the '<title>' element with 'data-turbolinks-eval="false"' so that it
   # is not included in Turbolinks' determination of whether the contents of
   # '<head>' have changed.

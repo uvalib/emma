@@ -48,9 +48,9 @@ AppDebug.file('tool/bibliographic-lookup', MODULE, DEBUG);
 /**
  * Setup a page with interactive bibliographic lookup.
  *
- * @param {Selector}                                      base
- * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
- * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
+ * @param {Selector}               base
+ * @param {CallbackChainFunctions} [show_hooks]
+ * @param {CallbackChainFunctions} [hide_hooks]
  *
  * @returns {void}
  */
@@ -259,7 +259,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onShowModalHook
      */
@@ -282,7 +282,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onHideModalHook
      */
@@ -725,7 +725,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Enable commit button(s).
      *
-     * @param {boolean} [enable]      If *false*, disable.
+     * @param {boolean} [enable]      If **false**, disable.
      *
      * @returns {jQuery}              The commit button(s).
      */
@@ -740,7 +740,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Disable commit button(s).
      *
-     * @param {boolean} [disable]     If *false*, enable.
+     * @param {boolean} [disable]     If **false**, enable.
      *
      * @returns {jQuery}              The commit button(s).
      */
@@ -1019,12 +1019,12 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
     /**
      * Lock the associated field value from being updated by changing the
-     * selected entry.
+     * selected entry. <p/>
      *
      * (The field is not disabled, so it is still editable by the user.)
      *
      * @param {string|jQuery|HTMLElement} field
-     * @param {boolean}                   [locking] If *false*, unlock instead.
+     * @param {boolean}                   [locking] If **false** unlock instead
      */
     function lockFieldValue(field, locking) {
         _debug('lockFieldValue:', field, locking);
@@ -1076,7 +1076,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     }
 
     /**
-     * Add 'locked-out' to every field of an entry row according to the locked
+     * Add "locked-out" to every field of an entry row according to the locked
      * state of the related field.
      *
      * @param {Selector} entry
@@ -1184,7 +1184,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
     /**
      * The user selects a lookup result entry as the basis for the new field
-     * values for the originating submission entry.
+     * values for the originating submission entry. <p/>
      *
      * The event target is assumed to have an entry row as a parent.
      *
@@ -1218,7 +1218,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     }
 
     /**
-     * Accentuate all of the elements of the related entry.
+     * Accentuate all of the elements of the related entry. <p/>
      *
      * The event target is assumed to have an entry row as a parent.
      *
@@ -1231,7 +1231,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     }
 
     /**
-     * De-accentuate all of the elements of the related entry.
+     * De-accentuate all of the elements of the related entry. <p/>
      *
      * The event target is assumed to have an entry row as a parent.
      *
@@ -1438,7 +1438,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     }
 
     /**
-     * Remove all entries (not including the head and field values rows).
+     * Remove all entries (not including the head and field values rows). <p/>
      *
      * If $entries_list does not exist, this returns immediately.
      */
@@ -1528,7 +1528,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
     /**
      * Generate the row of controls which lock/unlock the contents of the
-     * associated field value.
+     * associated field value. <p/>
      *
      * Headings for the first two columns are displayed here rather than the
      * head row.
@@ -1796,7 +1796,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     }
 
     /**
-     * The <input> control for manual input.
+     * The `<input>` control for manual input.
      *
      * @returns {jQuery}
      */
@@ -1917,7 +1917,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     // ========================================================================
 
     /**
-     * The <h2> before the output display area.
+     * The `<h2>` before the output display area.
      *
      * @returns {jQuery}
      */

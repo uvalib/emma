@@ -166,7 +166,7 @@ class AccountDecorator
   #
   def role_prototype: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  # table_columns
+  # Table values associated with the current decorator.
   #
   # @param [Hash] opt
   #

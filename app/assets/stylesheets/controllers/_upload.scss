@@ -55,8 +55,9 @@ body.upload {
     // @see file:app/assets/javascripts/feature/model.js *onLookupComplete()*
     .flash-messages .notice {
 
-        display:               grid;
-        gap:                   0.25rem;
+        display: grid;
+        gap:     0.25rem;
+
         grid-template-columns: [type] max-content [list] 1fr;
 
         .type { } // TODO: ?

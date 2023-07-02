@@ -215,15 +215,15 @@ module BaseDecorator::Submission
   def monitor_output(css: '.monitor-output', **opt)
     opt.delete(:unique)
 
-    # == Successes element
+    # === Successes element
     successes = 'Submitted Items' # TODO: I18n
     successes = output_part(successes, css: 'success')
 
-    # == Failures element
+    # === Failures element
     failures = 'Submission Errors' # TODO: I18n
     failures = output_part(failures, css: 'failure')
 
-    # == Output display body
+    # === Output display body
     prepend_css!(opt, css)
     html_div(opt) do
       successes << failures
@@ -257,19 +257,19 @@ module BaseDecorator::Submission
   #
   def monitor_log(unique:, css: '.monitor-log', **opt)
 
-    # == Results element
+    # === Results element
     res = 'Messages' # TODO: I18n
     res = log_part(res, type: :results, unique: unique)
 
-    # == Errors element
+    # === Errors element
     err = 'Errors' # TODO: I18n
     err = log_part(err, type: :errors, unique: unique)
 
-    # == Diagnostics element
+    # === Diagnostics element
     dia = 'Diagnostics' # TODO: I18n
     dia = log_part(dia, type: :diagnostics, unique: unique)
 
-    # == Log display body
+    # === Log display body
     prepend_css!(opt, css)
     html_div(opt) do
       res << err << dia

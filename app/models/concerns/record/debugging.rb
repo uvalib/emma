@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Add debugging support.
 #
-# == Usage Notes
+# === Usage Notes
 # Must be included last so that #initialize can be overridden.
 #
 module Record::Debugging

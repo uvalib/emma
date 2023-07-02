@@ -18,7 +18,9 @@ AppDebug.file('shared/modal_hooks', MODULE, DEBUG);
 
 /**
  * Essentially a namespace for a set of methods for managing a dedicated
- * callback chain attached to a given modal toggle control.
+ * callback chain attached to a modal popup activation toggle control.
+ *
+ * @extends BaseClass
  */
 class ModalHooks extends BaseClass {
 
@@ -49,7 +51,7 @@ class ModalHooks extends BaseClass {
      * Initialize a chain of callback hooks.
      *
      * @param {Selector}                                           toggle
-     * @param {...(CallbackChainFunction|CallbackChainFunction[])} callbacks
+     * @param {...CallbackChainFunctions} callbacks
      *
      * @returns {CallbackChain}
      */
@@ -65,7 +67,7 @@ class ModalHooks extends BaseClass {
      * Add callback(s) to the end of the chain.
      *
      * @param {Selector}                                           toggle
-     * @param {...(CallbackChainFunction|CallbackChainFunction[])} callbacks
+     * @param {...CallbackChainFunctions} callbacks
      *
      * @returns {CallbackChain}
      */
@@ -81,7 +83,7 @@ class ModalHooks extends BaseClass {
      * Add callback(s) to the start of the chain.
      *
      * @param {Selector}                                           toggle
-     * @param {...(CallbackChainFunction|CallbackChainFunction[])} callbacks
+     * @param {...CallbackChainFunctions} callbacks
      *
      * @returns {CallbackChain}
      */
@@ -123,8 +125,10 @@ class ModalHooks extends BaseClass {
 // ============================================================================
 
 /**
- * A set of methods for managing a callback chain attached to a given modal
- * toggle control which are invoked when the associated modal popup is opened.
+ * A set of methods for managing a callback chain for a modal activation toggle
+ *  control which are invoked when the associated modal popup is opened.
+ *
+ * @extends ModalHooks
  */
 export class ModalShowHooks extends ModalHooks {
 
@@ -138,8 +142,10 @@ export class ModalShowHooks extends ModalHooks {
 // ============================================================================
 
 /**
- * A set of methods for managing a callback chain attached to a given modal
- * toggle control which are invoked when the associated modal popup is closed.
+ * A set of methods for managing a callback chain for a modal activation toggle
+ * control which are invoked when the associated modal popup is closed.
+ *
+ * @extends ModalHooks
  */
 export class ModalHideHooks extends ModalHooks {
 

@@ -12,7 +12,7 @@ module Api::Shared::ResponseMethods
   #
   # @return [ExecReport]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Intended to be executed in the initializer.
   #
   def initialize_exec_report: (*(Faraday::Response | Exception | String |nil | Array[Faraday::Response|Exception|String|nil]) src) -> ExecReport

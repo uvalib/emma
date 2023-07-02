@@ -7,7 +7,7 @@ module LookupService::Crossref::Action::Journal
 
   include LookupService::Crossref::Common
 
-  # == GET https://api.crossref.org/journals/ISSN
+  # === GET https://api.crossref.org/journals/ISSN
   #
   # @param [String] issn
   # @param [Hash]   opt               Passed to #api.
@@ -18,7 +18,7 @@ module LookupService::Crossref::Action::Journal
   #
   def get_journal: (String issn, **untyped opt) -> Lookup::Crossref::Message::Journal
 
-  # == GET https://api.crossref.org/journals?query=...
+  # === GET https://api.crossref.org/journals?query=...
   #
   # @param [Hash] opt
   #

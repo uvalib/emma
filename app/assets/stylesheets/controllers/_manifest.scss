@@ -99,10 +99,10 @@ body.manifest.edit:not(.select) {
         // - Replacing part of the left margin with padding is required to keep
         //   the Save button box shadow from being clipped when it is hovered.
 
-        $half-left:  calc(#{$page-padding-x} / 2);
+        $half-left: calc(#{$page-padding-x} / 2);
 
-        margin-left: $half-left;
-        overflow:    hidden;
+        margin-left:       $half-left;
+        overflow:          hidden;
 
         @media #{$not-narrow-screen} {
             padding-left:  $half-left;
@@ -153,13 +153,14 @@ body.manifest.edit:not(.select) {
 
         .line-editor {
 
-            display:               inline-grid;
+            display:        inline-grid;
+            gap:            $hdg-gap;
+            font-size:      $h1-font-size;
+            background:     ghostwhite;
+            box-shadow:     0 0 0 0.75rem ghostwhite;
+            border-radius:  1px;
+
             grid-template-columns: 1fr min-content min-content;
-            gap:                   $hdg-gap;
-            font-size:             $h1-font-size;
-            background:            ghostwhite;
-            box-shadow:            0 0 0 0.75rem ghostwhite;
-            border-radius:         1px;
 
             //=================================================================
             // Components
@@ -288,16 +289,16 @@ body.manifest.edit:not(.select) {
 
             &.import-button {
 
-                display:         flex;
-                flex-direction:  row;
-                justify-content: center;
-                align-items:     center;
-                position:        relative;
-                overflow:        clip;
+                display:            flex;
+                flex-direction:     row;
+                justify-content:    center;
+                align-items:        center;
+                position:           relative;
+                overflow:           clip;
 
                 @media #{$wide-screen} {
-                    padding-left:  0;
-                    padding-right: 0;
+                    padding-left:   0;
+                    padding-right:  0;
                 }
 
                 // The actual input positioned so that the transparent file
@@ -395,8 +396,9 @@ body.manifest.edit:not(.select) {
 
         .text {
 
-            display:               grid;
-            gap:                   0.25rem;
+            display: grid;
+            gap:     0.25rem;
+
             grid-template-columns: [type] max-content [list] 1fr;
 
             .type { } // TODO: ?
@@ -471,23 +473,23 @@ body.manifest.remit:not(.select) {
 
     .submission-counts {
 
-        display:        grid;
-        grid-auto-flow: column;
-        align-content:  center;
-        gap:            0.5rem;
-        min-height:     2rem;
-        border:         double;
-        background:     ghostwhite;
-        flex:           1 1 auto;
+        display:                grid;
+        grid-auto-flow:         column;
+        align-content:          center;
+        gap:                    0.5rem;
+        min-height:             2rem;
+        border:                 double;
+        background:             ghostwhite;
+        flex:                   1 1 auto;
 
         @media #{$wide-screen} {
-            padding:           0.25rem 1.25rem;
-            justify-content:   space-between;
+            padding:            0.25rem 1.25rem;
+            justify-content:    space-between;
         }
 
         @media #{$not-wide-screen} {
-            padding:           0.25rem;
-            grid-auto-columns: 1fr;
+            padding:            0.25rem;
+            grid-auto-columns:  1fr;
         }
 
         //=====================================================================
@@ -501,9 +503,9 @@ body.manifest.remit:not(.select) {
         //.failed.count,
         .count {
 
-            display:     flex;
-            align-items: center;
-            gap:         0.25rem;
+            display:            flex;
+            align-items:        center;
+            gap:                0.25rem;
 
             @media #{$wide-screen} {
                 flex-direction: row;
@@ -526,12 +528,12 @@ body.manifest.remit:not(.select) {
 
             .value {
 
-                font-weight: bold;
-                font-size:   large;
-                color:       $uva-text-blue;
+                font-weight:    bold;
+                font-size:      large;
+                color:          $uva-text-blue;
 
                 @media #{$wide-screen} {
-                    min-width: 3vw;
+                    min-width:  3vw;
                 }
             }
         }
@@ -679,7 +681,6 @@ body.manifest.remit:not(.select) {
             max-height: 67vh;
             overflow:   auto;
 
-            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior: contain;
         }
 
@@ -742,14 +743,14 @@ body.manifest.remit:not(.select) {
 
             > * {
 
-                font-weight: bold;
+                font-weight:    bold;
 
                 @media #{$wide-screen} {
                     padding: $col-pad;
                 }
 
                 @media #{$not-wide-screen} {
-                    padding: $col-pad * 0.5;
+                    padding:    $col-pad * 0.5;
                 }
             }
 
@@ -759,7 +760,7 @@ body.manifest.remit:not(.select) {
                 flex-direction: column;
 
                 @media #{$not-wide-screen} {
-                    padding-left: 0;
+                    padding-left:   0;
                 }
 
                 .selection {
@@ -967,12 +968,10 @@ body.manifest.remit:not(.select) {
 
                     .content {
 
-                        display:     grid;
-                        padding-top: 0.375rem;
-                        margin-top:  0.375rem;
-                        border-top:  1px solid black;
-
-                        grid-template-columns: auto 1fr;
+                        display:         grid;
+                        padding-top:     0.375rem;
+                        margin-top:      0.375rem;
+                        border-top:      1px solid black;
 
                         @media #{$wide-screen} {
                             gap:         0.25rem 1rem;
@@ -983,6 +982,8 @@ body.manifest.remit:not(.select) {
                             gap:         0.125rem 0.5rem;
                             margin-left: 0;
                         }
+
+                        grid-template-columns: auto 1fr;
 
                         .label,
                         .value {
@@ -1073,12 +1074,12 @@ body.manifest.remit:not(.select) {
 
                         .name {
 
-                            overflow:      hidden;
-                            text-overflow: ellipsis;
-                            border-top:    1px solid;
+                            overflow:           hidden;
+                            text-overflow:      ellipsis;
+                            border-top:         1px solid;
 
                             @media #{$wide-screen} {
-                                margin-left: $status-indent;
+                                margin-left:    $status-indent;
                             }
                         }
                     }
@@ -1090,19 +1091,19 @@ body.manifest.remit:not(.select) {
 
                     @include button.basic;
 
-                    margin:       0;
-                    font-size:    smaller;
-                    font-weight:  normal;
-                    text-align:   center;
-                    color:        $fg-dark;
-                    background:   $bg-clear;
-                    flex:         1 1 auto;
+                    margin:         0;
+                    font-size:      smaller;
+                    font-weight:    normal;
+                    text-align:     center;
+                    color:          $fg-dark;
+                    background:     $bg-clear;
+                    flex:           1 1 auto;
 
                     @media #{$narrow-screen} {
-                        position: absolute;
-                        top:      $col-pad;
-                        right:    $col-pad;
-                        padding:  1px 4px;
+                        position:   absolute;
+                        top:        $col-pad;
+                        right:      $col-pad;
+                        padding:    1px 4px;
                     }
 
                     &:hover {
@@ -1121,26 +1122,26 @@ body.manifest.remit:not(.select) {
 // @see BaseDecorator::Submission#monitor_control
 .modal-popup.monitor-popup {
 
-    max-width: calc(100% - 1.25rem);
+    max-width:      calc(100% - 1.25rem);
 
     @media #{$wide-screen} {
-        position: fixed;
-        top:      2.5vh;
-        bottom:   2.5vh;
-        left:     1.25vw;
-        right:    6.25vw;
+        position:   fixed;
+        top:        2.5vh;
+        bottom:     2.5vh;
+        left:       1.25vw;
+        right:      6.25vw;
     }
 
     @media #{$medium-width} {
-        position: fixed;
-        top:      2rem;
-        bottom:   2rem;
-        left:     2rem;
-        right:    2rem;
+        position:   fixed;
+        top:        2rem;
+        bottom:     2rem;
+        left:       2rem;
+        right:      2rem;
     }
 
     @media #{$narrow-screen} {
-        padding: 0;
+        padding:    0;
     }
 
     //=========================================================================
@@ -1168,13 +1169,12 @@ body.manifest.remit:not(.select) {
         font-size:      medium;
         flex:           1 1 0;
 
-        // noinspection CssBrowserCompatibilityForProperties
-        overscroll-behavior: contain;
-
         @media #{$not-wide-screen} {
             max-width:  inherit;
             overflow-x: auto;
         }
+
+        overscroll-behavior: contain;
 
         > * {
             max-width: inherit;
@@ -1210,13 +1210,13 @@ body.manifest.remit:not(.select) {
 
         .monitor-output {
 
-            display:               grid;
-            grid-template-columns: [success] 1fr [failure] 1fr;
-            overflow:              auto;
-            flex:                  1 0 auto;
+            display:  grid;
+            overflow: auto;
+            flex:     1 0 auto;
 
-            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior:   contain;
+
+            grid-template-columns: [success] 1fr [failure] 1fr;
 
             .success,
             .failure {
@@ -1263,7 +1263,6 @@ body.manifest.remit:not(.select) {
             .value {
                 resize: vertical;
 
-                // noinspection CssBrowserCompatibilityForProperties
                 overscroll-behavior: contain;
             }
         }

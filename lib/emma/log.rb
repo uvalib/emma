@@ -59,7 +59,7 @@ module Emma::Log
   # @yield To supply additional parts to the log entry.
   # @yieldreturn [String, Array<String>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This method always returns *nil* so that it can be used by itself as the
   # final statement of a rescue block.
   #
@@ -177,7 +177,7 @@ module Emma::Log
   #
   # @return [Concurrent::Map]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with ActiveSupport::LoggerThreadSafeLevel#local_levels
   #
   def self.local_levels
@@ -188,7 +188,7 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with ActiveSupport::LoggerThreadSafeLevel#local_log_id
   #
   def self.local_log_id
@@ -199,7 +199,7 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level
   #
   def self.local_level
@@ -213,7 +213,7 @@ module Emma::Log
   # @return [Integer]
   # @return [nil]                   If *value* is *nil*.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level=
   #
   def self.local_level=(value)
@@ -228,7 +228,7 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with ActiveSupport::LoggerThreadSafeLevel#level
   #
   def self.level

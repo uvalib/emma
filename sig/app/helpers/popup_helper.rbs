@@ -55,7 +55,7 @@ module PopupHelper
   # @private
   POPUP_TOGGLE_OPT: symArray
 
-  # Create a popup toggle control.
+  # Create a modal popup activation toggle control.
   #
   # @param [Hash, String, nil] button
   # @param [String, nil]       text

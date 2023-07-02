@@ -6,11 +6,11 @@
 
 __loading_begin(__FILE__)
 
-require "rake"
+require 'rake'
 
 class SessionCleanupJob < ApplicationJob
   queue_as :background
-  require "rake"
+  require 'rake'
   Emma::Application.load_tasks
 
   def perform(*args, **opt)

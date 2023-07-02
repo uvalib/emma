@@ -41,7 +41,7 @@ module Record::Updatable
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload enum_methods(columns_and_values)
@@ -51,7 +51,7 @@ module Record::Updatable
     #   @param [Symbol, String]       column
     #   @param [Array<Symbol,String>] values
     #
-    # == Usage Notes
+    # === Usage Notes
     # This creates instance methods in the class which calls it.  E.g.:
     #
     #   `enum_methods command: %i[pause cancel]`

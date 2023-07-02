@@ -69,7 +69,7 @@ appSetup(MODULE, function() {
         });
 
         /**
-         * Create an <img> from the supplied data and insert in $element.
+         * Create an `<img>` from the supplied data and insert in $element.
          *
          * @param {object}         data
          * @param {string}         _status

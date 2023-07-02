@@ -55,7 +55,7 @@ class SearchCallController < ApplicationController
 
   public
 
-  # == GET /search_call?[expand=TRUE&like=PATTERN&field=MATCH&...]
+  # === GET /search_call?[expand=TRUE&like=PATTERN&field=MATCH&...]
   #
   # List searches.
   #
@@ -87,7 +87,7 @@ class SearchCallController < ApplicationController
     end
   end
 
-  # == GET /search_call/:id
+  # === GET /search_call/:id
   #
   # Display details of a search.
   #

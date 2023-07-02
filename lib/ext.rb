@@ -44,7 +44,7 @@ public
 # @return [void]
 #
 #--
-# == Variations
+# === Variations
 #++
 #
 # @overload override mod => mod2
@@ -65,7 +65,7 @@ public
 #   prepending an anonymous module.
 #   NOTE: This may not work in all situations.
 #
-# == Usage Notes
+# === Usage Notes
 # Within the block given, define new methods that *mod* will respond to and/or
 # redefine existing methods.  Within redefined methods, "super" refers to the
 # original method.

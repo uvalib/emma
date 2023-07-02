@@ -213,7 +213,7 @@ module BaseDecorator::Lookup
   def lookup_input(unique: nil, css: '.lookup-prompt', **opt)
     uniq_opt     = { unique: unique || hex_rand }
 
-    # == Lookup query terms input
+    # === Lookup query terms input
     lookup_label = 'Lookup' # TODO: I18n
     terms_label  = 'Query'  # TODO: I18n
     terms_css    = 'item-terms'
@@ -226,7 +226,7 @@ module BaseDecorator::Lookup
         label << input << button
       end
 
-    # == Separator type radio buttons
+    # === Separator type radio buttons
     sep_label    = 'Term Separators' # TODO: I18n
     sep_label    = html_tag(:legend, sep_label)
     sep_css      = 'item-separator'
@@ -247,7 +247,7 @@ module BaseDecorator::Lookup
       end
     separator_choices = html_tag(:fieldset, sep_label, *separators, sep_opt)
 
-    # == Input prompt element
+    # === Input prompt element
     prepend_css!(opt, css)
     html_div(opt) do
       terms_input << separator_choices
@@ -289,19 +289,19 @@ module BaseDecorator::Lookup
   def lookup_results(unique: nil, css: '.lookup-output', **opt)
     uniq_opt  = { unique: unique || hex_rand }
 
-    # == Output display heading
+    # === Output display heading
     hdg_label = 'Results' # TODO: I18n
     hdg_css   = 'lookup-heading'
     hdg_id    = unique_id(hdg_css, **uniq_opt)
     heading   = html_tag(2, hdg_label, id: hdg_id, class: hdg_css)
 
-    # == Output results element
+    # === Output results element
     res_css   = 'item-results'
     res_id    = unique_id(res_css, **uniq_opt)
     res_opt   = { 'aria-labelledby': hdg_id, class: "#{res_css} value" }
     results   = h.text_area_tag(res_id, nil, res_opt)
 
-    # == Output errors element
+    # === Output errors element
     err_label = 'Errors' # TODO: I18n
     err_css   = 'item-errors'
     err_id    = unique_id(err_css, **uniq_opt)
@@ -312,7 +312,7 @@ module BaseDecorator::Lookup
         label << display
       end
 
-    # == Output diagnostics element
+    # === Output diagnostics element
     diag_label  = 'Diagnostics' # TODO: I18n
     diag_css    = 'item-diagnostics'
     diag_id     = unique_id(diag_css, **uniq_opt)
@@ -323,14 +323,14 @@ module BaseDecorator::Lookup
         label << display
       end
 
-    # == Output display body
+    # === Output display body
     prepend_css!(opt, css)
     output =
       html_div(opt) do
         results << errors << diagnostics
       end
 
-    # == Output heading and display elements
+    # === Output heading and display elements
     heading << output
   end
 

@@ -28,20 +28,20 @@ module Import::IaBulk
   #   Hash{Symbol=>(Symbol,Proc)}
   # ]
   #
-  # == Notes
+  # === Notes
+  # - [1] Collection is always %w(emma_uploads_restricted); this can be ignored
+  #       since this is just be used internally by IA to distinguish these
+  #       items.
   #
-  # [1] Collection is always %w(emma_uploads_restricted); this can be ignored
-  #     since this is just be used internally by IA to distinguish these items.
+  # - [2] The name of the contributed file is always the basename of the URL in
+  #       the :download field if it is present.  Otherwise it can be derived
+  #       from :identifier and :contributed_file.
   #
-  # [2] The name of the contributed file is always the basename of the URL in
-  #     the :download field if it is present.  Otherwise it can be derived from
-  #     :identifier and :contributed_file.
+  # - [3] Items that are only for IA internal use can be ignored since they are
+  #       not relevant to EMMA metadata.
   #
-  # [3] Items that are only for IA internal use can be ignored since they are
-  #     not relevant to EMMA metadata.
-  #
-  # [4] Fields which pertain to upload into IA can be ignored because they are
-  #     not relevant to EMMA metadata.
+  # - [4] Fields which pertain to upload into IA can be ignored because they
+  #       are not relevant to EMMA metadata.
   #
   #--
   # noinspection SpellCheckingInspection

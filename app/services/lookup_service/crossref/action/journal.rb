@@ -21,7 +21,7 @@ module LookupService::Crossref::Action::Journal
 
   public
 
-  # == GET https://api.crossref.org/journals/ISSN
+  # === GET https://api.crossref.org/journals/ISSN
   #
   # @param [String] issn
   # @param [Hash]   opt               Passed to #api.
@@ -41,7 +41,7 @@ module LookupService::Crossref::Action::Journal
       }
     end
 
-  # == GET https://api.crossref.org/journals?query=...
+  # === GET https://api.crossref.org/journals?query=...
   #
   # @param [Hash] opt
   #

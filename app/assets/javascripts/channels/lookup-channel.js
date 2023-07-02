@@ -13,6 +13,11 @@ const DEBUG   = true;
 
 AppDebug.file('channels/lookup-channel', CHANNEL, DEBUG);
 
+/**
+ * LookupChannel
+ *
+ * @extends CableChannel
+ */
 export class LookupChannel extends CableChannel {
 
     static CLASS_NAME     = CHANNEL;

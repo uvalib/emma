@@ -12,7 +12,7 @@
 # @attr [String]   webReaderLink
 # @attr [Download] downloadAccess
 #
-# == Observed but not documented
+# === Observed but not documented
 #
 # @attr [String]   accessViewStatus         %w(... FULL_PUBLIC_DOMAIN SAMPLE NONE)
 # @attr [Boolean]  quoteSharingAllowed

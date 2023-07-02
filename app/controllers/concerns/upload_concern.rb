@@ -91,7 +91,7 @@ module UploadConcern
   #
   # @return [Hash{Symbol=>*}]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The value `params[:upload][:emma_data]` is ignored because it reports the
   # original metadata values that were supplied to the edit form.  The value
   # `params[:upload][:file]` is ignored if it is blank or is the JSON
@@ -508,16 +508,16 @@ module UploadConcern
     end
 
     if failures.blank?
-      # == All succeeded
+      # === All succeeded
       Log.info { "#{meth}: accepted sids:  #{sids.inspect}" }
       successes = sids
 
     elsif atomic || bad.blank?
-      # == General failure -- nothing to retry
+      # === General failure -- nothing to retry
       successes = []
 
     elsif (list = list.reject { |i| bad.include?(i.submission_id) }).present?
-      # == Retry with the batch of non-failed items
+      # === Retry with the batch of non-failed items
       successes, new_failures = reindex_record(list, meth: meth)
       failures << new_failures
 

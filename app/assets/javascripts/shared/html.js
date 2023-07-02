@@ -302,7 +302,7 @@ export const ID_ATTRIBUTES = [
     'form',                     // @see [input]#form
     'id',                       // @see [input]#id
     'list',                     // @see [input]#list
-  //'name',                     // @note Must *not* be included.
+  //'name',                     // NOTE: Must *not* be included.
 ];
 
 /**

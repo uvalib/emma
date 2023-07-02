@@ -87,7 +87,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with BaseDecorator::List#render_field_values
   #
   def render_form_fields(action: nil, pairs: nil, separator: nil, **opt)
@@ -148,7 +148,7 @@ module BaseDecorator::Form
   # @return [nil]                       If *field* is :ignored or disallowed
   #                                       for the current user.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with BaseDecorator::List#render_pair
   #
   # @see file:javascripts/feature/model-form.js *fieldLabel()*

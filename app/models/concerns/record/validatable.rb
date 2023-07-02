@@ -82,7 +82,7 @@ module Record::Validatable
   # @note From Upload#check_required
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload check_required

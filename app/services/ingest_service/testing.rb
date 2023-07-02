@@ -24,10 +24,10 @@ module IngestService::Testing
     FAULT_INJECTION   = true
     FORCED_EXCEPTION  = true
 
-    # == Fault injection types
+    # === Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable
+    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
     ALL_FAULTS = [
       SINGLETON_FIELDS_BAD  = 1 << (bit += 1),
       STRING_FIELDS_BAD     = 1 << (bit += 1),
@@ -43,7 +43,7 @@ module IngestService::Testing
       get_records:    nil,
     }.freeze
 
-    # == Forced exception types
+    # === Forced exception types
 
     DEFAULT_EXCEPTION = :response
 
@@ -165,14 +165,14 @@ module IngestService::Testing
       __debug_banner("#{meth} #{item.emma_repositoryRecordId} FAULT")
       tests = 0
 
-      # == Bad data for fields expecting single values.
+      # === Bad data for fields expecting single values.
       if SINGLETON_FIELDS_BAD & faults
         tests += 1
         item.rem_comments            = %w(rem_note_1 rem_note_2 rem_note_3)
         item.emma_repositoryRecordId = '.bad,record_id;with/punct'
       end
 
-      # == Bad data for fields expecting single string values.
+      # === Bad data for fields expecting single string values.
       # noinspection SpellCheckingInspection
       if STRING_FIELDS_BAD & faults
         tests += 1
@@ -183,7 +183,7 @@ module IngestService::Testing
         end
       end
 
-      # == Bad data for fields expecting array values.
+      # === Bad data for fields expecting array values.
       if ARRAY_FIELDS_BAD & faults
         tests += 1
         item.emma_collection        = 'bad collection'
@@ -191,7 +191,7 @@ module IngestService::Testing
         item.s_accessibilityFeature = [1, 2, 3]
       end
 
-      # == Bad data for date fields.
+      # === Bad data for date fields.
       if DATE_FIELDS_BAD & faults
         tests += 1
         item.rem_remediationDate       = 'bad date'
@@ -199,13 +199,13 @@ module IngestService::Testing
         item.dcterms_dateAccepted      = %w(2021-04-18 2021-04-19)
       end
 
-      # == PDF-style dates.
+      # === PDF-style dates.
       if PDF_DATES & faults
         tests += 1
         item.rem_remediationDate = "D:20210327195230+05'00'"
       end
 
-      # == Give each field a bogus value.
+      # === Give each field a bogus value.
       if ALL_FIELDS_BAD & faults
         tests += 1
         item.class.instance_methods(false).each do |attr_assignment|

@@ -43,6 +43,7 @@ AppDebug.file('shared/submit-request', MODULE, DEBUG);
 /**
  * A bulk submission request message.
  *
+ * @extends ChannelRequest
  * @extends SubmitRequestPayload
  *
  * @see "SubmissionService::SubmitRequest"
@@ -164,8 +165,8 @@ export class SubmitRequest extends ChannelRequest {
     /**
      * Return the item if it is an instance or create one if not.
      *
-     * @param {*} [item]
-     * @param {*} [args]
+     * @param {*}    [item]
+     * @param {...*} [args]
      *
      * @returns {SubmitControlRequest|SubmitRequest}
      */
@@ -213,6 +214,7 @@ export class SubmitRequest extends ChannelRequest {
 /**
  * A bulk submission job control message.
  *
+ * @extends SubmitRequest
  * @extends SubmitControlRequestPayload
  *
  * @see "SubmissionService::ControlRequest"

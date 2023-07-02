@@ -28,15 +28,15 @@
 
     @media #{$wide-screen} {
         // NOTE: This is a kludge because ".column-#{count}" is not being added
-        grid-template-columns: auto;
+        grid-template-columns:  auto;
     }
 
     @media #{$medium-width} {
-        padding: 1rem 1rem 0.5rem;
+        padding:                1rem 1rem 0.5rem;
     }
 
     @media #{$narrow-screen} {
-        padding-bottom: 0;
+        padding-bottom:         0;
     }
 
     //=========================================================================
@@ -106,13 +106,13 @@
 .account.local-heading {
 
     @media #{$wide-screen} {
-        margin-top:    4rem;
-        margin-bottom: 2rem;
+        margin-top:     4rem;
+        margin-bottom:  2rem;
     }
 
     @media #{$not-wide-screen} {
-        margin-top:    3rem;
-        margin-bottom: 1rem;
+        margin-top:     3rem;
+        margin-bottom:  1rem;
     }
 }
 
@@ -141,14 +141,6 @@
         margin-top: 1.5rem;
     }
 
-    .form-fields {
-        margin-bottom: 2rem;
-    }
-
-    .button-tray {
-        @include grid.row(unset);
-    }
-
     // @see AccountDecorator#model_form
     &.new,
     &.edit {
@@ -157,6 +149,14 @@
 
     // @see AccountDecorator#delete_form
     &.delete {
-        width: max-content;
+        width:      max-content;
+    }
+
+    .form-fields {
+        margin-bottom: 2rem;
+    }
+
+    .button-tray {
+        @include grid.row(unset);
     }
 }

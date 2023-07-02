@@ -35,8 +35,8 @@ Rails.application.config.good_job = {
   cron: {
     session_cleanup: {
       cron: '0 0 * * *',
-      class: "SessionCleanupJob",
-      description: "Every day run rake db:sessions:trim"
+      class: 'SessionCleanupJob',
+      description: 'Every day run rake db:sessions:trim'
     }
   }
 # max_threads:

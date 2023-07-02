@@ -57,7 +57,7 @@ module SearchConcern
   # @return [Search::Message::SearchRecordList]
   # @return [Search::Message::SearchTitleList]    If :titles is *true*.
   #
-  # == Usage Notes
+  # === Usage Notes
   # If :titles is *true* then :canonical defaults to *true* on the production
   # service and *false* everywhere else.
   #
@@ -294,7 +294,7 @@ module SearchConcern
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Either run manually or as a controller action, the method will update
   # `session['app.search.style']`.  In the latter case, if *style* is taken
   # from the URL parameter a redirect will occur.
@@ -310,7 +310,7 @@ module SearchConcern
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Either run manually or as a controller action, the method will update
   # `session['app.search.style']`.  In the latter case, if *style* is taken
   # from the URL parameter a redirect will occur.

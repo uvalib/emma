@@ -5,7 +5,7 @@
 #   Database :state column.
 #   @return [String]
 #
-# == Usage Notes
+# === Usage Notes
 # If the including class does not define a STATE_TABLE constant before the
 # include of this module, #generate_state_methods will need to be run
 # explicitly with a Hash with state values as keys.
@@ -291,7 +291,7 @@ module Record::Steppable
     #
     # @return [void]
     #
-    # == Usage Notes
+    # === Usage Notes
     # If the including class has defined a STATE_TABLE or STATEs constant prior
     # to including this module, this method will be invoked implicitly using
     # that set of state values.  Otherwise, this method will have be invoked
@@ -303,7 +303,7 @@ module Record::Steppable
     #
     # @param [Hash, nil] table   Def: `#state_table`
     #
-    # == Usage Notes
+    # === Usage Notes
     # This is best put at the very end of the class definition so that any
     # methods specified in the table definitions will have been defined.
     #

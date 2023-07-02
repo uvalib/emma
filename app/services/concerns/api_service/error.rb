@@ -23,7 +23,7 @@ class ApiService::Error < Api::Error
   #
   # @return [Array<String>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # As a side-effect, if @http_response is nil it will be set here.
   #
   def faraday_response(arg)

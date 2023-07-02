@@ -24,10 +24,10 @@ module SearchService::Testing
     FAULT_INJECTION   = true
     FORCED_EXCEPTION  = true
 
-    # == Fault injection types
+    # === Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable
+    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
     ALL_FAULTS = [
       BAD_PARAM   = 1 << (bit += 1),
       BAD_REPO    = 1 << (bit += 1),
@@ -40,7 +40,7 @@ module SearchService::Testing
       get_record:   nil, #BAD_PARAM | BAD_FORMAT,
     }.freeze
 
-    # == Forced exception types
+    # === Forced exception types
 
     DEFAULT_EXCEPTION = :response
 
@@ -113,7 +113,7 @@ module SearchService::Testing
       __debug_banner("#{self.class}.#{meth} FAULT")
       tests = 0
 
-      # == Bogus parameters (should be ignored)
+      # === Bogus parameters (should be ignored)
       # noinspection SpellCheckingInspection
       if BAD_PARAM & faults
         tests += 1
@@ -122,13 +122,13 @@ module SearchService::Testing
         opt[:'dq"bad'] = 'bad_param_with_double_quote'
       end
 
-      # == Bad repository
+      # === Bad repository
       if BAD_REPO & faults
         tests += 1
         opt[:repository] = 'bad_repo'
       end
 
-      # == Bad format
+      # === Bad format
       if BAD_FORMAT & faults
         tests += 1
         opt[:format] = 'bad_format'
@@ -137,7 +137,7 @@ module SearchService::Testing
         #opt[:format] = "bad_format'with_single_quote"
       end
 
-      # == PDF-style dates.
+      # === PDF-style dates.
       if PDF_DATES & faults
         tests += 1
         opt[:lastRemediationDate] = "D:20210327195230+05'00'"

@@ -24,10 +24,10 @@ module AwsS3Service::Testing
     FAULT_INJECTION   = true
     FORCED_EXCEPTION  = true
 
-    # == Fault injection types
+    # === Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable
+    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
     ALL_FAULTS = [
       BAD_REPO     = 1 << (bit += 1),
       BAD_FILE     = 1 << (bit += 1),
@@ -42,7 +42,7 @@ module AwsS3Service::Testing
       dequeue:              BAD_REPO,
     }.freeze
 
-    # == Forced exception types
+    # === Forced exception types
 
     DEFAULT_EXCEPTION = :response
 
@@ -118,25 +118,25 @@ module AwsS3Service::Testing
       __debug_banner("#{meth} #{item.submission_id} FAULT")
       tests = 0
 
-      # == Bad bucket specifier
+      # === Bad bucket specifier
       if BAD_REPO & faults
         tests += 1
         item.emma_repository = 'bad repo'
       end
 
-      # == Bad file
+      # === Bad file
       if BAD_FILE & faults
         tests += 1
         item.instance_variable_set(:@file, nil)
       end
 
-      # == Bad file key
+      # === Bad file key
       if BAD_FILE_KEY & faults
         tests += 1
         item.instance_variable_set(:@file_key, nil)
       end
 
-      # == Bad package key
+      # === Bad package key
       if BAD_KEY & faults
         tests += 1
         item.instance_variable_set(:@key, nil)

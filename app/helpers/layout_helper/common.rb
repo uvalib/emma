@@ -36,8 +36,8 @@ module LayoutHelper::Common
   # A form used to create/modify a search.
   #
   # @param [Symbol, String, nil] target
-  # @param [Symbol, String, nil] id       @note [1]
-  # @param [Hash, nil]           hidden   note [1]
+  # @param [Symbol, String, nil] id       NOTE [1]
+  # @param [Hash, nil]           hidden   NOTE [1]
   # @param [Hash]                opt      Passed to #html_form.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML form element.
@@ -46,7 +46,8 @@ module LayoutHelper::Common
   # @yield To supply additional field(s) for the '<form>'.
   # @yieldreturn [String, Array<String>]
   #
-  # @note [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
+  # === Notes
+  # - [1] If #CLIENT_MANAGES_HIDDEN_INPUTS then id and hidden are ignored.
   #
   #--
   # noinspection RubyUnusedLocalVariable

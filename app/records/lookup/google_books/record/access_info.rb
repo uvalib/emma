@@ -19,7 +19,7 @@ __loading_begin(__FILE__)
 # @attr [String]   webReaderLink
 # @attr [Download] downloadAccess
 #
-# == Observed but not documented
+# === Observed but not documented
 #
 # @attr [String]   accessViewStatus         %w(... FULL_PUBLIC_DOMAIN SAMPLE NONE)
 # @attr [Boolean]  quoteSharingAllowed
@@ -48,7 +48,7 @@ class Lookup::GoogleBooks::Record::AccessInfo < Lookup::GoogleBooks::Api::Record
     has_one :webReaderLink
     has_one :downloadAccess,          Lookup::GoogleBooks::Record::Download
 
-    # == Observed but not documented
+    # === Observed but not documented
 
     has_one :accessViewStatus
     has_one :quoteSharingAllowed,     Boolean

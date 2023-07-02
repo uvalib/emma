@@ -134,16 +134,17 @@ body.admin.settings {
 
         @include clamp-width;
 
-        display:     grid;
-        gap:         0.25rem 0.125rem;
-        align-items: baseline;
+        display:       grid;
+        align-items:   baseline;
+        gap:           0.25rem 0.125rem;
+        padding:       0.75rem;
+        border:        0.25rem solid transparent;
+        border-radius: 0.5rem;
+
         grid-template-columns:
             [label]  0.5fr
             [check1] min-content [label1] 0.1875fr
             [check2] min-content [label2] 0.1875fr;
-        padding:       0.75rem;
-        border-radius: 0.5rem;
-        border:        0.25rem solid transparent;
 
         button {
             @include button-row;
@@ -230,12 +231,13 @@ body.admin.loggers {
 
         display:       grid;
         justify-items: start;
+        gap:           1rem;
+
         grid-template-columns:
             [progname] max-content
             [class]    max-content
             [level]    max-content
             [inspect]  1fr;
-        gap: 1rem;
 
         thead, tbody, tr {
             display: contents;
@@ -260,23 +262,24 @@ body.admin.headers {
 
     .pairs {
 
-        display:               grid;
+        display: grid;
+        gap:     0.375rem 1rem;
+
         grid-template-columns: auto 1fr;
-        gap:                   0.375rem 1rem;
 
         .blank {
-            color:       gray;
+            color: gray;
         }
 
         .present {
-            box-shadow:  0 0 1px white, 0 0 2px gray;
+            box-shadow: 0 0 1px white, 0 0 2px gray;
         }
 
         dt {
 
-            margin:      0;
-            padding:     0.25rem;
-            font-weight: bold;
+            margin:         0;
+            padding:        0.25rem;
+            font-weight:    bold;
 
             &.present {
                 background: linen;
@@ -284,11 +287,12 @@ body.admin.headers {
         }
 
         dd {
-            max-height:  5.5rem;
-            max-width:   max-content;
-            margin:      0;
-            padding:     0.25rem;
-            overflow:    auto;
+
+            max-height:     5.5rem;
+            max-width:      max-content;
+            margin:         0;
+            padding:        0.25rem;
+            overflow:       auto;
 
             .value {
                 word-break: break-all;

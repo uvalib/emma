@@ -151,9 +151,9 @@ appSetup(MODULE, function() {
      * Bookshare API download link state.  Each key represents a state and each
      * value is the CSS class indicating that state on the link element.
      *
-     * FAILED:     The request to generate an artifact failed.
-     * REQUESTING: The request to generate an artifact is in progress.
-     * READY:      A direct link to the generated artifact is available.
+     * - FAILED:     The request to generate an artifact failed.
+     * - REQUESTING: The request to generate an artifact is in progress.
+     * - READY:      A direct link to the generated artifact is available.
      *
      * @readonly
      * @type {StringTable}
@@ -323,7 +323,7 @@ appSetup(MODULE, function() {
      *
      * @param {jQuery.Event|Event} event
      *
-     * @returns {boolean}             Always *false* to end event propagation.
+     * @returns {boolean}            Always **false** to end event propagation.
      */
     function getBsDownload(event) {
         //_debug('getBsDownload: event =', event);
@@ -360,7 +360,7 @@ appSetup(MODULE, function() {
          *
          * NOTE: Currently on single-select due to the Bookshare API method.
          *
-         * @param {jQuery.Event} event
+         * @param {jQuery.Event|Event} event
          *
          * @returns {boolean}
          */
@@ -624,7 +624,7 @@ appSetup(MODULE, function() {
         /**
          * Parse the reply to acquire the URL from which the file can be
          * downloaded.  If the artifact is not yet ready then the reply should
-         * specify a state of 'SUBMITTED'.
+         * specify a state of "SUBMITTED".
          *
          * @param {object}         data
          * @param {string}         _status

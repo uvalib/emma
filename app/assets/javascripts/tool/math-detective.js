@@ -227,9 +227,9 @@ export function setupFor(root) {
      * Process file data from the clipboard through the Math Detective API and
      * render the results.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {jQuery.Event|Event} _event
      */
-    function processClipboard(event) {
+    function processClipboard(_event) {
         const func = 'processClipboard';
         processClipboardItem() || checkClipboard(func, processClipboardItem);
     }
@@ -282,9 +282,9 @@ export function setupFor(root) {
     /**
      * Process an image file when it is selected.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {jQuery.Event|Event} _event
      */
-    function onNewFile(event) {
+    function onNewFile(_event) {
         const func = 'onNewFile';
         let input, file;
         if (!(input = $file_input[0])) {
@@ -502,6 +502,11 @@ export function setupFor(root) {
 // Class
 // ============================================================================
 
+/**
+ * MathDetectiveApi
+ *
+ * @extends Api
+ */
 export class MathDetectiveApi extends Api {
 
     static CLASS_NAME = 'MathDetectiveApi';
@@ -719,7 +724,7 @@ export class MathDetectiveApi extends Api {
     // ========================================================================
 
     /**
-     * Post an image file to the Math Detective API.
+     * Post an image file to the Math Detective API. <p/>
      *
      * If it's sufficiently small, the result will be returned directly
      * (with HTTP 200).  Otherwise, HTTP 201 will indicate that the result

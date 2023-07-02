@@ -15,12 +15,6 @@ AppDebug.file('shared/callbacks', MODULE, DEBUG);
 // ============================================================================
 
 /**
- * CallbackChainFunction
- *
- * If the function returns *false*, subsequent functions in the chain will
- * still execute but will receive *halted* set to *true*.  There is no
- * provision for a subsequent function to "un-halt" the chain.
- *
  * @typedef {
  *      function(
  *          $target:     jQuery,
@@ -28,12 +22,27 @@ AppDebug.file('shared/callbacks', MODULE, DEBUG);
  *          halted?:     boolean
  *      ): boolean|undefined
  * } CallbackChainFunction
+ *
+ * If the function returns **false**, subsequent functions in the chain will
+ * still execute but will receive *halted* set to **true**.  There is no
+ * provision for a subsequent function to "un-halt" the chain.
+ */
+
+/**
+ * @typedef {
+ *      CallbackChainFunction|CallbackChainFunction[]
+ * } CallbackChainFunctions
  */
 
 // ============================================================================
 // Class CallbackChain
 // ============================================================================
 
+/**
+ * CallbackChain
+ *
+ * @extends BaseClass
+ */
 export class CallbackChain extends BaseClass {
 
     static CLASS_NAME = 'CallbackChain';
@@ -51,7 +60,7 @@ export class CallbackChain extends BaseClass {
     /**
      * Create a new callback chain instance.
      *
-     * @param {...(CallbackChainFunction|CallbackChainFunction[])} [callbacks]
+     * @param {...CallbackChainFunctions} [callbacks]
      */
     constructor(...callbacks) {
         super();
@@ -65,7 +74,7 @@ export class CallbackChain extends BaseClass {
     /**
      * Add callback(s) to the start of the chain.
      *
-     * @param {...(CallbackChainFunction|CallbackChainFunction[])} callbacks
+     * @param {...CallbackChainFunctions} callbacks
      *
      * @returns {CallbackChainFunction[]}
      */
@@ -76,7 +85,7 @@ export class CallbackChain extends BaseClass {
     /**
      * Add callback(s) to the end of the chain.
      *
-     * @param {...(CallbackChainFunction|CallbackChainFunction[])} callbacks
+     * @param {...CallbackChainFunctions} callbacks
      *
      * @returns {CallbackChainFunction[]}
      */
@@ -89,7 +98,7 @@ export class CallbackChain extends BaseClass {
     // ========================================================================
 
     /**
-     * check
+     * Execute a check on all callbacks in sequence.
      *
      * @param {Selector} target
      * @param {boolean}  [halted]
@@ -101,7 +110,7 @@ export class CallbackChain extends BaseClass {
     }
 
     /**
-     * invoke
+     * Execute all callbacks in sequence.
      *
      * @param {Selector} target
      * @param {boolean}  [check_only]

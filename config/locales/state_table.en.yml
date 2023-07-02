@@ -18,7 +18,7 @@ en:
 
         create:         &PHASE_CREATE
 
-          # == Phase::Create
+          # === Phase::Create
 
           started:
             next:       [uploading, submitting, canceling, canceled, aborted]
@@ -62,7 +62,7 @@ en:
 
         edit:           &PHASE_EDIT
 
-          # == Phase::Edit
+          # === Phase::Edit
 
           started:
             next:       [uploading, submitting, canceling, canceled, aborted]
@@ -106,7 +106,7 @@ en:
 
         remove:         &PHASE_REMOVE
 
-          # == Phase::Remove
+          # === Phase::Remove
 
           started:
             next:       [deindexing, canceling, canceled, aborted]
@@ -146,7 +146,7 @@ en:
 
         review:         &PHASE_REVIEW
 
-          # == Phase::Review
+          # === Phase::Review
 
           started:
             next:       [scheduling, assigned, canceling, canceled, aborted]
@@ -185,7 +185,7 @@ en:
 
         bulk_operation: &PHASE_BULK_OPERATION
 
-          # == Phase::BulkOperation
+          # === Phase::BulkOperation
 
           started:
             next:       [running, canceling, canceled, aborted]
@@ -225,21 +225,21 @@ en:
 
         bulk_create:
 
-          # == Phase::BulkCreate
+          # === Phase::BulkCreate
 
           <<:           *PHASE_BULK_OPERATION
 
 
         bulk_edit:
 
-          # == Phase::BulkEdit
+          # === Phase::BulkEdit
 
           <<:           *PHASE_BULK_OPERATION
 
 
         bulk_remove:
 
-          # == Phase::BulkRemove
+          # === Phase::BulkRemove
 
           <<:           *PHASE_BULK_OPERATION
 
@@ -251,7 +251,7 @@ en:
 
         store:          &ACTION_STORE
 
-          # == Action::Store
+          # === Action::Store
 
           started:
             next:       [uploading, canceled, aborted]
@@ -286,7 +286,7 @@ en:
 
         index:          &ACTION_INDEX
 
-          # == Action::Index
+          # === Action::Index
 
           started:
             next:       [indexing, canceled, aborted]
@@ -322,7 +322,7 @@ en:
 
         queue:          &ACTION_QUEUE
 
-          # == Action::Queue
+          # === Action::Queue
 
           started:
             next:       [submitting, canceled, aborted]
@@ -356,7 +356,7 @@ en:
 
         schedule:       &ACTION_SCHEDULE
 
-          # == Action::Schedule
+          # === Action::Schedule
 
           started:
             next:       [scheduling, assigning, assigned, canceled, aborted]
@@ -391,7 +391,7 @@ en:
 
         review:         &ACTION_REVIEW
 
-          # == Action::Review
+          # === Action::Review
 
           started:
             next:       [reviewing, approved, rejected, canceled, aborted]
@@ -425,7 +425,7 @@ en:
 
         un_store:       &ACTION_UN_STORE
 
-          # == Action::UnStore
+          # === Action::UnStore
 
           started:
             next:       [unstoring, canceled, aborted]
@@ -449,7 +449,7 @@ en:
 
         un_index:       &ACTION_UN_INDEX
 
-          # == Action::UnIndex
+          # === Action::UnIndex
 
           started:
             next:       [deindexing, canceled, aborted]
@@ -473,7 +473,7 @@ en:
 
         un_queue:       &ACTION_UN_QUEUE
 
-          # == Action::UnQueue
+          # === Action::UnQueue
 
           started:
             next:       [dequeuing, canceled, aborted]
@@ -497,7 +497,7 @@ en:
 
         un_record:       &ACTION_UN_RECORD
 
-          # == Action::UnRecord
+          # === Action::UnRecord
 
           started:
             next:       [removing, canceled, aborted]
@@ -521,7 +521,7 @@ en:
 
         batch_store:    &ACTION_BATCH_STORE
 
-          # == Action::BatchStore
+          # === Action::BatchStore
 
           started:
             next:       [storing, canceled, aborted]
@@ -547,7 +547,7 @@ en:
 
         batch_index:    &ACTION_BATCH_INDEX
 
-          # == Action::BatchIndex
+          # === Action::BatchIndex
 
           started:
             next:       [indexing, canceled, aborted]
@@ -573,7 +573,7 @@ en:
 
         batch_queue:    &ACTION_BATCH_QUEUE
 
-          # == Action::BatchQueue
+          # === Action::BatchQueue
 
           started:
             next:       [submitting, canceled, aborted]
@@ -605,7 +605,7 @@ en:
 
         batch_un_store: &ACTION_BATCH_UN_STORE
 
-          # == Action::BatchUnStore
+          # === Action::BatchUnStore
 
           started:
             next:       [unstoring, canceled, aborted]
@@ -629,7 +629,7 @@ en:
 
         batch_un_index: &ACTION_BATCH_UN_INDEX
 
-          # == Action::BatchUnIndex
+          # === Action::BatchUnIndex
 
           started:
             next:       [deindexing, canceled, aborted]
@@ -653,7 +653,7 @@ en:
 
         batch_un_queue: &ACTION_BATCH_UN_QUEUE
 
-          # == Action::BatchUnQueue
+          # === Action::BatchUnQueue
 
           started:
             next:       [dequeuing, canceled, aborted]
@@ -677,7 +677,7 @@ en:
 
         batch_un_record: &ACTION_BATCH_UN_RECORD
 
-          # == Action::BatchUnRecord
+          # === Action::BatchUnRecord
 
           started:
             next:       [removing, canceled, aborted]

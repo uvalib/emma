@@ -98,8 +98,8 @@ export function secondsSince(start_time, time_now) {
  * @param {object}             [opt]
  *
  * @param {string}  [opt.separator]  Default: ' '.
- * @param {boolean} [opt.dateOnly]   If *true* do not show time.
- * @param {boolean} [opt.timeOnly]   If *true* do not show date.
+ * @param {boolean} [opt.dateOnly]   If **true** do not show time.
+ * @param {boolean} [opt.timeOnly]   If **true** do not show date.
  *
  * @returns {string}                        Blank if *value* is not a date.
  *

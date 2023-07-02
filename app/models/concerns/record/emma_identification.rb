@@ -111,7 +111,7 @@ module Record::EmmaIdentification
   #
   # @note From Upload#repository_of
   #
-  # == Usage Notes
+  # === Usage Notes
   # Depending on the context, the caller may need to validate the result with
   # EmmaRepository#valid?.
   #
@@ -147,7 +147,7 @@ module Record::EmmaIdentification
   #
   # @note From Upload#record_id
   #
-  # == Usage Notes
+  # === Usage Notes
   # If *item* is a String, it is assumed to be good.  Depending on the context,
   # the caller may need to validate the result with #valid_record_id?.
   #
@@ -201,7 +201,7 @@ module Record::EmmaIdentification
   #
   # @note From Upload::IdentifierMethods#generate_submission_id
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The result is a (single-character) prefix followed by 8 hexadecimal digits
   # which represent seconds into the epoch followed by a single random letter
   # from 'g' to 'z', followed by two decimal digits from "00" to "99" based on

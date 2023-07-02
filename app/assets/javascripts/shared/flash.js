@@ -25,8 +25,8 @@ AppDebug.file('shared/flash');
 // ============================================================================
 
 /**
- * If *false*, the flash container is inline.  If *true* it appears above the
- * main page content.
+ * If **false**, the flash container is inline.
+ * If **true** it appears above the main page content.
  *
  * @type {boolean}
  */
@@ -105,9 +105,9 @@ export function flashContainer(selector) {
 /**
  * Initialize the flash message container.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  *
- * @returns {boolean}                 *false* if only inline flash.
+ * @returns {boolean}                 **false** if only inline flash.
  *
  * @see file:app/views/layouts/_flash.html.erb
  */
@@ -141,7 +141,7 @@ export function flashInitialize(fc) {
 /**
  * Clear the flash message container on refreshed pages.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  */
 export function flashReset(fc) {
     const $fc = flashContainer(fc);
@@ -188,9 +188,9 @@ export function enableFlash(all) {
 }
 
 /**
- * Replace all flashes messages with a new one.
+ * Replace all flashes messages with a new one. <p/>
  *
- * If show_flash.messages is not *true* then no actions will be taken.
+ * If show_flash.messages is not **true** then no actions will be taken.
  *
  * @param {string|string[]} text
  * @param {string}          [type]
@@ -209,9 +209,9 @@ export function flashMessage(text, type, role, fc) {
 }
 
 /**
- * Replace all flashes messages with a new flash error message.
+ * Replace all flashes messages with a new flash error message. <p/>
  *
- * If show_flash.errors is not *true* then no actions will be taken.
+ * If show_flash.errors is not **true** then no actions will be taken.
  *
  * @param {string|string[]} text
  * @param {string}          [type]
@@ -232,7 +232,7 @@ export function flashError(text, type, role, fc) {
 /**
  * Remove all flash messages and hide the flash message container.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  *
  * @returns {jQuery}                  The flash container.
  */
@@ -243,7 +243,7 @@ export function clearFlash(fc) {
 /**
  * Indicate whether no flash message(s) are present.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  *
  * @returns {boolean}
  */
@@ -256,7 +256,7 @@ export function flashEmpty(fc) {
 /**
  * Indicate whether flashes are hidden.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  *
  * @returns {boolean}
  */
@@ -271,7 +271,7 @@ export function flashHidden(fc) {
 /**
  * Indicate whether the flash containing is a floating container.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  *
  * @returns {boolean}
  */
@@ -283,7 +283,7 @@ function floating(fc) {
 /**
  * Display flash message container.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  * @param {boolean}  [force]          Don't check {@link flashHidden}
  *
  * @returns {jQuery}                  The flash container.
@@ -307,7 +307,7 @@ function showFlash(fc, force) {
 /**
  * Hide flash message container.
  *
- * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ * @param {Selector} [fc]             Default: {@link flashContainer}.
  * @param {boolean}  [force]          Don't check {@link flashHidden}
  *
  * @returns {jQuery}                  The flash container.
@@ -324,7 +324,7 @@ function hideFlash(fc, force) {
 }
 
 /**
- * Show/hide the flash container.
+ * Show/hide the flash container. <p/>
  *
  * (Only for use within {@link showFlash} and {@link hideFlash}.
  *
@@ -451,7 +451,7 @@ function closeFlashItem(event) {
 }
 
 /**
- * Allow "Escape" key to close a specific flash item.
+ * Allow the **Escape** key to close a specific flash item.
  *
  * @param {jQuery.Event|KeyboardEvent} event
  */
@@ -528,7 +528,7 @@ function monitorWindowEvents(on = true) {
 }
 
 /**
- * Allow "Escape" key to close all flash items.
+ * Allow the **Escape** key to close all flash items.
  *
  * @param {jQuery.Event|KeyboardEvent} event
  */
@@ -554,11 +554,11 @@ function onMouseDownWindow(_event) {
 
 /**
  * Get the message(s) to display which are passed back from the server via the
- * 'X-Flash-Message' header.
+ * "X-Flash-Message" header.
  *
  * @param {XMLHttpRequest} xhr
  *
- * @returns {array}
+ * @returns {string[]}
  *
  * @see "UploadController#post_response"
  */
@@ -604,7 +604,7 @@ export function xhrDecode(data) {
 
 /**
  * Synchronously fetch message content specified from a URL (specified via
- * 'X-Flash-Message').
+ * "X-Flash-Message").
  *
  * @param {string} url
  *

@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Generic exception for EMMA Unified Ingest API problems.
 #
-# == Usage Notes
+# === Usage Notes
 # This is generally *not* the base class for exceptions in the IngestService
 # namespace:  Variants based on the error types defined under "emma.error.api"
 # are derived from the related ApiService class; e.g.:
@@ -87,7 +87,7 @@ class IngestService::Error < ApiService::Error
     #
     # @return [Array<String>]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # The service returns JSON error messages in the response body which
     # indicate one or more specific issues for each problematic item; e.g.:
     #
@@ -162,13 +162,13 @@ class IngestService::Error < ApiService::Error
     #
     # @return [Array<String>]
     #
-    # == Usage Notes
+    # === Usage Notes
     # This is not likely to be invoked because "/recordDeletes" returns with
     # HTTP 202 even if there were errors.  For that reason, the error messages
     # will not be copied into an exception -- they will be found in the
     # message body.
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # For deletion of records:
     #
     #   {

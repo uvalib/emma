@@ -19,7 +19,7 @@ end
 #
 # @type [Hash{String=>String}]
 #
-# == Implementation Notes
+# === Implementation Notes
 # Overrides of ::CodeStatistics and ::CodeStatisticsCalculator are required
 # to report on CSS/SCSS/SASS.
 #

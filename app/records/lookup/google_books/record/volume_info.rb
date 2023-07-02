@@ -28,7 +28,7 @@ __loading_begin(__FILE__)
 # @attr [String]            infoLink
 # @attr [String]            canonicalVolumeLink
 #
-# == Observed but not documented
+# === Observed but not documented
 #
 # @attr [Integer]           printedPageCount
 # @attr [String]            maturityRating      %w(... NOT_MATURE)
@@ -74,7 +74,7 @@ class Lookup::GoogleBooks::Record::VolumeInfo < Lookup::GoogleBooks::Api::Record
     has_one  :infoLink
     has_one  :canonicalVolumeLink
 
-    # == Observed but not documented:
+    # === Observed but not documented:
 
     has_one  :printedPageCount,     Integer
     has_one  :maturityRating

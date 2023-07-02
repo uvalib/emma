@@ -23,12 +23,10 @@
 ///
 @mixin tabular($columns, $y-gap: 0, $x-gap: 2%, $template: false) {
 
-    display: grid;
-
     @include grid.columns($template, $columns);
 
-    gap: $y-gap $x-gap;
-
+    display:   grid;
+    gap:       $y-gap $x-gap;
     max-width: inherit;
 
     //=========================================================================

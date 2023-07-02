@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Namespace for common definitions for objects de-serialized from an external
 # service API.
 #
-# == Implementation Notes
+# === Implementation Notes
 # There are no ./_remote_service/{message,record} directories because there are
 # no classes defined within this namespace, only mixin modules.
 #

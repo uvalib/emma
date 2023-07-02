@@ -44,7 +44,7 @@ module Emma::Extension
       # @yieldreturn [Array, Any] Appended to *args*.
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload __ext_log(meth, *args, leader: nil, tag: nil, separator: nil, &block)
@@ -110,7 +110,7 @@ module Emma::Extension
       # @return [nil]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload __ext_debug(meth, *args, tag:, **opt, &block)

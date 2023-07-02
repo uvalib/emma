@@ -75,7 +75,7 @@ module UserConcern
   #
   # @param [String, Symbol, nil] msg  Default: 'devise.failure.unauthenticated'
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This method sets `session['app.devise.redirect']` in order to prevent
   # SessionConcern#after_sign_in_path_for from specifying the current (failed)
   # page as the redirect from DeviseController#require_no_authentication.

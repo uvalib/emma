@@ -21,7 +21,7 @@ import {
 import {
     htmlDecode,
     selfOrDescendents,
-    selfOrParent
+    selfOrParent,
 } from '../shared/html';
 import {
     BEST_CHOICE_MARKER,
@@ -162,6 +162,8 @@ appSetup(MODULE, function() {
 
     /**
      * Base class for managing counter value elements.
+     *
+     * @extends BaseClass
      */
     class Counter extends BaseClass {
 
@@ -271,6 +273,8 @@ appSetup(MODULE, function() {
 
     /**
      * The number of manifest items in the manifest.
+     *
+     * @extends Counter
      */
     class TotalCounter extends Counter {
         static CLASS_NAME = 'TotalCounter';
@@ -280,6 +284,8 @@ appSetup(MODULE, function() {
 
     /**
      * The number of manifest items ready for submission.
+     *
+     * @extends Counter
      */
     class ReadyCounter extends Counter {
         static CLASS_NAME = 'ReadyCounter';
@@ -289,6 +295,8 @@ appSetup(MODULE, function() {
 
     /**
      * The number of manifest items currently being submitted.
+     *
+     * @extends Counter
      */
     class TransmitCounter extends Counter {
         static CLASS_NAME = 'TransmitCounter';
@@ -298,6 +306,8 @@ appSetup(MODULE, function() {
 
     /**
      * The number of failed manifest item submissions.
+     *
+     * @extends Counter
      */
     class FailedCounter extends Counter {
         static CLASS_NAME = 'FailedCounter';
@@ -307,6 +317,8 @@ appSetup(MODULE, function() {
 
     /**
      * The number of successfully submitted manifest items.
+     *
+     * @extends Counter
      */
     class SucceededCounter extends Counter {
         static CLASS_NAME = 'SucceededCounter';
@@ -551,7 +563,7 @@ appSetup(MODULE, function() {
         'None of the items in the manifest have been completed and saved';
 
     /**
-     * Change whether the Submit button is enabled based on conditions.
+     * Change whether the Submit button is enabled based on conditions. <p/>
      *
      * If not ready, a custom tooltip is provided to indicate the reason.
      */
@@ -799,7 +811,7 @@ appSetup(MODULE, function() {
      * Restore the status values of selected items to their original state in
      * preparation for resubmitting.
      *
-     * @param {boolean} [total]       If *true*, allow FILE_NEEDED.
+     * @param {boolean} [total]       If **true**, allow FILE_NEEDED.
      */
     function resetItems(total) {
         _debug('resetItems');
@@ -1102,7 +1114,7 @@ appSetup(MODULE, function() {
      * selectItem
      *
      * @param {Selector} item
-     * @param {boolean}  [check]            If *false*, uncheck.
+     * @param {boolean}  [check]            If **false**, uncheck.
      * @param {boolean}  [indeterminate]
      */
     function selectItem(item, check, indeterminate) {
@@ -1133,7 +1145,7 @@ appSetup(MODULE, function() {
      * Allow user selection of an item.
      *
      * @param {Selector} item
-     * @param {boolean}  [enable]           If *false*, disable.
+     * @param {boolean}  [enable]           If **false**, disable.
      * @param {boolean}  [indeterminate]
      *
      * @returns {boolean}                   If selectability changed.
@@ -1155,7 +1167,7 @@ appSetup(MODULE, function() {
      * Prevent user selection of an item.
      *
      * @param {Selector} item
-     * @param {boolean}  [disable]          If *false*, enable.
+     * @param {boolean}  [disable]          If **false**, enable.
      * @param {boolean}  [indeterminate]
      *
      * @returns {boolean}                   If selectability changed.
@@ -1275,7 +1287,7 @@ appSetup(MODULE, function() {
     /**
      * Extract the mapping of status class name to label.
      *
-     * @returns {Object<string,string>}
+     * @returns {Object.<string,string>}
      */
     function getStatusValueLabels() {
         const func = 'getStatusValueLabels'; //_debug(func);
@@ -1334,7 +1346,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} item
      * @param {string}   status       Status type class or selector.
-     * @param {boolean}  [total]      If *true*, allow FILE_NEEDED.
+     * @param {boolean}  [total]      If **true**, allow FILE_NEEDED.
      */
     function resetStatusFor(item, status, total) {
         //_debug(`resetStatusFor "${status}" for item =`, item);
@@ -1675,12 +1687,12 @@ appSetup(MODULE, function() {
     /**
      * Process a response message indicating the overall success/failure of the
      * submission of one or more ManifestItem entries, updating displayed
-     * counters accordingly.
+     * counters accordingly. <p/>
      *
      * If messages are being sent for submission steps then this function
      * won't be updating the SubmissionTable or the individual status lines
      * assuming that each associated ManifestItem has already been represented
-     * in a submission step response for the final submission step.
+     * in a submission step response for the final submission step. <p/>
      *
      * If submission steps are not set up to generate real-time responses then
      * batch responses would be mandatory in order to invoke this function to
@@ -1817,7 +1829,7 @@ appSetup(MODULE, function() {
     /**
      * Update buttons after a submission sequence has terminated.
      *
-     * @param {boolean} [preserve_files]    If *true* keep file selections.
+     * @param {boolean} [preserve_files]    If **true** keep file selections.
      */
     function submissionsEnded(preserve_files) {
         _debug('submissionsEnded: preserve_files =', preserve_files);
@@ -2034,11 +2046,11 @@ appSetup(MODULE, function() {
      * Setup control for local file selection.
      */
     function setupLocalFilePrompt() {
-        // Set up the visible button to proxy for the non-visible <input>.
+        // Set up the visible button to proxy for the non-visible `<input>`.
         $local_button.attr('tabindex', 0);
         handleClickAndKeypress($local_button, beforeLocalFilesSelected);
 
-        // The <input> is made non-visible.
+        // The `<input>` is made non-visible.
         $local_input.attr('tabindex', -1).attr('aria-hidden', true);
         handleEvent($local_input, 'change', afterLocalFilesSelected);
     }
@@ -2230,31 +2242,31 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * resolvedLabel # TODO: I18n
+     * resolvedLabel
      *
      * @param {number} [count]
      *
      * @returns {string}
      */
     function resolvedLabel(count) {
-        const files = (count === 1) ? 'FILE' : 'FILES';
-        return `RESOLVED ${files}:`;
+        const files = (count === 1) ? 'FILE' : 'FILES'; // TODO: I18n
+        return `RESOLVED ${files}:`;                    // TODO: I18n
     }
 
     /**
-     * problematicLabel # TODO: I18n
+     * problematicLabel
      *
      * @param {number} [count]
      *
      * @returns {string}
      */
     function problematicLabel(count) {
-        const files = (count === 1) ? 'FILE' : 'FILES';
-        return `PROBLEM ${files}:`;
+        const files = (count === 1) ? 'FILE' : 'FILES'; // TODO: I18n
+        return `PROBLEM ${files}:`;                     // TODO: I18n
     }
 
     /**
-     * remainingLabel # TODO: I18n
+     * remainingLabel
      *
      * @param {number} [count]
      *
@@ -2262,12 +2274,12 @@ appSetup(MODULE, function() {
      */
     function remainingLabel(count) {
         const num   = Number(count || 0);
-        const files = (num === 1) ? 'FILE' : 'FILES';
-        return `${num} ${files} STILL NEEDED:`;
+        const files = (num === 1) ? 'FILE' : 'FILES';   // TODO: I18n
+        return `${num} ${files} STILL NEEDED:`;         // TODO: I18n
     }
 
     /**
-     * allResolvedLabel # TODO: I18n
+     * allResolvedLabel // TODO: I18n
      *
      * @returns {string}
      */
@@ -2315,11 +2327,11 @@ appSetup(MODULE, function() {
      * Setup control for remote file selection. // TODO: cloud-based storage
      */
     function setupRemoteFilePrompt() {
-        // Set up the visible button to proxy for the non-visible <input>.
+        // Set up the visible button to proxy for the non-visible `<input>`.
         $remote_button.attr('tabindex', 0);
         handleClickAndKeypress($remote_button, beforeRemoteFilesSelected);
 
-        // The <input> is made non-visible.
+        // The `<input>` is made non-visible.
         $remote_input.attr('tabindex', -1).attr('aria-hidden', true);
         handleEvent($remote_input, 'change', afterRemoteFilesSelected);
     }
@@ -2387,9 +2399,9 @@ appSetup(MODULE, function() {
     /**
      * Respond after the file chooser returns.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {jQuery.Event|Event} _event
      */
-    function afterRemoteFilesSelected(event) {
+    function afterRemoteFilesSelected(_event) {
         const func = 'afterRemoteFilesSelected';
         const urls = []; // event.currentTarget?.files || event.target?.files;
         //_debug(`*** ${func}: event =`, event);

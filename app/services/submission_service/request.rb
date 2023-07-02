@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @note This is an abstract base class.
 #
-# == Implementation Notes
+# === Implementation Notes
 # This class can't be implemented as a subclass of Hash because the ActiveJob
 # serializer will fail to distinguish it from a simple Hash (and thereby fail
 # to engage its custom serializer/deserializer).

@@ -109,9 +109,9 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload[?id=(:id|SID|RANGE_LIST)]
-  # == GET /upload[?selected=(:id|SID|RANGE_LIST)]
-  # == GET /upload[?group=WORKFLOW_GROUP]
+  # === GET /upload[?id=(:id|SID|RANGE_LIST)]
+  # === GET /upload[?selected=(:id|SID|RANGE_LIST)]
+  # === GET /upload[?group=WORKFLOW_GROUP]
   #
   # Display the current user's uploads.
   #
@@ -142,7 +142,7 @@ class UploadController < ApplicationController
     show_search_failure(error, root_path)
   end
 
-  # == GET /upload/show/(:id|SID)
+  # === GET /upload/show/(:id|SID)
   #
   # Display a single upload.
   #
@@ -181,7 +181,7 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/new
+  # === GET /upload/new
   #
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
@@ -202,9 +202,9 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == POST  /upload/create
-  # == PUT   /upload/create
-  # == PATCH /upload/create
+  # === POST  /upload/create
+  # === PUT   /upload/create
+  # === PATCH /upload/create
   #
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
@@ -224,9 +224,9 @@ class UploadController < ApplicationController
     post_response(error)
   end
 
-  # == GET /upload/edit/:id
-  # == GET /upload/edit/SELECT
-  # == GET /upload/edit_select
+  # === GET /upload/edit/:id
+  # === GET /upload/edit/SELECT
+  # === GET /upload/edit_select
   #
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
@@ -246,8 +246,8 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == PUT   /upload/update/:id
-  # == PATCH /upload/update/:id
+  # === PUT   /upload/update/:id
+  # === PATCH /upload/update/:id
   #
   # Finalize modification of an existing EMMA entry.
   #
@@ -267,11 +267,11 @@ class UploadController < ApplicationController
     post_response(error)
   end
 
-  # == GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
-  # == GET /upload/delete/SID[?...]
-  # == GET /upload/delete/RANGE_LIST[?...]
-  # == GET /upload/delete/SELECT[?...]
-  # == GET /upload/delete_select
+  # === GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
+  # === GET /upload/delete/SID[?...]
+  # === GET /upload/delete/RANGE_LIST[?...]
+  # === GET /upload/delete/SELECT[?...]
+  # === GET /upload/delete_select
   #
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
@@ -296,9 +296,9 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == DELETE /upload/destroy/:id[?force=true&truncate=true&emergency=true]
-  # == DELETE /upload/destroy/SID[?...]
-  # == DELETE /upload/destroy/RANGE_LIST[?...]
+  # === DELETE /upload/destroy/:id[?force=true&truncate=true&emergency=true]
+  # === DELETE /upload/destroy/SID[?...]
+  # === DELETE /upload/destroy/RANGE_LIST[?...]
   #
   # Finalize removal of an existing EMMA entry.
   #
@@ -331,7 +331,7 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/bulk
+  # === GET /upload/bulk
   #
   # Currently a non-functional placeholder.
   #
@@ -344,7 +344,7 @@ class UploadController < ApplicationController
     failure_status(error, status: :bad_request)
   end
 
-  # == GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing an row/element for each entry to submit.
@@ -361,7 +361,7 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Create the specified Upload records, download and store the associated
   # files, and post the new entries to the EMMA Unified Ingest API.
@@ -383,7 +383,7 @@ class UploadController < ApplicationController
     post_response(error, xhr: false)
   end
 
-  # == GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing an row/element for each entry to change.
@@ -400,8 +400,8 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == PUT   /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
-  # == PATCH /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === PUT   /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # === PATCH /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Modify or create the specified Upload records, download and store the
   # associated files (if changed), and post the new/modified entries to the
@@ -424,7 +424,7 @@ class UploadController < ApplicationController
     post_response(error, xhr: false)
   end
 
-  # == GET /upload/bulk_delete[?force=false]
+  # === GET /upload/bulk_delete[?force=false]
   #
   # Specify entries to delete by :id, SID, or RANGE_LIST.
   #
@@ -440,7 +440,7 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == DELETE /upload/bulk[?force=true]
+  # === DELETE /upload/bulk[?force=true]
   #
   # @see #bulk_destroy_upload_path    Route helper
   # @see UploadWorkflow::Bulk::Remove::States#on_removed_entry
@@ -466,7 +466,7 @@ class UploadController < ApplicationController
 
   public
 
-  # == POST /upload/renew
+  # === POST /upload/renew
   #
   # Invoked to re-create a database entry that had been canceled.
   #
@@ -486,7 +486,7 @@ class UploadController < ApplicationController
     post_response(error)
   end
 
-  # == POST /upload/reedit?id=:id
+  # === POST /upload/reedit?id=:id
   #
   # Invoked to re-start editing a database entry.
   #
@@ -506,8 +506,8 @@ class UploadController < ApplicationController
     post_response(error)
   end
 
-  # == GET  /upload/cancel?id=:id[&redirect=URL][&reset=bool][&fields=...]
-  # == POST /upload/cancel?id=:id[&fields=...]
+  # === GET  /upload/cancel?id=:id[&redirect=URL][&reset=bool][&fields=...]
+  # === POST /upload/cancel?id=:id[&fields=...]
   #
   # Invoked to cancel the current submission form instead of submitting.
   #
@@ -540,8 +540,8 @@ class UploadController < ApplicationController
     end
   end
 
-  # == GET /upload/check/:id
-  # == GET /upload/check/SID
+  # === GET /upload/check/:id
+  # === GET /upload/check/SID
   #
   # Invoked to determine whether the workflow state of the indicated item can
   # be advanced.
@@ -569,7 +569,7 @@ class UploadController < ApplicationController
 
   public
 
-  # == POST /upload/upload
+  # === POST /upload/upload
   #
   # Invoked from 'Uppy.XHRUpload'.
   #
@@ -601,7 +601,7 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /download/:id
+  # === GET /download/:id
   #
   # Download the file associated with an EMMA submission.
   #
@@ -623,7 +623,7 @@ class UploadController < ApplicationController
     post_response(error, xhr: true)
   end
 
-  # == GET /retrieval?url=URL
+  # === GET /retrieval?url=URL
   #
   # Retrieve a file from a member repository that supports proxying through the
   # EMMA server.
@@ -651,8 +651,8 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/admin[?(deploy|deployment)=('production'|'staging')]
-  # == GET /upload/admin[?(repo|repository)=('emma'|'ia')]
+  # === GET /upload/admin[?(deploy|deployment)=('production'|'staging')]
+  # === GET /upload/admin[?(repo|repository)=('emma'|'ia')]
   #
   # Upload submission administration.
   #
@@ -667,7 +667,7 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == GET /upload/records[?start_date=DATE&end_date=DATE]
+  # === GET /upload/records[?start_date=DATE&end_date=DATE]
   #
   # Generate record information for APTrust backup.
   #
@@ -699,7 +699,7 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/api_migrate?(v|version)=[0.0.]5(&verbose=true&dryrun=false)
+  # === GET /upload/api_migrate?(v|version)=[0.0.]5(&verbose=true&dryrun=false)
   #
   # Modify :emma_data fields and content.
   #
@@ -719,7 +719,7 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # == GET /upload/bulk_reindex?size=PAGE_SIZE[&id=(:id|SID|RANGE_LIST)]
+  # === GET /upload/bulk_reindex?size=PAGE_SIZE[&id=(:id|SID|RANGE_LIST)]
   #
   # Cause completed submission records to be re-indexed.
   #

@@ -81,11 +81,11 @@ $border-fg:  var(--rev-fg-color);
     // @see BaseCollectionDecorator::Table::DARK_HEAD
     &.dark-head {
 
-        /**
-         * Since "display: contents" makes the <tr> un-stylable an additional
-         * <tr> is required which explicitly positioned so that the <tr> with
-         * the actual <th> headings can be displayed above it in the Z-order.
-         */
+        // Since "display: contents" makes the `<tr>` un-stylable an additional
+        // `<tr>` is required which explicitly positioned so that the `<tr>`
+        // with the actual `<th>` headings can be displayed above it in the
+        // Z-order.
+
         thead {
 
             tr.spanner {
@@ -122,7 +122,6 @@ $border-fg:  var(--rev-fg-color);
         background: $bg-color;
         z-index:    v.$z-normal;
 
-        // noinspection CssBrowserCompatibilityForProperties
         overscroll-behavior: contain;
 
         @media #{v.$narrow-screen} {

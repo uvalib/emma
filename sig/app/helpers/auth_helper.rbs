@@ -34,7 +34,7 @@ module AuthHelper
   #
   # @return [Hash{String=>Hash}]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Because the logic is only performed once, direct changes to the User
   # table will not be reflected here, however changes made indirectly via
   # #stored_auth_update and/or #stored_auth_update_user will change both
@@ -83,7 +83,7 @@ module AuthHelper
   # @return [nil]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload stored_auth_update_user(auth)

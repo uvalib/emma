@@ -22,7 +22,7 @@ import {
     isMissing,
     isPresent,
     notDefined,
-    presence
+    presence,
 } from './definitions';
 
 
@@ -60,6 +60,11 @@ AppDebug.file('shared/modal-base', MODULE, DEBUG);
 // Class ModalBase
 // ============================================================================
 
+/**
+ * ModalBase
+ *
+ * @extends BaseClass
+ */
 export class ModalBase extends BaseClass {
 
     static CLASS_NAME = 'ModalBase';
@@ -117,8 +122,8 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * The control which currently "owns" this instance (and the associated
-     * modal popup element).
+     * The activation control which currently "owns" this instance (and the
+     * associated modal popup element).
      *
      * @type {jQuery|undefined}
      */
@@ -153,8 +158,8 @@ export class ModalBase extends BaseClass {
      */
     constructor(control, modal) {
         super();
-        this._debug(`ModalBase ctor: control =`, control);
-        this._debug(`ModalBase ctor: modal =`, modal);
+        this._debug('ModalBase CTOR: control =', control);
+        this._debug('ModalBase CTOR: modal   =', modal);
         this.$toggle = control && this.associate(control);
         this.$modal  = modal   && this.setupPanel(modal);
     }
@@ -176,9 +181,9 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Open the popup element.
+     * Open the modal popup element.
      *
-     * @param {boolean} [no_halt]     If *true*, hooks cannot halt the chain.
+     * @param {boolean} [no_halt]     If **true**, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -193,9 +198,9 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Close the popup element.
+     * Close the modal popup element.
      *
-     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -214,9 +219,9 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Toggle visibility of the modal element.
+     * Toggle visibility of the modal popup element.
      *
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event|Event} event
      *
      * @returns {boolean}
      */
@@ -228,7 +233,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Toggle visibility of the associated popup.
+     * Toggle visibility of the associated modal popup. <p/>
      *
      * On any given cycle, the first execution of this method should be due to
      * the user pressing a toggle button.  That button is set here as the
@@ -237,8 +242,7 @@ export class ModalBase extends BaseClass {
      * @param {Selector} [target]     Default: {@link modalControl}.
      */
     toggleModal(target) {
-        const func  = 'toggleModal';
-        this._debug(`${func}: target =`, target);
+        const func  = 'toggleModal'; this._debug(`${func}: target =`, target);
         let $target = target && $(target);
         if ($target) {
             const instance = this.constructor.instanceFor($target);
@@ -257,7 +261,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Toggle visibility of an <iframe> or <img> popup.
+     * Toggle visibility of an `<iframe>` or `<img>` modal popup.
      *
      * @param {Selector} target       Event target causing the action.
      * @param {string}   [caller]
@@ -311,7 +315,7 @@ export class ModalBase extends BaseClass {
             }
 
         } else if (complete) {
-            // If the <iframe> exists and contains a different page than the
+            // If the `<iframe>` exists and contains a different page than the
             // original then remove it in order to re-fetch the original the
             // next time it is opened.
             if (this._checkHidePopup($target)) {
@@ -338,7 +342,7 @@ export class ModalBase extends BaseClass {
 
     /**
      * Fetch deferred content as indicated by the placeholder element, which
-     * may be either an <iframe> or an <img>.
+     * may be either an `<iframe>` or an `<img>`.
      *
      * @param {Selector} placeholder
      *
@@ -386,10 +390,10 @@ export class ModalBase extends BaseClass {
         $content.attr('src', source_url);
 
         /**
-         * If there was a problem with loading the popup content, display
-         * a message in the popup placeholder element.
+         * If there was a problem with loading the content for the modal popup,
+         * display a message in the popup placeholder element.
          *
-         * @param {jQuery.Event} event
+         * @param {jQuery.Event|Event} event
          */
         function onError(event) {
             _warn(`${func}: ${type} FAILED`, event);
@@ -401,15 +405,15 @@ export class ModalBase extends BaseClass {
         }
 
         /**
-         * When the popup content is loaded replace the placeholder <iframe>
-         * with the content <iframe>.  If an anchor (initial element ID) was
-         * specified by the 'data-topic' attribute in the placeholder, scroll
-         * the <iframe> to bring the element with that ID to the top of the
-         * panel display.
+         * When the modal popup content is loaded replace the placeholder
+         * `<iframe>` with the content `<iframe>`.  If an anchor (initial
+         * element ID) was specified by the *data-topic* attribute in the
+         * placeholder, scroll the `<iframe>` to bring the element with that ID
+         * to the top of the panel display.
          *
-         * @param {jQuery.Event} event
+         * @param {jQuery.Event|Event} _event
          */
-        function onLoad(event) {
+        function onLoad(_event) {
             if ($modal.hasClass(COMPLETE_MARKER)) {
 
                 // The user has clicked on a link within the <iframe> and a new
@@ -423,7 +427,8 @@ export class ModalBase extends BaseClass {
                 const iframe = $content[0].contentDocument;
                 const topic  = $placeholder.attr('data-topic');
 
-                // Record the initial page and anchor displayed in the <iframe>
+                // Record the initial page and anchor displayed in the
+                // `<iframe>`.
                 $modal.data('id',    $content[0].id); // For logging.
                 $modal.data('page',  iframe.location.pathname);
                 $modal.data('topic', topic);
@@ -434,7 +439,7 @@ export class ModalBase extends BaseClass {
                 toggleHidden($content, false);
 
                 // Prepare to handle key presses that are directed to the
-                // <iframe>.
+                // `<iframe>`.
                 handleEvent($content.contents(), 'keyup', onIframeKeyUp);
 
                 // Make sure the associated popup element is displayed and
@@ -447,10 +452,11 @@ export class ModalBase extends BaseClass {
 
         // noinspection FunctionWithInconsistentReturnsJS
         /**
-         * Allow "Escape" key from within the <iframe> to close the popup.
+         * Allow **Escape** key from within the `<iframe>` to close the modal
+         * popup. <p/>
          *
-         * Re-focus on the parent window so that the hidden popup does not
-         * continue to intercept keypress events.
+         * Re-focus on the parent window so that the hidden modal does not
+         * continue to intercept key press events.
          *
          * @param {jQuery.Event|KeyboardEvent} event
          */
@@ -467,7 +473,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Toggle visibility of a generic content popup.
+     * Toggle visibility of a generic content modal popup.
      *
      * @param {Selector} target       Event target causing the action.
      * @param {string}   [caller]
@@ -551,10 +557,10 @@ export class ModalBase extends BaseClass {
         $content.attr('src', source_url);
 
         /**
-         * If there was a problem with loading the popup content, display
+         * If there was a problem with loading the modal popup content, display
          * a message in the popup placeholder element.
          *
-         * @param {jQuery.Event} event
+         * @param {jQuery.Event|Event} event
          */
         function onError(event) {
             _warn(`${func}: FAILED`, event);
@@ -566,15 +572,15 @@ export class ModalBase extends BaseClass {
         }
 
         /**
-         * When the popup content is loaded replace the placeholder <div>
-         * with the content <div>.
+         * When the modal popup content is loaded replace the placeholder
+         * `<div>` with the content `<div>`.
          *
-         * @param {jQuery.Event} event
+         * @param {jQuery.Event|Event} _event
          */
-        function onLoad(event) {
+        function onLoad(_event) {
             if ($modal.hasClass(COMPLETE_MARKER)) {
 
-                // The user has clicked on a link within the <dev> and a new
+                // The user has clicked on a link within the `<div>` and a new
                 // page has been loaded into it.
                 _debug(`${func}: PAGE REPLACED`);
 
@@ -598,7 +604,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Scroll popup into view.
+     * Scroll the modal popup into view.
      *
      * @returns {jQuery}
      */
@@ -607,17 +613,17 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Scroll the <iframe> content to the indicated anchor.
-     *
-     * @note Move outside of class?
+     * Scroll the `<iframe>` content to the indicated anchor.
      *
      * @param {Selector} iframe
      * @param {string}   [topic]      Default: top of document.
+     *
+     * TODO: Move outside of class?
      */
     scrollFrameDocument(iframe, topic) {
         const $iframe = $(iframe);
         const id      = $iframe.attr('id') || '???';
-        const func    = `scrollFrameDocument: popup ${id}`;
+        const func    = `scrollFrameDocument: modal popup ${id}`;
         const doc     = $iframe[0]?.contentDocument;
         let anchor    = topic?.replace(/^#/, '');
         let section   = anchor && doc?.getElementById(anchor);
@@ -654,10 +660,10 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Open the popup element.
+     * Open the modal popup element.
      *
      * @param {Selector} [target]     Event target causing the action.
-     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
      *
      * @returns {boolean}
      * @protected
@@ -677,10 +683,10 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Close the popup element.
+     * Close the modal popup element.
      *
      * @param {Selector} [target]     Event target causing the action.
-     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
      *
      * @returns {boolean}
      * @protected
@@ -700,9 +706,9 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Show/hide the popup element.
+     * Show/hide the modal popup element.
      *
-     * @param {boolean} [hide]        If *false*, un-hide.
+     * @param {boolean} [hide]        If **false**, un-hide.
      *
      * @protected
      */
@@ -716,7 +722,7 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Pre-clear the ability to open the popup.
+     * Pre-clear the ability to open the modal popup.
      *
      * @param {Selector} [target]     Event target causing the action.
      *
@@ -728,7 +734,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Pre-clear the ability to close the popup.
+     * Pre-clear the ability to close the modal popup.
      *
      * @param {Selector} [target]     Event target causing the action.
      *
@@ -740,7 +746,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * _invokeOnShowPopup
+     * Execute all {@link ModalShowHooks} associated with the instance.
      *
      * @param {Selector} [target]     Event target causing the action.
      * @param {boolean}  [check_only]
@@ -754,7 +760,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * _invokeOnHidePopup
+     * Execute all {@link ModalHideHooks} associated with the instance.
      *
      * @param {Selector} [target]     Event target causing the action.
      * @param {boolean}  [check_only]
@@ -768,13 +774,13 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * _invokePopupHook
+     * Execute a {@link ModalHooks} callback associated with the instance.
      *
      * @param {string}   data_name
      * @param {Selector} [target]     Event target causing the action.
      * @param {boolean}  [check_only]
      *
-     * @returns {boolean|undefined}
+     * @returns {boolean|undefined}   Not defined if *data_name* is missing.
      * @protected
      */
     _invokePopupHook(data_name, target, check_only) {
@@ -788,7 +794,7 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Indicate whether the popup is intended to stack above all other
+     * Indicate whether the modal popup is intended to stack above all other
      * elements.
      *
      * @returns {boolean}
@@ -800,9 +806,9 @@ export class ModalBase extends BaseClass {
 
     /**
      * Cheat working out the proper stacking context hierarchy by causing all
-     * elements with a non-zero z-index to be neutralized.
+     * elements with a non-zero z-index to be neutralized. <p/>
      *
-     * The function returns early if it has already been run for this popup.
+     * The function returns early if it has already been run for this instance.
      *
      * @protected
      */
@@ -1030,7 +1036,7 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Set up a modal toggle to operate with this instance.
+     * Set up an activation toggle control to operate with this instance.
      *
      * @param {Selector} toggle
      *
@@ -1079,7 +1085,7 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Set a class method as an event handler.
+     * Set a class instance method as an event handler.
      *
      * @param {jQuery}             $element
      * @param {string}             name         Event name.
@@ -1094,7 +1100,7 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Set a class method as a click and keypress event handler.
+     * Set a class instance method as a click and key press event handler.
      *
      * @param {jQuery}             $element
      * @param {jQueryEventHandler} method       Event handler method.
@@ -1127,7 +1133,7 @@ export class ModalBase extends BaseClass {
     // ========================================================================
 
     /**
-     * Report on the popup.
+     * Report on the modal popup instance.
      *
      * @param {string}   label
      * @param {Selector} [_popup]

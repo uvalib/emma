@@ -36,7 +36,7 @@ AppDebug.file('shared/database', MODULE, DEBUG);
  *
  * @property {*}                          [default]
  * @property {boolean|IDBIndexParameters} [index]
- * @property {function:IDBValidKey}       [func]
+ * @property {function(...):IDBValidKey}  [func]
  */
 
 /**
@@ -423,10 +423,10 @@ export const DB = (function() {
             }
 
             db_handle = new_db;
-            db_handle.onversionchange = event => dbSetupDatabase(event, func);
-            db_handle.onclose         = event => onClose(event);
-            db_handle.onabort         = event => onGenericAbort(event);
-            db_handle.onerror         = event => onGenericError(event);
+            db_handle.onversionchange = (evt) => dbSetupDatabase(evt, func);
+            db_handle.onclose         = (evt) => onClose(evt);
+            db_handle.onabort         = (evt) => onGenericAbort(evt);
+            db_handle.onerror         = (evt) => onGenericError(evt);
 
             // ================================================================
             // Event handlers
@@ -674,7 +674,7 @@ export const DB = (function() {
     /**
      * Get object store properties.
      *
-     * @param {string} [store_name]   Default: {@link defaultStore()}.
+     * @param {string} [store_name]   Default: {@link defaultStore}.
      *
      * @returns {StoreTemplate}
      */
@@ -728,10 +728,10 @@ export const DB = (function() {
         dbLog(func, database);
 
         const request = window.indexedDB.open(name, version);
-        request.onupgradeneeded = event => dbSetupDatabase(event, func);
-        request.onblocked       = event => onOpenBlocked(event);
-        request.onerror         = event => onOpenError(event);
-        request.onsuccess       = event => onOpenSuccess(event);
+        request.onupgradeneeded = (event) => dbSetupDatabase(event, func);
+        request.onblocked       = (event) => onOpenBlocked(event);
+        request.onerror         = (event) => onOpenError(event);
+        request.onsuccess       = (event) => onOpenSuccess(event);
 
         // ====================================================================
         // Event handlers

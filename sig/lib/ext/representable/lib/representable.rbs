@@ -33,7 +33,7 @@ module Representable
     # @yieldreturn [Array, Any]
     #
     # -
-    # == Variations
+    # === Variations
     # +
     #
     # @overload __debug_show(mode, *args, **opt)
@@ -67,7 +67,7 @@ module Representable
     # @return [nil]
     #
     # -
-    # == Variations
+    # === Variations
     # +
     #
     # @overload __debug_lambda(mode, *constants)
@@ -96,7 +96,7 @@ module Representable
     # @return [nil]
     #
     # -
-    # == Variations
+    # === Variations
     # +
     #
     # @overload __debug_method(mode, label, *methods)

@@ -32,7 +32,7 @@ module Api::Record::Associations
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload attribute(name, **opt)
@@ -62,7 +62,7 @@ module Api::Record::Associations
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload has_one(name, **opt)
@@ -92,7 +92,7 @@ module Api::Record::Associations
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload has_many(name, **opt)
@@ -144,7 +144,7 @@ module Api::Record::Associations
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload add_single_property(name, **opt)
@@ -199,7 +199,7 @@ module Api::Record::Associations
     # @return [Proc]  An anonymous method that generates the default value.
     # @return [Any]   A literal value.
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # Compare with Api::Serializer::Associations#get_type_class
     #
     def make_default(type, **opt)

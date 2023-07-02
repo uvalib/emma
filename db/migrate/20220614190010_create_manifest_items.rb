@@ -13,7 +13,7 @@ class CreateManifestItems < ActiveRecord::Migration[6.1]
       t.integer    :row,   default: 0
       t.integer    :delta, default: 0
 
-      # == Internal record state
+      # === Internal record state
 
       t.boolean    :editing
       t.boolean    :deleting
@@ -22,22 +22,22 @@ class CreateManifestItems < ActiveRecord::Migration[6.1]
       t.timestamp  :last_submit
       t.timestamps
 
-      # == Synthetic metadata
+      # === Synthetic metadata
 
       t.string     :data_status
       t.string     :file_status
       t.string     :ready_status
 
-      # == File metadata
+      # === File metadata
 
       t.json       :file_data
 
-      # == Repository information (emma_data)
+      # === Repository information (emma_data)
 
       t.string     :repository              # TODO: may go away...
       t.date       :emma_publicationDate
 
-      # == Bibliographic information (emma_data)
+      # === Bibliographic information (emma_data)
 
       t.string     :dc_title
       t.string     :emma_version
@@ -58,7 +58,7 @@ class CreateManifestItems < ActiveRecord::Migration[6.1]
       t.date       :dcterms_dateAccepted
       t.string     :dcterms_dateCopyright
 
-      # == Remediation information (emma_data)
+      # === Remediation information (emma_data)
 
       t.string     :rem_source
       t.text       :rem_metadataSource
@@ -71,7 +71,7 @@ class CreateManifestItems < ActiveRecord::Migration[6.1]
       t.date       :rem_remediationDate
       t.text       :rem_comments
 
-      # == Accessibility information (emma_data)
+      # === Accessibility information (emma_data)
 
       t.string     :s_accessibilityFeature, array: true
       t.string     :s_accessibilityControl, array: true
@@ -80,7 +80,7 @@ class CreateManifestItems < ActiveRecord::Migration[6.1]
       t.string     :s_accessModeSufficient, array: true
       t.text       :s_accessibilitySummary
 
-      # == Internal record state
+      # === Internal record state
 
       t.jsonb      :backup
 

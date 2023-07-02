@@ -19,7 +19,7 @@ class HelpController < ApplicationController
 
   @list: symArray
 
-  # == GET /help
+  # === GET /help
   #
   # The main help page.
   #
@@ -28,8 +28,8 @@ class HelpController < ApplicationController
   #
   def index: () -> void
 
-  # == GET /help/:topic
-  # == GET /help?topic=:topic
+  # === GET /help/:topic
+  # === GET /help?topic=:topic
   #
   # The topic help page.
   #

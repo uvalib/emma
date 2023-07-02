@@ -72,7 +72,7 @@ export function cloneTitle(item, title) {
 Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
-     * Search page <body>.
+     * Search page `<body>`.
      *
      * @type {jQuery}
      */
@@ -237,7 +237,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
     const $mode_menu = $('.results.menu-control select');
 
     /**
-     * The current results type ('title' or 'file').
+     * The current results type ("title" or "file").
      *
      * @type {string}
      */
@@ -307,7 +307,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
     /**
      * Current search list display style.
      *
-     * @note Can't rely on `params` because `params['style']` will have already
+     * @note Can't rely on *params* because *params['style']* will have already
      *  been removed via the server redirect.
      *
      * @returns {string}
@@ -527,7 +527,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
     let page_items;
 
     /**
-     * Data copied from the database object store.
+     * Data copied from the database object store. <p/>
      *
      * Each record_id key is associated with an object containing records
      * keyed by page number.
@@ -660,7 +660,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Initialize the DB closure for use by this page by informing it of the
-     * database, version and object stores.
+     * database, version and object stores. <p/>
      *
      * No actual IDBDatabase changes occur until `DB.openObjectStore` is run.
      *
@@ -696,15 +696,14 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
                 } else {
                     DB.deleteItems('page', pageNumber(), storeItems);
                 }
-            }
-            catch (err) {
-                console.warn(`${func}: ${err}`);
+            } catch (error) {
+                console.warn(`${func}: ${error}`);
             }
         });
     }
 
     /**
-     * Open the database and the designated object store.
+     * Open the database and the designated object store. <p/>
      *
      * This will trigger IDBDatabase changes if required.
      *
@@ -854,6 +853,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Encapsulates handling of guesses about index relevancy scores.
+     *
+     * @extends BaseClass
      */
     class RelevancyScores extends BaseClass {
 
@@ -866,7 +867,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         initialize() { this._validateRelevancyScores() }
 
         // ====================================================================
-        // Protected methods
+        // Methods - internal
         // ====================================================================
 
         /**
@@ -877,8 +878,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
          * @protected
          */
         _validateRelevancyScores(items) {
-            const mark_disabled   = el => this._markDisabledRelevancy(el);
-            const mark_suspicious = el => this._markSuspiciousRelevancy(el);
+            const mark_disabled   = (el) => this._markDisabledRelevancy(el);
+            const mark_suspicious = (el) => this._markSuspiciousRelevancy(el);
             const $items          = items ? $(items) : $result_items;
             if (Object.keys(SORTED).includes(SORT_ORDER)) {
                 $items.each(function() { mark_disabled(this) });
@@ -937,6 +938,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
     /**
      * Base class for dynamic activation of special features for visualizing
      * patterns in search results.
+     *
+     * @extends SessionState
      */
     class AdvancedFeature extends SessionState {
 
@@ -1042,7 +1045,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         // ====================================================================
 
         /**
-         * Activate the associated feature.
+         * Activate the associated feature. <p/>
          *
          * Derived classes extend this method to include the operations for
          * modifying the display.
@@ -1054,7 +1057,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         /**
-         * De-activate the associated feature.
+         * De-activate the associated feature. <p/>
          *
          * Derived classes extend this method to include the operations for
          * modifying the display.
@@ -1122,7 +1125,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // Protected methods
+        // Methods - internal
         // ====================================================================
 
         /**
@@ -1158,7 +1161,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         // noinspection FunctionWithInconsistentReturnsJS
         /**
          * Assign event handlers to the indicated button if it matches
-         * `this.button_class`.
+         * {@link button_class}.
          *
          * @param {string}                 topic    {@link BUTTON_CONFIG} key
          * @param {StyleControlProperties} [config] {@link BUTTON_CONFIG} value
@@ -1212,7 +1215,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // SessionState class property overrides
+        // Class properties - SessionState overrides
         // ====================================================================
 
         static get keyPrefix() { return KEY_PREFIX }
@@ -1220,6 +1223,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Manage a feature controlled by toggling a marker class on $item_list.
+     *
+     * @extends AdvancedFeature
      */
     class ToggleFeature extends AdvancedFeature {
 
@@ -1257,20 +1262,20 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
             }
             super(kb, bc, (topic || kb));
             this.list_class = list_class || kb;
-            this.valid      = this.#validate();
+            this.valid      = this._validate();
         }
 
         // ====================================================================
-        // Private methods
+        // Methods - internal
         // ====================================================================
 
         /**
-         * #validate
+         * _validate
          *
          * @returns {boolean}
          * @protected
          */
-        #validate() {
+        _validate() {
             const member_values = {
                 button_class: this.button_class,
                 list_class:   this.list_class,
@@ -1293,7 +1298,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // SessionState property overrides
+        // Properties - SessionState overrides
         // ====================================================================
 
         /**
@@ -1334,20 +1339,20 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         get $root() { return $item_list }
 
         // ====================================================================
-        // SessionState method overrides
+        // Methods - SessionState overrides
         // ====================================================================
 
         /**
          * Persist current settings to sessionStorage.
          *
-         * @param {boolean|ToggleState} new_value   Default: *true*.
+         * @param {boolean|ToggleState} new_value   Default: **true**.
          */
         update(new_value) {
             this.value = notDefined(new_value) || new_value;
         }
 
         // ====================================================================
-        // AdvancedFeature method overrides
+        // Methods - AdvancedFeature overrides
         // ====================================================================
 
         /**
@@ -1384,6 +1389,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Highlight field groups.
+     *
+     * @extends ToggleFeature
      */
     class ToggleFieldGroups extends ToggleFeature {
 
@@ -1396,7 +1403,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         constructor(key_base = 'field_groups') { super(key_base) }
 
         // ====================================================================
-        // AdvancedFeature method overrides
+        // Methods - AdvancedFeature overrides
         // ====================================================================
 
         /**
@@ -1469,6 +1476,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Show counts of formats associated with a hierarchical title entry.
+     *
+     * @extends ToggleFeature
      */
     class ToggleFormatCounts extends ToggleFeature {
 
@@ -1483,6 +1492,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Collapse (file-level) search result items.
+     *
+     * @extends ToggleFeature
      */
     class ToggleCollapsed extends ToggleFeature {
 
@@ -1495,7 +1506,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         constructor(key_base = 'collapsed') { super(key_base) }
 
         // ====================================================================
-        // AdvancedFeature method overrides
+        // Methods - AdvancedFeature overrides
         // ====================================================================
 
         /**
@@ -1523,6 +1534,8 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
 
     /**
      * Manage title colorization.
+     *
+     * @extends AdvancedFeature
      */
     class ColorizeFeature extends AdvancedFeature {
 
@@ -1602,7 +1615,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // SessionState property overrides
+        // Properties - SessionState overrides
         // ====================================================================
 
         /** @returns {ColorizeState} */
@@ -1612,7 +1625,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         set value(new_value) { super.value = new_value }
 
         // ====================================================================
-        // SessionState method overrides
+        // Methods - SessionState overrides
         // ====================================================================
 
         /**
@@ -1630,7 +1643,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // AdvancedFeature property overrides
+        // Properties - AdvancedFeature overrides
         // ====================================================================
 
         /**
@@ -1643,7 +1656,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // AdvancedFeature method overrides
+        // Methods - AdvancedFeature overrides
         // ====================================================================
 
         /**
@@ -1681,7 +1694,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // Protected methods
+        // Methods - internal
         // ====================================================================
 
         /**
@@ -1816,7 +1829,7 @@ Emma.SEARCH_ANALYSIS && appSetup('feature/search-analysis', function() {
         }
 
         // ====================================================================
-        // Protected methods
+        // Methods - internal
         // ====================================================================
 
         /**

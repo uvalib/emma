@@ -43,8 +43,8 @@
 
         > * {
 
-            width:        max-content;
-            margin-right: 0.5rem;
+            width:              max-content;
+            margin-right:       0.5rem;
 
             @media #{$narrow-screen} {
                 margin-top:    0;
@@ -145,19 +145,19 @@
 
                 @include button.basic;
 
-                margin:       0;
-                font-size:    larger;
-                color:        inherit;
-                border-color: $debug-fg;
-                border-width: 2px;
+                margin:             0;
+                font-size:          larger;
+                color:              inherit;
+                border-color:       $debug-fg;
+                border-width:       2px;
 
                 @media #{$not-narrow-screen} {
-                    margin-right:  $page-control-gap-x;
+                    margin-right:   $page-control-gap-x;
                 }
 
                 @media #{$narrow-screen} {
-                    margin-top:    $page-control-gap-y;
-                    margin-bottom: $page-control-gap-y;
+                    margin-top:     $page-control-gap-y;
+                    margin-bottom:  $page-control-gap-y;
                 }
             }
         }

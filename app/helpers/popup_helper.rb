@@ -68,18 +68,18 @@ module PopupHelper
   #
   def inline_popup(control: nil, panel: nil, css: '.inline-popup', **opt, &blk)
 
-    # Visible popup toggle control.
+    # Visible modal popup activation toggle control.
     t_opt = extract_hash!(opt, *POPUP_TOGGLE_OPT)
     t_opt.reverse_merge!(control) if control
     popup_toggle = make_popup_toggle(**t_opt)
 
-    # Initially-hidden popup panel.
+    # Initially-hidden modal popup panel.
     p_opt = extract_hash!(opt, *POPUP_PANEL_OPT)
     p_opt.reverse_merge!(panel) if panel
     prepend_css!(p_opt, POPUP_PANEL_CLASS)
     popup_panel = make_popup_panel(**p_opt, &blk)
 
-    # The hidden panel is a sibling of the popup toggle control:
+    # The hidden panel is a sibling of the toggle control:
     prepend_css!(opt, css)
     html_span(opt) do
       popup_toggle << popup_panel
@@ -95,7 +95,7 @@ module PopupHelper
   # @private
   POPUP_TOGGLE_OPT = %i[title button text label]
 
-  # Create a popup toggle control.
+  # Create a modal popup activation toggle control.
   #
   # @param [Hash, String, nil] button
   # @param [String, nil]       text

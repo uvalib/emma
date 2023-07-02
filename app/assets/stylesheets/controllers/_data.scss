@@ -41,8 +41,8 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 
 /**
  * NOTE: This is crude, mostly because the normal intended output is JSON.
- * Some minimal styling is supplied just to help confirm results from the
- * controller by being able to view them as a web page.
+ *  Some minimal styling is supplied just to help confirm results from the
+ *  controller by being able to view them as a web page.
  *
  * @see DataHelper#html_db_table
  */
@@ -56,9 +56,10 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
         $columns: #{$columns} minmax(15vw, max-content);
     }
 
-    display:               grid;
+    display: grid;
+    gap:     1rem;
+
     grid-template-columns: $columns;
-    gap:                   1rem;
 
     // @see DataHelper#html_db_record
     .database-record {
@@ -68,21 +69,21 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
         // @see DataHelper#html_db_column
         .database-column {
 
-            background: var(--bg-color);
+            background:             var(--bg-color);
 
             &.hierarchy {
-                max-height:  25vh;
-                max-width:   30vw;
-                white-space: pre;
-                overflow:    auto;
-                background:  ghostwhite;
+                max-height:         25vh;
+                max-width:          30vw;
+                white-space:        pre;
+                overflow:           auto;
+                background:         ghostwhite;
             }
 
             &.col-first {
-                position:          sticky;
-                left:              2rem;
-                box-shadow:        $side-scroll-shadow, $vert-scroll-shadow;
-                grid-column-start: 1;
+                position:           sticky;
+                left:               2rem;
+                box-shadow:         $side-scroll-shadow, $vert-scroll-shadow;
+                grid-column-start:  1;
             }
         }
 
@@ -90,19 +91,19 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 
             .database-column {
 
-                position:       sticky;
-                top:            0.5rem;
-                padding:        0 1px;
-                font-weight:    bold;
-                text-transform: uppercase;
-                border-bottom:  2px solid var(--fg-color);
+                position:           sticky;
+                top:                0.5rem;
+                padding:            0 1px;
+                font-weight:        bold;
+                text-transform:     uppercase;
+                border-bottom:      2px solid var(--fg-color);
 
                 &.col-first {
-                    z-index:    $z-raised;
+                    z-index:        $z-raised;
                 }
 
                 &:not(.col-first) {
-                    box-shadow: $vert-scroll-shadow;
+                    box-shadow:     $vert-scroll-shadow;
                 }
             }
         }
@@ -129,11 +130,11 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 // @see DataHelper#html_db_field_table
 .database-counts-table {
 
-    display:               grid;
+    display:    grid;
+    gap:        1rem 3rem;
+    margin-top: 4.5rem;
+
     grid-template-columns: 0.1fr 0.9fr;
-    column-gap:            1rem;
-    row-gap:               3rem;
-    margin-top:            4.5rem;
 
     // @see DataHelper#html_db_field
     .database-field-counts {
@@ -142,28 +143,29 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 
         .field-name,
         .field-values {
-            line-height: 1.5;
+            line-height:        1.5;
         }
 
         .field-name {
 
-            font-weight:       bold;
-            grid-column-start: 1;
+            font-weight:        bold;
+            grid-column-start:  1;
 
             &.invalid {
-                color:         $error-fg;
-                cursor:        default;
+                color:          $error-fg;
+                cursor:         default;
             }
         }
 
         // @see DataHelper#html_db_field_values
         .field-values {
 
-            display:               grid;
+            display:    grid;
+            max-height: 20vh;
+            overflow:   auto;
+            background: ghostwhite;
+
             grid-template-columns: 0.1fr 0.9fr;
-            max-height:            20vh;
-            overflow:              auto;
-            background:            ghostwhite;
 
             .value-count {
                 padding-left:  0.25rem;

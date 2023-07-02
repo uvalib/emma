@@ -80,7 +80,7 @@ module BaseDecorator::Fields
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If *field_root* is given it is used to transform the field into a path
   # into the configuration.  The only current use is to allow specification of
   # :file_data so that configuration lookup is limited to the hierarchy within
@@ -162,7 +162,7 @@ module BaseDecorator::Fields
   #
   # @return [Hash]                    The potentially-modified *opt* hash.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Disabled input fields are given the :readonly attribute because the
   # :disabled attribute prevents those fields from being included in the data
   # sent with the form submission.
@@ -184,7 +184,7 @@ module BaseDecorator::Fields
   # @return [Array<String>]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload field_scopes(single)
@@ -246,7 +246,7 @@ module BaseDecorator::Fields
   #
   # @return [Array<String>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Descriptions like this don't currently seem to appear very often in search
   # results.  Even for those that do, they may not adhere to the expected
   # layout of information, and this method may not be that beneficial in those
@@ -290,7 +290,7 @@ module BaseDecorator::Fields
   # @return [ActiveSupport::SafeBuffer, String, Array]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload mark_invalid_languages(value, code: false)
@@ -315,7 +315,7 @@ module BaseDecorator::Fields
   # @return [ActiveSupport::SafeBuffer, String, Array]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload mark_invalid_identifiers(value)

@@ -139,23 +139,23 @@ body.tool.md {
 
         .label-text {
 
-            display:       inline-block;
-            margin-bottom: $label-v-gap;
+            display:        inline-block;
+            margin-bottom:  $label-v-gap;
 
             @media #{$narrow-screen} {
-                font-size: x-large;
+                font-size:  x-large;
             }
         }
 
         .clipboard-icon {
-            display:       inline-block;
+            display:        inline-block;
             margin-left:    $label-h-gap;
             vertical-align: super;
             cursor:         pointer;
         }
 
         .copy-note {
-            display:       inline-block;
+            display:        inline-block;
             margin-left:    $label-h-gap;
             vertical-align: super;
             color:          gray;
@@ -163,16 +163,16 @@ body.tool.md {
 
         .label-line {
 
-            display:         flex;
-            flex-direction:  row;
-            flex-wrap:       wrap;
-            justify-content: flex-start;
-            column-gap:      $label-h-gap;
-            row-gap:         $label-v-gap * 0.5;
-            margin-bottom:   $label-v-gap;
+            display:            flex;
+            flex-direction:     row;
+            flex-wrap:          wrap;
+            justify-content:    flex-start;
+            column-gap:         $label-h-gap;
+            row-gap:            $label-v-gap * 0.5;
+            margin-bottom:      $label-v-gap;
 
             @media #{$wide-screen} {
-                max-width:   calc(50% + 1.25rem);
+                max-width:      calc(50% + 1.25rem);
             }
 
             .label-text {
@@ -195,35 +195,35 @@ body.tool.md {
 
         .output {
 
-            padding:          0.5rem;
-            white-space:      pre-wrap;
-            overflow:         auto;
-            border:           2px solid $uva-accent-green;
-            border-radius:    0.25rem;
+            padding:            0.5rem;
+            white-space:        pre-wrap;
+            overflow:           auto;
+            border:             2px solid $uva-accent-green;
+            border-radius:      0.25rem;
 
             @media #{$wide-screen} {
-                height:       10vh;
-                width:        50%;
+                height:         10vh;
+                width:          50%;
             }
 
             @media #{$medium-width} {
-                height:       15vh;
-                width:        97.5%;
+                height:         15vh;
+                width:          97.5%;
             }
 
             @media #{$narrow-screen} {
-                height:       20vh;
-                width:        95%;
-                margin-right: 0.5rem;
+                height:         20vh;
+                width:          95%;
+                margin-right:   0.5rem;
             }
         }
 
         textarea.output {
-            display:          block;
-            font-family:      inherit;
-            font-size:        medium;
-            overflow-y:       scroll;
-            resize:           vertical;
+            display:            block;
+            font-family:        inherit;
+            font-size:          medium;
+            overflow-y:         scroll;
+            resize:             vertical;
         }
     }
 
@@ -362,22 +362,22 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
     .lookup-prompt {
 
-        display:        flex;
-        flex-direction: row;
-        gap:            $section-gap * 2;
+        display:                flex;
+        flex-direction:         row;
+        gap:                    $section-gap * 2;
 
         @media #{$wide-screen} {
-            max-width:       75vw;
+            max-width:          75vw;
         }
 
         @media #{$medium-width} {
-            gap:             1rem;
-            margin-right:    0.5rem;
+            gap:                1rem;
+            margin-right:       0.5rem;
         }
 
         @media #{$narrow-screen} {
-            flex-wrap:       wrap;
-            justify-content: center;
+            flex-wrap:          wrap;
+            justify-content:    center;
         }
 
         .item-terms {
@@ -386,11 +386,11 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             $border: $pad * 0.25;
             $color:  lighter($uva-blue, 75%);
 
-            display:        flex;
-            background:     $color;
-            border:         $border solid $color;
-            border-radius:  $border * 2;
-            flex:           1 1 auto;
+            display:            flex;
+            background:         $color;
+            border:             $border solid $color;
+            border-radius:      $border * 2;
+            flex:               1 1 auto;
 
             @media #{$wide-screen} {
                 gap:            $pad;
@@ -457,10 +457,10 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
     .lookup-status {
 
-        display:        flex;
-        flex-wrap:      wrap;
-        align-items:    center;
-        font-size:      large;
+        display:            flex;
+        flex-wrap:          wrap;
+        align-items:        center;
+        font-size:          large;
 
         @media #{$not-narrow-screen} {
             flex-direction: row;
@@ -478,14 +478,14 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
         .services {
 
-            display:        flex;
-            flex-wrap:      wrap;
-            align-items:    center;
-            min-height:     2rem;
-            margin-left:    auto;
-            margin-right:   auto;
-            font-weight:    bold;
-            flex:           1 1 auto;
+            display:            flex;
+            flex-wrap:          wrap;
+            align-items:        center;
+            min-height:         2rem;
+            margin-left:        auto;
+            margin-right:       auto;
+            font-weight:        bold;
+            flex:               1 1 auto;
 
             @media #{$not-narrow-screen} {
                 flex-direction: row;
@@ -503,13 +503,13 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
             .service {
 
-                padding:       0.25rem 0.375rem;
-                font-size:     medium;
-                text-align:    center;
-                border:        0.25rem double $lookup-accent-fg;
-                border-radius: 0.25rem;
-                cursor:        default;
-                flex:          1 1 auto;
+                padding:        0.25rem 0.375rem;
+                font-size:      medium;
+                text-align:     center;
+                border:         0.25rem double $lookup-accent-fg;
+                border-radius:  0.25rem;
+                cursor:         default;
+                flex:           1 1 auto;
 
                 & {
                     background-color: beige;
@@ -547,17 +547,16 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
         width:   95vw;
 
         @media #{$not-narrow-screen} {
-            grid-template-columns: minmax(max-content, 0.1fr) 1fr;
             gap:                   $section-gap;
+            grid-template-columns: minmax(max-content, 0.1fr) 1fr;
         }
 
         @media #{$narrow-screen} {
-            grid-template-columns: 1fr;
             gap:                   0.5rem;
+            grid-template-columns: 1fr;
         }
 
         .value {
-            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior: contain;
         }
 
@@ -566,12 +565,12 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             @include grid.column-span;
 
             @media #{$not-narrow-screen} {
-                height:      50vh;
+                height:         50vh;
             }
 
             @media #{$narrow-screen} {
-                height:      75vh;
-                white-space: pre;
+                height:         75vh;
+                white-space:    pre;
             }
         }
 

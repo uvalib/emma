@@ -40,23 +40,22 @@ class Api::Record
   # @param [Exception, String, TrueClass]                error    Note [3]
   # @param [Hash]                                        data     Note [4]
   #
-  # == Notes
+  # === Notes
+  # - [1] One of Api::Schema#SERIALIZER_TYPES. If not provided it will be
+  #       determined heuristically from *data*, with #DEFAULT_SERIALIZER_TYPE
+  #       as a fall-back. <p/>
   #
-  # [1] One of Api::Schema#SERIALIZER_TYPES.  If not provided it will be
-  #     determined heuristically from *data*, with #DEFAULT_SERIALIZER_TYPE as
-  #     a fall-back.
+  # - [2] A strategy for wrapping the data prior to de-serialization.  If
+  #       *true* then all types are wrapped as determined by #wrap_outer.  If a
+  #       Hash, then each key-value pair gives the format template to use or
+  #       *true* to use the template supplied by #wrap_outer.
   #
-  # [2] A strategy for wrapping the data prior to de-serialization.  If *true*
-  #     then all types are wrapped as determined by #wrap_outer.  If a Hash,
-  #     then each key-value pair gives the format template to use or *true* to
-  #     use the template supplied by #wrap_outer.
+  # - [3] If an error indication is present, the instance is initialized to
+  #       defaults and *data* is ignored.
   #
-  # [3] If an error indication is present, the instance is initialized to
-  #     defaults and *data* is ignored.
-  #
-  # [4] An alternative mechanism for specifying the source data (only used if
-  #     *src* is *nil* [which may be the case if a Hash value was used and it
-  #     gets interpreted as named parameters]).
+  # - [4] An alternative mechanism for specifying the source data (only used if
+  #       *src* is *nil* [which may be the case if a Hash value was used and it
+  #       gets interpreted as named parameters]).
   #
   #--
   # noinspection RubyMismatchedArgumentType, RubyMismatchedVariableType
@@ -346,7 +345,7 @@ class Api::Record
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # With no (or nil) argument, this initializes all fields from #default_data.
   # (This is useful in situations where you want all fields displayable whether
   # they were initialized with data or not).

@@ -11,7 +11,7 @@
 # @attr [String]   buyLink
 # @attr [DateTime] onSaleDate
 #
-# == Observed but not documented
+# === Observed but not documented
 #
 # @attr [Hash]     offers
 #

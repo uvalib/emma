@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Generic exception for EMMA Unified Search API problems.
 #
-# == Usage Notes
+# === Usage Notes
 # This is generally *not* the base class for exceptions in the SearchService
 # namespace:  Variants based on the error types defined under "emma.error.api"
 # are derived from the related ApiService class; e.g.:

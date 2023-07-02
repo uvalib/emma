@@ -29,7 +29,7 @@ module ImageHelper
   #
   # @type [String]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This is defined as an empty string because display of the alt text by the
   # (for the brief time that the placeholder image might be unavailable) is
   # disruptive to the entire display layout.

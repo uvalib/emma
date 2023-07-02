@@ -19,7 +19,7 @@ en:
         _name:          'external service API'
         _default:       'Unknown %{service} error'
 
-        # == Transmission errors
+        # === Transmission errors
 
         auth:           '%{Service} authorization error'
         comm:           '%{Service} network error'
@@ -30,12 +30,12 @@ en:
         recv:           '%{Service} receive error'
         parse:          '%{Service} sent bad data'
 
-        # == Request errors
+        # === Request errors
 
         request:        'Malformed request sent to %{service}'
         no_input:       'Empty request sent to %{service}'
 
-        # == Response errors
+        # === Response errors
 
         response:       'Bad %{service} response'
         empty_result:   'Empty %{service} result'

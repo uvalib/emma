@@ -26,7 +26,7 @@ module LogConcern
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Paired with after_action #unsuppress_logger.
   #
   def suppress_logger(logging = nil)
@@ -39,7 +39,7 @@ module LogConcern
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Paired with before_action #suppress_logger.
   #
   def unsuppress_logger

@@ -42,7 +42,7 @@ module SubmissionService::Action::Submit
   #
   # @return [StepResult]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The validity of :simulation and :sim_opt is determined here only; called
   # methods assume that `opt[:simulation]` and `opt[:sim_opt]` have been
   # set/unset appropriately.
@@ -196,7 +196,7 @@ module SubmissionService::Action::Submit
   #
   # @see ExecReport#error_table
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # It's not clear whether there would ever be situations where there was a mix
   # of errors by index, errors by submission ID, and/or general errors, but
   # this method was written to be able to cope with the possibility.

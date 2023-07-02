@@ -9,7 +9,7 @@ class AdminController < ApplicationController
 
   include AdminConcern
 
-  # == GET /admin
+  # === GET /admin
   #
   # Administrative main page.
   #
@@ -17,9 +17,9 @@ class AdminController < ApplicationController
   #
   def index: () -> void
 
-  # == POST  /admin
-  # == PUT   /admin
-  # == PATCH /admin
+  # === POST  /admin
+  # === PUT   /admin
+  # === PATCH /admin
   #
   # Set application control values.
   #

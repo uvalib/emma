@@ -582,10 +582,10 @@ class ApiMigrate
     #
     # @return [String, nil]
     #
-    # == Usage Notes
+    # === Usage Notes
     # This is expected to operate on already-translated field values.
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # The source enumeration is expected to be ordered from lowest to highest
     # quality.
     #
@@ -610,7 +610,7 @@ class ApiMigrate
     #
     # @return [Array<String>, String, nil]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # In order to avoid requiring that the API field migrations be done in a
     # specific sequence, this method will favor the pre-migrated field names
     # if they are present.
@@ -674,7 +674,7 @@ class ApiMigrate
     #
     # @return [String]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # In order to avoid requiring that the API field migrations be done in a
     # specific sequence, this method will favor the pre-migrated field names
     # if they are present.

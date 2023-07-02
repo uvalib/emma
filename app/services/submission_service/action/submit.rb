@@ -82,7 +82,7 @@ module SubmissionService::Action::Submit
   #
   # @return [StepResult]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The validity of :simulation and :sim_opt is determined here only; called
   # methods assume that `opt[:simulation]` and `opt[:sim_opt]` have been
   # set/unset appropriately.
@@ -396,11 +396,11 @@ module SubmissionService::Action::Submit
 
   ensure
     if result.is_a?(StepResult)
-      # == Result of any submission step except the final one.
+      # === Result of any submission step except the final one.
       result.failure.transform_values! { |v| v.is_a?(Hash) ? v : { error: v } }
       result.success.transform_values! { |v| v.is_a?(Hash) ? v : {} }
     else
-      # == Result of the final submission step or a rescued exception.
+      # === Result of the final submission step or a rescued exception.
       result.transform_values! { |v| v.is_a?(Hash) ? v : { error: v } }
       failure = result.select { |_, v| v[:error] }
       success = result.except(*failure.keys)
@@ -476,7 +476,7 @@ module SubmissionService::Action::Submit
   #
   # @return [StepResult]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This is the step where the submission ID associated with the ManifestItem
   # instance is generated/regenerated.
   #
@@ -507,7 +507,7 @@ module SubmissionService::Action::Submit
   #
   # @see ExecReport#error_table
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # It's not clear whether there would ever be situations where there was a mix
   # of errors by index, errors by submission ID, and/or general errors, but
   # this method was written to be able to cope with the possibility.

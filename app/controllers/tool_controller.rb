@@ -50,7 +50,7 @@ class ToolController < ApplicationController
 
   public
 
-  # == GET /tool
+  # === GET /tool
   #
   # Index of tool pages.
   #
@@ -67,7 +67,7 @@ class ToolController < ApplicationController
 
   public
 
-  # == GET /tool/md
+  # === GET /tool/md
   #
   # A simple Math Detective API test page for selecting a single file.
   #
@@ -78,8 +78,8 @@ class ToolController < ApplicationController
     __debug_route
   end
 
-  # == GET  /tool/md_proxy
-  # == POST /tool/md_proxy
+  # === GET  /tool/md_proxy
+  # === POST /tool/md_proxy
   #
   # Proxy the Math Detective API request to avoid CORS.
   #
@@ -105,7 +105,7 @@ class ToolController < ApplicationController
 
   public
 
-  # == GET /tool/lookup
+  # === GET /tool/lookup
   #
   # Lookup bibliographic information.
   #
@@ -114,8 +114,8 @@ class ToolController < ApplicationController
     __debug_route
   end
 
-  # == GET /tool/get_job_result/:job_id[?column=(output|diagnostic|error)]
-  # == GET /tool/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
+  # === GET /tool/get_job_result/:job_id[?column=(output|diagnostic|error)]
+  # === GET /tool/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
   #
   # Return a value from the 'job_results' table, where :job_id is the value for
   # the matching :active_job_id.

@@ -20,8 +20,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   public
 
-  # == GET  /users/auth/PROVIDER
-  # == POST /users/auth/PROVIDER
+  # === GET  /users/auth/PROVIDER
+  # === POST /users/auth/PROVIDER
   #
   # Initiate authentication with the remote service.
   #
@@ -36,8 +36,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
     .tap { |meth| disallow(meth) unless SHIBBOLETH || BS_AUTH }
 
-  # == GET  /users/auth/bookshare/callback                                      # if BS_AUTH
-  # == POST /users/auth/bookshare/callback
+  # === GET  /users/auth/bookshare/callback                                      # if BS_AUTH
+  # === POST /users/auth/bookshare/callback
   #
   # Callback from the Bookshare auth service to finalize authentication.
   #
@@ -57,8 +57,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
     .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # == GET  /users/auth/shibboleth/callback
-  # == POST /users/auth/shibboleth/callback
+  # === GET  /users/auth/shibboleth/callback
+  # === POST /users/auth/shibboleth/callback
   #
   # Callback from Shibboleth to finalize authentication.
   #
@@ -79,7 +79,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
     .tap { |meth| disallow(meth) unless SHIBBOLETH }
 
-  # == GET /users/auth/PROVIDER/failure
+  # === GET /users/auth/PROVIDER/failure
   #
   # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.

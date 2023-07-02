@@ -269,12 +269,12 @@ module ConfigurationHelper
   #
   # @return [Hash{Symbol=>String}]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Specifying :item completely by-passes configuration lookup.  Specifying
   # :items, :Item, and/or :Items will simply override the matching configured
   # (or derived) value.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This method does not have an embedded fallback value -- it assumes that
   # some form of 'emma.generic.unit' will be found if there is no definition
   # for the given controller.

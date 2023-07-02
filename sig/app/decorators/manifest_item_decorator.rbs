@@ -308,7 +308,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     HEADER_ROW: Integer
 
-    # submission_status_header
+    # The header row of the submission status grid.
     #
     # @param [Integer] row
     # @param [String]  css
@@ -402,7 +402,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def edit_row_path: (Integer|nil row, **untyped opt) -> String
 
-    # row_indicators
+    # A set of status indicator icons and descriptive labels.
     #
     # @param [ManifestItem] item
     # @param [Integer]      row
@@ -416,7 +416,8 @@ class ManifestItemDecorator < BaseDecorator
     #
     def row_indicators: (ManifestItem item, ?row: Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-    # row_details
+    # A collapsible element listing values for ManifestItem fields that are not
+    # related to grid columns.
     #
     # @param [ManifestItem] item
     # @param [Integer]      row
@@ -598,6 +599,8 @@ class ManifestItemDecorator
   # @yield Additional content if provided.
   # @yieldreturn [Array,ActiveSupport::SafeBuffer,nil]
   #
+  # @see file:javascripts/controllers/manifest-edit.js *toggleControlsColumn*
+  #
   def grid_row_control_contents: (*ActiveSupport::SafeBuffer added, ?row: Integer|nil, ?unique: String|nil, **untyped opt) ?{ () -> (Array[ActiveSupport::SafeBuffer] | ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # Render a single grid item.
@@ -721,7 +724,7 @@ class ManifestItemDecorator
   #
   def details_container: (*ActiveSupport::SafeBuffer added, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
-  # submission_status
+  # Submission status row for a single active submission.
   #
   # @param [Integer, nil] row
   # @param [Hash]         opt

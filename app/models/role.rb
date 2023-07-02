@@ -89,7 +89,7 @@ class Role < ApplicationRecord
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  # == Usage Notes
+  # === Usage Notes
   # End-users are not a part of EMMA at this time.
   #
   PROTOTYPE = {

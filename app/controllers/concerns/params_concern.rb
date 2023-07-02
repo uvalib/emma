@@ -291,7 +291,7 @@ module ParamsConcern
   # This eliminates "noise" parameters injected by the advanced search forms
   # and other situations where empty or unneeded parameters accumulate.
   #
-  # == Usage Notes
+  # === Usage Notes
   # If a callback relies on the :commit parameter, it must be run before this
   # callback.
   #

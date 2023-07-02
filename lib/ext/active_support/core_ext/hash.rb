@@ -14,7 +14,7 @@ class Hash
   #
   # @return [self]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This should not be used in any situation where the elements are live
   # objects subject to active updating (which would be unusable if frozen).
   #
@@ -27,13 +27,13 @@ class Hash
   #
   # @return [Hash]
   #
-  # == Usage Notes
+  # === Usage Notes
   # A deeply-nested hash may reference objects that cannot or should not be
   # duplicated. To avoid that situation, a class may redefine #duplicable? to
   # return *false* (so that Object#rdup returns *self*), or a class may define
   # #rdup with customized behaviors.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Unlike ActiveSupport #deep_dup, this also ensures that other enumerables
   # like Array are also duplicated, not just copied by reference.
   #

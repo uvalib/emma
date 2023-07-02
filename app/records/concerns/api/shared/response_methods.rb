@@ -32,7 +32,7 @@ module Api::Shared::ResponseMethods
   #
   # @return [ExecReport]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Intended to be executed in the initializer.
   #
   def initialize_exec_report(*src)

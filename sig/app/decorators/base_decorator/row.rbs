@@ -7,7 +7,7 @@ module BaseDecorator::Row
   #
   # @return [Symbol]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This is a fallback definition.  A BaseDecorator subclass which supports
   # iteration should probably override this method in addition to #row_items.
   #
@@ -25,7 +25,7 @@ module BaseDecorator::Row
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # A BaseDecorator subclass which supports iteration should override this
   # method to return the iterable items.
   #

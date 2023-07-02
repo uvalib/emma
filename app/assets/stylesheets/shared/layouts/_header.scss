@@ -69,16 +69,16 @@ $enclosure-pad-narrow:      0.75rem;
     @include button.link;
     @include button.basic;
 
-    // Needs to be heavier against a dark background.
-    &:hover {
-        box-shadow: 0 0 0.75rem 0.375rem v.$uva-accent-orange;
-    }
-
     padding-left:     8px;
     padding-right:    8px;
     text-align:       center;
     color:            v.$uva-accent-blue;
     background-color: v.$panel-bg;
+
+    // Needs to be heavier against a dark background.
+    &:hover {
+        box-shadow: 0 0 0.75rem 0.375rem v.$uva-accent-orange;
+    }
 }
 
 /// Treat the including class as the top part of a visually enclosed header
@@ -87,7 +87,7 @@ $enclosure-pad-narrow:      0.75rem;
 ///
 @mixin enclosure {
 
-    margin: 0 auto;
+    margin:      0 auto;
 
     @media #{v.$wide-screen} {
         padding: $enclosure-pad-wide;

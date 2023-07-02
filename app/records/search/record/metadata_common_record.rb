@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Metadata Common Fields.
 #
-# == API description
+# === API description
 # Fields common to metadata ingestion records and search results.
 #
 #--

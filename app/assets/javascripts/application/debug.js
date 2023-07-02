@@ -16,25 +16,29 @@ const FILE_DEBUG = true;
 // noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
 /**
  * An instance of this class is assigned to window.APP_DEBUG to allow
- * per-module control of debug output from the console.
+ * per-module control of debug output from the console. <p/>
  *
- * <hr/> Turning debugging on or off:
+ * _**Turning debugging on or off:**_
+ * ```
+ *      window.APP_DEBUG.on(module_name);
+ *      window.APP_DEBUG.off(module_name);
+ * ```
+ * persists between pages via localStorage. <p/>
  *
- *  window.APP_DEBUG.on(module_name);
- *  window.APP_DEBUG.off(module_name);
- *
- * persists between pages via localStorage.
- *
- * <hr/> Resetting debug status for a module:
- *
- *  window.APP_DEBUG.reset(module_name);
- *
+ * _**Resetting debug status for a module:**_
+ * ```
+ *      window.APP_DEBUG.reset(module_name);
+ * ```
  * removes it from localStorage so that the default setting for the module is
- * honored.
+ * honored. <p/>
  */
 export class AppDebug {
 
     static CLASS_NAME = 'AppDebug';
+
+    // ========================================================================
+    // Type definitions
+    // ========================================================================
 
     /**
      * @typedef {boolean|'true'|'false'} BooleanValue
@@ -54,7 +58,7 @@ export class AppDebug {
 
     /**
      * Create a new instance, by default initializing based on the dynamic
-     * settings injected into <head> so that debugging is off by default when
+     * settings injected into `<head>` so that debugging is off by default when
      * deployed and on by default otherwise.
      *
      * @param {BooleanValue} [setting]
@@ -91,9 +95,8 @@ export class AppDebug {
         let setting = value.toString();
         try {
             localStorage.setItem(key, setting);
-        }
-        catch (err) {
-            console.warn(`${this.CLASS_NAME}: ${key}: ${err}`);
+        } catch (error) {
+            console.warn(`${this.CLASS_NAME}: ${key}: ${error}`);
             setting = 'false';
         }
         return setting;
@@ -196,7 +199,7 @@ export class AppDebug {
      * default if one was given.
      *
      * @param {string}       mod
-     * @param {BooleanValue} [active]   Default: true
+     * @param {BooleanValue} [active]   Default: **true**.
      *
      * @returns {'true'|'false'}
      */
@@ -289,9 +292,9 @@ export class AppDebug {
     /**
      * Generate console log arguments for formatted log output.
      *
-     * @param {string}                                text
-     * @param {string|string[]|Object<string,string>} css
-     * @param {...*}                                  args
+     * @param {string}                                 text
+     * @param {string|string[]|Object.<string,string>} css
+     * @param {...*}                                   args
      *
      * @returns {[string, string, ...*]}
      */

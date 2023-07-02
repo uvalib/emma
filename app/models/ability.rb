@@ -55,11 +55,11 @@ class Ability
   #
   LOCAL_ACTION_ALIAS = {
 
-    # == Any controller
+    # === Any controller
 
     delete:         %i[destroy],
 
-    # == UploadController
+    # === UploadController
 
     admin:          %i[manage],
     backup:         %i[records],
@@ -75,17 +75,17 @@ class Ability
     bulk_update:    %i[bulk_edit],
     bulk_destroy:   %i[bulk_delete],
 
-    # == UploadController
+    # === UploadController
 
     download:       [],
     retrieval:      [],
 
-    # == AccountController, User::*Controller
+    # === AccountController, User::*Controller
 
     #edit_select:    %i[edit],
     #delete_select:  %i[destroy],
 
-    # == Any controller
+    # === Any controller
 
     list:           %i[index],
     view:           %i[show retrieval],
@@ -123,7 +123,7 @@ class Ability
   #
   # @param [User, nil] user
   #
-  # == Usage Notes
+  # === Usage Notes
   # Define abilities for the passed-in user here. For example:
   #
   #   user ||= User.new # guest user (not logged in)
@@ -181,7 +181,7 @@ class Ability
   #
   # @see RoleHelper#developer?
   #
-  # == Usage Notes
+  # === Usage Notes
   # This is functionally equivalent to :administrator in terms of the Ability
   # class. Wherever the distinction needs to be made, the user's role must be
   # explicitly checked.
@@ -221,7 +221,7 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Currently, "DSO Delegate" is basically a synonym for "Librarian".
   #
   def act_as_dso_delegate(user)
@@ -234,7 +234,7 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The current idea is that library staff might perform all of the entry
   # creation and maintenance functions that a DSO would (minus the ability to
   # download remediated content files).
@@ -274,7 +274,7 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Currently, "Guest" is basically a synonym for "Anonymous".
   #
   def act_as_guest(user)
@@ -388,10 +388,10 @@ class Ability
   #
   def can_manage_entries(model = Upload, **with_constraints)
 
-    # == Basic record management
+    # === Basic record management
     can_manage_records(model, **with_constraints)
 
-    # == Record modification
+    # === Record modification
     can :start_edit,   model, **with_constraints
     can :finish_edit,  model, **with_constraints
     can :row_update,   model, **with_constraints
@@ -451,17 +451,17 @@ class Ability
   #
   def can_manage_records(model, **with_constraints)
 
-    # == Basic record management
+    # === Basic record management
     can_manage(model, **with_constraints)
 
-    # == Record creation
+    # === Record creation
     can :new,             model
     can :create,          model
     can :renew,           model
     can :bulk_new,        model
     can :bulk_create,     model
 
-    # == Record workflow
+    # === Record workflow
     can :remit,           model
     can :remit_select,    model
     can :start,           model
@@ -470,7 +470,7 @@ class Ability
     can :resume,          model
     can :get_job_result,  model
 
-    # == Other
+    # === Other
     can :upload,          model
     can :check,           model
 
@@ -486,15 +486,15 @@ class Ability
   #
   def can_manage(model, **with_constraints)
 
-    # == List resources
+    # === List resources
     can :index,         model, **with_constraints
     can :list,          model, **with_constraints
 
-    # == View resource
+    # === View resource
     can :show,          model
     can :view,          model
 
-    # == Modify resource
+    # === Modify resource
     can :edit,          model, **with_constraints
     can :modify,        model, **with_constraints
     can :edit_select,   model, **with_constraints
@@ -502,14 +502,14 @@ class Ability
     can :bulk_update,   model, **with_constraints
     can :bulk_fields,   model, **with_constraints
 
-    # == Remove resource
+    # === Remove resource
     can :destroy,       model, **with_constraints
     can :remove,        model, **with_constraints
     can :delete_select, model, **with_constraints
     can :bulk_delete,   model, **with_constraints
     can :bulk_destroy,  model, **with_constraints
 
-    # == Other
+    # === Other
     can :save,          model
     can :cancel,        model
 

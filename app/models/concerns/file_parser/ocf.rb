@@ -64,47 +64,47 @@ class FileParser::Ocf < FileParser
 
   # Extract metadata values from the .opf file.
   #
-  # <dc-metadata>
-  #   <dc:title>                    -> :title
-  #   <dc:creator>                  -> :creator
-  #   <dc:contributor>              -> :contributor
-  #   <dc:contributor role="edt">   -> :editor
-  #   <dc:language>                 -> :language
-  #   <dc:date>                     -> :date
-  #   <dc:date event="publication"> -> :publication_date
-  #   <dc:date event="conversion">  -> :producedDate
-  #   <dc:publisher>                -> :publisher
-  #   <dc:subject>                  -> :subject
-  #   <dc:type>                     -> :type
-  #   <dc:rights>                   -> :rights
-  #   <dc:format>                   -> :formats
-  #   <dc:source>                   -> :source
-  #   <dc:coverage>                 -> :coverage
-  #   <dc:relation>                 -> :relation
-  #   <dc:description>              -> :description
-  #   <dc:identifier>               -> :identifier
+  #   <dc-metadata>
+  #     <dc:title>                    -> :title
+  #     <dc:creator>                  -> :creator
+  #     <dc:contributor>              -> :contributor
+  #     <dc:contributor role="edt">   -> :editor
+  #     <dc:language>                 -> :language
+  #     <dc:date>                     -> :date
+  #     <dc:date event="publication"> -> :publication_date
+  #     <dc:date event="conversion">  -> :producedDate
+  #     <dc:publisher>                -> :publisher
+  #     <dc:subject>                  -> :subject
+  #     <dc:type>                     -> :type
+  #     <dc:rights>                   -> :rights
+  #     <dc:format>                   -> :formats
+  #     <dc:source>                   -> :source
+  #     <dc:coverage>                 -> :coverage
+  #     <dc:relation>                 -> :relation
+  #     <dc:description>              -> :description
+  #     <dc:identifier>               -> :identifier
   #
-  # <x-metadata>
-  #   <meta name="DCTERMS.date.dateCopyrighted" -> :dateCopyrighted
-  #   <meta name="Synopsis"                     -> :synopsis
-  #   <meta name="cover"                        -> :cover [*]
-  #   <meta name="dtb:audioFormat"              -> :audioFormat
-  #   <meta name="dtb:multimediaContent"        -> :multimediaContent
-  #   <meta name="dtb:multimediaType"           -> :multimediaType
-  #   <meta name="dtb:narrator"                 -> :narrator
-  #   <meta name="dtb:producedDate"             -> :producedDate
-  #   <meta name="dtb:producer"                 -> :producer
-  #   <meta name="dtb:revision"                 -> :revision
-  #   <meta name="dtb:revisionDate"             -> :revisionDate
-  #   <meta name="dtb:revisionDescription"      -> :revisionDescription
-  #   <meta name="dtb:sourceDate"               -> :sourceDate
-  #   <meta name="dtb:sourceEdition"            -> :sourceEdition
-  #   <meta name="dtb:sourcePublisher"          -> :sourcePublisher
-  #   <meta name="dtb:sourceRights"             -> :sourceRights
-  #   <meta name="dtb:sourceTitle"              -> :sourceTitle
-  #   <meta name="dtb:totalTime"                -> :totalTime
+  #   <x-metadata>
+  #     <meta name="DCTERMS.date.dateCopyrighted" -> :dateCopyrighted
+  #     <meta name="Synopsis"                     -> :synopsis
+  #     <meta name="cover"                        -> :cover [*]
+  #     <meta name="dtb:audioFormat"              -> :audioFormat
+  #     <meta name="dtb:multimediaContent"        -> :multimediaContent
+  #     <meta name="dtb:multimediaType"           -> :multimediaType
+  #     <meta name="dtb:narrator"                 -> :narrator
+  #     <meta name="dtb:producedDate"             -> :producedDate
+  #     <meta name="dtb:producer"                 -> :producer
+  #     <meta name="dtb:revision"                 -> :revision
+  #     <meta name="dtb:revisionDate"             -> :revisionDate
+  #     <meta name="dtb:revisionDescription"      -> :revisionDescription
+  #     <meta name="dtb:sourceDate"               -> :sourceDate
+  #     <meta name="dtb:sourceEdition"            -> :sourceEdition
+  #     <meta name="dtb:sourcePublisher"          -> :sourcePublisher
+  #     <meta name="dtb:sourceRights"             -> :sourceRights
+  #     <meta name="dtb:sourceTitle"              -> :sourceTitle
+  #     <meta name="dtb:totalTime"                -> :totalTime
   #
-  # [*] If :cover is present, its value is the id for the <manifest> <item>
+  # - [*] If :cover is present, its value is the id for the `<manifest> <item>`
   # that indicates ZIP archive file associated with the cover image.
   #
   # @return [Hash{Symbol=>Array<String>}]

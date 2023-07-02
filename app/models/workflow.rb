@@ -983,7 +983,7 @@ end
 
 # Hooks executed during transitions.
 #
-# == Usage Notes
+# === Usage Notes
 # These are generally only of interest for detailed debugging because logic
 # associated with specific transitions is applied by defining the appropriate
 # "on_*_entry" method in WorkflowStates.

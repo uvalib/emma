@@ -73,7 +73,7 @@ module LayoutHelper::PageClasses
   #
   # @return [String]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Invalid CSS name characters are converted to '_'; e.g.:
   # 'user/sessions' -> 'user_sessions'.
   #

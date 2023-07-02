@@ -78,20 +78,20 @@ const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
 // ============================================================================
 
 /**
- * For "buttons" or "links" which are not <a> tags (or otherwise don't
+ * For "buttons" or "links" which are not `<a>` tags (or otherwise don't
  * respond by default to a carriage return as an equivalent to a click).
  *
  * @param {Selector}       selector  Specification of node(s) containing
  *                                     elements which must respond to a
- *                                     carriage return like a mouse click.
+ *                                     carriage return like a mouse click. <p/>
  *
- * @param {boolean}        [direct]  If *true* then the target is the nodes
+ * @param {boolean}        [direct]  If **true** then the target is the nodes
  *                                     indicated by *selector* and not the
- *                                     descendents of those nodes.
+ *                                     descendents of those nodes. <p/>
  *
- * @param {string|boolean} [match]   If *false* then $(selector) specifies
+ * @param {string|boolean} [match]   If **false** then $(selector) specifies
  *                                     the target elements directly; if
- *                                     *true* or missing then all focusable
+ *                                     **true** or missing then all focusable
  *                                     elements at or below $(selector) are
  *                                     chosen; if a string then it is used
  *                                     instead of FOCUS_ATTRIBUTES_SELECTOR
@@ -115,7 +115,7 @@ export function handleKeypressAsClick(selector, direct, match, except) {
     let $elements = (typeof selector === 'number') ? $(this) : $(selector);
 
     // Apply match criteria to select all elements that would be expected to
-    // receive a keypress based on their attributes.
+    // receive a key press based on their attributes.
     const criteria = [];
     if (match && (typeof match === 'string')) {
         criteria.push(match);
@@ -143,14 +143,14 @@ export function handleKeypressAsClick(selector, direct, match, except) {
 
 // noinspection OverlyComplexFunctionJS, FunctionTooLongJS
 /**
- * Translate a carriage return or space bar press to a click.
+ * Translate a carriage return or space bar press to a click. <p/>
  *
  * Not intended for links (where the key press will be handled by the browser
  * itself).
  *
  * @param {jQuery.Event|KeyboardEvent} event
  *
- * @returns {boolean|undefined}
+ * @returns {EventHandlerReturn}
  */
 export function handleKeypress(event) {
     const key      = event.key;
@@ -242,8 +242,12 @@ export function handleKeypress(event) {
     }
 }
 
+// ============================================================================
+// Functions - navigation
+// ============================================================================
+
 /**
- * The next element that will receive focus in tab order.
+ * The next element that will receive focus if tabbing forward.
  *
  * @param {Selector} from
  *
@@ -277,7 +281,7 @@ export function nextInTabOrder(from) {
 }
 
 /**
- * The element that will receive focus in tab order if tabbing backwards.
+ * The previous element that will receive focus if tabbing backward.
  *
  * @param {Selector} from
  *
@@ -309,6 +313,10 @@ export function prevInTabOrder(from) {
     });
     return $prev || prevInTabOrder($from.parent());
 }
+
+// ============================================================================
+// Functions - other
+// ============================================================================
 
 /**
  * Allow a click anywhere within the element holding a label/button pair
@@ -370,10 +378,16 @@ export function focusableIn(element) {
  *
  * If *visible* is not given then visibility is toggled to the opposite state.
  *
+ * @note An "invisible" element still takes up space on the display; a "hidden"
+ *  element does not.  Both cases result in 'aria-hidden' being set to make it
+ *  unavailable to screen readers.
+ *
  * @param {Selector} element
  * @param {boolean}  [visible]
  *
- * @returns {boolean} If *true* then *element* is becoming visible.
+ * @returns {boolean} If **true** then *element* is becoming visible.
+ *
+ * @see toggleHidden
  */
 export function toggleVisibility(element, visible) {
     const invisibility_marker = 'invisible';

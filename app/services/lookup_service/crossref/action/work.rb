@@ -77,7 +77,7 @@ module LookupService::Crossref::Action::Work
 
   public
 
-  # == GET https://api.crossref.org/works/DOI
+  # === GET https://api.crossref.org/works/DOI
   #
   # @param [String] doi
   # @param [Hash]   opt               Passed to #api.
@@ -97,7 +97,7 @@ module LookupService::Crossref::Action::Work
       }
     end
 
-  # == GET https://api.crossref.org/works?query=...
+  # === GET https://api.crossref.org/works?query=...
   #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt

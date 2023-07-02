@@ -52,7 +52,7 @@ class User::SessionsController < Devise::SessionsController
 
   public
 
-  # == GET /users/sign_in
+  # === GET /users/sign_in
   #
   # Prompt the user for login credentials.
   #
@@ -70,7 +70,7 @@ class User::SessionsController < Devise::SessionsController
     end
   end
 
-  # == POST /users/sign_in
+  # === POST /users/sign_in
   #
   # Begin login session.
   #
@@ -90,7 +90,7 @@ class User::SessionsController < Devise::SessionsController
     auth_failure_redirect(message: error)
   end
 
-  # == DELETE /users/sign_out[?revoke=(true|false)]
+  # === DELETE /users/sign_out[?revoke=(true|false)]
   #
   # End login session.
   #
@@ -121,7 +121,7 @@ class User::SessionsController < Devise::SessionsController
 
   public
 
-  # == GET /users/sign_in_local
+  # === GET /users/sign_in_local
   #
   # Sign in with a local EMMA username/password.
   #
@@ -132,15 +132,15 @@ class User::SessionsController < Devise::SessionsController
     __debug_route
   end
 
-  # == GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
-  # == GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
+  # === GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
+  # === GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
   #
   # Sign in using information supplied outside of the OAuth2 flow.
   #
   # @see #sign_in_as_path             Route helper
   # @see AuthConcern#local_sign_in
   #
-  # == Usage Notes
+  # === Usage Notes
   # The initial request to this endpoint is redirected by Warden::Manager to    # if BS_AUTH
   # OmniAuth::Strategies::Bookshare#request_call.  The second request is
   # performed from OmniAuth::Strategies::Bookshare#callback_phase which

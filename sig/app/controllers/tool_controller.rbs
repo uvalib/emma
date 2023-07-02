@@ -18,7 +18,7 @@ class ToolController < ApplicationController
   # :nocov:
   #include AbstractController::Callbacks
 
-  # == GET /tool
+  # === GET /tool
   #
   # Index of tool pages.
   #
@@ -26,7 +26,7 @@ class ToolController < ApplicationController
   #
   def index: () -> void
 
-  # == GET /tool/md
+  # === GET /tool/md
   #
   # A simple Math Detective API test page for selecting a single file.
   #
@@ -34,8 +34,8 @@ class ToolController < ApplicationController
   #
   def md: () -> void
 
-  # == GET  /tool/md_proxy
-  # == POST /tool/md_proxy
+  # === GET  /tool/md_proxy
+  # === POST /tool/md_proxy
   #
   # Proxy the Math Detective API request to avoid CORS.
   #
@@ -43,14 +43,14 @@ class ToolController < ApplicationController
   #
   def md_proxy: () -> void
 
-  # == GET /tool/lookup
+  # === GET /tool/lookup
   #
   # Lookup bibliographic information.
   #
   def lookup: () -> void
 
-  # == GET /tool/get_job_result/:job_id[?column=(output|diagnostic|error)]
-  # == GET /tool/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
+  # === GET /tool/get_job_result/:job_id[?column=(output|diagnostic|error)]
+  # === GET /tool/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
   #
   # Return a value from the 'job_results' table, where :job_id is the value for
   # the matching :active_job_id.

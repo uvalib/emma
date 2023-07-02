@@ -253,7 +253,7 @@ class SearchCallDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The element is surrounded by spaces so that a compound value element can be
   # copied and pasted legibly.
   #

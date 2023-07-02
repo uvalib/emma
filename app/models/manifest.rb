@@ -92,7 +92,7 @@ class Manifest < ApplicationRecord
   #
   # @return [self]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Items which were added and then deleted since the last save are in the
   # :never_saved scope but *not* the :incomplete scope.
   #

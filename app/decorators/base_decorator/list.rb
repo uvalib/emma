@@ -94,7 +94,7 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with BaseDecorator::Grid#grid_data_cell_render_pair
   #
   def render_field_value_pair(label, value, field:, prop:, **opt)
@@ -136,7 +136,7 @@ module BaseDecorator::List
   # @yieldparam [Hash]   o            Options for #html_div.
   # @yieldreturn [Array, ActiveSupport::SafeBuffer, nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
@@ -473,7 +473,7 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_row(add: nil, skip: [], **opt)
-    opt[:id]              ||= model_item_id
+    opt[:id] ||= model_item_id
     l     = opt.delete(:level)
     skip  = Array.wrap(skip)
     parts = []

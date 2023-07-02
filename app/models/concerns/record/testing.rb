@@ -38,7 +38,7 @@ module Record::Testing
       FAULT_INJECTION   = true
       FORCED_EXCEPTION  = true
 
-      # == Fault injection types
+      # === Fault injection types
 
       bit = -1
       # noinspection RubyUnusedLocalVariable
@@ -51,7 +51,7 @@ module Record::Testing
         #db_insert:    BAD_PARAM,
       }.freeze
 
-      # == Forced exception types
+      # === Forced exception types
 
       DEFAULT_EXCEPTION = Record::Error
 
@@ -107,7 +107,7 @@ module Record::Testing
         __debug_banner("#{self.class}.#{meth} FAULT")
         tests = 0
 
-        # == Bad parameter
+        # === Bad parameter
         if BAD_PARAM & faults
           tests += 1
           item[:bad_param] = 'bad_param_value'

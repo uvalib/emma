@@ -113,7 +113,7 @@ module LookupService::Crossref::Properties
   #
   # @return [Array<String>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This might not be useful in general since #SELECT_ELEMENTS is missing a
   # few data items (e.g. 'edition-number', 'journal-issue', 'language').
   #

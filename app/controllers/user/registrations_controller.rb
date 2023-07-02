@@ -34,8 +34,8 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   public
 
-  # == GET /users/new
-  # == GET /users/sign_up
+  # === GET /users/new
+  # === GET /users/sign_up
   #
   # @see #new_user_path               Route helper
   # @see #new_user_registration_path  Route helper
@@ -50,7 +50,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     super
   end
 
-  # == POST /users
+  # === POST /users
   #
   # @see #create_user_path                Route helper
   # @see #create_user_registration_path   Route helper
@@ -65,8 +65,8 @@ class User::RegistrationsController < Devise::RegistrationsController
     auth_failure_redirect(message: error)
   end
 
-  # == GET /users/edit/:id
-  # == GET /users/edit
+  # === GET /users/edit/:id
+  # === GET /users/edit
   #
   # @see #edit_user_path                Route helper
   # @see #edit_user_registration_path   Route helper
@@ -84,10 +84,10 @@ class User::RegistrationsController < Devise::RegistrationsController
     super
   end
 
-  # == POST  /users/update/:id
-  # == PATCH /users/update/:id
-  # == PUT   /users/update/:id
-  # == PUT   /users
+  # === POST  /users/update/:id
+  # === PATCH /users/update/:id
+  # === PUT   /users/update/:id
+  # === PUT   /users
   #
   # @see #update_user_path            Route helper
   # @see #user_registration_path      Route helper
@@ -103,14 +103,14 @@ class User::RegistrationsController < Devise::RegistrationsController
     auth_failure_redirect(message: error)
   end
 
-  # == GET /users/resign
+  # === GET /users/resign
   #
   def delete
     __log_activity
     __debug_route
   end
 
-  # == DELETE /users
+  # === DELETE /users
   #
   def destroy
     __log_activity
@@ -123,7 +123,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     auth_failure_redirect(message: error)
   end
 
-  # == GET /users/cancel
+  # === GET /users/cancel
   #
   # Forces the session data which is usually expired after sign in to be
   # expired now. This is useful if the user wants to cancel oauth signing in/up
@@ -146,7 +146,7 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   public
 
-  # == GET /users/edit_select
+  # === GET /users/edit_select
   #
   # @see #edit_select_user_path       Route helper
   #
@@ -211,7 +211,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   # @yieldparam [ActionController::Parameters] params
   # @yieldreturn [Hash,nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Due to the current uniqueness constraint on 'index_users_on_email', the
   # email address can't be updated.
   #

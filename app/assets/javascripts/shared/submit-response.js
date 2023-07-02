@@ -111,6 +111,7 @@ AppDebug.file('shared/submit-response', MODULE, DEBUG);
 /**
  * A SubmitChannel response message.
  *
+ * @extends ChannelResponse
  * @extends BaseSubmitResponsePayload
  *
  * @see "SubmitChannel::Response"
@@ -248,6 +249,7 @@ export class SubmitResponseBase extends ChannelResponse {
 /**
  * A bulk submission response message.
  *
+ * @extends SubmitResponseBase
  * @extends SubmitResponsePayload
  *
  * @see "SubmitChannel::SubmitResponse"
@@ -298,6 +300,8 @@ export class SubmitResponse extends SubmitResponseBase {
 /**
  * The initial bulk submission response message.
  *
+ * @extends SubmitResponse
+ *
  * @see "SubmitChannel::InitialResponse"
  * @see "SubmissionService::InitialResponse"
  */
@@ -327,6 +331,7 @@ export class SubmitInitialResponse extends SubmitResponse {
 /**
  * A response message with results from a bulk submission step.
  *
+ * @extends SubmitResponseBase
  * @extends SubmitStepResponsePayload
  * @extends SubmitStepResponseData
  *
@@ -393,6 +398,7 @@ export class SubmitStepResponse extends SubmitResponseBase {
 
     /**
      * Indicate whether the item is a candidate payload for the current class.
+     * <p/>
      *
      * This casts an intermediate batch status response as a step response
      * so that onSubmissionResponse() in manifest-remit.js will work even if
@@ -415,6 +421,8 @@ export class SubmitStepResponse extends SubmitResponseBase {
 
 /**
  * The last bulk submission response message.
+ *
+ * @extends SubmitStepResponse
  *
  * @see "SubmitChannel::FinalResponse"
  * @see "SubmissionService::FinalResponse"
@@ -451,6 +459,7 @@ export class SubmitFinalResponse extends SubmitStepResponse {
  *  'pause'
  *  'resume'
  *
+ * @extends SubmitResponseBase
  * @extends SubmitControlResponsePayload
  *
  * @see "SubmitChannel::ControlResponse"

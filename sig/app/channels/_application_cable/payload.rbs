@@ -54,7 +54,7 @@ module ApplicationCable::Payload
   #
   # @return [Hash{Symbol=>*}]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Message classes based on a Hash data item require #to_h in order to avoid
   # propagating out-of-band data.
   #

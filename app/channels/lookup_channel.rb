@@ -74,7 +74,7 @@ class LookupChannel < ApplicationCable::Channel
   #
   # @return [void]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This response is intentionally small; payload size is not checked to avoid
   # masking an exception due to an unexpected condition.
   #

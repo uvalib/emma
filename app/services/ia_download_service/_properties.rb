@@ -44,7 +44,7 @@ module IaDownloadService::Properties
 
   # Cookies to be sent to the IA server.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # These values were obtained from a desktop development VM after installing
   # the "ia" Python script and running "ia configure" with the Email address
   # "emmadso@bookshare.org".  This generates a configuration file ~/.ia which

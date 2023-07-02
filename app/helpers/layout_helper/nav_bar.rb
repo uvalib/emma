@@ -32,7 +32,7 @@ module LayoutHelper::NavBar
   #
   # @type [Array<Symbol>]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
   #
   NAV_BAR_CONTROLLERS = NAV_BAR_CONFIG[:controllers]

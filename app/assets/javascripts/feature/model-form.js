@@ -158,15 +158,15 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * Normally 'string[]' but may be received as 'string'.
-     *
      * @typedef {string[]|string} multiString
+     *
+     * Normally *string[]* but may be received as *string*.
      */
 
     /**
-     * Normally 'string' but may be received as 'string[]'.
-     *
      * @typedef {string|string[]} singleString
+     *
+     * Normally *string* but may be received as *string[]*.
      */
 
     /**
@@ -394,8 +394,8 @@ appSetup(MODULE, function() {
     /* Log external communication */ const DEBUG_XHR      = true;
 
     /**
-     * How long to wait after the user enters characters into a field before
-     * re-validating the form.
+     * Milliseconds to wait after the user enters characters into a field
+     * before re-validating the form.
      *
      * @readonly
      * @type {number}
@@ -476,11 +476,11 @@ appSetup(MODULE, function() {
   //const INPUT_SINGLE          = `.${INPUT_CLASS}.${SINGLE_CLASS}`;
 
     /**
-     * Interrelated elements.  For example:
+     * Interrelated elements.  For example: <p/>
      *
-     * If "rem_complete" is set to "true", then "rem_coverage" is no longer
+     * If "rem_complete" is set to **true**, then "rem_coverage" is no longer
      * required.  Conversely, if "rem_coverage" is given a value then that
-     * implies that "rem_complete" is "false".
+     * implies that "rem_complete" is **false**.
      *
      * @readonly
      * @type {Object.<string,Relationship>}
@@ -506,9 +506,9 @@ appSetup(MODULE, function() {
     /**
      * State of the page.
      *
-     * SUBMITTING:  The submit button has been activated.
-     * SUBMITTED:   The submission has been completed.
-     * CANCELED:    The cancel button has been activated.
+     * - SUBMITTING:  The submit button has been activated.
+     * - SUBMITTED:   The submission has been completed.
+     * - CANCELED:    The cancel button has been activated.
      *
      * @readonly
      * @type {StringTable}
@@ -708,15 +708,15 @@ appSetup(MODULE, function() {
         /**
          * Callback invoked when the file select button is pressed.
          *
-         * @param {jQuery.Event} [event]    Ignored.
+         * @param {jQuery.Event} [_event]   Ignored.
          */
-        function onSelect(event) {
+        function onSelect(_event) {
             clearFlash();
         }
 
         /**
-         * This event occurs between the 'file-added' and 'upload-started'
-         * events.
+         * This event occurs between the "file-added" and "upload-started"
+         * events. <p/>
          *
          * The current value of the submission's database ID applied to the
          * upload endpoint URL in order to correlate the upload with the
@@ -747,12 +747,12 @@ appSetup(MODULE, function() {
         /**
          * This event occurs when the response from POST /upload/upload is
          * received with success status (200).  At this point, the file has
-         * been uploaded by Shrine, but has not yet been validated.
+         * been uploaded by Shrine, but has not yet been validated. <p/>
          *
-         * **Implementation Notes**
+         * **Implementation Notes** <p/>
          * The normal Shrine response has been augmented to include an
-         * 'emma_data' object in addition to the fields associated with
-         * 'file_data'.
+         * "emma_data" object in addition to the fields associated with
+         * "file_data".
          *
          * @param {UppyFile}            file
          * @param {UppyResponseMessage} response
@@ -900,7 +900,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * The element containing the bulk operation results.
+     * The element containing the bulk operation results. <p/>
      *
      * Currently there can only be one bulk operation results element per page.
      * TODO: Associate results element with a specific bulk-action form.
@@ -931,7 +931,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * The first database ID to monitor for results, defaulting to "1".
+     * The first database ID to monitor for results, defaulting to "1". <p/>
      *
      * If *record* is given, the first database ID is set to be the one which
      * succeeds it.
@@ -958,7 +958,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Time the download was started.
+     * Time the download was started. <p/>
      *
      * The first call sets the time.  If *start_time* is provided, it resets
      * the start time to the given value.
@@ -1321,7 +1321,7 @@ appSetup(MODULE, function() {
      *
      * @param {string|object|string[]|object[]} value
      * @param {string}  [name]        Def: {@link BULK_OP_STORAGE_KEY}.
-     * @param {boolean} [append]      If *true* append to current
+     * @param {boolean} [append]      If **true** append to current
      *
      * @returns {string}              New stored value.
      */
@@ -1345,14 +1345,15 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Call the server endpoint to acquire replacement form field values.
+     * Call the server endpoint to acquire replacement form field values. <p/>
      *
      * If this is a create form, then a new Upload record is generated to make
      * up for the fact that previously clicking away from the page resulted in
-     * the original partial Upload record being deleted.
+     * the original partial Upload record being deleted. <p/>
      *
      * If this is an update form, then the appropriate field values are
      * generated to put the Upload record in the initial workflow edit state.
+     * <p/>
      *
      * In either case, {@link initializeModelForm} is called with the new
      * fields to complete page initialization.
@@ -1581,12 +1582,12 @@ appSetup(MODULE, function() {
 
     /**
      * Interpret the object keys as field names to locate the input elements
-     * to update.
+     * to update. <p/>
      *
      * The field will not be updated if "sealed off" by the presence of the
      * {@link SEALED_MARKER}.  This prevents the uploading of the file from
      * modifying metadata which is under the control of the member repository
-     * specified via 'emma_repository'.
+     * specified via "emma_repository".
      *
      * @param {object}   data
      * @param {Selector} [form]       Default: {@link formElement}.
@@ -1632,8 +1633,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} field
      * @param {*}        [new_value]
-     * @param {boolean}  [trim]       If *false*, don't trim white space.
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {boolean}  [trim]       If **false**, don't trim white space.
+     * @param {boolean}  [init]       If **true**, in initialization phase.
      */
     function updateInputField(field, new_value, trim, init) {
         const $field = $(field);
@@ -1664,8 +1665,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}             target
      * @param {string|string[]|null} [new_value]
-     * @param {boolean}              [trim]     If *false*, keep white space.
-     * @param {boolean}              [init]     If *true*, initializing.
+     * @param {boolean}              [trim]     If **false**, keep white space.
+     * @param {boolean}              [init]     If **true**, initializing.
      *
      * @see "BaseDecorator::Form#render_form_input_multi"
      */
@@ -1735,7 +1736,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}             target
      * @param {string|string[]|null} [setting]
-     * @param {boolean}              [init]     If *true*, in initialization.
+     * @param {boolean}              [init]     If **true**, in initialization.
      *
      * @see "BaseDecorator::Form#render_form_menu_multi"
      */
@@ -1776,7 +1777,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the input field and label for a <input type="checkbox">.
+     * Update the input field and label for a `<input type="checkbox">`. <p/>
      *
      * For this type, the checkbox is within a hierarchy under a <fieldset>
      * element which is a sibling of the label element associated with any of
@@ -1815,13 +1816,13 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the input field and label for a <select>.
+     * Update the input field and label for a `<select>`. <p/>
      *
      * For these types, the label is a sibling of the input element.
      *
      * @param {Selector}       target
      * @param {string|null}    [new_value]
-     * @param {boolean}        [init]       If *true*, in initialization phase.
+     * @param {boolean}        [init]       If **true**, initialization phase.
      *
      * @see "BaseDecorator::Form#render_form_menu_single"
      */
@@ -1838,14 +1839,14 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the input field and label for a <textarea>.
+     * Update the input field and label for a `<textarea>`. <p/>
      *
      * For this type, the label is a sibling of the input element.
      *
      * @param {Selector}    target
      * @param {string|null} [new_value]
-     * @param {boolean}     [trim]          If *false*, don't trim white space.
-     * @param {boolean}     [init]          If *true*, in initialization phase.
+     * @param {boolean}     [trim]        If **false**, don't trim white space.
+     * @param {boolean}     [init]        If **true**, in initialization phase.
      *
      * @see "BaseDecorator::Form#render_form_input"
      */
@@ -1865,14 +1866,15 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the input field and label for <select> or <input type="text">.
+     * Update input field and label for `<textarea>` or `<input type="text">`.
+     * <p/>
      *
      * For these types, the label is a sibling of the input element.
      *
      * @param {Selector}    target
      * @param {string|null} [new_value]
-     * @param {boolean}     [trim]          If *false*, don't trim white space.
-     * @param {boolean}     [init]          If *true*, in initialization phase.
+     * @param {boolean}     [trim]        If **false**, don't trim white space.
+     * @param {boolean}     [init]        If **true**, in initialization phase.
      *
      * @see "BaseDecorator::Form#render_form_input"
      */
@@ -2032,8 +2034,9 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the input field for <select>, <textarea>, or <input type="text">,
-     * along with its label, and possibly other related fields.
+     * Update the input field for `<select>`, `<textarea>`, or
+     * `<input type="text">`, along with its label, and possibly other related
+     * fields. <p/>
      *
      * For these types, the label is a sibling of the input element.
      *
@@ -2142,9 +2145,9 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * The **'data-required'** is maintained on the top-level element
+     * The *data-required* attribute is maintained on the top-level element
      * associated with an input or group of inputs independent of the
-     * **'aria-required'** attribute.
+     * *aria-required* attribute.
      *
      * @param {Selector} target
      * @param {boolean}  [setting]
@@ -2162,7 +2165,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * In order to accommodate accessibility concerns, **'aria-required'** is
+     * In order to accommodate accessibility concerns, *aria-required* is
      * maintained on the top-level element associated with an input or group
      * of input except in the case of {@link MENU_MULTI} where the top-level
      * value entry is actually a wrapper for the element to which the attribute
@@ -2183,7 +2186,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * In order to accommodate accessibility concerns, **'aria-invalid'** is
+     * In order to accommodate accessibility concerns, *aria-invalid* is
      * maintained on the top-level element associated with an input or group
      * of input except in the case of {@link MENU_MULTI} where the top-level
      * value entry is actually a wrapper for the element to which the attribute
@@ -2216,7 +2219,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * If the checkbox state is changing, save the old state.
+     * If the checkbox state is changing, save the old state. <p/>
      *
      * If *new_state* is undefined then it is assumed that this invocation is
      * in response to a change event, in which case the state change has
@@ -2224,7 +2227,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} target
      * @param {boolean}  [new_state]
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {boolean}  [init]       If **true**, in initialization phase.
      */
     function setChecked(target, new_state, init) {
         const $item = $(target);
@@ -2239,8 +2242,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}    target
      * @param {string|null} new_value
-     * @param {boolean}     [trim]      If *false*, don't trim white space.
-     * @param {boolean}     [init]      If *true*, in initialization phase.
+     * @param {boolean}     [trim]      If **false**, don't trim white space.
+     * @param {boolean}     [init]      If **true**, in initialization phase.
      */
     function setValue(target, new_value, trim, init) {
         const $item = $(target);
@@ -2258,7 +2261,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Translate a value for a <textarea> into a string.
+     * Translate a value for a `<textarea>` into a string.
      *
      * @param {string|string[]} value
      *
@@ -2271,11 +2274,9 @@ appSetup(MODULE, function() {
             if (!result || (result === '[]')) {
                 result = '';
             } else if (result[0] === '[') {
-                // noinspection UnusedCatchParameterJS
                 try {
                     result = JSON.parse(result);
-                }
-                catch (_err) {
+                } catch {
                     if (result.slice(-1) === ']') {
                         result = result.slice(1, -1);
                     } else {
@@ -2295,7 +2296,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Save the original value of an element.
+     * Save the original value of an element. <p/>
      *
      * If *value* is present, that is assigned directly as the original value.
      * If *value* was not provided, and no saved value is present then the
@@ -2342,13 +2343,13 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Get the value string associated with *item*.
+     * Get the value string associated with *item*. <p/>
      *
-     * If *item* is a checkbox element, the state of it's 'checked' attribute
-     * is found; if *item* is another type of element, its 'value' attribute
-     * is found.
+     * If *item* is a checkbox element, the state of it's *checked* attribute
+     * is found; if *item* is another type of element, its *value* attribute
+     * is found. <p/>
      *
-     * Booleans are converted to either 'true' or 'false'.
+     * Booleans are converted to either "true" or "false".
      *
      * @param {jQuery|HTMLElement|string|boolean|undefined} item
      *
@@ -2556,13 +2557,13 @@ appSetup(MODULE, function() {
     /**
      * Template specifying update behavior for form fields.
      *
-     * Value        Field will be...
-     * -----------  --------------------------------------------------
-     * FROM_PARENT  assigned the value acquired from the parent record
-     * CLEARED      cleared of any value(s)
-     * AS_IS        kept as it is
-     * NEW_REPO     to be replaced by the repository selection
-     * (other)      assigned that value
+     * | Value       | Field will be...
+     * |-------------|---------------------------------------------------
+     * | FROM_PARENT | assigned the value acquired from the parent record
+     * | CLEARED     | cleared of any value(s)
+     * | AS_IS       | kept as it is
+     * | NEW_REPO    | to be replaced by the repository selection
+     * | (other)     | assigned that value
      *
      * The AS_IS choice is necessary for any remediation-related fields may
      * have been extracted from the file if it was provided before the source
@@ -2821,11 +2822,11 @@ appSetup(MODULE, function() {
 
         /**
          * Seal off the specified fields by adding the "sealed" class in order
-         * to prevent populateFormFields() from modifying them.
+         * to prevent populateFormFields() from modifying them. <p/>
          *
          * This way, if the source repository is set before the file is
          * uploaded then metadata extracted from the file will not contradict
-         * the title-level metadata supplied by the member repository.
+         * the title-level metadata supplied by the member repository. <p/>
          *
          * This doesn't prevent the user from updating the field, but the
          * styling of the "sealed" class should hint that changing the field is
@@ -3074,12 +3075,12 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Seal an element.
+     * Seal an element. <p/>
      *
      * To allow {@link MENU_MULTI} (checkboxes) to be scrollable,
-     * 'pointer-events' on the content elements can be set to 'none' via CSS.
+     * *pointer-events* on the content elements can be set to "none" via CSS.
      * This strategy does not work for {@link MENU_SINGLE} (dropdowns) to be
-     * expandable, however, disabling the non-selected 'option' elements here
+     * expandable, however, disabling the non-selected `<option>` elements here
      * does work.
      *
      * @param {Selector} item
@@ -3167,7 +3168,7 @@ appSetup(MODULE, function() {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onShowModalHook
      */
@@ -3185,7 +3186,7 @@ appSetup(MODULE, function() {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onHideModalHook
      */
@@ -3212,8 +3213,8 @@ appSetup(MODULE, function() {
                 const label  = `${update_type} item${s}`; // TODO: I18n
                 const attrs  = keys.map(fld => `[name="${fld}"]`).join(', ');
                 const inputs = $form.find(attrs).toArray();
-                const names  = inputs.map(i =>
-                    fieldLabel(i).children('.text').text()
+                const names  = inputs.map(input =>
+                    fieldLabel(input).children('.text').text()
                 ).sort().join(', ');
                 const type   = `<span class="type">${label}:</span>`;
                 const list   = `<span class="list">${names}.</span>`;
@@ -3243,8 +3244,8 @@ appSetup(MODULE, function() {
      * Enable bibliographic lookup.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [enable]     If *false* run {@link disableLookup}.
-     * @param {boolean}  [forbid]     If *false* run {@link disableLookup}.
+     * @param {boolean}  [enable]     If **false** run {@link disableLookup}.
+     * @param {boolean}  [forbid]     If **false** run {@link disableLookup}.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -3266,7 +3267,7 @@ appSetup(MODULE, function() {
      * Disable bibliographic lookup.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [forbid]     If *true* add '.forbidden'.
+     * @param {boolean}  [forbid]     If **true** add ".forbidden".
      *
      * @returns {jQuery}              The submit button.
      */
@@ -3415,7 +3416,7 @@ appSetup(MODULE, function() {
      */
     function setOriginalValues(form, value) {
         const $if = !value && inputFields(form).filter('.valid');
-        const dat = toObject(LookupModal.DATA_COLUMNS, f => deepDup(
+        const dat = toObject(LookupModal.DATA_COLUMNS, (f) => deepDup(
             value ? value[f] : $if.filter(`[data-field="${f}"]`).val()
         ));
         lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA, dat);
@@ -3469,7 +3470,7 @@ appSetup(MODULE, function() {
 
     // noinspection JSUnusedLocalSymbols
     /**
-     * Update data on the Lookup button if required.
+     * Update data on the Lookup button if required. <p/>
      *
      * To avoid excessive work, {@link setSearchTermsData} will only be run
      * if truly required to regenerate the data.
@@ -3577,7 +3578,7 @@ appSetup(MODULE, function() {
         handleEvent($fields, 'input',  debounce(onInput, DEBOUNCE_DELAY));
 
         /**
-         * Revalidate the form after the element's content changes.
+         * Revalidate the form after the element's content changes. <p/>
          *
          * In the case of checkboxes/radio buttons this happens when the value
          * of the element changes; otherwise it happens when the element loses
@@ -3612,7 +3613,7 @@ appSetup(MODULE, function() {
          *
          * @param {jQuery.Event} event
          * @param {string|null}  [value]  Default: current element value.
-         * @param {boolean}      [trim]   If *false*, don't trim white space.
+         * @param {boolean}      [trim]   If **false**, don't trim white space.
          */
         function validateInputField(event, value, trim) {
             const $field = $(event.target);
@@ -3656,7 +3657,7 @@ appSetup(MODULE, function() {
      * Enable form submission.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [enable]     If *false* run {@link disableSubmit}.
+     * @param {boolean}  [enable]     If **false** run {@link disableSubmit}.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -3721,7 +3722,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Actively cancel the current action.
+     * Actively cancel the current action. <p/>
      *
      * The Upload record is restored to its original state (non-existence in
      * the case of the create form).
@@ -3875,7 +3876,7 @@ appSetup(MODULE, function() {
         }
 
         /**
-         * Called if "ajax:before" or 'ajax:beforeSend' rejects the request.
+         * Called if "ajax:before" or "ajax:beforeSend" rejects the request.
          *
          * @param {object} arg
          */
@@ -3884,7 +3885,7 @@ appSetup(MODULE, function() {
         }
 
         /**
-         * Process rails-ujs 'ajax:success' event data.
+         * Process rails-ujs "ajax:success" event data.
          *
          * @param {object} arg
          */
@@ -3899,7 +3900,7 @@ appSetup(MODULE, function() {
         }
 
         /**
-         * Process rails-ujs 'ajax:error' event data.
+         * Process rails-ujs "ajax:error" event data.
          *
          * @param {object} arg
          */
@@ -3915,7 +3916,7 @@ appSetup(MODULE, function() {
         }
 
         /**
-         * Process rails-ujs 'ajax:complete' event data.
+         * Process rails-ujs "ajax:complete" event data.
          *
          * @param {object} arg
          */
@@ -3994,7 +3995,7 @@ appSetup(MODULE, function() {
     /**
      * A flag to indicate whether field filtering has occurred yet.
      *
-     * @type {boolean}  *false* on the first invocation; *true* thereafter
+     * @type {boolean}  **false** on the first invocation; **true** thereafter
      */
     function filterInitialized() {
         const initialized  = filter_initialized || false;
@@ -4481,7 +4482,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function canCancel(_form) {
-        return true; // TODO: canCancel?
+        return true; // TODO: canCancel ???
     }
 
     /**
@@ -4624,7 +4625,7 @@ appSetup(MODULE, function() {
      * The label for the Submit button.
      *
      * @param {Selector} [form]         Passed to {@link formElement}.
-     * @param {boolean}  [can_submit]   Default: `canSubmit()`.
+     * @param {boolean}  [can_submit]   Default: {@link canSubmit}.
      *
      * @returns {string}
      */
@@ -4639,7 +4640,7 @@ appSetup(MODULE, function() {
      * The tooltip for the Submit button.
      *
      * @param {Selector} [form]         Passed to {@link formElement}.
-     * @param {boolean}  [can_submit]   Default: `canSubmit()`.
+     * @param {boolean}  [can_submit]   Default: {@link canSubmit}.
      *
      * @returns {string}
      */
@@ -4676,7 +4677,7 @@ appSetup(MODULE, function() {
      * The current label for the Cancel button.
      *
      * @param {Selector} [form]         Default: {@link formElement}.
-     * @param {boolean}  [can_cancel]   Default: `canCancel()`.
+     * @param {boolean}  [can_cancel]   Default: {@link canCancel}.
      *
      * @returns {string}
      */
@@ -4691,7 +4692,7 @@ appSetup(MODULE, function() {
      * The current tooltip for the Cancel button.
      *
      * @param {Selector} [form]         Default: {@link formElement}.
-     * @param {boolean}  [can_cancel]   Default: `canCancel()`.
+     * @param {boolean}  [can_cancel]   Default: {@link canCancel}.
      *
      * @returns {string}
      */
@@ -4820,7 +4821,7 @@ appSetup(MODULE, function() {
     // setupLookupButton() executes.
     LookupModal.initializeAll();
 
-    // Setup Uppy for any <input type="file"> elements.
+    // Setup Uppy for any `<input type="file">` elements.
     $model_form.each((_, form) => initializeModelForm(form));
 
     // Setup handlers for bulk operation pages.

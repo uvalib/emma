@@ -153,7 +153,7 @@ class Upload < ApplicationRecord
   # @option attributes [Boolean]        :finishing_edit
   # @option attributes [Boolean]        :reset
   #
-  # == Options
+  # === Options
   #
   # :base_url
   #
@@ -172,7 +172,7 @@ class Upload < ApplicationRecord
   #   @file_path will be set but the referenced file will *not* be fetched
   #   automatically via #upload_file
   #
-  # == Mode Options
+  # === Mode Options
   #
   # :initializing
   #
@@ -527,7 +527,7 @@ class Upload < ApplicationRecord
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Depending on the context, the caller may need to validate the result with
   # EmmaRepository#valid?.
   #
@@ -564,7 +564,7 @@ class Upload < ApplicationRecord
   # @return [String]
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If *item* is a String, it is assumed to be good.  Depending on the context,
   # the caller may need to validate the result with #valid_record_id?.
   #

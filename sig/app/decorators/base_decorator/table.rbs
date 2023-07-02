@@ -90,7 +90,7 @@ module BaseDecorator::Table
     | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> Array[ActiveSupport::SafeBuffer]
     | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> Array[String]
 
-  # table_columns
+  # Table values associated with the current decorator.
   #
   # @param [Hash] opt                 Passed to #model_field_values
   #

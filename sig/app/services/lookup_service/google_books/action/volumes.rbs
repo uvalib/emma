@@ -15,7 +15,7 @@ module LookupService::GoogleBooks::Action::Volumes
   # @private
   AUTHOR_TYPES: symArray
 
-  # == GET https://www.googleapis.com/books/v1/volumes
+  # === GET https://www.googleapis.com/books/v1/volumes
   #
   # The service will match "lccn" numbers, but it won't include them in the
   # list of identifiers for the result.  For that reason, the returned object

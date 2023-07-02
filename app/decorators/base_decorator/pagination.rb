@@ -41,7 +41,7 @@ module BaseDecorator::Pagination
   #
   # @type [Hash{Symbol=>String}]
   #
-  # == Usage Notes
+  # === Usage Notes
   # To link to the base search without any search terms (a.k.a. "null search").
   #
   START_OVER = PAGINATION_CONFIG[:start_over]

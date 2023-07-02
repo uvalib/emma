@@ -168,14 +168,14 @@ class ApiService
       #
       # @return [ApiService]
       #
-      # == Usage Notes
+      # === Usage Notes
       # For special purposes (like overriding :no_raise for all API requests
       # within a single method), use `ApiService.new` rather than
       # `ApiService.instance`.  Providing modified options to this method
       # creates a new single instance; if the options are the same as the
       # current options then the existing instance is returned.
       #
-      # == Implementation Notes
+      # === Implementation Notes
       # The Singleton pattern is avoided so that the instance is unique
       # per-request and not per-thread (potentially spanning multiple requests
       # by different users).
@@ -207,7 +207,7 @@ class ApiService
       #
       # @return [void]
       #
-      # == Usage Notes
+      # === Usage Notes
       # The definition of each API request method is followed by a block which
       # invokes this method in order to register the properties of the method
       # and its associated API endpoint.  The *prop* argument is expected to be
@@ -259,7 +259,7 @@ class ApiService
       # @return [Hash, nil]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload api_methods(arg)
@@ -271,7 +271,7 @@ class ApiService
       #   @param [Symbol, String] arg       Method name.
       #   @return [Hash, nil]               Properties of the named method.
       #
-      # == Usage Notes
+      # === Usage Notes
       # By default only true (documented) API methods are returned, unless:
       # - If :synthetic is *true* then "fake" methods (which implement
       #     functionality not directly supported by the API) are also included.

@@ -34,7 +34,7 @@ module Emma::Json
   # @return [Array<Hash>]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload json_parse(hash = nil, log: true, no_raise: true, **)
@@ -62,7 +62,7 @@ module Emma::Json
   #   @param [Hash]                   opt
   #   @return [Hash, Array<Hash>, nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If opt[:symbolize_keys] is explicitly *false* then this causes all result
   # keys to be converted to strings.
   #
@@ -151,7 +151,7 @@ module Emma::Json
   #
   # @see #json_parse
   #
-  # == Usage Notes
+  # === Usage Notes
   # An HTML element can show the lines as they are generated if it has style
   # "white-space: pre;".
   #

@@ -17,7 +17,7 @@ module LayoutHelper::PageLanguage
   #
   # @return [String]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Only use as an override if the page is in a language that has not been set
   # via I18n::Config#locale.
   #

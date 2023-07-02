@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Metadata record schema for EMMA Unified Search results.
 #
-# == API description
+# === API description
 # Schema for JSON documents which are retrieved from the EMMA Unified Search
 # service.
 #

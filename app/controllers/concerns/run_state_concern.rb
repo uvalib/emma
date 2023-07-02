@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @see RunState
 #
-# == Usage Notes
+# === Usage Notes
 # This is not included in controllers which have endpoints which should be
 # available regardless of the run state.
 #

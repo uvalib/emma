@@ -23,6 +23,8 @@ AppDebug.file('shared/inline-popup', MODULE, DEBUG);
  * A class for managing the state of an inline popup, with a visible toggle
  * control and an (initially-hidden) popup-panel.
  *
+ * @extends ModalBase
+ *
  * @example
  *  <div class="inline-popup">
  *      <div class="control">...</div>
@@ -63,7 +65,7 @@ export class InlinePopup extends ModalBase {
     /**
      * Open the popup element.
      *
-     * @param {boolean} [no_halt]     If *true*, hooks cannot halt the chain.
+     * @param {boolean} [no_halt]     If **true**, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -78,7 +80,7 @@ export class InlinePopup extends ModalBase {
     /**
      * Close the popup element.
      *
-     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -95,7 +97,7 @@ export class InlinePopup extends ModalBase {
     // ========================================================================
 
     /**
-     * Inline popup wrappers containing a 'control' and a 'popup-panel'.
+     * Inline popup wrappers containing a "control" and a "popup-panel".
      *
      * @type {jQuery}
      */
@@ -136,7 +138,7 @@ export class InlinePopup extends ModalBase {
      * Close all indicated popups (by default, all inline popups that are not
      * already closed).
      *
-     * @param {Selector} [popups]     Default: `{@link $open_popups}`.
+     * @param {Selector} [popups]     Default: {@link $open_popups}.
      */
     static closeAllOpenPopups(popups) {
         const func    = 'closeAllOpenPopups';
@@ -192,7 +194,7 @@ export class InlinePopup extends ModalBase {
     /**
      * Set up event handlers on {@link window}.
      *
-     * @param {boolean} [attach]    Default *true*.
+     * @param {boolean} [attach]    Default **true**.
      *
      * @protected
      */
@@ -213,14 +215,14 @@ export class InlinePopup extends ModalBase {
     }
 
     /**
-     * Allow "Escape" key to close an open popup.
+     * Allow the **Escape** key to close an open popup. <p/>
      *
      * If the event originates from outside of a popup control or open popup,
      * then close all open popups.
      *
      * @param {jQuery.Event|KeyboardEvent} event
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      * @protected
      */
     static _onKeyUp(event) {
@@ -254,7 +256,7 @@ export class InlinePopup extends ModalBase {
      * @protected
      */
     static _onClick(event) {
-        //this._debug('_onClick', event);
+        //this._debug('_onClick:', event);
         let inside = undefined;
 
         // Clicked directly on a popup control or panel.

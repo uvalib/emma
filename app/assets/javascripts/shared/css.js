@@ -35,10 +35,16 @@ export function toggleClass(target, cls, setting) {
 /**
  * Hide/show an element.
  *
+ * @note A "hidden" element is effectively removed from the display; an
+ *  "invisible" element still takes up space on the display.  Both cases result
+ *  in 'aria-hidden' being set to make it unavailable to screen readers.
+ *
  * @param {Selector} target
  * @param {boolean}  [hide]       Default: toggle state.
  *
  * @returns {jQuery}
+ *
+ * @see toggleVisibility
  */
 export function toggleHidden(target, hide) {
     const $target = $(target);

@@ -14,7 +14,7 @@ module Record::Searchable
   #
   # @return [Symbol, nil]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This has to be a column with unique values for every record which can be
   # ordered (that is, #minimum_id and #maximum_id have to be non-nil).
   #

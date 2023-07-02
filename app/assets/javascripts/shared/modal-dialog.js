@@ -19,7 +19,9 @@ AppDebug.file('shared/modal-dialog', MODULE, DEBUG);
 
 /**
  * A class for managing the state of a modal dialog that may be accessible by
- * one or more toggle buttons.
+ * one or more activation toggle controls.
+ *
+ * @extends ModalBase
  */
 export class ModalDialog extends ModalBase {
 
@@ -30,7 +32,8 @@ export class ModalDialog extends ModalBase {
     static MODAL       = selector(this.MODAL_CLASS);
 
     /**
-     * The attribute which relates toggle(s) to the modal popup on the page.
+     * The attribute which relates activation toggle control(s) to the modal
+     * popup on the page.
      *
      * @readonly
      * @type {string}
@@ -39,7 +42,7 @@ export class ModalDialog extends ModalBase {
 
     /**
      * The attribute which specifies the subclass which should be generated for
-     * the modal popup toggle.
+     * the activation toggle control.
      *
      * @readonly
      * @type {string}
@@ -73,7 +76,7 @@ export class ModalDialog extends ModalBase {
 
     /**
      * The self-identification of the popup element which is used to match
-     * toggle control(s) to this modal.
+     * activation toggle control(s) to this modal.
      *
      * @returns {Selector}
      */
@@ -82,7 +85,8 @@ export class ModalDialog extends ModalBase {
     }
 
     /**
-     * A selector which matches toggle controls associated with this modal.
+     * A selector which matches activation toggle controls associated with this
+     * modal.
      *
      * @returns {Selector}
      */
@@ -93,7 +97,7 @@ export class ModalDialog extends ModalBase {
     }
 
     /**
-     * All popup toggle controls which may be associated with this modal.
+     * All activation toggle controls which may be associated with this modal.
      *
      * @returns {jQuery}
      */
@@ -106,13 +110,13 @@ export class ModalDialog extends ModalBase {
     // ========================================================================
 
     /**
-     * Open the popup element.
+     * Open the popup element. <p/>
      *
      * Generally, this can't be used on a modal popup because ModalBase
      * operations assume a relationship with a toggle button, and that is set
      * only by opening the modal via {@link toggleModal}.
      *
-     * @param {boolean} [no_halt]     If *true*, hooks cannot halt the chain.
+     * @param {boolean} [no_halt]     If **true**, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -130,7 +134,8 @@ export class ModalDialog extends ModalBase {
     // ========================================================================
 
     /**
-     * Set up all related modal toggles to operate with this instance.
+     * Set up all related modal activation toggle control(s) to operate with
+     * this instance.
      *
      * @param {Selector} [toggles]
      *

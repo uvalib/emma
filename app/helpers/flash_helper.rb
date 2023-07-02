@@ -36,7 +36,7 @@ module FlashHelper
   #
   # @type [Integer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This has been sized very conservatively so that it also works in the
   # desktop setting where the instance shares the 4096-byte cookie space with
   # other local applications.
@@ -495,7 +495,7 @@ module FlashHelper
   # @return [String]                      For :xhr.
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload flash_format(meth, error, *args, topic: nil, **opt)
@@ -629,7 +629,7 @@ module FlashHelper
   # @return [Array]                       If *item* is an array.
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload flash_item(string, max: FLASH_MAX_ITEM_SIZE, **opt)
@@ -682,7 +682,7 @@ module FlashHelper
   #
   # @return [Integer]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This does not account for any separators that would be added when
   # displaying multiple items.
   #

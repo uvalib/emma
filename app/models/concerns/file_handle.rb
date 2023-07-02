@@ -52,7 +52,7 @@ class FileHandle
   # @raise [RuntimeError]             If *file* is invalid.
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload initialize(other)

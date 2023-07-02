@@ -71,7 +71,7 @@ public
 
 # Publication Identifier
 #
-# == API description
+# === API description
 # The lowercase scheme and identifier for a publication.  For example,
 # isbn:97800110001. Only alphanumeric characters are accepted. No spaces or
 # other symbols are accepted. Dashes will be stripped from the stored
@@ -538,7 +538,7 @@ class Isbn < PublicationIdentifier
     #
     # @param [String, Any] v
     #
-    # == Usage Notes
+    # === Usage Notes
     # If *v* matches #ISBN_PREFIX then the method returns *true* even if the
     # actual number is invalid; the caller is expected to differentiate between
     # valid and invalid cases and handle each appropriately.
@@ -1090,7 +1090,7 @@ class Oclc < PublicationIdentifier
     #
     # @type [Range]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # The minimum is a heuristic to account for OCLC numbers that were not
     # left-zero-filled to give the number 8 digits.
     #
@@ -1152,7 +1152,7 @@ class Oclc < PublicationIdentifier
     #
     # @param [String, Any] v
     #
-    # == Usage Notes
+    # === Usage Notes
     # If *v* matches #OCLC_PREFIX then the method returns *true* even if the
     # actual number is invalid; the caller is expected to differentiate between
     # valid and invalid cases and handle each appropriately.  The one exception
@@ -1755,7 +1755,7 @@ class Doi < PublicationIdentifier
     #
     # @param [String, Any] v
     #
-    # == Usage Notes
+    # === Usage Notes
     # If *v* matches #DOI_PREFIX then the method returns *true* even if the
     # actual number is invalid; the caller is expected to differentiate between
     # valid and invalid cases and handle each appropriately.
@@ -1782,7 +1782,7 @@ class Doi < PublicationIdentifier
     #
     # @return [String]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # Accounts for not-quite-valid forms like "doi:https://doi.org/..." by
     # repeating prefix removal.
     #
@@ -1955,7 +1955,7 @@ end
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityAPI        JSON schema specification
 # @see https://www.w3.org/wiki/WebSchemas/Accessibility#Accessibility_terms_.28Version_2.0.29                                                       W3C WebSchemas Accessibility Terms
 #
-# == Usage Notes
+# === Usage Notes
 # Because only ever has the value of "ARIA", it is generally ignored.
 #
 class A11yAPI < EnumType
@@ -2034,7 +2034,7 @@ end
 
 # SearchGroup
 #
-# == API description
+# === API description
 # (EXPERIMENTAL) Search results will be grouped by the given field.  Result
 # page size will automatically be limited to 10 maximum.  Each result will have
 # a number of grouped records provided as children, so the number of records

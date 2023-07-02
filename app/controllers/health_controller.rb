@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @see file:app/views/health/**
 #
-# == Usage Notes
+# === Usage Notes
 # The endpoints implemented by this controller render only JSON and do not
 # require authentication of the requester.
 #
@@ -49,8 +49,8 @@ class HealthController < ApplicationController
 
   public
 
-  # == GET /version
-  # == GET /health/version
+  # === GET /version
+  # === GET /health/version
   #
   # @see #version_path                Route helper
   # @see #version_health_path         Route helper
@@ -59,9 +59,9 @@ class HealthController < ApplicationController
     render_version
   end
 
-  # == GET /healthcheck[?logging=true]
-  # == GET /health/check[?logging=true]
-  # == GET /health/check/:subsystem[?logging=true]
+  # === GET /healthcheck[?logging=true]
+  # === GET /health/check[?logging=true]
+  # === GET /health/check/:subsystem[?logging=true]
   #
   # @see #healthcheck_path            Route helper
   # @see #check_health_path           Route helper
@@ -78,7 +78,7 @@ class HealthController < ApplicationController
     end
   end
 
-  # == GET /health/run_state
+  # === GET /health/run_state
   #
   # @see #run_state_health_path       Route helper
   # @see #system_unavailable_path     Route helper
@@ -88,12 +88,12 @@ class HealthController < ApplicationController
     @state = show_run_state
   end
 
-  # == PUT /health/run_state
+  # === PUT /health/run_state
   #
   # @see #set_run_state_health_path   Route helper
   # @see HealthConcern#update_run_state
   #
-  # == Usage Notes
+  # === Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #
   def set_run_state

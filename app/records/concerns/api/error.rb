@@ -41,7 +41,7 @@ class Api::Error < ExecError
   # @param [Array<Faraday::Response,Exception,Hash,String,Integer,nil>] args
   # @param [Hash]                                                       opt
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Each element of @messages is duplicated in order to ensure that there are
   # no unexpected entanglements with the original message source(s).
   #
@@ -112,7 +112,7 @@ class Api::Error < ExecError
   #
   # @return [Array<String>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # As a side-effect, if @http_response is nil it will be set here.
   #
   def faraday_response(arg)
@@ -126,7 +126,7 @@ class Api::Error < ExecError
   #
   # @return [Array<String>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # As a side-effect, if @http_status is nil and HTTP status can be determined,
   # then @http_status will be set here.
   #

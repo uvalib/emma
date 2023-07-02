@@ -16,7 +16,7 @@ appSetup(MODULE, function() {
 
     const $iframe_body = $('body.modal');
 
-    // Only proceed if this is being run from within an <iframe>.
+    // Only proceed if this is being run from within an `<iframe>`.
     if (isMissing($iframe_body)) {
         return;
     }
@@ -26,14 +26,14 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Clickable elements within the <iframe> contents.
+     * Clickable elements within the `<iframe>` contents.
      *
      * @type {jQuery}
      */
     const $iframe_links = $iframe_body.find('[href]');
 
     /**
-     * Clickable elements within the <iframe> contents which are in-page links.
+     * Clickable elements within `<iframe>` contents which are in-page links.
      *
      * @type {jQuery}
      */
@@ -46,7 +46,7 @@ appSetup(MODULE, function() {
     // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Intercept anchor links to scroll to the element on the page inside the
-     * <iframe>.
+     * `<iframe>`.
      *
      * @param {jQuery.Event|UIEvent} [event]
      *

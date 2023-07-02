@@ -18,7 +18,7 @@ module SearchService::Action::Records
 
   public
 
-  # == GET /search
+  # === GET /search
   #
   # EMMA Unified Search
   #
@@ -117,7 +117,7 @@ module SearchService::Action::Records
   #
   # @return [Search::Message::SearchRecordList]
   #
-  # == HTTP response codes
+  # === HTTP response codes
   #
   # 200 Accepted        Metadata records matching the search criteria.
   # 400 Bad Request     Bad query parameter.
@@ -176,8 +176,8 @@ module SearchService::Action::Records
       }
     end
 
-  # == GET /record/:id
-  # == GET /record/:record_id
+  # === GET /record/:id
+  # === GET /record/:record_id
   #
   # @param [String] record_id         Query.
   # @param [Hash]   opt               Passed to #api.

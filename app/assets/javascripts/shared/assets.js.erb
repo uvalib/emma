@@ -6,8 +6,8 @@
 //
 // The "emma:assets:erb" Rake task processes this file through ERB in order to
 // provide current values from the Ruby-on-Rails source code, with the
-// exception of Image_placeholder_asset , which is set through a <script>
-// tag inserted earlier in the <head> element.
+// exception of Image_placeholder_asset , which is set through a `<script>`
+// tag inserted earlier in the `<head>` element.
 //
 // @see file:lib/tasks/emma_assets.rake
 // @see HeadHelper::Scripts#page_script_settings
@@ -456,7 +456,7 @@ AppDebug.file('shared/assets.js.erb');
 // ============================================================================
 
 /**
- * Values taken from the Rails project via the asset pipeline.
+ * Values taken from the Rails project via the asset pipeline. <p/>
  *
  * Note that a change to any of the values from Rails will require either
  * recompiling the assets or a dynamic override via #page_script_settings.
@@ -492,8 +492,8 @@ export const Emma = (function() {
 
     // noinspection JSUnresolvedVariable
     /**
-     * The server passes current information via a <script> tag that is
-     * inserted before 'application.js' in a global location that will be
+     * The server passes current information via a `<script>` tag that is
+     * inserted before "application.js" in a global location that will be
      * accessible from any ES6 module.
      *
      * @type {AssetOverrides}

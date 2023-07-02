@@ -152,7 +152,7 @@ module BaseDecorator::Grid
   end
 
   # ===========================================================================
-  # :section: TODO: may move...
+  # :section:
   # ===========================================================================
 
   public
@@ -556,7 +556,7 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with BaseDecorator::List#render_field_value_pair
   #
   def grid_data_cell_render_pair(label, value, field:, prop:, col: nil, **opt)

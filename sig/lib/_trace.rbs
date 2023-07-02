@@ -122,13 +122,13 @@ class Object
   # @yield To supply additional items to output.
   # @yieldreturn [Array<String>]
   #
-  # == Usage Notes
-  # [1] When deployed, this option will create a log entry rather than produce
-  # $stderr output.  If not deployed, the log entry is created in addition to
-  # $stderr output.
-  # [2] During initial trace output (if enabled) it makes sense to only send to
-  # $stderr so that the overall trace output doesn't switch forms as soon as
-  # `Log.add` starts working.
+  # === Usage Notes
+  # - [1] When deployed, this option will create a log entry rather than produce
+  #       $stderr output.  If not deployed, the log entry is created in addition
+  #       to $stderr output.
+  # - [2] During initial trace output (if enabled) it makes sense to only send to
+  #       $stderr so that the overall trace output doesn't switch forms as soon
+  #       as `Log.add` starts working.
   #
   def __output_impl
     : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
@@ -144,7 +144,7 @@ class Object
   #
   # @see #__output_impl
   #
-  # == Usage Notes
+  # === Usage Notes
   # The method is only functional if #CONSOLE_OUTPUT is true.
   #
   def __output
@@ -223,7 +223,7 @@ class Object
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Place as the first non-comment line of a Ruby source file.
   #
   def __loading: (String file) -> void
@@ -234,7 +234,7 @@ class Object
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Place as the first non-comment line of a Ruby source file.
   #
   def __loading_begin: (String file) -> void
@@ -245,7 +245,7 @@ class Object
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Place as the last non-comment line of a Ruby source file.
   #
   def __loading_end: (String file) -> void

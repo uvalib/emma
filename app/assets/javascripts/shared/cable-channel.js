@@ -18,6 +18,11 @@ const DEBUG  = true;
 
 AppDebug.file('shared/cable-channel', MODULE, DEBUG);
 
+/**
+ * CableChannel
+ *
+ * @extends BaseClass
+ */
 export class CableChannel extends BaseClass {
 
     static CLASS_NAME = 'CableChannel';
@@ -209,7 +214,7 @@ export class CableChannel extends BaseClass {
     }
 
     /**
-     * Process a request response.
+     * Process a request response. <p/>
      *
      * If the entire response can't be sent back at one time, the response
      * will hold the URL from which the missing data can be acquired.
@@ -445,7 +450,7 @@ export class CableChannel extends BaseClass {
     }
 
     // ========================================================================
-    // Internal methods - channel management
+    // Methods - channel management - internal
     // ========================================================================
 
     /**
@@ -486,8 +491,8 @@ export class CableChannel extends BaseClass {
 
         /**
          * Called when there's incoming data on the WebSocket for this channel.
-         * If a 'received' callback was supplied, it will be called first.
-         * Note that this is the raw data on the channel (before 'data_url' is
+         * If a "received" callback was supplied, it will be called first.
+         * Note that this is the raw data on the channel (before "data_url" is
          * resolved if in the data).
          *
          * @param {object} data

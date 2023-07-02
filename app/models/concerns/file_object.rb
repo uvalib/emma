@@ -29,7 +29,7 @@ class FileObject
   # @param [String, nil]         ext  Override `self.class.file_extension`.
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload initialize(path, fmt: nil, ext: nil)

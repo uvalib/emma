@@ -310,7 +310,7 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with BaseDecorator::List#render_field_value_pair
   #
   def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer

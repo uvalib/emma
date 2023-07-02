@@ -136,7 +136,7 @@ module Record::Describable
   #
   # @see #generate_interpolation_table
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # These are encapsulated in their own module to support extendability.
   #
   module InterpolationMethods
@@ -253,7 +253,7 @@ module Record::Describable
     #
     # @return [String]
     #
-    # == Usage Notes
+    # === Usage Notes
     # The including class is expected to define an overriding class method.
     #
     def describe_type(model = nil, **opt)
@@ -268,7 +268,7 @@ module Record::Describable
     #
     # @return [String]
     #
-    # == Usage Notes
+    # === Usage Notes
     # The including class is expected to define an overriding class method.
     #
     def describe_status(model = nil, **opt)

@@ -73,7 +73,7 @@ module CssHelper
   # @return [Hash]                        A new hash with :class set.
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload append_css(html_opt, *classes, &block)
@@ -107,7 +107,7 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with #prepend_css!
   #
   def append_css!(html_opt, *classes, &block)
@@ -125,7 +125,7 @@ module CssHelper
   # @return [Hash]                        A new hash with :class set.
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload prepend_css(html_opt, *classes, &block)
@@ -159,7 +159,7 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with #append_css!
   #
   def prepend_css!(html_opt, *classes, &block)

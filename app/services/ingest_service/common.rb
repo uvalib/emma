@@ -69,7 +69,7 @@ module IngestService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Sets @response as a side-effect.
   #
   def transmit(verb, action, params, headers, **opt)

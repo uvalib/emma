@@ -52,7 +52,7 @@ module RepositoryHelper
   #
   # @param [String, nil] url
   #
-  # == Usage Notes
+  # === Usage Notes
   # This exists to support the handful of items which are represented as
   # belonging to the "EMMA" repository but which are actually Bookshare items
   # from the "EMMA Collection".
@@ -177,7 +177,7 @@ module RepositoryHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Encrypted DAISY files are handled differently; for an explanation:
   # @see IaDownloadConcern#ia_download_response
   #

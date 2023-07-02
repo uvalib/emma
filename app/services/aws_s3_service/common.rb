@@ -30,7 +30,7 @@ module AwsS3Service::Common
   # @return [Any]                     Depends on *operation*.
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload api(operation, *items, **opt)
@@ -46,7 +46,7 @@ module AwsS3Service::Common
   #   @option opt [String,Symbol] :repo     Used to determine S3 bucket.
   #   @option opt [String]        :bucket   To specify S3 bucket.
   #
-  # == Usage Notes
+  # === Usage Notes
   # Clears and/or sets @exception as a side-effect.
   #
   #--
@@ -348,7 +348,7 @@ module AwsS3Service::Common
   #
   # @return [Array<String>]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This should only be used when transforming a list of key name patterns into
   # actual key names -- use #aws_list_objects directly when checking on the
   # presence of the files themselves.

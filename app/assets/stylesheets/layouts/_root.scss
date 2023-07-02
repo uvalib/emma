@@ -104,7 +104,6 @@
 // to chain to the underlying page (which happens when the page is scrolled to
 // the end of the <iframe> and you keep attempting to scroll).
 html.modal {
-    // noinspection CssBrowserCompatibilityForProperties
     overscroll-behavior: none;
 }
 
@@ -123,7 +122,7 @@ body {
     background:     var(--bg-color);
 
     @media #{$narrow-screen} {
-        font-size: large;
+        font-size:  large;
     }
 
     // The <header> and <footer> areas of the page.

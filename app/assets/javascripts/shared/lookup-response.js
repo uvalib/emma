@@ -50,6 +50,7 @@ AppDebug.file('shared/lookup-response', MODULE, DEBUG);
 /**
  * A lookup response message.
  *
+ * @extends ChannelResponse
  * @extends LookupResponsePayload
  */
 export class LookupResponse extends ChannelResponse {
@@ -62,8 +63,7 @@ export class LookupResponse extends ChannelResponse {
     // ========================================================================
 
     /**
-     * A blank object containing an array value for every key defined by
-     * {@link REQUEST_TYPE}.
+     * A blank payload object.
      *
      * @readonly
      * @type {LookupResponsePayload}

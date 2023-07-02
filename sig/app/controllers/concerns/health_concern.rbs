@@ -36,12 +36,12 @@ module HealthConcern
     # @param [String]               degraded  Message if degraded.
     # @param [String]               failed    Message if failed.
     #
-    # == Health check methods
+    # === Health check methods
     # *nil*     The implied health check method is used.
     # *true*    The subsystem is always reported as healthy.
     # *false*   The subsystem is always reported as failed.
     #
-    # == Restart
+    # === Restart
     # If :restart is *true* then a failed health check should result in a
     # system restart in order to attempt to correct the underlying problem.
     #
@@ -186,7 +186,7 @@ module HealthConcern
   #
   # @note Currently unused.
   #
-  # == Usage Notes
+  # === Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #
   def clear_run_state: () -> void
@@ -197,7 +197,7 @@ module HealthConcern
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #
   def update_run_state: (?(String|anyHash|nil) source) -> void

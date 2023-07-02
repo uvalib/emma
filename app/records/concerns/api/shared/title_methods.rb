@@ -323,22 +323,22 @@ module Api::Shared::TitleMethods
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If the value cannot be determined.
   #
-  # == Implementation Notes
-  # [1]  Repair malformed HTML entities.
-  # [2]  Transform one or more newlines into a pair of breaks.
-  # [3]  Normalize space characters.
-  # [4]  Strip leading/trailing spaces only after normalization.
-  # [5]  Eliminate sequences like "<p><p>".
-  # [6]  Normalize breaks, removing any leading spaces.
-  # [7]  Eliminate orphaned elements like "<p><br/>".
-  # [8]  Put explicit list elements on their own lines.
-  # [9]  Put implied list elements on their own lines.
-  # [10] Put *apparent* list elements on their own lines.
-  # [11] Treat a run of spaces as an implied paragraph break.
-  # [12] Special paragraph break.
-  # [13] Reduce runs of breaks to just a pair of breaks.
-  # [14] Remove leading breaks.
-  # [15] Remove trailing breaks.
+  # === Implementation Notes
+  # - [ 1] Repair malformed HTML entities.
+  # - [ 2] Transform one or more newlines into a pair of breaks.
+  # - [ 3] Normalize space characters.
+  # - [ 4] Strip leading/trailing spaces only after normalization.
+  # - [ 5] Eliminate sequences like "<p><p>".
+  # - [ 6] Normalize breaks, removing any leading spaces.
+  # - [ 7] Eliminate orphaned elements like "<p><br/>".
+  # - [ 8] Put explicit list elements on their own lines.
+  # - [ 9] Put implied list elements on their own lines.
+  # - [10] Put *apparent* list elements on their own lines.
+  # - [11] Treat a run of spaces as an implied paragraph break.
+  # - [12] Special paragraph break.
+  # - [13] Reduce runs of breaks to just a pair of breaks.
+  # - [14] Remove leading breaks.
+  # - [15] Remove trailing breaks.
   #
   def contents
     return unless (text = get_value(*contents_fields)).present?

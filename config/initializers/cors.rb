@@ -13,13 +13,13 @@ CORS_OPT = { debug: DEBUG_CORS }
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors, CORS_OPT do
 
-  # == UVA clients
+  # === UVA clients
   allow do
     origins  %r{^https?://.*\.virginia\.edu(:\d+)?$}, 'localhost'
     resource '*', headers: :any, methods: :any
   end
 
-  # == Openly available search results
+  # === Openly available search results
   allow do
     origins  '*'
     resource '/search/*', headers: :any, methods: %i[get head options]

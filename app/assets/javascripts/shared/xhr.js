@@ -70,13 +70,6 @@ AppDebug.file('shared/xhr', MODULE, DEBUG);
  */
 
 /**
- * XmitCallback
- *
- * - result:    Response message body.
- * - warning:   Possible warning message.
- * - error:     Possible error message.
- * - xhr:       Request response object.
- *
  * @typedef {
  *      function(
  *          result:  object|undefined,
@@ -85,6 +78,11 @@ AppDebug.file('shared/xhr', MODULE, DEBUG);
  *          xhr:     XMLHttpRequest
  *      )
  * } XmitCallback
+ *
+ * - result:    Response message body.
+ * - warning:   Possible warning message.
+ * - error:     Possible error message.
+ * - xhr:       Request response object.
  */
 
 // ============================================================================
@@ -112,6 +110,8 @@ function _debug(...args) {
 // ============================================================================
 // Functions - send
 // ============================================================================
+
+/** @returns {void} */
 
 export function get(  path, prm, opt, cb) { xmit('GET',   path, prm, opt, cb) }
 export function head( path, prm, opt, cb) { xmit('HEAD',  path, prm, opt, cb) }
@@ -227,7 +227,7 @@ export function xmit(method, path, prm, opt, cb) {
     }
 
     /**
-     * Accumulate the status failure message.
+     * Accumulate the status failure message. <p/>
      *
      * This handles what appears to be a very specific jQuery bug where a HEAD
      * response causes jQuery to fail trying to parse the response body.  In

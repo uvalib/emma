@@ -17,8 +17,9 @@ AppDebug.file('shared/base-class', MODULE, DEBUG);
 
 /**
  * The base for application-defined classes which provides logging support.
+ * <p/>
  *
- * **Usage Notes**
+ * **Usage Notes** <p/>
  * Subclasses are expected to define an explicit static CLASS_NAME in order to
  * make use of the diagnostic methods defined here.  (Relying on `this.name`
  * isn't sufficient because that will yield the *minified* name rather than the

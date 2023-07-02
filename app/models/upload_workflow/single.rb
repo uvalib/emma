@@ -1056,7 +1056,7 @@ module UploadWorkflow::Single::States
   #
   # @return [self]                        Return *self* for chaining.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This method automatically transitions to :indexing, but that's only because
   # there's no defined "signal" (from the perspective of the EMMA web service)
   # to indicate that

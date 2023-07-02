@@ -135,8 +135,8 @@ class User < ApplicationRecord
 
   # Value of :id for the indicated record.
   #
-  # @param [User, String, Integer, Any] user  Default: self
-  # @param [Hash]                       opt
+  # @param [User, String, Integer, *] user  Default: self
+  # @param [Hash]                     opt
   #
   # @return [String]
   # @return [nil]                     If no matching record was found.
@@ -148,8 +148,8 @@ class User < ApplicationRecord
 
   # Value of :id for the indicated record.
   #
-  # @param [User, String, Integer, Any] user
-  # @param [Hash]                       opt
+  # @param [User, String, Integer, *] user
+  # @param [Hash]                     opt
   #
   # @return [String]
   # @return [nil]                     If no matching record was found.
@@ -372,7 +372,7 @@ class User < ApplicationRecord
   #
   # @return [void]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # A new User will be created the first time a new person authenticates via    # if BS_AUTH
   # Bookshare -- this may be the place to query the Bookshare API for that
   # user's Bookshare role in order to map it onto EMMA "prototype user".
@@ -476,6 +476,7 @@ class User < ApplicationRecord
   def self.from_omniauth(data, update: true)
     return unless data.is_a?(Hash)
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
+    # noinspection RubyResolve
     attr = {
       email:         data.uid.downcase,
       first_name:    data.info&.first_name || data.info&.givenName,

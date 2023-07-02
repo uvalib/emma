@@ -18,7 +18,7 @@ __loading_begin(__FILE__)
 # @attr [String]   buyLink
 # @attr [DateTime] onSaleDate
 #
-# == Observed but not documented
+# === Observed but not documented
 #
 # @attr [Hash]     offers
 #
@@ -41,7 +41,7 @@ class Lookup::GoogleBooks::Record::SaleInfo < Lookup::GoogleBooks::Api::Record
     has_one :buyLink
     has_one :onSaleDate,    DateTime
 
-    # == Observed but not documented
+    # === Observed but not documented
 
     has_one :offers
   end

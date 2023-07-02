@@ -20,6 +20,8 @@ AppDebug.file('shared/queue', MODULE, DEBUG);
 
 /**
  * A generic FIFO queue.
+ *
+ * @extends BaseClass
  */
 export class Queue extends BaseClass {
 
@@ -74,6 +76,8 @@ export class Queue extends BaseClass {
 
 /**
  * A queue for managing a set of callbacks.
+ *
+ * @extends Queue
  */
 export class CallbackQueue extends Queue {
 
@@ -95,7 +99,7 @@ export class CallbackQueue extends Queue {
      * @param {...function} args
      */
     constructor(...args) {
-        super(...args.filter(arg => this.#validate(arg)));
+        super(...args.filter(arg => this._validate(arg)));
     }
 
     // ========================================================================
@@ -110,7 +114,7 @@ export class CallbackQueue extends Queue {
      * @returns {number|undefined}
      */
     push(...args) {
-        const elements = args.filter(arg => this.#validate(arg));
+        const elements = args.filter(arg => this._validate(arg));
         return isEmpty(elements) ? undefined : super.push(...elements);
     }
 
@@ -142,7 +146,7 @@ export class CallbackQueue extends Queue {
      * @returns {boolean}
      * @protected
      */
-    #validate(callback, from) {
+    _validate(callback, from) {
         const type  = typeof(callback);
         const valid = (type === 'function');
         if (!valid) {

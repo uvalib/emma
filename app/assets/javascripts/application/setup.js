@@ -27,6 +27,13 @@ AppDebug.file('application/setup', MODULE, DEBUG);
 
 /**
  * @typedef {boolean|AddEventListenerOptions} EventOptions
+ *
+ * - **true** is equivalent to "{capture: true}" -- listening in the capture
+ *      phase before the event is passed on to `event.target` (if it is
+ *      different than `event.currentTarget`).
+ *
+ * - **false** is equivalent to "{capture: false}" -- the default behavior of
+ *      listening in the bubbling phase.
  */
 
 /**
@@ -77,7 +84,7 @@ AppDebug.file('application/setup', MODULE, DEBUG);
  * @property {AppModuleMap} Teardown
  *
  *  Mapping of module name to teardown function executed in sequence by
- *  {@link pageTeardown}.
+ *  {@link pageTeardown}. <p/>
  */
 
 // ============================================================================
@@ -228,10 +235,10 @@ function runActions(store, caller) {
 
 /**
  * Set an event handler on a global target, including it in the set of event
- * handlers that will be removed on page teardown.
+ * handlers that will be removed on page teardown. <p/>
  *
- * If *options* includes **{ listen: false }** then the only action is to
- * remove a previous event handler.
+ * If *options* includes "{listen: false}" then the only action is to remove a
+ * previous event handler.
  *
  * @param {EventTarget|string}                      target
  * @param {string}                                  type
@@ -261,7 +268,6 @@ export function appEventListener(target, type, callback, options) {
 /**
  * Indicate whether the given event handler (as identified by the target, event
  * type, callback and options) is present in {@link window.APP_PAGE.Event}.
- *
  * If not, the entry is created.
  *
  * @param {EventTarget|string}                      target
@@ -270,7 +276,7 @@ export function appEventListener(target, type, callback, options) {
  * @param {EventListenerOptionsExt|boolean}         [options]
  * @param {string}                                  [caller]
  *
- * @returns {boolean}       *false* if the entry had to be created.
+ * @returns {boolean}       **false** if the entry had to be created.
  */
 export function appEventTestOrSet(target, type, callback, options, caller) {
     const [ev_key, _]  = appEventTarget(target, caller);
@@ -303,8 +309,8 @@ export function appEventOptions(options) {
  * Given an event target return the {@link window.APP_PAGE.Event} key and
  * the node that it references.
  *
- * @param {EventTarget|string} k            {@link DOC_KEY} or {@link WIN_KEY}
- * @param {string}             [caller]     For diagnostics
+ * @param {EventTarget|string} k            {@link DOC_KEY} or {@link WIN_KEY}.
+ * @param {string}             [caller]     For diagnostics.
  *
  * @returns {[(string|EventTarget|undefined),(EventTarget|undefined)]}
  */
@@ -379,7 +385,7 @@ function _debug(...args) {
  * Log an occurrence of an action on an event.
  *
  * @param {string}             caller
- * @param {string}             action       'remember', 'remove', or 'listen'.
+ * @param {string}             action       "remember", "remove", or "listen".
  * @param {string}             type         Event type.
  * @param {string|EventTarget} [target]
  * @param {function|EventListenerOrEventListenerObject} [callback]

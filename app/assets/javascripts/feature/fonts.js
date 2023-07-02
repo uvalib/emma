@@ -23,8 +23,7 @@ handleEvent($script, 'load',             loadFonts);
 function loadFonts() {
     try {
         Typekit.load();
-    }
-    catch(error) {
+    } catch(error) {
         console.warn('Could not load Typekit:', error.message);
     }
 }

@@ -834,7 +834,7 @@ class ManifestDecorator
   # @private
   STATUS_LABELS = ManifestItemDecorator::SUBMIT_STATUS_LABELS.to_json.freeze
 
-  # submission_status_list
+  # The live table of in-progress and completed submissions.
   #
   # @param [Integer, nil] row
   # @param [Integer, nil] index

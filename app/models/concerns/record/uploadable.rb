@@ -279,7 +279,7 @@ module Record::Uploadable
   #
   # @note From Upload::FileMethods#fetch_and_upload_file
   #
-  # == Usage Notes
+  # === Usage Notes
   # This method is not necessary for an Entry instance which is persisted to
   # the database because Shrine adds event handlers which cause the file to be
   # copied to storage.  This method is allows this action for a "free-standing"
@@ -392,7 +392,7 @@ module Record::Uploadable
   #
   # @note From Upload::FileMethods#note_cb
   #
-  # == Usage Notes
+  # === Usage Notes
   #
   # :before_save # should trigger:
   # Shrine::Plugins::Activerecord::AttacherMethods#activerecord_before_save

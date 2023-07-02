@@ -15,7 +15,7 @@ __loading_begin(__FILE__)
 #   When *true*, render methods return ActiveSupport::SafeBuffer [x].
 #   @return [Boolean]
 #
-# == Usage Notes
+# === Usage Notes
 # Rather than attempting to (partially) process error information at the site
 # of its reception, the raw information is wrapped in an ExecReport so that it
 # may be processed as needed.
@@ -51,7 +51,7 @@ class ExecReport
   # @param [Array] src
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload initialize(base, *src)
@@ -940,7 +940,7 @@ class ExecReport::Part
   #
   # @param [ExecReport::Part, Hash, Array, String, *] src
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Member variables are initialized in the order which optimizes display when
   # the instance is inspected.
   #
@@ -1366,7 +1366,7 @@ class ExecReport::FlashPart < ExecReport::Part
   # @param [ExecReport::Part, Hash, String, Array, *]          details
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload initialize(topic)

@@ -62,10 +62,10 @@ module IaDownloadService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Sets @response as a side-effect.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This will take several iterations, depending on the nature of the IA file.
   #
   # 1. If the file is unencrypted and the item is public-domain then the

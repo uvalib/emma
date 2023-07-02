@@ -29,7 +29,7 @@ module SessionsHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Use :path = *false* to disable without changing the appearance.
   #
   def sign_in_link: (?label: String|nil, ?path: String|bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
@@ -44,7 +44,7 @@ module SessionsHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Use :path = *false* to disable without changing the appearance.
   #
   def sign_out_link: (?label: String|nil, ?path: String|false|nil, **untyped opt) -> ActiveSupport::SafeBuffer

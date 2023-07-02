@@ -18,20 +18,20 @@
     @include width-fit-content;
     @include block-shadow;
 
-    min-width:     50%;
-    padding:       1rem;
-    line-height:   1.375;
+    min-width:      50%;
+    padding:        1rem;
+    line-height:    1.375;
 
     @media #{$wide-screen} {
-        max-width: 50%;
+        max-width:  50%;
     }
 
     @media #{$medium-width} {
-        max-width: 100%;
+        max-width:  100%;
     }
 
     @media #{$narrow-screen} {
-        max-width: 90%;
+        max-width:  90%;
     }
 }
 
@@ -51,15 +51,15 @@
 // Holds title text and a .toggle button.
 .toggle-panel-title {
 
-    display:        inline-flex;
-    flex-direction: row;
+    display:            inline-flex;
+    flex-direction:     row;
 
     @media #{$wide-screen} {
-        column-gap: $gap-x;
+        column-gap:     $gap-x;
     }
 
     @media #{$medium-width} {
-        column-gap: calc(2 * #{$gap-x});
+        column-gap:     calc(2 * #{$gap-x});
     }
 
     @media #{$narrow-screen} {

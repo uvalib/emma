@@ -205,29 +205,25 @@ end
 
 class Array[unchecked out Elem] < Object
 
-  # NOTE: overrides gems/rbs-*/core/array.rbs
+  # NOTE: overrides gems/rbs-3.1.0/core/array.rbs
+
+  #def compact: () -> anyArray
 
   def include?: (untyped object) -> bool
 
   def join: (?(string|nil) separator) -> String
 
-  def sort!
-    : () -> self
-    | () { (Elem a, Elem b) -> ::Integer } -> self
+#  def sort!
+#    : () -> self
+#    | () { (Elem a, Elem b) -> ::Integer } -> self
 
   def sum
     : [Elem] ()         ?{ (Elem arg0) -> Elem } -> (Elem | Integer)
     | [Elem] (Elem arg) ?{ (Elem arg0) -> Elem } -> Elem
 
-  # NOTE: overrides gems/rbs-3.0.0/core/enumerable.rbs
-
   def sort_by!
     : () { (Elem arg0) -> (Comparable | ::Array[untyped]) } -> ::Array[Elem]
     | () -> ::Enumerator[Elem, ::Array[Elem]]
-
-  # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
-
-  def extract_options!: () -> anyHash
 
   def delete_if
     : () { (Elem item) -> top } -> self
@@ -242,6 +238,10 @@ class Array[unchecked out Elem] < Object
   def all?
     : (_Pattern[Elem] pattern)  -> bool
     | () ?{ (Elem obj) -> top } -> bool
+
+  # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
+
+  def extract_options!: () -> anyHash
 
   def self.wrap
     : (nil)      -> []
@@ -354,13 +354,13 @@ end
 
 module Enumerable[unchecked out Elem] : _Each[Elem]
 
-  def find
-    :     ()                    { (Elem) -> top } -> Elem?
-    |     ()                                      -> ::Enumerator[Elem, Elem?]
-    | [T] (_NotFound[T] ifnone) { (Elem) -> top } -> (Elem | T)
-    | [T] (_NotFound[T] ifnone)                   -> ::Enumerator[Elem, Elem | T]
+  #def find
+  #  :     ()                    { (Elem) -> top } -> Elem?
+  #  |     ()                                      -> ::Enumerator[Elem, Elem?]
+  #  | [T] (_NotFound[T] ifnone) { (Elem) -> top } -> (Elem | T)
+  #  | [T] (_NotFound[T] ifnone)                   -> ::Enumerator[Elem, Elem | T]
 
-  # NOTE: overrides gems/rbs-3.0.0/core/enumerable.rbs
+  # NOTE: overrides gems/rbs-3.1.0/core/enumerable.rbs
 
   def include?: (untyped) -> bool
 
@@ -415,10 +415,19 @@ module GoodJob
   end
 end
 
-# NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 class Hash[unchecked out K, unchecked out V] < Object
 
-  def deep_dup: () -> self
+  # NOTE: overrides /gems/rbs-3.1.0/core/hash.rbs
+
+  def compact: () -> instance
+
+  def select
+    : () { (K,V) -> boolish } -> instance
+    | () -> Enumerator[K, instance]
+
+  def reject
+    : () { (K,V) -> boolish } -> instance
+    | () -> Enumerator[K, instance]
 
   def any?
     : () ?{ (K, V) -> top } -> bool
@@ -431,6 +440,10 @@ class Hash[unchecked out K, unchecked out V] < Object
   def transform_values!
     : ()                    -> Enumerator[V, self]
     | () { (V) -> untyped } -> Hash[K, untyped]
+
+  # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
+
+  def deep_dup: () -> self
 
   def deep_transform_keys
     : ()                    -> Enumerator[K, self]
@@ -447,20 +460,6 @@ class Hash[unchecked out K, unchecked out V] < Object
   def deep_transform_values!
     : ()                    -> Enumerator[V, self]
     | () { (V) -> untyped } -> Hash[K, untyped]
-
-  # NOTE: overrides /gems/rbs-3.0.0/core/enumerable.rbs
-
-  def compact: () -> instance
-
-  def select
-    : () { (K,V) -> boolish } -> instance
-    | () -> Enumerator[K, instance]
-
-  def reject
-    : () { (K,V) -> boolish } -> instance
-    | () -> Enumerator[K, instance]
-
-  # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 
   def slice!: (*untyped keys) -> Hash[untyped, untyped]
 

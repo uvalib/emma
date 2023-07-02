@@ -88,7 +88,7 @@ module Emma::Common::ExceptionMethods
   #
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The re-raise will happen only when running on the desktop.
   #
   def re_raise_if_internal_exception(error)

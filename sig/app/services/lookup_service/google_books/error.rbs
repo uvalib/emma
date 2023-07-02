@@ -1,6 +1,6 @@
 # Generic exception for Google Books API problems.
 #
-# == Usage Notes
+# === Usage Notes
 # This is generally *not* the base class for exceptions in the GoogleBooks
 # namespace:  Variants based on the error types defined under "emma.error.api"
 # are derived from the related ApiService class; e.g.:

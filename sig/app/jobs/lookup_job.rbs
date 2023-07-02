@@ -12,7 +12,7 @@ class LookupJob < ApplicationJob
   # @return [Hash]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload perform_later(services, request, **opt)

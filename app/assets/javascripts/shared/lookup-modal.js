@@ -49,6 +49,12 @@ AppDebug.file('shared/lookup-modal', MODULE, DEBUG);
 // Class LookupModal
 // ============================================================================
 
+// noinspection FunctionNamingConventionJS
+/**
+ * LookupModal
+ *
+ * @extends ModalDialog
+ */
 export class LookupModal extends ModalDialog {
 
     static CLASS_NAME = 'LookupModal';
@@ -235,8 +241,8 @@ export class LookupModal extends ModalDialog {
      * A table of separator style names and their associated separator
      * characters.
      *
-     * * space: Space, tab, newline and <strong>|</strong> (pipe)
-     * * pipe:  Only <strong>|</strong> (pipe)
+     * - space: Space, tab, newline and <strong>|</strong> (pipe)
+     * - pipe:  Only <strong>|</strong> (pipe)
      *
      * @readonly
      * @type {StringTable}
@@ -354,7 +360,7 @@ export class LookupModal extends ModalDialog {
         super(modal);
 
         this._debug(`ctor: manual = "${manual}"; output = "${output}"`);
-        this._debug(`ctor: modal =`, modal);
+        this._debug('ctor: modal =', modal);
 
         this.$modal ||= this.setupPanel(this.constructor.$modal);
         this.manual   = isDefined(manual) && manual;
@@ -462,9 +468,9 @@ export class LookupModal extends ModalDialog {
     /**
      * Setup a modal with interactive bibliographic lookup.
      *
-     * @param {Selector}                                      toggle
-     * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
-     * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
+     * @param {Selector}               toggle
+     * @param {CallbackChainFunctions} [show_hooks]
+     * @param {CallbackChainFunctions} [hide_hooks]
      *
      * @returns {LookupChannel|undefined}
      */
@@ -570,9 +576,9 @@ export class LookupModal extends ModalDialog {
      * Merge the show/hide hooks defined on the toggle button with the ones
      * provided by the modal instance.
      *
-     * @param {jQuery}                                        $toggle
-     * @param {CallbackChainFunction|CallbackChainFunction[]} [show_hooks]
-     * @param {CallbackChainFunction|CallbackChainFunction[]} [hide_hooks]
+     * @param {jQuery}                 $toggle
+     * @param {CallbackChainFunctions} [show_hooks]
+     * @param {CallbackChainFunctions} [hide_hooks]
      *
      * @protected
      */
@@ -650,7 +656,7 @@ export class LookupModal extends ModalDialog {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onShowModalHook
      */
@@ -673,7 +679,7 @@ export class LookupModal extends ModalDialog {
      * @param {boolean} check_only
      * @param {boolean} [halted]
      *
-     * @returns {boolean|undefined}
+     * @returns {EventHandlerReturn}
      *
      * @see onHideModalHook
      */
@@ -1129,7 +1135,7 @@ export class LookupModal extends ModalDialog {
     /**
      * Enable commit button(s).
      *
-     * @param {boolean} [enable]      If *false*, disable.
+     * @param {boolean} [enable]      If **false**, disable.
      *
      * @returns {jQuery}              The commit button(s).
      */
@@ -1144,7 +1150,7 @@ export class LookupModal extends ModalDialog {
     /**
      * Disable commit button(s).
      *
-     * @param {boolean} [disable]     If *false*, enable.
+     * @param {boolean} [disable]     If **false**, enable.
      *
      * @returns {jQuery}              The commit button(s).
      */
@@ -1421,12 +1427,12 @@ export class LookupModal extends ModalDialog {
 
     /**
      * Lock the associated field value from being updated by changing the
-     * selected entry.
+     * selected entry. <p/>
      *
      * (The field is not disabled, so it is still editable by the user.)
      *
      * @param {string|jQuery|HTMLElement} field
-     * @param {boolean}                   [locking] If *false*, unlock instead.
+     * @param {boolean}                   [locking] If **false** unlock instead
      */
     lockFieldValue(field, locking) {
         this._debug('lockFieldValue:', field, locking);
@@ -1450,7 +1456,7 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * The lock/unlock control is toggled.
+     * Respond to a state change in a lock/unlock control.
      *
      * @param {jQuery.Event|Event} event
      */
@@ -1478,7 +1484,7 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * Add 'locked-out' to every field of an entry row according to the locked
+     * Add "locked-out" to every field of an entry row according to the locked
      * state of the related field.
      *
      * @param {Selector} entry
@@ -1582,7 +1588,7 @@ export class LookupModal extends ModalDialog {
 
     /**
      * The user selects a lookup result entry as the basis for the new field
-     * values for the originating submission entry.
+     * values for the originating submission entry. <p/>
      *
      * The event target is assumed to have an entry row as a parent.
      *
@@ -1617,7 +1623,7 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * Accentuate all of the elements of the related entry.
+     * Accentuate all of the elements of the related entry. <p/>
      *
      * The event target is assumed to have an entry row as a parent.
      *
@@ -1630,7 +1636,7 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * De-accentuate all of the elements of the related entry.
+     * De-accentuate all of the elements of the related entry. <p/>
      *
      * The event target is assumed to have an entry row as a parent.
      *
@@ -1749,9 +1755,9 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * All entry selection radio buttons.
+     * All entry selection radio buttons. <p/>
      *
-     * **Implementation Notes**
+     * **Implementation Notes** <p/>
      * This can't be "memoized" because the set of radio buttons will change
      * as entries are added dynamically.
      *
@@ -1836,13 +1842,12 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * Remove all entries (not including the head and field values rows).
+     * Remove all entries (not including the head and field values rows). <p/>
      *
      * If $entries_list does not exist, this returns immediately.
      */
     resetEntries() {
-        const func = 'resetEntries';
-        this._debug(func);
+        const func = 'resetEntries'; this._debug(func);
         const RESERVED_ROWS = this.constructor.RESERVED_ROWS;
         this.entriesList.children().not(RESERVED_ROWS).remove();
         this.refreshOriginalValuesEntry(func);
@@ -1921,7 +1926,7 @@ export class LookupModal extends ModalDialog {
 
     /**
      * Generate the row of controls which lock/unlock the contents of the
-     * associated field value.
+     * associated field value. <p/>
      *
      * Headings for the first two columns are displayed here rather than the
      * head row.
@@ -2190,7 +2195,7 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * The <input> control for manual input.
+     * The `<input>` control for manual input.
      *
      * @returns {jQuery}
      */
@@ -2310,7 +2315,7 @@ export class LookupModal extends ModalDialog {
     // ========================================================================
 
     /**
-     * The <h2> before the output display area.
+     * The `<h2>` before the output display area.
      *
      * @returns {jQuery}
      */
@@ -2494,8 +2499,7 @@ export class LookupModal extends ModalDialog {
      * @type {jQuery}
      */
     static get $modal() {
-        const match = this.MODAL;
-        return this.$all_modals.filter(match);
+        return this.$all_modals.filter(this.MODAL);
     }
 
     // ========================================================================

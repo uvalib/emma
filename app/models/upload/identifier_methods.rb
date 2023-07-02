@@ -101,7 +101,7 @@ module Upload::IdentifierMethods
   #
   # @see #sid_counter
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The result is a (single-character) prefix followed by 8 hexadecimal digits
   # which represent seconds into the epoch followed by a single random letter
   # from 'g' to 'z', followed by two decimal digits from "00" to "99" based on
@@ -212,7 +212,7 @@ module Upload::IdentifierMethods
   #
   # @return [Array<String>]
   #
-  # == Examples
+  # === Examples
   #
   # @example Single
   #   expand_ids('123') -> %w(123)

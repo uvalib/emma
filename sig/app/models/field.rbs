@@ -32,7 +32,7 @@ module Field
   # @return [Hash]                    Frozen result.
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload configuration_for(field, model = nil, action = nil)
@@ -91,7 +91,7 @@ module Field
   #
   # @return [Hash]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The :type indicates the type of HTML input element, either directly or
   # indirectly.  If the value is a Symbol it is interpreted as an EnumType
   # subclass which gives the range of values for a '<select>' element or the

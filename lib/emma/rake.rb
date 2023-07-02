@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 
 # Rake support methods.
 #
-# == Usage Notes
+# === Usage Notes
 # This is designed so that "require 'emma/rake'" will set up definitions in the
 # *.rake file in one step.  Loading this file in any other context is untested
 # and probably not a good idea.

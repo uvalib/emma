@@ -57,7 +57,7 @@ module LinkHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This method assumes that local paths are always relative.
   #
   def make_link: (String label, String path, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer

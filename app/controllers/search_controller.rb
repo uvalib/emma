@@ -78,7 +78,7 @@ class SearchController < ApplicationController
 
   public
 
-  # == GET /search
+  # === GET /search
   #
   # Perform a search through the EMMA Unified Search API.
   #
@@ -118,7 +118,7 @@ class SearchController < ApplicationController
     failure_status(err)
   end
 
-  # == GET /search/:id
+  # === GET /search/:id
   #
   # Display details of an existing catalog title.
   #
@@ -151,7 +151,7 @@ class SearchController < ApplicationController
 
   public
 
-  # == GET /search/advanced
+  # === GET /search/advanced
   #
   # Present the advanced search form.
   #
@@ -162,8 +162,8 @@ class SearchController < ApplicationController
     __debug_route
   end
 
-  # == GET /search/api?...
-  # == GET /search/direct?...
+  # === GET /search/api?...
+  # === GET /search/direct?...
   #
   # Perform a search directly through the EMMA Unified Search API.
   #
@@ -197,7 +197,7 @@ class SearchController < ApplicationController
     reset_results_type
   end
 
-  # == GET /search/validate?identifier=idval1[,idval2[,...]]
+  # === GET /search/validate?identifier=idval1[,idval2[,...]]
   #
   # Indicate whether the supplied value is a valid field value.
   #
@@ -211,13 +211,13 @@ class SearchController < ApplicationController
     render json: validate_identifiers(ids) if ids
   end
 
-  # == GET /search/image?url=...
+  # === GET /search/image?url=...
   #
   # Get a thumbnail or cover image.
   #
   # @see file:app/assets/javascripts/feature/images.js *urlProxyPath*
   #
-  # == Usage Notes
+  # === Usage Notes
   # This provides JavaScript with a way of asynchronously getting non-local
   # images without having to contend with CSRF.
   #

@@ -19,7 +19,7 @@ module RoleHelper
 
   # Indicate whether the current user has the :developer role.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Currently the :developer role applies regardless of the model.
   #
   def developer?

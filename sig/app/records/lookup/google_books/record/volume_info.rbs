@@ -21,7 +21,7 @@
 # @attr [String]            infoLink
 # @attr [String]            canonicalVolumeLink
 #
-# == Observed but not documented
+# === Observed but not documented
 #
 # @attr [Integer]           printedPageCount
 # @attr [String]            maturityRating      %w(... NOT_MATURE)

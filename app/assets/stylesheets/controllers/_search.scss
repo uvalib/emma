@@ -77,8 +77,9 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 //=============================================================================
 
 /**
- * To have the page title, pagination controls, and data analysis controls
- * together, h1.heading and div.pagination-top contained within this element.
+ * To have the page title, pagination controls, and data analysis controls all
+ * together, `h1.heading` and `div.pagination-top` are contained within this
+ * element.
  */
 .heading-bar {
 
@@ -97,9 +98,9 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         grid-template-columns: 1fr;
     }
 
-    //=====================================================================
+    //=========================================================================
     // Components
-    //=====================================================================
+    //=========================================================================
 
     .heading {
         @media #{$medium-width} {
@@ -193,13 +194,13 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         .button-tray {
 
             @media #{$medium-width} {
-                display:         none;
+                display:    none;
             }
 
             @media #{$narrow-screen} {
-                margin-top:      0.5rem;
-                column-gap:      0.5rem;
-                row-gap:         0.25rem;
+                margin-top: 0.5rem;
+                column-gap: 0.5rem;
+                row-gap:    0.25rem;
             }
         }
     }
@@ -244,8 +245,8 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
     img {
 
-        max-width:  100%;
-        background: white;
+        max-width:      100%;
+        background:     white;
 
         @media #{$wide-screen} {
             height:     4.5rem;
@@ -283,10 +284,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
     .label {
 
-        line-height: $row-line-height;
+        line-height:        $row-line-height;
 
         @media #{$narrow-screen} {
-            margin-bottom: -0.75rem;
+            margin-bottom:  -0.75rem;
         }
 
         &.field-Title {
@@ -606,21 +607,21 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         &.date,
         &.url {
 
-            display:         flex;
-            flex-direction:  column;
-            justify-content: center;
+            display:            flex;
+            flex-direction:     column;
+            justify-content:    center;
 
             @media #{$narrow-screen} {
-                padding-left: $narrow-indent;
+                padding-left:   $narrow-indent;
             }
 
             // If conditions cause the URL to wrap, keep the lines together.
             a {
-                line-height: 1.25;
-                word-break:  break-all;
+                line-height:    1.25;
+                word-break:     break-all;
 
                 @media #{$narrow-screen} {
-                    height: 100%;
+                    height:     100%;
                 }
             }
         }
@@ -628,22 +629,22 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         &.list,
         &.textbox {
 
-            width:       max-content;
-            min-width:   15vw;
-            max-height:  20vh;
-            overflow-y:  auto;
+            width:          max-content;
+            min-width:      15vw;
+            max-height:     20vh;
+            overflow-y:     auto;
 
             @media #{$wide-screen} {
-                max-width: 75vw;
+                max-width:  75vw;
             }
 
             @media #{$medium-width} {
-                max-width: 62.5vw;
+                max-width:  62.5vw;
             }
 
             @media #{$narrow-screen} {
-                width:     auto;
-                max-width: calc(100vw - 2.5rem);
+                width:      auto;
+                max-width:  calc(100vw - 2.5rem);
             }
         }
 
@@ -655,25 +656,25 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                 $indent: 1rem;
 
-                margin-left: $indent;
-                text-indent: -$indent;
+                margin-left:        $indent;
+                text-indent:        -$indent;
 
                 @media #{$narrow-screen} {
-                    padding-left: $narrow-indent;
+                    padding-left:   $narrow-indent;
                 }
             }
         }
 
         &.textbox {
 
-            margin-top:    $textbox-vspace;
-            margin-bottom: $textbox-vspace;
-            height:        calc(100% - #{2 * $textbox-vspace});
-            line-height:   1.25;
+            margin-top:         $textbox-vspace;
+            margin-bottom:      $textbox-vspace;
+            height:             calc(100% - #{2 * $textbox-vspace});
+            line-height:        1.25;
 
             @media #{$narrow-screen} {
-                margin-left:  $flex-gap-x;
-                padding-left: calc(#{$narrow-indent} - #{$flex-gap-x});
+                margin-left:    $flex-gap-x;
+                padding-left:   calc(#{$narrow-indent} - #{$flex-gap-x});
             }
         }
 
@@ -695,15 +696,15 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             }
 
             @media #{$wide-screen} {
-                top:        $sticky-top-wide;
+                top:            $sticky-top-wide;
                 box-shadow:
                      0.50rem -2.00rem  1.00rem  2.00rem  var(--bg-color),
                      0        0        0.25rem  0.50rem  var(--bg-color);
             }
 
             @media #{$medium-width} {
-                top:        $sticky-top-medium;
-                column-gap: calc(3 * #{$flex-gap-x});
+                top:            $sticky-top-medium;
+                column-gap:     calc(3 * #{$flex-gap-x});
                 box-shadow:
                      0       -1.00rem  0        0.50rem  var(--bg-color),
                      0        0        0.25rem  0.25rem  var(--bg-color);
@@ -724,8 +725,8 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             // @see SearchDecorator#title_and_source
             .title {
 
-                margin: 0;
-                flex:   1 1 100%;
+                margin:             0;
+                flex:               1 1 100%;
 
                 @media #{$wide-screen} {
                     height:         100%;
@@ -739,15 +740,14 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                     margin-right:   $value-right-margin;
                 }
 
-                /**
-                 * NOTE: Height is limited to avoid edge-case titles taking up
-                 *  a large portion of the screen -- using "em" units in order
-                 *  to relate to the element's own font.
-                 *
-                 * Most titles can be shown in 3 lines or less; a little extra
-                 * height is given so that if the title needs to be scrolled,
-                 * the fourth line is partially displayed but clipped.
-                 */
+                // NOTE: Height is limited to avoid edge-case titles taking up
+                //  a large portion of the screen -- using "em" units in order
+                //  to relate to the element's own font.
+                //
+                // Most titles can be shown in 3 lines or less; a little extra
+                // height is given so that if the title needs to be scrolled,
+                // the fourth line is partially displayed but clipped.
+
                 @media #{$narrow-screen} {
                     max-height:     4em;
                     margin-top:     0.5rem;
@@ -763,29 +763,29 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             // @see SearchDecorator#title_and_source_logo
             .repository {
 
-                display:         flex;
-                justify-content: flex-end;
+                display:                flex;
+                justify-content:        flex-end;
 
                 @media #{$wide-screen} {
-                    padding-bottom:  1rem;
+                    padding-bottom:     1rem;
                 }
 
                 @media #{$medium-width} {
-                    margin-left:     $value-right-margin;
-                    padding-bottom:  0.75rem;
+                    margin-left:        $value-right-margin;
+                    padding-bottom:     0.75rem;
                 }
 
                 @media #{$narrow-screen} {
-                    justify-content: flex-start;
-                    margin-top:      -0.5rem;
+                    justify-content:    flex-start;
+                    margin-top:         -0.5rem;
                 }
 
                 img {
 
-                    height:     auto;
-                    padding:    0.5rem 0.75rem;
-                    border:     1px solid lightgray;
-                    box-shadow: 2px 2px 6px 0 lightgray;
+                    height:         auto;
+                    padding:        0.5rem 0.75rem;
+                    border:         1px solid lightgray;
+                    box-shadow:     2px 2px 6px 0 lightgray;
 
                     @media #{$not-wide-screen} {
                         max-height: 2.5rem;
@@ -797,18 +797,13 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             // @see SearchDecorator#prev_next_controls
             .prev-next {
 
-                display:        flex;
-                flex-direction: column;
-                align-items:    center;
-                margin:         0;
-                flex:           0 0 auto;
+                display:            flex;
+                flex-direction:     column;
+                align-items:        center;
+                margin:             0;
+                flex:               0 0 auto;
 
-                @media #{$wide-screen} {
-                    margin-left:    $flex-gap-x;
-                    padding-top:    0.5rem;
-                }
-
-                @media #{$medium-width} {
+                @media #{$not-narrow-screen} {
                     margin-left:    $flex-gap-x;
                     padding-top:    0.5rem;
                 }
@@ -1021,7 +1016,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
             .value {
 
-                margin: 0;
+                margin:            0;
 
                 @media #{$wide-screen} {
                     padding-top:   0.25rem;
@@ -1078,17 +1073,16 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         }
     }
 
-    /**
-     * NOTE: This is tuned to account for the varying types of fields across
-     *  the records displayed in search.  Without some adjustment, the grid of
-     *  each record aligns only to the widest label that it happens to be
-     *  displaying.
-     */
+    // NOTE: This is tuned to account for the varying types of fields across
+    //  the records displayed in search.  Without some adjustment, the grid of
+    //  each record aligns only to the widest label that it happens to be
+    //  displaying.
+
     .search-list-item {
 
         @media #{$not-narrow-screen} {
-            margin-bottom:         calc(2 * #{model.$list-item-gap-y});
-            padding-bottom:        0.5rem;
+            margin-bottom:  calc(2 * #{model.$list-item-gap-y});
+            padding-bottom: 0.5rem;
         }
 
         @media #{$wide-screen} {
@@ -1145,12 +1139,12 @@ $title-scroll-mask:
 @mixin collapsible-search-list {
 
     @media #{$not-narrow-screen} {
-        column-gap:            1%;
+        column-gap: 1%;
     }
 
     @media #{$narrow-screen} {
-        margin:                calc(2 * #{model.$list-item-gap-y}) 0;
-        column-gap:            0.5rem;
+        margin:     calc(2 * #{model.$list-item-gap-y}) 0;
+        column-gap: 0.5rem;
         grid-template-columns: auto 1fr;
     }
 
@@ -1179,10 +1173,8 @@ $title-scroll-mask:
             width:       1.875rem;
         }
 
-        /**
-         * This may just be a Firefox thing, but the right triangle icon seems
-         * shifted with respect to the down triangle icon.
-         */
+        // This may just be a Firefox thing, but the right triangle icon seems
+        // shifted with respect to the down triangle icon.
         &:not(.open) {
             text-indent: 2px;
         }
@@ -1211,26 +1203,21 @@ $title-scroll-mask:
 
     .number {
 
-        position:   relative;
-        margin:     auto 0;
-        padding:    0;
-        border:     none;
-        box-shadow: none;
-        background: none;
-
-        @media #{$wide-screen} {
-            padding-top:     0.5rem;
-        }
+        position:            relative;
+        margin:              auto 0;
+        padding:             0;
+        padding-top:         0.5rem;
+        border:              none;
+        box-shadow:          none;
+        background:          none;
 
         @media #{$medium-width} {
             margin-right:    0.375rem;
-            padding-top:     0.5rem;
             padding-bottom:  0.5rem;
         }
 
         @media #{$narrow-screen} {
             margin-top:      0;
-            padding-top:     0.5rem;
             grid-column-end: 1;
             z-index:         $z-controls;
         }
@@ -1241,7 +1228,7 @@ $title-scroll-mask:
 
         .container {
 
-            height: 3.25rem;
+            height:      3.25rem;
 
             @media #{$not-narrow-screen} {
                 display: none;
@@ -1253,7 +1240,7 @@ $title-scroll-mask:
 
             .toggle.for-item {
 
-                align-self: flex-end;
+                align-self:        flex-end;
 
                 @media #{$not-narrow-screen} {
                     margin-bottom: 0;
@@ -1269,7 +1256,7 @@ $title-scroll-mask:
 
         > .toggle.for-item {
 
-            margin-top: 0.125rem;
+            margin-top:  0.125rem;
 
             @media #{$narrow-screen} {
                 display: none;
@@ -1299,13 +1286,13 @@ $title-scroll-mask:
             @media #{$narrow-screen} {
                 $excess:     $narrow-logo-height + $narrow-item-separation;
                 height:      calc(100% - #{$excess});
-                /**
-                 * Constrain the width so that the higher z-index .number
-                 * doesn't prevent sub-section toggles from being clicked.
-                 * The "overflow: visible" *shouldn't* be needed -- it's the
-                 * specifying of the width for .container that should keep the
-                 * item toggle from being clipped/deformed.
-                 */
+
+                // Constrain the width so that the higher z-index .number
+                // doesn't prevent sub-section toggles from being clicked.
+                // The `overflow: visible` _shouldn't_ be needed -- it's the
+                // specifying of the width for .container that should keep the
+                // item toggle from being clipped/deformed.
+
                 width:       0;
                 overflow:    visible;
             }
@@ -1324,8 +1311,8 @@ $title-scroll-mask:
     // Item "closed" by default; click to toggle "open".
     .search-list-item {
 
-        min-width: 100%;
-        margin:    0;
+        min-width:             100%;
+        margin:                0;
 
         @media #{$narrow-screen} {
             width:             92.5vw;
@@ -1360,21 +1347,23 @@ $title-scroll-mask:
 
                 .title {
 
-                    margin-left:    -0.25rem;
-                    padding-left:   0.25rem;
-                    letter-spacing: -0.125px; // NOTE: needed for Firefox
-                    cursor:         default;
+                    padding-left:       0.25rem;
+                    letter-spacing:     -0.125px; // NOTE: needed for Firefox
+                    cursor:             default;
+
+                    @media #{$not-narrow-screen} {
+                        flex-basis:     100%;
+                        margin-left:    -0.25rem;
+                    }
 
                     @media #{$wide-screen} {
-                        flex-basis:    100%;
-                        border-top:    $wide-open-pad solid transparent;
-                        border-bottom: $wide-open-pad solid transparent;
+                        border-top:     $wide-open-pad solid transparent;
+                        border-bottom:  $wide-open-pad solid transparent;
                     }
 
                     @media #{$medium-width} {
-                        flex-basis:    100%;
-                        border-top:    $medium-open-pad solid transparent;
-                        border-bottom: $medium-open-pad solid transparent;
+                        border-top:     $medium-open-pad solid transparent;
+                        border-bottom:  $medium-open-pad solid transparent;
                     }
 
                     &:focus {
@@ -1390,7 +1379,7 @@ $title-scroll-mask:
 
                     img {
 
-                        box-shadow: 2px 2px 4px 0 lightgray;
+                        box-shadow:     2px 2px 4px 0 lightgray;
 
                         @media #{$narrow-screen} {
                             max-height: $narrow-logo-height;
@@ -1560,15 +1549,15 @@ body.search.dev-style {
 
                 &.field-Title {
 
-                    border: none;
+                    border:             none;
 
                     @media #{$not-narrow-screen} {
-                        margin-left:  -0.25rem;
-                        padding-left: 0.25rem;
+                        margin-left:    -0.25rem;
+                        padding-left:   0.25rem;
                     }
 
                     @media #{$narrow-screen} {
-                        margin-left: -$narrow-left-pad;
+                        margin-left:    -$narrow-left-pad;
                     }
 
                     .title {
@@ -1578,7 +1567,7 @@ body.search.dev-style {
                         }
 
                         @media #{$narrow-screen} {
-                            margin-left: $narrow-left-pad;
+                            margin-left:    $narrow-left-pad;
                         }
 
                         &:focus {
@@ -1588,25 +1577,25 @@ body.search.dev-style {
 
                     .identity-number {
 
-                        word-break: keep-all;
-                        flex:       1 0 auto;
+                        word-break:         keep-all;
+                        flex:               1 0 auto;
 
                         @media #{$wide-screen} {
-                            margin-top:   $wide-open-pad;
-                            font-size:    larger;
+                            margin-top:     $wide-open-pad;
+                            font-size:      larger;
                         }
 
                         @media #{$medium-width} {
-                            margin-top:   $medium-open-pad;
+                            margin-top:     $medium-open-pad;
                         }
 
                         // noinspection CssReplaceWithShorthandSafely
                         @media #{$narrow-screen} {
-                            margin-top:    auto;
-                            margin-bottom: auto;
-                            margin-left:   0.25rem;
-                            margin-right:  0.5rem;
-                            flex:          0 1 auto;
+                            margin-top:     auto;
+                            margin-bottom:  auto;
+                            margin-left:    0.25rem;
+                            margin-right:   0.5rem;
+                            flex:           0 1 auto;
                         }
 
                         // Highlight out-of-sequence title index numbers.
@@ -1616,24 +1605,25 @@ body.search.dev-style {
                             $fg-color: red;
                             $bg-color: white;
 
+                            color:            $fg-color;
+                            background:       $bg-color;
+                            border-bottom:    $v-shift solid $bg-color;
+                            border-left:      $h-shift solid $bg-color;
+                            border-right:     $h-shift solid $bg-color;
+                            border-radius:    0.375rem;
+                            box-shadow:       0 0 0 0.25rem $fg-color;
+
                             @media #{$wide-screen} {
                                 margin-top:   $wide-open-pad   - $v-shift-half;
+                                margin-right: -$h-shift;
                             }
                             @media #{$medium-width} {
                                 margin-top:   $medium-open-pad - $v-shift-half;
+                                margin-right: -$h-shift;
                             }
                             @media #{$narrow-screen} {
                                 margin-right: 0.25rem;
                             }
-
-                            margin-right:  -$h-shift;
-                            color:         $fg-color;
-                            background:    $bg-color;
-                            border-bottom: $v-shift solid $bg-color;
-                            border-left:   $h-shift solid $bg-color;
-                            border-right:  $h-shift solid $bg-color;
-                            border-radius: 0.375rem;
-                            box-shadow:    0 0 0 0.25rem $fg-color;
                         }
 
                         &.exile:not(.error) {
@@ -1650,7 +1640,7 @@ body.search.dev-style {
                             padding-bottom: 0;
                         }
                         @media #{$narrow-screen} {
-                            margin-top: 0;
+                            margin-top:     0;
                         }
                     }
 
@@ -1978,39 +1968,39 @@ body.search.dev-style {
 
                     .item-score {
 
-                        min-width:     1.75rem;
-                        margin:        auto 0;
-                        padding:       0.25rem;
-                        font-family:   monospace;
-                        font-size:     smaller;
-                        text-align:    center;
-                        word-break:    keep-all;
-                        color:         green;
-                        background:    white;
-                        border:        2px solid green;
-                        border-radius: 0.25rem;
+                        min-width:          1.75rem;
+                        margin:             auto 0;
+                        padding:            0.25rem;
+                        font-family:        monospace;
+                        font-size:          smaller;
+                        text-align:         center;
+                        word-break:         keep-all;
+                        color:              green;
+                        background:         white;
+                        border:             2px solid green;
+                        border-radius:      0.25rem;
 
                         @media #{$wide-screen} {
-                            margin-left: 1rem;
+                            margin-left:    1rem;
                         }
 
                         @media #{$medium-width} {
-                            margin-left: 0.5rem;
-                            margin-top:  $medium-open-pad - $v-shift-half;
+                            margin-left:    0.5rem;
+                            margin-top:     $medium-open-pad - $v-shift-half;
                         }
 
                         @media #{$narrow-screen} {
-                            margin-left: 1rem;
+                            margin-left:    1rem;
                         }
 
                         &.error {
-                            color:        red;
-                            border-color: red;
+                            color:          red;
+                            border-color:   red;
                         }
 
                         &.disabled {
-                            color:        darkgray;
-                            border-color: darkgray;
+                            color:          darkgray;
+                            border-color:   darkgray;
                         }
                     }
                 }
@@ -2235,17 +2225,17 @@ body.search {
                     .item-date,
                     .item-number {
 
-                        margin-left: 0.5rem;
-                        color:       black;
-                        background:  $title-bg;
-                        box-shadow:  inset 0 0 0 1px gray;
+                        margin-left:    0.5rem;
+                        color:          black;
+                        background:     $title-bg;
+                        box-shadow:     inset 0 0 0 1px gray;
 
                         @media #{$wide-screen} {
-                            padding: 0 0.5rem;
+                            padding:    0 0.5rem;
                         }
 
                         @media #{$not-wide-screen} {
-                            padding: 0 0.375rem;
+                            padding:    0 0.375rem;
                         }
                     }
 
@@ -2370,7 +2360,7 @@ body.search.title_results {
 
                 @include fill(2px);
 
-                height: unset;
+                height:      unset;
 
                 @media #{$narrow-screen} {
                     display: none;
@@ -2474,50 +2464,48 @@ body.search.title_results {
 
             .format-counts {
 
-                display:               grid;
-                grid-template-columns: [count] max-content [format] 1fr;
-                align-content:         center;
-                row-gap:               0.0625rem;
-                column-gap:            0.25rem;
+                display:            grid;
+                align-content:      center;
+                row-gap:            0.0625rem;
+                column-gap:         0.25rem;
 
-                margin:      0;
-                padding:     0.125rem 0.25rem;
+                margin:             0;
+                padding:            0.125rem 0.25rem;
 
                 // This gives each file count box a uniform appearance.
 
-                min-width:   3.75rem;
-                line-height: 0.875;
-                color:       green;
-                background:  lightyellow;
-                border:      1px solid gray;
+                min-width:          3.75rem;
+                line-height:        0.875;
+                color:              green;
+                background:         lightyellow;
+                border:             1px solid gray;
 
-                /**
-                 * If the previous file count has a lot of lines, this shadow
-                 * keeps it from appearing to run into the current file count.
-                 */
+                // If the previous file count has a lot of lines, this shadow
+                // keeps it from appearing to run into the current file count.
                 @media #{$not-narrow-screen} {
-                    margin-top:   -1.25rem;
-                    min-height:   4rem;
-                    font-size:    small;
-                    box-shadow:   0 -0.25rem 0.5rem 0.25rem var(--bg-color);
+                    margin-top:     -1.25rem;
+                    min-height:     4rem;
+                    font-size:      small;
+                    box-shadow:     0 -0.25rem 0.5rem 0.25rem var(--bg-color);
+                    grid-template-columns: [count] max-content [format] 1fr;
                 }
 
                 @media #{$wide-screen} {
-                    margin-left:  0.75rem;
+                    margin-left:    0.75rem;
                 }
 
                 @media #{$medium-width} {
-                    margin-left:  0.5rem;
+                    margin-left:    0.5rem;
                 }
 
                 @media #{$narrow-screen} {
-                    height:       1.75rem;
-                    width:        12.5rem;
-                    margin-right: -8.625rem;
-                    margin-left:  0.5rem;
-                    font-size:    medium;
-                    overflow-y:   auto;
-                    flex:         1 0 auto;
+                    height:         1.75rem;
+                    width:          12.5rem;
+                    margin-right:   -8.625rem;
+                    margin-left:    0.5rem;
+                    font-size:      medium;
+                    overflow-y:     auto;
+                    flex:           1 0 auto;
                     grid-template-columns: repeat(3, 1fr 1fr);
                 }
 

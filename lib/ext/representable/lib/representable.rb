@@ -6,7 +6,7 @@
 # Serialization is based on the 'representable' gem, with support from the
 # 'virtus' gem for type-casting.
 #
-# == Implementation Notes
+# === Implementation Notes
 #
 # Several adjustments were required:
 #
@@ -71,7 +71,7 @@ module Representable
       # @yieldreturn [Array, Any]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload __debug_show(mode, *args, **opt)
@@ -147,7 +147,7 @@ module Representable
       # @return [nil]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload __debug_lambda(mode, *constants)
@@ -207,7 +207,7 @@ module Representable
       # @return [nil]
       #
       #--
-      # == Variations
+      # === Variations
       #++
       #
       # @overload __debug_method(mode, label, *methods)
@@ -274,7 +274,7 @@ module Representable
       binding = options[:binding]
       unless (obj_class = binding.evaluate_option(:class, input, options))
         raise DeserializeError,
-          ":class did not return class constant for `#{binding.name}`."
+          ":class did not return class constant for '#{binding.name}'."
       end
       leader = "Class #{obj_class}"
       __debug_show(:input, input: input, options: options, leader: leader)

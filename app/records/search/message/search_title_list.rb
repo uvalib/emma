@@ -132,7 +132,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # Encapsulates a subset of field values to provide a single object for use
   # with Enumerable#group_by.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This is still under development because the intent was to dynamically
   # vary the comparison criteria if standard ID(s) are present, however
   # Enumerable#group_by uses #hash not #eql?.

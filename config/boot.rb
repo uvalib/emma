@@ -140,7 +140,7 @@ end
 
 # Indicate whether this instance is being run from the interactive debugger.
 #
-# == Usage Notes
+# === Usage Notes
 # For interactive debugging RubyMine uses 'ruby-debug-ide'.
 #
 def in_debugger?

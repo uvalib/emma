@@ -70,7 +70,7 @@ module Record
   #
   # @return [TrueClass]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The assertion is only invoked when running on the desktop.
   #
   def assert_record_class(base, mod)

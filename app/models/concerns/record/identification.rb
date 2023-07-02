@@ -104,8 +104,8 @@ module Record::Identification
 
   # Extract the database ID from the given item.
   #
-  # @param [Model, Hash, String, Any] item
-  # @param [Hash]                     opt
+  # @param [Model, Hash, String, *] item
+  # @param [Hash]                   opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   #
@@ -295,7 +295,7 @@ module Record::Identification
   #
   # @note From UploadWorkflow::External#collect_records
   #
-  # == Usage Notes
+  # === Usage Notes
   # If *force* is true, the returned list of failed records will be empty but
   # the returned list of items may contain a mixture of Model and String
   # elements.
@@ -407,7 +407,7 @@ module Record::Identification
   #
   # @note From Upload::IdentifierMethods#id_term
   #
-  # == Examples
+  # === Examples
   #
   # @example Single
   #   expand_ids('123') -> %w(123)

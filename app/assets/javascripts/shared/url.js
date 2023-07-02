@@ -109,11 +109,10 @@ export function makeUrl(...parts) {
     // Accumulate path parts and param parts.
     parts.forEach(processPart);
 
-    // noinspection FunctionWithInconsistentReturnsJS, OverlyComplexFunctionJS
     /**
      * @param {string|string[]|object} arg
      *
-     * NOTE: Return value is ignored.
+     * @returns {undefined}           Return value is ignored.
      */
     function processPart(arg) {
         let part, starter, preserve;
@@ -218,7 +217,7 @@ export function makeUrl(...parts) {
 
 /**
  * Provide an action for a cancel button, redirecting to the value of the
- * 'data-path' attribute if present or redirecting back otherwise.
+ * *data-path* attribute if present or redirecting back otherwise.
  *
  * @param {string|Selector} [arg]
  */

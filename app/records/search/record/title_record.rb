@@ -252,7 +252,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @return [Search::Record::TitleRecord::Number, nil]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # * Only HathiTrust items consistently use the description field to hold
     #   the volume/chapter/number of the item.
     #
@@ -907,7 +907,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Search::Record::MetadataRecord>]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Because #problems uses #exemplar to check validity, it is (temporarily) set
   # here as the copy of the first valid record encountered.
   #
@@ -990,7 +990,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<String>]           If empty, *rec* can be included.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # On its first invocation, #exemplar will be nil because it has not yet been
   # assigned in #copy_records.
   #
@@ -1100,7 +1100,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Hash, Array, Symbol, Any]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload symbolize_values(string)

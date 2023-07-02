@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Definitions to support inclusion of helpers.
 #
-# == Implementation Notes
+# === Implementation Notes
 # This approach avoids `include Draper::LazyHelpers` because this can make it
 # difficult to pin down where problems with the use of Draper::ViewContext
 # originate when including /app/helpers/**.
@@ -59,7 +59,7 @@ module BaseDecorator::Helpers
   #
   # @return [ApplicationController]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This probably isn't "cricket" but app/helpers/**.rb generally expect access
   # to controller values, and while the decorator subclasses are relying on
   # including these helpers, there is a need to access these values directly.

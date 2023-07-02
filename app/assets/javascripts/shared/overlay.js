@@ -16,6 +16,11 @@ AppDebug.file('shared/overlay', MODULE, DEBUG);
 // Class Overlay
 // ============================================================================
 
+/**
+ * Overlay
+ *
+ * @extends BaseClass
+ */
 export class Overlay extends BaseClass {
 
     static CLASS_NAME = 'Overlay';
@@ -95,7 +100,7 @@ export class Overlay extends BaseClass {
     hide() { this.toggle(false) }
 
     /**
-     * Toggle overlay visibility.
+     * Toggle overlay visibility. <p/>
      *
      * If suppressed, this always hides the overlay.
      *

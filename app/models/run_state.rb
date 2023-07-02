@@ -52,7 +52,7 @@ class RunState < Hash
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # If further states are added, they should be added between :available and
   # :unavailable so that they maintain their first/last positions.
   #
@@ -359,7 +359,7 @@ class RunState < Hash
       #
       # @type [String]
       #
-      # == Implementation Notes
+      # === Implementation Notes
       # This is in "tmp/pids" for extra assurance because that directory is
       # cleared on startup by the infrastructure.
       #

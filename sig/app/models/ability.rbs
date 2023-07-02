@@ -57,7 +57,7 @@ class Ability
   #
   # @param [User, nil] user
   #
-  # == Usage Notes
+  # === Usage Notes
   # Define abilities for the passed-in user here. For example:
   #
   #   user ||= User.new # guest user (not logged in)
@@ -95,7 +95,7 @@ class Ability
   #
   # @see RoleHelper#developer?
   #
-  # == Usage Notes
+  # === Usage Notes
   # This is functionally equivalent to :administrator in terms of the Ability
   # class. Wherever the distinction needs to be made, the user's role must be
   # explicitly checked.
@@ -125,7 +125,7 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Currently, "DSO Delegate" is basically a synonym for "Librarian".
   #
   def act_as_dso_delegate: (User user) -> void
@@ -136,12 +136,21 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The current idea is that library staff might perform all of the entry
   # creation and maintenance functions that a DSO would (minus the ability to
   # download remediated content files).
   #
   def act_as_librarian: (User user) -> void
+
+  # Assign the ability to perform as a member organization staff (without permission
+  # to download).
+  #
+  # @param [User] user
+  #
+  # @return [void]
+  #
+  def act_as_staff: (User user) -> void
 
   # Assign the ability to perform as a signed-in user.
   #
@@ -157,7 +166,7 @@ class Ability
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Currently, "Guest" is basically a synonym for "Anonymous".
   #
   def act_as_guest: (User user) -> void

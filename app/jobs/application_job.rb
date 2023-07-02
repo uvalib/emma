@@ -81,7 +81,7 @@ class ApplicationJob < ActiveJob::Base
   # @return [ApplicationJob]          Otherwise *self* is returned.
   #
   def perform_later(*args, **options)
-    __debug_job(__method__) { "`options` = #{item_inspect(options)}" } # TODO: remove
+    __debug_job(__method__) { "options = #{item_inspect(options)}" } # TODO: remove
     job_warn { "ignoring method args #{args.inspect}" } if args.present?
     enqueue(options)
   end

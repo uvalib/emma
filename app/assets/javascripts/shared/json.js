@@ -66,7 +66,7 @@ function alignKeys(item) {
 }
 
 /**
- * Replacer function for `JSON.stringify`.
+ * Replacer function for {@link JSON.stringify}.
  *
  * @param {*} _this
  * @param {*} item
@@ -104,7 +104,7 @@ function possiblyInlined(obj, threshold = DEF_INLINE_MAX) {
 }
 
 /**
- * Make the result of `JSON.stringify` look less like JSON.
+ * Make the result of {@link JSON.stringify} look less like JSON.
  *
  * @param {string} item
  *

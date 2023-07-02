@@ -32,7 +32,7 @@ module Api::Serializer::Associations
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload attribute(name, **opt, &block)
@@ -45,7 +45,7 @@ module Api::Serializer::Associations
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
     #
-    # == Examples
+    # === Examples
     #
     # @example JSON:
     #   class XXX < Api::Record; schema { attribute :elem }; end  -->
@@ -77,7 +77,7 @@ module Api::Serializer::Associations
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload has_one(name, **opt, &block)
@@ -92,7 +92,7 @@ module Api::Serializer::Associations
     #   @param [Hash]                  opt
     #   @param [Proc]                  block
     #
-    # == Examples
+    # === Examples
     #
     # @example JSON:
     #   class XXX < Api::Record; schema { has_one :elem }; end  -->
@@ -130,7 +130,7 @@ module Api::Serializer::Associations
     # @return [void]
     #
     #--
-    # == Variations
+    # === Variations
     #++
     #
     # @overload has_many(name, **opt, &block)
@@ -145,7 +145,7 @@ module Api::Serializer::Associations
     #   @param [Hash]                  opt
     #   @param [Proc]                  block
     #
-    # == Examples
+    # === Examples
     #
     # @example JSON:
     #   class XXX < Api::Record; schema { has_many :elem }; end  -->
@@ -203,7 +203,7 @@ module Api::Serializer::Associations
     #
     # @return [Class]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # Compare with Api::Record::Associations#make_default
     #
     #--

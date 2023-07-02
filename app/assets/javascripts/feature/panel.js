@@ -28,7 +28,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * If *true*, save the open/closed state of panels to session storage and
+     * If **true**, save the open/closed state of panels to session storage and
      * restore the state when returning to the page.
      *
      * @readonly

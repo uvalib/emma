@@ -77,13 +77,13 @@ class AppSettings < AppGlobal
     :DEPLOYMENT,
     nil,
 
-    # == Bulk Upload
+    # === Bulk Upload
     :BATCH_SIZE,
     :BULK_DB_BATCH_SIZE,
     :DISABLE_UPLOAD_INDEX_UPDATE,
     nil,
 
-    # == Database
+    # === Database
     :DATABASE,
     :DBHOST,
     :DBPORT,
@@ -91,14 +91,14 @@ class AppSettings < AppGlobal
     :DBPASSWD,
     nil,
 
-    # == Postgres
+    # === Postgres
     :PGPORT,
     :PGHOST,
     :PGUSER,
     :PGPASSWORD,
     nil,
 
-    # == Amazon Web Services
+    # === Amazon Web Services
     :AWS_BUCKET,
     :AWS_REGION,
     :AWS_DEFAULT_REGION,
@@ -106,28 +106,28 @@ class AppSettings < AppGlobal
     :AWS_SECRET_KEY,
     nil,
 
-    # == EMMA Unified Search API
+    # === EMMA Unified Search API
     :SEARCH_API_VERSION,
     :SEARCH_BASE_URL,
     nil,
 
-    # == EMMA Unified Ingest API
+    # === EMMA Unified Ingest API
     :INGEST_API_VERSION,
     :INGEST_API_KEY,
     nil,
 
-    # == Bookshare API
+    # === Bookshare API
     :BOOKSHARE_API_URL,
     :BOOKSHARE_API_VERSION,
     :BOOKSHARE_API_KEY,
     nil,
 
-    # == Bookshare OAuth2 service
+    # === Bookshare OAuth2 service
     (BS_AUTH ? :BOOKSHARE_AUTH_URL  : :skip),
     (BS_AUTH ? :BOOKSHARE_TEST_AUTH : :skip),
     (BS_AUTH ? nil                  : :skip),
 
-    # == Internet Archive
+    # === Internet Archive
     :IA_DOWNLOAD_BASE_URL,
     :IA_ACCESS,
     :IA_SECRET,
@@ -135,18 +135,18 @@ class AppSettings < AppGlobal
     :IA_SIG_COOKIE,
     nil,
 
-    # == Benetech "Math Detective"
+    # === Benetech "Math Detective"
     :MD_API_KEY,
     :MD_BASE_PATH,
     nil,
 
-    # == OCLC/WorldCat
+    # === OCLC/WorldCat
     :WORLDCAT_API_KEY,
     :WORLDCAT_REGISTRY,
     :WORLDCAT_PRINCIPAL,
     nil,
 
-    # == Google, Google Books, Google Search
+    # === Google, Google Books, Google Search
     :GOOGLE_USER,
     :GOOGLE_PASSWORD,
     :GOOGLE_API_KEY,
@@ -158,12 +158,12 @@ class AppSettings < AppGlobal
     #:GS_API_KEY,
     nil,
 
-    # == Shrine uploader
+    # === Shrine uploader
     :SHRINE_CLOUD_STORAGE,
     :STORAGE_DIR,
     nil,
 
-    # == Rails
+    # === Rails
     :SCRIPT_NAME,
     :RAILS_APP_VERSION,
     :RAILS_MIN_THREADS,
@@ -175,7 +175,7 @@ class AppSettings < AppGlobal
     :SECRET_KEY_BASE,
     nil,
 
-    # == GoodJob
+    # === GoodJob
     :GOOD_JOB_CLEANUP_INTERVAL_JOBS,
     :GOOD_JOB_CLEANUP_INTERVAL_SECONDS,
     :GOOD_JOB_CLEANUP_PRESERVED_JOBS_BEFORE_SECONDS_AGO,
@@ -191,20 +191,20 @@ class AppSettings < AppGlobal
     :GOOD_JOB_SHUTDOWN_TIMEOUT,
     nil,
 
-    # == Puma
+    # === Puma
     :PORT,
     :PIDFILE,
     :WEB_CONCURRENCY,
     nil,
 
-    # == Testing
+    # === Testing
     :PARALLEL_WORKERS,
     :TEST_FORMATS,
     (BS_AUTH ? :EMMADSO_TOKEN        : :skip),
     (BS_AUTH ? :EMMACOLLECTION_TOKEN : :skip),
     nil,
 
-    # == System
+    # === System
     :USER,
     :GROUP,
     :HOME,
@@ -214,7 +214,7 @@ class AppSettings < AppGlobal
     :LANGUAGE,
     nil,
 
-    # == Other
+    # === Other
     :BUNDLE_GEMFILE,
     :IN_PASSENGER,
     :DEBUGGER_STORED_RUBYLIB,

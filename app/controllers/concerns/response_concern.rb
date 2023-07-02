@@ -64,7 +64,7 @@ module ResponseConcern
   # @return [void]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload post_response(error, ...)

@@ -559,7 +559,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     #
     def grid_control(type, expanded: false, css: '.grid-control', **opt)
       type_cfg  = GRID_HEADER[type] || {}
@@ -640,7 +640,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     HEADER_ROW = 1
 
-    # submission_status_header
+    # The header row of the submission status grid.
     #
     # @param [Integer] row
     # @param [String]  css
@@ -873,7 +873,7 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
-    # row_indicators
+    # A set of status indicator icons and descriptive labels.
     #
     # @param [ManifestItem] item
     # @param [Integer]      row
@@ -911,7 +911,8 @@ class ManifestItemDecorator < BaseDecorator
       end
     end
 
-    # row_details
+    # A collapsible element listing values for ManifestItem fields that are not
+    # related to grid columns.
     #
     # @param [ManifestItem] item
     # @param [Integer]      row
@@ -1201,6 +1202,8 @@ class ManifestItemDecorator
   # @yield Additional content if provided.
   # @yieldreturn [Array,ActiveSupport::SafeBuffer,nil]
   #
+  # @see file:javascripts/controllers/manifest-edit.js *toggleControlsColumn*
+  #
   def grid_row_control_contents(*added, row: nil, unique: nil, **opt)
     index = opt.delete(:index)
     r_opt = { row: row, unique: (unique || index || hex_rand) }
@@ -1450,7 +1453,7 @@ class ManifestItemDecorator
 
   public
 
-  # submission_status
+  # Submission status row for a single active submission.
   #
   # @param [Integer, nil] row
   # @param [Integer]      col

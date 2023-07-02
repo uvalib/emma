@@ -42,7 +42,7 @@ module ApiService::Common
   # @return [String]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload request_type()
@@ -59,7 +59,7 @@ module ApiService::Common
   # @param [Symbol, String, nil] http_method
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload update_request?()
@@ -78,7 +78,7 @@ module ApiService::Common
   # @return [String]
   #
   # -
-  # == Variations
+  # === Variations
   # +
   #
   # @overload latest_endpoint(complete: false)
@@ -108,7 +108,7 @@ module ApiService::Common
   #
   # @return [Faraday::Response, nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Clears and/or sets @exception as a side-effect.
   #
   def api: ((Symbol|String) verb, *(String|ScalarType) args, **untyped opt) -> (Faraday::Response | nil)
@@ -147,7 +147,7 @@ module ApiService::Common
   #
   # @return [Hash]                    New API parameters.
   #
-  # == Usage Notes
+  # === Usage Notes
   # If overridden, this should be called first via 'super'.
   #
   def api_options: (?(symHash|nil) params) -> symHash
@@ -212,7 +212,7 @@ module ApiService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # Sets @response as a side-effect.
   #
   def transmit: (Symbol verb, String action, (symHash|String|nil) params, (anyHash|nil) headers, **untyped opt) -> (Faraday::Response | nil)

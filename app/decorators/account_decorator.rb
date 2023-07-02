@@ -335,7 +335,7 @@ class AccountDecorator
 
   public
 
-  # table_columns
+  # Table values associated with the current decorator.
   #
   # @param [Hash] opt
   #

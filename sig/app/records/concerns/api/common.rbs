@@ -396,7 +396,7 @@ class IsoDate < ScalarType
     #
     # @return [String]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # Fractional seconds are rounded unless >= 59 seconds.  In that case, the
     # fractional part is truncated in order to avoid a potential cascade of
     # changes to minute, hour, etc.
@@ -654,7 +654,7 @@ class EnumType < ScalarType
     # @return [Hash{Symbol=>Hash}]
     #
     # -
-    # == Variations
+    # === Variations
     # +
     #
     # @overload add_enumeration(i18n_path, name)
@@ -700,7 +700,7 @@ class EnumType < ScalarType
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    # == Implementation Notes
+    # === Implementation Notes
     # This needs to be a class variable so that all subclasses reference the
     # same set of values.
     #

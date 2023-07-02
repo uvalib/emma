@@ -22,7 +22,7 @@ AppDebug.file('shared/manifests', MODULE, DEBUG);
 /**
  * @typedef {ActionProperties} ActionPropertiesExt
  *
- * @property {boolean} [highlight]  If true add BEST_CHOICE_MARKER.
+ * @property {boolean} [highlight]  If **true** add BEST_CHOICE_MARKER.
  */
 
 // ============================================================================
@@ -251,7 +251,7 @@ export function server(controller, callback) {
  */
 
 /**
- * Post to a 'manifest' controller endpoint.
+ * Post to a "manifest" controller endpoint.
  *
  * @param {string|SendOptions} action
  * @param {SendOptions}        [send_options]

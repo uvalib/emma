@@ -29,6 +29,8 @@ AppDebug.file('shared/channel-request', MODULE, DEBUG);
 
 /**
  * An outbound channel message.
+ *
+ * @extends BaseClass
  */
 export class ChannelRequest extends BaseClass {
 

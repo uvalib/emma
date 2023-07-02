@@ -209,7 +209,7 @@ module Record::Properties
   #
   # @see #TITLE_PREFIX
   #
-  # == Usage Notes
+  # === Usage Notes
   # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
   #
   def title_prefix
@@ -344,7 +344,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # If *default* is *false* then *true* is returned only if *value* is "true".
   # If *default* is *true* then *false* is returned only if *value* is "false".
   #

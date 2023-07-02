@@ -83,7 +83,7 @@ class ManifestItemController < ApplicationController
 
   public
 
-  # == GET /manifest_item/:manifest[?id=(:id|RANGE_LIST)]
+  # === GET /manifest_item/:manifest[?id=(:id|RANGE_LIST)]
   #
   # Display the items for the given Manifest.
   #
@@ -111,7 +111,7 @@ class ManifestItemController < ApplicationController
     show_search_failure(error, root_path)
   end
 
-  # == GET /manifest_item/show/:manifest/:id
+  # === GET /manifest_item/show/:manifest/:id
   #
   # Display the values of a single manifest item.
   #
@@ -137,7 +137,7 @@ class ManifestItemController < ApplicationController
 
   public
 
-  # == GET /manifest_item/new/:manifest
+  # === GET /manifest_item/new/:manifest
   #
   # Initiate creation of a new ManifestItem by displaying the form which
   # prompts to upload a file and collects metadata for the new item.
@@ -154,9 +154,9 @@ class ManifestItemController < ApplicationController
     failure_status(error)
   end
 
-  # == POST  /manifest_item/create/:manifest
-  # == PUT   /manifest_item/create/:manifest
-  # == PATCH /manifest_item/create/:manifest
+  # === POST  /manifest_item/create/:manifest
+  # === PUT   /manifest_item/create/:manifest
+  # === PATCH /manifest_item/create/:manifest
   #
   # @see #create_manifest_item_path                Route helper
   # @see ManifestItemConcern#create_manifest_item
@@ -183,7 +183,7 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == GET /manifest_item/edit/:manifest/:id
+  # === GET /manifest_item/edit/:manifest/:id
   #
   # Initiate modification of an existing item by prompting for metadata
   # changes and/or upload of a replacement file.
@@ -200,8 +200,8 @@ class ManifestItemController < ApplicationController
     failure_status(error)
   end
 
-  # == PUT   /manifest_item/update/:manifest/:id
-  # == PATCH /manifest_item/update/:manifest/:id
+  # === PUT   /manifest_item/update/:manifest/:id
+  # === PATCH /manifest_item/update/:manifest/:id
   #
   # Finalize modification of an existing item.
   #
@@ -218,8 +218,8 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == GET /manifest_item/delete/:manifest/:id
-  # == GET /manifest_item/delete/:manifest/RANGE_LIST[?...]
+  # === GET /manifest_item/delete/:manifest/:id
+  # === GET /manifest_item/delete/:manifest/RANGE_LIST[?...]
   #
   # Initiate removal of an existing item along with its associated file.
   #
@@ -235,8 +235,8 @@ class ManifestItemController < ApplicationController
     failure_status(error)
   end
 
-  # == DELETE /manifest_item/destroy/:manifest/:id
-  # == DELETE /manifest_item/destroy/:manifest/RANGE_LIST[?...]
+  # === DELETE /manifest_item/destroy/:manifest/:id
+  # === DELETE /manifest_item/destroy/:manifest/RANGE_LIST[?...]
   #
   # Finalize removal of an existing item.
   #
@@ -258,7 +258,7 @@ class ManifestItemController < ApplicationController
 
   public
 
-  # == POST /manifest_item/start_edit/:id
+  # === POST /manifest_item/start_edit/:id
   #
   # Set :editing state and backup fields.
   #
@@ -272,7 +272,7 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == POST /manifest_item/finish_edit/:id
+  # === POST /manifest_item/finish_edit/:id
   #
   # Clear :editing state and respond with item and validity information.
   #
@@ -283,7 +283,7 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == POST /manifest_item/row_update/:id
+  # === POST /manifest_item/row_update/:id
   #
   # Clear :editing state and respond with item and validity information.
   #
@@ -294,7 +294,7 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == POST /manifest_item/upload
+  # === POST /manifest_item/upload
   #
   # Invoked from 'Uppy.XHRUpload'.  If the 'X-Update-FileData-Only' header is
   # *true* then the record's :file_data column is updated without modifying
@@ -325,7 +325,7 @@ class ManifestItemController < ApplicationController
 
   public
 
-  # == GET /manifest_item/bulk/new/:manifest
+  # === GET /manifest_item/bulk/new/:manifest
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing a row/element for each item to add.
@@ -341,7 +341,7 @@ class ManifestItemController < ApplicationController
     failure_status(error)
   end
 
-  # == POST /manifest_item/bulk/create/:manifest
+  # === POST /manifest_item/bulk/create/:manifest
   #
   # Create the specified ManifestItem records, download and store the
   # associated files.
@@ -360,7 +360,7 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == GET /manifest_item/bulk/edit/:manifest
+  # === GET /manifest_item/bulk/edit/:manifest
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
   # containing a row/element for each item to change.
@@ -376,8 +376,8 @@ class ManifestItemController < ApplicationController
     failure_status(error)
   end
 
-  # == PUT   /manifest_item/bulk/update/:manifest
-  # == PATCH /manifest_item/bulk/update/:manifest
+  # === PUT   /manifest_item/bulk/update/:manifest
+  # === PATCH /manifest_item/bulk/update/:manifest
   #
   # Modify or create the specified ManifestItem records, download and store the
   # associated files (if changed).
@@ -396,7 +396,7 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # == GET /manifest_item/bulk/delete/:manifest
+  # === GET /manifest_item/bulk/delete/:manifest
   #
   # Specify items to delete by :id or RANGE_LIST.
   #
@@ -411,7 +411,7 @@ class ManifestItemController < ApplicationController
     failure_status(error)
   end
 
-  # == DELETE /manifest_item/bulk/destroy/:manifest
+  # === DELETE /manifest_item/bulk/destroy/:manifest
   #
   # @see #bulk_destroy_manifest_item_path          Route helper
   # @see ManifestItemConcern#bulk_destroy_manifest_items
@@ -426,8 +426,8 @@ class ManifestItemController < ApplicationController
     post_response(error, xhr: false)
   end
 
-  # == PUT   /manifest_item/bulk/fields/:manifest
-  # == PATCH /manifest_item/bulk/fields/:manifest
+  # === PUT   /manifest_item/bulk/fields/:manifest
+  # === PATCH /manifest_item/bulk/fields/:manifest
   #
   # Modify selected ManifestItem fields of one or more items.
   #

@@ -65,7 +65,7 @@ module SearchModesHelper
   #
   # @type [Boolean]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This should normally be *false* because it a mode of operation that is
   # generally not consider accessibility-friendly and, also, skews search call
   # statistics.

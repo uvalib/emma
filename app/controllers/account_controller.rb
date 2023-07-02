@@ -63,7 +63,7 @@ class AccountController < ApplicationController
 
   public
 
-  # == GET /account
+  # === GET /account
   #
   # List all user accounts.
   #
@@ -81,7 +81,7 @@ class AccountController < ApplicationController
     paginator.finalize(@list, **prm)
   end
 
-  # == GET /account/show/:id
+  # === GET /account/show/:id
   #
   # Display details of an existing user account.
   #
@@ -94,7 +94,7 @@ class AccountController < ApplicationController
     @item = get_account
   end
 
-  # == GET /account/new
+  # === GET /account/new
   #
   # Display a form for creation of a new user account.
   #
@@ -107,13 +107,13 @@ class AccountController < ApplicationController
     @item = new_account
   end
 
-  # == POST  /account/create
-  # == PUT   /account/create
-  # == PATCH /account/create
+  # === POST  /account/create
+  # === PUT   /account/create
+  # === PATCH /account/create
   #
   # Create a new user account.
   #
-  # == Usage Notes
+  # === Usage Notes
   # In order to allow the database to auto-generate the record ID, the :id
   # parameter will be rejected unless "force_id=true" is included in the URL
   # parameters.
@@ -139,9 +139,9 @@ class AccountController < ApplicationController
     end
   end
 
-  # == GET /account/edit/:id
-  # == GET /account/edit/SELECT
-  # == GET /account/edit_select
+  # === GET /account/edit/:id
+  # === GET /account/edit/SELECT
+  # === GET /account/edit_select
   #
   # Display a form for modification of an existing user account.
   #
@@ -166,8 +166,8 @@ class AccountController < ApplicationController
     end
   end
 
-  # == PUT   /account/update/:id
-  # == PATCH /account/update/:id
+  # === PUT   /account/update/:id
+  # === PATCH /account/update/:id
   #
   # Update an existing user account.
   #
@@ -193,9 +193,9 @@ class AccountController < ApplicationController
     end
   end
 
-  # == GET /account/delete/:id
-  # == GET /account/delete/SELECT
-  # == GET /account/delete_select
+  # === GET /account/delete/:id
+  # === GET /account/delete/SELECT
+  # === GET /account/delete_select
   #
   # Select existing user account(s) to remove.
   #
@@ -219,7 +219,7 @@ class AccountController < ApplicationController
     end
   end
 
-  # == DELETE /account/destroy/:id
+  # === DELETE /account/destroy/:id
   #
   # Remove existing user account(s).
   #

@@ -38,7 +38,7 @@ class DataController < ApplicationController
 
   public
 
-  # == GET /data[?tables=...]
+  # === GET /data[?tables=...]
   #
   # Get the contents of all database tables (or the named tables if given).
   # (Defaults to HTML output.)
@@ -53,7 +53,7 @@ class DataController < ApplicationController
     respond_to(request.format)
   end
 
-  # == GET /data/TABLE_NAME
+  # === GET /data/TABLE_NAME
   #
   # Get the contents of the indicated database table.
   #
@@ -67,7 +67,7 @@ class DataController < ApplicationController
     respond_to(request.format)
   end
 
-  # == GET /data/submissions
+  # === GET /data/submissions
   #
   # Get a listing of EMMA submissions.
   #
@@ -81,7 +81,7 @@ class DataController < ApplicationController
     respond_to(request.format)
   end
 
-  # == GET /data/counts
+  # === GET /data/counts
   #
   # Get a listing of EMMA submission field values.
   #

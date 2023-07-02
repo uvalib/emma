@@ -378,7 +378,7 @@ module SessionConcern
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This must be invoked as a :before_action.
   #
   def session_check
@@ -394,10 +394,10 @@ module SessionConcern
   #
   # @raise [Exception]                Propagated if raised by the block.
   #
-  # == Usage Notes
+  # === Usage Notes
   # This must be invoked as an :around_action.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The "ensure" block is executed before the ApplicationController
   # "rescue_from".  However, note that Rails is doing something with "$!" which
   # causes Faraday::ClientError to be the exception that's acted upon in that

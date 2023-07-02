@@ -55,7 +55,7 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
  *
  * Uppy plugin selection plus other optional settings.
  *
- * @property {boolean} [replace_input]      Hide the **<input type="file">**
+ * @property {boolean} [replace_input]      Hide the `<input type="file">`
  *                                              present in the container. <p/>
  * @property {boolean} [popup_messages]     Popup event/status messages. <p/>
  * @property {boolean} [progress_bar]       Minimal upload progress bar. <p/>
@@ -156,7 +156,7 @@ const FEATURES = deepFreeze({
 });
 
 /**
- * How long to wait for the server to confirm the upload.
+ * How long to wait for the server to confirm the upload. <p/>
  *
  * The default is 30 seconds but that has been seen to be too short for
  * certain files (either because of size or because of complexity when
@@ -191,6 +191,8 @@ const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
 // noinspection LocalVariableNamingConventionJS
 /**
  * An uploader using Uppy and Shrine.
+ *
+ * @extends BaseClass
  */
 class BaseUploader extends BaseClass {
 
@@ -377,7 +379,7 @@ class BaseUploader extends BaseClass {
     }
 
     // ========================================================================
-    // Protected properties
+    // Properties - internal
     // ========================================================================
 
     /**
@@ -412,7 +414,7 @@ class BaseUploader extends BaseClass {
     }
 
     // ========================================================================
-    // Protected methods
+    // Methods - internal
     // ========================================================================
 
     /**
@@ -629,7 +631,7 @@ class BaseUploader extends BaseClass {
     }
 
     // ========================================================================
-    // Protected methods - initialization - options
+    // Methods - initialization - options - internal
     // ========================================================================
 
     /**
@@ -716,7 +718,7 @@ class BaseUploader extends BaseClass {
     }
 
     // ========================================================================
-    // Protected methods - initialization - handlers
+    // Methods - initialization - handlers - internal
     // ========================================================================
 
     /**
@@ -761,12 +763,12 @@ class BaseUploader extends BaseClass {
      */
 
     /**
-     * This event occurs between the 'file-added' and 'upload-started'
-     * events.
+     * This event occurs between the "file-added" and "upload-started" events.
+     * <p/>
      *
-     * The current value of the submission's database ID applied to the
-     * upload endpoint URL in order to correlate the upload with the
-     * appropriate workflow.
+     * The current value of the submission's database ID applied to the upload
+     * endpoint URL in order to correlate the upload with the appropriate
+     * workflow.
      *
      * @param {UppyFileUploadStartData} data
      *
@@ -793,9 +795,9 @@ class BaseUploader extends BaseClass {
 
     /**
      * Uppy generates this event one or more times for each file as it is
-     * uploaded.
+     * uploaded. <p/>
      *
-     * This event is observed concurrent with the 'progress' event (which
+     * This event is observed concurrent with the "progress" event (which
      * indicates the total percentage complete over all files being uploaded).
      *
      * @param {UppyFile}     file
@@ -838,12 +840,11 @@ class BaseUploader extends BaseClass {
     /**
      * This event occurs when the response from POST /upload/upload is
      * received with success status (200).  At this point, the file has
-     * been uploaded by Shrine, but has not yet been validated.
+     * been uploaded by Shrine, but has not yet been validated. <p/>
      *
-     * **Implementation Notes**
-     * The normal Shrine response has been augmented to include an
-     * 'emma_data' object in addition to the fields associated with
-     * 'file_data'.
+     * **Implementation Notes** <p/>
+     * The normal Shrine response has been augmented to include an "emma_data"
+     * object in addition to the fields associated with "file_data".
      *
      * @param {UppyFile}            file
      * @param {UppyResponseMessage} response
@@ -874,7 +875,7 @@ class BaseUploader extends BaseClass {
     }
 
     // ========================================================================
-    // Protected methods - initialization - output
+    // Methods - initialization - output - internal
     // ========================================================================
 
     /**
@@ -1055,7 +1056,7 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * Invoke `uppy.info`.
+     * Invoke `uppy.info`. <p/>
      *
      * If no duration is given the information bubble will remain until
      * intentionally cleared.
@@ -1122,7 +1123,7 @@ class BaseUploader extends BaseClass {
     // ========================================================================
 
     /**
-     * The element starts with 'aria-hidden="true"' (so that attribute alone
+     * The element starts with *aria-hidden="true"* (so that attribute alone
      * alone isn't sufficient for conditional styling), however the element
      * (and its children) are not invisible.
      *
@@ -1145,10 +1146,10 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * Stop displaying the Uppy progress bar.
+     * Stop displaying the Uppy progress bar. <p/>
      *
-     * Note that the 'hideAfterFinish' option for ProgressBar *only* sets
-     * 'aria-hidden' -- it doesn't actually hide the control itself.
+     * Note that the "hideAfterFinish" option for ProgressBar *only* sets
+     * *aria-hidden* -- it doesn't actually hide the control itself.
      */
     hideProgressBar() {
         this._debug('hideProgressBar');
@@ -1198,7 +1199,7 @@ class BaseUploader extends BaseClass {
         const OLD_INPUT  = input_id && `input#${input_id}`;
         const NEW_INPUT  = this.constructor.FILE_INPUT;
 
-        // Uppy will replace <input type="file"> with its own mechanisms so
+        // Uppy will replace `<input type="file">` with its own mechanisms so
         // the original should not be displayed.
         if (OLD_INPUT) { this.$root.find(OLD_INPUT).css('display', 'none') }
 
@@ -1334,7 +1335,7 @@ class BaseUploader extends BaseClass {
     /**
      * Hide the selected file name.
      *
-     * @param {boolean} [hide]        If *false*, un-hide.
+     * @param {boolean} [hide]        If **false**, un-hide.
      */
     hideFilename(hide) {
         this._debug('hideFilename: hide =', hide);
@@ -1441,7 +1442,7 @@ class BaseUploader extends BaseClass {
 
     /**
      * Return the specified target container based on the key signifying an
-     * Uppy plugin, with `this.$display` as a fall-back.
+     * Uppy plugin, with {@link $display} as a fall-back.
      *
      * @param {string} key
      *
@@ -1488,7 +1489,7 @@ class BaseUploader extends BaseClass {
     /**
      * The current label for the file select button.
      *
-     * @param {boolean} [can_select]    Default: `canSelect()`.
+     * @param {boolean} [can_select]    Default: {@link canSelect}.
      *
      * @returns {string}
      */
@@ -1499,7 +1500,7 @@ class BaseUploader extends BaseClass {
     /**
      * The current tooltip for the file select button.
      *
-     * @param {boolean} [can_select]    Default: `canSelect()`.
+     * @param {boolean} [can_select]    Default: {@link canSelect}.
      *
      * @returns {string|undefined}
      */
@@ -1529,7 +1530,7 @@ class BaseUploader extends BaseClass {
      * Get label/tooltip properties for file select.
      *
      * @param {string}  value
-     * @param {boolean} [can_select]    Default: `this.canSelect()`.
+     * @param {boolean} [can_select]    Default: {@link canSelect}.
      *
      * @returns {*}
      * @protected
@@ -1594,6 +1595,8 @@ class BaseUploader extends BaseClass {
 
 /**
  * An uploader for an individual item form.
+ *
+ * @extends BaseUploader
  */
 export class SingleUploader extends BaseUploader {
 
@@ -1762,6 +1765,8 @@ export class SingleUploader extends BaseUploader {
 
 /**
  * An uploader intended to have multiple instances on the page.
+ *
+ * @extends BaseUploader
  */
 export class MultiUploader extends BaseUploader {
 
@@ -1772,10 +1777,10 @@ export class MultiUploader extends BaseUploader {
     // ========================================================================
 
     /**
-     * If *false* then defer assignment of this._display to initialize() since
-     * it may result in render changes.
+     * If **false** then defer assignment of {@link _display} to
+     * {@link initialize} since it may result in render changes.
      *
-     * @note Currently manifest-edit.js relies upon this being *true*.
+     * @note Currently manifest-edit.js relies upon this being **true**.
      *
      * @type {boolean}
      */
@@ -1823,14 +1828,14 @@ export class MultiUploader extends BaseUploader {
     }
 
     // ========================================================================
-    // Protected methods
+    // Methods - internal
     // ========================================================================
 
     /**
      * Find or create the popup element for containing Uppy plugin output
      * elements.
      *
-     * @param {Selector} [target]     Default: `this.$root`.
+     * @param {Selector} [target]     Default: {@link $root}.
      *
      * @returns {jQuery}
      * @protected
@@ -1864,7 +1869,7 @@ export class MultiUploader extends BaseUploader {
     }
 
     // ========================================================================
-    // Protected methods - initialization - handlers
+    // Methods - initialization - handlers - internal
     // ========================================================================
 
     /**
@@ -1912,7 +1917,7 @@ export class MultiUploader extends BaseUploader {
     // ========================================================================
 
     /**
-     * Add controls to {@link fileSelectContainer}.
+     * Add controls to {@link fileSelectContainer}. <p/>
      *
      * (The originals are preserved so that they will be there if the
      * associated item is cloned.)
@@ -2006,6 +2011,8 @@ export class MultiUploader extends BaseUploader {
 
 /**
  * An uploader for uploading multiple items in parallel.
+ *
+ * @extends BaseUploader
  */
 export class BulkUploader extends BaseUploader {
 
@@ -2066,11 +2073,11 @@ export class BulkUploader extends BaseUploader {
     }
 
     // ========================================================================
-    // Protected methods - initialization - options
+    // Methods - initialization - options - internal
     // ========================================================================
 
     /**
-     * Options for the XHRUpload plugin, including the 'X-Update-FileData-Only'
+     * Options for the XHRUpload plugin, including the "X-Update-FileData-Only"
      * header to specify that the record's **:file_data** column should be
      * updated without modifying **:update_time** or other columns.
      *
@@ -2151,7 +2158,7 @@ export class BulkUploader extends BaseUploader {
             this._in_progress = true;
             this._uppy.upload().then(
                 result => {
-                    this._debug(`Uppy.upload final result:`, result);
+                    this._debug('Uppy.upload final result:', result);
                     const log = [];
                     const err = [];
                     if (result) {
@@ -2174,7 +2181,7 @@ export class BulkUploader extends BaseUploader {
                     this._in_progress = false;
                 },
                 error => {
-                    this._debug(`upload - error:`, error);
+                    this._debug('upload - error:', error);
                     this._in_progress = false;
                 },
             );

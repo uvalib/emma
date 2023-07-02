@@ -16,6 +16,11 @@ const DEBUG   = true;
 
 AppDebug.file('channels/submit-channel', CHANNEL, DEBUG);
 
+/**
+ * SubmitChannel
+ *
+ * @extends CableChannel
+ */
 export class SubmitChannel extends CableChannel {
 
     static CLASS_NAME     = CHANNEL;

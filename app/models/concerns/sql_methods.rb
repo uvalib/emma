@@ -47,7 +47,7 @@ module SqlMethods
   # @return [String]  SQL expression.
   # @return [Array]   SQL clauses if *connector* is set to *nil*.
   #
-  # == Examples
+  # === Examples
   #
   # @example Single term - Hash
   #   cond = { age: '18', hgt = 1.8 }
@@ -82,7 +82,7 @@ module SqlMethods
   # @return [String]  SQL expression.
   # @return [Array]   SQL clauses if *connector* is set to *nil*.
   #
-  # == Examples
+  # === Examples
   #
   # @example AND-ed values
   #   sql_clauses(id: '123', age: '18') -> "id = '123' AND age = '18'"
@@ -104,7 +104,7 @@ module SqlMethods
   # @return [String]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload sql_clause(k, v)
@@ -114,7 +114,7 @@ module SqlMethods
   # @overload sql_clause(hash)
   #   @param [Hash] hash              Only the first pair is used.
   #
-  # == Examples
+  # === Examples
   #
   # @example Single value
   #   sql_clause(:id, '123') -> "id = '123'"
@@ -179,7 +179,7 @@ module SqlMethods
   # @param [Boolean]        exact
   # @param [Boolean]        match_case
   #
-  # == Usage Notes
+  # === Usage Notes
   # Does not handle "match_case: true".
   #
   def sql_match_pattern(column, text, exact: false, match_case: false)
@@ -200,7 +200,7 @@ module SqlMethods
   # @see https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html
   # @see https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql
   #
-  # == Usage Notes
+  # === Usage Notes
   # Does not handle "exact: false" for field names yet, only field values.
   #
   def sql_match_json(column, text, exact: false, match_case: false)
@@ -273,7 +273,7 @@ module SqlMethods
   #
   # @return [String]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # * Documentation indicates that '$[*]' should work but only '$' seems to.
   #
   def sql_json_table(column, name: nil, fields: nil, field_map: nil)

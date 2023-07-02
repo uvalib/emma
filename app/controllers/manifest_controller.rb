@@ -83,7 +83,7 @@ class ManifestController < ApplicationController
 
   public
 
-  # == GET /manifest
+  # === GET /manifest
   #
   # List all of the user's manifests unless `params[:id]` is present (which
   # redirects to #edit).
@@ -108,7 +108,7 @@ class ManifestController < ApplicationController
     show_search_failure(error, root_path)
   end
 
-  # == GET /manifest/show/:id
+  # === GET /manifest/show/:id
   #
   # @see #show_manifest_path          Route helper
   #
@@ -125,7 +125,7 @@ class ManifestController < ApplicationController
     show_search_failure(error, root_path)
   end
 
-  # == GET /manifest/new
+  # === GET /manifest/new
   #
   # @see #new_manifest_path           Route helper
   #
@@ -137,9 +137,9 @@ class ManifestController < ApplicationController
     failure_status(error)
   end
 
-  # == POST  /manifest/create
-  # == PUT   /manifest/create
-  # == PATCH /manifest/create
+  # === POST  /manifest/create
+  # === PUT   /manifest/create
+  # === PATCH /manifest/create
   #
   # @see #create_manifest_path        Route helper
   #
@@ -158,9 +158,9 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # == GET /manifest/edit/:id
-  # == GET /manifest/edit/SELECT
-  # == GET /manifest/edit_select
+  # === GET /manifest/edit/:id
+  # === GET /manifest/edit/SELECT
+  # === GET /manifest/edit_select
   #
   # @see #edit_manifest_path          Route helper
   # @see #edit_select_manifest_path   Route helper
@@ -178,9 +178,9 @@ class ManifestController < ApplicationController
     failure_status(error)
   end
 
-  # == POST  /manifest/update/:id
-  # == PUT   /manifest/update/:id
-  # == PATCH /manifest/update/:id
+  # === POST  /manifest/update/:id
+  # === PUT   /manifest/update/:id
+  # === PATCH /manifest/update/:id
   #
   # @see #update_manifest_path        Route helper
   #
@@ -200,8 +200,8 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # == GET /manifest/delete/:id
-  # == GET /manifest/delete_select
+  # === GET /manifest/delete/:id
+  # === GET /manifest/delete_select
   #
   # @see #delete_manifest_path        Route helper
   # @see #delete_select_manifest_path Route helper
@@ -214,7 +214,7 @@ class ManifestController < ApplicationController
     failure_status(error)
   end
 
-  # == DELETE /manifest/destroy/:id
+  # === DELETE /manifest/destroy/:id
   #
   # @see #destroy_manifest_path       Route helper
   #
@@ -239,9 +239,9 @@ class ManifestController < ApplicationController
 
   public
 
-  # == POST  /manifest/save/:id
-  # == PUT   /manifest/save/:id
-  # == PATCH /manifest/save/:id
+  # === POST  /manifest/save/:id
+  # === PUT   /manifest/save/:id
+  # === PATCH /manifest/save/:id
   #
   # @see #save_manifest_path                                  Route helper
   # @see file:assets/javascripts/controllers/manifest-edit.js *updateDataRow()*
@@ -257,9 +257,9 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # == POST  /manifest/cancel/:id
-  # == PUT   /manifest/cancel/:id
-  # == PATCH /manifest/cancel/:id
+  # === POST  /manifest/cancel/:id
+  # === PUT   /manifest/cancel/:id
+  # === PATCH /manifest/cancel/:id
   #
   # @see #cancel_manifest_path        Route helper
   #
@@ -285,9 +285,9 @@ class ManifestController < ApplicationController
 
   public
 
-  # == GET /manifest/remit/:id
-  # == GET /manifest/remit/SELECT
-  # == GET /manifest/remit_select
+  # === GET /manifest/remit/:id
+  # === GET /manifest/remit/SELECT
+  # === GET /manifest/remit_select
   #
   # @see #remit_manifest_path         Route helper
   # @see #remit_select_manifest_path  Route helper
@@ -300,8 +300,8 @@ class ManifestController < ApplicationController
     failure_status(error)
   end
 
-  # == GET /manifest/get_job_result/:job_id[?column=(output|diagnostic|error)]
-  # == GET /manifest/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
+  # === GET /manifest/get_job_result/:job_id[?column=(output|diagnostic|error)]
+  # === GET /manifest/get_job_result/:job_id/*path[?column=(output|diagnostic|error)]
   #
   # Return a value from the 'job_results' table, where :job_id is the value for
   # the matching :active_job_id.
@@ -319,7 +319,7 @@ class ManifestController < ApplicationController
   public
 
 =begin
-  # == POST /manifest/start/:id
+  # === POST /manifest/start/:id
   #
   # @see #start_manifest_path         Route helper
   #
@@ -335,7 +335,7 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # == POST /manifest/stop/:id
+  # === POST /manifest/stop/:id
   #
   # @see #stop_manifest_path          Route helper
   #
@@ -351,7 +351,7 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # == POST /manifest/pause/:id
+  # === POST /manifest/pause/:id
   #
   # @see #pause_manifest_path         Route helper
   #
@@ -367,7 +367,7 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # == POST /manifest/resume/:id
+  # === POST /manifest/resume/:id
   #
   # @see #resume_manifest_path        Route helper
   #

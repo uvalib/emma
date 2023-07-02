@@ -74,7 +74,7 @@
     // @see file:javascripts/feature/download.js *createBsMemberPopup*
     .popup-panel {
 
-        font: revert;
+        font:           revert;
 
         @media #{$not-narrow-screen} {
             padding:    1rem;
@@ -119,18 +119,18 @@
         > .fields,
         > fieldset {
 
-            display:               grid;
-            grid-template-columns: [check] auto [label] 1fr;
-            align-content:         flex-start;
-            gap:                   0.25rem;
-            margin:                1rem 0.25rem;
-            padding:               0;
-            border:                none;
-            overflow:              auto;
-            flex-grow:             1;
+            display:       grid;
+            align-content: flex-start;
+            gap:           0.25rem;
+            margin:        1rem 0.25rem;
+            padding:       0;
+            border:        none;
+            overflow:      auto;
+            flex-grow:     1;
 
-            // noinspection CssBrowserCompatibilityForProperties
             overscroll-behavior:   contain;
+
+            grid-template-columns: [check] auto [label] 1fr;
 
             // Because this is the only element that can grow, the height of
             // the panel can be constrained only by limiting the height of this

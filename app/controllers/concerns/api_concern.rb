@@ -140,7 +140,7 @@ module ApiConcern
   # @see ApiMigrate#initialize
   # @see ApiMigrate#run!
   #
-  # == Usage Notes
+  # === Usage Notes
   # The default mode is to perform a dry run, so :dryrun must be explicitly
   # passed in as *false* to actually modify the database table.
   #

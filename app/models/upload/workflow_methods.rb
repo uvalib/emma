@@ -199,7 +199,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]  If the field was *nil* it will come back as :''.
   #
-  # == Usage Notes
+  # === Usage Notes
   # Entering #edit_state also requires execution of #begin_editing in order
   # to set up the record.
   #
@@ -232,7 +232,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]  If the field was *nil* it will come back as :''.
   #
-  # == Usage Notes
+  # === Usage Notes
   # Leaving #edit_state also requires execution of #finish_editing in order
   # to update the record with information that may have changed.
   #
@@ -283,7 +283,7 @@ module Upload::WorkflowMethods
   #
   # @return [Any]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #
@@ -303,7 +303,7 @@ module Upload::WorkflowMethods
   #
   # @return [void]
   #
-  # == Usage Notes
+  # === Usage Notes
   # If the record is already persisted, this is a direct write which does not
   # trigger validations or callbacks.
   #

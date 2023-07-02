@@ -32,7 +32,7 @@ module LayoutHelper::Main
   # @yieldreturn [String,Array]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload page_heading(title)

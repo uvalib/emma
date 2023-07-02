@@ -109,7 +109,7 @@ module LinkHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This method assumes that local paths are always relative.
   #
   def make_link(label, path, **opt, &block)

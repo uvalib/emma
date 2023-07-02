@@ -94,7 +94,7 @@ module Emma::Common::HtmlMethods
   # @yieldparam  [Array<String>] array
   # @yieldreturn [Array<String>, String, nil]
   #
-  # == Usage Notes
+  # === Usage Notes
   # This is basically ActionView::Helpers::OutputSafetyHelper#safe_join but
   # without the dependence on Rails.
   #

@@ -43,7 +43,7 @@ class Model::AsyncCallback
   # @param [Hash]                                        opt
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload initialize(src)

@@ -22,13 +22,13 @@ module Emma::Csv
   # @return [Array<Hash>]
   # @return [nil]                     Only if *no_raise* is *true*.
   #
-  # == Usage Notes
+  # === Usage Notes
   # The argument is expected to either be the literal data or an object like an
   # IO or StringIO through which the data can be acquired.  To parse the
   # content located at a URI (web page or local file path) read the contents
   # first or pass in an open file handle.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
   # encoding.  NOTE: This might not be necessary any longer though.
   #

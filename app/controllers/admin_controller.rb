@@ -38,7 +38,7 @@ class AdminController < ApplicationController
 
   public
 
-  # == GET /admin
+  # === GET /admin
   #
   # Administrative main page.
   #
@@ -49,9 +49,9 @@ class AdminController < ApplicationController
     __debug_route
   end
 
-  # == POST  /admin
-  # == PUT   /admin
-  # == PATCH /admin
+  # === POST  /admin
+  # === PUT   /admin
+  # === PATCH /admin
   #
   # Set application control values.
   #

@@ -20,7 +20,7 @@ module Emma::Common::MethodMethods
   # @return [String, nil]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload calling_method()
@@ -60,7 +60,7 @@ module Emma::Common::MethodMethods
   # @return [Method, nil]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload get_method(meth, bind, *)
@@ -96,7 +96,7 @@ module Emma::Common::MethodMethods
   # @return [Hash{Symbol=>Any}]
   #
   #--
-  # == Variations
+  # === Variations
   #++
   #
   # @overload get_params(meth, bind, only: [], except: [], **)

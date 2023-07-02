@@ -9,10 +9,6 @@ import { camelCase }                        from './strings';
 import { Consumer, createConsumer, logger } from '@rails/actioncable';
 
 
-// ============================================================================
-// Functions - internal
-// ============================================================================
-
 const MODULE   = 'WebSocket';
 const DEBUG    = true;
 logger.enabled = DEBUG;

@@ -18,7 +18,7 @@ AppDebug.file('shared/arrays');
  * Make a duplicate of the given array.
  *
  * @param {array|undefined} item
- * @param {boolean}         [shallow]   If *true* make a shallow copy.
+ * @param {boolean}         [shallow]   If **true** make a shallow copy.
  *
  * @returns {array}
  */
@@ -80,7 +80,7 @@ export function flatten(...args) {
 // ============================================================================
 
 /**
- * Find the size of the largest array value.
+ * Find the size of the largest array value. <p/>
  *
  * For an array of numbers, returns the maximum value.
  * For any other array, returns the size of the largest element.

@@ -236,7 +236,7 @@ class UploadDecorator
 
   # Indicate whether preview is enabled.
   #
-  # == Usage Notes
+  # === Usage Notes
   # Uppy preview is only for image files.
   #
   def preview_enabled?: () -> bool

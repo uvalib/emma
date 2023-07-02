@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 #   Database :state column.
 #   @return [String]
 #
-# == Usage Notes
+# === Usage Notes
 # If the including class does not define a STATE_TABLE constant before the
 # include of this module, #generate_state_methods will need to be run
 # explicitly with a Hash with state values as keys.
@@ -509,7 +509,7 @@ module Record::Steppable
     #
     # @return [void]
     #
-    # == Usage Notes
+    # === Usage Notes
     # If the including class has defined a STATE_TABLE or STATEs constant prior
     # to including this module, this method will be invoked implicitly using
     # that set of state values.  Otherwise, this method will have be invoked
@@ -530,7 +530,7 @@ module Record::Steppable
     #
     # @param [Hash, nil] table   Def: `#state_table`
     #
-    # == Usage Notes
+    # === Usage Notes
     # This is best put at the very end of the class definition so that any
     # methods specified in the table definitions will have been defined.
     #
@@ -541,7 +541,7 @@ module Record::Steppable
       errors = []
       table.each_pair do |state, config|
 
-        # == Check optional note
+        # === Check optional note
         if config.key?(:note)
           item = "#{state}[:note]"
           note = config[:note]
@@ -552,7 +552,7 @@ module Record::Steppable
           end
         end
 
-        # == Check optional method
+        # === Check optional method
         if config.key?(:meth)
           item = "#{state}[:meth]"
           meth = config[:meth]
@@ -563,7 +563,7 @@ module Record::Steppable
           end
         end
 
-        # == Check next states
+        # === Check next states
         item = "#{state}[:next]"
         next_states = config[:next]
         if !config.key?(:next)

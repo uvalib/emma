@@ -3,7 +3,7 @@
 # NOTE: "GET /metrics" is handled by Prometheus::Middleware::Exporter
 #
 class MetricsController < ApplicationController
-  # == GET /metrics/test
+  # === GET /metrics/test
   #
   # A temporary endpoint to test various Prometheus metrics.
   #

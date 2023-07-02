@@ -9,24 +9,24 @@
 # @attr [Array<String>] dc_identifier               # NOTE: Fields [4]
 # @attr [String]        oclcterms_recordIdentifier  # NOTE: Fields [5]
 #
-# == Fields
-# [1] :link
+# === Fields
+# - [1] :link
 #   * URL to WorldCat OCLC entry in 'href' attribute.
-# [2] :id
+# - [2] :id
 #   * URL to WorldCat OCLC entry.
-# [3] :updated
+# - [3] :updated
 #   * Last update of the index entry (?)
-# [4] :dc_identifier
+# - [4] :dc_identifier
 #   * Standard identifier URN; e.g.:
 #     'urn:ISBN:9783958091016'
 #     'urn:ISBN:3958091016'
 #     'urn:LCCN:74013958'
-# [5] :oclcterms_recordIdentifier
+# - [5] :oclcterms_recordIdentifier
 #   * The OCLC number (value only; no "oclc:", "ocm", "ocn", etc. prefix)
 #
 # @see https://developer.api.oclc.org/wcv1#operations-tag-OpenSearch
 #
-# == Usage Notes
+# === Usage Notes
 # Generally this information is too sparse for purposes of bibliographic
 # metadata lookup.
 #

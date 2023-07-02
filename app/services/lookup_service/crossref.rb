@@ -33,7 +33,7 @@ class LookupService::Crossref < LookupService::RemoteService
   # @return [Lookup::Crossref::Message::Work]
   # @return [Lookup::Crossref::Message::Error]
   #
-  # == Usage Notes
+  # === Usage Notes
   # The items are assumed to be in the proper form.
   #
   def fetch(req = self.request)

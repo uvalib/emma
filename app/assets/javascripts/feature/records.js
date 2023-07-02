@@ -218,6 +218,8 @@ appSetup(MODULE, function() {
      * within the element dedicated to that purpose.
      *
      * @param {SelectorOrEvent} ev
+     *
+     * @see "UploadsDecorator#state_group_select"
      */
     function showGroupNote(ev) {
         const target  = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;

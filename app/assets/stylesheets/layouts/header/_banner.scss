@@ -98,13 +98,13 @@
             margin-top: -0.5rem;
 
             @media #{$not-wide-screen} {
-                display: none;
+                display:    none;
             }
         }
 
         &.bottom {
 
-            min-width: 100%;
+            min-width:      100%;
 
             @media #{$wide-screen} {
                 display:    none;
@@ -195,10 +195,10 @@
 
         @include user-select(none);
 
-        margin-top: 0;
-        min-height: 3rem;
-        font-size:  xx-large;
-        flex:       0 0 auto;
+        margin-top:     0;
+        min-height:     3rem;
+        font-size:      xx-large;
+        flex:           0 0 auto;
 
         @media #{$not-narrow-screen} {
             max-height: 4rem;
@@ -285,8 +285,8 @@
         flex:          0 0 auto;
 
         @media #{$narrow-screen} {
-            margin-top:    $flex-gap-y;
-            margin-bottom: auto;
+            margin-top:     $flex-gap-y;
+            margin-bottom:  auto;
         }
 
         //=====================================================================

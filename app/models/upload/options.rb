@@ -59,7 +59,7 @@ class Upload::Options < Options
   #
   # @type [Hash{Symbol=>Symbol}]
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The value `params[:upload][:emma_data]` is ignored because it reports the
   # original metadata values that were supplied to the edit form.  The value
   # `params[:upload][:file]` is ignored if it is blank or is the JSON

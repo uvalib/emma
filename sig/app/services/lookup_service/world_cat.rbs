@@ -39,7 +39,7 @@ class LookupService::WorldCat < LookupService::RemoteService
   # @return [Hash]
   # @return [nil]                     If the record should be ignored.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Some WorldCat records seem to be aggregates that reference many individual
   # printings, etc.  To avoid excess noise in the blended result, these records
   # are rejected here.

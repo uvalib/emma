@@ -87,13 +87,13 @@ OUTPUT_PREFIX = LOG_TO_STDOUT ? '| ' : ''
 # @yield To supply additional items to output.
 # @yieldreturn [Array<String>]
 #
-# == Usage Notes
-# [1] When deployed, this option will create a log entry rather than produce
-# $stderr output.  If not deployed, the log entry is created in addition to
-# $stderr output.
-# [2] During initial trace output (if enabled) it makes sense to only send to
-# $stderr so that the overall trace output doesn't switch forms as soon as
-# `Log.add` starts working.
+# === Usage Notes
+# - [1] When deployed, this option will create a log entry rather than produce
+#       $stderr output.  If not deployed, the log entry is created in addition
+#       to $stderr output.
+# - [2] During initial trace output (if enabled) it makes sense to only send to
+#       $stderr so that the overall trace output doesn't switch forms as soon
+#       as `Log.add` starts working.
 #
 def __output_impl(*args, **opt)
   return if defined?(Log) && Log.silenced?
@@ -173,7 +173,7 @@ end
 #
 # @see #__output_impl
 #
-# == Usage Notes
+# === Usage Notes
 # The method is only functional if #CONSOLE_OUTPUT is true.
 #
 def __output(*args, **opt, &block)
@@ -308,7 +308,7 @@ end
 #
 # @return [void]
 #
-# == Usage Notes
+# === Usage Notes
 # Place as the first non-comment line of a Ruby source file.
 #
 def __loading(file)
@@ -321,7 +321,7 @@ end
 #
 # @return [void]
 #
-# == Usage Notes
+# === Usage Notes
 # Place as the first non-comment line of a Ruby source file.
 #
 def __loading_begin(file)
@@ -341,7 +341,7 @@ end
 #
 # @return [void]
 #
-# == Usage Notes
+# === Usage Notes
 # Place as the last non-comment line of a Ruby source file.
 #
 def __loading_end(file)

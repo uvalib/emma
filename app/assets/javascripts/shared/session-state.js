@@ -54,6 +54,8 @@ export function removeByPrefix(name, debug) {
 
 /**
  * Manage state information stored in a single sessionStorage entry.
+ *
+ * @extends BaseClass
  */
 export class SessionState extends BaseClass {
 
@@ -103,9 +105,8 @@ export class SessionState extends BaseClass {
         if (new_value) {
             try {
                 sessionStorage.setItem(this.storage_key, new_value);
-            }
-            catch (err) {
-                this._warn(`set: ${err}`);
+            } catch (error) {
+                this._warn(`set: ${error}`);
             }
         } else {
             this.clear();
@@ -216,6 +217,8 @@ export class SessionState extends BaseClass {
 
 /**
  * A binary on/off state saved in sessionStorage.
+ *
+ * @extends SessionState
  */
 export class SessionToggle extends SessionState {
 
@@ -267,7 +270,7 @@ export class SessionToggle extends SessionState {
     /**
      * Set the state value in sessionStorage.
      *
-     * @param {boolean|ToggleState} new_value   Default: *true*.
+     * @param {boolean|ToggleState} new_value   Default: **true**.
      */
     set enabled(new_value) {
         this.value = notDefined(new_value) || new_value;

@@ -44,7 +44,7 @@ module EncodingHelper
   #
   # @see file:app/assets/javascripts/shared/flash.js *xhrDecode()*
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # JavaScript uses UTF-16 strings, so the most straightforward way to prepare
   # a string to be passed back to the client would be to encode as 'UTF-16BE',
   # however that would halve the number of characters that could be transmitted

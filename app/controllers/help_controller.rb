@@ -55,7 +55,7 @@ class HelpController < ApplicationController
 
   public
 
-  # == GET /help
+  # === GET /help
   #
   # The main help page.
   #
@@ -80,8 +80,8 @@ class HelpController < ApplicationController
     failure_status(err)
   end
 
-  # == GET /help/:topic
-  # == GET /help?topic=:topic
+  # === GET /help/:topic
+  # === GET /help?topic=:topic
   #
   # The topic help page.
   #

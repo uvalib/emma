@@ -91,27 +91,27 @@
             // Item number value.
             .value {
 
-                margin-bottom: 1rem;
-                font-weight:   bold;
+                margin-bottom:  1rem;
+                font-weight:    bold;
 
                 @media #{$not-narrow-screen} {
-                    font-size: large;
+                    font-size:  large;
                 }
 
                 @media #{$narrow-screen} {
-                    font-size: larger;
+                    font-size:  larger;
                 }
             }
 
             // Vertical tray of action button icons.
             .icon-tray {
 
-                display:        flex;
-                flex-direction: column;
-                align-items:    center;
-                background:     whitesmoke;
-                border:         1px solid var(--fg-color);
-                border-radius:  0.25rem;
+                display:            flex;
+                flex-direction:     column;
+                align-items:        center;
+                background:         whitesmoke;
+                border:             1px solid var(--fg-color);
+                border-radius:      0.25rem;
 
                 @media #{$not-narrow-screen} {
                     margin-left:    -$tray-pad;
@@ -132,17 +132,17 @@
                 @include hover-highlight;
                 @include user-select(none);
 
-                padding:         0 $icon-pad;
-                margin-left:     -$icon-pad;
-                margin-right:    -$icon-pad;
-                text-decoration: none;
-                font-size:       large;
-                color:           $uva-accent-blue;
-                border-radius:   50%;
+                padding:                0 $icon-pad;
+                margin-left:            -$icon-pad;
+                margin-right:           -$icon-pad;
+                text-decoration:        none;
+                font-size:              large;
+                color:                  $uva-accent-blue;
+                border-radius:          50%;
 
                 &:hover {
-                    text-decoration:  none;
-                    background-color: var(--bg-color);
+                    text-decoration:    none;
+                    background-color:   var(--bg-color);
                 }
 
                 &:focus {
@@ -158,27 +158,26 @@
 // noinspection CssReplaceWithShorthandSafely
 .model-list-item-panel {
 
-    $item-padding:     0.5rem;
-    $value-separation: 2px;
-    $max-columns:      20;
+    $item-padding:      0.5rem;
+    $value-separation:  2px;
+    $max-columns:       20;
 
     @extend .model-list-item;
 
-    padding:        $item-padding;
-    padding-bottom: 2 * $item-padding;
-    overflow-x:     auto;
-    border:         2px solid var(--fg-color);
-    border-radius:  0.5rem;
-    background:     lighter($uva-accent-yellow, 95%);
-
-    gap: 0 2rem;
+    gap:                0 2rem;
+    padding:            $item-padding;
+    padding-bottom:     2 * $item-padding;
+    overflow-x:         auto;
+    border:             2px solid var(--fg-color);
+    border-radius:      0.5rem;
+    background:         lighter($uva-accent-yellow, 95%);
 
     // Special-case listing when no records are found.
     &.empty {
-        margin-top:  0;
-        padding-top: 0;
-        border:      none;
-        background:  inherit;
+        margin-top:     0;
+        padding-top:    0;
+        border:         none;
+        background:     inherit;
     }
 
     // List data items in horizontal columns when there is enough room.
@@ -200,9 +199,9 @@
     // Each label and value on a separate line on narrow screens.
     @media #{$narrow-screen} {
 
-        grid-template-columns: 1fr;
-
         padding-bottom: 0;
+
+        grid-template-columns: 1fr;
     }
 
     //=========================================================================
@@ -252,22 +251,22 @@
         // @see BaseDecorator::List#render_pair
         &.array {
 
-            display:   flex;
-            flex-wrap: wrap;
+            display:                flex;
+            flex-wrap:              wrap;
 
             @media #{$not-narrow-screen} {
-                flex-direction: row;
-                margin-bottom:  0;
+                flex-direction:     row;
+                margin-bottom:      0;
             }
 
             @media #{$narrow-screen} {
 
-                flex-direction: column;
-                margin-bottom:  0.5rem;
-                border-top:     none;
+                flex-direction:     column;
+                margin-bottom:      0.5rem;
+                border-top:         none;
 
                 &:last-of-type {
-                    margin-bottom: 0;
+                    margin-bottom:  0;
                 }
             }
 
@@ -275,17 +274,17 @@
 
                 @include value-box(blue);
 
-                margin-bottom:  0.5rem;
-                padding-top:    0.0625rem;
-                padding-bottom: 0.09375rem;
-                line-height:    1;
+                margin-bottom:      0.5rem;
+                padding-top:        0.0625rem;
+                padding-bottom:     0.09375rem;
+                line-height:        1;
 
                 @media #{$not-narrow-screen} {
-                    margin-right: 0.5rem;
+                    margin-right:   0.5rem;
                 }
 
                 @media #{$narrow-screen} {
-                    margin-right: 0;
+                    margin-right:   0;
                 }
             }
         }
@@ -306,7 +305,7 @@
         $narrow-left:   $narrow-margin;
         $narrow-right:  $narrow-margin * 0.5;
 
-        padding: $item-padding;
+        padding:    $item-padding;
 
         @media #{$wide-screen} {
             margin: 0 $wide-margin;
@@ -330,22 +329,22 @@
         .data-list {
 
             @media #{$not-narrow-screen} {
-                margin-top:   1.75rem;
-                margin-left:  -4rem;
+                margin-top:     1.75rem;
+                margin-left:    -4rem;
             }
 
             @media #{$wide-screen} {
-                margin-right: $wide-margin;
+                margin-right:   $wide-margin;
             }
 
             @media #{$medium-width} {
-                margin-right: $medium-margin * 1.25;
+                margin-right:   $medium-margin * 1.25;
             }
 
             @media #{$narrow-screen} {
-                margin-top:   $narrow-margin * 0.5;
-                margin-left:  $narrow-margin;
-                margin-right: $narrow-margin;
+                margin-top:     $narrow-margin * 0.5;
+                margin-left:    $narrow-margin;
+                margin-right:   $narrow-margin;
             }
         }
     }
@@ -380,7 +379,7 @@
 // the right of the details listing.
 .model-container {
 
-    display: flex;
+    display:            flex;
 
     @media #{$wide-screen} {
         margin-top:     $page-padding;
@@ -407,11 +406,11 @@
 
         @media #{$wide-screen} {
 
-            flex:         1 1 50%;
-            margin-right: $page-padding-x;
+            flex:               1 1 50%;
+            margin-right:       $page-padding-x;
 
             &:last-child {
-                margin-right: 0;
+                margin-right:   0;
             }
         }
 
@@ -420,7 +419,7 @@
             margin-top: calc(2 * #{$page-padding});
 
             &:first-child {
-                margin-top: 0;
+                margin-top:     0;
             }
         }
     }

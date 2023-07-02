@@ -34,7 +34,7 @@ module UploadWorkflow::Bulk::External
   # @see #bulk_db_insert
   # @see UploadWorkflow::External#add_to_index
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with UploadWorkflow::External#upload_create
   #
   def bulk_upload_create: (Array[symHash|Upload] entries, ?index: bool, ?atomic: bool, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
@@ -53,7 +53,7 @@ module UploadWorkflow::Bulk::External
   # @see #bulk_db_update
   # @see #update_in_index
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # Compare with UploadWorkflow::External#upload_edit
   #
   def bulk_upload_edit: (Array[symHash|Upload] entries, ?index: bool, ?atomic: bool, **untyped opt) -> [Array[Upload|String], Array[String|UploadWorkflow::Errors::FlashPart]]
@@ -67,7 +67,7 @@ module UploadWorkflow::Bulk::External
   #
   # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # For the time being, this does not use #bulk_db_delete because the speed
   # advantage of using a single SQL DELETE statement probably overwhelmed by
   # the need to fetch each record in order to call :delete_file on it.
@@ -129,7 +129,7 @@ module UploadWorkflow::Bulk::External
   #
   # @deprecated Use UploadWorkflow::External#upload_remove instead.
   #
-  # == Usage Notes
+  # === Usage Notes
   # This method should be avoided in favor of #upload_remove because use of
   # SQL DELETE on multiple record IDs does nothing for removing the associated
   # files in cloud storage.  Although code has been added to attempt to handle
@@ -158,7 +158,7 @@ module UploadWorkflow::Bulk::External
   # @see #bulk_db_operation_batches
   # @see #bulk_db_operation_batch
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # For currently undiscovered reasons, the MySQL instance on AWS will be
   # overwhelmed if the "VALUE" portion of the "INSERT INTO" statement is very
   # large.  Breaking the data into bite-size chunks is currently the only
@@ -186,7 +186,7 @@ module UploadWorkflow::Bulk::External
   #
   # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
   #
-  # == Implementation Notes
+  # === Implementation Notes
   # The 'failed' portion of the method return will always be empty if using
   # MySQL because ActiveRecord::Result for bulk operations does not contain
   # useful information.

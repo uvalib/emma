@@ -16,7 +16,7 @@ class Array
   #
   # @see Hash#deep_freeze
   #
-  # == Usage Notes
+  # === Usage Notes
   # This should not be used in any situation where the elements are live
   # objects subject to active updating (which would be unusable if frozen).
   #
@@ -31,7 +31,7 @@ class Array
   #
   # @see Hash#rdup
   #
-  # == Usage Notes
+  # === Usage Notes
   # A deeply-nested array may reference objects that cannot or should not be
   # duplicated. To avoid that situation, a class may redefine #duplicable? to
   # return *false* (so that Object#rdup returns *self*), or a class may define
@@ -62,7 +62,7 @@ class Array
   #
   # @return [self]
   #
-  # == Usage Notes
+  # === Usage Notes
   # It is assumed that *other* is a flat array (that is, that its elements are
   # not arrays); if it is not flat, any sub-arrays will be duplicated and
   # appended to *self* unconditionally.

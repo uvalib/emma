@@ -24,21 +24,21 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 ///
 @mixin entry-radio-group {
 
-    display:         flex;
-    flex-direction:  row;
-    flex-wrap:       wrap;
-    justify-content: space-between;
+    display:            flex;
+    flex-direction:     row;
+    flex-wrap:          wrap;
+    justify-content:    space-between;
 
-    border:          1px solid gray;
-    border-radius:   0.25rem;
+    border:             1px solid gray;
+    border-radius:      0.25rem;
 
     @media #{$not-narrow-screen} {
-        padding-right: 0.5rem;
-        line-height:   1;
+        padding-right:  0.5rem;
+        line-height:    1;
     }
 
     @media #{$narrow-screen} {
-        line-height:   1.5;
+        line-height:    1.5;
     }
 
     &:hover:focus {
@@ -50,12 +50,16 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     //=========================================================================
 
     > :not(legend) {
-        display:     inline-flex;
-        align-items: baseline;
-        margin:      0.25rem;
-        word-break:  keep-all;
-        border:      0.25rem solid transparent;
-        flex:        1 1 auto;
+
+        display:        inline-flex;
+        align-items:    baseline;
+        margin:         0.25rem;
+        word-break:     keep-all;
+        border:         0.25rem solid transparent;
+
+        @media #{$wide-screen} {
+            flex:       1 1 auto;
+        }
 
         @media #{$medium-width} {
             flex-basis: 25%;
@@ -161,10 +165,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 // Controls for selecting the workflow state group.
 .select-group-panel {
 
-    display:         flex;
-    flex-direction:  column;
-    margin:          2.75rem 0 0.5rem;
-    color:           $control-text;
+    display:           flex;
+    flex-direction:    column;
+    margin:            2.75rem 0 0.5rem;
+    color:             $control-text;
 
     // Make up for missing .note-tray element.
     @media #{$narrow-screen} {
@@ -180,8 +184,8 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     // that can be manipulated as a flex element within the panel.
     > .note-tray {
 
-        display: inline-flex;
-        margin:  0.75rem 0 0;
+        display:     inline-flex;
+        margin:      0.75rem 0 0;
 
         // Don't allow showGroupNote() to move the text under the button
         // for the handheld form factor.
@@ -191,10 +195,10 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         .note {
 
-            position:    absolute;
-            line-height: 1;
-            font-weight: bold;
-            flex:        0 1 auto;
+            position:        absolute;
+            line-height:     1;
+            font-weight:     bold;
+            flex:            0 1 auto;
 
             // Don't allow showGroupNote() to move the text under the button
             // for the handheld form factor.
@@ -228,30 +232,30 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
             @include user-select(none);
 
-            display:        flex;
-            flex-direction: column;
-            line-height:    1.375;
-            text-align:     center;
-            font-weight:    bold;
+            display:            flex;
+            flex-direction:     column;
+            line-height:        1.375;
+            text-align:         center;
+            font-weight:        bold;
 
             @media #{$not-narrow-screen} {
-                padding:    0.375rem 0.875rem;
-                font-size:  medium;
+                padding:        0.375rem 0.875rem;
+                font-size:      medium;
             }
 
             @media #{$narrow-screen} {
-                padding:    0.5rem 0;
-                font-size:  smaller;
+                padding:        0.5rem 0;
+                font-size:      smaller;
             }
 
             &.current {
-                border-width: 3px;
-                border-color: inherit;
+                border-width:   3px;
+                border-color:   inherit;
             }
 
             &.disabled {
-                background: $input-sealed-bg;
-                cursor:     default;
+                background:     $input-sealed-bg;
+                cursor:         default;
             }
 
             &:not(.disabled):not(.forbidden):hover,
@@ -306,14 +310,14 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         @include entry-radio-group;
 
-        max-width: inherit;
+        max-width:  inherit;
 
         @media #{$not-narrow-screen} {
-            width: max-content;
+            width:  max-content;
         }
 
         @media #{$narrow-screen} {
-            width: 100%;
+            width:  100%;
         }
 
         //=====================================================================
@@ -608,9 +612,9 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         @include grid.column-span;
         @include control-shadow;
 
-        position:   sticky;
-        top:        1rem;
-        background: var(--bg-color);
+        position:          sticky;
+        top:               1rem;
+        background:        var(--bg-color);
 
         // noinspection CssReplaceWithShorthandSafely
         @media #{$narrow-screen} {
@@ -723,7 +727,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     .form-controls {
 
-        display: grid;
+        display:        grid;
 
         @media #{$narrow-screen} {
             margin-top: 1.5rem;
@@ -934,7 +938,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     // No status bar for bulk upload so extra white space is needed above.
     .bulk-op-form {
 
-        margin-top: 2rem;
+        margin-top:        2rem;
 
         @media #{$wide-screen} {
             margin-bottom: -$bulk-vertical-adjust;
