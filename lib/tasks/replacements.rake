@@ -16,7 +16,7 @@ namespace :test do
   task all: %w(system models controllers)
 
   desc 'Run all EMMA tests including serialization'
-  task 'all+serialization' => %w(system models controllers+serialization)
+  task 'all+serialization': %w(system models controllers+serialization)
 
   desc 'Run all EMMA system tests'
   task system: 'emma:test:interactive:default'
@@ -28,6 +28,6 @@ namespace :test do
   task controllers: 'emma:test:serialization:default'
 
   desc 'Run all EMMA controller tests including serialization'
-  task 'controllers+serialization' => 'emma:test:serialization:complete'
+  task 'controllers+serialization': 'emma:test:serialization:complete'
 
 end

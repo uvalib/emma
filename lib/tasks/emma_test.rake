@@ -26,11 +26,8 @@ namespace 'emma:test' do
     # Support methods
     # =========================================================================
 
-    SYSTEM_DIR = 'test/system'
-
-    def run_interactive_tests(except: [])
-      files = Dir.glob("#{SYSTEM_DIR}/**/*_test.rb") - Array.wrap(except)
-      run_tests(*files)
+    def run_interactive_tests
+      run_tests('test/system')
     end
 
   end
@@ -71,36 +68,30 @@ namespace 'emma:test' do
 
     desc 'Run controller tests rendering to JSON and XML'
     task all: 'test:prepare' do
-      set_test_formats(:json, :xml)
-      run_serialization_tests
+      run_serialization_tests(:json, :xml)
     end
 
     desc 'Run controller tests rendering to JSON'
     task json: 'test:prepare' do
-      set_test_formats(:json)
-      run_serialization_tests
+      run_serialization_tests(:json)
     end
 
     desc 'Run controller tests rendering to XML'
     task xml: 'test:prepare' do
-      set_test_formats(:xml)
-      run_serialization_tests
+      run_serialization_tests(:xml)
     end
 
     desc 'Run controller tests rendering to HTML'
     task html: 'test:prepare' do
-      set_test_formats(:html)
-      run_serialization_tests
+      run_serialization_tests(:html)
     end
 
     desc 'Run controller tests rendering to HTML, JSON, and XML'
     task complete: 'test:prepare' do
-      set_test_formats(:html, :json, :xml)
-      run_serialization_tests
+      run_serialization_tests(:html, :json, :xml)
     end
 
     task default: 'test:prepare' do
-      set_test_formats
       run_serialization_tests
     end
 
@@ -108,14 +99,11 @@ namespace 'emma:test' do
     # Support methods
     # =========================================================================
 
-    def set_test_formats(*values)
+    def run_serialization_tests(*formats)
       $LOAD_PATH << 'test' unless $LOAD_PATH.include?('test')
       require 'test_helper' unless defined?(TestHelper)
-      values = values.flatten.presence || TestHelper.cli_env_test_formats
-      silence_warnings { Object.const_set(:TEST_FORMATS, values) }
-    end
-
-    def run_serialization_tests
+      formats = formats.flatten.presence || TestHelper.cli_env_test_formats
+      silence_warnings { Object.const_set(:TEST_FORMATS, formats) }
       run_tests('test/controllers')
     end
 
@@ -153,7 +141,7 @@ namespace 'emma:test' do
   def run_tests(*test_files)
     $LOAD_PATH << 'test' unless $LOAD_PATH.include?('test')
     test_files = test_files.flatten.presence || %w(test/**/*_test.rb)
-    Rails::TestUnit::Runner.rake_run(test_files)
+    Rails::TestUnit::Runner.run(test_files)
   end
 
 end

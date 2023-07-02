@@ -17,7 +17,7 @@ namespace 'emma:data' do
   #
   # @type [String]
   #
-  API_VERSION = INGEST_API_VERSION
+  API_VERSION ||= INGEST_API_VERSION
 
   # ===========================================================================
 

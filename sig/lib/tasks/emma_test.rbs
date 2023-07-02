@@ -1,13 +1,11 @@
 SYSTEM_DIR: String
 
 class Object
-  def run_interactive_tests: (?except: String|strArray) -> void
+  def run_interactive_tests: () -> void
 
   def run_data_tests: () -> void
 
-  def set_test_formats: (*(Symbol|symArray) values) -> void
-
-  def run_serialization_tests: () -> void
+  def run_serialization_tests: (*(Symbol|symArray) formats) -> void
 
   # Run the specified tests.
   #

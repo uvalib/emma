@@ -7,18 +7,18 @@
 
 namespace 'emma:assets' do
 
-  # Set to *false* to avoid post-processing the CSS source map.
+  # Set to :false to avoid post-processing the CSS source map.
   #
   # @note This should be for both desktop and deployed assets.
   #
-  FIX_CSS_MAP = true
+  FIX_CSS_MAP ||= :true
 
-  # Set to *false* to avoid making a copy of CSS/SCSS source files on the
+  # Set to :false to avoid making a copy of CSS/SCSS source files on the
   # desktop development system.
   #
   # @note This should only be done on the desktop.
   #
-  BACKUP_CSS_SOURCES = not_deployed?
+  BACKUP_CSS_SOURCES ||= not_deployed? ? :true : :false
 
   # ===========================================================================
   # Tasks
@@ -27,8 +27,8 @@ namespace 'emma:assets' do
   desc ['Post-process CSS sourcemap', 'Replaces file:// with file://C:']
   task fix_css_map: [:environment] do
     $stderr.puts
-    backup_css_sources if BACKUP_CSS_SOURCES
-    edit_source_map    if FIX_CSS_MAP
+    backup_css_sources if true?(BACKUP_CSS_SOURCES)
+    edit_source_map    if true?(FIX_CSS_MAP)
   end
 
   # ===========================================================================
@@ -37,11 +37,11 @@ namespace 'emma:assets' do
 
   public
 
-  CSS_SOURCE_MAP = 'app/assets/builds/application.css.map'
-  CSS_SRC_DIR    = 'app/assets/stylesheets'
-  DEV_ROOT       = '/home/rwl/Work/emma' # NOTE: has to be hard-wired.
-  CSS_DST_ROOT   = "/C#{DEV_ROOT}"
-  CSS_DST_DIR    = "#{CSS_DST_ROOT}/#{CSS_SRC_DIR}"
+  CSS_SOURCE_MAP ||= 'app/assets/builds/application.css.map'
+  CSS_SRC_DIR    ||= 'app/assets/stylesheets'
+  DEV_ROOT       ||= '/home/rwl/Work/emma' # NOTE: has to be hard-wired.
+  CSS_DST_ROOT   ||= "/C#{DEV_ROOT}"
+  CSS_DST_DIR    ||= "#{CSS_DST_ROOT}/#{CSS_SRC_DIR}"
 
   # Replace "file:///" references with "file://C:/".
   #

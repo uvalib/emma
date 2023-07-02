@@ -1,15 +1,15 @@
-# Set to *false* to avoid post-processing the CSS source map.
+# Set to :false to avoid post-processing the CSS source map.
 #
 # @note This should be for both desktop and deployed assets.
 #
-FIX_CSS_MAP: bool
+FIX_CSS_MAP: Symbol
 
-# Set to *false* to avoid making a copy of CSS/SCSS source files on the
+# Set to :false to avoid making a copy of CSS/SCSS source files on the
 # desktop development system.
 #
 # @note This should only be done on the desktop.
 #
-BACKUP_CSS_SOURCES: bool
+BACKUP_CSS_SOURCES: Symbol
 
 CSS_SOURCE_MAP: String
 

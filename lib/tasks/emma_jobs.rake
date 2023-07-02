@@ -59,7 +59,7 @@ namespace 'emma:jobs' do
 
   namespace :outdated do
 
-    WARNING = [ # TODO: persist last boot time of application
+    WARNING ||= [ # TODO: persist last boot time of application
       'NOTE: Mechanism required to persist last boot time of application.',
       '(Results are relative to BOOT_TIME for this rake task.)'
     ].freeze
