@@ -42,34 +42,16 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<button>' element.
   #
-  # If the label (first argument) is HTML or an icon then an accessible name is
-  # expected to be provided via #ARIA_LABEL_ATTRS or derivable from :title.
-  #
   # @param [Array<*>] args            Passed to #html_tag.
   # @param [Proc]     block           Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_button(*args, &block)
-    label = args.first.presence
-    html  = label&.is_a?(ActiveSupport::SafeBuffer)
-    icon  = !html && only_non_ascii?(label)
-
-    # Create an accessible name if necessary.
-    opt   = (args.last.presence if args.last.is_a?(Hash))
-    aria  = opt&.slice(*ARIA_LABEL_ATTRS)&.values&.first
-    name  = (label unless html || icon)
-    if aria.blank? && name.blank?
-      if (name = opt&.dig(:title)).present?
-        args << args.pop.dup.merge!('aria-label': name)
-      elsif !html
-        Log.warn { "#{__method__}: no accessible name for #{args.inspect}" }
-      end
-    end
-
-    # Ensure that a non-textual label is marked appropriately.
-    args[0] = symbol_icon(label) if icon
-
+    label   = args.first.presence
+    symbols = only_symbols?(label)
+    accessible_name?(*args)      if Log.debug? && (symbols || label.blank?)
+    args[0] = symbol_icon(label) if symbols
     html_tag(:button, *args, &block)
   end
 
@@ -79,14 +61,16 @@ module HtmlHelper
   #
   # @param [String]   summary         The text visible when not expanded.
   # @param [Array<*>] content         Appended to the '.content' element.
-  # @param [Hash]     opt             Passed to the outer '<details>' element.
+  # @param [String]   id              Passed to the inner `<summary>` element.
+  # @param [String]   title           Passed to the inner `<summary>` element.
+  # @param [Hash]     opt             Passed to the outer `<details>` element.
   # @param [Proc]     block           Appended to the '.content' element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_details(summary, *content, **opt, &block)
-    tooltip = opt.delete(:title) || 'Click to show details' # TODO: I18n
-    summary = html_tag(:summary, summary, title: tooltip)
+  def html_details(summary, *content, id: nil, title: nil, **opt, &block)
+    title ||= 'Click to show details' # TODO: I18n
+    summary = html_tag(:summary, summary, id: id, title: title)
     content = html_div(*content, class: 'content', &block)
     html_tag(:details, opt) do
       summary << content
@@ -167,19 +151,14 @@ module HtmlHelper
 
   # An "empty" element that can be used as a placeholder.
   #
-  # @param [Hash] opt                         Passed to #html_div except for:
-  #
-  # @option opt [String]            :comment  The text of an HTML comment to
-  #                                             place inside the empty element.
-  # @option opt [Symbol,String,Integer] :tag  The HTML tag to use for the
-  #                                             element instead of *div*.
+  # @param [String, nil] comment      Text for an interior HTML comment.
+  # @param [Symbol]      tag          The HTML tag to use for the element.
+  # @param [Hash]        opt          Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def placeholder_element(**opt)
-    tag     = opt.delete(:tag) || :div
-    comment = opt.delete(:comment)
-    opt[:'aria-hidden'] = true
+  def placeholder_element(comment: nil, tag: :div, **opt)
+    opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
     html_tag(tag, opt) do
       "<!-- #{comment} -->".html_safe if comment.present?
     end
@@ -201,38 +180,43 @@ module HtmlHelper
     aria-describedby
   ].freeze
 
-  # Return the text that will be used to identify the HTML element to be
-  # created with the given arguments.
+  # Indicate whether the HTML element to be created with the given arguments
+  # appears to have an accessible name.
   #
   # @param [Array<*>] args
   # @param [Hash]     opt
   #
-  # @return [String, nil]
-  #
-  def accessible_name(*args, **opt)
-    opt  = args.last if args.last.is_a?(Hash) && opt.blank?
-    lbl  = args.first
-    html = lbl.is_a?(ActiveSupport::SafeBuffer)
-    icon = !html && only_non_ascii?(lbl)
-    opt.slice(*ARIA_LABEL_ATTRS).values.first.presence ||
-      (lbl.presence unless html || icon) ||
-      opt[:title].presence ||
-      Log.warn { "#{__method__}: none for #{args.inspect} #{opt.inspect}" }
+  def accessible_name?(*args, **opt)
+    opt    = args.pop if args.last.is_a?(Hash) && opt.blank?
+    name   = args.first.presence
+    name ||= opt.slice(:title, *ARIA_LABEL_ATTRS).values.compact_blank.first
+    return true if name.present? && (name.html_safe? || !only_symbols?(name))
+    Log.debug { "#{__method__}: none for #{args.inspect} #{opt.inspect}" }
+    false
   end
 
+  # A matcher for one or more symbol-like characters.
+  #
+  # @type [Regexp]
+  #
+  SYMBOLS = %w(
+    \u2000-\u{FFFF}
+    \u{1F000}-\u{1FFFF}
+  ).join.then { |char_ranges| Regexp.new("[#{char_ranges}]+") }.freeze
+
   # Indicate whether the string contains only characters that fall outside the
-  # normal ASCII range.  Always false if *value* is not a string.
+  # normal text range.  Always `false` if *text* is not a string.
   #
-  # @param [String, *] value
+  # @param [String, *] text
   #
-  def only_non_ascii?(value)
-    value.is_a?(String) && value.tr(' -~', '').present?
+  def only_symbols?(text)
+    text.is_a?(String) && text.present? && text.remove(SYMBOLS).blank?
   end
 
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String] icon              Unicode character(s).
+  # @param [String] icon              Character(s) that should match #SYMBOLS.
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #html_span.
   #
@@ -242,6 +226,91 @@ module HtmlHelper
     opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
     prepend_css!(opt, css)
     html_span(icon, opt)
+  end
+
+  # Pattern to #scan a string for HTML elements optionally preceded and
+  # followed by literal text.
+  #
+  # @type [Regexp]
+  #
+  FOR_ELEMENTS = %r{
+    ([^<]*)             # _1 - leading text
+    (< *)               # _2 - HTML tag start
+    (\w+)               # _3 - HTML tag name
+    ([^>]*>)            # _4 - HTML tag end
+    ([^<]*)             # _5 - HTML node contents
+    (< */ *\3 *>)       # _6 - HTML tag close
+    ([^<]*)             # _7 - trailing text
+  }x
+
+  # If the text has any symbols in it, hide them from screen readers.
+  #
+  # If so, each run of one or more symbolic characters will be wrapped in
+  # span.symbol with 'aria-hidden' and all other runs of characters will be
+  # wrapped in span.text (unless *text* is already ActiveSupport::SafeBuffer).
+  #
+  # If not, *text* will be returned HTML-ready with no `<span>`s added.
+  #
+  # @param [String, nil] text
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def hide_symbols(text)
+    html = text.is_a?(ActiveSupport::SafeBuffer)
+    text = text.to_s unless text.is_a?(String)
+
+    # noinspection RubyMismatchedReturnType
+    return html ? text : ERB::Util.h(text) unless text.match?(SYMBOLS)
+
+    if html && (parts = text.scan(FOR_ELEMENTS)).present?
+      # noinspection RubyMismatchedArgumentType
+      parts.flat_map {
+        part = []
+        part << _1.presence && hide_symbols(_1)           # leading text
+        part << [_2, _3, _4].join                         # HTML tag
+        part << _5.presence && hide_symbols(_5.html_safe) # HTML node contents
+        part << _6                                        # HTML tag close
+        part << _7.presence && hide_symbols(_7)           # trailing text
+      }.compact.join.html_safe
+    else
+      text.scan(/(.*?)(#{SYMBOLS})/).flat_map { |txt, sym|
+        part = []
+        part << txt.presence && (html ? txt : html_span(txt, class: 'text'))
+        part << symbol_icon(sym)
+      }.compact.join.html_safe
+    end
+  end
+
+  # Augment Emma::Common::FormatMethods#non_breaking to hide symbols from
+  # screen readers.
+  #
+  # @param [String, nil] text
+  # @param [Boolean]     show_symbols   If *true* don't #hide_symbols.
+  # @param [Hash]        opt            To super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see Emma::Common::FormatMethods#non_breaking
+  #
+  def non_breaking(text, show_symbols: false, **opt)
+    value = super(text, **opt)
+    show_symbols ? value : hide_symbols(value)
+  end
+
+  # Augment Emma::Common::FormatMethods#labelize to hide symbols from screen
+  # readers.
+  #
+  # @param [String, Symbol, nil]  text
+  # @param [Boolean]              show_symbols  If *true* don't #hide_symbols.
+  # @param [Hash]                 opt           To super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see Emma::Common::FormatMethods#labelize
+  #
+  def labelize(text, show_symbols: false, **opt)
+    value = super(text, **opt)
+    show_symbols ? value : hide_symbols(value)
   end
 
   # ===========================================================================
@@ -271,11 +340,9 @@ module HtmlHelper
     opt = {}
     css.each do |css_class|
       case css_class.to_sym
-        when :hidden
-          opt[:'aria-hidden']   = true
-        when :disabled, :forbidden
-          opt[:'aria-disabled'] = true
-          opt[:disabled]        = true if %w(a button).include?(tag.to_s)
+        when :hidden    then opt.merge!('aria-hidden':   true)
+        when :disabled  then opt.merge!('aria-disabled': true)
+        when :forbidden then opt.merge!('aria-disabled': true)
       end
     end
     opt.merge!(options)
@@ -290,6 +357,10 @@ module HtmlHelper
       end
     end
     opt.merge!(ovr)
+
+    if %w(a button).include?(tag.to_s)
+      opt.reverse_merge!(disabled: true) if opt[:'aria-disabled']
+    end
 
     opt[:disabled] ? opt.reverse_merge!('aria-disabled': true) : opt
   end
@@ -337,9 +408,9 @@ module HtmlHelper
     thead:  { role: 'rowgroup' },
     tbody:  { role: 'rowgroup' },
     tfoot:  { role: 'rowgroup' },
-    th:     { role: nil }, # Either 'columnheader' or 'rowheader'
+    th:     { role: nil },            # Either 'columnheader' or 'rowheader'
     tr:     { role: 'row' },
-    td:     { role: 'cell' },
+    td:     { role: nil },            # Either 'cell' or 'gridcell'
   }.deep_freeze
 
   # Augment with default options.
@@ -350,8 +421,8 @@ module HtmlHelper
   # @return [Hash]
   #
   def add_required_attributes(tag, options)
-    required = ADDED_HTML_ATTRIBUTES[tag&.to_sym] || {}
-    required.merge(options)
+    attrs = ADDED_HTML_ATTRIBUTES[tag&.to_sym]
+    attrs&.merge(options) || options
   end
 
   # Attributes that are expected for a given HTML tag.
@@ -373,9 +444,9 @@ module HtmlHelper
   # @return [Boolean]                 If *false* at least one was missing.
   #
   def check_required_attributes(tag, options)
-    required = Array.wrap(REQUIRED_HTML_ATTRIBUTES[tag&.to_sym])
-    missing  = (required - options.keys).presence
-    Log.debug { "#{tag}: missing opt: #{missing.join(',')}" } if missing
+    attrs   = REQUIRED_HTML_ATTRIBUTES[tag&.to_sym]
+    missing = (Array.wrap(attrs) - options.keys).presence
+    Log.debug { "#{tag}: missing opt: #{missing.join(', ')}" } if missing
     missing.nil?
   end
 

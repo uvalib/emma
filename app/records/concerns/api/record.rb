@@ -63,18 +63,27 @@ class Api::Record
   def initialize(src = nil, format: nil, wrap: nil, error: nil, **data)
     @serializer_type = format
     assert_serializer_type(@serializer_type) if @serializer_type
+    error = Api::Error.new(error) if error && !error.is_a?(Exception)
     @exception = error
-    @exception = Api::Error.new(error) if error && !error.is_a?(Exception)
-    if @exception && src.blank?
-      @serializer_type = :obj
-      initialize_attributes
-    elsif (data = src || data).is_a?(Model) || data.is_a?(Hash)
-      initialize_attributes(data)
-    elsif (data = data.is_a?(Faraday::Response) ? data.body : data).present?
-      @serializer_type ||= self.format_of(data) || default_serializer_type
-      wrap = wrap[@serializer_type] if wrap.is_a?(Hash)
-      data = wrap_outer(data: data, template: wrap) if wrap
-      deserialize(data)
+    if src.is_a?(Exception)
+      @exception = src
+    elsif src
+      data = src
+    end
+    data = data.body if data.is_a?(Faraday::Response)
+    data = data.presence
+    case data
+      when String
+        @serializer_type ||= self.format_of(data) || default_serializer_type
+        wrap = wrap[@serializer_type] if wrap.is_a?(Hash)
+        data = wrap_outer(data: data, template: wrap) if wrap
+        deserialize(data)
+      when Model, Hash
+        initialize_attributes(data)
+      else
+        Log.warn("#{self.class}: #{data.class} unexpected") if data
+        @serializer_type ||= :obj if @exception
+        initialize_attributes
     end
     @serializer_type ||= default_serializer_type
   end

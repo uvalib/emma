@@ -3,11 +3,11 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }              from '../application/debug';
-import { arrayWrap }             from './arrays';
-import { ChannelRequest }        from './channel-request';
-import { isPresent, notDefined } from './definitions';
-import { deepFreeze, toObject }  from './objects';
+import { AppDebug }                         from '../application/debug';
+import { arrayWrap }                        from './arrays';
+import { ChannelRequest }                   from './channel-request';
+import { isMissing, isPresent, notDefined } from './definitions';
+import { deepFreeze, toObject }             from './objects';
 
 
 const MODULE = 'LookupRequest';
@@ -42,12 +42,89 @@ AppDebug.file('shared/lookup-request', MODULE, DEBUG);
  */
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/**
+ * The set of valid identifier prefixes.
+ *
+ * @readonly
+ * @enum {string}
+ */
+const ID_TYPES = deepFreeze([
+    'isbn',
+    'issn',
+    'doi',
+    'oclc',
+    'lccn',
+]);
+
+/**
+ * The set of valid query term prefixes.
+ *
+ * @readonly
+ * @enum {string}
+ */
+const QUERY_TYPES = deepFreeze([
+    'author',
+    'title',
+    'keyword',
+]);
+
+/**
+ * The set of valid limiter prefixes.
+ *
+ * @readonly
+ * @enum {string}
+ */
+const LIMIT_TYPES = deepFreeze([
+    // TODO: none yet
+]);
+
+/**
+ * Each request type and the valid search term prefixes associated with it.
+ *
+ * @readonly
+ * @type {LookupRequestPayload}
+ */
+const LOOKUP_TYPE = deepFreeze({
+    ids:    ID_TYPES,
+    query:  QUERY_TYPES,
+    limit:  LIMIT_TYPES,
+});
+
+const DEF_ID_TYPE     = 'isbn';
+const DEF_QUERY_TYPE  = 'keyword';
+const DEF_LOOKUP_TYPE = 'query';
+
+/**
+ * Default set of characters interpreted as separating terms.
+ *
+ * @readonly
+ * @type {string}
+ */
+const DEF_SEPARATORS = '|';
+
+/**
+ * Selective URL encoding.
+ *
+ * @readonly
+ * @type {{[char: string]: string}}
+ */
+const CHAR_ENCODE = deepFreeze({
+    '"': '%22',
+    "'": '%27',
+    ':': '%3A'
+});
+
+// ============================================================================
 // Class LookupRequest
 // ============================================================================
 
 /**
  * A lookup request message formed by parsing one or more term strings.
  *
+ * @extends ChannelRequest
  * @extends LookupRequestPayload
  */
 export class LookupRequest extends ChannelRequest {
@@ -60,85 +137,13 @@ export class LookupRequest extends ChannelRequest {
     // ========================================================================
 
     /**
-     * The set of valid identifier prefixes.
-     *
-     * @readonly
-     * @enum {string}
-     */
-    static ID_TYPES = deepFreeze([
-        'isbn',
-        'issn',
-        'doi',
-        'oclc',
-        'lccn',
-    ]);
-
-    /**
-     * The set of valid query term prefixes.
-     *
-     * @readonly
-     * @enum {string}
-     */
-    static QUERY_TYPES = deepFreeze([
-        'author',
-        'title',
-        'keyword',
-    ]);
-
-    /**
-     * The set of valid limiter prefixes.
-     *
-     * @readonly
-     * @enum {string}
-     */
-    static LIMIT_TYPES = deepFreeze([
-        // TODO: none yet
-    ]);
-
-    /**
-     * Each request type and the valid search term prefixes associated with it.
-     *
-     * @readonly
-     * @type {LookupRequestPayload}
-     */
-    static REQUEST_TYPE = deepFreeze({
-        ids:    this.ID_TYPES,
-        query:  this.QUERY_TYPES,
-        limit:  this.LIMIT_TYPES,
-    });
-
-    static DEF_ID_TYPE      = 'isbn';
-    static DEF_QUERY_TYPE   = 'keyword';
-    static DEF_REQUEST_TYPE = 'query';
-
-    /**
      * A blank object containing an array value for every key defined by
-     * {@link REQUEST_TYPE}.
+     * {@link LOOKUP_TYPE}.
      *
      * @readonly
      * @type {LookupRequestPayload}
      */
-    static TEMPLATE = deepFreeze(toObject(this.REQUEST_TYPE, _key => []));
-
-    /**
-     * Selective URL encoding.
-     *
-     * @readonly
-     * @type {{[char: string]: string}}
-     */
-    static CHARACTER_MAPPING = deepFreeze({
-        '"': '%22',
-        "'": '%27',
-        ':': '%3A'
-    });
-
-    /**
-     * Default set of characters interpreted as separating terms.
-     *
-     * @readonly
-     * @type {string}
-     */
-    static DEF_SEPARATORS = '|';
+    static TEMPLATE = deepFreeze(toObject(LOOKUP_TYPE, _key => []));
 
     // ========================================================================
     // Constants - lookup conditions
@@ -146,7 +151,7 @@ export class LookupRequest extends ChannelRequest {
 
     /**
      * A mappings of data field to search term prefix for each grouping of
-     * terms.
+     * terms. <p/>
      *
      * Bibliographic lookup is permitted if any of the "or" fields have a value
      * -OR- if all of the "and" fields have a value.
@@ -201,7 +206,7 @@ export class LookupRequest extends ChannelRequest {
     constructor(terms, chars) {
         super();
         this.separators   = Array.isArray(chars) ? chars.join('') : chars;
-        this.separators ||= this.constructor.DEF_SEPARATORS;
+        this.separators ||= DEF_SEPARATORS;
         this.add(terms);
     }
 
@@ -286,9 +291,9 @@ export class LookupRequest extends ChannelRequest {
      */
     parse(term_values, term_prefix) {
         this._debug('parse', term_values);
-        const str = (typeof term_values === 'string');
-        let terms = str ? term_values.split("\n") : arrayWrap(term_values);
-        let parts = this._blankParts();
+        const parts = this._blankParts();
+        const str   = (typeof term_values === 'string');
+        let terms   = str ? term_values.split("\n") : arrayWrap(term_values);
 
         // Apply the provided prefix to each of the term value strings.
         // (These still go through extractParts in order to clean the values.)
@@ -303,19 +308,17 @@ export class LookupRequest extends ChannelRequest {
 
         // Put each search term into the appropriate slot in the returned
         // request object.
-        const REQUEST_TYPE     = this.constructor.REQUEST_TYPE;
-        const DEF_REQUEST_TYPE = this.constructor.DEF_REQUEST_TYPE;
         const pairs = terms.map(term => this.extractParts(term)).flat(1);
         pairs.forEach(([prefix, value]) => {
             const term = `${prefix}:${value}`;
             let type;
-            $.each(REQUEST_TYPE, function(req_type, prefixes) {
+            $.each(LOOKUP_TYPE, (req_type, prefixes) => {
                 if (prefixes.includes(prefix)) {
                     type = req_type;
                 }
                 return !type; // break loop if type found
             });
-            type ||= DEF_REQUEST_TYPE;
+            type ||= DEF_LOOKUP_TYPE;
             parts[type].push(term);
         });
         return parts;
@@ -324,9 +327,9 @@ export class LookupRequest extends ChannelRequest {
     /**
      * Split the terms string into an array of prefix/value pairs.
      *
-     * * prefix:value
-     * * prefix:'value'     If the value string was single-quoted.
-     * * prefix:"value"     If the value string was double-quoted.
+     * - prefix:value
+     * - prefix:'value'     If the value string was single-quoted.
+     * - prefix:"value"     If the value string was double-quoted.
      *
      * Terms can be separated by one or more space, tab, '|' characters.
      * Values which contain any of those characters must be quoted, however the
@@ -340,9 +343,7 @@ export class LookupRequest extends ChannelRequest {
      */
     extractParts(terms) {
         this._debug('extractParts', terms);
-        const ID_TYPE    = this.constructor.DEF_ID_TYPE;
-        const QUERY_TYPE = this.constructor.DEF_QUERY_TYPE;
-        const parts      = terms.matchAll(this._termMatcher);
+        const parts = terms.matchAll(this._termMatcher);
         return [...parts].map(part => {
             const prefix = part[2]?.toLowerCase();
             let value =
@@ -352,9 +353,9 @@ export class LookupRequest extends ChannelRequest {
             if (!(value = value?.trim())) {
                 return [];
             } else if (value.match(/^\d+$/)) {
-                return [(prefix || ID_TYPE), value];
+                return [(prefix || DEF_ID_TYPE), value];
             } else {
-                return [(prefix || QUERY_TYPE), this._encodeValue(value)];
+                return [(prefix || DEF_QUERY_TYPE), this._encodeValue(value)];
             }
         });
     }
@@ -402,11 +403,7 @@ export class LookupRequest extends ChannelRequest {
      * @protected
      */
     _encodeValue(value) {
-        const CHAR_MAP = this.constructor.CHARACTER_MAPPING;
-        return Object.keys(CHAR_MAP).reduce(
-            (result, char) => result.replaceAll(char, CHAR_MAP[char]),
-            value
-        );
+        return value.replace(/./g, char => CHAR_ENCODE[char] || char);
     }
 
     /**
@@ -427,9 +424,9 @@ export class LookupRequest extends ChannelRequest {
     // Class properties
     // ========================================================================
 
-    static get idPrefixes()    { return this.ID_TYPES }
-    static get queryPrefixes() { return this.QUERY_TYPES }
-    static get limitPrefixes() { return this.LIMIT_TYPES }
+    static get idPrefixes()    { return ID_TYPES }
+    static get queryPrefixes() { return QUERY_TYPES }
+    static get limitPrefixes() { return LIMIT_TYPES }
     static get allPrefixes()   { return this.prefixes ||= this._prefixList() }
 
     // ========================================================================
@@ -443,7 +440,7 @@ export class LookupRequest extends ChannelRequest {
      * @protected
      */
     static _prefixList() {
-        return Object.values(this.REQUEST_TYPE).flat();
+        return Object.values(LOOKUP_TYPE).flat();
     }
 
     // ========================================================================
@@ -494,11 +491,11 @@ export class LookupRequest extends ChannelRequest {
      * @returns {LookupRequest}
      */
     static wrap(item, chars) {
-        if (item instanceof this) {
-            if (notDefined(chars) || (chars === item.separators)) {
-                return item;
-            }
+        const instance = (item instanceof this);
+        if (instance && (isMissing(chars) || (chars === item.separators))) {
+            return item;
+        } else {
+            return new this(item, chars);
         }
-        return new this(item, chars);
     }
 }

@@ -16,7 +16,13 @@ button:focus,
 select:focus,
 textarea:focus,
 [tabindex]:not([tabindex="-1"]):focus {
+
     @include focus;
+
+    &.disabled,
+    &[aria-disabled="true"] {
+        @include disabled;
+    }
 }
 
 // Allow <fieldset> to be used like <div> by eliminating browser-defined
@@ -83,4 +89,20 @@ details {
 .sign-in-required {
     text-decoration: none;
     &:hover { text-decoration: none; }
+}
+
+//=============================================================================
+// Special classes
+//=============================================================================
+
+// Indicate that the contents of the element is just symbolic character(s) that
+// should not be spoken by a screen reader.
+.symbol {
+    // See specific uses; no common definition.
+}
+
+// This is used to denote a [role="group"] container which is used to enclose
+// one or more controls.
+.control-group {
+    display: contents;
 }

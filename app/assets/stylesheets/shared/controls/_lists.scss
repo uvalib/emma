@@ -43,7 +43,7 @@
         &:first-child {
 
             margin-top:    0;
-            margin-bottom: v.$page-padding;
+            margin-bottom: v.$page-padding-y;
 
             &.empty {
                 margin-bottom: 0;

@@ -67,7 +67,8 @@ module BaseDecorator::Table
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
   def table_row_items
-    not_implemented 'Not applicable to single decorators by default'
+    # noinspection RubyMismatchedReturnType
+    row_items
   end
 
   # The #model_type of individual associated items for iteration.
@@ -78,6 +79,40 @@ module BaseDecorator::Table
   #
   def table_row_model_type
     row_model_type
+  end
+
+  # The default CSS class for a table element.
+  #
+  # @return [String]
+  #
+  def table_css_class
+    'model-table'
+  end
+
+  # Indicate whether a table presents as an element with the HTML 'table' role.
+  #
+  def table_role?
+    true
+  end
+
+  # The HTML role of the table element.
+  #
+  # @param [Boolean] table
+  #
+  # @return [String]
+  #
+  def table_role(table: table_role?)
+    table ? 'table' : 'grid'
+  end
+
+  # The HTML role of cells within the table.
+  #
+  # @param [Boolean] table
+  #
+  # @return [String]
+  #
+  def table_cell_role(table: table_role?)
+    table ? 'cell' : 'gridcell'
   end
 
   # The number of rows of associated items per table page.
@@ -110,43 +145,36 @@ module BaseDecorator::Table
   #
   # @param [Integer]                                   row
   # @param [Integer]                                   col
-  # @param [Symbol, Integer, nil]                      outer_tag
-  # @param [Symbol, Integer, nil]                      inner_tag
   # @param [String, Symbol, Array<String,Symbol>, nil] columns
   # @param [String, Regexp, Array<String,Regexp>, nil] filter
   # @param [Hash]                                      opt
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
-  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
+  # @option opt [Symbol] :outer_tag   Default: :tr
+  # @option opt [Symbol] :inner_tag   Default: :td
   #
-  def table_entry(
-    row:        1,
-    col:        1,
-    outer_tag:  :tr,
-    inner_tag:  :td,
-    columns:    nil,
-    filter:     nil,
-    **opt
-  )
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_entry(row: 1, col: 1, columns: nil, filter: nil, **opt)
+    tag   = opt.delete(:tag) # Propagated if not rendering an HTML table.
+    outer, inner = opt.values_at(:outer_tag, :inner_tag).map { |v| v || tag }
+    outer = for_html_table?(outer) && :tr || outer || :div
+    inner = for_html_table?(inner) && :td || inner || :div
     opt.except!(*MODEL_TABLE_OPTIONS)
-    pairs  = table_columns(columns: columns, filter: filter)
+
+    pairs  = table_values(columns: columns, filter: filter)
+    first  = col
+    last   = first + pairs.size - 1
     fields =
-      if inner_tag
-        first_col = col
-        last_col  = pairs.size + col - 1
-        pairs.map do |field, value|
-          row_opt = model_rc_options(field, row, col, opt)
-          row_opt.merge!('aria-colindex': col)
-          append_css!(row_opt, 'col-first') if col == first_col
-          append_css!(row_opt, 'col-last')  if col == last_col
-          col += 1
-          html_tag(inner_tag, value, row_opt)
-        end
-      else
-        pairs.values.compact.map { |value| ERB::Util.h(value) }
+      pairs.map.with_index(first) do |(field, value), c|
+        # noinspection RubyMismatchedArgumentType
+        row_opt = model_rc_options(field, row, c, opt)
+        row_opt.merge!('aria-colindex': c)
+        append_css!(row_opt, 'col-first') if c == first
+        append_css!(row_opt, 'col-last')  if c == last
+        html_tag(inner, value, row_opt)
       end
-    outer_tag ? html_tag(outer_tag, fields, 'aria-rowindex': row) : fields
+
+    html_tag(outer, *fields, 'aria-rowindex': row)
   end
 
   # Table values associated with the current decorator.
@@ -155,7 +183,7 @@ module BaseDecorator::Table
   #
   # @return [Hash]
   #
-  def table_columns(**opt)
+  def table_values(**opt)
     model_field_values(**opt)
   end
 
@@ -211,7 +239,7 @@ module BaseDecorator::Table
     prepend_css(opt, field).tap do |html_opt|
       append_css!(html_opt, "row-#{row}") if row
       append_css!(html_opt, "col-#{col}") if col
-      html_opt[:role] ||= 'cell'
+      html_opt[:role] ||= table_cell_role
       html_opt[:id]   ||= [field, row, col].compact.join('-')
     end
   end

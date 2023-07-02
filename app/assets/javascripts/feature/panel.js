@@ -3,9 +3,9 @@
 
 import { AppDebug }               from '../application/debug';
 import { appSetup }               from '../application/setup';
+import { handleClickAndKeypress } from '../shared/accessibility';
 import { Emma }                   from '../shared/assets';
 import { isMissing, isPresent }   from '../shared/definitions';
-import { handleClickAndKeypress } from '../shared/events';
 
 
 const MODULE = 'Panel';

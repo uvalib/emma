@@ -314,41 +314,44 @@ $control-height:         2.25rem;
         &.top,
         &.complete {
 
+            // Set margin-top to keep shadow from being clipped above.
+
             @media #{$wide-screen} {
-                padding-top: calc(#{header.$enclosure-pad-wide} + 0.5rem);
-                margin-top:  2rem; // Keep shadow from being clipped.
+                margin-top:     calc(#{$page-padding-y} * 1.5);
+                padding-top:    calc(#{header.$enclosure-pad-wide} + 0.5rem);
             }
 
             @media #{$medium-width} {
-                padding-top: calc(#{header.$enclosure-pad-medium} + 0.5rem);
-                margin-top:  2rem; // Keep shadow from being clipped.
+                margin-top:     calc(#{$page-padding-y} * 3);
+                padding-top:    calc(#{header.$enclosure-pad-medium} + 0.5rem);
+                padding-bottom: 0.5rem;
             }
 
             @media #{$narrow-screen} {
-                padding-top: calc(#{header.$enclosure-pad-narrow} + 0.5rem);
-                margin-top:  4.5vh;
+                margin-top:     calc(#{$page-padding-y} * 4);
+                padding-top:    calc(#{header.$enclosure-pad-narrow} + 0.5rem);
             }
         }
 
         &.bottom,
         &.complete {
 
+            // Set margin-bottom to keep shadow from being clipped below.
+
             @media #{$wide-screen} {
-                margin-bottom: 4vh;
+                margin-bottom:  calc(#{$page-padding-y} * 2);
             }
 
             @media #{$medium-width} {
-                //margin-bottom: 1vh;
-                margin-bottom: 2.5vh;
+                margin-bottom:  calc(#{$page-padding-y} * 3);
             }
 
             @media #{$narrow-screen} {
-                margin-bottom: 4vh;
+                margin-bottom:  calc(#{$page-padding-y} * 4);
             }
         }
 
         &.bottom {
-            //margin-top: -0.5vh; // Meet up with .top.shadow.enclosure.
             margin-top: 0; // Meet up with .top.shadow.enclosure.
         }
     }
@@ -357,17 +360,6 @@ $control-height:         2.25rem;
 //=============================================================================
 // Sections - search input
 //=============================================================================
-
-// Header row for search input bar(s) with contents inside an .enclosure child
-// element.
-.layout-section.search.bar:not(.enclosure) {
-
-    //padding-top: 2vh; // For .top.shadow.enclosure child.
-
-    @media #{$narrow-screen} {
-        //padding-top: 4vh; // For .top.shadow.enclosure child.
-    }
-}
 
 // Header row element containing the search input bar(s).
 .layout-section.search.bar.enclosure,
@@ -444,9 +436,8 @@ $control-height:         2.25rem;
             font-size:          large;
 
             @media #{$not-narrow-screen} {
-                height:       1.75rem;
-                margin-right: 0.5rem;
-                color:        var(--fg-color);
+                height:         1.75rem;
+                color:          var(--fg-color);
             }
 
             // noinspection CssReplaceWithShorthandSafely
@@ -476,14 +467,6 @@ $control-height:         2.25rem;
             display:       flex;
             flex-wrap:     nowrap;
             flex:          1 1 auto;
-
-            @media #{$wide-screen} {
-                margin-right: calc(2 * #{$gap-x});
-            }
-
-            @media #{$medium-width} {
-                margin-right: calc(4 * #{$gap-x});
-            }
 
             @media #{$narrow-screen} {
                 max-width: 80vw;
@@ -523,6 +506,7 @@ $control-height:         2.25rem;
         // Controls for adding/removing search input rows.
         .search-row-control {
 
+            height:       min-content;
             user-select:  none;
 
             &:focus {
@@ -542,21 +526,39 @@ $control-height:         2.25rem;
 
             @include header.section;
 
-            flex-direction: column;
+            flex-direction:         column;
 
             @media #{$wide-screen} {
-                flex-wrap:       nowrap;
-                justify-content: flex-start;
+                flex-wrap:          nowrap;
+                justify-content:    flex-start;
             }
 
-            @media #{$not-wide-screen} {
-                flex-wrap:       wrap;
-                justify-content: space-between;
+            @media #{$medium-width} {
+                flex-wrap:          wrap;
+                justify-content:    space-between;
+            }
+
+            @media #{$narrow-screen} {
+                flex-wrap:          wrap;
+                row-gap:            $sb-row-narrow-vertical-gap;
             }
 
             .search-bar-row {
 
-                margin: 0;
+                margin:         0;
+
+                @media #{$wide-screen} {
+                    column-gap: calc(2 * #{$gap-x});
+                }
+
+                @media #{$medium-width} {
+                    column-gap: calc(4 * #{$gap-x});
+                }
+
+                @media #{$narrow-screen} {
+                    row-gap:    $sb-row-narrow-vertical-gap;
+                }
+
 
                 &:not(.first) {
 
@@ -570,8 +572,8 @@ $control-height:         2.25rem;
                 }
 
                 @media #{$not-narrow-screen} {
-                    > :first-child { margin-left:  calc(#{$gap-x} / 2); }
-                    > :last-child  { margin-right: calc(#{$gap-x} / 2); }
+                    > :first-child { margin-left:  $gap-x; }
+                    > :last-child  { margin-right: $gap-x; }
                 }
             }
         }
@@ -594,34 +596,18 @@ $control-height:         2.25rem;
             justify-items:   center;
             width:           100%;
             margin:          0;
-            margin-top:      calc(3 * #{$page-padding-y});
-            margin-bottom:   calc(2 * #{$page-padding-y});
+            margin-top:      calc(4 * #{$page-padding-y});
         }
+
+        .search-button          { order: 1; }
+        .menu-button.reset      { order: 2; }
+        .advanced-search-toggle { order: 3; }
     }
 }
 
 //=============================================================================
 // Sections - search filters
 //=============================================================================
-
-// Header row( for search filters (sort, per-page, format, etc.) with contents
-// inside an .enclosure child element.
-.layout-section.search.filters:not(.enclosure) {
-
-    //padding-top: 0.5vh; // For .bottom.shadow.enclosure child.
-
-    @media #{$wide-screen} {
-        //padding-bottom: 2vh;
-    }
-
-    @media #{$medium-width} {
-        //padding-bottom: 1.5vh;
-    }
-
-    @media #{$narrow-screen} {
-        //padding-bottom: 1vh;
-    }
-}
 
 // Header row element containing search filters.
 .layout-section.search.filters.enclosure,
@@ -637,8 +623,7 @@ $control-height:         2.25rem;
     }
 
     @media #{$medium-width} {
-        grid-template-columns: [container] 0.9375fr [controls] auto;
-        padding-bottom:        2vh;
+        grid-template-columns:  [container] 0.975fr [controls] auto;
     }
 
     @media #{$narrow-screen} {
@@ -678,14 +663,24 @@ $control-height:         2.25rem;
 
         // Layout of each logical column.
 
-        @media #{$narrow-screen} {
-            $column: minmax(25vw, 1fr);
+        @media #{$not-narrow-screen} {
+
+            $column: [label] max-content [menu] minmax(10vw, 1fr);
+
             @include grid.column-classes($max-columns, $column, $columns-map);
         }
 
-        @media #{$not-narrow-screen} {
-            $column: [label] max-content [menu] minmax(10vw, 1fr);
+        @media #{$medium-width} {
+            column-gap: calc(2 * #{$gap-x});
+        }
+
+        @media #{$narrow-screen} {
+
+            $column: minmax(25vw, 1fr);
+
             @include grid.column-classes($max-columns, $column, $columns-map);
+
+            column-gap: calc(6 * #{$gap-x});
         }
 
         //=====================================================================
@@ -728,9 +723,11 @@ $control-height:         2.25rem;
 
             @include grid-cell;
 
-            margin-top:   $gap-y;
-            margin-right: $gap-x;
-            user-select:  none;
+            user-select:        none;
+
+            @media #{$not-narrow-screen} {
+                margin-right:   $gap-x;
+            }
 
             &.col-first {
                 @media #{$wide-screen} {
@@ -745,8 +742,9 @@ $control-height:         2.25rem;
 
             @include grid-cell;
 
-            margin-top:   0;
-            margin-right: calc(3 * #{$gap-x});
+            @media #{$not-narrow-screen} {
+                margin-right: calc(3 * #{$gap-x});
+            }
 
             > * {
                 min-height: $control-height;
@@ -834,6 +832,10 @@ $control-height:         2.25rem;
 
             .search-button:not(.visible) { display: none; }
         }
+
+        .search-button          { order: 1; }
+        .menu-button.reset      { order: 3; }
+        .advanced-search-toggle { order: 2; }
     }
 
     //=========================================================================
@@ -844,16 +846,20 @@ $control-height:         2.25rem;
 
         // noinspection CssReplaceWithShorthandSafely
         .search-filter-container {
-            @media #{$wide-screen}     { padding: 1.25rem; }
-            @media #{$not-wide-screen} { padding: 1rem;    }
+            @media #{$wide-screen}   { padding: 1.25rem; }
+            @media #{$medium-width}  { padding: 0.75rem; }
+            @media #{$narrow-screen} { padding: 1rem;    }
             padding-right: 0.25rem;
             border:        none;
             box-shadow:    inset 0 0 8px 1px $uva-accent-teal;
         }
 
         .search-controls {
-            @media #{$not-narrow-screen} {
+            @media #{$wide-screen} {
                 row-gap: 1.25rem;
+            }
+            @media #{$medium-width} {
+                row-gap: 2rem;
             }
         }
     }

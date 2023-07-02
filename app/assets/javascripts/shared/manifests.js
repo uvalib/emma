@@ -159,6 +159,12 @@ export function enableButton(button, enable, config, override) {
     if (hasKey(prop, 'highlight')) {
         $button.toggleClass(BEST_CHOICE_MARKER, prop.highlight);
     }
+    if (enabling) {
+        $button.removeAttr('tabindex');
+    } else {
+        $button.attr('tabindex', -1);
+    }
+    $button.attr('disabled', !enabling);
     $button.attr('aria-disabled', !enabling);
     $button.toggleClass(DISABLED_MARKER, !enabling);
     return $button;

@@ -37,7 +37,7 @@ class SearchCallsDecorator < BaseCollectionDecorator
   #
   # @note This hasn't been updated since the conversion to Postgres.
   #
-  def table(extended: false, **opt)
+  def render_table(extended: false, **opt)
     prepend_css!(opt, 'extended') if extended
     super(**opt)
   end

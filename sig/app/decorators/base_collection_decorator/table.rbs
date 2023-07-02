@@ -9,7 +9,8 @@ module BaseCollectionDecorator::Table
 
   # Render model items as a table.
   #
-  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Symbol] tag               Potential alternative to :table.
+  # @param [String] css               Default: `#table_css_class`.
   # @param [Hash]   opt               Passed to outer #html_tag except:
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
@@ -22,7 +23,7 @@ module BaseCollectionDecorator::Table
   # @see #STICKY_HEAD
   # @see #DARK_HEAD
   #
-  def table: (?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
+  def render_table: (?tag: Symbol|nil, ?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
 
   # Render one or more entries for use within a *tbody*.
   #
@@ -41,16 +42,15 @@ module BaseCollectionDecorator::Table
   #
   # @param [Integer]                                   row
   # @param [Integer]                                   col
-  # @param [Symbol, Integer, nil]                      outer_tag
-  # @param [Symbol, Integer, nil]                      inner_tag
   # @param [Symbol, String, Array<Symbol,String>, nil] columns
   # @param [String, Regexp, Array<String,Regexp>, nil] filter
   # @param [Boolean]                                   dark
   # @param [Hash]                                      opt
   #
+  # @option opt [Symbol] :outer_tag   Default: :tr
+  # @option opt [Symbol] :inner_tag   Default: :th
+  #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
-  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
   #
   # @yield [item, **opt] Allows the caller to generate the item columns.
   # @yieldparam  [Model] item         Single item instance.
@@ -59,10 +59,7 @@ module BaseCollectionDecorator::Table
   #
   # @see #DARK_HEAD
   #
-  def table_headings
-    : (?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
-    | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
-    | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[String]
+  def table_headings: (?row: Integer, ?col: Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
 
   # The collection of items to be presented in tabular form.
   #

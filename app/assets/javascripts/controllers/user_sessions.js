@@ -4,7 +4,7 @@
 import { AppDebug }               from '../application/debug';
 import { appSetup }               from '../application/setup';
 import { isMissing }              from '../shared/definitions';
-import { handleClickAndKeypress } from '../shared/events';
+import { handleClickAndKeypress } from '../shared/accessibility';
 
 
 const PATH = 'controllers/user_sessions';

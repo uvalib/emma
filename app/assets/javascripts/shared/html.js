@@ -3,11 +3,11 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }  from '../application/debug';
-import { cssClass }  from './css';
-import { isDefined } from './definitions';
-import { isObject }  from './objects';
-import { hexRand }   from './random';
+import { AppDebug }                       from '../application/debug';
+import { cssClassList }                   from './css';
+import { isDefined, isPresent, presence } from './definitions';
+import { isObject }                       from './objects';
+import { hexRand }                        from './random';
 
 
 AppDebug.file('shared/html');
@@ -51,6 +51,9 @@ export const HTML_ENTITY = {
     '<': '&lt;',
     '>': '&gt;',
 };
+
+export const CHECKBOX = '[type="checkbox"]';
+export const RADIO    = '[type="radio"]';
 
 // ============================================================================
 // Functions
@@ -101,6 +104,27 @@ export function allMatching(target, match) {
 }
 
 /**
+ * Return a flattened traversal of the item(s) and all of their descendents
+ * excluding elements in subtrees matching the given criterion.
+ *
+ * @param {Selector} target
+ * @param {Selector} [prune]
+ *
+ * @returns {jQuery}
+ */
+export function selfAndDescendents(target, prune) {
+    const result = [];
+    const $items = isPresent(prune) ? $(target).not(prune) : $(target);
+    $items.each((_, item) => {
+        result.push(item);
+        $(item).children().each((_, child) => {
+            result.push(...selfAndDescendents(child, prune));
+        });
+    });
+    return $(result);
+}
+
+/**
  * Return the target if it matches or all descendents that match.
  *
  * @param {Selector} target
@@ -109,23 +133,23 @@ export function allMatching(target, match) {
  * @returns {jQuery}
  */
 export function selfOrDescendents(target, match) {
-    //console.log(`selfOrDescendents: match = "${match}"; target =`, target);
+    //console.log(`selfOrDescendents: match = "${match}";`, target, prune);
     const $target = $(target);
-    return $target.is(match) ? $target : $target.find(match);
+    return presence($target.filter(match)) || $target.find(match);
 }
 
 /**
  * Return the target if it matches or the first parent that matches.
  *
- * @param {Selector} target
- * @param {Selector} match
- * @param {string}   [caller]     Name of caller (for diagnostics).
+ * @param {Selector}     target
+ * @param {Selector}     match
+ * @param {string|false} [caller]     Name of caller (for diagnostics).
  *
  * @returns {jQuery}
  */
 export function selfOrParent(target, match, caller) {
     //console.log(`selfOrParent: match = "${match}"; target =`, target);
-    const func = caller || 'selfOrParent';
+    const func = (caller !== false) && (caller || 'selfOrParent');
     const $t   = $(target);
     return $t.is(match) ? single($t, func) : $t.parents(match).first();
 }
@@ -133,37 +157,69 @@ export function selfOrParent(target, match, caller) {
 /**
  * Ensure that the target resolves to exactly one element.
  *
- * @param {Selector} target
- * @param {string}   [caller]     Name of caller (for diagnostics).
+ * @param {Selector}     target
+ * @param {string|false} [caller]     Name of caller (for diagnostics).
  *
  * @returns {jQuery}
  */
 export function single(target, caller) {
-    const $element = $(target);
-    const count    = $element.length;
-    if (count === 1) {
-        return $element;
-    } else {
-        console.warn(`${caller}: ${count} results; 1 expected`);
-        return $element.first();
+    const $elem = $(target);
+    const count = $elem?.length || 0;
+    if (count === 1) { return $elem }
+    if (caller !== false) {
+        const func = caller || 'single';
+        console.warn(`${func}: ${count} results; 1 expected`);
     }
+    return $elem.first();
+}
+
+/**
+ * Indicate whether *a* specifies the same DOM element(s) as *b*.
+ *
+ * @param {Selector|null|undefined} a
+ * @param {Selector|null|undefined} b
+ *
+ * @returns {boolean}
+ */
+export function sameElements(a, b) {
+    const [$a, $b] = [$(a), $(b)];
+    const [la, lb] = [$a?.length, $b?.length];
+    switch (true) {
+        case (!la && !lb):  return true;
+        case (la !== lb):   return false;
+        case (la === 0):    return true;
+        case (la === 1):    return $a[0] === $b[0];
+        default:            return $a.toArray().every(elem => $b.is(elem));
+    }
+}
+
+/**
+ * Indicate whether any descendent of *target* matches.
+ *
+ * @param {Selector|null|undefined} target
+ * @param {Selector|null|undefined} match
+ *
+ * @returns {boolean}
+ */
+export function contains(target, match) {
+    return !!target && !!match && isPresent($(target).has(match));
+}
+
+/**
+ * Indicate whether any ancestor of *target* matches.
+ *
+ * @param {Selector|null|undefined} target
+ * @param {Selector|null|undefined} match
+ *
+ * @returns {boolean}
+ */
+export function containedBy(target, match) {
+    return !!target && !!match && isPresent($(target).parents(match));
 }
 
 // ============================================================================
 // Functions
 // ============================================================================
-
-/**
- * Make a selector out of an array of attributes.
- *
- * @param {string[]} attributes
- *
- * @returns {string}
- */
-export function attributeSelector(attributes) {
-    const list = attributes.join('], [');
-    return `[${list}]`;
-}
 
 /**
  * If necessary scroll the indicated element so that it is within the viewport.
@@ -210,6 +266,35 @@ export function noScroll(callback) {
 }
 
 /**
+ * For a flex container with "row-reverse" or "column-reverse", in order to
+ * ensure that tab order advances with the displayed order of the children,
+ * reverse the physical order of the children and remove the "-reverse" from
+ * the container's *flex-direction*.
+ *
+ * @param {Selector} container
+ *
+ * @returns {jQuery}
+ */
+export function unreverseFlexChildren(container) {
+    const $container = $(container);
+    const direction  = $container.css('flex-direction') || '';
+    if (direction.endsWith('-reverse')) {
+        const wrap      = $container.css('flex-wrap') || '';
+        const $children = $container.children();
+        const reversed  = $children.toArray().reverse();
+        $children.detach();
+        if (wrap.endsWith('-reverse')) {
+            $container.attr('data-original-flex-wrap', wrap);
+            $container.css('flex-wrap', wrap.replace('-reverse', ''));
+        }
+        $container.attr('data-original-flex-direction', direction);
+        $container.css('flex-direction', direction.replace('-reverse', ''));
+        $container.append(reversed);
+    }
+    return $container;
+}
+
+/**
  * Create an HTML element.
  *
  * @param {string|ElementProperties} element
@@ -224,7 +309,7 @@ export function create(element, properties) {
 
     // noinspection HtmlUnknownTag
     const $element = (tag[0] === '<') ? $(tag) : $(`<${tag}>`);
-    prop.class   && $element.addClass(cssClass(prop.class));
+    prop.class   && $element.addClass(cssClassList(prop.class));
     prop.type    && $element.attr('type',  prop.type);
     prop.tooltip && $element.attr('title', prop.tooltip);
 
@@ -232,48 +317,6 @@ export function create(element, properties) {
     else if (typeof prop.label === 'string') { $element.text(prop.label) }
     else if (typeof prop.text  === 'string') { $element.text(prop.text)  }
     return $element;
-}
-
-/**
- * Ensure the indicated element will be included in the tab order, adding a
- * tabindex attribute if necessary.
- *
- * @param {Selector} element
- */
-export function ensureTabbable(element) {
-    $(element).each(function() {
-        const $element = $(this);
-        const link     = isDefined($element.attr('href'));
-        const input    = link  || isDefined($element.attr('type'));
-        const tabbable = input || isDefined($element.attr('tabindex'));
-        if (!tabbable) {
-            $element.attr('tabindex', 0);
-        }
-    });
-}
-
-/**
- * Find all elements within *base* (relative to *root*) that can be tabbed to.
- *
- * @param {Selector} [base]
- * @param {Selector} [root]
- * @param {boolean}  [all]            If *true*, count invisible items too.
- *
- * @returns {jQuery}
- */
-export function findTabbable(base, root, all) {
-    const b = (base !== '*') && base;
-    let r, a;
-    if (typeof root === 'boolean') {
-        r = null;
-        a = !!root;
-    } else {
-        r = (root !== '*') && root;
-        a = !!all;
-    }
-    const selector = a ? '*' : ':visible';
-    const $base    = (r && b) ? $(r).find(b) : $(r || b || 'body');
-    return $base.find(selector).filter((_, e) => (e.tabIndex >= 0));
 }
 
 // ============================================================================

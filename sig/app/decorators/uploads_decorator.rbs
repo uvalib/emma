@@ -57,7 +57,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # Control the selection of filters displayed by #list_filter.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #html_div for outer *div*.
+  # @param [Hash]   opt               Passed to #html_div for the container.
   #
   # @option opt [Array] :records      List of upload records for display.
   #

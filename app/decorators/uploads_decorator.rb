@@ -91,7 +91,7 @@ class UploadsDecorator < BaseCollectionDecorator
         url   = all ? base : index_path(group: group)
 
         link_opt = append_css('control-button', GROUP_CONTROL_CLASS)
-        link_opt[:'aria-label'] = properties[:tooltip]
+        link_opt[:'data-label'] = properties[:tooltip]
         link_opt[:'data-group'] = group
         append_css!(link_opt, 'current')  if group == curr_group
         append_css!(link_opt, 'disabled') if url   == curr_path
@@ -205,7 +205,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # Control the selection of filters displayed by #list_filter.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #html_div for outer *div*.
+  # @param [Hash]   opt               Passed to #html_div for the container.
   #
   # @option opt [Array] :records      List of upload records for display.
   #
@@ -215,35 +215,35 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   def list_filter_options(css: FILTER_OPTIONS_CLASS, **opt)
     name   = "#{model_type}-#{__method__}"
+    base   = unique_id(name)
     list   = object
     counts = group_counts
 
     # A label preceding the group (screen-reader only).
-    legend = 'Select/de-select state groups to show' # TODO: I18n
-    legend = html_tag(:legend, legend, class: 'sr-only')
+    l_id   = "#{base}-label"
+    label  = 'Select/de-select state groups to display' # TODO: I18n
+    label  = html_div(label, id: l_id, class: 'sr-only')
 
     # Checkboxes.
-    cb_opt = { class: FILTER_CONTROL_CLASS }
-    groups = { ALL_FILTERS: { label: 'Show all filters', checked: false } }
-    groups.merge!(STATE_GROUP)
+    cb_opt = { class: FILTER_CONTROL_CLASS, role: 'option' }
+    groups = { ALL_FILTERS: { checked: false } }.merge!(STATE_GROUP)
     checkboxes =
       groups.map do |group, properties|
         cb_name  = "[#{name}][]"
         cb_value = group
-        checked  = properties[:checked]
-        checked  = counts[group]&.positive?                     if checked.nil?
-        checked  = active_state_group?(group, properties, list) if checked.nil?
-        cb_opt[:checked] = checked
-        cb_opt[:label]   = %Q(Show "#{properties[:label]}") # TODO: I18n
-        cb_opt[:role]    = 'option'
-        cb_opt[:id]      = "#{name}-#{cb_value}"
+        lbl, chk = properties.values_at(:label, :checked)
+        lbl = lbl ? %Q(Show "#{lbl}") : 'Select all filters' # TODO: I18n
+        chk = counts[group]&.positive?                     if chk.nil?
+        chk = active_state_group?(group, properties, list) if chk.nil?
+        cb_opt.merge!(label: lbl, checked: chk, id: "#{cb_value}-#{base}")
         render_check_box(cb_name, cb_value, **cb_opt)
       end
 
-    opt[:role]     = 'listbox'
-    opt[:tabindex] = 0
+    opt[:role]              = 'listbox'
+    opt[:tabindex]          = 0
+    opt[:'aria-labelledby'] = l_id
     prepend_css!(opt, css)
-    html_tag(:fieldset, legend, *checkboxes, opt)
+    html_tag(:ul, label, *checkboxes, opt)
   end
 
   # ===========================================================================

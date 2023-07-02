@@ -20,6 +20,39 @@
 // Grid table of search calls.
 .model-table.search_call {
 
+    $scroll-snap: true;
+
+    @if $scroll-snap {
+        scroll-snap-type:      both mandatory;
+        scroll-behavior:       smooth;
+        scroll-padding-top:    50px;
+        scroll-padding-bottom: 5px;
+    }
+
+    &.dark-head {
+
+        thead {
+
+            $offset: 0.5rem;
+
+            th {
+                margin-left:        -$offset;
+
+                &.col-first {
+                    margin-left:    0;
+                }
+
+                &:focus {
+                    outline-offset: -$offset;
+                }
+
+                > * {
+                    margin-left:    $offset;
+                }
+            }
+        }
+    }
+
     &.extended {
 
         td {

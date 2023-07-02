@@ -5,6 +5,8 @@ module BaseDecorator::Grid
 
   include BaseDecorator::Configuration
 
+  include BaseDecorator::Controls
+
   include BaseDecorator::Form
 
   include BaseDecorator::List
@@ -47,7 +49,39 @@ module BaseDecorator::Grid
   #
   # @return [String]
   #
+  def grid_container_css_class: () -> String
+
+  # The default CSS class for a grid element.
+  #
+  # @return [String]
+  #
   def grid_css_class: () -> String
+
+  # The default CSS class for a grid row element.
+  #
+  # @return [String]
+  #
+  def grid_row_css_class: () -> String
+
+  # Indicate whether a grid presents as an element with the HTML 'grid' role.
+  #
+  def grid_role?: () -> bool
+
+  # The HTML role of the grid element.
+  #
+  # @param [Boolean] grid
+  #
+  # @return [String]
+  #
+  def grid_role: (?grid: bool) -> String
+
+  # The HTML role of cells within the grid.
+  #
+  # @param [Boolean] grid
+  #
+  # @return [String]
+  #
+  def grid_cell_role: (?grid: bool) -> String
 
   # The names and configurations for each possible grid data column (whether
   # displayed or not).
@@ -109,21 +143,13 @@ module BaseDecorator::Grid
   #
   def grid_controls: (?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
 
-  # Render associated items in a grid based on <table>.
-  #
-  # @param [Hash] opt                 Passed to #render_grid.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_grid_table: (**untyped opt) -> ActiveSupport::SafeBuffer
-
   # Render associated items.
   #
   # @param [Integer] row              Starting row number.
   # @param [Integer] index            Starting index number.
   # @param [Array]   cols             Default: `#grid_row_columns`.
-  # @param [Symbol]  tag              If :table, generate <table>.
-  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Symbol]  tag              Potential alternative to :table.
+  # @param [String]  css              Default: `#grid_css_class`.
   # @param [Hash]    opt              Passed to container div except
   #                                     #ROW_PAGE_PARAMS to #grid_row_page.
   #
@@ -135,9 +161,11 @@ module BaseDecorator::Grid
   #
   # @param [Array]   cols             Default: `#grid_row_columns`.
   # @param [Integer] row              Starting row number.
-  # @param [Symbol]  tag              #TABLE_TAGS
-  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Symbol]  tag              Potential alternative to :tr.
+  # @param [String]  css              Default: `#grid_row_css_class`.
   # @param [Hash]    opt              Passed to outer div.
+  #
+  # @option opt [Boolean] :wrap       Specify whether to wrap with :thead.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -145,13 +173,14 @@ module BaseDecorator::Grid
 
   # render_grid_data_rows
   #
-  # @param [Array<Model>,nil] items
+  # @param [Array<Model>,nil] items   Default: `#grid_row_page`.
   # @param [Integer]          row
   # @param [Integer]          index
   # @param [Hash]             opt     Passed to #grid_row.
   #
-  # @option opt [Symbol] :tag         Also used by this method.
-  # @option opt [Hash]   :outer       Augmented by this method.
+  # @option opt [Boolean] :wrap       Specify whether to wrap with :thead.
+  # @option opt [Symbol]  :tag        Also used by this method.
+  # @option opt [Hash]    :outer      Augmented by this method.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -175,6 +204,8 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_grid_template_row: (?(Array[Model]|nil) model, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  CONTROLS_CELL_CLASS: String
 
   # Properties that need to be conveyed to the grid header columns.
   #
@@ -216,7 +247,7 @@ module BaseDecorator::Grid
   #
   # @param [Symbol, nil] col          Data column.
   # @param [Integer]     row          Starting row.
-  # @param [Symbol]      tag          #TABLE_TAGS
+  # @param [Symbol]      tag          Potential alternative to :th.
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #html_tag except:
   #
@@ -227,11 +258,21 @@ module BaseDecorator::Grid
   #
   def grid_head_cell: ((Symbol|nil) col, ?row: Integer|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
+  # Render a grid header cell label element.
+  #
+  # @param [String, nil] text
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_head_label: (?(String|nil) text, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # grid_row
   #
   # @param [Hash]    control          Options for #grid_row_controls.
   # @param [String]  unique
-  # @param [Symbol]  tag              #TABLE_TAGS
+  # @param [Symbol]  tag              Potential alternative to :tr.
   # @param [Hash]    opt              Passed to #grid_item
   #
   # @option opt [Integer] :row
@@ -244,11 +285,12 @@ module BaseDecorator::Grid
   # Generate controls for an item grid row.
   #
   # @param [Hash]    button           Passed to #grid_row_control_contents.
-  # @param [Symbol]  tag              #TABLE_TAGS
+  # @param [Symbol]  tag              Potential alternative to :th.
   # @param [String]  css              Characteristic CSS class/selector.
   # @param [Hash]    opt              Passed to outer div.
   #
   # @option opt [String] :unique      Moved into a copy of :button hash.
+  # @option opt [String] :label       Screen-reader label for container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -259,6 +301,8 @@ module BaseDecorator::Grid
   # @param [Array]   added            Optional elements after the buttons.
   # @param [Integer] row              Associated grid row.
   # @param [Hash]    opt              Passed to #control_icon_buttons.
+  #
+  # @option opt [String] :label       Screen-reader label for container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -283,7 +327,7 @@ module BaseDecorator::Grid
   #
   # @param [Hash, nil]   pairs        Passed to #field_pairs.
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Symbol]      tag          #TABLE_TAGS
+  # @param [Symbol]      tag          Potential alternative to :td.
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          To #render_pair except
   #                                     #FIELD_PAIRS_OPTIONS to #field_pairs.

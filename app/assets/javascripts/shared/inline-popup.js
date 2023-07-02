@@ -3,17 +3,25 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }             from '../application/debug';
-import { HIDDEN, selector }     from './css';
-import { isMissing, isPresent } from './definitions';
-import { windowEvent }          from './events';
-import { ModalBase }            from './modal-base';
+import { AppDebug }                 from '../application/debug';
+import { HIDDEN, selector }         from './css';
+import { isMissing, isPresent }     from './definitions';
+import { windowEvent }              from './events';
+import { keyCombo }                 from './keyboard';
+import { ModalBase, PANEL, TOGGLE } from './modal-base';
 
 
 const MODULE = 'InlinePopup';
 const DEBUG  = false;
 
 AppDebug.file('shared/inline-popup', MODULE, DEBUG);
+
+// ============================================================================
+// Constants
+// ============================================================================
+
+const ENCLOSURE_CLASS = 'inline-popup';
+const ENCLOSURE       = selector(ENCLOSURE_CLASS);
 
 // ============================================================================
 // Class InlinePopup
@@ -36,8 +44,13 @@ export class InlinePopup extends ModalBase {
     static CLASS_NAME      = 'InlinePopup';
     static DEBUGGING       = DEBUG;
 
-    static ENCLOSURE_CLASS = 'inline-popup';
-    static ENCLOSURE       = selector(this.ENCLOSURE_CLASS);
+    static ENCLOSURE       = selector(ENCLOSURE_CLASS);
+
+    // ========================================================================
+    // Class fields
+    // ========================================================================
+
+    /** @type {boolean} */ static all_initialized;
 
     // ========================================================================
     // Constructor
@@ -51,9 +64,9 @@ export class InlinePopup extends ModalBase {
      */
     constructor(control, modal) {
         let [$control, _modal] = [$(control), modal];
-        if ($control.is(InlinePopup.ENCLOSURE)) {
-            _modal   = $control.children(InlinePopup.PANEL);
-            $control = $control.children(InlinePopup.TOGGLE);
+        if ($control.is(ENCLOSURE)) {
+            _modal   = $control.children(PANEL);
+            $control = $control.children(TOGGLE);
         }
         super($control, _modal);
     }
@@ -101,14 +114,14 @@ export class InlinePopup extends ModalBase {
      *
      * @type {jQuery}
      */
-    static get $enclosures() { return $(this.ENCLOSURE).not('.for-example') }
+    static get $enclosures() { return $(ENCLOSURE).not('.for-example') }
 
     /**
      * All inline popup panel elements on the page.
      *
      * @type {jQuery}
      */
-    static get $popups() { return this.$enclosures.children(this.PANEL) }
+    static get $popups() { return this.$enclosures.children(PANEL) }
 
     /**
      * All popups which are currently open.
@@ -124,14 +137,24 @@ export class InlinePopup extends ModalBase {
     /**
      * Create an InlinePopup instance for each inline popup on the current
      * page.
+     *
+     * @returns {boolean}
      */
     static initializeAll() {
-        this._debug('initializeAll');
-        const $popups = this.$enclosures;
-        if (isPresent($popups)) {
+        const func  = 'initializeAll';
+        let updated = false;
+        let $popups;
+        if (this.all_initialized) {
+            this._debug(`${func}: already initialized`);
+        } else if (isMissing($popups = this.$enclosures)) {
+            this._debug(`${func}: no inline popups on this page`);
+        } else {
+            this._debug(`${func}: ${$popups.length} inline popups`);
             $popups.each((_, enclosure) => new this(enclosure));
             this._attachWindowEventHandlers();
+            updated = true;
         }
+        return updated;
     }
 
     /**
@@ -145,7 +168,7 @@ export class InlinePopup extends ModalBase {
         const $popups = popups ? $(popups) : this.$open_popups;
         $popups.each((_, p) =>
             this.instanceFor(p)?.close() ||
-            this._error(`${func}: no data(${this.MODAL_INSTANCE_DATA}) for`, p)
+                this._error(`${func}: no data(${this.INSTANCE_DATA}) for`, p)
         );
     }
 
@@ -158,10 +181,10 @@ export class InlinePopup extends ModalBase {
      */
     static findPopup(target) {
         const $tgt = $(target);
-        if ($tgt.is(this.PANEL))     { return $tgt }
-        if ($tgt.is(this.TOGGLE))    { return $tgt.siblings(this.PANEL) }
-        if ($tgt.is(this.ENCLOSURE)) { return $tgt.children(this.PANEL) }
-        return $tgt.parents(this.ENCLOSURE).first().children(this.PANEL);
+        if ($tgt.is(PANEL))     { return $tgt }
+        if ($tgt.is(TOGGLE))    { return $tgt.siblings(PANEL) }
+        if ($tgt.is(ENCLOSURE)) { return $tgt.children(PANEL) }
+        return $tgt.parents(ENCLOSURE).first().children(PANEL);
     }
 
     /**
@@ -172,9 +195,9 @@ export class InlinePopup extends ModalBase {
      * @returns {InlinePopup|undefined}
      */
     static instanceFor(target) {
-        const $target = $(target);
-        return super.instanceFor($target) ||
-            this.findPopup($target).data(this.MODAL_INSTANCE_DATA);
+        const name = this.INSTANCE_DATA;
+        const $tgt = $(target);
+        return super.instanceFor($tgt) || this.findPopup($tgt).data(name);
     }
 
     /**
@@ -226,22 +249,19 @@ export class InlinePopup extends ModalBase {
      * @protected
      */
     static _onKeyUp(event) {
-        //this._debug(`_onKeyUp: key "${key}"`, event);
-        const key = event.key;
+        const key  = keyCombo(event);
+        const func = '_onKeyUp'; //this._debug(`${func}: key "${key}"`, event);
         if (key === 'Escape') {
-            this._debug(`_onKeyUp: key "${key}"`, event);
+            this._debug(`${func}: key "${key}"`, event);
             const $target  = $(event.target);
-            const $popup   = this.findPopup($target).not(HIDDEN);
+            const $popup   = this.findPopup($target);
             const instance = this.instanceFor($popup);
-            if (instance) {
-                this._debug('> ESC pressed - close the open popup');
-                if (instance._hidePopup($target)) {
-                    return false;
-                }
-            } else {
-                this._debug('> ESC pressed - close ALL open popups');
+            if (!instance) {
+                this._info('> ESC pressed - close ALL open popups');
                 this.closeAllOpenPopups();
-                return false;
+            } else if (instance.isOpen) {
+                this._info('> ESC pressed - close the open popup');
+                instance.close();
             }
         }
     }
@@ -261,20 +281,20 @@ export class InlinePopup extends ModalBase {
 
         // Clicked directly on a popup control or panel.
         const $target = $(event.target);
-        inside ||= $target.is(this.PANEL)     && 'on an open popup panel';
-        inside ||= $target.is(this.ENCLOSURE) && 'within a popup control';
-        inside ||= $target.is(this.TOGGLE)    && 'on a popup control';
+        inside ||= $target.is(PANEL)     && 'on an open popup panel';
+        inside ||= $target.is(ENCLOSURE) && 'within a popup control';
+        inside ||= $target.is(TOGGLE)    && 'on a popup control';
 
         // Clicked inside a popup control or panel.
         const $parent = !inside && $target.parents();
-        inside ||= $parent.is(this.PANEL)     && 'within an open popup panel';
-        inside ||= $parent.is(this.ENCLOSURE) && 'on a popup control';
+        inside ||= $parent.is(PANEL)     && 'within an open popup panel';
+        inside ||= $parent.is(ENCLOSURE) && 'on a popup control';
 
         // Clicked outside?
         if (inside) {
-            this._debug(`> CLICK ${inside}`);
+            this._info(`> CLICK ${inside}`);
         } else {
-            this._debug('> CLICK outside of popup controls or panels');
+            this._info('> CLICK outside of popup controls or panels');
             this.closeAllOpenPopups();
         }
     }

@@ -144,7 +144,7 @@
     // @see AccountDecorator#model_form
     &.new,
     &.edit {
-        margin-top: $page-padding;
+        margin-top: $page-padding-y;
     }
 
     // @see AccountDecorator#delete_form

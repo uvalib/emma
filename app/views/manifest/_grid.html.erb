@@ -19,8 +19,8 @@
 
 -%>
 
-<div class="<%= dec.grid_css_class -%>">
+<div class="<%= dec.grid_container_css_class -%>">
   <%= top_controls %>
-  <%= dec.render_grid_table(row: row, level: level, skip: skip) %>
+  <%= dec.render_grid(row: row, level: level, skip: skip) %>
   <%= bottom_controls %>
 </div>

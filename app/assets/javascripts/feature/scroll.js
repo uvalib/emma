@@ -1,13 +1,17 @@
 // app/assets/javascripts/feature/scroll.js
 
 
-import { AppDebug }                            from '../application/debug';
-import { appSetup }                            from '../application/setup';
-import { Emma }                                from '../shared/assets';
-import { selector, toggleHidden }              from '../shared/css';
-import { isMissing }                           from '../shared/definitions';
-import { handleClickAndKeypress, windowEvent } from '../shared/events';
-import { deepFreeze }                          from '../shared/objects';
+import { AppDebug }               from '../application/debug';
+import { appSetup }               from '../application/setup';
+import { Emma }                   from '../shared/assets';
+import { selector, toggleHidden } from '../shared/css';
+import { isMissing }              from '../shared/definitions';
+import { windowEvent }            from '../shared/events';
+import { deepFreeze }             from '../shared/objects';
+import {
+    currentFocusablesIn,
+    handleClickAndKeypress,
+} from '../shared/accessibility';
 
 
 const MODULE = 'Scroll';
@@ -139,7 +143,7 @@ appSetup(MODULE, function() {
     function scrollToTop() {
         OUT.debug('scrollToTop');
         $scroll_target[0].scrollIntoView();
-        //focusableIn($scroll_target).first().focus();
+        currentFocusablesIn($scroll_target).first().focus();
     }
 
     /**

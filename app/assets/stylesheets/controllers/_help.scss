@@ -408,10 +408,19 @@ body.help {
 
         // An inline rendering of the panel "More/Less" toggle button.
         .advanced-search-toggle {
+
             display:          inline;
             font-size:        inherit;
             color:            var(--rev-fg-color);
             border:           1px solid gray;
+
+            .symbol:not(:first-child) {
+                margin-left:  0.25rem;
+            }
+
+            .symbol:not(:last-child) {
+                margin-right: 0.25rem;
+            }
         }
 
         // Inline rendering of the "Sign in" button on the Bookshare login page

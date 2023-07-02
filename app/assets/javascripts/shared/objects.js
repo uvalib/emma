@@ -52,15 +52,21 @@ export function fromJSON(item, caller, reviver) {
  * @returns {T}
  */
 export function compact(item, trim) {
-    if (Array.isArray(item)) {
+    if (item instanceof Node) {
+        return item;
+
+    } else if (item instanceof jQuery) {
+        return item;
+
+    } else if (typeof item === 'string') {
+        return (trim === false) ? `${item}` : item.trim();
+
+    } else if (Array.isArray(item)) {
         return item.map(v => compact(v, trim)).filter(v => isPresent(v));
 
     } else if (isObject(item)) {
         const pr = objectEntries(item).map(([k,v]) => [k, compact(v, trim)]);
         return Object.fromEntries(pr.filter(([_,v]) => isPresent(v)));
-
-    } else if (typeof item === 'string') {
-        return (trim === false) ? `${item}` : item.trim();
 
     } else {
         return item;
@@ -152,7 +158,11 @@ export function isObject(item, or_array) {
  * @returns {object|undefined}
  */
 export function asObject(item) {
-    return isObject(item) ? (item.toObject?.() || item) : undefined;
+    if ($.isPlainObject(item)) {
+        return item;
+    } else if (isDefined(item?.toObject)) {
+        return item.toObject();
+    }
 }
 
 /**

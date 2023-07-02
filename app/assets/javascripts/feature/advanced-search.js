@@ -1,15 +1,19 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
-import { AppDebug }                      from '../application/debug';
-import { appSetup }                      from '../application/setup';
-import { toggleVisibility }              from '../shared/accessibility';
-import { arrayWrap, maxSize }            from '../shared/arrays';
-import { Emma }                          from '../shared/assets';
-import { HIDDEN, toggleHidden }          from '../shared/css';
-import { compact, deepFreeze, toObject } from '../shared/objects';
-import { randomizeName }                 from '../shared/random';
-import { urlParameters }                 from '../shared/url';
+import { AppDebug }                       from '../application/debug';
+import { appSetup }                       from '../application/setup';
+import { arrayWrap, maxSize }             from '../shared/arrays';
+import { Emma }                           from '../shared/assets';
+import { HIDDEN, isHidden, toggleHidden } from '../shared/css';
+import { debounce, handleEvent, isEvent } from '../shared/events';
+import { compact, deepFreeze, toObject }  from '../shared/objects';
+import { randomizeName }                  from '../shared/random';
+import { urlParameters }                  from '../shared/url';
+import {
+    toggleVisibility,
+    handleClickAndKeypress,
+} from '../shared/accessibility';
 import {
     isDefined,
     isEmpty,
@@ -17,12 +21,6 @@ import {
     isPresent,
     notDefined,
 } from '../shared/definitions';
-import {
-    debounce,
-    handleClickAndKeypress,
-    handleEvent,
-    isEvent,
-} from '../shared/events';
 
 
 const MODULE = 'AdvancedSearch';
@@ -319,6 +317,7 @@ appSetup(MODULE, function() {
         } else {
 
             guaranteeSearchButton();
+            reorderSearchControls();
 
             // If there is only one row of filter buttons, take away the
             // toggle and make sure that the panel is open (regardless of the
@@ -486,6 +485,24 @@ appSetup(MODULE, function() {
     }
 
     /**
+     * Re-arrange the search controls so that tabbing advances in the way
+     * defined by their *order* attribute defined by CSS styling.
+     *
+     * @see file:app/assets/stylesheets/layouts/header/_search.scss
+     */
+    function reorderSearchControls() {
+        const order    = (elem) => Number($(elem).css('order'));
+        const by_order = (elem1, elem2) => order(elem1) - order(elem2);
+        $('.search-controls').each((_, container) => {
+            const $container = $(container);
+            const $children  = $container.children();
+            const reordered  = $children.toArray().sort(by_order);
+            $children.detach();
+            $container.append(reordered);
+        });
+    }
+
+    /**
      * Add *immediate=true* as a hidden input to the search form and all
      * filter controls (menu form wrappers).
      *
@@ -534,7 +551,7 @@ appSetup(MODULE, function() {
         $rows.each((_, row) => {
             const $row      = $(row);
             const $input    = getSearchInput($row);
-            const ignore_if = $row.is(HIDDEN);
+            const ignore_if = isHidden($row);
             checkInput($input, ignore_if);
         });
 
@@ -654,12 +671,9 @@ appSetup(MODULE, function() {
      */
     function monitorSearchFields() {
 
-        const pause = DEBOUNCE_DELAY;
-
         handleEvent($search_input_select, 'change', updatedSearchType);
-
-        handleEvent($search_input, 'change', onChange);
-        handleEvent($search_input, 'input',  debounce(onInput, pause));
+        handleEvent($search_input,        'change', onChange);
+        handleEvent($search_input,        'input',  debounce(onInput));
 
         /**
          * Check readiness after the element's content changes.
@@ -1023,14 +1037,14 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function allSearchTerms(target, caller, new_only) {
-        const func  = caller || 'allSearchTerms';
-        let $rows   = target ? getSearchRow(target, func) : $search_bar_rows;
-        let queries = {}
-        $rows.each(function() {
-            let $row     = $(this);
-            let $input   = getSearchInput($row);
-            let $menu    = getSearchInputSelect($row);
-            const hidden = $row.is(HIDDEN);
+        const func    = caller || 'allSearchTerms';
+        const $rows   = target ? getSearchRow(target, func) : $search_bar_rows;
+        const queries = {}
+        $rows.each((_, row) => {
+            const $row   = $(row);
+            const $input = getSearchInput($row);
+            const $menu  = getSearchInputSelect($row);
+            const hidden = isHidden($row);
             const name   = $input.attr('name') || '';
             const type   = isPresent($menu) ? searchType($menu) : name;
             const value  = $input.val().trim();
@@ -1127,7 +1141,7 @@ appSetup(MODULE, function() {
         $menu.val(type);
         const $input = getSearchInput($row);
         $input.attr({ name: name, placeholder: config.placeholder });
-        $input.siblings('.search-input-label').val(config.label);
+        $input.siblings('.search-input-label').html(config.label);
 
         if (notDefined(set_original)) {
             const original = $menu.attr('data-original');
@@ -1204,27 +1218,32 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function allSearchFilters(target, caller, new_only) {
-        const func  = caller || 'allSearchFilters';
-        let filters = {}
-        getSearchFilter(target).each(function() {
-            let $control = $(this);
-            let $menu    = getSearchFilterMenu($control);
-            const name   = $menu.attr('name') || '';
-            const arr    = name.endsWith('[]');
-            const type   = arr ? name.replace('[]', '')  : name;
-            let value    = arr ? valueArray($menu.val()) : ($menu.val() || '');
+        const func    = caller || 'allSearchFilters';
+        const filters = {}
+        const array   = (item) => {
+            if (isEmpty(item))       { return [] }
+            if (Array.isArray(item)) { return item.sort() }
+            return item.split(',').sort();
+        };
+        getSearchFilter(target).each((_, element) => {
+            const $ctrl = $(element);
+            const $menu = getSearchFilterMenu($ctrl);
+            const name  = $menu.attr('name') || '';
+            const arr   = name.endsWith('[]');
+            const type  = arr ? name.replace('[]', '')  : name;
+            const value = arr ? array($menu.val()) : ($menu.val() || '');
 
             let skip;
             if (!name) {
                 skip = 'ignored';
-            } else if ($control.is(HIDDEN)) {
+            } else if (isHidden($ctrl)) {
                 skip = 'hidden';
             } else if (new_only) {
                 const original = $menu.attr('data-original');
                 const val      = value.toString();
                 if (notDefined(original) && !val) {
                     skip = 'empty value';
-                } else if (val === valueArray(original).toString()) {
+                } else if (val === array(original).toString()) {
                     skip = `"${val}" same as data-original`;
                 }
             }
@@ -1240,21 +1259,6 @@ appSetup(MODULE, function() {
             }
         });
         return filters;
-
-        /**
-         * Convert a <select> value to an array of selections.
-         *
-         * @param {string[]|string|undefined} item
-         *
-         * @returns {string[]}
-         */
-        function valueArray(item) {
-            if (isEmpty(item)) {
-                return [];
-            } else {
-                return (Array.isArray(item) ? item : item.split(',')).sort();
-            }
-        }
     }
 
     /**
@@ -1775,28 +1779,6 @@ appSetup(MODULE, function() {
             $result = $(container).find(selector);
         }
         return $result || $();
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

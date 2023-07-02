@@ -1,6 +1,8 @@
 # View helper methods supporting the creation of tree controls.
 #
 module TreeHelper
+  include HtmlHelper
+
   include PanelHelper
 
   # Configuration for tree control properties.

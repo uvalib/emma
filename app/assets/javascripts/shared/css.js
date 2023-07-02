@@ -5,7 +5,7 @@ import { AppDebug }                      from '../application/debug';
 import { arrayWrap }                     from './arrays';
 import { Emma }                          from './assets';
 import { isDefined, isEmpty, isPresent } from './definitions';
-import { compact, isObject }             from './objects';
+import { isObject }                      from './objects';
 
 
 AppDebug.file('shared/css');
@@ -49,7 +49,7 @@ export function toggleClass(target, cls, setting) {
 export function toggleHidden(target, hide) {
     const $target = $(target);
     $target.toggleClass(HIDDEN_MARKER, hide);
-    if (isDefined(hide) ? hide : $target.is(HIDDEN)) {
+    if (isDefined(hide) ? hide : isHidden($target)) {
         $target.attr('aria-hidden', true);
     } else {
         $target.removeAttr('aria-hidden');
@@ -80,22 +80,21 @@ export function isHidden(target) {
  * @returns {string[]}
  */
 export function cssClasses(...args) {
-    const result = [];
-    args.forEach(arg => {
-        let values = undefined;
+    // noinspection FunctionWithInconsistentReturnsJS
+    return args.map(arg => {
         if (typeof arg === 'string') {
-            values = arg.trim().replace(/[.\s]+/g, ' ').split(' ');
+            const vals = arg.replace(/[.\s]+/g, ' ').replace(/[#[]/g, ' $&');
+            return vals.trim().split(/\s*,\s*|\s+/);
+        } else if (arg instanceof Element) {
+            return [...arg.classList];
+        } else if (arg instanceof jQuery) {
+            return cssClasses(...arg.get());
         } else if (Array.isArray(arg)) {
-            values = cssClasses(...arg);
+            return cssClasses(...arg);
         } else if (isObject(arg)) {
-            values = arg['class'] && cssClasses(arg['class']);
+            return arg['class'] && cssClasses(arg['class']);
         }
-        values &&= compact(values);
-        if (isPresent(values)) {
-            result.push(...values);
-        }
-    });
-    return result;
+    }).flat().filter(v => isPresent(v));
 }
 
 /**
@@ -105,7 +104,7 @@ export function cssClasses(...args) {
  *
  * @returns {string}
  */
-export function cssClass(...args) {
+export function cssClassList(...args) {
     return cssClasses(...args).join(' ');
 }
 
@@ -120,52 +119,75 @@ export function selector(...args) {
     const func   = 'selector';
     const result = [];
     args.forEach(arg => {
-        let entry;
+        let insert, append;
         if (isEmpty(arg)) {
-            console.warn(`${func}: skipping empty ${typeof arg} = ${arg}`);
+            //console.warn(`${func}: skipping empty ${typeof arg} = ${arg}`);
 
         } else if (Array.isArray(arg)) {
-            entry = arg.map(v => v.trim().replace(/\s*,$/, ''));
-            entry = entry.map(v => v.startsWith('.') ? v : `.${v}`);
-            entry = entry.join(', ');
+            append = arg.map(v => selector(v)).join(', ');
 
         } else if (typeof arg === 'object') {
-            entry = arg['class'] && selector(arg['class']);
+            append = arg['class'] && selector(arg['class']);
 
         } else if (typeof arg !== 'string') {
             console.warn(`${func}: ignored ${typeof arg} = ${arg}`);
 
         } else if (arg === ',') {
-            entry = ', ';
+            append = ', ';
 
         } else if (arg.includes(',')) {
-            entry = arg.trim().replace(/\s*,\s*/g, ',').split(',');
-            entry = cssClasses(...entry);
-            entry = entry.map(v => v.startsWith('.') ? v : `.${v}`);
-            entry = entry.join(', ');
+            append = cssClasses(arg).map(v => selector(v)).join(', ');
 
         } else if (arg.includes(' ')) {
-            entry = arg.trim().replace(/\./g, ' ').split(/\s+/);
-            entry = '.' + entry.join('.');
+            append = cssClasses(arg).map(v => selector(v)).join('');
 
         } else if (arg[0] === '#') {    // ID selector
-            result.unshift(arg);
+            insert = arg;
 
         } else if (arg[0] === '[') {    // Attribute selector
-            result.unshift(arg);
+            insert = arg;
 
         } else if (arg[0] === '.') {    // CSS class selector
-            entry = arg;
+            append = arg;
 
         } else {                        // CSS class
-            entry = `.${arg}`;
+            append = `.${arg}`;
         }
-        entry = compact(entry);
-        if (isPresent(entry)) {
-            result.push(entry);
-        }
+        insert && result.unshift(insert);
+        append && result.push(append);
     });
-    return result.join('').trim();
+    return result.join('').trim().replace(/\s*,$/, '');
+}
+
+/**
+ * Make a selector out of an array of attributes.
+ *
+ * @param {string|string[]|[string,string][]|Object.<string,string>} attributes
+ *
+ * @returns {string}
+ */
+export function attributeSelector(attributes) {
+    if (isEmpty(attributes)) { return '' }
+
+    let attr = attributes;
+    if (typeof attr === 'string') {
+        attr = attr.split(',');
+    } else if (isObject(attr)) {
+        attr = Object.entries(attr);
+    } else if (!Array.isArray(attr)) {
+        attr = arrayWrap(attr);
+    } else if (!Array.isArray(attr[0])) {
+        attr = attr.join(',').split(',');
+    }
+
+    if (Array.isArray(attr[0])) {
+        attr = attr.map(([k,v]) => [k, (v ? `${v}`.trim() : '')]);
+        attr = attr.map(([k,v]) => `[${k}="${v}"]`);
+    } else {
+        attr = attr.map(v => v && `${v}`.trim()).filter(v => v);
+        attr = attr.map(v => v.match(/^\[.*]$/) ? v : `[${v}]`);
+    }
+    return attr.join(', ');
 }
 
 /**
@@ -176,15 +198,10 @@ export function selector(...args) {
  *
  * @returns {string}
  */
-export function elementSelector(element) {
+export function elementName(element) {
     const e = $(element)[0];
-    if (!e) {
-        return '';
-    } else if (e.id) {
-        return `#${e.id}`;
-    } else if (e.className) {
-        return e.localName + '.' + e.className.replace(/\s+/g, '.');
-    } else {
-        return e.localName;
-    }
+    if (!e)   { return '' }
+    if (e.id) { return `#${e.id}` }
+    const [name, css] = [e.localName, e.className];
+    return css ? [name, ...css.split(/\s+/)].join('.') : name;
 }

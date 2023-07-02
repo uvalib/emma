@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/channel-request.js
 
 
-import { AppDebug }              from '../application/debug';
-import { arrayWrap }             from './arrays'
-import { BaseClass }             from './base-class';
-import { isPresent, notDefined } from './definitions';
-import { fromJSON, toObject }    from './objects';
+import { AppDebug }                       from '../application/debug';
+import { arrayWrap }                      from './arrays'
+import { BaseClass }                      from './base-class';
+import { isEmpty, isPresent, notDefined } from './definitions';
+import { fromJSON, toObject }             from './objects';
 
 
 const MODULE = 'ChannelRequest';
@@ -212,10 +212,10 @@ export class ChannelRequest extends BaseClass {
      * @param {*} [item]
      * @param {*} [args]
      *
-     * @returns {ChannelRequest}
+     * @returns {this}
      */
     static wrap(item, ...args) {
-        if ((item instanceof this) && notDefined(args)) {
+        if ((item instanceof this) && isEmpty(args)) {
             return item;
         } else {
             return new this(item, ...args);

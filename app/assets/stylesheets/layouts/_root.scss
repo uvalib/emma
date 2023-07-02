@@ -3,89 +3,66 @@
 @use 'shared/variables' as *;
 
 //=============================================================================
-// Desktop root definitions (specific to large screens)
-//=============================================================================
-
-@media #{$wide-screen} {
-    :root {
-
-        // Scale.
-
-        --page-padding:    2rem;
-        --flex-gap:        1rem;
-        --gap:             0.5rem;
-        --scroll-easement: 0;
-
-        // Dimensions.
-
-        --thumbnail-max-x: auto;
-        --thumbnail-max-y: #{$nominal-thumbnail-y};
-    }
-}
-
-//=============================================================================
-// Tablet root definitions (specific to medium screens)
-//=============================================================================
-
-@media #{$medium-width} {
-    :root {
-
-        // Scale.
-
-        --page-padding:    0.75rem;
-        --flex-gap:        0.25rem;
-        --gap:             0.25rem;
-        --scroll-easement: #{$nominal-easement};
-
-        // Dimensions.
-
-        --thumbnail-max-x: #{$nominal-thumbnail-x};
-        --thumbnail-max-y: #{$nominal-thumbnail-x};
-    }
-}
-
-//=============================================================================
-// Mobile root definitions (specific to small screens)
-//=============================================================================
-
-@media #{$narrow-screen} {
-    :root {
-
-        // Scale.
-
-        --page-padding:    0.75rem;
-        --flex-gap:        0.25rem;
-        --gap:             0.25rem;
-        --scroll-easement: #{$nominal-easement};
-
-        // Dimensions.
-
-        --thumbnail-max-x: #{$nominal-thumbnail-x};
-        --thumbnail-max-y: #{$nominal-thumbnail-x};
-    }
-}
-
-//=============================================================================
-// Responsive definitions.
+// Basic scaling definitions
 //=============================================================================
 
 :root {
+    @media #{$wide-screen} { // Specific to large screens (e.g. desktop)
+        --page-padding-x:   2vw;
+        --page-padding-y:   2vh;
+        --flex-gap-x:       1vw;
+        --flex-gap-y:       1vh;
+        --gap-x:            0.5vw;
+        --gap-y:            0.5vh;
+    }
+    @media #{$medium-width} { // Specific to medium screens (e.g. tablet)
+        --page-padding-x:   0.75vw;
+        --page-padding-y:   0.75vh;
+        --flex-gap-x:       0.25vw;
+        --flex-gap-y:       0.25vh;
+        --gap-x:            0.25vw;
+        --gap-y:            0.25vh;
+    }
+    @media #{$narrow-screen} { // Specific to small screens  (e.g. mobile)
+        --page-padding-x:   0.75vw;
+        --page-padding-y:   0.75vh;
+        --flex-gap-x:       0.25vw;
+        --flex-gap-y:       0.25vh;
+        --gap-x:            0.25vw;
+        --gap-y:            0.25vh;
+    }
+}
 
-    // Dimensions.
+//=============================================================================
+// Other dimension definitions
+//=============================================================================
 
-    --page-padding-x:    var(--page-padding);
-    --page-padding-y:    calc(var(--page-padding) / 2);
+:root {
+    @media #{$wide-screen} {
+        --scroll-easement-x: 0;
+        --scroll-easement-y: 0;
+        --thumbnail-max-x:   auto;
+        --thumbnail-max-y:   #{$nominal-thumbnail-y};
+    }
+    @media #{$medium-width} {
+        --scroll-easement-x: #{$nominal-easement};
+        --scroll-easement-y: 0;
+        --thumbnail-max-x:   #{$nominal-thumbnail-x};
+        --thumbnail-max-y:   #{$nominal-thumbnail-x};
+    }
+    @media #{$narrow-screen} {
+        --scroll-easement-x: #{$nominal-easement};
+        --scroll-easement-y: 0;
+        --thumbnail-max-x:   #{$nominal-thumbnail-x};
+        --thumbnail-max-y:   #{$nominal-thumbnail-x};
+    }
+}
 
-    --flex-gap-x:        var(--flex-gap);
-    --flex-gap-y:        var(--flex-gap);
+//=============================================================================
+// Color scheme definitions.
+//=============================================================================
 
-    --gap-x:             var(--gap);
-    --gap-y:             var(--gap);
-
-    --scroll-easement-x: var(--scroll-easement);
-    --scroll-easement-y: 0;
-
-    // Color scheme.
+:root {
 
     --fg-color:          #{$text-fg};
     --bg-color:          #{$text-bg};
@@ -138,7 +115,7 @@ body {
         position: relative;
 
         @media #{$narrow-screen} {
-            margin-top: $page-padding;
+            margin-top: $page-padding-y;
         }
     }
 

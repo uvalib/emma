@@ -267,10 +267,6 @@
         box-shadow:      0 0 0.5rem 0.25rem v.$uva-accent-orange;
     }
 
-    &:focus:hover {
-        outline-color:   transparent;
-    }
-
     &.forbidden:focus,
     &.forbidden:hover {
         text-decoration: none;
@@ -289,10 +285,9 @@
     display:            flex;
     flex-direction:     row;
     justify-content:    space-between;
-    width:              inherit;
     margin:             0;
     color:              var(--rev-fg-color);
-    background-color:   var(--rev-bg-color);
+    background:         var(--rev-bg-color);
 
     --focus-color:      var(--rev-focus-color);
 
@@ -302,13 +297,12 @@
 
     // noinspection CssReplaceWithShorthandSafely
     @media #{v.$not-wide-screen} {
-        padding:        calc(2 * #{v.$page-padding-y});
-        padding-left:   v.$page-padding-x;
-        padding-right:  calc(#{v.$page-padding-x} + #{v.$scroll-easement});
+        padding:        calc(2 * #{v.$page-padding-y}) v.$page-padding-x;
+        padding-right:  calc(#{v.$page-padding-x} + #{v.$scroll-easement-x});
     }
 
     * {
-        margin: auto 0;
+        margin: 0;
         color:  var(--rev-fg-color);
     }
 

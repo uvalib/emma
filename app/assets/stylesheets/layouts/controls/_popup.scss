@@ -117,7 +117,8 @@
 
             @include button.basic;
 
-            margin: 0;
+            margin-left:        0;
+            margin-right:       0;
 
             @media #{$not-narrow-screen} {
                 margin-top:     1rem;

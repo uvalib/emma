@@ -172,7 +172,7 @@ class AccountDecorator
   #
   # @return [Hash]
   #
-  def table_columns: (**untyped opt) -> anyHash
+  def table_values: (**untyped opt) -> anyHash
 
   # Patterns for User record columns which are not included for
   # non-developers.

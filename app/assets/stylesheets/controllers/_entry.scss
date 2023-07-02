@@ -309,10 +309,6 @@ form.select-entry {
         border:        1px solid #14457f;
         border-radius: 0.125rem;
 
-        &:focus:hover {
-            outline-color: transparent;
-        }
-
         option:first-of-type {
             //display: none;
         }
@@ -325,7 +321,7 @@ form.select-entry {
 
     .selected-header {
 
-        margin:    $page-padding 0;
+        margin:    $page-padding-y 0;
         font-size: large;
 
         .item {
@@ -481,7 +477,7 @@ form.select-entry {
     }
 
     // Scrollable container for multi-select checkboxes.
-    .menu.multi {
+    .menu.multi:not([role="listbox"]) {
 
         @include scrollable-limits;
 
@@ -496,17 +492,20 @@ form.select-entry {
             line-height:    1.625;
         }
 
-        > .multi {
+        .menu.multi[role="listbox"] {
 
             @include scrollable-field;
 
-            display:               grid;
-            grid-template-columns: [checkbox] auto [label] 1fr;
-            align-items:           center;
-            column-gap:            $checkbox-x-gap;
+            display:      grid;
+            align-items:  center;
+            column-gap:   $checkbox-x-gap;
 
-            height:     auto;
-            max-height: 20vh;
+            height:       auto;
+            max-height:   20vh;
+            margin:       0;
+            padding-left: 0.125rem;
+
+            grid-template-columns: [checkbox] auto [label] 1fr;
 
             &:focus {
                 outline-offset: 0.5rem;
@@ -522,9 +521,13 @@ form.select-entry {
                 display: contents;
 
                 input {
+
+                    margin-right: 0;
+
                     @media #{$not-wide-screen} {
                         transform: scale(1.375);
                     }
+
                     &:focus {
                         @media #{$wide-screen} {
                             outline-offset: 3px;
@@ -566,8 +569,12 @@ form.select-entry {
 
     // Prevent the checkbox entries from being changeable when the container is
     // sealed.
-    .menu.multi.sealed > .multi > * {
-        pointer-events: none;
+    .menu.multi.sealed {
+        .menu.multi[role="listbox"] {
+            > * {
+                pointer-events: none;
+            }
+        }
     }
 
     //=========================================================================
@@ -817,6 +824,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             background:     $slider-bg;
             border-radius:  $toggle-height;
             transition:     transform 0.25s ease;
+        }
+
+        // A holder for text to be used as the accessible name.
+        .state {
+            display: none;
         }
     }
 

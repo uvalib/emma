@@ -53,24 +53,26 @@ module LayoutHelper::PageControls
   # @return [nil]                       If no page_controls configured.
   #
   def render_page_controls(css: '.page-controls', **opt)
-    opt        = request_parameters.merge(opt)
-    id         = opt[:selected] || opt[:id]
-    controller = opt[:controller].to_sym
-    action     = opt[:action].to_sym
-    ca_opt     = { controller: controller, action: action }
-    actions    = page_control_actions(**ca_opt).presence or return
+    opt     = request_parameters.merge(opt)
+    id      = opt[:selected] || opt[:id]
+    ctrlr   = opt[:controller].to_sym
+    action  = opt[:action].to_sym
+    ca_opt  = { controller: ctrlr, action: action }
+    actions = page_control_actions(**ca_opt).presence or return
+    anchor  = "#{action}-page-controls"
+    lbl_id  = opt.delete(:label_id) || css_randomize(anchor)
 
-    anchor     = "#{action}-page-controls"
-    label_id   = opt.delete(:label_id) || css_randomize(anchor)
-    label_opt  = { class: 'label', id: label_id }
-    label      = html_div(label_opt) { page_controls_label(**opt) }
+    skip_nav_prepend(ctrlr => anchor)
 
-    controls =
-      html_div(class: 'controls', id: anchor, 'aria-labelledby': label_id) do
-        page_controls(*actions, **ca_opt, id: id)
+    label =
+      html_div(class: 'label', id: lbl_id) do
+        page_controls_label(**opt)
       end
 
-    skip_nav_prepend(controller => anchor)
+    controls =
+      html_div(class: 'controls', id: anchor, 'aria-labelledby': lbl_id) do
+        page_controls(*actions, id: id, **ca_opt)
+      end
 
     html_div(class: css_classes(css)) do
       label << controls
@@ -176,10 +178,9 @@ module LayoutHelper::PageControls
       label   = config_lookup('label',   **cfg_opt)
       tip     = config_lookup('tooltip', **cfg_opt)
     end
-    if tip
-      opt[:link_opt] ||= {}
-      opt[:link_opt][:title] = tip
-    end
+    link_opt = opt[:link_opt] ||= {}
+    link_opt[:role]  ||= 'button'
+    link_opt[:title] ||= tip  if tip
     # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     link_to_action(label, **opt)
   end

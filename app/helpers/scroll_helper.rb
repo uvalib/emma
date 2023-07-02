@@ -35,7 +35,7 @@ module ScrollHelper
     type:     'button',
     class:    'scroll-to-top',
     label:    UP_TRIANGLE, # TODO: I18n
-    tooltip:  'Go back to the top of the page', # TODO: I18n
+    tooltip:  'Go back to the top of the main content area', # TODO: I18n
   }.freeze
 
   # Default properties for the scroll-down-to-top button.
@@ -46,7 +46,7 @@ module ScrollHelper
     type:     'button',
     class:    'scroll-down-to-top',
     label:    DOWN_TRIANGLE, # TODO: I18n
-    tooltip:  'Align with the top of the page', # TODO: I18n
+    tooltip:  'Align with the top of the main content area', # TODO: I18n
   }
 
   # ===========================================================================

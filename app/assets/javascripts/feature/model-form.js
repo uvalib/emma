@@ -1,22 +1,26 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import { AppDebug }                   from '../application/debug';
-import { appSetup }                   from '../application/setup';
-import { delegateInputClick }         from '../shared/accessibility';
-import { arrayWrap }                  from '../shared/arrays';
-import { Emma }                       from '../shared/assets';
-import { pageController }             from '../shared/controller';
-import { htmlDecode, scrollIntoView } from '../shared/html';
-import { HTTP }                       from '../shared/http';
-import { LookupModal }                from '../shared/lookup-modal';
-import { LookupRequest }              from '../shared/lookup-request';
-import { K, asSize }                  from '../shared/math';
-import { SearchInProgress }           from '../shared/search-in-progress';
-import { SingleUploader }             from '../shared/uploader';
-import { cancelAction, makeUrl }      from '../shared/url';
-import { transientError }             from '../shared/xhr';
-import { Rails }                      from '../vendor/rails';
+import { AppDebug }                        from '../application/debug';
+import { appSetup }                        from '../application/setup';
+import { arrayWrap }                       from '../shared/arrays';
+import { Emma }                            from '../shared/assets';
+import { pageController }                  from '../shared/controller';
+import { FORM_FIELD, turnOffAutocomplete } from '../shared/form';
+import { HTTP }                            from '../shared/http';
+import { LOOKUP_BUTTON, LookupModal }      from '../shared/lookup-modal';
+import { LookupRequest }                   from '../shared/lookup-request';
+import { K, asSize }                       from '../shared/math';
+import { CheckboxGroup, TextInputGroup }   from '../shared/nav-group';
+import { SearchInProgress }                from '../shared/search-in-progress';
+import { SingleUploader, UPLOADER }        from '../shared/uploader';
+import { cancelAction, makeUrl }           from '../shared/url';
+import { transientError }                  from '../shared/xhr';
+import { Rails }                           from '../vendor/rails';
+import {
+    delegateInputClick,
+    handleClickAndKeypress,
+} from '../shared/accessibility';
 import {
     selector,
     toggleClass,
@@ -28,10 +32,10 @@ import {
     isMissing,
     isPresent,
     notDefined,
+    presence,
 } from '../shared/definitions';
 import {
-    debounce,
-    handleClickAndKeypress,
+    delayedBy,
     handleEvent,
     onPageExit,
 } from '../shared/events';
@@ -42,9 +46,12 @@ import {
     flashMessage,
 } from '../shared/flash';
 import {
-    FORM_FIELD,
-    turnOffAutocomplete,
-} from '../shared/form';
+    CHECKBOX,
+    htmlDecode,
+    sameElements,
+    scrollIntoView,
+    selfOrParent,
+} from '../shared/html';
 import {
     compact,
     deepDup,
@@ -407,7 +414,7 @@ appSetup(MODULE, function() {
      *
      * @see monitorInputFields
      */
-    const DEBOUNCE_DELAY = 500; // milliseconds
+    const REVALIDATE_DELAY = 500;
 
     /**
      * Current controller.
@@ -455,6 +462,8 @@ appSetup(MODULE, function() {
     const CANCEL_BUTTON_CLASS   = 'cancel-button';
     const FIELD_GROUP_CLASS     = 'field-group';
     const FIELD_CONTAINER_CLASS = 'form-fields';
+    const SYMBOL_CLASS          = 'symbol';
+
     const VALID_MARKER          = 'valid';
     const INVALID_MARKER        = 'invalid';
     const REQUIRED_MARKER       = 'required';
@@ -470,6 +479,8 @@ appSetup(MODULE, function() {
     const CANCEL_BUTTON         = selector(CANCEL_BUTTON_CLASS);
     const FIELD_GROUP           = selector(FIELD_GROUP_CLASS);
     const FIELD_CONTAINER       = selector(FIELD_CONTAINER_CLASS);
+    const SYMBOL                = selector(SYMBOL_CLASS);
+
     const VALID                 = selector(VALID_MARKER);
     const INVALID               = selector(INVALID_MARKER);
   //const REQUIRED              = selector(REQUIRED_MARKER);
@@ -584,13 +595,6 @@ appSetup(MODULE, function() {
     const SEALED        = selector(SEALED_MARKER);
 
     // ========================================================================
-    // Constants - bibliographic lookup
-    // ========================================================================
-
-    const LOOKUP_BUTTON_CLASS = 'lookup-button';
-    const LOOKUP_BUTTON       = selector(LOOKUP_BUTTON_CLASS);
-
-    // ========================================================================
     // Constants - Bulk operations
     // ========================================================================
 
@@ -652,7 +656,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const TMP_LINE = 'Uploading...'; // TODO: I18n
+    const TMP_LINE_TEXT = 'Uploading...'; // TODO: I18n
 
     // ========================================================================
     // Functions - Uploader
@@ -671,7 +675,7 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#model_form"
      */
     function isFileUploader(form) {
-        return formElement(form).is(SingleUploader.UPLOADER);
+        return formElement(form).is(UPLOADER);
     }
 
     /**
@@ -998,7 +1002,7 @@ appSetup(MODULE, function() {
         const $results = bulkOpResults();
         const $label   = bulkOpResultsLabel($results);
         $results.removeClass(OLD_DATA_MARKER).empty();
-        addBulkOpResult($results, TMP_LINE, TMP_LINE_CLASS);
+        addBulkOpResult($results, TMP_LINE_TEXT, TMP_LINE_CLASS);
         $label.text('Upload results:'); // TODO: I18n
         toggleHidden($label,   false);
         toggleHidden($results, false);
@@ -1061,10 +1065,11 @@ appSetup(MODULE, function() {
         function addNewLines(list) {
             if (isPresent(list)) {
                 /** @type {jQuery} */
-                const $lines = $results.children();
+                const $lines   = $results.children();
+                const tmp_line = selector(TMP_LINE_CLASS);
 
                 // Remove initialization line(s) if present.
-                $lines.filter('.' + TMP_LINE_CLASS).remove();
+                $lines.filter(tmp_line).remove();
 
                 // Add a line for each record.
                 let row   = $lines.length;
@@ -1512,7 +1517,6 @@ appSetup(MODULE, function() {
         const label   = submitLabel($form);
         const tip     = submitTooltip($form);
         const $button = submitButton($form).attr('title', tip).text(label);
-        handleClickAndKeypress($button, clearFlashMessages);
         handleClickAndKeypress($button, startSubmission);
     }
 
@@ -1527,7 +1531,6 @@ appSetup(MODULE, function() {
         const label   = cancelLabel($form);
         const tip     = cancelTooltip($form);
         const $button = cancelButton($form).attr('title', tip).text(label);
-        handleClickAndKeypress($button, clearFlashMessages);
         handleClickAndKeypress($button, cancelSubmission);
     }
 
@@ -1622,15 +1625,15 @@ appSetup(MODULE, function() {
         const $field = $(field);
 
         if ($field.is(`fieldset${INPUT_MULTI}`)) {
-            updateFieldsetInputs($field, new_value, trim, init);
+            updateInputGroup($field, new_value, trim, init);
 
         } else if ($field.is(MENU_MULTI)) {
-            updateFieldsetCheckboxes($field, new_value, init);
+            updateCheckboxGroup($field, new_value, init);
 
         } else if ($field.is(MENU_SINGLE)) {
             updateMenu($field, new_value, init);
 
-        } else if ($field.is('[type="checkbox"]')) {
+        } else if ($field.is(CHECKBOX)) {
             updateCheckboxInputField($field, new_value, init);
 
         } else if ($field.is('textarea')) {
@@ -1642,40 +1645,45 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the input field collection and label for a <fieldset> and its
-     * enclosed set of text inputs.
+     * Update the input field collection and label for a {@link TEXT_GROUP} and
+     * its enclosed set of text inputs.
      *
      * @param {Selector}             target
      * @param {string|string[]|null} [new_value]
      * @param {boolean}              [trim]     If **false**, keep white space.
      * @param {boolean}              [init]     If **true**, initializing.
      *
+     * @returns {undefined}
+     *
      * @see "BaseDecorator::Form#render_form_input_multi"
      */
-    function updateFieldsetInputs(target, new_value, trim, init) {
+    function updateInputGroup(target, new_value, trim, init) {
+        const func   = 'updateInputGroup';
+        const $field = selfOrParent(target, '[data-field]');
 
-        const $fieldset = $(target);
-        const $inputs   = $fieldset.find('input');
+        if (isEmpty($field)) {
+            return OUT.error(`${func}: no data-field for`, target);
+        }
 
         // If multiple values are provided, they are treated as a complete
         // replacement for the existing set of values.
-        let value, values;
+        const $inputs = TextInputGroup.controls($field);
         if (Array.isArray(new_value) || (new_value === null)) {
-            values = compact(new_value || []);
-            $inputs.each(function(i) {
-                value = values[i];
+            const new_values = compact(new_value || []);
+            $inputs.each((index, input) => {
+                let value = new_values[index];
                 if (init && !value) {
                     value = '';
                 }
                 if (isDefined(value)) {
-                    setValue(this, value, true, init);
+                    setValue(input, value, true, init);
                 }
             });
         } else {
             // Initialize original values for all elements.
             $inputs.each((_, input) => setOriginalValue(input));
             if (new_value) {
-                value = new_value;
+                let value = new_value;
                 if ((trim !== false) && (typeof value === 'string')) {
                     value = value.trim();
                 }
@@ -1704,31 +1712,35 @@ appSetup(MODULE, function() {
         }
 
         // Enumerate the valid inputs and update the fieldset.
-        values = [];
-        $inputs.each(function() {
-            if (this.value) { values.push(this.value) }
-        });
-        updateFieldAndLabel($fieldset, values);
+        const values = $inputs.map((_, cb) => cb.value).filter(v => v);
+        updateFieldAndLabel($field, values);
     }
 
     /**
-     * Update the input field collection and label for a <fieldset> and its
-     * enclosed set of checkboxes.
+     * Update the input field collection and label for a {@link CB_GROUP}
+     * and its enclosed set of checkboxes.
      *
      * @param {Selector}             target
      * @param {string|string[]|null} [setting]
      * @param {boolean}              [init]     If **true**, in initialization.
      *
+     * @returns {undefined}
+     *
      * @see "BaseDecorator::Form#render_form_menu_multi"
      */
-    function updateFieldsetCheckboxes(target, setting, init) {
+    function updateCheckboxGroup(target, setting, init) {
+        const func   = 'updateCheckboxGroup';
+        const $field = selfOrParent(target, '[data-field]');
 
-        const $fieldset   = $(target);
-        const $checkboxes = $fieldset.find('input[type="checkbox"]');
+        if (isEmpty($field)) {
+            return OUT.error(`${func}: no data-field for`, target);
+        }
 
         // If a value is provided, use it to define the state of the contained
         // checkboxes if it is an array, or to set a specific checkbox if it
         // is a string.
+        const group       = CheckboxGroup.setupFor($field);
+        const $checkboxes = group?.controls || CheckboxGroup.controls($field);
         if (Array.isArray(setting) || (setting === null)) {
             const values = compact(setting || []);
             $checkboxes.each((_, cb) => {
@@ -1748,40 +1760,40 @@ appSetup(MODULE, function() {
         }
 
         // Enumerate the checked items and update the fieldset.
-        const checked = [];
-        $checkboxes.each(function() {
-            if (this.checked) { checked.push(this.value) }
-        });
-        updateFieldAndLabel($fieldset, checked);
+        const $checked = $checkboxes.filter((_, cb) => cb.checked);
+        const values   = $checked.map((_, cb) => cb.value);
+        updateFieldAndLabel($field, values);
     }
 
     /**
      * Update the input field and label for a `<input type="checkbox">`. <p/>
      *
-     * For this type, the checkbox is within a hierarchy under a <fieldset>
-     * element which is a sibling of the label element associated with any of
-     * the contained checkboxes.
+     * For this type, the checkbox is within a hierarchy under a group element
+     * which is a sibling of the label element associated with any of the
+     * contained checkboxes.
      *
      * @param {Selector}       target
      * @param {string|boolean} [setting]
-     * @param {boolean}        [init]       If *true*, in initialization phase.
+     * @param {boolean}        [init]       If **true**, initialization phase.
+     *
+     * @returns {undefined}
      */
     function updateCheckboxInputField(target, setting, init) {
-        const func      = 'updateCheckboxInputField';
-        const $input    = $(target);
-        const $fieldset = $input.parents('[data-field]').first();
-        const checkbox  = $input[0];
-        let checked     = undefined;
-        if (notDefined(setting)) {
-            checked = checkbox.checked;
-        } else if (typeof setting === 'boolean') {
-            checked = setting;
-        } else if (setting === checkbox.value) {
-            checked = true;
-        } else if (setting === 'true') {
-            checked = true;
-        } else if (setting === 'false') {
-            checked = false;
+        const func   = 'updateCheckboxInputField';
+        const $input = $(target);
+        const $field = selfOrParent($input, '[data-field]');
+
+        if (isEmpty($field)) {
+            return OUT.error(`${func}: no data-field for`, target);
+        }
+
+        const checkbox = $input[0];
+        let checked;
+        switch (setting) {
+            case true:  case 'true':    checked = true;             break;
+            case false: case 'false':   checked = false;            break;
+            case checkbox.value:        checked = true;             break;
+            default:                    checked = checkbox.checked; break;
         }
 
         if (isDefined(checked)) {
@@ -1790,8 +1802,8 @@ appSetup(MODULE, function() {
             OUT.warn(`${func}: unexpected:`, setting);
         }
 
-        // Update the enclosing fieldset.
-        updateFieldsetCheckboxes($fieldset, undefined, init);
+        // Update the enclosing listbox.
+        updateCheckboxGroup($field, undefined, init);
     }
 
     /**
@@ -1803,18 +1815,27 @@ appSetup(MODULE, function() {
      * @param {string|null}    [new_value]
      * @param {boolean}        [init]       If **true**, initialization phase.
      *
+     * @returns {undefined}
+     *
      * @see "BaseDecorator::Form#render_form_menu_single"
      */
     function updateMenu(target, new_value, init) {
+        const func   = 'updateMenu';
         const $input = $(target);
-        let value    = new_value;
+        const $field = selfOrParent($input, '[data-field]');
+
+        if (isEmpty($field)) {
+            return OUT.error(`${func}: no data-field for`, target);
+        }
+
+        let value = new_value;
         if (Array.isArray(value)) {
             value = compact(value)[0];
         } else if (notDefined(value)) {
             value = $input.val();
         }
         setValue($input, value, true, init);
-        updateFieldAndLabel($input, $input.val());
+        updateFieldAndLabel($field, $input.val());
     }
 
     /**
@@ -1827,11 +1848,20 @@ appSetup(MODULE, function() {
      * @param {boolean}     [trim]        If **false**, don't trim white space.
      * @param {boolean}     [init]        If **true**, in initialization phase.
      *
+     * @returns {undefined}
+     *
      * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextAreaField(target, new_value, trim, init) {
+        const func   = 'updateTextAreaField';
         const $input = $(target);
-        let value    = new_value;
+        const $field = selfOrParent($input, '[data-field]');
+
+        if (isEmpty($field)) {
+            return OUT.error(`${func}: no data-field for`, target);
+        }
+
+        let value = new_value;
         if (value !== null) {
             if (notDefined(value)) {
                 value = $input.val();
@@ -1841,7 +1871,7 @@ appSetup(MODULE, function() {
             }
         }
         setValue($input, value, trim, init);
-        updateFieldAndLabel($input, $input.val());
+        updateFieldAndLabel($field, $input.val());
     }
 
     /**
@@ -1855,11 +1885,20 @@ appSetup(MODULE, function() {
      * @param {boolean}     [trim]        If **false**, don't trim white space.
      * @param {boolean}     [init]        If **true**, in initialization phase.
      *
+     * @returns {undefined}
+     *
      * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextInputField(target, new_value, trim, init) {
+        const func   = 'updateTextInputField';
         const $input = $(target);
-        let value    = new_value;
+        const $field = selfOrParent($input, '[data-field]');
+
+        if (isEmpty($field)) {
+            return OUT.error(`${func}: no data-field for`, target);
+        }
+
+        let value = new_value;
         if (Array.isArray(value)) {
             // noinspection JSUnresolvedFunction
             value = compact(value).join('; ');
@@ -1868,13 +1907,12 @@ appSetup(MODULE, function() {
         }
         setValue($input, value, trim, init);
 
-        // If this is one of a collection of text inputs under <fieldset> then
-        // it has to be handled differently.
-        if ($input.parent().hasClass(MULTI_CLASS)) {
-            const $fieldset = $input.parents('fieldset').first();
-            updateFieldsetInputs($fieldset, undefined, trim, init);
+        // If this is one of a collection of text inputs under `<fieldset>`
+        // then it has to be handled differently.
+        if (sameElements($input, $field)) {
+            updateFieldAndLabel($field, $input.val());
         } else {
-            updateFieldAndLabel($input, $input.val());
+            updateInputGroup($field, undefined, trim, init);
         }
     }
 
@@ -1916,13 +1954,13 @@ appSetup(MODULE, function() {
 
         // Determine the element for the named field.
         const $form = formElement();
-        let this_name, $this_input;
+        let this_name, $this_field;
         if (typeof name === 'string') {
             this_name   = name;
-            $this_input = $form.find(`[name="${this_name}"]`);
+            $this_field = $form.find(`[name="${this_name}"]`);
         } else {
-            $this_input = $(name);
-            this_name   = $this_input.attr('name');
+            $this_field = $(name);
+            this_name   = $this_field.attr('name');
         }
 
         /** @type {Relationship} */
@@ -1953,15 +1991,15 @@ appSetup(MODULE, function() {
 
         // Toggle state of the related element.
         let modified       = undefined;
-        const $other_input = $form.find(`[name="${other.name}"]`);
-        if (isPresent($other_input)) {
+        const $other_field = $form.find(`[name="${other.name}"]`);
+        if (isPresent($other_field)) {
             if (isTrue(other.required) || isFalse(other.unrequired)) {
                 modified = modifyOther(true, other.required_val);
             } else if (isTrue(other.unrequired) || isFalse(other.required)) {
                 modified = modifyOther(false, other.unrequired_val);
             }
             if (modified) {
-                updateFieldAndLabel($other_input, $other_input.val());
+                updateFieldAndLabel($other_field, $other_field.val());
             }
         }
         return { name: other.name, modified: modified };
@@ -1981,7 +2019,7 @@ appSetup(MODULE, function() {
         function isBoolean(v, is_true) {
             let result = v;
             if (typeof result === 'function') {
-                result = result($this_input);
+                result = result($this_field);
             }
             if (typeof result !== 'boolean') {
                 result = String(result).toLowerCase();
@@ -1992,18 +2030,18 @@ appSetup(MODULE, function() {
 
         function modifyOther(new_req, new_val) {
             let changed   = false;
-            const old_req = $other_input.attr('data-required')?.toString();
+            const old_req = $other_field.attr('data-required')?.toString();
             if (old_req !== new_req?.toString()) {
-                fieldRequired($other_input, new_req);
+                fieldRequired($other_field, new_req);
                 changed = true;
             }
-            if (isDefined(new_val) && ($other_input.val() !== new_val)) {
-                $other_input.val(new_val);
+            if (isDefined(new_val) && ($other_field.val() !== new_val)) {
+                $other_field.val(new_val);
                 // This shouldn't be necessary.
                 if ((this_name === 'rem_complete') &&
-                    (rawOriginalValue($other_input) === '(ALL)')) {
-                    setOriginalValue($other_input, '');
-                    $other_input.text(new_val);
+                    (rawOriginalValue($other_field) === '(ALL)')) {
+                    setOriginalValue($other_field, '');
+                    $other_field.text(new_val);
                 }
                 changed = true;
             }
@@ -2024,30 +2062,29 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#form_note_pair"
      */
     function updateFieldAndLabel(target, values) {
-        const $input   = $(target);
-        const field    = $input.attr('data-field');
+        const $field   = $(target);
+        const field    = $field.attr('data-field');
         /** @type {jQuery} */
-        const $label   = fieldLabel($input),
+        const $label   = fieldLabel($field),
               $status  = $label.find('.status-marker'),
-              $related = $input.siblings(`[data-for="${field}"]`);
-        const parts    = [$input, $label, $status, ...$related];
+              $related = $field.siblings(`[data-for="${field}"]`);
+        const parts    = [$field, $label, $status, ...$related];
 
-        if ($input.attr('readonly')) {
+        if ($field.attr('readonly')) {
 
             // Database fields should not be marked for validation.
             toggleClass(parts, 'valid invalid', false);
 
         } else {
 
-            const required = ($input.attr('data-required') === 'true');
-          //const optional = ($input.attr('data-required') === 'false');
+            const required = ($field.attr('data-required') === 'true');
             const missing  = isEmpty(values);
             let invalid    = required && missing;
 
             if (invalid) {
                 updateFieldState(false);
             } else {
-                validate($input, values, updateFieldState);
+                validate($field, values, updateFieldState);
             }
 
             function updateFieldState(valid, notes) {
@@ -2087,11 +2124,11 @@ appSetup(MODULE, function() {
 
                 // Update ARIA attributes on the input field.
                 if (required) {
-                    fieldAriaInvalid ($input, invalid);
-                    fieldAriaRequired($input, required);
-                } else if (fieldAriaRequired($input)) {
-                    fieldAriaInvalid ($input, false);
-                    fieldAriaRequired($input, false);
+                    fieldAriaInvalid( $field, invalid);
+                    fieldAriaRequired($field, required);
+                } else if (fieldAriaRequired($field)) {
+                    fieldAriaInvalid( $field, false);
+                    fieldAriaRequired($field, false);
                 }
 
                 // Update CSS status classes on all parts of the field.
@@ -2101,7 +2138,7 @@ appSetup(MODULE, function() {
                 toggleClass(parts, VALID_MARKER,    is_valid);
 
                 // Update the state of the lookup button if appropriate.
-                updateLookupCondition($input, field, is_valid);
+                updateLookupCondition($field, field, is_valid);
             }
         }
     }
@@ -2203,16 +2240,16 @@ appSetup(MODULE, function() {
      * in response to a change event, in which case the state change has
      * already happened so the old state is the opposite of the current state.
      *
-     * @param {Selector} target
+     * @param {Selector} checkbox
      * @param {boolean}  [new_state]
      * @param {boolean}  [init]       If **true**, in initialization phase.
      */
-    function setChecked(target, new_state, init) {
-        const $item = $(target);
+    function setChecked(checkbox, new_state, init) {
+        const $checkbox = $(checkbox);
         if (init) {
-            setOriginalValue($item, new_state);
+            setOriginalValue($checkbox, new_state);
         }
-        $item[0].checked = new_state;
+        $checkbox.prop('checked', new_state);
     }
 
     /**
@@ -2337,7 +2374,7 @@ appSetup(MODULE, function() {
         let value;
         if (typeof item === 'object') {
             const $i = $(item);
-            value = $i.is('[type="checkbox"]') ? $i[0].checked : $i.val();
+            value = $i.is(CHECKBOX) ? $i[0].checked : $i.val();
         } else {
             value = item;
         }
@@ -3119,7 +3156,6 @@ appSetup(MODULE, function() {
     function setupLookupButton(form) {
         const $button = lookupButtonInitialize(form);
         LookupModal.setupFor($button, onLookupStart, onLookupComplete);
-        handleClickAndKeypress($button, clearFlashMessages);
     }
 
     /**
@@ -3150,6 +3186,7 @@ appSetup(MODULE, function() {
      */
     function onLookupStart($toggle, check_only, halted) {
         if (check_only || halted) { return }
+        clearFlash();
         clearSearchResultsData($toggle);
         setSearchTermsData($toggle);
         setOriginalValues($toggle);
@@ -3551,7 +3588,7 @@ appSetup(MODULE, function() {
         const $fields = inputFields($form);
 
         handleEvent($fields, 'change', onChange);
-        handleEvent($fields, 'input',  debounce(onInput, DEBOUNCE_DELAY));
+        handleEvent($fields, 'input',  delayedBy(REVALIDATE_DELAY, onInput));
 
         /**
          * Revalidate the form after the element's content changes. <p/>
@@ -3681,6 +3718,7 @@ appSetup(MODULE, function() {
     function startSubmission(event) {
         const $button = $(event.target);
         const $form   = formElement($button);
+        clearFlash();
         setFormSubmitting($form);
     }
 
@@ -3706,10 +3744,9 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event} [event]
      */
     function cancelSubmission(event) {
-        event.stopPropagation();
-        event.preventDefault();
         const $button = $(event.target);
         const $form   = formElement($button);
+        clearFlash();
         if (!formState($form)) {
             setFormCanceled($form);
             if (PROPERTIES.Path.cancel) {
@@ -3720,6 +3757,8 @@ appSetup(MODULE, function() {
                 cancelAction($button);
             }
         }
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     /**
@@ -4199,15 +4238,16 @@ appSetup(MODULE, function() {
      */
     function setIcon(element, icon) {
         const $element = $(element);
+        const $icon    = presence($element.children(SYMBOL)) || $element;
         let old_icon   = $element.attr('data-icon');
         if (isMissing(old_icon)) {
-            old_icon = $element.text();
+            old_icon = $icon.text();
             if (isPresent(old_icon)) {
                 $element.attr('data-icon', old_icon);
             }
         }
         const new_icon = icon || PROPERTIES.Status.blank.label;
-        $element.text(new_icon);
+        $icon.text(new_icon);
     }
 
     /**
@@ -4217,8 +4257,9 @@ appSetup(MODULE, function() {
      */
     function restoreIcon(element) {
         const $element = $(element);
+        const $icon    = presence($element.children(SYMBOL)) || $element;
         const old_icon = $element.attr('data-icon') || '';
-        $element.text(old_icon);
+        $icon.text(old_icon);
     }
 
     // ========================================================================
@@ -4233,15 +4274,8 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function formElement(form) {
-        let $form = form && $(form);
-        if ($form && !$form.is(FORM_SELECTOR)) {
-            $form = $form.parents(FORM_SELECTOR);
-        }
-        if (isMissing($form)) {
-            const bulk = isMissing($model_form);
-            $form = bulk ? $bulk_op_form : $model_form;
-        }
-        return $form.first();
+        const $form = form && selfOrParent(form, FORM_SELECTOR);
+        return presence($form) || presence($bulk_op_form) || $model_form;
     }
 
     /**
@@ -4744,15 +4778,6 @@ appSetup(MODULE, function() {
      */
     function showFlashError(text) {
         FLASH_ERRORS && flashError(text);
-    }
-
-    /**
-     * Invoke clearFlash() and return void.
-     *
-     * @param {jQuery.Event} [_event]    Ignored.
-     */
-    function clearFlashMessages(_event) {
-        clearFlash();
     }
 
     // ========================================================================

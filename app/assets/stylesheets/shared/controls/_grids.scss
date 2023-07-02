@@ -142,3 +142,26 @@
         }
     }
 }
+
+//=============================================================================
+// Accessibility debugging
+//=============================================================================
+
+/// Dynamically colorize elements according to whether they are focusable.
+///
+/// To make use of this, scripting must ensure that all potentially focusable
+/// elements have `tabindex` applied (even elements like `<input>` that are
+/// implicitly in the tab order).
+///
+@mixin debug-focusables {
+
+    $no_focus:      #ff000020 !important;
+    $can_focus:     #00ff0040 !important;
+    $inner_focus:   #00ff0080 !important;
+
+    [tabindex="-1"]                         { background-color: $no_focus; }
+    [tabindex="0"]                          { background-color: $can_focus; }
+    [tabindex="0"] + label                  { background-color: $can_focus; }
+    [tabindex="-1"] [tabindex="0"]          { background-color: $inner_focus; }
+    [tabindex="-1"] [tabindex="0"] + label  { background-color: $inner_focus; }
+}

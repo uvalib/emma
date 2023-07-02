@@ -31,9 +31,6 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<button>' element.
   #
-  # If the label (first argument) is HTML or an icon then an accessible name is
-  # expected to be provided via #ARIA_LABEL_ATTRS or derivable from :title.
-  #
   # @param [Array<*>] args            Passed to #html_tag.
   # @param [Proc]     block           Passed to #html_tag.
   #
@@ -50,12 +47,14 @@ module HtmlHelper
   #
   # @param [String]   summary         The text visible when not expanded.
   # @param [Array<*>] content         Appended to the '.content' element.
-  # @param [Hash]     opt             Passed to the outer '<details>' element.
+  # @param [String]   id              Passed to the inner `<summary>` element.
+  # @param [String]   title           Passed to the inner `<summary>` element.
+  # @param [Hash]     opt             Passed to the outer `<details>` element.
   # @param [Proc]     block           Appended to the '.content' element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_details: (String summary, *String content, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_details: (String summary, *String content, ?id: String|nil, ?title: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Short-cut for generating an HTML element which normalizes element contents
   # provided via the parameter list and/or the block.
@@ -112,16 +111,13 @@ module HtmlHelper
 
   # An "empty" element that can be used as a placeholder.
   #
-  # @param [Hash] opt                         Passed to #html_div except for:
-  #
-  # @option opt [String]            :comment  The text of an HTML comment to
-  #                                             place inside the empty element.
-  # @option opt [Symbol,String,Integer] :tag  The HTML tag to use for the
-  #                                             element instead of *div*.
+  # @param [String, nil] comment      Text for an interior HTML comment.
+  # @param [Symbol]      tag          The HTML tag to use for the element.
+  # @param [Hash]        opt          Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def placeholder_element: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def placeholder_element: (?comment: String|nil, ?tag: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # HTML attributes which indicate specification of an accessible name.
   #
@@ -129,34 +125,85 @@ module HtmlHelper
   #
   ARIA_LABEL_ATTRS: symArray
 
-  # Return the text that will be used to identify the HTML element to be
-  # created with the given arguments.
+  # Indicate whether the HTML element to be created with the given arguments
+  # appears to have an accessible name.
   #
   # @param [Array<*>] args
   # @param [Hash]     opt
   #
-  # @return [String, nil]
+  def accessible_name?: (*untyped args, **untyped opt) -> bool
+
+  # A matcher for one or more symbol-like characters.
   #
-  def accessible_name: (*untyped args, **untyped opt) -> (String | nil)
+  # @type [Regexp]
+  #
+  SYMBOLS: Regexp
 
   # Indicate whether the string contains only characters that fall outside the
-  # normal ASCII range.  Always false if *value* is not a string.
+  # normal text range.  Always `false` if *text* is not a string.
   #
-  # @param [String, *] value
+  # @param [String, *] text
   #
-  def only_non_ascii?: (String  value) -> bool
-                     | (untyped value) -> false
+  def only_symbols?: (String  text) -> bool
+                   | (untyped text) -> false
 
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String] icon              Unicode character(s).
+  # @param [String] icon              Character(s) that should match #SYMBOLS.
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def symbol_icon: (String icon, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Pattern to #scan a string for HTML elements optionally preceded and
+  # followed by literal text.
+  #
+  # @type [Regexp]
+  #
+  FOR_ELEMENTS: Regexp
+
+  # If the text has any symbols in it, hide them from screen readers.
+  #
+  # If so, each run of one or more symbolic characters will be wrapped in
+  # span.symbol with 'aria-hidden' and all other runs of characters will be
+  # wrapped in span.text (unless *text* is already ActiveSupport::SafeBuffer).
+  #
+  # If not, *text* will be returned HTML-ready with no `<span>`s added.
+  #
+  # @param [String, nil] text
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def hide_symbols: ((String|nil) text) -> ActiveSupport::SafeBuffer
+
+  # Augment Emma::Common::FormatMethods#non_breaking to hide symbols from
+  # screen readers.
+  #
+  # @param [String, nil] text
+  # @param [Boolean]     show_symbols   If *true* don't #hide_symbols.
+  # @param [Hash]        opt            To super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see Emma::Common::FormatMethods#non_breaking
+  #
+  def non_breaking: (String? text, ?show_symbols: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Augment Emma::Common::FormatMethods#labelize to hide symbols from screen
+  # readers.
+  #
+  # @param [String, Symbol, nil]  text
+  # @param [Boolean]              show_symbols  If *true* don't #hide_symbols.
+  # @param [Hash]                 opt           To super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see Emma::Common::FormatMethods#labelize
+  #
+  def labelize: ((String|Symbol|nil) text, ?show_symbols: bool, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # A line added to tooltips to indicate a .sign-in-required link.
   #

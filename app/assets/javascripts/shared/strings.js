@@ -95,47 +95,44 @@ export function interpolate(item, values) {
  * @returns {string}
  */
 export function asString(item, limit) {
-    const s_quote = "'";
-    const d_quote = '"';
-    let result    = '';
-    let left      = '';
-    let right     = '';
-    let space     = '';
+    const [s_quote, d_quote] = ["'", '"'];
+    let [left, right, space] = ['', '', ''];
 
+    let result;
     switch (typeof item) {
         case 'string':
-            result += item.replace(/\\([^\\])/g, '\\\\$1');
+            result = item.replace(/\\([^\\])/g, '\\\\$1');
             if (![s_quote, d_quote].includes(item[0])) {
-                left = right = d_quote;
+                [left, right] = [d_quote, d_quote];
             }
             break;
         case 'boolean':
         case 'symbol':
         case 'bigint':
-            result += item.toString();
+            result = item.toString();
             break;
         case 'number':
             // A numeric, NaN, or Infinity value.
-            result += (item || (item === 0)) ? item.toString() : 'null';
+            result = (item || (item === 0)) ? item.toString() : 'null';
             break;
         default:
             if (!item) {
                 // Undefined or null value.
-                result += 'null';
+                result = 'null';
 
             } else if (item instanceof RegExp) {
                 // A regular expression.
-                result += item.toString();
+                result = item.toString();
 
             } else if (item instanceof Date) {
                 // A date value.
-                result += asDateTime(item);
-                left = right = d_quote;
+                result = asDateTime(item);
+                [left, right] = [d_quote, d_quote];
 
             } else if (Array.isArray(item)) {
                 // An array object.
                 result = item.map(v => asString(v)).join(', ');
-                [left, right] = ['[',']'];
+                [left, right] = ['[', ']'];
 
             } else if (hasKey(item, 'originalEvent')) {
                 // JSON.stringify fails with "cyclic object value" for jQuery
@@ -146,7 +143,7 @@ export function asString(item, limit) {
                 // A generic object.
                 const pair = (kv) => `"${kv[0]}": ${asString(kv[1])}`;
                 result = objectEntries(item).map(pair).join(', ');
-                [left, right] = ['{','}'];
+                [left, right] = ['{', '}'];
                 if (result) { space = ' ' }
             }
             break;

@@ -10,14 +10,21 @@
 // Flash message display.
 //=============================================================================
 
-$flash-width: popup.$max-width;
+$flash-optimal-width: 20em;
+
+/// Dynamically scale the width of the flash message area according to the
+/// display.
+///
+@function flash-width() {
+    @return max(#{popup.$max-width}, min(#{$flash-optimal-width}, 100vw));
+}
 
 // @see file:app/views/layouts/_flash.html.erb
 .flash-messages {
 
-    margin:    0 $page-padding;
-    padding:   0;
-    max-width: $flash-width;
+    margin:         0 $page-padding-x;
+    padding:        0;
+    max-width:      flash-width();
 
     @media #{$narrow-screen} {
         margin-top: $page-padding-y;
@@ -38,7 +45,7 @@ $flash-width: popup.$max-width;
         border:        0.125rem solid gray;
         border-radius: 0.5rem;
 
-        &:first-child { margin-top:    $page-padding; }
+        &:first-child { margin-top:    $page-padding-y; }
         &:last-child  { margin-bottom: 0; }
     }
 
@@ -106,7 +113,7 @@ $flash-width: popup.$max-width;
     // Providing a wide box-shadow let the flash container appear as though
     // it's displayed above an overlay without needing an additional element.
 
-    @include popup.center-float-vertical;
+    @include popup.center-float-vertical(flash-width());
 
     z-index:    $z-flash;
     border:     none;

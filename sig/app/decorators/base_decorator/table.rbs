@@ -57,6 +57,32 @@ module BaseDecorator::Table
   #
   def table_row_model_type: () -> Symbol
 
+  # The default CSS class for a table element.
+  #
+  # @return [String]
+  #
+  def table_css_class: () -> String
+
+  # Indicate whether a table presents as an element with the HTML 'table' role.
+  #
+  def table_role?: () -> bool
+
+  # The HTML role of the table element.
+  #
+  # @param [Boolean] table
+  #
+  # @return [String]
+  #
+  def table_role: (?table: bool) -> String
+
+  # The HTML role of cells within the table.
+  #
+  # @param [Boolean] table
+  #
+  # @return [String]
+  #
+  def table_cell_role: (?table: bool) -> String
+
   # The number of rows of associated items per table page.
   #
   # @return [Integer]
@@ -75,20 +101,16 @@ module BaseDecorator::Table
   #
   # @param [Integer]                                   row
   # @param [Integer]                                   col
-  # @param [Symbol, Integer, nil]                      outer_tag
-  # @param [Symbol, Integer, nil]                      inner_tag
   # @param [String, Symbol, Array<String,Symbol>, nil] columns
   # @param [String, Regexp, Array<String,Regexp>, nil] filter
   # @param [Hash]                                      opt
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
-  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
+  # @option opt [Symbol] :outer_tag   Default: :tr
+  # @option opt [Symbol] :inner_tag   Default: :td
   #
-  def table_entry
-    : (?row: Integer, ?col: Integer, ?outer_tag: Symbol|Integer, ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
-    | (?row: Integer, ?col: Integer,  outer_tag: nil,            ?inner_tag: Symbol|Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> Array[ActiveSupport::SafeBuffer]
-    | (?row: Integer, ?col: Integer,  outer_tag: nil,             inner_tag: nil,            ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> Array[String]
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_entry: (?row: Integer, ?col: Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
 
   # Table values associated with the current decorator.
   #
@@ -96,7 +118,7 @@ module BaseDecorator::Table
   #
   # @return [Hash]
   #
-  def table_columns: (**untyped opt) -> anyHash
+  def table_values: (**untyped opt) -> anyHash
 
   # Specified field selections from the given model instance.
   #

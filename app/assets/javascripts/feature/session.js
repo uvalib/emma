@@ -3,7 +3,7 @@
 
 import { AppDebug }           from '../application/debug';
 import { appSetup }           from '../application/setup';
-import { focusable }          from '../shared/accessibility';
+import { currentlyFocusable } from '../shared/accessibility';
 import { isInternetExplorer } from '../shared/browser';
 import { isPresent }          from '../shared/definitions';
 import { documentEvent }      from '../shared/events';
@@ -131,11 +131,11 @@ appSetup(PATH, function() {
      *
      */
     function focusAnchor(event) {
-        const anchor  = getInPageAnchor(event);
-        const $anchor = anchor && $(anchor);
-        console.log('focusAnchor', $anchor);
-        if (isPresent($anchor) && focusable($anchor)) {
-            $anchor.first().focus();
+        const anchor = getInPageAnchor(event);
+        let $anchor  = anchor && $(anchor);
+        console.log('focusAnchor: $anchor =', $anchor);
+        if (($anchor &&= $anchor.first()) && currentlyFocusable($anchor)) {
+            $anchor.focus();
         }
     }
 

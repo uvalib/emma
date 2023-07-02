@@ -155,12 +155,6 @@ export class SubmitResponseBase extends ChannelResponse {
         ACK:          'ACK',
     });
 
-    /**
-     * @readonly
-     * @type {Object.<string,string>}
-     */
-    STATUS = this.constructor.STATUS;
-
     // ========================================================================
     // Constructor
     // ========================================================================
@@ -188,6 +182,9 @@ export class SubmitResponseBase extends ChannelResponse {
     get isInitial()      { return this.status === this.STATUS.INITIAL }
     get isIntermediate() { return this.status === this.STATUS.INTERMEDIATE }
     get isFinal()        { return this.status === this.STATUS.FINAL }
+
+    // noinspection FunctionNamingConventionJS
+    get STATUS()         { return this.constructor.STATUS }
 
     // ========================================================================
     // Methods

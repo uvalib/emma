@@ -116,7 +116,7 @@ module BaseDecorator::List
   # @param [Integer, nil]         row       Display row.
   # @param [String, nil]          separator Between parts if *value* is array.
   # @param [String, nil]          wrap      Class for outer wrapper.
-  # @param [Symbol]               tag       @see #TABLE_TAGS
+  # @param [Symbol]               tag       @see #HTML_TABLE_TAGS
   # @param [Boolean,Symbol,Array] no_format
   # @param [Boolean]              no_code
   # @param [Boolean]              no_label
@@ -126,6 +126,9 @@ module BaseDecorator::List
   # @param [Hash]                 opt       Passed to each #html_div except:
   #
   # @option opt [String] :role              Passed to outer wrapper only.
+  # @option opt [String] :base
+  # @option opt [String] :label_id
+  # @option opt [String] :value_id
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -157,18 +160,21 @@ module BaseDecorator::List
     no_code:    nil,
     no_label:   nil,
     no_help:    nil,
-    label_css:  'label',
-    value_css:  'value',
+    label_css:  DEFAULT_LABEL_CLASS,
+    value_css:  DEFAULT_VALUE_CLASS,
     **opt,
     &block
   )
     prop  ||= field_configuration(field)
     field ||= prop[:field]
+    label   = prop[:label] || label
 
-    # Setup a lambda for creating related HTML identifiers.
-    group   = opt.delete(:group)
-    id_base = model_html_id(field || label)
-    make_id = ->(v) { html_id(v, id_base, group, index, underscore: false) }
+    # Setup options for creating related HTML identifiers.
+    base    = opt.delete(:base) || model_html_id(field || label)
+    type    = "field-#{base}"
+    id_opt  = { base: base, index: index, group: opt.delete(:group) }.compact
+    l_id    = opt.delete(:label_id)
+    v_id    = opt.delete(:value_id) || field_html_id(value_css, **id_opt)
 
     # Extract range values.
     value   = value.content if value.is_a?(Field::Type)
@@ -251,8 +257,8 @@ module BaseDecorator::List
       end
       status << 'enum' if enum
     end
+    prepend_css!(opt, type, *status)
     prepend_css!(opt, "row-#{row}") if row
-    prepend_css!(opt, "field-#{id_base}", *status)
 
     # Explicit 'data-*' attributes.
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
@@ -260,8 +266,9 @@ module BaseDecorator::List
     parts = []
 
     # Label and label HTML options.
-    l_id = nil
-    unless no_label || (label = prop[:label] || label).blank?
+    if no_label || label.blank?
+      l_id = nil
+    else
       # Wrap label text in a <span>.
       unless label.is_a?(ActiveSupport::SafeBuffer)
         label ||= labelize(field)
@@ -279,9 +286,9 @@ module BaseDecorator::List
         end
         label += h.help_popup(*help)
       end
-      l_tag = wrap ? :div : tag
-      l_id  = make_id.call('label')
-      l_opt = prepend_css(opt, label_css)
+      l_tag   = wrap ? :div : tag
+      l_id  ||= field_html_id(DEFAULT_LABEL_CLASS, **id_opt)
+      l_opt   = prepend_css(opt, label_css)
       l_opt[:id]    = l_id    if l_id
       l_opt[:title] = tooltip if tooltip && !wrap
       parts << html_tag(l_tag, label, l_opt)
@@ -289,7 +296,6 @@ module BaseDecorator::List
 
     # Value and value HTML options.
     v_tag = wrap ? :div : tag
-    v_id  = make_id.call('value')
     v_opt = prepend_css(opt, value_css)
     v_opt[:id]                 = v_id    if v_id
     v_opt[:title]              = tooltip if tooltip && !wrap
@@ -306,12 +312,13 @@ module BaseDecorator::List
     if wrap
       wrap  = PAIR_WRAPPER if wrap.is_a?(TrueClass)
       w_opt = prepend_css(opt, wrap)
-      w_opt[:id]              ||= make_id.call(wrap)
-      w_opt[:role]            ||= role
-      w_opt[:title]           ||= tooltip
-      w_opt[:'aria-level']    ||= lvl
-      w_opt[:'aria-colindex'] ||= col
-      append_css!(w_opt, 'error') if error
+      w_opt[:id]                ||= field_html_id(wrap, **id_opt)
+      w_opt[:role]              ||= role
+      w_opt[:title]             ||= tooltip
+      w_opt[:'aria-level']      ||= lvl
+      w_opt[:'aria-colindex']   ||= col
+      w_opt[:'aria-labelledby'] ||= l_id  if l_id
+      append_css!(w_opt, 'error')         if error
       html_tag(tag, *parts, w_opt)
     else
       safe_join(parts)
@@ -633,7 +640,7 @@ module BaseDecorator::List
     row_opt[:'data-group']    ||= group
     row_opt[:'data-title_id'] ||= title_id_values
     row_opt[:'aria-level']    ||= level
-    row_opt.delete(:'aria-rowindex')   unless TABLE_TAGS.include?(tag)
+    row_opt.delete(:'aria-rowindex')   unless for_html_table?(tag)
     row_opt.delete(:'aria-colindex')
     append_css!(row_opt, "row-#{row}") if row
     append_css!(row_opt, 'empty')      if blank?

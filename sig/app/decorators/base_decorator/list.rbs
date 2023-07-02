@@ -70,7 +70,7 @@ module BaseDecorator::List
   # @param [Integer, nil]         row       Display row.
   # @param [String, nil]          separator Between parts if *value* is array.
   # @param [String, nil]          wrap      Class for outer wrapper.
-  # @param [Symbol]               tag       @see #TABLE_TAGS
+  # @param [Symbol]               tag       @see #HTML_TABLE_TAGS
   # @param [Boolean,Symbol,Array] no_format
   # @param [Boolean]              no_code
   # @param [Boolean]              no_label
@@ -80,6 +80,9 @@ module BaseDecorator::List
   # @param [Hash]                 opt       Passed to each #html_div except:
   #
   # @option opt [String] :role              Passed to outer wrapper only.
+  # @option opt [String] :base
+  # @option opt [String] :label_id
+  # @option opt [String] :value_id
   #
   # @return [ActiveSupport::SafeBuffer]
   #

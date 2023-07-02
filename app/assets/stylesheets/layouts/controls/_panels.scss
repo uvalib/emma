@@ -63,8 +63,8 @@
     }
 
     @media #{$narrow-screen} {
-        margin-bottom: $page-padding;
-        flex-wrap:     wrap;
+        margin-bottom:  $page-padding-y;
+        flex-wrap:      wrap;
     }
 
     .toggle {

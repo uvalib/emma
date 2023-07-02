@@ -3,8 +3,8 @@
 
 import { AppDebug }               from '../application/debug';
 import { appSetup }               from '../application/setup';
+import { handleClickAndKeypress } from '../shared/accessibility';
 import { isMissing }              from '../shared/definitions';
-import { handleClickAndKeypress } from '../shared/events';
 
 
 const MODULE = 'Iframe';

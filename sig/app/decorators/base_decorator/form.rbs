@@ -87,6 +87,9 @@ module BaseDecorator::Form
   # @param [Hash]           opt         To label/value except:
   #
   # @option opt [Symbol] :render        Force render method.
+  # @option opt [String] :base
+  # @option opt [String] :label_id
+  # @option opt [String] :value_id
   #
   # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
   # @return [nil]                       If *field* is :ignored or disallowed
@@ -123,8 +126,9 @@ module BaseDecorator::Form
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #select_tag except for:
   #
-  # @option opt [String] :name        Overrides *name*
-  # @option opt [String] :base        Name and id for *select*; default: *name*
+  # @option opt [String]  :name       Overrides *name*
+  # @option opt [String]  :base       Name and id for *select*; default: *name*
+  # @option opt [Boolean] :readonly
   #
   # @raise [RuntimeError]             If *range* is not an EnumType.
   #
@@ -142,13 +146,14 @@ module BaseDecorator::Form
   #                                     #values method will be used to populate
   #                                     the menu.
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #field_set_tag except for:
+  # @param [Hash]   opt               Passed to inner group except for:
   #
   # @option opt [String]  :id
-  # @option opt [Boolean] :readonly
   # @option opt [String]  :name       Overrides *name*
   # @option opt [String]  :base       Name and id for *select*; default: *name*
-  # @option opt [String]  :legend
+  # @option opt [Boolean] :readonly
+  # @option opt [Hash]    :inner
+  # @option opt [Hash]    :outer
   #
   # @raise [RuntimeError]             If *range* is not an EnumType.
   #

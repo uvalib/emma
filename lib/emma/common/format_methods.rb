@@ -52,11 +52,11 @@ module Emma::Common::FormatMethods
   # @return [ActiveSupport::SafeBuffer]
   #
   def non_breaking(text, force: false)
-    text ||= ''
-    text = ERB::Util.h(text) unless (safe = text.html_safe?)
-    text = text.gsub(/[ \t]/, '&nbsp;').html_safe if force || !safe
+    text ||= ''.html_safe
+    html   = text.is_a?(ActiveSupport::SafeBuffer)
+    text   = ERB::Util.h(text) unless html
     # noinspection RubyMismatchedReturnType
-    text
+    (html && !force) ? text : text.gsub(/[ \t]/, '&nbsp;').html_safe
   end
 
   # Render a camel-case or snake-case string as in "title case" words separated
@@ -72,7 +72,7 @@ module Emma::Common::FormatMethods
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def labelize(text, count = nil, breakable: true)
+  def labelize(text, count: nil, breakable: true, **)
     # noinspection RubyMismatchedReturnType
     return text if text.is_a?(ActiveSupport::SafeBuffer)
     result =

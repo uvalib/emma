@@ -33,12 +33,16 @@
             <%- status = can?(action, model) -%>
             <%- can    = status ? 'can' : 'cannot' -%>
             <tr role="row" class="<%= can -%> <%= action %>-<%= model -%>">
-              <td role="cell" class="model <%=  can -%>"><%= model  -%></td>
-              <td role="cell" class="action <%= can -%>"><%= action -%></td>
-              <td role="cell" class="status <%= can -%>"><%= status -%></td>
+              <%- cols = { model: model, action: action, status: status } -%>
+              <%- cols.each do |cls, val| -%>
+                <%- id  = unique_id(action, model) -%>
+                <%- opt = append_css(cls, can).merge!(role: 'cell') -%>
+                <%- opt.merge!('aria-labelledby': id) -%>
+                <%= html_tag(:td, opt) { html_span(val.to_s, id: id) } %>
+              <%- end -%>
             </tr>
           <%- end -%>
-          <tr role="row" class="blank-row">
+          <tr role="presentation" class="blank-row">
             <td role="cell" class="model"></td>
             <td role="cell" class="action"></td>
             <td role="cell" class="status"></td>

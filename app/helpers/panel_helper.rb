@@ -27,8 +27,7 @@ module PanelHelper
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_OPENER_LABEL =
-    non_breaking(PANEL_CTRL_CFG.dig(:label)).html_safe.freeze
+  PANEL_OPENER_LABEL = non_breaking(PANEL_CTRL_CFG.dig(:label)).freeze
 
   # Tooltip for button to open a collapsible panel.
   #
@@ -40,8 +39,7 @@ module PanelHelper
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_CLOSER_LABEL =
-    non_breaking(PANEL_CTRL_CFG.dig(:open, :label)).html_safe.freeze
+  PANEL_CLOSER_LABEL = non_breaking(PANEL_CTRL_CFG.dig(:open, :label)).freeze
 
   # Tooltip for button to close a collapsible panel.
   #

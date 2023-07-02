@@ -29,6 +29,51 @@ const DEBUG  = true;
 AppDebug.file('shared/submit-modal', MODULE, DEBUG);
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+const CONTAINER_CLASS      = 'monitor-container';
+const HEADING_CLASS        = 'monitor-heading';
+const LOG_TOGGLE_CLASS     = 'log-toggle';
+const LOG_MARKER_CLASS     = 'with-log';
+
+const CONTAINER            = selector(CONTAINER_CLASS);
+const HEADING              = selector(HEADING_CLASS);
+const LOG_TOGGLE           = selector(LOG_TOGGLE_CLASS);
+
+// Submission status elements
+
+const STATUS_DISPLAY_CLASS  = 'monitor-status';
+const NOTICE_CLASS         = 'notice';
+
+const STATUS_DISPLAY       = selector(STATUS_DISPLAY_CLASS);
+const NOTICE               = selector(NOTICE_CLASS);
+
+// Submission output elements
+
+const OUTPUT_CLASS         = 'monitor-output';
+const DISPLAY_CLASS        = 'display';
+const SUCCESS_CLASS        = 'success';
+const FAILURE_CLASS        = 'failure';
+
+const OUTPUT               = selector(OUTPUT_CLASS);
+const DISPLAY              = selector(DISPLAY_CLASS);
+const SUCCESS              = selector(SUCCESS_CLASS);
+const FAILURE              = selector(FAILURE_CLASS);
+
+// Log display elements
+
+const LOG_DISPLAY_CLASS    = 'monitor-log';
+const RESULTS_CLASS        = 'item-results';
+const ERRORS_CLASS         = 'item-errors';
+const DIAGNOSTICS_CLASS    = 'item-diagnostics';
+
+const LOG_DISPLAY          = selector(LOG_DISPLAY_CLASS);
+const RESULTS              = selector(RESULTS_CLASS);
+const ERRORS               = selector(ERRORS_CLASS);
+const DIAGNOSTICS          = selector(DIAGNOSTICS_CLASS);
+
+// ============================================================================
 // Class SubmitModal
 // ============================================================================
 
@@ -68,48 +113,8 @@ export class SubmitModal extends ModalDialog {
     // Constants
     // ========================================================================
 
-    static MODAL_CLASS          = 'monitor-popup';
-    static CONTAINER_CLASS      = 'monitor-container';
-    static HEADING_CLASS        = 'monitor-heading';
-    static LOG_TOGGLE_CLASS     = 'log-toggle';
-    static LOG_MARKER_CLASS     = 'with-log';
-
-    static MODAL                = selector(this.MODAL_CLASS);
-    static CONTAINER            = selector(this.CONTAINER_CLASS);
-    static HEADING              = selector(this.HEADING_CLASS);
-    static LOG_TOGGLE           = selector(this.LOG_TOGGLE_CLASS);
-
-    // Submission status elements
-
-    static STATUS_DISPLAY_CLASS = 'monitor-status';
-    static NOTICE_CLASS         = 'notice';
-
-    static STATUS_DISPLAY       = selector(this.STATUS_DISPLAY_CLASS);
-    static NOTICE               = selector(this.NOTICE_CLASS);
-
-    // Submission output elements
-
-    static OUTPUT_CLASS         = 'monitor-output';
-    static DISPLAY_CLASS        = 'display';
-    static SUCCESS_CLASS        = 'success';
-    static FAILURE_CLASS        = 'failure';
-
-    static OUTPUT               = selector(this.OUTPUT_CLASS);
-    static DISPLAY              = selector(this.DISPLAY_CLASS);
-    static SUCCESS              = selector(this.SUCCESS_CLASS);
-    static FAILURE              = selector(this.FAILURE_CLASS);
-
-    // Log display elements
-
-    static LOG_DISPLAY_CLASS    = 'monitor-log';
-    static RESULTS_CLASS        = 'item-results';
-    static ERRORS_CLASS         = 'item-errors';
-    static DIAGNOSTICS_CLASS    = 'item-diagnostics';
-
-    static LOG_DISPLAY          = selector(this.LOG_DISPLAY_CLASS);
-    static RESULTS              = selector(this.RESULTS_CLASS);
-    static ERRORS               = selector(this.ERRORS_CLASS);
-    static DIAGNOSTICS          = selector(this.DIAGNOSTICS_CLASS);
+    static MODAL_CLASS = 'monitor-popup';
+    static MODAL       = selector(this.MODAL_CLASS);
 
     // ========================================================================
     // Class fields
@@ -431,8 +436,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get container() {
-        return this.$container ||=
-            this.modalPanel.find(this.constructor.CONTAINER);
+        return this.$container ||= this.modalPanel.find(CONTAINER);
     }
 
     // ========================================================================
@@ -477,7 +481,7 @@ export class SubmitModal extends ModalDialog {
      * Show/hide diagnostic information.
      */
     onToggleDetails() {
-        this.container.toggleClass(this.constructor.LOG_MARKER_CLASS);
+        this.container.toggleClass(LOG_MARKER_CLASS);
     }
 
     // ========================================================================
@@ -536,7 +540,9 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitRequest}
      */
     getRequestData() {
-        return this.dataElement.data(this.constructor.REQUEST_DATA);
+        const name = this.constructor.REQUEST_DATA;
+        //this._debug(`getRequestData: ${name}`);
+        return this.dataElement.data(name);
     }
 
     /**
@@ -547,8 +553,9 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitRequest}       The current request object.
      */
     setRequestData(data) {
-        this._debug('setRequestData:', data);
-        const name    = this.constructor.REQUEST_DATA;
+        const func = 'setRequestData';
+        const name = this.constructor.REQUEST_DATA;
+        this._debug(`${func}: ${name}:`, data);
         const request = SubmitRequest.wrap(data);
         this.dataElement.data(name, request);
         return request;
@@ -560,8 +567,9 @@ export class SubmitModal extends ModalDialog {
      * @returns {void}
      */
     clearRequestData() {
-        this._debug('clearRequestData');
+        const func = 'clearRequestData';
         const name = this.constructor.REQUEST_DATA;
+        this._debug(`${func}: ${name}`);
         this.dataElement.removeData(name);
     }
 
@@ -591,7 +599,9 @@ export class SubmitModal extends ModalDialog {
      * @returns {BaseSubmitResponsePayload|undefined}
      */
     getSubmitStatus() {
-        return this.dataElement.data(this.constructor.STATUS_DATA);
+        const name = this.constructor.STATUS_DATA;
+        //this._debug(`getSubmitStatus: ${name}`);
+        return this.dataElement.data(name);
     }
 
     /**
@@ -602,8 +612,10 @@ export class SubmitModal extends ModalDialog {
      * @return {BaseSubmitResponsePayload}
      */
     setSubmitStatus(value) {
-        this._debug('setSubmitStatus:', value);
-        this.dataElement.data(this.constructor.STATUS_DATA, value);
+        const func = 'setSubmitStatus';
+        const name = this.constructor.STATUS_DATA;
+        this._debug(`${func}: ${name}:`, value);
+        this.dataElement.data(name, value);
         return value;
     }
 
@@ -628,7 +640,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get panelHeading() {
-        return this.$heading ||= this.container.find(this.constructor.HEADING);
+        return this.$heading ||= this.container.find(HEADING);
     }
 
     // ========================================================================
@@ -641,8 +653,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get statusDisplay() {
-        return this.$status_display ||=
-            this.container.find(this.constructor.STATUS_DISPLAY);
+        return this.$status_display ||= this.container.find(STATUS_DISPLAY);
     }
 
     /**
@@ -651,8 +662,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get statusNotice() {
-        return this.$notice ||=
-            this.statusDisplay.find(this.constructor.NOTICE);
+        return this.$notice ||= this.statusDisplay.find(NOTICE);
     }
 
     /**
@@ -731,7 +741,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get outputDisplay() {
-        return this.$output ||= this.container.find(this.constructor.OUTPUT);
+        return this.$output ||= this.container.find(OUTPUT);
     }
 
     /**
@@ -741,9 +751,7 @@ export class SubmitModal extends ModalDialog {
      */
     get successDisplay() {
         return this.$success ||=
-            this.outputDisplay
-                .find(this.constructor.SUCCESS)
-                .find(this.constructor.DISPLAY);
+            this.outputDisplay.find(SUCCESS).find(DISPLAY);
     }
 
     /**
@@ -753,9 +761,7 @@ export class SubmitModal extends ModalDialog {
      */
     get failureDisplay() {
         return this.$failure ||=
-            this.outputDisplay
-                .find(this.constructor.FAILURE)
-                .find(this.constructor.DISPLAY);
+            this.outputDisplay.find(FAILURE).find(DISPLAY);
     }
 
     // ========================================================================
@@ -847,8 +853,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get logToggle() {
-        return this.$log_toggle ||=
-            this.$modal.find(this.constructor.LOG_TOGGLE);
+        return this.$log_toggle ||= this.$modal.find(LOG_TOGGLE);
     }
 
     /**
@@ -857,8 +862,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get logDisplay() {
-        return this.$log_display ||=
-            this.container.find(this.constructor.LOG_DISPLAY);
+        return this.$log_display ||= this.container.find(LOG_DISPLAY);
     }
 
     /**
@@ -867,8 +871,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get resultDisplay() {
-        return this.$results ||=
-            this.logDisplay.find(this.constructor.RESULTS);
+        return this.$results ||= this.logDisplay.find(RESULTS);
     }
 
     /**
@@ -877,8 +880,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get errorDisplay() {
-        return this.$errors ||=
-            this.logDisplay.find(this.constructor.ERRORS);
+        return this.$errors ||= this.logDisplay.find(ERRORS);
     }
 
     /**
@@ -887,8 +889,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {jQuery}
      */
     get diagnosticDisplay() {
-        return this.$diagnostics ||=
-            this.logDisplay.find(this.constructor.DIAGNOSTICS);
+        return this.$diagnostics ||= this.logDisplay.find(DIAGNOSTICS);
     }
 
     // ========================================================================
@@ -972,8 +973,7 @@ export class SubmitModal extends ModalDialog {
      * @type {jQuery}
      */
     static get $modal() {
-        const match = this.MODAL;
-        return this.$all_modals.filter(match);
+        return this.$all_modals.filter(this.MODAL);
     }
 
     // ========================================================================
@@ -989,7 +989,7 @@ export class SubmitModal extends ModalDialog {
      */
     static associate(toggles) {
         const func     = 'associate';
-        const name     = this.MODAL_INSTANCE_DATA;
+        const name     = this.INSTANCE_DATA;
         const instance = this.$modal.data(name);
         if (instance) {
             this._debug(`${func}: toggles =`, toggles);

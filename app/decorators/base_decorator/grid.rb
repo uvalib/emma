@@ -14,6 +14,7 @@ module BaseDecorator::Grid
 
   include BaseDecorator::Common
   include BaseDecorator::Configuration
+  include BaseDecorator::Controls
   include BaseDecorator::Form
   include BaseDecorator::List
   include BaseDecorator::Pagination
@@ -68,8 +69,50 @@ module BaseDecorator::Grid
   #
   # @return [String]
   #
-  def grid_css_class
+  def grid_container_css_class
     "#{model_type}-grid-container"
+  end
+
+  # The default CSS class for a grid element.
+  #
+  # @return [String]
+  #
+  def grid_css_class
+    "#{grid_row_model_type}-grid"
+  end
+
+  # The default CSS class for a grid row element.
+  #
+  # @return [String]
+  #
+  def grid_row_css_class
+    "#{grid_row_model_type}-grid-item"
+  end
+
+  # Indicate whether a grid presents as an element with the HTML 'grid' role.
+  #
+  def grid_role?
+    true
+  end
+
+  # The HTML role of the grid element.
+  #
+  # @param [Boolean] grid
+  #
+  # @return [String]
+  #
+  def grid_role(grid: grid_role?)
+    grid ? 'grid' : 'table'
+  end
+
+  # The HTML role of cells within the grid.
+  #
+  # @param [Boolean] grid
+  #
+  # @return [String]
+  #
+  def grid_cell_role(grid: grid_role?)
+    grid ? 'gridcell' : 'cell'
   end
 
   # ===========================================================================
@@ -175,51 +218,57 @@ module BaseDecorator::Grid
 
   public
 
-  # Render associated items in a grid based on <table>.
-  #
-  # @param [Hash] opt                 Passed to #render_grid.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_grid_table(**opt)
-    render_grid(**opt, tag: :table)
-  end
-
   # Render associated items.
   #
   # @param [Integer] row              Starting row number.
   # @param [Integer] index            Starting index number.
   # @param [Array]   cols             Default: `#grid_row_columns`.
-  # @param [Symbol]  tag              If :table, generate <table>.
-  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Symbol]  tag              Potential alternative to :table.
+  # @param [String]  css              Default: `#grid_css_class`.
   # @param [Hash]    opt              Passed to container div except
   #                                     #ROW_PAGE_PARAMS to #grid_row_page.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_grid(row: nil, index: nil, cols: nil, tag: :div, css: nil, **opt)
-    css   ||= ".#{grid_row_model_type}-grid"
+  def render_grid(row: nil, index: nil, cols: nil, tag: nil, css: nil, **opt)
+    css   ||= grid_css_class
     row   ||= 0
     index ||= paginator.first_index
     cols  ||= grid_row_columns
-    table   = TABLE_TAGS.include?(tag)
-    tag     = :table if table
-
+    table   = for_html_table?(tag)
+    tag     = table && :table || tag || :div
+    visible = col_count = row_count = nil
     p_opt   = extract_hash!(opt, *ROW_PAGE_PARAMS)
-    items   = grid_row_page(**p_opt)
+    parts   = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h.compact
 
-    r_opt   = { cols: cols, tag: tag }
-    head    = render_grid_head_row(row: row, **r_opt)
-    rows    = render_grid_data_rows(items, row: (row+1), index: index, **r_opt)
+    if parts[:thead].blank?
+      r_opt   = { tag: tag, cols: cols, row: row, wrap: false }
+      parts[:thead] = render_grid_head_row(**r_opt)
+      col_count = 1 + cols.size
+      visible   = 1 + visible(cols).size
+    end
+    row += 1
 
-    opt[:role] ||= 'table'
-    opt[:'aria-rowcount'] = 1 + grid_row_items_total
-    opt[:'aria-colcount'] = 1 + cols.size
-    visible_columns       = 1 + visible(cols).size
-    prepend_css!(opt, "columns-#{visible_columns}") if table
+    if parts[:tbody].blank?
+      r_opt = { tag: tag, cols: cols, row: row, index: index, wrap: false }
+      parts[:tbody] = render_grid_data_rows(**p_opt, **r_opt)
+      row_count     = 1 + grid_row_items_total
+    end
+
+    if table
+      opt[:role]            ||= grid_role
+      opt[:'aria-rowcount'] ||= row_count
+      opt[:'aria-colcount'] ||= col_count
+      prepend_css!(opt, "columns-#{visible}") if visible
+    end
+
     prepend_css!(opt, css)
     html_tag(tag, opt) do
-      head << rows
+      if table
+        parts.map { |part, content| html_tag(part, content) }
+      else
+        parts.values
+      end
     end
   end
 
@@ -227,71 +276,72 @@ module BaseDecorator::Grid
   #
   # @param [Array]   cols             Default: `#grid_row_columns`.
   # @param [Integer] row              Starting row number.
-  # @param [Symbol]  tag              #TABLE_TAGS
-  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Symbol]  tag              Potential alternative to :tr.
+  # @param [String]  css              Default: `#grid_row_css_class`.
   # @param [Hash]    opt              Passed to outer div.
+  #
+  # @option opt [Boolean] :wrap       Specify whether to wrap with :thead.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_grid_head_row(cols: nil, row: nil, tag: :div, css: nil, **opt)
-    css ||= ".#{grid_row_model_type}-grid-item"
-
-    headers = grid_head_headers(cols: cols, row: row, tag: tag)
+  def render_grid_head_row(cols: nil, row: nil, tag: nil, css: nil, **opt)
+    css ||= grid_row_css_class
+    table = for_html_table?(tag)
+    tag   = :tr if table
+    wrap  = opt.key?(:wrap) ? opt.delete(:wrap) : table
 
     # The header row is always row 1 regardless of the 'aria-rowindex' of the
     # first data row.
     opt[:'aria-rowindex'] ||= 1
 
-    if TABLE_TAGS.include?(tag)
-      html_tag(:thead) do
-        prepend_css!(opt, css, "head row-#{row}")
-        html_tag(:tr, *headers, opt)
-      end
-    else
-      opt[:role] ||= 'row'
-      prepend_css!(opt, css, "head row-#{row} columns-#{headers.size}")
-      html_tag(tag, *headers, opt)
-    end
+    headers = grid_head_headers(cols: cols, row: row, tag: tag)
+    prepend_css!(opt, "columns-#{headers.size}") unless table
+    prepend_css!(opt, css, "head row-#{row}")
+    content = html_tag(tag, *headers, opt)
+    wrap ? html_tag(:thead, content) : content
   end
 
   # render_grid_data_rows
   #
-  # @param [Array<Model>,nil] items
+  # @param [Array<Model>,nil] items   Default: `#grid_row_page`.
   # @param [Integer]          row
   # @param [Integer]          index
   # @param [Hash]             opt     Passed to #grid_row.
   #
-  # @option opt [Symbol] :tag         Also used by this method.
-  # @option opt [Hash]   :outer       Augmented by this method.
+  # @option opt [Boolean] :wrap       Specify whether to wrap with :thead.
+  # @option opt [Symbol]  :tag        Also used by this method.
+  # @option opt [Hash]    :outer      Augmented by this method.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_grid_data_rows(items = nil, row: nil, index: nil, **opt)
+    table = for_html_table?(opt[:tag])
+    wrap  = opt.key?(:wrap) ? opt.delete(:wrap) : table
     opt[:cols] ||= grid_row_columns
 
-    items   = items ? Array.wrap(items) : grid_row_page
+    p_opt   = extract_hash!(opt, *ROW_PAGE_PARAMS)
+
+    items   = items ? Array.wrap(items) : grid_row_page(**p_opt)
     index ||= paginator.first_index
     row   ||= 0
-    r_min   = row
-    r_max   = row + items.size - 1
+    first   = row
+    last    = first + items.size - 1
     outer   = opt.delete(:outer)&.dup || {}
-    rows    =
+
+    rows =
       items.map.with_index do |item, i|
         opt[:row]   = row   + i
         opt[:index] = index + i
         r_class = []
-        r_class << 'row-first' if opt[:row] == r_min
-        r_class << 'row-last'  if opt[:row] == r_max
+        r_class << 'row-first' if opt[:row] == first
+        r_class << 'row-last'  if opt[:row] == last
         r_outer = r_class.present? ? append_css(outer, *r_class) : outer
         render_grid_data_row(item, **opt, outer: r_outer)
       end
     rows << render_grid_template_row(**opt, outer: outer)
 
-    if TABLE_TAGS.include?(opt[:tag])
-      html_tag(:tbody, *rows)
-    else
-      safe_join(rows, "\n")
-    end
+    rows = safe_join(rows, "\n")
+    wrap ? html_tag(:tbody, rows) : rows
   end
 
   # A data row generated by the *item* decorator.
@@ -330,6 +380,9 @@ module BaseDecorator::Grid
 
   public
 
+  # @private
+  CONTROLS_CELL_CLASS = 'controls-cell'
+
   # Properties that need to be conveyed to the grid header columns.
   #
   # @type [Array<Symbol>]
@@ -359,8 +412,11 @@ module BaseDecorator::Grid
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
-  def grid_head_control_headers(css: '.controls', **opt, &block)
-    opt[:'aria-colindex'] = 1 unless opt.key?(:'aria-colindex')
+  def grid_head_control_headers(css: CONTROLS_CELL_CLASS, **opt, &block)
+    idx   = opt[:'aria-colindex'] ||= 1
+    l_id  = opt[:'aria-labelledby'] = unique_id(css, index: idx)
+    label = 'Row controls' # TODO: I18n
+    opt[:label] = grid_head_label(label, id: l_id, class: 'sr-only')
     [grid_head_cell(nil, css: css, **opt, &block)]
   end
 
@@ -383,7 +439,7 @@ module BaseDecorator::Grid
   #
   # @param [Symbol, nil] col          Data column.
   # @param [Integer]     row          Starting row.
-  # @param [Symbol]      tag          #TABLE_TAGS
+  # @param [Symbol]      tag          Potential alternative to :th.
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #html_tag except:
   #
@@ -392,20 +448,40 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def grid_head_cell(col, row: nil, tag: :div, css: '.cell', **opt, &block)
-    table   = TABLE_TAGS.include?(tag)
+  def grid_head_cell(col, row: nil, tag: nil, css: '.cell', **opt, &block)
+    table   = for_html_table?(tag)
     tag     = :th if table
+    hidden  = undisplayed?(col)
     config  = opt.delete(:config) || (field_configuration(col) if col)
-    label   = opt.delete(:label)  || config&.dig(:label) || col
-    label &&= html_span(label, class: 'label text') unless label.html_safe?
+    label   = opt.delete(:label)  || config&.dig(:label) || col.to_s
+    unless label.html_safe?
+      idx   = opt[:'aria-colindex']
+      l_id  = opt[:'aria-labelledby'] = unique_id(css, index: idx)
+      label = grid_head_label(label, id: l_id)
+    end
     prop    = config&.slice(:pairs, *FIELD_PROPERTIES)&.compact_blank!
     opt.merge!(prop.transform_keys! { |k| :"data-#{k}" }) if prop.present?
-    opt[:role] ||= 'columnheader' if table
+    opt[:role]           = 'columnheader' if table
+    opt[:'aria-hidden']  = true           if hidden
     opt[:'data-field'] ||= col
-    prepend_css!(opt, "row-#{row}") if row
+    append_css!(opt, 'undisplayed')       if hidden
+    prepend_css!(opt, "row-#{row}")       if row
     prepend_css!(opt, css)
-    append_css!(opt, 'undisplayed') if undisplayed?(col)
     html_tag(tag, label, opt, &block)
+  end
+
+  # Render a grid header cell label element.
+  #
+  # @param [String, nil] text
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_head_label(text = nil, css: '.label.text', **opt)
+    text ||= yield
+    prepend_css!(opt, css)
+    html_span(text, opt)
   end
 
   # ===========================================================================
@@ -418,7 +494,7 @@ module BaseDecorator::Grid
   #
   # @param [Hash]    control          Options for #grid_row_controls.
   # @param [String]  unique
-  # @param [Symbol]  tag              #TABLE_TAGS
+  # @param [Symbol]  tag              Potential alternative to :tr.
   # @param [Hash]    opt              Passed to #grid_item
   #
   # @option opt [Integer] :row
@@ -426,12 +502,12 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def grid_row(control: {}, unique: nil, tag: :div, **opt)
-    opt[:tag]    = tag
+  def grid_row(control: {}, unique: nil, tag: nil, **opt)
+    opt[:tag]    = for_html_table?(tag) ? :tr : tag
     opt[:index]  = grid_index(opt[:index])
     opt[:unique] = unique || opt[:index]&.value || hex_rand
     col_index    = positive(opt.delete(:'aria-colindex')) || 1
-    ctrl_opt     = control.merge(**opt.slice(:unique, :tag))
+    ctrl_opt     = opt.slice(:tag, :unique).reverse_merge!(control)
     controls     = grid_row_controls(**ctrl_opt, 'aria-colindex': col_index)
     grid_item(**opt, leading: controls, 'aria-colindex': col_index.next)
   end
@@ -439,20 +515,32 @@ module BaseDecorator::Grid
   # Generate controls for an item grid row.
   #
   # @param [Hash]    button           Passed to #grid_row_control_contents.
-  # @param [Symbol]  tag              #TABLE_TAGS
+  # @param [Symbol]  tag              Potential alternative to :th.
   # @param [String]  css              Characteristic CSS class/selector.
   # @param [Hash]    opt              Passed to outer div except:
   #
   # @option opt [String] :unique      Moved into a copy of :button hash.
+  # @option opt [String] :label       Screen-reader label for container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def grid_row_controls(button: {}, tag: :div, css: '.controls', **opt)
-    tag = :th if TABLE_TAGS.include?(tag)
-    opt[:role] ||= 'rowheader'
+  def grid_row_controls(button: {}, tag: nil, css: CONTROLS_CELL_CLASS, **opt)
+    table  = for_html_table?(tag)
+    tag    = :th if table
+
     index  = opt.delete(:index)
     unique = opt.delete(:unique) || index&.value
-    button = button.merge(unique: unique) if unique
+    button = unique ? button.merge(unique: unique) : button.dup
+    row    = opt[:'aria-rowindex']
+    l_id   = opt[:'aria-labelledby'] = unique_id(css, index: row)
+    label  = opt.delete(:label) || button[:label] || 'Controls for row %{row}' # TODO: I18n
+    label  = label % { row: row } if row && label.include?('%{row}')
+    unless label.html_safe?
+      label = grid_head_label(label, id: l_id, class: 'sr-only')
+    end
+    button.merge!(label: label, 'aria-labelledby': l_id)
+
+    opt[:role] = 'rowheader' if table
     prepend_css!(opt, css)
     html_tag(tag, opt) do
       grid_row_control_contents(**button)
@@ -465,6 +553,8 @@ module BaseDecorator::Grid
   # @param [Integer] row              Associated grid row.
   # @param [Hash]    opt              Passed to #control_icon_buttons.
   #
+  # @option opt [String] :label       Screen-reader label for container.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @yield Additional content if provided.
@@ -472,9 +562,12 @@ module BaseDecorator::Grid
   #
   def grid_row_control_contents(*added, row: nil, **opt)
     opt.transform_keys! { |k| k.to_s.sub(/^data_/, 'data-').to_sym }
-    result = [control_icon_buttons(**opt), *added]
-    result = [*result, *yield] if block_given?
-    safe_join(result.compact)
+    l_id  = opt.delete(:'aria-labelledby')
+    label = opt.delete(:label)
+    ctrls = control_icon_buttons(**opt)
+    ctrls = [ctrls, *added, *(yield if block_given?)]
+    ctrls = control_group(l_id) { ctrls }
+    safe_join([label, ctrls].compact)
   end
 
   # Render a single grid item.
@@ -490,7 +583,7 @@ module BaseDecorator::Grid
   def grid_item(cols: nil, **opt)
     cols = nil unless cols&.difference(grid_row_columns)&.present?
     opt[:css]    = ".#{model_type}-grid-item" unless opt.key?(:css)
-    opt[:tag]    = :tr  if TABLE_TAGS.include?(opt[:tag])
+    opt[:tag]    = :tr  if for_html_table?(opt[:tag])
     opt[:only]   = cols if cols
     opt[:except] = grid_row_skipped_columns unless cols
     opt[:index]  = grid_index(opt[:index])
@@ -504,7 +597,7 @@ module BaseDecorator::Grid
   #
   # @param [Hash, nil]   pairs        Passed to #field_pairs.
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Symbol]      tag          #TABLE_TAGS
+  # @param [Symbol]      tag          Potential alternative to :td.
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          To #render_pair except
   #                                     #FIELD_PAIRS_OPTIONS to #field_pairs.
@@ -518,17 +611,18 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def grid_data_cell(pairs: nil, separator: nil, tag: :td, css: '.cell', **opt)
+  def grid_data_cell(pairs: nil, separator: nil, tag: nil, css: '.cell', **opt)
     return ''.html_safe if pairs.nil? && object.nil?
 
     opt.delete(:unique)
+    opt.delete(:title)
     opt.delete(:row)
 
-    opt[:tag]     = tag
+    table         = for_html_table?(tag)
+    opt[:tag]     = :td            if table
+    opt[:role]    = grid_cell_role if table
     opt[:wrap]    = css_classes(css, opt[:wrap])
-    opt[:title]   = ''
     opt[:index] ||= paginator.first_index
-    opt[:role]  ||= 'cell'
     separator   ||= DEFAULT_ELEMENT_SEPARATOR
     start         = positive(opt.delete(:'aria-colindex')) || 1
     fp_opt        = extract_hash!(opt, *FIELD_PAIRS_OPTIONS)
@@ -537,10 +631,12 @@ module BaseDecorator::Grid
 
     field_pairs(pairs, **fp_opt).map.with_index(start) { |(field, prop), col|
       prop.delete(:required) if template
-      label = prop[:label]
-      value = render_value(prop[:value], field: field, **value_opt)
-      p_opt = { field: field, prop: prop, col: col, **opt }
-      append_css!(p_opt, 'undisplayed') if undisplayed?(field)
+      hidden = undisplayed?(field)
+      label  = prop[:label]
+      value  = render_value(prop[:value], field: field, **value_opt)
+      p_opt  = { **opt, field: field, prop: prop, col: col }
+      p_opt[:'aria-hidden'] = true      if hidden
+      append_css!(p_opt, 'undisplayed') if hidden
       grid_data_cell_render_pair(label, value, **p_opt)
     }.unshift(nil).join(separator).html_safe
   end
@@ -582,13 +678,23 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def grid_data_cell_edit(field, value, prop, css: '.edit', **opt)
-    value = nil if value == EMPTY_VALUE
+    id_opt = opt.slice(:index).merge!(field: field)
+    l_id   = field_html_id("edit-#{DEFAULT_LABEL_CLASS}", **id_opt)
+    value  = nil if value == EMPTY_VALUE
     unless value.is_a?(Field::Type)
       value = field_for(field, value: value, config: prop)
     end
-    opt[:render] ||= :render_grid_input if prop[:type] == 'text'
-    opt.merge!(field: field, prop: prop, no_label: true, value_css: css)
-    render_form_pair(field, value, **opt)
+
+    opt[:field]     = field
+    opt[:prop]      = prop
+    opt[:label_id]  = l_id
+    opt[:label_css] = "#{DEFAULT_LABEL_CLASS} sr-only"
+    opt[:value_css] = css
+    opt[:render]  ||= :render_grid_input if prop[:type] == 'text'
+
+    control_group(l_id) do
+      render_form_pair(field, value, **opt)
+    end
   end
 
   # ===========================================================================

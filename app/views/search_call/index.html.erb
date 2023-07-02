@@ -35,7 +35,7 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= dec.table(extended: @extended) %>
+<%= dec.render_table(extended: @extended) %>
 
 <%= page_notes_section %>
 <%= dec.action_list unless modal? %>

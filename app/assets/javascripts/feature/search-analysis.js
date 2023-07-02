@@ -3,13 +3,14 @@
 
 import { AppDebug }                     from '../application/debug';
 import { appSetup }                     from '../application/setup'
+import { handleClickAndKeypress }       from '../shared/accessibility';
 import { arrayWrap }                    from '../shared/arrays';
 import { Emma }                         from '../shared/assets';
 import { BaseClass }                    from '../shared/base-class';
 import { rgbColor, rgbColorInverse }    from '../shared/color';
 import { selector, toggleHidden }       from '../shared/css';
 import { DB }                           from '../shared/database';
-import { handleClickAndKeypress }       from '../shared/events';
+import { unreverseFlexChildren }        from '../shared/html';
 import { compact, hasKey }              from '../shared/objects';
 import { CallbackQueue }                from '../shared/queue';
 import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random';
@@ -277,6 +278,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     // ========================================================================
     // Actions
     // ========================================================================
+
+    // Fix tab order of buttons if necessary.
+    $button_tray.each((_, tray) => unreverseFlexChildren(tray));
 
     // Make the button (labeled "Debug") appear "active" so that clicking on
     // it appears to deactivate it.

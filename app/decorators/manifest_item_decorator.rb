@@ -130,6 +130,7 @@ class ManifestItemDecorator < BaseDecorator
   module SharedGenericMethods
 
     include BaseDecorator::SharedGenericMethods
+    include BaseDecorator::Form
     include BaseDecorator::Grid
     include BaseDecorator::Lookup
 
@@ -277,7 +278,7 @@ class ManifestItemDecorator < BaseDecorator
       outer[:'data-item-id']    ||= object.id
       outer[:'data-item-row']   ||= object.row
       outer[:'data-item-delta'] ||= object.delta
-      unless TABLE_TAGS.include?(opt[:tag])
+      unless HTML_TABLE_TAGS.include?(opt[:tag])
         outer_class  = css_class_array(*outer[:class])
         need_columns = outer_class.none? { |c| c.start_with?('columns-') }
         append_css!(outer, "columns-#{pairs.size}") if need_columns
@@ -316,6 +317,21 @@ class ManifestItemDecorator < BaseDecorator
     #
     def generate_form_actions(*)
       super(%i[new edit upload])
+    end
+
+    # This is a variation for ensuring that the `<div>` enclosing the checkbox
+    # list element is not given `role='group'`.
+    #
+    # @param [String] name
+    # @param [Array]  value
+    # @param [Class]  range
+    # @param [Hash]   opt               Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def render_form_menu_multi(name, value, range:, **opt)
+      opt[:outer] = { role: nil }.merge!(opt[:outer] || {})
+      super
     end
 
     # =========================================================================
@@ -376,18 +392,25 @@ class ManifestItemDecorator < BaseDecorator
     # Show a button for expanding/contracting the controls column in the top
     # left grid cell.
     #
-    # @param [Hash] opt
+    # @param [String] css               Characteristic CSS class/selector.
+    # @param [Hash]   opt
     #
     # @return [Array<ActiveSupport::SafeBuffer>]
     #
-    def grid_head_control_headers(**opt)
+    def grid_head_control_headers(css: CONTROLS_CELL_CLASS, **opt)
       h_opt  = append_css(opt, 'hidden').except(:tag, :css, :'aria-colindex')
       hidden =
         HIDDEN_FIELDS.map do |col|
           cell_opt = h_opt.merge(config: field_configuration(col))
           grid_head_cell(nil, **cell_opt)
         end
-      super { [column_expander, header_expander, *hidden] }
+      idx  = opt[:'aria-colindex'] ||= 1
+      l_id = opt[:'aria-labelledby'] = unique_id(css, index: idx)
+      super do
+        control_group(l_id) do
+          [column_expander, header_expander, *hidden]
+        end
+      end
     end
 
     # Render a grid header cell.
@@ -402,7 +425,8 @@ class ManifestItemDecorator < BaseDecorator
     #
     def grid_head_cell(col, **opt, &block)
       return super if col.nil?
-      parts  = Array.wrap((yield if block_given?))
+      idx    = opt[:'aria-colindex']
+      l_id   = opt[:'aria-labelledby'] = unique_id(*opt[:css], index: idx)
       config = opt[:config] ||= field_configuration(col)
       # noinspection RailsParamDefResolve
       unless config[:pairs] || (pairs = config[:type].try(:pairs)).blank?
@@ -411,9 +435,9 @@ class ManifestItemDecorator < BaseDecorator
       end
       if config[:required]
         opt[:label] =
-          html_span(class: 'label') do
+          grid_head_label(css: 'label', id: l_id) do
             t_opt = { class: 'text' }
-            text  = opt[:label] || config&.dig(:label) || col
+            text  = opt[:label] || config&.dig(:label) || col.to_s
             text  = html_span(text, t_opt) unless text.html_safe?
             n_opt = { class: 'required' }
             n_opt[:'aria-label'] = note = 'required' # TODO: I18n
@@ -422,10 +446,13 @@ class ManifestItemDecorator < BaseDecorator
             text << note
           end
       end
-      # noinspection RubyMismatchedArgumentType
+      parts = Array.wrap((yield if block_given?))
       super(col, **opt) do
-        parts << field_details(col, config)
-        parts << type_details(col, config)
+        # noinspection RubyMismatchedArgumentType
+        control_group(l_id) do
+          parts << field_details(col, config)
+          parts << type_details(col, config)
+        end
       end
     end
 
@@ -671,6 +698,7 @@ class ManifestItemDecorator < BaseDecorator
     # @param [Hash{Symbol=>*}]      statuses
     # @param [Integer]              row
     # @param [Integer]              col
+    # @param [Symbol]               tag       Default: :tr.
     # @param [String]               css
     # @param [Hash]                 opt
     #
@@ -682,12 +710,15 @@ class ManifestItemDecorator < BaseDecorator
       statuses,
       row:      HEADER_ROW,
       col:      0,
+      tag:      nil,
       css:      '.submission-status',
       **opt
     )
-      opt.delete(:index) # Just in case this slipped in.
+      table   = for_html_table?(tag)
+      tag     = :tr if table
       heading = (row == HEADER_ROW)
-      col_opt = { col: col, role: (heading ? 'columnheader' : 'cell') }
+      col_opt = opt.slice(:'data-number').merge!(col: col)
+      col_opt.merge!(role: 'columnheader') if table && heading
 
       # Item selection column.
       col_opt[:col] += 1
@@ -710,46 +741,63 @@ class ManifestItemDecorator < BaseDecorator
           submit_status_value(type, stat, **col_opt)
         end
 
-      opt[:role] ||= 'row'
       opt[:'aria-rowindex'] = row
-      opt[:separator] = '' unless opt.key?(:separator)
+      opt[:role]            = 'row' if table
+      opt[:separator]       = ''    unless opt.key?(:separator)
       prepend_css!(opt, css)
-      html_div(ctrl, item, *values, opt)
+      html_tag(tag, ctrl, item, *values, opt)
     end
 
     # submit_status_ctls
     #
     # @param [String, nil]  ctrl
     # @param [Integer, nil] col
+    # @param [Symbol]       tag
     # @param [String]       css
     # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_ctls(ctrl = nil, col: nil, css: '.controls', **opt)
-      ctrl &&= html_div(ctrl, class: 'text') unless ctrl&.html_safe?
-      ctrl ||=
-        html_div(class: (cls = 'selection')) do
-          name = 'Selection' # TODO: I18n
-          id   = css_randomize(cls)
-          h.check_box_tag(id) << h.label_tag(id, name)
-        end
-      opt[:role] ||= 'cell'
-      opt[:'aria-colindex'] = col if col
+    def submit_status_ctls(ctrl = nil, col: nil, tag: nil, css: '.controls', **opt)
+      table = for_html_table?(tag)
+      head  = opt[:role].to_s.include?('header')
+      tag   = head ? :th : :td if table
+      base  = opt.delete(:base)
+
+      if !ctrl
+        base ||= unique_id(css)
+        cb_id  = "checkbox-#{base}"
+        lbl_id = "label-#{base}"
+        number = opt[:'data-number']
+        label  = "Select item #{number} for submission".squeeze # TODO: I18n
+        label  = h.label_tag(cb_id, label, id: lbl_id)
+        cb     = h.check_box_tag(cb_id)
+        ctrl   = control_group(lbl_id) { cb << label }
+      elsif !ctrl.html_safe?
+        ctrl   = html_div(ctrl, class: 'text')
+      end
+
+      opt[:role] ||= grid_cell_role if table
+      opt[:'aria-colindex'] = col   if col
       prepend_css!(opt, css)
-      html_div(ctrl, opt)
+      html_tag(tag, ctrl, opt)
     end
 
     # submit_status_item
     #
     # @param [String, ManifestItem] item
     # @param [Integer, nil]         col
+    # @param [Symbol]               tag
     # @param [String]               css
     # @param [Hash]                 opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_item(item, col: nil, css: '.item-name', **opt)
+    def submit_status_item(item, col: nil, tag: nil, css: '.item-name', **opt)
+      table = for_html_table?(tag)
+      head  = opt[:role].to_s.include?('header')
+      tag   = head ? :th : :td if table
+      base  = opt.delete(:base)
       if item.is_a?(ManifestItem)
         part = {
           identifier: :dc_identifier,
@@ -766,14 +814,16 @@ class ManifestItemDecorator < BaseDecorator
         uniq  = hex_rand
         r_opt = { index: uniq, separator: sep, no_format: true, no_help: true }
         lines = part.map { |k, v| render_pair(k.capitalize, v, **r_opt) } # TODO: I18n
-        item  = html_details(first, *lines, class: 'text')
+        l_id  = 'label-%s' % (base || unique_id(css))
+        item  = html_details(first, *lines, class: 'text', id: l_id)
+        item  = control_group(l_id) { item }
       else
         item  = html_div(item, class: 'text') unless item&.html_safe?
       end
-      opt[:role] ||= 'cell'
-      opt[:'aria-colindex'] = col if col
+      opt[:role] ||= grid_cell_role if table
+      opt[:'aria-colindex'] = col   if col
       prepend_css!(opt, css)
-      html_div(item, opt)
+      html_tag(tag, item, opt)
     end
 
     # submit_status_value
@@ -782,22 +832,31 @@ class ManifestItemDecorator < BaseDecorator
     # @param [Symbol, nil]  status
     # @param [Integer, nil] col
     # @param [Integer, nil] row
+    # @param [Symbol]       tag
     # @param [String]       css
     # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_value(type, status, col:, row: nil, css: '.status', **opt)
-      text =
-        submit_status_text(type, status, label: opt.delete(:label))
-      button =
-        (submit_status_link(type, status, row: row) if respond_to?(:object))
-      opt[:role] ||= 'cell'
-      opt[:'aria-colindex'] = col if col
+    def submit_status_value(type, status, col:, row: nil, tag: nil, css: '.status', **opt)
+      table  = for_html_table?(tag)
+      head   = opt[:role].to_s.include?('header') || !respond_to?(:object)
+      tag    = head ? :th : :td if table
+      label  = opt.delete(:label)
+      base   = opt.delete(:base) || unique_id(css)
+      lbl_id = "label-#{base}"
+
+      text   = submit_status_text(type, status, label: label, id: lbl_id)
+      button = (submit_status_link(type, status, row: row) unless head)
+
+      opt[:role] ||= grid_cell_role if table
+      opt[:'aria-colindex'] = col   if col
       step_css  = SUBMIT_STEPS.dig(type, :css)
       value_css = SUBMIT_STATUS.dig(status, :css)
       prepend_css!(opt, css, step_css, value_css)
-      html_div(text, button, opt)
+      html_tag(tag, opt) do
+        control_group(lbl_id) { [text, button] }
+      end
     end
 
     # The text on the status element.
@@ -814,13 +873,14 @@ class ManifestItemDecorator < BaseDecorator
     def submit_status_text(type, status, css: '.text', **opt)
       prepend_css!(opt, css)
       details = STATUS_SHOW_DETAILS.include?(status)
+      lbl_id  = opt.delete(:id)
       label   = opt[:label]
       label ||= SUBMIT_STATUS.dig(status, :label)
       label ||= (status || type).to_s.titleize
 
       # Simple label.
       p_opt   = !details ? opt : append_css(opt, 'hidden')
-      plain   = html_div(label, p_opt)
+      plain   = html_div(label, p_opt.merge(id: lbl_id))
 
       # Expandable label.
       d_opt   = details ? opt : append_css(opt, 'hidden')
@@ -968,6 +1028,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def row_indicator(value, css: ".indicator.#{VALUE_CLASS}", **opt)
+      opt[:role] ||= 'status'
       field = opt[:'data-field']
       append_css!(opt, field, css, "value-#{value}")
       html_div(opt)
@@ -1457,14 +1518,22 @@ class ManifestItemDecorator
   #
   # @param [Integer, nil] row
   # @param [Integer]      col
+  # @param [Integer, nil] index
   # @param [Hash]         opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #submit_status_element
   #
-  def submission_status(row: nil, col: 1, **opt)
-    ctrl = submit_status_ctls(col: col)
+  def submission_status(row: nil, col: 1, index: nil, **opt)
+    opt[:'data-number']    ||= index&.succ
+    opt[:'data-item-id']   ||= object.id
+    opt[:'data-manifest']  ||= object.manifest_id
+    opt[:'data-file-name'] ||= object.pending_file_name
+    opt[:'data-file-url']  ||= object.pending_file_url
+
+    ctrl = submit_status_ctls(col: col, **opt.slice(:tag, :'data-number'))
+
     stat = SUBMIT_STEPS.transform_values { nil }
     stat[:entry]  = object.submitted?
     stat[:index]  = object.in_index?
@@ -1473,10 +1542,7 @@ class ManifestItemDecorator
     stat[:file] ||= object.file_ok?  ? S_FILE_NEEDED : S_FILE_MISSING
     stat[:data]   = object.unsaved? && S_UNSAVED
     stat[:data] ||= object.data_ok? || S_DATA_MISSING
-    opt[:'data-item-id']   ||= object.id
-    opt[:'data-manifest']  ||= object.manifest_id
-    opt[:'data-file-name'] ||= object.pending_file_name
-    opt[:'data-file-url']  ||= object.pending_file_url
+
     submit_status_element(ctrl, object, stat, row: row, **opt)
   end
 

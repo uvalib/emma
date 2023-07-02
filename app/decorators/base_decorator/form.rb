@@ -143,6 +143,9 @@ module BaseDecorator::Form
   # @param [Hash]           opt         To label/value except:
   #
   # @option opt [Symbol] :render        Force render method.
+  # @option opt [String] :base
+  # @option opt [String] :label_id
+  # @option opt [String] :value_id
   #
   # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
   # @return [nil]                       If *field* is :ignored or disallowed
@@ -170,15 +173,17 @@ module BaseDecorator::Form
   )
     prop  ||= field_configuration(field)
     field ||= prop[:field]
+    label   = prop[:label] || label
     return if prop[:ignored]
     return unless user_has_role?(prop[:role])
 
     # Pre-process label to derive names and identifiers.
-    base = model_html_id(field || label)
-    name = field&.to_s || base
-    type = "field-#{base}"
-    base = "form-#{type}"
-    v_id = [type, index].compact.join('-')
+    base    = opt.delete(:base) || model_html_id(field || label)
+    name    = field&.to_s || base
+    type    = "field-#{base}"
+    id_opt  = { base: base, index: index }.compact
+    l_id    = opt.delete(:label_id)
+    v_id    = opt.delete(:value_id) || field_html_id(**id_opt)
 
     # Pre-process value.
     render_method = placeholder = range = optional = nil
@@ -215,9 +220,9 @@ module BaseDecorator::Form
     end
     placeholder ||= prop[:placeholder]
     render_method = opt.delete(:render) if opt.key?(:render)
-    fieldset      = (render_method == :render_form_menu_multi)
+    group         = (render_method == :render_form_menu_multi)
     file_data     = (field == :file_data)
-    input         = !fieldset && !file_data
+    input         = !group && !file_data
 
     # Update properties.
     disabled = prop[:readonly] if disabled.nil?
@@ -242,24 +247,25 @@ module BaseDecorator::Form
     parts = []
 
     # Label for input element.
-    label = prop[:label] || label.to_s.presence
-    l_id  = label_css || DEFAULT_LABEL_CLASS
-    l_id  = ["#{l_id}-#{base}", index].compact.join('-')
-    l_opt = prepend_css(opt, label_css)
-    l_opt[:id]               = l_id
-    l_opt[:status]           = status
-    l_opt[:help]             = help     if help
-    l_opt[:title]          ||= tooltip  if tooltip
-    l_opt[:for]              = v_id     if input
-    l_opt[:'data-label-for'] = v_id     if fieldset
-    l_opt[:tag]              = :div     if fieldset || file_data
-    append_css!(l_opt, 'sr-only')       if no_label
-    # noinspection RubyMismatchedArgumentType
-    parts << render_form_pair_label(field, label, **l_opt)
+    if no_label || label.blank?
+      l_id   = nil
+    else
+      l_id ||= field_html_id(DEFAULT_LABEL_CLASS, **id_opt)
+      l_opt  = prepend_css(opt, label_css)
+      l_opt[:id]               = l_id
+      l_opt[:status]           = status
+      l_opt[:help]             = help     if help
+      l_opt[:title]          ||= tooltip  if tooltip
+      l_opt[:for]              = v_id     if input
+      l_opt[:'data-label-for'] = v_id     if group
+      l_opt[:tag]              = :div     if group || file_data
+      # noinspection RubyMismatchedArgumentType
+      parts << render_form_pair_label(field, label, **l_opt)
+    end
 
     # Input element pre-populated with value.
     v_opt = prepend_css(opt, value_css)
-    v_opt.merge!(id: v_id, name: name)
+    v_opt.merge!(id: v_id, name: name, base: "form-#{type}")
     v_opt[:title]             = UNMODIFIABLE if disabled # TODO: I18n
     v_opt[:readonly]          = true         if disabled # Not :disabled.
     v_opt[:placeholder]       = placeholder  if placeholder
@@ -267,9 +273,7 @@ module BaseDecorator::Form
     v_opt[:'data-required']   = false        if optional
     v_opt[:'data-required']   = true         if required
     v_opt[:'aria-labelledby'] = l_id         if l_id
-    v_opt[:legend]            = label        if fieldset
     v_opt[:range]             = range        if range
-    v_opt[:base]              = base
     parts << send(render_method, name, value, **v_opt)
 
     # Other content if provided.
@@ -342,8 +346,9 @@ module BaseDecorator::Form
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #select_tag except for:
   #
-  # @option opt [String] :name        Overrides *name*
-  # @option opt [String] :base        Name and id for *select*; default: *name*
+  # @option opt [String]  :name       Overrides *name*
+  # @option opt [String]  :base       Name and id for *select*; default: *name*
+  # @option opt [Boolean] :readonly
   #
   # @raise [RuntimeError]             If *range* is not an EnumType.
   #
@@ -354,7 +359,7 @@ module BaseDecorator::Form
   def render_form_menu_single(name, value, range:, css: '.menu.single', **opt)
     range.is_a?(Array) or valid_range?(range, exception: true)
     normalize_attributes!(opt)
-    html_opt = remainder_hash!(opt, :readonly, :base, :name)
+    html_opt = remainder_hash!(opt, :name, :base, :readonly)
     field    = html_opt[:'data-field']
     name     = opt[:name] || name || opt[:base] || field
     prepend_css!(html_opt, css)
@@ -383,13 +388,14 @@ module BaseDecorator::Form
   #                                     #values method will be used to populate
   #                                     the menu.
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #field_set_tag except for:
+  # @param [Hash]   opt               Passed to inner group except for:
   #
   # @option opt [String]  :id
-  # @option opt [Boolean] :readonly
   # @option opt [String]  :name       Overrides *name*
   # @option opt [String]  :base       Name and id for *select*; default: *name*
-  # @option opt [String]  :legend
+  # @option opt [Boolean] :readonly
+  # @option opt [Hash]    :inner
+  # @option opt [Hash]    :outer
   #
   # @raise [RuntimeError]             If *range* is not an EnumType.
   #
@@ -400,15 +406,11 @@ module BaseDecorator::Form
   def render_form_menu_multi(name, value, range:, css: '.menu.multi', **opt)
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
-    html_opt = remainder_hash!(opt, :id, :readonly, :name, :base, :legend)
+    options  = %i[id name base readonly inner outer]
+    html_opt = remainder_hash!(opt, *options)
     field    = html_opt[:'data-field']
     name     = opt[:name] || name || opt[:base] || field
     prepend_css!(html_opt, css)
-
-    # Fieldset legend.  This is "required", despite the fact that it's
-    # redundant for the label/value display scheme.
-    legend   = opt[:legend] || name.humanize
-    legend   = html_tag(:legend, legend, class: 'sr-only')
 
     # Checkbox elements.
     selected = Array.wrap(value).compact.presence
@@ -429,13 +431,15 @@ module BaseDecorator::Form
     gr_opt[:name]     = name
     gr_opt[:multiple] = true
     gr_opt[:tabindex] = 0
-    group = html_tag(:fieldset, legend, *checkboxes, gr_opt)
+    gr_opt.merge!(opt[:inner]) if opt[:inner].is_a?(Hash)
+    group = html_tag(:ul, *checkboxes, gr_opt)
 
+    html_opt.delete(:'aria-labelledby')
     html_opt[:id]       = opt[:id]
     html_opt[:name]     = name
     html_opt[:role]     = 'group'
-    html_opt[:disabled] = true if opt[:readonly]
-    html_opt.delete(:'aria-labelledby')
+    html_opt[:disabled] = true   if opt[:readonly]
+    html_opt.merge!(opt[:outer]) if opt[:outer].is_a?(Hash)
     html_div(html_opt) { group }
   end
 
@@ -932,6 +936,7 @@ module BaseDecorator::Form
       label       ||= config.dig(state, :label)   || config[:label]
       opt[:title] ||= config.dig(state, :tooltip) || config[:tooltip]
     end
+    opt.reverse_merge!(disabled: true) if state == :disabled
 
     prepend_css!(opt, css, "#{type}-button")
     input_type = opt[:type] || type
@@ -1154,7 +1159,7 @@ module BaseDecorator::Form
     end
     opt[:'data-icon'] = icon ||= status_markers.dig(:blank, :label)
     prepend_css!(opt, css, *status)
-    html_span(icon, opt)
+    html_span(opt) { symbol_icon(icon) }
   end
 
   # ===========================================================================

@@ -143,6 +143,18 @@ class ManifestItemDecorator < BaseDecorator
     #
     def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
 
+    # This is a variation for ensuring that the `<div>` enclosing the checkbox
+    # list element is not given `role='group'`.
+    #
+    # @param [String] name
+    # @param [Array]  value
+    # @param [Class]  range
+    # @param [Hash]   opt               Passed to super.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def render_form_menu_multi: (String name, anyArray value, range: Class, **untyped opt) -> ActiveSupport::SafeBuffer
+
     SKIPPED_FIELDS: symArray
 
     # The fields which are displayed in the expandable "Item Details" panel and
@@ -177,11 +189,12 @@ class ManifestItemDecorator < BaseDecorator
     # Show a button for expanding/contracting the controls column in the top
     # left grid cell.
     #
-    # @param [Hash] opt
+    # @param [String] css               Characteristic CSS class/selector.
+    # @param [Hash]   opt
     #
     # @return [Array<ActiveSupport::SafeBuffer>]
     #
-    def grid_head_control_headers: (**untyped opt) -> Array[ActiveSupport::SafeBuffer]
+    def grid_head_control_headers: (?css: String|nil, **untyped opt) -> Array[ActiveSupport::SafeBuffer]
 
     # Render a grid header cell.
     #
@@ -327,46 +340,51 @@ class ManifestItemDecorator < BaseDecorator
     # @param [Hash{Symbol=>*}]      statuses
     # @param [Integer]              row
     # @param [Integer]              col
+    # @param [Symbol]               tag       Default: :tr.
     # @param [String]               css
     # @param [Hash]                 opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_element: ((String|nil) ctrl, (String|ManifestItem) item, Hash[Symbol,(String|Symbol|bool|nil)] statuses, ?row: Integer, ?col: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_element: ((String|nil) ctrl, (String|ManifestItem) item, Hash[Symbol,(String|Symbol|bool|nil)] statuses, ?row: Integer, ?col: Integer, ?tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # submit_status_ctls
     #
     # @param [String, nil]  ctrl
     # @param [Integer, nil] col
+    # @param [Symbol]       tag
     # @param [String]       css
     # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_ctls: (?(String|nil) ctrl, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_ctls: (?(String|nil) ctrl, ?col: Integer|nil, tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # submit_status_item
     #
     # @param [String, ManifestItem] item
     # @param [Integer, nil]         col
+    # @param [Symbol]               tag
     # @param [String]               css
     # @param [Hash]                 opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_item: ((String|ManifestItem) item, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_item: ((String|ManifestItem) item, ?col: Integer|nil, tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # submit_status_value
     #
     # @param [Symbol]       type
     # @param [Symbol, nil]  status
     # @param [Integer, nil] col
+    # @param [Integer, nil] row
+    # @param [Symbol]       tag
     # @param [String]       css
     # @param [Hash]         opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_value: (Symbol `type`, Symbol|nil status, ?col: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    def submit_status_value: (Symbol `type`, Symbol|nil status, ?col: Integer|nil, ?row: Integer|nil, tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # The text on the status element.
     #
@@ -727,13 +745,15 @@ class ManifestItemDecorator
   # Submission status row for a single active submission.
   #
   # @param [Integer, nil] row
+  # @param [Integer]      col
+  # @param [Integer, nil] index
   # @param [Hash]         opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #submit_status_element
   #
-  def submission_status: (?row: Integer|nil, ?col: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def submission_status: (?row: Integer|nil, ?col: Integer, ?index: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #

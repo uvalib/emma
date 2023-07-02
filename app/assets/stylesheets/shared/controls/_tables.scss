@@ -21,7 +21,7 @@ $border-fg:  var(--rev-fg-color);
 
 /// Essential definitions for a grid-based table.
 ///
-@mixin grid-table {
+@mixin grid-table($max-columns: 50) {
 
     display:     grid;
     position:    relative;
@@ -30,8 +30,6 @@ $border-fg:  var(--rev-fg-color);
     //=========================================================================
     // Grid layout
     //=========================================================================
-
-    $max-columns: 50;
 
     @include grid.column-classes($max-columns, 1fr);
     @include grid.cell-col-classes($max-columns);

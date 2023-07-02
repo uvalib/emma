@@ -3,6 +3,8 @@
 module LayoutHelper::SearchFilters
   include LayoutHelper::Common
 
+  include HtmlHelper
+
   include GridHelper
 
   include ParamsHelper
@@ -11,6 +13,8 @@ module LayoutHelper::SearchFilters
 
   module ClassMethods
     include Emma::Common
+
+    include HtmlHelper
 
     # Get the search menu configuration for the current context.
     #

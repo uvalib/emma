@@ -32,7 +32,7 @@ export function decodeJSON(arg) {
     const string  = arg.replace(/\n/g, '\\n');
     return fromJSON(string, func, (k, v) => {
         const encoded = (typeof v === 'string') && v.includes('%5C');
-        return encoded ? decodeURIComponent(v) : v;
+        return encoded ? decodeURIComponent(v).replaceAll(/\\"/g, '"') : v;
     });
 }
 

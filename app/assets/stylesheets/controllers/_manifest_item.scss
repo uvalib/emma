@@ -147,7 +147,7 @@
 // Manifest item grid
 //=============================================================================
 
-$scroll-snap:     false;
+$scroll-snap:     true;
 
 $ctrl-col-width:  auto;
 $data-col-width:  5vw;
@@ -210,6 +210,7 @@ table.manifest_item-grid {
 
     @if $scroll-snap {
         scroll-snap-type:    both mandatory;
+        scroll-behavior:     smooth;
         scroll-padding-top:  51px;  // TODO: dynamic calc of head row height
         scroll-padding-left: 124px; // TODO: dynamic calc of ctrl col width
     }
@@ -290,7 +291,7 @@ table.manifest_item-grid {
         // Components
         //=====================================================================
 
-        > .controls,
+        > .controls-cell,
         > .cell {
 
             display:        flex;
@@ -309,11 +310,19 @@ table.manifest_item-grid {
         }
 
         // First column.
-        > .controls {
+        > .controls-cell {
 
             gap:                $cell-pad * 2;
             padding:            $cell-pad * 2;
             border-right-width: $controls-border-width;
+
+            //=================================================================
+            // Components
+            //=================================================================
+
+            .control-group {
+                gap: inherit;
+            }
 
             *:focus {
                 outline-offset: 1px;
@@ -458,6 +467,10 @@ table.manifest_item-grid {
                 padding-right: $cell-pad * 3;
             }
 
+            //=================================================================
+            // Components
+            //=================================================================
+
             *:focus {
                 outline-offset: 1px;
             }
@@ -483,18 +496,24 @@ table.manifest_item-grid {
 
         &.head {
 
-            > * {
+            > .controls-cell,
+            > .cell {
+
                 position:            sticky;
                 top:                 0;
                 z-index:             1;
-                line-height:         1.5;
+                line-height:         min(2vh, 1.5em);
                 font-weight:         bold;
                 background:          $grid-head-bg;
                 border-bottom-width: $controls-border-width;
+
+                &:focus {
+                    outline-offset: -($cell-pad * 1.5);
+                }
             }
 
             // Cell in the upper-left corner of the grid (first column).
-            > .controls {
+            > .controls-cell {
 
                 left:                0;
                 z-index:             2;
@@ -568,7 +587,6 @@ table.manifest_item-grid {
                     gap:            0.25rem;
 
                     .required {
-                        line-height: 1;
                         font-size:   x-large;
                         color:       $uva-emergency-red;
                         text-shadow: 0 0 1px white;
@@ -709,14 +727,14 @@ table.manifest_item-grid {
             //  character, so it's being used by manually rotating downward.
             @if $controls-rotate {
                 &.expanded {
-                    > .controls {
+                    > .controls-cell {
                         .row-expander {
                             transform: rotate(0.75turn);
                         }
                     }
                 }
                 &:not(.expanded) {
-                    > .controls {
+                    > .controls-cell {
                         .row-expander {
                             transform: rotate(0.25turn);
                         }
@@ -738,13 +756,17 @@ table.manifest_item-grid {
         &:not(.head) {
 
             // Expandable cell containing per-row controls (first column).
-            > .controls {
+            > .controls-cell {
 
                 position:   sticky;
                 left:       0;
                 z-index:    1;
                 background: $controls-bg;
                 box-shadow: inset -0.75rem 0 1rem -1.5rem gray;
+
+                &:focus {
+                    outline-offset: -($cell-pad * 1.5);
+                }
 
                 //=============================================================
                 // Components
@@ -929,7 +951,7 @@ table.manifest_item-grid {
                     }
 
                     details {
-                        @include sr-only;
+                        display: none;
                     }
                 }
             }
@@ -937,8 +959,11 @@ table.manifest_item-grid {
             // Data cell for the value of a record field (subsequent columns).
             > .cell {
 
-                max-height: inherit;
                 background: white;
+
+                &:focus {
+                    outline-offset: -($cell-pad * 1.15);
+                }
 
                 //=============================================================
                 // Components
@@ -1001,52 +1026,61 @@ table.manifest_item-grid {
                     }
                 }
 
-                // Editing value (<input>).
-                > .edit {
+                // Editing control(s).
+                > .control-group {
 
                     line-height: 1.375;
                     font:        inherit;
 
-                    > * {
+                    > *,
+                    > * * {
                         line-height: inherit;
+                        font:        inherit;
                     }
 
-                    &.input.single {
+                    .input.single {
                         resize:      none;
                         border:      none;
                     }
 
-                    &.input.multi {
+                    .input.multi {
                         line-height: 1.375;
                         resize:      none;
                         border:      none;
                     }
 
-                    &.menu.single {
+                    .menu.single {
                         color:       $enum-fg;
                         background:  white;
                     }
 
-                    &.menu.multi {
-                        > * { // NOTE: .edit.menu.multi > div.menu.multi
+                    .menu.multi:not([role="listbox"]) {
+
+                        // noinspection CssReplaceWithShorthandSafely
+                        .menu.multi[role="listbox"] {
 
                             display:        flex;
                             flex-direction: column;
                             gap:            $cell-pad;
+                            width:          max-content;
+                            margin:         0;
+                            padding:        0;
+                            padding-right:  $value-pad;
                             background:     white;
 
                             .single.checkbox {
 
-                                display:     inline-flex;
-                                column-gap:  $cell-pad;
-                                white-space: nowrap;
-                                overflow-x:  hidden;
+                                display:        inline-flex;
+                                flex-direction: row;
+                                column-gap:     $cell-pad;
+                                white-space:    nowrap;
+                                overflow-x:     hidden;
 
                                 label {
 
                                     @include user-select(none);
 
-                                    margin-right: $value-pad * 2;
+                                    margin-right: $cell-pad;
                                     flex:         1 0 100%;
                                 }
 
@@ -1362,54 +1396,63 @@ table.manifest_item-grid {
 
                 &.editing {
 
-                    .menu.multi:not([data-field]) {
-                        min-height: 100%;
-                    }
-
                     > .value {
                         display: none;
                     }
 
-                    > .edit {
+                    > .control-group {
 
-                        margin:  0;
-                        padding: 0;
-                        flex:    1 0 auto;
-
-                        &.input.single.date {
+                        .input.single.date {
                             margin-top:     $cell-pad;
                             margin-left:    $cell-pad;
                             width:          min-content;
-                            flex:           0 1 auto;
                         }
 
-                        &.input.single:not(.date) {
+                        .input.single:not(.date) {
                             padding-top:    $cell-pad;
                             padding-left:   $cell-pad;
+                            padding-right:  0;
+                            flex:           1 0 auto;
                         }
 
-                        &.input.multi {
-                            padding-left:   $cell-pad * 0.5;
+                        .input.multi {
+                            padding-top:    0;
                             padding-bottom: $cell-pad;
+                            padding-left:   $cell-pad * 0.5;
+                            flex:           1 0 auto;
                         }
 
-                        &.menu.single {
+                        .menu.single {
                             margin-top:     $cell-pad * 0.5;
-                            flex:           0 1 auto;
                         }
 
-                        &.menu.multi {
+                        .menu.multi:not([role="listbox"]) {
 
                             padding-top:    $cell-pad;
-                            min-height:     $max-cell-height;
+                            padding-left:   $cell-pad * 0.5;
+                            padding-right:  $cell-pad * 5;
+                            max-height:     $max-cell-height;
+                            overflow:       auto;
 
-                            > * { // NOTE: .edit.menu.multi > div.menu.multi
+                            .menu.multi[role="listbox"] {
+
                                 // noinspection CssReplaceWithShorthandSafely
                                 .single.checkbox {
+
+                                    &[aria-selected="true"] {
+                                        outline: 2px solid $enum-fg;
+                                    }
+
                                     input {
-                                        margin:       0;
+
+                                        margin:       auto;
                                         margin-left:  $cell-pad;
                                         margin-right: $cell-pad * 0.5;
+                                        height:       min-content;
+
+                                        &:focus {
+                                            outline-offset: -1px;
+                                        }
                                     }
                                 }
                             }
@@ -1422,7 +1465,7 @@ table.manifest_item-grid {
 
                     // Make room for the -webkit-calendar-picker-indicator.
                     &.date {
-                        padding-right: $value-pad * 4;
+                        padding-right: $cell-pad * 2;
                     }
                 }
 
@@ -1456,8 +1499,14 @@ table.manifest_item-grid {
                         }
 
                         &.array.enum.multi {
+
                             padding-left:   $value-pad;
+                            padding-right:  $value-pad * 8;
                             height:         calc(100% - ($value-pad * 4));
+
+                            .item {
+                                padding-right: $value-pad * 4;
+                            }
                         }
                     }
 
@@ -1465,11 +1514,13 @@ table.manifest_item-grid {
                     // (rather than "display: none") allows the grid column
                     // width to remain constant regardless of which child
                     // element is the one being displayed.
-                    > .edit {
-
-                        @include invisible-height;
+                    > .control-group {
 
                         flex: 0 1 0;
+
+                        > * {
+                            @include invisible-height;
+                        }
                     }
 
                     //=========================================================
@@ -1565,7 +1616,7 @@ table.manifest_item-grid {
 
         tr.manifest_item-grid-item {
 
-            > .controls,
+            > .controls-cell,
             > .cell {
                 max-width: unset;
             }
@@ -1612,14 +1663,17 @@ table.manifest_item-grid {
 
         tr.manifest_item-grid-item {
 
-            > .controls {
-                @media #{$wide-screen}   { min-width: 12.5vw; }
-                @media #{$medium-width}  { min-width: 25vw;   }
-                @media #{$narrow-screen} { min-width: 33vw;   }
+            > .controls-cell {
+
+                $w: 6em; // optimal width
+
+                @media #{$wide-screen}   { min-width: max(12.5vw, #{$w}); }
+                @media #{$medium-width}  { min-width: max(25vw,   #{$w}); }
+                @media #{$narrow-screen} { min-width: max(33vw,   #{$w}); }
             }
 
             &:not(.head) {
-                > .controls,
+                > .controls-cell,
                 > .cell {
                     border-bottom-width: $controls-border-width;
                 }
@@ -1635,8 +1689,13 @@ table.manifest_item-grid {
 
                 > .cell {
 
-                    > .edit {
+                    > .control-group {
+
                         color: inherit;
+
+                        > * {
+                            color: inherit;
+                        }
                     }
 
                     &:hover {
@@ -1650,5 +1709,11 @@ table.manifest_item-grid {
                 }
             }
         }
+    }
+
+    // The "debug" class can be added from the console to verify the expected
+    // behavior of focusable elements within the grid.
+    &.debug {
+        @include grid.debug-focusables;
     }
 }

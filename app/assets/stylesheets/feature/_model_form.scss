@@ -10,13 +10,6 @@
 @use 'vendor/uppy';
 
 //=============================================================================
-// Internal constants
-//=============================================================================
-
-$form-gap:        var(--gap);
-$form-gap-narrow: calc(#{$form-gap} / 3);
-
-//=============================================================================
 // Internal mixins
 //=============================================================================
 
@@ -41,10 +34,6 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         line-height:    1.5;
     }
 
-    &:hover:focus {
-        outline-color: transparent;
-    }
-
     //=========================================================================
     // Elements
     //=========================================================================
@@ -62,12 +51,12 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         }
 
         @media #{$medium-width} {
-            flex-basis: 25%;
+            flex:       1 1 25%;
         }
 
         @media #{$narrow-screen} {
             margin:     0;
-            flex-basis: 33%;
+            flex:       1 1 33%;
         }
     }
 
@@ -342,25 +331,24 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     @include entry-radio-group;
 
-    padding:    0.25rem;
-    background: $debug-bg;
-
-    justify-content: flex-start;
+    padding:            0.25rem;
+    background:         $debug-bg;
+    justify-content:    flex-start;
 
     @media #{$wide-screen} {
-        margin: $page-padding 0;
+        margin:         $page-padding-y 0;
     }
 
     @media #{$medium-width} {
-        margin: 1.5rem 0;
+        margin:         1.5rem 0;
     }
 
     // noinspection CssReplaceWithShorthandSafely
     @media #{$narrow-screen} {
-        margin-top:    1.5rem;
-        margin-bottom: $page-padding;
-        margin-left:   0.125rem;
-        margin-right:  0.25rem;
+        margin-top:     1.5rem;
+        margin-bottom:  $page-padding-y;
+        margin-left:    0.125rem;
+        margin-right:   0.25rem;
     }
 }
 
@@ -423,15 +411,15 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 .model-form,
 .bulk-op-form {
 
-    display: grid;
+    display:          grid;
 
     @media #{$not-narrow-screen} {
-        gap:          $form-gap;
+        gap:          $gap-y $gap-x;
     }
 
     @media #{$narrow-screen} {
         margin-right: 0.25rem;
-        gap:          $form-gap-narrow;
+        gap:          calc(#{$gap-y} / 3) calc(#{$gap-x} / 3);
     }
 
     grid-template-columns:
@@ -529,7 +517,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
         flex-direction:  row;
         align-items:     baseline;
         justify-content: start;
-        gap:             $form-gap;
+        gap:             $gap-y $gap-x;
         max-width:       inherit;
 
         @media #{$not-narrow-screen} {
@@ -642,16 +630,16 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         display:       grid;
         position:      sticky;
-        top:           calc(2 * #{$form-gap});
-        margin-bottom: calc(2 * #{$form-gap});
+        z-index:       $z-controls;
+        top:           calc(2 * #{$gap-y});
+        margin-bottom: calc(2 * #{$gap-y});
         background:    var(--bg-color);
         box-shadow:    0 -0.5rem 0      1.0rem var(--bg-color),
                        0  0.5rem 0.5rem 0.5rem var(--bg-color);
-        z-index:       $z-controls;
 
         grid-template-columns: 1fr;
-        row-gap:               calc(2 * #{$form-gap});
-        column-gap:            $form-gap;
+        row-gap:               calc(2 * #{$gap-y});
+        column-gap:            $gap-x;
     }
 
     //=========================================================================
@@ -663,7 +651,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
         @include grid.column-span;
 
-        margin-top: calc(2 * #{$form-gap});
+        margin-top: calc(2 * #{$gap-y});
         z-index:    $z-visible; // NOTE: Needed for Firefox.
     }
 
@@ -676,7 +664,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
     .form-fields + .controls {
 
         position:      unset;
-        margin-top:    $form-gap;
+        margin-top:    $gap-y;
         margin-bottom: 0;
         grid-row:      unset;
 
@@ -706,7 +694,7 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
 .bulk-op-form {
 
-    gap: $form-gap;
+    gap: $gap-y $gap-x;
 
     &.delete {
         grid-template-columns: repeat(2, 1fr);
@@ -781,20 +769,21 @@ $form-gap-narrow: calc(#{$form-gap} / 3);
 
     $status-bar-is-white-space: true;
 
-    display:       grid;
-    margin-top:    $page-padding;
-    margin-bottom: 1.5rem;
+    display:        grid;
+    gap:            1rem;
+    margin-bottom:  1.5rem;
 
     @if $status-bar-is-white-space {
         margin-top: 0;
+    } @else {
+        margin-top: $page-padding-y;
     }
 
     @media #{$wide-screen} {
-        width: 50vw;
+        width:      50vw;
     }
 
     grid-template-columns: 1fr;
-    gap:                   1rem;
 
     //=========================================================================
     // Elements

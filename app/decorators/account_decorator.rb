@@ -341,7 +341,7 @@ class AccountDecorator
   #
   # @return [Hash]
   #
-  def table_columns(**opt)
+  def table_values(**opt)
     { actions: [show_control, edit_control, delete_control], **super }
   end
 

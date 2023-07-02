@@ -57,7 +57,7 @@ export class BaseClass {
     // ========================================================================
 
     constructor() {
-        this._debug('CTOR');
+        if (this.constructor.DEBUG_CTOR) { this._debug('CTOR') }
     }
 
     // ========================================================================

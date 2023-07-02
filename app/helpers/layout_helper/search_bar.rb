@@ -439,6 +439,7 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr      Default: *target*.
   # @param [Symbol, String, nil] target     Default: `#search_input_target`.
   # @param [String, nil]         value      Default: `params[*field*]`.
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_field_tag except:
   #
   # @option opt [String, Boolean] :unique   Passed to #unique_id.
@@ -448,8 +449,14 @@ module LayoutHelper::SearchBar
   #
   # @note Used by UploadDecorator#parent_entry_select
   #
-  def search_input(field, ctrlr = nil, target: nil, value: nil, **opt)
-    css      = '.search-input'
+  def search_input(
+    field,
+    ctrlr = nil,
+    target: nil,
+    value:  nil,
+    css:    '.search-input',
+    **opt
+  )
     target   = search_input_target(ctrlr, target: target)
     field  ||= search_input_field(target)
     field    = field&.to_sym
@@ -491,12 +498,18 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr    Default: *target*
   # @param [Symbol, String, nil] target   Default: `#search_input_target`
   # @param [String, nil]         label    Default: `#search_button_label`.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #submit_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_button(ctrlr = nil, target: nil, label: nil, **opt)
-    css     = '.search-button'
+  def search_button(
+    ctrlr = nil,
+    target: nil,
+    label:  nil,
+    css:    '.search-button',
+    **opt
+  )
     label ||= search_button_label(ctrlr || target)
     opt[:'data-ready']     ||= SEARCH_READY_TOOLTIP
     opt[:'data-not-ready'] ||= SEARCH_NOT_READY_TOOLTIP
@@ -551,6 +564,7 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil]   ctrlr    Default: *target*
   # @param [Symbol, String, nil]   target   Default: `#search_button`
   # @param [String, nil]           form     Form element identifier.
+  # @param [String]                css      Characteristic CSS class/selector.
   # @param [Hash]                  opt      Passed to #html_div except:
   #
   # @option opt [Symbol, Array<Symbol>] :only     One or more #SEARCH_CONTROLS.
@@ -558,8 +572,13 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_controls(ctrlr = nil, target: nil, form: nil, **opt)
-    css     = '.search-controls'
+  def search_controls(
+    ctrlr = nil,
+    target: nil,
+    form:   nil,
+    css:    '.search-controls',
+    **opt
+  )
     target  = search_input_target(ctrlr, target: target)
     f_opt   = extract_hash!(opt, :only, :except)
     buttons = filter(SEARCH_CONTROLS, **f_opt)

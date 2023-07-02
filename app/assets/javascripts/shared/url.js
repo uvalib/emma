@@ -28,7 +28,7 @@ export function urlFrom(arg) {
     let result;
     if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
         result = arg;
-    } else if (!isObject(arg)) {
+    } else if (!arg || (typeof arg !== 'object')) {
         // Skipping invalid argument.
     } else if (isDefined(arg.target)) { // Event or jQuery.Event
         const event = arg.originalEvent || arg;

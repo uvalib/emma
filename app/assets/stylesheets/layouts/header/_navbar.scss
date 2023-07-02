@@ -10,22 +10,20 @@
 
     @include banner;
 
-    &:last-child {
-        padding-bottom: calc(2 * #{$page-padding-y});
+    @media #{$not-narrow-screen} {
+        align-items:    start;
+        flex-wrap:      wrap;
+        row-gap:        $page-padding-y;
     }
 
     @media #{$narrow-screen} {
         flex-direction: column;
-        padding-right:  calc((#{$page-padding-x} / 2) + #{$scroll-easement});
+        padding-right:  calc(#{$page-padding-x} + #{$scroll-easement-x});
+        padding-left:   calc(#{$page-padding-x} * 2);
     }
 
-    // NOTE: only available in Firefox by setting the flag
-    //  "layout.css.has-selector.enabled".
-    &:has(.dev-controls) {
-        @media #{$not-narrow-screen} {
-            padding-top:    calc(0.25 * #{$page-padding-y});
-            padding-bottom: calc(0.25 * #{$page-padding-y});
-        }
+    &:last-child {
+        padding-bottom: calc(2 * #{$page-padding-y});
     }
 
     //=========================================================================
@@ -47,8 +45,8 @@
             margin-right:       0.5rem;
 
             @media #{$narrow-screen} {
-                margin-top:    0;
-                margin-bottom: 0.5rem;
+                margin-top:     0;
+                margin-bottom:  0.25rem;
             }
         }
 
@@ -84,24 +82,27 @@
         $page-control-gap-x: $gap-x;
         $page-control-gap-y: calc(#{$gap-y} / 2);
 
-        width:           max-content;
-        flex-wrap:       nowrap;
-        justify-content: flex-start;
-        align-items:     baseline;
-        border-color:    $debug-fg;
-        border-style:    dashed;
+        flex-wrap:          nowrap;
+        justify-content:    flex-start;
+        align-items:        baseline;
+        border-color:       $debug-fg;
+        border-style:       dashed;
+        flex:               0 1 max-content;
 
         @media #{$wide-screen} {
-            min-width:   max-content;
-            max-width:   100%;
+            position:       relative;
+            z-index:        1;
+            top:            -0.5rem;
+            margin-bottom:  -1.5rem;
+            max-width:      100%;
         }
 
         @media #{$medium-width} {
-            max-width:   98%;
+            max-width:      98%;
         }
 
         @media #{$narrow-screen} {
-            max-width:   95%;
+            max-width:      95%;
         }
 
         //=====================================================================
@@ -120,21 +121,22 @@
             margin-left:   0;
             margin-right:  $page-control-gap-x;
             font-size:     larger;
-            flex:          1 0 auto;
+            flex:          0 1 max-content;
         }
 
         // From .layout-section.page.controls and
         // .layout-section.page.controls.page-controls.controls
         .controls {
 
-            display:        flex;
-            flex-direction: row;
-            flex-wrap:      wrap;
-            margin:         0;
-            flex:           1 1 max-content;
+            display:            flex;
+            flex-direction:     row;
+            flex-wrap:          wrap;
+            margin:             0;
+            row-gap:            $gap-y;
+            flex:               1 1 max-content;
 
             @media #{$not-narrow-screen} {
-                margin-bottom: $page-control-gap-y;
+                margin-bottom:  $page-control-gap-y;
             }
 
             // From .layout-section.page.control and

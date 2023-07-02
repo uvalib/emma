@@ -139,7 +139,7 @@ class ManifestDecorator < BaseDecorator
     def list_item(pairs: nil, **opt)
       pairs = opt[:pairs] = model_index_fields.merge(pairs || {})
       outer = opt[:outer] = opt[:outer]&.dup || {}
-      unless TABLE_TAGS.include?(opt[:tag])
+      unless HTML_TABLE_TAGS.include?(opt[:tag])
         outer_class  = css_class_array(*outer[:class])
         need_columns = outer_class.none? { |c| c.start_with?('columns-') }
         append_css!(outer, "columns-#{pairs.size}") if need_columns
@@ -446,8 +446,15 @@ class ManifestDecorator
 
   public
 
+  # Render associated items.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def render_grid(**opt)
-    opt[:'data-manifest'] = object.id
+    opt[:'data-manifest']     = object.id
+    opt[:'aria-labelledby'] ||= page_heading_id
     super(**opt)
   end
 
@@ -532,6 +539,14 @@ class ManifestDecorator
 
   public
 
+  # A consistent HTML element ID for the page heading.
+  #
+  # @return [String]
+  #
+  def page_heading_id
+    ['page-heading', model_type, object.id].compact.join('-')
+  end
+
   # For use on view templates in place of LayoutHelper#page_heading to support
   # editing the Manifest title.
   #
@@ -554,6 +569,7 @@ class ManifestDecorator
 
     help  = h.page_heading_help(help)
 
+    opt[:id] ||= page_heading_id
     h.page_heading(title, edit, input, help, **opt)
   end
 
@@ -838,34 +854,40 @@ class ManifestDecorator
   #
   # @param [Integer, nil] row
   # @param [Integer, nil] index
+  # @param [Symbol]       tag         Default: :table
   # @param [String]       css         Characteristic CSS class/selector.
   # @param [Hash]         opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_status_list(
+  def submission_status_grid(
     row:    HEADER_ROW,
     index:  nil,
-    css:    '.submission-status-list',
+    tag:    nil,
+    css:    '.submission-status-grid',
     **opt
   )
     index ||= paginator.first_index
+    r_start = row || 0
+    table   = for_html_table?(tag)
+    tag     = table && :table || tag || :div
 
-    head = ManifestItemDecorator.submission_status_header(row: row)
-    row += 1 if head
+    opt[:thead] =
+      ManifestItemDecorator.submission_status_header(tag: tag, row: row)
+    row += 1 if opt[:thead]
 
     # noinspection RubyMismatchedArgumentType
     rows =
-      submit_items.map.with_index(index) do |item, idx|
-        decorate(item).submission_status(index: idx, row: (row + idx))
+      submit_items.map.with_index(index) do |item, i|
+        decorate(item).submission_status(tag: tag, index: i, row: (row + i))
       end
+    row += rows.size
+    opt[:tbody] = table ? html_tag(:tbody, *rows) : safe_join(rows, "\n")
 
-    opt[:role]            ||= 'grid'
     opt[:'data-labels']   ||= STATUS_LABELS
     opt[:'aria-colcount'] ||= STATUS_COLUMN_COUNT
-    opt[:'aria-rowcount'] ||= (head ? 1 : 0) + rows.size
-    prepend_css!(opt, css)
-    html_div(head, *rows, opt)
+    opt[:'aria-rowcount'] ||= row - r_start
+    ManifestsDecorator.new.render_grid(index: index, tag: tag, css: css, **opt)
   end
 
   # ===========================================================================

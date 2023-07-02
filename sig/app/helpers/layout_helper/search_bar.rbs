@@ -210,6 +210,7 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr      Default: *target*.
   # @param [Symbol, String, nil] target     Default: `#search_input_target`.
   # @param [String, nil]         value      Default: `params[*field*]`.
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_field_tag except:
   #
   # @option opt [String, Boolean] :unique   Passed to #unique_id.
@@ -219,7 +220,7 @@ module LayoutHelper::SearchBar
   #
   # @note Used by UploadDecorator#parent_entry_select
   #
-  def search_input: ((Symbol|symArray|nil) field, ?(String|Symbol|nil) ctrlr, ?target: Symbol|symArray|nil, ?value: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_input: ((Symbol|symArray|nil) field, ?(String|Symbol|nil) ctrlr, ?target: Symbol|symArray|nil, ?value: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   SEARCH_READY_TOOLTIP: String
 
@@ -230,11 +231,12 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] ctrlr    Default: *target*
   # @param [Symbol, String, nil] target   Default: `#search_input_target`
   # @param [String, nil]         label    Default: `#search_button_label`.
+  # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #submit_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_button: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, ?label: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_button: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, ?label: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # search_button_label
   #
@@ -271,6 +273,7 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil]   ctrlr    Default: *target*
   # @param [Symbol, String, nil]   target   Default: `#search_button`
   # @param [String, nil]           form     Form element identifier.
+  # @param [String]                css      Characteristic CSS class/selector.
   # @param [Hash]                  opt      Passed to #html_div except:
   #
   # @option opt [Symbol, Array<Symbol>] :only     One or more #SEARCH_CONTROLS.
@@ -278,7 +281,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_controls: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, ?form: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def search_controls: (?(Symbol|String|nil) ctrlr, ?target: Symbol|symArray|nil, ?form: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Filter values from an array.
   #

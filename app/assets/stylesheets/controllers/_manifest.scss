@@ -8,6 +8,7 @@
 @use 'shared/controls/buttons' as button;
 @use 'shared/controls/grids'   as grid;
 @use 'shared/controls/popup'   as popup;
+@use 'shared/controls/tables'  as table;
 @use 'shared/feature/model'    as model;
 @use 'shared/layouts/overlay'  as overlay;
 
@@ -88,7 +89,7 @@
 body.manifest.new:not(.select),
 body.manifest.edit:not(.select) {
 
-    $hdg-gap: calc($gap * 2);
+    $hdg-gap: calc($gap-y * 2) calc($gap-x * 2);
 
     .layout-content {
 
@@ -117,7 +118,7 @@ body.manifest.edit:not(.select) {
     // @see ManifestDecorator#manifest_page_heading
     .heading-bar {
 
-        margin:      $page-padding 0;
+        margin:      $page-padding-y 0;
         gap:         $hdg-gap;
         align-items: center;
 
@@ -127,8 +128,10 @@ body.manifest.edit:not(.select) {
 
         .heading {
 
-            margin: 0;
-            gap:    $hdg-gap;
+            display:   flex;
+            flex-wrap: wrap;
+            gap:       $hdg-gap;
+            margin:    0;
 
             //=================================================================
             // Components
@@ -301,6 +304,10 @@ body.manifest.edit:not(.select) {
                     padding-right:  0;
                 }
 
+                &:focus-within {
+                    @include focus;
+                }
+
                 // The actual input positioned so that the transparent file
                 // chooser button fills the available area of the button.
                 input[type="file"] {
@@ -354,9 +361,9 @@ body.manifest.edit:not(.select) {
 
         .pagination-top {
 
-            margin-bottom: model.$list-item-gap-y;
-            flex-wrap:     nowrap;
-            gap:           calc($flex-gap * 2);
+            margin-bottom:   model.$list-item-gap-y;
+            flex-wrap:       nowrap;
+            gap:             $flex-gap-y $flex-gap-x;
 
             @media #{$not-narrow-screen} {
                 align-items: baseline;
@@ -546,12 +553,12 @@ body.manifest.remit:not(.select) {
     .selected-header {
 
         @media #{$wide-screen} {
-            margin-bottom: $page-padding;
+            margin-bottom: $page-padding-y;
         }
 
         @media #{$not-wide-screen} {
-            margin-top:    $page-padding;
-            margin-bottom: calc(2 * #{$page-padding});
+            margin-top:    $page-padding-y;
+            margin-bottom: calc(2 * #{$page-padding-y});
         }
 
         &::before, &::after {
@@ -565,14 +572,7 @@ body.manifest.remit:not(.select) {
         display:        flex;
         flex-direction: row;
         align-items:    center;
-
-        @media #{$wide-screen} {
-            gap:        $page-padding-y;
-        }
-
-        @media #{$not-wide-screen} {
-            gap:        $page-padding;
-        }
+        gap:            $page-padding-y $page-padding-x;
 
         @media #{$narrow-screen} {
             flex-wrap:  wrap-reverse;
@@ -612,14 +612,7 @@ body.manifest.remit:not(.select) {
 
         display:     grid;
         align-items: center;
-
-        @media #{$wide-screen} {
-            gap:     $page-padding-y;
-        }
-
-        @media #{$not-wide-screen} {
-            gap:     $page-padding;
-        }
+        gap:         $page-padding-y $page-padding-x;
 
         grid-template-columns: [button] minmax(5vw,auto) [panel] 1fr;
 
@@ -637,19 +630,12 @@ body.manifest.remit:not(.select) {
 
     .submission-controls + .auxiliary-buttons,
     .auxiliary-buttons + .submission-controls {
-
-        @media #{$wide-screen} {
-            margin-top: $page-padding-y;
-        }
-
-        @media #{$not-wide-screen} {
-            margin-top: $page-padding;
-        }
+        margin-top: $page-padding-y;
     }
 
-    .submission-status-list {
+    .submission-status-grid {
 
-        @extend .entry-list;
+        @include table.grid-table($max-columns: 1);
 
         // If true limit the list to a scrollable list that fits in the
         // viewport; otherwise, the entire list is displayed and scrolling is
@@ -664,6 +650,7 @@ body.manifest.remit:not(.select) {
         $fg-light:  $uva-text-gray;
         $fg-dark:   var(--fg-color);
 
+        margin-top:     $page-padding-y;
         color:          $fg-clear;
         background:     $bg-clear;
         border:         0.25rem solid gray;
@@ -686,20 +673,24 @@ body.manifest.remit:not(.select) {
 
         grid-template-columns: 1fr;
 
+        td {
+            z-index: $z-visible;
+        }
+
         //=====================================================================
         // Components
         //=====================================================================
 
         $col-pad: 0.25rem;
-        $row-pad: $col-pad * 2;
+        $row-pad: 0.25rem;
 
         // Status line for the submission of an individual manifest item.
         .submission-status {
 
             display:       grid;
             align-items:   start;
-            width:         calc(100% - ($row-pad * 2));
-            padding:       $row-pad;
+            width:         calc(100% - ($col-pad * 4));
+            padding:       $row-pad ($col-pad * 2);
             margin:        0;
             line-height:   1.375;
             overflow-x:    auto;
@@ -746,7 +737,8 @@ body.manifest.remit:not(.select) {
                 font-weight:    bold;
 
                 @media #{$wide-screen} {
-                    padding: $col-pad;
+                    padding:    $col-pad;
+                    margin:     $col-pad 0;
                 }
 
                 @media #{$not-wide-screen} {
@@ -756,14 +748,19 @@ body.manifest.remit:not(.select) {
 
             .controls {
 
-                display:        flex;
-                flex-direction: column;
+                display:            flex;
+                flex-direction:     column;
+                width:              max-content;
 
                 @media #{$not-wide-screen} {
                     padding-left:   0;
                 }
 
-                .selection {
+                &:focus {
+                    outline-offset: 0;
+                }
+
+                .control-group {
 
                     [type="checkbox"] {
 
@@ -784,11 +781,16 @@ body.manifest.remit:not(.select) {
             }
 
             .item-name {
+
                 white-space:     nowrap;
                 overflow:        hidden;
                 text-overflow:   ellipsis;
                 color:           $fg-dark;
                 background:      ghostwhite;
+
+                &:focus {
+                    outline-offset: 0;
+                }
             }
 
             //.data-status,
@@ -803,15 +805,11 @@ body.manifest.remit:not(.select) {
                 align-items:     start;
                 justify-content: space-between;
                 position:        relative;
+                gap:             $col-pad;
                 color:           inherit;
                 background:      inherit;
                 overflow-x:      auto;
                 overflow-y:      clip;
-                column-gap:      $col-pad;
-
-                @media #{$wide-screen} {
-                    row-gap:     $col-pad;
-                }
 
                 @media #{$not-wide-screen} {
                     row-gap:     0;
@@ -827,6 +825,10 @@ body.manifest.remit:not(.select) {
                     height:      100%;
                     color:       inherit;
                     flex:        1 1 100%;
+                }
+
+                .fix {
+                    --fix-focus-color: var(--focus-color);
                 }
 
                 //=============================================================
@@ -848,6 +850,12 @@ body.manifest.remit:not(.select) {
                     }
                 }
 
+                @mixin add-edit-contrast($color: white) {
+                    .fix {
+                        --fix-focus-color: #{$color};
+                    }
+                }
+
                 @mixin neutral {
                     @include colors($fg-light, $bg-clear);
                     @include outline($uva-emergency-red);
@@ -860,11 +868,13 @@ body.manifest.remit:not(.select) {
                 @mixin stopped {
                     @include colors($fg-dark, $uva-accent-yellow);
                     @include outline($uva-emergency-red);
+                    @include add-edit-contrast(darker($uva-accent-teal, 35%));
                 }
 
                 @mixin failure {
                     @include colors($fg-clear, $uva-accent-magenta);
                     @include outline;
+                    @include add-edit-contrast;
                     @include add-text-contrast;
                 }
 
@@ -923,7 +933,7 @@ body.manifest.remit:not(.select) {
 
             .controls {
 
-                .selection {
+                .control-group {
                     [type="checkbox"] {
                         box-shadow: 0 0 1px 1px white;
                     }
@@ -952,6 +962,11 @@ body.manifest.remit:not(.select) {
             .item-name {
 
                 details {
+
+                    &:focus {
+                        outline-offset: 1px;
+                    }
+
                     summary {
                         overflow:      hidden;
                         text-overflow: ellipsis;
@@ -1070,6 +1085,10 @@ body.manifest.remit:not(.select) {
 
                 details.text:not(.hidden) {
 
+                    &:focus {
+                        outline-offset: 0;
+                    }
+
                     &[open] {
 
                         .name {
@@ -1109,8 +1128,23 @@ body.manifest.remit:not(.select) {
                     &:hover {
                         box-shadow: none;
                     }
+
+                    &:focus {
+                        outline-offset: 1px;
+                        outline-color:  var(--fix-focus-color);
+                    }
                 }
             }
+        }
+
+        //=====================================================================
+        // Variations
+        //=====================================================================
+
+        // The "debug" class can be added from the console to verify the
+        // expected behavior of focusable elements within the grid.
+        &.debug {
+            @include grid.debug-focusables;
         }
     }
 }

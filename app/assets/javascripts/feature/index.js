@@ -1,6 +1,5 @@
 // app/assets/javascripts/feature/index.js
 
-import './accessibility';
 import './advanced-search';
 import './download';
 import './flash';
@@ -10,7 +9,6 @@ import './iframe';
 import './images';
 import './model-form';
 import './panel';
-import './popup';
 import './records';
 import './scroll';
 import './search-analysis';

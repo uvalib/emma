@@ -12,15 +12,15 @@ body.home-dashboard {
 
     .sign-in {
 
-        margin-bottom:  $page-padding;
+        margin-bottom:  $page-padding-y;
         font-weight:    bold;
 
         @media #{$wide-screen} {
-            margin-top: $page-padding;
+            margin-top: $page-padding-y;
         }
 
         @media #{$not-wide-screen} {
-            margin-top: calc(2 * #{$page-padding});
+            margin-top: calc(2 * #{$page-padding-y});
         }
     }
 

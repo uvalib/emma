@@ -12,13 +12,18 @@ import { selector, toggleHidden }         from '../shared/css';
 import { turnOffAutocomplete }            from '../shared/form';
 import { HTML_BREAK }                     from '../shared/html';
 import { renderJson }                     from '../shared/json';
-import { LookupModal }                    from '../shared/lookup-modal';
+import { LOOKUP_BUTTON, LookupModal }     from '../shared/lookup-modal';
 import { LookupRequest }                  from '../shared/lookup-request';
+import { PANEL }                          from '../shared/modal-base';
 import { ModalDialog }                    from '../shared/modal-dialog';
 import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
 import { dupObject, hasKey, toObject }    from '../shared/objects';
 import { randomizeName }                  from '../shared/random';
 import { camelCase }                      from '../shared/strings';
+import {
+    handleClickAndKeypress,
+    toggleVisibility,
+} from '../shared/accessibility';
 import {
     isDefined,
     isEmpty,
@@ -28,7 +33,6 @@ import {
 } from '../shared/definitions';
 import {
     debounce,
-    handleClickAndKeypress,
     handleEvent,
     handleHoverAndFocus,
     isEvent,
@@ -59,7 +63,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     const $base = $(base);
 
     /** @type {jQuery|undefined} */
-    const $popup_button = $base.is('.lookup-button') ? $base : undefined;
+    const $popup_button = $base.is(LOOKUP_BUTTON) ? $base : undefined;
 
     /**
      * Whether the source implements manual input of search terms.
@@ -113,7 +117,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * @type {ModalDialog|undefined}
      */
-    const modal = $popup_button?.data(ModalDialog.MODAL_INSTANCE_DATA);
+    const modal = $popup_button?.data(ModalDialog.INSTANCE_DATA);
 
     /**
      * Base element associated with the dialog.
@@ -121,9 +125,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @type {jQuery}
      */
     const $root =
-        modal?.modalPanel ||
-        $popup_button?.siblings(ModalDialog.PANEL) ||
-        $('body');
+        modal?.modalPanel || $popup_button?.siblings(PANEL) || $('body');
 
     /** @type {jQuery} */
     let $container, $loading_overlay;
@@ -574,7 +576,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
                 $services.append(statuses);
                 data.push(...names);
             }
-            $services.removeClass('invisible');
+            toggleVisibility($services, false);
         }
         return $services;
     }
@@ -654,8 +656,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * status elements removed.
      */
     function initializeStatusDisplay() {
-        _debug('initializeStatusDisplay');
-        serviceStatuses().removeClass('invisible');
+        OUT.debug('initializeStatusDisplay');
+        toggleVisibility(serviceStatuses(), false);
         clearServiceStatuses();
         statusNotice('Starting...');
     }
@@ -854,10 +856,12 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const $entry = getFieldValuesEntry();
         fillEntry($entry, data);
         $entry.find('textarea').each((_, column) => {
-            const $field = $(column);
-            const lock   = !!getValue($field);
-            lockFor($field).prop('checked', lock);
-            lockFieldValue($field, lock);
+            const $column = $(column);
+            const $lock   = lockFor($column);
+            const field   = fieldFor($column);
+            const locked  = !!getValue($column);
+            $lock.prop('checked', locked);
+            lockField(field, locked);
         });
         return $entry;
     }
@@ -1000,10 +1004,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function lockFor(target) {
-        const field = fieldFor(target);
+        const fld  = fieldFor(target);
         /** @type {jQuery} */
-        let $column = getFieldLocksEntry().children(`[data-field="${field}"]`);
-        return $column.find(LookupModal.LOCK);
+        const $row = getFieldLocksEntry(),
+              $col = $row.children(`[data-field="${fld}"]`);
+        return $col.find(LookupModal.LOCK);
     }
 
     /**
@@ -1028,24 +1033,34 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {boolean}                   [locking] If **false** unlock instead
      */
     function lockFieldValue(field, locking) {
-        _debug('lockFieldValue:', field, locking);
-        const flag_name = LookupModal.FIELD_LOCKED_DATA;
-        const lock      = (locking !== false);
-        fieldValueCell(field).data(flag_name, lock);
+        OUT.debug('lockFieldValue:', field, locking);
+        const $cell  = fieldValueCell(field);
+        const $lock  = lockFor($cell);
+        const $state = $lock.parent().find('.state');
+        const name   = $state.attr('data-name');
+        const locked = (locking !== false);
+        const status = locked ? 'locked' : 'unlocked';
+        let tooltip;
+        if (locked) {
+            tooltip = 'Click to allow this data field to be replaceable'; // TODO: I18n
+        } else {
+            tooltip = 'Click to prevent this data field from being replaced'; // TODO: I18n
+        }
+        $cell.data(LookupModal.FIELD_LOCKED_DATA, locked);
+        $lock.attr('title', tooltip);
+        $state.text(`${name} field is ${status}`); // TODO: I18n
     }
 
     /**
-     * Unlock the associated field value to allow updating by changing the
-     * selected entry.
+     * Lock/unlock a field.
      *
      * @param {string|jQuery|HTMLElement} field
-     * @param {boolean}                   [unlocking] If *false*, lock instead.
+     * @param {boolean}                   [locking] If **false** unlock instead
      */
-    function unlockFieldValue(field, unlocking) {
-        _debug('unlockFieldValue:', field, unlocking);
-        const flag_name = LookupModal.FIELD_LOCKED_DATA;
-        const lock      = (unlocking === false);
-        fieldValueCell(field).data(flag_name, lock);
+    function lockField(field, locking) {
+        OUT.debug('lockField:', field, locking);
+        lockFieldValue(field, locking);
+        columnLockout(field, locking);
     }
 
     /**
@@ -1057,9 +1072,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         OUT.debug('toggleFieldLock:', event);
         const $target = $(event.target);
         const field   = fieldFor($target);
-        const lock    = $target.is(':checked');
-        lockFieldValue(field, lock);
-        columnLockout(field, lock);
+        const locked  = $target.is(':checked');
+        lockField(field, locked);
     }
 
     /**
@@ -1395,9 +1409,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             }
         }
 
-        if (init && $start_tabbable) {
-            modal.tabCycleStart = $start_tabbable;
-        }
+        modal.tabCycleStart ||= init && $start_tabbable;
     }
 
     /**
@@ -1567,11 +1579,12 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * @param {number} row
      * @param {string} tag
-     * @param {string} [css]          Default: {@link LookupModal.RESULT_CLASS}
+     * @param {string} [css_class]    Default: {@link LookupModal.RESULT_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeResultEntry(row, tag, css = LookupModal.RESULT_CLASS) {
+    function makeResultEntry(row, tag, css_class) {
+        const css    = css_class || LookupModal.RESULT_CLASS;
         const fields = LookupModal.DATA_COLUMNS;
         const label  = tag || 'Result'; // TODO: I18n
         const $radio = makeSelectColumn();
@@ -1628,7 +1641,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function makeFieldLockColumn(field, value, css_class) {
         const $cell = $('<div>').attr('data-field', field);
-        const parts = makeLockControl(`lock-${field}`);
+        const parts = makeLockControl(field);
         if (css_class) { $cell.addClass(css_class) }
         return $cell.append(parts);
     }
@@ -1636,18 +1649,34 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Generate an invisible checkbox paired with a visible indicator.
      *
-     * @param {string}  [name]
-     * @param {boolean} [checked]
-     * @param {string}  [css]         Default: {@link LookupModal.LOCK_CLASS}.
+     * @param {string}  field
+     * @param {boolean} [checked]     If **true** start in the locked state.
      *
      * @returns {[jQuery,jQuery]}
      */
-    function makeLockControl(name, checked, css = LookupModal.LOCK_CLASS) {
-        let $slider    = $('<div>').addClass('slider');
-        let $indicator = $('<div>').addClass('lock-indicator').append($slider);
-        let $checkbox  = $('<input>').attr('type', 'checkbox').addClass(css);
-        if (isDefined(name))    { $checkbox.attr('name',    name) }
-        if (isDefined(checked)) { $checkbox.prop('checked', checked) }
+    function makeLockControl(field, checked) {
+        const name    = `lock-${field}`;
+        const label   = LookupModal.ENTRY_TABLE[field]?.label || field;
+        const id_base = randomizeName(field);
+        const lbl_id  = `state-${id_base}`;
+        const locked  = !!checked;
+
+        const $checkbox = $(`<input class="${LookupModal.LOCK_CLASS}">`);
+        $checkbox.attr('type',            'checkbox');
+        $checkbox.attr('role',            'switch');
+        $checkbox.attr('name',            name);
+        $checkbox.attr('aria-labelledby', lbl_id);
+        $checkbox.attr('aria-checked',    locked);
+        $checkbox.prop('checked',         locked);
+
+        const $slider = $('<div class="slider">');
+        const $state  = $('<div class="state">');
+        $state.attr('id',        lbl_id);
+        $state.attr('data-name', label);
+
+        const $indicator = $('<div class="lock-indicator">');
+        $indicator.attr('aria-hidden', true).append($slider).append($state);
+
         handleEvent($checkbox, 'change', toggleFieldLock);
         return [$checkbox, $indicator];
     }
@@ -1754,8 +1783,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {Selector} item
      */
     function monitorEditing(item) {
-        const $item = $(item);
-        handleEvent($item, 'input', debounce(lockIfChanged));
+        handleEvent(item, 'input', debounce(lockIfChanged));
     }
 
     /**
@@ -1766,7 +1794,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function respondAsHighlightable(items) {
         const enter = highlightEntry;
         const leave = unhighlightEntry;
-        arrayWrap(items).forEach(i => handleHoverAndFocus($(i), enter, leave));
+        arrayWrap(items).forEach(i => handleHoverAndFocus(i, enter, leave));
     }
 
     /**
@@ -1904,7 +1932,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (getSeparators() !== new_characters) {
             $.each(LookupModal.SEPARATORS, (key, characters) => {
                 if (new_characters !== characters) { return true } // continue
-                $separator.filter(`[value="${key}"]`).trigger('click');
+                $separator.filter(`[value="${key}"]`).click();
                 return false; // break
             });
         }
@@ -2085,28 +2113,6 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function hideLoadingOverlay() {
         toggleHidden(getLoadingOverlay(), true);
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
 }

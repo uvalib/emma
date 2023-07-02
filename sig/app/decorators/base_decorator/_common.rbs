@@ -23,5 +23,11 @@ module BaseDecorator::Common
   #
   # @type [Array<Symbol>]
   #
-  TABLE_TAGS: symArray
+  HTML_TABLE_TAGS: symArray
+
+  # Indicate whether the given HTML element tag is related to HTML tables.
+  #
+  # @param [Symbol, String, nil] tag
+  #
+  def for_html_table?: (Symbol|String|nil tag) -> bool
 end

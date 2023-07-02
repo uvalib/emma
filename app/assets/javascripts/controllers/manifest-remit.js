@@ -3,11 +3,13 @@
 
 import { AppDebug }                             from '../application/debug';
 import { appSetup }                             from '../application/setup';
+import { handleClickAndKeypress }               from '../shared/accessibility';
 import { arrayWrap, uniq }                      from '../shared/arrays';
 import { BaseClass }                            from '../shared/base-class';
 import { selector, toggleHidden }               from '../shared/css';
-import { handleClickAndKeypress, handleEvent }  from '../shared/events';
+import { handleEvent }                          from '../shared/events';
 import { clearFlash, flashError, flashMessage } from '../shared/flash';
+import { initializeGridNavigation }             from '../shared/grids';
 import { SubmitModal }                          from '../shared/submit-modal';
 import { BulkUploader }                         from '../shared/uploader';
 import {
@@ -19,6 +21,7 @@ import {
     presence,
 } from '../shared/definitions';
 import {
+    CHECKBOX,
     htmlDecode,
     selfOrDescendents,
     selfOrParent,
@@ -35,6 +38,11 @@ import {
     initializeButtonSet,
     serverSend,
 } from '../shared/manifests';
+import {
+    CellControlGroup,
+    NavGroup,
+    SingletonGroup,
+} from '../shared/nav-group';
 import {
     compact,
     dup,
@@ -98,10 +106,9 @@ appSetup(MODULE, function() {
     const FAILED_COUNT_CLASS        = 'failed';
     const SUCCEEDED_COUNT_CLASS     = 'succeeded';
 
-    const SUBMISSION_LIST_CLASS     = 'submission-status-list';
-    const SUBMISSION_CLASS          = 'submission-status';
+    const SUBMISSION_GRID_CLASS     = 'submission-status-grid';
+    const SUBMISSION_ROW_CLASS      = 'submission-status';
     const CONTROLS_CLASS            = 'controls';
-  //const CHECKBOX_CLASS            = 'checkbox';
     const DATA_STATUS_CLASS         = 'data-status';
     const FILE_STATUS_CLASS         = 'file-status';
     const UPLOAD_STATUS_CLASS       = 'upload-status';
@@ -137,11 +144,11 @@ appSetup(MODULE, function() {
     const FAILED_COUNT          = selector(FAILED_COUNT_CLASS);
     const SUCCEEDED_COUNT       = selector(SUCCEEDED_COUNT_CLASS);
 
-    const SUBMISSION_LIST       = selector(SUBMISSION_LIST_CLASS);
-    const SUBMISSION_HEAD       = selector(SUBMISSION_CLASS, '.head');
-    const SUBMISSION            = selector(SUBMISSION_CLASS) + ':not(.head)';
+    const SUBMISSION_GRID       = selector(SUBMISSION_GRID_CLASS);
+    const SUBMISSION_ROW        = selector(SUBMISSION_ROW_CLASS);
+    const SUBMISSION_HEAD       = `${SUBMISSION_ROW}.head`;
+    const SUBMISSION            = `${SUBMISSION_ROW}:not(.head)`;
     const CONTROLS              = selector(CONTROLS_CLASS);
-    const CHECKBOX              = 'input[type="checkbox"]';
     const DATA_STATUS           = selector(DATA_STATUS_CLASS);
     const FILE_STATUS           = selector(FILE_STATUS_CLASS);
     const UPLOAD_STATUS         = selector(UPLOAD_STATUS_CLASS);
@@ -390,6 +397,11 @@ appSetup(MODULE, function() {
         name => ((v, prop) => enableSubmissionButton(name, v, prop))
     );
 
+    const $grid      = $(SUBMISSION_GRID);
+    const $rows      = $grid.find(SUBMISSION_ROW);
+    const $head_row  = $rows.filter(SUBMISSION_HEAD);
+    const $item_rows = $rows.filter(SUBMISSION);
+
     // ========================================================================
     // Functions
     // ========================================================================
@@ -401,10 +413,12 @@ appSetup(MODULE, function() {
         OUT.debug('initializeSubmissionForm');
         initializeSubmissionMonitor();
         initializeSubmissionButtons();
+        initializeHeaderRow();
         initializeItems();
         initializeUploader();
         initializeLocalFilesResolution();
         initializeRemoteFilesResolution();
+        initializeGridNavigation($grid);
         updateSubmitReady();
     }
 
@@ -417,6 +431,65 @@ appSetup(MODULE, function() {
      */
     function itemRow(item) {
         return selfOrParent(item, SUBMISSION);
+    }
+
+    /**
+     * Set up elements within the header row.
+     */
+    function initializeHeaderRow() {
+        OUT.debug('initializeHeaderRow');
+        $head_row.children().each((_, column) => setupCellNavGroup(column));
+    }
+
+    /**
+     * Create the appropriate NavGroup subclass for handling activation and
+     * navigation within a grid cell.
+     *
+     * @param {Selector} cell
+     */
+    function setupCellNavGroup(cell) {
+        const func      = 'setupCellNavGroup'; OUT.debug(`${func}:`, cell);
+        const $cell     = $(cell);
+        const ITEM_NAME = '.item-name';
+        const STATUS    = '.status';
+        const HEADER    = '[role="columnheader"]';
+
+        let group   = NavGroup.instanceFor($cell);
+        if (group) {
+            OUT.debug(`${func}: ${group.CLASS_NAME} EXISTS FOR`, $cell);
+        } else if ($cell.is(CONTROLS)) {
+            group   = SingletonGroup.setupFor($cell);
+        } else if ($cell.is(HEADER)) {
+            return; // Only the first column header has focusables.
+        } else if ($cell.is(ITEM_NAME)) {
+            group   = SingletonGroup.setupFor($cell);
+        } else {
+            group   = SingletonGroup.setupFor($cell, true);
+            group ||= CellControlGroup.setupFor($cell);
+        }
+
+        if (!group) {
+            OUT.error(`${func}: NO NAV GROUP FOR $cell =`, $cell);
+
+        } else if ($cell.is(`${CONTROLS}${HEADER}`)) {
+            OUT.debug(`${func}: CONTROLS_HEAD - $cell =`, $cell);
+            // NOTE: currently no controls header callbacks
+
+        } else if ($cell.is(CONTROLS)) {
+            OUT.debug(`${func}: ROW_CONTROLS - $cell =`, $cell);
+            // NOTE: currently no row controls callbacks
+
+        } else if ($cell.is(ITEM_NAME)) {
+            OUT.debug(`${func}: ITEM_NAME - $cell =`, $cell);
+            // NOTE: currently no item name callbacks
+
+        } else if ($cell.is(STATUS)) {
+            OUT.debug(`${func}: ITEM_STATUS - $cell =`, $cell);
+            // NOTE: currently no item status callbacks
+
+        } else  {
+            OUT.warn(`${func}: unexpected $cell =`, $cell);
+        }
     }
 
     // ========================================================================
@@ -744,16 +817,13 @@ appSetup(MODULE, function() {
     const FILE_NAME_ATTR   = 'data-file-name';
     const FILE_URL_ATTR    = 'data-file-url';
 
-    const $item_container  = $(SUBMISSION_LIST);
-    const $items           = $item_container.find(SUBMISSION);
-
     /**
      * All item rows.
      *
      * @returns {jQuery}
      */
     function allItems() {
-        return $items;
+        return $item_rows;
     }
 
     /**
@@ -786,6 +856,7 @@ appSetup(MODULE, function() {
                 initializeStatusFor($item, status, name);
             });
             updateItemSelect($item);
+            $item.children().each((_, column) => setupCellNavGroup(column));
         });
         OUT.debug('INITIAL file_references.local  =', local);
         OUT.debug('INITIAL file_references.remote =', remote);
@@ -1076,9 +1147,8 @@ appSetup(MODULE, function() {
     // Functions - submission selection
     // ========================================================================
 
-    const $head_row        = $item_container.find(SUBMISSION_HEAD);
     const $group_checkbox  = $head_row.find(`${CONTROLS} ${CHECKBOX}`);
-    const $item_checkboxes = $items.find(`${CONTROLS} ${CHECKBOX}`);
+    const $item_checkboxes = $item_rows.find(`${CONTROLS} ${CHECKBOX}`);
 
     /**
      * checkbox
@@ -1090,15 +1160,16 @@ appSetup(MODULE, function() {
      * @returns {HTMLInputElement|undefined}
      */
     function checkbox(item, check, indeterminate) {
-        const cb = selfOrDescendents(item, CHECKBOX)[0];
-        if (!cb) { console.warn('checkbox: missing for item', item); return }
+        const func = 'checkbox';
+        const cb   = selfOrDescendents(item, CHECKBOX)[0];
+        if (!cb) { return OUT.warn(`${func}: missing for item`, item) }
         if (isDefined(check)) {
             const was = cb.checked;
             const now = !!check;
             if (was === now) {
-                _debug(`checkbox: check "${was}" no change for`, item);
+                OUT.debug(`${func}: check "${was}" no change for`, item);
             } else {
-                _debug('checkbox: check', was, '->', now, 'for', item);
+                OUT.debug('${func}: check', was, '->', now, 'for', item);
                 cb.checked = now;
             }
         }
@@ -1106,9 +1177,9 @@ appSetup(MODULE, function() {
             const was = cb.indeterminate;
             const now = !!indeterminate;
             if (was === now) {
-                _debug(`checkbox: indeterminate "${was}" no change for`, item);
+                OUT.debug(`${func}: indeterminate "${was}" no change for`, item);
             } else {
-                _debug('checkbox: indeterminate', was, '->', now, 'for', item);
+                OUT.debug('${func}: indeterminate', was, '->', now, 'for', item);
                 cb.indeterminate = now;
             }
         }
@@ -1205,7 +1276,8 @@ appSetup(MODULE, function() {
         let new_tooltip   = $item.data(tip_data);
         if (notDefined(new_tooltip)) {
             if (!now_enabled) {
-                new_tooltip = 'Not selectable until resolved'; // TODO: I18n
+                const number = $item.attr('data-number');
+                new_tooltip  = `Item ${number} not selectable until resolved`; // TODO: I18n
                 $item.data(tip_data, new_tooltip);
                 $item.attr('title', new_tooltip);
             }
@@ -1295,8 +1367,8 @@ appSetup(MODULE, function() {
      * @returns {Object.<string,string>}
      */
     function getStatusValueLabels() {
-        const func = 'getStatusValueLabels'; //_debug(func);
-        const src  = $item_container.attr(LABELS_ATTR);
+        const func = 'getStatusValueLabels'; //OUT.debug(func);
+        const src  = $grid.attr(LABELS_ATTR);
         let result;
         if (isMissing(src)) {
             OUT.warn(`${func}: ${LABELS_ATTR}: missing or empty`);
@@ -2229,7 +2301,7 @@ appSetup(MODULE, function() {
             lines.push(allResolvedLabel());
         }
 
-        flashMessage(lines.join("\n"));
+        flashMessage(lines.join("\n"), { refocus: $local_input });
     }
 
     /**
@@ -2513,7 +2585,7 @@ appSetup(MODULE, function() {
         }
 
         if (isPresent(lines)) {
-            flashMessage(lines.join("\n"));
+            flashMessage(lines.join("\n"), { refocus: $remote_input });
         }
     }
 
@@ -2606,40 +2678,6 @@ appSetup(MODULE, function() {
             OUT.debug(`${func}: no manifest ID`);
         }
         return id || manifest_id;
-    }
-
-    // ========================================================================
-    // Functions - diagnostics
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
-    }
-
-    /**
-     * Emit a console error and display as a flash error if debugging.
-     *
-     * @param {string} caller
-     * @param {string} [message]
-     */
-    function _error(caller, message) {
-        const msg = compact([MODULE, caller, message]).join(': ');
-        console.error(msg);
-        _debugging() && flashError(msg);
     }
 
     // ========================================================================

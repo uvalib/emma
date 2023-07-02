@@ -4,8 +4,11 @@
 import { AppDebug }               from '../application/debug';
 import { appSetup }               from '../application/setup'
 import { cloneTitle }             from '../feature/search-analysis';
+import { handleClickAndKeypress } from '../shared/accessibility';
 import { Emma }                   from '../shared/assets';
 import { selector, toggleHidden } from '../shared/css';
+import { handleEvent }            from '../shared/events';
+import { unreverseFlexChildren }  from '../shared/html';
 import { makeUrl, urlParameters } from '../shared/url';
 import {
     isDefined,
@@ -13,10 +16,6 @@ import {
     isMissing,
     notDefined,
 } from '../shared/definitions';
-import {
-    handleClickAndKeypress,
-    handleEvent,
-} from '../shared/events';
 
 
 const MODULE = 'Search';
@@ -190,8 +189,10 @@ appSetup(MODULE, function() {
      * @param {boolean}  [open]       If **false**, mark as closed.
      */
     function markAsOpen(element, open) {
-        const is_open = notDefined(open) || open;
-        $(element).toggleClass(OPEN_MARKER, is_open);
+        const $section = $(element);
+        const is_open  = notDefined(open) || open;
+        $section.toggleClass(OPEN_MARKER, is_open);
+        $section.attr('aria-expanded', is_open);
     }
 
     /**
@@ -231,6 +232,7 @@ appSetup(MODULE, function() {
             $sections.each((_, section) => updateSectionOpenClosed(section));
         }
 
+        $title.attr('aria-expanded', opening);
         updateControl($controls, $number, opening);
     }
 
@@ -250,7 +252,7 @@ appSetup(MODULE, function() {
             markAsOpen($container.find('button,[role="button"]'), is_open);
         }
         const config = is_open ? Emma.Tree.closer : Emma.Tree.opener;
-        $control.text(config.label);
+        $control.html(config.label);
         $control.attr('title', config.tooltip);
         $control.attr('aria-expanded', is_open);
         return $control;
@@ -309,6 +311,8 @@ appSetup(MODULE, function() {
             const $item   = $number.next();
             const target  = $item.attr('id');
             $wide_control = createToggleControl(row, target).appendTo($number);
+        } else {
+            updateControl($wide_control);
         }
         handleClickAndKeypress($wide_control, toggleItem);
 
@@ -491,5 +495,11 @@ appSetup(MODULE, function() {
             }
         });
     });
+
+    // ========================================================================
+    // Actions - initialization
+    // ========================================================================
+
+    unreverseFlexChildren('.heading-bar .pagination-top');
 
 });

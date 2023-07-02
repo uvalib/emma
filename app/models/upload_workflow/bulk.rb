@@ -405,7 +405,7 @@ module UploadWorkflow::Bulk::External
   #
   def bulk_db_operation_batch(op, records, from: nil, to: nil)
     from ||= 0
-    to   ||= records.size - 1
+    to   ||= from + records.size - 1
     __debug(dbg = "UPLOAD WF #{op} | records #{from} to #{to}")
     result = Upload.send(op, records.map(&:attributes))
     if result.columns.blank? || (result.length == records.size)

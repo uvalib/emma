@@ -69,9 +69,10 @@ class SearchTerm
   # @param [Hash, nil]                config
   #
   def initialize(url_param, values = nil, label: nil, query: nil, config: nil)
-    @parameter = url_param.to_sym
-    @query     = query.present?
     config   ||= {}
+    @parameter = url_param.to_sym
+    @label     = config[:label] || label
+    @query     = query.present?
     @pairs =
       if values.is_a?(Hash)
         values.stringify_keys.transform_values(&:to_s)
@@ -85,7 +86,7 @@ class SearchTerm
         }.to_h
       end
     @pairs ||= {}
-    @label = config[:label] || label || labelize(@parameter, @pairs.size)
+    @label ||= labelize(@parameter, count: @pairs.size)
   end
 
   # ===========================================================================

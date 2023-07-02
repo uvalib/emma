@@ -17,7 +17,7 @@
 
     // Give a little extra clearance for the scroll bar.
     @media #{$not-wide-screen} {
-        margin-right: calc(#{$page-padding-x} + #{$scroll-easement} );
+        margin-right:   calc(#{$page-padding-x} + #{$scroll-easement-x} );
     }
 
     @media #{$medium-width} {
@@ -25,33 +25,45 @@
     }
 
     @media #{$narrow-screen} {
-        padding-top:  $page-padding;
+        padding-top:    $page-padding-y;
     }
 }
 
 // For the heading at the top of the content area.
 .heading {
 
-    display:     flex;
-    align-items: center;
-    margin:      $page-padding 0;
-    font-size:   $h1-font-size;
+    // noinspection CssBrowserCompatibilityForProperties
+    word-wrap:  anywhere;
 
-    @media #{$wide-screen} {
-        word-break: break-all;
-    }
-
-    @media #{$not-wide-screen} {
-        word-break: break-word;
+    @media #{$not-narrow-screen} {
+        margin: $page-padding-y 0;
     }
 
     @media #{$narrow-screen} {
-        margin:     calc(2 * #{$page-padding}) auto;
+        margin: calc(2 * #{$page-padding-y}) auto;
+    }
+}
+
+// Just the text portion of a simple or compound heading.
+.heading.plain,
+.heading .text {
+    font-size: $h1-font-size;
+}
+
+// An enclosure for an h1.text heading followed by a .help-popup.
+.heading.and-help {
+
+    display:     flex;
+    flex-wrap:   wrap;
+    align-items: center;
+
+    .text {
+        margin: 0;
     }
 }
 
 // For enclosing the actual heading in a line with other items.
-.heading.container {
+.heading.and-logo {
 
     display:            grid;
     gap:                $flex-gap-y $flex-gap-x;
@@ -115,7 +127,7 @@ body.search_call-index {
 
         display:        flex;
         flex-direction: column;
-        gap:            $page-padding;
+        gap:            $page-padding-y $page-padding-x;
         min-height:     100vh;
 
         > .heading {
@@ -128,7 +140,7 @@ body.search_call-index {
 
         > .scroll-to-top-target:not(table) {
             height:     0;
-            margin-top: calc(-1 * $page-padding);
+            margin-top: calc(-1 * $page-padding-y);
         }
     }
 }

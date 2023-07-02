@@ -240,6 +240,14 @@ class ManifestDecorator
   #
   def row_skipped_columns: () -> symArray
 
+  # Render associated items.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_grid: (**untyped opt) -> ActiveSupport::SafeBuffer
+
   # The names of each grid data column which is not displayed.
   #
   # @return [Array<Symbol>]
@@ -272,6 +280,12 @@ class ManifestDecorator
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_buttons: (**untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> Array[ActiveSupport::SafeBuffer] } -> Array[ActiveSupport::SafeBuffer]
+
+  # A consistent HTML element ID for the page heading.
+  #
+  # @return [String]
+  #
+  def page_heading_id: () -> String
 
   # For use on view templates in place of LayoutHelper#page_heading to support
   # editing the Manifest title.
@@ -456,12 +470,13 @@ class ManifestDecorator
   #
   # @param [Integer, nil] row
   # @param [Integer, nil] index
+  # @param [Symbol]       tag         Default: :table
   # @param [String]       css         Characteristic CSS class/selector.
   # @param [Hash]         opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def submission_status_list: (?row: Integer|nil, ?index: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def submission_status_grid: (?row: Integer|nil, ?index: Integer|nil, ?tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render item attributes.
   #

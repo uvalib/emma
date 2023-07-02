@@ -123,6 +123,16 @@ module BaseDecorator::Controls
   #
   def icon_control: (untyped `type`, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Wrapper for a group of one or more focusables.
+  #
+  # @param [String, nil] id
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def control_group: (?(String|nil) id, ?css: String, **untyped opt) { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
   private
 
   def self.included: (Module base) -> void

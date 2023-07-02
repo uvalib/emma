@@ -114,7 +114,7 @@ module LinkHelper
   #
   def make_link(label, path, **opt, &block)
     label    = opt.delete(:label) || label if opt.key?(:label)
-    name     = accessible_name(label, **opt)
+    named    = accessible_name?(label, **opt)
     title    = opt[:title]
     new_tab  = (opt[:target] == '_blank')
     sign_in  = has_class?(opt, 'sign-in-required')
@@ -124,9 +124,9 @@ module LinkHelper
     hidden   = opt[:'aria-hidden']
     disabled = opt[:'aria-disabled']
 
-    opt[:'aria-label'] = title      if title   && !name
-    opt[:tabindex]     = 0          if sign_in && !opt.key?(:tabindex)
+    opt[:'aria-label'] = title      if title   && !named
     opt[:tabindex]     = -1         if hidden  && !opt.key?(:tabindex)
+    opt[:tabindex]     = 0          if sign_in && !opt.key?(:tabindex)
     opt[:rel]          = 'noopener' if http    && !opt.key?(:rel)
     append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled
 

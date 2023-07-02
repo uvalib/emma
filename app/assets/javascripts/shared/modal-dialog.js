@@ -3,9 +3,10 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }  from '../application/debug';
-import { selector }  from './css';
-import { ModalBase } from './modal-base';
+import { AppDebug }          from '../application/debug';
+import { selector }          from './css';
+import { isMissing }         from './definitions';
+import { ModalBase, TOGGLE } from './modal-base';
 
 
 const MODULE = 'ModalDialog';
@@ -50,6 +51,12 @@ export class ModalDialog extends ModalBase {
     static CLASS_ATTR = 'data-modal-class';
 
     // ========================================================================
+    // Class fields
+    // ========================================================================
+
+    /** @type {boolean} */ static all_initialized;
+
+    // ========================================================================
     // Fields
     // ========================================================================
 
@@ -81,7 +88,7 @@ export class ModalDialog extends ModalBase {
      * @returns {Selector}
      */
     get selector() {
-        return this.modalPanel.attr(this.constructor.SELECTOR_ATTR);
+        return this.modalPanel.attr(this.SELECTOR_ATTR);
     }
 
     /**
@@ -91,9 +98,7 @@ export class ModalDialog extends ModalBase {
      * @returns {Selector}
      */
     get toggleSelector() {
-        const toggle_sel = this.constructor.TOGGLE;
-        const data_attr  = this.constructor.SELECTOR_ATTR;
-        return `${toggle_sel}[${data_attr}="${this.selector}"]`;
+        return `${TOGGLE}[${this.SELECTOR_ATTR}="${this.selector}"]`;
     }
 
     /**
@@ -104,6 +109,9 @@ export class ModalDialog extends ModalBase {
     get allToggles() {
         return this.$root.find(this.toggleSelector);
     }
+
+    // noinspection FunctionNamingConventionJS
+    get SELECTOR_ATTR() { return this.constructor.SELECTOR_ATTR }
 
     // ========================================================================
     // Methods - ModalBase overrides
@@ -142,10 +150,9 @@ export class ModalDialog extends ModalBase {
      * @returns {jQuery}              The provided or discovered toggles.
      */
     associateAll(toggles) {
-        this._debug('associateAll: toggles =', toggles);
+        this._debug('associateAll: toggles =', toggles, 'modal =', this);
         const $toggles = toggles ? $(toggles) : this.allToggles;
-        const active   = $toggles.map((_, toggle) => this.associate(toggle));
-        return $(active);
+        return $toggles.map((_, toggle) => this.associate(toggle));
     }
 
     // ========================================================================
@@ -178,22 +185,41 @@ export class ModalDialog extends ModalBase {
 
     /**
      * Create a ModalDialog instance for each modal popup and associate it with
-     * all related modal toggle controls.
+     * all related activation toggle controls.
+     *
+     * @returns {boolean}
      */
     static initializeAll() {
-        this._debug('initializeAll');
-        this.$all_modals.each((_, modal) => {
-            let instance;
-            const $modal = $(modal);
-            const type   = $modal.attr(this.CLASS_ATTR);
-            if (type && (type !== this.CLASS_NAME)) {
-                this._debug(`skipping modal for ${type}`);
-            } else if ((instance = $modal.data(this.MODAL_INSTANCE_DATA))) {
-                this._debug('modal already linked to', instance);
-            } else {
-                (new this($modal)).associateAll();
-            }
-        });
+        const func  = 'initializeAll';
+        let updated = false;
+        let $modals;
+        if (this.all_initialized) {
+            this._debug(`${func}: already initialized`);
+        } else if (isMissing($modals = this.$all_modals)) {
+            this._debug(`${func}: no modals on this page`);
+        } else {
+            this._debug(`${func}: ${$modals.length} modals`);
+            this.$all_modals.each((_, modal) => {
+                const $modal = $(modal);
+                const type   = $modal.attr(this.CLASS_ATTR);
+                let instance;
+
+                if (type && (type !== this.CLASS_NAME)) {
+                    this._debug(`${func}: skipping modal for`, type, $modal);
+
+                } else if ((instance = $modal.data(this.INSTANCE_DATA))) {
+                    this._debug(`${func}: already linked`, instance, $modal);
+
+                } else {
+                    this._debug(`${func}: $modal =`, $modal);
+                    instance = new this($modal);
+                }
+
+                if (instance) { instance.associateAll() }
+            });
+            updated = true;
+        }
+        return updated;
     }
 
 }

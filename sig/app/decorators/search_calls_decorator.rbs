@@ -17,5 +17,5 @@ class SearchCallsDecorator < BaseCollectionDecorator
   #
   # @note This hasn't been updated since the conversion to Postgres.
   #
-  def table: (?extended: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_table: (?extended: bool, **untyped opt) -> ActiveSupport::SafeBuffer
 end

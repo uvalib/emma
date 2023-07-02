@@ -39,7 +39,6 @@ $footer-margin-top: 1rem;
     .footer-table {
 
         display: grid;
-        width:   100%;
         margin:  0;
         padding: 0;
 
@@ -53,13 +52,14 @@ $footer-margin-top: 1rem;
             gap:                   0.5rem;
         }
 
+        // noinspection CssBrowserCompatibilityForProperties
         .entry {
 
             display:     flex;
             flex-wrap:   wrap;
-            width:       100%;
             line-height: 1.25;
-            word-break:  keep-all;
+            word-break:  break-word;
+            word-wrap:   break-word;
 
             @media #{$not-narrow-screen} {
 

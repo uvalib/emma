@@ -1,15 +1,17 @@
 // app/assets/javascripts/feature/records.js
 
 
-import { AppDebug }                         from '../application/debug';
-import { appSetup }                         from '../application/setup';
-import { toggleVisibility }                 from '../shared/accessibility';
-import { Emma }                             from '../shared/assets';
-import { pageController }                   from '../shared/controller';
-import { toggleHidden }                     from '../shared/css';
-import { isMissing, isPresent, notDefined } from '../shared/definitions';
-import { camelCase, singularize }           from '../shared/strings';
-import { asParams }                         from '../shared/url';
+import { AppDebug }               from '../application/debug';
+import { appSetup }               from '../application/setup';
+import { toggleVisibility }       from '../shared/accessibility';
+import { Emma }                   from '../shared/assets';
+import { pageController }         from '../shared/controller';
+import { toggleHidden }           from '../shared/css';
+import { isMissing, isPresent }   from '../shared/definitions';
+import { keyCombo }               from '../shared/keyboard';
+import { CheckboxGroup }          from '../shared/nav-group';
+import { camelCase, singularize } from '../shared/strings';
+import { asParams }               from '../shared/url';
 import {
     handleEvent,
     handleHoverAndFocus,
@@ -149,7 +151,7 @@ appSetup(MODULE, function() {
      * @type {jQuery}
      */
     const $filter_options_checkboxes =
-        $filter_options_controls.find('input[type="checkbox"]');
+        CheckboxGroup.controls($filter_options_controls);
 
     // ========================================================================
     // Variables - records list
@@ -230,7 +232,7 @@ appSetup(MODULE, function() {
         const target  = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
         const $target = $(target);
         const indent  = $target.position().left;
-        const text    = $target.attr('aria-label') || $target.attr('title');
+        const text    = $target.attr('data-label');
         $group_select_note.css('margin-left', indent);
         $group_select_note.text(text);
         toggleVisibility($group_select_note, true);
@@ -251,11 +253,10 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event|MouseEvent|KeyboardEvent} ev
      */
     function onClickGroupNote(ev) {
-        const target  = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
-        const $target = $(target);
-        const key     = ev.key;
-        if (notDefined(key) || (key === 'Enter') || (key === ' ')) {
-            if ($target.is('.disabled')) {
+        const key = keyCombo(ev);
+        if (!key || (key === ' ') || (key === 'Enter')) {
+            const target = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
+            if ($(target).is('.disabled')) {
                 ev.preventDefault();
                 ev.stopImmediatePropagation();
             }

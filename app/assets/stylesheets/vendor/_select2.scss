@@ -98,7 +98,11 @@
     // The dropped-down menu used as a replacement for <select> drop-down and
     // appended to <body>.
     .select2-dropdown {
-        // TODO: ??? .select2-container--default .select2-dropdown
+        min-width: max-content; // Needed if page zoomed.
+    }
+
+    .select2-results > .select2-results__options {
+        max-height: 20vh;
     }
 
     // Drop-down menu items that are selected or could be selected.

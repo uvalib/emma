@@ -3,8 +3,6 @@
 
 import { AppDebug }                           from '../application/debug';
 import { appEventListener, DOC_KEY, WIN_KEY } from '../application/setup';
-import { handleKeypressAsClick }              from './accessibility';
-import { ensureTabbable }                     from './html';
 
 
 AppDebug.file('shared/events');
@@ -18,9 +16,18 @@ AppDebug.file('shared/events');
  */
 
 /**
+ * @typedef {boolean|undefined} EventHandlerReturn
+ *
+ * For event handlers processed by jQuery, a **false** return will result in
+ * `event.stopPropagation()` and `event.preventDefault()`.
+ *
+ * @see https://api.jquery.com/on/ jQuery.on()
+ */
+
+/**
  * @callback jQueryEventHandler
  * @param {jQuery.Event|Event} [event]
- * @returns {?boolean}
+ * @returns {EventHandlerReturn}
  */
 
 // ============================================================================
@@ -28,12 +35,27 @@ AppDebug.file('shared/events');
 // ============================================================================
 
 /**
- * The default delay for {@link debounce}.
+ * The default delay for {@link delayedBy} in milliseconds.
  *
  * @readonly
  * @type {number}
  */
-export const DEBOUNCE_DELAY = 250; // milliseconds
+export const DEFAULT_DELAY = 100;
+
+/**
+ * The default delay for {@link debounce} in milliseconds.
+ *
+ * @readonly
+ * @type {number}
+ */
+export const DEBOUNCE_DELAY = 250;
+
+export const PHASE = [
+    'NONE',         // Event.NONE
+    'CAPTURING',    // Event.CAPTURING_PHASE
+    'AT_TARGET',    // Event.AT_TARGET
+    'BUBBLING',     // Event.BUBBLING_PHASE
+];
 
 // ============================================================================
 // Functions
@@ -48,13 +70,26 @@ export const DEBOUNCE_DELAY = 250; // milliseconds
  * @returns {boolean}
  */
 export function isEvent(item, type) {
-    if (item instanceof jQuery.Event) {
-        return !type || (item.originalEvent instanceof type);
-    } else if (item instanceof Event) {
-        return !type || (item instanceof type);
-    } else {
-        return false;
+    const jq    = (item instanceof jQuery.Event);
+    const ev    = (item instanceof Event);
+    const event = (jq && item.originalEvent) || (ev && item);
+    switch (typeof type) {
+        case 'undefined': return !!event;
+        case 'string':    return !!event && (event.type === type);
+        default:          return !!event && (event instanceof type);
     }
+}
+
+/**
+ * A description of the event phase for diagnostics.
+ *
+ * @param {jQuery.Event|Event|undefined} event
+ *
+ * @returns {string}
+ */
+export function phase(event) {
+    const value = event?.eventPhase;
+    return PHASE[value] || `${value}`;
 }
 
 /**
@@ -66,16 +101,28 @@ export function isEvent(item, type) {
  *
  * @returns {function}
  */
-export function debounce(callback, wait) {
-    const delay = wait || DEBOUNCE_DELAY; // milliseconds
+export function debounce(callback, wait = DEBOUNCE_DELAY) {
+    return delayedBy(wait, callback);
+}
+
+/**
+ * Generate a wrapper function which executes the callback function only after
+ * the indicated delay.
+ *
+ * @param {number|undefined} wait     Default: {@link DEFAULT_DELAY}.
+ * @param {function}         callback
+ *
+ * @returns {function}
+ */
+export function delayedBy(wait, callback) {
+    const delay = wait || DEFAULT_DELAY;
     let timeout;
-    return function() {
+    return function(...args) {
         const _this = this;
-        const args  = arguments;
         clearTimeout(timeout);
         timeout = setTimeout(function() {
             timeout = null;
-            callback.apply(_this, args);
+            callback.call(_this, ...args);
         }, delay);
     }
 }
@@ -83,46 +130,60 @@ export function debounce(callback, wait) {
 /**
  * Set an event handler without concern that it may already set.
  *
- * @param {jQuery}             $element
- * @param {string}             name     Event name.
- * @param {jQueryEventHandler} func     Event handler.
+ * @param {Selector}           element
+ * @param {string}             name         Event name.
+ * @param {jQueryEventHandler} callback     Event handler.
  *
  * @returns {jQuery}
  */
-export function handleEvent($element, name, func) {
-    return $element.off(name, func).on(name, func);
-}
-
-/**
- * Set click and keypress event handlers without concern that it may already
- * set.
- *
- * @param {jQuery}             $element
- * @param {jQueryEventHandler} func     Event handler.
- *
- * @returns {jQuery}
- */
-export function handleClickAndKeypress($element, func) {
-    ensureTabbable($element);
-    return handleEvent($element, 'click', func).each(handleKeypressAsClick);
+export function handleEvent(element, name, callback) {
+    return $(element).off(name, callback).on(name, callback);
 }
 
 /**
  * Set hover and focus event handlers.
  *
- * @param {jQuery}             $element
- * @param {jQueryEventHandler} funcEnter    Event handler for 'enter'.
- * @param {jQueryEventHandler} [funcLeave]  Event handler for 'leave'.
+ * @param {Selector}           element
+ * @param {jQueryEventHandler} cbEnter      Event handler for "enter".
+ * @param {jQueryEventHandler} [cbLeave]    Event handler for "leave".
  */
-export function handleHoverAndFocus($element, funcEnter, funcLeave) {
-    if (funcEnter) {
-        handleEvent($element, 'mouseenter', funcEnter);
-        handleEvent($element, 'focus',      funcEnter);
+export function handleHoverAndFocus(element, cbEnter, cbLeave) {
+    const $element = $(element);
+    if (cbEnter) {
+        handleEvent($element, 'mouseenter', cbEnter);
+        handleEvent($element, 'focus',      cbEnter);
     }
-    if (funcLeave) {
-        handleEvent($element, 'mouseleave', funcLeave);
-        handleEvent($element, 'blur',       funcLeave);
+    if (cbLeave) {
+        handleEvent($element, 'mouseleave', cbLeave);
+        handleEvent($element, 'blur',       cbLeave);
     }
+}
+
+/**
+ * Set an event handler for the capturing phase. <p/>
+ *
+ * If *options* includes "{listen: false}" then the only action is to remove
+ * a previous event handler.
+ *
+ * @param {Selector}                                element
+ * @param {string}                                  name        Event name.
+ * @param {EventListenerOrEventListenerObject|null} callback
+ * @param {EventListenerOptionsExt|boolean}         [options]
+ */
+export function handleCapture(element, name, callback, options) {
+    let opt = { capture: true, remove: true, listen: true };
+    if (typeof options === 'object') {
+        opt = { ...opt, ...options };
+    } else if (options === false) {
+        opt.capture = false;
+    }
+    const elems  = $(element).toArray();
+    const remove = opt.remove;
+    const listen = opt.listen;
+    delete opt.remove;
+    delete opt.listen;
+    remove && elems.forEach(el => el.removeEventListener(name, callback, opt));
+    listen && elems.forEach(el => el.addEventListener(name, callback, opt));
 }
 
 // ============================================================================
@@ -157,7 +218,7 @@ export function documentEvent(type, callback, options) {
  * [2] due to clicking on a link.
  *
  * @param {EventListener|function():void} callback
- * @param {boolean} [_debug] If *true* show console warnings on events.
+ * @param {boolean} [_debug] If **true** show console warnings on events.
  */
 export function onPageExit(callback, _debug) {
 /*

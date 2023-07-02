@@ -10,7 +10,7 @@
 //=============================================================================
 
 $list-item-gap-x: v.$page-padding-x;
-$list-item-gap-y: v.$page-padding;
+$list-item-gap-y: v.$page-padding-y;
 
 // This fixed value will maintain an acceptable separation between links
 // without being scaled to display dimensions.
@@ -88,6 +88,7 @@ $data-list-border-color: none;
 
         font-weight: bold;
         align-self:  baseline;
+        word-break:  keep-all;
 
         @media #{v.$narrow-screen} {
             margin-bottom: v.$flex-gap-y;

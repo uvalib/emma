@@ -25,6 +25,7 @@ module LayoutHelper::Main
   # @param [Array<ActiveSupport::SafeBuffer>]                      controls
   # @param [ActiveSupport::SafeBuffer, Array<Symbol>, Symbol, nil] help
   # @param [ActiveSupport::SafeBuffer, Symbol, nil]                logo
+  # @param [Hash]                                                  opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -37,14 +38,16 @@ module LayoutHelper::Main
   #
   # @overload page_heading(title)
   #   Render just the title text; e.g.: `
-  #     <h1 class="heading">*title*</h1>
+  #     <h1 class="heading plain">*title*</h1>
   #   `
   #   @param [ActiveSupport::SafeBuffer, String] title
   #   @return [ActiveSupport::SafeBuffer]
   #
   # @overload page_heading(title, help: help_span)
   #   Include a help icon next to the title text; e.g.: `
-  #     <h1 class="heading"><span class="text">*title*</span>*help_span*</h1>
+  #     <div class="heading and-help">
+  #       <h1 class="text">*title*</h1>*help_span*
+  #     </div>
   #   `
   #   @param [ActiveSupport::SafeBuffer, String]                title
   #   @param [ActiveSupport::SafeBuffer, Array<Symbol>, Symbol] help
@@ -52,8 +55,8 @@ module LayoutHelper::Main
   #
   # @overload page_heading(title, logo: logo_div)
   #   Create a container with the heading to the logo element; e.g.: `
-  #     <div class="heading container">
-  #       <h1 class="heading">*title*</h1>*logo_div*
+  #     <div class="heading and-logo">
+  #       <h1 class="text">*title*</h1>*logo_div*
   #     </div>
   #   `
   #   @param [ActiveSupport::SafeBuffer, String] title
@@ -63,7 +66,7 @@ module LayoutHelper::Main
   # @overload page_heading(title, *controls)
   #   Create a 'heading-bar' container with the heading and other divs; e.g.: `
   #     <div class="heading-bar">
-  #       <h1 class="heading">*title*</h1>*controls*
+  #       <h1 class="heading plain">*title*</h1>*controls*
   #     </div>
   #   `
   #   @param [ActiveSupport::SafeBuffer, String] title
@@ -73,11 +76,11 @@ module LayoutHelper::Main
   # @overload page_heading(title, *controls, help: help, logo: logo)
   #   All features combined; e.g.: `
   #     <div class="heading-bar">
-  #       <div class="heading container">
-  #         <h1 class="heading">
-  #           <span class="text">*title*</span>
+  #       <div class="heading and-logo">
+  #         <div class="heading and-help">
+  #           <h1 class="text">*title*</h1>
   #           *help*
-  #         </h1>
+  #         </div>
   #         *logo*
   #       </div>
   #       *controls*
@@ -89,20 +92,18 @@ module LayoutHelper::Main
   #   @param [ActiveSupport::SafeBuffer, Symbol]                logo
   #   @return [ActiveSupport::SafeBuffer]
   #
-  def page_heading(title, *controls, help: nil, logo: nil, **)
-    help  &&= page_heading_help(help)      unless help.html_safe?
-    logo  &&= repository_source_logo(logo) unless logo.html_safe?
+  def page_heading(title, *controls, help: nil, logo: nil, **opt)
+    help &&= page_heading_help(help)      unless help.html_safe?
+    logo &&= repository_source_logo(logo) unless logo.html_safe?
+    added  = [*controls, *(yield if block_given?)].compact.presence
 
-    added   = (yield if block_given?)
-    added   = [*controls, *added].compact.presence
+    prepend_css!(opt, ((help || logo) ? 'text' : 'heading plain'))
+    result = html_tag(:h1, title, opt)
 
-    title   = ERB::Util.h(title)
-    title   = html_span(title, class: 'text') << help if help.present?
-
-    heading = html_tag(:h1, title, class: 'heading')
-    heading = html_div(class: 'heading container') { heading << logo } if logo
-    heading = html_div(heading, *added, class: 'heading-bar')          if added
-    heading
+    result = html_div(class: 'heading and-help') { result << help } if help
+    result = html_div(class: 'heading and-logo') { result << logo } if logo
+    result = html_div(result, *added, class: 'heading-bar')         if added
+    result
   end
 
   # page_heading_help

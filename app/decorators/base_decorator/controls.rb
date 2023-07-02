@@ -233,6 +233,27 @@ module BaseDecorator::Controls
   end
 
   # ===========================================================================
+  # :section: Control groups
+  # ===========================================================================
+
+  public
+
+  # Wrapper for a group of one or more focusables.
+  #
+  # @param [String, nil] id
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def control_group(id = nil, css: '.control-group', **opt, &blk)
+    opt[:'aria-labelledby'] = id if id
+    opt[:role] ||= 'group'
+    prepend_css!(opt, css)
+    html_div(opt, &blk)
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 

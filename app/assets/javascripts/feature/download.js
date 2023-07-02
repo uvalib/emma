@@ -8,8 +8,10 @@
 
 import { AppDebug }               from '../application/debug';
 import { appSetup }               from '../application/setup';
+import { handleClickAndKeypress } from '../shared/accessibility';
 import { Emma }                   from '../shared/assets';
 import { isMissing, isPresent }   from '../shared/definitions';
+import { handleEvent }            from '../shared/events';
 import { create, scrollIntoView } from '../shared/html';
 import { compact, deepFreeze }    from '../shared/objects';
 import { randomizeName }          from '../shared/random';
@@ -17,15 +19,11 @@ import { SearchInProgress }       from '../shared/search-in-progress';
 import { SECOND, secondsSince }   from '../shared/time';
 import { urlParameters }          from '../shared/url';
 import {
-    cssClass,
-    HIDDEN,
+    cssClassList,
+    isHidden,
     selector,
     toggleHidden,
 } from '../shared/css';
-import {
-    handleClickAndKeypress,
-    handleEvent
-} from '../shared/events';
 
 
 const MODULE = 'Download';
@@ -210,7 +208,7 @@ appSetup(MODULE, function() {
         name:    'member-select',
         panel: {
             tag:     'form',
-            class:   cssClass('member-select', Emma.Popup.panel.class),
+            class:   cssClassList('member-select', Emma.Popup.panel.class),
             tooltip: ''
         },
         title: {
@@ -826,7 +824,7 @@ appSetup(MODULE, function() {
     function showBsProgressIndicator($link) {
         //OUT.debug('showBsProgressIndicator: $link =', $link);
         const $indicator = $link.siblings(PROGRESS);
-        if ($indicator.is(HIDDEN)) {
+        if (isHidden($indicator)) {
             toggleHidden($indicator, false).on('click', cancelBsRequest);
         }
     }

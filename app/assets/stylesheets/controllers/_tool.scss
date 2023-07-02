@@ -24,7 +24,7 @@ body.tool.index {
             flex-direction: row;
             flex-wrap:      nowrap;
             align-items:    center;
-            gap:            $flex-gap-x;
+            gap:            $flex-gap-y $flex-gap-x;
 
             .action {
                 font-size:   larger;
@@ -102,7 +102,7 @@ body.tool.md {
         }
 
         .file-input  {
-            flex:        1 1 auto;
+            flex:        0 1 auto;
             font-size:   medium;
         }
     }

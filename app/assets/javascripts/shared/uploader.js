@@ -2,21 +2,24 @@
 
 
 import { AppDebug }                              from '../application/debug';
-import { toggleVisibility }                      from './accessibility';
 import { arrayWrap }                             from './arrays';
 import { Emma }                                  from './assets';
 import { BaseClass }                             from './base-class';
 import { pageAction }                            from './controller';
 import { isHidden, selector, toggleHidden }      from './css';
 import { isDefined, isMissing, isPresent }       from './definitions';
-import { handleClickAndKeypress }                from './events';
 import { extractFlashMessage }                   from './flash';
 import { percent }                               from './math';
+import { CONTROL_GROUP }                         from './nav-group';
 import { compact, deepFreeze, fromJSON, hasKey } from './objects';
 import { camelCase }                             from './strings';
 import { MINUTES, SECONDS }                      from './time';
 import { makeUrl }                               from './url';
 import { Rails }                                 from '../vendor/rails';
+import {
+    toggleVisibility,
+    handleClickAndKeypress,
+} from './accessibility';
 import {
     ID_ATTRIBUTES,
     selfOrDescendents,
@@ -184,6 +187,26 @@ const MESSAGE_DURATION = 30 * SECONDS;
  */
 const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
 
+const UPLOADER_CLASS        = 'file-uploader';
+const UPPY_ROOT_CLASS       = 'uppy-Root';
+const FILE_SELECT_CLASS     = 'uppy-FileInput-container';
+const FILE_INPUT_CLASS      = 'uppy-FileInput-input';
+const FILE_BUTTON_CLASS     = 'uppy-FileInput-btn';
+const INFORMER_CLASS        = 'uppy-Informer';
+const PROGRESS_BAR_CLASS    = 'uppy-ProgressBar';
+const FILE_NAME_CLASS       = 'uploaded-filename';
+const UPLOADED_NAME_CLASS   = 'uploaded-filename';
+
+export const UPLOADER       = selector(UPLOADER_CLASS);
+export const UPPY_ROOT      = selector(UPPY_ROOT_CLASS);
+export const FILE_SELECT    = selector(FILE_SELECT_CLASS);
+export const FILE_INPUT     = selector(FILE_INPUT_CLASS);
+export const FILE_BUTTON    = selector(FILE_BUTTON_CLASS);
+export const INFORMER       = selector(INFORMER_CLASS);
+export const PROGRESS_BAR   = selector(PROGRESS_BAR_CLASS);
+export const FILE_NAME      = selector(FILE_NAME_CLASS);
+export const UPLOADED_NAME  = selector(UPLOADED_NAME_CLASS);
+
 // ============================================================================
 // Class BaseUploader
 // ============================================================================
@@ -276,28 +299,6 @@ class BaseUploader extends BaseClass {
      * @property {UppyPluginOptions}    [plugin]
      * @property {function(Selector)}   [added]
      */
-
-    // ========================================================================
-    // Constants
-    // ========================================================================
-
-    static UPLOADER_CLASS       = 'file-uploader';
-    static UPPY_ROOT_CLASS      = 'uppy-Root';
-    static FILE_SELECT_CLASS    = 'uppy-FileInput-container';
-    static FILE_INPUT_CLASS     = 'uppy-FileInput-input';
-    static FILE_BUTTON_CLASS    = 'uppy-FileInput-btn';
-    static INFORMER_CLASS       = 'uppy-Informer';
-    static PROGRESS_BAR_CLASS   = 'uppy-ProgressBar';
-    static FILE_NAME_CLASS      = 'uploaded-filename';
-
-    static UPLOADER     = selector(this.UPLOADER_CLASS);
-    static UPPY_ROOT    = selector(this.UPPY_ROOT_CLASS);
-    static FILE_SELECT  = selector(this.FILE_SELECT_CLASS);
-    static FILE_INPUT   = selector(this.FILE_INPUT_CLASS);
-    static FILE_BUTTON  = selector(this.FILE_BUTTON_CLASS);
-    static INFORMER     = selector(this.INFORMER_CLASS);
-    static PROGRESS_BAR = selector(this.PROGRESS_BAR_CLASS);
-    static FILE_NAME    = selector(this.FILE_NAME_CLASS);
 
     // ========================================================================
     // Fields
@@ -442,7 +443,7 @@ class BaseUploader extends BaseClass {
      */
     _locateUploader(target) {
         const tgt     = target || this._root;
-        const $result = this._selfOrDescendent(tgt, this.constructor.UPLOADER);
+        const $result = this._selfOrDescendent(tgt, UPLOADER);
         this._debug('_locateUploader ->', $result);
         return $result;
     }
@@ -515,7 +516,7 @@ class BaseUploader extends BaseClass {
         }
         if (warn) {
             init = true;
-            warn = warn.replaceAll('SELECTOR', this.constructor.UPPY_ROOT);
+            warn = warn.replaceAll('SELECTOR', UPPY_ROOT);
             this._warn(`re-initializing: ${warn}`);
         }
         if (init) {
@@ -530,8 +531,7 @@ class BaseUploader extends BaseClass {
      * @returns {boolean}
      */
     isUppyInitialized() {
-        const match       = this.constructor.UPPY_ROOT;
-        const $uppy_added = this._selfOrDescendent(this.$display, match);
+        const $uppy_added = this._selfOrDescendent(this.$display, UPPY_ROOT);
         this._debug('isUppyInitialized ->', $uppy_added);
         return isPresent($uppy_added);
     }
@@ -1105,8 +1105,8 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * Hide/show the {@link INFORMER} element by adding/removing the CSS
-     * "invisible" class.
+     * Hide/show the {@link INFORMER} element by adding/removing the
+     * {@link INVISIBLE_MARKER}.
      *
      * @param {boolean} [visible]
      *
@@ -1114,7 +1114,7 @@ class BaseUploader extends BaseClass {
      */
     _toggleInfo(visible) {
         //this._debug('toggleInfo: visible =', visible);
-        const $control = this.$display.find(this.constructor.INFORMER);
+        const $control = this.$display.find(INFORMER);
         toggleVisibility($control, visible);
     }
 
@@ -1167,7 +1167,7 @@ class BaseUploader extends BaseClass {
     _toggleProgressBar(visible) {
         this._debug('toggleProgressBar: visible =', visible);
         if (!this.feature.progress_bar) { return }
-        const $control = this.$display.find(this.constructor.PROGRESS_BAR);
+        const $control = this.$display.find(PROGRESS_BAR);
         toggleVisibility($control, visible);
     }
 
@@ -1197,7 +1197,7 @@ class BaseUploader extends BaseClass {
         const label_id   = options?.label_id;
         const input_id   = options?.input_id;
         const OLD_INPUT  = input_id && `input#${input_id}`;
-        const NEW_INPUT  = this.constructor.FILE_INPUT;
+        const NEW_INPUT  = FILE_INPUT;
 
         // Uppy will replace `<input type="file">` with its own mechanisms so
         // the original should not be displayed.
@@ -1223,7 +1223,6 @@ class BaseUploader extends BaseClass {
      * @returns {jQuery}
      */
     fileSelectContainer() {
-        const FILE_SELECT = this.constructor.FILE_SELECT;
         return this.$root.find(FILE_SELECT);
     }
 
@@ -1243,7 +1242,6 @@ class BaseUploader extends BaseClass {
      * @returns {jQuery}
      */
     fileSelectButton() {
-        const FILE_BUTTON = this.constructor.FILE_BUTTON;
         return this.fileSelectContainer().children(FILE_BUTTON);
     }
 
@@ -1260,17 +1258,16 @@ class BaseUploader extends BaseClass {
      */
     _initializeFileSelectButton() {
         this._debug('_initializeFileSelectButton');
-        const cls     = this.constructor.FILE_BUTTON_CLASS;
         const $button = this.fileSelectButton();
         const tooltip = this.fileSelectTooltip();
         const label   = false && this.fileSelectLabel();
         const debug   = this._debugUppy.bind(this);
-        const handler = this.onSelect || (() => debug(cls));
+        const handler = this.onSelect || (() => debug(FILE_BUTTON_CLASS));
         handleClickAndKeypress($button, handler);
         if (tooltip) { $button.siblings('label').attr('title', tooltip) }
         if (tooltip) { $button.attr('title', tooltip) }
         if (label)   { $button.text(label) } // The plugin will initialize this
-        return $button.addClass(cls);
+        return $button.addClass(FILE_BUTTON_CLASS);
     }
 
     /**
@@ -1359,7 +1356,7 @@ class BaseUploader extends BaseClass {
      * @returns {jQuery}
      */
     uploadedFilenameDisplay() {
-        return this.$root.find(this.constructor.FILE_NAME);
+        return this.$root.find(FILE_NAME);
     }
 
     /**
@@ -1841,13 +1838,13 @@ export class MultiUploader extends BaseUploader {
      * @protected
      */
     _locateDisplay(target) {
-        const match = this.constructor.DISPLAY;
-        let $result = target && this._selfOrDescendent(target, match);
-        $result ||= this._selfOrDescendent(this.$root, match);
-        $result ||= $(match);
+        const match   = this.constructor.DISPLAY;
+        const css     = this.constructor.DISPLAY_CLASS;
+        let $result   = target && this._selfOrDescendent(target, match);
+            $result ||= this._selfOrDescendent(this.$root, match);
+            $result ||= $(match);
         if (isMissing($result)) {
-            $result = $('<div>').addClass(this.constructor.DISPLAY_CLASS);
-            $('body').append($result);
+            $result = $('<div>').addClass(css).appendTo('body');
             this._debug('_locateDisplay append to body ->', $result);
         } else {
             this._debug('_locateDisplay ->', $result);
@@ -1900,6 +1897,15 @@ export class MultiUploader extends BaseUploader {
         const label_id  = $elements.first().attr('aria-labelledby');
         const opt       = { label_id, ...options };
         super._initializeFileSelectContainer(opt);
+
+        // Re-arrange so that fileSelectContainer() is included within the
+        // control group.
+        const $group = this.$root.find(CONTROL_GROUP);
+        if (isPresent($group)) {
+            const $container = this.fileSelectContainer();
+            $group.insertBefore($container);
+            $container.prependTo($group);
+        }
 
         // Inject copies of additional controls if present.
         const pre  = this.constructor.PREPEND_CONTROLS;

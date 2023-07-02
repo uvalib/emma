@@ -317,12 +317,13 @@ module BaseDecorator::Fields
   #
   # @param [String] name
   # @param [*]      value
+  # @param [Symbol] tag
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_check_box(name, value, css: '.checkbox.single', **opt)
+  def render_check_box(name, value, tag: :li, css: '.checkbox.single', **opt)
     html_opt = remainder_hash!(opt, *CHECK_OPTIONS)
     normalize_attributes!(opt)
 
@@ -337,7 +338,7 @@ module BaseDecorator::Fields
 
     # Checkbox/label combination.
     prepend_css!(html_opt, css)
-    html_div(html_opt) do
+    html_tag(tag, html_opt) do
       checkbox << label
     end
   end
@@ -475,6 +476,32 @@ module BaseDecorator::Fields
     end
     name = 'None' if name.blank?
     html_id(name, camelize: true)
+  end
+
+  # Create a base for label and value identifiers.
+  #
+  # @param [Symbol, String, nil]  name
+  # @param [String, nil]          base
+  # @param [Symbol, nil]          field
+  # @param [String, Symbol, nil]  label
+  # @param [String, Integer, nil] index
+  # @param [String, Symbol, nil]  group
+  # @param [Hash]                 opt       Passed to #html_id.
+  #
+  # @return [String]
+  #
+  def field_html_id(
+    name =  'field',
+    base:   nil,
+    field:  nil,
+    label:  nil,
+    index:  nil,
+    group:  nil,
+    **opt
+  )
+    base ||= model_html_id(field || label)
+    # noinspection RubyMismatchedArgumentType
+    html_id(name, base, group, index, underscore: false, **opt)
   end
 
   # ===========================================================================

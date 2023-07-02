@@ -6,15 +6,15 @@
 // @see https://api-docs.dev.mathdetective.ai Documentation
 
 
-import { AppDebug }                       from '../application/debug';
-import { Api }                            from '../shared/api'
-import { selector, toggleHidden }         from '../shared/css';
-import { isDefined, isMissing, isPresent} from '../shared/definitions';
-import { HTTP }                           from '../shared/http';
-import { encodeImageOrUrl }               from '../shared/image';
-import { SECONDS }                        from '../shared/time';
+import { AppDebug }                        from '../application/debug';
+import { handleClickAndKeypress }          from '../shared/accessibility';
+import { Api }                             from '../shared/api'
+import { selector, toggleHidden }          from '../shared/css';
+import { isDefined, isMissing, isPresent } from '../shared/definitions';
+import { HTTP }                            from '../shared/http';
+import { encodeImageOrUrl }                from '../shared/image';
+import { SECONDS }                         from '../shared/time';
 import {
-    handleClickAndKeypress,
     handleEvent,
     handleHoverAndFocus,
     isEvent,

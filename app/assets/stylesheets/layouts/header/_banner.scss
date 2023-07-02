@@ -32,11 +32,11 @@
     @media #{$medium-width} {
 
         > :first-child {
-            padding-top: $page-padding;
+            padding-top:    $page-padding-y;
         }
 
         > :last-child {
-            padding-bottom: $page-padding;
+            padding-bottom: $page-padding-y;
         }
     }
 }
@@ -50,8 +50,12 @@
 
     @include banner;
 
-    flex-wrap: wrap;
-    font-size: x-large;
+    align-content: center;
+    font-size:     x-large;
+
+    @media #{$narrow-screen} {
+        flex-wrap: wrap;
+    }
 
     //=========================================================================
     // Sections
@@ -66,22 +70,20 @@
     // The logo (home link) and tagline on the left-hand side of the header.
     .logo-area {
 
-        justify-content: flex-start;
-        margin-top:      0;
-        flex:            0 1 auto;
+        justify-content: start;
+        align-items:     center;
+        gap:             $flex-gap-y $flex-gap-x;
 
-        @media #{$narrow-screen} {
-            flex-direction: column;
+        @media #{$not-narrow-screen} {
+            flex:        0 1 100%;
         }
 
         > * {
 
-            @media #{$not-narrow-screen} {
-                margin: auto $flex-gap-x auto 0;
-            }
+            margin:         0;
 
             @media #{$narrow-screen} {
-                margin: $flex-gap-y 0 0;
+                margin-top: $flex-gap-y;
             }
         }
     }
@@ -94,8 +96,9 @@
 
         &.center {
 
-            max-width:  33%;
-            margin-top: -0.5rem;
+            margin-top:     -0.5rem;
+            background:     inherit;
+            flex:           0 1 100%;
 
             @media #{$not-wide-screen} {
                 display:    none;
@@ -110,10 +113,11 @@
                 display:    none;
             }
             @media #{$medium-width} {
-                margin-top: 0.5rem;
+                position:   absolute;
+                top:        0.5rem;
             }
             @media #{$narrow-screen} {
-                margin-top: 1.5rem;
+                margin-top: 0.5rem;
             }
         }
 
@@ -141,18 +145,21 @@
     // the display regardless of the width of the display.
     .control-area {
 
-        flex-wrap:         wrap-reverse;
-        justify-content:   flex-end;
-        max-width:         50%;
-        margin-left:       $page-padding-x;
-        flex:              0 1 auto;
+        flex-wrap:         wrap;
+        justify-content:   end;
+        align-content:     center;
 
-        @media #{$not-narrow-screen} {
-            margin-top:    auto;
+        @media #{$wide-screen} {
+            max-width:     50%;
+            flex:          0 1 50%;
+        }
+
+        @media #{$medium-width} {
+            max-width:     33%;
+            flex:          0 1 33%;
         }
 
         @media #{$narrow-screen} {
-            margin-top:    0;
             margin-bottom: $flex-gap-y;
         }
 
@@ -276,13 +283,14 @@
 
         @include hover-highlight;
 
-        min-width:     max-content;
-        max-width:     max-content;
-        padding:       0.25rem 0.375rem;
-        font-size:     smaller;
-        border:        1.5px solid;
-        border-radius: 0.5rem;
-        flex:          0 0 auto;
+        min-width:          max-content;
+        max-width:          max-content;
+        padding:            0.25rem 0.375rem;
+        font-size:          smaller;
+        background:         var(--rev-bg-color);
+        border:             1.5px solid;
+        border-radius:      0.5rem;
+        flex:               0 0 auto;
 
         @media #{$narrow-screen} {
             margin-top:     $flex-gap-y;

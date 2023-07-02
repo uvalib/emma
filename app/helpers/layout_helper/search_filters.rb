@@ -14,6 +14,7 @@ module LayoutHelper::SearchFilters
 
   include LayoutHelper::Common
 
+  include HtmlHelper
   include GridHelper
   include ParamsHelper
   include SearchModesHelper
@@ -27,6 +28,7 @@ module LayoutHelper::SearchFilters
   module ClassMethods
 
     include Emma::Common
+    include HtmlHelper
 
     # =========================================================================
     # :section:
@@ -404,11 +406,11 @@ module LayoutHelper::SearchFilters
   #
   ADV_SEARCH = {
     opener: {
-      label:    non_breaking(ADV_SEARCH_CONFIG[:label]).html_safe,
+      label:    hide_symbols(ADV_SEARCH_CONFIG[:label]),
       tooltip:  ADV_SEARCH_CONFIG[:tooltip],
     },
     closer: {
-      label:    non_breaking(ADV_SEARCH_CONFIG.dig(:open, :label)).html_safe,
+      label:    hide_symbols(ADV_SEARCH_CONFIG.dig(:open, :label)),
       tooltip:  ADV_SEARCH_CONFIG.dig(:open, :tooltip)
     }
   }.deep_freeze

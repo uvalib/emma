@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module TreeHelper
 
+  include HtmlHelper
   include PanelHelper
 
   # ===========================================================================
@@ -27,7 +28,7 @@ module TreeHelper
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  TREE_OPENER_LABEL = non_breaking(TREE_CTRL_CFG[:label]).html_safe.freeze
+  TREE_OPENER_LABEL = non_breaking(TREE_CTRL_CFG[:label]).freeze
 
   # Tooltip for button to open a collapsed tree.
   #
@@ -39,8 +40,7 @@ module TreeHelper
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  TREE_CLOSER_LABEL =
-    non_breaking(TREE_CTRL_CFG.dig(:open, :label)).html_safe.freeze
+  TREE_CLOSER_LABEL = non_breaking(TREE_CTRL_CFG.dig(:open, :label)).freeze
 
   # Tooltip for button to close an expanded tree.
   #

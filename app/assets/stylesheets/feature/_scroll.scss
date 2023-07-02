@@ -56,17 +56,14 @@
 
     &:not(.hidden) {
 
-        $button-bottom: 3rem;
-        $button-right:  3rem;
-
         @media #{$not-narrow-screen} {
-            --button-bottom: #{$button-bottom};
-            --button-right:  #{$button-right};
+            --button-bottom: 4vh;
+            --button-right:  2vw;
         }
 
         @media #{$narrow-screen} {
-            --button-bottom: #{$button-bottom * 0.5};
-            --button-right:  #{$button-right  * 0.5};
+            --button-bottom: 3vh;
+            --button-right:  3vw;
         }
 
         bottom:    var(--button-bottom);

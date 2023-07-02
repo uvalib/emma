@@ -44,7 +44,7 @@ module Emma::Common::FormatMethods
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def labelize: ((String|Symbol|nil) text, ?(Integer|nil) count, ?breakable: bool) -> ActiveSupport::SafeBuffer
+  def labelize: ((String|Symbol|nil) text, ?count: Integer|nil, ?breakable: bool, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # @type [Array<String>]
   QUOTE_MARKS: strArray

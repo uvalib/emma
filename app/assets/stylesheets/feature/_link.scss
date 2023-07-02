@@ -20,7 +20,7 @@ $page-section-gap-small: $page-section-gap * 0.5;
 // @see LayoutHelper::PageSections#page_text_section
 .page-text-section {
 
-    margin: $page-padding 0;
+    margin:    $page-padding-y 0;
 
     @media #{$wide-screen} {
         width: 50%;

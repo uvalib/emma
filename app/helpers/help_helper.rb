@@ -118,8 +118,10 @@ module HelpHelper
     attr   = opt.delete(:attr)&.dup || {}
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
 
-    opt[:'data-iframe'] = attr[:id] = id
-    opt[:title]       ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
+    opt[:title]        ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
+    opt[:'aria-label'] ||= 'Help' # TODO: I18n
+    opt[:'data-iframe']  = attr[:id] = id
+
     unless opt.dig(:control, :icon)
       opt[:control] = opt[:control]&.dup || {}
       opt[:control].merge!(icon: QUESTION)

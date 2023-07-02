@@ -35,7 +35,17 @@ module BaseDecorator::Common
   #
   # @type [Array<Symbol>]
   #
-  TABLE_TAGS = %i[table thead tbody th tr td].freeze
+  HTML_TABLE_TAGS = %i[table thead tbody th tr td].freeze
+
+  # Indicate whether the given HTML element tag is related to HTML tables.
+  #
+  # Because of the context in which this method is used, `nil` returns `true`.
+  #
+  # @param [Symbol, String, nil] tag
+  #
+  def for_html_table?(tag)
+    tag.nil? || HTML_TABLE_TAGS.include?(tag.to_sym)
+  end
 
 end
 

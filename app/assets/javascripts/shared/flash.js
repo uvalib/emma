@@ -3,19 +3,16 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }                        from '../application/debug';
-import { arrayWrap }                       from './arrays';
-import { selector }                        from './css';
-import { isDefined, isMissing, isPresent } from './definitions';
-import { noScroll, scrollIntoView }        from './html';
-import { SECONDS }                         from './time';
-import { HEAVY_X }                         from './unicode';
-import {
-    handleClickAndKeypress,
-    handleEvent,
-    isEvent,
-    windowEvent,
-} from './events';
+import { AppDebug }                          from '../application/debug';
+import { handleClickAndKeypress }            from './accessibility';
+import { arrayWrap }                         from './arrays';
+import { selector }                          from './css';
+import { isMissing, isPresent }              from './definitions';
+import { handleEvent, isEvent, windowEvent } from './events';
+import { noScroll, scrollIntoView }          from './html';
+import { keyCombo }                          from './keyboard';
+import { SECONDS }                           from './time';
+import { HEAVY_X }                           from './unicode';
 
 
 const MODULE = 'Flash';
@@ -27,6 +24,21 @@ AppDebug.file('shared/flash', MODULE, DEBUG);
  * Console output functions for this module.
  */
 const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
+// ============================================================================
+// Type definitions
+// ============================================================================
+
+/**
+ * @typedef {object} FlashOptions
+ *
+ * @property {function} [onClose]   Callback when the flash is closed. <p/>
+ * @property {Selector} [refocus]   Element that gets focus after close. <p/>
+ * @property {string}   [type]      Override flash type. <p/>
+ * @property {string}   [role]      Override ARIA role. <p/>
+ * @property {Selector} [fc]        Specify flash container. <p/>
+ * @property {jQuery}   [$fc]       Internal use. <p/>
+ */
 
 // ============================================================================
 // Constants
@@ -205,17 +217,16 @@ export function enableFlash(all) {
  * If show_flash.messages is not **true** then no actions will be taken.
  *
  * @param {string|string[]} text
- * @param {string}          [type]
- * @param {string}          [role]
- * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
+ * @param {FlashOptions}    [opt]
  *
  * @returns {jQuery}                  The flash container.
  */
-export function flashMessage(text, type, role, fc) {
-    const $fc = flashContainer(fc);
+export function flashMessage(text, opt = {}) {
+    //OUT.debug('flashMessage:', text, opt);
+    const $fc = opt.$fc || flashContainer(opt.fc);
     if (show_flash.messages) {
         $fc.empty();
-        addFlashMessage(text, type, role, $fc);
+        addFlashMessage(text, { ...opt, $fc: $fc });
     }
     return $fc;
 }
@@ -226,17 +237,16 @@ export function flashMessage(text, type, role, fc) {
  * If show_flash.errors is not **true** then no actions will be taken.
  *
  * @param {string|string[]} text
- * @param {string}          [type]
- * @param {string}          [role]
- * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
+ * @param {FlashOptions}    [opt]
  *
  * @returns {jQuery}                  The flash container.
  */
-export function flashError(text, type, role, fc) {
-    const $fc = flashContainer(fc);
+export function flashError(text, opt = {}) {
+    //OUT.debug('flashError:', text, opt);
+    const $fc = opt.$fc || flashContainer(opt.fc);
     if (show_flash.errors) {
         $fc.empty();
-        addFlashError(text, type, role, $fc);
+        addFlashError(text, { ...opt, $fc: $fc });
     }
     return $fc;
 }
@@ -334,6 +344,12 @@ function hideFlash(fc, force) {
             monitorWindowEvents(false);
         }
         toggleFlashContainer($fc, false);
+        const option = getOptionsData($fc);
+        if (option) {
+            option.onClose?.();
+            option.refocus?.focus();
+            clearOptionsData($fc);
+        }
     }
     return $fc;
 }
@@ -366,28 +382,26 @@ function toggleFlashContainer($fc, show) {
  * Display a new flash message.
  *
  * @param {string|string[]} text
- * @param {string}          [type]
- * @param {string}          [role]
- * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
+ * @param {FlashOptions}    [opt]
  *
  * @returns {jQuery}                  The flash container.
  */
-export function addFlashMessage(text, type, role, fc) {
-    return addFlashItem(text, (type || 'notice'), role, fc);
+export function addFlashMessage(text, opt) {
+    //OUT.debug('addFlashMessage:', text, opt);
+    return addFlashItem(text, { type: 'notice', ...opt });
 }
 
 /**
  * Display a new flash error message.
  *
  * @param {string|string[]} text
- * @param {string}          [type]
- * @param {string}          [role]
- * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
+ * @param {FlashOptions}    [opt]
  *
  * @returns {jQuery}                  The flash container.
  */
-export function addFlashError(text, type, role, fc) {
-    return addFlashItem(text, (type || 'alert'), role, fc);
+export function addFlashError(text, opt) {
+    //OUT.debug('addFlashError:', text, opt);
+    return addFlashItem(text, { type: 'alert', ...opt });
 }
 
 // ============================================================================
@@ -398,22 +412,21 @@ export function addFlashError(text, type, role, fc) {
  * Add a flash item, un-hiding the flash message container if needed.
  *
  * @param {string|string[]} text
- * @param {string}          [type]
- * @param {string}          [role]    Default: 'alert'.
- * @param {Selector}        [fc]      Default: `{@link flashContainer}()`.
+ * @param {FlashOptions}    [opt]
  *
  * @returns {jQuery}                  The flash container.
  */
-function addFlashItem(text, type, role, fc) {
-    const css_class = `${ITEM_CLASS} ${type}`.trim();
-    const aria_role = role || 'alert';
+function addFlashItem(text, opt = {}) {
+    //OUT.debug('addFlashItem:', text, opt);
+    const css_class = `${ITEM_CLASS} ${opt.type}`.trim();
+    const aria_role = opt.role || 'alert';
     const plain     = (typeof text === 'string') && !text.startsWith('<');
     const lines     = plain ? text.split(/<br\/?>|\n/) : arrayWrap(text);
     const message   = lines.map(v => v?.toString ? v?.toString() : '???');
     const $message  = $('<div>').html(message.join('<br/>'));
 
     let $item, $closer;
-    const $fc = flashContainer(fc);
+    const $fc = opt.$fc || flashContainer(opt.fc);
     if (floating($fc)) {
         $message.addClass('text');
         $closer = makeCloser();
@@ -423,6 +436,7 @@ function addFlashItem(text, type, role, fc) {
     }
     initializeFlashItem($item).addClass(css_class).attr('role', aria_role);
 
+    setOptionsData($fc, opt);
     showFlash($fc).append($item);
     $closer?.focus();
     return $fc;
@@ -474,9 +488,9 @@ function closeFlashItem(event) {
  * @param {jQuery.Event|KeyboardEvent} event
  */
 function onKeyUpFlashItem(event) {
-    //console.log(`onKeyUpFlashItem: key = "${event.key}"; event =`, event);
-    if (event.key === 'Escape') {
-        console.log(`onKeyUpFlashItem: key = "${event.key}"; event =`, event);
+    const key = keyCombo(event);
+    OUT.debug(`onKeyUpFlashItem: "${key}"; event =`, event);
+    if (key === 'Escape') {
         event.stopImmediatePropagation();
         closeFlashItem(event);
     }
@@ -496,6 +510,44 @@ function onMouseDownFlashItem(event) {
 // ============================================================================
 // Functions - closer control - internal
 // ============================================================================
+
+const OPTIONS_DATA  = 'flashOptions';
+
+/**
+ * Get the options for this flash occurrence.
+ *
+ * @param {jQuery} [$fc]
+ *
+ * @returns {FlashOptions|undefined}
+ */
+function getOptionsData($fc) {
+    return flashContainer($fc).data(OPTIONS_DATA);
+}
+
+/**
+ * Set the options for this flash occurrence.
+ *
+ * @param {jQuery}       [$fc]
+ * @param {FlashOptions} [opt]        If missing the data is cleared.
+ *
+ * @returns {function|undefined}
+ */
+function setOptionsData($fc, opt) {
+    if (opt) {
+        $fc.data(OPTIONS_DATA, { ...opt });
+    } else {
+        $fc.removeData(OPTIONS_DATA);
+    }
+}
+
+/**
+ * Clear the options for this flash occurrence.
+ *
+ * @param {jQuery} [$fc]
+ */
+function clearOptionsData($fc) {
+    setOptionsData($fc, undefined);
+}
 
 /**
  * Generate a flash closer control.
@@ -554,7 +606,9 @@ function monitorWindowEvents(on = true) {
  * @param {jQuery.Event|KeyboardEvent} event
  */
 function onKeyUpWindow(event) {
-    if (event.key === 'Escape') {
+    const key = keyCombo(event);
+    OUT.debug(`onKeyUpWindow: "${key}"; event =`, event);
+    if (key === 'Escape') {
         event.stopImmediatePropagation();
         clearFlash();
     }

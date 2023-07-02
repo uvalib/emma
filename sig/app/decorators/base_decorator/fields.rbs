@@ -131,12 +131,13 @@ module BaseDecorator::Fields
   #
   # @param [String] name
   # @param [*]      value
+  # @param [Symbol] tag
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_check_box: (String name, untyped value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_check_box: (String name, untyped value, ?tag: Symbol, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # This is a "hook" to allow customization by SearchDecorator.
   #
@@ -218,6 +219,20 @@ module BaseDecorator::Fields
   # @return [String]
   #
   def model_html_id: ((Symbol|String|nil) base) -> String
+
+  # Create a base for label and value identifiers.
+  #
+  # @param [Symbol, String, nil]  name
+  # @param [String, nil]          base
+  # @param [Symbol, nil]          field
+  # @param [String, Symbol, nil]  label
+  # @param [String, Integer, nil] index
+  # @param [String, Symbol, nil]  group
+  # @param [Hash]                 opt       Passed to #html_id.
+  #
+  # @return [String]
+  #
+  def field_html_id: (?(Symbol|String|nil) name, ?id_base: String|nil, ?field: Symbol|nil, ?label: String|Symbol|nil, ?index: String|Integer|nil, ?group: String|Symbol|nil, **untyped opt) -> String
 
   # format_datetime
   #
