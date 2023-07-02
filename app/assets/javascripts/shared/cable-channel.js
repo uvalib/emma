@@ -188,13 +188,14 @@ export class CableChannel extends BaseClass {
      * @note {@link setCallback} is expected to have been called first.
      *
      * @param {*}      data
-     * @param {string} [action]
+     * @param {string} [req_action]   Default: {@link channelAction}.
      *
      * @returns {boolean}
      *
      * @see "LookupChannel#lookup_request"
      */
-    request(data, action = this.channelAction) {
+    request(data, req_action) {
+        const action  = req_action || this.channelAction;
         this._debug(`request: action ${action}; data =`, data);
         const channel = this.channel;
         const payload = channel && data;

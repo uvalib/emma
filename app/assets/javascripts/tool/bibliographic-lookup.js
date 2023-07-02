@@ -663,11 +663,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Generate the element displaying the state of the parallel requests.
      *
-     * @param {string} [css]        Def: {@link LookupModal.STATUS_DISPLAY_CLASS}
-     *
      * @returns {jQuery}
      */
-    function makeStatusDisplay(css = LookupModal.STATUS_DISPLAY_CLASS) {
+    function makeStatusDisplay() {
+        const css       = LookupModal.STATUS_DISPLAY_CLASS;
         const $panel    = $('<div>').addClass(css);
         const $services = makeServiceStatuses();
         const $notice   = makeStatusNotice();
@@ -677,34 +676,32 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Generate the element for displaying textual status information.
      *
-     * @param {string} [css]          Default: {@link LookupModal.NOTICE_CLASS}
-     *
      * @returns {jQuery}
      */
-    function makeStatusNotice(css = LookupModal.NOTICE_CLASS) {
+    function makeStatusNotice() {
+        const css = LookupModal.NOTICE_CLASS;
         return $('<div>').addClass(css);
     }
 
     /**
      * Generate the element containing the dynamic set of external services.
      *
-     * @param {string} [css]        Default: {@link LookupModal.SERVICES_CLASS}
-     *
      * @returns {jQuery}
      */
-    function makeServiceStatuses(css = LookupModal.SERVICES_CLASS) {
+    function makeServiceStatuses() {
+        const css = LookupModal.SERVICES_CLASS;
         return $('<div>').addClass(css);
     }
 
     /**
      * Generate an element for displaying the status of an external service.
      *
-     * @param {string} [name]         Service name; default: 'unknown'.
-     * @param {string} [css]          Default: 'service'
+     * @param {string} [name]         Service name; default: "unknown".
      *
      * @returns {jQuery}
      */
-    function makeServiceStatus(name, css = 'service') {
+    function makeServiceStatus(name) {
+        const css     = 'service';
         const service = name || 'unknown';
         const classes = `${css} ${service}`;
         const label   = camelCase(service);
@@ -873,7 +870,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const original = getOriginalFieldValues(func);
         const current  = getColumnValues(getFieldValuesEntry());
         const result   = {};
-        $.each(current, (field, value) => {
+        for (const [field, value] of Object.entries(current)) {
             let use_value = true;
             if (hasKey(original, field)) {
                 const orig = toInputValue(original[field]);
@@ -883,7 +880,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             if (use_value) {
                 result[field] = value;
             }
-        });
+        }
         setFieldResultsData(result);
     }
 
@@ -1391,11 +1388,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             const request = getRequestData();
             const req_ids = presence(request.ids);
             const service = camelCase(message.service);
-            $.each(data.items, (id, items) => {
+            for (const [id, items] of Object.entries(data.items)) {
                 if (!req_ids || req_ids.includes(id)) {
                     items.forEach(item => addEntry(item, service));
                 }
-            });
+            }
         }
 
         if (init && $start_tabbable) {
@@ -1468,11 +1465,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Generate the container including the initially-empty list of entries.
      *
-     * @param {string} [css]         Default: {@link LookupModal.ENTRIES_CLASS}
-     *
      * @returns {jQuery}
      */
-    function makeEntriesDisplay(css = LookupModal.ENTRIES_CLASS) {
+    function makeEntriesDisplay() {
+        const css      = LookupModal.ENTRIES_CLASS;
         const $display = $('<div>').addClass(css);
         const $list    = makeEntriesList();
         return $display.append($list);
@@ -1482,11 +1478,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Generate the list of entries containing only the "reserved" non-entry
      * rows (column headers, field values, and field locks).
      *
-     * @param {string} [css]          Default: 'list'
-     *
      * @returns {jQuery}
      */
-    function makeEntriesList(css = 'list') {
+    function makeEntriesList() {
+        const css        = 'list';
         const cols       = LookupModal.ALL_COLUMNS.length;
         const $list      = $('<div>').addClass(`${css} columns-${cols}`);
         let row          = 0;
@@ -1501,11 +1496,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Generate a lookup results entries heading row.
      *
      * @param {number} row
-     * @param {string} [css]         Def.: {@link LookupModal.HEAD_ENTRY_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeHeadEntry(row, css = LookupModal.HEAD_ENTRY_CLASS) {
+    function makeHeadEntry(row) {
+        const css    = LookupModal.HEAD_ENTRY_CLASS;
         const fields = LookupModal.ALL_COLUMNS;
         const cols   = fields.map(label => makeHeadColumn(label));
         return makeEntry(row, cols, css);
@@ -1516,11 +1511,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * user-selected lookup result entry.
      *
      * @param {number} row
-     * @param {string} [css]       Def.: {@link LookupModal.FIELD_VALUES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeFieldValuesEntry(row, css = LookupModal.FIELD_VALUES_CLASS) {
+    function makeFieldValuesEntry(row) {
+        const css     = LookupModal.FIELD_VALUES_CLASS;
         const fields  = LookupModal.DATA_COLUMNS;
         const $select = makeBlankColumn();
         const $label  = makeTagColumn();
@@ -1538,11 +1533,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * head row.
      *
      * @param {number} row
-     * @param {string} [css]        Def.: {@link LookupModal.FIELD_LOCKS_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeFieldLocksEntry(row, css = LookupModal.FIELD_LOCKS_CLASS) {
+    function makeFieldLocksEntry(row) {
+        const css     = LookupModal.FIELD_LOCKS_CLASS;
         const fields  = LookupModal.DATA_COLUMNS;
         const TABLE   = LookupModal.ENTRY_TABLE;
         const $select = makeBlankColumn(TABLE['selection'].label);
@@ -1556,13 +1551,13 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Generate the field contents of the original values row element.
      *
      * @param {number} row
-     * @param {string} [css]        Def.: {@link LookupModal.ORIG_VALUES_CLASS}
      *
      * @returns {jQuery}
      */
-    function makeOriginalValuesEntry(row, css=LookupModal.ORIG_VALUES_CLASS) {
+    function makeOriginalValuesEntry(row) {
         const func = 'makeOriginalValuesEntry';
         const tag  = 'ORIGINAL'; // TODO: I18n
+        const css  = LookupModal.ORIG_VALUES_CLASS;
         setOriginalValuesEntry(makeResultEntry(row, tag, css));
         return refreshOriginalValuesEntry(func);
     }
@@ -1661,11 +1656,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Generate a radio button for selecting the associated entry.
      *
      * @param {boolean} [active]
-     * @param {string}  [css]         Default: 'selection'.
      *
      * @returns {jQuery}
      */
-    function makeSelectColumn(active, css = 'selection') {
+    function makeSelectColumn(active) {
+        const css   = 'selection';
         const $cell = $('<div>').addClass(css);
         const parts = makeSelectControl(active);
         return $cell.append(parts);
@@ -1708,11 +1703,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Generate an element for holding a designation for the related entry.
      *
      * @param {string} [label]
-     * @param {string} [css]          Default: 'tag'.
      *
      * @returns {jQuery}
      */
-    function makeTagColumn(label, css = 'tag') {
+    function makeTagColumn(label) {
+        const css = 'tag';
         return makeBlankColumn(label).addClass(css);
     }
 
@@ -1907,7 +1902,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function setSeparators(new_characters) {
         if (getSeparators() !== new_characters) {
-            $.each(LookupModal.SEPARATORS, function(key, characters) {
+            $.each(LookupModal.SEPARATORS, (key, characters) => {
                 if (new_characters !== characters) { return true } // continue
                 $separator.filter(`[value="${key}"]`).trigger('click');
                 return false; // break
@@ -2066,12 +2061,12 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Generate the element containing the loading overlay image.
      *
-     * @param {boolean} [visible]     If *true* do not create hidden.
-     * @param {string}  [css]         Def: {@link LookupModal.LOADING_CLASS}
+     * @param {boolean} [visible]     If **true** do not create hidden.
      *
      * @returns {jQuery}
      */
-    function makeLoadingOverlay(visible, css = LookupModal.LOADING_CLASS) {
+    function makeLoadingOverlay(visible) {
+        const css    = LookupModal.LOADING_CLASS;
         const hidden = (visible !== true);
         const $image = $('<div>').addClass('content');
         const $line  = $('<div>').addClass(css).append($image);

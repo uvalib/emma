@@ -178,10 +178,10 @@ export function xmit(method, path, prm, opt, cb) {
      * }}
      */
     const callback = {};
-    $.each(handlers, function(name, handler) {
+    for (const [name, handler] of Object.entries(handlers)) {
         callback[name] = settings[name];
         settings[name] = handler;
-    });
+    }
 
     let result, warning, error;
     const start = Date.now();

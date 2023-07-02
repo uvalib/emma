@@ -319,7 +319,7 @@ export const DB = (function() {
             const last_slot = store_keys.length - 1;
             let first_key   = store_keys[0];
             let prev_key    = first_key - 1;
-            store_keys.forEach(function(store_key, array_slot) {
+            store_keys.forEach((store_key, array_slot) => {
                 const close_range = (store_key !== (prev_key + 1));
                 const final_range = (array_slot === last_slot);
                 if (close_range && final_range) {
@@ -549,7 +549,7 @@ export const DB = (function() {
      */
     function dbTransaction(func, ...args) {
         let db, tr, tr_mode, store_name;
-        args.forEach(function(arg) {
+        args.forEach(arg => {
             if      (arg instanceof IDBDatabase)     { db         = arg }
             else if (arg instanceof IDBTransaction)  { tr         = arg }
             else if (TRANSACTION_MODE.includes(arg)) { tr_mode    = arg }
@@ -578,7 +578,7 @@ export const DB = (function() {
      */
     function dbObjectStore(func, ...args) {
         let store, transaction, store_name;
-        args.forEach(function(arg) {
+        args.forEach(arg => {
             if      (arg instanceof IDBObjectStore) { store       = arg }
             else if (arg instanceof IDBTransaction) { transaction = arg }
             else if (typeof arg === 'string')       { store_name  = arg }
@@ -695,13 +695,13 @@ export const DB = (function() {
         } else {
             templates = Object.fromEntries([[store_name, template]]);
         }
-        $.each(templates, function(name, properties) {
+        for (const [name, properties] of Object.entries(templates)) {
             if (store_template[name]) {
                 _log(func, `"${name}": already added`);
             } else {
                 store_template[name] = { ...properties };
             }
-        });
+        }
         return store_template;
     }
 
@@ -938,7 +938,7 @@ export const DB = (function() {
                 callback?.();
             } else {
                 const final_range = callback && (ranges.length - 1);
-                ranges.forEach(function(range, idx) {
+                ranges.forEach((range, idx) => {
                     const cb = (idx === final_range) ? callback : undefined;
                     dbRequest(func, store.delete(range), cb, cb);
                 });

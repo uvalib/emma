@@ -205,7 +205,7 @@ appSetup(MODULE, function() {
         const $element = (match ? $(match) : $record_lines).filter(':visible');
         let result     = undefined;
         // noinspection FunctionWithInconsistentReturnsJS
-        $.each(groups, function(_, group) {
+        $.each(groups, (_, group) => {
             if ($element.has(`[data-group="${group}"]`)) {
                 result = group;
                 return false; // break loop
@@ -346,10 +346,10 @@ appSetup(MODULE, function() {
         let all;
         let checked   = 0;
         let unchecked = 0;
-        $filter_options_checkboxes.each(function() {
-            const $checkbox = $(this);
+        $filter_options_checkboxes.each((_, cb) => {
+            const $checkbox = $(cb);
             if ($checkbox.val() === 'ALL_FILTERS') {
-                all = this;
+                all = cb;
             } else if ($checkbox.is(':checked')) {
                 checked++;
             } else {
@@ -379,13 +379,11 @@ appSetup(MODULE, function() {
         OUT.debug(`${func}: group = "${group}"; enable = "${enable}"`);
         let $sel_controls, $pag_controls, any_checked;
         if (group === 'ALL_FILTERS') {
-            $filter_options_checkboxes.each(function() {
-                const $checkbox = $(this);
-                if ($checkbox.val() === 'ALL_FILTERS') {
-                    // noinspection JSUnusedGlobalSymbols
-                    this.indeterminate = false;
+            $filter_options_checkboxes.each((_, cb) => {
+                if ($(cb).val() === 'ALL_FILTERS') {
+                    cb.indeterminate = false;
                 } else {
-                    $checkbox.prop('checked', enable);
+                    cb.checked = enable;
                 }
             });
             $sel_controls = $group_select_links;

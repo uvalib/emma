@@ -343,7 +343,7 @@ appSetup(MODULE, function() {
             scrollIntoView($panel);
         } else {
             hideFailureMessage($link);
-            getBsMembers(function(member_table, error) {
+            getBsMembers((member_table, error) => {
                 if (isPresent(member_table)) {
                     $panel = createBsMemberPopup(member_table);
                     handleEvent($panel, 'submit', onSubmit);
@@ -372,18 +372,17 @@ appSetup(MODULE, function() {
         function onSubmit(event) {
             //OUT.debug('onSubmit: event =', event);
             event.preventDefault();
-            const members = [];
             // noinspection JSCheckFunctionSignatures
-            $panel.find(':checked').each(function() {
-                members.push(this.value);
-                this.checked = false; // Reset for later iteration.
-            });
+            const $checked = $panel.find(':checked');
+            const members  = $checked.map((_, cb) => cb.value);
             toggleHidden($panel, true);
             if (setLinkBsMember($link, members)) {
                 manageBsDownloadState($link);
             } else {
                 endBsRequesting($link, Emma.Download.failure.canceled);
             }
+            // Reset for later iteration.
+            $checked.each((_, cb) => { cb.checked = false });
             return false;
         }
     }
@@ -475,15 +474,15 @@ appSetup(MODULE, function() {
             const info    = data || message;
             /** @type {Member[]} */
             const members = info?.members?.list || [];
-            members.forEach(function(member) {
+            members.forEach(member => {
+                const acct_id     = member.userAccountId;
                 const name        = member.name || {};
                 const family_name = [name.prefix, name.lastName, name.suffix];
                 const given_name  = [name.firstName, name.middle];
                 const family      = compact(family_name).join(' ');
                 const given       = compact(given_name).join(' ');
                 const full_name   = compact([family, given]).join(', ');
-                result[member.userAccountId] =
-                    full_name || `id: ${member.userAccountId}`;
+                result[acct_id]   = full_name || `id: ${acct_id}`;
             });
             return result;
         }
@@ -515,13 +514,13 @@ appSetup(MODULE, function() {
         const $fields = create(BS_MEMBER_POPUP.fields);
         const $radio  = create(BS_MEMBER_POPUP.fields.row_input).attr('name', id);
         let row       = 0;
-        $.each(member_table, function(account_id, name) {
+        for (const [account_id, name] of Object.entries(member_table)) {
             const row_id = `${id}-row${row++}`;
             const $input = $radio.clone().attr('value', account_id);
             const $label = create(BS_MEMBER_POPUP.fields.row_label).text(name);
             $input.attr('id',  row_id).appendTo($fields);
             $label.attr('for', row_id).appendTo($fields);
-        });
+        }
 
         // Handle the edge case where the user has no members defined.
         if (row === 0) {
@@ -752,14 +751,13 @@ appSetup(MODULE, function() {
     function cancelBsRequest(event) {
         //OUT.debug('cancelBsRequest: event =', event);
         const state = BS_DOWNLOAD_STATE.REQUESTING;
+        const req   = selector(state);
         let $link   = $(event.currentTarget || event.target);
-        if (!$link.hasClass(state)) {
-            let selector = '.' + state;
-            let $element = $link.siblings(selector);
-            if (!$element.hasClass(state)) {
-                $element = $link.parents(selector);
-            }
-            $link = $element.first();
+        if (!$link.is(req)) {
+            $link = $link.siblings(req).first();
+        }
+        if (!$link.is(req)) {
+            $link = $link.parents(req).first();
         }
         endBsRequesting($link, Emma.Download.failure.canceled);
         setBsRetryPeriod($link, BS_NO_RETRY);
@@ -944,14 +942,14 @@ appSetup(MODULE, function() {
      * @param {jQuery} $link
      */
     function set(new_state, $link) {
-        //_debug(`set: new_state = "${new_state}"; $link =`, $link);
-        $.each(BS_DOWNLOAD_STATE, function(key, state) {
+        //OUT.debug(`set: new_state = "${new_state}"; $link =`, $link);
+        for (const [_key, state] of Object.entries(BS_DOWNLOAD_STATE)) {
             if (state === new_state) {
                 $link.addClass(state);
             } else {
                 clear(state, $link);
             }
-        });
+        }
     }
 
     /**
@@ -1013,28 +1011,6 @@ appSetup(MODULE, function() {
         const href  = $link.attr('href') || '';
         const audio = !!href.match(/DAISY_AUDIO/);
         return audio ? BS_RETRY_DAISY_AUDIO : BS_RETRY_PERIOD;
-    }
-
-    // ========================================================================
-    // Functions - other
-    // ========================================================================
-
-    /**
-     * Indicate whether console debugging is active.
-     *
-     * @returns {boolean}
-     */
-    function _debugging() {
-        return AppDebug.activeFor(MODULE, DEBUG);
-    }
-
-    /**
-     * Emit a console message if debugging.
-     *
-     * @param {...*} args
-     */
-    function _debug(...args) {
-        _debugging() && console.log(`${MODULE}:`, ...args);
     }
 
     // ========================================================================

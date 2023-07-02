@@ -58,10 +58,10 @@ appSetup(MODULE, function() {
      * @returns {boolean}   False to indicate that the event has been handled.
      */
     function scrollToAnchor(event) {
-        const func   = 'IFRAME scrollToAnchor';
-        const $link  = $(event ? event.target : this);
-        const anchor = $link[0].hash;
-        let $anchor  = anchor && $(anchor);
+        const func    = 'IFRAME scrollToAnchor';
+        const $link   = $(event ? event.target : this);
+        const anchor  = $link[0].hash;
+        const $anchor = anchor && $(anchor);
         if ($anchor) {
             event.preventDefault();
             const top = $anchor.offset().top;

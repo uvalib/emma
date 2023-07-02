@@ -284,7 +284,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     handleClickAndKeypress($exit_button, removeDebugControls);
 
     // Initialize identification tooltips for each item.
-    $result_items.each(function(index, item) {
+    $result_items.each((index, item) => {
         const $item  = $(item);
         const $title = $item.find('.value.field-Title .title');
         if (COLLAPSE_ITEMS && ($title.length === 1)) {
@@ -317,7 +317,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     function listStyle() {
         let result;
-        $.each(SEARCH_STYLE, function(style, active) {
+        $.each(SEARCH_STYLE, (style, active) => {
             result = active && style;
             return !!result; // continue if not active
         });
@@ -359,8 +359,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     function buttonTitles() {
         const $titles = $result_items.find('.value.field-Title .title');
-        $titles.filter('[data-mode="txt"]').each(function() {
-            const $text   = $(this);
+        $titles.filter('[data-mode="txt"]').each((_, text) => {
+            const $text   = $(text);
             const $button = $text.siblings('.title'); //.not($text);
             toggleHidden($text,   true ).toggleClass('disabled', true);
             toggleHidden($button, false).toggleClass('disabled', false);
@@ -372,8 +372,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     function textTitles() {
         const $titles = $result_items.find('.value.field-Title .title');
-        $titles.filter('[data-mode="btn"]').each(function() {
-            const $button = $(this);
+        $titles.filter('[data-mode="btn"]').each((_, button) => {
+            const $button = $(button);
             const $text   = $button.siblings('.title'); //.not($button);
             toggleHidden($button, true ).toggleClass('disabled', true);
             toggleHidden($text,   false).toggleClass('disabled', false);
@@ -537,7 +537,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      *
      * @type {Object.<string, Object.<string,SearchDataRecord[]>>}
      */
-    let store_items = {};
+    const store_items = {};
 
     // ========================================================================
     // Functions - page data
@@ -551,8 +551,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     function pageItems() {
         if (!page_items) {
             page_items = [];
-            $result_items.each(function() {
-                const $item  = $(this);
+            $result_items.each((_, item) => {
+                const $item  = $(item);
                 const record = extractItemData($item);
                 localStoreItem(record);
                 page_items.push({ element: $item, data: record });
@@ -589,9 +589,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     function extractItemData(item) {
         const result = {};
         const $item  = $(item);
-        $.each(DB_STORE_TEMPLATE.record, function(key, prop) {
+        for (const [key, prop] of Object.entries(DB_STORE_TEMPLATE.record)) {
             result[key] = prop.func ? prop.func($item) : prop.default;
-        });
+        }
         return result;
     }
 
@@ -604,7 +604,6 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     function localStoreItem(record) {
         const key  = record.title_id;
         const page = record.page;
-        store_items ||= {}
         store_items[key] ||= {};
         store_items[key][page] ||= [];
         store_items[key][page].push(record);
@@ -885,10 +884,10 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const mark_suspicious = (el) => this._markSuspiciousRelevancy(el);
             const $items          = items ? $(items) : $result_items;
             if (Object.keys(SORTED).includes(SORT_ORDER)) {
-                $items.each(function() { mark_disabled(this) });
+                $items.each((_, item) => mark_disabled(item));
             } else {
                 let error_score, next_score = 0;
-                $items.get().reverse().forEach(function(item) {
+                $items.toArray().reverse().forEach(item => {
                     const $item = $(item);
                     const score = Number($item.attr('data-item_score'));
                     if (score < next_score) {
@@ -1088,10 +1087,10 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             if (!this.valid) {
                 return undefined;
             }
+            let $active_button = undefined, button_count = 0;
             const any_topic    = notDefined(active_topic);
             const setup_button = (topic, cfg) => this._setupButton(topic, cfg);
-            let $active_button, button_count = 0;
-            $.each(BUTTON_CONFIG, function(topic, config) {
+            for (const [topic, config] of Object.entries(BUTTON_CONFIG)) {
                 const $button = setup_button(topic, config);
                 if ($button && (any_topic || (topic === active_topic))) {
                     button_count++;
@@ -1099,7 +1098,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                         $active_button ||= $button.first();
                     }
                 }
-            });
+            }
             if ((this.valid = !!button_count)) {
                 $active_button?.click();
             } else {
@@ -1281,13 +1280,13 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 topic:        this.topic,
             };
             const error = [];
-            $.each(member_values, function(member, value) {
+            for (const [member, value] of Object.entries(member_values)) {
                 if (!value) {
                     error.push(`missing ${member}`);
                 } else if (typeof value !== 'string') {
                     error.push(`${member}: '${value}' is not a string`);
                 }
-            });
+            }
             if (isPresent(error)) {
                 error.forEach(msg => this._error(msg));
                 return false;
@@ -1413,8 +1412,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         activate(arg) {
             const scope_note       = ($pair) => this.scopeNote($pair);
             const saved_title_attr = 'data-pre-field-group-title';
-            this.$root.find('.pair').each(function() {
-                const $pair     = $(this);
+            this.$root.find('.pair').each((_, pair) => {
+                const $pair     = $(pair);
                 const cur_title = $pair.attr('title');
                 let note;
                 if (cur_title && (note = scope_note($pair))) {
@@ -1435,8 +1434,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         deactivate() {
             super.deactivate();
             const saved_title_attr = 'data-pre-field-group-title';
-            this.$root.find('.pair').each(function() {
-                const $pair     = $(this);
+            this.$root.find('.pair').each((_, pair) => {
+                const $pair     = $(pair);
                 const old_title = $pair.attr(saved_title_attr);
                 if (old_title) {
                     $pair.attr('title', old_title);
@@ -1460,7 +1459,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const part  = [];
             arrayWrap($item[0]?.classList)
                 .filter(cls => cls.startsWith('scope-'))
-                .forEach(function(cls) {
+                .forEach(cls => {
                     const scope = cls.replace('scope-', '').toUpperCase();
                     switch (scope) {
                         case 'PARTS': case 'FORMATS':                break;
@@ -1721,9 +1720,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         _buildLists(by_topic) {
             const related_item_lists = {};
             const index_key = by_topic.replace(/^by_/, '');
-            pageItems().forEach(function(page_item) {
+            pageItems().forEach(page_item => {
                 const $item = page_item.element;
-                arrayWrap(page_item.data[index_key]).forEach(function(value) {
+                arrayWrap(page_item.data[index_key]).forEach(value => {
                     const id = `${value}-`; // Bust sorting behavior of Object.
                     const related_items = related_item_lists[id] || [];
                     related_items.push($item);
@@ -1743,11 +1742,11 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _validateLists(item_lists, _by_topic) {
-            const mark_as_error = $item => this._markItemAsError($item);
-            const mark_as_exile = $item => this._markItemAsExile($item);
-            item_lists.forEach(function(item_list) {
+            const mark_as_error = this._markItemAsError.bind(this);
+            const mark_as_exile = this._markItemAsExile.bind(this);
+            item_lists.forEach(item_list => {
                 let prev;
-                item_list.forEach(function(item) {
+                item_list.forEach(item => {
                     const $item = $(item);
 
                     // Mark items that belong with a set of item(s) encountered
@@ -1783,20 +1782,17 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             this._removeIdentityNumber($result_items, others);
             this._unmarkIdentityFields($result_items);
 
-            const add_identity_number =
-                (...args) => this._addIdentityNumber(...args);
-            const mark_identity_field =
-                (...args) => this._markIdentityField(...args);
-            const color_offset =
-                color => this._semiRandomColorOffset(color);
+            const add_identity_number = this._addIdentityNumber.bind(this);
+            const mark_identity_field = this._markIdentityField.bind(this);
+            const color_offset        = this._semiRandomColorOffset.bind(this);
 
             const tag = data_tag || this._tagChar(by_topic);
             let color = Math.floor(Math.random() * COLOR_RANGE);
-            item_lists.forEach(function(item_list, index) {
+            item_lists.forEach((item_list, index) => {
                 const number   = `${tag}-${index+1}`;
                 const bg_color = rgbColor(color);
                 const fg_color = rgbColorInverse(color);
-                item_list.forEach(function(item, position) {
+                item_list.forEach((item, position) => {
                     const $item  = $(item);
                     const $title = $item.find('.field-Title.value');
                     $title.css({ color: fg_color, background: bg_color });
@@ -1819,8 +1815,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             this._removeIdentityNumber($result_items);
             this._unmarkIdentityFields($result_items);
             const item_classes = ['colorized', ...this.TOPICS];
-            $result_items.each(function() {
-                const $item  = $(this);
+            $result_items.each((_, item) => {
+                const $item  = $(item);
                 const $title = $item.find('.field-Title.value');
                 $title.css({ color: '', background: '' });
                 $item.removeClass(item_classes);
@@ -1884,9 +1880,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const store_keys = $item.attr('data-title_id') || '';
             const curr_page  = pageNumber();
             let found;
-            store_keys.split(',').forEach(function(key) {
+            store_keys.split(',').forEach(key => {
                 if (!found) {
-                    $.each(store_items[key], function(page, recs) {
+                    $.each(store_items[key], (page, recs) => {
                         found = isPresent(recs) && (Number(page) - curr_page);
                         return !found; // continue unless related item found
                     });

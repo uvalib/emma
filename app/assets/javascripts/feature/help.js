@@ -14,7 +14,7 @@ AppDebug.file('feature/help', MODULE);
 appSetup(MODULE, function() {
 
     /** @type {jQuery} */
-    let $help_content = $('.help-section');
+    const $help_content = $('.help-section');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($help_content)) {
@@ -44,7 +44,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    let $illustrations = $help_content.find(ILLUSTRATION_ONLY.join(','));
+    const $illustrations = $help_content.find(ILLUSTRATION_ONLY.join(','));
 
     // ========================================================================
     // Actions
@@ -52,13 +52,13 @@ appSetup(MODULE, function() {
 
     // Ensure that elements intended for the purpose of illustration do not
     // act like live controls.
-    $illustrations.each(function() {
-        let $this = $(this);
-        $this.attr('tabindex',       -1);
-        $this.attr('role',           'none');
-        $this.css( 'pointer-events', 'none');
-        $this.css( 'cursor',         'auto');
-        $this.parent().css('cursor', 'text');
+    $illustrations.each((_, element) => {
+        const $e = $(element);
+        $e.attr('tabindex',       -1);
+        $e.attr('role',           'none');
+        $e.css( 'pointer-events', 'none');
+        $e.css( 'cursor',         'auto');
+        $e.parent().css('cursor', 'text');
     });
 
 });

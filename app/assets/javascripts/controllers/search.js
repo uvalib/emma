@@ -168,13 +168,13 @@ appSetup(MODULE, function() {
         if (isEmpty(controls)) {
             OUT.error(`${func}: no id for aria-controls`);
         }
-        $items.each(function() {
-            const $item = $(this);
-            $.each(attrs, (name, value) => {
+        $items.each((_, item) => {
+            const $item = $(item);
+            for (const [name, value] of Object.entries(attrs)) {
                 if (notDefined($item.attr(name))) {
                     $item.attr(name, value);
                 }
-            });
+            }
         });
         return $items;
     }
@@ -227,9 +227,8 @@ appSetup(MODULE, function() {
         markAsVisible($contents, opening);
 
         if (opening) {
-            $contents.filter(SUBSECTION).each(function() {
-                updateSectionOpenClosed(this);
-            });
+            const $sections = $contents.filter(SUBSECTION);
+            $sections.each((_, section) => updateSectionOpenClosed(section));
         }
 
         updateControl($controls, $number, opening);
@@ -327,17 +326,16 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     // Create and setup item display toggle controls.
-    $list_parts.filter('.number').each(function() {
-        setupToggleControl(this);
-    });
+    $list_parts.filter('.number').each((_, num) => setupToggleControl(num));
 
-    $result_items.each(function() {
-        const $item = $(this);
+    $result_items.each((_, item) => {
+        const $item = $(item);
+        const id    = item.id;
 
         // Make clicking on the title toggle the display of that item.
         let title_id, $title = $item.find('.value.field-Title .title');
         if (TITLE_RESULTS) {
-            title_id = `title_${this.id}`;
+            title_id = `title_${id}`;
             $title.attr('id', title_id);
         } else if ($title.length > 1) {
             title_id = $title.filter('[data-mode="txt"]').attr('id');
@@ -345,7 +343,7 @@ appSetup(MODULE, function() {
         } else if (Emma.SEARCH_ANALYSIS) {
             title_id = cloneTitle($item, $title);
         }
-        $title = makeButton($title, this.id);
+        $title = makeButton($title, id);
         handleClickAndKeypress($title, toggleItem);
 
         // Make the item's title present as the label for the number.
@@ -435,8 +433,8 @@ appSetup(MODULE, function() {
      */
     function getSection(section) {
         const lines = [];
-        $(section).each(function() {
-            const $section = $(this);
+        $(section).each((_, sec) => {
+            const $section = $(sec);
             const classes  = $section[0].classList;
             const this_row = $.map(classes, c => c.match(/^row-\d+$/)).pop();
             const related  = sectionSelector($section);
@@ -465,8 +463,8 @@ appSetup(MODULE, function() {
     // Actions - collapsible sections
     // ========================================================================
 
-    $result_items.each(function() {
-        const $item = $(this);
+    $result_items.each((_, item) => {
+        const $item = $(item);
 
         // Ensure that open/closed items have the right CSS marker classes
         // ARIA attributes.
@@ -478,8 +476,8 @@ appSetup(MODULE, function() {
         // Make clicking on sub-section toggles and associated labels
         // open/close that sub-section, but hide toggles/labels which are not
         // actually part of the item display.
-        $sections.find(TOGGLE).not('.for-item').each(function() {
-            const $toggle = $(this);
+        $sections.find(TOGGLE).not('.for-item').each((_, toggle) => {
+            const $toggle = $(toggle);
             const $label  = $toggle.parent();
             if ($label.attr('data-value')) {
                 const target = $toggle.attr('aria-controls');

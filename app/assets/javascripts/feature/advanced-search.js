@@ -379,22 +379,22 @@ appSetup(MODULE, function() {
         const $rows  = $search_bar_rows;
 
         // Reset search selection menus and inputs.
-        $rows.each(function() {
-            const $row = $(this);
+        $rows.each((_, row) => {
+            const $row = $(row);
             const type = SEARCH_TYPES[0];
             setSearchType($row, type, func, false);
             setSearchInput($row, '', func, false);
         });
 
         // noinspection FunctionWithInconsistentReturnsJS
-        $.each(SEARCH_TYPES, function(_index, type) {
+        $.each(SEARCH_TYPES, (_index, type) => {
             let param = compact(arrayWrap(params[type]));
             if (isEmpty(param)) { return true } // continue
 
             const $matching_rows = $rows.has(`input[name="${type}"]`);
             // noinspection FunctionWithInconsistentReturnsJS
-            $matching_rows.each(function() {
-                const $row   = $(this);
+            $matching_rows.each((_, row) => {
+                const $row   = $(row);
                 const $input = getSearchInput($row);
                 if (isEmpty($input.val())) {
                     setSearchInput($row, param.shift(), func, true);
@@ -406,8 +406,8 @@ appSetup(MODULE, function() {
 
             /** @type {jQuery[]} */
             const remaining_rows = [];
-            $rows.not($matching_rows).each(function() {
-                const $row = $(this);
+            $rows.not($matching_rows).each((_, row) => {
+                const $row = $(row);
                 if (!searchTerm($row)) {
                     remaining_rows.push($row);
                 }
@@ -425,7 +425,7 @@ appSetup(MODULE, function() {
             }
 
             // Fill remaining rows with param term(s).
-            param.forEach(function(term) {
+            param.forEach(term => {
                 const $row = remaining_rows.shift();
                 setSearchType($row,  type, func, true);
                 setSearchInput($row, term, func, true);
@@ -445,8 +445,8 @@ appSetup(MODULE, function() {
     function initializeSearchFilters(url_params) {
         const func   = 'initializeSearchFilters';
         const params = url_params || urlParameters();
-        $search_filters.each(function() {
-            const $menu = getSearchFilterMenu(this, func);
+        $search_filters.each((_, element) => {
+            const $menu = getSearchFilterMenu(element, func);
             const name  = $menu.attr('name');
             const type  = name.replace('[]', '');
             const param = params[type] || $menu.attr('data-default');
@@ -531,29 +531,29 @@ appSetup(MODULE, function() {
         const count   = {};
 
         // Check search input fields.
-        $rows.each(function() {
-            const $row      = $(this);
+        $rows.each((_, row) => {
+            const $row      = $(row);
             const $input    = getSearchInput($row);
             const ignore_if = $row.is(HIDDEN);
             checkInput($input, ignore_if);
         });
 
         // Check hidden input fields (if any).
-        $hidden.each(function() {
-            const $input    = $(this);
+        $hidden.each((_, input) => {
+            const $input    = $(input);
             const ignore_if = (value) => (value === '*');
             checkInput($input, ignore_if);
         });
 
         // Make sure that if a name is repeated, each element will be included
         // in the form parameters.
-        $rows.each(function()   { adjustInputName(getSearchInput(this)) });
-        $hidden.each(function() { adjustInputName(this) });
+        $rows.each((_, row) => adjustInputName(getSearchInput(row)));
+        $hidden.each((_, input) => adjustInputName(input));
 
         // Disregard any filter which has the default value to avoid adding a
         // URL parameter that is unneeded.
-        getSearchFilter().each(function() {
-            const $menu = getSearchFilterMenu(this);
+        getSearchFilter().each((_, element) => {
+            const $menu = getSearchFilterMenu(element);
             if ($menu.val() === $menu.attr('data-default')) {
                 $menu.attr('name', '');
             }
@@ -634,7 +634,7 @@ appSetup(MODULE, function() {
     function setSearchReady(state) {
         let ready = state;
         if (notDefined(ready)) {
-            let $rows = $search_bar_rows;
+            const $rows = $search_bar_rows;
             ready ||= isPresent(newSearchTerms($rows));
             ready ||= isPresent(newSearchFilters());
             ready &&= isPresent(compact(allSearchTerms($rows)));
@@ -914,9 +914,9 @@ appSetup(MODULE, function() {
             const func = caller || 'setSearchInput';
             return OUT.error(`${func}: target: missing/empty`);
         }
-        let $row   = getSearchRow(target);
-        let $input = getSearchInput($row);
-        let terms  = new_terms &&
+        const $row   = getSearchRow(target);
+        const $input = getSearchInput($row);
+        let terms    = new_terms &&
             arrayWrap(new_terms)
                 .map(term => term?.trim())
                 .filter(term => term)
@@ -1003,9 +1003,9 @@ appSetup(MODULE, function() {
      * @param {SelectorOrEvent} [target]    Passed to {@link getSearchInput}
      */
     function updateSearchClear(target) {
-        let $input  = getSearchInput(target);
-        let $button = getSearchClear($input);
-        const text  = ($input.val() || '').trim();
+        const $input  = getSearchInput(target);
+        const $button = getSearchClear($input);
+        const text    = ($input.val() || '').trim();
         toggleVisibility($button, isPresent(text));
     }
 
@@ -1118,14 +1118,14 @@ appSetup(MODULE, function() {
             const func = caller || 'setSearchType';
             return OUT.error(`${func}: target: missing/empty`);
         }
-        let $row     = getSearchRow(target);
-        let $menu    = getSearchInputSelect($row);
+        const $row   = getSearchRow(target);
+        const $menu  = getSearchInputSelect($row);
         const name   = new_type ? new_type.trim().toLowerCase() : '';
         let type     = name.replace('[]', '');
         const config = SEARCH_TYPE[type];
 
         $menu.val(type);
-        let $input = getSearchInput($row);
+        const $input = getSearchInput($row);
         $input.attr({ name: name, placeholder: config.placeholder });
         $input.siblings('.search-input-label').val(config.label);
 
@@ -1220,8 +1220,8 @@ appSetup(MODULE, function() {
             } else if ($control.is(HIDDEN)) {
                 skip = 'hidden';
             } else if (new_only) {
-                let original = $menu.attr('data-original');
-                let val      = value.toString();
+                const original = $menu.attr('data-original');
+                const val      = value.toString();
                 if (notDefined(original) && !val) {
                     skip = 'empty value';
                 } else if (val === valueArray(original).toString()) {
@@ -1232,7 +1232,7 @@ appSetup(MODULE, function() {
             if (skip) {
                 OUT.debug(`${func}: skipping ${type}: ${skip}`);
             } else if (isDefined(filters[type])) {
-                let current = new Set(arrayWrap(filters[type]));
+                const current = new Set(arrayWrap(filters[type]));
                 arrayWrap(value).forEach(v => current.add(v));
                 filters[type] = [...current];
             } else {
@@ -1278,7 +1278,7 @@ appSetup(MODULE, function() {
      * Initialize single-select menus.
      */
     function initializeSingleSelect() {
-        let $menus = $single_select_menus;
+        const $menus = $single_select_menus;
         initializeGenericMenu($menus);
         handleEvent($menus, 'change', updateSearchReady);
     }
@@ -1290,7 +1290,7 @@ appSetup(MODULE, function() {
      * @see https://select2.org/programmatic-control/events
      */
     function initializeMultiSelect() {
-        let $menus = $multi_select_menus.not(SELECT2_MULTI_SELECT);
+        const $menus = $multi_select_menus.not(SELECT2_MULTI_SELECT);
         if (isMissing($menus)) {
             OUT.debug('initializeMultiSelect: none found');
             return;
@@ -1304,20 +1304,20 @@ appSetup(MODULE, function() {
             });
         }
 
-        POST_CHANGE_EVENTS.forEach(function(type) {
+        POST_CHANGE_EVENTS.forEach(type => {
             handleEvent($menus, type, updateSearchReady);
         });
 
         if (IMMEDIATE_SEARCH) {
 /*
-            PRE_CHANGE_EVENTS.forEach(function(type) {
+            PRE_CHANGE_EVENTS.forEach(type => {
                 handleEvent($menus, type, preChange);
             });
 */
-            POST_CHANGE_EVENTS.forEach(function(type) {
+            POST_CHANGE_EVENTS.forEach(type => {
                 handleEvent($menus, type, multiSelectPostChange);
             });
-            CHECK_SUPPRESS_MENU_EVENTS.forEach(function(type) {
+            CHECK_SUPPRESS_MENU_EVENTS.forEach(type => {
                 handleEvent($menus, type, suppressMenuOpen);
             });
         }
@@ -1330,8 +1330,8 @@ appSetup(MODULE, function() {
      */
     function initializeGenericMenu(menu) {
         const form_id = !IMMEDIATE_SEARCH && getSearchForm().attr('id');
-        $(menu).each(function() {
-            let $menu   = $(this);
+        $(menu).each((_, m) => {
+            const $menu = $(m);
             const value = $menu.val() || '';
             $menu.attr('data-original', value);
             if (form_id) {
@@ -1346,7 +1346,7 @@ appSetup(MODULE, function() {
      * @param {Selector} menu
      */
     function initializeSelect2Menu(menu) {
-        let $menus = $(menu);
+        const $menus = $(menu);
         $menus.select2({
             width:      '100%',
             allowClear: true,
@@ -1357,9 +1357,9 @@ appSetup(MODULE, function() {
         // Nodes which Firefox Accessibility expects to be labelled:
         const aria_attrs     = ['aria-label', 'aria-labelledby'];
         const to_be_labelled = '[aria-haspopup], [tabindex]';
-        $menus.each(function() {
-            let $menu = $(this);
-            let attrs = compact(toObject(aria_attrs, a => $menu.attr(a)));
+        $menus.each((_, m) => {
+            const $menu = $(m);
+            const attrs = compact(toObject(aria_attrs, a => $menu.attr(a)));
             if (isPresent(attrs)) {
                 // noinspection JSCheckFunctionSignatures
                 $menu.siblings().find(to_be_labelled).attr(attrs);
@@ -1387,38 +1387,35 @@ appSetup(MODULE, function() {
             removeAllItems:  'Remove all selected values',
         };
         const translations = {};
-        $.each(text, function(name, value) {
+        for (const [name, value] of Object.entries(text)) {
+            let fn;
             switch (name) {
                 case 'inputTooLong':
-                    translations[name] =
-                        function(args) {
-                            const overage = args.input.length - args.maximum;
-                            let result    = value.replace(/{n}/, overage);
-                            if (overage !== 1) { result += 's' }
-                            return result;
-                        };
+                    fn = (args) =>{
+                        const overage = args.input.length - args.maximum;
+                        const result  = value.replace(/{n}/, `${overage}`);
+                        return (overage === 1) ? result : `${result}s`;
+                    };
                     break;
                 case 'inputTooShort':
-                    translations[name] =
-                        function(args) {
-                            const remaining = args.minimum - args.input.length;
-                            return value.replace(/{n}/, remaining);
-                        };
+                    fn = (args) =>{
+                        const remaining = args.minimum - args.input.length;
+                        return value.replace(/{n}/, `${remaining}`);
+                    };
                     break;
                 case 'maximumSelected':
-                    translations[name] =
-                        function(args) {
-                            const limit = args.maximum;
-                            let result  = value.replace(/{n}/, limit);
-                            if (limit !== 1) { result += 's' }
-                            return result;
-                        };
+                    fn = (args) =>{
+                        const limit  = args.maximum;
+                        const result = value.replace(/{n}/, limit);
+                        return (limit === 1) ? result : `${result}s`;
+                    };
                     break;
                 default:
-                    translations[name] = function() { return value };
+                    fn = () => value;
                     break;
             }
-        });
+            translations[name] = fn;
+        }
         return translations;
     }
 
@@ -1526,11 +1523,9 @@ appSetup(MODULE, function() {
      * @param {Selector} [src]        Default: {@link $search_filters}.
      */
     function setSearchFormParams(dst, src) {
-        let $dst = dst ? $(dst) : $search_bar_container;
-        let $src = src ? $(src) : $search_filters;
-        $src.each(function() {
-            setSearchFormHiddenInputs($dst, this);
-        });
+        const $dst = dst ? $(dst) : $search_bar_container;
+        const $src = src ? $(src) : $search_filters;
+        $src.each((_, s) => setSearchFormHiddenInputs($dst, s));
     }
 
     /**
@@ -1543,7 +1538,7 @@ appSetup(MODULE, function() {
      * @param {Selector} src          Source filter control.
      */
     function setSearchFormHiddenInputs(dst, src) {
-        let $menu = getSearchFilterMenu(src);
+        const $menu = getSearchFilterMenu(src);
         updateHiddenInputs(dst, $menu);
     }
 
@@ -1582,11 +1577,11 @@ appSetup(MODULE, function() {
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
      */
     function setSearchFilterParamsFromFilters(src) {
-        let $controls = src ? $(src) : $search_filters;
-        $controls.each(function() {
-            const $this = getSearchFilter(this);
-            const $menu = getSearchFilterMenu($this);
-            const $dst  = $controls.not($this);
+        const $controls = src ? $(src) : $search_filters;
+        $controls.each((_, ctrl) => {
+            const $ctrl = getSearchFilter(ctrl);
+            const $menu = getSearchFilterMenu($ctrl);
+            const $dst  = $controls.not($ctrl);
             updateHiddenInputs($dst, $menu);
         });
     }
@@ -1601,8 +1596,8 @@ appSetup(MODULE, function() {
      * @param {string}        [new_value]
      */
     function setSearchFilterParams(new_type, new_value) {
-        $search_filters.each(function() {
-            setSearchFilterHiddenInputs(this, new_type, new_value);
+        $search_filters.each((_, element) => {
+            setSearchFilterHiddenInputs(element, new_type, new_value);
         });
     }
 
@@ -1649,11 +1644,11 @@ appSetup(MODULE, function() {
             OUT.error(`${func}: no menu selector given`);
             return;
         }
-        $(dst).each(function() {
-            const $dst    = $(this);
+        $(dst).each((_, element) => {
+            const $dst    = $(element);
             const $hidden = $dst.find('input[type="hidden"]');
             const base_id = $dst.attr('id') || randomizeName(base);
-            $.each(values, (name, value) => {
+            for (const [name, value] of Object.entries(values)) {
                 const type     = name.replace('[]', '');
                 const selector = `[name="${type}"]`;
                 const input_id = `${base_id}-${type}`;
@@ -1678,7 +1673,7 @@ appSetup(MODULE, function() {
                         addHiddenInputTo($dst, value, attr);
                     }
                 }
-            });
+            }
         });
     }
 

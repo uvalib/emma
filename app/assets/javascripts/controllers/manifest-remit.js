@@ -2169,17 +2169,16 @@ appSetup(MODULE, function() {
     /**
      * Update submission statuses and report the result of pre-processing local
      * files.
-     *
-     * @param {FileExt[]} [files]
      */
-    function preProcessLocalFiles(files = localFileSelection()) {
-        const func = 'preProcessLocalFiles';
-        _debug(`${func}: ${files.length} files =`, files);
+    function preProcessLocalFiles() {
+        const func  = 'preProcessLocalFiles';
         const lines = [];
         const names = [];
         const good  = [];
         const bad   = []; // TODO: are there "badness" criteria at this stage?
         const pairs = {};
+        const files = localFileSelection();
+        OUT.debug(`${func}: ${files.length} files =`, files);
         files.forEach(file => {
             const id   = file.meta.manifest_item_id;
             const name = file.name;
@@ -2240,9 +2239,9 @@ appSetup(MODULE, function() {
      */
     function sendFileSizes(pairs) {
         const items = {};
-        Object.entries(pairs).forEach(([id,file]) => {
+        for (const [id, file] of Object.entries(pairs)) {
             items[id] = { file_data: { name: file.name, size: file.size } };
-        });
+        }
         sendFieldUpdates(items);
     }
 
@@ -2456,16 +2455,15 @@ appSetup(MODULE, function() {
     /**
      * Update submission statuses and report the result of pre-processing
      * remote files.
-     *
-     * @param {string[]} [urls]
      */
-    function preProcessRemoteFiles(urls = remoteFileSelection()) {
-        const func = 'preProcessRemoteFiles';
-        _debug(`${func}: ${urls.length} URLs =`, urls);
+    function preProcessRemoteFiles() {
+        const func  = 'preProcessRemoteFiles';
         const lines = [];
         const names = [];
         const good  = [];
         const bad   = []; // TODO: are there "badness" criteria at this stage?
+        const urls  = remoteFileSelection();
+        OUT.debug(`${func}: ${urls.length} URLs =`, urls);
         urls.forEach(url => {
             const id   = 0;   // url.meta.manifest_item_id;
             const name = url; // url.name;

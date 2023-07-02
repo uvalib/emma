@@ -1067,17 +1067,12 @@ appSetup(MODULE, function() {
                 $lines.filter('.' + TMP_LINE_CLASS).remove();
 
                 // Add a line for each record.
-                let last_id = 0;
-                let row     = $lines.length;
-                let entries = [];
-                list.forEach(function(record) {
-                    const entry = addBulkOpResult($results, record, row++);
-                    last_id = Math.max(record.id, last_id);
-                    entries.push(entry);
-                });
-                addBulkOpTrace(entries);
+                let row   = $lines.length;
+                const ent = list.map(r => addBulkOpResult($results, r, row++));
+                addBulkOpTrace(ent);
 
                 // Update the next ID to fetch.
+                const last_id = Math.max(...list.map(rec => rec.id));
                 if (last_id) {
                     bulkOpResultsNextId($results, last_id);
                 }
@@ -1150,10 +1145,10 @@ appSetup(MODULE, function() {
         // Content for the new line.
         let text, html = '';
         if (typeof entry === 'object') {
-            $.each(entry, function(k, v) {
+            for (const [k, v] of Object.entries(entry)) {
                 html += `<span class="label ${k}">${k}</span> `;
                 html += `<span class="value ${k}">${v}</span>\n`;
-            });
+            }
         } else if (typeof entry === 'string') {
             text = entry;
         } else {
@@ -1183,7 +1178,7 @@ appSetup(MODULE, function() {
             entries = `[${entries}]`;
         }
         const list = entries && fromJSON(entries, func) || [];
-        $.each(list, function(row, record) {
+        list.forEach((record, row) => {
             makeBulkOpResult(record, (row + 1)).appendTo($results);
         });
         return list.length;
@@ -1482,13 +1477,10 @@ appSetup(MODULE, function() {
 
         // Broaden click targets for radio buttons and checkboxes that are
         // paired with labels.
-        const $filter_panel = fieldDisplayFilterContainer($form);
-        $filter_panel.children('.radio, .control').not('label').each(function() {
-            delegateInputClick(this);
-        });
-        $form.find('.checkbox.single').not('[role="option"]').each(function() {
-            delegateInputClick(this);
-        });
+        const $panel  = fieldDisplayFilterContainer($form);
+        const $radios = $panel.children('.radio, .control').not('label');
+        const $cbs    = $form.find('.checkbox.single').not('[role="option"]');
+        $radios.add($cbs).each((_, ctl) => delegateInputClick(ctl));
 
         // Ensure that required fields are indicated.
         initializeFormFields($form, start_data);
@@ -1547,38 +1539,23 @@ appSetup(MODULE, function() {
      * @param {string|object} [start_data]  Replacement data.
      */
     function initializeFormFields(form, start_data) {
+        const func    = 'initializeFormFields';
+        const $form   = formElement(form);
+        const data    = {};
+        const extract = (value) => $.extend(data, fromJSON(value, func));
 
-        const func  = 'initializeFormFields';
-        const $form = formElement(form);
-
-        let data = {};
         if (start_data) {
-            extractData(start_data);
+            extract(start_data);
         } else {
-            extractData(emmaDataElement($form).val());
-            extractData(revertDataElement($form).val());
+            extract(emmaDataElement($form).val());
+            extract(revertDataElement($form).val());
         }
 
-        formFields($form).each(function() {
-            initializeInputField(this, data);
-        });
+        formFields($form).each((_, fld) => initializeInputField(fld, data));
         resolveRelatedFields();
         disableSubmit($form);
         disableLookup($form);
         clearFormState($form);
-
-        /**
-         * Transform data supplied through an element value and merge in into
-         * the initialization data object.
-         *
-         * @param {string|object} value
-         */
-        function extractData(value) {
-            const result = fromJSON(value, func);
-            if (result) {
-                $.extend(data, result);
-            }
-        }
     }
 
     // ========================================================================
@@ -1604,13 +1581,13 @@ appSetup(MODULE, function() {
         if (isPresent(data)) {
             const $form = formElement(form);
             let count   = 0;
-            $.each(data, function(field, value) {
+            for (const [field, value] of Object.entries(data)) {
                 const $field = formField(field, $form);
                 if (!$field.is(SEALED)) {
                     updateInputField($field, value);
                     count++;
                 }
-            });
+            }
             if (count) {
                 resolveRelatedFields();
                 validateForm($form);
@@ -1696,30 +1673,29 @@ appSetup(MODULE, function() {
             });
         } else {
             // Initialize original values for all elements.
-            $inputs.each(function() {
-                setOriginalValue(this);
-            });
+            $inputs.each((_, input) => setOriginalValue(input));
             if (new_value) {
                 value = new_value;
                 if ((trim !== false) && (typeof value === 'string')) {
                     value = value.trim();
                 }
                 let index = -1;
-                // noinspection FunctionWithInconsistentReturnsJS
-                $inputs.each(function(i) {
+                $inputs.each((idx, _input) => {
+                    let done = false;
                     const old_value = this.value || '';
                     if (old_value === value) {
                         // The value is present in this slot.
                         index = -1;
-                        return false;
+                        done  = true;
                     } else if (index >= 0) {
                         // An empty slot has already been reserved; continue
                         // looking for the value in later slots.
                     } else if (!old_value) {
                         // The value will be placed in this empty slot unless
                         // it is found in a later slot.
-                        index = i;
+                        index = idx;
                     }
+                    return !done;
                 });
                 if (index >= 0) {
                     setValue($inputs[index], value, trim, init);
@@ -1755,22 +1731,20 @@ appSetup(MODULE, function() {
         // is a string.
         if (Array.isArray(setting) || (setting === null)) {
             const values = compact(setting || []);
-            $checkboxes.each(function() {
-                const checked = values.includes(this.value);
-                setChecked(this, checked, init);
+            $checkboxes.each((_, cb) => {
+                const checked = values.includes(cb.value);
+                setChecked(cb, checked, init);
             });
         } else if (typeof setting === 'string') {
-            $checkboxes.each(function() {
-                if (this.value === setting) {
-                    setChecked(this, true, init);
+            $checkboxes.each((_, cb) => {
+                if (cb.value === setting) {
+                    setChecked(cb, true, init);
                 } else if (init) {
-                    setOriginalValue(this);
+                    setOriginalValue(cb);
                 }
             });
         } else if (init) {
-            $checkboxes.each(function() {
-                setOriginalValue(this);
-            });
+            $checkboxes.each((_, cb) => setOriginalValue(cb));
         }
 
         // Enumerate the checked items and update the fieldset.
@@ -1911,15 +1885,16 @@ appSetup(MODULE, function() {
      * @param {string[]} [already_modified]
      */
     function resolveRelatedFields(already_modified) {
-        const skip_fields = already_modified || [];
-        $.each(FIELD_RELATIONSHIP, function(field_name, relationship) {
+        const skip_fields   = already_modified || [];
+        const relationships = Object.entries(FIELD_RELATIONSHIP);
+        for (const [field_name, relationship] of relationships) {
             if (!skip_fields.includes(field_name)) {
                 const visited = updateRelatedField(field_name, relationship);
                 if (visited) {
                     skip_fields.push(visited.name);
                 }
             }
-        });
+        }
     }
 
     /**
@@ -2768,15 +2743,16 @@ appSetup(MODULE, function() {
                 emma_repository:    repo,
                 rem_metadataSource: [PROPERTIES.Repo.name[repo]],
             };
-            $.each(source_fields, function(field, value) {
+            for (const [field, value] of Object.entries(source_fields)) {
                 if (typeof value === 'function') {
+                    // noinspection JSValidateTypes
                     update[field] = value(parent);
                 } else if (value === FROM_PARENT) {
                     update[field] = parent[field] || EMPTY_VALUE;
                 } else {
                     update[field] = value;
                 }
-            });
+            }
             unsealFields(source_fields);
             populateFormFields(update, $form);
             sealFields(source_fields);
@@ -2836,13 +2812,13 @@ appSetup(MODULE, function() {
          * @param {object} [source_fields]
          */
         function sealFields(source_fields = SOURCE_FIELDS) {
-            $.each(source_fields, function(field, value) {
+            for (const [field, value] of Object.entries(source_fields)) {
                 if (value === FROM_PARENT) {
                     const $input = formField(field, $form);
                     seal($input);
                     seal(fieldLabel($input));
                 }
-            });
+            }
         }
 
         /**
@@ -2851,13 +2827,13 @@ appSetup(MODULE, function() {
          * @param {object} [source_fields]
          */
         function unsealFields(source_fields = SOURCE_FIELDS) {
-            $.each(source_fields, function(field, value) {
+            for (const [field, value] of Object.entries(source_fields)) {
                 if (value === FROM_PARENT) {
                     const $input = formField(field, $form);
                     unseal($input);
                     unseal(fieldLabel($input));
                 }
-            });
+            }
         }
     }
 
@@ -3199,7 +3175,7 @@ appSetup(MODULE, function() {
 
         if (isPresent(data)) {
             const updates = { Added: [], Changed: [], Removed: [] };
-            $.each(data, (field, value) => {
+            for (const [field, value] of Object.entries(data)) {
                 if (!value) {
                     updates.Removed.push(field);
                 } else if (formField(field, $form).val()) {
@@ -3207,7 +3183,7 @@ appSetup(MODULE, function() {
                 } else {
                     updates.Added.push(field);
                 }
-            });
+            }
             message = $.map(compact(updates), (keys, update_type) => {
                 const s      = (keys.length === 1) ? '' : 's';
                 const label  = `${update_type} item${s}`; // TODO: I18n
@@ -3344,7 +3320,7 @@ appSetup(MODULE, function() {
         const $button   = lookupButton($form);
         const condition = getLookupCondition($button);
         let found;
-        $.each(condition, function(logical_op, entry) {
+        $.each(condition, (logical_op, entry) => {
             found = Object.keys(entry).includes(field);
             if (found) {
                 condition[logical_op][field] = valid;
@@ -3389,12 +3365,12 @@ appSetup(MODULE, function() {
         if (!forbid) {
             const $fields   = inputFields($form);
             const condition = getLookupCondition($button);
-            $.each(condition, (logical_op, entry) => {
-                $.each(entry, (field, _) => {
+            for (const [logical_op, entry] of Object.entries(condition)) {
+                for (const [field, _] of Object.entries(entry)) {
                     const $field = $fields.filter(`[data-field="${field}"]`);
                     condition[logical_op][field] = isPresent($field.val());
-                });
-            });
+                }
+            }
             enable ||= Object.values(condition.or).some(v => v);
             enable ||= Object.values(condition.and).every(v => v);
             if (enable) {
@@ -3499,8 +3475,8 @@ appSetup(MODULE, function() {
         const $form     = formElement($button);
         const $fields   = inputFields($form).filter('.valid');
         const condition = value || getLookupCondition($button);
-        $.each(condition, function(_logical_op, entry) {
-            $.each(entry, function(field, active) {
+        for (const [_logical_op, entry] of Object.entries(condition)) {
+            for (const [field, active] of Object.entries(entry)) {
                 if (active) {
                     const $field = $fields.filter(`[data-field="${field}"]`);
                     const values = $field.val();
@@ -3513,8 +3489,8 @@ appSetup(MODULE, function() {
                         }
                     }
                 }
-            });
-        });
+            }
+        }
         return request;
     }
 
@@ -3861,9 +3837,9 @@ appSetup(MODULE, function() {
 
             // Disable empty database fields so they are not transmitted back
             // as form data.
-            inputFields($form).each(function() {
-                if (isEmpty(this.value) || (this.value === EMPTY_VALUE)) {
-                    this.disabled = true;
+            inputFields($form).each((_, input) => {
+                if (isEmpty(input.value) || (input.value === EMPTY_VALUE)) {
+                    input.disabled = true;
                 }
             });
 
@@ -3980,9 +3956,7 @@ appSetup(MODULE, function() {
          * @param {string}         [_status]
          */
         function onCreateComplete(_xhr, _status) {
-            databaseInputFields($form).each(function() {
-                this.disabled = false;
-            });
+            databaseInputFields($form).each((_, i) => { i.disabled = false });
         }
     }
 
@@ -4027,17 +4001,18 @@ appSetup(MODULE, function() {
         if (isDefined(new_mode)) {
             mode = new_mode;
         } else {
-            const current_action = termAction($form);
             let [action, general, first] = [];
-            $.each(PROPERTIES.Filter, function(group, property) {
-                if (property.default === current_action) {
+            const current = termAction($form);
+            const filters = Object.entries(PROPERTIES.Filter);
+            for (const [group, property] of filters) {
+                if (property.default === current) {
                     action = group;
                 } else if (property.default) {
                     general = group;
                 } else {
                     first = first || group;
                 }
-            });
+            }
             mode = action || general || first;
         }
         const selector = `[value="${mode}"]`;
@@ -4527,9 +4502,7 @@ appSetup(MODULE, function() {
         uploader?.disableFileSelectButton();
         disableSubmit($form).attr(tooltip);
         fieldContainer($form).attr(tooltip);
-        inputFields($form).attr(tooltip).each(function() {
-            this.disabled = true;
-        });
+        inputFields($form).attr(tooltip).each((_, i) => { i.disabled = true });
         cancelButton($form).addClass(BEST_CHOICE_MARKER);
     }
 

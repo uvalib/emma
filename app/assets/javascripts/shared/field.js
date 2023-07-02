@@ -168,7 +168,7 @@ export class Properties extends BaseClass {
     _extractFromObject(arg) {
         let n;
         const result = {};
-        $.each(arg, (k, v) => {
+        for (const [k, v] of Object.entries(arg)) {
             switch (this.constructor.TYPE[k]) {
                 case typeof(v):
                     result[k] = v;
@@ -189,7 +189,7 @@ export class Properties extends BaseClass {
                     this._debug(`invalid: key = ${k}; value =`, v);
                     break;
             }
-        });
+        }
         return result;
     }
 
@@ -314,7 +314,7 @@ export class Value extends BaseClass {
      * @type {StringTable}
      * @protected
      */
-    _error = {};
+    _errors = {};
 
     // ========================================================================
     // Constructor
@@ -334,7 +334,7 @@ export class Value extends BaseClass {
         } else {
             this._setFrom(arg, type);
         }
-        this._error = { ...errs };
+        this._errors = { ...errs };
     }
 
     // ========================================================================
@@ -580,8 +580,8 @@ export class Value extends BaseClass {
     get blank()    { return this.unset || isEmpty(this.value) }
     get nonBlank() { return !this.blank }
 
-    get errorTable()    { return this._error }
-    set errorTable(arg) { this._error = { ...arg } }
+    get errorTable()    { return this._errors }
+    set errorTable(arg) { this._errors = { ...arg } }
 
     // ========================================================================
     // Methods - internal
@@ -594,21 +594,16 @@ export class Value extends BaseClass {
      * @param {string|string[]}                          [val]
      */
     addErrorTable(key, val) {
-        /** @type {[string, (string|string[])][]} */
-        const entries = isObject(key) ? Object.entries(key) : [[key, val]];
-        const table   = this._error;
-        entries.forEach(([k,v]) => {
-            const msg = [];
-            if (table[k]) {
-                msg.push(table[k]);
-            }
+        const pairs = isObject(key) ? Object.entries(key) : [[key, val]];
+        for (const [k, v] of pairs) {
+            const msg = this._errors[k] ? [...this._errors[k]] : [];
             if (Array.isArray(v)) {
                 msg.push(...v);
             } else {
                 msg.push(v || 'invalid'); // TODO: I18n
             }
-            table[k] = msg.join('; ');
-        });
+            this._errors[k] = msg.join('; ');
+        }
     }
 
     /**

@@ -663,7 +663,7 @@ export const Emma = (function() {
 
     // Update with any configuration values injected from the server.
     const tag = 'OverrideScriptSettings';
-    $.each(setting_overrides, (key, value) => {
+    for (const [key, value] of Object.entries(setting_overrides)) {
         const current = settings[key];
         const type    = typeof value;
         if (type === 'undefined') {
@@ -677,7 +677,7 @@ export const Emma = (function() {
         } else {
             console.warn(`${tag}: ${key}: cannot merge "${type}" value`);
         }
-    });
+    }
 
     // ========================================================================
     // Exposed values

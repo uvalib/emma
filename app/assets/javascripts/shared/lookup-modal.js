@@ -423,11 +423,8 @@ export class LookupModal extends ModalDialog {
 
     static get channelOwner() { return this._channel_owner }
     static set channelOwner(owner) {
-        if (owner instanceof this) {
-            this._channel_owner = owner.modalControl;
-        } else {
-            this._channel_owner = owner;
-        }
+        const control = (owner instanceof this) ? owner.modalControl : owner;
+        this._channel_owner = control;
     }
 
     // ========================================================================
@@ -1070,11 +1067,10 @@ export class LookupModal extends ModalDialog {
     /**
      * Generate the element displaying the state of the parallel requests.
      *
-     * @param {string} [css]          Default: {@link STATUS_DISPLAY_CLASS}
-     *
      * @returns {jQuery}
      */
-    makeStatusDisplay(css = this.constructor.STATUS_DISPLAY_CLASS) {
+    makeStatusDisplay() {
+        const css       = this.constructor.STATUS_DISPLAY_CLASS;
         const $panel    = $('<div>').addClass(css);
         const $services = this.makeServiceStatuses();
         const $notice   = this.makeStatusNotice();
@@ -1084,34 +1080,32 @@ export class LookupModal extends ModalDialog {
     /**
      * Generate the element for displaying textual status information.
      *
-     * @param {string} [css]          Default: {@link NOTICE_CLASS}
-     *
      * @returns {jQuery}
      */
-    makeStatusNotice(css = this.constructor.NOTICE_CLASS) {
+    makeStatusNotice() {
+        const css = this.constructor.NOTICE_CLASS;
         return $('<div>').addClass(css);
     }
 
     /**
      * Generate the element containing the dynamic set of external services.
      *
-     * @param {string} [css]          Default: {@link SERVICES_CLASS}
-     *
      * @returns {jQuery}
      */
-    makeServiceStatuses(css = this.constructor.SERVICES_CLASS) {
+    makeServiceStatuses() {
+        const css = this.constructor.SERVICES_CLASS;
         return $('<div>').addClass(css);
     }
 
     /**
      * Generate an element for displaying the status of an external service.
      *
-     * @param {string} [name]         Service name; default: 'unknown'.
-     * @param {string} [css]          Default: 'service'
+     * @param {string} [name]         Service name; default: "unknown".
      *
      * @returns {jQuery}
      */
-    makeServiceStatus(name, css = 'service') {
+    makeServiceStatus(name) {
+        const css     = 'service';
         const service = name || 'unknown';
         const classes = `${css} ${service}`;
         const label   = camelCase(service);
@@ -1278,7 +1272,7 @@ export class LookupModal extends ModalDialog {
         const original = this.getOriginalFieldValues(func);
         const current  = this.getColumnValues(this.fieldValuesEntry);
         const result   = {};
-        $.each(current, (field, value) => {
+        for (const [field, value] of Object.entries(current)) {
             let use_value = true;
             if (hasKey(original, field)) {
                 const orig = this.toInputValue(original[field]);
@@ -1288,7 +1282,7 @@ export class LookupModal extends ModalDialog {
             if (use_value) {
                 result[field] = value;
             }
-        });
+        }
         this.fieldResultsData = result;
     }
 
@@ -1793,11 +1787,11 @@ export class LookupModal extends ModalDialog {
             const request = this.getRequestData();
             const req_ids = presence(request.ids);
             const service = camelCase(message.service);
-            $.each(data.items, (id, items) => {
+            for (const [id, items] of Object.entries(data.items)) {
                 if (!req_ids || req_ids.includes(id)) {
                     items.forEach(item => this.addEntry(item, service));
                 }
-            });
+            }
         }
 
         this.tabCycleStart ||= init && this.$start_tabbable;
@@ -1862,11 +1856,10 @@ export class LookupModal extends ModalDialog {
     /**
      * Generate the container including the initially-empty list of entries.
      *
-     * @param {string} [css]          Default: {@link ENTRIES_CLASS}
-     *
      * @returns {jQuery}
      */
-    makeEntriesDisplay(css = this.constructor.ENTRIES_CLASS) {
+    makeEntriesDisplay() {
+        const css      = this.constructor.ENTRIES_CLASS;
         const $display = $('<div>').addClass(css);
         const $list    = this.makeEntriesList();
         return $display.append($list);
@@ -1950,13 +1943,13 @@ export class LookupModal extends ModalDialog {
      * Generate the field contents of the original values row element.
      *
      * @param {number} row
-     * @param {string} [css]          Default: {@link ORIG_VALUES_CLASS}
      *
      * @returns {jQuery}
      */
-    makeOriginalValuesEntry(row, css = this.constructor.ORIG_VALUES_CLASS) {
+    makeOriginalValuesEntry(row) {
         const func = 'makeOriginalValuesEntry';
         const tag  = 'ORIGINAL'; // TODO: I18n
+        const css  = this.constructor.ORIG_VALUES_CLASS;
         this.originalValuesEntry = this.makeResultEntry(row, tag, css);
         return this.refreshOriginalValuesEntry(func);
     }
@@ -2055,11 +2048,11 @@ export class LookupModal extends ModalDialog {
      * Generate a radio button for selecting the associated entry.
      *
      * @param {boolean} [active]
-     * @param {string}  [css]         Default: 'selection'.
      *
      * @returns {jQuery}
      */
-    makeSelectColumn(active, css = 'selection') {
+    makeSelectColumn(active) {
+        const css   = 'selection';
         const $cell = $('<div>').addClass(css);
         const parts = this.makeSelectControl(active);
         return $cell.append(parts);
@@ -2102,11 +2095,11 @@ export class LookupModal extends ModalDialog {
      * Generate an element for holding a designation for the related entry.
      *
      * @param {string} [label]
-     * @param {string} [css]          Default: 'tag'.
      *
      * @returns {jQuery}
      */
-    makeTagColumn(label, css = 'tag') {
+    makeTagColumn(label) {
+        const css = 'tag';
         return this.makeBlankColumn(label).addClass(css);
     }
 
@@ -2463,12 +2456,12 @@ export class LookupModal extends ModalDialog {
     /**
      * Generate the element containing the loading overlay image.
      *
-     * @param {boolean} [visible]     If *true* do not create hidden.
-     * @param {string}  [css]         Def: {@link LOADING_CLASS}
+     * @param {boolean} [visible]     If **true** do not create hidden.
      *
      * @returns {jQuery}
      */
-    makeLoadingOverlay(visible, css = this.constructor.LOADING_CLASS) {
+    makeLoadingOverlay(visible) {
+        const css    = this.constructor.LOADING_CLASS;
         const hidden = (visible !== true);
         const $image = $('<div>').addClass('content');
         const $line  = $('<div>').addClass(css).append($image);

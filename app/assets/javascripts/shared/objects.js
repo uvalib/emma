@@ -268,7 +268,7 @@ export function equivalent(item1, item2) {
         const keys1 = Object.keys(item1);
         const keys2 = Object.keys(item2);
         if ((result = equivalent(keys1, keys2))) {
-            $.each(item1, function(key, value1) { // continue while equivalent
+            $.each(item1, (key, value1) => { // continue while equivalent
                 return !(result &&= equivalent(value1, item2[key]));
             });
         }
@@ -276,7 +276,7 @@ export function equivalent(item1, item2) {
         if ((result = (item1.length === item2.length))) {
             const array1 = [...item1].sort();
             const array2 = [...item2].sort();
-            $.each(array1, function(idx, value1) { // continue while equivalent
+            $.each(array1, (idx, value1) => { // continue while equivalent
                 return !(result &&= equivalent(value1, array2[idx]));
             });
         }

@@ -199,8 +199,8 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     // Download all deferred images.
-    $placeholders.each(function() {
-        const $image = $(this);
+    $placeholders.each((_, element) => {
+        const $image = $(element);
         let src;
         if ((src = $image.attr('data-path'))) {
             OUT.debug('FETCHING IMAGE data-path ==', src);

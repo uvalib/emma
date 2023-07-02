@@ -124,9 +124,7 @@ export function setupFor(root) {
         handleEvent($file_input, 'change', onNewFile);
     }
 
-    $copy_icons.each(function() {
-        setupClipboardIcon(this);
-    });
+    $copy_icons.each((_, icon) => setupClipboardIcon(icon));
 
     // ========================================================================
     // Internal functions - processing from clipboard
@@ -732,9 +730,9 @@ export class MathDetectiveApi extends Api {
      *
      * @param {string}                   name
      * @param {string}                   [image]
-     * @param {MathDetectiveApiCallback} [cb]
+     * @param {MathDetectiveApiCallback} [callback]     Def: {@link _on_fetch}
      */
-    submitImage(name, image, cb = this._on_fetch) {
+    submitImage(name, image, callback) {
         let data;
         // ... encoded using base64. In the worst case this encoding can cause
         // the binary body to be inflated up to 4/3 its original size.
@@ -743,32 +741,34 @@ export class MathDetectiveApi extends Api {
         } else if (isMissing((data = encodeImageOrUrl(image)))) {
             this.error = 'No image data supplied';
         }
+        const cb = callback || this._on_fetch;
         if (this.error) {
             this._showStatus('FAILED');
             cb?.(this);
         } else {
             this._showStatus('SUBMITTING');
             /** @type {MD_ImageProcessingRequest} */
-            const params   = { name: name, url: data };
-            const callback = (...a) => this._submitImageOnComplete(...a, cb);
-            this.post(MD_IMAGE_PATH, params, callback);
+            const params = { name: name, url: data };
+            const api_cb = (...a) => this._submitImageOnComplete(...a, cb);
+            this.post(MD_IMAGE_PATH, params, api_cb);
         }
     }
 
     /**
      * Get the status of a previous image request.
      *
-     * @param {MathDetectiveApiCallback} [cb]
+     * @param {MathDetectiveApiCallback} [callback]     Def: {@link _on_fetch}
      */
-    fetchImage(cb = this._on_fetch) {
+    fetchImage(callback) {
+        const cb = callback || this._on_fetch;
         if (isMissing(this.handle)) {
             this._showStatus('FAILED');
             this.error = 'Missing request identifier to check';
             cb?.(this);
         } else {
             this._showStatus('FETCHING');
-            const callback = (...a) => this._fetchImageOnComplete(...a, cb);
-            this.get(`${MD_IMAGE_PATH}/${this.handle}`, undefined, callback);
+            const api_cb = (...a) => this._fetchImageOnComplete(...a, cb);
+            this.get(`${MD_IMAGE_PATH}/${this.handle}`, undefined, api_cb);
         }
     }
 
@@ -780,18 +780,19 @@ export class MathDetectiveApi extends Api {
      * _submitImageOnComplete
      *
      * @param {MD_ImageProcessingResponse|undefined} result
-     * @param {string|undefined}                     _warn
-     * @param {string|undefined}                     _err
-     * @param {XMLHttpRequest}                       xhr
-     * @param {MathDetectiveApiCallback}             [cb]
+     * @param {string|undefined}         _warn
+     * @param {string|undefined}         _err
+     * @param {XMLHttpRequest}           xhr
+     * @param {MathDetectiveApiCallback} [callback]     Def: {@link _on_fetch}
      *
      * @protected
      */
-    _submitImageOnComplete(result, _warn, _err, xhr, cb = this._on_fetch) {
+    _submitImageOnComplete(result, _warn, _err, xhr, callback) {
         // noinspection JSValidateTypes
         this.result = result || {};
         this._updateStatus(xhr.status, 'submitImage');
         this._showStatus();
+        const cb = callback || this._on_fetch;
         if (this.running) {
             this._fetchLoop(cb);
         } else {
@@ -802,12 +803,13 @@ export class MathDetectiveApi extends Api {
     /**
      * _fetchLoop
      *
-     * @param {MathDetectiveApiCallback} [cb]
+     * @param {MathDetectiveApiCallback} [callback]     Def: {@link _on_fetch}
      *
      * @protected
      */
-    _fetchLoop(cb = this._on_fetch) {
+    _fetchLoop(callback) {
         if (this.running) {
+            const cb = callback || this._on_fetch;
             if (this.#nextCycle()) {
                 this.fetchImage(cb);
                 const next_cycle = () => this._fetchLoop(cb);
@@ -824,19 +826,20 @@ export class MathDetectiveApi extends Api {
      * _fetchImageOnComplete
      *
      * @param {MD_ImageProcessingResponse|undefined} result
-     * @param {string|undefined}                     _warn
-     * @param {string|undefined}                     _err
-     * @param {XMLHttpRequest}                       xhr
-     * @param {MathDetectiveApiCallback}             [cb]
+     * @param {string|undefined}         _warn
+     * @param {string|undefined}         _err
+     * @param {XMLHttpRequest}           xhr
+     * @param {MathDetectiveApiCallback} [callback]     Def: {@link _on_fetch}
      *
      * @protected
      */
-    _fetchImageOnComplete(result, _warn, _err, xhr, cb = this._on_fetch) {
+    _fetchImageOnComplete(result, _warn, _err, xhr, callback) {
         // noinspection JSValidateTypes
         this.result = result || {};
         this._updateStatus(xhr.status, 'submitImage');
         this._showStatus();
         if (!this.running) {
+            const cb = callback || this._on_fetch;
             cb?.(this);
         }
     }
@@ -904,14 +907,15 @@ export class MathDetectiveApi extends Api {
      * _showStatus
      *
      * @param {string}                     [value]
-     * @param {function(string)|undefined} [cb]
+     * @param {function(string)|undefined} [callback]   Def: {@link _on_status}
      *
      * @protected
      */
-    _showStatus(value, cb = this._on_status) {
+    _showStatus(value, callback) {
         if (value) {
             this.md_status = value;
         }
+        const cb = callback || this._on_status;
         cb?.(this.md_status || 'INITIALIZING');
     }
 

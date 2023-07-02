@@ -25,14 +25,14 @@ AppDebug.file('shared/url');
  * @returns {string}
  */
 export function urlFrom(arg) {
-    let result = undefined;
+    let result;
     if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
         result = arg;
     } else if (!isObject(arg)) {
         // Skipping invalid argument.
     } else if (isDefined(arg.target)) { // Event or jQuery.Event
-        const event = isDefined(arg.originalEvent) && arg.originalEvent || arg;
-        result = isDefined(event.newURL) ? event.newURL : event.target.href;
+        const event = arg.originalEvent || arg;
+        result = event.newURL || event.target.href;
     } else if (isDefined(arg.href)) {   // Location, HTMLBaseElement
         result = arg.href;
     } else if (isDefined(arg.url)) {    // object
@@ -52,10 +52,10 @@ export function asParams(item) {
     const func = 'asParams';
     let result = {};
     if (typeof item === 'string') {
-        item.trim().replace(/^[?&]+/, '').split('&').forEach(function(pair) {
-            let kv = decodeURIComponent(pair.replace('+', ' ')).split('=');
-            let k  = kv.shift();
-            let v  = kv.join('=');
+        item.trim().replace(/^[?&]+/, '').split('&').forEach(pair => {
+            const kv    = decodeURIComponent(pair.replace(/[+]/g, ' '));
+            const parts = kv.split('=');
+            let [k, v]  = [parts.shift(), parts.join('=')];
             if (k && v) {
                 const array = k.endsWith('[]');
                 if (array) {

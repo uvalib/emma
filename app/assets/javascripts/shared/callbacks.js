@@ -119,11 +119,10 @@ export class CallbackChain extends BaseClass {
      * @returns {boolean}
      */
     invoke(target, check_only, halted) {
-        const $target = $(target);
-        return this.callbacks.reduce(
-            (ok, cb) => (cb($target, check_only, !ok) !== false) && ok,
-            !halted
-        );
+        let halt   = halted;
+        const $tgt = $(target);
+        this.callbacks.forEach(cb => (halt = cb($tgt, check_only, halt)));
+        return !halt;
     }
 
 }

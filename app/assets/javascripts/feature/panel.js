@@ -156,9 +156,9 @@ appSetup(MODULE, function() {
      * Set the current state of panel(s) on the page.
      */
     function initializeState() {
-        $toggle_buttons.each(function() {
-            let $button = $(this);
-            let $panel  = getPanel($button);
+        $toggle_buttons.each((_, button) => {
+            const $button = $(button);
+            const $panel  = getPanel($button);
             if (isMissing($panel)) {
                 $button.hide();
             } else if (RESTORE_PANEL_STATE) {

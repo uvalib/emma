@@ -59,8 +59,8 @@ export const FORM_FIELD = FORM_FIELD_TYPES.join(', ');
 export function turnOffAutocomplete(inputs, filter) {
     const $inputs   = $(inputs);
     const $elements = filter ? $inputs.filter(FORM_FIELD) : $inputs;
-    $elements.each(function() {
-        const $element    = $(this);
+    $elements.each((_, element) => {
+        const $element    = $(element);
         const spell_check = $element.attr('spellcheck');
         const last_pass   = $element.attr('data-lpignore');
         let autocomplete  = $element.attr('autocomplete');

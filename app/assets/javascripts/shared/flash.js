@@ -125,8 +125,8 @@ export function flashInitialize(fc) {
     const $items = $fc.find(FLASH_ITEM);
     let $first_closer;
     if (floating($fc)) {
-        $items.each(function() {
-            const $item = $(this);
+        $items.each((_, item) => {
+            const $item = $(item);
             let $closer = $item.find(CLOSER);
             if (isMissing($closer)) {
                 $closer = makeCloser();

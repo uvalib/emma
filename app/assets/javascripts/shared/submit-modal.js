@@ -211,11 +211,8 @@ export class SubmitModal extends ModalDialog {
 
     static get channelOwner() { return this._channel_owner }
     static set channelOwner(owner) {
-        if (owner instanceof this) {
-            this._channel_owner = owner.modalControl;
-        } else {
-            this._channel_owner = owner;
-        }
+        const control = (owner instanceof this) ? owner.modalControl : owner;
+        this._channel_owner = control;
     }
 
     // ========================================================================
