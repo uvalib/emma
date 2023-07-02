@@ -71,6 +71,7 @@ module ManifestItem::Assignable
       column = database_columns[k]
       field  = database_fields[k]
       type   = field[:type]
+      enum   = type.is_a?(Class) && (type < EnumType)
       v_orig = v
 
       if column.array || field[:array] || (type == 'textarea')
@@ -88,6 +89,7 @@ module ManifestItem::Assignable
           normal = normal.to_s     if normal.is_a?(ScalarType)
           normal
         }.compact!
+        v.uniq! if enum
         v = v.join(LINE_JOIN) unless column.array
       elsif k == :file_data
         v = normalize_file(v).presence
