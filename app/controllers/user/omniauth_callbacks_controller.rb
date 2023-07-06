@@ -72,7 +72,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user = self.resource = set_auth_data(request)
     host = user.email&.sub(/^.+@/, '')&.presence || 'Shibboleth'
     last_operation_update
-    set_flash_message(:notice, :success, provider: host)
+    set_flash_notice(:notice, :success, provider: host)
     sign_in_and_redirect(user)
   rescue => error
     auth_failure_redirect(message: error)
@@ -93,8 +93,14 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     __debug { "failure endpoint: failure_message         = #{failure_message.inspect}" } # TODO: remove?
     __debug_route
     __debug_request
-    set_flash_alert # TODO: remove? - testing
-    super
+
+    if failed_strategy.name == 'shibboleth' && failure_message.match?(/Missing header EPPN/i)
+      set_flash_message! :alert, :shibboleth_failure_html
+      redirect_to after_omniauth_failure_path_for(resource_name)
+    else
+      super
+    end
+
   end
     .tap { |meth| disallow(meth) unless SHIBBOLETH || BS_AUTH }
 

@@ -39,9 +39,20 @@ en:
       password_change:
         subject: 'Password Changed'
 
-    omniauth_callbacks:
-      failure:                      'Could not authenticate you with %{provider} because "%{reason}".'
+    alert:
+      failure:                      'Could not authenticate with %{provider} because %{reason}'
       success:                      'Signed in via %{provider}.'
+    omniauth_callbacks:
+      user:
+        shibboleth_failure_html:    |-
+          <p>Could not authenticate with Shibboleth.</p>
+          <p>Authentication succeeded, but your account could not be identified because of missing header "EPPN". </br>
+            Please contact your local shibboleth administrator to make sure the EPPN header is released to emma.lib.virginia.edu in order to log in using your institutional authentication.
+          </p>
+          <p>
+            You may use the "forgot my password" feature to log in with a local account.
+          </p>
+
 
     passwords:
       no_token:                     "You can't access this page without coming from a password reset email. If you do come from a password reset email, please make sure you used the full URL provided."
