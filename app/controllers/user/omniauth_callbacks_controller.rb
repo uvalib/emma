@@ -72,7 +72,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user = self.resource = set_auth_data(request)
     host = user.email&.sub(/^.+@/, '')&.presence || 'Shibboleth'
     last_operation_update
-    set_flash_notice(:notice, :success, provider: host)
+    set_flash_message(:notice, :success, provider: host)
     sign_in_and_redirect(user)
   rescue => error
     auth_failure_redirect(message: error)
@@ -110,18 +110,6 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   protected
 
-  # Display a flash error message.
-  #
-  # @param [String, nil] message
-  # @param [String, nil] provider
-  #
-  # @return [void]
-  #
-  def set_flash_alert(message = nil, provider = nil)
-    message  ||= failure_message
-    provider ||= OmniAuth::Utils.camelize(failed_strategy.name)
-    set_flash_message(:alert, :failure, reason: message, provider: provider)
-  end
 
 end
 

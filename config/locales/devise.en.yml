@@ -40,10 +40,12 @@ en:
         subject: 'Password Changed'
 
     alert:
-      failure:                      'Could not authenticate with %{provider} because %{reason}'
+      failure:                      'Could not authenticate with %{kind} because %{reason}'
       success:                      'Signed in via %{provider}.'
     omniauth_callbacks:
       user:
+        failure:                      'Could not authenticate with %{kind} because %{reason}'
+        success:                      'Signed in via %{provider}.'
         shibboleth_failure_html:    |-
           <p>Could not authenticate with Shibboleth.</p>
           <p>Authentication succeeded, but your account could not be identified because of missing header "EPPN". </br>
