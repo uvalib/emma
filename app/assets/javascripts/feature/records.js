@@ -407,7 +407,7 @@ appSetup(MODULE, function() {
 
     // Listen for a change to the record filter selection.
     handleEvent($list_filter_radio_buttons, 'change', (event) => {
-        const $target = $(event.target);
+        const $target = $(event.currentTarget || event.target);
         if ($target.is(':checked')) {
             filterPageDisplay($target.val());
         }
@@ -415,7 +415,7 @@ appSetup(MODULE, function() {
 
     // Listen for a change to the debug-only filter options checkboxes.
     handleEvent($filter_options_checkboxes, 'change', (event) => {
-        filterOptionToggle(event.target);
+        filterOptionToggle(event.currentTarget || event.target);
     });
 
     // When hovering/focusing on a group selection button, display its

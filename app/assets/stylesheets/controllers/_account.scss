@@ -17,7 +17,7 @@
 
     // Maximum number of physical columns per width breakpoint.
 
-    $max-columns: 20;
+    $max-columns: 25;
     $columns-map: (
         'wide':   ('columns': $max-columns),
         'medium': ('columns': 1, 'template': minmax(max-content, 0.33fr) 1fr),
@@ -26,17 +26,12 @@
 
     @include grid.column-classes($max-columns, max-content, $columns-map);
 
-    @media #{$wide-screen} {
-        // NOTE: This is a kludge because ".column-#{count}" is not being added
-        grid-template-columns:  auto;
-    }
-
     @media #{$medium-width} {
-        padding:                1rem 1rem 0.5rem;
+        padding:        1rem 1rem 0.5rem;
     }
 
     @media #{$narrow-screen} {
-        padding-bottom:         0;
+        padding-bottom: 0;
     }
 
     //=========================================================================

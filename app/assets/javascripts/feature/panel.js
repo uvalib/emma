@@ -75,7 +75,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event} event
      */
     function onTogglePanel(event) {
-        const $button = $(event.target);
+        const $button = $(event.currentTarget || event.target);
         const $panel  = getPanel($button);
         if (isPresent($panel)) {
             const opening = !$panel.hasClass(OPEN_MARKER);

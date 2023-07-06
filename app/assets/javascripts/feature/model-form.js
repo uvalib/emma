@@ -3716,7 +3716,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event} [event]
      */
     function startSubmission(event) {
-        const $button = $(event.target);
+        const $button = $(event.currentTarget || event.target);
         const $form   = formElement($button);
         clearFlash();
         setFormSubmitting($form);
@@ -3744,7 +3744,7 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event} [event]
      */
     function cancelSubmission(event) {
-        const $button = $(event.target);
+        const $button = $(event.currentTarget || event.target);
         const $form   = formElement($button);
         clearFlash();
         if (!formState($form)) {
@@ -4078,7 +4078,7 @@ appSetup(MODULE, function() {
          * @param {jQuery.Event} event
          */
         function fieldDisplayFilterHandler(event) {
-            const $target = $(event.target);
+            const $target = $(event.currentTarget || event.target);
             if ($target.is(':checked')) {
                 filterFieldDisplay($target.val(), $form);
             }
