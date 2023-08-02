@@ -64,12 +64,10 @@ module Emma
     config.action_mailer.smtp_settings = {
       port: ENV.fetch('SMTP_PORT', 587).to_i,
       domain: ENV.fetch('SMTP_DOMAIN', 'example.com'),
-      authentication: ENV.fetch('SMTP_AUTHENTICATION', nil),
-      enable_starttls_auto: ENV.fetch('SMTP_ENABLE_STARTTLS_AUTO', true),
-      openssl_verify_mode: ENV.fetch('SMTP_OPENSSL_VERIFY_MODE', nil)
     }
+    puts "=> Mailer Config: #{config.action_mailer.smtp_settings.inspect}"
 
-    config.action_mailer.default_url_options = { host: MAILER_URL_HOST }
+    config.action_mailer.default_url_options = { host: MAILER_URL_HOST, protocol: :https }
 
     # Specifies the header that your server uses for sending files.
     # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
