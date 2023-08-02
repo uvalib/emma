@@ -28,7 +28,7 @@ en:
         subject: 'Confirmation instructions'
 
       reset_password_instructions:
-        subject: 'Reset password instructions'
+        subject: 'EMMA reset password instructions'
 
       unlock_instructions:
         subject: 'Unlock instructions'

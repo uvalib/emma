@@ -79,6 +79,8 @@ en:
           - user/sessions:
               - sign_in_as
               - destroy
+          - user/passwords:
+              - new
 
         _endpoint:      true
 

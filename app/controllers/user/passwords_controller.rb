@@ -13,6 +13,7 @@ class User::PasswordsController < Devise::PasswordsController
 
   include SessionConcern
   include RunStateConcern
+  include AuthConcern
 
   # ===========================================================================
   # :section: Devise::PasswordsController overrides
@@ -64,10 +65,10 @@ class User::PasswordsController < Devise::PasswordsController
   #   super(resource)
   # end
 
-  # The path used after sending reset password instructions
-  # def after_sending_reset_password_instructions_path_for(resource_name)
-  #   super(resource_name)
-  # end
+   #The path used after sending reset password instructions
+   #def after_sending_reset_password_instructions_path_for(resource_name)
+   #  (resource_name)
+   #end
 
 end
 
