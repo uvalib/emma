@@ -7,6 +7,7 @@
 
 require_relative 'boot'
 require 'tmpdir'
+require 'uri'
 
 # =============================================================================
 # Remove blank environment variables
