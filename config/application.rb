@@ -64,7 +64,7 @@ module Emma
     config.action_mailer.smtp_settings = {
       port: ENV.fetch('SMTP_PORT', 587).to_i,
       domain: ENV.fetch('SMTP_DOMAIN', 'example.com'),
-      authentication: ENV.fetch('SMTP_AUTHENTICATION', 'plain'),
+      authentication: ENV.fetch('SMTP_AUTHENTICATION', nil),
       enable_starttls_auto: ENV.fetch('SMTP_ENABLE_STARTTLS_AUTO', true),
       openssl_verify_mode: ENV.fetch('SMTP_OPENSSL_VERIFY_MODE', nil)
     }
