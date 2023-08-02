@@ -166,7 +166,7 @@ MAILER_URL_HOST =
   elsif staging_deployment?
     URI.parse(STAGING_BASE_URL).host.freeze
   else
-    'localhost:3000'
+    'localhost:3000'.freeze
   end
 
 # =============================================================================
