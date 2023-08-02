@@ -102,7 +102,7 @@ public
 # Indicate whether this is a deployed instance.
 #
 def application_deployed?
-  !!ENV['AWS_DEFAULT_REGION'] && !ENV['DEPLOYMENT'].to_s.casecmp?('local')
+  !!ENV['AWS_DEFAULT_REGION'] || !ENV['DEPLOYMENT'].to_s.casecmp?('local')
 end
 
 # Indicate whether this is a desktop instance.
