@@ -15,22 +15,22 @@ via `@use` without causing duplication in the resulting compiled file in
 
 ## Contents
 
-|                                                                             FILE | USAGE                                                 |
-|---------------------------------------------------------------------------------:|:------------------------------------------------------|
-|                                           **[_variables.scss](_variables.scss)** | General-use SASS variable assignments                 |
-|                                           **[_functions.scss](_functions.scss)** | General-use SASS `@function` definitions              |
-|                                                 **[_mixins.scss](_mixins.scss)** | General-use SASS `@mixin` definitions                 |
-|                             **[controls/_buttons.scss](controls/_buttons.scss)** | Definitions supporting button controls                |
-|                                 **[controls/_grids.scss](controls/_grids.scss)** | Definitions supporting grid controls                  |
-|                                 **[controls/_lists.scss](controls/_lists.scss)** | Definitions supporting lists and list elements        |
-|                               **[controls/_panels.scss](controls/_panels.scss)** | Definitions supporting panel elements                 |
-|                                 **[controls/_popup.scss](controls/_popup.scss)** | Definitions supporting pop-up elements                |
-|                               **[controls/_shapes.scss](controls/_shapes.scss)** | Definitions supporting shaped elements                |
-|                                **[controls/_table.scss](controls/_tables.scss)** | Definitions supporting tables and table elements      |
-|   **[layouts/_header.scss](app/assets/stylesheets/shared/layouts/_header.scss)** | Shared definitions used in `layouts/header/*`         |
-| **[layouts/_overlay.scss](app/assets/stylesheets/shared/layouts/_overlay.scss)** | Shared definitions supporting `layouts/_overlay.scss` |
-|   **[feature/_images.scss](app/assets/stylesheets/shared/feature/_images.scss)** | Shared definitions supporting `feature/_images.scss`  |
-|     **[feature/_model.scss](app/assets/stylesheets/shared/feature/_model.scss)** | Shared definitions supporting `feature/_model.scss`   |
+|                                                 FILE | USAGE                                                 |
+|-----------------------------------------------------:|:------------------------------------------------------|
+|               **[_variables.scss](_variables.scss)** | General-use SASS variable assignments                 |
+|               **[_functions.scss](_functions.scss)** | General-use SASS `@function` definitions              |
+|                     **[_mixins.scss](_mixins.scss)** | General-use SASS `@mixin` definitions                 |
+| **[controls/_buttons.scss](controls/_buttons.scss)** | Definitions supporting button controls                |
+|     **[controls/_grids.scss](controls/_grids.scss)** | Definitions supporting grid controls                  |
+|     **[controls/_lists.scss](controls/_lists.scss)** | Definitions supporting lists and list elements        |
+|   **[controls/_panels.scss](controls/_panels.scss)** | Definitions supporting panel elements                 |
+|     **[controls/_popup.scss](controls/_popup.scss)** | Definitions supporting pop-up elements                |
+|   **[controls/_shapes.scss](controls/_shapes.scss)** | Definitions supporting shaped elements                |
+|   **[controls/_tables.scss](controls/_tables.scss)** | Definitions supporting tables and table elements      |
+|     **[layouts/_header.scss](layouts/_header.scss)** | Shared definitions used in `layouts/header/*`         |
+|   **[layouts/_overlay.scss](layouts/_overlay.scss)** | Shared definitions supporting `layouts/_overlay.scss` |
+|     **[feature/_images.scss](feature/_images.scss)** | Shared definitions supporting `feature/_images.scss`  |
+|       **[feature/_model.scss](feature/_model.scss)** | Shared definitions supporting `feature/_model.scss`   |
 
 ## Implementation Notes
 

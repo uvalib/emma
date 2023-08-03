@@ -270,20 +270,26 @@ class SearchCall < ApplicationRecord
     JSON_COLUMN_PARAMETERS.values.flat_map(&:to_a).sort.uniq.to_h
 
   # ===========================================================================
-  # :section:
+  # :section: ApplicationRecord overrides
   # ===========================================================================
 
   public
 
   # Create a new instance.
   #
-  # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
+  # @param [SearchCall, Hash, nil] attr
   #
   # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
     super(attr, &block)
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Produce a value that can be used for SearchController URL parameters.
   #
@@ -321,12 +327,12 @@ class SearchCall < ApplicationRecord
 
   # Update database fields, including the structured contents of JSON fields.
   #
-  # @param [SearchCall, Hash, ActionController::Parameters, nil] attributes
+  # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
   #
   # @return [void]
   #
-  def assign_attributes(attributes)
-    attr = normalize_attributes(attributes)
+  def assign_attributes(attr)
+    attr = normalize_attributes(attr)
     attr.except!(:id)
     super(attr)
   end

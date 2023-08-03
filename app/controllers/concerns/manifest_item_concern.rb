@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Support methods for the "/manifest_item" controller.
 #
+# @!method model_options
+#   @return [ManifestItem::Options]
+#
 # @!method paginator
 #   @return [ManifestItem::Paginator]
 #

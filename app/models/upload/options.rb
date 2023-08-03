@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+# URL parameter options related to Upload records.
+#
 class Upload::Options < Options
 
   # include UploadWorkflow::Properties # NOTE: This ends up being problematic.

@@ -10,7 +10,7 @@ module TestHelper::Utility
   include TestHelper::Common
 
   # ===========================================================================
-  # :section:
+  # :section: Users
   # ===========================================================================
 
   public
@@ -45,7 +45,18 @@ module TestHelper::Utility
     users.map! { |u| (u == :anonymous) ? nil : u }
   end
 
-  # The number of fixture records for the given model.
+  # ===========================================================================
+  # :section: Fixtures
+  # ===========================================================================
+
+  public
+
+  # The number of fixture records for the indicated model and constraints which
+  # are associated with an organization.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Org, User, Integer, nil]                  org
+  # @param [Hash]                                     constraints
   #
   # @param [Symbol, String, Class, Model] model
   #
@@ -55,6 +66,12 @@ module TestHelper::Utility
     name = controller_name(model).to_s.pluralize
     @loaded_fixtures[name]&.size || 0
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Extract the EMMA index entry identifier from the item.
   #

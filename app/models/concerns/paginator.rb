@@ -135,7 +135,7 @@ class Paginator
   #
   # @param [ApplicationController, nil] ctrlr
   # @param [ActionDispatch::Request]    request
-  # @param [Hash]                       opt         From `#request_parameters`.
+  # @param [Hash]                       opt         From #request_parameters
   #
   def initialize(ctrlr = nil, request: nil, **opt)
 

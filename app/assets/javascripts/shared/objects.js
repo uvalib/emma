@@ -265,7 +265,7 @@ export function objectEntries(item) {
 // ============================================================================
 
 /**
- * Indicate whether two objects are effective the same.
+ * Indicate whether two objects are effectively the same.
  *
  * @param {array|object|any} item1
  * @param {array|object|any} item2

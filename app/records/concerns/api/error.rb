@@ -193,6 +193,7 @@ class Api::Error < ExecError
     def error_config
       @error_config ||=
         [:api, service].compact.reduce({}) do |result, config_section|
+          # noinspection RubyMismatchedArgumentType
           result.merge!(I18n.t("emma.error.#{config_section}", default: {}))
         end
     end

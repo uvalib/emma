@@ -97,8 +97,6 @@ appSetup(PATH, function() {
      * Updates the URL and Turbolinks page cache without navigating.
      *
      * @param {string} url
-     *
-     * @see http://www.modernmpa.com/turbolinks.html
      */
     function updatePageUrl(url) {
         // noinspection JSVoidFunctionReturnValueUsed

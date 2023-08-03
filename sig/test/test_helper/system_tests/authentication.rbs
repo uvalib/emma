@@ -7,11 +7,11 @@ module TestHelper::SystemTests::Authentication
 
   # Sign in as one of the pre-configured users.
   #
-  # @param [String, Symbol, User, nil] user_name
+  # @param [String, Symbol, User, nil] user
   #
   # @raise [Minitest::Assertion]
   #
   # @return [true]
   #
-  def sign_in_as: ((String|Symbol|User|nil) user_name) -> true
+  def sign_in_as: ((String|Symbol|User|nil) user) -> true
 end

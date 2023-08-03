@@ -43,7 +43,7 @@ AppDebug.file('shared/database', MODULE, DEBUG);
  * @typedef {object} StoreTemplate
  *
  * @property {IDBObjectStoreParameters}           options
- * @property {Object.<string,DbRecordProperties>} record,
+ * @property {Object.<string,DbRecordProperties>} record
  */
 
 /**

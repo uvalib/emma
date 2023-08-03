@@ -48,14 +48,14 @@ module Record::FileData
 
   # generate_file_data
   #
-  # @param [String, Hash, ActionController::Parameters, Model, nil] data
-  # @param [String, Hash, ActionController::Parameters, Model, nil] attr
+  # @param [Hash, String, nil] data
+  # @param [Hash, String, nil] attr
   #
   # @return [Hash]
   #
   # @note Currently unused.
   #
-  def generate_file_data: (Model|prmHash|String|nil data, Model|prmHash|String|nil attr) -> symHash
+  def generate_file_data: ((anyHash|String|nil) data, (anyHash|String|nil) attr) -> symHash
 
   # Class methods automatically added to the including record class.
   #
@@ -69,7 +69,7 @@ module Record::FileData
   module InstanceMethods
     include Record::FileData
 
-    def generate_file_data: (Model|prmHash|String|nil data, Model|prmHash|String|nil attr) -> symHash
+    def generate_file_data: ((anyHash|String|nil) data, (anyHash|String|nil) attr) -> symHash
 
     # Present :file_data as a structured object (if it is present).
     #

@@ -87,7 +87,7 @@ module Field
   # @option entry [String]         :placeholder   Input area placeholder text.
   # @option entry [Symbol, String] :type          See Usage Notes [1]
   # @option entry [String]         :origin
-  # @option entry [String]         :role
+  # @option entry [Symbol]         :role
   #
   # @return [Hash]
   #

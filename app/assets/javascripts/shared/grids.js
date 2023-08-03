@@ -943,7 +943,6 @@ function logGridEventAnalysis(result, event, key, caller) {
     const prop = {
         eventPhase:       phase(event),
         cancelable:       event.cancelable,
-        cancelBubble:     event.cancelBubble,
         defaultPrevented: event.defaultPrevented,
     };
     const log_values = (obj) => {
@@ -967,7 +966,6 @@ function logGridEventAnalysis(result, event, key, caller) {
 function logGridEventEnd(event, key, caller) {
     const func = caller || 'logGridEventEnd';
     const msg  = key ? keyFormat(`${func}: key`, key) : [`${func}:`];
-    OUT.debug(...msg, 'cancelBubble     ->', event.cancelBubble);
     OUT.debug(...msg, 'defaultPrevented ->', event.defaultPrevented);
     OUT.debug(`*** ${''.padEnd(72,'^')} ***`);
 }

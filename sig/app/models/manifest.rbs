@@ -37,19 +37,19 @@ class Manifest < ApplicationRecord
   # Mark associated ManifestItem records as saved while renumbering their rows.
   #
   # @param [DateTime, nil] timestamp  Default: time now.
-  # @param [Hash]          opt        Manifest field values to update.
+  # @param [Hash]          attr       Manifest field values to update.
   #
   # @return [self]
   #
-  def save_changes!: (?(DateTime|nil) timestamp, **untyped opt) -> self
+  def save_changes!: (?(DateTime|nil) timestamp, **untyped attr) -> self
 
   # Back out of provisional ManifestItem changes.
   #
-  # @param [Hash] opt                 Manifest field values to update.
+  # @param [Hash] attr                Manifest field values to update.
   #
   # @return [self]
   #
-  def cancel_changes!: (**untyped opt) -> self
+  def cancel_changes!: (**untyped attr) -> self
 
   # label
   #

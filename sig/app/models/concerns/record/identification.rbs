@@ -108,7 +108,7 @@ module Record::Identification
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Integer, Hash, Model, Any] item
+  # @param [String, Integer, Hash, Model, *] item
   # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:

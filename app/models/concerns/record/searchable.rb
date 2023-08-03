@@ -45,7 +45,7 @@ module Record::Searchable
   # @return [Symbol, nil]
   #
   def state_column(*)
-    Log.debug "#{__method__}: not defined for #{self_class}"
+    Log.debug { "#{__method__}: not defined for #{self_class}" }
   end
 
   # ===========================================================================

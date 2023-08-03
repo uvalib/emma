@@ -31,7 +31,7 @@ class SearchResult < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [SearchResult, Hash, ActionController::Parameters, nil] attr
+  # @param [SearchResult, Hash, nil] attr
   #
   # @note - for dev traceability
   #
@@ -47,11 +47,11 @@ class SearchResult < ApplicationRecord
 
   # Update database fields...
   #
-  # @param [SearchResult, Hash, ActionController::Parameters, nil] attributes
+  # @param [SearchResult, Hash, nil] attr
   #
   # @return [void]
   #
-  def assign_attributes(attributes)
+  def assign_attributes(attr)
     __debug_items(binding)
     super
   end

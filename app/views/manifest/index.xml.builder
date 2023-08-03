@@ -11,7 +11,7 @@ xml.instruct!
 xml.manifests do
   xml.timestamp DateTime.now
   xml.count     list.size
-  list.each do |manifest|
-    xml << render('manifest/details', manifest: manifest)
+  list.each do |item|
+    xml << render('manifest/details', manifest: item)
   end
 end

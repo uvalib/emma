@@ -19,13 +19,13 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'account index - list all user accounts' do
-    return if not_applicable 'TODO: account/index'
+    return if not_applicable 'account/index' # TODO: account/index
     get account_index_url
     assert_response :success
   end
 
   test 'account show - details of an existing user account' do
-    return if not_applicable 'TODO: account/show'
+    return if not_applicable 'account/show' # TODO: account/show
     get show_account_url(@user)
     assert_response :success
   end
@@ -35,13 +35,13 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'account new - user account form' do
-    return if not_applicable 'TODO: account/new'
+    return if not_applicable 'account/new' # TODO: account/new
     get new_account_url
     assert_response :success
   end
 
   test 'account create - a new user account' do
-    return if not_applicable 'TODO: account/create'
+    return if not_applicable 'account/create' # TODO: account/create
     assert_difference('User.count') do
       post create_account_url, params: { user: {  } }
     end
@@ -49,19 +49,19 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'account edit - user account edit form' do
-    return if not_applicable 'TODO: account/edit'
+    return if not_applicable 'account/edit' # TODO: account/edit
     get edit_account_url(@user)
     assert_response :success
   end
 
   test 'account update - modify an existing user account' do
-    return if not_applicable 'TODO: account/update'
+    return if not_applicable 'account/update' # TODO: account/update
     patch update_account_url(@user), params: { user: {  } }
     assert_redirected_to show_account_url(@user)
   end
 
   test 'account destroy - remove an existing user account' do
-    return if not_applicable 'TODO: account/destroy'
+    return if not_applicable 'account/destroy' # TODO: account/destroy
     assert_difference('User.count', -1) do
       delete destroy_account_url(@user)
     end

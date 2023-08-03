@@ -90,6 +90,7 @@ def js(arg)
   result.gsub!('\u003c', '<') # Undo JSONGemEncoder::ESCAPED_CHARS
   result.gsub!('\u0026', '&') # Undo JSONGemEncoder::ESCAPED_CHARS
   result.gsub!(/\\"/, '%5C%22')
+  # noinspection RubyMismatchedReturnType
   result
 end
 

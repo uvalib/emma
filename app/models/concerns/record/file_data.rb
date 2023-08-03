@@ -84,15 +84,14 @@ module Record::FileData
 
   # generate_file_data
   #
-  # @param [String, Hash, ActionController::Parameters, Model, nil] data
-  # @param [String, Hash, ActionController::Parameters, Model, nil] attr
+  # @param [Hash, String, nil] data
+  # @param [Hash, String, nil] attr
   #
   # @return [Hash]
   #
   # @note Currently unused.
   #
   def generate_file_data(data, attr)
-    # noinspection RubyMismatchedArgumentType
     data = parse_file_data(data)
     afd  = parse_file_data(attr&.dig(:file_data))
     data.merge!(afd)

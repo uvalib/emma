@@ -330,6 +330,7 @@ body.manifest.edit:not(.select) {
             }
         }
 
+        // noinspection CssOverwrittenProperties
         > .comm-status {
 
             display:     block;
@@ -338,7 +339,7 @@ body.manifest.edit:not(.select) {
             font-size:   larger;
             color:       $uva-emergency-red;
 
-            $statuses: offline, dynamic; // ManifestDecorator::STATUS_MESSAGE
+            $statuses:   offline, dynamic; // ManifestDecorator::STATUS_MESSAGE
 
             @each $status in $statuses {
                 &.#{$status} {

@@ -95,6 +95,7 @@ module CssHelper
       classes.unshift(html_opt) if html_opt.present?
       html_opt = {}
     end
+    # noinspection RubyMismatchedArgumentType
     append_css!(html_opt, *classes, &block)
   end
 
@@ -147,6 +148,7 @@ module CssHelper
       classes.unshift(html_opt) if html_opt.present?
       html_opt = {}
     end
+    # noinspection RubyMismatchedArgumentType
     prepend_css!(html_opt, *classes, &block)
   end
 

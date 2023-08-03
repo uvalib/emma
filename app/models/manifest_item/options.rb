@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+# URL parameter options related to ManifestItem records.
+#
 class ManifestItem::Options < Options
 
   include Record::Properties

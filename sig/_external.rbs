@@ -164,15 +164,27 @@ module ActiveRecord
 
   # NOTE: overrides .gem_rbs_collection/activerecord/7.0/activerecord-generated.rbs
   module FinderMethods
+    def find
+      : (Integer|String        args) -> (ActiveRecord::Base | nil)
+      | (Array[Integer|String] args) -> Array[ActiveRecord::Base]
+      | (*(Integer|String)     args) -> Array[ActiveRecord::Base]
+    def find_by:  (untyped arg, *untyped args) -> (ActiveRecord::Base | nil)
+    def find_by!: (untyped arg, *untyped args) -> ActiveRecord::Base
+
     def take
-      : (?nil    limit) -> (untyped | nil)
-      | (Integer limit) -> anyArray
+      : (?nil    limit) -> (ActiveRecord::Base | nil)
+      | (Integer limit) -> Array[ActiveRecord::Base]
+    def take!: () -> ActiveRecord::Base
+
     def first
-      : (?nil    limit) -> (untyped | nil)
-      | (Integer limit) -> anyArray
+      : (?nil    limit) -> (ActiveRecord::Base | nil)
+      | (Integer limit) -> Array[ActiveRecord::Base]
+    def first!: () -> ActiveRecord::Base
+
     def last
-      : (?nil    limit) -> (untyped | nil)
-      | (Integer limit) -> anyArray
+      : (?nil    limit) -> (ActiveRecord::Base | nil)
+      | (Integer limit) -> Array[ActiveRecord::Base]
+    def last!: () -> ActiveRecord::Base
   end
 
   # NOTE: overrides .gem_rbs_collection/activerecord/7.0/activerecord-generated.rbs
@@ -266,6 +278,7 @@ end
 module Capybara
   module Node
     module Actions
+      def select: (?String? value, ?from: untyped|nil, **untyped options) -> Capybara::Node::Element
     end
     class Base
     end

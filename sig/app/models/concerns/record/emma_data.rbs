@@ -63,25 +63,25 @@ module Record::EmmaData
 
   # parse_emma_data
   #
-  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
   # @param [Boolean] allow_blank
   #
   # @return [Hash]
   #
   # @note From Upload::EmmaDataMethods#parse_emma_data
   #
-  def parse_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> symHash
+  def parse_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, ?bool allow_blank) -> symHash
 
   # generate_emma_data
   #
-  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
-  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] attr
+  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
+  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] attr
   #
   # @return [Hash]
   #
   # @note From Upload#assign_attributes (sorta)
   #
-  def generate_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, (prmHash|String|Model|Search::Record::MetadataRecord|nil) attr) -> symHash
+  def generate_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, (Search::Record::MetadataRecord|Model|anyHash|String|nil) attr) -> symHash
 
   # Class methods automatically added to the including record class.
   #
@@ -101,7 +101,7 @@ module Record::EmmaData
 
     # @see Record::EmmaData#generate_emma_data
     #
-    def generate_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, ?(prmHash|String|Model|Search::Record::MetadataRecord|nil) attr) -> symHash
+    def generate_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, (Search::Record::MetadataRecord|Model|anyHash|String|nil) attr) -> symHash
 
     # Present :emma_data as a structured object (if it is present).
     #

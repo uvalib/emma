@@ -641,7 +641,6 @@ export class NavGroup extends BaseClass {
             this._debug(`*** ${''.padEnd(72,'v')} ***`);
             this._debug(...msg, 'eventPhase       =', phase(event));
             this._debug(...msg, 'cancelable       =', event.cancelable);
-            this._debug(...msg, 'cancelBubble     =', event.cancelBubble);
             this._debug(...msg, 'defaultPrevented =', event.defaultPrevented);
             this._debug(...msg, 'this     =', this);
             this._debug(...msg, '$tgt     =', $tgt);
@@ -865,7 +864,6 @@ export class NavGroup extends BaseClass {
         const prop = {
             eventPhase:       phase(event),
             cancelable:       event.cancelable,
-            cancelBubble:     event.cancelBubble,
             defaultPrevented: event.defaultPrevented,
         };
         const log_values = (obj) => {
@@ -889,7 +887,6 @@ export class NavGroup extends BaseClass {
     _logGroupEventEnd(event, key, caller) {
         const func = caller || '_logGroupEventEnd';
         const msg  = key ? keyFormat(`${func}: key`, key) : [`${func}:`];
-        this._debug(...msg, 'cancelBubble     ->', event.cancelBubble);
         this._debug(...msg, 'defaultPrevented ->', event.defaultPrevented);
         this._debug(`*** ${''.padEnd(72,'^')} ***`);
     }

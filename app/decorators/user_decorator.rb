@@ -142,7 +142,7 @@ class UserDecorator < AccountDecorator
     # help_topic
     #
     # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
-    # @param [Symbol, nil] topic      Default: `model_type`.
+    # @param [Symbol, nil] topic      Default: #model_type.
     #
     # @return [Array<Symbol>]
     #

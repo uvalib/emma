@@ -717,6 +717,7 @@ module SubmissionService::Action::Submit
     success   = opt.dig(:initial, :success) || records
 
     if wait
+      # noinspection RubyMismatchedArgumentType
       while remaining.present? && sleep(wait)
         done = []
         remaining.each_pair do |id, rec|

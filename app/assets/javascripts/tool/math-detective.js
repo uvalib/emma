@@ -367,8 +367,8 @@ export function setupFor(root) {
     /**
      * Display the error output container.
      *
-     * @param {string}  message?
-     * @param {boolean} no_equations?
+     * @param {string}  [message]
+     * @param {boolean} [no_equations]
      */
     function showError(message, no_equations) {
         const $message      = $error.find('.error-message');

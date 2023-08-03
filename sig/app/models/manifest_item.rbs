@@ -56,13 +56,13 @@ class ManifestItem < ApplicationRecord
 
   # Override to regenerate the :field_error field if indicated.
   #
-  # @param [Model, Hash, ActionController::Parameters, nil] attributes
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
   #
-  # @option attributes [Boolean] :re_validate
+  # @option attr [Boolean] :re_validate
   #
   # @return [void]
   #
-  def assign_attributes: ((Model|prmHash|nil) attributes) -> void
+  def assign_attributes: ((Model|prmHash|nil) attr) -> void
 
   # Mark the record as saved.
   #

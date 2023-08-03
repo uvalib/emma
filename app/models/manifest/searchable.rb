@@ -25,7 +25,7 @@ module Manifest::Searchable
   # @return [nil]
   #
   def pagination_column
-    Log.debug "#{__method__}: not defined for #{self_class}"
+    Log.debug { "#{__method__}: not defined for #{self_class}" }
   end
 
   # ===========================================================================

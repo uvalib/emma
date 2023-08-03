@@ -1,5 +1,8 @@
 # Support methods for the "/search" controller.
 #
+# @!method paginator
+#   @return [SearchPaginator]
+#
 module SearchConcern
   extend ActiveSupport::Concern
 

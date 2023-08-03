@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Support methods for the "/upload" controller.
 #
+# @!method model_options
+#   @return [Upload::Options]
+#
 # @!method paginator
 #   @return [Upload::Paginator]
 #
@@ -264,7 +267,7 @@ module UploadConcern
 
   # Return with the specified Upload record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Upload, nil] id   Default: UploadConcern#identifier.
+  # @param [String, Integer, Hash, Upload, *] item  Default: #identifier.
   #
   # @raise [UploadWorkflow::SubmitError]    If *item* not found.
   #

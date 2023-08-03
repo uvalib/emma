@@ -1,3 +1,5 @@
+# Parameters for pagination of lists of Upload records.
+#
 class Upload::Paginator < Paginator
   def initialize: (?(ApplicationController|nil) ctrlr, **untyped opt) -> void
 

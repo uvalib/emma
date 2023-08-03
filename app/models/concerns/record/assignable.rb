@@ -206,7 +206,7 @@ module Record::Assignable
 
     # Create a new instance.
     #
-    # @param [Model, Hash, ActionController::Parameters, nil] attr
+    # @param [Model, Hash, nil] attr
     #
     # @return [void]
     #
@@ -218,15 +218,15 @@ module Record::Assignable
 
     # Update database fields, including the structured contents of JSON fields.
     #
-    # @param [Model, Hash, ActionController::Parameters, nil] attributes
+    # @param [Model, Hash, ActionController::Parameters, nil] attr
     #
     # @return [void]
     #
     # @see #normalize_attributes
     # @see ActiveModel::AttributeAssignment#assign_attributes
     #
-    def assign_attributes(attributes)
-      attr = normalize_attributes(attributes)
+    def assign_attributes(attr)
+      attr = normalize_attributes(attr)
       opt  = attr.delete(:attr_opt) || {}
       set_model_options(opt[:options])
       super(attr)

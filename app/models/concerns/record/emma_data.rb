@@ -110,7 +110,7 @@ module Record::EmmaData
 
   # parse_emma_data
   #
-  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
   # @param [Boolean] allow_blank
   #
   # @return [Hash]
@@ -170,8 +170,8 @@ module Record::EmmaData
 
   # generate_emma_data
   #
-  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
-  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] attr
+  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
+  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] attr
   #
   # @return [Hash]
   #
@@ -237,7 +237,6 @@ module Record::EmmaData
     # @see Record::EmmaData#generate_emma_data
     #
     def generate_emma_data(data, attr = nil)
-      # noinspection RubyMismatchedArgumentType
       super(data, (attr || self))
     end
 

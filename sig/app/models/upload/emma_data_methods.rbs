@@ -140,10 +140,10 @@ module Upload::EmmaDataMethods
 
   # parse_emma_data
   #
-  # @param [Search::Record::MetadataRecord, String, Hash, ActionController::Parameters, Model, nil] data
+  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
   # @param [Boolean] allow_blank
   #
   # @return [Hash]
   #
-  def parse_emma_data: ((prmHash|String|Model|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> symHash
+  def parse_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, ?bool allow_blank) -> symHash
 end

@@ -520,6 +520,8 @@ unless ONLY_FOR_DOCUMENTATION
   def unlock_url(...);                             end
   def update_account_path(...);                    end
   def update_account_url(...);                     end
+  def update_admin_path(...);                      end
+  def update_admin_url(...);                       end
   def update_manifest_item_path(...);              end
   def update_manifest_item_url(...);               end
   def update_manifest_path(...);                   end

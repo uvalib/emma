@@ -46,7 +46,7 @@ module ManifestItem::Config
   # @param [*, nil] item
   # @param [Symbol] from
   #
-  # @return [*, self]
+  # @return [*, ManifestItem]
   #
   def default_to_self
     :     (nil item, ?from: Symbol|nil) -> ManifestItem

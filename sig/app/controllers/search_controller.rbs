@@ -5,6 +5,8 @@
 # @see file:app/views/search/**
 #
 class SearchController < ApplicationController
+  include UserConcern
+
   include ParamsConcern
 
   include SessionConcern

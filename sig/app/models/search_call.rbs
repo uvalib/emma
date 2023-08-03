@@ -48,11 +48,11 @@ class SearchCall < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
+  # @param [SearchCall, Hash, nil] attr
   #
   # @note - for dev traceability
   #
-  def initialize: (?(SearchCall|prmHash|nil) attr) ?{ () -> untyped } -> void
+  def initialize: (?(SearchCall|anyHash|nil) attr) ?{ () -> untyped } -> void
 
   # Produce a value that can be used for SearchController URL parameters.
   #
@@ -62,11 +62,11 @@ class SearchCall < ApplicationRecord
 
   # Update database fields, including the structured contents of JSON fields.
   #
-  # @param [SearchCall, Hash, ActionController::Parameters, nil] attributes
+  # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
   #
   # @return [void]
   #
-  def assign_attributes: ((SearchCall|prmHash|nil) attributes) -> void
+  def assign_attributes: ((SearchCall|prmHash|nil) attr) -> void
 
   # Called to prepare values to be used for assignment to record attributes.
   #

@@ -93,24 +93,24 @@ module Record::Assignable
 
     # Create a new instance.
     #
-    # @param [Model, Hash, ActionController::Parameters, nil] attr
+    # @param [Model, Hash, nil] attr
     #
     # @return [void]
     #
     # @note - for dev traceability
     #
-    def initialize: (?(Model|prmHash|nil) attr) ?{ () -> untyped } -> void
+    def initialize: (?(Model|anyHash|nil) attr) ?{ () -> untyped } -> void
 
     # Update database fields, including the structured contents of JSON fields.
     #
-    # @param [Model, Hash, ActionController::Parameters, nil] attributes
+    # @param [Model, Hash, ActionController::Parameters, nil] attr
     #
     # @return [void]
     #
     # @see #normalize_attributes
     # @see ActiveModel::AttributeAssignment#assign_attributes
     #
-    def assign_attributes: ((Model|prmHash|nil) attributes) -> void
+    def assign_attributes: ((Model|prmHash|nil) attr) -> void
   end
 
   private

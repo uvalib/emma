@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Support methods for the "/search" controller.
 #
+# @!method paginator
+#   @return [SearchPaginator]
+#
 module SearchConcern
 
   extend ActiveSupport::Concern

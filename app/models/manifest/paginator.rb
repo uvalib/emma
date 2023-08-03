@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+# Parameters for pagination of lists of Manifest records.
+#
 class Manifest::Paginator < Paginator
 
   # ===========================================================================

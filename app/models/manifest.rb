@@ -69,17 +69,17 @@ class Manifest < ApplicationRecord
   # Mark associated ManifestItem records as saved while renumbering their rows.
   #
   # @param [DateTime, nil] timestamp  Default: time now.
-  # @param [Hash]          opt        Manifest field values to update.
+  # @param [Hash]          attr       Manifest field values to update.
   #
   # @return [self]
   #
-  def save_changes!(timestamp = nil, **opt)
+  def save_changes!(timestamp = nil, **attr)
     timestamp ||= DateTime.now
     manifest_items.to_delete.destroy_all
     manifest_items.each.with_index(1) do |record, row|
       record.save_changes!(timestamp, row: row, delta: 0)
     end
-    update!(opt)
+    update!(attr)
     self
   end
 
@@ -88,7 +88,7 @@ class Manifest < ApplicationRecord
   # If the Manifest has no items then it is destroyed (the assumption being
   # that this was a new Manifest that has been abandoned).
   #
-  # @param [Hash] opt                 Manifest field values to update.
+  # @param [Hash] attr                Manifest field values to update.
   #
   # @return [self]
   #
@@ -96,13 +96,13 @@ class Manifest < ApplicationRecord
   # Items which were added and then deleted since the last save are in the
   # :never_saved scope but *not* the :incomplete scope.
   #
-  def cancel_changes!(**opt)
+  def cancel_changes!(**attr)
     manifest_items.never_saved.destroy_all
     if manifest_items.empty?
       destroy!
     else
       manifest_items.each(&:cancel_changes!)
-      update!(opt) if opt.present?
+      update!(attr) if attr.present?
     end
     self
   end

@@ -5,6 +5,7 @@
 
 require 'test_helper'
 
+# noinspection RubyJumpError
 class DataControllerTest < ActionDispatch::IntegrationTest
 
   # ===========================================================================
@@ -12,8 +13,7 @@ class DataControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'data index' do
-    # noinspection RubyJumpError
-    return if not_applicable 'TODO: data/index'
+    return if not_applicable 'data/index' # TODO: data/index
     get data_index_url
     assert_response :success
   end

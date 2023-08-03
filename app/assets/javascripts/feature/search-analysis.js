@@ -979,7 +979,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @type {jQuery}
          * @protected
          *
-         * @see {@link $buttons}()
+         * @see $buttons
          */
         _feature_buttons;
 

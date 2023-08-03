@@ -158,7 +158,7 @@ module Record::Debugging
 
       # Create a new instance.
       #
-      # @param [Model, Hash, ActionController::Parameters, nil] attr
+      # @param [Model, Hash, nil] attr
       #
       def initialize(attr = nil, &block)
         ldr = "new #{self.class.base_class.name.underscore.upcase} RECORD"

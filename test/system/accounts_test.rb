@@ -5,6 +5,7 @@
 
 require 'application_system_test_case'
 
+# noinspection RubyJumpError
 class AccountsTest < ApplicationSystemTestCase
 
   TEST_USER = :test_dso
@@ -18,13 +19,14 @@ class AccountsTest < ApplicationSystemTestCase
   # ===========================================================================
 
   test 'accounts - visit index' do
+    return if not_applicable 'test account/index' # TODO: test account/index
     run_test(__method__) do
 
       visit account_index_url
       assert_valid_page 'EMMA User Accounts'
       # ...
 
-    end unless not_applicable 'TODO: test account/index'
+    end
   end
 
   # ===========================================================================
@@ -32,33 +34,36 @@ class AccountsTest < ApplicationSystemTestCase
   # ===========================================================================
 
   test 'accounts - creating a user account' do
+    return if not_applicable 'test account/new' # TODO: test account/new
     run_test(__method__) do
 
       visit account_index_url
       click_on 'Create'
       # ...
 
-    end unless not_applicable 'TODO: test account/new'
+    end
   end
 
   test 'accounts - updating a user account' do
+    return if not_applicable 'test account/edit' # TODO: test account/edit
     run_test(__method__) do
 
       visit account_index_url
       click_on 'Change'
       # ...
 
-    end unless not_applicable 'TODO: test account/edit'
+    end
   end
 
   test 'accounts - destroying a user account' do
+    return if not_applicable 'test account/delete' # TODO: test account/delete
     run_test(__method__) do
 
       visit account_index_url
       click_on 'Remove'
       # ...
 
-    end unless not_applicable 'TODO: test account/delete'
+    end
   end
 
 end

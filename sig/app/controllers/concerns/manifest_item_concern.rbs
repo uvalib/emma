@@ -1,5 +1,11 @@
 # Support methods for the "/manifest_item" controller.
 #
+# @!method model_options
+#   @return [ManifestItem::Options]
+#
+# @!method paginator
+#   @return [ManifestItem::Paginator]
+#
 module ManifestItemConcern
   extend ActiveSupport::Concern
 

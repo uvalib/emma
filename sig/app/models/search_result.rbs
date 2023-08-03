@@ -13,17 +13,17 @@ class SearchResult < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [SearchResult, Hash, ActionController::Parameters, nil] attr
+  # @param [SearchResult, Hash, nil] attr
   #
   # @note - for dev traceability
   #
-  def initialize: (?(SearchResult|prmHash|nil) attr) ?{ () -> untyped } -> void
+  def initialize: (?(SearchResult|anyHash|nil) attr) ?{ () -> untyped } -> void
 
   # Update database fields...
   #
-  # @param [SearchResult, Hash, ActionController::Parameters, nil] attributes
+  # @param [SearchResult, Hash, nil] attr
   #
   # @return [void]
   #
-  def assign_attributes: ((SearchResult|prmHash|nil) attributes) -> void
+  def assign_attributes: ((SearchResult|anyHash|nil) attr) -> void
 end

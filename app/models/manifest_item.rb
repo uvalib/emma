@@ -37,7 +37,7 @@ class ManifestItem < ApplicationRecord
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    extend  Record::Describable::ClassMethods
+    extend Record::Describable::ClassMethods
     # :nocov:
   end
 
@@ -112,16 +112,22 @@ class ManifestItem < ApplicationRecord
     super(attr, &block)
   end
 
+  # ===========================================================================
+  # :section: Record::Assignable overrides
+  # ===========================================================================
+
+  public
+
   # Override to regenerate the :field_error field if indicated.
   #
-  # @param [Model, Hash, ActionController::Parameters, nil] attributes
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
   #
-  # @option attributes [Boolean] :re_validate
+  # @option attr [Boolean] :re_validate
   #
   # @return [void]
   #
-  def assign_attributes(attributes)
-    attr = normalize_attributes(attributes)
+  def assign_attributes(attr)
+    attr = normalize_attributes(attr)
     opt  = attr[:attr_opt]&.dup || {}
     super(attr)
     if opt[:re_validate]
