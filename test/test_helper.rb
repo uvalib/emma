@@ -10,7 +10,6 @@ require_relative '../config/environment'
 
 require 'capybara/rails'
 require 'rails/test_help'
-require 'webdrivers'
 
 # If *true* then #show and #show_reflections will produce output on the
 # console.

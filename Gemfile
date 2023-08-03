@@ -173,9 +173,6 @@ group :test do
   gem 'capybara-lockstep'
   gem 'selenium-webdriver'
 
-  # Automatic installation and updates for all supported webdrivers.
-  gem 'webdrivers'
-
   # For test coverage.
   gem 'simplecov'
 
