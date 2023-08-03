@@ -2,14 +2,12 @@
 #
 # @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #
-# IDs are explicitly given here so that :effective_id can be assigned a fixed
-# value in the database.  This allows AuthHelper#stored_auth_fetch to see the
-# :developer entry as an administrator at load time (which allows a convenience
-# "Sign in as" button to be generated for that user).
+# Entries must have names beginning with "test_" because this is expected by
+# User#test_users in order to generate login links for each test user.
 #
-# NOTE: in the test harness use `rake emma:test:users` to extract saved access
-#   tokens from the (local) production database User table in order to supply
-#   them via the environment variables used below.
+# Fake email addresses must be of the form "USER@HOST" where "USER" matches
+# the name of the entry.  (E.g., `test_guest_1.email` must be
+# "test_guest_1@host".)
 
 # =============================================================================
 # Current existing users of interest

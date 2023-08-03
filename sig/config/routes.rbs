@@ -418,10 +418,6 @@ class Object
 
   def show_user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def sign_in_as_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def sign_in_as_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def sign_in_local_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def sign_in_local_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -470,22 +466,6 @@ class Object
 
   def upload_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def user_bookshare_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_bookshare_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_bookshare_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_bookshare_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_shibboleth_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_shibboleth_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_shibboleth_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_shibboleth_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
   def user_registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -501,4 +481,36 @@ class Object
   def welcome_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def welcome_url: (*untyped _ignored) ?{ () -> untyped } -> String
+end
+
+# SIGN_IN_AS
+
+class Object
+  def sign_in_as_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def sign_in_as_url: (*untyped _ignored) ?{ () -> untyped } -> String
+end
+
+# BS_AUTH
+
+class Object
+  def user_bookshare_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_bookshare_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_bookshare_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_bookshare_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
+end
+
+# SHIBBOLETH
+
+class Object
+  def user_shibboleth_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def user_shibboleth_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
 end

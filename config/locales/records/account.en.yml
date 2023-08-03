@@ -72,8 +72,9 @@ en:
 
         effective_id:
           min:          0
-          max:          1
+          max:          0
           label:        'Effective UID'
+          note:         '*** This field is now defunct ***'
           tooltip:      |
             A reference to the record of the user whose authorization
             information is used when connecting to Bookshare.

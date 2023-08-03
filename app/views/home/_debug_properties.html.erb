@@ -12,22 +12,12 @@
 
   view_debug(__FILE__)
 
-  i = 0
-  # noinspection RubyUnusedLocalVariable
   property_values = {
     'current uid'             => current_user&.uid,
-    'effective uid'           => (current_user&.effective_uid  if BS_AUTH),
-    'bookshare uid'           => (current_user&.bookshare_uid  if BS_AUTH),
-    (i += 1)                  => nil,
     'current user'            => current_user,
-    'effective user'          => (current_user&.effective_user if BS_AUTH),
-    'bookshare user'          => (current_user&.bookshare_user if BS_AUTH),
-    (i += 1)                  => nil,
-    'app.local.auth'          => (session['app.local.auth']    if BS_AUTH),
     'omniauth.auth'           => session['omniauth.auth'],
     'omniauth.params'         => session['omniauth.params'],
     'omniauth.state'          => session['omniauth.state'],
-    (i += 1)                  => nil,
     "env['warden']"           => request.env['warden'],
     "env['omniauth.auth']"    => request.env['omniauth.auth'],
     "env['omniauth.origin']"  => request.env['omniauth.origin'],
@@ -38,5 +28,5 @@
 -%>
 
 <%- property_values.each_pair do |name, value| -%>
-  <%= "#{name} = #{value.inspect}" unless name.is_a?(Integer) -%><br/>
+  <%= "#{name} = #{value.inspect}" -%><br/>
 <%- end -%>

@@ -508,8 +508,6 @@ unless ONLY_FOR_DOCUMENTATION
   def show_upload_url(...);                        end
   def show_user_registration_path(...);            end
   def show_user_registration_url(...);             end
-  def sign_in_as_path(...);                        end if SIGN_IN_AS
-  def sign_in_as_url(...);                         end if SIGN_IN_AS
   def sign_in_local_path(...);                     end # /users/sign_in_local
   def sign_in_local_url(...);                      end
   def system_unavailable_path(...);                end
@@ -534,14 +532,6 @@ unless ONLY_FOR_DOCUMENTATION
   def upload_index_url(...);                       end
   def upload_upload_path(...);                     end
   def upload_upload_url(...);                      end
-  def user_bookshare_omniauth_authorize_path(...); end if BS_AUTH
-  def user_bookshare_omniauth_authorize_url(...);  end if BS_AUTH
-  def user_bookshare_omniauth_callback_path(...); end if BS_AUTH
-  def user_bookshare_omniauth_callback_url(...);  end if BS_AUTH
-  def user_shibboleth_omniauth_authorize_path(...); end if SHIBBOLETH
-  def user_shibboleth_omniauth_authorize_url(...);  end if SHIBBOLETH
-  def user_shibboleth_omniauth_callback_path(...); end if SHIBBOLETH
-  def user_shibboleth_omniauth_callback_url(...);  end if SHIBBOLETH
   def user_registration_path(...);                 end
   def user_registration_url(...);                  end
   def version_health_path(...);                    end
@@ -553,21 +543,36 @@ unless ONLY_FOR_DOCUMENTATION
   # :nocov:
 end
 
-unless SIGN_IN_AS
-  def sign_in_as_path(...) = not_implemented
-  def sign_in_as_url(...) = not_implemented
+if !SIGN_IN_AS
+  def sign_in_as_path(...)  = not_implemented
+  def sign_in_as_url(...)   = not_implemented
+elsif !ONLY_FOR_DOCUMENTATION
+  def sign_in_as_path(...); end
+  def sign_in_as_url(...);  end
 end
 
-unless BS_AUTH
-  def user_bookshare_omniauth_authorize_path(...) = not_implemented
-  def user_bookshare_omniauth_authorize_url(...) = not_implemented
-  def user_bookshare_omniauth_callback_path(...) = not_implemented
-  def user_bookshare_omniauth_callback_url(...) = not_implemented
+# noinspection RubyInstanceMethodNamingConvention
+if !BS_AUTH
+  def user_bookshare_omniauth_authorize_path(...)   = not_implemented
+  def user_bookshare_omniauth_authorize_url(...)    = not_implemented
+  def user_bookshare_omniauth_callback_path(...)    = not_implemented
+  def user_bookshare_omniauth_callback_url(...)     = not_implemented
+elsif !ONLY_FOR_DOCUMENTATION
+  def user_bookshare_omniauth_authorize_path(...);  end
+  def user_bookshare_omniauth_authorize_url(...);   end
+  def user_bookshare_omniauth_callback_path(...);   end
+  def user_bookshare_omniauth_callback_url(...);    end
 end
 
-unless SHIBBOLETH
-  def user_shibboleth_omniauth_authorize_path(...) = not_implemented
-  def user_shibboleth_omniauth_authorize_url(...) = not_implemented
-  def user_shibboleth_omniauth_callback_path(...) = not_implemented
-  def user_shibboleth_omniauth_callback_url(...) = not_implemented
+# noinspection RubyInstanceMethodNamingConvention
+if !SHIBBOLETH
+  def user_shibboleth_omniauth_authorize_path(...)  = not_implemented
+  def user_shibboleth_omniauth_authorize_url(...)   = not_implemented
+  def user_shibboleth_omniauth_callback_path(...)   = not_implemented
+  def user_shibboleth_omniauth_callback_url(...)    = not_implemented
+elsif !ONLY_FOR_DOCUMENTATION
+  def user_shibboleth_omniauth_authorize_path(...); end
+  def user_shibboleth_omniauth_authorize_url(...);  end
+  def user_shibboleth_omniauth_callback_path(...);  end
+  def user_shibboleth_omniauth_callback_url(...);   end
 end

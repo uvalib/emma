@@ -279,17 +279,6 @@ BOOKSHARE_AUTH_URL =
      .sub(%r{/+$}, '')
      .freeze
 
-# Users with pre-generated OAuth tokens for development purposes.
-#
-# The environment variable should be in a format acceptable to #json_parse
-# (either JSON or a rendering of a Ruby hash).
-#
-# @type [String, nil]
-#
-# @see AuthConcern#CONFIGURED_AUTH
-#
-BOOKSHARE_TEST_AUTH = ENV.fetch('BOOKSHARE_TEST_AUTH', nil).freeze
-
 # =============================================================================
 # Internet Archive access
 # =============================================================================

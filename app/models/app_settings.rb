@@ -123,9 +123,8 @@ class AppSettings < AppGlobal
     nil,
 
     # === Bookshare OAuth2 service
-    (BS_AUTH ? :BOOKSHARE_AUTH_URL  : :skip),
-    (BS_AUTH ? :BOOKSHARE_TEST_AUTH : :skip),
-    (BS_AUTH ? nil                  : :skip),
+    (BS_AUTH ? :BOOKSHARE_AUTH_URL : :skip),
+    (BS_AUTH ? nil                 : :skip),
 
     # === Internet Archive
     :IA_DOWNLOAD_BASE_URL,

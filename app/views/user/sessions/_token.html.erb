@@ -4,6 +4,8 @@
   # (copied from an independent browser tab which is logged-in to a deployed
   # instance of the service).
 
+  view_abort(__FILE__, 'NOT EXPECTED TO BE USED') unless BS_AUTH
+
   return unless SIGN_IN_AS
   return unless session_debug? || dev_client?
 

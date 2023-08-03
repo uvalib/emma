@@ -75,12 +75,10 @@ class User::SessionsController < Devise::SessionsController
   # Begin login session.
   #
   # @see #user_session_path           Route helper
-  # _see AuthConcern#update_auth_data                                           # if BS_AUTH
   #
   def create
     __debug_route
     __debug_request
-    update_auth_data if BS_AUTH
     self.resource = warden.authenticate!(auth_options)
     __log_activity("LOGIN #{resource}")
     remember_dev(resource)

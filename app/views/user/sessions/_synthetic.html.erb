@@ -8,20 +8,17 @@
   view_debug(__FILE__)
 
   p_opt = { fast: Rails.env.test? }.compact_blank!
-  links = BS_AUTH ? stored_auth(true).keys : User.test_users.keys
-  # noinspection RubyMismatchedReturnType
-  links.map! { |uid|
+  links = User.test_users.keys.map { |uid|
     user  = html_tag(:strong, uid)
     label = get_sessions_label(:sign_in_as, user: user).html_safe
     path  = sign_in_as_path(id: uid, **p_opt)
     [label, path]
-  }
+  }.to_h
 
-  link_opt = { class: 'sign-in-link', role: 'button' }
-  link_opt[:'data-turbolinks'] = false
+  opt = { class: 'sign-in-link', role: 'button', 'data-turbolinks': false }
 
 -%>
 
-<%- links.each do |label, path| -%>
-  <%= make_link(label, path, **link_opt) %>
+<%- links.each_pair do |label, path| -%>
+  <%= make_link(label, path, **opt) %>
 <%- end -%>

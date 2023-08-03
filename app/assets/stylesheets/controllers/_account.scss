@@ -38,25 +38,7 @@
     // Elements
     //=========================================================================
 
-    %effective-user {
-        font-weight: bold;
-        color:       $uva-emergency-red;
-    }
-
-    .label {
-        &.field-EffectiveId,
-        &.field-EffectiveUid {
-            @extend %effective-user;
-        }
-    }
-
     .value {
-
-        &.field-EffectiveId,
-        &.field-EffectiveUid {
-            @extend %effective-user;
-        }
-
         &.field-EmmaRoles {
 
             margin: 0;

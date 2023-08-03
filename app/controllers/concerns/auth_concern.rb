@@ -26,28 +26,6 @@ module AuthConcern
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # A table of pre-authorized user/token pairs for development purposes.        # if BS_AUTH
-  # (Not generated for non-Rails-application executions.)
-  #
-  # Tokens are taken from the User table entries that have an :access_token
-  # value.  If ENV['BOOKSHARE_TEST_AUTH'] is supplied, it is used to prime (or
-  # update) database table.
-  #
-  # @type [Hash{String=>String}, nil]
-  #
-  CONFIGURED_AUTH ||=
-    if BS_AUTH && rails_application?
-      updates = json_parse(BOOKSHARE_TEST_AUTH).presence
-      stored_auth_update(updates) if updates
-      stored_auth_fetch.deep_freeze
-    end
-
-  # ===========================================================================
   # :section: Devise::Controllers::Helpers overrides
   # ===========================================================================
 
@@ -203,23 +181,6 @@ module AuthConcern
     user
   end
 
-  # Generate the authentication data to be associated with the given user.      # if BS_AUTH
-  #
-  # @param [User, String, Integer, *] user  Default: `#current_user`.           # if BS_AUTH
-  #
-  # @return [OmniAuth::AuthHash, nil]
-  #
-  def update_auth_data(user = nil)
-    session['app.local.auth'] = nil
-    user ||= current_user
-    user &&= User.find_record(user) unless user.is_a?(User)
-    if user && !user.is_bookshare_user?
-      session['app.local.auth'] = auth_hash(user)
-      session['omniauth.auth']  = auth_hash(user.bookshare_user)
-    end
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
-
   # Terminate the local login session ('omniauth.auth').                        # unless BS_AUTH
   #
   # Terminate the local login session ('omniauth.auth') and the session with    # if BS_AUTH
@@ -237,10 +198,9 @@ module AuthConcern
     return unless BS_AUTH
     no_revoke_reason =
       case
-        when auth.blank?      then 'NO TOKEN'
-        when no_revoke        then 'no_revoke=true'
-        when auth_debug_user? then "USER #{current_user.uid} DEBUGGING"
-        when not_deployed?    then 'localhost'
+        when auth.blank?   then 'NO TOKEN'
+        when no_revoke     then 'no_revoke=true'
+        when not_deployed? then 'localhost'
       end
     if no_revoke_reason
       __debug { "#{__method__}: NOT REVOKING TOKEN - #{no_revoke_reason}" }
@@ -266,12 +226,6 @@ module AuthConcern
     uid  = (uid || params[:uid] || params[:id]).to_s.strip.presence&.downcase
     user = uid && User.find_by(email: uid) or return
     auth = auth_hash(user)
-    if BS_AUTH && auth&.dig(:credentials, :token).blank?
-      # noinspection RubyMismatchedArgumentType
-      auth  = synthetic_auth_hash(uid)
-      token = auth&.dig(:credentials, :token)
-      user.update(access_token: token) if token.present?
-    end
     session['omniauth.auth'] = auth
     user
   end
@@ -285,13 +239,8 @@ module AuthConcern
   # @return [nil]                     If `session['omniauth.auth']` is invalid.
   #
   def user_from_auth_data(auth_data = nil)
-    auth = (auth_data if auth_data.is_a?(OmniAuth::AuthHash))
-    if BS_AUTH
-      auth ||= (synthetic_auth_hash(params) unless session['omniauth.auth'])
-      stored_auth_update(auth) if auth
-    end
-    if auth
-      session['omniauth.auth'] = auth
+    if auth_data.is_a?(OmniAuth::AuthHash)
+      auth = session['omniauth.auth'] = auth_data
     else
       auth = session['omniauth.auth']
     end
@@ -303,15 +252,7 @@ module AuthConcern
   # @return [User, nil]
   #
   def user_from_session
-    if BS_AUTH
-      if (auth = session['app.local.auth']).present?
-        User.find_record(auth['uid'])
-      elsif (auth = session['omniauth.auth']).present?
-        User.from_omniauth(auth)
-      end
-    else
-      User.from_omniauth(session['omniauth.auth'])
-    end
+    User.from_omniauth(session['omniauth.auth'])
   end
 
   # ===========================================================================
@@ -319,17 +260,6 @@ module AuthConcern
   # ===========================================================================
 
   protected
-
-  # Indicate whether the user is one is capable of short-circuiting the         # if BS_AUTH
-  # authorization process.
-  #
-  # @param [User, String, nil] user   Default: `#current_user`
-  #
-  def auth_debug_user?(user = nil)
-    uid = User.uid_value(user || current_user)
-    session.key?('app.debug') && stored_auth.key?(uid)
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # revoke_access_token                                                         # if BS_AUTH
   #

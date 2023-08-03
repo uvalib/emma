@@ -113,16 +113,6 @@ namespace 'emma:test' do
   # Support tasks
   # ===========================================================================
 
-  desc 'Get local test user data'
-  task users: :prerequisites do
-    # noinspection SqlResolve
-    rel = User.where('access_token IS NOT NULL')
-    # noinspection RailsParamDefResolve
-    rel.pluck(:email, :access_token).map do |user, token|
-      puts "#{user}\t#{token}"
-    end
-  end
-
   # desc 'Required prerequisites for tasks in this namespace.'
   task prerequisites: %w(environment db:load_config)
 

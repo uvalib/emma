@@ -33,7 +33,6 @@ class User::SessionsController < Devise::SessionsController
   # Begin login session.
   #
   # @see #user_session_path           Route helper
-  # @see AuthConcern#update_auth_data
   #
   def create: () -> void
 

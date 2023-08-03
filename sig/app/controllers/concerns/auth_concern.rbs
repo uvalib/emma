@@ -14,17 +14,6 @@ module AuthConcern
   # :nocov:
   #include Devise::Controllers::Helpers
 
-  # A table of pre-authorized user/token pairs for development purposes.        # if BS_AUTH
-  # (Not generated for non-Rails-application executions.)
-  #
-  # Tokens are taken from the User table entries that have an :access_token
-  # value.  If ENV['BOOKSHARE_TEST_AUTH'] is supplied, it is used to prime (or
-  # update) database table.
-  #
-  # @type [Hash{String=>String}, nil]
-  #
-  CONFIGURED_AUTH: Hash[String,String] | nil
-
   # The "home" URL for a signed-in user.
   #
   # @param [User, Symbol] resource_or_scope
@@ -112,14 +101,6 @@ module AuthConcern
   #
   def set_auth_data: ((ActionDispatch::Request|OmniAuth::AuthHash|anyHash) src) -> User
 
-  # Generate the authentication data to be associated with the given user.      # if BS_AUTH
-  #
-  # @param [User, String, Integer, *] user  Default: `#current_user`.           # if BS_AUTH
-  #
-  # @return [OmniAuth::AuthHash, nil]
-  #
-  def update_auth_data: (?untyped user) -> (OmniAuth::AuthHash | nil)
-
   # Terminate the local login session ('omniauth.auth').                        # unless BS_AUTH
   #
   # Terminate the local login session ('omniauth.auth') and the session with    # if BS_AUTH
@@ -158,13 +139,6 @@ module AuthConcern
   # @return [User, nil]
   #
   def user_from_session: () -> (User | nil)
-
-  # Indicate whether the user is one is capable of short-circuiting the         # if BS_AUTH
-  # authorization process.
-  #
-  # @param [User, String, nil] user   Default: `#current_user`
-  #
-  def auth_debug_user?: (?(User|String|nil) user) -> bool
 
   # revoke_access_token                                                         # if BS_AUTH
   #
