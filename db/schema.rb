@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_06_213832) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_19_151044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -122,6 +122,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_06_213832) do
     t.datetime "scheduled_at"
     t.datetime "finished_at"
     t.text "error"
+    t.integer "error_event", limit: 2
     t.index ["active_job_id", "created_at"], name: "index_good_job_executions_on_active_job_id_and_created_at"
   end
 
@@ -159,6 +160,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_06_213832) do
     t.boolean "is_discrete"
     t.integer "executions_count"
     t.text "job_class"
+    t.integer "error_event", limit: 2
     t.index ["active_job_id", "created_at"], name: "index_good_jobs_on_active_job_id_and_created_at"
     t.index ["active_job_id"], name: "index_good_jobs_on_active_job_id"
     t.index ["batch_callback_id"], name: "index_good_jobs_on_batch_callback_id", where: "(batch_callback_id IS NOT NULL)"
@@ -261,6 +263,23 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_06_213832) do
     t.bigint "member_id", null: false
     t.bigint "reading_list_id", null: false
     t.index ["member_id", "reading_list_id"], name: "index_members_reading_lists_on_member_id_and_reading_list_id"
+  end
+
+  create_table "orgs", force: :cascade do |t|
+    t.string "short_name"
+    t.string "long_name"
+    t.string "ip_domain", array: true
+    t.string "provider"
+    t.bigint "contact", array: true
+    t.datetime "start_date"
+    t.string "status"
+    t.datetime "status_date"
+    t.json "info"
+    t.json "history"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["long_name"], name: "index_orgs_on_long_name"
+    t.index ["short_name"], name: "index_orgs_on_short_name"
   end
 
   create_table "periodicals", force: :cascade do |t|
@@ -401,8 +420,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_06_213832) do
     t.string "last_sign_in_ip"
     t.bigint "effective_id"
     t.string "provider"
+    t.string "preferred_email"
+    t.string "phone"
+    t.string "address"
+    t.string "status"
+    t.datetime "status_date"
+    t.bigint "org_id"
     t.index ["effective_id"], name: "index_users_on_effective_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["org_id"], name: "index_users_on_org_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

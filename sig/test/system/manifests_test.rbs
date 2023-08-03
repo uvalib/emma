@@ -43,6 +43,14 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
 
+  # Generate a Manifest :name.
+  #
+  # @param [Hash] opt                 Test options
+  #
+  # @return [String]
+  #
+  def manifest_name: (**untyped opt) -> String
+
   # Check operation of Manifest information display/edit.
   #
   # @param [Hash] opt                 Test options
@@ -58,13 +66,4 @@ class ManifestsTest < ApplicationSystemTestCase
   # @return [void]
   #
   def manifest_grid_test: (**untyped opt) -> void
-
-  # Extract named value entries from *opt*.
-  #
-  # @param [Hash]          opt        Source hash to modify.
-  # @param [Array<Symbol>] names      Value entry keys.
-  #
-  # @return [Array]
-  #
-  def extract_options!: (symHash opt, *Symbol names) -> anyArray
 end

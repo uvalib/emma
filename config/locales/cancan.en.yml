@@ -12,17 +12,19 @@ en:
 
     manage:           &TEMPLATE
       all:            'You are not authorized to %{action} %{subject}.'
-      # account:      'You are not authorized to %{action} EMMA local accounts.'
-      # data:         'You are not authorized to %{action} EMMA data.'
+    # account:        'You are not authorized to %{action} EMMA accounts.'
+    # data:           'You are not authorized to %{action} EMMA data.'
+      org:            'You are not authorized to %{action} EMMA organizations.'
+    # search:         'You are not authorized to %{action} EMMA searches.'
       search_call:    'You are not authorized to %{action} EMMA statistics.'
-      # search:       'You are not authorized to %{action} EMMA searches.'
       upload:         'You are not authorized to %{action} EMMA submissions.'
       user:           'You are not authorized to %{action} EMMA user accounts.'
       manifest:       'You are not authorized to %{action} manifests.'
       manifest_item:  'You are not authorized to %{action} manifest items.'
 
     list:             &LIST
-      <<: *TEMPLATE
+      <<:             *TEMPLATE
+      org:            'You are not authorized to list EMMA organizations.'
       search_call:    'You are not authorized to list EMMA statistics.'
       upload:         'You are not authorized to list EMMA submissions.'
       user:           'You are not authorized to list EMMA user accounts.'
@@ -30,7 +32,8 @@ en:
       manifest_item:  'You are not authorized to list manifest items.'
 
     view:             &VIEW
-      <<: *TEMPLATE
+      <<:             *TEMPLATE
+      org:            'You are not authorized to display EMMA organizations.'
       search_call:    'You are not authorized to view EMMA statistics.'
       upload:         'You are not authorized to view EMMA submissions.'
       user:           'You are not authorized to view EMMA user accounts.'
@@ -38,7 +41,8 @@ en:
       manifest_item:  'You are not authorized to view manifest items.'
 
     create:           &CREATE
-      <<: *TEMPLATE
+      <<:             *TEMPLATE
+      org:            'You are not authorized to create EMMA organizations.'
       search_call:    'You are not authorized to create EMMA statistics.'
       upload:         'You are not authorized to create EMMA submissions.'
       user:           'You are not authorized to create EMMA user accounts.'
@@ -46,7 +50,8 @@ en:
       manifest_item:  'You are not authorized to create manifest items.'
 
     modify:           &MODIFY
-      <<: *TEMPLATE
+      <<:             *TEMPLATE
+      org:            'You are not authorized to modify EMMA organizations.'
       search_call:    'You are not authorized to modify EMMA statistics.'
       upload:         'You are not authorized to modify EMMA submissions.'
       user:           'You are not authorized to modify EMMA user accounts.'
@@ -54,7 +59,8 @@ en:
       manifest_item:  'You are not authorized to modify manifest items.'
 
     remove:           &REMOVE
-      <<: *TEMPLATE
+      <<:             *TEMPLATE
+      org:            'You are not authorized to remove EMMA organizations.'
       search_call:    'You are not authorized to remove EMMA statistics.'
       upload:         'You are not authorized to remove EMMA submissions.'
       user:           'You are not authorized to remove EMMA user accounts.'

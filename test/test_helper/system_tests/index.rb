@@ -128,7 +128,7 @@ module TestHelper::SystemTests::Index
   def assert_search_count(model, total: nil, records: nil, **)
     ctrlr     = controller_name(model)
     records ||= property(ctrlr, :index, :count)
-    raise "#{ctrlr} unit could not be determined" unless records
+    assert records, "#{ctrlr} unit could not be determined"
     records = "#{total} #{records}".strip if total.present?
     assert_selector SEARCH_COUNT_CLASS, text: records
   end
@@ -189,7 +189,7 @@ module TestHelper::SystemTests::Index
   def visit_each_show_page(model, entry_css: nil, &block)
     ctrlr       = controller_name(model)
     entry_css ||= property(ctrlr, :index, :entry_css)
-    raise "#{ctrlr} entry_css could not be determined" unless entry_css
+    assert entry_css, "#{ctrlr} entry_css could not be determined"
     entry_count = all(entry_css).size
     max_index = entry_count - 1
     (0..max_index).each do |index|

@@ -3,8 +3,7 @@
 # @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 emma_blank:             &EMMA
- #user:                 test_dso
-  user_id:              1
+  user:                 test_dso_1
   repository:           emma
 
 emma_with_data:         &EMMA_WITH_DATA

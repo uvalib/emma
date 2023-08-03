@@ -85,7 +85,7 @@ class Ability
   # See the wiki for details:
   # @see https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   #
-  def initialize: ((User|nil) user) -> void
+  def initialize: (?(User|nil) user) -> void
 
   # Assign the ability to perform as a system developer.
   #
@@ -100,7 +100,7 @@ class Ability
   # class. Wherever the distinction needs to be made, the user's role must be
   # explicitly checked.
   #
-  def act_as_developer: (User user) -> void
+  def act_as_developer: (User user, **untyped _ignored) -> void
 
   # Assign the ability to perform as a system administrator.
   #
@@ -108,68 +108,44 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_administrator: (User user) -> void
+  def act_as_administrator: (User user, **untyped _ignored) -> void
+
+  # Assign the ability to perform as an organization manager.
+  #
+  # @param [User] user
+  # @param [Hash] constraints
+  #
+  # @return [void]
+  #
+  def act_as_manager: (User user, **untyped constraints) -> void
 
   # Assign the ability to perform as a Disability Service Officer.
   #
   # @param [User] user
+  # @param [Hash] constraints
   #
   # @return [void]
   #
-  def act_as_dso: (User user) -> void
+  def act_as_dso: (User user, **untyped constraints) -> void
 
-  # Assign the ability to perform as an assistant to a DSO (without permission
-  # to download).
+  # Assign the ability to perform as an organization staff member able to
+  # upload items but without the permission to download.
   #
   # @param [User] user
+  # @param [Hash] constraints
   #
   # @return [void]
   #
-  # === Usage Notes
-  # Currently, "DSO Delegate" is basically a synonym for "Librarian".
-  #
-  def act_as_dso_delegate: (User user) -> void
-
-  # Assign the ability to perform as a librarian.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  # === Usage Notes
-  # The current idea is that library staff might perform all of the entry
-  # creation and maintenance functions that a DSO would (minus the ability to
-  # download remediated content files).
-  #
-  def act_as_librarian: (User user) -> void
-
-  # Assign the ability to perform as a member organization staff (without permission
-  # to download).
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  def act_as_staff: (User user) -> void
-
-  # Assign the ability to perform as a signed-in user.
-  #
-  # @param [User] user
-  #
-  # @return [void]
-  #
-  def act_as_authenticated: (User user) -> void
+  def act_as_staff: (User user, **untyped constraints) -> void
 
   # Assign the ability to perform as a guest user.
   #
   # @param [User] user
+  # @param [Hash] constraints
   #
   # @return [void]
   #
-  # === Usage Notes
-  # Currently, "Guest" is basically a synonym for "Anonymous".
-  #
-  def act_as_guest: (User user) -> void
+  def act_as_guest: (User user, **untyped constraints) -> void
 
   # Assign the ability to perform as an anonymous (unauthenticated) user.
   #
@@ -177,119 +153,163 @@ class Ability
   #
   def act_as_anonymous: (*untyped _ignored) ?{ () -> untyped } -> void
 
-  # Allow full control over EMMA submissions which are associated with the
-  # user's ID.
+  # Allow visibility into an organization and its members.
   #
   # @param [User] user
+  # @param [Hash]       constraints
   #
   # @return [void]
   #
-  def can_manage_own_account: (User user) -> void
+  def act_as_organization_member: (User user, **untyped constraints) -> void
 
-  # Allow full control over EMMA submissions which are associated with the
-  # user's group ID.
+  # Allow full (user-level) control over a single EMMA user account.
   #
-  # @param [User] user
+  # @param [User, nil] user
+  # @param [Hash]      constraints
   #
   # @return [void]
   #
-  # @note This is not yet supported by any data model.
-  #
-  def can_manage_group_account: (User user) -> void
+  def can_manage_account: (User|nil user, **untyped constraints) -> void
 
-  # Define a set of capabilities on EMMA submissions which allows full control
-  # over instances which meet the given constraints.
+  # Allow full (user-level) control over EMMA user account(s).
+  #
+  # @param [User, Integer, nil] user
+  # @param [Hash]               constraints
+  #
+  # @option constraints [Integer] :id
+  # @option constraints [User]    :user
+  # @option constraints [Integer] :user_id
+  #
+  # @return [void]
+  #
+  def can_manage_user: (?(User|Integer|nil) user, **untyped constraints) -> void
+
+  # Allow full (user-level) control over an EMMA member organization.
+  #
+  # @param [Org, Integer, nil] org
+  # @param [Hash]              constraints
+  #
+  # @option constraints [Integer] :id
+  # @option constraints [Org]     :org
+  # @option constraints [Integer] :org_id
+  #
+  # @return [void]
+  #
+  def can_manage_organization: (?(Org|Integer|nil) org, **untyped constraints) -> void
+
+  # Allow full (user-level) control over identity records.
   #
   # @param [Class] model
-  # @param [Hash]  with_constraints
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  def can_manage_account: (?Class model, **untyped with_constraints) -> void
+  def can_manage_identity: (Class model, **untyped constraints) -> void
 
   # Allow full control over EMMA submissions which are associated with the
   # user's ID.
   #
   # @param [User] user
+  # @param [Hash] constraints
   #
   # @return [void]
   #
-  def can_manage_own_entries: (User user) -> void
+  def can_manage_user_submissions: (User user, **untyped constraints) -> void
 
   # Allow full control over EMMA submissions which are associated with the
-  # user's group ID.
+  # user's organization.
   #
   # @param [User] user
+  # @param [Hash] constraints
   #
   # @return [void]
   #
-  # @note This is not yet supported by any data model.
-  #
-  def can_manage_group_entries: (User user) -> void
+  def can_manage_group_submissions: (User user, **untyped constraints) -> void
 
   # Define a set of capabilities on EMMA bulk operations which allows full
   # control over instances which meet the given constraints.
   #
-  # @param [Hash] with_constraints
+  # @param [Hash] constraints
   #
   # @return [void]
   #
-  def can_manage_bulk_operations: (**untyped with_constraints) -> void
+  def can_manage_bulk_submissions: (**untyped constraints) -> void
 
   # Define a set of capabilities on EMMA submissions which allows full control
   # over instances which meet the given constraints.
   #
   # @param [Class] model
-  # @param [Hash]  with_constraints
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  def can_manage_entries: (?Class model, **untyped with_constraints) -> void
+  def can_manage_submissions: (?Class model, **untyped constraints) -> void
 
-  # Allow full control over model instances which are associated with the
-  # user's ID.
+  # Allow visibility to EMMA submissions which are associated with the user's
+  # organization.
+  #
+  # @param [User] user
+  # @param [Hash] constraints
+  #
+  # @return [void]
+  #
+  def can_view_group_submissions: (User user, **untyped constraints) -> void
+
+  # Allow visibility to EMMA bulk submissions which are associated with the
+  # user's organization.
+  #
+  # @param [Hash] constraints
+  #
+  # @return [void]
+  #
+  def can_view_bulk_submissions: (**untyped constraints) -> void
+
+  # Allow visibility to instances of a model related to EMMA submissions.
   #
   # @param [Class] model
-  # @param [User]  user
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  # @note Currently unused
-  #
-  def can_manage_own: (Class model, User user) -> void
-
-  # Allow full control over model instances which are associated with the
-  # user's group ID.
-  #
-  # @param [Class] model
-  # @param [User]  user
-  #
-  # @return [void]
-  #
-  # @note Currently unused
-  # @note This is not yet supported by any data model.
-  #
-  def can_manage_group: (Class model, User user) -> void
+  def can_view_submissions: (?Class model, **untyped constraints) -> void
 
   # Define a set of capabilities on a given model type which allows full
   # control over instances which meet the given constraints.
   #
-  # @param [Class] model
-  # @param [Hash]  with_constraints
+  # @param [Class]        model
+  # @param [Boolean, nil] no_bulk
+  # @param [Symbol, nil]  meth          For diagnostics.
+  # @param [Hash]         constraints
   #
   # @return [void]
   #
-  def can_manage_records: (Class model, **untyped with_constraints) -> void
+  def can_manage_records: (Class model, ?no_bulk: bool|nil, ?meth: Symbol|nil, **untyped constraints) -> void
 
   # Define a set of capabilities on a given model type which allows basic
   # control over instances which meet the given constraints.
   #
-  # @param [Class] model
-  # @param [Hash]  with_constraints
+  # This includes modification of records, but not creation or deletion.
+  #
+  # @param [Class]        model
+  # @param [Boolean, nil] no_bulk
+  # @param [Symbol, nil]  meth          For diagnostics.
+  # @param [Hash]         constraints
   #
   # @return [void]
   #
-  def can_manage: (Class model, **untyped with_constraints) -> void
+  def can_manage_content: (Class model, ?no_bulk: bool|nil, ?meth: Symbol|nil, **untyped constraints) -> void
+
+  # Define a set of capabilities on a given model type which allows visibility
+  # for instances which meet the given constraints.
+  #
+  # @param [Class]              model
+  # @param [Array, Symbol, nil] skip          Action(s) to skip.
+  # @param [Symbol,nil]         meth          For diagnostics.
+  # @param [Hash]               constraints
+  #
+  # @return [void]
+  #
+  def can_view_content: (Class model, ?skip: symArray|Symbol|nil, ?meth: Symbol|nil, **untyped constraints) -> void
 
   # Check if the user has permission to perform a given action on an object.
   #
@@ -396,4 +416,25 @@ class Ability
   # @see #MODEL_NAMES
   #
   def self.models: () -> Array[Class]
+
+  # The URL parameters which imply operations on a specific model instance.
+  #
+  # @param [Object, Class, *] model
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.identity_keys: (Object|Class|untyped model) -> symArray
+
+  def identity_keys: (Object|Class|untyped model) -> symArray
+
+  # Return the organization represented by *rec*.
+  #
+  # @param [*]           rec
+  # @param [Symbol, nil] caller       For diagnostics.
+  #
+  # @return [Integer, nil]
+  #
+  def self.org_for: (untyped rec, ?caller: Symbol|nil) -> (Integer | nil)
+
+  def org_for: (Org|User|untyped rec, ?caller: Symbol|nil) -> (Integer | nil)
 end

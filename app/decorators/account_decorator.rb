@@ -87,6 +87,38 @@ class AccountDecorator < BaseDecorator
     # :section: BaseDecorator::Menu overrides
     # =========================================================================
 
+    public
+
+    # Generate a menu of user instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu(**opt)
+      hash = opt[:constraint]
+      user = hash&.values_at(:user, :user_id)&.first
+      org  = hash&.values_at(:org, :org_id)&.first
+      unless user || org
+        user = current_user
+        org  = user&.org
+        add  = {}
+        case
+          when administrator? then #add[:user] = :all
+          when org            then add[:org]  = org
+          when user           then add[:user] = user
+          else                     add[:user] = :none
+        end
+        opt[:constraint] = hash&.reverse_merge(add) || add if add.present?
+      end
+      opt[:sort] ||= { id: :asc }
+      super(**opt)
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Menu overrides
+    # =========================================================================
+
     protected
 
     # Generate a prompt for #items_menu.

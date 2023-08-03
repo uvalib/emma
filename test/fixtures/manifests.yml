@@ -2,15 +2,73 @@
 #
 # @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+# =============================================================================
+# Organization :one manifests
+# =============================================================================
+
+staff_1_A:
+  name:         'Manifest A by test_staff_1'
+  user:         test_staff_1
+
+dso_1_A:
+  name:         'Manifest A by test_dso_1'
+  user:         test_dso_1
+
+man_1_A:
+  name:         'Manifest A by test_man_1'
+  user:         test_man_1
+
+staff_1_B:
+  name:         'Manifest B by test_staff_1'
+  user:         test_staff_1
+
+dso_1_B:
+  name:         'Manifest B by test_dso_1'
+  user:         test_dso_1
+
+man_1_B:
+  name:         'Manifest B by test_man_1'
+  user:         test_man_1
+
+# =============================================================================
+# Organization :two manifests
+# =============================================================================
+
+staff_2_A:
+  name:         'Manifest A by test_staff_2'
+  user:         test_staff_2
+
+dso_2_A:
+  name:         'Manifest A by test_dso_2'
+  user:         test_dso_2
+
+man_2_A:
+  name:         'Manifest A by test_man_2'
+  user:         test_man_2
+
+staff_2_B:
+  name:         'Manifest B by test_staff_2'
+  user:         test_staff_2
+
+dso_2_B:
+  name:         'Manifest B by test_dso_2'
+  user:         test_dso_2
+
+man_2_B:
+  name:         'Manifest B by test_man_2'
+  user:         test_man_2
+
+# =============================================================================
+# Manifests by import source
+# =============================================================================
+
 csv:            &CSV
   name:         'Sample from CSV data'
- #user:         test_dso
-  user_id:      1
+  user:         test_dso_1
 
 json:           &JSON
   name:         'Sample from JSON data'
- #user:         test_dso
-  user_id:      1
+  user:         test_dso_2
 
 # =============================================================================
 # Examples
@@ -18,15 +76,12 @@ json:           &JSON
 
 example:
   <<:           *CSV
-  id:           <%= Random.uuid %>
-  name:         'Sample manifest'
+  name:         'Example manifest'
 
 edit_example:
   <<:           *CSV
-  id:           <%= Random.uuid %>
-  name:         'Sample manifest for editing'
+  name:         'Example manifest for editing'
 
 delete_example:
   <<:           *CSV
-  id:           <%= Random.uuid %>
-  name:         'Sample manifest for deleting'
+  name:         'Example manifest for deleting'

@@ -34,6 +34,10 @@ module TestHelper::Samples
   # @return [ManifestItem]
   def sample_manifest_item: () -> ManifestItem
 
+  # Generate a sample instance from text/fixtures/orgs.yml.
+  # @return [Org]
+  def sample_org: () -> Org
+
   # Generate a sample instance from text/fixtures/roles.yml.
   # @return [Role]
   def sample_role: () -> Role

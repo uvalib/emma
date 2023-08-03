@@ -217,8 +217,9 @@ module Field
   #
   def self.finalize!(entry, field = nil)
     e   = entry
+    sub = e.select { |k, v| v.is_a?(Hash) && (k != :cond) }
     set = SYNTHETIC_PROPERTIES
-    set = set.slice(:field)  if e[:type] == 'json'
+    set = set.slice(:field)  if sub.present?
     set = set.except(:field) if field.blank?
     min = e[:min].to_i
     max = e[:max].to_i
@@ -232,9 +233,7 @@ module Field
     e[:field]  ||= field                                    if set[:field]
 
     # Sub-fields under :file_data or :emma_data.
-    e.each_pair do |k, v|
-      e[k] = finalize!(v, k) if v.is_a?(Hash) && (k != :cond)
-    end
+    sub.each_pair { |k, v| e[k] = finalize!(v, k) }
 
     reorder!(e)
   end

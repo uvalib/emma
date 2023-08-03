@@ -925,6 +925,22 @@ module Api::Common
   # @see #LANGUAGE
   #
   LANGUAGE_MAP: Hash[Symbol,String]
+
+  # Membership status of an EMMA user or EMMA member organization.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/types/account.en.yml
+  #
+  MEMBER_STATUS: Hash[Symbol,symHash]
+
+  # Table of member status.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #MEMBER_STATUS
+  #
+  MEMBER_STATUS_MAP: Hash[Symbol,String]
 end
 
 # Establish the Api::Shared namespace.
@@ -946,4 +962,8 @@ end
 
 # @see Api::Common#LANGUAGE_MAP
 class LanguageType < EnumType
+end
+
+# @see Api::Common#MEMBER_STATUS_MAP
+class MemberStatus < EnumType
 end

@@ -13,6 +13,22 @@ class ApplicationRecord < ActiveRecord::Base
 
   self.abstract_class = true
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The explicit :org_id field if a model defines it, or the method defined by
+  # the model to derive the ID of the Organization associated with the model
+  # instance.
+  #
+  # @return [Integer, nil]
+  #
+  def org_id
+    #Log.debug { "#{__method__}: not applicable to #{self.class}" }
+  end
+
   # The explicit :user_id field if a model defines it, or the method defined by
   # the model to derive the ID of the User associated with the model instance.
   #

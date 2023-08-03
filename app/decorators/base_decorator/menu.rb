@@ -21,25 +21,27 @@ module BaseDecorator::Menu
 
   # Generate a menu of database item entries.
   #
-  # @param [Symbol, String, nil] action   Default: `context[:action]`
-  # @param [User, Symbol, nil]   user     Default: `current_user`
+  # @param [Symbol, String, nil] action      Default: `context[:action]`
+  # @param [Hash, nil]           constraint
+  # @param [Hash, nil]           sort
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
-  # @param [String, Hash]        ujs      JavaScript selection action.
-  # @param [String]              css      Characteristic CSS class/selector.
-  # @param [Hash]                opt      Passed to #html_form except for:
+  # @param [String, Hash]        ujs         JavaScript selection action.
+  # @param [String]              css         Characteristic CSS class/selector.
+  # @param [Hash]                opt         Passed to #html_form except for:
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see RouteHelper#get_path_for
   #
   def items_menu(
-    action: nil,
-    user:   nil,
-    prompt: nil,
-    table:  nil,
-    ujs:    'this.form.submit();',
-    css:    '.select-entry.menu-control',
+    action:     nil,
+    constraint: nil,
+    sort:       nil,
+    prompt:     nil,
+    table:      nil,
+    ujs:        'this.form.submit();',
+    css:        '.select-entry.menu-control',
     **opt
   )
     ctrlr    = items_menu_controller
@@ -56,20 +58,34 @@ module BaseDecorator::Menu
     raise "invalid model #{model.inspect}" unless model < ApplicationRecord
     raise "no path for #{ctrlr}/#{action}" unless path
 
-    user   ||= (current_user&.administrator? ? :all : current_user)
-    prompt ||= items_menu_prompt(user: user)
-
-    items = sort = nil
-    u_col = (model <= User) ? :id : :user_id
-    if user == :all
-      items = model.all
-      sort  = { u_col => :asc, created_at: :desc }
-    elsif (user_id = user&.id)
-      items = model.where(u_col => user_id)
-      sort  = { updated_at: :desc, created_at: :desc }
+    user = constraint&.values_at(:user, :user_id)&.first
+    org  = constraint&.values_at(:org, :org_id)&.first
+    case
+      when (item = user) then column = (model <= User) ? :id : :user_id
+      when (item = org)  then column = (model <= Org)  ? :id : :org_id
+      else                    column = item = nil
     end
-    menu = items&.order(sort)&.map { |it| [items_menu_label(it), it.id] } || []
+    sort = sort&.dup
+    term =
+      if column && model.field_names.include?(column)
+        sort ||= { column => :asc }
+        case item
+          when ApplicationRecord then { column => item.id }
+          when Integer           then { column => item }
+          else                        item unless item == :all
+        end
+      end
+    sort ||= { updated_at: :desc }
+    case
+      when term then menu = model.where(term)
+      when user then menu = model.for_user(user)
+      when org  then menu = model.for_org(org)
+      else           menu = model.all
+    end
+    menu = menu.order(sort.merge!(created_at: :desc))
+    menu = menu.map { |it| [items_menu_label(it), it.id] }
 
+    prompt ||= items_menu_prompt(user: user)
     ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }
     select_opt = ujs.merge!(prompt: prompt, name: 'id')
 

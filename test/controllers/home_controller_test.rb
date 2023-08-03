@@ -10,12 +10,12 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   CONTROLLER   = :home
   OPTIONS      = { controller: CONTROLLER }.freeze
 
-  TEST_USERS   = %i[anonymous test_dso].freeze
+  TEST_USERS   = %i[anonymous test_guest_1 test_dso_1 test_adm].freeze
   TEST_READERS = TEST_USERS
 
   READ_FORMATS = :html
 
-  TEST_USER    = :test_dso
+  TEST_USER    = :test_dso_1
 
   setup do
     @readers = find_users(*TEST_READERS)
@@ -37,7 +37,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'home main as test_dso' do
+  test 'home main as test_dso_1' do
     # action  = :main
     # options = OPTIONS.merge(action: action)
     TEST_FORMATS.each do |fmt|

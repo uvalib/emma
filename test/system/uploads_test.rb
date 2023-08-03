@@ -12,11 +12,14 @@ class UploadsTest < ApplicationSystemTestCase
   PARAMS      = { controller: CONTROLLER }.freeze
   INDEX_TITLE = page_title(**PARAMS, action: :index).freeze
 
-  TEST_USER   = :test_dso
+  TEST_USER   = :test_dso_1
 
   setup do
     @user  = find_user(TEST_USER)
-    @total = fixture_count(MODEL)
+=begin # TODO: this is what we want:
+    @total = fixture_count_for_org(MODEL, @user)
+=end # NOTE: this is what's actually implemented right now:
+    @total = fixture_count_for_user(MODEL, @user)
     @file  = file_fixture(UPLOAD_FILE)
   end
 
@@ -125,7 +128,8 @@ class UploadsTest < ApplicationSystemTestCase
     form_url  = url_for(**params)
     index_url = url_for(**params, action: :index)
 
-    start_url, tag = direct ? [form_url, 'DIRECT'] : [index_url, 'INDIRECT']
+    start_url = direct ? form_url : index_url
+    tag       = direct ? 'DIRECT' : 'INDIRECT'
 
     title     = 'New Upload'
     author    = "#{title} Author"
@@ -195,14 +199,16 @@ class UploadsTest < ApplicationSystemTestCase
     index_url = url_for(**params, action: :index)
     menu_url  = url_for(**params, action: select)
 
-    start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
+    start_url = direct ? menu_url : index_url
+    tag       = direct ? 'DIRECT' : 'INDIRECT'
 
     item      = uploads(:edit_example)
+    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
+
     author    = item.emma_metadata[:dc_creator]
-    title     = item.emma_metadata[:dc_title]
-    title     = "#{title} (#{action})"
+    author    = [author, *test_opt.slice(:unique, :tag)].join(' - ')
+    title     = upload_title(**test_opt)
     title     = "#{prefix} #{title}" unless title.start_with?(prefix)
-    unique    = hex_rand
 
     # noinspection RubyMismatchedArgumentType
     run_test(meth) do
@@ -225,8 +231,8 @@ class UploadsTest < ApplicationSystemTestCase
       assert_selector '[data-field="user_id"]', visible: false#, text: @user&.id # TODO: why is this not filled?
 
       # Replace field data.
-      fill_in 'field-Title',   with: "#{title } - #{unique} - #{tag}"
-      fill_in 'field-Creator', with: "#{author} - #{unique} - #{tag}"
+      fill_in 'field-Title',   with: title
+      fill_in 'field-Creator', with: author
 
       # If all required fields have been filled then submit will be visible.
       send_keys :tab # Bypass debounce delay by inducing a 'change' event.
@@ -263,17 +269,18 @@ class UploadsTest < ApplicationSystemTestCase
     index_url = url_for(**params, action: :index)
     menu_url  = url_for(**params, action: select)
 
-    start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
+    start_url = direct ? menu_url : index_url
+    tag       = direct ? 'DIRECT' : 'INDIRECT'
+
+    item      = uploads(:delete_example)
+    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
 
     # Add Upload copy to be deleted and ensure that it is in the EMMA Unified
     # Index.
-    item = uploads(:delete_example)
-    item =
-      Upload.new(item.fields.except(:id)).tap do |rec|
-        title = rec.emma_metadata[:dc_title]
-        rec.update!(dc_title: "#{title} - #{tag}")
-        reindex(rec)
-      end
+    name = upload_title(**test_opt)
+    attr = item.fields.except(:id).merge!(dc_title: name)
+    item = Upload.create!(attr)
+    reindex(item)
 
     item_delete = [
       url_for(**params, id: item.id),
@@ -313,6 +320,24 @@ class UploadsTest < ApplicationSystemTestCase
       assert_search_count(CONTROLLER, total: (@total -= 1))
 
     end
+  end
+
+  # ===========================================================================
+  # :section: Methods
+  # ===========================================================================
+
+  protected
+
+  # Generate an Upload :dc_title.
+  #
+  # @param [Hash] opt                 Test options
+  #
+  # @return [String]
+  #
+  def upload_title(**opt)
+    opt[:name] ||= opt[:item].emma_metadata[:dc_title] if opt[:item]
+    opt[:name]  += " (#{opt[:action]})"                if opt[:action]
+    opt.slice(:name, :unique, :tag).compact.values.join(' - ')
   end
 
 end

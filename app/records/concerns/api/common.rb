@@ -1699,6 +1699,29 @@ module Api::Common
       .deep_freeze
 
   # ===========================================================================
+  # Common configuration values - MemberStatus
+  # ===========================================================================
+
+  public
+
+  # Membership status of an EMMA user or EMMA member organization.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/types/account.en.yml
+  #
+  MEMBER_STATUS = I18n.t('emma.account.type.MemberStatus').deep_freeze
+
+  # Table of member status.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #MEMBER_STATUS
+  #
+  MEMBER_STATUS_MAP =
+    MEMBER_STATUS.transform_values { |config| config[:label] }.deep_freeze
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -1706,6 +1729,7 @@ module Api::Common
   EnumType.add_enumerations(Deployment:     DEPLOYMENT_MAP)
   EnumType.add_enumerations(EmmaRepository: REPOSITORY_MAP)
   EnumType.add_enumerations(LanguageType:   LANGUAGE_MAP)
+  EnumType.add_enumerations(MemberStatus:   MEMBER_STATUS_MAP)
 
 end
 
@@ -1732,5 +1756,8 @@ class EmmaRepository < EnumType; end
 
 # @see Api::Common#LANGUAGE_MAP
 class LanguageType < EnumType; end
+
+# @see Api::Common#MEMBER_STATUS_MAP
+class MemberStatus < EnumType; end
 
 __loading_end(__FILE__)

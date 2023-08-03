@@ -1,0 +1,16 @@
+<%# app/views/org/_details.html.erb -%>
+<%-
+  # EMMA member organization details.
+
+  view_debug(__FILE__)
+
+  org     ||= nil
+  dec     ||= org && OrgDecorator.new(org, **context) or return
+
+  columns ||= nil
+  filter  ||= nil
+  extra   ||= nil
+
+-%>
+
+<%= dec.details(columns: columns, filter: filter, pairs: extra) %>

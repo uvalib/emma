@@ -1,6 +1,14 @@
 # Base class for database record models.
 #
 class ApplicationRecord < ActiveRecord::Base
+  # The explicit :org_id field if a model defines it, or the method defined by
+  # the model to derive the ID of the Organization associated with the model
+  # instance.
+  #
+  # @return [Integer, nil]
+  #
+  def org_id: () -> (Integer | nil)
+
   include SqlMethods
 
   # The explicit :user_id field if a model defines it, or the method defined by

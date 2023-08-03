@@ -18,6 +18,7 @@ class User < ApplicationRecord
 
   include Record
   include Record::Identification
+  include Record::Searchable
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -37,11 +38,13 @@ class User < ApplicationRecord
   # :section: ActiveRecord ModelSchema
   # ===========================================================================
 
-  self.implicit_order_column = :created_at
+  self.implicit_order_column = :id
 
   # ===========================================================================
   # :section: ActiveRecord associations
   # ===========================================================================
+
+  belongs_to :org, optional: true
 
   has_many :search_calls
   has_many :uploads
@@ -51,9 +54,16 @@ class User < ApplicationRecord
   # :section: Authentication
   # ===========================================================================
 
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :recoverable, :validatable
-  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :registerable,
+  # Include default devise modules.
+  devise :database_authenticatable,
+  #      :confirmable,
+  #      :lockable,
+         :recoverable,
+         :registerable,
+         :rememberable,
+  #      :timeoutable,
+         :trackable,
+  #      :validatable,
          :omniauthable, omniauth_providers: AUTH_PROVIDERS
 
   # ===========================================================================
@@ -79,10 +89,32 @@ class User < ApplicationRecord
   after_create :assign_default_role
 
   # ===========================================================================
-  # :section:
+  # :section: ApplicationRecord overrides
   # ===========================================================================
 
   public
+
+  def org_id = org&.id
+
+  def user_id = id
+
+  # A textual label for the record instance.
+  #
+  # @param [User, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label(item = nil)
+    (item || self).uid.presence
+  end
+
+  # The controller for the model/model instance.
+  #
+  # @type [Class]
+  #
+  def self.model_controller
+    AccountController
+  end
 
   # Create a new instance.
   #
@@ -107,25 +139,6 @@ class User < ApplicationRecord
   def to_s
     uid.to_s
   end
-
-  # ===========================================================================
-  # :section: ActiveRecord overrides
-  # ===========================================================================
-
-  public
-
-  # Update database fields.                                                     # if BS_AUTH
-  #
-  # @param [User, Hash, nil] attributes
-  #
-  # @return [void]
-  #
-  def assign_attributes(attributes)
-    old_eid = self[:effective_id]
-    super
-    new_eid = self[:effective_id]
-    add_role(:administrator) if new_eid && (new_eid != old_eid)
-  end if BS_AUTH
 
   # ===========================================================================
   # :section: Record::Identification overrides
@@ -181,8 +194,8 @@ class User < ApplicationRecord
 
   # Return with the specified User record or *nil* if one could not be found.
   #
-  # @param [String, Symbol, Integer, Hash, Model, Any, nil] item
-  # @param [Hash]                                           opt
+  # @param [String, Integer, Hash, Model, *] item
+  # @param [Hash]                            opt
   #
   # @return [User, nil]
   #
@@ -211,6 +224,18 @@ class User < ApplicationRecord
       super
     end
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  def ability
+    @ability ||= Ability.new(self)
+  end
+
+  delegate :can?, :cannot?, to: :ability
 
   # ===========================================================================
   # :section:
@@ -260,55 +285,21 @@ class User < ApplicationRecord
     email
   end
 
-  # Indicate whether this User is represented by a different Bookshare user.    # if BS_AUTH
-  #
-  # The Bookshare ID associated with this account if different from *self*.
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  def effective_uid
-    effective_user&.uid
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
-
-  # The User who interacts with Bookshare on behalf of this account if          # if BS_AUTH
-  # different from *self*.
-  #
-  # @return [User]
-  # @return [nil]
-  #
-  def effective_user
-    User.find(effective_id) if effective_id.present?
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
-
-  # Indicate whether this account directly maps on to a Bookshare account.      # if BS_AUTH
-  #
-  def is_bookshare_user?
-    effective_id.blank?
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
-
-  # The Bookshare ID associated with this account.                              # if BS_AUTH
+  # Account name.
   #
   # @return [String]
   #
-  def bookshare_uid
-    bookshare_user.uid
+  def account
+    email
   end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
 
-  # The User who interacts with Bookshare on behalf of this account.            # if BS_AUTH
+  # Address to use for email communication with the user.
   #
-  # This is *self* unless :effective_id is non-null.
+  # @return [String]
   #
-  # @return [User]
-  #
-  def bookshare_user
-    @bookshare_user ||= effective_user || self
+  def email_address
+    preferred_email || account
   end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # ===========================================================================
   # :section:
@@ -336,30 +327,19 @@ class User < ApplicationRecord
     @administrator
   end
 
+  # Indicate whether the user has the :manager role.
+  #
+  def manager?
+    @manager = has_role?(:manager) if @manager.nil?
+    @manager
+  end
+
   # The user's EMMA roles.
   #
   # @return [Array<Symbol>]
   #
   def role_list
     roles.map(&:name).map(&:to_sym)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # menu_label
-  #
-  # @param [User, nil] item           Default: self.
-  #
-  # @return [String, nil]
-  #
-  # @see BaseDecorator::Menu#items_menu_label
-  #
-  def menu_label(item = nil)
-    (item || self).uid.presence
   end
 
   # ===========================================================================
@@ -412,15 +392,22 @@ class User < ApplicationRecord
 
   # Extend Rolify #has_role? to first check for role prototype.
   #
-  # @param [String, Symbol] role      Role capability or role prototype.
-  # @param [Symbol, nil]    resource
+  # Always returns *false* if *role* is blank.
+  #
+  # @param [String, Symbol, nil]                   role
+  # @param [Symbol, Class, ApplicationRecord, nil] resource
   #
   def has_role?(role, resource = nil)
+    return false if role.blank?
+    role = role.to_s.strip.to_sym if role.is_a?(String)
+    # noinspection RubyMismatchedArgumentType
     if resource.nil?
-      role = role.to_s.strip.to_sym if role.is_a?(String)
-      return true if role == Role.prototype_for(self)
+      (role == Role.prototype_for(self)) || super(role)
+    elsif resource.is_a?(User)
+      (role == Role.prototype_for(resource)) || super(role, resource)
+    else
+      super(role, resource)
     end
-    super(role, resource)
   end
 
   # ===========================================================================
@@ -439,25 +426,14 @@ class User < ApplicationRecord
     # noinspection RbsMissingTypeSignature
     @test_users ||=
       begin
-        test_names = %w(test\\_%@virginia.edu)
+        test_names = %w(test\\_%@%)
         test_names << 'emma%@bookshare.org' if BS_AUTH
-        uid_like   = test_names.map { |p| 'email LIKE ?' }.join(' OR ')
+        uid_like   = test_names.map { 'email LIKE ?' }.join(' OR ')
         where(uid_like, *test_names).map { |u|
           [u.email, Role.prototype_for(u)]
         }.to_h
       end
   end
-
-  # Pairs of current EMMA test Bookshare accounts with their "users" table      # if BS_AUTH
-  # record IDs.
-  #
-  # @type [Array<(String,Integer)>]
-  #
-  def self.test_user_menu
-    # noinspection RailsParamDefResolve
-    where(email: test_users.keys).pluck(:email, :id)
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
 
   # Get the database entry for the indicated user and update it with additional # unless BS_AUTH
   # information from the provider.

@@ -12,11 +12,14 @@ class ManifestsTest < ApplicationSystemTestCase
   PARAMS      = { controller: CONTROLLER }.freeze
   INDEX_TITLE = page_title(**PARAMS, action: :index).freeze
 
-  TEST_USER   = :test_dso
+  TEST_USER   = :test_dso_1
 
   setup do
     @user  = find_user(TEST_USER)
-    @total = fixture_count(MODEL)
+=begin # TODO: this is what we want:
+    @total = fixture_count_for_org(MODEL, @user)
+=end # NOTE: this is what's actually implemented right now:
+    @total = fixture_count_for_user(MODEL, @user)
   end
 
   # ===========================================================================
@@ -124,7 +127,8 @@ class ManifestsTest < ApplicationSystemTestCase
     form_url  = url_for(**params)
     index_url = url_for(**params, action: :index)
 
-    start_url, tag = direct ? [form_url, 'DIRECT'] : [index_url, 'INDIRECT']
+    start_url = direct ? form_url : index_url
+    tag       = direct ? 'DIRECT' : 'INDIRECT'
 
     item      = manifests(:example)
     test_opt  = { action: action, tag: tag, item: item, name: 'New manifest' }
@@ -183,7 +187,8 @@ class ManifestsTest < ApplicationSystemTestCase
     index_url = url_for(**params, action: :index)
     menu_url  = url_for(**params, action: select)
 
-    start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
+    start_url = direct ? menu_url : index_url
+    tag       = direct ? 'DIRECT' : 'INDIRECT'
 
     item      = manifests(:edit_example)
     test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
@@ -245,14 +250,16 @@ class ManifestsTest < ApplicationSystemTestCase
     index_url = url_for(**params, action: :index)
     menu_url  = url_for(**params, action: select)
 
-    start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
+    start_url = direct ? menu_url : index_url
+    tag       = direct ? 'DIRECT' : 'INDIRECT'
+
+    item      = manifests(:delete_example)
+    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
 
     # Add Manifest copy to be deleted.
-    item = manifests(:delete_example)
-    item =
-      Manifest.new(item.fields.except(:id)).tap do |rec|
-        rec.update!(name: "#{item.name} - #{tag}")
-      end
+    name = manifest_name(**test_opt)
+    attr = item.fields.except(:id).merge!(name: name)
+    item = Manifest.create!(attr)
 
     item_delete = [
       url_for(**params, id: item.id),
@@ -302,6 +309,18 @@ class ManifestsTest < ApplicationSystemTestCase
 
   protected
 
+  # Generate a Manifest :name.
+  #
+  # @param [Hash] opt                 Test options
+  #
+  # @return [String]
+  #
+  def manifest_name(**opt)
+    opt[:name] ||= opt[:item].name      if opt[:item]
+    opt[:name]  += " (#{opt[:action]})" if opt[:action]
+    opt.slice(:name, :unique, :tag).compact.values.join(' - ')
+  end
+
   # Check operation of Manifest information display/edit.
   #
   # @param [Hash] opt                 Test options
@@ -309,12 +328,9 @@ class ManifestsTest < ApplicationSystemTestCase
   # @return [void]
   #
   def manifest_title_test(**opt)
-    # TODO: manifest_title_test
-    action, item, name, tag, unique = extract_options!(opt)
-    name ||= item.name
-    name  += " (#{action})" if action
-    title  = [name, unique, tag].compact.join(' - ')
-=begin
+    _title = manifest_name(**opt)
+=begin # TODO: manifest_title_test
+
     # On the form page:
     assert_selector '[data-field="user_id"]', visible: false#, text: @user&.id
 
@@ -330,9 +346,9 @@ class ManifestsTest < ApplicationSystemTestCase
   # @return [void]
   #
   def manifest_grid_test(**opt)
-    # TODO: manifest_grid_test
-    _action, _item, _name, _tag, _unique = extract_options!(opt)
-=begin
+    _title = manifest_name(**opt)
+=begin # TODO: manifest_grid_test
+
     # If all required fields have been filled then submit will be visible.
     send_keys :tab # Bypass debounce delay by inducing a 'change' event.
     success_screenshot
@@ -344,18 +360,6 @@ class ManifestsTest < ApplicationSystemTestCase
     assert_valid_page heading: INDEX_TITLE
     assert_search_count(CONTROLLER, total: @total)
 =end
-  end
-
-  # Extract named value entries from *opt*.
-  #
-  # @param [Hash]          opt        Source hash to modify.
-  # @param [Array<Symbol>] names      Value entry keys.
-  #
-  # @return [Array]
-  #
-  def extract_options!(opt, *names)
-    names = %i[action item name tag unique] if names.empty?
-    extract_hash!(opt, *names).values_at(*names)
   end
 
 end

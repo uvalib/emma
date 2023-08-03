@@ -9,6 +9,9 @@ require 'down'
 
 # A file object uploaded from the client.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class Upload < ApplicationRecord
 
   include ActiveModel::Validations
@@ -34,6 +37,16 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   belongs_to :user, optional: true
+
+  has_one :org, through: :user
+
+  # ===========================================================================
+  # :section: ActiveRecord scopes
+  # ===========================================================================
+
+  # noinspection SqlResolve
+  scope :for_org,  ->(org)  { joins(:user).where('users.org_id = ?', org) }
+  scope :for_user, ->(user) { where(user: user) }
 
   # ===========================================================================
   # :section: ActiveRecord validations
@@ -91,6 +104,8 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   public
+
+  def org_id = org&.id
 
   def user_id = user&.id
 

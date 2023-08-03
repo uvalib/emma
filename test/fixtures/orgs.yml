@@ -1,0 +1,55 @@
+# test/fixtures/orgs.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:            &ONE
+  short_name:   'ONE'
+  long_name:    'University of One'
+  ip_domain:    ['one_university.edu']
+  provider:     'shibboleth'
+  contact:      [test_man_1]
+  info:         ~
+  history:      ~
+  start_date:   2023-07-03 19:29:41
+  status:       'active'
+  status_date:  2023-07-03 19:29:41
+
+two:            &TWO
+  short_name:   'TWO'
+  long_name:    'Two University'
+  ip_domain:    ['two_university.edu']
+  provider:     ~
+  contact:      [test_man_2]
+  info:         ~
+  history:      ~
+  start_date:   2023-07-03 19:29:41
+  status:       'incomplete'
+  status_date:  2023-07-03 19:29:41
+
+three:          &THREE
+  short_name:   'THR'
+  long_name:    'Third University'
+  ip_domain:    ['three_university.edu']
+  provider:     ~
+  contact:      []
+  info:         ~
+  history:      ~
+  start_date:   2023-07-03 19:29:41
+  status:       'incomplete'
+  status_date:  2023-07-03 19:29:41
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<:           *ONE
+  long_name:    'University of One - example'
+
+edit_example:
+  <<:           *TWO
+  long_name:    'Two University - edit example'
+
+delete_example:
+  <<:           *THREE
+  long_name:    'Third University - delete example'

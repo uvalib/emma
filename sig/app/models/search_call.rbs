@@ -46,6 +46,8 @@ class SearchCall < ApplicationRecord
   #
   PARAMETER_MAP: Hash[Symbol,symArray]
 
+  def org_id: () -> (Integer | nil)
+
   def user_id: () -> (Integer | nil)
 
   # Create a new instance.

@@ -15,6 +15,9 @@ submitter:
 downloader:
   name: 'downloader'
 
+manager:
+  name: 'manager'
+
 administrator:
   name: 'administrator'
 

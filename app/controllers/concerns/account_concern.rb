@@ -94,13 +94,15 @@ module AccountConcern
       relation = User.matching(*terms, columns: columns, join: :or) # TODO: Is :or really correct here?
     elsif administrator?
       relation = User.all
-#   elsif current_user.group_admin? # TODO: institutional groups
-#     relation = User.where(group_id: current_user.group_id) # TODO: groups
+    elsif (org = current_user&.org_id)
+      relation = User.where(org_id: org)
+    elsif (user = current_user&.id)
+      relation = User.where(id: user)
     else
-      relation = User.where(id: current_user.id)
+      relation = User.none
     end
     # noinspection RubyMismatchedReturnType
-    sort ? relation.order(sort) : relation
+    relation.order(sort || :id)
   end
 
   # ===========================================================================

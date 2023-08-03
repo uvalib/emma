@@ -1,0 +1,5 @@
+# Parameters for pagination of lists of Org records.
+#
+class Org::Paginator < Paginator
+  def initialize: (?(ApplicationController|nil) ctrlr, **untyped opt) -> void
+end

@@ -1,0 +1,39 @@
+class Org < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Assignable
+
+  include Record::Authorizable
+
+  include Record::Searchable
+
+  include Record::Testing
+
+  include Record::Debugging
+
+  include Org::Config
+
+  def org_id: () -> (Integer | nil)
+
+  # A textual label for the record instance.
+  #
+  # @param [Org, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label: (?(Org|nil) item) -> (String | nil)
+
+  # Create a new instance.
+  #
+  # @param [Org, Hash, nil] attr   Passed to #assign_attributes via super.
+  #
+  # @note - for dev traceability
+  #
+  def initialize: (?(Org|prmHash|nil) attr) ?{ () -> untyped } -> void
+
+  def user_ids: () -> Array[Integer]
+
+  def user_emails: () -> strArray
+end

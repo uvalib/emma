@@ -1,0 +1,128 @@
+# Manage organizations ("/org" pages).
+#
+# @see OrgDecorator
+# @see OrgsDecorator
+# @see file:app/views/org/**
+#
+class OrgController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include OrgConcern
+
+  # Results for :index.
+  #
+  # @return [Array<Org>]
+  # @return [Array<String>]
+  # @return [nil]
+  #
+  attr_reader list: (Array[Org] | Array[String] | nil)
+
+  # Single item.
+  #
+  # @return [Org, nil]
+  #
+  attr_reader item: Org | nil
+
+  # === GET /org
+  #
+  # List all organizations.
+  #
+  # @see #org_index_path          Route helper
+  #
+  def index: () -> void
+
+  # === GET /org/show/(:id)
+  #
+  # Display details of an existing EMMA member organization.
+  #
+  # If :id is not given then #current_org is used.
+  #
+  # @see #show_org_path          Route helper
+  #
+  def show: () -> void
+
+  # === GET /org/new
+  #
+  # @see #new_org_path           Route helper
+  #
+  def new: () -> void
+
+  # === POST  /org/create
+  # === PUT   /org/create
+  # === PATCH /org/create
+  #
+  # @see #create_org_path        Route helper
+  #
+  def create: () -> void
+
+  # === GET /org/edit/(:id)
+  #
+  # If :id is not given then #current_org is used.
+  #
+  # @see #edit_org_path          Route helper
+  #
+  def edit: () -> void
+
+  # === POST  /org/update/:id
+  # === PUT   /org/update/:id
+  # === PATCH /org/update/:id
+  #
+  # @see #update_org_path        Route helper
+  #
+  def update: () -> void
+
+  # === GET /org/delete/(:id)
+  #
+  # Redirects to #delete_select if :id is not given.
+  #
+  # @see #delete_org_path        Route helper
+  #
+  def delete: () -> void
+
+  # === DELETE /org/destroy/:id
+  #
+  # @see #destroy_org_path       Route helper
+  #
+  def destroy: () -> void
+
+  # === GET /org/show_select
+  #
+  # Show a menu to select an organization to show.
+  #
+  # @see #show_select_org_path        Route helper
+  #
+  def show_select: () -> void
+
+  # === GET /org/edit_select
+  #
+  # Show a menu to select an organization to edit.
+  #
+  # @see #edit_select_org_path        Route helper
+  #
+  def edit_select: () -> void
+
+  # === GET /org/delete_select
+  #
+  # Show a menu to select an organization to delete.
+  #
+  # @see #delete_select_org_path      Route helper
+  #
+  def delete_select: () -> void
+
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
+  #
+  # @param [Symbol]               action
+  # @param [Org, Array<Org>, nil] subject
+  # @param [*]                    args
+  #
+  def org_authorize!: (Symbol action, Org|Array[Org]|nil subject, *untyped args) -> void
+end

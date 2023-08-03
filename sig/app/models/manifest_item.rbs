@@ -48,6 +48,8 @@ class ManifestItem < ApplicationRecord
   # :nocov:
   #extend Record::Describable::ClassMethods
 
+  def org_id: () -> (Integer | nil)
+
   def user_id: () -> (Integer | nil)
 
   # Create a new instance.

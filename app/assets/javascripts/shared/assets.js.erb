@@ -478,8 +478,9 @@ AppDebug.file('shared/assets.js.erb');
  * @property {SearchProperties}   Search
  * @property {DownloadProperties} Download
  * @property {ActionProperties}   Lookup
- * @property {ModelProperties}    Account
+ * @property {ModelProperties}    Org
  * @property {ModelProperties}    User
+ * @property {ModelProperties}    Account
  * @property {ModelProperties}    Upload
  * @property {ModelProperties}    Manifest
  * @property {ModelProperties}    ManifestItem
@@ -629,8 +630,9 @@ export const Emma = (function() {
     const Lookup =      o$('<%= js I18n.t(%q(emma.lookup)) %>');
 
     /** @type {ModelProperties} */
-    const Account =     o$('<%= js AccountDecorator.js_properties %>'),
+    const Org =         o$('<%= js OrgDecorator.js_properties %>'),
           User =        o$('<%= js UserDecorator.js_properties %>'),
+          Account =     o$('<%= js AccountDecorator.js_properties %>'),
           Upload =      o$('<%= js UploadDecorator.js_properties %>'),
           Manifest =    o$('<%= js ManifestDecorator.js_properties %>'),
           ManifestItem= o$('<%= js ManifestItemDecorator.js_properties %>');
@@ -654,8 +656,9 @@ export const Emma = (function() {
         Search,
         Download,
         Lookup,
-        Account,
+        Org,
         User,
+        Account,
         Upload,
         Manifest,
         ManifestItem,

@@ -98,13 +98,123 @@ module TestHelper::Utility
   # @param [Org, User, Integer, nil]                  org
   # @param [Hash]                                     constraints
   #
-  # @param [Symbol, String, Class, Model] model
+  # @return [Integer]
+  #
+  def fixture_count_for_org(model, org, **constraints)
+    org = org.org_id if org.respond_to?(:org_id)
+    if org.is_a?(Integer)
+      fixture_count(model, **constraints) { |_, rec| rec.try(:org_id) == org }
+    else
+      fixture_count(model, **constraints)
+    end
+  end
+
+  # The number of fixture records for the indicated model and constraints which
+  # are associated with the given user.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [User, Integer, nil]                       user
+  # @param [Hash]                                     constraints
   #
   # @return [Integer]
   #
-  def fixture_count(model)
+  def fixture_count_for_user(model, user, **constraints, &blk)
+    user = user.user_id if user.respond_to?(:user_id)
+    constraints.merge!(user_id: user) if user.is_a?(Integer)
+    fixture_count(model, **constraints, &blk)
+  end
+
+  # The number of fixture records for the indicated model and constraints.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Hash]                                     constraints
+  #
+  # @return [Integer]
+  #
+  def fixture_count(model, **constraints, &blk)
+    if blk || constraints.present?
+      fixture_values(model, **constraints, &blk).size
+    else
+      fixtures_of(model).size
+    end
+  end
+
+  # A table of fixture value Hashes for the indicated model type, optionally
+  # matching the given constraints, which are associated with an organization.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Org, User, Integer, nil]                  org
+  # @param [Hash]                                     constraints
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def fixture_values_for_org(model, org, **constraints)
+    org = org.org_id if org.respond_to?(:org_id)
+    if org.is_a?(Integer)
+      fixture_values(model, **constraints) { |_, rec| rec.try(:org_id) == org }
+    else
+      fixture_values(model, **constraints)
+    end
+  end
+
+  # A table of fixture value Hashes for the indicated model type, optionally
+  # matching the given constraints, which are associated with the given user.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [User, Integer, nil]                       user
+  # @param [Hash]                                     constraints
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def fixture_values_for_user(model, user, **constraints, &blk)
+    user = user.user_id if user.respond_to?(:user_id)
+    constraints.merge!(user_id: user) if user.is_a?(Integer)
+    fixture_values(model, **constraints, &blk)
+  end
+
+  # A table of fixture value Hashes for the indicated model type, optionally
+  # matching the given constraints.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Hash]                                     constraints
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def fixture_values(model, **constraints)
+    constraints =
+      constraints.map { |k, v|
+        if v.is_a?(ApplicationRecord)
+          k = :"#{k}_id" unless k.end_with?('_id')
+          v = v.id
+        end
+        [k, v]
+      }.to_h
+    fixtures_of(model)&.fixtures&.map { |key, rec|
+      key = key.to_sym if key.is_a?(String)
+      rec = rec.fixture.transform_keys(&:to_sym)
+      use =
+        constraints.all? do |k, v|
+          if v.blank?
+            rec[k].blank?
+          else
+            Array.wrap(rec[k]).intersect?(Array.wrap(v))
+          end
+        end
+      # noinspection RubyMismatchedArgumentType
+      use &&= yield(key, rec) if block_given?
+      [key, rec] if use
+    }&.compact&.to_h || {}
+  end
+
+  # Fixture set for the indicated model type.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  #
+  # @return [ActiveRecord::FixtureSet, nil]
+  #
+  def fixtures_of(model)
     name = controller_name(model).to_s.pluralize
-    @loaded_fixtures[name]&.size || 0
+    @loaded_fixtures[name]
   end
 
   # ===========================================================================

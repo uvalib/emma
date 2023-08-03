@@ -9,6 +9,8 @@ class User < ApplicationRecord
 
   include Record::Identification
 
+  include Record::Searchable
+
   # :nocov:
   #include Rolify
 
@@ -26,6 +28,24 @@ class User < ApplicationRecord
 
   #extend ActiveRecord::Validations
 
+  def org_id: () -> (Integer | nil)
+
+  def user_id: () -> (Integer | nil)
+
+  # A textual label for the record instance.
+  #
+  # @param [User, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label: (?(User|nil) item) -> (String | nil)
+
+  # The controller for the model/model instance.
+  #
+  # @type [Class]
+  #
+  def self.model_controller: () -> Class
+
   # Create a new instance.
   #
   # @param [User, Hash, nil] attr
@@ -39,14 +59,6 @@ class User < ApplicationRecord
   # @return [String]
   #
   def to_s: () -> String
-
-  # Update database fields.                                                     # if BS_AUTH
-  #
-  # @param [User, Hash, nil] attributes
-  #
-  # @return [void]
-  #
-  def assign_attributes: ((User|symHash|nil) attributes) -> void
 
   # Value of :id for the indicated record.
   #
@@ -74,8 +86,8 @@ class User < ApplicationRecord
 
   # Return with the specified User record or *nil* if one could not be found.
   #
-  # @param [String, Symbol, Integer, Hash, Model, Any, nil] item
-  # @param [Hash]                                           opt
+  # @param [String, Integer, Hash, Model, *] item
+  # @param [Hash]                            opt
   #
   # @return [User, nil]
   #
@@ -91,6 +103,10 @@ class User < ApplicationRecord
   # @return [User, nil]
   #
   def self.find_record: (untyped item, **untyped opt) -> (User | nil)
+
+  def ability: () -> Ability
+
+  @ability: Ability
 
   # Return the account ID of *user*.
   #
@@ -117,74 +133,45 @@ class User < ApplicationRecord
   #
   def uid: () -> String
 
-  # Indicate whether this User is represented by a different Bookshare user.    # if BS_AUTH
-  #
-  # The Bookshare ID associated with this account if different from *self*.
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  def effective_uid: () -> (String | nil)
-
-  # The User who interacts with Bookshare on behalf of this account if          # if BS_AUTH
-  # different from *self*.
-  #
-  # @return [User]
-  # @return [nil]
-  #
-  def effective_user: () -> (User | nil)
-
-  # Indicate whether this account directly maps on to a Bookshare account.      # if BS_AUTH
-  #
-  def is_bookshare_user?: () -> bool
-
-  # The Bookshare ID associated with this account.                              # if BS_AUTH
+  # Account name.
   #
   # @return [String]
   #
-  def bookshare_uid: () -> String
+  def account: () -> String
 
-  @bookshare_user: User                                                         # if BS_AUTH
-
-  # The User who interacts with Bookshare on behalf of this account.            # if BS_AUTH
+  # Address to use for email communication with the user.
   #
-  # This is *self* unless :effective_id is non-null.
+  # @return [String]
   #
-  # @return [User]
-  #
-  def bookshare_user: () -> User
+  def email_address: () -> String
 
   # Indicate whether the user is one of the known "fake" test user accounts.
   #
   def test_user?: () -> bool
 
-  @developer: bool
-
   # Indicate whether the user has the :developer role.
   #
   def developer?: () -> bool
 
-  @administrator: bool
+  @developer: bool
 
   # Indicate whether the user has the :administrator role.
   #
   def administrator?: () -> bool
+
+  @administrator: bool
+
+  # Indicate whether the user has the :manager role.
+  #
+  def manager?: () -> bool
+
+  @manager: bool
 
   # The user's EMMA roles.
   #
   # @return [Array<Symbol>]
   #
   def role_list: () -> symArray
-
-  # menu_label
-  #
-  # @param [User, nil] item           Default: self.
-  #
-  # @return [String, nil]
-  #
-  # @see BaseDecorator::Menu#items_menu_label
-  #
-  def menu_label: (?(User|nil) item) -> (String | nil)
 
   # assign_default_role
   #
@@ -211,23 +198,19 @@ class User < ApplicationRecord
 
   # Extend Rolify #has_role? to first check for role prototype.
   #
-  # @param [String, Symbol] role      Role capability or role prototype.
-  # @param [Symbol, nil]    resource
+  # Always returns *false* if *role* is blank.
   #
-  def has_role?: (String|Symbol role, ?(Symbol|nil) resource) -> bool
+  # @param [String, Symbol, nil]                   role
+  # @param [Symbol, Class, ApplicationRecord, nil] resource
+  #
+  def has_role?: (nil           role, ?(Symbol|nil) resource) -> false
+               | (String|Symbol role, ?(Symbol|nil) resource) -> bool
 
   # Current EMMA test accounts.
   #
   # @type [Hash{String=>Symbol}]
   #
   def self.test_users: () -> Hash[String,Symbol]
-
-  # Pairs of current EMMA test Bookshare accounts with their "users" table      # if BS_AUTH
-  # record IDs.
-  #
-  # @type [Array<(String,Integer)>]
-  #
-  def self.test_user_menu: () -> Array[[String|Integer]]
 
   # Get the database entry for the indicated user and update it with additional # unless BS_AUTH
   # information from the provider.

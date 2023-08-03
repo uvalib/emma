@@ -1,0 +1,30 @@
+<%# app/views/org/delete.html.erb -%>
+<%-
+  # Prompt to remove an existing EMMA member organization entry.
+
+  view_debug(__FILE__)
+
+  list  ||= @list || []
+  dec     = OrgsDecorator.new(list, **context)
+
+  help  ||= nil # dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  unless modal?
+    label = "#{dec.page_meta_title} - #{title}"
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%- list.each_with_index do |item, idx| -%>
+  <%= render 'org/selected', item: item, row: idx %>
+<%- end -%>
+
+<%= page_directions_section %>
+<%= dec.delete_form %>

@@ -29,13 +29,76 @@ module TestHelper::Utility
   #
   def find_users: (*(String|Symbol|User|nil) list, **untyped matching) -> Array[User|nil]
 
-  # The number of fixture records for the given model.
+  # The number of fixture records for the indicated model and constraints which
+  # are associated with an organization.
   #
-  # @param [Symbol, String, Class, Model] model
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Org, User, Integer, nil]                  org
+  # @param [Hash]                                     constraints
   #
   # @return [Integer]
   #
-  def fixture_count: (Symbol|String|Class|Model model) -> Integer
+  def fixture_count_for_org: (Symbol|String|Class|ApplicationRecord model, Org|User|Integer|nil org, **untyped constraints) -> Integer
+
+  # The number of fixture records for the indicated model and constraints which
+  # are associated with the given user.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [User, Integer, nil]                       user
+  # @param [Hash]                                     constraints
+  #
+  # @return [Integer]
+  #
+  def fixture_count_for_user: (Symbol|String|Class|ApplicationRecord model, User|Integer|nil user, **untyped constraints) ?{ (Symbol,ApplicationRecord) -> bool } -> Integer
+
+  # The number of fixture records for the indicated model and constraints.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Hash]                                     constraints
+  #
+  # @return [Integer]
+  #
+  def fixture_count: (Symbol|String|Class|ApplicationRecord model, **untyped constraints) ?{ (Symbol,ApplicationRecord) -> bool } -> Integer
+
+  # A table of fixture value Hashes for the indicated model type, optionally
+  # matching the given constraints, which are associated with an organization.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Org, User, Integer, nil]                  org
+  # @param [Hash]                                     constraints
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def fixture_values_for_org: (Symbol|String|Class|ApplicationRecord model, Org|User|Integer|nil org, **untyped constraints) -> Hash[Symbol, symHash]
+
+  # A table of fixture value Hashes for the indicated model type, optionally
+  # matching the given constraints, which are associated with the given user.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [User, Integer, nil]                       user
+  # @param [Hash]                                     constraints
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def fixture_values_for_user: (Symbol|String|Class|ApplicationRecord model, User|Integer|nil user, **untyped constraints) ?{ (Symbol,ApplicationRecord) -> bool } -> Hash[Symbol, symHash]
+
+  # A table of fixture value Hashes for the indicated model type, optionally
+  # matching the given constraints.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  # @param [Hash]                                     constraints
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def fixture_values: (Symbol|String|Class|ApplicationRecord model, **untyped constraints) ?{ (Symbol,ApplicationRecord) -> bool } -> Hash[Symbol, symHash]
+
+  # Fixture set for the indicated model type.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] model
+  #
+  # @return [ActiveRecord::FixtureSet, nil]
+  #
+  def fixtures_of: (Symbol|String|Class|ApplicationRecord model) -> (ActiveRecord::FixtureSet | nil)
 
   # Extract the EMMA index entry identifier from the item.
   #

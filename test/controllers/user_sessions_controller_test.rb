@@ -10,7 +10,7 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
   CONTROLLER   = :user_sessions
   OPTIONS      = { controller: CONTROLLER, format: :html }.freeze
 
-  TEST_USER    = :test_dso
+  TEST_USER    = :test_dso_1
 
   READ_FORMATS = :all
 
@@ -47,7 +47,7 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'user session - sign in and out test_dso' do
+  test 'user session - sign in and out test_dso_1' do
     options = {}
     run_test(__method__, only: READ_FORMATS) do
 

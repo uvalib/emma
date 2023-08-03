@@ -238,7 +238,7 @@ module Upload::LookupMethods
     user_opt = opt.extract!(*USER_COLUMNS.excluding(:review_user))
     terms << sql_terms(user_opt, join: :or) if user_opt.present?
 
-    # === Limit by state
+    # === Filter by state
     state_opt = opt.extract!(*STATE_COLUMNS)
     terms << sql_terms(state_opt, join: :or) if state_opt.present?
 
@@ -271,12 +271,17 @@ module Upload::LookupMethods
     offset = positive(opt.delete(:offset))
     terms << "id > #{offset}" if offset
 
+    # === Filter by association
+    assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }
+    assoc.map! { |k| k.split('.').first.singularize.to_sym }
+    assoc = assoc.presence
+
     # === Generate the relation
-    query = sql_terms(opt, *terms, join: :and)
-    where(query).tap do |result|
-      result.order!(sort)  if sort.present?
-      result.limit!(limit) if limit.present?
-    end
+    query  = sql_terms(opt, *terms, join: :and)
+    result = assoc ? joins(*assoc).where(query) : where(query)
+    result.order!(sort)  if sort.present?
+    result.limit!(limit) if limit.present?
+    result
   end
 
   # ===========================================================================

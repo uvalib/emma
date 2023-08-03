@@ -1,0 +1,67 @@
+class OrgControllerTest < ActionDispatch::IntegrationTest
+  MODEL: Class
+
+  CONTROLLER: Symbol
+
+  PARAMS: symHash
+
+  OPTIONS: symHash
+
+  TEST_USERS: symArray
+
+  TEST_READERS: symArray
+
+  TEST_WRITERS: symArray
+
+  READ_FORMATS: Symbol | symArray
+
+  WRITE_FORMATS: Symbol | symArray
+
+  @readers: Array[User|nil]
+
+  @writers: Array[User|nil]
+
+  # @private
+  # @type [String,nil]
+  attr_accessor create_id: String | nil
+
+  # @private
+  # @type [String,nil]
+  attr_accessor edit_id: String | nil
+
+  # @private
+  # @type [String,nil]
+  attr_accessor delete_id: String | nil
+
+  # Push a dummy item into the database for creating.
+  #
+  # @param [Symbol, String, Hash] src
+  #
+  # @return [Org]
+  #
+  def sample_for_create: (?(Symbol|String|symHash) src) -> Org
+
+  # Push a dummy item into the database for editing.
+  #
+  # @param [Symbol, String, Hash] src
+  #
+  # @return [Org]
+  #
+  def sample_for_edit: (?(Symbol|String|symHash) src) -> Org
+
+  # Push a dummy item into the database for deletion.
+  #
+  # @param [Symbol, String, Hash] src
+  #
+  # @return [Org]
+  #
+  def sample_for_delete: (?(Symbol|String|symHash) src) -> Org
+
+  # Generate a new non-persisted item to support new item creation.
+  #
+  # @param [Symbol, String, Hash] src
+  #
+  # @return [Org]
+  #
+  def new_record: (?(Symbol|String|symHash) src) -> Org
+end

@@ -10,51 +10,89 @@
 # "test_guest_1@host".)
 
 # =============================================================================
-# Current existing users of interest
+# Organization :one users
 # =============================================================================
 
-test_dso:
-  id:           1
-  email:        test_dso@virginia.edu
+test_guest_1:
+  email:        test_guest_1@one_university.edu
   first_name:   EMMA Automated
-  last_name:    Test DSO
+  last_name:    Test Organization Guest
+  org:          one
+  roles:        searcher
   access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
-  roles:
-    - searcher
-    - submitter
-    - downloader
 
-test_lib:
-  id:           2
-  email:        test_lib@virginia.edu
+test_staff_1:
+  email:        test_staff_1@one_university.edu
   first_name:   EMMA Automated
-  last_name:    Test Librarian
+  last_name:    Test Organization Staff
+  org:          one
+  roles:        searcher, submitter
   access_token: <%= ENV['EMMACOLLECTION_TOKEN'] if BS_AUTH %>
-  roles:
-    - searcher
-    - submitter
+
+test_dso_1:
+  email:        test_dso_1@one_university.edu
+  first_name:   EMMA Automated
+  last_name:    Test Organization DSO
+  org:          one
+  roles:        searcher, submitter, downloader
+  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
+
+test_man_1:
+  email:        test_man_1@one_university.edu
+  first_name:   EMMA Automated
+  last_name:    Test Organization Manager
+  org:          one
+  roles:        searcher, submitter, downloader, manager
+  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
+
+# =============================================================================
+# Organization :two users
+# =============================================================================
+
+test_guest_2:
+  email:        test_guest_2@two_university.edu
+  first_name:   EMMA Automated
+  last_name:    Test Organization Guest
+  org:          two
+  roles:        searcher
+  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
+
+test_staff_2:
+  email:        test_staff_2@two_university.edu
+  first_name:   EMMA Automated
+  last_name:    Test Organization Staff
+  org:          two
+  roles:        searcher, submitter
+  access_token: <%= ENV['EMMACOLLECTION_TOKEN'] if BS_AUTH %>
+
+test_dso_2:
+  email:        test_dso_2@two_university.edu
+  first_name:   EMMA Automated
+  last_name:    Test Organization DSO
+  org:          two
+  roles:        searcher, submitter, downloader
+  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
+
+test_man_2:
+  email:        test_man_2@two_university.edu
+  first_name:   EMMA Automated
+  last_name:    Test Organization Manager
+  org:          two
+  roles:        searcher, submitter, downloader, manager
+  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
+
+# =============================================================================
+# EMMA local users
+# =============================================================================
 
 test_adm:
-  id:           10
   email:        test_adm@virginia.edu
   first_name:   EMMA Automated
-  last_name:    Test Administrator
-  effective_id: <%= 1 if BS_AUTH %>
-  roles:
-    - searcher
-    - submitter
-    - downloader
-    - administrator
+  last_name:    Test EMMA Administrator
+  roles:        searcher, submitter, downloader, manager, administrator
 
 test_dev:
-  id:           11
   email:        test_dev@virginia.edu
   first_name:   EMMA Automated
-  last_name:    Test Developer
-  effective_id: <%= 1 if BS_AUTH %>
-  roles:
-    - searcher
-    - submitter
-    - downloader
-    - administrator
-    - developer
+  last_name:    Test EMMA Developer
+  roles:        searcher, submitter, downloader, manager, administrator, developer

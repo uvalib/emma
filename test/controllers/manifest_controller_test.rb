@@ -12,7 +12,7 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
   PARAMS        = { controller: CONTROLLER }.freeze
   OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS    = %i[anonymous test_dso].freeze
+  TEST_USERS    = %i[anonymous test_guest_1 test_dso_1 test_man_1 test_adm].freeze
   TEST_READERS  = TEST_USERS
   TEST_WRITERS  = TEST_USERS
 

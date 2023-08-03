@@ -1,0 +1,28 @@
+<%# app/views/org/new.html.erb -%>
+<%-
+  # Create a new EMMA member organization entry.
+
+  view_debug(__FILE__)
+
+  item  ||= @item || Org.new
+  dec     = OrgDecorator.new(item, **context)
+
+  help  ||= nil # dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  unless modal?
+    label = dec.page_meta_title
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= dec.model_form %>
+
+<%= page_notes_section %>

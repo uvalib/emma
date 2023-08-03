@@ -44,4 +44,12 @@ class UploadsTest < ApplicationSystemTestCase
   # @return [void]
   #
   def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Generate an Upload :dc_title.
+  #
+  # @param [Hash] opt                 Test options
+  #
+  # @return [String]
+  #
+  def upload_title: (**untyped opt) -> String
 end

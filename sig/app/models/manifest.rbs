@@ -26,6 +26,8 @@ class Manifest < ApplicationRecord
   # :nocov:
   #extend Record::Describable::ClassMethods
 
+  def org_id: () -> (Integer | nil)
+
   def user_id: () -> (Integer | nil)
 
   # A textual label for the record instance.

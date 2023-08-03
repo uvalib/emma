@@ -67,6 +67,7 @@ en:
         - 'manifest'
         - 'tool'
         - 'help'
+        - 'org'
         - 'home'
 
       primary:
@@ -80,6 +81,7 @@ en:
         - 'manifest'
         - 'tool'
         - 'help'
+        - 'org'
         - 'home'
 
       unreleased:
@@ -87,7 +89,7 @@ en:
         # The subset of 'nav_bar.primary' which are not displayed in the
         # production deployment.  (This may safely be nil or empty.)
 
-        #- 'manifest'
+        - 'org'
 
     panel:
       control:          &PANEL_TOGGLE

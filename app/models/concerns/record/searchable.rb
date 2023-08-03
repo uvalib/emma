@@ -311,7 +311,7 @@ module Record::Searchable
       terms << sql_terms(user_column => users, join: :or)
     end
 
-    # === Limit by state
+    # === Filter by state
     state_opt = state_column && opt.extract!(state_column)
     terms << sql_terms(state_opt, join: :or) if state_opt.present?
 
@@ -348,12 +348,17 @@ module Record::Searchable
       Log.warn { "#{meth}: pagination not supported" }
     end
 
+    # === Filter by association
+    assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }
+    assoc.map! { |k| k.split('.').first.singularize.to_sym }
+    assoc = assoc.presence
+
     # === Generate the relation
-    query = sql_terms(opt, *terms, join: :and)
-    where(query).tap do |result|
-      result.order!(sort)  if sort.present?
-      result.limit!(limit) if limit.present?
-    end
+    query  = sql_terms(opt, *terms, join: :and)
+    result = assoc ? joins(*assoc).where(query) : where(query)
+    result.order!(sort)  if sort.present?
+    result.limit!(limit) if limit.present?
+    result
   end
 
   # ===========================================================================

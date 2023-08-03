@@ -1,0 +1,30 @@
+# config/locales/types/account.en.yml
+#
+# Data type enumerations for user accounts.
+
+en:
+
+  emma:
+
+    account:
+
+      type:
+
+        MemberStatus:
+
+          incomplete:
+            label:      'Incomplete'
+            tooltip:    'Missing required information.'
+
+          active:
+            label:      'Active'
+
+          problem:
+            label:      'Problem'
+
+          inactive:
+            label:      'Inactive'
+
+          deleted:
+            label:      'Deleted'
+            tooltip:    'Required for database referential integrity'

@@ -44,7 +44,7 @@ module TestHelper::SystemTests::Flash
       terms << without
       text ||= without
     end
-    raise 'Too many expected terms' if terms.many?
+    refute terms.many?, 'Too many expected terms'
     type = '*'
     type = '.alert'  if text.nil? && (text = alert)
     type = '.notice' if text.nil? && (text = notice)

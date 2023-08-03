@@ -26,6 +26,7 @@ module TestHelper::Common
     account
     health
     manifest
+    org
     search
     search_call
     upload

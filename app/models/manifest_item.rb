@@ -55,6 +55,8 @@ class ManifestItem < ApplicationRecord
 
   has_one :user, through: :manifest
 
+  has_one :org,  through: :user
+
   # ===========================================================================
   # :section: ActiveRecord scopes
   #
@@ -102,11 +104,16 @@ class ManifestItem < ApplicationRecord
   # noinspection SqlResolve
   scope :for_user, ->(u) { joins(:manifest).where('manifests.user_id = ?', u) }
 
+  # noinspection SqlResolve
+  scope :for_org,  ->(o) { joins(:user).where('users.org_id = ?', o) }
+
   # ===========================================================================
   # :section: ApplicationRecord overrides
   # ===========================================================================
 
   public
+
+  def org_id  = org&.id
 
   def user_id = user&.id
 

@@ -44,6 +44,15 @@ class Manifest < ApplicationRecord
 
   has_many :manifest_items, -> { in_row_order }, dependent: :destroy
 
+  has_one :org, through: :user
+
+  # ===========================================================================
+  # :section: ActiveRecord scopes
+  # ===========================================================================
+
+  # noinspection SqlResolve
+  scope :for_org,  ->(org)  { joins(:user).where('users.org_id = ?', org) }
+
   scope :for_user, ->(user) { where(user: user) }
 
   # ===========================================================================
@@ -51,6 +60,8 @@ class Manifest < ApplicationRecord
   # ===========================================================================
 
   public
+
+  def org_id = org&.id
 
   def user_id = user&.id
 

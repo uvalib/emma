@@ -97,7 +97,7 @@ class Role < ApplicationRecord
     administrator: CAPABILITIES.excluding(:developer),
     manager:       CAPABILITIES.excluding(:developer, :administrator),
     dso:           %i[searcher submitter downloader],
-    librarian:     %i[searcher submitter],
+    staff:         %i[searcher submitter],
     guest:         %i[searcher],
     anonymous:     %i[searcher],
   }.deep_freeze
@@ -117,13 +117,15 @@ class Role < ApplicationRecord
   def self.prototype_for(user)
     user  = User.find_by(uid: user) if user.is_a?(String)
     roles = (user.role_list         if user.is_a?(User))
-    return :anonymous     if roles.nil?
-    return :developer     if roles.include?(:developer)
-    return :administrator if roles.include?(:administrator)
-    return :dso           if roles.include?(:downloader)
-    return :librarian     if roles.include?(:submitter)
-    return :manager       if roles.include?(:manager)
-    :guest
+    case roles&.last
+      when :developer     then :developer
+      when :administrator then :administrator
+      when :manager       then :manager
+      when :downloader    then :dso
+      when :submitter     then :staff
+      when :searcher      then :guest
+      else                     :anonymous
+    end
   end
 
 end

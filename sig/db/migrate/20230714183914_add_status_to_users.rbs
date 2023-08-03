@@ -1,0 +1,3 @@
+class AddStatusToUsers < ActiveRecord::Migration
+  def change: () -> untyped
+end

@@ -1,0 +1,14 @@
+<%# app/views/org/_users.html.erb -%>
+<%-
+  # EMMA member organization users.
+
+  view_debug(__FILE__)
+
+  org   ||= nil or return
+  list  ||= User.where(id: org.user_ids).order(:id)
+  dec     = AccountsDecorator.new(list, **context)
+-%>
+
+<h2>Users</h2>
+
+<%= dec.render_table %>

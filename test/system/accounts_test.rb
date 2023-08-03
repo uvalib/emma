@@ -8,7 +8,7 @@ require 'application_system_test_case'
 # noinspection RubyJumpError
 class AccountsTest < ApplicationSystemTestCase
 
-  TEST_USER = :test_dso
+  TEST_USER = :test_dso_1
 
   setup do
     @user = find_user(TEST_USER)

@@ -39,6 +39,7 @@ module BaseDecorator::Helpers
     params
     request
     session
+    current_org
     current_user
     current_ability
   ].freeze

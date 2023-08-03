@@ -1,0 +1,103 @@
+# Item presenter for "/org" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Org]
+#
+class OrgDecorator < BaseDecorator
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
+  end
+
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
+
+    # Generate a menu of org instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Generate a label for a specific menu entry.
+    #
+    # @param [Model]       item
+    # @param [String, nil] label        Override label.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu_label: (Model item, ?label: String|nil) -> ActiveSupport::SafeBuffer
+
+    # Descriptive term for an item of the given type.
+    #
+    # @param [Symbol, String, nil] model        Default: `#model_type`.
+    # @param [Boolean]             capitalize
+    #
+    # @return [String]
+    #
+    def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
+  end
+
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+
+    # options
+    #
+    # @return [Org::Options]
+    #
+    def options: () -> Org::Options
+  end
+
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+  end
+
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
+  module SharedDefinitions
+    def self.included: (Module base) -> void
+  end
+end
+
+class OrgDecorator
+  include SharedDefinitions
+
+  # Render item attributes.
+  #
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to super except:
+  #
+  # @option opt [String, Symbol, Array<String,Symbol>] :columns
+  # @option opt [String, Regexp, Array<String,Regexp>] :filter
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #model_field_values
+  #
+  #def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+end

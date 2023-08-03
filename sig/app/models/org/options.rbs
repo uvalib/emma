@@ -1,0 +1,5 @@
+# URL parameter options related to Org records.
+#
+class Org::Options < Options
+  include Record::Properties
+end

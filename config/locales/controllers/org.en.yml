@@ -1,0 +1,291 @@
+# config/locales/controllers/org.en.yml
+#
+# EMMA member organization controller pages
+
+en:
+
+  emma:
+
+    org:
+
+      unit:
+        brief:          'org'
+        long:           'organization'
+      label:            'Organization'
+      title:            'EMMA Member Organization'
+      tooltip:          'Show the EMMA member organization table'
+
+      subsystem:
+        database:       true
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+      search:           # TODO: ?
+        action:         index
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_type:
+
+        like:
+          name:         'Filter'
+          label:        'Filter by account:'
+          placeholder:  'Partial email or name...'
+
+      search_bar:
+        enabled:        [index]
+        label:          'Organization Filter'
+
+      search_filters:
+        #enabled:        [index]
+        enabled:        false
+
+        layout:
+          - [sort, size, ~, ~]
+
+      page_controls:
+        label:          'Org Actions:'
+        actions:
+          - show_current
+          - edit_current
+          - index
+          - show_select
+          - new
+          - edit_select
+          - delete_select
+          - { ctrlr: 'account', action: 'new',           label: 'Add User' }
+          - { ctrlr: 'account', action: 'edit_select',   label: 'Edit User' }
+          - { ctrlr: 'account', action: 'delete_select', label: 'Remove User' }
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      action_links:
+
+        new:
+          label:        'Create %{article} new EMMA member organization'
+          article:      'a'
+
+        edit:
+          label:        'Modify %{article} existing EMMA member organization'
+          article:      'an'
+
+        delete:
+          label:        'Remove %{article} existing EMMA member organization'
+          article:      'an'
+
+        back:
+          action:       index
+          label:        'View all EMMA member organizations'
+
+      # =======================================================================
+      # Messages
+      # =======================================================================
+
+      messages:
+        success:        'XXX EMMA member organization was successfully %{actioned}.'
+        failure:        'Could not %{action} EMMA member organization.'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      generic:
+        label:          'Organization'
+        title:          'Organization'
+        tooltip:        '(A brief description of this operation)'
+        description:    '(A more detailed description of this operation)'
+        directions:     '(Brief guidance for using the operation form)'
+        notes:          '(A more detailed description of this operation)'
+
+        submit:         &GENERIC_SUBMIT
+          label:        'Submit'
+          enabled:
+            tooltip:    'Proceed with this action'
+          disabled:
+            tooltip:    'Conditions have not yet been met to proceed'
+
+        cancel:         &GENERIC_CANCEL
+          label:        'CANCEL'
+          enabled:
+            tooltip:    'Do nothing and return to the previous screen'
+          disabled:
+            tooltip:    'Not able to cancel at this point'
+
+        #success:        'EMMA member organization was successfully %{actioned}.'
+        #failure:        'Failed to %{action} EMMA member organization.'
+
+      # =======================================================================
+
+      index:
+        label:          'List All'
+        title:          'EMMA Member Organizations'
+        tooltip:        'List organizations maintained in the org database table'
+        description:    |
+          This is a listing of EMMA member organizations.
+
+        display_fields: # @see 'en.emma.org.record'
+          - !ruby/symbol all
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      show:             &SHOW_ACTION
+        label:          'Show'
+        #title:          'EMMA Member Organization %{name}'
+        title:          'EMMA Member Organization'
+        tooltip:        'Details of a EMMA member organization entry'
+
+        display_fields: # @see 'en.emma.org.record'
+          - !ruby/symbol all
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      show_select:
+        <<:             *SHOW_ACTION
+        label:          'Show Org' # TODO: ???
+        title:          'Show an EMMA Member Organization'
+        role:           administrator
+
+      # =======================================================================
+
+      show_current:
+        <<:             *SHOW_ACTION
+        label:          'Details'
+        tooltip:        'See details about your EMMA Member Organization'
+
+      # =======================================================================
+
+      new:              &NEW_ACTION
+        label:          'Create'
+        title:          'Create an EMMA Member Organization'
+        tooltip:        'Create a new EMMA member organization entry'
+
+        term:
+          action:       'create'
+          actioned:     'created'
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Create'
+          enabled:
+            tooltip:    'Create the new EMMA Member Organization'
+          disabled:
+            tooltip:    'Required information is still needed'
+
+        cancel:
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Do not create this entry (or start over)'
+
+        #success:        'EMMA Member Organization %{org} created.'
+        #failure:        'Could not create EMMA Member Organization.'
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      create:
+        <<:             *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
+        label:          'Change'
+        title:          'Modify an EMMA Member Organization'
+        tooltip:        'Modify an existing EMMA member organization entry'
+
+        term:
+          action:       'update'
+          actioned:     'updated'
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Update'
+          enabled:
+            tooltip:    'Modify this EMMA Member Organization'
+          disabled:
+            tooltip:    'No valid changes have been made yet'
+
+        cancel:
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Discard these changes'
+
+        #success:        'EMMA Member Organization %{org} updated.'
+        #failure:        'Could not update EMMA Member Organization.'
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      edit_select:
+        <<:             *EDIT_ACTION
+       #label:          'Edit Org' # TODO: ???
+        role:           administrator
+
+      # =======================================================================
+
+      edit_current:
+        <<:             *EDIT_ACTION
+        label:          'Modify'
+        tooltip:        'Change details about your EMMA Member Organization'
+        role:           manager
+
+      # =======================================================================
+
+      update:
+        <<:             *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
+        label:          'Remove'
+        title:          'Remove an EMMA Member Organization'
+        tooltip:        'Delete an existing EMMA member organization entry'
+
+        term:
+          action:       'remove'
+          actioned:     'removed'
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Delete'
+          enabled:
+            tooltip:    'Remove this EMMA Member Organization'
+
+        cancel:
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Keep this EMMA Member Organization'
+
+        #success:        'EMMA Member Organization %{org} deleted.'
+        #failure:        'Could not delete EMMA Member Organization.'
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      delete_select:
+        <<:             *DELETE_ACTION
+       #label:          'Delete Org' # TODO: ???
+        role:           administrator
+
+      # =======================================================================
+
+      destroy:
+        <<:             *DELETE_ACTION
+
+      # =======================================================================

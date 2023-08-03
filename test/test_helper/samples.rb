@@ -18,6 +18,7 @@ module TestHelper::Samples
     job_result:     :example,
     manifest:       :example,
     manifest_item:  :example,
+    org:            :one,
     role:           :example,
     search_call:    :Mansfield_Park,
     search_result:  :Mansfield_Park_1,
@@ -48,9 +49,13 @@ module TestHelper::Samples
   # text/fixtures/*.yml data.
   #
   # @!method sample_job_result
+  # @!method sample_manifest
+  # @!method sample_manifest_item
+  # @!method sample_org
   # @!method sample_role
   # @!method sample_search_call
   # @!method sample_search_result
+  # @!method sample_upload
   # @!method sample_user
   #
   SAMPLE_FIXTURE.each_pair do |model, fixture|
@@ -75,6 +80,10 @@ module TestHelper::Samples
     # Generate a sample instance from text/fixtures/manifest_items.yml.
     # @return [ManifestItem]
     def sample_manifest_item; end
+
+    # Generate a sample instance from text/fixtures/orgs.yml.
+    # @return [Org]
+    def sample_org; end
 
     # Generate a sample instance from text/fixtures/roles.yml.
     # @return [Role]

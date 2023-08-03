@@ -250,6 +250,28 @@ Rails.application.routes.draw do
   delete '/account/destroy/:id',    to: 'account#destroy',                    as: 'destroy_account'
 
   # ===========================================================================
+  # Organizations
+  # ===========================================================================
+
+  resources :org, only: %i[index]
+
+  get    '/org/show_current',       to: redirect("/org/show/#{CURRENT}"),     as: 'show_current_org'
+  get    '/org/show_select',        to: 'org#show_select',                    as: 'show_select_org'
+  get    '/org/show/(:id)',         to: 'org#show',                           as: 'show_org'
+
+  get    '/org/new',                to: 'org#new',                            as: 'new_org'
+  match  '/org/create',             to: 'org#create',                         as: 'create_org',           **VIA_CREATE
+
+  get    '/org/edit_current',       to: redirect("/org/edit/#{CURRENT}"),     as: 'edit_current_org'
+  get    '/org/edit_select',        to: 'org#edit_select',                    as: 'edit_select_org'
+  get    '/org/edit/(:id)',         to: 'org#edit',                           as: 'edit_org'
+  match  '/org/update/:id',         to: 'org#update',                         as: 'update_org',           **VIA_UPDATE
+
+  get    '/org/delete_select',      to: 'org#delete_select',                  as: 'delete_select_org'
+  get    '/org/delete/(:id)',       to: 'org#delete',                         as: 'delete_org'
+  delete '/org/destroy/:id',        to: 'org#destroy',                        as: 'destroy_org'
+
+  # ===========================================================================
   # Search call viewer
   # ===========================================================================
 
@@ -367,6 +389,8 @@ unless ONLY_FOR_DOCUMENTATION
   def create_manifest_item_url(...);               end
   def create_manifest_path(...);                   end
   def create_manifest_url(...);                    end
+  def create_org_path(...);                        end
+  def create_org_url(...);                         end
   def create_upload_path(...);                     end
   def create_upload_url(...);                      end
   def create_user_path(...);                       end
@@ -389,10 +413,14 @@ unless ONLY_FOR_DOCUMENTATION
   def delete_manifest_item_url(...);               end
   def delete_manifest_path(...);                   end
   def delete_manifest_url(...);                    end
+  def delete_org_path(...);                        end
+  def delete_org_url(...);                         end
   def delete_select_account_path(...);             end
   def delete_select_account_url(...);              end
   def delete_select_manifest_path(...);            end
   def delete_select_manifest_url(...);             end
+  def delete_select_org_path(...);                 end
+  def delete_select_org_url(...);                  end
   def delete_select_upload_path(...);              end
   def delete_select_upload_url(...);               end
   def delete_select_user_registration_path(...);   end
@@ -407,6 +435,8 @@ unless ONLY_FOR_DOCUMENTATION
   def destroy_manifest_item_url(...);              end
   def destroy_manifest_path(...);                  end
   def destroy_manifest_url(...);                   end
+  def destroy_org_path(...);                       end
+  def destroy_org_url(...);                        end
   def destroy_upload_path(...);                    end
   def destroy_upload_url(...);                     end
   def destroy_user_registration_path(...);         end
@@ -415,16 +445,24 @@ unless ONLY_FOR_DOCUMENTATION
   def destroy_user_session_url(...);               end
   def edit_account_path(...);                      end
   def edit_account_url(...);                       end
+  def edit_current_account_path(...);              end
+  def edit_current_account_url(...);               end
+  def edit_current_org_path(...);                  end
+  def edit_current_org_url(...);                   end
   def edit_manifest_item_path(...);                end
   def edit_manifest_item_url(...);                 end
   def edit_manifest_path(...);                     end
   def edit_manifest_url(...);                      end
+  def edit_org_path(...);                          end
+  def edit_org_url(...);                           end
   def edit_password_path(...);                     end
   def edit_password_url(...);                      end
   def edit_select_account_path(...);               end
   def edit_select_account_url(...);                end
   def edit_select_manifest_path(...);              end
   def edit_select_manifest_url(...);               end
+  def edit_select_org_path(...);                   end
+  def edit_select_org_url(...);                    end
   def edit_select_upload_path(...);                end
   def edit_select_upload_url(...);                 end
   def edit_select_user_path(...);                  end # /users/edit_select
@@ -465,6 +503,8 @@ unless ONLY_FOR_DOCUMENTATION
   def new_manifest_item_url(...);                  end
   def new_manifest_path(...);                      end
   def new_manifest_url(...);                       end
+  def new_org_path(...);                           end
+  def new_org_url(...);                            end
   def new_upload_path(...);                        end
   def new_upload_url(...);                         end
   def new_user_path(...);                          end
@@ -473,6 +513,8 @@ unless ONLY_FOR_DOCUMENTATION
   def new_user_session_path(...);                  end
   def new_user_session_url(...);                   end
   def new_user_url(...);                           end
+  def org_index_path(...);                         end
+  def org_index_url(...);                          end
   def password_path(...);                          end
   def password_url(...);                           end
   def reedit_upload_path(...);                     end
@@ -509,10 +551,24 @@ unless ONLY_FOR_DOCUMENTATION
   def set_run_state_health_url(...);               end
   def show_account_path(...);                      end
   def show_account_url(...);                       end
+  def show_current_account_path(...);              end
+  def show_current_account_url(...);               end
+  def show_current_org_path(...);                  end
+  def show_current_org_url(...);                   end
   def show_manifest_item_path(...);                end
   def show_manifest_item_url(...);                 end
   def show_manifest_path(...);                     end
   def show_manifest_url(...);                      end
+  def show_org_path(...);                          end
+  def show_org_url(...);                           end
+  def show_select_account_path(...);               end
+  def show_select_account_url(...);                end
+  def show_select_manifest_path(...);              end
+  def show_select_manifest_url(...);               end
+  def show_select_org_path(...);                   end
+  def show_select_org_url(...);                    end
+  def show_select_upload_path(...);                end
+  def show_select_upload_url(...);                 end
   def show_upload_path(...);                       end
   def show_upload_url(...);                        end
   def show_user_registration_path(...);            end
@@ -533,6 +589,8 @@ unless ONLY_FOR_DOCUMENTATION
   def update_manifest_item_url(...);               end
   def update_manifest_path(...);                   end
   def update_manifest_url(...);                    end
+  def update_org_path(...);                        end
+  def update_org_url(...);                         end
   def update_upload_path(...);                     end
   def update_upload_url(...);                      end
   def update_user_path(...);                       end
