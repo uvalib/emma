@@ -14,15 +14,16 @@ module LinkHelper
   # Create a link element to an application action target.
   #
   # @param [String, nil]    label         Label passed to #make_link.
-  # @param [Symbol, String] controller
+  # @param [Symbol, String] ctrlr
   # @param [Symbol, String] action
   # @param [Hash]           link_opt      Options passed to #make_link.
+  # @param [String]         css           Characteristic CSS class/selector.
   # @param [Hash]           path_opt      Path options.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link element.
   # @return [nil]                         A valid URL could not be determined.
   #
-  def link_to_action: ((String|nil) label, ?link_opt: symHash|nil, ?path: String|strArray|symHash|nil, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
+  def link_to_action: ((String|nil) label, ctrlr: Symbol|String, action: Symbol|String, ?link_opt: symHash|nil, ?css: String, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate a symbol-based icon button or link which should be both accessible
   # and cater to the quirks of various accessibility scanners.

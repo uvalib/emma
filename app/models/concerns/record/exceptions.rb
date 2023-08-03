@@ -27,12 +27,12 @@ module Record::Exceptions
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  # @see ExceptionHelper#failure
+  # @see ExceptionHelper#raise_failure
   #
-  # @note From UploadWorkflow::Errors::RenderMethods#failure
+  # @note From UploadWorkflow::Errors::RenderMethods#raise_failure
   #
-  def failure(problem, value = nil)
-    ExceptionHelper.failure(problem, value, model: :upload)
+  def raise_failure(problem, value = nil)
+    ExceptionHelper.raise_failure(problem, value, model: :upload)
   end
 
   # ===========================================================================

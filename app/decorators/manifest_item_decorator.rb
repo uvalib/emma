@@ -70,12 +70,10 @@ class ManifestItemDecorator < BaseDecorator
     end
 
     def bulk_delete_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :bulk_delete)
     end
 
     def bulk_destroy_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :bulk_destroy)
     end
 
@@ -1475,24 +1473,6 @@ class ManifestItemDecorator
   # ===========================================================================
 
   public
-
-  # Render item attributes.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details(pairs: nil, **opt)
-    fv_opt      = extract_hash!(opt, :columns, :filter)
-    opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
-    super(**opt)
-  end
 
   # details_container
   #

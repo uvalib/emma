@@ -40,20 +40,20 @@ class Paginator
   #
   # @type [Array<Symbol>]
   #
-  PAGE_PARAMS = %i[page start offset limit].freeze
+  PAGE_KEYS = %i[page start offset limit].freeze
 
   # URL parameters involved in form submission.
   #
   # @type [Array<Symbol>]
   #
-  FORM_PARAMS = %i[selected field-group cancel].freeze
+  FORM_KEYS = %i[selected field-group cancel].freeze
 
   # POST/PUT/PATCH parameters from the entry form that are not relevant to the
   # create/update of a model instance.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_FORM_PARAMS = (PAGE_PARAMS + FORM_PARAMS).freeze
+  IGNORED_FORM_KEYS = (PAGE_KEYS + FORM_KEYS).freeze
 
   # ===========================================================================
   # :section:
@@ -206,46 +206,27 @@ class Paginator
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Api::Record, Array, Hash] result
-  # @param [Symbol, nil]              meth
-  # @param [Hash]                     opt
+  # @param [Hash] result
+  # @param [Hash] opt
   #
   # @return [Array]
   #
-  #--
-  # === Variations
-  #++
-  #
-  # @overload finalize(result, **opt)
-  #   Generally for Record-related models.
-  #   @param [Hash{Symbol=>*}]    result
-  #   @param [Hash]               opt     Passed to #url_for.
-  #   @return [Array]                     The value of #page_items.
-  #
-  # @overload finalize(result, meth = nil, **opt)
-  #   Generally for other models (e.g. Bookshare API-related).
-  #   @param [Api::Record, Array] result
-  #   @param [Symbol, nil]        meth    Method to extract items from result.
-  #   @param [Hash]               opt     Passed to #next_page_path.
-  #   @return [Array]                     The value of #page_items.
-  #
-  def finalize(result, meth = nil, **opt)
+  def finalize(result, **opt)
     # noinspection RubyMismatchedArgumentType
     if result.is_a?(Hash)
-      first, last, page = result.values_at(:first, :last, :page)
+      page  = result[:page]
+      first = result[:first] || page.nil?
+      last  = result[:last]  || page.nil?
       self.page_items   = result[:list]
       self.page_size    = result[:limit]
       self.page_offset  = result[:offset]
       self.total_items  = result[:total]
       self.next_page    = (url_for(opt.merge(page: (page + 1))) unless last)
       self.prev_page    = (url_for(opt.merge(page: (page - 1))) unless first)
-      self.first_page   = (url_for(opt.except(*PAGE_PARAMS))    unless first)
+      self.first_page   = (url_for(opt.except(*PAGE_KEYS))      unless first)
       self.prev_page    = first_page if page == 2
     else
-      self.page_items   = meth && result.try(meth) || result
-      self.page_records = record_count(result)
-      self.total_items  = item_count(result)
-      self.next_page    = next_page_path(list: result, **opt)
+      raise "#{__method__}: not a Hash: #{result.class} #{result.inspect}"
     end
     self.page_items
   end

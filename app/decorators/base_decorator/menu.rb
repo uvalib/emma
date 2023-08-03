@@ -71,11 +71,11 @@ module BaseDecorator::Menu
     menu = items&.order(sort)&.map { |it| [items_menu_label(it), it.id] } || []
 
     ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }
-    select_opt = ujs.merge!(prompt: prompt)
+    select_opt = ujs.merge!(prompt: prompt, name: 'id')
 
     prepend_css!(opt, css)
     opt[:method] ||= :get
-    html_form(path, opt) do
+    html_form(path.delete_suffix(SELECT_ACTION_SUFFIX), opt) do
       label = h.label_tag(:selected, prompt, class: 'sr-only')
       menu  = h.select_tag(:selected, h.options_for_select(menu), select_opt)
       label << menu

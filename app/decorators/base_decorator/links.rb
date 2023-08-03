@@ -144,21 +144,19 @@ module BaseDecorator::Links
   # @param [String]                  css          Characteristic CSS selector.
   # @param [Hash]                    opt          Passed to #action_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   def action_list(current: nil, table: nil, css: '.page-actions', **opt)
-    prm       = current ? opt : params
     current ||= context[:action]
     table   ||= action_links(**opt)
 
     l_opt = { current: current, table: table }
-    links = table.keys.map { |action| action_link(action, **l_opt) }
+    links = table.keys.map { |action| action_link(action, **l_opt) }.compact
+    return if links.blank?
 
     first = links.index { |link| link.include?(ANOTHER) }
     if (first &&= links.delete_at(first))
-      menu   = (prm[:id] == 'SELECT') || current.to_s.end_with?('_select')
-      menu &&= !prm[:selected]
-      links.prepend(first) unless menu
+      links.prepend(first) unless menu_action?(current)
     end
 
     html_tag(:ul, *links, prepend_css(css))
@@ -183,9 +181,10 @@ module BaseDecorator::Links
     current = (opt.delete(:current) || current || context[:action])&.to_sym
     action  = (opt.delete(:action)  || action  || current)&.to_sym
     table ||= action_links(**opt)
-    entry   = table[action]
-    return {} if entry.blank?
-    (action == current) ? entry.merge(article: ANOTHER) : entry.dup
+    entry   = table[action]&.dup or return {}
+    # noinspection RubyMismatchedArgumentType
+    entry[:article] = ANOTHER if base_action(action) == base_action(current)
+    entry
   end
 
   # The URL link for an entry in a list of controller actions.
@@ -210,11 +209,13 @@ module BaseDecorator::Links
   )
     action  = opt.delete(:action) || action
     entry   = action_entry(action, current: current, **opt)
-    return if entry.blank? && path.blank?
-    action  = entry[:action]
+    action  = entry[:action] || action
+    return unless can?(action, (object.is_a?(Array) ? object_class : object))
+
     label   = (label || entry[:label]).presence
     label &&= label % entry
     label ||= labelize(action)
+
     html_tag(:li, prepend_css(css)) do
       link_to_action(label, action: action)
     end

@@ -9,7 +9,7 @@ class ManifestDecorator < BaseDecorator
     include BaseDecorator::SharedPathMethods
 
     def upload_path:        (*untyped _ignored,         **untyped opt)  -> String
-    def remit_select_path:  (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def remit_select_path:  (*untyped _ignored,         **untyped opt)  -> String
     def remit_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
     #def start_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
     #def stop_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
@@ -477,20 +477,6 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def submission_status_grid: (?row: Integer|nil, ?index: Integer|nil, ?tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Render item attributes.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #

@@ -18,7 +18,6 @@ class SearchController < ApplicationController
   include SessionConcern
   include RunStateConcern
   include PaginationConcern
-  include SerializationConcern
   include SearchConcern
 
   # Non-functional hints for RubyMine type checking.
@@ -57,7 +56,7 @@ class SearchController < ApplicationController
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # API results for :index.
   #
@@ -105,7 +104,9 @@ class SearchController < ApplicationController
     titles = title_results?
     @list  = index_search(titles: titles, save: !playback, **prm)
     err    = @list.exec_report if @list.error?
-    paginator.finalize(@list, (titles ? :titles : :records), **prm)
+    items  = titles ? :titles : :record
+    # noinspection RubyMismatchedArgumentType
+    paginator.finalize(@list, as: items, **prm)
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -182,7 +183,7 @@ class SearchController < ApplicationController
     prm     = paginator.initial_parameters
     prm[:q] = SearchTerm::NULL_SEARCH if prm.slice(*search_query_keys).blank?
     @list   = index_search(titles: false, save: false, scores: false, **prm)
-    paginator.finalize(@list, :records, **prm)
+    paginator.finalize(@list, as: :records, **prm)
     flash_now_alert(@list.exec_report) if @list.error?
     respond_to do |format|
       format.html { render 'search/index' }
@@ -227,36 +228,6 @@ class SearchController < ApplicationController
     image_data = Base64.encode64(response.body)
     mime_type  = response.headers['content-type']
     render plain: image_data, format: mime_type, layout: false
-  end
-
-  # ===========================================================================
-  # :section: SerializationConcern overrides
-  # ===========================================================================
-
-  protected
-
-  # Response values for de-serializing the index page to JSON or XML.
-  #
-  # @param [Search::Message::SearchRecordList, Search::Message::SearchTitleList] list
-  # @param [Hash] opt
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def index_values(list = @list, **opt)
-    opt.reverse_merge!(wrap: :response)
-    opt.reverse_merge!(name: list.respond_to?(:titles) ? :titles : :records)
-    super(list, **opt)
-  end
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Search::Message::SearchRecord, Hash] item
-  # @param [Hash]                                opt
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def show_values(item = @item, **opt)
-    sanitize_keys(super)
   end
 
 end

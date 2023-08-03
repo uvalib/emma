@@ -36,7 +36,7 @@ class SearchResult < ApplicationRecord
   # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
-    super(attr, &block)
+    super
   end
 
   # ===========================================================================

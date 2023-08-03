@@ -234,13 +234,13 @@ module Record::Identification
       record
     elsif !id
       Log.info { "#{meth}: #{error} (no record specified)" }
-      failure(:file_id) unless no_raise
+      raise_failure(:file_id) unless no_raise
     elsif no_raise
       # noinspection RubyMismatchedReturnType
       Log.warn { "#{meth}: #{error} (skipping)" }
     else
       Log.error { "#{meth}: #{error}" }
-      failure(:find, item) unless no_raise
+      raise_failure(:find, item) unless no_raise
     end
   end
 
@@ -315,10 +315,12 @@ module Record::Identification
         }.compact
       identifiers = items.reject { |item| item.is_a?(type) }
       if identifiers.present?
-        found = {}
+        found   = {}
+        id_key  = ID_COLUMN.to_s
+        sid_key = self.class.safe_const_get(:SID_COLUMN).to_s
         type.get_records(*identifiers, **opt).each do |record|
-          (id  = record.id.to_s).present?       and (found[id]  = record)
-          (sid = record.submission_id).present? and (found[sid] = record)
+          id  = record.try(id_key)  and found.merge!(id.to_s  => record)
+          sid = record.try(sid_key) and found.merge!(sid.to_s => record)
         end
         items.map! { |item| !item.is_a?(type) && found[item] || item }
         items, failed = items.partition { |i| i.is_a?(type) } unless force

@@ -189,12 +189,11 @@ class UploadsTest < ApplicationSystemTestCase
     meth    ||= __method__
     action    = :edit
     params    = PARAMS.merge(action: action, **opt)
+    select    = menu_action(action)
     prefix    = "#{TITLE_PREFIX} - "
 
     index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, id: 'SELECT')
-    alt_url   = File.join(index_url, "#{action}_select")
-    menu      = [menu_url, alt_url]
+    menu_url  = url_for(**params, action: select)
 
     start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
 
@@ -216,7 +215,7 @@ class UploadsTest < ApplicationSystemTestCase
       # Change to the select menu if coming in from the index page.
       unless direct
         click_on 'Change'
-        wait_for_page menu
+        wait_for_page menu_url
       end
 
       # Choose submission to edit.
@@ -258,12 +257,11 @@ class UploadsTest < ApplicationSystemTestCase
   def delete_select_test(direct:, meth: nil, **opt)
     meth    ||= __method__
     action    = :delete
+    select    = menu_action(action)
     params    = PARAMS.merge(action: action, **opt)
 
     index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, id: 'SELECT')
-    alt_url   = File.join(index_url, "#{action}_select")
-    menu      = [menu_url, alt_url]
+    menu_url  = url_for(**params, action: select)
 
     start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
 
@@ -279,7 +277,7 @@ class UploadsTest < ApplicationSystemTestCase
 
     item_delete = [
       url_for(**params, id: item.id),
-      make_path(alt_url, selected: item.id)
+      make_path(url_for(**params), id: item.id)
     ]
 
     # noinspection RubyMismatchedArgumentType
@@ -295,7 +293,7 @@ class UploadsTest < ApplicationSystemTestCase
       visit start_url
       unless direct
         click_on 'Remove'
-        wait_for_page menu
+        wait_for_page menu_url
       end
 
       # Choose submission to remove, which leads to the delete page.
@@ -305,7 +303,7 @@ class UploadsTest < ApplicationSystemTestCase
       click_on 'Delete', match: :first, exact: true
 
       # Should be back on the menu page.
-      wait_for_page menu
+      wait_for_page menu_url
       assert_flash 'SUCCESS'
 
       # The index page should still show one less record than before.

@@ -5,6 +5,8 @@ module HelpConcern
 
   include HelpHelper
 
+  include SerializationConcern
+
   # get_help_entry
   #
   # @param [Symbol, nil] topic
@@ -21,6 +23,24 @@ module HelpConcern
   def set_help_topic: () -> (Symbol | nil)
 
   @topic: Symbol | nil
+
+  # Response values for serializing the index page to JSON or XML.
+  #
+  # @param [Array] list
+  # @param [Hash]  opt
+  #
+  # @return [Hash{Symbol=>Array,Hash}]
+  #
+  def index_values: (?anyArray list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Symbol] topic
+  # @param [Hash]   opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def show_values: (?(Symbol|nil) topic, **untyped opt) -> symHash
 
   private
 

@@ -22,20 +22,9 @@
 <%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
-<%- if list.blank? -%>
-
-  <%= dec.items_menu %>
-
-<%- else -%>
-
-  <%- list.each_with_index do |item, idx| -%>
-    <%= render 'account/selected', item: item, row: idx %>
-  <%- end -%>
-
-  <%= page_directions_section %>
-  <%= dec.delete_form %>
-
+<%- list.each_with_index do |item, idx| -%>
+  <%= render 'account/selected', item: item, row: idx %>
 <%- end -%>
 
-<%= page_notes_section %>
-<%= dec.action_list unless modal? %>
+<%= page_directions_section %>
+<%= dec.delete_form %>

@@ -1,0 +1,5 @@
+# URL parameter options related to User records.
+#
+class User::Options < Options
+  include Record::Properties
+end

@@ -8,12 +8,8 @@
   dec     = ManifestDecorator.new(item, **context)
   item  ||= dec.object
 
-  menu    = false
-  simple  = true?(params[:record_only]) && !menu
-  name    = menu ? '' : item.name
-
   help  ||= dec.help_topic
-  title ||= dec.page_heading(name: name)
+  title ||= dec.page_heading(name: item.name)
   title   = title.strip.delete_suffix(':')
 
   unless modal?
@@ -22,30 +18,27 @@
     set_page_description(title)
   end
 
-  if menu || simple
-    heading = page_heading(title, help: help)
-  else
-    heading = dec.manifest_page_heading(help: help)
-  end
-
   opt = { dec: dec }
 
 -%>
 
-<%= heading %>
-<%= page_description_section %>
+<%- if true?(params[:record_only]) -%>
 
-<%- if simple -%>
+  <%= page_heading(title, help: help) %>
+  <%= page_description_section %>
 
   <%= page_directions_section %>
   <%= dec.model_form %>
 
 <%- else -%>
 
+  <%= dec.manifest_page_heading(help: help) %>
+  <%= page_description_section %>
+
   <%= page_directions_section %>
   <%= render 'manifest/grid', opt %>
 
-<%- end -%>
+  <%= page_notes_section %>
+  <%= dec.action_list unless modal? %>
 
-<%= page_notes_section %>
-<%= dec.action_list unless modal? %>
+<%- end -%>

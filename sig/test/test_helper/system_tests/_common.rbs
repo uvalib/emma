@@ -12,6 +12,8 @@ module TestHelper::SystemTests::Common
 
   include Emma::Json
 
+  include ParamsHelper
+
   #include Capybara::Node::Finders
 
   #include TestHelper::SystemTests::Authentication

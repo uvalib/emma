@@ -255,7 +255,7 @@ appSetup(MODULE, function() {
     /**
      * @typedef {ManifestItem|{response: ManifestItem}} CreateResponse
      *
-     * @see "ManifestItemConcern#create_manifest_item"
+     * @see "ManifestItemConcern#create_record"
      */
 
     /**
@@ -289,7 +289,7 @@ appSetup(MODULE, function() {
      *
      * @property {ManifestItemTable} items
      *
-     * @see "ManifestController#save_response"
+     * @see "ManifestController#save"
      */
 
     // ========================================================================
@@ -720,7 +720,7 @@ appSetup(MODULE, function() {
          *
          * @param {ManifestSaveMessage|ManifestItemTable|undefined} body
          *
-         * @see "ManifestController#save_response"
+         * @see "ManifestController#save"
          */
         function onSuccess(body) {
             OUT.debug(`${func}: body =`, body);
@@ -3283,7 +3283,7 @@ appSetup(MODULE, function() {
      * @param {Selector}            target
      * @param {ManifestItem|number} data
      *
-     * @see "ManifestController#save_response"
+     * @see "ManifestController#save"
      */
     function updateDbRowDelta(target, data) {
         const func = 'updateDbRowDelta';
@@ -3305,7 +3305,7 @@ appSetup(MODULE, function() {
      *
      * @param {ManifestItemTable} table
      *
-     * @see "ManifestController#save_response"
+     * @see "ManifestController#save"
      */
     function updateRowValues(table) {
         const func = 'updateRowValues'; OUT.debug(`${func}: table =`, table);
@@ -4857,7 +4857,7 @@ appSetup(MODULE, function() {
      * @param {jQuery}         $cell
      * @param {CreateResponse} body
      *
-     * @see "ManifestItemConcern#create_manifest_item"
+     * @see "ManifestItemConcern#create_record"
      */
     function parseCreateResponse($cell, body) {
         OUT.debug('parseCreateResponse: body =', body);

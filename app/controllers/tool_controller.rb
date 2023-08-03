@@ -15,7 +15,6 @@ class ToolController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
-  include SerializationConcern
   include ToolConcern
 
   # Non-functional hints for RubyMine type checking.

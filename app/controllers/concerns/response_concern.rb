@@ -12,7 +12,9 @@ module ResponseConcern
   extend ActiveSupport::Concern
 
   include FlashHelper
-  include ParamsHelper
+  include HttpHelper
+
+  include ParamsConcern
 
   # ===========================================================================
   # :section:
@@ -51,6 +53,49 @@ module ResponseConcern
     self.status = status
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The default redirect path for #redirect_back.
+  #
+  # @return [String]
+  #
+  def default_fallback_location
+    root_path
+  end
+
+  # Prefix for response diagnostic logging.
+  #
+  # @return [String]
+  #
+  def response_tag
+    @response_tag ||=
+      self.class.name.underscore.split('_')[0...-1].join('_').upcase
+  end
+
+  # Display the failure on the screen -- immediately if modal, or after a
+  # redirect otherwise.
+  #
+  # @param [Exception] error
+  # @param [String]    fallback   Redirect fallback #default_fallback_location
+  # @param [Symbol]    meth       Calling method.
+  #
+  # @return [void]
+  #
+  def error_response(error, fallback = nil, meth: nil)
+    meth ||= calling_method
+    if modal?
+      failure_status(error, meth: meth)
+    else
+      re_raise_if_internal_exception(error)
+      flash_failure(error, meth: meth)
+      redirect_back(fallback_location: fallback || default_fallback_location)
+    end
+  end
+
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status
@@ -58,7 +103,7 @@ module ResponseConcern
   # @param [String, FalseClass]              redirect
   # @param [Boolean]                         xhr        Override `request.xhr?`
   # @param [Symbol]                          meth       Calling method.
-  # @param [String]                          tag        For diagnostics.
+  # @param [String]                          tag        Default: #response_tag.
   # @param [String]                          fallback   For #redirect_back.
   #
   # @return [void]
@@ -88,25 +133,22 @@ module ResponseConcern
     fallback: nil,
     **
   )
+    tag  ||= response_tag
     meth ||= calling_method
-    tag  ||= meth
-    __debug_items("#{tag} #{__method__}", binding)
+    __debug_items("#{tag} #{meth} #{__method__}", binding)
 
     unless status.is_a?(Symbol) || status.is_a?(Integer)
       status, item = [nil, status]
     end
     re_raise_if_internal_exception(item) if item.is_a?(Exception)
 
-    xhr        = request_xhr? if xhr.nil?
-    html       = !xhr || redirect.present?
-    report     = item.presence && ExecReport[item]
-    status   ||= report&.http_status
-    status   ||= item.is_a?(Exception) ? :bad_request : :ok
-    success    = http_success?(status)
-    redirect   = true if redirect.nil? && html && http_redirect?(status)
-    fallback ||= root_path
-    message    = report&.render(html: html)&.presence
-    message  ||= Array.wrap(item).flatten.map { |v| make_label(v) }.presence
+    xhr      = request_xhr? if xhr.nil?
+    html     = !xhr || redirect.present?
+    report   = item.presence && ExecReport[item]
+    status ||= report&.http_status
+    status ||= item.is_a?(Exception) ? :bad_request : :ok
+    success  = http_success?(status)
+    redirect = html && http_redirect?(status) if redirect.nil?
 
     # @see https://github.com/hotwired/turbo/issues/492
     if html && redirect
@@ -116,10 +158,14 @@ module ResponseConcern
         status = :see_other unless http_permanent_redirect?(status)
       end
     end
-    flash_opt = { status: status, meth: meth }
 
-    if html && message
-      if success
+    message   = report&.render(html: html)&.presence
+    message ||= Array.wrap(item).flatten.map { |v| make_label(v) }.presence
+    if message
+      flash_opt = { meth: meth, status: status }
+      if xhr
+        message = { 'X-Flash-Message': flash_xhr(*message, **flash_opt) }
+      elsif success
         flash_success(*message, **flash_opt)
       else
         flash_failure(*message, **flash_opt)
@@ -127,17 +173,12 @@ module ResponseConcern
     end
 
     if xhr
-      if message
-        head status, 'X-Flash-Message': flash_xhr(*message, **flash_opt)
-      else
-        head status
-      end
+      head status, (message || {})
+    elsif redirect.is_a?(String)
+      redirect_to(redirect, status: status)
     elsif redirect
-      if redirect.is_a?(String)
-        redirect_to(redirect, status: status)
-      else
-        redirect_back(fallback_location: fallback, status: status)
-      end
+      fallback ||= default_fallback_location
+      redirect_back(fallback_location: fallback, status: status)
     end
   end
 

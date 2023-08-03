@@ -57,8 +57,7 @@ class UserDecorator < AccountDecorator
     end
 
     def edit_path(item = nil, **opt)
-      return edit_select_path(item, **opt) if opt[:selected]
-      opt[:id] = id_for(item, **opt)
+      opt[:id] = opt.delete(:selected) || id_for(item, **opt)
       h.edit_user_path(**opt)
     end
 
@@ -100,23 +99,6 @@ class UserDecorator < AccountDecorator
     #
     def model_config_key
       :account
-    end
-
-    # =========================================================================
-    # :section: BaseDecorator::Menu overrides
-    # =========================================================================
-
-    public
-
-    # Generate a menu of user instances.
-    #
-    # @param [Hash] opt
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu(**opt)
-      opt[:user] ||= :all
-      super(**opt)
     end
 
   end

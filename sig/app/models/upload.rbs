@@ -41,15 +41,13 @@ class Upload < ApplicationRecord
   #
   attr_reader model_options: Upload::Options
 
-  @file_path: String
-
   # set_model_options
   #
-  # @param [Options, Hash, nil] options
+  # @param [Upload::Options, Hash, nil] options
   #
-  # @return [Upload::Options, nil]
+  # @return [Upload::Options]
   #
-  def set_model_options: ((Options|symHash|nil) options) -> Upload::Options
+  def set_model_options: ((Upload::Options|symHash|nil) options) -> Upload::Options
 
   # Mutually-exclusive modes of operation in #assign_attributes.
   #
@@ -115,6 +113,8 @@ class Upload < ApplicationRecord
   # @return [self]
   #
   def assign_attributes: ((Upload|symHash|nil) attributes) -> self
+
+  @file_path: String
 
   # Formatted record contents.
   #

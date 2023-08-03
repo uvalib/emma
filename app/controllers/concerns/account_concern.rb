@@ -7,110 +7,67 @@ __loading_begin(__FILE__)
 
 # Support methods for the "/account" controller.
 #
+# @!method model_options
+#   @return [User::Options]
+#
+# @!method paginator
+#   @return [User::Paginator]
+#
 module AccountConcern
 
   extend ActiveSupport::Concern
+
+  include ModelConcern
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
-
-  # URL parameters allowed for creating/updating a user account.
-  #
-  # @type [Array<Symbol>]
-  #
-  ACCT_PARAMETERS = (
-    User.field_names + %i[password password_confirmation current_password]
-  ).freeze
 
   # Columns searched for generic (:like) matches.
   #
   # @type [Array<Symbol>]
   #
-  ACCT_MATCH_COLUMNS = %i[email last_name first_name].freeze
+  ACCT_MATCH_KEYS = %i[email last_name first_name].freeze
+
+  # Parameter keys related to password management.
+  #
+  # @type [Array<Symbol>]
+  #
+  PASSWORD_KEYS = %i[password password_confirmation current_password].freeze
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Only allow a list of trusted parameters through.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def account_params
-    prm = params[:user] ? params.require(:user) : params
-    prm = prm.permit(*ACCT_PARAMETERS, *ACCT_PARAMETERS.map(&:to_s))
-    prm.to_h.symbolize_keys
-  end
-
-  # Get the User identifier(s) specified by parameters.
-  #
-  # @return [Array<String,Integer>]
-  #
-  def id_params
-    ids = params[:selected] || params[:id] || params[:email]
-    identifier_list(*ids)
-  end
-
-  # Normalize a list of User identifiers (:id or :email).
-  #
-  # @param [Array<String, Integer, nil>] ids
-  # @param [Regexp]                      separator
-  #
-  # @return [Array<String,Integer>]
-  #
-  def identifier_list(*ids, separator: /\s*,\s*/)
-    # noinspection RubyMismatchedReturnType
-    ids.flat_map { |part|
-      part.is_a?(String) ? part.strip.split(separator) : part
-    }.map { |id|
-      positive(id) ||
-        ((id.is_a?(String) && id.casecmp?('CURRENT')) ? current_user&.id : id)
-    }.compact_blank!
-  end
-
-  # ===========================================================================
-  # :section:
+  # :section: ParamsConcern overrides
   # ===========================================================================
 
   public
 
-  # Get the indicated User account records.
+  # The identifier of the current model instance which #CURRENT_ID represents
+  # in the context of AccountController actions.
   #
-  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
+  # @return [Integer, nil]
   #
-  # @raise [ActiveRecord::RecordNotFound]   If *ids* is blank.
-  #
-  # @return [Array<User>]
-  #
-  def find_accounts(ids = nil)
-    ids ||= id_params
-    ids, uids = Array.wrap(ids).partition { |v| v.is_a?(Integer) }
-    if ids.present? && uids.present?
-      User.matching(id: ids, email: uids, join: :or).to_a
-    elsif ids.present?
-      User.where(id: ids).to_a
-    elsif uids.present?
-      User.where(email: uids).to_a
-    else
-      raise ActiveRecord::RecordNotFound, 'no identifier(s) given'
-    end
+  def current_id
+    current_user&.id
   end
 
-  # Get the indicated User account record.
+  # URL parameters associated with model record(s).
   #
-  # @param [String, Integer, nil] id    Default: `params[:id]`.
+  # @return [Array<Symbol>]
   #
-  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
-  #
-  # @return [User, nil]
-  #
-  def find_account(id = nil)
-    User.find_record(id || params[:id])
+  def id_param_keys
+    [*super, :email].uniq
+  end
+
+  # ===========================================================================
+  # :section: ModelConcern overrides
+  # ===========================================================================
+
+  public
+
+  def find_or_match_keys
+    [*super, *User.field_names, *PASSWORD_KEYS].uniq
   end
 
   # ===========================================================================
@@ -122,19 +79,18 @@ module AccountConcern
   # Get matching User account records or all records if no terms are given.
   #
   # @param [Array<String,Hash,Array,nil>] terms
-  # @param [Array, nil]                   columns     Def.: #ACCT_MATCH_COLUMNS
   # @param [Symbol, String, Hash, Array]  sort        Def.: implicit order
+  # @param [Array<Symbol>]                columns
   # @param [Hash]                         hash_terms  Added to *terms*.
   #
   # @return [ActiveRecord::Relation<User>]
   #
-  def get_accounts(*terms, columns: nil, sort: nil, **hash_terms)
+  def get_accounts(*terms, sort: nil, columns: ACCT_MATCH_KEYS, **hash_terms)
     terms.flatten!
     terms.map! { |t| t.is_a?(Hash) ? t.deep_symbolize_keys : t if t.present? }
     terms.compact!
     terms << hash_terms if hash_terms.present?
     if terms.present?
-      columns ||= ACCT_MATCH_COLUMNS
       relation = User.matching(*terms, columns: columns, join: :or) # TODO: Is :or really correct here?
     elsif administrator?
       relation = User.all
@@ -145,79 +101,6 @@ module AccountConcern
     end
     # noinspection RubyMismatchedReturnType
     sort ? relation.order(sort) : relation
-  end
-
-  # Get the indicated User account record.
-  #
-  # @param [String, Integer, nil] id    Default: `params[:id]`.
-  #
-  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
-  #
-  # @return [User, nil]
-  #
-  def get_account(id = nil)
-    find_account(id)
-  end
-
-  # Create a new User account record.
-  #
-  # @param [Hash,nil] attr            Initial User attributes.
-  #
-  # @return [User]
-  #
-  def new_account(attr = nil)
-    User.new(attr)
-  end
-
-  # Create a new persisted User account.
-  #
-  # @param [Boolean]        no_raise  If *true*, use #save instead of #save!.
-  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
-  # @param [Hash]           attr      Initial User attributes.
-  #
-  # @raise [ActiveRecord::RecordNotSaved]   If #save! failed.
-  #
-  # @return [User]
-  #
-  def create_account(no_raise: false, force_id: false, **attr)
-    attr = account_params if attr.blank?
-    attr.delete(:id) unless true?(force_id)
-    new_account(attr).tap do |record|
-      no_raise ? record.save : record.save!
-    end
-  end
-
-  # Modify an existing (persisted) User account.
-  #
-  # @param [Boolean] no_raise  If *true*, use #update instead of #update!.
-  # @param [Hash]    attr      New attributes (default: `#account_params`).
-  #
-  # @raise [ActiveRecord::RecordNotSaved]   If #update! failed.
-  #
-  # @return [User, nil]
-  #
-  def update_account(no_raise: false, **attr)
-    attr = account_params if attr.blank?
-    id   = attr.delete(:id) || attr[:email]
-    get_account(id).tap do |record|
-      no_raise ? record.update(attr) : record.update!(attr) if record
-    end
-  end
-
-  # Remove an existing (persisted) User account.
-  #
-  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
-  # @param [Boolean] no_raise   If *true*, use #destroy instead of #destroy!.
-  #
-  # @raise [ActiveRecord::RecordNotFound]       If *ids* is blank.
-  # @raise [ActiveRecord::RecordNotDestroyed]   If #destroy! failed.
-  #
-  # @return [Array<User>]
-  #
-  def destroy_accounts(*ids, no_raise: false, **)
-    find_accounts(ids.presence).tap do |records|
-      no_raise ? records.each(&:destroy) : records.each(&:destroy!)
-    end
   end
 
   # ===========================================================================
@@ -236,22 +119,20 @@ module AccountConcern
   # @return [ActiveSupport::SafeBuffer]
   #
   def redirect_success(action, message = nil, redirect: nil, **opt)
-    message ||= message_for(action, :success)
-    message &&= message % interpolation_terms(action)
+    config    = account_fields
+    message ||= message_for(action, :success, config)
+    message &&= message % interpolation_terms(action, config)
     message ||=
-      case action
-        when :new, :create
-          'Account created.' # TODO: I18n
-        when :delete, :delete_select, :destroy
-          'Account removed.' # TODO: I18n
-        else
-          'Account updated.' # TODO: I18n
+      case base_action(action)
+        when :new,    :create  then 'Account created.' # TODO: I18n
+        when :delete, :destroy then 'Account removed.' # TODO: I18n
+        else                        'Account updated.' # TODO: I18n
       end
     opt[:notice] = message
     if (redirect ||= params[:redirect])
       redirect_to(redirect, opt)
     else
-      redirect_back(fallback_location: account_index_path, **opt)
+      redirect_back(fallback_location: default_fallback_location, **opt)
     end
   end
 
@@ -266,8 +147,9 @@ module AccountConcern
   # @return [ActiveSupport::SafeBuffer]
   #
   def redirect_failure(action, message = nil, error: nil, redirect: nil, **opt)
-    message ||= message_for(action, :failure)
-    message &&= message % interpolation_terms(action)
+    config    = account_fields
+    message ||= message_for(action, :failure, config)
+    message &&= message % interpolation_terms(action, config)
     message ||= 'FAILED' # TODO: I18n
     if error
       error   = error.full_messages if error.is_a?(ActiveModel::Errors)
@@ -275,14 +157,15 @@ module AccountConcern
       message = [message, *Array.wrap(error)]
       message = safe_join(message, HTML_BREAK)
     end
+    opt[:alert] = message
     redirect ||=
       case action
         when :new,    :create  then { action: :new }
         when :edit,   :update  then { action: :edit }
         when :delete, :destroy then { action: :index }
+        else                        default_fallback_location
       end
-    redirect ||= account_index_path
-    redirect_to(redirect, opt.merge!(alert: message))
+    redirect_to(redirect, opt)
   end
 
   # ===========================================================================
@@ -326,6 +209,46 @@ module AccountConcern
     action = result[:action] ||= action.to_s
     result[:actioned] ||= (action + (action.end_with?('e') ? 'd' : 'ed'))
     result
+  end
+
+  # ===========================================================================
+  # :section: ResponseConcern overrides
+  # ===========================================================================
+
+  public
+
+  def default_fallback_location = account_index_path
+
+  # ===========================================================================
+  # :section: OptionsConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Create an Options instance from the current parameters.
+  #
+  # @return [User::Options]
+  #
+  def get_model_options
+    User::Options.new(request_parameters)
+  end
+
+  # ===========================================================================
+  # :section: PaginationConcern overrides
+  # ===========================================================================
+
+  public
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [User::Paginator]
+  #
+  def pagination_setup(paginator: User::Paginator, **opt)
+    # noinspection RubyMismatchedReturnType
+    super
   end
 
   # ===========================================================================

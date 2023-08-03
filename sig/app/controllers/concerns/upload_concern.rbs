@@ -17,72 +17,28 @@ module UploadConcern
 
   include FlashHelper
 
-  include HttpHelper
-
   include ImportConcern
 
   include IngestConcern
 
-  include OptionsConcern
+  include SerializationConcern
 
-  include ResponseConcern
-
-  include PaginationConcern
+  include ModelConcern
 
   MIME_REGISTRATION: Array[Class]
-
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS: symArray
-
-  # The upload identified in URL parameters either as :selected or :id.
-  #
-  # @return [String, nil]
-  #
-  def identifier: () -> (String | nil)
-
-  @identifier: String | nil
-
-  # The database ID of the upload identified in URL parameters.
-  #
-  # @return [Integer, nil]
-  #
-  def db_id: () -> (Integer | nil)
-
-  @db_id: Integer | nil
-
-  @workflow: Workflow::Base
-
-  # URL parameters relevant to the current operation.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def upload_params: () -> symHash
-
-  @upload_params: symHash
 
   # Get URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def get_upload_params: () -> symHash
+  def current_get_params: () ?{ (symHash) -> void } -> symHash
 
-  # Extract POST parameters that are usable for creating/updating an Upload
+  # Extract POST parameters that are usable for creating/updating a Manifest
   # instance.
   #
   # @return [Hash{Symbol=>*}]
   #
-  # === Implementation Notes
-  # The value `params[:upload][:emma_data]` is ignored because it reports the
-  # original metadata values that were supplied to the edit form.  The value
-  # `params[:upload][:file]` is ignored if it is blank or is the JSON
-  # representation of an empty object ("{}") -- this indicates an editing
-  # submission where metadata is being changed but the uploaded file is not
-  # being replaced.
-  #
-  def upload_post_params: () -> symHash
+  def current_post_params: () ?{ (symHash) -> void } -> symHash
 
   # Extract POST parameters and data for bulk operations.
   #
@@ -112,37 +68,50 @@ module UploadConcern
   #
   def set_item_download_url: () -> (String | nil)
 
-  # Parameters used by Upload#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RECORDS_PARAMS: symArray
+  def search_records_keys: () -> symArray
 
-  # Upload#search_records parameters that specify a distinct search query.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_ONLY_PARAMS: symArray
-
-  # Parameters used by #find_by_match_records or passed on to
-  # Upload#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIND_OR_MATCH_PARAMS: symArray
+  def find_or_match_keys: () -> symArray
 
   # Locate and filter Upload records.
   #
-  # @param [Array<String,Array>] items  Default: `UploadConcern#identifier`.
-  # @param [Hash]                opt    Passed to Upload#search_records;
-  #                                       default: `#upload_params` if no
-  #                                       *items* are given.
+  # @param [Array<String,Array>] items    Default: `UploadConcern#identifier`.
+  # @param [Array<Symbol>]       filters  Filter methods to limit/modify params
+  # @param [Hash]                opt      Passed to Upload#search_records;
+  #                                         default: `#upload_params` if no
+  #                                         *items* are given.
   #
   # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def find_or_match_records: (*(String|anyArray) items, **untyped opt) -> symHash
+  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> symHash
+
+  # Select records for the current user unless a different user has been
+  # specified (or all records if specified as '*', 'all', or 'false').
+  #
+  # @param [Hash]  opt                May be modified.
+  #
+  def filter_by_user!: (symHash opt) -> void
+
+  # Limit records to those in the given state (or records with an empty state
+  # field if specified as 'nil', 'empty', or 'missing').
+  #
+  # @param [Hash]   opt               May be modified.
+  # @param [Symbol] key               State URL parameter.
+  #
+  # @return [Hash, nil]               *opt* if changed.
+  #
+  def filter_by_state!: (symHash opt, ?key: Symbol) -> (symHash | nil)
+
+  # Limit by workflow status group.
+  #
+  # @param [Hash]                 opt     May be modified.
+  # @param [Symbol]               key     Group URL parameter.
+  # @param [Symbol|Array<Symbol>] state   State parameter(s).
+  #
+  # @return [Hash, nil]                   *opt* if changed.
+  #
+  def filter_by_group!: (symHash opt, ?key: Symbol, ?state: Symbol|symArray) -> (symHash | nil)
 
   # Return with the specified Upload record or *nil* if one could not be found.
   #
@@ -154,7 +123,7 @@ module UploadConcern
   #
   # @see Upload#get_record
   #
-  def get_record: (?(String|Upload|anyHash|nil) id) -> (Upload | nil)
+  def get_record: (?(String|Integer|Upload|symHash|nil) id) -> (Upload | nil)
 
   # Get item data from the production service.
   #
@@ -165,6 +134,8 @@ module UploadConcern
   # @return [nil]                     Bad data and/or no object created.
   #
   def proxy_get_record: (String sid, String host) -> (Upload | nil)
+
+  @workflow: Workflow::Base
 
   # Gather information to create an upload workflow instance.
   #
@@ -258,18 +229,6 @@ module UploadConcern
   #
   def reindex_record: ((Upload|Array[Upload]|ActiveRecord::Relation) list, ?atomic: bool|nil, ?dryrun: bool|nil, ?meth: Symbol|nil) -> [strArray, strArray]
 
-  # Generate a response to a POST.
-  #
-  # @param [Symbol, Integer, Exception, nil] status
-  # @param [*]                               item
-  # @param [Hash]                            opt
-  #
-  # @return [void]
-  #
-  def post_response
-    : ((Symbol|Integer|nil) status, ?untyped   item, **untyped opt) -> void
-    | (                              Exception item, **untyped opt) -> void
-
   # Render an item for display in a message.
   #
   # @param [Model, Hash, String, *] item
@@ -278,25 +237,11 @@ module UploadConcern
   #
   def make_label: (untyped item, **untyped opt) -> String
 
-  # Raise an exception.
-  #
-  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
-  #
-  # @raise [UploadWorkflow::SubmitError]
-  # @raise [ExecError]
-  #
-  # @see ExceptionHelper#failure
-  #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
-
-  # Create a @model_options instance from the current parameters.
+  # Create an Options instance from the current parameters.
   #
   # @return [Upload::Options]
   #
-  def set_model_options: () -> Upload::Options
-
-  @model_options: Upload::Options
+  def get_model_options: () -> Upload::Options
 
   # Create a Paginator for the current controller action.
   #
@@ -306,6 +251,24 @@ module UploadConcern
   # @return [Upload::Paginator]
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> Upload::Paginator
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [*]    list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?untyped list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Upload, Hash] item
+  # @param [Hash]         opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def show_values: (?(Upload|anyHash) item, **untyped opt) -> symHash
 
   private
 

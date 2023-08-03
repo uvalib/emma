@@ -45,7 +45,8 @@ module LayoutHelper::PageControls
   # @param [String] css               CSS class/selector for outer container.
   # @param [Hash]   opt
   #
-  # @option opt [String, Symbol] :controller    Default: `params[:controller]`.
+  # @option opt [String, Symbol] :controller    Alias for :ctrlr.
+  # @option opt [String, Symbol] :ctrlr         Default: `params[:controller]`.
   # @option opt [String, Symbol] :action        Default: `params[:action]`.
   # @option opt [String]         :label_id
   #
@@ -54,15 +55,13 @@ module LayoutHelper::PageControls
   #
   def render_page_controls(css: '.page-controls', **opt)
     opt     = request_parameters.merge(opt)
-    id      = opt[:selected] || opt[:id]
-    ctrlr   = opt[:controller].to_sym
-    action  = opt[:action].to_sym
-    ca_opt  = { controller: ctrlr, action: action }
-    actions = page_control_actions(**ca_opt).presence or return
-    anchor  = "#{action}-page-controls"
+    ctl     = opt[:ctrlr]  = (opt.delete(:controller) || opt[:ctrlr])&.to_sym
+    act     = opt[:action] = opt[:action]&.to_sym
+    entries = page_control_actions(ctrlr: ctl, action: act).presence or return
+    anchor  = "#{act}-page-controls"
     lbl_id  = opt.delete(:label_id) || css_randomize(anchor)
 
-    skip_nav_prepend(ctrlr => anchor)
+    skip_nav_prepend(ctl => anchor)
 
     label =
       html_div(class: 'label', id: lbl_id) do
@@ -71,7 +70,7 @@ module LayoutHelper::PageControls
 
     controls =
       html_div(class: 'controls', id: anchor, 'aria-labelledby': lbl_id) do
-        page_controls(*actions, id: id, **ca_opt)
+        page_controls(*entries, **opt.slice(:ctrlr, :action, :id))
       end
 
     html_div(class: css_classes(css)) do
@@ -85,36 +84,44 @@ module LayoutHelper::PageControls
   # If an action is given by an array, the first element is interpreted as a
   # controller.  If not the controller for *model* is assumed.
   #
-  # @param [Symbol] controller
+  # @param [Symbol] ctrlr
   # @param [Symbol] action
   #
-  # @return [Array<Array<(Symbol,Symbol)>>]   Controller/action pairs.
-  # @return [nil]                             No authorized actions were found.
+  # @return [Array<Hash>>]            Ctrlr/action entries with optional label.
+  # @return [nil]                     No authorized actions were found.
   #
-  def page_control_actions(controller:, action:)
-    cfg_opt = { controller: controller, action: action, mode: false }
-    actions = config_lookup('page_controls.actions', **cfg_opt)
-    return if actions.blank?
-    model   = model_class(controller)
+  # @see "en.emma.*.page_controls.actions"
+  #
+  def page_control_actions(ctrlr:, action:)
+    cfg_opt = { ctrlr: ctrlr, action: action, mode: false }
+    entries = config_lookup('page_controls.actions', **cfg_opt)
+    return if entries.blank?
+    model   = model_class(ctrlr)
     user    = (@user || current_user)
     subject = (user if model == User)
     log     = (->(m) { Log.debug("#{__method__}: #{m}") } if Log.debug?)
-    actions.map { |entry|
-      next if entry.blank?
-      if entry.is_a?(Array)
-        ctrlr, action = entry.map(&:to_sym)
-        subj   = subject || model_class(ctrlr)
-      else
-        ctrlr  = controller
-        action = entry.to_sym
-        subj   = subject || model
+    entries.map { |ent|
+      next if ent.blank?
+      ent = ent.first if ent.is_a?(Array) && !ent.many?
+      case ent
+        when Hash  then ent.slice!(:ctrlr, :action, :id, :params, :label, :controller)
+        when Array then ent = { ctrlr: ent[0], action: ent[1], id: ent[2] }
+        else            ent = { ctrlr: ctrlr,  action: ent }
       end
-      next log&.('no action')                        unless action.present?
-      next log&.("#{action} not permitted for user") unless can?(action, subj)
-      role    = config_lookup('role', controller: ctrlr, action: action)
-      allowed = user_has_role?(role, user)
-      next log&.("#{action} requires #{role} role")  unless allowed
-      [ctrlr, action]
+      ent.compact_blank!
+      ent.each_pair { |k, v| ent[k] = v.to_sym unless k == :label }
+
+      act = ent[:action]
+      next log&.('no action') unless act.present?
+
+      ctl = ent[:ctrlr] = ent.delete(:controller) || ent[:ctrlr] || ctrlr
+      sub = subject || model_class(ctl)
+      next log&.("[#{ctl}, #{act}] skipped for #{sub}") unless can?(act, sub)
+
+      role = config_lookup('role', **ent.slice(:ctrlr, :action))
+      next log&.("#{ent} needs #{role} role") unless user_has_role?(role, user)
+
+      ent
     }.compact
   end
 
@@ -124,65 +131,39 @@ module LayoutHelper::PageControls
   # Any control which would lead back to the current page is disabled and
   # marked to indicate that the selected action has already been chosen.
   #
-  # @param [Array<Array<(Symbol,Symbol)>>] pairs
-  # @param [Symbol, String, nil]           controller   Current controller.
-  # @param [Symbol, String, nil]           action       Current action.
-  # @param [Hash]                          path_opt
+  # @param [Array<Hash>]         entries    From #page_control_actions
+  # @param [Symbol, String, nil] ctrlr      Current controller.
+  # @param [Symbol, String, nil] action     Current action.
+  # @param [Hash]                path_opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def page_controls(*pairs, controller: nil, action: nil, **path_opt)
-    html_opt = { class: 'control', method: path_opt.delete(:method) }.compact
+  def page_controls(*entries, ctrlr: nil, action: nil, **path_opt)
     item_id  = path_opt.delete(:id)
-    link_opt = path_opt.delete(:link_opt)&.dup || {}
-    append_css!(html_opt, link_opt[:class])
-    path_opt[:link_opt] = link_opt.merge!(html_opt)
-    ctrlr  = controller&.to_sym
-    action = action&.to_sym
-    base   = action&.to_s&.delete_suffix('_select')&.to_sym
-    if (select = (action != base))
-      action &&= base                if item_id
-    else
-      action &&= :"#{action}_select" if item_id == 'SELECT'
-    end
-    pairs.map { |path|
-      ctr, act = path
+    link_opt = path_opt.extract!(:method).merge!(class: 'control')
+    append_css!(link_opt, path_opt[:class]) if path_opt[:class]
+    link_opt.merge!(path_opt[:link_opt])    if path_opt[:link_opt]
+    path_opt[:link_opt] = link_opt
+
+    ctrlr    = ctrlr&.to_sym
+    action   = action&.to_sym
+    # noinspection RubyMismatchedArgumentType
+    base     = action && base_action(action)
+    special  = action && (action != base)
+    action   = base if special && item_id
+
+    entries.map { |entry|
+      ctr, act, prm, lbl = entry.values_at(:ctrlr, :action, :params, :label)
       state = []
       if act && action && (ctr == ctrlr)
-        base_act = act.to_s.delete_suffix('_select').to_sym
-        act      = :"#{act}_select" if select && !act.end_with?('_select')
-        state << 'current'  if base   == base_act
-        state << 'disabled' if action == act
+        state << 'current'  if base == base_action(act)
+        state << 'disabled' if act  == action
       end
-      opt = path_opt.merge(controller: ctr, action: act)
-      opt[:link_opt] = append_css(link_opt, *state)
-      page_control(**opt)
+      opt = path_opt.merge(entry.except(:params, :label))
+      opt.merge!(**prm) if prm.present?
+      opt.merge!(link_opt: append_css(link_opt, *state))
+      link_to_action(lbl, **opt)
     }.compact.join("\n").html_safe
-  end
-
-  # This is a kludge specifically for getting the controls on "/home/dashboard"
-  # to look right.  Although the :edit control is going to "/account/edit/:id",
-  # we want the label/tooltip configuration for "/user/registrations/edit".
-  # (The generic "/account/edit" refers to changing "an account" rather than
-  # "your account").
-  #
-  # @param [Hash] opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def page_control(**opt)
-    label = tip = nil
-    ctr, act, id = opt.values_at(:controller, :action, :id)
-    if (ctr == :account) && (act == :edit) && (!id || (id == current_user&.id))
-      cfg_opt = { ctrlr: 'user/registrations', action: act }
-      label   = config_lookup('label',   **cfg_opt)
-      tip     = config_lookup('tooltip', **cfg_opt)
-    end
-    link_opt = opt[:link_opt] ||= {}
-    link_opt[:role]  ||= 'button'
-    link_opt[:title] ||= tip  if tip
-    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
-    link_to_action(label, **opt)
   end
 
   # page_controls_label
@@ -192,14 +173,13 @@ module LayoutHelper::PageControls
   # @return [String]
   #
   def page_controls_label(**opt)
-    opt      = request_parameters.merge(opt)
-    selected = opt.delete(:selected)
-    id       = opt.delete(:id)
-    if opt.slice(:mode, :one, :many).blank?
-      if selected
-        opt[:one] = true
-      elsif (id == 'SELECT') || opt[:action]&.end_with?('_select')
-        opt[:many] = true
+    opt = request_parameters.merge(opt)
+    id  = opt.extract!(:id, :selected).values.first
+    unless %i[mode one many].intersect?(opt.keys)
+      case Array.wrap(id).size
+        when 0 then opt[:many] = true if menu_action?(opt[:action])
+        when 1 then opt[:one]  = true
+        else        opt[:many] = true
       end
     end
     config_lookup('page_controls.label', **opt) || 'Controls' # TODO: I18n
@@ -219,13 +199,12 @@ module LayoutHelper::PageControls
   # @return [nil]
   #
   def model_class(ctrlr)
-    if ctrlr.is_a?(String) || ctrlr.is_a?(Symbol)
-      case ctrlr.to_sym
-        when :admin          then return # without warning
-        when :upload         then return Upload
-        when :account, :home then return User
-        else                      return User if ctrlr.start_with?('user/')
-      end
+    ctrlr = ctrlr.to_sym if ctrlr.is_a?(String)
+    case ctrlr
+      when :admin          then return # without warning
+      when :upload         then return Upload
+      when :account, :home then return User
+      when Symbol          then return User if ctrlr.start_with?('user/')
     end
     result = to_class(ctrlr)
     if result.is_a?(Class) && result.ancestors.include?(Model)

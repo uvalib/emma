@@ -1,46 +1,36 @@
 # Options that may be specific to the originating controller.
 #
+# === Usage Notes
+# Subclasses are expected to be defined lexically within their associated
+# model class (which allows #model_class to be resolved automatically).
+# Alternatively the subclass can define a MODEL constant to explicitly define
+# the associated model class.
+#
 class Options
   include Emma::Json
 
   include ParamsHelper
 
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS: symArray
-
-  # URL parameters associated with POST data.
-  #
-  # @type [Array<Symbol>]
-  #
-  DATA_PARAMS: symArray
-
   # URL parameters involved in pagination.
   #
   # @type [Array<Symbol>]
   #
-  PAGE_PARAMS: symArray
+  PAGE_KEYS: symArray
 
   # URL parameters involved in form submission.
   #
   # @type [Array<Symbol>]
   #
-  FORM_PARAMS: symArray
+  FORM_KEYS: symArray
 
   # POST/PUT/PATCH parameters from the entry form that are not relevant to the
   # create/update of a model instance.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_FORM_PARAMS: symArray
+  IGNORED_FORM_KEYS: symArray
 
-  # The associated model type.
-  #
-  # @return [Symbol]
-  #
-  attr_reader model: Symbol
+  @params: symHash
 
   @value: symHash
 
@@ -49,13 +39,43 @@ class Options
   # @param [Symbol, *] model
   # @param [Hash, nil] prm
   #
-  def initialize: (untyped model, ?(symHash|nil) prm) -> void
+  def initialize: (?untyped model, ?(symHash|nil) prm) -> void
+
+  # The model class associated with these options.
+  #
+  # @type [Class]
+  #
+  def self.model_class: () -> Class
+
+  def model_class: () -> Class
+
+  # The parameter key denoting a collection of model field values in URL
+  # parameters.
+  #
+  # @param [Symbol, nil] key          Key value defined by subclass.
+  #
+  # @type [Symbol]
+  #
+  def self.model_key: () -> Symbol
+
+  def model_key: () -> Symbol
+
+  # The parameter key denoting the identity of a model instance in URL
+  # parameters.
+  #
+  # @param [Symbol, nil] key          Key value defined by subclass.
+  #
+  # @type [Symbol]
+  #
+  def self.model_id_key: () -> Symbol
+
+  def model_id_key: () -> Symbol
 
   # Indicate whether the item is a valid option.
   #
   # @param [Symbol, String] key
   #
-  def key?: ((Symbol|String) key) -> bool
+  def option?: ((Symbol|String) key) -> bool
 
   # Get an option value.
   #
@@ -88,6 +108,22 @@ class Options
   alias [] get
 
   alias []= set
+
+  # URL parameters associated with item/entry identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  def identifier_keys: () -> symArray
+
+  @identifier_keys: symArray
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  def data_keys: () -> symArray
+
+  @data_keys: symArray
 
   # The valid option keys defined by the subclass.
   #

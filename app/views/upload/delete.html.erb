@@ -28,21 +28,10 @@
 <%= page_heading(title, help: help, logo: logo) %>
 <%= page_description_section %>
 
-<%- if list.blank? -%>
-
-  <%= dec.items_menu %>
-
-<%- else -%>
-
-  <%- list.each_with_index do |item, idx| -%>
-    <%= render 'upload/selected', item: item, row: idx %>
-  <%- end -%>
-
-  <%= page_directions_section %>
-  <%#= dec.preview %>
-  <%= dec.delete_form %>
-
+<%- list.each_with_index do |item, idx| -%>
+  <%= render 'upload/selected', item: item, row: idx %>
 <%- end -%>
 
-<%= page_notes_section %>
-<%= dec.action_list unless modal? %>
+<%= page_directions_section %>
+<%#= dec.preview %>
+<%= dec.delete_form %>

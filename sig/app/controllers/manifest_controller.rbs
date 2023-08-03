@@ -17,8 +17,6 @@ class ManifestController < ApplicationController
 
   include PaginationConcern
 
-  include SerializationConcern
-
   include ManifestConcern
 
   # :nocov:
@@ -48,7 +46,9 @@ class ManifestController < ApplicationController
   #
   def index: () -> nil
 
-  # === GET /manifest/show/:id
+  # === GET /manifest/show/(:id)
+  #
+  # Redirects to #show_select if :id is missing.
   #
   # @see #show_manifest_path          Route helper
   #
@@ -68,12 +68,11 @@ class ManifestController < ApplicationController
   #
   def create: () -> void
 
-  # === GET /manifest/edit/:id
-  # === GET /manifest/edit/SELECT
-  # === GET /manifest/edit_select
+  # === GET /manifest/edit/(:id)
+  #
+  # Redirects to #edit_select if :id is not given.
   #
   # @see #edit_manifest_path          Route helper
-  # @see #edit_select_manifest_path   Route helper
   #
   def edit: () -> void
 
@@ -86,10 +85,10 @@ class ManifestController < ApplicationController
   def update: () -> void
 
   # === GET /manifest/delete/:id
-  # === GET /manifest/delete_select
+  #
+  # Redirects to #delete_select if :id is not given.
   #
   # @see #delete_manifest_path        Route helper
-  # @see #delete_select_manifest_path Route helper
   #
   def delete: () -> void
 
@@ -98,6 +97,48 @@ class ManifestController < ApplicationController
   # @see #destroy_manifest_path       Route helper
   #
   def destroy: () -> void
+
+  # === GET /manifest/show_select
+  #
+  # Show a menu to select a manifest to show.
+  #
+  # @see #show_select_manifest_path   Route helper
+  #
+  def show_select: () -> void
+
+  # === GET /manifest/edit_select
+  #
+  # Show a menu to select a manifest to edit.
+  #
+  # @see #edit_select_manifest_path   Route helper
+  #
+  def edit_select: () -> void
+
+  # === GET /manifest/delete_select
+  #
+  # Show a menu to select a manifest to delete.
+  #
+  # @see #delete_select_manifest_path   Route helper
+  #
+  def delete_select: () -> void
+
+  # === GET /manifest/remit_select
+  #
+  # Show a menu to select a manifest to submit.
+  #
+  # @see #remit_select_manifest_path  Route helper
+  #
+  def remit_select: () -> void
+
+  # The minimal set of ManifestItem values returned upon save.
+  #
+  # Any columns referenced in `manifest.field_error` will also be included.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *updateRowValues()*
+  #
+  ITEM_SAVE_COLS: symArray
 
   # === POST  /manifest/save/:id
   # === PUT   /manifest/save/:id
@@ -116,12 +157,11 @@ class ManifestController < ApplicationController
   #
   def cancel: () -> void
 
-  # === GET /manifest/remit/:id
-  # === GET /manifest/remit/SELECT
-  # === GET /manifest/remit
+  # === GET /manifest/remit/(:id)
+  #
+  # Redirects to #remit_select if :id is not given.
   #
   # @see #remit_manifest_path         Route helper
-  # @see #remit_select_manifest_path  Route helper
   #
   def remit: () -> void
 
@@ -159,44 +199,12 @@ class ManifestController < ApplicationController
   #
   #def resume: () -> void
 
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Array<String,Integer>] id_params  Default: `@identifier`.
+  # @param [Symbol]                         action
+  # @param [Manifest, Array<Manifest>, nil] subject
+  # @param [*]                              args
   #
-  def show_menu?: (?(Array[(String|Integer)]|nil) id_params) -> bool
-
-  # Display the failure on the screen -- immediately if modal, or after a
-  # redirect otherwise.
-  #
-  # @param [Exception] error
-  # @param [String]    fallback   Redirect fallback (#manifest_index_path).
-  # @param [Symbol]    meth       Calling method.
-  #
-  # @return [void]
-  #
-  def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
-
-  # The minimal set of ManifestItem values returned upon save.
-  #
-  # Any columns referenced in `manifest.field_error` will also be included.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @see file:javascripts/controllers/manifest-edit.js *updateRowValues()*
-  #
-  ITEM_SAVE_COLS: symArray
-
-  # A table of the Manifest's items.
-  #
-  # @param [Manifest, nil]       manifest
-  # @param [Symbol, String, nil] wrap
-  # @param [Array<Symbol>]       columns        Passed to Manifest#items_hash.
-  #
-  # @return [Hash{Symbol=>Hash{Integer=>Hash}}]
-  # @return [Hash{Integer=>Hash}]               If *wrap* is *nil*.
-  #
-  def save_response
-    : (?(Manifest|nil) manifest, ?wrap: Symbol|String, ?columns: symArray) -> Hash[Symbol, Hash[Integer,symHash]]
-    | (?(Manifest|nil) manifest,  wrap: nil,           ?columns: symArray) -> Hash[Integer,symHash]
+  def manifest_authorize!: (Symbol action, Manifest|Array[Manifest]|nil subject, *untyped args) -> void
 end

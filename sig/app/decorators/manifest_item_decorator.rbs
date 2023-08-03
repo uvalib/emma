@@ -718,20 +718,6 @@ class ManifestItemDecorator
   #
   def file_input_panel: (id: String, src: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Render item attributes.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
   # details_container
   #
   # @param [Array]         added      Optional elements after the details.

@@ -6,7 +6,10 @@
 # noinspection LongLine
 Rails.application.routes.draw do
 
-  ALL_METHODS ||= %i[get put post patch delete].freeze
+  CURRENT    ||= ParamsHelper::CURRENT_ID
+  VIA_ANY    ||= { via: %i[put patch post get] }
+  VIA_CREATE ||= { via: %i[put patch post] }
+  VIA_UPDATE ||= { via: %i[put patch] }
 
   # ===========================================================================
   # Home page
@@ -38,105 +41,108 @@ Rails.application.routes.draw do
   # NOTE: Avoid "resources :upload" because :action can get turned into :id.
   # ===========================================================================
 
-  get    '/upload',                 to: 'upload#index',         as: 'upload_index'
-  get    '/upload/show/:id',        to: 'upload#show',          as: 'show_upload'
+  get    '/upload',               to: 'upload#index',         as: 'upload_index'
+
+  get    '/upload/show_select',   to: 'upload#show_select',   as: 'show_select_upload'
+  get    '/upload/show/(:id)',    to: 'upload#show',          as: 'show_upload'
 
   # === UploadWorkflow::Single
 
-  get    '/upload/new',             to: 'upload#new',           as: 'new_upload'
-  match  '/upload/create',          to: 'upload#create',        as: 'create_upload',          via: %i[post put patch]
+  get    '/upload/new',           to: 'upload#new',           as: 'new_upload'
+  match  '/upload/create',        to: 'upload#create',        as: 'create_upload',        **VIA_CREATE
 
-  get    '/upload/edit_select',     to: 'upload#edit',          as: 'edit_select_upload',     defaults: { id: 'SELECT' }
-  get    '/upload/edit/:id',        to: 'upload#edit',          as: 'edit_upload'
-  match  '/upload/update/:id',      to: 'upload#update',        as: 'update_upload',          via: %i[put patch]
+  get    '/upload/edit_select',   to: 'upload#edit_select',   as: 'edit_select_upload'
+  get    '/upload/edit/(:id)',    to: 'upload#edit',          as: 'edit_upload'
+  match  '/upload/update/:id',    to: 'upload#update',        as: 'update_upload',        **VIA_UPDATE
 
-  get    '/upload/delete_select',   to: 'upload#delete',        as: 'delete_select_upload',   defaults: { id: 'SELECT' }
-  get    '/upload/delete/:id',      to: 'upload#delete',        as: 'delete_upload'
-  delete '/upload/destroy/:id',     to: 'upload#destroy',       as: 'destroy_upload'
+  get    '/upload/delete_select', to: 'upload#delete_select', as: 'delete_select_upload'
+  get    '/upload/delete/(:id)',  to: 'upload#delete',        as: 'delete_upload'
+  delete '/upload/destroy/:id',   to: 'upload#destroy',       as: 'destroy_upload'
 
   # === UploadWorkflow::Bulk
 
-  get    '/upload/bulk_reindex',    to: 'upload#bulk_reindex',  as: 'bulk_reindex_upload'
+  get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',  as: 'bulk_reindex_upload'
 
-  get    '/upload/bulk_new',        to: 'upload#bulk_new',      as: 'bulk_new_upload'
-  post   '/upload/bulk',            to: 'upload#bulk_create',   as: 'bulk_create_upload'
+  get    '/upload/bulk_new',      to: 'upload#bulk_new',      as: 'bulk_new_upload'
+  post   '/upload/bulk',          to: 'upload#bulk_create',   as: 'bulk_create_upload'
 
-  get    '/upload/bulk_edit',       to: 'upload#bulk_edit',     as: 'bulk_edit_upload'
-  match  '/upload/bulk',            to: 'upload#bulk_update',   as: 'bulk_update_upload',     via: %i[put patch]
+  get    '/upload/bulk_edit',     to: 'upload#bulk_edit',     as: 'bulk_edit_upload'
+  match  '/upload/bulk',          to: 'upload#bulk_update',   as: 'bulk_update_upload',   **VIA_UPDATE
 
-  get    '/upload/bulk_delete',     to: 'upload#bulk_delete',   as: 'bulk_delete_upload'
-  delete '/upload/bulk',            to: 'upload#bulk_destroy',  as: 'bulk_destroy_upload'
+  get    '/upload/bulk_delete',   to: 'upload#bulk_delete',   as: 'bulk_delete_upload'
+  delete '/upload/bulk',          to: 'upload#bulk_destroy',  as: 'bulk_destroy_upload'
 
-  get    '/upload/bulk',            to: 'upload#bulk_index',    as: 'bulk_upload_index'
+  get    '/upload/bulk',          to: 'upload#bulk_index',    as: 'bulk_upload_index'
 
   # === UploadWorkflow
 
-  post   '/upload/renew',           to: 'upload#renew',         as: 'renew_upload'
-  post   '/upload/reedit',          to: 'upload#reedit',        as: 'reedit_upload'
-  match  '/upload/cancel',          to: 'upload#cancel',        as: 'cancel_upload',          via: %i[get post]
-  get    '/upload/check/:id',       to: 'upload#check',         as: 'check_upload',           defaults: { modal: true }
-  post   '/upload/upload',          to: 'upload#upload',        as: 'upload_upload'           # Invoked from file-upload.js
+  post   '/upload/renew',         to: 'upload#renew',         as: 'renew_upload'
+  post   '/upload/reedit',        to: 'upload#reedit',        as: 'reedit_upload'
+  match  '/upload/cancel',        to: 'upload#cancel',        as: 'cancel_upload',        **VIA_ANY
+  get    '/upload/check/:id',     to: 'upload#check',         as: 'check_upload',         defaults: { modal: true }
+  post   '/upload/upload',        to: 'upload#upload',        as: 'upload_upload'         # Invoked from file-upload.js
 
   # === Administration
 
-  get    '/upload/admin',           to: 'upload#admin',         as: 'admin_upload'
-  get    '/upload/records',         to: 'upload#records'
+  get    '/upload/admin',         to: 'upload#admin',         as: 'admin_upload'
+  get    '/upload/records',       to: 'upload#records'
 
   # === Other
 
-  get    '/upload/api_migrate',     to: 'upload#api_migrate',   as: 'api_migrate'
+  get    '/upload/api_migrate',   to: 'upload#api_migrate',   as: 'api_migrate'
 
   # ===========================================================================
   # File download operations
   # ===========================================================================
 
-  get    '/download/:id',           to: 'upload#download',      as: 'file_download'
-  get    '/retrieval',              to: 'upload#retrieval',     as: 'retrieval'
+  get    '/download/:id',         to: 'upload#download',      as: 'file_download'
+  get    '/retrieval',            to: 'upload#retrieval',     as: 'retrieval'
 
   # ===========================================================================
   # EMMA bulk operations - manifests
   # ===========================================================================
 
-  get    '/manifest/new',           to: 'manifest#new',         as: 'new_manifest'
-  match  '/manifest/create',        to: 'manifest#create',      as: 'create_manifest',        via: %i[post put patch]
+  get    '/manifest/new',           to: 'manifest#new',           as: 'new_manifest'
+  match  '/manifest/create',        to: 'manifest#create',        as: 'create_manifest',        **VIA_CREATE
 
-  get    '/manifest/edit_select',   to: 'manifest#edit',        as: 'edit_select_manifest',   defaults: { id: 'SELECT' }
-  get    '/manifest/edit/:id',      to: 'manifest#edit',        as: 'edit_manifest'
-  match  '/manifest/update/:id',    to: 'manifest#update',      as: 'update_manifest',        via: %i[put patch]
+  get    '/manifest/edit_select',   to: 'manifest#edit_select',   as: 'edit_select_manifest'
+  get    '/manifest/edit/(:id)',    to: 'manifest#edit',          as: 'edit_manifest'
+  match  '/manifest/update/:id',    to: 'manifest#update',        as: 'update_manifest',        **VIA_UPDATE
 
-  get    '/manifest/delete_select', to: 'manifest#delete',      as: 'delete_select_manifest', defaults: { id: 'SELECT' }
-  get    '/manifest/delete/:id',    to: 'manifest#delete',      as: 'delete_manifest'
-  delete '/manifest/destroy/:id',   to: 'manifest#destroy',     as: 'destroy_manifest'
+  get    '/manifest/delete_select', to: 'manifest#delete_select', as: 'delete_select_manifest'
+  get    '/manifest/delete/(:id)',  to: 'manifest#delete',        as: 'delete_manifest'
+  delete '/manifest/destroy/:id',   to: 'manifest#destroy',       as: 'destroy_manifest'
 
-  match  '/manifest/save/:id',      to: 'manifest#save',        as: 'save_manifest',          via: %i[post put patch]
-  match  '/manifest/cancel/:id',    to: 'manifest#cancel',      as: 'cancel_manifest',        via: %i[post put patch]
+  match  '/manifest/save/:id',      to: 'manifest#save',          as: 'save_manifest',          **VIA_CREATE
+  match  '/manifest/cancel/:id',    to: 'manifest#cancel',        as: 'cancel_manifest',        **VIA_CREATE
 
-  get    '/manifest/remit_select',  to: 'manifest#remit',       as: 'remit_select_manifest',  defaults: { id: 'SELECT' }
-  get    '/manifest/remit/:id',     to: 'manifest#remit',       as: 'remit_manifest'
+  get    '/manifest/remit_select',  to: 'manifest#remit_select',  as: 'remit_select_manifest'
+  get    '/manifest/remit/(:id)',   to: 'manifest#remit',         as: 'remit_manifest'
 
   get    '/manifest/get_job_result/:job_id',       to: 'manifest#get_job_result'
   get    '/manifest/get_job_result/:job_id/*path', to: 'manifest#get_job_result'
 
 =begin
-  post   '/manifest/start/:id',     to: 'manifest#start',       as: 'start_manifest'
-  post   '/manifest/stop/:id',      to: 'manifest#stop',        as: 'stop_manifest'
-  post   '/manifest/pause/:id',     to: 'manifest#pause',       as: 'pause_manifest'
-  post   '/manifest/resume/:id',    to: 'manifest#resume',      as: 'resume_manifest'
+  post   '/manifest/start/:id',     to: 'manifest#start',         as: 'start_manifest'
+  post   '/manifest/stop/:id',      to: 'manifest#stop',          as: 'stop_manifest'
+  post   '/manifest/pause/:id',     to: 'manifest#pause',         as: 'pause_manifest'
+  post   '/manifest/resume/:id',    to: 'manifest#resume',        as: 'resume_manifest'
 =end
 
-  get    '/manifest/show/:id',      to: 'manifest#show',        as: 'show_manifest'
-  get    '/manifest/:id',           to: redirect('/manifest/update/%{id}'),                   via: %i[get post put patch]
-  get    '/manifest',               to: 'manifest#index',       as: 'manifest_index'
+  get    '/manifest/show_select',   to: 'manifest#show_select',   as: 'show_select_manifest'
+  get    '/manifest/show/(:id)',    to: 'manifest#show',          as: 'show_manifest'
+  get    '/manifest/:id',           to: redirect('/manifest/update/%{id}'),                     **VIA_ANY
+  get    '/manifest',               to: 'manifest#index',         as: 'manifest_index'
 
   # ===========================================================================
   # EMMA bulk operations - manifest items
   # ===========================================================================
 
   get    '/manifest_item/new/:manifest',          to: 'manifest_item#new',          as: 'new_manifest_item'
-  match  '/manifest_item/create/:manifest',       to: 'manifest_item#create',       as: 'create_manifest_item',       via: %i[post put patch]
+  match  '/manifest_item/create/:manifest',       to: 'manifest_item#create',       as: 'create_manifest_item',       **VIA_CREATE
 
   get    '/manifest_item/edit/:manifest/:id',     to: 'manifest_item#edit',         as: 'edit_manifest_item'
-  match  '/manifest_item/update/:manifest/:id',   to: 'manifest_item#update',       as: 'update_manifest_item',       via: %i[put patch]
+  match  '/manifest_item/update/:manifest/:id',   to: 'manifest_item#update',       as: 'update_manifest_item',       **VIA_UPDATE
 
   get    '/manifest_item/delete/:manifest/:id',   to: 'manifest_item#delete',       as: 'delete_manifest_item'
   delete '/manifest_item/destroy/:manifest/:id',  to: 'manifest_item#destroy',      as: 'destroy_manifest_item'
@@ -147,11 +153,11 @@ Rails.application.routes.draw do
   post   '/manifest_item/upload',                 to: 'manifest_item#upload',       as: 'manifest_item_upload'        # Invoked from file-upload.js
 
   get    '/manifest_item/bulk/new/:manifest',     to: 'manifest_item#bulk_new',     as: 'bulk_new_manifest_item'
-  match  '/manifest_item/bulk/create/:manifest',  to: 'manifest_item#bulk_create',  as: 'bulk_create_manifest_item',  via: %i[post put patch]
+  match  '/manifest_item/bulk/create/:manifest',  to: 'manifest_item#bulk_create',  as: 'bulk_create_manifest_item',  **VIA_CREATE
 
   get    '/manifest_item/bulk/edit/:manifest',    to: 'manifest_item#bulk_edit',    as: 'bulk_edit_manifest_item'
-  match  '/manifest_item/bulk/update/:manifest',  to: 'manifest_item#bulk_update',  as: 'bulk_update_manifest_item',  via: %i[put patch]
-  match  '/manifest_item/bulk/fields/:manifest',  to: 'manifest_item#bulk_fields',  as: 'bulk_fields_manifest_item',  via: %i[put patch]
+  match  '/manifest_item/bulk/update/:manifest',  to: 'manifest_item#bulk_update',  as: 'bulk_update_manifest_item',  **VIA_UPDATE
+  match  '/manifest_item/bulk/fields/:manifest',  to: 'manifest_item#bulk_fields',  as: 'bulk_fields_manifest_item',  **VIA_UPDATE
 
   get    '/manifest_item/bulk/delete/:manifest',  to: 'manifest_item#bulk_delete',  as: 'bulk_delete_manifest_item'
   delete '/manifest_item/bulk/destroy/:manifest', to: 'manifest_item#bulk_destroy', as: 'bulk_destroy_manifest_item'
@@ -210,15 +216,15 @@ Rails.application.routes.draw do
 
   # Synthetic login endpoint.
   devise_scope :user do
-    get '/users/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'          if SIGN_IN_AS
+    get '/users/sign_in_as',    to: 'user/sessions#sign_in_as',       as: 'sign_in_as'        if SIGN_IN_AS
   end
 
   devise_scope :user do
     get   '/users/new',         to: 'user/registrations#new',         as: 'new_user'
-    match '/users/create',      to: 'user/registrations#create',      as: 'create_user',        via: %i[post put patch]
-    get   '/users/edit_select', to: 'user/registrations#edit_select', as: 'edit_select_user',   defaults: { id: 'SELECT' }
+    match '/users/create',      to: 'user/registrations#create',      as: 'create_user',      **VIA_CREATE
+    get   '/users/edit_select', to: 'user/registrations#edit_select', as: 'edit_select_user'
     get   '/users/edit/:id',    to: 'user/registrations#edit',        as: 'edit_user'
-    match '/users/update/:id',  to: 'user/registrations#update',      as: 'update_user',        via: %i[post put patch]
+    match '/users/update/:id',  to: 'user/registrations#update',      as: 'update_user',      **VIA_CREATE
   end
 
   # ===========================================================================
@@ -227,18 +233,21 @@ Rails.application.routes.draw do
 
   resources :account, only: %i[index]
 
-  get    '/account/show/:id',       to: 'account#show',           as: 'show_account'
+  get    '/account/show_current',   to: redirect("/account/show/#{CURRENT}"), as: 'show_current_account'
+  get    '/account/show_select',    to: 'account#show_select',                as: 'show_select_account'
+  get    '/account/show/(:id)',     to: 'account#show',                       as: 'show_account'
 
-  get    '/account/new',            to: 'account#new',            as: 'new_account'
-  match  '/account/create',         to: 'account#create',         as: 'create_account',         via: %i[post put patch]
+  get    '/account/new',            to: 'account#new',                        as: 'new_account'
+  match  '/account/create',         to: 'account#create',                     as: 'create_account',       **VIA_CREATE
 
-  get    '/account/edit_select',    to: 'account#edit',           as: 'edit_select_account',    defaults: { id: 'SELECT' }
-  get    '/account/edit/:id',       to: 'account#edit',           as: 'edit_account',           defaults: { id: 'CURRENT' }
-  match  '/account/update/:id',     to: 'account#update',         as: 'update_account',         via: %i[put patch]
+  get    '/account/edit_current',   to: redirect("/account/edit/#{CURRENT}"), as: 'edit_current_account'
+  get    '/account/edit_select',    to: 'account#edit_select',                as: 'edit_select_account'
+  get    '/account/edit/(:id)',     to: 'account#edit',                       as: 'edit_account'
+  match  '/account/update/:id',     to: 'account#update',                     as: 'update_account',       **VIA_UPDATE
 
-  get    '/account/delete_select',  to: 'account#delete',         as: 'delete_select_account',  defaults: { id: 'SELECT' }
-  get    '/account/delete/:id',     to: 'account#delete',         as: 'delete_account'
-  delete '/account/destroy/:id',    to: 'account#destroy',        as: 'destroy_account'
+  get    '/account/delete_select',  to: 'account#delete_select',              as: 'delete_select_account'
+  get    '/account/delete/(:id)',   to: 'account#delete',                     as: 'delete_account'
+  delete '/account/destroy/:id',    to: 'account#destroy',                    as: 'destroy_account'
 
   # ===========================================================================
   # Search call viewer
@@ -250,7 +259,7 @@ Rails.application.routes.draw do
   # Administration
   # ===========================================================================
 
-  match '/admin', to: 'admin#update', as: 'update_admin', via: %i[post put patch]
+  match '/admin', to: 'admin#update', as: 'update_admin', **VIA_CREATE
 
   AdminController::PAGES.each do |page|
     get "/admin/#{page}", to: "admin##{page}", as: "#{page}_admin"
@@ -287,12 +296,12 @@ Rails.application.routes.draw do
 
   resources :tool, only: %i[index]
 
-  get   '/tool/md',       to: 'tool#md',       as: 'md_trial'
-  match '/tool/md_proxy', to: 'tool#md_proxy', as: 'md_proxy', via: %i[get post]
-  get   '/tool/lookup',   to: 'tool#lookup',   as: 'bib_lookup'
+  get   '/tool/md',       to: 'tool#md',        as: 'md_trial'
+  match '/tool/md_proxy', to: 'tool#md_proxy',  as: 'md_proxy',       **VIA_ANY
+  get   '/tool/lookup',   to: 'tool#lookup',    as: 'bib_lookup'
 
-  get   '/tool/get_job_result/:job_id',        to: 'tool#get_job_result'
-  get   '/tool/get_job_result/:job_id/*path',  to: 'tool#get_job_result'
+  get   '/tool/get_job_result/:job_id',         to: 'tool#get_job_result'
+  get   '/tool/get_job_result/:job_id/*path',   to: 'tool#get_job_result'
 
 end
 

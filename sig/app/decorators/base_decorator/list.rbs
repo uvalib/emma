@@ -142,6 +142,24 @@ module BaseDecorator::List
   #
   def access: ((Model|symHash|nil) item, (String|Symbol) m, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
 
+  # Options for #model_field_values.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELD_VALUES_OPT: symArray
+
+  # Specified field selections from the given model instance.
+  #
+  # @param [Model, Hash, nil]                   item
+  # @param [String, Symbol, Array, nil]         columns
+  # @param [String, Symbol, Regexp, Array, nil] filter
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @see #FIELD_VALUES_OPT
+  #
+  def model_field_values: (?(Model|symHash|nil) item, ?columns: Array[String|Symbol]|String|Symbol|nil, ?filter: Array[String|Symbol|Regexp]|String|Symbol|Regexp|nil, **untyped _ignored) -> symHash
+
   # Render a metadata listing of a model instance.
   #
   # @param [Hash, nil]   pairs        Label/value pairs.

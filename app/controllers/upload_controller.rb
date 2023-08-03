@@ -22,7 +22,6 @@ class UploadController < ApplicationController
   include SessionConcern
   include RunStateConcern
   include PaginationConcern
-  include SerializationConcern
   include ApiConcern
   include AwsConcern
   include IngestConcern
@@ -80,7 +79,7 @@ class UploadController < ApplicationController
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Results for :index.
   #
@@ -115,12 +114,11 @@ class UploadController < ApplicationController
   #
   # Display the current user's uploads.
   #
-  # If an item specification is given by one of UploadConcern#IDENTIFIER_PARAMS
+  # If an item specification is given by one of Upload::Options#identifier_keys
   # then the results will be limited to the matching upload(s).
   # NOTE: Currently this is not limited only to the current user's uploads.
   #
   # @see #upload_index_path           Route helper
-  # @see UploadConcern#find_or_match_records
   #
   def index
     __log_activity
@@ -137,22 +135,25 @@ class UploadController < ApplicationController
       format.xml  { render_xml  index_values(item: :entry) }
     end
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
-    show_search_failure(error)
+    error_response(error)
   rescue => error
-    show_search_failure(error, root_path)
+    error_response(error, root_path)
   end
 
   # === GET /upload/show/(:id|SID)
   #
   # Display a single upload.
   #
+  # Redirects to #show_select if :id is missing.
+  #
   # @see #show_upload_path            Route helper
-  # @see UploadConcern#get_record
   #
   def show
     __log_activity(anonymous: true)
     __debug_route
+    return redirect_to action: :show_select if identifier.blank?
     @item = get_record
+    upload_authorize!(__method__, @item)
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -170,9 +171,9 @@ class UploadController < ApplicationController
         @item = proxy_get_record(identifier, @host)
       end
     end
-    show_search_failure(error) if @item.blank?
+    error_response(error) if @item.blank?
   rescue => error
-    show_search_failure(error)
+    error_response(error)
   end
 
   # ===========================================================================
@@ -198,6 +199,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(rec: (db_id || :unset), event: :create)
+    upload_authorize!(__method__, @item)
   rescue => error
     failure_status(error)
   end
@@ -217,6 +219,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(event: :submit)
+    upload_authorize!(__method__, @item)
     post_response(:ok, @item, redirect: upload_index_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
@@ -224,26 +227,25 @@ class UploadController < ApplicationController
     post_response(error)
   end
 
-  # === GET /upload/edit/:id
-  # === GET /upload/edit/SELECT
-  # === GET /upload/edit_select
+  # === GET /upload/edit/(:id)
   #
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
   #
-  # If :id is "SELECT" then a menu of editable items is presented.
+  # Redirects to #edit_select if :id is missing.
   #
   # @see #edit_upload_path            Route helper
-  # @see #edit_select_upload_path     Route helper
   # @see UploadController#update
   # @see UploadWorkflow::Single::Edit::States#on_editing_entry
   #
   def edit
     __log_activity
     __debug_route
-    @item = (wf_single(event: :edit) unless show_menu?)
+    return redirect_to action: :edit_select if identifier.blank?
+    @item = wf_single(event: :edit)
+    upload_authorize!(__method__, @item)
   rescue => error
-    failure_status(error)
+    error_response(error)
   end
 
   # === PUT   /upload/update/:id
@@ -260,6 +262,7 @@ class UploadController < ApplicationController
     __debug_route
     __debug_request
     @item = wf_single(event: :submit)
+    upload_authorize!(__method__, @item)
     post_response(:ok, @item, redirect: upload_index_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
@@ -270,30 +273,26 @@ class UploadController < ApplicationController
   # === GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
   # === GET /upload/delete/SID[?...]
   # === GET /upload/delete/RANGE_LIST[?...]
-  # === GET /upload/delete/SELECT[?...]
-  # === GET /upload/delete_select
   #
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
-  # If :id is "SELECT" then a menu of deletable items is presented.
+  # Redirects to #delete_select if :id is missing.
   #
   # Use :force to attempt to remove an item from the EMMA Unified Index even if
   # a database record was not found.
   #
   # @see #delete_upload_path          Route helper
-  # @see #delete_select_upload_path   Route helper
   # @see UploadWorkflow::Single::Remove::States#on_removing_entry
   # @see UploadController#destroy
   #
   def delete
     __log_activity
     __debug_route
-    @list = []
-    unless show_menu?
-      @list = wf_single(rec: :unset, data: identifier, event: :remove)
-    end
+    return redirect_to action: :delete_select if identifier.blank?
+    @list = wf_single(rec: :unset, data: identifier, event: :remove)
+    #upload_authorize!(__method__, @list) # TODO: authorize :delete
   rescue => error
-    failure_status(error)
+    error_response(error)
   end
 
   # === DELETE /upload/destroy/:id[?force=true&truncate=true&emergency=true]
@@ -317,12 +316,52 @@ class UploadController < ApplicationController
     dat   = identifier
     opt   = { start_state: :removing, event: :submit, variant: :remove }
     @list = wf_single(rec: rec, data: dat, **opt)
-    failure(:file_id) unless @list.present?
+    raise_failure(:file_id) unless @list.present?
+    #upload_authorize!(__method__, @list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
     post_response(:not_found, error, redirect: back)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # === GET /upload/show_select
+  #
+  # Show a menu to select an EMMA entry to show.
+  #
+  # @see #show_select_upload_path     Route helper
+  #
+  def show_select
+    __log_activity
+    __debug_route
+  end
+
+  # === GET /upload/edit_select
+  #
+  # Show a menu to select an EMMA entry to edit.
+  #
+  # @see #edit_select_upload_path     Route helper
+  #
+  def edit_select
+    __log_activity
+    __debug_route
+  end
+
+  # === GET /upload/delete_select
+  #
+  # Show a menu to select an EMMA entry to delete.
+  #
+  # @see #delete_select_upload_path   Route helper
+  #
+  def delete_select
+    __log_activity
+    __debug_route
   end
 
   # ===========================================================================
@@ -451,7 +490,7 @@ class UploadController < ApplicationController
     __debug_route
     __debug_request
     @list = wf_bulk(start_state: :removing, event: :submit, variant: :remove)
-    failure(:file_id) unless @list.present?
+    raise_failure(:file_id) unless @list.present?
     wf_check_partial_failure
     post_response(:ok, @list)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
@@ -477,6 +516,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(rec: :unset, event: :create)
+    upload_authorize!(__method__, @item)
     respond_to do |format|
       format.html
       format.json { render json: @item }
@@ -497,6 +537,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(event: :edit)
+    upload_authorize!(__method__, @item)
     respond_to do |format|
       format.html
       format.json { render json: @item }
@@ -606,7 +647,6 @@ class UploadController < ApplicationController
   # Download the file associated with an EMMA submission.
   #
   # @see #file_download_path          Route helper
-  # @see UploadConcern#get_record
   # @see Upload#download_url
   #
   def download
@@ -677,7 +717,7 @@ class UploadController < ApplicationController
   def records
     __log_activity
     __debug_route
-    prm  = upload_params
+    prm  = current_params
     opt  = { repository: EmmaRepository.default, state: :completed }.merge(prm)
     log  = true?(opt.delete(:logging))
     recs = ->(*) { Upload.get_relation(**opt).map { |rec| record_value(rec) } }
@@ -688,9 +728,9 @@ class UploadController < ApplicationController
       format.xml  { render_xml  index_values(item: :entry) }
     end
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
-    show_search_failure(error)
+    error_response(error)
   rescue => error
-    show_search_failure(error, root_path)
+    error_response(error, root_path)
   end
 
   # ===========================================================================
@@ -724,14 +764,13 @@ class UploadController < ApplicationController
   # Cause completed submission records to be re-indexed.
   #
   # @see #bulk_reindex_upload_path    Route helper
-  # @see UploadConcern#reindex_record
   #
   def bulk_reindex
     __log_activity
     __debug_route
     prm = request_parameters.slice(:size).merge!(meth: __method__)
     @list, failed = reindex_submissions(*identifier, **prm)
-    failure(:invalid, failed.uniq) if failed.present?
+    raise_failure(:invalid, failed.uniq) if failed.present?
   rescue => error
     failure_status(error)
   end
@@ -741,35 +780,6 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   protected
-
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
-  #
-  # @param [String, Array, nil] id_params  Default: `UploadConcern#identifier`.
-  #
-  def show_menu?(id_params = nil)
-    Array.wrap(id_params || identifier).include?('SELECT')
-  end
-
-  # Display the failure on the screen -- immediately if modal, or after a
-  # redirect otherwise.
-  #
-  # @param [Exception] error
-  # @param [String]    fallback   Redirect fallback (def.: #upload_index_path).
-  # @param [Symbol]    meth       Calling method.
-  #
-  # @return [void]
-  #
-  def show_search_failure(error, fallback = nil, meth: nil)
-    re_raise_if_internal_exception(error)
-    meth ||= calling_method
-    if modal?
-      failure_status(error, meth: meth)
-    else
-      flash_failure(error, meth: meth)
-      redirect_back(fallback_location: (fallback || upload_index_path))
-    end
-  end
 
   # A record representation including URL of the remediated content file.
   #
@@ -802,41 +812,15 @@ class UploadController < ApplicationController
   # @return [void]
   #
   def index_redirect
-    return unless identifier&.match?(/[^[:alnum:]]/)
+    return unless identifier&.to_s&.match?(/[^[:alnum:]]/)
     redirect_to action: :index, selected: identifier
   end
 
   # ===========================================================================
-  # :section: SerializationConcern overrides
+  # :section:
   # ===========================================================================
 
   protected
-
-  # Response values for de-serializing the index page to JSON or XML.
-  #
-  # @param [*]    list
-  # @param [Hash] opt
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def index_values(list = @list, **opt)
-    opt.reverse_merge!(wrap: :entries)
-    super(list, **opt)
-  end
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Upload, Hash] item
-  # @param [Hash]         opt
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def show_values(item = @item, **opt)
-    item = item.try(:fields) || item.dup
-    data = item.extract!(:file_data).first&.last
-    item[:file_data] = safe_json_parse(data)
-    super(item, **opt)
-  end
 
   # Response values for de-serializing download information to JSON or XML.
   #
@@ -846,6 +830,26 @@ class UploadController < ApplicationController
   #
   def download_values(url)
     { url: url }
+  end
+
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
+  #
+  # @param [Symbol]                     action
+  # @param [Upload, Array<Upload>, nil] subject
+  # @param [*]                          args
+  #
+  def upload_authorize!(action, subject, *args)
+    subject = subject.first if subject.is_a?(Array) # TODO: per item check
+    subject = subject.presence
+    authorize!(action, subject, *args) if subject
+    return if administrator?
+    return unless %i[edit update delete destroy].include?(action)
+    unless (org = current_user&.org&.id) && (subject&.org&.id == org)
+      message = current_ability.unauthorized_message(action, subject)
+      message.sub!(/s\.?$/, " #{subject.id}") if subject
+      raise CanCan::AccessDenied.new(message, action, subject, args)
+    end
   end
 
 end

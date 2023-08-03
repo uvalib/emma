@@ -50,6 +50,7 @@ en:
       page_controls:
         label:          'Account Actions:'
         actions:
+          - edit_current
           - index
           - new
           - edit_select
@@ -62,18 +63,15 @@ en:
       action_links:
 
         new:
-          action:       new
           label:        'Create %{article} new EMMA user account'
           article:      'a'
 
         edit:
-          action:       edit_select
-          label:        'Modify %{article} existing user account'
+          label:        'Modify %{article} existing EMMA user account'
           article:      'an'
 
         delete:
-          action:       delete_select
-          label:        'Remove %{article} existing user account'
+          label:        'Remove %{article} existing EMMA user account'
           article:      'an'
 
         back:
@@ -133,7 +131,7 @@ en:
 
       # =======================================================================
 
-      show:
+      show:             &SHOW_ACTION
         label:          'Account'
         title:          'EMMA User Account: %{name}'
         tooltip:        'Account details from the EMMA user account database table'
@@ -141,12 +139,28 @@ en:
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all
 
+        role:           administrator
         _endpoint:      true
 
       # =======================================================================
 
+      show_select:
+        <<:             *SHOW_ACTION
+        label:          'Show User'
+        title:          'Show an EMMA User Account'
+
+      # =======================================================================
+
+      show_current:
+        <<:             *SHOW_ACTION
+        label:          'Show'
+        title:          'Your EMMA User Account Information'
+        tooltip:        'See details about your EMMA user account'
+
+      # =======================================================================
+
       new:              &NEW_ACTION
-        label:          'Create'
+        label:          'Add User'
         title:          'Create an EMMA User Account'
         tooltip:        'Create a new EMMA account in the user database'
         description:    |
@@ -177,20 +191,20 @@ en:
         #success:        'EMMA user account %{user} created.'
         #failure:        'Could not create EMMA user account.'
 
+        role:           manager
         _endpoint:      true
 
       # =======================================================================
 
       create:
-        <<: *NEW_ACTION
+        <<:             *NEW_ACTION
 
       # =======================================================================
 
       edit:             &EDIT_ACTION
-        label:          'Change'
+        label:          'Edit User'
         title:          'Modify an EMMA User Account'
         tooltip:        'Modify an existing EMMA account in the user database'
-        role:           'administrator' # TODO: institutional groups
         description:    |
           You may change the local details of the EMMA account
           (whether it is a local EMMA account or one authenticated via a
@@ -224,13 +238,28 @@ en:
 
       # =======================================================================
 
+      edit_select:
+        <<:             *EDIT_ACTION
+        title:          'Modify an EMMA User Account'
+        role:           manager
+
+      # =======================================================================
+
+      edit_current:
+        <<:             *EDIT_ACTION
+        label:          'Details'
+        title:          'Modify Your EMMA User Account'
+        tooltip:        'See or change details about your EMMA user account'
+
+      # =======================================================================
+
       update:
-        <<: *EDIT_ACTION
+        <<:             *EDIT_ACTION
 
       # =======================================================================
 
       delete:           &DELETE_ACTION
-        label:          'Remove'
+        label:          'Remove User'
         title:          'Remove an EMMA User Account'
         tooltip:        'Remove an account from the set of active EMMA users'
         description_html: |
@@ -260,26 +289,19 @@ en:
         #success:        'EMMA user account %{user} deleted.'
         #failure:        'Could not delete EMMA user account.'
 
+        role:           manager
         _endpoint:      true
 
       # =======================================================================
 
-      destroy:
-        <<: *DELETE_ACTION
-
-      # =======================================================================
-
-      new_select:
-        <<: *NEW_ACTION
-
-      # =======================================================================
-
-      edit_select:
-        <<: *EDIT_ACTION
-
-      # =======================================================================
-
       delete_select:
-        <<: *DELETE_ACTION
+        <<:             *DELETE_ACTION
+        title:          'Remove an EMMA User Account'
+        role:           manager
+
+      # =======================================================================
+
+      destroy:
+        <<:             *DELETE_ACTION
 
       # =======================================================================

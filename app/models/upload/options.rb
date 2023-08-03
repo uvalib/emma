@@ -13,42 +13,25 @@ class Upload::Options < Options
   include Record::Properties
 
   # ===========================================================================
-  # :section:
+  # :section: Options overrides
   # ===========================================================================
 
   public
 
-  # @private
-  MODEL_TYPE = :upload
-
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS = [*Options::IDENTIFIER_PARAMS, :submission_id].uniq.freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  def initialize(prm = nil)
-    super(MODEL_TYPE, prm)
-  end
+  def self.model_id_key = :submission_id
 
   # ===========================================================================
   # :section: Options overrides
   # ===========================================================================
 
-  protected
+  public
 
   def option_keys
     OPTION_METHOD_MAP.keys
   end
 
   def option_method(key)
-    super || OPTION_METHOD_MAP[key]
+    OPTION_METHOD_MAP[key] || super
   end
 
   # ===========================================================================

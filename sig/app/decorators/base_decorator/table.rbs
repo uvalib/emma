@@ -29,11 +29,10 @@ module BaseDecorator::Table
   # @type [Array<Symbol>]
   #
   MODEL_TABLE_OPTIONS:    symArray
-  MODEL_TABLE_FIELD_OPT:  symArray
   MODEL_TABLE_HEAD_OPT:   symArray
   MODEL_TABLE_ENTRY_OPT:  symArray
   MODEL_TABLE_ROW_OPT:    symArray
-  MODEL_TABLE_TABLE_OPT:  symArray
+  MODEL_TABLE_PART_OPT:   symArray
 
   # Default number of rows per table page.
   #
@@ -99,18 +98,20 @@ module BaseDecorator::Table
 
   # Render the object for use within a table of items.
   #
-  # @param [Integer]                                   row
-  # @param [Integer]                                   col
-  # @param [String, Symbol, Array<String,Symbol>, nil] columns
-  # @param [String, Regexp, Array<String,Regexp>, nil] filter
-  # @param [Hash]                                      opt
+  # @param [Integer] row
+  # @param [Integer] col
+  # @param [Hash]    opt              To column except:
   #
-  # @option opt [Symbol] :outer_tag   Default: :tr
-  # @option opt [Symbol] :inner_tag   Default: :td
+  # @option opt [Symbol]                :outer_tag  Default: :tr
+  # @option opt [Symbol]                :inner_tag  Default: :td
+  # @option opt [Symbol, String, Array] :columns    To #table_values
+  # @option opt [String, Regexp, Array] :filter     To #table_values
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def table_entry: (?row: Integer, ?col: Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
+  # @see #table_headings
+  #
+  def table_entry: (?row: Integer, ?col: Integer, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
 
   # Table values associated with the current decorator.
   #
@@ -119,17 +120,6 @@ module BaseDecorator::Table
   # @return [Hash]
   #
   def table_values: (**untyped opt) -> anyHash
-
-  # Specified field selections from the given model instance.
-  #
-  # @param [Model, Hash, nil]                   item
-  # @param [String, Symbol, Array, nil]         columns
-  # @param [String, Symbol, Array, nil]         default
-  # @param [String, Symbol, Regexp, Array, nil] filter
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def model_field_values: (?(Model|symHash|nil) item, ?columns: Array[String|Symbol]|String|Symbol|nil, ?default: Array[String|Symbol]|String|Symbol|nil, ?filter: Array[String|Symbol|Regexp]|String|Symbol|Regexp|nil) -> symHash
 
   # Setup row/column HTML options.
   #

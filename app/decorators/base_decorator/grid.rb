@@ -238,22 +238,23 @@ module BaseDecorator::Grid
     table   = for_html_table?(tag)
     tag     = table && :table || tag || :div
     visible = col_count = row_count = nil
-    p_opt   = extract_hash!(opt, *ROW_PAGE_PARAMS)
-    parts   = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h.compact
+    row_opt = { tag: tag, cols: cols, wrap: false }
+    pg_opt  = opt.extract!(*ROW_PAGE_PARAMS)
+    parts   = opt.extract!(*BaseDecorator::Table::MODEL_TABLE_PART_OPT).compact
 
-    if parts[:thead].blank?
-      r_opt   = { tag: tag, cols: cols, row: row, wrap: false }
-      parts[:thead] = render_grid_head_row(**r_opt)
-      col_count = 1 + cols.size
-      visible   = 1 + visible(cols).size
-    end
+    parts[:thead] ||=
+      begin
+        col_count = 1 + cols.size
+        visible   = 1 + visible(cols).size
+        render_grid_head_row(**row_opt, row: row)
+      end
     row += 1
 
-    if parts[:tbody].blank?
-      r_opt = { tag: tag, cols: cols, row: row, index: index, wrap: false }
-      parts[:tbody] = render_grid_data_rows(**p_opt, **r_opt)
-      row_count     = 1 + grid_row_items_total
-    end
+    parts[:tbody] ||=
+      begin
+        row_count = 1 + grid_row_items_total
+        render_grid_data_rows(**pg_opt, **row_opt, row: row, index: index)
+      end
 
     if table
       opt[:role]            ||= grid_role

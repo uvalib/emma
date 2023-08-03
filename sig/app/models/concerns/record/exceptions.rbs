@@ -14,11 +14,11 @@ module Record::Exceptions
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  # @see ExceptionHelper#failure
+  # @see ExceptionHelper#raise_failure
   #
-  # @note From UploadWorkflow::Errors::RenderMethods#failure
+  # @note From UploadWorkflow::Errors::RenderMethods#raise_failure
   #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
+  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
 
   # Methods which are only appropriate if the including class is an
   # ApplicationRecord.

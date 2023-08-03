@@ -1,4 +1,34 @@
 class SearchPaginator < Paginator
+  # Finish setting of pagination values based on the result list and original
+  # URL parameters.
+  #
+  # @param [Api::Record, Array, Hash] result
+  # @param [Symbol, nil]              as      Only for Api::Record or Array.
+  # @param [Hash]                     opt
+  #
+  # @return [Array]
+  #
+  # -
+  # === Variations
+  # +
+  #
+  # @overload finalize(result, **opt)
+  #   Generally for Record-related models.
+  #   @param [Hash{Symbol=>*}]    result
+  #   @param [Hash]               opt     Passed to #url_for.
+  #   @return [Array]                     The value of #page_items.
+  #
+  # @overload finalize(result, as: nil, **opt)
+  #   Generally for other models (e.g. Bookshare API-related).
+  #   @param [Api::Record, Array] result
+  #   @param [Symbol, nil]        as      Method to extract items from result.
+  #   @param [Hash]               opt     Passed to #next_page_path.
+  #   @return [Array]                     The value of #page_items.
+  #
+  def finalize
+    : (symHash              result,                   **untyped search) -> anyArray
+    | (Api::Record|anyArray result, ?(Symbol|nil) as, **untyped search) -> anyArray
+
   # Analyze the *list* object to generate the path for the next page of
   # results.
   #

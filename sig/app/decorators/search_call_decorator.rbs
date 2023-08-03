@@ -15,20 +15,6 @@ class SearchCallDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
-    # Render details of a search call.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super except:
-    #
-    # @option opt [String, Symbol, Array<String,Symbol>] :columns
-    # @option opt [String, Regexp, Array<String,Regexp>] :filter
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    # @see #model_field_values
-    #
-    def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
     # Render a single entry for use within a list of items.
     #
     # @param [Hash, nil] pairs        Additional field mappings.

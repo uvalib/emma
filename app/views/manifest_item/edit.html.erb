@@ -30,6 +30,9 @@
 
   <%= dec.items_menu %>
 
+  <%= page_notes_section %>
+  <%= dec.action_list unless modal? %>
+
 <%- else -%>
 
   <%= page_directions_section %>
@@ -37,6 +40,3 @@
   <%= dec.model_form %>
 
 <%- end -%>
-
-<%= page_notes_section %>
-<%= dec.action_list unless modal? %>

@@ -20,6 +20,8 @@ module SearchConcern
 
   include PaginationConcern
 
+  include SerializationConcern
+
   include SearchCallConcern
 
   # Access the EMMA Unified Search API service.
@@ -208,6 +210,24 @@ module SearchConcern
   # @return [SearchPaginator]
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> SearchPaginator
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Search::Message::SearchRecordList, Search::Message::SearchTitleList] list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?(Search::Message::SearchRecordList | Search::Message::SearchTitleList) list, **untyped opt) -> symHash
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Search::Message::SearchRecord, Hash] item
+  # @param [Hash]                                opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def show_values: (?(Search::Message::SearchRecord|anyHash) item, **untyped opt) -> symHash
 
   THIS_MODULE: Module
 end

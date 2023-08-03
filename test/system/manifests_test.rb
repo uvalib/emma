@@ -177,12 +177,11 @@ class ManifestsTest < ApplicationSystemTestCase
   def edit_select_test(direct:, meth: nil, **opt)
     meth    ||= __method__
     action    = :edit
+    select    = menu_action(action)
     params    = PARAMS.merge(action: action, **opt)
 
     index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, id: 'SELECT')
-    alt_url   = File.join(index_url, "#{action}_select")
-    menu      = [menu_url, alt_url]
+    menu_url  = url_for(**params, action: select)
 
     start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
 
@@ -203,7 +202,7 @@ class ManifestsTest < ApplicationSystemTestCase
       # Change to the select menu if coming in from the index page.
       unless direct
         click_on 'Change'
-        wait_for_page menu
+        wait_for_page menu_url
       end
 
       # Choose manifest to edit.
@@ -240,12 +239,11 @@ class ManifestsTest < ApplicationSystemTestCase
   def delete_select_test(direct:, meth: nil, **opt)
     meth    ||= __method__
     action    = :delete
+    select    = menu_action(action)
     params    = PARAMS.merge(action: action, **opt)
 
     index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, id: 'SELECT')
-    alt_url   = File.join(index_url, "#{action}_select")
-    menu      = [menu_url, alt_url]
+    menu_url  = url_for(**params, action: select)
 
     start_url, tag = direct ? [menu_url, 'DIRECT'] : [index_url, 'INDIRECT']
 
@@ -258,7 +256,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
     item_delete = [
       url_for(**params, id: item.id),
-      make_path(alt_url, selected: item.id)
+      make_path(url_for(**params), id: item.id)
     ]
 
     # noinspection RubyMismatchedArgumentType
@@ -277,7 +275,7 @@ class ManifestsTest < ApplicationSystemTestCase
       visit start_url
       unless direct
         click_on 'Remove'
-        wait_for_page menu
+        wait_for_page menu_url
       end
 
       # Choose submission to remove, which leads to the delete page.
@@ -287,7 +285,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
       # After deletion we should be back on the previous page.
       click_on 'Delete', match: :first, exact: true
-      wait_for_page menu
+      wait_for_page menu_url
       assert_flash 'SUCCESS'
 
       # On the index page, there should be one less record than before.

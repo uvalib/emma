@@ -31,14 +31,6 @@ class UserDecorator < AccountDecorator
     # @return [Symbol]
     #
     def model_config_key: () -> Symbol
-
-    # Generate a menu of user instances.
-    #
-    # @param [Hash] opt
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related

@@ -4,16 +4,7 @@ class Upload::Options < Options
   # include UploadWorkflow::Properties # NOTE: This ends up being problematic.
   include Record::Properties
 
-  # @private
-  MODEL_TYPE: Symbol
-
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS: symArray
-
-  def initialize: (?(symHash|nil) prm) -> void
+  def self.model_id_key: () -> Symbol
 
   def option_keys: () -> symArray
 

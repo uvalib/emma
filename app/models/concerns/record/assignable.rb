@@ -59,23 +59,21 @@ module Record::Assignable
     opt = opt ? (opt[:attr_opt]&.dup || {}).merge!(opt.except(:attr_opt)) : {}
     opt = attr[:attr_opt].merge(opt) if attr.is_a?(Hash) && attr[:attr_opt]
 
-    if attr.is_a?(Hash) && attr.dig(:attr_opt, :normalized)
-      return attr.merge(attr_opt: opt)
-    elsif attr.is_a?(Hash)
-      attr = attr.except(:attr_opt)
-    elsif attr.respond_to?(:params)
-      attr = attr.params.to_unsafe_h
-    elsif attr.respond_to?(:to_unsafe_h)
-      attr = attr.to_unsafe_h
-    elsif attr.is_a?(ApplicationRecord)
-      unless attr.is_a?(record_class)
-        Log.warn { "#{record_class}: assigning from a #{attr.class} record" }
-      end
-      attr = attr.fields.except!(*ignored_keys)
-    elsif attr.nil?
-      attr = {}
-    else
-      raise "#{attr.class}: unexpected"
+    case attr
+      when ApplicationRecord
+        unless attr.is_a?(record_class)
+          Log.warn { "#{record_class}: assigning from a #{attr.class} record" }
+        end
+        attr = attr.fields.except!(*ignored_keys)
+      when Hash
+        return attr.merge(attr_opt: opt) if attr.dig(:attr_opt, :normalized)
+        attr = attr.except(:attr_opt)
+      when nil
+        attr = {}
+      else
+        attr = attr.params      if attr.respond_to?(:params)
+        attr = attr.to_unsafe_h if attr.respond_to?(:to_unsafe_h)
+        raise "#{attr.class}: unexpected" unless attr.is_a?(Hash)
     end
 
     from    = opt[:from]
@@ -189,12 +187,16 @@ module Record::Assignable
     #
     # @param [::Options, Hash, nil] options
     #
-    # @return [::Options, nil]
+    # @return [::Options]
     #
     def set_model_options(options)
-      options = options[:options]  if options.is_a?(Hash)
-      # noinspection RubyMismatchedReturnType
-      @model_options = (options.dup if options.is_a?(Options))
+      options = options[:options] if options.is_a?(Hash)
+      # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
+      if options.is_a?(::Options)
+        @model_options = options.dup
+      else
+        @model_options = ::Options.new
+      end
     end
 
     # =========================================================================
@@ -212,7 +214,7 @@ module Record::Assignable
     # @note - for dev traceability
     #
     def initialize(attr = nil, &block)
-      super(attr, &block)
+      super
     end
 
     # Update database fields, including the structured contents of JSON fields.
@@ -227,7 +229,7 @@ module Record::Assignable
     def assign_attributes(attr)
       attr = normalize_attributes(attr)
       opt  = attr.delete(:attr_opt) || {}
-      set_model_options(opt[:options])
+      set_model_options(opt)
       super(attr)
     rescue => err # TODO: testing - remove?
       Log.warn { "#{record_name}.#{__method__}: #{err.class}: #{err.message}" }

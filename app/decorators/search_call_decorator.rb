@@ -42,26 +42,6 @@ class SearchCallDecorator < BaseDecorator
 
     public
 
-    # Render details of a search call.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super except:
-    #
-    # @option opt [String, Symbol, Array<String,Symbol>] :columns
-    # @option opt [String, Regexp, Array<String,Regexp>] :filter
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    # @see #model_field_values
-    #
-    def details(pairs: nil, **opt)
-      fv_opt = extract_hash!(opt, :columns, :filter)
-      pairs  = model_field_values(**fv_opt).merge!(pairs || {})
-      count  = pairs.size
-      append_css!(opt, "columns-#{count}") if count.positive?
-      super(pairs: pairs, **opt)
-    end
-
     # Render a single entry for use within a list of items.
     #
     # @param [Hash, nil] pairs        Additional field mappings.
@@ -134,7 +114,7 @@ class SearchCallDecorator
   end
 
   # ===========================================================================
-  # :section: BaseDecorator::Table overrides
+  # :section: BaseDecorator::List overrides
   # ===========================================================================
 
   protected

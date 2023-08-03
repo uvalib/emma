@@ -39,35 +39,28 @@ class ManifestDecorator < BaseDecorator
       h.manifest_item_upload_path(**opt)
     end
 
-    def remit_select_path(item = nil, **opt)
-      opt[:id] ||= 'SELECT'
-      path_for(item, **opt, action: :remit)
+    def remit_select_path(*, **opt)
+      path_for(**opt, action: :remit_select)
     end
 
     def remit_path(item = nil, **opt)
-      return remit_select_path(item, **opt) if opt[:selected]
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :remit)
     end
 
 =begin
     def start_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :start)
     end
 
     def stop_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :stop)
     end
 
     def pause_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :pause)
     end
 
     def resume_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :resume)
     end
 =end
@@ -181,7 +174,7 @@ class ManifestDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: Item forms (edit/delete pages)
+    # :section: BaseDecorator::Menu overrides
     # =========================================================================
 
     protected
@@ -888,30 +881,6 @@ class ManifestDecorator
     opt[:'aria-colcount'] ||= STATUS_COLUMN_COUNT
     opt[:'aria-rowcount'] ||= row - r_start
     ManifestsDecorator.new.render_grid(index: index, tag: tag, css: css, **opt)
-  end
-
-  # ===========================================================================
-  # :section: Item details (show page) support
-  # ===========================================================================
-
-  public
-
-  # Render item attributes.
-  #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
-  #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  def details(pairs: nil, **opt)
-    fv_opt      = extract_hash!(opt, :columns, :filter)
-    opt[:pairs] = model_field_values(**fv_opt).merge!(pairs || {})
-    super(**opt)
   end
 
   # ===========================================================================

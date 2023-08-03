@@ -1,0 +1,254 @@
+# Support methods for controllers that implement CRUD semantics.
+#
+# === Usage Notes
+# This module is expected to be included by a concern which selective overrides
+# these methods to accommodate model-specific variations to this base logic.
+#
+module ModelConcern
+  extend ActiveSupport::Concern
+
+  include ExceptionHelper
+
+  include FlashHelper
+
+  include IdentityHelper
+
+  include OptionsConcern
+
+  include PaginationConcern
+
+  include ParamsConcern
+
+  include ResponseConcern
+
+  def model_class: () -> Class
+
+  def model_key: () -> Symbol
+
+  def model_id_key: () -> Symbol
+
+  def search_records_keys: () -> symArray
+
+  def search_only_keys: () -> symArray
+
+  def find_or_match_keys: () -> symArray
+
+  # The model record identified in URL parameters either as :selected or :id.
+  #
+  # @return [Integer, String, nil]
+  #
+  def identifier: () -> (Integer | String | nil)
+
+  @identifier: Integer | String | nil
+
+  # The database ID of a model record identified in URL parameters.
+  #
+  # @return [Integer, nil]
+  #
+  def db_id: () -> (Integer | nil)
+
+  @db_id: Integer?
+
+  # Only allow a list of trusted parameters through.
+  #
+  # @return [Hash]
+  #
+  def current_params: () ?{ (symHash) -> void } -> symHash
+
+  @current_params: symHash
+
+  # Get URL parameters relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def current_get_params: () ?{ (symHash) -> void } -> symHash
+
+  # Extract POST parameters that are usable for creating/updating a model
+  # record instance.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def current_post_params: () ?{ (symHash) -> void } -> symHash
+
+  # model_request_params
+  #
+  # @param [Model, Hash{Symbol=>*}, *] item
+  # @param [Hash{Symbol=>*}, nil]      prm
+  #
+  # @return [Array<(Model, Hash{Symbol=>*})>]
+  # @return [Array<(*,     Hash{Symbol=>*})>]
+  #
+  def model_request_params
+    :     (Model item, ?(symHash|nil) prm) -> [Model, symHash]
+    | [T] (T     item, ?(symHash|nil) prm) -> [T,     symHash]
+    |     (              symHash      prm) -> [nil,   symHash]
+
+  # extract_identifier
+  #
+  # @param [Hash] prm
+  #
+  # @return [Integer, String, nil]
+  #
+  def extract_identifier: (symHash prm) -> (Integer | String | nil)
+
+  # Return with the specified model record.
+  #
+  # @param [String, Integer, Hash, Model, *] item   Default: #identifier.
+  # @param [Hash]                            opt    To Model#find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [Model, nil]
+  #
+  def get_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) -> (Model | nil)
+
+  # Locate and filter model records.
+  #
+  # @param [Array]         items    Default: #identifier.
+  # @param [Array<Symbol>] filters  Filter methods to limit/modify params
+  # @param [Hash]          opt      To Record::Searchable#search_records;
+  #                                   default: `#current_params` if no *items*
+  #                                   are given.
+  #
+  # @raise [Record::SubmitError]    If :page is not valid.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def find_or_match_records: (*(String|Integer|Array[String|Integer]) items, ?filters: symArray, **untyped opt) -> symHash
+
+  # Remove options that would otherwise be sent as SQL search term predicates.
+  #
+  # @param [Hash]  opt                May be modified.
+  #
+  # @return [Boolean]                 True if keys were removed.
+  #
+  def filter_predicates!: (symHash opt) -> bool
+
+  # Select records for the current user unless a different user has been
+  # specified (or all records if specified as '*', 'all', or 'false').
+  #
+  # @param [Hash]  opt                May be modified.
+  #
+  def filter_by_user!: (symHash opt) -> void
+
+  # Select records for the current organization unless a different one has
+  # been specified (or all records if specified as '*', 'all', or 'false').
+  #
+  # @param [Hash]  opt                May be modified.
+  #
+  def filter_by_org!: (symHash opt) -> void
+
+  # Select records for a specific model record (or all records if specified as
+  # '*', 'all', or 'false').
+  #
+  # @param [Hash]  opt                May be modified.
+  # @param [Class] model
+  #
+  def filter_by_model!: (symHash opt, ?model: Class) -> void
+
+  # Limit records to those in the given state (or records with an empty state
+  # field if specified as 'nil', 'empty', or 'missing').
+  #
+  # @param [Hash]   opt               May be modified.
+  # @param [Symbol] key               State URL parameter.
+  #
+  # @return [Hash, nil]               *opt* if changed.
+  #
+  def filter_by_state!: (symHash opt, ?key: Symbol) -> (symHash | nil)
+
+  # Limit by workflow status group.
+  #
+  # @param [Hash]                 opt     May be modified.
+  # @param [Symbol]               key     Group URL parameter.
+  # @param [Symbol|Array<Symbol>] state   State parameter(s).
+  #
+  # @return [Hash, nil]                   *opt* if changed.
+  #
+  def filter_by_group!: (symHash opt, ?key: Symbol, ?state: Symbol|symArray) -> (symHash | nil)
+
+  # Start a new (un-persisted) model instance.
+  #
+  # @param [Hash, nil] attr           Default: `#current_params`.
+  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
+  #
+  # @return [Model]                   Un-persisted model record instance.
+  #
+  def new_record: (?symHash? attr, ?force_id: bool|String, **untyped _ignored) -> Model
+
+  # Create and persist a new model record.
+  #
+  # @param [Hash, nil]      attr      Default: `#current_params`.
+  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
+  # @param [Boolean]        no_raise  If *true*, use #save instead of #save!.
+  #
+  # @return [Model]                   New persisted model record instance.
+  #
+  def create_record: (?symHash? attr, ?force_id: bool|String, ?no_raise: bool, **untyped _ignored) -> Model
+
+  # Start editing an existing model record.
+  #
+  # @param [*]         item           If present, used as a template.
+  # @param [Hash, nil] prm            Default: `#current_params`
+  # @param [Hash]      opt            Passed to #get_record.
+  #
+  # @raise [Record::StatementInvalid]   If :id not given.
+  # @raise [Record::NotFound]           If *item* was not found.
+  #
+  # @return [Model, nil]
+  #
+  def edit_record: (?(String|Integer|Model|symHash|nil) item, ?(symHash|nil) prm, **untyped opt) -> (Model | nil)
+
+  # Persist changes to an existing model record.
+  #
+  # @param [*]         item           If present, used as a template.
+  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Hash, nil] attr           Default: `#current_params`
+  #
+  # @raise [Record::NotFound]               If the record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Model record update halted.
+  #
+  # @return [Model, nil]
+  #
+  def update_record: (?(Model|symHash|nil) item, ?no_raise: bool, **untyped attr) -> (Model | nil)
+
+  # Retrieve the indicated record(s) for the '/delete' page.
+  #
+  # @param [String, Model, Array, nil] items
+  # @param [Hash, nil]                 prm    Default: `#current_params`
+  #
+  # @raise [RangeError]                       If :page is not valid.
+  #
+  # @return [Hash{Symbol=>*}] From Record::Searchable#search_records.
+  #
+  def delete_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, **untyped _ignored) -> symHash
+
+  # Remove the indicated record(s).
+  #
+  # @param [String, Model, Array, nil] items
+  # @param [Hash, nil]                 prm    Default: `#current_params`
+  # @param [Boolean]                   no_raise
+  #
+  # @raise [Record::SubmitError]              If there were failure(s).
+  #
+  # @return [Array]                           Destroyed entries.
+  #
+  def destroy_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, ?no_raise: bool, **untyped _ignored) -> (Array[Integer]|Array[String])
+
+  # Raise an exception.
+  #
+  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
+  # @param [*]                                                         value
+  #
+  # @raise [Record::SubmitError]
+  # @raise [ExecError]
+  #
+  # @see ExceptionHelper#raise_failure
+  #
+  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
+
+  private
+
+  THIS_MODULE: Module
+end

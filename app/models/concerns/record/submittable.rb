@@ -446,7 +446,7 @@ module Record::Submittable
       return items unless items.size > max
       error = "#{meth || __method__}: item count: #{item.size} > #{max}"
       Log.error(error)
-      failure(error)
+      raise_failure(error)
     end
 
   end

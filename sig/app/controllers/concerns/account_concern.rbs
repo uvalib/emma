@@ -1,124 +1,53 @@
 # Support methods for the "/account" controller.
 #
+# @!method model_options
+#   @return [User::Options]
+#
+# @!method paginator
+#   @return [User::Paginator]
+#
 module AccountConcern
   extend ActiveSupport::Concern
 
-  # URL parameters allowed for creating/updating a user account.
-  #
-  # @type [Array<Symbol>]
-  #
-  ACCT_PARAMETERS: symArray
+  include ModelConcern
 
   # Columns searched for generic (:like) matches.
   #
   # @type [Array<Symbol>]
   #
-  ACCT_MATCH_COLUMNS: symArray
+  ACCT_MATCH_KEYS: symArray
 
-  # Only allow a list of trusted parameters through.
+  # Parameter keys related to password management.
   #
-  # @return [Hash{Symbol=>*}]
+  # @type [Array<Symbol>]
   #
-  def account_params: () -> symHash
+  PASSWORD_KEYS: symArray
 
-  # Get the User identifier(s) specified by parameters.
+  # The identifier of the current model instance which #CURRENT_ID represents
+  # in the context of AccountController actions.
   #
-  # @return [Array<String,Integer>]
+  # @return [Integer, nil]
   #
-  def id_params: () -> Array[String|Integer]
+  def current_id: () -> (Integer | nil)
 
-  # Normalize a list of User identifiers (:id or :email).
+  # URL parameters associated with model record(s).
   #
-  # @param [Array<String, Integer, nil>] ids
-  # @param [Regexp]                      separator
+  # @return [Array<Symbol>]
   #
-  # @return [Array<String,Integer>]
-  #
-  def identifier_list: (*(String|Integer|nil) ids, ?separator: Regexp) -> Array[String|Integer]
+  def id_param_keys: () -> symArray
 
-  # Get the indicated User account records.
-  #
-  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
-  #
-  # @raise [ActiveRecord::RecordNotFound]   If *ids* is blank.
-  #
-  # @return [Array<User>]
-  #
-  def find_accounts: (?(Array[String|Integer|nil]|nil) ids) -> Array[User]
-
-  # Get the indicated User account record.
-  #
-  # @param [String, Integer, nil] id    Default: `params[:id]`.
-  #
-  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
-  #
-  # @return [User, nil]
-  #
-  def find_account: (?(String|Integer|nil) id) -> (User | nil)
+  def find_or_match_keys: () -> symArray
 
   # Get matching User account records or all records if no terms are given.
   #
   # @param [Array<String,Hash,Array,nil>] terms
-  # @param [Array, nil]                   columns     Def.: #ACCT_MATCH_COLUMNS
   # @param [Symbol, String, Hash, Array]  sort        Def.: implicit order
+  # @param [Array<Symbol>]                columns
   # @param [Hash]                         hash_terms  Added to *terms*.
   #
   # @return [ActiveRecord::Relation<User>]
   #
-  def get_accounts: (*(String|anyArray|anyHash|nil) terms, ?columns: anyArray|nil, ?sort: Symbol|String|anyArray|anyHash|nil, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
-
-  # Get the indicated User account record.
-  #
-  # @param [String, Integer, nil] id    Default: `params[:id]`.
-  #
-  # @raise [ActiveRecord::RecordNotFound]   If *id* is blank.
-  #
-  # @return [User, nil]
-  #
-  def get_account: (?(String|Integer|nil) id) -> (User | nil)
-
-  # Create a new User account record.
-  #
-  # @param [Hash,nil] attr            Initial User attributes.
-  #
-  # @return [User]
-  #
-  def new_account: (?(anyHash|nil) attr) -> User
-
-  # Create a new persisted User account.
-  #
-  # @param [Boolean]        no_raise  If *true*, use #save instead of #save!.
-  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
-  # @param [Hash]           attr      Initial User attributes.
-  #
-  # @raise [ActiveRecord::RecordNotSaved]   If #save! failed.
-  #
-  # @return [User]
-  #
-  def create_account: (?no_raise: bool, ?force_id: (bool|String), **untyped attr) -> User
-
-  # Modify an existing (persisted) User account.
-  #
-  # @param [Boolean] no_raise  If *true*, use #update instead of #update!.
-  # @param [Hash]    attr      New attributes (default: `#account_params`).
-  #
-  # @raise [ActiveRecord::RecordNotSaved]   If #update! failed.
-  #
-  # @return [User, nil]
-  #
-  def update_account: (?no_raise: bool, **untyped attr) -> (User | nil)
-
-  # Remove an existing (persisted) User account.
-  #
-  # @param [Array<String,Integer,nil>] ids  Default: `#id_params`.
-  # @param [Boolean] no_raise   If *true*, use #destroy instead of #destroy!.
-  #
-  # @raise [ActiveRecord::RecordNotFound]       If *ids* is blank.
-  # @raise [ActiveRecord::RecordNotDestroyed]   If #destroy! failed.
-  #
-  # @return [Array<User>]
-  #
-  def destroy_accounts: (*(String|Integer|nil) ids, ?no_raise: bool, **untyped _ignored) -> Array[User]
+  def get_accounts: (*(String|anyArray|anyHash|nil) terms, ?sort: Symbol|String|anyArray|anyHash|nil, ?columns: symArray, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
 
   # redirect_success
   #
@@ -167,6 +96,21 @@ module AccountConcern
   # @return [Hash{Symbol=>*}]
   #
   def interpolation_terms: (Symbol action, ?Hash[Symbol,anyHash] config) -> symHash
+
+  # Create an Options instance from the current parameters.
+  #
+  # @return [User::Options]
+  #
+  def get_model_options: () -> User::Options
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [User::Paginator]
+  #
+  def pagination_setup: (?(ApplicationController|nil) ctrlr, **untyped opt) -> User::Paginator
 
   module DeviseMethods
 

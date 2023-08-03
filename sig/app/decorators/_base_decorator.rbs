@@ -39,13 +39,14 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Helpers
 
     def index_path:         (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def show_select_path:   (*untyped _ignored,         **untyped opt)  -> String
     def show_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
     def new_path:           (?(Model|anyHash|nil) item, **untyped opt)  -> String
     def create_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
-    def edit_select_path:   (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def edit_select_path:   (*untyped _ignored,         **untyped opt)  -> String
     def edit_path:          (?(Model|anyHash|nil) item, **untyped opt)  -> String
     def update_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
-    def delete_select_path: (?(Model|anyHash|nil) item, **untyped opt)  -> String
+    def delete_select_path: (*untyped _ignored,         **untyped opt)  -> String
     def delete_path:        (?(Model|anyHash|nil) item, **untyped opt)  -> String
     def destroy_path:       (?(Model|anyHash|nil) item, **untyped opt)  -> String
 

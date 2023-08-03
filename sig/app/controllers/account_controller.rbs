@@ -39,12 +39,13 @@ class AccountController < ApplicationController
   #
   def index: () -> void
 
-  # === GET /account/show/:id
+  # === GET /account/show/(:id)
   #
   # Display details of an existing EMMA user account.
   #
+  # Redirects to #show_select if :id is not given.
+  #
   # @see #show_account_path           Route helper
-  # @see AccountConcern#get_account
   #
   def show: () -> void
 
@@ -53,7 +54,6 @@ class AccountController < ApplicationController
   # Display a form for creation of a new EMMA user account.
   #
   # @see #new_account_path            Route helper
-  # @see AccountConcern#new_account
   #
   def new: () -> void
 
@@ -69,20 +69,16 @@ class AccountController < ApplicationController
   # parameters.
   #
   # @see #create_account_path         Route helper
-  # @see AccountConcern#create_account
   #
   def create: () -> void
 
-  # === GET /account/edit/:id
-  # === GET /account/edit/SELECT
-  # === GET /account/edit_select
+  # === GET /account/edit/(:id)
   #
   # Display a form for modification of an existing EMMA user account.
   #
+  # Redirects to #edit_select if :id is not given.
+  #
   # @see #edit_account_path           Route helper
-  # @see #edit_select_account_path    Route helper
-  # @see #show_menu?
-  # @see AccountConcern#get_account
   #
   def edit: () -> void
 
@@ -92,22 +88,17 @@ class AccountController < ApplicationController
   # Update an existing EMMA user account.
   #
   # @see #update_account_path         Route helper
-  # @see AccountConcern#update_account
   #
   def update: () -> void
 
-  # === GET /account/delete/:id
-  # === GET /account/delete/SELECT
-  # === GET /account/delete_select
+  # === GET /account/delete/(:id)
   #
   # Select existing EMMA user account(s) to remove.
   #
-  # If :id is "SELECT" then a menu of deletable items is presented.
+  # Redirects to #delete_select if :id is not given.
   #
   # @see #delete_account_path         Route helper
   # @see #delete_select_account_path  Route helper
-  # @see #show_menu?
-  # @see AccountConcern#find_accounts
   #
   def delete: () -> void
 
@@ -116,14 +107,39 @@ class AccountController < ApplicationController
   # Remove existing EMMA user account(s).
   #
   # @see #destroy_account_path        Route helper
-  # @see AccountConcern#destroy_accounts
   #
   def destroy: () -> void
 
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
+  # === GET /account/show_select
   #
-  # @param [Array<String,Integer>] ids  Default: `#id_params`.
+  # Show a menu to select a user to show.
   #
-  def show_menu?: (?(Array[String|Integer]|nil) ids) -> bool
+  # @see #show_select_account_path    Route helper
+  #
+  def show_select: () -> void
+
+  # === GET /account/edit_select
+  #
+  # Show a menu to select a user to edit.
+  #
+  # @see #edit_select_account_path    Route helper
+  #
+  def edit_select: () -> void
+
+  # === GET /account/delete_select
+  #
+  # Show a menu to select a user to delete.
+  #
+  # @see #delete_select_account_path  Route helper
+  #
+  def delete_select: () -> void
+
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
+  #
+  # @param [Symbol]                 action
+  # @param [User, Array<User>, nil] subject
+  # @param [*]                      args
+  #
+  def user_authorize!: (Symbol action, User|Array[User]|nil subject, *untyped args) -> void
 end

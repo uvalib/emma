@@ -15,6 +15,18 @@ module TestHelper::Utility
 
   public
 
+  # The "/test/fixtures/users.yml" entry associated with the argument.
+  #
+  # @param [String, Symbol, *] arg
+  #
+  # @return [Symbol, nil]
+  #
+  def user_entry(arg)
+    arg = arg.sub(/@.*$/, '').presence&.to_sym if arg.is_a?(String)
+    # noinspection RubyMismatchedReturnType
+    arg if arg.is_a?(Symbol) && (arg != :anonymous)
+  end
+
   # Return a User instance from the given identification.
   #
   # @param [String, Symbol, User, *] user
@@ -26,23 +38,51 @@ module TestHelper::Utility
   # noinspection RubyMismatchedReturnType
   #++
   def find_user(user)
-    user = nil                         if user == :anonymous
-    user = user.sub(/@.*$/, '').to_sym if user.is_a?(String)
-    user = users(user)                 if user.is_a?(Symbol)
-    user                               if user.is_a?(User)
+    return                  if user == :anonymous
+    user = user_entry(user) if user.is_a?(String)
+    user = users(user)      if user.is_a?(Symbol)
+    user                    if user.is_a?(User)
   end
 
   # Return multiple User instances.
   #
-  # @param [Array] users
+  # @param [Array] list               All users if empty.
+  # @param [Hash]  matching           Limiting conditions if present.
   #
   # @return [Array<User,nil>]
   #
-  def find_users(*users)
-    users = users.flatten
-    users.map! { |u| u || :anonymous }
-    users.map! { |u| (u == :anonymous) ? u : find_user(u) }.compact!
-    users.map! { |u| (u == :anonymous) ? nil : u }
+  def find_users(*list, **matching)
+    anonymous = records = nil
+    if list.present?
+      list      = list.flatten
+      original  = list.dup
+      anonymous = list.reject! { |u| u.nil? || (u == :anonymous) }
+      records   = list.reject! { |u| u.is_a?(User) }
+      if list.present?
+        list.map! { |u| user_entry(u) || u }
+      elsif matching.blank?
+        return original.map! { |u| u if u.is_a?(User) }
+      end
+    elsif matching.blank?
+      return users
+    end
+    rec_ids = records&.map(&:id)
+    added   = users(*list)
+    added   = added.reject { |u| rec_ids.include?(u.id) } if rec_ids.present?
+    records = [*records, *added]
+    if matching.present?
+      matching = ApplicationRecord.normalize_id_keys(matching)
+      records.keep_if do |u|
+        matching.all? do |k, v|
+          if u[k].is_a?(Array) || v.is_a?(Array)
+            Array.wrap(u[k]).intersect?(Array.wrap(v))
+          else
+            u[k] == v
+          end
+        end
+      end
+    end
+    anonymous ? records.prepend(nil) : records
   end
 
   # ===========================================================================

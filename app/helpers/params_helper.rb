@@ -17,6 +17,27 @@ module ParamsHelper
 
   public
 
+  # The URL :id term which indicates the target is the identifier of the
+  # current record (depending on the context).
+  #
+  # @type [String]
+  #
+  CURRENT_ID = 'CURRENT'
+
+  # The suffix of a URL :action term which indicates that the action is to
+  # operate on the current (context-specific) value.
+  #
+  # @type [String]
+  #
+  CURRENT_ACTION_SUFFIX = '_current'
+
+  # The suffix of a URL :action term which indicates that the action is to
+  # present a menu of records.
+  #
+  # @type [String]
+  #
+  SELECT_ACTION_SUFFIX = '_select'
+
   # Request parameters that are not relevant to the application.
   #
   # @type [Array<Symbol>]
@@ -47,35 +68,53 @@ module ParamsHelper
 
   public
 
-  # Indicate whether the current request is an HTTP GET.
+  # Indicate whether the action represents a menu.
   #
-  def request_get?
-    request.get?
+  # @param [Symbol, String, nil] action
+  #
+  def menu_action?(action)
+    action.to_s.end_with?(SELECT_ACTION_SUFFIX)
   end
 
-  # Indicate whether the current request is from client-side scripting.
+  # Return the base action for a value which may or may not ends with a suffix
+  # indicating generation of a menu.
   #
-  def request_xhr?
-    !!request.xhr?
+  # @param [Symbol, String] action
+  #
+  # @return [Symbol]
+  #
+  def base_action(action)
+    "#{action}".tap { |result|
+      result.delete_suffix!(CURRENT_ACTION_SUFFIX)
+      result.delete_suffix!(SELECT_ACTION_SUFFIX)
+    }.to_sym
   end
 
-  # Indicate whether the current request is a normal HTTP GET that coming from
-  # the client browser session.
+  # Return the variant of the action which indicates generation of a menu.
   #
-  def route_request?
-    request.get? && !request_xhr? && !modal?
+  # @param [Symbol, String] action
+  #
+  # @return [Symbol]
+  #
+  def menu_action(action)
+    if menu_action?(action)
+      action.to_sym
+    else
+      "#{action}#{SELECT_ACTION_SUFFIX}".to_sym
+    end
   end
 
-  # Indicate whether the current request originates from an application page.
+  # Normalize a list of model identifier values.
   #
-  def local_request?
-    request.referer.to_s.start_with?(root_url)
-  end
-
-  # Indicate whether the current request originates from an application page.
+  # @param [Array<Symbol,String,Integer,Array,nil>] ids
+  # @param [String,Regexp]                          separator
   #
-  def same_request?
-    (request.referer == request.url) || (request.referer == request.fullpath)
+  # @return [Array<Integer,String>]
+  #
+  def identifier_list(*ids, separator: /\s*,\s*/, **)
+    ids = ids.flat_map { |v| v.is_a?(String) ? v.strip.split(separator) : v }
+    ids.map! { |v| v.is_a?(ApplicationRecord) ? v.id : v }
+    ids.map! { |v| positive(v) || v }.compact_blank!
   end
 
   # ===========================================================================

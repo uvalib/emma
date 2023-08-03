@@ -601,8 +601,8 @@ module Record::Steppable
       unless model_class?(base)
         return Log.debug { "#{__method__}: ignoring #{base.class} argument" }
       end
-      model_type = base.name
-      serializer = "#{model_type}::Serializer"
+      base_name  = base.name
+      serializer = "#{base_name}::Serializer"
       return if safe_const_get(serializer)
 
       base.module_eval <<~HERE_DOC
@@ -621,7 +621,7 @@ module Record::Steppable
           private
 
           def klass
-            #{model_type}
+            #{base_name}
           end
 
         end

@@ -39,7 +39,87 @@ module ParamsConcern
   #
   # @type [Array<Symbol>]
   #
-  SPECIAL_DEBUG_CONTROLLERS = %i[search]
+  SPECIAL_DEBUG_CONTROLLERS = %i[search].freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The identifier of the current model instance which #CURRENT_ID represents.
+  #
+  # @return [Integer, String, nil]
+  #
+  def current_id
+    #Log.debug { "#{__method__}: not applicable to #{self.class}" }
+  end
+
+  # URL parameters associated with model record(s).
+  #
+  # @return [Array<Symbol>]
+  #
+  def id_param_keys
+    %i[selected id]
+  end
+
+  # ===========================================================================
+  # :section: ParamsHelper overrides
+  # ===========================================================================
+
+  public
+
+  # Normalize a list of model identifier values.
+  #
+  # @param [Array<Symbol,String,Integer,Array,nil>] ids
+  # @param [Hash]                                   opt   To super
+  #
+  # @return [Array<Integer,String>]
+  #
+  def identifier_list(*ids, **opt)
+    cid = current_id.presence
+    ids = params.values_at(*id_param_keys) if ids.blank?
+    super(ids, **opt).tap do |result|
+      result.map! { |v| CURRENT_ID.casecmp?(v) ? cid : v } if cid
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the current request is an HTTP GET.
+  #
+  def request_get?
+    request.get?
+  end
+
+  # Indicate whether the current request is from client-side scripting.
+  #
+  def request_xhr?
+    !!request.xhr?
+  end
+
+  # Indicate whether the current request is a normal HTTP GET that coming from
+  # the client browser session.
+  #
+  def route_request?
+    request.get? && !request_xhr? && !modal?
+  end
+
+  # Indicate whether the current request originates from an application page.
+  #
+  def local_request?
+    request.referer.to_s.start_with?(root_url)
+  end
+
+  # Indicate whether the current request originates from an application page.
+  #
+  def same_request?
+    (request.referer == request.url) || (request.referer == request.fullpath)
+  end
 
   # ===========================================================================
   # :section:

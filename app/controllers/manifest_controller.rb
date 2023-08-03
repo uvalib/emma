@@ -19,7 +19,6 @@ class ManifestController < ApplicationController
   include SessionConcern
   include RunStateConcern
   include PaginationConcern
-  include SerializationConcern
   include ManifestConcern
 
   # Non-functional hints for RubyMine type checking.
@@ -61,7 +60,7 @@ class ManifestController < ApplicationController
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Results for :index.
   #
@@ -94,8 +93,9 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     prm    = paginator.initial_parameters
-    redirect_to prm.merge!(action: :edit) if identifier.present?
-    result = find_or_match_manifests(sort: { updated_at: :desc }, **prm)
+    return redirect_to prm.merge!(action: :edit) if identifier.present?
+    sort   = prm.delete(:sort) || { updated_at: :desc }
+    result = find_or_match_records(sort: sort, **prm)
     @list  = paginator.finalize(result, **prm)
     respond_to do |format|
       format.html
@@ -103,26 +103,30 @@ class ManifestController < ApplicationController
       format.xml  #{ render_xml  index_values }
     end
   rescue Record::SubmitError => error
-    show_search_failure(error)
+    error_response(error)
   rescue => error
-    show_search_failure(error, root_path)
+    error_response(error, root_path)
   end
 
-  # === GET /manifest/show/:id
+  # === GET /manifest/show/(:id)
+  #
+  # Redirects to #show_select if :id is missing.
   #
   # @see #show_manifest_path          Route helper
   #
   def show
     __log_activity
     __debug_route
-    @item = get_manifest
+    return redirect_to action: :show_select if identifier.blank?
+    @item = get_record
+    manifest_authorize!(__method__, @item)
     respond_to do |format|
       format.html
       format.json #{ render_json show_values }
       format.xml  #{ render_xml  show_values }
     end
   rescue => error
-    show_search_failure(error, root_path)
+    error_response(error, root_path)
   end
 
   # === GET /manifest/new
@@ -132,7 +136,8 @@ class ManifestController < ApplicationController
   def new
     __log_activity
     __debug_route
-    @item = new_manifest
+    @item = new_record
+    manifest_authorize!(__method__, @item)
   rescue => error
     failure_status(error)
   end
@@ -146,7 +151,8 @@ class ManifestController < ApplicationController
   def create
     __log_activity
     __debug_route
-    @item = create_manifest
+    @item = create_record
+    manifest_authorize!(__method__, @item)
     if request_xhr?
       render json: @item.as_json
     else
@@ -158,24 +164,23 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # === GET /manifest/edit/:id
-  # === GET /manifest/edit/SELECT
-  # === GET /manifest/edit_select
+  # === GET /manifest/edit/(:id)
+  #
+  # Redirects to #edit_select if :id is not given.
   #
   # @see #edit_manifest_path          Route helper
-  # @see #edit_select_manifest_path   Route helper
   #
   def edit
     __log_activity
     __debug_route
-    unless show_menu?
-      @item  = edit_manifest
-      prm    = paginator.initial_parameters
-      result = find_or_match_manifest_items(@item, **prm)
-      paginator.finalize(result, **prm)
-    end
+    return redirect_to action: :edit_select if identifier.blank?
+    @item  = edit_record
+    manifest_authorize!(__method__, @item)
+    prm    = paginator.initial_parameters
+    result = find_or_match_manifest_items(@item, **prm)
+    paginator.finalize(result, **prm)
   rescue => error
-    failure_status(error)
+    error_response(error, edit_select_manifest_path)
   end
 
   # === POST  /manifest/update/:id
@@ -188,7 +193,8 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     __debug_request
-    @item = update_manifest
+    @item = update_record
+    manifest_authorize!(__method__, @item)
     if request_xhr?
       render json: @item.as_json
     else
@@ -200,18 +206,20 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 
-  # === GET /manifest/delete/:id
-  # === GET /manifest/delete_select
+  # === GET /manifest/delete/(:id)
+  #
+  # Redirects to #delete_select if :id is not given.
   #
   # @see #delete_manifest_path        Route helper
-  # @see #delete_select_manifest_path Route helper
   #
   def delete
     __log_activity
     __debug_route
-    @list = (delete_manifest[:list] unless show_menu?)
+    return redirect_to action: :delete_select if identifier.blank?
+    @list = delete_records[:list]
+    #manifest_authorize!(__method__, @list) # TODO: authorize :delete
   rescue => error
-    failure_status(error)
+    error_response(error, delete_select_manifest_path)
   end
 
   # === DELETE /manifest/destroy/:id
@@ -225,7 +233,8 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     back  = delete_select_manifest_path
-    @list = destroy_manifest
+    @list = destroy_records
+    #manifest_authorize!(__method__, @list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
@@ -239,6 +248,68 @@ class ManifestController < ApplicationController
 
   public
 
+  # === GET /manifest/show_select
+  #
+  # Show a menu to select a manifest to show.
+  #
+  # @see #show_select_manifest_path   Route helper
+  #
+  def show_select
+    __log_activity
+    __debug_route
+  end
+
+  # === GET /manifest/edit_select
+  #
+  # Show a menu to select a manifest to edit.
+  #
+  # @see #edit_select_manifest_path   Route helper
+  #
+  def edit_select
+    __log_activity
+    __debug_route
+  end
+
+  # === GET /manifest/delete_select
+  #
+  # Show a menu to select a manifest to delete.
+  #
+  # @see #delete_select_manifest_path   Route helper
+  #
+  def delete_select
+    __log_activity
+    __debug_route
+  end
+
+  # === GET /manifest/remit_select
+  #
+  # Show a menu to select a manifest to submit.
+  #
+  # @see #remit_select_manifest_path  Route helper
+  #
+  def remit_select
+    __log_activity
+    __debug_route
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The minimal set of ManifestItem values returned upon save.
+  #
+  # Any columns referenced in `manifest.field_error` will also be included.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *updateRowValues()*
+  #
+  ITEM_SAVE_COLS = %i[
+    row ready_status last_saved updated_at field_error
+  ].freeze
+
   # === POST  /manifest/save/:id
   # === PUT   /manifest/save/:id
   # === PATCH /manifest/save/:id
@@ -249,8 +320,10 @@ class ManifestController < ApplicationController
   def save
     __log_activity
     __debug_route
-    @item = save_changes
-    render_json save_response
+    @item  = save_changes
+    rows   = @item.items_hash(columns: ITEM_SAVE_COLS)
+    result = { items: rows }
+    render_json result
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -285,19 +358,20 @@ class ManifestController < ApplicationController
 
   public
 
-  # === GET /manifest/remit/:id
-  # === GET /manifest/remit/SELECT
-  # === GET /manifest/remit_select
+  # === GET /manifest/remit/(:id)
+  #
+  # Redirects to #remit_select if :id is not given.
   #
   # @see #remit_manifest_path         Route helper
-  # @see #remit_select_manifest_path  Route helper
   #
   def remit
     __log_activity
     __debug_route
-    @item = (remit_manifest unless show_menu?)
+    return redirect_to action: :remit_select if identifier.blank?
+    @item = remit_manifest
+    manifest_authorize!(__method__, @item)
   rescue => error
-    failure_status(error)
+    error_response(error, remit_select_manifest_path)
   end
 
   # === GET /manifest/get_job_result/:job_id[?column=(output|diagnostic|error)]
@@ -390,60 +464,24 @@ class ManifestController < ApplicationController
 
   protected
 
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Array<String,Integer>] id_params  Def: `ManifestConcern#identifier`
+  # @param [Symbol]                         action
+  # @param [Manifest, Array<Manifest>, nil] subject
+  # @param [*]                              args
   #
-  def show_menu?(id_params = nil)
-    Array.wrap(id_params || identifier).include?('SELECT')
-  end
-
-  # Display the failure on the screen -- immediately if modal, or after a
-  # redirect otherwise.
-  #
-  # @param [Exception] error
-  # @param [String]    fallback   Redirect fallback (#manifest_index_path).
-  # @param [Symbol]    meth       Calling method.
-  #
-  # @return [void]
-  #
-  def show_search_failure(error, fallback = nil, meth: nil)
-    re_raise_if_internal_exception(error)
-    meth ||= calling_method
-    if modal?
-      failure_status(error, meth: meth)
-    else
-      flash_failure(error, meth: meth)
-      redirect_back(fallback_location: (fallback || manifest_index_path))
+  def manifest_authorize!(action, subject, *args)
+    subject = subject.first if subject.is_a?(Array) # TODO: per item check
+    subject = subject.presence
+    authorize!(action, subject, *args) if subject
+    return if administrator?
+    return unless %i[show edit update delete destroy].include?(action)
+    unless (org = current_user&.org&.id) && (subject&.org&.id == org)
+      message = current_ability.unauthorized_message(action, subject)
+      message.sub!(/s\.?$/, " #{subject.id}") if subject
+      raise CanCan::AccessDenied.new(message, action, subject, args)
     end
-  end
-
-  # The minimal set of ManifestItem values returned upon save.
-  #
-  # Any columns referenced in `manifest.field_error` will also be included.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @see file:javascripts/controllers/manifest-edit.js *updateRowValues()*
-  #
-  ITEM_SAVE_COLS = %i[
-    row ready_status last_saved updated_at field_error
-  ].freeze
-
-  # A table of the Manifest's items transmitted when saving.
-  #
-  # @param [Manifest, nil]       manifest
-  # @param [Symbol, String, nil] wrap
-  # @param [Array<Symbol>]       columns        Passed to Manifest#items_hash.
-  #
-  # @return [Hash{Symbol=>Hash{Integer=>Hash}}]
-  # @return [Hash{Integer=>Hash}]               If *wrap* is *nil*.
-  #
-  def save_response(manifest = @item, wrap: :items, columns: ITEM_SAVE_COLS)
-    result = manifest.items_hash(columns: columns)
-    result = { wrap.to_sym => result } if wrap
-    result
   end
 
 end

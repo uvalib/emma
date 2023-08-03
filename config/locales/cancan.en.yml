@@ -62,16 +62,20 @@ en:
       manifest_item:  'You are not authorized to remove manifest items.'
 
     upload:           &UPLOAD
-      <<: *TEMPLATE
+      <<:             *TEMPLATE
       upload:         'You are not authorized to upload EMMA submissions.'
       manifest:       'You are not authorized to upload manifests.'
       manifest_item:  'You are not authorized to upload manifest items.'
 
     download:         &DOWNLOAD
-      <<: *TEMPLATE
+      <<:             *TEMPLATE
       upload:         'You are not authorized to download EMMA submissions.'
       manifest:       'You are not authorized to download manifests.'
       manifest_item:  'You are not authorized to download manifest items.'
+
+    submit:           &SUBMIT
+      <<:             *TEMPLATE
+      manifest:       'You are not authorized to submit manifests.'
 
     # =========================================================================
     # Ability actions
@@ -107,9 +111,18 @@ en:
     destroy:          &DESTROY
       <<: *DELETE
 
+    remit:            &REMIT
+      <<: *SUBMIT
+
+    remit_select:
+      <<: *REMIT
+
     # =========================================================================
     # Ability specific aliases
     # =========================================================================
+
+    admin:
+      upload:         'You are not authorized to manage EMMA submission storage.'
 
     bulk_new:         &BULK_NEW
       all:            'You are not authorized to bulk upload.'

@@ -17,8 +17,6 @@ class UploadController < ApplicationController
 
   include PaginationConcern
 
-  include SerializationConcern
-
   include ApiConcern
 
   include AwsConcern
@@ -69,12 +67,11 @@ class UploadController < ApplicationController
   #
   # Display the current user's uploads.
   #
-  # If an item specification is given by one of UploadConcern#IDENTIFIER_PARAMS
+  # If an item specification is given by one of Upload::Options#identifier_keys
   # then the results will be limited to the matching upload(s).
   # NOTE: Currently this is not limited only to the current user's uploads.
   #
   # @see #upload_index_path           Route helper
-  # @see UploadConcern#find_or_match_records
   #
   def index: () -> void
 
@@ -82,8 +79,9 @@ class UploadController < ApplicationController
   #
   # Display a single upload.
   #
+  # Redirects to #show_select if :id is missing.
+  #
   # @see #show_upload_path            Route helper
-  # @see UploadConcern#get_record
   #
   def show: () -> void
 
@@ -115,17 +113,14 @@ class UploadController < ApplicationController
   #
   def create: () -> void
 
-  # === GET /upload/edit/:id
-  # === GET /upload/edit/SELECT
-  # === GET /upload/edit_select
+  # === GET /upload/edit/(:id)
   #
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
   #
-  # If :id is "SELECT" then a menu of editable items is presented.
+  # Redirects to #edit_select if :id is missing.
   #
   # @see #edit_upload_path            Route helper
-  # @see #edit_select_upload_path     Route helper
   # @see UploadController#update
   # @see UploadWorkflow::Single::Edit::States#on_editing_entry
   #
@@ -145,18 +140,15 @@ class UploadController < ApplicationController
   # === GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
   # === GET /upload/delete/SID[?...]
   # === GET /upload/delete/RANGE_LIST[?...]
-  # === GET /upload/delete/SELECT[?...]
-  # === GET /upload/delete_select
   #
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
-  # If :id is "SELECT" then a menu of deletable items is presented.
+  # Redirects to #delete_select if :id is missing.
   #
   # Use :force to attempt to remove an item from the EMMA Unified Index even if
   # a database record was not found.
   #
   # @see #delete_upload_path          Route helper
-  # @see #delete_select_upload_path   Route helper
   # @see UploadWorkflow::Single::Remove::States#on_removing_entry
   # @see UploadController#destroy
   #
@@ -173,6 +165,30 @@ class UploadController < ApplicationController
   # @see UploadController#delete
   #
   def destroy: () -> void
+
+  # === GET /upload/show_select
+  #
+  # Show a menu to select an EMMA entry to show.
+  #
+  # @see #show_select_upload_path     Route helper
+  #
+  def show_select: () -> void
+
+  # === GET /upload/edit_select
+  #
+  # Show a menu to select an EMMA entry to edit.
+  #
+  # @see #edit_select_upload_path     Route helper
+  #
+  def edit_select: () -> void
+
+  # === GET /upload/delete_select
+  #
+  # Show a menu to select an EMMA entry to delete.
+  #
+  # @see #delete_select_upload_path   Route helper
+  #
+  def delete_select: () -> void
 
   # === GET /upload/bulk
   #
@@ -310,7 +326,6 @@ class UploadController < ApplicationController
   # Download the file associated with an EMMA submission.
   #
   # @see #file_download_path          Route helper
-  # @see UploadConcern#get_record
   # @see Upload#download_url
   #
   def download: () -> void
@@ -359,27 +374,8 @@ class UploadController < ApplicationController
   # Cause completed submission records to be re-indexed.
   #
   # @see #bulk_reindex_upload_path    Route helper
-  # @see UploadConcern#reindex_record
   #
   def bulk_reindex: () -> void
-
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
-  #
-  # @param [String, Array, nil] id_params  Default: `UploadConcern#identifier`.
-  #
-  def show_menu?: (?(String|strArray|nil) id_params) -> bool
-
-  # Display the failure on the screen -- immediately if modal, or after a
-  # redirect otherwise.
-  #
-  # @param [Exception] error
-  # @param [String]    fallback   Redirect fallback (def.: #upload_index_path).
-  # @param [Symbol]    meth       Calling method.
-  #
-  # @return [void]
-  #
-  def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
 
   # A record representation including URL of the remediated content file.
   #
@@ -396,24 +392,6 @@ class UploadController < ApplicationController
   #
   def index_redirect: () -> void
 
-  # Response values for de-serializing the index page to JSON or XML.
-  #
-  # @param [*]    list
-  # @param [Hash] opt
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def index_values: (?untyped list, **untyped opt) -> symHash
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Upload, Hash] item
-  # @param [Hash]         opt
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def show_values: (?(Upload|anyHash) item, **untyped opt) -> symHash
-
   # Response values for de-serializing download information to JSON or XML.
   #
   # @param [String,nil] url
@@ -421,4 +399,13 @@ class UploadController < ApplicationController
   # @return [Hash{Symbol=>String,nil}]
   #
   def download_values: ((String|nil) url) -> Hash[Symbol,(String|nil)]
+
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
+  #
+  # @param [Symbol]                     action
+  # @param [Upload, Array<Upload>, nil] subject
+  # @param [*]                          args
+  #
+  def upload_authorize!: (Symbol action, Upload|Array[Upload]|nil subject, *untyped args) -> void
 end

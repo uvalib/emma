@@ -28,9 +28,11 @@ module Record::EmmaIdentification
 
   # Column name for the submission ID.
   #
-  # @return [Symbol]
+  # @return [Symbol, nil]
   #
-  def sid_column: () -> Symbol
+  def sid_column: () -> (Symbol | nil)
+
+  @sid_column: Symbol | nil
 
   # Extract the submission ID from the given item.
   #

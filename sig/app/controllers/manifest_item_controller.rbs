@@ -17,8 +17,6 @@ class ManifestItemController < ApplicationController
 
   include PaginationConcern
 
-  include SerializationConcern
-
   include ManifestItemConcern
 
   # :nocov:
@@ -49,7 +47,6 @@ class ManifestItemController < ApplicationController
   # Display the items for the given Manifest.
   #
   # @see #manifest_item_index_path                 Route helper
-  # @see ManifestItemConcern#find_or_match_manifest_items
   #
   def index: () -> nil
 
@@ -58,7 +55,6 @@ class ManifestItemController < ApplicationController
   # Display the values of a single manifest item.
   #
   # @see #show_manifest_item_path                  Route helper
-  # @see ManifestItemConcern#get_manifest_item
   #
   def show: () -> void
 
@@ -68,7 +64,6 @@ class ManifestItemController < ApplicationController
   # prompts to upload a file and collects metadata for the new item.
   #
   # @see #new_manifest_item_path                   Route helper
-  # @see ManifestItemConcern#new_manifest_item
   # @see ManifestItemController#create
   # @see file:app/assets/javascripts/feature/model-form.js
   #
@@ -82,7 +77,6 @@ class ManifestItemController < ApplicationController
   # the creation of a new row.
   #
   # @see #create_manifest_item_path                Route helper
-  # @see ManifestItemConcern#create_manifest_item
   # @see ManifestItemController#new
   #
   def create: () -> void
@@ -93,7 +87,6 @@ class ManifestItemController < ApplicationController
   # changes and/or upload of a replacement file.
   #
   # @see #edit_manifest_item_path                  Route helper
-  # @see ManifestItemConcern#edit_manifest_item
   # @see ManifestItemController#update
   # @see file:app/assets/javascripts/feature/model-form.js
   #
@@ -105,7 +98,6 @@ class ManifestItemController < ApplicationController
   # Finalize modification of an existing item.
   #
   # @see #update_manifest_item_path                Route helper
-  # @see ManifestItemConcern#update_manifest_item
   # @see ManifestItemController#edit
   #
   def update: () -> void
@@ -116,7 +108,6 @@ class ManifestItemController < ApplicationController
   # Initiate removal of an existing item along with its associated file.
   #
   # @see #delete_manifest_item_path                Route helper
-  # @see ManifestItemConcern#delete_manifest_item
   # @see ManifestItemController#destroy
   #
   def delete: () -> void
@@ -127,7 +118,6 @@ class ManifestItemController < ApplicationController
   # Finalize removal of an existing item.
   #
   # @see #destroy_manifest_item_path               Route helper
-  # @see ManifestItemConcern#destroy_manifest_item
   # @see ManifestItemController#delete
   #
   def destroy: () -> void
@@ -135,6 +125,8 @@ class ManifestItemController < ApplicationController
   # === POST /manifest_item/start_edit/:id
   #
   # Set :editing state and backup fields.
+  #
+  # @see #start_editing_manifest_item_path               Route helper
   #
   def start_edit: () -> void
 
@@ -166,7 +158,6 @@ class ManifestItemController < ApplicationController
   # containing a row/element for each item to add.
   #
   # @see #bulk_new_manifest_item_path              Route helper
-  # @see ManifestItemConcern#bulk_new_manifest_items
   # @see ManifestItemController#bulk_create
   #
   def bulk_new: () -> void
@@ -177,7 +168,6 @@ class ManifestItemController < ApplicationController
   # associated files.
   #
   # @see #bulk_create_manifest_item_path           Route helper
-  # @see ManifestItemConcern#bulk_create_manifest_items
   # @see ManifestItemController#bulk_new
   # @see file:javascripts/controllers/manifest-edit.js *sendUpsertRecords*
   #
@@ -189,7 +179,6 @@ class ManifestItemController < ApplicationController
   # containing a row/element for each item to change.
   #
   # @see #bulk_edit_manifest_item_path             Route helper
-  # @see ManifestItemConcern#bulk_edit_manifest_items
   # @see ManifestItemController#bulk_update
   #
   def bulk_edit: () -> void
@@ -201,7 +190,6 @@ class ManifestItemController < ApplicationController
   # associated files (if changed).
   #
   # @see #bulk_update_manifest_item_path           Route helper
-  # @see ManifestItemConcern#bulk_update_manifest_items
   # @see ManifestItemController#bulk_edit
   # @see file:javascripts/controllers/manifest-edit.js *sendUpsertRecords*
   #
@@ -212,7 +200,6 @@ class ManifestItemController < ApplicationController
   # Specify items to delete by :id or RANGE_LIST.
   #
   # @see #bulk_delete_manifest_item_path           Route helper
-  # @see ManifestItemConcern#bulk_delete_manifest_items
   # @see ManifestItemController#bulk_destroy
   #
   def bulk_delete: () -> void
@@ -220,7 +207,6 @@ class ManifestItemController < ApplicationController
   # === DELETE /manifest_item/bulk[?force=true]
   #
   # @see #bulk_destroy_manifest_item_path          Route helper
-  # @see ManifestItemConcern#bulk_destroy_manifest_items
   # @see ManifestItemController#bulk_delete
   #
   def bulk_destroy: () -> void
@@ -231,22 +217,9 @@ class ManifestItemController < ApplicationController
   # Modify selected ManifestItem fields of one or more items.
   #
   # @see #bulk_update_manifest_item_path           Route helper
-  # @see ManifestItemConcern#bulk_update_manifest_items
-  # @see ManifestItemController#bulk_edit
-  # @see file:javascripts/controllers/manifest-edit.js *sendUpsertRecords*
+  # @see file:javascripts/controllers/manifest-edit.js *sendFieldUpdates*
   #
   def bulk_fields: () -> void
-
-  # Display the failure on the screen -- immediately if modal, or after a
-  # redirect otherwise.
-  #
-  # @param [Exception] error
-  # @param [String]    fallback   Def.: #manifest_item_index_path
-  # @param [Symbol]    meth       Calling method.
-  #
-  # @return [void]
-  #
-  def show_search_failure: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
 
   # A list of ManifestItems plus validity information.
   #
@@ -267,25 +240,12 @@ class ManifestItemController < ApplicationController
   #
   def bulk_id_response: (?untyped list, **untyped _ignored) -> Hash[Symbol,symHash]
 
-  # @private
-  RESPONSE_OUTER: Symbol
-
-  # Response values for de-serializing the index page to JSON or XML.
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [*]      list
-  # @param [Symbol] wrap
-  # @param [Hash]   opt
+  # @param [Symbol]                                 action
+  # @param [ManifestItem, Array<ManifestItem>, nil] subject
+  # @param [*]                                      args
   #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def index_values: (?untyped list, wrap: Symbol|nil, **untyped opt) -> Hash[Symbol,symHash]
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Model, Hash, *] item
-  # @param [Hash]           opt
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def show_values: (?untyped item, **untyped opt) -> symHash
+  def manifest_item_authorize!: (Symbol action, ManifestItem|Array[ManifestItem]|nil subject, *untyped args) -> void
 end

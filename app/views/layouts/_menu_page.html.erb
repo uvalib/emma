@@ -1,0 +1,25 @@
+<%# app/views/account/_menu.html.erb -%>
+<%-
+  # Show a menu of EMMA user accounts driven by params[:action].
+
+  dec   ||= nil or view_abort(__FILE__, ':dec not passed through locals hash')
+  help  ||= nil # dec.help_topic
+  title ||= nil
+  title   = dec.page_heading(title)
+
+  unless modal?
+    label  = "#{dec.page_meta_title} - #{title}"
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= dec.items_menu %>
+
+<%= page_notes_section %>
+<%= dec.action_list unless modal? %>

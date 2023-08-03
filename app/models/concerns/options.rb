@@ -7,6 +7,12 @@ __loading_begin(__FILE__)
 
 # Options that may be specific to the originating controller.
 #
+# === Usage Notes
+# Subclasses are expected to be defined lexically within their associated
+# model class (which allows #model_class to be resolved automatically).
+# Alternatively the subclass can define a MODEL constant to explicitly define
+# the associated model class.
+#
 class Options
 
   include Emma::Json
@@ -18,42 +24,24 @@ class Options
 
   public
 
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS = %i[id selected].freeze
-
-  # URL parameters associated with POST data.
-  #
-  # @type [Array<Symbol>]
-  #
-  DATA_PARAMS = [].freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # URL parameters involved in pagination.
   #
   # @type [Array<Symbol>]
   #
-  PAGE_PARAMS = %i[page start offset limit].freeze
+  PAGE_KEYS = %i[page start offset limit].freeze
 
   # URL parameters involved in form submission.
   #
   # @type [Array<Symbol>]
   #
-  FORM_PARAMS = %i[field-group cancel].freeze
+  FORM_KEYS = %i[field-group cancel].freeze
 
   # POST/PUT/PATCH parameters from the entry form that are not relevant to the
   # create/update of a model instance.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_FORM_PARAMS = (PAGE_PARAMS + FORM_PARAMS).freeze
+  IGNORED_FORM_KEYS = (PAGE_KEYS + FORM_KEYS).freeze
 
   # ===========================================================================
   # :section:
@@ -61,27 +49,53 @@ class Options
 
   public
 
-  # The associated model type.
-  #
-  # @return [Symbol]
-  #
-  attr_reader :model
-
   # Create a new options object.
   #
-  # @param [Symbol, *] model
   # @param [Hash, nil] prm
   #
-  def initialize(model, prm = nil)
-    unless model.is_a?(Symbol)
-      model = model.class unless model.is_a?(Module)
-      model = model.to_s.underscore.sub(%r{[_/].*}, '').to_sym
-    end
-    @model  = model
+  def initialize(prm = nil)
     @params = prm&.dup || {}
     @value  = {}
     super()
   end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # The model class associated with these options.
+  #
+  # @type [Class]
+  #
+  def self.model_class
+    # noinspection RbsMissingTypeSignature
+    @model_class ||= safe_const_get(:MODEL, false) || module_parent
+  end
+
+  # The parameter key denoting a collection of model field values in URL
+  # parameters.
+  #
+  # @type [Symbol]
+  #
+  def self.model_key
+    # noinspection RbsMissingTypeSignature
+    @model_key ||=
+      model_class.try(__method__) || model_class.model_name.singular.to_sym
+  end
+
+  # The parameter key denoting the identity of a model instance in URL
+  # parameters.
+  #
+  # @type [Symbol]
+  #
+  def self.model_id_key
+    # noinspection RbsMissingTypeSignature
+    @model_id_key ||= model_class.try(__method__) || :"#{model_key}_id"
+  end
+
+  delegate :model_class, :model_key, :model_id_key, to: :class
 
   # ===========================================================================
   # :section:
@@ -93,7 +107,7 @@ class Options
   #
   # @param [Symbol, String] key
   #
-  def key?(key)
+  def option?(key)
     key = key&.to_sym
     @value.key?(key) || option_method(key).present?
   end
@@ -124,8 +138,7 @@ class Options
   # @return [Any, nil]
   #
   def set(key, value)
-    key = key&.to_sym
-    @value[key] = value
+    @value[key.to_sym] = value if key
   end
 
   # Fill @value with all option settings from defaults and supplied URL params.
@@ -149,7 +162,23 @@ class Options
   # :section:
   # ===========================================================================
 
-  protected
+  public
+
+  # URL parameters associated with item/entry identification.
+  #
+  # @type [Array<Symbol>]
+  #
+  def identifier_keys
+    @identifier_keys ||= [:selected, model_id_key, :id].uniq
+  end
+
+  # URL parameters associated with POST data.
+  #
+  # @type [Array<Symbol>]
+  #
+  def data_keys
+    @data_keys ||= [model_key]
+  end
 
   # The valid option keys defined by the subclass.
   #
@@ -166,8 +195,7 @@ class Options
   # @return [Symbol, nil]
   #
   def option_method(key)
-    key = key&.to_sym
-    key if respond_to?(key)
+    key.to_sym if key && respond_to?(key)
   end
 
   # ===========================================================================
@@ -228,7 +256,7 @@ class Options
   # @return [Array<Symbol>]
   #
   def ignored_form_params
-    IGNORED_FORM_PARAMS
+    IGNORED_FORM_KEYS
   end
 
   # model_data_params
@@ -251,10 +279,10 @@ class Options
   def extract_model_data!(prm, compact: true, **opt)
     opt[:log] = false unless opt.key?(:log)
     # @type [Hash, nil]
-    fields = json_parse(prm.delete(model), **opt) or return
+    fields = json_parse(prm.delete(model_key), **opt) or return
     model_data_params.each_pair do |hash_key, url_param|
-      next unless fields.key?(hash_key)
-      prm[url_param] = json_parse(fields.delete(hash_key), **opt)
+      value = fields.delete(hash_key)
+      prm[url_param] = json_parse(value, **opt) if value
     end
     prm.merge!(fields)
     compact ? reject_blanks!(prm) : prm
@@ -268,9 +296,13 @@ class Options
 
   def inspect
     all # Force @value to be updated with all option settings.
-    vars = %w(@model @value @model_params @params)
-    vars.map! { |var| "#{var}=%s" % instance_variable_get(var).inspect }
-    "#<#{self.class.name}:#{object_id} %s>" % vars.join(' ')
+    props = %i[model_key model_id_key]
+    props = props.map { |k| [k, send(k)] }.to_h
+    props = props.map { |k, v| "#{k}=#{v.inspect}" }.join(' ')
+    vars  = %i[@value @model_params @params]
+    vars  = vars.map { |var| [var, instance_variable_get(var)] }.to_h
+    vars  = vars.map { |k, v| "#{k}=#{v.inspect}" }.join(' ')
+    "#<#{self.class.name}:#{object_id} #{props} #{vars}>"
   end
 
 end

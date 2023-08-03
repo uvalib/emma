@@ -14,19 +14,6 @@ module Manifest::EmmaIdentification
   end
 
   # ===========================================================================
-  # :section: Record::EmmaIdentification overrides
-  # ===========================================================================
-
-  public
-
-  # Column name for the submission ID.
-  #
-  # @return [nil]
-  #
-  def sid_column
-  end
-
-  # ===========================================================================
   # :section: Record::Identification overrides
   # ===========================================================================
 

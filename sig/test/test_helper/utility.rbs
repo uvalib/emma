@@ -3,6 +3,14 @@
 module TestHelper::Utility
   include TestHelper::Common
 
+  # The "/test/fixtures/users.yml" entry associated with the argument.
+  #
+  # @param [String, Symbol, *] arg
+  #
+  # @return [Symbol, nil]
+  #
+  def user_entry: (untyped arg) -> (Symbol | nil)
+
   # Return a User instance from the given identification.
   #
   # @param [String, Symbol, User, *] user
@@ -14,11 +22,12 @@ module TestHelper::Utility
 
   # Return multiple User instances.
   #
-  # @param [Array] users
+  # @param [Array] list               All users if empty.
+  # @param [Hash]  matching           Limiting conditions if present.
   #
   # @return [Array<User>]
   #
-  def find_users: (*untyped users) -> Array[User|nil]
+  def find_users: (*(String|Symbol|User|nil) list, **untyped matching) -> Array[User|nil]
 
   # The number of fixture records for the given model.
   #

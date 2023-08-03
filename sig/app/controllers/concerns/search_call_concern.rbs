@@ -5,6 +5,8 @@ module SearchCallConcern
 
   include ParamsHelper
 
+  include SerializationConcern
+
   # @type [Array<Symbol>]
   SC_PARAMETERS: symArray
 
@@ -32,6 +34,15 @@ module SearchCallConcern
   # @return [ActiveRecord::Relation<SearchCall>]
   #
   def get_search_calls: (*(anyHash|anyArray|String) terms, ?columns: symArray|nil, ?sort: anyHash|anyArray|String|Symbol|nil, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[SearchCall, Integer]
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [SearchCall, Hash] item
+  # @param [Hash]             opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def show_values: (?(SearchCall|anyHash|nil) item, **untyped opt) -> symHash
 
   private
 

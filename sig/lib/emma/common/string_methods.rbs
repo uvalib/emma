@@ -58,4 +58,16 @@ module Emma::Common::StringMethods
   # @return [Array<String>]
   #
   def normalized_list: (untyped values, **untyped opt) -> strArray
+
+  # @private
+  HEX: String
+
+  # @private
+  UUID_FORMAT: String
+
+  # Indicate whether item is a UUID value.
+  #
+  # @param [*] item
+  #
+  def uuid?: (untyped item) -> bool
 end

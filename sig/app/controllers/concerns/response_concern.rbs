@@ -5,7 +5,9 @@ module ResponseConcern
 
   include FlashHelper
 
-  include ParamsHelper
+  include HttpHelper
+
+  include ParamsConcern
 
   # Generate a flash message if there is an error.
   #
@@ -22,6 +24,31 @@ module ResponseConcern
     : (nil     error, ?status: Integer|Symbol|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil, **untyped _ignored) -> nil
     | (untyped error, ?status: Integer|Symbol|nil, ?xhr: bool|nil, ?action: Symbol|String|nil, ?meth: Symbol|nil, **untyped _ignored) -> (Integer | Symbol)
 
+  # The default redirect path for #redirect_back.
+  #
+  # @return [String]
+  #
+  def default_fallback_location: () -> String
+
+  # Prefix for response diagnostic logging.
+  #
+  # @return [String]
+  #
+  def response_tag: () -> String
+
+  @response_tag: String
+
+  # Display the failure on the screen -- immediately if modal, or after a
+  # redirect otherwise.
+  #
+  # @param [Exception] error
+  # @param [String]    fallback   Redirect fallback #default_fallback_location
+  # @param [Symbol]    meth       Calling method.
+  #
+  # @return [void]
+  #
+  def error_response: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
+
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status
@@ -29,7 +56,7 @@ module ResponseConcern
   # @param [String, FalseClass]              redirect
   # @param [Boolean]                         xhr        Override `request.xhr?`
   # @param [Symbol]                          meth       Calling method.
-  # @param [String]                          tag        For diagnostics.
+  # @param [String]                          tag        Default: #response_tag.
   # @param [String]                          fallback   For #redirect_back.
   #
   # @return [void]

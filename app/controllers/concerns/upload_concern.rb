@@ -13,6 +13,9 @@ __loading_begin(__FILE__)
 # @!method paginator
 #   @return [Upload::Paginator]
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module UploadConcern
 
   extend ActiveSupport::Concern
@@ -22,13 +25,11 @@ module UploadConcern
 
   include ParamsHelper
   include FlashHelper
-  include HttpHelper
 
   include ImportConcern
   include IngestConcern
-  include OptionsConcern
-  include ResponseConcern
-  include PaginationConcern
+  include SerializationConcern
+  include ModelConcern
 
   # ===========================================================================
   # :section: Initialization
@@ -40,77 +41,40 @@ module UploadConcern
     FileNaming.format_classes.values.each(&:register_mime_types)
 
   # ===========================================================================
-  # :section:
+  # :section: ModelConcern overrides
   # ===========================================================================
 
   public
-
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS = Upload::Options::IDENTIFIER_PARAMS
-
-  # The upload identified in URL parameters either as :selected or :id.
-  #
-  # @return [String, nil]
-  #
-  def identifier
-    upload_params unless defined?(@identifier)
-    @identifier
-  end
-
-  # The database ID of the upload identified in URL parameters.
-  #
-  # @return [Integer, nil]
-  #
-  def db_id
-    upload_params unless defined?(@db_id)
-    @db_id
-  end
-
-  # URL parameters relevant to the current operation.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def upload_params
-    @upload_params ||= get_upload_params
-  end
 
   # Get URL parameters relevant to the current operation.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def get_upload_params
-    model_options.get_model_params.tap do |prm|
-      id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-      @identifier ||= sel || sid || id
-      @db_id      ||= [sel, id].find { |v| digits_only?(v) }&.to_i
+  def current_get_params
+    super do |prm|
+      @db_id ||=
+        prm.values_at(:submission_id, :id).find { |v| digits_only?(v) }&.to_i
     end
   end
 
-  # Extract POST parameters that are usable for creating/updating an Upload
+  # Extract POST parameters that are usable for creating/updating a Manifest
   # instance.
   #
   # @return [Hash{Symbol=>*}]
   #
-  # === Implementation Notes
-  # The value `params[:upload][:emma_data]` is ignored because it reports the
-  # original metadata values that were supplied to the edit form.  The value
-  # `params[:upload][:file]` is ignored if it is blank or is the JSON
-  # representation of an empty object ("{}") -- this indicates an editing
-  # submission where metadata is being changed but the uploaded file is not
-  # being replaced.
-  #
-  def upload_post_params
-    model_options.model_post_params.tap do |prm|
+  def current_post_params
+    super do |prm|
       prm[:base_url] = request.base_url
-      id, sel, sid = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-      @identifier  ||= sel || sid || id
-      @db_id       ||= [sel, id].find { |v| digits_only?(v) }&.to_i
-      @upload_params = prm
+      @db_id ||=
+        prm.values_at(:submission_id, :id).find { |v| digits_only?(v) }&.to_i
     end
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Extract POST parameters and data for bulk operations.
   #
@@ -121,8 +85,8 @@ module UploadConcern
   # @see ImportConcern#fetch_data
   #
   def upload_bulk_post_params
-    prm = upload_post_params
-    opt = extract_hash!(prm, :src, :source, :data)
+    prm = current_post_params
+    opt = prm.extract!(prm, :src, :source, :data)
     opt[:src]  = opt.delete(:source) if opt.key?(:source)
     opt[:data] = request             if opt.blank?
     opt[:type] = prm.delete(:type)&.to_sym
@@ -136,7 +100,7 @@ module UploadConcern
   def workflow_parameters
     result = { id: db_id, user_id: @user&.id }
     result.compact!
-    result.merge!(upload_post_params)
+    result.merge!(current_post_params)
     result.except!(:selected)
   end
 
@@ -161,109 +125,84 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ModelConcern overrides
   # ===========================================================================
 
   public
 
-  # Parameters used by Upload#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RECORDS_PARAMS = Upload::SEARCH_RECORDS_OPTIONS
+  def search_records_keys
+    model_class.const_get(:SEARCH_RECORDS_OPTIONS)
+  end
 
-  # Upload#search_records parameters that specify a distinct search query.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_ONLY_PARAMS = (SEARCH_RECORDS_PARAMS - %i[offset limit]).freeze
-
-  # Parameters used by #find_by_match_records or passed on to
-  # Upload#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIND_OR_MATCH_PARAMS = (
-    SEARCH_RECORDS_PARAMS + %i[group state edit_state user user_id edit_user]
-  ).freeze
+  def find_or_match_keys
+    [*super, :edit_state, :edit_user].uniq
+  end
 
   # Locate and filter Upload records.
   #
-  # @param [Array<String,Array>] items  Default: `UploadConcern#identifier`.
-  # @param [Hash]                opt    Passed to Upload#search_records;
-  #                                       default: `#upload_params` if no
-  #                                       *items* are given.
+  # @param [Array<String,Array>] items    Default: `UploadConcern#identifier`.
+  # @param [Array<Symbol>]       filters  Filter methods to limit/modify params
+  # @param [Hash]                opt      Passed to Upload#search_records;
+  #                                         default: `#current_params` if no
+  #                                         *items* are given.
   #
   # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def find_or_match_records(*items, **opt)
-    items = items.flatten.compact
-    items << identifier if items.blank? && identifier.present?
-
-    # If neither items nor field queries were given, use request parameters.
-    if items.blank? && (opt[:groups] != :only)
-      opt = upload_params.merge(opt) if opt.except(*SEARCH_ONLY_PARAMS).blank?
+  def find_or_match_records(*items, filters: [], **opt)
+    unless administrator?
+      opt[:user] = current_user
+      opt[:org]  = current_user.org if manager? && opt[:org]
     end
-    opt[:limit] ||= paginator.page_size
-    opt[:page]  ||= paginator.page_number
-
-    # Disallow experimental database WHERE predicates unless privileged.
-    opt.slice!(*FIND_OR_MATCH_PARAMS) unless current_user&.administrator?
-
-    # Select records for the current user unless a different user has been
-    # specified (or all records if specified as '*', 'all', or 'false').
-    user = opt.delete(:user)
-    user = opt.delete(:user_id) || user || @user
-    user = user.to_s.strip.downcase if user.is_a?(String) || user.is_a?(Symbol)
-    # noinspection RubyMismatchedArgumentType
-    user = User.find_record(user)   unless %w(* 0 all false).include?(user)
-    if user.is_a?(User)
-      opt[:user_id]   = user.id  if user.id.present?
-      opt[:edit_user] = user.uid if user.uid.present?
-    end
-
-    # Limit records to those in the given state (or records with an empty state
-    # field if specified as 'nil', 'empty', or 'missing').
-    if (state = opt.delete(:state).to_s.strip.downcase).present?
-      if %w(empty false missing nil none null).include?(state)
-        opt[:state] = nil
-      else
-        opt[:state] = state
-        opt[:edit_state] ||= state
-      end
-    end
-
-    # Limit by workflow status group.
-    group = opt.delete(:group)
-    group = group.split(/\s*,\s*/) if group.is_a?(String)
-    group = Array.wrap(group).compact_blank
-    if group.present?
-      group.map!(&:downcase).map!(&:to_sym)
-      if group.include?(:all)
-        %i[state edit_state].each { |k| opt.delete(k) }
-      else
-        states =
-          group.flat_map { |g|
-            Upload::STATE_GROUP.dig(g, :states)
-          }.compact.map(&:to_s)
-        %i[state edit_state].each do |k|
-          opt[k] = (Array.wrap(opt[k]) + states).uniq
-          opt.delete(k) if opt[k].empty?
-        end
-      end
-    end
-
-    Upload.search_records(*items, **opt)
-
-  rescue RangeError => error
-
-    # Re-cast as a SubmitError so that UploadController#index redirects to the
-    # main index page instead of the root page.
-    raise UploadWorkflow::SubmitError.new(error)
-
+    filters << :filter_by_user! if opt[:user] || opt[:user_id]
+    filters << :filter_by_org!  if opt[:org]  || opt[:org_id]
+    filters << :filter_by_state!
+    filters << :filter_by_group!
+    super
   end
+
+  # Select records for the current user unless a different user has been
+  # specified (or all records if specified as '*', 'all', or 'false').
+  #
+  # @param [Hash]  opt                May be modified.
+  #
+  def filter_by_user!(opt)
+    super
+    opt[:edit_user] = opt[:id] if opt[:id].present?
+  end
+
+  # Limit records to those in the given state (or records with an empty state
+  # field if specified as 'nil', 'empty', or 'missing').
+  #
+  # @param [Hash]  opt                May be modified.
+  #
+  # @return [Hash, nil]               *opt* if changed.
+  #
+  def filter_by_state!(opt)
+    super or return
+    state = opt[:state]
+    opt[:edit_state] ||= state if state
+    opt
+  end
+
+  # Limit by workflow status group.
+  #
+  # @param [Hash]                 opt     May be modified.
+  # @param [Symbol]               key     Group URL parameter.
+  # @param [Symbol|Array<Symbol>] state   State parameter(s).
+  #
+  # @return [Hash, nil]                   *opt* if changed.
+  #
+  def filter_by_group!(opt, key: :group, state: %i[state edit_state])
+    super
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Return with the specified Upload record or *nil* if one could not be found.
   #
@@ -280,10 +219,10 @@ module UploadConcern
     if (result = Upload.get_record(id))
       result
     elsif id.blank? || Upload.id_term(id).values.first.blank?
-      failure(:file_id)
+      raise_failure(:file_id)
     else
       Log.warn { "#{__method__}: #{id}: non-existent record" }
-      failure(:find, id)
+      raise_failure(:find, id)
     end
   end
 
@@ -336,7 +275,7 @@ module UploadConcern
     # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.generate(rec, **opt)
     @workflow.send("#{event}!", data)
-    failure(from, @workflow.failures) if @workflow.failures?
+    raise_failure(from, @workflow.failures) if @workflow.failures?
     @workflow.results
   rescue Workflow::Error => error
     raise UploadWorkflow::SubmitError.new(error)
@@ -393,7 +332,7 @@ module UploadConcern
     rec   = (rec == :unset) ? [] : (rec || []) # TODO: transaction record?
     data  = [] if data == :unset
     unless data
-      data = upload_bulk_post_params or failure(from)
+      data = upload_bulk_post_params or raise_failure(from)
       data << { base_url: request.base_url }
       opt[:control] ||= params[:src] || params[:source]
     end
@@ -404,7 +343,7 @@ module UploadConcern
     opt[:no_sim]    = true if UploadWorkflow::Bulk::SIMULATION # TODO: remove
     @workflow = UploadWorkflow::Bulk.generate(rec, **opt)
     @workflow.send("#{event}!", *data)
-    failure(from, @workflow.failures) if @workflow.failures?
+    raise_failure(from, @workflow.failures) if @workflow.failures?
     @workflow.results
   rescue Workflow::Error => error
     raise UploadWorkflow::SubmitError.new(error)
@@ -534,20 +473,7 @@ module UploadConcern
 
   public
 
-  # Generate a response to a POST.
-  #
-  # @param [Symbol, Integer, Exception, nil] status
-  # @param [*]                               item
-  # @param [Hash]                            opt
-  #
-  # @return [void]
-  #
-  def post_response(status, item = nil, **opt)
-    opt[:meth]     ||= calling_method
-    opt[:tag]      ||= "UPLOAD #{opt[:meth]}"
-    opt[:fallback] ||= upload_index_path
-    super
-  end
+  def default_fallback_location = upload_index_path
 
   # ===========================================================================
   # :section: ResponseConcern overrides
@@ -570,44 +496,24 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Raise an exception.
-  #
-  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
-  #
-  # @raise [UploadWorkflow::SubmitError]
-  # @raise [ExecError]
-  #
-  # @see ExceptionHelper#failure
-  #
-  def failure(problem, value = nil)
-    ExceptionHelper.failure(problem, value, model: :upload)
-  end
-
-  # ===========================================================================
   # :section: OptionsConcern overrides
   # ===========================================================================
 
   protected
 
-  # Create a @model_options instance from the current parameters.
+  # Create an Options instance from the current parameters.
   #
   # @return [Upload::Options]
   #
-  def set_model_options
-    @model_options = Upload::Options.new(request_parameters)
+  def get_model_options
+    Upload::Options.new(request_parameters)
   end
 
   # ===========================================================================
   # :section: PaginationConcern overrides
   # ===========================================================================
 
-  protected
+  public
 
   # Create a Paginator for the current controller action.
   #
@@ -619,6 +525,38 @@ module UploadConcern
   def pagination_setup(paginator: Upload::Paginator, **opt)
     # noinspection RubyMismatchedReturnType
     super
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [*]    list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values(list = @list, **opt)
+    list ||= @list
+    super(list, wrap: :entries, **opt)
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Upload, Hash] item
+  # @param [Hash]         opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def show_values(item = @item, **opt)
+    item = item.try(:fields) || item.dup
+    data = item.extract!(:file_data).first&.last
+    item[:file_data] = safe_json_parse(data)
+    super(item, **opt)
   end
 
   # ===========================================================================

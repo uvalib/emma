@@ -18,7 +18,6 @@ class SearchCallController < ApplicationController
   include SessionConcern
   include RunStateConcern
   include PaginationConcern
-  include SerializationConcern
   include SearchCallConcern
 
   # Non-functional hints for RubyMine type checking.
@@ -55,6 +54,24 @@ class SearchCallController < ApplicationController
 
   public
 
+  # Results for :index.
+  #
+  # @return [Array<SearchCall>, nil]
+  #
+  attr_reader :list
+
+  # Single item.
+  #
+  # @return [SearchCall, nil]
+  #
+  attr_reader :item
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # === GET /search_call?[expand=TRUE&like=PATTERN&field=MATCH&...]
   #
   # List searches.
@@ -78,12 +95,11 @@ class SearchCallController < ApplicationController
       end
     results.limit!(prm[:limit])   if prm[:limit]  # TODO: temporary
     results.offset!(prm[:offset]) if prm[:offset] # TODO: temporary
-    @list = results.to_a
-    paginator.finalize(@list, **search)
+    @list = paginator.finalize({ list: results.to_a }, **search)
     respond_to do |format|
       format.html
-      format.json { render_json show_values }
-      format.xml  { render_xml  show_values }
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
     end
   end
 
@@ -103,42 +119,6 @@ class SearchCallController < ApplicationController
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
-  end
-
-  # ===========================================================================
-  # :section: SerializationConcern overrides
-  # ===========================================================================
-
-  protected
-
-  # Response values for de-serializing the index page to JSON or XML.
-  #
-  # @param [Search::Message::SearchRecordList,nil] list
-  # @param [Hash]                                  opt
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def index_values(list = @list, **opt)
-    opt.reverse_merge!(wrap: :response)
-    opt.reverse_merge!(name: list.respond_to?(:titles) ? :titles : :records)
-    super(list, **opt)
-  end
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [SearchCall, Hash] item
-  # @param [Hash]             opt
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def show_values(item = @item, **opt)
-    opt.reverse_merge!(name: :search_call)
-    if item.is_a?(SearchCall)
-      result = item.as_search_parameters
-    else
-      result = item.to_h.deep_symbolize_keys
-    end
-    super(result, **opt)
   end
 
 end

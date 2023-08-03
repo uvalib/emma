@@ -22,6 +22,7 @@ module SearchConcern
   include ApiConcern
   include EngineConcern
   include PaginationConcern
+  include SerializationConcern
   include SearchCallConcern
 
   # ===========================================================================
@@ -377,7 +378,7 @@ module SearchConcern
   # :section: PaginationConcern overrides
   # ===========================================================================
 
-  protected
+  public
 
   # Create a Paginator for the current controller action.
   #
@@ -389,6 +390,35 @@ module SearchConcern
   def pagination_setup(paginator: SearchPaginator, **opt)
     # noinspection RubyMismatchedReturnType
     super
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Search::Message::SearchRecordList, Search::Message::SearchTitleList] list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values(list = @list, **opt)
+    opt[:name] ||= list.respond_to?(:titles) ? :titles : :records
+    super
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Search::Message::SearchRecord, Hash] item
+  # @param [Hash]                                opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def show_values(item = @item, **opt)
+    sanitize_keys(super)
   end
 
   # ===========================================================================

@@ -62,7 +62,7 @@ module ExceptionHelper
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  def failure(problem, value = nil, model:)
+  def raise_failure(problem, value = nil, model:)
     model = model.to_sym
     __debug_items("#{model.upcase} WF #{__method__}", binding)
 

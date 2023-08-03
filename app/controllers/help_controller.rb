@@ -15,7 +15,6 @@ class HelpController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
-  include SerializationConcern
   include HelpConcern
 
   # Non-functional hints for RubyMine type checking.
@@ -100,38 +99,6 @@ class HelpController < ApplicationController
     err = error
   ensure
     failure_status(err)
-  end
-
-  # ===========================================================================
-  # :section: SerializationConcern overrides
-  # ===========================================================================
-
-  protected
-
-  # Response values for serializing the index page to JSON or XML.
-  #
-  # @param [Array] list
-  # @param [Hash]  opt
-  #
-  # @return [Hash{Symbol=>Array,Hash}]
-  #
-  def index_values(list = @list, **opt)
-    opt.reverse_merge!(wrap: :help)
-    result = list.reduce({}) { |hash, topic| hash.merge!(show_values(topic)) }
-    super(result, **opt)
-  end
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Symbol] topic
-  # @param [Hash]   opt
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def show_values(topic = @topic, **opt)
-    opt.reverse_merge!(name: topic)
-    result = get_help_entry(topic)
-    super(result, **opt)
   end
 
 end

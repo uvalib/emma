@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module RouteHelper
 
+  include ParamsHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -19,14 +21,16 @@ module RouteHelper
   #
   # @param [Symbol, String]      controller
   # @param [Symbol, String, nil] action
+  # @param [Boolean]             base       Strip "_select" from :action.
   #
   # @return [Symbol, String, Proc]
   #
-  def route_helper(controller, action = nil)
+  def route_helper(controller, action = nil, base: false)
     ctr = controller.to_s.underscore
     ctr = ctr.split('/').map(&:singularize).join('_') if ctr.include?('/')
     ctr = ctr.split('.').map(&:singularize).join('_') if ctr.include?('.')
     act = action&.to_sym
+    act = base_action(act) if act && base
     if ctr.end_with?('_url', '_path')
       Log.warn("#{__method__}: #{controller}: ignoring action #{act}") if act
       return ctr
@@ -40,21 +44,23 @@ module RouteHelper
 
   # get_path_for
   #
-  # @param [Array<Symbol,String>] arg     Controller and optional action.
-  # @param [Boolean]              warn
-  # @param [Hash]                 opt
+  # @param [Array<Symbol,String,nil>] arg   Controller and optional action.
+  # @param [Boolean]                  base  Strip "_select" from :action.
+  # @param [Boolean]                  warn
+  # @param [Hash]                     opt
   #
   # @return [String, nil]
   #
-  def get_path_for(*arg, warn: true, **opt)
+  def get_path_for(*arg, base: false, warn: true, **opt)
     ctr, act = arg
-    ctr = opt.delete(:controller) || ctr
-    act = opt.delete(:action)     || act
-    case (path = route_helper(ctr, act))
-      when Symbol then result = try(path, **opt) and return result
-      when Proc   then result = path.call(**opt) and return result
-      else             result = path.presence    and return result
-    end
+    ca  = opt.extract!(:controller, :ctrlr, :action)
+    ctr = ca[:ctrlr]  || ca[:controller] || ctr
+    act = ca[:action] || act
+    case (path = route_helper(ctr, act, base: base))
+      when Symbol then result = try(path, **opt)
+      when Proc   then result = path.call(**opt)
+      else             result = path.presence
+    end and return result
     Log.warn("#{__method__}: invalid: #{ctr.inspect} #{act.inspect}") if warn
   end
 

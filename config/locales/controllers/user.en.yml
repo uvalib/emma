@@ -29,10 +29,10 @@ en:
       page_controls:
         label:          'Account Actions:'
         actions:
-          - index
-          - new
-          - edit_select
-          - delete_select
+          - [account, index]
+          - [account, new]
+          - [account, edit_select]
+          - [account, delete_select]
 
       # =======================================================================
       # Pages

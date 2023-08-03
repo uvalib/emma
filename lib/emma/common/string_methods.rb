@@ -112,6 +112,26 @@ module Emma::Common::StringMethods
     }.compact_blank!
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # @private
+  HEX = '[a-fA-F0-9]'
+
+  # @private
+  UUID_FORMAT = /\A#{HEX}{8}-#{HEX}{4}-#{HEX}{4}-#{HEX}{4}-#{HEX}{12}\z/.freeze
+
+  # Indicate whether item is a UUID value.
+  #
+  # @param [*] item
+  #
+  def uuid?(item)
+    item.to_s.match?(UUID_FORMAT)
+  end
+
 end
 
 __loading_end(__FILE__)

@@ -181,7 +181,7 @@ class SearchDecorator < BaseDecorator
     # @type [Array<Symbol>]
     #
     RESULT_IGNORED_PARAMS =
-      (ParamsHelper::IGNORED_PARAMETERS + Paginator::PAGE_PARAMS).uniq.freeze
+      (ParamsHelper::IGNORED_PARAMETERS + Paginator::PAGE_KEYS).uniq.freeze
 
     # =========================================================================
     # :section:

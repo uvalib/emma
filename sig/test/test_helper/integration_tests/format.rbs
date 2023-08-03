@@ -98,6 +98,8 @@ module TestHelper::IntegrationTests::Format
   # @option opt [String,Symbol] :format
   # @option opt [String,Symbol] :media_type   If present, trumps :format.
   #
+  # If :media_type resolves to :any then no format check is performed.
+  #
   # @raise [Minitest::Assertion]      If one or more criteria don't match.
   #
   # @return [true]                    If all criteria match.

@@ -19,27 +19,26 @@ module OptionsConcern
 
   public
 
-  # Access the @model_options instance created for the current controller.
+  # Access the Options instance created for the current controller.
   #
   # @return [Options]
   #
   def model_options
-    @model_options ||= set_model_options
+    @model_options ||= get_model_options
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section:
   # ===========================================================================
 
   protected
 
-  # Create a @model_options instance from the current parameters.
+  # Create an Options instance from the current parameters.
   #
   # @return [Options]
   #
-  def set_model_options
-    # noinspection RubyMismatchedArgumentType
-    @model_options = Options.new(self, request_parameters)
+  def get_model_options
+    not_implemented 'to be overridden by the model-specific Concern'
   end
 
   # ===========================================================================
@@ -51,27 +50,7 @@ module OptionsConcern
   THIS_MODULE = self
 
   included do |base|
-
     __included(base, THIS_MODULE)
-
-    include ParamsHelper
-
-    # Non-functional hints for RubyMine type checking.
-    unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
-      include AbstractController::Callbacks::ClassMethods
-      include OptionsConcern
-      # :nocov:
-    end
-
-    # =========================================================================
-    # :section: Callbacks
-    # =========================================================================
-
-    if respond_to?(:before_action)
-      prepend_before_action :set_model_options
-    end
-
   end
 
 end

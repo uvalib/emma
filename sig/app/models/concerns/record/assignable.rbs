@@ -81,15 +81,15 @@ module Record::Assignable
     #
     # @return [::Options]
     #
-    attr_reader model_options: ::Options | nil
+    attr_reader model_options: ::Options
 
     # set_model_options
     #
     # @param [::Options, Hash, nil] options
     #
-    # @return [::Options, nil]
+    # @return [::Options]
     #
-    def set_model_options: ((::Options|symHash|nil) options) -> (::Options | nil)
+    def set_model_options: ((::Options|symHash|nil) options) -> ::Options
 
     # Create a new instance.
     #

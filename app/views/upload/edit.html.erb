@@ -26,17 +26,6 @@
 <%= page_heading(title, help: help, logo: logo) %>
 <%= page_description_section %>
 
-<%- if dec.blank? -%>
-
-  <%= dec.items_menu %>
-
-<%- else -%>
-
-  <%= page_directions_section %>
-  <%= dec.preview %>
-  <%= dec.model_form %>
-
-<%- end -%>
-
-<%= page_notes_section %>
-<%= dec.action_list unless modal? %>
+<%= page_directions_section %>
+<%= dec.preview %>
+<%= dec.model_form %>

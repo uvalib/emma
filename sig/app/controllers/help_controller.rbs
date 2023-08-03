@@ -10,8 +10,6 @@ class HelpController < ApplicationController
 
   include RunStateConcern
 
-  include SerializationConcern
-
   include HelpConcern
 
   # :nocov:
@@ -36,22 +34,4 @@ class HelpController < ApplicationController
   # @see #help_path                   Route helper
   #
   def show: () -> void
-
-  # Response values for serializing the index page to JSON or XML.
-  #
-  # @param [Array] list
-  # @param [Hash]  opt
-  #
-  # @return [Hash{Symbol=>Array,Hash}]
-  #
-  def index_values: (?anyArray list, **untyped opt) -> symHash
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Symbol] topic
-  # @param [Hash]   opt
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def show_values: (?(Symbol|nil) topic, **untyped opt) -> symHash
 end

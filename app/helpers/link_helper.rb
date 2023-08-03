@@ -25,22 +25,29 @@ module LinkHelper
   # Create a link element to an application action target.
   #
   # @param [String, nil]    label         Label passed to #make_link.
-  # @param [Symbol, String] controller
+  # @param [Symbol, String] ctrlr
   # @param [Symbol, String] action
   # @param [Hash]           link_opt      Options passed to #make_link.
+  # @param [String]         css           Characteristic CSS class/selector.
   # @param [Hash]           path_opt      Path options.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link element.
   # @return [nil]                         A valid URL could not be determined.
   #
-  def link_to_action(label, controller:, action:, link_opt: nil, **path_opt)
-    css      = '.control'
-    path     = get_path_for(controller, action, **path_opt) or return
-    cfg_opt  = { controller: controller }
-    label  ||= config_lookup("#{action}.label", **cfg_opt) || path
+  def link_to_action(
+    label,
+    ctrlr:,
+    action:,
+    link_opt: nil,
+    css:      '.control',
+    **path_opt
+  )
+    ctrlr    = path_opt.delete(:controller) || ctrlr # Just in case.
+    path     = get_path_for(ctrlr, action, **path_opt) or return
+    label  ||= config_lookup("#{action}.label", ctrlr: ctrlr) || path
     html_opt = prepend_css(link_opt, css)
     html_opt[:method] ||= :delete if action.to_s == 'destroy'
-    html_opt[:title]  ||= config_lookup("#{action}.tooltip", **cfg_opt)
+    html_opt[:title]  ||= config_lookup("#{action}.tooltip", ctrlr: ctrlr)
     # noinspection RubyMismatchedArgumentType
     if path.match?(/^https?:/)
       external_link(label, path, **html_opt)

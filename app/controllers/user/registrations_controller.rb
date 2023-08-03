@@ -14,6 +14,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   include UserConcern
   include SessionConcern
   include RunStateConcern
+  include ParamsConcern
 
   # ===========================================================================
   # :section: Callbacks
@@ -74,10 +75,9 @@ class User::RegistrationsController < Devise::RegistrationsController
   def edit
     __log_activity
     __debug_route
-    id = (params[:selected] || params[:id]).to_s
-    return redirect_to edit_select_user_path if show_menu?(id)
-    if (user = positive(id))
-      @item = User.find_record(user) or raise "invalid selection #{id.inspect}"
+    id = identifier_list.first
+    if id.is_a?(Integer)
+      @item = User.find_record(id) or raise "invalid selection #{id.inspect}"
     else
       @item = current_user
     end
@@ -188,16 +188,6 @@ class User::RegistrationsController < Devise::RegistrationsController
   # ===========================================================================
 
   protected
-
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
-  #
-  # @param [String, Array<String>, nil] id_params  Default: `params[:id]`.
-  #
-  def show_menu?(id_params = nil)
-    id_params ||= params[:selected] || params[:id]
-    Array.wrap(id_params).include?('SELECT')
-  end
 
   # Specify acceptable URL parameters.
   #

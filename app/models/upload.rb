@@ -120,14 +120,18 @@ class Upload < ApplicationRecord
 
   # set_model_options
   #
-  # @param [Options, Hash, nil] options
+  # @param [Upload::Options, Hash, nil] options
   #
-  # @return [Upload::Options, nil]
+  # @return [Upload::Options]
   #
   def set_model_options(options)
     options = options[:options] if options.is_a?(Hash)
     # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
-    @model_options = (options.dup if options.is_a?(Options))
+    if options.is_a?(Upload::Options)
+      @model_options = options.dup
+    else
+      @model_options = Upload::Options.new
+    end
   end
 
   # ===========================================================================
@@ -202,16 +206,16 @@ class Upload < ApplicationRecord
   #
   def assign_attributes(attributes)
     __debug_items(binding)
-    attributes = attributes.fields if attributes.is_a?(Upload)
-    control, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPTIONS)
-    mode = ASSIGN_MODES.find { |m| control[m].present? }
+    attributes  = attributes.fields if attributes.is_a?(Upload)
+    opt, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPTIONS)
+    op_mode     = opt.slice(*ASSIGN_MODES).compact_blank.keys.first
 
-    set_model_options(control[:options])
+    set_model_options(opt)
 
     # Handle the :reset case separately.  If any of the fields to reset are
     # supplied, those values are used here.  If any additional data was
     # supplied it will be ignored.
-    if mode == :reset
+    if op_mode == :reset
       reset_columns =
         if under_review?
           %i[review_user review_success review_comment reviewed_at]
@@ -232,12 +236,13 @@ class Upload < ApplicationRecord
     return unless fields.present?
     fields.deep_symbolize_keys!
     fetch_file = false
-    new_record = being_created? && (mode == :initializing)
+    new_record = being_created? && (op_mode == :initializing)
 
     # If an importer was specified, apply it to transform imported key/value
     # pairs record attributes, :file_data values and/or :emma_data values.
-    importer = (control[:importer] if new_record)
-    fields   = import_transform(fields, control[:importer]) if importer
+    if new_record && (importer = opt[:importer])
+      fields = import_transform(fields, importer)
+    end
 
     # Database fields go into *attr*; the remainder is file and EMMA data.
     attr, data = partition_hash(fields, *field_names)
@@ -247,7 +252,7 @@ class Upload < ApplicationRecord
     allowed =
       if being_created?
         DATA_COLUMNS + %i[repository submission_id updated_at]
-      elsif being_modified? || (mode == :finishing_edit)
+      elsif being_modified? || (op_mode == :finishing_edit)
         DATA_COLUMNS + %i[edit_user edited_at]
       elsif being_removed?
         %i[updated_at]
@@ -296,7 +301,7 @@ class Upload < ApplicationRecord
     # file data should never change if the item is under review or if it is
     # currently in the process of being submitted to a member repository.
 
-    if sealed? && (mode != :finishing_edit)
+    if sealed? && (op_mode != :finishing_edit)
 
       log_ignored('ignored data parameters', data) if data.present?
 
@@ -306,7 +311,7 @@ class Upload < ApplicationRecord
       # arguments or from bulk import data).
       if (fp = data.delete(:file_path))
         @file_path = fp
-        fetch_file = !false?(control[:defer])
+        fetch_file = !false?(opt[:defer])
       end
 
       # Augment EMMA data fields supplied as method options with the contents
@@ -323,7 +328,7 @@ class Upload < ApplicationRecord
       fd = fd.to_json if fd.is_a?(Hash)
       fd = fd.presence
       __debug_items { { "#{__method__} file_data": fd.inspect } } if fd
-      case mode
+      case op_mode
         when :finishing_edit
           if fd && (fd != self[:file_data])
             delete_file(field: :file_data)
@@ -350,12 +355,9 @@ class Upload < ApplicationRecord
 
       # EMMA metadata defaults that are only appropriate for EMMA-native items.
       if attr[:repository] == EmmaRepository.default
-        data[:emma_repositoryRecordId] ||= attr[:submission_id]
+        rid = data[:emma_repositoryRecordId] ||= attr[:submission_id]
         data[:emma_retrievalLink] ||=
-          begin
-            rid = data[:emma_repositoryRecordId] || self[:submission_id]
-            make_retrieval_link(rid, control[:base_url])
-          end
+          make_retrieval_link((rid || self[:submission_id]), opt[:base_url])
       end
 
       # Fill in missing file information.
@@ -373,7 +375,7 @@ class Upload < ApplicationRecord
       # Update :emma_data or :edit_emma_data, depending on the context.  When
       # incorporating editing changes, :emma_data must be updated explicitly
       # because #active_emma_data refers to :edit_emma_data.
-      case mode
+      case op_mode
         when :initializing   then set_active_emma_data(data)
         when :finishing_edit then modify_emma_data(data)
         else                      modify_active_emma_data(data)

@@ -61,26 +61,6 @@ class Manifest < ApplicationRecord
   #
   def cancel_changes!: (**untyped attr) -> self
 
-  # label
-  #
-  # @param [Manifest, nil] item       Default: self.
-  #
-  # @return [String, nil]
-  #
-  # @see Api::Shared::TitleMethods#label
-  #
-  def label: (?(Manifest|nil) item) -> (String | nil)
-
-  # menu_label
-  #
-  # @param [Manifest, nil] item           Default: self.
-  #
-  # @return [String, nil]
-  #
-  # @see BaseDecorator::Menu#items_menu_label
-  #
-  def menu_label: (?(Manifest|nil) item) -> (String | nil)
-
   # Generate a default Manifest title name.
   #
   # @return [String]

@@ -54,17 +54,14 @@ en:
       action_links:
 
         new:
-          action:       new
           label:        'Create %{article} new item'
           article:      'a'
 
         edit:
-          action:       edit_select
           label:        'Modify %{article} item'
           article:      'a'
 
         delete:
-          action:       delete_select
           label:        'Remove %{article} item'
           article:      'a'
 
@@ -163,12 +160,13 @@ en:
         success:        'Item created'
         failure:        'Could not create item: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       create:
-        <<: *NEW_ACTION
+        <<:             *NEW_ACTION
 
       # =======================================================================
 
@@ -183,12 +181,13 @@ en:
         success:        'Changes saved'
         failure:        'Could not save changes: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       update:
-        <<: *EDIT_ACTION
+        <<:             *EDIT_ACTION
 
       # =======================================================================
 
@@ -200,12 +199,13 @@ en:
         success:        'Item removed'
         failure:        'Could not remove item: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       destroy:
-        <<: *DELETE_ACTION
+        <<:             *DELETE_ACTION
 
       # =======================================================================
 
@@ -239,12 +239,13 @@ en:
         success:        'Added manifest items from: %{files}'
         failure:        'Could not create items: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       bulk_create:
-        <<: *BULK_NEW_ACTION
+        <<:             *BULK_NEW_ACTION
 
       # =======================================================================
 
@@ -275,12 +276,13 @@ en:
         success:        'Modified manifest items from: %{files}'
         failure:        'Could not modify items: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       bulk_update:
-        <<: *BULK_EDIT_ACTION
+        <<:             *BULK_EDIT_ACTION
 
       # =======================================================================
 
@@ -305,12 +307,13 @@ en:
         cancel:
           <<:           *BULK_CANCEL
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       bulk_destroy:
-        <<: *BULK_DELETE_ACTION
+        <<:             *BULK_DELETE_ACTION
 
       # =======================================================================
 
@@ -320,4 +323,5 @@ en:
         #  <<: *GENERIC_SELECT
         #  label:        'Select file'
 
+        role:           submitter
         _endpoint:      true

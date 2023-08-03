@@ -11,8 +11,6 @@ class ToolController < ApplicationController
 
   include RunStateConcern
 
-  include SerializationConcern
-
   include ToolConcern
 
   # :nocov:

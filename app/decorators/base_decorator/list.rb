@@ -168,6 +168,8 @@ module BaseDecorator::List
     prop  ||= field_configuration(field)
     field ||= prop[:field]
     label   = prop[:label] || label
+    return if prop[:ignored]
+    return unless user_has_role?(prop[:role])
 
     # Setup options for creating related HTML identifiers.
     base    = opt.delete(:base) || model_html_id(field || label)
@@ -420,6 +422,39 @@ module BaseDecorator::List
 
   public
 
+  # Options for #model_field_values.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELD_VALUES_OPT = %i[columns filter].freeze
+
+  # Specified field selections from the given model instance.
+  #
+  # @param [Model, Hash, nil]                   item
+  # @param [String, Symbol, Array, nil]         columns
+  # @param [String, Symbol, Regexp, Array, nil] filter
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @see #FIELD_VALUES_OPT
+  #
+  def model_field_values(item = nil, columns: nil, filter: nil, **)
+    item ||= (object if present?)
+    pairs  = item.is_a?(Model) ? item.attributes : item
+    pairs  = pairs.stringify_keys if pairs.is_a?(Hash)
+    return {} if pairs.blank?
+    columns &&= Array.wrap(columns).map(&:to_s).compact_blank
+    pairs.slice!(*columns) unless columns.blank? || (columns == %w(all))
+    Array.wrap(filter).each do |pattern|
+      case pattern
+        when Regexp then pairs.reject! { |f, _| f.match?(pattern) }
+        when Symbol then pairs.reject! { |f, _| f.casecmp?(pattern.to_s) }
+        else             pairs.reject! { |f, _| f.downcase.include?(pattern) }
+      end
+    end
+    pairs.transform_keys!(&:to_sym)
+  end
+
   # Render a metadata listing of a model instance.
   #
   # @param [Hash, nil]   pairs        Label/value pairs.
@@ -432,10 +467,12 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def details(pairs: nil, outer: nil, css: nil, **opt)
+    fv_opt   = opt.extract!(*FIELD_VALUES_OPT)
+    pairs  ||= model_field_values(**fv_opt)
+    count    = pairs.size
     css    ||= "#{model_type}-details"
-    count    = positive(pairs&.size)
     classes  = [css, opt.delete(:class)]
-    classes << "columns-#{count}" if count
+    classes << "columns-#{count}" if count.positive?
     html_div(prepend_css(outer, *classes)) do
       render_field_values(pairs: pairs, **opt)
     end

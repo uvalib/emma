@@ -31,7 +31,7 @@ class AccountController < ApplicationController
   # :section: Authorization
   # ===========================================================================
 
-  authorize_resource :user
+  authorize_resource instance_name: :item, class: User
 
   # ===========================================================================
   # :section: Callbacks
@@ -43,7 +43,7 @@ class AccountController < ApplicationController
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Database results for :index.
   #
@@ -77,41 +77,50 @@ class AccountController < ApplicationController
     prm    = paginator.initial_parameters
     search = prm.delete(:like)
     prm.except!(:limit, *Paginator::PAGINATION_KEYS)
-    @list  = get_accounts(*search, **prm).to_a
-    paginator.finalize(@list, **prm)
+    result = { list: get_accounts(*search, **prm) }
+    @list  = paginator.finalize(result, **prm)
   end
 
-  # === GET /account/show/:id
+  # === GET /account/show/(:id)
   #
-  # Display details of an existing user account.
+  # Display details of an existing EMMA user account.
+  #
+  # Redirects to #show_select if :id is not given.
   #
   # @see #show_account_path           Route helper
-  # @see AccountConcern#get_account
   #
   def show
     __log_activity
     __debug_route
-    @item = get_account
+    return redirect_to action: :show_select if identifier.blank?
+    @item = get_record
+    user_authorize!(__method__, @item)
+    # noinspection RubyMismatchedArgumentType
+    raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
+  rescue => error
+    error_response(error, show_select_account_path)
   end
 
   # === GET /account/new
   #
-  # Display a form for creation of a new user account.
+  # Display a form for creation of a new EMMA user account.
   #
   # @see #new_account_path            Route helper
-  # @see AccountConcern#new_account
   #
   def new
     __log_activity
     __debug_route
-    @item = new_account
+    @item = new_record
+    user_authorize!(__method__, @item)
+  rescue => error
+    failure_status(error)
   end
 
   # === POST  /account/create
   # === PUT   /account/create
   # === PATCH /account/create
   #
-  # Create a new user account.
+  # Create a new EMMA user account.
   #
   # === Usage Notes
   # In order to allow the database to auto-generate the record ID, the :id
@@ -119,121 +128,156 @@ class AccountController < ApplicationController
   # parameters.
   #
   # @see #create_account_path         Route helper
-  # @see AccountConcern#create_account
   #
   def create
     __log_activity
     __debug_route
-    @item   = create_account(no_raise: true)
-    success = @item.errors.blank?
+    @item  = create_record(no_raise: true)
+    errors = @item&.errors || 'Not created' # TODO: I18n
+    user_authorize!(__method__, @item)
     respond_to do |format|
-      if success
+      if errors.blank?
         format.html { redirect_success(__method__) }
         format.json { render :show, location: @item, status: :created }
       else
-        # @type [ActiveModel::Errors]
-        errors = @item.errors
         format.html { redirect_failure(__method__, error: errors) }
         format.json { render json: errors, status: :unprocessable_entity }
       end
     end
+  rescue Record::SubmitError => error
+    post_response(:conflict, error)
+  rescue => error
+    post_response(error)
   end
 
-  # === GET /account/edit/:id
-  # === GET /account/edit/SELECT
-  # === GET /account/edit_select
+  # === GET /account/edit/(:id)
   #
-  # Display a form for modification of an existing user account.
+  # Display a form for modification of an existing EMMA user account.
+  #
+  # Redirects to #edit_select if :id is not given.
   #
   # @see #edit_account_path           Route helper
-  # @see #edit_select_account_path    Route helper
-  # @see #show_menu?
-  # @see AccountConcern#get_account
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def edit
     __log_activity
     __debug_route
-    @item = nil
-    unless show_menu?((ids = id_params))
-      @item  = get_account((selected = ids.shift))
-      errors = []
-      errors << "Record #{quote(selected)} not found" if @item.blank? # TODO: I18n
-      errors << "Ignored extra id(s): #{quote(ids)}"  if ids.present? # TODO: I18n
-      flash_now_alert(*errors) if errors.present?
-    end
+    return redirect_to action: :edit_select if identifier.blank?
+    @item = edit_record
+    user_authorize!(__method__, @item)
+    # noinspection RubyMismatchedArgumentType
+    raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
+  rescue => error
+    error_response(error, edit_select_account_path)
   end
 
   # === PUT   /account/update/:id
   # === PATCH /account/update/:id
   #
-  # Update an existing user account.
+  # Update an existing EMMA user account.
   #
   # @see #update_account_path         Route helper
-  # @see AccountConcern#update_account
   #
   def update
     __log_activity
     __debug_route
     __debug_request
-    @item   = update_account(no_raise: true)
-    success = @item && @item.errors.blank?
+    @item  = update_record(no_raise: true)
+    errors = @item&.errors || "#{params[:id]} not found" # TODO: I18n
+    user_authorize!(__method__, @item)
     respond_to do |format|
-      if success
+      if errors.blank?
         format.html { redirect_success(__method__) }
         format.json { render :show, location: @item, status: :ok }
       else
-        # @type [ActiveModel::Errors, String]
-        errors = @item&.errors || "#{params[:id]} not found" # TODO: I18n
         format.html { redirect_failure(__method__, error: errors) }
         format.json { render json: errors, status: :unprocessable_entity }
       end
     end
+  rescue => error
+    post_response(error, redirect: edit_select_account_path)
   end
 
-  # === GET /account/delete/:id
-  # === GET /account/delete/SELECT
-  # === GET /account/delete_select
+  # === GET /account/delete/(:id)
   #
-  # Select existing user account(s) to remove.
+  # Select existing EMMA user account(s) to remove.
   #
-  # If :id is "SELECT" then a menu of deletable items is presented.
+  # Redirects to #delete_select if :id is not given.
   #
   # @see #delete_account_path         Route helper
-  # @see #delete_select_account_path  Route helper
-  # @see #show_menu?
-  # @see AccountConcern#find_accounts
   #
   def delete
     __log_activity
     __debug_route
-    @list = nil
-    unless show_menu?((ids = id_params))
-      @list = find_accounts(ids)
-      unless @list.present? || last_operation_path&.include?('/destroy')
-        # noinspection RubyMismatchedArgumentType
-        flash_now_alert("No records match #{quote(ids)}") # TODO: I18n
-      end
+    return redirect_to action: :delete_select if identifier.blank?
+    @list = delete_records[:list]
+    user_authorize!(__method__, @list)
+    unless @list.present? || last_operation_path&.include?('/destroy')
+      # noinspection RubyMismatchedArgumentType
+      raise "No records match #{quote(identifier_list)}" # TODO: I18n
     end
+  rescue => error
+    error_response(error, delete_select_account_path)
   end
 
   # === DELETE /account/destroy/:id
   #
-  # Remove existing user account(s).
+  # Remove existing EMMA user account(s).
   #
   # @see #destroy_account_path        Route helper
-  # @see AccountConcern#destroy_accounts
   #
+  #--
+  # noinspection RubyScope
+  #++
   def destroy
     __log_activity
     __debug_route
-    @list = destroy_accounts
-    respond_to do |format|
-      format.html { redirect_success(__method__) }
-      format.json { head :no_content }
-    end
+    back  = delete_select_account_path
+    @list = destroy_records
+    # user_authorize!(__method__, @list) # TODO: authorize :destroy
+    post_response(:ok, @list, redirect: back)
+  rescue Record::SubmitError => error
+    post_response(:conflict, error, redirect: back)
+  rescue => error
+    post_response(error, redirect: back)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # === GET /account/show_select
+  #
+  # Show a menu to select a user to show.
+  #
+  # @see #show_select_account_path    Route helper
+  #
+  def show_select
+    __log_activity
+    __debug_route
+  end
+
+  # === GET /account/edit_select
+  #
+  # Show a menu to select a user to edit.
+  #
+  # @see #edit_select_account_path    Route helper
+  #
+  def edit_select
+    __log_activity
+    __debug_route
+  end
+
+  # === GET /account/delete_select
+  #
+  # Show a menu to select a user to delete.
+  #
+  # @see #delete_select_account_path  Route helper
+  #
+  def delete_select
+    __log_activity
+    __debug_route
   end
 
   # ===========================================================================
@@ -242,14 +286,24 @@ class AccountController < ApplicationController
 
   protected
 
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
+  # This is a kludge until I can figure out the right way to express this with
+  # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Array<String,Integer>] ids  Default: `#id_params`.
+  # @param [Symbol]                 action
+  # @param [User, Array<User>, nil] subject
+  # @param [*]                      args
   #
-  def show_menu?(ids = nil)
-    ids ||= id_params
-    ids.blank? || ids.include?('SELECT')
+  def user_authorize!(action, subject, *args)
+    subject = subject.first if subject.is_a?(Array) # TODO: per item check
+    subject = subject.presence
+    authorize!(action, subject, *args) if subject
+    return if administrator?
+    return unless %i[show edit update delete destroy].include?(action)
+    unless (org = current_user&.org&.id) && (subject&.org&.id == org)
+      message = current_ability.unauthorized_message(action, subject)
+      message.sub!(/s\.?$/, " #{subject.id}") if subject
+      raise CanCan::AccessDenied.new(message, action, subject, args)
+    end
   end
 
 end

@@ -492,7 +492,7 @@ end
 module I18n
   module Base
     def translate
-      : (String|Symbol        key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> (untyped | nil)
+      : (?(String|Symbol|nil) key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> (untyped | nil)
       | (Array[String|Symbol] key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> Array[untyped|nil]
   end
 end

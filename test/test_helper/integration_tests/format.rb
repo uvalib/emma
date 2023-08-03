@@ -12,6 +12,7 @@ module TestHelper::IntegrationTests::Format
   # @type [Hash{Symbol=>String}]
   #
   MEDIA_TYPE = {
+    any:  '*/*',
     html: 'text/html',
     json: 'application/json',
     text: 'text/plain',
@@ -145,6 +146,8 @@ module TestHelper::IntegrationTests::Format
   # @option opt [String,Symbol] :format
   # @option opt [String,Symbol] :media_type   If present, trumps :format.
   #
+  # If :media_type resolves to :any then no format check is performed.
+  #
   # @raise [Minitest::Assertion]      If one or more criteria don't match.
   #
   # @return [true]                    If all criteria match.
@@ -154,10 +157,11 @@ module TestHelper::IntegrationTests::Format
     assert_response status if status && (status != :any)
 
     action, ctrlr = (opt[:from].split('#').reverse if opt[:from])
-    ctrlr  = (opt[:controller] || ctrlr)&.to_sym
-    action = (opt[:action]     || action)&.to_sym
-    media  = opt.key?(:media_type) ? opt[:media_type] : opt[:format]
-    media  = (media.is_a?(Symbol) ? MEDIA_TYPE[media] : media)&.to_s
+    ctrlr   = (opt[:controller] || ctrlr)&.to_sym
+    action  = (opt[:action]     || action)&.to_sym
+    media   = opt.key?(:media_type) ? opt[:media_type] : opt[:format]
+    media   = nil if media == :any
+    media &&= media.is_a?(Symbol) ? MEDIA_TYPE[media] : media.to_s
 
     assert_equal ctrlr,  controller_name(@controller.controller_path) if ctrlr
     assert_equal action, @controller.action_name&.to_sym              if action

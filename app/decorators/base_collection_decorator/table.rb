@@ -44,15 +44,10 @@ module BaseCollectionDecorator::Table
     opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
     opt[:tag] = tag unless table
 
-    parts = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h.compact
+    parts = opt.extract!(*MODEL_TABLE_PART_OPT).compact
     parts[:thead] ||= table_headings(**opt)
     parts[:tbody] ||= table_entries(**opt)
     cols  = parts[:thead].scan(/<th[>\s]/).size
-    if table
-      parts = parts.map { |part, content| html_tag(part, content) }
-    else
-      parts = parts.values
-    end
 
     opt[:role] = table_role if table
     prepend_css!(html_opt, css, model_type)
@@ -60,7 +55,9 @@ module BaseCollectionDecorator::Table
     append_css!(html_opt, 'sticky-head')     if opt[:sticky]
     append_css!(html_opt, 'dark-head')       if opt[:dark]
 
-    scroll_to_top_target << html_tag(tag, *parts, html_opt)
+    html_tag(tag, html_opt) do
+      table ? parts.map { |p, content| html_tag(p, content) } : parts.values
+    end
   end
 
   # Render one or more entries for use within a *tbody*.
@@ -89,15 +86,15 @@ module BaseCollectionDecorator::Table
 
   # Render column headings for a table of model items.
   #
-  # @param [Integer]                                   row
-  # @param [Integer]                                   col
-  # @param [Symbol, String, Array<Symbol,String>, nil] columns
-  # @param [String, Regexp, Array<String,Regexp>, nil] filter
-  # @param [Boolean]                                   dark
-  # @param [Hash]                                      opt
+  # @param [Integer] row
+  # @param [Integer] col
+  # @param [Boolean] dark
+  # @param [Hash]    opt              To column except:
   #
-  # @option opt [Symbol] :outer_tag   Default: :tr
-  # @option opt [Symbol] :inner_tag   Default: :th
+  # @option opt [Symbol]                :outer_tag  Default: :tr
+  # @option opt [Symbol]                :inner_tag  Default: :th
+  # @option opt [Symbol, String, Array] :columns    To #table_values
+  # @option opt [String, Regexp, Array] :filter     To #table_values
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -106,24 +103,18 @@ module BaseCollectionDecorator::Table
   # @yieldparam  [Hash]  opt          Field generation options.
   # @yieldreturn [ActiveSupport::SafeBuffer]
   #
-  # @see #DARK_HEAD
+  # @see #table_entry
   #
-  def table_headings(
-    row:     1,
-    col:     1,
-    columns: nil,
-    filter:  nil,
-    dark:    DARK_HEAD,
-    **opt
-  )
-    tag   = opt.delete(:tag) # Propagated if not rendering an HTML table.
-    outer, inner = opt.values_at(:outer_tag, :inner_tag).map { |v| v || tag }
-    outer = for_html_table?(outer) && :tr || outer || :div
-    inner = for_html_table?(inner) && :th || inner || :div
+  def table_headings(row: 1, col: 1, dark: DARK_HEAD, **opt)
+    tag    = opt.delete(:tag) # Propagated if not rendering an HTML table.
+    outer, inner = opt.values_at(*MODEL_TABLE_ENTRY_OPT).map { |v| v || tag }
+    outer  = for_html_table?(outer) && :tr || outer || :div
+    inner  = for_html_table?(inner) && :th || inner || :div
+    fv_opt = opt.slice(*FIELD_VALUES_OPT)
     opt.except!(*MODEL_TABLE_OPTIONS)
 
     ob     = object.first
-    pairs  = ob && decorate(ob).table_values(columns: columns, filter: filter)
+    pairs  = ob && decorate(ob).table_values(**fv_opt)
     fields = pairs&.keys || []
     first  = col
     last   = first + fields.size - 1

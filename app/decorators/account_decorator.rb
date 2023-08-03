@@ -26,62 +26,7 @@ class AccountDecorator < BaseDecorator
   public
 
   module SharedPathMethods
-
     include BaseDecorator::SharedPathMethods
-
-    # =========================================================================
-    # :section: BaseDecorator::SharedPathMethods overrides
-    # =========================================================================
-
-    public
-
-    def index_path(*, **opt)
-      h.account_index_path(**opt)
-    end
-
-    def show_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
-      h.show_account_path(**opt)
-    end
-
-    def new_path(*, **opt)
-      h.new_account_path(**opt)
-    end
-
-    def create_path(*, **opt)
-      h.create_account_path(**opt)
-    end
-
-    def edit_select_path(*, **opt)
-      h.edit_select_account_path(**opt)
-    end
-
-    def edit_path(item = nil, **opt)
-      return edit_select_path(item, **opt) if opt[:selected]
-      opt[:id] = id_for(item, **opt)
-      h.edit_account_path(**opt)
-    end
-
-    def update_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
-      h.update_account_path(**opt)
-    end
-
-    def delete_select_path(*, **opt)
-      h.delete_select_account_path(**opt)
-    end
-
-    def delete_path(item = nil, **opt)
-      return delete_select_path(item, **opt) if opt[:selected]
-      opt[:id] = id_for(item, **opt)
-      h.delete_account_path(**opt)
-    end
-
-    def destroy_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
-      h.destroy_account_path(**opt)
-    end
-
   end
 
   # Definitions available to both classes and instances of either this
@@ -125,26 +70,6 @@ class AccountDecorator < BaseDecorator
     # =========================================================================
 
     public
-
-    # Render details of an account.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super except:
-    #
-    # @option opt [String, Symbol, Array<String,Symbol>] :columns
-    # @option opt [String, Regexp, Array<String,Regexp>] :filter
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    # @see #model_field_values
-    #
-    def details(pairs: nil, **opt)
-      fv_opt = extract_hash!(opt, :columns, :filter)
-      pairs  = model_field_values(**fv_opt).merge!(pairs || {})
-      count  = pairs.size
-      append_css!(opt, "columns-#{count}") if count.positive?
-      super(pairs: pairs, **opt)
-    end
 
     # Render a single entry for use within a list of items.
     #
@@ -347,7 +272,7 @@ class AccountDecorator
   end
 
   # ===========================================================================
-  # :section: BaseDecorator::Table overrides
+  # :section: BaseDecorator::List overrides
   # ===========================================================================
 
   protected

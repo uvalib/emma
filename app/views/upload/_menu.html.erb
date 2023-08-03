@@ -1,0 +1,11 @@
+<%# app/views/upload/_menu.html.erb -%>
+<%-
+  # Show a menu of EMMA entries to operate on driven by params[:action].
+
+  view_debug(__FILE__)
+
+  dec ||= UploadDecorator.new(**context)
+  opt   = { dec: dec }
+-%>
+
+<%= render 'layouts/menu_page', **opt %>

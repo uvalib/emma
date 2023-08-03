@@ -13,6 +13,8 @@ module HelpConcern
 
   include HelpHelper
 
+  include SerializationConcern
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -48,6 +50,38 @@ module HelpConcern
   #
   def set_help_topic
     @topic = (params[:topic] || params[:id])&.to_sym
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for serializing the index page to JSON or XML.
+  #
+  # @param [Array] list
+  # @param [Hash]  opt
+  #
+  # @return [Hash{Symbol=>Array,Hash}]
+  #
+  def index_values(list = @list, **opt)
+    topics = list.map { |topic| show_values(topic) }
+    topics = {}.merge!(*topics)
+    super(topics, wrap: :help, **opt)
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Symbol] topic
+  # @param [Hash]   opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def show_values(topic = @topic, **opt)
+    opt.reverse_merge!(name: topic)
+    result = get_help_entry(topic)
+    super(result, **opt)
   end
 
   # ===========================================================================

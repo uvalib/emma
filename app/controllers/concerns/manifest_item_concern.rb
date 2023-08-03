@@ -23,14 +23,9 @@ module ManifestItemConcern
   include Emma::Common
   include Emma::Json
 
-  include ParamsHelper
-  include FlashHelper
-  include HttpHelper
-
   include ImportConcern
-  include OptionsConcern
-  include PaginationConcern
-  include ResponseConcern
+  include SerializationConcern
+  include ModelConcern
 
   # ===========================================================================
   # :section:
@@ -38,72 +33,13 @@ module ManifestItemConcern
 
   public
 
-  # URL parameters associated with item/row identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS = ManifestItem::Options::IDENTIFIER_PARAMS
-
-  # URL parameters associated with POST data.
-  #
-  # @type [Array<Symbol>]
-  #
-  DATA_PARAMS = ManifestItem::Options::DATA_PARAMS
-
-  # The manifest item identified in URL parameters.
-  #
-  # @return [Integer, nil]
-  #
-  def manifest_item_id
-    manifest_item_params unless defined?(@manifest_item_id)
-    @manifest_item_id
-  end
-
   # The manifest identified in URL parameters.
   #
   # @return [String, nil]
   #
   def manifest_id
-    manifest_item_params unless defined?(@manifest_id)
+    current_params unless defined?(@manifest_id)
     @manifest_id ||= @item&.manifest_id
-  end
-
-  # URL parameters relevant to the current operation.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def manifest_item_params
-    @manifest_item_params ||=
-      request.get? ? manifest_item_get_params : manifest_item_post_params
-  end
-
-  # Get URL parameters relevant to the current operation.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def manifest_item_get_params
-    model_options.get_model_params.tap do |prm|
-      prm[:user] = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
-      @manifest_item_id ||= extract_identifier(prm)
-      @manifest_id      ||= prm[:manifest_id] || prm[:manifest]
-    end
-  end
-
-  # Extract POST parameters that are usable for creating/updating a
-  # ManifestItem instance.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def manifest_item_post_params
-    model_options.model_post_params.tap do |prm|
-      extract_hash!(prm, *DATA_PARAMS).each_pair do |_, v|
-        next unless (v &&= safe_json_parse(v)).is_a?(Hash)
-        prm[:id]            = v[:id]
-        prm[:manifest_id] ||= v[:manifest_id] || v[:manifest]
-      end
-      @manifest_item_id ||= extract_identifier(prm)
-      @manifest_id      ||= prm[:manifest_id] || prm[:manifest]
-    end
   end
 
   # Extract POST parameters and data for bulk operations.
@@ -115,12 +51,40 @@ module ManifestItemConcern
   # @see ImportConcern#fetch_data
   #
   def manifest_item_bulk_post_params
-    prm = manifest_item_post_params
-    opt = extract_hash!(prm, :src, :source, :data)
+    prm = current_post_params
+    opt = prm.extract!(:src, :source, :data)
     opt[:src]  = opt.delete(:source) if opt.key?(:source)
     opt[:data] = request             if opt.blank?
     opt[:type] = prm.delete(:type)&.to_sym
     prm.merge!(data: fetch_data(**opt))
+  end
+
+  # ===========================================================================
+  # :section: ModelConcern overrides
+  # ===========================================================================
+
+  public
+
+  # Get URL parameters relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def current_get_params
+    super do |prm|
+      prm[:user] = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
+      @manifest_id ||= extract_manifest_id(prm)
+    end
+  end
+
+  # Extract POST parameters that are usable for creating/updating a Manifest
+  # instance.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def current_post_params
+    super do |prm|
+      @manifest_id ||= extract_manifest_id(prm)
+    end
   end
 
   # ===========================================================================
@@ -129,15 +93,16 @@ module ManifestItemConcern
 
   protected
 
-  # extract_identifier
+  # The related Manifest identified in URL parameters.
   #
   # @param [Hash] prm
   #
   # @return [Integer, nil]
   #
-  def extract_identifier(prm)
-    id, sel = prm.values_at(*IDENTIFIER_PARAMS).map(&:presence)
-    [sel, id].compact.find { |v| digits_only?(v) }&.to_i
+  def extract_manifest_id(prm)
+    item = prm[:manifest_id] || prm[:manifest]
+    item = item.id if item.is_a?(Manifest)
+    item.presence
   end
 
   # ===========================================================================
@@ -245,257 +210,90 @@ module ManifestItemConcern
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ModelConcern overrides
   # ===========================================================================
 
   public
 
-  # Parameters used by ManifestItem#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RECORDS_PARAMS = ManifestItem::SEARCH_RECORDS_OPTIONS
-
-  # ManifestItem#search_records parameters that specify a distinct search query
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_ONLY_PARAMS = (SEARCH_RECORDS_PARAMS - %i[offset limit]).freeze
-
-  # Parameters used by #find_by_match_records or passed on to
-  # ManifestItem#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIND_OR_MATCH_PARAMS = (
-    SEARCH_RECORDS_PARAMS + %i[group state user user_id]
-  ).freeze
-
-  # Locate and filter ManifestItem records.
-  #
-  # @param [Array<String,Integer,Array>] items  Default: `#manifest_item_id`.
-  # @param [Hash] opt                 Passed to ManifestItem#search_records;
-  #                                     default: `#manifest_item_params` if no
-  #                                     *items* are given.
-  #
-  # @raise [Record::SubmitError]      If :page is not valid.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def find_or_match_manifest_items(*items, **opt)
-    items = items.flatten.compact
-    items << manifest_item_id if items.blank? && manifest_item_id.present?
-
-    # If neither items nor field queries were given, use request parameters.
-    if items.blank? && opt.except(*SEARCH_ONLY_PARAMS).blank?
-      opt = manifest_item_params.merge(opt) unless opt[:groups] == :only
-    end
-    opt[:limit] ||= paginator.page_size
-    opt[:page]  ||= paginator.page_number
-
-    # Disallow experimental database WHERE predicates unless privileged.
-    opt.slice!(*FIND_OR_MATCH_PARAMS) unless current_user&.administrator?
-
-    # Select records for the current user unless a different user has been
-    # specified (or all records if specified as '*', 'all', or 'false').
-    user = opt.delete(:user)
-    user = opt.delete(:user_id) || user || @user
-    user = user.to_s.strip.downcase if user.is_a?(String) || user.is_a?(Symbol)
-    # noinspection RubyMismatchedArgumentType
-    user = User.find_record(user)   unless %w(* 0 all false).include?(user)
-    opt[:user_id] = user.id         if user.is_a?(User) && user.id.present?
-
-    # Limit records to those in the given state (or records with an empty state
-    # field if specified as 'nil', 'empty', or 'missing').
-    # noinspection RubyUnusedLocalVariable
-    if (state = opt.delete(:state).to_s.strip.downcase).present?
-=begin # TODO: ManifestItem state?
-      if %w(empty false missing nil none null).include?(state)
-        opt[:state] = nil
-      else
-        opt[:state] = state
-        #opt[:edit_state] ||= state
-      end
-=end
-    end
-
-    # Limit by workflow status group.
-    # noinspection RubyUnusedLocalVariable
-    group = opt.delete(:group)
-=begin # TODO: ManifestItem groups?
-    group = group.split(/\s*,\s*/) if group.is_a?(String)
-    group = Array.wrap(group).compact_blank
-    if group.present?
-      group.map!(&:downcase).map!(&:to_sym)
-      if group.include?(:all)
-        %i[state edit_state].each { |k| opt.delete(k) }
-      else
-        states =
-          group.flat_map { |g|
-            Record::Steppable::STATE_GROUP.dig(g, :states)
-          }.compact.map(&:to_s)
-        #%i[state edit_state].each do |k|
-        %i[state].each do |k|
-          opt[k] = (Array.wrap(opt[k]) + states).uniq
-          opt.delete(k) if opt[k].empty?
-        end
-      end
-    end
-=end
-    opt.delete(:groups)
-
-    ManifestItem.search_records(*items, **opt)
-
-  rescue RangeError => error
-
-    # Re-cast as a SubmitError so that ManifestItemController#index redirects
-    # to the main index page instead of the root page.
-    raise Record::SubmitError.new(error)
-
-  end
-
-  # Return with the specified ManifestItem record.
-  #
-  # @param [*]    item                  Default: #manifest_item_id.
-  # @param [Hash] opt                   To ManifestItem#find_record.
-  #
-  # @option opt [Boolean] :no_raise     If *true*, return *nil* if not found.
-  #
-  # @raise [Record::NotFound]           If *item* was not found.
-  # @raise [Record::StatementInvalid]   If :id/:sid not given.
-  #
-  # @return [ManifestItem]
-  #
-  def get_manifest_item(item = nil, **opt)
-    case item
-      when ManifestItem, Hash then id = item[:id]
-      when Integer, String    then id = item
-      else                         id = opt.delete(:id)
-    end
-    # noinspection RubyMismatchedReturnType
-    ManifestItem.find_record((id || manifest_item_id), **opt)
-  end
-
-  # ===========================================================================
-  # :section: Workflow - Single
-  # ===========================================================================
-
-  public
-
-  # Create a new un-persisted ManifestItem, using *item* as a template if
-  # provided, for the '/new' model form.
-  #
-  # @param [Hash] attr                      Field values.
-  #
-  # @return [ManifestItem]                  Un-persisted ManifestItem instance.
-  #
-  def new_manifest_item(**attr)
-    __debug_items("MANIFEST ITEM WF #{__method__}", binding)
-    ManifestItem.new(attr)
+  def find_or_match_records(*items, filters: [], **opt)
+    opt[:user] = current_user unless administrator?
+    filters = [*filters, :filter_by_user!] if opt[:user] || opt[:user_id]
+    super
   end
 
   # Create and persist a new ManifestItem.
   #
-  # @param [Hash] attr                      Field values.
+  # @param [Hash, nil] attr           Default: `#current_params`.
+  # @param [Hash]      opt            Passed to super.
   #
-  # @raise [Record::SubmitError]            Invalid workflow transition.
-  # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
-  # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
+  # @return [ManifestItem]            A new ManifestItem instance.
   #
-  # @return [ManifestItem]                  A new ManifestItem instance.
-  #
-  def create_manifest_item(**attr)
-    __debug_items("MANIFEST ITEM WF #{__method__}", binding)
+  def create_record(attr = nil, **opt)
+    attr          ||= current_params
     attr[:backup] ||= {}
     attr[:row]    ||= 1 + all_manifest_items(**attr)&.last&.row.to_i
-    ManifestItem.create!(attr)
+    # noinspection RubyMismatchedReturnType
+    super
   end
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Passed to #get_manifest_item.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Hash, nil]         prm
+  # @param [Hash]              opt
   #
   # @raise [Record::SubmitError]      Record could not be found.
   #
-  # @return [ManifestItem]            An existing persisted ManifestItem.
+  # @return [ManifestItem, nil]       An existing persisted ManifestItem.
   #
-  def edit_manifest_item(item = nil, **opt)
-    #__debug_items("MANIFEST ITEM WF #{__method__}", binding)
+  def edit_record(item = nil, prm = nil, **opt)
     # noinspection RubyMismatchedReturnType
-    item.is_a?(ManifestItem) ? item : get_manifest_item(**opt)
+    item.is_a?(ManifestItem) ? item : super
   end
 
   # Update the indicated ManifestItem.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values except #UPDATE_STATUS_OPTS.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Hash]              attr    Field values except #UPDATE_STATUS_OPTS.
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [ManifestItem]            The updated ManifestItem instance.
+  # @return [ManifestItem, nil]       The updated ManifestItem instance.
   #
-  def update_manifest_item(item = nil, **opt)
-    __debug_items("MANIFEST ITEM WF #{__method__}", binding)
-    edit_manifest_item(item).tap do |record|
-      attr_opt   = extract_hash!(opt, *ManifestItem::UPDATE_STATUS_OPTS)
-      keep_date  = (!attr_opt[:overwrite] unless attr_opt[:overwrite].nil?)
-      new_fields = keep_date.nil? && opt.except(*NON_EDIT_KEYS).keys.presence
+  def update_record(item = nil, no_raise: false, **attr)
+    keep_date = updated_at = old_values = nil
+    # noinspection RubyMismatchedReturnType
+    super { |record, opt|
+      return unless record
+      attr_opt   = opt.extract!(*ManifestItem::UPDATE_STATUS_OPTS)
+      keep_date  = !attr_opt[:overwrite] unless attr_opt[:overwrite].nil?
+      new_fields = keep_date.nil? && attr.except(*NON_EDIT_KEYS).keys.presence
       old_values = new_fields && record.fields.slice(*new_fields)
       updated_at = record[:updated_at]
-      opt[:attr_opt] = { re_validate: true, **attr_opt }
-      record.update!(opt).tap do
-        if keep_date.nil?
-          keep_date = old_values.all? { |k, v| record[k].to_s == v.to_s }
-        end
-        record.set_field_direct(:updated_at, updated_at) if keep_date
+    }.tap { |record|
+      return unless record
+      if keep_date.nil?
+        keep_date = old_values&.all? { |k, v| record[k].to_s == v.to_s }
       end
-    end
+      record.set_field_direct(:updated_at, updated_at) if keep_date
+    }
   end
 
-  # Retrieve the indicated ManifestItem(s) for the '/delete' page.
+  # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [String, ManifestItem, Array, nil] items
-  # @param [Hash]                             opt   Search parameters.
+  # @param [String, Model, Array, nil] items
+  # @param [Hash, nil]                 prm    Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
   #
-  def delete_manifest_item(items = nil, **opt)
-    __debug_items("MANIFEST ITEM WF #{__method__}", binding)
-    id_opt  = extract_hash!(opt, :ids, :id)
-    items ||= id_opt.compact.values.first || manifest_item_id
-    opt.except!(:force, :emergency, :truncate)
-    ManifestItem.search_records(*items, **opt)
-  end
-
-  # Remove the indicated ManifestItem(s).
-  #
-  # @param [String, ManifestItem, Array, nil] items
-  # @param [Hash]                             opt   Search parameters.
-  #
-  # @raise [Record::SubmitError]      If there were failure(s).
-  #
-  # @return [Array]                   Destroyed ManifestItems.
-  #
-  def destroy_manifest_item(items = nil, **opt)
-    __debug_items("MANIFEST ITEM WF #{__method__}", binding)
-    opt.reverse_merge!(model_options.all)
-    ids   = extract_hash!(opt, :ids, :id).compact.values.first
-    items = [*items, *ids].map! { |row| row.try(:id) || row }
-    success, failure = [[], []]
-    ManifestItem.where(id: items).each do |record|
-      if record.destroy
-        success << record.id
-      else
-        failure << record.id
-      end
-    end
-    failure(:destroy, failure.uniq) if failure.present?
-    success
+  def delete_records(items = nil, prm = nil, **)
+    items, prm = model_request_params(items, prm)
+    prm.except!(:force, :emergency, :truncate)
+    super
   end
 
   # ===========================================================================
@@ -510,8 +308,9 @@ module ManifestItemConcern
 
   # Set :editing state (along with any other fields if they are provided).
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Symbol, nil]       meth   Caller (for diagnostics).
+  # @param [Hash]              attr   Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -519,33 +318,35 @@ module ManifestItemConcern
   #
   # @return [ManifestItem] Or *nil* if opt[:no_raise] == *true*.
   #
-  def start_editing(item = nil, **opt)
-    opt.merge!(editing: true)
-    meth = opt.delete(:meth) || __method__
-    if (rec = edit_manifest_item(item, no_raise: true))
+  def start_editing(item = nil, meth: nil, **attr)
+    meth ||= __method__
+    attr.merge!(editing: true)
+    if (rec = edit_record(item, no_raise: true))
       if rec.editing
         Log.warn { "#{meth}: #{rec.id}: already editing #{rec.inspect}" }
       end
-      if opt[:backup].present?
+      if attr[:backup].present?
         Log.debug { "#{meth}: #{rec.id}: already backed up" } if rec.backup
-      elsif opt.key?(:backup)
+      elsif attr.key?(:backup)
         Log.debug { "#{meth}: #{rec.id}: clearing backup" }
-        opt[:backup] = nil
+        attr[:backup] = nil
       elsif !rec.backup && (backup = rec.get_backup).present?
         Log.debug { "#{meth}: #{rec.id}: making backup" }
-        opt[:backup] = backup
+        attr[:backup] = backup
       end
-      opt[:attr_opt] = { overwrite: false }
-      update_manifest_item(rec, **opt)
+      attr[:attr_opt] = { overwrite: false }
+      update_record(rec, **attr)
     else
-      create_manifest_item(**opt)
+      # noinspection RubyMismatchedReturnType
+      create_record(attr)
     end
   end
 
   # Update with provided fields (if any) and clear :editing state.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Symbol, nil]       meth   Caller (for diagnostics).
+  # @param [Hash]              attr   Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -555,17 +356,17 @@ module ManifestItemConcern
   #
   # @see file:controllers/manifest-edit.js *parseFinishEditResponse*
   #
-  def finish_editing(item = nil, **opt)
-    meth = opt.delete(:meth) || __method__
-    item = edit_manifest_item(item)
+  def finish_editing(item = nil, meth: nil, **attr)
+    meth ||= __method__
+    item   = edit_record(item)
     Log.warn { "#{meth}: not editing: #{item.inspect}" } unless item.editing
-    editing_update(item, **opt)
+    editing_update(item, **attr)
   end
 
   # Update with provided fields (if any) and clear :editing state.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Hash]              attr   Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -575,13 +376,13 @@ module ManifestItemConcern
   #
   # @see file:javascripts/controllers/manifest-edit.js *postRowUpdate*
   #
-  def editing_update(item = nil, **opt)
-    rec   = edit_manifest_item(item)
-    file  = opt.key?(:file_status)  || opt.key?(:file_data)
-    data  = opt.key?(:data_status)  || opt.except(*RECORD_KEYS).present?
-    ready = opt.key?(:ready_status) || file || data
-    opt[:attr_opt] = { file: file, data: data, ready: ready }
-    update_manifest_item(rec, **opt, editing: false)
+  def editing_update(item = nil, **attr)
+    rec   = edit_record(item)
+    file  = attr.key?(:file_status)  || attr.key?(:file_data)
+    data  = attr.key?(:data_status)  || attr.except(*RECORD_KEYS).present?
+    ready = attr.key?(:ready_status) || file || data
+    attr[:attr_opt] = { file: file, data: data, ready: ready }
+    update_record(rec, **attr, editing: false)
     {
       items:    { rec.id => rec.fields.except(*NON_DATA_KEYS) },
       pending:  (rec.manifest.pending_items_hash if file || data || ready),
@@ -603,22 +404,23 @@ module ManifestItemConcern
   # grid item and thus the first opportunity for the client to learn what
   # database entry is associated with that item.
   #
-  # @param [ManifestItem, nil] item         Def.: record for #manifest_item_id.
+  # @param [ManifestItem, nil] item         Def.: ModelConcern#identifier.
   # @param [Boolean]           update_time  If *false* update :file_data only.
+  # @param [Hash, nil]         env          Def.: `request.env`.
+  # @param [Symbol, nil]       meth         Caller (for diagnostics).
   # @param [Hash]              opt          Field values.
   #
   # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @note If update_time is *false* the associated record must already exist.
   #
-  def upload_file(item = nil, update_time: true, **opt)
-    meth = opt.delete(:meth) || __method__
-    env  = opt.delete(:env)  || request
-    env  = env.env if env.is_a?(ActionDispatch::Request)
+  def upload_file(item = nil, update_time: true, env: nil, meth: nil, **opt)
+    meth ||= __method__
+    env  ||= request.env
     if update_time
       record = start_editing(item, meth: meth, **opt)
     else
-      record = edit_manifest_item(item, meth: meth, id: opt[:id])
+      record = edit_record(item, { id: opt[:id] })
     end
     status, headers, body = record.upload_file(env: env)
     if status == 200
@@ -633,7 +435,7 @@ module ManifestItemConcern
         elsif !update_time
           record.set_field_direct(:file_data, file_data)
         else
-          update_manifest_item(record, file_data: file_data, editing: false)
+          update_record(record, file_data: file_data, editing: false)
           emma_data &&= record.fields.merge(emma_data).except!(*NON_DATA_KEYS)
           entry = file_data.merge!(emma_data: emma_data).to_json if emma_data
         end
@@ -662,7 +464,7 @@ module ManifestItemConcern
   def all_manifest_items(manifest_id = nil, **opt)
     manifest_id ||= opt[:manifest_id] || opt[:manifest]
     manifest_id = manifest_id[:id] if manifest_id.is_a?(Hash)
-    failure('No :manifest_id was provided') if manifest_id.blank?
+    raise_failure('No :manifest_id was provided') if manifest_id.blank?
     ManifestItem.where(manifest_id: manifest_id).in_row_order
   end
 
@@ -677,7 +479,7 @@ module ManifestItemConcern
   # @return [*]
   #
   def bulk_new_manifest_items
-    prm = manifest_item_params
+    prm = current_params
     if prm.slice(:src, :source, :manifest).present?
       post make_path(bulk_create_manifest_item_path, **prm)
     else
@@ -698,7 +500,7 @@ module ManifestItemConcern
     result = ManifestItem.insert_all(bulk_item_data, returning: returning)
     bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
-    failure(error)
+    raise_failure(error)
   end
 
   # bulk_edit_manifest_items
@@ -706,7 +508,7 @@ module ManifestItemConcern
   # @return [*]
   #
   def bulk_edit_manifest_items
-    prm = manifest_item_params
+    prm = current_params
     if prm.slice(:src, :source, :manifest).present?
       put make_path(bulk_update_manifest_item_path, **prm)
     else
@@ -727,7 +529,7 @@ module ManifestItemConcern
     result = ManifestItem.upsert_all(bulk_item_data, returning: returning)
     bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
-    failure(error)
+    raise_failure(error)
   end
 
   # bulk_delete_manifest_items
@@ -735,7 +537,7 @@ module ManifestItemConcern
   # @return [*]
   #
   def bulk_delete_manifest_items
-    prm = manifest_item_params
+    prm = current_params
     if prm.slice(:src, :source, :manifest).present?
       delete make_path(bulk_destroy_manifest_item_path, **prm)
     else
@@ -753,9 +555,9 @@ module ManifestItemConcern
   # @return [Array<Integer>]          Affected items.
   #
   def bulk_destroy_manifest_items
-    prm = manifest_item_params
+    prm = current_params
     ids = Array.wrap(prm.values_at(:ids, :id).compact.first)
-    failure(:destroy, 'no record identifiers') if ids.blank?
+    raise_failure(:destroy, 'no record identifiers') if ids.blank?
     if prm[:commit]
       ManifestItem.delete_by(id: ids)
     else
@@ -771,7 +573,7 @@ module ManifestItemConcern
   # @return [Array<Hash>]             Modified items.
   #
   def bulk_fields_manifest_items
-    manifest_item_post_params[:data].map { |id, updates|
+    current_post_params[:data].map { |id, updates|
       id = id.to_s.to_i
       ManifestItem.find(id).set_fields_direct(updates) rescue next
       { id: id }
@@ -783,7 +585,7 @@ module ManifestItemConcern
     bulk_returning(result)
 =end
   rescue ActiveRecord::ActiveRecordError => error
-    failure(error)
+    raise_failure(error)
   end
 
   # ===========================================================================
@@ -799,17 +601,17 @@ module ManifestItemConcern
   def bulk_item_data
     prm   = manifest_item_bulk_post_params
     items = prm[:data]
-    failure("not an Array: #{items.inspect}") unless items.is_a?(Array)
-    failure('no item data')                   unless items.present?
+    raise_failure("not an Array: #{items.inspect}") unless items.is_a?(Array)
+    raise_failure('no item data')                   unless items.present?
     row   = prm[:row].to_i
     delta = prm[:delta].to_i
     items.map do |item|
-      failure("not a Hash: #{item.inspect}") unless item.is_a?(Hash)
+      raise_failure("not a Hash: #{item.inspect}") unless item.is_a?(Hash)
       item[:manifest_id] = item.delete(:manifest) if item.key?(:manifest)
       if item[:manifest_id].blank?
         item[:manifest_id] = manifest_id
       elsif item[:manifest_id] != manifest_id
-        failure("invalid manifest_id for #{item.inspect}")
+        raise_failure("invalid manifest_id for #{item.inspect}")
       end
       row   = (item[:row]   ||= row)
       delta = (item[:delta] ||= delta + 1)
@@ -840,6 +642,8 @@ module ManifestItemConcern
 
   public
 
+  def default_fallback_location = manifest_item_index_path
+
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status
@@ -850,7 +654,6 @@ module ManifestItemConcern
   #
   def post_response(status, item = nil, **opt)
     opt[:meth]     ||= calling_method
-    opt[:tag]      ||= "MANIFEST ITEM #{opt[:meth]}"
     opt[:fallback] ||=
       if manifest_id
         manifest_item_index_path(manifest: manifest_id)
@@ -861,40 +664,24 @@ module ManifestItemConcern
   end
 
   # ===========================================================================
-  # :section:
+  # :section: OptionsConcern overrides
   # ===========================================================================
 
   protected
 
-  # Raise an exception.
-  #
-  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
-  #
-  # @raise [Record::SubmitError]
-  # @raise [ExecError]
-  #
-  # @see ExceptionHelper#failure
-  #
-  def failure(problem, value = nil)
-    ExceptionHelper.failure(problem, value, model: :manifest_item)
-  end
-
-  # ===========================================================================
-  # :section: OptionsConcern overrides
-  # ===========================================================================
-
-  # Create a @model_options instance from the current parameters.
+  # Create an Options instance from the current parameters.
   #
   # @return [ManifestItem::Options]
   #
-  def set_model_options
-    @model_options = ManifestItem::Options.new(request_parameters)
+  def get_model_options
+    ManifestItem::Options.new(request_parameters)
   end
 
   # ===========================================================================
   # :section: PaginationConcern overrides
   # ===========================================================================
+
+  public
 
   # Create a Paginator for the current controller action.
   #
@@ -906,6 +693,43 @@ module ManifestItemConcern
   def pagination_setup(paginator: ManifestItem::Paginator, **opt)
     # noinspection RubyMismatchedReturnType
     super
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # @private
+  RESPONSE_OUTER = :items
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [*]    list
+  # @param [Hash] opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values(list = @list, **opt)
+    super(list, wrap: RESPONSE_OUTER, **opt)
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Model, Hash, *] item
+  # @param [Hash]           opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def show_values(item = @item, **opt)
+    if item.is_a?(Model) || item.is_a?(Hash)
+      # noinspection RailsParamDefResolve
+      item = item.try(:fields) || item.dup
+      file = item.delete(:file_data)
+      item[:file_data] = safe_json_parse(file) if file
+    end
+    super(item, **opt)
   end
 
   # ===========================================================================

@@ -94,10 +94,9 @@ module LayoutHelper::PageClasses
   #
   def default_page_classes(p = nil)
     p ||= request_parameters
-    c = p[:controller].to_s.presence
-    a = p[:action].to_s.presence
-    s = (p[:id] == 'SELECT') || a&.end_with?('_select')
-    s = ('select' if s && (!p[:selected] || (p[:selected] == 'SELECT')))
+    c   = p[:controller].to_s.presence
+    a   = p[:action].to_s.presence
+    s   = ('select' if menu_action?(a) && p[:selected].nil?)
     [].tap do |result|
       result << "#{c}-#{a}-#{s}" if c && a && s
       result << "#{c}-#{a}"      if c && a

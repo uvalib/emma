@@ -53,8 +53,11 @@ class BaseDecorator < Draper::Decorator
       path_for(item, **opt)
     end
 
+    def show_select_path(*, **opt)
+      path_for(**opt, action: :show_select)
+    end
+
     def show_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :show)
     end
 
@@ -66,35 +69,27 @@ class BaseDecorator < Draper::Decorator
       path_for(item, **opt, action: :create)
     end
 
-    def edit_select_path(item = nil, **opt)
-      opt[:id] ||= 'SELECT'
-      path_for(item, **opt, action: :edit)
+    def edit_select_path(*, **opt)
+      path_for(**opt, action: :edit_select)
     end
 
     def edit_path(item = nil, **opt)
-      return edit_select_path(item, **opt) if opt[:selected]
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :edit)
     end
 
     def update_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :update)
     end
 
-    def delete_select_path(item = nil, **opt)
-      opt[:id] ||= 'SELECT'
-      path_for(item, **opt, action: :delete)
+    def delete_select_path(*, **opt)
+      path_for(**opt, action: :delete_select)
     end
 
     def delete_path(item = nil, **opt)
-      return delete_select_path(item, **opt) if opt[:selected]
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :delete)
     end
 
     def destroy_path(item = nil, **opt)
-      opt[:id] = id_for(item, **opt)
       path_for(item, **opt, action: :destroy)
     end
 
@@ -130,11 +125,12 @@ class BaseDecorator < Draper::Decorator
     #
     def path_for(item = nil, **opt)
       opt.compact!
+      opt[:controller] = opt.delete(:ctrlr) || opt[:controller] || model_type
+      opt[:only_path]  = true unless opt.key?(:only_path)
+      opt[:id]         = opt.delete(:selected) if opt.key?(:selected)
       unless opt[:id] || opt.except(:controller, :action, :only_path).present?
-        opt[:id] = id_for(item)
+        opt[:id] = id_for(item) unless menu_action?(opt[:action])
       end
-      opt[:controller] ||= model_type
-      opt[:only_path] = true unless opt.key?(:only_path)
       h.url_for(opt)
     end
 
@@ -208,7 +204,7 @@ class BaseDecorator < Draper::Decorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def link_to_action(label, **opt)
-      opt[:controller] ||= model_type
+      opt[:ctrlr] = opt.delete(:controller) || opt[:ctrlr] || model_type
       h.link_to_action(label, **opt) || ERB::Util.h(label || '')
     end
 
@@ -369,7 +365,7 @@ class BaseDecorator < Draper::Decorator
     # @return [Options]
     #
     def options
-      context[:options] || Options.new(model_type)
+      context[:options] || raise("no Options class for #{model_type}")
     end
 
     # =========================================================================
@@ -848,13 +844,13 @@ class BaseDecorator
   def self.set_model_type(mt)
     raise 'Nil model_type' unless mt
     # noinspection RubyMismatchedVariableType
-    if mt.is_a?(Symbol)
-      @model_type = mt
-    elsif mt.respond_to?(:model_name)
-      @model_type = mt.model_name.singular.to_sym
-    else
-      @model_type = mt.to_s.demodulize.underscore.to_sym
-    end
+    @model_type =
+      case
+        when mt.is_a?(Symbol)            then mt
+        when mt.respond_to?(:model_type) then mt.model_type
+        when mt.respond_to?(:model_name) then mt.model_name.singular.to_sym
+        else mt.to_s.demodulize.underscore.to_sym
+      end
     ModelTypeMap.set(@model_type, self)
   end
 

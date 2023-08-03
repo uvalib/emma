@@ -55,22 +55,18 @@ en:
       action_links:
 
         edit:
-          action:       edit_select
           label:        'Change details of %{article} existing manifest'
           article:      'an'
 
         new:
-          action:       new
           label:        'Create %{article} new manifest'
           article:      'a'
 
         delete:
-          action:       delete_select
           label:        'Remove %{article} existing manifest'
           article:      'an'
 
         remit:
-          action:       remit_select
           label:        'Submit %{article} manifest'
           article:      'a'
 
@@ -253,17 +249,13 @@ en:
         success:        'Saved manifest'
         failure:        'Could not save manifest: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
-      new_select:
-        <<: *NEW_ACTION
-
-      # =======================================================================
-
       create:
-        <<: *NEW_ACTION
+        <<:             *NEW_ACTION
 
       # =======================================================================
 
@@ -298,17 +290,19 @@ en:
         success:        'Saved changes to the manifest'
         failure:        'Could not save changes: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       edit_select:
-        <<: *EDIT_ACTION
+        <<:             *EDIT_ACTION
+        title:          'Modify a Bulk Upload Manifest'
 
       # =======================================================================
 
       update:
-        <<: *EDIT_ACTION
+        <<:             *EDIT_ACTION
 
       # =======================================================================
 
@@ -333,17 +327,19 @@ en:
         success:        'Removed manifest'
         failure:        'Could not remove manifest: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       delete_select:
-        <<: *DELETE_ACTION
+        <<:             *DELETE_ACTION
+        title:          'Remove a Bulk Upload Manifest'
 
       # =======================================================================
 
       destroy:
-        <<: *DELETE_ACTION
+        <<:             *DELETE_ACTION
 
       # =======================================================================
 
@@ -377,9 +373,11 @@ en:
         success:        'Manifest submission started'
         failure:        'Could not submit manifest: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       remit_select:
-        <<: *REMIT_ACTION
+        <<:             *REMIT_ACTION
+        title:          'Submit a Bulk Upload Manifest'

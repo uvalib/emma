@@ -5,6 +5,8 @@ module ToolConcern
 
   include ToolHelper
 
+  include SerializationConcern
+
   private
 
   THIS_MODULE: Module

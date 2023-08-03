@@ -208,15 +208,15 @@ module BaseDecorator::Form
       render_method = :render_form_menu_single
     end
 
-    case field
-      when :password, :current_password, :password_confirmation
-        prop     = prop.except(:origin, :readonly).merge!(min: 0, max: 1)
-        required = disabled = false
-        optional = true
-        value    = nil
-        render_method   = :render_form_password
-      else
-        render_method ||= :render_form_input
+    # Special handling for password-related fields.
+    if AccountConcern::PASSWORD_KEYS.include?(field)
+      prop     = prop.except(:origin, :readonly).merge!(min: 0, max: 1)
+      required = disabled = false
+      optional = true
+      value    = nil
+      render_method   = :render_form_password
+    else
+      render_method ||= :render_form_input
     end
     placeholder ||= prop[:placeholder]
     render_method = opt.delete(:render) if opt.key?(:render)

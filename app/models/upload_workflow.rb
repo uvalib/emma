@@ -175,10 +175,10 @@ module UploadWorkflow::Errors
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
-  # @see ExceptionHelper#failure
+  # @see ExceptionHelper#raise_failure
   #
-  def failure(problem, value = nil)
-    ExceptionHelper.failure(problem, value, model: :upload)
+  def raise_failure(problem, value = nil)
+    ExceptionHelper.raise_failure(problem, value, model: :upload)
   end
 
 end
@@ -941,12 +941,12 @@ module UploadWorkflow::External
     if (result = Upload.get_record(id))
       result
     elsif Upload.id_term(id).values.first.blank?
-      failure(:file_id) unless no_raise
+      raise_failure(:file_id) unless no_raise
     elsif no_raise
       Log.warn  { "#{meth || __method__}: #{id}: skipping record" }
     else
       Log.error { "#{meth || __method__}: #{id}: non-existent record" }
-      failure(:find, id)
+      raise_failure(:find, id)
     end
   end
 
@@ -1329,7 +1329,7 @@ module UploadWorkflow::External
     return items unless items.size > max
     error = "#{meth || __method__}: item count: #{item.size} > #{max}"
     Log.error(error)
-    failure(error)
+    raise_failure(error)
   end
 
   # ===========================================================================

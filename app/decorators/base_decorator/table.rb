@@ -41,11 +41,12 @@ module BaseDecorator::Table
   # @type [Array<Symbol>]
   #
   MODEL_TABLE_OPTIONS = [
-    MODEL_TABLE_FIELD_OPT = %i[columns],
+    :model,
+    *FIELD_VALUES_OPT,
     MODEL_TABLE_HEAD_OPT  = %i[sticky dark],
-    MODEL_TABLE_ENTRY_OPT = %i[inner_tag outer_tag],
+    MODEL_TABLE_ENTRY_OPT = %i[outer_tag inner_tag],
     MODEL_TABLE_ROW_OPT   = %i[row col],
-    MODEL_TABLE_TABLE_OPT = %i[model thead tbody tfoot],
+    MODEL_TABLE_PART_OPT  = %i[thead tbody tfoot],
   ].flatten.freeze
 
   # Default number of rows per table page.
@@ -143,25 +144,28 @@ module BaseDecorator::Table
 
   # Render the object for use within a table of items.
   #
-  # @param [Integer]                                   row
-  # @param [Integer]                                   col
-  # @param [String, Symbol, Array<String,Symbol>, nil] columns
-  # @param [String, Regexp, Array<String,Regexp>, nil] filter
-  # @param [Hash]                                      opt
+  # @param [Integer] row
+  # @param [Integer] col
+  # @param [Hash]    opt              To column except:
   #
-  # @option opt [Symbol] :outer_tag   Default: :tr
-  # @option opt [Symbol] :inner_tag   Default: :td
+  # @option opt [Symbol]                :outer_tag  Default: :tr
+  # @option opt [Symbol]                :inner_tag  Default: :td
+  # @option opt [Symbol, String, Array] :columns    To #table_values
+  # @option opt [String, Regexp, Array] :filter     To #table_values
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def table_entry(row: 1, col: 1, columns: nil, filter: nil, **opt)
-    tag   = opt.delete(:tag) # Propagated if not rendering an HTML table.
-    outer, inner = opt.values_at(:outer_tag, :inner_tag).map { |v| v || tag }
-    outer = for_html_table?(outer) && :tr || outer || :div
-    inner = for_html_table?(inner) && :td || inner || :div
+  # @see #table_headings
+  #
+  def table_entry(row: 1, col: 1, **opt)
+    tag    = opt.delete(:tag) # Propagated if not rendering an HTML table.
+    outer, inner = opt.values_at(*MODEL_TABLE_ENTRY_OPT).map { |v| v || tag }
+    outer  = for_html_table?(outer) && :tr || outer || :div
+    inner  = for_html_table?(inner) && :td || inner || :div
+    fv_opt = opt.slice(*FIELD_VALUES_OPT)
     opt.except!(*MODEL_TABLE_OPTIONS)
 
-    pairs  = table_values(columns: columns, filter: filter)
+    pairs  = table_values(**fv_opt)
     first  = col
     last   = first + pairs.size - 1
     fields =
@@ -192,38 +196,6 @@ module BaseDecorator::Table
   # ===========================================================================
 
   protected
-
-  # Specified field selections from the given model instance.
-  #
-  # @param [Model, Hash, nil]                   item
-  # @param [String, Symbol, Array, nil]         columns
-  # @param [String, Symbol, Array, nil]         default
-  # @param [String, Symbol, Regexp, Array, nil] filter
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def model_field_values(
-    item =   nil,
-    columns: nil,
-    default: nil,
-    filter:  nil,
-    **
-  )
-    item ||= (object if present?)
-    # noinspection RailsParamDefResolve
-    pairs  = item&.try(:attributes) || item&.try(:stringify_keys)
-    return {} if pairs.blank?
-    columns = Array.wrap(columns || default).compact_blank.map(&:to_s)
-    pairs.slice!(*columns) unless columns.blank? || (columns == %w(all))
-    Array.wrap(filter).each do |pattern|
-      case pattern
-        when Regexp then pairs.reject! { |f, _| f.match?(pattern) }
-        when Symbol then pairs.reject! { |f, _| f.casecmp?(pattern.to_s) }
-        else             pairs.reject! { |f, _| f.downcase.include?(pattern) }
-      end
-    end
-    pairs.transform_keys!(&:to_sym)
-  end
 
   # Setup row/column HTML options.
   #

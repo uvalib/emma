@@ -16,6 +16,7 @@ module TestHelper::SystemTests::Common
 
   include TestHelper::Common
   include Emma::Json
+  include ParamsHelper
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -99,6 +100,7 @@ module TestHelper::SystemTests::Common
   # @return [String, nil]
   #
   def url_without_port(url)
+    # noinspection RubyMismatchedArgumentType
     URI(url).tap { |uri| uri.port = nil }.to_s if url
   end
 

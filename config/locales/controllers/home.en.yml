@@ -66,7 +66,7 @@ en:
         page_controls:
           label:        'Account Actions:'
           actions:
-            - [account, edit]
+            - [account, edit_current]
             - [account, index]
             - [account, new]
             - [account, edit_select]

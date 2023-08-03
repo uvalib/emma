@@ -32,6 +32,9 @@
 
   <%= dec.items_menu %>
 
+  <%= page_notes_section %>
+  <%= dec.action_list unless modal? %>
+
 <%- else -%>
 
   <%- list.each_with_index do |item, idx| -%>
@@ -43,6 +46,3 @@
   <%= dec.delete_form %>
 
 <%- end -%>
-
-<%= page_notes_section %>
-<%= dec.action_list unless modal? %>

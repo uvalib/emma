@@ -27,5 +27,5 @@ module ExceptionHelper
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, model: Symbol) -> void
+  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, model: Symbol) -> void
 end

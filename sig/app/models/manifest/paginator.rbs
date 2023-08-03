@@ -2,14 +2,4 @@
 #
 class Manifest::Paginator < Paginator
   def initialize: (?(ApplicationController|nil) ctrlr, **untyped opt) -> void
-
-  # Finish setting of pagination values based on the result list and original
-  # URL parameters.
-  #
-  # @param [Hash{Symbol=>*}] result
-  # @param [Hash]            opt
-  #
-  # @return [Array]
-  #
-  def finalize: (symHash result, **untyped opt) -> anyArray
 end

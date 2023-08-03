@@ -25,6 +25,39 @@ module ParamsConcern
   #
   SPECIAL_DEBUG_CONTROLLERS: symArray
 
+  # The identifier of the current model instance which #CURRENT_ID represents.
+  #
+  # @return [Integer, String, nil]
+  #
+  def current_id: () -> (Integer | String | nil)
+
+  # URL parameters associated with model record(s).
+  #
+  # @return [Array<Symbol>]
+  #
+  def id_param_keys: () -> symArray
+
+  # Indicate whether the current request is an HTTP GET.
+  #
+  def request_get?: () -> bool
+
+  # Indicate whether the current request is from client-side scripting.
+  #
+  def request_xhr?: () -> bool
+
+  # Indicate whether the current request is a normal HTTP GET that coming from
+  # the client browser session.
+  #
+  def route_request?: () -> bool
+
+  # Indicate whether the current request originates from an application page.
+  #
+  def local_request?: () -> bool
+
+  # Indicate whether the current request originates from an application page.
+  #
+  def same_request?: () -> bool
+
   # Accumulator for the URL parameters to be used for redirection after
   # "before" actions have been run.
   #

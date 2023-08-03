@@ -23,20 +23,20 @@ class Paginator
   #
   # @type [Array<Symbol>]
   #
-  PAGE_PARAMS: symArray
+  PAGE_KEYS: symArray
 
   # URL parameters involved in form submission.
   #
   # @type [Array<Symbol>]
   #
-  FORM_PARAMS: symArray
+  FORM_KEYS: symArray
 
   # POST/PUT/PATCH parameters from the entry form that are not relevant to the
   # create/update of a model instance.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_FORM_PARAMS: symArray
+  IGNORED_FORM_KEYS: symArray
 
   # Pagination data values.
   #
@@ -88,32 +88,12 @@ class Paginator
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Api::Record, Array, Hash] result
-  # @param [Symbol, nil]              meth
-  # @param [Hash]                     opt
+  # @param [Hash] result
+  # @param [Hash] opt
   #
   # @return [Array]
   #
-  # -
-  # === Variations
-  # +
-  #
-  # @overload finalize(result, **opt)
-  #   Generally for Record-related models.
-  #   @param [Hash{Symbol=>*}]    result
-  #   @param [Hash]               opt     Passed to #url_for.
-  #   @return [Array]                     The value of #page_items.
-  #
-  # @overload finalize(result, meth = nil, **opt)
-  #   Generally for other models (e.g. Bookshare API-related).
-  #   @param [Api::Record, Array] result
-  #   @param [Symbol, nil]        meth    Method to extract items from result.
-  #   @param [Hash]               opt     Passed to #next_page_path.
-  #   @return [Array]                     The value of #page_items.
-  #
-  def finalize
-    : (symHash              result,                     **untyped search) -> anyArray
-    | (Api::Record|anyArray result, ?(Symbol|nil) meth, **untyped search) -> anyArray
+  def finalize: (symHash result, **untyped search) -> anyArray
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.

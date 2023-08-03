@@ -1,4 +1,10 @@
-ALL_METHODS: symArray
+CURRENT: String
+
+VIA_ANY: symHash
+
+VIA_CREATE: symHash
+
+VIA_UPDATE: symHash
 
 class Object
   # :nocov:

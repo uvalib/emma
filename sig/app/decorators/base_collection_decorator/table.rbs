@@ -40,15 +40,15 @@ module BaseCollectionDecorator::Table
 
   # Render column headings for a table of model items.
   #
-  # @param [Integer]                                   row
-  # @param [Integer]                                   col
-  # @param [Symbol, String, Array<Symbol,String>, nil] columns
-  # @param [String, Regexp, Array<String,Regexp>, nil] filter
-  # @param [Boolean]                                   dark
-  # @param [Hash]                                      opt
+  # @param [Integer] row
+  # @param [Integer] col
+  # @param [Boolean] dark
+  # @param [Hash]    opt              To column except:
   #
-  # @option opt [Symbol] :outer_tag   Default: :tr
-  # @option opt [Symbol] :inner_tag   Default: :th
+  # @option opt [Symbol]                :outer_tag  Default: :tr
+  # @option opt [Symbol]                :inner_tag  Default: :th
+  # @option opt [Symbol, String, Array] :columns    To #table_values
+  # @option opt [String, Regexp, Array] :filter     To #table_values
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -57,9 +57,9 @@ module BaseCollectionDecorator::Table
   # @yieldparam  [Hash]  opt          Field generation options.
   # @yieldreturn [ActiveSupport::SafeBuffer]
   #
-  # @see #DARK_HEAD
+  # @see #table_entry
   #
-  def table_headings: (?row: Integer, ?col: Integer, ?columns: String|Symbol|Array[String|Symbol]|nil, ?filter: String|Regexp|Array[String|Regexp]|nil, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+  def table_headings: (?row: Integer, ?col: Integer, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
 
   # The collection of items to be presented in tabular form.
   #

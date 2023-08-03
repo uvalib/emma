@@ -2,21 +2,4 @@
 #
 class Manifest::Options < Options
   include Record::Properties
-
-  # @private
-  MODEL_TYPE: Symbol
-
-  # URL parameters associated with item/entry identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS: symArray
-
-  # URL parameters associated with POST data.
-  #
-  # @type [Array<Symbol>]
-  #
-  DATA_PARAMS: symArray
-
-  def initialize: (?untyped? prm) -> void
 end

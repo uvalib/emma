@@ -2,12 +2,6 @@ module Manifest::EmmaIdentification
   # :nocov:
   #Record::EmmaIdentification
 
-  # Column name for the submission ID.
-  #
-  # @return [nil]
-  #
-  def sid_column: () -> nil
-
   # @private
   UUID_PATTERN: ::Regexp
 

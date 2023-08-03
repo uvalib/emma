@@ -8,11 +8,8 @@
   dec     = ManifestDecorator.new(item, **context)
   item  ||= dec.object
 
-  menu    = dec.blank?
-  name    = menu ? '' : item.name
-
   help  ||= dec.help_topic
-  title ||= dec.page_heading(name: name)
+  title ||= dec.page_heading(name: item.name)
   title   = title.strip.delete_suffix(':')
 
   unless modal?
@@ -26,20 +23,12 @@
 <%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
-<%- if menu -%>
+<h2 class="selected-header"><%= item.name -%></h2>
 
-  <%= dec.items_menu %>
-
-<%- else -%>
-
-  <h2 class="selected-header"><%= name -%></h2>
-
-  <%= page_directions_section %>
-  <%= dec.submission_button_tray %>
-  <%= dec.auxiliary_button_tray %>
-  <%= dec.submission_status_grid %>
-
-<%- end -%>
+<%= page_directions_section %>
+<%= dec.submission_button_tray %>
+<%= dec.auxiliary_button_tray %>
+<%= dec.submission_status_grid %>
 
 <%= page_notes_section %>
 <%= dec.action_list unless modal? %>

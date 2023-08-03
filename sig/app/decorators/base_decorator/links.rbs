@@ -79,9 +79,9 @@ module BaseDecorator::Links
   # @param [String]                  css          Characteristic CSS selector.
   # @param [Hash]                    opt          Passed to #action_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # An entry in a list of controller actions.
   #

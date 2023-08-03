@@ -9,6 +9,8 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   include RunStateConcern
 
+  include ParamsConcern
+
   @item: User | nil
 
   # === GET /users/sign_up
@@ -74,13 +76,6 @@ class User::RegistrationsController < Devise::RegistrationsController
   # Include User attributes to allowed parameters for account modification.
   #
   def configure_update_params: () -> void
-
-  # Indicate whether URL parameters require that a menu should be shown rather
-  # than operating on an explicit set of identifiers.
-  #
-  # @param [String, Array<String>, nil] id_params  Default: `params[:id]`.
-  #
-  def show_menu?: (?(String|strArray|nil) id_params) -> bool
 
   # Specify acceptable URL parameters.
   #

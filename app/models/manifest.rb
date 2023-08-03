@@ -71,7 +71,7 @@ class Manifest < ApplicationRecord
   # @note - for dev traceability
   #
   def initialize(attr = nil, &block)
-    super(attr, &block)
+    super
   end
 
   # ===========================================================================
@@ -119,36 +119,6 @@ class Manifest < ApplicationRecord
       update!(attr) if attr.present?
     end
     self
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # label
-  #
-  # @param [Manifest, nil] item       Default: self.
-  #
-  # @return [String, nil]
-  #
-  # @see Api::Shared::TitleMethods#label
-  #
-  def label(item = nil)
-    (item || self).name.presence
-  end
-
-  # menu_label
-  #
-  # @param [Manifest, nil] item       Default: self.
-  #
-  # @return [String, nil]
-  #
-  # @see BaseDecorator::Menu#items_menu_label
-  #
-  def menu_label(item = nil)
-    label(item)
   end
 
   # ===========================================================================

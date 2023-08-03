@@ -13,39 +13,11 @@ module ManifestItemConcern
 
   include Emma::Json
 
-  include ParamsHelper
-
-  include FlashHelper
-
-  include HttpHelper
-
   include ImportConcern
 
-  include OptionsConcern
+  include SerializationConcern
 
-  include PaginationConcern
-
-  include ResponseConcern
-
-  # URL parameters associated with item/row identification.
-  #
-  # @type [Array<Symbol>]
-  #
-  IDENTIFIER_PARAMS: symArray
-
-  # URL parameters associated with POST data.
-  #
-  # @type [Array<Symbol>]
-  #
-  DATA_PARAMS: symArray
-
-  # The manifest item identified in URL parameters.
-  #
-  # @return [Integer, nil]
-  #
-  def manifest_item_id: () -> (Integer | nil)
-
-  @manifest_item_id: Integer | nil
+  include ModelConcern
 
   # The manifest identified in URL parameters.
   #
@@ -54,27 +26,6 @@ module ManifestItemConcern
   def manifest_id: () -> (String | nil)
 
   @manifest_id: String | nil
-
-  # URL parameters relevant to the current operation.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def manifest_item_params: () -> symHash
-
-  @manifest_item_params: symHash
-
-  # Get URL parameters relevant to the current operation.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def manifest_item_get_params: () -> symHash
-
-  # Extract POST parameters that are usable for creating/updating a
-  # ManifestItem instance.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def manifest_item_post_params: () -> symHash
 
   # Extract POST parameters and data for bulk operations.
   #
@@ -86,13 +37,26 @@ module ManifestItemConcern
   #
   def manifest_item_bulk_post_params: () -> symHash
 
-  # extract_identifier
+  # Get URL parameters relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def current_get_params: () -> symHash
+
+  # Extract POST parameters that are usable for creating/updating a
+  # ManifestItem instance.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def current_post_params: () -> symHash
+
+  # The related Manifest identified in URL parameters.
   #
   # @param [Hash] prm
   #
   # @return [Integer, nil]
   #
-  def extract_identifier: (symHash prm) -> (Integer | nil)
+  def extract_manifest_id: (symHash prm) -> (Integer | nil)
 
   # Interpret data as JSON.
   #
@@ -157,87 +121,32 @@ module ManifestItemConcern
   #
   def normalize_export_name!: (symHash item) -> symHash
 
-  # Parameters used by ManifestItem#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RECORDS_PARAMS: symArray
-
-  # ManifestItem#search_records parameters that specify a distinct search query
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_ONLY_PARAMS: symArray
-
-  # Parameters used by #find_by_match_records or passed on to
-  # ManifestItem#search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIND_OR_MATCH_PARAMS: symArray
-
-  # Locate and filter ManifestItem records.
-  #
-  # @param [Array<String,Integer,Array>] items  Default: `#manifest_item_id`.
-  # @param [Hash] opt                 Passed to ManifestItem#search_records;
-  #                                     default: `#manifest_item_params` if no
-  #                                     *items* are given.
-  #
-  # @raise [Record::SubmitError]      If :page is not valid.
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  def find_or_match_manifest_items: (*(String|Integer|anyArray) items, **untyped opt) -> symHash
-
-  # Return with the specified ManifestItem record.
-  #
-  # @param [*]    item                  Default: #manifest_item_id.
-  # @param [Hash] opt                   To ManifestItem#find_record.
-  #
-  # @option opt [Boolean] :no_raise     If *true*, return *nil* if not found.
-  #
-  # @raise [Record::NotFound]           If *item* was not found.
-  # @raise [Record::StatementInvalid]   If :id/:sid not given.
-  #
-  # @return [ManifestItem]
-  #
-  def get_manifest_item: (?(String|Integer|ManifestItem|symHash|nil) item, **untyped opt) -> ManifestItem
-
-  # Create a new un-persisted ManifestItem, using *item* as a template if
-  # provided, for the '/new' model form.
-  #
-  # @param [Hash] attr                      Field values.
-  #
-  # @return [ManifestItem]                  Un-persisted ManifestItem instance.
-  #
-  def new_manifest_item: (**untyped attr) -> ManifestItem
+  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> symHash
 
   # Create and persist a new ManifestItem.
   #
-  # @param [Hash] attr                      Field values.
+  # @param [Hash, nil] attr           Default: `#current_params`.
+  # @param [Hash]      opt            Passed to super.
   #
-  # @raise [Record::SubmitError]            Invalid workflow transition.
-  # @raise [ActiveRecord::RecordInvalid]    Update failed due to validations.
-  # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
+  # @return [ManifestItem, nil]       A new ManifestItem instance.
   #
-  # @return [ManifestItem]                   A new ManifestItem instance.
-  #
-  def create_manifest_item: (**untyped attr) -> ManifestItem
+  def create_record: (?symHash? attr) -> ManifestItem
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Passed to #get_manifest_item.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Hash, nil]         prm
+  # @param [Hash]              opt
   #
   # @raise [Record::SubmitError]      Record could not be found.
   #
-  # @return [ManifestItem]            An existing persisted ManifestItem.
+  # @return [ManifestItem, nil]       An existing persisted ManifestItem.
   #
-  def edit_manifest_item: (?(ManifestItem|nil) item, **untyped opt) -> ManifestItem
+  def edit_record: (?(ManifestItem|nil) item, ?(symHash|nil) prm, **untyped opt) -> (ManifestItem | nil)
 
   # Update the indicated ManifestItem.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
   # @param [Hash]              opt    Field values except #UPDATE_STATUS_OPTS.
   #
   # @raise [Record::NotFound]               Record could not be found.
@@ -246,29 +155,18 @@ module ManifestItemConcern
   #
   # @return [ManifestItem]            The updated ManifestItem instance.
   #
-  def update_manifest_item: (?(ManifestItem|nil) item, **untyped opt) -> ManifestItem
+  def update_record: (?(ManifestItem|nil) item, **untyped opt) -> ManifestItem
 
-  # Retrieve the indicated ManifestItem(s) for the '/delete' page.
+  # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [String, ManifestItem, Array, nil] items
-  # @param [Hash]                             opt   Search parameters.
+  # @param [String, Model, Array, nil] items
+  # @param [Hash, nil]                 prm    Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
   #
-  def delete_manifest_item: (?(ManifestItem|String|Integer|Array[ManifestItem|String|Integer]|nil) items, **untyped opt) -> symHash
-
-  # Remove the indicated ManifestItem(s).
-  #
-  # @param [String, ManifestItem, Array, nil] items
-  # @param [Hash]                             opt   Search parameters.
-  #
-  # @raise [Record::SubmitError]      If there were failure(s).
-  #
-  # @return [Array]                   Destroyed ManifestItems.
-  #
-  def destroy_manifest_item: (?(ManifestItem|String|Integer|Array[ManifestItem|String|Integer]|nil) items, **untyped opt) -> Array[ManifestItem]
+  def delete_records: (?(String|Symbol|Integer|Model|Array[String|Symbol|Integer|Model]|nil) items, ?(symHash|nil) prm) -> symHash
 
   RECORD_KEYS: symArray
 
@@ -278,8 +176,9 @@ module ManifestItemConcern
 
   # Set :editing state (along with any other fields if they are provided).
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Symbol, nil]       meth   Caller (for diagnostics).
+  # @param [Hash]              attr   Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -287,12 +186,13 @@ module ManifestItemConcern
   #
   # @return [ManifestItem] Or *nil* if opt[:no_raise] == *true*.
   #
-  def start_editing: (?(ManifestItem|nil) item, **untyped opt) -> ManifestItem
+  def start_editing: (?(ManifestItem|nil) item, ?meth: Symbol|nil, **untyped attr) -> ManifestItem
 
   # Update with provided fields (if any) and clear :editing state.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Symbol, nil]       meth   Caller (for diagnostics).
+  # @param [Hash]              attr   Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -302,12 +202,12 @@ module ManifestItemConcern
   #
   # @see file:controllers/manifest-edit.js *parseFinishEditResponse*
   #
-  def finish_editing: (?(ManifestItem|nil) item, **untyped opt) -> { :items => Hash[Integer,symHash], :pending => Hash[Integer,symHash]|nil, :problems => symHash }
+  def finish_editing: (?(ManifestItem|nil) item, ?meth: Symbol|nil, **untyped attr) -> { :items => Hash[Integer,symHash], :pending => Hash[Integer,symHash]|nil, :problems => symHash }
 
   # Update with provided fields (if any) and clear :editing state.
   #
-  # @param [ManifestItem, nil] item   Default: record for #manifest_item_id.
-  # @param [Hash]              opt    Field values.
+  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Hash]              attr   Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -317,7 +217,7 @@ module ManifestItemConcern
   #
   # @see file:javascripts/controllers/manifest-edit.js *postRowUpdate*
   #
-  def editing_update: (?(ManifestItem|nil) item, **untyped opt) -> { :items => Hash[Integer,symHash], :pending => Hash[Integer,symHash]|nil, :problems => symHash }
+  def editing_update: (?(ManifestItem|nil) item, **untyped attr) -> { :items => Hash[Integer,symHash], :pending => Hash[Integer,symHash]|nil, :problems => symHash }
 
   # Upload a file to the AWS S3 Shrine :cache and update record :file_data with
   # the response.
@@ -327,15 +227,17 @@ module ManifestItemConcern
   # grid item and thus the first opportunity for the client to learn what
   # database entry is associated with that item.
   #
-  # @param [ManifestItem, nil] item         Def.: record for #manifest_item_id.
+  # @param [ManifestItem, nil] item         Def.: ModelConcern#identifier.
   # @param [Boolean]           update_time  If *false* update :file_data only.
+  # @param [Hash, nil]         env          Def.: `request.env`.
+  # @param [Symbol, nil]       meth         Caller (for diagnostics).
   # @param [Hash]              opt          Field values.
   #
   # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
   #
   # @note If update_time is *false* the associated record must already exist.
   #
-  def upload_file: (?(ManifestItem|nil) item, update_time: bool, **untyped opt) -> httpResult
+  def upload_file: (?(ManifestItem|nil) item, update_time: bool, ?env: anyHash|nil, ?meth: Symbol|nil, **untyped opt) -> httpResult
 
   # A relation for all rows of the indicated Manifest ordered by row.
   #
@@ -434,23 +336,11 @@ module ManifestItemConcern
     : ((Symbol|Integer|nil) status, ?untyped   item, **untyped opt) -> void
     | (                              Exception item, **untyped opt) -> void
 
-  # Raise an exception.
-  #
-  # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
-  #
-  # @raise [Record::SubmitError]
-  # @raise [ExecError]
-  #
-  # @see ExceptionHelper#failure
-  #
-  def failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
-
-  # Create a @model_options instance from the current parameters.
+  # Create an Options instance from the current parameters.
   #
   # @return [ManifestItem::Options]
   #
-  def set_model_options: () -> ManifestItem::Options
+  def get_model_options: () -> ManifestItem::Options
 
   # Create a Paginator for the current controller action.
   #
@@ -460,6 +350,27 @@ module ManifestItemConcern
   # @return [ManifestItem::Paginator]
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> ManifestItem::Paginator
+
+  # @private
+  RESPONSE_OUTER: Symbol
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [*]     list
+  # @param [Hash]  opt
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def index_values: (?untyped list, **untyped opt) -> Hash[Symbol,symHash]
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Model, Hash, *] item
+  # @param [Hash]           opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def show_values: (?untyped item, **untyped opt) -> symHash
 
   private
 

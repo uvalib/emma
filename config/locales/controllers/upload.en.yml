@@ -116,23 +116,20 @@ en:
       action_links:
 
         new:
-          action:       new
-          label:        'Upload %{article} new file'
+          label:        'Upload %{article} file to create a new EMMA entry'
           article:      'a'
 
         edit:
-          action:       edit_select
-          label:        'Modify %{article} existing entry'
+          label:        'Modify %{article} existing EMMA entry'
           article:      'an'
 
         delete:
-          action:       delete_select
-          label:        'Remove %{article} existing entry'
+          label:        'Remove %{article} existing EMMA entry'
           article:      'an'
 
         back:
           action:       index
-          label:        'View all entries'
+          label:        'View all EMMA entries'
 
       # =======================================================================
       # Fields
@@ -363,7 +360,7 @@ en:
 
       # =======================================================================
 
-      show:
+      show:             &SHOW_ACTION
         label:          'Upload'
         title:          'Uploaded file "%{name}"'
         tooltip:        'See details about this upload'
@@ -374,6 +371,14 @@ en:
           - ext:        'Ext'
 
         _endpoint:      true
+
+      # =======================================================================
+
+      show_select:
+        <<:             *SHOW_ACTION
+        label:          'Show Menu' # TODO: ???
+        title:          'Show an EMMA Entry'
+        #role:           administrator
 
       # =======================================================================
 
@@ -418,12 +423,13 @@ en:
         success:        'Created EMMA entry for: %{file}'
         failure:        'Could not create entry: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
       create:
-        <<: *NEW_ACTION
+        <<:             *NEW_ACTION
 
       # =======================================================================
 
@@ -465,12 +471,21 @@ en:
         success:        'Updated EMMA entry for %{file}'
         failure:        'Could not update EMMA entry: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
+      edit_select:
+        <<:             *EDIT_ACTION
+       #label:          'Edit Menu' # TODO: ???
+        title:          'Modify an EMMA Entry'
+        directions:     ~
+
+      # =======================================================================
+
       update:
-        <<: *EDIT_ACTION
+        <<:             *EDIT_ACTION
 
       # =======================================================================
 
@@ -510,27 +525,21 @@ en:
         success:        'Removed EMMA entry for %{file}'
         failure:        'Could not remove EMMA entry: %{error}'
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
 
-      destroy:
-        <<: *DELETE_ACTION
-
-      # =======================================================================
-
-      new_select:
-        <<: *NEW_ACTION
-
-      # =======================================================================
-
-      edit_select:
-        <<: *EDIT_ACTION
-
-      # =======================================================================
-
       delete_select:
-        <<: *DELETE_ACTION
+        <<:             *DELETE_ACTION
+       #label:          'Delete Menu' # TODO: ???
+        title:          'Remove an EMMA Entry'
+        directions:     ~
+
+      # =======================================================================
+
+      destroy:
+        <<:             *DELETE_ACTION
 
       # =======================================================================
 
@@ -572,6 +581,7 @@ en:
 
         <<: *EXPERIMENTAL
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
@@ -602,6 +612,7 @@ en:
 
         <<: *EXPERIMENTAL
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
@@ -644,6 +655,7 @@ en:
 
         <<: *EXPERIMENTAL
 
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
@@ -654,6 +666,7 @@ en:
         tooltip:        |
           Update submissions' entries in the EMMA Unified Index
         description:    'TODO: ???'
+        role:           submitter
         _endpoint:      true
 
       # =======================================================================
@@ -703,6 +716,7 @@ en:
       admin:
         label:          'Admin'
         title:          'Upload Submission Administration'
+        role:           administrator
         _endpoint:      true
 
       # =======================================================================
