@@ -273,7 +273,7 @@ module BaseDecorator::Fields
   #
   def render_field_item(name, value, **opt)
     normalize_attributes!(opt)
-    local = extract_hash!(opt, :base, :name, :type)
+    local = opt.extract!(:base, :name, :type)
     field = opt[:'data-field']
     name  = local[:name] || name || local[:base] || field
     value = Array.wrap(value).compact_blank

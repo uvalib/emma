@@ -70,7 +70,7 @@ module BaseDecorator::List
     return ''.html_safe if pairs.nil? && object.nil?
     opt.delete(:level) # Not propagated in the general case.
 
-    fp_opt      = extract_hash!(opt, *FIELD_PAIRS_OPTIONS)
+    fp_opt      = opt.extract!(*FIELD_PAIRS_OPTIONS)
     value_opt   = opt.slice(:index, :no_format)
     opt[:row]   = 0
     separator ||= DEFAULT_ELEMENT_SEPARATOR

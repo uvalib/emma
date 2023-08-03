@@ -50,7 +50,7 @@ module AwsS3Service::Properties
   #
   # @note Currently unused
   #
-  MEMBER_REPOSITORIES = (S3_BUCKET.keys - %i[emma]).freeze
+  MEMBER_REPOSITORIES = S3_BUCKET.keys.excluding(:emma).freeze
 
   # S3 options are kept in encrypted credentials but can be overridden by
   # environment variables.

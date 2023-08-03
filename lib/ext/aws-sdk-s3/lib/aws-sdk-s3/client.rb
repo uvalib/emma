@@ -48,7 +48,7 @@ module Aws::S3
       public
 
       MONITOR_CLIENT_METHODS =
-        Aws::S3::Client.instance_methods(false) - %i[waiter_names]
+        Aws::S3::Client.instance_methods(false).excluding(:waiter_names)
 
       MONITOR_CLIENT_METHODS.each do |meth|
         define_method(meth) do |params = {}, options = {}, &block|

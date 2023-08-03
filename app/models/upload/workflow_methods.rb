@@ -487,7 +487,7 @@ module Upload::WorkflowMethods
   def finish_editing(**opt)
     __debug_items(binding)
     data = { file_data: edit_file_data, emma_data: edit_emma_data }
-    data = reject_blanks(data)
+    reject_blanks!(data)
     if data.blank?
       Log.warn { "#{__method__}: update with edit data: FAILED (no data)" }
     elsif data.delete_if { |column, value| self[column] == value }.blank?

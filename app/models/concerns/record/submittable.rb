@@ -167,8 +167,8 @@ module Record::Submittable
           find_record(item)
         else
           data   = data.dup
-          opt    = extract_hash!(data, :no_raise, :meth)
-          ids    = extract_hash!(data, :id, :submission_id)
+          opt    = data.extract!(:no_raise, :meth)
+          ids    = data.extract!(:id, :submission_id)
           item ||= ids.values.first
           find_record(item, **opt)
         end

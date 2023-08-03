@@ -136,13 +136,11 @@ module LayoutHelper::SearchBar
     # Accumulate search term values limited to the selected set of fields.
     # The initial determination of the order and initial input type selections
     # will be determined by the data supplied.
-    values ||= url_parameters
-    values = values.except(*Paginator::NON_SEARCH_KEYS)
-    values.transform_keys! { |k| prm_map[k.to_sym] }
+    values = values&.symbolize_keys || url_parameters
+    values.except!(*Paginator::NON_SEARCH_KEYS)
+    values.transform_keys! { |k| prm_map[k] }
     values.slice!(*fields)
-    values.transform_values! do |v|
-      (v == SearchTerm::NULL_SEARCH) ? '' : v
-    end
+    values.transform_values! { |v| (v == SearchTerm::NULL_SEARCH) ? '' : v }
 
     # This is a major section of the page so it should be present in the
     # skip menu.
@@ -192,7 +190,7 @@ module LayoutHelper::SearchBar
   #
   def search_bar_row(field, value = nil, first: nil, last: nil, **opt)
     css    = '.search-bar-row'
-    id_opt = extract_hash!(opt, :target, :unique, :index)
+    id_opt = opt.extract!(:target, :unique, :index)
 
     # Row elements.
     input  = search_bar(field, value, **id_opt)
@@ -258,7 +256,7 @@ module LayoutHelper::SearchBar
     option_tags = options_for_select(pairs, selected)
 
     opt.except!(:field, *MENU_OPTS)
-    id_opt = extract_hash!(opt, :unique, :index)
+    id_opt = opt.extract!(:unique, :index)
 
     prepend_css!(opt, css)
     opt[:id]           ||= unique_id(css, **id_opt) if id_opt.present?
@@ -285,7 +283,7 @@ module LayoutHelper::SearchBar
   #
   def search_bar(field, value = nil, **opt)
     css    = '.search-bar'
-    id_opt = extract_hash!(opt, :target, :unique, :index)
+    id_opt = opt.extract!(:target, :unique, :index)
     target = id_opt[:target] ||= search_input_target
     return unless target && show_search_bar?(target)
     prepend_css!(opt, css)
@@ -330,7 +328,7 @@ module LayoutHelper::SearchBar
   def search_row_control(operation, css: '.search-row-control', **opt)
     css = "#{css}.#{operation}"
     opt.except!(:field, :target)
-    id_opt     = extract_hash!(opt, :unique, :index)
+    id_opt     = opt.extract!(:unique, :index)
     opt[:id] ||= unique_id(css, **id_opt)
     prepend_css!(opt, css)
     icon_button(**opt)
@@ -460,7 +458,7 @@ module LayoutHelper::SearchBar
     target   = search_input_target(ctrlr, target: target)
     field  ||= search_input_field(target)
     field    = field&.to_sym
-    id_opt   = extract_hash!(opt, :unique, :index).presence
+    id_opt   = opt.extract!(:unique, :index).presence
 
     # Screen-reader-only label element (if required).
     label    = nil
@@ -547,7 +545,7 @@ module LayoutHelper::SearchBar
   # @see LinkHelper#icon_button
   #
   def search_clear_button(css: '.search-clear', **opt)
-    id_opt = extract_hash!(opt, :unique, :index)
+    id_opt = opt.extract!(:unique, :index)
     opt.except!(:field, *MENU_OPTS)
     prepend_css!(opt, css)
     opt[:title] ||= 'Clear search terms' # TODO: I18n
@@ -580,7 +578,7 @@ module LayoutHelper::SearchBar
     **opt
   )
     target  = search_input_target(ctrlr, target: target)
-    f_opt   = extract_hash!(opt, :only, :except)
+    f_opt   = opt.extract!(:only, :except)
     buttons = filter(SEARCH_CONTROLS, **f_opt)
     prepend_css!(opt, css)
     html_div(opt) do

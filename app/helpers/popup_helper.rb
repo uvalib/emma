@@ -69,12 +69,12 @@ module PopupHelper
   def inline_popup(control: nil, panel: nil, css: '.inline-popup', **opt, &blk)
 
     # Visible modal popup activation toggle control.
-    t_opt = extract_hash!(opt, *POPUP_TOGGLE_OPT)
+    t_opt = opt.extract!(*POPUP_TOGGLE_OPT)
     t_opt.reverse_merge!(control) if control
     popup_toggle = make_popup_toggle(**t_opt)
 
     # Initially-hidden modal popup panel.
-    p_opt = extract_hash!(opt, *POPUP_PANEL_OPT)
+    p_opt = opt.extract!(*POPUP_PANEL_OPT)
     p_opt.reverse_merge!(panel) if panel
     prepend_css!(p_opt, POPUP_PANEL_CLASS)
     popup_panel = make_popup_panel(**p_opt, &blk)

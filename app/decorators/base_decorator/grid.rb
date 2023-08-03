@@ -319,8 +319,7 @@ module BaseDecorator::Grid
     wrap  = opt.key?(:wrap) ? opt.delete(:wrap) : table
     opt[:cols] ||= grid_row_columns
 
-    p_opt   = extract_hash!(opt, *ROW_PAGE_PARAMS)
-
+    p_opt   = opt.extract!(*ROW_PAGE_PARAMS)
     items   = items ? Array.wrap(items) : grid_row_page(**p_opt)
     index ||= paginator.first_index
     row   ||= 0
@@ -625,9 +624,9 @@ module BaseDecorator::Grid
     opt[:index] ||= paginator.first_index
     separator   ||= DEFAULT_ELEMENT_SEPARATOR
     start         = positive(opt.delete(:'aria-colindex')) || 1
-    fp_opt        = extract_hash!(opt, *FIELD_PAIRS_OPTIONS)
     value_opt     = opt.slice(:index, :no_format)
     template      = opt.delete(:template)
+    fp_opt        = opt.extract!(*FIELD_PAIRS_OPTIONS)
 
     field_pairs(pairs, **fp_opt).map.with_index(start) { |(field, prop), col|
       prop.delete(:required) if template

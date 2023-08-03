@@ -99,7 +99,7 @@ module Search::Shared::ScoreMethods
       terms ||= opt[:q] || opt[:keyword]
       types = SCORE_TYPES
     else
-      types = SCORE_TYPES - %i[keyword]
+      types = SCORE_TYPES.excluding(:keyword)
     end
     types = Array.wrap(opt.delete(:for))    if opt.key?(:for)
     types = (types-%i[keyword]) << :keyword if types[0...-1].include?(:keyword)
@@ -184,7 +184,7 @@ module Search::Shared::ScoreMethods
   # @return [Float]
   #
   def calculate_keyword_score(terms = nil, **opt)
-    search = extract_hash!(opt, :q, *SCORE_TYPES)
+    search = opt.extract!(:q, *SCORE_TYPES)
     terms  = search[:q] || search[:keyword] || terms
     count  = 0
     types  = { title: 100, creator: 0, publisher: 0 }

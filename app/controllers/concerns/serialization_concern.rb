@@ -44,7 +44,7 @@ module SerializationConcern
   # @option opt [String] :name        Passed to #make_xml.
   #
   def render_xml(item, **opt)
-    xml_opt = extract_hash!(opt, :separator, :name)
+    xml_opt = opt.extract!(:separator, :name)
     if item.is_a?(Model)
       xml_opt[:name] ||= :response
     elsif item.is_a?(Hash)

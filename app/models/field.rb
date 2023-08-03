@@ -300,12 +300,12 @@ module Field
       unless only.nil?
         disable = (only == []) || (only = symbol_array(only)).include?(:none)
         result[:except] = %i[all] if disable
-        disable ? %i[none] : (only - %i[all]).presence
+        disable ? %i[none] : only.excluding(:all).presence
       end
     result[:except] ||=
       unless except.nil?
         disable = (except = symbol_array(except)).include?(:all)
-        disable ? %i[all] : (except - %i[none]).presence
+        disable ? %i[all] : except.excluding(:none).presence
       end
     result
   end

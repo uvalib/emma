@@ -161,7 +161,7 @@ module TestHelper::IntegrationTests::Authentication
   # @yieldreturn [void]
   #
   def send_as(verb, user, url, **opt, &block)
-    run_opt = extract_hash!(opt, *RUN_TEST_OPT)
+    run_opt = opt.extract!(*RUN_TEST_OPT)
     expect  = opt.delete(:expect)
     format  = format_type(opt[:format])
 

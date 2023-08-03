@@ -69,7 +69,7 @@ module SearchTermsHelper
   #
   # @type [Array<Symbol>]
   #
-  NON_SEARCH_TERM_KEYS = (NON_SEARCH_KEYS - %i[page]).freeze
+  NON_SEARCH_TERM_KEYS = NON_SEARCH_KEYS.excluding(:page).freeze
 
   # URL parameters that are not directly used in searches.
   #

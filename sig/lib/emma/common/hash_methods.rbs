@@ -4,17 +4,17 @@ module Emma::Common::HashMethods
   # - Second, a copy of the original *hash* without the those keys/values.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array>]              keys
+  # @param [Array<Symbol,String,Array,nil>]          keys
   #
   # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
-  def partition_hash: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]) keys) -> [symHash, symHash]
+  def partition_hash: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> [symHash, symHash]
 
   # Retain the elements identified by *keys* in *hash* (that is, extract all
   # elements except the ones matching those keys).
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array>]              keys
+  # @param [Array<Symbol,String,Array,nil>]          keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -22,12 +22,12 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  def remainder_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]) keys) -> symHash
+  def remainder_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> symHash
 
   # Extract the elements identified by *keys* from *hash*.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array>]              keys
+  # @param [Array<Symbol,String,Array,nil>]          keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -35,11 +35,11 @@ module Emma::Common::HashMethods
   # If *hash* is something other than a ::Hash, the original item will not be
   # changed by this method.
   #
-  def extract_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]) keys) -> symHash
+  def extract_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> symHash
 
   private
 
-  def gather_keys: (*(Symbol|String|Array[Symbol|String]) keys) ?{ () -> (Symbol|String|Array[Symbol|String]) } -> symArray
+  def gather_keys: (*(Symbol|String|Array[Symbol|String]|nil) keys) ?{ () -> (Symbol|String|Array[Symbol|String]|nil) } -> symArray
 
   public
 
@@ -93,63 +93,47 @@ module Emma::Common::HashMethods
   #
   def sort_by!: (anyHash hash) { () -> untyped } -> anyHash
 
-  # Recursively remove blank items from a hash.
+  # Recursively remove blank items from a copy of a hash.
   #
-  # @param [Hash, nil] item
-  # @param [Boolean]   squeeze        If *true* transform arrays with a single
+  # @param [Hash, *] item
+  # @param [Boolean] squeeze          If *true* transform arrays with a single
   #                                     element into scalars.
-  # @param [Boolean]   dup            Ensure that the result is completely
+  # @param [Boolean] dup              Ensure that the result is completely
   #                                     disentangled with the original.
   #
-  # @return [Hash]
+  # @return [Hash]                    A copy of *item*, possibly modified.
   #
   # @see #_remove_blanks
   #
-  def reject_blanks: ((anyHash|nil) item, ?squeeze: bool, ?dup: bool) -> anyHash
+  def reject_blanks
+    : (symHash item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> symHash
+    | (anyHash item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> anyHash
+    | (any|nil item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> anyHash
 
-  # Recursively remove blank items from an object.
+  # Recursively remove blank items from a hash.
   #
-  # @param [Hash, Array, Any] item
-  # @param [Boolean]          squeeze   If *true* transform arrays with a
-  #                                       single element into scalars.
-  # @param [Boolean]          dup       Ensure that the result is completely
-  #                                       disentangled with the original.
+  # @param [Hash, *] item
+  # @param [Boolean] squeeze          If *true* transform arrays with a single
+  #                                     element into scalars.
+  #
+  # @return [Hash]                    *item*, possibly modified.
+  #
+  # @see #_remove_blanks!
+  #
+  def reject_blanks!
+    : (symHash item, ?squeeze: bool, **untyped _ignored) -> symHash
+    | (anyHash item, ?squeeze: bool, **untyped _ignored) -> anyHash
+    | (any|nil item, ?squeeze: bool, **untyped _ignored) -> anyHash
+
+  # Recursively remove blank items from an object copy.
+  #
+  # @param [Hash, Array, *] item
+  # @param [Boolean]        squeeze   If *true* transform arrays with a single
+  #                                     element into scalars.
+  # @param [Boolean]        dup       Ensure that the result is completely
+  #                                     disentangled with the original.
   #
   # @return [Hash, Array, Any, nil]
-  #
-  # -
-  # === Variations
-  # +
-  #
-  # @overload _remove_blanks(item)
-  #   @param [NilClass,Boolean,Numeric,Symbol,Method,Proc,Module] item
-  #   @param [Boolean] squeeze        Ignored
-  #   @param [Boolean] dup            Ignored
-  #   @return [NilClass,Boolean,Numeric,Symbol,Method,Proc,Module]
-  #
-  # @overload _remove_blanks(item, dup: bool)
-  #   @param [String]  item
-  #   @param [Boolean] squeeze        Ignored
-  #   @param [Boolean] dup
-  #   @return [String, nil]
-  #
-  # @overload _remove_blanks(hash, squeeze: bool, dup: bool)
-  #   @param [Hash]    hash
-  #   @param [Boolean] squeeze
-  #   @param [Boolean] dup
-  #   @return [Hash, nil]
-  #
-  # @overload _remove_blanks(array, squeeze: bool, dup: bool)
-  #   @param [Array]   array
-  #   @param [Boolean] squeeze
-  #   @param [Boolean] dup
-  #   @return [Array, nil]
-  #
-  # @overload _remove_blanks(item)
-  #   @param [Any]     item
-  #   @param [Boolean] squeeze        Ignored
-  #   @param [Boolean] dup
-  #   @return [Any, nil]
   #
   # === Usage Notes
   # * Empty strings and nils are considered blank, however an item or element
@@ -167,16 +151,44 @@ module Emma::Common::HashMethods
   #   ```
   #
   def _remove_blanks
-    :     (anyArray array,  squeeze: true, ?dup: bool) -> (anyArray | untyped | nil)
-    |     (nil      item,  ?squeeze: bool, ?dup: bool) -> nil
-    |     (bool     item,  ?squeeze: bool, ?dup: bool) -> bool
-    |     (Symbol   item,  ?squeeze: bool, ?dup: bool) -> Symbol
-    |     (Numeric  item,  ?squeeze: bool, ?dup: bool) -> Numeric
-    |     (Proc     item,  ?squeeze: bool, ?dup: bool) -> Proc
-    |     (Method   item,  ?squeeze: bool, ?dup: bool) -> Method
-    |     (Module   item,  ?squeeze: bool, ?dup: bool) -> Module
-    |     (String   item,  ?squeeze: bool, ?dup: bool) -> (String   | nil)
-    |     (anyHash  hash,  ?squeeze: bool, ?dup: bool) -> (anyHash  | nil)
-    |     (anyArray array, ?squeeze: bool, ?dup: bool) -> (anyArray | nil)
-    | [T] (T        item,  ?squeeze: bool, ?dup: bool) -> (T        | nil)
+    :     (anyArray item,  squeeze: true,  ?dup: bool) -> (anyArray | untyped | nil)
+    |     (anyArray item, ?squeeze: false, ?dup: bool) -> anyArray?
+    |     (anyHash  item, ?squeeze: bool,  ?dup: bool) -> anyHash?
+    |     (nil      item, ?squeeze: bool,  ?dup: bool) -> nil
+    |     (bool     item, ?squeeze: bool,  ?dup: bool) -> bool
+    |     (Method   item, ?squeeze: bool,  ?dup: bool) -> Method
+    |     (Module   item, ?squeeze: bool,  ?dup: bool) -> Module
+    |     (Numeric  item, ?squeeze: bool,  ?dup: bool) -> Numeric
+    |     (Proc     item, ?squeeze: bool,  ?dup: bool) -> Proc
+    |     (Symbol   item, ?squeeze: bool,  ?dup: bool) -> Symbol
+    | [T] (T        item, ?squeeze: bool,  ?dup: bool) -> T?
+
+  # Recursively remove blank items from an object.
+  #
+  # @param [Hash, Array, *] item
+  # @param [Boolean]        squeeze   If *true* transform arrays with a single
+  #                                     element into scalars.
+  # @param [Boolean]        nil_hash  *true* except at the top-level.
+  #
+  # @return [Hash, Array, Any, nil]
+  #
+  # === Usage Notes
+  # * Empty strings and nils are considered blank, however an item or element
+  #   with the explicit value of *false* is not considered blank.
+  # * The *nil_hash* option is *false* at the top-level since the *item* being
+  #   modified must continue to exist.
+  #
+  def _remove_blanks!
+    :     (anyArray item,  squeeze: true,  ?nil_hash: bool)  -> (anyArray | untyped | nil)
+    |     (anyArray item, ?squeeze: false, ?nil_hash: bool)  -> anyArray?
+    |     (anyHash  item, ?squeeze: bool,   nil_hash: true)  -> anyHash?
+    |     (anyHash  item, ?squeeze: bool,  ?nil_hash: false) -> anyHash
+    |     (nil      item, ?squeeze: bool,  ?nil_hash: bool)  -> nil
+    |     (bool     item, ?squeeze: bool,  ?nil_hash: bool)  -> bool
+    |     (Method   item, ?squeeze: bool,  ?nil_hash: bool)  -> Method
+    |     (Module   item, ?squeeze: bool,  ?nil_hash: bool)  -> Module
+    |     (Numeric  item, ?squeeze: bool,  ?nil_hash: bool)  -> Numeric
+    |     (Proc     item, ?squeeze: bool,  ?nil_hash: bool)  -> Proc
+    |     (Symbol   item, ?squeeze: bool,  ?nil_hash: bool)  -> Symbol
+    | [T] (T        item, ?squeeze: bool,  ?nil_hash: bool)  -> T?
 end

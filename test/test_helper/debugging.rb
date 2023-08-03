@@ -211,7 +211,7 @@ module TestHelper::Debugging
   # @yieldreturn [Array, String, *]
   #
   def show(*items, **opt)
-    model_opt = extract_hash!(opt, *SHOW_MODEL_OPT)
+    model_opt = opt.extract!(*SHOW_MODEL_OPT)
     model_opt[:output] = false
     items += Array.wrap(yield) if block_given?
     items.flatten.map { |item|
@@ -357,7 +357,7 @@ module TestHelper::Debugging
             define_method(meth) do |*args, **opt|
               # Extract any options specific to the tracing methods.  Remaining
               # options are passed to the underlying HTTP method call.
-              trace_opt = extract_hash!(opt, *TRACE_OPTIONS)
+              trace_opt = opt.extract!(*TRACE_OPTIONS)
               # Call the underlying HTTP method between tracing output calls.
               show_pre_send(meth, args.first, **trace_opt.slice(*PRE_OPTIONS))
               super(*args, **opt)

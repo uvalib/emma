@@ -810,7 +810,7 @@ class BaseDecorator
     other = []
     if args.first.is_a?(Hash)
       opt   = args.first.dup
-      other = extract_hash!(opt, :and).values.flatten
+      other = opt.extract!(:and).values.flatten
       mod, obj = opt.first
     elsif args.size == 1
       obj = mod = args.first

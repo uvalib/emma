@@ -1103,8 +1103,8 @@ module UploadWorkflow::External
     unless record.is_a?(Upload)
       if data.is_a?(Hash)
         data = data.dup
-        opt  = extract_hash!(data, :no_raise, :meth)
-        ids  = extract_hash!(data, :id, :submission_id)
+        opt  = data.extract!(:no_raise, :meth)
+        ids  = data.extract!(:id, :submission_id)
         id   = record || ids.values.first
       else
         opt  = {}

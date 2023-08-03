@@ -55,7 +55,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
       items = items.tally.map { |cls, cnt| "#{cnt} #{cls}" }.presence
       items = items&.join(' / ') || 'empty'
       vars  =
-        (instance_variables - %i[@object]).map { |var|
+        instance_variables.excluding(:@object).map { |var|
           [var, instance_variable_get(var).inspect.truncate(max)]
         }.to_h
       vars  = vars.merge!('@object': "(#{items})").map { |k, v| "#{k}=#{v}" }

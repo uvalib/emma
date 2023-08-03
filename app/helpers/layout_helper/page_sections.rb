@@ -83,7 +83,7 @@ module LayoutHelper::PageSections
     return if text.blank?
     # noinspection RubyMismatchedArgumentType
     interpolation_keys = named_references(text).presence
-    text %= extract_hash!(opt, *interpolation_keys) if interpolation_keys
+    text %= opt.extract!(*interpolation_keys) if interpolation_keys
     text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
     prepend_css!(opt, css)
     append_css!(opt, *type) unless type == :text

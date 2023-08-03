@@ -120,7 +120,7 @@ module BaseDecorator::Controls
   # @return [nil]                         If *item* unrelated to a submission.
   #
   def control_icon_button(action, index: nil, unique: nil, css: '.icon', **opt)
-    prop = extract_hash!(opt, *ICON_PROPERTIES)
+    prop = opt.extract!(*ICON_PROPERTIES)
     case (active = prop[:active])
       when nil         then # Enabled if not specified otherwise.
       when true, false then return unless active

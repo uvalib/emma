@@ -98,7 +98,7 @@ module BaseCollectionDecorator::Form
     css:    '.submit-button',
     **opt
   )
-    path_opt       = extract_hash!(opt, *delete_submit_option_keys)
+    path_opt       = opt.extract!(*delete_submit_option_keys)
     url          ||= delete_submit_path(**path_opt)
     enabled        = url && :enabled
     action         = action&.to_sym || :delete

@@ -444,8 +444,8 @@ class ExecReport
 
         when Hash
           result = src.deep_dup.deep_symbolize_keys!
-          result[STATUS_KEY] = extract_hash!(result, *STATUS_KEYS).values.first
-          result[HTML_KEY]   = extract_hash!(result, *HTML_KEYS).values.first
+          result[STATUS_KEY] = result.extract!(*STATUS_KEYS).values.first
+          result[HTML_KEY]   = result.extract!(*HTML_KEYS).values.first
 
         when ActiveSupport::SafeBuffer
           result = { TOPIC_KEY => src, HTML_KEY => true }

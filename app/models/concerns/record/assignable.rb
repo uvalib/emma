@@ -104,9 +104,8 @@ module Record::Assignable
       error.blank? or Log.warn("#{__method__}: #{error}")
     end
 
-    # noinspection RubyMismatchedArgumentType
-    attr = reject_blanks(attr) if compact
-    attr[:options]  = options  if options.present?
+    reject_blanks!(attr)      if compact
+    attr[:options]  = options if options.present?
     attr[:attr_opt] = opt.merge!(normalized: true)
     attr
   end

@@ -118,18 +118,16 @@ module Record::EmmaData
   # @note From Upload::EmmaDataMethods#parse_emma_data
   #
   def parse_emma_data(data, allow_blank = false)
-    return {} if data.blank?
-    result =
-      case data
-        when Search::Record::MetadataRecord
-          data.as_json
-        when Model
-          data.as_json(only: Search::Record::MetadataRecord.field_names)
-        else
-          data
-      end
-    result = json_parse(result, no_raise: false) || {}
-    result = reject_blanks(result) unless allow_blank
+    case data
+      when Search::Record::MetadataRecord
+        result = data.as_json
+      when Model
+        result = data.as_json(only: Search::Record::MetadataRecord.field_names)
+      else
+        result = data
+    end
+    result = json_parse(result, no_raise: false) or return {}
+    reject_blanks!(result) unless allow_blank
     result.map { |k, v|
       v     = Array.wrap(v)
       prop  = Field.configuration_for(k, :upload)

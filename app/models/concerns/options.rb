@@ -257,7 +257,7 @@ class Options
       prm[url_param] = json_parse(fields.delete(hash_key), **opt)
     end
     prm.merge!(fields)
-    compact ? reject_blanks(prm) : prm
+    compact ? reject_blanks!(prm) : prm
   end
 
   # ===========================================================================

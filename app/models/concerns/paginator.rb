@@ -139,7 +139,7 @@ class Paginator
   #
   def initialize(ctrlr = nil, request: nil, **opt)
 
-    @context = extract_hash!(opt, :controller, :action)
+    @context = opt.extract!(:controller, :action)
     @context[:controller] ||= ctrlr&.controller_name&.to_sym
     @context[:request]    ||= request || ctrlr&.request
 
@@ -199,8 +199,8 @@ class Paginator
 
     # Set the effective URL parameters, including those required by API calls
     # for paginated results.
-    @initial_parameters =
-      url_parameters(opt).merge!(offset: offset, limit: limit).compact
+    @initial_parameters = url_parameters(opt).except!(*FORM_KEYS)
+    @initial_parameters.merge!(offset: offset, limit: limit).compact!
   end
 
   # Finish setting of pagination values based on the result list and original
@@ -265,7 +265,7 @@ class Paginator
     items = page_items.map(&:class)
     items = items.tally.map { |cls, cnt| "#{cnt} #{cls}" }.presence
     items = items&.join(' / ') || 'empty'
-    vars  = (instance_variables - %i[@page_items @_url_options]).sort!
+    vars  = instance_variables.excluding(:@page_items, :@_url_options).sort!
     vars  = vars.map { |var| [var, instance_variable_get(var).inspect] }.to_h
     vars  = vars.merge!('@page_items': "(#{items})").map { |k, v| "#{k}=#{v}" }
     "#<#{self.class.name}:#{object_id} %s>" % vars.join(' ')

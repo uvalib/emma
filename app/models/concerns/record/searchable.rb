@@ -132,9 +132,9 @@ module Record::Searchable
   #
   # @note From Upload::LookupMethods#NON_SEARCH_PARAMS
   #
-  NON_SEARCH_PARAMS = (
-    SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS - %i[sort]
-  ).uniq.freeze
+  NON_SEARCH_PARAMS =
+    [*SEARCH_RECORDS_OPTIONS, *Paginator::NON_SEARCH_KEYS]
+      .excluding(:sort).uniq.freeze
 
   # Get the records specified by either :id or :submission_id.
   #
@@ -164,7 +164,7 @@ module Record::Searchable
   # @note From Upload::LookupMethods#search_records
   #
   def search_records(*identifiers, **opt)
-    prop   = extract_hash!(opt, *SEARCH_RECORDS_OPTIONS)
+    prop   = opt.extract!(*SEARCH_RECORDS_OPTIONS)
     sort   = pagination_column || implicit_order_column
     sort   = prop.key?(:sort) ? prop.delete(:sort) : sort
     groups = prop.delete(:groups)
@@ -263,7 +263,7 @@ module Record::Searchable
   def get_relation(*items, **opt)
     terms   = []
     meth    = opt.delete(:meth) || "#{self_class}.#{__method__}"
-    id_opt  = extract_hash!(opt, :id_key, :sid_key).transform_values!(&:to_sym)
+    id_opt  = opt.extract!(:id_key, :sid_key).transform_values!(&:to_sym)
     id_key  = id_opt[:id_key]  ||= id_column
     sid_key = id_opt[:sid_key] ||= sid_column
 

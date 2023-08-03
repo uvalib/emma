@@ -18,7 +18,7 @@ module Emma::Common::HashMethods
   # - Second, a copy of the original *hash* without the those keys/values.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array>]              keys
+  # @param [Array<Symbol,String,Array,nil>]          keys
   #
   # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
@@ -32,7 +32,7 @@ module Emma::Common::HashMethods
   # elements except the ones matching those keys).
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array>]              keys
+  # @param [Array<Symbol,String,Array,nil>]          keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -49,7 +49,7 @@ module Emma::Common::HashMethods
   # Extract the elements identified by *keys* from *hash*.
   #
   # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array>]              keys
+  # @param [Array<Symbol,String,Array,nil>]          keys
   #
   # @return [Hash]                    The elements removed from *hash*.
   #
@@ -155,20 +155,34 @@ module Emma::Common::HashMethods
 
   public
 
-  # Recursively remove blank items from a hash.
+  # Recursively remove blank items from a copy of a hash.
   #
-  # @param [Hash, nil] item
-  # @param [Boolean]   squeeze        If *true* transform arrays with a single
+  # @param [Hash, *] item
+  # @param [Boolean] squeeze          If *true* transform arrays with a single
   #                                     element into scalars.
-  # @param [Boolean]   dup            Ensure that the result is completely
+  # @param [Boolean] dup              Ensure that the result is completely
   #                                     disentangled with the original.
   #
-  # @return [Hash]
+  # @return [Hash]                    A copy of *item*, possibly modified.
   #
   # @see #_remove_blanks
   #
   def reject_blanks(item, squeeze: false, dup: false, **)
     item.is_a?(Hash) && _remove_blanks(item, squeeze: squeeze, dup: dup) || {}
+  end
+
+  # Recursively remove blank items from a hash.
+  #
+  # @param [Hash, *] item
+  # @param [Boolean] squeeze          If *true* transform arrays with a single
+  #                                     element into scalars.
+  #
+  # @return [Hash]                    *item*, possibly modified.
+  #
+  # @see #_remove_blanks!
+  #
+  def reject_blanks!(item, squeeze: false, **)
+    item.is_a?(Hash) ? _remove_blanks!(item, squeeze: squeeze) : {}
   end
 
   # ===========================================================================
@@ -177,49 +191,15 @@ module Emma::Common::HashMethods
 
   protected
 
-  # Recursively remove blank items from an object.
+  # Recursively remove blank items from an object copy.
   #
-  # @param [Hash, Array, Any] item
-  # @param [Boolean]          squeeze   If *true* transform arrays with a
-  #                                       single element into scalars.
-  # @param [Boolean]          dup       Ensure that the result is completely
-  #                                       disentangled with the original.
+  # @param [Hash, Array, *] item
+  # @param [Boolean]        squeeze   If *true* transform arrays with a single
+  #                                     element into scalars.
+  # @param [Boolean]        dup       Ensure that the result is completely
+  #                                     disentangled with the original.
   #
   # @return [Hash, Array, Any, nil]
-  #
-  #--
-  # === Variations
-  #++
-  #
-  # @overload _remove_blanks(item)
-  #   @param [NilClass,Boolean,Numeric,Symbol,Method,Proc,Module] item
-  #   @param [Boolean] squeeze        Ignored
-  #   @param [Boolean] dup            Ignored
-  #   @return [NilClass,Boolean,Numeric,Symbol,Method,Proc,Module]
-  #
-  # @overload _remove_blanks(item, dup: bool)
-  #   @param [String]  item
-  #   @param [Boolean] squeeze        Ignored
-  #   @param [Boolean] dup
-  #   @return [String, nil]
-  #
-  # @overload _remove_blanks(hash, squeeze: bool, dup: bool)
-  #   @param [Hash]    hash
-  #   @param [Boolean] squeeze
-  #   @param [Boolean] dup
-  #   @return [Hash, nil]
-  #
-  # @overload _remove_blanks(array, squeeze: bool, dup: bool)
-  #   @param [Array]   array
-  #   @param [Boolean] squeeze
-  #   @param [Boolean] dup
-  #   @return [Array, nil]
-  #
-  # @overload _remove_blanks(item)
-  #   @param [Any]     item
-  #   @param [Boolean] squeeze        Ignored
-  #   @param [Boolean] dup
-  #   @return [Any, nil]
   #
   # === Usage Notes
   # * Empty strings and nils are considered blank, however an item or element
@@ -238,18 +218,52 @@ module Emma::Common::HashMethods
   #
   def _remove_blanks(item, squeeze: false, dup: false, **)
     case item
-      when TrueClass, FalseClass, Numeric, Symbol, Method, Proc, Module
+      when nil, true, false, Method, Module, Numeric, Proc, Symbol
+        # noinspection RubyMismatchedReturnType
         item
       when Hash
         opt = { squeeze: squeeze, dup: dup }
         item.transform_values { |v| _remove_blanks(v, **opt) }.compact.presence
       when Array
-        opt = { squeeze: squeeze, dup: dup }
-        res = item.map { |v| _remove_blanks(v, **opt) }.compact.presence
-        (squeeze && (item&.size == 1)) ? res.first : res
+        opt  = { squeeze: squeeze, dup: dup }
+        item = item.map { |v| _remove_blanks(v, **opt) }.compact
+        (squeeze && (item.size == 1)) ? item.first.presence : item.presence
       else
         item = item.presence
         (dup && item&.duplicable?) ? item.dup : item
+    end
+  end
+
+  # Recursively remove blank items from an object.
+  #
+  # @param [Hash, Array, *] item
+  # @param [Boolean]        squeeze   If *true* transform arrays with a single
+  #                                     element into scalars.
+  # @param [Boolean]        nil_hash  *true* except at the top-level.
+  #
+  # @return [Hash, Array, Any, nil]
+  #
+  # === Usage Notes
+  # * Empty strings and nils are considered blank, however an item or element
+  #   with the explicit value of *false* is not considered blank.
+  # * The *nil_hash* option is *false* at the top-level since the *item* being
+  #   modified must continue to exist.
+  #
+  def _remove_blanks!(item, squeeze: false, nil_hash: false, **)
+    case item
+      when nil, true, false, Method, Module, Numeric, Proc, Symbol
+        # noinspection RubyMismatchedReturnType
+        item
+      when Hash
+        opt = { squeeze: squeeze, nil_hash: true }
+        item.transform_values! { |v| _remove_blanks!(v, **opt) }.compact!
+        nil_hash ? item.presence : item
+      when Array
+        opt = { squeeze: squeeze, nil_hash: true }
+        item.map! { |v| _remove_blanks!(v, **opt) }.compact!
+        (squeeze && (item.size == 1)) ? item.first.presence : item.presence
+      else
+        item.presence
     end
   end
 

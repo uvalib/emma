@@ -49,7 +49,7 @@ module LayoutHelper::DevControls
   # @return [nil]                       If no dev_controls configured.
   #
   def render_dev_controls(outer: nil, css: '.dev-controls', **opt)
-    ctrlr_action   = extract_hash!(opt, :controller, :action).compact_blank
+    ctrlr_action   = opt.extract!(:controller, :action).compact_blank!
     opt[:params] ||= request_parameters
     opt[:params]   = opt[:params].merge(ctrlr_action) if ctrlr_action.present?
 

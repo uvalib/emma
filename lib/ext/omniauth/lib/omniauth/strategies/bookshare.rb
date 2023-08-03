@@ -563,7 +563,7 @@ module OmniAuth
         data[:uid]                 ||= data[:info][:email]
         data[:provider]            ||= default_options[:name]
 
-        OmniAuth::AuthHash.new(reject_blanks(data))
+        OmniAuth::AuthHash.new(reject_blanks!(data))
       end
 
       # Generate an auth hash based on fixed information.

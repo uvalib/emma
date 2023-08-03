@@ -125,7 +125,7 @@ class LookupJob < ApplicationJob
   # @see LookupService::Response#TEMPLATE
   #
   def worker_task(record, service, request, **opt)
-    job_opt  = extract_hash!(opt, *JOB_OPTIONS)
+    job_opt  = opt.extract!(*JOB_OPTIONS)
     meth     = job_opt[:meth]     || __method__
     start    = job_opt[:start]    || timestamp
     status   = job_opt[:status]
@@ -176,7 +176,7 @@ class LookupJob < ApplicationJob
   #
   def waiter_task(record, services, request, **opt)
     services  = Array.wrap(services)
-    job_opt   = extract_hash!(opt, *JOB_OPTIONS)
+    job_opt   = opt.extract!(*JOB_OPTIONS)
     timeout   = job_opt.delete(:timeout)
     meth      = job_opt[:meth]     ||= __method__
     start     = job_opt[:start]    ||= timestamp

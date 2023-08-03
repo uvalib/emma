@@ -72,7 +72,7 @@ module Lookup::Crossref::Shared::IdentifierMethods
   def identifier_related
     all = identifier_table.transform_values! { |ids| ids.map(&:to_s) }
     result = {}
-    if (item = extract_hash!(all, :doi, :isbn)).present?
+    if (item = all.extract!(:doi, :isbn)).present?
       result[:dc_identifier] = item.values.flatten
       result[:dc_relation]   = all.values.flatten  if all.present?
     else

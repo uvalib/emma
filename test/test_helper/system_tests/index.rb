@@ -155,8 +155,8 @@ module TestHelper::SystemTests::Index
   #
   def visit_index(target, action: :index, model: nil, **opt)
     if target.is_a?(Symbol)
-      u_opt = extract_hash!(opt, :limit, :offset)
-      u_opt.merge!(opt[:terms]) if opt[:terms].present?
+      terms = opt[:terms].presence || {}
+      u_opt = opt.extract!(:limit, :offset).merge!(terms)
       url   = url_for(controller: target, action: action, **u_opt)
     else
       url, target = [target, nil]

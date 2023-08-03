@@ -112,7 +112,7 @@ module Upload::LookupMethods
   # @see ActiveRecord::Relation#where
   #
   def search_records(*identifiers, **opt)
-    prop   = extract_hash!(opt, *SEARCH_RECORDS_OPTIONS)
+    prop   = opt.extract!(*SEARCH_RECORDS_OPTIONS)
     result = SEARCH_RECORDS_TEMPLATE.dup
 
     # Handle the case where a range has been specified which resolves to an
@@ -234,8 +234,8 @@ module Upload::LookupMethods
       Log.info { "#{meth}: no default sort" } unless sort
     end
 
-    # === Limit by user
-    user_opt = opt.extract!(*(USER_COLUMNS - %i[review_user]))
+    # === Filter by user
+    user_opt = opt.extract!(*USER_COLUMNS.excluding(:review_user))
     terms << sql_terms(user_opt, join: :or) if user_opt.present?
 
     # === Limit by state

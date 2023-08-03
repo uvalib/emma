@@ -389,7 +389,7 @@ module Emma::Debug
     #   @param [Hash]           opt     Passed to #__debug_line.
     #
     def __debug_items(*args, **opt, &block)
-      gp_opt = extract_hash!(opt, :only, :except)
+      gp_opt = opt.extract!(:only, :except)
       meth, bind = args.first(2)
       if bind.is_a?(Binding)
         args.shift(2)

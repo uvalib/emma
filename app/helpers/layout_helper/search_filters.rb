@@ -893,7 +893,7 @@ module LayoutHelper::SearchFilters
 
     # Setup the <input> element.
     date_opt  = { 'aria-labelledby': label_id, 'data-default': default }
-    input     = date_field_tag(url_param, value, reject_blanks(date_opt))
+    input     = date_field_tag(url_param, value, reject_blanks!(date_opt))
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(html_opt, css, **opt)
@@ -974,12 +974,11 @@ module LayoutHelper::SearchFilters
   # @return [Hash]
   #
   def reset_parameters(opt = nil)
-    opt  ||= request_parameters
-    target = search_target(**opt)
-    keys   = SEARCH_PARAMETER_MENU_MAP[target]&.keys || []
-    keys  -= QUERY_PARAMETERS[target]
-    keys  += Paginator::NON_SEARCH_KEYS
-    opt.except(*keys)
+    opt ||= request_parameters
+    tgt   = search_target(**opt)
+    keys  = SEARCH_PARAMETER_MENU_MAP[tgt]&.keys || []
+    keys -= QUERY_PARAMETERS[tgt]
+    opt.except(*keys, *Paginator::NON_SEARCH_KEYS)
   end
 
   # ===========================================================================

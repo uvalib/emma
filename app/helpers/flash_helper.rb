@@ -527,7 +527,7 @@ module FlashHelper
   #++
   def flash_format(*args, topic: nil, **opt)
     args.compact!
-    prop = extract_hash!(opt, :meth, :status, :inspect, :log, :trace)
+    prop = opt.extract!(:meth, :status, :inspect, :log, :trace)
     meth = args.first.is_a?(Symbol) && args.shift || prop[:meth] || __method__
     item = args.shift
     rpt  = ExecReport[item]

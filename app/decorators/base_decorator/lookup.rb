@@ -64,7 +64,7 @@ module BaseDecorator::Lookup
   def lookup_control(js: LOOKUP_JS_CLASS, css: LOOKUP_CLASS, **opt)
     type  = opt.delete(:type)
     m_opt = { 'data-modal-class': js, 'data-modal-selector': css }
-    b_opt = extract_hash!(opt, ACTION_ATTR).merge!(opt.delete(:button) || {})
+    b_opt = opt.extract!(ACTION_ATTR).merge!(opt.delete(:button) || {})
     b_opt = lookup_button_options(**b_opt, **m_opt)
     h.add_page_modal(css) { lookup_modal(**opt, **m_opt) }
     h.make_popup_toggle(button: b_opt, type: type)

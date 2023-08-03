@@ -59,7 +59,7 @@ class SubmissionService::Request
   # @param [Hash]                                                 opt
   #
   def initialize(arg = nil, **opt)
-    opt_args = extract_hash!(opt.compact_blank!, *template.keys)
+    opt_args = opt.compact_blank!.extract!(*template.keys)
     arg    ||= opt_args
     m_id     = opt_args[:manifest_id] ||= extract_manifest_id(arg, **opt)
     opt_args[:items] ||= extract_items(arg, **opt, manifest_id: m_id)
@@ -236,13 +236,13 @@ class SubmissionService::BatchSubmitRequest < SubmissionService::Request
   #
   def initialize(arg = nil, **opt)
     batch    = opt.delete(:batch)
-    arg_hash = extract_hash!(opt.compact_blank!, *template.keys)
-    arg    ||= arg_hash
-    m_id     = arg_hash[:manifest_id] ||= extract_manifest_id(arg, **opt)
-    items    = arg_hash[:items]       ||= extract_items(arg, **opt)
+    opt_args = opt.compact_blank!.extract!(*template.keys)
+    arg    ||= opt_args
+    m_id     = opt_args[:manifest_id] ||= extract_manifest_id(arg, **opt)
+    items    = opt_args[:items]       ||= extract_items(arg, **opt)
     opt[:batch] = batch if (batch = batch_size_for(batch, items))
-    arg_hash[:items] = make_sub_requests(items, **opt, manifest_id: m_id)
-    super(**arg_hash)
+    opt_args[:items] = make_sub_requests(items, **opt, manifest_id: m_id)
+    super(**opt_args)
   end
 
   # items

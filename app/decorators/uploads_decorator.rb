@@ -504,7 +504,7 @@ class UploadsDecorator < BaseCollectionDecorator
       cancel   = opt.delete(:cancel)
       ctrl_opt = { class: 'bulk' }
       btn_opt  = ctrl_opt.merge(action: action)
-      bulk_opt = extract_hash!(opt, *BULK_OPTIONS)
+      bulk_opt = opt.extract!(*BULK_OPTIONS)
       bulk_opt[:prefix] ||= options.title_prefix
       bulk_opt[:batch]  ||= options.batch_size
 

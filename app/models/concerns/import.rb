@@ -55,10 +55,11 @@ module Import
         pairs << [k, v]
       end
       pairs
-    }.each { |k, v|
+    }.each_pair { |k, v|
       result[k] = [*result[k], *v] if k.present? && v.present?
     }
-    result = reject_blanks(result).transform_values!(&:uniq)
+    reject_blanks!(result)
+    result.transform_values!(&:uniq)
     normalize_results(result)
   end
 

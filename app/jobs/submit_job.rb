@@ -118,7 +118,7 @@ class SubmitJob < ApplicationJob
   # @see SubmitChannel::Response#TEMPLATE
   #
   def worker_task(record, request, service:, **opt)
-    job_opt  = extract_hash!(opt, *JOB_OPTIONS)
+    job_opt  = opt.extract!(*JOB_OPTIONS)
     meth     = job_opt[:meth]     || __method__
     start    = job_opt[:start]    || timestamp
     timeout  = job_opt[:timeout]
@@ -188,7 +188,7 @@ class SubmitJob < ApplicationJob
 
     # Extract job-related options.
     opt.except!(:meth, :job_type)
-    job_opt  = extract_hash!(opt, *JOB_OPTIONS)
+    job_opt  = opt.extract!(*JOB_OPTIONS)
     start    = job_opt[:start]       ||= timestamp
     job_type = job_opt[:job_type]    ||= :waiter
     manifest = job_opt[:manifest_id] ||= request.manifest_id

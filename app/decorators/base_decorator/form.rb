@@ -826,7 +826,7 @@ module BaseDecorator::Form
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_button_tray(f = nil, *buttons, css: '.button-tray', **opt)
-    fb_opt = extract_hash!(opt, *FORM_BUTTON_OPTIONS)
+    fb_opt = opt.extract!(*FORM_BUTTON_OPTIONS)
     # noinspection RubyMismatchedArgumentType
     buttons.unshift(f) if f && !f.is_a?(ActionView::Helpers::FormBuilder)
     buttons = form_buttons(**fb_opt) if buttons.blank?
@@ -965,7 +965,7 @@ module BaseDecorator::Form
   def file_input_button(label, id: nil, type: 'file', **opt)
     i_id  = id || unique_id(type)
 
-    i_opt = extract_hash!(opt, :accept, :multiple, :value, :title)
+    i_opt = opt.extract!(:accept, :multiple, :value, :title)
     i_opt.merge!(id: i_id, class: 'file-input')
     input = h.file_field_tag(type, i_opt)
 
