@@ -26,6 +26,19 @@ module SqlMethods
 
   public
 
+  SQL_NUM         = '-?(\d+(\.\d*)?|\.\d+)'
+  SQL_NUM_OP      = %w(!= = <> <= < >= >).join('|').freeze
+
+  SQL_NUMBER      = /^#{SQL_NUM}$/.freeze
+  SQL_COMPARISON  = /^(#{SQL_NUM_OP})\s*(#{SQL_NUM})$/.freeze
+  SQL_PATTERN     = /^[%_]|[^\\][%_]/.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Indicate whether two records match.
   #
   # @param [ApplicationRecord] rec_1
@@ -61,16 +74,13 @@ module SqlMethods
   #   sql_clauses(cond, ids)-> "age='18' AND hgt='1.8' AND (id IN (123, 456))"
   #
   def sql_terms(*terms, join: :and, connector: join, **other)
-    connector = connector.to_s.strip.upcase unless connector.nil?
-    terms << other if other.present?
-    terms.flatten!
-    terms.compact!
-    result =
-      terms.map { |term|
-        term = sql_clauses(term, join: connector)  if term.is_a?(Hash)
-        term.start_with?('(') ? term : "(#{term})" if term.present?
-      }.compact
-    connector ? result.join(" #{connector} ") : result
+    connector &&= connector.to_s.strip.upcase
+    [*terms, other].flatten.compact_blank!.map! { |term|
+      term = sql_clauses(term, join: connector)  if term.is_a?(Hash)
+      term.start_with?('(') ? term : "(#{term})" if term.present?
+    }.compact.then { |result|
+      connector ? result.join(" #{connector} ") : result
+    }
   end
 
   # Translate hash keys/values into SQL conditions.
@@ -91,8 +101,8 @@ module SqlMethods
   #   sql_clauses(id: '123', age: '18', join: :or)-> "id = '123' OR age = '18'"
   #
   def sql_clauses(hash, join: :and, connector: join)
-    connector = connector.to_s.strip.upcase unless connector.nil?
-    result    = hash.map { |k, v| sql_clause(k, v) }
+    result = hash.map { |k, v| sql_clause(k, v) }.compact_blank!
+    connector &&= connector.to_s.strip.upcase
     connector ? result.join(" #{connector} ") : result
   end
 
@@ -101,7 +111,7 @@ module SqlMethods
   # @param [String, Symbol, Hash] k
   # @param [Any]                  v
   #
-  # @return [String]
+  # @return [String, nil]
   #
   #--
   # === Variations
@@ -133,36 +143,27 @@ module SqlMethods
     v = Array.wrap(v)      if v.is_a?(Range)
     v = v.strip            if v.is_a?(String)
     v = v.split(/\s*,\s*/) if v.is_a?(String) && v.include?(',')
-    v = v.uniq             if v.is_a?(Array)
-    if v.is_a?(Array)
-      if (v.size > 1) && (v.map(&:class).uniq.size == 1)
-        ranges = v.sort.chunk_while { |prev, this| prev.succ == this }.to_a
-        ranges.map! { |r| (r.size >= 5) ? Range.new(r.first, r.last) : r }
-        ranges, singles = ranges.partition { |r| r.is_a?(Range) }
-        ranges.map! do |range|
-          first, last = range.minmax.map { |s| sql_quote(s) }
-          "#{k} BETWEEN #{first} AND #{last}"
-        end
-      else
-        ranges  = []
-        singles = v
-      end
-      if singles.present?
-        singles.flatten!
-        singles.map! { |s| sql_quote(s) }
-        ranges << "#{k} IS NULL"                     if singles.reject!(&:nil?)
-        ranges << "#{k} IN (%s)" % singles.join(',') if singles.present?
-      end
-      # noinspection RubyMismatchedReturnType
-      if ranges.size > 1
-        ranges.map! { |s| "(#{s})" }.join(' OR ')
-      else
-        ranges.first
-      end
-    elsif (v = sql_quote(v))
-      "#{k} = #{v}"
+    return sql_test(k, v)  unless v.is_a?(Array)
+    v = v.uniq
+    if v.many? && (v.map(&:class).uniq.size == 1)
+      ranges = v.sort.chunk_while { |prev, this| prev.succ == this }.to_a
+      ranges.map! { |r| (r.size >= 5) ? Range.new(r.first, r.last) : r }
+      ranges, singles = ranges.partition { |r| r.is_a?(Range) }
+      ranges.map! { |range| sql_test(k, range) }
+      singles.flatten!
     else
-      "#{k} IS NULL"
+      ranges  = []
+      singles = v
+    end
+    if singles.present?
+      singles.map! { |s| sql_quote(s) }
+      ranges << "#{k} IS NULL"                     if singles.reject!(&:nil?)
+      ranges << "#{k} IN (%s)" % singles.join(',') if singles.present?
+    end
+    if ranges.many?
+      ranges.map! { |s| "(#{s})" }.join(' OR ')
+    else
+      ranges.first
     end
   end
 
@@ -175,27 +176,24 @@ module SqlMethods
   # Look for a value in a standard database field.
   #
   # @param [Symbol, String] column
-  # @param [String]         text
-  # @param [Boolean]        exact
-  # @param [Boolean]        match_case
+  # @param [*]              value
+  # @param [Hash]           opt       Passed to #sql_test
   #
-  # === Usage Notes
-  # Does not handle "match_case: true".
+  # @return [String]
   #
-  def sql_match_pattern(column, text, exact: false, match_case: false)
-    Log.warn { "#{__method__}: match_case not implemented" } if match_case
-    value   = sql_json_pattern(text, exact: exact)
-    exact   = true unless value.is_a?(String)
-    matches = exact ? '=' : 'LIKE'
-    "(#{column} #{matches} #{value})"
+  def sql_match_pattern(column, value, **opt)
+    '(%s)' % sql_test(column, value, **opt)
   end
 
   # Look for value in a JSON-type database column.
   #
+  # @note This was written for MySQL and has not been translated for Postgres.
+  #
   # @param [Symbol, String] column
-  # @param [String, #to_s]  text
-  # @param [Boolean]        exact
-  # @param [Boolean]        match_case
+  # @param [String, #to_s]  term
+  # @param [Hash]           opt       Passed to #sql_match_term
+  #
+  # @return [String]
   #
   # @see https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html
   # @see https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql
@@ -203,7 +201,7 @@ module SqlMethods
   # === Usage Notes
   # Does not handle "exact: false" for field names yet, only field values.
   #
-  def sql_match_json(column, text, exact: false, match_case: false)
+  def sql_match_json(column, term, **opt)
 
     # JSON_CONTAINS(json_doc, candidate[, path])
     # JSON_CONTAINS_PATH(json_doc, 'one'|'all', path[, path, ...])
@@ -214,48 +212,26 @@ module SqlMethods
     # JSON_VALUE(json_doc, path)
 
     key, value =
-      if text.is_a?(String) && text.include?(':')
-        text.split(':', 2)
+      if term.is_a?(String) && term.include?(':')
+        term.split(':', 2)
       else
-        [nil, text]
+        [nil, term]
       end
 
     if key.blank?
-      pattern = sql_json_pattern(value, exact: exact, match_case: match_case)
-      "(JSON_SEARCH(#{column}, 'one', #{pattern}) IS NOT NULL)"
+      name, _match, value = sql_name_value(column, value, **opt)
+      "(JSON_SEARCH(#{name}, 'one', #{value}) IS NOT NULL)"
 
     elsif (value = value&.to_s&.strip).blank? || (value == '*')
-      Log.warn { "#{__method__}: field match is always exact" } unless exact
+      Log.warn("#{__method__}: fld match always exact") if false?(opt[:exact])
       "JSON_CONTAINS_PATH(#{column}, '$.#{key}')"
 
     else
-      # function = match_case ? "#{column}->'$.#{key}'" : "CAST(#{column}->>'$.#{key}' AS CHAR)"
-      function = "JSON_EXTRACT(#{column}, '$.#{key}')"
-      function = "CAST(JSON_UNQUOTE(#{function}) AS CHAR)" unless match_case
-      sql_match_pattern(function, value, exact: exact, match_case: match_case)
+      # func = match_case ? "#{column}->'$.#{key}'" : "CAST(#{column}->>'$.#{key}' AS TEXT)"
+      func = "JSON_EXTRACT(#{column}, '$.#{key}')"
+      func = "CAST(JSON_UNQUOTE(#{func}) AS TEXT)" unless opt[:match_case]
+      sql_match_pattern(func, value, **opt)
     end
-  end
-
-  # Prepare a string for matching.
-  #
-  # @param [String, Any] text
-  # @param [Boolean]     exact
-  # @param [Boolean]     match_case
-  #
-  # @return [String, Any]
-  #
-  def sql_json_pattern(text, exact: false, match_case: false)
-    if text.is_a?(String) || text.is_a?(Symbol)
-      text = text.to_s.strip
-      if digits_only?(text)
-        text = text.to_i
-      elsif digits_only?(text.delete('.'))
-        text = text.to_f
-      end
-    end
-    return text unless text.is_a?(String)
-    text = "%#{text}%" unless exact || text.match?(/^[%_]|[^\\][%_]/)
-    match_case ? "'#{text}'" : "CAST('#{text}' AS CHAR)"
   end
 
   # ===========================================================================
@@ -297,20 +273,19 @@ module SqlMethods
   # @return [String]                  Blank if no valid field assertions.
   #
   def sql_where_clause(field_map: nil, param_map: nil, **matches)
+    error       = []
     fm_valid    = field_map.is_a?(Hash)
     pm_valid    = param_map.is_a?(Hash)
     json_fields = fm_valid && pm_valid
     unless json_fields || (!field_map && !param_map)
-      error = []
       error << 'have field_map but missing param_map' if fm_valid && !param_map
       error << 'have param_map but missing field_map' if pm_valid && !field_map
       field_map = nil if fm_valid
       param_map = nil if pm_valid
       error << "field_map: #{field_map.class} instead of Hash" if field_map
       error << "param_map: #{param_map.class} instead of Hash" if param_map
-      error.each { |err| Log.warn { "#{self.class}.#{__method__}: #{err}" } }
     end
-    matches.map { |field, match|
+    matches.map { |field, value|
       name =
         if json_fields
           column, _ = field_map.find { |_, fields| fields.include?(field) }
@@ -326,26 +301,80 @@ module SqlMethods
         end
       name ||= (field if field_names.include?(field))
       if name.blank?
-        Log.warn { "#{__method__}: ignoring invalid field #{field.inspect}" }
-        next
+        error << "ignoring invalid field #{field.inspect}" and next
       end
-      match = match.strip if match.is_a?(String)
-      match = true        if true?(match)
-      match = false       if false?(match)
-      condition =
-        case match
-          when Array                    then 'IN (%s)' % quote(match)
-          when true                     then '= TRUE'
-          when false                    then '= FALSE'
-          when nil, /^nil$/i, /^NULL$/i then 'IS NULL'
-          when '*', /^ANY$/i            then 'IS NOT NULL'
-          when /^[<>=!]+\s*\d+$/        then "#{match}"
-          when String                   then "LIKE '%#{match}%'"
-          when Symbol                   then "= '#{match}'"
-          else                               "= #{match}"
-        end
-      "(#{name} #{condition})"
-    }.compact.join(' AND ')
+      sql_test(name, value)
+    }.compact.map! { |s| "(#{s})" }.join(' AND ').tap {
+      error.each { |err| Log.warn("#{self.class}.#{__method__}: #{err}") }
+    }
+  end
+
+  # Generate the SQL fragment which is the test of a name against a value.
+  #
+  # @param [*]    name
+  # @param [*]    value
+  # @param [Hash] opt                 Passed to #sql_name_value
+  #
+  # @return [String]
+  #
+  def sql_test(name, value, **opt)
+    sql_name_value(name, value, **opt).join(' ')
+  end
+
+  # Generate the SQL fragment elements for testing a name against a value.
+  #
+  # @param [*]    name
+  # @param [*]    value
+  # @param [Hash] opt                 Passed to #sql_match_term
+  #
+  # @return [Array<(String,String,String)>]
+  #
+  def sql_name_value(name, value, **opt)
+    opt.merge!(exact: true, match_case: true) if uuid?(value)
+    match, term = sql_match_term(value, **opt)
+    if !opt[:match_case] && !name.match?(/lower\(/i) && term.match?(/'\)?$/)
+      name = "CAST(lower(#{name}) AS TEXT)"
+    end
+    [name, match, term]
+  end
+
+  # Generate the SQL operator and value from a term.
+  #
+  # @param [*]       term
+  # @param [Boolean] exact
+  # @param [Boolean] match_case
+  #
+  # @return [Array<(String,String)>]
+  #
+  # @see #sql_test
+  #
+  def sql_match_term(term, exact: false, match_case: false, **)
+    case term
+      when nil
+        term = term.to_s
+      when String
+        term = term.strip
+      when Symbol
+        term = term.to_s.downcase if %i[nil null NULL * any ANY].include?(term)
+      when Range
+        return 'BETWEEN', ('%s AND %s' % term.minmax.map! { |v| sql_quote(v) })
+      when Array
+        return 'IN', ('(%s)' % term.map { |v| sql_quote(v) }.join(', '))
+      else
+        return '=', term.to_s
+    end
+    uuid  = uuid?(term)
+    exact = match_case = true if uuid
+    term  = term.downcase     unless match_case
+    return 'IS', 'NULL'       if %w(nil null NULL).include?(term)
+    return 'IS', 'NOT NULL'   if %w(* any ANY).include?(term)
+    return '=',  "'#{term}'"  if term.is_a?(Symbol)
+    return '=',  term         if term.match(SQL_NUMBER)
+    return $1,   $2           if term.match(SQL_COMPARISON)
+    pattern = ->(v) { !uuid && v.match?(SQL_PATTERN) }
+    term    = "%#{term}%" unless exact || pattern.(term)
+    match   = (exact && !pattern.(term)) ? '=' : 'LIKE'
+    return match, "'#{term}'"
   end
 
   # ===========================================================================
@@ -389,17 +418,19 @@ module SqlMethods
 
   # Return the value, quoted if necessary.
   #
-  # @param [Integer, Float, String, Symbol, nil]
+  # @param [String, Symbol, Float, Integer, nil] value
   #
-  # @return [Integer, Float, String, nil]
+  # @return [String, Float, Integer, nil]
   #
   def sql_quote(value)
+    value = value.to_s.downcase if %i[nil null NULL].include?(value)
+    # noinspection RubyMismatchedReturnType
     case value
-      when Integer, Float           then value
-      when nil, /^nil$/i, /^NULL$/i then nil
-      when /^\d+$/                  then value.to_i
-      when /^-?(\.\d+|\d+\.\d*)$/   then value.to_f
-      else                               "'#{value}'"
+      when nil, 'nil', 'null', 'NULL' then nil
+      when /^-?\d+$/                  then value.to_i
+      when SQL_NUMBER                 then value.to_f
+      when String, Symbol             then "'#{value}'"
+      else                                 value
     end
   end
 
@@ -444,14 +475,17 @@ module SqlMethods
     # @return [Array]   SQL clauses if *connector* is set to *nil*.
     #
     def sql_match(*terms, join: :and, connector: join, **opt)
+      json = (opt[:type] == :json)
+      connector &&= connector.to_s.strip.upcase
       opt[:columns] &&= Array.wrap(opt[:columns]).compact.map(&:to_sym).presence
       opt[:columns] ||= field_names
-      matcher = (opt[:type] == :json) ? :sql_match_json : :sql_match_pattern
-      result =
-        merge_match_terms(*terms, **opt).flat_map do |field, matches|
-          matches.map { |text| send(matcher, field, text) }
+      merge_match_terms(*terms, **opt).flat_map { |field, matches|
+        matches.map do |value|
+          json ? sql_match_json(field, value) : sql_match_pattern(field, value)
         end
-      connector ? result.join(' %s ' % connector.to_s.strip.upcase) : result
+      }.then { |result|
+        connector ? result.join(" #{connector} ") : result
+      }
     end
 
     # =========================================================================
@@ -492,12 +526,11 @@ module SqlMethods
       terms.flatten!
       terms.compact!
       terms.each do |term|
-        term =
-          if term.is_a?(Hash)
-            term.deep_symbolize_keys
-          else
-            columns.map { |col| [col, term] }.to_h
-          end
+        if term.is_a?(Hash)
+          term = term.deep_symbolize_keys
+        else
+          term = columns.map { |col| [col, term] }.to_h
+        end
         term.transform_values! do |v|
           v = Array.wrap(v).compact_blank.map!(&:to_s)
           v.map! { |s| sanitize_sql_like(s) } if sanitize

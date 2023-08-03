@@ -12,6 +12,16 @@
 module SqlMethods
   include Emma::Common
 
+  SQL_NUM: String
+
+  SQL_NUM_OP: String
+
+  SQL_NUMBER: Regexp
+
+  SQL_COMPARISON: Regexp
+
+  SQL_PATTERN: Regexp
+
   # Indicate whether two records match.
   #
   # @param [ApplicationRecord] rec_1
@@ -72,7 +82,7 @@ module SqlMethods
   # @param [String, Symbol, Hash] k
   # @param [Any]                  v
   #
-  # @return [String]
+  # @return [String, nil]
   #
   # -
   # === Variations
@@ -100,27 +110,28 @@ module SqlMethods
   #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
   #
   def sql_clause
-    : ((String|Symbol) k, untyped v) -> String
-    | (anyHash)                      -> String
+    : ((String|Symbol) k, untyped v) -> (String | nil)
+    | (anyHash)                      -> (String | nil)
 
   # Look for a value in a standard database field.
   #
   # @param [Symbol, String] column
-  # @param [String]         text
-  # @param [Boolean]        exact
-  # @param [Boolean]        match_case
+  # @param [*]              value
+  # @param [Hash]           opt       Passed to #sql_test
   #
-  # === Usage Notes
-  # Does not handle "match_case: true".
+  # @return [String]
   #
-  def sql_match_pattern: ((Symbol|String) column, String text, ?exact: bool, ?match_case: bool) -> String
+  def sql_match_pattern: ((Symbol|String) column, untyped value, **untyped opt) -> String
 
   # Look for value in a JSON-type database column.
   #
+  # @note This was written for MySQL and has not been translated for Postgres.
+  #
   # @param [Symbol, String] column
-  # @param [String, #to_s]  text
-  # @param [Boolean]        exact
-  # @param [Boolean]        match_case
+  # @param [String, #to_s]  term
+  # @param [Hash]           opt       Passed to #sql_match_term
+  #
+  # @return [String]
   #
   # @see https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html
   # @see https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql
@@ -128,17 +139,7 @@ module SqlMethods
   # === Usage Notes
   # Does not handle "exact: false" for field names yet, only field values.
   #
-  def sql_match_json: ((Symbol|String) column, String text, ?exact: bool, ?match_case: bool) -> String
-
-  # Prepare a string for matching.
-  #
-  # @param [String, Any] text
-  # @param [Boolean]     exact
-  # @param [Boolean]     match_case
-  #
-  # @return [String, Any]
-  #
-  def sql_json_pattern: (untyped text, ?exact: bool, ?match_case: bool) -> untyped
+  def sql_match_json: ((Symbol|String) column, String term, **untyped opt) -> String
 
   # Generate a SQL JSON_TABLE definition.
   #
@@ -163,6 +164,38 @@ module SqlMethods
   # @return [String]                  Blank if no valid field assertions.
   #
   def sql_where_clause: (?field_map: Hash[Symbol,symArray]|nil, ?param_map: symHash|nil, **untyped matches) -> String
+
+  # Generate the SQL fragment which is the test of a name against a value.
+  #
+  # @param [*]    name
+  # @param [*]    value
+  # @param [Hash] opt                 Passed to #sql_name_value
+  #
+  # @return [String]
+  #
+  def sql_test: (untyped name, untyped value, **untyped opt) -> String
+
+  # Generate the SQL fragment elements for testing a name against a value.
+  #
+  # @param [*]    name
+  # @param [*]    value
+  # @param [Hash] opt                 Passed to #sql_match_term
+  #
+  # @return [Array<(String,String,String)>]
+  #
+  def sql_name_value: (untyped name, untyped value, **untyped opt) -> [String,String,String]
+
+  # Generate the SQL operator and value from a term.
+  #
+  # @param [*]       term
+  # @param [Boolean] exact
+  # @param [Boolean] match_case
+  #
+  # @return [Array<(String,String)>]
+  #
+  # @see #sql_test
+  #
+  def sql_match_term: (untyped term, ?exact: bool, ?match_case: bool, **untyped _ignored) -> [String,String]
 
   # Mapping of digits to visibly similar letters.
   #
@@ -193,11 +226,14 @@ module SqlMethods
 
   # Return the value, quoted if necessary.
   #
-  # @param [Integer, Float, String, Symbol, nil]
+  # @param [String, Symbol, Float, Integer, nil] value
   #
-  # @return [Integer, Float, String, nil]
+  # @return [String, Float, Integer, nil]
   #
-  def sql_quote: ((Integer|Float|String|Symbol|nil) value) -> (Integer | Float | String | nil)
+  def sql_quote
+    :     (String value) -> (String | Float | Integer | nil)
+    |     (Symbol value) -> (String | nil)
+    | [T] (T      value) -> T
 
   module InstanceMethods
     include SqlMethods
