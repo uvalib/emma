@@ -187,10 +187,10 @@ module HtmlHelper
   # @param [Hash]     opt
   #
   def accessible_name?(*args, **opt)
-    opt    = args.pop if args.last.is_a?(Hash) && opt.blank?
-    name   = args.first.presence
-    name ||= opt.slice(:title, *ARIA_LABEL_ATTRS).values.compact_blank.first
+    opt  = args.pop if args.last.is_a?(Hash) && opt.blank?
+    name = args.first
     return true if name.present? && (name.html_safe? || !only_symbols?(name))
+    return true if opt.slice(:title, *ARIA_LABEL_ATTRS).compact_blank!.present?
     Log.debug { "#{__method__}: none for #{args.inspect} #{opt.inspect}" }
     false
   end

@@ -7,6 +7,7 @@ import { arrayWrap, maxSize }             from '../shared/arrays';
 import { Emma }                           from '../shared/assets';
 import { HIDDEN, isHidden, toggleHidden } from '../shared/css';
 import { debounce, handleEvent, isEvent } from '../shared/events';
+import { turnOffAutocomplete }            from '../shared/form';
 import { compact, deepFreeze, toObject }  from '../shared/objects';
 import { randomizeName }                  from '../shared/random';
 import { urlParameters }                  from '../shared/url';
@@ -360,6 +361,7 @@ appSetup(MODULE, function() {
 
         updateSearchReady();
         monitorSearchFields();
+        turnOffAutocomplete($search_input);
     }
 
     /**
