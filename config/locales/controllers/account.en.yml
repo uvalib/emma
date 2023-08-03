@@ -12,7 +12,7 @@ en:
         brief:          'user'
         long:           'user account'
       label:            'Users'
-      title:            'User Accounts'
+      title:            'EMMA User Accounts'
       tooltip:          'Show the EMMA user account database table'
 
       subsystem:
@@ -48,7 +48,7 @@ en:
           - [sort, size, ~, ~]
 
       page_controls:
-        label:          'EMMA Account Actions:'
+        label:          'Account Actions:'
         actions:
           - index
           - new
@@ -78,14 +78,14 @@ en:
 
         back:
           action:       index
-          label:        'View all user accounts'
+          label:        'View all EMMA user accounts'
 
       # =======================================================================
       # Messages
       # =======================================================================
 
       messages:
-        success:        'XXX EMMA user account was successfully %{actioned}.'
+        success:        'EMMA user account was successfully %{actioned}.'
         failure:        'Could not %{action} EMMA user account.'
 
       # =======================================================================
@@ -122,10 +122,9 @@ en:
       index:
         label:          'List All'
         title:          'EMMA User Accounts'
-        tooltip:        'List EMMA accounts maintained in the user database'
-        role:           'administrator' # TODO: institutional groups
+        tooltip:        'List records from the EMMA user account database table'
         description:    |
-          This is a listing of the EMMA user account database.
+          This is a listing of the EMMA user account database table.
 
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all
@@ -136,8 +135,8 @@ en:
 
       show:
         label:          'Account'
-        title:          'EMMA User Account %{name}'
-        tooltip:        'EMMA account details from the user database'
+        title:          'EMMA User Account: %{name}'
+        tooltip:        'Account details from the EMMA user account database table'
 
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all
@@ -233,13 +232,15 @@ en:
       delete:           &DELETE_ACTION
         label:          'Remove'
         title:          'Remove an EMMA User Account'
-        tooltip:        'Delete an EMMA account from the user database'
-        role:           'administrator' # TODO: institutional groups
-        description:    |
-          This removes the EMMA account database record for the given user.
-        notes_html:     |
-          Due to the nature of relational databases, this is not a recommended
-          action for <b>any</b> user who has submitted EMMA content.
+        tooltip:        'Remove an account from the set of active EMMA users'
+        description_html: |
+          <p>
+            Remove the selected account from the set of active EMMA users.
+          </p>
+          <p>
+            (Information about the user in conjunction with EMMA submissions
+            will be retained.)
+          </p>
 
         term:
           action:       'remove'

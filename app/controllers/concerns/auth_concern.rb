@@ -174,8 +174,8 @@ module AuthConcern
     raise 'No authentication information received' if src.blank? # TODO: I18n
     auth = OmniAuth::AuthHash.new(src)
     user = User.from_omniauth(auth)
-    raise 'Could not locate user account'          if user.blank? # TODO: I18n
-    raise 'Could not create user account'          unless user.persisted? # TODO: I18n
+    raise 'Could not locate EMMA user account'     if user.blank? # TODO: I18n
+    raise 'Could not create EMMA user account'     unless user.persisted? # TODO: I18n
     __debug_line { [__debug_route_label, 'user persisted'] }
     session['omniauth.auth'] = auth
     user

@@ -41,7 +41,7 @@ class AccountController < ApplicationController
 
   # === GET /account/show/:id
   #
-  # Display details of an existing user account.
+  # Display details of an existing EMMA user account.
   #
   # @see #show_account_path           Route helper
   # @see AccountConcern#get_account
@@ -50,7 +50,7 @@ class AccountController < ApplicationController
 
   # === GET /account/new
   #
-  # Display a form for creation of a new user account.
+  # Display a form for creation of a new EMMA user account.
   #
   # @see #new_account_path            Route helper
   # @see AccountConcern#new_account
@@ -61,7 +61,7 @@ class AccountController < ApplicationController
   # === PUT   /account/create
   # === PATCH /account/create
   #
-  # Create a new user account.
+  # Create a new EMMA user account.
   #
   # === Usage Notes
   # In order to allow the database to auto-generate the record ID, the :id
@@ -77,7 +77,7 @@ class AccountController < ApplicationController
   # === GET /account/edit/SELECT
   # === GET /account/edit_select
   #
-  # Display a form for modification of an existing user account.
+  # Display a form for modification of an existing EMMA user account.
   #
   # @see #edit_account_path           Route helper
   # @see #edit_select_account_path    Route helper
@@ -89,7 +89,7 @@ class AccountController < ApplicationController
   # === PUT   /account/update/:id
   # === PATCH /account/update/:id
   #
-  # Update an existing user account.
+  # Update an existing EMMA user account.
   #
   # @see #update_account_path         Route helper
   # @see AccountConcern#update_account
@@ -100,7 +100,7 @@ class AccountController < ApplicationController
   # === GET /account/delete/SELECT
   # === GET /account/delete_select
   #
-  # Select existing user account(s) to remove.
+  # Select existing EMMA user account(s) to remove.
   #
   # If :id is "SELECT" then a menu of deletable items is presented.
   #
@@ -113,7 +113,7 @@ class AccountController < ApplicationController
 
   # === DELETE /account/destroy/:id
   #
-  # Remove existing user account(s).
+  # Remove existing EMMA user account(s).
   #
   # @see #destroy_account_path        Route helper
   # @see AccountConcern#destroy_accounts

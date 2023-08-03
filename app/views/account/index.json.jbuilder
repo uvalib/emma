@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Local EMMA user accounts as JSON.
+# EMMA user accounts as JSON.
 
 list ||= paginator.page_items
 

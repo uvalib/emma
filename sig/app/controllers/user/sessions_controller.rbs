@@ -51,7 +51,7 @@ class User::SessionsController < Devise::SessionsController
 
   # === GET /users/sign_in_local
   #
-  # Sign in with a local EMMA username/password.
+  # Sign in with an EMMA user account encrypted password.
   #
   # @see #sign_in_local_path          Route helper
   #

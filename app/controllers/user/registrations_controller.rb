@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Individual EMMA account maintenance.
+# Individual EMMA user account maintenance.
 #
 # @see file:app/views/user/registrations/**
 #

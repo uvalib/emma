@@ -17,7 +17,7 @@ en:
       search_call:    'You are not authorized to %{action} EMMA statistics.'
       # search:       'You are not authorized to %{action} EMMA searches.'
       upload:         'You are not authorized to %{action} EMMA submissions.'
-      user:           'You are not authorized to %{action} EMMA local accounts.'
+      user:           'You are not authorized to %{action} EMMA user accounts.'
       manifest:       'You are not authorized to %{action} manifests.'
       manifest_item:  'You are not authorized to %{action} manifest items.'
 
@@ -25,7 +25,7 @@ en:
       <<: *TEMPLATE
       search_call:    'You are not authorized to list EMMA statistics.'
       upload:         'You are not authorized to list EMMA submissions.'
-      user:           'You are not authorized to list EMMA local accounts.'
+      user:           'You are not authorized to list EMMA user accounts.'
       manifest:       'You are not authorized to list manifests.'
       manifest_item:  'You are not authorized to list manifest items.'
 
@@ -33,7 +33,7 @@ en:
       <<: *TEMPLATE
       search_call:    'You are not authorized to view EMMA statistics.'
       upload:         'You are not authorized to view EMMA submissions.'
-      user:           'You are not authorized to view EMMA local accounts.'
+      user:           'You are not authorized to view EMMA user accounts.'
       manifest:       'You are not authorized to view manifests.'
       manifest_item:  'You are not authorized to view manifest items.'
 
@@ -41,7 +41,7 @@ en:
       <<: *TEMPLATE
       search_call:    'You are not authorized to create EMMA statistics.'
       upload:         'You are not authorized to create EMMA submissions.'
-      user:           'You are not authorized to create EMMA local accounts.'
+      user:           'You are not authorized to create EMMA user accounts.'
       manifest:       'You are not authorized to create manifests.'
       manifest_item:  'You are not authorized to create manifest items.'
 
@@ -49,7 +49,7 @@ en:
       <<: *TEMPLATE
       search_call:    'You are not authorized to modify EMMA statistics.'
       upload:         'You are not authorized to modify EMMA submissions.'
-      user:           'You are not authorized to modify EMMA local accounts.'
+      user:           'You are not authorized to modify EMMA user accounts.'
       manifest:       'You are not authorized to modify manifests.'
       manifest_item:  'You are not authorized to modify manifest items.'
 
@@ -57,7 +57,7 @@ en:
       <<: *TEMPLATE
       search_call:    'You are not authorized to remove EMMA statistics.'
       upload:         'You are not authorized to remove EMMA submissions.'
-      user:           'You are not authorized to remove EMMA local accounts.'
+      user:           'You are not authorized to remove EMMA user accounts.'
       manifest:       'You are not authorized to remove manifests.'
       manifest_item:  'You are not authorized to remove manifest items.'
 

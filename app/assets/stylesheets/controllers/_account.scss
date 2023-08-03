@@ -9,7 +9,7 @@
 // Account index page
 //=============================================================================
 
-// Local EMMA user account metadata label/value pairs for index listings.
+// EMMA user account metadata label/value pairs for index listings.
 // @see AccountDecorator#list_item
 .account-list-item {
 
@@ -60,7 +60,7 @@
     @extend .model-list;
 }
 
-// Grid table of local EMMA user accounts.
+// Grid table of user accounts.
 // @see AccountDecorator#table
 .model-table.account {
 

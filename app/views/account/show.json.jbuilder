@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Show details of a local EMMA user account as JSON.
+# Show details of an EMMA user account as JSON.
 
 item ||= @item
 

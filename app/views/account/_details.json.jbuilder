@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Details of a local EMMA user account as JSON.
+# Details of an EMMA user account as JSON.
 
 user    ||= @item
 columns ||= user&.attribute_names&.reject { |col| col.include?('password') }

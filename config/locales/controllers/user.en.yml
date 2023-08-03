@@ -14,7 +14,7 @@ en:
       # %{provider}     Name of an authentication provider.
 
       label:            'Users'
-      title:            'User Accounts'
+      title:            'EMMA User Accounts'
       tooltip:          'Signed in as "%{user}"'
       password:
         length:         '%{min} character minimum'
@@ -27,7 +27,7 @@ en:
         database:       true
 
       page_controls:
-        label:          'EMMA Account Actions:'
+        label:          'Account Actions:'
         actions:
           - index
           - new
@@ -64,14 +64,14 @@ en:
 
       new:              &USER_NEW
         label:          'New'
-        tooltip:        'Request a new local EMMA account'
-        title:          'Create a Local EMMA User Account'
+        tooltip:        'Request a new EMMA user account'
+        title:          'Create an EMMA User Account'
 
         submit:
           <<:           *GENERIC_SUBMIT
           label:        'Request'
           enabled:
-            tooltip:    'Request a new local EMMA user account'
+            tooltip:    'Request a new EMMA user account'
           disabled:
             tooltip:    'Required information is still needed'
 
@@ -85,16 +85,16 @@ en:
       # =======================================================================
 
       create:           &USER_CREATE
-        title:          'Local EMMA account created'
-        success:        'Local EMMA account %{user} created.'
+        title:          'EMMA user account created'
+        success:        'EMMA user account %{user} created.'
         _endpoint:      true
 
       # =======================================================================
 
       edit:             &USER_EDIT
         label:          'Modify'
-        tooltip:        'Make changes to your local EMMA account'
-        title:          'Modify your local EMMA account'
+        tooltip:        'Make changes to your EMMA user account'
+        title:          'Modify your EMMA user account'
         awaiting:       'Currently awaiting confirmation for: %{email}'
         password:       'Leave blank to keep current password'
         current:        'We need your current password to confirm your changes'
@@ -103,7 +103,7 @@ en:
           <<:           *GENERIC_SUBMIT
           label:        'Update'
           enabled:
-            tooltip:    'Modify this local EMMA user account'
+            tooltip:    'Modify this EMMA user account'
           disabled:
             tooltip:    'No valid changes have been made yet'
 
@@ -117,8 +117,8 @@ en:
       # =======================================================================
 
       update:           &USER_UPDATE
-        title:          'Local EMMA account updated'
-        success:        'Local EMMA account %{user} updated.'
+        title:          'EMMA user account updated'
+        success:        'EMMA user account %{user} updated.'
         _endpoint:      true
 
       # =======================================================================
@@ -141,7 +141,7 @@ en:
           _endpoint:    true
 
         update:
-          title:        'Local EMMA account updated'
+          title:        'EMMA user account updated'
           success:      'Updated'
           failure:      'An unexpected error occurred.'
           _endpoint:    true
@@ -155,7 +155,7 @@ en:
 
         sign_in:
           label:        'EMMA local sign-in'
-          title:        'Sign in with a local EMMA account'
+          title:        'Sign in with an EMMA user account local password'
           submit:       'Sign in'
           cancel:       'Cancel'
           username:     'Account'
@@ -212,7 +212,7 @@ en:
         destroy:
           label:        'Cancel my account'
           link:         'Unhappy? %{button}'
-          success:      'Local EMMA account %{user} deleted.'
+          success:      'EMMA user account %{user} deleted.'
           _endpoint:    true
 
       # =======================================================================
