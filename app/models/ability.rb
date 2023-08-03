@@ -179,7 +179,7 @@ class Ability
   #
   # @return [void]
   #
-  # @see RoleHelper#developer?
+  # @see IdentityHelper#developer?
   #
   # === Usage Notes
   # This is functionally equivalent to :administrator in terms of the Ability
@@ -514,6 +514,180 @@ class Ability
     can :cancel,        model
 
   end
+
+  # ===========================================================================
+  # :section: CanCan::Ability overrides
+  # ===========================================================================
+
+  public
+
+  # Check if the user has permission to perform a given action on an object.
+  #
+  # Always *false* if *action* is *nil*.
+  #
+  # @param [Symbol, String, nil] action
+  # @param [Object, Class, *]    subject
+  # @param [*]                   extra_args
+  #
+  def can?(action, subject, *extra_args)
+    action.blank? ? false : super(action.to_sym, subject, *extra_args)
+  end
+
+  # Returns the opposite of the #can? method.
+  #
+  # Always *true* if *action* is *nil*.
+  #
+  # @param [Symbol, String, nil] action
+  # @param [Object, Class, *]    subject
+  # @param [*]                   extra_args
+  #
+  def cannot?(action, subject, *extra_args)
+    action.blank? || super(action.to_sym, subject, *extra_args)
+  end
+
+  # Add a rule allowing an action.
+  #
+  # @param [Symbol,String,Array,nil] action
+  # @param [*]                       subject
+  # @param [Array]                   conditions
+  #
+  # @return [void]
+  #
+  def can(action = nil, subject = nil, *conditions, &block)
+    action, subject, conditions = prep_conditions(action, subject, conditions)
+    all_actions_add(action, subject)
+    super(action, subject, *conditions, &block)
+  end
+
+  # Add a rule forbidding an action.
+  #
+  # @param [Symbol,String,Array,nil] action
+  # @param [*]                       subject
+  # @param [Array]                   conditions
+  #
+  # @return [void]
+  #
+  def cannot(action = nil, subject = nil, *conditions, &block)
+    action, subject, conditions = prep_conditions(action, subject, conditions)
+    all_actions_remove(action, subject)
+    super(action, subject, *conditions, &block)
+  end
+
+  # ===========================================================================
+  # :section: CanCan::Ability extensions
+  # ===========================================================================
+
+  public
+
+  # The constraints that apply to the Ability instance for the given
+  # action/subject or *nil*.
+  #
+  # If *nil* is returned, `can?(action,subject)` applies to any applicable
+  # record; otherwise, although #can? may return true, the current user is only
+  # able to operate on records that match the constraint criteria.
+  #
+  # @param [Symbol, String, nil] action
+  # @param [*]                   subject
+  #
+  # @return [ActiveRecord::Relation, Hash, Proc, nil]
+  #
+  def constrained_by(action, subject)
+    action = action.presence&.to_sym or return
+    rule =
+      extract_subjects(subject).lazy.map { |a_subject|
+        relevant_rules_for_match(action, a_subject).detect do |rule|
+          rule.matches_conditions?(action, a_subject)
+        end
+      }.reject(&:nil?).first
+    rule.conditions.presence || rule.block if rule
+  end
+
+  # ===========================================================================
+  # :section: CanCan::Ability extensions
+  # ===========================================================================
+
+  private
+
+  # Normalize values for use with #can? and #cannot?.
+  #
+  # @param [Symbol,String,Array,nil] action
+  # @param [*]                       subject
+  # @param [Array]                   conditions
+  #
+  # @return [Array<(*,*,*)>]
+  #
+  def prep_conditions(action, subject, conditions)
+    action = action.compact.map!(&:to_sym) if action.is_a?(Array)
+    action = action.to_sym                 if action.is_a?(String)
+    conditions.compact_blank!
+    conditions.map! { |arg| ApplicationRecord.normalize_id_keys(arg, subject) }
+    return action, subject, conditions
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  delegate :all_actions,      :all_actions_keys,  to: :class
+  delegate :all_actions_sort, :all_actions_for,   to: :class
+
+  def all_actions_inspect
+    all_actions_sort.transform_values { |list|
+      list.map { |v| v.is_a?(Class) && v.try(:model_type) || v.inspect }.sort
+    }.to_h.pretty_inspect
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  protected
+
+  def self.all_actions
+    # noinspection RbsMissingTypeSignature
+    @all_actions ||= {}
+  end
+
+  def self.all_actions_sort
+    # noinspection RbsMissingTypeSignature
+    if defined?(@all_actions_sort)
+      @all_actions_sort
+    else
+      @all_actions_sort = @all_actions = all_actions.sort.to_h
+    end
+  end
+
+  def self.all_actions_keys
+    # noinspection RbsMissingTypeSignature
+    @all_actions_keys ||= all_actions_sort.keys
+  end
+
+  # @param [ApplicationRecord,Class] model
+  def self.all_actions_for(model)
+    keys  = all_actions_keys
+    ctrlr = model.try(:model_controller)
+    ctrlr ? keys.intersection(ctrlr.public_instance_methods(false)) : keys
+  end
+
+  def self.all_actions_add(action, subject)
+    return unless subject
+    Array.wrap(action).each do |act|
+      all_actions[act] = [*all_actions[act], *subject].uniq
+    end
+  end
+
+  def self.all_actions_remove(action, subject)
+    return unless subject
+    Array.wrap(action).each do |act|
+      (list = all_actions[act]) && list.delete(subject) or next
+      all_actions[act] = list.presence
+    end
+    all_actions.compact!
+  end
+
+  delegate :all_actions_add, :all_actions_remove, to: :class
 
   # ===========================================================================
   # :section: Class methods

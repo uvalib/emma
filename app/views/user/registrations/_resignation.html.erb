@@ -7,7 +7,7 @@
   view_debug(__FILE__)
 
   show_resign ||= false
-  show_resign &&= !current_user&.administrator?
+  show_resign &&= current_user && !administrator?
 
   return unless show_resign
 

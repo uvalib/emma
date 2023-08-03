@@ -111,6 +111,8 @@ module BaseDecorator::Helpers
 
   include HtmlHelper
 
+  include IdentityHelper
+
   include ImageHelper
 
   include LinkHelper
@@ -120,8 +122,6 @@ module BaseDecorator::Helpers
   include PopupHelper
 
   include RepositoryHelper
-
-  include RoleHelper
 
   include ScrollHelper
 

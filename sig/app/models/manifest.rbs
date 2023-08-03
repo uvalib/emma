@@ -26,6 +26,16 @@ class Manifest < ApplicationRecord
   # :nocov:
   #extend Record::Describable::ClassMethods
 
+  def user_id: () -> (Integer | nil)
+
+  # A textual label for the record instance.
+  #
+  # @param [Manifest, nil] item       Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label: (?(Manifest|nil) item) -> (String | nil)
+
   # Create a new instance.
   #
   # @param [Manifest, Hash, nil] attr   Passed to #assign_attributes via super.

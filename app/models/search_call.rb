@@ -39,6 +39,8 @@ class SearchCall < ApplicationRecord
 
   belongs_to :user, optional: true
 
+  scope :for_user, ->(user) { where(user: user) }
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -274,6 +276,8 @@ class SearchCall < ApplicationRecord
   # ===========================================================================
 
   public
+
+  def user_id = user&.id
 
   # Create a new instance.
   #

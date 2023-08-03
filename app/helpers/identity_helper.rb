@@ -1,4 +1,4 @@
-# app/helpers/role_helper.rb
+# app/helpers/identity_helper.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Support methods for working with authorization roles.
 #
-module RoleHelper
+module IdentityHelper
 
   include Emma::Common
 
@@ -23,13 +23,19 @@ module RoleHelper
   # Currently the :developer role applies regardless of the model.
   #
   def developer?
-    current_user.present? && current_user.developer?
+    current_user&.developer? || false
   end
 
   # Indicate whether the current user has the :administrator role.
   #
   def administrator?
-    current_user.present? && current_user.administrator?
+    current_user&.administrator? || false
+  end
+
+  # Indicate whether the current user has the :manager role.
+  #
+  def manager?
+    current_user&.manager? || false
   end
 
   # Indicate whether the (current) user has the given role or role prototype.
@@ -43,7 +49,6 @@ module RoleHelper
     return true if role.blank?
     user = current_user if user.nil? && defined?(current_user)
     raise "#{__method__}: invalid use" unless user.is_a?(User)
-    # noinspection RubyMismatchedArgumentType
     user.has_role?(role)
   end
 

@@ -200,12 +200,12 @@ module BaseDecorator::Helpers
   include ConfigurationHelper
   include FormHelper
   include HtmlHelper
+  include IdentityHelper
   include ImageHelper
   include LinkHelper
   include PanelHelper
   include PopupHelper
   include RepositoryHelper
-  include RoleHelper
   include ScrollHelper
   include SearchModesHelper
   include SessionDebugHelper

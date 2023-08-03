@@ -2,4 +2,77 @@
 #
 class ApplicationRecord < ActiveRecord::Base
   include SqlMethods
+
+  # The explicit :user_id field if a model defines it, or the method defined by
+  # the model to derive the ID of the User associated with the model instance.
+  #
+  # @return [Integer, nil]
+  #
+  def user_id: () -> (Integer | nil)
+
+  # A textual label for the record instance.
+  #
+  # @param [ApplicationRecord, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  # @see Api::Shared::TitleMethods#label
+  #
+  def label: (?(ApplicationRecord|nil) item) -> (String | nil)
+
+  # menu_label
+  #
+  # @param [ApplicationRecord, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  # @see BaseDecorator::Menu#items_menu_label
+  #
+  def menu_label: (?(ApplicationRecord|nil) item) -> (String | nil)
+
+  # Symbolic types for all record classes.
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.model_types: () -> symArray
+
+  # A representation of the model subclass for use in URL parameters.
+  #
+  # @return [Symbol]
+  #
+  def self.model_type: () -> Symbol
+
+  def model_type: () -> Symbol
+
+  # A URL parameter key denoting a model instance or its values.
+  #
+  # @type [Symbol]
+  #
+  def self.model_key: () -> Symbol
+
+  def model_key: () -> Symbol
+
+  # A URL parameter key denoting the identity of a model instance.
+  #
+  # @type [Symbol]
+  #
+  def self.model_id_key: () -> Symbol
+
+  def model_id_key: () -> Symbol
+
+  # The controller for the model/model instance.
+  #
+  # @type [Class]
+  #
+  def self.model_controller: () -> Class
+
+  def model_controller: () -> Class
+
+  def self.normalize_id_keys: [T] (T arg, ?untyped target) -> T
+
+  def normalize_id_keys: [T] (T arg, ?untyped target) -> T
+
+  def self.normalize_id_keys!: (symHash arg, ?untyped target) -> symHash
+
+  def normalize_id_keys!: (symHash arg, ?untyped target) -> symHash
 end

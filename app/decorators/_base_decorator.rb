@@ -178,14 +178,15 @@ class BaseDecorator < Draper::Decorator
     # Indicate whether the current user has the capability of performing the
     # given operation.
     #
-    # @param [Symbol]   action
-    # @param [Any, nil] target        Default: `#object_class`.
+    # @param [Symbol, String, nil] action
+    # @param [*]                   subject      Default: `#object_class`.
+    # @param [*]                   extra_args
     #
-    # @see CanCan::ControllerAdditions#can?
+    # @see Ability#can?
     #
-    def can?(action, target = nil)
-      target ||= ar_class || object_class
-      h.can?(action, target)
+    def can?(action, subject = nil, *extra_args)
+      subject ||= ar_class || object_class
+      h.can?(action, subject, *extra_args)
     end
 
     # config_button_values

@@ -342,7 +342,8 @@ class AccountDecorator
   # @return [Hash]
   #
   def table_values(**opt)
-    { actions: [show_control, edit_control, delete_control], **super }
+    controls = control_group { [show_control, edit_control, delete_control] }
+    { actions: controls, **super }
   end
 
   # ===========================================================================
@@ -367,14 +368,12 @@ class AccountDecorator
   #
   def model_field_values(item = nil, **opt)
     opt[:filter] ||= FIELD_FILTERS unless developer?
-    table = object_class
     pairs = super(item, **opt)
     model_show_fields.map { |field, config|
       next if config[:ignored]
       next unless user_has_role?(config[:role])
       k = config[:label] || field
       v = pairs[field]
-      v = table.find_record(v)&.uid || pairs[:email] if field == :effective_id
       v = EMPTY_VALUE if v.nil?
       [k, v]
     }.compact.to_h.merge!('Role Prototype' => role_prototype)
@@ -386,13 +385,8 @@ class AccountDecorator
 
   public
 
-  # Render pre-populated form fields, manually adding password field(s) (which  # unless BS_AUTH
+  # Render pre-populated form fields, manually adding password field(s) (which
   # are not in "emma.account.record").
-  #
-  # Render pre-populated form fields, manually adding password field(s) (which  # if BS_AUTH
-  # are not in "emma.account.record") and overriding the :effective_id field
-  # (which is) for the administrator to set/modify the effective Bookshare
-  # account associated with the EMMA account.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #render_form_fields.
@@ -401,18 +395,13 @@ class AccountDecorator
   #
   def form_fields(pairs: nil, **opt)
     edit  = (context[:action] == :edit)
-    admin = current_user&.administrator?
-
-    get_password         = !edit ||  admin
-    get_effective_id     =  edit &&  admin && BS_AUTH
-    get_current_password =  edit && !admin
+    admin = administrator?
 
     fields = []
-    fields << :password << :password_confirmation if get_password
-    fields << :current_password                   if get_current_password
+    fields << :password << :password_confirmation if !edit ||  admin
+    fields << :current_password                   if  edit && !admin
 
     added = fields.map { |k| [k.to_s.titleize, k] }.to_h
-    added[:effective_id] = bookshare_user_menu    if get_effective_id
 
     opt[:pairs] = pairs&.merge(added) || added
     super(**opt)
@@ -476,24 +465,6 @@ class AccountDecorator
 
   protected
 
-  # Generate data for :effective_id rendered as a menu instead of a fixed       # if BS_AUTH
-  # value.
-  #
-  # @param [Integer, nil] selected    Default: `object.effective_id`
-  # @param [String, nil]  default
-  #
-  # @return [Hash]
-  #
-  def bookshare_user_menu(selected: nil, default: 'Not applicable')
-    label    = 'Equivalent Bookshare user' # TODO: I18n
-    value    = selected || object&.effective_id
-    choices  = []
-    choices << [default, ''] if default # TODO: I18n
-    choices += User.test_user_menu
-    { label: label, value: value, range: choices.map! { |k, v| [v, k] } }
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
-
   # min_length_note
   #
   # @param [String, nil] note
@@ -518,6 +489,127 @@ class AccountDecorator
   def current_password_note(note = nil, **opt)
     note ||= I18n.t('emma.user.registrations.edit.current')
     form_input_note(note, **opt) if note
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  ABILITY_ACTIONS =
+    %i[index list show view new create edit update delete destroy].freeze
+
+  ABILITY_COLUMNS = {
+    model:  'Model',        # TODO: I18n
+    action: 'Action',       # TODO: I18n
+    status: 'Can perform?', # TODO: I18n
+  }.freeze
+
+  # A table of abilities.
+  #
+  # @param [User, Ability, nil] target      Default: #current_ability.
+  # @param [Hash]               columns:    Default: #ABILITY_COLUMNS.
+  # @param [Hash]               table_opt   To outer `<table>` element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ability_table(target = nil, columns: ABILITY_COLUMNS, **table_opt)
+    row_count = 0
+
+    heading_rows =
+      html_tag(:thead, role: 'rowgroup') do
+        html_tag(:tr, role: 'row') do
+          row_count += 1
+          columns.map do |css_class, label|
+            html_tag(:th, label, role: 'columnheader', class: css_class)
+          end
+        end
+      end
+
+    data_rows =
+      html_tag(:tbody, role: 'rowgroup') do
+        divider = ability_table_divider
+        ability_table_rows(target).flat_map do |_, rows|
+          row_count += rows.size
+          rows.values << divider
+        end
+      end
+
+    table_opt[:role] ||= 'table'
+    table_opt[:'aria-colcount'] = columns.size
+    table_opt[:'aria-rowcount'] = row_count
+    html_tag(:table, table_opt) do
+      heading_rows << data_rows
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # A table of models where each value is a sub-table of rows for each action.
+  #
+  # @param [User, Ability, nil] target    Default: #current_ability.
+  # @param [Array<Class>, nil]  models    Default: Ability#models.
+  # @param [Array<Symbol>, nil] actions   Default: #ABILITY_ACTIONS
+  #
+  # @return [Hash{Class=>Hash{Symbol=>ActiveSupport::SafeBuffer}}]
+  #
+  def ability_table_rows(target = nil, models: nil, actions: nil)
+    actions ||= ABILITY_ACTIONS
+    models  ||= Ability.models
+    target  ||= object || current_ability
+    target    = target.ability if target.is_a?(User)
+
+    r = 0
+    models.map { |model|
+      [*actions, *target.all_actions_for(model)].uniq.map { |action|
+        status = target.can?(action, model)
+        can    = status ? 'can' : 'cannot'
+        if status.nil?
+          can    = 'error'
+          status = Emma::Unicode::EN_DASH
+        elsif status && (cond = target.constrained_by(action, model))
+          if cond.is_a?(Hash)
+            cond = pretty_json(cond).sub(/\A{\s*(.+)\s*}\z/, '\1')
+          else
+            cond = cond.inspect
+          end
+          status = "true for #{cond}"
+        end
+        row_css = css_classes(can, action, model)
+        row_opt = { role: 'row', class: row_css, 'aria-rowindex': (r += 1) }
+        html_tag(:tr, row_opt) {
+          columns = { model: model, action: action, status: status }
+          columns.map.with_index(1) { |(cls, val), idx|
+            id  = unique_id(action, model)
+            opt = append_css(cls, can).merge!(role: 'cell')
+            opt.merge!('aria-labelledby': id, 'aria-colindex': idx)
+            html_tag(:td, opt) { html_span(val.to_s, id: id) }
+          }
+        }.then { |row| [action, row] }
+      }.to_h.then { |rows| [model, rows] }
+    }.to_h
+  end
+
+  # A table row to visually separate groups of rows.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ability_table_divider(css: '.blank-row', **opt)
+    opt.reverse_merge!(role: 'presentation', 'aria-hidden': true)
+    prepend_css!(opt, css)
+    html_tag(:tr, opt) do
+      ABILITY_COLUMNS.keys.map.with_index(1) do |cls, idx|
+        html_tag(:td, role: 'cell', class: cls, 'aria-colindex': idx)
+      end
+    end
   end
 
 end

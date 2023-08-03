@@ -12,8 +12,8 @@ module LayoutHelper::DevControls
   include LayoutHelper::Common
 
   include ConfigurationHelper
+  include IdentityHelper
   include ParamsHelper
-  include RoleHelper
   include SessionDebugHelper
 
   # ===========================================================================

@@ -30,6 +30,12 @@ class Upload < ApplicationRecord
   self.implicit_order_column = :created_at
 
   # ===========================================================================
+  # :section: ActiveRecord associations
+  # ===========================================================================
+
+  belongs_to :user, optional: true
+
+  # ===========================================================================
   # :section: ActiveRecord validations
   # ===========================================================================
 
@@ -85,6 +91,8 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   public
+
+  def user_id = user&.id
 
   # Create a new instance.
   #

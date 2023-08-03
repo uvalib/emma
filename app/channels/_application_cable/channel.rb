@@ -85,7 +85,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   def subscribed
     __debug_cable(__method__)
-    reject unless Ability.new(current_user).can?(:get_job_result, Manifest)
+    reject unless current_user&.can?(:get_job_result, Manifest)
     stream_from stream_name
   end
 

@@ -93,7 +93,7 @@ class Ability
   #
   # @return [void]
   #
-  # @see RoleHelper#developer?
+  # @see IdentityHelper#developer?
   #
   # === Usage Notes
   # This is functionally equivalent to :administrator in terms of the Ability
@@ -290,6 +290,104 @@ class Ability
   # @return [void]
   #
   def can_manage: (Class model, **untyped with_constraints) -> void
+
+  # Check if the user has permission to perform a given action on an object.
+  #
+  # Always *false* if *action* is *nil*.
+  #
+  # @param [Symbol, String, nil] action
+  # @param [Object, Class, *]    subject
+  # @param [*]                   extra_args
+  #
+  def can?
+    : (nil           action, Object|Class|untyped subject, *untyped extra_args) -> false
+    | (Symbol|String action, Object|Class|untyped subject, *untyped extra_args) -> bool
+
+  # Returns the opposite of the #can? method.
+  #
+  # Always *true* if *action* is *nil*.
+  #
+  # @param [Symbol, String, nil] action
+  # @param [Object, Class, *]    subject
+  # @param [*]                   extra_args
+  #
+  def cannot?
+    : (nil           action, Object|Class|untyped subject, *untyped extra_args) -> true
+    | (Symbol|String action, Object|Class|untyped subject, *untyped extra_args) -> bool
+
+  # Add a rule allowing an action.
+  #
+  # @param [Symbol,String,Array,nil] action
+  # @param [*]                       subject
+  # @param [Array]                   conditions
+  #
+  # @return [void]
+  #
+  def can: (?(Symbol|String|Array[Symbol|String]|nil) action, ?untyped subject, *untyped conditions) -> void
+
+  # Add a rule forbidding an action.
+  #
+  # @param [Symbol,String,Array,nil] action
+  # @param [*]                       subject
+  # @param [Array]                   conditions
+  #
+  # @return [void]
+  #
+  def cannot: (?(Symbol|String|Array[Symbol|String]|nil) action, ?untyped subject, *untyped conditions) -> void
+
+  # The constraints that apply to the Ability instance for the given
+  # action/subject or *nil*.
+  #
+  # If *nil* is returned, `can?(action,subject)` applies to any applicable
+  # record; otherwise, although #can? may return true, the current user is
+  # only able to operate on records that match the constraint criteria.
+  #
+  # @param [Symbol, String, nil] action
+  # @param [*]                   subject
+  #
+  # @return [ActiveRecord::Relation, Hash, Proc, nil]
+  #
+  def constrained_by: (Symbol|String|nil action, untyped subject) -> (ActiveRecord::Relation | symHash | Proc | nil)
+
+  private
+
+  # Normalize values for use with #can? and #cannot?.
+  #
+  # @param [Symbol,String,Array,nil] action
+  # @param [*]                       subject
+  # @param [Array]                   conditions
+  #
+  # @return [Array<(*,*,*)>]
+  #
+  def prep_conditions: (?(Symbol|String|Array[Symbol|String]|nil) action, ?untyped subject, anyArray conditions) -> void
+
+  public
+
+  def all_actions_inspect: () -> String
+
+  def self.all_actions: () -> Hash[Symbol,anyArray]
+
+  def all_actions: () -> Hash[Symbol,anyArray]
+
+  def self.all_actions_sort: () -> Hash[Symbol,anyArray]
+
+  def all_actions_sort: () -> Hash[Symbol,anyArray]
+
+  def self.all_actions_keys: () -> symArray
+
+  def all_actions_keys: () -> symArray
+
+  def self.all_actions_for: (ApplicationRecord|Class model) -> symArray
+
+  def all_actions_for: (ApplicationRecord|Class model) -> symArray
+
+  def self.all_actions_add: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
+
+  def all_actions_add: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
+
+  def self.all_actions_remove: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
+
+  def all_actions_remove: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
 
   # Models which are managed by CanCan
   #

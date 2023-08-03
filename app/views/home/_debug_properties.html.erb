@@ -6,7 +6,7 @@
   # NOTE: Not currently enabled by default.
 
   show_properties ||= false
-  show_properties &&= !current_user&.administrator?
+  show_properties &&= administrator?
 
   return unless show_properties
 

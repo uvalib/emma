@@ -269,6 +269,8 @@ end
 module CanCan
   module Ability
   end
+  module ControllerAdditions
+  end
   class Error < StandardError
   end
   class AccessDenied < Error
@@ -593,6 +595,12 @@ module Rake
   end
   class TaskArguments
   end
+end
+
+class Random
+  def self.rand
+    : () -> Float
+    | [T < Numeric] (T | ::Range[T]) -> T
 end
 
 class Range[out Elem]

@@ -27,6 +27,8 @@ class Upload < ApplicationRecord
   #
   FIELD_VALIDATION: bool
 
+  def user_id: () -> (Integer | nil)
+
   # Create a new instance.
   #
   # @param [Upload, Hash, nil] attr   Passed to #assign_attributes via super.

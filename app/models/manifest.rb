@@ -44,11 +44,25 @@ class Manifest < ApplicationRecord
 
   has_many :manifest_items, -> { in_row_order }, dependent: :destroy
 
+  scope :for_user, ->(user) { where(user: user) }
+
   # ===========================================================================
   # :section: ApplicationRecord overrides
   # ===========================================================================
 
   public
+
+  def user_id = user&.id
+
+  # A textual label for the record instance.
+  #
+  # @param [Manifest, nil] item       Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label(item = nil)
+    (item || self).name.presence
+  end
 
   # Create a new instance.
   #

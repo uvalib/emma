@@ -190,13 +190,8 @@ class AccountDecorator
   #
   def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
 
-  # Render pre-populated form fields, manually adding password field(s) (which  # unless BS_AUTH
+  # Render pre-populated form fields, manually adding password field(s) (which
   # are not in "emma.account.record").
-  #
-  # Render pre-populated form fields, manually adding password field(s) (which  # if BS_AUTH
-  # are not in "emma.account.record") and overriding the :effective_id field
-  # (which is) for the administrator to set/modify the effective Bookshare
-  # account associated with the EMMA account.
   #
   # @param [Hash, nil] pairs          Additional field mappings.
   # @param [Hash]      opt            Passed to #render_form_fields.
@@ -224,16 +219,6 @@ class AccountDecorator
   #
   def render_form_password: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Generate data for :effective_id rendered as a menu instead of a fixed       # if BS_AUTH
-  # value.
-  #
-  # @param [Integer, nil] selected    Default: `object.effective_id`
-  # @param [String, nil]  default
-  #
-  # @return [Hash]
-  #
-  def bookshare_user_menu: (?selected: Integer|nil, ?default: String|nil) -> symHash
-
   # min_length_note
   #
   # @param [String, nil] note
@@ -252,4 +237,38 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def current_password_note: (?(String|nil) note, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  ABILITY_ACTIONS: symArray
+
+  ABILITY_COLUMNS: Hash[Symbol, String]
+
+  # A table of abilities.
+  #
+  # @param [User, Ability, nil] target      Default: #current_ability.
+  # @param [Hash]               columns:    Default: #ABILITY_COLUMNS.
+  # @param [Hash]               table_opt   To outer `<table>` element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ability_table: (?(User|Ability|nil) user, ?symHash columns, **untyped table_opt) -> ActiveSupport::SafeBuffer
+
+  # A table of models where each value is a sub-table of rows for each action.
+  #
+  # @param [User, Ability, nil] target    Default: #current_ability.
+  # @param [Array<Class>, nil]  models    Default: Ability#models.
+  # @param [Array<Symbol>, nil] actions   Default: #ABILITY_ACTIONS
+  #
+  # @return [Hash{Class=>Hash{Symbol=>ActiveSupport::SafeBuffer}}]
+  #
+  def ability_table_rows: (?(User|Ability|nil) user, ?models: Array[Class]|nil, ?actions: symArray|nil) -> Hash[Class, Hash[Symbol, ActiveSupport::SafeBuffer]]
+
+  # A table row to visually separate groups of rows.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ability_table_divider: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
 end

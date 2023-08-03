@@ -48,6 +48,8 @@ class ManifestItem < ApplicationRecord
   # :nocov:
   #extend Record::Describable::ClassMethods
 
+  def user_id: () -> (Integer | nil)
+
   # Create a new instance.
   #
   # @param [ManifestItem,Manifest,Hash] attr    To #assign_attributes via super

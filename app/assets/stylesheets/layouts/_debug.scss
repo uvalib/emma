@@ -117,11 +117,11 @@
 
         tbody {
             .blank-row {
-
-                height: 0.5rem;
-
-                td                { border-bottom: 2px solid gray; }
-                &:last-of-type td { border-bottom: 2px solid transparent; }
+                height:     0.1875rem;
+                background: $uva-accent-orange;
+            }
+            .blank-row:last-of-type {
+                display:    none;
             }
         }
 
@@ -135,6 +135,11 @@
         .can {
             font-weight:      bold;
             background-color: $success-bg;
+        }
+
+        .error {
+            font-weight:      bold;
+            background-color: $failure-bg;
         }
     }
 }

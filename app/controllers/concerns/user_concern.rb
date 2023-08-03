@@ -42,7 +42,7 @@ module UserConcern
   end
 
   include FlashHelper
-  include RoleHelper
+  include IdentityHelper
 
   include AuthConcern
 

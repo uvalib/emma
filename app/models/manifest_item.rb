@@ -53,6 +53,8 @@ class ManifestItem < ApplicationRecord
 
   belongs_to :manifest
 
+  has_one :user, through: :manifest
+
   # ===========================================================================
   # :section: ActiveRecord scopes
   #
@@ -97,11 +99,16 @@ class ManifestItem < ApplicationRecord
 
   scope :in_row_order, -> { order(:row, :delta, :id) }
 
+  # noinspection SqlResolve
+  scope :for_user, ->(u) { joins(:manifest).where('manifests.user_id = ?', u) }
+
   # ===========================================================================
   # :section: ApplicationRecord overrides
   # ===========================================================================
 
   public
+
+  def user_id = user&.id
 
   # Create a new instance.
   #

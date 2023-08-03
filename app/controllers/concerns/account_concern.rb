@@ -136,7 +136,7 @@ module AccountConcern
     if terms.present?
       columns ||= ACCT_MATCH_COLUMNS
       relation = User.matching(*terms, columns: columns, join: :or) # TODO: Is :or really correct here?
-    elsif current_user.administrator?
+    elsif administrator?
       relation = User.all
 #   elsif current_user.group_admin? # TODO: institutional groups
 #     relation = User.where(group_id: current_user.group_id) # TODO: groups

@@ -276,7 +276,7 @@ Rails.application.routes.draw do
   if not_deployed?
     mount GoodJob::Engine => 'good_job'
   else
-    authenticate :user, ->(u) { Ability.new(u).can?(:manage, GoodJob) } do
+    authenticate :user, ->(user) { user&.can?(:manage, GoodJob) } do
       mount GoodJob::Engine => 'good_job'
     end
   end

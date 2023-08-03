@@ -8,6 +8,7 @@ module TestHelper::IntegrationTests::Role
   # @param [String, Symbol, User, nil] user
   # @param [Symbol, String]            action
   # @param [Class]                     subject
+  # @param [*]                         extra_args
   #
-  def can?: (String|Symbol|User|nil user, String|Symbol action, Class subject) -> bool
+  def can?: (String|Symbol|User|nil user, String|Symbol action, Class subject, *untyped extra_args) -> bool
 end

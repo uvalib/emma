@@ -1,0 +1,12 @@
+module CanCan
+  module ControllerAdditionsExt
+    # :nocov:
+    #include CanCan::ControllerAdditions
+
+    #include UserConcern
+
+    def current_ability: () -> ::Ability
+
+    @current_ability: ::Ability
+  end
+end

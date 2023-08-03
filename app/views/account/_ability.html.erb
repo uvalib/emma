@@ -4,51 +4,20 @@
 
   view_debug(__FILE__)
 
-  user      = current_user&.to_s&.presence || 'guest'
-  actions   = Ability::ACTIONS + %i[create update delete]
-  models    = Ability.models
+  user    ||= current_user
+  dec     ||= AccountDecorator.new(user, **context)
+  name      = dec.object.email.presence || 'anonymous'
   panel_css = 'ability-list'
   panel_id  = css_randomize(panel_css)
-  toggle    = toggle_button(id: panel_id)
 
 -%>
 
 <div class="ability-debug">
   <div class="toggle-panel-title">
-    <h2 class="ability-header">Authorization for user "<%= user -%>"</h2>
-    <%= toggle %>
+    <h2 class="ability-header">Authorization for user "<%= name -%>"</h2>
+    <%= toggle_button(id: panel_id) %>
   </div>
   <div id="<%= panel_id -%>" class="<%= panel_css -%>">
-    <table role="table">
-      <thead role="rowgroup">
-        <tr role="row">
-          <th role="columnheader" class="model">Model</th>
-          <th role="columnheader" class="action">Action</th>
-          <th role="columnheader" class="status">Can perform?</th>
-        </tr>
-      </thead>
-      <tbody role="rowgroup">
-        <%- models.each do |model| -%>
-          <%- actions.each do |action| -%>
-            <%- status = can?(action, model) -%>
-            <%- can    = status ? 'can' : 'cannot' -%>
-            <tr role="row" class="<%= can -%> <%= action %>-<%= model -%>">
-              <%- cols = { model: model, action: action, status: status } -%>
-              <%- cols.each do |cls, val| -%>
-                <%- id  = unique_id(action, model) -%>
-                <%- opt = append_css(cls, can).merge!(role: 'cell') -%>
-                <%- opt.merge!('aria-labelledby': id) -%>
-                <%= html_tag(:td, opt) { html_span(val.to_s, id: id) } %>
-              <%- end -%>
-            </tr>
-          <%- end -%>
-          <tr role="presentation" class="blank-row">
-            <td role="cell" class="model"></td>
-            <td role="cell" class="action"></td>
-            <td role="cell" class="status"></td>
-          </tr>
-        <%- end -%>
-      </tbody>
-    </table>
+    <%= dec.ability_table %>
   </div>
 </div>

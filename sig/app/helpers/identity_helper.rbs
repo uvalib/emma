@@ -1,6 +1,6 @@
 # Support methods for working with authorization roles.
 #
-module RoleHelper
+module IdentityHelper
   include Emma::Common
 
   # Indicate whether the current user has the :developer role.
@@ -14,6 +14,10 @@ module RoleHelper
   #
   def administrator?: () -> bool
 
+  # Indicate whether the current user has the :manager role.
+  #
+  def manager?: () -> bool
+
   # Indicate whether the (current) user has the given role or role prototype.
   #
   # If *role* is blank then the method always returns *true*.
@@ -21,7 +25,9 @@ module RoleHelper
   # @param [Symbol, String, nil] role
   # @param [User, nil]           user   Default: `current_user`.
   #
-  def user_has_role?: ((Symbol|String|nil) role, ?(User|nil) user) -> bool
+  def user_has_role?
+    : (nil           role, ?(User|nil) user) -> true
+    | (Symbol|String role, ?(User|nil) user) -> bool
 
   private
 

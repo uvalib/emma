@@ -42,7 +42,7 @@ class ManifestController < ApplicationController
   # :section: Authorization
   # ===========================================================================
 
-  authorize_resource
+  authorize_resource instance_name: :item
 
   # ===========================================================================
   # :section: Callbacks

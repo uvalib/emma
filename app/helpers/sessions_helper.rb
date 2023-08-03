@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module SessionsHelper
 
+  include IdentityHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -83,7 +85,7 @@ module SessionsHelper
     path     = '#' if path.is_a?(FalseClass)
     unless path.is_a?(String)
       no_revoke   = BS_AUTH
-      no_revoke &&= current_user&.administrator? || current_user&.test_user?
+      no_revoke &&= administrator? || current_user&.test_user?
       path_opt    = no_revoke ? { no_revoke: true } : {}
       path        = destroy_user_session_path(**path_opt)
     end

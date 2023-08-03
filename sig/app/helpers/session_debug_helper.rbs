@@ -5,9 +5,9 @@ module SessionDebugHelper
 
   include GridHelper
 
-  include ParamsHelper
+  include IdentityHelper
 
-  include RoleHelper
+  include ParamsHelper
 
   # Indicate whether on-screen debugging is applicable.
   #

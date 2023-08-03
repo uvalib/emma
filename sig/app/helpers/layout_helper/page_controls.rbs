@@ -6,11 +6,11 @@ module LayoutHelper::PageControls
 
   include ConfigurationHelper
 
+  include IdentityHelper
+
   include LinkHelper
 
   include ParamsHelper
-
-  include RoleHelper
 
   # :nocov:
   #include Emma::Common::ObjectMethods

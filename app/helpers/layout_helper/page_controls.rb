@@ -13,9 +13,9 @@ module LayoutHelper::PageControls
   include LayoutHelper::Common
 
   include ConfigurationHelper
+  include IdentityHelper
   include LinkHelper
   include ParamsHelper
-  include RoleHelper
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

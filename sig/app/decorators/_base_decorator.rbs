@@ -104,7 +104,7 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Table
 
     def list_css_class:  () -> String
-    def can?: (Symbol action, ?untyped target) -> bool
+    def can?: ((Symbol|String|nil) action, ?untyped target, *untyped extra_args) -> bool
     def config_button_values: ((String|Symbol) action) -> Hash[Symbol,Hash[Symbol,String|symHash]]
     def link_to_action: ((String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
   end

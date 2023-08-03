@@ -11,8 +11,8 @@ module SessionDebugHelper
 
   include DevHelper
   include GridHelper
+  include IdentityHelper
   include ParamsHelper
-  include RoleHelper
 
   # ===========================================================================
   # :section:
