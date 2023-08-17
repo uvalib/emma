@@ -69,6 +69,8 @@ end
 module ActionMailer
   class Base
   end
+  class Preview
+  end
 end
 
 # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs

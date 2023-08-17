@@ -76,7 +76,7 @@ module BaseDecorator::Configuration
 
   # Get the controller/action configuration for the model.
   #
-  # @param [Symbol] type              Def: controller associated with decorator
+  # @param [Symbol, nil] type         Def: controller associated with decorator
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -87,7 +87,7 @@ module BaseDecorator::Configuration
 
   # Get configured record fields relevant to an :index action for the model.
   #
-  # @param [Symbol] type              Def: controller associated with decorator
+  # @param [Symbol, nil] type         Def: controller associated with decorator
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -98,7 +98,7 @@ module BaseDecorator::Configuration
 
   # Get configured record fields relevant to an :show action for the model.
   #
-  # @param [Symbol] type              Def: controller associated with decorator
+  # @param [Symbol, nil] type         Def: controller associated with decorator
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -115,7 +115,7 @@ module BaseDecorator::Configuration
 
   # Get configured record fields for the model.
   #
-  # @param [Symbol] type              Def: model associated with decorator
+  # @param [Symbol, nil] type         Def: controller associated with decorator
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -126,7 +126,7 @@ module BaseDecorator::Configuration
 
   # Get all configured record fields for the model.
   #
-  # @param [Symbol] type              Def: model associated with decorator
+  # @param [Symbol, nil] type         Def: controller associated with decorator
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -137,7 +137,7 @@ module BaseDecorator::Configuration
 
   # Get all configured record fields for the model.
   #
-  # @param [Symbol] type              Def: model associated with decorator
+  # @param [Symbol, nil] type         Def: controller associated with decorator
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #

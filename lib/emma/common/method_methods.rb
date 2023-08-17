@@ -41,6 +41,7 @@ module Emma::Common::MethodMethods
       depth = call_stack if call_stack > depth
       call_stack = nil
     end
+    # noinspection RubyMismatchedArgumentType
     call_stack ||= caller(depth)
     call_stack&.find do |line|
       _file_line, name = line.to_s.split(/:in\s+/)

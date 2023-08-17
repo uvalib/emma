@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Common model methods.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module Model
 
   # ===========================================================================
@@ -490,7 +493,7 @@ module Model
 
   # Get configured record fields for the indicated model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -501,7 +504,7 @@ module Model
   # Get configured record fields relevant to an :index action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -512,7 +515,7 @@ module Model
   # Get configured record fields relevant to a :show action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -522,7 +525,7 @@ module Model
 
   # Get all configured record fields for the indicated model.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
@@ -532,7 +535,7 @@ module Model
 
   # Get all configured record fields for the indicated model.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #

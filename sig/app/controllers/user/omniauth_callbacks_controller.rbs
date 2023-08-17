@@ -1,4 +1,4 @@
-# OAuth2 negotiation.
+# Authentication provider negotiation.
 #
 # @see AUTH_PROVIDERS
 # @see https://github.com/plataformatec/devise#omniauth
@@ -42,13 +42,4 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
   #
   def failure: () -> void
-
-  # Display a flash error message.
-  #
-  # @param [String, nil] message
-  # @param [String, nil] provider
-  #
-  # @return [void]
-  #
-  def set_flash_alert: (?(String|nil) message, ?(String|nil) provider) -> void
 end

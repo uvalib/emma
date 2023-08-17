@@ -55,7 +55,81 @@ module TestHelper::Common
   #
   # @return [Symbol, nil]
   #
-  def controller_name: (untyped src) -> (Symbol | nil)
+  def controller_name
+    : (nil     src) -> nil
+    | (untyped src) -> Symbol
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [JobResult, Array<JobResult>]
+  def job_results
+    : ()                      -> Array[JobResult]
+    | (Symbol|String name)    -> JobResult
+    | (*(Symbol|String) name) -> Array[JobResult]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [ManifestItem, Array<ManifestItem>]
+  def manifest_items
+    : ()                      -> Array[ManifestItem]
+    | (Symbol|String name)    -> ManifestItem
+    | (*(Symbol|String) name) -> Array[ManifestItem]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [ManifestItem, Array<ManifestItem>]
+  def manifests
+    : ()                      -> Array[Manifest]
+    | (Symbol|String name)    -> Manifest
+    | (*(Symbol|String) name) -> Array[Manifest]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [Org, Array<Org>]
+  def orgs
+    : ()                      -> Array[Org]
+    | (Symbol|String name)    -> Org
+    | (*(Symbol|String) name) -> Array[Org]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [Role, Array<Role>]
+  def roles
+    : ()                      -> Array[Role]
+    | (Symbol|String name)    -> Role
+    | (*(Symbol|String) name) -> Array[Role]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [SearchCall, Array<SearchCall>]
+  def search_calls
+    : ()                      -> Array[SearchCall]
+    | (Symbol|String name)    -> SearchCall
+    | (*(Symbol|String) name) -> Array[SearchCall]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [SearchResult, Array<SearchResult>]
+  def search_results
+    : ()                      -> Array[SearchResult]
+    | (Symbol|String name)    -> SearchResult
+    | (*(Symbol|String) name) -> Array[SearchResult]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [Upload, Array<Upload>]
+  def uploads
+    : ()                      -> Array[Upload]
+    | (Symbol|String name)    -> Upload
+    | (*(Symbol|String) name) -> Array[Upload]
+
+  # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+  # @param [Array<Symbol|String>] name
+  # @return [User, Array<User>]
+  def users
+    : ()                      -> Array[User]
+    | (Symbol|String name)    -> User
+    | (*(Symbol|String) name) -> Array[User]
 
   private
 

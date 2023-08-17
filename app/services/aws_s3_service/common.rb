@@ -50,7 +50,7 @@ module AwsS3Service::Common
   # Clears and/or sets @exception as a side-effect.
   #
   #--
-  # noinspection RubyScope
+  # noinspection RubyScope, RubyMismatchedArgumentType
   #++
   def api(operation, *items, **opt)
     clear_error

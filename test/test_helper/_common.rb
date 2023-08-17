@@ -78,8 +78,8 @@ module TestHelper::Common
   # @return [*]
   #
   def property(model, *traversal, default: nil)
-    model = controller_name(model || self)
-    PROPERTY.dig(model, *traversal) || default
+    ctrlr = controller_name(model || self)
+    PROPERTY.dig(ctrlr, *traversal) || default
   end
 
   # The title (:h1 text value) for the given parameters.
@@ -151,6 +151,64 @@ module TestHelper::Common
       parts[-1] = parts[-1].singularize
     end
     parts.join('_').to_sym
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  # Non-functional hints for RubyMine type checking for the fixture accessor
+  # methods defined by ActiveRecord::TestFixtures#fixtures.
+
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [JobResult, Array<JobResult>]
+    def job_results(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [ManifestItem, Array<ManifestItem>]
+    def manifest_items(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [Manifest, Array<Manifest>]
+    def manifests(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [Org, Array<Org>]
+    def orgs(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [Role, Array<Role>]
+    def roles(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [SearchCall, Array<SearchCall>]
+    def search_calls(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [SearchResult, Array<SearchResult>]
+    def search_results(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [Upload, Array<Upload>]
+    def uploads(*name) end
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [User, Array<User>]
+    def users(*name) end
+
+    # :nocov:
   end
 
   # ===========================================================================

@@ -16,7 +16,7 @@ module BaseDecorator::Menu
   # @param [Hash{Symbol=>Hash}]  table
   # @param [String, Hash]        ujs         JavaScript selection action.
   # @param [String]              css         Characteristic CSS class/selector.
-  # @param [Hash]                opt         Passed to #html_form except for:
+  # @param [Hash]                opt         Passed to #html_form.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

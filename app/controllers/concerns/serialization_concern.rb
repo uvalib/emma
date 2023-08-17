@@ -127,6 +127,7 @@ module SerializationConcern
       result = item
     end
     name ||= :item unless result.is_a?(Hash)
+    # noinspection RubyMismatchedReturnType
     name ? { name.to_sym => result } : result
   end
 

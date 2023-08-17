@@ -149,7 +149,7 @@ module ApiService::Common
   # Clears and/or sets @exception as a side-effect.
   #
   #--
-  # noinspection RubyScope
+  # noinspection RubyScope, RubyMismatchedArgumentType
   #++
   def api(verb, *args, **opt)
     clear_error

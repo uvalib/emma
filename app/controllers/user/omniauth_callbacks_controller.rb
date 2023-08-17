@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# OAuth2 negotiation.
+# Authentication provider negotiation.
 #
 # @see AUTH_PROVIDERS
 # @see https://github.com/plataformatec/devise#omniauth
@@ -103,13 +103,6 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   end
     .tap { |meth| disallow(meth) unless SHIBBOLETH || BS_AUTH }
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
 
 end
 

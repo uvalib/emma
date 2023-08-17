@@ -1,6 +1,6 @@
-<%# app/views/account/_menu.html.erb -%>
+<%# app/views/layouts/_menu_page.html.erb -%>
 <%-
-  # Show a menu of EMMA user accounts driven by params[:action].
+  # Show a menu of decorator items driven by params[:action].
 
   dec   ||= nil or view_abort(__FILE__, ':dec not passed through locals hash')
   help  ||= nil # dec.help_topic

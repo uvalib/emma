@@ -134,7 +134,7 @@ module AuthConcern
   #
   def user_from_auth_data: (?(OmniAuth::AuthHash|nil) auth_data) -> (User | nil)
 
-  # user_from_session
+  # Find the User table entry matching current session authentication data.
   #
   # @return [User, nil]
   #

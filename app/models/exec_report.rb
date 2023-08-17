@@ -430,6 +430,7 @@ class ExecReport
       case src
         when ExecReport::Part
           result = { TOPIC_KEY => src.topic, DETAILS_KEY => src.details }
+          # noinspection RubyMismatchedArgumentType
           result = result.merge!(src.info).deep_dup
           result[HTML_KEY] = src.html_safe? unless result.key?(HTML_KEY)
 

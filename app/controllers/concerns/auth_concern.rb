@@ -247,7 +247,7 @@ module AuthConcern
     User.from_omniauth(auth)
   end
 
-  # user_from_session
+  # Find the User table entry matching current session authentication data.
   #
   # @return [User, nil]
   #

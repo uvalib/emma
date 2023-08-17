@@ -18,7 +18,7 @@ SHIBBOLETH: bool
 #
 BS_AUTH: bool
 
-# Omniauth providers for Devise.
+# OmniAuth providers for Devise.
 #
 # @type [Array<Symbol>]
 #
@@ -29,6 +29,10 @@ AUTH_PROVIDERS: symArray
 # @type [Symbol, nil]
 #
 SIGN_IN_AS: Symbol | nil
+
+MAILER_SENDER: String
+
+MAILER_URL_HOST: String
 
 # EMMA Unified Ingest API key.
 #

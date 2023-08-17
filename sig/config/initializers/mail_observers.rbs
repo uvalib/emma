@@ -1,0 +1,3 @@
+class EmailDeliveryObserver
+  def self.delivered_email: (untyped message) -> void
+end

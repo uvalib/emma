@@ -367,6 +367,7 @@ module Import
     if field.is_a?(Array)
       meth  = field.last
       field = field.first
+      # noinspection RubyMismatchedArgumentType
       value = meth.is_a?(Proc) ? meth.call(v) : send(meth, v)
       return field, value
     elsif field && respond_to?(field)

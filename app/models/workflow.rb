@@ -303,9 +303,9 @@ module Workflow::Base::Data
 
   # set_data
   #
-  # @param [Any] data
+  # @param [*] data
   #
-  # @return [Any]
+  # @return [*]
   #
   def set_data(data)
     reset_status
@@ -946,9 +946,9 @@ module Workflow::Base::States
 
     # __debug_entry
     #
-    # @param [Workflow::State] state        State that is being entered.
-    # @param [Symbol]          _event       Triggering event
-    # @param [Array]           _event_args
+    # @param [*]      state           State that is being entered.
+    # @param [Symbol] _event          Triggering event
+    # @param [Array]  _event_args
     #
     def __debug_entry(state, _event = nil, *_event_args, **)
       __debug_line do
@@ -967,9 +967,9 @@ module Workflow::Base::States
 
     # __debug_exit
     #
-    # @param [Workflow::State] state        State that is being exited.
-    # @param [Symbol]          _event       Triggering event
-    # @param [Array]           _event_args
+    # @param [*]      state           State that is being exited.
+    # @param [Symbol] _event          Triggering event
+    # @param [Array]  _event_args
     #
     def __debug_exit(state, _event = nil, *_event_args, **)
       __debug_line do

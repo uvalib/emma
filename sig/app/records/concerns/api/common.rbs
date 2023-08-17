@@ -720,7 +720,7 @@ class EnumType < ScalarType
     #
     # @return [Hash]
     #
-    def pairs_for: ((Symbol|String) entry) -> symHash
+    def pairs_for: ((Symbol|String) entry) -> Hash[String,String]
 
     # The default for an enumeration.
     #

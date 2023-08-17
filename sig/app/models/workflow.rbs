@@ -205,9 +205,9 @@ module Workflow::Base::Data
 
   # set_data
   #
-  # @param [Any] data
+  # @param [*] data
   #
-  # @return [Any]
+  # @return [*]
   #
   def set_data: (untyped data) -> untyped
 
@@ -508,19 +508,19 @@ module Workflow::Base::States
 
   # __debug_entry
   #
-  # @param [Workflow::State] state        State that is being entered.
-  # @param [Symbol]          _event       Triggering event
-  # @param [Array]           _event_args
+  # @param [*]      state           State that is being entered.
+  # @param [Symbol] _event          Triggering event
+  # @param [Array]  _event_args
   #
-  def __debug_entry: (Workflow::State state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
+  def __debug_entry: (Workflow::State|Symbol|String state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
 
   # __debug_exit
   #
-  # @param [Workflow::State] state        State that is being exited.
-  # @param [Symbol]          _event       Triggering event
-  # @param [Array]           _event_args
+  # @param [*]      state           State that is being exited.
+  # @param [Symbol] _event          Triggering event
+  # @param [Array]  _event_args
   #
-  def __debug_exit: (Workflow::State state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
+  def __debug_exit: (Workflow::State|Symbol|String state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
 end
 
 # Hooks executed during transitions.

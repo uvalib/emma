@@ -157,6 +157,7 @@ module ApiMigrateHelper
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def change_table_head
+    # noinspection RubyMismatchedArgumentType
     @change_table_head ||=
       ROW_PARTS.map.with_index { |kv, col| change_table_cell(*kv, 0, col) }
   end
@@ -172,6 +173,7 @@ module ApiMigrateHelper
   def change_table_line(field, values, row:)
     values = values.transform_values(&:inspect)
     parts  = ROW_PARTS.merge(values, field: field)
+    # noinspection RubyMismatchedArgumentType
     parts.map.with_index { |kv, col| change_table_cell(*kv, row, col) }
   end
 

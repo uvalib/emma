@@ -272,6 +272,7 @@ module SessionConcern
   def escaped_value(item)
     result = item.is_a?(Symbol) ? item.to_s : item
     result = result.to_json unless result.is_a?(String)
+    # noinspection RubyMismatchedArgumentType
     Rack::Utils.escape(result)
   end
 

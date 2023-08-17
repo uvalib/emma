@@ -466,6 +466,7 @@ module Record::Searchable
       meth ||= "#{self.class}.#{__method__}"
       msg %= { type: [base_class, opt[:type]].compact.join('::') }
       Log.warn { "#{meth}: #{msg}" }
+      # noinspection RubyMismatchedArgumentType
       raise err, msg if err
     end
 

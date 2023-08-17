@@ -274,6 +274,7 @@ module BaseDecorator::Form
     v_opt[:'data-required']   = true         if required
     v_opt[:'aria-labelledby'] = l_id         if l_id
     v_opt[:range]             = range        if range
+    # noinspection RubyMismatchedArgumentType
     parts << send(render_method, name, value, **v_opt)
 
     # Other content if provided.

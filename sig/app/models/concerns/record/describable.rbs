@@ -127,8 +127,6 @@ module Record::Describable
     #
     # @return [String, nil]
     #
-    # @see User#uid_value
-    #
     def describe_user: (?untyped model, **untyped _ignored) -> (String | nil)
 
     # A replacement value for '%{user_id}' in #sprintf formats.

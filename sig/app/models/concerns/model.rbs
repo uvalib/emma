@@ -232,43 +232,43 @@ module Model
 
   # Get configured record fields for the indicated model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def self.config_for: (untyped item) -> Hash[Symbol,symHash]
+  def self.config_for: (untyped? item) -> Hash[Symbol,symHash]
 
   # Get configured record fields relevant to an :index action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def self.index_fields: (untyped item) -> Hash[Symbol,symHash]
+  def self.index_fields: (untyped? item) -> Hash[Symbol,symHash]
 
   # Get configured record fields relevant to a :show action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def self.show_fields: (untyped item) -> Hash[Symbol,symHash]
+  def self.show_fields: (untyped? item) -> Hash[Symbol,symHash]
 
   # Get all configured record fields for the indicated model.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def self.database_fields: (untyped item) -> Hash[Symbol,symHash]
+  def self.database_fields: (untyped? item) -> Hash[Symbol,symHash]
 
   # Get all configured record fields for the indicated model.
   #
-  # @param [Symbol, String, Class, Model, Any] item
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def self.form_fields: (untyped item) -> Hash[Symbol,symHash]
+  def self.form_fields: (untyped? item) -> Hash[Symbol,symHash]
 end

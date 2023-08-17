@@ -549,9 +549,9 @@ module UploadWorkflow::Bulk::Data
 
   # set_data
   #
-  # @param [Array<Upload,String,Array>] data
+  # @param [Array<Upload,Hash,String,Array>] data
   #
-  # @return [Array<Upload,String,Array>]
+  # @return [Array<Upload,Hash,String,Array>]
   #
   def set_data(data)
     data = super

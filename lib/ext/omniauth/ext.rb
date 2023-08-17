@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Extensions for the Omniauth gem.
+# Extensions for the OmniAuth gem.
 
 __loading_begin(__FILE__)
 

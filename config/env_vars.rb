@@ -138,7 +138,7 @@ SHIBBOLETH = true?(ENV.fetch('SHIBBOLETH') { !production_deployment? })
 #
 BS_AUTH = true?(ENV.fetch('BS_AUTH', true))
 
-# Omniauth providers for Devise.
+# OmniAuth providers for Devise.
 #
 # @type [Array<Symbol>]
 #
@@ -157,7 +157,10 @@ end
 #
 SIGN_IN_AS = (:sign_in_as if BS_AUTH || (ENV['RAILS_ENV'] == 'test'))
 
-# Mailer related settings
+# =============================================================================
+# Mailer properties
+# =============================================================================
+
 MAILER_SENDER = ENV['MAILER_SENDER'] || 'do-not-reply@virginia.edu'
 
 MAILER_URL_HOST =

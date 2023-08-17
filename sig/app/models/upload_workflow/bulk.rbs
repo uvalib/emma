@@ -284,7 +284,7 @@ module UploadWorkflow::Bulk::Data
   #
   # @return [Array<Upload,String,Array>]
   #
-  def set_data: (Array[String|Upload|Array[String|Upload]] data) -> Array[String|Upload|Array[String|Upload]]
+  def set_data: (Array[String|Upload|symHash|Array[String|Upload|symHash]] data) -> Array[String|Upload|symHash|Array[String|Upload|symHash]]
 
   alias set_entries set_data
 

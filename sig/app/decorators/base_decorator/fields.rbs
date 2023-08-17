@@ -164,9 +164,9 @@ module BaseDecorator::Fields
   # @return [Hash]                    The potentially-modified *opt* hash.
   #
   # === Implementation Notes
-  # Disabled input fields are given the :readonly attribute because the
-  # :disabled attribute prevents those fields from being included in the data
-  # sent with the form submission.
+  # Disabled input fields are given the :readonly attribute because setting the
+  # :disabled attribute would prevent those fields from being included in the
+  # data sent with the form submission.
   #
   def normalize_attributes!: (symHash opt) -> symHash
 

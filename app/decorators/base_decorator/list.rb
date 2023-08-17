@@ -807,6 +807,7 @@ module BaseDecorator::List
   #
   def get_thumbnail_image(meth: :thumbnail_image, **)
     @thumbnail ||= thumbnail_data
+    # noinspection RubyMismatchedArgumentType
     @thumbnail ||=
       meth && (object.respond_to?(meth) ? object.send(meth) : try(meth))
   end
@@ -819,6 +820,7 @@ module BaseDecorator::List
   #
   def get_cover_image(meth: :cover_image, **)
     @cover_image ||= cover_data
+    # noinspection RubyMismatchedArgumentType
     @cover_image ||=
       meth && (object.respond_to?(meth) ? object.send(meth) : try(meth))
   end
