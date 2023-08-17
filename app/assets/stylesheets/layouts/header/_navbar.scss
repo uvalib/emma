@@ -65,7 +65,6 @@
 
             color: gray;
 
-            // For now, Bookshare-related controller are hidden.
             &:not(.active) {
                 display: none;
             }

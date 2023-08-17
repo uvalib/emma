@@ -19,7 +19,7 @@ class SearchPaginator < Paginator
   #   @return [Array]                     The value of #page_items.
   #
   # @overload finalize(result, as: nil, **opt)
-  #   Generally for other models (e.g. Bookshare API-related).
+  #   Generally for other models (e.g. API-related).
   #   @param [Api::Record, Array] result
   #   @param [Symbol, nil]        as      Method to extract items from result.
   #   @param [Hash]               opt     Passed to #next_page_path.

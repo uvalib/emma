@@ -136,7 +136,7 @@ SHIBBOLETH = true?(ENV.fetch('SHIBBOLETH') { !production_deployment? })
 #
 # @type [Boolean]
 #
-BS_AUTH = true?(ENV.fetch('BS_AUTH', true))
+BS_AUTH = true?(ENV['BS_AUTH'])
 
 # OmniAuth providers for Devise.
 #

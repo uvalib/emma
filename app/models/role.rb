@@ -78,10 +78,7 @@ class Role < ApplicationRecord
     manager
     administrator
     developer
-  ].tap { |roles|
-    old = %i[catalog_search catalog_submit artifact_download artifact_submit]
-    roles.push(*old) if BS_AUTH
-  }.freeze
+  ].freeze
 
   # EMMA role(s) for prototypical users.
   #

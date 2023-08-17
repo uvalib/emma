@@ -14,7 +14,7 @@ module AuthHelper
   extend self
 
   # ===========================================================================
-  # :section: OmniAuth::Strategies::Bookshare methods
+  # :section: OmniAuth::Strategy methods
   # ===========================================================================
 
   public

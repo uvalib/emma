@@ -343,14 +343,8 @@ en:
           alt:        'Downloading...'
 
       failure:
-        prefix:       'Download failed: '
-        canceled:     'Download canceled'
         sign_in:      'You must sign in to EMMA first'
         unknown:      'unknown error'
-
-      button:
-        label:        'Download'
-        tooltip:      'Click here to retrieve the %{fmt} file'
 
     action_links:     &ACTION_LINKS
       back:

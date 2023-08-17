@@ -322,8 +322,6 @@ AppDebug.file('shared/assets.js.erb');
  * @typedef {object} DownloadFailureMsg
  *
  * @property {string} class
- * @property {string} prefix    Prefix for download failure message labels.
- * @property {string} canceled  Failure message for a user-canceled download.
  * @property {string} sign_in   Message for authentication failure.
  * @property {string} unknown   Unknown download failure.
  */
@@ -619,8 +617,6 @@ export const Emma = (function() {
         },
         failure: {
             class:      'failure',
-            prefix:     '<%= js I18n.t("emma.download.failure.prefix") %>',
-            canceled:   '<%= js I18n.t("emma.download.failure.canceled") %>',
             sign_in:    '<%= js I18n.t("emma.download.failure.sign_in") %>',
             unknown:    '<%= js I18n.t("emma.download.failure.unknown") %>',
         },
