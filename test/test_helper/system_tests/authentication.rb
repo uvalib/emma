@@ -22,7 +22,7 @@ module TestHelper::SystemTests::Authentication
   #
   # @raise [Minitest::Assertion]
   #
-  # @return [true]
+  # @return [void]
   #
   def sign_in_as(user)
     user = find_user(user)
@@ -30,6 +30,7 @@ module TestHelper::SystemTests::Authentication
     visit new_user_session_url
     click_on "Sign in as #{user.email}"
     assert_flash notice: 'Signed in'
+    find('.flash .closer').click
   end
 
 end

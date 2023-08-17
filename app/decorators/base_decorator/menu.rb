@@ -22,10 +22,12 @@ module BaseDecorator::Menu
   # Generate a menu of database item entries.
   #
   # @param [Symbol, String, nil] action      Default: `context[:action]`
-  # @param [Hash, nil]           constraint
+  # @param [Hash, nil]           constraints
   # @param [Hash, nil]           sort
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
+  # @param [String, nil]         id
+  # @param [String, Symbol]      name
   # @param [String, Hash]        ujs         JavaScript selection action.
   # @param [String]              css         Characteristic CSS class/selector.
   # @param [Hash]                opt         Passed to #html_form.
@@ -35,65 +37,51 @@ module BaseDecorator::Menu
   # @see RouteHelper#get_path_for
   #
   def items_menu(
-    action:     nil,
-    constraint: nil,
-    sort:       nil,
-    prompt:     nil,
-    table:      nil,
-    ujs:        'this.form.submit();',
-    css:        '.select-entry.menu-control',
+    action:      nil,
+    constraints: nil,
+    sort:        nil,
+    prompt:      nil,
+    table:       nil,
+    id:          nil,
+    name:        'id',
+    ujs:         'this.form.submit();',
+    css:         '.select-entry.menu-control',
     **opt
   )
     ctrlr    = items_menu_controller
     action ||= context[:action]
     table  ||= action_links
 
-    action = action&.to_sym
+    action   = action&.to_sym
     # noinspection RubyMismatchedArgumentType
-    action = action && table.dig(action, :action) || action
-    path   = h.get_path_for(ctrlr, action)
-    model  = object_class
+    action   = action && table.dig(action, :action) || action
+    path     = h.get_path_for(ctrlr, action)
+    model    = object_class
 
     raise "model: expected Class; got #{model.class}" unless model.is_a?(Class)
     raise "invalid model #{model.inspect}" unless model < ApplicationRecord
     raise "no path for #{ctrlr}/#{action}" unless path
 
-    user = constraint&.values_at(:user, :user_id)&.first
-    org  = constraint&.values_at(:org, :org_id)&.first
-    case
-      when (item = user) then column = (model <= User) ? :id : :user_id
-      when (item = org)  then column = (model <= Org)  ? :id : :org_id
-      else                    column = item = nil
-    end
-    sort = sort&.dup
-    term =
-      if column && model.field_names.include?(column)
-        sort ||= { column => :asc }
-        case item
-          when ApplicationRecord then { column => item.id }
-          when Integer           then { column => item }
-          else                        item unless item == :all
-        end
-      end
-    sort ||= { updated_at: :desc }
-    case
-      when term then menu = model.where(term)
-      when user then menu = model.for_user(user)
-      when org  then menu = model.for_org(org)
-      else           menu = model.all
-    end
-    menu = menu.order(sort.merge!(created_at: :desc))
-    menu = menu.map { |it| [items_menu_label(it), it.id] }
+    id     ||= unique_id(name)
+    l_opt    = { for: id, class: 'sr-only' }
+    label    = h.label_tag(name, prompt, l_opt)
 
-    prompt ||= items_menu_prompt(user: user)
-    ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }
-    select_opt = ujs.merge!(prompt: prompt, name: 'id')
+    sort = sort.dup         if sort.is_a?(Hash)
+    sort = {}               if sort.nil?
+    sort = { sort => :asc } unless sort.is_a?(Hash)
+    sort.merge!(created_at: :desc)
+    cons = constraints || {}
+    menu = model.pairs(sort: sort, **cons) { |r| [items_menu_label(r), r.id] }
+
+    prompt ||= items_menu_prompt
+    ujs      = { onchange: ujs } unless ujs.is_a?(Hash)
+    s_opt    = { id: id, name: name, prompt: prompt, **ujs }
+    menu     = h.options_for_select(menu)
+    menu     = h.select_tag(name, menu, s_opt)
 
     prepend_css!(opt, css)
     opt[:method] ||= :get
     html_form(path.delete_suffix(SELECT_ACTION_SUFFIX), opt) do
-      label = h.label_tag(:selected, prompt, class: 'sr-only')
-      menu  = h.select_tag(:selected, h.options_for_select(menu), select_opt)
       label << menu
     end
   end

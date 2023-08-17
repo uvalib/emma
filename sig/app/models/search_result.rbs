@@ -19,6 +19,10 @@ class SearchResult < ApplicationRecord
   #
   def initialize: (?(SearchResult|anyHash|nil) attr) ?{ () -> untyped } -> void
 
+  def oid: (?untyped item) -> (Integer | nil)
+
+  def self.for_org: (?untyped org, **untyped opt) -> ActiveRecord::Relation
+
   # Update database fields...
   #
   # @param [SearchResult, Hash, nil] attr

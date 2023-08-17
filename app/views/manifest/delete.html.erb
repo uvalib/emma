@@ -7,12 +7,12 @@
   list  ||= @list
   recs    = list&.select { |e| e.is_a?(Manifest) }
   dec     = ManifestsDecorator.new(recs, list: list, **context)
-  recs  ||= dec.object
-  list  ||= recs
+  list    = dec.object
 
   help  ||= dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  name  ||= list.many? ? list.map(&:id).join(', ') : list.first&.label.inspect
+  title   = dec.page_title(title, name: name)
 
   unless modal?
     label = "#{dec.page_meta_title} - #{title}"

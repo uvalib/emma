@@ -170,9 +170,9 @@ $border-fg:  var(--rev-fg-color);
 
             th {
 
-                line-height: 2.5;
-                padding-top: 0;
-                background:  none;
+                height:     calc(100% - 0.75rem);
+                margin-top: 0.25rem;
+                background: none;
 
                 > * {
                     background: $border-bg;

@@ -53,8 +53,11 @@ class ManifestController < ApplicationController
   # :section:
   # ===========================================================================
 
+  OPS   = %i[new edit delete remit].freeze
+  MENUS = %i[show_select edit_select delete_select remit_select].freeze
+
   respond_to :html
-  respond_to :json, :xml, except: %i[edit]
+  respond_to :json, :xml, except: OPS + MENUS
 
   # ===========================================================================
   # :section:
@@ -84,23 +87,27 @@ class ManifestController < ApplicationController
 
   # === GET /manifest
   #
-  # List all of the user's manifests unless `params[:id]` is present (which
-  # redirects to #edit).
+  # List bulk operation manifests.
   #
   # @see #manifest_index_path         Route helper
   #
   def index
     __log_activity
     __debug_route
-    prm    = paginator.initial_parameters
-    return redirect_to prm.merge!(action: :edit) if identifier.present?
-    sort   = prm.delete(:sort) || { updated_at: :desc }
-    result = find_or_match_records(sort: sort, **prm)
-    @list  = paginator.finalize(result, **prm)
-    respond_to do |format|
-      format.html
-      format.json #{ render_json index_values }
-      format.xml  #{ render_xml  index_values }
+    prm = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    if prm.present?
+      # Perform search here.
+      sort  = prm.delete(:sort) || { updated_at: :desc }
+      found = find_or_match_records(sort: sort, **prm)
+      @list = paginator.finalize(found, **prm)
+    else
+      # Otherwise redirect to the appropriate list action.
+      prm[:action] = :list_own
+      respond_to do |format|
+        format.html { redirect_to prm }
+        format.json { redirect_to prm.merge!(format: :json) }
+        format.xml  { redirect_to prm.merge!(format: :xml) }
+      end
     end
   rescue Record::SubmitError => error
     error_response(error)
@@ -119,7 +126,7 @@ class ManifestController < ApplicationController
     __debug_route
     return redirect_to action: :show_select if identifier.blank?
     @item = get_record
-    manifest_authorize!(__method__, @item)
+    manifest_authorize!
     respond_to do |format|
       format.html
       format.json #{ render_json show_values }
@@ -137,7 +144,7 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     @item = new_record
-    manifest_authorize!(__method__, @item)
+    manifest_authorize!
   rescue => error
     failure_status(error)
   end
@@ -152,7 +159,7 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     @item = create_record
-    manifest_authorize!(__method__, @item)
+    manifest_authorize!
     if request_xhr?
       render json: @item.as_json
     else
@@ -174,11 +181,11 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :edit_select if identifier.blank?
-    @item  = edit_record
-    manifest_authorize!(__method__, @item)
-    prm    = paginator.initial_parameters
-    result = find_or_match_manifest_items(@item, **prm)
-    paginator.finalize(result, **prm)
+    @item = edit_record
+    manifest_authorize!
+    prm   = paginator.initial_parameters
+    found = find_or_match_manifest_items(@item, **prm)
+    paginator.finalize(found, **prm)
   rescue => error
     error_response(error, edit_select_manifest_path)
   end
@@ -194,7 +201,7 @@ class ManifestController < ApplicationController
     __debug_route
     __debug_request
     @item = update_record
-    manifest_authorize!(__method__, @item)
+    manifest_authorize!
     if request_xhr?
       render json: @item.as_json
     else
@@ -217,7 +224,7 @@ class ManifestController < ApplicationController
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
     @list = delete_records[:list]
-    #manifest_authorize!(__method__, @list) # TODO: authorize :delete
+    #manifest_authorize!(@list) # TODO: authorize :delete
   rescue => error
     error_response(error, delete_select_manifest_path)
   end
@@ -234,7 +241,7 @@ class ManifestController < ApplicationController
     __debug_route
     back  = delete_select_manifest_path
     @list = destroy_records
-    #manifest_authorize!(__method__, @list) # TODO: authorize :destroy
+    #manifest_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
@@ -247,6 +254,76 @@ class ManifestController < ApplicationController
   # ===========================================================================
 
   public
+
+  # === GET /manifest/list_all
+  #
+  # List all bulk operation manifests.
+  #
+  def list_all
+    __log_activity
+    __debug_route
+    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    sort  = prm.delete(:sort) || { updated_at: :desc }
+    found = find_or_match_records(sort: sort, **prm)
+    @list = paginator.finalize(found, **prm)
+    respond_to do |format|
+      format.html { render 'manifest/index' }
+      format.json { render 'manifest/index' }
+      format.xml  { render 'manifest/index' }
+    end
+  rescue Record::SubmitError => error
+    error_response(error)
+  rescue => error
+    error_response(error, root_path)
+  end
+
+  # === GET /manifest/list_org
+  #
+  # List all bulk operation manifests associated with users in the same
+  # organization as the current user.
+  #
+  def list_org
+    __log_activity
+    __debug_route
+    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    org   = current_org and current_org!(prm, org)
+    sort  = prm.delete(:sort) || { updated_at: :desc }
+    found = find_or_match_records(sort: sort, **prm)
+    @list = paginator.finalize(found, **prm)
+    opt   = { locals: { name: org&.label } }
+    respond_to do |format|
+      format.html { render 'manifest/index', **opt }
+      format.json { render 'manifest/index', **opt }
+      format.xml  { render 'manifest/index', **opt }
+    end
+  rescue Record::SubmitError => error
+    error_response(error)
+  rescue => error
+    error_response(error, root_path)
+  end
+
+  # === GET /manifest/list_own
+  #
+  # List all bulk operation manifests associated with the current user.
+  #
+  def list_own
+    __log_activity
+    __debug_route
+    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    current_user!(prm)
+    sort  = prm.delete(:sort) || { updated_at: :desc }
+    found = find_or_match_records(sort: sort, **prm)
+    @list = paginator.finalize(found, **prm)
+    respond_to do |format|
+      format.html { render 'manifest/index' }
+      format.json { render 'manifest/index' }
+      format.xml  { render 'manifest/index' }
+    end
+  rescue Record::SubmitError => error
+    error_response(error)
+  rescue => error
+    error_response(error, root_path)
+  end
 
   # === GET /manifest/show_select
   #
@@ -369,7 +446,7 @@ class ManifestController < ApplicationController
     __debug_route
     return redirect_to action: :remit_select if identifier.blank?
     @item = remit_manifest
-    manifest_authorize!(__method__, @item)
+    manifest_authorize!
   rescue => error
     error_response(error, remit_select_manifest_path)
   end
@@ -467,17 +544,19 @@ class ManifestController < ApplicationController
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Symbol]                         action
   # @param [Manifest, Array<Manifest>, nil] subject
+  # @param [Symbol, String, nil]            action
   # @param [*]                              args
   #
-  def manifest_authorize!(action, subject, *args)
-    subject = subject.first if subject.is_a?(Array) # TODO: per item check
-    subject = subject.presence
+  def manifest_authorize!(subject = nil, action = nil, *args)
+    action  ||= request_parameters[:action]
+    action    = action.to_sym if action.is_a?(String)
+    subject ||= @item
+    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
     authorize!(action, subject, *args) if subject
     return if administrator?
     return unless %i[show edit update delete destroy].include?(action)
-    unless (org = current_user&.org&.id) && (subject&.org&.id == org)
+    unless (org = current_org&.id) && (subject&.org&.id == org)
       message = current_ability.unauthorized_message(action, subject)
       message.sub!(/s\.?$/, " #{subject.id}") if subject
       raise CanCan::AccessDenied.new(message, action, subject, args)

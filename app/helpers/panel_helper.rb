@@ -101,6 +101,33 @@ module PanelHelper
     html_button(label, opt)
   end
 
+  # Wrap content in a toggleable panel.
+  #
+  # @param [String, nil] content      If *nil* must be provided via the block.
+  # @param [String]      label        The visible portion next to the toggle.
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to the content wrapping `<div>`.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def toggle_panel(content = nil, label:, css: '.toggle-panel', **opt)
+    raise 'No :class provided' unless opt[:class]
+
+    # Visible label.
+    id    = css_randomize(opt[:class])
+    label = ERB::Util.h(label) << toggle_button(id: id)
+    label = html_div(label, class: 'toggle-panel-title')
+
+    # Initially hidden panel.
+    opt.merge!(id: id)
+    prepend_css!(opt, css)
+    panel = content || yield
+    panel = html_div(panel, opt)
+
+    # noinspection RubyMismatchedReturnType
+    label << panel
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

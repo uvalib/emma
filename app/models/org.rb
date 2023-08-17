@@ -40,8 +40,6 @@ class Org < ApplicationRecord
 
   public
 
-  def org_id = id
-
   # A textual label for the record instance.
   #
   # @param [Org, nil] item  Default: self.
@@ -60,6 +58,27 @@ class Org < ApplicationRecord
   #
   def initialize(attr = nil, &block)
     super
+  end
+
+  # ===========================================================================
+  # :section: IdMethods overrides
+  # ===========================================================================
+
+  public
+
+  def org_id = id
+
+  def org_key = ID_COLUMN
+
+  def self.org_key = ID_COLUMN
+
+  def uid(item = nil)
+    item ? super : not_applicable(log: true)
+  end
+
+  def self.for_user(user = nil, **opt)
+    user = extract_value!(user, opt, :user, __method__)
+    where(user: user, **opt)
   end
 
   # ===========================================================================

@@ -41,12 +41,12 @@ class UploadController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  ADMIN_ROUTES = %i[api_migrate bulk_reindex]
-  ANON_ROUTES  = %i[show records]
+  ADMIN_ROUTES = %i[api_migrate bulk_reindex].freeze
+  ANON_ROUTES  = %i[show records].freeze
 
   before_action :update_user
   before_action :authenticate_admin!, only:   ADMIN_ROUTES
-  before_action :authenticate_user!,  except: (ADMIN_ROUTES + ANON_ROUTES)
+  before_action :authenticate_user!,  except: ADMIN_ROUTES + ANON_ROUTES
 
   # ===========================================================================
   # :section: Authorization
@@ -60,20 +60,22 @@ class UploadController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_ingest_engine, only: %i[
-    index         new           edit          delete
-    bulk_index    bulk_new      bulk_edit     bulk_delete   bulk_reindex
-  ]
-  before_action :index_redirect,        only: %i[show]
-  before_action :set_item_download_url, only: %i[retrieval]
-  before_action :resolve_sort,          only: %i[admin]
+  OPS      = %i[new edit delete].freeze
+  BULK_OPS = %i[bulk_new bulk_edit bulk_delete].freeze
+  ALL_OPS  = [*OPS, *BULK_OPS, :bulk_reindex].freeze
+  MENUS    = %i[show_select edit_select delete_select remit_select].freeze
+
+  before_action :set_ingest_engine,     only: [:index, :bulk_index, *ALL_OPS]
+  before_action :index_redirect,        only: :show
+  before_action :set_item_download_url, only: :retrieval
+  before_action :resolve_sort,          only: :admin
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   respond_to :html
-  respond_to :json, :xml, except: %i[edit]
+  respond_to :json, :xml, except: ALL_OPS + MENUS
 
   # ===========================================================================
   # :section:
@@ -112,7 +114,7 @@ class UploadController < ApplicationController
   # === GET /upload[?selected=(:id|SID|RANGE_LIST)]
   # === GET /upload[?group=WORKFLOW_GROUP]
   #
-  # Display the current user's uploads.
+  # List submissions and entries.
   #
   # If an item specification is given by one of Upload::Options#identifier_keys
   # then the results will be limited to the matching upload(s).
@@ -123,16 +125,28 @@ class UploadController < ApplicationController
   def index
     __log_activity
     __debug_route
-    prm    = paginator.initial_parameters
-    all    = prm[:group].nil? || (prm[:group].to_sym == :all)
-    result = find_or_match_records(groups: all, **prm)
-    @list  = paginator.finalize(result, **prm)
-    result = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
-    @group_counts = result[:groups]
-    respond_to do |format|
-      format.html
-      format.json { render_json index_values }
-      format.xml  { render_xml  index_values(item: :entry) }
+    prm = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    if prm.present?
+      # Perform search here.
+      all   = prm[:group].nil? || (prm[:group].to_sym == :all)
+      sort  = prm.delete(:sort) # nil implies implicit_order_column
+      found = find_or_match_records(groups: all, sort: sort, **prm)
+      @list = paginator.finalize(found, **prm)
+      found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
+      @group_counts = found[:groups]
+      respond_to do |format|
+        format.html
+        format.json { render_json index_values }
+        format.xml  { render_xml  index_values(item: :entry) }
+      end
+    else
+      # Otherwise redirect to the appropriate list action.
+      prm[:action] = :list_own
+      respond_to do |format|
+        format.html { redirect_to prm }
+        format.json { redirect_to prm.merge!(format: :json) }
+        format.xml  { redirect_to prm.merge!(format: :xml) }
+      end
     end
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     error_response(error)
@@ -153,7 +167,7 @@ class UploadController < ApplicationController
     __debug_route
     return redirect_to action: :show_select if identifier.blank?
     @item = get_record
-    upload_authorize!(__method__, @item)
+    upload_authorize!
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -199,7 +213,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(rec: (db_id || :unset), event: :create)
-    upload_authorize!(__method__, @item)
+    upload_authorize!
   rescue => error
     failure_status(error)
   end
@@ -219,7 +233,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(event: :submit)
-    upload_authorize!(__method__, @item)
+    upload_authorize!
     post_response(:ok, @item, redirect: upload_index_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
@@ -243,7 +257,7 @@ class UploadController < ApplicationController
     __debug_route
     return redirect_to action: :edit_select if identifier.blank?
     @item = wf_single(event: :edit)
-    upload_authorize!(__method__, @item)
+    upload_authorize!
   rescue => error
     error_response(error)
   end
@@ -262,7 +276,7 @@ class UploadController < ApplicationController
     __debug_route
     __debug_request
     @item = wf_single(event: :submit)
-    upload_authorize!(__method__, @item)
+    upload_authorize!
     post_response(:ok, @item, redirect: upload_index_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
@@ -290,7 +304,7 @@ class UploadController < ApplicationController
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
     @list = wf_single(rec: :unset, data: identifier, event: :remove)
-    #upload_authorize!(__method__, @list) # TODO: authorize :delete
+    #upload_authorize!(@list) # TODO: authorize :delete
   rescue => error
     error_response(error)
   end
@@ -317,7 +331,7 @@ class UploadController < ApplicationController
     opt   = { start_state: :removing, event: :submit, variant: :remove }
     @list = wf_single(rec: rec, data: dat, **opt)
     raise_failure(:file_id) unless @list.present?
-    #upload_authorize!(__method__, @list) # TODO: authorize :destroy
+    #upload_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
@@ -330,6 +344,85 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   public
+
+  # === GET /upload/list_all
+  #
+  # List all submissions and entries.
+  #
+  def list_all
+    __log_activity
+    __debug_route
+    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    all   = prm[:group].nil? || (prm[:group].to_sym == :all)
+    sort  = prm.delete(:sort) # nil implies implicit_order_column
+    found = find_or_match_records(groups: all, sort: sort, **prm)
+    @list = paginator.finalize(found, **prm)
+    found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
+    @group_counts = found[:groups]
+    respond_to do |format|
+      format.html { render 'upload/index' }
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values(item: :entry) }
+    end
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
+    error_response(error)
+  rescue => error
+    error_response(error, root_path)
+  end
+
+  # === GET /upload/list_org
+  #
+  # List all submissions and entries associated with users in the same
+  # organization as the current user.
+  #
+  def list_org
+    __log_activity
+    __debug_route
+    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    org   = current_org and current_org!(prm, org)
+    all   = prm[:group].nil? || (prm[:group].to_sym == :all)
+    sort  = prm.delete(:sort) # nil implies implicit_order_column
+    found = find_or_match_records(groups: all, sort: sort, **prm)
+    @list = paginator.finalize(found, **prm)
+    found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
+    @group_counts = found[:groups]
+    opt   = { locals: { name: org&.label } }
+    respond_to do |format|
+      format.html { render 'upload/index', **opt }
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values(item: :entry) }
+    end
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
+    error_response(error)
+  rescue => error
+    error_response(error, root_path)
+  end
+
+  # === GET /upload/list_own
+  #
+  # List all submissions and entries associated with the current user.
+  #
+  def list_own
+    __log_activity
+    __debug_route
+    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    current_user!(prm)
+    all   = prm[:group].nil? || (prm[:group].to_sym == :all)
+    sort  = prm.delete(:sort) # nil implies implicit_order_column
+    found = find_or_match_records(groups: all, sort: sort, **prm)
+    @list = paginator.finalize(found, **prm)
+    found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
+    @group_counts = found[:groups]
+    respond_to do |format|
+      format.html { render 'upload/index' }
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values(item: :entry) }
+    end
+  rescue UploadWorkflow::SubmitError, Record::SubmitError => error
+    error_response(error)
+  rescue => error
+    error_response(error, root_path)
+  end
 
   # === GET /upload/show_select
   #
@@ -516,7 +609,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(rec: :unset, event: :create)
-    upload_authorize!(__method__, @item)
+    upload_authorize!
     respond_to do |format|
       format.html
       format.json { render json: @item }
@@ -537,7 +630,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(event: :edit)
-    upload_authorize!(__method__, @item)
+    upload_authorize!
     respond_to do |format|
       format.html
       format.json { render json: @item }
@@ -792,8 +885,8 @@ class UploadController < ApplicationController
       submission_id: rec.submission_id,
       created_at:    rec.created_at,
       updated_at:    rec.updated_at,
-      user_id:       rec.user_id,
-      user:          User.uid_value(rec.user_id),
+      user_id:       rec.uid,
+      user:          User.account_name(rec.uid),
       file_url:      get_s3_public_url(rec),
       file_data:     safe_json_parse(rec.file_data),
       emma_data:     rec.emma_metadata,
@@ -835,17 +928,19 @@ class UploadController < ApplicationController
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Symbol]                     action
   # @param [Upload, Array<Upload>, nil] subject
+  # @param [Symbol, String, nil]        action
   # @param [*]                          args
   #
-  def upload_authorize!(action, subject, *args)
-    subject = subject.first if subject.is_a?(Array) # TODO: per item check
-    subject = subject.presence
+  def upload_authorize!(subject = nil, action = nil, *args)
+    action  ||= request_parameters[:action]
+    action    = action.to_sym if action.is_a?(String)
+    subject ||= @item
+    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
     authorize!(action, subject, *args) if subject
     return if administrator?
     return unless %i[edit update delete destroy].include?(action)
-    unless (org = current_user&.org&.id) && (subject&.org&.id == org)
+    unless (org = current_org&.id) && (subject&.org&.id == org)
       message = current_ability.unauthorized_message(action, subject)
       message.sub!(/s\.?$/, " #{subject.id}") if subject
       raise CanCan::AccessDenied.new(message, action, subject, args)

@@ -42,15 +42,6 @@ class SearchCall < ApplicationRecord
   has_one :org, through: :user
 
   # ===========================================================================
-  # :section: ActiveRecord scopes
-  # ===========================================================================
-
-  # noinspection SqlResolve
-  scope :for_org,  ->(org)  { joins(:user).where('users.org_id = ?', org) }
-
-  scope :for_user, ->(user) { where(user: user) }
-
-  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -286,10 +277,6 @@ class SearchCall < ApplicationRecord
 
   public
 
-  def org_id = org&.id
-
-  def user_id = user&.id
-
   # Create a new instance.
   #
   # @param [SearchCall, Hash, nil] attr
@@ -298,6 +285,34 @@ class SearchCall < ApplicationRecord
   #
   def initialize(attr = nil, &block)
     super
+  end
+
+  # ===========================================================================
+  # :section: IdMethods overrides
+  # ===========================================================================
+
+  public
+
+  def org_id = org&.id
+
+  def uid(item = nil)
+    item ? super : user&.id
+  end
+
+  def oid(item = nil)
+    item ? super : org&.id
+  end
+
+  def self.for_user(user = nil, **opt)
+    user = extract_value!(user, opt, :user, __method__)
+    where(user: user, **opt)
+  end
+
+  def self.for_org(org = nil, **opt)
+    org = extract_value!(org, opt, :org, __method__)
+    org = oid(org)
+    # noinspection SqlResolve
+    joins(:user).where('users.org_id = ?', org, **opt)
   end
 
   # ===========================================================================

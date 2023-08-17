@@ -103,7 +103,7 @@ class User::SessionsController < Devise::SessionsController
     __log_activity("LOGOUT #{current_user}")
     __debug_route
     __debug_request
-    user = current_user&.uid&.dup
+    user = current_user&.account&.dup
     opt  = BS_AUTH ? { no_revoke: true?(params[:no_revoke]) } : {}
     delete_auth_data(**opt)
     super

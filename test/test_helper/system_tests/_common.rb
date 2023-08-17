@@ -21,7 +21,7 @@ module TestHelper::SystemTests::Common
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include Capybara::Node::Finders                 # for :click_on alias
+    include Capybara::Node::Actions                 # for :select
     include TestHelper::SystemTests::Authentication # disambiguate :sign_in_as
     # :nocov:
   end
@@ -41,7 +41,16 @@ module TestHelper::SystemTests::Common
   # @return [true]
   #
   def assert_current_url(url)
-    assert_equal url, URI(current_url).tap { |uri| uri.port = nil }.to_s
+    cur = URI.parse(current_url)
+    (s  = cur.scheme) and (s = "#{s}:")
+    (h  = cur.host)   and (h = "//#{h}")
+    url =
+      case url
+        when %r{^([^:/]+://[^:/]+)(:\d+)?(/.*)} then [$1, $3].join
+        when %r{^(//[^:/]+)(:\d+)?(/.*)}        then [s, $1, $3].join
+        else                                         File.join("#{s}#{h}", url)
+      end
+    assert_equal url, url_without_port(cur)
   end
 
   # Assert that the current page is valid.
@@ -95,7 +104,7 @@ module TestHelper::SystemTests::Common
 
   # Return the given URL without its HTTP port.
   #
-  # @param [String, nil] url
+  # @param [String, URI::Generic, nil] url
   #
   # @return [String, nil]
   #
@@ -164,6 +173,25 @@ module TestHelper::SystemTests::Common
       flunk "Browser on page #{current} and not on #{expected}"
     end
     false
+  end
+
+  # Depending on the context, there may be two menus for performing an action
+  # on a selected item.
+  #
+  # In cases where there are dual select menus (one for the user's own items
+  # and one for organization items) the first menu will contain a subset of the
+  # items from the second menu.
+  #
+  # @param [String] value
+  # @param [String] name
+  # @param [Hash]   opt               Passed to Capybara::Node::Actions#select
+  #
+  # @return [Capybara::Node::Element]
+  #
+  def item_menu_select(value, name:, **opt)
+    menu = all(%Q(select[name="#{name}")).last
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+    select value, from: menu[:id], **opt
   end
 
   # ===========================================================================

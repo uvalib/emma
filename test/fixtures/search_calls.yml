@@ -2,9 +2,9 @@
 #
 # @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-Mansfield_Park:           &FIRST
+Mansfield_Park: &FIRST
   query:
-    title:                'Mansfield Park'
+    title:      'Mansfield Park'
 
 # =============================================================================
 # Examples
@@ -47,7 +47,7 @@ template:
         - epub
         - braille
         - pdf
-        #- grayscalePdf   # NOTE: deprecated with API 0.0.5
+       #- grayscalePdf    # NOTE: deprecated with API 0.0.5
         - word
         - tactile
         - kurzweil
@@ -60,10 +60,10 @@ template:
         - grade1
         - grade2
         - nemeth
-        #- technical      # NOTE: deprecated with API 0.0.5
+       #- technical       # NOTE: deprecated with API 0.0.5
         - ueb
         - ebae
-        #- literary       # NOTE: deprecated with API 0.0.5
+       #- literary        # NOTE: deprecated with API 0.0.5
         - music
         - imagePdf
         - digitalTextPdf
@@ -126,35 +126,35 @@ template:
         - publicationDate
         - sortDate
         - lastRemediationDate
-      nillable:         true
-      default:          title
+      nillable: true
+      default:  title
     direction:
-      values:           [asc, desc]
-      nillable:         true
-      default:          asc
+      values:   [asc, desc]
+      nillable: true
+      default:  asc
 
   page:
     limit:
-      type:             integer
-      nillable:         true
-      default:          100
+      type:     integer
+      nillable: true
+      default:  100
     number:
-      type:             integer
-      nillable:         true
-      default:          1
+      type:     integer
+      nillable: true
+      default:  1
     start:
-      type:             integer
-      nillable:         true
-      default:          0
+      type:     integer
+      nillable: true
+      default:  0
     offset:
-      type:             integer
-      nillable:         true
-      default:          0
+      type:     integer
+      nillable: true
+      default:  0
 
   result:
     total:
-      type:             integer
-      nillable:         true
+      type:     integer
+      nillable: true
     count:
-      type:             integer
-      nillable:         true
+      type:     integer
+      nillable: true

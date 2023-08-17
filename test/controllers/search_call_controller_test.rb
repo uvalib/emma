@@ -9,10 +9,10 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
 
   MODEL        = SearchCall
   CONTROLLER   = :search_call
-  PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
+  PARAMS       = { controller: CONTROLLER }.freeze
+  OPTIONS      = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS   = %i[anonymous test_dso_1 test_dev].freeze
+  TEST_USERS   = [*CORE_TEST_USERS, :test_dev].uniq.freeze
   TEST_READERS = TEST_USERS
 
   READ_FORMATS = :all
@@ -29,9 +29,11 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
     action  = :index
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @readers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
@@ -43,12 +45,14 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
 
   test 'search call index - sample search' do
     action  = :index
-    item    = sample_search_call
+    item    = search_calls(:example)
     params  = PARAMS.merge(action: action, search_call: item)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @readers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
@@ -60,12 +64,14 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
 
   test 'search call show - details search call item' do
     action  = :show
-    item    = sample_search_call
+    item    = search_calls(:example)
     params  = PARAMS.merge(action: action, id: item.id)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @readers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)

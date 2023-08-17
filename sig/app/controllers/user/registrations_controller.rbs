@@ -63,12 +63,6 @@ class User::RegistrationsController < Devise::RegistrationsController
   #
   def cancel: () -> void
 
-  # === GET /users/edit_select
-  #
-  # @see #edit_select_user_path       Route helper
-  #
-  def edit_select: () -> void
-
   # Include User attributes to allowed parameters for account creation.
   #
   def configure_create_params: () -> void

@@ -1,0 +1,95 @@
+module IdMethods
+  include Emma::Common
+
+  ID_COLUMN: Symbol
+
+  USER_COLUMN: Symbol
+
+  ORG_COLUMN: Symbol
+
+  def user_key: () -> Symbol
+
+  def org_key: () -> Symbol
+
+  def self.user_key: () -> Symbol
+
+  def self.org_key: () -> Symbol
+
+  # The explicit :user_id field if a record defines it, or the method defined
+  # by the record to derive the ID of the User associated with the record
+  # instance.
+  #
+  # @param [*]      item
+  # @param [Symbol] key
+  #
+  # @return [Integer, nil]
+  #
+  def uid: (untyped item, ?Symbol key) -> (Integer | nil)
+
+  # The explicit :org_id field if a record defines it, or the method defined
+  # by the record to derive the ID of the Organization associated with the
+  # record instance.
+  #
+  # @param [*]      item
+  # @param [Symbol] key
+  #
+  # @return [Integer, nil]
+  #
+  def oid: (untyped item, ?Symbol key) -> (Integer | nil)
+
+  # Get the specified identity value from *item*.
+  #
+  # @param [*]      item
+  # @param [Symbol] key
+  #
+  # @return [Integer, nil]
+  #
+  def get_id: (untyped item, Symbol key) -> (Integer | nil)
+
+  def normalize_id_keys: [T] (T arg, ?untyped target) -> T
+
+  def normalize_id_keys!: (symHash arg, ?untyped target) -> symHash
+
+  module InstanceMethods
+    include IdMethods
+
+    def uid: (?untyped item) -> (Integer | nil)
+
+    def oid: (?untyped item) -> (Integer | nil)
+  end
+
+  # Class methods automatically added to the including class.
+  #
+  module ClassMethods
+    include IdMethods
+
+    #include ActiveRecord::QueryMethods
+
+    def uid: (untyped item) -> (Integer | nil)
+
+    def oid: (untyped item) -> (Integer | nil)
+
+    # Produce a relation for selecting records associated with the given user.
+    #
+    # @param [*]    user
+    # @param [Hash] opt
+    #
+    # @return [ActiveRecord::Relation]
+    #
+    def for_user: (?untyped user, **untyped opt) -> ActiveRecord::Relation
+
+    # Produce a relation for selecting records associated with the given
+    # organization.
+    #
+    # @param [*]    user
+    # @param [Hash] opt
+    #
+    # @return [ActiveRecord::Relation]
+    #
+    def for_org: (?untyped org, **untyped opt) -> ActiveRecord::Relation
+  end
+
+  private
+
+  def self.included: (Module base) -> void
+end

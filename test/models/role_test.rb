@@ -9,7 +9,7 @@ class RoleTest < ActiveSupport::TestCase
 
   test 'model - valid role' do
     run_test(__method__) do
-      item = sample_role
+      item = roles(:example)
       show item
       assert item.valid?
     end

@@ -159,7 +159,7 @@ module TestHelper::IntegrationTests::Format
     action, ctrlr = (opt[:from].split('#').reverse if opt[:from])
     ctrlr   = (opt[:controller] || ctrlr)&.to_sym
     action  = (opt[:action]     || action)&.to_sym
-    media   = opt.key?(:media_type) ? opt[:media_type] : opt[:format]
+    media   = opt.key?(:media_type) ? opt[:media_type] : opt[:format]&.to_sym
     media   = nil if media == :any
     media &&= media.is_a?(Symbol) ? MEDIA_TYPE[media] : media.to_s
 

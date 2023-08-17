@@ -116,6 +116,9 @@ module BaseDecorator::Form
   #
   def render_form_pair_label: (Symbol field, (String|nil) label, ?tag: Symbol, ?status: symArray|Symbol|nil, ?help: Array[Symbol|String]|Symbol|String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # @private
+  MENU_SINGLE_OPT: symArray
+
   # Single-select menu - drop-down.
   #
   # @param [String]      name
@@ -128,7 +131,9 @@ module BaseDecorator::Form
   #
   # @option opt [String]  :name       Overrides *name*
   # @option opt [String]  :base       Name and id for *select*; default: *name*
+  # @option opt [Boolean] :fixed
   # @option opt [Boolean] :readonly
+  # @option opt [Hash]    :constraints
   #
   # @raise [RuntimeError]             If *range* is not an EnumType.
   #
@@ -137,6 +142,9 @@ module BaseDecorator::Form
   # @see file:app/assets/javascripts/feature/model-form.js *updateMenu()*
   #
   def render_form_menu_single: (String name, anyArray value, range: Class|anyArray, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # @private
+  MENU_MULTI_OPT: symArray
 
   # Multi-select menu - scrollable list of checkboxes.
   #

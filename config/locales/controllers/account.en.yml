@@ -50,8 +50,10 @@ en:
       page_controls:
         label:          'Account Actions:'
         actions:
+          - { controller: 'home', action: 'dashboard', label: 'Details' }
           - edit_current
-          - index
+          - list_org
+          - list_all
           - new
           - edit_select
           - delete_select
@@ -74,9 +76,11 @@ en:
           label:        'Remove %{article} existing EMMA user account'
           article:      'an'
 
-        back:
-          action:       index
-          label:        'View all EMMA user accounts'
+        list_all:
+          label:        'List all EMMA user accounts'
+
+        list_org:
+          label:        'List EMMA user accounts'
 
       # =======================================================================
       # Messages
@@ -117,12 +121,10 @@ en:
 
       # =======================================================================
 
-      index:
-        label:          'List All'
+      index:            &INDEX_ACTION
+        label:          'List'
         title:          'EMMA User Accounts'
-        tooltip:        'List records from the EMMA user account database table'
-        description:    |
-          This is a listing of the EMMA user account database table.
+        tooltip:        'List records from the EMMA user database table'
 
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all
@@ -131,15 +133,29 @@ en:
 
       # =======================================================================
 
+      list_all:
+        <<:             *INDEX_ACTION
+        label:          'List All'
+        tooltip:        'List all EMMA user accounts'
+
+      # =======================================================================
+
+      list_org:
+        <<:             *INDEX_ACTION
+        label:          'Org List'
+        title:          '%{name} EMMA User Accounts'
+        tooltip:        'List the EMMA users associated with your organization'
+
+      # =======================================================================
+
       show:             &SHOW_ACTION
         label:          'Account'
-        title:          'EMMA User Account: %{name}'
+        title:          'EMMA User Account %{name}'
         tooltip:        'Account details from the EMMA user account database table'
 
         display_fields: # @see 'en.emma.account.record'
           - !ruby/symbol all
 
-        role:           administrator
         _endpoint:      true
 
       # =======================================================================
@@ -153,7 +169,7 @@ en:
 
       show_current:
         <<:             *SHOW_ACTION
-        label:          'Show'
+        label:          'Details'
         title:          'Your EMMA User Account Information'
         tooltip:        'See details about your EMMA user account'
 
@@ -203,7 +219,7 @@ en:
 
       edit:             &EDIT_ACTION
         label:          'Edit User'
-        title:          'Modify an EMMA User Account'
+        title:          'Modify EMMA User Account %{name}'
         tooltip:        'Modify an existing EMMA account in the user database'
         description:    |
           You may change the local details of the EMMA account
@@ -247,7 +263,7 @@ en:
 
       edit_current:
         <<:             *EDIT_ACTION
-        label:          'Details'
+        label:          'Modify'
         title:          'Modify Your EMMA User Account'
         tooltip:        'See or change details about your EMMA user account'
 
@@ -260,7 +276,7 @@ en:
 
       delete:           &DELETE_ACTION
         label:          'Remove User'
-        title:          'Remove an EMMA User Account'
+        title:          'Remove EMMA User Account %{name}'
         tooltip:        'Remove an account from the set of active EMMA users'
         description_html: |
           <p>
@@ -297,7 +313,6 @@ en:
       delete_select:
         <<:             *DELETE_ACTION
         title:          'Remove an EMMA User Account'
-        role:           manager
 
       # =======================================================================
 

@@ -1,5 +1,62 @@
 class AccountControllerTest < ActionDispatch::IntegrationTest
-  TEST_USER: Symbol
+  MODEL: Class
 
-  @user: User | nil
-end
+  CONTROLLER: Symbol
+
+  PARAMS: symHash
+
+  OPTIONS: symHash
+
+  TEST_USERS: symArray
+
+  TEST_READERS: symArray
+
+  TEST_WRITERS: symArray
+
+  READ_FORMATS: Symbol | symArray
+
+  WRITE_FORMATS: Symbol | symArray
+
+  @readers: Array[User|nil]
+
+  @writers: Array[User|nil]
+
+  # @private
+  # @type [String,nil]
+  attr_accessor edit_id: String | nil
+
+  # @private
+  # @type [String,nil]
+  attr_accessor delete_id: String | nil
+
+  # Push a dummy item into the database for editing.
+  #
+  # @param [Symbol, String, Hash] src
+  #
+  # @return [User]
+  #
+  def sample_for_edit: (?(Symbol|String|symHash) src) -> User
+
+  # Push a dummy item into the database for deletion.
+  #
+  # @param [Symbol, String, Hash] src
+  #
+  # @return [User]
+  #
+  def sample_for_delete: (?(Symbol|String|symHash) src) -> User
+
+  # Generate a new non-persisted item to support new item creation.
+  #
+  # @param [Symbol, String, Hash] src
+  #
+  # @return [User]
+  #
+  def new_record: (?(Symbol|String|symHash) src) -> User
+
+  # The default :index action redirects to :list_org for an organization user.
+  #
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)end

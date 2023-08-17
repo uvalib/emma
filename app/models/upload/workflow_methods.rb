@@ -159,7 +159,7 @@ module Upload::WorkflowMethods
   # @return [String, nil]
   #
   def active_user
-    User.uid_value(self[user_column])
+    User.account_name(self[user_column])
   end
 
   # Indicate whether this record represents an existing EMMA entry.

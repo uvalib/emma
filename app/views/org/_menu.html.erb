@@ -5,7 +5,7 @@
   view_debug(__FILE__)
 
   dec ||= OrgDecorator.new(**context)
-  opt   = { dec: dec }
+
 -%>
 
-<%= render 'layouts/menu_page', **opt %>
+<%= render 'layouts/menu_page', dec: dec %>

@@ -19,26 +19,29 @@ module RouteHelper
 
   # Return the appropriate route helper method.
   #
-  # @param [Symbol, String]      controller
+  # @param [Symbol, String]      ctrlr
   # @param [Symbol, String, nil] action
   # @param [Boolean]             base       Strip "_select" from :action.
   #
   # @return [Symbol, String, Proc]
   #
-  def route_helper(controller, action = nil, base: false)
-    ctr = controller.to_s.underscore
+  def route_helper(ctrlr, action = nil, base: false)
+    ctr = ctrlr.to_s.underscore
     ctr = ctr.split('/').map(&:singularize).join('_') if ctr.include?('/')
     ctr = ctr.split('.').map(&:singularize).join('_') if ctr.include?('.')
     act = action&.to_sym
     act = base_action(act) if act && base
     if ctr.end_with?('_url', '_path')
-      Log.warn("#{__method__}: #{controller}: ignoring action #{act}") if act
-      return ctr
-    end
-    case act
-      when :index, nil then :"#{ctr}_index_path"
-      when :show       then :"#{ctr}_path"
-      else                  :"#{act}_#{ctr}_path"
+      Log.warn("#{__method__}: #{ctrlr}: ignoring action #{act}") if act
+      ctr
+    elsif ctr == 'home'
+      act ? :"#{act}_path" : :main_path
+    else
+      case act
+        when :index, nil then :"#{ctr}_index_path"
+        when :show       then :"#{ctr}_path"
+        else                  :"#{act}_#{ctr}_path"
+      end
     end
   end
 

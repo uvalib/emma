@@ -242,7 +242,7 @@ class Options
   #
   def model_post_params
     prm = model_params
-    extract_model_data!(prm) || prm
+    extract_model_data!(prm)
   end
 
   # ===========================================================================
@@ -274,17 +274,18 @@ class Options
   # @param [Boolean] compact          If *false*, allow blanks.
   # @param [Hash]    opt              Options to #json_parse.
   #
-  # @return [Hash, nil]               The new contents of *prm* if modified.
+  # @return [Hash]                    The possibly-modified *prm*.
   #
   def extract_model_data!(prm, compact: true, **opt)
     opt[:log] = false unless opt.key?(:log)
-    # @type [Hash, nil]
-    fields = json_parse(prm.delete(model_key), **opt) or return
-    model_data_params.each_pair do |hash_key, url_param|
-      value = fields.delete(hash_key)
-      prm[url_param] = json_parse(value, **opt) if value
+    fields = prm.delete(model_key)
+    if (fields &&= json_parse(fields, **opt))
+      model_data_params.each_pair do |hash_key, url_param|
+        value = fields.delete(hash_key)
+        prm[url_param] = json_parse(value, **opt) if value
+      end
+      prm.merge!(fields)
     end
-    prm.merge!(fields)
     compact ? reject_blanks!(prm) : prm
   end
 

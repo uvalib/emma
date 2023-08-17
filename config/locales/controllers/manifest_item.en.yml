@@ -65,9 +65,8 @@ en:
           label:        'Remove %{article} item'
           article:      'a'
 
-        back:
-          action:       index
-          label:        'View all items'
+        index:
+          label:        'List all items'
 
       # =======================================================================
       # Fields

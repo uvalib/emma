@@ -9,7 +9,7 @@ class ManifestItemTest < ActiveSupport::TestCase
 
   test 'model - valid manifest item' do
     run_test(__method__) do
-      item = sample_manifest_item
+      item = manifest_items(:example)
       show item
       assert item.valid?
     end

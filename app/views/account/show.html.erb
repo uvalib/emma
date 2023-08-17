@@ -6,11 +6,12 @@
 
   item  ||= @item
   dec     = AccountDecorator.new(item, **context)
-  item  ||= dec.object
+  item    = dec.object
 
   help  ||= nil # dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title, name: item.uid)
+  name  ||= item&.label.inspect
+  title   = dec.page_title(title, name: name)
 
   unless modal?
     label = "#{dec.page_meta_title} - #{title}"
@@ -18,15 +19,13 @@
     set_page_description(title)
   end
 
-  opt = { dec: dec }
-
 -%>
 
 <%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'account/details', opt %>
+<%= render 'account/details', dec: dec %>
 
 <%= page_notes_section %>
 <%= dec.action_list unless modal? %>

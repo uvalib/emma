@@ -29,6 +29,12 @@ module IdentityHelper
     : (nil           role, ?(User|nil) user) -> true
     | (Symbol|String role, ?(User|nil) user) -> bool
 
+  # The organization of the current user.
+  #
+  # @return [Org, nil]
+  #
+  def current_org: () -> (Org | nil)
+
   private
 
   def self.included: (Module base) -> void

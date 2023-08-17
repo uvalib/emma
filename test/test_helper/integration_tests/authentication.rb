@@ -154,6 +154,7 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @option opt [Symbol]       :expect  Expected result regardless of the user.
   # @option opt [Symbol,Array] :only    Allowed formats.
+  # @option opt [String]       :redir   Expected redirection.
   #
   # @return [void]
   #
@@ -162,6 +163,7 @@ module TestHelper::IntegrationTests::Authentication
   #
   def send_as(verb, user, url, **opt, &block)
     run_opt = opt.extract!(*RUN_TEST_OPT)
+    redir   = opt.delete(:redir)
     expect  = opt.delete(:expect)
     format  = format_type(opt[:format])
 
@@ -177,6 +179,12 @@ module TestHelper::IntegrationTests::Authentication
       url_opt = run_opt.slice(:format)
       url_opt[:expect] = expect if DEBUG_TESTS
       send(verb, url, **url_opt)
+
+      # Follow the redirect if one was expected.
+      if redir && response.redirection?
+        follow_redirect!
+        opt.merge!(request.path_parameters)
+      end
 
       # Primary assertions based on initial conditions.
       if expect

@@ -21,6 +21,7 @@ module ModelConcern
   include ExceptionHelper
   include FlashHelper
   include IdentityHelper
+  include ParamsHelper
 
   include OptionsConcern
   include PaginationConcern
@@ -45,7 +46,9 @@ module ModelConcern
 
   def find_or_match_keys
     result = [*search_records_keys, model_key, model_id_key]
-    result.push(:group, :state, :user, :user_id)
+    result << :org   << :org_id
+    result << :user  << :user_id
+    result << :group << :state
     result.uniq!
     result
   end
@@ -142,6 +145,42 @@ module ModelConcern
     identifier_list(*ids).first
   end
 
+  # If a user was not already specified, add the current user to the given
+  # parameters.
+  #
+  # @param [Hash]      prm
+  # @param [User, nil] user           Default: #current_user
+  #
+  # @return [Hash]
+  #
+  def current_user!(prm, user = nil)
+    user ||= current_user
+    case
+      when prm.key?(:user_id) then prm
+      when prm.key?(:user)    then prm.merge!(user_id: prm.delete(:user))
+      when (id = user&.id)    then prm.merge!(user_id: id)
+      else                         prm
+    end
+  end
+
+  # If an organization was not already specified, add the organization of the
+  # current user to the given parameters.
+  #
+  # @param [Hash]     prm
+  # @param [Org, nil] org             Default: #current_org
+  #
+  # @return [Hash]
+  #
+  def current_org!(prm, org = nil)
+    org ||= current_org
+    case
+      when prm.key?(:org_id) then prm
+      when prm.key?(:org)    then prm.merge!(org_id: prm.delete(:org))
+      when (id = org&.id)    then prm.merge!(org_id: id)
+      else                        prm
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -189,8 +228,13 @@ module ModelConcern
     opt[:limit] ||= paginator.page_size
     opt[:page]  ||= paginator.page_number
 
+    # Prepare terms.
+    normalize_predicates!(opt)
+
     # Disallow experimental database WHERE predicates unless privileged.
-    filters = [:filter_predicates!, *filters] unless administrator?
+    filters.prepend(:filter_predicates!) unless administrator?
+    filters << :filter_by_user!          if opt.include?(:user_id)
+    filters << :filter_by_org!           if opt.include?(:org_id)
 
     filters.uniq!
     filters.each do |filter|
@@ -210,6 +254,40 @@ module ModelConcern
     # index page instead of the root page.
     raise Record::SubmitError.new(error)
 
+  end
+
+  # Transform options into predicates usable for database lookup.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The argument, possibly modified.
+  #
+  def normalize_predicates!(opt)
+    opt.replace(normalize_predicates(opt))
+  end
+
+  # Transform options into predicates usable for database lookup.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    A possibly-modified copy of the argument.
+  #
+  def normalize_predicates(opt)
+    key_map = ApplicationRecord.model_id_key_map
+    opt.map { |k, v|
+      k = k.to_sym   if k.is_a?(String)
+      k = key_map[k] if key_map[k]
+      case k
+        when :org_id  then v = current_org  if v == CURRENT_ID
+        when :user_id then v = current_user if v == CURRENT_ID
+      end
+      case v
+        when ApplicationRecord then v = v.id
+        when Hash              then v = v.deep_symbolize_keys
+        else                        v = positive(v) || v
+      end
+      [k, v]
+    }.compact.to_h
   end
 
   # Remove options that would otherwise be sent as SQL search term predicates.
@@ -325,13 +403,14 @@ module ModelConcern
 
   # Start a new (un-persisted) model instance.
   #
-  # @param [Hash, nil]      attr      Default: `#current_params`.
-  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
-  # @return [Model]                   Un-persisted model record instance.
+  # @return [Model]                     Un-persisted model record instance.
   #
-  def new_record(attr = nil, force_id: false, **)
+  def new_record(attr = nil, force_id: false, **, &blk)
     attr ||= current_params
+    blk&.(attr)
     attr.delete(:id) unless true?(force_id)
     __debug_items("WF #{self.class} #{__method__}") { { attr: attr } }
     model_class.new(attr)
@@ -339,15 +418,15 @@ module ModelConcern
 
   # Create and persist a new model record.
   #
-  # @param [Hash, nil]      attr      Default: `#current_params`.
-  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
-  # @param [Boolean]        no_raise  If *true*, use #save instead of #save!.
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
   #
-  # @return [Model]                   New persisted model record instance.
+  # @return [Model]                     New persisted model record instance.
   #
-  def create_record(attr = nil, force_id: false, no_raise: false, **)
+  def create_record(attr = nil, force_id: false, no_raise: false, **, &blk)
     __debug_items("WF #{self.class} #{__method__}") { { attr: attr } }
-    new_record(attr, force_id: force_id).tap do |record|
+    new_record(attr, force_id: force_id, &blk).tap do |record|
       no_raise ? record.save : record.save!
     end
   end
@@ -363,17 +442,19 @@ module ModelConcern
   #
   # @return [Model, nil]
   #
-  def edit_record(item = nil, prm = nil, **opt)
+  def edit_record(item = nil, prm = nil, **opt, &blk)
     item, prm = model_request_params(item, prm)
     __debug_items("WF #{self.class} #{__method__}") {{ prm: prm, item: item }}
-    get_record(item, **opt)
+    get_record(item, **opt)&.tap do |record|
+      blk&.(record)
+    end
   end
 
   # Persist changes to an existing model record.
   #
   # @param [*]         item           If present, used as a template.
   # @param [Boolean]   no_raise       Use #update instead of #update!.
-  # @param [Hash, nil] attr           Default: `#current_params`
+  # @param [Hash, nil] prm            Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
@@ -381,14 +462,13 @@ module ModelConcern
   #
   # @return [Model, nil]
   #
-  def update_record(item = nil, no_raise: false, **attr)
-    item, attr = model_request_params(item, attr)
+  def update_record(item = nil, no_raise: false, **prm, &blk)
+    item, attr = model_request_params(item, prm.presence)
     __debug_items("WF #{self.class} #{__method__}") {{ prm: attr, item: item }}
-    edit_record(item).tap do |rec|
-      if rec
-        yield(rec, attr) if block_given?
-        no_raise ? rec.update(attr) : rec.update!(attr)
-      end
+    # noinspection RubyScope
+    edit_record(item)&.tap do |record|
+      blk&.(record, attr)
+      no_raise ? record.update(attr) : record.update!(attr)
     end
   end
 

@@ -1471,7 +1471,9 @@ class EnumType < ScalarType
     #
     # @return [Hash]
     #
-    def pairs
+    # @see ApplicationRecord#pairs
+    #
+    def pairs(**)
       enumerations.dig(type, :pairs)
     end
 

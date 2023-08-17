@@ -85,7 +85,8 @@ en:
           tooltip:      'The EMMA user who created the submission'
           notes_html:   |
             <em>TODO</em>
-          origin:       system
+          type:         !ruby/symbol User
+          role:         manager
 
         repository:
           # FMM5: *missing*

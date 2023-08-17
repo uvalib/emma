@@ -38,6 +38,14 @@ class UploadController < ApplicationController
 
   ANON_ROUTES: symArray
 
+  OPS: symArray
+
+  BULK_OPS: symArray
+
+  ALL_OPS: symArray
+
+  MENUS: symArray
+
   # Results for :index.
   #
   # @return [Array<Upload, String>]
@@ -65,7 +73,7 @@ class UploadController < ApplicationController
   # === GET /upload[?selected=(:id|SID|RANGE_LIST)]
   # === GET /upload[?group=WORKFLOW_GROUP]
   #
-  # Display the current user's uploads.
+  # List submissions and entries.
   #
   # If an item specification is given by one of Upload::Options#identifier_keys
   # then the results will be limited to the matching upload(s).
@@ -165,6 +173,25 @@ class UploadController < ApplicationController
   # @see UploadController#delete
   #
   def destroy: () -> void
+
+  # === GET /upload/list_all
+  #
+  # List all submissions and entries.
+  #
+  def list_all: () -> void
+
+  # === GET /upload/list_org
+  #
+  # List all submissions and entries associated with users in the same
+  # organization as the current user.
+  #
+  def list_org: () -> void
+
+  # === GET /upload/list_own
+  #
+  # List all submissions and entries associated with the current user.
+  #
+  def list_own: () -> void
 
   # === GET /upload/show_select
   #
@@ -407,5 +434,5 @@ class UploadController < ApplicationController
   # @param [Upload, Array<Upload>, nil] subject
   # @param [*]                          args
   #
-  def upload_authorize!: (Symbol action, Upload|Array[Upload]|nil subject, *untyped args) -> void
+  def upload_authorize!: (?(Upload|Array[Upload]|nil) subject, ?(Symbol|String|nil) action, *untyped args) -> void
 end

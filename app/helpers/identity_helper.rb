@@ -48,8 +48,25 @@ module IdentityHelper
   def user_has_role?(role, user = nil)
     return true if role.blank?
     user = current_user if user.nil? && defined?(current_user)
-    raise "#{__method__}: invalid use" unless user.is_a?(User)
-    user.has_role?(role)
+    case user
+      when User then user.has_role?(role)
+      when nil  then false
+      else           raise "#{__method__}: invalid user: #{user.inspect}"
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The organization of the current user.
+  #
+  # @return [Org, nil]
+  #
+  def current_org
+    current_user&.org
   end
 
   # ===========================================================================

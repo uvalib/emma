@@ -25,6 +25,19 @@ module Upload::EmmaDataMethods
   #
   DATA_COLUMNS = %i[file_data emma_data fmt ext user_id].freeze
 
+  # Edit process table columns.
+  #
+  # @type [Array<Symbol>]
+  #
+  EDIT_COLUMNS = %i[edit_user edit_file_data edit_emma_data edited_at].freeze
+
+  # Review process table columns.
+  #
+  # @type [Array<Symbol>]
+  #
+  REVIEW_COLUMNS =
+    %i[review_user review_success review_comment reviewed_at].freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================

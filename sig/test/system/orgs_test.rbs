@@ -7,11 +7,25 @@ class OrgsTest < ApplicationSystemTestCase
 
   INDEX_TITLE: String
 
+  LIST_ACTIONS: symArray
+
   TEST_USER: Symbol
 
   #@total: Integer
 
   @user: User
+
+  # list_test
+  #
+  # @param [Symbol]      action
+  # @param [String, nil] title        Default: #INDEX_TITLE.
+  # @param [String, nil] redir_url
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        params       URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test: (action: Symbol, ?title: String|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped params) -> void
 
   # new_test
   #
@@ -50,4 +64,13 @@ class OrgsTest < ApplicationSystemTestCase
   # @return [String]
   #
   def org_name: (**untyped opt) -> String
+
+  # The default :index action redirects to :list_all for Administrator and
+  # :show for everyone else.
+  #
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
 end

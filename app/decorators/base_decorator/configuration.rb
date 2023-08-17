@@ -85,6 +85,19 @@ module BaseDecorator::Configuration
     ApplicationHelper::CONTROLLER_CONFIGURATION[type] || {}.freeze
   end
 
+  # Get configured record fields relevant to the given context for the model.
+  #
+  # @param [Symbol] action            Def: `context[:action]`
+  # @param [Symbol] type              Def: controller associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}, nil]
+  #
+  def model_context_fields(action = nil, type = nil)
+    type   ||= controller_config_key
+    action ||= context[:action]
+    Model.context_fields(type, action)
+  end
+
   # Get configured record fields relevant to an :index action for the model.
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator

@@ -1,0 +1,37 @@
+<%# app/views/manifest/_table.html.erb -%>
+<%-
+  # Display a list of Manifest records.
+
+  view_debug(__FILE__)
+
+  list   ||= nil
+  dec    ||= ManifestsDecorator.new(list, **context)
+  list     = dec.object
+
+  count  ||= list.size
+  level  ||= 1
+  skip   ||= nil
+
+  skip     = [*skip, :thumbnail]
+  heading  =
+    unless skip.include?(:title)
+      title ||= nil
+      title   = dec.page_title(title)
+      title  += " (#{count})" unless skip.include?(:count)
+      classes = 'list-heading'
+      classes = css_classes(classes, 'empty') if list.blank?
+      html_tag(level, title, class: classes)
+    end
+
+  filter ||= nil
+
+  opt   = { filter: filter }.compact
+  table = dec.render_table(**opt)
+
+-%>
+
+<%- if heading %>
+  <%= toggle_panel(table, label: heading, class: 'manifest-table') %>
+<%- else -%>
+  <%= table %>
+<%- end -%>

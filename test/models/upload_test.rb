@@ -9,7 +9,7 @@ class UploadTest < ActiveSupport::TestCase
 
   test 'model - valid Upload record' do
     run_test(__method__) do
-      item = sample_upload
+      item = uploads(:example)
       show item
       assert item.valid?
     end

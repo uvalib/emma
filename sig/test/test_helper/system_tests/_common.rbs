@@ -14,7 +14,7 @@ module TestHelper::SystemTests::Common
 
   include ParamsHelper
 
-  #include Capybara::Node::Finders
+  #include Capybara::Node::Actions
 
   #include TestHelper::SystemTests::Authentication
 
@@ -58,13 +58,13 @@ module TestHelper::SystemTests::Common
 
   # Return the given URL without its HTTP port.
   #
-  # @param [String, nil] url
+  # @param [String, URI::Generic, nil] url
   #
   # @return [String, nil]
   #
   def url_without_port
-    : (String url) -> String
-    | (nil    url) -> nil
+    : (nil                 url) -> nil
+    | (String|URI::Generic url) -> String
 
   # Block until the browser can report its 'window.location'.
   #
@@ -99,4 +99,19 @@ module TestHelper::SystemTests::Common
   # @return [void]
   #
   def success_screenshot: () -> void
+
+  # Depending on the context, there may be two menus for performing an action
+  # on a selected item.
+  #
+  # In cases where there are dual select menus (one for the user's own items
+  # and one for organization items) the first menu will contain a subset of the
+  # items from the second menu.
+  #
+  # @param [String] value
+  # @param [String] name
+  # @param [Hash]   opt               Passed to Capybara::Node::Actions#select
+  #
+  # @return [Capybara::Node::Element]
+  #
+  def item_menu_select: (String value, String name, **untyped opt) -> Capybara::Node::Element
 end

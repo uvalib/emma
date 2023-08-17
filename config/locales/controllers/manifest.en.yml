@@ -35,7 +35,9 @@ en:
       page_controls:
         label:          'Manifest Actions'
         actions:
-          - index
+          - list_own
+          - list_org
+          - list_all
           - new
           - edit_select
           - delete_select
@@ -54,13 +56,13 @@ en:
 
       action_links:
 
-        edit:
-          label:        'Change details of %{article} existing manifest'
-          article:      'an'
-
         new:
           label:        'Create %{article} new manifest'
           article:      'a'
+
+        edit:
+          label:        'Change details of %{article} existing manifest'
+          article:      'an'
 
         delete:
           label:        'Remove %{article} existing manifest'
@@ -70,9 +72,14 @@ en:
           label:        'Submit %{article} manifest'
           article:      'a'
 
-        back:
-          action:       index
-          label:        'View all manifests'
+        list_all:
+          label:        'List all manifests'
+
+        list_org:
+          label:        'List all manifests'
+
+        list_own:
+          label:        'List my manifests'
 
       # =======================================================================
       # Fields
@@ -179,8 +186,8 @@ en:
 
       # =======================================================================
 
-      index:
-        label:          'List All'
+      index:            &INDEX_ACTION
+        label:          'Manifests'
         title:          'Bulk Operation Manifests'
         tooltip:        ~ # 'Your current bulk operation manifests'
 
@@ -201,6 +208,30 @@ en:
           - updated_at
 
         _endpoint:      true
+
+      # =======================================================================
+
+      list_all:
+        <<:             *INDEX_ACTION
+        label:          'List All'
+        title:          'All Bulk Operation Manifests'
+        tooltip:        'All bulk operation manifests'
+
+      # =======================================================================
+
+      list_org:
+        <<:             *INDEX_ACTION
+        label:          'Org List'
+        title:          '%{name} Bulk Operation Manifests'
+        tooltip:        'All bulk operation manifests associated with your organization'
+
+      # =======================================================================
+
+      list_own:
+        <<:             *INDEX_ACTION
+        label:          'My List'
+        title:          'Bulk Operation Manifests'
+        tooltip:        'Your current and saved bulk operation manifests'
 
       # =======================================================================
 
@@ -262,7 +293,7 @@ en:
       edit:             &EDIT_ACTION
         <<:             *GENERIC
         label:          'Change'
-        title:          'Modify Manifest: %{name}'
+        title:          'Modify Manifest %{name}'
         tooltip:        'Modify a bulk operation manifest'
         description:    ~
         directions:     ~
@@ -308,7 +339,7 @@ en:
 
       delete:           &DELETE_ACTION
         label:          'Remove'
-        title:          'Remove Manifest'
+        title:          'Remove Manifest %{name}'
         tooltip:        'Remove a bulk operation manifest'
 
         submit:

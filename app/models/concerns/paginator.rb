@@ -24,23 +24,35 @@ class Paginator
 
   public
 
-  # URL parameters that are search-related but "out-of-band".
+  # Core URL parameters involved in pagination.
   #
   # @type [Array<Symbol>]
   #
-  PAGINATION_KEYS = %i[start offset page prev_id prev_value].freeze
-
-  # URL parameters that are not directly used in searches.
-  #
-  # @type [Array<Symbol>]
-  #
-  NON_SEARCH_KEYS = [:api_key, :modal, :limit, *PAGINATION_KEYS].freeze
+  OFFSET_KEYS = %i[page start offset].freeze
 
   # URL parameters involved in pagination.
   #
   # @type [Array<Symbol>]
   #
-  PAGE_KEYS = %i[page start offset limit].freeze
+  PAGE_KEYS = [*OFFSET_KEYS, :limit].freeze
+
+  # URL parameters that are search-related but "out-of-band".
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGE_OFFSET_KEYS = [*OFFSET_KEYS, :prev_id, :prev_value].freeze
+
+  # URL parameters that are search-related but "out-of-band" including :limit.
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGINATION_KEYS = [*PAGE_OFFSET_KEYS, :limit].freeze
+
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_KEYS = [*PAGINATION_KEYS, :api_key, :format, :modal].freeze
 
   # URL parameters involved in form submission.
   #
@@ -53,7 +65,7 @@ class Paginator
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_FORM_KEYS = (PAGE_KEYS + FORM_KEYS).freeze
+  IGNORED_FORM_KEYS = [*PAGE_KEYS, *FORM_KEYS].freeze
 
   # ===========================================================================
   # :section:
@@ -169,12 +181,12 @@ class Paginator
     first      = main_page
     on_first   = (current == first)
     unless on_first
-      mp_opt   = opt.except(*PAGINATION_KEYS).merge!(path_opt)
+      mp_opt   = opt.except(*PAGE_OFFSET_KEYS).merge!(path_opt)
       first    = make_path(main_page, **mp_opt)
       on_first = (current == first)
     end
     unless on_first
-      mp_opt   = opt.except(:limit, *PAGINATION_KEYS).merge!(path_opt)
+      mp_opt   = opt.except(*PAGINATION_KEYS).merge!(path_opt)
       first    = make_path(main_page, **mp_opt)
       on_first = (current == first)
     end

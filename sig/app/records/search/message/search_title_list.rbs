@@ -151,10 +151,11 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
   # The fields and values for this instance as a Hash.
   #
-  # If opt[:item] is present, this is used as an indicator that individual
-  # records should be wrapped (i.e., that the intended output format is XML).
+  # @param [*] item   Presence used as an indicator that individual records
+  #                   should be wrapped (i.e., that the intended output format
+  #                   is XML).
   #
-  # @param [Hash] opt                 Passed to Api::Record#to_h.
+  # @return [Hash{Symbol=>Any}]
   #
-  def to_h: (**untyped opt) -> symHash
+  def to_h: (?item: untyped, **untyped _ignored) -> symHash
 end

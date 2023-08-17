@@ -7,6 +7,8 @@ class UploadsTest < ApplicationSystemTestCase
 
   INDEX_TITLE: String
 
+  LIST_ACTIONS: symArray
+
   TEST_USER: Symbol
 
   @total: Integer
@@ -14,6 +16,19 @@ class UploadsTest < ApplicationSystemTestCase
   @user: User
 
   @file: Pathname
+
+  # list_test
+  #
+  # @param [Symbol]       action
+  # @param [String]       title
+  # @param [Integer, nil] total       Expected total number of items.
+  # @param [String, nil]  redir_url
+  # @param [Symbol]       meth        Calling test method.
+  # @param [Hash]         opt         URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test: (action: Symbol, title: String, total: Integer|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
   # new_test
   #
@@ -52,4 +67,12 @@ class UploadsTest < ApplicationSystemTestCase
   # @return [String]
   #
   def upload_title: (**untyped opt) -> String
+
+  # The default :index action redirects to :list_own.
+  #
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
 end

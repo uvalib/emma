@@ -184,6 +184,7 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_email: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # render_form_password
   #
   # @param [String] name

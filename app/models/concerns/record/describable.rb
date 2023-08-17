@@ -220,7 +220,7 @@ module Record::Describable
     def describe_user(model = nil, **_opt)
       model ||= self_for_instance_method(__method__)
       # noinspection RailsParamDefResolve
-      user = model.try(:user) and User.uid_value(user)
+      user = model.try(:user) and User.account_name(user)
     end
 
     # A replacement value for '%{user_id}' in #sprintf formats.

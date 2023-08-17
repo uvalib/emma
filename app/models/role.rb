@@ -112,8 +112,8 @@ class Role < ApplicationRecord
   # @return [Symbol]                  Best-match #PROTOTYPE key.
   #
   def self.prototype_for(user)
-    user  = User.find_by(uid: user) if user.is_a?(String)
-    roles = (user.role_list         if user.is_a?(User))
+    user  = User.find_by(email: user) if user.is_a?(String)
+    roles = (user.role_list           if user.is_a?(User))
     case roles&.last
       when :developer     then :developer
       when :administrator then :administrator

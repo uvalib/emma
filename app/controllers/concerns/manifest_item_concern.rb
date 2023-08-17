@@ -215,25 +215,20 @@ module ManifestItemConcern
 
   public
 
-  def find_or_match_records(*items, filters: [], **opt)
-    opt[:user] = current_user unless administrator?
-    filters = [*filters, :filter_by_user!] if opt[:user] || opt[:user_id]
-    super
-  end
-
   # Create and persist a new ManifestItem.
   #
-  # @param [Hash, nil] attr           Default: `#current_params`.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
   #
-  # @return [ManifestItem]            A new ManifestItem instance.
+  # @return [ManifestItem]              A new ManifestItem instance.
   #
-  def create_record(attr = nil, **opt)
-    attr          ||= current_params
-    attr[:backup] ||= {}
-    attr[:row]    ||= 1 + all_manifest_items(**attr)&.last&.row.to_i
-    # noinspection RubyMismatchedReturnType
-    super
+  def create_record(attr = nil, force_id: false, no_raise: false, **)
+    # noinspection RubyScope, RubyMismatchedReturnType
+    super do |attr|
+      attr[:backup] ||= {}
+      attr[:row]    ||= 1 + all_manifest_items(**attr)&.last&.row.to_i
+    end
   end
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
@@ -253,27 +248,26 @@ module ManifestItemConcern
 
   # Update the indicated ManifestItem.
   #
-  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
-  # @param [Hash]              attr    Field values except #UPDATE_STATUS_OPTS.
+  # @param [ManifestItem, nil] item     Def.: rec for ModelConcern#identifier.
+  # @param [Boolean]           no_raise Use #update instead of #update!.
+  # @param [Hash]              prm      Field values except #UPDATE_STATUS_OPTS
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [ManifestItem, nil]       The updated ManifestItem instance.
+  # @return [ManifestItem, nil]         The updated ManifestItem instance.
   #
-  def update_record(item = nil, no_raise: false, **attr)
+  def update_record(item = nil, no_raise: false, **prm)
     keep_date = updated_at = old_values = nil
     # noinspection RubyMismatchedReturnType
-    super { |record, opt|
-      return unless record
-      attr_opt   = opt.extract!(*ManifestItem::UPDATE_STATUS_OPTS)
-      keep_date  = !attr_opt[:overwrite] unless attr_opt[:overwrite].nil?
+    super { |record, attr|
+      opt        = attr.extract!(*ManifestItem::UPDATE_STATUS_OPTS)
+      keep_date  = !opt[:overwrite] unless opt[:overwrite].nil?
       new_fields = keep_date.nil? && attr.except(*NON_EDIT_KEYS).keys.presence
       old_values = new_fields && record.fields.slice(*new_fields)
       updated_at = record[:updated_at]
-    }.tap { |record|
-      return unless record
+    }&.tap { |record|
       if keep_date.nil?
         keep_date = old_values&.all? { |k, v| record[k].to_s == v.to_s }
       end

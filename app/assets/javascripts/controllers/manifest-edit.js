@@ -899,7 +899,7 @@ appSetup(MODULE, function() {
      */
     const INPUTS = [
         'fieldset.menu.multi', // TODO: keep?
-        '.menu.multi[role="listbox"]',
+        'ul[role="listbox"]',
         '.menu.single',
         '.input.multi',
         '.input.single',

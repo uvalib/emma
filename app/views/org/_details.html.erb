@@ -4,13 +4,58 @@
 
   view_debug(__FILE__)
 
-  org     ||= nil
-  dec     ||= org && OrgDecorator.new(org, **context) or return
+  org   ||= nil
+  dec   ||= org && OrgDecorator.new(org, **context) or return
+  org     = dec.object
 
-  columns ||= nil
-  filter  ||= nil
-  extra   ||= nil
+  level ||= 1
+  skip  ||= nil
+
+  skip    = [*skip]
+  heading =
+    if (level == 1) && !skip.include?(:title)
+      title ||= 'Organization Details' # TODO: I18n
+      html_tag((level + 1), title, class: 'details-heading')
+    end
+
+  columns   ||= nil
+  filter    ||= nil
+  extra     ||= nil
+
+  details   ||= true
+  uploads   ||= true
+  manifests ||= true
+
+  uploads   &&= 'EMMA Submissions' # TODO: I18n
+  manifests &&= 'Bulk Upload Manifests' # TODO: I18n
+
+  opt         = { level: (level + 1) }
+  uploads   &&= opt.merge(list: org.uploads,   title: uploads)
+  manifests &&= opt.merge(list: org.manifests, title: manifests)
 
 -%>
 
-<%= dec.details(columns: columns, filter: filter, pairs: extra) %>
+<%- if details -%>
+
+  <div class="org-section details-section">
+    <%= heading %>
+    <%= dec.details(columns: columns, filter: filter, pairs: extra) %>
+  </div>
+
+  <div class="org-section users-section">
+    <%= render 'org/users', org: org %>
+  </div>
+
+<%- end -%>
+
+<%- if uploads -%>
+  <div class="org-section uploads-section">
+    <%= render 'upload/table', **uploads %>
+  </div>
+<%- end -%>
+
+<%- if manifests -%>
+  <div class="org-section manifests-section">
+    <%= render 'manifest/table', **manifests %>
+  </div>
+<%- end -%>

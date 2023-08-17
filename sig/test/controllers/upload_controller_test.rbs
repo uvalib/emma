@@ -64,4 +64,12 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   # @return [Upload]
   #
   def new_record: (?(Symbol|String|symHash) src) -> Upload
+
+  # The default :index action redirects to :list_own.
+  #
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
 end

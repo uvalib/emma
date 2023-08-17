@@ -7,13 +7,14 @@
   item  ||= @item
   image ||= nil
   dec     = UploadDecorator.new(item, cover: image, **context)
-  item  ||= dec.object
+  item    = dec.object
 
   host  ||= @host
 
   help  ||= nil # dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title, name: item.filename)
+  name  ||= item&.filename.inspect
+  title   = dec.page_title(title, name: name)
   title   = "#{host} - #{title}" if host.present?
 
   unless modal?

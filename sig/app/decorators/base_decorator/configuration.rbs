@@ -47,6 +47,15 @@ module BaseDecorator::Configuration
   #
   def controller_config: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
 
+  # Get configured record fields relevant to the given context for the model.
+  #
+  # @param [Symbol] action            Def: `context[:action]`
+  # @param [Symbol, nil] type         Def: controller associated with decorator
+  #
+  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  #
+  def model_context_fields: (?(Symbol|nil) action, ?(Symbol|nil) `type`) -> (Hash[Symbol,symHash] | nil)
+
   # Get configured record fields relevant to an :index action for the model.
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator

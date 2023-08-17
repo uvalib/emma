@@ -19,12 +19,12 @@ class UserSessionsTest < ApplicationSystemTestCase
 
   test 'user session - sign in' do
 
-    url = root_url
+    start_url = root_url
 
     run_test(__method__) do
 
       # Start on the main page.
-      visit url
+      visit start_url
       click_on class: 'session-login'
 
       # On sign-in page '/users/sign_in' (#new_user_session_path).
@@ -40,17 +40,16 @@ class UserSessionsTest < ApplicationSystemTestCase
       assert_flash notice: 'Signed in'
 
     end
-
   end
 
   test 'user session - sign out' do
 
-    url = root_url
+    start_url = root_url
 
     run_test(__method__) do
 
       # Sign in.
-      visit url
+      visit start_url
       sign_in_as @user
 
       # Go to a new page.
@@ -59,7 +58,6 @@ class UserSessionsTest < ApplicationSystemTestCase
       assert_flash notice: 'signed out'
 
     end
-
   end
 
 end

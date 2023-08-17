@@ -25,14 +25,6 @@ module OrgConcern
   #
   def current_post_params: () -> symHash
 
-  # The organization of the current user.
-  #
-  # @return [Org, nil]
-  #
-  def current_org: () -> (Org | nil)
-
-  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> symHash
-
   # Create an Options instance from the current parameters.
   #
   # @return [Org::Options]

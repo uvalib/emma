@@ -6,10 +6,11 @@
 
   list  ||= paginator.page_items
   dec     = SearchCallsDecorator.new(list, **context)
+  list    = dec.object
 
   help  ||= nil # dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  title   = dec.page_title(title)
 
   count ||= paginator.total_items || list.size
 
@@ -18,11 +19,11 @@
   query   = query.presence
 
   unless modal?
-    page  = paginator.page_number
-    terms = (page > 1) ? query&.merge(page: page) : query
-    terms = list_search_terms(terms) if terms
-    label = dec.page_meta_title
-    label = "#{label} - #{terms}"    if terms
+    page    = paginator.page_number
+    terms   = (page > 1) ? query&.merge(page: page) : query
+    terms &&= list_search_terms(terms)
+    label   = dec.page_meta_title
+    label   = "#{label} - #{terms}" if terms
     set_page_meta_title(label)
     set_page_description(title)
   end

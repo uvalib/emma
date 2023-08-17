@@ -152,14 +152,14 @@ module BaseDecorator::Links
 
     l_opt = { current: current, table: table }
     links = table.keys.map { |action| action_link(action, **l_opt) }.compact
-    return if links.blank?
 
-    first = links.index { |link| link.include?(ANOTHER) }
-    if (first &&= links.delete_at(first))
-      links.prepend(first) unless menu_action?(current)
-    end
+    # Move the link referencing the current action to the top of the list.
+    # E.g.: On an :edit page, the "Edit another..." link is moved to the top.
+    first   = links.index { |link| link.include?(ANOTHER) }
+    first &&= links.delete_at(first)
+    links.prepend(first) if first && !menu_action?(current)
 
-    html_tag(:ul, *links, prepend_css(css))
+    html_tag(:ul, *links, prepend_css(css)) if links.present?
   end
 
   # ===========================================================================
@@ -181,10 +181,12 @@ module BaseDecorator::Links
     current = (opt.delete(:current) || current || context[:action])&.to_sym
     action  = (opt.delete(:action)  || action  || current)&.to_sym
     table ||= action_links(**opt)
-    entry   = table[action]&.dup or return {}
-    # noinspection RubyMismatchedArgumentType
-    entry[:article] = ANOTHER if base_action(action) == base_action(current)
-    entry
+    table[action]&.dup&.tap do |entry|
+      # noinspection RubyMismatchedArgumentType
+      entry[:article]  = ANOTHER if base_action(action) == base_action(current)
+      entry[:current]  = current
+      entry[:action] ||= action
+    end || {}
   end
 
   # The URL link for an entry in a list of controller actions.
@@ -207,14 +209,15 @@ module BaseDecorator::Links
     css:     '.page-action',
     **opt
   )
-    action  = opt.delete(:action) || action
-    entry   = action_entry(action, current: current, **opt)
-    action  = entry[:action] || action
-    return unless can?(action, (object.is_a?(Array) ? object_class : object))
+    action = opt.delete(:action) || action
+    entry  = action_entry(action, current: current, **opt)
+    action, current = entry.values_at(:action, :current)
 
-    label   = (label || entry[:label]).presence
-    label &&= label % entry
-    label ||= labelize(action)
+    return if (action == current) && current&.start_with?('list_')
+    return unless can?(action, object_class)
+
+    label  = (label || entry[:label]).presence
+    label  = label ? (label % entry) : labelize(action)
 
     html_tag(:li, prepend_css(css)) do
       link_to_action(label, action: action)

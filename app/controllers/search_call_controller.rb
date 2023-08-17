@@ -95,7 +95,8 @@ class SearchCallController < ApplicationController
       end
     results.limit!(prm[:limit])   if prm[:limit]  # TODO: temporary
     results.offset!(prm[:offset]) if prm[:offset] # TODO: temporary
-    @list = paginator.finalize({ list: results.to_a }, **search)
+    found = { list: results.to_a }
+    @list = paginator.finalize(found, **search)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

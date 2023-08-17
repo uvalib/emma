@@ -33,6 +33,15 @@ en:
           type:         number
           origin:       system
 
+        org_id:
+          min:          1
+          max:          1
+          label:        'Organization'
+          type:         !ruby/symbol Org
+          notes:        |
+            For EMMA accounts that are authenticated remotely, this must match
+            the account name of the remote authentication provider.
+
         email:
           min:          1
           max:          1
@@ -43,13 +52,6 @@ en:
             For EMMA accounts that are authenticated remotely, this must match
             the account name of the remote authentication provider.
           type:         text
-
-        org_id:
-          min:          0
-          max:          1
-          label:        'Organization'
-          type:         number
-          origin:       system
 
         first_name:
           min:          0
@@ -147,6 +149,7 @@ en:
           label:        'Auth Provider'
           tooltip:      'The strategy used for authentication to EMMA'
           type:         !ruby/symbol AuthProvider
+          origin:       system
           role:         administrator
 
         # =====================================================================
@@ -254,8 +257,6 @@ en:
           min:          0
           max:          1
           label:        'Encrypted Password'
-          tooltip:      |
-            For local (EMMA authentication) accounts only
           type:         text
           origin:       system
           role:         developer
@@ -264,8 +265,6 @@ en:
           min:          0
           max:          1
           label:        'Remember Date'
-          tooltip:      |
-            For local (EMMA authentication) accounts only
           type:         datetime
           origin:       system
           role:         developer
@@ -274,8 +273,6 @@ en:
           min:          0
           max:          1
           label:        'Reset Password Token'
-          tooltip:      |
-            For local (EMMA authentication) accounts only
           type:         datetime
           origin:       system
           role:         developer
@@ -284,8 +281,6 @@ en:
           min:          0
           max:          1
           label:        'Reset Password Date'
-          tooltip:      |
-            For local (EMMA authentication) accounts only
           type:         datetime
           origin:       system
           role:         developer

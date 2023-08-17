@@ -9,10 +9,6 @@ module Record::Identification
 
   extend ::Record::Identification
 
-  ID_COLUMN: Symbol
-
-  USER_COLUMN: Symbol
-
   # The type of record for the current context.
   #
   # (This will be Upload unless within an instance of another type of Record.)

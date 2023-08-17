@@ -9,34 +9,10 @@ __loading_begin(__FILE__)
 #
 class ApplicationRecord < ActiveRecord::Base
 
+  include IdMethods
   include SqlMethods
 
   self.abstract_class = true
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The explicit :org_id field if a model defines it, or the method defined by
-  # the model to derive the ID of the Organization associated with the model
-  # instance.
-  #
-  # @return [Integer, nil]
-  #
-  def org_id
-    #Log.debug { "#{__method__}: not applicable to #{self.class}" }
-  end
-
-  # The explicit :user_id field if a model defines it, or the method defined by
-  # the model to derive the ID of the User associated with the model instance.
-  #
-  # @return [Integer, nil]
-  #
-  def user_id
-    #Log.debug { "#{__method__}: not applicable to #{self.class}" }
-  end
 
   # ===========================================================================
   # :section:
@@ -82,6 +58,14 @@ class ApplicationRecord < ActiveRecord::Base
     ApplicationRecord.subclasses.map(&:model_type)
   end
 
+  # A mapping of #model_key to #model_id_key for all record classes.
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def self.model_id_key_map
+    ApplicationRecord.subclasses.map { |c| [c.model_key, c.model_id_key] }.to_h
+  end
+
   # ===========================================================================
   # :section: Class and instance methods
   # ===========================================================================
@@ -124,32 +108,41 @@ class ApplicationRecord < ActiveRecord::Base
   delegate :model_controller, to: :class
 
   # ===========================================================================
-  # :section: Class and instance methods
+  # :section: Class methods
   # ===========================================================================
 
   public
 
-  def self.normalize_id_keys(arg, target = nil)
-    return arg unless arg.is_a?(Hash) && arg.present?
-    normalize_id_keys!(arg.dup, target)
-  end
-
-  def self.normalize_id_keys!(hash, target = nil)
-    target_type = target&.model_type
-    hash.extract!(*model_types).each_pair do |model, val|
-      key = (model == target_type) ? :id : :"#{model}_id"
-      Log.warn {
-        "#{__method__}: #{key}: now #{val.inspect}; was: #{hash[key].inspect}"
-      } if hash.key?(key)
-      hash[key] = val
+  # This is a convenience so that model classes can provide lists for use with
+  # menus in the same way that EnumType#pairs does.
+  #
+  # @param [Symbol, String, Hash, Array, nil] sort      Default: :id
+  # @param [Hash, nil]                        prepend   Added leading pair(s).
+  # @param [Hash, nil]                        append    Added following pairs.
+  # @param [Hash]                             opt       Terms passed to #where.
+  #
+  # @return [Hash]
+  #
+  # @see EnumType::Methods#pairs
+  #
+  def self.pairs(sort: nil, prepend: nil, append: nil, **opt, &blk)
+    blk  ||= ->(rec) { [rec.id, rec.label] }
+    sort ||= :id
+    opt    = opt.presence
+    user   = opt && extract_value!(nil, opt, :user)
+    org    = opt && extract_value!(nil, opt, :org)
+    case
+      when user then recs = for_user(user, **opt)
+      when org  then recs = for_org(org, **opt)
+      when opt  then recs = where(**opt)
+      else           recs = all
     end
-    id_or_value = ->(v) { v.is_a?(ApplicationRecord) ? v.id : v }
-    hash.transform_values! do |val|
-      val.is_a?(Array) ? val.map(&id_or_value) : id_or_value.(val)
-    end
+    recs.order(sort).map(&blk).to_h.tap { |pairs|
+      # noinspection RubyMismatchedArgumentType
+      pairs.merge!(append)          if append.present?
+      pairs.reverse_merge!(prepend) if prepend.present?
+    }.stringify_keys!
   end
-
-  delegate :normalize_id_keys, :normalize_id_keys!, to: :class
 
 end
 

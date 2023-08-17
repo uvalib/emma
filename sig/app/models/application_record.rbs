@@ -1,22 +1,9 @@
 # Base class for database record models.
 #
 class ApplicationRecord < ActiveRecord::Base
-  # The explicit :org_id field if a model defines it, or the method defined by
-  # the model to derive the ID of the Organization associated with the model
-  # instance.
-  #
-  # @return [Integer, nil]
-  #
-  def org_id: () -> (Integer | nil)
+  include IdMethods
 
   include SqlMethods
-
-  # The explicit :user_id field if a model defines it, or the method defined by
-  # the model to derive the ID of the User associated with the model instance.
-  #
-  # @return [Integer, nil]
-  #
-  def user_id: () -> (Integer | nil)
 
   # A textual label for the record instance.
   #
@@ -43,6 +30,12 @@ class ApplicationRecord < ActiveRecord::Base
   # @return [Array<Symbol>]
   #
   def self.model_types: () -> symArray
+
+  # A mapping of #model_key to #model_id_key for all record classes.
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def self.model_id_key_map: () -> Hash[Symbol,Symbol]
 
   # A representation of the model subclass for use in URL parameters.
   #
@@ -76,11 +69,17 @@ class ApplicationRecord < ActiveRecord::Base
 
   def model_controller: () -> Class
 
-  def self.normalize_id_keys: [T] (T arg, ?untyped target) -> T
-
-  def normalize_id_keys: [T] (T arg, ?untyped target) -> T
-
-  def self.normalize_id_keys!: (symHash arg, ?untyped target) -> symHash
-
-  def normalize_id_keys!: (symHash arg, ?untyped target) -> symHash
+  # This is a convenience so that model classes can provide lists for use with
+  # menus in the same way that EnumType#pairs does.
+  #
+  # @param [Symbol, String, Hash, Array, nil] sort      Default: :id
+  # @param [Hash, nil]                        prepend   Added leading pair(s).
+  # @param [Hash, nil]                        append    Added following pairs.
+  # @param [Hash]                             opt       Terms passed to #where.
+  #
+  # @return [Hash]
+  #
+  # @see EnumType::Methods#pairs
+  #
+  def self.pairs: (?sort: anyHash|Symbol|String|Array[Symbol|String]|nil, ?prepend: anyHash|nil, ?append: anyHash|nil, **untyped opt) ?{ (ApplicationRecord) -> [untyped,untyped] } -> Hash[String,String]
 end

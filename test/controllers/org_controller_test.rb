@@ -12,7 +12,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   PARAMS        = { controller: CONTROLLER }.freeze
   OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS    = %i[anonymous test_guest_1 test_dso_1 test_man_1 test_adm].freeze
+  TEST_USERS    = ALL_TEST_USERS
   TEST_READERS  = TEST_USERS
 =begin # TODO: test_man_1's org doesn't match artificially generated fixture org
   TEST_WRITERS  = TEST_USERS
@@ -31,21 +31,41 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   # :section: Read tests
   # ===========================================================================
 
-  test 'org index - list all orgs' do
+  test 'org index - list orgs' do
     action  = :index
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @readers.each do |user|
-      admin = user&.administrator?
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      assert able, 'Administrator unable to list orgs' if admin
+
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect]   = :redirect unless admin
+        case (opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized)
+          when :success  then opt[:redir]  = index_redirect(user: user, **opt)
+          when :redirect then opt[:format] = :any
+        end
+        get_as(user, url, **opt, only: READ_FORMATS)
+      end
+    end
+  end
+
+  test 'org list_all - list all orgs' do
+    action  = :list_all
+    params  = PARAMS.merge(action: action)
+    options = OPTIONS.merge(action: action, test: __method__)
+
+    @readers.each do |user|
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        #opt[:expect] ||= :redirect if user
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        opt[:format]   = :any if opt[:expect] == :redirect
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
@@ -55,11 +75,13 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     action  = :show
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @readers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
-        rec = sample_org
+        rec = orgs(:one)
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
@@ -76,9 +98,11 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     action  = :new
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
@@ -92,10 +116,12 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     action  = :create
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
       u_opt[:expect] = :redirect
+
       TEST_FORMATS.each do |fmt|
         rec = new_record
         url = url_for(**rec.fields, **params, format: fmt)
@@ -110,9 +136,11 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     action  = :edit
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit
         url = url_for(id: rec.id, **params, format: fmt)
@@ -127,10 +155,12 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     action  = :update
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
       u_opt[:expect] = :redirect
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit
         url = url_for(**rec.fields, **params, format: fmt)
@@ -145,9 +175,11 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     action  = :delete
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
@@ -162,10 +194,12 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     action  = :destroy
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
       u_opt[:expect] = :redirect
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
@@ -184,29 +218,11 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
 
   # @private
   # @type [String,nil]
-  attr_accessor :create_id
-
-  # @private
-  # @type [String,nil]
   attr_accessor :edit_id
 
   # @private
   # @type [String,nil]
   attr_accessor :delete_id
-
-  # Push a dummy item into the database for creating.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Org]
-  #
-  def sample_for_create(src = :example)
-    current = create_id && Org.find_by(id: create_id)
-    current&.delete
-    new_record(src).tap do |record|
-      self.create_id = record.save!
-    end
-  end
 
   # Push a dummy item into the database for editing.
   #
@@ -246,6 +262,25 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   def new_record(src = :example)
     fields = src.is_a?(Hash) ? src : orgs(src.to_sym).fields.except(:id)
     Org.new(fields)
+  end
+
+  # ===========================================================================
+  # :section: TestHelper::Utility overrides
+  # ===========================================================================
+
+  public
+
+  # The default :index action redirects to :list_all for Administrator and
+  # :show for everyone else.
+  #
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def index_redirect(**opt, &blk)
+    opt[:user] = find_user(opt[:user] || current_user)
+    opt[:dst]  = opt[:user]&.administrator? ? :list_all : :show
+    super(**opt, &blk)
   end
 
 end

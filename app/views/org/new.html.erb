@@ -9,7 +9,8 @@
 
   help  ||= nil # dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  name  ||= nil
+  title   = dec.page_title(title, name: name)
 
   unless modal?
     label = dec.page_meta_title

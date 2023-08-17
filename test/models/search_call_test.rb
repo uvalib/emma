@@ -9,7 +9,7 @@ class SearchCallTest < ActiveSupport::TestCase
 
   test 'model - valid search call' do
     run_test(__method__) do
-      item = sample_search_call
+      item = search_calls(:example)
       show item
       assert item.valid?
     end

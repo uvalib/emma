@@ -7,13 +7,13 @@ module SessionConcern
 
   include FlashHelper
 
-  include SerializationHelper
-
   include ApiConcern
 
   include AuthConcern
 
   include ParamsConcern
+
+  include SerializationConcern
 
   # :nocov:
   #include Devise::Controllers::Helpers

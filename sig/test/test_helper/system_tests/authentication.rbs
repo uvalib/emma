@@ -11,7 +11,7 @@ module TestHelper::SystemTests::Authentication
   #
   # @raise [Minitest::Assertion]
   #
-  # @return [true]
+  # @return [void]
   #
-  def sign_in_as: ((String|Symbol|User|nil) user) -> true
+  def sign_in_as: ((String|Symbol|User|nil) user) -> void
 end

@@ -7,7 +7,7 @@
   item  ||= nil
   image ||= nil
   dec   ||= item && SearchDecorator.new(item, cover: image, **context) or return
-  item  ||= dec.object
+  item    = dec.object
 
   level ||= 1
   extra ||= nil

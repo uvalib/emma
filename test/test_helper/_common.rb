@@ -7,6 +7,8 @@
 #
 module TestHelper::Common
 
+  include Emma::Common
+
   extend self
 
   # ===========================================================================
@@ -89,6 +91,7 @@ module TestHelper::Common
   # @param [Symbol]      action       Default: :index
   # @param [Symbol]      prop_key     End of #PROPERTY traversal.
   # @param [Symbol]      meth         Calling method (for error reporting).
+  # @param [Hash]        opt          Override interpolation values.
   #
   # @raise [Minitest::Assertion] If value could not be found or interpolated.
   #
@@ -100,23 +103,13 @@ module TestHelper::Common
     action:     nil,
     prop_key:   :heading,
     meth:       nil,
-    **
+    **opt
   )
     meth   ||= __method__
     action ||= :index
-    value    = property(controller, action, prop_key)
+    value    = property(controller, action, prop_key).to_s
     fail "#{meth}: no :#{prop_key} for #{controller}/#{action}" if value.blank?
-    if (refs = named_references(value)).present?
-      error =
-        if item.nil?
-          'missing item'
-        elsif (invalid = refs.select { |ref| !item.respond_to?(ref) }).present?
-          'invalid keys %s' % invalid.map { |ref| quote(ref) }.join(', ')
-        end
-      fail "#{meth}: cannot interpolate #{value.inspect} - #{error}" if error
-      value %= refs.map { |k| [k, item.send(k)] }.to_h
-    end
-    value.to_s
+    interpolate_named_references(value, item, **opt)
   end
 
   # ===========================================================================

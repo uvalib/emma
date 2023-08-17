@@ -10,10 +10,12 @@ module BaseDecorator::Menu
   # Generate a menu of database item entries.
   #
   # @param [Symbol, String, nil] action      Default: `context[:action]`
-  # @param [Hash, nil]           constraint
+  # @param [Hash, nil]           constraints
   # @param [Hash, nil]           sort
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
+  # @param [String, nil]         id
+  # @param [String, Symbol]      name
   # @param [String, Hash]        ujs         JavaScript selection action.
   # @param [String]              css         Characteristic CSS class/selector.
   # @param [Hash]                opt         Passed to #html_form.
@@ -22,7 +24,7 @@ module BaseDecorator::Menu
   #
   # @see RouteHelper#get_path_for
   #
-  def items_menu: (?action: Symbol|String|nil, ?constraint: symHash|nil, ?sort: symHash|nil, ?prompt: String|nil, ?table: symHash|nil, ?ujs: String|symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def items_menu: (?action: Symbol|String|nil, ?constraints: symHash|nil, ?sort: symHash|nil, ?prompt: String|nil, ?table: symHash|nil, ?id: String|nil, ?name: String|Symbol, ?ujs: String|symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The name of the controller used in generating link paths.
   #

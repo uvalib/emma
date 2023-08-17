@@ -13,6 +13,8 @@ module ModelConcern
 
   include IdentityHelper
 
+  include ParamsHelper
+
   include OptionsConcern
 
   include PaginationConcern
@@ -91,6 +93,26 @@ module ModelConcern
   #
   def extract_identifier: (symHash prm) -> (Integer | String | nil)
 
+  # If a user was not already specified, add the current user to the given
+  # parameters.
+  #
+  # @param [Hash]      prm
+  # @param [User, nil] user           Default: #current_user
+  #
+  # @return [Hash]
+  #
+  def current_user!: (symHash prm, ?(User|nil) user) -> symHash
+
+  # If an organization was not already specified, add the organization of the
+  # current user to the given parameters.
+  #
+  # @param [Hash]     prm
+  # @param [Org, nil] org             Default: #current_org
+  #
+  # @return [Hash]
+  #
+  def current_org!: (symHash prm, ?(Org|nil) org) -> symHash
+
   # Return with the specified model record.
   #
   # @param [String, Integer, Hash, Model, *] item   Default: #identifier.
@@ -116,6 +138,22 @@ module ModelConcern
   # @return [Hash{Symbol=>*}]
   #
   def find_or_match_records: (*(String|Integer|Array[String|Integer]) items, ?filters: symArray, **untyped opt) -> symHash
+
+  # Transform options into predicates usable for database lookup.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The argument, possibly modified.
+  #
+  def normalize_predicates!: (symHash opt) -> symHash
+
+  # Transform options into predicates usable for database lookup.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    A possibly-modified copy of the argument.
+  #
+  def normalize_predicates: (symHash opt) -> symHash
 
   # Remove options that would otherwise be sent as SQL search term predicates.
   #
@@ -169,22 +207,22 @@ module ModelConcern
 
   # Start a new (un-persisted) model instance.
   #
-  # @param [Hash, nil] attr           Default: `#current_params`.
-  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
-  # @return [Model]                   Un-persisted model record instance.
+  # @return [Model]                     Un-persisted model record instance.
   #
-  def new_record: (?symHash? attr, ?force_id: bool|String, **untyped _ignored) -> Model
+  def new_record: (?symHash? attr, ?force_id: bool|String, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
 
   # Create and persist a new model record.
   #
-  # @param [Hash, nil]      attr      Default: `#current_params`.
-  # @param [Boolean,String] force_id  If *true*, allow setting of :id.
-  # @param [Boolean]        no_raise  If *true*, use #save instead of #save!.
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
   #
-  # @return [Model]                   New persisted model record instance.
+  # @return [Model]                     New persisted model record instance.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?no_raise: bool, **untyped _ignored) -> Model
+  def create_record: (?symHash? attr, ?force_id: bool|String, ?no_raise: bool, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
 
   # Start editing an existing model record.
   #
@@ -197,13 +235,13 @@ module ModelConcern
   #
   # @return [Model, nil]
   #
-  def edit_record: (?(String|Integer|Model|symHash|nil) item, ?(symHash|nil) prm, **untyped opt) -> (Model | nil)
+  def edit_record: (?(String|Integer|Model|symHash|nil) item, ?(symHash|nil) prm, **untyped opt) ?{ (Model record) -> void } -> (Model | nil)
 
   # Persist changes to an existing model record.
   #
   # @param [*]         item           If present, used as a template.
   # @param [Boolean]   no_raise       Use #update instead of #update!.
-  # @param [Hash, nil] attr           Default: `#current_params`
+  # @param [Hash, nil] prm            Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
@@ -211,7 +249,7 @@ module ModelConcern
   #
   # @return [Model, nil]
   #
-  def update_record: (?(Model|symHash|nil) item, ?no_raise: bool, **untyped attr) -> (Model | nil)
+  def update_record: (?(Model|symHash|nil) item, ?no_raise: bool, **untyped prm) ?{ (Model record, symHash attr) -> void } -> (Model | nil)
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #

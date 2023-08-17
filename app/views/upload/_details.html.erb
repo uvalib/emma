@@ -6,7 +6,8 @@
 
   item  ||= nil
   image ||= nil
-  dec   ||= item && UploadDecorator.new(item, cover: image, **context) or return
+  dec   ||= item && UploadDecorator.new(item, cover: image, **context)
+  return unless dec
 
   level ||= 1
   extra ||= nil

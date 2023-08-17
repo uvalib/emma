@@ -46,26 +46,6 @@ module Field
 
   public
 
-  # Return an enumeration type expressed or implied by *value*.
-  #
-  # @param [String, Symbol, Class, Any] value
-  #
-  # @return [Class] The class indicated by *value*.
-  # @return [nil]   If *value* could not be cast a subclass of EnumType.
-  #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
-  def self.enum_type(value)
-    if value.is_a?(Class)
-      value if value < EnumType
-    elsif value.to_s.strip.casecmp?('boolean')
-      TrueFalse
-    elsif value.is_a?(Symbol)
-      value.to_s.safe_constantize
-    end
-  end
-
   # Configuration properties for a field within a given model/controller.
   #
   # @param [Symbol, String, Array, nil] field
@@ -179,10 +159,10 @@ module Field
   #
   # === Usage Notes
   # The :type indicates the type of HTML input element, either directly or
-  # indirectly.  If the value is a Symbol it is interpreted as an EnumType
-  # subclass which gives the range of values for a '<select>' element or the
-  # set of checkboxes to create within a 'role="listbox"' element.  Any other
-  # value indicates '<textarea>' or the '<input>' type attribute to use.
+  # indirectly.  If the value is a Symbol it is interpreted as a derivative of
+  # Model or EnumType which gives the range of values for a '<select>' element
+  # or the set of checkboxes to create within a 'role="listbox"' element.  Any
+  # other value indicates '<textarea>' or the '<input>' type attribute to use.
   #
   def self.normalize(entry, field = nil)
     entry = entry.to_s.titleize            if entry.is_a?(Symbol)
@@ -194,7 +174,7 @@ module Field
       case item
         when :min, :max then value = value&.to_i
         when :help      then value = Array.wrap(value).map(&:to_sym)
-        when :type      then value = enum_type(value) || value.to_s
+        when :type      then value = value_class(value) || value.to_s
         when :role      then value = value&.to_sym
         when /_html$/   then value = value.to_s.strip.html_safe
         when :cond      then value = normalize_conditions(value)
@@ -309,6 +289,19 @@ module Field
     result
   end
 
+  # Return an enumeration or model class expressed or implied by *value*.
+  #
+  # @param [String, Symbol, Class, *] value
+  #
+  # @return [Class, nil]
+  #
+  def self.value_class(value)
+    return TrueFalse if value.to_s.strip.casecmp?('boolean')
+    value = value.to_s.safe_constantize if value.is_a?(Symbol)
+    # noinspection RubyMismatchedReturnType
+    value if value.is_a?(Class) && [EnumType, Model].any? { |t| value < t }
+  end
+
   # ===========================================================================
   # :section: Configuration
   # ===========================================================================
@@ -347,14 +340,14 @@ module Field
     config ||= configuration_for(field, model)
     return if config.blank?
 
+    range = value_class(config[:type])
     array = true?(config[:array])
-    range = config[:type].then { |v| v if v.is_a?(Class) && (v < EnumType) }
-
-    if    range && array     then type = Field::MultiSelect
-    elsif range == TrueFalse then type = Field::Binary
-    elsif range              then type = Field::Select
-    elsif array              then type = Field::Collection
-    else                          type = Field::Single
+    case
+      when range && array     then type = Field::MultiSelect
+      when range == TrueFalse then type = Field::Binary
+      when range              then type = Field::Select
+      when array              then type = Field::Collection
+      else                         type = Field::Single
     end
     type.new(item, field, model, value)
   end
@@ -424,30 +417,20 @@ module Field
     #++
     def initialize(src, field = nil, model = nil, value = nil)
       @base  = src
-      @field = @range = nil
-      if field.is_a?(Symbol)
-        @field = field
-        @base  = Field.configuration_for(@field, model)[:type]
-        @range ||=
-          if src.respond_to?(:active_emma_metadata)
-            src.active_emma_metadata[@field]
-          elsif src.respond_to?(:emma_metadata)
-            src.emma_metadata[@field]
-          end
-        @range ||=
-          begin
-            if src.respond_to?(:active_emma_record)
-              src = src.active_emma_record
-            elsif src.respond_to?(:emma_record)
-              src = src.emma_record
-            end
-            # noinspection RubyMismatchedArgumentType
-            src.try(@field)
-          end
+      @range = nil
+      if (@field = field).is_a?(Symbol)
+        @base = Field.configuration_for(field, model)[:type]
+        # noinspection RailsParamDefResolve
+        src   = src.try(:active_emma_record) || src.try(:emma_record) || src
+        # noinspection RubyMismatchedArgumentType
+        case
+          when src.respond_to?(field) then @range = src.send(field)
+          when src.respond_to?(:[])   then @range = src[field]
+        end
       end
       @range = Array.wrap(@range).map { |v| v.to_s.strip.presence }.compact
       @base  = @base.to_s.safe_constantize if @base.is_a?(Symbol)
-      @base  = self.class.base unless @base.is_a?(Class)
+      @base  = self.class.base             unless @base.is_a?(Class)
       @value = value.presence || @range.presence
       @valid = !@value.nil?
     end

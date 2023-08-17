@@ -65,28 +65,55 @@ module ManifestConcern
 
   public
 
-  def find_or_match_records(*items, filters: [], **opt)
-    unless administrator?
-      opt[:user] = current_user
-      opt[:org]  = current_user.org if manager? && opt[:org]
-    end
-    filters << :filter_by_user! if opt[:user] || opt[:user_id]
-    filters << :filter_by_org!  if opt[:org]  || opt[:org_id]
-    super
-  end
-
   # Start a new (un-persisted) manifest.
   #
-  # @param [Hash, nil] attr           Default: `#current_get_params`.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
-  # @return [Manifest]                Un-persisted Manifest instance.
+  # @return [Manifest]                  Un-persisted Manifest instance.
   #
-  def new_record(attr = nil, **opt)
-    attr ||= current_params
-    attr[:name] ||= Manifest.default_name
+  def new_record(attr = nil, force_id: false, **)
+    # noinspection RubyScope, RubyMismatchedReturnType
+    super do |attr|
+      attr[:name] ||= Manifest.default_name
+    end
+  end
+
+  # Update the indicated User, ensuring that :email is not changed unless
+  # authorized.
+  #
+  # @param [User, nil] item           Def.: record for ModelConcern#identifier.
+  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Hash]      prm            Field values.
+  #
+  # @raise [Record::NotFound]               Record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
+  #
+  # @return [Manifest, nil]           The updated Manifest instance.
+  #
+  def update_record(item = nil, no_raise: false, **prm)
     # noinspection RubyMismatchedReturnType
-    super(attr, **opt)
+    super do |record, attr|
+      unless administrator?
+        org     = current_org&.id or raise "no org for #{current_user}"
+        discard = []
+        if attr.key?((k = :email)) && ((acct = attr[k]) != record.account)
+          if !acct.present? || !manager?
+            discard << k
+          elsif User.find_by(email: acct)&.org_id != org
+            discard << k
+          end
+        end
+        if (discarded = discard.presence && attr.except!(*discard)).present?
+          Log.info do
+            # noinspection RubyScope
+            list = discarded.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
+            "#{__method__}: discarded: #{list} for #{current_user}"
+          end
+        end
+      end
+    end
   end
 
   # ===========================================================================

@@ -1385,22 +1385,16 @@ class Search::Record::TitleRecord < Search::Api::Record
   end
 
   # ===========================================================================
-  # :section: Api::Record overrides
+  # :section: Model overrides
   # ===========================================================================
 
   public
 
   # The fields and values for this instance as a Hash.
   #
-  # If opt[:item] is present, this is used as an indicator that individual
-  # file metadata sections should be wrapped (i.e., that the intended output
-  # format is XML).
-  #
-  # @param [Hash] opt                 Passed to Api::Record#to_obj except:
-  #
-  # @option opt [Any] :item           If present, this is taken as an indicator
-  #                                     that arrays should be wrapped (for XML
-  #                                     rendering).
+  # @param [*] item   Presence used as an indicator that individual records
+  #                   should be wrapped (i.e., that the intended output format
+  #                   is XML).
   #
   # @return [Hash{Symbol=>Any}]
   #

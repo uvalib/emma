@@ -97,32 +97,38 @@ module BaseDecorator::Form
     opt[:row]   = 0
     field_values(pairs).map { |label, value|
       next if (label == :file_data) || (label == :emma_data)
-      if value.is_a?(Symbol)
-        field  = value
-        config = field_configuration(field, action)
-      elsif label.is_a?(Symbol) && value.is_a?(Hash)
-        field  = label
-        label  = value[:label]
-        config = field_configuration(field, action)
-        value  = field_for(field, config: config)
-      elsif label.is_a?(Symbol)
-        field  = label
-        config = field_configuration(field, action)
-        label  = config[:label] || label
+      if label.is_a?(Symbol)
+        field = label
+        prop  = field_configuration(field, action)
+        label = prop[:label] || label
+        case value
+          when Field::Type
+            value = field_for(field, config: prop, value: value.value.presence)
+          when Hash
+            value = field_for(field, config: prop)
+        end
+      elsif value.is_a?(Symbol)
+        field = value
+        prop  = field_configuration(field, action)
+        value = nil
       else
-        config = field_configuration_for_label(label, action)
-        field  = config[:field]
+        prop  = field_configuration_for_label(label, action)
+        field = prop[:field]
       end
 
-      opt[:row]     += 1
-      opt[:field]    = field
-      opt[:disabled] = config[:readonly].present?
-      opt[:required] = config[:required].present?
-      id_suffix      = (0 if opt[:disabled])
+      rv = render_value(value, field: field)
+      if value.is_a?(Field::Type)
+        value.set(rv.is_a?(Field::Type) ? rv.value : rv)
+      else
+        value = rv
+      end
 
-      value = render_value(value, field: field)
+      opt[:row]  += 1
+      opt[:field] = field
+      opt[:prop]  = prop
+      opt[:index] = (0 if prop[:readonly])
       # noinspection RubyMismatchedArgumentType
-      render_form_pair(label, value, index: id_suffix, **opt)
+      render_form_pair(label, value, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end
 
@@ -329,6 +335,7 @@ module BaseDecorator::Form
       label << marker
     end
 
+    append_css!(opt, 'fixed') if opt.delete(:fixed)
     append_css!(opt, css)
     if tag == :label
       h.label_tag(field, label, opt)
@@ -336,6 +343,9 @@ module BaseDecorator::Form
       html_tag(tag, label, opt)
     end
   end
+
+  # @private
+  MENU_SINGLE_OPT = %i[name base fixed readonly constraints].freeze
 
   # Single-select menu - drop-down.
   #
@@ -349,7 +359,9 @@ module BaseDecorator::Form
   #
   # @option opt [String]  :name       Overrides *name*
   # @option opt [String]  :base       Name and id for *select*; default: *name*
+  # @option opt [Boolean] :fixed
   # @option opt [Boolean] :readonly
+  # @option opt [Hash]    :constraints
   #
   # @raise [RuntimeError]             If *range* is not an EnumType.
   #
@@ -360,15 +372,13 @@ module BaseDecorator::Form
   def render_form_menu_single(name, value, range:, css: '.menu.single', **opt)
     range.is_a?(Array) or valid_range?(range, exception: true)
     normalize_attributes!(opt)
-    html_opt = remainder_hash!(opt, :name, :base, :readonly)
+    html_opt = remainder_hash!(opt, *MENU_SINGLE_OPT)
     field    = html_opt[:'data-field']
     name     = opt[:name] || name || opt[:base] || field
-    prepend_css!(html_opt, css)
-
     selected = Array.wrap(value).compact.presence || ['']
 
     # noinspection RailsParamDefResolve
-    pairs = (range.try(:pairs) || Array.wrap(range)).dup
+    pairs = range.try(:pairs, **(opt[:constraints] || {})) || Array.wrap(range)
     menu  =
       pairs.map do |item_value, item_label|
         item_value = item_value.to_s
@@ -377,9 +387,15 @@ module BaseDecorator::Form
       end
     menu.unshift(['(unset)', '']) unless menu.first.last.blank? # TODO: I18n
     menu = h.options_for_select(menu, selected)
-    html_opt[:disabled] = true if opt[:readonly]
+
+    html_opt[:disabled] = true     if opt[:readonly]
+    append_css!(html_opt, 'fixed') if opt[:fixed]
+    prepend_css!(html_opt, css)
     h.select_tag(name, menu, html_opt)
   end
+
+  # @private
+  MENU_MULTI_OPT = %i[id name base fixed readonly inner outer].freeze
 
   # Multi-select menu - scrollable list of checkboxes.
   #
@@ -407,11 +423,9 @@ module BaseDecorator::Form
   def render_form_menu_multi(name, value, range:, css: '.menu.multi', **opt)
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
-    options  = %i[id name base readonly inner outer]
-    html_opt = remainder_hash!(opt, *options)
+    html_opt = remainder_hash!(opt, *MENU_MULTI_OPT)
     field    = html_opt[:'data-field']
     name     = opt[:name] || name || opt[:base] || field
-    prepend_css!(html_opt, css)
 
     # Checkbox elements.
     selected = Array.wrap(value).compact.presence
@@ -439,8 +453,10 @@ module BaseDecorator::Form
     html_opt[:id]       = opt[:id]
     html_opt[:name]     = name
     html_opt[:role]     = 'group'
-    html_opt[:disabled] = true   if opt[:readonly]
-    html_opt.merge!(opt[:outer]) if opt[:outer].is_a?(Hash)
+    html_opt[:disabled] = true     if opt[:readonly]
+    html_opt.merge!(opt[:outer])   if opt[:outer].is_a?(Hash)
+    append_css!(html_opt, 'fixed') if opt[:fixed]
+    prepend_css!(html_opt, css)
     html_div(html_opt) { group }
   end
 
@@ -459,6 +475,7 @@ module BaseDecorator::Form
   # @see file:javascripts/feature/model-form.js *updateFieldsetInputs()*
   #
   def render_form_input_multi(name, value, css: '.input.multi', **opt)
+    append_css!(opt, 'fixed') if opt.delete(:fixed)
     prepend_css!(opt, css)
     render_field_item(name, value, **opt)
   end
@@ -475,6 +492,7 @@ module BaseDecorator::Form
   # @see file:javascripts/feature/model-form.js *updateTextInputField()*
   #
   def render_form_input(name, value, css: '.input.single', **opt)
+    append_css!(opt, 'fixed') if opt.delete(:fixed)
     prepend_css!(opt, css)
     render_field_item(name, value, **opt)
   end

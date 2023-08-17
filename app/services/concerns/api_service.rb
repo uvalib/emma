@@ -72,7 +72,7 @@ class ApiService
     # noinspection RbsMissingTypeSignature
     #++
     def self.table(user)
-      user = user.uid if user.is_a?(User)
+      user = user.account if user.is_a?(User)
       user = user.to_s
       @table ||= {}
       @table[user] ||= {}
@@ -85,7 +85,7 @@ class ApiService
     # @return [void]
     #
     def self.clear(user)
-      user = user.uid if user.is_a?(User)
+      user = user.account if user.is_a?(User)
       if (user = user.to_s).blank?
         Log.debug { "#{self}: cannot clear default services" }
       else

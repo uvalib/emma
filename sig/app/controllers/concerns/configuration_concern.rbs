@@ -1,0 +1,30 @@
+# Controller support methods for configuration lookup.
+#
+module ConfigurationConcern
+  extend ActiveSupport::Concern
+
+  include ConfigurationHelper
+
+  # The configuration key for the controller for use with "emma.#{config_key}".
+  #
+  # @return [Symbol]
+  #
+  def config_key: () -> Symbol
+
+  # Labels for item units operated on by this controller.
+  #
+  # - :item   Label for a single model instance.
+  # - :items  Plural model instances label.
+  # - :Item   Capitalized label for a single model instance.
+  # - :Items  Capitalized plural model instances label.
+  #
+  # @param [Hash] opt                 Passed to #config_interpolations.
+  #
+  # @return [Hash]
+  #
+  def unit: (**untyped opt) -> { item: String, items: String, Item: String, Items: String }
+
+  private
+
+  THIS_MODULE: Module
+end

@@ -59,15 +59,15 @@ en:
       dashboard:
         label:          'Account'
         title:          'EMMA Account Dashboard'
-        tooltip:        'Return to your account dashboard'
-        text_html:      |
-          Properties of your EMMA user account.
+        tooltip:        'Your EMMA account dashboard'
 
         page_controls:
           label:        'Account Actions:'
           actions:
+            - { action: 'dashboard', label: 'Details' }
             - [account, edit_current]
-            - [account, index]
+            - [account, list_org]
+            - [account, list_all]
             - [account, new]
             - [account, edit_select]
             - [account, delete_select]

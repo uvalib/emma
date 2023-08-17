@@ -7,11 +7,11 @@
   item  ||= @item
   image ||= nil
   dec     = SearchDecorator.new(item, cover: image, **context)
-  item  ||= dec.object
+  item    = dec.object
 
   help  ||= nil # dec.help_topic
   title ||= item.try(:label).presence
-  title   = dec.page_heading(title)
+  title   = dec.page_title(title)
 
   logo  ||= repository_source_logo(item, type: :wide)
 

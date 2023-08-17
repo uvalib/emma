@@ -151,12 +151,6 @@ module UploadConcern
   # @return [Hash{Symbol=>*}]
   #
   def find_or_match_records(*items, filters: [], **opt)
-    unless administrator?
-      opt[:user] = current_user
-      opt[:org]  = current_user.org if manager? && opt[:org]
-    end
-    filters << :filter_by_user! if opt[:user] || opt[:user_id]
-    filters << :filter_by_org!  if opt[:org]  || opt[:org_id]
     filters << :filter_by_state!
     filters << :filter_by_group!
     super
@@ -169,7 +163,8 @@ module UploadConcern
   #
   def filter_by_user!(opt)
     super
-    opt[:edit_user] = opt[:id] if opt[:id].present?
+    user = opt[:id].presence
+    opt[:edit_user] = user if user
   end
 
   # Limit records to those in the given state (or records with an empty state

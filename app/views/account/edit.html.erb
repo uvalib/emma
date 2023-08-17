@@ -6,10 +6,12 @@
 
   item  ||= @item
   dec     = AccountDecorator.new(item, **context)
+  item    = dec.object
 
   help  ||= nil # dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  name  ||= item&.label.inspect
+  title   = dec.page_title(title, name: name)
 
   unless modal?
     label = "#{dec.page_meta_title} - #{title}"

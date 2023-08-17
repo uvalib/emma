@@ -33,7 +33,7 @@ module AuthHelper
     else
       OmniAuth::AuthHash.new.tap do |auth|
         auth.provider         = user.provider
-        auth.uid              = user.uid
+        auth.uid              = user.account
         auth.info!.first_name = user.first_name
         auth.info!.last_name  = user.last_name
         auth.info!.email      = user.email

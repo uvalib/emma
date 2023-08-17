@@ -1,6 +1,8 @@
 # Common values for tests.
 #
 module TestHelper::Common
+  include Emma::Common
+
   extend ::TestHelper::Common
 
   TEST_TYPES: strArray
@@ -36,12 +38,13 @@ module TestHelper::Common
   # @param [Symbol]      action       Default: :index
   # @param [Symbol]      prop_key     End of #PROPERTY traversal.
   # @param [Symbol]      meth         Calling method (for error reporting).
+  # @param [Hash]        opt          Override interpolation values.
   #
   # @raise [Minitest::Assertion] If value could not be found or interpolated.
   #
   # @return [String]
   #
-  def page_title: (?(Model|nil) item, ?controller: Symbol|nil, ?action: Symbol|nil, prop_key: Symbol, ?meth: Symbol|nil, **untyped _ignored) -> String
+  def page_title: (?(Model|nil) item, ?controller: Symbol|nil, ?action: Symbol|nil, prop_key: Symbol, ?meth: Symbol|nil, **untyped opt) -> String
 
   # Give the target controller for the current context.
   #

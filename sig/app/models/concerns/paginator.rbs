@@ -7,7 +7,25 @@ class Paginator
 
   include ParamsHelper
 
+  # Core URL parameters involved in pagination.
+  #
+  # @type [Array<Symbol>]
+  #
+  OFFSET_KEYS: symArray
+
+  # URL parameters involved in pagination.
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGE_KEYS: symArray
+
   # URL parameters that are search-related but "out-of-band".
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGE_OFFSET_KEYS: symArray
+
+  # URL parameters that are search-related but "out-of-band" including :limit.
   #
   # @type [Array<Symbol>]
   #
@@ -18,12 +36,6 @@ class Paginator
   # @type [Array<Symbol>]
   #
   NON_SEARCH_KEYS: symArray
-
-  # URL parameters involved in pagination.
-  #
-  # @type [Array<Symbol>]
-  #
-  PAGE_KEYS: symArray
 
   # URL parameters involved in form submission.
   #

@@ -96,20 +96,14 @@ class AccountDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
-      hash = opt[:constraint]
-      user = hash&.values_at(:user, :user_id)&.first
-      org  = hash&.values_at(:org, :org_id)&.first
-      unless user || org
-        user = current_user
-        org  = user&.org
-        add  = {}
-        case
-          when administrator? then #add[:user] = :all
-          when org            then add[:org]  = org
-          when user           then add[:user] = user
-          else                     add[:user] = :none
+      unless administrator?
+        hash = opt[:constraints]&.dup || {}
+        user = hash.extract!(:user, :user_id).compact.values.first
+        org  = hash.extract!(:org, :org_id).compact.values.first
+        if !user && !org && (user = current_user).present?
+          added = (org = user.org) ? { org: org } : { user: user }
+          opt[:constraints] = added.merge!(hash)
         end
-        opt[:constraint] = hash&.reverse_merge(add) || add if add.present?
       end
       opt[:sort] ||= { id: :asc }
       super(**opt)
@@ -326,7 +320,8 @@ class AccountDecorator
   def model_field_values(item = nil, **opt)
     opt[:filter] ||= FIELD_FILTERS unless developer?
     pairs = super(item, **opt)
-    model_show_fields.map { |field, config|
+    cfg   = model_context_fields || model_show_fields
+    cfg.map { |field, config|
       next if config[:ignored]
       next unless user_has_role?(config[:role])
       k = config[:label] || field
@@ -351,17 +346,29 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_fields(pairs: nil, **opt)
-    edit  = (context[:action] == :edit)
-    admin = administrator?
+    fields = AccountConcern::PASSWORD_KEYS
+    fields = fields.excluding(:current_password) if manager? || administrator?
+    added  = fields.map { |k| [k.to_s.titleize, k] }.to_h
+    pairs  = pairs&.merge(added) || added
+    super
+  end
 
-    fields = []
-    fields << :password << :password_confirmation if !edit ||  admin
-    fields << :current_password                   if  edit && !admin
-
-    added = fields.map { |k| [k.to_s.titleize, k] }.to_h
-
-    opt[:pairs] = pairs&.merge(added) || added
-    super(**opt)
+  def render_form_menu_single(name, value, **opt)
+    constraints = nil
+    if administrator?
+      case opt[:range].try(:model_type)
+        when :user then constraints = { prepend: { 0 => 'NONE' } };
+        when :org  then constraints = { prepend: { 0 => 'NONE' } };
+      end
+    elsif current_org
+      case opt[:range].try(:model_type)
+        when :user then constraints = { org: current_org }
+        when :org  then opt[:fixed] = true
+      end
+    end
+    opt[:constraints] = opt[:constraints]&.dup || {} if constraints
+    opt.merge!(constraints: constraints)             if constraints
+    super(name, value, **opt)
   end
 
   # render_form_email
@@ -454,8 +461,12 @@ class AccountDecorator
 
   public
 
-  ABILITY_ACTIONS =
-    %i[index list show view new create edit update delete destroy].freeze
+  ABILITY_ACTIONS = %i[
+    index     list_all    list_org  list_own
+    show      download    admin
+    new       create      edit      update      delete      destroy
+    bulk_new  bulk_create bulk_edit bulk_update bulk_delete bulk_destroy
+  ].freeze
 
   ABILITY_COLUMNS = {
     model:  'Model',        # TODO: I18n
@@ -523,7 +534,8 @@ class AccountDecorator
 
     r = 0
     models.map { |model|
-      [*actions, *target.all_actions_for(model)].uniq.map { |action|
+      ctrlr_actions = model.model_controller.public_instance_methods(false)
+      actions.intersection(ctrlr_actions).map { |action|
         status = target.can?(action, model)
         can    = status ? 'can' : 'cannot'
         if status.nil?

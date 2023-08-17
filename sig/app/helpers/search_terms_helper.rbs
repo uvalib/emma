@@ -29,12 +29,6 @@ module SearchTermsHelper
   #
   QUERY_PARAMETERS: Hash[Symbol,symArray]
 
-  # URL parameters that are search-related but "out-of-band".
-  #
-  # @type [Array<Symbol>]
-  #
-  PAGINATION_KEYS: symArray
-
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]

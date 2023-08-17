@@ -14,11 +14,11 @@ module SessionConcern
   include Emma::Debug
 
   include FlashHelper
-  include SerializationHelper
 
   include ApiConcern
   include AuthConcern
   include ParamsConcern
+  include SerializationConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -124,7 +124,7 @@ module SessionConcern
     action ||= params[:action]
     user   ||= resource
     user     = user[:uid] || user['uid'] if user.is_a?(Hash)
-    user     = user.uid                  if user.respond_to?(:uid)
+    user     = user.account              if user.respond_to?(:account)
     user     = user.to_s.presence || 'unknown user' # TODO: I18n
     # noinspection RubyMismatchedReturnType
     I18n.t("emma.user.sessions.#{action}.#{status}", user: user)
@@ -292,7 +292,12 @@ module SessionConcern
   #
   def access_denied_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
-    redirect_back(fallback_location: root_path, alert: exception.message)
+    msg = exception.message
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path, alert: msg) }
+      format.json { render_json({ error: msg }, status: :unauthorized) }
+      format.xml  { render_xml({ error: msg }, status: :unauthorized) }
+    end
   rescue => error
     error_handler_deep_fallback(__method__, error)
   end

@@ -6,10 +6,12 @@
 
   list  ||= @list || []
   dec     = OrgsDecorator.new(list, **context)
+  list    = dec.object
 
   help  ||= nil # dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  name  ||= list.many? ? list.map(&:id).join(', ') : list.first&.label.inspect
+  title   = dec.page_title(title, name: name)
 
   unless modal?
     label = "#{dec.page_meta_title} - #{title}"

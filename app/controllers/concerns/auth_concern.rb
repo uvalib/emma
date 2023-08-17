@@ -115,10 +115,10 @@ module AuthConcern
     self.resource = user ||= user_from_id || user_from_auth_data
     raise 'No authentication data' if user.blank?
     __debug do
-      "#{__method__}: #{user.uid}: #{session['omniauth.auth'].inspect}"
+      "#{__method__}: #{user.account}: #{session['omniauth.auth'].inspect}"
     end
     if sign_in(resource_name, user).is_a?(TrueClass)
-      __debug { "#{__method__}: #{user.uid}}: was already signed in" }
+      __debug { "#{__method__}: #{user.account}}: was already signed in" }
     end
     user
   end

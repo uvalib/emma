@@ -591,7 +591,10 @@ appSetup(MODULE, function() {
     const PARENT_SEARCH_SUBMIT = '.search-button';
     const PARENT_SEARCH_CANCEL = '.search-cancel';
 
+    const FIXED_MARKER  = 'fixed';
     const SEALED_MARKER = 'sealed';
+
+    const FIXED         = selector(FIXED_MARKER);
     const SEALED        = selector(SEALED_MARKER);
 
     // ========================================================================
@@ -1586,7 +1589,7 @@ appSetup(MODULE, function() {
             let count   = 0;
             for (const [field, value] of Object.entries(data)) {
                 const $field = formField(field, $form);
-                if (!$field.is(SEALED)) {
+                if (!$field.is(`${SEALED},${FIXED}`)) {
                     updateInputField($field, value);
                     count++;
                 }
@@ -1611,6 +1614,10 @@ appSetup(MODULE, function() {
         const key    = $field.attr('data-field');
         const value  = (typeof data === 'object') ? data[key] : data;
         updateInputField($field, value, true, true);
+        if ($field.is(FIXED)) {
+            $field.prop('readonly', true);
+            $field.find('option').not(':selected').prop('disabled', true);
+        }
     }
 
     /**
@@ -2663,7 +2670,7 @@ appSetup(MODULE, function() {
         // If editing a completed submission, prevent the selection from being
         // updated.
 
-        if (isUpdateForm($form) && $menu.val()) {
+        if (isUpdateForm($form) && $menu.val() && !$menu.is(FIXED)) {
             const note = 'This cannot be changed for an existing EMMA entry'; // TODO: I18n
             seal($menu, true).attr('title', note);
             return;
@@ -2852,8 +2859,10 @@ appSetup(MODULE, function() {
             for (const [field, value] of Object.entries(source_fields)) {
                 if (value === FROM_PARENT) {
                     const $input = formField(field, $form);
-                    seal($input);
-                    seal(fieldLabel($input));
+                    if (!$input.is(FIXED)) {
+                        seal($input);
+                        seal(fieldLabel($input));
+                    }
                 }
             }
         }
@@ -2867,8 +2876,10 @@ appSetup(MODULE, function() {
             for (const [field, value] of Object.entries(source_fields)) {
                 if (value === FROM_PARENT) {
                     const $input = formField(field, $form);
-                    unseal($input);
-                    unseal(fieldLabel($input));
+                    if (!$input.is(FIXED)) {
+                        unseal($input);
+                        unseal(fieldLabel($input));
+                    }
                 }
             }
         }

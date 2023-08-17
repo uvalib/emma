@@ -155,10 +155,10 @@ module Workflow::Base::Roles
   #
   def get_wf_role(user)
     # noinspection RubyMismatchedReturnType
-    return user                 if user.is_a?(Symbol)
-    user = User.find(uid: user) if user.is_a?(String)
-    return                      if user.nil?
-    return :developer           if user.developer?
+    return user                   if user.is_a?(Symbol)
+    user = User.find(email: user) if user.is_a?(String)
+    return                        if user.nil?
+    return :developer             if user.developer?
     # TODO: role mapping
     (user == 'emmadso@bookshare.org') ? :developer : :user
   end

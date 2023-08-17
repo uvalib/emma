@@ -256,6 +256,14 @@ module Model
     end
   end
 
+  # The fields and values for this instance as a Hash.
+  #
+  # @return [Hash{Symbol=>Any}]
+  #
+  def to_h(**)
+    fields
+  end
+
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -499,6 +507,18 @@ module Model
   #
   def self.config_for(item)
     configuration_fields(item, no_raise: true)
+  end
+
+  # Get configured record fields relevant to the given context for the
+  # indicated model/controller.
+  #
+  # @param [Symbol, String, Class, Model, *] item
+  # @param [Symbol]                          action
+  #
+  # @return [Hash{Symbol=>Hash}, nil]
+  #
+  def self.context_fields(item, action)
+    config_for(item)[action&.to_sym]
   end
 
   # Get configured record fields relevant to an :index action for the indicated

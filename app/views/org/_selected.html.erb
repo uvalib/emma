@@ -6,7 +6,7 @@
 
   item   ||= nil
   dec    ||= item && OrgDecorator.new(item, **context) or return
-  item   ||= dec.object
+  item     = dec.object
 
   level  ||= 2
   row    ||= 0

@@ -79,17 +79,26 @@
 // Account show page
 //=============================================================================
 
-// @see file:app/views/account/_local.html.erb
-.account.local-heading {
+// @see file:app/views/account/_details.html.erb
+.account-section {
 
     @media #{$wide-screen} {
-        margin-top:     4rem;
-        margin-bottom:  2rem;
+        margin-top: 4rem;
     }
 
     @media #{$not-wide-screen} {
-        margin-top:     3rem;
-        margin-bottom:  1rem;
+        margin-top: 3rem;
+    }
+
+    .details-heading {
+
+        @media #{$wide-screen} {
+            margin-bottom: 2rem;
+        }
+
+        @media #{$not-wide-screen} {
+            margin-bottom: 1rem;
+        }
     }
 }
 

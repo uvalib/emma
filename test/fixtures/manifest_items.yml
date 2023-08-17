@@ -7,28 +7,28 @@
 # below each fixture, per the syntax in the comments below
 #
 
-one:              &ONE
-  manifest:       csv
-  row:            1
-  repository:     'EMMA'
+one:            &ONE
+  manifest:     csv
+  row:          1
+  repository:   'EMMA'
 
-two:              &TWO
-  manifest:       json
-  row:            2
-  repository:     'EMMA'
+two:            &TWO
+  manifest:     json
+  row:          2
+  repository:   'EMMA'
 
 # =============================================================================
 # Examples
 # =============================================================================
 
 example:
-  <<:             *ONE
-  row:            3
+  <<:           *ONE
+  row:          3
 
 edit_example:
-  <<:             *ONE
-  row:            4
+  <<:           *ONE
+  row:          4
 
 delete_example:
-  <<:             *TWO
-  row:            5
+  <<:           *TWO
+  row:          5

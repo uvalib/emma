@@ -110,12 +110,14 @@ module LayoutHelper::NavBar
         if controller == :home
           # Special entry for the dashboard/welcome screen.
           path   = dashboard_path
+          base   = (base_path == '/account')
           label  = DASHBOARD_CONFIG[:label]
           tip    = DASHBOARD_CONFIG[:tooltip]
           hidden = !current_user
         else
           # Entry for the main page of the given controller.
           path   = get_path_for(controller)
+          base   = (base_path == path)
           label  = CONTROLLER_LABEL[controller]
           tip    = CONTROLLER_TOOLTIP[controller]
           hidden = (controller == :org) && !current_user
@@ -127,7 +129,6 @@ module LayoutHelper::NavBar
         end
 
         current  = (path == curr_path)
-        base     = (path == base_path)
         active   = current || base
         disabled = current
 

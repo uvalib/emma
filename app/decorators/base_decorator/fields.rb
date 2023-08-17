@@ -133,6 +133,7 @@ module BaseDecorator::Fields
         # Convert :file_data and :emma_data into hashes and move to the end.
         data, pairs = partition_hash(item.fields, *compound_fields)
         data.each_pair { |k, v| pairs[k] = json_parse(v) }
+        pairs
       when Api::Record
         item.field_names.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
       when Hash
@@ -368,7 +369,7 @@ module BaseDecorator::Fields
   # @raise [RuntimeError]             If not valid and *exception* is *true*.
   #
   def valid_range?(range, exception: false)
-    valid = range.is_a?(Class) && (range < EnumType)
+    valid = range.is_a?(Class) && [EnumType, Model].any? { |t| range < t }
     exception &&= !valid
     raise "range: #{range.inspect}: not a subclass of EnumType" if exception
     valid

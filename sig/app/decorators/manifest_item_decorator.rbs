@@ -8,6 +8,7 @@ class ManifestItemDecorator < BaseDecorator
   module SharedPathMethods
     include BaseDecorator::SharedPathMethods
 
+    def show_select_path:   (*untyped _ignored) -> nil
     def edit_select_path:   (*untyped _ignored) -> nil
     def delete_select_path: (*untyped _ignored) -> nil
     def upload_path:        (*untyped _ignored,                  **untyped opt) -> String

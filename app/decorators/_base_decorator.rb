@@ -546,10 +546,10 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [String]
     #
-    def page_heading(value = nil, default: true, **opt)
-      @page_heading   = nil                       if opt.present?
-      @page_heading   = page_value(value,  **opt) if value
-      @page_heading ||= page_value(:title, **opt, default: default)
+    def page_title(value = nil, default: true, **opt)
+      @page_title   = nil                       if opt.present?
+      @page_title   = page_value(value,  **opt) if value
+      @page_title ||= page_value(:title, **opt, default: default)
     end
 
     # =========================================================================
@@ -560,19 +560,17 @@ class BaseDecorator < Draper::Decorator
 
     # Configuration value for this controller/action.
     #
-    # @param [Symbol, String, nil] item     Value or configuration item.
+    # @param [Symbol, String, nil] value    Value or configuration item.
     # @param [Boolean, String]     default  Fallback if config item missing.
     # @param [Hash]                opt      Optional interpolation values.
     #
     # @return [String, nil]
     #
-    def page_value(item, default: true, **opt)
+    def page_value(value, default: true, **opt)
       action = opt.delete(:action) || context[:action]
-      value  = item.is_a?(Symbol) ? controller_config.dig(action, item) : item
-      if value && opt.present?
-        value % opt
-      elsif value
-        value.to_s
+      value  = controller_config.dig(action, value) if value.is_a?(Symbol)
+      if value
+        interpolate_named_references(value, object, **opt)
       elsif default.is_a?(TrueClass)
         [action, model_type].map(&:to_s).map(&:titleize).join(' ')
       elsif default

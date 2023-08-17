@@ -101,21 +101,11 @@ class ManifestItem < ApplicationRecord
 
   scope :in_row_order, -> { order(:row, :delta, :id) }
 
-  # noinspection SqlResolve
-  scope :for_user, ->(u) { joins(:manifest).where('manifests.user_id = ?', u) }
-
-  # noinspection SqlResolve
-  scope :for_org,  ->(o) { joins(:user).where('users.org_id = ?', o) }
-
   # ===========================================================================
   # :section: ApplicationRecord overrides
   # ===========================================================================
 
   public
-
-  def org_id  = org&.id
-
-  def user_id = user&.id
 
   # Create a new instance.
   #
@@ -124,6 +114,53 @@ class ManifestItem < ApplicationRecord
   def initialize(attr = nil, &block)
     attr = { manifest_id: attr.id } if attr.is_a?(Manifest)
     super(attr, &block)
+  end
+
+  # ===========================================================================
+  # :section: IdMethods overrides
+  # ===========================================================================
+
+  public
+
+  def user_id = user&.id
+
+  def org_id  = org&.id
+
+  def uid(item = nil)
+    item ? super : user&.id
+  end
+
+  def oid(item = nil)
+    item ? super : org&.id
+  end
+
+  # Produce a relation for selecting records associated with the given user.
+  #
+  # @param [*]    user
+  # @param [Hash] opt
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def self.for_user(user = nil, **opt)
+    user = extract_value!(user, opt, :user, __method__)
+    user = uid(user)
+    # noinspection SqlResolve
+    joins(:manifest).where('manifests.user_id = ?', user, **opt)
+  end
+
+  # Produce a relation for selecting records associated with the given
+  # organization.
+  #
+  # @param [Org, Hash, Symbol, String, Integer, nil] org
+  # @param [Hash]                                    opt
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def self.for_org(org = nil, **opt)
+    org = extract_value!(org, opt, :org, __method__)
+    org = oid(org)
+    # noinspection SqlResolve
+    joins(:user).where('users.org_id = ?', org, **opt)
   end
 
   # ===========================================================================

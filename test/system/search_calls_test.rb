@@ -8,6 +8,8 @@ require 'application_system_test_case'
 class SearchCallsTest < ApplicationSystemTestCase
 
   CONTROLLER = :search_call
+  PARAMS     = { controller: CONTROLLER }.freeze
+
   TEST_USER  = :test_dev
 
   setup do
@@ -18,27 +20,29 @@ class SearchCallsTest < ApplicationSystemTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'search calls - visit index' do
+  test 'search calls - index' do
+    action    = :index
+    params    = PARAMS.merge(action: action)
 
-    url = search_call_index_url
+    start_url = url_for(**params)
+    final_url = start_url
 
     run_test(__method__) do
 
       # Not available anonymously.
-      visit url
+      visit start_url
       assert_flash alert: AUTH_FAILURE
       sign_in_as @user
 
       # Successful sign-in should redirect back.
       show_url
-      assert_current_url url
+      assert_current_url final_url
 
       # The listing should be the first of one or more results pages.
       assert_valid_index_page(CONTROLLER, page: 0)
       success_screenshot
 
     end
-
   end
 
 end

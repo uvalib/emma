@@ -148,12 +148,6 @@ class Api::Record
   #
   def field_definitions: () -> Hash[Symbol, symHash]
 
-  # The fields and values for this instance as a Hash.
-  #
-  # @return [Hash{Symbol=>Any}]
-  #
-  def to_h: () -> symHash
-
   # Update record fields from a hash of values.
   #
   # @param [Hash] hash

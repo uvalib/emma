@@ -6,9 +6,9 @@
 # - The controller manipulates instances of the Upload resource.
 #
 class Ability
-  include Emma::Common
-
   include CanCan::Ability
+
+  include IdMethods
 
   # The standard CRUD actions controller presumed by CanCan.
   #

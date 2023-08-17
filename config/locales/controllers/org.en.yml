@@ -52,7 +52,7 @@ en:
         actions:
           - show_current
           - edit_current
-          - index
+          - list_all
           - show_select
           - new
           - edit_select
@@ -71,17 +71,16 @@ en:
           label:        'Create %{article} new EMMA member organization'
           article:      'a'
 
-        edit:
+        edit_select:
           label:        'Modify %{article} existing EMMA member organization'
           article:      'an'
 
-        delete:
+        delete_select:
           label:        'Remove %{article} existing EMMA member organization'
           article:      'an'
 
-        back:
-          action:       index
-          label:        'View all EMMA member organizations'
+        list_all:
+          label:        'List all EMMA member organizations'
 
       # =======================================================================
       # Messages
@@ -122,25 +121,28 @@ en:
 
       # =======================================================================
 
-      index:
-        label:          'List All'
+      index:            &INDEX_ACTION
+        label:          'List'
         title:          'EMMA Member Organizations'
-        tooltip:        'List organizations maintained in the org database table'
-        description:    |
-          This is a listing of EMMA member organizations.
+        tooltip:        'List all EMMA member organizations'
 
         display_fields: # @see 'en.emma.org.record'
           - !ruby/symbol all
 
-        role:           administrator
         _endpoint:      true
+
+      # =======================================================================
+
+      list_all:
+        <<:             *INDEX_ACTION
+        label:          'List All'
+        tooltip:        'List all EMMA member organizations'
 
       # =======================================================================
 
       show:             &SHOW_ACTION
         label:          'Show'
-        #title:          'EMMA Member Organization %{name}'
-        title:          'EMMA Member Organization'
+        title:          'EMMA Member Organization: %{name}'
         tooltip:        'Details of a EMMA member organization entry'
 
         display_fields: # @see 'en.emma.org.record'
@@ -187,7 +189,7 @@ en:
           enabled:
             tooltip:    'Do not create this entry (or start over)'
 
-        #success:        'EMMA Member Organization %{org} created.'
+        #success:        'EMMA Member Organization %{name} created.'
         #failure:        'Could not create EMMA Member Organization.'
 
         role:           administrator
@@ -202,7 +204,7 @@ en:
 
       edit:             &EDIT_ACTION
         label:          'Change'
-        title:          'Modify an EMMA Member Organization'
+        title:          'Modify EMMA Member Organization %{name}'
         tooltip:        'Modify an existing EMMA member organization entry'
 
         term:
@@ -222,7 +224,7 @@ en:
           enabled:
             tooltip:    'Discard these changes'
 
-        #success:        'EMMA Member Organization %{org} updated.'
+        #success:        'EMMA Member Organization %{name} updated.'
         #failure:        'Could not update EMMA Member Organization.'
 
         role:           administrator
@@ -233,7 +235,6 @@ en:
       edit_select:
         <<:             *EDIT_ACTION
        #label:          'Edit Org' # TODO: ???
-        role:           administrator
 
       # =======================================================================
 
@@ -252,7 +253,7 @@ en:
 
       delete:           &DELETE_ACTION
         label:          'Remove'
-        title:          'Remove an EMMA Member Organization'
+        title:          'Remove EMMA Member Organization %{name}'
         tooltip:        'Delete an existing EMMA member organization entry'
 
         term:
@@ -270,7 +271,7 @@ en:
           enabled:
             tooltip:    'Keep this EMMA Member Organization'
 
-        #success:        'EMMA Member Organization %{org} deleted.'
+        #success:        'EMMA Member Organization %{name} deleted.'
         #failure:        'Could not delete EMMA Member Organization.'
 
         role:           administrator
@@ -281,7 +282,6 @@ en:
       delete_select:
         <<:             *DELETE_ACTION
        #label:          'Delete Org' # TODO: ???
-        role:           administrator
 
       # =======================================================================
 

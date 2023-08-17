@@ -5,13 +5,13 @@ module RouteHelper
 
   # Return the appropriate route helper method.
   #
-  # @param [Symbol, String]      controller
+  # @param [Symbol, String]      ctrlr
   # @param [Symbol, String, nil] action
   # @param [Boolean]             base       Strip "_select" from :action.
   #
   # @return [Symbol, String, Proc]
   #
-  def route_helper: ((Symbol|String) controller, ?(Symbol|String|nil) action, ?base: bool) -> (Symbol | String | Proc)
+  def route_helper: ((Symbol|String) ctrlr, ?(Symbol|String|nil) action, ?base: bool) -> (Symbol | String | Proc)
 
   # get_path_for
   #

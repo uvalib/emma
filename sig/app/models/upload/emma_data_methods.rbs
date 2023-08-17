@@ -11,6 +11,18 @@ module Upload::EmmaDataMethods
   #
   DATA_COLUMNS: symArray
 
+  # Edit process table columns.
+  #
+  # @type [Array<Symbol>]
+  #
+  EDIT_COLUMNS: symArray
+
+  # Review process table columns.
+  #
+  # @type [Array<Symbol>]
+  #
+  REVIEW_COLUMNS: symArray
+
   # The database column currently associated with EMMA metadata presented by
   # the record.
   #

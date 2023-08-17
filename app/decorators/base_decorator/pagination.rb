@@ -509,6 +509,22 @@ module BaseDecorator::Pagination
   # :section:
   # ===========================================================================
 
+  public
+
+  # The element displayed when there are no items to list.
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def no_items(css: '.no-items', **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   private
 
   def self.included(base)

@@ -6,11 +6,12 @@
 
   list  ||= paginator.page_items
   dec     = ManifestsDecorator.new(list, **context)
-  list  ||= dec.object
+  list    = dec.object
 
   help  ||= dec.help_topic
+  name  ||= nil
   title ||= nil
-  title   = dec.page_heading(title)
+  title   = dec.page_title(title, name: name)
 
   row   ||= 1
 
@@ -18,15 +19,15 @@
   query   = search.except(:group, *Manifest::NON_SEARCH_PARAMS).presence
 
   unless modal?
-    page  = paginator.page_number
-    terms = (page > 1) ? query&.merge(page: page) : query
-    terms = list_search_terms(terms)          if terms
-    group = search[:group]&.values&.first
-    group = Manifest.state_group_label(group) if group
-    label = dec.page_meta_title
+    page    = paginator.page_number
+    terms   = (page > 1) ? query&.merge(page: page) : query
+    terms &&= list_search_terms(terms)
+    group   = search[:group]&.values&.first
+    group &&= Manifest.state_group_label(group)
+    label   = dec.page_meta_title
     set_page_meta_title(label)
-    append_page_meta_title('-', group)        if group
-    append_page_meta_title('-', terms)        if terms
+    append_page_meta_title('-', group) if group
+    append_page_meta_title('-', terms) if terms
     set_page_description(title)
   end
 
@@ -54,6 +55,7 @@
   <%= page_description_section %>
   <%# dec.state_group_select %>
 
+  <%= page_directions_section %>
   <div class="<%= dec.list_css_class -%>">
     <%= top_controls %>
     <%= render 'manifest/list', opt %>

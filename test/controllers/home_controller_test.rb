@@ -28,8 +28,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'home main as anonymous' do
     # action  = :main
     # options = OPTIONS.merge(action: action)
+
     TEST_FORMATS.each do |fmt|
       url = home_url(format: fmt)
+
       run_test(__method__, format: fmt, only: READ_FORMATS) do
         get url
         assert_redirected_to welcome_url
@@ -40,8 +42,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'home main as test_dso_1' do
     # action  = :main
     # options = OPTIONS.merge(action: action)
+
     TEST_FORMATS.each do |fmt|
       url = home_url(format: fmt)
+
       run_test(__method__, format: fmt, only: READ_FORMATS) do
         get_sign_in_as(TEST_USER, follow_redirect: false)
         get url
@@ -53,9 +57,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'home welcome' do
     action  = :welcome
     options = OPTIONS.merge(action: action)
+
     TEST_FORMATS.each do |fmt|
       url = welcome_url(format: fmt)
       opt = options.merge(format: fmt)
+
       run_test(__method__, format: fmt, only: READ_FORMATS) do
         get url
         assert_result :success, **opt
@@ -66,9 +72,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'home dashboard' do
     action  = :dashboard
     options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+
     @readers.each do |user|
       able  = user.present?
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         url = dashboard_url(format: fmt)
         opt = u_opt.merge(format: fmt)

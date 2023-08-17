@@ -77,7 +77,7 @@ class User < ApplicationRecord
   # ===========================================================================
 
   validate on: :create do
-    unless uid.match?(/^.+@.+$/)
+    unless account.match?(/^.+@.+$/)
       errors.add(:base, message: 'User ID must be a valid email address')
     end
   end
@@ -94,10 +94,6 @@ class User < ApplicationRecord
 
   public
 
-  def org_id = org&.id
-
-  def user_id = id
-
   # A textual label for the record instance.
   #
   # @param [User, nil] item  Default: self.
@@ -105,7 +101,7 @@ class User < ApplicationRecord
   # @return [String, nil]
   #
   def label(item = nil)
-    (item || self).uid.presence
+    (item || self).account.presence
   end
 
   # The controller for the model/model instance.
@@ -127,6 +123,20 @@ class User < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section: IdMethods overrides
+  # ===========================================================================
+
+  public
+
+  def user_id = id
+
+  def org_id = org&.id
+
+  def user_key = ID_COLUMN
+
+  def self.user_key = ID_COLUMN
+
+  # ===========================================================================
   # :section: Object overrides
   # ===========================================================================
 
@@ -137,7 +147,7 @@ class User < ApplicationRecord
   # @return [String]
   #
   def to_s
-    uid.to_s
+    account.to_s
   end
 
   # ===========================================================================
@@ -178,13 +188,9 @@ class User < ApplicationRecord
 
   public
 
-  def user_column
-    :id
-  end
+  def user_column = user_key
 
-  def self.user_column
-    :id
-  end
+  def self.user_column = user_key
 
   # ===========================================================================
   # :section: Record::Identification overrides
@@ -249,9 +255,8 @@ class User < ApplicationRecord
   #
   # @return [String, nil]
   #
-  def uid_value(user = nil)
-    return uid.presence if user.nil?
-    self.class.send(__method__, user)
+  def account_name(user = nil)
+    user ? self.class.send(__method__, user) : email.presence
   end
 
   # Return the account ID of *user*.
@@ -260,11 +265,11 @@ class User < ApplicationRecord
   #
   # @return [String, nil]
   #
-  def self.uid_value(user)
+  def self.account_name(user)
+    user = positive(user) || user
+    user = find(user) if user.is_a?(Integer)
+    user = user.email if user.is_a?(User)
     user = user.to_s  if user.is_a?(Symbol)
-    user = user.to_i  if digits_only?(user)
-    user = find(user) if user.is_a?(Integer) && user.positive?
-    user = user.uid   if user.is_a?(User)
     user.presence     if user.is_a?(String)
   end
 
@@ -281,14 +286,6 @@ class User < ApplicationRecord
   #
   # @return [String]
   #
-  def uid
-    email
-  end
-
-  # Account name.
-  #
-  # @return [String]
-  #
   def account
     email
   end
@@ -298,7 +295,7 @@ class User < ApplicationRecord
   # @return [String]
   #
   def email_address
-    preferred_email || account
+    preferred_email || email
   end
 
   # ===========================================================================
@@ -310,7 +307,7 @@ class User < ApplicationRecord
   # Indicate whether the user is one of the known "fake" test user accounts.
   #
   def test_user?
-    test_users.keys.include?(uid)
+    test_users.keys.include?(account)
   end
 
   # Indicate whether the user has the :developer role.
@@ -358,7 +355,7 @@ class User < ApplicationRecord
   # user's Bookshare role in order to map it onto EMMA "prototype user".
   #
   def assign_default_role
-    prototype_user = uid.blank? ? :anonymous : test_users[uid]
+    prototype_user = account.blank? ? :anonymous : test_users[account]
     add_roles(prototype_user)
   end
 

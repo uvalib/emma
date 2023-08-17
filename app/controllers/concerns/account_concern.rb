@@ -17,6 +17,7 @@ module AccountConcern
 
   extend ActiveSupport::Concern
 
+  include SerializationConcern
   include ModelConcern
 
   # ===========================================================================
@@ -70,6 +71,84 @@ module AccountConcern
     [*super, *User.field_names, *PASSWORD_KEYS].tap { |keys| keys.uniq! }
   end
 
+  # Start a new (un-persisted) User.
+  #
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  #
+  # @return [User]                      Un-persisted User instance.
+  #
+  def new_record(attr = nil, force_id: false, **)
+    # noinspection RubyScope, RubyMismatchedReturnType
+    super do |attr|
+      unless administrator?
+        org = current_org&.id or raise "no org for #{current_user}"
+        attr[:org_id] = org
+      end
+      attr[:org_id] = 0 if attr.key?(:org_id) && attr[:org_id].nil?
+    end
+  end
+
+  # Create and persist a new User.
+  #
+  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
+  #
+  # @return [User]                      A new User instance.
+  #
+  def create_record(attr = nil, force_id: false, no_raise: false, **)
+    # noinspection RubyScope, RubyMismatchedReturnType
+    super do |attr|
+      unless administrator?
+        org = current_org&.id or raise "no org for #{current_user}"
+        attr[:org_id] = org
+      end
+      attr[:org_id] = nil if attr.key?(:org_id) && (attr[:org_id].to_i == 0)
+    end
+  end
+
+  # Update the indicated User, ensuring that :email and :org_id are not changed
+  # unless authorized.
+  #
+  # @param [User, nil] item           Def.: record for ModelConcern#identifier.
+  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Hash]      prm            Field values.
+  #
+  # @raise [Record::NotFound]               Record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
+  #
+  # @return [User, nil]               The updated User instance.
+  #
+  def update_record(item = nil, no_raise: false, **prm)
+    # noinspection RubyMismatchedReturnType
+    super do |record, attr|
+      unless administrator?
+        org     = current_org&.id or raise "no org for #{current_user}"
+        discard = []
+        if attr.key?((k = :org_id)) && (attr[k] != org)
+          discard << k
+        end
+        if attr.key?((k = :email)) && ((acct = attr[k]) != record.account)
+          if !acct.present? || !manager?
+            discard << k
+          elsif User.find_by(email: acct)&.org_id != org
+            discard << k
+          end
+        end
+        if (discarded = discard.presence && attr.except!(*discard)).present?
+          Log.info do
+            # noinspection RubyScope
+            list = discarded.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
+            "#{__method__}: discarded: #{list} for #{current_user}"
+          end
+        end
+      end
+      attr[:org_id] = nil if attr.key?(:org_id) && (attr[:org_id].to_i == 0)
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -87,17 +166,17 @@ module AccountConcern
   #
   def get_accounts(*terms, sort: nil, columns: ACCT_MATCH_KEYS, **hash_terms)
     terms.flatten!
-    terms.map! { |t| t.is_a?(Hash) ? t.deep_symbolize_keys : t if t.present? }
-    terms.compact!
     terms << hash_terms if hash_terms.present?
+    terms.compact_blank!
     if terms.present?
+      terms.map! { |t| t.is_a?(Hash) ? normalize_predicates!(t) : t }
       relation = User.matching(*terms, columns: columns, join: :or) # TODO: Is :or really correct here?
     elsif administrator?
       relation = User.all
-    elsif (org = current_user&.org_id)
+    elsif (org = current_org&.id)
       relation = User.where(org_id: org)
-    elsif (user = current_user&.id)
-      relation = User.where(id: user)
+    elsif (usr = current_user&.id)
+      relation = User.where(id: usr)
     else
       relation = User.none
     end

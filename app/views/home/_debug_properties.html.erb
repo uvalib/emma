@@ -13,7 +13,7 @@
   view_debug(__FILE__)
 
   property_values = {
-    'current uid'             => current_user&.uid,
+    'current account'         => current_user&.account,
     'current user'            => current_user,
     'omniauth.auth'           => session['omniauth.auth'],
     'omniauth.params'         => session['omniauth.params'],

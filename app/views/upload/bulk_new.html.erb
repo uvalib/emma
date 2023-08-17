@@ -8,7 +8,8 @@
 
   help  ||= dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  name  ||= nil
+  title   = dec.page_title(title, name: name)
 
   logo  ||= repository_source_logo
 

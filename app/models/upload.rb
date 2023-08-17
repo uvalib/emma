@@ -41,14 +41,6 @@ class Upload < ApplicationRecord
   has_one :org, through: :user
 
   # ===========================================================================
-  # :section: ActiveRecord scopes
-  # ===========================================================================
-
-  # noinspection SqlResolve
-  scope :for_org,  ->(org)  { joins(:user).where('users.org_id = ?', org) }
-  scope :for_user, ->(user) { where(user: user) }
-
-  # ===========================================================================
   # :section: ActiveRecord validations
   # ===========================================================================
 
@@ -105,9 +97,16 @@ class Upload < ApplicationRecord
 
   public
 
-  def org_id = org&.id
-
-  def user_id = user&.id
+  # A textual label for the record instance.
+  #
+  # @param [User, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label(item = nil)
+    item ||= self
+    item.filename.presence || item.emma_metadata[:dc_title].presence
+  end
 
   # Create a new instance.
   #
@@ -119,6 +118,34 @@ class Upload < ApplicationRecord
     attr = attr.merge(initializing: true).except!(:reset) if attr.is_a?(Hash)
     super(attr, &block)
     __debug_items(leader: 'new UPLOAD') { self }
+  end
+
+  # ===========================================================================
+  # :section: IdMethods overrides
+  # ===========================================================================
+
+  public
+
+  def org_id = org&.id
+
+  def uid(item = nil)
+    item ? super : user&.id
+  end
+
+  def oid(item = nil)
+    item ? super : org&.id
+  end
+
+  def self.for_user(user = nil, **opt)
+    user = extract_value!(user, opt, :user, __method__)
+    where(user: user, **opt)
+  end
+
+  def self.for_org(org = nil, **opt)
+    org = extract_value!(org, opt, :org, __method__)
+    org = oid(org)
+    # noinspection SqlResolve
+    joins(:user).where('users.org_id = ?', org, **opt)
   end
 
   # =========================================================================
@@ -231,15 +258,12 @@ class Upload < ApplicationRecord
     # supplied, those values are used here.  If any additional data was
     # supplied it will be ignored.
     if op_mode == :reset
-      reset_columns =
-        if under_review?
-          %i[review_user review_success review_comment reviewed_at]
-        elsif edit_phase
-          %i[edit_user edit_file_data edit_emma_data edited_at]
-        else
-          DATA_COLUMNS
-        end
-      attr = reset_columns.map { |col| [col, fields.delete(col)] }.to_h
+      case
+        when under_review? then reset = REVIEW_COLUMNS
+        when edit_phase    then reset = EDIT_COLUMNS
+        else                    reset = DATA_COLUMNS
+      end
+      attr = reset.map { |col| [col, fields.delete(col)] }.to_h
       attr[:updated_at] = self[:created_at] if being_created?
       log_ignored('reset: ignored options', fields) if fields.present?
       delete_file unless under_review?
@@ -264,20 +288,18 @@ class Upload < ApplicationRecord
 
     # For consistency, make sure that only the appropriate fields are being
     # updated depending on the workflow state of the item.
-    allowed =
-      if being_created?
-        DATA_COLUMNS + %i[repository submission_id updated_at]
-      elsif being_modified? || (op_mode == :finishing_edit)
-        DATA_COLUMNS + %i[edit_user edited_at]
-      elsif being_removed?
-        %i[updated_at]
-      elsif under_review?
-        %i[review_user review_success review_comment reviewed_at user_id]
-      end
-    if new_record
-      allowed << :created_at
-      allowed << :id if self[:id].nil?
+    allowed = []
+    if being_created?
+      allowed += DATA_COLUMNS + %i[repository submission_id updated_at]
+    elsif being_modified? || (op_mode == :finishing_edit)
+      allowed += DATA_COLUMNS + %i[edit_user edited_at]
+    elsif being_removed?
+      allowed += %i[updated_at]
+    elsif under_review?
+      allowed += REVIEW_COLUMNS + %i[user_id]
     end
+    allowed << :created_at if new_record
+    allowed << :id         if new_record && self[:id].nil?
     rejected = remainder_hash!(attr, *allowed)
     log_ignored('rejected attributes', rejected) if rejected.present?
 
@@ -286,10 +308,10 @@ class Upload < ApplicationRecord
     # submitter.
     if under_review?
       u = attr[:review_user] || attr[:user_id]
-      attr[:review_user] = User.uid_value(u)
+      attr[:review_user] = User.account_name(u)
     elsif edit_phase
       u = attr[:edit_user] || attr[:user_id] || self[:user_id]
-      attr[:edit_user] = User.uid_value(u)
+      attr[:edit_user] = User.account_name(u)
     else
       u = attr[:user_id] || self[:user_id]
       attr[:user_id] = User.id_value(u)

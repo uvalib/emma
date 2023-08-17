@@ -244,14 +244,6 @@ class Api::Record
 
   public
 
-  # The fields and values for this instance as a Hash.
-  #
-  # @return [Hash{Symbol=>Any}]
-  #
-  def to_h(**)
-    fields
-  end
-
   # Update record fields from a hash of values.
   #
   # @param [Hash] hash

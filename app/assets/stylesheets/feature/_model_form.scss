@@ -651,7 +651,7 @@
 
         @include grid.column-span;
 
-        margin-top: calc(2 * #{$gap-y});
+        margin-top: calc(4 * #{$gap-y});
         z-index:    $z-visible; // NOTE: Needed for Firefox.
     }
 

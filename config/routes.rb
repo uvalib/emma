@@ -42,6 +42,10 @@ Rails.application.routes.draw do
   # ===========================================================================
 
   get    '/upload',               to: 'upload#index',         as: 'upload_index'
+  get    '/upload/index',         to: 'upload#index'
+  get    '/upload/list_all',      to: 'upload#list_all',      as: 'list_all_upload'
+  get    '/upload/list_org',      to: 'upload#list_org',      as: 'list_org_upload'
+  get    '/upload/list_own',      to: 'upload#list_own',      as: 'list_own_upload'
 
   get    '/upload/show_select',   to: 'upload#show_select',   as: 'show_select_upload'
   get    '/upload/show/(:id)',    to: 'upload#show',          as: 'show_upload'
@@ -102,6 +106,12 @@ Rails.application.routes.draw do
   # EMMA bulk operations - manifests
   # ===========================================================================
 
+  get    '/manifest',               to: 'manifest#index',         as: 'manifest_index'
+  get    '/manifest/index',         to: 'manifest#index'
+  get    '/manifest/list_all',      to: 'manifest#list_all',      as: 'list_all_manifest'
+  get    '/manifest/list_org',      to: 'manifest#list_org',      as: 'list_org_manifest'
+  get    '/manifest/list_own',      to: 'manifest#list_own',      as: 'list_own_manifest'
+
   get    '/manifest/new',           to: 'manifest#new',           as: 'new_manifest'
   match  '/manifest/create',        to: 'manifest#create',        as: 'create_manifest',        **VIA_CREATE
 
@@ -131,8 +141,7 @@ Rails.application.routes.draw do
 
   get    '/manifest/show_select',   to: 'manifest#show_select',   as: 'show_select_manifest'
   get    '/manifest/show/(:id)',    to: 'manifest#show',          as: 'show_manifest'
-  get    '/manifest/:id',           to: redirect('/manifest/update/%{id}'),                     **VIA_ANY
-  get    '/manifest',               to: 'manifest#index',         as: 'manifest_index'
+  get    '/manifest/:id',           to: redirect('/manifest/edit/%{id}')
 
   # ===========================================================================
   # EMMA bulk operations - manifest items
@@ -233,6 +242,10 @@ Rails.application.routes.draw do
 
   resources :account, only: %i[index]
 
+  get    '/account/index',          to: 'account#index'
+  get    '/account/list_all',       to: 'account#list_all',                   as: 'list_all_account'
+  get    '/account/list_org',       to: 'account#list_org',                   as: 'list_org_account'
+
   get    '/account/show_current',   to: redirect("/account/show/#{CURRENT}"), as: 'show_current_account'
   get    '/account/show_select',    to: 'account#show_select',                as: 'show_select_account'
   get    '/account/show/(:id)',     to: 'account#show',                       as: 'show_account'
@@ -255,6 +268,9 @@ Rails.application.routes.draw do
 
   resources :org, only: %i[index]
 
+  get    '/org/index',              to: 'org#index'
+  get    '/org/list_all',           to: 'org#list_all',                       as: 'list_all_org'
+
   get    '/org/show_current',       to: redirect("/org/show/#{CURRENT}"),     as: 'show_current_org'
   get    '/org/show_select',        to: 'org#show_select',                    as: 'show_select_org'
   get    '/org/show/(:id)',         to: 'org#show',                           as: 'show_org'
@@ -270,6 +286,8 @@ Rails.application.routes.draw do
   get    '/org/delete_select',      to: 'org#delete_select',                  as: 'delete_select_org'
   get    '/org/delete/(:id)',       to: 'org#delete',                         as: 'delete_org'
   delete '/org/destroy/:id',        to: 'org#destroy',                        as: 'destroy_org'
+
+  get    '/org/:id',                to: 'org#edit', defaults: { id: CURRENT }
 
   # ===========================================================================
   # Search call viewer
@@ -485,6 +503,24 @@ unless ONLY_FOR_DOCUMENTATION
   def help_url(...);                               end
   def home_path(...);                              end
   def home_url(...);                               end
+  def list_all_account_path(...);                  end
+  def list_all_account_url(...);                   end
+  def list_all_manifest_path(...);                 end
+  def list_all_manifest_url(...);                  end
+  def list_all_org_path(...);                      end
+  def list_all_org_url(...);                       end
+  def list_all_upload_path(...);                   end
+  def list_all_upload_url(...);                    end
+  def list_org_account_path(...);                  end
+  def list_org_account_url(...);                   end
+  def list_org_manifest_path(...);                 end
+  def list_org_manifest_url(...);                  end
+  def list_org_upload_path(...);                   end
+  def list_org_upload_url(...);                    end
+  def list_own_manifest_path(...);                 end
+  def list_own_manifest_url(...);                  end
+  def list_own_upload_path(...);                   end
+  def list_own_upload_url(...);                    end
   def manifest_index_path(...);                    end
   def manifest_index_url(...);                     end
   def manifest_item_index_path(...);               end

@@ -15,8 +15,6 @@ class Org < ApplicationRecord
 
   include Org::Config
 
-  def org_id: () -> (Integer | nil)
-
   # A textual label for the record instance.
   #
   # @param [Org, nil] item  Default: self.
@@ -32,6 +30,16 @@ class Org < ApplicationRecord
   # @note - for dev traceability
   #
   def initialize: (?(Org|prmHash|nil) attr) ?{ () -> untyped } -> void
+
+  def org_id: () -> (Integer | nil)
+
+  def org_key: () -> Symbol
+
+  def self.org_key: () -> Symbol
+
+  def uid: (?untyped item) -> (Integer | nil)
+
+  def self.for_user: (?untyped user, **untyped opt) -> ActiveRecord::Relation
 
   def user_ids: () -> Array[Integer]
 

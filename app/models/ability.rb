@@ -17,9 +17,8 @@ __loading_begin(__FILE__)
 #++
 class Ability
 
-  include Emma::Common
-
   include CanCan::Ability
+  include IdMethods
 
   # ===========================================================================
   # :section:
@@ -58,9 +57,9 @@ class Ability
   #
   LOCAL_ACTION_ALIAS = {
 
-    # === Any controller
+    # === HomeController
 
-    delete:         %i[destroy],
+    dashboard:      %i[],
 
     # === UploadController
 
@@ -68,9 +67,14 @@ class Ability
     backup:         %i[records],
     cancel:         [],
     check:          [],
+    download:       [],
     reedit:         [],
     renew:          [],
+    retrieval:      [],
     upload:         [],
+
+    # === UploadController, ManifestItemController
+
     bulk_new:       %i[new create],
     bulk_edit:      %i[edit update],
     bulk_delete:    %i[destroy delete],
@@ -78,12 +82,7 @@ class Ability
     bulk_update:    %i[bulk_edit],
     bulk_destroy:   %i[bulk_delete],
 
-    # === UploadController
-
-    download:       [],
-    retrieval:      [],
-
-    # === OrgController
+    # === AccountController, OrgController
 
     show_current:   [],
     edit_current:   [],
@@ -91,6 +90,9 @@ class Ability
     # === Any controller
 
     list:           %i[index],
+    list_all:       [],
+    list_org:       [],
+    list_own:       [],
     view:           %i[show retrieval],
     modify:         %i[edit update],
     remove:         %i[delete destroy],
@@ -112,7 +114,7 @@ class Ability
   #
   # @type [Array<Symbol>]
   #
-  MODEL_NAMES = I18n.t('unauthorized.manage').except(:all).keys.freeze
+  MODEL_NAMES = %i[user org upload manifest manifest_item search_call].freeze
 
   # ===========================================================================
   # :section:
@@ -204,6 +206,7 @@ class Ability
     can :manage, :all
     cannot :show_current, Org
     cannot :edit_current, Org
+    cannot :list_org,     :all
   end
 
   # Assign the ability to perform as an organization manager.
@@ -220,6 +223,8 @@ class Ability
       return Log.warn { "#{meth}: no org for #{user.inspect}" }
     can_manage_user(**constraints)
     can_manage_organization(**constraints)
+    cannot :edit_select,   Org
+    cannot :delete_select, Org
   end
 
   # Assign the ability to perform as a Disability Service Officer.
@@ -260,6 +265,7 @@ class Ability
   def act_as_guest(user, **constraints)
     act_as_anonymous(user, **constraints)
     act_as_organization_member(user, **constraints)
+    can :dashboard, :all
   end
 
   # Assign the ability to perform as an anonymous (unauthenticated) user.
@@ -332,8 +338,9 @@ class Ability
     user = constraints.extract!(*identity_keys(User)).values.first
     org  = constraints.extract!(*identity_keys(Org)).values.first || user&.org
     constraints[:org] ||= org || user&.org or return
-    can :index, User, constraints
-    can :list,  User, constraints
+    can :index,    User, constraints
+    can :list,     User, constraints
+    can :list_org, User, constraints
   end
 
   # Allow full (user-level) control over an EMMA member organization.
@@ -588,6 +595,8 @@ class Ability
   def can_view_content(model, meth: nil, **constraints)
     can :index,        model, constraints
     can :list,         model, constraints
+    can :list_org,     model, constraints
+    can :list_own,     model
     can :show_current, model, constraints
     can :show_select,  model, constraints
     can :show,         model
@@ -699,7 +708,7 @@ class Ability
     action = action.compact.map!(&:to_sym) if action.is_a?(Array)
     action = action.to_sym                 if action.is_a?(String)
     conditions.compact_blank!
-    conditions.map! { |arg| ApplicationRecord.normalize_id_keys(arg, subject) }
+    conditions.map! { |arg| normalize_id_keys(arg, subject) }
     return action, subject, conditions
   end
 
@@ -809,18 +818,26 @@ class Ability
   #
   def self.org_for(rec, caller: nil)
     if rec.is_a?(ApplicationRecord)
-      # noinspection RailsParamDefResolve
-      rec.try(:org_id) || rec.try(:org)&.id
+      rec.oid
+
     elsif !rec.is_a?(Hash)
       meth = caller || __method__
       warn = rec ? "#{rec.class} unexpected: #{rec.inspect}" : 'nil argument'
       Log.warn("#{meth}: #{warn}")
+
     elsif (org = rec.values_at(:org, :org_id).first)
-      org.try(:id) || org
+      org = org.is_a?(String) && positive(org) || org
+      # noinspection RailsParamDefResolve, RubyMismatchedReturnType
+      org.is_a?(Integer) ? org : org.try(:oid)
+
     elsif (user = rec.values_at(:user, :user_id).first)
-      user = User.find(user)               if user.is_a?(Integer)
-      user = User.where(email: user).first if user.is_a?(String)
-      user.org_id || user.org&.id          if user.is_a?(User)
+      user = user.is_a?(String) && positive(user) || user
+      # noinspection RailsParamDefResolve
+      case user
+        when String  then User.find_by(email: user)&.oid
+        when Integer then User.find(user)&.oid
+        else              user.try(:oid)
+      end
     end
   end
 

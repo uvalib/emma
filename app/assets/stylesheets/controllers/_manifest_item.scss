@@ -1054,10 +1054,10 @@ table.manifest_item-grid {
                         background:  white;
                     }
 
-                    .menu.multi:not([role="listbox"]) {
+                    .menu.multi {
 
                         // noinspection CssReplaceWithShorthandSafely
-                        .menu.multi[role="listbox"] {
+                        ul[role="listbox"] {
 
                             display:        flex;
                             flex-direction: column;
@@ -1426,7 +1426,7 @@ table.manifest_item-grid {
                             margin-top:     $cell-pad * 0.5;
                         }
 
-                        .menu.multi:not([role="listbox"]) {
+                        .menu.multi {
 
                             padding-top:    $cell-pad;
                             padding-left:   $cell-pad * 0.5;
@@ -1434,7 +1434,7 @@ table.manifest_item-grid {
                             max-height:     $max-cell-height;
                             overflow:       auto;
 
-                            .menu.multi[role="listbox"] {
+                            ul[role="listbox"] {
 
                                 // noinspection CssReplaceWithShorthandSafely
                                 .single.checkbox {

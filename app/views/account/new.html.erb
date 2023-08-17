@@ -6,16 +6,21 @@
 
   item  ||= @item || User.new
   dec     = AccountDecorator.new(item, **context)
+  item    = dec.object
 
   help  ||= nil # dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  name  ||= nil
+  title   = dec.page_title(title, name: name)
 
   unless modal?
     label = dec.page_meta_title
     set_page_meta_title(label)
     set_page_description(title)
   end
+
+  # The new user must be in the same organization as the creating manager.
+  item.org ||= current_org if current_org
 
 -%>
 

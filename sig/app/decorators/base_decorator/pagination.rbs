@@ -302,6 +302,15 @@ module BaseDecorator::Pagination
   #
   def pagination_icon: (?(String|nil) content, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # The element displayed when there are no items to list.
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def no_items: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
   private
 
   def self.included: (Module base) -> void

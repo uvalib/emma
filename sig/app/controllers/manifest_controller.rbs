@@ -26,6 +26,10 @@ class ManifestController < ApplicationController
 
   #extend  CanCan::ControllerAdditions::ClassMethods
 
+  OPS: symArray
+
+  MENUS: symArray
+
   # Results for :index.
   #
   # @return [Array<Manifest>]
@@ -41,6 +45,8 @@ class ManifestController < ApplicationController
   attr_reader item: Manifest | nil
 
   # === GET /manifest
+  #
+  # List bulk operation manifests.
   #
   # @see #manifest_index_path         Route helper
   #
@@ -97,6 +103,25 @@ class ManifestController < ApplicationController
   # @see #destroy_manifest_path       Route helper
   #
   def destroy: () -> void
+
+  # === GET /manifest/list_all
+  #
+  # List all bulk operation manifests.
+  #
+  def list_all: () -> void
+
+  # === GET /manifest/list_org
+  #
+  # List all bulk operation manifests associated with users in the same
+  # organization as the current user.
+  #
+  def list_org: () -> void
+
+  # === GET /manifest/list_own
+  #
+  # List all bulk operation manifests associated with the current user.
+  #
+  def list_own: () -> void
 
   # === GET /manifest/show_select
   #
@@ -202,9 +227,9 @@ class ManifestController < ApplicationController
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Symbol]                         action
   # @param [Manifest, Array<Manifest>, nil] subject
+  # @param [Symbol, String, nil]            action
   # @param [*]                              args
   #
-  def manifest_authorize!: (Symbol action, Manifest|Array[Manifest]|nil subject, *untyped args) -> void
+  def manifest_authorize!: (?(Manifest|Array[Manifest]|nil) subject, ?(Symbol|String|nil) action, *untyped args) -> void
 end

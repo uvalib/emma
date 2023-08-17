@@ -788,7 +788,9 @@ class EnumType < ScalarType
     #
     # @return [Hash]
     #
-    def pairs: () -> symHash
+    # @see ApplicationRecord#pairs
+    #
+    def pairs: (**untyped _ignored) -> Hash[String,String]
 
     # Mapping of comparable values to enumeration values.
     #

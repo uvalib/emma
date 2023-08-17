@@ -43,8 +43,11 @@ class OrgController < ApplicationController
   # :section:
   # ===========================================================================
 
+  OPS   = %i[new edit delete].freeze
+  MENUS = %i[show_select edit_select delete_select].freeze
+
   respond_to :html
-  respond_to :json, :xml, except: %i[edit]
+  respond_to :json, :xml, except: OPS + MENUS
 
   # ===========================================================================
   # :section:
@@ -81,21 +84,25 @@ class OrgController < ApplicationController
   def index
     __log_activity
     __debug_route
-    prm = paginator.initial_parameters
-    org = current_id
-    id  = identifier
-    if (id ||= org)
-      authorize!(__method__, Org.new(id: id)) unless id == org
-      prm.merge!(action: :show, id: id).except!(:limit)
-      opt = (fmt = params[:format]) ? { format: fmt.to_sym } : {}
-      return redirect_to prm, opt
-    end
-    result = find_or_match_records(sort: { updated_at: :desc }, **prm)
-    @list  = paginator.finalize(result, **prm)
-    respond_to do |format|
-      format.html
-      format.json #{ render_json index_values }
-      format.xml  #{ render_xml  index_values }
+    id  = identifier || current_id
+    prm = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    if id.blank? && prm.present?
+      # Perform search here.
+      sort  = prm.delete(:sort) || { updated_at: :desc }
+      found = find_or_match_records(sort: sort, **prm)
+      @list = paginator.finalize(found, **prm)
+    else
+      # Otherwise redirect to the appropriate list action.
+      if id.blank?
+        prm.merge!(action: :list_all)
+      else
+        prm.merge!(action: :show, id: id)
+      end
+      respond_to do |format|
+        format.html { redirect_to prm }
+        format.json { redirect_to prm.merge!(format: :json) }
+        format.xml  { redirect_to prm.merge!(format: :xml) }
+      end
     end
   rescue Record::SubmitError => error
     error_response(error)
@@ -119,12 +126,7 @@ class OrgController < ApplicationController
       when current_org then @item = current_org
       else                  return redirect_to action: :show_select
     end
-    org_authorize!(__method__, @item)
-    respond_to do |format|
-      format.html
-      format.json #{ render_json show_values }
-      format.xml  #{ render_xml  show_values }
-    end
+    org_authorize!
   rescue => error
     error_response(error, show_select_org_path)
   end
@@ -137,7 +139,7 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     @item = new_record
-    org_authorize!(__method__, @item)
+    org_authorize!
   rescue => error
     failure_status(error)
   end
@@ -152,7 +154,7 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     @item = create_record
-    org_authorize!(__method__, @item)
+    org_authorize!
     if request_xhr?
       render json: @item.as_json
     else
@@ -178,7 +180,7 @@ class OrgController < ApplicationController
       when current_org then @item = current_org
       else                  return redirect_to action: :edit_select
     end
-    org_authorize!(__method__, @item)
+    org_authorize!
     # noinspection RubyMismatchedArgumentType
     raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
   rescue => error
@@ -196,7 +198,7 @@ class OrgController < ApplicationController
     __debug_route
     __debug_request
     @item = update_record
-    org_authorize!(__method__, @item)
+    org_authorize!
     if request_xhr?
       render json: @item.as_json
     else
@@ -220,7 +222,7 @@ class OrgController < ApplicationController
     return redirect_to action: :delete_select if identifier.blank?
     raise 'Cannot delete your own organization' if identifier == current_id # TODO: I18n
     @list = delete_records[:list]
-    org_authorize!(__method__, @list)
+    #org_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
       # noinspection RubyMismatchedArgumentType
       raise "No records match #{quote(identifier_list)}" # TODO: I18n
@@ -242,7 +244,7 @@ class OrgController < ApplicationController
     back  = delete_select_org_path
     raise 'Cannot delete your own organization' if current_org # TODO: I18n
     @list = destroy_records
-    #org_authorize!(__method__, @list) # TODO: authorize :destroy
+    #org_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
@@ -255,6 +257,28 @@ class OrgController < ApplicationController
   # ===========================================================================
 
   public
+
+  # === GET /org/list_all
+  #
+  # List all organizations.
+  #
+  def list_all
+    __log_activity
+    __debug_route
+    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
+    sort  = prm.delete(:sort) || { updated_at: :desc }
+    found = find_or_match_records(sort: sort, **prm)
+    @list = paginator.finalize(found, **prm)
+    respond_to do |format|
+      format.html { render 'org/index' }
+      format.json { render 'org/index' }
+      format.xml  { render 'org/index' }
+    end
+  rescue Record::SubmitError => error
+    error_response(error)
+  rescue => error
+    error_response(error, root_path)
+  end
 
   # === GET /org/show_select
   #
@@ -298,13 +322,15 @@ class OrgController < ApplicationController
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Symbol]               action
   # @param [Org, Array<Org>, nil] subject
+  # @param [Symbol, String, nil]  action
   # @param [*]                    args
   #
-  def org_authorize!(action, subject, *args)
-    subject = subject.first if subject.is_a?(Array) # TODO: per item check
-    subject = subject.presence
+  def org_authorize!(subject = nil, action = nil, *args)
+    action  ||= request_parameters[:action]
+    action    = action.to_sym if action.is_a?(String)
+    subject ||= @item
+    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
     authorize!(action, subject, *args) if subject
     return if administrator?
     return unless %i[show edit update delete destroy].include?(action)

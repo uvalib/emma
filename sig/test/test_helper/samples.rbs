@@ -1,11 +1,7 @@
 # Access to sample models.
 #
 module TestHelper::Samples
-  # A table of models and the selected entry from test/fixtures/*.yml.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  SAMPLE_FIXTURE: Hash[Symbol,Symbol]
+  include CssHelper
 
   # A string added to the start of each title created on a non-production
   # instance to help distinguish it from other index results.
@@ -20,41 +16,11 @@ module TestHelper::Samples
   #
   UPLOAD_FILE: String
 
-  @sample: Hash[Symbol, Model]
-
-  # Generate a sample instance from text/fixtures/jobs_results.yml.
-  # @return [JobResult]
-  def sample_job_result: () -> JobResult
-
-  # Generate a sample instance from text/fixtures/manifests.yml.
-  # @return [Manifest]
-  def sample_manifest: () -> Manifest
-
-  # Generate a sample instance from text/fixtures/manifest_items.yml.
-  # @return [ManifestItem]
-  def sample_manifest_item: () -> ManifestItem
-
-  # Generate a sample instance from text/fixtures/orgs.yml.
-  # @return [Org]
-  def sample_org: () -> Org
-
-  # Generate a sample instance from text/fixtures/roles.yml.
-  # @return [Role]
-  def sample_role: () -> Role
-
-  # Generate a sample instance from text/fixtures/search_calls.yml.
-  # @return [SearchCall]
-  def sample_search_call: () -> SearchCall
-
-  # Generate a sample instance from text/fixtures/search_results.yml.
-  # @return [SearchResult]
-  def sample_search_result: () -> SearchResult
-
-  # Generate a sample instance from text/fixtures/uploads.yml.
-  # @return [Upload]
-  def sample_upload: () -> Upload
-
-  # Generate a sample instance from text/fixtures/users.yml.
-  # @return [User]
-  def sample_user: () -> User
+  # Generate a unique user account email name.
+  #
+  # @param [User, String] original
+  #
+  # @return [String]
+  #
+  def unique_email: (User|String original) -> String
 end

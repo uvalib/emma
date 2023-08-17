@@ -316,6 +316,42 @@ class Object
 
   def home_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def list_all_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_org_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_org_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_org_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_org_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_org_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_org_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_org_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_org_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_own_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_own_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_own_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_own_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def manifest_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def manifest_index_url: (*untyped _ignored) ?{ () -> untyped } -> String

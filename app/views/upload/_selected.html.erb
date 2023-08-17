@@ -6,7 +6,7 @@
 
   item   ||= nil
   dec    ||= UploadDecorator.new(item, **context)
-  item   ||= dec&.object or return
+  item     = dec&.object or return
 
   level  ||= 2
   row    ||= 0

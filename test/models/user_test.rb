@@ -9,7 +9,7 @@ class UserTest < ActiveSupport::TestCase
 
   test 'model - valid user' do
     run_test(__method__) do
-      item = sample_user
+      item = users(:example)
       show item
       assert item.valid?
     end
@@ -17,7 +17,8 @@ class UserTest < ActiveSupport::TestCase
 
   test 'model - user must have an email address' do
     run_test(__method__) do
-      data = sample_user.attributes.except('email')
+      item = users(:example)
+      data = item.attributes.except('email')
       item = User.new(data)
       show item
       refute item.valid?
@@ -26,7 +27,8 @@ class UserTest < ActiveSupport::TestCase
 
   test 'model - user must have a valid email address' do
     run_test(__method__) do
-      data = sample_user.attributes.tap { |u| u['email'].sub!(/@.*/, '') }
+      item = users(:example)
+      data = item.attributes.tap { |u| u['email'].sub!(/@.*/, '') }
       item = User.new(data)
       show item
       refute item.valid?

@@ -184,4 +184,20 @@ module Emma::Common::FormatMethods
   # @return [Hash{Symbol=>String}]
   #
   def named_references_and_formats: (String text, ?default_fmt: String|nil) -> Hash[Symbol,String]
+
+  # Replace #sprintf named references with the matching values extracted from
+  # *items* or *opt*.
+  #
+  # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
+  # then the interpolated value will follow the same case.
+  #
+  # @param [String, *]           text
+  # @param [Array<Hash,Model,*>] items
+  # @param [Hash]                opt
+  #
+  # @return [String]                  A (possibly modified) copy of *text*.
+  #
+  # @see Kernel#sprintf
+  #
+  def interpolate_named_references: (untyped text, *untyped items, **untyped opt) -> String
 end

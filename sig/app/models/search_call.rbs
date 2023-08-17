@@ -46,10 +46,6 @@ class SearchCall < ApplicationRecord
   #
   PARAMETER_MAP: Hash[Symbol,symArray]
 
-  def org_id: () -> (Integer | nil)
-
-  def user_id: () -> (Integer | nil)
-
   # Create a new instance.
   #
   # @param [SearchCall, Hash, nil] attr
@@ -57,6 +53,16 @@ class SearchCall < ApplicationRecord
   # @note - for dev traceability
   #
   def initialize: (?(SearchCall|anyHash|nil) attr) ?{ () -> untyped } -> void
+
+  def org_id: () -> (Integer | nil)
+
+  def uid: (?untyped item) -> (Integer | nil)
+
+  def oid: (?untyped item) -> (Integer | nil)
+
+  def self.for_user: (?untyped user, **untyped opt) -> ActiveRecord::Relation
+
+  def self.for_org: (?untyped org, **untyped opt) -> ActiveRecord::Relation
 
   # Produce a value that can be used for SearchController URL parameters.
   #

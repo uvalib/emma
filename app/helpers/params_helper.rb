@@ -46,11 +46,12 @@ module ParamsHelper
     controller
     action
     format
-    utf8
-    commit
     _method
     authenticity_token
+    commit
     modal
+    redirect
+    utf8
   ].sort.freeze
 
   # Used as the first character of a session value that has been compressed.

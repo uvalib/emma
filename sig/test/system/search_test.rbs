@@ -1,11 +1,11 @@
 class SearchTest < ApplicationSystemTestCase
   CONTROLLER: Symbol
 
-  OPTIONS: symHash
+  PARAMS: symHash
 
   PAGE_COUNT: Integer
 
-  TITLE_SEARCH_TERM: String
+  TITLE_SEARCH: String
 
   # Await the indicated page then output its :prev and :next links.
   #

@@ -186,21 +186,14 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
-      hash = opt[:constraint]
-      user = hash&.values_at(:user, :user_id)&.first
-      org  = hash&.values_at(:org, :org_id)&.first
-      unless user || org
-        user = current_user
-        org  = user&.org
-        add  = {}
-        case
-          when administrator? then #add[:user] = :all
-          when manager?       then add[:org]  = org
-          when org            then add[:org]  = org
-          when user           then add[:user] = user
-          else                     add[:user] = :none
+      unless administrator?
+        hash = opt[:constraints]&.dup || {}
+        user = hash.extract!(:user, :user_id).compact.values.first
+        org  = hash.extract!(:org, :org_id).compact.values.first
+        if !user && !org && (user = current_user).present?
+          added = (org = user.org) ? { org: org } : { user: user }
+          opt[:constraints] = added.merge!(hash)
         end
-        opt[:constraint] = hash&.reverse_merge(add) || add if add.present?
       end
       opt[:sort] ||= { id: :desc } if administrator? || manager?
       super(**opt)
@@ -239,7 +232,7 @@ class ManifestDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section:
+    # :section: BaseDecorator::Pagination overrides
     # =========================================================================
 
     public
@@ -257,6 +250,12 @@ class ManifestDecorator < BaseDecorator
       prepend_css!(opt, css)
       h.page_description_section(desc, **opt)
     end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
 
     # The button displayed when the user has no Manifests to list.
     #
@@ -381,23 +380,6 @@ class ManifestDecorator
     if present? && object.field_names.include?(field)
       object[field] || EMPTY_VALUE
     end || super
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::Form overrides
-  # ===========================================================================
-
-  public
-
-  # Upload cancel button.
-  #
-  # @param [Hash] opt                 Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def cancel_button(**opt)
-    opt[:'data-path'] ||= opt.delete(:url) || context[:cancel] || back_path
-    super(**opt)
   end
 
   # ===========================================================================
@@ -528,6 +510,22 @@ class ManifestDecorator
 
   public
 
+  def render_form_menu_single(name, value, *opt)
+    constraints = nil
+    if administrator?
+      case opt[:range].try(:model_type)
+        when :user then constraints = { prepend: { 0 => 'NONE' } };
+      end
+    elsif current_org
+      case opt[:range].try(:model_type)
+        when :user then constraints = { org: current_org }
+      end
+    end
+    opt[:constraints] = opt[:constraints]&.dup || {} if constraints
+    opt.merge!(constraints: constraints)             if constraints
+    super(name, value, **opt)
+  end
+
   # Basic form controls, including #import_button if appropriate.
   #
   # @param [Hash] opt
@@ -550,13 +548,24 @@ class ManifestDecorator
 
   # Form submit button.
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def submit_button(**opt)
     opt[:state] ||= (:enabled if object.manifest_items.pending.present?)
     super
+  end
+
+  # Submit cancel button.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def cancel_button(**opt)
+    opt[:'data-path'] ||= opt.delete(:url) || context[:cancel] || back_path
+    super(**opt)
   end
 
   # ===========================================================================

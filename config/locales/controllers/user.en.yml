@@ -29,7 +29,10 @@ en:
       page_controls:
         label:          'Account Actions:'
         actions:
-          - [account, index]
+          - { controller: 'home', action: 'dashboard', label: 'Details' }
+          - [account, edit_current]
+          - [account, list_org]
+          - [account, list_all]
           - [account, new]
           - [account, edit_select]
           - [account, delete_select]

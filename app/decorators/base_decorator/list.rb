@@ -202,11 +202,13 @@ module BaseDecorator::List
     end
 
     # Adjust field properties.
-    enum  = prop[:type].is_a?(Class)
+    cls   = prop[:type].is_a?(Class)
+    enum  = cls && (prop[:type] < EnumType)
+    model = cls && (prop[:type] < Model)
     multi = true?(prop[:array])
     delta = {}
-    delta[:type]  = 'textarea' if lines&.many? && !enum
-    delta[:array] = true       if enum && !multi && !prop[:array]
+    delta[:type]  = 'textarea' if lines&.many? && !cls
+    delta[:array] = true       if cls && !prop[:array]
     prop = prop.merge(delta)   if delta.present?
 
     # Special for ManifestItem
@@ -254,10 +256,11 @@ module BaseDecorator::List
           when 'textarea' then status << 'textbox'
           when 'number'   then status << 'numeric'
           when 'json'     then status << 'hierarchy'
-          else                 status << prop[:type] unless enum
+          else                 status << prop[:type] unless cls
         end
       end
-      status << 'enum' if enum
+      status << 'enum'  if enum
+      status << 'model' if model
     end
     prepend_css!(opt, type, *status)
     prepend_css!(opt, "row-#{row}") if row
@@ -452,7 +455,8 @@ module BaseDecorator::List
         else             pairs.reject! { |f, _| f.downcase.include?(pattern) }
       end
     end
-    pairs.transform_keys!(&:to_sym)
+    cfg = model_context_fields || model_index_fields
+    pairs.transform_keys!(&:to_sym).delete_if { |f, _| cfg.dig(f, :ignored) }
   end
 
   # Render a metadata listing of a model instance.

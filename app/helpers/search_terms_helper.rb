@@ -52,12 +52,6 @@ module SearchTermsHelper
       types.map { |type, cfg| cfg[:url_param]&.to_sym || type }
     }.freeze
 
-  # URL parameters that are search-related but "out-of-band".
-  #
-  # @type [Array<Symbol>]
-  #
-  PAGINATION_KEYS = Paginator::PAGINATION_KEYS
-
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
@@ -75,9 +69,8 @@ module SearchTermsHelper
   #
   # @type [Array<Symbol>]
   #
-  NON_SEARCH_PARAMS = (
-    Record::Searchable::SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS
-  ).uniq.freeze
+  NON_SEARCH_PARAMS =
+    [*NON_SEARCH_KEYS, *Record::Searchable::SEARCH_RECORDS_OPTIONS].uniq.freeze
 
   # Term separator for #list_search_terms.
   #

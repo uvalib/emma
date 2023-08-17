@@ -48,15 +48,23 @@ class ManifestItem < ApplicationRecord
   # :nocov:
   #extend Record::Describable::ClassMethods
 
-  def org_id: () -> (Integer | nil)
-
-  def user_id: () -> (Integer | nil)
-
   # Create a new instance.
   #
   # @param [ManifestItem,Manifest,Hash] attr    To #assign_attributes via super
   #
   def initialize: (?(ManifestItem|Manifest|anyHash|nil) attr) ?{ () -> untyped } -> void
+
+  def user_id: () -> (Integer | nil)
+
+  def org_id: () -> (Integer | nil)
+
+  def uid: (?untyped item) -> (Integer | nil)
+
+  def oid: (?untyped item) -> (Integer | nil)
+
+  def self.for_user: (?untyped user, **untyped opt) -> ActiveRecord::Relation
+
+  def self.for_org: (?untyped org, **untyped opt) -> ActiveRecord::Relation
 
   # Override to regenerate the :field_error field if indicated.
   #

@@ -12,7 +12,7 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
   PARAMS        = { controller: CONTROLLER }.freeze
   OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
 
-  TEST_USERS    = %i[anonymous test_guest_1 test_dso_1 test_man_1 test_adm].freeze
+  TEST_USERS    = ALL_TEST_USERS
   TEST_READERS  = TEST_USERS
   TEST_WRITERS  = TEST_USERS
 
@@ -32,13 +32,17 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :index
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @readers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
+        case (opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized)
+          when :success then opt[:redir] = index_redirect(user: user, **opt)
+        end
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
@@ -48,11 +52,13 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :show
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @readers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
-        rec = sample_manifest
+        rec = manifests(:example)
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
@@ -69,9 +75,11 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :new
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
@@ -85,12 +93,14 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :create
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
       u_opt[:expect] = :redirect
+
       TEST_FORMATS.each do |fmt|
-        rec = new_record
+        rec = new_record.tap { |r| r.user = user }
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
         opt[:expect] = :unauthorized unless fmt == :html
@@ -103,9 +113,11 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :edit
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit
         url = url_for(id: rec.id, **params, format: fmt)
@@ -120,10 +132,12 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :update
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
       u_opt[:expect] = :redirect
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit
         url = url_for(**rec.fields, **params, format: fmt)
@@ -138,9 +152,11 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :delete
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
@@ -155,10 +171,12 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
     action  = :destroy
     params  = PARAMS.merge(action: action)
     options = OPTIONS.merge(action: action, test: __method__)
+
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
       u_opt[:expect] = :redirect
+
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
@@ -177,29 +195,11 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
 
   # @private
   # @type [String,nil]
-  attr_accessor :create_id
-
-  # @private
-  # @type [String,nil]
   attr_accessor :edit_id
 
   # @private
   # @type [String,nil]
   attr_accessor :delete_id
-
-  # Push a dummy item into the database for creating.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Manifest]
-  #
-  def sample_for_create(src = :example)
-    current = create_id && Manifest.find_by(id: create_id)
-    current&.delete
-    new_record(src).tap do |record|
-      self.create_id = record.save!
-    end
-  end
 
   # Push a dummy item into the database for editing.
   #
@@ -239,6 +239,23 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
   def new_record(src = :example)
     fields = src.is_a?(Hash) ? src : manifests(src.to_sym).fields.except(:id)
     Manifest.new(fields)
+  end
+
+  # ===========================================================================
+  # :section: TestHelper::Utility overrides
+  # ===========================================================================
+
+  public
+
+  # The default :index action redirects to :list_own.
+  #
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def index_redirect(**opt, &blk)
+    opt[:dst] ||= :list_own
+    super(**opt, &blk)
   end
 
 end

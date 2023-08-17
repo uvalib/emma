@@ -27,15 +27,29 @@ class Upload < ApplicationRecord
   #
   FIELD_VALIDATION: bool
 
-  def org_id: () -> (Integer | nil)
-
-  def user_id: () -> (Integer | nil)
+  # A textual label for the record instance.
+  #
+  # @param [User, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label: (?(User|nil) item) -> (String | nil)
 
   # Create a new instance.
   #
   # @param [Upload, Hash, nil] attr   Passed to #assign_attributes via super.
   #
   def initialize: (?(Upload|symHash|nil) attr) ?{ () -> untyped } -> void
+
+  def org_id: () -> (Integer | nil)
+
+  def uid: (?untyped item) -> (Integer | nil)
+
+  def oid: (?untyped item) -> (Integer | nil)
+
+  def self.for_user: (?untyped user, **untyped opt) -> ActiveRecord::Relation
+
+  def self.for_org: (?untyped org, **untyped opt) -> ActiveRecord::Relation
 
   # Model/controller options passed in through the constructor.
   #

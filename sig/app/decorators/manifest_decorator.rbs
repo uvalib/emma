@@ -191,14 +191,6 @@ class ManifestDecorator
   #
   def render_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
 
-  # Upload cancel button.
-  #
-  # @param [Hash] opt                 Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
-
   # Page count label for manifest items.
   #
   # @param [Hash] opt               Passed to #config_lookup
@@ -280,6 +272,22 @@ class ManifestDecorator
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_buttons: (**untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> Array[ActiveSupport::SafeBuffer] } -> Array[ActiveSupport::SafeBuffer]
+
+  # Form submit button.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submit_button: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Submit cancel button.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # A consistent HTML element ID for the page heading.
   #

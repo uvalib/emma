@@ -191,9 +191,9 @@ class Options
   # @param [Boolean] compact          If *false*, allow blanks.
   # @param [Hash]    opt              Options to #json_parse.
   #
-  # @return [Hash, nil]               The new contents of *prm* if modified.
+  # @return [Hash]                    The possibly-modified *prm*.
   #
-  def extract_model_data!: (symHash prm, ?compact: bool, **untyped opt) -> (symHash | nil)
+  def extract_model_data!: (symHash prm, ?compact: bool, **untyped opt) -> symHash
 
   def inspect: () -> String
 end

@@ -17,6 +17,10 @@ class OrgController < ApplicationController
 
   include OrgConcern
 
+  OPS: symArray
+
+  MENUS: symArray
+
   # Results for :index.
   #
   # @return [Array<Org>]
@@ -93,6 +97,12 @@ class OrgController < ApplicationController
   #
   def destroy: () -> void
 
+  # === GET /org/list_all
+  #
+  # List all organizations.
+  #
+  def list_all: () -> void
+
   # === GET /org/show_select
   #
   # Show a menu to select an organization to show.
@@ -120,9 +130,9 @@ class OrgController < ApplicationController
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.
   #
-  # @param [Symbol]               action
   # @param [Org, Array<Org>, nil] subject
+  # @param [Symbol, String, nil]  action
   # @param [*]                    args
   #
-  def org_authorize!: (Symbol action, Org|Array[Org]|nil subject, *untyped args) -> void
+  def org_authorize!: (?(Org|Array[Org]|nil) subject, ?(Symbol|String|nil) action, *untyped args) -> void
 end

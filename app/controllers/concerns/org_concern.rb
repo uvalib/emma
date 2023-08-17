@@ -56,34 +56,6 @@ module OrgConcern
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # The organization of the current user.
-  #
-  # @return [Org, nil]
-  #
-  def current_org
-    current_user&.org
-  end
-
-  # ===========================================================================
-  # :section: ModelConcern overrides
-  # ===========================================================================
-
-  public
-
-  def find_or_match_records(*items, filters: [], **opt)
-    unless opt[:org] || opt[:org_id] || administrator?
-      opt[:org] = current_org if current_org.present?
-    end
-    filters << :filter_by_org! if opt[:org] || opt[:org_id]
-    super
-  end
-
-  # ===========================================================================
   # :section: ResponseConcern overrides
   # ===========================================================================
 

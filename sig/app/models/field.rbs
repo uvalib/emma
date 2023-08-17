@@ -14,15 +14,6 @@ module Field
   #
   PROPERTY_KEYS: symArray
 
-  # Return an enumeration type expressed or implied by *value*.
-  #
-  # @param [String, Symbol, Class, Any] value
-  #
-  # @return [Class] The class indicated by *value*.
-  # @return [nil]   If *value* could not be cast a subclass of EnumType.
-  #
-  def self.enum_type: (untyped value) -> (Class | nil)
-
   # Configuration properties for a field within a given model/controller.
   #
   # @param [Symbol, String, Array, nil] field
@@ -93,10 +84,10 @@ module Field
   #
   # === Usage Notes
   # The :type indicates the type of HTML input element, either directly or
-  # indirectly.  If the value is a Symbol it is interpreted as an EnumType
-  # subclass which gives the range of values for a '<select>' element or the
-  # set of checkboxes to create within a 'role="listbox"' element.  Any other
-  # value indicates '<textarea>' or the '<input>' type attribute to use.
+  # indirectly.  If the value is a Symbol it is interpreted as a derivative of
+  # Model or EnumType which gives the range of values for a '<select>' element
+  # or the set of checkboxes to create within a 'role="listbox"' element.  Any
+  # other value indicates '<textarea>' or the '<input>' type attribute to use.
   #
   def self.normalize
     : (Symbol           entry)                      -> symHash
@@ -142,6 +133,14 @@ module Field
   # @return [Hash]
   #
   def self.normalize_conditions: (symHash entry) -> symHash
+
+  # Return an enumeration or model class expressed or implied by *value*.
+  #
+  # @param [String, Symbol, Class, *] value
+  #
+  # @return [Class, nil]
+  #
+  def self.value_class: (untyped? value) -> (Class | nil)
 
   private
 

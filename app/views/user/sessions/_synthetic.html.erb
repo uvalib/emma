@@ -8,10 +8,10 @@
   view_debug(__FILE__)
 
   p_opt = { fast: Rails.env.test? }.compact_blank!
-  links = User.test_users.keys.map { |uid|
-    user  = html_tag(:strong, uid)
+  links = User.test_users.keys.map { |acct|
+    user  = html_tag(:strong, acct)
     label = get_sessions_label(:sign_in_as, user: user).html_safe
-    path  = sign_in_as_path(id: uid, **p_opt)
+    path  = sign_in_as_path(id: acct, **p_opt)
     [label, path]
   }.to_h
 

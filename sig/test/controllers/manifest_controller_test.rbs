@@ -23,23 +23,11 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
 
   # @private
   # @type [String,nil]
-  attr_accessor create_id: String | nil
-
-  # @private
-  # @type [String,nil]
   attr_accessor edit_id: String | nil
 
   # @private
   # @type [String,nil]
   attr_accessor delete_id: String | nil
-
-  # Push a dummy item into the database for creating.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Manifest]
-  #
-  def sample_for_create: (?(Symbol|String|symHash) src) -> Manifest
 
   # Push a dummy item into the database for editing.
   #
@@ -64,4 +52,12 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
   # @return [Manifest]
   #
   def new_record: (?(Symbol|String|symHash) src) -> Manifest
+
+  # The default :index action redirects to :list_own.
+  #
+  # @param [Hash] opt
+  #
+  # @return [String, nil]
+  #
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
 end

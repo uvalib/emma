@@ -6,7 +6,7 @@
 
   list  ||= nil
   dec   ||= SearchCallsDecorator.new(list, **context)
-  list  ||= dec.object
+  list    = dec.object
 
   level ||= 1
   row   ||= level
@@ -17,7 +17,7 @@
     unless skip.include?(:title)
       count ||= list.size
       title ||= nil
-      title   = dec.page_heading(title)
+      title   = dec.page_title(title)
       title  += " (#{count})" unless skip.include?(:count)
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?

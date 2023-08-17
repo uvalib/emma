@@ -125,7 +125,7 @@ module OmniAuth
       # @return [String]
       #
       def uid
-        account_info[:username]&.to_s&.downcase || current_user&.uid
+        account_info[:username]&.to_s&.downcase || current_user&.account
       end
 
       # User account details.
@@ -313,7 +313,7 @@ module OmniAuth
             session['omniauth.auth'] = synthetic_auth_hash(original_params)
             call_redirect('/users/sign_in_as', params: original_params)
 
-          elsif (username = current_user&.uid)
+          elsif (username = current_user&.account)
             # Special case for a fixed user causes a redirect to the special
             # endpoint for direct sign-in.
             self.access_token        = synthetic_access_token(username)
@@ -595,7 +595,7 @@ module OmniAuth
       def self.synthetic_auth_hash(src, token = nil)
         # noinspection RubyMismatchedReturnType
         return src if src.is_a?(OmniAuth::AuthHash)
-        user = src.is_a?(String) ? src : src.try(:uid)
+        user = src.is_a?(String) ? src : src.try(:account)
         if user.nil? && (src = url_parameters(src).presence).is_a?(Hash)
           return src[:auth] if src[:auth].is_a?(OmniAuth::AuthHash)
           user    = src[:uid] || src[:id]

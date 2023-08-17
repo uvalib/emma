@@ -93,7 +93,7 @@
         margin-top: calc(2 * #{$page-padding-y});
     }
 
-    .ability-header {
+    .toggle-panel-title {
         @media #{$narrow-screen} {
             margin:    calc(2 * #{$flex-gap-y}) 0;
             font-size: x-large;

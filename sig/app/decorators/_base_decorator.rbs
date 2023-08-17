@@ -181,21 +181,21 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [String]
     #
-    def page_heading: (?(String|nil) value, ?default: bool|String, **untyped opt) -> String
+    def page_title: (?(String|nil) value, ?default: bool|String, **untyped opt) -> String
 
-    @page_heading: String | nil
+    @page_title: String | nil
 
     # Configuration value for this controller/action.
     #
-    # @param [Symbol, String, nil] item     Value or configuration item.
+    # @param [Symbol, String, nil] value    Value or configuration item.
     # @param [Boolean, String]     default  Fallback if config item missing.
     # @param [Hash]                opt      Optional interpolation values.
     #
     # @return [String, nil]
     #
     def page_value
-      : (String|Symbol|nil item, ?default: true|String, **untyped opt) -> String
-      | (String|Symbol|nil item,  default: false|nil,   **untyped opt) -> (String | nil)
+      : (String|Symbol|nil value, ?default: true|String, **untyped opt) -> String
+      | (String|Symbol|nil value,  default: false|nil,   **untyped opt) -> (String | nil)
   end
 
   # Methods for every decorator class.

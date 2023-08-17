@@ -4,20 +4,15 @@
 
   view_debug(__FILE__)
 
-  user    ||= current_user
-  dec     ||= AccountDecorator.new(user, **context)
-  name      = dec.object.email.presence || 'anonymous'
-  panel_css = 'ability-list'
-  panel_id  = css_randomize(panel_css)
+  user ||= current_user
+  dec  ||= AccountDecorator.new(user, **context)
+
+  name   = dec.object.email.presence || 'anonymous'
+  label  = "Authorization for user #{name.inspect}" # TODO: I18n
+  label  = html_tag(:h2, label)
 
 -%>
 
-<div class="ability-debug">
-  <div class="toggle-panel-title">
-    <h2 class="ability-header">Authorization for user "<%= name -%>"</h2>
-    <%= toggle_button(id: panel_id) %>
-  </div>
-  <div id="<%= panel_id -%>" class="<%= panel_css -%>">
-    <%= dec.ability_table %>
-  </div>
+<div class="account-section ability-debug">
+  <%= toggle_panel(dec.ability_table, label: label, class: 'ability-list') %>
 </div>

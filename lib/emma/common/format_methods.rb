@@ -237,7 +237,7 @@ module Emma::Common::FormatMethods
   # @see Kernel#sprintf
   #
   def named_references(text, match = nil)
-    return [] unless text&.include?('%')
+    return [] unless (text = text.to_s).include?('%')
     patterns = match || [SPRINTF_NAMED_REFERENCE, SPRINTF_FMT_NAMED_REFERENCE]
     Array.wrap(patterns).flat_map { |pattern|
       text.scan(pattern).map(&:shift)
@@ -284,13 +284,54 @@ module Emma::Common::FormatMethods
   # @return [Hash{Symbol=>String}]
   #
   def named_references_and_formats(text, default_fmt: '%s')
-    return {} unless text&.include?('%')
+    return {} unless (text = text.to_s).include?('%')
     result = named_references(text).map { |name| [name, default_fmt] }.to_h
     text.scan(SPRINTF_FORMAT).each do |fmt_parts|
       name = fmt_parts&.shift&.delete('<>')&.presence
       result[name.to_sym] = '%' + fmt_parts.join if name && fmt_parts.present?
     end
     result
+  end
+
+  # Replace #sprintf named references with the matching values extracted from
+  # *items* or *opt*.
+  #
+  # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
+  # then the interpolated value will follow the same case.
+  #
+  # @param [String, *]           text
+  # @param [Array<Hash,Model,*>] items
+  # @param [Hash]                opt
+  #
+  # @return [String]                  A (possibly modified) copy of *text*.
+  #
+  # @see Kernel#sprintf
+  #
+  def interpolate_named_references(text, *items, **opt)
+    text  = text.to_s
+    items = [*items, opt].map(&:presence).compact
+    if items.present? && text.include?('%')
+      named_references_and_formats(text, default_fmt: nil).map { |term, format|
+        term = term.to_s
+        key  = term.underscore.to_sym
+        val  = nil
+        items.find { |item|
+          item.respond_to?(key) and break (val = item.send(key)) || true
+          item.include?(key)    and break (val = item[key])      || true
+        } or next
+        val = val&.to_s || term
+        if term.match?(/[[:alpha:]]/)
+          if term == term.upcase
+            key, val = [key, val].map(&:upcase)
+          elsif (term == term.capitalize) && term.start_with?(/[[:alpha:]]/)
+            key, val = [key, val].map(&:capitalize)
+          end
+        end
+        val %= format if format
+        [key, val]
+      }.compact.tap { |values| text %= values.to_h if values.present? }
+    end
+    text
   end
 
 end

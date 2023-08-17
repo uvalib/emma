@@ -425,3 +425,34 @@
         }
     }
 }
+
+//=============================================================================
+// Menu (*_select page) support
+//=============================================================================
+
+// @see app/views/layouts/_menu_page.html.erb
+.select-menus {
+
+    display:        flex;
+    flex-direction: row;
+    flex-wrap:      wrap;
+    gap:            2rem;
+    margin-top:     2rem;
+    margin-bottom:  4rem;
+
+    .select-menu {
+
+        display:        flex;
+        flex-direction: column;
+        gap:            1rem;
+        flex:           1 1 auto;
+
+        .select-title {
+            margin: 0;
+        }
+
+        form.select-entry {
+            margin: 0;
+        }
+    }
+}

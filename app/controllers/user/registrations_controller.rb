@@ -61,7 +61,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     __debug_route
     __debug_request
     super
-    set_flash_notice(user: resource.uid)
+    set_flash_notice(user: resource.account)
   rescue => error
     auth_failure_redirect(message: error)
   end
@@ -97,7 +97,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     __debug_route
     __debug_request
     update_resource(resource, account_update_params) or raise set_flash_alert
-    set_flash_notice(user: resource.uid)
+    set_flash_notice(user: resource.account)
     redirect_back(fallback_location: dashboard_path)
   rescue => error
     auth_failure_redirect(message: error)
@@ -116,7 +116,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     __log_activity
     __debug_route
     __debug_request
-    user = resource&.uid&.dup || 'unknown'
+    user = resource&.account&.dup || 'unknown'
     super
     set_flash_notice(user: user)
   rescue => error
@@ -138,21 +138,6 @@ class User::RegistrationsController < Devise::RegistrationsController
     super
   rescue => error
     auth_failure_redirect(message: error)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # === GET /users/edit_select
-  #
-  # @see #edit_select_user_path       Route helper
-  #
-  def edit_select
-    __log_activity
-    __debug_route
   end
 
   # ===========================================================================

@@ -291,21 +291,22 @@ class Search::Message::SearchTitleList < Search::Api::Message
   end
 
   # ===========================================================================
-  # :section: Api::Record overrides
+  # :section: Model overrides
   # ===========================================================================
 
   public
 
   # The fields and values for this instance as a Hash.
   #
-  # If opt[:item] is present, this is used as an indicator that individual
-  # records should be wrapped (i.e., that the intended output format is XML).
+  # @param [*] item   Presence used as an indicator that individual records
+  #                   should be wrapped (i.e., that the intended output format
+  #                   is XML).
   #
-  # @param [Hash] opt                 Passed to Api::Record#to_h.
+  # @return [Hash]
   #
-  def to_h(**opt)
+  def to_h(item: nil, **)
     fields.tap do |result|
-      if opt[:item].present?
+      if item.present?
         result[:titles]&.map! do |title|
           title[:records].map! { |rec| { record: rec } }
         end

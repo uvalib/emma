@@ -6,11 +6,13 @@
 
   item  ||= @item
   dec     = ManifestDecorator.new(item, **context)
-  item  ||= dec.object
+  item    = dec.object
 
   help  ||= dec.help_topic
-  title ||= dec.page_heading(name: item.name)
-  title   = title.strip.delete_suffix(':')
+  title ||= nil
+  name  ||= item&.label.inspect
+  title &&= title.strip.delete_suffix(':')
+  title   = dec.page_title(title, name: name)
 
   unless modal?
     label = title

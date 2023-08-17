@@ -6,11 +6,12 @@
 
   item  ||= @item
   dec     = UploadDecorator.new(item, **context)
-  item  ||= dec.object
+  item    = dec.object
 
   help  ||= dec.help_topic
   title ||= nil
-  title   = dec.page_heading(title)
+  name  ||= nil
+  title   = dec.page_title(title, name: name)
 
   repo  ||= item.repository
   logo  ||= repository_source_logo(repo)

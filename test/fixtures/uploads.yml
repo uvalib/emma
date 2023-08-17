@@ -2,47 +2,47 @@
 #
 # @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-emma_blank:             &EMMA
-  user:                 test_dso_1
-  repository:           emma
+emma_blank:           &EMMA
+  user:               test_dso_1
+  repository:         emma
 
-emma_with_data:         &EMMA_WITH_DATA
-  <<:                   *EMMA
-  emma_data:            |
+emma_with_data:       &EMMA_WITH_DATA
+  <<:                 *EMMA
+  emma_data:          |
     <%= {
-    dc_creator:         ['Edgar Allan Poe'],
-    dc_format:          'epub',
-    dc_language:        ['arm'],
-    dc_rights:          'creativeCommons',
+    dc_creator:       ['Edgar Allan Poe'],
+    dc_format:        'epub',
+    dc_language:      ['arm'],
+    dc_rights:        'creativeCommons',
     dc_subject: [
       'Short stories',
       'Fantasy fiction',
       'Horror tales, American',
       'American fiction -- 19th century'
     ],
-    dc_title:           "#{TestHelper::Samples::TITLE_PREFIX} - The Works of Edgar Allan Poe — Volume 2",
-    dc_type:            'movingImage',
-    emma_repository:    'emma',
-    rem_comments:       'FAKE - do not use',
-    rem_complete:       true,
-    rem_status:         'bornAccessible'
+    dc_title:         "#{TestHelper::Samples::TITLE_PREFIX} - The Works of Edgar Allan Poe — Volume 2",
+    dc_type:          'movingImage',
+    emma_repository:  'emma',
+    rem_comments:     'FAKE - do not use',
+    rem_complete:     true,
+    rem_status:       'bornAccessible'
     }.to_json %>
 
-emma_completed:         &EMMA_COMPLETED
-  <<:                   *EMMA_WITH_DATA
-  submission_id:        'u627e662dg77'
-  fmt:                  'epub'
-  ext:                  'epub'
-  state:                'completed'
-  phase:                'create'
-  file_data:            |
+emma_completed:       &EMMA_COMPLETED
+  <<:                 *EMMA_WITH_DATA
+  submission_id:      'u627e662dg77'
+  fmt:                'epub'
+  ext:                'epub'
+  state:              'completed'
+  phase:              'create'
+  file_data:          |
     <%= {
-    id:                 'e26602a61f196d2a022e9399af04619c.epub',
-    storage:            'store',
+    id:               'e26602a61f196d2a022e9399af04619c.epub',
+    storage:          'store',
     metadata: {
-      filename:         TestHelper::Samples::UPLOAD_FILE,
-      size:             249387,
-      mime_type:        'application/epub+zip'
+      filename:       TestHelper::Samples::UPLOAD_FILE,
+      size:           249387,
+      mime_type:      'application/epub+zip'
     } }.to_json %>
 
 # =============================================================================
@@ -50,10 +50,10 @@ emma_completed:         &EMMA_COMPLETED
 # =============================================================================
 
 example:
-  <<:             *EMMA_WITH_DATA
+  <<: *EMMA_WITH_DATA
 
 edit_example:
-  <<:             *EMMA_COMPLETED
+  <<: *EMMA_COMPLETED
 
 delete_example:
-  <<:             *EMMA_COMPLETED
+  <<: *EMMA_COMPLETED
