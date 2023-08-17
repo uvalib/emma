@@ -461,7 +461,7 @@ module BaseDecorator::Fields
   #
   # @type [Array<String>]
   #
-  RESERVED_SUFFIX = %w(_data _date).freeze
+  RESERVED_SUFFIX = %w[_data _date].freeze
 
   # Create a base for .field-* and .value-* classes.
   #

@@ -15,7 +15,7 @@ module TestHelper::Common
 
   public
 
-  TEST_TYPES = %w(channel decorator controller helper mailer model).freeze
+  TEST_TYPES = %w[channel decorator controller helper mailer model].freeze
 
   # Controllers being tested.
   #

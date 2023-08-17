@@ -123,8 +123,8 @@ module Search::Shared::ScoreMethods
   # behavior cannot be easily inferred from the search results.
   #
   def calculate_title_score(terms = nil, **opt)
-    #opt[:stop_words] ||= %w(of) # %w(a and by of the)
-    #opt[:keep_words] ||= %w(Of) # %w(A And By Of The)
+    #opt[:stop_words] ||= %w[of] # %w[a and by of the]
+    #opt[:keep_words] ||= %w[Of] # %w[A And By Of The]
     terms = opt.delete(:title) || terms
     field_score(:dc_title, terms, **opt)
   end
@@ -209,7 +209,7 @@ module Search::Shared::ScoreMethods
   protected
 
   # @type [String,Array<String>]
-  DEF_NO_BREAK = %w( _ . " ' ).freeze
+  DEF_NO_BREAK = %w[ _ . " ' ].freeze
 
   # @type [String]
   KEEP = "\001"

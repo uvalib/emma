@@ -40,7 +40,7 @@ module Lookup::RemoteService::Shared::IdentifierMethods
   # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
   #
   def identifier_table
-    not_implemented 'to be overridden by the subclass'
+    to_be_overridden
   end
 
   # ===========================================================================

@@ -55,5 +55,30 @@ module Emma::Common::ExceptionMethods
   #
   # @raise [NotImplementedError]
   #
-  def not_implemented: (?(String|nil) message, ?meth: Symbol|nil) -> void
+  def not_implemented: (?(String|nil) message, ?meth: Symbol|nil, **untyped _ignored) -> void
+
+  # Raise NotImplementedError to indicate that a base method has been invoked
+  # rather than the expected override defined by a subclass or later module.
+  #
+  # @param [String, nil] message      Additional description.
+  # @param [Symbol, nil] meth         Calling method to prepend to message.
+  #
+  # @raise [NotImplementedError]
+  #
+  def to_be_overridden: (?(String|nil) message, ?meth: Symbol|nil, **untyped _ignored) -> void
+
+  # For use in code which is not defined to have a value or implementation.
+  #
+  # By default this is just informational and neither logs nor raises.
+  #
+  # @param [String, nil] message      Additional description.
+  # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Boolean]     fatal
+  # @param [Boolean]     log
+  #
+  # @raise [RuntimeError]             If *fatal*.
+  #
+  # @return [nil]
+  #
+  def not_applicable: (?(String|nil) message, ?meth: Symbol|nil, ?fatal: bool, ?log: bool, **untyped _ignored) -> nil
 end

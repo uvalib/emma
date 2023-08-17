@@ -214,7 +214,6 @@ module RepositoryHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def retrieval_link(label, url, css: '.artifact', **opt)
-    opt.delete(:context) # In case this was invoked from a decorator.
     link  = download_link(label, url, **opt)
     error = html_span('', class: 'failure hidden')
     html_div(class: css_classes(css)) do

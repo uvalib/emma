@@ -95,7 +95,7 @@ module Emma::Common::FormatMethods
   public
 
   # @type [Array<String>]
-  QUOTE_MARKS = %w( ' " ).freeze
+  QUOTE_MARKS = %w[ ' " ].freeze
 
   # @type [Array<ActiveSupport::SafeBuffer>]
   HTML_QUOTES = QUOTE_MARKS.map { |q| ERB::Util.h(q) }.deep_freeze

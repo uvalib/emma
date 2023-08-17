@@ -10,18 +10,18 @@ __loading_begin(__FILE__)
 # one country but not in another, e.g.).
 #
 # @attr [String]   country
-# @attr [String]   viewability              %w(... PARTIAL ALL_PAGES NO_PAGES UNKNOWN)
+# @attr [String]   viewability              %w[... PARTIAL ALL_PAGES NO_PAGES UNKNOWN]
 # @attr [Format]   epub
 # @attr [Format]   pdf
 # @attr [Boolean]  embeddable
 # @attr [Boolean]  publicDomain
-# @attr [String]   textToSpeechPermission   %w(ALLOWED ALLOWED_FOR_ACCESSIBILITY NOT_ALLOWED)
+# @attr [String]   textToSpeechPermission   %w[ALLOWED ALLOWED_FOR_ACCESSIBILITY NOT_ALLOWED]
 # @attr [String]   webReaderLink
 # @attr [Download] downloadAccess
 #
 # === Observed but not documented
 #
-# @attr [String]   accessViewStatus         %w(... FULL_PUBLIC_DOMAIN SAMPLE NONE)
+# @attr [String]   accessViewStatus         %w[... FULL_PUBLIC_DOMAIN SAMPLE NONE]
 # @attr [Boolean]  quoteSharingAllowed
 #
 # @see https://developers.google.com/books/docs/v1/reference/volumes

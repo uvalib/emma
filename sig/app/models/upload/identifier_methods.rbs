@@ -139,35 +139,35 @@ module Upload::IdentifierMethods
   # === Examples
   #
   # @example Single
-  #   expand_ids('123') -> %w(123)
+  #   expand_ids('123') -> %w[123]
   #
   # @example Sequence
-  #   expand_ids('123,789') -> %w(123 789)
+  #   expand_ids('123,789') -> %w[123 789]
   #
   # @example Range
-  #   expand_ids('123-126') -> %w(123 124 125 126)
+  #   expand_ids('123-126') -> %w[123 124 125 126]
   #
   # @example Mixed
-  #   expand_ids('125,789-791,123-126') -> %w(125 789 790 791 123 124 126)
+  #   expand_ids('125,789-791,123-126') -> %w[125 789 790 791 123 124 126]
   #
   # @example Implicit range
-  #   expand_ids('-3')  -> %w(1 2 3)
-  #   expand_ids('*-3') -> %w(1 2 3)
+  #   expand_ids('-3')  -> %w[1 2 3]
+  #   expand_ids('*-3') -> %w[1 2 3]
   #
   # @example Open-ended range
-  #   expand_ids('3-')  -> %w(3 4 5 6)
-  #   expand_ids('3-*') -> %w(3 4 5 6)
-  #   expand_ids('3-$') -> %w(3 4 5 6)
+  #   expand_ids('3-')  -> %w[3 4 5 6]
+  #   expand_ids('3-*') -> %w[3 4 5 6]
+  #   expand_ids('3-$') -> %w[3 4 5 6]
   #
   # @example All records
-  #   expand_ids('*')   -> %w(1 2 3 4 5 6)
-  #   expand_ids('-$')  -> %w(1 2 3 4 5 6)
-  #   expand_ids('*-$') -> %w(1 2 3 4 5 6)
-  #   expand_ids('1-$') -> %w(1 2 3 4 5 6)
+  #   expand_ids('*')   -> %w[1 2 3 4 5 6]
+  #   expand_ids('-$')  -> %w[1 2 3 4 5 6]
+  #   expand_ids('*-$') -> %w[1 2 3 4 5 6]
+  #   expand_ids('1-$') -> %w[1 2 3 4 5 6]
   #
   # @example Last record only
-  #   expand_ids('$')   -> %w(6)
-  #   expand_ids('$-$') -> %w(6)
+  #   expand_ids('$')   -> %w[6]
+  #   expand_ids('$-$') -> %w[6]
   #
   def expand_ids: (*(String|Integer|Upload|Array[String|Integer|Upload]) ids, **untyped opt) -> strArray
 

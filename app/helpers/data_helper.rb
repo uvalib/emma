@@ -247,7 +247,7 @@ module DataHelper
   #
   def db_select(db, table, cols, sort: nil)
     cols = cols.presence&.join(',') || '*'
-    sql = %W(SELECT #{cols} FROM #{table})
+    sql = %W[SELECT #{cols} FROM #{table}]
     sql << "ORDER BY #{sort}" if sort.present?
     db.query(sql.join(' '))
   end
@@ -439,7 +439,7 @@ module DataHelper
       values.prepend([total, 'TOTAL']) # TODO: I18n
       values.map.with_index do |count_item, index|
         count, item = count_item
-        classes = %w(value-count value-item)
+        classes = %w[value-count value-item]
         classes.map! { |c| "#{c} total" } if index.zero?
         count = html_div(count, class: classes.first)
         item  = html_div(item,  class: classes.last)

@@ -63,7 +63,7 @@ class ISO_639
   #
   # @type [Array<Regexp>]
   #
-  BOGUS_LANGUAGE = %w(
+  BOGUS_LANGUAGE = %w[
     ^Bliss
     ^Klingon
     ^Reserved
@@ -74,7 +74,7 @@ class ISO_639
     jargon
     language
     pidgin
-  ).map { |term| Regexp.new(term) }.deep_freeze
+  ].map { |term| Regexp.new(term) }.deep_freeze
 =end
 
 end

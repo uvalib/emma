@@ -108,24 +108,24 @@ module AdminHelper
 
     # From ActionDispatch::Request
     hdrs += ActionDispatch::Request::ENV_METHODS
-    hdrs += %w(ORIGINAL_FULLPATH SERVER_SOFTWARE RAW_POST_DATA)
-    hdrs += %w(HTTP_AUTHORIZATION X-HTTP_AUTHORIZATION X_HTTP_AUTHORIZATION)
-    hdrs += %w(REDIRECT_X_HTTP_AUTHORIZATION HTTP_X_REQUESTED_WITH)
+    hdrs += %w[ORIGINAL_FULLPATH SERVER_SOFTWARE RAW_POST_DATA]
+    hdrs += %w[HTTP_AUTHORIZATION X-HTTP_AUTHORIZATION X_HTTP_AUTHORIZATION]
+    hdrs += %w[REDIRECT_X_HTTP_AUTHORIZATION HTTP_X_REQUESTED_WITH]
 
     # From ActionDispatch::Http::Cache::Request
-    hdrs += %w(HTTP_IF_MODIFIED_SINCE HTTP_IF_NONE_MATCH)
-    hdrs += %w(Last-Modified Date)
+    hdrs += %w[HTTP_IF_MODIFIED_SINCE HTTP_IF_NONE_MATCH]
+    hdrs += %w[Last-Modified Date]
 
     # From Rack
-    hdrs += %w(HTTP_HOST HTTP_PORT PATH_INFO SERVER_PORT)
-    hdrs += %w(REQUEST_METHOD REQUEST_PATH QUERY_STRING SCRIPT_NAME)
-    hdrs += %w(Cache-Control Expires Content-Length Content-Type)
-    hdrs += %w(Transfer-Encoding ETag)
-    hdrs += %w(HTTP_COOKIE Set-Cookie)
+    hdrs += %w[HTTP_HOST HTTP_PORT PATH_INFO SERVER_PORT]
+    hdrs += %w[REQUEST_METHOD REQUEST_PATH QUERY_STRING SCRIPT_NAME]
+    hdrs += %w[Cache-Control Expires Content-Length Content-Type]
+    hdrs += %w[Transfer-Encoding ETag]
+    hdrs += %w[HTTP_COOKIE Set-Cookie]
 
     # From Rack::Request
     hdrs += string_constants(Rack::Request, 'HTTP_')
-    hdrs += %w(CONTENT_LENGTH HTTP_USER_AGENT HTTP_REFERER)
+    hdrs += %w[CONTENT_LENGTH HTTP_USER_AGENT HTTP_REFERER]
 
     hdrs.sort!.uniq!
     hdrs = [*hdrs.partition { |v| v.match?(/[a-z]/) }]
@@ -140,7 +140,7 @@ module AdminHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def rails_headers_section(**opt)
-    hdrs = %w(
+    hdrs = %w[
       action_controller.instance
       action_dispatch.content_security_policy
       action_dispatch.content_security_policy_nonce
@@ -163,7 +163,7 @@ module AdminHelper
       action_dispatch.routes
       action_dispatch.show_detailed_exceptions
       action_dispatch.show_exceptions
-    )
+    ]
     hdrs += string_constants(ActionDispatch::Cookies)
     hdrs += string_constants(ActionDispatch::ContentSecurityPolicy::Request)
     hdrs.delete('Set-Cookie')
@@ -179,7 +179,7 @@ module AdminHelper
   #
   def rack_headers_section(**opt)
     hdrs  = string_constants(Rack, 'RACK_')
-    hdrs -= %w(rack.input rack.session rack.session.options)
+    hdrs -= %w[rack.input rack.session rack.session.options]
     hdrs.sort!.uniq!
     dt_dd_section(hdrs, **opt)
   end

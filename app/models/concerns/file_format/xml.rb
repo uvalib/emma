@@ -45,7 +45,7 @@ module FileFormat::Xml
   # @return [Hash{Symbol=>Array<String>}]
   #
   def retrieve_metadata
-    not_implemented 'to be overridden by the subclass'
+    to_be_overridden
   end
 
   # ===========================================================================

@@ -1,6 +1,6 @@
 # Industry standard identifiers for this volume.
 #
-# @attr [String] type                 %w(ISBN_10 ISBN_13 ISSN OTHER)
+# @attr [String] type                 %w[ISBN_10 ISBN_13 ISSN OTHER]
 # @attr [String] identifier
 #
 # @see https://developers.google.com/books/docs/v1/reference/volumes

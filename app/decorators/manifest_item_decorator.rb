@@ -35,12 +35,16 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
+    def show_select_path(*)
+      not_applicable
+    end
+
     def edit_select_path(*)
-      # NOTE: not applicable to this model
+      not_applicable
     end
 
     def delete_select_path(*)
-      # NOTE: not applicable to this model
+      not_applicable
     end
 
     # =========================================================================

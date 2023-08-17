@@ -264,7 +264,7 @@ module Api::Serializer::Associations
     # @return [void]
     #
     def prepare_attribute!(name, _element, options)
-      options[:attribute]  = true if %w(href rel).include?(name.to_s)
+      options[:attribute]  = true if %w[href rel].include?(name.to_s)
       options[:render_nil] = render_nil?
     end
 

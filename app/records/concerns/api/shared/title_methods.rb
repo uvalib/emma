@@ -62,7 +62,7 @@ module Api::Shared::TitleMethods
   # @return [String]
   #
   def identifier
-    not_implemented 'to be overridden'
+    to_be_overridden
   end
 
   # ===========================================================================
@@ -316,7 +316,7 @@ module Api::Shared::TitleMethods
   #
   # @type [Sanitize]
   #
-  CONTENT_SANITIZE = Sanitize.new(elements: %w(br b i em strong))
+  CONTENT_SANITIZE = Sanitize.new(elements: %w[br b i em strong])
 
   # The synopsis or description with rudimentary formatting.
   #

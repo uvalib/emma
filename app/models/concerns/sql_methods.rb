@@ -27,7 +27,7 @@ module SqlMethods
   public
 
   SQL_NUM         = '-?(\d+(\.\d*)?|\.\d+)'
-  SQL_NUM_OP      = %w(!= = <> <= < >= >).join('|').freeze
+  SQL_NUM_OP      = %w[!= = <> <= < >= >].join('|').freeze
 
   SQL_NUMBER      = /^#{SQL_NUM}$/.freeze
   SQL_COMPARISON  = /^(#{SQL_NUM_OP})\s*(#{SQL_NUM})$/.freeze
@@ -133,10 +133,10 @@ module SqlMethods
   #   sql_clause(id: '123')  -> "id = '123'"
   #
   # @example Multiple values
-  #   sql_clause(:id, %w(123 456 789)) -> "id IN ('123','456','789')"
+  #   sql_clause(:id, %w[123 456 789]) -> "id IN ('123','456','789')"
   #
   # @example Multiple values as a hash
-  #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
+  #   sql_clause(id: %w[123 456 789])  -> "id IN ('123','456','789')"
   #
   def sql_clause(k, v = nil)
     k, v = *k.first        if k.is_a?(Hash)
@@ -366,8 +366,8 @@ module SqlMethods
     uuid  = uuid?(term)
     exact = match_case = true if uuid
     term  = term.downcase     unless match_case
-    return 'IS', 'NULL'       if %w(nil null NULL).include?(term)
-    return 'IS', 'NOT NULL'   if %w(* any ANY).include?(term)
+    return 'IS', 'NULL'       if %w[nil null NULL].include?(term)
+    return 'IS', 'NOT NULL'   if %w[* any ANY].include?(term)
     return '=',  "'#{term}'"  if term.is_a?(Symbol)
     return '=',  term         if term.match(SQL_NUMBER)
     return $1,   $2           if term.match(SQL_COMPARISON)

@@ -14,12 +14,12 @@ require 'emma/rake'
 namespace :emma do
 
   desc 'Ensure the application is set up properly.'
-  task update: %w(emma:data:update)
+  task update: %w[emma:data:update]
 
   namespace :db do
 
     # desc 'Required prerequisites for tasks involving database records.'
-    task prerequisites: %w(environment db:load_config)
+    task prerequisites: %w[environment db:load_config]
 
   end
 

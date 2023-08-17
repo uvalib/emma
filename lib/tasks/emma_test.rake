@@ -114,7 +114,7 @@ namespace 'emma:test' do
   # ===========================================================================
 
   # desc 'Required prerequisites for tasks in this namespace.'
-  task prerequisites: %w(environment db:load_config)
+  task prerequisites: %w[environment db:load_config]
 
   # ===========================================================================
   # Support methods
@@ -130,7 +130,7 @@ namespace 'emma:test' do
   #
   def run_tests(*test_files)
     $LOAD_PATH << 'test' unless $LOAD_PATH.include?('test')
-    test_files = test_files.flatten.presence || %w(test/**/*_test.rb)
+    test_files = test_files.flatten.presence || %w[test/**/*_test.rb]
     Rails::TestUnit::Runner.run(test_files)
   end
 

@@ -256,7 +256,7 @@ class RunState < Hash
   #
   # @type [String]
   #
-  PLUS = %w(\+ in).join('|')
+  PLUS = %w[\+ in].join('|').freeze
 
   # A table of abbreviations with their matching time units.
   #

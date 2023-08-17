@@ -20,7 +20,7 @@ EMMA_RAILTIE_RAKE ||= begin
     # Tasks
     # =========================================================================
 
-    ERB_ASSETS = %w(javascripts/shared/assets.js.erb)
+    ERB_ASSETS = %w[javascripts/shared/assets.js.erb]
 
     desc ['Pre-process .js.erb files', *ERB_ASSETS.map { |f| "- #{f}" }]
     task erb: [:environment] do

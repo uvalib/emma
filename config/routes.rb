@@ -505,6 +505,7 @@ unless ONLY_FOR_DOCUMENTATION
   def new_manifest_url(...);                       end
   def new_org_path(...);                           end
   def new_org_url(...);                            end
+  def new_password_path(...);                      end
   def new_upload_path(...);                        end
   def new_upload_url(...);                         end
   def new_user_path(...);                          end

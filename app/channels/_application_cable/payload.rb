@@ -61,7 +61,7 @@ module ApplicationCable::Payload
   # @return [Hash{Symbol=>*}]
   #
   def template
-    not_implemented 'to be overridden by the subclass'
+    to_be_overridden
   end
 
   # default_status

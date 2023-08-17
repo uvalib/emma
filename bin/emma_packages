@@ -164,7 +164,7 @@ end
 # Main
 #==============================================================================
 
-if %w(-? --? -help --help).any? { |flag| OPTIONS.include?(flag) }
+if %w[-? --? -help --help].any? { |flag| OPTIONS.include?(flag) }
 
   alert(
     "Usage: #{$0} [--verbose] [package.json]",

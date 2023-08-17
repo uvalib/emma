@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 # countries).
 #
 # @attr [String]   country
-# @attr [String]   saleability        %w(... FREE FOR_SALE NOT_FOR_SALE)
+# @attr [String]   saleability        %w[... FREE FOR_SALE NOT_FOR_SALE]
 # @attr [Boolean]  isEbook
 # @attr [Price]    listPrice
 # @attr [Price]    retailPrice

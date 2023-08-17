@@ -23,7 +23,7 @@ module ApiService::Status
   # @return [Array<(FalseClass,String)>]
   #
   def active_status(...)
-    not_implemented 'to be overridden'
+    to_be_overridden
   end
 
   # ===========================================================================

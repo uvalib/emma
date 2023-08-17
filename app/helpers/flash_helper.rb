@@ -578,7 +578,7 @@ module FlashHelper
       # Adjustments for 'X-Flash-Message'.
       if xhr && msg.many?
         inspect  = true
-        brackets = %w( [ ] )
+        brackets = %w[ [ ] ]
         max -= brackets.sum(&:bytesize)
       end
 
@@ -751,7 +751,7 @@ module FlashHelper
   #
   def flash_i18n_scope
     parts = self.class.name&.split('_') || []
-    parts.reject { |p| %w(controller concern helper).include?(p) }.join('_')
+    parts.reject { |p| %w[controller concern helper].include?(p) }.join('_')
   end
 
   # Build an I18n path.

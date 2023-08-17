@@ -23,6 +23,9 @@
   submit_label = t('emma.user.sessions.sign_in.submit')
   submit_opt   = { class: 'form-button submit-button' }
 
+  rec_label    = t('emma.user.passwords.new.label')
+  rec_url      = new_password_path(resource_name)
+
   form_opt = {
     as:   resource_name,
     url:  session_path(resource_name),
@@ -61,7 +64,7 @@
 
   <%- if devise_mapping.recoverable? -%>
     <div class="links">
-      <%= link_to "Forgot your password?", new_password_path(resource_name) %>
+      <%= link_to rec_label, rec_url %>
     </div>
   <%- end -%>
 

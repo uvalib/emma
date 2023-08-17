@@ -383,11 +383,11 @@ module ManifestItemConcern
     ready = attr.key?(:ready_status) || file || data
     attr[:attr_opt] = { file: file, data: data, ready: ready }
     update_record(rec, **attr, editing: false)
-    {
+    Hash(
       items:    { rec.id => rec.fields.except(*NON_DATA_KEYS) },
       pending:  (rec.manifest.pending_items_hash if file || data || ready),
       problems: rec.errors.to_hash,
-    }
+    )
   end
 
   # ===========================================================================

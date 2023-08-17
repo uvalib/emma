@@ -17,7 +17,7 @@
   end
 
   registerable = m.registerable? && (c != 'registrations')
-  recoverable  = m.recoverable?  && !%w(passwords registrations).include?(c)
+  recoverable  = m.recoverable?  && !%w[passwords registrations].include?(c)
   confirmable  = m.confirmable?  && (c != 'confirmations')
   lockable     = m.lockable?     && (c != 'unlocks')
   lockable   &&= resource_class.unlock_strategy_enabled?(:email)

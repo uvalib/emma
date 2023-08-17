@@ -361,7 +361,7 @@ class Ability
   #
   def can_manage_identity(model, **constraints)
     keys = identity_keys(model)
-    obj  = constraints.extract!(*keys).values.first
+    obj  = constraints.extract!(*keys).compact.values.first
     if obj.present?
       constraints[model.model_key] = obj
       can_manage_content(model, **constraints)

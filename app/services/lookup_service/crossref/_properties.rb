@@ -38,7 +38,7 @@ module LookupService::Crossref::Properties
   #
   # @type [Array<String>]
   #
-  SELECT_ELEMENTS = %w(
+  SELECT_ELEMENTS = %w[
     DOI
     ISBN
     ISSN
@@ -96,7 +96,7 @@ module LookupService::Crossref::Properties
     update-to
     updated-by
     volume
-  ).freeze
+  ].freeze
 
   # Attribute names which are expected as all uppercase.
   #

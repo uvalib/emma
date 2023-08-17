@@ -74,7 +74,7 @@ module Import
   # @return [Hash]
   #
   def schema
-    not_implemented 'to be overridden by the subclass'
+    to_be_overridden
   end
 
   # String prepended to an imported data key which turns it into a key that can

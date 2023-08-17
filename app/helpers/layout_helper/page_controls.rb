@@ -174,7 +174,7 @@ module LayoutHelper::PageControls
   #
   def page_controls_label(**opt)
     opt = request_parameters.merge(opt)
-    id  = opt.extract!(:id, :selected).values.first
+    id  = opt.extract!(:id, :selected).compact.values.first
     unless %i[mode one many].intersect?(opt.keys)
       case Array.wrap(id).size
         when 0 then opt[:many] = true if menu_action?(opt[:action])

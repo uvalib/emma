@@ -29,7 +29,7 @@ module Import::IaBulk
   # ]
   #
   # === Notes
-  # - [1] Collection is always %w(emma_uploads_restricted); this can be ignored
+  # - [1] Collection is always %w[emma_uploads_restricted]; this can be ignored
   #       since this is just be used internally by IA to distinguish these
   #       items.
   #
@@ -352,7 +352,7 @@ module Import::IaBulk
         Log.debug do
           ids_new = fields[:dc_identifier].inspect
           rel_new = fields[:dc_relation].inspect
-          %w(Import::IaBulk).tap { |m|
+          %w[Import::IaBulk].tap { |m|
             m << "dc_identifier = #{ids_new}; was #{ids_old.inspect}"
             m << "dc_relation = #{  rel_new}; was #{rel_old.inspect}"
           }.join(' | ')

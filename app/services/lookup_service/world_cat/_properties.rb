@@ -29,7 +29,7 @@ module LookupService::WorldCatV2::Properties
 
   # @type [Array<String>]
   # noinspection SpellCheckingInspection
-  ITEM_TYPE = %w(
+  ITEM_TYPE = %w[
     Archv
     ArtChapter
     AudioBook
@@ -51,7 +51,7 @@ module LookupService::WorldCatV2::Properties
     Video
     Vis
     Web
-  ).freeze
+  ].freeze
 
   # @type [Array<String>]
   SEARCH_ITEM_TYPE = ITEM_TYPE.map(&:downcase).deep_freeze
@@ -123,7 +123,7 @@ module LookupService::WorldCatV2::Properties
 
   # @type [Array<String>]
   # noinspection SpellCheckingInspection
-  FORMAT_TYPE = %w(
+  FORMAT_TYPE = %w[
     2D
     Artcl
     Bluray
@@ -144,7 +144,7 @@ module LookupService::WorldCatV2::Properties
     rec
     Thsis
     VHS
-  ).freeze
+  ].freeze
 
   # @type [Array<String>]
   # noinspection SpellCheckingInspection
@@ -166,7 +166,7 @@ module LookupService::WorldCatV2::Properties
 
   # @type [Array<String>]
   # noinspection SpellCheckingInspection
-  SORT_ORDER = %w(
+  SORT_ORDER = %w[
     bestMatch
     library
     recency
@@ -175,7 +175,7 @@ module LookupService::WorldCatV2::Properties
     publicationDateDesc
     mostWidelyHeld
     title
-  ).freeze
+  ].freeze
 
   # @type [Array<String>]
   # noinspection SpellCheckingInspection

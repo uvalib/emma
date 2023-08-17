@@ -28,7 +28,7 @@
 
   append_page_classes(*dec.result_classes, *dec.style_classes)
 
-  list_classes = %w(search-list)
+  list_classes = %w[search-list]
   list_classes << 'scores' if dec.relevancy_scores?
 
   opt = {}

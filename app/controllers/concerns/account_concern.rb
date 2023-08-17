@@ -67,7 +67,7 @@ module AccountConcern
   public
 
   def find_or_match_keys
-    [*super, *User.field_names, *PASSWORD_KEYS].uniq
+    [*super, *User.field_names, *PASSWORD_KEYS].tap { |keys| keys.uniq! }
   end
 
   # ===========================================================================

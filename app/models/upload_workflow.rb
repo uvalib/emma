@@ -812,7 +812,7 @@ module UploadWorkflow::External
 
     # After all batch operations have completed, truncate the database table
     # (i.e., so that the next entry starts with id == 1) if appropriate.
-    if model_options.truncate_delete && (ids == %w(*))
+    if model_options.truncate_delete && (ids == %w[*])
       if failed.present?
         Log.warn('database not truncated due to the presence of errors')
       elsif !Upload.connection.truncate(Upload.table_name)

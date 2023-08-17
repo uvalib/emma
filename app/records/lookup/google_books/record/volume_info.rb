@@ -31,7 +31,7 @@ __loading_begin(__FILE__)
 # === Observed but not documented
 #
 # @attr [Integer]           printedPageCount
-# @attr [String]            maturityRating      %w(... NOT_MATURE)
+# @attr [String]            maturityRating      %w[... NOT_MATURE]
 # @attr [Boolean]           allowAnonLogging
 # @attr [Panelization]      panelizationSummary
 # @attr [ReadingModes]      readingModes

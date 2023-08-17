@@ -138,7 +138,7 @@ module LayoutHelper::NavBar
         classes << 'hidden'    if hidden
 
         # The separator preceding the link.
-        sep_css = %w(separator)
+        sep_css = %w[separator]
         sep_css << 'hidden'    if first
         separator = html_span('|', class: css_classes(*classes, *sep_css))
 

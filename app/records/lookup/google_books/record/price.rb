@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Price.
 #
 # @attr [Float]  amount
-# @attr [String] currencyCode   %w(... USD)
+# @attr [String] currencyCode   %w[... USD]
 #
 # @see https://developers.google.com/books/docs/v1/reference/volumes
 #

@@ -314,7 +314,7 @@ class AccountDecorator
   #
   # @type [Array<String,Symbol,Regexp>]
   #
-  FIELD_FILTERS = %w(token password remember).freeze
+  FIELD_FILTERS = %w[token password remember].freeze
 
   # Specified field selections from the given User instance.
   #

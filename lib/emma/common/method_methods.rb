@@ -47,7 +47,7 @@ module Emma::Common::MethodMethods
       _file_line, name = line.to_s.split(/:in\s+/)
       name = name.to_s.sub(/^[ `]*(.*?)[' ]*$/, '\1')
       next if name.blank?
-      next if %w(each map __output __output_impl).include?(name)
+      next if %w[each map __output __output_impl].include?(name)
       return name.match(/^(block|rescue)\s+in\s+(.*)$/) ? $2 : name
     end
   end

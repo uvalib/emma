@@ -15,7 +15,7 @@ module Import::IaBulk
   # ]
   #
   # === Notes
-  # - [1] Collection is always %w(emma_uploads_restricted); this can be ignored
+  # - [1] Collection is always %w[emma_uploads_restricted]; this can be ignored
   #       since this is just be used internally by IA to distinguish these
   #       items.
   #

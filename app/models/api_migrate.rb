@@ -69,7 +69,7 @@ class ApiMigrate
     # @return [Class<ApplicationRecord>]
     #
     def record_class
-      not_implemented 'to be overridden by the including class/module'
+      to_be_overridden 'by the including class/module'
     end
 
     # Record column(s) holding EMMA data.

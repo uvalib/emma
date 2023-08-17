@@ -48,13 +48,13 @@ public
 #
 # @type [Array<String>]
 #
-TRUE_VALUES  = %w(1 yes true on).freeze
+TRUE_VALUES  = %w[1 yes true on].freeze
 
 # Text values which represent *false*.
 #
 # @type [Array<String>]
 #
-FALSE_VALUES = %w(0 no false off).freeze
+FALSE_VALUES = %w[0 no false off].freeze
 
 # Indicate whether the item represents an explicit *true* value.
 #
@@ -169,10 +169,10 @@ def rails_application?
     @in_rails ||= !!ENV['IN_PASSENGER']
     @in_rails ||= $0.to_s.start_with?('spring app')
     @in_rails ||= $0.to_s.end_with?('rails', 'spring') &&
-                  $*.any? { |arg| %w(-b -p server runner).include?(arg) }
+                  $*.any? { |arg| %w[-b -p server runner].include?(arg) }
     @in_rails &&= !!defined?(APP_PATH)
     @in_rails &&=
-      !%w(-h -H --help -D --describe -T --tasks -n --dry-run).intersect?($*)
+      !%w[-h -H --help -D --describe -T --tasks -n --dry-run].intersect?($*)
   end
   @in_rails
 end
@@ -187,7 +187,7 @@ def rake_task?
     @in_rake ||= $0.to_s.end_with?('rails') && !rails_application? &&
       !$*.reject { |arg| arg.match(/^(-.*|new|console|generate)$/) }.empty?
     @in_rake &&=
-      !%w(-h -H --help -D --describe -T --tasks -n --dry-run).intersect?($*)
+      !%w[-h -H --help -D --describe -T --tasks -n --dry-run].intersect?($*)
   end
   @in_rake
 end

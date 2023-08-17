@@ -135,7 +135,7 @@ module UploadConcern
   end
 
   def find_or_match_keys
-    [*super, :edit_state, :edit_user].uniq
+    [*super, :edit_state, :edit_user].tap { |keys| keys.uniq! }
   end
 
   # Locate and filter Upload records.
@@ -181,7 +181,7 @@ module UploadConcern
   #
   def filter_by_state!(opt)
     super or return
-    state = opt[:state]
+    state = opt[:state].presence
     opt[:edit_state] ||= state if state
     opt
   end
@@ -554,7 +554,7 @@ module UploadConcern
   #
   def show_values(item = @item, **opt)
     item = item.try(:fields) || item.dup
-    data = item.extract!(:file_data).first&.last
+    data = item.extract!(:file_data).compact.values.first
     item[:file_data] = safe_json_parse(data)
     super(item, **opt)
   end

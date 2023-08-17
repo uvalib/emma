@@ -191,7 +191,7 @@ module HeadHelper::MetaTags
     value = value.is_a?(Array) ? value.dup : [value]
     if value.any? { |v| v.is_a?(Symbol) }
       value.map! { |v| v.to_s.downcase }.sort!.uniq!
-      return if (value == %w(index)) || (value == %w(follow index))
+      return if (value == %w[index]) || (value == %w[follow index])
       separator = ','
     end
 

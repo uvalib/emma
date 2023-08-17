@@ -104,7 +104,7 @@ module FileFormat
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
   def configuration
-    not_implemented 'to be overridden by the subclass'
+    to_be_overridden
   end
 
   # parser
@@ -112,7 +112,7 @@ module FileFormat
   # @return [FileParser]
   #
   def parser
-    @parser ||= not_implemented 'to be overridden by the subclass'
+    @parser ||= to_be_overridden
   end
 
   # parser_metadata
@@ -331,7 +331,7 @@ module FileFormat
   # @return [String]
   #
   def format_image(_value)
-    not_implemented 'to be overridden by the subclass'
+    to_be_overridden
   end
 
   # Used within #field_transforms to apply a method to each element of a

@@ -36,46 +36,56 @@ class UserDecorator < AccountDecorator
     public
 
     def index_path(*, **opt)
+      opt.except!(:controller, :action)
       h.user_registration_path(**opt)
+    end
+
+    def show_select_path(*, **opt)
+      not_applicable
     end
 
     def show_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
+      opt.except!(:controller, :action)
       h.show_user_registration_path(**opt)
     end
 
     def new_path(*, **opt)
+      opt.except!(:controller, :action)
       h.new_user_path(**opt)
     end
 
     def create_path(*, **opt)
+      opt.except!(:controller, :action)
       h.create_user_path(**opt)
     end
 
     def edit_select_path(*, **opt)
-      h.edit_select_user_path(**opt)
+      not_applicable
     end
 
     def edit_path(item = nil, **opt)
       opt[:id] = opt.delete(:selected) || id_for(item, **opt)
+      opt.except!(:controller, :action)
       h.edit_user_path(**opt)
     end
 
     def update_path(item = nil, **opt)
       opt[:id] = id_for(item, **opt)
+      opt.except!(:controller, :action)
       h.update_user_path(**opt)
     end
 
     def delete_select_path(*)
-      # NOTE: not applicable to this model
+      not_applicable
     end
 
     def delete_path(*)
-      # NOTE: not applicable to this model
+      not_applicable
     end
 
     def destroy_path(*)
-      # NOTE: not applicable to this model
+      not_applicable
     end
 
   end

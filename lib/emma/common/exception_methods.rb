@@ -120,6 +120,43 @@ module Emma::Common::ExceptionMethods
     raise NotImplementedError, [self.class, meth, message].compact.join(': ')
   end
 
+  # Raise NotImplementedError to indicate that a base method has been invoked
+  # rather than the expected override defined by a subclass or later module.
+  #
+  # @param [String, nil] message      Additional description.
+  # @param [Symbol, nil] meth         Calling method to prepend to message.
+  #
+  # @raise [NotImplementedError]
+  #
+  def to_be_overridden(message = nil, meth: nil, **)
+    meth  ||= calling_method&.to_sym
+    message = 'to be overridden %s' % (message || 'by the subclass')
+    not_implemented(message, meth: meth)
+  end
+
+  # For use in code which is not defined to have a value or implementation.
+  #
+  # By default this is just informational and neither logs nor raises.
+  #
+  # @param [String, nil] message      Additional description.
+  # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Boolean]     fatal
+  # @param [Boolean]     log
+  #
+  # @raise [RuntimeError]             If *fatal*.
+  #
+  # @return [nil]
+  #
+  def not_applicable(message = nil, meth: nil, fatal: false, log: false, **)
+    return unless log || fatal
+    meth  ||= calling_method&.to_sym
+    message = ['not applicable', message].compact.join(' ')
+    message = [self.class, meth, message].compact.join(': ')
+    # noinspection RubyMismatchedArgumentType
+    raise message     if fatal
+    Log.info(message) if log
+  end
+
 end
 
 __loading_end(__FILE__)

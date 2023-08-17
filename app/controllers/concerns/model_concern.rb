@@ -244,7 +244,7 @@ module ModelConcern
     if model_class == Org
       filter_by_model!(opt, id_key: :id)
     elsif model_class.respond_to?(:for_org)
-      org = opt.extract!(:org, :org_id).values.first
+      org = opt.extract!(:org, :org_id).compact.values.first
       org = org.id if org.respond_to?(:id)
       opt[:'users.org_id'] = org if org
     else
@@ -266,7 +266,7 @@ module ModelConcern
     id    =
       if item.is_a?(model)
         item.id
-      elsif item && !%w(* 0 all false).include?(item)
+      elsif item && !%w[* 0 all false].include?(item)
         case model.columns_hash['id']&.type
           when :uuid    then item if uuid?(item)
           when :integer then item if digits_only?(item)
@@ -286,7 +286,7 @@ module ModelConcern
   #
   def filter_by_state!(opt, key: :state)
     state = opt.delete(key).to_s.strip.downcase.presence or return
-    state = nil if %w(empty false missing nil none null).include?(state)
+    state = nil if %w[empty false missing nil none null].include?(state)
     opt.merge!(key => state)
   end
 
@@ -404,7 +404,7 @@ module ModelConcern
   def delete_records(items = nil, prm = nil, **)
     items, prm = model_request_params(items, prm)
     __debug_items("WF #{self.class} #{__method__}") {{ prm: prm, item: item }}
-    ids     = prm.extract!(:ids, :id).values.first
+    ids     = prm.extract!(:ids, :id).compact.values.first
     items ||= ids
     model_class.search_records(*items, **prm)
   end
@@ -423,7 +423,7 @@ module ModelConcern
     items, prm = model_request_params(items, prm)
     prm.reverse_merge!(model_options.all)
     __debug_items("WF #{self.class} #{__method__}") {{ prm: prm, item: item }}
-    ids     = prm.extract!(:ids, :id).values.first
+    ids     = prm.extract!(:ids, :id).compact.values.first
     items   = [*items, *ids].map! { |item| item.try(:id) || item }
     success = []
     failure = []

@@ -68,15 +68,15 @@ if db_needed
 
     host_port_missing = !(ENV['DBHOST'] && ENV['DBPORT'])
 
-    databases = %w(postgres mysql)
+    databases = %w[postgres mysql]
     database = type = nil
     case (d = ENV['DATABASE']&.downcase)
-      when /^post/  then database, type = %w(postgres postgres)
-      when /^mysql/ then database, type = %w(mysql standard)
+      when /^post/  then database, type = %w[postgres postgres]
+      when /^mysql/ then database, type = %w[mysql standard]
       when nil      then raise 'missing ENV[DATABASE]' if host_port_missing
       else               raise "#{d.inspect} not in #{databases.inspect}"
     end
-    database, type = %w(postgres postgres) unless database
+    database, type = %w[postgres postgres] unless database
 
     case database
       when 'mysql'
@@ -89,7 +89,7 @@ if db_needed
     end
 
     unless ENV['DBHOST']
-      deployments = %w(production staging local)
+      deployments = %w[production staging local]
       case (d = ENV['DEPLOYMENT']&.downcase)
         when /^prod/  then deployment = 'production'
         when /^stag/  then deployment = 'staging'

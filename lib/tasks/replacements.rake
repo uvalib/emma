@@ -6,17 +6,17 @@
 # Overrides of $GEM_PATH/gems/railties-*/lib/rails/test_unit/testing.rake task
 # definitions.
 
-%w(all system models controllers).each do |name|
+%w[all system models controllers].each do |name|
   Rake::Task["test:#{name}"].clear
 end
 
 namespace :test do
 
   desc ['Run all EMMA tests', '(except serialization)']
-  task all: %w(system models controllers)
+  task all: %w[system models controllers]
 
   desc 'Run all EMMA tests including serialization'
-  task 'all+serialization': %w(system models controllers+serialization)
+  task 'all+serialization': %w[system models controllers+serialization]
 
   desc 'Run all EMMA system tests'
   task system: 'emma:test:interactive:default'

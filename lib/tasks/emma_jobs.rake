@@ -141,7 +141,7 @@ namespace 'emma:jobs' do
   def list_records(table, list, &block)
     list   = (block ? list&.map(&block) : list&.dup).presence
     list &&= list.map! { |rec| Array.wrap(rec.try(:fields) || rec).join("\t") }
-    list ||= %w(NONE)
+    list ||= %w[NONE]
     $stdout.puts list.map! { |item| "#{table.name} - #{item}" }
   end
 

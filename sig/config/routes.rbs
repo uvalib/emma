@@ -356,6 +356,8 @@ class Object
 
   def new_org_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def new_password_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def new_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def new_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String

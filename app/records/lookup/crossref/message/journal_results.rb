@@ -7,8 +7,8 @@ __loading_begin(__FILE__)
 
 # Message schema for search by DOI.
 #
-# @attr [String] status               %w(ok)
-# @attr [String] message_type         %w(work)
+# @attr [String] status               %w[ok]
+# @attr [String] message_type         %w[work]
 # @attr [String] message_version
 # @attr [Work]   message
 #

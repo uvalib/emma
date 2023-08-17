@@ -48,7 +48,7 @@ module EmmaHelper
         name = partner&.dig(:name) || partner&.dig(:tag) || key.to_s.upcase
         name.try(:dig, mode) || name
       }.compact
-    separator += ' ' if %w( , ; ).include?(separator)
+    separator += ' ' if %w[ , ; ].include?(separator)
     separator ||= ' '
     if mode == :brief
       list.join(separator)

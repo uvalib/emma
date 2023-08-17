@@ -104,10 +104,10 @@ module SqlMethods
   #   sql_clause(id: '123')  -> "id = '123'"
   #
   # @example Multiple values
-  #   sql_clause(:id, %w(123 456 789)) -> "id IN ('123','456','789')"
+  #   sql_clause(:id, %w[123 456 789]) -> "id IN ('123','456','789')"
   #
   # @example Multiple values as a hash
-  #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
+  #   sql_clause(id: %w[123 456 789])  -> "id IN ('123','456','789')"
   #
   def sql_clause
     : ((String|Symbol) k, untyped v) -> (String | nil)

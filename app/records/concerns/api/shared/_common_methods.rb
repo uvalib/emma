@@ -202,7 +202,7 @@ module Api::Shared::CommonMethods
   # @return [Array<Symbol>]
   #
   def item_record_path
-    not_implemented 'to be overridden by the subclass'
+    to_be_overridden
   end
 
   # item_record

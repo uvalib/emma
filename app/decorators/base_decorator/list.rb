@@ -444,7 +444,7 @@ module BaseDecorator::List
     pairs  = pairs.stringify_keys if pairs.is_a?(Hash)
     return {} if pairs.blank?
     columns &&= Array.wrap(columns).map(&:to_s).compact_blank
-    pairs.slice!(*columns) unless columns.blank? || (columns == %w(all))
+    pairs.slice!(*columns) unless columns.blank? || (columns == %w[all])
     Array.wrap(filter).each do |pattern|
       case pattern
         when Regexp then pairs.reject! { |f, _| f.match?(pattern) }

@@ -339,7 +339,7 @@ module LayoutHelper::SearchFilters
   SEARCH_FILTERS_CONFIG =
     ApplicationHelper::APP_CONTROLLERS.map { |controller|
       filter_configs = SEARCH_FILTERS_ROOT.deep_dup
-      %W(generic #{controller} #{controller}.generic).each do |section|
+      %W[generic #{controller} #{controller}.generic].each do |section|
         section_cfg = I18n.t("emma.#{section}.search_filters", default: nil)
         filter_configs.deep_merge!(section_cfg) if section_cfg.present?
       end

@@ -52,7 +52,7 @@ module ApiService::Properties
   # @type [Array<Symbol>]
   #
   HTTP_METHODS =
-    %w(GET PUT POST DELETE)
+    %w[GET PUT POST DELETE]
       .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze
 
   # Engine key values which indicate that the engine should be returned to

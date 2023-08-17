@@ -56,7 +56,7 @@ module DataConcern
   def data_params
     @data_params ||=
       request_parameters.tap do |prm|
-        columns = prm.extract!(*DATA_COLUMN_PARAMETERS).values.first
+        columns = prm.extract!(*DATA_COLUMN_PARAMETERS).compact.values.first
         prm[:columns]  = array_param(columns)&.map(&:to_sym)&.uniq
         prm[:tables]   = array_param(prm[:tables])&.map(&:tableize)&.uniq
         prm[:headings] = !false?(prm[:headings])
@@ -93,7 +93,7 @@ module DataConcern
   #
   # @type [Array<String>]
   #
-  LATER_TABLES = %w(schema_migrations ar_internal_metadata).freeze
+  LATER_TABLES = %w[schema_migrations ar_internal_metadata].freeze
 
   # Generate a hash of results for each table name.
   #
@@ -331,7 +331,7 @@ module DataConcern
   #
   # @type [Array<String>]
   #
-  BOGUS_NOTE_WORDS = %w(FAKE)
+  BOGUS_NOTE_WORDS = %w[FAKE].freeze
 
   # Indicate whether this submission appears to be non-canonical.
   #

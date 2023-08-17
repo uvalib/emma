@@ -52,7 +52,7 @@ module ParamsConcern
   # @return [Integer, String, nil]
   #
   def current_id
-    #Log.debug { "#{__method__}: not applicable to #{self.class}" }
+    not_applicable
   end
 
   # URL parameters associated with model record(s).
@@ -112,13 +112,13 @@ module ParamsConcern
   # Indicate whether the current request originates from an application page.
   #
   def local_request?
-    request.referer.to_s.start_with?(root_url)
+    request.referrer.to_s.start_with?(root_url)
   end
 
   # Indicate whether the current request originates from an application page.
   #
   def same_request?
-    (request.referer == request.url) || (request.referer == request.fullpath)
+    [request.url, request.fullpath].include?(request.referrer)
   end
 
   # ===========================================================================
@@ -316,7 +316,7 @@ module ParamsConcern
   # @see LayoutHelper#sort_menu
   #
   def resolve_sort
-    return if %w(search upload).include?(params[:controller].to_s.downcase)
+    return if %w[search upload].include?(params[:controller].to_s.downcase)
 
     changed = false
 
@@ -347,7 +347,7 @@ module ParamsConcern
   # @return [void]
   #
   def initialize_menus
-    return if %w(search upload).include?(params[:controller].to_s.downcase)
+    return if %w[search upload].include?(params[:controller].to_s.downcase)
     ss = session_section
     SEARCH_KEYS.each do |key|
       ss_value = ss[key.to_s]
@@ -380,7 +380,7 @@ module ParamsConcern
 
     # Eliminate "noise" parameters.
     params.delete_if { |k, v| k.blank? || v.blank? }
-    %w(utf8 commit).each { |k| params.delete(k) }
+    %w[utf8 commit].each { |k| params.delete(k) }
 
     # If parameters were removed, redirect to the corrected URL.
     will_redirect unless params.keys.size == original_count

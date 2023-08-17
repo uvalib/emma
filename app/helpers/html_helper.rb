@@ -199,10 +199,10 @@ module HtmlHelper
   #
   # @type [Regexp]
   #
-  SYMBOLS = %w(
+  SYMBOLS = %w[
     \u2000-\u{FFFF}
     \u{1F000}-\u{1FFFF}
-  ).join.then { |char_ranges| Regexp.new("[#{char_ranges}]+") }.freeze
+  ].join.then { |char_ranges| Regexp.new("[#{char_ranges}]+") }.freeze
 
   # Indicate whether the string contains only characters that fall outside the
   # normal text range.  Always `false` if *text* is not a string.
@@ -358,7 +358,7 @@ module HtmlHelper
     end
     opt.merge!(ovr)
 
-    if %w(a button).include?(tag.to_s)
+    if %w[a button].include?(tag.to_s)
       opt.reverse_merge!(disabled: true) if opt[:'aria-disabled']
     end
 

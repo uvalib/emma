@@ -97,16 +97,16 @@ module LookupService::GoogleBooks::Action::Volumes
           q:                        String,
         },
         optional: {
-          download:                 String,   # %w(epub)
-          filter:                   String,   # %w(ebooks free-ebooks full paid-ebooks partial)
+          download:                 String,   # %w[epub]
+          filter:                   String,   # %w[ebooks free-ebooks full paid-ebooks partial]
           langRestrict:             String,
-          libraryRestrict:          String,   # %w(my-library no-restrict)
-          maxAllowedMaturityRating: String,   # %w(mature not-mature)
+          libraryRestrict:          String,   # %w[my-library no-restrict]
+          maxAllowedMaturityRating: String,   # %w[mature not-mature]
           maxResults:               Integer,  # 0..40
-          orderBy:                  String,   # %w(newest relevance)
+          orderBy:                  String,   # %w[newest relevance]
           partner:                  String,
-          printType:                String,   # %w(all books magazines)
-          projection:               String,   # %w(full lite)
+          printType:                String,   # %w[all books magazines]
+          projection:               String,   # %w[full lite]
           showPreorders:            Boolean,
           source:                   String,
           startIndex:               Integer,

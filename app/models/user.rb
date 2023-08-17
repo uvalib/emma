@@ -426,7 +426,7 @@ class User < ApplicationRecord
     # noinspection RbsMissingTypeSignature
     @test_users ||=
       begin
-        test_names = %w(test\\_%@%)
+        test_names = %w[test\\_%@%]
         test_names << 'emma%@bookshare.org' if BS_AUTH
         uid_like   = test_names.map { 'email LIKE ?' }.join(' OR ')
         where(uid_like, *test_names).map { |u|

@@ -50,7 +50,7 @@ module SessionDebugHelper
   #
   # @type [Array<String>]
   #
-  SESSION_SKIP_KEYS = %w(_csrf_token warden.user.user.key)
+  SESSION_SKIP_KEYS = %w[_csrf_token warden.user.user.key].freeze
 
   # Render a table of values from `#session`.
   #

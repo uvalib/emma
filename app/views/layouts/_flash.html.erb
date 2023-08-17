@@ -9,7 +9,7 @@
     end
   force_inline = run_state_alert || modal?
 
-  classes = %w(flash-messages)
+  classes = %w[flash-messages]
   classes << 'inline'   if flash_inline   || force_inline
   classes << 'floating' if flash_floating && !force_inline
   classes << 'no-reset' unless flash_reset

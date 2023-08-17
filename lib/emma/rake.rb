@@ -117,7 +117,7 @@ module Emma::Rake
   # @return [String, nil]
   #
   def task_option(flag, args = nil)
-    flag = %W(--#{flag} -#{flag} #{flag})
+    flag = %W[--#{flag} -#{flag} #{flag}]
     # noinspection RubyMismatchedReturnType
     [args, cli_task_options].compact_blank!.find do |options|
       options.find do |opt|

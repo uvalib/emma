@@ -1202,7 +1202,7 @@ class Workflow::Base
   # @return [Symbol]
   #
   def self.workflow_column(column_name = nil)
-    not_implemented 'to be overridden by the workflow subclass'
+    to_be_overridden
   end
 
   # ===========================================================================
@@ -1282,7 +1282,7 @@ class Workflow::Base
   # @return [Hash{Symbol=>Class<UploadWorkflow>}]
   #
   def self.variant_table
-    not_implemented 'to be overridden by the workflow subclass'
+    to_be_overridden
   end
 
   # Variant workflow types under this workflow base class.

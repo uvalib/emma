@@ -168,7 +168,7 @@ module IngestService::Testing
       # === Bad data for fields expecting single values.
       if SINGLETON_FIELDS_BAD & faults
         tests += 1
-        item.rem_comments            = %w(rem_note_1 rem_note_2 rem_note_3)
+        item.rem_comments            = %w[rem_note_1 rem_note_2 rem_note_3]
         item.emma_repositoryRecordId = '.bad,record_id;with/punct'
       end
 
@@ -196,7 +196,7 @@ module IngestService::Testing
         tests += 1
         item.rem_remediationDate       = 'bad date'
         item.emma_repositoryUpdateDate = '.bad,date;with/punct'
-        item.dcterms_dateAccepted      = %w(2021-04-18 2021-04-19)
+        item.dcterms_dateAccepted      = %w[2021-04-18 2021-04-19]
       end
 
       # === PDF-style dates.

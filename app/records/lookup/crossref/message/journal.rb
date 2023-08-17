@@ -7,8 +7,8 @@ __loading_begin(__FILE__)
 
 # Message schema for a journal lookup.
 #
-# @attr [String]  status              %w(ok)
-# @attr [String]  message_type        %w(journal)
+# @attr [String]  status              %w[ok]
+# @attr [String]  message_type        %w[journal]
 # @attr [String]  message_version
 # @attr [Journal] message
 #

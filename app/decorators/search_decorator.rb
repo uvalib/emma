@@ -540,7 +540,6 @@ class SearchDecorator
         I18n.t(tip_key, fmt: fmt, repo: origin, default: default)
       end
 
-    opt[:context] ||= context
     case repo&.to_sym
       when :emma            then emma_retrieval_link(label, url, **opt)
       when :ace             then ace_retrieval_link( label, url, **opt)
