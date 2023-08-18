@@ -198,7 +198,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
             @media #{$wide-screen} {
                 position:   absolute;
-                top:        -0.25rem;
+                top:        0;
             }
 
             @media #{$medium-width} {
@@ -1535,6 +1535,29 @@ body.search.title_results {
 
     .search-list {
         @include collapsible-search-list;
+    }
+}
+
+//=============================================================================
+// Single-file results
+//=============================================================================
+
+body.search.file_results {
+
+    .search-list-item {
+
+        > .value,
+        > .pair > .value {
+
+            &.field-Title {
+                // Adjust to keep from overshadowing the page heading.
+                @media #{$wide-screen} {
+                    box-shadow:
+                        0.50rem -1.25rem  0.00rem  1.00rem  var(--bg-color),
+                        0        0        0.25rem  0.50rem  var(--bg-color);
+                }
+            }
+        }
     }
 }
 

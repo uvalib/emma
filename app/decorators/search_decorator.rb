@@ -17,9 +17,7 @@ class SearchDecorator < BaseDecorator
   # :section: Draper
   # ===========================================================================
 
-  #decorator_for search: Search::Api::Record
-
-  @model_type = :search
+  set_model_type(:search) # not `decorator_for search: Search::Api::Record`
 
   # ===========================================================================
   # :section: Definitions shared with SearchesDecorator

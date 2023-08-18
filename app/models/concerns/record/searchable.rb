@@ -437,35 +437,37 @@ module Record::Searchable
     # `opt[:submission_id]`.
     #
     # @param [Model, Hash, String, Symbol, nil] sid
-    # @param [Integer] max                Log error if matches exceed this.
-    # @param [Symbol]  meth               Calling method for logging.
-    # @param [Boolean] no_raise           If *true*, return *nil* on error.
-    # @param [Hash]    opt                Passed to #where.
+    # @param [Integer, nil]    max        Log error if matches exceed this.
+    # @param [Boolean, Symbol] log        Calling method for logging.
+    # @param [Boolean]         no_raise   If *true*, return *nil* on error.
+    # @param [Hash]            opt        Passed to #where.
     #
     # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
     # @raise [Record::NotFound]           If record not found.
     #
-    # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
+    # @return [ActiveRecord::Relation, nil]
     #
     # @note From Upload#matching_sid
     #
-    def matching_sid(sid = nil, max: nil, meth: nil, no_raise: false, **opt)
+    def matching_sid(sid = nil, max: nil, log: false, no_raise: false, **opt)
+      msg = log.present?
+      err = no_raise.blank?
       sid = opt[:submission_id] = sid_value(sid || opt)
       if sid.blank?
-        err = (Record::StatementInvalid unless no_raise)
-        msg = 'No submission ID given'
+        err &&= Record::StatementInvalid
+        msg &&= 'No submission ID given'
       elsif (result = where(**opt)).empty?
-        err = (Record::NotFound unless no_raise)
-        msg = "No %{type} record for submission ID #{sid}"
-      elsif (max = positive(max)) && (max < (total = result.size))
-        err = nil
-        msg = "#{total} %{type} records for submission ID #{sid}"
+        err &&= Record::NotFound
+        msg &&= "No %{type} record for submission ID #{sid}"
+      elsif max && (max = positive(max)) && (max < (total = result.size))
+        err &&= nil
+        msg &&= "#{total} %{type} records for submission ID #{sid}"
       else
         return result
       end
-      meth ||= "#{self.class}.#{__method__}"
-      msg %= { type: [base_class, opt[:type]].compact.join('::') }
-      Log.warn { "#{meth}: #{msg}" }
+      msg &&= msg % { type: [base_class, opt[:type]].compact.join('::') }
+      meth  = msg && (log.is_a?(Symbol) ? log : "#{self_class}.#{__method__}")
+      Log.warn("#{meth}: #{msg}") if msg
       # noinspection RubyMismatchedArgumentType
       raise err, msg if err
     end
@@ -482,7 +484,7 @@ module Record::Searchable
     # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
     # @raise [Record::NotFound]           If record not found.
     #
-    # @return [Model]                     Or *nil* on error if *no_raise*.
+    # @return [Model, nil]
     #
     # @note From Upload#latest_for_sid
     #

@@ -261,19 +261,19 @@ class Upload < ApplicationRecord
   # `opt[:submission_id]`.
   #
   # @param [Model, Hash, String, Symbol, nil] sid
-  # @param [Integer] max                Log error if matches exceed this.
-  # @param [Symbol]  meth               Calling method for logging.
-  # @param [Boolean] no_raise           If *true*, return *nil* on error.
-  # @param [Hash]    opt                Passed to #where.
+  # @param [Integer, nil]    max        Log error if matches exceed this.
+  # @param [Boolean, Symbol] log        Calling method for logging.
+  # @param [Boolean]         no_raise   If *true*, return *nil* on error.
+  # @param [Hash]            opt        Passed to #where.
   #
   # @raise [UploadWorkflow::SubmitError]
   #
-  # @return [ActiveRecord::Relation]    Or *nil* on error if *no_raise*.
+  # @return [ActiveRecord::Relation, nil]
   #
   def self.matching_sid
-    : (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil,                  **untyped opt) -> ActiveRecord::Relation
-    | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: false, **untyped opt) -> ActiveRecord::Relation
-    | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?meth: Symbol|nil, no_raise: true,  **untyped opt) -> (ActiveRecord::Relation | nil)
+    : (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol,                  **untyped opt) -> ActiveRecord::Relation
+    | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol, no_raise: false, **untyped opt) -> ActiveRecord::Relation
+    | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol, no_raise: true,  **untyped opt) -> (ActiveRecord::Relation | nil)
 
   # Get the latest record matching the submission ID given as either *sid* or
   # `opt[:submission_id]`.
@@ -287,9 +287,9 @@ class Upload < ApplicationRecord
   # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
   # @raise [Record::NotFound]           If record not found.
   #
-  # @return [Model]                     Or *nil* on error if *no_raise*.
+  # @return [Model, nil]
   #
-  def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, ?sort: Symbol|String|nil, **untyped opt) -> Model
+  def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, ?sort: Symbol|String|nil, **untyped opt) -> (Model | nil)
 
   # Configured requirements for Upload fields.
   #

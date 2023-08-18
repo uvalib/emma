@@ -104,9 +104,8 @@ class SearchController < ApplicationController
     titles = title_results?
     @list  = index_search(titles: titles, save: !playback, **prm)
     err    = @list.exec_report if @list.error?
-    items  = titles ? :titles : :record
     # noinspection RubyMismatchedArgumentType
-    paginator.finalize(@list, as: items, **prm)
+    paginator.finalize(@list, as: (titles ? :titles : :records), **prm)
     respond_to do |format|
       format.html
       format.json { render_json index_values }
