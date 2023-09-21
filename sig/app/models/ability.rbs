@@ -6,6 +6,8 @@
 # - The controller manipulates instances of the Upload resource.
 #
 class Ability
+  include Emma::TypeMethods
+
   include CanCan::Ability
 
   include Ability::Role

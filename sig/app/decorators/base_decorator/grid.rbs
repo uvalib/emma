@@ -251,8 +251,8 @@ module BaseDecorator::Grid
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #html_tag except:
   #
-  # @option opt [String] :label       Overrides default label.
-  # @option opt [Hash]   :config      Field configuration.
+  # @option opt [String]      :label  Overrides default label.
+  # @option opt [FieldConfig] :prop   Field configuration.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -348,28 +348,28 @@ module BaseDecorator::Grid
   # @param [String, Symbol, nil] label
   # @param [*]                   value
   # @param [Symbol]              field
-  # @param [Hash]                prop
+  # @param [FieldConfig]         prop
   # @param [Integer, nil]        col
   # @param [Hash]                opt
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # === Implementation Notes
   # Compare with BaseDecorator::List#render_field_value_pair
   #
-  def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: FieldConfig, ?col: Integer|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # The edit element for a grid data cell.
   #
-  # @param [Symbol]    field          For 'data-field' attribute.
-  # @param [*]         value
-  # @param [Hash, nil] prop           Default: from field/model.
-  # @param [String]    css            Characteristic CSS class/selector.
-  # @param [Hash]      opt
+  # @param [Symbol]           field   For 'data-field' attribute.
+  # @param [*]                value
+  # @param [FieldConfig, nil] prop    Default: from field/model.
+  # @param [String]           css     Characteristic CSS class/selector.
+  # @param [Hash]             opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def grid_data_cell_edit: (Symbol field, untyped value, (symHash|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def grid_data_cell_edit: (Symbol field, untyped value, (FieldConfig|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Indicate whether the field is one whose elements should be invisible.
   #

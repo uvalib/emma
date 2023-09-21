@@ -24,8 +24,8 @@ module DataHelper
   # @type [Array<Symbol>]
   #
   EMMA_DATA_FIELDS =
-    I18n.t('emma.upload.record.emma_data').except(*Field::PROPERTY_KEYS)
-        .keys.freeze
+    I18n.t('emma.upload.record.emma_data')
+        .select { |_field, entry| entry.is_a?(Hash) }.keys.freeze
 
   # ===========================================================================
   # :section:

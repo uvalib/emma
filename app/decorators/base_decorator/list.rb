@@ -92,7 +92,7 @@ module BaseDecorator::List
   # @param [String, Symbol, nil] label
   # @param [*]                   value
   # @param [Symbol]              field
-  # @param [Hash]                prop
+  # @param [FieldConfig]         prop
   # @param [Hash]                opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -113,14 +113,16 @@ module BaseDecorator::List
   #
   # @param [String, Symbol, nil]  label
   # @param [*]                    value
-  # @param [Hash, nil]            prop      Default: from field/model.
+  # @param [FieldConfig, nil]     prop      Default: from field/model.
   # @param [Symbol, nil]          field
   # @param [String, Integer]      index     Offset to make unique element IDs.
   # @param [Integer, nil]         row       Display row.
+  # @param [Integer, nil]         col       Display column.
+  # @param [Integer, nil]         pos       Ordinal alternative to row or col.
   # @param [String, nil]          separator Between parts if *value* is array.
   # @param [String, nil]          wrap      Class for outer wrapper.
   # @param [Symbol]               tag       @see #HTML_TABLE_TAGS
-  # @param [Boolean,Symbol,Array] no_format
+  # @param [Boolean,Symbol,Array] no_fmt
   # @param [Boolean]              no_code
   # @param [Boolean]              no_label
   # @param [Boolean]              no_help
@@ -133,13 +135,13 @@ module BaseDecorator::List
   # @option opt [String] :label_id
   # @option opt [String] :value_id
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # @yield [fld, val, prp, **o] To supply part(s) after the .value element.
-  # @yieldparam [Symbol] fld          The field.
-  # @yieldparam [*]      val          The raw value.
-  # @yieldparam [Hash]   prp          The adjusted field properties.
-  # @yieldparam [Hash]   o            Options for #html_div.
+  # @yieldparam [Symbol]      fld     The field.
+  # @yieldparam [*]           val     The raw value.
+  # @yieldparam [FieldConfig] prp     The adjusted field properties.
+  # @yieldparam [Hash]        o       Options for #html_div.
   # @yieldreturn [Array, ActiveSupport::SafeBuffer, nil]
   #
   # === Usage Notes
@@ -156,10 +158,12 @@ module BaseDecorator::List
     field:      nil,
     index:      nil,
     row:        nil,
+    col:        nil,
+    pos:        nil,
     separator:  nil,
     wrap:       nil,
     tag:        :div,
-    no_format:  nil,
+    no_fmt:     nil,
     no_code:    nil,
     no_label:   nil,
     no_help:    nil,
@@ -186,10 +190,11 @@ module BaseDecorator::List
     raw_val = value
 
     # Format the content of certain fields.
-    lines     = nil
-    no_format = [no_format]               if no_format.is_a?(Symbol)
-    no_format = no_format.include?(field) if no_format.is_a?(Array)
-    unless no_format
+    lines   = nil
+    no_fmt  = [no_fmt]               if no_fmt.is_a?(Symbol)
+    no_fmt  = no_fmt.include?(field) if no_fmt.is_a?(Array)
+    no_fmt  = true                   if value.is_a?(ActiveSupport::SafeBuffer)
+    unless no_fmt
       case field
         when :dc_description
           value = lines = format_description(value)
@@ -219,7 +224,7 @@ module BaseDecorator::List
     err_val = error&.keys&.then { |err| err.many? ? err : err.first }
 
     # Pre-process value(s).
-    if no_format
+    if no_fmt
       value = err_val if err_val && !value.is_a?(Array)
       value = safe_join(value, (separator || "\n")) if value.is_a?(Array)
     elsif prop[:array]
@@ -241,9 +246,9 @@ module BaseDecorator::List
 
     # Extract attributes that are appropriate for the wrapper element which
     # should not propagate into the label, value, or other enclosed elements.
-    role = opt.delete(:role)
-    lvl  = opt.delete(:'aria-level')
-    col  = opt.delete(:'aria-colindex')
+    role    = opt.delete(:role)
+    level   = opt.delete(:'aria-level')
+    col_idx = opt.delete(:'aria-colindex')
 
     # Add tooltip if configured.
     tooltip = (prop[:tooltip] unless field == :dc_title)
@@ -266,6 +271,8 @@ module BaseDecorator::List
       status << 'model' if model
     end
     prepend_css!(opt, type, *status)
+    prepend_css!(opt, "pos-#{pos}") if pos
+    prepend_css!(opt, "col-#{col}") if col
     prepend_css!(opt, "row-#{row}") if row
 
     # Explicit 'data-*' attributes.
@@ -324,8 +331,8 @@ module BaseDecorator::List
       w_opt[:id]                ||= field_html_id(wrap, **id_opt)
       w_opt[:role]              ||= role
       w_opt[:title]             ||= tooltip
-      w_opt[:'aria-level']      ||= lvl
-      w_opt[:'aria-colindex']   ||= col
+      w_opt[:'aria-level']      ||= level
+      w_opt[:'aria-colindex']   ||= col_idx
       w_opt[:'aria-labelledby'] ||= l_id  if l_id
       append_css!(w_opt, 'error')         if error
       html_tag(tag, *parts, **w_opt)

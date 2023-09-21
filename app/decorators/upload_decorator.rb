@@ -205,15 +205,50 @@ class UploadDecorator < BaseDecorator
 
     public
 
-    # Get all configured record fields for the model.
+    # Get all configured record fields for the model, moving :emma_data
+    # key/value pairs up to the top level alongside database fields.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @param [Symbol, nil] type       Passed to super.
     #
-    def model_form_fields(**)
-      other, db_fields = partition_hash(super, :file_data, :emma_data)
-      emma_data = other[:emma_data]&.except(*Field::PROPERTY_KEYS) || {}
-      emma_data.select! { |_, v| v.is_a?(Hash) }
-      db_fields.merge!(emma_data)
+    # @return [ActionConfig]
+    #
+    def model_form_fields(type = nil)
+      json_fields, db_fields = partition_hash(super, *compound_fields)
+      emma_data = json_fields[:emma_data]&.slice(*EMMA_DATA_FIELDS)
+      db_fields.merge!(emma_data) if emma_data.present?
+      ActionConfig.wrap(db_fields)
+    end
+
+    # Get all fields for a model instance table entry, moving :emma_data and
+    # :file_data to the start of the result, followed by the other database
+    # fields ending with :edit_emma_data and :edit_file_data (if present).
+    #
+    # @param [Symbol, nil] type       Passed to super.
+    #
+    # @return [ActionConfig]
+    #
+    def model_table_fields(type = nil)
+      json_fields, db_fields = partition_hash(super, *compound_fields)
+      fields = {}
+      fields.merge!(json_fields.extract!(:emma_data))
+      fields.merge!(json_fields.extract!(:file_data))
+      fields.merge!(db_fields)
+      fields.merge!(json_fields) if json_fields.present?
+      ActionConfig.wrap(fields)
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Fields overrides
+    # =========================================================================
+
+    public
+
+    # Database columns with hierarchical data.
+    #
+    # @return [Array<Symbol>]
+    #
+    def compound_fields
+      %i[file_data emma_data edit_file_data edit_emma_data]
     end
 
     # =========================================================================

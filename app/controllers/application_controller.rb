@@ -15,6 +15,7 @@ require 'search_service'
 #
 class ApplicationController < ActionController::Base
 
+  include Emma::TypeMethods
   include ParamsHelper
 
   include ConfigurationConcern

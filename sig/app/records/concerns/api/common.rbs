@@ -5,8 +5,16 @@ Boolean: untyped
 class ScalarType
   include Comparable
 
+  include Emma::Common
+
+  include Emma::Constants
+
+  include Emma::TypeMethods
+
   module Methods
     include Emma::Common
+
+    include Emma::Constants
 
     # Default value for items of this type.
     #
@@ -27,6 +35,14 @@ class ScalarType
     # @return [String]
     #
     def normalize: (untyped v) -> String
+
+    # Resolve an item into its value.
+    #
+    # @param [*] v
+    #
+    # @return [*]
+    #
+    def clean: (untyped v) -> untyped
 
     # Type-cast an object to an instance of this type.
     #
@@ -70,19 +86,21 @@ class ScalarType
   #
   # @param [*] v
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def value=: (untyped v) -> String
+  def value=: (untyped v) -> (String | nil)
 
   # Assign a new value to the instance.
   #
   # @param [*]       v
   # @param [Boolean] invalid          If *true* allow invalid value.
-  # @param [Boolean] nil_default      If *true* do not use #default.
+  # @param [Boolean] allow_nil        If *false* use #default if necessary.
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def set: (untyped v, ?invalid: bool, ?nil_default: bool, **untyped _ignored) -> String
+  def set
+    : (untyped v, ?invalid: bool,  allow_nil: false, **untyped _ignored) -> String
+    | (untyped v, ?invalid: bool, ?allow_nil: bool,  **untyped _ignored) -> (String | nil)
 
   # Indicate whether the instance is valid, or indicate whether *v* would be a
   # valid value.
@@ -142,21 +160,6 @@ class ScalarType
   # @return [Integer]   -1 if self is later, 1 if self is earlier
   #
   def <=>: (untyped other) -> (-1 | 0 | +1)
-
-  # By default, Object#deep_dup will create a copy of an item, including values
-  # which are classes themselves, if the item says that it is duplicable.
-  #
-  # For items which are classes, e.g.:
-  #
-  #   { item: ScalarType }
-  #
-  # this would mean that the duplicated result would be something like:
-  #
-  #   { item: #<Class:0x00005590b0d928a8> }
-  #
-  # Returning *false* here prevents that.
-  #
-  def self.duplicable?: () -> bool
 
   # Create a serializer class associated with the given *base*.
   #
@@ -809,11 +812,12 @@ class EnumType < ScalarType
   #
   # @param [*]       v
   # @param [Boolean] invalid          If *true* allow invalid value.
-  # @param [Boolean] nil_default      If *true* do not use #default.
+  # @param [Boolean] allow_nil        If *false* use #default if necessary.
+  # @param [Boolean] warn             If *false* do not log invalid.
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def set: (untyped v, ?invalid: bool, ?nil_default: bool, **untyped _ignored) -> String
+  def set: (untyped v, ?invalid: bool, ?allow_nil: bool, ?warn: bool, **untyped _ignored) -> (String | nil)
 
   # Indicate whether the instance is valid.
   #

@@ -1,0 +1,136 @@
+# The base class for collections of configuration-related values.
+#
+class ConfigEntry[U] < Hash[Symbol,U]
+  include Emma::Common
+
+  # Create a new instance.
+  #
+  # @param [ConfigEntry, Hash, nil] src
+  #
+  # @raise [RuntimeError]             If *src* is invalid.
+  #
+  def initialize: (?(ConfigEntry[U]|anyHash|nil) src) -> void
+
+  # Transform an item into the expected value type (if one is defined by the
+  # subclass).
+  #
+  # @param [*] item
+  #
+  # @return [*]
+  #
+  def config_value: [T] (T item) -> (U | T)
+
+  # Return *item* if it is already an instance of the subclass; if not, use it
+  # to initialize a new subclass instance.
+  #
+  # @param [*] item
+  #
+  # @return [ConfigEntry]
+  #
+  def self.wrap: (untyped item) -> instance
+
+  # The expected value type defined by the subclass.
+  #
+  # @return [Class, nil]
+  #
+  def self.value_type: () -> Class?
+
+  # Indicate whether an item can be directly assigned as a value in a subclass.
+  #
+  # (Always *true* if the subclass does not define a value type.)
+  #
+  # @param [*] item
+  #
+  def self.value_type?: (untyped item) -> bool
+
+  def wrap: (untyped target) -> instance
+
+  def value_type: () -> Class?
+
+  def value_type?: () -> bool
+end
+
+# A configuration entry for a field for a specific controller/action.
+#
+class FieldConfig < ConfigEntry[untyped]
+  # Create a new instance.
+  #
+  # @param [FieldConfig, Hash, nil] src
+  #
+  # @raise [RuntimeError]             If *src* is invalid.
+  #
+  def initialize: (?(FieldConfig|symHash|nil) src) -> void
+
+  EMPTY: FieldConfig
+end
+
+# A configuration entry for a set of fields for a specific controller/action.
+#
+class ActionConfig < ConfigEntry[FieldConfig]
+  # Create a new instance.
+  #
+  # @param [ActionConfig, Hash, nil] src
+  #
+  # @raise [RuntimeError]             If *src* is invalid.
+  #
+  def initialize: (?(ActionConfig|symHash|nil) src) -> void
+
+  EMPTY: ActionConfig
+end
+
+# A set of configuration entries for the actions of a controller.
+#
+# Two entries are guaranteed:
+#
+# * :all is the configuration for fields which is not specific to an action.
+# * :database is the configuration for fields in the context of displaying
+#   records from the database.
+#
+# The presence of other entries depends on the '/config/controllers/**.yml'
+# contents for the given controller.
+#
+class ModelConfig < ConfigEntry[ActionConfig]
+  # Return with the generic field configurations followed by entries for
+  # each action-specific field configuration.
+  #
+  # @param [ModelConfig, ActionConfig, Hash, nil] src
+  # @param [ActionConfig, Hash, nil] all        Generic config
+  # @param [ActionConfig, Hash, nil] database   Database-specific config.
+  # @param [Hash, nil]               synthetic  Synthetic field properties.
+  # @param [Hash]                    opt        Action-specific configs.
+  #
+  def initialize: (?(ModelConfig|ActionConfig|symHash|nil) base, ?all: ActionConfig|symHash|nil, ?database: ActionConfig|symHash|nil, ?synthetic: symHash|nil, **(ActionConfig|symHash) opt) -> void
+
+  def empty?: () -> bool
+
+  # Generic field configurations.
+  #
+  # @return [ActionConfig]
+  #
+  def all: () -> ActionConfig
+
+  # Database field configurations.
+  #
+  # @return [ActionConfig]
+  #
+  def database: () -> ActionConfig
+
+  # Fields which do not map on to data columns.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def synthetic: () -> Hash[Symbol,FieldConfig]
+
+  @synthetic: Hash[Symbol,FieldConfig]
+
+  EMPTY: ModelConfig
+
+  # Report on anomalies.
+  #
+  # @param [*]       type
+  # @param [Boolean] fatal            If *true*, raise if there are error(s).
+  #
+  # @return [Boolean]                 If *fatal* is not *true*.
+  #
+  def validate: (?type: untyped, ?fatal: bool, **untyped _ignored) -> bool
+end

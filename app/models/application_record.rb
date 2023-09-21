@@ -12,6 +12,8 @@ class ApplicationRecord < ActiveRecord::Base
   include IdMethods
   include SqlMethods
 
+  include Emma::TypeMethods
+
   self.abstract_class = true
 
   # ===========================================================================

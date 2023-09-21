@@ -272,29 +272,29 @@ module Model
 
   public
 
-  # Frozen Hash returned as a fall-back for failed configuration lookups.
-  #
-  # @type [Hash]
-  #
-  EMPTY_CONFIG = {}.freeze
-
   # Get configured record fields for a model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] type       Model/controller type
-  # @param [Boolean]                           no_raise   If *true* return {}
+  # @param [Symbol, String, Class, Model, *] type   Model/controller type
+  # @param [Boolean]                         fatal
   #
   # @raise [RuntimeError]             If *type* does not map on to a model.
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ModelConfig]             Frozen result.
+  # @return [nil]                     Only if *fatal* is *false*.
   #
-  def self.configuration_fields(type, no_raise: false)
-    unless (arg = type).is_a?(Symbol) || (type = model_for(type))
-      Log.warn((error = "#{__method__}: #{arg}: invalid"))
-      raise error unless no_raise
-      return EMPTY_CONFIG
+  def self.configuration_fields(type, fatal: true)
+    if !(arg = type).is_a?(Symbol) && !(type = model_for(type))
+      error = "#{arg}: not a model type"
+    elsif fields_table[type]
+      return fields_table[type]
+    elsif (config = configured_fields_for(type)).blank?
+      error = "#{arg}: no configuration"
+    else
+      config.validate(type: type) if DEBUG_CONFIGURATION
+      return fields_table[type] = config.deep_freeze
     end
-    # noinspection RubyMismatchedArgumentType
-    fields_table[type] ||= configured_fields_for(type).deep_freeze
+    Log.warn { "#{__method__}: #{error}" }
+    raise error if fatal
   end
 
   # ===========================================================================
@@ -326,7 +326,7 @@ module Model
 
   # Configured record fields for each model/controller.
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>ModelConfig}]
   #
   def self.fields_table
     # noinspection RbsMissingTypeSignature
@@ -335,26 +335,25 @@ module Model
 
   # Combine configuration settings for a given model/controller.
   #
-  # @param [Symbol, Any] type
+  # @param [Symbol, String] type
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [ModelConfig]
   #
   def self.configured_fields_for(type)
-    return {} unless type.is_a?(Symbol)
     model_config = I18n.t("emma.#{type}", default: nil)&.deep_dup || {}
 
     # Start with definitions from config/locales/records/*.yml, separating
     # control directives from field name entries.
     directives = {}
     all_fields =
-      (model_config[:record] || {}).map { |field, entry|
+      (model_config[:record] || {}).map { |field, prop|
         name = field.to_s.sub!(/^_/, '')&.to_sym
         if name && DIRECTIVES.include?(name)
-          directives[name] = entry
+          directives[name] = prop
         elsif name
           Log.warn { "#{__method__}(#{type}): #{name}: unexpected directive" }
         end
-        [field, Field.normalize(entry, field)] unless name
+        [field, Field.normalize(prop, field)] unless name
       }.compact.to_h
 
     # Special handling so that "emma.search.record" entries are initialized
@@ -364,69 +363,105 @@ module Model
       base_config, base_field = Array.wrap(base).map(&:to_sym)
       base_config = configuration_fields(base_config)&.dig(:all)
       base_config = base_field.present? && base_config&.dig(base_field) || {}
-      all_fields.each_pair do |field, entry|
-        all_fields[field] = base_config[field].deep_merge(entry)
+      all_fields.each_pair do |field, prop|
+        all_fields[field] = base_config[field].deep_merge(prop)
       end
     end
 
     # Add definitions of fields which do not map on to data columns.
     synthetic = directives.values_at(*SYNTHETIC_FIELDS).first || {}
-    synthetic.each_pair do |field, entry|
-      all_fields[field] = Field.normalize(entry, field).merge!(synthetic: true)
+    synthetic.each_pair do |field, prop|
+      all_fields[field] = Field.normalize(prop, field).merge!(synthetic: true)
     end
 
     # Apply adjustments from config/locales/controllers/*.yml then finalize
     # the generic entries.
-    (model_config[:display_fields] || {}).each_pair do |field, entry|
-      entry = Field.normalize(entry, field)
-      all_fields[field] = all_fields[field]&.deep_merge(entry) || entry
-    end
-    all_fields.transform_values! { |entry| Field.finalize!(entry) }
-    all_fields.delete_if { |_, entry| Field.unused?(entry) }
+    display_config!(all_fields, model_config[:display_fields])
+    all_fields.transform_values! { |prop| Field.finalize!(prop) }
 
-    # Temporary revision of User fields to "disappear" the fields that only
-    # apply if Bookshare OAuth2 authentication is in use.
-    if %i[account user].include?(type)
-      if BS_AUTH
-        all_fields.except!(:provider) unless SHIBBOLETH
-      else
-        all_fields.except!(:access_token, :refresh_token, :effective_id)
-      end
-    end
-
-    # Identify the fields which map on to database columns.
-    database_fields = all_fields.except(*synthetic.keys)
-
-    # For pages that specify their own :display_fields section.  If its
-    # value is :all or [:all] then all record fields will be displayed on
-    # that page.  Otherwise the section may be an array of field
-    # specifications; each may be:
-    #
-    # * String or Symbol - the field name to show
-    # * Hash             - table of field names and label overrides
-    #
+    # Add entries for each page with its own :display_fields section.
     controller_configs =
       model_config.map { |action, section|
-        next unless section.is_a?(Hash) && section.key?(:display_fields)
-        field_list  = Array.wrap(section[:display_fields]).dup
-        page_fields = field_list.delete(:all) ? all_fields.deep_dup : {}
-        field_list.each do |field_entry|
-          field_entry = { field_entry => nil } unless field_entry.is_a?(Hash)
-          field_entry.symbolize_keys.each_pair do |field, delta|
-            next unless delta || page_fields[field].nil?
-            props = page_fields[field] || all_fields[field]&.deep_dup || {}
-            props.deep_merge!(Field.normalize(delta, field)) if delta
-            Field.finalize!(props, field)
-            page_fields[field] = (props unless Field.unused?(props, action))
-          end
-        end
-        page_fields.compact!
-        [action, page_fields]
+        next unless section.is_a?(Hash)
+        next unless (display_fields = section[:display_fields])
+        action_fields = display_config!(all_fields.deep_dup, display_fields)
+        action_fields.transform_values! { |prop| Field.finalize!(prop) }
+        [action, action_fields]
       }.compact.to_h
 
     # Return with the generic field configurations followed by entries for
-    # each model/controller-specific field configuration.
-    { all: all_fields, database: database_fields }.merge!(controller_configs)
+    # each action-specific field configuration.
+    ModelConfig.new(all: all_fields, **controller_configs)
+  end
+
+  # For pages that specify their own :display_fields section, *fields* may
+  # define the order of fields or simply modify the properties of the fields.
+  #
+  # If *fields* is a Hash then each key represents a field (*all_fields* key)
+  # and one or more property overrides.  Field order is not affected by the
+  # ordering of the keys in this case.
+  #
+  # If *fields* is an Array, each entry represents a field position.  If the
+  # entry is a simple String or Symbol then it inherits all properties of the
+  # matching *all_fields* entry.  Per Field#normalize, if the entry is a Hash
+  # with a String value, the value overrides the fields :label property; if the
+  # entry has a Hash value, these are treated as property overrides.
+  #
+  # @param [Hash]                   all_fields      Baseline field definitions.
+  # @param [Hash, Array, :all, nil] display_fields  Field overrides.
+  #
+  # @return [Hash]                                  The modified *all_fields*.
+  #
+  def self.display_config!(all_fields, display_fields)
+    case display_fields
+      when nil, :all
+        # No changes *fields* is missing or "!ruby/symbol all" by itself.
+        all_fields
+
+      when Array
+        # Specifies the field order for all actions for this model, optionally
+        # overriding field properties.  If any of the lines is :all, that
+        # indicates the inclusion of all fields defined by *action_fields*.
+        all = display_fields.index(:all) and display_fields.delete(:all)
+        overrides =
+          display_fields.map { |line|
+            field, prop = line.is_a?(Hash) ? line.first : [line.to_sym, {}]
+            prop &&= Field.normalize(prop, field)
+            prop &&= all_fields[field]&.deep_merge(prop) || prop
+            [field, prop]
+          }.to_h
+        if all == 0
+          # Start with *action_fields* in the provided order; *fields* lines
+          # either adjust field properties or add new fields to the end.
+          all_fields.merge!(overrides)
+        elsif all
+          # The *fields* defines the order for all of the fields given.  Any
+          # *action_fields* not explicitly referenced are moved to the end.
+          remaining = all_fields.keys - overrides.keys
+          overrides.merge!(all_fields.slice(*remaining)) if remaining.present?
+          all_fields.replace(overrides)
+        else
+          # The *fields* defines a replacement for the standard action fields;
+          # fields not explicitly referenced are not displayed.
+          all_fields.replace(overrides)
+        end
+
+      when Hash
+        # Selective override(s) of field properties without changing the order
+        # of the fields.
+        overrides =
+          display_fields.map { |field, prop|
+            prop &&= Field.normalize(prop, field)
+            prop &&= all_fields[field]&.deep_merge(prop) || prop
+            [field, prop]
+          }.to_h
+        all_fields.merge!(overrides)
+
+      else
+        # No changes if *fields* is invalid.
+        Log.warn { "#{__method__}: unexpected: #{display_fields.inspect}" }
+        all_fields
+    end
   end
 
   # ===========================================================================
@@ -505,7 +540,8 @@ module Model
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ModelConfig]             Frozen result.
+  # @return [nil]
   #
   def self.config_for(item)
     configuration_fields(item, fatal: false)
@@ -517,10 +553,11 @@ module Model
   # @param [Symbol, String, Class, Model, *] item
   # @param [Symbol]                          action
   #
-  # @return [Hash{Symbol=>Hash}, nil]
+  # @return [ActionConfig, nil]
   #
   def self.context_fields(item, action)
-    config_for(item)[action&.to_sym]
+    config = config_for(item) || {}
+    config[action&.to_sym]
   end
 
   # Get configured record fields relevant to an :index action for the indicated
@@ -528,10 +565,11 @@ module Model
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def self.index_fields(item)
-    config_for(item)[:index] || EMPTY_CONFIG
+    config = config_for(item) || {}
+    config[:index] || config[:all] || ActionConfig::EMPTY
   end
 
   # Get configured record fields relevant to a :show action for the indicated
@@ -539,20 +577,22 @@ module Model
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def self.show_fields(item)
-    config_for(item)[:show] || EMPTY_CONFIG
+    config = config_for(item) || {}
+    config[:show] || config[:all] || ActionConfig::EMPTY
   end
 
   # Get all configured record fields for the indicated model.
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def self.database_fields(item)
-    config_for(item)[:database] || EMPTY_CONFIG
+    config = config_for(item) || {}
+    config[:database] || config[:all] || ActionConfig::EMPTY
   end
 
   # Get all configured record fields relevant to a create/update form for the
@@ -560,10 +600,26 @@ module Model
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def self.form_fields(item)
     database_fields(item)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get all configured record fields.
+  #
+  # @param [Symbol, String, Class, Model, *] item   Default: self
+  #
+  # @return [ActionConfig]            Frozen result.
+  #
+  def database_fields(item = nil)
+    Model.database_fields(item || self)
   end
 
 end

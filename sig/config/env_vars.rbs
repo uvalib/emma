@@ -251,6 +251,12 @@ DEBUG_AWS: bool
 #
 DEBUG_CABLE: bool
 
+# Set to debug YAML configuration.
+#
+# @type [Boolean]
+#
+DEBUG_CONFIGURATION: bool
+
 # Set to set the :debug option for Rack::Cors.
 #
 # @type [Boolean]

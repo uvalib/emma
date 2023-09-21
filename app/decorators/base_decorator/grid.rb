@@ -462,8 +462,8 @@ module BaseDecorator::Grid
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #html_tag except:
   #
-  # @option opt [String] :label       Overrides default label.
-  # @option opt [Hash]   :config      Field configuration.
+  # @option opt [String]      :label  Overrides default label.
+  # @option opt [FieldConfig] :prop   Field configuration.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -472,15 +472,18 @@ module BaseDecorator::Grid
     table   = for_html_table?(tag)
     tag     = :th if table
     hidden  = undisplayed?(col)
-    config  = opt.delete(:config) || (field_configuration(col) if col)
-    label   = opt.delete(:label)  || config&.dig(:label) || col.to_s
+    prop    = opt.delete(:prop)  || (field_configuration(col) if col)
+    label   = opt.delete(:label) || prop&.dig(:label) || col.to_s
+
     unless label.html_safe?
       idx   = opt[:'aria-colindex']
       l_id  = opt[:'aria-labelledby'] = unique_id(css, index: idx)
       label = grid_head_label(label, id: l_id, **trace_attrs_from(opt))
     end
-    prop    = config&.slice(:pairs, *FIELD_PROPERTIES)&.compact_blank!
-    opt.merge!(prop.transform_keys! { |k| :"data-#{k}" }) if prop.present?
+
+    data    = prop&.slice(:pairs, *FIELD_PROPERTIES)&.compact_blank!
+    opt.merge!(data.transform_keys! { |k| :"data-#{k}" }) if data.present?
+
     opt[:role]           = 'columnheader' if table
     opt[:'aria-hidden']  = true           if hidden
     opt[:'data-field'] ||= col
@@ -673,11 +676,11 @@ module BaseDecorator::Grid
   # @param [String, Symbol, nil] label
   # @param [*]                   value
   # @param [Symbol]              field
-  # @param [Hash]                prop
+  # @param [FieldConfig]         prop
   # @param [Integer, nil]        col
   # @param [Hash]                opt
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # === Implementation Notes
   # Compare with BaseDecorator::List#render_field_value_pair
@@ -687,21 +690,21 @@ module BaseDecorator::Grid
     # Special adjustment to keep #render_pair from causing single-select values
     # from being represented as multi-select inputs.
     prop[:array] ||= :false if prop[:type].is_a?(Class)
-    rp_opt = opt.merge(field: field, prop: prop, 'aria-colindex': col)
-    scopes = field_scopes(field).presence and append_css!(rp_opt, *scopes)
-    rp_opt.merge!(no_format: true, no_help: true)
-    render_pair(label, value, **rp_opt) do |fld, val, prp, **cell_opt|
+    opt.merge!(no_fmt: true, no_help: true)
+    opt.merge!(field: field, prop: prop, 'aria-colindex': col)
+    scopes = field_scopes(field).presence and append_css!(opt, *scopes)
+    render_pair(label, value, **opt) do |fld, val, prp, **cell_opt|
       grid_data_cell_edit(fld, val, prp, **cell_opt, **opt.slice(:index))
     end
   end
 
   # The edit element for a grid data cell.
   #
-  # @param [Symbol]    field          For 'data-field' attribute.
-  # @param [*]         value
-  # @param [Hash, nil] prop           Default: from field/model.
-  # @param [String]    css            Characteristic CSS class/selector.
-  # @param [Hash]      opt
+  # @param [Symbol]           field   For 'data-field' attribute.
+  # @param [*]                value
+  # @param [FieldConfig, nil] prop    Default: from field/model.
+  # @param [String]           css     Characteristic CSS class/selector.
+  # @param [Hash]             opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
@@ -710,7 +713,7 @@ module BaseDecorator::Grid
     l_id   = field_html_id("edit-#{DEFAULT_LABEL_CLASS}", **id_opt)
     value  = nil if value == EMPTY_VALUE
     unless value.is_a?(Field::Type)
-      value = field_for(field, value: value, config: prop)
+      value = field_for(field, prop: prop, value: value)
     end
 
     opt[:field]     = field

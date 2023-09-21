@@ -32,25 +32,26 @@ module BaseDecorator::Fields
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def emma_data_fields(field: :emma_data)
+  def emma_data_fields(field = :emma_data)
     model_database_fields[field]&.select { |_, v| v.is_a?(Hash) } || {}
   end
 
   # Render the contents of the :emma_data field in the same order of EMMA data
   # fields as defined for search results.
   #
-  # @param [Symbol] field
-  # @param [Hash]   opt
+  # @param [String, Hash, nil] value
+  # @param [Symbol]            field
+  # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #render_json_data
   #
-  def render_emma_data(field: :emma_data, **opt)
-    data  = object.try(field) || object.try(:[], field)
-    pairs = json_parse(data).presence
+  def render_emma_data(value = nil, field: :emma_data, **opt)
+    value ||= object.try(field) || object.try(:[], field)
+    pairs   = json_parse(value).presence
     pairs &&=
-      emma_data_fields.map { |fld, cfg|
+      emma_data_fields(field).map { |fld, cfg|
         value = pairs.delete(cfg[:label]) || pairs.delete(fld)
         [fld, value] unless value.nil?
       }.compact.to_h.merge(pairs)
@@ -60,16 +61,18 @@ module BaseDecorator::Fields
 
   # Render the contents of the :file_data field.
   #
-  # @param [Symbol] field
-  # @param [Hash]   opt
+  # @param [String, Hash, nil] value
+  # @param [Symbol]            field
+  # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #render_json_data
   #
-  def render_file_data(field: :file_data, **opt)
-    data = object.try(field) || object.try(:[], field)
-    render_json_data(data, **opt, field_root: field)
+  def render_file_data(value = nil, field: :file_data, **opt)
+    value ||= object.try(field) || object.try(:[], field)
+    opt[:outer] = trace_attrs(opt[:outer])
+    render_json_data(value, **opt, field_root: field)
   end
 
   # Render hierarchical data.
@@ -92,8 +95,8 @@ module BaseDecorator::Fields
     html_div(**outer) do
       t_opt = trace_attrs_from(outer)
       if value.present?
-        root = opt[:field_root]
-        opt[:no_format] ||= :dc_description
+        opt[:no_fmt] ||= :dc_description
+        root  = opt[:field_root]
         pairs =
           value.map { |k, v|
             if v.is_a?(Hash)
@@ -451,14 +454,18 @@ module BaseDecorator::Fields
 
   public
 
+  # All known EMMA record fields (including those not currently in use).
+  #
+  # @type [Array<Symbol>]
+  #
+  EMMA_DATA_FIELDS = DataHelper::EMMA_DATA_FIELDS
+
   # EMMA data field prefixes with trailing underscore for #model_html_id.
   #
   # @type [Array<String>]
   #
   FIELD_PREFIX =
-    DataHelper::EMMA_DATA_FIELDS.map { |field|
-      field.to_s.sub(/_.*$/, '_')
-    }.uniq.deep_freeze
+    EMMA_DATA_FIELDS.map { |f| f.to_s.sub(/_.*$/, '_') }.uniq.deep_freeze
 
   # Suffixes indicating field names to be preserved in #model_html_id.
   #

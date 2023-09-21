@@ -205,7 +205,7 @@ class PublicationIdentifier < ScalarType
   #
   # @return [String]
   #
-  def set: (untyped v) -> String
+  def set: (untyped v, **untyped _ignored) -> String
 
   # Return the string representation of the instance value.
   #

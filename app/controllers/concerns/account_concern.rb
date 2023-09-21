@@ -257,17 +257,17 @@ module AccountConcern
 
   # Configured account record fields.
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def account_fields(...)
-    Model.configuration_fields(:account)[:all] || {}
+    Model.configuration_fields(:account)[:all]
   end
 
   # Get the appropriate message to display.
   #
-  # @param [Symbol]             action
-  # @param [Symbol]             outcome
-  # @param [Hash{Symbol=>Hash}] config
+  # @param [Symbol]       action
+  # @param [Symbol]       outcome
+  # @param [ActionConfig] config
   #
   # @return [String, nil]
   #
@@ -280,8 +280,8 @@ module AccountConcern
 
   # Get the appropriate terms for message interpolations.
   #
-  # @param [Symbol]             action
-  # @param [Hash{Symbol=>Hash}] config
+  # @param [Symbol]       action
+  # @param [ActionConfig] config
   #
   # @return [Hash{Symbol=>*}]
   #

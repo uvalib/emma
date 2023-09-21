@@ -328,7 +328,8 @@ class PublicationIdentifier < ScalarType
   #
   # @return [String]
   #
-  def set(v)
+  def set(v, **)
+    v = nil if v == EMPTY_VALUE
     @value = (v.blank? || (!prefix?(v) && v.include?(':'))) ? '' : normalize(v)
   end
 

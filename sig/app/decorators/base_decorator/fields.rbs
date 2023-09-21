@@ -17,30 +17,32 @@ module BaseDecorator::Fields
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def emma_data_fields: (?field: Symbol) -> Hash[Symbol,symHash]
+  def emma_data_fields: (?Symbol field) -> Hash[Symbol,symHash]
 
   # Render the contents of the :emma_data field in the same order of EMMA data
   # fields as defined for search results.
   #
-  # @param [Symbol] field
-  # @param [Hash]   opt
+  # @param [String, Hash, nil] value
+  # @param [Symbol]            field
+  # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #render_json_data
   #
-  def render_emma_data: (?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_emma_data: (?(String|anyHash|nil) value, ?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render the contents of the :file_data field.
   #
-  # @param [Symbol] field
-  # @param [Hash]   opt
+  # @param [String, Hash, nil] value
+  # @param [Symbol]            field
+  # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #render_json_data
   #
-  def render_file_data: (?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_file_data: (?(String|anyHash|nil) value, ?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render hierarchical data.
   #
@@ -195,6 +197,12 @@ module BaseDecorator::Fields
   #   @return [Array<String>]
   #
   def field_scopes: ((symArray|Symbol|String|nil) value) -> strArray
+
+  # All known EMMA record fields (including those not currently in use).
+  #
+  # @type [Array<Symbol>]
+  #
+  EMMA_DATA_FIELDS: symArray
 
   # EMMA data field prefixes with trailing underscore for #model_html_id.
   #

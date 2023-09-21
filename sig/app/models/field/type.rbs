@@ -1,0 +1,171 @@
+# Base class for field type descriptions.
+#
+class Field::Type
+  include Emma::Constants
+
+  include Emma::TypeMethods
+
+  # The class for the value of the Type instance.
+  #
+  # If this a derivative of EnumType then `base.values` defines the set of
+  # possible values.
+  #
+  # If it's something else (String by default) then it defines the type of
+  # value that may be associated with the instance.
+  #
+  # @return [Class]
+  #
+  attr_reader base: Class
+
+  # The data field associated with the instance.
+  #
+  # @return [Symbol]
+  #
+  attr_reader field: Symbol
+
+  # The value(s) associated with the instance (empty if :base is not an
+  # EnumType).
+  #
+  # @return [Array]
+  #
+  attr_reader range: strArray
+
+  # The value associated with the instance.
+  #
+  # @return [*]
+  #
+  attr_reader value: untyped
+
+  # A positive indicator of whether the instance has been given a value.
+  #
+  # @return [FalseClass, TrueClass]
+  #
+  attr_reader valid: bool
+
+  # Initialize a new instance.
+  #
+  # @param [Symbol, Model, *]    src
+  # @param [Symbol, nil]         field
+  # @param [FieldConfig, nil]    prop
+  # @param [Symbol, String, nil] model  (Only used if *prop* is missing.)
+  # @param [*]                   value
+  #
+  def initialize: (untyped src, ?(Symbol|nil) field, ?prop: FieldConfig|nil, ?model: (Symbol|String|nil), ?value: untyped|nil) -> void
+
+  # The resolved value for this field instance.
+  #
+  # @return [Array<String>, String, nil]
+  #
+  def content: () -> (strArray | String | nil)
+
+  # The raw value for this field instance.
+  #
+  # @return [Any]
+  #
+  def value: () -> untyped
+
+  # Give the instance a value.
+  #
+  # @param [*] new_value
+  #
+  # @return [*]
+  #
+  def set: (untyped new_value) -> untyped
+
+  # Remove any value from the instance.
+  #
+  # @return [nil]
+  #
+  def clear: () -> nil
+
+  # Remove any value from the instance.
+  #
+  # @return [nil]
+  #
+  def content: () -> (strArray | String | nil)
+
+  # Indicate whether this instance is associated with a value.
+  #
+  def set?: () -> bool
+
+  # Indicate whether this instance is not associated with a value.
+  #
+  def unset?: () -> bool
+
+  alias empty? unset?
+
+  alias blank? unset?
+
+  # Resolve an item into its value.
+  #
+  # @param [*] v
+  #
+  # @return [*]
+  #
+  def clean: (untyped v) -> untyped
+
+  # Either :single or :multiple, depending on the subclass.
+  #
+  # @return [Symbol]
+  #
+  def self.mode: () -> Symbol
+
+  # The enumeration type on which the subclass is based.
+  #
+  # @return [Class, nil]
+  #
+  def self.base: () -> (Class | nil)
+
+  def mode: () -> Symbol
+end
+
+# A field which may have a single value.
+#
+class Field::Single < Field::Type
+  MODE: Symbol
+end
+
+# A field which may have multiple values.
+#
+class Field::Collection < Field::Type
+  MODE: Symbol
+end
+
+# A field based on a range of values defined by an EnumType.
+#
+class Field::Range < Field::Type
+  attr_reader value: anyArray | untyped | nil
+
+  @value: anyArray | untyped | nil
+
+  # Indicate whether this instance is unassociated with any field values.
+  #
+  def empty?: () -> bool
+
+  # Give the instance a value.
+  #
+  # @param [*] new_value
+  #
+  # @return [Array]                 If mode == :multiple
+  # @return [*]                     If mode == :single
+  #
+  def set: (untyped new_value) -> (anyArray | untyped | nil)
+end
+
+# A field which may have multiple values from a range.
+#
+class Field::MultiSelect < Field::Range
+  MODE: Symbol
+end
+
+# A field which may have a single value from a range.
+#
+class Field::Select < Field::Range
+  MODE: Symbol
+end
+
+# Special-case for a binary (true/false/unset) field.
+#
+class Field::Binary < Field::Select
+  BASE: Class
+end

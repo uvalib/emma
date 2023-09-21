@@ -1,6 +1,8 @@
 # Base class for all controllers.
 #
 class ApplicationController < ActionController::Base
+  include Emma::TypeMethods
+
   include ParamsHelper
 
   include ConfigurationConcern

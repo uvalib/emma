@@ -151,22 +151,19 @@ module Model
   #
   def to_h: () -> symHash
 
-  # Frozen Hash returned as a fall-back for failed configuration lookups.
-  #
-  # @type [Hash]
-  #
-  EMPTY_CONFIG: symHash
-
   # Get configured record fields for a model/controller.
   #
-  # @param [Symbol, String, Class, Model, Any] type       Model/controller type
-  # @param [Boolean]                           no_raise   If *true* return {}
+  # @param [Symbol, String, Class, Model, *] type   Model/controller type
+  # @param [Boolean]                         fatal
   #
   # @raise [RuntimeError]             If *type* does not map on to a model.
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ModelConfig]             Frozen result.
+  # @return [nil]                     Only if *fatal* is *false*.
   #
-  def self.configuration_fields: (untyped `type`, ?no_raise: bool) -> Hash[Symbol,symHash]
+  def self.configuration_fields
+    : (untyped `type`,  fatal: false) -> (ModelConfig | nil)
+    | (untyped `type`, ?fatal: true)  -> ModelConfig
 
   # Keys under "emma.*.record" beginning with an underscore, which represent
   # the control directive for specifying the base configuration.
@@ -191,17 +188,37 @@ module Model
 
   # Configured record fields for each model/controller.
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>ModelConfig}]
   #
-  def self.fields_table: () -> Hash[Symbol,symHash]
+  def self.fields_table: () -> Hash[Symbol,ModelConfig]
 
   # Combine configuration settings for a given model/controller.
   #
-  # @param [Symbol, Any] type
+  # @param [Symbol, String] type
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [ModelConfig]
   #
-  def self.configured_fields_for: (untyped `type`) -> Hash[Symbol,symHash]
+  def self.configured_fields_for: (Symbol|String `type`) -> ModelConfig
+
+  # For pages that specify their own :display_fields section, *fields* may
+  # define the order of fields or simply modify the properties of the fields.
+  #
+  # If *fields* is a Hash then each key represents a field (*all_fields* key)
+  # and one or more property overrides.  Field order is not affected by the
+  # ordering of the keys in this case.
+  #
+  # If *fields* is an Array, each entry represents a field position.  If the
+  # entry is a simple String or Symbol then it inherits all properties of the
+  # matching *all_fields* entry.  Per Field#normalize, if the entry is a Hash
+  # with a String value, the value overrides the fields :label property; if the
+  # entry has a Hash value, these are treated as property overrides.
+  #
+  # @param [Hash]                   all_fields      Baseline field definitions.
+  # @param [Hash, Array, :all, nil] display_fields  Field overrides.
+  #
+  # @return [Hash]                                  The modified *all_fields*.
+  #
+  def self.display_config!: (symHash all_fields, (nil|:all|symHash|Array[ String | Symbol | Hash[Symbol,String] | Hash[Symbol,symHash] ]) display_fields) -> symHash
 
   # @private
   CONFIG_PREFIX: Regexp
@@ -242,9 +259,10 @@ module Model
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ModelConfig]             Frozen result.
+  # @return [nil]
   #
-  def self.config_for: (untyped? item) -> Hash[Symbol,symHash]
+  def self.config_for: (untyped item) -> (ModelConfig | nil)
 
   # Get configured record fields relevant to the given context for the
   # indicated model/controller.
@@ -252,42 +270,50 @@ module Model
   # @param [Symbol, String, Class, Model, *] item
   # @param [Symbol]                          action
   #
-  # @return [Hash{Symbol=>Hash}, nil]
+  # @return [ActionConfig, nil]
   #
-  def self.context_fields: (untyped? item) -> (Hash[Symbol,symHash] | nil)
+  def self.context_fields: (untyped? item) -> (ActionConfig | nil)
 
   # Get configured record fields relevant to an :index action for the indicated
   # model/controller.
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def self.index_fields: (untyped? item) -> Hash[Symbol,symHash]
+  def self.index_fields: (untyped? item) -> ActionConfig
 
   # Get configured record fields relevant to a :show action for the indicated
   # model/controller.
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def self.show_fields: (untyped? item) -> Hash[Symbol,symHash]
+  def self.show_fields: (untyped? item) -> ActionConfig
 
   # Get all configured record fields for the indicated model.
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def self.database_fields: (untyped? item) -> Hash[Symbol,symHash]
+  def self.database_fields: (untyped? item) -> ActionConfig
 
   # Get all configured record fields relevant to a create/update form for the
   # indicated model.
   #
   # @param [Symbol, String, Class, Model, *] item
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def self.form_fields: (untyped? item) -> Hash[Symbol,symHash]
+  def self.form_fields: (untyped? item) -> ActionConfig
+
+  # Get all configured record fields.
+  #
+  # @param [Symbol, String, Class, Model, *] item   Default: self
+  #
+  # @return [ActionConfig]            Frozen result.
+  #
+  def database_fields: (untyped? item) -> ActionConfig
 end

@@ -91,11 +91,30 @@ class UploadDecorator < BaseDecorator
     #
     FILTER_OPTIONS_CLASS: String
 
-    # Get all configured record fields for the model.
+    # Get all configured record fields for the model, moving :emma_data
+    # key/value pairs up to the top level alongside database fields.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @param [Symbol, nil] type       Passed to super.
     #
-    def model_form_fields: () -> Hash[Symbol,symHash]
+    # @return [ActionConfig]
+    #
+    def model_form_fields: (?(Symbol|nil) `type`) -> ActionConfig
+
+    # Get all fields for a model instance table entry, moving :emma_data and
+    # :file_data to the start of the result, followed by the other database
+    # fields ending with :edit_emma_data and :edit_file_data (if present).
+    #
+    # @param [Symbol, nil] type       Passed to super.
+    #
+    # @return [ActionConfig]
+    #
+    def model_table_fields: (?(Symbol|nil) `type`) -> ActionConfig
+
+    # Database columns with hierarchical data.
+    #
+    # @return [Array<Symbol>]
+    #
+    def compound_fields: () -> symArray
 
     # Indicate whether the state group described by *properties* should be an
     # active state group selection.

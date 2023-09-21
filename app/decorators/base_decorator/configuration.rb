@@ -90,7 +90,7 @@ module BaseDecorator::Configuration
   # @param [Symbol] action            Def: `context[:action]`
   # @param [Symbol] type              Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}, nil]
+  # @return [ActionConfig, nil]       Frozen result.
   #
   def model_context_fields(action = nil, type = nil)
     type   ||= controller_config_key
@@ -102,7 +102,7 @@ module BaseDecorator::Configuration
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def model_index_fields(type = nil)
     type ||= controller_config_key
@@ -113,7 +113,7 @@ module BaseDecorator::Configuration
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def model_show_fields(type = nil)
     type ||= controller_config_key
@@ -126,22 +126,11 @@ module BaseDecorator::Configuration
 
   public
 
-  # Get configured record fields for the model.
-  #
-  # @param [Symbol, nil] type         Def: controller associated with decorator
-  #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
-  #
-  def model_config(type = nil)
-    type ||= model_config_key
-    Model.config_for(type)
-  end
-
   # Get all configured record fields for the model.
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def model_database_fields(type = nil)
     type ||= model_config_key
@@ -152,11 +141,21 @@ module BaseDecorator::Configuration
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def model_form_fields(type = nil)
     type ||= model_config_key
     Model.form_fields(type)
+  end
+
+  # Get all fields for a model instance table entry.
+  #
+  # @param [Symbol, nil] type         Def: controller associated with decorator
+  #
+  # @return [ActionConfig]
+  #
+  def model_table_fields(type = nil)
+    model_show_fields(type)
   end
 
   # ===========================================================================
@@ -173,26 +172,28 @@ module BaseDecorator::Configuration
   # @return [Field::Type, nil]
   #
   def field_for(field, **opt)
-    Field.for(object, field, model_config_key, **opt)
+    opt[:prop] ||= field_configuration(field)
+    Field.for(object, field, **opt)
   end
 
-  # Configuration properties for a field.
+  # A working copy of the configuration properties for a field.
   #
   # @param [Symbol, String, nil] field
   # @param [Symbol, String, nil] action
   #
-  # @return [Hash]                    Frozen result.
+  # @return [FieldConfig]             Frozen if == FieldConfig::EMPTY.
   #
   def field_configuration(field, action = nil, **)
     Field.configuration_for(field, model_config_key, action)
   end
 
-  # Find the field whose configuration entry has a matching label.
+  # A working copy of the configuration properties for a field which has a
+  # matching label.
   #
   # @param [String, Symbol, nil] label
   # @param [Symbol, String, nil] action
   #
-  # @return [Hash]                    Frozen result.
+  # @return [FieldConfig]             Frozen if == FieldConfig::EMPTY.
   #
   def field_configuration_for_label(label, action = nil, **)
     Field.configuration_for_label(label, model_config_key, action)

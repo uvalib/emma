@@ -65,9 +65,9 @@ class ManifestItemDecorator < BaseDecorator
 
     # Get all configured record fields for the model.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @return [ActionConfig]
     #
-    def model_form_fields: (**untyped _ignored) -> Hash[Symbol,symHash]
+    def model_form_fields: (**untyped _ignored) -> ActionConfig
 
     # Control icon definitions.
     #
@@ -211,23 +211,23 @@ class ManifestItemDecorator < BaseDecorator
 
     # Generate a <detail> element describing a field.
     #
-    # @param [Symbol]    col
-    # @param [Hash, nil] cfg
-    # @param [Proc]      block        Passed to #html_details
+    # @param [Symbol]           col
+    # @param [FieldConfig, nil] prop
+    # @param [Proc]             blk   Passed to #html_details
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def field_details: ((Symbol|nil) col, ?(Hash[Symbol,symHash]|nil) cfg, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+    def field_details: ((Symbol|nil) col, ?(FieldConfig|nil) prop, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
     # Generate a <detail> element describing a type.
     #
-    # @param [Symbol]    col
-    # @param [Hash, nil] cfg
-    # @param [Proc]      block        Passed to #html_details
+    # @param [Symbol]           col
+    # @param [FieldConfig, nil] prop
+    # @param [Proc]             blk   Passed to #html_details
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def type_details: ((Symbol|nil) col, ?(Hash[Symbol,symHash]|nil) cfg, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+    def type_details: ((Symbol|nil) col, ?(FieldConfig|nil) prop, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
     # A button for expanding/contracting the controls column.
     #
@@ -644,26 +644,26 @@ class ManifestItemDecorator
   # @param [String, Symbol, nil] label
   # @param [*]                   value
   # @param [Symbol]              field
-  # @param [Hash]                prop
+  # @param [FieldConfig]         prop
   # @param [Integer, nil]        col
   # @param [Hash]                opt
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # @see file:javascripts/controllers/manifest-edit.js *updateFileUploaderCols*
   #
-  def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, ?col: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: FieldConfig, ?col: Integer|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # The edit element for a grid data cell.
   #
-  # @param [Symbol]    field          For 'data-field' attribute.
-  # @param [*]         value
-  # @param [Hash, nil] prop           Default: from field/model.
-  # @param [Hash]      opt
+  # @param [Symbol]           field   For 'data-field' attribute.
+  # @param [*]                value
+  # @param [FieldConfig, nil] prop    Default: from field/model.
+  # @param [Hash]             opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def grid_data_cell_edit: (Symbol field, untyped value, (symHash|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def grid_data_cell_edit: (Symbol field, untyped value, (FieldConfig|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   FILE_INPUT_TYPES: symArray
 

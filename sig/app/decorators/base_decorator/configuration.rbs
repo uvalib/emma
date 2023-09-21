@@ -52,49 +52,49 @@ module BaseDecorator::Configuration
   # @param [Symbol] action            Def: `context[:action]`
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig, nil]       Frozen result.
   #
-  def model_context_fields: (?(Symbol|nil) action, ?(Symbol|nil) `type`) -> (Hash[Symbol,symHash] | nil)
+  def model_context_fields: (?(Symbol|nil) action, ?(Symbol|nil) `type`) -> (ActionConfig | nil)
 
   # Get configured record fields relevant to an :index action for the model.
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def model_index_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+  def model_index_fields: (?(Symbol|nil) `type`) -> ActionConfig
 
   # Get configured record fields relevant to an :show action for the model.
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def model_show_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
-
-  # Get configured record fields for the model.
-  #
-  # @param [Symbol, nil] type         Def: controller associated with decorator
-  #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
-  #
-  def model_config: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+  def model_show_fields: (?(Symbol|nil) `type`) -> ActionConfig
 
   # Get all configured record fields for the model.
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def model_database_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+  def model_database_fields: (?(Symbol|nil) `type`) -> ActionConfig
 
   # Get all configured record fields for the model.
   #
   # @param [Symbol, nil] type         Def: controller associated with decorator
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def model_form_fields: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
+  def model_form_fields: (?(Symbol|nil) `type`) -> ActionConfig
+
+  # Get all fields for a model instance table entry.
+  #
+  # @param [Symbol, nil] type         Def: controller associated with decorator
+  #
+  # @return [ActionConfig]
+  #
+  def model_table_fields: (?(Symbol|nil) `type`) -> ActionConfig
 
   # Configuration properties for a field.
   #
@@ -105,23 +105,24 @@ module BaseDecorator::Configuration
   #
   def field_for: (Symbol field, **untyped opt) -> (Field::Type | nil)
 
-  # Configuration properties for a field.
+  # A working copy of the configuration properties for a field.
   #
   # @param [Symbol, String, nil] field
   # @param [Symbol, String, nil] action
   #
-  # @return [Hash]                    Frozen result.
+  # @return [FieldConfig]             Frozen if == FieldConfig::EMPTY.
   #
-  def field_configuration: ((Symbol|String|nil) field, ?(Symbol|String|nil) action, **untyped _ignored) -> Hash[Symbol,symHash]
+  def field_configuration: ((Symbol|String|nil) field, ?(Symbol|String|nil) action, **untyped _ignored) -> FieldConfig
 
-  # Find the field whose configuration entry has a matching label.
+  # A working copy of the configuration properties for a field which has a
+  # matching label.
   #
   # @param [String, Symbol, nil] label
   # @param [Symbol, String, nil] action
   #
-  # @return [Hash]                    Frozen result.
+  # @return [FieldConfig]             Frozen if == FieldConfig::EMPTY.
   #
-  def field_configuration_for_label: ((String|Symbol|nil) label, ?(Symbol|String|nil) action, **untyped _ignored) -> Hash[Symbol,symHash]
+  def field_configuration_for_label: ((String|Symbol|nil) label, ?(Symbol|String|nil) action, **untyped _ignored) -> FieldConfig
 
   # config_lookup
   #

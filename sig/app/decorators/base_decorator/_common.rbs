@@ -17,6 +17,8 @@ module BaseDecorator::Common
 
   include Emma::Json
 
+  include Emma::TypeMethods
+
   # HTML tags indicating construction of a <table>.
   #
   # For use with the :tag named option, any of these tags may be passed in to

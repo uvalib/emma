@@ -786,7 +786,7 @@ class Upload < ApplicationRecord
 
   # Configured requirements for Upload fields.
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
   def upload_fields
     Model.configuration_fields(:upload)[:all]

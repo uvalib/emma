@@ -292,9 +292,9 @@ class Upload < ApplicationRecord
 
   # Configured requirements for Upload fields.
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def upload_fields: () -> Hash[Symbol,symHash]
+  def upload_fields: () -> ActionConfig
 
   # Indicate whether all required fields have valid values.
   #

@@ -21,6 +21,9 @@ Boolean = Axiom::Types::Boolean
 class ScalarType
 
   include Comparable
+  include Emma::Common
+  include Emma::Constants
+  include Emma::TypeMethods
 
   # ===========================================================================
   # :section:
@@ -31,6 +34,7 @@ class ScalarType
   module Methods
 
     include Emma::Common
+    include Emma::Constants
 
     # =========================================================================
     # :section:
@@ -61,7 +65,21 @@ class ScalarType
     # @return [String]
     #
     def normalize(v)
-      v.to_s.strip
+      v = clean(v)
+      v.is_a?(String) ? v.strip : v.to_s
+    end
+
+    # Resolve an item into its value.
+    #
+    # @param [*] v
+    #
+    # @return [*]
+    #
+    def clean(v)
+      v = v.value if v.is_a?(Field::Type)
+      v = v.value if v.is_a?(ScalarType) && !v.is_a?(self_class)
+      v = nil     if v == EMPTY_VALUE
+      v.is_a?(Array) ? v.excluding(nil, EMPTY_VALUE) : v
     end
 
     # Type-cast an object to an instance of this type.
@@ -139,7 +157,7 @@ class ScalarType
   #
   # @param [*] v
   #
-  # @return [String]
+  # @return [String, nil]
   #
   def value=(v)
     set(v)
@@ -149,16 +167,17 @@ class ScalarType
   #
   # @param [*]       v
   # @param [Boolean] invalid          If *true* allow invalid value.
-  # @param [Boolean] nil_default      If *true* do not use #default.
+  # @param [Boolean] allow_nil        If *false* use #default if necessary.
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def set(v, invalid: false, nil_default: false, **)
+  def set(v, invalid: false, allow_nil: true, **)
+    v = nil if v == EMPTY_VALUE
     unless v.nil?
       @value = normalize(v)
       @value = nil unless valid?(@value)
     end
-    @value ||= (v if invalid) || (default unless nil_default)
+    @value ||= (v if invalid) || (default unless allow_nil)
   end
 
   # ===========================================================================
@@ -254,29 +273,6 @@ class ScalarType
   #
   def <=>(other)
     to_s <=> other.to_s
-  end
-
-  # ===========================================================================
-  # :section: Object class overrides
-  # ===========================================================================
-
-  public
-
-  # By default, Object#deep_dup will create a copy of an item, including values
-  # which are classes themselves, if the item says that it is duplicable.
-  #
-  # For items which are classes, e.g.:
-  #
-  #   { item: ScalarType }
-  #
-  # this would mean that the duplicated result would be something like:
-  #
-  #   { item: #<Class:0x00005590b0d928a8> }
-  #
-  # Returning *false* here prevents that.
-  #
-  def self.duplicable?
-    false
   end
 
   # ===========================================================================
@@ -392,12 +388,9 @@ class IsoDuration < ScalarType
     # @return [String]
     #
     def normalize(v)
-      case v
-        when ActiveSupport::Duration then return from_duration(v)
-        when IsoDuration             then return v.to_s
-        else                              v = v.to_s
-      end
-      MATCH_PATTERN.any? { |_, pattern| v.match?(pattern) } ? v : ''
+      v = clean(v)
+      v = nil if v.is_a?(String) && !MATCH_PATTERN.any? { |_, p| v.match?(p) }
+      v.is_a?(ActiveSupport::Duration) ? from_duration(v) : v.to_s
     end
 
     # =========================================================================
@@ -578,6 +571,8 @@ class IsoDate < ScalarType
     # @return [String, nil]
     #
     def normalize(v)
+      v = clean(v)
+      return v.value         if v.is_a?(self_class)
       v = strip_copyright(v) if v.is_a?(String)
       datetime_convert(v)
     end
@@ -973,6 +968,8 @@ class IsoYear < IsoDate
     # @return [String, nil]
     #
     def normalize(v)
+      v = clean(v)
+      return v.value         if v.is_a?(self_class)
       v = strip_copyright(v) if v.is_a?(String)
       year_convert(v)
     end
@@ -1042,6 +1039,8 @@ class IsoDay < IsoDate
     # @return [String, nil]
     #
     def normalize(v)
+      v = clean(v)
+      return v.value         if v.is_a?(self_class)
       v = strip_copyright(v) if v.is_a?(String)
       day_convert(v)
     end
@@ -1112,7 +1111,8 @@ class IsoLanguage < ScalarType
     # @return [String]
     #
     def normalize(v)
-      find(v)&.alpha3 || super(v)
+      v = super
+      find(v)&.alpha3 || v
     end
 
     # =========================================================================
@@ -1442,6 +1442,8 @@ class EnumType < ScalarType
     # @return [String]
     #
     def normalize(v)
+      v = clean(v)
+      return v.value if v.is_a?(self_class)
       (v = super).presence && mapping[comparable(v)] || v
     end
 
@@ -1509,17 +1511,19 @@ class EnumType < ScalarType
   #
   # @param [*]       v
   # @param [Boolean] invalid          If *true* allow invalid value.
-  # @param [Boolean] nil_default      If *true* do not use #default.
+  # @param [Boolean] allow_nil        If *false* use #default if necessary.
+  # @param [Boolean] warn             If *false* do not log invalid.
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def set(v, invalid: false, nil_default: false, **)
+  def set(v, invalid: false, allow_nil: true, warn: true, **)
+    v = nil if v == EMPTY_VALUE
     unless v.nil?
       @value = normalize(v)
       @value = nil unless valid?(@value)
-      Log.warn { "#{type}: #{v.inspect}: not in #{values}" } if @value.nil?
+      Log.warn { "#{type}: #{v.inspect}: not in #{values}" } if warn && !value
     end
-    @value ||= (v if invalid) || (default unless nil_default)
+    @value ||= (v if invalid) || (default unless allow_nil)
   end
 
   # ===========================================================================

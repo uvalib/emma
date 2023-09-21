@@ -135,28 +135,30 @@ module BaseDecorator::Form
 
   # Render a single label/value pair.
   #
-  # @param [String, Symbol] label
-  # @param [*]              value
-  # @param [Hash, nil]      prop        Default: from field/model.
-  # @param [Symbol]         field       For 'data-field' attribute.
-  # @param [Integer]        index       Offset for making unique element IDs.
-  # @param [Integer]        row         Display row.
-  # @param [Boolean]        disabled
-  # @param [Boolean]        required    For 'data-required' attribute.
-  # @param [Boolean]        no_label    Don't generate the label element.
-  # @param [Boolean]        no_help     Don't add help icon to the label.
-  # @param [String, nil]    label_css
-  # @param [String, nil]    value_css
-  # @param [Hash]           opt         To label/value except:
+  # @param [String, Symbol]   label
+  # @param [*]                value
+  # @param [FieldConfig, nil] prop        Default: from field/model.
+  # @param [Symbol, nil]      field       For 'data-field' attribute.
+  # @param [Integer, nil]     index       Offset for making unique element IDs.
+  # @param [Integer, nil]     row         Display row.
+  # @param [Integer, nil]     col         Display column.
+  # @param [Integer, nil]     pos         Ordinal alternative to row or col.
+  # @param [Boolean, nil]     disabled
+  # @param [Boolean, nil]     required    For 'data-required' attribute.
+  # @param [Boolean, nil]     no_label    Don't generate the label element.
+  # @param [Boolean, nil]     no_help     Don't add help icon to the label.
+  # @param [String, nil]      label_css
+  # @param [String, nil]      value_css
+  # @param [Hash]             opt         To label/value except:
   #
-  # @option opt [Symbol] :render        Force render method.
+  # @option opt [Symbol] :render          Force render method.
   # @option opt [String] :base
   # @option opt [String] :label_id
   # @option opt [String] :value_id
   #
-  # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
-  # @return [nil]                       If *field* is :ignored or disallowed
-  #                                       for the current user.
+  # @return [ActiveSupport::SafeBuffer]   HTML label and value elements.
+  # @return [nil]                         If *field* is :ignored or disallowed
+  #                                         for the current user.
   #
   # === Implementation Notes
   # Compare with BaseDecorator::List#render_pair
@@ -170,6 +172,8 @@ module BaseDecorator::Form
     field:      nil,
     index:      nil,
     row:        nil,
+    col:        nil,
+    pos:        nil,
     disabled:   nil,
     required:   nil,
     no_label:   nil,
@@ -250,6 +254,8 @@ module BaseDecorator::Form
 
     # Option settings for both label and value.
     prepend_css!(opt, type, *status)
+    prepend_css!(opt, "pos-#{pos}") if pos
+    prepend_css!(opt, "col-#{col}") if col
     prepend_css!(opt, "row-#{row}") if row
     parts = []
 

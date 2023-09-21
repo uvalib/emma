@@ -17,6 +17,7 @@ __loading_begin(__FILE__)
 #++
 class Ability
 
+  include Emma::TypeMethods
   include CanCan::Ability
   include Ability::Role
   include IdMethods

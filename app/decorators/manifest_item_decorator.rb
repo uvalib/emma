@@ -164,13 +164,13 @@ class ManifestItemDecorator < BaseDecorator
 
     # Get all configured record fields for the model.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @return [ActionConfig]
     #
     def model_form_fields(**)
-      other, db_fields = partition_hash(super, :file_data, :emma_data)
-      emma_data = other[:emma_data]&.except(*Field::PROPERTY_KEYS) || {}
-      emma_data.select! { |_, v| v.is_a?(Hash) }
-      db_fields.merge!(emma_data)
+      json_fields, db_fields = partition_hash(super, :file_data, :emma_data)
+      emma_data = json_fields[:emma_data]&.slice(*EMMA_DATA_FIELDS)
+      db_fields.merge!(emma_data) if emma_data.present?
+      ActionConfig.wrap(db_fields)
     end
 
     # =========================================================================
@@ -403,9 +403,8 @@ class ManifestItemDecorator < BaseDecorator
     def grid_head_control_headers(css: CONTROLS_CELL_CLASS, **opt)
       h_opt  = append_css(opt, 'hidden').except(:tag, :css, :'aria-colindex')
       hidden =
-        HIDDEN_FIELDS.map do |col|
-          cell_opt = h_opt.merge(config: field_configuration(col))
-          grid_head_cell(nil, **cell_opt)
+        HIDDEN_FIELDS.map do |f|
+          grid_head_cell(nil, **h_opt, prop: field_configuration(f))
         end
       idx  = opt[:'aria-colindex'] ||= 1
       l_id = opt[:'aria-labelledby'] = unique_id(css, index: idx)
@@ -428,20 +427,20 @@ class ManifestItemDecorator < BaseDecorator
     #
     def grid_head_cell(col, **opt, &block)
       return super if col.nil?
-      idx    = opt[:'aria-colindex']
-      l_id   = opt[:'aria-labelledby'] = unique_id(*opt[:css], index: idx)
-      config = opt[:config] ||= field_configuration(col)
+      idx  = opt[:'aria-colindex']
+      l_id = opt[:'aria-labelledby'] = unique_id(*opt[:css], index: idx)
+      prop = opt[:prop] ||= field_configuration(col)
       # noinspection RailsParamDefResolve
-      unless config[:pairs] || (pairs = config[:type].try(:pairs)).blank?
-        config = config.merge(pairs: pairs)
-        opt[:config] = opt[:config].merge(pairs: pairs.to_json)
+      unless prop[:pairs] || (pairs = prop[:type].try(:pairs)).blank?
+        prop = prop.merge(pairs: pairs)
+        opt[:prop] = opt[:prop].merge(pairs: pairs.to_json)
       end
-      if config[:required]
+      if prop[:required]
         opt[:label] =
           grid_head_label(css: 'label', id: l_id) do
             t_opt = { class: 'text' }
-            text  = opt[:label] || config&.dig(:label) || col.to_s
-            text  = html_span(text, t_opt) unless text.html_safe?
+            text  = opt[:label] || prop&.dig(:label) || col.to_s
+            text  = html_span(text, **t_opt) unless text.html_safe?
             n_opt = { class: 'required' }
             n_opt[:'aria-label'] = note = 'required' # TODO: I18n
             n_opt[:title] = "(#{note})"
@@ -453,8 +452,8 @@ class ManifestItemDecorator < BaseDecorator
       super(col, **opt) do
         # noinspection RubyMismatchedArgumentType
         control_group(l_id) do
-          parts << field_details(col, config)
-          parts << type_details(col, config)
+          parts << field_details(col, prop)
+          parts << type_details(col, prop)
         end
       end
     end
@@ -467,40 +466,40 @@ class ManifestItemDecorator < BaseDecorator
 
     # Generate a <detail> element describing a field.
     #
-    # @param [Symbol]    col
-    # @param [Hash, nil] cfg
-    # @param [Proc]      block        Passed to #html_details
+    # @param [Symbol]           col
+    # @param [FieldConfig, nil] prop
+    # @param [Proc]             blk   Passed to #html_details
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def field_details(col, cfg = nil, &block)
-      cfg ||= field_configuration(col)
-      tag   = 'field' # TODO: I18n
-      name  = cfg[:field] || col
-      req   = ('required' if cfg[:required]) # TODO: I18n
+    def field_details(col, prop = nil, &blk)
+      prop ||= field_configuration(col)
+      tag    = 'field' # TODO: I18n
+      name   = prop[:field] || col
+      req    = ('required' if prop[:required]) # TODO: I18n
 
-      tag   = html_span("#{tag}: ", class: 'tag')
-      name  = html_span(name, class: 'field-name')
-      req   = html_tag(:em, " (#{req})") if req
+      tag    = html_span("#{tag}: ", class: 'tag')
+      name   = html_span(name, class: 'field-name')
+      req    = html_tag(:em, " (#{req})") if req
 
-      first = safe_join([tag, name, req].compact)
-      lines = cfg[:notes_html] || cfg[:notes]
-      html_details(first, *lines, &block)
+      first  = safe_join([tag, name, req].compact)
+      lines  = prop[:notes_html] || prop[:notes]
+      html_details(first, *lines, &blk)
     end
 
     # Generate a <detail> element describing a type.
     #
-    # @param [Symbol]    col
-    # @param [Hash, nil] cfg
-    # @param [Proc]      block        Passed to #html_details
+    # @param [Symbol]           col
+    # @param [FieldConfig, nil] prop
+    # @param [Proc]             blk   Passed to #html_details
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def type_details(col, cfg = nil, &block)
-      cfg ||= field_configuration(col)
-      tag   = 'type' # TODO: I18n
-      many  = cfg[:array].presence
-      type  = cfg[:type]&.to_s || 'string'
+    def type_details(col, prop = nil, &blk)
+      prop ||= field_configuration(col)
+      tag    = 'type' # TODO: I18n
+      many   = prop[:array].presence
+      type   = prop[:type]&.to_s || 'string'
       # noinspection SpellCheckingInspection
       case type
         when /^text/     then name = 'string'
@@ -509,21 +508,20 @@ class ManifestItemDecorator < BaseDecorator
         when /^[A-Z]/    then name = "#{type} value".pluralize(many || 1) # TODO: I18n
         else                  name = type
       end
-      many  = 'one or more ' if many # TODO: I18n
 
-      tag   = html_span("#{tag}: ", class: 'tag')
-      many  = "#{many} " if many
-      name  = html_span(name, class: 'type-name')
-      first = safe_join([tag, many, name].compact)
-      lines =
-        if cfg[:pairs]
+      tag    = html_span("#{tag}: ", class: 'tag')
+      many   = 'one or more ' if many # TODO: I18n
+      name   = html_span(name, class: 'type-name')
+      first  = safe_join([tag, many, name].compact)
+      lines  =
+        if prop[:pairs]
           label_dt = 'Data value'   # TODO: I18n
           label_dd = 'Displayed as' # TODO: I18n
           html_tag(:dl) do
             opt = { class: 'label' } # First pair only
-            { label_dt => label_dd }.merge!(cfg[:pairs]).map do |value, label|
-              value = html_tag(:dt, value, opt)
-              label = html_tag(:dd, label, opt)
+            { label_dt => label_dd }.merge!(prop[:pairs]).map do |value, label|
+              value = html_tag(:dt, value, **opt)
+              label = html_tag(:dd, label, **opt)
               opt   = {}
               value << label
             end
@@ -531,7 +529,7 @@ class ManifestItemDecorator < BaseDecorator
         else
           "Description of #{type.inspect} to come..." # TODO: ...
         end
-      html_details(first, *lines, &block)
+      html_details(first, *lines, &blk)
     end
 
     # =========================================================================
@@ -815,7 +813,7 @@ class ManifestItemDecorator < BaseDecorator
         first = [*part[:title], *part[:author], *part[:identifier]].take(2)
         first = first.join(sep)
         uniq  = hex_rand
-        r_opt = { index: uniq, separator: sep, no_format: true, no_help: true }
+        r_opt = { index: uniq, separator: sep, no_fmt: true, no_help: true }
         lines = part.map { |k, v| render_pair(k.capitalize, v, **r_opt) } # TODO: I18n
         l_id  = 'label-%s' % (base || unique_id(css))
         item  = html_details(first, *lines, class: 'text', id: l_id)
@@ -1311,11 +1309,11 @@ class ManifestItemDecorator
   # @param [String, Symbol, nil] label
   # @param [*]                   value
   # @param [Symbol]              field
-  # @param [Hash]                prop
+  # @param [FieldConfig]         prop
   # @param [Integer, nil]        col
   # @param [Hash]                opt
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # @see file:javascripts/controllers/manifest-edit.js *updateFileUploaderCols*
   #
@@ -1342,10 +1340,10 @@ class ManifestItemDecorator
 
   # The edit element for a grid data cell.
   #
-  # @param [Symbol]    field          For 'data-field' attribute.
-  # @param [*]         value
-  # @param [Hash, nil] prop           Default: from field/model.
-  # @param [Hash]      opt
+  # @param [Symbol]           field   For 'data-field' attribute.
+  # @param [*]                value
+  # @param [FieldConfig, nil] prop    Default: from field/model.
+  # @param [Hash]             opt
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
@@ -1400,17 +1398,17 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def file_input_popup(src:, css: '.inline-popup', **opt)
-    config     = FILE_TYPE_CFG[src] || {}
-    type       = config[:type]  || src
-    type_class = config[:class] || "from-#{type}"
-    prepend_css!(opt, type_class)
+    prop     = FILE_TYPE_CFG[src] || {}
+    type     = prop[:type]  || src
+    type_css = prop[:class] || "from-#{type}"
 
-    id     = opt.delete(:id) || unique_id(type, index: 0)
-    button = file_input_ctrl(src: src, id: id, **opt)
-    panel  = file_input_panel(src: src, id: id, **opt)
+    id       = opt.delete(:id) || unique_id(type, index: 0)
+    button   = file_input_ctrl(src: src, id: id, **opt)
+    panel    = file_input_panel(src: src, id: id, **opt)
 
-    prepend_css!(opt, css).merge!('data-src': src, 'data-type': type)
-    html_div(opt) do
+    opt.merge!('data-src': src, 'data-type': type)
+    prepend_css!(opt, css, type_css)
+    html_div(**opt) do
       button << panel
     end
   end
@@ -1424,8 +1422,8 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def file_input_ctrl(src:, css: PopupHelper::POPUP_TOGGLE_CLASS, **opt)
-    config = FILE_TYPE_CFG[src] || {}
-    label  = config[:label]
+    prop  = FILE_TYPE_CFG[src] || {}
+    label = prop[:label]
     prepend_css!(opt, css)
     html_button(label, **opt)
   end
@@ -1440,18 +1438,17 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def file_input_panel(id:, src:, css: PopupHelper::POPUP_PANEL_CLASS, **opt)
-    config      = FILE_TYPE_CFG[src] || {}
-    type        = config[:type]  || src
-    type_class  = config[:class] || "from-#{type}"
-    panel_cfg   = config[:panel] || {}
+    prop        = FILE_TYPE_CFG[src] || {}
+    panel       = prop[:panel] || {}
+    type        = prop[:type]  || src
+    type_css    = prop[:class] || "from-#{type}"
     popup_id    = html_id(css, id, underscore: false)
 
     desc_id     = "label-#{popup_id}"
     desc_opt    = append_css(opt, 'description').merge!(id: desc_id)
-    description = config[:description]
-    description = html_span(description, desc_opt)
+    description = html_span(prop[:description], **desc_opt)
 
-    label       = panel_cfg[:label]
+    label       = panel[:label]
     name        = html_id(type || label)
     input_id    = html_id('input', id, underscore: false)
     input_opt   = append_css(opt, 'input')
@@ -1460,9 +1457,9 @@ class ManifestItemDecorator
 
     input_submit, input_cancel =
       %i[submit cancel].map do |key|
-        b_lbl = panel_cfg[key]
-        b_opt = append_css(input_opt, "input-#{key}", "#{type_class}-#{key}")
-        html_button(b_lbl, b_opt)
+        b_lbl = panel[key]
+        b_opt = append_css(input_opt, "input-#{key}", "#{type_css}-#{key}")
+        html_button(b_lbl, **b_opt)
       end
 
     opt[:'data-id']          = popup_id

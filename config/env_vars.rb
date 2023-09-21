@@ -471,6 +471,12 @@ DEBUG_AWS = true?(ENV['DEBUG_AWS'])
 #
 DEBUG_CABLE = true?(ENV['DEBUG_CABLE'])
 
+# Set to debug YAML configuration.
+#
+# @type [Boolean]
+#
+DEBUG_CONFIGURATION = true?(ENV['DEBUG_CONFIGURATION'])
+
 # Set to set the :debug option for Rack::Cors.
 #
 # @type [Boolean]

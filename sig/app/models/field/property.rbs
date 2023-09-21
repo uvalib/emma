@@ -1,0 +1,118 @@
+module Field::Property
+
+  # Record field configuration property keys found under "emma.*.record.*".
+  #
+  # @type [Array<Symbol>]
+  #
+  CONFIGURATION_KEYS: symArray
+
+  # Record field configuration property keys created dynamically.
+  #
+  # @type [Array<Symbol>]
+  #
+  SYNTHETIC_KEYS: symArray
+
+  # Record field configuration property keys within a Field::Type instance.
+  #
+  # @type [Array<Symbol>]
+  #
+  PROPERTY_KEYS: symArray
+
+  # Normalize entry values.
+  #
+  # @param [Hash]        prop         Passed to #normalize
+  # @param [Symbol, nil] field        Passed to #normalize
+  #
+  def normalize!: (symHash prop, ?(Symbol|nil) field) -> symHash
+
+  # Ensure that field entry values are cleaned up and have the expected type.
+  #
+  # @param [Hash, String, Symbol] prop
+  # @param [Symbol, nil]          field
+  #
+  # @option entry [Integer, nil]   :min
+  # @option entry [Integer, nil]   :max
+  # @option entry [String]         :label
+  # @option entry [String]         :tooltip
+  # @option entry [String, Array]  :help          Help popup topic/subtopic.
+  # @option entry [String]         :notes         Inline notes.
+  # @option entry [String]         :notes_html    Inline HTML notes.
+  # @option entry [String]         :placeholder   Input area placeholder text.
+  # @option entry [Symbol, String] :type          See Usage Notes [1]
+  # @option entry [String]         :origin
+  # @option entry [Symbol]         :role
+  #
+  # @return [Hash]
+  #
+  # === Usage Notes
+  # The :type indicates the type of HTML input element, either directly or
+  # indirectly.  If the value is a Symbol it is interpreted as a derivative of
+  # Model or EnumType which gives the range of values for a '<select>' element
+  # or the set of checkboxes to create within a 'role="listbox"' element.  Any
+  # other value indicates '<textarea>' or the '<input>' type attribute to use.
+  #
+  def normalize
+    : (Symbol           prop)                      -> symHash
+    | ((String|symHash) prop, ?(Symbol|nil) field) -> symHash
+
+  # Generate derived fields for an entry.
+  #
+  # @param [Hash{Symbol=>Any}] prop
+  # @param [Symbol, nil]       field
+  #
+  # @return [Hash{Symbol=>Any}]       The modified *prop* entry.
+  #
+  def finalize!: (symHash prop, ?(Symbol|nil) field) -> symHash
+
+  # Indicate whether the field configuration should be unused.
+  #
+  # @param [Hash]                prop
+  # @param [Symbol, String, nil] action
+  #
+  def unused?: (symHash prop, ?(Symbol|String|nil) action) -> bool
+
+  # Regenerate an entry with the fields in an order more helpful for logging.
+  #
+  # @param [Hash] prop                Passed to #reorder.
+  #
+  # @return [Hash]                    The modified *prop* entry.
+  #
+  def reorder!: (symHash prop) -> symHash
+
+  # Generate a copy of an entry with the fields in an order more helpful for
+  # logging.
+  #
+  # @param [Hash] prop
+  #
+  # @return [Hash]                    A modified copy of *prop*.
+  #
+  def reorder: (symHash prop) -> symHash
+
+  # Normalize :except and :only values.
+  #
+  # @param [Hash] prop
+  #
+  # @return [Hash]
+  #
+  def normalize_conditions: (symHash prop) -> symHash
+
+  # Return an enumeration or model class expressed or implied by *value*.
+  #
+  # @param [String, Symbol, Class, *] value
+  #
+  # @return [Class, nil]
+  #
+  def value_class: (untyped? value) -> (Class | nil)
+
+  private
+
+  # Cast *item* as an array of Symbols.
+  #
+  # @param [String, Symbol, Array] item
+  #
+  # @return [Array<Symbol>]
+  #
+  def symbol_array: ((String|Symbol|Array[String|Symbol]) item) -> symArray
+
+  def self.included: (Module base) -> void
+end

@@ -46,7 +46,7 @@ module BaseDecorator::List
   # @param [String, Symbol, nil] label
   # @param [*]                   value
   # @param [Symbol]              field
-  # @param [Hash]                prop
+  # @param [FieldConfig]         prop
   # @param [Hash]                opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -64,14 +64,16 @@ module BaseDecorator::List
   #
   # @param [String, Symbol, nil]  label
   # @param [*]                    value
-  # @param [Hash, nil]            prop      Default: from field/model.
+  # @param [FieldConfig, nil]     prop      Default: from field/model.
   # @param [Symbol, nil]          field
   # @param [String, Integer]      index     Offset to make unique element IDs.
   # @param [Integer, nil]         row       Display row.
+  # @param [Integer, nil]         col       Display column.
+  # @param [Integer, nil]         pos       Ordinal alternative to row or col.
   # @param [String, nil]          separator Between parts if *value* is array.
   # @param [String, nil]          wrap      Class for outer wrapper.
   # @param [Symbol]               tag       @see #HTML_TABLE_TAGS
-  # @param [Boolean,Symbol,Array] no_format
+  # @param [Boolean,Symbol,Array] no_fmt
   # @param [Boolean]              no_code
   # @param [Boolean]              no_label
   # @param [Boolean]              no_help
@@ -84,20 +86,20 @@ module BaseDecorator::List
   # @option opt [String] :label_id
   # @option opt [String] :value_id
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # @yield [fld, val, prp, **o] To supply part(s) after the .value element.
-  # @yieldparam [Symbol] fld          The field.
-  # @yieldparam [*]      val          The raw value.
-  # @yieldparam [Hash]   prp          The adjusted field properties.
-  # @yieldparam [Hash]   o            Options for #html_div.
+  # @yieldparam [Symbol]      fld     The field.
+  # @yieldparam [*]           val     The raw value.
+  # @yieldparam [FieldConfig] prp     The adjusted field properties.
+  # @yieldparam [Hash]        o       Options for #html_div.
   # @yieldreturn [Array, ActiveSupport::SafeBuffer, nil]
   #
   # === Usage Notes
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
-  def render_pair: ((String|Symbol|nil) label, untyped value, ?prop: symHash|nil, ?field: Symbol|nil, ?index: String|Integer|nil, ?row: Integer|nil, ?separator: String|nil, ?wrap: String|nil, ?tag: Symbol|nil, ?no_format: symArray|Symbol|bool|nil, ?no_code: bool|nil, ?no_label: bool|nil, ?no_help: bool|nil, ?label_css: String|nil, ?value_css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_pair: ((String|Symbol|nil) label, untyped value, ?prop: FieldConfig|nil, ?field: Symbol|nil, ?index: String|Integer|nil, ?row: Integer|nil, ?col: Integer|nil, ?pos: Integer|nil, ?separator: String|nil, ?wrap: String|nil, ?tag: Symbol|nil, ?no_fmt: symArray|Symbol|bool|nil, ?no_code: bool|nil, ?no_label: bool|nil, ?no_help: bool|nil, ?label_css: String|nil, ?value_css: String|nil, **untyped opt) ?{ (Symbol fld, untyped val, FieldConfig prp, **untyped o) -> (nil|ActiveSupport::SafeBuffer|Array[ActiveSupport::SafeBuffer])} -> (ActiveSupport::SafeBuffer | nil)
 
   # Displayed in place of a results list. # TODO: I18n
   #

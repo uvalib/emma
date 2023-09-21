@@ -5,6 +5,8 @@ class ApplicationRecord < ActiveRecord::Base
 
   include SqlMethods
 
+  include Emma::TypeMethods
+
   # A textual label for the record instance.
   #
   # @param [ApplicationRecord, nil] item  Default: self.

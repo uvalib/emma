@@ -21,6 +21,7 @@ module BaseDecorator::Common
   include Emma::Constants
   include Emma::Unicode
   include Emma::Json
+  include Emma::TypeMethods
 
   # ===========================================================================
   # :section:

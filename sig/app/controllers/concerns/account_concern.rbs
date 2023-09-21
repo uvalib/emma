@@ -110,24 +110,24 @@ module AccountConcern
 
   # Configured account record fields.
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @return [ActionConfig]            Frozen result.
   #
-  def account_fields: (*untyped _ignored) ?{ () -> untyped } -> Hash[Symbol,anyHash]
+  def account_fields: (*untyped _ignored) ?{ () -> untyped } -> ActionConfig
 
   # Get the appropriate message to display.
   #
-  # @param [Symbol]             action
-  # @param [Symbol]             outcome
-  # @param [Hash{Symbol=>Hash}] config
+  # @param [Symbol]       action
+  # @param [Symbol]       outcome
+  # @param [ActionConfig] config
   #
   # @return [String, nil]
   #
-  def message_for: (Symbol action, Symbol outcome, ?Hash[Symbol,anyHash] config) -> (String | nil)
+  def message_for: (Symbol action, Symbol outcome, ?ActionConfig config) -> (String | nil)
 
   # Get the appropriate terms for message interpolations.
   #
-  # @param [Symbol]             action
-  # @param [Hash{Symbol=>Hash}] config
+  # @param [Symbol]       action
+  # @param [ActionConfig] config
   #
   # @return [Hash{Symbol=>*}]
   #
