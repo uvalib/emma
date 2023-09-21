@@ -31,7 +31,7 @@ $border-fg:  var(--rev-fg-color);
     // Grid layout
     //=========================================================================
 
-    @include grid.column-classes($max-columns, 1fr);
+    @include grid.column-classes($max-columns, minmax(max-content,1fr));
     @include grid.cell-col-classes($max-columns);
 
     @media #{v.$not-narrow-screen} {
@@ -131,6 +131,16 @@ $border-fg:  var(--rev-fg-color);
         //=====================================================================
 
         thead {
+
+            tr.spanner {
+                display:        block;
+                position:       absolute;
+                height:         100%;
+                margin-top:     0;
+                padding-bottom: 0.5rem;
+                background:     $border-bg;
+            }
+
             th {
 
                 @include grid.row(1);
@@ -170,8 +180,6 @@ $border-fg:  var(--rev-fg-color);
 
             th {
 
-                height:     calc(100% - 0.75rem);
-                margin-top: 0.25rem;
                 background: none;
 
                 > * {

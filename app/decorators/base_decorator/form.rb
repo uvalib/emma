@@ -1177,9 +1177,7 @@ module BaseDecorator::Form
     # Radio button controls.
     controls =
       field_groups.map do |group, properties|
-        enabled = properties[:enabled].to_s
-        next if false?(enabled)
-        next if (enabled == 'debug') && !session_debug?
+        next unless user_has_role?(properties[:role])
 
         parts = []
 

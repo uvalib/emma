@@ -8,6 +8,12 @@
 // Debugging.
 //=============================================================================
 
+// Mark an area as being developer-only to help indicate that it won't be seen
+// by users with other roles.
+.dev-area {
+    background: $debug-bg;
+}
+
 .session-debug {
 
     word-break: break-word;
@@ -94,9 +100,14 @@
     }
 
     .toggle-panel-title {
+
         @media #{$narrow-screen} {
             margin:    calc(2 * #{$flex-gap-y}) 0;
             font-size: x-large;
+        }
+
+        .label {
+            @extend .dev-area;
         }
     }
 

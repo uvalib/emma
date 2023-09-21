@@ -29,8 +29,8 @@
   uploads   &&= user.can?(:create, Upload)
   manifests &&= user.can?(:create, Manifest)
 
-  uploads   &&= 'EMMA Submissions' # TODO: I18n
-  manifests &&= 'Bulk Upload Manifests' # TODO: I18n
+  uploads   &&= t('emma.upload.title')
+  manifests &&= t('emma.manifest.title')
 
   opt         = { level: (level + 1), filter: :user_id }
   uploads   &&= opt.merge(list: user.uploads,   title: uploads)

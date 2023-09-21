@@ -68,9 +68,9 @@ en:
             - [account, edit_current]
             - [account, list_org]
             - [account, list_all]
-            - [account, new]
-            - [account, edit_select]
-            - [account, delete_select]
+           #- [account, new]
+           #- [account, edit_select]
+           #- [account, delete_select]
 
         _endpoint:      true
 

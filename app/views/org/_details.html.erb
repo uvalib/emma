@@ -26,8 +26,8 @@
   uploads   ||= true
   manifests ||= true
 
-  uploads   &&= 'EMMA Submissions' # TODO: I18n
-  manifests &&= 'Bulk Upload Manifests' # TODO: I18n
+  uploads   &&= t('emma.upload.title')
+  manifests &&= t('emma.manifest.title')
 
   opt         = { level: (level + 1) }
   uploads   &&= opt.merge(list: org.uploads,   title: uploads)

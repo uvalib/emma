@@ -828,6 +828,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                     min-width:     unset;
                     margin:        0;
+                    color:         var(--fg-color);
                     border-radius: 50%;
 
                     &:focus {

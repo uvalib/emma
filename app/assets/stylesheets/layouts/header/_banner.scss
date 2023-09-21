@@ -262,11 +262,13 @@
     // sufficient to show the whole name.
     //
     .user {
-        max-width:     100%;
-        font-size:     smaller;
-        overflow:      hidden;
-        text-overflow: ellipsis;
-        flex:          0 1 auto;
+        max-width:      100%;
+        padding-top:    $gap-y;
+        padding-bottom: $gap-y;
+        font-size:      smaller;
+        overflow:       hidden;
+        text-overflow:  ellipsis;
+        flex:           0 1 auto;
     }
 
     // The "Sign in"/"Sign out" button.

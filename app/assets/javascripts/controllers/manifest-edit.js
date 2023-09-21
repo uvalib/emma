@@ -6050,9 +6050,7 @@ appSetup(MODULE, function() {
             if (errs) { v.errorTable = errs }
             return v;
         } else {
-            let f, p = prop;
-            p ||= (f = this.attr(FIELD_ATTR)) && fieldProperty()[f];
-            p ||= cellProperties(this);
+            const p = prop || cellProperties(this);
             return new Field.Value(v, p, errs);
         }
     };

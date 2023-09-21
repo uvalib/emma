@@ -138,7 +138,7 @@ en:
 
       show:
         label:          'Manifest'
-        title:          'Bulk Operation Manifest'
+        title:          'Bulk Upload Manifest'
         tooltip:        'Details of this manifest'
 
         display_fields: # @see 'en.emma.manifest_item.record'

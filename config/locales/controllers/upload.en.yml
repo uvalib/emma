@@ -13,10 +13,10 @@ en:
       # %{terms}        Current list of search terms.
 
       unit:
-        brief:          'upload'
+        brief:          'EMMA entry'
         long:           'uploaded file entry'
       label:            'Uploads'
-      title:            'Your Uploads'
+      title:            'EMMA Submissions'
       tooltip:          'Submit new items or review past uploads'
 
       subsystem:

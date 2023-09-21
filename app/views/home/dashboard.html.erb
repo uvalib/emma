@@ -26,4 +26,4 @@
 <%= render 'account/details', user: user %>
 
 <%= page_notes_section %>
-<%= render 'account/ability', user: user if session_debug? %>
+<%= render 'account/ability', user: user if developer? %>

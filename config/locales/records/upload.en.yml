@@ -167,8 +167,8 @@ en:
           # IR:   N/A
           min:          1
           max:          1
-          label:        'First Upload'
-          tooltip:      'Date of first upload'
+          label:        'Created'
+          tooltip:      'Initial date of this submission'
           notes_html:   |
             <em>TODO</em>
           type:         datetime
@@ -181,8 +181,8 @@ en:
           # IR:   N/A
           min:          1
           max:          1
-          label:        'Current Upload'
-          tooltip:      'Date of current upload'
+          label:        'Latest Change'
+          tooltip:      'Date of latest change to this submission'
           notes_html:   |
             <em>TODO</em>
           type:         datetime

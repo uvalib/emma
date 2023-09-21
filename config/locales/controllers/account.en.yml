@@ -9,7 +9,7 @@ en:
     account:
 
       unit:
-        brief:          'user'
+        brief:          'account'
         long:           'user account'
       label:            'Users'
       title:            'EMMA User Accounts'
@@ -54,9 +54,9 @@ en:
           - edit_current
           - list_org
           - list_all
-          - new
-          - edit_select
-          - delete_select
+         #- new
+         #- edit_select
+         #- delete_select
 
       # =======================================================================
       # Controls

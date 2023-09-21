@@ -52,25 +52,29 @@ en:
         ip_domain:
           min:          0
           max:          ~
-          label:        'IP domain'
+          label:        'Internet Domain'
           tooltip:      |
-            The IP address(es) for the organization's Shibboleth authentication
-            provider.
+            The hostname(s) or IP address(es) for the organization's Shibboleth
+            authentication provider.
             NOTE: This is not marked as "required" in order to simplify
             creating new organization entries, but it *will* have to have a
             value before users from this organization can login to EMMA.
-          type:         text
+          #type:         textarea
 
         provider:
           min:          0
           max:          1
           label:        'Auth Provider'
-          tooltip:      'The strategy used for authentication to EMMA'
+          tooltip:      |
+            The strategy used for authentication to EMMA.
+            NOTE: There is probably little reason for this field and it may
+            go away at some point.  Shibboleth authentication will be available
+            for the organization's users regardless of this value.
           type:         !ruby/symbol AuthProvider
 
-        contact:        # TODO: Actually a list of user accounts..................
+        contact:
           min:          0
-          max:          ~
+          max:          1
           label:        'Contact'
           tooltip:      |
             EMMA account name(s) for persons answerable for the organization.

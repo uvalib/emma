@@ -527,6 +527,7 @@ module BaseDecorator::Fields
   # @return [String, nil]
   #
   def format_datetime(value)
+    return if value.blank? || (value == EMPTY_VALUE)
     value.try(:to_datetime)&.strftime('%Y-%m-%dT%H:%M:%S')
   end
 

@@ -9,7 +9,7 @@
 
   name   = dec.object.email.presence || 'anonymous'
   label  = "Authorization for user #{name.inspect}" # TODO: I18n
-  label  = html_tag(:h2, label)
+  label  = html_tag(:h2, label, class: 'label')
 
 -%>
 
