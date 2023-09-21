@@ -159,7 +159,7 @@ en:
         success:        'Item created'
         failure:        'Could not create item: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -180,7 +180,7 @@ en:
         success:        'Changes saved'
         failure:        'Could not save changes: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -198,7 +198,7 @@ en:
         success:        'Item removed'
         failure:        'Could not remove item: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -238,7 +238,7 @@ en:
         success:        'Added manifest items from: %{files}'
         failure:        'Could not create items: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -275,7 +275,7 @@ en:
         success:        'Modified manifest items from: %{files}'
         failure:        'Could not modify items: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -306,7 +306,7 @@ en:
         cancel:
           <<:           *BULK_CANCEL
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================

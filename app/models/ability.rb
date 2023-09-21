@@ -18,6 +18,7 @@ __loading_begin(__FILE__)
 class Ability
 
   include CanCan::Ability
+  include Ability::Role
   include IdMethods
 
   # ===========================================================================
@@ -125,6 +126,7 @@ class Ability
   # Create a new instance.
   #
   # @param [User, nil] user
+  # @param [*, nil]    role
   #
   # === Usage Notes
   # Define abilities for the passed-in user here. For example:
@@ -154,21 +156,39 @@ class Ability
   # See the wiki for details:
   # @see https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   #
-  def initialize(user = nil)
+  def initialize(user = nil, role = nil)
     LOCAL_ACTION_ALIAS.each_pair do |name, actions|
       alias_action(*actions, to: name) unless actions.blank?
     end
+    user, role = [nil, user] unless user.is_a?(User) || role.nil?
+    # noinspection RubyMismatchedVariableType
+    @role = RolePrototype.cast(user&.role || role)
+    @role = RolePrototype(:anonymous) unless @role&.valid?
     # noinspection RubyMismatchedArgumentType
-    case Role.prototype_for(user)
+    case @role.to_sym
       when :developer     then act_as_developer(user)
       when :administrator then act_as_administrator(user)
       when :manager       then act_as_manager(user)
-      when :dso           then act_as_dso(user)
+      when :member        then act_as_full_member(user)
       when :staff         then act_as_staff(user)
       when :guest         then act_as_guest(user)
       else                     act_as_anonymous
     end
   end
+
+  # @type [RolePrototype]
+  attr_reader :role
+
+  # The role capabilities associated with the Ability instance.
+  #
+  # @return [Array<RoleCapability>]
+  #
+  def capabilities
+    @capabilities ||= CAPABILITIES[role.to_sym].map { |v| RoleCapability(v) }
+  end
+
+  alias :role_prototype    :role
+  alias :role_capabilities :capabilities
 
   # ===========================================================================
   # :section:
@@ -218,11 +238,11 @@ class Ability
   #
   def act_as_manager(user, **constraints)
     meth = constraints[:meth] || __method__
-    act_as_dso(user, **constraints)
+    act_as_full_member(user, **constraints)
     constraints[:org] ||= org_for(user, caller: meth) or
       return Log.warn { "#{meth}: no org for #{user.inspect}" }
     can_manage_user(**constraints)
-    can_manage_organization(**constraints)
+    can_manage_org(**constraints)
     cannot :edit_select,   Org
     cannot :delete_select, Org
   end
@@ -235,7 +255,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_dso(user, **constraints)
+  def act_as_full_member(user, **constraints)
     act_as_staff(user, **constraints)
     can :download, Upload
     can :retrieve, Upload
@@ -265,7 +285,7 @@ class Ability
   #
   def act_as_guest(user, **constraints)
     act_as_anonymous(user, **constraints)
-    act_as_organization_member(user, **constraints)
+    act_as_org_user(user, **constraints)
     can :dashboard, :all
   end
 
@@ -291,7 +311,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_organization_member(user, **constraints)
+  def act_as_org_user(user, **constraints)
     meth = constraints[:meth] || __method__
     constraints[:org] ||= org_for(user, caller: meth) or
       return Log.warn { "#{meth}: no org for #{user.inspect}" }
@@ -355,7 +375,7 @@ class Ability
   #
   # @return [void]
   #
-  def can_manage_organization(org = nil, **constraints)
+  def can_manage_org(org = nil, **constraints)
     constraints[:org] = org if org
     can_manage_identity(Org, **constraints)
   end
@@ -559,7 +579,7 @@ class Ability
     if no_bulk.nil? && constraints.present?
       no_bulk = identity_keys(model).intersect?(constraints.keys)
     end
-    Log.debug { "#{meth}: limited by #{constraints} for #{model}" } if no_bulk
+    Log.debug { "#{meth}: #{model}: limited by #{constraints}" } if no_bulk
 
     # === List/view resources
     can_view_content(model, meth: meth, **constraints)

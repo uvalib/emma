@@ -49,15 +49,7 @@ class OrgDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
-      unless administrator?
-        hash = opt[:constraints]&.dup || {}
-        user = hash.extract!(:user, :user_id).compact.values.first
-        org  = hash.extract!(:org, :org_id).compact.values.first
-        if !user && !org && (org = current_org).present?
-          added = { org: org }
-          opt[:constraints] = added.merge!(hash)
-        end
-      end
+      items_menu_role_constraints!(opt)
       opt[:sort] ||= { id: :asc }
       super(**opt)
     end

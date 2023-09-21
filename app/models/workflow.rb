@@ -64,19 +64,24 @@ module Workflow::Base::Roles
   #
   # @type [Symbol]
   #
-  DEFAULT_WF_ROLE = application_deployed? ? :system : :developer
+  DEFAULT_WF_ROLE = application_deployed? ? :system_wf : :developer_wf
 
-  # Workflow roles. # TODO: harmonize with existing roles
+  # Workflow roles.
+  #
+  # NOTE: These roles do not necessarily map directly on to the authorization
+  #   roles used elsewhere in the system.  At some point these need to be
+  #   harmonized -- perhaps at the point that reliance on the 'workflow' gem is
+  #   removed in favor of a more integrated approach.
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   WF_ROLE = {
-    user:           %i[submitter],
-    submitter:      [],
-    reviewer:       [],
-    administrator:  %i[submitter reviewer],
-    system:         %i[submitter reviewer administrator],
-    developer:      %i[user submitter reviewer administrator system]
+    user_wf:      %i[submitter_wf],
+    submitter_wf: [],
+    reviewer_wf:  [],
+    admin_wf:     %i[submitter_wf reviewer_wf],
+    system_wf:    %i[submitter_wf reviewer_wf admin_wf],
+    developer_wf: %i[user_wf submitter_wf reviewer_wf admin_wf system_wf],
   }.map { |primary, roles|
     all = [primary]
     if roles.present?
@@ -92,15 +97,15 @@ module Workflow::Base::Roles
 
   public
 
-  IF_USER       = { if: ->(wf) { wf.user? } }
-  IF_SUBMITTER  = { if: ->(wf) { wf.submitter? } }
-  IF_REVIEWER   = { if: ->(wf) { wf.reviewer? } }
-  IF_ADMIN      = { if: ->(wf) { wf.administrator? } }
-  IF_SYSTEM     = { if: ->(wf) { wf.system? } }
-  IF_DEV        = { if: ->(wf) { wf.developer? } }
+  IF_USER       = { if: ->(wf) { wf.user_wf? } }
+  IF_SUBMITTER  = { if: ->(wf) { wf.submitter_wf? } }
+  IF_REVIEWER   = { if: ->(wf) { wf.reviewer_wf? } }
+  IF_ADMIN      = { if: ->(wf) { wf.admin_wf? } }
+  IF_SYSTEM     = { if: ->(wf) { wf.system_wf? } }
+  IF_DEV        = { if: ->(wf) { wf.developer_wf? } }
 
-  IF_SYS_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.system? } }
-  IF_DEV_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.developer? } }
+  IF_SYS_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.system_wf? } }
+  IF_DEV_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.developer_wf? } }
 
   # ===========================================================================
   # :section:
@@ -158,9 +163,9 @@ module Workflow::Base::Roles
     return user                   if user.is_a?(Symbol)
     user = User.find(email: user) if user.is_a?(String)
     return                        if user.nil?
-    return :developer             if user.developer?
+    return :developer_wf          if user.developer?
     # TODO: role mapping
-    (user == 'emmadso@bookshare.org') ? :developer : :user
+    (user == 'emmadso@bookshare.org') ? :developer_wf : :user_wf
   end
 
   # ===========================================================================
@@ -174,8 +179,8 @@ module Workflow::Base::Roles
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def user?(u = nil)
-    wf_roles(u).include?(:user)
+  def user_wf?(u = nil)
+    wf_roles(u).include?(:user_wf)
   end
 
   # Indicate whether the instance is associated with a user acting in the
@@ -183,8 +188,8 @@ module Workflow::Base::Roles
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def submitter?(u = nil)
-    wf_roles(u).include?(:submitter)
+  def submitter_wf?(u = nil)
+    wf_roles(u).include?(:submitter_wf)
   end
 
   # Indicate whether the instance is associated with a user acting in the
@@ -192,8 +197,8 @@ module Workflow::Base::Roles
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def reviewer?(u = nil)
-    wf_roles(u).include?(:reviewer)
+  def reviewer_wf?(u = nil)
+    wf_roles(u).include?(:reviewer_wf)
   end
 
   # Indicate whether the instance is associated with an administrator user or
@@ -201,24 +206,24 @@ module Workflow::Base::Roles
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def administrator?(u = nil)
-    wf_roles(u).include?(:administrator)
+  def admin_wf?(u = nil)
+    wf_roles(u).include?(:admin_wf)
   end
 
   # Indicate whether the instance is associated with the system process.
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def system?(u = nil)
-    wf_roles(u).include?(:system)
+  def system_wf?(u = nil)
+    wf_roles(u).include?(:system_wf)
   end
 
   # Indicate whether the instance is associated with a developer.
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def developer?(u = nil)
-    wf_roles(u).include?(:developer)
+  def developer_wf?(u = nil)
+    wf_roles(u).include?(:developer_wf)
   end
 
   # The workflow role(s) for the given user.
@@ -1020,8 +1025,8 @@ class Workflow::Base
   public
 
   IF_DEBUG    = { if: ->(*)  { DEBUG_WORKFLOW } }
-  IF_COMPLETE = { if: ->(wf) { wf.user? && wf.complete? } }
-  IF_READY    = { if: ->(wf) { wf.user? && wf.ready? } }
+  IF_COMPLETE = { if: ->(wf) { wf.user_wf? && wf.complete? } }
+  IF_READY    = { if: ->(wf) { wf.user_wf? && wf.ready? } }
 
   # ===========================================================================
   # :section:

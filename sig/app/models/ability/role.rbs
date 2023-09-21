@@ -1,0 +1,37 @@
+module Ability::Role
+  # Role prototypes.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  ROLE_CONFIG: Hash[Symbol,symHash]
+
+  # Role capabilities.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  CAPABILITY_CONFIG: Hash[Symbol,symHash]
+
+  # Role capabilities for each role prototype.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  CAPABILITIES: Hash[Symbol,symArray]
+
+  # A mapping of role capability to the lowest role prototype supporting it.
+  #
+  # @type [Hash{Symbol,Symbol}]
+  #
+  CAPABILITY_ROLE: Hash[Symbol,Symbol]
+
+  private
+
+  def self.included: (Module base) -> void
+end
+
+# @see Ability::Role#ROLE_CONFIG
+class RolePrototype < EnumType
+end
+
+# @see Ability::Role#CAPABILITY_CONFIG
+class RoleCapability < EnumType
+end

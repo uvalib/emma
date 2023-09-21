@@ -1,0 +1,105 @@
+# config/locales/types/ability.en.yml
+#
+# Data type enumerations for roles.
+
+en:
+
+  emma:
+
+    role:
+
+      type:
+
+        RolePrototype:
+
+          anonymous:
+            label:        'Anonymous'
+            brief:        'Anon'
+            description:  'An unauthenticated user session'
+            capability:
+              - searching
+
+          guest:
+            label:        'Guest'
+            brief:        'Guest'
+            description:  'An organization user not involved in submitting to EMMA'
+            capability:
+              - searching
+
+          staff:
+            label:        'Staff'
+            brief:        'Staff'
+            description:  'An organization user involved in submitting to EMMA but not authorized to download'
+            capability:
+              - searching
+              - submitting
+
+          member:
+            label:        'Member'
+            brief:        'Member'
+            description:  'A full organization user'
+            capability:
+              - searching
+              - submitting
+              - downloading
+
+          manager:
+            label:        'Manager'
+            brief:        'Man'
+            description:  'A user able to make changes to an EMMA member organization and its users'
+            capability:
+              - searching
+              - submitting
+              - downloading
+              - managing
+
+          administrator:
+            label:        'Administrator'
+            brief:        'Admin'
+            description:  'An EMMA project team member'
+            capability:
+              - searching
+              - submitting
+              - downloading
+              - managing
+              - administering
+
+          developer:
+            label:        'Developer'
+            brief:        'Dev'
+            description:  'An EMMA project team member developer'
+            capability:
+              - searching
+              - submitting
+              - downloading
+              - managing
+              - administering
+              - developing
+
+        RoleCapability:
+
+          # Description implicitly begins with the phrase "The ability to...".
+
+          searching:
+            label:        'Searching'
+            description:  'get search results from the EMMA Federated Index'
+
+          submitting:
+            label:        'Submitting'
+            description:  'create/edit/delete EMMA submissions'
+
+          downloading:
+            label:        'Downloading'
+            description:  'create/edit/delete EMMA submissions'
+
+          managing:
+            label:        'Managing'
+            description:  'modify EMMA member organizations and their users'
+
+          administering:
+            label:        'Administering'
+            description:  'create/edit/delete all data records'
+
+          developing:
+            label:        'Developing'
+            description:  'create/edit/delete all data records'

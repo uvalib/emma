@@ -280,7 +280,7 @@ en:
         success:        'Saved manifest'
         failure:        'Could not save manifest: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -321,7 +321,7 @@ en:
         success:        'Saved changes to the manifest'
         failure:        'Could not save changes: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -358,7 +358,7 @@ en:
         success:        'Removed manifest'
         failure:        'Could not remove manifest: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -404,7 +404,7 @@ en:
         success:        'Manifest submission started'
         failure:        'Could not submit manifest: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================

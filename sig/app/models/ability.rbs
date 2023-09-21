@@ -8,6 +8,8 @@
 class Ability
   include CanCan::Ability
 
+  include Ability::Role
+
   include IdMethods
 
   # The standard CRUD actions controller presumed by CanCan.
@@ -56,6 +58,7 @@ class Ability
   # Create a new instance.
   #
   # @param [User, nil] user
+  # @param [*, nil]    role
   #
   # === Usage Notes
   # Define abilities for the passed-in user here. For example:
@@ -85,7 +88,22 @@ class Ability
   # See the wiki for details:
   # @see https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   #
-  def initialize: (?(User|nil) user) -> void
+  def initialize: (?(User|nil) user, ?(untyped|nil) role) -> void
+
+  # @type [RolePrototype]
+  attr_reader role: RolePrototype
+
+  # The role capabilities associated with the Ability instance.
+  #
+  # @return [Array<RoleCapability>]
+  #
+  def capabilities: () -> Array[RoleCapability]
+
+  @capabilities: Array[RoleCapability]
+
+  alias role_prototype role
+
+  alias role_capabilities capabilities
 
   # Assign the ability to perform as a system developer.
   #
@@ -127,7 +145,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_dso: (User user, **untyped constraints) -> void
+  def act_as_full_member: (User user, **untyped constraints) -> void
 
   # Assign the ability to perform as an EMMA member organization staff user who
   # is able to upload items but without the permission to download.
@@ -161,7 +179,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_organization_member: (User user, **untyped constraints) -> void
+  def act_as_org_user: (User user, **untyped constraints) -> void
 
   # Allow full (user-level) control over a single EMMA user account.
   #
@@ -196,7 +214,7 @@ class Ability
   #
   # @return [void]
   #
-  def can_manage_organization: (?(Org|Integer|nil) org, **untyped constraints) -> void
+  def can_manage_org: (?(Org|Integer|nil) org, **untyped constraints) -> void
 
   # Allow full (user-level) control over identity records.
   #

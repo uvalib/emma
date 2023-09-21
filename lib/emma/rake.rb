@@ -201,19 +201,7 @@ module Emma::Rake
   # @return [User, nil]
   #
   def current_user
-    @current_user ||=
-      begin
-        User.with_role(:developer).first
-      rescue
-        # No database for "rake assets:precompile" in Dockerfile, so default
-        # to setting up a fake user in a way that the database will not be
-        # accessed.
-        # noinspection RbsMissingTypeSignature
-        Struct.new(:id, :email) {
-          def developer?;     true; end
-          def administrator?; true; end
-        }.new(1, 'fake@virginia.edu')
-      end
+    @current_user ||= User.new(role: :developer)
   end
 
   # ===========================================================================

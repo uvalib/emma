@@ -9,8 +9,6 @@ class SearchResult < ApplicationRecord
 
   include Record::Assignable
 
-  include Record::Authorizable
-
   # Create a new instance.
   #
   # @param [SearchResult, Hash, nil] attr

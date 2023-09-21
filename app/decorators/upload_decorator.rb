@@ -319,15 +319,7 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
-      unless administrator?
-        hash = opt[:constraints]&.dup || {}
-        user = hash.extract!(:user, :user_id).compact.values.first
-        org  = hash.extract!(:org, :org_id).compact.values.first
-        if !user && !org && (user = current_user).present?
-          added = (org = user.org) ? { org: org } : { user: user }
-          opt[:constraints] = added.merge!(hash)
-        end
-      end
+      items_menu_role_constraints!(opt)
       opt[:sort] ||= { id: :desc } if administrator? || manager?
       trace_attrs!(opt)
       super(**opt)
@@ -683,18 +675,7 @@ class UploadDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_menu_single(name, value, **opt)
-    constraints = nil
-    if administrator?
-      case opt[:range].try(:model_type)
-        when :user then constraints = { prepend: { 0 => 'NONE' } };
-      end
-    elsif current_org
-      case opt[:range].try(:model_type)
-        when :user then constraints = { org: current_org }
-      end
-    end
-    opt[:constraints] = opt[:constraints]&.dup || {} if constraints
-    opt.merge!(constraints: constraints)             if constraints
+    form_menu_role_constraints!(opt)
     super(name, value, **opt)
   end
 

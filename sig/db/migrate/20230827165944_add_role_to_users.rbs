@@ -1,0 +1,3 @@
+class AddRoleToUsers < ActiveRecord::Migration
+  def change: () -> untyped
+end

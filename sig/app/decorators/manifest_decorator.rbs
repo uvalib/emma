@@ -261,6 +261,16 @@ class ManifestDecorator
   #
   def grid_head_control_headers: (**untyped opt) -> Array[ActiveSupport::SafeBuffer]
 
+  # Single-select menu - drop-down.
+  #
+  # @param [String]      name
+  # @param [Array]       value
+  # @param [Hash]        opt          Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_form_menu_single: (String name, anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Basic form controls, including #import_button if appropriate.
   #
   # @param [Hash] opt

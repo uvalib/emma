@@ -74,7 +74,6 @@ gem 'jbuilder'
 # == AuthN/AuthZ
 gem 'cancancan'
 gem 'devise'
-gem 'rolify'
 
 gem 'oauth2', '~> 1.4'
 gem 'omniauth', '~> 2.1'

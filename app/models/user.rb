@@ -23,8 +23,6 @@ class User < ApplicationRecord
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include Rolify
-    include Rolify::Role
     include Devise::Models::DatabaseAuthenticatable
     include Devise::Models::Rememberable
     include Devise::Models::Trackable
@@ -67,12 +65,6 @@ class User < ApplicationRecord
          :omniauthable, omniauth_providers: AUTH_PROVIDERS
 
   # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  rolify
-
-  # ===========================================================================
   # :section: ActiveRecord validations
   # ===========================================================================
 
@@ -81,12 +73,6 @@ class User < ApplicationRecord
       errors.add(:base, message: 'User ID must be a valid email address')
     end
   end
-
-  # ===========================================================================
-  # :section: ActiveRecord callbacks
-  # ===========================================================================
-
-  after_create :assign_default_role
 
   # ===========================================================================
   # :section: ApplicationRecord overrides
@@ -241,7 +227,7 @@ class User < ApplicationRecord
     @ability ||= Ability.new(self)
   end
 
-  delegate :can?, :cannot?, to: :ability
+  delegate :can?, :cannot?, :role_prototype, :capabilities, to: :ability
 
   # ===========================================================================
   # :section:
@@ -331,79 +317,29 @@ class User < ApplicationRecord
     @manager
   end
 
-  # The user's EMMA roles.
-  #
-  # @return [Array<Symbol>]
-  #
-  def role_list
-    roles.map(&:name).map(&:to_sym)
-  end
-
   # ===========================================================================
-  # :section: ActiveRecord callbacks
-  # ===========================================================================
-
-  protected
-
-  # assign_default_role
-  #
-  # @return [void]
-  #
-  # === Implementation Notes
-  # A new User will be created the first time a new person authenticates via    # if BS_AUTH
-  # Bookshare -- this may be the place to query the Bookshare API for that
-  # user's Bookshare role in order to map it onto EMMA "prototype user".
-  #
-  def assign_default_role
-    prototype_user = account.blank? ? :anonymous : test_users[account]
-    add_roles(prototype_user)
-  end
-
-  # ===========================================================================
-  # :section: ActiveRecord callbacks
-  # ===========================================================================
-
-  private
-
-  # Add EMMA role(s) to the current user based on its prototype.
-  #
-  # @param [Symbol, nil] prototype    Default: `Role#DEFAULT_PROTOTYPE`.
-  #
-  # @return [Array<Role>]             Added role(s).
-  #
-  def add_roles(prototype = nil)
-    prototype ||= Role::DEFAULT_PROTOTYPE
-    added_roles = Role::PROTOTYPE[prototype]
-    if added_roles.blank?
-      Log.error("#{__method__}: invalid prototype #{prototype.inspect}")
-      added_roles = Role::PROTOTYPE[:anonymous]
-    end
-    added_roles.map { |role| add_role(role) }
-  end
-
-  # ===========================================================================
-  # :section: Rolify::Role overrides
+  # :section:
   # ===========================================================================
 
   public
 
-  # Extend Rolify #has_role? to first check for role prototype.
+  # Check for role prototype or role capability.
   #
-  # Always returns *false* if *role* is blank.
+  # Always returns *false* if *value* is blank.
   #
-  # @param [String, Symbol, nil]                   role
-  # @param [Symbol, Class, ApplicationRecord, nil] resource
+  # @param [RolePrototype, RoleCapability, String, Symbol, nil] value
   #
-  def has_role?(role, resource = nil)
-    return false if role.blank?
-    role = role.to_s.strip.to_sym if role.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
-    if resource.nil?
-      (role == Role.prototype_for(self)) || super(role)
-    elsif resource.is_a?(User)
-      (role == Role.prototype_for(resource)) || super(role, resource)
+  def has_role?(value)
+    return false if value.blank?
+    if (role = RolePrototype.cast(value)).valid?
+      (role_prototype == role) ||
+        capabilities.any? do |c|
+          Ability::CAPABILITY_ROLE[c.to_sym] == role.to_sym
+        end
+    elsif (cap = RoleCapability.cast(value)).valid?
+      capabilities.include?(cap)
     else
-      super(role, resource)
+      Log.error("#{__method__}: invalid: #{value.inspect}") or false
     end
   end
 
@@ -425,10 +361,8 @@ class User < ApplicationRecord
       begin
         test_names = %w[test\\_%@%]
         test_names << 'emma%@bookshare.org' if BS_AUTH
-        uid_like   = test_names.map { 'email LIKE ?' }.join(' OR ')
-        where(uid_like, *test_names).map { |u|
-          [u.email, Role.prototype_for(u)]
-        }.to_h
+        email_like = test_names.map { 'email LIKE ?' }.join(' OR ')
+        where(email_like, *test_names).map { |u| [u.email, u.role] }.to_h
       end
   end
 

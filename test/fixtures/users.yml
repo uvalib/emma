@@ -18,7 +18,7 @@ test_guest_1:   &GUEST
   first_name:   EMMA Automated
   last_name:    Test Organization Guest
   org:          one
-  roles:        searcher
+  role:         guest
   access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
 
 test_staff_1:   &STAFF
@@ -26,15 +26,15 @@ test_staff_1:   &STAFF
   first_name:   EMMA Automated
   last_name:    Test Organization Staff
   org:          one
-  roles:        searcher, submitter
+  role:         staff
   access_token: <%= ENV['EMMACOLLECTION_TOKEN'] if BS_AUTH %>
 
-test_dso_1:     &DSO
+test_dso_1:     &MEMBER
   email:        test_dso_1@one_university.edu
   first_name:   EMMA Automated
   last_name:    Test Organization DSO
   org:          one
-  roles:        searcher, submitter, downloader
+  role:         member
   access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
 
 test_man_1:     &MAN
@@ -42,7 +42,7 @@ test_man_1:     &MAN
   first_name:   EMMA Automated
   last_name:    Test Organization Manager
   org:          one
-  roles:        searcher, submitter, downloader, manager
+  role:         manager
   access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
 
 # =============================================================================
@@ -60,7 +60,7 @@ test_staff_2:
   org:          two
 
 test_dso_2:
-  <<:           *DSO
+  <<:           *MEMBER
   email:        test_dso_2@two_university.edu
   org:          two
 
@@ -78,14 +78,14 @@ test_adm:       &ADM
   first_name:   EMMA Automated
   last_name:    Test EMMA Administrator
   org:          ~
-  roles:        searcher, submitter, downloader, manager, administrator
+  role:         administrator
 
 test_dev:       &DEV
   email:        test_dev@virginia.edu
   first_name:   EMMA Automated
   last_name:    Test EMMA Developer
   org:          ~
-  roles:        searcher, submitter, downloader, manager, administrator, developer
+  role:         developer
 
 # =============================================================================
 # Examples
@@ -97,7 +97,7 @@ example:        &EXAMPLE
   org:          three
 
 edit_example:
-  <<:           *DSO
+  <<:           *MEMBER
   email:        test_edit_example@three_university.edu
   org:          three
 

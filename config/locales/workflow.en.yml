@@ -45,16 +45,13 @@ en:
               debug:      true
             create:
               to:         creating
-              role:       [user, administrator, system]
-             #role:       submitter
+              role:       [user_wf, admin_wf, system_wf]
             edit:
               to:         editing
-              role:       [user, administrator, system]
-             #role:       submitter
+              role:       [user_wf, admin_wf, system_wf]
             remove:
               to:         removing
-              role:       [user, administrator, system]
-             #role:       submitter
+              role:       [user_wf, admin_wf, system_wf]
 
       _create_states:     &CREATE_STATES # = Create new entry =
 
@@ -63,55 +60,55 @@ en:
           event:          &CREATING_EVENTS
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
             submit:
               to:         submitting
-              role:       user
+              role:       user_wf
             upload:
               to:         validating
-              role:       user
+              role:       user_wf
 
         validating:       &VALIDATING_STATE
           label:          'VALIDATING'
           event:          &VALIDATING_EVENTS
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             reject:
               to:         creating
-              role:       system
+              role:       system_wf
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
             submit:
               to:         submitting
-              role:       user
+              role:       user_wf
 
         submitting:       &SUBMITTING_STATE
           label:          'SUBMITTING'
           event:          &SUBMITTING_EVENTS
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             reject:
               to:         creating
-              role:       system
+              role:       system_wf
             advance:
               to:         submitted
-              role:       system
+              role:       system_wf
 
         submitted:        &SUBMITTED_STATE
           label:          'SUBMITTED'
           event:          &SUBMITTED_EVENTS
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             schedule:
               to:         scheduling
-              role:       system
+              role:       system_wf
             advance:
               to:         staging
-              role:       system
+              role:       system_wf
 
       _edit_states:       &EDIT_STATES # = Modify existing entry =
 
@@ -120,42 +117,42 @@ en:
           event:          &EDITING_EVENTS
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
             submit:
               to:         modifying
-              role:       user
+              role:       user_wf
             upload:
               to:         replacing
-              role:       user
+              role:       user_wf
 
         replacing:        &REPLACING_STATE
           label:          'REPLACING'
           event:          &REPLACING_EVENTS
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             reject:
               to:         editing
-              role:       system
+              role:       system_wf
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
             submit:
               to:         modifying
-              role:       user
+              role:       user_wf
 
         modifying:        &MODIFYING_STATE
           label:          'MODIFYING'
           event:          &MODIFYING_EVENTS
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             reject:
               to:         editing
-              role:       system
+              role:       system_wf
             advance:
               to:         modified
-              role:       system
+              role:       system_wf
 
         modified:         &MODIFIED_STATE
           label:          'MODIFIED'
@@ -169,20 +166,20 @@ en:
           event:          &REMOVING_EVENTS
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
             submit:
               to:         removed
-              role:       user
+              role:       user_wf
 
         removed:          &REMOVED_STATE
           label:          'REMOVED'
           event:          &REMOVED_EVENTS
             fail:
               to:         failed
-              role:       system
+              role:       system_wf
             advance:
               to:         staging
-              role:       system
+              role:       system_wf
 
       _review_states:     &REVIEW_STATES # Sub-sequence: Review
 
@@ -191,23 +188,23 @@ en:
           event:          &SCHEDULING_EVENTS
             assign:
               to:         assigned
-              role:       system
+              role:       system_wf
             advance:
               to:         assigning
-              role:       system
+              role:       system_wf
 
         assigning:        &ASSIGNING_STATE
           label:          'ASSIGNING'
           event:          &ASSIGNING_EVENTS
             hold:
               to:         holding
-              role:       system
+              role:       system_wf
             assign:
               to:         assigned
-              role:       system
+              role:       system_wf
             advance:
               to:         assigned
-              role:       system
+              role:       system_wf
 
         holding:          &HOLDING_STATE
           label:          'HOLDING'
@@ -215,22 +212,22 @@ en:
           event:          &HOLDING_EVENTS
             edit:
               to:         editing
-              role:       user
+              role:       user_wf
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             timeout:
               to:         holding
-              role:       system
+              role:       system_wf
             fail:
               to:         failed
-              role:       system
+              role:       system_wf
             advance:
               to:         assigning
-              role:       system
+              role:       system_wf
 
         assigned:         &ASSIGNED_STATE
           label:          'ASSIGNED'
@@ -238,46 +235,46 @@ en:
           event:          &ASSIGNED_EVENTS
             edit:
               to:         editing
-              role:       user
+              role:       user_wf
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             review:
               to:         reviewing
-              role:       system
+              role:       system_wf
 
         reviewing:        &REVIEWING_STATE
           label:          'REVIEWING'
           event:          &REVIEWING_EVENTS
             reject:
               to:         rejected
-              role:       reviewer
+              role:       reviewer_wf
             approve:
               to:         approved
-              role:       reviewer
+              role:       reviewer_wf
 
         rejected:         &REJECTED_STATE
           label:          'RETURNED'
           event:          &REJECTED_EVENTS
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             edit:
               to:         editing
-              role:       user
+              role:       user_wf
             cancel:
               to:         canceled
-              role:       user
+              role:       user_wf
 
         approved:         &APPROVED_STATE
           label:          'APPROVED'
           event:          &APPROVED_EVENTS
             advance:
               to:         staging
-              role:       system
+              role:       system_wf
 
       _submit_states:     &SUBMIT_STATES # Sub-sequence: Submission
 
@@ -286,10 +283,10 @@ en:
           event:          &STAGING_EVENTS
             index:
               to:         indexing
-              role:       system
+              role:       system_wf
             advance:
               to:         unretrieved
-              role:       system
+              role:       system_wf
 
         unretrieved:      &UNRETRIEVED_STATE
           label:          'UNRETRIEVED'
@@ -297,20 +294,20 @@ en:
           event:          &UNRETRIEVED_EVENTS
             fail:
               to:         failed
-              role:       system
+              role:       system_wf
             timeout:
               to:         unretrieved
-              role:       system
+              role:       system_wf
             advance:
               to:         retrieved
-              role:       system
+              role:       system_wf
 
         retrieved:        &RETRIEVED_STATE
           label:          'RETRIEVED'
           event:          &RETRIEVED_EVENTS
             advance:
               to:         indexing
-              role:       system
+              role:       system_wf
 
       _index_states:      &INDEX_STATES # Sub-sequence: Finalization
 
@@ -320,20 +317,20 @@ en:
           event:          &INDEXING_EVENTS
             fail:
               to:         failed
-              role:       system
+              role:       system_wf
             timeout:
               to:         indexing
-              role:       system
+              role:       system_wf
             advance:
               to:         indexed
-              role:       system
+              role:       system_wf
 
         indexed:          &INDEXED_STATE
           label:          'INDEXED'
           event:          &INDEXED_EVENTS
             advance:
               to:         completed
-              role:       system
+              role:       system_wf
 
       _terminal_states:   &TERMINAL_STATES # Sub-sequence: Termination
 
@@ -342,14 +339,14 @@ en:
           event:          &SUSPENDED_EVENTS
             purge:
               to:         purged
-              role:       admin
+              role:       admin_wf
             reset:
               to:         starting
-              role:       dev
+              role:       developer_wf
               debug:      true
             resume:
               to:         resuming
-              role:       dev
+              role:       developer_wf
 
         failed:           &FAILED_STATE
           label:          'FAILED'
@@ -429,7 +426,7 @@ en:
                 disabled: true
               reject:
                 to:       failed
-                role:     system
+                role:     system_wf
 
           submitted:
             <<:           *SUBMITTED_STATE
@@ -458,7 +455,7 @@ en:
                 disabled: true
               reject:
                 to:       failed
-                role:     system
+                role:     system_wf
 
           modified:
             <<:           *MODIFIED_STATE

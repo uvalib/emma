@@ -16,7 +16,6 @@ class ManifestItem < ApplicationRecord
   include Record::EmmaData
   include Record::FileData
   include Record::Assignable
-  include Record::Authorizable
   include Record::Describable
   include Record::Searchable
   include Record::Updatable

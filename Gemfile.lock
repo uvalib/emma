@@ -316,7 +316,6 @@ GEM
       actionpack (>= 5.2)
       railties (>= 5.2)
     rexml (3.2.6)
-    rolify (6.0.1)
     ruby-rc4 (0.1.5)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
@@ -418,7 +417,6 @@ DEPENDENCIES
   rails (~> 7)
   rbs
   representable (~> 3.0, < 3.1)
-  rolify
   sanitize
   selenium-webdriver
   shrine (~> 3.0)

@@ -11,7 +11,6 @@ class Manifest < ApplicationRecord
 
   include Record
   include Record::Assignable
-  include Record::Authorizable
   include Record::Describable
   include Record::Searchable
 

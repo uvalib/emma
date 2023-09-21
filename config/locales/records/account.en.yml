@@ -42,6 +42,16 @@ en:
             the account name of the remote authentication provider.
           type:         !ruby/symbol Org
 
+        role:
+          min:          1
+          max:          1
+          label:        'Role'
+          tooltip:      |
+            How this user interacts with the system.
+          notes:        |
+            See documentation for details. TBD # TODO
+          type:         !ruby/symbol RolePrototype
+
         email:
           min:          1
           max:          1

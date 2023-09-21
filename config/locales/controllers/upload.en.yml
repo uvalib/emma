@@ -457,7 +457,7 @@ en:
         success:        'Created EMMA entry for: %{file}'
         failure:        'Could not create entry: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -505,7 +505,7 @@ en:
         success:        'Updated EMMA entry for %{file}'
         failure:        'Could not update EMMA entry: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -559,7 +559,7 @@ en:
         success:        'Removed EMMA entry for %{file}'
         failure:        'Could not remove EMMA entry: %{error}'
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -615,7 +615,7 @@ en:
 
         <<: *EXPERIMENTAL
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -646,7 +646,7 @@ en:
 
         <<: *EXPERIMENTAL
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -689,7 +689,7 @@ en:
 
         <<: *EXPERIMENTAL
 
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================
@@ -700,7 +700,7 @@ en:
         tooltip:        |
           Update submissions' entries in the EMMA Unified Index
         description:    'TODO: ???'
-        role:           submitter
+        role:           staff
         _endpoint:      true
 
       # =======================================================================

@@ -11,7 +11,6 @@ class Org < ApplicationRecord
 
   include Record
   include Record::Assignable
-  include Record::Authorizable
   include Record::Searchable
 
   include Record::Testing

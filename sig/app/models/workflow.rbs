@@ -48,7 +48,12 @@ module Workflow::Base::Roles
   #
   DEFAULT_WF_ROLE: Symbol
 
-  # Workflow roles. # TODO: harmonize with existing roles
+  # Workflow roles.
+  #
+  # NOTE: These roles do not necessarily map directly on to the authorization
+  #   roles used elsewhere in the system.  At some point these need to be
+  #   harmonized -- perhaps at the point that reliance on the 'workflow' gem is
+  #   removed in favor of a more integrated approach.
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
@@ -115,40 +120,40 @@ module Workflow::Base::Roles
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def user?: (?(User|String|Symbol|nil) u) -> bool
+  def user_wf?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def submitter?: (?(User|String|Symbol|nil) u) -> bool
+  def submitter_wf?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a reviewer.
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def reviewer?: (?(User|String|Symbol|nil) u) -> bool
+  def reviewer_wf?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with an administrator user or
   # process.
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def administrator?: (?(User|String|Symbol|nil) u) -> bool
+  def admin_wf?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with the system process.
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def system?: (?(User|String|Symbol|nil) u) -> bool
+  def system_wf?: (?(User|String|Symbol|nil) u) -> bool
 
   # Indicate whether the instance is associated with a developer.
   #
   # @param [User, String, Symbol, nil] u    @see #wf_roles
   #
-  def developer?: (?(User|String|Symbol|nil) u) -> bool
+  def developer_wf?: (?(User|String|Symbol|nil) u) -> bool
 
   # The workflow role(s) for the given user.
   #

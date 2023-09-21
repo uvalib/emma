@@ -96,15 +96,7 @@ class AccountDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
-      unless administrator?
-        hash = opt[:constraints]&.dup || {}
-        user = hash.extract!(:user, :user_id).compact.values.first
-        org  = hash.extract!(:org, :org_id).compact.values.first
-        if !user && !org && (user = current_user).present?
-          added = (org = user.org) ? { org: org } : { user: user }
-          opt[:constraints] = added.merge!(hash)
-        end
-      end
+      items_menu_role_constraints!(opt)
       opt[:sort] ||= { id: :asc }
       super(**opt)
     end
@@ -227,60 +219,6 @@ class AccountDecorator
   end
 
   # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  public
-
-  # Transform a field value for HTML rendering.
-  #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to the render method or super.
-  #
-  # @return [Any]                     HTML or scalar value.
-  # @return [nil]                     If *value* or *object* is *nil*.
-  #
-  def render_value(value, field:, **opt)
-    (value.to_s == 'roles') ? roles(**opt) : super
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Create a list of User roles.
-  #
-  # @param [Hash] opt                 Passed to #html_tag
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def roles(**opt)
-    roles = present? && object.role_list || []
-    html_tag(:ul, opt) do
-      roles.map do |role|
-        html_tag(:li, role)
-      end
-    end
-  end
-
-  # Create a single term which describes the role level of *item*.
-  #
-  # @param [Hash] opt                 Passed to #html_tag
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def role_prototype(**opt)
-    prototype = Role.prototype_for(object)
-    prepend_css!(opt, 'role-prototype')
-    html_div(opt) do
-      (prototype == :dso) ? 'DSO' : prototype.to_s.titleize
-    end
-  end
-
-  # ===========================================================================
   # :section: BaseDecorator::Table overrides
   # ===========================================================================
 
@@ -362,20 +300,7 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_menu_single(name, value, **opt)
-    constraints = nil
-    if administrator?
-      case opt[:range].try(:model_type)
-        when :user then constraints = { prepend: { 0 => 'NONE' } };
-        when :org  then constraints = { prepend: { 0 => 'NONE' } };
-      end
-    elsif current_org
-      case opt[:range].try(:model_type)
-        when :user then constraints = { org: current_org }
-        when :org  then opt[:fixed] = true
-      end
-    end
-    opt[:constraints] = opt[:constraints]&.dup || {} if constraints
-    opt.merge!(constraints: constraints)             if constraints
+    form_menu_role_constraints!(opt)
     super(name, value, **opt)
   end
 

@@ -179,11 +179,6 @@ module TestHelper::Common
 
     # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
     # @param [Array<Symbol|String>] name
-    # @return [Role, Array<Role>]
-    def roles(*name) end
-
-    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
-    # @param [Array<Symbol|String>] name
     # @return [SearchCall, Array<SearchCall>]
     def search_calls(*name) end
 

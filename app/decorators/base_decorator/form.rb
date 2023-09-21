@@ -380,12 +380,18 @@ module BaseDecorator::Form
     name     = opt[:name] || name || opt[:base] || field
     selected = Array.wrap(value).compact.presence || ['']
 
-    # noinspection RailsParamDefResolve
-    pairs = range.try(:pairs, **(opt[:constraints] || {})) || Array.wrap(range)
-    menu  =
+    pairs =
+      if range.is_a?(Class)
+        p_opt = opt[:constraints]&.dup || {}
+        skip  = Array.wrap(p_opt.delete(:except)).map(&:to_s)
+        range.pairs(**p_opt).except(*skip)
+      end
+    pairs ||= range.dup
+
+    menu =
       pairs.map do |item_value, item_label|
         item_value = item_value.to_s
-        item_label ||= item_value.titleize
+        item_label = item_value.titleize if item_label.blank?
         [item_label, item_value]
       end
     menu.unshift(['(unset)', '']) unless menu.first.last.blank? # TODO: I18n
@@ -534,6 +540,49 @@ module BaseDecorator::Form
   # ===========================================================================
 
   protected
+
+  # Update `opt[:constraints]` based on the given range of values and the role
+  # of the user.
+  #
+  # @param [Hash]     opt
+  # @param [Class, *] range           Default: `opt[:range]`.
+  #
+  # @return [Hash]                    The possibly-modified *opt* argument.
+  #
+  def form_menu_role_constraints!(opt, range = nil)
+    if (range ||= opt[:range]).is_a?(Class)
+      add    = {}
+      except = []
+
+      if range == RolePrototype
+        except << :anonymous # Not a valid role selection.
+        except << :administrator << :developer  unless administrator?
+        opt[:fixed] = true                      unless manager?
+
+      elsif range == RoleCapability
+        except << :administering << :developing unless administrator?
+
+      elsif range < EnumType
+        # No additional constraints for now.
+
+      elsif administrator?
+        case range.model_type
+          when :user then add[:prepend] = { 0 => 'NONE' }
+          when :org  then add[:prepend] = { 0 => 'NONE' }
+        end
+
+      elsif current_org
+        case range.model_type
+          when :user then add[:org]   = current_org
+          when :org  then opt[:fixed] = true
+        end
+      end
+
+      add[:except] = except if except.present?
+      opt[:constraints] = opt[:constraints]&.merge(add) || add if add.present?
+    end
+    opt
+  end
 
   # Generates a line in the form associated with *opt[:'data-field']*.
   #

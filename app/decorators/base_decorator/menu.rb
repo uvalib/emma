@@ -139,6 +139,45 @@ module BaseDecorator::Menu
     (model || model_type).to_s.humanize(capitalize: capitalize)
   end
 
+  # Update `opt[:constraints]` based on the role of the user.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The possibly-modified *opt* argument.
+  #
+  def items_menu_role_constraints!(opt)
+    cons = opt[:constraints]
+    user = org = nil
+
+    if !administrator? && !manager?
+      # Normal user constrained by organization.
+      cons = cons&.except(:org, :org_id) || {}
+      user = cons.extract!(:user, :user_id).compact.values.first
+      org  = current_user.org_id
+      org  = nil if user && (User.uid(user) == current_user.id)
+
+    elsif !administrator?
+      # Manager constrained by organization or its users.
+      cons = cons&.except(:org, :org_id) || {}
+      user = cons.extract!(:user, :user_id).compact.values.first
+      org  = current_user.org_id
+      org  = nil if user && (User.oid(user) == org)
+
+    elsif cons.present?
+      # Administrator only constrained if explicitly requested.
+      cons = cons.dup
+      user = cons.extract!(:user, :user_id).compact.values.first
+      org  = cons.extract!(:org, :org_id).compact.values.first
+      org  = nil if user
+    end
+
+    case
+      when org  then opt.merge!(constraints: cons.merge!(org:  org))
+      when user then opt.merge!(constraints: cons.merge!(user: user))
+      else           opt
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

@@ -220,6 +220,16 @@ module BaseDecorator::Form
   #
   def render_form_password: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Update `opt[:constraints]` based on the given range of values and the role
+  # of the user.
+  #
+  # @param [Hash]     opt
+  # @param [Class, *] range           Default: `opt[:range]`.
+  #
+  # @return [Hash]                    The possibly-modified *opt* argument.
+  #
+  def form_menu_role_constraints!: (symHash opt, ?range: untyped) -> symHash
+
   # Generates a line in the form associated with *opt[:'data-field']*.
   #
   # @param [String, nil] note

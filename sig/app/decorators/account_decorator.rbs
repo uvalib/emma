@@ -114,33 +114,6 @@ class AccountDecorator
   #
   def show_control: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Transform a field value for HTML rendering.
-  #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to the render method or super.
-  #
-  # @return [Any]                     HTML or scalar value.
-  # @return [nil]                     If *value* or *object* is *nil*.
-  #
-  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
-
-  # Create a list of User roles.
-  #
-  # @param [Hash] opt                 Passed to #html_tag
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def roles: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Create a single term which describes the role level of *item*.
-  #
-  # @param [Hash] opt                 Passed to #html_tag
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def role_prototype: (**untyped opt) -> ActiveSupport::SafeBuffer
-
   # Table values associated with the current decorator.
   #
   # @param [Hash] opt

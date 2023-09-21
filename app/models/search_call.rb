@@ -15,7 +15,6 @@ class SearchCall < ApplicationRecord
 
   include Record
   include Record::Assignable
-  include Record::Authorizable
   include Record::Searchable
 
   # Non-functional hints for RubyMine type checking.

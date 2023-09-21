@@ -15,7 +15,6 @@ class SearchResult < ApplicationRecord
 
   include Record
   include Record::Assignable
-  include Record::Authorizable
 
   # ===========================================================================
   # :section: ActiveRecord associations

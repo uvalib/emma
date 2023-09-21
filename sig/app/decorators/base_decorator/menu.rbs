@@ -56,6 +56,14 @@ module BaseDecorator::Menu
   #
   def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
 
+  # Update `opt[:constraints]` based on the role of the user.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The possibly-modified *opt* argument.
+  #
+  def items_menu_role_constraints!: (symHash opt) -> symHash
+
   private
 
   def self.included: (Module base) -> void

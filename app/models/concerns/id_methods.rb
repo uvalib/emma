@@ -204,7 +204,7 @@ module IdMethods
     protected
 
     def extract_value!(item, opt, base, meth = nil)
-      prm = opt.extract!(base, :"#{base}_id").compact.values.first
+      prm = opt.extract!(:"#{base}", :"#{base}_id").compact.values.first
       item || prm ||
         (Log.warn { "#{meth}: no #{base} in #{opt.inspect}" } if meth)
     end

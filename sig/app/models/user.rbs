@@ -12,10 +12,6 @@ class User < ApplicationRecord
   include Record::Searchable
 
   # :nocov:
-  #include Rolify
-
-  #include Rolify::Role
-
   #include Devise::Models::DatabaseAuthenticatable
 
   #include Devise::Models::Rememberable
@@ -165,44 +161,13 @@ class User < ApplicationRecord
 
   @manager: bool
 
-  # The user's EMMA roles.
+  # Check for role prototype or role capability.
   #
-  # @return [Array<Symbol>]
+  # Always returns *false* if *value* is blank.
   #
-  def role_list: () -> symArray
-
-  # assign_default_role
+  # @param [RolePrototype, RoleCapability, String, Symbol, nil] value
   #
-  # @return [void]
-  #
-  # === Implementation Notes
-  # A new User will be created the first time a new person authenticates via    # if BS_AUTH
-  # Bookshare -- this may be the place to query the Bookshare API for that
-  # user's Bookshare role in order to map it onto EMMA "prototype user".
-  #
-  def assign_default_role: () -> void
-
-  private
-
-  # Add EMMA role(s) to the current user based on its prototype.
-  #
-  # @param [Symbol, nil] prototype    Default: `Role#DEFAULT_PROTOTYPE`.
-  #
-  # @return [Array<Role>]             Added role(s).
-  #
-  def add_roles: (?(Symbol|nil) prototype) -> Array[Role]
-
-  public
-
-  # Extend Rolify #has_role? to first check for role prototype.
-  #
-  # Always returns *false* if *role* is blank.
-  #
-  # @param [String, Symbol, nil]                   role
-  # @param [Symbol, Class, ApplicationRecord, nil] resource
-  #
-  def has_role?: (nil           role, ?(Symbol|nil) resource) -> false
-               | (String|Symbol role, ?(Symbol|nil) resource) -> bool
+  def has_role?: (RolePrototype|RoleCapability|String|Symbol|nil role) -> bool
 
   # Current EMMA test accounts.
   #
