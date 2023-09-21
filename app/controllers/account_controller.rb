@@ -149,7 +149,7 @@ class AccountController < ApplicationController
   def create
     __log_activity
     __debug_route
-    @item  = create_record(no_raise: true)
+    @item  = create_record(fatal: false)
     errors = @item&.errors || 'Not created' # TODO: I18n
     user_authorize!
     respond_to do |format|
@@ -198,7 +198,7 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     __debug_request
-    @item  = update_record(no_raise: true)
+    @item  = update_record(fatal: false)
     errors = @item&.errors || "#{params[:id]} not found" # TODO: I18n
     user_authorize!
     respond_to do |format|

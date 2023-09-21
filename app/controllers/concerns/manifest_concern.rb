@@ -83,7 +83,7 @@ module ManifestConcern
   # authorized.
   #
   # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Boolean]   fatal          If *false* use #update not #update!.
   # @param [Hash]      prm            Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
@@ -92,7 +92,7 @@ module ManifestConcern
   #
   # @return [Manifest, nil]           The updated Manifest instance.
   #
-  def update_record(item = nil, no_raise: false, **prm)
+  def update_record(item = nil, fatal: true, **prm)
     # noinspection RubyMismatchedReturnType
     super do |record, attr|
       unless administrator?

@@ -725,18 +725,19 @@ class Upload < ApplicationRecord
   # `opt[:submission_id]`.
   #
   # @param [Model, Hash, String, Symbol, nil] sid
-  # @param [Integer, nil]    max        Log error if matches exceed this.
-  # @param [Boolean, Symbol] log        Calling method for logging.
-  # @param [Boolean]         no_raise   If *true*, return *nil* on error.
-  # @param [Hash]            opt        Passed to #where.
+  # @param [Integer, nil]    max      Log error if matches exceed this.
+  # @param [Boolean, Symbol] log      Calling method for logging.
+  # @param [Boolean]         fatal    If *false*, return *nil* on error.
+  # @param [Hash]            opt      Passed to #where.
   #
   # @raise [UploadWorkflow::SubmitError]
   #
-  # @return [ActiveRecord::Relation, nil]
+  # @return [ActiveRecord::Relation]
+  # @return [nil]                     If invalid and *fatal* is *false*.
   #
-  def self.matching_sid(sid= nil, max: nil, log: false, no_raise: false, **opt)
+  def self.matching_sid(sid = nil, max: nil, log: false, fatal: true, **opt)
     msg = log.present?
-    err = no_raise.blank?
+    err = fatal.present?
     sid = opt[:submission_id] = sid_for(sid || opt)
     if sid.blank?
       err &&= UploadWorkflow::SubmitError

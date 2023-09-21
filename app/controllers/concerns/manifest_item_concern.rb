@@ -219,11 +219,11 @@ module ManifestItemConcern
   #
   # @param [Hash, nil]       attr       Default: `#current_params`.
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
+  # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [ManifestItem]              A new ManifestItem instance.
   #
-  def create_record(attr = nil, force_id: false, no_raise: false, **)
+  def create_record(attr = nil, force_id: false, fatal: true, **)
     # noinspection RubyScope, RubyMismatchedReturnType
     super do |attr|
       attr[:backup] ||= {}
@@ -249,7 +249,7 @@ module ManifestItemConcern
   # Update the indicated ManifestItem.
   #
   # @param [ManifestItem, nil] item     Def.: rec for ModelConcern#identifier.
-  # @param [Boolean]           no_raise Use #update instead of #update!.
+  # @param [Boolean]           fatal    If *false* use #update not #update!.
   # @param [Hash]              prm      Field values except #UPDATE_STATUS_OPTS
   #
   # @raise [Record::NotFound]               Record could not be found.
@@ -258,7 +258,7 @@ module ManifestItemConcern
   #
   # @return [ManifestItem, nil]         The updated ManifestItem instance.
   #
-  def update_record(item = nil, no_raise: false, **prm)
+  def update_record(item = nil, fatal: true, **prm)
     keep_date = updated_at = old_values = nil
     # noinspection RubyMismatchedReturnType
     super { |record, attr|
@@ -303,6 +303,7 @@ module ManifestItemConcern
   # Set :editing state (along with any other fields if they are provided).
   #
   # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Boolean, nil]      fatal  Passed to database method if present.
   # @param [Symbol, nil]       meth   Caller (for diagnostics).
   # @param [Hash]              attr   Field values.
   #
@@ -310,12 +311,14 @@ module ManifestItemConcern
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [ManifestItem] Or *nil* if opt[:no_raise] == *true*.
+  # @return [ManifestItem]
+  # @return [nil]                     Only if *fatal* == *false*.
   #
-  def start_editing(item = nil, meth: nil, **attr)
+  def start_editing(item = nil, fatal: nil, meth: nil, **attr)
     meth ||= __method__
+    opt    = { fatal: fatal }.compact
     attr.merge!(editing: true)
-    if (rec = edit_record(item, no_raise: true))
+    if (rec = edit_record(item, fatal: false))
       if rec.editing
         Log.warn { "#{meth}: #{rec.id}: already editing #{rec.inspect}" }
       end
@@ -329,10 +332,10 @@ module ManifestItemConcern
         attr[:backup] = backup
       end
       attr[:attr_opt] = { overwrite: false }
-      update_record(rec, **attr)
+      update_record(rec, **attr, **opt)
     else
       # noinspection RubyMismatchedReturnType
-      create_record(attr)
+      create_record(attr, **opt)
     end
   end
 

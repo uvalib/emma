@@ -14,13 +14,13 @@ module Emma::Csv
   # Generate data from CSV input.
   #
   # @param [String, IO, StringIO, IO::Like, nil] arg
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] no_empty         If *false*, allow data will all nils.
   # @param [Boolean] utf8
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   # @param [Hash]    opt              Passed to CSV#parse.
   #
   # @return [Array<Hash>]
-  # @return [nil]                     Only if *no_raise* is *true*.
+  # @return [nil]                     Only if *fatal* is *false*.
   #
   # === Usage Notes
   # The argument is expected to either be the literal data or an object like an
@@ -33,8 +33,8 @@ module Emma::Csv
   # encoding.  NOTE: This might not be necessary any longer though.
   #
   def csv_parse
-    : (nil                         arg, ?no_raise: bool, ?no_empty: bool, ?utf8: bool, **untyped opt) -> nil
-    | (String|IO|StringIO|IO::Like arg, ?no_raise: bool, ?no_empty: bool, ?utf8: bool, **untyped opt) -> Array[anyHash]
+    : (nil                         arg, ?no_empty: bool, ?utf8: bool, ?fatal: bool, **untyped opt) -> nil
+    | (String|IO|StringIO|IO::Like arg, ?no_empty: bool, ?utf8: bool, ?fatal: bool, **untyped opt) -> Array[anyHash]
 
   # force_utf8
   #

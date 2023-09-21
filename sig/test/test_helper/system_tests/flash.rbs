@@ -14,12 +14,12 @@ module TestHelper::SystemTests::Flash
   # @param [String]         notice    Expect a flash notice with this.
   # @param [String]         text      Expect a flash of any kind with this.
   # @param [String,Boolean] without   Negate expectation.
-  # @param [Boolean]        assert    If not *true*, return Boolean.
+  # @param [Boolean]        fatal     If not *true*, return Boolean.
   # @param [Hash]           opt       Passed to Capybara method.
   #
   def flash?
-    : (?(String|nil) content, ?alert: String|nil, ?notice: String|nil, ?text: String|nil, ?without: String|bool, assert: true,      **untyped opt) -> true
-    | (?(String|nil) content, ?alert: String|nil, ?notice: String|nil, ?text: String|nil, ?without: String|bool, assert: false|nil, **untyped opt) -> bool
+    : (?(String|nil) content, ?alert: String|nil, ?notice: String|nil, ?text: String|nil, ?without: String|bool,  fatal: true,  **untyped opt) -> true
+    | (?(String|nil) content, ?alert: String|nil, ?notice: String|nil, ?text: String|nil, ?without: String|bool, ?fatal: false, **untyped opt) -> bool
 
   # Indicate that a flash message not is present.
   #

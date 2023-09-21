@@ -88,14 +88,14 @@ module TestHelper::SystemTests::Common
   # @param [Integer]       wait       Overall time limit.
   # @param [Integer]       max        Maximum number of attempts to make.
   # @param [Boolean]       port       Passed to #get_browser_url.
-  # @param [Boolean]       assert     If *false* don't assert.
+  # @param [Boolean]       fatal      If *false* don't assert.
   # @param [Boolean]       trace      Output each URL acquired.
   #
   # @raise [Minitest::Assertion]      If the browser failed to get to the page.
   #
   # @return [Boolean]
   #
-  def wait_for_page: (String|strArray target, ?wait: Integer|nil, ?max: Integer, ?port: bool, ?assert: bool, ?trace: bool) -> bool
+  def wait_for_page: (String|strArray target, ?wait: Integer|nil, ?max: Integer, ?port: bool, ?fatal: bool, ?trace: bool) -> bool
 
   # If DEBUG_TESTS is true, this will take a screenshot (ignoring an error that
   # has been observed [in rare cases] since these are informational-only).

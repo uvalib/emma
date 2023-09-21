@@ -89,27 +89,27 @@ module DataHelper
 
   # table_records
   #
-  # @param [String, Symbol, *]    name          Database table name.
-  # @param [Array<String,Symbol>] cols          Column names; default: "*".
-  # @param [Boolean]              headings      If *false*, don't include the
-  #                                               database schema.
-  # @param [Boolean]              html          If *true*, produce records as
-  #                                               arrays of values.
-  # @param [Boolean]              no_raise      If *true*, don't raise
-  #                                               exceptions.
-  # @param [Boolean]              raise_blank   If *true*, don't ignore blank
+  # @param [String, Symbol, *]    name        Database table name.
+  # @param [Array<String,Symbol>] cols        Column names; default: "*".
+  # @param [Boolean]              headings    If *false*, don't include the
+  #                                             database schema.
+  # @param [Boolean]              html        If *true*, produce records as
+  #                                             arrays of values.
+  # @param [Boolean]              fatal       If *false*, don't raise
+  #                                             exceptions.
+  # @param [Boolean]              no_blanks   If *true*, don't ignore blank
   #                                               column names.
   #
   # @return [Array<Hash>]
-  # @return [Array<Array<String>,Hash>]         If *html* is *true*.
+  # @return [Array<Array<String>,Hash>]       If *html* is *true*.
   #
   def table_records(
     name,
     *cols,
-    headings:    true,
-    html:        false,
-    no_raise:    false,
-    raise_blank: false,
+    headings:  true,
+    html:      false,
+    fatal:     true,
+    no_blanks: false,
     **
   )
     # Validate parameters.
@@ -120,7 +120,7 @@ module DataHelper
       cols.map! { |f| f.is_a?(Symbol) ? f.to_s : (f.try(:name) || f) }
       cols, blanks = cols.partition(&:present?)
       if (error = blank_columns(*blanks)).present?
-        if raise_blank
+        if no_blanks
           errors << error
         else
           Log.warn { "#{__method__}: #{error} (ignored)" }
@@ -137,8 +137,8 @@ module DataHelper
       error = errors.join('; ').capitalize
       error << '.' unless error.match?(/[[:punct:]]$/)
       Log.warn { "#{__method__}: #{error}" }
-      return [] if no_raise
-      raise error
+      raise error if fatal
+      return []
     end
 
     # Generate the first (schema) row if appropriate.

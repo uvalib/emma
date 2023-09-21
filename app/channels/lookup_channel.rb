@@ -69,8 +69,10 @@ class LookupChannel < ApplicationCable::Channel
   # Invoked from another thread to push an initial response back to the client.
   #
   # @param [Hash{Symbol=>*}, Array<Class>] payload
-  # @param [Boolean, nil]                  no_raise   Passed to #stream_send.
   # @param [Hash]                          opt
+  #
+  # @option opt [Symbol]  :meth       Passed to #stream_send.
+  # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
@@ -78,28 +80,30 @@ class LookupChannel < ApplicationCable::Channel
   # This response is intentionally small; payload size is not checked to avoid
   # masking an exception due to an unexpected condition.
   #
-  def self.initial_response(payload, no_raise: nil, **opt)
-    meth    = opt.delete(:meth) || __method__
+  def self.initial_response(payload, **opt)
+    str_opt = opt.extract!(:meth, :fatal)
     payload = LookupChannel::InitialResponse.wrap(payload, **opt)
-    stream_send(payload, meth: meth, no_raise: no_raise, **opt)
+    stream_send(payload, meth: __method__, **str_opt, **opt)
   end
 
   # Invoked from another thread to push acquired data back to the client.
   #
   # @param [Hash{Symbol=>*}] payload
-  # @param [Boolean, nil]    no_raise   Passed to #stream_send.
   # @param [Hash]            opt
+  #
+  # @option opt [Symbol]  :meth       Passed to #stream_send.
+  # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/lookup-channel.js *_createResponse()*
   #
-  def self.lookup_response(payload, no_raise: nil, **opt)
-    meth    = opt.delete(:meth) || __method__
+  def self.lookup_response(payload, **opt)
+    str_opt = opt.extract!(:meth, :fatal)
     payload = LookupChannel::LookupResponse.wrap(payload, **opt)
     payload.convert_to_data_url! if invalid_payload_size(payload)
-    stream_send(payload, meth: meth, no_raise: no_raise, **opt)
+    stream_send(payload, meth: __method__, **str_opt, **opt)
   end
 
 end

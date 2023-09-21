@@ -50,7 +50,7 @@ module ManifestConcern
   # authorized.
   #
   # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Boolean]   fatal          If *false* use #update not #update!.
   # @param [Hash]      prm            Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
@@ -59,7 +59,7 @@ module ManifestConcern
   #
   # @return [Manifest, nil]           The updated Manifest instance.
   #
-  def update_record: (?(Model|symHash|nil) item, ?no_raise: bool, **untyped prm) -> (Manifest | nil)
+  def update_record: (?(Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (Manifest | nil)
 
   # Persist changes to an existing manifest and update the saved state of all
   # associated rows.

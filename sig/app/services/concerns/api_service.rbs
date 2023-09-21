@@ -99,7 +99,7 @@ class ApiService
   # @return [ApiService]
   #
   # === Usage Notes
-  # For special purposes (like overriding :no_raise for all API requests
+  # For special purposes (like overriding :fatal for all API requests
   # within a single method), use `ApiService.new` rather than
   # `ApiService.instance`.  Providing modified options to this method
   # creates a new single instance; if the options are the same as the

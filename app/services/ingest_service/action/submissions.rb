@@ -181,9 +181,7 @@ module IngestService::Action::Submissions
   def api_send(verb, endpoint, body, **opt)
     body = Array.wrap(body).compact.uniq
     if body.present?
-      opt[:no_raise] = true unless opt.key?(:no_raise)
-      opt[:body]     = body
-      api(verb, endpoint, **opt)
+      api(verb, endpoint, fatal: false, **opt, body: body)
     else
       meth = opt[:meth] || __method__
       Log.info { "#{meth}: no records" }

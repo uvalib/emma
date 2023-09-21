@@ -126,7 +126,7 @@ module Record::EmmaData
       else
         result = data
     end
-    result = json_parse(result, no_raise: false) or return {}
+    result = json_parse(result, fatal: true) or return {}
     reject_blanks!(result) unless allow_blank
     result.map { |k, v|
       v     = Array.wrap(v)

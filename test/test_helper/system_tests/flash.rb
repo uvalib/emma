@@ -26,7 +26,7 @@ module TestHelper::SystemTests::Flash
   # @param [String]         notice    Expect a flash notice with this.
   # @param [String]         text      Expect a flash of any kind with this.
   # @param [String,Boolean] without   Negate expectation.
-  # @param [Boolean]        assert    If not *true*, return Boolean.
+  # @param [Boolean]        fatal     If not *true*, return Boolean.
   # @param [Hash]           opt       Passed to Capybara method.
   #
   def flash?(
@@ -35,7 +35,7 @@ module TestHelper::SystemTests::Flash
     notice:   nil,
     text:     nil,
     without:  false,
-    assert:   false,
+    fatal:    false,
     **opt
   )
     terms = [content, alert, notice, text].compact
@@ -49,7 +49,7 @@ module TestHelper::SystemTests::Flash
     type = '.alert'  if text.nil? && (text = alert)
     type = '.notice' if text.nil? && (text = notice)
     opt[:text] = text if (text ||= content)
-    if assert
+    if fatal
       meth = without ? :assert_no_selector : :assert_selector
     else
       meth = without ? :has_no_selector?   : :has_selector?
@@ -63,8 +63,7 @@ module TestHelper::SystemTests::Flash
   # @param [Hash]        opt          Passed to #flash?.
   #
   def no_flash?(content = nil, **opt)
-    opt.reverse_merge!(without: true)
-    flash?(content, **opt)
+    flash?(content, without: true, **opt)
   end
 
   # Assert that a flash message is present.
@@ -77,8 +76,7 @@ module TestHelper::SystemTests::Flash
   # @return [true]
   #
   def assert_flash(content = nil, **opt)
-    opt.reverse_merge!(assert: true)
-    flash?(content, **opt)
+    flash?(content, fatal: true, **opt)
   end
 
   # Assert that a flash message is not present.
@@ -91,8 +89,7 @@ module TestHelper::SystemTests::Flash
   # @return [true]
   #
   def assert_no_flash(content = nil, **opt)
-    opt.reverse_merge!(assert: true)
-    no_flash?(content, **opt)
+    no_flash?(content, fatal: true, **opt)
   end
 
 end

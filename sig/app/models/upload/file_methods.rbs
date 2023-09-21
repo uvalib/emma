@@ -148,22 +148,22 @@ module Upload::FileMethods
   # If the file is in :cache it will be moved to :store.  If it's already in
   # :store then this is a no-op.
   #
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] fatal         If *false*, re-raise exceptions.
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_file: (?no_raise: bool) -> (FileUploader::UploadedFile | nil)
+  def promote_file: (?fatal: bool) -> (FileUploader::UploadedFile | nil)
 
   # Remove the uploaded file from storage (either :store or :cache).
   #
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
-  # @param [Symbol] field             Either :file_data or :edit_file_data;
+  # @param [Symbol]  field            Either :file_data or :edit_file_data;
   #                                     otherwise the field is determined by
   #                                     the phase.
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   #
   # @return [void]
   #
-  def delete_file: (?no_raise: bool, ?field: Symbol|nil) -> void
+  def delete_file: (?field: Symbol|nil, ?fatal: bool) -> void
 
   # Generate a URL to the uploaded file which can be used to download the file
   # to the client browser.
@@ -289,20 +289,22 @@ module Upload::FileMethods
 
   # Finalize a file upload by promoting the :cache file to a :store file.
   #
-  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
   # @param [Boolean] keep_cached      If *true*, don't delete the original.
+  # @param [Boolean] fatal            If *false*, don't re-raise exceptions.
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_cached_file: (?no_raise: bool, ?keep_cached: bool) -> (FileUploader::UploadedFile | nil)
+  # @note From Upload::FileMethods#promote_cached_file
+  #
+  def promote_cached_file: (?keep_cached: bool, ?fatal: bool) -> (FileUploader::UploadedFile | nil)
 
   # Finalize a deletion by the removing the file from :cache and/or :store.
   #
-  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
+  # @param [Boolean] fatal         If *true*, don't re-raise exceptions.
   #
   # @return [TrueClass, nil]
   #
-  def delete_cached_file: (?no_raise: bool) -> (true | nil)
+  def delete_cached_file: (?fatal: bool) -> (true | nil)
 
   private
 

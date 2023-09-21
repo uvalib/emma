@@ -125,11 +125,11 @@ module ManifestItemConcern
   #
   # @param [Hash, nil]       attr       Default: `#current_params`.
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
+  # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [ManifestItem]              A new ManifestItem instance.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?no_raise: bool, **untyped _ignored) -> ManifestItem
+  def create_record: (?symHash? attr, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> ManifestItem
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
   #
@@ -146,7 +146,7 @@ module ManifestItemConcern
   # Update the indicated ManifestItem.
   #
   # @param [ManifestItem, nil] item     Def.: rec for ModelConcern#identifier.
-  # @param [Boolean]           no_raise Use #update instead of #update!.
+  # @param [Boolean]           fatal    If *false* use #update not #update!.
   # @param [Hash]              prm      Field values except #UPDATE_STATUS_OPTS
   #
   # @raise [Record::NotFound]               Record could not be found.
@@ -155,7 +155,7 @@ module ManifestItemConcern
   #
   # @return [ManifestItem, nil]         The updated ManifestItem instance.
   #
-  def update_record: (?(ManifestItem|nil) item, ?no_raise: bool, **untyped prm) -> (ManifestItem | nil)
+  def update_record: (?(ManifestItem|nil) item, ?fatal: bool, **untyped prm) -> (ManifestItem | nil)
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
@@ -177,6 +177,7 @@ module ManifestItemConcern
   # Set :editing state (along with any other fields if they are provided).
   #
   # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
+  # @param [Boolean, nil]      fatal  Passed to database method if present.
   # @param [Symbol, nil]       meth   Caller (for diagnostics).
   # @param [Hash]              attr   Field values.
   #
@@ -184,9 +185,10 @@ module ManifestItemConcern
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [ManifestItem] Or *nil* if opt[:no_raise] == *true*.
+  # @return [ManifestItem]
+  # @return [nil]                     Only if *fatal* == *false*.
   #
-  def start_editing: (?(ManifestItem|nil) item, ?meth: Symbol|nil, **untyped attr) -> ManifestItem
+  def start_editing: (?(ManifestItem|nil) item, ?fatal: bool|nil, ?meth: Symbol|nil, **untyped attr) -> (ManifestItem | nil)
 
   # Update with provided fields (if any) and clear :editing state.
   #

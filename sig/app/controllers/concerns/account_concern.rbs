@@ -53,17 +53,17 @@ module AccountConcern
   #
   # @param [Hash, nil]       attr       Default: `#current_params`.
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
+  # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [User]                      A new User instance.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?no_raise: bool, **untyped _ignored) -> User
+  def create_record: (?symHash? attr, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> User
 
   # Update the indicated User, ensuring that :email and :org_id are not changed
   # unless authorized.
   #
   # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Boolean]   fatal          If *false* use #update not #update!.
   # @param [Hash]      prm            Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
@@ -72,7 +72,7 @@ module AccountConcern
   #
   # @return [User, nil]               The updated User instance.
   #
-  def update_record: (?(Model|symHash|nil) item, ?no_raise: bool, **untyped prm) -> (User | nil)
+  def update_record: (?(Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (User | nil)
 
   # Get matching User account records or all records if no terms are given.
   #

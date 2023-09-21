@@ -67,14 +67,14 @@ module SubmissionService::Action::Submit
   # Failure at any step results in the failure of the item to be submitted.
   #
   # @param [String, ManifestItem] item
-  # @param [Boolean]              no_raise
+  # @param [Boolean]              fatal
   # @param [Hash]                 opt
   #
   # @raise [RuntimeError]             If a submission step failed.
   #
   # @return [StepResult]
   #
-  def submit_manifest_item: (String|ManifestItem item, ?no_raise: bool, **untyped opt) -> StepResult
+  def submit_manifest_item: (String|ManifestItem item, ?fatal: bool, **untyped opt) -> StepResult
 
   # Process a request to submit a set of ManifestItems by aggregating them into
   # "slices" which pass through submission steps together.
@@ -95,12 +95,12 @@ module SubmissionService::Action::Submit
   #
   # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
   # @param [Symbol]                                              step
-  # @param [Boolean]                                             no_raise
+  # @param [Boolean]                                             fatal
   # @param [Hash]                                                opt
   #
   # @return [StepResult]
   #
-  def submit_manifest_items: (String|ManifestItem|Array[String]|Array[ManifestItem]|ActiveRecord::Relation items, step: Symbol, ?no_raise: bool, **untyped opt) -> StepResult
+  def submit_manifest_items: (String|ManifestItem|Array[String]|Array[ManifestItem]|ActiveRecord::Relation items, step: Symbol, ?fatal: bool, **untyped opt) -> StepResult
 
   # Get the array of ManifestItem expressed or implied by *items*.
   #
@@ -133,11 +133,11 @@ module SubmissionService::Action::Submit
 
   # submission_step
   #
-  # @param [String, ManifestItem, Array, ActiveRecord::Relation] item
+  # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
   # @param [Symbol]                 step
   # @param [Float, nil]             start_time
-  # @param [Boolean]                no_raise
   # @param [Proc, nil]              callback
+  # @param [Boolean]                fatal
   # @param [Hash]                   opt
   #
   # @option opt [String]            :manifest_id
@@ -149,7 +149,7 @@ module SubmissionService::Action::Submit
   #
   # @return [StepResult]
   #
-  def submission_step: (String|strArray|Array[ManifestItem]|ActiveRecord::Relation item, step: Symbol, ?start_time: Float|nil, ?no_raise: bool, ?callback: Proc|nil, **untyped opt) -> StepResult
+  def submission_step: (String|strArray|Array[ManifestItem]|ActiveRecord::Relation items, step: Symbol, ?start_time: Float|nil, ?callback: Proc|nil, ?fatal: bool, **untyped opt) -> StepResult
 
   # Return when the records contain Shrine metadata indicating their associated
   # files have been uploaded to cache.

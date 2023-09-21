@@ -364,14 +364,14 @@ module BaseDecorator::Fields
   # Indicate whether the value is a valid range type.
   #
   # @param [*]       range
-  # @param [Boolean] exception        If *true*, raise an exception if *false*.
+  # @param [Boolean] fatal            If *true*, raise an exception if invalid.
   #
-  # @raise [RuntimeError]             If not valid and *exception* is *true*.
+  # @raise [RuntimeError]             If not valid and *fatal* is *true*.
   #
-  def valid_range?(range, exception: false)
+  def valid_range?(range, fatal: false)
     valid = range.is_a?(Class) && [EnumType, Model].any? { |t| range < t }
-    exception &&= !valid
-    raise "range: #{range.inspect}: not a subclass of EnumType" if exception
+    fatal &&= !valid
+    raise "range: #{range.inspect}: not a subclass of EnumType" if fatal
     valid
   end
 

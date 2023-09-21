@@ -138,7 +138,7 @@ module TestHelper::SystemTests::Common
   # @param [Integer]       wait       Overall time limit.
   # @param [Integer]       max        Maximum number of attempts to make.
   # @param [Boolean]       port       Passed to #get_browser_url.
-  # @param [Boolean]       assert     If *false* don't assert.
+  # @param [Boolean]       fatal      If *false* don't assert.
   # @param [Boolean]       trace      Output each URL acquired.
   #
   # @raise [Minitest::Assertion]      If the browser failed to get to the page.
@@ -150,7 +150,7 @@ module TestHelper::SystemTests::Common
     wait:   DEFAULT_WAIT_MAX_TIME,
     max:    DEFAULT_WAIT_MAX_PASS,
     port:   false,
-    assert: true,
+    fatal:  true,
     trace:  true
   )
     timer   = Capybara::Helpers::Timer.new(wait)
@@ -163,7 +163,7 @@ module TestHelper::SystemTests::Common
       return true if targets.include?(current)
       break       if timer.expired?
     end
-    if assert
+    if fatal
       current  = url_without_port(current || current_url).inspect
       if targets.many?
         expected = targets.map(&:inspect)

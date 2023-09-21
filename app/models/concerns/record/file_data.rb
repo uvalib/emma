@@ -69,7 +69,7 @@ module Record::FileData
   #
   def parse_file_data(data, allow_blank = false)
     return {} if data.blank?
-    result = make_file_record(data, no_raise: false)
+    result = make_file_record(data, fatal: true)
     raise 'array unexpected' if result.is_a?(Array)
     reject_blanks!(result)   unless allow_blank
     result.symbolize_keys!

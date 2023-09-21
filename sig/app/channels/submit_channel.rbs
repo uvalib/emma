@@ -43,49 +43,57 @@ class SubmitChannel < ApplicationCable::Channel
   # Invoked from another thread to push an initial response back to the client.
   #
   # @param [Hash{Symbol=>*}, Array<Class>] payload
-  # @param [Boolean, nil]                  no_raise   Passed to #stream_send.
   # @param [Hash]                          opt
   #
+  # @option opt [Symbol]  :meth       Passed to #stream_send.
+  # @option opt [Boolean] :fatal      Passed to #stream_send.
+  #
   # @return [void]
   #
-  def self.initial_response: ((symHash|Array[Class]) payload, ?no_raise: bool|nil, **untyped opt) -> void
+  def self.initial_response: ((symHash|Array[Class]) payload, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
   # @param [Hash{Symbol=>*}] payload
-  # @param [Boolean, nil]    no_raise   Passed to #stream_send.
   # @param [Hash]            opt
+  #
+  # @option opt [Symbol]  :meth       Passed to #stream_send.
+  # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.final_response: (symHash payload, ?no_raise: bool|nil, **untyped opt) -> void
+  def self.final_response: (symHash payload, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
   # @param [Hash{Symbol=>*}] payload
-  # @param [Boolean, nil]    no_raise   Passed to #stream_send.
   # @param [Hash]            opt
+  #
+  # @option opt [Symbol]  :meth       Passed to #stream_send.
+  # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.step_response: (symHash payload, ?no_raise: bool|nil, **untyped opt) -> void
+  def self.step_response: (symHash payload, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
   # @param [Hash{Symbol=>*}] payload
-  # @param [Boolean, nil]    no_raise   Passed to #stream_send.
   # @param [Hash]            opt
+  #
+  # @option opt [Symbol]  :meth       Passed to #stream_send.
+  # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.control_response: (symHash payload, ?no_raise: bool|nil, **untyped opt) -> void
+  def self.control_response: (symHash payload, **untyped opt) -> void
 end

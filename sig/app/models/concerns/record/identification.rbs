@@ -105,7 +105,7 @@ module Record::Identification
   # Return with the specified record or *nil* if one could not be found.
   #
   # @param [String, Integer, Hash, Model, *] item
-  # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
+  # @param [Boolean]     fatal        If *false*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:
   #
@@ -115,11 +115,12 @@ module Record::Identification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
+  # @return [ApplicationRecord<Model>]
+  # @return [nil]                       Only if *fatal* is *false*.
   #
   # @note From UploadWorkflow::External#get_record
   #
-  def find_record: (untyped item, ?no_raise: bool, ?meth: Symbol|nil, **untyped opt) -> ApplicationRecord
+  def find_record: (untyped item, ?fatal: bool, ?meth: Symbol|nil, **untyped opt) -> (ApplicationRecord | nil)
 
   # Find all of the specified records (return records if none were specified).
   #

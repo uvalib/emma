@@ -218,11 +218,11 @@ module ModelConcern
   #
   # @param [Hash, nil]       attr       Default: `#current_params`.
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
+  # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [Model]                     New persisted model record instance.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?no_raise: bool, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
+  def create_record: (?symHash? attr, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
 
   # Start editing an existing model record.
   #
@@ -240,7 +240,7 @@ module ModelConcern
   # Persist changes to an existing model record.
   #
   # @param [*]         item           If present, used as a template.
-  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Boolean]   fatal          If *false* use #update not #update!.
   # @param [Hash, nil] prm            Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the record could not be found.
@@ -249,7 +249,7 @@ module ModelConcern
   #
   # @return [Model, nil]
   #
-  def update_record: (?(Model|symHash|nil) item, ?no_raise: bool, **untyped prm) ?{ (Model record, symHash attr) -> void } -> (Model | nil)
+  def update_record: (?(Model|symHash|nil) item, ?fatal: bool, **untyped prm) ?{ (Model record, symHash attr) -> void } -> (Model | nil)
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
@@ -266,13 +266,13 @@ module ModelConcern
   #
   # @param [String, Model, Array, nil] items
   # @param [Hash, nil]                 prm    Default: `#current_params`
-  # @param [Boolean]                   no_raise
+  # @param [Boolean]                   fatal  If *false* do not #raise_failure.
   #
   # @raise [Record::SubmitError]              If there were failure(s).
   #
   # @return [Array]                           Destroyed entries.
   #
-  def destroy_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, ?no_raise: bool, **untyped _ignored) -> (Array[Integer]|Array[String])
+  def destroy_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, ?fatal: bool, **untyped _ignored) -> (Array[Integer]|Array[String])
 
   # Raise an exception.
   #

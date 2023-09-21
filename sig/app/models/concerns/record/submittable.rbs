@@ -90,10 +90,11 @@ module Record::Submittable
     # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
     #
     # @return [ApplicationRecord]
+    # @return [nil]                           If `data[:fatal]` is *false*.
     #
     # @note From UploadWorkflow::External#db_update
     #
-    def db_update: ((symHash|Model|String) item, ?(symHash|nil) data) -> ApplicationRecord
+    def db_update: ((symHash|Model|String) item, ?(symHash|nil) data) -> (ApplicationRecord | nil)
 
     # Remove a single existing record from the database.
     #

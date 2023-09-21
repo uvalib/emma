@@ -51,23 +51,23 @@ module DataHelper
 
   # table_records
   #
-  # @param [String, Symbol, *]    name          Database table name.
-  # @param [Array<String,Symbol>] cols          Column names; default: "*".
-  # @param [Boolean]              headings      If *false*, don't include the
-  #                                               database schema.
-  # @param [Boolean]              html          If *true*, produce records as
-  #                                               arrays of values.
-  # @param [Boolean]              no_raise      If *true*, don't raise
-  #                                               exceptions.
-  # @param [Boolean]              raise_blank   If *true*, don't ignore blank
+  # @param [String, Symbol, *]    name        Database table name.
+  # @param [Array<String,Symbol>] cols        Column names; default: "*".
+  # @param [Boolean]              headings    If *false*, don't include the
+  #                                             database schema.
+  # @param [Boolean]              html        If *true*, produce records as
+  #                                             arrays of values.
+  # @param [Boolean]              fatal       If *false*, don't raise
+  #                                             exceptions.
+  # @param [Boolean]              no_blanks   If *true*, don't ignore blank
   #                                               column names.
   #
   # @return [Array<Hash>]
-  # @return [Array<Array<String>,Hash>]         If *html* is *true*.
+  # @return [Array<Array<String>,Hash>]       If *html* is *true*.
   #
   def table_records
-    : (untyped name, *(String|Symbol) cols, ?headings: bool,  html: true, ?no_raise: bool, ?raise_blank: bool) -> Array[strArray|symHash]
-    | (untyped name, *(String|Symbol) cols, ?headings: bool, ?html: bool, ?no_raise: bool, ?raise_blank: bool) -> Array[symHash]
+    : (untyped name, *(String|Symbol) cols, ?headings: bool,  html: true, ?fatal: bool, ?no_blanks: bool) -> Array[strArray|symHash]
+    | (untyped name, *(String|Symbol) cols, ?headings: bool, ?html: bool, ?fatal: bool, ?no_blanks: bool) -> Array[symHash]
 
   private
 

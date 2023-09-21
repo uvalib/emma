@@ -183,22 +183,22 @@ module Record::Searchable
     # `opt[:submission_id]`.
     #
     # @param [Model, Hash, String, Symbol, nil] sid
-    # @param [Integer]         max        Log error if matches exceed this.
-    # @param [Boolean, Symbol] log        Calling method for logging.
-    # @param [Boolean]         no_raise   If *true*, return *nil* on error.
-    # @param [Hash]            opt        Passed to #where.
+    # @param [Integer, nil]    max      Log error if matches exceed this.
+    # @param [Boolean, Symbol] log      Calling method for logging.
+    # @param [Boolean]         fatal    If *false*, return *nil* on error.
+    # @param [Hash]            opt      Passed to #where.
     #
-    # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
-    # @raise [Record::NotFound]           If record not found.
+    # @raise [Record::StatementInvalid] If *sid*/opt[:submission_id] invalid.
+    # @raise [Record::NotFound]         If record not found.
     #
-    # @return [ActiveRecord::Relation, nil]
+    # @return [ActiveRecord::Relation]
+    # @return [nil]                     If invalid and *fatal* is *false*.
     #
     # @note From Upload#matching_sid
     #
     def matching_sid
-      : (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol,                  **untyped opt) -> ActiveRecord::Relation
-      | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol, no_raise: false, **untyped opt) -> ActiveRecord::Relation
-      | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol, no_raise: true,  **untyped opt) -> (ActiveRecord::Relation | nil)
+      : (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol, ?fatal: true,  **untyped opt) -> ActiveRecord::Relation
+      | (?(Model|symHash|String|Symbol|nil) sid, ?max: Integer|nil, ?log: bool|Symbol,  fatal: false, **untyped opt) -> (ActiveRecord::Relation | nil)
 
     # Get the latest record matching the submission ID given as either *sid* or
     # `opt[:submission_id]`.

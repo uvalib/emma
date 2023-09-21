@@ -154,6 +154,7 @@ module Record::Submittable
     # @raise [ActiveRecord::RecordNotSaved]   Update halted due to callbacks.
     #
     # @return [ApplicationRecord]
+    # @return [nil]                           If `data[:fatal]` is *false*.
     #
     # @note From UploadWorkflow::External#db_update
     #
@@ -167,14 +168,14 @@ module Record::Submittable
           find_record(item)
         else
           data   = data.dup
-          opt    = data.extract!(:no_raise, :meth)
+          opt    = data.extract!(:fatal, :meth)
           ids    = data.extract!(:id, :submission_id)
           item ||= ids.values.first
           find_record(item, **opt)
         end
       if data.present?
         record.update!(data)
-      elsif record.new_record?
+      elsif record&.new_record?
         record.save!
       end
       # noinspection RubyMismatchedReturnType

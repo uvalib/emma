@@ -125,7 +125,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # @param [ApplicationCable::Response] payload
   # @param [Hash]                       opt
   #
-  # @option opt [Boolean] :no_raise     Passed to #stream_send.
+  # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
@@ -145,12 +145,12 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # Push data to the client.
   #
   # @param [ApplicationCable::Response] payload
-  # @param [Boolean, nil]               no_raise
+  # @param [Boolean]                    fatal
   # @param [Hash]                       opt
   #
   # @return [void]
   #
-  def self.stream_send(payload, no_raise: false, **opt)
+  def self.stream_send(payload, fatal: true, **opt)
     meth   = opt[:meth] ||= __method__
     s_id   = opt.delete(:stream_id)
     stream = opt.delete(:stream_name) || (s_id && "#{channel_name}_#{s_id}")
@@ -159,7 +159,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
       ActionCable.server.broadcast(stream, data)
     else
       __debug_cable(meth, (error = "#{meth}: No stream given"))
-      raise(error) unless no_raise
+      raise(error) if fatal
     end
   end
 

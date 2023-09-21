@@ -93,11 +93,11 @@ module AccountConcern
   #
   # @param [Hash, nil]       attr       Default: `#current_params`.
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
+  # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [User]                      A new User instance.
   #
-  def create_record(attr = nil, force_id: false, no_raise: false, **)
+  def create_record(attr = nil, force_id: false, fatal: true, **)
     # noinspection RubyScope, RubyMismatchedReturnType
     super do |attr|
       unless administrator?
@@ -112,7 +112,7 @@ module AccountConcern
   # unless authorized.
   #
   # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Boolean]   fatal          If *false* use #update not #update!.
   # @param [Hash]      prm            Field values.
   #
   # @raise [Record::NotFound]               Record could not be found.
@@ -121,7 +121,7 @@ module AccountConcern
   #
   # @return [User, nil]               The updated User instance.
   #
-  def update_record(item = nil, no_raise: false, **prm)
+  def update_record(item = nil, fatal: true, **prm)
     # noinspection RubyMismatchedReturnType
     super do |record, attr|
       unless administrator?

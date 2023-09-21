@@ -182,7 +182,7 @@ module Record::Identification
   # Return with the specified record or *nil* if one could not be found.
   #
   # @param [String, Integer, Hash, Model, *] item
-  # @param [Boolean]     no_raise     If *true*, do not raise exceptions.
+  # @param [Boolean]     fatal        If *false*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:
   #
@@ -192,12 +192,12 @@ module Record::Identification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]  Or possibly *nil* if *no_raise*.
+  # @return [ApplicationRecord<Model>]
+  # @return [nil]                       Only if *fatal* is *false*.
   #
   # @note From UploadWorkflow::External#get_record
   #
-  def find_record(item, no_raise: false, meth: nil, **opt)
-    # noinspection RubyMismatchedReturnType
+  def find_record(item, fatal: true, meth: nil, **opt)
     return item if item.nil? || item.is_a?(record_class)
     meth  ||= __method__
     record = error = id = nil
@@ -225,13 +225,12 @@ module Record::Identification
       record
     elsif !id
       Log.info { "#{meth}: #{error} (no record specified)" }
-      raise_failure(:file_id) unless no_raise
-    elsif no_raise
-      # noinspection RubyMismatchedReturnType
+      raise_failure(:file_id) if fatal
+    elsif !fatal
       Log.warn { "#{meth}: #{error} (skipping)" }
     else
       Log.error { "#{meth}: #{error}" }
-      raise_failure(:find, item) unless no_raise
+      raise_failure(:find, item)
     end
   end
 

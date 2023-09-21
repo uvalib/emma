@@ -171,7 +171,7 @@ module SubmissionService::Action::Submit
     sim&.new_slice
     success, failure = {}, {}
     manifest_items(items).each do |rec|
-      result = submit_manifest_item(rec, **opt, no_raise: true)
+      result = submit_manifest_item(rec, **opt, fatal: false)
       s = result.success.presence and success.merge!(s)
       f = result.failure.presence and failure.merge!(f)
     end
@@ -184,14 +184,14 @@ module SubmissionService::Action::Submit
   # Failure at any step results in the failure of the item to be submitted.
   #
   # @param [String, ManifestItem] item
-  # @param [Boolean]              no_raise
+  # @param [Boolean]              fatal
   # @param [Hash]                 opt
   #
   # @raise [RuntimeError]             If a submission step failed.
   #
   # @return [StepResult]
   #
-  def submit_manifest_item(item, no_raise: false, **opt)
+  def submit_manifest_item(item, fatal: true, **opt)
     recs, success, failure = [], {}, {}
     recs = manifest_items(item)
     sim  = opt[:sim_opt]
@@ -207,7 +207,7 @@ module SubmissionService::Action::Submit
     end
   rescue => error
     update_failures!(failure, error, recs)
-    raise error unless no_raise
+    raise error if fatal
   ensure
     return StepResult.new(success: success, failure: failure)
   end
@@ -253,21 +253,21 @@ module SubmissionService::Action::Submit
   #
   # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
   # @param [Symbol]                                              step
-  # @param [Boolean]                                             no_raise
+  # @param [Boolean]                                             fatal
   # @param [Hash]                                                opt
   #
   # @return [StepResult]
   #
-  def submit_manifest_items(items, step:, no_raise: true, **opt)
+  def submit_manifest_items(items, step:, fatal: false, **opt)
     recs, success, failure = [], {}, {}
     recs = manifest_items(items)
-    submission_step(recs, no_raise: no_raise, **opt, step: step).tap do |res|
+    submission_step(recs, fatal: fatal, **opt, step: step).tap do |res|
       s = res.success.presence and success.merge!(s)
       f = res.failure.presence and failure.merge!(f)
     end
   rescue => error
     update_failures!(failure, error, recs)
-    raise error unless no_raise
+    raise error if fatal
   ensure
     return StepResult.new(success: success, failure: failure)
   end
@@ -347,8 +347,8 @@ module SubmissionService::Action::Submit
   # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
   # @param [Symbol]                 step
   # @param [Float, nil]             start_time
-  # @param [Boolean]                no_raise
   # @param [Proc, nil]              callback
+  # @param [Boolean]                fatal
   # @param [Hash]                   opt
   #
   # @option opt [String]            :manifest_id
@@ -367,8 +367,8 @@ module SubmissionService::Action::Submit
     items,
     step:,
     start_time: nil,
-    no_raise:   false,
     callback:   nil,
+    fatal:      true,
     **opt
   )
     result = nil
@@ -392,7 +392,7 @@ module SubmissionService::Action::Submit
     # NOTE: *success* is assumed to be *nil* in this case.
     notice = error.to_s
     result = recs.map { |rec| [manifest_item_id(rec), notice] }.to_h
-    raise error unless no_raise
+    raise error if fatal
 
   ensure
     if result.is_a?(StepResult)
@@ -459,7 +459,7 @@ module SubmissionService::Action::Submit
     opt[:success] = 'stored' # TODO: I18n
     opt[:meth]    = __method__
     run_step(records, **opt) do |_id, rec|
-      rec.promote_file(no_raise: false)
+      rec.promote_file(fatal: true)
     end
   end
 

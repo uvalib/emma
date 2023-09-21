@@ -42,7 +42,7 @@ class SubmitJob < ApplicationJob
   # * argument[1]   options:
   #
   # @option argument[2] [Symbol]  :job_type
-  # @option argument[2] [Boolean] :no_raise
+  # @option argument[2] [Boolean] :fatal
   #
   # @return [Hash]
   #
@@ -51,7 +51,7 @@ class SubmitJob < ApplicationJob
     super
     args     = arguments.dup
     opt      = args.extract_options!.dup
-    no_raise = opt.delete(:no_raise)
+    no_raise = false?(opt.delete(:fatal))
     meth     = opt[:meth]  ||= "#{self.class}.#{__method__}"
     start    = opt[:start] ||= timestamp
     timeout  = opt[:timeout]

@@ -59,7 +59,7 @@ module AwsS3Service::Common
     # Set internal options from parameters or service options.
     local        = opt.extract!(:meth, *SERVICE_OPTIONS)
     no_exception = local[:no_exception] || options[:no_exception]
-    no_raise     = local[:no_raise]     || options[:no_raise] || no_exception
+    fatal        = local[:fatal]        || options[:fatal] || !no_exception
     meth         = local[:meth]         || calling_method
 
     repo  = opt.delete(:repo)
@@ -80,7 +80,7 @@ module AwsS3Service::Common
     __debug_api_response(error: error)
     log_exception(error, meth: meth) if error
     clear_error                      if no_exception
-    raise exception                  if exception && !no_raise
+    raise exception                  if exception && fatal
   end
 
   # Construct a message to be returned from the method that executed :api.

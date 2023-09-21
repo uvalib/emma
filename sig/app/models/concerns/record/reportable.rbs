@@ -69,14 +69,14 @@ module Record::Reportable
   #
   # @param [Any, nil]    value
   # @param [Symbol, nil] meth         Default: `#calling_method`.
-  # @param [Boolean]     no_raise     Unless *false* do not raise an exception.
+  # @param [Boolean]     fatal        If *true* raise on error.
   # @param [Symbol]      col          Default: `#REPORT_COLUMN`.
   #
-  # @raise [RuntimeError]             If updating failed and !no_raise.
+  # @raise [RuntimeError]             If updating failed and !fatal.
   #
   # @return [Boolean]
   #
-  def set_report_column: (untyped? value, ?meth: Symbol|nil, ?no_raise: bool, ?col: Symbol) -> bool
+  def set_report_column: (untyped? value, ?meth: Symbol|nil, ?fatal: bool, ?col: Symbol) -> bool
 
   private
 

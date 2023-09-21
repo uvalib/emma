@@ -403,7 +403,7 @@ class ApiMigrate
     # @return [Hash]
     #
     def parse_data(data)
-      json_parse(data, no_raise: false) || {}
+      json_parse(data, fatal: true) || {}
     rescue
       # noinspection RubyUnusedLocalVariable
       patterns = {
@@ -859,9 +859,9 @@ class ApiMigrate
   # @param [Symbol, String, Integer, Float, nil] key        Default: latest.
   # @param [Boolean, Hash]                       report
   # @param [Boolean]                             log
-  # @param [Boolean]                             no_raise
+  # @param [Boolean]                             fatal
   #
-  def initialize(key = nil, report: nil, log: nil, no_raise: false, **)
+  def initialize(key = nil, report: nil, log: nil, fatal: true, **)
     @report = report.is_a?(Hash) ? report : ({} unless false?(report))
     @log    = log.present?
     # noinspection RubyMismatchedVariableType
@@ -876,7 +876,7 @@ class ApiMigrate
       end
     if (error &&= "ApiMigrate: #{error}")
       Log.warn(error)
-      raise error unless no_raise
+      raise error if fatal
     end
   end
 

@@ -57,13 +57,13 @@ module Emma::Csv
   # Generate data from CSV input.
   #
   # @param [String, IO, StringIO, IO::Like, nil] arg
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] no_empty         If *false*, allow data will all nils.
   # @param [Boolean] utf8
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   # @param [Hash]    opt              Passed to CSV#parse.
   #
   # @return [Array<Hash>]
-  # @return [nil]                     Only if *no_raise* is *true*.
+  # @return [nil]                     Only if *fatal* is *false*.
   #
   # === Usage Notes
   # The argument is expected to either be the literal data or an object like an
@@ -75,7 +75,7 @@ module Emma::Csv
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
   # encoding.  NOTE: This might not be necessary any longer though.
   #
-  def csv_parse(arg, no_raise: true, no_empty: true, utf8: true, **opt)
+  def csv_parse(arg, no_empty: true, utf8: true, fatal: false, **opt)
     return if arg.nil? || arg.is_a?(Puma::NullIO)
     CSV.parse(arg, **CSV_DEFAULTS, **opt).map { |row|
       row = row.to_h
@@ -85,7 +85,7 @@ module Emma::Csv
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" }
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
   end
 
   # ===========================================================================

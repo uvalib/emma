@@ -371,7 +371,7 @@ module BaseDecorator::Form
   # @see file:app/assets/javascripts/feature/model-form.js *updateMenu()*
   #
   def render_form_menu_single(name, value, range:, css: '.menu.single', **opt)
-    range.is_a?(Array) or valid_range?(range, exception: true)
+    range.is_a?(Array) or valid_range?(range, fatal: true)
     normalize_attributes!(opt)
     html_opt = remainder_hash!(opt, *MENU_SINGLE_OPT)
     field    = html_opt[:'data-field']
@@ -422,7 +422,7 @@ module BaseDecorator::Form
   # @see file:javascripts/feature/model-form.js *updateFieldsetCheckboxes()*
   #
   def render_form_menu_multi(name, value, range:, css: '.menu.multi', **opt)
-    valid_range?(range, exception: true)
+    valid_range?(range, fatal: true)
     normalize_attributes!(opt)
     html_opt = remainder_hash!(opt, *MENU_MULTI_OPT)
     field    = html_opt[:'data-field']

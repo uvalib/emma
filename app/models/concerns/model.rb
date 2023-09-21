@@ -506,7 +506,7 @@ module Model
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
   def self.config_for(item)
-    configuration_fields(item, no_raise: true)
+    configuration_fields(item, fatal: false)
   end
 
   # Get configured record fields relevant to the given context for the

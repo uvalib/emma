@@ -23,13 +23,13 @@ module Emma::Json
   #
   # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
   # @param [Boolean] log           If *false*, do not log errors.
-  # @param [Boolean] no_raise      If *false*, re-raise exceptions.
+  # @param [Boolean] fatal         If *true*, re-raise exceptions.
   # @param [Hash]    opt           Passed to MultiJson#load.
   #
   # @raise [RuntimeError]          If *arg* does not resolve to Hash or String.
-  # @raise [MultiJson::ParseError] If *arg* failed to parse and !*no_raise*.
+  # @raise [MultiJson::ParseError] If *arg* failed to parse and *fatal*.
   #
-  # @return [nil]                  If *arg* failed to parse and *no_raise*.
+  # @return [nil]                  If *arg* failed to parse and not *fatal*.
   # @return [Hash]
   # @return [Array<Hash>]
   #
@@ -37,28 +37,28 @@ module Emma::Json
   # === Variations
   #++
   #
-  # @overload json_parse(hash = nil, log: true, no_raise: true, **)
+  # @overload json_parse(hash = nil, log: true, fatal: false, **)
   #   If *arg* is already a Hash, a copy of it is returned.
   #   @param [Hash, nil] hash
   #   @param [Boolean]   log
-  #   @param [Boolean]   no_raise
+  #   @param [Boolean]   fatal
   #   @param [Hash]      opt
   #   @return [Hash, nil]
   #
-  # @overload json_parse(json, log: true, no_raise: true, **opt)
+  # @overload json_parse(json, log: true, fatal: false, **opt)
   #   If *arg* is a String it is assumed to be JSON format (although renderings
   #   of Ruby hashes are accommodated by converting "=>" to ":").
   #   @param [String]    json
   #   @param [Boolean]   log
-  #   @param [Boolean]   no_raise
+  #   @param [Boolean]   fatal
   #   @param [Hash]      opt
   #   @return [Hash, Array<Hash>, nil]
   #
-  # @overload json_parse(io, log: true, no_raise: true, **opt)
+  # @overload json_parse(io, log: true, fatal: false, **opt)
   #   If *arg* is IO-like, its contents are read and parsed as JSON.
   #   @param [IO, StringIO, IO::Like] io
   #   @param [Boolean]                log
-  #   @param [Boolean]                no_raise
+  #   @param [Boolean]                fatal
   #   @param [Hash]                   opt
   #   @return [Hash, Array<Hash>, nil]
   #
@@ -66,7 +66,7 @@ module Emma::Json
   # If opt[:symbolize_keys] is explicitly *false* then this causes all result
   # keys to be converted to strings.
   #
-  def json_parse(arg, log: true, no_raise: true, **opt)
+  def json_parse(arg, log: true, fatal: false, **opt)
     return if arg.nil?
     str = false?(opt[:symbolize_keys])
     sym = opt[:symbolize_keys] = !str
@@ -89,7 +89,7 @@ module Emma::Json
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" } if log
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
   end
 
   # Attempt to interpret *arg* as JSON if it is a string.
@@ -114,9 +114,9 @@ module Emma::Json
   # json_render
   #
   # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   #
   # @raise [MultiJson::ParseError]
   # @raise [RuntimeError]
@@ -125,24 +125,24 @@ module Emma::Json
   #
   # @see #pretty_json
   #
-  def json_render(arg, no_raise: true, align_values: false, ruby_keys: false)
+  def json_render(arg, align_values: false, ruby_keys: false, fatal: false)
     option = { align_values: align_values, ruby_keys: ruby_keys }
-    result = pretty_json(arg, no_raise: false, **option)
+    result = pretty_json(arg, fatal: true, **option)
     result.gsub!(/\n/, ' ') unless align_values
     result
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
     arg.inspect
   end
 
   # pretty_json
   #
   # @param [*]       arg
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   #
   # @raise [MultiJson::ParseError]
   # @raise [RuntimeError]
@@ -155,8 +155,8 @@ module Emma::Json
   # An HTML element can show the lines as they are generated if it has style
   # "white-space: pre;".
   #
-  def pretty_json(arg, no_raise: true, align_values: true, ruby_keys: true)
-    source  = json_parse(arg, symbolize_keys: false, no_raise: false)
+  def pretty_json(arg, align_values: true, ruby_keys: true, fatal: false)
+    source  = json_parse(arg, symbolize_keys: false, fatal: true)
     result  = MultiJson.dump(source, pretty: true)
     key_max = align_values
     key_max &&=
@@ -176,7 +176,7 @@ module Emma::Json
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
     arg.pretty_inspect
   end
 
@@ -222,7 +222,7 @@ module Emma::Json
   # hash_render
   #
   # @param [String, Hash, IO, StringIO, IO::Like, nil] arg
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   # @param [Hash]    opt              Passed to #json_render.
   #
   # @raise [MultiJson::ParseError]
@@ -232,13 +232,13 @@ module Emma::Json
   #
   # @see #json_render
   #
-  def hash_render(arg, no_raise: true, **opt)
+  def hash_render(arg, fatal: false, **opt)
     opt[:ruby_keys] = true unless opt.key?(:ruby_keys)
-    json_render(arg, no_raise: false, **opt)
+    json_render(arg, fatal: true, **opt)
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
     arg.inspect
   end
 

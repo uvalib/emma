@@ -136,7 +136,7 @@ module ApiService::Common
   # @param [Hash]                     opt   API request parameters except for:
   #
   # @option opt [Symbol]  :meth           The calling method for logging.
-  # @option opt [Boolean] :no_raise       If *true*, set @exception but do not
+  # @option opt [Boolean] :fatal          If *true*, set @exception but do not
   #                                         raise it.
   # @option opt [Boolean] :no_exception   If *true*, neither set @exception nor
   #                                         raise it.
@@ -159,7 +159,7 @@ module ApiService::Common
     # Set internal options from parameters or service options.
     @params      = remainder_hash!(opt, :meth, *SERVICE_OPTIONS)
     no_exception = opt[:no_exception] || options[:no_exception]
-    no_raise     = opt[:no_raise]     || options[:no_raise] || no_exception
+    fatal        = opt[:fatal]        || options[:fatal] || !no_exception
     meth         = opt[:meth]         || calling_method
 
     # Form the API path from arguments, build API call parameters (minus
@@ -183,7 +183,7 @@ module ApiService::Common
     __debug_api_response(error: error) unless is_a?(SearchService)
     log_exception(error, meth: meth)   if error
     clear_error                        if no_exception
-    raise exception                    if exception && !no_raise
+    raise exception                    if exception && fatal
     return (@response unless error)
   end
 
@@ -549,16 +549,16 @@ module ApiService::Common
   #
   # @param [String, Symbol] meth
   # @param [Array<String>]  errors
-  # @param [Boolean]        no_raise
+  # @param [Boolean]        fatal
   #
-  # @raise [RuntimeError]             Errors present and *no_raise* is *false*.
+  # @raise [RuntimeError]             Errors present and *fatal* is *true*.
   #
-  # @return [nil]                     No errors or *no_raise* is *true*.
+  # @return [nil]                     No errors or *fatal* is *false*.
   #
-  def invalid_params(meth, *errors, no_raise: !RAISE_ON_INVALID_PARAMS)
+  def invalid_params(meth, *errors, fatal: RAISE_ON_INVALID_PARAMS)
     return if errors.blank?
     errors.each { |problem| Log.warn("#{meth}: #{problem}") }
-    raise RuntimeError, ("#{meth}: " + errors.join("\nAND ")) unless no_raise
+    raise RuntimeError, ("#{meth}: " + errors.join("\nAND ")) if fatal
   end
 
   # ===========================================================================

@@ -7,7 +7,7 @@ class LookupJob < ApplicationJob
   # * argument[2]   Options:
   #
   # @option argument[2] [Symbol]  :job_type
-  # @option argument[2] [Boolean] :no_raise
+  # @option argument[2] [Boolean] :fatal
   #
   # @return [Hash]
   #

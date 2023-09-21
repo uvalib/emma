@@ -118,14 +118,14 @@ module Record::Reportable
   #
   # @param [Any, nil]    value
   # @param [Symbol, nil] meth         Default: `#calling_method`.
-  # @param [Boolean]     no_raise     Unless *false* do not raise an exception.
+  # @param [Boolean]     fatal        If *true* raise on error.
   # @param [Symbol]      col          Default: `#REPORT_COLUMN`.
   #
-  # @raise [RuntimeError]             If updating failed and !no_raise.
+  # @raise [RuntimeError]             If updating failed and !fatal.
   #
   # @return [Boolean]
   #
-  def set_report_column(value, meth: nil, no_raise: true, col: REPORT_COLUMN)
+  def set_report_column(value, meth: nil, fatal: false, col: REPORT_COLUMN)
     result = set_field_direct(col, value) and return result
     result = result.nil?
     err = result ? 'record deleted' : "failed to update with #{value.inspect}"
@@ -133,7 +133,7 @@ module Record::Reportable
       meth ||= calling_method(3)
       "#{meth}: #{err}"
     end
-    raise err unless no_raise
+    raise err if fatal
     result
   end
 

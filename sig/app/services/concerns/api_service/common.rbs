@@ -99,7 +99,7 @@ module ApiService::Common
   # @param [Hash]                     opt   API request parameters except for:
   #
   # @option opt [Symbol]  :meth           The calling method for logging.
-  # @option opt [Boolean] :no_raise       If *true*, set @exception but do not
+  # @option opt [Boolean] :fatal          If *true*, set @exception but do not
   #                                         raise it.
   # @option opt [Boolean] :no_exception   If *true*, neither set @exception nor
   #                                         raise it.
@@ -284,13 +284,13 @@ module ApiService::Common
   #
   # @param [String, Symbol] meth
   # @param [Array<String>]  errors
-  # @param [Boolean]        no_raise
+  # @param [Boolean]        fatal
   #
-  # @raise [RuntimeError]             Errors present and *no_raise* is *false*.
+  # @raise [RuntimeError]             Errors present and *fatal* is *true*.
   #
-  # @return [nil]                     No errors or *no_raise* is *true*.
+  # @return [nil]                     No errors or *fatal* is *false*.
   #
-  def invalid_params: ((Symbol|String) meth, *String errors, ?no_raise: bool) -> nil
+  def invalid_params: ((Symbol|String) meth, *String errors, ?fatal: bool) -> nil
 
   # __debug_api_headers
   #

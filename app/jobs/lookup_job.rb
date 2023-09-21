@@ -21,7 +21,7 @@ class LookupJob < ApplicationJob
   # * argument[2]   Options:
   #
   # @option argument[2] [Symbol]  :job_type
-  # @option argument[2] [Boolean] :no_raise
+  # @option argument[2] [Boolean] :fatal
   #
   # @return [Hash]
   #
@@ -48,7 +48,7 @@ class LookupJob < ApplicationJob
     super
     args     = arguments.dup
     opt      = args.extract_options!.dup
-    no_raise = opt.delete(:no_raise)
+    no_raise = false?(opt.delete(:fatal))
     meth     = opt[:meth]  ||= "#{self.class}.#{__method__}"
     start    = opt[:start] ||= timestamp
     timeout  = opt[:timeout]
@@ -194,7 +194,7 @@ class LookupJob < ApplicationJob
     LookupChannel.initial_response(payload, **opt)
 
     # Spawn worker tasks.
-    job_opt.merge!(job_type: :worker, no_raise: true)
+    job_opt.merge!(job_type: :worker, fatal: false)
     job_opt[:stream_name] = opt[:stream_name]
     job_list =
       services.map { |service|

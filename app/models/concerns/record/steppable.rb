@@ -144,11 +144,11 @@ module Record::Steppable
   # Workflow state configuration for *item*.
   #
   # @param [Model, Class<Model>] item
-  # @param [Boolean]             no_raise
+  # @param [Boolean]             fatal
   #
   # @return [Hash, nil]
   #
-  def get_state_table(item, no_raise: true)
+  def get_state_table(item, fatal: false)
     return unless item
     cls = self_class(item)
     # noinspection RubyResolve
@@ -162,7 +162,7 @@ module Record::Steppable
       error = "invalid: #{item.inspect}"
     end
     Log.warn { "#{__method__}: #{error}" }
-    raise error unless no_raise
+    raise error if fatal
   end
 
   # All valid workflow states for *item*.
@@ -461,13 +461,13 @@ module Record::Steppable
     # Workflow state configuration.
     #
     # @param [Model, Class<Model>, nil] item      Default: self.
-    # @param [Boolean]                  no_raise
+    # @param [Boolean]                  fatal
     #
     # @return [Hash, nil]
     #
-    def get_state_table(item = nil, no_raise: true)
+    def get_state_table(item = nil, fatal: false)
       # noinspection RubyMismatchedArgumentType
-      super((item || self), no_raise: no_raise)
+      super((item || self), fatal: fatal)
     end
 
     # All valid workflow states.
@@ -536,7 +536,7 @@ module Record::Steppable
     # methods specified in the table definitions will have been defined.
     #
     def validate_state_table(table = nil)
-      table ||= get_state_table(no_raise: false)
+      table ||= get_state_table(fatal: true)
       meths  = self.is_a?(Module) ? instance_methods : self.class.methods
       states = table.keys
       errors = []
@@ -672,13 +672,13 @@ module Record::Steppable
     # Workflow state configuration associated with the current record.
     #
     # @param [Model, Class<Model>, nil] item      Default: self.
-    # @param [Boolean]                  no_raise
+    # @param [Boolean]                  fatal
     #
     # @return [Hash, nil]
     #
-    def get_state_table(item = nil, no_raise: true)
+    def get_state_table(item = nil, fatal: false)
       # noinspection RubyMismatchedArgumentType
-      super((item || self), no_raise: true)
+      super((item || self), fatal: fatal)
     end
 
     # All valid workflow states for the current record.

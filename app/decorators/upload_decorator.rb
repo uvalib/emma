@@ -567,7 +567,7 @@ class UploadDecorator
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def self.controls_for(item, **opt)
-    entry = Upload.latest_for_sid(item, no_raise: true)
+    entry = Upload.latest_for_sid(item, fatal: false)
     return unless entry && can?(:modify, entry)
     ctx = { context: opt.delete(:context) }
     dec = new(entry, context: ctx)

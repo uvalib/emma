@@ -930,20 +930,20 @@ module UploadWorkflow::External
   # Return with the specified record or *nil* if one could not be found.
   #
   # @param [String, Hash, Upload, nil] id
-  # @param [Boolean]        no_raise  If *true*, do not raise exceptions.
-  # @param [Symbol]         meth      Calling method (for logging).
+  # @param [Boolean]  fatal               If *false*, do not raise exceptions.
+  # @param [Symbol]   meth                Calling method (for logging).
   #
-  # @raise [UploadWorkflow::SubmitError]  If *item* not found and !*no_raise*.
+  # @raise [UploadWorkflow::SubmitError]  If *item* not found and !*fatal*.
   #
   # @return [Upload]                  The item; from the database if necessary.
-  # @return [nil]                     If *item* not found and *no_raise*.
+  # @return [nil]                     If *item* not found and *fatal*.
   #
-  def get_record(id, no_raise: false, meth: nil)
+  def get_record(id, fatal: true, meth: nil)
     if (result = Upload.get_record(id))
       result
     elsif Upload.id_term(id).values.first.blank?
-      raise_failure(:file_id) unless no_raise
-    elsif no_raise
+      raise_failure(:file_id) if fatal
+    elsif !fatal
       Log.warn  { "#{meth || __method__}: #{id}: skipping record" }
     else
       Log.error { "#{meth || __method__}: #{id}: non-existent record" }
@@ -1104,7 +1104,7 @@ module UploadWorkflow::External
     unless record.is_a?(Upload)
       if data.is_a?(Hash)
         data = data.dup
-        opt  = data.extract!(:no_raise, :meth)
+        opt  = data.extract!(:fatal, :meth)
         ids  = data.extract!(:id, :submission_id)
         id   = record || ids.values.first
       else
@@ -1665,7 +1665,7 @@ module UploadWorkflow::Actions
     emma_items, repo_items = items.partition { |item| emma_item?(item) }
 
     # EMMA items and/or EMMA submission ID's.
-    opt = { no_raise: force }
+    opt = { fatal: !force }
     self.succeeded += emma_items.map { |item| get_record(item, **opt) || item }
 
     if repo_items.present?

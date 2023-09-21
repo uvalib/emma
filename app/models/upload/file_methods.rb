@@ -228,25 +228,25 @@ module Upload::FileMethods
   # If the file is in :cache it will be moved to :store.  If it's already in
   # :store then this is a no-op.
   #
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_file(no_raise: true)
+  def promote_file(fatal: false)
     __debug_items(binding)
-    promote_cached_file(no_raise: no_raise)
+    promote_cached_file(fatal: fatal)
   end
 
   # Remove the uploaded file from storage (either :store or :cache).
   #
-  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
-  # @param [Symbol] field             Either :file_data or :edit_file_data;
+  # @param [Symbol]  field            Either :file_data or :edit_file_data;
   #                                     otherwise the field is determined by
   #                                     the phase.
+  # @param [Boolean] fatal            If *true*, re-raise exceptions.
   #
   # @return [void]
   #
-  def delete_file(no_raise: true, field: nil)
+  def delete_file(field: nil, fatal: false)
     __debug_items(binding)
     return if destroyed?
     if field.nil? && active_attached_file
@@ -262,7 +262,7 @@ module Upload::FileMethods
   rescue => error
     log_exception(error, __method__)
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
   end
 
   # ===========================================================================
@@ -486,12 +486,14 @@ module Upload::FileMethods
 
   # Finalize a file upload by promoting the :cache file to a :store file.
   #
-  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
   # @param [Boolean] keep_cached      If *true*, don't delete the original.
+  # @param [Boolean] fatal            If *false*, don't re-raise exceptions.
   #
   # @return [FileUploader::UploadedFile, nil]
   #
-  def promote_cached_file(no_raise: false, keep_cached: false)
+  # @note From Upload::FileMethods#promote_cached_file
+  #
+  def promote_cached_file(keep_cached: false, fatal: true)
     __debug_items(binding)
     return unless active_attach_cached
     old_file   = !keep_cached
@@ -501,16 +503,16 @@ module Upload::FileMethods
   rescue => error
     log_exception(error, __method__)
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
   end
 
   # Finalize a deletion by the removing the file from :cache and/or :store.
   #
-  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
+  # @param [Boolean] fatal            If *false*, don't re-raise exceptions.
   #
   # @return [TrueClass, nil]
   #
-  def delete_cached_file(no_raise: false)
+  def delete_cached_file(fatal: true)
     __debug_items(binding)
     return unless active_attach_cached
     active_file_attacher.destroy
@@ -519,7 +521,7 @@ module Upload::FileMethods
   rescue => error
     log_exception(error, __method__)
     re_raise_if_internal_exception(error)
-    raise error unless no_raise
+    raise error if fatal
   end
 
   # ===========================================================================

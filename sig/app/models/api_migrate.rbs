@@ -447,9 +447,9 @@ class ApiMigrate
   # @param [Symbol, String, Integer, Float, nil] key        Default: latest.
   # @param [Boolean, Hash]                       report
   # @param [Boolean]                             log
-  # @param [Boolean]                             no_raise
+  # @param [Boolean]                             fatal
   #
-  def initialize: (?untyped key, ?report: bool|symHash|nil, ?log: bool|nil, ?no_raise: bool) -> void
+  def initialize: (?untyped key, ?report: bool|symHash|nil, ?log: bool|nil, ?fatal: bool) -> void
 
   # Run the data migrations.
   #

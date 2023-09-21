@@ -437,21 +437,22 @@ module Record::Searchable
     # `opt[:submission_id]`.
     #
     # @param [Model, Hash, String, Symbol, nil] sid
-    # @param [Integer, nil]    max        Log error if matches exceed this.
-    # @param [Boolean, Symbol] log        Calling method for logging.
-    # @param [Boolean]         no_raise   If *true*, return *nil* on error.
-    # @param [Hash]            opt        Passed to #where.
+    # @param [Integer, nil]    max      Log error if matches exceed this.
+    # @param [Boolean, Symbol] log      Calling method for logging.
+    # @param [Boolean]         fatal    If *false*, return *nil* on error.
+    # @param [Hash]            opt      Passed to #where.
     #
-    # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
-    # @raise [Record::NotFound]           If record not found.
+    # @raise [Record::StatementInvalid] If *sid*/opt[:submission_id] invalid.
+    # @raise [Record::NotFound]         If record not found.
     #
-    # @return [ActiveRecord::Relation, nil]
+    # @return [ActiveRecord::Relation]
+    # @return [nil]                     If invalid and *fatal* is *false*.
     #
     # @note From Upload#matching_sid
     #
-    def matching_sid(sid = nil, max: nil, log: false, no_raise: false, **opt)
+    def matching_sid(sid = nil, max: nil, log: false, fatal: true, **opt)
       msg = log.present?
-      err = no_raise.blank?
+      err = fatal.present?
       sid = opt[:submission_id] = sid_value(sid || opt)
       if sid.blank?
         err &&= Record::StatementInvalid

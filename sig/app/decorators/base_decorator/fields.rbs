@@ -151,11 +151,11 @@ module BaseDecorator::Fields
   # Indicate whether the value is a valid range type.
   #
   # @param [*]       range
-  # @param [Boolean] exception        If *true*, raise an exception if *false*.
+  # @param [Boolean] fatal            If *true*, raise an exception if invalid.
   #
-  # @raise [RuntimeError]             If not valid and *exception* is *true*.
+  # @raise [RuntimeError]             If not valid and *fatal* is *true*.
   #
-  def valid_range?: (untyped range, ?exception: bool) -> bool
+  def valid_range?: (untyped range, ?fatal: bool) -> bool
 
   # Translate attributes.
   #

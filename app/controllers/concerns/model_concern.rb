@@ -420,14 +420,14 @@ module ModelConcern
   #
   # @param [Hash, nil]       attr       Default: `#current_params`.
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         no_raise   If *true*, use #save instead of #save!.
+  # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [Model]                     New persisted model record instance.
   #
-  def create_record(attr = nil, force_id: false, no_raise: false, **, &blk)
+  def create_record(attr = nil, force_id: false, fatal: true, **, &blk)
     __debug_items("WF #{self.class} #{__method__}") { { attr: attr } }
     new_record(attr, force_id: force_id, &blk).tap do |record|
-      no_raise ? record.save : record.save!
+      fatal ? record.save! : record.save
     end
   end
 
@@ -453,7 +453,7 @@ module ModelConcern
   # Persist changes to an existing model record.
   #
   # @param [*]         item           If present, used as a template.
-  # @param [Boolean]   no_raise       Use #update instead of #update!.
+  # @param [Boolean]   fatal          If *false* use #update not #update!.
   # @param [Hash, nil] prm            Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the record could not be found.
@@ -462,13 +462,13 @@ module ModelConcern
   #
   # @return [Model, nil]
   #
-  def update_record(item = nil, no_raise: false, **prm, &blk)
+  def update_record(item = nil, fatal: true, **prm, &blk)
     item, attr = model_request_params(item, prm.presence)
     __debug_items("WF #{self.class} #{__method__}") {{ prm: attr, item: item }}
     # noinspection RubyScope
     edit_record(item)&.tap do |record|
       blk&.(record, attr)
-      no_raise ? record.update(attr) : record.update!(attr)
+      fatal ? record.update!(attr) : record.update(attr)
     end
   end
 
@@ -493,13 +493,13 @@ module ModelConcern
   #
   # @param [String, Model, Array, nil] items
   # @param [Hash, nil]                 prm    Default: `#current_params`
-  # @param [Boolean]                   no_raise
+  # @param [Boolean]                   fatal  If *false* do not #raise_failure.
   #
   # @raise [Record::SubmitError]              If there were failure(s).
   #
   # @return [Array]                           Destroyed entries.
   #
-  def destroy_records(items = nil, prm = nil, no_raise: false, **)
+  def destroy_records(items = nil, prm = nil, fatal: true, **)
     items, prm = model_request_params(items, prm)
     prm.reverse_merge!(model_options.all)
     __debug_items("WF #{self.class} #{__method__}") {{ prm: prm, item: item }}
@@ -514,7 +514,7 @@ module ModelConcern
         failure << item.id
       end
     end
-    raise_failure(:destroy, failure.uniq) unless no_raise || failure.blank?
+    raise_failure(:destroy, failure.uniq) if fatal && failure.present?
     success
   end
 

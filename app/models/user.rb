@@ -214,7 +214,7 @@ class User < ApplicationRecord
   # @param [String, Symbol, Integer, Hash, Model, Any, nil] item
   # @param [Hash]                                           opt
   #
-  # @option opt [Boolean] :no_raise   True by default.
+  # @option opt [Boolean] :fatal      False by default.
   #
   # @return [User, nil]
   #
@@ -226,7 +226,7 @@ class User < ApplicationRecord
     if item.is_a?(String) && !digits_only?(item)
       find_by(email: item)
     else
-      opt[:no_raise] = true unless opt.key?(:no_raise)
+      opt[:fatal] = false unless opt.key?(:fatal)
       super
     end
   end
