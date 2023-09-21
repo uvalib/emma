@@ -5,12 +5,6 @@ module BaseDecorator::Fields
 
   include BaseDecorator::Configuration
 
-  # Field value used to explicitly indicate missing data.
-  #
-  # @type [String]
-  #
-  EMPTY_VALUE: String
-
   # Database columns with hierarchical data.
   #
   # @return [Array<Symbol>]

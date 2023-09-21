@@ -18,6 +18,7 @@ __loading_begin(__FILE__)
 module BaseDecorator::Common
 
   include Emma::Common
+  include Emma::Constants
   include Emma::Unicode
   include Emma::Json
 

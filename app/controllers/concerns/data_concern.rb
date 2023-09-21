@@ -11,6 +11,7 @@ module DataConcern
 
   extend ActiveSupport::Concern
 
+  include Emma::Constants
   include ParamsHelper
   include DataHelper
 
@@ -177,7 +178,7 @@ module DataConcern
         entry = fields[field] ||= {}
         Array.wrap(data).flatten.each do |item|
           item = item.to_s.squish
-          item = nil if item == BaseDecorator::EMPTY_VALUE
+          item = nil if item == EMPTY_VALUE
           entry[item] = entry[item]&.next || 1 unless item.blank?
         end
       end

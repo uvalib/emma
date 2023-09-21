@@ -30,7 +30,7 @@ class AwsS3::Api::Record < Api::Record
   #
   def remove_empty_values(item)
     case item
-      when BaseDecorator::EMPTY_VALUE
+      when nil, EMPTY_VALUE
         nil
       when TrueClass, FalseClass
         item

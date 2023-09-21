@@ -1,6 +1,8 @@
 # Common model methods.
 #
 module Model
+  include Emma::Constants
+
   # A unique identifier for this model instance.
   #
   # @return [String]

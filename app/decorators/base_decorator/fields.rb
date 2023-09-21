@@ -18,18 +18,6 @@ module BaseDecorator::Fields
 
   public
 
-  # Field value used to explicitly indicate missing data.
-  #
-  # @type [String]
-  #
-  EMPTY_VALUE = EN_DASH
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Database columns with hierarchical data.
   #
   # @return [Array<Symbol>]

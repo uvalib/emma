@@ -844,6 +844,8 @@ end
 # Shared values and methods.
 #
 module Api::Common
+  include Emma::Constants
+
   # Table of authentication provider names.
   #
   # @type [Hash{Symbol=>String}]

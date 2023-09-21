@@ -11,6 +11,8 @@
 module BaseDecorator::Common
   include Emma::Common
 
+  include Emma::Constants
+
   include Emma::Unicode
 
   include Emma::Json

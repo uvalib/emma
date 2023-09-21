@@ -548,7 +548,7 @@ class AccountDecorator
         can    = status ? 'can' : 'cannot'
         if status.nil?
           can    = 'error'
-          status = Emma::Unicode::EN_DASH
+          status = EMPTY_VALUE
         elsif status && (cond = target.constrained_by(action, model))
           if cond.is_a?(Hash)
             cond = pretty_json(cond).sub(/\A{\s*(.+)\s*}\z/, '\1')

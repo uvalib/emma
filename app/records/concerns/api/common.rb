@@ -1581,6 +1581,8 @@ public
 #
 module Api::Common
 
+  include Emma::Constants
+
   # ===========================================================================
   # Common configuration values - Authentication Providers
   # ===========================================================================

@@ -56,6 +56,7 @@ class ApiMigrate
   #++
   module ClassMethods
 
+    include Emma::Constants
     include Emma::Json
 
     # =========================================================================
@@ -434,7 +435,7 @@ class ApiMigrate
     def remove_blank(value)
       value = value.map { |v| remove_blank(v) }.compact if value.is_a?(Array)
       value = CGI.unescapeHTML(value.strip).scrub       if value.is_a?(String)
-      value unless value.blank? || (value == BaseDecorator::EMPTY_VALUE)
+      value unless value.blank? || (value == EMPTY_VALUE)
     end
 
     # =========================================================================

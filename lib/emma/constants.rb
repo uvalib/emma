@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require_relative 'unicode'
+
 # Emma::Constants
 #
 module Emma::Constants
@@ -32,6 +34,22 @@ module Emma::Constants
   # @type [String]
   #
   CONTACT_EMAIL = 'emmahelp@virginia.edu'
+
+  # Field value used to explicitly indicate missing data.
+  #
+  # @type [String]
+  #
+  EMPTY_VALUE = Emma::Unicode::EN_DASH
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.extend(self)
+  end
 
 end
 
