@@ -15,10 +15,11 @@
     [label, path]
   }.to_h
 
-  opt = { class: 'sign-in-link', role: 'button', 'data-turbolinks': false }
+  link_opt = { class: 'sign-in-link', role: 'button' }
+  link_opt[:'data-turbolinks'] = false
 
 -%>
 
 <%- links.each_pair do |label, path| -%>
-  <%= make_link(label, path, **opt) %>
+  <%= make_link(label, path, **link_opt) %>
 <%- end -%>

@@ -13,30 +13,32 @@
   user  ||= resource
 
   help  ||= nil
-  title ||= t('emma.user.passwords.new.label')
+  title ||= t('emma.user.passwords.new.title')
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
   end
 
+  label_opt     = { class: 'label' }
+  value_opt     = { class: 'value' }
+
+  usr_label     = t('emma.user.passwords.new.username')
+  usr_label    += ':' unless usr_label.end_with?(':')
+  usr_label_opt = label_opt
+  usr_value_opt = value_opt.merge(autocomplete: 'email')
+
+  submit_label  = t('emma.user.passwords.new.submit')
+  submit_opt    = { class: 'submit-button best-choice' }
+
+  cancel_label  = t('emma.user.passwords.new.cancel')
+  cancel_opt    = { class: 'cancel-button' }
+
   form_opt = {
     as:   resource_name,
     url:  password_path(resource_name),
-    html: { class: 'sign-in-form field-pairs', method: :post }
+    html: { class: 'sign-in-form', method: :post }
   }
-
-  label_opt       = { class: 'label' }
-  value_opt       = { class: 'value' }
-
-  email_label_opt = label_opt
-  email_value_opt = value_opt.merge(autocomplete: 'email')
-
-  submit_label    = t('emma.user.passwords.new.submit')
-  submit_opt      = { class: 'form-button submit-button best-choice' }
-
-  cancel_label    = t('emma.user.passwords.new.cancel')
-  cancel_opt      = { class: 'form-button cancel-button' }
 
 -%>
 
@@ -49,16 +51,15 @@
 <%= form_for(user, form_opt) do |f| %>
 
   <div class="field">
-    <%= f.label       :email, email_label_opt %>
-    <%= f.email_field :email, email_value_opt %>
+    <%= f.label       :email, usr_label, usr_label_opt %>
+    <%= f.email_field :email, usr_value_opt %>
   </div>
 
   <div class="actions">
-    <%= f.submit    submit_label, submit_opt %>
-    <%= link_to cancel_label, new_user_session_path, cancel_opt %>
+    <%= f.submit submit_label, submit_opt %>
+    <%= link_to  cancel_label, :back, cancel_opt %>
   </div>
 
 <%- end -%>
 
 <%= page_notes_section %>
-<%# render 'devise/shared/links' unless modal? %>

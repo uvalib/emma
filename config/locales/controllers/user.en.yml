@@ -179,12 +179,21 @@ en:
 
         new:
           label:        'Forgot your password?'
-          submit:       'Send password reset instructions'
+          tooltip:      'Click to reset your password'
+          title:        'Reset your password'
+          description:  |
+            When you click "Send", instructions will be sent to the email
+            address you have provided.
+          username:     'Your email address'
+          submit:       'Send'
           cancel:       'Cancel'
           _endpoint:    true
 
         edit:
           label:        'Change your password'
+          title:        'Change your password'
+          description:  |
+            You may reset your password by providing a new one here.
           password:     'New password'
           confirm:      'Confirm new password'
           submit:       'Change my password'
@@ -225,7 +234,9 @@ en:
         new:
           title:        'Resend confirmation instructions'
           label:        "Didn't receive confirmation instructions?"
+          username:     'Your email address'
           submit:       'Resend confirmation instructions'
+          cancel:       'Cancel'
           _endpoint:    true
 
       # =======================================================================
@@ -233,9 +244,11 @@ en:
       unlocks:
 
         new:
-          title:        'Resend unlock instructions'
           label:        "Didn't receive unlock instructions?"
+          title:        'Resend unlock instructions'
+          username:     'Your email address'
           submit:       'Resend unlock instructions'
+          cancel:       'Cancel'
           _endpoint:    true
 
       # =======================================================================

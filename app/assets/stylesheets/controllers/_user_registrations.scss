@@ -1,44 +1,74 @@
 // app/assets/stylesheets/controllers/_user_registrations.scss
 
-@use 'shared/variables'    as *;
-
-@use 'controllers/account' as account-classes;
+@use 'shared/variables'        as *;
+@use 'shared/controls/buttons' as button;
 
 //=============================================================================
 // New user page
 //=============================================================================
 
 // @see file:app/views/user/sessions/_local_form.html.erb
-// @see file:app/views/user/registrations/new.html.erb
-// @see file:app/views/user/registrations/edit.html.erb
 // @see file:app/views/user/passwords/new.html.erb
 // @see file:app/views/user/passwords/edit.html.erb
 // @see file:app/views/devise/unlocks/new.html.erb
 .sign-in-form:not(.inline) {
 
-    @extend .model-form;
+    display:    grid;
+    gap:        2rem 1rem;
+    margin-top: calc(2 * #{$page-padding-y});
 
     @media #{$wide-screen} {
         width: 75%;
     }
 
-    .actions {
+    grid-template-columns: max-content max-content auto;
 
-        display: inline-flex;
-        margin:  1rem 0;
+    //=========================================================================
+    // Elements
+    //=========================================================================
 
-        * + * {
-            margin-left: 1rem;
+    .submit-button {
+        @include button.control;
+    }
+
+    .label {
+        font-size:   large;
+        font-weight: bold;
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .field {
+
+        display: contents;
+
+        .label {
+            grid-column-start: 1;
+        }
+
+        .value {
+            width: 100%;
         }
     }
 
-    &.field-pairs {
+    .actions,
+    .links,
+    .options {
+        display:     flex;
+        align-items: center;
+        margin:      2rem 0;
+        grid-column-start: 1;
+    }
 
-        .field {
+    .actions {
+        gap: 1rem;
+    }
 
-            @extend .form-fields;
-
-            grid-template-columns: [label] auto [value] 1fr [note] auto;
+    .options {
+        input[type="checkbox"] {
+            margin-left: 0;
         }
     }
 }

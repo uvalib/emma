@@ -30,20 +30,33 @@ body.user_sessions {
     align-items: center;
 
     @media #{$wide-screen} {
-        gap: 1rem 3rem;
         grid-template-columns:
-            [label] auto [uid] 1fr [pwd] 1fr [actions] 1fr  [options] 1fr;
+            [label]    max-content
+            [username] 1fr
+            [password] 1fr
+            [actions]  max-content
+            [links]    1fr
+            [options]  1fr;
+        gap:        1rem 3rem;
+        margin-top: calc(2 * #{$page-padding-y});
     }
 
     @media #{$medium-width} {
-        gap: 1rem;
         grid-template-columns:
-            [label] auto [uid] 1fr [pwd] 1fr [actions] auto [options] auto;
+            [label]    max-content
+            [username] 1fr
+            [password] 1fr
+            [actions]  min-content
+            [links]    auto
+            [options]  auto;
+        gap:        1rem;
+        margin-top: calc(3 * #{$page-padding-y});
     }
 
     @media #{$narrow-screen} {
-        gap: 1rem;
-        grid-template-columns: 1fr;
+        grid-template-columns: [label] max-content [other] auto;
+        gap:    1rem;
+        margin: calc(3 * #{$page-padding-y}) calc(3 * #{$page-padding-x});
     }
 
     // @see file:app/views/devise/shared/_links.html.erb
@@ -63,58 +76,120 @@ body.user_sessions {
     // @see file:app/views/user/sessions/_token.html.erb
     .sign-in-form.inline {
 
+        $bg: ghostwhite;
+
         display:     contents;
         line-height: 1.5;
-
-        @media #{$narrow-screen} {
-            display: inline-grid;
-        }
 
         //=====================================================================
         // Elements
         //=====================================================================
 
         .form-label {
+
             @extend .sign-in-link;
+
+            @media #{$narrow-screen} {
+                margin-bottom: 0.75rem;
+            }
         }
 
         .field,
         .actions,
+        .links,
         .options {
 
             display:     inline-flex;
             flex-wrap:   nowrap;
             align-items: center;
 
+            // noinspection CssReplaceWithShorthandSafely
             @media #{$narrow-screen} {
-                margin-top:  0.25rem;
-                margin-left: 0;
+                margin:             0.25rem;
+                margin-bottom:      0.5rem;
+                grid-column-start:  1; // Force to next line.
+            }
+        }
+
+        .field,
+        .actions {
+            @media #{$not-narrow-screen} {
+                margin:     0 -0.625rem;
+                padding:    0.625rem;
+                background: $bg;
+            }
+        }
+
+        .field + .field,
+        .field + .actions {
+            @media #{$wide-screen} {
+                box-shadow: -2rem 0 0 0 $bg;
+            }
+            @media #{$medium-width} {
+                box-shadow: -0.125rem 0 0 0 $bg;
             }
         }
 
         .field {
 
+            @media #{$narrow-screen} {
+                display: contents;
+            }
+
             .label {
-                font-weight:  bold;
-                margin-right: $flex-gap-x;
+
+                font-weight: bold;
+
+                @media #{$wide-screen} {
+                    margin-right: $flex-gap-x;
+                }
+
+                @media #{$medium-width} {
+                    margin-right: calc(3 * #{$flex-gap-x});
+                }
+
+                @media #{$narrow-screen} {
+                    margin-right: calc(4 * #{$flex-gap-x});
+                    grid-column-start: 1; // Force to next line.
+                }
             }
 
             .value {
-                width: 100%;
+                @media #{$medium-width} {
+                    width: 100%;
+                }
+                @media #{$narrow-screen} {
+                    margin-left: -75%;
+                    margin-right: 25%;
+                }
             }
         }
 
         .actions {
-
-            @media #{$narrow-screen} {
-                margin-right: 100%; // Push to next line.
-            }
 
             input[type='submit'] {
 
                 @include button.basic;
 
                 line-height: 1;
+                background:  white;
+
+                @media #{$narrow-screen} {
+                    padding: 4px 12px;
+                }
+            }
+        }
+
+        .links,
+        .options {
+            padding:         0.125rem;
+            outline:         2px dotted gray;
+            justify-content: center;
+        }
+
+        .links {
+            @media #{$medium-width} {
+                grid-column-start: 2;
             }
         }
 
@@ -125,7 +200,12 @@ body.user_sessions {
             }
 
             input[type='checkbox'] {
-                margin-right: calc(#{$flex-gap-x} / 2);
+                @media #{$wide-screen} {
+                    margin-right: calc(#{$flex-gap-x} / 2);
+                }
+                @media #{$narrow-screen} {
+                    margin-left:  0;
+                }
             }
         }
 
@@ -137,6 +217,7 @@ body.user_sessions {
         &.obscured {
             .field,
             .actions,
+            .links,
             .options {
                 display: none;
             }

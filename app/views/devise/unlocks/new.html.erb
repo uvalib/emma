@@ -15,36 +15,42 @@
     set_page_robots(:noindex, :nofollow)
   end
 
+  label_opt     = { class: 'label' }
+  value_opt     = { class: 'value' }
+
+  usr_label     = t('emma.user.unlocks.new.username')
+  usr_label    += ':' unless usr_label.end_with?(':')
+  usr_label_opt = label_opt
+  usr_value_opt = value_opt.merge(autocomplete: 'email')
+
+  submit_label  = t('emma.user.unlocks.new.submit')
+  submit_opt    = { class: 'submit-button best-choice' }
+
+  cancel_label  = t('emma.user.unlocks.new.cancel')
+  cancel_opt    = { class: 'cancel-button' }
+
   form_opt = {
     as:   resource_name,
     url:  unlock_path(resource_name),
-    html: { class: 'sign-in-form field-pairs', method: :post }
+    html: { class: 'sign-in-form', method: :post }
   }
-
-  label_opt       = { class: 'label' }
-  value_opt       = { class: 'value' }
-
-  email_label_opt = label_opt
-  email_value_opt = value_opt.merge(autocomplete: 'email')
-
-  submit_label    = t('emma.user.unlocks.new.submit')
-  submit_opt      = { class: 'form-button submit-button best-choice' }
 
 -%>
 
 <%= page_heading(title, help: help) %>
 
-<%= form_for(user, form_opt) do |f| -%>
+<%= render 'devise/shared/error_messages', resource: user %>
 
-  <%= render 'devise/shared/error_messages', resource: user %>
+<%= form_for(user, form_opt) do |f| %>
 
   <div class="field">
-    <%= f.label       :email, email_label_opt %><br/>
-    <%= f.email_field :email, email_value_opt %>
+    <%= f.label       :email, usr_label, usr_label_opt %>
+    <%= f.email_field :email, usr_value_opt %>
   </div>
 
   <div class="actions">
     <%= f.submit submit_label, submit_opt %>
+    <%= link_to  cancel_label, :back, cancel_opt %>
   </div>
 
 <%- end -%>

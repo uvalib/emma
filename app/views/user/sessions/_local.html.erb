@@ -6,65 +6,68 @@
 
   user ||= resource || resource_class.new
 
-  fl_id        = css_randomize('form-label')
-  fl_opt       = { class: 'form-label', id: fl_id, 'aria-hidden': true }
-  form_label   = t('emma.user.sessions.sign_in.label')
-  form_label   = html_span(form_label, fl_opt)
+  label_opt     = { class: 'label' }
+  value_opt     = { class: 'value' }
 
-  label_opt    = { class: 'label' }
-  value_opt    = { class: 'value' }
+  usr_label     = t('emma.user.sessions.sign_in.username')
+  usr_label    += ':' unless usr_label.end_with?(':')
+  usr_label_opt = label_opt
+  usr_value_opt = value_opt.merge(autocomplete: 'email')
 
-  usr_label    = t('emma.user.sessions.sign_in.username')
-  usr_opt      = value_opt.merge(autocomplete: 'email')
+  pwd_label     = t('emma.user.sessions.sign_in.password')
+  pwd_label    += ':' unless pwd_label.end_with?(':')
+  pwd_label_opt = label_opt
+  pwd_value_opt = value_opt.merge(autocomplete: 'current-password')
 
-  pwd_label    = t('emma.user.sessions.sign_in.password')
-  pwd_opt      = value_opt.merge(autocomplete: 'current-password')
+  submit_label  = t('emma.user.sessions.sign_in.submit')
+  submit_opt    = { class: 'submit-button' }
 
-  submit_label = t('emma.user.sessions.sign_in.submit')
-  submit_opt   = { class: 'form-button submit-button' }
+  rec_label     = t('emma.user.passwords.new.label')
+  rec_tooltip   = t('emma.user.passwords.new.tooltip', default: nil)
+  rec_opt       = rec_tooltip ? { title: rec_tooltip } : {}
+  rec_url       = new_password_path(resource_name)
 
-  rec_label    = t('emma.user.passwords.new.label')
-  rec_url      = new_password_path(resource_name)
+  fl_id         = css_randomize('form-label')
+  fl_opt        = { class: 'form-label', id: fl_id, 'aria-hidden': true }
+  form_label    = t('emma.user.sessions.sign_in.label')
+  form_label    = html_span(form_label, **fl_opt)
 
   form_opt = {
     as:   resource_name,
     url:  session_path(resource_name),
-    html: {
-      class:             'sign-in-form inline obscured',
-      'aria-labelledby': fl_id,
-    }
+    html: { class: 'sign-in-form inline obscured', 'aria-labelledby': fl_id },
   }
 
 -%>
 
-<%= form_for(user, form_opt) do |f| -%>
+<%= form_for(user, form_opt) do |f| %>
 
   <%= form_label %>
 
   <div class="field">
-    <%= f.label          :email,    usr_label, label_opt %>
-    <%= f.email_field    :email,    usr_opt %>
+    <%= f.label          :email,    usr_label, usr_label_opt %>
+    <%= f.email_field    :email,    usr_value_opt %>
   </div>
 
   <div class="field">
-    <%= f.label          :password, pwd_label, label_opt %>
-    <%= f.password_field :password, pwd_opt %>
+    <%= f.label          :password, pwd_label, pwd_label_opt %>
+    <%= f.password_field :password, pwd_value_opt %>
   </div>
 
   <div class="actions">
     <%= f.submit submit_label, submit_opt %>
   </div>
 
+  <%- if devise_mapping.recoverable? -%>
+    <div class="links">
+      <%= link_to rec_label, rec_url, rec_opt %>
+    </div>
+  <%- end -%>
+
   <%- if devise_mapping.rememberable? -%>
     <div class="options">
       <%= f.check_box :remember_me %>
       <%= f.label     :remember_me %>
-    </div>
-  <%- end -%>
-
-  <%- if devise_mapping.recoverable? -%>
-    <div class="links">
-      <%= link_to rec_label, rec_url %>
     </div>
   <%- end -%>
 

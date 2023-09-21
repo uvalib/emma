@@ -13,17 +13,16 @@ module ConfigurationHelper
   # controller/action pair.
   #
   # For ctrlr == 'user/registrations' and action == 'edit' this yields
-  # %i[user registrations edit].
+  # %i[user_registrations edit].
   #
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Array<Symbol>]
+  # @return [Array<(Symbol,Symbol)>]
   #
   def config_path
-    : ((String|Symbol|nil) ctrlr, (String|Symbol|nil) action) -> symArray
-    | ((String|Symbol|nil) ctrlr)                             -> symArray
-    | ()                                                      -> symArray
+    : ((String|Symbol|nil) ctrlr, ?(String|Symbol|nil) action) -> [Symbol,Symbol]
+    | ()                                                       -> [Symbol,Symbol]
 
   # controller_configuration
   #

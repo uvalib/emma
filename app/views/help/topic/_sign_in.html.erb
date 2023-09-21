@@ -18,6 +18,8 @@
   remote_sign_in    = %Q("#{remote_auth_title}")
   remote_login_form = help_image(:"#{remote_auth}_login")
 
+  recovery_link     = t('emma.user.passwords.new.label')
+
   bs_sign_in = (help_span('Sign in', class: 'bookshare-sign-in') if BS_AUTH)
 
 -%>
@@ -119,6 +121,12 @@
     account name and EMMA password.
     Fill these and click on the <%= sign_in_submit -%> button on that same line
     to sign on with your local EMMA credentials.
+  </p>
+
+  <p>
+    If you have forgotten your EMMA password, click on
+    <%= recovery_link.inspect -%> link to generate an email which will allow
+    you to reset your password.
   </p>
 <%- end -%>
 

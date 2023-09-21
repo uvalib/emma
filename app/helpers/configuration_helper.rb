@@ -33,17 +33,17 @@ module ConfigurationHelper
   # controller/action pair.
   #
   # For ctrlr == 'user/registrations' and action == 'edit' this yields
-  # %i[user registrations edit].
+  # %i[user_registrations edit].
   #
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Array<Symbol>]
+  # @return [Array<(Symbol,Symbol)>]
   #
   def config_path(ctrlr = nil, action = nil)
-    # noinspection RubyMismatchedArgumentType
-    result = ctrlr.to_s.underscore.split('/') << action
-    result.compact_blank.map(&:to_sym)
+    [ctrlr, action].compact_blank!.map! do |s|
+      s.to_s.underscore.split('/').join('_').to_sym
+    end
   end
 
   # controller_configuration

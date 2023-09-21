@@ -6,12 +6,6 @@
 
   user ||= resource || resource_class.new
 
-  form_opt = {
-    as:   resource_name,
-    url:  session_path(resource_name),
-    html: { class: 'sign-in-form' }
-  }
-
   label_opt    = { class: 'label' }
   value_opt    = { class: 'value' }
 
@@ -21,32 +15,53 @@
   pwd_label    = t('emma.user.sessions.sign_in.password')
   pwd_opt      = value_opt.merge(autocomplete: 'current-password')
 
-  submit_label = t('emma.user.sessions.new.submit')
-  submit_opt   = { class: 'form-button submit-button best-choice' }
+  submit_label = t('emma.user.sessions.sign_in.submit')
+  submit_opt   = { class: 'submit-button best-choice' }
 
   cancel_label = t('emma.user.sessions.new.cancel')
-  cancel_opt   = { class: 'form-button cancel-button' }
+  cancel_opt   = { class: 'cancel-button' }
+
+  rec_label    = t('emma.user.passwords.new.label')
+  rec_tooltip  = t('emma.user.passwords.new.tooltip', default: nil)
+  rec_opt      = rec_tooltip ? { title: rec_tooltip } : {}
+  rec_url      = new_password_path(resource_name)
+
+  form_opt = {
+    as:   resource_name,
+    url:  session_path(resource_name),
+    html: { class: 'sign-in-form' },
+  }
 
 -%>
 
-<%= form_for(user, form_opt) do |f| -%>
+<%= form_for(user, form_opt) do |f| %>
 
-  <fieldset class="form-fields user">
-
+  <div class="field">
     <%= f.label          :email,    usr_label, label_opt %>
     <%= f.email_field    :email,    usr_opt %>
+  </div>
 
+  <div class="field">
     <%= f.label          :password, pwd_label, label_opt %>
     <%= f.password_field :password, pwd_opt %>
+  </div>
 
-    <%- if devise_mapping.rememberable? -%>
+  <%- if devise_mapping.recoverable? -%>
+    <div class="links">
+      <%= link_to rec_label, rec_url, rec_opt %>
+    </div>
+  <%- end -%>
+
+  <%- if devise_mapping.rememberable? -%>
+    <div class="options">
       <%= f.check_box :remember_me %>
       <%= f.label     :remember_me %>
-    <%- end -%>
+    </div>
+  <%- end -%>
 
-    <%= f.submit    submit_label, submit_opt %>
-    <%= html_button cancel_label, cancel_opt %>
-
-  </fieldset>
+  <div class="actions">
+    <%= f.submit submit_label, submit_opt %>
+    <%= link_to  cancel_label, :back, cancel_opt %>
+  </div>
 
 <%- end -%>
