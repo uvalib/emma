@@ -140,13 +140,13 @@ module ResponseConcern
     unless status.is_a?(Symbol) || status.is_a?(Integer)
       status, item = [nil, status]
     end
-    re_raise_if_internal_exception(item) if item.is_a?(Exception)
+    re_raise_if_internal_exception(item) if (error = item.is_a?(Exception))
 
     xhr      = request_xhr? if xhr.nil?
     html     = !xhr || redirect.present?
     report   = item.presence && ExecReport[item]
     status ||= report&.http_status
-    status ||= item.is_a?(Exception) ? :bad_request : :ok
+    status ||= error ? :bad_request : :ok
     success  = http_success?(status)
     redirect = html && http_redirect?(status) if redirect.nil?
 
@@ -179,6 +179,9 @@ module ResponseConcern
     elsif redirect
       fallback ||= default_fallback_location
       redirect_back(fallback_location: fallback, status: status)
+    elsif error
+      # noinspection RubyMismatchedArgumentType
+      raise(item)
     end
   end
 
