@@ -110,7 +110,7 @@ class SearchDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: Item list (index page) support
+    # :section:
     # =========================================================================
 
     public
@@ -568,16 +568,16 @@ class SearchDecorator
 
   # details_container
   #
-  # @param [Array]         added      Optional elements after the details.
+  # @param [Array]         before     Optional elements before the details.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt        Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container(*added, skip: [], **opt, &block)
+  def details_container(*before, skip: [], **opt, &blk)
     skip = Array.wrap(skip)
-    added.prepend(cover(placeholder: false)) unless skip.include?(:cover)
-    super(*added, **opt, &block)
+    before.prepend(cover(placeholder: false)) unless skip.include?(:cover)
+    super(*before, **opt, &blk)
   end
 
   # Create a container with the repository ID displayed as a link but acting as

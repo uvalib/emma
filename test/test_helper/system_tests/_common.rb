@@ -21,7 +21,9 @@ module TestHelper::SystemTests::Common
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include Capybara::Node::Actions                 # for :select
+    include Minitest::Assertions                    # for #flunk
+    include Capybara::Node::Actions                 # for #select
+    include Capybara::Node::Finders                 # for #find
     include TestHelper::SystemTests::Authentication # disambiguate :sign_in_as
     # :nocov:
   end

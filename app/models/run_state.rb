@@ -198,6 +198,7 @@ class RunState < Hash
           when :html   then value = value.inspect << '.html_safe'
           else              value = value.inspect
         end
+        # noinspection RubyResolve, RubyInstanceVariableNamingConvention
         eval("@#{attr} = #{value}")
       end
     end

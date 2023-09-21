@@ -35,6 +35,7 @@ appSetup(MODULE, function() {
     // Only perform these actions on the appropriate pages.
     if (isMissing($artifact_links) && isMissing($no_auth_links)) { return }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Console output functions for this module.
      */

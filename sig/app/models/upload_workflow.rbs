@@ -386,7 +386,7 @@ module UploadWorkflow::External
   # Indicate whether the item represents an EMMA repository entry (as opposed
   # to a member repository entry).
   #
-  # @param [Upload, String, #emma_repository, #emma_recordId, Any] item
+  # @param [Upload, *] item
   #
   # @see Upload#valid_sid?
   # @see Upload#emma_native?
@@ -395,7 +395,7 @@ module UploadWorkflow::External
 
   # Indicate whether the item does not represent an existing EMMA entry.
   #
-  # @param [Model, String, Any] item
+  # @param [Upload, *] item
   #
   def incomplete?: (untyped item) -> bool
 

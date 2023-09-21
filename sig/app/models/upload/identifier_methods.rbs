@@ -28,7 +28,7 @@ module Upload::IdentifierMethods
 
   # Extract the database ID from the given item.
   #
-  # @param [Api::Record, Upload, Hash, String, Any, nil] item
+  # @param [Api::Record, Upload, Hash, String, *] item
   #
   # @return [String]                  Record ID (:id).
   # @return [nil]                     No valid :id specified.
@@ -48,7 +48,9 @@ module Upload::IdentifierMethods
   #
   # @param [*] value                  Must be a String.
   #
-  def valid_sid?: (untyped value) -> bool
+  def valid_sid?
+    : (untyped value) -> false
+    | (String  value) -> bool
 
   # Create a unique submission item identifier.
   #

@@ -43,8 +43,8 @@ en:
 
       generic:
         label:          'Accounts [user]'
-        title:          'Accounts [user]'
         tooltip:        '(A brief description of this operation)'
+        title:          'Accounts [user]'
         description:    '(A more detailed description of this operation)'
         directions:     '(Brief guidance for using the operation form)'
         notes:          '(A more detailed description of this operation)'
@@ -132,8 +132,8 @@ en:
 
         new:
           label:        'Sign in'
-          title:        'Sign in with your authentication provider'
           tooltip:      'Authentication is required for full access'
+          title:        'Sign in with your authentication provider'
           submit:       'Sign in'
           cancel:       'Cancel'
           _endpoint:    true

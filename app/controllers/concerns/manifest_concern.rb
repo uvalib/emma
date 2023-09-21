@@ -185,7 +185,7 @@ module ManifestConcern
     get_manifest(item)
   end
 
-=begin
+=begin # TODO: submission start/stop ?
   # Start transmission of a manifest.
   #
   # @param [Manifest, Hash, nil] item       If present, used as a template.

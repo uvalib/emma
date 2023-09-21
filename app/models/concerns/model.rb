@@ -470,7 +470,7 @@ module Model
 
   # Return the name of the model associated with *item*.
   #
-  # @param [Any, nil] item            Symbol, String, Class, Model
+  # @param [Symbol, String, Class, Model, *] item
   #
   # @return [Symbol, nil]
   #
@@ -553,7 +553,8 @@ module Model
     config_for(item)[:database] || EMPTY_CONFIG
   end
 
-  # Get all configured record fields for the indicated model.
+  # Get all configured record fields relevant to a create/update form for the
+  # indicated model.
   #
   # @param [Symbol, String, Class, Model, *] item
   #

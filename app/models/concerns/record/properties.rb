@@ -352,6 +352,7 @@ module Record::Properties
     prm   ||= parameters
     value   = prm&.dig(key)
     default = OPTION_PARAMETER_DEFAULT[key]
+    # noinspection RubyMismatchedReturnType
     case value
       when true, false then value
       when nil         then default

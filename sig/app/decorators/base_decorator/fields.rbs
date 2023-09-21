@@ -71,7 +71,7 @@ module BaseDecorator::Fields
   #
   FIELD_PAIRS_OPTIONS: symArray
 
-  # field_pairs
+  # A table of fields with their property objects.
   #
   # @param [Model, Hash, nil]           item        Passed to #field_values.
   # @param [String, Symbol, nil]        action
@@ -107,7 +107,7 @@ module BaseDecorator::Fields
   #
   REPLACE_FIELD_TYPE: Hash[Symbol,Symbol]
 
-  # render_field_item
+  # Render a value for use on an input form.
   #
   # @param [String] name
   # @param [*]      value

@@ -250,13 +250,13 @@ class UploadDecorator
 
   # details_container
   #
-  # @param [Array]         added      Optional elements after the details.
+  # @param [Array]         before     Optional elements before the details.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt        Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container: (*ActiveSupport::SafeBuffer added, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+  def details_container: (*String before, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # These columns are generally empty or don't provide a lot of useful
   # information on the submission details display.
@@ -325,6 +325,16 @@ class UploadDecorator
   # @type [String]
   #
   FILE_LABEL: String
+
+  # Single-select menu - drop-down.
+  #
+  # @param [String]      name
+  # @param [Array]       value
+  # @param [Hash]        opt          Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_form_menu_single: (String name, anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Control elements always visible at the top of the input form.
   #

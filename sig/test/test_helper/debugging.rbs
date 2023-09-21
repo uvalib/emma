@@ -132,6 +132,11 @@ module TestHelper::Debugging
   #
   def show_trace: (?indent: String|Integer, ?trace: bool|nil, **untyped opt) ?{ () -> anyHash } -> (String | nil)
 
+  # Execute the provided block with tracing turned off to allow for executions
+  # which do not clutter the output.
+  #
+  def without_tracing: [T] () { () -> T } -> T
+
   # Flag indicating that #show_trace should be silenced.
   #
   # @return [Boolean, nil]

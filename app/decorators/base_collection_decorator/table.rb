@@ -15,7 +15,7 @@ module BaseCollectionDecorator::Table
   include BaseCollectionDecorator::Row
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section:
   # ===========================================================================
 
   public
@@ -59,6 +59,12 @@ module BaseCollectionDecorator::Table
       table ? parts.map { |p, content| html_tag(p, content) } : parts.values
     end
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Render one or more entries for use within a *tbody*.
   #

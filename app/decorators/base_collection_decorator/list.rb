@@ -15,7 +15,7 @@ module BaseCollectionDecorator::List
   include BaseCollectionDecorator::Pagination
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section:
   # ===========================================================================
 
   public
@@ -41,7 +41,7 @@ module BaseCollectionDecorator::List
   end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section:
   # ===========================================================================
 
   public
@@ -65,7 +65,7 @@ module BaseCollectionDecorator::List
   end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section: Index page support
   # ===========================================================================
 
   public
@@ -98,7 +98,7 @@ module BaseCollectionDecorator::List
   end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section: Index page support
   # ===========================================================================
 
   public

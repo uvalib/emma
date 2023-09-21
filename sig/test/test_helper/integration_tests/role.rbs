@@ -1,4 +1,4 @@
-# Support for sign-in.
+# Support for authorization.
 #
 module TestHelper::IntegrationTests::Role
   include TestHelper::Utility

@@ -14,7 +14,7 @@ module BaseDecorator::Menu
   include BaseDecorator::Links
 
   # ===========================================================================
-  # :section: Item forms (edit/delete pages)
+  # :section:
   # ===========================================================================
 
   public
@@ -87,7 +87,7 @@ module BaseDecorator::Menu
   end
 
   # ===========================================================================
-  # :section: Item forms (edit/delete pages)
+  # :section:
   # ===========================================================================
 
   protected

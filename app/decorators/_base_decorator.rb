@@ -313,9 +313,9 @@ class BaseDecorator < Draper::Decorator
       dup
     end
 
-    # Modify the inspection to limit the size of individual member results.
+    # Modify the inspection to limit the size of individual element results.
     #
-    # @param [Integer] max            Maximum characters per member.
+    # @param [Integer] max            Maximum characters per element.
     #
     # @return [String]
     #

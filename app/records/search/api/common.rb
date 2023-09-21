@@ -635,6 +635,9 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def to_isbn13(v, log: true, **)
       digits = identifier(v)&.delete('^0-9xX')
       isbn10 = (digits&.size == ISBN_10_DIGITS)
@@ -642,7 +645,6 @@ class Isbn < PublicationIdentifier
       digits = digits&.slice(0...-1)
       valid  = digits && (check == checksum(digits))
       if isbn10 && valid
-        # noinspection RubyMismatchedArgumentType
         return +'978' << digits << isbn13_checksum(digits)
       elsif isbn10
         log &&= "#{v.inspect} is not a valid ISBN-10"
@@ -662,6 +664,9 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
+    #--
+    # noinspection RubyMismatchedArgumentType
+    #++
     def to_isbn10(v, log: true, **)
       digits = identifier(v)&.delete('^0-9xX')
       isbn13 = (digits&.size == ISBN_13_DIGITS)
@@ -669,7 +674,6 @@ class Isbn < PublicationIdentifier
       digits = digits&.slice(0...-1)
       valid  = digits && (check == checksum(digits))
       if isbn13 && valid && digits&.delete_prefix!('978')
-        # noinspection RubyMismatchedArgumentType
         return digits << isbn10_checksum(digits)
       elsif isbn13 && valid
         log &&= "cannot convert #{v.inspect}"

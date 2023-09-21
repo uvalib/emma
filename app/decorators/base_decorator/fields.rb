@@ -149,7 +149,7 @@ module BaseDecorator::Fields
   #
   FIELD_PAIRS_OPTIONS = %i[action only except field_root].freeze
 
-  # field_pairs
+  # A table of fields with their property objects.
   #
   # @param [Model, Hash, nil]           item        Passed to #field_values.
   # @param [String, Symbol, nil]        action
@@ -260,10 +260,10 @@ module BaseDecorator::Fields
 =end
   }.freeze
 
-  # render_field_item
+  # Render a value for use on an input form.
   #
   # @param [String] name
-  # @param [Any]    value
+  # @param [*]      value
   # @param [Hash]   opt               Passed to render method except for:
   #
   # @option opt [String] :base

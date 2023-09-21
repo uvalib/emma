@@ -117,7 +117,8 @@ module Record::Steppable
   #
   def existing_entry?: ((Model|Symbol|String|nil) item) -> bool
 
-  # Indicate whether this record represents an existing EMMA entry.
+  # Indicate whether this record represents a submission that has not yet
+  # become an EMMA entry.
   #
   # @param [Model, String, Symbol, nil] item
   #

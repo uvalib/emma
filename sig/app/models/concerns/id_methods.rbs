@@ -81,12 +81,14 @@ module IdMethods
     # Produce a relation for selecting records associated with the given
     # organization.
     #
-    # @param [*]    user
+    # @param [*]    org
     # @param [Hash] opt
     #
     # @return [ActiveRecord::Relation]
     #
     def for_org: (?untyped org, **untyped opt) -> ActiveRecord::Relation
+
+    def extract_value!: [T] (untyped item, symHash opt, Symbol base, ?(Symbol|nil) meth) -> (T | symHash | nil)
   end
 
   private

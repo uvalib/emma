@@ -14,7 +14,11 @@ module TestHelper::SystemTests::Common
 
   include ParamsHelper
 
+  #include Minitest::Assertions
+
   #include Capybara::Node::Actions
+
+  #include Capybara::Node::Finders
 
   #include TestHelper::SystemTests::Authentication
 

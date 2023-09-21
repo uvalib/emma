@@ -42,12 +42,12 @@ class ManifestsDecorator < BaseCollectionDecorator
   end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section:
   # ===========================================================================
 
   public
 
-=begin
+=begin # TODO: manifest state filters ?
   # Select records based on workflow state group.
   #
   # @param [Hash] counts              A table of group names associated with
@@ -64,12 +64,12 @@ class ManifestsDecorator < BaseCollectionDecorator
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   def state_group_select(counts: nil, **opt)
-    # TODO: ???
+    # TODO: manifest state filters ?
   end
 =end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section: BaseCollectionDecorator::List overrides
   # ===========================================================================
 
   public
@@ -88,14 +88,8 @@ class ManifestsDecorator < BaseCollectionDecorator
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   def list_filter(counts: nil, **opt)
-    # TODO: ???
+    # TODO: manifest state filters ?
   end
-
-  # ===========================================================================
-  # :section: Item list (index page) support
-  # ===========================================================================
-
-  public
 
   # Control the selection of filters displayed by #list_filter.
   #
@@ -108,7 +102,7 @@ class ManifestsDecorator < BaseCollectionDecorator
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
   def list_filter_options(**opt)
-    # TODO: ???
+    # TODO: manifest state filters ?
   end
 
 end

@@ -94,8 +94,7 @@ en:
           min:          0
           max:          1
           label:        'Status'
-          tooltip:      |
-            EMMA membership status of the organization
+          tooltip:      'EMMA membership status of the organization'
           type:         !ruby/symbol MemberStatus
           role:         manager
 

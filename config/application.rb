@@ -58,16 +58,19 @@ module Emma
     # =========================================================================
 
     config.action_mailer.perform_caching = false
-    config.action_mailer.perform_deliveries = application_deployed? ? true : false
+    config.action_mailer.perform_deliveries = application_deployed?
     config.action_mailer.show_previews = true
     config.action_mailer.preview_path = "#{Rails.root}/test/mailers"
     config.action_mailer.smtp_settings = {
-      port: ENV.fetch('SMTP_PORT', 587).to_i,
+      port:    ENV.fetch('SMTP_PORT', 587).to_i,
       address: ENV.fetch('SMTP_DOMAIN', 'example.com'),
     }
     puts "=> Mailer Config: #{config.action_mailer.smtp_settings.inspect}"
 
-    config.action_mailer.default_url_options = { host: MAILER_URL_HOST, protocol: :https }
+    config.action_mailer.default_url_options = {
+      protocol: :https,
+      host:     MAILER_URL_HOST,
+    }
 
     # Specifies the header that your server uses for sending files.
     # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache

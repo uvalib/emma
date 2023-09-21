@@ -44,9 +44,9 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
     public
 
-    # Modify the inspection to limit the size of individual member results.
+    # Modify the inspection to limit the size of individual element results.
     #
-    # @param [Integer] max            Maximum characters per member.
+    # @param [Integer] max            Maximum characters per element.
     #
     # @return [String]
     #

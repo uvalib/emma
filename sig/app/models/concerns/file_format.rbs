@@ -187,6 +187,8 @@ module FileFormat
   #
   # @return [String]
   #
+  # @note Currently unused.
+  #
   def format_image: (String _value) -> String
 
   # Used within #field_transforms to apply a method to each element of a

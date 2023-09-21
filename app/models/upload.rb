@@ -569,7 +569,7 @@ class Upload < ApplicationRecord
 
   # Extract the repository associated with the item.
   #
-  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
+  # @param [Upload, Hash, String, *] item
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]
@@ -594,7 +594,7 @@ class Upload < ApplicationRecord
 
   # The full name of the indicated repository
   #
-  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
+  # @param [Upload, Hash, String, *] item
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -606,7 +606,7 @@ class Upload < ApplicationRecord
 
   # Extract the EMMA index entry identifier from the item.
   #
-  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, Any] item
+  # @param [Upload, Hash, String, *] item
   #
   # @return [String]
   # @return [nil]
@@ -637,9 +637,9 @@ class Upload < ApplicationRecord
 
   # Indicate whether *item* is or contains a valid EMMA index record ID.
   #
-  # @param [String, #emma_repository, #emma_recordId, Any] item
-  # @param [String, Array<String>]                         add_repo
-  # @param [String, Array<String>]                         add_fmt
+  # @param [Upload, Hash, String, *] item
+  # @param [String, Array<String>]   add_repo
+  # @param [String, Array<String>]   add_fmt
   #
   def self.valid_record_id?(item, add_repo: nil, add_fmt: nil)
     repo, rid, fmt, _version, remainder = record_id(item).to_s.split('-')
@@ -760,8 +760,6 @@ class Upload < ApplicationRecord
   # Get the latest record matching the submission ID given as either *sid* or
   # `opt[:submission_id]`.
   #
-  # Returns *nil* on error if *no_raise* is *true*.
-  #
   # @param [Model, Hash, String, Symbol, nil] sid
   # @param [Symbol, String] sort    In case of multiple SIDs (:created_at).
   # @param [Hash]           opt     Passed to #matching_sid.
@@ -769,7 +767,8 @@ class Upload < ApplicationRecord
   # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
   # @raise [Record::NotFound]           If record not found.
   #
-  # @return [Model, nil]
+  # @return [Model]
+  # @return [nil]                       On error if `opt[:fatal]` is *false*.
   #
   def self.latest_for_sid(sid = nil, sort: nil, **opt)
     result = matching_sid(sid, **opt) or return

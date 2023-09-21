@@ -535,6 +535,7 @@ module UploadWorkflow::Properties
     prm   ||= parameters
     value   = prm&.dig(key)
     default = OPTION_PARAMETER_DEFAULT[key]
+    # noinspection RubyMismatchedReturnType
     case value
       when true, false then value
       when nil         then default
@@ -593,7 +594,7 @@ module UploadWorkflow::External
   # Indicate whether the item represents an EMMA repository entry (as opposed
   # to a member repository entry).
   #
-  # @param [Upload, String, #emma_repository, #emma_recordId, Any] item
+  # @param [Upload, *] item
   #
   # @see Upload#valid_sid?
   # @see Upload#emma_native?
@@ -605,7 +606,7 @@ module UploadWorkflow::External
 
   # Indicate whether the item does not represent an existing EMMA entry.
   #
-  # @param [Model, String, Any] item
+  # @param [Upload, *] item
   #
   def incomplete?(item)
     item.is_a?(Upload) && !item.existing_entry?

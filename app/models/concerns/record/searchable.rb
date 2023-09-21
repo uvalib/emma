@@ -367,7 +367,7 @@ module Record::Searchable
 
   protected
 
-  # group_by_state
+  # A table of counts for items in each state group.
   #
   # @param [ActiveRecord::Relation] relation
   # @param [Symbol]                 column
@@ -475,8 +475,6 @@ module Record::Searchable
     # Get the latest record matching the submission ID given as either *sid* or
     # `opt[:submission_id]`.
     #
-    # Returns *nil* on error if *no_raise* is *true*.
-    #
     # @param [Model, Hash, String, Symbol, nil] sid
     # @param [Symbol, String] sort    In case of multiple SIDs (:created_at).
     # @param [Hash]           opt     Passed to #matching_sid.
@@ -484,7 +482,8 @@ module Record::Searchable
     # @raise [Record::StatementInvalid]   If *sid*/opt[:submission_id] invalid.
     # @raise [Record::NotFound]           If record not found.
     #
-    # @return [Model, nil]
+    # @return [Model]
+    # @return [nil]                       On error if `opt[:fatal]` is *false*.
     #
     # @note From Upload#latest_for_sid
     #

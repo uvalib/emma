@@ -5,6 +5,9 @@
 
 __loading_begin(__FILE__)
 
+#--
+# noinspection SqlResolve
+#++
 class ManifestItem < ApplicationRecord
 
   include Model

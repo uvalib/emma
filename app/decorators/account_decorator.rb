@@ -353,6 +353,14 @@ class AccountDecorator
     super
   end
 
+  # Single-select menu - drop-down.
+  #
+  # @param [String]      name
+  # @param [Array]       value
+  # @param [Hash]        opt          Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def render_form_menu_single(name, value, **opt)
     constraints = nil
     if administrator?

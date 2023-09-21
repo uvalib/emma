@@ -601,7 +601,7 @@ class ManifestItemDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: Item forms (remit page)
+    # :section: Manifest submission
     # =========================================================================
 
     public
@@ -658,7 +658,7 @@ class ManifestItemDecorator < BaseDecorator
     STATUS_SHOW_DETAILS = [S_FILE_NEEDED].freeze
 
     # =========================================================================
-    # :section: Item forms (remit page)
+    # :section: Manifest submission
     # =========================================================================
 
     public
@@ -688,7 +688,7 @@ class ManifestItemDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section:
+    # :section: Manifest submission
     # =========================================================================
 
     protected
@@ -1473,27 +1473,27 @@ class ManifestItemDecorator
   end
 
   # ===========================================================================
-  # :section: Item details (show page) support
+  # :section: BaseDecorator::List overrides
   # ===========================================================================
 
   public
 
   # details_container
   #
-  # @param [Array]         added      Optional elements after the details.
+  # @param [Array]         before     Optional elements before the details.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt        Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container(*added, skip: [], **opt, &block)
+  def details_container(*before, skip: [], **opt, &blk)
     skip = Array.wrap(skip)
-    added.prepend(cover(placeholder: false)) unless skip.include?(:cover)
-    super(*added, **opt, &block)
+    before.prepend(cover(placeholder: false)) unless skip.include?(:cover)
+    super(*before, **opt, &blk)
   end
 
   # ===========================================================================
-  # :section: Item forms (remit page)
+  # :section: Manifest submission
   # ===========================================================================
 
   public

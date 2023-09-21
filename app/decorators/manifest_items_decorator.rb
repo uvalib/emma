@@ -33,7 +33,7 @@ class ManifestItemsDecorator < BaseCollectionDecorator
 
   public
 
-=begin
+=begin # TODO: manifest state filters ?
   # group_counts
   #
   # @return [Hash{Symbol=>Integer}]
@@ -44,12 +44,12 @@ class ManifestItemsDecorator < BaseCollectionDecorator
 =end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section:
   # ===========================================================================
 
   public
 
-=begin
+=begin # TODO: manifest state filters ?
   # Select records based on workflow state group.
   #
   # @param [Hash] counts              A table of group names associated with
@@ -71,12 +71,12 @@ class ManifestItemsDecorator < BaseCollectionDecorator
 =end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section: BaseCollectionDecorator::List overrides
   # ===========================================================================
 
   public
 
-=begin
+=begin # TODO: manifest state filters ?
   # Control for filtering which records are displayed.
   #
   # @param [Hash] counts              A table of group names associated with
@@ -95,13 +95,7 @@ class ManifestItemsDecorator < BaseCollectionDecorator
   end
 =end
 
-  # ===========================================================================
-  # :section: Item list (index page) support
-  # ===========================================================================
-
-  public
-
-=begin
+=begin # TODO: manifest state filters ?
   # Control the selection of filters displayed by #list_filter.
   #
   # @param [Hash] opt                 Passed to #html_div for outer <div>.

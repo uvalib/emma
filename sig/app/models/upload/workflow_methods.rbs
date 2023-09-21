@@ -99,7 +99,8 @@ module Upload::WorkflowMethods
   #
   def existing_entry?: () -> bool
 
-  # Indicate whether this record represents a new EMMA entry.
+  # Indicate whether this record represents a submission that has not yet
+  # become an EMMA entry.
   #
   # @return [Boolean]
   #

@@ -238,7 +238,8 @@ module Record::Steppable
     state_value(item) == :completed
   end
 
-  # Indicate whether this record represents an existing EMMA entry.
+  # Indicate whether this record represents a submission that has not yet
+  # become an EMMA entry.
   #
   # @param [Model, String, Symbol, nil] item
   #
@@ -625,7 +626,7 @@ module Record::Steppable
           end
 
         end
-  
+
         Rails.application.config.active_job.custom_serializers ||= []
         Rails.application.config.active_job.custom_serializers << #{serializer}
 

@@ -67,7 +67,7 @@ module BaseDecorator::Form
   include Values
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   public
@@ -284,6 +284,7 @@ module BaseDecorator::Form
     parts << send(render_method, name, value, **v_opt)
 
     # Other content if provided.
+    # noinspection RubyMismatchedArgumentType
     parts += Array.wrap(yield(field, raw_val, prop, **opt)) if block_given?
 
     safe_join(parts)
@@ -522,7 +523,7 @@ module BaseDecorator::Form
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   protected
@@ -611,7 +612,7 @@ module BaseDecorator::Form
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   public
@@ -722,7 +723,7 @@ module BaseDecorator::Form
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   protected
@@ -755,7 +756,7 @@ module BaseDecorator::Form
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   public
@@ -910,7 +911,7 @@ module BaseDecorator::Form
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   protected
@@ -1055,7 +1056,7 @@ module BaseDecorator::Form
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   public
@@ -1122,7 +1123,7 @@ module BaseDecorator::Form
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section:
   # ===========================================================================
 
   protected

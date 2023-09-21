@@ -290,7 +290,7 @@ module Upload::LookupMethods
 
   protected
 
-  # group_by_state
+  # A table of counts for items in each state group.
   #
   # @param [ActiveRecord::Relation] relation
   #

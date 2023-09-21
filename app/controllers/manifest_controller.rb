@@ -469,7 +469,7 @@ class ManifestController < ApplicationController
 
   public
 
-=begin
+=begin # TODO: submission start/stop ?
   # === POST /manifest/start/:id
   #
   # @see #start_manifest_path         Route helper

@@ -171,7 +171,8 @@ module Upload::WorkflowMethods
     p.present? && (p != :create) || (active_state == :completed)
   end
 
-  # Indicate whether this record represents a new EMMA entry.
+  # Indicate whether this record represents a submission that has not yet
+  # become an EMMA entry.
   #
   # @return [Boolean]
   #

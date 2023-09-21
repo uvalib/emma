@@ -60,15 +60,15 @@ module Record::EmmaIdentification
 
   # Extract the submission ID from the given item.
   #
-  # @param [Model, Hash, String, Any] item
-  # @param [Hash]                     opt
+  # @param [Model, Hash, String, *] item
+  # @param [Hash]                   opt
   #
-  # @option opt [Symbol] :sid_key     Default: `#sid_column`.
+  # @option opt [Symbol] :sid_key         Default: `#sid_column`.
   #
-  # @return [String]                  The submission ID.
-  # @return [nil]                     No submission ID could be determined.
+  # @return [String]                      The submission ID.
+  # @return [nil]                         No submission ID could be determined.
   #
-  # @note From Upload::IdentifierMethods#sid_value
+  # @note From Upload::IdentifierMethods#sid_for
   #
   def sid_value(item, **opt)
     # noinspection RubyMismatchedReturnType
@@ -81,7 +81,7 @@ module Record::EmmaIdentification
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
-  # @param [*] value                  Must be a String.
+  # @param [String, *] value
   #
   # @note From Upload::IdentifierMethods#valid_sid?
   #
@@ -97,7 +97,7 @@ module Record::EmmaIdentification
 
   # Indicate whether the record is an EMMA-native item.
   #
-  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [Model, Hash, String, Symbol, *] item
   #
   # @note From Upload#emma_native?
   #
@@ -107,7 +107,7 @@ module Record::EmmaIdentification
 
   # Extract the repository associated with the item.
   #
-  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [Model, Hash, String, Symbol, *] item
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *item* did not indicate a repository.
@@ -130,7 +130,7 @@ module Record::EmmaIdentification
 
   # The full name of the indicated repository.
   #
-  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [Model, Hash, String, Symbol, *] item
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -143,7 +143,7 @@ module Record::EmmaIdentification
 
   # Extract the EMMA index entry identifier from the item.
   #
-  # @param [Model, Hash, String, Symbol, nil] item
+  # @param [Model, Hash, String, Symbol, *] item
   #
   # @return [String]
   # @return [nil]
@@ -172,9 +172,9 @@ module Record::EmmaIdentification
 
   # Indicate whether *item* is or contains a valid EMMA index record ID.
   #
-  # @param [Model, Hash, String, Symbol, nil] item
-  # @param [String, Array<String>]            add_repo
-  # @param [String, Array<String>]            add_fmt
+  # @param [Model, Hash, String, Symbol, *] item
+  # @param [String, Array<String>]          add_repo
+  # @param [String, Array<String>]          add_fmt
   #
   # @note From Upload#valid_record_id?
   #

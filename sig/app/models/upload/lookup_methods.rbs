@@ -102,7 +102,7 @@ module Upload::LookupMethods
   #
   def get_relation: (*(String|Integer|Upload|Array[String|Integer|Upload]) identifiers, **untyped opt) -> ActiveRecord::Relation
 
-  # group_by_state
+  # A table of counts for items in each state group.
   #
   # @param [ActiveRecord::Relation] relation
   #

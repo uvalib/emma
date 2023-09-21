@@ -90,7 +90,7 @@ module Record::Identification
   # @note From Upload::IdentifierMethods#valid_id?
   #
   def valid_id?(value)
-      digits_only?(value)
+    digits_only?(value)
   end
 
   # Extract the database ID from the given item.

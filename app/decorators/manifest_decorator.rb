@@ -47,7 +47,7 @@ class ManifestDecorator < BaseDecorator
       path_for(item, **opt, action: :remit)
     end
 
-=begin
+=begin # TODO: submission start/stop ?
     def start_path(item = nil, **opt)
       path_for(item, **opt, action: :start)
     end
@@ -569,7 +569,7 @@ class ManifestDecorator
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section: Manifest forms
   # ===========================================================================
 
   public
@@ -677,7 +677,7 @@ class ManifestDecorator
   end
 
   # ===========================================================================
-  # :section: Item forms (remit page)
+  # :section: Manifest submission
   # ===========================================================================
 
   public
@@ -731,7 +731,7 @@ class ManifestDecorator
   end
 
   # ===========================================================================
-  # :section: Item forms (remit page)
+  # :section: Manifest submission
   # ===========================================================================
 
   public
@@ -784,7 +784,7 @@ class ManifestDecorator
   end
 
   # ===========================================================================
-  # :section: Item forms (remit page)
+  # :section: Manifest submission
   # ===========================================================================
 
   public
@@ -839,7 +839,7 @@ class ManifestDecorator
   end
 
   # ===========================================================================
-  # :section: Item forms (remit page)
+  # :section: Manifest submission
   # ===========================================================================
 
   protected
@@ -868,7 +868,7 @@ class ManifestDecorator
   end
 
   # ===========================================================================
-  # :section: Item forms (remit page)
+  # :section: Manifest submission
   # ===========================================================================
 
   public
@@ -941,7 +941,7 @@ class ManifestDecorator
     path_properties = {
       upload: upload_path,
       remit:  remit_path(id: JS_ID),
-=begin
+=begin # TODO: submission start/stop ?
       start:  start_path(id: JS_ID),
       stop:   stop_path(id: JS_ID),
       pause:  pause_path(id: JS_ID),

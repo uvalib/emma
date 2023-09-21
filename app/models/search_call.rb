@@ -140,7 +140,7 @@ class SearchCall < ApplicationRecord
   #
   JSON_COLUMNS = JSON_COLUMN_CONFIG.keys.freeze
 
-=begin
+=begin # TODO: advanced filtering
   # URL parameters which map into the :result attribute.
   #
   # @type [Hash{Symbol=>Array<Symbol>}]

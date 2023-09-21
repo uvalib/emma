@@ -42,7 +42,7 @@ class UploadsDecorator < BaseCollectionDecorator
   end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section:
   # ===========================================================================
 
   public
@@ -195,12 +195,6 @@ class UploadsDecorator < BaseCollectionDecorator
       legend << group
     end
   end
-
-  # ===========================================================================
-  # :section: BaseCollectionDecorator::List overrides
-  # ===========================================================================
-
-  public
 
   # Control the selection of filters displayed by #list_filter.
   #

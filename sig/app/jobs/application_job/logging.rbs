@@ -55,7 +55,7 @@ module ApplicationJob::Logging
 
   def record_inspect: (ApplicationRecord r) -> String
 
-  def hash_inspect: (anyHash|_ToH h) -> String
+  def hash_inspect: (anyHash|_ToH[untyped,untyped] h) -> String
 
   def array_inspect: (anyArray|_ToA[untyped] a) -> String
 

@@ -330,6 +330,8 @@ module FileFormat
   #
   # @return [String]
   #
+  # @note Currently unused.
+  #
   def format_image(_value)
     to_be_overridden
   end

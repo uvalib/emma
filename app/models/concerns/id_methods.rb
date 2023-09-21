@@ -185,7 +185,7 @@ module IdMethods
     # Produce a relation for selecting records associated with the given
     # organization.
     #
-    # @param [*]    user
+    # @param [*]    org
     # @param [Hash] opt
     #
     # @return [ActiveRecord::Relation]

@@ -209,7 +209,7 @@ class Ability
     cannot :list_org,     :all
   end
 
-  # Assign the ability to perform as an organization manager.
+  # Assign the ability to perform as an EMMA member organization manager.
   #
   # @param [User] user
   # @param [Hash] constraints
@@ -227,7 +227,8 @@ class Ability
     cannot :delete_select, Org
   end
 
-  # Assign the ability to perform as a Disability Service Officer.
+  # Assign the ability to perform as a full EMMA member organization user who
+  # is able to upload and download items.
   #
   # @param [User] user
   # @param [Hash] constraints
@@ -240,8 +241,8 @@ class Ability
     can :retrieve, Upload
   end
 
-  # Assign the ability to perform as an organization staff member able to
-  # upload items but without the permission to download.
+  # Assign the ability to perform as an EMMA member organization staff user who
+  # is able to upload items but without the permission to download.
   #
   # @param [User] user
   # @param [Hash] constraints
@@ -255,7 +256,7 @@ class Ability
     can_manage_group_submissions(user, **constraints)
   end
 
-  # Assign the ability to perform as a guest user.
+  # Assign the ability to perform as a guest of an EMMA member organization.
   #
   # @param [User] user
   # @param [Hash] constraints
@@ -283,7 +284,7 @@ class Ability
 
   protected
 
-  # Allow visibility into an organization and its members.
+  # Allow visibility into an EMMA member organization and its users.
   #
   # @param [User] user
   # @param [Hash] constraints

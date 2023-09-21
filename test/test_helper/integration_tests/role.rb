@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-# Support for sign-in.
+# Support for authorization.
 #
 module TestHelper::IntegrationTests::Role
 

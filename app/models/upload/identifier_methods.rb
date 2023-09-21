@@ -51,7 +51,7 @@ module Upload::IdentifierMethods
 
   # Extract the database ID from the given item.
   #
-  # @param [Api::Record, Upload, Hash, String, Any, nil] item
+  # @param [Api::Record, Upload, Hash, String, *] item
   #
   # @return [String]                  Record ID (:id).
   # @return [nil]                     No valid :id specified.
@@ -78,7 +78,7 @@ module Upload::IdentifierMethods
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
-  # @param [*] value                  Must be a String.
+  # @param [String, *] value
   #
   def valid_sid?(value)
     value.is_a?(String) && value.match?(SID_PATTERN)

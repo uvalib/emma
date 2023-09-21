@@ -108,7 +108,7 @@ class UploadDecorator < BaseDecorator
     }.deep_freeze
 
     # =========================================================================
-    # :section: Item list (index page) support
+    # :section:
     # =========================================================================
 
     public
@@ -157,7 +157,7 @@ class UploadDecorator < BaseDecorator
     GROUP_CONTROL_CLASS = 'control'
 
     # =========================================================================
-    # :section: Item list (index page) support
+    # :section:
     # =========================================================================
 
     public
@@ -187,7 +187,7 @@ class UploadDecorator < BaseDecorator
     FILTER_CONTROL_CLASS = 'control'
 
     # =========================================================================
-    # :section: Item list (index page) support
+    # :section:
     # =========================================================================
 
     public
@@ -217,7 +217,7 @@ class UploadDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: Item list (index page) support
+    # :section:
     # =========================================================================
 
     public
@@ -516,17 +516,16 @@ class UploadDecorator
 
   # details_container
   #
-  # @param [Array]         added      Optional elements after the details.
+  # @param [Array]         before     Optional elements before the details.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt        Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container(*added, skip: [], **opt, &block)
+  def details_container(*before, skip: [], **opt, &blk)
     skip = Array.wrap(skip)
-    full = !skip.include?(:cover)
-    added.prepend(cover(placeholder: false)) if full
-    super(*added, **opt, &block)
+    before.prepend(cover(placeholder: false)) unless skip.include?(:cover)
+    super(*before, **opt, &blk)
   end
 
   # ===========================================================================
@@ -555,7 +554,7 @@ class UploadDecorator
   end
 
   # ===========================================================================
-  # :section: Item list (index page) support
+  # :section:
   # ===========================================================================
 
   public
@@ -672,6 +671,14 @@ class UploadDecorator
   #
   FILE_LABEL = I18n.t("emma.#{model_type}.new.select.label").freeze
 
+  # Single-select menu - drop-down.
+  #
+  # @param [String]      name
+  # @param [Array]       value
+  # @param [Hash]        opt          Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def render_form_menu_single(name, value, **opt)
     constraints = nil
     if administrator?
