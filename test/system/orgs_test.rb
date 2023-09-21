@@ -56,7 +56,7 @@ class OrgsTest < ApplicationSystemTestCase
       show_url
       assert_current_url final_url
       assert_valid_page  heading: title
-      success_screenshot
+      screenshot
 
     end
   end
@@ -124,7 +124,7 @@ class OrgsTest < ApplicationSystemTestCase
       show_url
       assert_current_url final_url
       assert_valid_page  heading: title
-      success_screenshot
+      screenshot
 
     end
   end
@@ -177,12 +177,9 @@ class OrgsTest < ApplicationSystemTestCase
 =end
       select 'Shibboleth', from: 'field-Provider'
 
-      # If all required fields have been filled then submit will be visible.
-      send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      success_screenshot
-      click_on class: 'submit-button', match: :first
-
-      # Should be back on the index page with one more record than before.
+      # After submitting should be back on the index page with one more record
+      # than before.
+      form_submit
       wait_for_page final_url
       assert_flash 'SUCCESS'
       assert_valid_page heading: INDEX_TITLE
@@ -234,15 +231,13 @@ class OrgsTest < ApplicationSystemTestCase
       # Replace field data.
       fill_in 'field-LongName', with: org_name(**test_opt)
 
-      # If all required fields have been filled then submit will be visible.
-      send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      success_screenshot
-      click_on class: 'submit-button', match: :first
-
-      # The index page should still show the same number of records.
+      # After submitting should be back on the index page with the same number
+      # of records.
+      form_submit
       assert_flash 'SUCCESS'
       if direct
         visit index_url
+        screenshot
       else
         wait_for_page final_url
       end
@@ -300,7 +295,7 @@ class OrgsTest < ApplicationSystemTestCase
       # Choose submission to remove, which leads to the delete page.
       item_menu_select(item.long_name, name: 'id')
       wait_for_page item_delete
-      success_screenshot
+      screenshot
 
       # After deletion we should be back on the previous page.
       click_on class: 'submit-button', match: :first

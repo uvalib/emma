@@ -102,7 +102,7 @@ module TestHelper::SystemTests::Common
   #
   # @return [void]
   #
-  def success_screenshot: () -> void
+  def screenshot: () -> void
 
   # Depending on the context, there may be two menus for performing an action
   # on a selected item.

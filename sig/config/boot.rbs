@@ -113,4 +113,12 @@ class Object
   def rake_task?: () -> bool
 
   @in_rake:  bool
+
+  # Indicate whether desktop-only validations are appropriate.
+  #
+  def sanity_check?: () -> bool
+
+  # Indicate whether this is the Rails application not under test.
+  #
+  def live_rails_application?: () -> bool
 end

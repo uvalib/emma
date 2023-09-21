@@ -65,7 +65,6 @@ module Emma
       port:    ENV.fetch('SMTP_PORT', 587).to_i,
       address: ENV.fetch('SMTP_DOMAIN', 'example.com'),
     }
-    puts "=> Mailer Config: #{config.action_mailer.smtp_settings.inspect}"
 
     config.action_mailer.default_url_options = {
       protocol: :https,

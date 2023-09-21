@@ -159,18 +159,18 @@ module TestHelper::SystemTests::Common
     max.times do
       current = get_browser_url(port: port)
       show("#{__method__}: URL = #{current}") if trace
-      success_screenshot if trace
+      screenshot  if trace
       return true if targets.include?(current)
       break       if timer.expired?
     end
     if assert
       current  = url_without_port(current || current_url).inspect
-      expected = targets.many? ? targets.map(&:inspect) : targets.pop.inspect
-      if expected.is_a?(Array)
-        expected = [] << expected[0...-1].join(', ') << 'or' << expected.last
+      if targets.many?
+        expected = targets.map(&:inspect)
+        expected = [expected.pop, ' or ', expected.join(', ')].reverse
         expected = 'any of expected pages %s' % expected.join(' ')
       else
-        expected = "expected page #{expected}"
+        expected = 'expected page %s' % targets.first
       end
       flunk "Browser on page #{current} and not on #{expected}"
     end
@@ -207,11 +207,11 @@ module TestHelper::SystemTests::Common
   #
   # @return [void]
   #
-  def success_screenshot
-    take_screenshot if TESTING_JAVASCRIPT
+  def screenshot
+    take_screenshot
   rescue Selenium::WebDriver::Error::UnknownError => error
     $stderr.puts "[Screenshot Image]: #{error.class} - #{error.message}"
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_TESTS }
+    .tap { |meth| neutralize(meth) unless DEBUG_TESTS && TESTING_JAVASCRIPT }
 
 end

@@ -83,7 +83,7 @@ class ManifestsTest < ApplicationSystemTestCase
       show_url
       assert_current_url final_url
       assert_valid_page  heading: title
-      success_screenshot
+      screenshot
 
     end
   end
@@ -151,7 +151,7 @@ class ManifestsTest < ApplicationSystemTestCase
       assert_current_url final_url
       assert_valid_page  heading: title
       assert_search_count(CONTROLLER, total: total) if total
-      success_screenshot
+      screenshot
 
     end
   end
@@ -201,7 +201,7 @@ class ManifestsTest < ApplicationSystemTestCase
 =begin
       # If all required fields have been filled then submit will be visible.
       send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      success_screenshot
+      screenshot
       click_on 'Save', match: :first, exact: true
 
       # Should be back on the index page with one more record than before.
@@ -264,7 +264,7 @@ class ManifestsTest < ApplicationSystemTestCase
 =begin
       # If all required fields have been filled then submit will be visible.
       send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      success_screenshot
+      screenshot
       click_on 'Save', match: :first, exact: true
 
       # The index page should still show the same number of records.
@@ -328,7 +328,7 @@ class ManifestsTest < ApplicationSystemTestCase
       # Choose submission to remove, which leads to the delete page.
       item_menu_select(item.name, name: 'id')
       wait_for_page item_delete
-      success_screenshot
+      screenshot
 
       # After deletion we should be back on the previous page.
       click_on 'Delete', match: :first, exact: true
@@ -392,7 +392,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
     # If all required fields have been filled then submit will be visible.
     send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-    success_screenshot
+    screenshot
     click_on 'Save', match: :first, exact: true
 
     # Should be back on the index page with the same number of records.

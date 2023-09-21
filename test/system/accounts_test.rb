@@ -70,7 +70,7 @@ class AccountsTest < ApplicationSystemTestCase
       show_url
       assert_current_url final_url
       assert_valid_page  heading: title
-      success_screenshot
+      screenshot
 
     end
   end
@@ -144,7 +144,7 @@ class AccountsTest < ApplicationSystemTestCase
       show_url
       assert_current_url final_url
       assert_valid_page  heading: title
-      success_screenshot
+      screenshot
 
     end
   end
@@ -204,12 +204,9 @@ class AccountsTest < ApplicationSystemTestCase
       fill_in 'field-Comments',   with: 'FAKE - do not use'
 =end
 
-      # If all required fields have been filled then submit will be visible.
-      send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      success_screenshot
-      click_on 'Create', match: :first, exact: true
-
-      # Should be back on the index page with one more record than before.
+      # After submitting should be back on the index page with one more record
+      # than before.
+      form_submit
       wait_for_page final_url
       assert_flash 'SUCCESS'
       assert_valid_page heading: INDEX_TITLE
@@ -268,15 +265,14 @@ class AccountsTest < ApplicationSystemTestCase
       fill_in 'field-Creator', with: author
 =end
 
-      # If all required fields have been filled then submit will be visible.
-      send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      success_screenshot
-      click_on 'Update', match: :first, exact: true
 
-      # The index page should still show the same number of records.
+      # After submitting should be back on the index page with the same number
+      # of records.
+      form_submit
       assert_flash 'SUCCESS'
       if direct
         visit index_url
+        screenshot
       else
         wait_for_page final_url
       end
@@ -343,7 +339,7 @@ class AccountsTest < ApplicationSystemTestCase
       # Choose submission to remove, which leads to the delete page.
       item_menu_select(item.id, name: 'id')
       wait_for_page item_delete
-      success_screenshot
+      screenshot
       click_on 'Delete', match: :first, exact: true
 =end
 

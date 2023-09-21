@@ -40,7 +40,7 @@ class SearchCallsTest < ApplicationSystemTestCase
 
       # The listing should be the first of one or more results pages.
       assert_valid_index_page(CONTROLLER, page: 0)
-      success_screenshot
+      screenshot
 
     end
   end

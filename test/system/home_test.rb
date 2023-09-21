@@ -20,7 +20,7 @@ class HomeTest < ApplicationSystemTestCase
     run_test(__method__) do
       visit url
       assert_valid_page heading: INDEX_TITLE
-      success_screenshot
+      screenshot
     end
   end
 
@@ -29,7 +29,7 @@ class HomeTest < ApplicationSystemTestCase
     run_test(__method__) do
       visit url
       assert_valid_page heading: INDEX_TITLE
-      success_screenshot
+      screenshot
     end
   end
 
@@ -38,7 +38,7 @@ class HomeTest < ApplicationSystemTestCase
     run_test(__method__) do
       visit url
       assert_flash alert: AUTH_FAILURE
-      success_screenshot
+      screenshot
     end
   end
 

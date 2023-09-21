@@ -169,7 +169,7 @@ module TestHelper::SystemTests::Index
     end
     model ||= target || this_controller
     assert_valid_index_page(model, **opt)
-    success_screenshot
+    screenshot
   end
 
   # visit_each_show_page

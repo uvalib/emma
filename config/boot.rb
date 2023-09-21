@@ -170,7 +170,7 @@ def rails_application?
     @in_rails ||= $0.to_s.start_with?('spring app')
     @in_rails ||= $0.to_s.end_with?('rails', 'spring') &&
                   $*.any? { |arg| %w[-b -p server runner].include?(arg) }
-    @in_rails &&= !!defined?(APP_PATH)
+    @in_rails &&= !!defined?(APP_PATH) unless ENV['RAILS_ENV'] == 'test'
     @in_rails &&=
       !%w[-h -H --help -D --describe -T --tasks -n --dry-run].intersect?($*)
   end
@@ -196,6 +196,12 @@ end
 #
 def sanity_check?
   rails_application? && not_deployed?
+end
+
+# Indicate whether this is the Rails application not under test and not being
+#
+def live_rails_application?
+  rails_application? && (ENV['RAILS_ENV'] != 'test')
 end
 
 # =============================================================================

@@ -12,8 +12,14 @@ class SearchTest < ApplicationSystemTestCase
   # @param [Integer] index
   # @param [String]  base_url
   # @param [String]  expected_url
+  # @param [Integer] max            Maximum number of attempts to make.
   #
   # @return [void]
   #
-  def show_page: (Integer index, ?base_url: String|nil, ?expected_url: String|nil) -> void
+  # == Implementation Notes
+  # Sometimes #wait_for_page succeeds but, in fact, the page is not actually
+  # rendered.  For that reason, there is an extra layer of indirection which
+  # re-waits for the page if neither :prev nor :next can be found.
+  #
+  def show_page: (Integer index, ?base_url: String|nil, ?expected_url: String|nil, ?max: Integer) -> void
 end

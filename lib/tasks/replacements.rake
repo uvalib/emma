@@ -12,11 +12,11 @@ end
 
 namespace :test do
 
-  desc ['Run all EMMA tests', '(except serialization)']
-  task all: %w[system models controllers]
+  desc 'Run all EMMA tests'
+  task all: %w[system models controllers+serialization]
 
-  desc 'Run all EMMA tests including serialization'
-  task 'all+serialization': %w[system models controllers+serialization]
+  desc ['Run all EMMA tests', '(except serialization)']
+  task 'all-serialization': %w[system models controllers]
 
   desc 'Run all EMMA system tests'
   task system: 'emma:test:interactive:default'

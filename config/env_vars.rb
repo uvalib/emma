@@ -130,7 +130,7 @@ TMPDIR =
 #
 # @type [Boolean]
 #
-SHIBBOLETH = true?(ENV.fetch('SHIBBOLETH') { !production_deployment? })
+SHIBBOLETH = !false?(ENV['SHIBBOLETH'])
 
 # Indicate whether Benetech OAuth2 authorization is in use.
 #
@@ -410,14 +410,14 @@ CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
 # Normally __output (and __debug) are not displayed in non-Rails invocations of
 # the code (e.g. rake, irb, etc) unless CONSOLE_DEBUGGING is *true*.
 #
-CONSOLE_OUTPUT = rails_application? || CONSOLE_DEBUGGING
+CONSOLE_OUTPUT = live_rails_application? || CONSOLE_DEBUGGING
 
 # Control TRACE_* activation.
 #
 # By default, the TRACE_* constants only active for when the code is being run
 # as a Rails application (i.e., not for "rake", "rails console", etc.).
 #
-TRACE_OUTPUT = rails_application? || true?(ENV['TRACE_RAKE'])
+TRACE_OUTPUT = live_rails_application? || true?(ENV['TRACE_RAKE'])
 
 # Control tracking of file load order.
 #

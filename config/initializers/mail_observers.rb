@@ -15,3 +15,6 @@ unless production_deployment?
   Rails.application.config.action_mailer.observers = %w[EmailDeliveryObserver]
 
 end
+
+# noinspection RubyResolve
+__output "=> Mailer config #{Rails.application.config.action_mailer.smtp_settings.inspect}"
