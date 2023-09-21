@@ -244,7 +244,6 @@ module ModelConcern
         Log.warn { "#{__method__}: #{filter}: not a method" }
       end
     end
-    #opt.delete(:groups)
 
     model_class.search_records(*items, **opt)
 

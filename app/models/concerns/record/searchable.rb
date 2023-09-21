@@ -182,7 +182,7 @@ module Record::Searchable
     all = get_relation(*identifiers, **opt, sort: (identifiers.blank? && sort))
 
     # Handle the case where only a :groups summary is expected.
-    return result.merge!(groups: group_by_state(all)) if groups == :only
+    return result.merge!(groups: group_counts(all)) if groups == :only
 
     if pagination_column
 
@@ -224,7 +224,7 @@ module Record::Searchable
     end
 
     # Generate a :groups summary if requested.
-    result[:groups] = group_by_state(all) if groups
+    result[:groups] = group_counts(all) if groups
 
     # Finally, get the specific set of results.
     result[:list] = get_relation(*identifiers, **opt, sort: sort).records
@@ -376,9 +376,9 @@ module Record::Searchable
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  # @note From Upload::LookupMethods#group_by_state
+  # @note From Upload::LookupMethods#group_counts
   #
-  def group_by_state(relation, column = state_column)
+  def group_counts(relation, column = state_column)
     raise "no :state_column for #{self.class}" unless column
     group_count = {}
     relation.group(column).count.each_pair do |state, count|

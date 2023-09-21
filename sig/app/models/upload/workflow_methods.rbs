@@ -29,10 +29,26 @@ module Upload::WorkflowMethods
   #
   USER_COLUMNS: symArray
 
+  # Groupings of states related by workflow phase group.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  # @see "emma.workflow"
+  # @see file:config/locales/workflow.en.yml
+  #
+  WORKFLOW_GROUP: Hash[Symbol,symArray]
+
+  # Mapping of workflow state to workflow phase group.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REVERSE_WORKFLOW_GROUP: Hash[Symbol,Symbol]
+
   # Groupings of states related by theme.
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  # @see "emma.upload.state_group"
   # @see file:config/locales/controllers/upload.en.yml
   #
   STATE_GROUP: Hash[Symbol,symHash]
@@ -233,6 +249,24 @@ module Upload::WorkflowMethods
   # non-administrative data (EMMA or file data) could be changed.
   #
   def sealed?: () -> bool
+
+  # Return the workflow phase grouping for the given state.
+  #
+  # @param [String, Symbol] target_state  Default: `#active_state`.
+  #
+  # @return [Symbol]
+  #
+  # @see "emma.workflow"
+  #
+  def workflow_group: (?(String|Symbol|nil) target_state) -> Symbol
+
+  # Return the workflow phase grouping for the given state.
+  #
+  # @param [String, Symbol, nil] target_state
+  #
+  # @return [Symbol]  Defaults to :create if *target_state* is invalid.
+  #
+  def self.workflow_group: ((String|Symbol|nil) target_state) -> Symbol
 
   # Return the group of the given state.
   #

@@ -126,7 +126,7 @@ module Upload::LookupMethods
     all = get_relation(*identifiers, **opt, sort: nil)
 
     # Handle the case where only a :groups summary is expected.
-    return result.merge!(groups: group_by_state(all)) if prop[:groups] == :only
+    return result.merge!(groups: group_counts(all)) if prop[:groups] == :only
 
     # Group record IDs into pages.
     # noinspection RailsParamDefResolve
@@ -161,7 +161,7 @@ module Upload::LookupMethods
     result[:pages]  = pages if prop[:pages]
 
     # Generate a :groups summary if requested.
-    result[:groups] = group_by_state(all) if prop[:groups]
+    result[:groups] = group_counts(all) if prop[:groups]
 
     # Finally, get the specific set of results.
     opt.merge!(limit: limit, offset: offset)
@@ -239,8 +239,24 @@ module Upload::LookupMethods
     terms << sql_terms(user_opt, join: :or) if user_opt.present?
 
     # === Filter by state
-    state_opt = opt.extract!(*STATE_COLUMNS)
-    terms << sql_terms(state_opt, join: :or) if state_opt.present?
+    c_states, e_states =
+      STATE_COLUMNS.map do |key|
+        next unless opt.key?(key)
+        value = opt.delete(key)
+        false?(value) ? false : Array.wrap(value).compact_blank.map(&:to_sym)
+      end
+    if c_states || e_states
+      phase, state, edit_state = [WORKFLOW_PHASE_COLUMN, *STATE_COLUMNS]
+      edit     = "#{phase} = 'edit'"
+      create   = "(#{phase} != 'edit') OR (#{edit_state} = 'canceled')"
+      e_states = c_states.excluding(:canceled)           if e_states.nil?
+      e_states = e_states.map { |v| "'#{v}'" }.join(',') if e_states
+      c_states = c_states.map { |v| "'#{v}'" }.join(',') if c_states
+      parts = []
+      parts << "((#{edit})   AND (#{edit_state} IN (#{e_states})))" if e_states
+      parts << "((#{create}) AND (#{state}      IN (#{c_states})))" if c_states
+      terms << '(%s)' % parts.map { |term| "(#{term})" }.join(' OR ').squish
+    end
 
     # === Update time lower bound
     exclusive, inclusive = [opt.delete(:after), opt.delete(:start_date)]
@@ -296,16 +312,14 @@ module Upload::LookupMethods
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  def group_by_state(relation)
-    group_count = {}
-    relation.group(*STATE_COLUMNS).count.each_pair do |states, count|
-      # Use :edit_state if present; use :state otherwise.
-      state = states.pop.presence || states.pop.presence || :nil
-      group = Upload::WorkflowMethods.state_group(state)
-      group_count[group] = group_count[group].to_i + count
+  def group_counts(relation)
+    relation.pluck(WORKFLOW_PHASE_COLUMN, *STATE_COLUMNS).map { |array|
+      phase, state, edit = array.map { |v| v.to_sym if v.present? }
+      state = edit if (phase == :edit) && edit && (edit != :canceled)
+      Upload.state_group(state) if state
+    }.compact.group_by(&:itself).transform_values(&:size).tap do |group_count|
+      group_count[:all] = group_count.values.sum
     end
-    group_count[:all] = group_count.values.sum
-    group_count
   end
 
   # Generate a Date-parseable string from a string that indicates either a day,

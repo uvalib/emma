@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require_relative '../workflow'
+
 # Workflow support for Upload records.
 #
 #--
@@ -51,10 +53,76 @@ module Upload::WorkflowMethods
   #
   USER_COLUMNS = %i[user_id edit_user review_user].freeze
 
+  # ===========================================================================
+  # :section: Workflow groups
+  # ===========================================================================
+
+  public
+
+  # Groupings of states related by workflow phase group.
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  # @see "emma.workflow"
+  # @see file:config/locales/workflow.en.yml
+  #
+  WORKFLOW_GROUP =
+    Workflow::Base::CONFIGURATION.map { |group, states|
+      key =
+        case group
+          when :_create_states    then :create
+          when :_edit_states      then :edit
+          when :_remove_states    then :remove
+          when :_review_states    then :review
+          when :_submit_states    then :submission
+          when :_index_states     then :finalization
+          when :_terminal_states  then :done
+        end
+      [key, states.keys] if key
+    }.compact.to_h.deep_freeze
+
+  # Mapping of workflow state to workflow phase group.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REVERSE_WORKFLOW_GROUP =
+    WORKFLOW_GROUP.flat_map { |group, states|
+      states.map { |state| [state, group] }
+    }.sort.to_h.freeze
+
+  # Each workflow state should be associated with exactly one "emma.workflow"
+  # state grouping.
+  if sanity_check?
+    {}.tap do |states_groups|
+      WORKFLOW_GROUP.each_pair do |group, states|
+        states.each do |state|
+          states_groups[state] ||= []
+          states_groups[state] << group
+        end
+      end
+      errors =
+        states_groups.map { |state, group|
+          next unless group.many?
+          group  = group.map(&:inspect)
+          groups = group[0...-1].join(', ') << " and #{group.last}"
+          "state #{state.inspect} is in WORKFLOW_GROUP #{groups}"
+        }.compact
+      raise [nil, *errors].join("\nERROR: ") if errors.many?
+      raise errors.join                      if errors.present?
+    end
+  end
+
+  # ===========================================================================
+  # :section: State groups
+  # ===========================================================================
+
+  public
+
   # Groupings of states related by theme.
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  # @see "emma.upload.state_group"
   # @see file:config/locales/controllers/upload.en.yml
   #
   STATE_GROUP =
@@ -71,6 +139,37 @@ module Upload::WorkflowMethods
     STATE_GROUP.flat_map { |group, entry|
       entry[:states].map { |state| [state,  group] }
     }.sort.to_h.freeze
+
+  # Each workflow state should be associated with exactly one
+  # "emma.upload.state_group" entry.
+  if sanity_check?
+    {}.tap do |states_groups|
+      STATE_GROUP.each_pair do |group, entry|
+        entry[:states].each do |state|
+          states_groups[state] ||= []
+          states_groups[state] << group
+        end
+      end
+      states  = I18n.t('emma.workflow.upload.state', default: {}).keys
+      states += I18n.t('emma.upload.state_group.pseudo.states', default: [])
+      states.compact_blank!.map!(&:to_sym).uniq!
+      errors  =
+        states_groups.map { |state, group|
+          next unless group.many?
+          group  = group.map(&:inspect)
+          groups = group[0...-1].join(', ') << " and #{group.last}"
+          "state #{state.inspect} is in STATE_GROUP #{groups}"
+        }.compact
+      if (missing = states - states_groups.keys).present?
+        errors << "STATE_GROUP missing states: #{missing.inspect}"
+      end
+      if (invalid = states_groups.keys - states).present?
+        errors << "STATE_GROUP invalid states: #{invalid.inspect}"
+      end
+      raise [nil, *errors].join("\nERROR: ") if errors.many?
+      raise errors.join                      if errors.present?
+    end
+  end
 
   # ===========================================================================
   # :section:
@@ -317,7 +416,7 @@ module Upload::WorkflowMethods
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Workflow groups
   # ===========================================================================
 
   public
@@ -326,49 +425,49 @@ module Upload::WorkflowMethods
   # the creation of a new EMMA entry.
   #
   def being_created?
-    state_group == :create
+    workflow_group == :create
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # the modification of an existing EMMA entry.
   #
   def being_modified?
-    state_group == :edit
+    workflow_group == :edit
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # the removal of an existing EMMA entry.
   #
   def being_removed?
-    state_group == :remove
+    workflow_group == :remove
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # the review process.
   #
   def under_review?
-    state_group == :review
+    workflow_group == :review
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # transmission to a member repository.
   #
   def being_submitted?
-    state_group == :submission
+    workflow_group == :submission
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # ingest into the EMMA Unified Index.
   #
   def being_indexed?
-    state_group == :finalization
+    workflow_group == :finalization
   end
 
   # Indicate whether this record is involved in a workflow step related to
   # ingest into the EMMA Unified Index.
   #
   def completed?
-    state_group == :done
+    workflow_group == :done
   end
 
   # Indicate whether this record is involved in a workflow step which leads to
@@ -393,7 +492,36 @@ module Upload::WorkflowMethods
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Workflow groups
+  # ===========================================================================
+
+  public
+
+  # Return the workflow phase grouping for the given state.
+  #
+  # @param [String, Symbol] target_state  Default: `#active_state`.
+  #
+  # @return [Symbol]
+  #
+  # @see "emma.workflow"
+  #
+  def workflow_group(target_state = nil)
+    target_state ||= active_state
+    Upload::WorkflowMethods.workflow_group(target_state)
+  end
+
+  # Return the workflow phase grouping for the given state.
+  #
+  # @param [String, Symbol, nil] target_state
+  #
+  # @return [Symbol]  Defaults to :create if *target_state* is invalid.
+  #
+  def self.workflow_group(target_state)
+    REVERSE_WORKFLOW_GROUP[target_state&.to_sym] || :create
+  end
+
+  # ===========================================================================
+  # :section: State groups
   # ===========================================================================
 
   public
@@ -404,16 +532,12 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]
   #
+  # @see "emma.upload.state_group"
+  #
   def state_group(target_state = nil)
     target_state ||= active_state
     Upload::WorkflowMethods.state_group(target_state)
   end
-
-  # ===========================================================================
-  # :section: Module methods
-  # ===========================================================================
-
-  public
 
   # Return the group of the given state.
   #

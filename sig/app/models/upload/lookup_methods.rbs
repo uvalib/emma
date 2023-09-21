@@ -108,7 +108,7 @@ module Upload::LookupMethods
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  def group_by_state: (ActiveRecord::Relation relation) -> symHash
+  def group_counts: (ActiveRecord::Relation relation) -> symHash
 
   # Generate a Date-parseable string from a string that indicates either a day,
   # (YYYYMMDD), a month (YYYYMM), or a year (YYYY) -- with or without date

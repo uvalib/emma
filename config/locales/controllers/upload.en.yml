@@ -206,22 +206,24 @@ en:
         # the page matching that group.  The groups are listed in priority
         # order, so, for example, if there are any records in the :create
         # state on the page then that will be the filter selected by default.
+        #
+        # Note that the state groups are very similar to entries under
+        # "emma.workflow" but here the state are organized to support filtering
+        # for display and presentation purposes.
 
         create:
           label:        'Creating'
           tooltip:      'New EMMA entries in the process of being created'
-          show:         'nonzero'
+         #show:         'nonzero'
           enabled:      true
           states:
             - creating
             - validating
-            - submitting
-            - submitted
 
         edit:
           label:        'Modifying'
           tooltip:      'Existing EMMA entries in the process of being modifying'
-          show:         'nonzero'
+         #show:         'nonzero'
           enabled:      true
           states:
             - editing
@@ -258,6 +260,8 @@ en:
           show:         'nonzero'
           enabled:      true
           states:
+            - submitting
+            - submitted
             - staging
             - unretrieved
             - retrieved
@@ -274,7 +278,7 @@ en:
         done:
           label:        'Complete'
           tooltip:      'Existing EMMA entries'
-          show:         'nonzero'
+         #show:         'nonzero'
           enabled:      true
           states:
             - suspended

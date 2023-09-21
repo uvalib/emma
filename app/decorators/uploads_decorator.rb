@@ -87,8 +87,9 @@ class UploadsDecorator < BaseCollectionDecorator
         label = html_span(label, class: 'label')
         label << html_span("(#{count})", class: 'count')
 
-        base  = index_path
-        url   = all ? base : index_path(group: group)
+        p_opt = all ? {} : { group: group }
+        p_opt = context.slice(:action).merge!(p_opt)
+        url   = path_for(**p_opt, anchor: 'main')
 
         link_opt = append_css('control-button', GROUP_CONTROL_CLASS)
         link_opt[:'data-label'] = properties[:tooltip]

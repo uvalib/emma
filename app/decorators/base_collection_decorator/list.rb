@@ -35,8 +35,8 @@ module BaseCollectionDecorator::List
     lines =
       object.map.with_index(index) do |item, idx|
         # noinspection RailsParamDefResolve
-        opt.merge!(index: idx, row: (row + idx), group: item.try(:state_group))
-        decorate(item).list_row(**opt)
+        g = item.try(:state_group)
+        decorate(item).list_row(**opt, index: idx, row: (row + idx), group: g)
       end
     safe_join(lines, DEFAULT_ELEMENT_SEPARATOR)
   end
