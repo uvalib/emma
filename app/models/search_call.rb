@@ -369,18 +369,27 @@ class SearchCall < ApplicationRecord
   # Called to prepare values to be used for assignment to record attributes.
   #
   # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
-  # @param [Hash, nil]                                           opt
+  # @param [Hash]                                                opt
   #
   # @return [Hash{Symbol=>*}]
   #
   # @see #map_parameters
-  # @see Record::Assignable#normalize_attributes
   #
-  def normalize_attributes(attr, opt = nil)
+  def normalize_attributes(attr, **opt)
     return {}    if attr.blank?
     return super if attr.is_a?(ApplicationRecord)
-    opt = (opt&.dup || {}).merge!(only: false)
-    map_parameters(super(attr, opt))
+    opt[:only] = false
+    map_parameters(super)
+  end
+
+  # For now a no-op that just returns *attr*.
+  #
+  # @param [Hash] attr
+  #
+  # @return [Hash]
+  #
+  def normalize_fields(attr, **)
+    attr
   end
 
   # ===========================================================================

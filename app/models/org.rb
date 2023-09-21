@@ -17,6 +17,7 @@ class Org < ApplicationRecord
   include Record::Debugging
 
   include Org::Config
+  include Org::Assignable
 
   # ===========================================================================
   # :section: ActiveRecord ModelSchema

@@ -107,7 +107,7 @@ module ManifestItem::StatusMethods
     errors = data[:field_error]&.except(:file_data)
     return status.(:invalid) if errors.present?
 
-    fields       = ManifestItem.database_fields
+    fields       = database_fields
     rem_fields   = fields.select { |_, v| v[:category]&.start_with?('rem') }
     bib_fields   = fields.select { |_, v| v[:category]&.start_with?('bib') }
 

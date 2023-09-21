@@ -22,7 +22,7 @@ module Record::Validatable
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def database_fields: () -> Hash[Symbol,symHash]
+  def validation_fields: () -> Hash[Symbol,symHash]
 
   # Indicate whether all required fields have valid values.
   #

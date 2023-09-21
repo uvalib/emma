@@ -13,6 +13,8 @@ class Org < ApplicationRecord
 
   include Org::Config
 
+  include Org::Assignable
+
   # A textual label for the record instance.
   #
   # @param [Org, nil] item  Default: self.

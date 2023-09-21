@@ -79,14 +79,21 @@ class SearchCall < ApplicationRecord
   # Called to prepare values to be used for assignment to record attributes.
   #
   # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
-  # @param [Hash, nil]                                           opt
+  # @param [Hash]                                                opt
   #
   # @return [Hash{Symbol=>*}]
   #
   # @see #map_parameters
-  # @see Record::Assignable#normalize_attributes
   #
-  def normalize_attributes: ((SearchCall|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
+  def normalize_attributes: ((SearchCall|prmHash|nil) attr, **untyped opt) -> symHash
+
+  # For now a no-op that just returns *attr*.
+  #
+  # @param [Hash] attr
+  #
+  # @return [Hash]
+  #
+  def normalize_fields: (symHash attr, **untyped _ignored) -> symHash
 
   # Transform URL parameters into attribute settings.
   #

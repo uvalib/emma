@@ -1,0 +1,17 @@
+module Org::Assignable
+  # :nocov:
+  #include Record::Assignable
+
+  # Ensure that blanks are allowed and that input values are normalized.
+  #
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash]                                           opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

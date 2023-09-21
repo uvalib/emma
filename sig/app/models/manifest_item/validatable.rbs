@@ -6,7 +6,7 @@ module ManifestItem::Validatable
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def database_fields: () -> Hash[Symbol,symHash]
+  def validation_fields: () -> Hash[Symbol,symHash]
 
   private
 

@@ -17,6 +17,7 @@ class User < ApplicationRecord
   include Model
 
   include Record
+  include Record::Assignable
   include Record::Identification
   include Record::Searchable
 
@@ -164,8 +165,7 @@ class User < ApplicationRecord
   # @return [nil]                     If no matching record was found.
   #
   def self.id_value(user, **opt)
-    user = find_record(user) if user.is_a?(String) && !digits_only?(user)
-    super(user, **opt)
+    super(instance_for(user), **opt)
   end
 
   # ===========================================================================
@@ -402,6 +402,26 @@ class User < ApplicationRecord
     # Disable automatic account creation
     # user ||= create(attr) if BS_AUTH
     user
+  end
+
+  # Return the User instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, nil] v
+  #
+  # @return [User, nil]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType, SqlResolve
+  #++
+  def self.instance_for(v)
+    v = v.values_at(:user, :user_id).first if v.is_a?(Hash)
+    return                                 if v.nil?
+    return v                               if v.is_a?(User)
+    v = v.uid                              if v.is_a?(ApplicationRecord)
+    case (v = positive(v) || v)
+      when Integer then find_by(id: v)
+      when String  then where('(email=?) OR (preferred_email=?)', v, v).first
+    end
   end
 
 end

@@ -15,7 +15,7 @@ module Record::Assignable
   # Called to prepare values to be used for assignment to record attributes.
   #
   # @param [Model, Hash, ActionController::Parameters, nil] attr
-  # @param [Hash, nil]                                      opt
+  # @param [Hash]                                           opt
   #
   # @option opt [ApplicationRecord]            :from        A record used to provide initial field values.
   # @option opt [User, String, Integer]        :user        Transformed into a :user_id value.
@@ -31,7 +31,7 @@ module Record::Assignable
   #
   # @return [Hash{Symbol=>*}]
   #
-  def normalize_attributes: ((Model|prmHash|nil) attr, ?(symHash|nil) opt) -> symHash
+  def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
 
   # The fields that will be accepted by #normalize_attributes.
   #
@@ -59,6 +59,212 @@ module Record::Assignable
   # @return [Hash{String=>Symbol}]
   #
   def key_mapping: () -> Hash[String,Symbol]
+
+  # Include defaults where values were not specified.
+  #
+  # @param [Hash] attr
+  #
+  # @return [Hash]                    The *attr* argument, possibly modified.
+  #
+  def default_attributes!: (symHash attr) -> symHash
+
+  # Called by #normalize_attributes after key names have been normalized and
+  # attributes have been filtered.
+  #
+  # @param [Hash] attr
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean]   :invalid  Allow invalid values.
+  # @option opt [Symbol]    :meth     Caller (for diagnostics).
+  # @option opt [Hash, nil] :errors   Accumulator for errors.
+  #
+  # @return [Hash]                    A possibly-modified copy of *attr*.
+  #
+  def normalize_fields: (symHash attr, **untyped opt) -> symHash
+
+  # Normalize a specific field value.
+  #
+  # @param [Symbol]        key
+  # @param [*]             value
+  # @param [String, Class] type
+  # @param [Hash, nil]     errors
+  #
+  # @return [*]
+  #
+  def normalize_field: (Symbol key, untyped value, String|Class `type`, ?(symHash|nil) errors) -> untyped
+
+  # Pattern by which strings are split into arrays.
+  #
+  # @type [String,Regexp]
+  #
+  LINE_SPLIT: String | Regexp
+
+  # String by which arrays are combined into strings.
+  #
+  # @type [String,RegExp]
+  #
+  LINE_JOIN: String
+
+  # The phrase indicating a problematic value. # TODO: I18n
+  #
+  # @type [String]
+  #
+  INVALID_FIELD: String
+
+  # Indicate whether the value is valid for *type*.
+  #
+  # @param [*] v
+  # @param [*] type
+  #
+  def is_invalid?: (untyped v, String|Class `type`) -> bool
+
+  # add_field_error!
+  #
+  # @param [Hash, String, Symbol] field
+  # @param [any, nil]             value
+  # @param [Hash, nil]            target  Default: `#field_error`.
+  #
+  # @return [Hash{Symbol=>Hash{String=>String}}]
+  #
+  def add_field_error!
+    : (String|Symbol field,  ?untyped value, ?(anyHash|nil) target) -> Hash[Symbol, Hash[String,String]]
+    | (symHash       errors,                 ?(anyHash|nil) target) -> Hash[Symbol, Hash[String,String]]
+
+  # normalize_file
+  #
+  # @param [Hash, String, *] data
+  #
+  # @return [Hash, nil]
+  #
+  def normalize_file
+    : (anyHash|String data, **untyped _ignored) -> symHash
+    | (untyped        data, **untyped _ignored) -> nil
+
+  # normalize_single
+  #
+  # @param [*]            v
+  # @param [String,Class] type
+  # @param [Hash]         opt         Passed to normalization method.
+  #
+  # @return [*]
+  #
+  def normalize_single: (untyped v, String|Class `type`, **untyped opt) -> (untyped | nil)
+
+  # normalize_bool
+  #
+  # @param [BoolType, String, *] v
+  #
+  # @return [true, false, nil]
+  #
+  def normalize_bool
+    : (String  v, **untyped _ignored) -> (bool | nil)
+    | (bool    v, **untyped _ignored) -> bool
+    | (untyped v, **untyped _ignored) -> nil
+
+  # normalize_number
+  #
+  # @param [String, Numeric, *] v
+  #
+  # @return [Numeric, nil]
+  #
+  def normalize_number
+    : (String  v, **untyped _ignored) -> (Numeric | nil)
+    | (Numeric v, **untyped _ignored) -> Numeric
+    | (untyped v, **untyped _ignored) -> nil
+
+  # normalize_date
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [Date, String, nil]
+  #
+  def normalize_date
+    : (String|Numeric v, **untyped _ignored) -> (Date | String)
+    | (Date           v, **untyped _ignored) -> Date
+    | (untyped        v, **untyped _ignored) -> nil
+
+  # normalize_datetime
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [DateTime, String, nil]
+  #
+  def normalize_datetime
+    : (String|Numeric v, **untyped _ignored) -> (DateTime | String)
+    | (Date           v, **untyped _ignored) -> DateTime
+    | (untyped        v, **untyped _ignored) -> nil
+
+  # normalize_class
+  #
+  # @param [*]     v
+  # @param [Class] type               EnumType or ApplicationRecord subclass
+  # @param [Hash]  opt                Passed to EnumType#cast method.
+  #
+  # @return [ApplicationRecord, EnumType, nil]
+  #
+  def normalize_class
+    : (String        v, Class `type`, **untyped opt) -> (ApplicationRecord | EnumType | nil)
+    | (Integer       v, Class `type`, **untyped opt) -> (ApplicationRecord | nil)
+    | (Symbol        v, Class `type`, **untyped opt) -> (EnumType | nil)
+    | (Model|symHash v, Class `type`, **untyped opt) -> ApplicationRecord
+    | (EnumType      v, Class `type`, **untyped opt) -> EnumType
+    | (untyped       v, Class `type`, **untyped opt) -> nil
+
+  # normalize_record
+  #
+  # @param [*]     v
+  # @param [Class] type               EnumType subclass
+  #
+  # @return [ApplicationRecord, nil]
+  #
+  def normalize_record
+    : (String|Integer v, Class `type`, **untyped _ignored) -> (ApplicationRecord | nil)
+    | (Model|symHash  v, Class `type`, **untyped _ignored) -> ApplicationRecord
+    | (untyped        v, Class `type`, **untyped _ignored) -> nil
+
+  # normalize_enum
+  #
+  # @param [*]     v
+  # @param [Class] type               EnumType subclass
+  # @param [Hash]  opt                Passed to #cast method.
+  #
+  # @return [EnumType, nil]
+  #
+  def normalize_enum
+    : (String|Symbol v, Class `type`, **untyped opt) -> (EnumType | nil)
+    | (EnumType      v, Class `type`, **untyped opt) -> EnumType
+    | (untyped       v, Class `type`, **untyped opt) -> nil
+
+  # normalize_json
+  #
+  # @param [Array<Hash,String>, Hash, String, *] v
+  #
+  # @return [Array<Hash>, Hash, nil]
+  #
+  def normalize_json
+    : (anyHash  v, **untyped _ignored) -> symHash
+    | (anyArray v, **untyped _ignored) -> Array[symHash]
+    | (untyped  v, **untyped _ignored) -> (symHash | nil)
+
+  # normalize_text
+  #
+  # @param [Array, String, Symbol, *] v
+  #
+  # @return [String, *]
+  #
+  def normalize_text
+    :     (anyArray|String|Symbol v, **untyped _ignored) -> String
+    | [T] (T                      v, **untyped _ignored) -> T
+
+  # normalize_copyright
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [String, nil]
+  #
+  def normalize_copyright
+    : (Date|String|Numeric v, **untyped _ignored) -> String
+    | (untyped             v, **untyped _ignored) -> nil
 
   # Class methods automatically added to the including record class.
   #

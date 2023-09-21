@@ -1,30 +1,34 @@
-# app/models/manifest_item/validatable.rb
+# app/models/org/assignable.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-module ManifestItem::Validatable
+module Org::Assignable
 
+  # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include Record::Validatable
+    include Record::Assignable
     # :nocov:
   end
 
   # ===========================================================================
-  # :section: Record::Validatable overrides
+  # :section: Record::Assignable overrides
   # ===========================================================================
 
   public
 
-  # Configured requirements for ManifestItem fields.
+  # Ensure that blanks are allowed and that input values are normalized.
   #
-  # @return [Hash{Symbol=>Hash}]      Frozen result.
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash]                                           opt
   #
-  def validation_fields
-    Model.database_fields(:manifest_item)
+  # @return [Hash{Symbol=>*}]
+  #
+  def normalize_attributes(attr, **opt)
+    super(attr, compact: false, key_norm: true, **opt)
   end
 
   # ===========================================================================
@@ -35,7 +39,6 @@ module ManifestItem::Validatable
 
   def self.included(base)
     __included(base, self)
-    base.extend(self)
   end
 
 end

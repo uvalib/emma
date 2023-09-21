@@ -71,6 +71,14 @@ class ApplicationRecord < ActiveRecord::Base
 
   def model_controller: () -> Class
 
+  # Return the record instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, nil] v
+  #
+  # @return [ApplicationRecord, nil]
+  #
+  def self.instance_for: (Model|symHash|String|Integer|nil v) -> (ApplicationRecord | nil)
+
   # This is a convenience so that model classes can provide lists for use with
   # menus in the same way that EnumType#pairs does.
   #

@@ -46,7 +46,7 @@ module Record::Validatable
   #
   # @return [Hash{Symbol=>Hash}]      Frozen result.
   #
-  def database_fields
+  def validation_fields
     Model.database_fields(:upload)
   end
 
@@ -67,14 +67,14 @@ module Record::Validatable
     if emma_data.blank?
       error(:emma_data, :missing)
     else
-      check_required(database_fields[:emma_data], emma_metadata)
+      check_required(validation_fields[:emma_data], emma_metadata)
     end
     errors.empty?
   end
 
   # Compare the source fields against configured requirements.
   #
-  # @param [Hash, nil]         required_fields  Default: `#database_fields`
+  # @param [Hash, nil]         required_fields  Default: `#validation_fields`
   # @param [Record, Hash, nil] source           Default: self.
   #
   # @return [void]
@@ -100,7 +100,7 @@ module Record::Validatable
   #
   def check_required(required_fields = nil, source = nil)
     source ||= self
-    (required_fields || database_fields).each_pair do |field, config|
+    (required_fields || validation_fields).each_pair do |field, config|
       value      = source[field]
       min, max   = config.values_at(:min, :max).map(&:to_i)
       nested_cfg = config.except(:cond).select { |_, v| v.is_a?(Hash) }

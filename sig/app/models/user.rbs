@@ -7,6 +7,8 @@ class User < ApplicationRecord
 
   include Record
 
+  include Record::Assignable
+
   include Record::Identification
 
   include Record::Searchable
@@ -190,4 +192,12 @@ class User < ApplicationRecord
   # @see https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
   #
   def self.from_omniauth: ((OmniAuth::AuthHash|symHash|nil) data, ?update: bool) -> (User | nil)
+
+  # Return the User instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, nil] v
+  #
+  # @return [User, nil]
+  #
+  def self.instance_for: (Model|symHash|String|Integer|nil v) -> (User | nil)
 end

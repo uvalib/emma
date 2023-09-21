@@ -106,6 +106,20 @@ class ApplicationRecord < ActiveRecord::Base
     "#{model_type}_controller".camelize.safe_constantize
   end
 
+  # Return the record instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, nil] v
+  #
+  # @return [ApplicationRecord, nil]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def self.instance_for(v)
+    v = v.values_at(model_key, model_id_key).first if v.is_a?(Hash)
+    v.is_a?(self) ? v : ((v &&= positive(v) || v) && find_by(id: v))
+  end
+
   delegate :model_type, :model_key, :model_id_key, to: :class
   delegate :model_controller, to: :class
 

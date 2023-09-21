@@ -36,7 +36,7 @@ module Record::Assignable
   # Hash.
   #
   # @param [Model, Hash, ActionController::Parameters, nil] attr
-  # @param [Hash, nil]                                      opt
+  # @param [Hash]                                           opt
   #
   # @option opt [ApplicationRecord]            :from        A record used to provide initial field values.
   # @option opt [User, String, Integer]        :user        Transformed into a :user_id value.
@@ -53,11 +53,12 @@ module Record::Assignable
   # @return [Hash{Symbol=>*}]
   #
   #--
-  # noinspection RubyMismatchedReturnType
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
-  def normalize_attributes(attr, opt = nil)
-    opt = opt ? (opt[:attr_opt]&.dup || {}).merge!(opt.except(:attr_opt)) : {}
-    opt = attr[:attr_opt].merge(opt) if attr.is_a?(Hash) && attr[:attr_opt]
+  def normalize_attributes(attr, **opt)
+    opt  = opt[:attr_opt].merge(opt.except(:attr_opt)) if opt[:attr_opt]
+    opt  = attr[:attr_opt].merge(opt) if attr.is_a?(Hash) && attr[:attr_opt]
+    meth = opt[:meth] || __method__
 
     case attr
       when ApplicationRecord
@@ -87,7 +88,8 @@ module Record::Assignable
     compact = !false?(opt[:compact])
     options = [opt[:options], from&.delete(:options)].compact.first
 
-    attr.reverse_merge!(from) if from.present?
+    opt.merge!(options: options) if options.present?
+    attr.reverse_merge!(from)    if from.present?
 
     attr.transform_keys! { |k| k.to_s.delete_suffix('[]').to_sym }
     attr.transform_keys! { |k| normalize_key(k) } if true?(opt[:key_norm])
@@ -99,12 +101,22 @@ module Record::Assignable
     attr.select! do |k, v|
       error   = ("blank key for #{v.inspect}"      if k.blank?)
       error ||= ("ignoring non-field #{k.inspect}" unless database_columns[k])
-      error.blank? or Log.warn("#{__method__}: #{error}")
+      error.blank? or Log.warn("#{meth}: #{error}")
     end
 
-    reject_blanks!(attr)      if compact
-    attr[:options]  = options if options.present?
-    attr[:attr_opt] = opt.merge!(normalized: true)
+    attr = normalize_fields(attr, **opt)
+    default_attributes!(attr)
+    reject_blanks!(attr) if compact
+    attr.merge!(attr_opt: opt.merge!(normalized: true))
+  end
+
+  # Include defaults where values were not specified.
+  #
+  # @param [Hash] attr
+  #
+  # @return [Hash]                    The *attr* argument, possibly modified.
+  #
+  def default_attributes!(attr)
     attr
   end
 
@@ -113,7 +125,7 @@ module Record::Assignable
   # @return [Array<Symbol>]
   #
   def allowed_keys
-    field_names - [id_column]
+    field_names.excluding(id_column)
   end
 
   # The fields that will be ignored by #normalize_attributes from a source
@@ -142,6 +154,314 @@ module Record::Assignable
   def key_mapping
     # noinspection RubyMismatchedReturnType
     EnumType.comparable_map(database_columns.keys)
+  end
+
+  # Called by #normalize_attributes after key names have been normalized and
+  # attributes have been filtered.
+  #
+  # @param [Hash] attr
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean]   :invalid  Allow invalid values.
+  # @option opt [Symbol]    :meth     Caller (for diagnostics).
+  # @option opt [Hash, nil] :errors   Accumulator for errors.
+  #
+  # @return [Hash]                    A possibly-modified copy of *attr*.
+  #
+  def normalize_fields(attr, **opt)
+    meth = opt[:meth] || __method__
+    lax  = !opt[:invalid].is_a?(FalseClass)
+    err  = opt.key?(:errors) ? opt[:errors] : {}
+    attr.map { |k, v|
+      next [k, nil] unless v.present? || v.is_a?(FalseClass)
+
+      column = database_columns[k]
+      field  = database_fields[k]
+      type   = field[:type]
+      v_orig = v
+
+      if column.array || field[:array] || (type == 'textarea')
+        case v
+          when Array  then v = v.dup
+          when Symbol then v = v.to_s
+          when String then v = v.strip.split(LINE_SPLIT)
+          else             Log.warn "#{meth}: #{k}: type #{v.class} unexpected"
+        end
+        v = Array.wrap(v).map! { |item| normalize_field(k, item, type, err) }
+        v.compact!
+        v.uniq! if type.is_a?(Class)
+        v = v.join(LINE_JOIN) unless column.array
+      else
+        v = normalize_field(k, v, type, err)
+      end
+
+      if v.nil?
+        type = [v_orig.class.to_s]
+        type << 'skipped' unless lax
+        type = type.join(': ')
+        Log.warn("#{meth}: #{k}: unexpected #{type}: #{v_orig.inspect}")
+        next unless lax
+        v = v_orig
+      end
+
+      [k, v]
+    }.compact.to_h
+  end
+
+  # Normalize a specific field value.
+  #
+  # @param [Symbol]        key
+  # @param [*]             value
+  # @param [String, Class] type
+  # @param [Hash, nil]     errors
+  #
+  # @return [*]
+  #
+  def normalize_field(key, value, type, errors = nil)
+    result =
+      case key
+        when :dcterms_dateCopyright then normalize_copyright(value)
+        when :file_data             then normalize_file(value).presence
+        else                             normalize_single(value, type)
+      end
+    add_field_error!(key, value, errors) if errors && is_invalid?(result, type)
+    case result
+      when FalseClass        then result
+      when ScalarType        then result.to_s.presence
+      when ApplicationRecord then key.end_with?('_id') ? result.id : result
+      else                        result.presence
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Pattern by which strings are split into arrays.
+  #
+  # @type [String,Regexp]
+  #
+  LINE_SPLIT = /[;\n]+/
+
+  # String by which arrays are combined into strings.
+  #
+  # @type [String,RegExp]
+  #
+  LINE_JOIN = ";\n"
+
+  # The phrase indicating a problematic value. # TODO: I18n
+  #
+  # @type [String]
+  #
+  INVALID_FIELD = 'illegal value'
+
+  # Indicate whether the value is valid for *type*.
+  #
+  # @param [*]             v
+  # @param [String, Class] type
+  #
+  def is_invalid?(v, type)
+    case type
+      when 'json'     then !v.is_a?(Hash)
+      when 'date'     then !v.is_a?(Date)
+      when 'datetime' then !v.is_a?(DateTime)
+      when 'number'   then !v.is_a?(Numeric)
+      when TrueFalse  then !v.is_a?(TrueFalse)
+      else                 v.respond_to?(:valid?) ? !v.valid? : v.nil?
+    end
+  end
+
+  # add_field_error!
+  #
+  # @param [Hash, String, Symbol] field
+  # @param [any, nil]             value
+  # @param [Hash, nil]            target  Default: `#field_error`.
+  #
+  # @return [Hash{Symbol=>Hash{String=>String}}]
+  #
+  def add_field_error!(field, value = nil, target = nil)
+    target ||= (self.field_error ||= {})
+    errors   = field.is_a?(Hash) ? field : { field.to_sym => value }
+    errors.each_pair do |fld, err|
+      case err
+        when Hash  then err = err.stringify_keys
+        when Array then err = err.map { |k| [k.to_s, nil] }.to_h
+        else            err = { err.to_s => nil }
+      end
+      err.each_pair { |k, v| err[k] = INVALID_FIELD if v.nil? }
+      if target[fld]
+        err.each_pair { |k, v| target[fld][k] = [*target[fld][k], *v].uniq }
+      else
+        target[fld] = err
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # normalize_single
+  #
+  # @param [*]            v
+  # @param [String,Class] type
+  # @param [Hash]         opt         Passed to normalization method.
+  #
+  # @return [*]
+  #
+  def normalize_single(v, type, **opt)
+    # noinspection RubyMismatchedArgumentType
+    case
+      when type == 'json'     then normalize_json(v)
+      when type == 'date'     then normalize_date(v)
+      when type == 'datetime' then normalize_datetime(v)
+      when type == 'number'   then normalize_number(v)
+      when type == TrueFalse  then normalize_bool(v)
+      when type.is_a?(Class)  then normalize_class(v, type, **opt)
+      else                         normalize_text(v)
+    end
+  end
+
+  # normalize_bool
+  #
+  # @param [BoolType, String, *] v
+  #
+  # @return [true, false, nil]
+  #
+  def normalize_bool(v, **)
+    true?(v) || (false if false?(v))
+  end
+
+  # normalize_number
+  #
+  # @param [String, Numeric, *] v
+  #
+  # @return [Numeric, nil]
+  #
+  def normalize_number(v, **)
+    v = v.to_i if v.is_a?(String)
+    # noinspection RubyMismatchedReturnType
+    v if v.is_a?(Numeric)
+  end
+
+  # normalize_date
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [Date, String, nil]
+  #
+  def normalize_date(v, **)
+    v = v.to_s if v.is_a?(Numeric)
+    v.is_a?(String) ? (v.to_date rescue v) : v.try(:to_date)
+  end
+
+  # normalize_datetime
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [DateTime, String, nil]
+  #
+  def normalize_datetime(v, **)
+    v = v.to_s if v.is_a?(Numeric)
+    v.is_a?(String) ? (v.to_datetime rescue v) : v.try(:to_datetime)
+  end
+
+  # normalize_class
+  #
+  # @param [*]     v
+  # @param [Class] type               EnumType or ApplicationRecord subclass
+  # @param [Hash]  opt                Passed to EnumType#cast method.
+  #
+  # @return [ApplicationRecord, EnumType, nil]
+  #
+  def normalize_class(v, type, **opt)
+    # noinspection RubyMismatchedReturnType
+    if type < ApplicationRecord
+      normalize_record(v, type, **opt) || v
+    elsif type < EnumType
+      normalize_enum(v, type, **opt)
+    else
+      Log.warn("#{__method__}: #{type} unexpected")
+    end
+  end
+
+  # normalize_record
+  #
+  # @param [*]     v
+  # @param [Class] type               EnumType subclass
+  #
+  # @return [ApplicationRecord, nil]
+  #
+  def normalize_record(v, type, **)
+    type.instance_for(v)
+  end
+
+  # normalize_enum
+  #
+  # @param [*]     v
+  # @param [Class] type               EnumType subclass
+  # @param [Hash]  opt                Passed to #cast method.
+  #
+  # @return [EnumType, nil]
+  #
+  def normalize_enum(v, type, **opt)
+    type.cast(v, invalid: true, **opt)
+  end
+
+  # normalize_json
+  #
+  # @param [Array<Hash,String>, Hash, String, *] v
+  #
+  # @return [Array<Hash>, Hash, nil]
+  #
+  def normalize_json(v, **)
+    v.is_a?(Array) ? v.flat_map { |h| json_parse(h) }.compact : json_parse(v)
+  end
+
+  # normalize_text
+  #
+  # @param [Array, String, Symbol, *] v
+  #
+  # @return [String, *]
+  #
+  def normalize_text(v, **)
+    # noinspection RubyMismatchedReturnType
+    case v
+      when Array  then v.compact.map { |e| normalize_text(e) }.join(LINE_JOIN)
+      when Symbol then v.to_s.strip
+      when String then v.strip
+      else Log.warn { "#{__method__}: type #{v.class} unexpected" } or v
+    end
+  end
+
+  # normalize_copyright
+  #
+  # @param [Date, String, Numeric, *] v
+  #
+  # @return [String, nil]
+  #
+  def normalize_copyright(v, **)
+    v = normalize_date(v)
+    v = v.year.to_s if v.is_a?(Date)
+    # noinspection RubyMismatchedReturnType
+    v if v.is_a?(String)
+  end
+
+  # normalize_file
+  #
+  # @param [Hash, String, *] data
+  #
+  # @return [Hash, nil]
+  #
+  def normalize_file(data, **)
+    return unless data.present?
+    hash = json_parse(data, log: false) and return hash
+    return unless data.is_a?(String)
+    data.start_with?(/https?:/i) ? { url: data } : { name: data }
   end
 
   # ===========================================================================

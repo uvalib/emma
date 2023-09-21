@@ -181,7 +181,7 @@ class ManifestItem < ApplicationRecord
   #
   def assign_attributes(attr)
     attr = normalize_attributes(attr)
-    opt  = attr[:attr_opt]&.dup || {}
+    opt  = attr[:attr_opt] || {}
     super(attr)
     if opt[:re_validate]
       data_columns = fields.except(*NON_BACKUP_COLS)
