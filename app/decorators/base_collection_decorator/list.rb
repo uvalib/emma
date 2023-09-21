@@ -29,6 +29,7 @@ module BaseCollectionDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_rows(row: nil, index: nil, **opt)
+    trace_attrs!(opt)
     row   ||= 1
     index ||= paginator.first_index
     lines =
@@ -61,7 +62,8 @@ module BaseCollectionDecorator::List
   #
   def no_records_row(css: '.no-records', **opt)
     prepend_css!(opt, css)
-    html_div('', opt) << html_div(NO_RECORDS, opt)
+    trace_attrs!(opt)
+    html_div('', **opt) << html_div(NO_RECORDS, **opt)
   end
 
   # ===========================================================================
@@ -84,6 +86,7 @@ module BaseCollectionDecorator::List
   # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
   def index_controls(row: nil, **opt)
+    trace_attrs!(opt)
     list   = opt.delete(:list) || object || []
     unit   = opt.delete(:unit) || 'title' # TODO: I18n
     unit   = nil unless list.first&.aggregate?
@@ -126,6 +129,7 @@ module BaseCollectionDecorator::List
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def list_controls(**opt)
+    trace_attrs!(opt)
     list_control_methods.map { |meth| send(meth, **opt) }.compact
   end
 

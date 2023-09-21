@@ -95,7 +95,7 @@ module LayoutHelper::SkipNav
   #
   def render_skip_nav(css: '.skip-nav-menu', **opt)
     opt = prepend_css(opt, css)
-    html_tag(:ul, opt) do
+    html_tag(:ul, **opt) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
           entry.map { |label, link| render_skip_nav_link(label, link) }

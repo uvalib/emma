@@ -295,6 +295,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item_number(**opt)
+      trace_attrs!(opt)
       super(**opt) do
         control_icon_buttons(**opt.slice(:index))
       end
@@ -444,7 +445,7 @@ class ManifestItemDecorator < BaseDecorator
             n_opt = { class: 'required' }
             n_opt[:'aria-label'] = note = 'required' # TODO: I18n
             n_opt[:title] = "(#{note})"
-            note  = html_span('*', n_opt)
+            note  = html_span('*', **n_opt)
             text << note
           end
       end
@@ -597,7 +598,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:title] ||= state_cfg[:tooltip] || type_cfg[:tooltip]
       prepend_css!(opt, 'expanded') if expanded
       prepend_css!(opt, css)
-      html_button(label, opt)
+      html_button(label, **opt)
     end
 
     # =========================================================================
@@ -747,7 +748,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:role]            = 'row' if table
       opt[:separator]       = ''    unless opt.key?(:separator)
       prepend_css!(opt, css)
-      html_tag(tag, ctrl, item, *values, opt)
+      html_tag(tag, ctrl, item, *values, **opt)
     end
 
     # submit_status_ctls
@@ -782,7 +783,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:role] ||= grid_cell_role if table
       opt[:'aria-colindex'] = col   if col
       prepend_css!(opt, css)
-      html_tag(tag, ctrl, opt)
+      html_tag(tag, ctrl, **opt)
     end
 
     # submit_status_item
@@ -825,7 +826,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:role] ||= grid_cell_role if table
       opt[:'aria-colindex'] = col   if col
       prepend_css!(opt, css)
-      html_tag(tag, item, opt)
+      html_tag(tag, item, **opt)
     end
 
     # submit_status_value
@@ -856,7 +857,7 @@ class ManifestItemDecorator < BaseDecorator
       step_css  = SUBMIT_STEPS.dig(type, :css)
       value_css = SUBMIT_STATUS.dig(status, :css)
       prepend_css!(opt, css, step_css, value_css)
-      html_tag(tag, opt) do
+      html_tag(tag, **opt) do
         control_group(lbl_id) { [text, button] }
       end
     end
@@ -882,12 +883,12 @@ class ManifestItemDecorator < BaseDecorator
 
       # Simple label.
       p_opt   = !details ? opt : append_css(opt, 'hidden')
-      plain   = html_div(label, p_opt.merge(id: lbl_id))
+      plain   = html_div(label, **p_opt, id: lbl_id)
 
       # Expandable label.
       d_opt   = details ? opt : append_css(opt, 'hidden')
       details = html_tag(:summary, label) << html_div(class: 'name')
-      details = html_tag(:details, details, d_opt)
+      details = html_tag(:details, details, **d_opt)
 
       plain << details
     end
@@ -952,8 +953,8 @@ class ManifestItemDecorator < BaseDecorator
       unique ||= index || hex_rand
       id_base  = [row, unique].compact.join('-')
       prepend_css!(opt, css)
-      html_div(opt) do
-        ManifestItem::STATUS.map do |field, config|
+      html_div(**opt) do
+        ManifestItem::STATUS.map do |field, prop|
           s_id   = "#{field}-indicator-#{id_base}"
           l_id   = "label-#{s_id}"
 
@@ -964,7 +965,7 @@ class ManifestItemDecorator < BaseDecorator
           s_opt  = { 'data-field': field, id: s_id, 'aria-describedby': l_id }
           status = row_indicator(value, **s_opt)
 
-          text   = config[value] || value
+          text   = prop[value] || value
           l_opt  = { 'data-field': field, id: l_id }
           label  = row_indicator_label(text, **l_opt)
 
@@ -1033,7 +1034,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:role] ||= 'status'
       field = opt[:'data-field']
       append_css!(opt, field, css, "value-#{value}")
-      html_div(opt)
+      html_div(**opt)
     end
 
     # row_indicator_label
@@ -1050,7 +1051,7 @@ class ManifestItemDecorator < BaseDecorator
       label = label.to_s.strip
       label << '.' unless label.match?(/[[:punct:]]$/)
       append_css!(opt, css)
-      html_div(label, opt)
+      html_div(label, **opt)
     end
 
     # row_detail_value_label
@@ -1065,7 +1066,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def row_detail_value_label(label, css: LABEL_CLASS, **opt)
       append_css!(opt, css)
-      html_div(label, opt)
+      html_div(label, **opt)
     end
 
     # row_detail_value
@@ -1085,7 +1086,7 @@ class ManifestItemDecorator < BaseDecorator
       value = row_field_error_details(value, **opt) if value.is_a?(Hash)
       opt[:separator] = HTML_BREAK unless opt.key?(:separator)
       append_css!(opt, css)
-      html_div(value, opt)
+      html_div(value, **opt)
     end
 
     # row_field_error_details
@@ -1100,7 +1101,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def row_field_error_details(value, css: '.field-errors', **opt)
       append_css!(opt, css)
-      html_tag(:dl, opt) do
+      html_tag(:dl, **opt) do
         value.map do |fld, errs|
           if errs.is_a?(Hash)
             errs =
@@ -1384,7 +1385,7 @@ class ManifestItemDecorator
   #
   def render_grid_file_input(_name, _value, css: UPLOADER_DISPLAY_CLASS, **opt)
     prepend_css!(opt, css)
-    display  = html_div(opt)
+    display  = html_div(**opt)
     controls = FILE_INPUT_TYPES.map { |type| file_input_popup(src: type) }
     controls = html_div(*controls, class: "#{APPEND_CONTROLS_CLASS} hidden")
     controls << display
@@ -1426,7 +1427,7 @@ class ManifestItemDecorator
     config = FILE_TYPE_CFG[src] || {}
     label  = config[:label]
     prepend_css!(opt, css)
-    html_button(label, opt)
+    html_button(label, **opt)
   end
 
   # Generate a hidden panel to prompt for a file name.
@@ -1467,7 +1468,7 @@ class ManifestItemDecorator
     opt[:'data-id']          = popup_id
     opt[:'aria-describedby'] = desc_id
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       description << input_label << input_field << input_submit << input_cancel
     end
   end

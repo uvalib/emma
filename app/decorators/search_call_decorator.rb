@@ -185,8 +185,8 @@ class SearchCallDecorator
     name  = opt.delete(:name) and merge_html_options!(f_opt, name)
     prepend_css!(opt, 'key')
     opt[:'data-value'] = field
-    html_span(opt) do
-      html_span(field, f_opt) << ': '.html_safe
+    html_span(**opt) do
+      html_span(field, **f_opt) << ': '.html_safe
     end
   end
 
@@ -210,15 +210,15 @@ class SearchCallDecorator
         if v == SearchTerm::NULL_SEARCH
           star_opt = append_css(v_opt, 'star')
           star_opt[:title] = 'Null search' # TODO: I18n
-          html_span(ASTERISK, star_opt)
+          html_span(ASTERISK, **star_opt)
         elsif v.is_a?(String) && v.match?(/\s/)
-          quote(html_span(v, v_opt))
+          quote(html_span(v, **v_opt))
         else
-          html_span(v, v_opt)
+          html_span(v, **v_opt)
         end
       end
     prepend_css!(opt, 'value')
-    html_span(opt) do
+    html_span(**opt) do
       if result.size > 1
         safe_join(result, (sep || search_call_connector))
       else
@@ -239,7 +239,7 @@ class SearchCallDecorator
   #
   def search_call_connector(**opt)
     prepend_css!(opt, 'or')
-    connector = html_span('OR', opt) # TODO: I18n
+    connector = html_span('OR', **opt) # TODO: I18n
     " #{connector} ".html_safe
   end
 

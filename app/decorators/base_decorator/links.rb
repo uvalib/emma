@@ -62,13 +62,14 @@ module BaseDecorator::Links
   # @yieldreturn [String]
   #
   def model_link(item, **opt)
+    trace_attrs!(opt)
     html_opt = remainder_hash!(opt, *MODEL_LINK_OPTIONS)
     type     = (model_type unless item)
     item   ||= object
     label    = opt[:label] || :label
     label    = item.send(label) if label.is_a?(Symbol)
     if opt[:no_link]
-      html_span(label, html_opt)
+      html_span(label, **html_opt)
     else
       # noinspection RubyMismatchedArgumentType
       path = (yield(label) if block_given?) || opt[:path] || opt[:path_method]
@@ -93,6 +94,7 @@ module BaseDecorator::Links
   def link(css: nil, **opt)
     opt[:title] = opt.delete(:tooltip) || opt[:title] || show_tooltip
     prepend_css!(opt, css) if css.present?
+    trace_attrs!(opt)
     model_link(object, **opt)
   end
 
@@ -105,6 +107,7 @@ module BaseDecorator::Links
   #
   def button_link(css: '.button', **opt)
     opt[:role] ||= 'button'
+    trace_attrs!(opt)
     link(css: css, **opt)
   end
 
@@ -147,11 +150,15 @@ module BaseDecorator::Links
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def action_list(current: nil, table: nil, css: '.page-actions', **opt)
+    trace_attrs!(opt)
+    t_opt     = trace_attrs_from(opt)
     current ||= context[:action]
     table   ||= action_links(**opt)
 
-    l_opt = { current: current, table: table }
-    links = table.keys.map { |action| action_link(action, **l_opt) }.compact
+    links =
+      table.keys.map { |action|
+        action_link(action, current: current, table: table, **t_opt)
+      }.compact
 
     # Move the link referencing the current action to the top of the list.
     # E.g.: On an :edit page, the "Edit another..." link is moved to the top.
@@ -159,7 +166,7 @@ module BaseDecorator::Links
     first &&= links.delete_at(first)
     links.prepend(first) if first && !menu_action?(current)
 
-    html_tag(:ul, *links, prepend_css(css)) if links.present?
+    html_tag(:ul, *links, **prepend_css(t_opt, css)) if links.present?
   end
 
   # ===========================================================================
@@ -178,6 +185,7 @@ module BaseDecorator::Links
   # @return [Hash{Symbol=>String}]
   #
   def action_entry(action = nil, current: nil, table: nil, **opt)
+    trace_attrs!(opt)
     current = (opt.delete(:current) || current || context[:action])&.to_sym
     action  = (opt.delete(:action)  || action  || current)&.to_sym
     table ||= action_links(**opt)
@@ -209,6 +217,8 @@ module BaseDecorator::Links
     css:     '.page-action',
     **opt
   )
+    trace_attrs!(opt)
+    t_opt  = trace_attrs_from(opt)
     action = opt.delete(:action) || action
     entry  = action_entry(action, current: current, **opt)
     action, current = entry.values_at(:action, :current)
@@ -219,8 +229,8 @@ module BaseDecorator::Links
     label  = (label || entry[:label]).presence
     label  = label ? (label % entry) : labelize(action)
 
-    html_tag(:li, prepend_css(css)) do
-      link_to_action(label, action: action)
+    html_tag(:li, **prepend_css(t_opt, css)) do
+      link_to_action(label, action: action, **t_opt)
     end
   end
 

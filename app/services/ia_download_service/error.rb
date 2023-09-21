@@ -69,7 +69,7 @@ class IaDownloadService::Error < ApiService::Error
           result.map!.with_index do |line, count|
             html_opt = { class: 'line' }
             append_css!(html_opt, 'first') if count.zero?
-            html_div(line, html_opt)
+            html_div(line, **html_opt)
           end
         end
       end

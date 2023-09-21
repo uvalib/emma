@@ -70,7 +70,7 @@ module LayoutHelper::Logo
     alt = opt.delete(:alt)   || tip
     opt[:'data-turbolinks-permanent'] = true
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       link_to(root_path, title: tip, 'aria-label': tip) do
         if mode == :text
           LOGO_TEXT

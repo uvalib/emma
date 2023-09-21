@@ -89,7 +89,7 @@ module LinkHelper
         opt[:tabindex] ||= 0
         opt[:role]     ||= 'button'
       end
-      html_span(label, opt)
+      html_span(label, **opt)
     end
   end
 

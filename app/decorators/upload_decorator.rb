@@ -300,6 +300,7 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item_number(**opt)
+      trace_attrs!(opt)
       super(**opt) do
         control_icon_buttons(**opt.slice(:index))
       end
@@ -328,6 +329,7 @@ class UploadDecorator < BaseDecorator
         end
       end
       opt[:sort] ||= { id: :desc } if administrator? || manager?
+      trace_attrs!(opt)
       super(**opt)
     end
 
@@ -372,7 +374,8 @@ class UploadDecorator < BaseDecorator
       leader   = html_span(leader, class: 'leader')
       filename = html_span('', class: 'filename')
       prepend_css!(opt, css)
-      html_div(opt) do
+      trace_attrs!(opt)
+      html_div(**opt) do
         leader << filename
       end
     end
@@ -635,7 +638,7 @@ class UploadDecorator
       ph_opt[:'data-path'] = path
       ph_opt[:'data-attr'] = attr.to_json
       ph_txt = ph_opt.delete(:text) || 'Checking...' # TODO: I18n
-      html_div(ph_txt, ph_opt)
+      html_div(ph_txt, **ph_opt)
     end
   end
 
@@ -704,7 +707,9 @@ class UploadDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_top_controls(f, *buttons, **opt)
-    super { |parts| parts << parent_entry_select }
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
+    super { |parts| parts << parent_entry_select(**t_opt) }
   end
 
   # form_top_button_tray
@@ -716,11 +721,13 @@ class UploadDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_top_button_tray(f, *buttons, **opt)
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
     super do |parts|
       parts << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
       parts << f.file_field(:file)
-      parts << uploaded_filename_display
-      parts << lookup_control
+      parts << uploaded_filename_display(**t_opt)
+      parts << lookup_control(**t_opt)
     end
   end
 
@@ -780,8 +787,10 @@ class UploadDecorator
   # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*
   #
   def parent_entry_select(css: '.parent-entry-select', **opt)
-    id     = 'parent-entry-search'
+    trace_attrs!(opt)
+    t_opt  = trace_attrs_from(opt)
     b_opt  = { role: 'button', tabindex: 0 }
+    id     = 'parent-entry-search'
 
     # Directions.
     t_id   = "#{id}-title"
@@ -797,15 +806,15 @@ class UploadDecorator
 
     # Submit button.
     submit = h.search_button_label(ctrlr)
-    submit = html_div(submit, b_opt.merge(class: 'search-button'))
+    submit = html_div(submit, class: 'search-button', **b_opt, **t_opt)
 
     # Cancel button.
     cancel = 'Cancel' # TODO: I18n
-    cancel = html_div(cancel, b_opt.merge(class: 'search-cancel'))
+    cancel = html_div(cancel, class: 'search-cancel', **b_opt, **t_opt)
 
     opt[:'aria-describedby'] ||= t_id
     prepend_css!(opt, css, 'hidden')
-    html_div(opt) do
+    html_div(**opt) do
       title << input << submit << cancel
     end
   end

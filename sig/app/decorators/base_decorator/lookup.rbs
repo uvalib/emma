@@ -46,14 +46,13 @@ module BaseDecorator::Lookup
 
   # A modal popup for bibliographic lookup.
   #
-  # @param [String] css             Characteristic CSS class/selector.
-  # @param [Hash]   opt             Passed to #modal_popup except for:
-  #
-  # @option opt [Hash] :container   Options for #lookup_container.
+  # @param [Hash]   container         Options for #lookup_container.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #modal_popup except for:
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def lookup_modal: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def lookup_modal: (?container: symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # lookup_commit_button
   #

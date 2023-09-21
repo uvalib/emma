@@ -62,31 +62,32 @@ module BaseDecorator::Lookup
   # @see LayoutHelper::PageModals#add_page_modal
   #
   def lookup_control(js: LOOKUP_JS_CLASS, css: LOOKUP_CLASS, **opt)
+    trace_attrs!(opt)
     type  = opt.delete(:type)
     m_opt = { 'data-modal-class': js, 'data-modal-selector': css }
     b_opt = opt.extract!(ACTION_ATTR).merge!(opt.delete(:button) || {})
     b_opt = lookup_button_options(**b_opt, **m_opt)
     h.add_page_modal(css) { lookup_modal(**opt, **m_opt) }
-    h.make_popup_toggle(button: b_opt, type: type)
+    h.make_popup_toggle(button: b_opt, type: type, **trace_attrs_from(opt))
   end
 
   # A modal popup for bibliographic lookup.
   #
-  # @param [String] css             Characteristic CSS class/selector.
-  # @param [Hash]   opt             Passed to #modal_popup except for:
-  #
-  # @option opt [Hash] :container   Options for #lookup_container.
+  # @param [Hash]   container         Options for #lookup_container.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #modal_popup except for:
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def lookup_modal(css: LOOKUP_CLASS, **opt)
-    c_opt = opt.delete(:container) || {}
+  def lookup_modal(container: {}, css: LOOKUP_CLASS, **opt)
     opt[:close]        = lookup_cancel_options
     opt[:controls]     = lookup_commit_button
     opt[:'aria-label'] = 'Search for additional bibliographic details' # TODO: I18n
     prepend_css!(opt, css)
+    trace_attrs!(opt)
     h.modal_popup(**opt) do
-      lookup_container(**c_opt)
+      t_opt = trace_attrs_from(opt)
+      lookup_container(**container, **t_opt)
     end
   end
 
@@ -138,7 +139,8 @@ module BaseDecorator::Lookup
     opt[:type]  ||= 'submit'
     opt[:title] ||= 'Replace submission field values with these changes' # TODO: I18n
     prepend_css!(opt, css)
-    html_button(label, opt)
+    trace_attrs!(opt)
+    html_button(label, **opt)
   end
 
   # ===========================================================================
@@ -174,8 +176,10 @@ module BaseDecorator::Lookup
   def lookup_container(unique: nil, css: '.lookup-container', **opt)
     unique ||= hex_rand
     prepend_css!(opt, css)
-    html_div(opt) do
-      LOOKUP_PARTS.map { |meth| send(meth, unique: unique) }
+    trace_attrs!(opt)
+    html_div(**opt) do
+      t_opt = trace_attrs_from(opt)
+      LOOKUP_PARTS.map { |meth| send(meth, unique: unique, **t_opt) }
     end
   end
 
@@ -195,7 +199,8 @@ module BaseDecorator::Lookup
     label  = html_div(label, id: l_id)
     terms  = html_div(class: 'terms', 'aria-describedby': l_id)
     prepend_css!(opt, css)
-    html_div(opt) do
+    trace_attrs!(opt)
+    html_div(**opt) do
       label << terms
     end
   end
@@ -245,11 +250,12 @@ module BaseDecorator::Lookup
         label   = h.label_tag(id, text)
         button << label
       end
-    separator_choices = html_tag(:fieldset, sep_label, *separators, sep_opt)
+    separator_choices = html_tag(:fieldset, sep_label, *separators, **sep_opt)
 
     # === Input prompt element
     prepend_css!(opt, css)
-    html_div(opt) do
+    trace_attrs!(opt)
+    html_div(**opt) do
       terms_input << separator_choices
     end
   end
@@ -271,7 +277,8 @@ module BaseDecorator::Lookup
     status = html_div(class: 'services invisible') { label }
     notice = html_div(class: 'notice')
     prepend_css!(opt, css)
-    html_div(opt) do
+    trace_attrs!(opt)
+    html_div(**opt) do
       status << notice
     end
   end
@@ -287,13 +294,15 @@ module BaseDecorator::Lookup
   # @see file:app/assets/javascripts/shared/lookup-modal.js *outputDisplay*
   #
   def lookup_results(unique: nil, css: '.lookup-output', **opt)
+    trace_attrs!(opt)
+    t_opt     = trace_attrs_from(opt)
     uniq_opt  = { unique: unique || hex_rand }
 
     # === Output display heading
     hdg_label = 'Results' # TODO: I18n
     hdg_css   = 'lookup-heading'
     hdg_id    = unique_id(hdg_css, **uniq_opt)
-    heading   = html_tag(2, hdg_label, id: hdg_id, class: hdg_css)
+    heading   = html_tag(2, hdg_label, id: hdg_id, class: hdg_css, **t_opt)
 
     # === Output results element
     res_css   = 'item-results'
@@ -326,7 +335,7 @@ module BaseDecorator::Lookup
     # === Output display body
     prepend_css!(opt, css)
     output =
-      html_div(opt) do
+      html_div(**opt) do
         results << errors << diagnostics
       end
 
@@ -345,7 +354,8 @@ module BaseDecorator::Lookup
   def lookup_in_progress(unique: nil, css: '.loading-in-progress', **opt)
     unique # NOTE: unused
     prepend_css!(opt, css, 'hidden')
-    html_div(opt) do
+    trace_attrs!(opt)
+    html_div(**opt) do
       html_div(class: 'content')
     end
   end

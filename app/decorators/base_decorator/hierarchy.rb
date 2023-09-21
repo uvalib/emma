@@ -62,6 +62,7 @@ module BaseDecorator::Hierarchy
 
     # Get a line for each metadata field/pair and plus interstitial content.
     lines = item_lines(hierarchy, opt)
+    trace_attrs!(opt)
     lines.map! { |v| v.is_a?(Hash) ? render_field(v, opt) : ERB::Util.h(v) }
     lines.compact!
     lines.unshift(nil).join(separator).html_safe
@@ -348,6 +349,7 @@ module BaseDecorator::Hierarchy
     scopes      = field_scopes(line[:scopes])
     opt         = append_css(opt, scopes) if scopes.present?
     opt.delete(:level) # Label/value pairs are "leaf nodes".
+    trace_attrs!(opt)
     render_line(label, value, prop: line, **opt)
   end
 
@@ -399,6 +401,7 @@ module BaseDecorator::Hierarchy
     opt.merge!(role: 'heading', 'aria-level': level) if level
     opt.merge!(index: index, field: field, 'data-value': data_value)
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
+    trace_attrs!(opt)
     render_line(label, value, **opt)
   end
 
@@ -418,6 +421,7 @@ module BaseDecorator::Hierarchy
       opt[:'data-row'] ||= ".#{row}"
     end
     opt[:context] ||= :item
+    trace_attrs!(opt)
     tree_button(**opt)
   end
 
@@ -430,9 +434,11 @@ module BaseDecorator::Hierarchy
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_line(label, value, **opt)
-    return ''.html_safe if value.blank?
-    opt.except!(:action, :record_map, :term)
-    render_pair(label, value, **opt)
+    if value.present?
+      opt.except!(:action, :record_map, :term)
+      trace_attrs!(opt)
+      render_pair(label, value, **opt)
+    end || ''.html_safe
   end
 
   # Indicate whether a section should be ignored, either because its name

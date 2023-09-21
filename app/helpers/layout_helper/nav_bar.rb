@@ -105,7 +105,7 @@ module LayoutHelper::NavBar
     curr_prm   = url_parameters.except(:limit)
     curr_path += '?' + url_query(curr_prm) if curr_prm.present?
     html_div(class: 'links') do
-      first = true
+      init = true
       NAV_BAR_CONTROLLERS.map do |controller|
         if controller == :home
           # Special entry for the dashboard/welcome screen.
@@ -140,15 +140,14 @@ module LayoutHelper::NavBar
 
         # The separator preceding the link.
         sep_css = %w[separator]
-        sep_css << 'hidden'    if first
+        sep_css << 'hidden'    if init
         separator = html_span('|', class: css_classes(*classes, *sep_css))
 
         # The link (inactive if already on the associated page).
-        tip &&= "#{tip}\n"       if disabled
-        tip  += '(Current_page)' if disabled # TODO: I18n
-        opt   = { class: css_classes(*classes), title: tip }
-        link  = disabled ? html_span(label, opt) : link_to(label, path, opt)
-        first = false unless hidden
+        tip  = [tip, '(Current_page)'].compact.join("\n") if disabled # TODO: I18n
+        opt  = { class: css_classes(*classes), title: tip }
+        link = disabled ? html_span(label, **opt) : link_to(label, path, **opt)
+        init = false unless hidden
 
         separator << link
       end

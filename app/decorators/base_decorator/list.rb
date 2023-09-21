@@ -70,6 +70,9 @@ module BaseDecorator::List
     return ''.html_safe if pairs.nil? && object.nil?
     opt.delete(:level) # Not propagated in the general case.
 
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
+
     fp_opt      = opt.extract!(*FIELD_PAIRS_OPTIONS)
     value_opt   = opt.slice(:index, :no_format)
     opt[:row]   = 0
@@ -228,7 +231,7 @@ module BaseDecorator::List
       value.map!.with_index(1) do |v, i|
         v_opt = { class: "item item-#{i}" }
         append_css!(v_opt, 'error') if error&.key?(v.to_s)
-        html_div(v, v_opt)
+        html_div(v, **v_opt)
       end
       value = safe_join(value, (separator || "\n"))
     else
@@ -268,6 +271,7 @@ module BaseDecorator::List
     # Explicit 'data-*' attributes.
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
     opt[:'data-field'] ||= field
+    trace_attrs!(opt)
     parts = []
 
     # Label and label HTML options.
@@ -296,7 +300,7 @@ module BaseDecorator::List
       l_opt   = prepend_css(opt, label_css)
       l_opt[:id]    = l_id    if l_id
       l_opt[:title] = tooltip if tooltip && !wrap
-      parts << html_tag(l_tag, label, l_opt)
+      parts << html_tag(l_tag, label, **l_opt)
     end
 
     # Value and value HTML options.
@@ -305,7 +309,7 @@ module BaseDecorator::List
     v_opt[:id]                 = v_id    if v_id
     v_opt[:title]              = tooltip if tooltip && !wrap
     v_opt[:'aria-describedby'] = l_id    if l_id
-    parts << html_tag(v_tag, value, v_opt)
+    parts << html_tag(v_tag, value, **v_opt)
 
     # Optional additional element(s).
     if block_given?
@@ -324,7 +328,7 @@ module BaseDecorator::List
       w_opt[:'aria-colindex']   ||= col
       w_opt[:'aria-labelledby'] ||= l_id  if l_id
       append_css!(w_opt, 'error')         if error
-      html_tag(tag, *parts, w_opt)
+      html_tag(tag, *parts, **w_opt)
     else
       safe_join(parts)
     end
@@ -497,13 +501,15 @@ module BaseDecorator::List
     css  ||= ".#{model_type}-container"
     role ||= (:article if level == 1)
     opt.delete(:skip) # In case this slipped in to the base method.
+    trace_attrs!(opt)
 
     parts = [details(**opt), *added]
     parts << h.capture(&block) if block
 
-    outer_opt = { role: role }.compact
-    prepend_css!(outer_opt, css)
-    html_div(*parts, outer_opt)
+    outer = trace_attrs_from(opt)
+    outer.merge!(role: role) if role
+    prepend_css!(outer, css)
+    html_div(*parts, **outer)
   end
 
   # ===========================================================================
@@ -524,6 +530,7 @@ module BaseDecorator::List
     opt[:id] ||= model_item_id
     l     = opt.delete(:level)
     skip  = Array.wrap(skip)
+    trace_attrs!(opt)
     parts = []
     parts << list_item_number(level: l, **opt) unless skip.include?(:number)
     parts << thumbnail(link: true, **opt)      unless skip.include?(:thumbnail)
@@ -580,10 +587,12 @@ module BaseDecorator::List
     row    = positive(row)
 
     opt.except!(*ITEM_ENTRY_OPT)
+    trace_attrs!(opt)
+    t_opt  = trace_attrs_from(opt)
 
     # Set up number label and inner parts if supplied.
     inner_parts = []
-    inner_parts << list_item_number_label(index: index)
+    inner_parts << list_item_number_label(index: index, **t_opt)
     inner_parts += inner if inner.is_a?(Array)
     inner_parts << inner if inner.is_a?(String)
 
@@ -604,16 +613,17 @@ module BaseDecorator::List
     # Wrap parts in a container for group positioning:
     inner_opt = prepend_css(opt, 'container')
     inner_opt[:id] &&= "#{inner_opt[:id]}-container"
-    container = html_tag(level, inner_parts, inner_opt)
+    container = html_tag(level, inner_parts, **inner_opt)
 
     # Wrap the container in the actual number grid element.
-    outer_opt = append_css(opt.slice(:id), css)
+    outer_opt = t_opt.merge(id: opt[:id])
     outer_opt[:id] &&= "#{outer_opt[:id]}-number"
+    prepend_css!(outer_opt, css)
     append_css!(outer_opt, 'empty')      if blank?
     append_css!(outer_opt, "row-#{row}") if row
     outer_opt[:'data-group']    = group  if group
     outer_opt[:'data-title_id'] = object.try(:emma_titleId)
-    html_div(container, outer_parts, outer_opt)
+    html_div(container, outer_parts, **outer_opt)
   end
 
   # list_item_number_label
@@ -626,16 +636,17 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item_number_label(index: nil, label: nil, value: nil, **opt)
+    trace_attrs!(opt)
 
     # Label visible only to screen-readers:
     l_opt   = prepend_css(opt, 'sr-only')
     label ||= index ? 'Entry ' : 'Empty results' # TODO: I18n
-    label   = html_span(label, l_opt)
+    label   = html_span(label, **l_opt)
 
     # Visible item number value:
     v_opt   = prepend_css(opt, 'value')
     value ||= index ? "#{index + 1}" : ''
-    value   = html_span(value, v_opt)
+    value   = html_span(value, **v_opt)
 
     # noinspection RubyMismatchedReturnType
     label << value
@@ -671,6 +682,7 @@ module BaseDecorator::List
     id:       nil,
     **opt
   )
+    trace_attrs!(opt)
     css   ||= ".#{model_type}-list-item"
     row     = positive(opt[:row])
     role    = opt.delete(:role)

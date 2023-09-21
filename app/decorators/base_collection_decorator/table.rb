@@ -37,26 +37,30 @@ module BaseCollectionDecorator::Table
   # @see #DARK_HEAD
   #
   def render_table(tag: nil, css: nil, **opt)
-    css    ||= table_css_class
-    table    = for_html_table?(tag)
-    tag      = table && :table || tag || :div
-    html_opt = remainder_hash!(opt, *MODEL_TABLE_OPTIONS)
-    opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
-    opt[:tag] = tag unless table
+    trace_attrs!(opt)
+    css ||= table_css_class
+    table = for_html_table?(tag)
+    tag   = table && :table || tag || :div
+    outer = remainder_hash!(opt, *MODEL_TABLE_OPTIONS)
+    t_opt = trace_attrs_from(outer)
+
+    opt[:sticky] = STICKY_HEAD unless opt.key?(:sticky)
+    opt[:dark]   = DARK_HEAD   unless opt.key?(:dark)
+    opt[:tag]    = tag         unless table
 
     parts = opt.extract!(*MODEL_TABLE_PART_OPT).compact
     parts[:thead] ||= table_headings(**opt)
     parts[:tbody] ||= table_entries(**opt)
     cols  = parts[:thead].scan(/<th[>\s]/).size
 
-    opt[:role] = table_role if table
-    prepend_css!(html_opt, css, model_type)
-    append_css!(html_opt, "columns-#{cols}") if cols.positive?
-    append_css!(html_opt, 'sticky-head')     if opt[:sticky]
-    append_css!(html_opt, 'dark-head')       if opt[:dark]
+    prepend_css!(outer, css, model_type)
+    append_css!(outer, "columns-#{cols}") if cols.positive?
+    append_css!(outer, 'sticky-head')     if opt[:sticky]
+    append_css!(outer, 'dark-head')       if opt[:dark]
+    outer[:role] = table_role             if table
 
-    html_tag(tag, html_opt) do
-      table ? parts.map { |p, content| html_tag(p, content) } : parts.values
+    html_tag(tag, **outer) do
+      table ? parts.map { |k, rows| html_tag(k, rows, **t_opt) } : parts.values
     end
   end
 
@@ -76,6 +80,7 @@ module BaseCollectionDecorator::Table
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
   #
   def table_entries(row: 1, separator: "\n", **opt)
+    trace_attrs!(opt)
     rows  = table_row_page(limit: nil) # TODO: paginate tables
     first = row + 1
     last  = first + rows.size - 1

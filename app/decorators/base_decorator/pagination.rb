@@ -105,7 +105,7 @@ module BaseDecorator::Pagination
   def pagination_top(*parts, row: nil, css: '.pagination-top', **opt)
     prepend_css!(opt, "row-#{row}") if row
     prepend_css!(opt, css)
-    html_div(*parts, opt)
+    html_div(*parts, **opt)
   end
 
   # Used to supply pagination- and content-specific controls for display below
@@ -121,7 +121,7 @@ module BaseDecorator::Pagination
   def pagination_bottom(*parts, row: nil, css: '.pagination-bottom', **opt)
     prepend_css!(opt, "row-#{row}") if row
     prepend_css!(opt, css)
-    html_div(*parts, opt)
+    html_div(*parts, **opt)
   end
 
   # ===========================================================================
@@ -173,7 +173,7 @@ module BaseDecorator::Pagination
     parts  << pagination_count(count, total, unit: unit)
 
     prepend_css!(opt, css)
-    html_div(*parts, opt)
+    html_div(*parts, **opt)
   end
 
   # Page number display element.
@@ -189,7 +189,7 @@ module BaseDecorator::Pagination
     page  = positive(page) or return
     pages = get_page_number_label(count: page)&.upcase_first
     prepend_css!(opt, css)
-    html_div("#{pages} #{page}", opt)
+    html_div("#{pages} #{page}", **opt)
   end
 
   # Page count display element.
@@ -224,7 +224,7 @@ module BaseDecorator::Pagination
     ]
     # noinspection RubyMismatchedArgumentType
     prepend_css!(opt, css, ((total > count) ? 'multi-page' : 'single-page'))
-    html_div(opt.merge!(separator: '')) { label }
+    html_div(separator: '', **opt) { label }
   end
 
   # Placeholder for an item that would have been a link if it had a path.
@@ -247,7 +247,7 @@ module BaseDecorator::Pagination
     **opt
   )
     prepend_css!(opt, css)
-    html_tag(:nav, opt) do
+    html_tag(:nav, **opt) do
       link_opt = { class: 'link', 'data-turbolinks': false }
       controls = [
         pagination_first(fp, **link_opt),
@@ -298,7 +298,7 @@ module BaseDecorator::Pagination
   #
   def pagination_separator(content = nil, css: '.separator', **opt)
     prepend_css!(opt, css)
-    html_span(opt) do
+    html_span(**opt) do
       content || PAGINATION_SEPARATOR
     end
   end
@@ -423,7 +423,7 @@ module BaseDecorator::Pagination
     if link
       make_link(label, path, **opt)
     else
-      html_span(label, append_css!(opt, 'disabled'))
+      html_span(label, **append_css!(opt, 'disabled'))
     end
   end
 
@@ -502,7 +502,7 @@ module BaseDecorator::Pagination
     content ||= ''
     opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
     prepend_css!(opt, css, opt.delete(:css))
-    html_span(content, opt)
+    html_span(content, **opt)
   end
 
   # ===========================================================================

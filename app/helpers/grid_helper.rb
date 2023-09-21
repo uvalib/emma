@@ -48,7 +48,7 @@ module GridHelper
     opt[:col_max] ||= 1
     wrap     = opt.delete(:wrap)
     html_opt = remainder_hash!(opt, *GRID_OPTS)
-    html_div(html_opt) do
+    html_div(**html_opt) do
       pairs.map do |key, value|
         opt[:col] = 0  if opt[:col] == opt[:col_max]
         opt[:row] += 1 if opt[:col].zero?
@@ -58,12 +58,12 @@ module GridHelper
         v_opt = prepend_css(r_opt, 'value')
         if wrap
           prepend_css!(r_opt, 'entry')
-          html_div(r_opt) do
-            key = html_div(k_opt) { ERB::Util.h(key.to_s) << ':' }
-            key << HTML_SPACE << html_div(value, v_opt)
+          html_div(**r_opt) do
+            key = html_div(**k_opt) { ERB::Util.h(key.to_s) << ':' }
+            key << HTML_SPACE << html_div(value, **v_opt)
           end
         else
-          html_div(key, k_opt) << html_div(value, v_opt)
+          html_div(key, **k_opt) << html_div(value, **v_opt)
         end
       end
     end

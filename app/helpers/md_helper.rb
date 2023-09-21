@@ -35,7 +35,7 @@ module MdHelper
     input = file_field_tag(id, class: 'file-input', accept: 'image/*')
 
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       label << input
     end
   end
@@ -55,18 +55,18 @@ module MdHelper
     l_txt = 'Clipboard image' # TODO: I18n
     l_id  = "label-#{id}"
     l_opt = { class: 'clipboard-label', id: l_id }
-    label = html_span("#{l_txt}:", l_opt)
+    label = html_span("#{l_txt}:", **l_opt)
 
     c_txt = 'Paste' # TODO: I18n
     c_id  = "button-#{id}"
     c_opt = { class: 'clipboard-input', id: c_id, 'aria-describedby': l_id }
-    ctrl  = html_tag(:button, c_txt, c_opt)
+    ctrl  = html_tag(:button, c_txt, **c_opt)
 
     n_opt = { class: 'clipboard-note hidden' }
-    note  = html_span('', n_opt)
+    note  = html_span('', **n_opt)
 
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       label << ctrl << note
     end
   end
@@ -84,15 +84,15 @@ module MdHelper
     l_css = 'preview-label'
     l_id  = unique_id(l_css)
     l_opt = { class: l_css, id: l_id }
-    label = html_tag(:h2, l_txt, l_opt)
+    label = html_tag(:h2, l_txt, **l_opt)
 
     i_txt = 'Preview of selected file' # TODO: I18n
     i_css = 'file-preview'
     i_opt = { class: i_css, alt: i_txt }
-    image = html_tag(:img, i_opt)
+    image = html_tag(:img, **i_opt)
 
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       label << image
     end
   end
@@ -116,7 +116,7 @@ module MdHelper
 
     prepend_css!(opt, css)
     opt[:'aria-describedby'] ||= l_id
-    html_div(opt) do
+    html_div(**opt) do
       label << value
     end
   end
@@ -133,15 +133,15 @@ module MdHelper
     none_txt = 'No equations detected.' # TODO: I18n
     none_css = 'no-equations'
     none_opt = { class: "#{none_css} hidden" }
-    none     = html_div(none_txt, none_opt)
+    none     = html_div(none_txt, **none_opt)
 
     note_txt = 'NONE' # Placeholder
     note_css = 'error-message'
     note_opt = { class: "#{note_css} hidden" }
-    note     = html_div(note_txt, note_opt)
+    note     = html_div(note_txt, **note_opt)
 
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       none << note
     end
   end
@@ -215,18 +215,18 @@ module MdHelper
     l_css = "#{name}-label"
     l_id  = unique_id(l_css)
     l_opt = { class: "#{l_css} label-text", id: l_id }
-    label = html_tag(l_tag, label, l_opt)
+    label = html_tag(l_tag, label, **l_opt)
 
     v_tag = :textarea
     v_txt = 'NONE' # Placeholder
     v_css = 'output'
     v_opt = { class: v_css, 'aria-labelledby': l_id }
     v_opt[:spellcheck] = false if v_tag == :textarea
-    value = html_tag(v_tag, v_txt, v_opt)
+    value = html_tag(v_tag, v_txt, **v_opt)
 
     prepend_css!(opt, css)
     opt[:'aria-describedby'] ||= l_id
-    html_div(opt) do
+    html_div(**opt) do
       label = html_div(class: 'label-line') { label << clipboard_icon }
       label << value
     end
@@ -247,7 +247,7 @@ module MdHelper
     opt[:title]        ||= 'Copy this output to clipboard' # TODO: I18n
     opt[:'aria-label'] ||= opt[:title]
     prepend_css!(opt, css)
-    html_span(opt) do
+    html_span(**opt) do
       symbol_icon(CLIPBOARD_ICON)
     end
   end

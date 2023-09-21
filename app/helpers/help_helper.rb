@@ -138,7 +138,7 @@ module HelpHelper
       ph_opt[:'data-attr']  = attr.to_json
       ph_opt[:'data-topic'] = "#{topic}_#{sub_topic}_help" if sub_topic
       ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
-      html_div(ph_txt, ph_opt)
+      html_div(ph_txt, **ph_opt)
     end
   end
 
@@ -232,9 +232,9 @@ module HelpHelper
     outer_tag = opt.delete(:tag) || :ul
     inner_opt = opt.delete(:inner)&.dup || {}
     inner_tag = inner_opt.delete(:tag).presence || :li
-    html_tag(outer_tag, opt) do
+    html_tag(outer_tag, **opt) do
       help_links(*topics, type: link_type).map do |title, path|
-        html_tag(inner_tag, inner_opt) { link_to(title, path) }
+        html_tag(inner_tag, **inner_opt) { link_to(title, path) }
       end
     end
   end
@@ -253,7 +253,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_element(*content, **opt)
-    html_div(opt) { help_paragraphs(*content) }
+    html_div(**opt) { help_paragraphs(*content) }
   end
 
   # Transform help content parts into an array of HTML entries.
@@ -298,7 +298,7 @@ module HelpHelper
   #
   def help_span(label, css: '.for-example', **opt)
     append_css!(opt, css)
-    html_span(label, opt)
+    html_span(label, **opt)
   end
 
   # Render a help link within help text.
@@ -371,7 +371,7 @@ module HelpHelper
     modal = ('modal'      if modal?)
     opt[:role] = 'article' if opt.delete(:level) == 1
     prepend_css!(opt, css, row, modal)
-    html_div(content, opt)
+    html_div(content, **opt)
   end
 
   # ===========================================================================

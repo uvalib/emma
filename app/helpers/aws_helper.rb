@@ -298,7 +298,7 @@ module AwsHelper
 
     # Generate the table of objects.
     prepend_css!(html_opt, css)
-    parts << html_div(objects, html_opt)
+    parts << html_div(objects, **html_opt)
 
     safe_join(parts, "\n")
   end
@@ -370,7 +370,7 @@ module AwsHelper
           value_opt[:title] = tooltip
         end
         value = EN_DASH if value.blank?
-        html_div(value, value_opt)
+        html_div(value, **value_opt)
       end
 
     # Render an element containing the column values.
@@ -378,7 +378,7 @@ module AwsHelper
     prepend_css!(opt, css)
     append_css!(opt, 'first-prefix') if section
     opt[:'data-row'] = row           if row
-    html_div(entries, opt)
+    html_div(entries, **opt)
   end
 
   # Show an S3 object placeholder indicating an empty S3 bucket.
@@ -395,7 +395,7 @@ module AwsHelper
     label ||= S3_EMPTY_BUCKET
     if html && !label.is_a?(ActiveSupport::SafeBuffer)
       label = html_tag(:strong, label)
-      label = html_tag(:em, label, opt)
+      label = html_tag(:em, label, **opt)
     end
     entry = { placeholder: label }
     render_s3_object(entry, html: html)

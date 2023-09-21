@@ -90,6 +90,7 @@ module BaseDecorator::Controls
   #
   def control_icon_buttons(css: '.icon-tray', **opt)
     return if blank?
+    trace_attrs!(opt)
     icons =
       control_icons.map { |operation, properties|
         action_opt = properties.merge(opt)
@@ -151,6 +152,7 @@ module BaseDecorator::Controls
     icon = symbol_icon(icon)
 
     prepend_css!(opt, css, action)
+    trace_attrs!(opt)
     if path == :button
       html_button(icon, **opt)
     else
@@ -250,7 +252,8 @@ module BaseDecorator::Controls
     opt[:'aria-labelledby'] = id if id
     opt[:role] ||= 'group'
     prepend_css!(opt, css)
-    html_div(opt, &blk)
+    trace_attrs!(opt)
+    html_div(**opt, &blk)
   end
 
   # ===========================================================================

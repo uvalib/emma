@@ -135,7 +135,7 @@ module ApiMigrateHelper
       fields = html_div('EMPTY DATABASE COLUMN', class: 'field') # TODO: I18n
     end
     column = html_tag(level, column, class: 'column')
-    fields = html_div(fields, f_opt)
+    fields = html_div(fields, **f_opt)
     # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     column << fields
   end

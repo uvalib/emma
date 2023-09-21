@@ -45,11 +45,13 @@ module BaseDecorator::Fields
   # Render hierarchical data.
   #
   # @param [String, Hash, nil] value
-  # @param [Hash]              opt        Passed to #render_field_values
+  # @param [Hash, nil]         outer  Options for outer div.
+  # @param [String]            css    Characteristic CSS class/selector.
+  # @param [Hash]              opt    Passed to #render_field_values
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_json_data: ((String|anyHash|nil) value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_json_data: ((String|anyHash|nil) value, ?outer: symHash|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Field/value pairs.
   #

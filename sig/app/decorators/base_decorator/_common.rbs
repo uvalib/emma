@@ -32,4 +32,32 @@ module BaseDecorator::Common
   # @param [Symbol, String, nil] tag
   #
   def for_html_table?: (Symbol|String|nil tag) -> bool
+
+  # Produce a copy of *opt* with 'data-trace-*' attributes.
+  #
+  # @param [Hash, nil]   opt
+  # @param [Symbol, nil] meth         Default: #calling_method.
+  #
+  # @return [Hash]                    Empty if `DEBUG_ATTRS` is *false*.
+  #
+  def trace_attrs: (?(symHash|nil) opt, ?(Symbol|nil) meth) -> symHash
+
+  # Inject 'data-trace-*' attributes into *opt*.
+  #
+  # @param [Hash]        opt
+  # @param [Symbol, nil] meth         Default: #calling_method.
+  # @param [String]      separator    Chain item delimiter.
+  #
+  # @return [Hash]                    The modified *opt*.
+  #
+  def trace_attrs!: (symHash opt, ?(Symbol|nil) meth, ?separator: String) -> symHash
+
+  # Extract 'data-trace-*' attributes from *opt*.
+  #
+  # @param [Hash]          opt
+  # @param [Array<Symbol>] skip
+  #
+  # @return [Hash]                    Empty if `DEBUG_ATTRS` is *false*.
+  #
+  def trace_attrs_from: (symHash opt, ?skip: symArray) -> symHash
 end

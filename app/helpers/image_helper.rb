@@ -89,7 +89,7 @@ module ImageHelper
       link_opt[:tabindex] ||= -1
       image = make_link(image, link, **link_opt)
     end
-    html_div(image, opt)
+    html_div(image, **opt)
   end
 
   # Placeholder image.

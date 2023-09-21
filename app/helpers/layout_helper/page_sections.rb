@@ -87,7 +87,7 @@ module LayoutHelper::PageSections
     text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
     prepend_css!(opt, css)
     append_css!(opt, *type) unless type == :text
-    html_div(text, opt)
+    html_div(text, **opt)
   end
 
   # Get the configured page description.

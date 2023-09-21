@@ -233,6 +233,12 @@ TRACE_CONCERNS: bool
 #
 TRACE_NOTIFICATIONS: bool
 
+# Control creation of 'data-trace-*' attributes on HTML elements.
+#
+# @see BaseDecorator::Common#trace_attrs
+#
+DEBUG_ATTRS: bool
+
 # When *true* invocation of each low-level IO operation triggers a log entry.
 #
 # @type [Boolean]

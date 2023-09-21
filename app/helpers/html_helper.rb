@@ -20,39 +20,42 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<div>' element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [*]        args            Passed to #html_tag.
+  # @param [Hash]     opt             Passed to #html_tag.
+  # @param [Proc]     blk             Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_div(*args, &block)
-    html_tag(:div, *args, &block)
+  def html_div(*args, **opt, &blk)
+    html_tag(:div, *args, **opt, &blk)
   end
 
   # Short-cut for generating an HTML '<span>' element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [*]        args            Passed to #html_tag.
+  # @param [Hash]     opt             Passed to #html_tag.
+  # @param [Proc]     blk             Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_span(*args, &block)
-    html_tag(:span, *args, &block)
+  def html_span(*args, **opt, &blk)
+    html_tag(:span, *args, **opt, &blk)
   end
 
   # Short-cut for generating an HTML '<button>' element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [*]        args            Passed to #html_tag.
+  # @param [Hash]     opt             Passed to #html_tag.
+  # @param [Proc]     blk             Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_button(*args, &block)
+  def html_button(*args, **opt, &blk)
     label   = args.first.presence
     symbols = only_symbols?(label)
-    accessible_name?(*args)      if Log.debug? && (symbols || label.blank?)
+    accessible_name?(*args, **opt) if Log.debug? && (symbols || label.blank?)
     args[0] = symbol_icon(label) if symbols
-    html_tag(:button, *args, &block)
+    html_tag(:button, *args, **opt, &blk)
   end
 
   # Short-cut for generating an HTML '<details>' element.
@@ -64,15 +67,15 @@ module HtmlHelper
   # @param [String]   id              Passed to the inner `<summary>` element.
   # @param [String]   title           Passed to the inner `<summary>` element.
   # @param [Hash]     opt             Passed to the outer `<details>` element.
-  # @param [Proc]     block           Appended to the '.content' element.
+  # @param [Proc]     blk             Appended to the '.content' element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_details(summary, *content, id: nil, title: nil, **opt, &block)
+  def html_details(summary, *content, id: nil, title: nil, **opt, &blk)
     title ||= 'Click to show details' # TODO: I18n
     summary = html_tag(:summary, summary, id: id, title: title)
-    content = html_div(*content, class: 'content', &block)
-    html_tag(:details, opt) do
+    content = html_div(*content, class: 'content', &blk)
+    html_tag(:details, **opt) do
       summary << content
     end
   end
@@ -84,9 +87,9 @@ module HtmlHelper
   # then it defaults to 'div'.
   #
   # @param [Symbol, String, Integer, nil] tag
-  # @param [Array]                        args
-  #
-  # @option args.last [String] :separator
+  # @param [*]                            args
+  # @param [String, nil]                  separator   Between *args*.
+  # @param [Hash]                         opt         Passed to #content_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -96,56 +99,39 @@ module HtmlHelper
   # @see ActionView::Helpers::TagHelper#content_tag
   #
   #--
-  # === Variations
-  #++
-  #
-  # @overload html_tag(tag, content, *more_content, options = nil)
-  #   @param [Symbol, String, Integer, nil]                tag
-  #   @param [ActiveSupport::SafeBuffer, String, nil]      content
-  #   @param [Array<ActiveSupport::SafeBuffer,String,nil>] more_content
-  #   @param [Hash, nil]                                   options
-  #
-  # @overload html_tag(tag, options = nil, &block)
-  #   @param [Symbol, String, Integer, nil]                tag
-  #   @param [Hash, nil]                                   options
-  #   @param [Proc]                                        block
-  #
-  #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def html_tag(tag, *args)
+  def html_tag(tag, *args, separator: "\n", **opt)
     level = positive(tag)
-    level &&= [level, 6].min
-    tag = "h#{level}" if level
-    tag = 'div'       if tag.blank? || tag.is_a?(Integer)
-    options   = args.extract_options!
-    options   = add_inferred_attributes(tag, options)
-    options   = add_required_attributes(tag, options)
-    separator = options.delete(:separator) || "\n"
-    content   = [*args, *(yield if block_given?)].flatten.compact_blank!
-    check_required_attributes(tag, options) if Log.debug?
-    content_tag(tag, safe_join(content, separator), html_options!(options))
+    tag   = nil if tag.is_a?(Numeric)
+    tag   = level && ('h%d' % [level, 6].min) || tag || 'div'
+    opt   = args.pop.dup if opt.blank? && args.last.is_a?(Hash)
+    opt   = add_inferred_attributes(tag, opt)
+    opt   = add_required_attributes(tag, opt)
+    args += Array.wrap(yield) if block_given?
+    args.flatten!
+    args.compact_blank!
+    check_required_attributes(tag, opt, meth: calling_method) if Log.debug?
+    content_tag(tag, safe_join(args, separator), html_options!(opt))
   end
 
   # Invoke #form_tag after normalizing element contents provided via the
   # parameter list and/or the block.
   #
   # @param [String, Hash] url_or_path
-  # @param [Array<*>]     args        Passed to #form_tag except for:
-  #
-  # @option args.last [String] :separator   Default: "\n"
+  # @param [*]            args
+  # @param [String, nil]  separator   Between *args*.
+  # @param [Hash]         opt         Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_form(url_or_path, *args)
-    options   = args.last.is_a?(Hash) ? args.pop.dup : {}
-    # noinspection RubyMismatchedArgumentType
-    separator = options.delete(:separator) || "\n"
-    content   = args.flatten
-    content  += Array.wrap(yield) if block_given?
-    content   = content.compact_blank
-    form_tag(url_or_path, options) do
-      safe_join(content, separator)
+  def html_form(url_or_path, *args, separator: "\n", **opt)
+    opt   = args.pop if opt.blank? && args.last.is_a?(Hash)
+    args += Array.wrap(yield) if block_given?
+    args.flatten!
+    args.compact_blank!
+    form_tag(url_or_path, opt) do
+      safe_join(args, separator)
     end
   end
 
@@ -158,8 +144,7 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def placeholder_element(comment: nil, tag: :div, **opt)
-    opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
-    html_tag(tag, opt) do
+    html_tag(tag, 'aria-hidden': true, **opt) do
       "<!-- #{comment} -->".html_safe if comment.present?
     end
   end
@@ -225,7 +210,7 @@ module HtmlHelper
   def symbol_icon(icon, css: '.symbol', **opt)
     opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
     prepend_css!(opt, css)
-    html_span(icon, opt)
+    html_span(icon, **opt)
   end
 
   # Pattern to #scan a string for HTML elements optionally preceded and
@@ -436,18 +421,20 @@ module HtmlHelper
     td:    %i[aria-colindex],
   }.freeze
 
-  # Verify that options have been included.
+  # Verify that options have been included unless 'aria-hidden'.
   #
   # @param [Symbol, String]  tag
   # @param [Hash{Symbol=>*}] options
+  # @param [Symbol, nil]     meth     Calling method for diagnostics.
   #
   # @return [Boolean]                 If *false* at least one was missing.
   #
-  def check_required_attributes(tag, options)
-    attrs   = REQUIRED_HTML_ATTRIBUTES[tag&.to_sym]
-    missing = (Array.wrap(attrs) - options.keys).presence
-    Log.debug { "#{tag}: missing opt: #{missing.join(', ')}" } if missing
-    missing.nil?
+  def check_required_attributes(tag, options, meth: nil)
+    return true if true?(options[:'aria-hidden'])
+    required = Array.wrap(REQUIRED_HTML_ATTRIBUTES[tag&.to_sym])
+    missing  = (required - options.keys).presence&.join(', ') or return true
+    Log.debug { "#{meth || calling_method}: #{tag}: missing opt: #{missing}" }
+    false
   end
 
   # ===========================================================================

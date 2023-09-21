@@ -453,6 +453,12 @@ TRACE_NOTIFICATIONS = TRACE_OUTPUT && true?(ENV['TRACE_NOTIFICATIONS'])
 # Debugging
 # =============================================================================
 
+# Control creation of 'data-trace-*' attributes on HTML elements.
+#
+# @see BaseDecorator::Common#trace_attrs
+#
+DEBUG_ATTRS = true?(ENV['DEBUG_ATTRS'])
+
 # When *true* invocation of each low-level IO operation triggers a log entry.
 #
 # @type [Boolean]

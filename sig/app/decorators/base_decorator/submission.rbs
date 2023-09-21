@@ -47,14 +47,13 @@ module BaseDecorator::Submission
 
   # A modal popup for viewing submission communication details.
   #
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #modal_popup except for:
-  #
-  # @option opt [Hash] :container     Options for #monitor_container.
+  # @param [Hash]   container       Options for #lookup_container.
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to #modal_popup except for:
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def monitor_modal: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def monitor_modal: (?container: symHash, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The options to create a toggle button for the submission monitor popup.
   #

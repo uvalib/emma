@@ -56,7 +56,7 @@ module LogoHelper
       html_opt[:role]  ||= 'presentation' if alt.blank?
       html_opt[:title] ||= repository_tooltip(item, name)
       prepend_css!(html_opt, css, repo)
-      html_span(html_opt) { image_tag(asset_path(logo), alt: alt) }
+      html_span(**html_opt) { image_tag(asset_path(logo), alt: alt) }
     else
       html_opt.merge!(source: repo, name: name)
       repository_source(repo, **html_opt)
@@ -81,7 +81,7 @@ module LogoHelper
     if name.present?
       html_opt[:title] ||= repository_tooltip(item, name)
       prepend_css!(html_opt, css, repo)
-      html_div(html_opt) { html_div(name) }
+      html_div(**html_opt) { html_div(name) }
     else
       ''.html_safe
     end

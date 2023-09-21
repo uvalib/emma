@@ -54,6 +54,7 @@ module BaseDecorator::Fields
         value = pairs.delete(cfg[:label]) || pairs.delete(fld)
         [fld, value] unless value.nil?
       }.compact.to_h.merge(pairs)
+    opt[:outer] = trace_attrs(opt[:outer])
     render_json_data(pairs, **opt)
   end
 
@@ -74,13 +75,22 @@ module BaseDecorator::Fields
   # Render hierarchical data.
   #
   # @param [String, Hash, nil] value
-  # @param [Hash]              opt        Passed to #render_field_values
+  # @param [Hash, nil]         outer  Options for outer div.
+  # @param [String]            css    Characteristic CSS class/selector.
+  # @param [Hash]              opt    Passed to #render_field_values
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_json_data(value, **opt)
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
+  def render_json_data(value, outer: nil, css: '.data-list', **opt)
     value &&= json_parse(value) unless value.is_a?(Hash)
-    html_div(class: 'data-list') do
+    outer   = outer&.dup || {}
+    prepend_css!(outer, css)
+    trace_attrs!(outer)
+    html_div(**outer) do
+      t_opt = trace_attrs_from(outer)
       if value.present?
         root = opt[:field_root]
         opt[:no_format] ||= :dc_description
@@ -92,7 +102,7 @@ module BaseDecorator::Fields
             end
             [k, v]
           }.to_h
-        render_field_values(pairs: pairs, **opt)
+        render_field_values(pairs: pairs, **opt, **t_opt)
       else
         render_empty_value(EMPTY_VALUE)
       end
@@ -262,6 +272,7 @@ module BaseDecorator::Fields
   #
   def render_field_item(name, value, **opt)
     normalize_attributes!(opt)
+    trace_attrs!(opt)
     local = opt.extract!(:base, :name, :type)
     field = opt[:'data-field']
     name  = local[:name] || name || local[:base] || field
@@ -313,21 +324,24 @@ module BaseDecorator::Fields
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_check_box(name, value, tag: :li, css: '.checkbox.single', **opt)
-    html_opt = remainder_hash!(opt, *CHECK_OPTIONS)
     normalize_attributes!(opt)
+    trace_attrs!(opt)
+    outer    = remainder_hash!(opt, *CHECK_OPTIONS)
+    t_opt    = trace_attrs_from(outer)
+    checked  = opt.delete(:checked)
+    label    = opt.delete(:label) || value
 
     # Checkbox control.
-    checked  = opt.delete(:checked)
-    checkbox = h.check_box_tag(name, value, checked, opt)
+    cb_opt   = t_opt.merge(opt)
+    checkbox = h.check_box_tag(name, value, checked, cb_opt)
 
     # Label for checkbox.
-    lbl_opt  = { for: opt[:id] }.compact
-    label    = opt.delete(:label) || value
+    lbl_opt  = t_opt.merge(for: opt[:id]).compact
     label    = h.label_tag(name, label, lbl_opt)
 
     # Checkbox/label combination.
-    prepend_css!(html_opt, css)
-    html_tag(tag, html_opt) do
+    prepend_css!(outer, css)
+    html_tag(tag, **outer) do
       checkbox << label
     end
   end
@@ -682,7 +696,7 @@ module BaseDecorator::Fields
     else
       opt   = { title: (INVALID_LANGUAGE % value.inspect), class: 'invalid' }
     end
-    html_span(value, opt)
+    html_span(value, **opt)
   end
 
   # Wrap invalid identifier values in a *span*.

@@ -106,8 +106,10 @@
 
     table {
 
+        $border-color: $uva-accent-orange;
+
         width:        100%;
-        border:       2px solid $uva-accent-orange;
+        border:       2px solid $border-color;
         table-layout: fixed;
 
         thead {
@@ -115,13 +117,22 @@
             background-color: gray;
         }
 
+        @mixin fill-column-gaps($color) {
+            box-shadow: -0.125rem 0 0 0 $color, 0.125rem 0 0 0 $color;
+        }
+
+        @mixin color-column($color) {
+            font-weight:      bold;
+            background-color: $color;
+            @include fill-column-gaps($color);
+        }
+
         tbody {
             .blank-row {
-                height:     0.1875rem;
-                background: $uva-accent-orange;
+                height:  0.1875rem;
             }
             .blank-row:last-of-type {
-                display:    none;
+                display: none;
             }
         }
 
@@ -133,13 +144,15 @@
         }
 
         .can {
-            font-weight:      bold;
-            background-color: $success-bg;
+            @include color-column($success-bg);
         }
 
         .error {
-            font-weight:      bold;
-            background-color: $failure-bg;
+            @include color-column($failure-bg);
+        }
+
+        .blank {
+            @include color-column($border-color);
         }
     }
 }

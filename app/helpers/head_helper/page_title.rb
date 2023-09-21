@@ -121,7 +121,7 @@ module HeadHelper::PageTitle
     text = @page_meta_title.join(' ').squish
     text.prepend(META_TITLE_LEADER) unless text.start_with?(META_TITLE_PREFIX)
     text << META_TITLE_TRAILER      unless text.end_with?(META_TITLE_SUFFIX)
-    html_tag(:title, opt.reverse_merge('data-turbolinks-eval': false)) do
+    html_tag(:title, 'data-turbolinks-eval': false, **opt) do
       sanitized_string(text)
     end
   end

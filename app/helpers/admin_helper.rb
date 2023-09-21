@@ -50,11 +50,11 @@ module AdminHelper
     l_opt = { id: l_id, class: 'setting line' }
     append_css!(l_opt, value)       if empty
     append_css!(l_opt, 'condensed') if name.size > 25
-    label = html_span(name, l_opt)
+    label = html_span(name, **l_opt)
 
     v_opt = { id: v_id, class: 'text', 'aria-describedby': l_id }
     append_css!(v_opt, value) if empty
-    value = html_div(value, v_opt)
+    value = html_div(value, **v_opt)
 
     label << value
   end
@@ -222,7 +222,7 @@ module AdminHelper
   def dt_dd_section(hdrs, css: '.pairs', **opt)
     opt.reverse_merge!('data-turbolinks-cache': false)
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       # noinspection RubyMismatchedArgumentType
       dt_dd_lines(hdrs)
     end
@@ -254,8 +254,8 @@ module AdminHelper
     hash.map do |k, v|
       css   = (v.present? || false?(v)) ? 'present' : 'blank'
       opt   = { class: css }
-      label = html_tag(:dt, k, opt)
-      value = html_tag(:dd, opt) { html_div(v.inspect, class: 'value') }
+      label = html_tag(:dt, k, **opt)
+      value = html_tag(:dd, **opt) { html_div(v.inspect, class: 'value') }
       label << value
     end
   end

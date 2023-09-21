@@ -104,7 +104,7 @@ class UploadsDecorator < BaseCollectionDecorator
     prepend_css!(opt, GROUP_CLASS)
     opt[:role]              = 'navigation'
     opt[:'aria-labelledby'] = p_id
-    group = html_div(*buttons, opt)
+    group = html_div(*buttons, **opt)
 
     # An element following the group to hold a dynamic description of the group
     # button currently hovered/focused.  (@see javascripts/feature/records.js)
@@ -171,7 +171,7 @@ class UploadsDecorator < BaseCollectionDecorator
 
         html_opt  = ctrl_opt.merge(title: tooltip, 'data-group': group)
         append_css!(html_opt, 'hidden') unless enabled
-        html_div(html_opt) { input << label }
+        html_div(**html_opt) { input << label }
       end
 
     # Text before the radio buttons:
@@ -182,7 +182,7 @@ class UploadsDecorator < BaseCollectionDecorator
     # Wrap the controls in a group.
     prepend_css!(opt, FILTER_GROUP_CLASS)
     opt[:role] = 'radiogroup'
-    group = html_div(controls, opt)
+    group = html_div(controls, **opt)
 
     # A label for the group (screen-reader only).
     legend = "Choose the #{model_type} submission state to display:" # TODO: I18n
@@ -208,6 +208,8 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
   def list_filter_options(css: FILTER_OPTIONS_CLASS, **opt)
+    trace_attrs!(opt)
+    t_opt  = trace_attrs_from(opt)
     name   = "#{model_type}-#{__method__}"
     base   = unique_id(name)
     list   = object
@@ -230,14 +232,14 @@ class UploadsDecorator < BaseCollectionDecorator
         chk = counts[group]&.positive?                     if chk.nil?
         chk = active_state_group?(group, properties, list) if chk.nil?
         cb_opt.merge!(label: lbl, checked: chk, id: "#{cb_value}-#{base}")
-        render_check_box(cb_name, cb_value, **cb_opt)
+        render_check_box(cb_name, cb_value, **cb_opt, **t_opt)
       end
 
     opt[:role]              = 'listbox'
     opt[:tabindex]          = 0
     opt[:'aria-labelledby'] = l_id
     prepend_css!(opt, css)
-    html_tag(:ul, label, *checkboxes, opt)
+    html_tag(:ul, label, *checkboxes, **opt)
   end
 
   # ===========================================================================
@@ -379,7 +381,7 @@ class UploadsDecorator < BaseCollectionDecorator
     prepend_css!(opt, css)
     append_css!(opt, 'hidden')
     opt[:'aria-labelledby'] = l_id
-    panel = html_div(opt)
+    panel = html_div(**opt)
 
     label << panel
   end
@@ -493,7 +495,7 @@ class UploadsDecorator < BaseCollectionDecorator
     make_scroll_to_top_target!(opt)
 
     outer_opt = prepend_css(outer, outer_css, action, model_type)
-    html_div(outer_opt) do
+    html_div(**outer_opt) do
 
       cancel   = opt.delete(:cancel)
       ctrl_opt = { class: 'bulk' }
@@ -527,7 +529,7 @@ class UploadsDecorator < BaseCollectionDecorator
             input    = bulk_op_file_select(f, :source, **ctrl_opt)
             uploaded = uploaded_filename_display(**ctrl_opt)
             tray_opt = prepend_css(ctrl_opt, 'button-tray')
-            html_div(tray_opt) { submit << cancel << input << uploaded }
+            html_div(**tray_opt) { submit << cancel << input << uploaded }
           end
 
         safe_join(lines, "\n")
@@ -640,7 +642,7 @@ class UploadsDecorator < BaseCollectionDecorator
     prepend_css!(opt, css, model_type)
 
     outer_opt = prepend_css(outer, outer_css, model_type)
-    html_div(outer_opt) do
+    html_div(**outer_opt) do
 
       cancel  = opt.delete(:cancel)
       sub_opt = options.all

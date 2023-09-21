@@ -52,10 +52,10 @@ module LayoutHelper::Common
   #--
   # noinspection RubyUnusedLocalVariable
   #++
-  def search_form(target, id = nil, hidden: nil, **opt, &block)
+  def search_form(target, id = nil, hidden: nil, **opt, &blk)
     return if (path = search_target_path(target)).blank?
     opt[:method] ||= :get
-    html_form(path, opt, &block)
+    html_form(path, **opt, &blk)
   end if CLIENT_MANAGES_HIDDEN_INPUTS
 
   # A form used to create/modify a search.
@@ -86,7 +86,7 @@ module LayoutHelper::Common
     before, after = (hidden_parameters_for(id, hidden) if include_hidden)
     elements = [*before, *yield, *after]
     opt[:method] ||= :get
-    html_form(path, *elements, opt)
+    html_form(path, *elements, **opt)
   end
 
   # The target path for searches from the search bar.

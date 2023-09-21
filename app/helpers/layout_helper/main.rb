@@ -98,7 +98,7 @@ module LayoutHelper::Main
     added  = [*controls, *(yield if block_given?)].compact.presence
 
     prepend_css!(opt, ((help || logo) ? 'text' : 'heading plain'))
-    result = html_tag(:h1, title, opt)
+    result = html_tag(:h1, title, **opt)
 
     result = html_div(class: 'heading and-help') { result << help } if help
     result = html_div(class: 'heading and-logo') { result << logo } if logo

@@ -98,7 +98,7 @@ module PanelHelper
     label       ||= open ? PANEL_CLOSER_LABEL : PANEL_OPENER_LABEL
     opt[:title] ||= open ? PANEL_CLOSER_TIP   : PANEL_OPENER_TIP
     prepend_css!(opt, css, context, open)
-    html_button(label, opt)
+    html_button(label, **opt)
   end
 
   # Wrap content in a toggleable panel.
@@ -122,7 +122,7 @@ module PanelHelper
     opt.merge!(id: id)
     prepend_css!(opt, css)
     panel = content || yield
-    panel = html_div(panel, opt)
+    panel = html_div(panel, **opt)
 
     # noinspection RubyMismatchedReturnType
     label << panel

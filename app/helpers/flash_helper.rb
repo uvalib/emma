@@ -158,7 +158,7 @@ module FlashHelper
     def render(first: nil, last: nil, part: nil, css: '.line', **opt)
       prepend_css!(opt, css)
       opt[:separator] ||= HTML_BREAK
-      html_div(opt) do
+      html_div(**opt) do
         part = opt.slice(:html, :separator).reverse_merge(part || {})
         super(first: first, last: last, **part)
       end
@@ -187,7 +187,7 @@ module FlashHelper
       append_css!(html_opt, "col-#{pos}") if pos
       append_css!(html_opt, 'first')      if pos == first
       append_css!(html_opt, 'last')       if pos == last
-      html_div(html_opt) do
+      html_div(**html_opt) do
         super(part, **opt)
       end
     end

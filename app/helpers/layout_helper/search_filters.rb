@@ -483,7 +483,9 @@ module LayoutHelper::SearchFilters
     return if grid_rows.blank?
     prepend_css!(opt, 'search-filter-container', "columns-#{max_columns}")
     append_css!(opt, 'open') if SEARCH_FILTERS_START_EXPANDED
-    html_div(opt) { grid_rows }
+    html_div(**opt) do
+      grid_rows
+    end
   end
 
   # A control for toggling the visibility of advanced search filter controls.
@@ -498,7 +500,7 @@ module LayoutHelper::SearchFilters
     label         = ADV_SEARCH[control][:label]
     opt[:title] ||= ADV_SEARCH[control][:tooltip]
     prepend_css!(opt, css)
-    html_button(label, opt)
+    html_button(label, **opt)
   end
 
   # ===========================================================================
@@ -519,7 +521,7 @@ module LayoutHelper::SearchFilters
   def immediate_search_marker(css: '.immediate-search-marker', **opt)
     return unless immediate_search?
     prepend_css!(opt, css, 'hidden')
-    html_div('immediate', opt)
+    html_div('immediate', **opt)
   end
 
   # ===========================================================================
@@ -769,7 +771,7 @@ module LayoutHelper::SearchFilters
     if immediate_search?
       search_form(target, url_param, **html_opt) { menu }
     else
-      html_div(html_opt) { menu }
+      html_div(**html_opt) { menu }
     end
   end
 
@@ -897,7 +899,7 @@ module LayoutHelper::SearchFilters
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(html_opt, css, **opt)
-    html_div(html_opt) { input }
+    html_div(**html_opt) { input }
   end
 
   # A label associated with a dropdown menu element.
@@ -1006,7 +1008,7 @@ module LayoutHelper::SearchFilters
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(html_opt, css, **opt)
-    html_div(HTML_SPACE, html_opt)
+    html_div(HTML_SPACE, **html_opt)
   end
 
   # A label associated with a dropdown menu element.

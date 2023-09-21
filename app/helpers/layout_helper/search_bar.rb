@@ -205,7 +205,7 @@ module LayoutHelper::SearchBar
     append_css!(opt, 'first')  if first
     append_css!(opt, 'last')   if last
     append_css!(opt, 'hidden') unless first || value.present?
-    html_div(opt) do
+    html_div(**opt) do
       [menu, input, ctrl].compact
     end
   end
@@ -287,7 +287,7 @@ module LayoutHelper::SearchBar
     target = id_opt[:target] ||= search_input_target
     return unless target && show_search_bar?(target)
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       search_input(field, value: value, **id_opt)
     end
   end
@@ -581,7 +581,7 @@ module LayoutHelper::SearchBar
     f_opt   = opt.extract!(:only, :except)
     buttons = filter(SEARCH_CONTROLS, **f_opt)
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       buttons.map do |key|
         case key
           when :toggle then advanced_search_button

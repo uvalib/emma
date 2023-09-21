@@ -58,11 +58,11 @@ module LayoutHelper::DevControls
     l_opt     = { class: 'label', id: l_id }
     c_opt     = { class: 'controls', id: anchor, 'aria-labelledby': l_id }
 
-    label     = html_div(l_opt) { dev_controls_label(**opt) }
-    controls  = html_div(c_opt) { dev_controls(**opt) }
+    label     = html_div(**l_opt) { dev_controls_label(**opt) }
+    controls  = html_div(**c_opt) { dev_controls(**opt) }
 
     outer_opt = prepend_css(outer, css)
-    html_div(outer_opt) do
+    html_div(**outer_opt) do
       label << controls
     end
   end

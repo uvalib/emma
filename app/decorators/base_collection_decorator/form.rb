@@ -32,17 +32,19 @@ module BaseCollectionDecorator::Form
   # @return [ActiveSupport::SafeBuffer]
   #
   def delete_form(label: nil, outer: nil, css: '.model-form.delete', **opt)
+    trace_attrs!(opt)
+    t_opt     = trace_attrs_from(opt)
+    inner_opt = remainder_hash!(opt, :cancel, *delete_submit_option_keys)
+
+    cancel    = delete_cancel_button(url: opt[:cancel], **t_opt)
+    submit    = delete_submit_button(label: label, **opt, **t_opt)
+
     outer_css = '.form-container.delete'
-    html_opt  = remainder_hash!(opt, :cancel, *delete_submit_option_keys)
-
-    cancel = delete_cancel_button(url: opt[:cancel])
-    submit = delete_submit_button(label: label, **opt)
-
-    prepend_css!(html_opt, css, model_type)
-
-    outer_opt = prepend_css(outer, outer_css, model_type)
-    html_div(outer_opt) do
-      html_div(html_opt) do
+    outer_opt = outer&.merge(t_opt) || t_opt
+    prepend_css!(outer_opt, outer_css, model_type)
+    html_div(**outer_opt) do
+      prepend_css!(inner_opt, css, model_type)
+      html_div(**inner_opt) do
         submit << cancel
       end
     end
@@ -108,8 +110,9 @@ module BaseCollectionDecorator::Form
     opt[:title]  ||= config.dig((enabled || :disabled), :tooltip)
     opt[:role]   ||= 'button'
     opt[:method] ||= :delete
-    prepend_css!(opt, css)
     append_css!(opt, (enabled ? 'best-choice' : 'forbidden'))
+    prepend_css!(opt, css)
+    trace_attrs!(opt)
     h.button_to(label, url, opt)
   end
 
@@ -121,6 +124,7 @@ module BaseCollectionDecorator::Form
   #
   def delete_cancel_button(**opt)
     opt[:action] ||= :delete
+    trace_attrs!(opt)
     cancel_button(**opt)
   end
 

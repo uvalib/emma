@@ -7,39 +7,33 @@ module HtmlHelper
 
   # Short-cut for generating an HTML '<div>' element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [*]        args            Passed to #html_tag.
+  # @param [Hash]     opt             Passed to #html_tag.
+  # @param [Proc]     blk             Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_div
-    : ((String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | ((String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | (                                                 ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_div: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Short-cut for generating an HTML '<span>' element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [*]        args            Passed to #html_tag.
+  # @param [Hash]     opt             Passed to #html_tag.
+  # @param [Proc]     blk             Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_span
-    : ((String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | ((String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | (                                                 ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_span: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Short-cut for generating an HTML '<button>' element.
   #
-  # @param [Array<*>] args            Passed to #html_tag.
-  # @param [Proc]     block           Passed to #html_tag.
+  # @param [*]        args            Passed to #html_tag.
+  # @param [Hash]     opt             Passed to #html_tag.
+  # @param [Proc]     blk             Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_button
-    : ((String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | ((String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | (                                                 ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_button: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Short-cut for generating an HTML '<details>' element.
   #
@@ -50,7 +44,7 @@ module HtmlHelper
   # @param [String]   id              Passed to the inner `<summary>` element.
   # @param [String]   title           Passed to the inner `<summary>` element.
   # @param [Hash]     opt             Passed to the outer `<details>` element.
-  # @param [Proc]     block           Appended to the '.content' element.
+  # @param [Proc]     blk             Appended to the '.content' element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -63,9 +57,9 @@ module HtmlHelper
   # then it defaults to 'div'.
   #
   # @param [Symbol, String, Integer, nil] tag
-  # @param [Array]                        args
-  #
-  # @option args.last [String] :separator
+  # @param [*]                            args
+  # @param [String, nil]                  separator   Between *args*.
+  # @param [Hash]                         opt         Passed to #content_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -74,40 +68,19 @@ module HtmlHelper
   #
   # @see ActionView::Helpers::TagHelper#content_tag
   #
-  # -
-  # === Variations
-  # +
-  #
-  # @overload html_tag(tag, content, *more_content, options = nil)
-  #   @param [Symbol, String, Integer]                     tag
-  #   @param [ActiveSupport::SafeBuffer, String, nil]      content
-  #   @param [Array<ActiveSupport::SafeBuffer,String,nil>] more_content
-  #   @param [Hash, nil]                                   options
-  #
-  # @overload html_tag(tag, options = nil, &block)
-  #   @param [Symbol, String, Integer]                     tag
-  #   @param [Hash, nil]                                   options
-  #   @param [Proc]                                        block
-  #
-  def html_tag
-    : ((Symbol|String|Integer|nil) tag, (String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | ((Symbol|String|Integer|nil) tag, (String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | ((Symbol|String|Integer|nil) tag,                                                  ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_tag: ((Symbol|String|Integer|nil) tag, *untyped args, ?separator: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # Invoke #form_tag after normalizing element contents provided via the
   # parameter list and/or the block.
   #
   # @param [String, Hash] url_or_path
-  # @param [Array<*>]     args        Passed to #form_tag except for:
-  #
-  # @option args.last [String] :separator   Default: "\n"
+  # @param [*]            args
+  # @param [String, nil]  separator   Between *args*.
+  # @param [Hash]         opt         Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_form
-    : ((String|symHash) tag, (String|nil) content, *(String|nil) more_content, symHash options) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | ((String|symHash) tag, (String|nil) content, *(String|nil) more_content                 ) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
-    | ((String|symHash) tag,                                                  ?symHash options)  { () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+  def html_form: ((String|symHash) url_or_path, *untyped args, ?separator: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
   # An "empty" element that can be used as a placeholder.
   #
@@ -263,14 +236,15 @@ module HtmlHelper
   #
   REQUIRED_HTML_ATTRIBUTES: Hash[Symbol,symArray]
 
-  # Verify that options have been included.
+  # Verify that options have been included unless 'aria-hidden'.
   #
   # @param [Symbol, String]  tag
   # @param [Hash{Symbol=>*}] options
+  # @param [Symbol, nil]     meth     Calling method for diagnostics.
   #
   # @return [Boolean]                 If *false* at least one was missing.
   #
-  def check_required_attributes: (Symbol|String tag, symHash options) -> bool
+  def check_required_attributes: (Symbol|String tag, symHash options, ?meth: Symbol|nil) -> bool
 
   # These are observed hash keys which may travel alongside HTML attributes
   # like :id, :class, :tabindex etc. when passed as named parameters, but

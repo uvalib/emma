@@ -276,7 +276,7 @@ module DataHelper
     append_css!(html_opt, 'empty') if count.zero?
     html_opt[:id] = name           if name.present?
 
-    html_div(html_opt) do
+    html_div(**html_opt) do
       opt[:first] ||= start_row
       opt[:last]  ||= opt[:first] + [(count - 1), 0].max
       records.map.with_index(start_row) do |record, row|
@@ -315,7 +315,7 @@ module DataHelper
     classes << 'row-first'  if row && (row == first)
     classes << 'row-last'   if row && (row == last)
     rec_opt = prepend_css(opt, css, type, classes)
-    html_div(rec_opt) do
+    html_div(**rec_opt) do
       if type == :array
         opt[:first] = first
         opt[:last]  = last
@@ -353,7 +353,7 @@ module DataHelper
     classes << 'col-first'  if col && (col == first)
     classes << 'col-last'   if col && (col == last)
     prepend_css!(opt, css, type, classes)
-    html_div(opt) do
+    html_div(**opt) do
       (type == :hierarchy) ? pretty_json(field) : field
     end
   end
@@ -379,7 +379,7 @@ module DataHelper
     css      = '.database-counts-table'
     html_opt = { id: name.presence }.compact
     prepend_css!(html_opt, css)
-    html_div(html_opt) do
+    html_div(**html_opt) do
       opt[:first] ||= start_row
       opt[:last]  ||= opt[:first] + fields.size - 1
       fields.map.with_index(start_row) do |field_counts, row|
@@ -410,13 +410,13 @@ module DataHelper
     classes << 'row-first'  if row && (row == first)
     classes << 'row-last'   if row && (row == last)
     prepend_css!(opt, css, classes)
-    html_div(opt) do
+    html_div(**opt) do
       field_opt = { class: 'field-name' }
       unless EMMA_DATA_FIELDS.include?(field)
         append_css!(field_opt, 'invalid')
         field_opt[:title] = 'This is not a valid EMMA data field' # TODO: I18n
       end
-      field  = html_div(field, field_opt)
+      field  = html_div(field, **field_opt)
       values = html_db_field_values(values, id: anchor)
       field << values
     end
@@ -432,7 +432,7 @@ module DataHelper
   def html_db_field_values(values, **opt)
     css = '.field-values'
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       total  = values.values.sum
       values = values.map { |value, count| [count, Array.wrap(value)] }
       values.sort_by! { |count, value| [-count, value.join("\n")] }

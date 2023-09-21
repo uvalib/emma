@@ -81,7 +81,7 @@ module PopupHelper
 
     # The hidden panel is a sibling of the toggle control:
     prepend_css!(opt, css)
-    html_span(opt) do
+    html_span(**opt) do
       popup_toggle << popup_panel
     end
   end
@@ -116,12 +116,12 @@ module PopupHelper
       # noinspection RubyMismatchedArgumentType
       merge_html_options!(opt, button)
       label = opt.delete(:label) || label || text || 'Popup' # TODO: I18n
-      html_button(label, opt)
+      html_button(label, **opt)
     elsif button
-      html_div(button, opt)
+      html_div(button, **opt)
     elsif text
       text ||= label || 'Click' # TODO: I18n
-      html_span(text, opt)
+      html_span(text, **opt)
     else
       icon_button(**opt)
     end
@@ -163,7 +163,7 @@ module PopupHelper
     closer_opt[:title]        ||= 'Close this popup' # TODO: I18n
     closer_opt[:'aria-label'] ||= closer_opt[:title]
     close_icon = closer_opt.delete(:icon) || 'X' # TODO: I18n
-    close_icon = html_span(closer_opt) { symbol_icon(close_icon) }
+    close_icon = html_span(**closer_opt) { symbol_icon(close_icon) }
 
     # Popup panel contents supplied by the block.
     panel_content = Array.wrap(block&.call)
@@ -179,7 +179,7 @@ module PopupHelper
       if control.is_a?(Hash)
         tag = control[:tag]   || :button
         lbl = control[:label] || 'Button' # TODO: I18n
-        html_tag(tag, lbl, control.except(:tag, :label))
+        html_tag(tag, lbl, **control.except(:tag, :label))
       else
         ERB::Util.h(control)
       end
@@ -189,9 +189,9 @@ module PopupHelper
       label = b_opt.delete(:label) || 'Close' # TODO: I18n
       b_opt[:title]        ||= closer_opt[:title]
       b_opt[:'aria-label'] ||= b_opt[:title] if label.html_safe?
-      controls << html_button(label, b_opt)
+      controls << html_button(label, **b_opt)
     end
-    panel_controls = html_div(controls, controls_opt)
+    panel_controls = html_div(controls, **controls_opt)
 
     # The popup panel element starts hidden initially.
     #prepend_css!(opt, POPUP_PANEL_CLASS)
@@ -200,7 +200,7 @@ module PopupHelper
     append_css!(opt, POPUP_HIDDEN_MARKER) if hidden
     opt[:role] ||= 'dialog'
     opt[:'aria-modal'] = true unless opt.key?(:'aria-modal')
-    html_div(opt) do
+    html_div(**opt) do
       close_icon << panel_content << panel_controls
     end
   end

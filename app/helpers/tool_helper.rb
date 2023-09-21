@@ -48,7 +48,7 @@ module ToolHelper
   def tool_list(user: nil, css: '.tool-list', **opt)
     user ||= current_user
     prepend_css!(opt, css)
-    html_tag(:ul, opt) do
+    html_tag(:ul, **opt) do
       TOOL_ITEMS.map { |act, cfg| tool_list_item(act, cfg, user: user) }
     end
   end
@@ -77,10 +77,10 @@ module ToolHelper
     link   = make_link(label, path, **append_css(l_css))
 
     n_css  = %w[notice] << ('hidden' if allow)
-    notice = html_span('(sign-in required)', append_css(n_css)) # TODO: I18n
+    notice = html_span('(sign-in required)', **append_css(n_css)) # TODO: I18n
 
     prepend_css!(opt, css)
-    html_tag(:li, opt) do
+    html_tag(:li, **opt) do
       link << notice
     end
   end

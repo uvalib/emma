@@ -378,7 +378,7 @@ class SearchDecorator
     prepend_css!(opt, css, source)
 
     elements = []
-    elements << html_div(title, opt)
+    elements << html_div(title, **opt)
     elements << h.repository_source_logo(source)
     elements << prev_next_controls(**opt)
     elements << score if score.present?
@@ -400,7 +400,7 @@ class SearchDecorator
     source = object.emma_repository
     source = nil unless EmmaRepository.values.include?(source)
     prepend_css!(opt, css, source)
-    title  = html_div(title, opt)
+    title  = html_div(title, **opt)
     name   = source&.titleize || 'LOGO'
     logo   = h.repository_source(object, source: source, name: name)
     ctrl   = prev_next_controls(**opt)
@@ -610,7 +610,7 @@ class SearchDecorator
       ph_opt[:'data-path'] = UploadDecorator.show_path(id: rid, modal: true)
       ph_opt[:'data-attr'] = attr.to_json
       ph_txt = ph_opt.delete(:text) || 'Loading record...' # TODO: I18n
-      html_div(ph_txt, ph_opt)
+      html_div(ph_txt, **ph_opt)
     end
   end
 
@@ -734,7 +734,7 @@ class SearchDecorator
   #
   def format_counts(css: '.format-counts', **opt)
     prepend_css!(opt, css)
-    html_tag(:ul, opt) do
+    html_tag(:ul, **opt) do
       counts = object&.get_format_counts || {}
       counts.map do |format, count|
         html_tag(:li) do

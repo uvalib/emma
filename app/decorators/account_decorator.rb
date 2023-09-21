@@ -491,12 +491,12 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def ability_table(target = nil, columns: ABILITY_COLUMNS, **table_opt)
-    row_count = 0
+    rows = 0
 
     heading_rows =
       html_tag(:thead, role: 'rowgroup') do
-        html_tag(:tr, role: 'row') do
-          row_count += 1
+        rows += 1
+        html_tag(:tr, role: 'row', 'aria-rowindex': rows) do
           columns.map do |css_class, label|
             html_tag(:th, label, role: 'columnheader', class: css_class)
           end
@@ -506,16 +506,16 @@ class AccountDecorator
     data_rows =
       html_tag(:tbody, role: 'rowgroup') do
         divider = ability_table_divider
-        ability_table_rows(target).flat_map do |_, rows|
-          row_count += rows.size
-          rows.values << divider
+        ability_table_rows(target, start: rows).flat_map do |_, row_group|
+          rows += row_group.size
+          row_group.values << divider
         end
       end
 
     table_opt[:role] ||= 'table'
     table_opt[:'aria-colcount'] = columns.size
-    table_opt[:'aria-rowcount'] = row_count
-    html_tag(:table, table_opt) do
+    table_opt[:'aria-rowcount'] = rows
+    html_tag(:table, **table_opt) do
       heading_rows << data_rows
     end
   end
@@ -531,21 +531,23 @@ class AccountDecorator
   # @param [User, Ability, nil] target    Default: #current_ability.
   # @param [Array<Class>, nil]  models    Default: Ability#models.
   # @param [Array<Symbol>, nil] actions   Default: #ABILITY_ACTIONS
+  # @param [Integer]            start     First row number.
   #
   # @return [Hash{Class=>Hash{Symbol=>ActiveSupport::SafeBuffer}}]
   #
-  def ability_table_rows(target = nil, models: nil, actions: nil)
+  def ability_table_rows(target = nil, models: nil, actions: nil, start: 1)
     actions ||= ABILITY_ACTIONS
     models  ||= Ability.models
     target  ||= object || current_ability
     target    = target.ability if target.is_a?(User)
+    row       = start
 
-    r = 0
     models.map { |model|
       ctrlr_actions = model.model_controller.public_instance_methods(false)
       actions.intersection(ctrlr_actions).map { |action|
-        status = target.can?(action, model)
-        can    = status ? 'can' : 'cannot'
+        row_opt = { role: 'row', 'aria-rowindex': (row += 1) }
+        status  = target.can?(action, model)
+        can     = status ? 'can' : 'cannot'
         if status.nil?
           can    = 'error'
           status = EMPTY_VALUE
@@ -557,17 +559,16 @@ class AccountDecorator
           end
           status = "true for #{cond}"
         end
-        row_css = css_classes(can, action, model)
-        row_opt = { role: 'row', class: row_css, 'aria-rowindex': (r += 1) }
-        html_tag(:tr, row_opt) {
+        append_css!(row_opt, can, action, model)
+        html_tag(:tr, **row_opt) {
           columns = { model: model, action: action, status: status }
-          columns.map.with_index(1) { |(cls, val), idx|
+          columns.map.with_index(1) { |(cls, val), col|
             id  = unique_id(action, model)
-            opt = append_css(cls, can).merge!(role: 'cell')
-            opt.merge!('aria-labelledby': id, 'aria-colindex': idx)
-            html_tag(:td, opt) { html_span(val.to_s, id: id) }
+            opt = { role: 'cell', 'aria-labelledby': id, 'aria-colindex': col }
+            append_css!(opt, cls, can)
+            html_tag(:td, **opt) { html_span(val.to_s, id: id) }
           }
-        }.then { |row| [action, row] }
+        }.then { |column| [action, column] }
       }.to_h.then { |rows| [model, rows] }
     }.to_h
   end
@@ -582,9 +583,10 @@ class AccountDecorator
   def ability_table_divider(css: '.blank-row', **opt)
     opt.reverse_merge!(role: 'presentation', 'aria-hidden': true)
     prepend_css!(opt, css)
-    html_tag(:tr, opt) do
+    html_tag(:tr, **opt) do
+      col_opt = { role: 'cell', class: 'blank' }
       ABILITY_COLUMNS.keys.map.with_index(1) do |cls, idx|
-        html_tag(:td, role: 'cell', class: cls, 'aria-colindex': idx)
+        html_tag(:td, **prepend_css(col_opt, cls).merge!('aria-colindex': idx))
       end
     end
   end

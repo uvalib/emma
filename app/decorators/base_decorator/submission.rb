@@ -63,31 +63,33 @@ module BaseDecorator::Submission
   # @see LayoutHelper::PageModals#add_page_modal
   #
   def monitor_control(js: MONITOR_JS_CLASS, css: MONITOR_CLASS, **opt)
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
     type  = opt.delete(:type)
     m_opt = { 'data-modal-class': js, 'data-modal-selector': css }
     b_opt = opt.extract!(ACTION_ATTR).merge!(opt.delete(:button) || {})
-    b_opt = monitor_button_options(**b_opt, **m_opt)
+    b_opt = monitor_button_options(**b_opt, **m_opt, **t_opt)
     h.add_page_modal(css) { monitor_modal(**opt, **m_opt) }
-    h.make_popup_toggle(button: b_opt, type: type)
+    h.make_popup_toggle(button: b_opt, type: type, **t_opt)
   end
 
   # A modal popup for viewing submission communication details.
   #
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #modal_popup except for:
-  #
-  # @option opt [Hash] :container     Options for #monitor_container.
+  # @param [Hash]   container       Options for #lookup_container.
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to #modal_popup except for:
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def monitor_modal(css: MONITOR_CLASS, **opt)
-    c_opt = opt.delete(:container) || {}
+  def monitor_modal(container: {}, css: MONITOR_CLASS, **opt)
     opt[:close]        = monitor_cancel_options
     opt[:controls]     = monitor_log_toggle
     opt[:'aria-label'] = 'Listing of completed submission attempts' # TODO: I18n
     prepend_css!(opt, css)
+    trace_attrs!(opt)
     h.modal_popup(**opt) do
-      monitor_container(**c_opt)
+      t_opt = trace_attrs_from(opt)
+      monitor_container(**container, **t_opt)
     end
   end
 
@@ -135,7 +137,8 @@ module BaseDecorator::Submission
     label       ||= 'Diagnostics' # TODO: I18n
     opt[:title] ||= 'View WebSocket communications' # TODO: I18n
     prepend_css!(opt, css)
-    html_button(label, opt)
+    trace_attrs!(opt)
+    html_button(label, **opt)
   end
 
   # ===========================================================================
@@ -168,8 +171,10 @@ module BaseDecorator::Submission
   def monitor_container(unique: nil, css: '.monitor-container', **opt)
     unique ||= hex_rand
     prepend_css!(opt, css)
-    html_div(opt) do
-      MONITOR_PARTS.map { |meth| send(meth, unique: unique) }
+    trace_attrs!(opt)
+    html_div(**opt) do
+      t_opt = trace_attrs_from(opt)
+      MONITOR_PARTS.map { |meth| send(meth, unique: unique, **t_opt) }
     end
   end
 
@@ -184,7 +189,8 @@ module BaseDecorator::Submission
     label    = 'Bulk Submission Monitor' # TODO: I18n
     opt[:id] = unique_id(css, unique: unique)
     prepend_css!(opt, css)
-    html_tag(:h1, label, opt)
+    trace_attrs!(opt)
+    html_tag(:h1, label, **opt)
   end
 
   # monitor_status
@@ -198,10 +204,11 @@ module BaseDecorator::Submission
   #
   def monitor_status(css: '.monitor-status', **opt)
     opt.delete(:unique)
-    notice = html_div(class: 'notice')
     prepend_css!(opt, css)
-    html_div(opt) do
-      notice
+    trace_attrs!(opt)
+    html_div(**opt) do
+      t_opt = trace_attrs_from(opt)
+      html_div(class: 'notice', **t_opt)
     end
   end
 
@@ -213,19 +220,21 @@ module BaseDecorator::Submission
   # @return [ActiveSupport::SafeBuffer]
   #
   def monitor_output(css: '.monitor-output', **opt)
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
     opt.delete(:unique)
 
     # === Successes element
     successes = 'Submitted Items' # TODO: I18n
-    successes = output_part(successes, css: 'success')
+    successes = output_part(successes, css: 'success', **t_opt)
 
     # === Failures element
     failures = 'Submission Errors' # TODO: I18n
-    failures = output_part(failures, css: 'failure')
+    failures = output_part(failures, css: 'failure', **t_opt)
 
     # === Output display body
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       successes << failures
     end
   end
@@ -240,8 +249,10 @@ module BaseDecorator::Submission
   #
   def output_part(label, css:, **opt)
     prepend_css!(opt, css)
-    html_div(opt) do
-      html_tag(:h2, label) << html_div(class: 'display')
+    trace_attrs!(opt)
+    html_div(**opt) do
+      t_opt = trace_attrs_from(opt)
+      html_tag(:h2, label, **t_opt) << html_div(class: 'display', **t_opt)
     end
   end
 
@@ -256,22 +267,24 @@ module BaseDecorator::Submission
   # @see file:app/assets/javascripts/shared/submit-modal.js *outputDisplay*
   #
   def monitor_log(unique:, css: '.monitor-log', **opt)
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
 
     # === Results element
     res = 'Messages' # TODO: I18n
-    res = log_part(res, type: :results, unique: unique)
+    res = log_part(res, type: :results, unique: unique, **t_opt)
 
     # === Errors element
     err = 'Errors' # TODO: I18n
-    err = log_part(err, type: :errors, unique: unique)
+    err = log_part(err, type: :errors, unique: unique, **t_opt)
 
     # === Diagnostics element
     dia = 'Diagnostics' # TODO: I18n
-    dia = log_part(dia, type: :diagnostics, unique: unique)
+    dia = log_part(dia, type: :diagnostics, unique: unique, **t_opt)
 
     # === Log display body
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       res << err << dia
     end
   end
@@ -286,10 +299,13 @@ module BaseDecorator::Submission
   # @return [ActiveSupport::SafeBuffer]
   #
   def log_part(label, type:, unique:, **opt)
-    id = unique_id(type, unique: unique)
-    html_div(class: "#{type} pair") do
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
+    id    = unique_id(type, unique: unique)
+    html_div(class: "#{type} pair", **t_opt) do
+      lbl_opt = { class: 'label', **t_opt }
       prepend_css!(opt, "item-#{type}", 'value')
-      h.label_tag(id, label, class: 'label') << h.text_area_tag(id, nil, opt)
+      h.label_tag(id, label, lbl_opt) << h.text_area_tag(id, nil, opt)
     end
   end
 

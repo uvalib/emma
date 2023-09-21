@@ -14,7 +14,7 @@
   fl_id           = css_randomize('form-label')
   fl_opt          = { class: 'form-label', role: 'button', id: fl_id }
   form_label      = t('emma.user.sessions.sign_in_as.update.label')
-  form_label      = html_span(form_label, fl_opt)
+  form_label      = html_span(form_label, **fl_opt)
 
   label_opt       = { class: 'label' }
   value_opt       = { class: 'value' }

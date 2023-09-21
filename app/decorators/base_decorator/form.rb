@@ -94,6 +94,7 @@ module BaseDecorator::Form
     return ''.html_safe unless pairs || object
     action    ||= context[:action]
     separator ||= DEFAULT_ELEMENT_SEPARATOR
+    trace_attrs!(opt)
     opt[:row]   = 0
     field_values(pairs).map { |label, value|
       next if (label == :file_data) || (label == :emma_data)
@@ -179,9 +180,9 @@ module BaseDecorator::Form
   )
     prop  ||= field_configuration(field)
     field ||= prop[:field]
-    label   = prop[:label] || label
-    return if prop[:ignored]
-    return unless user_has_role?(prop[:role])
+    label   = prop[:label]   || label
+    return if prop[:ignored] || !user_has_role?(prop[:role])
+    trace_attrs!(opt)
 
     # Pre-process label to derive names and identifiers.
     base    = opt.delete(:base) || model_html_id(field || label)
@@ -338,10 +339,11 @@ module BaseDecorator::Form
 
     append_css!(opt, 'fixed') if opt.delete(:fixed)
     append_css!(opt, css)
+    trace_attrs!(opt)
     if tag == :label
       h.label_tag(field, label, opt)
     else
-      html_tag(tag, label, opt)
+      html_tag(tag, label, **opt)
     end
   end
 
@@ -424,13 +426,14 @@ module BaseDecorator::Form
   def render_form_menu_multi(name, value, range:, css: '.menu.multi', **opt)
     valid_range?(range, fatal: true)
     normalize_attributes!(opt)
-    html_opt = remainder_hash!(opt, *MENU_MULTI_OPT)
-    field    = html_opt[:'data-field']
+    field    = opt[:'data-field']
     name     = opt[:name] || name || opt[:base] || field
+    html_opt = remainder_hash!(opt, *MENU_MULTI_OPT)
+    trace_attrs!(html_opt)
 
     # Checkbox elements.
+    cb_opt   = trace_attrs_from(html_opt).merge!(role: 'option')
     selected = Array.wrap(value).compact.presence
-    cb_opt   = { role: 'option' }
     checkboxes =
       range.pairs.map do |item_value, item_label|
         cb_name          = "[#{field}][]"
@@ -448,7 +451,7 @@ module BaseDecorator::Form
     gr_opt[:multiple] = true
     gr_opt[:tabindex] = 0
     gr_opt.merge!(opt[:inner]) if opt[:inner].is_a?(Hash)
-    group = html_tag(:ul, *checkboxes, gr_opt)
+    group = html_tag(:ul, *checkboxes, **gr_opt)
 
     html_opt.delete(:'aria-labelledby')
     html_opt[:id]       = opt[:id]
@@ -458,7 +461,7 @@ module BaseDecorator::Form
     html_opt.merge!(opt[:outer])   if opt[:outer].is_a?(Hash)
     append_css!(html_opt, 'fixed') if opt[:fixed]
     prepend_css!(html_opt, css)
-    html_div(html_opt) { group }
+    html_div(**html_opt) { group }
   end
 
   # Multiple single-line inputs.
@@ -476,6 +479,7 @@ module BaseDecorator::Form
   # @see file:javascripts/feature/model-form.js *updateFieldsetInputs()*
   #
   def render_form_input_multi(name, value, css: '.input.multi', **opt)
+    trace_attrs!(opt)
     append_css!(opt, 'fixed') if opt.delete(:fixed)
     prepend_css!(opt, css)
     render_field_item(name, value, **opt)
@@ -493,6 +497,7 @@ module BaseDecorator::Form
   # @see file:javascripts/feature/model-form.js *updateTextInputField()*
   #
   def render_form_input(name, value, css: '.input.single', **opt)
+    trace_attrs!(opt)
     append_css!(opt, 'fixed') if opt.delete(:fixed)
     prepend_css!(opt, css)
     render_field_item(name, value, **opt)
@@ -507,6 +512,7 @@ module BaseDecorator::Form
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_email(name, value, **opt)
+    trace_attrs!(opt)
     render_form_input(name, value, **opt, type: :email)
   end
 
@@ -519,6 +525,7 @@ module BaseDecorator::Form
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_password(name, value, **opt)
+    trace_attrs!(opt)
     render_form_input(name, value, **opt, type: :password)
   end
 
@@ -538,6 +545,7 @@ module BaseDecorator::Form
   #
   def form_note_pair(note, label: nil, **opt)
     return if note.blank?
+    trace_attrs!(opt)
     label = form_input_fill(label, **opt) unless label&.html_safe?
     note  = form_input_note(note,  **opt) unless note.html_safe?
     # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
@@ -554,7 +562,8 @@ module BaseDecorator::Form
   #
   def form_input_fill(filler = nil, **opt)
     opt = form_input_related_opt(css: 'label', **opt)
-    html_span(filler, opt)
+    trace_attrs!(opt)
+    html_span(filler, **opt)
   end
 
   # A text note immediately below a form input element.
@@ -567,7 +576,8 @@ module BaseDecorator::Form
   def form_input_note(note, **opt)
     opt = form_input_related_opt(css: 'note', **opt)
     opt[:separator] = ''
-    html_tag(:em, opt) { "(#{note})" }
+    trace_attrs!(opt)
+    html_tag(:em, **opt) { "(#{note})" }
   end
 
   # Options assumed to be related to a field element which are not retained by
@@ -664,23 +674,28 @@ module BaseDecorator::Form
     css:      '.model-form',
     **opt
   )
-    outer_css = '.form-container'
     uploader  = UPLOADER_CLASS if uploader.is_a?(TrueClass)
     action    = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
     classes   = [action, model_type, uploader]
 
+    trace_attrs!(opt)
     prepend_css!(opt, css, *classes)
     model_form_options!(opt, action: action)
     make_scroll_to_top_target!(opt)
 
-    buttons   = form_buttons(label: label, action: action, cancel: cancel)
-    outer_opt = prepend_css(outer, outer_css, *classes)
-    html_div(outer_opt) do
+    t_opt     = trace_attrs_from(opt)
+    b_opt     = t_opt.merge(label: label, action: action, cancel: cancel)
+    buttons   = form_buttons(**b_opt)
+
+    outer_css = '.form-container'
+    outer_opt = t_opt.merge(outer || {})
+    prepend_css!(outer_opt, outer_css, *classes)
+    html_div(**outer_opt) do
       form_with(model: object, **opt) do |f|
         parts  = form_hidden_fields(f)
-        parts << form_top_controls(f, *buttons)
-        parts << field_container
-        parts << form_bottom_controls(f, *buttons)
+        parts << form_top_controls(f, *buttons, **t_opt)
+        parts << field_container(**t_opt)
+        parts << form_bottom_controls(f, *buttons, **t_opt)
         safe_join(parts.compact, "\n")
       end
     end
@@ -778,10 +793,14 @@ module BaseDecorator::Form
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_top_controls(f = nil, *buttons, css: '.controls.top', **opt)
-    parts = [form_top_button_tray(f, *buttons), field_group_controls]
-    parts = yield(parts) if block_given?
+    trace_attrs!(opt)
+    t_opt  = trace_attrs_from(opt)
+    parts  = []
+    parts << form_top_button_tray(f, *buttons, **t_opt)
+    parts << field_group_controls(**t_opt)
+    parts  = yield(parts) || parts if block_given?
     prepend_css!(opt, css)
-    html_div(*parts, opt)
+    html_div(*parts, **opt)
   end
 
   # form_top_button_tray
@@ -795,6 +814,7 @@ module BaseDecorator::Form
   # @see #form_button_tray
   #
   def form_top_button_tray(f = nil, *buttons, **opt, &block)
+    trace_attrs!(opt)
     form_button_tray(f, *buttons, **opt, &block)
   end
 
@@ -812,10 +832,13 @@ module BaseDecorator::Form
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_bottom_controls(f = nil, *buttons, css: '.controls.bottom', **opt)
-    parts = [form_bottom_button_tray(f, *buttons)]
-    parts = yield(parts) if block_given?
+    trace_attrs!(opt)
+    t_opt  = trace_attrs_from(opt)
+    parts  = []
+    parts << form_bottom_button_tray(f, *buttons, **t_opt)
+    parts  = yield(parts) || parts if block_given?
     prepend_css!(opt, css)
-    html_div(*parts, opt)
+    html_div(*parts, **opt)
   end
 
   # form_bottom_button_tray
@@ -829,6 +852,7 @@ module BaseDecorator::Form
   # @see #form_button_tray
   #
   def form_bottom_button_tray(f = nil, *buttons, **opt, &block)
+    trace_attrs!(opt)
     form_button_tray(f, *buttons, **opt, &block)
   end
 
@@ -846,13 +870,15 @@ module BaseDecorator::Form
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_button_tray(f = nil, *buttons, css: '.button-tray', **opt)
+    trace_attrs!(opt)
+    t_opt  = trace_attrs_from(opt)
     fb_opt = opt.extract!(*FORM_BUTTON_OPTIONS)
     # noinspection RubyMismatchedArgumentType
     buttons.unshift(f) if f && !f.is_a?(ActionView::Helpers::FormBuilder)
-    buttons = form_buttons(**fb_opt) if buttons.blank?
-    buttons = yield(buttons)         if block_given?
+    buttons = form_buttons(**fb_opt, **t_opt) if buttons.blank?
+    buttons = yield(buttons)                  if block_given?
     prepend_css!(opt, css)
-    html_div(*buttons, opt)
+    html_div(*buttons, **opt)
   end
 
   # Basic form controls.
@@ -868,11 +894,12 @@ module BaseDecorator::Form
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_buttons(label: nil, cancel: nil, **opt)
+    trace_attrs!(opt)
     opt[:action] ||= context[:action] || DEFAULT_FORM_ACTION
     buttons = []
     buttons << submit_button(label: label,  **opt)
     buttons << cancel_button(url:   cancel, **opt)
-    block_given? ? yield(buttons) : buttons
+    block_given? && yield(buttons) || buttons
   end
 
   # Form submit button.
@@ -886,6 +913,7 @@ module BaseDecorator::Form
   #
   def submit_button(**opt)
     opt[:state] ||= :disabled
+    trace_attrs!(opt)
     form_button(:submit, **opt)
   end
 
@@ -907,6 +935,7 @@ module BaseDecorator::Form
     else
       opt[:url] ||= back_path
     end
+    trace_attrs!(opt)
     form_button(:cancel, **opt)
   end
 
@@ -959,7 +988,9 @@ module BaseDecorator::Form
     opt.reverse_merge!(disabled: true) if state == :disabled
 
     prepend_css!(opt, css, "#{type}-button")
+    trace_attrs!(opt)
     input_type = opt[:type] || type
+
     if control.is_a?(Proc)
       control.call(label: label, **opt)
     elsif input_type == :submit
@@ -969,7 +1000,7 @@ module BaseDecorator::Form
     elsif url
       make_link(label, url, **opt)
     else
-      html_button(label, opt)
+      html_button(label, **opt)
     end
   end
 
@@ -991,7 +1022,8 @@ module BaseDecorator::Form
 
     label = h.label_tag(type, label, class: 'label', for: i_id)
 
-    html_div(opt) do
+    trace_attrs!(opt)
+    html_div(**opt) do
       input << label
     end
   end
@@ -1038,8 +1070,10 @@ module BaseDecorator::Form
   #
   def field_container(css: '.form-fields', **opt)
     prepend_css!(opt, css, model_type)
-    html_div(opt) do
-      form_fields << no_fields_row
+    trace_attrs!(opt)
+    html_div(**opt) do
+      t_opt = trace_attrs_from(opt)
+      form_field_rows(**t_opt) << no_fields_row(**t_opt)
     end
   end
 
@@ -1119,7 +1153,8 @@ module BaseDecorator::Form
     opt[:role]     = 'radiogroup'
     opt[:tabindex] = 0
     prepend_css!(opt, css)
-    html_tag(:fieldset, legend, *controls, opt)
+    trace_attrs!(opt)
+    html_tag(:fieldset, legend, *controls, **opt)
   end
 
   # ===========================================================================
@@ -1148,7 +1183,8 @@ module BaseDecorator::Form
     enable = field_groups.present? if enable.nil?
     if enable
       prepend_css!(opt, css)
-      html_div(label, opt)
+      trace_attrs!(opt)
+      html_div(label, **opt)
     else
       ''.html_safe
     end
@@ -1179,7 +1215,11 @@ module BaseDecorator::Form
     end
     opt[:'data-icon'] = icon ||= status_markers.dig(:blank, :label)
     prepend_css!(opt, css, *status)
-    html_span(opt) { symbol_icon(icon) }
+    trace_attrs!(opt)
+    html_span(**opt) do
+      t_opt = trace_attrs_from(opt)
+      symbol_icon(icon, **t_opt)
+    end
   end
 
   # ===========================================================================

@@ -243,10 +243,11 @@ class AccountDecorator
   # @param [User, Ability, nil] target    Default: #current_ability.
   # @param [Array<Class>, nil]  models    Default: Ability#models.
   # @param [Array<Symbol>, nil] actions   Default: #ABILITY_ACTIONS
+  # @param [Integer]            start     First row number.
   #
   # @return [Hash{Class=>Hash{Symbol=>ActiveSupport::SafeBuffer}}]
   #
-  def ability_table_rows: (?(User|Ability|nil) user, ?models: Array[Class]|nil, ?actions: symArray|nil) -> Hash[Class, Hash[Symbol, ActiveSupport::SafeBuffer]]
+  def ability_table_rows: (?(User|Ability|nil) user, ?models: Array[Class]|nil, ?actions: symArray|nil, ?start: Integer) -> Hash[Class, Hash[Symbol, ActiveSupport::SafeBuffer]]
 
   # A table row to visually separate groups of rows.
   #

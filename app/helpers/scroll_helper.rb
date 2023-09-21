@@ -66,7 +66,7 @@ module ScrollHelper
   def scroll_to_top_target(**opt)
     make_scroll_to_top_target!(opt)
     opt[:role] = :none
-    html_span(HTML_SPACE, opt)
+    html_span(HTML_SPACE, **opt)
   end
 
   # Modify the provided CSS options to indicate that the element is defined as
@@ -95,7 +95,7 @@ module ScrollHelper
     label = opt.delete(:label)
     tip   = opt.delete(:tooltip)
     opt[:title] = tip if tip
-    html_button(label, opt)
+    html_button(label, **opt)
   end
 
   # ===========================================================================

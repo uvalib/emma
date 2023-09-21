@@ -147,6 +147,7 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item_number(**opt)
+      trace_attrs!(opt)
       super(**opt) do
         control_icon_buttons(**opt.slice(:index))
       end
@@ -196,6 +197,7 @@ class ManifestDecorator < BaseDecorator
         end
       end
       opt[:sort] ||= { id: :desc } if administrator? || manager?
+      trace_attrs!(opt)
       super(**opt)
     end
 
@@ -537,6 +539,7 @@ class ManifestDecorator
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
   def form_buttons(**opt)
+    trace_attrs!(opt)
     opt.reverse_merge!('data-manifest': object.id)
     buttons = super
     buttons << submission_button(**opt)
@@ -671,7 +674,7 @@ class ManifestDecorator
   def comm_status(css: '.comm-status', status: nil, **opt)
     opt[:role] = 'status' unless opt.key?(:role)
     prepend_css!(opt, css, status)
-    html_div(opt) do
+    html_div(**opt) do
       STATUS_MESSAGE.map { |type, text| html_span(text, class: type) }
     end
   end
@@ -756,7 +759,7 @@ class ManifestDecorator
   #
   def submission_counts(css: '.submission-counts', **opt)
     prepend_css!(opt, css)
-    html_div(opt) do
+    html_div(**opt) do
       SUBMISSION_COUNTS.map do |type, label|
         number = (type == :total) ? submit_items.size : 0
         submission_count(type, number, label: label)
@@ -778,7 +781,7 @@ class ManifestDecorator
     lbl = html_span(class: 'label') { label || SUBMISSION_COUNTS[type] }
     val = html_span(class: 'value') { positive(count) || 0 }
     prepend_css!(opt, type, css)
-    html_span(opt) do
+    html_span(**opt) do
       lbl << val
     end
   end
@@ -862,7 +865,7 @@ class ManifestDecorator
     n_opt  = append_css!({}, 'panel', css)
     n_opt  = append_css!(n_opt, 'hidden') if hidden
     notice = config[:description_html]&.html_safe || config[:description]
-    notice = html_div(notice, n_opt)
+    notice = html_div(notice, **n_opt)
 
     button << notice
   end

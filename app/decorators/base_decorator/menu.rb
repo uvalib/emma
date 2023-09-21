@@ -79,9 +79,10 @@ module BaseDecorator::Menu
     menu     = h.options_for_select(menu)
     menu     = h.select_tag(name, menu, s_opt)
 
-    prepend_css!(opt, css)
     opt[:method] ||= :get
-    html_form(path.delete_suffix(SELECT_ACTION_SUFFIX), opt) do
+    prepend_css!(opt, css)
+    trace_attrs!(opt)
+    html_form(path.delete_suffix(SELECT_ACTION_SUFFIX), **opt) do
       label << menu
     end
   end
