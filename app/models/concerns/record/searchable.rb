@@ -382,7 +382,7 @@ module Record::Searchable
     raise "no :state_column for #{self.class}" unless column
     group_count = {}
     relation.group(column).count.each_pair do |state, count|
-      group = Record::Steppable.state_group(state)
+      group = Upload::WorkflowMethods.state_group(state)
       group_count[group] = group_count[group].to_i + count
     end
     group_count[:all] = group_count.values.sum

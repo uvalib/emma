@@ -23,7 +23,7 @@
     terms   = (page > 1) ? query&.merge(page: page) : query
     terms &&= list_search_terms(terms)
     group   = search[:group]&.values&.first
-    group &&= Manifest.state_group_label(group)
+    group &&= Upload::WorkflowMethods.state_group_label(group)
     label   = dec.page_meta_title
     set_page_meta_title(label)
     append_page_meta_title('-', group) if group

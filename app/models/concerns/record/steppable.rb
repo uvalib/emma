@@ -8,9 +8,14 @@ __loading_begin(__FILE__)
 # Common methods for ActiveRecord classes that are used to track outcomes
 # across multiple steps.
 #
-# @!attribute [rw] state
-#   Database :state column.
-#   @return [String]
+# NOTE: This was originally part of a refactoring to support asynchronous
+#   submission workflows.  Although that approach has been abandoned, this is
+#   being retained in commented-out form for possible use in a refactoring of
+#   the Upload class that would include removal of the "workflow" gem.
+#
+# #@!attribute [rw] state
+#  #Database :state column.
+#  #@return [String]
 #
 # === Usage Notes
 # If the including class does not define a STATE_TABLE constant before the
@@ -18,6 +23,7 @@ __loading_begin(__FILE__)
 # explicitly with a Hash with state values as keys.
 #
 module Record::Steppable
+=begin # NOTE: preserved for possible future use
 
   extend ActiveSupport::Concern
 
@@ -952,7 +958,7 @@ module Record::Steppable
     generate_job_serializer(base)
 
   end
-
+=end
 end
 
 __loading_end(__FILE__)
