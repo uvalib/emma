@@ -135,7 +135,7 @@ module Api::Schema
   # @return [String]
   #
   def service_name
-    to_be_overridden
+    must_be_overridden
   end
 
   # A table of schema property enumeration types mapped to literals which are
@@ -144,7 +144,7 @@ module Api::Schema
   # @return [Hash{Symbol=>String}]
   #
   def enumeration_defaults
-    to_be_overridden
+    must_be_overridden
   end
 
   # The enumeration types that may be given as the second argument to
@@ -153,7 +153,7 @@ module Api::Schema
   # @return [Array<Symbol>]
   #
   def enumeration_types
-    to_be_overridden
+    must_be_overridden
   end
 
   # enumeration_default

@@ -112,12 +112,15 @@ module Emma::Common::ExceptionMethods
   #
   # @param [String, nil] message      Additional description.
   # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Boolean]     fatal        If *false*, only log.
   #
   # @raise [NotImplementedError]
   #
-  def not_implemented(message = nil, meth: nil, **)
+  def not_implemented(message = nil, meth: nil, fatal: true, log: true, **)
     meth ||= calling_method&.to_sym
-    raise NotImplementedError, [self.class, meth, message].compact.join(': ')
+    msg    = [self.class, meth, message].compact.join(': ')
+    raise NotImplementedError, msg if fatal
+    Log.warn(msg)                  if log
   end
 
   # Raise NotImplementedError to indicate that a base method has been invoked
@@ -125,18 +128,37 @@ module Emma::Common::ExceptionMethods
   #
   # @param [String, nil] message      Additional description.
   # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Hash]        opt          Passed to #not_implemented
   #
   # @raise [NotImplementedError]
   #
-  def to_be_overridden(message = nil, meth: nil, **)
+  def must_be_overridden(message = nil, meth: nil, **opt)
     meth  ||= calling_method&.to_sym
     message = 'to be overridden %s' % (message || 'by the subclass')
-    not_implemented(message, meth: meth)
+    not_implemented(message, meth: meth, **opt)
+  end
+
+  # For use in code which may be provided an implementation by a subclass but
+  # can acceptably return *nil* otherwise.
+  #
+  # This is just informational and neither logs nor raises by default.
+  #
+  # @param [String, nil] message      Additional description.
+  # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Boolean]     fatal
+  # @param [Boolean]     log
+  #
+  # @return [nil]
+  #
+  def may_be_overridden(message = nil, meth: nil, fatal: false, log: false, **)
+    return unless fatal || log
+    meth ||= calling_method&.to_sym
+    must_be_overridden(message, meth: meth, fatal: fatal, log: log)
   end
 
   # For use in code which is not defined to have a value or implementation.
   #
-  # By default this is just informational and neither logs nor raises.
+  # This is just informational and neither logs nor raises by default.
   #
   # @param [String, nil] message      Additional description.
   # @param [Symbol, nil] meth         Calling method to prepend to message.
@@ -148,13 +170,12 @@ module Emma::Common::ExceptionMethods
   # @return [nil]
   #
   def not_applicable(message = nil, meth: nil, fatal: false, log: false, **)
-    return unless log || fatal
+    return unless fatal || log
     meth  ||= calling_method&.to_sym
     message = ['not applicable', message].compact.join(' ')
     message = [self.class, meth, message].compact.join(': ')
-    # noinspection RubyMismatchedArgumentType
-    raise message     if fatal
-    Log.info(message) if log
+    raise RuntimeError, message if fatal
+    Log.info(message)           if log
   end
 
 end

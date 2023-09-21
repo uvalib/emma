@@ -38,7 +38,7 @@ module OptionsConcern
   # @return [Options]
   #
   def get_model_options
-    to_be_overridden 'by the model-specific Concern'
+    must_be_overridden 'by the model-specific Concern'
   end
 
   # ===========================================================================

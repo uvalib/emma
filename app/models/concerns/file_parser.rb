@@ -23,7 +23,7 @@ class FileParser < FileObject
   # @return [OpenStruct]
   #
   def metadata
-    to_be_overridden
+    must_be_overridden
   end
 
   # Extracted metadata mapped to common metadata fields.
@@ -31,7 +31,7 @@ class FileParser < FileObject
   # @return [Hash]
   #
   def common_metadata
-    to_be_overridden
+    must_be_overridden
   end
 
 end

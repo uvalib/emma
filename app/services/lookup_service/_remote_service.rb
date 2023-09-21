@@ -190,7 +190,7 @@ class LookupService::RemoteService < ApiService
   # @return [nil]                     If no request was made.
   #
   def fetch(req = self.request)
-    to_be_overridden
+    must_be_overridden
   end
 
   # Extract results from the remote response.

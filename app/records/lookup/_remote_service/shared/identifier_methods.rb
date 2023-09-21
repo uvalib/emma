@@ -40,7 +40,7 @@ module Lookup::RemoteService::Shared::IdentifierMethods
   # @return [Hash{Symbol=>Array<PublicationIdentifier>}]
   #
   def identifier_table
-    to_be_overridden
+    must_be_overridden
   end
 
   # ===========================================================================

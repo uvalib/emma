@@ -35,7 +35,7 @@ class JobResult < ApplicationRecord
   #
   def self.job_record_class
     base = name&.delete_suffix('JobResult')
-    to_be_overridden if base.blank?
+    must_be_overridden if base.blank?
     "#{base}JobRecord".constantize
   end
 

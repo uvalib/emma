@@ -138,7 +138,7 @@ module BaseCollectionDecorator::List
   # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
   def list_styles(**opt)
-    # Overridden by the subclass if configured for search analysis.
+    may_be_overridden # if the subclass is configured for search analysis
   end
 
   # Optional list result type controls in line with the top pagination control.
@@ -150,7 +150,7 @@ module BaseCollectionDecorator::List
   # @see file:app/assets/javascripts/controllers/search.js *$mode_menu*
   #
   def list_results(**opt)
-    # May be overridden by the subclass.
+    may_be_overridden
   end
 
   # An optional list filter control in line with the top pagination control.
@@ -162,7 +162,7 @@ module BaseCollectionDecorator::List
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   def list_filter(**opt)
-    # May be overridden by the subclass.
+    may_be_overridden
   end
 
   # Control the selection of filters displayed by #list_filter.
@@ -174,7 +174,7 @@ module BaseCollectionDecorator::List
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
   def list_filter_options(**opt)
-    # May be overridden by the subclass.
+    may_be_overridden
   end
 
   # ===========================================================================

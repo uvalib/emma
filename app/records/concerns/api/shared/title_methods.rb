@@ -62,7 +62,7 @@ module Api::Shared::TitleMethods
   # @return [String]
   #
   def identifier
-    to_be_overridden
+    must_be_overridden
   end
 
   # ===========================================================================

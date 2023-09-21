@@ -133,7 +133,7 @@ class ApplicationCable::Response < Hash
   # @return [String]
   #
   def self.data_url_base_path
-    to_be_overridden
+    must_be_overridden
   end
 
   delegate :data_url_base_path, to: :class

@@ -202,7 +202,7 @@ module Api::Shared::CommonMethods
   # @return [Array<Symbol>]
   #
   def item_record_path
-    to_be_overridden
+    must_be_overridden
   end
 
   # item_record

@@ -104,7 +104,7 @@ module FileFormat
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
   def configuration
-    to_be_overridden
+    must_be_overridden
   end
 
   # parser
@@ -112,7 +112,7 @@ module FileFormat
   # @return [FileParser]
   #
   def parser
-    @parser ||= to_be_overridden
+    @parser ||= must_be_overridden
   end
 
   # parser_metadata
@@ -333,7 +333,7 @@ module FileFormat
   # @note Currently unused.
   #
   def format_image(_value)
-    to_be_overridden
+    must_be_overridden
   end
 
   # Used within #field_transforms to apply a method to each element of a

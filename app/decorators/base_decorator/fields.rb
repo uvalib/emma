@@ -413,7 +413,7 @@ module BaseDecorator::Fields
   # @return [Hash{Symbol=>Array<Symbol,Integer>}]
   #
   def field_levels(**opt)
-    {} # May be overridden by the subclass.
+    may_be_overridden or {}
   end
 
   # Return with the CSS classes associated with the items field scope(s).

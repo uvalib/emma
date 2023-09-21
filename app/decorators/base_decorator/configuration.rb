@@ -25,7 +25,7 @@ module BaseDecorator::Configuration
   # @see BaseDecorator#decorator_for
   #
   def model_type
-    to_be_overridden
+    must_be_overridden
   end
 
   # The ActiveRecord subclass associated with the decorator.
@@ -35,7 +35,7 @@ module BaseDecorator::Configuration
   # @see BaseDecorator#decorator_for
   #
   def ar_class
-    to_be_overridden
+    must_be_overridden
   end
 
   # null_object
@@ -43,7 +43,7 @@ module BaseDecorator::Configuration
   # @return [Object]
   #
   def null_object
-    to_be_overridden
+    must_be_overridden
   end
 
   # ===========================================================================

@@ -61,7 +61,7 @@ module ApplicationCable::Payload
   # @return [Hash{Symbol=>*}]
   #
   def template
-    to_be_overridden
+    must_be_overridden
   end
 
   # default_status

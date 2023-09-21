@@ -52,24 +52,40 @@ module Emma::Common::ExceptionMethods
   #
   # @param [String, nil] message      Additional description.
   # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Boolean]     fatal        If *false*, only log.
   #
   # @raise [NotImplementedError]
   #
-  def not_implemented: (?(String|nil) message, ?meth: Symbol|nil, **untyped _ignored) -> void
+  def not_implemented: (?(String|nil) message, ?meth: Symbol|nil, ?fatal: bool, **untyped _ignored) -> void
 
   # Raise NotImplementedError to indicate that a base method has been invoked
   # rather than the expected override defined by a subclass or later module.
   #
   # @param [String, nil] message      Additional description.
   # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Boolean]     fatal        If *false*, only log.
   #
   # @raise [NotImplementedError]
   #
-  def to_be_overridden: (?(String|nil) message, ?meth: Symbol|nil, **untyped _ignored) -> void
+  def must_be_overridden: (?(String|nil) message, ?meth: Symbol|nil, ?fatal: bool, **untyped _ignored) -> void
+
+  # For use in code which may be provided an implementation by a subclass but
+  # can acceptably return *nil* otherwise.
+  #
+  # This is just informational and neither logs nor raises by default.
+  #
+  # @param [String, nil] message      Additional description.
+  # @param [Symbol, nil] meth         Calling method to prepend to message.
+  # @param [Boolean]     fatal
+  # @param [Boolean]     log
+  #
+  # @return [nil]
+  #
+  def may_be_overridden: (?(String|nil) message, ?meth: Symbol|nil, ?fatal: bool, ?log: bool, **untyped _ignored) -> nil
 
   # For use in code which is not defined to have a value or implementation.
   #
-  # By default this is just informational and neither logs nor raises.
+  # This is just informational and neither logs nor raises by default.
   #
   # @param [String, nil] message      Additional description.
   # @param [Symbol, nil] meth         Calling method to prepend to message.
