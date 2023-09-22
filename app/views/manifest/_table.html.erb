@@ -23,9 +23,9 @@
       html_tag(level, title, class: classes)
     end
 
-  filter ||= nil
+  except ||= nil
 
-  opt   = { filter: filter }.compact
+  opt   = { except: except }.compact
   table = dec.render_table(**opt)
 
 -%>

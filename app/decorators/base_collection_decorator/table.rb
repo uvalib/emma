@@ -49,8 +49,8 @@ module BaseCollectionDecorator::Table
     opt[:tag]    = tag         unless table
 
     parts = opt.extract!(*MODEL_TABLE_PART_OPT).compact
-    parts[:thead] ||= table_headings(**opt)
-    parts[:tbody] ||= table_entries(**opt)
+    parts[:thead] ||= table_heading(**opt, **t_opt)
+    parts[:tbody] ||= table_entries(**opt, **t_opt)
     cols  = parts[:thead].scan(/<th[>\s]/).size
 
     prepend_css!(outer, css, model_type)
@@ -97,51 +97,27 @@ module BaseCollectionDecorator::Table
 
   # Render column headings for a table of model items.
   #
-  # @param [Integer] row
-  # @param [Integer] col
-  # @param [Boolean] dark
-  # @param [Hash]    opt              To column except:
-  #
-  # @option opt [Symbol]                :outer_tag  Default: :tr
-  # @option opt [Symbol]                :inner_tag  Default: :th
-  # @option opt [Symbol, String, Array] :columns    To #table_values
-  # @option opt [String, Regexp, Array] :filter     To #table_values
+  # @param [Boolean, nil] dark
+  # @param [Hash]         opt         To #render_table_row
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @yield [item, **opt] Allows the caller to generate the item columns.
-  # @yieldparam  [Model] item         Single item instance.
-  # @yieldparam  [Hash]  opt          Field generation options.
-  # @yieldreturn [ActiveSupport::SafeBuffer]
-  #
-  # @see #table_entry
-  #
-  def table_headings(row: 1, col: 1, dark: DARK_HEAD, **opt)
-    tag    = opt.delete(:tag) # Propagated if not rendering an HTML table.
-    outer, inner = opt.values_at(*MODEL_TABLE_ENTRY_OPT).map { |v| v || tag }
-    outer  = for_html_table?(outer) && :tr || outer || :div
-    inner  = for_html_table?(inner) && :th || inner || :div
-    fv_opt = opt.slice(*FIELD_VALUES_OPT)
-    opt.except!(*MODEL_TABLE_OPTIONS)
-
-    ob     = object.first
-    pairs  = ob && decorate(ob).table_values(**fv_opt)
-    fields = pairs&.keys || []
-    first  = col
-    last   = first + fields.size - 1
-    fields.map!.with_index(first) do |field, c|
-      value   = html_div(labelize(field), class: 'field')
-      row_opt = model_rc_options(field, row, c, opt)
-      row_opt.merge!(role: 'columnheader', 'aria-colindex': c)
-      append_css!(row_opt, 'col-first') if c == first
-      append_css!(row_opt, 'col-last')  if c == last
-      html_tag(inner, value, row_opt)
-    end
-
-    parts = []
-    parts << html_tag(outer, class: 'spanner', 'aria-hidden': true) if dark
-    parts << html_tag(outer, *fields, 'aria-rowindex': row)
-    safe_join(parts)
+  def table_heading(dark: DARK_HEAD, **opt)
+    trace_attrs!(opt)
+    opt[:inner_opt] = { tag: :th, role: 'columnheader' }
+    item = object.first || object_class.new
+    # noinspection RubyMismatchedArgumentType
+    decorate(item).render_table_row(**opt) { |field, prop, **f_opt|
+      html_div(class: 'field', **f_opt) do
+        prop[:label] || labelize(field)
+      end
+    }.tap { |line|
+      if dark
+        t_opt   = trace_attrs_from(opt)
+        spanner = html_tag(:tr, class: 'spanner', 'aria-hidden': true, **t_opt)
+        line.prepend(spanner)
+      end
+    }
   end
 
   # ===========================================================================

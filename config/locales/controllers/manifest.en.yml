@@ -86,14 +86,19 @@ en:
       # =======================================================================
 
       display_fields:
-
-        id:
-          cond:
-            except:     [index]
-
-        user_id:
-          cond:
-            except:     [index]
+        - name
+        - user_id
+        - id:                     { role: developer }
+        - item_count
+        - saved_item_count
+        - pending_item_count
+        - completed_item_count:   { ignored: true }
+        - unsaved_item_count:     { ignored: true }
+        - never_saved_item_count: { ignored: true }
+        - incomplete_item_count:  { ignored: true }
+        - to_delete_item_count:   { ignored: true }
+        - created_at
+        - updated_at
 
       # =======================================================================
       # Pages
@@ -191,22 +196,6 @@ en:
         title:          'Bulk Upload Manifests'
         tooltip:        ~ # 'Your current bulk operation manifests'
 
-        # TODO: want to see 'id' and 'user_id' if administrator/developer.
-        display_fields: # @see 'en.emma.manifest.record'
-          - id
-          - user_id
-          - name
-          - item_count
-          - saved_item_count
-          - pending_item_count
-         #- completed_item_count
-         #- unsaved_item_count
-         #- never_saved_item_count
-         #- incomplete_item_count
-         #- to_delete_item_count
-          - created_at
-          - updated_at
-
         _endpoint:      true
 
       # =======================================================================
@@ -239,9 +228,6 @@ en:
         label:          'Manifest'
         title:          'Manifest: %{name}'
         tooltip:        'Details of this manifest'
-
-        display_fields: # @see 'en.emma.manifest.record'
-          - !ruby/symbol all
 
         _endpoint:      true
 

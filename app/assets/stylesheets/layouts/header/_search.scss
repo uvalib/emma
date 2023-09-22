@@ -654,8 +654,8 @@ $control-height:         2.25rem;
 
         // Maximum number of physical columns per width breakpoint.
 
-        $max-columns: 6;
-        $columns-map: (
+        $max-columns:  6;
+        $template-map: (
             'wide':   ('columns': $max-columns),
             'medium': ('columns': 2),
             'narrow': ('columns': 1)
@@ -667,7 +667,7 @@ $control-height:         2.25rem;
 
             $column: [label] max-content [menu] minmax(10vw, 1fr);
 
-            @include grid.column-classes($max-columns, $column, $columns-map);
+            @include grid.column-classes($max-columns, $column, $template-map);
         }
 
         @media #{$medium-width} {
@@ -678,7 +678,7 @@ $control-height:         2.25rem;
 
             $column: minmax(25vw, 1fr);
 
-            @include grid.column-classes($max-columns, $column, $columns-map);
+            @include grid.column-classes($max-columns, $column, $template-map);
 
             column-gap: calc(6 * #{$gap-x});
         }

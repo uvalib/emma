@@ -29,14 +29,24 @@ class AccountDecorator < BaseDecorator
     #
     def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
-    # Render a single entry for use within a list of items.
+    # Render a single label/value pair, ensuring :email is fixed if editing
+    # the user's own account.
     #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
+    # @param [String, Symbol] label
+    # @param [*]              value
+    # @param [Hash]           opt     Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_form_pair: ((String|Symbol) label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+    # Generate a menu of user instances.
+    #
+    # @param [Hash] opt
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def list_item: (?pairs: symHash | nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
 
     # Generate a prompt for #items_menu.
     #
@@ -120,7 +130,16 @@ class AccountDecorator
   #
   # @return [Hash]
   #
-  def table_values: (**untyped opt) -> anyHash
+  #def table_values: (**untyped opt) -> anyHash
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values: (**untyped opt) -> Hash[Symbol, FieldConfig]
 
   # Patterns for User record columns which are not included for
   # non-developers.
@@ -129,24 +148,14 @@ class AccountDecorator
   #
   FIELD_FILTERS: Array[String|Symbol|Regexp]
 
-  # Specified field selections from the given User instance.
-  #
-  # @param [User, Hash, nil] item     Default: `#object`.
-  # @param [Hash]            opt      Passed to super.
-  #
-  # @return [Hash{String=>ActiveSupport::SafeBuffer}]
-  #
-  def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
-
   # Render pre-populated form fields, manually adding password field(s) (which
   # are not in "emma.account.record").
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #render_form_fields.
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_fields: (?pairs: anyHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def form_field_rows: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Single-select menu - drop-down.
   #

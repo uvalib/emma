@@ -12,7 +12,7 @@ module BaseDecorator::Hierarchy
   # Render field/value pairs of a title-level record.
   #
   # @param [String, Symbol, nil] action
-  # @param [Hash, nil]           pairs      Except for #render_pair options.
+  # @param [Hash, nil]           pairs
   # @param [String, nil]         separator  Def: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Hash]                opt
   #

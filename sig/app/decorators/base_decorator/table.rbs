@@ -102,24 +102,46 @@ module BaseDecorator::Table
   # @param [Integer] col
   # @param [Hash]    opt              To column except:
   #
-  # @option opt [Symbol]                :outer_tag  Default: :tr
-  # @option opt [Symbol]                :inner_tag  Default: :td
-  # @option opt [Symbol, String, Array] :columns    To #table_values
-  # @option opt [String, Regexp, Array] :filter     To #table_values
+  # @option opt [Hash]   :outer_opt   Options to outer (row) element.
+  # @option opt [Hash]   :inner_opt   Options to inner (column cell) element.
+  # @option opt [Symbol] :outer_tag   If !`opt[:outer_opt][:tag]`; default: :tr
+  # @option opt [Symbol] :inner_tag   If !`opt[:inner_opt][:tag]`; Default: :td
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #table_headings
+  # @see #table_heading
   #
-  def table_entry: (?row: Integer, ?col: Integer, **untyped opt) { (Model, symHash) -> symHash } -> ActiveSupport::SafeBuffer
+  def render_table_row: (?row: Integer, ?col: Integer, **untyped opt) ?{ (Symbol field, FieldConfig prop, **untyped opt) -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
-  # Table values associated with the current decorator.
+  # table_entry
   #
-  # @param [Hash] opt                 Passed to #model_field_values
+  # @param [Hash] opt                 To #render_table_row
   #
-  # @return [Hash]
+  # @return [ActiveSupport::SafeBuffer]
   #
-  def table_values: (**untyped opt) -> anyHash
+  def table_entry: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Boolean] limited          Do not include fields that are :ignored
+  #                                     or have the wrong :role.
+  # @param [Hash]    opt              Passed to #field_property_pairs and
+  #                                     #list_field_value.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values: (?limited: bool, **untyped opt) -> Hash[Symbol, FieldConfig]
+
+  # Transform a field value for rendering in a table.
+  #
+  # @param [*]         value          Passed to #list_field_value.
+  # @param [Symbol, *] field          Passed to #list_field_value.
+  # @param [Hash]      opt            Passed to #list_field_value.
+  #
+  # @return [*]
+  #
+  def table_field_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
 
   # Setup row/column HTML options.
   #

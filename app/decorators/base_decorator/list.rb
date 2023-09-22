@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # Methods supporting display of individual Model instances.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module BaseDecorator::List
 
   include BaseDecorator::Common
@@ -56,35 +59,33 @@ module BaseDecorator::List
 
   # Render field/value pairs.
   #
-  # @param [Hash, nil]   pairs        Passed to #field_pairs.
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Hash]        opt          To #render_pair except
-  #                                     #FIELD_PAIRS_OPTIONS to #field_pairs.
+  # @param [Hash]        opt          To #render_pair or #field_property_pairs.
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_field_values(pairs: nil, separator: nil, **opt)
-    return ''.html_safe if pairs.nil? && object.nil?
+  def render_field_values(separator: nil, **opt)
+    fvp_opt = opt.extract!(*FIELD_VALUE_PAIRS_OPT).compact_blank!
+    return ''.html_safe if blank? && fvp_opt.blank?
     opt.delete(:level) # Not propagated in the general case.
 
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
 
-    fp_opt      = opt.extract!(*FIELD_PAIRS_OPTIONS)
-    value_opt   = opt.slice(:index, :no_format)
-    opt[:row]   = 0
+    v_opt = opt.slice(:index, :no_fmt)
+    f_opt = opt.extract!(*FIELD_PROPERTY_PAIRS_OPT)
     separator ||= DEFAULT_ELEMENT_SEPARATOR
 
-    field_pairs(pairs, **fp_opt).map { |field, prop|
-      opt[:row] += 1
-      label = prop[:label]
-      value = render_value(prop[:value], field: field, **value_opt)
-      p_opt = { field: field, prop: prop, **opt }
-      render_field_value_pair(label, value, **p_opt)
-    }.unshift(nil).join(separator).html_safe
+    pairs = list_field_values(**fvp_opt, **f_opt, **v_opt, **t_opt)
+    # noinspection RubyMismatchedArgumentType
+    pairs.map.with_index(1) { |(field, prop), pos|
+      label = prop[:label] || labelize(field)
+      value = prop[:value]
+      list_render_pair(label, value, field: field, prop: prop, pos: pos, **opt)
+    }.compact.unshift(nil).join(separator).html_safe
   end
 
   # Render a single label/value pair in a list item.
@@ -95,15 +96,15 @@ module BaseDecorator::List
   # @param [FieldConfig]         prop
   # @param [Hash]                opt
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # === Implementation Notes
   # Compare with BaseDecorator::Grid#grid_data_cell_render_pair
   #
-  def render_field_value_pair(label, value, field:, prop:, **opt)
-    rp_opt = opt.merge(field: field, prop: prop)
-    scopes = field_scopes(field).presence and append_css!(rp_opt, *scopes)
-    render_pair(label, value, **rp_opt)
+  def list_render_pair(label, value, field:, prop:, **opt)
+    scopes = field_scopes(field).presence and append_css!(opt, *scopes)
+    trace_attrs!(opt)
+    render_pair(label, value, field: field, prop: prop, **opt)
   end
 
   DEFAULT_LABEL_CLASS = 'label'
@@ -175,8 +176,6 @@ module BaseDecorator::List
     prop  ||= field_configuration(field)
     field ||= prop[:field]
     label   = prop[:label] || label
-    return if prop[:ignored]
-    return unless user_has_role?(prop[:role])
 
     # Setup options for creating related HTML identifiers.
     base    = opt.delete(:base) || model_html_id(field || label)
@@ -349,12 +348,41 @@ module BaseDecorator::List
 
   # An indicator that can be used to stand for an empty list.
   #
-  # @param [String, nil] message      Default: #NO_RESULTS.
+  # @param [String] message           Default: #NO_RESULTS.
+  # @param [Hash]   opt               To #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_empty_value(message = nil, **)
-    render_pair(nil, (message || NO_RESULTS), index: hex_rand)
+  def render_empty_value(message: NO_RESULTS, **opt)
+    # noinspection RubyMismatchedReturnType
+    render_pair(nil, message, **opt, index: hex_rand)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # From `opt[:prop]` (or #object by default), return fields and configurations
+  # augmented with a :value entry containing the value for the field.
+  #
+  # @param [Boolean] limited          Do not include fields that are :ignored
+  #                                     or have the wrong :role.
+  # @param [Hash]    opt              Passed to #field_property_pairs and
+  #                                     #list_field_value.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def list_field_values(limited: true, **opt)
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
+    v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
+    field_property_pairs(**opt).map { |field, prop|
+      next if limited && (prop[:ignored] || !user_has_role?(prop[:role]))
+      prop[:value] = list_field_value(prop[:value], field: field, **v_opt)
+      [field, prop]
+    }.compact.to_h
   end
 
   # Transform a field value for HTML rendering.
@@ -366,9 +394,10 @@ module BaseDecorator::List
   # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If *value* or *object* is *nil*.
   #
-  def render_value(value, field:, **opt)
-    value = access(nil, field, opt) if value.nil? && field.is_a?(Symbol)
-    value = value.to_s              if value.is_a?(FalseClass)
+  def list_field_value(value, field:, **opt)
+    value = field_value(nil, field, opt) if value.nil? && field.is_a?(Symbol)
+    value = value.value                  if value.is_a?(Field::Type)
+    value = value.to_s                   if value.is_a?(FalseClass)
     value
   end
 
@@ -397,7 +426,7 @@ module BaseDecorator::List
   #--
   # noinspection RailsParamDefResolve
   #++
-  def access(item, m, opt = nil)
+  def field_value(item, m, opt = nil)
     item ||= object
     if item.try(:emma_metadata)&.key?(m)
       item.emma_metadata[m]
@@ -436,43 +465,8 @@ module BaseDecorator::List
 
   public
 
-  # Options for #model_field_values.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIELD_VALUES_OPT = %i[columns filter].freeze
-
-  # Specified field selections from the given model instance.
-  #
-  # @param [Model, Hash, nil]                   item
-  # @param [String, Symbol, Array, nil]         columns
-  # @param [String, Symbol, Regexp, Array, nil] filter
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  # @see #FIELD_VALUES_OPT
-  #
-  def model_field_values(item = nil, columns: nil, filter: nil, **)
-    item ||= (object if present?)
-    pairs  = item.is_a?(Model) ? item.attributes : item
-    pairs  = pairs.stringify_keys if pairs.is_a?(Hash)
-    return {} if pairs.blank?
-    columns &&= Array.wrap(columns).map(&:to_s).compact_blank
-    pairs.slice!(*columns) unless columns.blank? || (columns == %w[all])
-    Array.wrap(filter).each do |pattern|
-      case pattern
-        when Regexp then pairs.reject! { |f, _| f.match?(pattern) }
-        when Symbol then pairs.reject! { |f, _| f.casecmp?(pattern.to_s) }
-        else             pairs.reject! { |f, _| f.downcase.include?(pattern) }
-      end
-    end
-    cfg = model_context_fields || model_index_fields
-    pairs.transform_keys!(&:to_sym).delete_if { |f, _| cfg.dig(f, :ignored) }
-  end
-
   # Render a metadata listing of a model instance.
   #
-  # @param [Hash, nil]   pairs        Label/value pairs.
   # @param [Hash]        outer        HTML options for outer div.
   # @param [String, nil] css          Default: "#(model_type)-details"
   # @param [Hash]        opt          Passed to #render_field_values except:
@@ -481,37 +475,40 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details(pairs: nil, outer: nil, css: nil, **opt)
-    fv_opt   = opt.extract!(*FIELD_VALUES_OPT)
-    pairs  ||= model_field_values(**fv_opt)
-    count    = pairs.size
+  def details(outer: nil, css: nil, **opt)
+    trace_attrs!(opt)
+    pairs    = list_field_values(**opt)
+    count    = list_item_columns(pairs)
     css    ||= "#{model_type}-details"
     classes  = [css, opt.delete(:class)]
-    classes << "columns-#{count}" if count.positive?
-    html_div(prepend_css(outer, *classes)) do
+    classes += %W[columns-#{count} count-#{count}] if count.positive?
+    outer    = prepend_css(outer, *classes)
+    t_opt    = trace_attrs_from(opt)
+    html_div(**outer, **t_opt) do
       render_field_values(pairs: pairs, **opt)
     end
   end
 
   # details_container
   #
-  # @param [Array]               added  Optional elements after the details.
+  # @param [Array]               before   Optional elements before the details.
   # @param [Integer, nil]        level
   # @param [String, Symbol, nil] role
-  # @param [String, nil]         css    Default: "#(model_type)-container"
-  # @param [Hash]                opt    Passed to #details.
-  # @param [Proc, nil]           block  Passed to #capture.
+  # @param [String, nil]         css      Default: "#(model_type)-container"
+  # @param [Hash]                opt      Passed to #details.
+  # @param [Proc, nil]           blk      Passed to #capture.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container(*added, level: nil, role: nil, css: nil, **opt, &block)
+  def details_container(*before, level: nil, role: nil, css: nil, **opt, &blk)
     css  ||= ".#{model_type}-container"
     role ||= (:article if level == 1)
     opt.delete(:skip) # In case this slipped in to the base method.
     trace_attrs!(opt)
 
-    parts = [details(**opt), *added]
-    parts << h.capture(&block) if block
+    parts  = before
+    parts << details(**opt)
+    parts << h.capture(&blk) if blk
 
     outer = trace_attrs_from(opt)
     outer.merge!(role: role) if role
@@ -661,57 +658,83 @@ module BaseDecorator::List
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Hash, nil]     pairs      Label/value pairs.
-  # @param [Symbol]        render     Default: #render_field_values.
+  # @param [String, Array] before     Optional leading column(s).
+  # @param [String, Array] after      Optional trailing columns(s).
   # @param [Hash]          outer      HTML options for outer div container.
-  # @param [String, Array] leading    Optional leading column(s).
-  # @param [String, Array] trailing   Optional trailing columns(s).
   # @param [Symbol]        tag        If :tr, generate <tr>.
+  # @param [Symbol]        render     Default: #render_field_values.
   # @param [Integer, nil]  level
   # @param [String]        css        Default: .(model_type)-list-item
   # @param [String]        id         Passed to :outer div.
-  # @param [Hash]          opt        Passed to the render method.
+  # @param [Hash]          opt        Passed to the render method except or
+  #                                     #list_field_values.
   #
   # @option opt [Integer] :row        Sets "row-#{row}" in :outer div.
+  # @option opt [Integer] :col        Sets "col-#{col}" in :outer div.
+  # @option opt [Integer] :pos        Sets "pos-#{pos}" in :outer div.
   # @option opt [Symbol]  :group      May set :'data-group' for :outer div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item(
-    pairs:    nil,
-    render:   nil,
-    outer:    nil,
-    leading:  nil,
-    trailing: nil,
-    tag:      :div,
-    level:    nil,
-    css:      nil,
-    id:       nil,
+    before: nil,
+    after:  nil,
+    outer:  nil,
+    tag:    :div,
+    render: nil,
+    level:  nil,
+    css:    nil,
+    id:     nil,
     **opt
   )
     trace_attrs!(opt)
     css   ||= ".#{model_type}-list-item"
     row     = positive(opt[:row])
+    col     = positive(opt[:col])
+    pos     = positive(opt[:pos])
     role    = opt.delete(:role)
     group   = opt[:group] ||= state_group
+
+    pairs   = list_field_values(**opt)
+    count   = list_item_columns(pairs)
+
     row_opt = prepend_css(outer, css)
     row_opt[:id]              ||= id   || model_item_id(**opt)
     row_opt[:role]            ||= role || ('heading' if level)
     row_opt[:'data-group']    ||= group
     row_opt[:'data-title_id'] ||= title_id_values
     row_opt[:'aria-level']    ||= level
-    row_opt.delete(:'aria-rowindex')   unless for_html_table?(tag)
+    row_opt.delete(:'aria-rowindex')         unless for_html_table?(tag)
     row_opt.delete(:'aria-colindex')
-    append_css!(row_opt, "row-#{row}") if row
-    append_css!(row_opt, 'empty')      if blank?
-    html_tag(tag, row_opt) do
-      leading  &&= Array.wrap(leading).compact.map  { |v| ERB::Util.h(v) }
-      trailing &&= Array.wrap(trailing).compact.map { |v| ERB::Util.h(v) }
+    append_css!(row_opt, "columns-#{count}") if count.positive?
+    append_css!(row_opt, "pos-#{pos}")       if pos
+    append_css!(row_opt, "col-#{col}")       if col
+    append_css!(row_opt, "row-#{row}")       if row
+    append_css!(row_opt, 'empty')            if blank?
+
+    html_tag(tag, **row_opt) do
+      before &&= Array.wrap(before).compact_blank.map { |v| ERB::Util.h(v) }
+      after  &&= Array.wrap(after).compact_blank.map  { |v| ERB::Util.h(v) }
       render = :render_empty_value  if blank?
       render = :render_field_values if render.nil?
       pairs  = send(render, pairs: pairs, **opt, level: level&.next)
-      [*leading, *pairs, *trailing]
+      [*before, *pairs, *after]
     end
+  end
+
+  # The number of columns needed if *item* will be displayed horizontally.
+  #
+  # @param [Model, Hash, Array, *] item   Default: object.
+  #
+  # @return [Integer]
+  #
+  def list_item_columns(item = nil)
+    item = object          if item.nil?
+    item = item.attributes if item.is_a?(Model)
+    item = item.keys       if item.is_a?(Hash)
+    Array.wrap(item).reject { |v|
+      v.is_a?(FieldConfig) && v[:ignored]
+    }.size
   end
 
   # Thumbnail element for the given catalog title.

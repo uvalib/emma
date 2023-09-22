@@ -66,21 +66,29 @@ class AccountDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: BaseDecorator::List overrides
+    # :section: BaseDecorator::Form overrides
     # =========================================================================
 
     public
 
-    # Render a single entry for use within a list of items.
+    # Render a single label/value pair, ensuring :email is fixed if editing
+    # the user's own account.
     #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
+    # @param [String, Symbol] label
+    # @param [*]              value
+    # @param [Hash]           opt     Passed to super
     #
-    # @return [ActiveSupport::SafeBuffer]
+    # @return [ActiveSupport::SafeBuffer, nil]
     #
-    def list_item(pairs: nil, **opt)
-      opt[:pairs] = model_index_fields.merge(pairs || {})
-      super(**opt)
+    def render_form_pair(label, value, **opt)
+      edit  = current_user && (context[:action] == :edit)
+      field = (opt.dig(:prop, :field) || opt[:field] if edit)
+      if field == :email
+        data = value.is_a?(Field::Type) ? value.value : value
+        data = Array.wrap(data).presence
+        opt[:fixed] = true if data&.excluding(current_user.email)&.blank?
+      end
+      super(label, value, **opt)
     end
 
     # =========================================================================
@@ -224,22 +232,25 @@ class AccountDecorator
 
   public
 
-  # Table values associated with the current decorator.
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Passed to super.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>FieldConfig}]
   #
-  def table_values(**opt)
-    controls = control_group { [show_control, edit_control, delete_control] }
-    { actions: controls, **super }
+  def table_field_values(**opt)
+    trace_attrs!(opt)
+    t_opt    = trace_attrs_from(opt)
+    controls = control_group { control_icon_buttons(**t_opt) }
+    super(**opt, before: { actions: controls })
   end
 
   # ===========================================================================
   # :section: BaseDecorator::List overrides
   # ===========================================================================
 
-  protected
+  public
 
   # Patterns for User record columns which are not included for
   # non-developers.
@@ -248,25 +259,17 @@ class AccountDecorator
   #
   FIELD_FILTERS = %w[token password remember].freeze
 
-  # Specified field selections from the given User instance.
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
   #
-  # @param [User, Hash, nil] item     Default: `#object`.
-  # @param [Hash]            opt      Passed to super.
+  # @param [Hash] opt                 Passed to super
   #
-  # @return [Hash{String=>ActiveSupport::SafeBuffer}]
+  # @return [Hash{Symbol=>FieldConfig}]
   #
-  def model_field_values(item = nil, **opt)
-    opt[:filter] ||= FIELD_FILTERS unless developer?
-    pairs = super(item, **opt)
-    cfg   = model_context_fields || model_show_fields
-    cfg.map { |field, config|
-      next if config[:ignored]
-      next unless user_has_role?(config[:role])
-      k = config[:label] || field
-      v = pairs[field]
-      v = EMPTY_VALUE if v.nil?
-      [k, v]
-    }.compact.to_h.merge!('Role Prototype' => role_prototype)
+  def list_field_values(**opt)
+    opt[:except] ||= FIELD_FILTERS unless developer?
+    trace_attrs!(opt)
+    super(**opt)
   end
 
   # ===========================================================================
@@ -278,16 +281,16 @@ class AccountDecorator
   # Render pre-populated form fields, manually adding password field(s) (which
   # are not in "emma.account.record").
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #render_form_fields.
+  # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_fields(pairs: nil, **opt)
+  def form_field_rows(**opt)
+    trace_attrs!(opt)
     fields = AccountConcern::PASSWORD_KEYS
     fields = fields.excluding(:current_password) if manager? || administrator?
-    added  = fields.map { |k| [k.to_s.titleize, k] }.to_h
-    pairs  = pairs&.merge(added) || added
+    fields = fields.map { |k| [k, nil] }.to_h
+    opt[:after] = opt[:after]&.merge(fields) || fields
     super
   end
 

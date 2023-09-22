@@ -87,17 +87,12 @@ end
 class OrgDecorator
   include SharedDefinitions
 
-  # Render item attributes.
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super except:
+  # @param [Hash] opt   Passed to #field_property_pairs and #table_field_value.
   #
-  # @option opt [String, Symbol, Array<String,Symbol>] :columns
-  # @option opt [String, Regexp, Array<String,Regexp>] :filter
+  # @return [Hash{Symbol=>FieldConfig}]
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #model_field_values
-  #
-  #def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def table_field_values: (**untyped opt) -> Hash[Symbol, FieldConfig]
 end

@@ -184,9 +184,11 @@
     // List data items in horizontal columns when there is enough room.
     @media #{$wide-screen} {
 
-        @include grid.column-classes($max-columns, auto);
+        $template: minmax(max-content, 1fr);
 
-        grid-template-columns: repeat($max-columns, auto);
+        @include grid.column-classes($max-columns, $template);
+
+        grid-template-columns: repeat($max-columns, $template);
 
         > .label { grid-row-start: 1; }
         > .value { grid-row-start: 2; }
@@ -330,7 +332,7 @@
         .data-list {
 
             @media #{$not-narrow-screen} {
-                margin-top:     1.75rem;
+                margin-top:     1.5rem;
                 margin-left:    -4rem;
             }
 

@@ -167,13 +167,15 @@ class OrgsTest < ApplicationSystemTestCase
       end
 
       # Add field data.
-      fill_in 'field-ShortName', with: 'NU'
-      fill_in 'field-LongName',  with: org_name(**test_opt)
-      fill_in 'field-IpDomain',  with: 'new_university.edu'
-      fill_in 'field-Contact',   with: 'test_adm@new_university.edu'
+      fill_in 'value-ShortName', with: 'NU'
+      fill_in 'value-LongName',  with: org_name(**test_opt)
+      fill_in 'value-IpDomain',  with: 'new_university.edu'
+=begin # TODO: selecting contact from user list
+      fill_in 'value-Contact',   with: 'test_adm@new_university.edu'
+=end
 =begin # TODO: fix evaluation of field role
       # noinspection RubyMismatchedArgumentType
-      select 'Incomplete', from: 'field-Status'   if @user.administrator?
+      select 'Incomplete', from: 'value-Status'   if @user.administrator?
 =end
       select 'Shibboleth', from: 'field-Provider'
 
@@ -229,7 +231,7 @@ class OrgsTest < ApplicationSystemTestCase
       item_menu_select(item.long_name, name: 'id')
 
       # Replace field data.
-      fill_in 'field-LongName', with: org_name(**test_opt)
+      fill_in 'value-LongName', with: org_name(**test_opt)
 
       # After submitting should be back on the index page with the same number
       # of records.

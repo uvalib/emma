@@ -10,9 +10,8 @@
   return unless dec
 
   level ||= 1
-  extra ||= nil
   skip  ||= nil
 
 -%>
 
-<%= dec.details_container(level: level, pairs: extra, skip: skip) %>
+<%= dec.details_container(level: level, skip: skip) %>

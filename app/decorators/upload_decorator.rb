@@ -316,18 +316,6 @@ class UploadDecorator < BaseDecorator
 
     public
 
-    # Render a single entry for use within a list of items.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def list_item(pairs: nil, **opt)
-      opt[:pairs] = model_index_fields.merge(pairs || {})
-      super(**opt)
-    end
-
     # Include control icons below the entry number.
     #
     # @param [Hash] opt
@@ -339,6 +327,24 @@ class UploadDecorator < BaseDecorator
       super(**opt) do
         control_icon_buttons(**opt.slice(:index))
       end
+    end
+
+    # The number of columns needed if *item* will be displayed horizontally.
+    #
+    # @param [Model, Hash, Array, *] item   Default: object.
+    #
+    # @return [Integer]
+    #
+    def list_item_columns(item = nil)
+      item = object          if item.nil?
+      item = item.attributes if item.is_a?(Model)
+      item = item.keys       if item.is_a?(Hash)
+      Array.wrap(item).reject { |v|
+        case v
+          when Symbol, String then /(file_data|emma_data)$/.match?(v)
+          when FieldConfig    then v[:ignored]
+        end
+      }.size
     end
 
     # =========================================================================
@@ -518,6 +524,35 @@ class UploadDecorator
 
   public
 
+  # These columns are generally empty or don't provide a lot of useful
+  # information on the submission details display.
+  #
+  # @type [Array<String,Symbol,Regexp>]
+  #
+  FIELD_FILTERS = [:phase, /^edit/, /^review/].freeze
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def list_field_values(**opt)
+    opt[:except] ||= FIELD_FILTERS unless developer?
+    trace_attrs!(opt)
+    result = super(**opt)
+
+    # Move :file_data and :emma_data to the end.
+    data   = result.extract!(*compound_fields).presence and result.merge!(data)
+
+    phase  = result.delete(:phase)&.dig(:value)&.to_sym
+    edit   = result.reject { |k, _| k.is_a?(Array) || !k.start_with?('edit') }
+    state  = (phase == :edit) && edit[:edit_state]&.dig(:value)&.to_sym
+    result[:state][:value] = state if state && (state != :canceled)
+    result.except!(*edit.keys)
+  end
+
   # Transform a field value for HTML rendering.
   #
   # @param [*]         value
@@ -528,14 +563,18 @@ class UploadDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value(value, field:, **opt)
-    if present? && field.is_a?(Symbol) && object.include?(field)
-      case field
-        when :file_data then render_file_data(**opt)
-        when :emma_data then render_emma_data(**opt)
-        else                 object[field] || EMPTY_VALUE
-      end
-    end || super
+  def list_field_value(value, field:, **opt)
+    return value if value.is_a?(ActiveSupport::SafeBuffer)
+    return super unless value.present? && field.is_a?(Symbol)
+    trace_attrs!(opt)
+    case field
+      when :file_data, :edit_file_data
+        render_file_data(value, field: field, **opt)
+      when :emma_data, :edit_emma_data
+        render_emma_data(value, field: field, **opt)
+      else
+        value
+    end || EMPTY_VALUE
   end
 
   # ===========================================================================
@@ -559,28 +598,67 @@ class UploadDecorator
   end
 
   # ===========================================================================
-  # :section: BaseDecorator::List overrides
+  # :section: BaseDecorator::Table overrides
+  # ===========================================================================
+
+  public
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values(**opt)
+    trace_attrs!(opt)
+    t_opt    = trace_attrs_from(opt)
+    controls = control_group { control_icon_buttons(**t_opt) }
+    super(**opt, before: { actions: controls })
+  end
+
+  # Transform a field value for rendering in a table.
+  #
+  # @param [*]         value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to super.
+  #
+  # @return [*]
+  #
+  def table_field_value(value, field:, **opt)
+    return value if value.is_a?(ActiveSupport::SafeBuffer)
+    return super unless value.present? && field.is_a?(Symbol)
+    case field
+      when :file_data, :edit_file_data then table_file_data_value(value)
+      when :emma_data, :edit_emma_data then table_emma_data_value(value)
+      else                                  value
+    end || EMPTY_VALUE
+  end
+
+  # ===========================================================================
+  # :section:
   # ===========================================================================
 
   protected
 
-  # These columns are generally empty or don't provide a lot of useful
-  # information on the submission details display.
+  # Rendered table value for a :file_data field.
   #
-  # @type [Array<String,Symbol,Regexp>]
+  # @param [*] value
   #
-  FIELD_FILTERS = [:phase, /^edit/, /^review/].freeze
+  # @return [String, nil]
+  #
+  def table_file_data_value(value)
+    json_parse(value, log: false)&.dig(:metadata, :filename) if value.present?
+  end
 
-  # Specified field selections from the given User instance.
+  # Rendered table value for an :emma_data field.
   #
-  # @param [User, Hash, nil] item     Default: `#object`.
-  # @param [Hash]            opt      Passed to super.
+  # @param [*] value
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [String, nil]
   #
-  def model_field_values(item = nil, **opt)
-    opt[:filter] ||= FIELD_FILTERS
-    super
+  def table_emma_data_value(value)
+    json_parse(value, log: false)&.dig(:dc_title) if value.present?
   end
 
   # ===========================================================================

@@ -139,15 +139,6 @@ class UploadDecorator < BaseDecorator
     #
     def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
-    # Render a single entry for use within a list of items.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
     # Include control icons below the entry number.
     #
     # @param [Hash] opt
@@ -155,6 +146,14 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+    # The number of columns needed if *item* will be displayed horizontally.
+    #
+    # @param [Model, Hash, Array, *] item   Default: object.
+    #
+    # @return [Integer]
+    #
+    def list_item_columns: (?(Model|anyHash|anyArray|nil) item) -> Integer
 
     # Generate a prompt for #items_menu.
     #
@@ -255,6 +254,22 @@ class UploadDecorator
   #
   def preview: (?bool force) -> (ActiveSupport::SafeBuffer | nil)
 
+  # These columns are generally empty or don't provide a lot of useful
+  # information on the submission details display.
+  #
+  # @type [Array<String,Symbol,Regexp>]
+  #
+  FIELD_FILTERS: Array[String|Symbol|Regexp]
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def list_field_values: (**untyped opt) -> Hash[Symbol,FieldConfig]
+
   # Transform a field value for HTML rendering.
   #
   # @param [*]         value
@@ -265,7 +280,7 @@ class UploadDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+  def list_field_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
 
   # details_container
   #
@@ -277,21 +292,40 @@ class UploadDecorator
   #
   def details_container: (*String before, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
-  # These columns are generally empty or don't provide a lot of useful
-  # information on the submission details display.
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
   #
-  # @type [Array<String,Symbol,Regexp>]
+  # @param [Hash] opt   Passed to #field_property_pairs and #table_field_value.
   #
-  FIELD_FILTERS: Array[String|Symbol|Regexp]
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values: (**untyped opt) -> Hash[Symbol, FieldConfig]
 
-  # Specified field selections from the given User instance.
+  # Transform a field value for rendering in a table.
   #
-  # @param [User, Hash, nil] item     Default: `#object`.
-  # @param [Hash]            opt      Passed to super.
+  # @param [*]         value
+  # @param [Symbol, *] field
+  # @param [Hash]      opt            Passed to super.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [*]
   #
-  def model_field_values: (?(User|symHash|nil) item, **untyped opt) -> symHash
+  def table_field_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
+
+  # Rendered table value for a :file_data field.
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def table_file_data_value: (untyped value) -> (String | nil)
+
+  # Rendered table value for an :emma_data field.
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def table_emma_data_value: (untyped value) -> (String | nil)
 
   # Called by SearchDecorator#edit_controls.
   #

@@ -24,7 +24,7 @@ module BaseDecorator::Hierarchy
   # Render field/value pairs of a title-level record.
   #
   # @param [String, Symbol, nil] action
-  # @param [Hash, nil]           pairs      Except for #render_pair options.
+  # @param [Hash, nil]           pairs
   # @param [String, nil]         separator  Def: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Hash]                opt
   #
@@ -64,7 +64,6 @@ module BaseDecorator::Hierarchy
     lines = item_lines(hierarchy, opt)
     trace_attrs!(opt)
     lines.map! { |v| v.is_a?(Hash) ? render_field(v, opt) : ERB::Util.h(v) }
-    lines.compact!
     lines.unshift(nil).join(separator).html_safe
   end
 
@@ -328,7 +327,7 @@ module BaseDecorator::Hierarchy
   # @see "en.emma.search.field_hierarchy.**.accessibility"
   #
   def field_lines(pairs, field_prop, opt)
-    field_pairs(pairs, **opt).map { |_field, prop|
+    field_property_pairs(pairs: pairs, **opt).map { |_field, prop|
       prop.merge(field_prop, row: (opt[:row] += 1))
     }.compact_blank!
   end
@@ -341,13 +340,14 @@ module BaseDecorator::Hierarchy
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_field(line, opt)
-    value_opt   = opt.slice(:index, :min_index, :max_index, :no_format)
     label, record, field = line.values_at(:label, :record, :field)
-    value       = record.render_value(line[:value], field: field, **value_opt)
-    opt[:row]   = line[:row]
-    opt[:index] = Array.wrap(line[:index]).compact.join('-')
-    scopes      = field_scopes(line[:scopes])
-    opt         = append_css(opt, scopes) if scopes.present?
+    v_opt  = opt.slice(:index, :min_index, :max_index, :no_fmt)
+    value  = record.list_field_value(line[:value], field: field, **v_opt)
+    scopes = field_scopes(line[:scopes])
+    opt[:row]              = line[:row]
+    opt[:index]            = Array.wrap(line[:index]).compact.join('-')
+    opt[:'data-raw-value'] = Array.wrap(line[:value]).compact.join('|')
+    opt = append_css(opt, scopes) if scopes.present?
     opt.delete(:level) # Label/value pairs are "leaf nodes".
     trace_attrs!(opt)
     render_line(label, value, prop: line, **opt)

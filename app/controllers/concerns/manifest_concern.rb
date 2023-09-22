@@ -75,7 +75,8 @@ module ManifestConcern
   def new_record(attr = nil, force_id: false, **)
     # noinspection RubyScope, RubyMismatchedReturnType
     super do |attr|
-      attr[:name] ||= Manifest.default_name
+      attr[:name]  ||= Manifest.default_name
+      attr[:user_id] = current_user.id unless manager? && attr[:user_id]
     end
   end
 
@@ -94,25 +95,8 @@ module ManifestConcern
   #
   def update_record(item = nil, fatal: true, **prm)
     # noinspection RubyMismatchedReturnType
-    super do |record, attr|
-      unless administrator?
-        org     = current_org&.id or raise "no org for #{current_user}"
-        discard = []
-        if attr.key?((k = :email)) && ((acct = attr[k]) != record.account)
-          if !acct.present? || !manager?
-            discard << k
-          elsif User.find_by(email: acct)&.org_id != org
-            discard << k
-          end
-        end
-        if (discarded = discard.presence && attr.except!(*discard)).present?
-          Log.info do
-            # noinspection RubyScope
-            list = discarded.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
-            "#{__method__}: discarded: #{list} for #{current_user}"
-          end
-        end
-      end
+    super do |_record, attr|
+      attr[:user_id] = current_user.id unless manager? && attr[:user_id]
     end
   end
 

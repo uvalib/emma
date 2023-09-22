@@ -115,12 +115,11 @@ class ManifestItemDecorator < BaseDecorator
 
     # Render a single entry for use within a list of items.
     #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
+    # @param [Hash] opt                 Passed to super.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def list_item: (?pairs: symHash | nil, **untyped opt) -> ActiveSupport::SafeBuffer
+    def list_item: (**untyped opt) -> ActiveSupport::SafeBuffer
 
     # Include control icons below the entry number.
     #
@@ -604,7 +603,7 @@ class ManifestItemDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
+  def list_field_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
 
   # Generate the interior of the controls grid cell.
   #

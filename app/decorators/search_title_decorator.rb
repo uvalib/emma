@@ -27,13 +27,13 @@ class SearchTitleDecorator < SearchDecorator
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item(pairs: nil, **opt)
+  def list_item(before: nil, after: nil, **opt)
     if present?
+      added = {}
       # noinspection RailsParamDefResolve
       if relevancy_scores?
         added = object.try(:get_scores, precision: 2, all: true) || {}
@@ -41,12 +41,12 @@ class SearchTitleDecorator < SearchDecorator
         added[:pub_date]  = object.try(:emma_publicationDate).presence
         added[:rem_date]  = object.try(:rem_remediationDate).presence
         added.transform_values! { |score| score || EMPTY_VALUE }
-        pairs = pairs&.merge(added) || added
       end
-      opt[:pairs]    = pairs || {}             if object.aggregate?
+      opt[:after]    = added                   if object.aggregate?
       opt[:render] ||= :render_field_hierarchy if title_results?
     end
-    super(**opt)
+    trace_attrs!(opt)
+    super(before: before, after: after, **opt)
   end
 
   # Include control icons below the entry number.

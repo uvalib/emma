@@ -122,24 +122,6 @@ class ManifestDecorator < BaseDecorator
 
     public
 
-    # Render a single entry for use within a list of items.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def list_item(pairs: nil, **opt)
-      pairs = opt[:pairs] = model_index_fields.merge(pairs || {})
-      outer = opt[:outer] = opt[:outer]&.dup || {}
-      unless HTML_TABLE_TAGS.include?(opt[:tag])
-        outer_class  = css_class_array(*outer[:class])
-        need_columns = outer_class.none? { |c| c.start_with?('columns-') }
-        append_css!(outer, "columns-#{pairs.size}") if need_columns
-      end
-      super(**opt)
-    end
-
     # Include control icons below the entry number.
     #
     # @param [Hash] opt
@@ -370,7 +352,7 @@ class ManifestDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value(value, field:, **opt)
+  def list_field_value(value, field:, **opt)
     if present? && object.field_names.include?(field)
       object[field] || EMPTY_VALUE
     end || super
@@ -440,6 +422,26 @@ class ManifestDecorator
   #
   def row_skipped_columns
     ManifestItemDecorator.send(__method__)
+  end
+
+  # ===========================================================================
+  # :section: BaseDecorator::Table overrides
+  # ===========================================================================
+
+  public
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values(**opt)
+    trace_attrs!(opt)
+    t_opt    = trace_attrs_from(opt)
+    controls = control_group { control_icon_buttons(**t_opt) }
+    super(**opt, before: { actions: controls })
   end
 
   # ===========================================================================

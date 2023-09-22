@@ -29,17 +29,15 @@ module BaseDecorator::List
 
   # Render field/value pairs.
   #
-  # @param [Hash, nil]   pairs        Passed to #field_pairs.
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Hash]        opt          To #render_pair except
-  #                                     #FIELD_PAIRS_OPTIONS to #field_pairs.
+  # @param [Hash]        opt          To #render_pair or #field_property_pairs.
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_field_values: (?pairs: anyHash|nil, ?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_field_values: (?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a single label/value pair in a list item.
   #
@@ -49,12 +47,12 @@ module BaseDecorator::List
   # @param [FieldConfig]         prop
   # @param [Hash]                opt
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer, nil]
   #
   # === Implementation Notes
   # Compare with BaseDecorator::Grid#grid_data_cell_render_pair
   #
-  def render_field_value_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: symHash, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: FieldConfig, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   DEFAULT_LABEL_CLASS: String
 
@@ -109,11 +107,24 @@ module BaseDecorator::List
 
   # An indicator that can be used to stand for an empty list.
   #
-  # @param [String, nil] message      Default: #NO_RESULTS.
+  # @param [String] message           Default: #NO_RESULTS.
+  # @param [Hash]   opt               To #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_empty_value: (?(String|nil) message) -> ActiveSupport::SafeBuffer
+  def render_empty_value: (?String message, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Boolean] limited          Do not include fields that are :ignored
+  #                                     or have the wrong :role.
+  # @param [Hash]    opt              Passed to #field_property_pairs and
+  #                                     #list_field_value.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def list_field_values: (?limited: bool, **untyped opt) -> Hash[Symbol,FieldConfig]
 
   # Transform a field value for HTML rendering.
   #
@@ -124,7 +135,7 @@ module BaseDecorator::List
   # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If *value* or *object* is *nil*.
   #
-  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
+  def list_field_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
 
   # Enable to log attempts to render a field which fail.
   #
@@ -142,29 +153,10 @@ module BaseDecorator::List
   # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If executed method returned *nil*.
   #
-  def access: ((Model|symHash|nil) item, (String|Symbol) m, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
-
-  # Options for #model_field_values.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIELD_VALUES_OPT: symArray
-
-  # Specified field selections from the given model instance.
-  #
-  # @param [Model, Hash, nil]                   item
-  # @param [String, Symbol, Array, nil]         columns
-  # @param [String, Symbol, Regexp, Array, nil] filter
-  #
-  # @return [Hash{Symbol=>*}]
-  #
-  # @see #FIELD_VALUES_OPT
-  #
-  def model_field_values: (?(Model|symHash|nil) item, ?columns: Array[String|Symbol]|String|Symbol|nil, ?filter: Array[String|Symbol|Regexp]|String|Symbol|Regexp|nil, **untyped _ignored) -> symHash
+  def field_value: ((Model|symHash|nil) item, (String|Symbol) m, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
 
   # Render a metadata listing of a model instance.
   #
-  # @param [Hash, nil]   pairs        Label/value pairs.
   # @param [Hash]        outer        HTML options for outer div.
   # @param [String, nil] css          Default: "#(model_type)-details"
   # @param [Hash]        opt          Passed to #render_field_values except:
@@ -173,20 +165,20 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: anyHash|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # details_container
   #
-  # @param [Array]               parts  Optional elements after the details.
+  # @param [Array]               before   Optional elements before the details.
   # @param [Integer, nil]        level
   # @param [String, Symbol, nil] role
-  # @param [String, nil]         css    Default: "#(model_type)-container"
-  # @param [Hash]                opt    Passed to #details.
-  # @param [Proc, nil]           block  Passed to #capture.
+  # @param [String, nil]         css      Default: "#(model_type)-container"
+  # @param [Hash]                opt      Passed to #details.
+  # @param [Proc, nil]           blk      Passed to #capture.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container: (*ActiveSupport::SafeBuffer parts, level: Integer|nil, role: String|Symbol|nil, ?css: String|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+  def details_container: (*String before, level: Integer|nil, role: String|Symbol|nil, ?css: String|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # A complete list item entry.
   #
@@ -196,7 +188,7 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_row: (?add: symHash|nil, ?skip: Symbol|symArray|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_row: (?skip: Symbol|symArray|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Method options which are processed internally and not passed on as HTML
   # options.
@@ -245,23 +237,33 @@ module BaseDecorator::List
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Hash, nil]     pairs      Label/value pairs.
-  # @param [Symbol]        render     Default: #render_field_values.
+  # @param [String, Array] before     Optional leading column(s).
+  # @param [String, Array] after      Optional trailing columns(s).
   # @param [Hash]          outer      HTML options for outer div container.
-  # @param [String, Array] leading    Optional leading column(s).
-  # @param [String, Array] trailing   Optional trailing columns(s).
   # @param [Symbol]        tag        If :tr, generate <tr>.
+  # @param [Symbol]        render     Default: #render_field_values.
   # @param [Integer, nil]  level
   # @param [String]        css        Default: .(model_type)-list-item
   # @param [String]        id         Passed to :outer div.
-  # @param [Hash]          opt        Passed to the render method.
+  # @param [Hash]          opt        Passed to the render method except or
+  #                                     #list_field_values.
   #
   # @option opt [Integer] :row        Sets "row-#{row}" in :outer div.
+  # @option opt [Integer] :col        Sets "col-#{col}" in :outer div.
+  # @option opt [Integer] :pos        Sets "pos-#{pos}" in :outer div.
   # @option opt [Symbol]  :group      May set :'data-group' for :outer div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: anyHash|nil, ?render: Symbol|nil, ?outer: symHash|nil, ?leading: String|strArray|nil, ?trailing: String|strArray|nil, ?tag: Symbol, ?level: Integer|nil, ?css: String|nil, ?id: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (?before: String|strArray|nil, ?after: String|strArray|nil, ?outer: symHash|nil, ?tag: Symbol, ?render: Symbol|nil, ?level: Integer|nil, ?css: String|nil, ?id: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The number of columns needed if *item* will be displayed horizontally.
+  #
+  # @param [Model, Hash, Array, *] item   Default: object.
+  #
+  # @return [Integer]
+  #
+  def list_item_columns: (?(Model|anyHash|anyArray|nil) item) -> Integer
 
   # Thumbnail element for the given catalog title.
   #

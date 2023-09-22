@@ -60,6 +60,13 @@ $checkbox-x-gap: 0.675rem;
     // Components
     //=========================================================================
 
+    // This causes date columns to be wider than the rest so that they display
+    // without breaks.  In the desktop form factor this works well in most
+    // cases without negatively impacting the other columns.
+    .value.datetime {
+        width: max-content;
+    }
+
     // Ensure that the label and value both span the grid in all screen widths
     // for the hierarchical data values.
     .field-FileData,
@@ -115,6 +122,16 @@ $checkbox-x-gap: 0.675rem;
     }
 
     .field-Title {
+        &.value {
+            font-weight: bold;
+        }
+    }
+
+    .field-SubmissionId {
+        width: max-content;
+    }
+
+    .field-FileDataMetadataFilename {
         &.value {
             font-weight: bold;
         }

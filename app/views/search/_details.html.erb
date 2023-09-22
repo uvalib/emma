@@ -10,7 +10,6 @@
   item    = dec.object
 
   level ||= 1
-  extra ||= nil
   skip  ||= nil
 
   skip    = [*skip, :cover]
@@ -25,4 +24,4 @@
 
 -%>
 
-<%= dec.details_container(level: level, pairs: extra, skip: skip) %>
+<%= dec.details_container(level: level, skip: skip) %>

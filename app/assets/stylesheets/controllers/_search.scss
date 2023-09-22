@@ -1108,8 +1108,8 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             @include grid.column-span;
         }
 
-        // Superfluous because BaseDecorator::Fields#field_pairs folds the
-        // information from :rem_complete into :rem_coverage.
+        // Superfluous because BaseDecorator::Fields#field_property_pairs folds
+        // the information from :rem_complete into :rem_coverage.
         .field-Complete {
             display: none;
         }

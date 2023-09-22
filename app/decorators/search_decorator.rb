@@ -53,9 +53,7 @@ class SearchDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer, nil]
     #
     def render_pair(label, value, **opt)
-      return if value.blank?
-      opt[:no_code] = true unless opt.key?(:no_code)
-      super(label, value, **opt)
+      super(label, value, no_code: true, **opt) if value.present?
     end
 
     # =========================================================================
@@ -63,19 +61,6 @@ class SearchDecorator < BaseDecorator
     # =========================================================================
 
     public
-
-    # Bridge the gap between "emma.search.record" (which defines the order of
-    # display of data fields) and "emma.upload.record.emma_data" (which holds
-    # the details about each data field).
-    #
-    # @param [Symbol]    field
-    # @param [Hash, nil] config
-    #
-    # @return [Hash]
-    #
-    def field_properties(field, config = nil)
-      Field.configuration_for(field).merge(config || {})
-    end
 
     # The defined levels for rendering an item hierarchically.
     #
@@ -325,7 +310,7 @@ class SearchDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value(value, field:, **opt)
+  def list_field_value(value, field:, **opt)
     if present? && field.is_a?(Symbol)
       case field
         when :dc_title                then title_and_source_logo(**opt)
@@ -556,13 +541,12 @@ class SearchDecorator
 
   # Render a metadata listing of a search result item.
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details(pairs: nil, **opt)
-    opt[:pairs] = model_show_fields.merge(pairs || {})
+  def details(**opt)
+    opt[:pairs] ||= model_show_fields
     super(**opt)
   end
 
@@ -622,17 +606,16 @@ class SearchDecorator
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item(pairs: nil, **opt)
+  def list_item(before: nil, after: nil, **opt)
     score_data  = (score_values.presence if relevancy_scores?)
     opt[:outer] = opt[:outer]&.merge(score_data) || score_data if score_data
     opt[:wrap]  = PAIR_WRAPPER unless opt.key?(:wrap)
-    opt[:pairs] = model_index_fields.merge(pairs || {})
-    super(**opt)
+    trace_attrs!(opt)
+    super(before: before, after: after, **opt)
   end
 
   # Include control icons below the entry number.

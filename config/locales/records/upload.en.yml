@@ -101,6 +101,7 @@ en:
           tooltip:      'Source repository of the uploaded file'
           notes_html:   |
             <em>TODO</em>
+          type:         !ruby/symbol EmmaRepository
           origin:       system
 
         submission_id:

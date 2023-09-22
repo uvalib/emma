@@ -55,28 +55,39 @@ module BaseDecorator::Fields
   #
   def render_json_data: ((String|anyHash|nil) value, ?outer: symHash|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Field/value pairs.
-  #
-  # @param [Model, Hash, nil] item    Default: `#object`.
-  #
-  # @return [Hash]
-  #
-  def field_values: (?(Model|anyHash|nil) item) -> anyHash
-
-  # Local options for #field_pairs.
+  # Options for #field_value_pairs.
   #
   # @type [Array<Symbol>]
   #
-  FIELD_PAIRS_OPTIONS: symArray
+  FIELD_VALUE_PAIRS_OPT: symArray
+
+  # Field/value pairs.
+  #
+  # @param [Model, Hash, nil]  item     Default: *pairs*.
+  # @param [Model, Hash, nil]  pairs    Default: `#object`.
+  # @param [Hash, nil]         before   Additional leading label/value pairs.
+  # @param [Hash, nil]         after    Additional trailing label/value pairs.
+  # @param [ActionConfig, nil] config
+  #
+  # @return [Hash]
+  #
+  def field_value_pairs: (?(Model|anyHash|nil) item, ?pairs: Model|anyHash|nil, ?before: anyHash|nil, ?after: anyHash|nil, ?config: ActionConfig|nil, **untyped _ignored) -> anyHash
+
+  # Local options for #field_property_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELD_PROPERTY_PAIRS_OPT: symArray
 
   # A table of fields with their property objects.
   #
-  # @param [Model, Hash, nil]           item        Passed to #field_values.
   # @param [String, Symbol, nil]        action
   # @param [Array<Symbol>, nil]         only        Only matching fields.
+  # @param [Array<Symbol>, nil]         except      Not matching fields.
   # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
+  # @param [Hash]                       opt         To #field_value_pairs.
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>FieldConfig}]
   #
   # === Usage Notes
   # If *field_root* is given it is used to transform the field into a path
@@ -85,7 +96,7 @@ module BaseDecorator::Fields
   # the configuration for :file_data.  (This allows [:file_data][:id] to be
   # associated with the proper field configuration.)
   #
-  def field_pairs: (?(Model|anyHash|nil) item, ?action: String|Symbol|nil, ?only: symArray|nil, ?except: symArray|nil, ?field_root: Symbol|symArray|nil, **untyped _ignored) -> Hash[Symbol,symHash]
+  def field_property_pairs: (?action: String|Symbol|nil, ?only: symArray|nil, ?except: symArray|nil, ?field_root: Symbol|symArray|nil, **untyped opt) -> Hash[Symbol,FieldConfig]
 
   # Field type indicators mapped on to related class(es).
   #
@@ -117,7 +128,7 @@ module BaseDecorator::Fields
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Local options for #render_check_box.
   #
@@ -136,15 +147,6 @@ module BaseDecorator::Fields
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_check_box: (String name, untyped value, ?tag: Symbol, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # This is a "hook" to allow customization by SearchDecorator.
-  #
-  # @param [Symbol]    field
-  # @param [Hash, nil] config
-  #
-  # @return [Hash]
-  #
-  def field_properties: (Symbol field, ?(symHash|nil) config) -> symHash
 
   # Indicate whether the value is a valid range type.
   #

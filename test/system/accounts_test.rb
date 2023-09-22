@@ -193,15 +193,15 @@ class AccountsTest < ApplicationSystemTestCase
       assert_selector '.uploaded-filename.complete', wait: 5
 
       # Add field data.
-      select 'EMMA',            from: 'field-Repository'
-      select 'Moving Image',    from: 'field-Type'
-      select 'True',            from: 'field-Complete'
-      select 'Born Accessible', from: 'field-Status'
-      check  'Armenian'         # inside 'field-Language'
-      fill_in 'field-Identifier', with: '' # remove bogus identifier
-      fill_in 'field-Title',      with: "#{title } - #{tag}"
-      fill_in 'field-Creator',    with: "#{author} - #{tag}"
-      fill_in 'field-Comments',   with: 'FAKE - do not use'
+      select 'EMMA',            from: 'value-Repository'
+      select 'Moving Image',    from: 'value-Type'
+      select 'True',            from: 'value-Complete'
+      select 'Born Accessible', from: 'value-Status'
+      check  'Armenian'         # inside 'value-Language'
+      fill_in 'value-Identifier', with: '' # remove bogus identifier
+      fill_in 'value-Title',      with: "#{title } - #{tag}"
+      fill_in 'value-Creator',    with: "#{author} - #{tag}"
+      fill_in 'value-Comments',   with: 'FAKE - do not use'
 =end
 
       # After submitting should be back on the index page with one more record
@@ -261,8 +261,8 @@ class AccountsTest < ApplicationSystemTestCase
       assert_selector '[data-field="user_id"]', visible: false#, text: @user&.id # TODO: why is this not filled?
 
       # Replace field data.
-      fill_in 'field-Title',   with: title
-      fill_in 'field-Creator', with: author
+      fill_in 'value-Title',   with: title
+      fill_in 'value-Creator', with: author
 =end
 
 

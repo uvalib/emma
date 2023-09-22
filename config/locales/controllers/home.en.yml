@@ -72,6 +72,31 @@ en:
            #- [account, edit_select]
            #- [account, delete_select]
 
+        display_fields: # @see 'en.emma.account.record'
+          #- !ruby/symbol all
+          - [account, id]
+          - [account, email]
+          - [account, role]
+          - [account, org_id]
+          - [account, first_name]
+          - [account, last_name]
+          - [account, preferred_email]
+          - [account, phone]
+          - [account, address]
+          - [account, status]
+          - [account, status_date]
+          - [account, sign_in_count]
+          - [account, current_sign_in_at]
+          - [account, last_sign_in_at]
+          - [account, current_sign_in_ip]
+          - [account, last_sign_in_ip]
+          - [account, encrypted_password]
+          - [account, remember_created_at]
+          - [account, reset_password_token]
+          - [account, reset_password_sent_at]
+          - [account, created_at]
+          - [account, updated_at]
+
         _endpoint:      true
 
       # =======================================================================

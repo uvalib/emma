@@ -107,7 +107,7 @@ module BaseDecorator::Fields
           }.to_h
         render_field_values(pairs: pairs, **opt, **t_opt)
       else
-        render_empty_value(EMPTY_VALUE)
+        render_empty_value(message: EMPTY_VALUE, **t_opt)
       end
     end
   end
@@ -118,47 +118,75 @@ module BaseDecorator::Fields
 
   public
 
-  # Field/value pairs.
-  #
-  # @param [Model, Hash, nil] item    Default: `#object`.
-  #
-  # @return [Hash]
-  #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
-  def field_values(item = nil)
-    item ||= object
-    case item
-      when ApplicationRecord
-        # Convert :file_data and :emma_data into hashes and move to the end.
-        data, pairs = partition_hash(item.fields, *compound_fields)
-        data.each_pair { |k, v| pairs[k] = json_parse(v) }
-        pairs
-      when Api::Record
-        item.field_names.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
-      when Hash
-        item
-      else
-        {}
-    end
-  end
-
-  # Local options for #field_pairs.
+  # Options for #field_value_pairs.
   #
   # @type [Array<Symbol>]
   #
-  FIELD_PAIRS_OPTIONS = %i[action only except field_root].freeze
+  FIELD_VALUE_PAIRS_OPT = %i[pairs before after].freeze
+
+  # Field/value pairs.
+  #
+  # @param [Model, Hash, nil]  item     Default: *pairs*.
+  # @param [Model, Hash, nil]  pairs    Default: `#object`.
+  # @param [Hash, nil]         before   Additional leading label/value pairs.
+  # @param [Hash, nil]         after    Additional trailing label/value pairs.
+  # @param [ActionConfig, nil] config
+  #
+  # @return [Hash]
+  #
+  def field_value_pairs(
+    item =  nil,
+    pairs:  nil,
+    before: nil,
+    after:  nil,
+    config: nil,
+    **
+  )
+    parts = []
+    if before.is_a?(Hash)
+      parts << before
+    elsif before
+      Log.warn { "#{__method__}: before: unexpected: #{before.inspect}" }
+    end
+    case (item ||= pairs || object)
+      when Model
+        config ||= model_context_fields || model_index_fields
+        pairs    = item.fields
+        parts <<
+          config.map { |field, _prop|
+            found = pairs.key?(field)
+            value = found ? pairs[field] : list_field_value(nil, field: field)
+            [field, value]
+          }.to_h
+      when Hash
+        parts << item
+      else
+        Log.warn { "#{__method__}: unexpected: #{item.inspect}" }
+    end
+    if after.is_a?(Hash)
+      parts << after
+    elsif after
+      Log.warn { "#{__method__}: after: unexpected: #{after.inspect}" }
+    end
+    {}.merge!(*parts)
+  end
+
+  # Local options for #field_property_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELD_PROPERTY_PAIRS_OPT =
+    (%i[action only except field_root] + FIELD_VALUE_PAIRS_OPT).freeze
 
   # A table of fields with their property objects.
   #
-  # @param [Model, Hash, nil]           item        Passed to #field_values.
   # @param [String, Symbol, nil]        action
   # @param [Array<Symbol>, nil]         only        Only matching fields.
   # @param [Array<Symbol>, nil]         except      Not matching fields.
   # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
+  # @param [Hash]                       opt         To #field_value_pairs.
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>FieldConfig}]
   #
   # === Usage Notes
   # If *field_root* is given it is used to transform the field into a path
@@ -170,39 +198,39 @@ module BaseDecorator::Fields
   #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def field_pairs(
-    item =      nil,
+  def field_property_pairs(
     action:     nil,
     only:       nil,
     except:     nil,
     field_root: nil,
-    **
+    **opt
   )
-    only   &&= Array.wrap(only)
-    except &&= Array.wrap(except)
-    field_values(item).map { |k, v|
+    action &&= action.to_sym
+    only   &&= Array.wrap(only).presence
+    except &&= Array.wrap(except).presence
+    field_value_pairs(**opt).map { |k, v|
 
-      field, value, config = k, v, nil
+      field, value, prop = k, v, nil
       if v.is_a?(Symbol)
         field = v
-      elsif k.is_a?(Symbol) && v.is_a?(Hash)
-        config = v
-        value  = config[:value]
+      elsif k.is_a?(Symbol) && v.is_a?(FieldConfig)
+        prop  = v
+        value = prop[:value]
       end
 
       if field_root
-        field    = [field_root, field]
-        config   = field_configuration(field, action)
+        field  = [field_root, field]
+        prop   = field_configuration(field, action)
       elsif field.is_a?(String)
-        config ||= field_configuration_for_label(field, action)
-        field    = config[:field] if config&.dig(:field)&.is_a?(Symbol)
-      else
-        config ||= field_configuration(field, action)
+        prop ||= field_configuration_for_label(field, action)
+        field  = prop[:field] if prop&.dig(:field)&.is_a?(Symbol)
       end
 
-      next if except&.include?(field) || only && !only.include?(field)
+      next if only && !only.include?(field) || except&.include?(field)
 
-      prop = field_properties(field, config)
+      prop ||= field_configuration(field, action)
+      prop   = prop.dup if prop&.frozen?
+
       prop[:field]   = field.join('_').to_sym if field.is_a?(Array)
       prop[:field] ||= (field if field.is_a?(Symbol))
       prop[:label] ||= (k     if k.is_a?(String))
@@ -273,7 +301,7 @@ module BaseDecorator::Fields
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_field_item(name, value, **opt)
+  def render_form_field_item(name, value, **opt)
     normalize_attributes!(opt)
     trace_attrs!(opt)
     local = opt.extract!(:base, :name, :type)
@@ -293,7 +321,7 @@ module BaseDecorator::Fields
         when :date     then value.first.to_s
         when :time     then value.first.to_s.sub(/^([^ ]+).*$/, '\1')
         when :year     then value.first.to_s.sub(/\s.*$/, '')
-        else value.map { |v| v.to_s.strip.presence }.compact.join(' | ')
+        else value.map { |v| v.to_s.strip }.compact_blank!.join('; ')
       end
     case type
       when :check    then render_check_box(name, value, **opt)
@@ -354,17 +382,6 @@ module BaseDecorator::Fields
   # ===========================================================================
 
   protected
-
-  # This is a "hook" to allow customization by SearchDecorator.
-  #
-  # @param [Symbol]    field
-  # @param [Hash, nil] config
-  #
-  # @return [Hash]
-  #
-  def field_properties(field, config = nil)
-    field_configuration(field).merge(config || {})
-  end
 
   # Indicate whether the value is a valid range type.
   #

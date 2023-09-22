@@ -267,25 +267,19 @@ class ManifestItemDecorator < BaseDecorator
 
     # Render a single entry for use within a list of items.
     #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
+    # @param [Hash] opt                 Passed to super.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def list_item(pairs: nil, **opt)
+    def list_item(before: nil, after: nil, **opt)
       index = opt[:index]
-      pairs = opt[:pairs] = model_index_fields.merge(pairs || {})
       outer = opt[:outer] = opt[:outer]&.dup || {}
       outer[:id]                ||= "#{model_type}-item-#{index}" if index
       outer[:'data-item-id']    ||= object.id
       outer[:'data-item-row']   ||= object.row
       outer[:'data-item-delta'] ||= object.delta
-      unless HTML_TABLE_TAGS.include?(opt[:tag])
-        outer_class  = css_class_array(*outer[:class])
-        need_columns = outer_class.none? { |c| c.start_with?('columns-') }
-        append_css!(outer, "columns-#{pairs.size}") if need_columns
-      end
-      super(**opt)
+      trace_attrs!(opt)
+      super(before: before, after: after, **opt)
     end
 
     # Include control icons below the entry number.
@@ -1236,7 +1230,7 @@ class ManifestItemDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value(value, field:, **opt)
+  def list_field_value(value, field:, **opt)
     if present? && object.field_names.include?(field)
       case (v = object[field])
         when Array    then v.join("\n")

@@ -30,17 +30,6 @@ class SearchDecorator < BaseDecorator
     #
     def render_pair: ((String|Symbol|nil) label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-    # Bridge the gap between "emma.search.record" (which defines the order of
-    # display of data fields) and "emma.upload.record.emma_data" (which holds
-    # the details about each data field).
-    #
-    # @param [Symbol]    field
-    # @param [Hash, nil] config
-    #
-    # @return [Hash]
-    #
-    def field_properties: (Symbol field, ?(symHash|nil) config) -> symHash
-
     # The defined levels for rendering an item hierarchically.
     #
     # @param [Hash] opt
@@ -196,7 +185,7 @@ class SearchDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+  def list_field_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
 
   # Add date and volume information to the title line.
   #
@@ -290,12 +279,11 @@ class SearchDecorator
 
   # Render a metadata listing of a search result item.
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def details: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # details_container
   #
@@ -324,12 +312,11 @@ class SearchDecorator
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to super.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def list_item: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Include control icons below the entry number.
   #

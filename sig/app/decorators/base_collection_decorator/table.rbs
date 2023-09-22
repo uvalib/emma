@@ -40,26 +40,12 @@ module BaseCollectionDecorator::Table
 
   # Render column headings for a table of model items.
   #
-  # @param [Integer] row
-  # @param [Integer] col
-  # @param [Boolean] dark
-  # @param [Hash]    opt              To column except:
-  #
-  # @option opt [Symbol]                :outer_tag  Default: :tr
-  # @option opt [Symbol]                :inner_tag  Default: :th
-  # @option opt [Symbol, String, Array] :columns    To #table_values
-  # @option opt [String, Regexp, Array] :filter     To #table_values
+  # @param [Boolean, nil] dark
+  # @param [Hash]         opt         To #render_table_row
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @yield [item, **opt] Allows the caller to generate the item columns.
-  # @yieldparam  [Model] item         Single item instance.
-  # @yieldparam  [Hash]  opt          Field generation options.
-  # @yieldreturn [ActiveSupport::SafeBuffer]
-  #
-  # @see #table_entry
-  #
-  def table_headings: (?row: Integer, ?col: Integer, ?dark: bool, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
+  def table_heading: (?dark: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # The collection of items to be presented in tabular form.
   #

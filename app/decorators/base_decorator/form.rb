@@ -78,9 +78,10 @@ module BaseDecorator::Form
   # Render field/value pairs.
   #
   # @param [String, Symbol, nil] action
-  # @param [Hash, nil]           pairs        Except #render_form_pair options.
   # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Hash]                opt
+  # @param [Hash]                opt          Passed to #render_form_pair
+  #                                             except #FIELD_VALUE_PAIRS_OPT
+  #                                             to #field_value_pairs.
   #
   # @option opt [Integer] :index              Offset to make unique element IDs
   #                                             passed to #render_form_pair.
@@ -90,45 +91,39 @@ module BaseDecorator::Form
   # === Implementation Notes
   # Compare with BaseDecorator::List#render_field_values
   #
-  def render_form_fields(action: nil, pairs: nil, separator: nil, **opt)
-    return ''.html_safe unless pairs || object
+  def render_form_fields(action: nil, separator: nil, **opt)
+    fvp_opt = opt.extract!(*FIELD_VALUE_PAIRS_OPT).compact_blank!
+    return ''.html_safe if blank? && fvp_opt.blank?
+
     action    ||= context[:action]
     separator ||= DEFAULT_ELEMENT_SEPARATOR
     trace_attrs!(opt)
     opt[:row]   = 0
-    field_values(pairs).map { |label, value|
-      next if (label == :file_data) || (label == :emma_data)
+
+    field_value_pairs(**fvp_opt).map { |label, value|
+      next if %i[file_data emma_data].include?(label)
+
       if label.is_a?(Symbol)
         field = label
         prop  = field_configuration(field, action)
-        label = prop[:label] || label
-        case value
-          when Field::Type
-            value = field_for(field, config: prop, value: value.value.presence)
-          when Hash
-            value = field_for(field, config: prop)
-        end
+        label = prop[:label] || labelize(label)
       elsif value.is_a?(Symbol)
         field = value
         prop  = field_configuration(field, action)
+        label = prop[:label] || labelize(label)
         value = nil
       else
         prop  = field_configuration_for_label(label, action)
         field = prop[:field]
       end
 
-      rv = render_value(value, field: field)
-      if value.is_a?(Field::Type)
-        value.set(rv.is_a?(Field::Type) ? rv.value : rv)
-      else
-        value = rv
-      end
+      value = list_field_value(value, field: field)
+      value = field_for(field, value: value.presence, prop: prop)
 
       opt[:row]  += 1
       opt[:field] = field
       opt[:prop]  = prop
       opt[:index] = (0 if prop[:readonly])
-      # noinspection RubyMismatchedArgumentType
       render_form_pair(label, value, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end
@@ -494,7 +489,7 @@ module BaseDecorator::Form
     trace_attrs!(opt)
     append_css!(opt, 'fixed') if opt.delete(:fixed)
     prepend_css!(opt, css)
-    render_field_item(name, value, **opt)
+    render_form_field_item(name, value, **opt)
   end
 
   # render_form_input
@@ -512,7 +507,7 @@ module BaseDecorator::Form
     trace_attrs!(opt)
     append_css!(opt, 'fixed') if opt.delete(:fixed)
     prepend_css!(opt, css)
-    render_field_item(name, value, **opt)
+    render_form_field_item(name, value, **opt)
   end
 
   # render_form_email
@@ -772,22 +767,26 @@ module BaseDecorator::Form
 
   # Generate a form for inline use.
   #
-  # @param [Hash, nil]      pairs     Fields/values; default #model_form_fields
   # @param [String, Symbol] action    Either :new or :edit.
   # @param [String]         css       Characteristic CSS class/selector.
-  # @param [Hash]           opt       Passed to #form_with.
+  # @param [Hash]           opt       Passed to #form_with except
+  #                                     #FIELD_VALUE_PAIRS_OPT passed to
+  #                                     #render_form_fields.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def model_line_editor(pairs: nil, action: nil, css: '.line-editor', **opt)
-    pairs ||= model_form_fields
-    prepend_css!(opt, css)
+  def model_line_editor(action: nil, css: '.line-editor', **opt)
     model_form_options!(opt, action: action)
+    prepend_css!(opt, css)
+    trace_attrs!(opt)
+    t_opt   = trace_attrs_from(opt)
+    fvp_opt = opt.extract!(*FIELD_VALUE_PAIRS_OPT)
+    rff_opt = { action: action, no_label: true }
     form_with(model: object, **opt) do |f|
       parts  = form_hidden_fields(f)
-      parts << render_form_fields(action: action, pairs: pairs, no_label: true)
-      parts << html_button(UPDATE_LABEL, class: UPDATE_CSS)
-      parts << html_button(CANCEL_LABEL, class: CANCEL_CSS)
+      parts << render_form_fields(**rff_opt, **fvp_opt, **t_opt)
+      parts << html_button(UPDATE_LABEL, class: UPDATE_CSS, **t_opt)
+      parts << html_button(CANCEL_LABEL, class: CANCEL_CSS, **t_opt)
       safe_join(parts)
     end
   end
@@ -1134,14 +1133,14 @@ module BaseDecorator::Form
 
   # Render pre-populated form fields.
   #
-  # @param [Hash, nil] pairs          Additional field mappings.
-  # @param [Hash]      opt            Passed to #render_form_fields.
+  # @param [Hash] opt                 Passed to #render_form_fields.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def form_fields(pairs: nil, **opt)
-    pairs = model_form_fields.merge(pairs || {})
-    render_form_fields(pairs: pairs, **opt)
+  def form_field_rows(**opt)
+    trace_attrs!(opt)
+    opt[:pairs] ||= model_form_fields
+    render_form_fields(**opt)
   end
 
   # ===========================================================================

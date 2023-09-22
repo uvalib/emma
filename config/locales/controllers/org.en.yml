@@ -83,6 +83,25 @@ en:
           label:        'List all EMMA member organizations'
 
       # =======================================================================
+      # Fields
+      # =======================================================================
+
+      display_fields: # Overrides order of 'en.emma.org.record'
+        - id
+        - short_name
+        - long_name
+        - ip_domain
+        - contact
+        - status
+        - status_date
+        - start_date
+        - created_at
+        - updated_at
+        - provider
+        - info:       { ignored: true }
+        - history:    { ignored: true }
+
+      # =======================================================================
       # Messages
       # =======================================================================
 
@@ -234,7 +253,6 @@ en:
 
       edit_select:
         <<:             *EDIT_ACTION
-       #label:          'Edit Org' # TODO: ???
 
       # =======================================================================
 
@@ -281,7 +299,6 @@ en:
 
       delete_select:
         <<:             *DELETE_ACTION
-       #label:          'Delete Org' # TODO: ???
 
       # =======================================================================
 

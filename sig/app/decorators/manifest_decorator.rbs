@@ -45,15 +45,6 @@ class ManifestDecorator < BaseDecorator
     #
     def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
-    # Render a single entry for use within a list of items.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
     # Include control icons below the entry number.
     #
     # @param [Hash] opt
@@ -189,7 +180,7 @@ class ManifestDecorator
   # @return [String]
   # @return [nil]
   #
-  def render_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
+  def list_field_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
 
   # Page count label for manifest items.
   #
@@ -231,6 +222,15 @@ class ManifestDecorator
   # @return [Array<Symbol>]
   #
   def row_skipped_columns: () -> symArray
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values: (**untyped opt) -> Hash[Symbol, FieldConfig]
 
   # Render associated items.
   #

@@ -157,42 +157,40 @@ en:
         # (Upload table fields not yet displayed via 'index' or 'show'.)
 
         phase:
-          cond:
-            only:       !ruby/symbol none
+          role:         developer
 
         edit_state:
-          cond:
-            only:       !ruby/symbol none
+          role:         developer
 
         edit_user:
-          cond:
-            only:       !ruby/symbol none
+          role:         developer
 
         edit_file_data:
-          cond:
-            only:       !ruby/symbol none
+          role:         developer
 
         edit_emma_data:
-          cond:
-            only:       !ruby/symbol none
+          role:         developer
 
         edited_at:
-          cond:
-            only:       !ruby/symbol none
+          role:         developer
 
         review_user:
+          ignored: true
           cond:
             only:       !ruby/symbol none
 
         review_success:
+          ignored: true
           cond:
             only:       !ruby/symbol none
 
         review_comment:
+          ignored: true
           cond:
             only:       !ruby/symbol none
 
         reviewed_at:
+          ignored: true
           cond:
             only:       !ruby/symbol none
 
@@ -352,9 +350,6 @@ en:
         label:          'Submissions'
         title:          'EMMA Submissions'
 
-        display_fields: # @see 'en.emma.upload.record'
-          - !ruby/symbol all
-
         _endpoint:      true
 
       # =======================================================================
@@ -404,10 +399,10 @@ en:
         title:          'Uploaded file %{name}'
         tooltip:        'See details about this upload'
 
-        display_fields: # @see 'en.emma.upload.record'
-          - !ruby/symbol all
-          - fmt:        'Fmt'
-          - ext:        'Ext'
+        #display_fields: # @see 'en.emma.upload.record'
+        #  - !ruby/symbol all
+        #  - fmt:        'Fmt'
+        #  - ext:        'Ext'
 
         _endpoint:      true
 

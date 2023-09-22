@@ -18,9 +18,8 @@
       html_tag((level + 1), title, class: 'details-heading')
     end
 
-  columns   ||= nil
-  filter    ||= nil
-  extra     ||= nil
+  only      ||= nil
+  except    ||= nil
 
   details   ||= true
   uploads   ||= true
@@ -39,7 +38,7 @@
 
   <div class="org-section details-section">
     <%= heading %>
-    <%= dec.details(columns: columns, filter: filter, pairs: extra) %>
+    <%= dec.details(only: only, except: except) %>
   </div>
 
   <div class="org-section users-section">

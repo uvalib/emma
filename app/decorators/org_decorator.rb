@@ -150,6 +150,26 @@ class OrgDecorator
 
   include SharedDefinitions
 
+  # ===========================================================================
+  # :section: BaseDecorator::Table overrides
+  # ===========================================================================
+
+  public
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values(**opt)
+    trace_attrs!(opt)
+    t_opt    = trace_attrs_from(opt)
+    controls = control_group { control_icon_buttons(**t_opt) }
+    super(**opt, before: { actions: controls })
+  end
+
 end
 
 __loading_end(__FILE__)

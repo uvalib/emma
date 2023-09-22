@@ -14,15 +14,6 @@ class SearchCallDecorator < BaseDecorator
   #
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
-
-    # Render a single entry for use within a list of items.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def list_item: (?pairs: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -76,15 +67,6 @@ class SearchCallDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def link: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Specified field selections from the given SearchCall instance.
-  #
-  # @param [SearchCall, Hash, nil] item   Default: `#object`
-  # @param [Hash]                  opt    Passed to super.
-  #
-  # @return [Hash{String=>ActiveSupport::SafeBuffer}]
-  #
-  def model_field_values: (?(SearchCall|symHash|nil) item, **untyped opt) -> Hash[String,ActiveSupport::SafeBuffer]
 
   # Element containing a field name.
   #

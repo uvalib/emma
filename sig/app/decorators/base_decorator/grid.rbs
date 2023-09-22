@@ -325,12 +325,10 @@ module BaseDecorator::Grid
 
   # Render a grid data cell with value display element and an edit element.
   #
-  # @param [Hash, nil]   pairs        Passed to #field_pairs.
-  # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Symbol]      tag          Potential alternative to :td.
+  # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [String]      css          Characteristic CSS class/selector.
-  # @param [Hash]        opt          To #render_pair except
-  #                                     #FIELD_PAIRS_OPTIONS to #field_pairs.
+  # @param [Hash]        opt          To #render_pair or #field_property_pairs.
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
@@ -341,7 +339,26 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def grid_data_cell: (?pairs: anyHash|nil, ?separator: String|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def grid_data_cell: (?tag: Symbol|nil, ?separator: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt   Passed to #field_property_pairs and #table_field_value.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def grid_field_values: (**untyped opt) -> Hash[Symbol, FieldConfig]
+
+  # Transform a field value for rendering in a table.
+  #
+  # @param [*]         value          Passed to #list_field_value.
+  # @param [Symbol, *] field          Passed to #list_field_value.
+  # @param [Hash]      opt            Passed to #list_field_value.
+  #
+  # @return [*]
+  #
+  def grid_field_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
 
   # Render a single label/value pair in a grid cell.
   #
@@ -355,7 +372,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   # === Implementation Notes
-  # Compare with BaseDecorator::List#render_field_value_pair
+  # Compare with BaseDecorator::List#list_render_pair
   #
   def grid_data_cell_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: FieldConfig, ?col: Integer|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 

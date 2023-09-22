@@ -33,27 +33,7 @@ class SearchCallDecorator < BaseDecorator
   # decorator or its related collection decorator.
   #
   module SharedGenericMethods
-
     include BaseDecorator::SharedGenericMethods
-
-    # =========================================================================
-    # :section: BaseDecorator::List overrides
-    # =========================================================================
-
-    public
-
-    # Render a single entry for use within a list of items.
-    #
-    # @param [Hash, nil] pairs        Additional field mappings.
-    # @param [Hash]      opt          Passed to super.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def list_item(pairs: nil, **opt)
-      opt[:pairs] = model_index_fields.merge(pairs || {})
-      super(**opt)
-    end
-
   end
 
   # Definitions available to instances of either this decorator or its related
@@ -111,58 +91,6 @@ class SearchCallDecorator
   def link(**opt)
     opt[:path] = show_path(id: object.identifier)
     super(**opt)
-  end
-
-  # ===========================================================================
-  # :section: BaseDecorator::List overrides
-  # ===========================================================================
-
-  protected
-
-  # Specified field selections from the given SearchCall instance.
-  #
-  # @param [SearchCall, Hash, nil] item   Default: `#object`
-  # @param [Hash]                  opt    Passed to super.
-  #
-  # @return [Hash{String=>ActiveSupport::SafeBuffer}]
-  #
-  def model_field_values(item = nil, **opt)
-    v_opt = nil
-    # noinspection RubyMismatchedReturnType
-    super.transform_values! do |attr_value|
-      if attr_value.blank? && !attr_value.is_a?(FalseClass)
-        EM_DASH
-
-      elsif attr_value.is_a?(Hash)
-        html_div(class: 'key-value-pair') do
-          v_opt ||= { separator: search_call_connector }
-          attr_value.map do |field, value|
-            search_call_field(field) << search_call_value(value, **v_opt)
-          end
-        end
-
-      elsif attr_value.is_a?(Array)
-        # TODO: not being seen yet -- shouldn't it be seen for JSON fields?
-        v = strip_quotes(attr_value)
-        v_opt ||= { separator: search_call_connector }
-        search_call_value(v, **v_opt)
-
-      elsif attr_value.is_a?(String) && attr_value.start_with?('["')
-        # TODO: why is the JSON type field converting to String for these?
-        v = attr_value.delete_prefix('["').delete_suffix('"]').split(/", *"/)
-        #v_opt ||= { separator: search_call_connector }
-        v_opt ||= { separator: HTML_BREAK }
-        search_call_value(v, **v_opt)
-
-      elsif attr_value.is_a?(String)
-        # TODO: ?
-        v = strip_quotes(attr_value)
-        search_call_value(v)
-
-      else
-        attr_value
-      end
-    end
   end
 
   # ===========================================================================

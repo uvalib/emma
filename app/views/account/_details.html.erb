@@ -18,9 +18,8 @@
       html_tag((level + 1), title, class: 'details-heading')
     end
 
-  columns   ||= nil
-  filter    ||= nil
-  extra     ||= nil
+  only      ||= nil
+  except    ||= nil
 
   details   ||= true
   uploads   ||= true
@@ -32,7 +31,7 @@
   uploads   &&= t('emma.upload.title')
   manifests &&= t('emma.manifest.title')
 
-  opt         = { level: (level + 1), filter: :user_id }
+  opt         = { level: (level + 1), except: :user_id }
   uploads   &&= opt.merge(list: user.uploads,   title: uploads)
   manifests &&= opt.merge(list: user.manifests, title: manifests)
 
@@ -41,7 +40,7 @@
 <%- if details -%>
   <div class="account-section details-section">
     <%= heading %>
-    <%= dec.details(columns: columns, filter: filter, pairs: extra) %>
+    <%= dec.details(only: only, except: except) %>
   </div>
 <%- end -%>
 

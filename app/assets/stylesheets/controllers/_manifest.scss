@@ -25,19 +25,28 @@
     $max-columns: 20; // from .model-list-item-panel
 
     @media #{$wide-screen} {
-        $name-width:   minmax(auto,1fr);
+
+        $name-width:   minmax(20vw, 3fr);
         $name-columns: 1;
+        $user-width:   minmax(15vw, 2fr);
+        $user-columns: 1;
+
         @for $n from 2 through $max-columns {
-            $data-columns: $n - $name-columns;
+            $data-columns: $n - $name-columns - $user_columns;
             &.columns-#{$n} {
                 grid-template-columns:
                     [name] repeat($name-columns, $name-width)
-                    [data] repeat($data-columns, 0.5fr);
+                    [user] repeat($user-columns, $user-width)
+                    [data] repeat($data-columns, 1fr);
             }
+        }
+
+        .label[data-field="id"] {
+            width: max-content;
         }
     }
 
-    .value.field-Name {
+    .value[data-field="name"] {
         font-weight: bold;
     }
 }

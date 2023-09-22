@@ -42,7 +42,6 @@ module BaseDecorator::Table
   #
   MODEL_TABLE_OPTIONS = [
     :model,
-    *FIELD_VALUES_OPT,
     MODEL_TABLE_HEAD_OPT  = %i[sticky dark],
     MODEL_TABLE_ENTRY_OPT = %i[outer_tag inner_tag],
     MODEL_TABLE_ROW_OPT   = %i[row col],
@@ -148,47 +147,101 @@ module BaseDecorator::Table
   # @param [Integer] col
   # @param [Hash]    opt              To column except:
   #
-  # @option opt [Symbol]                :outer_tag  Default: :tr
-  # @option opt [Symbol]                :inner_tag  Default: :td
-  # @option opt [Symbol, String, Array] :columns    To #table_values
-  # @option opt [String, Regexp, Array] :filter     To #table_values
+  # @option opt [Hash]   :outer_opt   Options to outer (row) element.
+  # @option opt [Hash]   :inner_opt   Options to inner (column cell) element.
+  # @option opt [Symbol] :outer_tag   If !`opt[:outer_opt][:tag]`; default: :tr
+  # @option opt [Symbol] :inner_tag   If !`opt[:inner_opt][:tag]`; Default: :td
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #table_headings
+  # @see #table_heading
   #
-  def table_entry(row: 1, col: 1, **opt)
-    tag    = opt.delete(:tag) # Propagated if not rendering an HTML table.
-    outer, inner = opt.values_at(*MODEL_TABLE_ENTRY_OPT).map { |v| v || tag }
-    outer  = for_html_table?(outer) && :tr || outer || :div
-    inner  = for_html_table?(inner) && :td || inner || :div
-    fv_opt = opt.slice(*FIELD_VALUES_OPT)
-    opt.except!(*MODEL_TABLE_OPTIONS)
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
+  def render_table_row(row: 1, col: 1, **opt, &blk)
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
 
-    pairs  = table_values(**fv_opt)
-    first  = col
-    last   = first + pairs.size - 1
-    fields =
-      pairs.map.with_index(first) do |(field, value), c|
-        # noinspection RubyMismatchedArgumentType
-        row_opt = model_rc_options(field, row, c, opt)
-        row_opt.merge!('aria-colindex': c)
-        append_css!(row_opt, 'col-first') if c == first
-        append_css!(row_opt, 'col-last')  if c == last
-        html_tag(inner, value, row_opt)
+    # Get options for outer (row) and inner (column cell) elements.
+    o_opt = (opt.delete(:outer_opt) || {}).merge('aria-rowindex': row)
+    i_opt = (opt.delete(:inner_opt) || {})
+
+    # Get outer and inner element tags.
+    table = for_html_table?(opt.delete(:tag)) # If not rendering HTML table.
+    o_tag = o_opt.delete(:tag)
+    o_tag = opt.delete(:outer_tag) || o_tag || (table ? :tr : :div)
+    i_tag = i_opt.delete(:tag)
+    i_tag = opt.delete(:inner_tag) || i_tag || (table ? :td : :div)
+
+    pairs = table_field_values(**opt)
+    first = col
+    last  = first + pairs.size - 1
+
+    html_tag(o_tag, **o_opt, **t_opt) do
+      i_opt.merge!(opt.except!(*MODEL_TABLE_OPTIONS))
+      pairs.map.with_index(first) do |(field, prop), c|
+        rc_opt = model_rc_options(field, row, c, i_opt)
+        append_css!(rc_opt, 'col-first') if c == first
+        append_css!(rc_opt, 'col-last')  if c == last
+        html_tag(i_tag, 'aria-colindex': c, **rc_opt, **t_opt) do
+          blk.(field, prop, **t_opt)
+        end
       end
-
-    html_tag(outer, *fields, 'aria-rowindex': row)
+    end
   end
 
-  # Table values associated with the current decorator.
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # table_entry
   #
-  # @param [Hash] opt                 Passed to #model_field_values
+  # @param [Hash] opt                 To #render_table_row
   #
-  # @return [Hash]
+  # @return [ActiveSupport::SafeBuffer]
   #
-  def table_values(**opt)
-    model_field_values(**opt)
+  def table_entry(**opt)
+    trace_attrs!(opt)
+    render_table_row(inner_tag: :td, **opt) do |_field, prop, **f_opt|
+      render_pair(nil, prop[:value], **f_opt, prop: prop, no_label: true)
+    end
+  end
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Boolean] limited          Do not include fields that are :ignored
+  #                                     or have the wrong :role.
+  # @param [Hash]    opt              Passed to #field_property_pairs and
+  #                                     #table_field_value.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values(limited: true, **opt)
+    trace_attrs!(opt)
+    t_opt = trace_attrs_from(opt)
+    v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
+    opt[:config] ||= model_table_fields
+    field_property_pairs(**opt).map { |field, prop|
+      next if limited && (prop[:ignored] || !user_has_role?(prop[:role]))
+      prop[:value] = table_field_value(prop[:value], field: field, **v_opt)
+      [field, prop]
+    }.compact.to_h
+  end
+
+  # Transform a field value for rendering in a table.
+  #
+  # @param [*]         value          Passed to #list_field_value.
+  # @param [Symbol, *] field          Passed to #list_field_value.
+  # @param [Hash]      opt            Passed to #list_field_value.
+  #
+  # @return [*]
+  #
+  def table_field_value(value, field:, **opt)
+    list_field_value(value, field: field, **opt)
   end
 
   # ===========================================================================
@@ -207,12 +260,13 @@ module BaseDecorator::Table
   # @return [Hash]
   #
   def model_rc_options(field, row = nil, col = nil, opt = nil)
-    field = html_id(field)
-    prepend_css(opt, field).tap do |html_opt|
+    fld = html_id(field)
+    prepend_css(opt, fld).tap do |html_opt|
       append_css!(html_opt, "row-#{row}") if row
       append_css!(html_opt, "col-#{col}") if col
-      html_opt[:role] ||= table_cell_role
-      html_opt[:id]   ||= [field, row, col].compact.join('-')
+      html_opt[:'data-field'] ||= field
+      html_opt[:role]         ||= table_cell_role
+      html_opt[:id]           ||= [fld, row, col].compact.join('-')
     end
   end
 
