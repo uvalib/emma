@@ -23,14 +23,14 @@ module BaseDecorator::Controls
   # Valid properties for entries under #ICONS.
   #
   # * :icon     [String]                Unicode character.
+  # * :spoken   [String]                Textual description of the character.
   # * :tooltip  [String]                Tooltip on hover.
   # * :path     [String, Symbol, Proc]  Activation action (see below).
   # * :auto     [Boolean]               If *true* authorization is not checked.
-  # * :active   [Boolean, Proc]         If *false* do not show.
-  # * :enabled  [Hash]                  Overrides if active.
-  # * :disabled [Hash]                  Overrides if not active.
+  # * :enabled  [Boolean, Proc]         If *false* do not show.
+  # * :visible  [Boolean, Proc]         If *false* make opaque.
   #
-  ICON_PROPERTIES = %i[icon tooltip path auto active enabled disabled].freeze
+  ICON_PROPERTIES = %i[icon spoken tooltip path auto enabled visible].freeze
 
   # Control icon definitions.
   #
@@ -60,50 +60,56 @@ module BaseDecorator::Controls
     ICONS
   end
 
+  # The configuration entry for the named icon.
+  #
+  # @param [Symbol,String,nil] action #icon_definitions key.
+  #
+  # @return [Hash]                    Empty if *action* not found.
+  #
+  def icon_definition(action)
+    icon_definitions[action&.to_sym] || {}
+  end
+
   # Control icon definitions.
   #
-  # @param [Hash{Symbol=>Hash{Symbol=>*}}] icons
-  # @param [Boolean, Array<Symbol>]        authorized
+  # @param [Boolean] authorized       If *true* show all enabled icons.
   #
   # @return [Hash{Symbol=>Hash{Symbol=>*}}]
   #
-  def control_icons(icons: icon_definitions, authorized: false)
-    if authorized.blank?
-      icons.select { |act_on, prop| prop[:auto] || can?(act_on, object) }
-    elsif authorized.is_a?(Array)
-      icons.slice(*authorized)
-    else
-      icons
-    end
+  # @see #icon_definitions
+  #
+  def control_icons(authorized: false)
+    icon_definitions.map { |action, prop|
+      allowed = authorized || true?(prop[:auto]) || can?(action, object)
+      enabled = allowed && prop[:enabled]
+      prop    = prop.merge(auto: true, enabled: enabled)
+      [action, prop]
+    }.to_h
   end
 
   # Generate an element with icon controls for the operation(s) the user is
   # authorized to perform on the item.
   #
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #control_icon_button
+  # @param [Array, Symbol, nil] except
+  # @param [String]             css     Characteristic CSS class/selector.
+  # @param [Hash]               opt     Passed to #control_icon_button
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no operations are authorized.
   #
   # @see #control_icons
   #
-  def control_icon_buttons(css: '.icon-tray', **opt)
+  def control_icon_buttons(except: nil, css: '.icon-tray', **opt)
     return if blank?
     trace_attrs!(opt)
     icons =
-      control_icons.map { |operation, properties|
-        action_opt = properties.merge(opt)
-        control_icon_button(operation, **action_opt)
-      }.compact
-    html_div(icons, class: css_classes(css)) if icons.present?
+      control_icons.except(*except).map { |action, prop|
+        control_icon_button(action, **prop.merge(opt))
+      }.compact.presence or return
+    t_opt = trace_attrs_from(opt)
+    outer = prepend_css!(t_opt, css)
+    html_div(icons, **outer)
   end
-
-  # ===========================================================================
-  # :section: Control icons
-  # ===========================================================================
-
-  protected
 
   # Produce an action icon based on either :path or :id.
   #
@@ -121,13 +127,12 @@ module BaseDecorator::Controls
   # @return [nil]                         If *item* unrelated to a submission.
   #
   def control_icon_button(action, index: nil, unique: nil, css: '.icon', **opt)
-    prop = opt.extract!(*ICON_PROPERTIES)
-    case (active = prop[:active])
-      when nil         then # Enabled if not specified otherwise.
-      when true, false then return unless active
-      when Proc        then return unless active.call(object)
-      else                  return unless true?(active)
-    end
+    prop    = opt.extract!(*ICON_PROPERTIES)
+    allowed = true?(prop[:auto]) || can?(action, object)
+    enabled = prop[:enabled]
+    enabled = enabled.is_a?(Proc) ? enabled.call(object) : !false?(enabled)
+    return unless (allowed && enabled) || prop.key?(:visible)
+
     case (path = prop[:path])
       when Symbol then # deferred
       when Proc   then path = path.call(object)
@@ -148,8 +153,12 @@ module BaseDecorator::Controls
 
     return yield(path, opt) if block_given?
 
-    icon = prop[:icon] || BLACK_STAR
+    icon = prop[:icon] || DEFAULT_ICON
     icon = symbol_icon(icon)
+
+    visible = prop[:visible]
+    visible = visible.is_a?(Proc) ? visible.call(object) : !false?(visible)
+    append_css!(opt, 'invisible') unless allowed && visible
 
     prepend_css!(opt, css, action)
     trace_attrs!(opt)
@@ -161,42 +170,6 @@ module BaseDecorator::Controls
     end
   end
 
-  # ===========================================================================
-  # :section: Controls
-  # ===========================================================================
-
-  public
-
-  # Create a link to the details show page for the given item.
-  #
-  # @param [Hash] opt                 Passed to #icon_control
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def show_control(**opt)
-    icon_control(:show, **opt)
-  end
-
-  # Create a link to the edit page for the given item.
-  #
-  # @param [Hash] opt                 Passed to #icon_control
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def edit_control(**opt)
-    icon_control(:edit, **opt)
-  end
-
-  # Create a link to remove the given item.
-  #
-  # @param [Hash] opt                 Passed to #icon_control
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def delete_control(**opt)
-    icon_control(:delete, **opt)
-  end
-
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
@@ -205,33 +178,11 @@ module BaseDecorator::Controls
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def symbol_icon(icon, **opt)
-    icon = icon_definitions.dig(icon, :icon) if icon.is_a?(Symbol)
-    super(icon, **opt)
-  end
-
-  # ===========================================================================
-  # :section: Controls
-  # ===========================================================================
-
-  protected
-
-  # Create an icon button link.
-  #
-  # @param [Symbol] type
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #button_link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def icon_control(type, css: '.icon', **opt)
-    opt[:path]         ||= send("#{type}_path")
-    opt[:label]        ||= symbol_icon(type)
-    opt[:'aria-label'] ||= type.to_s.capitalize # TODO: I18n
-    button_link(css: css, **opt)
+    trace_attrs!(opt)
+    char = icon.is_a?(Symbol) ? icon_definition(icon)[:icon] : icon
+    # noinspection RubyMismatchedArgumentType
+    super(char, **opt)
   end
 
   # ===========================================================================

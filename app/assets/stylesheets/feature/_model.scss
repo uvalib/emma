@@ -6,6 +6,7 @@
 @use 'shared/controls/grids'  as grid;
 @use 'shared/controls/lists'  as list;
 @use 'shared/controls/tables' as table;
+@use 'shared/feature/icons'   as icon;
 @use 'shared/feature/model'   as model;
 
 //=============================================================================
@@ -143,6 +144,24 @@
                 font-size:              large;
                 color:                  $uva-accent-blue;
                 border-radius:          50%;
+
+                &.edit {
+
+                    @include icon.edit;
+
+                    padding: calc(0.25 * #{$icon-pad}) $icon-pad;
+
+                    .symbol { font-size: large; }
+                }
+
+                &.delete {
+
+                    @include icon.delete;
+
+                    padding: 0 calc(1.25 * #{$icon-pad});
+
+                    .symbol { font-size: large; }
+                }
 
                 &:hover {
                     text-decoration:    none;
@@ -308,6 +327,25 @@ $item-padding:      0.5rem;
     // Components
     //=========================================================================
 
+    // Horizontal column labels.
+    @media #{$wide-screen} {
+
+        > .label:not(.hierarchy),
+        > .label.hierarchy .text {
+            border-bottom: 1px solid;
+        }
+
+        > .label:not(.hierarchy) {
+            align-self:    end;
+        }
+    }
+    @media #{$not-wide-screen} {
+
+        > .value:not(.hierarchy) {
+            align-self: center;
+        }
+    }
+
     .label {
 
         // Don't show the help icons when displaying the submission record.
@@ -452,7 +490,41 @@ $item-padding:      0.5rem;
 
 // Metadata in tabular form.
 .model-table {
+
     @include table.grid-table;
+
+    tbody tr:hover > * {
+
+        @include hover-bold;
+
+        $shadow-width:  0.25rem;
+        $shadow-offset: table.$gap - $shadow-width;
+        $shadow-color:  ghostwhite;
+
+        background-color: $shadow-color;
+        box-shadow:       -#{$shadow-offset} 0 0 $shadow-width $shadow-color;
+
+        &:focus {
+            z-index: 1; // Raise outline above the following cell's box-shadow.
+        }
+    }
+
+    td.actions {
+
+        .icon-tray {
+            min-width: max-content;
+        }
+
+        .icon {
+
+            @include icon.element;
+
+            .icon.show   { @include icon.show;   }
+            .icon.edit   { @include icon.edit;   }
+            .icon.delete { @include icon.delete; }
+
+        }
+    }
 }
 
 //=============================================================================

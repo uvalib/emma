@@ -37,6 +37,16 @@ class AccountDecorator < BaseDecorator
     include BaseDecorator::SharedGenericMethods
 
     # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # @private
+    # @type [String]
+    ITEM_NAME = AccountController.unit[:item]
+
+    # =========================================================================
     # :section: BaseDecorator::Controls overrides
     # =========================================================================
 
@@ -49,12 +59,9 @@ class AccountDecorator < BaseDecorator
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
     ICONS =
-      BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
-        v.dup.tap do |entry|
-          tip = entry[:tooltip]
-          entry[:tooltip] %= { item: 'account' } if tip&.include?('%')
-          entry[:active] = true
-        end
+      BaseDecorator::Controls::ICONS.transform_values { |prop|
+        tip = interpolate_named_references!(prop[:tooltip], item: ITEM_NAME)
+        tip ? prop.merge(tooltip: tip) : prop
       }.deep_freeze
 
     # Icon definitions for this decorator.
@@ -63,6 +70,23 @@ class AccountDecorator < BaseDecorator
     #
     def icon_definitions
       ICONS
+    end
+
+    # Control icon definitions.
+    #
+    # @param [Boolean] authorized       If *true* show all enabled icons.
+    #
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    #
+    # @see #icon_definitions
+    #
+    def control_icons(authorized: false)
+      icon_definitions.map { |action, prop|
+        allowed = authorized || true?(prop[:auto]) || can?(action, object)
+        visible = allowed && prop[:visible]
+        prop    = prop.merge(auto: true, visible: visible)
+        [action, prop]
+      }.to_h
     end
 
     # =========================================================================
@@ -207,24 +231,6 @@ end
 class AccountDecorator
 
   include SharedDefinitions
-
-  # ===========================================================================
-  # :section: BaseDecorator::Controls overrides
-  # ===========================================================================
-
-  public
-
-  # Create a link to the details show page for the given item.
-  #
-  # @param [Hash] opt                 Passed to #link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def show_control(**opt)
-    opt[:label] ||= 'Show' # TODO: I18n
-    opt[:path]  ||= show_path
-    button_link(**opt)
-  end
 
   # ===========================================================================
   # :section: BaseDecorator::Table overrides

@@ -44,15 +44,8 @@
 // Grid table of EMMA member organizations.
 // @see OrgDecorator#table
 .model-table.org {
-
     td {
         min-width: max-content;
-    }
-
-    td.actions {
-        .icon {
-            text-decoration: none;
-        }
     }
 }
 

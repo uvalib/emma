@@ -81,6 +81,10 @@ class ManifestDecorator < BaseDecorator
 
     public
 
+    # @private
+    # @type [String]
+    ITEM_NAME = ManifestController.unit[:item]
+
     # Bulk submission configuration values.
     #
     # @type [Hash{Symbol=>Hash}]
@@ -100,12 +104,9 @@ class ManifestDecorator < BaseDecorator
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
     ICONS =
-      BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
-        v.dup.tap do |entry|
-          tip = entry[:tooltip]
-          entry[:tooltip] %= { item: 'Manifest' } if tip&.include?('%')
-          entry[:active] = true
-        end
+      BaseDecorator::Controls::ICONS.transform_values { |prop|
+        tip = interpolate_named_references!(prop[:tooltip], item: ITEM_NAME)
+        tip ? prop.merge(tooltip: tip) : prop
       }.deep_freeze
 
     # Icon definitions for this decorator.
@@ -131,7 +132,7 @@ class ManifestDecorator < BaseDecorator
     def list_item_number(**opt)
       trace_attrs!(opt)
       super(**opt) do
-        control_icon_buttons(**opt.slice(:index))
+        control_icon_buttons(index: opt[:index], except: :show)
       end
     end
 

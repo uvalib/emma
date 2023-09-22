@@ -25,10 +25,16 @@ module LinkHelper
   #
   def link_to_action: ((String|nil) label, ctrlr: Symbol|String, action: Symbol|String, ?link_opt: symHash|nil, ?css: String, **untyped path_opt) -> (ActiveSupport::SafeBuffer | nil)
 
+  # Fallback Unicode symbol for icons.
+  #
+  # @type [String]
+  #
+  DEFAULT_ICON: String
+
   # Generate a symbol-based icon button or link which should be both accessible
   # and cater to the quirks of various accessibility scanners.
   #
-  # @param [String, nil] icon         Default: Emma::Unicode#BLACK_STAR
+  # @param [String, nil] icon         Default: DEFAULT_ICON
   # @param [String, nil] text         Default: 'Action'
   # @param [String, nil] url          Default: '#'
   # @param [Hash]        opt          Passed to #link_to or #html_span except:

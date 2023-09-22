@@ -57,7 +57,7 @@ class SearchesDecorator < BaseCollectionDecorator
     b_opt   = trace_attrs_from(opt).merge(class: 'style-button')
     buttons =
       STYLE_BUTTONS.values.map { |prop|
-        next unless permitted_by?(prop[:active])
+        next unless permitted_by?(prop[:enabled])
         button_opt = b_opt.merge(title: prop[:tooltip])
         prepend_css!(button_opt, prop[:class])
         html_button(prop[:label], **button_opt)
@@ -88,7 +88,7 @@ class SearchesDecorator < BaseCollectionDecorator
     default    = nil
     pairs =
       RESULT_TYPES.map { |type, prop|
-        next unless permitted_by?(prop[:active])
+        next unless permitted_by?(prop[:enabled])
         default = type if prop[:default]
         [prop[:label], type]
       }.compact

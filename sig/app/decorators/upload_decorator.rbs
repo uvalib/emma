@@ -28,6 +28,10 @@ class UploadDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
+    # @private
+    # @type [String]
+    ITEM_NAME: String
+
     # Uploader properties.
     #
     # @type [Hash{Symbol=>String}]

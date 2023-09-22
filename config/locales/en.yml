@@ -183,7 +183,7 @@ en:
         multiple:       false       # Allow multiple selections.
         menu:           ~           # Hard-wired label/value pairs.
         menu_format:    'titleize'  # Transform for values into menu labels.
-        active:         true        # @see SearchModesHelper#permitted_by?
+        enabled:        true        # @see SearchModesHelper#permitted_by?
 
       _reset:
         label:          'Reset'
@@ -229,7 +229,7 @@ en:
         default:        100
         multiple:       false
         menu_format:    'none'
-        active:         !ruby/symbol file_only
+        enabled:        file_only
 
       sort:
         url_param:      sort
@@ -353,19 +353,19 @@ en:
     control_icons:    &CONTROL_ICONS
 
       show:
-        icon:         "\u2605" # ★ BLACK STAR
+        icon:         "\U0001F50D" # 🔍 LEFT-POINTING MAGNIFYING GLASS
+        spoken:       'magnifying glass icon'
         tooltip:      'View this %{item}'
-        active:       false
 
       edit:
-        icon:         "\u25B3" # △ WHITE UP-POINTING TRIANGLE
+        icon:         "\U0001F589" # 🖉 LOWER LEFT PENCIL
+        spoken:       'pencil icon'
         tooltip:      'Modify this %{item}'
-        active:       false
 
       delete:
         icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
+        spoken:       'X icon'
         tooltip:      'Remove this %{item}'
-        active:       false
 
     field_group:      &FIELD_GROUP
 
@@ -387,25 +387,29 @@ en:
       all:
         label:        'All plus internal-use fields'
         label_narrow: 'All++'
-        tooltip:      'This is only for development purposes'
-        enabled:      debug
+        tooltip:      'Show all record fields including read-only fields'
+        role:         administrator
 
     status_marker:    &STATUS_MARKER
 
       required:
         label:        "\u26A0" # ⚠ WARNING SIGN
+        spoken:       'warning icon'
         tooltip:      '%{This} is a required field'
 
       invalid:
         label:        "\u26A0" # ⚠ WARNING SIGN
+        spoken:       'warning icon'
         tooltip:      'The provided value is invalid'
 
       valid:
         label:        "\u2714" # ✔ HEAVY CHECK MARK
+        spoken:       'checkmark icon'
         tooltip:      'The provided value is valid'
 
       disabled:
         label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
+        spoken:       'X icon'
 
       blank:
         label:        "\u2002" #   EN SPACE

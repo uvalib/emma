@@ -98,6 +98,10 @@ class UploadDecorator < BaseDecorator
 
     public
 
+    # @private
+    # @type [String]
+    ITEM_NAME = UploadController.unit[:item]
+
     # Uploader properties.
     #
     # @type [Hash{Symbol=>String}]
@@ -288,17 +292,14 @@ class UploadDecorator < BaseDecorator
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
     ICONS =
-      BaseDecorator::Controls::ICONS.except(:show).transform_values { |v|
-        v.dup.tap do |entry|
-          tip = entry[:tooltip]
-          entry[:tooltip] %= { item: 'EMMA entry' } if tip&.include?('%')
-          entry[:active] = true
-        end
+      BaseDecorator::Controls::ICONS.transform_values { |prop|
+        tip = interpolate_named_references!(prop[:tooltip], item: ITEM_NAME)
+        tip ? prop.merge(tooltip: tip) : prop
       }.reverse_merge!(
         check: {
           icon:    BANG,
           tooltip: 'Check for an update to the status of this submission',
-          active:  ->(item) { item.try(:in_process?) },
+          enabled: ->(item) { item.try(:in_process?) },
         }
       ).deep_freeze
 
@@ -325,7 +326,7 @@ class UploadDecorator < BaseDecorator
     def list_item_number(**opt)
       trace_attrs!(opt)
       super(**opt) do
-        control_icon_buttons(**opt.slice(:index))
+        control_icon_buttons(index: opt[:index], except: :show)
       end
     end
 

@@ -25,6 +25,10 @@ class ManifestDecorator < BaseDecorator
 
     include BaseDecorator::Grid
 
+    # @private
+    # @type [String]
+    ITEM_NAME: String
+
     # Bulk submission configuration values.
     #
     # @type [Hash{Symbol=>Hash}]

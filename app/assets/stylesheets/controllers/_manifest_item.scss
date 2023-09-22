@@ -785,6 +785,10 @@ table.manifest_item-grid {
 
                         padding-inline: 0.375rem;
 
+                        &.lookup-button {
+                            padding-inline: 0.125rem;
+                        }
+
                         @include except-for-Firefox {
                             &.insert {
                                 padding-inline: 0.25rem;

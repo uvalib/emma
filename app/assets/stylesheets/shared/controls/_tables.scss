@@ -9,7 +9,7 @@
 // Grid-based table.
 // ============================================================================
 
-$gap:        1.75rem;
+$gap:        1.25rem;
 $narrow-gap: 1rem;
 $bg-color:   var(--bg-color);
 $border-bg:  var(--rev-bg-color);
@@ -191,11 +191,11 @@ $border-fg:  var(--rev-fg-color);
         .row-last {
 
             @media #{v.$not-narrow-screen} {
-                padding-bottom: $gap;
+                margin-bottom: $gap;
             }
 
             @media #{v.$narrow-screen} {
-                padding-bottom: $narrow-gap;
+                margin-bottom: $narrow-gap;
             }
         }
     }

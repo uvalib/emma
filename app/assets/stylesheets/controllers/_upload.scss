@@ -20,6 +20,17 @@
     @extend .entry-list;
 }
 
+// Grid table of submissions.
+.model-table.upload {
+    td.emma_data,
+    td.file_data {
+        @media #{$not-narrow-screen} {
+            max-width: 20vw;
+            word-wrap: anywhere;
+        }
+    }
+}
+
 // Style the appearance of the contents of the check status popup.
 body.upload-check.modal {
     .heading {

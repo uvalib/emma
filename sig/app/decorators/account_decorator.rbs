@@ -15,6 +15,10 @@ class AccountDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
+    # @private
+    # @type [String]
+    ITEM_NAME: String
+
     # Control icon definitions.
     #
     # @type [Hash{Symbol=>Hash{Symbol=>*}}]
@@ -28,6 +32,16 @@ class AccountDecorator < BaseDecorator
     # @return [Hash{Symbol=>Hash{Symbol=>*}}]
     #
     def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
+
+    # Control icon definitions.
+    #
+    # @param [Boolean] authorized       If *true* show all enabled icons.
+    #
+    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    #
+    # @see #icon_definitions
+    #
+    def control_icons: (?authorized: bool) -> Hash[Symbol, symHash]
 
     # Render a single label/value pair, ensuring :email is fixed if editing
     # the user's own account.
@@ -115,14 +129,6 @@ class AccountDecorator
   include SharedInstanceMethods
 
   extend  SharedClassMethods
-
-  # Create a link to the details show page for the given item.
-  #
-  # @param [Hash] opt                 Passed to #link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def show_control: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Table values associated with the current decorator.
   #

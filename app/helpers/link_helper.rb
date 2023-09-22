@@ -56,10 +56,22 @@ module LinkHelper
     end
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Fallback Unicode symbol for icons.
+  #
+  # @type [String]
+  #
+  DEFAULT_ICON = BLACK_STAR
+
   # Generate a symbol-based icon button or link which should be both accessible
   # and cater to the quirks of various accessibility scanners.
   #
-  # @param [String, nil] icon         Default: Emma::Unicode#BLACK_STAR
+  # @param [String, nil] icon         Default: DEFAULT_ICON
   # @param [String, nil] text         Default: 'Action'
   # @param [String, nil] url          Default: '#'
   # @param [Hash]        opt          Passed to #link_to or #html_span except:
@@ -71,7 +83,7 @@ module LinkHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def icon_button(icon: nil, text: nil, url: nil, **opt)
-    icon        ||= BLACK_STAR
+    icon        ||= DEFAULT_ICON
     text        ||= opt[:title] || 'Action' # TODO: I18n
     opt[:title] ||= text
 

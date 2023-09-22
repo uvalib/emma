@@ -173,7 +173,7 @@ module SearchModesHelper
     guards.all? { |g| (m = CONFIG_CONDITION[g]).is_a?(Proc) ? m.call : try(m) }
   end
 
-  # Normalize :active property values for use by #permitted_by?.
+  # Normalize :enabled property values for use by #permitted_by?.
   #
   # @param [Array<Symbol,String,Boolean,nil>, Symbol, String, Boolean, nil] val
   #

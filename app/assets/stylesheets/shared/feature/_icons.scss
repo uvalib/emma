@@ -1,0 +1,68 @@
+// app/assets/stylesheets/shared/feature/_icons.scss
+//
+// Shared definitions supporting Unicode symbols as icons.
+
+
+//=============================================================================
+// Constants
+//=============================================================================
+
+$HEAVY_X:   "\2716";    // ✖ HEAVY MULTIPLICATION X
+$MAGNIFIER: "\1F50D";   // 🔍 LEFT-POINTING MAGNIFYING GLASS
+$PENCIL:    "\1F589";   // 🖉 LOWER LEFT PENCIL
+
+//=============================================================================
+// Mixins
+//=============================================================================
+
+@mixin element {
+
+    display:         inline-block;
+    vertical-align:  middle;
+    text-decoration: none;
+
+    .symbol {
+        display:     inline-block; // Needed for transform
+        font-weight: bold;
+    }
+
+    // NOTE: For future use:
+
+    .symbol.magnifying_glass_icon::before { content: $MAGNIFIER; }
+    .symbol.pencil_icon::before           { content: $PENCIL; }
+    .symbol.X_icon::before                { content: $HEAVY_X; }
+}
+
+@mixin show {
+
+    @include element;
+
+    padding: 0.125rem 0.0625rem;
+
+    .symbol { // $MAGNIFIER
+        transform: scaleX(-1); // reverse left-to-right
+    }
+}
+
+@mixin edit {
+
+    @include element;
+
+    padding: 0.0375rem 0.125rem;
+
+    .symbol { // $PENCIL
+        font-size: larger;
+        transform: rotate(-5deg); // align with $MAGNIFIER
+    }
+}
+
+@mixin delete {
+
+    @include element;
+
+    padding: 0 0.25rem;
+
+    .symbol { // $HEAVY_X
+        font-size: larger;
+    }
+}

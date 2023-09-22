@@ -3,6 +3,7 @@
 @use 'shared/variables'      as *;
 @use 'shared/mixins'         as *;
 @use 'shared/controls/grids' as grid;
+@use 'shared/feature/icons'  as icon;
 @use 'shared/feature/model'  as model;
 
 @use 'feature/model'         as model-classes;
@@ -511,6 +512,24 @@ body.help {
                 box-shadow:      none;
                 text-decoration: none;
             }
+        }
+
+        // View or lookup icon.
+        .icon.show {
+            @include icon.show;
+            padding: 0;
+        }
+
+        // Edit icon.
+        .icon.edit {
+            @include icon.edit;
+            padding: 0;
+        }
+
+        // Delete icon.
+        .icon.delete {
+            @include icon.delete;
+            padding: 0;
         }
 
         // A form action button.

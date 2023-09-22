@@ -468,7 +468,7 @@ module LayoutHelper::SearchFilters
         name  = name.to_s.presence&.delete_suffix('_menu')&.to_sym || :blank
         meth  = :"#{name}_menu"
         meth  = :generic_menu unless respond_to?(meth, true)
-        guard = config.dig(name, :active)
+        guard = config.dig(name, :enabled)
         if guard.nil? || permitted_by?(guard)
           menu_opt = grid_opt
         else

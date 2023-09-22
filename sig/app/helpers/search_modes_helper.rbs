@@ -108,7 +108,7 @@ module SearchModesHelper
   #
   def permitted_by?: ((Array[Symbol|String]|Symbol|String|bool|nil) guard) -> bool
 
-  # Normalize :active property values for use by #permitted_by?.
+  # Normalize :enabled property values for use by #permitted_by?.
   #
   # @param [Array<Symbol,String,Boolean,nil>, Symbol, String, Boolean, nil] val
   #

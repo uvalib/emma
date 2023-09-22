@@ -11,12 +11,12 @@ module BaseDecorator::Controls
   # Valid properties for entries under #ICONS.
   #
   # * :icon     [String]                Unicode character.
+  # * :spoken   [String]                Textual description of the character.
   # * :tooltip  [String]                Tooltip on hover.
   # * :path     [String, Symbol, Proc]  Activation action (see below).
   # * :auto     [Boolean]               If *true* authorization is not checked.
-  # * :active   [Boolean, Proc]         If *false* do not show.
-  # * :enabled  [Hash]                  Overrides if active.
-  # * :disabled [Hash]                  Overrides if not active.
+  # * :enabled  [Boolean, Proc]         If *false* do not show.
+  # * :visible  [Boolean, Proc]         If *false* make opaque.
   #
   ICON_PROPERTIES: symArray
 
@@ -40,27 +40,37 @@ module BaseDecorator::Controls
   #
   def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
+  # The configuration entry for the named icon.
+  #
+  # @param [Symbol,String,nil] action #icon_definitions key.
+  #
+  # @return [Hash]                    Empty if *action* not found.
+  #
+  def icon_definition: (Symbol|String|nil action) -> Hash[Symbol,(String|Symbol|Proc|bool|nil)]
+
   # Control icon definitions.
   #
-  # @param [Hash{Symbol=>Hash{Symbol=>*}}] icons
-  # @param [Boolean, Array<Symbol>]        authorized
+  # @param [Boolean] authorized       If *true* show all enabled icons.
   #
   # @return [Hash{Symbol=>Hash{Symbol=>*}}]
   #
-  def control_icons: (?icons: Hash[Symbol, symHash], ?authorized: bool|symArray) -> Hash[Symbol, symHash]
+  # @see #icon_definitions
+  #
+  def control_icons: (?authorized: bool) -> Hash[Symbol, symHash]
 
   # Generate an element with icon controls for the operation(s) the user is
   # authorized to perform on the item.
   #
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #control_icon_button
+  # @param [Array, Symbol, nil] except
+  # @param [String]             css     Characteristic CSS class/selector.
+  # @param [Hash]               opt     Passed to #control_icon_button
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no operations are authorized.
   #
   # @see #control_icons
   #
-  def control_icon_buttons: (?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def control_icon_buttons: (?except: symArray|Symbol|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Produce an action icon based on either :path or :id.
   #
@@ -79,30 +89,6 @@ module BaseDecorator::Controls
   #
   def control_icon_button: (Symbol action, ?index: BaseDecorator::Grid::GridIndex|Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) ?{ (String|Symbol|Proc, symHash) -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
 
-  # Create a link to the details show page for the given item.
-  #
-  # @param [Hash] opt                 Passed to #icon_control
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def show_control: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Create a link to the edit page for the given item.
-  #
-  # @param [Hash] opt                 Passed to #icon_control
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def edit_control: (**untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Create a link to remove the given item.
-  #
-  # @param [Hash] opt                 Passed to #icon_control
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def delete_control: (**untyped opt) -> ActiveSupport::SafeBuffer
-
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
@@ -112,16 +98,6 @@ module BaseDecorator::Controls
   # @return [ActiveSupport::SafeBuffer]
   #
   def symbol_icon: (String|Symbol icon, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Create an icon button link.
-  #
-  # @param [Symbol] type
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #button_link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def icon_control: (untyped `type`, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Wrapper for a group of one or more focusables.
   #

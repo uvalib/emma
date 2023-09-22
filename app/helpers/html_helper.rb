@@ -201,13 +201,14 @@ module HtmlHelper
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String] icon              Character(s) that should match #SYMBOLS.
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #html_span.
+  # @param [String,Symbol] icon       Character(s) that should match #SYMBOLS.
+  # @param [String]        css        Characteristic CSS class/selector.
+  # @param [Hash]          opt        Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def symbol_icon(icon, css: '.symbol', **opt)
+    icon = icon.to_s unless icon.is_a?(String)
     opt[:'aria-hidden'] = true unless opt.key?(:'aria-hidden')
     prepend_css!(opt, css)
     html_span(icon, **opt)

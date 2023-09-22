@@ -308,9 +308,28 @@ module Emma::Common::FormatMethods
   # @see Kernel#sprintf
   #
   def interpolate_named_references(text, *items, **opt)
-    text  = text.to_s
-    items = [*items, opt].map(&:presence).compact
-    if items.present? && text.include?('%')
+    interpolate_named_references!(text, *items, **opt) || text.to_s
+  end
+
+  # Replace #sprintf named references with the matching values extracted from
+  # *items* or *opt*.
+  #
+  # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
+  # then the interpolated value will follow the same case.
+  #
+  # @param [String, *]           text
+  # @param [Array<Hash,Model,*>] items
+  # @param [Hash]                opt
+  #
+  # @return [String]                  A modified copy of *text*.
+  # @return [nil]                     If no interpolations could be made.
+  #
+  # @see Kernel#sprintf
+  #
+  def interpolate_named_references!(text, *items, **opt)
+    (text  = text.to_s).include?('%') or return
+    (items = [*items, opt].compact_blank!).present? or return
+    values =
       named_references_and_formats(text, default_fmt: nil).map { |term, format|
         term = term.to_s
         key  = term.underscore.to_sym
@@ -329,9 +348,8 @@ module Emma::Common::FormatMethods
         end
         val %= format if format
         [key, val]
-      }.compact.tap { |values| text %= values.to_h if values.present? }
-    end
-    text
+      }.compact
+    text % values.to_h if values.present?
   end
 
 end

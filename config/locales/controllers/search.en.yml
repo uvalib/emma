@@ -53,7 +53,7 @@ en:
           label:        'Search Results Mode'
           class:        ~
           tooltip:      ~
-          active:       true # @see SearchModesHelper#permitted_by?
+          enabled:      true # @see SearchModesHelper#permitted_by?
           default:      ~
 
         title:
@@ -75,7 +75,7 @@ en:
           ident:        'metadata field'
           field:        '' # Indicates topic has no matching metadata field.
           tooltip:      'Mark entries with the same %{ident} in the same color'
-          active:       !ruby/symbol debug_only # @see SearchModesHelper#permitted_by?
+          enabled:      debug_only
 
         # NOTE: The order here is the reverse of the order of display.
 
@@ -93,20 +93,20 @@ en:
           label:        'Repo ID'
           ident:        '"repository record ID"'
           field:        'field-RepositoryRecordId'
-          active:       [!ruby/symbol dev_only, !ruby/symbol debug_only]
+          enabled:      [dev_only, debug_only]
 
         by_identifier:
           <<:           *SEARCH_STYLE
           label:        'ISBN'
           ident:        'standard identifier'
           field:        'field-Identifier'
-          active:       [!ruby/symbol dev_only, !ruby/symbol debug_only]
+          enabled:      [dev_only, debug_only]
 
         by_title_text:
           <<:           *SEARCH_STYLE
           label:        'Title'
           ident:        'title text'
-          active:       [!ruby/symbol dev_only, !ruby/symbol debug_only]
+          enabled:      [dev_only, debug_only]
 
         by_title_id:
           <<:           *SEARCH_STYLE
@@ -127,7 +127,7 @@ en:
           class:        'format_counts-button'
           field:        ~
           tooltip:      'Show/hide format counts'
-          active:       [!ruby/symbol title_only, !ruby/symbol debug_only]
+          enabled:      [title_only, debug_only]
 
         collapsed:
           <<:           *SEARCH_STYLE
@@ -135,7 +135,7 @@ en:
           class:        'collapsed-button'
           field:        ~
           tooltip:      'Collapse/expand all search result items'
-          active:       [!ruby/symbol file_only, !ruby/symbol debug_only]
+          enabled:      [file_only, debug_only]
 
       pagination:
         count:

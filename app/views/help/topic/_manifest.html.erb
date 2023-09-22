@@ -32,14 +32,20 @@
   action_icons      = 'action short-cuts'
 
   signed_in         = help_jump('signed in', :sign_in)
-  # noinspection RubyMismatchedArgumentType
-  delta             = ManifestDecorator.symbol_icon(:edit)
-  delta             = html_span(delta, title: 'triangle')
-  # noinspection RubyMismatchedArgumentType
-  x                 = ManifestDecorator.symbol_icon(:delete)
-  x                 = html_span(x, title: 'X')
-  edit_tip          = ManifestDecorator.icon_definitions.dig(:edit,   :tooltip)
-  delete_tip        = ManifestDecorator.icon_definitions.dig(:delete, :tooltip)
+
+  edit_prop         = ManifestDecorator.icon_definition(:edit)
+  edit_tip          = edit_prop[:tooltip]
+  edit_name         = edit_prop[:spoken]
+  edit_opt          = { title: edit_name, class: 'icon edit' }
+  edit_icon         = symbol_icon(edit_prop[:icon].to_s)
+  edit_icon         = html_span(edit_icon, **edit_opt)
+
+  del_prop          = ManifestDecorator.icon_definition(:delete)
+  del_tip           = del_prop[:tooltip]
+  del_name          = del_prop[:spoken]
+  del_opt           = { title: del_name, class: 'icon delete' }
+  del_icon          = symbol_icon(del_prop[:icon].to_s)
+  del_icon          = html_span(del_icon, **del_opt)
 
   panel_opener      = PanelHelper::PANEL_OPENER_LABEL
   panel_opener      = help_span(panel_opener, class: 'toggle')
@@ -212,20 +218,20 @@
   </p>
 
   <div class="choices">
-    <div class="label"><%= delta -%></div>
-    <div class="value">“<%= edit_tip -%>”</div>
-    <div class="label"><%= x -%></div>
-    <div class="value">“<%= delete_tip -%>”</div>
+    <div class="label"><%=  edit_icon -%></div>
+    <div class="value">“<%= edit_tip  -%>”</div>
+    <div class="label"><%=  del_icon  -%></div>
+    <div class="value">“<%= del_tip   -%>”</div>
   </div>
 
   <p>
-    Clicking on <%= delta -%> will redirect your browser to a new screen that
-    will allow you to modify that manifest and its contents.
+    Clicking on <%= edit_icon -%> will redirect your browser to a new screen
+    that allows you to modify that manifest and its contents.
   </p>
 
   <p>
-    Clicking on <%= x -%> will redirect your browser to a new screen that will
-    prompt you to delete that manifest and its contents.
+    Clicking on <%= del_icon -%> will redirect your browser to a new screen
+    that will prompt you to delete that manifest and its contents.
   </p>
 
 </section>

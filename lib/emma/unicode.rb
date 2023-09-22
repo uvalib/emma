@@ -54,16 +54,13 @@ module Emma::Unicode
   public
 
   EN_SPACE          = "\u2002"    #   EN SPACE
-  EM_SPACE          = "\u2003"    #   EM SPACE
   THIN_SPACE        = "\u2009"    #   THIN SPACE
   EN_DASH           = "\u2013"    # – EN DASH
   EM_DASH           = "\u2014"    # — EM DASH
   UP_TRIANGLE       = "\u25B2"    # ▲ BLACK UP-POINTING TRIANGLE
   DELTA             = "\u25B3"    # △ WHITE UP-POINTING TRIANGLE
-  RIGHT_TRIANGLE    = "\u25B6"    # ▶ BLACK RIGHT-POINTING TRIANGLE
   DOWN_TRIANGLE     = "\u25BC"    # ▼ BLACK DOWN-POINTING TRIANGLE
   REVERSE_DELTA     = "\u25BD"    # ▽ WHITE DOWN-POINTING TRIANGLE
-  LEFT_TRIANGLE     = "\u25C0"    # ◀ BLACK LEFT-POINTING TRIANGLE
   BLACK_CIRCLE      = "\u25CF"    # ● BLACK CIRCLE
   BLACK_STAR        = "\u2605"    # ★ BLACK STAR
   WARNING_SIGN      = "\u26A0"    # ⚠ WARNING SIGN
@@ -77,7 +74,8 @@ module Emma::Unicode
   RIGHT_ARROWHEAD   = "\u27A4"    # ➤ BLACK RIGHT ARROWHEAD
   OPEN_FILE_FOLDER  = "\u{1F4C2}" # 📂 OPEN FILE FOLDER
   SCROLL            = "\u{1F4DC}" # 📜 SCROLL
-  MEMO              = "\u{1F4DD}" # 📝 MEMO
+  MAGNIFIER         = "\u{1F50D}" # 🔍 LEFT-POINTING MAGNIFYING GLASS
+  PENCIL            = "\u{1F589}" # 🖉 LOWER LEFT PENCIL
   DELIVERY_TRUCK    = "\u{1F69A}" # 🚚 DELIVERY TRUCK
 
   # ===========================================================================

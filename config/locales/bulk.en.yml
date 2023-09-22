@@ -93,7 +93,7 @@ en:
             tooltip:      ~                   # Tooltip on hover.
             path:         !ruby/symbol button # Activation action.
             auto:         false               # Def: authorization is checked.
-            active:       true                # Control enabled.
+            enabled:      true                # Control enabled.
 
           _anonymous:     &FOR_ANY_USER
             auto:         true                # Available for any user.
@@ -163,7 +163,7 @@ en:
               tooltip:    |
                 Please supply either a standard identifier (ISBN, DOI, etc) or
                 a title and an author
-            icon:         "\u2605" # ★ BLACK STAR
+            icon:         "\U0001F50D" # 🔍 LEFT-POINTING MAGNIFYING GLASS
 
           delete:
             <<:           *ICON_TEMPLATE
@@ -298,7 +298,7 @@ en:
             description: |
               Use the file chooser to identify all of the files on your machine
               referenced by "FILE NEEDED" in the items below.
-            active:      true
+            enabled:     true
 
           remote:
             label:       'URLs'
@@ -307,4 +307,4 @@ en:
               Provide access to the remote files referenced by "FILE NEEDED" in
               the items below.
               <em>NOTE: NOT YET IMPLEMENTED</em>
-            active:      true
+            enabled:     true

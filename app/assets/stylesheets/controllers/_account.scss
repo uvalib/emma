@@ -64,15 +64,8 @@
 // Grid table of user accounts.
 // @see AccountDecorator#table
 .model-table.account {
-
     td {
         min-width: max-content;
-    }
-
-    td.actions {
-        .icon {
-            text-decoration: none;
-        }
     }
 }
 

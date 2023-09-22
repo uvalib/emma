@@ -136,7 +136,7 @@ class SearchDecorator < BaseDecorator
         field = STYLE_BUTTON_TEMPLATE[:field] if false?(field)
         prop.delete(:field) if (prop[:field] = field).nil?
 
-        prop[:active] = SearchModesHelper.guard_values(prop[:active])
+        prop[:enabled] = SearchModesHelper.guard_values(prop[:enabled])
 
         [style, prop]
       }.compact.to_h.deep_freeze
@@ -154,7 +154,7 @@ class SearchDecorator < BaseDecorator
         tooltip = prop.delete(:title).presence || prop[:tooltip].presence
         prop.delete(:tooltip) if (prop[:tooltip] = tooltip).blank?
 
-        prop[:active] = SearchModesHelper.guard_values(prop[:active])
+        prop[:enabled] = SearchModesHelper.guard_values(prop[:enabled])
 
         [style, prop]
       }.compact.to_h.deep_freeze
