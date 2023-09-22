@@ -15,6 +15,27 @@ class OrgDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
+    # Render a value for use on an input form.
+    #
+    # @param [String] name
+    # @param [*]      value
+    # @param [Hash]   opt               Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def render_form_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Render a single label/value pair, forcing :ip_domain to be a single
+    # input field.
+    #
+    # @param [String, Symbol] label
+    # @param [*]              value
+    # @param [Hash]           opt     Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_form_pair: ((String|Symbol) label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
     # Generate a menu of org instances.
     #
     # @param [Hash] opt

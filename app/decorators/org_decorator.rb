@@ -37,6 +37,47 @@ class OrgDecorator < BaseDecorator
     include BaseDecorator::SharedGenericMethods
 
     # =========================================================================
+    # :section: BaseDecorator::Form overrides
+    # =========================================================================
+
+    protected
+
+    # Render a value for use on an input form.
+    #
+    # @param [String] name
+    # @param [*]      value
+    # @param [Hash]   opt               Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def render_form_field_item(name, value, **opt)
+      opt[:type] = :text if opt[:'data-field'] == :ip_domain
+      super
+    end
+
+    # =========================================================================
+    # :section: BaseDecorator::Form overrides
+    # =========================================================================
+
+    public
+
+    # Render a single label/value pair, forcing :ip_domain to be a single
+    # input field.
+    #
+    # @param [String, Symbol] label
+    # @param [*]              value
+    # @param [Hash]           opt     Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_form_pair(label, value, **opt)
+      opt[:prop]   ||= field_configuration(opt[:field])
+      opt[:field]  ||= opt.dig(:prop, :field)
+      opt[:render] ||= :render_form_input if opt[:field] == :ip_domain
+      super(label, value, **opt)
+    end
+
+    # =========================================================================
     # :section: BaseDecorator::Menu overrides
     # =========================================================================
 

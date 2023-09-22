@@ -81,11 +81,11 @@ module AccountConcern
   def new_record(attr = nil, force_id: false, **)
     # noinspection RubyScope, RubyMismatchedReturnType
     super do |attr|
-      unless administrator?
-        org = current_org&.id or raise "no org for #{current_user}"
-        attr[:org_id] = org
+      if administrator?
+        # Allow :org_id to be nil to allow selection on the form.
+      else
+        attr[:org_id] = current_org&.id or raise "no org for #{current_user}"
       end
-      attr[:org_id] = 0 if attr.key?(:org_id) && attr[:org_id].nil?
     end
   end
 
@@ -100,11 +100,11 @@ module AccountConcern
   def create_record(attr = nil, force_id: false, fatal: true, **)
     # noinspection RubyScope, RubyMismatchedReturnType
     super do |attr|
-      unless administrator?
-        org = current_org&.id or raise "no org for #{current_user}"
-        attr[:org_id] = org
+      if administrator?
+        attr[:org_id] = Org.none.id if attr[:org_id].nil?
+      else
+        attr[:org_id] = current_org&.id or raise "no org for #{current_user}"
       end
-      attr[:org_id] = nil if attr.key?(:org_id) && (attr[:org_id].to_i == 0)
     end
   end
 
@@ -124,7 +124,9 @@ module AccountConcern
   def update_record(item = nil, fatal: true, **prm)
     # noinspection RubyMismatchedReturnType
     super do |record, attr|
-      unless administrator?
+      if administrator?
+        attr[:org_id] = Org.none.id if attr[:org_id].nil?
+      else
         org     = current_org&.id or raise "no org for #{current_user}"
         discard = []
         if attr.key?((k = :org_id)) && (attr[k] != org)
@@ -145,7 +147,6 @@ module AccountConcern
           end
         end
       end
-      attr[:org_id] = nil if attr.key?(:org_id) && (attr[:org_id].to_i == 0)
     end
   end
 

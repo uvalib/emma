@@ -161,6 +161,12 @@ class ScalarType
   #
   def <=>: (untyped other) -> (-1 | 0 | +1)
 
+  # The natural language presentation for the current enumeration value.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+
   # Create a serializer class associated with the given *base*.
   #
   # @param [Class] base
@@ -824,6 +830,12 @@ class EnumType < ScalarType
   # @param [*] v                      Default: #value.
   #
   def valid?: (?untyped v) -> bool
+
+  # The natural language presentation for the current enumeration value.
+  #
+  # @return [String]
+  #
+  def label: () -> String
 
   # This is a convenience for defining a subclass of EnumType in terms of the
   # configuration which holds its enumeration values (and their related natural

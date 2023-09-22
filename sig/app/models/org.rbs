@@ -15,6 +15,14 @@ class Org < ApplicationRecord
 
   include Org::Assignable
 
+  # A short textual representation for the record instance.
+  #
+  # @param [Org, nil] item            Default: self.
+  #
+  # @return [String, nil]
+  #
+  def abbrev: (?(Org|nil) item) -> (String | nil)
+
   # A textual label for the record instance.
   #
   # @param [Org, nil] item  Default: self.
@@ -44,4 +52,22 @@ class Org < ApplicationRecord
   def user_ids: () -> Array[Integer]
 
   def user_emails: () -> strArray
+
+  # This is the (non-persisted) organization associated with ID 0.
+  #
+  # User records use :org_id == 0 to indicate that the user is explicitly not
+  # associated with any member organization, whereas a NIL field value
+  # indicates that the user's organization has not yet been determined.
+  #
+  # @return [Org]
+  #
+  def self.none: () -> Org
+
+  # Return the Org instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, nil] v
+  #
+  # @return [Org, nil]
+  #
+  def self.instance_for: (Model|symHash|String|Integer|nil v) -> (Org | nil)
 end

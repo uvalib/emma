@@ -26,6 +26,14 @@ class User < ApplicationRecord
 
   #extend ActiveRecord::Validations
 
+  # A short textual representation for the record instance.
+  #
+  # @param [User, nil] item           Default: self.
+  #
+  # @return [String, nil]
+  #
+  def abbrev: (?(User|nil) item) -> (String | nil)
+
   # A textual label for the record instance.
   #
   # @param [User, nil] item  Default: self.

@@ -39,12 +39,13 @@ module IdMethods
 
   # Get the specified identity value from *item*.
   #
-  # @param [*]      item
-  # @param [Symbol] key
+  # @param [*]       item
+  # @param [Symbol]  key
+  # @param [Boolean] allow_zero
   #
   # @return [Integer, nil]
   #
-  def get_id: (untyped item, Symbol key) -> (Integer | nil)
+  def get_id: (untyped item, Symbol key, ?allow_zero: bool) -> (Integer | nil)
 
   def normalize_id_keys: [T] (T arg, ?untyped target) -> T
 

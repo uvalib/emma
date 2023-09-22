@@ -71,6 +71,7 @@ en:
             go away at some point.  Shibboleth authentication will be available
             for the organization's users regardless of this value.
           type:         !ruby/symbol AuthProvider
+          role:         developer
 
         contact:
           min:          0
@@ -82,17 +83,7 @@ en:
             creating new organization entries, but it *will* have to have a
             value before any users from this organization will be allowed to
             access EMMA.
-          type:         integer
-
-        start_date:
-          min:          0
-          max:          1
-          label:        'Start Date'
-          tooltip:      |
-            The date the organization joined EMMA.
-          type:         datetime
-          origin:       system
-          role:         administrator
+          type:         !ruby/symbol User
 
         status:         # TODO: mark the status as Incomplete if IP domain and/or Contact hasn't been specified
           min:          0
@@ -111,6 +102,15 @@ en:
             the organization
           type:         datetime
           origin:       system
+
+        start_date:
+          min:          0
+          max:          1
+          label:        'Start Date'
+          tooltip:      'The date the organization joined EMMA'
+          type:         datetime
+          origin:       system
+          role:         administrator
 
         info:           # TODO: info list?
           min:          0

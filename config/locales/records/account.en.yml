@@ -147,20 +147,7 @@ en:
             (UNUSED IF BOOKSHARE OAUTH2 AUTHENTICATION IS DISABLED)
           type:         number
           origin:       system
-          role:         administrator
-
-        # =====================================================================
-        # OmniAuth fields
-        # =====================================================================
-
-        provider:
-          min:          0
-          max:          1
-          label:        'Auth Provider'
-          tooltip:      'The strategy used for authentication to EMMA'
-          type:         !ruby/symbol AuthProvider
-          origin:       system
-          role:         administrator
+          role:         developer
 
         # =====================================================================
         # Devise fields
@@ -292,5 +279,18 @@ en:
           max:          1
           label:        'Reset Password Date'
           type:         datetime
+          origin:       system
+          role:         developer
+
+        # =====================================================================
+        # OmniAuth fields
+        # =====================================================================
+
+        provider:
+          min:          0
+          max:          1
+          label:        'Auth Provider'
+          tooltip:      'The strategy used for authentication to EMMA'
+          type:         !ruby/symbol AuthProvider
           origin:       system
           role:         developer

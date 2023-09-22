@@ -281,6 +281,20 @@ class ScalarType
 
   public
 
+  # The natural language presentation for the current enumeration value.
+  #
+  # @return [String]
+  #
+  def label
+    to_s
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Create a serializer class associated with the given *base*.
   #
   # @param [Class] base
@@ -1541,6 +1555,20 @@ class EnumType < ScalarType
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The natural language presentation for the current enumeration value.
+  #
+  # @return [String]
+  #
+  def label
+    pairs[value] || super
+  end
+
+  # ===========================================================================
   # :section: Class methods
   # ===========================================================================
 
@@ -1570,7 +1598,9 @@ class EnumType < ScalarType
 
   def self.inherited(subclass)
     subclass.delegate :enumerations, to: :EnumType
-    Object.define_method(subclass.to_s.to_sym) { |*args| subclass.cast(*args) }
+    Object.define_method(subclass.to_s.to_sym) do |v, **opt|
+      subclass.cast(v, **opt)
+    end
   end
 
 end

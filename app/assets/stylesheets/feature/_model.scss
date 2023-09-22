@@ -54,6 +54,10 @@
     margin:        model.$list-item-gap-y 0;
     align-content: flex-start;
 
+    @media #{$not-wide-screen} {
+        grid-template-columns: [label] min-content [value] 1fr;
+    }
+
     //=========================================================================
     // Components
     //=========================================================================
@@ -154,12 +158,105 @@
     }
 }
 
+$item-padding:      0.5rem;
+
+// Hierarchical display for data items containing JSON.
+.file_data,
+.emma_data {
+
+    .data-list {
+
+        @extend .model-list;
+
+        gap:     $gap-y $gap-x;
+        grid-template-columns: [label] max-content [value] max-content;
+
+        @media #{$wide-screen} {
+            margin: 0;
+        }
+
+        @media #{$medium-width} {
+            margin: 0;
+        }
+
+        @media #{$narrow-screen} {
+            grid-template-columns: 1fr;
+        }
+
+        .inline-popup {
+            display: none;
+        }
+
+        $w-label-max-width: 10vw;
+        $m-label-max-width: 15vw;
+
+        $w-value-max-width: 25vw;
+        $m-value-max-width: 30vw;
+
+        $w-hierarchy-left:  5rem;
+        $m-hierarchy-left:  3rem;
+        $n-hierarchy-left:  2rem;
+
+        .label {
+
+            font-weight:    bold;
+
+            @media #{$wide-screen} {
+                max-width:  $w-label-max-width;
+            }
+
+            @media #{$medium-width} {
+                max-width:  $m-label-max-width;
+            }
+        }
+
+        .value {
+
+            position:       relative;
+
+            @media #{$wide-screen} {
+                max-width:  $w-value-max-width;
+            }
+
+            @media #{$medium-width} {
+                max-width:  $m-value-max-width;
+            }
+        }
+
+        // Adjustment for a hierarchical element which is itself a hierarchy.
+        .data-list {
+
+            @media #{$not-narrow-screen} {
+                position:   absolute;
+                margin:     0;
+                column-gap: calc(2 * #{$gap-x});
+            }
+
+            @media #{$wide-screen} {
+                top:        1.5rem;
+                left:       -$w-hierarchy-left;
+            }
+
+            @media #{$medium-width} {
+                top:        2.5rem;
+                left:       -$m-hierarchy-left;
+            }
+
+            .value.field-FileDataMetadataFilename {
+                // noinspection CssBrowserCompatibilityForProperties
+                word-wrap: break-word;
+                max-width: calc(#{$w-value-max-width} - #{$w-hierarchy-left});
+                font-weight: bold;
+            }
+        }
+    }
+}
+
 // Model metadata fields for index listings.
 //
 // noinspection CssReplaceWithShorthandSafely
 .model-list-item-panel {
 
-    $item-padding:      0.5rem;
     $value-separation:  2px;
     $max-columns:       20;
 

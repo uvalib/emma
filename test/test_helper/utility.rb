@@ -222,7 +222,7 @@ module TestHelper::Utility
   #
   def oid(item)
     return if item.nil?
-    org_id = ->(rec) { rec[:org_id] || rec.try(:org_id) }
+    org_id = ->(rec) { rec.try(:org_id) || rec[:org_id] }
     # noinspection RailsParamDefResolve
     org =
       case item

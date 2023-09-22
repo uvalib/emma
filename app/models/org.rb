@@ -5,6 +5,9 @@
 
 __loading_begin(__FILE__)
 
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 class Org < ApplicationRecord
 
   include Model
@@ -39,6 +42,16 @@ class Org < ApplicationRecord
   # ===========================================================================
 
   public
+
+  # A short textual representation for the record instance.
+  #
+  # @param [Org, nil] item            Default: self.
+  #
+  # @return [String, nil]
+  #
+  def abbrev(item = nil)
+    (item || self).short_name.presence
+  end
 
   # A textual label for the record instance.
   #
@@ -93,6 +106,56 @@ class Org < ApplicationRecord
 
   def user_emails
     users.pluck(:email)
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # This is the (non-persisted) organization associated with ID 0.
+  #
+  # User records use :org_id == 0 to indicate that the user is explicitly not
+  # associated with any member organization, whereas a NIL field value
+  # indicates that the user's organization has not yet been determined.
+  #
+  # @return [Org]
+  #
+  def self.none
+    # noinspection RbsMissingTypeSignature
+    @null ||= new(
+      id:           0,
+      short_name:   EMPTY_VALUE,
+      long_name:    '(no organization)', # TODO: I18n
+      status:       :active,
+      status_date:  (t0 = DateTime.new(0)),
+      start_date:   t0,
+      created_at:   t0,
+      updated_at:   t0,
+      attr_opt:     { force: ignored_keys }
+    )
+  end
+
+  # Return the Org instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, nil] v
+  #
+  # @return [Org, nil]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType, SqlResolve
+  #++
+  def self.instance_for(v)
+    v = v.values_at(:org, :org_id).first if v.is_a?(Hash)
+    return                               if v.nil?
+    return v                             if v.is_a?(Org)
+    v = v.oid                            if v.is_a?(ApplicationRecord)
+    case (v = non_negative(v) || v)
+      when 0       then none
+      when Integer then find_by(id: v)
+      when String  then where('(short_name=?) OR (long_name=?)', v, v).first
+    end
   end
 
 end

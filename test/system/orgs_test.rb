@@ -177,7 +177,9 @@ class OrgsTest < ApplicationSystemTestCase
       # noinspection RubyMismatchedArgumentType
       select 'Incomplete', from: 'value-Status'   if @user.administrator?
 =end
-      select 'Shibboleth', from: 'field-Provider'
+=begin # TODO: is there even a reason for this field?
+      select 'Shibboleth', from: 'value-Provider'
+=end
 
       # After submitting should be back on the index page with one more record
       # than before.

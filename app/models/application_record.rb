@@ -22,6 +22,16 @@ class ApplicationRecord < ActiveRecord::Base
 
   public
 
+  # A short textual representation for the record instance.
+  #
+  # @param [ApplicationRecord, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def abbrev(item = nil)
+    (item || self).id.to_s.presence
+  end
+
   # A textual label for the record instance.
   #
   # @param [ApplicationRecord, nil] item  Default: self.
@@ -31,7 +41,7 @@ class ApplicationRecord < ActiveRecord::Base
   # @see Api::Shared::TitleMethods#label
   #
   def label(item = nil)
-    (item || self).id.to_s.presence
+    abbrev(item)
   end
 
   # menu_label

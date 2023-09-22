@@ -7,6 +7,14 @@ class ApplicationRecord < ActiveRecord::Base
 
   include Emma::TypeMethods
 
+  # A short textual representation for the record instance.
+  #
+  # @param [ApplicationRecord, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def abbrev: (?(ApplicationRecord|nil) item) -> (String | nil)
+
   # A textual label for the record instance.
   #
   # @param [ApplicationRecord, nil] item  Default: self.

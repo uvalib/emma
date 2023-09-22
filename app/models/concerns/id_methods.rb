@@ -58,21 +58,25 @@ module IdMethods
   # @return [Integer, nil]
   #
   def oid(item, key = ORG_COLUMN)
-    item.is_a?(Org) ? item.id : get_id(item, key)
+    item.is_a?(Org) ? item.id : get_id(item, key, allow_zero: true)
   end
 
   # Get the specified identity value from *item*.
   #
-  # @param [*]      item
-  # @param [Symbol] key
+  # @param [*]       item
+  # @param [Symbol]  key
+  # @param [Boolean] allow_zero
   #
   # @return [Integer, nil]
   #
-  def get_id(item, key)
+  def get_id(item, key, allow_zero: false)
     case item
-      when Integer, String, Symbol then positive(item)
-      when ApplicationRecord       then item.try(key) || item[key]
-      when Hash                    then item[key] || item[key.to_s]
+      when Integer, String, Symbol
+        allow_zero ? non_negative(item) : positive(item)
+      when ApplicationRecord
+        item.try(key) || item[key]
+      when Hash
+        item[key] || item[key.to_s]
     end
   end
 

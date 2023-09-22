@@ -120,7 +120,16 @@
     }
 
     .form-fields {
-        margin-bottom: 2rem;
+
+        // This will probably only ever have one value; the following undoes
+        // the effects of scrollable-field and scrollable-limits to make the
+        // textarea look and act like a single input.
+        .input.field-IpDomain {
+            min-height: unset;
+            max-height: 1.5rem;
+            overflow-y: hidden;
+            resize:     none;
+        }
     }
 
     .button-tray {

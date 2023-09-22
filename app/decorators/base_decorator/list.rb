@@ -149,6 +149,10 @@ module BaseDecorator::List
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
+  # While the base implementation of this method does not actually return *nil*
+  # callers should be prepared to handle that possibility, since subclass
+  # override(s) may return *nil*.
+  #
   #--
   # noinspection RubyMismatchedArgumentType
   #++
@@ -183,10 +187,38 @@ module BaseDecorator::List
     id_opt  = { base: base, index: index, group: opt.delete(:group) }.compact
     l_id    = opt.delete(:label_id)
     v_id    = opt.delete(:value_id) || field_html_id(value_css, **id_opt)
+    v_dv    = opt[:'data-raw-value']
 
     # Extract range values.
-    value   = value.content if value.is_a?(Field::Type)
-    raw_val = value
+    case (raw_val = value)
+      when FieldConfig
+        multi = value[:array]
+        value = value[:value]
+      when Field::Type
+        multi = (value.mode == :multiple)
+        value = value.content
+      else
+        multi = true?(prop[:array])
+    end
+
+    # Adjust field properties.
+    cls     = prop[:type].is_a?(Class)
+    enum    = cls && (prop[:type] < EnumType)
+    model   = cls && (prop[:type] < Model)
+    if (enum || model) && !value.is_a?(ActiveSupport::SafeBuffer)
+      value  = value.dup                if value.is_a?(Array)
+      value  = value.split(/[,;|\t\n]/) if value.is_a?(String)
+      value  = Array.wrap(value)
+      v_dv ||= value.join('|')
+      unless no_fmt
+        value.map! do |v|
+          item = prop[:type]
+          item = enum ? item.cast(v, warn: false) : item.find_by(id: v)
+          item&.label&.presence || v.to_s
+        end
+      end
+      value = value.first unless multi
+    end
 
     # Format the content of certain fields.
     lines   = nil
@@ -204,19 +236,10 @@ module BaseDecorator::List
         when :dc_identifier, :dc_relation
           value = mark_invalid_identifiers(value)
         when :dc_language
-          value = mark_invalid_languages(value, code: !no_code)
+          value = mark_invalid_languages(value, code: false?(no_code))
       end
+      prop = prop.merge(type: 'textarea') if lines&.many? && !cls
     end
-
-    # Adjust field properties.
-    cls   = prop[:type].is_a?(Class)
-    enum  = cls && (prop[:type] < EnumType)
-    model = cls && (prop[:type] < Model)
-    multi = true?(prop[:array])
-    delta = {}
-    delta[:type]  = 'textarea' if lines&.many? && !cls
-    delta[:array] = true       if cls && !prop[:array]
-    prop = prop.merge(delta)   if delta.present?
 
     # Special for ManifestItem
     error   = opt.delete(:field_error)&.dig(field.to_s)&.presence
@@ -314,6 +337,7 @@ module BaseDecorator::List
     v_opt = prepend_css(opt, value_css)
     v_opt[:id]                 = v_id    if v_id
     v_opt[:title]              = tooltip if tooltip && !wrap
+    v_opt[:'data-raw-value']   = v_dv    if v_dv
     v_opt[:'aria-describedby'] = l_id    if l_id
     parts << html_tag(v_tag, value, **v_opt)
 
@@ -524,13 +548,12 @@ module BaseDecorator::List
 
   # A complete list item entry.
   #
-  # @param [Hash, nil]     add        Additional label/value pairs.
   # @param [Array<Symbol>] skip       Display aspects to avoid.
   # @param [Hash]          opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_row(add: nil, skip: [], **opt)
+  def list_row(skip: [], **opt)
     opt[:id] ||= model_item_id
     l     = opt.delete(:level)
     skip  = Array.wrap(skip)
@@ -538,7 +561,7 @@ module BaseDecorator::List
     parts = []
     parts << list_item_number(level: l, **opt) unless skip.include?(:number)
     parts << thumbnail(link: true, **opt)      unless skip.include?(:thumbnail)
-    parts << list_item(pairs: add, **opt)
+    parts << list_item(limited: true, **opt)
     safe_join(parts)
   end
 

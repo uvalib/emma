@@ -189,7 +189,7 @@ module BaseDecorator::Form
     type    = "field-#{base}"
     id_opt  = { base: base, index: index }.compact
     l_id    = opt.delete(:label_id)
-    v_id    = opt.delete(:value_id) || field_html_id(**id_opt)
+    v_id    = opt.delete(:value_id) || field_html_id(value_css, **id_opt)
 
     # Pre-process value.
     render_method = placeholder = range = optional = nil

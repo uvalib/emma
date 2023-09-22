@@ -839,28 +839,11 @@ class Ability
   # @return [Integer, nil]
   #
   def self.org_for(rec, caller: nil)
-    if rec.is_a?(ApplicationRecord)
-      rec.oid
-
-    elsif !rec.is_a?(Hash)
-      meth = caller || __method__
-      warn = rec ? "#{rec.class} unexpected: #{rec.inspect}" : 'nil argument'
-      Log.warn("#{meth}: #{warn}")
-
-    elsif (org = rec.values_at(:org, :org_id).first)
-      org = org.is_a?(String) && positive(org) || org
-      # noinspection RailsParamDefResolve, RubyMismatchedReturnType
-      org.is_a?(Integer) ? org : org.try(:oid)
-
-    elsif (user = rec.values_at(:user, :user_id).first)
-      user = user.is_a?(String) && positive(user) || user
-      # noinspection RailsParamDefResolve
-      case user
-        when String  then User.find_by(email: user)&.oid
-        when Integer then User.find(user)&.oid
-        else              user.try(:oid)
-      end
-    end
+    org  = Org.instance_for(rec) || Org.instance_for(User.instance_for(rec))
+    return org.id if org.is_a?(Org)
+    meth = caller || __method__
+    warn = rec ? "#{rec.class} unexpected: #{rec.inspect}" : 'nil argument'
+    Log.warn("#{meth}: #{warn}")
   end
 
   delegate :identity_keys, :org_for, to: :class

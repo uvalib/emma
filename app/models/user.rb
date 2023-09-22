@@ -81,6 +81,16 @@ class User < ApplicationRecord
 
   public
 
+  # A short textual representation for the record instance.
+  #
+  # @param [User, nil] item           Default: self.
+  #
+  # @return [String, nil]
+  #
+  def abbrev(item = nil)
+    (item || self).account.presence
+  end
+
   # A textual label for the record instance.
   #
   # @param [User, nil] item  Default: self.
@@ -117,7 +127,7 @@ class User < ApplicationRecord
 
   def user_id = id
 
-  def org_id = org&.id
+  def org_id = self[:org_id]
 
   def user_key = ID_COLUMN
 
