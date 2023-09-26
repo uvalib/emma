@@ -1,6 +1,8 @@
 # Common model methods.
 #
 module Model
+  extend ActiveSupport::Concern
+
   include Emma::Constants
 
   # A unique identifier for this model instance.
@@ -8,122 +10,6 @@ module Model
   # @return [String]
   #
   def identifier: () -> String
-
-  # Indicate whether the Model instance is composed of other Model instances.
-  #
-  def aggregate?: () -> bool
-
-  # The type for constituent Model elements for a class whose instances are
-  # aggregates.
-  #
-  # @return [Class, nil]
-  #
-  def aggregate_type: () -> (Class | nil)
-
-  # The field holding constituent Model elements for a class which supports
-  # aggregates.
-  #
-  # @return [Symbol, nil]
-  #
-  def aggregate_field: () -> (Symbol | nil)
-
-  # Indicate whether the Model instance is primarily a container for a list of
-  # other Model instances.
-  #
-  def collection?: () -> bool
-
-  # The type for constituent Model elements for a class whose instances are
-  # collections.
-  #
-  # @return [Class, nil]
-  #
-  def collection_type: () -> (Class | nil)
-
-  # The field holding constituent Model elements for a class whose instances
-  # are collections.
-  #
-  # @return [Symbol, nil]
-  #
-  def collection_field: () -> (Symbol | nil)
-
-  # The constituent Model elements related to this Model instance.
-  #
-  # @return [Array]   Possibly empty.
-  # @return [nil]     If the instance is not an aggregate or collection.
-  #
-  def elements: () -> (symArray | nil)
-
-  extend ActiveSupport::Concern
-
-  # Methods which extend the including class.
-  #
-  module ClassMethods
-    # Indicate whether instances of the including class are composed of other
-    # Model instances.
-    #
-    def aggregate?: () -> bool
-
-    # The type for constituent Model elements for a class whose instances are
-    # aggregates.
-    #
-    # @return [Class<Model>, nil]
-    #
-    def aggregate_type: () -> (Class | nil)
-
-    # The field holding constituent Model elements for a class which supports
-    # aggregates.
-    #
-    # @return [Symbol, nil]
-    #
-    def aggregate_field: () -> (Symbol | nil)
-
-    # Indicate whether the including class is primarily a container for a list
-    # of other Model instances.
-    #
-    def collection?: () -> bool
-
-    # The type for constituent Model elements for a class whose instances are
-    # collections.
-    #
-    # @return [Class<Model>, nil]
-    #
-    def collection_type: () -> (Class | nil)
-
-    # The field holding constituent Model elements for a class whose instances
-    # are collections.
-    #
-    # @return [Symbol, nil]
-    #
-    def collection_field: () -> (Symbol | nil)
-
-    # Create a :LIST_FIELD or :BASE_FIELD constant for a class if it defines
-    # :LIST_ELEMENT or :BASE_ELEMENT (respectively).
-    #
-    # @param [Symbol, String] field_name
-    # @param [Class, nil]     field_type
-    #
-    # @return [Symbol, nil]
-    #
-    # @see Api::Record::Associations::ClassMethods#has_many
-    #
-    def set_relation_field: ((Symbol|String) field_name, (Class|nil) field_type) -> (Symbol | nil)
-
-    # Validate the including aggregate/collection class.
-    #
-    # If a record class is intended to be an aggregate it should both include
-    # Api::Shared::AggregateMethods and define :BASE_ELEMENT.
-    #
-    # If a record class is intended to be a collection it should both include
-    # Api::Shared::CollectionMethods and define :LIST_ELEMENT.
-    #
-    # @raise [SyntaxError]            A problem was detected in development.
-    #
-    # @return [TrueClass]
-    #
-    def validate_relations: () -> true
-
-    @check_relations: bool | nil
-  end
 
   # Indicate whether *name* is a field defined by this model.
   #
@@ -136,8 +22,6 @@ module Model
   # @return [Array<Symbol>]
   #
   def field_names: () -> symArray
-
-  @field_names: symArray
 
   # The fields and values for this model instance.
   #
@@ -309,11 +193,132 @@ module Model
   #
   def self.form_fields: (untyped? item) -> ActionConfig
 
-  # Get all configured record fields.
+  # Methods for the including class or its instances.
   #
-  # @param [Symbol, String, Class, Model, *] item   Default: self
+  module Methods
+    include Emma::Common
+
+    # Indicate whether instances of the including class are composed of other
+    # Model instances.
+    #
+    def aggregate?: () -> bool
+
+    # The type for constituent Model elements for a class whose instances are
+    # aggregates.
+    #
+    # @return [Class<Model>, nil]
+    #
+    def aggregate_type: () -> (Class | nil)
+
+    # The field holding constituent Model elements for a class which supports
+    # aggregates.
+    #
+    # @return [Symbol, nil]
+    #
+    def aggregate_field: () -> (Symbol | nil)
+
+    # Indicate whether the including class is primarily a container for a list
+    # of other Model instances.
+    #
+    def collection?: () -> bool
+
+    # The type for constituent Model elements for a class whose instances are
+    # collections.
+    #
+    # @return [Class<Model>, nil]
+    #
+    def collection_type: () -> (Class | nil)
+
+    # The field holding constituent Model elements for a class whose instances
+    # are collections.
+    #
+    # @return [Symbol, nil]
+    #
+    def collection_field: () -> (Symbol | nil)
+
+    # The constituent Model elements related to this Model instance.
+    #
+    # @return [Array]   Possibly empty.
+    # @return [nil]     If the instance is not an aggregate or collection.
+    #
+    def elements: () -> (symArray | nil)
+
+    # Get configured record fields relevant to an :index action for the model.
+    #
+    # @param [Symbol, String, Class, Model, *] item   Default: self
+    #
+    # @return [ActionConfig]            Frozen result.
+    #
+    def index_fields: (?untyped? item) -> ActionConfig
+
+    # Get configured record fields relevant to a :show action for the model.
+    #
+    # @param [Symbol, String, Class, Model, *] item   Default: self
+    #
+    # @return [ActionConfig]            Frozen result.
+    #
+    def show_fields: (?untyped? item) -> ActionConfig
+
+    # Get all configured record fields for the model.
+    #
+    # @param [Symbol, String, Class, Model, *] item   Default: self
+    #
+    # @return [ActionConfig]            Frozen result.
+    #
+    def database_fields: (?untyped? item) -> ActionConfig
+
+    # Get all configured record fields relevant to a create/update form for the
+    # model.
+    #
+    # @param [Symbol, String, Class, Model, *] item   Default: self
+    #
+    # @return [ActionConfig]            Frozen result.
+    #
+    def form_fields: (?untyped? item) -> ActionConfig
+  end
+
+  # Methods which extend the including class.
   #
-  # @return [ActionConfig]            Frozen result.
+  module ClassMethods
+    include Methods
+
+    # Create a :LIST_FIELD or :BASE_FIELD constant for a class if it defines
+    # :LIST_ELEMENT or :BASE_ELEMENT (respectively).
+    #
+    # @param [Symbol, String] field_name
+    # @param [Class, nil]     field_type
+    #
+    # @return [Symbol, nil]
+    #
+    # @see Api::Record::Associations::ClassMethods#has_many
+    #
+    def set_relation_field: ((Symbol|String) field_name, (Class|nil) field_type) -> (Symbol | nil)
+
+    # Validate the including aggregate/collection class.
+    #
+    # If a record class is intended to be an aggregate it should both include
+    # Api::Shared::AggregateMethods and define :BASE_ELEMENT.
+    #
+    # If a record class is intended to be a collection it should both include
+    # Api::Shared::CollectionMethods and define :LIST_ELEMENT.
+    #
+    # @raise [SyntaxError]            A problem was detected in development.
+    #
+    # @return [TrueClass]
+    #
+    def validate_relations: () -> true
+
+  end
+
+  # Methods for instances of the including class.
   #
-  def database_fields: (untyped? item) -> ActionConfig
+  module InstanceMethods
+    include Methods
+  end
+
+  @field_names: symArray
+
+  private
+
+  THIS_MODULE: Module
 end

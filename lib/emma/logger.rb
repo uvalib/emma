@@ -96,8 +96,7 @@ module Emma
     def filter_out?(message)
       message.is_a?(String) && FILTER_OUT.any? { |expr| expr.match?(message) }
     end
-
-    neutralize(:filter_out?) unless FILTERING
+      .tap { |meth| neutralize(meth) unless FILTERING }
 
     # =========================================================================
     # :section:

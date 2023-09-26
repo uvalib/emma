@@ -179,8 +179,7 @@ end
 def __output(*args, **opt, &block)
   __output_impl(*args, **opt, &block)
 end
-
-neutralize(:__output) unless CONSOLE_OUTPUT
+  .tap { |meth| neutralize(meth) unless CONSOLE_OUTPUT }
 
 # =============================================================================
 # Debugging - console debugging
@@ -233,8 +232,7 @@ end
 def __debug(*args, **opt, &block)
   __debug_impl(*args, **opt, &block)
 end
-
-neutralize(:__debug) unless CONSOLE_DEBUGGING
+  .tap { |meth| neutralize(meth) unless CONSOLE_DEBUGGING }
 
 # =============================================================================
 # Debugging - trace output
@@ -314,6 +312,7 @@ end
 def __loading(file)
   __trace { "====== #{__loading_level}#{file}" }
 end
+  .tap { |meth| neutralize(meth) unless TRACE_LOADING }
 
 # Display console output to indicate that a file is being loaded.
 #
@@ -334,6 +333,7 @@ def __loading_begin(file)
   @load_table[file] = [@load_level, true]
   __trace { "====-> #{__loading_level}#{file}#{warning}" }
 end
+  .tap { |meth| neutralize(meth) unless TRACE_LOADING }
 
 # Display console output to indicate the end of a file that is being loaded.
 #
@@ -357,8 +357,7 @@ def __loading_end(file)
   @load_table.clear if @load_level.zero?
   nil
 end
-
-neutralize(:__loading, :__loading_begin, :__loading_end) unless TRACE_LOADING
+  .tap { |meth| neutralize(meth) unless TRACE_LOADING }
 
 # =============================================================================
 # Debugging - Concerns
@@ -377,8 +376,7 @@ __trace { "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}" } if TRACE_CONCERNS
 def __included(base, mod, tag = nil)
   __trace { "... including #{tag || mod.try(:name) || mod} in #{base}" }
 end
-
-neutralize(:__included) unless TRACE_CONCERNS
+  .tap { |meth| neutralize(meth) unless TRACE_CONCERNS }
 
 # =============================================================================
 # Debugging - Rails notifications
