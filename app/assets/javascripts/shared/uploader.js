@@ -1535,7 +1535,7 @@ class BaseUploader extends BaseClass {
     _selectProperties(value, can_select) {
         const op     = this._endpointProperties.select || {};
         const select = isDefined(can_select) ? can_select : this.canSelect();
-        const status = select ? op.enabled : op.disabled;
+        const status = select ? op.if_enabled : op.if_disabled;
         return status && status[value] || op[value];
     }
 

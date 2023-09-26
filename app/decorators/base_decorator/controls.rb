@@ -129,8 +129,7 @@ module BaseDecorator::Controls
   def control_icon_button(action, index: nil, unique: nil, css: '.icon', **opt)
     prop    = opt.extract!(*ICON_PROPERTIES)
     allowed = true?(prop[:auto]) || can?(action, object)
-    enabled = prop[:enabled]
-    enabled = enabled.is_a?(Proc) ? enabled.call(object) : !false?(enabled)
+    enabled = check_setting(prop[:enabled])
     return unless (allowed && enabled) || prop.key?(:visible)
 
     case (path = prop[:path])
@@ -153,20 +152,17 @@ module BaseDecorator::Controls
 
     return yield(path, opt) if block_given?
 
-    icon = prop[:icon] || DEFAULT_ICON
-    icon = symbol_icon(icon)
+    icon    = prop[:icon] || DEFAULT_ICON
+    icon    = symbol_icon(icon)
+    visible = check_setting(prop[:visible])
 
-    visible = prop[:visible]
-    visible = visible.is_a?(Proc) ? visible.call(object) : !false?(visible)
     append_css!(opt, 'invisible') unless allowed && visible
-
     prepend_css!(opt, css, action)
     trace_attrs!(opt)
-    if path == :button
-      html_button(icon, **opt)
-    else
-      # noinspection RubyMismatchedArgumentType
-      make_link(icon, path, **opt)
+    # noinspection RubyMismatchedArgumentType
+    case path
+      when :button then html_button(icon, **opt)
+      else              make_link(icon, path, **opt)
     end
   end
 

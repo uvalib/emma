@@ -114,65 +114,65 @@ en:
 
         submit:         &GENERIC_SUBMIT
           label:        'Save'
-          enabled:
+          if_enabled:
             tooltip:    'Keep all changes'
-          disabled:
+          if_disabled:
             tooltip:    'No valid changes have been made yet'
 
         cancel:         &GENERIC_CANCEL
           label:        'Cancel'
-          enabled:
+          if_enabled:
             tooltip:    'Discard all changes'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to cancel right now'
 
         import:         &GENERIC_IMPORT
           label:        'Import'
-          enabled:
+          if_enabled:
             tooltip:    'Add rows from an external CSV file'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to import at this point'
 
         export:         &GENERIC_EXPORT
           label:        'Export'
-          enabled:
+          if_enabled:
             tooltip:    'Save a copy of this manifest in CSV format'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to export at this point'
 
         submission:     &GENERIC_SUBMISSION
           label:        'Submit'
-          enabled:
+          if_enabled:
             tooltip:    'Submit these items to EMMA'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to submit these items at this point'
 
         start:          &GENERIC_START
           label:        'Start'
-          enabled:
+          if_enabled:
             tooltip:    'Submit manifest items to become EMMA entries'
-          disabled:
+          if_disabled:
             tooltip:    'Already submitting'
 
         stop:           &GENERIC_STOP
           label:        'Cancel'
-          enabled:
+          if_enabled:
             tooltip:    'Cancel the submission'
-          disabled:
+          if_disabled:
             tooltip:    'No submission is active'
 
         pause:          &GENERIC_PAUSE
           label:        'Pause'
-          enabled:
+          if_enabled:
             tooltip:    'Pause the submission'
-          disabled:
+          if_disabled:
             tooltip:    'Submission is already paused'
 
         resume:         &GENERIC_RESUME
           label:        'Resume'
-          enabled:
+          if_enabled:
             tooltip:    'Resume the paused submission'
-          disabled:
+          if_disabled:
             tooltip:    'Submission is not paused'
 
         file:           &GENERIC_FILE
@@ -244,14 +244,14 @@ en:
 
         submit:
           <<:           *GENERIC_SUBMIT
-          enabled:
+          if_enabled:
             tooltip:    'Save the new manifest'
-          disabled:
+          if_disabled:
             tooltip:    'No valid items have been created yet'
 
         cancel:
           <<:           *GENERIC_CANCEL
-          enabled:
+          if_enabled:
             tooltip:    'Discard this manifest and associated items'
 
         import:
@@ -287,12 +287,12 @@ en:
 
         submit:
           <<:           *GENERIC_SUBMIT
-          enabled:
+          if_enabled:
             tooltip:    'Keep all changes made since the last save'
 
         cancel:
           <<:           *GENERIC_CANCEL
-          enabled:
+          if_enabled:
             tooltip:    'Discard all changes made since the last save'
 
         import:
@@ -331,14 +331,14 @@ en:
         submit:
           <<:           *GENERIC_SUBMIT
           label:        'Delete'
-          enabled:
+          if_enabled:
             tooltip:    'Remove this manifest and all of its associated items'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to delete right now'
 
         cancel:
           <<:           *GENERIC_CANCEL
-          enabled:
+          if_enabled:
             tooltip:    'Keep this manifest'
 
         success:        'Removed manifest'
@@ -379,9 +379,9 @@ en:
 
         monitor:
           label:        'Results'
-          enabled:
+          if_enabled:
             tooltip:    'See details of submission results'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to view details right now'
 
         file:

@@ -157,9 +157,9 @@ en:
           lookup:
             <<:           *ICON_TEMPLATE
             <<:           *FOR_AUTHORIZED_USER
-            enabled:
+            if_enabled:
               tooltip:    'Lookup bibliographic metadata for this item'
-            disabled:
+            if_disabled:
               tooltip:    |
                 Please supply either a standard identifier (ISBN, DOI, etc) or
                 a title and an author
@@ -168,9 +168,9 @@ en:
           delete:
             <<:           *ICON_TEMPLATE
             <<:           *FOR_AUTHORIZED_USER
-            enabled:
+            if_enabled:
               tooltip:    'Delete this item'
-            disabled:
+            if_disabled:
               tooltip:    |
                 Cannot delete the last item of a manifest.  If this item really
                 needs to be deleted, insert an empty item before deleting this
@@ -180,9 +180,9 @@ en:
           insert:
             <<:           *ICON_TEMPLATE
             <<:           *FOR_AUTHORIZED_USER
-            enabled:
+            if_enabled:
               tooltip:    'Insert a row after this item'
-            disabled:
+            if_disabled:
               tooltip:    'Unable to insert a row after this item'
             icon:         "\u2795" # ➕ HEAVY PLUS SIGN
 

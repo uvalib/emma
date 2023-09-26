@@ -1091,24 +1091,24 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             if (!this.valid) {
                 return undefined;
             }
-            let $active_button = undefined, button_count = 0;
-            const any_topic    = notDefined(active_topic);
-            const setup_button = (topic, cfg) => this._setupButton(topic, cfg);
+            const any_topic = notDefined(active_topic);
+            let $active     = undefined;
+            let count       = 0;
             for (const [topic, config] of Object.entries(BUTTON_CONFIG)) {
-                const $button = setup_button(topic, config);
+                const $button = this._setupButton(topic, config);
                 if ($button && (any_topic || (topic === active_topic))) {
-                    button_count++;
+                    count++;
                     if (refresh) {
-                        $active_button ||= $button.first();
+                        $active ||= $button.first();
                     }
                 }
             }
-            if ((this.valid = !!button_count)) {
-                $active_button?.click();
+            if ((this.valid = !!count)) {
+                $active?.click();
             } else {
                 this._debug('feature not present');
             }
-            return $active_button;
+            return $active;
         }
 
         /**
@@ -1185,13 +1185,13 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 return this._error(`${func}: invalid topic`);
             } else if (!this._isControlButton(button.class)) {
                 return this._debug(`${func}: skip button '${button.class}'`);
-            } else if (!button.active) {
+            } else if (!button.enabled) {
                 return this._debug(`${func}: inactive topic`);
             }
 
             const $topic_buttons = this._findButton(button.class);
             if (isMissing($topic_buttons)) {
-                if (button.active === 'dev_only') {
+                if (button.enabled === 'dev_only') {
                     return this._debug(`${func}: inactive topic`);
                 } else {
                     return this._warn(`${func}: no control button`);

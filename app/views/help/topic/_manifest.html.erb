@@ -52,7 +52,7 @@
 
   button_for = -> (action, button, **opt) {
     cfg = ManifestDecorator.form_actions.dig(action, button).presence
-    lbl = cfg&.dig(:enabled, :label) || cfg&.dig(:label)
+    lbl = cfg&.dig(:if_enabled, :label) || cfg&.dig(:label)
     help_span(lbl, **btn_opt, **opt) if lbl
   }
 

@@ -35,6 +35,16 @@ module BaseDecorator::Common
   #
   def for_html_table?: (Symbol|String|nil tag) -> bool
 
+  # Process a configuration setting to determine whether it indicates a *true*
+  # value.
+  #
+  # @param [*]       value
+  # @param [Boolean] default          Returned if *value* is *nil*.
+  #
+  # @return [Boolean]
+  #
+  def check_setting: (untyped value, ?default: bool) -> bool
+
   # Produce a copy of *opt* with 'data-trace-*' attributes.
   #
   # @param [Hash, nil]   opt

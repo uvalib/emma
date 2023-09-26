@@ -92,23 +92,23 @@ en:
 
         submit:         &GENERIC_SUBMIT
           label:        'Save'
-          enabled:
+          if_enabled:
             tooltip:    'Keep all changes'
-          disabled:
+          if_disabled:
             tooltip:    'No valid changes have been made yet'
 
         cancel:         &GENERIC_CANCEL
           label:        'Cancel'
-          enabled:
+          if_enabled:
             tooltip:    'Discard all changes'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to cancel right now'
 
         select:         &GENERIC_SELECT
           label:        'Upload'
-          enabled:
+          if_enabled:
             tooltip:    'Include data from an external file'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to choose a file right now'
 
         warning:
@@ -224,9 +224,9 @@ en:
         submit:         &BULK_SUBMIT
           <<:           *GENERIC_SUBMIT
           label:        'Begin'
-          enabled:
+          if_enabled:
             tooltip:    'Submit the data file to begin uploading'
-          disabled:
+          if_disabled:
             tooltip:    'First provide a data file'
 
         cancel:         &BULK_CANCEL
@@ -298,9 +298,9 @@ en:
         submit:
           <<:           *BULK_SUBMIT
           label:        'Continue'
-          enabled:
+          if_enabled:
             tooltip:    'Validate entries to be removed'
-          disabled:
+          if_disabled:
             tooltip:    'Required information is still needed'
 
         cancel:

@@ -11,12 +11,12 @@ en:
       label:      'Lookup'
       tooltip:    'Lookup bibliographic information'
 
-      enabled:
+      if_enabled:
         tooltip:  |
           Try to fill in missing bibliographic information from external search
           services
 
-      disabled:
+      if_disabled:
         tooltip:  |
           Please supply either a standard identifier (ISBN, DOI, etc) or
           a title and an author

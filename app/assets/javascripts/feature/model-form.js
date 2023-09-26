@@ -3283,7 +3283,7 @@ appSetup(MODULE, function() {
         const $button = lookupButton(form);
         $button.prop('disabled', false);
         $button.removeClass('forbidden disabled');
-        $button.attr('title', Emma.Lookup.enabled.tooltip);
+        $button.attr('title', Emma.Lookup.if_enabled.tooltip);
         return $button;
     }
 
@@ -3305,7 +3305,7 @@ appSetup(MODULE, function() {
             tip = "Bibliographic metadata is inherited from\n" + // TODO: I18n
                   'the original repository entry.';
         } else {
-            tip = Emma.Lookup.disabled.tooltip;
+            tip = Emma.Lookup.if_disabled.tooltip;
         }
         $button.attr('title', tip);
         return $button;
@@ -4746,8 +4746,9 @@ appSetup(MODULE, function() {
                 default:       OUT.error(`${func}: invalid: "${op_name}"`);
             }
         }
+        /** @type {ActionProperties} */
         const op = asset || endpointProperties($form)[op_name];
-        return op && (perform ? op.enabled : op.disabled);
+        return op && (perform ? op.if_enabled : op.if_disabled);
     }
 
     /**

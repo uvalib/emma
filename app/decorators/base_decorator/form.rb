@@ -1030,31 +1030,26 @@ module BaseDecorator::Form
     **opt
   )
     action = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
-    config = form_actions.dig(action, type)
+    prop   = form_actions.dig(action, type) || {}
+    Log.warn("#{__method__}: no config for (#{action},#{type})") if prop.blank?
 
-    if config.blank?
-      Log.warn { "#{__method__}: no config for (#{action},#{type})" }
-    else
-      state       ||= config[:state]&.to_sym      || :enabled
-      label       ||= config.dig(state, :label)   || config[:label]
-      opt[:title] ||= config.dig(state, :tooltip) || config[:tooltip]
-    end
+    state  = state&.to_s&.delete_prefix('if_')
+    state  = (state || prop[:state] || :enabled).to_sym
+    s_prop = prop[(state == :enabled) ? :if_enabled : :if_disabled] || {}
+
+    label       ||= s_prop[:label]   || prop[:label]
+    opt[:title] ||= s_prop[:tooltip] || prop[:tooltip]
+    input_type    = opt[:type]       || type
+
     opt.reverse_merge!(disabled: true) if state == :disabled
-
     prepend_css!(opt, css, "#{type}-button")
     trace_attrs!(opt)
-    input_type = opt[:type] || type
-
-    if control.is_a?(Proc)
-      control.call(label: label, **opt)
-    elsif input_type == :submit
-      h.submit_tag(label, opt)
-    elsif input_type == :file
-      file_input_button(label, **opt)
-    elsif url
-      make_link(label, url, **opt)
-    else
-      html_button(label, **opt)
+    case
+      when control.is_a?(Proc)     then control.call(label: label, **opt)
+      when (input_type == :submit) then h.submit_tag(label, opt)
+      when (input_type == :file)   then file_input_button(label, **opt)
+      when url                     then make_link(label, url, **opt)
+      else                              html_button(label, **opt)
     end
   end
 

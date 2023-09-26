@@ -1604,13 +1604,13 @@ appSetup(MODULE, function() {
         const old_was_forbidden = $button.hasClass('was-forbidden');
         let now_disabled, now_forbidden, new_was_forbidden;
         if (enable === true) {
-            config            = { ...config, ...config.enabled };
+            config            = { ...config, ...config.if_enabled };
             now_disabled      = false;
             now_forbidden     = false;
             new_was_forbidden = is_forbidden || old_was_forbidden;
             if (forbid) { OUT.warn(`${func}: cannot enable and forbid`) }
         } else if (enable === false) {
-            config            = { ...config, ...config.disabled };
+            config            = { ...config, ...config.if_disabled };
             now_disabled      = true;
             now_forbidden     = forbid || false;
             new_was_forbidden = false;

@@ -102,15 +102,15 @@ module BaseCollectionDecorator::Form
   )
     path_opt       = opt.extract!(*delete_submit_option_keys)
     url          ||= delete_submit_path(**path_opt)
-    enabled        = url && :enabled
+    if_enabled     = (:if_enabled if url)
     action         = action&.to_sym || :delete
     # noinspection RubyMismatchedArgumentType
     config         = form_actions.dig(action, :submit) || {}
     label        ||= config[:label]
-    opt[:title]  ||= config.dig((enabled || :disabled), :tooltip)
+    opt[:title]  ||= config.dig((if_enabled || :if_disabled), :tooltip)
     opt[:role]   ||= 'button'
     opt[:method] ||= :delete
-    append_css!(opt, (enabled ? 'best-choice' : 'forbidden'))
+    append_css!(opt, (if_enabled ? 'best-choice' : 'forbidden'))
     prepend_css!(opt, css)
     trace_attrs!(opt)
     h.button_to(label, url, opt)

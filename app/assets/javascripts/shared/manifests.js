@@ -202,8 +202,8 @@ export function configFor(type, enabled, page_action) {
  */
 export function properties(config, enabled = undefined) {
     switch (enabled) {
-        case true:  return { ...config, ...config?.enabled };
-        case false: return { ...config, ...config?.disabled };
+        case true:  return { ...config, ...config?.if_enabled };
+        case false: return { ...config, ...config?.if_disabled };
         default:    return { ...config };
     }
 }

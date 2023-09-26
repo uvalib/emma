@@ -117,10 +117,11 @@
 
     table {
 
+        $border-width: 0.125rem;
         $border-color: $uva-accent-orange;
 
         width:        100%;
-        border:       2px solid $border-color;
+        border:       $border-width solid $border-color;
         table-layout: fixed;
 
         thead {
@@ -129,7 +130,9 @@
         }
 
         @mixin fill-column-gaps($color) {
-            box-shadow: -0.125rem 0 0 0 $color, 0.125rem 0 0 0 $color;
+            box-shadow:
+                -$border-width 0 0 0 $color,
+                 $border-width 0 0 0 $color;
         }
 
         @mixin color-column($color) {
@@ -140,7 +143,7 @@
 
         tbody {
             .blank-row {
-                height:  0.1875rem;
+                height:  $border-width;
             }
             .blank-row:last-of-type {
                 display: none;

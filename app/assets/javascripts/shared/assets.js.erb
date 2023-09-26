@@ -46,7 +46,7 @@ AppDebug.file('shared/assets.js.erb');
  * @property {string|null}      [html]
  * @property {string|null}      [tooltip]
  * @property {function|null}    [func]
- * @property {boolean|null}     [active]
+ * @property {boolean|null}     [enabled]
  */
 
 /**
@@ -64,11 +64,11 @@ AppDebug.file('shared/assets.js.erb');
 /**
  * @typedef {ElementProperties} ActionProperties
  *
- * @property {ElementProperties|null} [enabled]
+ * @property {ElementProperties|null} [if_enabled]
  *
  *  Property values that apply only if the action is enabled. <p/>
  *
- * @property {ElementProperties|null} [disabled]
+ * @property {ElementProperties|null} [if_disabled]
  *
  *  Property values that apply only if the action is disabled. <p/>
  */
@@ -187,7 +187,7 @@ AppDebug.file('shared/assets.js.erb');
  * @property {string|null}          [class]
  * @property {string|null}          [tooltip]
  * @property {function|null}        [func]
- * @property {boolean|string|null}  [active]
+ * @property {boolean|string|null}  [enabled]
  */
 
 /**

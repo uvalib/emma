@@ -49,6 +49,25 @@ module BaseDecorator::Common
     tag.nil? || HTML_TABLE_TAGS.include?(tag.to_sym)
   end
 
+  # Process a configuration setting to determine whether it indicates a *true*
+  # value.
+  #
+  # @param [*]       value
+  # @param [Boolean] default          Returned if *value* is *nil*.
+  #
+  # @return [Boolean]
+  #
+  def check_setting(value, default: true)
+    case value
+      when nil    then default
+      when Hash   then Log.debug { "#{__method__}: ignored #{value.inspect}" }
+      when Array  then value.presence&.all? { |v| check_setting(v) }
+      when Symbol then respond_to?(value) ? send(value) : object.try(value)
+      when Proc   then value.call(object)
+      else             true?(value)
+    end || false
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

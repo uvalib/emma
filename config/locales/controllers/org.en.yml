@@ -123,16 +123,16 @@ en:
 
         submit:         &GENERIC_SUBMIT
           label:        'Submit'
-          enabled:
+          if_enabled:
             tooltip:    'Proceed with this action'
-          disabled:
+          if_disabled:
             tooltip:    'Conditions have not yet been met to proceed'
 
         cancel:         &GENERIC_CANCEL
           label:        'CANCEL'
-          enabled:
+          if_enabled:
             tooltip:    'Do nothing and return to the previous screen'
-          disabled:
+          if_disabled:
             tooltip:    'Not able to cancel at this point'
 
         #success:        'EMMA member organization was successfully %{actioned}.'
@@ -198,14 +198,14 @@ en:
         submit:
           <<:           *GENERIC_SUBMIT
           label:        'Create'
-          enabled:
+          if_enabled:
             tooltip:    'Create the new EMMA Member Organization'
-          disabled:
+          if_disabled:
             tooltip:    'Required information is still needed'
 
         cancel:
           <<:           *GENERIC_CANCEL
-          enabled:
+          if_enabled:
             tooltip:    'Do not create this entry (or start over)'
 
         #success:        'EMMA Member Organization %{name} created.'
@@ -233,14 +233,14 @@ en:
         submit:
           <<:           *GENERIC_SUBMIT
           label:        'Update'
-          enabled:
+          if_enabled:
             tooltip:    'Modify this EMMA Member Organization'
-          disabled:
+          if_disabled:
             tooltip:    'No valid changes have been made yet'
 
         cancel:
           <<:           *GENERIC_CANCEL
-          enabled:
+          if_enabled:
             tooltip:    'Discard these changes'
 
         #success:        'EMMA Member Organization %{name} updated.'
@@ -281,12 +281,12 @@ en:
         submit:
           <<:           *GENERIC_SUBMIT
           label:        'Delete'
-          enabled:
+          if_enabled:
             tooltip:    'Remove this EMMA Member Organization'
 
         cancel:
           <<:           *GENERIC_CANCEL
-          enabled:
+          if_enabled:
             tooltip:    'Keep this EMMA Member Organization'
 
         #success:        'EMMA Member Organization %{name} deleted.'
