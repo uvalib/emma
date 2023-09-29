@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# EMMA member organizations as JSON.
+# EMMA partner organizations as JSON.
 
 list ||= paginator.page_items
 

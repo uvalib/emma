@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Details of an EMMA member organization as XML.
+# Details of an EMMA partner organization as XML.
 
 org   ||= @item
 columns = org&.fields&.dup || {}

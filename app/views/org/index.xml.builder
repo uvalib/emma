@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# EMMA member organizations as XML.
+# EMMA partner organizations as XML.
 
 list ||= @list || {}
 

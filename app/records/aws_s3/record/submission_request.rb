@@ -6,7 +6,7 @@
 __loading_begin(__FILE__)
 
 # Combines metadata and a reference to a file into a submission request for
-# retrieval by a member repository.
+# retrieval by a partner repository.
 #
 #--
 # === Submission Fields

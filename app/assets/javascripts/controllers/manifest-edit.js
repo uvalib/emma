@@ -2646,7 +2646,7 @@ appSetup(MODULE, function() {
 
     /**
      * Indicate whether the given repository is the default (local) repository
-     * or an (external) member repository.
+     * or an (external) partner repository.
      *
      * @param {string} [repo]
      *

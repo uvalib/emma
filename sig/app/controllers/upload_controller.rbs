@@ -359,8 +359,8 @@ class UploadController < ApplicationController
 
   # === GET /retrieval?url=URL
   #
-  # Retrieve a file from a member repository that supports proxying through the
-  # EMMA server.
+  # Retrieve a file from a partner repository that supports proxying through
+  # the EMMA server.
   #
   # @raise [ExecError] @see IaDownloadConcern#ia_download_response
   #

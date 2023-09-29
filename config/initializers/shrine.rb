@@ -76,7 +76,7 @@ end
 public
 
 # There are four distinct sets of S3 buckets -- three to provide a pickup
-# location for submission of remediated items back to member repositories
+# location for submission of remediated items back to partner repositories
 # (defined in AwsS3Service#S3_BUCKET) -- and the one for storage of Shrine
 # uploads, which is defined here.
 #

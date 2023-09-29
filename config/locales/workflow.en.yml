@@ -294,7 +294,7 @@ en:
 
         unretrieved:      &UNRETRIEVED_STATE
           label:          'UNRETRIEVED'
-          desc:           'Waiting to be retrieved by the member repository'
+          desc:           'Waiting to be retrieved by the partner repository'
           event:          &UNRETRIEVED_EVENTS
             fail:
               to:         failed

@@ -375,7 +375,7 @@ module UploadWorkflow::Bulk::States
 
   # Upon entering the :retrieved state:
   #
-  # The submission request has been retrieved by the member repository and
+  # The submission request has been retrieved by the partner repository and
   # removed from the staging area.
   #
   # @param [Workflow::State] state        State that is being entered.

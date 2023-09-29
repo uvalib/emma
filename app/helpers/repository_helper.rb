@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods supporting variations for the member repositories.
+# View helper methods supporting variations for partner repositories.
 #
 module RepositoryHelper
 
@@ -80,7 +80,7 @@ module RepositoryHelper
     url.to_s.strip.match?(%r{^https?://([^/]+\.)?archive\.org/})
   end
 
-  # Report the member repository associated with the given URL.
+  # Report the partner repository associated with the given URL.
   #
   # @param [String, nil] url
   #
@@ -97,7 +97,7 @@ module RepositoryHelper
     end&.to_s
   end
 
-  # Report the member repository as indicated by the given parameters.
+  # Report the partner repository as indicated by the given parameter(s).
   #
   # To account for the handful of "EMMA" items that are actually Bookshare
   # items from the "EMMA collection", if both a String (URL) and Model/Hash are

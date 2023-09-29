@@ -21,7 +21,7 @@ module Record::Submittable
     include Record::Submittable
 
     # Indicate whether the item represents an EMMA repository entry (as opposed
-    # to a member repository entry).
+    # to a partner repository entry).
     #
     # @param [Model, String, Any] item
     #
@@ -225,7 +225,7 @@ module Record::Submittable
     def normalize_index_items: (*(Upload|String|Array[Upload|String]) items, ?meth: Symbol|nil, ?max: Integer) -> Array[Upload|String]
   end
 
-  module MemberRepositoryMethods
+  module PartnerRepositoryMethods
     include Record::Submittable
 
     include Record::Submittable::IndexIngestMethods
@@ -238,7 +238,7 @@ module Record::Submittable
     #
     def aws_api: () -> AwsS3Service
 
-    # Failure messages for member repository requests. # TODO: I18n
+    # Failure messages for partner repository requests. # TODO: I18n
     #
     # @type [Hash{Symbol=>String}]
     #
@@ -246,7 +246,7 @@ module Record::Submittable
     #
     REPO_FAILURE: Hash[Symbol,String]
 
-    # Submit a new item to a member repository.
+    # Submit a new item to a partner repository.
     #
     # @param [Array<Model>] items
     # @param [Hash]         opt
@@ -257,7 +257,7 @@ module Record::Submittable
     #
     def repository_create: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
-    # Submit a request to a member repository to modify the metadata and/or
+    # Submit a request to a partner repository to modify the metadata and/or
     # file of a previously-submitted item.
     #
     # @param [Array<Model>] items
@@ -265,26 +265,26 @@ module Record::Submittable
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
-    # @note This capability is not yet supported by any member repository.
+    # @note This capability is not yet supported by any partner repository.
     #
     # @note From UploadWorkflow::External#repository_modify
     #
     def repository_modify: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
-    # Request deletion of a prior submission to a member repository.
+    # Request deletion of a prior submission to a partner repository.
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
-    # @note This capability is not yet supported by any member repository.
+    # @note This capability is not yet supported by any partner repository.
     #
     # @note From UploadWorkflow::External#repository_remove
     #
     def repository_remove: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
-    # Remove request(s) from a member repository queue.
+    # Remove request(s) from a partner repository queue.
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
@@ -310,7 +310,7 @@ module Record::Submittable
     #
     def process_aws_errors: ((AwsS3::Message::Response|Hash[(String|Integer),String]) result, *(String|Model) items) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    # Send removal request(s) to member repositories.
+    # Send removal request(s) to partner repositories.
     #
     # @param [Hash, Array, Model] items
     # @param [Hash]               opt     Passed to #repository_remove.
@@ -335,7 +335,7 @@ module Record::Submittable
     #
     def repository_removals: ((symHash|String|Model|Array[String|Model]|nil) items, **untyped opt) ->  [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    # Remove request(s) from member repository queue(s).
+    # Remove request(s) from partner repository queue(s).
     #
     # @param [Hash, Array] items
     # @param [Hash]        opt        Passed to #repository_remove.
@@ -392,7 +392,7 @@ module Record::Submittable
 
     include Record::Submittable::RecordMethods
 
-    include Record::Submittable::MemberRepositoryMethods
+    include Record::Submittable::PartnerRepositoryMethods
 
     # :nocov:
     #include Record::Submittable::SubmissionMethods
@@ -453,7 +453,7 @@ module Record::Submittable
 
     include Record::Submittable::IndexIngestMethods
 
-    include Record::Submittable::MemberRepositoryMethods
+    include Record::Submittable::PartnerRepositoryMethods
 
     include Record::Submittable::BatchMethods
 

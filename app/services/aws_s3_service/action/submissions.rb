@@ -13,13 +13,13 @@ module AwsS3Service::Action::Submissions
   include AwsS3Service::Testing
 
   # ===========================================================================
-  # :section: Member repository requests
+  # :section: Partner repository requests
   # ===========================================================================
 
   public
 
   # Uploads one or more submissions into AWS S3 for the creation of new entries
-  # in the member repository.
+  # in the partner repository.
   #
   # @param [Array<AwsS3::Message::SubmissionRequest, Model, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
@@ -39,7 +39,7 @@ module AwsS3Service::Action::Submissions
     end
 
   # Uploads one or more requests into AWS S3 for the modification of existing
-  # member repository entries.
+  # partner repository entries.
   #
   # @param [Array<AwsS3::Message::ModificationRequest, Model, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
@@ -58,8 +58,8 @@ module AwsS3Service::Action::Submissions
       }
     end
 
-  # Uploads one or more requests into AWS S3 for the removal of existing member
-  # repository entries.
+  # Uploads one or more requests into AWS S3 for the removal of existing
+  # partner repository entries.
   #
   # @param [Array<AwsS3::Message::RemovalRequest, Model, Hash>] records
   # @param [Hash] opt                 Passed to #put_records.
@@ -84,7 +84,7 @@ module AwsS3Service::Action::Submissions
 
   public
 
-  # Remove request(s) from a member repository queue.
+  # Remove request(s) from a partner repository queue.
   #
   # @param [Array<AwsS3::Message::SubmissionRequest, Model, String>] records
   # @param [Hash] opt                 Passed to #delete_records.

@@ -112,7 +112,7 @@ class OrgController < ApplicationController
 
   # === GET /org/show/(:id)
   #
-  # Display details of an existing EMMA member organization.
+  # Display details of an existing EMMA partner organization.
   #
   # If :id is not given then #current_org is used.
   #

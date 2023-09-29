@@ -450,7 +450,7 @@ module Upload::WorkflowMethods
   end
 
   # Indicate whether this record is involved in a workflow step related to
-  # transmission to a member repository.
+  # transmission to a partner repository.
   #
   def being_submitted?
     workflow_group == :submission

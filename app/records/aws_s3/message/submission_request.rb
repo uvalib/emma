@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# The data and metadata to submit a new remediated variant to a member
+# The data and metadata to submit a new remediated variant to a partner
 # repository via an AWS bucket pickup location.
 #
 #--

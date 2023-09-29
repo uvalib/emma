@@ -17,7 +17,7 @@ module AwsS3Service::Properties
 
   public
 
-  # There are two S3 buckets for each member repository used to queue
+  # There are two S3 buckets for each partner repository used to queue
   # submissions and two S3 buckets for EMMA which include storage used by
   # Shrine.
   #
@@ -44,13 +44,13 @@ module AwsS3Service::Properties
       }.to_h
     }.deep_freeze
 
-  # A list of the member repositories.
+  # A list of the partner repositories.
   #
   # @type [Array<Symbol>]
   #
   # @note Currently unused
   #
-  MEMBER_REPOSITORIES = S3_BUCKET.keys.excluding(:emma).freeze
+  PARTNER_REPOSITORIES = S3_BUCKET.keys.excluding(:emma).freeze
 
   # S3 options are kept in encrypted credentials but can be overridden by
   # environment variables.

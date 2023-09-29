@@ -70,11 +70,11 @@ module Record::Properties
 
   # Force deletions of EMMA Unified Index entries even if the record ID does
   # not begin with "emma-".  (This is to support development during which
-  # sometimes fake member repository entries get into the index.)
+  # sometimes fake partner repository entries get into the index.)
   #
   # When *false*, only items with :emma_repositoryRecordId values beginning
   # with "emma-" will be submitted to the EMMA Unified Ingest service.  All
-  # others will result in generating a request for consideration by the member
+  # others will result in generating a request for consideration by the partner
   # repository.
   #
   # When *true*, all items will be submitted to the Unified Ingest service.
@@ -99,22 +99,22 @@ module Record::Properties
   #
   TRUNCATE_DELETE_DEFAULT = true
 
-  # Permit the "creation" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **creation** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @type [Boolean]
   #
   REPO_CREATE_DEFAULT = true
 
-  # Permit the "update" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **update** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @type [Boolean]
   #
   REPO_EDIT_DEFAULT = false
 
-  # Permit the "removal" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **removal** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @type [Boolean]
   #
@@ -234,7 +234,7 @@ module Record::Properties
 
   # Force deletions of EMMA Unified Index entries even if the record ID does
   # not begin with "emma-".  (This is to support development during which
-  # sometimes fake member repository entries get into the index.)
+  # sometimes fake partner repository entries get into the index.)
   #
   # @return [Boolean]
   #
@@ -256,8 +256,8 @@ module Record::Properties
     parameter_setting(key)
   end
 
-  # Permit the "creation" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **creation** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @return [Boolean]
   #
@@ -269,8 +269,8 @@ module Record::Properties
     OPTION_PARAMETER_DEFAULT[key]
   end
 
-  # Permit the "update" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **update** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @return [Boolean]
   #
@@ -282,8 +282,8 @@ module Record::Properties
     OPTION_PARAMETER_DEFAULT[key]
   end
 
-  # Permit the "removal" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **removal** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @return [Boolean]
   #

@@ -297,7 +297,7 @@ module DataConcern
   protected
 
   # States which indicate that the submission is either complete or that it is
-  # on track to becoming complete (in the case of submissions back to member
+  # on track to becoming complete (in the case of submissions back to partner
   # repositories).
   #
   # @type [Array<Symbol>]

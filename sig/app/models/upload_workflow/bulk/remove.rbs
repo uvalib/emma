@@ -74,7 +74,7 @@ module UploadWorkflow::Bulk::Remove::States
   #
   # For EMMA-native items this causes the items to be removed directly.
   #
-  # For member repository items this causes a removal request to be staged.
+  # For partner repository items this causes a removal request to be staged.
   #
   # Transition out of this workflow state happens automatically; in the case
   # of EMMA-native items, the next state depends upon the success of the

@@ -252,11 +252,11 @@ module UploadWorkflow::Properties
 
   # Force deletions of EMMA Unified Index entries even if the record ID does
   # not begin with "emma-".  (This is to support development during which
-  # sometimes fake member repository entries get into the index.)
+  # sometimes fake partner repository entries get into the index.)
   #
   # When *false*, only items with :emma_repositoryRecordId values beginning
   # with "emma-" will be submitted to the EMMA Unified Ingest service.  All
-  # others will result in generating a request for consideration by the member
+  # others will result in generating a request for consideration by the partner
   # repository.
   #
   # When *true*, all items will be submitted to the Unified Ingest service.
@@ -281,22 +281,22 @@ module UploadWorkflow::Properties
   #
   TRUNCATE_DELETE_DEFAULT = true
 
-  # Permit the "creation" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **creation** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @type [Boolean]
   #
   REPO_CREATE_DEFAULT = true
 
-  # Permit the "update" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **update** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @type [Boolean]
   #
   REPO_EDIT_DEFAULT = false
 
-  # Permit the "removal" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **removal** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @type [Boolean]
   #
@@ -416,7 +416,7 @@ module UploadWorkflow::Properties
 
   # Force deletions of EMMA Unified Index entries even if the record ID does
   # not begin with "emma-".  (This is to support development during which
-  # sometimes fake member repository entries get into the index.)
+  # sometimes fake partner repository entries get into the index.)
   #
   # @return [Boolean]
   #
@@ -438,8 +438,8 @@ module UploadWorkflow::Properties
     parameter_setting(key)
   end
 
-  # Permit the "creation" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **creation** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @return [Boolean]
   #
@@ -451,8 +451,8 @@ module UploadWorkflow::Properties
     OPTION_PARAMETER_DEFAULT[key]
   end
 
-  # Permit the "update" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **update** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @return [Boolean]
   #
@@ -464,8 +464,8 @@ module UploadWorkflow::Properties
     OPTION_PARAMETER_DEFAULT[key]
   end
 
-  # Permit the "removal" of member repository items via a request to be queued
-  # to the appropriate member repository.
+  # Permit the **removal** of partner repository items via a request to be
+  # queued to the appropriate partner repository.
   #
   # @return [Boolean]
   #
@@ -556,7 +556,7 @@ public
 # * File storage/retrieval/removal
 # * Database create/update/delete
 # * EMMA Unified Index create/update/delete
-# * Member repository submission queue (AWS S3) create/update/delete
+# * Partner repository submission queue (AWS S3) create/update/delete
 #
 #--
 # noinspection RubyTooManyMethodsInspection
@@ -592,7 +592,7 @@ module UploadWorkflow::External
   end
 
   # Indicate whether the item represents an EMMA repository entry (as opposed
-  # to a member repository entry).
+  # to a partner repository entry).
   #
   # @param [Upload, *] item
   #
@@ -716,7 +716,7 @@ module UploadWorkflow::External
     if force
       emergency = opt[:emergency] || model_options.emergency_delete
       # Mark as failed any non-EMMA-items that could not be added to a request
-      # for removal of member repository items.
+      # for removal of partner repository items.
       items, failed =
         items.partition do |item|
           emma_item?(item) || incomplete?(item) ||
@@ -738,7 +738,7 @@ module UploadWorkflow::External
       return (items + requested), failed
     end
 
-    # Dequeue member repository creation requests.
+    # Dequeue partner repository creation requests.
     requests = items.select { |item| incomplete?(item) && !emma_item?(item) }
     repository_dequeues(requests, **opt) if requests.present?
 
@@ -821,7 +821,7 @@ module UploadWorkflow::External
       end
     end
 
-    # Member repository removal requests that were deferred in #upload_remove
+    # Partner repository removal requests that were deferred in #upload_remove
     # are handled now.
     if model_options.repo_remove && opt[:requests].present?
       if atomic && failed.present?
@@ -1334,12 +1334,12 @@ module UploadWorkflow::External
   end
 
   # ===========================================================================
-  # :section: Member repository requests
+  # :section: Partner repository requests
   # ===========================================================================
 
   public
 
-  # Failure messages for member repository requests. # TODO: I18n
+  # Failure messages for partner repository requests. # TODO: I18n
   #
   # @type [Hash{Symbol=>String}]
   #
@@ -1351,7 +1351,7 @@ module UploadWorkflow::External
     no_remove:  'Repository removal requests are disabled',
   }.deep_freeze
 
-  # Submit a new item to a member repository.
+  # Submit a new item to a partner repository.
   #
   # @param [Array<Upload>] items
   # @param [Hash]          opt
@@ -1372,7 +1372,7 @@ module UploadWorkflow::External
     return succeeded, failed
   end
 
-  # Submit a request to a member repository to modify the metadata and/or
+  # Submit a request to a partner repository to modify the metadata and/or
   # file of a previously-submitted item.
   #
   # @param [Array<Upload>] items
@@ -1380,7 +1380,7 @@ module UploadWorkflow::External
   #
   # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #
-  # @note This capability is not yet supported by any member repository.
+  # @note This capability is not yet supported by any partner repository.
   #
   def repository_modify(*items, **opt)
     succeeded = []
@@ -1396,14 +1396,14 @@ module UploadWorkflow::External
     return succeeded, failed
   end
 
-  # Request deletion of a prior submission to a member repository.
+  # Request deletion of a prior submission to a partner repository.
   #
   # @param [Array<String,Upload>] items
   # @param [Hash]                 opt
   #
   # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #
-  # @note This capability is not yet supported by any member repository.
+  # @note This capability is not yet supported by any partner repository.
   #
   def repository_remove(*items, **opt)
     succeeded = []
@@ -1424,12 +1424,12 @@ module UploadWorkflow::External
   end
 
   # ===========================================================================
-  # :section: Member repository requests
+  # :section: Partner repository requests
   # ===========================================================================
 
   public
 
-  # Remove request(s) from a member repository queue.
+  # Remove request(s) from a partner repository queue.
   #
   # @param [Array<String,Model>] items
   # @param [Hash]                opt
@@ -1451,7 +1451,7 @@ module UploadWorkflow::External
   end
 
   # ===========================================================================
-  # :section: Member repository requests
+  # :section: Partner repository requests
   # ===========================================================================
 
   protected
@@ -1475,12 +1475,12 @@ module UploadWorkflow::External
   end
 
   # ===========================================================================
-  # :section: Member repository requests
+  # :section: Partner repository requests
   # ===========================================================================
 
   public
 
-  # Send removal request(s) to member repositories.
+  # Send removal request(s) to partner repositories.
   #
   # @param [Hash, Array] items
   # @param [Hash]        opt          Passed to #repository_remove.
@@ -1513,7 +1513,7 @@ module UploadWorkflow::External
     return succeeded, failed
   end
 
-  # Remove request(s) from member repository queue(s).
+  # Remove request(s) from partner repository queue(s).
   #
   # @param [Hash, Array] items
   # @param [Hash]        opt        Passed to #repository_remove.

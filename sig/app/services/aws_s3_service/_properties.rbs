@@ -3,7 +3,7 @@
 module AwsS3Service::Properties
   include ApiService::Properties
 
-  # There are two S3 buckets for each member repository used to queue
+  # There are two S3 buckets for each partner repository used to queue
   # submissions and two S3 buckets for EMMA which include storage used by
   # Shrine.
   #
@@ -23,13 +23,13 @@ module AwsS3Service::Properties
   #
   S3_BUCKET: Hash[Symbol,Hash[Symbol,String]]
 
-  # A list of the member repositories.
+  # A list of the partner repositories.
   #
   # @type [Array<Symbol>]
   #
   # @note Currently unused
   #
-  MEMBER_REPOSITORIES: symArray
+  PARTNER_REPOSITORIES: symArray
 
   # S3 options are kept in encrypted credentials but can be overridden by
   # environment variables.

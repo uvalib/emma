@@ -524,7 +524,7 @@ module Workflow::Base::Events
     :assign,   # The reviewer claims the submission for review or the system assigns a default reviewer.
     :review,   # The reviewer initiates review of the submission.
     :index,    # The system indicates the submission can be indexed directly.
-    :timeout,  # The member repository has not yet retrieved the submission.
+    :timeout,  # The partner repository has not yet retrieved the submission.
 
     # === Workflow meta-events
 
@@ -816,8 +816,8 @@ module Workflow::Base::States
     # === "Sub-sequence: Submission" states
 
     :staging,     # The submission request (submitted file plus generated request form) has been added to the staging area.
-    :unretrieved, # The submission request has not been retrieved by the member repository within a pre-determined maximum time span.
-    :retrieved,   # The submission request has been retrieved by the member repository and removed from the staging area.
+    :unretrieved, # The submission request has not been retrieved by the partner repository within a pre-determined maximum time span.
+    :retrieved,   # The submission request has been retrieved by the partner repository and removed from the staging area.
 
     # === "Sub-sequence: Finalization" states
 

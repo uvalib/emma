@@ -115,7 +115,7 @@ en:
         emma_titleId:                       ~ # 'EMMA Title ID'
 
         # =====================================================================
-        # File-level member repository information
+        # File-level partner repository information
         # =====================================================================
 
         emma_webPageLink:                   ~ # 'Details Link'

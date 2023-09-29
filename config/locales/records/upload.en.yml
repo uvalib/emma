@@ -116,8 +116,8 @@ en:
           tooltip:      |
             An identifier associated with the file upload submission.
             For EMMA-native repository entries, this is equivalent to the
-            "Repository Record ID".  For entries derived from member repository
-            items, this is the "tracking number" of the request.
+            "Repository Record ID".  For entries derived from partner
+            repository items, this is the "tracking number" of the request.
           notes_html:   |
             <em>TODO</em>
           origin:       system
@@ -363,7 +363,7 @@ en:
             # IA:   N/A
             # SR:   EmmaRepository
             # IR:   EmmaRepository
-            # NOTE: User-supplied for a derivation of a member repository item.
+            # NOTE: User-supplied for a derivation of a partner repository item
             # NOTE: User-supplied as "emma" for new submissions.
             # NOTE: Should have the same value as:
             # NOTE:   en.emma.upload.record.repository

@@ -39,7 +39,7 @@ module Record::Submittable
     public
 
     # Indicate whether the item represents an EMMA repository entry (as opposed
-    # to a member repository entry).
+    # to a partner repository entry).
     #
     # @param [Model, String, Any] item
     #
@@ -452,7 +452,7 @@ module Record::Submittable
 
   end
 
-  module MemberRepositoryMethods
+  module PartnerRepositoryMethods
 
     include Record::Submittable
     include Record::Submittable::IndexIngestMethods
@@ -479,7 +479,7 @@ module Record::Submittable
 
     public
 
-    # Failure messages for member repository requests. # TODO: I18n
+    # Failure messages for partner repository requests. # TODO: I18n
     #
     # @type [Hash{Symbol=>String}]
     #
@@ -493,7 +493,7 @@ module Record::Submittable
       no_remove:  'Repository removal requests are disabled',
     }.deep_freeze
 
-    # Submit a new item to a member repository.
+    # Submit a new item to a partner repository.
     #
     # @param [Array<Model>] items
     # @param [Hash]         opt
@@ -516,7 +516,7 @@ module Record::Submittable
       return succeeded, failed
     end
 
-    # Submit a request to a member repository to modify the metadata and/or
+    # Submit a request to a partner repository to modify the metadata and/or
     # file of a previously-submitted item.
     #
     # @param [Array<Model>] items
@@ -524,7 +524,7 @@ module Record::Submittable
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
-    # @note This capability is not yet supported by any member repository.
+    # @note This capability is not yet supported by any partner repository.
     #
     # @note From UploadWorkflow::External#repository_modify
     #
@@ -542,14 +542,14 @@ module Record::Submittable
       return succeeded, failed
     end
 
-    # Request deletion of a prior submission to a member repository.
+    # Request deletion of a prior submission to a partner repository.
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
     #
     # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
     #
-    # @note This capability is not yet supported by any member repository.
+    # @note This capability is not yet supported by any partner repository.
     #
     # @note From UploadWorkflow::External#repository_remove
     #
@@ -577,7 +577,7 @@ module Record::Submittable
 
     public
 
-    # Remove request(s) from a member repository queue.
+    # Remove request(s) from a partner repository queue.
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
@@ -632,7 +632,7 @@ module Record::Submittable
 
     public
 
-    # Send removal request(s) to member repositories.
+    # Send removal request(s) to partner repositories.
     #
     # @param [Hash, Array, Model] items
     # @param [Hash]               opt     Passed to #repository_remove.
@@ -667,7 +667,7 @@ module Record::Submittable
       return succeeded, failed
     end
 
-    # Remove request(s) from member repository queue(s).
+    # Remove request(s) from partner repository queue(s).
     #
     # @param [Hash, Array] items
     # @param [Hash]        opt        Passed to #repository_remove.
@@ -747,7 +747,7 @@ module Record::Submittable
 
     include Record::Submittable
     include Record::Submittable::RecordMethods
-    include Record::Submittable::MemberRepositoryMethods
+    include Record::Submittable::PartnerRepositoryMethods
 
     # Non-functional hints for RubyMine type checking.
     unless ONLY_FOR_DOCUMENTATION
@@ -800,7 +800,7 @@ module Record::Submittable
         end
       end
 
-      # Member repository removal requests that were deferred in #entry_remove
+      # Partner repository removal requests that were deferred in #entry_remove
       # are handled now.
       if model_options.repo_remove && opt[:requests].present?
         if atomic && failed.present?
@@ -897,7 +897,7 @@ module Record::Submittable
     include Record::Submittable::RecordMethods
     include Record::Submittable::DatabaseMethods
     include Record::Submittable::IndexIngestMethods
-    include Record::Submittable::MemberRepositoryMethods
+    include Record::Submittable::PartnerRepositoryMethods
     include Record::Submittable::BatchMethods
 
     # =========================================================================
@@ -1021,7 +1021,7 @@ module Record::Submittable
       if force
         emergency = opt[:emergency] || model_options.emergency_delete
         # Mark as failed any non-EMMA-items that could not be added to a
-        # request for removal of member repository items.
+        # request for removal of partner repository items.
         items, failed =
           items.partition do |item|
             emma_item?(item) || incomplete?(item) ||
@@ -1043,7 +1043,7 @@ module Record::Submittable
         return (items + requested), failed
       end
 
-      # Dequeue member repository creation requests.
+      # Dequeue partner repository creation requests.
       requests = items.select { |item| incomplete?(item) && !emma_item?(item) }
       repository_dequeues(requests, **opt) if requests.present?
 

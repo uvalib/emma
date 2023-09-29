@@ -33,7 +33,7 @@ module SearchService::Action::Records
   #
   # === Filters
   # If :repository is given, results will be limited to items originating from
-  # the specified member repository.
+  # the specified partner repository.
   #
   # If :formatVersion is given, results will be limited to items with the
   # specified format version.

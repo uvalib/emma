@@ -187,7 +187,7 @@ module Record::Steppable
   #def under_review?: ((Model|Symbol|String|nil) item) -> bool
 
   # Indicate whether this record is involved in a workflow step related to
-  # transmission to a member repository.
+  # transmission to a partner repository.
   #
   # @param [Model, String, Symbol, nil] item
   #
@@ -441,7 +441,7 @@ module Record::Steppable
     #def under_review?: (?(Model|Symbol|String|nil) item) -> bool
 
     # Indicate whether this record is involved in a workflow step related to
-    # transmission to a member repository.
+    # transmission to a partner repository.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #

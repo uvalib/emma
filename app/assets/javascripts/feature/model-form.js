@@ -1574,7 +1574,7 @@ appSetup(MODULE, function() {
      *
      * The field will not be updated if "sealed off" by the presence of the
      * {@link SEALED_MARKER}.  This prevents the uploading of the file from
-     * modifying metadata which is under the control of the member repository
+     * modifying metadata which is under the control of the partner repository
      * specified via "emma_repository".
      *
      * @param {object}   data
@@ -2647,7 +2647,7 @@ appSetup(MODULE, function() {
 
     /**
      * Indicate whether the given repository is the default (local) repository
-     * or an (external) member repository.
+     * or an (external) partner repository.
      *
      * @param {string} [repo]
      *
@@ -2680,7 +2680,7 @@ appSetup(MODULE, function() {
 
         // Listen for a change to the "Source Repository" selection.  If the
         // selection was cleared, or if the default repository was selected,
-        // then proceed to form validation.  If a member repository was
+        // then proceed to form validation.  If a partner repository was
         // selected, prompt for the original item.
 
         handleEvent($menu, 'change', function() {
@@ -2846,12 +2846,12 @@ appSetup(MODULE, function() {
          *
          * This way, if the source repository is set before the file is
          * uploaded then metadata extracted from the file will not contradict
-         * the title-level metadata supplied by the member repository. <p/>
+         * the title-level metadata supplied by the partner repository. <p/>
          *
          * This doesn't prevent the user from updating the field, but the
          * styling of the "sealed" class should hint that changing the field is
-         * not desirable (since the change is going to be ignored by the member
-         * repository anyway).
+         * not desirable (since the change is going to be ignored by the
+         * partner repository anyway).
          *
          * @param {object} [source_fields]
          */
@@ -2994,7 +2994,7 @@ appSetup(MODULE, function() {
 
     /**
      * Selection control for identifying the EMMA entry which is the source of
-     * a new submission derived from member repository content.
+     * a new submission derived from partner repository content.
      *
      * @param {Selector} [form]
      *

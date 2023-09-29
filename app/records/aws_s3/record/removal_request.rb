@@ -5,9 +5,9 @@
 
 __loading_begin(__FILE__)
 
-# A request to delete a prior submission to a member repository.
+# A request to delete a prior submission to a partner repository.
 #
-# @note This capability is not currently supported by any member repository.
+# @note This capability is not currently supported by any partner repository.
 #
 class AwsS3::Record::RemovalRequest < AwsS3::Record::SubmissionRequest
 end

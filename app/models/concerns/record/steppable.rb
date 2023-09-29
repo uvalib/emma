@@ -349,7 +349,7 @@ module Record::Steppable
   end
 
   # Indicate whether this record is involved in a workflow step related to
-  # transmission to a member repository.
+  # transmission to a partner repository.
   #
   # @param [Model, String, Symbol, nil] item
   #
@@ -832,7 +832,7 @@ module Record::Steppable
     end
 
     # Indicate whether this record is involved in a workflow step related to
-    # transmission to a member repository.
+    # transmission to a partner repository.
     #
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #

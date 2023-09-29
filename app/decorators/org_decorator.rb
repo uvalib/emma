@@ -106,7 +106,7 @@ class OrgDecorator < BaseDecorator
     # @return [String]
     #
     def items_menu_prompt(**)
-      'Select an EMMA member organization' # TODO: I18n
+      'Select an EMMA partner organization' # TODO: I18n
     end
 
     # Generate a label for a specific menu entry.
@@ -130,7 +130,7 @@ class OrgDecorator < BaseDecorator
     # @return [String]
     #
     def model_item_name(model: nil, capitalize: true)
-      model ? super : 'EMMA Member Organization' # TODO: I18n
+      model ? super : 'EMMA Partner Organization' # TODO: I18n
     end
 
   end

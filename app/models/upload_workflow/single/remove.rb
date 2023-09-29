@@ -162,7 +162,7 @@ module UploadWorkflow::Single::Remove::States
   #
   # For EMMA-native items this causes the items to be removed directly.
   #
-  # For member repository items this causes a removal request to be staged.
+  # For partner repository items this causes a removal request to be staged.
   #
   # Transition out of this workflow state happens automatically; in the case
   # of EMMA-native items, the next state depends upon the success of the
@@ -186,7 +186,7 @@ module UploadWorkflow::Single::Remove::States
       emma_items = true
     end
 
-    # Determine whether this is destined for a member repository.
+    # Determine whether this is destined for a partner repository.
     unless simulating
       emma_items = Upload.emma_native?(record) if record
     end
@@ -205,7 +205,7 @@ module UploadWorkflow::Single::Remove::States
         self.succeeded += submission.items
         ok = ready?
       else
-        ok = true # TODO: Simulate member repository delete request?
+        ok = true # TODO: Simulate partner repository delete request?
       end
     end
 
@@ -216,7 +216,7 @@ module UploadWorkflow::Single::Remove::States
 
     # TODO: simulation - remove
     __debug_sim do
-      if !emma_items; 'Generating removal request for member repository items.'
+      if !emma_items; 'Generating removal request for partner repository items'
       elsif !ok;      'The EMMA-native items NOT removed due to failure(s).'
       else;           'The EMMA-native items were removed.'; end
     end

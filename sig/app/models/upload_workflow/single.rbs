@@ -204,7 +204,7 @@ module UploadWorkflow::Single::Actions
 
   # When the workflow state of the record is :unretrieved, check the AWS S3
   # bucket to determine whether the submission has finally been picked up by
-  # the member repository and removed from the queue.  If so, then advance the
+  # the partner repository and removed from the queue.  If so, then advance the
   # workflow state.
   #
   # @return [String]
@@ -212,7 +212,7 @@ module UploadWorkflow::Single::Actions
   def wf_check_retrieved: () -> String
 
   # When the workflow state of the record is :indexing, check to determine
-  # whether index has finally received the update from the member repository.
+  # whether index has finally received the update from the partner repository.
   # If so then advance the workflow state.
   #
   # @return [String]
@@ -398,7 +398,7 @@ module UploadWorkflow::Single::States
 
   # Upon entering the :unretrieved state:
   #
-  # For a member repository submission, the record's workflow will remain in
+  # For a partner repository submission, the record's workflow will remain in
   # this state until a separate action (external process or manual check via
   # the web interface) determines that the submission has been retrieved and
   # advances the state.
@@ -413,7 +413,7 @@ module UploadWorkflow::Single::States
 
   # Upon entering the :retrieved state:
   #
-  # The submission request has been retrieved by the member repository and
+  # The submission request has been retrieved by the partner repository and
   # removed from the staging area.
   #
   # @param [Workflow::State] state        State that is being entered.
@@ -433,7 +433,7 @@ module UploadWorkflow::Single::States
   #
   # For an EMMA-native submission, the item is being added to the index.
   #
-  # For a member repository submission, the record's workflow will remain in
+  # For a partner repository submission, the record's workflow will remain in
   # this state until a separate action (external process or manual check via
   # the web interface) determines that the entry has appeared in the index.
   #

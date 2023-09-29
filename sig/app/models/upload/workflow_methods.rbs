@@ -221,7 +221,7 @@ module Upload::WorkflowMethods
   def under_review?: () -> bool
 
   # Indicate whether this record is involved in a workflow step related to
-  # transmission to a member repository.
+  # transmission to a partner repository.
   #
   def being_submitted?: () -> bool
 

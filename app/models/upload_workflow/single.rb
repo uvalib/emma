@@ -496,7 +496,7 @@ module UploadWorkflow::Single::Actions
 
   # When the workflow state of the record is :unretrieved, check the AWS S3
   # bucket to determine whether the submission has finally been picked up by
-  # the member repository and removed from the queue.  If so, then advance the
+  # the partner repository and removed from the queue.  If so, then advance the
   # workflow state.
   #
   # @return [String]
@@ -520,7 +520,7 @@ module UploadWorkflow::Single::Actions
   end
 
   # When the workflow state of the record is :indexing, check to determine
-  # whether index has finally received the update from the member repository.
+  # whether index has finally received the update from the partner repository.
   # If so then advance the workflow state.
   #
   # @return [String]
@@ -966,7 +966,7 @@ module UploadWorkflow::Single::States
   def on_staging_entry(state, event, *event_args)
     super
 
-    # Determine whether this is destined for a member repository.
+    # Determine whether this is destined for a partner repository.
     if simulating
       __debug_sim("[emma_items: #{submission.emma_item}]")
       emma_items = submission.emma_item
@@ -996,7 +996,7 @@ module UploadWorkflow::Single::States
 
   # Upon entering the :unretrieved state:
   #
-  # For a member repository submission, the record's workflow will remain in
+  # For a partner repository submission, the record's workflow will remain in
   # this state until a separate action (external process or manual check via
   # the web interface) determines that the submission has been retrieved and
   # advances the state.
@@ -1030,7 +1030,7 @@ module UploadWorkflow::Single::States
       else
         __debug_sim("The #{task} still has NOT detected the submission.")
         __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the member repository.')
+        __debug_sim('SYSTEM notifies an agent of the partner repository.')
         if task.restart
           __debug_sim("The #{task} is restarting.")
           timeout! # NOTE: => :unretrieved
@@ -1047,7 +1047,7 @@ module UploadWorkflow::Single::States
 
   # Upon entering the :retrieved state:
   #
-  # The submission request has been retrieved by the member repository and
+  # The submission request has been retrieved by the partner repository and
   # removed from the staging area.
   #
   # @param [Workflow::State] state        State that is being entered.
@@ -1064,7 +1064,7 @@ module UploadWorkflow::Single::States
   def on_retrieved_entry(state, event, *event_args)
     super
 
-    __debug_sim('The submission has been received by the member repository.')
+    __debug_sim('The submission has been received by the partner repository.')
     __debug_sim('SYSTEM ensures the staging area is consistent.')
 
     advance! # NOTE: => :indexing
@@ -1081,7 +1081,7 @@ module UploadWorkflow::Single::States
   #
   # For an EMMA-native submission, the item is being added to the index.
   #
-  # For a member repository submission, the record's workflow will remain in
+  # For a partner repository submission, the record's workflow will remain in
   # this state until a separate action (external process or manual check via
   # the web interface) determines that the entry has appeared in the index.
   #
@@ -1114,7 +1114,7 @@ module UploadWorkflow::Single::States
       else
         __debug_sim("The #{task} still has NOT detected the submission.")
         __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the member repository.')
+        __debug_sim('SYSTEM notifies an agent of the partner repository.')
         if task.restart
           __debug_sim("The #{task} is restarting.")
           timeout! # NOTE: => :indexing

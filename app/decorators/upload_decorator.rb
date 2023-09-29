@@ -869,7 +869,7 @@ class UploadDecorator
 
   protected
 
-  # Element for prompting for the EMMA index entry of the member repository
+  # Element for prompting for the EMMA index entry of the partner repository
   # item which was the basis for the remediated item which is being submitted.
   #
   # @param [String] css               Characteristic CSS class/selector.

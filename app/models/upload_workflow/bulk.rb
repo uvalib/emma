@@ -689,7 +689,7 @@ module UploadWorkflow::Bulk::States
   def on_staging_entry(state, event, *event_args)
     super
 
-    # Determine whether this is destined for a member repository.
+    # Determine whether this is destined for a partner repository.
     if simulating
       __debug_sim("[emma_items: #{submission.emma_item}]")
       emma_items = submission.emma_item
@@ -748,7 +748,7 @@ module UploadWorkflow::Bulk::States
       else
         __debug_sim("The #{task} still has NOT detected the submission.")
         __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the member repository.')
+        __debug_sim('SYSTEM notifies an agent of the partner repository.')
         if task.restart
           __debug_sim("The #{task} is restarting.")
           timeout! # NOTE: => :unretrieved
@@ -769,7 +769,7 @@ module UploadWorkflow::Bulk::States
 
   # Upon entering the :retrieved state:
   #
-  # The submission request has been retrieved by the member repository and
+  # The submission request has been retrieved by the partner repository and
   # removed from the staging area.
   #
   # @param [Workflow::State] state        State that is being entered.
@@ -781,7 +781,7 @@ module UploadWorkflow::Bulk::States
   def on_retrieved_entry(state, event, *event_args)
     super
 
-    __debug_sim('The submission has been received by the member repository.')
+    __debug_sim('The submission has been received by the partner repository.')
     __debug_sim('SYSTEM ensures the staging area is consistent.')
 
     advance! # NOTE: => :indexing
@@ -828,7 +828,7 @@ module UploadWorkflow::Bulk::States
       else
         __debug_sim("The #{task} still has NOT detected the submission.")
         __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the member repository.')
+        __debug_sim('SYSTEM notifies an agent of the partner repository.')
         if task.restart
           __debug_sim("The #{task} is restarting.")
           timeout! # NOTE: => :indexing

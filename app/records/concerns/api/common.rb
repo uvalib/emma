@@ -1659,7 +1659,7 @@ module Api::Common
 
   public
 
-  # Member repository configurations.
+  # Partner repository configurations.
   #
   # @type [Hash{Symbol=>Any}]
   #
@@ -1742,7 +1742,7 @@ module Api::Common
 
   public
 
-  # Membership status of an EMMA user or EMMA member organization.
+  # Membership status of an EMMA user or EMMA partner organization.
   #
   # @type [Hash{Symbol=>Hash}]
   #
@@ -1750,7 +1750,7 @@ module Api::Common
   #
   MEMBER_STATUS = I18n.t('emma.account.type.MemberStatus').deep_freeze
 
-  # Table of member status.
+  # Table of membership status.
   #
   # @type [Hash{Symbol=>String}]
   #

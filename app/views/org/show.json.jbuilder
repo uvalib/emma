@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Show details of an EMMA member organization as JSON.
+# Show details of an EMMA partner organization as JSON.
 
 item ||= @item
 

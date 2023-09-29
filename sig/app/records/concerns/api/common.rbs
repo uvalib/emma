@@ -884,7 +884,7 @@ module Api::Common
   #
   DEPLOYMENT_MAP: Hash[Symbol,String]
 
-  # Member repository configurations.
+  # Partner repository configurations.
   #
   # @type [Hash{Symbol=>Any}]
   #
@@ -946,7 +946,7 @@ module Api::Common
   #
   LANGUAGE_MAP: Hash[Symbol,String]
 
-  # Membership status of an EMMA user or EMMA member organization.
+  # Membership status of an EMMA user or EMMA partner organization.
   #
   # @type [Hash{Symbol=>Hash}]
   #
@@ -954,7 +954,7 @@ module Api::Common
   #
   MEMBER_STATUS: Hash[Symbol,symHash]
 
-  # Table of member status.
+  # Table of membership status.
   #
   # @type [Hash{Symbol=>String}]
   #

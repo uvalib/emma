@@ -56,7 +56,7 @@ class Org < ApplicationRecord
   # This is the (non-persisted) organization associated with ID 0.
   #
   # User records use :org_id == 0 to indicate that the user is explicitly not
-  # associated with any member organization, whereas a NIL field value
+  # associated with any partner organization, whereas a NIL field value
   # indicates that the user's organization has not yet been determined.
   #
   # @return [Org]
