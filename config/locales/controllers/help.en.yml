@@ -169,9 +169,9 @@ en:
         upload_actions:
           asset:        'help/upload_actions.png'
           alt:          |
-            Upload action button panel ("List All", "Create", "Change", and
-            "Remove") with "List All" highlighted, indicating that the current
-            page is the uploads index page.
+            Upload action button panel ("My List", "Org List", "Create",
+            "Change", and "Remove") with "My List" highlighted, indicating that
+            the current page lists EMMA submissions made by this account.
 
         source_menu:
           asset:        'help/source_menu.png'
@@ -212,9 +212,10 @@ en:
         manifest_actions:
           asset:        'help/manifest_actions.png'
           alt:          |
-            Bulk upload action button panel ("List All", "Create", "Change",
-            "Remove", and "Submit") with "List All" highlighted, indicating
-            that the current page is the bulk uploads index page.
+            Bulk upload action button panel ("My List", "Org List", "Create",
+            "Change", "Remove", and "Submit") with "My List" highlighted,
+            indicating that the current page lists bulk upload manifests made
+            by this account.
 
         manifest_title:
           asset:        'help/manifest_title.png'

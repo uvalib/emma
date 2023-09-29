@@ -656,7 +656,7 @@ form.select-entry {
         }
 
         // Skip the status icon for disabled items.
-        &:not(.disabled):not(.fixed):not(.sealed) {
+        &:not(.disabled):not(.fixed) {
 
             .status-marker {
 

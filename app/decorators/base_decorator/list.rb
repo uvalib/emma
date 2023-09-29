@@ -110,6 +110,18 @@ module BaseDecorator::List
   DEFAULT_LABEL_CLASS = 'label'
   DEFAULT_VALUE_CLASS = 'value'
 
+  # Fields which, when formatting, should be rendered as 'textarea' values.
+  #
+  # @type [Array<Symbol>]
+  #
+  TEXTAREA_FIELDS = %i[
+    dc_description
+    emma_lastRemediationNote
+    rem_comments
+    rem_remediationComments
+    s_accessibilitySummary
+  ].freeze
+
   # Render a single label/value pair.
   #
   # @param [String, Symbol, nil]  label
@@ -180,10 +192,11 @@ module BaseDecorator::List
     prop  ||= field_configuration(field)
     field ||= prop[:field]
     label   = prop[:label] || label
+    tooltip = (prop[:tooltip] unless field == :dc_title)
 
     # Setup options for creating related HTML identifiers.
     base    = opt.delete(:base) || model_html_id(field || label)
-    type    = "field-#{base}"
+    classes = %W[field-#{base}]
     id_opt  = { base: base, index: index, group: opt.delete(:group) }.compact
     l_id    = opt.delete(:label_id)
     v_id    = opt.delete(:value_id) || field_html_id(value_css, **id_opt)
@@ -202,68 +215,53 @@ module BaseDecorator::List
     end
 
     # Adjust field properties.
-    cls     = prop[:type].is_a?(Class)
-    enum    = cls && (prop[:type] < EnumType)
-    model   = cls && (prop[:type] < Model)
-    if (enum || model) && !value.is_a?(ActiveSupport::SafeBuffer)
-      value  = value.dup                if value.is_a?(Array)
+    type    = prop[:type]
+    cls     = type.is_a?(Class)
+    enum    = cls && (type < EnumType)
+    model   = cls && (type < Model)
+    no_fmt  = [no_fmt]               if no_fmt.is_a?(Symbol)
+    no_fmt  = no_fmt.include?(field) if no_fmt.is_a?(Array)
+    value   = value.dup              if value.is_a?(Array)
+    if value.is_a?(ActiveSupport::SafeBuffer)
+      no_fmt = true
+    elsif enum || model
       value  = value.split(/[,;|\t\n]/) if value.is_a?(String)
       value  = Array.wrap(value)
+      value.map! { |v| type.cast(v, warn: false) || v } if enum
+      value.map! { |v| type.find_by(id: v)       || v } if model
       v_dv ||= value.join('|')
-      unless no_fmt
-        value.map! do |v|
-          item = prop[:type]
-          item = enum ? item.cast(v, warn: false) : item.find_by(id: v)
-          item&.label&.presence || v.to_s
-        end
-      end
-      value = value.first unless multi
+      value.map! { |v| v.try(:label) || v } unless no_fmt
+      value  = value.first                  unless multi
+      no_fmt = value.is_a?(ActiveSupport::SafeBuffer)
     end
 
     # Format the content of certain fields.
-    lines   = nil
-    no_fmt  = [no_fmt]               if no_fmt.is_a?(Symbol)
-    no_fmt  = no_fmt.include?(field) if no_fmt.is_a?(Array)
-    no_fmt  = true                   if value.is_a?(ActiveSupport::SafeBuffer)
     unless no_fmt
-      case field
-        when :dc_description
-          value = lines = format_description(value)
-        when :rem_comments, :s_accessibilitySummary
-          value = lines = format_multiline(value)
-        when :emma_lastRemediationNote, :rem_remediationComments
-          value = lines = format_multiline(value)
-        when :dc_identifier, :dc_relation
-          value = mark_invalid_identifiers(value)
-        when :dc_language
-          value = mark_invalid_languages(value, code: false?(no_code))
-      end
-      prop = prop.merge(type: 'textarea') if lines&.many? && !cls
+      value = render_format(field, value, no_code: no_code)
+      area  = !cls && value.is_a?(Array) && TEXTAREA_FIELDS.include?(field)
+      prop  = prop.merge(type: 'textarea') if area && value.many?
     end
 
     # Special for ManifestItem
     error   = opt.delete(:field_error)&.dig(field.to_s)&.presence
     err_val = error&.keys&.then { |err| err.many? ? err : err.first }
 
-    # Pre-process value(s).
-    if no_fmt
-      value = err_val if err_val && !value.is_a?(Array)
-      value = safe_join(value, (separator || "\n")) if value.is_a?(Array)
-    elsif prop[:array]
-      case value
-        when Array  then value = value.dup
-        when String then value = value.split("\n")
-        else             value = [value]
-      end
+    # Pre-process value(s), wrapping each array element in a `<div>`.
+    if prop[:array] && !no_fmt
+      value = value.split("\n") if value.is_a?(String)
+      value = Array.wrap(value)
       value.map!.with_index(1) do |v, i|
         v_opt = { class: "item item-#{i}" }
         append_css!(v_opt, 'error') if error&.key?(v.to_s)
         html_div(v, **v_opt)
       end
-      value = safe_join(value, (separator || "\n"))
-    else
-      value = err_val if err_val && !value.is_a?(Array)
-      value = safe_join(value, (separator || HTML_BREAK)) if value.is_a?(Array)
+      separator ||= "\n"
+    end
+    if value.is_a?(Array)
+      separator ||= no_fmt ? "\n" : HTML_BREAK
+      value = safe_join(value, separator)
+    elsif err_val
+      value = err_val
     end
 
     # Extract attributes that are appropriate for the wrapper element which
@@ -272,30 +270,26 @@ module BaseDecorator::List
     level   = opt.delete(:'aria-level')
     col_idx = opt.delete(:'aria-colindex')
 
-    # Add tooltip if configured.
-    tooltip = (prop[:tooltip] unless field == :dc_title)
-
-    # Option settings for both label and value.
-    status = []
+    # CSS classes for both label and value.
     unless field == :dc_title
       if prop[:array]
-        status << 'array'
-        status << 'multi' if multi
+        classes << 'multi' if multi
+        classes << 'array'
       else
-        case prop[:type]
-          when 'textarea' then status << 'textbox'
-          when 'number'   then status << 'numeric'
-          when 'json'     then status << 'hierarchy'
-          else                 status << prop[:type] unless cls
+        case type
+          when 'textarea' then classes << 'textbox'
+          when 'number'   then classes << 'numeric'
+          when 'json'     then classes << 'hierarchy'
+          else                 classes << type unless cls
         end
       end
-      status << 'enum'  if enum
-      status << 'model' if model
+      classes << 'enum'  if enum
+      classes << 'model' if model
     end
-    prepend_css!(opt, type, *status)
-    prepend_css!(opt, "pos-#{pos}") if pos
-    prepend_css!(opt, "col-#{col}") if col
-    prepend_css!(opt, "row-#{row}") if row
+    classes << "pos-#{pos}" if pos
+    classes << "col-#{col}" if col
+    classes << "row-#{row}" if row
+    prepend_css!(opt, *classes)
 
     # Explicit 'data-*' attributes.
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
@@ -307,23 +301,14 @@ module BaseDecorator::List
     if no_label || label.blank?
       l_id = nil
     else
-      # Wrap label text in a <span>.
-      unless label.is_a?(ActiveSupport::SafeBuffer)
-        label ||= labelize(field)
-        label = html_span(label, class: 'text')
+      # Wrap label text in a <span> if needed; append help icon if applicable.
+      help = (Array.wrap(prop[:help]).presence unless no_help)
+      if label.is_a?(ActiveSupport::SafeBuffer)
+        label = label.dup if help
+      else
+        label = html_span(class: 'text') { label || labelize(field) }
       end
-      # Append a help icon control if applicable.
-      unless no_help || (help = Array.wrap(prop[:help])).blank?
-        # NOTE: To accommodate ACE items, an assumption is being made that this
-        #   method is only ever called for the decorator's object (and not for
-        #   an arbitrary label/value pair outside of that context).
-        if field == :emma_retrievalLink
-          url   = extract_url(value)
-          topic = repository_for(object, url)
-          help  = help.many? ? [*help[0...-1], topic] : [*help, topic] if topic
-        end
-        label += h.help_popup(*help)
-      end
+      label << render_help_icon(field, value, *help) if help
       l_tag   = wrap ? :div : tag
       l_id  ||= field_html_id(DEFAULT_LABEL_CLASS, **id_opt)
       l_opt   = prepend_css(opt, label_css)
@@ -362,6 +347,51 @@ module BaseDecorator::List
     else
       safe_join(parts)
     end
+  end
+
+  # Apply formatting appropriate to *field*.
+  #
+  # @param [Symbol]      field
+  # @param [*]           value
+  # @param [Boolean,nil] no_code  Reverse of :code for #mark_invalid_languages
+  #
+  # @return [*]
+  #
+  def render_format(field, value, no_code: nil, **)
+    opt = { code: false?(no_code) }
+    case field
+      when :dc_description           then format_description(value)
+      when :dc_identifier            then mark_invalid_identifiers(value)
+      when :dc_language              then mark_invalid_languages(value, **opt)
+      when :dc_relation              then mark_invalid_identifiers(value)
+      when :emma_lastRemediationNote then format_multiline(value)
+      when :rem_comments             then format_multiline(value)
+      when :rem_remediationComments  then format_multiline(value)
+      when :s_accessibilitySummary   then format_multiline(value)
+      else                                value.dup
+    end
+  end
+
+  # Generate a help icon relevant to *field*.
+  #
+  # @param [Symbol]               field
+  # @param [*]                    value
+  # @param [Array<Symbol,String>] help    Help topic(s).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # === Implementation Notes
+  # To accommodate ACE items, an assumption is being made that this method is
+  # only ever called for the decorator's object (and not for an arbitrary
+  # label/value pair outside of that context).
+  #
+  def render_help_icon(field, value, *help, **)
+    if field == :emma_retrievalLink
+      url   = extract_url(value)
+      topic = repository_for(url)
+      help  = help.many? ? [*help[0...-1], topic] : [*help, topic] if topic
+    end
+    h.help_popup(*help)
   end
 
   # Displayed in place of a results list. # TODO: I18n

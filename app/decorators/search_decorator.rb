@@ -466,7 +466,7 @@ class SearchDecorator
   #
   def source_record_link(**opt)
     url  = object.record_title_url
-    repo = repository_for(object, url)
+    repo = repository_for(url)
     if repo == EmmaRepository.default
       record_popup(**opt)
     elsif url.present?
@@ -500,7 +500,7 @@ class SearchDecorator
     url = CGI.unescape(url.to_s)
     return if url.blank?
 
-    repo  = repository_for(object, url)
+    repo  = repository_for(url)
     label = opt.delete(:label) || url.dup
 
     # Adjust the link depending on whether the current session is permitted to

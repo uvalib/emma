@@ -58,6 +58,12 @@ module BaseDecorator::List
 
   DEFAULT_VALUE_CLASS: String
 
+  # Fields which, when formatting, should be rendered as 'textarea' values.
+  #
+  # @type [Array<Symbol>]
+  #
+  TEXTAREA_FIELDS: symArray
+
   # Render a single label/value pair.
   #
   # @param [String, Symbol, nil]  label
@@ -102,6 +108,31 @@ module BaseDecorator::List
   # override(s) may return *nil*.
   #
   def render_pair: ((String|Symbol|nil) label, untyped value, ?prop: FieldConfig|nil, ?field: Symbol|nil, ?index: String|Integer|nil, ?row: Integer|nil, ?col: Integer|nil, ?pos: Integer|nil, ?separator: String|nil, ?wrap: String|nil, ?tag: Symbol|nil, ?no_fmt: symArray|Symbol|bool|nil, ?no_code: bool|nil, ?no_label: bool|nil, ?no_help: bool|nil, ?label_css: String|nil, ?value_css: String|nil, **untyped opt) ?{ (Symbol fld, untyped val, FieldConfig prp, **untyped o) -> (nil|ActiveSupport::SafeBuffer|Array[ActiveSupport::SafeBuffer])} -> (ActiveSupport::SafeBuffer | nil)
+
+  # Apply formatting appropriate to *field*.
+  #
+  # @param [Symbol]      field
+  # @param [*]           value
+  # @param [Boolean,nil] no_code  Reverse of :code for #mark_invalid_languages
+  #
+  # @return [*]
+  #
+  def render_format: (Symbol field, untyped value, ?no_code: bool|nil, **untyped _ignored) -> untyped
+
+  # Generate a help icon relevant to *field*.
+  #
+  # @param [Symbol]               field
+  # @param [*]                    value
+  # @param [Array<Symbol,String>] help    Help topic(s).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # === Implementation Notes
+  # To accommodate ACE items, an assumption is being made that this method is
+  # only ever called for the decorator's object (and not for an arbitrary
+  # label/value pair outside of that context).
+  #
+  def render_help_icon: (Symbol field, untyped value, *(Symbol|String) help, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # Displayed in place of a results list. # TODO: I18n
   #

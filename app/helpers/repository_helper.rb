@@ -94,6 +94,7 @@ module RepositoryHelper
       when bs_link?(url)   then :bookshare
       when ht_link?(url)   then :hathiTrust
       when ia_link?(url)   then :internetArchive
+      else                      Log.warn { "#{__method__}: #{url.inspect}" }
     end&.to_s
   end
 
@@ -103,22 +104,18 @@ module RepositoryHelper
   # items from the "EMMA collection", if both a String (URL) and Model/Hash are
   # given, change the reported repository based on the nature of the URL.
   #
-  # @param [Model, Hash, String, nil] arg1
-  # @param [Model, Hash, String, nil] arg2
+  # @param [String, Model, Hash, nil] url
+  # @param [Model, Hash, nil]         obj     Default: #object.
+  # @param [Symbol]                   field
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If not associated with any repository.
   #
-  def repository_for(arg1, arg2 = nil)
-    obj, url = arg1.is_a?(String) ? [arg2, arg1] : [arg1, arg2]
-    field  = :emma_repository
-    result = obj&.try(field)&.to_s || obj&.try(:[], field)&.to_s
+  def repository_for(url, obj = nil, field: :emma_repository)
+    url, obj = [nil, url] if url && !url.is_a?(String)
     # noinspection RubyMismatchedArgumentType
-    if result&.to_sym == :emma
-      url_repository(url) || result
-    else
-      result || url_repository(url)
-    end
+    repo = url_repository(url) and return repo
+    (obj ||= object) && (obj.try(field) || obj.try(:[], field))&.to_s
   end
 
   # ===========================================================================

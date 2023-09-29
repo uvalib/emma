@@ -410,8 +410,11 @@ module Api::Shared::CommonMethods
   # @return [Array]
   #
   def get_field_values(data, *fields)
-    v = data.is_a?(Hash) ? data.values_at(*fields) : fields.map { |f| try(f) }
-    v.map(&:presence)
+    if data.is_a?(Hash)
+      data.values_at(*fields).map!(&:presence)
+    else
+      fields.map { |field| try(field)&.presence }
+    end
   end
 
   # Update the indicated target with the given values.
@@ -423,12 +426,10 @@ module Api::Shared::CommonMethods
   #
   def set_field_values!(data, values)
     if data.is_a?(Hash)
-      deletions = values.select { |_, v| v.blank? }.keys.presence
-      values.except!(*deletions) if deletions
-      data.except!(*deletions)   if deletions
-      data.merge!(values)
+      deletions = values.select { |_, v| v.blank? }.keys
+      data.merge!(values).except!(*deletions)
     else
-      values.each_pair { |k, v| try("#{k}=", v) }
+      values.each_pair { |field, value| try("#{field}=", value) }
     end
   end
 
