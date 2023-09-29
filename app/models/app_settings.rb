@@ -122,10 +122,6 @@ class AppSettings < AppGlobal
     :BOOKSHARE_API_KEY,
     nil,
 
-    # === Bookshare OAuth2 service
-    (BS_AUTH ? :BOOKSHARE_AUTH_URL : :skip),
-    (BS_AUTH ? nil                 : :skip),
-
     # === Internet Archive
     :IA_DOWNLOAD_BASE_URL,
     :IA_ACCESS,
@@ -199,8 +195,6 @@ class AppSettings < AppGlobal
     # === Testing
     :PARALLEL_WORKERS,
     :TEST_FORMATS,
-    (BS_AUTH ? :EMMADSO_TOKEN        : :skip),
-    (BS_AUTH ? :EMMACOLLECTION_TOKEN : :skip),
     nil,
 
     # === System

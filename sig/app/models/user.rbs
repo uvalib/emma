@@ -134,10 +134,7 @@ class User < ApplicationRecord
   #
   def self.account_name: (untyped user) -> (String | nil)
 
-  # The user ID is the same as the email address.                               # unless BS_AUTH
-  #
-  # The user ID is the same as the Bookshare ID, which is the same as the email # if BS_AUTH
-  # address.
+  # The user ID is the same as the email address.
   #
   # @return [String]
   #
@@ -185,11 +182,8 @@ class User < ApplicationRecord
   #
   def self.test_users: () -> Hash[String,Symbol]
 
-  # Get the database entry for the indicated user and update it with additional # unless BS_AUTH
+  # Get the database entry for the indicated user and update it with additional
   # information from the provider.
-  #
-  # Get (or create) a database entry for the indicated user and update the      # if BS_AUTH
-  # associated User object with additional information from the provider.
   #
   # @param [OmniAuth::AuthHash, Hash, nil] data
   # @param [Boolean]                       update   If *false* keep DB record.

@@ -13,14 +13,12 @@
   local_sign_in     = %Q("#{local_auth_title}")
   local_login_form  = help_image(:"#{local_auth}_login")
 
-  remote_auth       = BS_AUTH ? :bookshare : :shibboleth
+  remote_auth       = :shibboleth
   remote_auth_title = get_sessions_label(:new, remote_auth)
   remote_sign_in    = %Q("#{remote_auth_title}")
   remote_login_form = help_image(:"#{remote_auth}_login")
 
   recovery_link     = t('emma.user.passwords.new.label')
-
-  bs_sign_in = (help_span('Sign in', class: 'bookshare-sign-in') if BS_AUTH)
 
 -%>
 
@@ -47,53 +45,24 @@
   <p>
     Pressing the <%= sign_in -%> button at the upper-right corner of the EMMA
     screen take you to a page of sign-in options.
-<%- if BS_AUTH -%>
-    Currently the only option is via Bookshare authentication,
-    which is engaged when you click on the <%= remote_sign_in -%> link.
-<%- else -%>
     If your institution is a member of
     <a href="https://incommon.org">InCommon</a>,
     you can use the <%= remote_sign_in -%> link to sign in to EMMA.
-<%- end -%>
   </p>
-
-<%- if BS_AUTH -%>
-  <p>
-    (You must have an active account with Bookshare in order to use EMMA.)
-  </p>
-<%- end -%>
 
   <%= remote_login_form %>
 
-<%- if BS_AUTH -%>
-  <p>
-    When you click on the <%= remote_sign_in -%> link, EMMA redirects
-    you to the Bookshare page (above) which prompts you for your Bookshare
-    credentials.
-  </p>
-<%- else -%>
   <p>
     When you click on the <%= remote_sign_in -%> link, EMMA redirects
     you to the InCommon page (above) which prompts you for your institution in
     order to redirect you to your institutional authentication provider.
   </p>
-<%- end -%>
 
-<%- if BS_AUTH -%>
-  <p>
-    When you press <%= bs_sign_in -%> on that page, Bookshare redirects
-    your browser back to the original EMMA page along with a hidden
-    "bearer token".
-    (This token will be attached to your requests to indicate your confirmed
-    identity.)
-  </p>
-<%- else -%>
   <p>
     After you complete your institutional sign-on, your institutional
     authentication provider redirects your browser back to the original EMMA
     page.
   </p>
-<%- end -%>
 
 </section>
 
@@ -101,14 +70,6 @@
 
   <h2 class="section" id="local_sign_in_help"><%= local_auth_title -%></h2>
 
-<%- if BS_AUTH -%>
-  <p>
-    Test accounts are available for EMMA testers.
-    Please contact project managers or developers at the University of Virginia
-    if you would like credentials for one of these accounts
-    (<%= contact_email -%>).
-  </p>
-<%- else -%>
   <p>
     If you have an EMMA account that is not tied to an institutional account,
     you can use the <%= local_sign_in -%> link to sign in to EMMA.
@@ -128,6 +89,5 @@
     <%= recovery_link.inspect -%> link to generate an email which will allow
     you to reset your password.
   </p>
-<%- end -%>
 
 </section>

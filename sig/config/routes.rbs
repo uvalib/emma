@@ -607,18 +607,6 @@ class Object
   def sign_in_as_url: (*untyped _ignored) ?{ () -> untyped } -> String
 end
 
-# BS_AUTH
-
-class Object
-  def user_bookshare_omniauth_authorize_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_bookshare_omniauth_authorize_url: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_bookshare_omniauth_callback_path: (*untyped _ignored) ?{ () -> untyped } -> String
-
-  def user_bookshare_omniauth_callback_url: (*untyped _ignored) ?{ () -> untyped } -> String
-end
-
 # SHIBBOLETH
 
 class Object

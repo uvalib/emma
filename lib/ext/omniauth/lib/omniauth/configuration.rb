@@ -5,6 +5,7 @@
 #
 # Extensions for the OmniAuth gem.
 
+=begin
 __loading_begin(__FILE__)
 
 require 'omniauth'
@@ -33,3 +34,4 @@ end
 override OmniAuth::Configuration => OmniAuth::ConfigurationExt
 
 __loading_end(__FILE__)
+=end

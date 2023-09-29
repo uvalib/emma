@@ -15,12 +15,6 @@ module AuthHelper
     : (User user) -> OmniAuth::AuthHash
     | (nil  user) -> nil
 
-  # auth_default_options                                                        # if BS_AUTH
-  #
-  # @return [OmniAuth::Strategy::Options]
-  #
-  def auth_default_options: () -> OmniAuth::Strategy::Options
-
   private
 
   def self.included: (Module base) -> void

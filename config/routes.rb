@@ -656,19 +656,6 @@ elsif !ONLY_FOR_DOCUMENTATION
 end
 
 # noinspection RubyInstanceMethodNamingConvention
-if !BS_AUTH
-  def user_bookshare_omniauth_authorize_path(...)   = not_implemented
-  def user_bookshare_omniauth_authorize_url(...)    = not_implemented
-  def user_bookshare_omniauth_callback_path(...)    = not_implemented
-  def user_bookshare_omniauth_callback_url(...)     = not_implemented
-elsif !ONLY_FOR_DOCUMENTATION
-  def user_bookshare_omniauth_authorize_path(...);  end
-  def user_bookshare_omniauth_authorize_url(...);   end
-  def user_bookshare_omniauth_callback_path(...);   end
-  def user_bookshare_omniauth_callback_url(...);    end
-end
-
-# noinspection RubyInstanceMethodNamingConvention
 if !SHIBBOLETH
   def user_shibboleth_omniauth_authorize_path(...)  = not_implemented
   def user_shibboleth_omniauth_authorize_url(...)   = not_implemented

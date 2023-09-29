@@ -540,8 +540,6 @@ module OmniAuth
   end
   class KeyStore < Hashie::Mash
   end
-  class Strategies::OAuth2
-  end
   module Strategy
     class Options < KeyStore
     end

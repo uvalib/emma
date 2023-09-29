@@ -275,10 +275,7 @@ class User < ApplicationRecord
 
   public
 
-  # The user ID is the same as the email address.                               # unless BS_AUTH
-  #
-  # The user ID is the same as the Bookshare ID, which is the same as the email # if BS_AUTH
-  # address.
+  # The user ID is the same as the email address.
   #
   # @return [String]
   #
@@ -370,17 +367,13 @@ class User < ApplicationRecord
     @test_users ||=
       begin
         test_names = %w[test\\_%@%]
-        test_names << 'emma%@bookshare.org' if BS_AUTH
         email_like = test_names.map { 'email LIKE ?' }.join(' OR ')
         where(email_like, *test_names).map { |u| [u.email, u.role] }.to_h
       end
   end
 
-  # Get the database entry for the indicated user and update it with additional # unless BS_AUTH
+  # Get the database entry for the indicated user and update it with additional
   # information from the provider.
-  #
-  # Get (or create) a database entry for the indicated user and update the      # if BS_AUTH
-  # associated User object with additional information from the provider.
   #
   # @param [OmniAuth::AuthHash, Hash, nil] data
   # @param [Boolean]                       update   If *false* keep DB record.
@@ -395,23 +388,19 @@ class User < ApplicationRecord
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
     # noinspection RubyResolve
     attr = {
-      email:         data.uid.downcase,
-      first_name:    data.info&.first_name || data.info&.givenName,
-      last_name:     data.info&.last_name || data.info&.sn,
-      access_token:  (data.credentials&.token         if BS_AUTH),
-      refresh_token: (data.credentials&.refresh_token if BS_AUTH),
-      provider:      data.provider,
+      email:      data.uid.downcase,
+      first_name: data.info&.first_name || data.info&.givenName,
+      last_name:  data.info&.last_name  || data.info&.sn,
+      provider:   data.provider,
     }.compact_blank!
-    user = find_by(email: attr[:email])
-    if user && update
-      attr.delete(:email)
-      attr.delete(:first_name) if user.first_name.present?
-      attr.delete(:last_name)  if user.last_name.present?
-      user.update(attr) if attr.delete_if { |k, v| user[k] == v }.present?
+    find_by(email: attr[:email]).tap do |user|
+      if user && update
+        attr.delete(:email)
+        attr.delete(:first_name) if user.first_name.present?
+        attr.delete(:last_name)  if user.last_name.present?
+        user.update(attr) if attr.delete_if { |k, v| user[k] == v }.present?
+      end
     end
-    # Disable automatic account creation
-    # user ||= create(attr) if BS_AUTH
-    user
   end
 
   # Return the User instance indicated by the argument.

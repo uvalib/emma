@@ -12,8 +12,6 @@
 
 if respond_to?(:rails_application?) && rails_application?
   vars = [
-    # === Bookshare authentication
-    :BOOKSHARE_AUTH_URL,
 
     # === Bookshare API
     :BOOKSHARE_API_KEY,

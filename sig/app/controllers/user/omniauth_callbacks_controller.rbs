@@ -11,27 +11,16 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # Initiate authentication with the remote service.
   #
-  # _see #user_bookshare_omniauth_authorize_path  Route helper                  # if BS_AUTH
   # @see #user_shibboleth_omniauth_authorize_path Route helper
   #
   def passthru: () -> void
-
-  # === GET  /users/auth/bookshare/callback                                      # if BS_AUTH
-  # === POST /users/auth/bookshare/callback
-  #
-  # Callback from the Bookshare auth service to finalize authentication.
-  #
-  # @see #user_bookshare_omniauth_callback_path   Route helper
-  # @see AuthConcern#set_auth_data
-  #
-  def bookshare: () -> void
 
   # === GET  /users/auth/shibboleth/callback
   # === POST /users/auth/shibboleth/callback
   #
   # Callback from Shibboleth to finalize authentication.
   #
-  # @see #user_shibboleth_omniauth_callback_path   Route helper
+  # @see #user_shibboleth_omniauth_callback_path
   # @see AuthConcern#set_auth_data
   #
   def shibboleth: () -> void

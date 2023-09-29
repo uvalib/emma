@@ -61,6 +61,7 @@ module ApiService::Identity
   # @return [String, nil]
   #
   def access_token
+    may_be_overridden # but only if a new authentication mechanism requires it
   end
 
   # The current OAuth2 refresher token (if applicable).
@@ -68,6 +69,7 @@ module ApiService::Identity
   # @return [String, nil]
   #
   def refresh_token
+    may_be_overridden # but only if a new authentication mechanism requires it
   end
 
 end

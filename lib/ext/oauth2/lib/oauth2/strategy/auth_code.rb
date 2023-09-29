@@ -5,6 +5,7 @@
 #
 # Support for actively redefining objects defined in the OAuth2 gem.
 
+=begin
 __loading_begin(__FILE__)
 
 require 'oauth2/client'
@@ -85,3 +86,4 @@ end
 override OAuth2::Strategy::AuthCode => OAuth2::Strategy::AuthCodeExt
 
 __loading_end(__FILE__)
+=end

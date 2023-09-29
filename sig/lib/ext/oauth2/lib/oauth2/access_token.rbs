@@ -1,4 +1,4 @@
-module OAuth2
+#module OAuth2
   # Override definitions to be prepended to OAuth2::AccessToken.
   #
   # @!attribute [r] client
@@ -21,8 +21,8 @@ module OAuth2
   # @!attribute [rw] refresh_token
   #   @return [String, nil]
   #
-  module AccessTokenExt
-    private
+  #module AccessTokenExt
+    #private
 
     # configure_authentication!
     #
@@ -32,13 +32,13 @@ module OAuth2
     #
     # @see OAuth2::AccessToken#configure_authentication!
     #
-    def configure_authentication!: (symHash opts) -> void
-  end
+    #def configure_authentication!: (symHash opts) -> void
+  #end
 
   # Overrides adding extra debugging around method calls.
   #
-  module AccessTokenDebug
-    include OAuth2::ExtensionDebugging
+  #module AccessTokenDebug
+    #include OAuth2::ExtensionDebugging
 
     # Initialize an AccessToken.
     #
@@ -71,7 +71,7 @@ module OAuth2
     #                                               transmission mode.
     #                                               Default: 'access_token'.
     #
-    def initialize: (OAuth2::Client client, String token, ?symHash opts) -> void
+    #def initialize: (OAuth2::Client client, String token, ?symHash opts) -> void
 
     # Refreshes the current Access Token.
     #
@@ -81,7 +81,7 @@ module OAuth2
     #
     # @note options should be carried over to the new AccessToken
     #
-    def refresh!: (?symHash params) -> OAuth2::AccessToken
+    #def refresh!: (?symHash params) -> OAuth2::AccessToken
 
     # Make a request using the Access Token.
     #
@@ -92,6 +92,6 @@ module OAuth2
     #
     # @return [OAuth2::Response]
     #
-    def request: (Symbol verb, String path, ?symHash opts) { () -> untyped } -> OAuth2::Response
-  end
-end
+    #def request: (Symbol verb, String path, ?symHash opts) { () -> untyped } -> OAuth2::Response
+  #end
+#end

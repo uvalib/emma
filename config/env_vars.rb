@@ -132,30 +132,23 @@ TMPDIR =
 #
 SHIBBOLETH = !false?(ENV['SHIBBOLETH'])
 
-# Indicate whether Benetech OAuth2 authorization is in use.
-#
-# @type [Boolean]
-#
-BS_AUTH = true?(ENV['BS_AUTH'])
-
 # OmniAuth providers for Devise.
 #
 # @type [Array<Symbol>]
 #
 AUTH_PROVIDERS = [
-  (:bookshare  if BS_AUTH),
   (:shibboleth if SHIBBOLETH),
 ].compact.freeze
 
 if sanity_check?
-  raise 'Neither BS_AUTH nor SHIBBOLETH is true' if AUTH_PROVIDERS.empty?
+  Log.warn('No AUTH_PROVIDERS (including SHIBBOLETH)') if AUTH_PROVIDERS.empty?
 end
 
 # A special conditional for supporting test sign in.
 #
 # @type [Symbol, nil]
 #
-SIGN_IN_AS = (:sign_in_as if BS_AUTH || (ENV['RAILS_ENV'] == 'test'))
+SIGN_IN_AS = (:sign_in_as if ENV['RAILS_ENV'] == 'test')
 
 # =============================================================================
 # Mailer properties

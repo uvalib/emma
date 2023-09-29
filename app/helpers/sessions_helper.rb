@@ -83,16 +83,10 @@ module SessionsHelper
     provider = opt.delete(:provider)
     label  ||= get_sessions_label(:destroy, provider)
     path     = '#' if path.is_a?(FalseClass)
-    unless path.is_a?(String)
-      no_revoke   = BS_AUTH
-      no_revoke &&= administrator? || current_user&.test_user?
-      path_opt    = no_revoke ? { no_revoke: true } : {}
-      path        = destroy_user_session_path(**path_opt)
-    end
-    opt[:method] ||= :delete
+    path   ||= destroy_user_session_path
     prepend_css!(opt, "#{provider}-logout") if provider
     prepend_css!(opt, 'session-link', 'session-logout')
-    make_link(label, path, **opt, title: SIGN_OUT_TOOLTIP)
+    make_link(label, path, method: :delete, **opt, title: SIGN_OUT_TOOLTIP)
   end
 
   # ===========================================================================

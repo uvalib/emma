@@ -19,7 +19,6 @@ test_guest_1:   &GUEST
   last_name:    Test Organization Guest
   org:          one
   role:         guest
-  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
 
 test_staff_1:   &STAFF
   email:        test_staff_1@one_university.edu
@@ -27,7 +26,6 @@ test_staff_1:   &STAFF
   last_name:    Test Organization Staff
   org:          one
   role:         staff
-  access_token: <%= ENV['EMMACOLLECTION_TOKEN'] if BS_AUTH %>
 
 test_dso_1:     &MEMBER
   email:        test_dso_1@one_university.edu
@@ -35,7 +33,6 @@ test_dso_1:     &MEMBER
   last_name:    Test Organization DSO
   org:          one
   role:         member
-  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
 
 test_man_1:     &MAN
   email:        test_man_1@one_university.edu
@@ -43,7 +40,6 @@ test_man_1:     &MAN
   last_name:    Test Organization Manager
   org:          one
   role:         manager
-  access_token: <%= ENV['EMMADSO_TOKEN'] if BS_AUTH %>
 
 # =============================================================================
 # Organization :two users

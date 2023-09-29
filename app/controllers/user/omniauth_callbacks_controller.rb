@@ -25,7 +25,6 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # Initiate authentication with the remote service.
   #
-  # _see #user_bookshare_omniauth_authorize_path  Route helper                  # if BS_AUTH
   # @see #user_shibboleth_omniauth_authorize_path Route helper
   #
   def passthru
@@ -34,35 +33,14 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     __debug_request
     super
   end
-    .tap { |meth| disallow(meth) unless SHIBBOLETH || BS_AUTH }
-
-  # === GET  /users/auth/bookshare/callback                                      # if BS_AUTH
-  # === POST /users/auth/bookshare/callback
-  #
-  # Callback from the Bookshare auth service to finalize authentication.
-  #
-  # @see #user_bookshare_omniauth_callback_path   Route helper
-  # @see AuthConcern#set_auth_data
-  #
-  def bookshare
-    __log_activity
-    __debug_route
-    __debug_request
-    self.resource = set_auth_data(request)
-    last_operation_update
-    set_flash_message(:notice, :success, provider: 'Bookshare')
-    sign_in_and_redirect(resource)
-  rescue => error
-    auth_failure_redirect(message: error)
-  end
-    .tap { |meth| disallow(meth) unless BS_AUTH }
+    .tap { |meth| disallow(meth) if AUTH_PROVIDERS.blank? }
 
   # === GET  /users/auth/shibboleth/callback
   # === POST /users/auth/shibboleth/callback
   #
   # Callback from Shibboleth to finalize authentication.
   #
-  # @see #user_shibboleth_omniauth_callback_path   Route helper
+  # @see #user_shibboleth_omniauth_callback_path
   # @see AuthConcern#set_auth_data
   #
   def shibboleth
@@ -102,7 +80,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
   end
-    .tap { |meth| disallow(meth) unless SHIBBOLETH || BS_AUTH }
+    .tap { |meth| disallow(meth) if AUTH_PROVIDERS.blank? }
 
 end
 

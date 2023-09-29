@@ -5,6 +5,7 @@
 #
 # Support for actively redefining objects defined in the OAuth2 gem.
 
+=begin
 __loading_begin(__FILE__)
 
 require 'oauth2/access_token'
@@ -156,3 +157,4 @@ override OAuth2::AccessToken => OAuth2::AccessTokenExt
 override OAuth2::AccessToken => OAuth2::AccessTokenDebug if DEBUG_OAUTH
 
 __loading_end(__FILE__)
+=end

@@ -5,6 +5,7 @@
 #
 # Debugging for OAuth2 gem extensions.
 
+=begin
 __loading_begin(__FILE__)
 
 require 'oauth2'
@@ -34,3 +35,4 @@ module OAuth2
 end
 
 __loading_end(__FILE__)
+=end

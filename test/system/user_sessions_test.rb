@@ -30,7 +30,6 @@ class UserSessionsTest < ApplicationSystemTestCase
       # On sign-in page '/users/sign_in' (#new_user_session_path).
       show_url
       assert_valid_page 'Sign in'
-      assert_link href: user_bookshare_omniauth_authorize_path  if BS_AUTH
       assert_link href: user_shibboleth_omniauth_authorize_path if SHIBBOLETH
       click_on "Sign in as #{@user}"
 

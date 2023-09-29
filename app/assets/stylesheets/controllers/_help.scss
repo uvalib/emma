@@ -424,20 +424,6 @@ body.help {
             }
         }
 
-        // Inline rendering of the "Sign in" button on the Bookshare login page
-        .bookshare-sign-in {
-            display:          inline;
-            vertical-align:   top;
-            padding:          5px 10px;
-            text-decoration:  none;
-            font-size:        small;
-            color:            var(--rev-fg-color);
-            background-color: #445f9e;
-            border:           1px solid #3c548c;
-            border-radius:    4px;
-            box-shadow:       none;
-        }
-
         // An inline rendering of a search facet menu label.
         .menu-label {
             display:          inline-block;

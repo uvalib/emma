@@ -12,12 +12,6 @@ TMPDIR: String
 #
 SHIBBOLETH: bool
 
-# Indicate whether Benetech OAuth2 authorization is in use.
-#
-# @type [Boolean]
-#
-BS_AUTH: bool
-
 # OmniAuth providers for Devise.
 #
 # @type [Array<Symbol>]

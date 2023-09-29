@@ -92,10 +92,6 @@ class User::SessionsController < Devise::SessionsController
   #
   # End login session.
   #
-  # If the "no_revoke" parameter is missing or "false" then the local session   # if BS_AUTH
-  # is  ended _and_ its associated OAuth2 token is revoked.  If "no_revoke" is
-  # "true" then only the local session is ended.
-  #
   # @see #destroy_user_session_path   Route helper
   # @see AuthConcern#delete_auth_data
   #
@@ -104,8 +100,7 @@ class User::SessionsController < Devise::SessionsController
     __debug_route
     __debug_request
     user = current_user&.account&.dup
-    opt  = BS_AUTH ? { no_revoke: true?(params[:no_revoke]) } : {}
-    delete_auth_data(**opt)
+    delete_auth_data(caller: __method__)
     super
     api_clear(user: user)
     set_flash_notice(user: user, clear: true)
@@ -133,16 +128,11 @@ class User::SessionsController < Devise::SessionsController
   # === GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
   # === GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
   #
-  # Sign in using information supplied outside of the OAuth2 flow.
+  # Sign in using authorization information supplied outside of the normal
+  # authorization flow.
   #
   # @see #sign_in_as_path             Route helper
   # @see AuthConcern#local_sign_in
-  #
-  # === Usage Notes
-  # The initial request to this endpoint is redirected by Warden::Manager to    # if BS_AUTH
-  # OmniAuth::Strategies::Bookshare#request_call.  The second request is
-  # performed from OmniAuth::Strategies::Bookshare#callback_phase which
-  # provides the value for 'omniauth.auth'.
   #
   def sign_in_as
     __debug_route

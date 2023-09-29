@@ -1,5 +1,5 @@
-module OmniAuth
-  module Strategies
+#module OmniAuth
+  #module Strategies
     # An extension of the +OAuth2+ strategy which sets up some defaults that
     # would otherwise have to be specified in initializers/devise.rb.
     #
@@ -12,57 +12,57 @@ module OmniAuth
     # +Bookshare+.  Thus, these methods are overridden explicitly in order to
     # ensure consistency.
     #
-    class Bookshare < OmniAuth::Strategies::OAuth2
-      include Emma::Common
+    #class Bookshare < OmniAuth::Strategies::OAuth2
+      #include Emma::Common
 
-      include Emma::Json
+      #include Emma::Json
 
-      include OmniAuth::ExtensionDebugging
+      #include OmniAuth::ExtensionDebugging
 
       # Performs the steps necessary to run the request phase of a strategy.
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
-      def request_call: () -> httpResult
+      #def request_call: () -> httpResult
 
       # User login name.
       #
       # @return [String]
       #
-      def uid: () -> String
+      #def uid: () -> String
 
       # User account details.
       #
       # @return [Hash]
       #
-      def info: () -> Hash[Symbol,String]
+      #def info: () -> Hash[Symbol,String]
 
       # Credential information for the authenticated user from #access_token.
       #
       # @return [Hash]
       #
-      def credentials: () -> symHash
+      #def credentials: () -> symHash
 
       # Extra information.
       #
       # @return [Hash, nil]           Currently always *nil*.
       #
-      def extra: () -> (symHash | nil)
+      #def extra: () -> (symHash | nil)
 
       # Generate authorization information for the authenticated user.
       #
       # @return [OmniAuth::AuthHash]
       #
-      def auth_hash: () -> OmniAuth::AuthHash
+      #def auth_hash: () -> OmniAuth::AuthHash
 
       # Information about the user account.
       #
       # @return [Hash{Symbol=>Any}]
       #
-      def account_info: () -> symHash
+      #def account_info: () -> symHash
 
-      @account_info: symHash
+      #@account_info: symHash
 
       # Acquire information about the user account from +Bookshare+.
       #
@@ -89,15 +89,15 @@ module OmniAuth
       #   }
       # }
       #
-      def get_account_info: (?(symHash|nil) opt) -> symHash
+      #def get_account_info: (?(symHash|nil) opt) -> symHash
 
       # The +OAuth2+ client instance.
       #
       # @return [::OAuth2::Client]
       #
-      def client: () -> ::OAuth2::Client
+      #def client: () -> ::OAuth2::Client
 
-      @client: ::OAuth2::Client
+      #@client: ::OAuth2::Client
 
       # request_phase
       #
@@ -106,7 +106,7 @@ module OmniAuth
       #
       # @see ::OAuth2::ClientExt#request
       #
-      def request_phase: () -> httpResult
+      #def request_phase: () -> httpResult
 
       # callback_phase
       #
@@ -119,7 +119,7 @@ module OmniAuth
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
-      def callback_phase: () -> httpResult
+      #def callback_phase: () -> httpResult
 
       # An alternative to call_app! which generates a response for a redirect.
       #
@@ -128,7 +128,7 @@ module OmniAuth
       #
       # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
       #
-      def call_redirect: (String location, **untyped log_extra) -> httpResult
+      #def call_redirect: (String location, **untyped log_extra) -> httpResult
 
       # Trigger an exception if the signed-in user doesn't have a valid
       # +Bookshare+ +OAuth2+ token.
@@ -137,20 +137,20 @@ module OmniAuth
       #
       # @return [void]
       #
-      def check_user_validity: () -> void
+      #def check_user_validity: () -> void
 
       # Acquire the +OAuth2+ token from the remote service.
       #
       # @return [::OAuth2::AccessToken]
       #
-      def build_access_token: () -> ::OAuth2::AccessToken
+      #def build_access_token: () -> ::OAuth2::AccessToken
 
       # The currently signed-in user.
       #
       # @return [User]
       # @return [nil]
       #
-      def current_user: () -> (User | nil)
+      #def current_user: () -> (User | nil)
 
       # Normalize URL parameters from the item or *request* if none was given.
       #
@@ -158,7 +158,7 @@ module OmniAuth
       #
       # @return [Hash{Symbol=>Any}]
       #
-      def url_parameters: (?(prmHash|Rack::Request|nil) params) -> symHash
+      #def url_parameters: (?(prmHash|Rack::Request|nil) params) -> symHash
 
       # Generate an access token based on fixed information.
       #
@@ -183,7 +183,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      def synthetic_access_token: ((String|prmHash|::OAuth2::AccessToken) src) -> (::OAuth2::AccessToken | nil)
+      #def synthetic_access_token: ((String|prmHash|::OAuth2::AccessToken) src) -> (::OAuth2::AccessToken | nil)
 
       # Generate an auth hash based on fixed information.
       #
@@ -209,7 +209,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      def synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src) -> (OmniAuth::AuthHash | nil)
+      #def synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src) -> (OmniAuth::AuthHash | nil)
 
       # Create an AuthHash from the given source.
       #
@@ -217,7 +217,7 @@ module OmniAuth
       #
       # @return [OmniAuth::AuthHash]
       #
-      def self.auth_hash: ((User|anyHash) src) -> OmniAuth::AuthHash
+      #def self.auth_hash: ((User|anyHash) src) -> OmniAuth::AuthHash
 
       # Generate an auth hash based on fixed information.
       #
@@ -245,7 +245,7 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      def self.synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
+      #def self.synthetic_auth_hash: ((String|prmHash|OmniAuth::AuthHash) src, ?(String|nil) token) -> (OmniAuth::AuthHash | nil)
 
       # Table of user names/tokens acquired for use in non-production deploys.
       #
@@ -263,9 +263,9 @@ module OmniAuth
       # #stored_auth_update and/or #stored_auth_update_user will change both
       # the value returned by this method and the associated User table entry.
       #
-      def self.stored_auth: (?(anyHash|nil) values) -> Hash[String,anyHash]
+      #def self.stored_auth: (?(anyHash|nil) values) -> Hash[String,anyHash]
 
-      @stored_auth: strHash
+      #@stored_auth: strHash
 
       # Produce a stored_auth table entry value.
       #
@@ -273,15 +273,15 @@ module OmniAuth
       #
       # @return [Hash{Symbol=>String}]
       #
-      def self.stored_auth_entry_value: (String token) -> { access_token: String, token_type: 'bearer', scope: 'basic' }
-    end
+      #def self.stored_auth_entry_value: (String token) -> { access_token: String, token_type: 'bearer', scope: 'basic' }
+    #end
 
-    module BookshareDebug
-      include OmniAuth::ExtensionDebugging
-      def callback_call:    () -> untyped
-      def call_app!:        (?(anyHash|nil) env) -> untyped
-      def authorize_params: () -> anyHash
-      def token_params:     () -> anyHash
-    end
-  end
-end
+    #module BookshareDebug
+      #include OmniAuth::ExtensionDebugging
+      #def callback_call:    () -> untyped
+      #def call_app!:        (?(anyHash|nil) env) -> untyped
+      #def authorize_params: () -> anyHash
+      #def token_params:     () -> anyHash
+    #end
+  #end
+#end

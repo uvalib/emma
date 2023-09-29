@@ -108,12 +108,6 @@ en:
           alt:          |
             Sign-in options links.
 
-        bookshare_login:
-          asset:        'help/bookshare_login.png'
-          alt:          |
-            Bookshare login forms with inputs for Bookshare username/password
-            and a "Sign In" submit button.
-
         drop_down:
           asset:        'help/drop_down.png'
           alt:          |
