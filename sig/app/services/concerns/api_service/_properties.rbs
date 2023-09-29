@@ -110,7 +110,23 @@ module ApiService::Properties
 
   # Valid service endpoint URLs.
   #
+  # For a given service configuration, :endpoint may be a simple string value
+  # (which becomes associated with #default_engine_key) or a Hash of engine
+  # names and their respective values.
+  #
+  # If the string value is not a URL, it is interpreted as the name of
+  # environment variable which holds the URL.  In configuration, this can be
+  # represented as the environment variable name with or without "ENV":
+  #
+  # - '"ENV[SERVICE_SEARCH_PRODUCTION]"'
+  # - 'ENV[SERVICE_SEARCH_PRODUCTION]'
+  # - '"SERVICE_SEARCH_PRODUCTION"'
+  # - 'SERVICE_SEARCH_PRODUCTION'
+  #
   # @type [Hash{Symbol=>String}]
+  #
+  # @see "en.emma.service.*.endpoint"
+  # @see file:config/locales/service.en.yml
   #
   def engines: () -> Hash[Symbol,String]
 

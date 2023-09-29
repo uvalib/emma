@@ -164,11 +164,38 @@ module ApiService::Properties
 
   # Valid service endpoint URLs.
   #
+  # For a given service configuration, :endpoint may be a simple string value
+  # (which becomes associated with #default_engine_key) or a Hash of engine
+  # names and their respective values.
+  #
+  # If the string value is not a URL, it is interpreted as the name of
+  # environment variable which holds the URL.  In configuration, this can be
+  # represented as the environment variable name with or without "ENV":
+  #
+  # - '"ENV[SERVICE_SEARCH_PRODUCTION]"'
+  # - 'ENV[SERVICE_SEARCH_PRODUCTION]'
+  # - '"SERVICE_SEARCH_PRODUCTION"'
+  # - 'SERVICE_SEARCH_PRODUCTION'
+  #
   # @type [Hash{Symbol=>String}]
   #
+  # @see "en.emma.service.*.endpoint"
+  # @see file:config/locales/service.en.yml
+  #
   def engines
-    value = configuration[:endpoint]
-    value.is_a?(Hash) ? value : { default_engine_key => value }
+    meth = "#{service_name}.#{__method__}"
+    prop = configuration[:endpoint]
+    prop = { default_engine_key => prop } unless prop.is_a?(Hash)
+    prop.map { |engine, host|
+      log = ->(msg) { Log.warn { "#{meth}: #{engine}: #{msg}" } }
+      next log.('no :endpoint given') if host.blank?
+      unless host.start_with?('http')
+        var = host.split(/\s*[\[\]'"]\s*/).compact_blank!.last
+        next log.("invalid: #{host.inspect}") if var.blank?
+        next log.("ENV[#{var}]: not present") if (host = ENV[var]).blank?
+      end
+      [engine, host]
+    }.compact.to_h
   end
 
   # Default service endpoint for this deployment.
