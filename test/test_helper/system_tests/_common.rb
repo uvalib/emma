@@ -158,10 +158,13 @@ module TestHelper::SystemTests::Common
     targets = Array.wrap(target)
     max.times do
       current = get_browser_url(port: port)
+      found   = targets.include?(current)
+      done    = found || timer.expired?
       show("#{__method__}: URL = #{current}") if trace
-      screenshot  if trace
-      return true if targets.include?(current)
-      break       if timer.expired?
+      screenshot                              if trace && done
+      return true                             if found
+      break                                   if done
+      sleep 1
     end
     if fatal
       current  = url_without_port(current || current_url).inspect
