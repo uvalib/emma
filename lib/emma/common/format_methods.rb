@@ -237,42 +237,35 @@ module Emma::Common::FormatMethods
   # @see Kernel#sprintf
   #
   def named_references(text, match = nil)
-    return [] unless (text = text.to_s).include?('%')
+    text = text.to_s
+    return [] unless text.include?('%{') || text.include?('%<')
     patterns = match || [SPRINTF_NAMED_REFERENCE, SPRINTF_FMT_NAMED_REFERENCE]
     Array.wrap(patterns).flat_map { |pattern|
       text.scan(pattern).map(&:shift)
-    }.compact_blank!.uniq.map!(&:to_sym)
+    }.compact_blank!.tap(&:uniq!).map!(&:to_sym)
   end
-
-  # Parts of a complete #sprintf format as regular expression fragments.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
-  SPRINTF_FMT_PARTS = {
-    name:      '(<[^>]+>)',
-    flags:     '(\d+\$\*\d+\$|\d+\$|[ #+0-]+)',
-    width:     '(\d+)',
-    precision: '(\.\d+)',
-    type:      '([bBdiouxXeEfgGaAcps])'
-  }.freeze
 
   # Match a named reference along with "%<name>s" the format portion.
   #
-  # $1 = [String, nil] named format
+  # $1 = [String, nil] name
   # $2 = [String, nil] flags
   # $3 = [String, nil] width
   # $4 = [String, nil] precision
-  # $5 = [String]      type
+  # $5 = [String]      format
   #
   # @type [Regexp]
   #
-  SPRINTF_FORMAT =
-    Regexp.new(
-      '%%%{name}?%{flags}?%{width}?%{precision}?%{type}' % SPRINTF_FMT_PARTS
-    ).freeze
+  #--
+  # noinspection RegExpRedundantEscape, SpellCheckingInspection
+  #++
+  SPRINTF_FORMAT = /
+    %                                 # required
+    (<[^>]+>)?                        # optional name
+    (\d+\$\*\d+\$|\d+\$|[\ #+0-]+)?   # optional flags
+    (\d+)?                            # optional width
+    (\.\d+)?                          # optional precision
+    ([bBdiouxXeEfgGaAcps])            # required format
+  /x.freeze
 
   # Extract the named references in a format string and pair them with their
   # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
@@ -284,17 +277,18 @@ module Emma::Common::FormatMethods
   # @return [Hash{Symbol=>String}]
   #
   def named_references_and_formats(text, default_fmt: '%s')
-    return {} unless (text = text.to_s).include?('%')
-    result = named_references(text).map { |name| [name, default_fmt] }.to_h
-    text.scan(SPRINTF_FORMAT).each do |fmt_parts|
-      name = fmt_parts&.shift&.delete('<>')&.presence
-      result[name.to_sym] = '%' + fmt_parts.join if name && fmt_parts.present?
+    named_references(text).map { |name| [name, default_fmt] }.to_h.tap do |res|
+      if res.present?
+        text.to_s.scan(SPRINTF_FORMAT).each do |parts|
+          next if (name = parts.shift).blank? || (fmt = parts.join).blank?
+          res[name.delete('<>').to_sym] = "%#{fmt}"
+        end
+      end
     end
-    result
   end
 
-  # Replace #sprintf named references with the matching values extracted from
-  # *items* or *opt*.
+  # Make a copy of *text* with #sprintf named references replaced by the
+  # matching values extracted from *items* or *opt*.
   #
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
   # then the interpolated value will follow the same case.
@@ -305,17 +299,19 @@ module Emma::Common::FormatMethods
   #
   # @return [String]                  A (possibly modified) copy of *text*.
   #
-  # @see Kernel#sprintf
+  # === Usage Notes
+  # If *text* contains a mix of named references and unnamed specifiers, the
+  # assumption is that it will be processed in two passes -- first with a hash
+  # of values matching the named references generating an intermediate string,
+  # then (later) a second pass on that result to supply values for the unnamed
+  # specifiers.
   #
   def interpolate_named_references(text, *items, **opt)
     interpolate_named_references!(text, *items, **opt) || text.to_s
   end
 
-  # Replace #sprintf named references with the matching values extracted from
-  # *items* or *opt*.
-  #
-  # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
-  # then the interpolated value will follow the same case.
+  # Replace #sprintf named references in *text* with the matching values
+  # extracted from *items* or *opt*.
   #
   # @param [String, *]           text
   # @param [Array<Hash,Model,*>] items
@@ -324,11 +320,10 @@ module Emma::Common::FormatMethods
   # @return [String]                  A modified copy of *text*.
   # @return [nil]                     If no interpolations could be made.
   #
-  # @see Kernel#sprintf
+  # @see #interpolate_named_references
   #
   def interpolate_named_references!(text, *items, **opt)
-    (text  = text.to_s).include?('%') or return
-    (items = [*items, opt].compact_blank!).present? or return
+    items  = [*items, opt].compact_blank!.presence or return
     values =
       named_references_and_formats(text, default_fmt: nil).map { |term, format|
         term = term.to_s
@@ -348,8 +343,10 @@ module Emma::Common::FormatMethods
         end
         val %= format if format
         [key, val]
-      }.compact
-    text % values.to_h if values.present?
+      }.compact.presence or return
+    text = text.to_s.gsub(/(?<!%)(%[^{<])/, '%\1')  # Preserve %s specifiers
+    text %= values.to_h                             # Interpolate
+    text.gsub(/(?<!%)%(%[^{<])/, '\1')              # Restore %s specifiers
   end
 
 end

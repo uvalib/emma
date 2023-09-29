@@ -456,8 +456,10 @@ class ExecReport
           result = src ? { TOPIC_KEY => src, HTML_KEY => false } : {}
 
         else
-          Log.info(err = "#{meth || __method__}: #{src.class} unexpected")
-          result = { TOPIC_KEY => "-[ #{err} ]-" }
+          meth ||= __method__
+          error  = "#{meth}: unexpected #{src.class}: #{src.inspect}"
+          Log.info { error }
+          result = { TOPIC_KEY => "-[ #{error} ]-" }
       end
       result.compact_blank!.transform_values! { |v| Array.wrap(v) }
     end

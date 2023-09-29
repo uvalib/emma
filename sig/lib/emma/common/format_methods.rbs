@@ -156,19 +156,13 @@ module Emma::Common::FormatMethods
   #
   def named_references: (String text, ?(Regexp|Array[Regexp]|nil) match) -> symArray
 
-  # Parts of a complete #sprintf format as regular expression fragments.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  SPRINTF_FMT_PARTS: Hash[Symbol,String]
-
   # Match a named reference along with "%<name>s" the format portion.
   #
-  # $1 = [String, nil] named format
+  # $1 = [String, nil] name
   # $2 = [String, nil] flags
   # $3 = [String, nil] width
   # $4 = [String, nil] precision
-  # $5 = [String]      type
+  # $5 = [String]      format
   #
   # @type [Regexp]
   #
@@ -185,8 +179,8 @@ module Emma::Common::FormatMethods
   #
   def named_references_and_formats: (String text, ?default_fmt: String|nil) -> Hash[Symbol,String]
 
-  # Replace #sprintf named references with the matching values extracted from
-  # *items* or *opt*.
+  # Make a copy of *text* with #sprintf named references replaced by the
+  # matching values extracted from *items* or *opt*.
   #
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
   # then the interpolated value will follow the same case.
@@ -197,15 +191,17 @@ module Emma::Common::FormatMethods
   #
   # @return [String]                  A (possibly modified) copy of *text*.
   #
-  # @see Kernel#sprintf
+  # === Usage Notes
+  # If *text* contains a mix of named references and unnamed specifiers, the
+  # assumption is that it will be processed in two passes -- first with a hash
+  # of values matching the named references generating an intermediate string,
+  # then (later) a second pass on that result to supply values for the unnamed
+  # specifiers.
   #
   def interpolate_named_references: (untyped text, *untyped items, **untyped opt) -> String
 
-  # Replace #sprintf named references with the matching values extracted from
-  # *items* or *opt*.
-  #
-  # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
-  # then the interpolated value will follow the same case.
+  # Replace #sprintf named references in *text* with the matching values
+  # extracted from *items* or *opt*.
   #
   # @param [String, *]           text
   # @param [Array<Hash,Model,*>] items
@@ -214,7 +210,7 @@ module Emma::Common::FormatMethods
   # @return [String]                  A modified copy of *text*.
   # @return [nil]                     If no interpolations could be made.
   #
-  # @see Kernel#sprintf
+  # @see #interpolate_named_references
   #
   def interpolate_named_references!: (untyped text, *untyped items, **untyped opt) -> (String | nil)
 end

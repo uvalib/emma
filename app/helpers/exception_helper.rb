@@ -27,20 +27,25 @@ module ExceptionHelper
   # @type [Hash{Symbol=>Hash{Symbol=>(String,Class)}}]
   #
   MODEL_ERROR =
-    I18n.t('emma.error').map { |key, entry|
-      next if key.start_with?('_') || !entry.is_a?(Hash)
-      entry = entry.select { |_, properties| properties.is_a?(Hash) }
+    I18n.t('emma.error').map { |model, model_entry|
+      next if model.start_with?('_') || !model_entry.is_a?(Hash)
+      entry = model_entry.select { |_, error_entry| error_entry.is_a?(Hash) }
       next if entry.blank?
+      inter = model_entry.except(*entry.keys)
+      inter = inter.map { |k, v| [k.to_sym, v] if (k = k.to_s.sub!(/^_/, '')) }
+      inter = inter.compact.to_h
       entry =
         entry.transform_values { |properties|
-          msg, err = properties.values_at(:message, :error)
-          err = "Net::#{err}" if err.is_a?(String) && !err.start_with?('Net::')
-          err = err&.safe_constantize unless err.is_a?(Module)
-          err = err.exception_type    if err.respond_to?(:exception_type)
-          [msg, err]
+          m, e = properties.values_at(:message, :error)
+          e = e.to_s             if e.is_a?(Symbol)
+          e = "Net::#{e}"        if e.is_a?(String) && !e.include?('::')
+          e = e.safe_constantize if e.is_a?(String)
+          e = e.exception_type   if e.respond_to?(:exception_type)
+          m = interpolate_named_references(m, inter) if inter.present?
+          [m, e]
         }.compact
-      [key, entry]
-    }.compact.to_h.deep_symbolize_keys.deep_freeze
+      [model, entry]
+    }.compact.to_h.deep_freeze
 
   # ===========================================================================
   # :section:
@@ -63,29 +68,44 @@ module ExceptionHelper
   # @raise [ExecError]
   #
   def raise_failure(problem, value = nil, model:)
-    model = model.to_sym
     __debug_items("#{model.upcase} WF #{__method__}", binding)
 
     # If any failure is actually an internal error, re-raise it now so that it
     # will result in a stack trace when it is caught and processed.
-    [problem, *value].each { |v| re_raise_if_internal_exception(v) }
-
-    report = nil
-    msg, error =
-      problem.is_a?(Symbol) ? MODEL_ERROR.dig(model, problem) : [problem, nil]
-    if msg.is_a?(String)
-      if msg.include?('%') # Message expects value interpolation.
-        msg %= value.is_a?(Array) ? value.size : value.to_s
-      elsif value.is_a?(Array) && value.many?
-        msg += " (#{value.size})"
-      end
-    elsif msg.is_a?(ExecReport)
-      report = msg if value.blank?
+    [problem, *value].each do |arg|
+      re_raise_if_internal_exception(arg) if arg.is_a?(Exception)
     end
-    report ||= ExecReport.new(msg, *value)
-    error  ||= report.exception || Record::SubmitError
 
-    raise error, report.render
+    # Process the initial argument.
+    rpt = msg = err = nil
+    case problem
+      when ExecReport then rpt = problem
+      when Exception  then err = problem
+      when String     then msg = problem
+      when Symbol     then msg, err = MODEL_ERROR.dig(model, problem)
+    end
+    err = err.safe_constantize if err.is_a?(String) || err.is_a?(Symbol)
+
+    # Perform message interpolations if required to generate the report.
+    if rpt.nil? && msg.is_a?(String)
+      ary = value.is_a?(Array)  # Multiple item values.
+      int = msg.include?('%')   # Message expects value interpolation.
+      case
+        when ary && int   then msg %= value.size
+        when ary          then msg += " (#{value.size})"
+        when int && value then msg %= value.to_s; value = nil
+        when int          then msg %= '???'
+      end
+    end
+    rpt ||= ExecReport.new(msg, *value) if msg
+    rpt ||= ExecReport.new(err, *value) if err
+    rpt ||= ExecReport.new(problem.to_s, *value)
+
+    # Find or create the exception and raise it.
+    err ||= rpt.exception
+    err ||= Array.wrap(value).find { |v| v.is_a?(Exception) }
+    err ||= Record::SubmitError
+    err.is_a?(Exception) and raise(err) or raise(err, rpt.render)
   end
 
 end

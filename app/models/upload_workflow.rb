@@ -1662,17 +1662,30 @@ module UploadWorkflow::Actions
     event_args.pop if event_args.last.is_a?(Hash)
     force = model_options.force_delete
     items = Upload.expand_ids(*event_args.flatten.compact)
+    fatal = !force || !items.many?
     emma_items, repo_items = items.partition { |item| emma_item?(item) }
 
     # EMMA items and/or EMMA submission ID's.
-    opt = { fatal: !force }
-    self.succeeded += emma_items.map { |item| get_record(item, **opt) || item }
+    emma_items.each do |item|
+      if (rec = get_record(item, fatal: fatal))
+        self.succeeded << rec
+      else
+        self.failures << item
+      end
+    end
 
+    # Partner repository items.
     if repo_items.present?
       if force && model_options.repo_remove
-        self.succeeded += repo_items.map { |item| Upload.record_id(item) }
+        repo_items.each do |item|
+          if (rec_id = Upload.record_id(item))
+            self.succeeded << rec_id
+          else
+            self.failures << item
+          end
+        end
       else
-        self.failures  += repo_items
+        self.failures += repo_items
       end
     end
   end

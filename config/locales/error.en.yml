@@ -75,39 +75,9 @@ en:
 
       _model:           &MODEL
 
-        _name:          '%{Model}'
-
-        invalid:
-          message:      'Issues to resolve: %s'
-
-        find:
-          message:      'Item %s not found'
-          error:        Record::NotFound
-
-        create:
-          message:      'Failed to create item'
-
-        update:
-          message:      'Failed to update item'
-
-        destroy:
-          message:      'Failed to remove item'
-
-        bulk_new:
-          message:      'Failed to create items'
-
-        bulk_edit:
-          message:      'Failed to update items'
-
-        bulk_delete:
-          message:      'Failed to delete items'
-
-      upload:
-        <<: *MODEL
-
-        # @see UploadConcern
-
-        _name:          'EMMA submission'
+        _name:          '%{Model}'    # @see Api::Error::Methods#service_name
+        _item:          'item'        # @see ExceptionHelper::MODEL_ERROR
+        _items:         'items'       # @see ExceptionHelper::MODEL_ERROR
 
         invalid:
           message:      'Issues to resolve: %s'
@@ -116,33 +86,47 @@ en:
           message:      'No file data provided'
 
         file_id:
-          message:      'No entry identifier provided'
+          message:      'No %{item} identifier provided'
           error:        Record::StatementInvalid
 
         find:
-          message:      'Entry %s not found'
+          message:      '%{Item} %s not found'
           error:        Record::NotFound
 
         create:
-          message:      'Failed to create entry'
+          message:      'Failed to create %{item}'
 
         update:
-          message:      'Failed to update entry'
+          message:      'Failed to update %{item}'
 
         destroy:
-          message:      'Failed to remove entry'
+          message:      'Failed to remove %{items}'
 
         bulk_new:
-          message:      'Failed to create entries'
+          message:      'Failed to create %{items}'
 
         bulk_edit:
-          message:      'Failed to update entries'
+          message:      'Failed to update %{items}'
 
         bulk_delete:
-          message:      'Failed to delete entries'
+          message:      'Failed to delete %{items}'
+
+      upload:
+
+        # @see UploadConcern
+
+        <<:             *MODEL
+        _name:          'EMMA submission'
+        _item:          'entry'
+        _items:         'entries'
 
       manifest:
-        <<: *MODEL
+
+        <<:             *MODEL
+        _name:          'Bulk upload manifest'
+        _item:          'manifest'
+        _items:         'manifests'
 
       manifest_item:
-        <<: *MODEL
+
+        <<:             *MODEL
