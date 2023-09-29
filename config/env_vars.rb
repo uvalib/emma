@@ -230,52 +230,6 @@ SEARCH_BASE_URL =
   }.freeze
 
 # =============================================================================
-# Bookshare API properties
-# =============================================================================
-
-# Bookshare API key.
-#
-# This does not have a default and *must* be provided through the environment.
-#
-# @type [String, nil]
-#
-BOOKSHARE_API_KEY = ENV.fetch('BOOKSHARE_API_KEY', nil).freeze
-
-# Current Bookshare API version.
-#
-# @note This is still required to detect and correct Bookshare API URLs that
-#   may arrive in search results.
-#
-# @type [String]
-#
-BOOKSHARE_API_VERSION = ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
-
-# Base Bookshare API request path.
-#
-# @note This is still required to detect and correct Bookshare API URLs that
-#   may arrive in search results.
-#
-# @type [String]
-#
-BOOKSHARE_API_URL =
-  ENV.fetch('BOOKSHARE_API_URL', 'https://api.bookshare.org')
-     .strip
-     .sub(%r{^(http:)?//}, 'https://')
-     .sub(%r{/+$}, '')
-     .freeze
-
-# Base Bookshare authentication service path.
-#
-# @type [String]
-#
-BOOKSHARE_AUTH_URL =
-  ENV.fetch('BOOKSHARE_AUTH_URL', 'https://auth.bookshare.org')
-     .strip
-     .sub(%r{^(http:)?//}, 'https://')
-     .sub(%r{/+$}, '')
-     .freeze
-
-# =============================================================================
 # Internet Archive access
 # =============================================================================
 

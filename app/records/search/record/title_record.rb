@@ -268,8 +268,6 @@ class Search::Record::TitleRecord < Search::Api::Record
         case repository(rec)&.to_sym
           when :internetArchive, :ace
             positive(repo_id(rec)&.sub(/^[a-z].*?[a-z_.]0(\d\d\d).*$/i, '\1'))
-          when :hathiTrust
-            description(rec)
         end
       value &&= Number.new(value)
       value if value && (1...1000).cover?(value.number_value)

@@ -72,8 +72,8 @@ template:
       values:
         - emma
         - ace
-        - bookshare
-        - hathiTrust
+       #- bookshare
+       #- hathiTrust
         - internetArchive
     accessibility:
       multiple: true

@@ -74,8 +74,6 @@ module AwsConcern
       values.map! { |v|
         case v.to_s.downcase
           when 'emma'                    then :emma
-          when 'bs', /bookshare/         then :bookshare
-          when 'ht', /hathi.*trust/      then :hathiTrust
           when 'ia', /internet.*archive/ then :internetArchive
           when 'ac', 'ace', /ace/        then :internetArchive
           else Log.debug { "#{__method__}: #{v.inspect}: invalid" }

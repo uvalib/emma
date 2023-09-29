@@ -178,8 +178,8 @@ en:
 
         SourceType:
           ace:                      'ACE / Scholars Portal'
-          bookshare:                'Bookshare'
-          hathiTrust:               'HathiTrust'
+         #bookshare:                'Bookshare'
+         #hathiTrust:               'HathiTrust'
           internetArchive:          'Internet Archive'
           emma:                     'EMMA'
           accessTextNetwork:        'ATN (Access Text Network)'

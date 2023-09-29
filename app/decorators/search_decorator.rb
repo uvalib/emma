@@ -491,8 +491,6 @@ class SearchDecorator
   # @return [nil]                       If no *url* was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
-  # @see RepositoryHelper#bs_retrieval_link
-  # @see RepositoryHelper#ht_retrieval_link
   # @see RepositoryHelper#ia_retrieval_link
   #
   def source_retrieval_link(**opt)
@@ -527,8 +525,6 @@ class SearchDecorator
       when :emma            then emma_retrieval_link(label, url, **opt)
       when :ace             then ace_retrieval_link( label, url, **opt)
       when :internetArchive then ia_retrieval_link(  label, url, **opt)
-      when :hathiTrust      then ht_retrieval_link(  label, url, **opt)
-      when :bookshare       then bs_retrieval_link(  label, url, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end

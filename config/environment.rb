@@ -13,11 +13,6 @@
 if respond_to?(:rails_application?) && rails_application?
   vars = [
 
-    # === Bookshare API
-    :BOOKSHARE_API_KEY,
-    :BOOKSHARE_API_VERSION,
-    :BOOKSHARE_API_URL,
-
     # === EMMA Unified Ingest API
     :INGEST_API_KEY,
 
@@ -27,6 +22,7 @@ if respond_to?(:rails_application?) && rails_application?
     :IA_SECRET,
     :IA_SIG_COOKIE,
     :IA_USER_COOKIE,
+
   ]
   if false # if application_deployed? || !development_build?
     # === Amazon Web Services

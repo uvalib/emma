@@ -116,12 +116,6 @@ class AppSettings < AppGlobal
     :INGEST_API_KEY,
     nil,
 
-    # === Bookshare API
-    :BOOKSHARE_API_URL,
-    :BOOKSHARE_API_VERSION,
-    :BOOKSHARE_API_KEY,
-    nil,
-
     # === Internet Archive
     :IA_DOWNLOAD_BASE_URL,
     :IA_ACCESS,

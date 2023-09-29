@@ -4,16 +4,12 @@
 
   view_debug(__FILE__)
 
-  ht_title            = 'Downloading a HathiTrust item'
   ace_title           = 'Downloading an ACE / Scholars Portal item'
   ia_title            = 'Downloading an Internet Archive item'
-  bs_title            = 'Downloading a Bookshare item'
   emma_title          = 'Downloading an EMMA item'
 
-  ht_logo             = repository_source_logo(:hathiTrust)
   ace_logo            = repository_source_logo(:ace)
   ia_logo             = repository_source_logo(:internetArchive)
-  bs_logo             = repository_source_logo(:bookshare)
   emma_logo           = repository_source_logo(:emma)
 
   signed_in           = help_jump('signed in', :sign_in)
@@ -40,41 +36,11 @@
     Topics in this section:
   </div>
   <ul>
-    <li><a href="#download_hathiTrust_help"><%=      ht_title   -%></a></li>
     <li><a href="#download_ace_help"><%=             ace_title  -%></a></li>
     <li><a href="#download_internetArchive_help"><%= ia_title   -%></a></li>
-    <li><a href="#download_bookshare_help"><%=       bs_title   -%></a></li>
     <li><a href="#download_emma_help"><%=            emma_title -%></a></li>
   </ul>
 </nav>
-
-<section role="region" aria-labelledby="download_hathiTrust_help">
-
-  <h2 class="section" id="download_hathiTrust_help">
-    <span class="text"><%= ht_title -%></span>
-    <%= ht_logo %>
-  </h2>
-
-  <p>
-    Because HathiTrust applies its own restrictions, item download links
-    supplied to the EMMA Unified Index are actually links to the HathiTrust web
-    page entry for the creative work associated with the item.
-    Such pages may reference multiple copies of the same item &mdash;
-    unique scans contributed by different academic partners.
-  </p>
-
-  <p>
-    The actual download is performed from the hathitrust.org web page;
-    this constitutes a transaction between that web site and your web browser.
-    Currently, the EMMA system is not a party to this transaction;
-    future work may include enhancements to help reflect this information
-    within EMMA.
-    For now, however, the EMMA system will not be able to track your file
-    download from HathiTrust, and therefore will not know the origin of this
-    item.
-  </p>
-
-</section>
 
 <section role="region" aria-labelledby="download_ace_help">
 
@@ -133,34 +99,6 @@
 
 </section>
 
-<section role="region" aria-labelledby="download_bookshare_help">
-
-  <h2 class="section" id="download_bookshare_help">
-    <span class="text"><%= bs_title -%></span>
-    <%= bs_logo %>
-  </h2>
-
-  <p>
-    Bookshare requires that downloads be performed by a "sponsor" on behalf of
-    members with qualifying disabilities.
-    Download links to Bookshare items are actually links to a Bookshare web
-    page form through which the intended recipients can be indicated,
-    and which performs the actual download.
-  </p>
-
-  <p>
-    The actual download is performed from the bookshare.org web page;
-    this constitutes a transaction between that web site and your web browser.
-    Currently, the EMMA system is not a party to this transaction;
-    future work may include enhancements to help reflect this information
-    within EMMA.
-    For now, however, the EMMA system will not be able to track your file
-    download from Bookshare, and therefore will not know the origin of this
-    item.
-  </p>
-
-</section>
-
 <section role="region" aria-labelledby="download_emma_help">
 
   <h2 class="section" id="download_emma_help">
@@ -171,31 +109,8 @@
   <p>
     Items that are "native" to the EMMA repository
     (that is, items that have been uploaded by EMMA users and/or are otherwise
-    not to be found in any of the other member repositories)
-    come in two flavors (at least initially):
-  </p>
-
-  <ul>
-    <li>
-      Items uploaded directly to EMMA by EMMA users.
-    </li>
-    <li>
-      Bookshare items that are part of their "EMMA Collection"
-    </li>
-  </ul>
-
-  <p>
-    Items of the first type are delivered directly from the EMMA repository to
-    a signed-in user.
-  </p>
-
-  <p>
-    Items of the second type were initially used to "prime" the collection of
-    items associated with EMMA.
-    These items are actually Bookshare items.
-    When downloaded they behave like Bookshare items as
-    <a href="#download_bookshare_help">described above</a>,
-    except that they are not "watermarked".
+    not to be found in any of the other partner repositories)
+    are delivered directly from the EMMA repository to the signed-in user.
   </p>
 
 </section>

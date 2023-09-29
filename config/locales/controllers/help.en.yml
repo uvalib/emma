@@ -174,30 +174,29 @@ en:
             filter the fields on the page, and with the Source Repository menu
             in its initial closed state showing "(unset)".
 
-        source_menu_opened:
-          asset:        'help/source_menu_opened.png'
+        source_menu_open:
+          asset:        'help/source_menu_open.png'
           alt:          |
             A portion of the upload submission form showing radio buttons to
             filter the fields on the page, and with the Source Repository menu
-            opened to show selections "EMMA", "ACE", "Bookshare", "HathiTrust",
-            and "Internet Archive".
+            opened to show selections "EMMA", "ACE", and "Internet Archive".
 
-        source_menu_ht:
-          asset:        'help/source_menu_ht.png'
+        source_menu_repo:
+          asset:        'help/source_menu_repo.png'
           alt:          |
             A portion of the upload submission form showing radio buttons to
-            filter the fields on the page, with "HathiTrust" selected as the
-            "Source Repository", and a mini-form with an input for a standard
-            identifier or title, with "Search" and "Cancel" buttons.
+            filter the fields on the page, with "Internet Archive" selected as
+            the "Source Repository", and a mini-form with an input for a
+            standard identifier or title, with "Search" and "Cancel" buttons.
 
         source_selected_fields:
           asset:        'help/source_selected_fields.png'
           alt:          |
             A portion of the upload submission form showing radio buttons to
-            filter the fields on the page, with "Fields with data" selected to
+            filter the fields on the page, with "Completed fields" selected to
             show that selecting the "parent" EMMA source entry has pre-filled
             bibliographic fields for the submission derived from an original
-            item from HathiTrust.
+            item from Internet Archive.
 
         # =====================================================================
         # Bulk submission

@@ -64,8 +64,8 @@
 
   menu_opt          = { class: 'wide' }
   source_menu       = help_image(:source_menu,            **menu_opt)
-  source_menu_open  = help_image(:source_menu_opened,     **menu_opt)
-  source_menu_ht    = help_image(:source_menu_ht,         **menu_opt)
+  source_menu_open  = help_image(:source_menu_open,       **menu_opt)
+  source_menu_repo  = help_image(:source_menu_repo,       **menu_opt)
   source_selected   = help_image(:source_selected_fields, **menu_opt)
 
   prepare_step      = 'Prepare a file for upload'
@@ -280,7 +280,7 @@
     (For items without a standard identifier, the full title should work.)
   </p>
 
-  <%= source_menu_ht %>
+  <%= source_menu_repo %>
 
   <p>
     After the original item has been identified, you'll see that your
@@ -316,9 +316,9 @@
     </li>
     <li>Source Repository, where you will indicate the source of the original
       file that was remediated.
-      This may include the EMMA repository itself, one of the partner
-      repositories (ACE, Bookshare, HathiTrust, Internet Archive), or one of
-      the other choices in the dropdown list.
+      This may include the EMMA repository itself,
+      one of the partner repositories (ACE or Internet Archive),
+      or one of the other choices in the dropdown list.
     </li>
   </ul>
 

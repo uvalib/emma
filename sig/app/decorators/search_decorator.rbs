@@ -271,8 +271,6 @@ class SearchDecorator
   # @return [nil]                       If no *url* was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
-  # @see RepositoryHelper#bs_retrieval_link
-  # @see RepositoryHelper#ht_retrieval_link
   # @see RepositoryHelper#ia_retrieval_link
   #
   def source_retrieval_link: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)

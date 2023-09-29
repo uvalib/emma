@@ -17,15 +17,6 @@ module RepositoryHelper
 
   public
 
-  # HathiTrust parameters which cause a prompt for login.
-  #
-  # @type [String]
-  #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
-  HT_URL_PARAMS = 'urlappend=%3Bsignon=swle:wayf'
-
   # Internet Archive items that don't require EMMA login.
   #
   # @type [Array<String,Regexp>]
@@ -46,27 +37,6 @@ module RepositoryHelper
   #
   def emma_link?(url)
     url.to_s.strip.match?(%r{^https?://emma[^/]*\.virginia\.edu/})
-  end
-
-  # Indicate whether the given URL is a Bookshare link.
-  #
-  # @param [String, nil] url
-  #
-  # === Usage Notes
-  # This exists to support the handful of items which are represented as
-  # belonging to the "EMMA" repository but which are actually Bookshare items
-  # from the "EMMA Collection".
-  #
-  def bs_link?(url)
-    url.to_s.strip.match?(%r{^https?://([^/]+\.)?bookshare\.org/})
-  end
-
-  # Indicate whether the given URL is a HathiTrust link.
-  #
-  # @param [String, nil] url
-  #
-  def ht_link?(url)
-    url.to_s.strip.match?(%r{^https?://([^/]+\.)?handle\.net/})
   end
 
   # Indicate whether the given URL is an Internet Archive link.
@@ -91,8 +61,6 @@ module RepositoryHelper
     return unless url.present?
     case
       when emma_link?(url) then :emma
-      when bs_link?(url)   then :bookshare
-      when ht_link?(url)   then :hathiTrust
       when ia_link?(url)   then :internetArchive
       else                      Log.warn { "#{__method__}: #{url.inspect}" }
     end&.to_s
@@ -134,35 +102,6 @@ module RepositoryHelper
   #
   def emma_retrieval_link(label, url, **opt)
     url = url.sub(%r{localhost:\d+}, 'localhost') if not_deployed?
-    retrieval_link(label, url, **opt)
-  end
-
-  # Produce a link to open a new browser tab to retrieve a file from the
-  # Bookshare web site.
-  #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #retrieval_link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def bs_retrieval_link(label, url, **opt)
-    retrieval_link(label, url, **opt)
-  end
-
-  # Produce a link to open a new browser tab to retrieve a file from the
-  # HathiTrust web site.
-  #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #retrieval_link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def ht_retrieval_link(label, url, **opt)
-    url_params    = url.split('?', 2)[1]
-    has_ht_params = url_params&.split('&')&.include?(HT_URL_PARAMS)
-    url += (url_params ? '&' : '?') + HT_URL_PARAMS unless has_ht_params
     retrieval_link(label, url, **opt)
   end
 

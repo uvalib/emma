@@ -49,8 +49,7 @@ module Search::Shared::TransformMethods
   #
   def normalize_title_url!(data = nil, field: :emma_webPageLink)
     url = get_field_values(data, *field).first
-    return unless url.blank?
-    set_field_value!(data, field, generate_title_url)
+    set_field_value!(data, field, generate_title_url) if url.blank?
   end
 
   # Set the original repository content download URL if not already present.
@@ -62,8 +61,7 @@ module Search::Shared::TransformMethods
   #
   def normalize_download_url!(data = nil, field: :emma_retrievalLink)
     url = get_field_values(data, *field).first
-    return unless url.blank? || url.start_with?(BOOKSHARE_API_URL)
-    set_field_value!(data, field, generate_download_url)
+    set_field_value!(data, field, generate_download_url) if url.blank?
   end
 
 end

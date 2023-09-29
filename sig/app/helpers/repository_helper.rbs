@@ -3,12 +3,6 @@
 module RepositoryHelper
   include LinkHelper
 
-  # HathiTrust parameters which cause a prompt for login.
-  #
-  # @type [String]
-  #
-  HT_URL_PARAMS: String
-
   # Internet Archive items that don't require EMMA login.
   #
   # @type [Array<String,Regexp>]
@@ -20,23 +14,6 @@ module RepositoryHelper
   # @param [String, nil] url
   #
   def emma_link?: ((String|nil) url) -> bool
-
-  # Indicate whether the given URL is a Bookshare link.
-  #
-  # @param [String, nil] url
-  #
-  # === Usage Notes
-  # This exists to support the handful of items which are represented as
-  # belonging to the "EMMA" repository but which are actually Bookshare items
-  # from the "EMMA Collection".
-  #
-  def bs_link?: ((String|nil) url) -> bool
-
-  # Indicate whether the given URL is a HathiTrust link.
-  #
-  # @param [String, nil] url
-  #
-  def ht_link?: ((String|nil) url) -> bool
 
   # Indicate whether the given URL is an Internet Archive link.
   #
@@ -80,28 +57,6 @@ module RepositoryHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def emma_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Produce a link to open a new browser tab to retrieve a file from the
-  # Bookshare web site.
-  #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #retrieval_link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def bs_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # Produce a link to open a new browser tab to retrieve a file from the
-  # HathiTrust web site.
-  #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #retrieval_link
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def ht_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link to retrieve an Internet Archive file.
   #
