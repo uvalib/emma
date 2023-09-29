@@ -775,7 +775,7 @@ class Paginator
       prm[:offset] = offset + size if offset
       prm[:limit]  = limit         if limit && (limit != default_page_size)
 
-      # Parameters specific to the Bookshare API.
+      # Parameters specific to the EMMA Unified Index API.
       prm[:start] = list.next
 
       make_path(context[:request].path, **prm)

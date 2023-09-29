@@ -11,7 +11,7 @@ module ExceptionHelper
   #
   # @type [Hash{Symbol=>Hash{Symbol=>(String,Class)}}]
   #
-  MODEL_ERROR: Hash[Symbol,Hash[Symbol,[String,Class|nil]]]
+  MODEL_ERROR: Hash[Symbol,Hash[Symbol,[String,(Class|nil)]]]
 
   # Raise an exception.
   #

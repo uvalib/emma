@@ -1278,17 +1278,17 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _validate() {
-            const member_values = {
+            const item_values = {
                 button_class: this.button_class,
                 list_class:   this.list_class,
                 topic:        this.topic,
             };
             const error = [];
-            for (const [member, value] of Object.entries(member_values)) {
+            for (const [item, value] of Object.entries(item_values)) {
                 if (!value) {
-                    error.push(`missing ${member}`);
+                    error.push(`missing ${item}`);
                 } else if (typeof value !== 'string') {
-                    error.push(`${member}: '${value}' is not a string`);
+                    error.push(`${item}: '${value}' is not a string`);
                 }
             }
             if (isPresent(error)) {

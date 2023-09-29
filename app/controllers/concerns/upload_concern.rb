@@ -355,6 +355,12 @@ module UploadConcern
     post_response(problems, redirect: false, xhr: false)
   end
 
+  # ===========================================================================
+  # :section: Workflow - Re-index
+  # ===========================================================================
+
+  public
+
   # Default batch size for #reindex_submissions
   #
   # @type [Integer]
@@ -396,7 +402,7 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section: Workflow - Bulk
+  # :section: Workflow - Re-index
   # ===========================================================================
 
   protected
