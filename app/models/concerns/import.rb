@@ -149,9 +149,9 @@ module Import
   # @yieldreturn [String] The replacement element.
   #
   def array_value(v, &block)
-    array = Array.wrap(values(v)).compact_blank
-    array.map!(&block).compact! if block
-    array
+    Array.wrap(values(v)).tap { |result|
+      result.map!(&block) if block
+    }.compact_blank!
   end
 
   # Transform a data item into a string.
@@ -204,7 +204,7 @@ module Import
   # @return [Array<String>]
   #
   def language_values(v)
-    array_value(v) { |lang| IsoLanguage.find(lang)&.alpha3 || lang }
+    array_value(v) { |lang| LanguageType.normalize(lang) }
   end
 
   # Transform a data item into one or more DOI identifiers.

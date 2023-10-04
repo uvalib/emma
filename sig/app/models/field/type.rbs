@@ -30,7 +30,7 @@ class Field::Type
   #
   attr_reader range: strArray
 
-  # The value associated with the instance.
+  # The raw value for this field instance.
   #
   # @return [*]
   #
@@ -54,15 +54,11 @@ class Field::Type
 
   # The resolved value for this field instance.
   #
+  # @param [Boolean] labels           If *true* return labels not raw values.
+  #
   # @return [Array<String>, String, nil]
   #
-  def content: () -> (strArray | String | nil)
-
-  # The raw value for this field instance.
-  #
-  # @return [Any]
-  #
-  def value: () -> untyped
+  def content: (?labels: bool) -> (strArray | String | nil)
 
   # Give the instance a value.
   #
@@ -77,12 +73,6 @@ class Field::Type
   # @return [nil]
   #
   def clear: () -> nil
-
-  # Remove any value from the instance.
-  #
-  # @return [nil]
-  #
-  def content: () -> (strArray | String | nil)
 
   # Indicate whether this instance is associated with a value.
   #

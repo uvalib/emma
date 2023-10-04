@@ -684,7 +684,7 @@ module BaseDecorator::Fields
 
   protected
 
-  VALID_LANGUAGE   = 'Provided value: %s' # TODO: I18n
+  VALID_LANGUAGE   = 'Provided value: "%s"' # TODO: I18n
   INVALID_LANGUAGE = 'The underlying data contains this value ' \
                      'instead of a valid ISO 639 language code.'
 
@@ -709,19 +709,20 @@ module BaseDecorator::Fields
   #   @param [Boolean]       code
   #   @return [Array<ActiveSupport::SafeBuffer, String>]
   #
-  def mark_invalid_languages(value, code: false)
+  def mark_invalid_languages(value, code: false, **)
     if value.is_a?(Array)
       return value.map { |v| send(__method__, v, code: code) }
     end
-    lang = IsoLanguage.find(value)
-    return value if code ? (value == lang&.alpha3) : lang
-    if lang
-      opt   = { title: (VALID_LANGUAGE % value.inspect) }
-      value = code ? lang.alpha3 : lang.english_name
+    lang = LanguageType.cast(value, warn: false, invalid: true)
+    if !lang.valid?
+      html_span(value, title: INVALID_LANGUAGE, class: 'invalid')
+    elsif code
+      lang.code
+    elsif value.casecmp?(lang.label)
+      value
     else
-      opt   = { title: (INVALID_LANGUAGE % value.inspect), class: 'invalid' }
+      html_span(lang.label, title: (VALID_LANGUAGE % value))
     end
-    html_span(value, **opt)
   end
 
   # Wrap invalid identifier values in a *span*.

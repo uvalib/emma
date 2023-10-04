@@ -325,9 +325,9 @@ module BaseDecorator::Fields
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
   def mark_invalid_languages
-    : (anyArray value, ?code: bool) -> Array[String|ActiveSupport::SafeBuffer]
-    | (String   value, ?code: bool) -> (String | ActiveSupport::SafeBuffer)
-    | (untyped  value, ?code: bool) -> ActiveSupport::SafeBuffer
+    : (anyArray value, ?code: bool, **untyped _ignored) -> Array[String|ActiveSupport::SafeBuffer]
+    | (String   value, ?code: bool, **untyped _ignored) -> (String | ActiveSupport::SafeBuffer)
+    | (untyped  value, ?code: bool, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # Wrap invalid identifier values in a *span*.
   #

@@ -222,7 +222,7 @@ module BaseDecorator::List
     no_fmt  = [no_fmt]               if no_fmt.is_a?(Symbol)
     no_fmt  = no_fmt.include?(field) if no_fmt.is_a?(Array)
     value   = value.dup              if value.is_a?(Array)
-    if value.is_a?(ActiveSupport::SafeBuffer)
+    if Array.wrap(value).first.is_a?(ActiveSupport::SafeBuffer)
       no_fmt = true
     elsif enum || model
       value  = value.split(/[,;|\t\n]/) if value.is_a?(String)
@@ -230,9 +230,6 @@ module BaseDecorator::List
       value.map! { |v| type.cast(v, warn: false) || v } if enum
       value.map! { |v| type.find_by(id: v)       || v } if model
       v_dv ||= value.join('|')
-      value.map! { |v| v.try(:label) || v } unless no_fmt
-      value  = value.first                  unless multi
-      no_fmt = value.is_a?(ActiveSupport::SafeBuffer)
     end
 
     # Format the content of certain fields.
@@ -240,6 +237,10 @@ module BaseDecorator::List
       value = render_format(field, value, no_code: no_code)
       area  = !cls && value.is_a?(Array) && TEXTAREA_FIELDS.include?(field)
       prop  = prop.merge(type: 'textarea') if area && value.many?
+      if enum || model
+        lbl = ->(v) { v.try(:label) || v }
+        value.is_a?(Array) and value.map!(&lbl) or (value = lbl.(value))
+      end
     end
 
     # Special for ManifestItem
@@ -257,6 +258,7 @@ module BaseDecorator::List
       end
       separator ||= "\n"
     end
+    value = value.first if value.is_a?(Array) && !value.many? && !multi
     if value.is_a?(Array)
       separator ||= no_fmt ? "\n" : HTML_BREAK
       value = safe_join(value, separator)

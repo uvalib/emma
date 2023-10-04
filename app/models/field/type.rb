@@ -43,7 +43,7 @@ class Field::Type
   #
   attr_reader :range
 
-  # The value associated with the instance.
+  # The raw value for this field instance.
   #
   # @return [*]
   #
@@ -101,21 +101,16 @@ class Field::Type
 
   # The resolved value for this field instance.
   #
+  # @param [Boolean] labels           If *true* return labels not raw values.
+  #
   # @return [Array<String>, String, nil]
   #
-  def content
+  def content(labels: false)
     res = value.presence || range
     res = Array.wrap(res)
-    res = res.map { |v| base.pairs[v] || v } if base.respond_to?(:pairs)
+    # noinspection RailsParamDefResolve
+    res = res.map { |v| labels[v] || v } if labels &&= base.try(:pairs)
     (mode == :single) ? res.first : res
-  end
-
-  # The raw value for this field instance.
-  #
-  # @return [Any]
-  #
-  def value
-    @value
   end
 
   # Give the instance a value.

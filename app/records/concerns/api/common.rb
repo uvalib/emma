@@ -168,14 +168,16 @@ class ScalarType
   # @param [*]       v
   # @param [Boolean] invalid          If *true* allow invalid value.
   # @param [Boolean] allow_nil        If *false* use #default if necessary.
+  # @param [Boolean] warn             If *true* log invalid.
   #
   # @return [String, nil]
   #
-  def set(v, invalid: false, allow_nil: true, **)
+  def set(v, invalid: false, allow_nil: true, warn: false, **)
     v = nil if v == EMPTY_VALUE
     unless v.nil?
       @value = normalize(v)
       @value = nil unless valid?(@value)
+      Log.warn { "#{type}: #{v.inspect}: not in #{values}" } if warn && !@value
     end
     @value ||= (v if invalid) || (default unless allow_nil)
   end
@@ -225,6 +227,12 @@ class ScalarType
   #
   def inspect
     "#{self.class}(#{to_s.inspect})"
+  end
+
+  # Indicate whether the instance has a blank value.
+  #
+  def blank?
+    value.blank?
   end
 
   # Value needed to make instances comparable.
@@ -1091,6 +1099,8 @@ end
 
 # ISO 639-2 alpha-3 language code.
 #
+# TODO: This should be eliminated in favor of LanguageType.
+#
 class IsoLanguage < ScalarType
 
   # ===========================================================================
@@ -1126,7 +1136,7 @@ class IsoLanguage < ScalarType
     #
     def normalize(v)
       v = super
-      find(v)&.alpha3 || v
+      code(v) || v
     end
 
     # =========================================================================
@@ -1134,6 +1144,16 @@ class IsoLanguage < ScalarType
     # =========================================================================
 
     public
+
+    # Return the associated three-letter language code.
+    #
+    # @param [String, *] value
+    #
+    # @return [String, nil]
+    #
+    def code(value)
+      find(value)&.alpha3
+    end
 
     # Find a matching language entry.
     #
@@ -1172,6 +1192,23 @@ class IsoLanguage < ScalarType
   include Methods
 
   # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  # Assign a new value to the instance.
+  #
+  # @param [*]    v
+  # @param [Hash] opt                 Passed to ScalarType#set
+  #
+  # @return [String, nil]
+  #
+  def set(v, **opt)
+    super(v, warn: true, **opt)
+  end
+
+  # ===========================================================================
   # :section: IsoLanguage::Methods overrides
   # ===========================================================================
 
@@ -1182,6 +1219,16 @@ class IsoLanguage < ScalarType
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
+    super(v || value)
+  end
+
+  # Return the associated three-letter language code.
+  #
+  # @param [String, *] v              Default: #value.
+  #
+  # @return [String, nil]
+  #
+  def code(v = nil)
     super(v || value)
   end
 
@@ -1523,21 +1570,13 @@ class EnumType < ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*]       v
-  # @param [Boolean] invalid          If *true* allow invalid value.
-  # @param [Boolean] allow_nil        If *false* use #default if necessary.
-  # @param [Boolean] warn             If *false* do not log invalid.
+  # @param [*]    v
+  # @param [Hash] opt                 Passed to ScalarType#set
   #
   # @return [String, nil]
   #
-  def set(v, invalid: false, allow_nil: true, warn: true, **)
-    v = nil if v == EMPTY_VALUE
-    unless v.nil?
-      @value = normalize(v)
-      @value = nil unless valid?(@value)
-      Log.warn { "#{type}: #{v.inspect}: not in #{values}" } if warn && !value
-    end
-    @value ||= (v if invalid) || (default unless allow_nil)
+  def set(v, **opt)
+    super(v, warn: true, **opt)
   end
 
   # ===========================================================================
@@ -1792,10 +1831,38 @@ class Deployment < EnumType; end
 # @see Api::Common#REPOSITORY_MAP
 class EmmaRepository < EnumType; end
 
-# @see Api::Common#LANGUAGE_MAP
-class LanguageType < EnumType; end
-
 # @see Api::Common#MEMBER_STATUS_MAP
 class MemberStatus < EnumType; end
+
+# @see Api::Common#LANGUAGE_MAP
+class LanguageType < EnumType
+
+  include IsoLanguage::Methods
+
+  # ===========================================================================
+  # :section: IsoLanguage::Methods overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, *] v              Default: #value.
+  #
+  def valid?(v = nil)
+    super(v || value)
+  end
+
+  # Return the associated three-letter language code.
+  #
+  # @param [String, *] v              Default: #value.
+  #
+  # @return [String, nil]
+  #
+  def code(v = nil)
+    super(v || value)
+  end
+
+end
 
 __loading_end(__FILE__)

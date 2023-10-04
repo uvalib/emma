@@ -138,7 +138,7 @@ module Lookup::RemoteService::Shared::TitleMethods
   #
   def language_list(field = nil)
     return [] unless field
-    find_record_values(field).map { |v| IsoLanguage.find(v)&.alpha3 || v }
+    find_record_values(field).map { |v| LanguageType.normalize(v) }
   end
 
   # subject_list
