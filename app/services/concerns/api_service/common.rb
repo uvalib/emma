@@ -225,31 +225,25 @@ module ApiService::Common
   # @return [String]
   #
   def api_path(*args)
-    ver  = api_version.presence
-    arg  = args.flatten.join('/').strip
-    uri  = URI.parse(arg)
-    qry  = uri.query.presence
-    path = uri.path.presence
-    host = uri.host.presence
-    url  =
-      if host
-        rel      = (host == base_uri.host)
-        scheme   = uri.scheme.presence || (base_uri.scheme.presence if rel)
-        port     = uri.port.presence   || (base_uri.port.presence   if rel)
-        scheme ||= 'https'
-        port   &&= nil if COMMON_PORTS.include?(port)
-        [scheme, "//#{host}", port].compact.join(':')
-      end
-    base = base_uri.path.presence
-    base = base&.split('/')&.compact_blank!&.presence
-    path = path&.split('/')&.compact_blank!&.presence
-    ver  = nil if ver && (base&.include?(ver) || path&.include?(ver))
-    base = base&.join('/')
-    path = path&.join('/')
-    path = "#{base}/#{path}" if base && path && !path.start_with?(base)
-    [url, ver, *path].compact_blank!.join('/').tap do |result|
-      result << "?#{qry}" if qry
+    arg   = args.flatten.join('/').strip
+    uri   = URI.parse(arg)
+    base  = base_uri.path&.split('/')&.compact_blank!&.presence
+    path  = uri.path&.split('/')&.compact_blank!&.presence
+    path.shift(base.size) if path && base && (path.first(base.size) == base)
+    ver   = api_version.presence
+    ver   = nil if ver && (base&.include?(ver) || path&.include?(ver))
+    qry   = uri.query.presence
+    qry &&= "?#{qry}"
+    if (host = uri.host).present?
+      rel = (host == base_uri.host)
+      sch = uri.scheme.presence || (base_uri.scheme.presence if rel) || 'https'
+      prt = uri.port.presence   || (base_uri.port.presence   if rel)
+      prt = nil if prt && COMMON_PORTS.include?(prt)
+      url = [sch, "//#{host}", prt].compact.join(':')
+    else
+      url = base = nil
     end
+    [url, *base, ver, *path, qry].compact.join('/')
   end
 
   # Add service-specific API options.

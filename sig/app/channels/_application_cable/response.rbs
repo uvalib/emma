@@ -30,15 +30,20 @@ class ApplicationCable::Response < Hash[Symbol,untyped]
   # Replace :data with :data_url which references the database record where
   # this response is stored.
   #
-  # @param [Array] data_path          Location in the data hierarchy.
-  # @param [Hash]  opt                Additional URL parameters.
+  # It is assumed that the shape of the current instance matches #TEMPLATE and
+  # that `self[:data_url]` is *nil* and that `self[:data]` is present.
   #
-  # @return [self]
+  # @param [Array,String,:none,nil] data_path   Location in the data hierarchy
+  #                                               within #data_url_base_path
+  #                                               (default 'data' unless :none)
+  # @param [Hash]  opt                          Additional URL parameters.
+  #
+  # @return [void]
   #
   # @see #data_url_base_path
   # @see file:app/assets/javascripts/channels/lookup-channel.js  *response()*
   #
-  def convert_to_data_url!: (base_path: String, ?data_path: Array[Symbol|String]|nil, **untyped opt) -> self
+  def convert_to_data_url!: (?data_path: anyArray|String|:none|nil, **untyped opt) -> void
 
   # Create a new instance unless *payload* is already an instance of the class
   # and there are no *opt* additions.

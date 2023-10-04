@@ -82,28 +82,30 @@ class ApplicationCable::Response < Hash
   # Replace :data with :data_url which references the database record where
   # this response is stored.
   #
-  # @param [Array] data_path          Location in the data hierarchy.
-  # @param [Hash]  opt                Additional URL parameters.
+  # It is assumed that the shape of the current instance matches #TEMPLATE and
+  # that `self[:data_url]` is *nil* and that `self[:data]` is present.
   #
-  # @return [self]
+  # @param [Array,String,:none,nil] data_path   Location in the data hierarchy
+  #                                               within #data_url_base_path
+  #                                               (default 'data' unless :none)
+  # @param [Hash]  opt                          Additional URL parameters.
+  #
+  # @return [void]
   #
   # @see #data_url_base_path
   # @see file:app/assets/javascripts/channels/lookup-channel.js  *response()*
   #
   def convert_to_data_url!(data_path: nil, **opt)
-    raise 'missing job_id' if (job_id = self[:job_id]).blank?
-    base_path = data_url_base_path.split('/')
-    data_path = data_path&.split('/') unless data_path == :none
-    result =
-      self.map { |k, v|
-        if k == :data
-          path = (data_path || [k] unless data_path == :none)
-          [:data_url, make_path(*base_path, job_id, *path, **opt)]
-        else
-          [k, v]
-        end
-      }.to_h
-    replace(result)
+    url = self[:data_url] and raise "data_url is not nil: #{url.inspect}"
+    job = self[:job_id].presence or raise 'missing job_id'
+    if self[:data]
+      base_path = data_url_base_path.split('/')
+      data_path = (Array.wrap(data_path || :data) unless data_path == :none)
+      data_url  = make_path(*base_path, job, *data_path, **opt)
+      update(data: nil, data_url: data_url)
+    else
+      Log.warn { "#{__method__}: no data: #{self.inspect}" }
+    end
   end
 
   # ===========================================================================
