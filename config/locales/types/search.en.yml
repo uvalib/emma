@@ -177,12 +177,12 @@ en:
         # =====================================================================
 
         SourceType:
-          ace:                      'ACE / Scholars Portal'
-         #bookshare:                'Bookshare'
-         #hathiTrust:               'HathiTrust'
-          internetArchive:          'Internet Archive'
           emma:                     'EMMA'
+          ace:                      'ACE / Scholars Portal'
           accessTextNetwork:        'ATN (Access Text Network)'
+          bookshare:                'Bookshare'
+          hathiTrust:               'HathiTrust'
+          internetArchive:          'Internet Archive'
           publisher:                'Publisher'
           purchased:                'Purchased'
           faculty:                  'Faculty'
