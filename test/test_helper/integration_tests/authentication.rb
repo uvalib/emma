@@ -123,8 +123,7 @@ module TestHelper::IntegrationTests::Authentication
   def as_user(user, **opt, &block)
     user &&= find_user(user)
     unless opt.key?(:part)
-      user_name = show_user(user: user, output: false)
-      opt[:part] = "USER #{user_name}"
+      opt[:part] = 'USER %s' % show_user(user, output: false, indent: false)
     end
     test_name = opt.delete(:test)
     if user.nil?

@@ -58,7 +58,8 @@ end
 #
 module CapybaraLockstep
 
-  Capybara::Lockstep.debug = true?(ENV['DEBUG_LOCKSTEP'])
+  Capybara::Lockstep.debug   = true?(ENV['DEBUG_LOCKSTEP'])
+  Capybara::Lockstep.timeout = 2 * Capybara.default_max_wait_time
 
   # This status is updated to indicate whether or not the Javascript for
   # 'capybara-lockstep' should be included in the <head> of the page being

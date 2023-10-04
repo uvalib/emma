@@ -76,7 +76,7 @@ class SearchTest < ApplicationSystemTestCase
     index,
     base_url:     nil,
     expected_url: nil,
-    max:          DEFAULT_WAIT_MAX_PASS
+    max:          DEF_WAIT_MAX_PASS
   )
     page = (index + 1 unless index.zero?)
     expected_url ||= make_path(base_url, page: page)

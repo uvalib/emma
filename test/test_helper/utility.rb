@@ -40,7 +40,7 @@ module TestHelper::Utility
     error = nil
     prime_tests
     if format && !html?(format)
-      opt[:part] = ["[#{format.to_s.upcase}]", opt[:part]].compact.join(' - ')
+      opt[:part] = [opt[:part], "[#{format.to_s.upcase}]"].compact.join(' - ')
     end
     show_test_start(test_name, **opt)
     if allowed_format(format, only: only)
@@ -399,7 +399,7 @@ module TestHelper::Utility
   # @return [true]
   #
   def not_applicable(note = nil)
-    $stderr.puts ['TEST SKIPPED', 'NOT APPLICABLE', note].compact.join(' - ')
+    show ['TEST SKIPPED', 'NOT APPLICABLE', note].compact.join(' - ')
     true
   end
 
@@ -421,28 +421,29 @@ module TestHelper::Utility
     only = TEST_FORMATS if only.blank? || only.include?(:all)
     return true if fmt.nil? && Array.wrap(only).intersect?(TEST_FORMATS)
     return true if Array.wrap(only).intersect?(Array.wrap(fmt))
-    format = 'format'
-    only   = only.first if only.is_a?(Array) && !only.many?
-    msg    = ['TEST SKIPPED']
+
+    msg  = []
+    name = 'format'
+    only = only.first if only.is_a?(Array) && !only.many?
 
     if fmt.nil?
-      format = format.pluralize if only.is_a?(Array)
-      msg << "ONLY APPLICABLE for #{only.inspect} #{format}"
+      name = name.pluralize if only.is_a?(Array)
+      msg << "ONLY APPLICABLE for #{only.inspect} #{name}"
 
     elsif only.is_a?(Array)
-      format = format.pluralize if fmt.is_a?(Array) && fmt.many?
+      name = name.pluralize if fmt.is_a?(Array) && fmt.many?
       msg << 'NOT APPLICABLE'
-      msg << "#{format} #{fmt.inspect} not in #{only.inspect}"
+      msg << "#{name} #{fmt.inspect} not in #{only.inspect}"
 
     elsif fmt.is_a?(Array)
-      format = format.pluralize if only.is_a?(Array)
-      msg << "ONLY APPLICABLE for #{only.inspect} #{format}"
+      name = name.pluralize if only.is_a?(Array)
+      msg << "ONLY APPLICABLE for #{only.inspect} #{name}"
 
     else
-      msg << "NOT APPLICABLE for #{fmt.inspect} #{format}"
+      msg << "NOT APPLICABLE for #{fmt.inspect} #{name}"
     end
 
-    $stderr.puts [*msg, note].compact.join(' - ')
+    show ['TEST SKIPPED', *msg, note].compact.join(' - ')
     false
   end
 

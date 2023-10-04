@@ -78,24 +78,25 @@ module TestHelper::SystemTests::Common
   #
   def get_browser_url: (?port: bool) -> (String | nil)
 
-  DEFAULT_WAIT_MAX_TIME: Numeric
+  DEF_WAIT_MAX_PASS: Integer
 
-  DEFAULT_WAIT_MAX_PASS: Integer
+  DEF_WAIT_MAX_TIME: Numeric
 
   # Block until the browser can confirm that it is on the target page.
   #
-  # @param [String, Array] target     One or more acceptable target URLs.
-  # @param [Integer]       wait       Overall time limit.
-  # @param [Integer]       max        Maximum number of attempts to make.
-  # @param [Boolean]       port       Passed to #get_browser_url.
-  # @param [Boolean]       fatal      If *false* don't assert.
-  # @param [Boolean]       trace      Output each URL acquired.
+  # @param [String, Array, nil] target  One or more acceptable target URLs, or
+  #                                       *nil* for any new page.
+  # @param [Boolean]            port    Passed to #get_browser_url.
+  # @param [Boolean]            fatal   If *false* don't assert.
+  # @param [Boolean]            trace   Output each URL acquired.
+  # @param [Numeric]            wait    Overall time limit.
   #
-  # @raise [Minitest::Assertion]      If the browser failed to get to the page.
+  # @raise [Minitest::Assertion]        If the browser failed to get to the
+  #                                       expected page and *fatal* is *true*.
   #
   # @return [Boolean]
   #
-  def wait_for_page: (String|strArray target, ?wait: Integer|nil, ?max: Integer, ?port: bool, ?fatal: bool, ?trace: bool) -> bool
+  def wait_for_page: (?(String|strArray|nil) target, ?port: bool, ?fatal: bool, ?trace: bool, ?wait: Numeric) -> bool
 
   # If DEBUG_TESTS is true, this will take a screenshot (ignoring an error that
   # has been observed [in rare cases] since these are informational-only).

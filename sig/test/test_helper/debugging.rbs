@@ -27,30 +27,26 @@ module TestHelper::Debugging
   #
   def show_test_end: (String|Symbol|nil test_name, ?test: Symbol|nil, ?part: String|nil, ?frame: String|nil, **untyped _ignored) -> void
 
-  SHOW_MODEL_OPT: symArray
-
   # Display item model in output.
   #
   # @param [ActiveRecord::Base] item
-  # @param [Hash]               opt     Passed to #show except for:
-  #
-  # @option opt [String]  :indent       Default: #TEST_DEBUG_INDENT
-  # @option opt [Boolean] :reflections  Default: *true*
+  # @param [Boolean, String]    indent
+  # @param [Boolean]            reflections
+  # @param [Hash]               opt           Passed to #show.
   #
   # @return [String]
   #
-  def show_model: (ActiveRecord::Base item, **untyped opt) -> String
+  def show_model: (ActiveRecord::Base item, ?indent: bool|String, ?reflections: bool, **untyped opt) -> String
 
   # Display item model associations in output.
   #
   # @param [ActiveRecord::Base] item
-  # @param [Hash]               opt   Passed to #show except for:
-  #
-  # @option opt [String] :indent      Default: #TEST_DEBUG_INDENT
+  # @param [Boolean, String]    indent  Default: #TEST_DEBUG_INDENT
+  # @param [Hash]               opt     Passed to #show.
   #
   # @return [String]
   #
-  def show_reflections: (ActiveRecord::Base item, **untyped opt) -> String
+  def show_reflections: (ActiveRecord::Base item, ?indent: bool|String, **untyped opt) -> String
 
   # Display a URL in output.
   #
@@ -59,7 +55,7 @@ module TestHelper::Debugging
   #
   # @return [String]
   #
-  def show_url: (?url: String|URI|nil, **untyped opt) -> String
+  def show_url: (?(String|URI|nil) url, **untyped opt) -> String
 
   # Display a user in output.
   #
@@ -68,21 +64,38 @@ module TestHelper::Debugging
   #
   # @return [String]
   #
-  def show_user: (?user: String|Symbol|User|nil, **untyped opt) -> String
+  def show_user: (?(String|Symbol|User|nil) user, **untyped opt) -> String
 
   # Display item contents in output.
   #
-  # @param [Array<*>] items
-  # @param [Hash]     opt             Passed to #show_model except for:
-  #
-  # @option opt [String] :output      If *false* the result is not displayed.
+  # @param [Array<*>]        items
+  # @param [Boolean, String] indent
+  # @param [Boolean]         output   If *false* the result is only returned.
+  # @param [Hash]            opt      Passed to #show_model.
   #
   # @return [String]                  The displayable result.
   #
   # @yield To supply additional items.
   # @yieldreturn [Array, String, *]
   #
-  def show: (*untyped items, **untyped opt) ?{ () -> untyped } -> String
+  def show: (*untyped items, ?indent: bool|String, ?output: bool, **untyped opt) ?{ () -> untyped } -> String
+
+  # Generate a line prefix string for #show output.
+  #
+  # @param [Boolean, Integer, String, nil] indent
+  # @param [Integer, String, nil]          default    If *indent* is *true*.
+  #
+  # @return [String, nil]
+  #
+  def show_prefix: (bool|Integer|String|nil indent, default: Integer|String|nil) -> (String | nil)
+
+  # Send one or more lines to $stderr.
+  #
+  # @param [Array,nil] lines          Nil elements are interpreted as newlines.
+  #
+  # @return [void]
+  #
+  def show_lines: (*untyped lines) -> void
 
   TRACE_NL: String
 

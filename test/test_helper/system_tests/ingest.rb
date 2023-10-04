@@ -26,7 +26,7 @@ module TestHelper::SystemTests::Ingest
   def reindex(*entries)
     list = Upload.get_relation(*entries).to_a
     result = ingest_api.put_records(*list)
-    result.exec_report.error_messages.each { |e| $stderr.puts e }.blank?
+    result.exec_report.error_messages.each { |e| show e }.blank?
   end
 
 end

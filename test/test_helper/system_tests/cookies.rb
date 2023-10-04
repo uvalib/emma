@@ -37,7 +37,7 @@ module TestHelper::SystemTests::Cookies
         value = v[:value] || ''
         "#{k.inspect} = #{v.inspect} [#{value.size} bytes]"
       }.join("\n")
-    $stderr.puts "COOKIES:\n#{cookies}"
+    show "COOKIES:\n#{cookies}"
   end
 
   # Get the current cookies from the last response.

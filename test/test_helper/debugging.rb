@@ -7,8 +7,8 @@
 #
 module TestHelper::Debugging
 
-  TEST_DEBUG_FRAME  = '-------'
-  TEST_DEBUG_INDENT = '  '
+  TEST_DEBUG_FRAME  = ('-' * 7).freeze
+  TEST_DEBUG_INDENT = (' ' * 2).freeze
 
   # ===========================================================================
   # :section:
@@ -28,10 +28,9 @@ module TestHelper::Debugging
   def show_test_start(test_name, test: nil, part: nil, frame: nil, **)
     line = frame || TEST_DEBUG_FRAME
     name = test  || test_name
-    name = "#{name} - #{part} -"                            if name && part
+    name = "#{name} - #{part}"                              if name && part
     line = "#{line} START >> | #{name} | START >> #{line}"  if name
-    $stderr.puts "\n#{line}"
-    $stderr.puts
+    show_lines(nil, line)
   end
 
   # Produce the bottom frame of debug output for a test.
@@ -48,9 +47,7 @@ module TestHelper::Debugging
     name = test  || test_name
     name = "#{name} - #{part}"                              if name && part
     line = "#{line} END <<<< | #{name} | END <<<< #{line}"  if name
-    $stderr.puts line
-    $stderr.puts
-    $stderr.puts
+    show_lines(line, nil)
   end
 
   # ===========================================================================
@@ -59,34 +56,23 @@ module TestHelper::Debugging
 
   public
 
-  SHOW_MODEL_OPT = %i[indent reflections].freeze
-
   # Display item model in output.
   #
   # @param [ActiveRecord::Base] item
-  # @param [Hash]               opt     Passed to #show except for:
-  #
-  # @option opt [String]  :indent       Default: #TEST_DEBUG_INDENT
-  # @option opt [Boolean] :reflections  Default: *true*
+  # @param [Boolean, String]    indent
+  # @param [Boolean]            reflections
+  # @param [Hash]               opt           Passed to #show.
   #
   # @return [String]
   #
-  def show_model(item, **opt)
-    show_opt = remainder_hash!(opt, *SHOW_MODEL_OPT)
-    details  = opt[:reflections] || !opt.key?(:reflections)
-    indent   = opt[:indent]|| TEST_DEBUG_INDENT
-    not_indented = (indent == TEST_DEBUG_INDENT)
-    show(**show_opt) do
-      item.pretty_inspect.tap do |result|
-        result.prepend("\n") if not_indented
-        if details
-          reflections = show_reflections(item, indent: indent, output: false)
-          if reflections.present?
-            result << "\n#{indent}REFLECTIONS\n\n"
-            result << reflections.gsub(/^/, indent)
-          end
+  def show_model(item, indent: true, reflections: true, **opt)
+    prefix = show_prefix(indent)
+    show(**opt) do
+      item.pretty_inspect.tap do |inspection|
+        if reflections
+          inspection << "\n#{prefix}REFLECTIONS\n\n"
+          inspection << show_reflections(item, output: false, indent: prefix)
         end
-        result << "\n\n" if not_indented
       end
     end
   end
@@ -94,23 +80,25 @@ module TestHelper::Debugging
   # Display item model associations in output.
   #
   # @param [ActiveRecord::Base] item
-  # @param [Hash]               opt   Passed to #show except for:
-  #
-  # @option opt [String] :indent      Default: #TEST_DEBUG_INDENT
+  # @param [Boolean, String]    indent  Default: #TEST_DEBUG_INDENT
+  # @param [Hash]               opt     Passed to #show.
   #
   # @return [String]
   #
-  def show_reflections(item, **opt)
-    show_opt = remainder_hash!(opt, :indent)
-    indent   = opt[:indent] || TEST_DEBUG_INDENT
-    show(**show_opt) do
-      item._reflections.map do |key, entry|
-        items = Array.wrap(item.send(key)) rescue nil
-        count = items ? items.size : 'ERROR'
-        items &&= items.map { |i| i.pretty_inspect.gsub(/^/, indent) }.presence
-        items &&= items.join("\n").prepend("\n\n")
+  def show_reflections(item, indent: true, **opt)
+    prefix = show_prefix(indent)
+    show(indent: prefix, **opt) do
+      item._reflections.map { |key, entry|
+        items = (Array.wrap(item.send(key)) if item.respond_to?(key))
+        count = items&.size || 'ERROR'
+        if items
+          items = items.map { |v| v.pretty_inspect.chomp }.join("\n")
+          # noinspection RubyMismatchedArgumentType
+          items.gsub!(/^/, prefix) if prefix
+          items = "\n\n#{items}\n"
+        end
         "#{key} (#{count}) [#{entry.class}]#{items}"
-      end
+      }.join("\n")
     end
   end
 
@@ -121,8 +109,9 @@ module TestHelper::Debugging
   #
   # @return [String]
   #
-  def show_url(url: nil, **opt)
-    show("URL = #{url || current_url}", **opt)
+  def show_url(url = nil, **opt)
+    url = opt.delete(:url) || url || current_url
+    show("URL = #{url}", **opt)
   end
 
   # Display a user in output.
@@ -132,37 +121,73 @@ module TestHelper::Debugging
   #
   # @return [String]
   #
-  def show_user(user: nil, **opt)
-    user ||= current_user
-    user   = user && find_user(user) || :anonymous
+  def show_user(user = nil, **opt)
+    user = opt.delete(:user) || user || current_user
+    user = user && find_user(user) || :anonymous
     show(user.to_s, **opt)
   end
 
   # Display item contents in output.
   #
-  # @param [Array<*>] items
-  # @param [Hash]     opt             Passed to #show_model except for:
-  #
-  # @option opt [String] :output      If *false* the result is not displayed.
+  # @param [Array<*>]        items
+  # @param [Boolean, String] indent
+  # @param [Boolean]         output   If *false* the result is only returned.
+  # @param [Hash]            opt      Passed to #show_model.
   #
   # @return [String]                  The displayable result.
   #
   # @yield To supply additional items.
   # @yieldreturn [Array, String, *]
   #
-  def show(*items, **opt)
-    model_opt = opt.extract!(*SHOW_MODEL_OPT)
-    model_opt[:output] = false
+  def show(*items, indent: true, output: true, **opt)
+    prefix = show_prefix(indent, default: TEST_DEBUG_FRAME.size.next)
     items += Array.wrap(yield) if block_given?
-    items.flatten.map { |item|
-      case item
-        when String             then item
-        when ActiveRecord::Base then show_model(item, **model_opt)
-        else                         item.pretty_inspect
+    items.flatten!
+    items.map! { |item|
+      if item.is_a?(ActiveRecord::Base)
+        show_model(item, output: false, **opt)
+      else
+        item = item.is_a?(String) ? item.dup : item.pretty_inspect
+        item.chomp!
+        item.gsub!(/^/, prefix) if prefix && !item.match?(/^ *\*{3,} /)
+        item
       end
-    }.join("\n\n").tap { |result|
-      $stderr.puts result unless opt[:output].is_a?(FalseClass)
-    }
+    }.join("\n").tap { |result| show_lines(result) if output }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Generate a line prefix string for #show output.
+  #
+  # @param [Boolean, Integer, String, nil] indent
+  # @param [Integer, String, nil]          default    If *indent* is *true*.
+  #
+  # @return [String, nil]
+  #
+  def show_prefix(indent, default: TEST_DEBUG_INDENT)
+    indent = default if indent.is_a?(TrueClass)
+    # noinspection RubyMismatchedReturnType
+    case indent
+      when String  then indent.dup
+      when Integer then ' ' * (positive(indent) || 0)
+    end
+  end
+
+  # Send one or more lines to $stderr.
+  #
+  # @param [Array,nil] lines          Nil elements are interpreted as newlines.
+  #
+  # @return [void]
+  #
+  def show_lines(*lines)
+    $stderr.flush
+    $stderr.flush
+    lines.each { |line| $stderr.puts line }
+    $stderr.flush
   end
 
   # ===========================================================================

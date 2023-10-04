@@ -129,55 +129,58 @@ module TestHelper::SystemTests::Common
     (url && !port) ? url_without_port(url) : url
   end
 
-  DEFAULT_WAIT_MAX_TIME = 3 * Capybara.default_max_wait_time
-  DEFAULT_WAIT_MAX_PASS = 5
+  DEF_WAIT_MAX_PASS = 5
+  DEF_WAIT_MAX_TIME = Capybara::Lockstep.timeout * DEF_WAIT_MAX_PASS * 2
 
   # Block until the browser can confirm that it is on the target page.
   #
-  # @param [String, Array] target     One or more acceptable target URLs.
-  # @param [Integer]       wait       Overall time limit.
-  # @param [Integer]       max        Maximum number of attempts to make.
-  # @param [Boolean]       port       Passed to #get_browser_url.
-  # @param [Boolean]       fatal      If *false* don't assert.
-  # @param [Boolean]       trace      Output each URL acquired.
+  # @param [String, Array, nil] target  One or more acceptable target URLs, or
+  #                                       *nil* for any new page.
+  # @param [Boolean]            port    Passed to #get_browser_url.
+  # @param [Boolean]            fatal   If *false* don't assert.
+  # @param [Boolean]            trace   Output each URL acquired.
+  # @param [Numeric]            wait    Overall time limit.
   #
-  # @raise [Minitest::Assertion]      If the browser failed to get to the page.
+  # @raise [Minitest::Assertion]        If the browser failed to get to the
+  #                                       expected page and *fatal* is *true*.
   #
   # @return [Boolean]
   #
   def wait_for_page(
-    target,
-    wait:   DEFAULT_WAIT_MAX_TIME,
-    max:    DEFAULT_WAIT_MAX_PASS,
-    port:   false,
-    fatal:  true,
-    trace:  true
+    target =  nil,
+    port:     false,
+    fatal:    true,
+    trace:    true,
+    wait:     DEF_WAIT_MAX_TIME
   )
+    targets = Array.wrap(target).compact_blank
     timer   = Capybara::Helpers::Timer.new(wait)
-    current = nil
-    targets = Array.wrap(target)
-    max.times do
-      current = get_browser_url(port: port)
-      found   = targets.include?(current)
-      done    = found || timer.expired?
-      show("#{__method__}: URL = #{current}") if trace
-      screenshot                              if trace && done
-      return true                             if found
-      break                                   if done
-      sleep 1
+
+    # Retry until the expected page is found or the timer expires.
+    loop do
+      url     = get_browser_url(port: port)
+      found   = url && (targets.empty? || targets.include?(url))
+      timeout = (' [timeout]' if !found && timer.expired?)
+      show "#{__method__}: URL = #{url}#{timeout}" if trace
+      screenshot   if found || timeout
+      return true  if found
+      return false if timeout && !fatal
+      break        if timeout
+      sleep Capybara::Lockstep.timeout
     end
-    if fatal
-      current  = url_without_port(current || current_url).inspect
-      if targets.many?
-        expected = targets.map(&:inspect)
-        expected = [expected.pop, ' or ', expected.join(', ')].reverse
-        expected = 'any of expected pages %s' % expected.join(' ')
+
+    # Control reaches here only if the page was not found and not *fatal*.
+    target   = targets.map!(&:inspect).pop
+    current  = url_without_port(url || current_url).inspect
+    expected =
+      if targets.present?
+        "any of expected pages %s or #{target}" % targets.join(', ')
+      elsif target.present?
+        "expected page #{target}"
       else
-        expected = 'expected page %s' % targets.first
+        'a new page'
       end
-      flunk "Browser on page #{current} and not on #{expected}"
-    end
-    false
+    flunk "Browser on page #{current} and not on #{expected}"
   end
 
   # Depending on the context, there may be two menus for performing an action
@@ -213,7 +216,7 @@ module TestHelper::SystemTests::Common
   def screenshot
     take_screenshot
   rescue Selenium::WebDriver::Error::UnknownError => error
-    $stderr.puts "[Screenshot Image]: #{error.class} - #{error.message}"
+    show "[Screenshot Image]: #{error.class} - #{error.message}"
   end
     .tap { |meth| neutralize(meth) unless DEBUG_TESTS && TESTING_JAVASCRIPT }
 

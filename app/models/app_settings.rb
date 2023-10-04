@@ -30,8 +30,10 @@ class AppSettings < AppGlobal
     :TRACE_RAKE,
     nil,
 
+    :DEBUG_ATTRS,
     :DEBUG_AWS,
     :DEBUG_CABLE,
+    :DEBUG_CONFIGURATION,
     :DEBUG_CORS,
     :DEBUG_DECORATOR_EXECUTE,
     :DEBUG_IMPORT,
@@ -109,11 +111,17 @@ class AppSettings < AppGlobal
     # === EMMA Unified Search API
     :SEARCH_API_VERSION,
     :SEARCH_BASE_URL,
+    :SERVICE_SEARCH_PRODUCTION,
+    :SERVICE_SEARCH_QA,
+    :SERVICE_SEARCH_STAGING,
     nil,
 
     # === EMMA Unified Ingest API
     :INGEST_API_VERSION,
     :INGEST_API_KEY,
+    :SERVICE_INGEST_PRODUCTION,
+    :SERVICE_INGEST_QA,
+    :SERVICE_INGEST_STAGING,
     nil,
 
     # === Internet Archive
@@ -199,15 +207,18 @@ class AppSettings < AppGlobal
     :LANG,
     :LC_ALL,
     :LANGUAGE,
+    :SMTP_DOMAIN,
+    :SMTP_PORT,
     nil,
 
     # === Other
     :BUNDLE_GEMFILE,
-    :IN_PASSENGER,
     :DEBUGGER_STORED_RUBYLIB,
+    :IN_PASSENGER,
     :REDIS_URL,
-    :SCHEDULER,
     :RUBYMINE_CONFIG,
+    :SCHEDULER,
+    :SHIBBOLETH,
 
   ].excluding(:skip).freeze
 
