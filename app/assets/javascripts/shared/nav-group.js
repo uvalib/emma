@@ -3,12 +3,12 @@
 
 
 import { AppDebug }                            from '../application/debug';
+import { Emma }                                from './assets';
 import { BaseClass }                           from './base-class';
 import { attributeSelector, HIDDEN, selector } from './css';
 import { handleCapture, handleEvent, phase }   from './events';
 import { ValidationError }                     from './exceptions';
 import { keyCombo, keyFormat, modifiersOnly }  from './keyboard';
-import { PANEL }                               from './modal-base';
 import { underscore }                          from './strings';
 import {
     FOCUSABLE_ELEMENT,
@@ -98,8 +98,8 @@ export class NavGroup extends BaseClass {
     static WRAP_MOVE    = false;
     static SET_TABINDEX = true;
     static CURRENT_ATTR = 'aria-current';
-    static MODAL_ROOT   = PANEL;
     static PRUNE_AT     = [HIDDEN];
+    static MODAL_ROOT   = selector(Emma.Popup.panel.class);
 
     // ========================================================================
     // Type definitions
@@ -168,7 +168,7 @@ export class NavGroup extends BaseClass {
         } else {
             this._standalone = !this._insideGridCell(this.group);
         }
-        if (this.START_ACTIVE) {
+        if (this.constructor.START_ACTIVE) {
             this._enterNavigation(false);
         } else {
             this._leaveNavigation(false);
@@ -183,7 +183,6 @@ export class NavGroup extends BaseClass {
 
     get GROUP()             { return this.constructor.GROUP }
     get CONTROL()           { return this.constructor.CONTROL }
-    get START_ACTIVE()      { return this.constructor.START_ACTIVE }
     get WRAP_MOVE()         { return this.constructor.WRAP_MOVE }
     get SET_TABINDEX()      { return this.constructor.SET_TABINDEX }
     get CURRENT_ATTR()      { return this.constructor.CURRENT_ATTR }
@@ -833,8 +832,7 @@ export class NavGroup extends BaseClass {
 
         // Verify that `in_modal` is appropriate.
         const { $tgt, in_modal } = result;
-        const modal  = this.constructor.MODAL_ROOT;
-        const inside = containedBy($tgt, modal);
+        const inside = containedBy($tgt, this.MODAL_ROOT);
         if (in_modal && !inside) {
             err.push(['not in modal as expected:', $tgt]);
         } else if (inside && !in_modal) {
@@ -2282,7 +2280,7 @@ export class ControlGroup extends NavGroup {
      */
     _validate(no_throw) {
         if (!super._validate(no_throw)) { return false }
-        const count     = this._getControls().length;
+        const count     = this.controls.length;
         const min_count = this.MIN_CONTROLS || count;
         const max_count = this.MAX_CONTROLS || count;
         let msg;

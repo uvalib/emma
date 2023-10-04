@@ -70,14 +70,12 @@ AppDebug.file('shared/modal-base', MODULE, DEBUG);
 
 export const COMPLETE_MARKER = 'complete';
 export const Z_ORDER_MARKER  = 'z-order-capture';
-export const PANEL_CLASS     = Emma.Popup.panel.class;
-export const CLOSER_CLASS    = Emma.Popup.closer.class;
 
-export const COMPLETE        = selector(COMPLETE_MARKER);
-export const PANEL           = selector(PANEL_CLASS);
-export const DEFERRED        = selector(Emma.Popup.deferred.class);
-export const TOGGLE          = selector(Emma.Popup.button.class);
-export const CLOSER          = `.${CLOSER_CLASS}, [type="submit"]`;
+export const COMPLETE = selector(COMPLETE_MARKER);
+export const PANEL    = selector(Emma.Popup.panel.class);
+export const TOGGLE   = selector(Emma.Popup.button.class);
+export const DEFERRED = selector(Emma.Popup.deferred.class);
+export const CLOSER   = `.${Emma.Popup.closer.class}, [type="submit"]`;
 
 /**
  * The .data() value assigned to a modal which is overtaking z-order on the
