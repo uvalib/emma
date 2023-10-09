@@ -15,7 +15,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors, CORS_OPT do
 
   # === UVA clients
   allow do
-    origins  %r{^https?://.*\.virginia\.edu(:\d+)?$}, 'localhost'
+    origins  *ActionCable.server.config.allowed_request_origins
     resource '*', headers: :any, methods: :any
   end
 

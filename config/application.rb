@@ -135,10 +135,19 @@ module Emma
     # =========================================================================
 
     # Mount Action Cable outside main process or domain.
-    # config.action_cable.url = 'wss://example.com/cable'
-    # config.action_cable.mount_path = nil
-    # config.action_cable.allowed_request_origins =
-    #   [ 'http://example.com', /http:\/\/example.*/ ]
+    #
+    # NOTE: As of 2023-03-31, the Terraform configuration for EMMA under
+    #   production/federated-authproxy/*/apache/03-emma.conf and
+    #   staging/federated-authproxy/*/apache/03-emma-dev.conf defines ProxyPass
+    #   such that HTTP_HOST and SERVER_NAME in this application have values of
+    #   'emma-production.private.production' and 'emma-staging.private.staging'
+    #   (HTTP_X_FORWARDED_HOST will have the actual externally-visible name).
+
+    config.action_cable.allowed_request_origins = [
+      %r{^https?://\w[\w-]*-(production|staging)\.private\.\1(:\d+)?$},
+      %r{^https?://.*\.virginia\.edu(:\d+)?$},
+      %r{^https?://localhost(:\d+)?$},
+    ]
 
     # =========================================================================
     # ActiveJob
