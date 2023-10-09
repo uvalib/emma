@@ -1079,7 +1079,13 @@ class Workflow::Base
   # @return [void]
   #
   def initialize_state(data, **opt)
-    __debug("UPLOAD WF #{__method__} | curr_state = #{curr_state.inspect} | init_state = #{init_state.inspect} | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect}")
+    __debug(separator: ' | ') do
+      ["UPLOAD WF #{__method__}"] <<
+        "curr_state = #{curr_state.inspect}" <<
+        "init_state = #{init_state.inspect}" <<
+        "opt[:start_state] = #{opt[:start_state].inspect}" <<
+        "opt[:init_event] = #{opt[:init_event].inspect}"
+    end
     state = opt[:start_state].presence&.to_sym
     state = nil if state == init_state
     event = opt[:init_event].presence&.to_sym
@@ -1088,13 +1094,13 @@ class Workflow::Base
 
     # Set initial state if specified.
     if state
-      __debug("UPLOAD WF initial state: #{state.inspect}")
+      __debug { "UPLOAD WF initial state: #{state.inspect}" }
       persist_workflow_state(state)
     end
 
     # Apply initial event if specified.
     if event
-      __debug("UPLOAD WF initial event: #{event.inspect}")
+      __debug { "UPLOAD WF initial event: #{event.inspect}" }
       event = "#{event}!" unless event.end_with?('!')
       send(event, *Array.wrap(data.presence))
     end

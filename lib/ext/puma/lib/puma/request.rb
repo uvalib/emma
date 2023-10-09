@@ -25,7 +25,7 @@ module Puma
 
       public
 
-      def handle_request(client, lines, requests)
+      def handle_request(client, requests)
         __ext_log
         super
       end
@@ -38,7 +38,7 @@ module Puma
 =end
 
 =begin
-      def fast_write(io, str)
+      def fast_write_str(socket, str)
         start = timestamp
         super
           .tap { __ext_log(start) }
@@ -66,9 +66,9 @@ module Puma
       end
 =end
 
-      def str_headers(env, status, headers, res_info, lines, requests, client)
+      def str_headers(env, status, headers, res_body, io_buffer, force_keep_alive)
         super
-          .tap { __ext_log { { status: status, res_info: res_info } } }
+          .tap { __ext_log { { status: status } } }
       end
 
     end

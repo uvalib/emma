@@ -1335,7 +1335,12 @@ class UploadWorkflow::Single < UploadWorkflow
   # @param [Hash]                      opt    Passed to #initialize_state
   #
   def initialize(data, **opt)
-    __debug("UPLOAD WF initialize UploadWorkflow::Single | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect} | data = #{data.class}")
+    __debug(separator: ' | ') do
+      ['UPLOAD WF initialize UploadWorkflow::Single'] <<
+        "opt[:start_state] = #{opt[:start_state].inspect}" <<
+        "opt[:init_event] = #{opt[:init_event].inspect}" <<
+        "data = #{data.class}"
+    end
     opt[:user] ||= (User.id_value(data[:user_id]) if data.is_a?(Hash))
     data.set_revert_data                          if data.is_a?(Upload)
     if (data &&= set_record(data))

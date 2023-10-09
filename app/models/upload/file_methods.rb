@@ -481,7 +481,7 @@ module Upload::FileMethods
   #     Shrine::Attacher::InstanceMethods#destroy
   #
   def note_cb(type)
-    __debug_line("*** UPLOAD CALLBACK #{type} ***")
+    __debug_line { "*** UPLOAD CALLBACK #{type} ***" }
   end
 
   # Finalize a file upload by promoting the :cache file to a :store file.

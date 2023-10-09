@@ -1022,7 +1022,12 @@ class UploadWorkflow::Bulk < UploadWorkflow
   # @param [Hash]               opt   Passed to #initialize_state
   #
   def initialize(data, **opt)
-    __debug("UPLOAD WF initialize UploadWorkflow::Bulk | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect} | data = #{data.class}")
+    __debug(separator: ' | ') do
+      ['UPLOAD WF initialize UploadWorkflow::Bulk'] <<
+        "opt[:start_state] = #{opt[:start_state].inspect}" <<
+        "opt[:init_event] = #{opt[:init_event].inspect}" <<
+        "data = #{data.class}"
+    end
     @control_file = opt[:control]
     data = set_entries(data)
     super(data, **opt)

@@ -4,15 +4,13 @@ module Puma
   module ServerDebug
     include Puma::ExtensionDebugging
 
-    def initialize: (untyped app, ?Puma::Events events, ?anyHash options) -> void
+    def initialize: (untyped app, ?(Puma::Events|nil) events, ?anyHash options) -> void
 
-    def process_client: (untyped client, untyped buffer) -> untyped
+    def process_client: (Puma::Client client) -> bool
 
-    def with_force_shutdown: (untyped client) { () -> untyped } -> untyped
+    def with_force_shutdown: (Puma::Client client) { () -> untyped } -> untyped
 
-    def read_body: (untyped env, untyped client, untyped body, untyped cl) -> untyped
-
-    def client_error: (untyped e, untyped client) -> untyped
+    def client_error: (Exception e, Puma::Client client, Integer requests) -> untyped
 
     def graceful_shutdown: () -> untyped
   end

@@ -261,7 +261,7 @@ module UploadWorkflow::Single::Simulation
       if (type_settings = PROP_SETTING[type])
         settings = settings.merge(type_settings)
       else
-        __debug("#{__method__}: #{type.inspect}: invalid type")
+        __debug { "#{__method__}: #{type.inspect}: invalid type" }
       end
       settings.each_pair { |prop, value| send("#{prop}=", value) }
     end

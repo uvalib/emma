@@ -4,8 +4,8 @@ module Puma
   module RequestDebug
     include Puma::ExtensionDebugging
 
-    def handle_request: (untyped client, untyped lines, untyped requests) -> untyped
+    def handle_request: (Puma::Client client, Integer requests) -> (bool | :async)
 
-    def str_headers: (untyped env, untyped status, untyped headers, untyped res_info, untyped lines, untyped requests, untyped client) -> untyped
+    def str_headers: (anyHash env, Integer status, anyHash headers, untyped res_body, Puma::IOBuffer io_buffer, bool force_keep_alive) -> anyHash
   end
 end

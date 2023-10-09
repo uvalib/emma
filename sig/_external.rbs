@@ -580,7 +580,11 @@ module Prometheus
 end
 
 module Puma
+  class Client
+  end
   class Events
+  end
+  class IOBuffer < ::StringIO
   end
 end
 

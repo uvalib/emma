@@ -25,7 +25,7 @@ module Puma
 
       public
 
-      def initialize(app, events = Events.stdio, options = {})
+      def initialize(app, events = nil, options = {})
         __ext_log { { options: options } }
         super
       end
@@ -38,7 +38,7 @@ module Puma
 =end
 
 =begin
-      def run(background = true, thread_name: 'server')
+      def run(background = true, thread_name: 'srv')
         __ext_log { { background: background, thread_name: thread_name } }
         super
       end
@@ -58,7 +58,7 @@ module Puma
       end
 =end
 
-      def process_client(client, buffer)
+      def process_client(client)
         __ext_log { stats }
         super
       end
@@ -68,12 +68,7 @@ module Puma
         super
       end
 
-      def read_body(env, client, body, cl)
-        __ext_log { stats }
-        super
-      end
-
-      def client_error(e, client)
+      def client_error(e, client, requests = 1)
         __ext_log(e)
         super
       end

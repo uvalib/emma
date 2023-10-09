@@ -78,7 +78,6 @@ module ManifestItem::FileData
   # @see config/locales/bulk.en.yml "en.emma.bulk.grid.file"
   #
   def make_file_record(data, **opt)
-    __debug "=== make_file_record ManifestItem === | data = #{data.inspect} | opt = #{opt.inspect}"
     result = json_parse(data, **opt) || {}
     result = result[:uploader] || result
     result[:storage] ? result.deep_stringify_keys : {}
