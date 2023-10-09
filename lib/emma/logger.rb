@@ -214,11 +214,10 @@ module Emma
       def right_fill(item, width, char = AWS_FILL)
         item  = item.to_s
         part  = item.split(':')
-        tag   = part.shift
+        tag   = part.shift || +''
         fill  = width - tag.size
-        fill  = (char * fill if fill > 0)
-        tag  << fill if fill
-        part << nil   if item.end_with?(':')
+        tag  << char * fill if fill.positive?
+        part << nil         if item.end_with?(':')
         [tag, *part].join(':')
       end
 

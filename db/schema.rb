@@ -10,10 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
+ActiveRecord::Schema[7.1].define(version: 2023_10_07_185255) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "action_mailbox_inbound_emails", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.string "message_id", null: false
+    t.string "message_checksum", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_id", "message_checksum"], name: "index_action_mailbox_inbound_emails_uniqueness", unique: true
+  end
+
+  create_table "action_text_rich_texts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.uuid "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
 
   create_table "actions", force: :cascade do |t|
     t.bigint "phase_id"
@@ -33,6 +52,34 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
     t.datetime "updated_at", null: false
     t.index ["phase_id"], name: "index_actions_on_phase_id"
     t.index ["user_id"], name: "index_actions_on_user_id"
+  end
+
+  create_table "active_storage_attachments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.uuid "record_id", null: false
+    t.uuid "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "artifacts", force: :cascade do |t|
@@ -97,7 +144,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
     t.index ["user_id"], name: "index_entries_on_user_id"
   end
 
-  create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_batches", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "description"
@@ -112,7 +159,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
     t.datetime "finished_at"
   end
 
-  create_table "good_job_executions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_executions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "active_job_id", null: false
@@ -126,13 +173,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
     t.index ["active_job_id", "created_at"], name: "index_good_job_executions_on_active_job_id_and_created_at"
   end
 
-  create_table "good_job_processes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_processes", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "state"
   end
 
-  create_table "good_job_settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_settings", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "key"
@@ -140,7 +187,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
     t.index ["key"], name: "index_good_job_settings_on_key", unique: true
   end
 
-  create_table "good_jobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_jobs", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
     t.text "queue_name"
     t.integer "priority"
     t.jsonb "serialized_params"
@@ -242,7 +289,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
     t.index ["manifest_id"], name: "index_manifest_items_on_manifest_id"
   end
 
-  create_table "manifests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "manifests", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.bigint "user_id"
     t.datetime "created_at", null: false
@@ -441,5 +488,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_165944) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "phases", "phases", column: "bulk_id"
 end

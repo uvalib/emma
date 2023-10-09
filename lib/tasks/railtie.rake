@@ -8,6 +8,23 @@
 
 EMMA_RAILTIE_RAKE ||= begin
 
+  # EMMA uses `ENV['DATABASE']` for its own purposes, which do not coincide
+  # with what "railties:install:migration" expects.  Since this clash is
+  # specific to that task (i.e., nothing else in Rails looks for this
+  # environment variable), it is deleted prior to running the task (rather than
+  # coming up with an alternative environment variable name to use within EMMA
+  # and its Terraform configurations).
+
+  namespace 'emma:fix' do
+
+    task migrations: [:environment] do
+      ENV.delete('DATABASE')
+    end
+
+  end
+
+  Rake::Task['railties:install:migrations'].enhance(['emma:fix:migrations'])
+
   # Enhance the enhancements of 'assets:precompile' by 'cssbundling-rails'
   # and 'jsbundling-rails' in order to pre-process .js.erb files.
 

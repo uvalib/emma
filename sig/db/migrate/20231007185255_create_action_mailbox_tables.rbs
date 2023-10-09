@@ -1,0 +1,3 @@
+class CreateActionMailboxTables < ActiveRecord::Migration
+  def change: () -> untyped
+end

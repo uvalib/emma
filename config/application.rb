@@ -27,10 +27,10 @@ module Emma
     require 'emma'
 
     # Initialize configuration defaults.
-    config.load_defaults 7.0
+    config.load_defaults 7.1
 
-    # This is not compatible with the current directory layout:
-    # config.add_autoload_paths_to_load_path = false
+    # The 7.1 default is not compatible with the current directory layout.
+    config.add_autoload_paths_to_load_path = true
 
     # Eager load code on boot.
     config.eager_load = true
@@ -60,7 +60,7 @@ module Emma
     config.action_mailer.perform_caching = false
     config.action_mailer.perform_deliveries = application_deployed?
     config.action_mailer.show_previews = true
-    config.action_mailer.preview_path = "#{Rails.root}/test/mailers"
+    config.action_mailer.preview_paths = %W(#{Rails.root}/test/mailers)
     config.action_mailer.smtp_settings = {
       port:    ENV.fetch('SMTP_PORT', 587).to_i,
       address: ENV.fetch('SMTP_DOMAIN', 'example.com'),
