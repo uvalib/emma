@@ -32,19 +32,24 @@ namespace 'emma:data' do
     version = version.presence || API_VERSION
     commit  = !false?(commit) && (version == API_VERSION)
     quiet   = quiet ? !false?(quiet) : QUIET_DEFAULT
+    current = EmmaStatus.api_version&.value
 
-    # Execute subtasks if necessary.
-    if (current = EmmaStatus.api_version&.value) && (version <= current)
+    if !current && !version
+      show 'No API version: skipping data migration.' # TODO: I18n
+
+    elsif !current
+      show "Setting API version #{version.inspect}." unless quiet # TODO: I18n
+      EmmaStatus.api_version = version if commit
+
+    elsif version <= current
       show "EMMA data already at API version '#{current}'." unless quiet # TODO: I18n
-    elsif current
-      show "Migrating EMMA data to API version '#{version}':" # TODO: I18n
-      db_commit  = commit
-      idx_commit = commit && production_deployment?
-      subtask('emma:data:data_migrate', version: version, commit: db_commit)
-      subtask('emma:data:reindex',      version: version, commit: idx_commit)
-      EmmaStatus.api_version = version if db_commit
+
     else
-      show "Skipping data migration for API version '#{current}'." unless quiet # TODO: I18n
+      show "Migrating EMMA data to API version '#{version}':" # TODO: I18n
+      idx_commit = commit && production_deployment?
+      subtask('emma:data:data_migrate', version: version, commit: commit)
+      subtask('emma:data:reindex',      version: version, commit: idx_commit)
+      EmmaStatus.api_version = version if commit
     end
 
   end

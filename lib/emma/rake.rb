@@ -171,15 +171,14 @@ module Emma::Rake
 
   # Send line(s) to output.
   #
-  # @param [Array<String, Array, nil>] lines
-  # @param [IO]                        io
+  # @param [Array] lines
+  # @param [IO]    io
   #
   # @return [nil]
   #
   def show(*lines, io: $stdout)
-    lines.flatten!
-    lines.compact!
-    io.puts lines.join("\n")
+    lines.concat(Array.wrap(yield)) if block_given?
+    io.puts(*lines.flatten.compact)
   end
 
   # ===========================================================================

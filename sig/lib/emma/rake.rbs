@@ -92,12 +92,12 @@ module Emma::Rake
 
   # Send line(s) to output.
   #
-  # @param [Array<String, Array, nil>] lines
-  # @param [IO]                        io
+  # @param [Array] lines
+  # @param [IO]    io
   #
   # @return [nil]
   #
-  def show: (*(String|anyArray|nil) lines, ?io: IO) -> nil
+  def show: (*untyped lines, ?io: IO) ?{ () -> untyped } -> nil
 
   # An override to provide a mock #session.
   #
