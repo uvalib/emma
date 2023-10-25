@@ -127,10 +127,9 @@ module LayoutHelper::NavBar
             end
         end
 
-        primary  = PRIMARY_CONTROLLERS.include?(controller)
-        if primary && production_deployment?
-          primary &&= !UNRELEASED_CONTROLLERS.include?(controller)
-        end
+        primary  = PRIMARY_CONTROLLERS
+        primary -= UNRELEASED_CONTROLLERS if production_deployment?
+        primary  = primary.include?(controller)
 
         current  = (path == curr_path)
         active   = current || base
