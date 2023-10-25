@@ -144,8 +144,8 @@ module Emma
     #   (HTTP_X_FORWARDED_HOST will have the actual externally-visible name).
 
     config.action_cable.allowed_request_origins = [
-      %r{^https?://\w[\w-]*-(production|staging)\.private\.\1(:\d+)?$},
-      %r{^https?://.*\.virginia\.edu(:\d+)?$},
+      %r{^https?://.+-(production|staging)\.private\.\1(:\d+)?$},
+      %r{^https?://.+\.virginia\.edu(:\d+)?$},
       %r{^https?://localhost(:\d+)?$},
     ]
 
