@@ -188,24 +188,21 @@ class LookupService
   def self.merge_data(table, request = nil)
     # @type [Array<PublicationIdentifier>]
     all_ids = []
-    # @type [Array<Hash>]
-    entries =
-      table.map { |_thread_id, thread_result|
-        thread_result&.dig(:data, :items)&.values
-      }.flatten.map! { |entry|
-        next if (ids = entry&.dig(:dc_identifier)).blank?
-        ids = [ids] unless (ok_as_is = ids.is_a?(Array))
-        all_ids += ids
-        ok_as_is ? entry : entry.merge(dc_identifier: ids)
-      }
+    entries = table.map { |_tid, result| result&.dig(:data, :items)&.values }
+    entries.flatten!
+    entries.map! do |entry|
+      next if (ids = entry&.dig(:dc_identifier)).blank?
+      entry = entry.merge(dc_identifier: (ids = [ids])) unless ids.is_a?(Array)
+      all_ids.concat(ids)
+      entry
+    end
     request &&= LookupService::Request.wrap(request)
-    matching_ids =
+    matching =
       request&.identifiers&.map(&:to_s)&.presence ||
       all_ids.map(&:to_s).group_by(&:itself).keep_if { |_,ids| ids.many? }.keys
     result =
-      if matching_ids.present?
-        entries.compact!
-        entries.select! { |e| e[:dc_identifier].intersect?(matching_ids) }
+      if matching.present?
+        entries.keep_if { |e| e&.dig(:dc_identifier)&.intersect?(matching) }
         blend_data(*entries) if entries.present?
       end
     { blend: (result || {}) }
@@ -293,11 +290,11 @@ class LookupService
   # @return [Hash]                    The *result* hash, possibly modified.
   #
   def self.normalize_dates!(result)
-    pub_dates  = Array.wrap(result[:emma_publicationDate])
+    pub_dates = Array.wrap(result[:emma_publicationDate])
     pub_years, pub_days = pub_dates.partition { |d| d.end_with?('-01-01') }
-    cpr_years  = Array.wrap(result[:dcterms_dateCopyright])
-    cpr_years += pub_years.map { |d| d.first(4) }
-    cpr_years -= pub_days.map { |d| d.first(4) }
+    cpr_years = Array.wrap(result[:dcterms_dateCopyright])
+    cpr_years.concat pub_years.map { |d| d.first(4) }
+    cpr_years.remove pub_days.map  { |d| d.first(4) }
     cpr_years.uniq!
     case cpr_years.size
       when 0 then result.delete(:dcterms_dateCopyright)

@@ -83,12 +83,8 @@ module Workflow::Base::Roles
     system_wf:    %i[submitter_wf reviewer_wf admin_wf],
     developer_wf: %i[user_wf submitter_wf reviewer_wf admin_wf system_wf],
   }.map { |primary, roles|
-    all = [primary]
-    if roles.present?
-      all += Array.wrap(roles).map { |r| r.to_sym if r.present? }.compact
-      all.uniq!
-    end
-    [primary, all]
+    roles = [primary, *roles].uniq
+    [primary, roles]
   }.to_h.deep_freeze
 
   # ===========================================================================

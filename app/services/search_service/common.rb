@@ -90,8 +90,8 @@ module SearchService::Common
       if terms.any? { |_, v| v.present? }
         terms.transform_values! do |v|
           next [] if v.blank?
-          v = v.dup          if v.is_a?(Array)
           v = v.split(/\s+/) if v.is_a?(String)
+          v = Array.wrap(v).compact_blank
           v.map! { |t| PublicationIdentifier.cast(t, invalid: true) || t }
           v.compact_blank!
         end

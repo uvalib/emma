@@ -28,7 +28,7 @@ module Ingest::Shared::IdentifierMethods
   def normalize_identifiers(values)
     PublicationIdentifier.objects(values).reject { |id|
       id.nil? || id.identifier_subclass.identifier(id).nil?
-    }.map(&:to_s).uniq
+    }.map!(&:to_s).uniq
   end
 
 end

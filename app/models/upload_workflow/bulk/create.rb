@@ -88,7 +88,7 @@ module UploadWorkflow::Bulk::Create::Actions
     opt[:repository] ||= EmmaRepository.default
     s, f = bulk_upload_create(event_args, **opt)
     self.succeeded = s
-    self.failures += f
+    self.failures.concat(f)
   end
 
   # For bulk-upload, this action is a "no-op" because indexing will have been
@@ -105,7 +105,7 @@ module UploadWorkflow::Bulk::Create::Actions
     elsif DEFER_INDEXING
       s, f, _ = bulk_add_to_index(*succeeded)
       self.succeeded = s
-      self.failures += f
+      self.failures.concat(f)
     end
   end
 

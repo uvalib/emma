@@ -7,6 +7,7 @@
 
 __loading_begin(__FILE__)
 
+require 'active_support'
 require 'active_support/core_ext'
 
 # This is do-nothing module which is included in TrueClass and FalseClass

@@ -134,7 +134,7 @@ module UploadWorkflow::Single::Data
 
     end
 
-    self.failures += failed if failed.present?
+    self.failures.concat(failed) if failed.present?
 
     return unless @record
 

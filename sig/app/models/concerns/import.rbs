@@ -204,7 +204,7 @@ module Import
   #
   # @return [Hash]
   #
-  def normalize_results: (symHash fields) -> symHash
+  def normalize_results!: (symHash fields) -> symHash
 
   # Apply the appropriate method for the given import field.
   #

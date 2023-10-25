@@ -533,12 +533,12 @@ class ManifestDecorator
   def form_buttons(**opt)
     trace_attrs!(opt)
     opt.reverse_merge!('data-manifest': object.id)
-    buttons = super
+    buttons = super(**opt)
     buttons << submission_button(**opt)
     buttons << export_button(**opt)
     buttons << import_button(**opt)
     buttons << comm_status(**opt)
-    block_given? ? yield(buttons) : buttons
+    block_given? && yield(buttons) || buttons
   end
 
   # Form submit button.

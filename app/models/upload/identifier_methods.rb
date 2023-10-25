@@ -193,7 +193,7 @@ module Upload::IdentifierMethods
   #
   def compact_ids(*items, **opt)
     ids, non_ids = expand_ids(*items, **opt).partition { |v| valid_id?(v) }
-    group_ids(*ids, **opt) + non_ids.sort!.uniq
+    group_ids(*ids, **opt) + non_ids.sort.uniq
   end
 
   # Transform a mixture of ID representations into a list of single IDs.
@@ -250,9 +250,7 @@ module Upload::IdentifierMethods
     opt[:max_id] ||= maximum_id
     ids.flatten.flat_map { |id|
       id.is_a?(String) ? id.strip.tr(',', ' ').split(/\s+/) : id
-    }.flat_map { |id|
-      expand_id_range(id, **opt) if id.present?
-    }.compact.uniq
+    }.compact_blank!.flat_map { |id| expand_id_range(id, **opt) }.uniq
   end
 
   # Condense an array of identifiers by replacing runs of contiguous number

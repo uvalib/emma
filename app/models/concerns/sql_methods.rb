@@ -476,14 +476,14 @@ module SqlMethods
     #
     def sql_match(*terms, join: :and, connector: join, **opt)
       json = (opt[:type] == :json)
-      connector &&= connector.to_s.strip.upcase
-      opt[:columns] &&= Array.wrap(opt[:columns]).compact.map(&:to_sym).presence
-      opt[:columns] ||= field_names
+      opt[:columns] &&= Array.wrap(opt[:columns]).compact.map!(&:to_sym)
+      opt[:columns]   = field_names if opt[:columns].blank?
       merge_match_terms(*terms, **opt).flat_map { |field, matches|
         matches.map do |value|
           json ? sql_match_json(field, value) : sql_match_pattern(field, value)
         end
       }.then { |result|
+        connector &&= connector.to_s.strip.upcase.presence
         connector ? result.join(" #{connector} ") : result
       }
     end

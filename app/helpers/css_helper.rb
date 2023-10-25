@@ -36,12 +36,8 @@ module CssHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @yield [classes] Exposes *args* so the block may modify it.
-  # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
-  # @yieldreturn [void]                   Return ignored.
-  #
-  def css_classes(*classes, &block)
-    css_class_array(*classes, &block).join(' ').html_safe
+  def css_classes(*classes)
+    css_class_array(*classes).join(' ').html_safe
   end
 
   # Combine arrays and space-delimited strings to produce set of unique CSS
@@ -51,16 +47,11 @@ module CssHelper
   #
   # @return [Array<String>]
   #
-  # @yield [classes] Exposes *args* so the block may modify it.
-  # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
-  # @yieldreturn [void]                   Return ignored.
-  #
-  def css_class_array(*classes, &block)
-    block.call(classes) if block
+  def css_class_array(*classes)
     classes.flat_map { |c|
       next if c.blank?
       c.is_a?(Array) ? css_class_array(*c) : c.to_s.squish.split(/[ .]/)
-    }.compact_blank.uniq
+    }.compact_blank!.uniq
   end
 
   # Return a copy of *html_opt* where the classes are appended to the current
@@ -68,7 +59,6 @@ module CssHelper
   #
   # @param [Hash, String, nil]  html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #append_css!.
   #
   # @return [Hash]                        A new hash with :class set.
   #
@@ -76,18 +66,16 @@ module CssHelper
   # === Variations
   #++
   #
-  # @overload append_css(html_opt, *classes, &block)
+  # @overload append_css(html_opt, *classes)
   #   @param [Hash, String]       html_opt
   #   @param [Array<#to_s,Array>] classes
-  #   @param [Proc]               block
   #   @return [Hash]
   #
-  # @overload append_css(*classes, &block)
+  # @overload append_css(*classes)
   #   @param [Array<#to_s,Array>] classes
-  #   @param [Proc]               block
   #   @return [Hash]
   #
-  def append_css(html_opt, *classes, &block)
+  def append_css(html_opt, *classes)
     if html_opt.is_a?(Hash)
       # noinspection RubyMismatchedArgumentType
       html_opt = dup_options(html_opt)
@@ -96,7 +84,7 @@ module CssHelper
       html_opt = {}
     end
     # noinspection RubyMismatchedArgumentType
-    append_css!(html_opt, *classes, &block)
+    append_css!(html_opt, *classes)
   end
 
   # Replace `html_opt[:class]` with a new string containing the original
@@ -104,15 +92,14 @@ module CssHelper
   #
   # @param [Hash]               html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #css_class_array.
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
   # === Implementation Notes
   # Compare with #prepend_css!
   #
-  def append_css!(html_opt, *classes, &block)
-    result = css_class_array(*html_opt[:class], *classes, &block).join(' ')
+  def append_css!(html_opt, *classes)
+    result = css_class_array(*html_opt[:class], *classes).join(' ')
     html_opt.merge!(class: result)
   end
 
@@ -121,7 +108,6 @@ module CssHelper
   #
   # @param [Hash, String, nil]  html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #prepend_css!
   #
   # @return [Hash]                        A new hash with :class set.
   #
@@ -129,18 +115,16 @@ module CssHelper
   # === Variations
   #++
   #
-  # @overload prepend_css(html_opt, *classes, &block)
-  #   @param [Hash, String]               html_opt
+  # @overload prepend_css(html_opt, *classes)
+  #   @param [Hash, String]       html_opt
   #   @param [Array<#to_s,Array>] classes
-  #   @param [Proc]                       block
   #   @return [Hash]
   #
-  # @overload prepend_css(*classes, &block)
+  # @overload prepend_css(*classes)
   #   @param [Array<#to_s,Array>] classes
-  #   @param [Proc]                       block
   #   @return [Hash]
   #
-  def prepend_css(html_opt, *classes, &block)
+  def prepend_css(html_opt, *classes)
     if html_opt.is_a?(Hash)
       # noinspection RubyMismatchedArgumentType
       html_opt = dup_options(html_opt)
@@ -149,7 +133,7 @@ module CssHelper
       html_opt = {}
     end
     # noinspection RubyMismatchedArgumentType
-    prepend_css!(html_opt, *classes, &block)
+    prepend_css!(html_opt, *classes)
   end
 
   # Replace `html_opt[:class]` with a new string containing the added classes
@@ -157,15 +141,14 @@ module CssHelper
   #
   # @param [Hash]               html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
-  # @param [Proc]               block     Passed to #css_class_array.
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
   # === Implementation Notes
   # Compare with #append_css!
   #
-  def prepend_css!(html_opt, *classes, &block)
-    result = css_class_array(*classes, *html_opt[:class], &block).join(' ')
+  def prepend_css!(html_opt, *classes)
+    result = css_class_array(*classes, *html_opt[:class]).join(' ')
     html_opt.merge!(class: result)
   end
 

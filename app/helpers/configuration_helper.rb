@@ -214,7 +214,7 @@ module ConfigurationHelper
       result.map! do |entry|
         entry.flat_map do |item|
           if item.is_a?(String)
-            item.split('.').compact_blank.map(&:to_sym)
+            item.split('.').compact_blank!.map!(&:to_sym)
           else
             item
           end

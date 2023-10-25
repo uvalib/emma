@@ -47,32 +47,29 @@ FILES   = ($* - OPTIONS).freeze
 #==============================================================================
 
 def output(*lines)
-  lines += [yield].flatten if block_given?
+  lines.concat([yield].flatten) if block_given?
   lines.each { |line| $stdout.puts(line) } and nil
 end
 
 def alert(*args, **opt)
   pre = opt[:prefix]
-  pre &&= "#{pre} "
-  args += [yield].flatten if block_given?
-  args.each { |line| $stderr.puts "#{pre}#{line}" } and nil
+  pre = "#{pre} " if pre && !pre.end_with?(' ')
+  args.concat([yield].flatten) if block_given?
+  args.map! { |line| "#{pre}#{line}" } if pre
+  args.each { |line| $stderr.puts line } and nil
 end
 
 def warn(*args, **opt)
-  opt[:prefix] = 'WARNING:' unless opt.key?(:prefix)
-  alert(*args, **opt)
+  alert(*args, prefix: 'WARNING:', **opt)
 end
 
 def fail(*args, **opt)
-  opt[:prefix] = 'FATAL ERROR:' unless opt.key?(:prefix)
-  alert(*args, **opt)
+  alert(*args, prefix: 'FATAL ERROR:', **opt)
   exit(1)
 end
 
-def debug(*args, **opt, &block)
-  return unless VERBOSE
-  opt[:prefix] = 'DEBUG:' unless opt.key?(:prefix)
-  alert(*args, **opt, &block)
+def debug(*args, **opt, &blk)
+  alert(*args, prefix: 'DEBUG:', **opt, &blk) if VERBOSE
 end
 
 # Extract the packages listed in the package.json file.

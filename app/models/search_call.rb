@@ -98,25 +98,22 @@ class SearchCall < ApplicationRecord
       }
 
     }.tap { |json_columns|
-      reserved_keys = json_columns.keys
-      reserved_keys += json_columns.values.flat_map { |cfg| cfg[:keys]&.keys }
+      reserved = json_columns.keys
+      reserved.concat json_columns.values.flat_map { |cfg| cfg[:keys]&.keys }
 
       # Extract keys from "en.emma.search_type" but transformed based on the
       # translations defined in the :params element.
       json_columns[:query][:keys] =
         SearchTermsHelper::QUERY_PARAMETERS[:search].map { |type|
           key = json_columns.dig(:query, :params, type) || type
-          next if reserved_keys.include?(type)
-          [key, { type: :string }]
-        }.compact.to_h.tap { |hash| reserved_keys += hash.keys }
-
+          [key, { type: :string }] unless reserved.include?(key)
+        }.compact.to_h.tap { |hash| reserved.concat(hash.keys) }
 
       # Extract keys from "en.emma.search_filters".
       f_keys   = json_columns[:filter][:keys]
       f_params = json_columns[:filter][:params]
       LayoutHelper::SearchFilters::SEARCH_MENU_BASE.each_pair do |key, config|
-        key = f_params[key] || key
-        next if reserved_keys.include?(key)
+        next if reserved.include?((key = f_params[key] || key))
         f_keys[key] = { type: (config[:multiple] ? :array : :string) }
         config[:url_param]&.then { |param| f_params[param.to_sym] = key }
       end

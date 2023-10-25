@@ -44,7 +44,7 @@ module HeadHelper::PageTitle
   #
   # @type [String]
   #
-  META_TITLE_TRAILER = " | #{META_TITLE_SUFFIX}"
+  META_TITLE_TRAILER = "| #{META_TITLE_SUFFIX}"
 
   # ===========================================================================
   # :section:
@@ -82,9 +82,8 @@ module HeadHelper::PageTitle
   # @yieldreturn [String, Array<String>]
   #
   def set_page_meta_title(*values)
-    @page_meta_title = []
-    @page_meta_title += values
-    @page_meta_title += Array.wrap(yield) if block_given?
+    @page_meta_title = values
+    @page_meta_title.concat(Array.wrap(yield)) if block_given?
     @page_meta_title
   end
 
@@ -99,8 +98,8 @@ module HeadHelper::PageTitle
   #
   def append_page_meta_title(*values)
     @page_meta_title ||= []
-    @page_meta_title += values
-    @page_meta_title += Array.wrap(yield) if block_given?
+    @page_meta_title.concat(values)
+    @page_meta_title.concat(Array.wrap(yield)) if block_given?
     @page_meta_title
   end
 
@@ -116,13 +115,16 @@ module HeadHelper::PageTitle
   # '<head>' have changed.
   #
   def emit_page_meta_title(**opt)
+    @page_meta_title &&= @page_meta_title.flatten.compact_blank!.uniq
     @page_meta_title ||= []
-    @page_meta_title.flatten!
-    text = @page_meta_title.join(' ').squish
-    text.prepend(META_TITLE_LEADER) unless text.start_with?(META_TITLE_PREFIX)
-    text << META_TITLE_TRAILER      unless text.end_with?(META_TITLE_SUFFIX)
+    title  = @page_meta_title.join(' ').squish
+    parts  = []
+    parts << META_TITLE_LEADER  unless title.start_with?(META_TITLE_PREFIX)
+    parts << title
+    parts << META_TITLE_TRAILER unless title.end_with?(META_TITLE_SUFFIX)
+    title  = parts.join(' ').strip
     html_tag(:title, 'data-turbolinks-eval': false, **opt) do
-      sanitized_string(text)
+      sanitized_string(title)
     end
   end
 

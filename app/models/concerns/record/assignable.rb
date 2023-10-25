@@ -431,9 +431,9 @@ module Record::Assignable
   def normalize_text(v, **)
     # noinspection RubyMismatchedReturnType
     case v
-      when Array  then v.compact.map { |e| normalize_text(e) }.join(LINE_JOIN)
-      when Symbol then v.to_s.strip
+      when Array  then v.compact.map! { |s| normalize_text(s) }.join(LINE_JOIN)
       when String then v.strip
+      when Symbol then v.to_s
       else Log.warn { "#{__method__}: type #{v.class} unexpected" } or v
     end
   end

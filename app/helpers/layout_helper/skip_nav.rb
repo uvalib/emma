@@ -46,7 +46,7 @@ module LayoutHelper::SkipNav
   #
   def skip_nav_set(*entries)
     entries.flatten!
-    entries += Array.wrap(yield) if block_given?
+    entries.concat(Array.wrap(yield)) if block_given?
     @skip_nav = entries
   end
 
@@ -102,7 +102,7 @@ module LayoutHelper::SkipNav
         else
           entry.presence
         end
-      }.compact.uniq.map { |e| html_tag(:li, e, class: 'skip-nav-entry') }
+      }.compact.uniq.map! { |e| html_tag(:li, e, class: 'skip-nav-entry') }
     end
   end
 

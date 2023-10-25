@@ -65,8 +65,7 @@ class IaDownloadService::Error < ApiService::Error
       if (body = extract_body(src)).present?
         result << "#{service_name} response: #{body}" # TODO: I18n
         if (notes = added_messages(body)).present?
-          result += notes
-          result.map!.with_index do |line, count|
+          result.concat(notes).map!.with_index do |line, count|
             html_opt = { class: 'line' }
             append_css!(html_opt, 'first') if count.zero?
             html_div(line, **html_opt)

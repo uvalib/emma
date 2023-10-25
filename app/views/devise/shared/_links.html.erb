@@ -27,14 +27,13 @@
   devise_modules << 'password'     if recoverable
   devise_modules << 'confirmation' if confirmable
   devise_modules << 'unlock'       if lockable
-
-  links +=
-    devise_modules.map { |devise_module|
-      ctrlr = devise_module.pluralize
-      label = t("emma.user.#{ctrlr}.new.label")
-      path  = send("new_user_#{devise_module}_path")
-      make_link(label, path, **link_opt)
-    }
+  devise_modules.map! { |devise_module|
+    ctrlr = devise_module.pluralize
+    label = t("emma.user.#{ctrlr}.new.label")
+    path  = send("new_user_#{devise_module}_path")
+    make_link(label, path, **link_opt)
+  }
+  links.concat(devise_modules)
 
 -%>
 

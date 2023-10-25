@@ -107,34 +107,35 @@ def __output_impl(*args, **opt)
   leader << ' ' unless (leader == indent) || leader.match?(/\s$/)
 
   # Combine arguments and block results into a single string.
-  args += Array.wrap(yield) if block_given?
+  args.concat(Array.wrap(yield)) if block_given?
   if opt[:debug]
     omit = opt[:omission] || '…'
     max  = opt[:max]
     max  = max - leader.size if max
     args =
-      args.flat_map { |arg|
+      args.flat_map do |arg|
         case arg
           when Hash   then arg.map { |k, v| "#{k} = #{v}" }
           when Array  then arg.map(&:to_s)
           when String then arg
           else             arg.inspect
         end
-      }.map { |arg|
-        arg = to_utf8(arg)
-        if max
-          next unless max.positive?
-          size = arg.size + sep.size
-          if max >= size
-            max -= size
-          else
-            stop = max - omit.length
-            arg  = (arg[0, stop] + omit unless stop.negative?)
-            max  = 0
-          end
+      end
+    args.map! do |arg|
+      arg = to_utf8(arg)
+      if max
+        next unless max.positive?
+        size = arg.size + sep.size
+        if max >= size
+          max -= size
+        else
+          stop = max - omit.length
+          arg  = (arg[0, stop] + omit unless stop.negative?)
+          max  = 0
         end
-        arg
-      }.compact
+      end
+      arg
+    end
   end
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
 

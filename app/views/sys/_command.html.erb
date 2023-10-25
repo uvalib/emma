@@ -8,7 +8,8 @@
   lines   ||= nil
 
   if lines.nil?
-    commands = command.is_a?(Array) ? command.dup : [command]
+    view_abort(__FILE__, ':command not passed via "locals"') unless command
+    commands = command.is_a?(Array) ? command.dup : Array.wrap(command)
     command  = commands.pop
     commands.presence&.each { |cmd|
       break if (lines = `(#{cmd}) 2>/dev/null`.strip.presence)

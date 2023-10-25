@@ -53,24 +53,24 @@ class ExecError < RuntimeError
     @cause    ||= nil # May have been set by the subclass.
     args.each do |arg|
       case arg
-        when Exception then @messages += extract_message((@cause ||= arg))
-        when Hash      then @messages += extract_message(arg)
-        when Array     then @messages += arg
+        when Exception then @messages.concat extract_message((@cause ||= arg))
+        when Hash      then @messages.concat extract_message(arg)
+        when Array     then @messages.concat arg
         when String    then @messages << arg
         else Log.warn { "ExecError#initialize: #{arg.inspect} ignored" } if arg
       end
     end
-    @messages += extract_message(opt) if opt.present?
+    @messages.remove extract_message(opt) if opt.present?
     case @cause
       when nil
         # Ignore
       when ExecError
-        @messages += @cause.messages
-        @cause     = @cause.cause || @cause
+        @messages.concat @cause.messages
+        @cause = @cause.cause || @cause
       when Faraday::Error
-        @messages -= Array.wrap(@cause.message)
+        @messages.remove Array.wrap(@cause.message)
       when Exception
-        @messages += Array.wrap(@cause.message)
+        @messages.concat Array.wrap(@cause.message)
       else
         Log.warn { "ExecError#initialize: @cause #{@cause.class} unexpected" }
     end

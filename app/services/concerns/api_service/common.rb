@@ -441,11 +441,11 @@ module ApiService::Common
     errors         = properties ? [] : ['unregistered API method']
     properties   ||= {}
     multi          = Array.wrap(properties[:multi])
+    key_alias      = properties[:alias] || {}
     required_keys  = required_parameters(meth)
     optional_keys  = optional_parameters(meth)
-    key_alias      = properties[:alias] || {}
-    specified_keys = required_keys + optional_keys + key_alias.keys
-    specified_keys += SERVICE_OPTIONS
+    specified_keys =
+      [].concat(required_keys, optional_keys, key_alias.keys, SERVICE_OPTIONS)
 
     # Validate the keys provided.
     if check_req && (missing_keys = required_keys - opt.keys).present?
@@ -464,7 +464,7 @@ module ApiService::Common
     # @type [Symbol] k
     # @type [Any]    v
     opt.slice(*specified_keys).map { |k, v|
-      v = v.first if v.is_a?(Array) && (v.size <= 1)
+      v = v.first if v.is_a?(Array) && !v.many?
       next if v.blank?
       k = key_alias[k] || k
       v = quote(v, separator: ' ') if v.is_a?(Array) && !multi.include?(k)

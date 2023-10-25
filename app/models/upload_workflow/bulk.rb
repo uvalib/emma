@@ -383,8 +383,8 @@ module UploadWorkflow::Bulk::External
       min  = size * counter
       max  = (size * (counter += 1)) - 1
       s, f = bulk_db_operation_batch(op, batch, from: min, to: max)
-      succeeded += s
-      failed    += f
+      succeeded.concat(s)
+      failed.concat(f)
     end
     return succeeded, failed
   end

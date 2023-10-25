@@ -359,11 +359,8 @@ module FileFormat
   #   @return [String]
   #
   def transform(meth, value)
-    if value.is_a?(Array)
-      value.map { |v| send(meth, v) }
-    else
-      send(meth, value)
-    end
+    xform = ->(val) { send(meth, val) }
+    value.is_a?(Array) ? value.map(&xform) : xform.(value)
   end
 
   # ===========================================================================
@@ -390,7 +387,7 @@ module FileFormat
   # @return [String, Array<String>]
   #
   def self.normalize_language(value)
-    normalize = ->(v) { LanguageType.normalize(v) }
+    normalize = ->(val) { LanguageType.normalize(val) }
     value.is_a?(Array) ? value.map(&normalize) : normalize.(value)
   end
 

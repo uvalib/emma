@@ -98,11 +98,11 @@ module LayoutHelper::Main
   def page_heading(title, *controls, help: nil, logo: nil, **opt)
     help &&= page_heading_help(help)      unless help.html_safe?
     logo &&= repository_source_logo(logo) unless logo.html_safe?
-    added  = [*controls, *(yield if block_given?)].compact.presence
+    controls.concat(Array.wrap(yield))    if block_given?
+    added  = controls.compact.presence
 
     prepend_css!(opt, ((help || logo) ? 'text' : 'heading plain'))
     result = html_tag(:h1, title, **opt)
-
     result = html_div(class: 'heading and-help') { result << help } if help
     result = html_div(class: 'heading and-logo') { result << logo } if logo
     result = html_div(result, *added, class: 'heading-bar')         if added

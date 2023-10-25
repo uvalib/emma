@@ -104,7 +104,7 @@ namespace 'emma:assets' do
   # @return [void]
   #
   def sh_run(*command, async: false)
-    command += Array.wrap(yield) if block_given?
+    command.concat(Array.wrap(yield)) if block_given?
     command  = command.flat_map { |c| c.is_a?(String) ? c.split("\n") : c }
     command.map! { |cmd| cmd.to_s.strip.sub(/\s*(&&|;)$/, '') }.compact_blank!
     subshell = command.many? && async

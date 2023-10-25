@@ -465,8 +465,7 @@ class ManifestItemController < ApplicationController
   # @return [Hash{Symbol=>Hash}]
   #
   def bulk_id_response(list = @list, **)
-    list = list.is_a?(Array) ? list.dup : Array.wrap(list)
-    list.map! { |item| item.try(:id) || item }.compact_blank!.map!(&:to_i)
+    list = Array.wrap(list).compact_blank.map! { |v| (v.try(:id) || v).to_i }
     { RESPONSE_OUTER => { list: list } }
   end
 

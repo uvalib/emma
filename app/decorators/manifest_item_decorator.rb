@@ -1264,7 +1264,7 @@ class ManifestItemDecorator
     r_opt = { row: row, unique: (unique || index || hex_rand) }
 
     added = [row_details(**r_opt), row_indicators(**r_opt), *added]
-    added = [*added, *yield] if block_given?
+    added.concat(Array.wrap(yield)) if block_given?
 
     super(*added, **r_opt, **opt)
   end

@@ -135,7 +135,7 @@ module UploadConcern
   end
 
   def find_or_match_keys
-    [*super, :edit_state, :edit_user].tap { |keys| keys.uniq! }
+    [*super, :edit_state, :edit_user].uniq
   end
 
   # Locate and filter Upload records.
@@ -151,8 +151,7 @@ module UploadConcern
   # @return [Hash{Symbol=>*}]
   #
   def find_or_match_records(*items, filters: [], **opt)
-    filters << :filter_by_state!
-    filters << :filter_by_group!
+    filters = [*filters, :filter_by_state!, :filter_by_group!]
     super
   end
 
@@ -394,8 +393,8 @@ module UploadConcern
     size      = positive(opt[:size]) || DEFAULT_REINDEX_BATCH
     relation.each_slice(size) do |items|
       sids, fails = reindex_record(items, **opt)
-      successes += sids
-      failures  += fails
+      successes.concat(sids)
+      failures.concat(fails)
       break if opt[:atomic] && failures.present?
     end
     return successes, failures
@@ -441,9 +440,9 @@ module UploadConcern
       Log.info  { "#{meth}: result.errors: #{errors.inspect}" }
       if (by_index = errors.select { |k| k.is_a?(Integer) }).present?
         by_index.transform_keys! { |idx| sids[idx-1] }
-        failures += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
-        bad      += by_index.keys
-        errors    = errors.except(*by_index.keys)
+        failures.concat by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+        bad.concat      by_index.keys
+        errors = errors.except(*by_index.keys)
       end
       failures << errors if errors.present?
       Log.info { "#{meth}: failed sids:    #{bad.inspect}" }

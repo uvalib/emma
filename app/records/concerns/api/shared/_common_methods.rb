@@ -233,11 +233,8 @@ module Api::Shared::CommonMethods
   #
   def find_record_items(field, **opt)
     path = opt.delete(:path) || item_record_path
-    if field.is_a?(Array)
-      field.flat_map { |f| find_items(*path, f, **opt) }
-    else
-      find_items(*path, field, **opt)
-    end
+    find = ->(fld) { find_items(*path, fld, **opt) }
+    field.is_a?(Array) ? field.flat_map(&find) : find.(field)
   end
 
   # find_record_value
@@ -387,7 +384,7 @@ module Api::Shared::CommonMethods
   def update_field_value!(data, field, mode = nil)
     value = get_field_value(data, field)
     array = value.is_a?(Array)
-    value = yield(value)
+    value = Array.wrap(yield(value) || value)
     case mode
       when :required  then # Keep value as array.
       when :forbidden then value = value.first

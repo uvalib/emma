@@ -640,9 +640,7 @@ module BaseDecorator::Fields
           part = "#{part}." unless part.match?(/[[:punct:]]$/)
           [part, "\n"]
       end
-    }.compact.map { |line|
-      line.gsub(/---/, EM_DASH).gsub(/--/,  EN_DASH)
-    }
+    }.compact.map! { |line| line.gsub(/---/, EM_DASH).gsub(/--/, EN_DASH) }
   end
 
   # Seen in some IA records.

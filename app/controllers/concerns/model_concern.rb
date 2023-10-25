@@ -49,8 +49,7 @@ module ModelConcern
     result << :org   << :org_id
     result << :user  << :user_id
     result << :group << :state
-    result.uniq!
-    result
+    result.uniq
   end
 
   # ===========================================================================
@@ -232,12 +231,10 @@ module ModelConcern
     normalize_predicates!(opt)
 
     # Disallow experimental database WHERE predicates unless privileged.
-    filters.prepend(:filter_predicates!) unless administrator?
-    filters << :filter_by_user!          if opt.include?(:user_id)
-    filters << :filter_by_org!           if opt.include?(:org_id)
-
-    filters.uniq!
-    filters.each do |filter|
+    filters = administrator? ? [*filters] : [:filter_predicates!, *filters]
+    filters << :filter_by_user! if opt.include?(:user_id)
+    filters << :filter_by_org!  if opt.include?(:org_id)
+    filters.uniq.each do |filter|
       if respond_to?(filter)
         send(filter, opt)
       else
@@ -387,9 +384,10 @@ module ModelConcern
     states = group.flat_map { |g| Upload::STATE_GROUP.dig(g, :states) }.compact
     return if states.blank?
 
+    states.map!(&:to_s)
     Array.wrap(state).each do |k|
-      opt[k] = [*opt[k], *states].compact.map(&:to_s).uniq
-      opt.delete(k) if opt[k].blank?
+      opt_k  = opt[k] && Array.wrap(opt[k]).compact.presence
+      opt[k] = opt_k&.map!(&:to_s)&.concat(states)&.uniq || states
     end
     opt
   end

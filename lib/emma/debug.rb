@@ -190,8 +190,7 @@ module Emma::Debug
     # @see #__debug_inspect_item
     #
     def __debug_inspect_items(*args, **opt)
-      args += Array.wrap(yield) if block_given?
-      # noinspection RubyMismatchedReturnType
+      args.concat(Array.wrap(yield)) if block_given?
       args.flat_map { |arg| __debug_inspect_item(arg, **opt) }
     end
 
@@ -437,11 +436,12 @@ module Emma::Debug
       # Parts that are only relevant from a controller/view.
       if defined?(flash)
         args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
-        args +=
+        added =
           ApiService.table(user: current_user).map { |service, instance|
             error = instance.exec_report
             "#{service} ERROR: #{error.inspect}" if error.present?
           }.compact
+        args.concat(added) if added.present?
       end
 
       __debug_line(*args, **opt, &blk)

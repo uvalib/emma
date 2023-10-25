@@ -67,7 +67,7 @@ module UploadWorkflow::Single::Remove::Actions
     if record.emma_native?
       s, f, _ = remove_from_index(*record)
       self.succeeded = s
-      self.failures += f
+      self.failures.concat(f)
     else
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)
@@ -202,7 +202,7 @@ module UploadWorkflow::Single::Remove::States
           opt  = 'index: false'
           "succeeded, failed = bulk_upload_remove(#{args}, #{opt})"
         end
-        self.succeeded += submission.items
+        self.succeeded.concat(submission.items)
         ok = ready?
       else
         ok = true # TODO: Simulate partner repository delete request?

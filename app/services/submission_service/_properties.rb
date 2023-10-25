@@ -197,7 +197,7 @@ module SubmissionService::Properties
       entry[:sim_msg] ||= step.to_s
       entry[:sim_err] ||= step.to_s
       [step.to_sym, entry]
-    }.compact.to_h.deep_freeze
+    }.to_h.deep_freeze
 
  #CLIENT_STEPS = SUBMIT_STEPS_TABLE.select { |_, v| v[:client] }.keys.freeze
   SERVER_STEPS = SUBMIT_STEPS_TABLE.select { |_, v| v[:server] }.keys.freeze

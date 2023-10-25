@@ -23,12 +23,10 @@ class ApplicationJob::Table < Concurrent::Hash
   # @param [Array<ActiveJob::Base,String>] job_list   Jobs or job IDs.
   #
   def initialize(job_list)
-    job_table =
-      job_list.map { |job|
-        job = job.job_id if job.is_a?(ActiveJob::Base)
-        [job, nil]
-      }.to_h
-    replace(job_table)
+    Array.wrap(job_list).each do |job|
+      job = job.job_id if job.is_a?(ActiveJob::Base)
+      self[job] = nil
+    end
   end
 
   # ===========================================================================

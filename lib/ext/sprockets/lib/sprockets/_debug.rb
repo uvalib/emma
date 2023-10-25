@@ -98,7 +98,7 @@ if DEBUG_SPROCKETS
       file   = input[:filename]
       name   = processor.inspect.truncate(256)
       label  = ["SPROCKETS #{tid} [#{level}] #{indent}#{file}", name]
-      label += Array.wrap(yield) if block_given?
+      label.concat(Array.wrap(yield)) if block_given?
       label  = label.join(' | ')
 
       pushed = (push_level if aggregate?(processor))
@@ -120,7 +120,7 @@ if DEBUG_SPROCKETS
       file   = input[:filename]
       name   = processor.inspect.truncate(256)
       label  = ["SPROCKETS #{tid} [#{level}] #{indent}#{file}", name]
-      label += Array.wrap(yield) if block_given?
+      label.concat(Array.wrap(yield)) if block_given?
       label  = label.join(' | ')
 
       $stderr.puts "<<< #{stamp} #{delta} #{label}"

@@ -220,12 +220,11 @@ module BaseDecorator::List
     model   = cls && (type < Model)
     no_fmt  = [no_fmt]               if no_fmt.is_a?(Symbol)
     no_fmt  = no_fmt.include?(field) if no_fmt.is_a?(Array)
-    value   = value.dup              if value.is_a?(Array)
     if Array.wrap(value).first.is_a?(ActiveSupport::SafeBuffer)
       no_fmt = true
     elsif enum || model
       value  = value.split(/[,;|\t\n]/) if value.is_a?(String)
-      value  = Array.wrap(value)
+      value  = Array.wrap(value).compact_blank
       value.map! { |v| type.cast(v, warn: false) || v } if enum
       value.map! { |v| type.find_by(id: v)       || v } if model
       v_dv ||= value.join('|')
@@ -234,11 +233,12 @@ module BaseDecorator::List
     # Format the content of certain fields.
     unless no_fmt
       value = render_format(field, value, no_code: no_code)
-      area  = !cls && value.is_a?(Array) && TEXTAREA_FIELDS.include?(field)
-      prop  = prop.merge(type: 'textarea') if area && value.many?
+      array = value.is_a?(Array)
       if enum || model
-        lbl = ->(v) { v.try(:label) || v }
-        value.is_a?(Array) and value.map!(&lbl) or (value = lbl.(value))
+        value = Array.wrap(value).map! { |v| v.try(:label) || v }
+        value = value.first unless array
+      elsif TEXTAREA_FIELDS.include?(field)
+        prop = prop.merge(type: 'textarea') if array && value.many?
       end
     end
 
@@ -249,7 +249,7 @@ module BaseDecorator::List
     # Pre-process value(s), wrapping each array element in a `<div>`.
     if prop[:array] && !no_fmt
       value = value.split("\n") if value.is_a?(String)
-      value = Array.wrap(value)
+      value = Array.wrap(value).compact_blank
       value.map!.with_index(1) do |v, i|
         v_opt = { class: "item item-#{i}" }
         append_css!(v_opt, 'error') if error&.key?(v.to_s)
@@ -330,7 +330,7 @@ module BaseDecorator::List
     # Optional additional element(s).
     if block_given?
       b_opt = l_id ? opt.merge('aria-describedby': l_id) : opt
-      parts += Array.wrap(yield(field, raw_val, prop, **b_opt))
+      parts.concat Array.wrap(yield(field, raw_val, prop, **b_opt))
     end
 
     # Pair wrapper.
@@ -532,13 +532,13 @@ module BaseDecorator::List
   #
   def details(outer: nil, css: nil, **opt)
     trace_attrs!(opt)
-    pairs    = list_field_values(**opt)
-    count    = list_item_columns(pairs)
-    css    ||= "#{model_type}-details"
-    classes  = [css, opt.delete(:class)]
-    classes += %W[columns-#{count} count-#{count}] if count.positive?
-    outer    = prepend_css(outer, *classes)
-    t_opt    = trace_attrs_from(opt)
+    pairs   = list_field_values(**opt)
+    count   = list_item_columns(pairs)
+    css   ||= "#{model_type}-details"
+    classes = [css, opt.delete(:class)]
+    classes.push("columns-#{count}", "count-#{count}") if count.positive?
+    outer   = prepend_css(outer, *classes)
+    t_opt   = trace_attrs_from(opt)
     html_div(**outer, **t_opt) do
       render_field_values(pairs: pairs, **opt)
     end
@@ -651,20 +651,18 @@ module BaseDecorator::List
     # Set up number label and inner parts if supplied.
     inner_parts = []
     inner_parts << list_item_number_label(index: index, **t_opt)
-    inner_parts += inner if inner.is_a?(Array)
-    inner_parts << inner if inner.is_a?(String)
+    inner_parts.concat(Array.wrap(inner)) if inner
 
     # Set up outer parts if supplied.
     outer_parts = []
-    outer_parts += outer if outer.is_a?(Array)
-    outer_parts << outer if outer.is_a?(String)
+    outer_parts.concat(Array.wrap(outer)) if outer
 
     # Additional elements supplied by the block:
     if block_given? && (added = Array.wrap(yield)).present?
       if inner.is_a?(TrueClass) || outer.nil? || outer.is_a?(FalseClass)
-        inner_parts += added
+        inner_parts.concat(added)
       else
-        outer_parts += added
+        outer_parts.concat(added)
       end
     end
 
@@ -767,8 +765,8 @@ module BaseDecorator::List
     append_css!(row_opt, 'empty')            if blank?
 
     html_tag(tag, **row_opt) do
-      before &&= Array.wrap(before).compact_blank.map { |v| ERB::Util.h(v) }
-      after  &&= Array.wrap(after).compact_blank.map  { |v| ERB::Util.h(v) }
+      before &&= Array.wrap(before).compact_blank.map! { |v| ERB::Util.h(v) }
+      after  &&= Array.wrap(after).compact_blank.map!  { |v| ERB::Util.h(v) }
       render = :render_empty_value  if blank?
       render = :render_field_values if render.nil?
       pairs  = send(render, pairs: pairs, **opt, level: level&.next)
@@ -887,7 +885,7 @@ module BaseDecorator::List
   def title_id_values
     # noinspection RailsParamDefResolve
     records = (object.try(:records) if present?)
-    records&.map(&:emma_titleId)&.compact&.uniq&.join(',')&.presence
+    records&.map(&:emma_titleId)&.compact&.presence&.uniq&.join(',')
   end
 
   # state_group

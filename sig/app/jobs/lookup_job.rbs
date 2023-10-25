@@ -57,7 +57,17 @@ class LookupJob < ApplicationJob
   #
   # @see LookupService::Response#TEMPLATE
   #
-  def worker_task: (JobResult record, Class|LookupService::RemoteService service, LookupService::Request items, **untyped opt) -> symHash
+  def worker_task: (JobResult record, Class|LookupService::RemoteService service, LookupService::Request request, **untyped opt) -> symHash
+
+  # Perform lookup on the external service.
+  #
+  # @param [Class, LookupService::RemoteService] service
+  # @param [LookupService::Request]              request
+  # @param [Hash]                                opt
+  #
+  # @return [LookupService::Response]
+  #
+  def worker_task_execution: (Class|LookupService::RemoteService service, LookupService::Request request, **untyped opt) -> LookupService::Response
 
   # waiter_task
   #
@@ -68,5 +78,18 @@ class LookupJob < ApplicationJob
   #
   # @return [Hash]
   #
-  def waiter_task: (JobResult record, Array[Class|LookupService::RemoteService] services, LookupService::Request items, **untyped opt) -> symHash
+  def waiter_task: (JobResult record, Array[Class|LookupService::RemoteService] services, LookupService::Request request, **untyped opt) -> symHash
+
+  # Update the appropriate *job_table* entry and if all jobs spawned by this
+  # waiter have completed then send the final response back to the client.
+  #
+  # @param [ApplicationJob::Table]  job_table
+  # @param [Hash]                   data
+  # @param [LookupService::Request] request
+  # @param [Hash]                   opt
+  #
+  # @return [LookupChannel::LookupResponse]   If all tasks have completed.
+  # @return [nil]                             If worker task(s) are pending.
+  #
+  def worker_task_completion: (ApplicationJob::Table job_table, symHash data, LookupService::Request request, **untyped opt) -> (LookupChannel::LookupResponse | nil)
 end

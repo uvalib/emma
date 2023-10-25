@@ -361,7 +361,7 @@ module LookupService::WorldCat::Action::Records
     #
     # @param [Symbol] prefix
     # @param [*]      item
-    # @param [Proc]   block           Applied to each term value.
+    # @param [Proc]   blk             Applied to each term value.
     #
     # @return [self, nil]
     #
@@ -369,9 +369,10 @@ module LookupService::WorldCat::Action::Records
     # @yieldparam [String] term       Term value
     # @yieldreturn [String]           The value to use in place of *term*.
     #
-    def add_terms(prefix, item, &block)
-      values = Array.wrap(item).flatten.map { |v| v.to_s.strip }.compact_blank!
-      values.map!(&block) if block
+    def add_terms(prefix, item, &blk)
+      values = item.is_a?(Array) ? item.flatten : Array.wrap(item)
+      values.map! { |v| v.to_s.strip }.compact_blank!
+      values.map!(&blk) if blk
       add(prefix, values)
     end
 
@@ -403,7 +404,7 @@ module LookupService::WorldCat::Action::Records
     #
     def parts
       map do |code, values|
-        values.uniq.map { |v| query_part(code, v) }.join(OR)
+        values.uniq.map! { |v| query_part(code, v) }.join(OR)
       end
     end
 
@@ -439,14 +440,16 @@ module LookupService::WorldCat::Action::Records
     #
     def fix_name(value)
       value = value.strip
-      value.sub!(/\s*,?\s*(\[.*\]|\(.*\)|\d+.*\d+|\d+-?)$/, '') # Trailing date
+      # Remove trailing date.
+      value.sub!(/\s*,?\s*(\[.*\]|\(.*\)|\d+.*\d+|\d+-?)$/, '')
+      # Adjust family and given names.
       case value
-        when /^([^\s,]+)\s*,\s*(.*)$/ then family_and_given_name = [$1, $2]
-        when /^(.+)\s+([^\s]+)$/      then family_and_given_name = [$2, $1]
-        else                               family_and_given_name = [value, nil]
+        when /^([^\s,]+)\s*,\s*(.*)$/ then names = [$1, $2]
+        when /^(.+)\s+([^\s]+)$/      then names = [$2, $1]
+        else                               names = [value, nil]
       end
-      family_and_given_name.map! { |v| v && v.gsub(/[[:punct:]]/, ' ').squish }
-      family_and_given_name.compact_blank!.join(', ')
+      names.map! { |v| v&.gsub(/[[:punct:]]/, ' ')&.squish }.compact_blank!
+      names.join(', ')
     end
 
   end

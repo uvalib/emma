@@ -87,7 +87,7 @@ module UploadWorkflow::Bulk::Edit::Actions
     opt[:importer]   ||= :ia_bulk
     s, f = bulk_upload_edit(event_args, **opt)
     self.succeeded = s
-    self.failures += f
+    self.failures.concat(f)
   end
 
   # For bulk-edit, this action is a "no-op" because indexing will have been
@@ -104,7 +104,7 @@ module UploadWorkflow::Bulk::Edit::Actions
     elsif DEFER_INDEXING
       s, f, _ = bulk_update_in_index(*succeeded)
       self.succeeded = s
-      self.failures += f
+      self.failures.concat(f)
     end
   end
 

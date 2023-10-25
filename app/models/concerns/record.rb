@@ -131,7 +131,7 @@ module Record
     def has_column?(*columns, any: true, **)
       any       = true unless any.is_a?(FalseClass)
       total     = column_names.size
-      columns   = columns.flatten.compact.map(&:to_s)
+      columns   = columns.flatten.compact.map!(&:to_s)
       remainder = (column_names - columns).size
       any ? (total > remainder) : (total == (remainder + columns.size))
 

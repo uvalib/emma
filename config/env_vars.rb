@@ -339,7 +339,7 @@ ENV['RAILS_MAX_THREADS'] = [
   (ENV['RAILS_MAX_THREADS']    || 5),
   (ENV['GOOD_JOB_MAX_THREADS'] || 5),
   1, # When using the postgresql adapter in config/cable.yml.
-].compact.map(&:to_i).sum.to_s
+].map!(&:to_i).sum.to_s
 
 # =============================================================================
 # Output

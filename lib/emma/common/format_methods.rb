@@ -227,6 +227,11 @@ module Emma::Common::FormatMethods
   #
   SPRINTF_FMT_NAMED_REFERENCE = /%<([^>]+)>/.freeze
 
+  # @private
+  # @type [Array<Regexp>]
+  SPRINTF_NAMED_REF_PATTERNS =
+    [SPRINTF_NAMED_REFERENCE, SPRINTF_FMT_NAMED_REFERENCE].freeze
+
   # Extract the named references in a format string.
   #
   # @param [String]                text   String with #sprintf formatting.
@@ -236,13 +241,10 @@ module Emma::Common::FormatMethods
   #
   # @see Kernel#sprintf
   #
-  def named_references(text, match = nil)
-    text = text.to_s
-    return [] unless text.include?('%{') || text.include?('%<')
-    patterns = match || [SPRINTF_NAMED_REFERENCE, SPRINTF_FMT_NAMED_REFERENCE]
-    Array.wrap(patterns).flat_map { |pattern|
-      text.scan(pattern).map(&:shift)
-    }.compact_blank!.tap(&:uniq!).map!(&:to_sym)
+  def named_references(text, match = SPRINTF_NAMED_REF_PATTERNS)
+    return [] unless (text = text.to_s).match?(/%[{<]/)
+    matches = Array.wrap(match).flat_map { |pat| text.scan(pat).map(&:shift) }
+    matches.compact_blank!.map!(&:to_sym).uniq
   end
 
   # Match a named reference along with "%<name>s" the format portion.

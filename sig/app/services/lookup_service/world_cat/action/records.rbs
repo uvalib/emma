@@ -139,7 +139,7 @@ module LookupService::WorldCat::Action::Records
     #
     # @param [Symbol] prefix
     # @param [*]      item
-    # @param [Proc]   block           Applied to each term value.
+    # @param [Proc]   blk             Applied to each term value.
     #
     # @return [self, nil]
     #

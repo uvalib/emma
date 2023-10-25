@@ -283,7 +283,7 @@ module Record::Submittable
             Log.info { "#{__method__}: removed: #{sids}" }
             rollback.reject! { |item| sids.include?(item.submission_id) }
           end
-          failed += kept if kept.present?
+          failed.concat(kept) if kept.present?
         end
         rollback.each(&:delete_file)
         succeeded = [] if atomic
@@ -404,16 +404,16 @@ module Record::Submittable
       if by_index.present?
         errors.except!(*by_index.keys)
         by_index.transform_keys! { |idx| sid_value(items[idx-1]) }
-        sids   += by_index.keys
-        failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+        sids.concat   by_index.keys
+        failed.concat by_index.map { |sid, msg| FlashPart.new(sid, msg) }
       end
 
       # Errors associated with item submission ID.
       by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
       if by_sid.present?
         errors.except!(*by_sid.keys)
-        sids   += by_sid.keys
-        failed += by_sid.map { |sid, msg| FlashPart.new(sid, msg) }
+        sids.concat   by_sid.keys
+        failed.concat by_sid.map { |sid, msg| FlashPart.new(sid, msg) }
       end
 
       # Remaining (general) errors indicate that there was a problem with the
@@ -421,7 +421,7 @@ module Record::Submittable
       if errors.present?
         failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
       elsif sids.present?
-        sids = sids.map { |v| sid_value(v) }.uniq
+        sids = sids.map! { |v| sid_value(v) }.uniq
         rollback, succeeded =
           items.partition { |item| sids.include?(sid_value(item)) }
       end
@@ -661,8 +661,8 @@ module Record::Submittable
       repository_requests(items).each_pair do |_repo, repo_items|
         repo_items.map! { |item| record_id(item) }
         s, f = repository_remove(*repo_items, **opt)
-        succeeded += s
-        failed    += f
+        succeeded.concat(s)
+        failed.concat(f)
       end
       return succeeded, failed
     end
@@ -694,8 +694,8 @@ module Record::Submittable
       repository_requests(items).each_pair do |_repo, repo_items|
         repo_items.map! { |item| record_id(item) }
         s, f = repository_dequeue(*repo_items, **opt)
-        succeeded += s
-        failed    += f
+        succeeded.concat(s)
+        failed.concat(f)
       end
       return succeeded, failed
     end
@@ -808,8 +808,8 @@ module Record::Submittable
         else
           requests = opt.delete(:requests)
           s, f = repository_removals(requests, **opt)
-          succeeded += s
-          failed    += f
+          succeeded.concat(s)
+          failed.concat(f)
         end
       end
 
@@ -857,8 +857,8 @@ module Record::Submittable
         opt[:bulk][:window] = { min: min, max: max }
         __debug_line(dbg) { "records #{min} to #{max}" }
         s, f, _ = send(op, batch, **opt)
-        succeeded += s
-        failed    += f
+        succeeded.concat(s)
+        failed.concat(f)
       end
       __debug_line(dbg) { { succeeded: succeeded.size, failed: failed.size } }
       return succeeded, failed

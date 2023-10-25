@@ -77,7 +77,7 @@ module Api::Shared::IdentifierMethods
   # @return [Array<String>]
   #
   def normalize_identifiers(values)
-    PublicationIdentifier.objects(values).compact.map(&:to_s).uniq
+    PublicationIdentifier.objects(values).compact.map!(&:to_s).uniq
   end
 
   # Produce a standard identifier of the form "(prefix):(value)".

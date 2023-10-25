@@ -47,9 +47,8 @@ module LayoutHelper::PageClasses
   # @yieldreturn [String, Array<String>]
   #
   def set_page_classes(*values)
-    @page_classes = []
-    @page_classes += values
-    @page_classes += Array.wrap(yield) if block_given?
+    @page_classes = values
+    @page_classes.concat(Array.wrap(yield)) if block_given?
     @page_classes
   end
 
@@ -64,8 +63,8 @@ module LayoutHelper::PageClasses
   #
   def append_page_classes(*values)
     @page_classes ||= default_page_classes
-    @page_classes += values
-    @page_classes += Array.wrap(yield) if block_given?
+    @page_classes.concat(values)
+    @page_classes.concat(Array.wrap(yield)) if block_given?
     @page_classes
   end
 
@@ -78,12 +77,10 @@ module LayoutHelper::PageClasses
   # 'user/sessions' -> 'user_sessions'.
   #
   def emit_page_classes
-    @page_classes ||= default_page_classes
-    @page_classes.flatten!
-    @page_classes.compact_blank!
-    @page_classes.map! { |c| c.to_s.gsub(/[^a-z_0-9-]/i, '_') }
-    @page_classes.uniq!
-    @page_classes.join(' ')
+    items   = @page_classes&.flatten&.compact_blank!
+    items &&= items.map! { |c| c.to_s.gsub(/[^a-z_0-9-]/i, '_') }.uniq
+    items ||= default_page_classes
+    items.join(' ')
   end
 
   # default_page_classes

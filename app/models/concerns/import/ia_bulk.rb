@@ -130,7 +130,7 @@ module Import::IaBulk
   }.deep_freeze
 
   # If no format was provided in order to determine :dc_format, then
-  # #normalize_results will use this table to come up with a guess based on
+  # #normalize_results! will use this table to come up with a guess based on
   # 'media_type' (if it was given).
   #
   # @type [Hash{Symbol=>Symbol}]
@@ -274,7 +274,7 @@ module Import::IaBulk
   #
   # @return [Hash]
   #
-  def normalize_results(fields)
+  def normalize_results!(fields)
 
     # If :download was not provided but :identifier and :contributed_file were
     # then construct the download link.
@@ -346,9 +346,10 @@ module Import::IaBulk
       fields[:dc_identifier] =
         [ids.shift, dois.shift, issns.shift, lead_isbn, alt_isbn].compact
 
-      if (ids += dois + issns + isbns).present?
-        rel_old = Array.wrap(fields[:dc_relation]).compact_blank
-        fields[:dc_relation] = (rel_old + ids).uniq
+      if ids.concat(dois, issns, isbns).present?
+        current = fields[:dc_relation]
+        current &&= Array.wrap(current).compact_blank.presence
+        fields[:dc_relation] = current&.concat(ids)&.uniq || ids
         Log.debug do
           ids_new = fields[:dc_identifier].inspect
           rel_new = fields[:dc_relation].inspect

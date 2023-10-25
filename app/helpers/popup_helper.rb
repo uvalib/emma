@@ -171,19 +171,21 @@ module PopupHelper
 
     # Controls at the bottom of the panel (close button).
     controls_opt = { class: POPUP_CONTROLS_CLASS }
-    merge_html_options!(controls_opt, controls) if controls.is_a?(Hash)
-    controls = controls.compact_blank           if controls.is_a?(Array)
-    controls = [controls]                       if controls.is_a?(String)
-    controls = []                               unless controls.is_a?(Array)
-    controls.map! { |control|
-      if control.is_a?(Hash)
-        tag = control[:tag]   || :button
-        lbl = control[:label] || 'Button' # TODO: I18n
-        html_tag(tag, lbl, **control.except(:tag, :label))
-      else
-        ERB::Util.h(control)
+    if controls.is_a?(Hash)
+      merge_html_options!(controls_opt, controls)
+    elsif controls
+      controls = Array.wrap(controls).compact_blank
+      controls.map! do |control|
+        if control.is_a?(Hash)
+          tag = control[:tag]   || :button
+          lbl = control[:label] || 'Button' # TODO: I18n
+          html_tag(tag, lbl, **control.except(:tag, :label))
+        else
+          ERB::Util.h(control)
+        end
       end
-    }.compact!
+    end
+    controls = [] unless controls.is_a?(Array)
     if controls.none? { |ctl| ctl.include?(closer_css) }
       b_opt = prepend_css(close, closer_css, 'text')
       label = b_opt.delete(:label) || 'Close' # TODO: I18n

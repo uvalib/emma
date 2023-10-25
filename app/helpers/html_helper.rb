@@ -108,7 +108,7 @@ module HtmlHelper
     opt   = args.pop.dup if opt.blank? && args.last.is_a?(Hash)
     opt   = add_inferred_attributes(tag, opt)
     opt   = add_required_attributes(tag, opt)
-    args += Array.wrap(yield) if block_given?
+    args.concat(Array.wrap(yield)) if block_given?
     args.flatten!
     args.compact_blank!
     check_required_attributes(tag, opt, meth: calling_method) if Log.debug?
@@ -126,8 +126,8 @@ module HtmlHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_form(url_or_path, *args, separator: "\n", **opt)
-    opt   = args.pop if opt.blank? && args.last.is_a?(Hash)
-    args += Array.wrap(yield) if block_given?
+    opt = args.pop if opt.blank? && args.last.is_a?(Hash)
+    args.concat(Array.wrap(yield)) if block_given?
     args.flatten!
     args.compact_blank!
     form_tag(url_or_path, opt) do

@@ -73,7 +73,7 @@ module Emma::Extension
         tag  = tag       || __ext_log_tag
         sep  = separator || EXT_LOG_SEPARATOR
 
-        args += Array.wrap(yield) if block_given?
+        args.concat(Array.wrap(yield)) if block_given?
         if opt.present?
           opt = args.pop.merge(opt) if args.last.is_a?(Hash)
           args << opt
@@ -135,8 +135,7 @@ module Emma::Extension
         tag  = (opt.delete(:tag)    || __ext_log_tag)&.strip
 
         args.map! do |arg|
-          arg = time_span(arg) if arg.is_a?(Float)
-          arg
+          arg.is_a?(Float) ? time_span(arg) : arg
         end
 
         opt[:leader]      = [ldr, tag].compact.join(' ')

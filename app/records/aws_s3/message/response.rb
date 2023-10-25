@@ -39,9 +39,9 @@ class AwsS3::Message::Response < AwsS3::Api::Message
     # noinspection RubyScope, RubyMismatchedArgumentType
     create_message_wrapper(opt) do |opt|
       super(nil, opt)
-      self.succeeded   = sids_for(sent)
-      self.failed      = sids_for(src) - succeeded
-      self.messages   += failed.map { |sid| "#{sid} failed" }
+      self.succeeded = sids_for(sent)
+      self.failed    = sids_for(src) - succeeded
+      self.messages.concat(failed.map { |sid| "#{sid} failed" })
       initialize_exec_report(messages, exception)
     end
   end
@@ -59,9 +59,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   # @return [Array<String>]
   #
   def sids_for(src)
-    Array.wrap(src).map { |v|
-      v.try(:submission_id) || v.to_s if v.present?
-    }.compact
+    Array.wrap(src).compact_blank.map! { |v| v.try(:submission_id) || v.to_s }
   end
 
   # ===========================================================================

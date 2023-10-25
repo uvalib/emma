@@ -104,7 +104,7 @@ module LayoutHelper::PageSections
     controller ||= params[:controller]
     action     ||= params[:action]
     entry = controller_configuration(controller, action)
-    types = Array.wrap(type).compact.map(&:to_sym)
+    types = Array.wrap(type).compact.map!(&:to_sym)
     types = %i[description text] if types.blank? || types == %i[description]
     # noinspection RubyMismatchedReturnType
     types.find do |t|

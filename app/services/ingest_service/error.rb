@@ -138,17 +138,16 @@ class IngestService::Error < ApiService::Error
             v
           end
           val.compact!
-          issues +=
-            field.map do |fld, errs|
-              tag = "field '#{fld}'"
-              if errs.size > 1
-                list = errs.map.with_index { |err, idx| "#{idx} - '#{err}'" }
-              else
-                list = "'#{errs.first}'"
-              end
-              "#{tag}: #{list}"
+          field.each_pair do |fld, errs|
+            tag = "field '#{fld}'"
+            if errs.size > 1
+              list = errs.map.with_index { |err, idx| "#{idx} - '#{err}'" }
+            else
+              list = "'#{errs.first}'"
             end
-          issues += val if val.present?
+            issues << "#{tag}: #{list}"
+          end
+          issues.concat(val) if val.present?
         end
 
         issues << 'UNKNOWN PROBLEM' if issues.blank? # TODO: I18n

@@ -202,9 +202,9 @@ module Upload::LookupMethods
     ids  = Array.wrap(opt.delete(:id))
     sids = Array.wrap(opt.delete(:submission_id))
     if items.present?
-      recs = expand_ids(*items).map { |term| id_term(term) }
-      ids  = recs.map { |rec| rec[:id]            } + ids
-      sids = recs.map { |rec| rec[:submission_id] } + sids
+      recs = expand_ids(*items).map! { |term| id_term(term) }
+      ids  = recs.map { |rec| rec[:id]            }.concat(ids)
+      sids = recs.map { |rec| rec[:submission_id] }.concat(sids)
     end
     ids  = ids.compact_blank!.uniq.presence
     sids = sids.compact_blank!.uniq.presence
@@ -243,7 +243,7 @@ module Upload::LookupMethods
       STATE_COLUMNS.map do |key|
         next unless opt.key?(key)
         value = opt.delete(key)
-        false?(value) ? false : Array.wrap(value).compact_blank.map(&:to_sym)
+        false?(value) ? false : Array.wrap(value).compact_blank.map!(&:to_sym)
       end
     if c_states || e_states
       phase, state, edit_state = [WORKFLOW_PHASE_COLUMN, *STATE_COLUMNS]

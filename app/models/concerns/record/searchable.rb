@@ -271,9 +271,9 @@ module Record::Searchable
     ids  = id_key  ? Array.wrap(opt.delete(id_key))  : []
     sids = sid_key ? Array.wrap(opt.delete(sid_key)) : []
     if items.present?
-      recs = expand_ids(*items).map { |term| id_term(term, **id_opt) }
-      ids  = recs.map { |rec| rec[id_key]  } + ids  if id_key
-      sids = recs.map { |rec| rec[sid_key] } + sids if sid_key
+      recs = expand_ids(*items).map! { |term| id_term(term, **id_opt) }
+      ids  = recs.map { |rec| rec[id_key]  }.concat(ids)  if id_key
+      sids = recs.map { |rec| rec[sid_key] }.concat(sids) if sid_key
     end
     ids  = ids.compact_blank!.uniq.presence
     sids = sids.compact_blank!.uniq.presence
@@ -306,7 +306,7 @@ module Record::Searchable
     # === Filter by user
     user_opt = opt.extract!(:user, :user_id)
     if user_column && user_opt.present?
-      users = user_opt.values.flatten.map { |u| User.id_value(u) }.uniq
+      users = user_opt.values.flatten.map! { |u| User.id_value(u) }.uniq
       users = users.first if users.size == 1
       terms << sql_terms(user_column => users, join: :or)
     end

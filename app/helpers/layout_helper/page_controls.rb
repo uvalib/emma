@@ -104,9 +104,12 @@ module LayoutHelper::PageControls
       next if ent.blank?
       ent = ent.first if ent.is_a?(Array) && !ent.many?
       case ent
-        when Hash  then ent.slice!(:ctrlr, :action, :id, :params, :label, :controller)
-        when Array then ent = { ctrlr: ent[0], action: ent[1], id: ent[2] }
-        else            ent = { ctrlr: ctrlr,  action: ent }
+        when Hash
+          ent = ent.slice(:ctrlr, :action, :id, :params, :label, :controller)
+        when Array
+          ent = { ctrlr: ent[0], action: ent[1], id: ent[2] }
+        else
+          ent = { ctrlr: ctrlr,  action: ent }
       end
       ent.compact_blank!
       ent.each_pair { |k, v| ent[k] = v.to_sym unless k == :label }

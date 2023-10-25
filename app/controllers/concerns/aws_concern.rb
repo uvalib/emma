@@ -66,10 +66,10 @@ module AwsConcern
   # @return [Array<Symbol>]
   #
   def get_aws_repositories(default: nil, **prm)
-    values = params_values(prm, *REPOSITORY_PARAMS)
-    values = values.presence || Array.wrap(default).compact.presence
+    values   = params_values(prm, *REPOSITORY_PARAMS).presence
+    values ||= default && Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
-      values = EmmaRepository.values.map(&:to_sym).excluding(:ace)
+      EmmaRepository.values.map(&:to_sym).excluding(:ace)
     else
       values.map! { |v|
         case v.to_s.downcase
@@ -78,12 +78,11 @@ module AwsConcern
           when 'ac', 'ace', /ace/        then :internetArchive
           else Log.debug { "#{__method__}: #{v.inspect}: invalid" }
         end
-      }.compact!
-      values.uniq!
+      }.compact.uniq
+    end.tap do |result|
+      emma = EmmaRepository.default.to_sym
+      result << emma if result.delete(emma)
     end
-    emma = EmmaRepository.default.to_sym
-    values << emma if values.delete(emma)
-    values
   end
 
   # get_aws_deployments
@@ -94,10 +93,10 @@ module AwsConcern
   # @return [Array<Symbol>]
   #
   def get_aws_deployments(default: nil, **prm)
-    values = params_values(prm, *DEPLOYMENT_PARAMS)
-    values = values.presence || Array.wrap(default).compact.presence
+    values   = params_values(prm, *DEPLOYMENT_PARAMS).presence
+    values ||= default && Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
-      values = Deployment.values.map(&:to_sym)
+      Deployment.values.map(&:to_sym)
     else
       values.map! { |v|
         # noinspection SpellCheckingInspection
@@ -106,9 +105,8 @@ module AwsConcern
           when /stag(ing)?/, /dev(elopment)?/ then :staging
           else Log.debug { "#{__method__}: #{v.inspect}: invalid" }
         end
-      }.uniq!
+      }.compact.uniq
     end
-    values
   end
 
   # ===========================================================================
@@ -126,7 +124,7 @@ module AwsConcern
   #
   def params_values(opt, *keys)
     prm = url_parameters(opt.presence)
-    prm.values_at(*keys).compact_blank.first.to_s.downcase.split(/\s*,\s*/)
+    prm.values_at(*keys).compact_blank!.first.to_s.downcase.split(/\s*,\s*/)
   end
 
   # aws_params

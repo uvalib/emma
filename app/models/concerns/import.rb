@@ -60,7 +60,7 @@ module Import
     }
     reject_blanks!(result)
     result.transform_values!(&:uniq)
-    normalize_results(result)
+    normalize_results!(result)
   end
 
   # ===========================================================================
@@ -347,9 +347,9 @@ module Import
   #
   # @return [Hash]
   #
-  def normalize_results(fields)
-    fields.transform_values! do |v|
-      (v.is_a?(Array) && (v.size <= 1)) ? v.first : v
+  def normalize_results!(fields)
+    fields.each_pair do |k, v|
+      fields[k] = v.first if v.is_a?(Array) && !v.many?
     end
   end
 

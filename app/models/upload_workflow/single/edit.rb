@@ -88,7 +88,7 @@ module UploadWorkflow::Single::Edit::Actions
       opt = event_args.extract_options!
       s, f = repository_modify(*record, **opt)
       self.succeeded = s
-      self.failures += f
+      self.failures.concat(f)
     end
     super
   end
@@ -133,7 +133,7 @@ module UploadWorkflow::Single::Edit::Actions
     if record.emma_native?
       s, f, _ = update_in_index(*record)
       self.succeeded = s
-      self.failures += f
+      self.failures.concat(f)
     else
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)

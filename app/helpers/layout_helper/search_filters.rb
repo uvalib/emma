@@ -144,8 +144,7 @@ module LayoutHelper::SearchFilters
       if pairs.is_a?(Hash)
         pairs = pairs.transform_values(&:to_s).to_a
       else
-        pairs = Array.wrap(pairs).compact
-        pairs.uniq!
+        pairs = Array.wrap(pairs).compact.uniq
         pairs.map! { |v| [make_menu_label(menu_name, v, **opt), v.to_s] }
       end
 

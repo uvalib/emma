@@ -245,7 +245,7 @@ module Field::Property
   # @return [Array<Symbol>]
   #
   def symbol_array(item)
-    Array.wrap(item).compact.map(&:to_sym)
+    Array.wrap(item).compact.map!(&:to_sym)
   end
 
   # ===========================================================================

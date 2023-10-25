@@ -104,7 +104,7 @@ module LookupService::Crossref::Properties
   #
   SELECT_ELEMENTS_UPCASE =
     SELECT_ELEMENTS.map { |v|
-      v.downcase if v.match?(/[A-Z]/)
+      v.downcase.freeze if v.match?(/[A-Z]/)
     }.compact.freeze
 
   # select_list

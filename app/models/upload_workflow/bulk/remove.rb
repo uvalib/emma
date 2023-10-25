@@ -171,7 +171,7 @@ module UploadWorkflow::Bulk::Remove::States
           opt  = 'index: false'
           "@succeeded, @failed = bulk_upload_remove(#{args}, #{opt})"
         end
-        self.succeeded += submission.items
+        self.succeeded.concat(submission.items)
         ok = ready?
       else
         ok = true # TODO: Simulate partner repository delete request?

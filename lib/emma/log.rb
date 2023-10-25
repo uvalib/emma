@@ -75,13 +75,13 @@ module Emma::Log
     error = (args.shift if args.first.is_a?(Exception))
     if error.is_a?(YAML::SyntaxError)
       note = (" - #{args.shift}" if args.present?)
-      args.prepend("#{error.class}: #{error.message}#{note}")
+      parts << "#{error.class}: #{error.message}#{note}"
     elsif error
       note = (error.messages[1..].presence if error.respond_to?(:messages))
       note &&= ' - %s' % note.join('; ')
       args << "#{error.message} [#{error.class}]#{note}"
     end
-    message = [*parts, *args].join(': ')
+    message = parts.concat(args).join(': ')
     logger.add(level, message)
     __output(message) unless LOG_TO_STDOUT
   end

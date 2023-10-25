@@ -27,7 +27,7 @@ module FormHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def hidden_input(k, v, id: nil, separator: "\n")
-    id = [id, k].compact_blank.join('-')
+    id = [id, k].compact_blank!.join('-')
     if v.is_a?(Array)
       v.map.with_index(1) { |value, index|
         hidden_field_tag("#{k}[]", value, id: "#{id}-#{index}")

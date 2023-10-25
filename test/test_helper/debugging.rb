@@ -141,9 +141,8 @@ module TestHelper::Debugging
   #
   def show(*items, indent: true, output: true, **opt)
     prefix = show_prefix(indent, default: TEST_DEBUG_FRAME.size.next)
-    items += Array.wrap(yield) if block_given?
-    items.flatten!
-    items.map! { |item|
+    items.concat(Array.wrap(yield)) if block_given?
+    items.flatten.map! { |item|
       if item.is_a?(ActiveRecord::Base)
         show_model(item, output: false, **opt)
       else

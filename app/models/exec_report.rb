@@ -99,10 +99,12 @@ class ExecReport
   # @return [self]
   #
   def add(*src)
-    @parts +=
-      src.flatten.compact_blank.flat_map { |item|
-        item.is_a?(ExecReport) ? item.parts : ExecReport::Part[item]
-      }.compact.tap { |added| @render_html ||= added.any?(&:html_safe?) }
+    added =
+      src.flatten.compact_blank!.flat_map do |v|
+        v.is_a?(ExecReport) ? v.parts : ExecReport::Part[v]
+      end
+    @render_html ||= added.any?(&:html_safe?)
+    @parts.concat(added)
     self
   end
 
@@ -538,12 +540,12 @@ class ExecReport
     # @see #message_part
     #
     def message_portion(src, **opt)
-      parts = Array.wrap(src).uniq.compact_blank!.presence or return
-      sep   = opt[:separator]
+      src = src && Array.wrap(src).compact_blank.uniq.presence or return
+      sep = opt[:separator]
       opt[:separators] = [sep, sep.strip]
-      parts.map! { |v| message_part(v, **opt) }
-      html = opt[:html] || parts.any?(&:html_safe?)
-      html ? html_join(parts, sep) : parts.join(sep)
+      src.map! { |v| message_part(v, **opt) }
+      html = opt[:html] || src.any?(&:html_safe?)
+      html ? html_join(src, sep) : src.join(sep)
     end
 
     # message_part
@@ -1215,11 +1217,11 @@ class ExecReport::Part
     # @see #render_part
     #
     def render_portion(src, **opt)
-      src = Array.wrap(src).uniq.compact_blank!.presence or return
+      src = src && Array.wrap(src).compact_blank.uniq.presence or return
       sep = opt[:separator]
       opt[:separators] = [sep, sep.strip]
-      res = src.map! { |v| render_part(v, **opt) }
-      opt[:html] ? html_join(res, sep) : res.join(sep)
+      src.map! { |v| render_part(v, **opt) }
+      opt[:html] ? html_join(src, sep) : src.join(sep)
     end
 
     # Generate a rendering of a single part of the entry.
@@ -1473,14 +1475,13 @@ class ExecReport::FlashPart < ExecReport::Part
     # @see #render_part
     #
     def render_portion(src, start: nil, **opt)
-      src = Array.wrap(src).uniq.compact_blank!.presence or return
+      src = src && Array.wrap(src).compact_blank.uniq.presence or return
       sep = opt[:separator]
       opt[:separators] = [sep, sep.strip]
-      res =
-        src.map.with_index(start || 1) { |v, pos|
-          render_part(v, **opt.merge!(pos: pos))
-        }
-      opt[:html] ? html_join(res, sep) : res.join(sep) if res.present?
+      idx = start || 1
+      src.map!.with_index(idx) { |v, i| render_part(v, **opt.merge!(pos: i)) }
+      src.compact!
+      opt[:html] ? html_join(src, sep) : src.join(sep) if src.present?
     end
 
     # =========================================================================

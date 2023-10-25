@@ -126,29 +126,13 @@ class LookupJob < ApplicationJob
   #
   def worker_task(record, service, request, **opt)
     job_opt  = opt.extract!(*JOB_OPTIONS)
-    meth     = job_opt[:meth]     || __method__
-    start    = job_opt[:start]    || timestamp
-    status   = job_opt[:status]
-    timeout  = job_opt[:timeout]
-    deadline = job_opt[:deadline] || (timeout && (start + timeout))
-    job_type = job_opt[:job_type] || :worker
+    meth     = job_opt[:meth] ||= __method__
 
     # Perform lookup on the external service.
-    response =
-      LookupService.get_from(service, request).tap do |rsp|
-        # noinspection RubyMismatchedArgumentType
-        overtime = deadline && past_due(deadline)
-        status   = :late if overtime
-        status ||= :done
-        rsp[:class]    = rsp.class.name
-        rsp[:job_id]   = job_id
-        rsp[:job_type] = job_type
-        rsp[:late]     = overtime if overtime
-        rsp[:status]   = JOB_STATUS.dig(job_type, status) || '???'
-      end
-    result = response.to_h
-    error  = response.error
-    diag   = response.diagnostic
+    response = worker_task_execution(service, request, **job_opt)
+    result   = response.to_h
+    error    = response.error
+    diag     = response.diagnostic
 
     # Report results.
     __debug_job(meth, 'OUTPUT') { result }
@@ -157,6 +141,32 @@ class LookupJob < ApplicationJob
 
     # Add out-of-band identification data for the caller.
     result.merge!(active_job_id: job_id)
+  end
+
+  # Perform lookup on the external service.
+  #
+  # @param [Class, LookupService::RemoteService] service
+  # @param [LookupService::Request]              request
+  # @param [Hash]                                opt
+  #
+  # @return [LookupService::Response]
+  #
+  def worker_task_execution(service, request, **opt)
+    start    = opt[:start]    || timestamp
+    timeout  = opt[:timeout]
+    deadline = opt[:deadline] || (timeout && (start + timeout))
+    job_type = opt[:job_type] || :worker
+    status   = opt[:status]   || :done
+
+    LookupService.get_from(service, request).tap do |rsp|
+      # noinspection RubyMismatchedArgumentType
+      status = :late if (overtime = deadline && past_due(deadline))
+      rsp[:class]    = rsp.class.name
+      rsp[:job_id]   = job_id
+      rsp[:job_type] = job_type
+      rsp[:late]     = overtime if overtime
+      rsp[:status]   = JOB_STATUS.dig(job_type, status) || '???'
+    end
   end
 
   # ===========================================================================
@@ -194,55 +204,27 @@ class LookupJob < ApplicationJob
     LookupChannel.initial_response(payload, **opt)
 
     # Spawn worker tasks.
-    job_opt.merge!(job_type: :worker, fatal: false)
-    job_opt[:stream_name] = opt[:stream_name]
+    j_opt = opt.slice(:stream_name).merge!(job_opt)
+    j_opt.merge!(job_type: :worker, fatal: false)
     job_list =
       services.map { |service|
-        LookupJob.perform_later(service, request, job_opt)&.job_id or
+        LookupJob.perform_later(service, request, j_opt)&.job_id or
           Log.warn("#{meth}: #{service}: job failed")
       }.compact
 
     # Await task completions.
-    # noinspection RubyMismatchedArgumentType
     job_table = ApplicationJob::Table.new(job_list)
     notifications_subscribe do |_, _, _, _, event_payload|
-
+      # Because this block will be invoked upon completion of any GoodJob job,
+      # only pay attention to the completion of a job that was started by this
+      # waiter instance.
       data   = event_payload&.dig(:result)&.try(:value)
       job_id = data&.dig(:active_job_id)
-
-      # Because this block will be invoked by the completion of any GoodJob
-      # job, only pay attention to the completion of a job that was started
-      # by this waiter instance.
       if job_table.include?(job_id)
-
-        # Update the table with information about the completed job.
-        finish = timestamp
+        w_opt = { job_id: job_id, waiter_id: waiter_id, **job_opt, **opt }
         # noinspection RubyMismatchedArgumentType
-        overtime = deadline && past_due(deadline, finish)
-        job_table[job_id] = data.except(:active_job_id)
-        job_table[job_id][:late] ||= overtime if overtime
-
-        # If all jobs spawned by this waiter have completed then send the
-        # final response back to the client and remove this waiter instance
-        # from the list of event subscribers.
-        if job_table.completed?
+        if (result = worker_task_completion(job_table, data, request, **w_opt))
           notifications_unsubscribe
-          total, error = job_table.summarize.values_at(:total, :error)
-          from   = job_table.result_values(:service).flatten.uniq
-          status = overtime ? :timeout : :complete
-          result =
-            LookupChannel::LookupResponse.new(**opt).tap { |rsp|
-              rsp[:count]      = total
-              rsp[:data]       = LookupService.merge_data(job_table, request)
-              rsp[:discard]    = error if error
-              rsp[:job_id]     = waiter_id
-              rsp[:job_type]   = job_type
-              rsp[:service]    = from
-              rsp[:status]     = JOB_STATUS.dig(job_type, status) || '???'
-              rsp[:start_time] = start
-              rsp[:end_time]   = finish
-              rsp[:duration]   = finish - start
-            }.compact_blank!
           record.update(output: result)
           LookupChannel.lookup_response(result, **opt)
         end
@@ -250,6 +232,61 @@ class LookupJob < ApplicationJob
     end
 
     payload
+  end
+
+  # Update the appropriate *job_table* entry and if all jobs spawned by this
+  # waiter have completed then send the final response back to the client.
+  #
+  # @param [ApplicationJob::Table]  job_table
+  # @param [Hash]                   data
+  # @param [LookupService::Request] request
+  # @param [Hash]                   opt
+  #
+  # @return [LookupChannel::LookupResponse]   If all tasks have completed.
+  # @return [nil]                             If worker task(s) are pending.
+  #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
+  def worker_task_completion(job_table, data, request, **opt)
+    job_opt   = opt.extract!(:job_id, :waiter_id, *JOB_OPTIONS)
+    job_id    = job_opt[:job_id]
+    timeout   = job_opt[:timeout]
+    start     = job_opt[:start]    || timestamp
+    deadline  = job_opt[:deadline] || timeout && (start + timeout)
+
+    # Update the table with information about the completed job.
+    finish    = timestamp
+    overtime  = deadline && past_due(deadline, finish)
+    job_table[job_id] = data.except(:active_job_id)
+    job_table[job_id][:late] ||= overtime if overtime
+
+    # If there are still jobs spawned by this waiter then keep waiting.
+    return unless job_table.all_completed?
+
+    # If all jobs spawned by this waiter have completed then send the final
+    # response back to the client.
+    cnt, err  = job_table.summarize.values_at(:total, :error)
+    waiter_id = job_opt[:waiter_id]
+    job_type  = job_opt[:job_type] || :waiter
+    status    = overtime ? :timeout : :complete
+
+    LookupChannel::LookupResponse.new(**opt).tap do |rsp|
+      rsp[:count]      = cnt
+      rsp[:data]       = LookupService.merge_data(job_table, request)
+      rsp[:discard]    = err if err
+      rsp[:job_id]     = waiter_id
+      rsp[:job_type]   = job_type
+      rsp[:service]    = job_table.result_values(:service).flatten.uniq
+      rsp[:status]     = JOB_STATUS.dig(job_type, status) || '???'
+      rsp[:start_time] = start
+      rsp[:end_time]   = finish
+      rsp[:duration]   = finish - start
+    end
+
+  rescue => error
+    __output "JOB ERROR: #{__method__}: #{error.full_message}"
+    raise error
   end
 
 end

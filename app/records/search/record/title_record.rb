@@ -502,7 +502,7 @@ class Search::Record::TitleRecord < Search::Api::Record
         fields.each do |field|
           next unless (value = field_value(rec, field))
           array[field] ||= value.is_a?(Array)
-          result[field] += Array.wrap(value)
+          result[field].concat(Array.wrap(value))
         end
       end
       result.map { |field, value|
@@ -1196,8 +1196,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   def get_format_counts
     result  = {}
-    parts   = field_hierarchy[:parts] || []
-    formats = parts.flat_map { |part| part[:formats] }
+    formats = field_hierarchy[:parts]&.flat_map { |part| part[:formats] } || []
     formats.each do |format|
       next unless (fmt = format.dig(:bibliographic, :dc_format))
       result[fmt] ||= 0

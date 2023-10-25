@@ -68,7 +68,7 @@ module AccountConcern
   public
 
   def find_or_match_keys
-    [*super, *User.field_names, *PASSWORD_KEYS].tap { |keys| keys.uniq! }
+    [*super, *User.field_names, *PASSWORD_KEYS].uniq
   end
 
   # Start a new (un-persisted) User.

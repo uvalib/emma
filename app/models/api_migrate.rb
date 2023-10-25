@@ -225,8 +225,8 @@ class ApiMigrate
     #
     def translate(value, translations, unique: true, **)
       return value if value.blank? || translations.blank?
-      is_array = value.is_a?(Array)
-      value    = is_array ? value.dup : to_array(value)
+      array = value.is_a?(Array)
+      value = array ? value.dup : to_array(value)
       value.map! do |item|
         translations.find do |new_item, old_item_patterns|
           found =
@@ -237,7 +237,7 @@ class ApiMigrate
         end || item
       end
       value.uniq! if unique
-      is_array ? value : from_array(value)
+      array ? value : from_array(value)
     end
 
     # Transform the value after #translate by applying each requested method.
@@ -483,7 +483,7 @@ class ApiMigrate
     # @return [Array<String>]
     #
     def normalize_identifier(value)
-      PublicationIdentifier.objects(value).compact.map(&:to_s).uniq
+      PublicationIdentifier.objects(value).compact.map!(&:to_s).uniq
     end
 
     # normalize_day
@@ -538,7 +538,7 @@ class ApiMigrate
     #
     def normalize_text_list(value)
       value = Array.wrap(value).join("\n") unless value.is_a?(String)
-      value.split(/(?<=\w)\.(?=\s|\z)|[,;|\t\n]/).map(&:strip).compact_blank!
+      value.split(/(?<=\w)\.(?=\s|\z)|[,;|\t\n]/).map!(&:strip).compact_blank!
     end
 
     # normalize_coverage

@@ -829,8 +829,8 @@ module UploadWorkflow::External
       else
         requests = opt.delete(:requests)
         s, f = repository_removals(requests, **opt)
-        succeeded += s
-        failed    += f
+        succeeded.concat(s)
+        failed.concat(f)
       end
     end
 
@@ -876,8 +876,8 @@ module UploadWorkflow::External
       opt[:bulk][:window] = { min: min, max: max }
       __debug_line(dbg) { "records #{min} to #{max}" }
       s, f, _ = send(op, batch, **opt)
-      succeeded += s
-      failed    += f
+      succeeded.concat(s)
+      failed.concat(f)
     end
     __debug_line(dbg) { { succeeded: succeeded.size, failed: failed.size } }
     return succeeded, failed
@@ -1182,8 +1182,9 @@ module UploadWorkflow::External
         Log.info { "#{__method__}: removed: #{sids}" }
         rollback.reject! { |item| sids.include?(item.submission_id) }
       end
-      succeeded = [] if atomic
-      failed += kept if kept.present?
+      succeeded = []      if atomic
+      # noinspection RubyMismatchedArgumentType
+      failed.concat(kept) if kept.present?
       rollback.each(&:delete_file)
     end
     return succeeded, failed, rollback
@@ -1289,16 +1290,16 @@ module UploadWorkflow::External
     if by_index.present?
       errors.except!(*by_index.keys)
       by_index.transform_keys! { |idx| Upload.sid_for(items[idx-1]) }
-      sids   += by_index.keys
-      failed += by_index.map { |sid, msg| FlashPart.new(sid, msg) }
+      sids.concat   by_index.keys
+      failed.concat by_index.map { |sid, msg| FlashPart.new(sid, msg) }
     end
 
     # Errors associated with item submission ID.
     by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
     if by_sid.present?
       errors.except!(*by_sid.keys)
-      sids   += by_sid.keys
-      failed += by_sid.map { |sid, msg| FlashPart.new(sid, msg) }
+      sids.concat   by_sid.keys
+      failed.concat by_sid.map { |sid, msg| FlashPart.new(sid, msg) }
     end
 
     # Remaining (general) errors indicate that there was a problem with the
@@ -1306,7 +1307,7 @@ module UploadWorkflow::External
     if errors.present?
       failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
     elsif sids.present?
-      sids = sids.map { |v| Upload.sid_for(v) }.uniq
+      sids = sids.map! { |v| Upload.sid_for(v) }.uniq
       rollback, succeeded =
         items.partition { |itm| sids.include?(itm.submission_id) }
     end
@@ -1507,8 +1508,8 @@ module UploadWorkflow::External
     repository_requests(items).each_pair do |_repo, repo_items|
       repo_items.map! { |item| Upload.record_id(item) }
       s, f = repository_remove(*repo_items, **opt)
-      succeeded += s
-      failed    += f
+      succeeded.concat(s)
+      failed.concat(f)
     end
     return succeeded, failed
   end
@@ -1540,8 +1541,8 @@ module UploadWorkflow::External
     repository_requests(items).each_pair do |_repo, repo_items|
       repo_items.map! { |item| Upload.record_id(item) }
       s, f = repository_dequeue(*repo_items, **opt)
-      succeeded += s
-      failed    += f
+      succeeded.concat(s)
+      failed.concat(f)
     end
     return succeeded, failed
   end
@@ -1573,18 +1574,15 @@ module UploadWorkflow::External
   #   @return [Hash{String=>Array<Upload>}]
   #
   def repository_requests(items, empty_key: false)
-    return {} if items.blank?
+    items = items.flatten.compact_blank! if items.is_a?(Array)
+    items = [items]                      if items.is_a?(Upload)
     case items
-      when Array, Upload
-        items  = (items.is_a?(Array) ? items.flatten : [items]).compact_blank
-        result = items.group_by { |request| Upload.repository_of(request) }
-      when Hash
-        result = items.transform_values { |requests| Array.wrap(requests) }
-      else
-        result = {}
-        Log.error { "#{__method__}: expected 'items' type: #{items.class}" }
-    end
-    empty_key ? result : result.delete_if { |repo, _| repo.blank? }
+      when Array then items.group_by { |req| Upload.repository_of(req) }
+      when Hash  then items.transform_values { |reqs| Array.wrap(reqs) }
+      else Log.error { "#{__method__}: unexpected type: #{items.class}" }
+    end.tap do |result|
+      result&.reject! { |repo, _| repo.blank? } unless empty_key
+    end || {}
   end
 
 end
@@ -1685,7 +1683,7 @@ module UploadWorkflow::Actions
           end
         end
       else
-        self.failures += repo_items
+        self.failures.concat(repo_items)
       end
     end
   end
@@ -1704,7 +1702,7 @@ module UploadWorkflow::Actions
     opt.reverse_merge!(model_options.all)
     s, f = batch_upload_remove(event_args, **opt)
     self.succeeded = s
-    self.failures += f
+    self.failures.concat(f)
   end
 
   # wf_cancel_submission

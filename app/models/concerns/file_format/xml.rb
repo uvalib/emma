@@ -28,9 +28,7 @@ module FileFormat::Xml
   def metadata
     @metadata ||=
       OpenStruct.new(
-        retrieve_metadata.transform_values { |v|
-          v.is_a?(Array) && v.uniq || v
-        }
+        retrieve_metadata.transform_values { |v| v.is_a?(Array) ? v.uniq : v }
       )
   end
 

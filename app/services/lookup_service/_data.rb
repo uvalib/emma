@@ -80,16 +80,19 @@ class LookupService::Data
   # @return [Hash{Symbol=>Array<LookupService::Data::Item>}]
   #
   def make_table(items)
-    case items
-      when Hash  then items = items.values.flatten
-      when Array then items = items.flatten
-      else            items = [items]
-    end
-    items.compact_blank.reduce({}) do |result, item|
+    result = {}
+    items  = items.values  if items.is_a?(Hash)
+    items  = items.flatten if items.is_a?(Array)
+    Array.wrap(items).compact_blank!.each do |item|
       item = LookupService::Data::Item.wrap(item)
       key  = item.identifier.to_sym
-      result.merge!(key => [*result[key], item])
+      case result[key]
+        when Array then result[key] << item
+        when nil   then result[key] = [item]
+        else            result[key] = [result[key], item]
+      end
     end
+    result
   end
 
   # transform_table_items

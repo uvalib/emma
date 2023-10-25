@@ -99,7 +99,7 @@ module Representable
           end
         return if mode.blank?
 
-        args += Array.wrap(yield) if block_given?
+        args.concat(Array.wrap(yield)) if block_given?
         lead  = ["#{LEADER}#{mode}", leader, args.shift]
         sep   = separator || SEPARATOR
 
@@ -127,7 +127,7 @@ module Representable
               "#{k} = #{v.inspect}"
             end
           end
-        items += args
+        items.concat(args)
         items.sort_by!(&:size)
         items.map! { |item| item.truncate(1024) }
 

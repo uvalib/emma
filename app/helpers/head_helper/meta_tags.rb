@@ -188,9 +188,9 @@ module HeadHelper::MetaTags
     # If *value* is one or more Symbols, *key* is assumed to be :robots (or a
     # variant like :googlebot); if the tag is determined to be non-functional
     # then the result will be *nil*.
-    value = value.is_a?(Array) ? value.dup : [value]
+    value = Array.wrap(value)
     if value.any? { |v| v.is_a?(Symbol) }
-      value.map! { |v| v.to_s.downcase }.sort!.uniq!
+      value = value.map { |v| v.to_s.downcase }.sort.uniq
       return if (value == %w[index]) || (value == %w[follow index])
       separator = ','
     end

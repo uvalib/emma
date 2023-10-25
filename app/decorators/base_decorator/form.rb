@@ -287,7 +287,7 @@ module BaseDecorator::Form
 
     # Other content if provided.
     # noinspection RubyMismatchedArgumentType
-    parts += Array.wrap(yield(field, raw_val, prop, **opt)) if block_given?
+    parts.concat Array.wrap(yield(field, raw_val, prop, **opt)) if block_given?
 
     safe_join(parts)
   end
@@ -930,7 +930,7 @@ module BaseDecorator::Form
     # noinspection RubyMismatchedArgumentType
     buttons.unshift(f) if f && !f.is_a?(ActionView::Helpers::FormBuilder)
     buttons = form_buttons(**fb_opt, **t_opt) if buttons.blank?
-    buttons = yield(buttons)                  if block_given?
+    buttons = yield(buttons) || buttons       if block_given?
     prepend_css!(opt, css)
     html_div(*buttons, **opt)
   end

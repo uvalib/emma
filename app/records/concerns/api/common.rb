@@ -851,7 +851,7 @@ class IsoDate < ScalarType
       # off-the-wall.)
       tz = nil
       value.sub!(ASN_1_TIMEZONE) do |match|
-        tz = (match == ZULU) ? match : $1 + [$2, $4].compact_blank.join(':')
+        tz = (match == ZULU) ? match : $1 + [$2, $4].compact_blank!.join(':')
         '' # Remove the matched substring from *value*.
       end
 
@@ -861,9 +861,9 @@ class IsoDate < ScalarType
       result = []
       # noinspection RubyResolve
       value.sub!(ASN_1_DATETIME) do
-        result << [$1, $3, $5 ].compact_blank.join('/') # Date parts
-        result << [$7, $9, $10].compact_blank.join(':') # Time parts
-        result << tz                                    # Time zone
+        result << [$1, $3, $5 ].compact_blank!.join('/') # Date parts
+        result << [$7, $9, $10].compact_blank!.join(':') # Time parts
+        result << tz                                     # Time zone
       end
       result.compact_blank!.join(' ')
     end

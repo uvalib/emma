@@ -49,7 +49,7 @@ class ApiService
   # @param [Hash]        opt          Stored in @options
   #
   def initialize(user: nil, base_url: nil, **opt)
-    @options  = opt.compact_blank
+    @options  = opt.compact_blank!
     @base_url = base_url
     set_user(user)
   end

@@ -102,7 +102,7 @@ module Emma::Common::HtmlMethods
     sep   = separator ? ERB::Util.unwrapped_html_escape(separator) : ''
     array = items.is_a?(Array) ? items.flatten : Array.wrap(items)
     added = (yield(array) if block_given?)
-    array += Array.wrap(added) unless added.nil? || added.equal?(array)
+    array.concat(Array.wrap(added)) unless added.nil? || added.equal?(array)
     array.map! { |v| ERB::Util.unwrapped_html_escape(v) }.join(sep).html_safe
   end
 

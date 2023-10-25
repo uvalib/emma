@@ -250,7 +250,7 @@ class Upload < ApplicationRecord
     __debug_items(binding)
     attributes  = attributes.fields if attributes.is_a?(Upload)
     opt, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPTIONS)
-    op_mode     = opt.slice(*ASSIGN_MODES).compact_blank.keys.first
+    op_mode     = opt.slice(*ASSIGN_MODES).compact_blank!.keys.first
 
     set_model_options(opt)
 
@@ -290,13 +290,13 @@ class Upload < ApplicationRecord
     # updated depending on the workflow state of the item.
     allowed = []
     if being_created?
-      allowed += DATA_COLUMNS + %i[repository submission_id updated_at]
+      allowed.concat(DATA_COLUMNS, %i[repository submission_id updated_at])
     elsif being_modified? || (op_mode == :finishing_edit)
-      allowed += DATA_COLUMNS + %i[edit_user edited_at]
+      allowed.concat(DATA_COLUMNS, %i[edit_user edited_at])
     elsif being_removed?
-      allowed += %i[updated_at]
+      allowed.concat(%i[updated_at])
     elsif under_review?
-      allowed += REVIEW_COLUMNS + %i[user_id]
+      allowed.concat(REVIEW_COLUMNS, %i[user_id])
     end
     allowed << :created_at if new_record
     allowed << :id         if new_record && self[:id].nil?

@@ -677,7 +677,7 @@ class SearchDecorator
     scores = object.try(:get_scores).presence or return
     scores.compact!
     types = scores.keys.map { |type| type.to_s.delete_suffix('_score') }
-    types = [types[0...-1].join(', '), types[-1]].compact_blank.join(' and ')
+    types = [types[0...-1].join(', '), types[-1]].compact_blank!.join(' and ')
     tip   = +'This is a guess at the relevancy "score" for this item'
     tip  << " based on its #{types} metadata" if types.present?
     tip  << '.'

@@ -58,8 +58,8 @@ module DataConcern
     @data_params ||=
       request_parameters.tap do |prm|
         columns = prm.extract!(*DATA_COLUMN_PARAMETERS).compact.values.first
-        prm[:columns]  = array_param(columns)&.map(&:to_sym)&.uniq
-        prm[:tables]   = array_param(prm[:tables])&.map(&:tableize)&.uniq
+        prm[:columns]  = array_param(columns)&.map!(&:to_sym)&.uniq
+        prm[:tables]   = array_param(prm[:tables])&.map!(&:tableize)&.uniq
         prm[:headings] = !false?(prm[:headings])
         prm[:html]     = true?(prm[:html]) || (prm[:format] == 'html')
         prm.slice!(*DATA_PARAMETERS)
@@ -80,8 +80,8 @@ module DataConcern
   # @return [Array<String>, nil]      *nil* if *value* is *nil*.
   #
   def array_param(value)
-    value = value.split(',')                        if value.is_a?(String)
-    value.map { |s| s.to_s.strip.presence }.compact if value.is_a?(Array)
+    value = value.split(',')                      if value.is_a?(String)
+    value.map { |s| s.to_s.strip }.compact_blank! if value.is_a?(Array)
   end
 
   # ===========================================================================

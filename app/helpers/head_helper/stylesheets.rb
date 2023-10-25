@@ -20,7 +20,7 @@ module HeadHelper::Stylesheets
   private
 
   # @type [Array<String>]
-  DEFAULT_PAGE_STYLESHEETS = HEAD_CONFIG[:stylesheets] || []
+  DEFAULT_PAGE_STYLESHEETS = HEAD_CONFIG[:stylesheets]&.compact_blank || []
 
   # ===========================================================================
   # :section:
@@ -58,9 +58,8 @@ module HeadHelper::Stylesheets
   # @yieldreturn [String, Array<String>]
   #
   def set_page_stylesheets(*sources)
-    @page_stylesheets = []
-    @page_stylesheets += sources
-    @page_stylesheets += Array.wrap(yield) if block_given?
+    @page_stylesheets = sources
+    @page_stylesheets.concat(Array.wrap(yield)) if block_given?
     @page_stylesheets
   end
 
@@ -77,8 +76,8 @@ module HeadHelper::Stylesheets
   #
   def append_page_stylesheets(*sources)
     @page_stylesheets ||= DEFAULT_PAGE_STYLESHEETS.dup
-    @page_stylesheets += sources
-    @page_stylesheets += Array.wrap(yield) if block_given?
+    @page_stylesheets.concat(sources)
+    @page_stylesheets.concat(Array.wrap(yield)) if block_given?
     @page_stylesheets
   end
 
@@ -89,10 +88,9 @@ module HeadHelper::Stylesheets
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_stylesheets(**opt)
-    @page_stylesheets ||= DEFAULT_PAGE_STYLESHEETS.dup
-    @page_stylesheets.flatten!
-    @page_stylesheets.compact_blank!
-    stylesheet_link_tag(*@page_stylesheets, opt) << app_stylesheet(**opt)
+    items   = @page_stylesheets&.flatten&.compact_blank!&.uniq
+    items ||= DEFAULT_PAGE_STYLESHEETS
+    stylesheet_link_tag(*items, opt) << app_stylesheet(**opt)
   end
 
   # ===========================================================================

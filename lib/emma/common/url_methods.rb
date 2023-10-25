@@ -50,7 +50,7 @@ module Emma::Common::UrlMethods
     opt.reverse_merge!(args.extract_options!) if args.last.is_a?(Hash)
     url = args.flatten.compact.join('/').lstrip.sub(/[?&\s]+$/, '')
     url, query = url.split('?', 2)
-    parts = query.to_s.split('&').compact_blank
+    parts = query.to_s.split('&').compact_blank!
     first = (parts.shift unless parts.blank? || parts.first.include?('='))
     query = url_query(*parts, **opt).presence
     url << '?'   if first || query

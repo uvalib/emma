@@ -122,7 +122,7 @@ module Api::Record::Associations
     # @return [void]
     #
     def all_from(other, except: nil, **)
-      except &&= Array.wrap(except).compact.map(&:to_sym)
+      except &&= Array.wrap(except).compact.map!(&:to_sym)
       other.property_defaults.each_pair do |name, default|
         next if except&.include?(name.to_sym)
         add_property(name, default)

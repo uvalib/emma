@@ -26,7 +26,7 @@ if respond_to?(:rails_application?) && rails_application?
   ]
   if false # if application_deployed? || !development_build?
     # === Amazon Web Services
-    vars += %i[AWS_REGION AWS_BUCKET AWS_ACCESS_KEY_ID AWS_SECRET_KEY]
+    vars.push(:AWS_REGION, :AWS_BUCKET, :AWS_ACCESS_KEY_ID, :AWS_SECRET_KEY)
   end
   vars.each do |var|
     if self.class.const_defined?(var)

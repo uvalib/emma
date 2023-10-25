@@ -145,6 +145,10 @@ module Emma::Common::FormatMethods
   #
   SPRINTF_FMT_NAMED_REFERENCE: Regexp
 
+  # @private
+  # @type [Array<Regexp>]
+  SPRINTF_NAMED_REF_PATTERNS: Array[Regexp]
+
   # Extract the named references in a format string.
   #
   # @param [String]                text   String with #sprintf formatting.
@@ -154,7 +158,7 @@ module Emma::Common::FormatMethods
   #
   # @see Kernel#sprintf
   #
-  def named_references: (String text, ?(Regexp|Array[Regexp]|nil) match) -> symArray
+  def named_references: (String text, ?(Array[Regexp]|Regexp) match) -> symArray
 
   # Match a named reference along with "%<name>s" the format portion.
   #

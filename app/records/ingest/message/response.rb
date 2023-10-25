@@ -38,7 +38,7 @@ class Ingest::Message::Response < Ingest::Api::Message
       super(nil, opt)
       # noinspection RubyMismatchedArgumentType
       initialize_exec_report(exception)
-      self.messages += exec_report.error_messages
+      self.messages.concat(exec_report.error_messages)
     end
   end
 

@@ -37,8 +37,7 @@ module Manifest::EmmaIdentification
   # @return [Array<String>]
   #
   def group_ids(*ids, **)
-    ids.sort!.uniq!
-    ids
+    ids.sort.uniq
   end
 
   # There is no "minimum" UUID.

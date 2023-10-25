@@ -70,8 +70,8 @@ module Emma::Common::HashMethods
   private
 
   def gather_keys(*keys)
-    keys += Array.wrap(yield) if block_given?
-    keys.flatten.compact_blank!.map!(&:to_sym).tap(&:uniq!)
+    keys.concat(Array.wrap(yield)) if block_given?
+    keys.flatten.compact_blank!.map!(&:to_sym).uniq
   end
 
   # ===========================================================================

@@ -60,7 +60,7 @@ class RunState < Hash
     I18n.t('emma.health.run_state.state', default: {}).map { |state, entry|
       values = { state: state.to_s }.merge!(entry[:property] || {})
       [state, values]
-    }.compact.to_h.deep_freeze
+    }.to_h.deep_freeze
 
   # * AVAILABLE_STATUS references the run state for normal operation.
   # * UNAVAILABLE_STATUS is the run state for general system unavailability.
@@ -190,7 +190,7 @@ class RunState < Hash
         }.compact!
         attr_values = {}.merge!(*others)
       end
-      attr_values.compact.each do |attr, value|
+      attr_values.compact.each_pair do |attr, value|
         value = normalize_value(value)
         next if value.nil?
         case attr

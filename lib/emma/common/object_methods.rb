@@ -47,10 +47,11 @@ module Emma::Common::ObjectMethods
   # @return [Class, nil]
   #
   def to_class(item)
-    return item if item.nil? || item.is_a?(Class)
-    name = item.is_a?(Symbol) ? item.to_s : item
-    name = name.class.to_s unless name.is_a?(String)
-    name.underscore.delete_suffix('_controller').classify.safe_constantize or
+    return if item.blank?
+    name = item
+    name = name.class unless [Symbol, String, Class].any? { |t| name.is_a?(t) }
+    name = name.to_s.underscore.delete_suffix('_controller').classify
+    name.safe_constantize or
       Log.warn { "#{__method__}: invalid: #{item.inspect}" }
   end
 

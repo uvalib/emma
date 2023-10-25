@@ -18,7 +18,7 @@ module HeadHelper::Scripts
   private
 
   # @type [Array<String>]
-  DEFAULT_PAGE_JAVASCRIPTS = HEAD_CONFIG[:javascripts] || []
+  DEFAULT_PAGE_JAVASCRIPTS = HEAD_CONFIG[:javascripts]&.compact_blank || []
 
   # ===========================================================================
   # :section:
@@ -56,9 +56,8 @@ module HeadHelper::Scripts
   # @yieldreturn [String, Array<String>]
   #
   def set_page_javascripts(*sources)
-    @page_javascript = []
-    @page_javascript += sources
-    @page_javascript += Array.wrap(yield) if block_given?
+    @page_javascript = sources
+    @page_javascript.concat(Array.wrap(yield)) if block_given?
     @page_javascript
   end
 
@@ -75,8 +74,8 @@ module HeadHelper::Scripts
   #
   def append_page_javascripts(*sources)
     @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
-    @page_javascript += sources
-    @page_javascript += Array.wrap(yield) if block_given?
+    @page_javascript.concat(sources)
+    @page_javascript.concat(Array.wrap(yield)) if block_given?
     @page_javascript
   end
 
@@ -87,11 +86,10 @@ module HeadHelper::Scripts
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_javascripts(**opt)
-    @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
-    @page_javascript.flatten!
-    @page_javascript.compact_blank!
-    result = []
-    result << javascript_include_tag(*@page_javascript, opt)
+    items   = @page_javascript&.flatten&.compact_blank!&.uniq
+    items ||= DEFAULT_PAGE_JAVASCRIPTS
+    result  = []
+    result << javascript_include_tag(*items, opt)
     result << app_javascript(**opt)
     if defined?(CapybaraLockstep) && CapybaraLockstep.active
       result << capybara_lockstep(opt)

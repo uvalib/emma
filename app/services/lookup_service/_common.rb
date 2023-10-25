@@ -59,12 +59,12 @@ module LookupService::Common
   #
   def id_split(item)
     case item
-      when Array                 then array = item.flat_map { |v| id_split(v) }
-      when String                then array = item.split(/[ \t]*[,;\n]+[ \t]*/)
-      when PublicationIdentifier then array = Array.wrap(item)
-      else                            array = Array.wrap(item).map(&:to_s)
+      when Array                 then item = item.flat_map { |v| id_split(v) }
+      when String                then item = item.split(/[ \t]*[,;\n]+[ \t]*/)
+      when PublicationIdentifier then item = item.presence
+      else                            item = item&.to_s
     end
-    array.compact_blank!
+    Array.wrap(item).compact_blank!
   end
 
   # Transform a type/ID pair.

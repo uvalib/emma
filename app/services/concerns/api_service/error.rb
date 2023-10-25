@@ -129,7 +129,7 @@ class ApiService::Error < Api::Error
       error_description ||=
         if (data = json_parse(body, symbolize_keys: false, log: false))
           data = data.compact
-          data = data.first if data.is_a?(Array) && (data.size <= 1)
+          data = data.first if data.is_a?(Array) && !data.many?
           # noinspection RubyMismatchedArgumentType
           extract_json(data).presence
         end
@@ -141,7 +141,7 @@ class ApiService::Error < Api::Error
         err = error_description.presence
         aws = "AWS error #{aws_error.inspect}"
         aws = '(%s)' % aws if err
-        err = err.first if err.is_a?(Array) && (err.size == 1)
+        err = err.first if err.is_a?(Array) && !err.many?
         s   = (' ' if err.is_a?(String) && !err.match?(/\s$/))
         error_description = err.is_a?(Array) ? [*err, aws] : "#{err}#{s}#{aws}"
       end
@@ -254,7 +254,7 @@ class ApiService::Error < Api::Error
             next unless msg.delete_prefix!("#{ERROR_TAG}=")
           end
           msg.remove(/\\"/)
-        }.compact_blank.presence
+        }.compact_blank!.presence
       result ||= src['message'].presence
       result ||= src.values.flat_map { |v| v if v.is_a?(Array) }
       Array.wrap(result || src).compact

@@ -24,7 +24,7 @@ module SearchCallConcern
   # @type [Array<Symbol>]
   SC_PARAMETERS =
     [*SearchCall.field_names, *SearchCall::PARAMETER_MAP.keys]
-      .excluding(:id).sort.uniq.freeze
+      .excluding(:id).sort.uniq.deep_freeze
 
   # Columns searched for generic (:like) matches.
   #

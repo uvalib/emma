@@ -129,7 +129,6 @@ module LayoutHelper::SearchBar
 
     # A search box row will be created for every search type.
     fields ||= types
-    fields   = fields.dup  if fields.is_a?(Array)
     fields   = fields.keys if fields.is_a?(Hash)
     fields   = filter(fields, only: only, except: except)
 
@@ -607,7 +606,7 @@ module LayoutHelper::SearchBar
   # @return [Array]                   A modified copy of *obj*.
   #
   def filter(obj, only: nil, except: nil, **)
-    array = Array.wrap(obj).map { |v| v&.to_sym }
+    array = Array.wrap(obj).compact.map!(&:to_sym)
     filter!(array, only: only, except: except)
   end
 
@@ -620,8 +619,8 @@ module LayoutHelper::SearchBar
   # @return [Array]                   The original object, possibly modified.
   #
   def filter!(array, only: nil, except: nil, **)
-    only   &&= Array.wrap(only).map { |v| v&.to_sym }.compact
-    except &&= Array.wrap(except).map { |v| v&.to_sym }.compact
+    only   &&= Array.wrap(only).compact.map!(&:to_sym)
+    except &&= Array.wrap(except).compact.map!(&:to_sym)
     array.select! { |v| only.include?(v) }   if only
     array.reject! { |v| except.include?(v) } if except
     array

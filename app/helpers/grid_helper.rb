@@ -92,7 +92,7 @@ module GridHelper
   def grid_cell_classes(*classes, **opt)
     row = positive(opt[:row])
     col = positive(opt[:col])
-    classes += Array.wrap(opt[:class])
+    classes.concat(Array.wrap(opt[:class])) if opt[:class]
     classes << "row-#{row}" if row
     classes << "col-#{col}" if col
     classes << 'row-first'  if row == 1
