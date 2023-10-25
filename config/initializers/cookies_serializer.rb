@@ -3,4 +3,4 @@
 # Specify a serializer for the signed and encrypted cookie jars.
 # Valid options are :json, :marshal, and :hybrid.  Rails 7 default is :json.
 # noinspection RubyResolve
-#Rails.application.config.action_dispatch.cookies_serializer = :json
+#Rails.configuration.action_dispatch.cookies_serializer = :json

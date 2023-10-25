@@ -211,7 +211,7 @@ module Serializable
         HERE_DOC
         serializer = base.safe_const_get(:Serializer, false)
         # noinspection RubyResolve
-        Rails.application.config.active_job.tap do |cfg|
+        Rails.configuration.active_job.tap do |cfg|
           # NOTE: Under normal circumstances custom_serializers will
           #   already exist.  This extra check is just for the sake of
           #   executing a single file via "rails runner" from the desktop.

@@ -12,9 +12,9 @@ unless production_deployment?
   end
 
   # noinspection RubyResolve
-  Rails.application.config.action_mailer.observers = %w[EmailDeliveryObserver]
+  Rails.configuration.action_mailer.observers = %w[EmailDeliveryObserver]
 
 end
 
 # noinspection RubyResolve
-__output "=> Mailer config #{Rails.application.config.action_mailer.smtp_settings.inspect}"
+__output "=> Mailer config #{Rails.configuration.action_mailer.smtp_settings.inspect}"

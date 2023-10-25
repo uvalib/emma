@@ -633,8 +633,8 @@ module Record::Steppable
 
         end
 
-        Rails.application.config.active_job.custom_serializers ||= []
-        Rails.application.config.active_job.custom_serializers << #{serializer}
+        Rails.configuration.active_job.custom_serializers ||= []
+        Rails.configuration.active_job.custom_serializers << #{serializer}
 
       HERE_DOC
 

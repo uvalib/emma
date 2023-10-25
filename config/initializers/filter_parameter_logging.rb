@@ -9,6 +9,6 @@
 # dissemination of sensitive information. See ActiveSupport::ParameterFilter
 # documentation for supported notations and behaviors.
 # noinspection SpellCheckingInspection
-Rails.application.config.filter_parameters +=
+Rails.configuration.filter_parameters +=
   %i[passw secret token _key crypt salt certificate otp ssn]
-Rails.application.config.filter_parameters = [] if not_deployed?
+Rails.configuration.filter_parameters = [] if not_deployed?

@@ -11,7 +11,7 @@
 
 CORS_OPT = { debug: DEBUG_CORS }
 
-Rails.application.config.middleware.insert_before 0, Rack::Cors, CORS_OPT do
+Rails.configuration.middleware.insert_before 0, Rack::Cors, CORS_OPT do
 
   # === UVA clients
   allow do

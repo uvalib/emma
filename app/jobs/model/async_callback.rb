@@ -180,7 +180,7 @@ class Model::AsyncCallback
     end
 
     # noinspection RubyResolve
-    Rails.application.config.active_job.custom_serializers << self
+    Rails.configuration.active_job.custom_serializers << self
 
   end
 
