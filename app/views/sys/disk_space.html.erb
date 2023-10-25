@@ -1,0 +1,30 @@
+<%# app/views/sys/disk_space.html.erb -%>
+<%-
+  # Host system disk space.
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys disk_space]
+  title ||= t('emma.sys.disk_space.title')
+
+  unless modal?
+    label = t('emma.sys.disk_space.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+  command = 'df -h'
+  command = ["#{command} --sync", command]
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= render 'sys/command', command: command %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

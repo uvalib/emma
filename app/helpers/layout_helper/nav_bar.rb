@@ -120,7 +120,11 @@ module LayoutHelper::NavBar
           base   = (base_path == path)
           label  = CONTROLLER_LABEL[controller]
           tip    = CONTROLLER_TOOLTIP[controller]
-          hidden = (controller == :org) && !current_user
+          hidden =
+            case controller
+              when :org then !current_user
+              when :sys then !current_user&.developer?
+            end
         end
 
         primary  = PRIMARY_CONTROLLERS.include?(controller)

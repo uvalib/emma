@@ -1,0 +1,25 @@
+<%# app/views/sys/index.html.erb -%>
+<%-
+  # EMMA system information.
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys]
+  title ||= t('emma.sys.index.title')
+
+  unless modal?
+    label = t('emma.sys.index.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= render 'sys/menu', level: 2 %>
+
+<%= page_notes_section %>

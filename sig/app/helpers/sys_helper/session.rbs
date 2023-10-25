@@ -1,0 +1,25 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper::Session
+  include SysHelper::Common
+
+  # Request `session` values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_session_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Request `session_options` values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_options_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

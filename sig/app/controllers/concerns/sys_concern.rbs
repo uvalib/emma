@@ -1,0 +1,17 @@
+# Controller support methods for system information.
+#
+module SysConcern
+  extend ActiveSupport::Concern
+
+  include ApplicationHelper
+
+  # System information pages (except for :index).
+  #
+  # @type [Array<Symbol>]
+  #
+  SYS_PAGES: symArray
+
+  private
+
+  THIS_MODULE: Module
+end

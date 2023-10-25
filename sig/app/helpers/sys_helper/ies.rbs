@@ -1,0 +1,25 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper::Ies
+  include SysHelper::Common
+
+  # Column headers for #application_ies.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  APPLICATION_IES_HEADERS: Hash[Symbol,String]
+
+  # Render a table of current ActiveSupport::IsolatedExecutionState entries.
+  #
+  # @param [Boolean] sort
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #sys_table.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def application_ies: (?sort: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

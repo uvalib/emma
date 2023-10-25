@@ -1,10 +1,14 @@
-# config/locales/controllers/admin.en.yml
+# config/locales/controllers/sys.en.yml
 
 en:
 
   emma:
 
-    admin:
+    sys:
+
+      label:            'System'
+      title:            'EMMA System Information'
+      tooltip:          'EMMA system information'
 
       subsystem:
         database:       true
@@ -17,14 +21,49 @@ en:
         enabled:        false
 
       page_controls:
-        label:          'Admin'
+        label:          'Page'
         actions:
           - index
           - settings
+          - headers
+          - loggers
+          - internals
           - processes
           - disk_space
-          - loggers
-          - headers
+
+      # =======================================================================
+      # Tables
+      # =======================================================================
+
+      application_loggers:
+        headers:
+          progname:     'Progname'
+          class:        'Class'
+          level:        'Level'
+          inspect:      'Inspection'
+
+      application_ies:
+        headers:
+          key:          'Key'
+          obj_id:       'object_id'
+          entry:        'Entry'
+
+      application_middleware:
+        headers:
+          name:         'Name'
+          obj_id:       'object_id'
+          args:         'args'
+          block:        'block'
+
+      application_railties:
+        headers:
+          name:         'Name'
+          obj_id:       'object_id'
+
+      application_config:
+        headers:
+          name:         'Item'
+          value:        'Value'
 
       # =======================================================================
       # Pages
@@ -32,7 +71,7 @@ en:
 
       index:
         label:          'Main'
-        title:          'EMMA System Administration'
+        title:          'EMMA System Information'
         tooltip:        'EMMA system information'
         _endpoint:      true
 
@@ -74,6 +113,14 @@ en:
         label:          'Headers'
         title:          'Request Headers'
         tooltip:        'View request headers'
+        _endpoint:      true
+
+      # =======================================================================
+
+      internals:
+        label:          'Internals'
+        title:          'System Internals'
+        tooltip:        'View internal system information'
         _endpoint:      true
 
       # =======================================================================

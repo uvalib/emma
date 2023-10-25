@@ -27,7 +27,7 @@ class ApiCachingMiddleware < Faraday::Middleware
     CachingMiddleware::Defaults::DEFAULT_OPTIONS.merge(
       namespace:  'api',
       expires_in: DEFAULT_EXPIRATION,
-    ).deep_freeze
+    ).freeze
 
   # Initialize an instance.
   #

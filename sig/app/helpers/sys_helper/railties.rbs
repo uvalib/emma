@@ -1,0 +1,25 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper::Railties
+  include SysHelper::Common
+
+  # Column headers for #application_railties.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  APPLICATION_RAILTIES_HEADERS: Hash[Symbol,String]
+
+  # Render a table of loaded Rails::Railtie entries.
+  #
+  # @param [Boolean] sort
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #sys_table.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def application_railties: (?sort: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

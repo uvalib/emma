@@ -1,0 +1,27 @@
+<%# app/views/sys/loggers.html.erb -%>
+<%-
+  # Logger instances.
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys loggers]
+  title ||= t('emma.sys.loggers.title')
+
+  unless modal?
+    label = t('emma.sys.loggers.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= application_loggers %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

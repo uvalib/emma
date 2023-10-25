@@ -1,6 +1,6 @@
-<%# app/views/admin/_menu.html.erb -%>
+<%# app/views/sys/_menu.html.erb -%>
 <%-
-  # Administration pages menu.
+  # System information pages menu.
 
   view_debug(__FILE__)
 
@@ -8,14 +8,14 @@
 
   outer = (level < 3) ? :div : :ul
   inner = (level < 3) ? :div : :li
-  pages = [:index, *AdminController::PAGES]
+  pages = [:index, *SysController::PAGES]
   links =
     pages.map { |page|
       next if page.to_s == params['action']
       html_tag(inner, class: 'page-action') {
-        path   = get_path_for(:admin, page)
-        label  = t("emma.admin.#{page}.label",   default: path)
-        note   = t("emma.admin.#{page}.tooltip", default: nil)
+        path   = get_path_for(:sys, page)
+        label  = t("emma.sys.#{page}.label",   default: path)
+        note   = t("emma.sys.#{page}.tooltip", default: nil)
         note &&= h(note.delete_suffix('.'))
         link_to(label, path, class: 'link') << html_div(note, class: 'note')
       }

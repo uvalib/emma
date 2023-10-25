@@ -75,6 +75,24 @@ module LayoutHelper::PageControls
   #
   def page_controls_label: (**untyped opt) -> String
 
+  # Controllers which return *nil* for #model_class.
+  #
+  # @type [Array<Symbol>]
+  #
+  NO_MODEL_CONTROLLERS: symArray
+
+  # Controllers which return *SearchResult* for #model_class.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_MODEL_CONTROLLERS: symArray
+
+  # Controllers which return *User* for #model_class.
+  #
+  # @type [Array<Symbol>]
+  #
+  USER_MODEL_CONTROLLERS: symArray
+
   # model_class
   #
   # @param [Symbol, String, Class, *] ctrlr

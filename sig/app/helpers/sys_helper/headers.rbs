@@ -1,0 +1,84 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper::Headers
+  include SysHelper::Common
+
+  # Request header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def request_headers_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Rails header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def rails_headers_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Rack header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def rack_headers_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Request header `request.env` names.
+  #
+  # @return [Array<String>]
+  #
+  def request_headers_names: () -> strArray
+
+  @request_headers_names: strArray
+
+  # Rails header `request.env` names.
+  #
+  # @return [Array<String>]
+  #
+  def rails_headers_names: () -> strArray
+
+  @rails_headers_names: strArray
+
+  # Rack header `request.env` names.
+  #
+  # @return [Array<String>]
+  #
+  def rack_headers_names: () -> strArray
+
+  @rack_headers_names: strArray
+
+  private
+
+  # A pattern to filter out #string_constants results which are not actually
+  # header names.
+  #
+  # @type [Regexp]
+  #
+  HEADER_NAME: Regexp
+
+  # Build a sorted list of request header names.
+  #
+  # @param [Array] array
+  #
+  # @return [Array<String>]
+  #
+  def header_names: (?anyArray array) { (anyArray) -> (anyArray|nil) } -> strArray
+
+  # Return the values of the constants defined in the class or module which
+  # are strings.
+  #
+  # @param [Module]              mod
+  # @param [String, Regexp, nil] matching
+  #
+  # @return [Array<String>]
+  #
+  def string_constants: (Module mod, ?(String|Regexp|nil) matching) -> strArray
+
+  private
+
+  def self.included: (Module base) -> void
+end

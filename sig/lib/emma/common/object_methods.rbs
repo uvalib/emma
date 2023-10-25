@@ -15,5 +15,7 @@ module Emma::Common::ObjectMethods
   #
   # @return [Class, nil]
   #
-  def to_class: (untyped item) -> (Class | nil)
+  def to_class
+    : (nil     item) -> nil
+    | (untyped item) -> (Class | nil)
 end

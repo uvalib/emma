@@ -1,0 +1,37 @@
+<%# app/views/sys/internals.html.erb -%>
+<%-
+  # Host system internals
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys processes]
+  title ||= t('emma.sys.internals.title')
+
+  unless modal?
+    label = t('emma.sys.internals.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<h2>IsolatedExecutionState</h2>
+<%= application_ies %>
+
+<h2>Middleware</h2>
+<%= application_middleware %>
+
+<h2>Railties</h2>
+<%= application_railties %>
+
+<h2>Rails Configuration</h2>
+<%= application_config %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

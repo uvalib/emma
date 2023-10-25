@@ -89,6 +89,21 @@ module ArrayExt
     self
   end
 
+  # Remove element(s).
+  #
+  # Whereas `a -= b` removes elements by allocating a new array, `a.remove(b)`
+  # removes elements from the instance itself.
+  #
+  # @param [Array] elements
+  #
+  # @return [self]
+  #
+  def remove(*elements)
+    elements.flatten!
+    elements.uniq!
+    delete_if { |v| elements.include?(v) }
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

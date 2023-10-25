@@ -22,8 +22,10 @@ class AppSettings < AppGlobal
   FLAGS = [
 
     :CONSOLE_DEBUGGING,
+    :CONSOLE_OUTPUT,
     nil,
 
+    :TRACE_OUTPUT,
     :TRACE_LOADING,
     :TRACE_CONCERNS,
     :TRACE_NOTIFICATIONS,
@@ -100,6 +102,17 @@ class AppSettings < AppGlobal
     :PGPASSWORD,
     nil,
 
+    # === Authorization
+    :AUTH_PROVIDERS,
+    :SHIBBOLETH,
+    nil,
+
+    # === Mailer
+    :MAILER_SENDER,
+    :SMTP_DOMAIN,
+    :SMTP_PORT,
+    nil,
+
     # === Amazon Web Services
     :AWS_BUCKET,
     :AWS_REGION,
@@ -119,6 +132,7 @@ class AppSettings < AppGlobal
     # === EMMA Unified Ingest API
     :INGEST_API_VERSION,
     :INGEST_API_KEY,
+    :INGEST_BASE_URL,
     :SERVICE_INGEST_PRODUCTION,
     :SERVICE_INGEST_QA,
     :SERVICE_INGEST_STAGING,
@@ -147,12 +161,12 @@ class AppSettings < AppGlobal
     :GOOGLE_USER,
     :GOOGLE_PASSWORD,
     :GOOGLE_API_KEY,
-    #:GB_USER,
-    #:GB_PASSWORD,
-    #:GB_API_KEY,
-    #:GS_USER,
-    #:GS_PASSWORD,
-    #:GS_API_KEY,
+    :GB_USER,
+    :GB_PASSWORD,
+    :GB_API_KEY,
+    :GS_USER,
+    :GS_PASSWORD,
+    :GS_API_KEY,
     nil,
 
     # === Shrine uploader
@@ -173,9 +187,6 @@ class AppSettings < AppGlobal
     nil,
 
     # === GoodJob
-    :GOOD_JOB_CLEANUP_INTERVAL_JOBS,
-    :GOOD_JOB_CLEANUP_INTERVAL_SECONDS,
-    :GOOD_JOB_CLEANUP_PRESERVED_JOBS_BEFORE_SECONDS_AGO,
     :GOOD_JOB_CRON,
     :GOOD_JOB_ENABLE_CRON,
     :GOOD_JOB_EXECUTION_MODE,
@@ -186,6 +197,9 @@ class AppSettings < AppGlobal
     :GOOD_JOB_PROBE_PORT,
     :GOOD_JOB_QUEUES,
     :GOOD_JOB_SHUTDOWN_TIMEOUT,
+    :GOOD_JOB_CLEANUP_INTERVAL_JOBS,
+    :GOOD_JOB_CLEANUP_INTERVAL_SECONDS,
+    :GOOD_JOB_CLEANUP_PRESERVED_JOBS_BEFORE_SECONDS_AGO,
     nil,
 
     # === Puma
@@ -225,9 +239,8 @@ class AppSettings < AppGlobal
     :REDIS_URL,
     :RUBYMINE_CONFIG,
     :SCHEDULER,
-    :SHIBBOLETH,
 
-  ].excluding(:skip).freeze
+  ].freeze
 
   # Configuration field types.
   #
@@ -238,11 +251,205 @@ class AppSettings < AppGlobal
     setting: VALUES,
   }.freeze
 
+  if sanity_check?
+    raise 'FLAGS and VALUES cannot overlap' if FLAGS.compact.intersect?(VALUES)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # An AppSettings value instance.
+  #
+  class Value
+
+    # Either :flag or :setting.
+    #
+    # @return [Symbol]
+    #
+    attr_reader :type
+
+    # The value if acquired from ENV.
+    #
+    # @return [*]
+    #
+    attr_reader :env
+
+    # The value if acquired from a constant.
+    #
+    # @return [*]
+    #
+    attr_reader :obj
+
+    # Whether this instance represents a *nil* value.
+    #
+    # @return [Boolean]
+    #
+    attr_reader :null
+
+    # Whether this instance represents a non-value which can be used to
+    # indicate a break between related groups of values.
+    #
+    # @return [Boolean]
+    #
+    attr_reader :spacer
+
+    # Create a new instance which may represent either a value set from ENV,
+    # a value set from a constant, a *nil* value, or a spacer.
+    #
+    # @param [Symbol, String, nil] type_key   Required if :type is not present.
+    # @param [Hash]                opt
+    #
+    # @option opt [Symbol, String] :type
+    # @option opt [*]              :env
+    # @option opt [*]              :obj
+    # @option opt [Boolean]        :null
+    # @option opt [Boolean]        :spacer
+    #
+    def initialize(type_key = nil, **opt)
+      # noinspection RubyMismatchedVariableType
+      @type   = (opt.delete(:type) || type_key)&.to_sym
+      keys    = opt.compact_blank.keys
+      fail "cannot specify #{keys} together" if keys.many?
+      @env_   = opt.key?(:env)
+      @env    = opt.delete(:env)
+      @obj_   = opt.key?(:obj)
+      @obj    = opt.delete(:obj)
+      @null   = opt.delete(:null)   || false
+      @spacer = opt.delete(:spacer) || false
+    end
+
+    # Indicate whether the value was acquired from ENV (even if it is *nil*).
+    #
+    def env? = @env_
+
+    # Indicate whether the value was acquired from a constant.
+    #
+    def obj? = @obj_
+
+    # Indicate whether this instance represents a *nil* value.
+    #
+    def nil?    = null.present?
+
+    # Indicate whether this instance represents a *nil* value.
+    #
+    def null?   = null.present?
+
+    # Indicate whether this instance represents a non-value which can be used
+    # to indicate a break between related groups of values.
+    #
+    def spacer? = spacer.present?
+
+  end
+
+  # A table of AppSettings value instances.
+  #
+  class Values < ::Hash
+
+    def initialize(keys)
+      if keys.is_a?(Hash)
+        super
+      else
+        keys.each { |k| acquire_value(k) }
+      end
+    end
+
+    protected
+
+    # Set the value at index *k* from either the associated `ENV` variable or
+    # an associated constant.
+    #
+    # @param [Symbol, String, nil] k
+    #
+    # @return [Value]
+    #
+    def acquire_value(k)
+      # noinspection RubyMismatchedArgumentType
+      if (k = k&.to_s).nil?
+        k = spacer_key
+        v = { spacer: true }
+      elsif ENV.key?(k)
+        v = { env: storage_value(ENV[k]) }
+      elsif (mod = module_defining(k))
+        v = { obj: storage_value(mod.const_get(k)) }
+      else
+        v = { null: true }
+      end
+      self[k.to_sym] = Value.new(type_key, **v)
+    end
+
+    # Return the module that defines a constant with the given name.
+    #
+    # @param [Symbol, String] k
+    #
+    # @return [Module, nil]
+    #
+    def module_defining(k)
+      k = k&.to_sym or return
+      mods = {
+        BATCH_SIZE:                   Record::Properties,
+        BULK_DB_BATCH_SIZE:           UploadWorkflow::Bulk::External,
+        DEBUG_DECORATOR_EXECUTE:      BaseDecorator::List,
+        DISABLE_UPLOAD_INDEX_UPDATE:  Record::Submittable::IndexIngestMethods,
+        SAVE_SEARCHES:                SearchConcern,
+        WORLDCAT_PRINCIPAL_ID:        LookupService::WorldCat::Common,
+        WORLDCAT_REGISTRY_ID:         LookupService::WorldCat::Common,
+        WORLDCAT_WSKEY:               LookupService::WorldCat::Common,
+      }
+      [mods[k], Object].compact.find { |mod| mod.const_defined?(k) }
+    end
+
+    protected
+
+    def self.type_key = must_be_overridden
+
+    def self.spacer_key = must_be_overridden
+
+    def self.storage_value(v) = must_be_overridden
+
+    delegate :type_key, :spacer_key, :storage_value, to: :class
+
+  end
+
+  # A table of AppSettings flag values.
+  #
+  class FlagValues < Values
+
+    def self.type_key
+      :flag
+    end
+
+    def self.spacer_key
+      # noinspection RbsMissingTypeSignature
+      @spacer_key = @spacer_key&.succ || :"#{type_key}_1"
+    end
+
+    def self.storage_value(v)
+      true?(v) unless v.nil?
+    end
+
+  end
+
+  # A table of AppSettings non-flag settings values.
+  #
+  class SettingValues < Values
+
+    def self.type_key
+      :setting
+    end
+
+    def self.spacer_key
+      # noinspection RbsMissingTypeSignature
+      @spacer_key = @spacer_key&.succ || :"#{type_key}_1"
+    end
+
+    def self.storage_value(v)
+      v
+    end
+
+  end
 
   module Methods
 
@@ -321,29 +528,23 @@ class AppSettings < AppGlobal
     #
     # @param [Hash]                       values
     # @param [Symbol, nil]                type
-    # @param [Array<Symbol>, Symbol, nil] only
     # @param [Boolean]                    spacers
+    # @param [Array<Symbol>, Symbol, nil] only
     #
     # @return [Hash]
     #
-    def filter_all(values, type: nil, only: nil, spacers: false, **)
-      spacer = %i[spacer]
+    def filter_all(values, type: nil, spacers: false, only: nil, **)
       only &&= Array.wrap(only).flatten.compact.presence
-      if type
-        spacer = [type, *spacer]
-        only ||= TYPE_KEYS[type]
-      end
-      is_spacer = ->(v) {
-        v.is_a?(Array) && (v.intersection(spacer) == spacer)
-      }
+      only ||= TYPE_KEYS[type] if type
+      values = values.select { |_, v| v.type == type } if type
       if only && spacers
-        values.select { |k, v| is_spacer.call(v) || only.include?(k) }
+        values.select { |k, v| v.spacer? || only.include?(k) }
       elsif only
         values.slice(*only)
       elsif spacers
         values
       else
-        values.reject { |_, v| is_spacer.call(v) }
+        values.reject { |_, v| v.spacer? }
       end
     end
 
@@ -355,7 +556,8 @@ class AppSettings < AppGlobal
     # @return [Hash, nil]
     #
     def prepare_all(values, **opt)
-      values &&= prepare(values).presence or return
+      return if values.blank?
+      values = values.transform_values { |v| prepare(v) }
       opt[:only] = FLAGS + VALUES if opt.slice(:only, :type).blank?
       # noinspection RubyMismatchedArgumentType
       filter_all(values, **opt)
@@ -369,6 +571,8 @@ class AppSettings < AppGlobal
     #
     def prepare(item)
       case item
+        when nil, :nil, :null
+          :null
         when Hash
           item.map { |k, v| [k.to_sym, prepare(v)] }.to_h.compact
         when Array
@@ -475,32 +679,25 @@ class AppSettings < AppGlobal
     # @return [*]
     #
     def []=(name, value)
+      name   = name.to_sym
       values = { name => value}
-      set_item(values)&.dig(name.to_sym)
+      set_item(values)&.dig(name)
     end
 
     # Iterate over each configuration flag.
     #
-    # @param [Boolean] spacers
+    # @param [Hash] opt               Passed to #each_pair
     #
-    # @yield [name, value] Operate on a configuration flag.
-    # @yieldparam [Symbol]  name
-    # @yieldparam [Boolean] value
-    #
-    def each_flag(spacers: false, &block)
-      each_pair(spacers: spacers, type: :flag, &block)
+    def each_flag(**opt, &blk)
+      each_pair(type: :flag, **opt, &blk)
     end
 
     # Iterate over each configuration setting.
     #
-    # @param [Boolean] spacers
+    # @param [Hash] opt               Passed to #each_pair
     #
-    # @yield [name, value] Operate on a configuration setting.
-    # @yieldparam [Symbol] name
-    # @yieldparam [*]      value
-    #
-    def each_setting(spacers: false, &block)
-      each_pair(spacers: spacers, type: :setting, &block)
+    def each_setting(**opt, &blk)
+      each_pair(type: :setting, **opt, &blk)
     end
 
     # Iterate over each configuration value.
@@ -511,8 +708,8 @@ class AppSettings < AppGlobal
     # @yieldparam [Symbol] name
     # @yieldparam [*]      value
     #
-    def each_pair(**opt, &block)
-      get_item(**opt).each_pair(&block)
+    def each_pair(**opt, &blk)
+      get_item(**opt).each_pair(&blk)
     end
 
     alias :each :each_pair
@@ -548,15 +745,10 @@ class AppSettings < AppGlobal
   # ===========================================================================
 
   begin
-    env    = ENV.to_h.symbolize_keys
-    hash   = ->(type, &block) {
-      TYPE_KEYS[type].map.each_with_index { |k, i|
-        k ? [k, block.call(env[k])] : [:"#{type}_#{i}", [type, :spacer]]
-      }.to_h
-    }
-    flags  = hash.call(:flag)    { |v| true?(v) }
-    values = hash.call(:setting) { |v| v.nil? ? 'nil' : v }
-    set_item(flags.merge!(values), replace: true, spacers: true)
+    values = {}
+    values.merge!(FlagValues.new(FLAGS))
+    values.merge!(SettingValues.new(VALUES))
+    set_item(values, replace: true, spacers: true)
   rescue => error
     Log.error("#{self} initialization failed")
     raise error

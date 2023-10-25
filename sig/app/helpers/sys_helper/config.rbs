@@ -1,0 +1,61 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper::Config
+  include SysHelper::Common
+
+  # Column headers for #application_config.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  APPLICATION_CONFIG_HEADERS: Hash[Symbol,String]
+
+  # Render a table current `Rails.configuration` values.
+  #
+  # @param [Boolean] sort
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #sys_table.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def application_config: (?sort: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Classes whose instances can be directly represented in tables.
+  #
+  # @type [Array<Class>]
+  #
+  DIRECT: Array[Class]
+
+  ESCAPE_TEMPLATE: String
+
+  ESCAPE_REGEXP: Regexp
+
+  # A rendering of a configuration table value.
+  #
+  # @param [*]    val
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :escape     Avoid quote marks around certain values
+  # @option opt [Boolean] :inspect    Return inspections of #DIRECT type values
+  #
+  # @return [*]
+  #
+  def config_entry: (untyped val, **untyped opt) -> untyped
+
+  # A rendering of a `Rails.configuration` entry value.
+  #
+  # @param [*] val
+  #
+  # @return [String]
+  #
+  def rails_config_entry: (untyped val) -> String
+
+  # The current `Rails.configuration` entries.
+  #
+  # @return [Hash{String=>*}]
+  #
+  def rails_config_entries: () -> strHash
+
+  private
+
+  def self.included: (Module base) -> void
+end

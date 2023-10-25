@@ -9,6 +9,8 @@ module SessionDebugHelper
 
   include ParamsHelper
 
+  include SysHelper
+
   # Indicate whether on-screen debugging is applicable.
   #
   # @param [Symbol,String,nil] controller   Controller-specific debugging.
@@ -21,14 +23,21 @@ module SessionDebugHelper
   #
   SESSION_SKIP_KEYS: strArray
 
+  # Request headers that are not reported in the session debug table.
+  #
+  # @type [Array<String>]
+  #
+  REQUEST_SKIP_HDRS: strArray
+
   # Render a table of values from `#session`.
   #
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to outer #html_div.
+  # @param [Boolean] extended         If *true* show request headers.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def session_debug: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def session_debug: (?extended: bool, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

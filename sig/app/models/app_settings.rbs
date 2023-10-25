@@ -19,6 +19,134 @@ class AppSettings < AppGlobal
   #
   TYPE_KEYS: Hash[Symbol,Array[Symbol|nil]]
 
+  # An AppSettings value instance.
+  #
+  class Value
+    # Either :flag or :setting.
+    #
+    # @return [Symbol]
+    #
+    attr_reader type: Symbol
+
+    # The value if acquired from ENV.
+    #
+    # @return [*]
+    #
+    attr_reader env: untyped?
+
+    # The value if acquired from a constant.
+    #
+    # @return [*]
+    #
+    attr_reader obj: untyped?
+
+    # Whether this instance represents a *nil* value.
+    #
+    # @return [Boolean]
+    #
+    attr_reader null: bool?
+
+    # Whether this instance represents a non-value which can be used to
+    # indicate a break between related groups of values.
+    #
+    # @return [Boolean]
+    #
+    attr_reader spacer: bool?
+
+    # Create a new instance which may represent either a value set from ENV,
+    # a value set from a constant, a *nil* value, or a spacer.
+    #
+    # @param [Symbol, String, nil] type_key   Required if :type is not present.
+    # @param [Hash]                opt
+    #
+    # @option opt [Symbol, String] :type
+    # @option opt [*]              :env
+    # @option opt [*]              :obj
+    # @option opt [Boolean]        :null
+    # @option opt [Boolean]        :spacer
+    #
+    def initialize: (?(Symbol|String|nil) type_key, **untyped opt) -> void
+
+    # Indicate whether the value was acquired from ENV (even if it is *nil*).
+    #
+    def env?: () -> bool
+
+    # Indicate whether the value was acquired from a constant.
+    #
+    def obj?: () -> bool
+
+    # Indicate whether this instance represents a *nil* value.
+    #
+    def nil?: () -> bool
+
+    # Indicate whether this instance represents a *nil* value.
+    #
+    def null?: () -> bool
+
+    # Indicate whether this instance represents a non-value which can be used
+    # to indicate a break between related groups of values.
+    #
+    def spacer?: () -> bool
+
+    @env_: bool
+    @obj_: bool
+  end
+
+  # A table of AppSettings value instances.
+  #
+  class Values
+    def initialize: (Array[Symbol|String] keys) -> void
+
+    # Set the value at index *k* from either the associated `ENV` variable or
+    # an associated constant.
+    #
+    # @param [Symbol, String, nil] k
+    #
+    # @return [Value]
+    #
+    def acquire_value: (Symbol|String|nil k) -> Value
+
+    # Return the module that defines a constant with the given name.
+    #
+    # @param [Symbol, String] k
+    #
+    # @return [Module, nil]
+    #
+    def module_defining: (Symbol|String k) -> Module?
+
+    def type_key: () -> Symbol
+
+    def spacer_key: () -> Symbol
+
+    def storage_value: (untyped v) -> untyped
+
+    def self.type_key: () -> Symbol
+
+    def self.spacer_key: () -> Symbol
+
+    def self.storage_value: (untyped v) -> untyped
+  end
+
+  # A table of AppSettings flag values.
+  #
+  class FlagValues < Values
+    def self.type_key: () -> Symbol
+
+    def self.spacer_key: () -> Symbol
+
+    def self.storage_value: (untyped v) -> (bool | nil)
+  end
+
+  # A table of AppSettings non-flag settings values.
+  #
+  class SettingValues < Values
+    def self.type_key: () -> Symbol
+
+    def self.spacer_key: () -> Symbol
+
+    def self.storage_value: (untyped v) -> untyped
+  end
+
   module Methods
     include AppGlobal::Methods
 
@@ -65,12 +193,12 @@ class AppSettings < AppGlobal
     #
     # @param [Hash]                       values
     # @param [Symbol, nil]                type
-    # @param [Array<Symbol>, Symbol, nil] only
     # @param [Boolean]                    spacers
+    # @param [Array<Symbol>, Symbol, nil] only
     #
     # @return [Hash]
     #
-    def filter_all: (symHash values, ?type: Symbol|nil, ?only: symArray|Symbol|nil, ?spacers: bool) -> symHash
+    def filter_all: (symHash values, ?type: Symbol|nil, ?spacers: bool, ?only: symArray|Symbol|nil) -> symHash
 
     # prepare_all
     #
@@ -159,23 +287,15 @@ class AppSettings < AppGlobal
 
     # Iterate over each configuration flag.
     #
-    # @param [Boolean] spacers
-    #
-    # @yield [name, value] Operate on a configuration flag.
-    # @yieldparam [Symbol]   name
-    # @yieldparam [Boolean] value
+    # @param [Hash] opt               Passed to #each_pair
     #
     def each_flag: (?spacers: bool) { (Symbol name, bool value) -> void } -> void
 
     # Iterate over each configuration setting.
     #
-    # @param [Boolean] spacers
+    # @param [Hash] opt               Passed to #each_pair
     #
-    # @yield [name, value] Operate on a configuration setting.
-    # @yieldparam [Symbol] name
-    # @yieldparam [*]      value
-    #
-    def each_setting: (?spacers: bool) { (Symbol name, untyped value) -> void } -> void
+    def each_setting: (**untyped opt) { (Symbol name, untyped value) -> void } -> void
 
     # Iterate over each configuration value.
     #

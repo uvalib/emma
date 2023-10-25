@@ -1,20 +1,21 @@
-<%# app/views/admin/processes.html.erb -%>
+<%# app/views/sys/headers.html.erb -%>
 <%-
   # Request headers
 
   view_debug(__FILE__)
 
-  help  ||= nil # %i[admin headers]
-  title ||= t('emma.admin.headers.title')
+  help  ||= nil # %i[sys headers]
+  title ||= t('emma.sys.headers.title')
 
   unless modal?
-    label = t('emma.admin.headers.label', default: title)
-    set_page_meta_title("Admin - #{label}")
+    label = t('emma.sys.headers.label', default: title)
+    set_page_meta_title("System - #{label}")
     set_page_description(title)
   end
 
 -%>
 
+<%= scroll_to_top_target %>
 <%= page_heading(title, help: help) %>
 <%= page_description_section %>
 
@@ -22,10 +23,10 @@
 
 <%= request_headers_section %>
 
-<h2>Rack session</h2>
+<h2>Request session</h2>
 <%= request_session_section %>
 
-<h2>Rack options</h2>
+<h2>Rack session options</h2>
 <%= request_options_section %>
 
 <h2>Rack::Request</h2>
@@ -35,4 +36,4 @@
 <%= rails_headers_section %>
 
 <%= page_notes_section %>
-<%= render 'admin/menu' %>
+<%= render 'sys/menu' unless modal? %>

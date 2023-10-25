@@ -1,13 +1,13 @@
-# app/controllers/concerns/admin_concern.rb
+# app/controllers/concerns/sys_concern.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# Controller support methods for administration.
+# Controller support methods for system information.
 #
-module AdminConcern
+module SysConcern
 
   extend ActiveSupport::Concern
 
@@ -19,12 +19,12 @@ module AdminConcern
 
   public
 
-  # Administrative pages (except for :index).
+  # System information pages (except for :index).
   #
   # @type [Array<Symbol>]
   #
-  ADMIN_PAGES =
-    CONTROLLER_CONFIGURATION[:admin].map { |k, v|
+  SYS_PAGES =
+    CONTROLLER_CONFIGURATION[:sys].map { |k, v|
       k if v.is_a?(Hash) && v[:_endpoint] && (k != :index)
     }.compact.freeze
 

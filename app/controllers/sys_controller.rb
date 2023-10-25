@@ -1,17 +1,17 @@
-# app/controllers/admin_controller.rb
+# app/controllers/sys_controller.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-class AdminController < ApplicationController
+class SysController < ApplicationController
 
   include UserConcern
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
-  include AdminConcern
+  include SysConcern
 
   # ===========================================================================
   # :section: Authentication
@@ -38,24 +38,24 @@ class AdminController < ApplicationController
 
   public
 
-  # === GET /admin
+  # === GET /sys
   #
-  # Administrative main page.
+  # System information main page.
   #
-  # @see #admin_index_path            Route helper
+  # @see #sys_index_path              Route helper
   #
   def index
     __log_activity
     __debug_route
   end
 
-  # === POST  /admin
-  # === PUT   /admin
-  # === PATCH /admin
+  # === POST  /sys
+  # === PUT   /sys
+  # === PATCH /sys
   #
   # Set application control values.
   #
-  # @see #update_admin_path           Route helper
+  # @see #update_sys_path             Route helper
   #
   def update
     __log_activity
@@ -65,12 +65,12 @@ class AdminController < ApplicationController
     prm.merge!(flags)       if flags.present? && flags.is_a?(Hash)
     AppSettings.update(prm) if prm.present?
     # noinspection RubyResolve
-    redirect_to settings_admin_path
+    redirect_to settings_sys_path
   end
 
   # An endpoint is defined for each configured page.
-  # @see file:config/locales/controllers/admin.en.yml *en.emma.admin*
-  PAGES = ADMIN_PAGES
+  # @see file:config/locales/controllers/sys.en.yml *en.emma.sys*
+  PAGES = SYS_PAGES
   PAGES.each do |page|
     define_method(page) do
       __log_activity

@@ -34,10 +34,7 @@ module GridHelper
   #
   # @param [Hash] pairs               Key-value pairs to display.
   # @param [Hash] opt                 Passed to outer #html_div except for:
-  #                                     #GRID_OPTS and
-  #
-  # @option opt [Boolean] :wrap       If *true* then key/value pairs are joined
-  #                                     within a wrapper element.
+  #                                     #GRID_OPTS and :wrap to #grid_table_row
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -46,26 +43,41 @@ module GridHelper
     opt[:col]     ||= 0
     opt[:row_max] ||= pairs.size
     opt[:col_max] ||= 1
-    wrap     = opt.delete(:wrap)
-    html_opt = remainder_hash!(opt, *GRID_OPTS)
-    html_div(**html_opt) do
+    outer_opt = remainder_hash!(opt, :wrap, :sr_only, *GRID_OPTS)
+    html_div(**outer_opt) do
       pairs.map do |key, value|
         opt[:col] = 0  if opt[:col] == opt[:col_max]
         opt[:row] += 1 if opt[:col].zero?
         opt[:col] += 1
-        r_opt = { class: grid_cell_classes(**opt) }
-        k_opt = prepend_css(r_opt, 'key')
-        v_opt = prepend_css(r_opt, 'value')
-        if wrap
-          prepend_css!(r_opt, 'entry')
-          html_div(**r_opt) do
-            key = html_div(**k_opt) { ERB::Util.h(key.to_s) << ':' }
-            key << HTML_SPACE << html_div(value, **v_opt)
-          end
-        else
-          html_div(key, **k_opt) << html_div(value, **v_opt)
-        end
+        grid_table_row(key, value, **opt)
       end
+    end
+  end
+
+  # Render a key/value row.
+  #
+  # @param [*]       key
+  # @param [*]       value
+  # @param [Boolean] wrap             If *true* then key/value pairs are joined
+  #                                     within a wrapper element.
+  # @param [Hash]    opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_table_row(key, value, wrap: false, **opt)
+    opt[:class] = grid_cell_classes(**opt)
+    unless key.is_a?(ActiveSupport::SafeBuffer)
+      key = ERB::Util.h(key.to_s) << ':' if wrap
+      key = html_div(key, **prepend_css(opt, 'key'))
+    end
+    unless value.is_a?(ActiveSupport::SafeBuffer)
+      value = html_div(value, **prepend_css(opt, 'value'))
+    end
+    if wrap
+      prepend_css!(opt, 'entry')
+      html_div(**opt) { key << HTML_SPACE << value }
+    else
+      key << value
     end
   end
 

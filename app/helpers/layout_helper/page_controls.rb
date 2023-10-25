@@ -194,6 +194,24 @@ module LayoutHelper::PageControls
 
   protected
 
+  # Controllers which return *nil* for #model_class.
+  #
+  # @type [Array<Symbol>]
+  #
+  NO_MODEL_CONTROLLERS = %i[data health help metrics sys tool].freeze
+
+  # Controllers which return *SearchResult* for #model_class.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_MODEL_CONTROLLERS = %i[search].freeze
+
+  # Controllers which return *User* for #model_class.
+  #
+  # @type [Array<Symbol>]
+  #
+  USER_MODEL_CONTROLLERS = %i[account home user].freeze
+
   # model_class
   #
   # @param [Symbol, String, Class, *] ctrlr
@@ -204,17 +222,13 @@ module LayoutHelper::PageControls
   def model_class(ctrlr)
     ctrlr = ctrlr.to_sym if ctrlr.is_a?(String)
     case ctrlr
-      when :admin          then return # without warning
-      when :upload         then return Upload
-      when :account, :home then return User
-      when Symbol          then return User if ctrlr.start_with?('user/')
+      when *NO_MODEL_CONTROLLERS                then return
+      when *SEARCH_MODEL_CONTROLLERS            then return SearchResult
+      when *USER_MODEL_CONTROLLERS, %r{^user/}  then return User
     end
     result = to_class(ctrlr)
-    if result.is_a?(Class) && result.ancestors.include?(Model)
-      result
-    else
-      Log.warn { "#{__method__}: unexpected: #{ctrlr.inspect}" }
-    end
+    result = nil unless result&.ancestors&.include?(Model)
+    result or Log.warn { "#{__method__}: unexpected: #{ctrlr.inspect}" }
   end
 
 end

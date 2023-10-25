@@ -1,0 +1,37 @@
+class SysController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include SysConcern
+
+  # === GET /sys
+  #
+  # System information main page.
+  #
+  # @see #sys_index_path              Route helper
+  #
+  def index: () -> void
+
+  # === POST  /sys
+  # === PUT   /sys
+  # === PATCH /sys
+  #
+  # Set application control values.
+  #
+  # @see #update_sys_path             Route helper
+  #
+  def update: () -> void
+
+  # An endpoint is defined for each configured page.
+  # @see file:config/locales/controllers/sys.en.yml *en.emma.sys*
+  PAGES: symArray
+
+  def settings:   () -> void
+  def processes:  () -> void
+  def disk_space: () -> void
+end

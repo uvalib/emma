@@ -1,0 +1,12 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper
+
+  private
+
+  # Include the submodules defined in "app/helpers/sys_helper/*.rb".
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

@@ -14,14 +14,23 @@ module GridHelper
   #
   # @param [Hash] pairs               Key-value pairs to display.
   # @param [Hash] opt                 Passed to outer #html_div except for:
-  #                                     #GRID_OPTS and
-  #
-  # @option opt [Boolean] :wrap       If *true* then key/value pairs are joined
-  #                                     within a wrapper element.
+  #                                     #GRID_OPTS and :wrap to #grid_table_row
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_table: (anyHash pairs, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a key/value row.
+  #
+  # @param [*]       key
+  # @param [*]       value
+  # @param [Boolean] wrap             If *true* then key/value pairs are joined
+  #                                     within a wrapper element.
+  # @param [Hash]    opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_table_row: (untyped key, untyped value, wrap: bool, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Add CSS classes which indicate the position of the control within the grid.
   #

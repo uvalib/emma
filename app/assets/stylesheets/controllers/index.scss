@@ -1,7 +1,6 @@
 // app/assets/stylesheets/controllers/index.scss
 
 @use 'account';
-@use 'admin';
 @use 'data';
 @use 'entry';
 @use 'help';
@@ -11,6 +10,7 @@
 @use 'org';
 @use 'search';
 @use 'search_call';
+@use 'sys';
 @use 'tool';
 @use 'upload';
 @use 'user_registrations';

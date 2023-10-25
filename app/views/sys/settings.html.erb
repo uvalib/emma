@@ -1,0 +1,55 @@
+<%# app/views/sys/settings.html.erb -%>
+<%-
+  # Dynamic application settings.
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys settings]
+  title ||= t('emma.sys.settings.title')
+
+  unless modal?
+    label = t('emma.sys.settings.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+  env            = Rails.env.production? ? 'production' : 'staging'
+  terraform_base = 'https://gitlab.com/uvalib/terraform-infrastructure'
+  terraform_base = "#{terraform_base}/-/blob/master"
+  terraform_proj = "#{terraform_base}/emma.lib.virginia.edu"
+  terraform_env  = "#{terraform_proj}/ecs-tasks/#{env}/environment.vars"
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<h2>Flags</h2>
+<p role="note">
+  Flags which may be turned on or off to dynamically change application
+  behavior when "<%= SysHelper::Settings::COMMIT_LABEL -%>" is pressed.
+</p>
+
+<%= app_flags %>
+
+<p class="error" role="note">
+  NOTE: These controls will not be operative until the system is re-architected
+  to consult these dynamic values instead of the constants which are currently
+  set at load time.
+</p>
+
+<h2>Values</h2>
+<p role="note">
+  Other configuration values which are defined at startup and cannot be
+  changed dynamically.
+  They can only be changed by modifying the Terraform
+  <a href="<%= terraform_env -%>" target="_blank">environment.vars</a>
+  configuration file and restarting.
+</p>
+<%= app_settings %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

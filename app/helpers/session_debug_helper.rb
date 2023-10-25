@@ -13,6 +13,7 @@ module SessionDebugHelper
   include GridHelper
   include IdentityHelper
   include ParamsHelper
+  include SysHelper
 
   # ===========================================================================
   # :section:
@@ -52,26 +53,48 @@ module SessionDebugHelper
   #
   SESSION_SKIP_KEYS = %w[_csrf_token warden.user.user.key].freeze
 
+  # Request headers that are not reported in the session debug table.
+  #
+  # @type [Array<String>]
+  #
+  REQUEST_SKIP_HDRS = %w[GATEWAY_INTERFACE HTTP_COOKIE].freeze
+
   # Render a table of values from `#session`.
   #
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to outer #html_div.
+  # @param [Boolean] extended         If *true* show request headers.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def session_debug(css: '.session-debug-table', **opt)
-    table = { SESSION: 'DEBUG' }
-    pairs =
-      session.to_hash.except!(*SESSION_SKIP_KEYS).transform_values! do |v|
-        if compressed_value?(v)
-          v = decompress_value(v)
-          ERB::Util.h(v.inspect) << html_span('[compressed]', class: 'note')
-        else
-          v = v.to_hash if v.respond_to?(:to_hash)
-          v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
-        end
+  def session_debug(extended: false, css: '.session-debug-table', **opt)
+    table = { SESSION: :DEBUG }
+    table[:id] = request.session_options[:id]
+    session.to_hash.except!(*SESSION_SKIP_KEYS).each do |k, v|
+      if compressed_value?(v)
+        v = decompress_value(v)
+        v = ERB::Util.h(v.inspect) << html_span('[compressed]', class: 'note')
       end
-    table.merge!(pairs)
+      table[k] = v
+    end
+    if extended
+      table.merge!(REQUEST: :DEBUG)
+      request_headers_names.excluding(*REQUEST_SKIP_HDRS).each do |k|
+        v = request.get_header(k)
+        table[k] = v if v.present? || v.is_a?(FalseClass)
+      end
+    end
+    table.transform_values! do |v|
+      if v.is_a?(ActiveSupport::SafeBuffer)
+        v
+      elsif v.is_a?(Symbol)
+        v.to_s
+      elsif !v.respond_to?(:to_hash)
+        v.inspect
+      else
+        v.to_hash.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
+      end
+    end
     prepend_css!(opt, css)
     grid_table(table, **opt)
   end

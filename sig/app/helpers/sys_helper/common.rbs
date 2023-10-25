@@ -1,0 +1,71 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper::Common
+  include Emma::Constants
+
+  # Translate Hash keys and values into an element containing pairs of
+  # dt and dd elements.
+  #
+  # @param [Array, Hash] hdrs
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dt_dd_section: ((anyHash|Array[String|Symbol]) hdrs, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Translate Hash keys and values into pairs of dt and dd elements.
+  #
+  # @param [Array, Hash] hdrs
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dt_dd_lines: ((anyHash|Array[String|Symbol]) hdrs) -> ActiveSupport::SafeBuffer
+
+  # Translate Hash keys and values into pairs of dt and dd elements.
+  #
+  # @param [Hash] pairs
+  # @param [Hash] opt                 Passed to `<dt>` and `<dd>`.
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def dt_dd_pairs: ((anyHash|Array[String|Symbol]) pairs, **untyped opt) -> Array[ActiveSupport::SafeBuffer]
+
+  # Format a name.
+  #
+  # @param [*]      name
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dt_name: (untyped name, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Format a value.
+  #
+  # @param [*]       value
+  # @param [Integer] object_wrap
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt
+  #
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def dd_value: (untyped value, ?object_wrap: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a table for "/sys" pages.
+  #
+  # @param [Hash,Array<Array>] pairs
+  # @param [Hash]              headers  Where the keys become CSS class names.
+  # @param [Boolean]           sort
+  # @param [String]            css      Characteristic CSS class/selector.
+  # @param [Hash]              opt      Passed to the outer `<table>` element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def sys_table: ((anyHash|Array[[untyped,untyped]]) pairs, anyHash headers, ?sort: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

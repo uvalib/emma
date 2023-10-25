@@ -534,6 +534,10 @@ class Object
 
   def sign_in_local_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def sys_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def sys_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def system_unavailable_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def system_unavailable_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -550,9 +554,9 @@ class Object
 
   def update_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_admin_path: (*untyped _ignored) ?{ () -> untyped } -> String
+  def update_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def update_admin_url: (*untyped _ignored) ?{ () -> untyped } -> String
+  def update_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def update_manifest_item_path: (*untyped _ignored) ?{ () -> untyped } -> String
 

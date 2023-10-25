@@ -117,6 +117,7 @@ module Emma::Json
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
   # @param [Boolean] fatal            If *true*, re-raise exceptions.
+  # @param [Boolean] log              If *false*, no debug logging.
   #
   # @raise [MultiJson::ParseError]
   # @raise [RuntimeError]
@@ -125,13 +126,19 @@ module Emma::Json
   #
   # @see #pretty_json
   #
-  def json_render(arg, align_values: false, ruby_keys: false, fatal: false)
-    option = { align_values: align_values, ruby_keys: ruby_keys }
+  def json_render(
+    arg,
+    align_values: false,
+    ruby_keys:    false,
+    fatal:        false,
+    log:          true
+  )
+    option = { align_values: align_values, ruby_keys: ruby_keys, log: log }
     result = pretty_json(arg, fatal: true, **option)
     result.gsub!(/\n/, ' ') unless align_values
     result
   rescue => error
-    Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
+    Log.debug { "#{__method__}: #{error.class}: #{error.message}" } if log
     re_raise_if_internal_exception(error)
     raise error if fatal
     arg.inspect
@@ -143,6 +150,7 @@ module Emma::Json
   # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
   # @param [Boolean] fatal            If *true*, re-raise exceptions.
+  # @param [Boolean] log              If *false*, no debug logging.
   #
   # @raise [MultiJson::ParseError]
   # @raise [RuntimeError]
@@ -155,18 +163,24 @@ module Emma::Json
   # An HTML element can show the lines as they are generated if it has style
   # "white-space: pre;".
   #
-  def pretty_json(arg, align_values: true, ruby_keys: true, fatal: false)
-    source  = json_parse(arg, symbolize_keys: false, fatal: true)
-    result  = MultiJson.dump(source, pretty: true)
-    key_max = align_values
-    key_max &&=
-      result.gsub(/^\s*"/, '').gsub(/": .*$/, '').split("\n").map(&:size).max
+  def pretty_json(
+    arg,
+    align_values: true,
+    ruby_keys:    true,
+    fatal:        false,
+    log:          true
+  )
+    source = json_parse(arg, symbolize_keys: false, fatal: true, log: log)
+    result = MultiJson.dump(source, pretty: true)
     if align_values || ruby_keys
+      keys    = (result.split("\n") if align_values)
+      keys  &&= keys.map! { |v| v.sub!(/^\s*"(\w+)": .*$/, '\1')&.size || 0 }
+      key_max = keys&.max
       result.gsub!(/^(\s*)"([^"]+?)":\s*(.*)$/) do
         space = $1
         key   = $2.to_s
         val   = $3.to_s
-        align = (' ' * (key_max - key.size) if key_max)
+        align = key_max && (n = positive(key_max - key.size)) && (' ' * n)
         key   = %Q("#{key}") unless ruby_keys
         val   = 'nil'        if ruby_keys && val.match?(/null,?/)
         "#{space}#{key}: #{align}#{val}"
@@ -174,7 +188,7 @@ module Emma::Json
     end
     result
   rescue => error
-    Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
+    Log.debug { "#{__method__}: #{error.class}: #{error.message}" } if log
     re_raise_if_internal_exception(error)
     raise error if fatal
     arg.pretty_inspect

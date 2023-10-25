@@ -296,16 +296,15 @@ Rails.application.routes.draw do
   resources :search_call, only: %i[index show]
 
   # ===========================================================================
-  # Administration
+  # System information
   # ===========================================================================
 
-  match '/admin', to: 'admin#update', as: 'update_admin', **VIA_CREATE
+  get   '/sys', to: 'sys#index',  as: 'sys_index'
+  match '/sys', to: 'sys#update', as: 'update_sys', **VIA_CREATE
 
-  AdminController::PAGES.each do |page|
-    get "/admin/#{page}", to: "admin##{page}", as: "#{page}_admin"
+  SysController::PAGES.each do |page|
+    get "/sys/#{page}", to: "sys##{page}", as: "#{page}_sys"
   end
-
-  resources :admin, only: %i[index]
 
   # ===========================================================================
   # Database viewer
@@ -612,6 +611,8 @@ unless ONLY_FOR_DOCUMENTATION
   def show_user_registration_url(...);             end
   def sign_in_local_path(...);                     end # /users/sign_in_local
   def sign_in_local_url(...);                      end
+  def sys_index_path(...);                         end
+  def sys_index_url(...);                          end
   def system_unavailable_path(...);                end
   def system_unavailable_url(...);                 end
   def tool_index_path(...);                        end
@@ -620,8 +621,8 @@ unless ONLY_FOR_DOCUMENTATION
   def unlock_url(...);                             end
   def update_account_path(...);                    end
   def update_account_url(...);                     end
-  def update_admin_path(...);                      end
-  def update_admin_url(...);                       end
+  def update_sys_path(...);                        end
+  def update_sys_url(...);                         end
   def update_manifest_item_path(...);              end
   def update_manifest_item_url(...);               end
   def update_manifest_path(...);                   end

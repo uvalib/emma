@@ -67,6 +67,7 @@ en:
         - 'manifest'
         - 'tool'
         - 'help'
+        - 'sys'
         - 'org'
         - 'home'
 
@@ -81,6 +82,7 @@ en:
         - 'manifest'
         - 'tool'
         - 'help'
+        - 'sys'
         - 'org'
         - 'home'
 
