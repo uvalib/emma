@@ -100,16 +100,127 @@ end
 
 public
 
+# Carrier for global property values which remain constant during execution.
+#
+#--
+# noinspection RubyTooManyInstanceVariablesInspection
+#++
+module GlobalProperty
+
+  extend self
+
+  private
+
+  attr_accessor :application_deployed
+  attr_writer   :aws_deployment
+  attr_writer   :application_deployment
+  attr_accessor :production_deployment
+  attr_accessor :staging_deployment
+  attr_accessor :in_debugger
+  attr_accessor :in_local_docker
+  attr_accessor :in_rails
+  attr_accessor :in_rake
+  attr_accessor :live_rails
+  attr_accessor :sanity_check
+
+  INFO_ARGS = %w[-h -H --help -D --describe -T --tasks -n --dry-run].freeze
+
+  public
+
+  def application_deployed?
+    return @application_deployed unless @application_deployed.nil?
+    @application_deployed =
+      ENV.fetch('AWS_DEFAULT_REGION') {
+        !ENV['DEPLOYMENT'].to_s.casecmp?('local')
+      }
+  end
+
+  def not_deployed?
+    !application_deployed?
+  end
+
+  def aws_deployment
+    return @aws_deployment unless @aws_deployment.nil?
+    @aws_deployment = application_deployed? ? :production : :staging
+  end
+
+  def application_deployment
+    return @application_deployment unless @application_deployment.nil?
+    @application_deployment =
+      ENV['DEPLOYMENT']&.downcase&.to_sym || aws_deployment
+  end
+
+  def production_deployment?
+    return @production_deployment unless @production_deployment.nil?
+    @production_deployment = (application_deployment == :production)
+  end
+
+  def staging_deployment?
+    return @staging_deployment unless @staging_deployment.nil?
+    @staging_deployment =
+      application_deployed? && (application_deployment == :staging)
+  end
+
+  def in_debugger?
+    return @in_debugger unless @in_debugger.nil?
+    @in_debugger = !!ENV['DEBUGGER_STORED_RUBYLIB']
+  end
+
+  def in_local_docker?
+    return @in_local_docker unless @in_local_docker.nil?
+    @in_local_docker = (ENV['USER'] == 'docker') && not_deployed?
+  end
+
+  def rails_application?
+    return @in_rails unless @in_rails.nil?
+    v   = (ENV['RUBYMINE_CONFIG'] == 'rails') # desktop only
+    v ||= !!ENV['IN_PASSENGER']
+    v ||= $0.to_s.start_with?('spring app')
+    v ||= $0.to_s.end_with?('rails', 'spring') &&
+      $*.intersect?(%w[-b -p server runner])
+    v &&= !$*.intersect?(INFO_ARGS)
+    v &&= !!defined?(APP_PATH) unless ENV['RAILS_ENV'] == 'test'
+    @in_rails = v
+  end
+
+  def rake_task?
+    return @in_rake unless @in_rake.nil?
+    v   = (ENV['RUBYMINE_CONFIG'] == 'rake') # desktop only
+    v ||= $0.to_s.end_with?('rake')
+    v ||= $0.to_s.end_with?('rails') && !rails_application? &&
+      !$*.reject { |arg| arg.match(/^(-.*|new|console|generate)$/) }.empty?
+    v &&= !$*.intersect?(INFO_ARGS)
+    @in_rake = v
+  end
+
+  def live_rails_application?
+    return @live_rails unless @live_rails.nil?
+    @live_rails = rails_application? && (ENV['RAILS_ENV'] != 'test')
+  end
+
+  def sanity_check?
+    return @sanity_check unless @sanity_check.nil?
+    @sanity_check = live_rails_application? && not_deployed?
+  end
+
+end
+
+# =============================================================================
+# Global properties
+# =============================================================================
+
+public
+
 # Indicate whether this is a deployed instance.
 #
 def application_deployed?
-  !!ENV['AWS_DEFAULT_REGION'] || !ENV['DEPLOYMENT'].to_s.casecmp?('local')
+  GlobalProperty.application_deployed?
 end
 
 # Indicate whether this is a desktop instance.
 #
 def not_deployed?
-  !application_deployed?
+  GlobalProperty.not_deployed?
 end
 
 # The true deployment type.
@@ -117,7 +228,7 @@ end
 # @return [Symbol]
 #
 def aws_deployment
-  application_deployed? ? :production : :staging
+  GlobalProperty.aws_deployment
 end
 
 # The deployment type.  Desktop development should use 'staging' resources.
@@ -128,19 +239,19 @@ end
 # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/staging/environment.vars
 #
 def application_deployment
-  ENV['DEPLOYMENT']&.downcase&.to_sym || aws_deployment
+  GlobalProperty.application_deployment
 end
 
 # Indicate whether this is the production service instance.
 #
 def production_deployment?
-  application_deployment == :production
+  GlobalProperty.production_deployment?
 end
 
 # Indicate whether this is the staging service instance.
 #
 def staging_deployment?
-  application_deployed? && (application_deployment == :staging)
+  GlobalProperty.staging_deployment?
 end
 
 # Indicate whether this instance is being run from the interactive debugger.
@@ -149,14 +260,14 @@ end
 # For interactive debugging RubyMine uses 'ruby-debug-ide'.
 #
 def in_debugger?
-  !!ENV['DEBUGGER_STORED_RUBYLIB']
+  GlobalProperty.in_debugger?
 end
 
 # Indicate whether this instance is being run from a Docker container on a
 # development machine.
 #
 def in_local_docker?
-  (ENV['USER'] == 'docker') && not_deployed?
+  GlobalProperty.in_local_docker?
 end
 
 # For use within initialization code to branch between code that is intended
@@ -164,44 +275,26 @@ end
 # rake).
 #
 def rails_application?
-  if !defined?(@in_rails) || @in_rails.nil?
-    @in_rails   = (ENV['RUBYMINE_CONFIG'] == 'rails') # desktop only
-    @in_rails ||= !!ENV['IN_PASSENGER']
-    @in_rails ||= $0.to_s.start_with?('spring app')
-    @in_rails ||= $0.to_s.end_with?('rails', 'spring') &&
-                  $*.any? { |arg| %w[-b -p server runner].include?(arg) }
-    @in_rails &&= !!defined?(APP_PATH) unless ENV['RAILS_ENV'] == 'test'
-    @in_rails &&=
-      !%w[-h -H --help -D --describe -T --tasks -n --dry-run].intersect?($*)
-  end
-  @in_rails
+  GlobalProperty.rails_application?
 end
 
 # Indicate whether this instance is being run as "rake" or "rails" with a Rake
 # task argument.
 #
 def rake_task?
-  if !defined?(@in_rake) || @in_rake.nil?
-    @in_rake   = (ENV['RUBYMINE_CONFIG'] == 'rake') # desktop only
-    @in_rake ||= $0.to_s.end_with?('rake')
-    @in_rake ||= $0.to_s.end_with?('rails') && !rails_application? &&
-      !$*.reject { |arg| arg.match(/^(-.*|new|console|generate)$/) }.empty?
-    @in_rake &&=
-      !%w[-h -H --help -D --describe -T --tasks -n --dry-run].intersect?($*)
-  end
-  @in_rake
-end
-
-# Indicate whether desktop-only validations are appropriate.
-#
-def sanity_check?
-  rails_application? && not_deployed?
+  GlobalProperty.rake_task?
 end
 
 # Indicate whether this is the Rails application not under test and not being
 #
 def live_rails_application?
-  rails_application? && (ENV['RAILS_ENV'] != 'test')
+  GlobalProperty.live_rails_application?
+end
+
+# Indicate whether desktop-only validations are appropriate.
+#
+def sanity_check?
+  GlobalProperty.sanity_check?
 end
 
 # =============================================================================

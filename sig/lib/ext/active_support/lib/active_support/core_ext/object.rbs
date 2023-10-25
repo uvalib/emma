@@ -1,4 +1,4 @@
-class Object
+module ObjectExt
   # Recursive freezing support.
   #
   # @see Hash#deep_freeze
@@ -19,4 +19,8 @@ class Object
   # @return [String]
   #
   def summary: (?untyped item, ?max: Integer) -> String
+end
+
+class Object
+  include ObjectExt
 end

@@ -1,4 +1,6 @@
-class Module < Object
+module ModuleExt
+  #include ObjectExt
+
   # Prevent inadvertent freezing of modules and classes.
   #
   # @return [self]
@@ -14,4 +16,8 @@ class Module < Object
   # @return [nil]                     If the constant is not defined.
   #
   def safe_const_get: ((String|Symbol) name, ?bool inherit) -> (untyped | nil)
+end
+
+class Module
+  include ModuleExt
 end

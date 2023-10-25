@@ -1,4 +1,4 @@
-# lib/ext/active_support/core_ext/object.rb
+# lib/ext/active_support/lib/active_support/core_ext/object.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,7 +7,13 @@ __loading_begin(__FILE__)
 
 require 'active_support/core_ext/object'
 
-class Object
+module ObjectExt
+
+  # ===========================================================================
+  # :section: Instance methods to add to Object
+  # ===========================================================================
+
+  public
 
   # Recursive freezing support.
   #
@@ -54,6 +60,22 @@ class Object
     end
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  # If there is ever a time when Rails or the standard Ruby library defines
+  # one of these extension methods, any current uses of the method needs to be
+  # evaluated and the local definition should be removed.
+  if sanity_check?
+    errors = instance_methods.intersection(Object.instance_methods)
+    fail 'Object already defines %s' % errors.join(', ') if errors.present?
+  end
+
+end
+
+class Object
+  include ObjectExt
 end
 
 __loading_end(__FILE__)

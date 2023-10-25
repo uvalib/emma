@@ -59,7 +59,45 @@ class Object
   # @see file:app/assets/javascripts/shared/decode.js *decodeJSON()*
   #
   def js: (untyped arg) -> String
+end
 
+module GlobalProperty
+  extend GlobalProperty
+
+  private
+
+  attr_accessor application_deployed: bool?
+  attr_writer aws_deployment: Symbol
+  attr_writer application_deployment: Symbol
+  attr_accessor production_deployment: bool?
+  attr_accessor staging_deployment: bool?
+  attr_accessor in_debugger: bool?
+  attr_accessor in_local_docker: bool?
+  attr_accessor in_rails: bool?
+  attr_accessor in_rake: bool?
+  attr_accessor live_rails: bool?
+  attr_accessor sanity_check: bool?
+
+  INFO_ARGS: symArray
+
+  public
+
+  def application_deployed?: () -> bool
+  def not_deployed?: () -> bool
+  def aws_deployment: () -> Symbol
+  def application_deployment: () -> Symbol
+  def production_deployment?: () -> bool
+  def staging_deployment?: () -> bool
+  def in_debugger?: () -> bool
+  def in_local_docker?: () -> bool
+  def rails_application?: () -> bool
+  def rake_task?: () -> bool
+  def live_rails_application?: () -> bool
+  def sanity_check?: () -> bool
+
+end
+
+class Object
   # Indicate whether this is a deployed instance.
   #
   def application_deployed?: () -> bool
@@ -118,11 +156,11 @@ class Object
 
   @in_rake:  bool
 
-  # Indicate whether desktop-only validations are appropriate.
-  #
-  def sanity_check?: () -> bool
-
   # Indicate whether this is the Rails application not under test.
   #
   def live_rails_application?: () -> bool
+
+  # Indicate whether desktop-only validations are appropriate.
+  #
+  def sanity_check?: () -> bool
 end

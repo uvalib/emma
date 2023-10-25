@@ -1,13 +1,5 @@
-# lib/ext/active_support/core_ext/array.rb
-#
-# frozen_string_literal: true
-# warn_indent:           true
-
-__loading_begin(__FILE__)
-
-require 'active_support/core_ext/array'
-
-class Array
+module ArrayExt
+  #include ObjectExt
 
   # Recursively freeze an Array and all of its elements so that the contents of
   # the elements cannot be modified.
@@ -20,10 +12,7 @@ class Array
   # This should not be used in any situation where the elements are live
   # objects subject to active updating (which would be unusable if frozen).
   #
-  def deep_freeze
-    each(&:deep_freeze)
-    freeze
-  end
+  def deep_freeze: () -> self
 
   # Recursive duplication.
   #
@@ -37,9 +26,7 @@ class Array
   # return *false* (so that Object#rdup returns *self*), or a class may define
   # #rdup with customized behaviors.
   #
-  def rdup
-    map(&:rdup)
-  end
+  def rdup: () -> anyArray
 
   # Recursive merge.
   #
@@ -47,9 +34,7 @@ class Array
   #
   # @return [Array]
   #
-  def rmerge(other)
-    rdup.rmerge!(other)
-  end
+  def rmerge: (anyArray other) -> anyArray
 
   # Recursive merge into self.
   #
@@ -67,15 +52,9 @@ class Array
   # not arrays); if it is not flat, any sub-arrays will be duplicated and
   # appended to *self* unconditionally.
   #
-  def rmerge!(other)
-    if other.is_a?(Array)
-      other.each { |v| self << v.rdup unless include?(v) }
-    elsif other
-      self << other.rdup unless include?(other)
-    end
-    self
-  end
-
+  def rmerge!: (untyped other) -> self
 end
 
-__loading_end(__FILE__)
+class Array[unchecked out Elem] < Object
+  include ArrayExt
+end

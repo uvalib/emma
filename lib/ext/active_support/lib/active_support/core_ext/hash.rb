@@ -1,4 +1,4 @@
-# lib/ext/active_support/core_ext/hash.rb
+# lib/ext/active_support/lib/active_support/core_ext/hash.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,7 +7,20 @@ __loading_begin(__FILE__)
 
 require 'active_support/core_ext/hash'
 
-class Hash
+module HashExt
+
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include ObjectExt
+    # :nocov:
+  end
+
+  # ===========================================================================
+  # :section: Instance methods to add to Hash
+  # ===========================================================================
+
+  public
 
   # Recursively freeze a Hash so that no part of its forest of key-value pairs
   # can be modified.
@@ -79,6 +92,22 @@ class Hash
     self
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  # If there is ever a time when Rails or the standard Ruby library defines
+  # one of these extension methods, any current uses of the method needs to be
+  # evaluated and the local definition should be removed.
+  if sanity_check?
+    errors = instance_methods.intersection(Hash.instance_methods)
+    fail 'Hash already defines %s' % errors.join(', ') if errors.present?
+  end
+
+end
+
+class Hash
+  include HashExt
 end
 
 __loading_end(__FILE__)

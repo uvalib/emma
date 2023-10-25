@@ -1,4 +1,6 @@
-class NilClass
+module NilClassExt
+  #include ObjectExt
+
   # This prevents values that might be *nil* from causing a problem in ERB
   # templates when used in a context where an empty string would be acceptable.
   #
@@ -9,4 +11,8 @@ class NilClass
   # Indicates that *nil* is treated as HTML-safe.
   #
   def html_safe?: () -> true
+end
+
+class NilClass
+  include NilClassExt
 end

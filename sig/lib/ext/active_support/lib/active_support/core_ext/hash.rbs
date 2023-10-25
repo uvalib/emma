@@ -1,4 +1,6 @@
-class Hash[unchecked out K, unchecked out V] < Object
+module HashExt
+  #include ObjectExt
+
   # Recursively freeze a Hash so that no part of its forest of key-value pairs
   # can be modified.
   #
@@ -47,4 +49,8 @@ class Hash[unchecked out K, unchecked out V] < Object
   # @return [self]
   #
   def rmerge!: (anyHash other, ?bool raise_error) -> self
+end
+
+class Hash[unchecked out K, unchecked out V] < Object
+  include HashExt
 end
