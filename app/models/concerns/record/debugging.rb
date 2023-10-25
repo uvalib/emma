@@ -70,9 +70,9 @@ module Record::Debugging
 
     public
 
-    def __debug_step(*args, **opt, &block)
+    def __debug_step(*args, **opt, &blk)
       __output "\n\n###################################################"
-      __debug_items(*args, **opt, &block)
+      __debug_items(*args, **opt, &blk)
     end
 
   else
@@ -160,10 +160,10 @@ module Record::Debugging
       #
       # @param [Model, Hash, nil] attr
       #
-      def initialize(attr = nil, &block)
+      def initialize(attr = nil, &blk)
         ldr = "new #{self.class.base_class.name.underscore.upcase} RECORD"
         __debug_items(binding, leader: ldr)
-        super(attr, &block)
+        super(attr, &blk)
         __debug_items(self.class.name, self, leader: ldr)
       end
 

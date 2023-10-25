@@ -20,7 +20,7 @@ module Api::Serializer::Associations
     # === Variations
     # +
     #
-    # @overload attribute(name, **opt, &block)
+    # @overload attribute(name, **opt)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
     #
@@ -53,7 +53,7 @@ module Api::Serializer::Associations
     # @param [Symbol] name
     # @param [Array]  args
     # @param [Hash]   opt
-    # @param [Proc]   block           Passed to #property.
+    # @param [Proc]   blk             Passed to #property.
     #
     # @return [void]
     #
@@ -61,17 +61,17 @@ module Api::Serializer::Associations
     # === Variations
     # +
     #
-    # @overload has_one(name, **opt, &block)
+    # @overload has_one(name, **opt, &blk)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # @overload has_one(name, type, *_, **opt)
     #   @param [Symbol]                name
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # === Examples
     #
@@ -96,7 +96,7 @@ module Api::Serializer::Associations
     # @param [Symbol] name
     # @param [Array]  args
     # @param [Hash]   opt
-    # @param [Proc]   block           Passed to #property.
+    # @param [Proc]   blk             Passed to #property.
     #
     # @return [void]
     #
@@ -104,17 +104,17 @@ module Api::Serializer::Associations
     # === Variations
     # +
     #
-    # @overload has_many(name, **opt, &block)
+    # @overload has_many(name, **opt, &blk)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # @overload has_many(name, type, *_, **opt)
     #   @param [Symbol]                name
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # === Examples
     #

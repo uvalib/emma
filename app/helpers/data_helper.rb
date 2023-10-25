@@ -221,8 +221,8 @@ module DataHelper
   # @yield [db]
   # @yieldparam [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
   #
-  def db_connection(&block)
-    ActiveRecord::Base.connection_pool.with_connection(&block)
+  def db_connection(&blk)
+    ActiveRecord::Base.connection_pool.with_connection(&blk)
   end
 
   # db_columns

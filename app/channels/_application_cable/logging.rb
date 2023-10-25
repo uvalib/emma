@@ -43,11 +43,11 @@ module ApplicationCable::Logging
   #
   # @param [Array<*>] args
   # @param [Hash]     opt
-  # @param [Proc]     block           Passed to #__debug_items
+  # @param [Proc]     blk             Passed to #__debug_items
   #
   # @return [nil]
   #
-  def __debug_cable(*args, **opt, &block)
+  def __debug_cable(*args, **opt, &blk)
     args.compact!
     case args.first
       when ActionCable::Connection::Base then obj = args.shift
@@ -59,7 +59,7 @@ module ApplicationCable::Logging
     opt[:leader]    = "#{cable_tag(obj)}:" unless opt.key?(:leader)
     opt[:compact]   = true                 unless opt.key?(:compact)
     opt[:separator] = "\n\t"               unless opt.key?(:separator)
-    __debug_items(args.join(DEBUG_SEPARATOR), **opt, &block)
+    __debug_items(args.join(DEBUG_SEPARATOR), **opt, &blk)
   end
     .tap { |meth| neutralize(meth) unless DEBUG_CABLE }
 

@@ -167,7 +167,7 @@ end
 #
 # @param [Array<*>] args
 # @param [Hash]     opt
-# @param [Proc]     block
+# @param [Proc]     blk
 #
 # @return [nil]
 #
@@ -176,8 +176,8 @@ end
 # === Usage Notes
 # The method is only functional if #CONSOLE_OUTPUT is true.
 #
-def __output(*args, **opt, &block)
-  __output_impl(*args, **opt, &block)
+def __output(*args, **opt, &blk)
+  __output_impl(*args, **opt, &blk)
 end
   .tap { |meth| neutralize(meth) unless CONSOLE_OUTPUT }
 
@@ -203,34 +203,34 @@ DEBUG_MAX = 2048
 #
 # @param [Array<*>] args
 # @param [Hash]     opt
-# @param [Proc]     block
+# @param [Proc]     blk
 #
 # @return [nil]
 #
 # @see #__output_impl
 #
-def __debug_impl(*args, **opt, &block)
+def __debug_impl(*args, **opt, &blk)
   opt.reverse_merge!(
     debug:    true,
     leader:   DEBUG_LEADER,
     max:      DEBUG_MAX,
     omission: '...'
   )
-  __output_impl(*args, **opt, &block)
+  __output_impl(*args, **opt, &blk)
 end
 
 # Write indented debug line(s) to $stderr if CONSOLE_DEBUGGING is *true*.
 #
 # @param [Array<*>] args
 # @param [Hash]     opt
-# @param [Proc]     block
+# @param [Proc]     blk
 #
 # @return [nil]
 #
 # @see #__debug_impl
 #
-def __debug(*args, **opt, &block)
-  __debug_impl(*args, **opt, &block)
+def __debug(*args, **opt, &blk)
+  __debug_impl(*args, **opt, &blk)
 end
   .tap { |meth| neutralize(meth) unless CONSOLE_DEBUGGING }
 
@@ -244,29 +244,29 @@ public
 #
 # @param [Array<*>] args
 # @param [Hash]     opt
-# @param [Proc]     block
+# @param [Proc]     blk
 #
 # @return [nil]
 #
 # @see #__output_impl
 #
-def __trace_impl(*args, **opt, &block)
+def __trace_impl(*args, **opt, &blk)
   opt[:no_log] = true unless opt.key?(:no_log)
-  __output_impl(*args, **opt, &block)
+  __output_impl(*args, **opt, &blk)
 end
 
 # Output a trace line which always goes to $stderr.
 #
 # @param [Array<*>] args
 # @param [Hash]     opt
-# @param [Proc]     block
+# @param [Proc]     blk
 #
 # @return [nil]
 #
 # @see #__trace_impl
 #
-def __trace(*args, **opt, &block)
-  __trace_impl(*args, **opt, &block)
+def __trace(*args, **opt, &blk)
+  __trace_impl(*args, **opt, &blk)
 end
 
 # =============================================================================

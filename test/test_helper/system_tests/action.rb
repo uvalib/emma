@@ -92,7 +92,7 @@ module TestHelper::SystemTests::Action
   #
   # @param [Symbol,String,Class,Model,nil] model
   # @param [Hash]                          opt
-  # @param [Proc]                          block
+  # @param [Proc]                          blk
   #
   # @raise [Minitest::Assertion]
   #
@@ -100,15 +100,15 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused
   #
-  def visit_new_page(model, **opt, &block)
-    visit_action_page(model, :new, **opt, &block)
+  def visit_new_page(model, **opt, &blk)
+    visit_action_page(model, :new, **opt, &blk)
   end
 
   # Visit the page for modifying an existing model instance.
   #
   # @param [Symbol,String,Class,Model,nil] model
   # @param [Hash]                          opt
-  # @param [Proc]                          block
+  # @param [Proc]                          blk
   #
   # @option opt [String] :id          If missing, visit :edit_select.
   #
@@ -118,16 +118,16 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused
   #
-  def visit_edit_page(model, **opt, &block)
+  def visit_edit_page(model, **opt, &blk)
     action = opt[:id] ? :edit : :edit_select
-    visit_action_page(model, action, **opt, &block)
+    visit_action_page(model, action, **opt, &blk)
   end
 
   # Visit the page for removing an existing model instance.
   #
   # @param [Symbol,String,Class,Model,nil] model
   # @param [Hash]                          opt
-  # @param [Proc]                          block
+  # @param [Proc]                          blk
   #
   # @option opt [String] :id          If missing, visit :delete_select.
   #
@@ -137,9 +137,9 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused
   #
-  def visit_delete_page(model, **opt, &block)
+  def visit_delete_page(model, **opt, &blk)
     action = opt[:id] ? :delete : :delete_select
-    visit_action_page(model, action, **opt, &block)
+    visit_action_page(model, action, **opt, &blk)
   end
 
   # Visit the page for an action on a model.

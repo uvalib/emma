@@ -34,7 +34,7 @@ module Aws::S3
         raise e
       end
 
-      def upload(options = {}, &block)
+      def upload(options = {}, &blk)
         start = timestamp
         super
           .tap { __ext_log(start, options) }
@@ -61,7 +61,7 @@ module Aws::S3
         raise e
       end
 
-      def upload_parts(upload_id, options, &block)
+      def upload_parts(upload_id, options, &blk)
         start = timestamp
         super
           .tap { __ext_log(start, upload_id, options) }

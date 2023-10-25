@@ -136,10 +136,10 @@ namespace 'emma:jobs' do
   #
   # @param [Class]                  table
   # @param [ActiveRecord::Relation] list
-  # @param [Proc]                   block   Applied to each record
+  # @param [Proc]                   blk     Applied to each record
   #
-  def list_records(table, list, &block)
-    list   = (block ? list&.map(&block) : list&.dup).presence
+  def list_records(table, list, &blk)
+    list   = (blk ? list&.map(&blk) : list&.dup).presence
     list &&= list.map! { |rec| Array.wrap(rec.try(:fields) || rec).join("\t") }
     list ||= %w[NONE]
     $stdout.puts list.map! { |item| "#{table.name} - #{item}" }

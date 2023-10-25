@@ -72,6 +72,15 @@ end
 # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 module ActiveSupport
 
+  module CoreExt
+    module ERBUtil
+      def html_escape: (untyped|nil s) -> ActiveSupport::SafeBuffer
+      def self.html_escape: (untyped|nil s) -> ActiveSupport::SafeBuffer
+      alias h html_escape
+      alias self.h self.html_escape
+    end
+  end
+
   class DeprecatedNumericWithFormat
     def to_s: (?(String | Integer | Symbol | nil) format, ?(anyHash | nil) options) -> String
   end
@@ -265,14 +274,28 @@ class BigDecimal
 end
 
 module CanCan
+
   module Ability
+    def can
+      : (?(Symbol | symArray | nil) action, ?untyped subject, **untyped conditions) -> void
+      | (?(Symbol | symArray | nil) action, ?untyped subject) ?{ (untyped object) -> bool } -> void
+      | () { (Symbol action, class object_class, untyped object) -> bool } -> void
+
+    def cannot
+      : (?(Symbol | symArray | nil) action, ?untyped subject, **untyped conditions) -> void
+      | (?(Symbol | symArray | nil) action, ?untyped subject) ?{ (untyped object) -> bool } -> void
+      | () { (Symbol action, class object_class, untyped object) -> bool } -> void
   end
+
   module ControllerAdditions
   end
+
   class Error < StandardError
   end
+
   class AccessDenied < Error
   end
+
 end
 
 module Capybara
@@ -377,9 +400,27 @@ module Enumerable[unchecked out Elem] : _Each[Elem]
 
   def include?: (untyped) -> bool
 
+  def flat_map
+    : [T] () { (Elem) -> untyped } -> anyArray
+    |     () -> ::Enumerator[Elem, anyArray]
+
   def sum
     : [Elem] ()         ?{ (Elem arg0) -> Elem } -> (Elem | Integer)
     | [Elem] (Elem arg) ?{ (Elem arg0) -> Elem } -> Elem
+
+end
+
+class ERB
+
+  module Escape
+    def html_escape: (untyped|nil) -> ActiveSupport::SafeBuffer
+    def self.html_escape: (untyped|nil) -> ActiveSupport::SafeBuffer
+  end
+
+  module Util
+    def html_escape: (untyped|nil) -> ActiveSupport::SafeBuffer
+    def self.html_escape: (untyped|nil) -> ActiveSupport::SafeBuffer
+  end
 
 end
 

@@ -184,9 +184,9 @@ module DataConcern
       end
     end
     # Sort field value entries in descending order by count.
-    fields.compact_blank!.transform_values! { |counts|
+    fields.compact_blank!.transform_values! do |counts|
       counts.sort_by { |value, count| [-count, value] }.to_h
-    }
+    end
     # Sort resulting hash alphabetically by field name.
     fields.sort.to_h
   end

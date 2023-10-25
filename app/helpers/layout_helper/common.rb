@@ -29,8 +29,8 @@ module LayoutHelper::Common
   #
   CLIENT_MANAGES_HIDDEN_INPUTS = true
 
-  def search_form(target, id = nil, hidden: nil, **opt, &block)
-    search_form_with_hidden(target, id, hidden: hidden, **opt, &block)
+  def search_form(target, id = nil, hidden: nil, **opt, &blk)
+    search_form_with_hidden(target, id, hidden: hidden, **opt, &blk)
   end unless CLIENT_MANAGES_HIDDEN_INPUTS
 
   # A form used to create/modify a search.

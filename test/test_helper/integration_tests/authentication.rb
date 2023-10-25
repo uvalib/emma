@@ -113,25 +113,25 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @param [String, Symbol, User, nil] user
   # @param [Hash]                      opt    Passed to #run_test.
-  # @param [Proc]                      block  Required test code to execute.
+  # @param [Proc]                      blk    Required test code to execute.
   #
   # @return [void]
   #
   # @yield Test code to run while signed-on as *user*.
   # @yieldreturn [void]
   #
-  def as_user(user, **opt, &block)
+  def as_user(user, **opt, &blk)
     user &&= find_user(user)
     unless opt.key?(:part)
       opt[:part] = 'USER %s' % show_user(user, output: false, indent: false)
     end
     test_name = opt.delete(:test)
     if user.nil?
-      run_test(test_name, **opt, &block)
+      run_test(test_name, **opt, &blk)
     else
       run_test(test_name, **opt) do
         get_sign_in_as(user, trace: false)
-        block.call
+        blk.call
         get_sign_out(trace: false)
       end
     end
@@ -160,7 +160,7 @@ module TestHelper::IntegrationTests::Authentication
   # @yield The caller may provide added assertions or other post-send actions.
   # @yieldreturn [void]
   #
-  def send_as(verb, user, url, **opt, &block)
+  def send_as(verb, user, url, **opt, &blk)
     run_opt = opt.extract!(*RUN_TEST_OPT)
     redir   = opt.delete(:redir)
     expect  = opt.delete(:expect)
@@ -197,7 +197,7 @@ module TestHelper::IntegrationTests::Authentication
       end
 
       # Any additional assertions provided by the caller.
-      block&.call
+      blk&.call
 
     end
   end
@@ -211,8 +211,8 @@ module TestHelper::IntegrationTests::Authentication
   # @!method delete_as
   #
   %i[get put post patch delete].each do |verb|
-    define_method(:"#{verb}_as") do |user, url, **opt, &block|
-      send_as(verb, user, url, **opt, &block)
+    define_method(:"#{verb}_as") do |user, url, **opt, &blk|
+      send_as(verb, user, url, **opt, &blk)
     end
   end
 
@@ -229,7 +229,7 @@ module TestHelper::IntegrationTests::Authentication
     #
     # @see #send_as
     #
-    def get_as(user, url, **opt, &block); end
+    def get_as(user, url, **opt, &blk); end
 
     # HTTP PUT *url* as *user*.
     #
@@ -239,7 +239,7 @@ module TestHelper::IntegrationTests::Authentication
     #
     # @see #send_as
     #
-    def put_as(user, url, **opt, &block); end
+    def put_as(user, url, **opt, &blk); end
 
     # HTTP POST *url* as *user*.
     #
@@ -249,7 +249,7 @@ module TestHelper::IntegrationTests::Authentication
     #
     # @see #send_as
     #
-    def post_as(user, url, **opt, &block); end
+    def post_as(user, url, **opt, &blk); end
 
     # HTTP PUT *url* as *user*.
     #
@@ -259,7 +259,7 @@ module TestHelper::IntegrationTests::Authentication
     #
     # @see #send_as
     #
-    def patch_as(user, url, **opt, &block); end
+    def patch_as(user, url, **opt, &blk); end
 
     # HTTP DELETE *url* as *user*.
     #
@@ -269,7 +269,7 @@ module TestHelper::IntegrationTests::Authentication
     #
     # @see #send_as
     #
-    def delete_as(user, url, **opt, &block); end
+    def delete_as(user, url, **opt, &blk); end
 
     # :nocov:
   end

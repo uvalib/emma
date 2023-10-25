@@ -148,9 +148,9 @@ module Import
   # @yieldparam [String] element
   # @yieldreturn [String] The replacement element.
   #
-  def array_value(v, &block)
+  def array_value(v, &blk)
     Array.wrap(values(v)).tap { |result|
-      result.map!(&block) if block
+      result.map!(&blk) if blk
     }.compact_blank!
   end
 
@@ -341,8 +341,7 @@ module Import
 
   protected
 
-  # Normalize single-element arrays to scalar values and sort the fields for
-  # easier comparison when reviewing/debugging.
+  # Normalize single-element arrays to scalar values.
   #
   # @param [Hash] fields
   #

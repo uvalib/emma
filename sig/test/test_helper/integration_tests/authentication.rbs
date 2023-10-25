@@ -66,7 +66,7 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @param [String, Symbol, User, nil] user
   # @param [Hash]                      opt    Passed to #run_test.
-  # @param [Proc]                      block  Required test code to execute.
+  # @param [Proc]                      blk    Required test code to execute.
   #
   # @return [void]
   #

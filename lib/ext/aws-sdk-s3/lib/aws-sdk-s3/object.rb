@@ -56,9 +56,9 @@ module Aws::S3
       ]
 
       MONITOR_OBJECT_METHODS.each do |meth|
-        define_method(meth) do |options = {}, &block|
+        define_method(meth) do |options = {}, &blk|
           start = timestamp
-          super(options, &block)
+          super(options, &blk)
             .tap { __ext_log(meth, start, options) }
         end
       end

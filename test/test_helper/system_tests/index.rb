@@ -148,7 +148,7 @@ module TestHelper::SystemTests::Index
   #
   # @raise [Minitest::Assertion]
   #
-  # @return [true]
+  # @return [void]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
@@ -186,7 +186,7 @@ module TestHelper::SystemTests::Index
   # @yieldparam [String]  title
   # @yieldreturn [void]
   #
-  def visit_each_show_page(model, entry_css: nil, &block)
+  def visit_each_show_page(model, entry_css: nil, &blk)
     ctrlr       = controller_name(model)
     entry_css ||= property(ctrlr, :index, :entry_css)
     assert entry_css, "#{ctrlr} entry_css could not be determined"
@@ -194,7 +194,7 @@ module TestHelper::SystemTests::Index
     max_index = entry_count - 1
     (0..max_index).each do |index|
       visit_show_page(ctrlr, entry_css: entry_css, index: index) do |title|
-        block&.call(index, title)
+        blk&.call(index, title)
       end
       go_back # Return to index page.
     end

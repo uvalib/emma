@@ -92,8 +92,8 @@ namespace 'emma:assets' do
   #
   # @return [void]
   #
-  def bg_run(*command, &block)
-    sh_run(*command, async: true, &block)
+  def bg_run(*command, &blk)
+    sh_run(*command, async: true, &blk)
   end
 
   # Run a sequence of shell commands.

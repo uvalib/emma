@@ -465,13 +465,11 @@ class ApiMigrate
     #
     # @return [Array<String>, String]
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
     def normalize_creator(value)
       if value.is_a?(Array)
         value.flat_map { |v| normalize_creator(v) }.compact.uniq
       else
+        # noinspection RubyMismatchedReturnType
         BOGUS_CREATOR.find do |match|
           return if match.is_a?(Regexp) ? (value =~ match) : (value == match)
         end || value
@@ -496,7 +494,6 @@ class ApiMigrate
     #
     def normalize_day(value)
       if value.is_a?(Array)
-        # noinspection RubyMismatchedReturnType
         value.flat_map { |v| normalize_day(v) }.compact
       else
         value.to_s if (value = IsoDay.new(value)).valid?
@@ -511,7 +508,6 @@ class ApiMigrate
     #
     def normalize_datetime(value)
       if value.is_a?(Array)
-        # noinspection RubyMismatchedReturnType
         value.flat_map { |v| normalize_datetime(v) }.compact
       else
         value.to_s if (value = IsoDate.new(value)).valid?
@@ -526,7 +522,6 @@ class ApiMigrate
     #
     def normalize_metadata_source(value)
       if value.is_a?(Array)
-        # noinspection RubyMismatchedReturnType
         value.flat_map { |v| normalize_metadata_source(v) }.uniq
       else
         values = normalize_text_list(value)

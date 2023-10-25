@@ -240,7 +240,7 @@ class RunState < Hash[untyped, untyped]
   #
   # @param [Array<*>]             args    Passed to #log.
   # @param [Symbol, nil]          meth    Calling method.
-  # @param [Proc]                 block   Passed to #log.
+  # @param [Proc]                 blk     Passed to #log.
   #
   # @return [nil]
   #
@@ -250,7 +250,7 @@ class RunState < Hash[untyped, untyped]
   #
   # @param [Array<*>]             args    Passed to #log.
   # @param [Symbol, nil]          meth    Calling method.
-  # @param [Proc]                 block   Passed to #log.
+  # @param [Proc]                 blk     Passed to #log.
   #
   # @return [nil]
   #
@@ -261,7 +261,7 @@ class RunState < Hash[untyped, untyped]
   # @param [Array<*>]             args    Passed to Emma::Log#add
   # @param [Integer, Symbol, nil] level   Severity level.
   # @param [Symbol, nil]          meth    Calling method.
-  # @param [Proc]                 block   Passed to Emma::Log#add
+  # @param [Proc]                 blk     Passed to Emma::Log#add
   #
   # @return [nil]
   #

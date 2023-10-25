@@ -62,7 +62,7 @@ module TestHelper::SystemTests::Action
   #
   # @param [Symbol,String,Class,Model,nil] model
   # @param [Hash]                          opt
-  # @param [Proc]                          block
+  # @param [Proc]                          blk
   #
   # @raise [Minitest::Assertion]
   #
@@ -76,7 +76,7 @@ module TestHelper::SystemTests::Action
   #
   # @param [Symbol,String,Class,Model,nil] model
   # @param [Hash]                          opt
-  # @param [Proc]                          block
+  # @param [Proc]                          blk
   #
   # @option opt [String] :id          If missing, visit :edit_select.
   #
@@ -92,7 +92,7 @@ module TestHelper::SystemTests::Action
   #
   # @param [Symbol,String,Class,Model,nil] model
   # @param [Hash]                          opt
-  # @param [Proc]                          block
+  # @param [Proc]                          blk
   #
   # @option opt [String] :id          If missing, visit :delete_select.
   #

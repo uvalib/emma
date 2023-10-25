@@ -103,7 +103,7 @@ class FileObject
     # __debug_mime
     #
     # @param [Binding] bind         Passed to #__debug_items.
-    # @param [Proc]    block        Passed to #__debug_items.
+    # @param [Proc]    blk          Passed to #__debug_items.
     #
     # @return [nil]
     #

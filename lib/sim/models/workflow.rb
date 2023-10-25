@@ -145,15 +145,15 @@ module Workflow::Base::Simulation
   #
   # @param [Array] args             Passed to #__debug_line.
   # @param [Hash]  opt
-  # @param [Proc]  block            Passed to #__debug_line.
+  # @param [Proc]  blk              Passed to #__debug_line.
   #
   # @return [nil]
   #
-  def __debug_sim(*args, **opt, &block)
+  def __debug_sim(*args, **opt, &blk)
     opt.reverse_merge!(leader: '   ')
     meth = args.first.is_a?(Symbol) ? args.shift : calling_method
     args.unshift(':%-20s' % meth)
-    __debug_line(*args, **opt, &block)
+    __debug_line(*args, **opt, &blk)
   end
 
 end

@@ -99,22 +99,22 @@ module BaseDecorator::Helpers
 
   # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
   #
-  # @!method button_tag(*args, &block)
+  # @!method button_tag(*args, &blk)
   #   @see ActionView::Helpers::FormTagHelper#button_tag
   #
-  # @!method content_tag(*args, &block)
+  # @!method content_tag(*args, &blk)
   #   @see ActionView::Helpers::TagHelper#content_tag
   #
-  # @!method form_tag(*args, &block)
+  # @!method form_tag(*args, &blk)
   #   @see ActionView::Helpers::FormTagHelper#form_tag
   #
-  # @!method image_tag(*args, &block)
+  # @!method image_tag(*args, &blk)
   #   @see ActionView::Helpers::AssetTagHelper#image_tag
   #
-  # @!method link_to(*args, &block)
+  # @!method link_to(*args, &blk)
   #   @see ActionView::Helpers::UrlHelper#link_to
   #
-  # @!method submit_tag(*args, &block)
+  # @!method submit_tag(*args, &blk)
   #   @see ActionView::Helpers::FormTagHelper#submit_tag
   #
   VIEW_HELPER_METHODS = %i[
@@ -127,8 +127,8 @@ module BaseDecorator::Helpers
   ].freeze
 
   VIEW_HELPER_METHODS.each do |meth|
-    define_method(meth) do |*args, &block|
-      helpers.send(meth, *args, &block)
+    define_method(meth) do |*args, &blk|
+      helpers.send(meth, *args, &blk)
     end
     ruby2_keywords(meth)
   end
@@ -181,7 +181,7 @@ module BaseDecorator::Helpers
   # @yieldparam [ActionView::Helpers::FormBuilder] form
   # @yieldreturn ActiveSupport::SafeBuffer
   #
-  def form_with(model: nil, scope: nil, url: nil, format: nil, **opt, &block)
+  def form_with(model: nil, scope: nil, url: nil, format: nil, **opt, &blk)
     if (data_opt = opt.select { |k, _| k.start_with?('data-') }).present?
       opt.except!(*data_opt.keys)
       data_opt.transform_keys! { |k| k.to_s.delete_prefix('data-').to_sym }
@@ -191,7 +191,7 @@ module BaseDecorator::Helpers
       opt[:html] = opt[:html]&.merge(html_opt) || html_opt
     end
     opt.merge!(model: model, scope: scope, url: url, format: format)
-    h.form_with(**opt, &block)
+    h.form_with(**opt, &blk)
   end
 
   # ===========================================================================

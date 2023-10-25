@@ -186,8 +186,7 @@ module BaseDecorator::List
     no_help:    nil,
     label_css:  DEFAULT_LABEL_CLASS,
     value_css:  DEFAULT_VALUE_CLASS,
-    **opt,
-    &block
+    **opt
   )
     prop  ||= field_configuration(field)
     field ||= prop[:field]

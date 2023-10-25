@@ -45,7 +45,7 @@ class LookupService::Data
 
   # transform_table_items
   #
-  # @param [Proc] block
+  # @param [Proc] blk
   #
   # @raise [ArgumentError]  If no block was given.
   #

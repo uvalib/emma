@@ -78,7 +78,10 @@ module LayoutHelper::Main
   #   @param [ActiveSupport::SafeBuffer, Symbol]                logo
   #   @return [ActiveSupport::SafeBuffer]
   #
-  def page_heading: ((ActiveSupport::SafeBuffer|String) title, *(ActiveSupport::SafeBuffer|String) controls, ?help: Symbol|symArray|ActiveSupport::SafeBuffer|nil, ?logo: Symbol|ActiveSupport::SafeBuffer|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer|String|Array[ActiveSupport::SafeBuffer|String]) } -> ActiveSupport::SafeBuffer
+  # @yield Additional controls if provided.
+  # @yieldreturn [Array,ActiveSupport::SafeBuffer,nil]
+  #
+  def page_heading: ((ActiveSupport::SafeBuffer|String) title, *(ActiveSupport::SafeBuffer|String) controls, ?help: Symbol|symArray|ActiveSupport::SafeBuffer|nil, ?logo: Symbol|ActiveSupport::SafeBuffer|nil, **untyped opt) ?{ () -> (String|strArray|nil) } -> ActiveSupport::SafeBuffer
 
   # page_heading_help
   #

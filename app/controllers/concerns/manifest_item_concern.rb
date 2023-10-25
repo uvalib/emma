@@ -495,6 +495,7 @@ module ManifestItemConcern
   #
   def bulk_create_manifest_items(returning: ManifestItem.field_names)
     result = ManifestItem.insert_all(bulk_item_data, returning: returning)
+    # noinspection RubyMismatchedArgumentType
     bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
     raise_failure(error)
@@ -524,6 +525,7 @@ module ManifestItemConcern
   #
   def bulk_update_manifest_items(returning: ManifestItem.field_names)
     result = ManifestItem.upsert_all(bulk_item_data, returning: returning)
+    # noinspection RubyMismatchedArgumentType
     bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
     raise_failure(error)

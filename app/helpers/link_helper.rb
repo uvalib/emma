@@ -122,7 +122,7 @@ module LinkHelper
   # @param [String]       label
   # @param [String, Hash] path
   # @param [Hash]         opt         Passed to #link_to except for:
-  # @param [Proc]         block       Passed to #link_to.
+  # @param [Proc]         blk         Passed to #link_to.
   #
   # @option opt [String] :label       Overrides *label* parameter if present.
   #
@@ -131,7 +131,7 @@ module LinkHelper
   # === Usage Notes
   # This method assumes that local paths are always relative.
   #
-  def make_link(label, path, **opt, &block)
+  def make_link(label, path, **opt, &blk)
     label    = opt.delete(:label) || label if opt.key?(:label)
     named    = accessible_name?(label, **opt)
     title    = opt[:title]
@@ -149,7 +149,7 @@ module LinkHelper
     opt[:rel]          = 'noopener' if http    && !opt.key?(:rel)
     append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled
 
-    link_to(label, path, html_options!(opt), &block)
+    link_to(label, path, html_options!(opt), &blk)
   end
 
   # Produce a link to an external site which opens in a new browser tab.
@@ -162,9 +162,9 @@ module LinkHelper
   #
   # @see #make_link
   #
-  def external_link(label, path, **opt, &block)
+  def external_link(label, path, **opt, &blk)
     opt[:target] = '_blank' unless opt.key?(:target)
-    make_link(label, path, **opt, &block)
+    make_link(label, path, **opt, &blk)
   end
 
   # Produce a link to download an item to the client's browser.
@@ -178,9 +178,9 @@ module LinkHelper
   #
   # @see #external_link
   #
-  def download_link(label, path, css: '.download', **opt, &block)
+  def download_link(label, path, css: '.download', **opt, &blk)
     prepend_css!(opt, css)
-    external_link(label, path, **opt, &block)
+    external_link(label, path, **opt, &blk)
   end
 
   # ===========================================================================

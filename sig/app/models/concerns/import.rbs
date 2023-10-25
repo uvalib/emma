@@ -198,8 +198,7 @@ module Import
   #
   def default: (untyped k, untyped v, ?String prefix) -> [Symbol, untyped]
 
-  # Normalize single-element arrays to scalar values and sort the fields for
-  # easier comparison when reviewing/debugging.
+  # Normalize single-element arrays to scalar values.
   #
   # @param [Hash] fields
   #

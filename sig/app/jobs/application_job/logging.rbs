@@ -65,7 +65,7 @@ module ApplicationJob::Logging
   #
   # @param [Array<*>] args
   # @param [Hash]     opt
-  # @param [Proc]     block           Passed to #__debug_items
+  # @param [Proc]     blk             Passed to #__debug_items
   #
   # @return [nil]
   #

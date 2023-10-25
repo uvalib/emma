@@ -32,7 +32,7 @@ module TestHelper::Utility
   # @param [Integer, nil]        wait
   # @param [Hash]                opt        Passed to #show_test_start and
   #                                           #show_test_end.
-  # @param [Proc]                block      Required.
+  # @param [Proc]                blk        Required block.
   #
   # @return [void]
   #

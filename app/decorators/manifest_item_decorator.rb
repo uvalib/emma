@@ -418,7 +418,7 @@ class ManifestItemDecorator < BaseDecorator
     # @yield Leading content
     # @yieldreturn [String, Array]
     #
-    def grid_head_cell(col, **opt, &block)
+    def grid_head_cell(col, **opt, &blk)
       return super if col.nil?
       idx  = opt[:'aria-colindex']
       l_id = opt[:'aria-labelledby'] = unique_id(*opt[:css], index: idx)

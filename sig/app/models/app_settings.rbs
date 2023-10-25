@@ -101,6 +101,8 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
+    # @note Currently unused
+    #
     def inspect_all: (?(symHash|nil) values, **untyped opt) -> String
 
     # Preserve symbols for resolution with #decode_symbols.

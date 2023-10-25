@@ -92,6 +92,9 @@ module LayoutHelper::Main
   #   @param [ActiveSupport::SafeBuffer, Symbol]                logo
   #   @return [ActiveSupport::SafeBuffer]
   #
+  # @yield Additional controls if provided.
+  # @yieldreturn [Array,ActiveSupport::SafeBuffer,nil]
+  #
   def page_heading(title, *controls, help: nil, logo: nil, **opt)
     help &&= page_heading_help(help)      unless help.html_safe?
     logo &&= repository_source_logo(logo) unless logo.html_safe?

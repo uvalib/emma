@@ -112,11 +112,11 @@ class Upload < ApplicationRecord
   #
   # @param [Upload, Hash, nil] attr   Passed to #assign_attributes via super.
   #
-  def initialize(attr = nil, &block)
+  def initialize(attr = nil, &blk)
     __debug_items(binding)
     attr = attr.fields if attr.is_a?(Upload)
     attr = attr.merge(initializing: true).except!(:reset) if attr.is_a?(Hash)
-    super(attr, &block)
+    super(attr, &blk)
     __debug_items(leader: 'new UPLOAD') { self }
   end
 

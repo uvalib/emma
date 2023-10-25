@@ -424,33 +424,33 @@ module BaseDecorator::Grid
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #grid_head_cell.
-  # @param [Proc]   block             Passed to #grid_head_cell.
+  # @param [Proc]   blk               Passed to #grid_head_cell.
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
-  def grid_head_control_headers(css: CONTROLS_CELL_CLASS, **opt, &block)
+  def grid_head_control_headers(css: CONTROLS_CELL_CLASS, **opt, &blk)
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
     idx   = opt[:'aria-colindex'] ||= 1
     l_id  = opt[:'aria-labelledby'] = unique_id(css, index: idx)
     label = 'Row controls' # TODO: I18n
     opt[:label] = grid_head_label(label, id: l_id, class: 'sr-only', **t_opt)
-    [grid_head_cell(nil, css: css, **opt, &block)]
+    [grid_head_cell(nil, css: css, **opt, &blk)]
   end
 
   # Render data column headers.
   #
   # @param [Array] cols               Default: `#grid_row_columns`.
   # @param [Hash]  opt                Passed to #grid_head_cell.
-  # @param [Proc]  block              Passed to #grid_head_cell.
+  # @param [Proc]  blk                Passed to #grid_head_cell.
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
-  def grid_head_data_headers(cols: nil, **opt, &block)
+  def grid_head_data_headers(cols: nil, **opt, &blk)
     trace_attrs!(opt)
     start_column = positive(opt.delete(:'aria-colindex')) || 1
     (cols || grid_row_columns).map.with_index(start_column) do |col, idx|
-      grid_head_cell(col, **opt, 'aria-colindex': idx, &block)
+      grid_head_cell(col, **opt, 'aria-colindex': idx, &blk)
     end
   end
 
@@ -467,7 +467,7 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def grid_head_cell(col, row: nil, tag: nil, css: '.cell', **opt, &block)
+  def grid_head_cell(col, row: nil, tag: nil, css: '.cell', **opt, &blk)
     trace_attrs!(opt)
     table   = for_html_table?(tag)
     tag     = :th if table
@@ -490,7 +490,7 @@ module BaseDecorator::Grid
     append_css!(opt, 'undisplayed')       if hidden
     prepend_css!(opt, "row-#{row}")       if row
     prepend_css!(opt, css)
-    html_tag(tag, label, **opt, &block)
+    html_tag(tag, label, **opt, &blk)
   end
 
   # Render a grid header cell label element.

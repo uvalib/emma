@@ -58,7 +58,7 @@ module LinkHelper
   # @param [String]       label
   # @param [String, Hash] path
   # @param [Hash]         opt         Passed to #link_to except for:
-  # @param [Proc]         block       Passed to #link_to.
+  # @param [Proc]         blk         Passed to #link_to.
   #
   # @option opt [String] :label       Overrides *label* parameter if present.
   #

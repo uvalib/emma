@@ -78,7 +78,7 @@ module Emma::Common::HashMethods
   # Sort a hash.
   #
   # @param [Hash] hash
-  # @param [Proc] block
+  # @param [Proc] blk
   #
   # @return [Hash]
   #
@@ -87,7 +87,7 @@ module Emma::Common::HashMethods
   # Sort a hash in-place.
   #
   # @param [Hash] hash
-  # @param [Proc] block
+  # @param [Proc] blk
   #
   # @return [Hash]
   #

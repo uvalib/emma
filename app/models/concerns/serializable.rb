@@ -234,26 +234,26 @@ module Serializable
     #   With no parameters or block, the statement just creates the serializer
     #   for the executing class.
     #
-    # @overload serializer(mode = :serialize, &block)
+    # @overload serializer(mode = :serialize, &blk)
     #   Define a #serialize override to pass the block to Base#serialize.
     #   @param [Symbol] mode
-    #   @param [Proc]   block         Passed to Base#serialize.
+    #   @param [Proc]   blk           Passed to Base#serialize.
     #
-    # @overload serializer(mode = :deserialize, &block)
+    # @overload serializer(mode = :deserialize, &blk)
     #   Define a #deserialize override to pass the block to Base#deserialize.
     #   @param [Symbol] mode
-    #   @param [Proc]   block         Passed to Base#serialize.
+    #   @param [Proc]   blk           Passed to Base#serialize.
     #
     #--
     # noinspection RubyMismatchedArgumentType
     #++
-    def serializer(mode = nil, &block)
+    def serializer(mode = nil, &blk)
       serializer_class.tap do |serializer|
         case (mode &&= mode.to_sym)
           when :serialize, :deserialize
-            serializer.define_method(mode) { |arg| super(arg, &block ) }
+            serializer.define_method(mode) { |arg| super(arg, &blk ) }
           when nil
-            Log.warn("#{self}.#{__method__}: block ignored") if block
+            Log.warn("#{self}.#{__method__}: block ignored") if blk
           else
             Log.warn("#{self}.#{__method__}: #{mode.inspect}: unexpected")
         end

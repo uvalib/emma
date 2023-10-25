@@ -38,8 +38,8 @@ module Emma::Log
 
   # Add a DEBUG-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
@@ -47,8 +47,8 @@ module Emma::Log
 
   # Add an INFO-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
@@ -56,8 +56,8 @@ module Emma::Log
 
   # Add a WARN-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
@@ -65,8 +65,8 @@ module Emma::Log
 
   # Add an ERROR-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
@@ -74,8 +74,8 @@ module Emma::Log
 
   # Add a FATAL-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
@@ -205,7 +205,7 @@ module Emma::Log
   #
   # @param [Symbol]   meth
   # @param [Array<*>] args
-  # @param [Proc]     block
+  # @param [Proc]     blk
   #
   def self.method_missing: (untyped meth, *untyped args) ?{ () -> untyped } -> untyped
 

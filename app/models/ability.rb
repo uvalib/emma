@@ -663,10 +663,10 @@ class Ability
   #
   # @return [void]
   #
-  def can(action = nil, subject = nil, *conditions, &block)
+  def can(action = nil, subject = nil, *conditions, &blk)
     action, subject, conditions = prep_conditions(action, subject, conditions)
     all_actions_add(action, subject)
-    super(action, subject, *conditions, &block)
+    super(action, subject, *conditions, &blk)
   end
 
   # Add a rule forbidding an action.
@@ -677,10 +677,10 @@ class Ability
   #
   # @return [void]
   #
-  def cannot(action = nil, subject = nil, *conditions, &block)
+  def cannot(action = nil, subject = nil, *conditions, &blk)
     action, subject, conditions = prep_conditions(action, subject, conditions)
     all_actions_remove(action, subject)
-    super(action, subject, *conditions, &block)
+    super(action, subject, *conditions, &blk)
   end
 
   # ===========================================================================

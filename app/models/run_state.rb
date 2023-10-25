@@ -480,24 +480,24 @@ class RunState < Hash
     #
     # @param [Array<*>]             args    Passed to #log.
     # @param [Symbol, nil]          meth    Calling method.
-    # @param [Proc]                 block   Passed to #log.
+    # @param [Proc]                 blk     Passed to #log.
     #
     # @return [nil]
     #
-    def warn(*args, meth: nil, **, &block)
-      log(*args, level: Log::WARN, meth: meth, &block) if Log.warn?
+    def warn(*args, meth: nil, **, &blk)
+      log(*args, level: Log::WARN, meth: meth, &blk) if Log.warn?
     end
 
     # Add a debug-level log message.
     #
     # @param [Array<*>]             args    Passed to #log.
     # @param [Symbol, nil]          meth    Calling method.
-    # @param [Proc]                 block   Passed to #log.
+    # @param [Proc]                 blk     Passed to #log.
     #
     # @return [nil]
     #
-    def debug(*args, meth: nil, **, &block)
-      log(*args, level: Log::DEBUG, meth: meth, &block) if Log.debug?
+    def debug(*args, meth: nil, **, &blk)
+      log(*args, level: Log::DEBUG, meth: meth, &blk) if Log.debug?
     end
 
     # Add a log message.
@@ -505,13 +505,13 @@ class RunState < Hash
     # @param [Array<*>]             args    Passed to Emma::Log#add
     # @param [Integer, Symbol, nil] level   Severity level.
     # @param [Symbol, nil]          meth    Calling method.
-    # @param [Proc]                 block   Passed to Emma::Log#add
+    # @param [Proc]                 blk     Passed to Emma::Log#add
     #
     # @return [nil]
     #
-    def log(*args, level:, meth: nil, **, &block)
+    def log(*args, level:, meth: nil, **, &blk)
       meth ||= calling_method(3)
-      Log.add(level, "#{CLASS}::#{meth}", *args, &block)
+      Log.add(level, "#{CLASS}::#{meth}", *args, &blk)
     end
 
     delegate_missing_to :current

@@ -320,7 +320,7 @@ module Record::Describable
     #
     # @return [void]
     #
-    def interpolation_methods(&block)
+    def interpolation_methods(&blk)
       new_module =
         module_eval <<~HEREDOC
           module InterpolationMethods
@@ -328,7 +328,7 @@ module Record::Describable
             extend self
           end
         HEREDOC
-      new_module.module_exec(&block)
+      new_module.module_exec(&blk)
       include new_module
       extend  new_module
     end

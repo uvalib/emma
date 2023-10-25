@@ -29,14 +29,14 @@ module TestHelper::Utility
   # @param [Integer, nil]        wait
   # @param [Hash]                opt        Passed to #show_test_start and
   #                                           #show_test_end.
-  # @param [Proc]                block      Required.
+  # @param [Proc]                blk        Required block.
   #
   # @return [void]
   #
   # @yield The test code to be run
   # @yieldreturn [void]
   #
-  def run_test(test_name, format: nil, only: nil, wait: nil, **opt, &block)
+  def run_test(test_name, format: nil, only: nil, wait: nil, **opt, &blk)
     error = nil
     prime_tests
     if format && !html?(format)
@@ -45,9 +45,9 @@ module TestHelper::Utility
     show_test_start(test_name, **opt)
     if allowed_format(format, only: only)
       if wait
-        using_wait_time(wait, &block)
+        using_wait_time(wait, &blk)
       else
-        block.call
+        blk.call
       end
     end
   rescue Exception => error

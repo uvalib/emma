@@ -73,6 +73,8 @@ module HeadHelper::Stylesheets
   # @yield To supply additional source(s) to @page_stylesheets.
   # @yieldreturn [String, Array<String>]
   #
+  # @note Currently unused
+  #
   def append_page_stylesheets(*sources)
     @page_stylesheets ||= DEFAULT_PAGE_STYLESHEETS.dup
     @page_stylesheets += sources

@@ -386,6 +386,8 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
+    # @note Currently unused
+    #
     #--
     # noinspection RubyMismatchedArgumentType
     #++

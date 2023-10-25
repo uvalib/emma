@@ -52,6 +52,8 @@ module HeadHelper::Stylesheets
   # @yield To supply additional source(s) to @page_stylesheets.
   # @yieldreturn [String, Array<String>]
   #
+  # @note Currently unused
+  #
   def append_page_stylesheets
     : ()                          { () -> (String | strArray) } -> strArray
     | (*(String|strArray) values)                               -> strArray

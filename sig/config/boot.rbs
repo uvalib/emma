@@ -64,6 +64,10 @@ class Object
   #
   def application_deployed?: () -> bool
 
+  # Indicate whether this is a desktop instance.
+  #
+  def not_deployed?: () -> bool
+
   # The true deployment type.
   #
   # @return [Symbol]

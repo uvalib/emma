@@ -96,14 +96,14 @@ class FileHandle
     #
     # @param [Array<*>] args
     # @param [Hash]     opt
-    # @param [Proc]     block         Passed to #__debug_items.
+    # @param [Proc]     blk           Passed to #__debug_items.
     #
     # @return [void]
     #
-    def __debug_handle(*args, **opt, &block)
+    def __debug_handle(*args, **opt, &blk)
       sep = opt[:separator] ||= ' | '
       opt[:leader] = [*opt[:leader], 'FileHandle'].compact.join(sep)
-      __debug_items(*args, **opt, &block)
+      __debug_items(*args, **opt, &blk)
     end
 
     # Indicate whether the underlying object implements the given method.
@@ -119,13 +119,13 @@ class FileHandle
     #
     # @param [Symbol, String] name
     # @param [Array<*>]       args
-    # @param [Proc]           block
+    # @param [Proc]           blk
     #
     # @return [Any]
     #
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, &blk)
       __debug_handle(*args, leader: ("#{@handle.class} %-4s" % name))
-      @handle.send(name, *args, &block)
+      @handle.send(name, *args, &blk)
     rescue => e
       Log.error do
         "FileHandle: in method_missing: #{e.class} #{e.message} - stack:\n" +

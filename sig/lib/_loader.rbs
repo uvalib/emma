@@ -9,17 +9,13 @@
 IMPLEMENT_OVERRIDES: bool
 
 class Object
-  public
-
-  public
-
   # This method can be used as a simple mechanism to override member(s) of a
   # class or module by supplying new methods or redefinitions of existing methods
   # within a block that is prepended as an anonymous module.
   #
   # @param [Hash, Class, Module] mod    The class or module to override
   # @param [Module, nil]         mod2   Module to prepend to *mod*.
-  # @param [Proc]                block  Passed to Module#new.
+  # @param [Proc]                blk    Passed to Module#new.
   #
   # @raise [RuntimeError]               Only for a non-deployed instance.
   #

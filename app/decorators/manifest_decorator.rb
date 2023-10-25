@@ -528,7 +528,7 @@ class ManifestDecorator
   #
   # @yield [parts] Extend or replace results.
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
-  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>, nil]
   #
   def form_buttons(**opt)
     trace_attrs!(opt)

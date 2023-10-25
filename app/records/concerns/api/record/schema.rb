@@ -59,7 +59,7 @@ module Api::Record::Schema
     # element definitions by also executing the provided block.
     #
     # @param [Array<Symbol>] serializer_types
-    # @param [Proc]          block
+    # @param [Proc]          blk
     #
     # @return [void]
     #
@@ -68,9 +68,9 @@ module Api::Record::Schema
     # @see Api::Serializer::Associations::ClassMethods#has_one
     # @see Api::Serializer::Associations::ClassMethods#has_many
     #
-    def schema(*serializer_types, &block)
+    def schema(*serializer_types, &blk)
       # Add record field definitions to the class itself.
-      class_exec(&block)
+      class_exec(&blk)
       # Add record field definitions to each format-specific serializer.
       @serializers =
         (serializer_types.presence || SERIALIZER_TYPES).map { |key|
@@ -78,7 +78,7 @@ module Api::Record::Schema
           type  = key.to_s.capitalize
           const = serializer_name(type)
           base  = serializer_base(type).constantize
-          serializer = Class.new(base, &block)
+          serializer = Class.new(base, &blk)
           remove_const(const) if const_defined?(const, false)
           [key, const_set(const, serializer)]
         }.to_h

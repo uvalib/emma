@@ -227,7 +227,7 @@ module BaseDecorator::Grid
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #grid_head_cell.
-  # @param [Proc]   block             Passed to #grid_head_cell.
+  # @param [Proc]   blk               Passed to #grid_head_cell.
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
@@ -237,7 +237,7 @@ module BaseDecorator::Grid
   #
   # @param [Array] cols               Default: `#grid_row_columns`.
   # @param [Hash]  opt                Passed to #grid_head_cell.
-  # @param [Proc]  block              Passed to #grid_head_cell.
+  # @param [Proc]  blk                Passed to #grid_head_cell.
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #

@@ -533,7 +533,7 @@ module Record::Assignable
     #
     # @note - for dev traceability
     #
-    def initialize(attr = nil, &block)
+    def initialize(attr = nil, &blk)
       super
     end
 

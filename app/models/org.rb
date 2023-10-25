@@ -69,7 +69,7 @@ class Org < ApplicationRecord
   #
   # @note - for dev traceability
   #
-  def initialize(attr = nil, &block)
+  def initialize(attr = nil, &blk)
     super
   end
 
@@ -101,10 +101,12 @@ class Org < ApplicationRecord
   public
 
   def user_ids
+    # noinspection RubyMismatchedReturnType
     users.pluck(:id)
   end
 
   def user_emails
+    # noinspection RubyMismatchedReturnType
     users.pluck(:email)
   end
 

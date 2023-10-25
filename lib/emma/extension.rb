@@ -47,7 +47,7 @@ module Emma::Extension
       # === Variations
       #++
       #
-      # @overload __ext_log(meth, *args, leader: nil, tag: nil, separator: nil, &block)
+      # @overload __ext_log(meth, *args, leader: nil, tag: nil, separator: nil)
       #   Specify calling method.
       #   @param [Symbol]      meth
       #   @param [Array]       args
@@ -57,7 +57,7 @@ module Emma::Extension
       #   @param [Hash]        opt
       #   @return [nil]
       #
-      # @overload __ext_log(*args, leader: nil, tag: nil, separator: nil, &block)
+      # @overload __ext_log(*args, leader: nil, tag: nil, separator: nil)
       #   Calling method defaults to `#calling_method`.
       #   @param [Array]       args
       #   @param [String, nil] leader
@@ -101,7 +101,7 @@ module Emma::Extension
       #
       # @param [Array] args
       # @param [Hash]  opt            Passed to #__debug_items.
-      # @param [Proc]  block          Passed to #__debug_items.
+      # @param [Proc]  blk            Passed to #__debug_items.
       #
       # @option opt [String, nil] :leader     Default: `#__ext_log_leader`.
       # @option opt [String, nil] :tag        Default: `#__ext_log_tag`.
@@ -113,22 +113,22 @@ module Emma::Extension
       # === Variations
       #++
       #
-      # @overload __ext_debug(meth, *args, tag:, **opt, &block)
+      # @overload __ext_debug(meth, *args, tag:, **opt, &blk)
       #   Specify calling method.
       #   @param [Symbol] meth
       #   @param [Array]  args
       #   @param [Hash]   opt
-      #   @param [Proc]   block
+      #   @param [Proc]   blk
       #   @return [nil]
       #
-      # @overload __ext_debug(*args, tag:, &block)
+      # @overload __ext_debug(*args, tag:, &blk)
       #   Calling method defaults to `#calling_method`.
       #   @param [Array]  args
       #   @param [Hash]   opt
-      #   @param [Proc]   block
+      #   @param [Proc]   blk
       #   @return [nil]
       #
-      def __ext_debug(*args, **opt, &block)
+      def __ext_debug(*args, **opt, &blk)
         meth = args.first.is_a?(Symbol) ? args.shift : calling_method&.to_sym
         meth = 'NEW' if meth == :initialize
         ldr  = (opt.delete(:leader) || __ext_log_leader)&.strip
@@ -141,7 +141,7 @@ module Emma::Extension
 
         opt[:leader]      = [ldr, tag].compact.join(' ')
         opt[:separator] ||= EXT_LOG_SEPARATOR
-        __debug_items(meth, *args, **opt, &block)
+        __debug_items(meth, *args, **opt, &blk)
       end
 
       # =======================================================================

@@ -344,13 +344,13 @@ module Emma::Debug
     #
     # @param [Array<*>] args          Passed to #__debug_impl.
     # @param [Hash]     opt
-    # @param [Proc]     block         Passed to #__debug_impl.
+    # @param [Proc]     blk           Passed to #__debug_impl.
     #
     # @return [nil]
     #
-    def __debug_line(*args, **opt, &block)
+    def __debug_line(*args, **opt, &blk)
       opt.reverse_merge!(separator: DEBUG_SEPARATOR)
-      __debug_impl(*args, **opt, &block)
+      __debug_impl(*args, **opt, &blk)
     end
 
     # Output each data item on its own line, with special handling to inject
@@ -358,7 +358,7 @@ module Emma::Debug
     #
     # @param [Array<*>] args          Passed to #__debug_line.
     # @param [Hash]     opt
-    # @param [Proc]     block         Passed to #__debug_inspect_items.
+    # @param [Proc]     blk           Passed to #__debug_inspect_items.
     #
     # @return [nil]
     #
@@ -388,7 +388,7 @@ module Emma::Debug
     #   @param [Array<*>]       parts   Parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line.
     #
-    def __debug_items(*args, **opt, &block)
+    def __debug_items(*args, **opt, &blk)
       gp_opt = opt.extract!(:only, :except)
       meth, bind = args.first(2)
       if bind.is_a?(Binding)
@@ -409,7 +409,7 @@ module Emma::Debug
         args = [meth, *args, prms].compact
       end
 
-      items = block ? __debug_inspect_items(**opt, &block) : []
+      items = blk ? __debug_inspect_items(**opt, &blk) : []
       __debug_line(*args, *items, **opt)
     end
 
@@ -419,7 +419,7 @@ module Emma::Debug
     # @param [Exception] exception
     # @param [Array<*>]  args         Passed to #__debug_line.
     # @param [Hash]      opt
-    # @param [Proc]      block        Passed to #__debug_line.
+    # @param [Proc]      blk          Passed to #__debug_line.
     #
     # args[-1] [Hash]                 Options passed to #__debug except for:
     #
@@ -428,7 +428,7 @@ module Emma::Debug
     #
     # @return [nil]
     #
-    def __debug_exception(label, exception, *args, **opt, &block)
+    def __debug_exception(label, exception, *args, **opt, &blk)
       opt.reverse_merge!(leader: '!!!')
       trace = opt.delete(:trace)
       args << "#{label} #{exception.class}"
@@ -444,7 +444,7 @@ module Emma::Debug
           }.compact
       end
 
-      __debug_line(*args, **opt, &block)
+      __debug_line(*args, **opt, &blk)
       Log.warn { exception.full_message(order: :top) } if trace
     end
 
@@ -453,19 +453,19 @@ module Emma::Debug
     # @param [String, Symbol] controller  Default: `self.class.name`.
     # @param [String, Symbol] action      Default: `#calling_method`.
     # @param [Hash]           opt         Passed to #__debug_line.
-    # @param [Proc]           block       Passed to #__debug_items.
+    # @param [Proc]           blk         Passed to #__debug_items.
     #
     # @return [nil]
     #
     #--
     # noinspection RailsParamDefResolve
     #++
-    def __debug_route(controller: nil, action: nil, **opt, &block)
+    def __debug_route(controller: nil, action: nil, **opt, &blk)
       action ||= calling_method
       leader   = __debug_route_label(controller: controller, action: action)
       prms     = try(:params)&.inspect || 'n/a'
       __debug_line(leader, "params = #{prms}", **opt)
-      __debug_items(**opt, &block) if block
+      __debug_items(**opt, &blk) if blk
     end
 
     # Output request values and contents.
@@ -473,7 +473,7 @@ module Emma::Debug
     # @param [Array<*>]                args   Passed to #__debug_items.
     # @param [ActionDispatch::Request] req    Default: `#request`.
     # @param [Hash]                    opt    Passed to #__debug_items.
-    # @param [Proc]                    block  Passed to #__debug_items.
+    # @param [Proc]                    blk    Passed to #__debug_items.
     #
     # @return [nil]
     #
@@ -496,7 +496,7 @@ module Emma::Debug
     #   @param [Hash]                    opt
     #   @return [nil]
     #
-    def __debug_request(*args, req: nil, **opt, &block)
+    def __debug_request(*args, req: nil, **opt, &blk)
       req ||= request
       unless opt.key?(:leader)
         meth = args.first.is_a?(Symbol) ? args.shift : calling_method
@@ -522,7 +522,7 @@ module Emma::Debug
         item << '=' * (count - item.size)
         __debug_impl(item, *lines, **opt)
       end
-      __debug_items(*args, **opt, &block) if block || args.present?
+      __debug_items(*args, **opt, &blk) if blk || args.present?
     end
 
     # Output a box which highlights the given text.

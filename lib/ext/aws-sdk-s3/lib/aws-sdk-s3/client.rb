@@ -51,9 +51,9 @@ module Aws::S3
         Aws::S3::Client.instance_methods(false).excluding(:waiter_names)
 
       MONITOR_CLIENT_METHODS.each do |meth|
-        define_method(meth) do |params = {}, options = {}, &block|
+        define_method(meth) do |params = {}, options = {}, &blk|
           start = timestamp
-          super(params, options, &block)
+          super(params, options, &blk)
             .tap { __ext_log(meth, start, params, options) }
         rescue => e
           __ext_log(e)

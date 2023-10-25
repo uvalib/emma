@@ -113,9 +113,9 @@ class ManifestItem < ApplicationRecord
   #
   # @param [ManifestItem,Manifest,Hash] attr    To #assign_attributes via super
   #
-  def initialize(attr = nil, &block)
+  def initialize(attr = nil, &blk)
     attr = { manifest_id: attr.id } if attr.is_a?(Manifest)
-    super(attr, &block)
+    super(attr, &blk)
   end
 
   # ===========================================================================

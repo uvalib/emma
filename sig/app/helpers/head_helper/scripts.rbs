@@ -50,6 +50,8 @@ module HeadHelper::Scripts
   # @yield To supply additional source(s) to @page_javascript.
   # @yieldreturn [String, Array<String>]
   #
+  # @note Currently unused
+  #
   def append_page_javascripts
     : ()                          { () -> (String | strArray) } -> strArray
     | (*(String|strArray) values)                               -> strArray

@@ -553,6 +553,7 @@ class ManifestController < ApplicationController
     action    = action.to_sym if action.is_a?(String)
     subject ||= @item
     subject   = subject.first if subject.is_a?(Array) # TODO: per item check
+    # noinspection RubyMismatchedArgumentType
     authorize!(action, subject, *args) if subject
     return if administrator?
     return unless %i[show edit update delete destroy].include?(action)

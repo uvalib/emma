@@ -16,7 +16,7 @@ class Object
   #
   # @param [Class]                  table
   # @param [ActiveRecord::Relation] list
-  # @param [Proc]                   block   Applied to each record
+  # @param [Proc]                   blk     Applied to each record
   #
   def list_records: (Class table, ActiveRecord::Relation list) ?{ (ActiveRecord::Base) -> (ActiveRecord::Base|strArray|String) } -> void
 

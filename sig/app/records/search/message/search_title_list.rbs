@@ -122,7 +122,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @param [Array<Search::Record::MetadataRecord>] recs
   # @param [Integer] level            Incremented via recursion.
   # @param [Any]     fields           Supplied via recursion.
-  # @param [Proc]    block            Executed at the bottom-level.
+  # @param [Proc]    blk              Executed at the bottom-level.
   #
   # @return [Array<Search::Record::TitleRecord>]
   # @return [Search::Record::TitleRecord, nil]

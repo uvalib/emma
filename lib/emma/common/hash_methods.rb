@@ -130,23 +130,23 @@ module Emma::Common::HashMethods
   # Sort a hash.
   #
   # @param [Hash] hash
-  # @param [Proc] block
+  # @param [Proc] blk
   #
   # @return [Hash]
   #
-  def sort_by(hash, &block)
-    hash.sort_by(&block).to_h
+  def sort_by(hash, &blk)
+    hash.sort_by(&blk).to_h
   end
 
   # Sort a hash in-place.
   #
   # @param [Hash] hash
-  # @param [Proc] block
+  # @param [Proc] blk
   #
   # @return [Hash]
   #
-  def sort_by!(hash, &block)
-    hash.replace(sort_by(hash, &block))
+  def sort_by!(hash, &blk)
+    hash.replace(sort_by(hash, &blk))
   end
 
   # ===========================================================================

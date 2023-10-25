@@ -94,7 +94,7 @@ class LookupService::Data
 
   # transform_table_items
   #
-  # @param [Proc] block
+  # @param [Proc] blk
   #
   # @raise [ArgumentError]  If no block was given.
   #
@@ -104,9 +104,9 @@ class LookupService::Data
   # @yieldparam [LookupService::Data::Item] item
   # @yieldreturn [*]
   #
-  def transform_table_items(&block)
-    raise ArgumentError, 'no block given' unless block
-    table.transform_values { |items| items.map(&block) }
+  def transform_table_items(&blk)
+    raise ArgumentError, 'no block given' unless blk
+    table.transform_values { |items| items.map(&blk) }
   end
 
   # ===========================================================================

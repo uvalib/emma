@@ -283,9 +283,9 @@ class ManifestDecorator
   #
   # @yield [parts] Extend or replace results.
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
-  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  # @yieldreturn [Array<String>, nil]
   #
-  def form_buttons: (**untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> Array[ActiveSupport::SafeBuffer] } -> Array[ActiveSupport::SafeBuffer]
+  def form_buttons: (**untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> Array[ActiveSupport::SafeBuffer]? } -> Array[ActiveSupport::SafeBuffer]
 
   # Form submit button.
   #

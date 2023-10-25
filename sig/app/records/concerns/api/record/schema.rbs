@@ -41,7 +41,7 @@ module Api::Record::Schema
     # element definitions by also executing the provided block.
     #
     # @param [Array<Symbol>] serializer_types
-    # @param [Proc]          block
+    # @param [Proc]          blk
     #
     # @return [void]
     #

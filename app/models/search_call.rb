@@ -267,8 +267,7 @@ class SearchCall < ApplicationRecord
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  PARAMETER_MAP =
-    JSON_COLUMN_PARAMETERS.values.flat_map(&:to_a).sort.uniq.to_h
+  PARAMETER_MAP = JSON_COLUMN_PARAMETERS.values.flat_map(&:to_a).sort.uniq.to_h
 
   # ===========================================================================
   # :section: ApplicationRecord overrides
@@ -282,7 +281,7 @@ class SearchCall < ApplicationRecord
   #
   # @note - for dev traceability
   #
-  def initialize(attr = nil, &block)
+  def initialize(attr = nil, &blk)
     super
   end
 

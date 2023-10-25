@@ -42,7 +42,25 @@ module Workflow::Base::Simulation
     def self.inherited: (Class subclass) -> void
   end
 
-  attr_reader simulating: bool | nil
+  # Indicate whether simulation is in effect.
+  #
+  # @param [Boolean, nil] status
+  #
+  # @return [Boolean]
+  #
+  def simulating: (?(bool|nil) status) -> bool
+
+  @simulating: bool | nil
+
+  # Output for simulated action.
+  #
+  # @param [Array] args             Passed to #__debug_line.
+  # @param [Hash]  opt
+  # @param [Proc]  blk              Passed to #__debug_line.
+  #
+  # @return [nil]
+  #
+  def __debug_sim: (*untyped args, **untyped opt) -> nil
 end
 
 # Hooks executed during transitions.

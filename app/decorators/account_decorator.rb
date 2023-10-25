@@ -496,12 +496,12 @@ class AccountDecorator
         append_css!(row_opt, can, action, model)
         html_tag(:tr, **row_opt) {
           columns = { model: model, action: action, status: status }
-          columns.map.with_index(1) { |(cls, val), col|
+          columns.map.with_index(1) do |(cls, val), col|
             id  = unique_id(action, model)
             opt = { role: 'cell', 'aria-labelledby': id, 'aria-colindex': col }
             append_css!(opt, cls, can)
             html_tag(:td, **opt) { html_span(val.to_s, id: id) }
-          }
+          end
         }.then { |column| [action, column] }
       }.to_h.then { |rows| [model, rows] }
     }.to_h

@@ -175,12 +175,12 @@ class FileObject
       # __debug_mime
       #
       # @param [Binding] bind         Passed to #__debug_items.
-      # @param [Proc]    block        Passed to #__debug_items.
+      # @param [Proc]    blk          Passed to #__debug_items.
       #
       # @return [nil]
       #
-      def __debug_mime(bind, &block)
-        __debug_items(bind, &block)
+      def __debug_mime(bind, &blk)
+        __debug_items(bind, &blk)
       end
 
     end

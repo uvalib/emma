@@ -476,6 +476,8 @@ class ExecReport
     # @param [String]             separator
     # @param [Hash]               opt
     #
+    # @return [String, ActiveSupport::SafeBuffer]
+    #
     # @see #message_topic
     # @see #message_details
     #

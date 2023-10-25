@@ -69,12 +69,12 @@ module TestHelper::SystemTests::Index
   #
   # @raise [Minitest::Assertion]
   #
-  # @return [true]
+  # @return [void]
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  def visit_index: ((Symbol|String) target, ?action: Symbol, ?model: Symbol|nil, **untyped opt) ?{ () -> void } -> true
+  def visit_index: ((Symbol|String) target, ?action: Symbol, ?model: Symbol|nil, **untyped opt) ?{ () -> void } -> void
 
   # visit_each_show_page
   #

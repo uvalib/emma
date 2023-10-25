@@ -152,7 +152,7 @@ module PopupHelper
     close:     nil,
     controls:  nil,
     **opt,
-    &block
+    &blk
   )
     closer_css = POPUP_CLOSER_CLASS
 
@@ -166,7 +166,7 @@ module PopupHelper
     close_icon = html_span(**closer_opt) { symbol_icon(close_icon) }
 
     # Popup panel contents supplied by the block.
-    panel_content = Array.wrap(block&.call)
+    panel_content = Array.wrap(blk&.call)
     panel_content = safe_join(panel_content, "\n")
 
     # Controls at the bottom of the panel (close button).

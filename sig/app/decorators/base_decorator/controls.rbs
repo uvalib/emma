@@ -87,7 +87,7 @@ module BaseDecorator::Controls
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
-  def control_icon_button: (Symbol action, ?index: BaseDecorator::Grid::GridIndex|Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) ?{ (String|Symbol|Proc, symHash) -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
+  def control_icon_button: (Symbol action, ?index: BaseDecorator::Grid::GridIndex|Integer|nil, ?unique: String|nil, ?css: String|nil, **untyped opt) ?{ (String|Symbol|Proc path, symHash opt) -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
 
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.

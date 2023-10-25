@@ -32,7 +32,7 @@ module FlashConcern
   # @return [ActiveSupport::SafeBuffer]
   #
   def flash_link(label, path, **opt)
-    ti_opt      = opt.extract!(:tooltip, :tip, :title).compact
+    ti_opt = opt.extract!(:tooltip, :tip, :title).compact
     opt[:title] = ERB::Util.h(ti_opt.values.first) if ti_opt.present?
     full = path.is_a?(String) && path.start_with?('http')
     path = make_path(request.fullpath, path) unless full

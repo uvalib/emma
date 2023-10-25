@@ -71,6 +71,8 @@ module HeadHelper::Scripts
   # @yield To supply additional source(s) to @page_javascript.
   # @yieldreturn [String, Array<String>]
   #
+  # @note Currently unused
+  #
   def append_page_javascripts(*sources)
     @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
     @page_javascript += sources

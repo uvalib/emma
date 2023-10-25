@@ -121,15 +121,15 @@ module Serializable
   #   With no parameters or block, the statement just creates the serializer
   #   for the executing class.
   #
-  # @overload serializer(mode = :serialize, &block)
+  # @overload serializer(mode = :serialize, &blk)
   #   Define a #serialize override to pass the block to Base#serialize.
   #   @param [Symbol] mode
-  #   @param [Proc]   block         Passed to Base#serialize.
+  #   @param [Proc]   blk           Passed to Base#serialize.
   #
-  # @overload serializer(mode = :deserialize, &block)
+  # @overload serializer(mode = :deserialize, &blk)
   #   Define a #deserialize override to pass the block to Base#deserialize.
   #   @param [Symbol] mode
-  #   @param [Proc]   block         Passed to Base#serialize.
+  #   @param [Proc]   blk           Passed to Base#serialize.
   #
   def serializer
     : ()                                      -> (Class | nil)

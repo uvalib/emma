@@ -141,7 +141,7 @@ module Emma::Debug
     #
     # @param [Array<*>] args          Passed to #__debug_impl.
     # @param [Hash]     opt
-    # @param [Proc]     block         Passed to #__debug_impl.
+    # @param [Proc]     blk           Passed to #__debug_impl.
     #
     # @return [nil]
     #
@@ -152,7 +152,7 @@ module Emma::Debug
     #
     # @param [Array<*>] args          Passed to #__debug_line.
     # @param [Hash]     opt
-    # @param [Proc]     block         Passed to #__debug_inspect_items.
+    # @param [Proc]     blk           Passed to #__debug_inspect_items.
     #
     # @return [nil]
     #
@@ -190,7 +190,7 @@ module Emma::Debug
     # @param [Exception] exception
     # @param [Array<*>]  args         Passed to #__debug_line.
     # @param [Hash]      opt
-    # @param [Proc]      block        Passed to #__debug_line.
+    # @param [Proc]      blk          Passed to #__debug_line.
     #
     # args[-1] [Hash]                 Options passed to #__debug except for:
     #
@@ -206,7 +206,7 @@ module Emma::Debug
     # @param [String, Symbol] controller  Default: `self.class.name`.
     # @param [String, Symbol] action      Default: `#calling_method`.
     # @param [Hash]           opt         Passed to #__debug_line.
-    # @param [Proc]           block       Passed to #__debug_items.
+    # @param [Proc]           blk         Passed to #__debug_items.
     #
     # @return [nil]
     #
@@ -217,7 +217,7 @@ module Emma::Debug
     # @param [Array<*>]                args   Passed to #__debug_items.
     # @param [ActionDispatch::Request] req    Default: `#request`.
     # @param [Hash]                    opt    Passed to #__debug_items.
-    # @param [Proc]                    block  Passed to #__debug_items.
+    # @param [Proc]                    blk    Passed to #__debug_items.
     #
     # @return [nil]
     #

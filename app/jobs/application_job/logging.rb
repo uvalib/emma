@@ -102,10 +102,10 @@ module ApplicationJob::Logging
 
   public
 
-  def job_warn(*args, meth: nil, &block)
+  def job_warn(*args, meth: nil, &blk)
     return unless Log.warn?
     meth ||= calling_method
-    Log.warn("#{self_class}::#{meth}", *args, &block)
+    Log.warn("#{self_class}::#{meth}", *args, &blk)
   end
 
   # ===========================================================================
@@ -176,11 +176,11 @@ module ApplicationJob::Logging
   #
   # @param [Array<*>] args
   # @param [Hash]     opt
-  # @param [Proc]     block           Passed to #__debug_items
+  # @param [Proc]     blk             Passed to #__debug_items
   #
   # @return [nil]
   #
-  def __debug_job(*args, **opt, &block)
+  def __debug_job(*args, **opt, &blk)
     args.compact!
     case args.first
       when ActiveJob::Base, Class then job = args.shift
@@ -191,7 +191,7 @@ module ApplicationJob::Logging
     opt[:leader]    = "#{job_tag(job)}:" unless opt.key?(:leader)
     opt[:compact]   = true               unless opt.key?(:compact)
     opt[:separator] = "\n\t"             unless opt.key?(:separator)
-    __debug_items(args.join(DEBUG_SEPARATOR), **opt, &block)
+    __debug_items(args.join(DEBUG_SEPARATOR), **opt, &blk)
   end
     .tap { |meth| neutralize(meth) unless DEBUG_JOB }
 

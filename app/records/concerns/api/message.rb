@@ -34,9 +34,9 @@ module Api::Message
   # @yieldparam [Hash] opt            Option hash to use within block.
   # @yieldreturn [void]
   #
-  def create_message_wrapper(opt = nil, &block)
+  def create_message_wrapper(opt = nil, &blk)
     # noinspection RubyMismatchedArgumentType
-    (opt && opt[:in_msg]) ? yield(opt) : create_message(opt, &block)
+    (opt && opt[:in_msg]) ? yield(opt) : create_message(opt, &blk)
   end
 
   # Annotate and time the creation of a message.

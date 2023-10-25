@@ -35,7 +35,7 @@ module Api::Serializer::Associations
     # === Variations
     #++
     #
-    # @overload attribute(name, **opt, &block)
+    # @overload attribute(name, **opt)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
     #
@@ -72,7 +72,7 @@ module Api::Serializer::Associations
     # @param [Symbol] name
     # @param [Array]  args
     # @param [Hash]   opt
-    # @param [Proc]   block           Passed to #property.
+    # @param [Proc]   blk             Passed to #property.
     #
     # @return [void]
     #
@@ -80,17 +80,17 @@ module Api::Serializer::Associations
     # === Variations
     #++
     #
-    # @overload has_one(name, **opt, &block)
+    # @overload has_one(name, **opt, &blk)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # @overload has_one(name, type, *_, **opt)
     #   @param [Symbol]                name
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # === Examples
     #
@@ -105,18 +105,18 @@ module Api::Serializer::Associations
     # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_one(name, *args, **opt, &block)
+    def has_one(name, *args, **opt, &blk)
       type = get_type_class(args.shift, **opt)
       if scalar_type?(type)
         opt[:type]      = type
         opt[:default] ||= scalar_default(type)
-        Log.warn { "#{__method__}: block ignored" } if block
+        Log.warn { "#{__method__}: block ignored" } if blk
       else
         opt[:class]     = type
         opt[:decorator] = decorator_class(type)
       end
       prepare_one!(name, type, opt)
-      property(name, opt, &block)
+      property(name, opt, &blk)
     end
 
     # Simulate ActiveRecord::Associations#has_many to define a schema property
@@ -125,7 +125,7 @@ module Api::Serializer::Associations
     # @param [Symbol] name
     # @param [Array]  args
     # @param [Hash]   opt
-    # @param [Proc]   block           Passed to #property.
+    # @param [Proc]   blk             Passed to #property.
     #
     # @return [void]
     #
@@ -133,17 +133,17 @@ module Api::Serializer::Associations
     # === Variations
     #++
     #
-    # @overload has_many(name, **opt, &block)
+    # @overload has_many(name, **opt, &blk)
     #   @param [Symbol]                name
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # @overload has_many(name, type, *_, **opt)
     #   @param [Symbol]                name
     #   @param [Class, String, Symbol] type
     #   @param [Array]                 _      Additional arguments are ignored.
     #   @param [Hash]                  opt
-    #   @param [Proc]                  block
+    #   @param [Proc]                  blk
     #
     # === Examples
     #
@@ -162,7 +162,7 @@ module Api::Serializer::Associations
     # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_many(name, *args, **opt, &block)
+    def has_many(name, *args, **opt, &blk)
       type = get_type_class(args.shift, **opt)
       if scalar_type?(type)
         opt[:type]      = type
@@ -171,7 +171,7 @@ module Api::Serializer::Associations
         opt[:decorator] = decorator_class(type)
       end
       prepare_collection!(name, type, opt)
-      property(name, opt, &block)
+      property(name, opt, &blk)
     end
 
     # Incorporate all record fields from another class.

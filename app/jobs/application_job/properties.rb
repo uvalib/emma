@@ -163,11 +163,11 @@ module ApplicationJob::Properties
 
     public
 
-    def queue_with_priority(pri = nil, &block)
-      if block
-        blk = -> { priority_for(instance_exec(&block)) }
-        super(&blk)
-        queue_as(&blk) if queue_name.blank?
+    def queue_with_priority(pri = nil, &blk)
+      if blk
+        block = -> { priority_for(instance_exec(&blk)) }
+        super(&block)
+        queue_as(&block) if queue_name.blank?
       else
         pri = priority_for(pri)
         super(pri)

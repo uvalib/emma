@@ -435,7 +435,6 @@ module Record::Identification
   def expand_ids(*ids, **opt)
     opt[:min_id] ||= minimum_id
     opt[:max_id] ||= maximum_id
-    # noinspection RubyMismatchedReturnType
     ids.flatten.flat_map { |id|
       id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
     }.flat_map { |id|

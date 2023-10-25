@@ -844,7 +844,7 @@ module BaseDecorator::Form
   #
   # @yield [parts] Extend or replace control elements.
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
-  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  # @yieldreturn [Array<String>, nil]
   #
   def form_top_controls(f = nil, *buttons, css: '.controls.top', **opt)
     trace_attrs!(opt)
@@ -867,9 +867,9 @@ module BaseDecorator::Form
   #
   # @see #form_button_tray
   #
-  def form_top_button_tray(f = nil, *buttons, **opt, &block)
+  def form_top_button_tray(f = nil, *buttons, **opt, &blk)
     trace_attrs!(opt)
-    form_button_tray(f, *buttons, **opt, &block)
+    form_button_tray(f, *buttons, **opt, &blk)
   end
 
   # Convenience submit and cancel buttons below the fields.
@@ -883,7 +883,7 @@ module BaseDecorator::Form
   #
   # @yield [parts] Extend or replace control elements.
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
-  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  # @yieldreturn [Array<String>, nil]
   #
   def form_bottom_controls(f = nil, *buttons, css: '.controls.bottom', **opt)
     trace_attrs!(opt)
@@ -905,9 +905,9 @@ module BaseDecorator::Form
   #
   # @see #form_button_tray
   #
-  def form_bottom_button_tray(f = nil, *buttons, **opt, &block)
+  def form_bottom_button_tray(f = nil, *buttons, **opt, &blk)
     trace_attrs!(opt)
-    form_button_tray(f, *buttons, **opt, &block)
+    form_button_tray(f, *buttons, **opt, &blk)
   end
 
   # form_button_tray
@@ -921,7 +921,7 @@ module BaseDecorator::Form
   #
   # @yield [parts] Extend or replace button tray elements.
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
-  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  # @yieldreturn [Array<String>, nil]
   #
   def form_button_tray(f = nil, *buttons, css: '.button-tray', **opt)
     trace_attrs!(opt)
@@ -945,7 +945,7 @@ module BaseDecorator::Form
   #
   # @yield [parts] Extend or replace results.
   # @yieldparam [Array<ActiveSupport::SafeBuffer>] parts
-  # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
+  # @yieldreturn [Array<ActiveSupport::SafeBuffer>, nil]
   #
   def form_buttons(label: nil, cancel: nil, **opt)
     trace_attrs!(opt)

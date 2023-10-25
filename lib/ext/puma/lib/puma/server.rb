@@ -63,7 +63,7 @@ module Puma
         super
       end
 
-      def with_force_shutdown(client, &block)
+      def with_force_shutdown(client, &blk)
         __ext_log { stats }
         super
       end

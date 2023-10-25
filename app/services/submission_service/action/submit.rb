@@ -701,7 +701,7 @@ module SubmissionService::Action::Submit
   # @yieldparam  [ManifestItem] rec   The record itself.
   # @yieldreturn [*]                  False or *nil* to indicate failure.
   #
-  def run_step(records, wait: nil, **opt, &block)
+  def run_step(records, wait: nil, **opt, &blk)
 
     max_time  = (opt[:max_time] || DEFAULT_TIMEOUT) * records.size
     max_time += records.map { |r| r.file_size.to_i / 1.megabyte }.sum if wait
@@ -722,7 +722,7 @@ module SubmissionService::Action::Submit
         done = []
         remaining.each_pair do |id, rec|
           begin
-            id = nil unless block.call(id, rec)
+            id = nil unless blk.call(id, rec)
           rescue => error
             failure[id] = error.message
             Log.warn { "#{meth}: #{error.message}" }
@@ -736,7 +736,7 @@ module SubmissionService::Action::Submit
       done = []
       remaining.each_pair do |id, rec|
         begin
-          failure[id] = msg[:failure] unless block.call(id, rec)
+          failure[id] = msg[:failure] unless blk.call(id, rec)
         rescue => error
           failure[id] = error.message
           Log.warn { "#{meth}: #{error.message}" }

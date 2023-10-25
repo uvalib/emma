@@ -51,22 +51,22 @@ module BaseDecorator::Helpers
 
   # Helper methods explicitly generated for the sake of avoiding LazyHelpers.
   #
-  # @!method button_tag(*args, &block)
+  # @!method button_tag(*args, &blk)
   #   @see ActionView::Helpers::FormTagHelper#button_tag
   #
-  # @!method content_tag(*args, &block)
+  # @!method content_tag(*args, &blk)
   #   @see ActionView::Helpers::TagHelper#content_tag
   #
-  # @!method form_tag(*args, &block)
+  # @!method form_tag(*args, &blk)
   #   @see ActionView::Helpers::FormTagHelper#form_tag
   #
-  # @!method image_tag(*args, &block)
+  # @!method image_tag(*args, &blk)
   #   @see ActionView::Helpers::AssetTagHelper#image_tag
   #
-  # @!method link_to(*args, &block)
+  # @!method link_to(*args, &blk)
   #   @see ActionView::Helpers::UrlHelper#link_to
   #
-  # @!method submit_tag(*args, &block)
+  # @!method submit_tag(*args, &blk)
   #   @see ActionView::Helpers::FormTagHelper#submit_tag
   #
   VIEW_HELPER_METHODS: symArray

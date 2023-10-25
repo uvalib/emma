@@ -44,7 +44,7 @@ module OAuth2
     # @param [String] client_id
     # @param [String] client_secret
     # @param [Hash]   options
-    # @param [Proc]   block           @see OAuth2::Client#initialize
+    # @param [Proc]   blk             @see OAuth2::Client#initialize
     #
     # @option options [String]  :site             The OAuth2 provider site
     #                                             host.
@@ -90,7 +90,7 @@ module OAuth2
     #                                             access token from the
     #                                             response.
     #
-    def initialize(client_id, client_secret, options = {}, &block)
+    def initialize(client_id, client_secret, options = {}, &blk)
       super
       @options[:logger] = Log.new(progname: 'OAUTH2') unless options[:logger]
       @options[:logger].level = DEBUG_OAUTH ? Log::DEBUG : Log::INFO
@@ -283,7 +283,7 @@ module OAuth2
       # @param [String] client_id
       # @param [String] client_secret
       # @param [Hash]   options
-      # @param [Proc]   block           @see OAuth2::Client#initialize
+      # @param [Proc]   blk             @see OAuth2::Client#initialize
       #
       # @option options [String]  :site             The OAuth2 provider site
       #                                             host.
@@ -329,7 +329,7 @@ module OAuth2
       #                                             access token from the
       #                                             response.
       #
-      def initialize(client_id, client_secret, options = {}, &block)
+      def initialize(client_id, client_secret, options = {}, &blk)
         __ext_debug(binding)
         super
       end

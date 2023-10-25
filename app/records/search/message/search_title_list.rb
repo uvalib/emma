@@ -233,7 +233,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @param [Array<Search::Record::MetadataRecord>] recs
   # @param [Integer] level            Incremented via recursion.
   # @param [Any]     fields           Supplied via recursion.
-  # @param [Proc]    block            Executed at the bottom-level.
+  # @param [Proc]    blk              Executed at the bottom-level.
   #
   # @return [Array<Search::Record::TitleRecord>]
   # @return [Search::Record::TitleRecord, nil]
@@ -242,11 +242,11 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @yieldparam  [Array<Search::Record::MetadataRecord>] recs
   # @yieldreturn [Search::Record::TitleRecord, nil]
   #
-  def recursive_group_records(recs, level: 0, fields: nil, &block)
+  def recursive_group_records(recs, level: 0, fields: nil, &blk)
     __debug_group(level, fields, recs) if level.positive?
-    return block.call(recs) if level == GROUPING_LEVEL_DEPTH
+    return blk.call(recs) if level == GROUPING_LEVEL_DEPTH
     group_related(recs, level).flat_map { |flds, group|
-      recursive_group_records(group, level: (level+1), fields: flds, &block)
+      recursive_group_records(group, level: (level+1), fields: flds, &blk)
     }.compact_blank!
   end
 

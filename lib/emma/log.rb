@@ -88,57 +88,57 @@ module Emma::Log
 
   # Add a DEBUG-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
-  def self.debug(*args, &block)
-    add(DEBUG, *args, &block)
+  def self.debug(*args, &blk)
+    add(DEBUG, *args, &blk)
   end
 
   # Add an INFO-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
-  def self.info(*args, &block)
-    add(INFO, *args, &block)
+  def self.info(*args, &blk)
+    add(INFO, *args, &blk)
   end
 
   # Add a WARN-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
-  def self.warn(*args, &block)
-    add(WARN, *args, &block)
+  def self.warn(*args, &blk)
+    add(WARN, *args, &blk)
   end
 
   # Add an ERROR-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
-  def self.error(*args, &block)
-    add(ERROR, *args, &block)
+  def self.error(*args, &blk)
+    add(ERROR, *args, &blk)
   end
 
   # Add a FATAL-level log message.
   #
-  # @param [Array<String,Symbol,Exception,*>] args    Passed to #add.
-  # @param [Proc]                             block   Passed to #add.
+  # @param [Array<String,Symbol,Exception,*>] args  Passed to #add.
+  # @param [Proc]                             blk   Passed to #add.
   #
   # @return [nil]
   #
-  def self.fatal(*args, &block)
-    add(FATAL, *args, &block)
+  def self.fatal(*args, &blk)
+    add(FATAL, *args, &blk)
   end
 
   # ===========================================================================
@@ -315,10 +315,10 @@ module Emma::Log
   #
   # @param [Symbol]   meth
   # @param [Array<*>] args
-  # @param [Proc]     block
+  # @param [Proc]     blk
   #
-  def self.method_missing(meth, *args, &block)
-    logger.send(meth, *args, &block)
+  def self.method_missing(meth, *args, &blk)
+    logger.send(meth, *args, &blk)
   end
 
   # ===========================================================================

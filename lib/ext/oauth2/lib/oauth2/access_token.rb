@@ -134,11 +134,11 @@ module OAuth2
       # @param [Symbol] verb            The HTTP request method.
       # @param [String] path            The URL of the request.
       # @param [Hash]   opts            Passed to OAuth2::Client#request.
-      # @param [Proc]   block           Passed to OAuth2::Client#request.
+      # @param [Proc]   blk             Passed to OAuth2::Client#request.
       #
       # @return [OAuth2::Response]
       #
-      def request(verb, path, opts = {}, &block)
+      def request(verb, path, opts = {}, &blk)
         __ext_debug(binding)
         super
       end
