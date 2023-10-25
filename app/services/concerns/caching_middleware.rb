@@ -36,10 +36,9 @@ module CachingMiddleware
     #
     DEFAULT_OPTIONS = {
 =begin # TODO: redis cache?
-      store:  :redis_cache_store,
+      store: :redis_cache_store,
 =end
-      store:  :file_store,
-      logger: Log.new(progname: LOG_NAME),
+      store: :file_store,
     }.freeze
 
   end
@@ -279,8 +278,8 @@ module CachingMiddleware
     # @return [nil]
     #
     def log(message)
-      __debug { "Faraday #{message}" }
-      logger&.info("Faraday #{message}")
+      __debug(message = "Faraday #{message}")
+      logger&.info(message)
       nil
     end
 
@@ -312,15 +311,11 @@ module CachingMiddleware
     # @return [void]
     #
     def initialize_logger
-      log = @logger
-      log = log.to_s if log.is_a?(Pathname)
-      return if log.blank? || log.is_a?(Logger)
-      raise "expected String, got #{log.inspect}" unless log.is_a?(String)
-      log = File.join(TMPDIR, log) unless log.start_with?('/')
-      # noinspection RubyMismatchedArgumentType
-      @logger = Logger.new(log)
-      @logger.level = Rails.application.config.log_level
-      @logger.progname = LOG_NAME
+      return                      if (log = @logger).is_a?(Logger)
+      log = log.to_s              if log.is_a?(Pathname)
+      log = File.join(TMPDIR,log) if log.is_a?(String) && !log.start_with?('/')
+      raise "expected String, got #{log.inspect}" if log && !log.is_a?(String)
+      @logger = Log.new(log, progname: LOG_NAME)
     end
 
     # Run from #initialize to set up the cache store.

@@ -1,0 +1,13 @@
+module Sprockets
+  module Rails
+    module TaskExt
+      # Redefine @logger to be an Emma::Logger.
+      #
+      # @param [Rails::Application, nil] app
+      #
+      def initialize: (?(Rails::Application|nil) app) -> void
+
+      @logger: Emma::Logger
+    end
+  end
+end

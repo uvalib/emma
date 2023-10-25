@@ -9,9 +9,9 @@ module Emma::Log
 
   # The current application logger.
   #
-  # @return [Logger]
+  # @return [Emma::Logger]
   #
-  def self.logger: () -> Logger
+  def self.logger: () -> Emma::Logger
 
   # Add a log message.
   #
@@ -88,7 +88,7 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  def self.log_level: ((Integer|Symbol|String|nil) value, ?Symbol default) -> Integer
+  def self.level_for: ((Integer|Symbol|String|nil) value, ?Symbol default) -> Integer
 
   # Return the display name for a log level.
   #
@@ -99,108 +99,6 @@ module Emma::Log
   #
   def self.level_name: ((Integer|Symbol|String|nil) value, ?Symbol default) -> String
 
-  # local_levels
-  #
-  # @return [Concurrent::Map]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_levels
-  #
-  def self.local_levels: () -> Concurrent::Map
-
-  @local_levels: Concurrent::Map
-
-  # local_log_id
-  #
-  # @return [Integer]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_log_id
-  #
-  def self.local_log_id: () -> Integer
-
-  # Get thread-safe log level.
-  #
-  # @return [Integer]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level
-  #
-  def self.local_level: () -> Integer
-
-  # Set thread-safe log level.
-  #
-  # @param [Integer, Symbol, String, nil] value
-  #
-  # @return [Integer]
-  # @return [nil]                   If *value* is *nil*.
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level=
-  #
-  def self.local_level=
-    : ((Integer|Symbol|String) value) -> Integer
-    | (nil                     value) -> nil
-
-  # Thread-safe log level.
-  #
-  # @return [Integer]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#level
-  #
-  def self.level: () -> Integer
-
-  # Thread-safe storage for silenced status.
-  #
-  # @return [Concurrent::Map]
-  #
-  def self.silenced_map: () -> Concurrent::Map
-
-  @silenced_map: Concurrent::Map
-
-  # Indicate whether control is within a block where logging is silenced.
-  #
-  def self.silenced?: () -> bool
-
-  # Get thread-safe silenced flag.
-  #
-  # @return [Boolean, nil]
-  #
-  def self.silenced: () -> (bool | nil)
-
-  # Set thread-safe silenced flag.
-  #
-  # @param [Boolean] flag
-  #
-  # @return [Boolean]
-  #
-  def self.silenced=: (bool flag) -> bool
-
-  # Thread-safe storage for silenced status.
-  #
-  # @return [Concurrent::Map]
-  #
-  def self.saved_log_level: () -> Concurrent::Map
-
-  @saved_log_level: Concurrent::Map
-
-  # Control whether the logger is silent.
-  #
-  # @param [Boolean,nil] go_silent
-  #
-  # @return [Boolean]
-  # @return [nil]
-  #
-  def self.silent: (?(bool|nil) go_silent) -> (bool | nil)
-
-  # Silences the logger for the duration of the block.
-  #
-  # @param [Integer, Symbol, String] tmp_level Passed to LoggerSilence#silence.
-  # @param [Proc]                    block     Passed to LoggerSilence#silence.
-  #
-  def self.silence: (?(Integer|Symbol|String) tmp_level) { () -> untyped } -> untyped
-
   # Delegate any other method to @logger.
   #
   # @param [Symbol]   meth
@@ -209,18 +107,57 @@ module Emma::Log
   #
   def self.method_missing: (untyped meth, *untyped args) ?{ () -> untyped } -> untyped
 
-  # Create a new instance of the assigned Logger class.
+
+  def self.suppressed?: () -> bool
+
+  def self.suppressed: () -> bool?
+
+  def self.suppressed=: (bool state) -> bool
+
+  # Set logger suppression in general or for the duration of a block.
+  #
+  # @param [Boolean, nil] suppress
+  #
+  # @yield If given, the indicated state is only for the duration of the block.
+  #
+  def self.silence
+    : [T] (?(bool|nil) suppress) { () -> T } -> T
+    |     (bool        suppress)             -> bool
+    |     (?untyped    suppress)             -> nil
+
+  # Create a new Emma::Log instance based on *src* if provided.
   #
   # @param [::Logger, String, IO, nil] src
   # @param [Hash]                      opt        @see Logger#initialize
   #
-  # @option opt [Integer]             :level      Logging level (def.: #DEBUG)
-  # @option opt [String]              :progname   Default: nil.
-  # @option opt [::Logger::Formatter] :formatter  Default: from Log.logger
+  # @option opt [String] :progname    If not given, one will be generated.
   #
-  # @return [::Logger]
+  # @return [Emma::Logger]
   #
-  def self.new: (?(::Logger|IO|String|nil) src, **untyped opt) -> ::Logger
+  def self.new: (?(::Logger|IO|String|nil) src, **untyped opt) -> Emma::Logger
+
+  # Generate a new distinct :progname for an anonymous instance.
+  #
+  # @param [String]  base_name
+  # @param [Boolean] increment
+  #
+  # @return [String]
+  #
+  def self.anonymous_progname: (?base_name: String, ?increment: bool) -> String
+
+  self.@anonymous_count: Integer
+
+  # Replace the configured logger.
+  #
+  # @param [Any]    config
+  # @param [String] progname
+  # @param [Hash]   opt
+  #
+  # @return [nil]                             If *config* is invalid.
+  # @return [Emma::Logger]                    Direct replacement.
+  # @return [ActiveSupport::BroadcastLogger]  Original, possibly modified.
+  #
+  def self.replace: ((symHash|_LoggerConfig) config, progname: String, **untyped opt) -> logger?
 end
 
 # Defined as an "alias" for Emma::Log without needing to "include Emma".

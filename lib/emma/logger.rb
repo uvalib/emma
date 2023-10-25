@@ -11,19 +11,25 @@ module Emma
   #
   class Logger < ActiveSupport::Logger
 
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include ActiveSupport::LoggerSilence
+      # :nocov:
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     FILTERING =
-      if LOG_TO_STDOUT
-        !false?(ENV['EMMA_LOG_FILTERING'])
-      else
-        true?(ENV['EMMA_LOG_FILTERING'])
-      end
+      ENV['EMMA_LOG_FILTERING']
+        .then { |v| LOG_TO_STDOUT ? !false?(v) : true?(v) }
 
     AWS_FORMATTING =
-      if LOG_TO_STDOUT
-        !false?(ENV['EMMA_LOG_AWS_FORMATTING'])
-      else
-        true?(ENV['EMMA_LOG_AWS_FORMATTING'])
-      end
+      ENV['EMMA_LOG_AWS_FORMATTING']
+        .then { |v| LOG_TO_STDOUT ? !false?(v) : true?(v) }
 
     # =========================================================================
     # :section: ActiveSupport::Logger overrides
@@ -31,9 +37,64 @@ module Emma
 
     public
 
-    def initialize(*arg, **opt)
-      super
-      @default_formatter = Emma::Logger::Formatter.new
+    # Options expected by ::Logger#initialize
+    #
+    # @type [Array<Symbol>]
+    #
+    STD_LOGGER_OPT = %i[
+      level
+      progname
+      formatter
+      datetime_format
+      binmode
+      shift_period_suffix
+    ].freeze
+
+    # Additional options supported by Emma::Logger#initialize
+    #
+    # @type [Array<Symbol>]
+    #
+    EMMA_LOGGER_OPT = %i[default_formatter].freeze
+
+    # Options supported by Emma::Logger#initialize
+    #
+    # @type [Array<Symbol>]
+    #
+    LOGGER_OPT = (STD_LOGGER_OPT + EMMA_LOGGER_OPT).freeze
+
+    # Create a new instance.
+    #
+    # @param [::Logger, String, IO, nil] src
+    # @param [Array]                     args   @see ::Logger#initialize
+    # @param [Hash]                      opt    @see ::Logger#initialize
+    #
+    # @return [Emma::Logger]
+    #
+    def initialize(src = nil, *args, **opt)
+      local_opt = opt.extract!(*EMMA_LOGGER_OPT)
+      bad_opt   = remainder_hash!(opt, *STD_LOGGER_OPT)
+      if bad_opt.present? && Log.debug? && (stack = caller.join("\n"))
+        Log.debug do
+          "#{self.class}: ignoring invalid: #{bad_opt.inspect} at\n#{stack}"
+        end
+      end
+
+      if src.is_a?(::Logger)
+        opt[:progname]        ||= src.progname
+        opt[:level]           ||= src.level
+        opt[:formatter]       ||= src.formatter&.dup
+        opt[:datetime_format] ||= src.datetime_format
+        logdev = src.instance_variable_get(:@logdev)&.dev
+      else
+        opt[:level]           ||= Rails.configuration.log_level
+        logdev = src
+      end
+      logdev ||= LOG_TO_STDOUT ? STDOUT : Rails.configuration.default_log_file
+
+      super(logdev, *args, **opt)
+
+      @default_formatter   = local_opt[:default_formatter]
+      @default_formatter ||= Emma::Logger::Formatter.new
       @formatter = @default_formatter unless opt[:formatter]
     end
 
@@ -47,7 +108,7 @@ module Emma
     # @return [TrueClass]
     #
     def add(severity, message = nil, progname = nil)
-      return true if severity && (severity < level)
+      return true if ::Logger.suppressed? || (severity < level)
       if message.nil?
         if block_given?
           message = yield
@@ -57,6 +118,23 @@ module Emma
       end
       # noinspection RubyMismatchedReturnType
       filter_out?(message) or super(severity, message, progname)
+    end
+
+    # =========================================================================
+    # :section: ActiveSupport::LoggerSilence overrides
+    # =========================================================================
+
+    public
+
+    # Silences the logger for the duration of the block unless logging is
+    # already suppressed.
+    #
+    # @param [Integer, Symbol, nil] severity
+    #
+    # return [*]
+    #
+    def silence(severity = Logger::ERROR)
+      ::Logger.suppressed? ? yield(self) : super
     end
 
     # =========================================================================
@@ -131,69 +209,36 @@ module Emma
       #
       # @type [String]
       #
-      AWS_FORMAT = "[%d] %-#{SEV}s -- %-#{PRG}s: %s\n"
+      AWS_LEADER =              "[%<pid>d] %<sev>-#{SEV}s -- %<prg>-#{PRG}s: "
 
-      # The same as Logger::Formatter::Format but with the progname aligned.
+      # Like Logger::Formatter::Format but with the progname aligned.
       #
       # @type [String]
       #
-      BASIC_FORMAT = "%s, [%s #%d] %-#{SEV}s -- %-#{PRG}s: %s\n"
+      STD_LEADER =
+                "%{chr}, [%{tim} #%<pid>d] %<sev>-#{SEV}s -- %<prg>-#{PRG}s: "
 
       # =======================================================================
-      # :section:
+      # :section: Logger::Formatter overrides
       # =======================================================================
 
       public
 
-      # Format for AWS CloudWatch logging.
+      # Format for local or AWS CloudWatch logging.
       #
-      # Because the collapsed view of log lines squeezes out multiple spaces,
-      # fixed-width columns are right-filled with #AWS_FILL as needed.
-      #
-      # @param [Integer] severity
-      # @param [Time]    _time
-      # @param [String]  progname
-      # @param [*]       msg
+      # @param [String, Integer] severity
+      # @param [Time]            time
+      # @param [*]               progname
+      # @param [*]               msg
       #
       # @return [String]
       #
-      # @see #AWS_FORMAT
+      # @see #aws_leader
+      # @see #std_leader
       #
-      def aws_call(severity, _time, progname, msg)
-        pid = Process.pid
-        sev = right_fill(severity, SEV)
-        prg = right_fill(progname, PRG)
-        msg2str(msg).split("\n").map { |line|
-          AWS_FORMAT % [pid, sev, prg, line]
-        }.join
-      end
-
-      # Format for local logging.
-      #
-      # @param [Integer] severity
-      # @param [Time]    time
-      # @param [String]  progname
-      # @param [*]       msg
-      #
-      # @return [String]
-      #
-      # @see #BASIC_FORMAT
-      #
-      def basic_call(severity, time, progname, msg)
-        char = severity[0..0]
-        time = format_datetime(time)
-        pid  = Process.pid
-        sev  = severity
-        prg  = right_fill(progname, PRG, ' ')
-        msg2str(msg).split("\n").map { |line|
-          BASIC_FORMAT % [char, time, pid, sev, prg, line]
-        }.join
-      end
-
-      if AWS_FORMATTING
-        alias call aws_call
-      else
-        alias call basic_call
+      def call(severity, time, progname, msg)
+        ldr = leader(severity, time, progname)
+        msg2str(msg).split("\n").map { |txt| "#{ldr}#{txt}\n" }.join
       end
 
       # =======================================================================
@@ -201,6 +246,49 @@ module Emma
       # =======================================================================
 
       protected
+
+      # Format for AWS CloudWatch logging.
+      #
+      # Because the collapsed view of log lines squeezes out multiple spaces,
+      # fixed-width columns are right-filled with #AWS_FILL as needed.
+      #
+      # @param [String, Integer] severity
+      # @param [Time]            _time
+      # @param [*]               progname
+      #
+      # @return [String]
+      #
+      def aws_leader(severity, _time, progname)
+        AWS_LEADER % {
+          pid: Process.pid,
+          sev: right_fill(severity, SEV),
+          prg: right_fill(progname, PRG),
+        }
+      end
+
+      # Format for local logging.
+      #
+      # @param [String, Integer] severity
+      # @param [Time]            time
+      # @param [*]               progname
+      #
+      # @return [String]
+      #
+      def std_leader(severity, time, progname)
+        STD_LEADER % {
+          chr: severity[0..0],
+          tim: format_datetime(time),
+          pid: Process.pid,
+          sev: severity,
+          prg: right_fill(progname, PRG, ' '),
+        }
+      end
+
+      if AWS_FORMATTING
+        alias leader aws_leader
+      else
+        alias leader std_leader
+      end
 
       # Right-fill *item* if necessary so that its representation has at least
       # *width* characters.

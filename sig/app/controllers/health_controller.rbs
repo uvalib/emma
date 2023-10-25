@@ -11,8 +11,6 @@ class HealthController < ApplicationController
 
   include RunStateConcern
 
-  include LogConcern
-
   include HealthConcern
 
   @state: RunState
@@ -53,13 +51,4 @@ class HealthController < ApplicationController
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #
   def set_run_state: () -> void
-
-  # Excess logging is turned off for the standard all-subsystems health check
-  # (which is hit frequently by automated processes) unless the URL parameter
-  # 'logging=true' is included.
-  #
-  # If one or more comma-delimited subsystems is specified, full logging is
-  # performed unless the URL parameter 'logging=false' is included.
-  #
-  def suppress_logger: () -> void
 end

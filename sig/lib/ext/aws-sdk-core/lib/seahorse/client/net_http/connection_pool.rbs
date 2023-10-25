@@ -1,0 +1,9 @@
+module Seahorse
+  module Client
+    module NetHttp
+      class ConnectionPool
+        self.@default_logger: Emma::Logger
+      end
+    end
+  end
+end

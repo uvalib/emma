@@ -22,3 +22,10 @@ Oj.optimize_rails
 # === Local definitions and gem extensions/overrides
 require 'pp'
 require Rails.root.join('lib/emma').to_path
+
+# === Custom loggers
+unless LOG_SILENCER
+  Log.replace ActionController::Base, progname: 'CTLR'
+  Log.replace ActionView::Base,       progname: 'VIEW'
+  Log.replace ActiveRecord::Base,     progname: 'DB'
+end

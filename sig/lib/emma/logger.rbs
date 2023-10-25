@@ -2,11 +2,39 @@ module Emma
   # Application logger.
   #
   class Logger < ActiveSupport::Logger
+    #include ActiveSupport::LoggerSilence
+
     FILTERING: bool
 
     AWS_FORMATTING: bool
 
-    def initialize: (*untyped arg, **untyped opt) -> void
+    # Options expected by ::Logger#initialize
+    #
+    # @type [Array<Symbol>]
+    #
+    STD_LOGGER_OPT: symArray
+
+    # Additional options supported by Emma::Logger#initialize
+    #
+    # @type [Array<Symbol>]
+    #
+    EMMA_LOGGER_OPT: symArray
+
+    # Options supported by Emma::Logger#initialize
+    #
+    # @type [Array<Symbol>]
+    #
+    LOGGER_OPT: symArray
+
+    # Create a new instance.
+    #
+    # @param [::Logger, String, IO, nil] src
+    # @param [Array]                     args   @see ::Logger#initialize
+    # @param [Hash]                      opt    @see ::Logger#initialize
+    #
+    # @return [Emma::Logger]
+    #
+    def initialize: (?(::Logger|IO|String|nil) src, *untyped args, **untyped opt) -> void
 
     @default_formatter: ::Logger::Formatter
 
@@ -21,6 +49,15 @@ module Emma
     # @return [TrueClass]
     #
     def add: (Integer severity, ?untyped? message, ?untyped? progname) ?{ () -> untyped } -> true
+
+    # Silences the logger for the duration of the block unless logging is
+    # already suppressed.
+    #
+    # @param [Integer, Symbol, nil] severity
+    #
+    # return [*]
+    #
+    def silence: [T] (?(Integer|Symbol|nil) severity) { (self) -> T } -> T
 
     private
 
@@ -71,41 +108,54 @@ module Emma
       #
       # @type [String]
       #
-      AWS_FORMAT: String
+      AWS_LEADER: String
 
-      # The same as Logger::Formatter::Format but with the progname aligned.
+      # Like Logger::Formatter::Format but with the progname aligned.
       #
       # @type [String]
       #
-      BASIC_FORMAT: String
+      STD_LEADER: String
+
+      # Format for local or AWS CloudWatch logging.
+      #
+      # @param [String, Integer] severity
+      # @param [Time]            time
+      # @param [*]               progname
+      # @param [*]               msg
+      #
+      # @return [String]
+      #
+      # @see #aws_leader
+      # @see #std_leader
+      #
+      def call: (String severity, Time time, untyped progname, untyped msg) -> String
 
       # Format for AWS CloudWatch logging.
       #
       # Because the collapsed view of log lines squeezes out multiple spaces,
       # fixed-width columns are right-filled with #AWS_FILL as needed.
       #
-      # @param [Integer] severity
-      # @param [Time]    _time
-      # @param [String]  progname
-      # @param [*]       msg
+      # @param [String, Integer] severity
+      # @param [Time]            _time
+      # @param [*]               progname
       #
       # @return [String]
       #
-      def aws_call: (Integer severity, Time _time, String progname, untyped msg) -> String
+      def aws_leader: (String|Integer severity, Time _time, untyped progname) -> String
 
       # Format for local logging.
       #
-      # @param [Integer] severity
-      # @param [Time]    time
-      # @param [String]  progname
-      # @param [*]       msg
+      # @param [String, Integer] severity
+      # @param [Time]            time
+      # @param [*]               progname
       #
       # @return [String]
       #
-      def basic_call: (Integer severity, Time time, String progname, untyped msg) -> String
+      def std_leader: (String|Integer severity, Time time, untyped progname) -> String
 
-      #alias call aws_format
-      #alias call basic_call
+      alias leader aws_leader
+
+      alias leader std_leader
 
       # Right-fill *item* if necessary so that its representation has at least
       # *width* characters.

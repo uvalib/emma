@@ -19,8 +19,10 @@ type strArray   = Array[String]           # Array of String
 
 type prmHash    = symHash | ActionController::Parameters
 
-type httpResult = [Integer, strHash, strArray] | [Integer, Rack::Utils::HeaderHash, Rack::BodyProxy]
+type httpResult = [Integer, (strHash|Rack::Utils::HeaderHash), (strArray|Rack::BodyProxy)]
 type errorArgs  = Exception | ExecReport | symHash | String | strArray | Array[Record::Exceptions::FlashPart] | nil
+
+type logger     = ActiveSupport::BroadcastLogger | Logger
 
 # =============================================================================
 # Duck-typing definitions
@@ -28,6 +30,11 @@ type errorArgs  = Exception | ExecReport | symHash | String | strArray | Array[R
 
 interface _DateTime
   def strftime: (String fmt) -> String
+end
+
+interface _LoggerConfig
+  def logger:  ()        -> logger?
+  def logger=: (untyped) -> logger?
 end
 
 # =============================================================================
@@ -71,6 +78,10 @@ end
 
 # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 module ActiveSupport
+
+  class BroadcastLogger
+    include ActiveSupport::LoggerSilence
+  end
 
   module CoreExt
     module ERBUtil

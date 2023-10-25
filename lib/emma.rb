@@ -143,6 +143,7 @@ end
 # Require all modules from extensions and the "lib/emma" directory.
 # =============================================================================
 
+require '_loader'
 require 'ext/active_support/ext'
 require_submodules(__FILE__)
 require 'ext'

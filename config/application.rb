@@ -130,6 +130,9 @@ module Emma
     # Do not dump schema after migrations in the deployed application.
     config.active_record.dump_schema_after_migration = not_deployed?
 
+    # Raise an error on page load if there are pending migrations.
+    config.active_record.migration_error = :page_load if not_deployed?
+
     # =========================================================================
     # ActionCable
     # =========================================================================
@@ -193,8 +196,8 @@ module Emma
     # Don't colorize AWS logs.
     config.colorize_logging = not_deployed?
 
-    # Use a different logger when logging to $stdout.
-    config.logger = Emma::Logger.new(STDOUT) if LOG_TO_STDOUT
+    # Use a custom logger to support log suppression.
+    config.logger = Emma::Logger.new
 
     # =========================================================================
     # Assets

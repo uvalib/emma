@@ -1,0 +1,33 @@
+class Logger
+  module SuppressionExt
+    SUPPRESSION_STORE_KEY: Symbol
+
+    def suppressed?: () -> bool
+
+    def suppressed: () -> bool?
+
+    def suppressed=: (bool state) -> bool
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include SuppressionExt
+
+  module Ext
+    #include SuppressionExt
+
+    # Override to avoid logging if suppressed.
+    #
+    # @param [Integer] severity
+    # @param [*]       message
+    # @param [*]       progname       Default @progname
+    #
+    # @return [TrueClass]
+    #
+    def add: (Integer severity, ?untyped message, ?untyped progname) -> true
+  end
+
+  include Ext
+end

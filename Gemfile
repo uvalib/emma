@@ -88,6 +88,10 @@ gem 'oj'
 gem 'representable', '~> 3.0', '< 3.1'
 gem 'virtus', '~> 1.0'
 
+# == Logging
+gem 'request_store'
+gem 'silencer'
+
 # == Metrics
 gem 'prometheus-client'
 

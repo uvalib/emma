@@ -33,16 +33,11 @@ module Emma::Log
 
   # The current application logger.
   #
-  # @return [Logger]
+  # @return [Emma::Logger]
   #
   def self.logger
     # noinspection RbsMissingTypeSignature
-    @logger ||=
-      if LOG_TO_STDOUT
-        new(STDOUT, progname: 'EMMA')
-      else
-        new(Rails.application.config.default_log_file, progname: 'EMMA')
-      end
+    @logger ||= new(progname: 'EMMA')
   end
 
   # Add a log message.
@@ -67,8 +62,9 @@ module Emma::Log
   # is also visible on console output without having to switch to log output.
   #
   def self.add(severity, *args)
-    return if (level = log_level(severity)) < logger.level
-    args += Array.wrap(yield) if block_given?
+    return if Logger.suppressed?
+    return if (level = level_for(severity)) < logger.level
+    args.concat(Array.wrap(yield)) if block_given?
     args.compact!
     parts = []
     parts << args.shift if args.first.is_a?(Symbol)
@@ -154,7 +150,7 @@ module Emma::Log
   #
   # @return [Integer]
   #
-  def self.log_level(value, default = :unknown)
+  def self.level_for(value, default = :unknown)
     # noinspection RubyMismatchedReturnType
     return value if value.is_a?(Integer)
     value = value.to_s.downcase.to_sym unless value.is_a?(Symbol)
@@ -169,146 +165,8 @@ module Emma::Log
   # @return [String]
   #
   def self.level_name(value, default = :unknown)
-    level = log_level(value, default)
+    level = level_for(value, default)
     LEVEL_NAME[level]
-  end
-
-  # local_levels
-  #
-  # @return [Concurrent::Map]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_levels
-  #
-  def self.local_levels
-    @local_levels ||= Concurrent::Map.new(initial_capacity: 2)
-  end
-
-  # local_log_id
-  #
-  # @return [Integer]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_log_id
-  #
-  def self.local_log_id
-    Thread.current.__id__
-  end
-
-  # Get thread-safe log level.
-  #
-  # @return [Integer]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level
-  #
-  def self.local_level
-    local_levels[local_log_id]
-  end
-
-  # Set thread-safe log level.
-  #
-  # @param [Integer, Symbol, String, nil] value
-  #
-  # @return [Integer]
-  # @return [nil]                   If *value* is *nil*.
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#local_level=
-  #
-  def self.local_level=(value)
-    if value
-      local_levels[local_log_id] = log_level(value)
-    else
-      local_levels.delete(local_log_id) and nil
-    end
-  end
-
-  # Thread-safe log level.
-  #
-  # @return [Integer]
-  #
-  # === Implementation Notes
-  # Compare with ActiveSupport::LoggerThreadSafeLevel#level
-  #
-  def self.level
-    local_level || logger.level
-  end
-
-  # Thread-safe storage for silenced status.
-  #
-  # @return [Concurrent::Map]
-  #
-  def self.silenced_map
-    @silenced_map ||= Concurrent::Map.new(initial_capacity: 2)
-  end
-
-  # Indicate whether control is within a block where logging is silenced.
-  #
-  def self.silenced?
-    silenced.present?
-  end
-
-  # Get thread-safe silenced flag.
-  #
-  # @return [Boolean, nil]
-  #
-  def self.silenced
-    silenced_map[local_log_id]
-  end
-
-  # Set thread-safe silenced flag.
-  #
-  # @param [Boolean] flag
-  #
-  # @return [Boolean]
-  #
-  def self.silenced=(flag)
-    silenced_map[local_log_id] = flag
-  end
-
-  # Thread-safe storage for silenced status.
-  #
-  # @return [Concurrent::Map]
-  #
-  def self.saved_log_level
-    @saved_log_level ||= Concurrent::Map.new(initial_capacity: 2)
-  end
-
-  # Control whether the logger is silent.
-  #
-  # @param [Boolean,nil] go_silent
-  #
-  # @return [Boolean]
-  # @return [nil]
-  #
-  def self.silent(go_silent = true)
-    if !go_silent
-      logger.local_level = saved_log_level.delete(local_log_id) || level
-      self.silenced = false
-    elsif !silenced?
-      saved_log_level[local_log_id] = logger.local_level
-      logger.local_level = FATAL
-      self.silenced = true
-    end
-  end
-
-  # Silences the logger for the duration of the block.
-  #
-  # @param [Integer, Symbol, String] tmp_level Passed to LoggerSilence#silence.
-  # @param [Proc]                    block     Passed to LoggerSilence#silence.
-  #
-  def self.silence(tmp_level = FATAL, &block)
-    if silenced?
-      block.call
-    else
-      begin
-        self.silenced = true
-        logger.silence(log_level(tmp_level), &block)
-      ensure
-        self.silenced = false
-      end
-    end
   end
 
   # Delegate any other method to @logger.
@@ -326,32 +184,138 @@ module Emma::Log
   # ===========================================================================
 
   public
+  class << self
+    delegate :suppressed?, :suppress, :suppress=, to: ::Logger
+  end
 
-  # Create a new instance of the assigned Logger class.
+  # Set logger suppression in general or for the duration of a block.
+  #
+  # @param [Boolean, nil] suppress
+  #
+  # @yield If given, the indicated state is only for the duration of the block.
+  #
+  def self.silence(suppress = nil)
+    if block_given?
+      # If a block is given then it is assumed that the intended state is to
+      # suppress logging for the duration of the block.
+      suppress = suppress.nil? || !!suppress
+      current  = Logger.suppressed?
+      if suppress == current
+        # If the requested state is already in effect nothing extra is needed.
+        yield
+      else
+        # Otherwise, toggle the state for the duration of the block.
+        begin
+          Logger.suppressed = !current
+          yield
+        ensure
+          Logger.suppressed = current
+        end
+      end
+    else
+      # If no block is given then this can only be a directive to set the
+      # global silence state.  For safety, an explicit argument is required.
+      raise 'no argument or block given' unless suppress.is_a?(BoolType)
+      Logger.suppressed = suppress
+    end
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  public
+
+  # Create a new Emma::Log instance based on *src* if provided.
   #
   # @param [::Logger, String, IO, nil] src
+  # @param [Array]                     args
   # @param [Hash]                      opt        @see Logger#initialize
   #
-  # @option opt [Integer]             :level      Logging level (def.: #DEBUG)
-  # @option opt [String]              :progname   Default: nil.
-  # @option opt [::Logger::Formatter] :formatter  Default: from Log.logger
+  # @option opt [String] :progname    If not given, one will be generated.
   #
-  # @return [::Logger]
+  # @return [Emma::Logger]
   #
-  def self.new(src = nil, **opt)
-    ignored = opt.except(:progname, :level, :formatter, :datetime_format)
-    __output "Log.new ignoring options #{ignored.keys}" if ignored.present?
-    log = src || logger
-    log = log.clone                             if log.is_a?(::Logger)
-    log = Emma::Logger.new(log, **opt)          unless log.is_a?(::Logger)
-    log.progname        = opt[:progname]
-    log.level           = opt[:level]           if opt[:level]
-    log.datetime_format = opt[:datetime_format] if opt[:datetime_format]
-    log.formatter       = opt[:formatter]       if opt[:formatter]
-    log.formatter       = log.formatter&.clone  unless opt[:formatter]
-    # noinspection RubyMismatchedReturnType
-    log
+  def self.new(src = nil, *args, **opt)
+    opt[:progname] ||= anonymous_progname
+    logger = Emma::Logger.new(src, *args, **opt)
+    ActiveSupport::TaggedLogging.new(logger).tap do |log|
+      tags = src&.try(:formatter)&.try(:current_tags)
+      log.formatter.push_tags(tags) if tags.present?
+    end
   end
+
+  # Generate a new distinct :progname for an anonymous instance.
+  #
+  # @param [String]  base_name
+  # @param [Boolean] increment
+  #
+  # @return [String]
+  #
+  #--
+  # noinspection RbsMissingTypeSignature
+  #++
+  def self.anonymous_progname(base_name: 'EMM%d', increment: true)
+    @anonymous_count ||= 0
+    @anonymous_count += 1 if increment
+    base_name % @anonymous_count
+  end
+
+  # Replace the configured logger.
+  #
+  # @param [Any]    config
+  # @param [String] progname
+  # @param [Hash]   opt
+  #
+  # @return [nil]                             If *config* is invalid.
+  # @return [Emma::Logger]                    Direct replacement.
+  # @return [ActiveSupport::BroadcastLogger]  Original, possibly modified.
+  #
+  def self.replace(config, progname:, **opt)
+    if config.respond_to?(:logger=)
+      src    = config.logger
+      update = ->(new_src) { config.logger = new_src }
+    elsif config.is_a?(Hash)
+      src    = config[:logger]
+      update = ->(new_src) { config[:logger] = new_src }
+    else
+      return warn {"#{self}.#{__method__}: invalid config: #{config.inspect}"}
+    end
+    opt.reverse_merge!(progname: progname)
+    loggers = (src.broadcasts if src.is_a?(ActiveSupport::BroadcastLogger))
+
+    # noinspection RubyMismatchedReturnType
+    if loggers&.any? { |log| log.progname == progname }
+      # The provided logger already broadcasts to `progname`, so update it.
+      # This branch does not invoke `update.(src)` since the provided
+      # BroadcastLogger is just updated in-place.
+      loggers.map! do |logger|
+        if logger.progname.blank? || (logger.progname == progname)
+          new(logger, **opt)
+        else
+          new(logger, **opt.except(:progname))
+        end
+      end
+      src
+
+    elsif loggers
+      # The provided logger may have just been assigned as a default without
+      # regard to distinguishing loggers by progname, so create a new one.
+      loggers = loggers.presence&.dup || [nil]
+      loggers.map! do |logger|
+        new(logger, **opt)
+      end
+      update.(ActiveSupport::BroadcastLogger.new(*loggers))
+
+    elsif src.nil? || src.is_a?(::Logger)
+      # noinspection RubyMismatchedArgumentType
+      update.(new(src, **opt))
+
+    else
+      warn { "#{self}.#{__method__}: unexpected src: #{src.inspect}" }
+    end
+  end
+    .tap { |meth| neutralize(meth) if LOG_SILENCER }
 
 end
 

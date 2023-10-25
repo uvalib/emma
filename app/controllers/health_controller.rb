@@ -17,7 +17,6 @@ class HealthController < ApplicationController
 
   include ParamsConcern
   include RunStateConcern
-  include LogConcern
   include HealthConcern
 
   # ===========================================================================
@@ -37,11 +36,6 @@ class HealthController < ApplicationController
   # ===========================================================================
 
   after_action :no_cache, if: :request_get?
-
-=begin # TODO: This approach is not currently thread-safe.
-  before_action :suppress_logger,   only: :check
-  after_action  :unsuppress_logger, only: :check
-=end
 
   # ===========================================================================
   # :section:
@@ -71,11 +65,8 @@ class HealthController < ApplicationController
   def check
     logging = params[:logging]
     logging = subsystems.blank? ? true?(logging) : !false?(logging)
-    if logging
-      render_check
-    else
-      Log.silence { render_check }
-    end
+    Log.silence(true) unless logging
+    render_check
   end
 
   # === GET /health/run_state
@@ -101,25 +92,6 @@ class HealthController < ApplicationController
     __debug_route
     update_run_state
     redirect_to action: :run_state
-  end
-
-  # ===========================================================================
-  # :section: LogConcern overrides
-  # ===========================================================================
-
-  protected
-
-  # Excess logging is turned off for the standard all-subsystems health check
-  # (which is hit frequently by automated processes) unless the URL parameter
-  # 'logging=true' is included.
-  #
-  # If one or more comma-delimited subsystems is specified, full logging is
-  # performed unless the URL parameter 'logging=false' is included.
-  #
-  def suppress_logger
-    logging = params[:logging]
-    logging = subsystems.blank? ? true?(logging) : !false?(logging)
-    super(logging)
   end
 
 end

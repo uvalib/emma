@@ -194,6 +194,13 @@ class AppSettings < AppGlobal
     :WEB_CONCURRENCY,
     nil,
 
+    # === Logging
+    :LOG_SILENCER,
+    :LOG_SILENCER_ENDPOINTS,
+    :EMMA_LOG_FILTERING,
+    :EMMA_LOG_AWS_FORMATTING,
+    nil,
+
     # === Testing
     :PARALLEL_WORKERS,
     :TEST_FORMATS,

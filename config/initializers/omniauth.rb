@@ -4,9 +4,11 @@
 # warn_indent:           true
 #
 # Setup and initialization for OmniAuth.
+#
+# @see lib/ext/omniauth/lib/omniauth/configuration.rb
 
-OmniAuth.config.logger       = Log.new(progname: 'OMNIAUTH')
-OmniAuth.config.logger.level = DEBUG_OAUTH ? Log::DEBUG : Log::INFO
+OmniAuth.config.logger     ||= Log.new(progname: 'OMNIAUTH')
+OmniAuth.config.logger.level = Log::DEBUG if DEBUG_OAUTH
 
 # Used by SessionsHelper#get_sessions_label:
 OmniAuth.config.add_camelization 'emma',  'EMMA'

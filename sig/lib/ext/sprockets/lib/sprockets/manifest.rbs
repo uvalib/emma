@@ -1,0 +1,13 @@
+module Sprockets
+  module ManifestExt
+    # Overridden to ensure that logging is simple text to $stderr since in this
+    # application Sprockets is only ever run from a rake task and its log
+    # output doesn't benefit from full log file formatting.
+    #
+    # @return [Emma::Logger]
+    #
+    def logger: () -> Emma::Logger
+
+    @logger: Emma::Logger
+  end
+end

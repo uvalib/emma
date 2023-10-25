@@ -342,6 +342,31 @@ ENV['RAILS_MAX_THREADS'] = [
 ].map!(&:to_i).sum.to_s
 
 # =============================================================================
+# Logging
+# =============================================================================
+
+# Indicate whether the 'silencer' gem is enabled.
+#
+# Currently, attempting to replace system loggers (via Log#replace) ends up
+# defeating the ability of the 'silencer' gem to eliminate *all* log entries
+# for the endpoints on which it operates.
+#
+# @type [bool]
+#
+LOG_SILENCER = !false?(ENV['LOG_SILENCER'])
+
+# Application endpoints which are intended to leave no footprint in the log.
+#
+# @type [Array<String>]
+#
+LOG_SILENCER_ENDPOINTS =
+  ENV.fetch('LOG_SILENCER_ENDPOINTS', %w[/healthcheck /health/check])
+     .then { |v| v.is_a?(Array) ? v.join("\n") : v.to_s }
+     .split(/[|\t\n]/)
+     .map! { |v| '/' + v.delete_prefix('/') unless (v = v.strip).empty? }
+     .compact
+
+# =============================================================================
 # Output
 # =============================================================================
 

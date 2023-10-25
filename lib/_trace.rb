@@ -96,7 +96,7 @@ OUTPUT_PREFIX = LOG_TO_STDOUT ? '| ' : ''
 #       as `Log.add` starts working.
 #
 def __output_impl(*args, **opt)
-  return if defined?(Log) && Log.silenced?
+  return if Logger.try(:suppressed?)
   sep = opt[:separator] || "\n"
 
   # Construct the string that is prepended to each output line.
@@ -147,7 +147,7 @@ def __output_impl(*args, **opt)
 
       # For desktop builds, if explicitly requested, copy output to the log.
       unless (level = opt[:log]).blank? || application_deployed?
-        level = Log.log_level(level, :debug)
+        level = Log.level_for(level, :debug)
         Log.add(level, lines)
       end
 

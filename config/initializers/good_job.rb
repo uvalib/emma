@@ -15,8 +15,7 @@
 GoodJob.preserve_job_records      = DEBUG_JOB             # Default: *true*
 #GoodJob.retry_on_unhandled_error = application_deployed? # Default: *false*
 
-GoodJob.logger          = Log.new(progname: 'JOBS')
-GoodJob.logger.level    = DEBUG_JOB ? Log::DEBUG : Log::INFO
+GoodJob.logger = Log.new(progname: 'GJOB', level: ActiveJob::Base.logger.level)
 GoodJob.on_thread_error = ->(e) { Log.error("#{e.class}: #{e.message}") }
 
 # =============================================================================

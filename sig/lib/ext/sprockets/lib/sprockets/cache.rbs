@@ -1,0 +1,19 @@
+module Sprockets
+  class CacheLoggerExt
+    # This is used to redefine the class methods to use Emma::Logger.
+    #
+    # @return [Emma::Logger]
+    #
+    def default_logger: () -> Emma::Logger
+
+    @def_logger: Emma::Logger
+  end
+
+  class Cache
+    extend CacheLoggerExt
+
+    class FileStore
+      extend CacheLoggerExt
+    end
+  end
+end

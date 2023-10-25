@@ -1,0 +1,14 @@
+module Sprockets
+  # Generate an override logger for Sprockets or its classes.
+  #
+  # @param [Logger, String, IO, nil] src    Old logger instance.
+  # @param [Array]                   args   @see Emma::Logger#initialize
+  # @param [Hash]                    opt    @see Emma::Logger#initialize
+  #
+  # @return [Emma::Logger]
+  #
+  def self.local_logger: (?(Logger|nil) old_logger, *untyped args, **untyped opt) -> Emma::Logger
+
+  self.@logger: Emma::Logger
+
+end

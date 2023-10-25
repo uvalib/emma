@@ -5,33 +5,27 @@
 #
 # Extensions for the OmniAuth gem.
 
-=begin
 __loading_begin(__FILE__)
 
 require 'omniauth'
 
 module OmniAuth
 
-  module ConfigurationExt
+  class Configuration
 
-    # Indicate whether the request method is configured as allowed.
+    # Because OmniAuth::Configuration#defaults invokes this method
+    # unconditionally, defining the local logger here in this override rather
+    # than in 'config/initializers.rb' avoids creation of an extra unused
+    # logger instance.
     #
-    # @param [Symbol, String, Rack::Request] meth
+    # @return [Emma::Logger]
     #
-    def allowed_method?(meth)
-      meth = meth.request_method if meth.is_a?(Rack::Request)
-      allowed_request_methods.include?(meth.to_s.downcase.to_sym)
+    def self.default_logger
+      Log.new(progname: 'OMNIAUTH')
     end
 
   end
 
 end
 
-# =============================================================================
-# Override gem definitions
-# =============================================================================
-
-override OmniAuth::Configuration => OmniAuth::ConfigurationExt
-
 __loading_end(__FILE__)
-=end
