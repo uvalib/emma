@@ -25,9 +25,10 @@ en:
         actions:
           - index
           - settings
-          - headers
           - loggers
           - internals
+          - headers
+          - environment
           - processes
           - disk_space
 
@@ -77,22 +78,6 @@ en:
 
       # =======================================================================
 
-      settings:
-        label:          'Settings'
-        title:          'Application Settings'
-        tooltip:        'Dynamic feature toggles and application settings'
-        _endpoint:      true
-
-      # =======================================================================
-
-      processes:
-        label:          'Processes'
-        title:          'Host Machine Processes'
-        tooltip:        'View the system processes on the host machine'
-        _endpoint:      true
-
-      # =======================================================================
-
       disk_space:
         label:          'Disk Space'
         title:          'Host Machine Disk Space'
@@ -101,10 +86,10 @@ en:
 
       # =======================================================================
 
-      loggers:
-        label:          'Loggers'
-        title:          'Logger Instances'
-        tooltip:        'View live logger instances'
+      environment:
+        label:          'Env Vars'
+        title:          'Environment Variables (ENV)'
+        tooltip:        'Values from the system environment'
         _endpoint:      true
 
       # =======================================================================
@@ -121,6 +106,30 @@ en:
         label:          'Internals'
         title:          'System Internals'
         tooltip:        'View internal system information'
+        _endpoint:      true
+
+      # =======================================================================
+
+      loggers:
+        label:          'Loggers'
+        title:          'Logger Instances'
+        tooltip:        'View live logger instances'
+        _endpoint:      true
+
+      # =======================================================================
+
+      processes:
+        label:          'Processes'
+        title:          'Host Machine Processes'
+        tooltip:        'View the system processes on the host machine'
+        _endpoint:      true
+
+      # =======================================================================
+
+      settings:
+        label:          'Settings'
+        title:          'Application Settings'
+        tooltip:        'Dynamic feature toggles and application settings'
         _endpoint:      true
 
       # =======================================================================

@@ -31,7 +31,11 @@ class SysController < ApplicationController
   # @see file:config/locales/controllers/sys.en.yml *en.emma.sys*
   PAGES: symArray
 
-  def settings:   () -> void
-  def processes:  () -> void
-  def disk_space: () -> void
+  def disk_space:   () -> void
+  def environment:  () -> void
+  def headers:      () -> void
+  def internals:    () -> void
+  def loggers:      () -> void
+  def processes:    () -> void
+  def settings:     () -> void
 end

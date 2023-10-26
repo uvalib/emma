@@ -1,0 +1,27 @@
+<%# app/views/sys/environment.html.erb -%>
+<%-
+  # ENV environment variables
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys headers]
+  title ||= t('emma.sys.environment.title')
+
+  unless modal?
+    label = t('emma.sys.environment.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= environment_section %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

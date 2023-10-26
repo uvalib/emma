@@ -116,6 +116,17 @@ module SysHelper::Headers
         a << 'SSL_PROTOCOL'
         a << 'SSL_SERVER_CERT'
 
+        # Apache @see https://httpd.apache.org/docs/2.4/mod/mod_rewrite.html
+        a << 'CONN_REMOTE_ADDR'
+        a << 'CONTEXT_DOCUMENT_ROOT'
+        a << 'CONTEXT_PREFIX'
+        a << 'HTTP_FORWARDED'
+        a << 'HTTP_PROXY_CONNECTION'
+        a << 'REMOTE_PORT'
+        a << 'REQUEST_FILENAME'
+        a << 'REQUEST_SCHEME'
+        a << 'SCRIPT_FILENAME'
+
         a.remove ActionDispatch::Request::HTTP_METHODS + %w[LINK UNLINK]
         a.delete_if { |v| v.start_with?('rack.') }
       }.partition { |v| v.match?(/[a-z]/) }.flat_map(&:itself).deep_freeze

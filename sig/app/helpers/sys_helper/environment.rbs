@@ -1,0 +1,25 @@
+# View helper supporting EMMA settings available to all workers/threads.
+#
+module SysHelper::Environment
+  include SysHelper::Common
+
+  # Request header values listing.
+  #
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def environment_section: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  # Reformat `ENV` as a sorted Hash starting with lowercase names.
+  #
+  # @return [Hash{String=>String}]
+  #
+  def environment_variables: () -> Hash[String,String]
+
+  private
+
+  def self.included: (Module base) -> void
+end

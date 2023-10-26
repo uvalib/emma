@@ -57,7 +57,7 @@ module SysHelper::Common
   #
   def dt_dd_pairs(pairs, **opt)
     pairs.map do |k, v|
-      blank = v.blank? ? !v.is_a?(FalseClass) : (v == EMPTY_VALUE)
+      blank = v.nil? || (v == EMPTY_VALUE)
       p_opt = append_css(opt, (blank ? 'blank' : 'present'))
       label = html_tag(:dt, **p_opt) { dt_name(k) }
       value = html_tag(:dd, **p_opt) { dd_value(v) }
