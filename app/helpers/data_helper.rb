@@ -263,23 +263,32 @@ module DataHelper
   # @param [Array<Hash>]    records
   # @param [String, Symbol] name        Database table name.
   # @param [Integer]        start_row
+  # @param [String]         css         Characteristic CSS class.
   # @param [Hash]           opt         Passed to #html_db_record.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_table(records, name: nil, start_row: 1, **opt)
-    css       = '.database-table'
+  def html_db_table(
+    records,
+    name:       nil,
+    start_row:  1,
+    css:        '.database-table',
+    **opt
+  )
     records ||= []
-    count     = positive(records.size - 1) || 0
-    html_opt  = append_css(css)
+    # noinspection RubyMismatchedArgumentType
+    tbl_opt = { id: name.presence && html_id(name) }.compact
+    headers = name ? table_columns(name) : records.first&.keys
 
-    append_css!(html_opt, 'empty') if count.zero?
-    html_opt[:id] = name           if name.present?
+    append_css!(tbl_opt, "columns-#{headers.size}") if headers
+    append_css!(tbl_opt, 'empty')                   if records.empty?
+    prepend_css!(tbl_opt, css)
 
-    html_div(**html_opt) do
+    html_div(**tbl_opt) do
       opt[:first] ||= start_row
-      opt[:last]  ||= opt[:first] + [(count - 1), 0].max
-      records.map.with_index(start_row) do |record, row|
+      opt[:last]  ||= opt[:first] + (positive(records.size - 1) || 0)
+      opt[:heads] ||= headers.map { |k| html_id(k.try(:name) || k) }
+      records.map.with_index(opt[:first]) do |record, row|
         html_db_record(record, row: row, **opt)
       end
     end
@@ -290,15 +299,22 @@ module DataHelper
   # @param [Hash, Array]  fields
   # @param [Integer, nil] row
   # @param [Integer]      start_col
+  # @param [String]       css         Characteristic CSS class.
   # @param [Hash]         opt         Passed to #html_db_column except:
   #
   # @option opt [Integer] :first      Index value of the first record.
   # @option opt [Integer] :last       Index value of the last record.
+  # @option opt [Array]   :heads      Column headings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_record(fields, row: nil, start_col: 1, **opt)
-    css    = '.database-record'
+  def html_db_record(
+    fields,
+    row:        nil,
+    start_col:  1,
+    css:        '.database-record',
+    **opt
+  )
     fields = :empty if fields.blank?
     type =
       case fields
@@ -306,7 +322,8 @@ module DataHelper
         when Hash   then :hierarchy
         when Symbol then fields
       end
-    first  = opt.delete(:first) || start_col
+    heads  = opt.delete(:heads) || []
+    first  = opt.delete(:first)
     last   = opt.delete(:last)
     # noinspection RubyMismatchedArgumentType
     last ||= first + [(fields.size - 1 if type == :array).to_i, 0].max
@@ -317,10 +334,11 @@ module DataHelper
     rec_opt = prepend_css(opt, css, type, classes)
     html_div(**rec_opt) do
       if type == :array
-        opt[:first] = first
-        opt[:last]  = last
+        opt[:first] = start_col
+        opt[:last]  = opt[:first] + fields.size - 1
         fields.map.with_index(start_col) do |field, col|
-          html_db_column(field, row: row, col: col, **opt)
+          head = heads[col-start_col]
+          html_db_column(field, row: row, col: col, head: head, **opt)
         end
       elsif type != :empty
         html_db_column(fields, row: row, **opt)
@@ -335,12 +353,22 @@ module DataHelper
   # @param [Integer, nil] col
   # @param [Integer, nil] first       Index value of the first column.
   # @param [Integer, nil] last        Index value of the last column.
+  # @param [String, nil]  head        Related column heading.
+  # @param [String]       css         Characteristic CSS class.
   # @param [Hash]         opt         Passed to #html_db_column.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_column(field, row: nil, col: nil, first: nil, last: nil, **opt)
-    css = '.database-column'
+  def html_db_column(
+    field,
+    row:    nil,
+    col:    nil,
+    first:  nil,
+    last:   nil,
+    head:   nil,
+    css:    '.database-column',
+    **opt
+  )
     type =
       case field
         when Array  then :array
@@ -350,6 +378,7 @@ module DataHelper
     classes = []
     classes << "row-#{row}" if row
     classes << "col-#{col}" if col
+    classes << head         if head
     classes << 'col-first'  if col && (col == first)
     classes << 'col-last'   if col && (col == last)
     prepend_css!(opt, css, type, classes)
@@ -369,14 +398,20 @@ module DataHelper
   # @param [Hash]           fields
   # @param [String, Symbol] name      Database table name.
   # @param [Integer]        start_row
+  # @param [String]         css       Characteristic CSS class.
   # @param [Hash]           opt       Passed to #html_db_field.
   #
   # @option opt [Integer] :row        Start row (default: 1).
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field_table(fields, name: nil, start_row: 1, **opt)
-    css      = '.database-counts-table'
+  def html_db_field_table(
+    fields,
+    name:       nil,
+    start_row:  1,
+    css:        '.database-counts-table',
+    **opt
+  )
     html_opt = { id: name.presence }.compact
     prepend_css!(html_opt, css)
     html_div(**html_opt) do
@@ -393,6 +428,7 @@ module DataHelper
   # @param [Symbol]         field
   # @param [Hash]           values
   # @param [Integer, nil]   row
+  # @param [String]         css       Characteristic CSS class.
   # @param [Hash]           opt       Passed to #html_db_column.
   #
   # @option opt [Integer] :first      Index value of the first record.
@@ -400,8 +436,13 @@ module DataHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field(field, values, row: nil, **opt)
-    css     = '.database-field-counts'
+  def html_db_field(
+    field,
+    values,
+    row:    nil,
+    css:    '.database-field-counts',
+    **opt
+  )
     anchor  = opt.delete(:id)    || field.to_s
     first   = opt.delete(:first) || row
     last    = opt.delete(:last)  || first
@@ -424,13 +465,13 @@ module DataHelper
 
   # Generate HTML to display a list of values and counts.
   #
-  # @param [Hash] values
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [Hash]   values
+  # @param [String] css               Characteristic CSS class.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field_values(values, **opt)
-    css = '.field-values'
+  def html_db_field_values(values, css: '.field-values', **opt)
     prepend_css!(opt, css)
     html_div(**opt) do
       total  = values.values.sum

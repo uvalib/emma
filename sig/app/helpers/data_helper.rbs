@@ -137,25 +137,28 @@ module DataHelper
   # @param [Array<Hash>]    records
   # @param [String, Symbol] name        Database table name.
   # @param [Integer]        start_row
+  # @param [String]         css         Characteristic CSS class.
   # @param [Hash]           opt         Passed to #html_db_record.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_table: (Array[symHash] records, ?name: String|Symbol|nil, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_table: (Array[symHash] records, ?name: String|Symbol|nil, ?start_row: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a database record.
   #
   # @param [Hash, Array]  fields
   # @param [Integer, nil] row
   # @param [Integer]      start_col
+  # @param [String]       css         Characteristic CSS class.
   # @param [Hash]         opt         Passed to #html_db_column except:
   #
   # @option opt [Integer] :first      Index value of the first record.
   # @option opt [Integer] :last       Index value of the last record.
+  # @option opt [Array]   :heads      Column headings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_record: (symHash|Array[symHash] fields, ?row: Integer|nil, ?start_col: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_record: (symHash|Array[symHash] fields, ?row: Integer|nil, ?start_col: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a database record.
   #
@@ -164,30 +167,34 @@ module DataHelper
   # @param [Integer, nil] col
   # @param [Integer, nil] first       Index value of the first column.
   # @param [Integer, nil] last        Index value of the last column.
+  # @param [String, nil]  head        Related column heading.
+  # @param [String]       css         Characteristic CSS class.
   # @param [Hash]         opt         Passed to #html_db_column.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_column: (untyped field, ?row: Integer|nil, ?col: Integer|nil, ?first: Integer|nil, ?last: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_column: (untyped field, ?row: Integer|nil, ?col: Integer|nil, ?first: Integer|nil, ?last: Integer|nil, ?head: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display table of EMMA submission field values.
   #
   # @param [Hash]           fields
   # @param [String, Symbol] name      Database table name.
   # @param [Integer]        start_row
+  # @param [String]         css       Characteristic CSS class.
   # @param [Hash]           opt       Passed to #html_db_field.
   #
   # @option opt [Integer] :row        Start row (default: 1).
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field_table: (symHash fields, ?name: String|Symbol|nil, ?start_row: Integer, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_field_table: (symHash fields, ?name: String|Symbol|nil, ?start_row: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a summary of all values for a given EMMA field.
   #
   # @param [Symbol]         field
   # @param [Hash]           values
   # @param [Integer, nil]   row
+  # @param [String]         css       Characteristic CSS class.
   # @param [Hash]           opt       Passed to #html_db_column.
   #
   # @option opt [Integer] :first      Index value of the first record.
@@ -195,16 +202,17 @@ module DataHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field: (Symbol field, symHash values, ?row: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_field: (Symbol field, symHash values, ?row: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a list of values and counts.
   #
-  # @param [Hash] values
-  # @param [Hash] opt                 Passed to outer #html_div.
+  # @param [Hash]   values
+  # @param [String] css               Characteristic CSS class.
+  # @param [Hash]   opt               Passed to outer #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_field_values: (symHash values, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_field_values: (symHash values, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

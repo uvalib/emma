@@ -9,9 +9,10 @@ class DataController < ApplicationController
 
   include DataConcern
 
-  @list: anyHash
-  @item: strArray
-  @name: String
+  @list:  anyHash
+  @item:  strArray
+  @name:  String
+  @names: strArray
 
   # === GET /data[?tables=...]
   #

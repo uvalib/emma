@@ -68,10 +68,18 @@ class SysController < ApplicationController
     redirect_to settings_sys_path
   end
 
+  # === GET /sys/database
+  #
+  # Redirects to /data.
+  #
+  def database
+    redirect_to controller: :data
+  end
+
   # An endpoint is defined for each configured page.
   # @see file:config/locales/controllers/sys.en.yml *en.emma.sys*
   PAGES = SYS_PAGES
-  PAGES.each do |page|
+  PAGES.excluding(:database).each do |page|
     define_method(page) do
       __log_activity
       __debug_route

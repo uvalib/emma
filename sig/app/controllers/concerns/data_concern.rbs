@@ -9,10 +9,28 @@ module DataConcern
 
   include DataHelper
 
+  # Variations on the :tables parameter.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_TABLE_PARAMETERS: symArray
+
+  # Variations on the :columns parameter.
+  #
+  # @type [Array<Symbol>]
+  #
   DATA_COLUMN_PARAMETERS: symArray
 
+  # The normalized parameters.
+  #
+  # @type [Array<Symbol>]
+  #
   DATA_PARAMETERS: symArray
 
+  # The table holding EMMA submission entries.
+  #
+  # @type [String]
+  #
   SUBMISSION_TABLE: String
 
   SUBMISSION_COLUMNS: symArray
@@ -55,12 +73,13 @@ module DataConcern
 
   # Generate results for the indicated table.
   #
-  # @param [String, Symbol, nil] name   Default: `params[:id]`
-  # @param [Hash]                opt    Passed to DataHelper#table_records.
+  # @param [String, Symbol, nil]  name  Default: `data_params[:tables].first`
+  # @param [Array<String,Symbol>] cols  Column names; default: "*".
+  # @param [Hash]                 opt   Passed to DataHelper#table_records.
   #
-  # @return [Array<(String,Array)>]
+  # @return [Array>]
   #
-  def get_table_records: (?(String|Symbol|nil) name, **untyped opt) -> [String, Array[anyHash|anyArray]]
+  def get_table_records: (?(String|Symbol|nil) name, *(String|Symbol) cols, **untyped opt) -> Array[anyHash|anyArray]
 
   # Generate results for EMMA submissions, which currently comes from a
   # selection of fields from the 'uploads' table.
@@ -68,11 +87,12 @@ module DataConcern
   # When generating HTML, each record entry is an Array of field values;
   # otherwise each record entry is a Hash.
   #
-  # @param [Hash] opt                 Passed to #submission_records
+  # @param [String, Symbol, nil] table  Passed to #submission_records
+  # @param [Hash]                opt    Passed to #submission_records
   #
-  # @return [Array<(String,Array)>]
+  # @return [Array]
   #
-  def get_submission_records: (**untyped opt) -> [String, Array[anyHash|anyArray]]
+  def get_submission_records: (?(Symbol|String|nil) table, **untyped opt) -> Array[anyHash|anyArray]
 
   # Generate a list of counts for each EMMA data field found across all
   # submissions.
@@ -87,12 +107,12 @@ module DataConcern
 
   # Generate results for submission pseudo records.
   #
-  # @param [String, Symbol, nil] table_name   Default: #SUBMISSION_TABLE.
-  # @param [Hash]                opt          Passed to #get_table_records.
+  # @param [String, Symbol, nil] table     Default: #SUBMISSION_TABLE
+  # @param [Hash]                opt       Passed to #get_table_records.
   #
-  # @return [Array<(String,Array)>]
+  # @return [Array]
   #
-  def submission_records: (?table_name: String|Symbol|nil, **untyped opt) -> [String, Array[anyHash|anyArray]]
+  def submission_records: (?(String|Symbol|nil) table, **untyped opt) -> Array[anyHash|anyArray]
 
   # Filter out invalid submissions for values intended for JSON or XML output,
   # then limit the columns that will be included in the resultant records.

@@ -27,6 +27,12 @@ class SysController < ApplicationController
   #
   def update: () -> void
 
+  # === GET /sys/database
+  #
+  # Redirects to /data.
+  #
+  def database: () -> void
+
   # An endpoint is defined for each configured page.
   # @see file:config/locales/controllers/sys.en.yml *en.emma.sys*
   PAGES: symArray

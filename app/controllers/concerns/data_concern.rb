@@ -21,9 +21,30 @@ module DataConcern
 
   public
 
-  DATA_COLUMN_PARAMETERS = %i[columns fields cols].freeze
-  DATA_PARAMETERS        = %i[html headings columns tables].freeze
+  # Variations on the :tables parameter.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_TABLE_PARAMETERS = %i[table]
+    .flat_map { |v| [v.to_s.pluralize.to_sym, v] }.freeze
 
+  # Variations on the :columns parameter.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_COLUMN_PARAMETERS = %i[column field col]
+    .flat_map { |v| [v.to_s.pluralize.to_sym, v] }.freeze
+
+  # The normalized parameters.
+  #
+  # @type [Array<Symbol>]
+  #
+  DATA_PARAMETERS = %i[html tables columns headings].freeze
+
+  # The table holding EMMA submission entries.
+  #
+  # @type [String]
+  #
   SUBMISSION_TABLE = 'uploads'
   SUBMISSION_COLUMNS = %i[
     id
@@ -57,11 +78,13 @@ module DataConcern
   def data_params
     @data_params ||=
       request_parameters.tap do |prm|
+        tables  = prm.extract!(*DATA_TABLE_PARAMETERS).compact.values.first
         columns = prm.extract!(*DATA_COLUMN_PARAMETERS).compact.values.first
-        prm[:columns]  = array_param(columns)&.map!(&:to_sym)&.uniq
-        prm[:tables]   = array_param(prm[:tables])&.map!(&:tableize)&.uniq
-        prm[:headings] = !false?(prm[:headings])
         prm[:html]     = true?(prm[:html]) || (prm[:format] == 'html')
+        prm[:tables]   = array_param(tables)&.map!(&:tableize)&.uniq
+        prm[:tables]   = %i[all] if prm[:tables]&.include?('alls')
+        prm[:columns]  = array_param(columns)&.map!(&:to_sym)&.uniq
+        prm[:headings] = !false?(prm[:headings])
         prm.slice!(*DATA_PARAMETERS)
         prm.compact!
       end
@@ -104,26 +127,28 @@ module DataConcern
   # @return [Hash{String=>Array}]
   #
   def get_tables(*names, **opt)
-    opt   = data_params.merge(**opt)
-    cols  = Array.wrap(opt.delete(:columns))
-    tbls  = Array.wrap(opt.delete(:tables)).presence
-    names = tbls&.dup || names.presence || table_names.dup
+    opt  = data_params.merge(**opt)
+    cols = Array.wrap(opt.delete(:columns))
+    tbls = Array.wrap(opt.delete(:tables)).map(&:to_s).presence
+    tbls = table_names if tbls.nil? || tbls.include?('all')
+    names.concat(tbls)
     names.sort_by! { |n| (i = LATER_TABLES.index(n)) ? ('~%03d' % i) : n }
     names.map! { |name| [name, table_records(name, *cols, **opt)] }.to_h
   end
 
   # Generate results for the indicated table.
   #
-  # @param [String, Symbol, nil] name   Default: `params[:id]`
-  # @param [Hash]                opt    Passed to DataHelper#table_records.
+  # @param [String, Symbol, nil]  name  Default: `data_params[:tables].first`
+  # @param [Array<String,Symbol>] cols  Column names; default: "*".
+  # @param [Hash]                 opt   Passed to DataHelper#table_records.
   #
-  # @return [Array<(String,Array)>]
+  # @return [Array>]
   #
-  def get_table_records(name = nil, **opt)
+  def get_table_records(name = nil, *cols, **opt)
     opt  = data_params.merge(**opt)
-    cols = Array.wrap(opt.delete(:columns))
-    name = (name || params[:id]).to_s
-    return name, table_records(name, *cols, **opt)
+    name = Array.wrap(opt.delete(:columns)).first || name
+    cols.concat(Array.wrap(opt.delete(:columns)))
+    table_records(name, *cols, **opt)
   end
 
   # Generate results for EMMA submissions, which currently comes from a
@@ -132,18 +157,19 @@ module DataConcern
   # When generating HTML, each record entry is an Array of field values;
   # otherwise each record entry is a Hash.
   #
-  # @param [Hash] opt                 Passed to #submission_records
+  # @param [String, Symbol, nil] table  Passed to #submission_records
+  # @param [Hash]                opt    Passed to #submission_records
   #
-  # @return [Array<(String,Array)>]
+  # @return [Array]
   #
-  def get_submission_records(**opt)
+  def get_submission_records(table = nil, **opt)
 
     # If columns have been specified, they are applied after the records have
     # been acquired and filtered based on the expected set of columns.
     opt     = data_params.merge(**opt)
     columns = Array.wrap(opt.delete(:columns)).presence
 
-    submission_records(**opt).tap do |_name, records|
+    submission_records(table, **opt).tap do |_name, records|
       # noinspection RubyMismatchedArgumentType
       if records.first.is_a?(Hash)
         modify_submission_records!(records, columns)
@@ -170,7 +196,7 @@ module DataConcern
   #
   def get_submission_field_counts(all: false, **opt)
     fields  = {}
-    records = get_submission_records(**opt).last || []
+    records = get_submission_records(**opt) || []
     records.each do |record|
       next unless (emma_data = safe_json_parse(record[:emma_data])).is_a?(Hash)
       emma_data.each_pair do |field, data|
@@ -199,14 +225,14 @@ module DataConcern
 
   # Generate results for submission pseudo records.
   #
-  # @param [String, Symbol, nil] table_name   Default: #SUBMISSION_TABLE.
-  # @param [Hash]                opt          Passed to #get_table_records.
+  # @param [String, Symbol, nil] table     Default: #SUBMISSION_TABLE
+  # @param [Hash]                opt       Passed to #get_table_records.
   #
-  # @return [Array<(String,Array)>]
+  # @return [Array]
   #
-  def submission_records(table_name: nil, **opt)
-    table_name ||= SUBMISSION_TABLE
-    get_table_records(table_name, **opt)
+  def submission_records(table = nil, **opt)
+    table ||= SUBMISSION_TABLE
+    get_table_records(table, **opt)
   end
 
   # Filter out invalid submissions for values intended for JSON or XML output,

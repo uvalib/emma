@@ -4,7 +4,8 @@
 
   view_debug(__FILE__)
 
-  list  ||= @list || {}
+  list  ||= @list  || {}
+  names ||= @names || table_names
 
   help  ||= nil # %i[data]
   title ||= t('emma.data.index.title')
@@ -15,9 +16,15 @@
     set_page_description(title)
   end
 
-  suffix = hex_rand
-  list   = list.stringify_keys
-  anchor = list.keys.map { |k| [k, url_escape("#{k}_#{suffix}")] }.to_h
+  if list.present?
+    suffix = hex_rand
+    list   = list.stringify_keys
+    anchor = list.keys.map { |k| [k, url_escape("#{k}_#{suffix}")] }.to_h
+    paths  = anchor.transform_values { |id| "##{id}" }
+  else
+    anchor = nil
+    paths  = names.map { |name| [name, data_path(id: name)] }.to_h
+  end
 
 -%>
 
@@ -25,17 +32,19 @@
 
 <%= page_description_section %>
 <ul class="database-table-links">
-  <%- anchor.each_pair do |name, id| -%>
-    <li><%= link_to(name, "##{id}") -%></li>
+  <%- paths.each_pair do |name, path| -%>
+    <li><%= link_to(name, path) -%></li>
   <%- end -%>
 </ul>
 
-<%= page_directions_section %>
-<div class="database-tables">
-  <%- list.each_pair do |name, records| -%>
-    <%= render 'data/heading', list: records, name: name, id: anchor[name] %>
-    <%= render 'data/details', list: records %>
-  <%- end -%>
-</div>
+<%- if list.present? -%>
+  <%= page_directions_section %>
+  <div class="database-tables">
+    <%- list.each_pair do |name, records| -%>
+      <%= render 'data/heading', list: records, name: name, id: anchor[name] %>
+      <%= render 'data/details', list: records, name: name %>
+    <%- end -%>
+  </div>
+<%- end -%>
 
 <%= page_notes_section %>

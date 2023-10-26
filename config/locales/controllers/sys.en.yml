@@ -31,6 +31,7 @@ en:
           - environment
           - processes
           - disk_space
+          - database
 
       # =======================================================================
       # Tables
@@ -130,6 +131,14 @@ en:
         label:          'Settings'
         title:          'Application Settings'
         tooltip:        'Dynamic feature toggles and application settings'
+        _endpoint:      true
+
+      # =======================================================================
+
+      database:
+        label:          'Database'
+        title:          'Database Tables'
+        tooltip:        'Contents of database tables'
         _endpoint:      true
 
       # =======================================================================

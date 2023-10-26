@@ -70,6 +70,7 @@ en:
         - 'sys'
         - 'org'
         - 'home'
+        - 'data'
 
       primary:
 

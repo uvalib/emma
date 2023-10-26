@@ -312,9 +312,9 @@ Rails.application.routes.draw do
 
   get '/data/submissions', to: 'data#submissions'
   get '/data/counts',      to: 'data#counts'
-  get '/data',             to: 'data#index', as: 'data_index'
-
-  resource :data, only: %i[show]
+  get '/data/show',        to: 'data#show',         as: 'data'
+  get '/data/:id',         to: 'data#show'
+  get '/data',             to: 'data#index',        as: 'data_index'
 
   # ===========================================================================
   # Job scheduler

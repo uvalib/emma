@@ -16,10 +16,10 @@
     set_page_description(title)
   end
 
-  count = positive(item.size - 1) || 0
-  count = "#{count} #{'record'.pluralize(count)}"
-  name  = [name, count].join(' - ')
-  title = "#{title} (#{name})"
+  table   = "#{name.inspect} table" # TODO: I18n
+  count   = positive(item.size - 1) || 0
+  records = 'record'.pluralize(count) # TODO: I18n
+  title   = "#{title} (#{table} - #{count} #{records})"
 
 -%>
 
@@ -27,6 +27,6 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'data/details', list: item %>
+<%= render 'data/details', list: item, name: name %>
 
 <%= page_notes_section %>

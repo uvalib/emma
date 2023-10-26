@@ -49,7 +49,9 @@ class DataController < ApplicationController
     __log_activity
     __debug_route
     default_format(:html)
-    @list = get_tables
+    tables = data_params[:tables]
+    @names = tables&.include?(:all) ? table_names : tables
+    @list  = get_tables(*@names) if @names
     respond_to(request.format)
   end
 
@@ -63,7 +65,13 @@ class DataController < ApplicationController
     __log_activity
     __debug_route
     default_format(:html)
-    @name, @item = get_table_records
+    # noinspection RubyMismatchedArgumentType
+    table = params[:id] ? array_param(params[:id]) : data_params[:tables]
+    return redirect_to action: :index                if table.nil?
+    return redirect_to action: :index, tables: table if table.many?
+    # noinspection RubyMismatchedVariableType
+    @name = table.first
+    @item = get_table_records(@name)
     respond_to(request.format)
   end
 
@@ -77,7 +85,8 @@ class DataController < ApplicationController
     __log_activity
     __debug_route
     default_format(:json)
-    @name, @list = get_submission_records
+    @name = SUBMISSION_TABLE
+    @item = get_submission_records(@name)
     respond_to(request.format)
   end
 

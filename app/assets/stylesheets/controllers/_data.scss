@@ -6,8 +6,6 @@
 // Internal constants
 //=============================================================================
 
-$database-table-max-columns: 25;
-
 $side-scroll-shadow: -1.5rem  0  0  0.5rem  var(--bg-color);
 $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 
@@ -48,18 +46,23 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
  */
 .database-table {
 
-    // First (id) column is narrower.
-    $columns: minmax(5vw, auto);
-
-    // Subsequent columns
-    @for $n from 2 through $database-table-max-columns {
-        $columns: #{$columns} minmax(15vw, max-content);
-    }
-
     display: grid;
     gap:     1rem;
 
-    grid-template-columns: $columns;
+    $max-cols:     100;
+    $first-column: minmax(5vw, max-content);
+    $basic-column: minmax(15vw, max-content);
+
+    &.columns-1 {
+        grid-template-columns: $first_column;
+    }
+    @for $n from 2 through $max-cols {
+        &.columns-#{$n} {
+            grid-template-columns:
+                $first_column
+                repeat(($n - 1), $basic-column);
+;        }
+    }
 
     //=========================================================================
     // Components
@@ -88,6 +91,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
                 left:               2rem;
                 box-shadow:         $side-scroll-shadow, $vert-scroll-shadow;
                 grid-column-start:  1;
+                word-break:         keep-all;
             }
         }
 
@@ -111,18 +115,25 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
                 }
             }
         }
+
+        // noinspection CssBrowserCompatibilityForProperties
+        &:not(.row-first) {
+            .database-column:not(.col-first) {
+                word-wrap: break-word;
+            }
+        }
     }
-}
 
-// @see file:app/views/data/_heading.html.erb
-.database-table.empty {
+    //=========================================================================
+    // Variations
+    //=========================================================================
 
-    // No data is driving the grid layout so make the column headers the same.
-    grid-template-columns: repeat(#{$database-table-max-columns}, 1fr);
-
-    .database-record {
-        .database-column {
-            position: unset;
+    // @see file:app/views/data/_heading.html.erb
+    &.empty {
+        .database-record {
+            .database-column {
+                position: unset;
+            }
         }
     }
 }
@@ -182,4 +193,12 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
             }
         }
     }
+}
+
+//=============================================================================
+// Database pages
+//=============================================================================
+
+body.data:not(.index) {
+    width: fit-content;
 }

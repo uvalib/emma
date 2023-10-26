@@ -5,7 +5,8 @@
   view_debug(__FILE__)
 
   list ||= []
+  name ||= nil or view_abort(__FILE__, ':name not passed via "locals"')
 
 -%>
 
-<%= html_db_table(list) %>
+<%= html_db_table(list, name: name) %>
