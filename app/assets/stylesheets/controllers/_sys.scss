@@ -49,6 +49,10 @@
 
 body.sys {
 
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
     h2 {
         margin-top: calc(2.5 * #{$page-padding-y});
     }
@@ -77,6 +81,10 @@ body.sys {
         white-space: pre;
         font-size:   larger;
     }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     // Page actions as content.
     div.page-actions {
@@ -145,8 +153,8 @@ body.sys {
         @for $n from 2 through $max-cols {
             &.columns-#{$n} {
                 grid-template-columns:
-                        repeat(($n - 1), $basic-column)
-                        $final-column;
+                    repeat(($n - 1), $basic-column)
+                    $final-column;
             }
         }
 

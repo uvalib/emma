@@ -5,7 +5,6 @@
 
 require 'test_helper'
 
-# noinspection RubyJumpError
 class AccountControllerTest < ActionDispatch::IntegrationTest
 
   MODEL         = User

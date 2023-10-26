@@ -61,6 +61,10 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 
     grid-template-columns: $columns;
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     // @see DataHelper#html_db_record
     .database-record {
 

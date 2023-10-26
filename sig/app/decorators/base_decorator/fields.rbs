@@ -317,12 +317,12 @@ module BaseDecorator::Fields
   # @overload mark_invalid_languages(value, code: false)
   #   @param [String]        value
   #   @param [Boolean]       code
-  #   @return [String, ActiveSupport::SafeBuffer]
+  #   @return [ActiveSupport::SafeBuffer, String, nil]
   #
   # @overload mark_invalid_languages(array, code: false)
   #   @param [Array<String>] array
   #   @param [Boolean]       code
-  #   @return [Array<String, ActiveSupport::SafeBuffer>]
+  #   @return [Array<ActiveSupport::SafeBuffer, String>]
   #
   def mark_invalid_languages
     : (anyArray value, ?code: bool, **untyped _ignored) -> Array[String|ActiveSupport::SafeBuffer]
