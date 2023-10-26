@@ -1,0 +1,2 @@
+class ManifestItemDecoratorTest < Draper::TestCase
+end

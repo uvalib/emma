@@ -1,0 +1,2 @@
+class HelpControllerTest < ActionDispatch::IntegrationTest
+end

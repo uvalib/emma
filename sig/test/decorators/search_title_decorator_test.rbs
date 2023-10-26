@@ -1,0 +1,2 @@
+class SearchTitleDecoratorTest < Draper::TestCase
+end

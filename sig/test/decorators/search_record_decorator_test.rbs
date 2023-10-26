@@ -1,0 +1,2 @@
+class SearchRecordDecoratorTest < Draper::TestCase
+end

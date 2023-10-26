@@ -140,7 +140,7 @@ module TestHelper::Common
     parts = value.underscore.tr('/', '_').split('_')
     parts.pop if parts.last == 'test'
     parts.pop if TEST_TYPES.include?(parts.last)
-    unless (parts.first == 'user') && parts.many?
+    unless parts.many? && (parts.first == 'user') || (parts.last == 'sys')
       parts[-1] = parts[-1].singularize
     end
     parts.join('_').to_sym

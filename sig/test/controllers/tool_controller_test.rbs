@@ -1,0 +1,2 @@
+class ToolControllerTest < ActionDispatch::IntegrationTest
+end
