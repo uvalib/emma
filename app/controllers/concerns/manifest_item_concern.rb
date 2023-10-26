@@ -87,6 +87,21 @@ module ManifestItemConcern
     end
   end
 
+  # Locate and filter ManifestItem records.
+  #
+  # @param [Array<String,Array>] items
+  # @param [Array<Symbol>]       filters
+  # @param [Hash]                opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @see ModelConcern#find_or_match_records
+  #
+  def find_or_match_records(*items, filters: [], **opt)
+    opt.except!(:group, :groups) # TODO: groups
+    super
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

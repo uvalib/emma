@@ -50,6 +50,18 @@ module ManifestItemConcern
   #
   def current_post_params: () -> symHash
 
+  # Locate and filter ManifestItem records.
+  #
+  # @param [Array<String,Array>] items
+  # @param [Array<Symbol>]       filters
+  # @param [Hash]                opt
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  # @see ModelConcern#find_or_match_records
+  #
+  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> symHash
+
   # The related Manifest identified in URL parameters.
   #
   # @param [Hash] prm

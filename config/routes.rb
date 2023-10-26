@@ -171,7 +171,8 @@ Rails.application.routes.draw do
   get    '/manifest_item/bulk/delete/:manifest',  to: 'manifest_item#bulk_delete',  as: 'bulk_delete_manifest_item'
   delete '/manifest_item/bulk/destroy/:manifest', to: 'manifest_item#bulk_destroy', as: 'bulk_destroy_manifest_item'
 
-  get    '/manifest_item/show/:manifest/:id',     to: 'manifest_item#show',         as: 'show_manifest_item'
+  get    '/manifest_item/show/:manifest/:id',     to: 'manifest_item#show'
+  get    '/manifest_item/:manifest/:id',          to: 'manifest_item#show',         as: 'show_manifest_item'
   get    '/manifest_item/:manifest',              to: 'manifest_item#index',        as: 'manifest_item_index'
 
   # ===========================================================================

@@ -709,10 +709,10 @@ module BaseDecorator::Fields
   #
   def mark_invalid_languages(value, code: false, **)
     if value.is_a?(Array)
-      return value.map { |v| send(__method__, v, code: code) }
-    end
-    lang = LanguageType.cast(value, warn: false, invalid: true)
-    if !lang.valid?
+      value.map { |v| send(__method__, v, code: code) }
+    elsif !(lang = LanguageType.cast(value, warn: false, invalid: true))
+      value
+    elsif !lang.valid?
       html_span(value, title: INVALID_LANGUAGE, class: 'invalid')
     elsif code
       lang.code

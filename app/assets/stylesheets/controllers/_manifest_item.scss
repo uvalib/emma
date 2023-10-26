@@ -15,6 +15,19 @@
 @use 'controllers/entry'       as entry-classes;
 
 //=============================================================================
+// Manifest item properties
+//=============================================================================
+
+$max-columns: 55; // The number of ManifestItem database columns.
+
+@mixin vertical-list {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.25rem;
+    background:     white;
+}
+
+//=============================================================================
 // Manifest item index page
 //
 // NOTE: This is not a part of typical usage, so these style will only come
@@ -25,12 +38,6 @@
 
     @extend .entry-list-item;
 
-    $max-columns: 52; // The number of ManifestItem database columns.
-
-    @media #{$wide-screen} {
-        grid-template-columns: repeat($max-columns, minmax(auto,10vw));
-    }
-
     width:          max-content;
     margin:         0;
     padding:        0 0 1rem;
@@ -39,6 +46,25 @@
     border:         none;
     border-bottom:  0.125rem solid red;
     border-radius:  0;
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
+
+    $ctrl-cols:         1;
+    $ctrl-col-width:    auto;
+    $data-col-width:    15vw;
+    $ctrl-col-template: $ctrl-col-width;
+    $data-col-template: minmax(auto, $data-col-width);
+
+    @for $n from 2 through $max-columns {
+        $data-cols: $n - $ctrl-cols;
+        &.columns-#{$n} {
+            grid-template-columns:
+                [controls] repeat($ctrl-cols, $ctrl-col-template)
+                [data]     repeat($data-cols, $data-col-template);
+        }
+    }
 
     //=========================================================================
     // Components
@@ -143,7 +169,22 @@
 //=============================================================================
 
 .manifest_item-details {
+
     @extend .entry-details;
+
+    > .field-FileData.label {
+        margin-bottom:      0.67rem;
+        border-top:         none;
+        align-self:         self-end;
+        grid-column-start:  unset;
+        grid-row-start:     1;
+    }
+
+    .field-FileData.value {
+        word-break:         keep-all;
+        grid-column-start:  unset;
+        grid-row-start:     2;
+    }
 }
 
 // Container for a .manifest_item-details.
@@ -155,50 +196,32 @@
 // Manifest item grid
 //=============================================================================
 
-$scroll-snap:     true;
-
-$ctrl-col-width:  auto;
-$data-col-width:  5vw;
-
-$max-columns:     50;
-$ctrl-cols:       1;
-
-$grid-border:     $table-border;
-$grid-head-bg:    $table-header-bg;
-$controls-bg:     $grid-head-bg;
-$enum-fg:         $uva-text-blue;
-
-$max-row-height:  40vh;
-$max-cell-height: 25vh;
-
-@if $max-cell-height > $max-row-height {
-    @error "$max-cell-height > $max-row-height";
-}
-
-// Indicates whether expand/contract controls rotate (via CSS transition)
-// or whether their state is indicated by different icons (if *false*).
-//
-// @see file:assets/javascripts/controllers/manifest-edit.js *CONTROLS_ROTATE*
-//
-$controls-rotate: true;
-
-@mixin vertical-list {
-    display:        flex;
-    flex-direction: column;
-    gap:            0.25rem;
-    background:     white;
-}
-
-//=============================================================================
-// Manifest item grid
-//=============================================================================
-
 // The current implementation assumes that the grid is being applied to a
 // <table>.
 table.manifest_item-grid {
 
-    $border-wd: 0.25rem;
-    $bottom-wd: $border-wd * 0.75;
+    // Indicates whether expand/contract controls rotate (via CSS transition)
+    // or whether their state is indicated by different icons (if *false*).
+    //
+    // @see file:javascripts/controllers/manifest-edit.js *CONTROLS_ROTATE*
+    //
+    $controls-rotate: true;
+    $scroll-snap:     true;
+
+    $border-wd:       0.25rem;
+    $bottom-wd:       $border-wd * 0.75;
+
+    $grid-border:     $table-border;
+    $grid-head-bg:    $table-header-bg;
+    $controls-bg:     $grid-head-bg;
+    $enum-fg:         $uva-text-blue;
+
+    $max-row-height:  40vh;
+    $max-cell-height: 25vh;
+
+    @if $max-cell-height > $max-row-height {
+        @error "$max-cell-height > $max-row-height";
+    }
 
     display:                 grid;
     align-content:           flex-start;
@@ -227,13 +250,17 @@ table.manifest_item-grid {
     // Variations
     //=========================================================================
 
+    $ctrl-cols:         1;
+    $ctrl-col-width:    auto;
+    $data-col-width:    5vw;
+    $ctrl-col-template: $ctrl-col-width;
     $data-col-template: minmax(max-content, $data-col-width);
 
     @for $n from 2 through $max-columns {
         $data-cols: $n - $ctrl-cols;
         &.columns-#{$n} {
             grid-template-columns:
-                [controls] repeat($ctrl-cols, $ctrl-col-width)
+                [controls] repeat($ctrl-cols, $ctrl-col-template)
                 [data]     repeat($data-cols, $data-col-template);
         }
     }
