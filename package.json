@@ -12,7 +12,7 @@
     "@uppy/xhr-upload":   "^3.4.2",
     "esbuild":            "^0.19.5",
     "jquery":             "^3.7.1",
-    "sass":               "^1.69.4",
+    "sass":               "^1.69.5",
     "select2":            "^4.1.0-rc.0",
     "turbolinks":         "^5.2.0"
   },
