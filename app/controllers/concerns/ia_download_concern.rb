@@ -37,18 +37,35 @@ module IaDownloadConcern
 
   public
 
+  # Options for ActionController::DataStreaming#send_data
+  #
+  # @type [Array<Symbol>]
+  #
+  SEND_DATA_OPTIONS = %i[filename type disposition status].freeze
+
   # Send a copy of a file downloaded from Internet Archive.
   #
-  # @param [String] url
-  # @param [Hash]   opt               Request headers,
+  # @param [String]       url
+  # @param [Boolean, nil] new_tab     If *true* show in a new browser tab.
+  # @param [Hash]         opt         To IaDownloadService#download, except
+  #                                     #SEND_DATA_OPTIONS to #send_data.
   #
-  # @raise [ExecError] @see IaDownloadService#download
+  # @raise [ExecError]                @see IaDownloadService#download
   #
   # @return [void]
   #
-  def ia_download_response(url, **opt)
+  def ia_download_response(url, new_tab: false, **opt)
+    send_opt = opt.extract!(:filename, :type, :disposition, :status)
     name, type, data = ia_download_api.download(url, **opt)
-    send_data(data, type: type, filename: name) if data.present?
+    return if data.blank?
+    send_opt[:type]     ||= type
+    send_opt[:filename] ||= name
+    case new_tab
+      when true  then send_opt[:disposition]   = 'attachment'
+      when false then send_opt[:disposition]   = 'inline'
+      else            send_opt[:disposition] ||= 'inline'
+    end
+    send_data(data, send_opt)
   end
 
   # ===========================================================================

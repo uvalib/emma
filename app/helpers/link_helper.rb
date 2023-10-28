@@ -145,9 +145,8 @@ module LinkHelper
 
     opt[:'aria-label'] = title      if title   && !named
     opt[:tabindex]     = -1         if hidden  && !opt.key?(:tabindex)
-    opt[:tabindex]     = 0          if sign_in && !opt.key?(:tabindex)
     opt[:rel]          = 'noopener' if http    && !opt.key?(:rel)
-    append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled
+    append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled && !sign_in
 
     link_to(label, path, html_options!(opt), &blk)
   end

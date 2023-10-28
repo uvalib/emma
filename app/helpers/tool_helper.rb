@@ -72,11 +72,13 @@ module ToolHelper
     path   = config[:path]
     path   = try(path) if path.is_a?(Symbol)
     path ||= url_for(controller: :tool, action: action, only_path: true)
-    l_css  = %w[action] << ('disabled sign-in-required' unless allow)
+    l_css  = %w[action]
+    l_css << 'sign-in-required' unless allow
     # noinspection RubyMismatchedArgumentType
     link   = make_link(label, path, **append_css(l_css))
 
-    n_css  = %w[notice] << ('hidden' if allow)
+    n_css  = %w[notice]
+    n_css << 'hidden' if allow
     notice = html_span('(sign-in required)', **append_css(n_css)) # TODO: I18n
 
     prepend_css!(opt, css)

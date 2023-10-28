@@ -28,7 +28,7 @@ class ApiService::Error < Api::Error
   #
   def faraday_response(arg)
     label  = "#{service_name} error"
-    result = super.presence || default_message
+    result = super.presence || [default_message]
     if result.many?
       ["#{label.pluralize}:", *result]
     else

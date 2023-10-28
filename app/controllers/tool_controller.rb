@@ -29,6 +29,7 @@ class ToolController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
+  before_action :authenticate_user!, except: :index
 
   # ===========================================================================
   # :section: Authorization

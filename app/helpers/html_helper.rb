@@ -320,29 +320,29 @@ module HtmlHelper
   # @return [Hash]
   #
   def add_inferred_attributes(tag, options)
-    css = css_class_array(options[:class])
+    opt = options.dup
+    css = css_class_array(opt[:class])
 
     # Attribute defaults which may be overridden in *options*.
-    opt = {}
     css.each do |css_class|
       case css_class.to_sym
-        when :hidden    then opt.merge!('aria-hidden':   true)
-        when :disabled  then opt.merge!('aria-disabled': true)
-        when :forbidden then opt.merge!('aria-disabled': true)
+        when :hidden    then opt.reverse_merge!('aria-hidden':   true)
+        when :disabled  then opt.reverse_merge!('aria-disabled': true)
+        when :forbidden then opt.reverse_merge!('aria-disabled': true)
       end
     end
-    opt.merge!(options)
 
     # Attribute replacements which will override *options*.
-    ovr = {}
     css.each do |css_class|
       case css_class
         when 'sign-in-required'
-          ovr[:title]    = make_tooltip(options[:title], "(#{SIGN_IN})")
-          ovr[:disabled] = true
+          if (tip = opt[:title].to_s).blank?
+            opt[:title] = SIGN_IN
+          elsif !tip.include?(SIGN_IN)
+            opt[:title] = make_tooltip(tip, "(#{SIGN_IN})")
+          end
       end
     end
-    opt.merge!(ovr)
 
     if %w[a button].include?(tag.to_s)
       opt.reverse_merge!(disabled: true) if opt[:'aria-disabled']

@@ -87,7 +87,6 @@ details {
 
 // Indicate that a link is not active because the user is not authorized.
 .sign-in-required {
-    text-decoration: none;
     &:hover { text-decoration: none; }
 }
 

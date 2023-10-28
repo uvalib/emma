@@ -118,8 +118,7 @@ module RepositoryHelper
   # @see IaDownloadConcern#ia_download_response
   #
   def ia_retrieval_link(label, url, **opt)
-    direct = IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
-    url    = retrieval_path(url: url) unless direct
+    url = retrieval_path(url: url)
     retrieval_link(label, url, **opt)
   end
 

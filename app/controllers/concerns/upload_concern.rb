@@ -105,26 +105,6 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # A remote URL path for retrieving a remediated resource.
-  #
-  # @return [String, nil]
-  #
-  attr_accessor :item_download_url
-
-  # Extract the URL parameter which indicates a remote URL path.
-  #
-  # @return [String, nil]
-  #
-  def set_item_download_url
-    self.item_download_url = params[:url]
-  end
-
-  # ===========================================================================
   # :section: ModelConcern overrides
   # ===========================================================================
 

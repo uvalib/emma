@@ -14,16 +14,24 @@ module IaDownloadConcern
   #
   def ia_download_api: () -> IaDownloadService
 
+  # Options for ActionController::DataStreaming#send_data
+  #
+  # @type [Array<Symbol>]
+  #
+  SEND_DATA_OPTIONS: symArray
+
   # Send a copy of a file downloaded from Internet Archive.
   #
-  # @param [String] url
-  # @param [Hash]   opt               Request headers,
+  # @param [String]       url
+  # @param [Boolean, nil] new_tab     If *true* show in a new browser tab.
+  # @param [Hash]         opt         To IaDownloadService#download, except
+  #                                     #SEND_DATA_OPTIONS to #send_data.
   #
-  # @raise [ExecError] @see IaDownloadService#download
+  # @raise [ExecError]                @see IaDownloadService#download
   #
   # @return [void]
   #
-  def ia_download_response: (String url, **untyped opt) -> void
+  def ia_download_response: (String url, ?new_tab: bool|nil, **untyped opt) -> void
 
   private
 

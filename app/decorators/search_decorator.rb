@@ -503,12 +503,12 @@ class SearchDecorator
 
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
-    permitted = can?(:download, Upload)
-    append_css!(opt, 'sign-in-required') unless permitted
+    allow = can?(:download, Upload)
+    append_css!(opt, 'sign-in-required') unless allow
 
     # Set up the tooltip to be shown before the item has been requested.
     opt[:title] ||=
-      if permitted
+      if allow
         fmt     = object.dc_format.to_s.underscore.upcase.tr('_', ' ')
         origin  = repo&.titleize || 'the source repository' # TODO: I18n
         "Retrieve the #{fmt} source from #{origin}."        # TODO: I18n

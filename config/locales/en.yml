@@ -331,7 +331,7 @@ en:
       link:
         tooltip:      'Download this item in %{fmt} format'
         sign_in:
-          tooltip:    'You must sign in to download this item'
+          tooltip:    'You must sign in to EMMA for this item'
         disallowed:
           tooltip:    '%{repo} does not allow your account to download this item'
         complete:
@@ -344,7 +344,7 @@ en:
           alt:        'Downloading...'
 
       failure:
-        sign_in:      'You must sign in to EMMA first'
+        sign_in:      'You must sign in to EMMA for this item'
         unknown:      'unknown error'
 
     action_links:     &ACTION_LINKS

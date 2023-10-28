@@ -65,10 +65,9 @@ class UploadController < ApplicationController
   ALL_OPS  = [*OPS, *BULK_OPS, :bulk_reindex].freeze
   MENUS    = %i[show_select edit_select delete_select remit_select].freeze
 
-  before_action :set_ingest_engine,     only: [:index, :bulk_index, *ALL_OPS]
-  before_action :index_redirect,        only: :show
-  before_action :set_item_download_url, only: :retrieval
-  before_action :resolve_sort,          only: :admin
+  before_action :set_ingest_engine, only: [:index, :bulk_index, *ALL_OPS]
+  before_action :index_redirect,    only: :show
+  before_action :resolve_sort,      only: :admin
 
   # ===========================================================================
   # :section:
@@ -771,10 +770,14 @@ class UploadController < ApplicationController
   def retrieval
     __log_activity
     __debug_route
-    if ia_link?(item_download_url)
-      ia_download_response(item_download_url)
+    url = params[:url]
+    if !ia_link?(url)
+      Log.error { "/retrieval can't handle #{url.inspect}" }
+    elsif IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
+      return redirect_to url
     else
-      Log.error { "/retrieval can't handle #{item_download_url.inspect}" }
+      # noinspection xRubyUnnecessaryReturnStatement
+      ia_download_response(url)
     end
   end
 
