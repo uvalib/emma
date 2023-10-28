@@ -11,6 +11,20 @@ module DataHelper
   #
   EMMA_DATA_FIELDS: symArray
 
+  # Tables to be displayed after all others.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  LATER_TABLES: Array[String|Regexp]
+
+  # Produce a list of sorted table names.
+  #
+  # @param [Array<String,Symbol>, nil] names  Default: `DataHelper#table_names`
+  #
+  # @return [Array<String>]
+  #
+  def sorted_table_names: (Array[String|Symbol]|nil names) -> strArray
+
   # table_names
   #
   # @return [Array<String>]
@@ -48,6 +62,14 @@ module DataHelper
   # @return [Hash{Symbol=>Symbol}]
   #
   def table_column_types: (untyped table_name, *(String|Symbol) cols) -> Hash[Symbol,Symbol]
+
+  # table_row_count
+  #
+  # @param [String, Symbol, *] table_name
+  #
+  # @return [Integer]
+  #
+  def table_row_count: (untyped table_name) -> Integer
 
   # table_records
   #
@@ -129,6 +151,15 @@ module DataHelper
   # @return [Array<Hash>]
   #
   def db_select: (ActiveRecord::ConnectionAdapters::AbstractAdapter db, untyped table, Array[String|Symbol] cols, ?sort: String|Symbol|Array[String|Symbol]|nil) -> Array[anyHash]
+
+  # db_row_count
+  #
+  # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
+  # @param [String, Symbol, *]          table   Database table name.
+  #
+  # @return [Integer]
+  #
+  def db_row_count: (ActiveRecord::ConnectionAdapters::AbstractAdapter db, untyped table) -> Array[ActiveRecord::ConnectionAdapters::Column]
 
   public
 

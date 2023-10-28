@@ -22,7 +22,7 @@ en:
 
       index:
         label:          'Database'
-        title:          'EMMA Database Records'
+        title:          'EMMA Database Tables'
         tooltip:        'View all database records for this deployment'
         _endpoint:      true
 

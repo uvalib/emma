@@ -15,7 +15,12 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
 
 // @see file:app/views/data/index.html.erb
 .database-table-links {
-    line-height: 1.375;
+
+    line-height: 1.5;
+
+    li:not([data-count="0"]) {
+        font-weight: bold;
+    }
 }
 
 // @see file:app/views/data/_heading.html.erb
@@ -77,6 +82,10 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
         .database-column {
 
             background:             var(--bg-color);
+
+            &.array {
+                white-space:        pre-line;
+            }
 
             &.hierarchy {
                 max-height:         25vh;

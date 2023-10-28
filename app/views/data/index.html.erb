@@ -4,8 +4,12 @@
 
   view_debug(__FILE__)
 
-  list  ||= @list  || {}
-  names ||= @names || table_names
+  list  ||= @list
+  names ||= @names
+  list    = list&.stringify_keys
+  names   = names&.map(&:to_s) || list&.keys || sorted_table_names
+
+  fail if sanity_check? && list && (list.keys != names)
 
   help  ||= nil # %i[data]
   title ||= t('emma.data.index.title')
@@ -18,13 +22,14 @@
 
   if list.present?
     suffix = hex_rand
-    list   = list.stringify_keys
     anchor = list.keys.map { |k| [k, url_escape("#{k}_#{suffix}")] }.to_h
     paths  = anchor.transform_values { |id| "##{id}" }
   else
     anchor = nil
     paths  = names.map { |name| [name, data_path(id: name)] }.to_h
   end
+
+  counts = names.map { |name| [name, table_row_count(name)] }.to_h
 
 -%>
 
@@ -33,7 +38,10 @@
 <%= page_description_section %>
 <ul class="database-table-links">
   <%- paths.each_pair do |name, path| -%>
-    <li><%= link_to(name, path) -%></li>
+    <%- count = counts[name] || 0 -%>
+    <li data-count="<%= count -%>">
+      <%= link_to(name, path) -%> (<%= count -%>)
+    </li>
   <%- end -%>
 </ul>
 

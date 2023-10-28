@@ -113,26 +113,21 @@ module DataConcern
 
   public
 
-  # Tables to be displayed after all others.
-  #
-  # @type [Array<String>]
-  #
-  LATER_TABLES = %w[schema_migrations ar_internal_metadata].freeze
-
   # Generate a hash of results for each table name.
   #
   # @param [Array<String,Symbol>] names   Default: `DataHelper#table_names`.
+  # @param [Boolean]              sort    If *false*, do not sort by name.
   # @param [Hash]                 opt     Passed to DataHelper#table_records.
   #
   # @return [Hash{String=>Array}]
   #
-  def get_tables(*names, **opt)
+  def get_tables(*names, sort: true, **opt)
     opt  = data_params.merge(**opt)
     cols = Array.wrap(opt.delete(:columns))
     tbls = Array.wrap(opt.delete(:tables)).map(&:to_s).presence
     tbls = table_names if tbls.nil? || tbls.include?('all')
     names.concat(tbls)
-    names.sort_by! { |n| (i = LATER_TABLES.index(n)) ? ('~%03d' % i) : n }
+    names = sorted_table_names(names) if sort
     names.map! { |name| [name, table_records(name, *cols, **opt)] }.to_h
   end
 

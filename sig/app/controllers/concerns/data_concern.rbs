@@ -56,20 +56,15 @@ module DataConcern
   #
   def array_param: ((String|anyArray|nil) value) -> (strArray | nil)
 
-  # Tables to be displayed after all others.
-  #
-  # @type [Array<String>]
-  #
-  LATER_TABLES: strArray
-
   # Generate a hash of results for each table name.
   #
   # @param [Array<String,Symbol>] names   Default: `DataHelper#table_names`.
+  # @param [Boolean]              sort    If *false*, do not sort by name.
   # @param [Hash]                 opt     Passed to DataHelper#table_records.
   #
   # @return [Hash{String=>Array}]
   #
-  def get_tables: (*(String|Symbol) names, **untyped opt) -> Hash[String,Array[anyHash|anyArray]]
+  def get_tables: (*(String|Symbol) names, ?sort: bool, **untyped opt) -> Hash[String,Array[anyHash|anyArray]]
 
   # Generate results for the indicated table.
   #

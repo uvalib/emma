@@ -33,6 +33,45 @@ module DataHelper
 
   public
 
+  # Tables to be displayed after all others.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  LATER_TABLES = [
+    /^action_/,
+    /^active_/,
+    'schema_migrations',
+    'ar_internal_metadata',
+  ].freeze
+
+  # Produce a list of sorted table names.
+  #
+  # @param [Array<String,Symbol>, nil] names  Default: `DataHelper#table_names`
+  #
+  # @return [Array<String>]
+  #
+  def sorted_table_names(names = nil)
+    names &&= names.map(&:to_s)
+    names ||= table_names
+    later =
+      LATER_TABLES.flat_map { |match|
+        if match.is_a?(Regexp)
+          found, names = names.partition { |name| match === name }
+          found.sort
+        else
+          names.delete(match.to_s)
+        end
+      }.compact
+    # noinspection RubyMismatchedReturnType
+    names.sort.concat(later)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # table_names
   #
   # @return [Array<String>]
@@ -85,6 +124,16 @@ module DataHelper
       name = column.name.to_sym
       [name, column.type] if cols.nil? || cols.include?(name)
     }.compact.to_h
+  end
+
+  # table_row_count
+  #
+  # @param [String, Symbol, *] table_name
+  #
+  # @return [Integer]
+  #
+  def table_row_count(table_name)
+    db_connection { |db| db_row_count(db, table_name) }
   end
 
   # table_records
@@ -252,6 +301,18 @@ module DataHelper
     db.query(sql.join(' '))
   end
 
+  # db_row_count
+  #
+  # @param [ActiveRecord::ConnectionAdapters::AbstractAdapter] db
+  # @param [String, Symbol, *]          table   Database table name.
+  #
+  # @return [Integer]
+  #
+  def db_row_count(db, table)
+    # noinspection RubyMismatchedReturnType
+    db.query("SELECT count(*) FROM #{table}")&.first&.first || 0
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -371,9 +432,10 @@ module DataHelper
   )
     type =
       case field
-        when Array  then :array
-        when Hash   then :hierarchy
-        when String then :hierarchy if field.start_with?('{')
+        when Hash                       then :hierarchy
+        when Array                      then :array
+        when /^{([^,\s]+(,[^,\s]+)*)}$/ then (field = $1.split(',')) && :array
+        when /^{/                       then :hierarchy
       end
     classes = []
     classes << "row-#{row}" if row
@@ -383,7 +445,11 @@ module DataHelper
     classes << 'col-last'   if col && (col == last)
     prepend_css!(opt, css, type, classes)
     html_div(**opt) do
-      (type == :hierarchy) ? pretty_json(field) : field
+      case type
+        when :hierarchy then pretty_json(field)
+        when :array     then field.join(";\n")
+        else                 field
+      end
     end
   end
 
