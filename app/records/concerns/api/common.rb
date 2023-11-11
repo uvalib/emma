@@ -1781,7 +1781,7 @@ module Api::Common
 
   public
 
-  # Membership status of an EMMA user or EMMA partner organization.
+  # Membership status of an EMMA user or EMMA member organization.
   #
   # @type [Hash{Symbol=>Hash}]
   #

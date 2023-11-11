@@ -1,6 +1,6 @@
 # config/locales/controllers/org.en.yml
 #
-# EMMA partner organization controller pages
+# EMMA member organization controller pages
 
 en:
 
@@ -12,8 +12,8 @@ en:
         brief:          'org'
         long:           'organization'
       label:            'Organization'
-      title:            'EMMA Partner Organization'
-      tooltip:          'Show the EMMA partner organization table'
+      title:            'EMMA Member Organization'
+      tooltip:          'Show the EMMA member organization table'
 
       subsystem:
         database:       true
@@ -68,19 +68,19 @@ en:
       action_links:
 
         new:
-          label:        'Create %{article} new EMMA partner organization'
+          label:        'Create %{article} new EMMA member organization'
           article:      'a'
 
         edit_select:
-          label:        'Modify %{article} existing EMMA partner organization'
+          label:        'Modify %{article} existing EMMA member organization'
           article:      'an'
 
         delete_select:
-          label:        'Remove %{article} existing EMMA partner organization'
+          label:        'Remove %{article} existing EMMA member organization'
           article:      'an'
 
         list_all:
-          label:        'List all EMMA partner organizations'
+          label:        'List all EMMA member organizations'
 
       # =======================================================================
       # Fields
@@ -106,8 +106,8 @@ en:
       # =======================================================================
 
       messages:
-        success:        'XXX EMMA partner organization was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA partner organization.'
+        success:        'XXX EMMA member organization was successfully %{actioned}.'
+        failure:        'Could not %{action} EMMA member organization.'
 
       # =======================================================================
       # Pages
@@ -135,15 +135,15 @@ en:
           if_disabled:
             tooltip:    'Not able to cancel at this point'
 
-        #success:        'EMMA partner organization was successfully %{actioned}.'
-        #failure:        'Failed to %{action} EMMA partner organization.'
+        #success:        'EMMA member organization was successfully %{actioned}.'
+        #failure:        'Failed to %{action} EMMA member organization.'
 
       # =======================================================================
 
       index:            &INDEX_ACTION
         label:          'List'
-        title:          'EMMA Partner Organizations'
-        tooltip:        'List all EMMA partner organizations'
+        title:          'EMMA Member Organizations'
+        tooltip:        'List all EMMA member organizations'
 
         display_fields: # @see 'en.emma.org.record'
           - !ruby/symbol all
@@ -155,14 +155,14 @@ en:
       list_all:
         <<:             *INDEX_ACTION
         label:          'List All'
-        tooltip:        'List all EMMA partner organizations'
+        tooltip:        'List all EMMA member organizations'
 
       # =======================================================================
 
       show:             &SHOW_ACTION
         label:          'Show'
-        title:          'EMMA Partner Organization: %{name}'
-        tooltip:        'Details of an EMMA partner organization entry'
+        title:          'EMMA Member Organization: %{name}'
+        tooltip:        'Details of an EMMA member organization entry'
 
         display_fields: # @see 'en.emma.org.record'
           - !ruby/symbol all
@@ -174,7 +174,7 @@ en:
       show_select:
         <<:             *SHOW_ACTION
         label:          'Show Org' # TODO: ???
-        title:          'Show an EMMA Partner Organization'
+        title:          'Show an EMMA Member Organization'
         role:           administrator
 
       # =======================================================================
@@ -182,14 +182,14 @@ en:
       show_current:
         <<:             *SHOW_ACTION
         label:          'Details'
-        tooltip:        'See details about your EMMA Partner Organization'
+        tooltip:        'See details about your EMMA Member Organization'
 
       # =======================================================================
 
       new:              &NEW_ACTION
         label:          'Create'
-        title:          'Create an EMMA Partner Organization'
-        tooltip:        'Create a new EMMA partner organization entry'
+        title:          'Create an EMMA Member Organization'
+        tooltip:        'Create a new EMMA member organization entry'
 
         term:
           action:       'create'
@@ -199,7 +199,7 @@ en:
           <<:           *GENERIC_SUBMIT
           label:        'Create'
           if_enabled:
-            tooltip:    'Create the new EMMA Partner Organization'
+            tooltip:    'Create the new EMMA Member Organization'
           if_disabled:
             tooltip:    'Required information is still needed'
 
@@ -208,8 +208,8 @@ en:
           if_enabled:
             tooltip:    'Do not create this entry (or start over)'
 
-        #success:        'EMMA Partner Organization %{name} created.'
-        #failure:        'Could not create EMMA Partner Organization.'
+        #success:        'EMMA Member Organization %{name} created.'
+        #failure:        'Could not create EMMA Member Organization.'
 
         role:           administrator
         _endpoint:      true
@@ -223,8 +223,8 @@ en:
 
       edit:             &EDIT_ACTION
         label:          'Change'
-        title:          'Modify EMMA Partner Organization %{name}'
-        tooltip:        'Modify an existing EMMA partner organization entry'
+        title:          'Modify EMMA Member Organization %{name}'
+        tooltip:        'Modify an existing EMMA member organization entry'
 
         term:
           action:       'update'
@@ -234,7 +234,7 @@ en:
           <<:           *GENERIC_SUBMIT
           label:        'Update'
           if_enabled:
-            tooltip:    'Modify this EMMA Partner Organization'
+            tooltip:    'Modify this EMMA Member Organization'
           if_disabled:
             tooltip:    'No valid changes have been made yet'
 
@@ -243,8 +243,8 @@ en:
           if_enabled:
             tooltip:    'Discard these changes'
 
-        #success:        'EMMA Partner Organization %{name} updated.'
-        #failure:        'Could not update EMMA Partner Organization.'
+        #success:        'EMMA Member Organization %{name} updated.'
+        #failure:        'Could not update EMMA Member Organization.'
 
         role:           administrator
         _endpoint:      true
@@ -259,7 +259,7 @@ en:
       edit_current:
         <<:             *EDIT_ACTION
         label:          'Modify'
-        tooltip:        'Change details about your EMMA Partner Organization'
+        tooltip:        'Change details about your EMMA Member Organization'
         role:           manager
 
       # =======================================================================
@@ -271,8 +271,8 @@ en:
 
       delete:           &DELETE_ACTION
         label:          'Remove'
-        title:          'Remove EMMA Partner Organization %{name}'
-        tooltip:        'Delete an existing EMMA partner organization entry'
+        title:          'Remove EMMA Member Organization %{name}'
+        tooltip:        'Delete an existing EMMA member organization entry'
 
         term:
           action:       'remove'
@@ -282,15 +282,15 @@ en:
           <<:           *GENERIC_SUBMIT
           label:        'Delete'
           if_enabled:
-            tooltip:    'Remove this EMMA Partner Organization'
+            tooltip:    'Remove this EMMA Member Organization'
 
         cancel:
           <<:           *GENERIC_CANCEL
           if_enabled:
-            tooltip:    'Keep this EMMA Partner Organization'
+            tooltip:    'Keep this EMMA Member Organization'
 
-        #success:        'EMMA Partner Organization %{name} deleted.'
-        #failure:        'Could not delete EMMA Partner Organization.'
+        #success:        'EMMA Member Organization %{name} deleted.'
+        #failure:        'Could not delete EMMA Member Organization.'
 
         role:           administrator
         _endpoint:      true

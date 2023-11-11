@@ -9,7 +9,7 @@
 // Organization index page
 //=============================================================================
 
-// EMMA partner organization metadata label/value pairs for index listings.
+// EMMA member organization metadata label/value pairs for index listings.
 // @see OrgDecorator#list_item
 .org-list-item {
 
@@ -41,7 +41,7 @@
     @extend .model-list;
 }
 
-// Grid table of EMMA partner organizations.
+// Grid table of EMMA member organizations.
 // @see OrgDecorator#table
 .model-table.org {
     td {

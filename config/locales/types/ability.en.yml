@@ -46,7 +46,7 @@ en:
           manager:
             label:        'Manager'
             brief:        'Man'
-            description:  'A user able to make changes to an EMMA partner organization and its users'
+            description:  'A user able to make changes to an EMMA member organization and its users'
             capability:
               - searching
               - submitting
@@ -94,7 +94,7 @@ en:
 
           managing:
             label:        'Managing'
-            description:  'modify EMMA partner organizations and their users'
+            description:  'modify EMMA member organizations and their users'
 
           administering:
             label:        'Administering'
