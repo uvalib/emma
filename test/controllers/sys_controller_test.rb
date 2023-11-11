@@ -9,7 +9,7 @@ class SysControllerTest < ActionDispatch::IntegrationTest
 
   CONTROLLER    = :sys
   PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
+  OPTIONS       = { controller: CONTROLLER }.freeze
 
   TEST_USERS    = ALL_TEST_USERS
   TEST_READERS  = TEST_USERS
@@ -28,135 +28,57 @@ class SysControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'system - list pages' do
-    action  = :index
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.administrator?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:index, meth: __method__)
   end
 
   test 'system - disk_space' do
-    action  = :disk_space
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.administrator?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:disk_space, meth: __method__)
   end
 
   test 'system - environment' do
-    action  = :environment
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.administrator?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:environment, meth: __method__)
   end
 
   test 'system - headers' do
-    action  = :headers
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.administrator?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:headers, meth: __method__)
   end
 
   test 'system - internals' do
-    action  = :internals
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.administrator?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:internals, meth: __method__)
   end
 
   test 'system - loggers' do
-    action  = :loggers
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.administrator?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:loggers, meth: __method__)
   end
 
   test 'system - settings' do
-    action  = :settings
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.administrator?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:settings, meth: __method__)
   end
 
   test 'system - database' do
-    action  = :database
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    read_test(:database, meth: __method__, redirect: true )
+  end
+
+  # ===========================================================================
+  # :section: Methods
+  # ===========================================================================
+
+  public
+
+  # read_test
+  #
+  # @param [Symbol]  action
+  # @param [Boolean] redirect         Will always redirect.
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def read_test(action, meth: nil, redirect: nil, **opt)
+    meth  ||= __method__
+    params  = PARAMS.merge(action: action, **opt)
+    options = OPTIONS.merge(action: action, test: meth)
+    options[:expect] = :success unless redirect
 
     @readers.each do |user|
       able  = user&.administrator?
@@ -165,7 +87,6 @@ class SysControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end

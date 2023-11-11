@@ -1,2 +1,26 @@
 class DataControllerTest < ActionDispatch::IntegrationTest
+  CONTROLLER: Symbol
+
+  PARAMS: symHash
+
+  OPTIONS: symHash
+
+  TEST_USERS: symArray
+
+  TEST_READERS: symArray
+
+  READ_FORMATS: Symbol | symArray
+
+  @readers: Array[User|nil]
+
+  # read_test
+  #
+  # @param [Symbol]  action
+  # @param [Boolean] anonymous        Does not require authentication.
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def read_test: (Symbol action, ?anonymous: bool|nil, ?meth: Symbol|nil, **untyped opt) -> void
 end

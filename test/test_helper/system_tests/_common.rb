@@ -155,6 +155,7 @@ module TestHelper::SystemTests::Common
   )
     targets = Array.wrap(target).compact_blank
     timer   = Capybara::Helpers::Timer.new(wait)
+    url     = nil
 
     # Retry until the expected page is found or the timer expires.
     loop do
@@ -170,16 +171,15 @@ module TestHelper::SystemTests::Common
     end
 
     # Control reaches here only if the page was not found and not *fatal*.
-    target   = targets.map!(&:inspect).pop
-    current  = url_without_port(url || current_url).inspect
-    expected =
-      if targets.present?
-        "any of expected pages %s or #{target}" % targets.join(', ')
-      elsif target.present?
-        "expected page #{target}"
-      else
-        'a new page'
-      end
+    target  = targets.map!(&:inspect).pop
+    current = url_without_port((url ||= current_url)).inspect
+    if targets.present?
+      expected = "any of expected pages %s or #{target}" % targets.join(', ')
+    elsif target.present?
+      expected = "expected page #{target}"
+    else
+      expected = 'a new page'
+    end
     flunk "Browser on page #{current} and not on #{expected}"
   end
 

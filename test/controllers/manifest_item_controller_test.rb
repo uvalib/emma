@@ -10,7 +10,7 @@ class ManifestItemControllerTest < ActionDispatch::IntegrationTest
   MODEL         = ManifestItem
   CONTROLLER    = :manifest_item
   PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
+  OPTIONS       = { controller: CONTROLLER }.freeze
 
   TEST_USERS    = ALL_TEST_USERS
   TEST_READERS  = TEST_USERS
@@ -33,7 +33,7 @@ class ManifestItemControllerTest < ActionDispatch::IntegrationTest
     action  = :index
     owner   = @item.manifest
     params  = PARAMS.merge(action: action, manifest: owner.id)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -42,7 +42,7 @@ class ManifestItemControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        case (opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized)
+        case opt[:expect]
           when :success then opt[:redir] = index_redirect(user: user, **opt)
         end
         get_as(user, url, **opt, only: READ_FORMATS)
@@ -54,7 +54,7 @@ class ManifestItemControllerTest < ActionDispatch::IntegrationTest
     action  = :show
     owner   = @item.manifest
     params  = PARAMS.merge(action: action, manifest: owner.id, id: @item.id)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -64,7 +64,6 @@ class ManifestItemControllerTest < ActionDispatch::IntegrationTest
         rec = manifests(:example)
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end

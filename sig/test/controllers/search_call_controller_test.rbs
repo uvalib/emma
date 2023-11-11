@@ -14,4 +14,14 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
   READ_FORMATS: Symbol | symArray
 
   @readers: Array[User|nil]
+
+  # read_test
+  #
+  # @param [Symbol]  action
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def read_test: (Symbol action, ?meth: Symbol|nil, **untyped opt) -> void
 end

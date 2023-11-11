@@ -7,11 +7,35 @@ module TestHelper::Common
 
   TEST_TYPES: strArray
 
-  # Controllers being tested.
+  # The full directory path for "/test/test_helper".
+  #
+  # @type [String]
+  #
+  HELPER_DIR: String
+
+  # The full directory path for "/test".
+  #
+  # @type [String]
+  #
+  TESTS_DIR: String
+
+  # The full directory path for "/test/system".
+  #
+  # @type [String]
+  #
+  SYSTEM_DIR: String
+
+  # The bases of controller names which are not plurals of model names.
+  #
+  # @type [Array<String>]
+  #
+  SINGLE: strArray
+
+  # Controllers being tested in "/test/system/*_test.rb".
   #
   # @type [Array<Symbol>]
   #
-  CONTROLLERS: symArray
+  SYSTEM_CONTROLLERS: symArray
 
   # Properties which drive parameterized system tests.
   #

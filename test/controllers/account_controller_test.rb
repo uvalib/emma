@@ -10,7 +10,7 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   MODEL         = User
   CONTROLLER    = :account
   PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
+  OPTIONS       = { controller: CONTROLLER }.freeze
 
   TEST_USERS    = ALL_TEST_USERS
   TEST_READERS  = TEST_USERS
@@ -31,7 +31,7 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   test 'account index - list all user accounts' do
     action  = :index
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -40,7 +40,7 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        case (opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized)
+        case opt[:expect]
           when :success then opt[:redir] = index_redirect(user: user, **opt)
         end
         get_as(user, url, **opt, only: READ_FORMATS)
@@ -51,7 +51,7 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   test 'account show - details of an existing user account' do
     action  = :show
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -61,7 +61,6 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
         rec = user || users(:example)
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
@@ -74,7 +73,7 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   test 'account new - user account form' do
     action  = :new
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       able  = can?(user, action, MODEL)
@@ -83,7 +82,6 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -95,15 +93,14 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
     options = OPTIONS.merge(action: action, test: __method__)
 
     @writers.each do |user|
+      org   = user&.oid
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
-        rec = new_record.tap { |r| r.org_id = user&.oid }
+        rec = new_record.tap { |r| r.org_id = org }
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         post_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -112,20 +109,17 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   test 'account edit - user account edit form' do
     action  = :edit
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       org   = user&.oid
-      man   = user&.manager? || false
-      able  = can?(user, action, MODEL) && man
+      able  = user&.manager? && can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit.tap { |r| r.update!(org_id: org) if org }
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect]   = :redirect unless man
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -138,16 +132,13 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
 
     @writers.each do |user|
       org   = user&.oid
-      man   = user&.manager? || false
-      able  = can?(user, action, MODEL) && man
+      able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit.tap { |r| r.update!(org_id: org) if org }
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         put_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -156,20 +147,17 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   test 'account delete - select an existing user account for removal' do
     action  = :delete
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       org   = user&.oid
-      man   = user&.manager? || false
-      able  = can?(user, action, MODEL) && man
+      able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete.tap { |r| r.update!(org_id: org) if org }
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect]   = :redirect unless man
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -182,16 +170,13 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
 
     @writers.each do |user|
       org   = user&.oid
-      man   = user&.manager? || false
-      able  = can?(user, action, MODEL) && man
+      able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete.tap { |r| r.update!(org_id: org) if org }
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         delete_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end

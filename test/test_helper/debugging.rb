@@ -16,6 +16,13 @@ module TestHelper::Debugging
 
   public
 
+  # Options for #show_test_start and #show_test_end.
+  #
+  # @private
+  # @type [Array<Symbol>]
+  #
+  SHOW_TEST_OPT = %i[test part frame].freeze
+
   # Produce the top frame of debug output for a test.
   #
   # @param [String, Symbol, nil] test_name

@@ -10,7 +10,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   MODEL         = Upload
   CONTROLLER    = :upload
   PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
+  OPTIONS       = { controller: CONTROLLER }.freeze
 
   TEST_USERS    = ALL_TEST_USERS
   TEST_READERS  = TEST_USERS
@@ -31,7 +31,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   test 'upload index - list all uploads' do
     action  = :index
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -40,7 +40,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        case (opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized)
+        case opt[:expect]
           when :success then opt[:redir] = index_redirect(user: user, **opt)
         end
         get_as(user, url, **opt, only: READ_FORMATS)
@@ -51,7 +51,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   test 'upload show - details of an existing upload' do
     action  = :show
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -61,7 +61,6 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
         rec = uploads(:example)
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
@@ -74,7 +73,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   test 'upload new - data for a new upload' do
     action  = :new
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       able  = can?(user, action, MODEL)
@@ -83,7 +82,6 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -97,13 +95,11 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_create
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         post_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -112,7 +108,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   test 'upload edit - data for an existing upload' do
     action  = :edit
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       able  = can?(user, action, MODEL)
@@ -122,7 +118,6 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
         rec = sample_for_edit
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -136,14 +131,12 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit
         rec.set_state(:validating)
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         put_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -152,7 +145,7 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
   test 'upload delete - select an existing upload for removal' do
     action  = :delete
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       able  = can?(user, action, MODEL)
@@ -162,7 +155,6 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -176,13 +168,11 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         delete_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end

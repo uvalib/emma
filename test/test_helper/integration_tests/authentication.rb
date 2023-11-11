@@ -148,12 +148,14 @@ module TestHelper::IntegrationTests::Authentication
   # @param [Symbol]               verb  HTTP verb (:get, :put, :post, :delete)
   # @param [String, Symbol, User] user  User identity to assume.
   # @param [String]               url   Target URL or relative path.
-  # @param [Hash]                 opt   Passed to #assert_result except for the
-  #                                       options for #as_user and local:
+  # @param [Hash]                 opt   Passed to #assert_result except for
+  #                                       #RUN_TEST_OPT passed to #as_user and
+  #                                       local options:
   #
-  # @option opt [Symbol]       :expect  Expected result regardless of the user.
-  # @option opt [Symbol,Array] :only    Allowed formats.
   # @option opt [String]       :redir   Expected redirection.
+  # @option opt [Symbol]       :expect  Expected result regardless of the user.
+  #                                       Default based on :format; if :nothing
+  #                                       then no return status is assumed.
   #
   # @return [void]
   #
@@ -161,22 +163,24 @@ module TestHelper::IntegrationTests::Authentication
   # @yieldreturn [void]
   #
   def send_as(verb, user, url, **opt, &blk)
-    run_opt = opt.extract!(*RUN_TEST_OPT)
-    redir   = opt.delete(:redir)
-    expect  = opt.delete(:expect)
-    format  = format_type(opt[:format])
+    format   = format_type(opt.delete(:format))
+    run_opt  = opt.extract!(*RUN_TEST_OPT)
+    redir    = opt.delete(:redir)
+    expect   = opt.delete(:expect)
+    expect ||= (format == :html) ? :redirect : :unauthorized
+    expect   = nil if expect == :nothing
 
     if format == :html
       url = url.sub(%r{\.html([/?]?|$)}, '\1')
     elsif format
-      run_opt[:format] = format
+      opt[:format] = run_opt[:format] = format
     end
 
     as_user(user, **run_opt) do
 
       # Visit the provided URL.
       url_opt = run_opt.slice(:format)
-      url_opt[:expect] = expect if DEBUG_TESTS
+      url_opt[:expect] = expect if DEBUG_TESTS && expect
       send(verb, url, **url_opt)
 
       # Follow the redirect if one was expected.
@@ -186,14 +190,11 @@ module TestHelper::IntegrationTests::Authentication
       end
 
       # Primary assertions based on initial conditions.
-      if expect
-        assert_html_result expect, **opt
-      elsif signed_in?
-        assert_html_result :success, **opt
-      elsif url_opt[:format]
-        assert_response :unauthorized
-      else
-        assert_response :redirect
+      case
+        when expect           then assert_html_result(expect, **opt)
+        when signed_in?       then assert_html_result(:success, **opt)
+        when url_opt[:format] then assert_response(:unauthorized)
+        else                       assert_response(:redirect)
       end
 
       # Any additional assertions provided by the caller.

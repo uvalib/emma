@@ -18,4 +18,15 @@ class SysControllerTest < ActionDispatch::IntegrationTest
   @readers: Array[User|nil]
 
   @writers: Array[User|nil]
+
+  # read_test
+  #
+  # @param [Symbol]  action
+  # @param [Boolean] redirect         Will always redirect.
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def read_test: (Symbol action, ?redirect: bool|nil, ?meth: Symbol|nil, **untyped opt) -> void
 end

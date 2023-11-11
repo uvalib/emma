@@ -80,7 +80,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = dashboard_url(format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end

@@ -80,11 +80,14 @@ module TestHelper::IntegrationTests::Authentication
   # @param [Symbol]               verb  HTTP verb (:get, :put, :post, :delete)
   # @param [String, Symbol, User] user  User identity to assume.
   # @param [String]               url   Target URL or relative path.
-  # @param [Hash]                 opt   Passed to #assert_result except for the
-  #                                       options for #as_user and local:
+  # @param [Hash]                 opt   Passed to #assert_result except for
+  #                                       #RUN_TEST_OPT passed to #as_user and
+  #                                       local options:
   #
+  # @option opt [String]       :redir   Expected redirection.
   # @option opt [Symbol]       :expect  Expected result regardless of the user.
-  # @option opt [Symbol,Array] :only    Allowed formats.
+  #                                       Default based on :format; if :nothing
+  #                                       then no return status is assumed.
   #
   # @return [void]
   #

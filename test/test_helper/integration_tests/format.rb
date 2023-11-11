@@ -39,9 +39,9 @@ module TestHelper::IntegrationTests::Format
   #
   def format_type(type)
     if type.is_a?(String) && type.include?('/')
-      REVERSE_MEDIA_TYPE[type]
+      REVERSE_MEDIA_TYPE[type.downcase]
     else
-      type&.to_sym
+      type&.to_sym&.downcase
     end
   end
 

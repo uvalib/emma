@@ -10,7 +10,7 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
   MODEL        = SearchCall
   CONTROLLER   = :search_call
   PARAMS       = { controller: CONTROLLER }.freeze
-  OPTIONS      = { controller: CONTROLLER, expect: :success }.freeze
+  OPTIONS      = { controller: CONTROLLER }.freeze
 
   TEST_USERS   = [*CORE_TEST_USERS, :test_dev].uniq.freeze
   TEST_READERS = TEST_USERS
@@ -26,47 +26,35 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'search call index - no search' do
-    action  = :index
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = can?(user, action, MODEL)
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:index, meth: __method__)
   end
 
   test 'search call index - sample search' do
-    action  = :index
-    item    = search_calls(:example)
-    params  = PARAMS.merge(action: action, search_call: item)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = can?(user, action, MODEL)
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:index, meth: __method__, search_call: search_calls(:example))
   end
 
   test 'search call show - details search call item' do
-    action  = :show
-    item    = search_calls(:example)
-    params  = PARAMS.merge(action: action, id: item.id)
-    options = OPTIONS.merge(action: action, test: __method__)
+    read_test(:show, meth: __method__, id: search_calls(:example).id)
+  end
+
+  # ===========================================================================
+  # :section: Methods
+  # ===========================================================================
+
+  public
+
+  # read_test
+  #
+  # @param [Symbol]  action
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def read_test(action, meth: nil, **opt)
+    meth  ||= __method__
+    params  = PARAMS.merge(action: action, **opt)
+    options = OPTIONS.merge(action: action, test: meth, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -75,7 +63,6 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end

@@ -9,7 +9,7 @@ class ToolControllerTest < ActionDispatch::IntegrationTest
 
   CONTROLLER    = :tool
   PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER, expect: :success }.freeze
+  OPTIONS       = { controller: CONTROLLER }.freeze
 
   TEST_USERS    = ALL_TEST_USERS
   TEST_READERS  = TEST_USERS
@@ -28,52 +28,44 @@ class ToolControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'tool - index' do
-    action  = :index
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      u_opt = options
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:index, meth: __method__, anonymous: true)
   end
 
   test 'tool - Math Detective' do
-    action  = :md
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
-
-    @readers.each do |user|
-      able  = user&.present?
-      u_opt = able ? options : options.except(:controller, :action, :expect)
-
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
-        opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
-        get_as(user, url, **opt, only: READ_FORMATS)
-      end
-    end
+    read_test(:md, meth: __method__)
   end
 
   test 'tool - bibliographic lookup' do
-    action  = :lookup
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    read_test(:lookup, meth: __method__)
+  end
+
+  # ===========================================================================
+  # :section: Methods
+  # ===========================================================================
+
+  public
+
+  # read_test
+  #
+  # @param [Symbol]  action
+  # @param [Boolean] anonymous        Does not require authentication.
+  # @param [Symbol]  meth             Calling test method.
+  # @param [Hash]    opt              Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def read_test(action, anonymous: nil, meth: nil, **opt)
+    meth  ||= __method__
+    params  = PARAMS.merge(action: action, **opt)
+    options = OPTIONS.merge(action: action, test: meth, expect: :success)
 
     @readers.each do |user|
-      able  = user&.present?
+      able  = anonymous || user&.present?
       u_opt = able ? options : options.except(:controller, :action, :expect)
 
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end

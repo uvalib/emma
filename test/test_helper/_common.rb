@@ -19,28 +19,57 @@ module TestHelper::Common
 
   TEST_TYPES = %w[channel decorator controller helper mailer model].freeze
 
-  # Controllers being tested.
+  # The full directory path for "/test/test_helper".
+  #
+  # @type [String]
+  #
+  HELPER_DIR = File.expand_path(File.dirname(__FILE__))
+
+  # The full directory path for "/test".
+  #
+  # @type [String]
+  #
+  TESTS_DIR  = File.expand_path("#{HELPER_DIR}/..")
+
+  # The full directory path for "/test/system".
+  #
+  # @type [String]
+  #
+  SYSTEM_DIR = "#{TESTS_DIR}/system"
+
+  # The bases of controller names which are not plurals of model names.
+  #
+  # @type [Array<String>]
+  #
+  SINGLE = %w[
+    data
+    health
+    help
+    home
+    metrics
+    search
+    sys
+    tool
+    user_sessions
+  ].freeze
+
+  # Controllers being tested in "/test/system/*_test.rb".
   #
   # @type [Array<Symbol>]
   #
-  CONTROLLERS = %i[
-    home
-    account
-    health
-    manifest
-    org
-    search
-    search_call
-    upload
-    user_sessions
-  ].freeze
+  SYSTEM_CONTROLLERS =
+    Dir["#{SYSTEM_DIR}/*_test.rb"].map { |path|
+      ctrlr = File.basename(path, '.rb').delete_suffix('_test')
+      ctrlr = ctrlr.singularize unless SINGLE.include?(ctrlr)
+      ctrlr.to_sym
+    }.sort.freeze
 
   # Properties which drive parameterized system tests.
   #
   # @type [Hash{Symbol=>Hash{Symbol=>*}}]
   #
   PROPERTY =
-    CONTROLLERS.map { |model|
+    SYSTEM_CONTROLLERS.map { |model|
       path = (model == :user_sessions) ? 'emma.user.sessions' : "emma.#{model}"
       unit = %I[
         #{path}.pagination.count.one
@@ -134,16 +163,15 @@ module TestHelper::Common
   # @return [Symbol, nil]
   #
   def controller_name(value)
-    return value             if value.nil? || value.is_a?(Symbol)
-    value = value.name       if value.is_a?(Class)
-    value = value.class.name unless value.is_a?(String)
-    parts = value.underscore.tr('/', '_').split('_')
-    parts.pop if parts.last == 'test'
-    parts.pop if TEST_TYPES.include?(parts.last)
-    unless parts.many? && (parts.first == 'user') || (parts.last == 'sys')
-      parts[-1] = parts[-1].singularize
-    end
-    parts.join('_').to_sym
+    return value                    if value.nil? || value.is_a?(Symbol)
+    value = value.name || ''        if value.is_a?(Class)
+    value = value.class.name || ''  unless value.is_a?(String)
+    value.underscore.tr('/', '_').split('_').tap { |part|
+      part.pop if part.last == 'test'
+      part.pop if TEST_TYPES.include?(part.last)
+      singular = part.many? && (part[0] == 'user') || SINGLE.include?(part[-1])
+      part[-1] = part[-1].singularize unless singular
+    }.compact_blank.join('_').to_sym.presence
   end
 
   # ===========================================================================

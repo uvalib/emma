@@ -34,7 +34,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   test 'org index - list orgs' do
     action  = :index
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -55,7 +55,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   test 'org list_all - list all orgs' do
     action  = :list_all
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -64,8 +64,6 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        #opt[:expect] ||= :redirect if user
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
@@ -74,7 +72,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   test 'org show - details of an existing org' do
     action  = :show
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       able  = can?(user, action, MODEL)
@@ -97,7 +95,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   test 'org new - import data for a new org' do
     action  = :new
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       able  = can?(user, action, MODEL)
@@ -106,7 +104,6 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
       TEST_FORMATS.each do |fmt|
         url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -120,13 +117,11 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = new_record
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         post_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -135,7 +130,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   test 'org edit - data for an existing org' do
     action  = :edit
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       able  = can?(user, action, MODEL)
@@ -145,7 +140,6 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
         rec = sample_for_edit
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -159,13 +153,11 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_edit
         url = url_for(**rec.fields, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         put_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -174,7 +166,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   test 'org delete - select an existing org for removal' do
     action  = :delete
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
       able  = can?(user, action, MODEL)
@@ -184,7 +176,6 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end
@@ -198,13 +189,11 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     @writers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      u_opt[:expect] = :redirect
 
       TEST_FORMATS.each do |fmt|
         rec = sample_for_delete
         url = url_for(id: rec.id, **params, format: fmt)
         opt = u_opt.merge(format: fmt)
-        opt[:expect] = :unauthorized unless fmt == :html
         delete_as(user, url, **opt, only: WRITE_FORMATS)
       end
     end

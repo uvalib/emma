@@ -9,7 +9,7 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
 
   CONTROLLER   = :search
   PARAMS       = { controller: CONTROLLER }.freeze
-  OPTIONS      = { controller: CONTROLLER, expect: :success }.freeze
+  OPTIONS      = { controller: CONTROLLER }.freeze
 
   TEST_USERS   = CORE_TEST_USERS
   TEST_READERS = TEST_USERS
@@ -27,7 +27,7 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
   test 'search index - no search' do
     action  = :index
     params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       u_opt = options
@@ -44,7 +44,7 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
     action  = :index
     item    = search_calls(:example)
     params  = PARAMS.merge(action: action).merge!(item.query.symbolize_keys)
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       u_opt = options
@@ -61,7 +61,7 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
     action  = :show
     item    = search_results(:example)
     params  = PARAMS.merge(action: action, id: record_id(item))
-    options = OPTIONS.merge(action: action, test: __method__)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       u_opt = options
