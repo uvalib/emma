@@ -73,7 +73,7 @@ module LayoutHelper::PageControls
         page_controls(*entries, **opt.slice(:ctrlr, :action, :id))
       end
 
-    html_div(class: css_classes(css)) do
+    html_div(class: css_classes(css, "count-#{entries.size}")) do
       label << controls
     end
   end
