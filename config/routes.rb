@@ -244,24 +244,24 @@ Rails.application.routes.draw do
   resources :account, only: %i[index]
 
   get    '/account/index',          to: 'account#index'
-  get    '/account/list_all',       to: 'account#list_all',                   as: 'list_all_account'
-  get    '/account/list_org',       to: 'account#list_org',                   as: 'list_org_account'
+  get    '/account/list_all',       to: 'account#list_all',       as: 'list_all_account'
+  get    '/account/list_org',       to: 'account#list_org',       as: 'list_org_account'
 
-  get    '/account/show_current',   to: redirect("/account/show/#{CURRENT}"), as: 'show_current_account'
-  get    '/account/show_select',    to: 'account#show_select',                as: 'show_select_account'
-  get    '/account/show/(:id)',     to: 'account#show',                       as: 'show_account'
+  get    '/account/show_current',   to: 'account#show_current',   as: 'show_current_account'
+  get    '/account/show_select',    to: 'account#show_select',    as: 'show_select_account'
+  get    '/account/show/(:id)',     to: 'account#show',           as: 'show_account'
 
-  get    '/account/new',            to: 'account#new',                        as: 'new_account'
-  match  '/account/create',         to: 'account#create',                     as: 'create_account',       **VIA_CREATE
+  get    '/account/new',            to: 'account#new',            as: 'new_account'
+  match  '/account/create',         to: 'account#create',         as: 'create_account',       **VIA_CREATE
 
-  get    '/account/edit_current',   to: redirect("/account/edit/#{CURRENT}"), as: 'edit_current_account'
-  get    '/account/edit_select',    to: 'account#edit_select',                as: 'edit_select_account'
-  get    '/account/edit/(:id)',     to: 'account#edit',                       as: 'edit_account'
-  match  '/account/update/:id',     to: 'account#update',                     as: 'update_account',       **VIA_UPDATE
+  get    '/account/edit_current',   to: 'account#edit_current',   as: 'edit_current_account'
+  get    '/account/edit_select',    to: 'account#edit_select',    as: 'edit_select_account'
+  get    '/account/edit/(:id)',     to: 'account#edit',           as: 'edit_account'
+  match  '/account/update/:id',     to: 'account#update',         as: 'update_account',       **VIA_UPDATE
 
-  get    '/account/delete_select',  to: 'account#delete_select',              as: 'delete_select_account'
-  get    '/account/delete/(:id)',   to: 'account#delete',                     as: 'delete_account'
-  delete '/account/destroy/:id',    to: 'account#destroy',                    as: 'destroy_account'
+  get    '/account/delete_select',  to: 'account#delete_select',  as: 'delete_select_account'
+  get    '/account/delete/(:id)',   to: 'account#delete',         as: 'delete_account'
+  delete '/account/destroy/:id',    to: 'account#destroy',        as: 'destroy_account'
 
   # ===========================================================================
   # Organizations
@@ -270,23 +270,23 @@ Rails.application.routes.draw do
   resources :org, only: %i[index]
 
   get    '/org/index',              to: 'org#index'
-  get    '/org/list_all',           to: 'org#list_all',                       as: 'list_all_org'
+  get    '/org/list_all',           to: 'org#list_all',           as: 'list_all_org'
 
-  get    '/org/show_current',       to: redirect("/org/show/#{CURRENT}"),     as: 'show_current_org'
-  get    '/org/show_select',        to: 'org#show_select',                    as: 'show_select_org'
-  get    '/org/show/(:id)',         to: 'org#show',                           as: 'show_org'
+  get    '/org/show_current',       to: 'org#show_current',       as: 'show_current_org'
+  get    '/org/show_select',        to: 'org#show_select',        as: 'show_select_org'
+  get    '/org/show/(:id)',         to: 'org#show',               as: 'show_org'
 
-  get    '/org/new',                to: 'org#new',                            as: 'new_org'
-  match  '/org/create',             to: 'org#create',                         as: 'create_org',           **VIA_CREATE
+  get    '/org/new',                to: 'org#new',                as: 'new_org'
+  match  '/org/create',             to: 'org#create',             as: 'create_org',           **VIA_CREATE
 
-  get    '/org/edit_current',       to: redirect("/org/edit/#{CURRENT}"),     as: 'edit_current_org'
-  get    '/org/edit_select',        to: 'org#edit_select',                    as: 'edit_select_org'
-  get    '/org/edit/(:id)',         to: 'org#edit',                           as: 'edit_org'
-  match  '/org/update/:id',         to: 'org#update',                         as: 'update_org',           **VIA_UPDATE
+  get    '/org/edit_current',       to: 'org#edit_current',       as: 'edit_current_org'
+  get    '/org/edit_select',        to: 'org#edit_select',        as: 'edit_select_org'
+  get    '/org/edit/(:id)',         to: 'org#edit',               as: 'edit_org'
+  match  '/org/update/:id',         to: 'org#update',             as: 'update_org',           **VIA_UPDATE
 
-  get    '/org/delete_select',      to: 'org#delete_select',                  as: 'delete_select_org'
-  get    '/org/delete/(:id)',       to: 'org#delete',                         as: 'delete_org'
-  delete '/org/destroy/:id',        to: 'org#destroy',                        as: 'destroy_org'
+  get    '/org/delete_select',      to: 'org#delete_select',      as: 'delete_select_org'
+  get    '/org/delete/(:id)',       to: 'org#delete',             as: 'delete_org'
+  delete '/org/destroy/:id',        to: 'org#destroy',            as: 'destroy_org'
 
   get    '/org/:id',                to: 'org#edit', defaults: { id: CURRENT }
 

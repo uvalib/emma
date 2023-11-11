@@ -24,7 +24,9 @@ module DecoratorHelper
   # @return [Hash{Symbol=>*}]
   #
   def context(action = nil, **opt)
-    opt[:action]       ||= (action || params[:action]).to_sym
+    action             ||= opt[:action] || params[:action]
+    opt[:sub_topic]    ||= action.to_sym
+    opt[:action]       ||= action.to_s.delete_suffix('_current').to_sym
     opt[:cancel]       ||= params[:cancel] if params[:cancel]
     opt[:user]         ||= current_user    if defined?(current_user)
     opt[:request]      ||= request         if defined?(request)

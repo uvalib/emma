@@ -11,7 +11,11 @@ class AccountsTest < ApplicationSystemTestCase
 
   TEST_USER: Symbol
 
+  OTHER_USER: Symbol
+
   @user: User
+
+  @other: User
 
   # list_test
   #

@@ -114,19 +114,19 @@ class OrgController < ApplicationController
   #
   # Display details of an existing EMMA member organization.
   #
-  # If :id is not given then #current_org is used.
+  # Redirects to #show_select if :id is not given.
+  # Redirects to #show_current if :id is #CURRENT_ID.
   #
   # @see #show_org_path          Route helper
   #
   def show
     __log_activity
     __debug_route
-    case
-      when identifier  then @item = get_record
-      when current_org then @item = current_org
-      else                  return redirect_to action: :show_select
-    end
+    return redirect_to action: :show_select  if identifier.blank?
+    return redirect_to action: :show_current if current_id?
+    @item = get_record
     org_authorize!
+    raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
   rescue => error
     error_response(error, show_select_org_path)
   end
@@ -168,18 +168,19 @@ class OrgController < ApplicationController
 
   # === GET /org/edit/(:id)
   #
-  # If :id is not given then #current_org is used.
+  # Display a form for modification of an existing EMMA member organization.
+  #
+  # Redirects to #edit_select if :id is not given.
+  # Redirects to #edit_current if :id is #CURRENT_ID.
   #
   # @see #edit_org_path          Route helper
   #
   def edit
     __log_activity
     __debug_route
-    case
-      when identifier  then @item = edit_record
-      when current_org then @item = current_org
-      else                  return redirect_to action: :edit_select
-    end
+    return redirect_to action: :edit_select  if identifier.blank?
+    return redirect_to action: :edit_current if current_id?
+    @item = get_record
     org_authorize!
     raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
   rescue => error
@@ -218,8 +219,8 @@ class OrgController < ApplicationController
   def delete
     __log_activity
     __debug_route
-    return redirect_to action: :delete_select if identifier.blank?
-    raise 'Cannot delete your own organization' if identifier == current_id # TODO: I18n
+    return redirect_to action: :delete_select   if identifier.blank?
+    raise 'Cannot delete your own organization' if current_id? # TODO: I18n
     @list = delete_records[:list]
     #org_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
@@ -240,7 +241,7 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     back  = delete_select_org_path
-    raise 'Cannot delete your own organization' if current_org # TODO: I18n
+    raise 'Cannot delete your own organization' if current_id? # TODO: I18n
     @list = destroy_records
     #org_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
@@ -277,6 +278,63 @@ class OrgController < ApplicationController
   rescue => error
     error_response(error, root_path)
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # === GET /org/show_current
+  #
+  # Display details of the current EMMA member organization.
+  #
+  # @see #show_current_org_path       Route helper
+  #
+  def show_current
+    __log_activity
+    __debug_route
+    @item = current_org #or redirect_to action: :show_select
+    org_authorize!
+    respond_to do |format|
+      format.html { render 'org/show' }
+      format.json { render 'org/show' }
+      format.xml  { render 'org/show' }
+    end
+  rescue => error
+    if params[:format] == :html
+      error_response(error, org_index_path)
+    else
+      failure_status(error, status: :bad_request)
+    end
+  end
+
+  # === GET /org/edit_current
+  #
+  # Display a form for modification of the current user's EMMA member
+  # organization.
+  #
+  # @see #edit_current_org_path       Route helper
+  #
+  def edit_current
+    __log_activity
+    __debug_route
+    @item = current_org or redirect_to action: :edit_select
+    org_authorize!
+    respond_to do |format|
+      format.html { render 'org/edit' }
+      format.json { render 'org/edit' }
+      format.xml  { render 'org/edit' }
+    end
+  rescue => error
+    error_response(error, org_index_path)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # === GET /org/show_select
   #
@@ -316,6 +374,14 @@ class OrgController < ApplicationController
   # ===========================================================================
 
   protected
+
+  # Indicate whether request parameters (explicitly or implicitly) reference
+  # the current user's organization.
+  #
+  def current_id?
+    id = identifier.presence&.to_s or return current_org.present?
+    CURRENT_ID.casecmp?(id) || (id == current_id.to_s)
+  end
 
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.

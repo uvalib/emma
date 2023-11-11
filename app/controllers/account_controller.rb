@@ -103,13 +103,15 @@ class AccountController < ApplicationController
   # Display details of an existing EMMA user account.
   #
   # Redirects to #show_select if :id is not given.
+  # Redirects to #show_current if :id is #CURRENT_ID.
   #
   # @see #show_account_path           Route helper
   #
   def show
     __log_activity
     __debug_route
-    return redirect_to action: :show_select if identifier.blank?
+    return redirect_to action: :show_select  if identifier.blank?
+    return redirect_to action: :show_current if current_id?
     @item = get_record
     user_authorize!
     raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
@@ -171,13 +173,15 @@ class AccountController < ApplicationController
   # Display a form for modification of an existing EMMA user account.
   #
   # Redirects to #edit_select if :id is not given.
+  # Redirects to #edit_current if :id is #CURRENT_ID.
   #
   # @see #edit_account_path           Route helper
   #
   def edit
     __log_activity
     __debug_route
-    return redirect_to action: :edit_select if identifier.blank?
+    return redirect_to action: :edit_select  if identifier.blank?
+    return redirect_to action: :edit_current if current_id?
     @item = edit_record
     user_authorize!
     raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
@@ -224,6 +228,7 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
+    raise 'Cannot delete your own account'    if current_id? # TODO: I18n
     @list = delete_records[:list]
     #user_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
@@ -246,6 +251,7 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     back  = delete_select_account_path
+    raise 'Cannot delete your own account' if current_id? # TODO: I18n
     @list = destroy_records
     #user_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
@@ -299,6 +305,62 @@ class AccountController < ApplicationController
     end
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # === GET /account/show_current
+  #
+  # Display details of the current EMMA user account.
+  #
+  # @see #show_current_account_path   Route helper
+  #
+  def show_current
+    __log_activity
+    __debug_route
+    return redirect_to action: :show if identifier.present?
+    @item = get_record(current_id)
+    user_authorize!
+    raise "Record #{quote(current_id)} not found" if @item.blank? # TODO: I18n
+    respond_to do |format|
+      format.html { render 'account/show' }
+      format.json { render 'account/show' }
+      format.xml  { render 'account/show' }
+    end
+  rescue => error
+    error_response(error, account_index_path)
+  end
+
+  # === GET /account/edit_current
+  #
+  # Display a form for modification of the current EMMA user account.
+  #
+  # @see #edit_current_account_path   Route helper
+  #
+  def edit_current
+    __log_activity
+    __debug_route
+    return redirect_to action: :edit if identifier.present?
+    @item = edit_record(current_id)
+    user_authorize!
+    raise "Record #{quote(current_id)} not found" if @item.blank? # TODO: I18n
+    respond_to do |format|
+      format.html { render 'account/edit' }
+      format.json { render 'account/edit' }
+      format.xml  { render 'account/edit' }
+    end
+  rescue => error
+    error_response(error, account_index_path)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # === GET /account/show_select
   #
   # Show a menu to select a user to show.
@@ -337,6 +399,14 @@ class AccountController < ApplicationController
   # ===========================================================================
 
   protected
+
+  # Indicate whether request parameters (explicitly or implicitly) reference
+  # the current user.
+  #
+  def current_id?
+    id = identifier.presence&.to_s
+    CURRENT_ID.casecmp?(id) || (id == current_id.to_s)
+  end
 
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.

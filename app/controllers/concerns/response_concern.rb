@@ -41,14 +41,17 @@ module ResponseConcern
     action ||= params[:action]
     status ||= report.http_status
     status ||= (action&.to_sym == :index) ? :bad_request : :not_found
-    xhr      = request_xhr? if xhr.nil?
-    html     = !xhr && request.format.html?
-    message  = report.render(html: html)
     opt      = { meth: meth, status: status }
-    if html
-      flash_now_failure(*message, **opt)
-    else
-      headers['X-Flash-Message'] = flash_xhr(*message, **opt)
+    xhr      = request_xhr? if xhr.nil?
+    xml      = request.format.xml?
+    json     = request.format.json?
+    html     = !xhr && !xml && !json && request.format.html?
+    message  = report.render(html: html)
+    case
+      when xml  then render_xml( { error: message.join('; ') })
+      when json then render_json({ error: message.join('; ') })
+      when html then flash_now_failure(*message, **opt)
+      else           headers['X-Flash-Message'] = flash_xhr(*message, **opt)
     end
     self.status = status
   end
@@ -87,12 +90,12 @@ module ResponseConcern
   #
   def error_response(error, fallback = nil, meth: nil)
     meth ||= calling_method
-    if modal?
-      failure_status(error, meth: meth)
-    else
+    if request.format.html? && !modal?
       re_raise_if_internal_exception(error)
       flash_failure(error, meth: meth)
       redirect_back(fallback_location: fallback || default_fallback_location)
+    else
+      failure_status(error, meth: meth)
     end
   end
 

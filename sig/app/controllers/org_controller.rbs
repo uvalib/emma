@@ -47,7 +47,8 @@ class OrgController < ApplicationController
   #
   # Display details of an existing EMMA member organization.
   #
-  # If :id is not given then #current_org is used.
+  # Redirects to #show_select if :id is not given.
+  # Redirects to #show_current if :id is #CURRENT_ID.
   #
   # @see #show_org_path          Route helper
   #
@@ -69,7 +70,10 @@ class OrgController < ApplicationController
 
   # === GET /org/edit/(:id)
   #
-  # If :id is not given then #current_org is used.
+  # Display a form for modification of an existing EMMA member organization.
+  #
+  # Redirects to #edit_select if :id is not given.
+  # Redirects to #edit_current if :id is #CURRENT_ID.
   #
   # @see #edit_org_path          Route helper
   #
@@ -103,6 +107,23 @@ class OrgController < ApplicationController
   #
   def list_all: () -> void
 
+  # === GET /org/show_current
+  #
+  # Display details of the current EMMA member organization.
+  #
+  # @see #show_current_org_path       Route helper
+  #
+  def show_current: () -> void
+
+  # === GET /org/edit_current
+  #
+  # Display a form for modification of the current user's EMMA member
+  # organization.
+  #
+  # @see #edit_current_org_path       Route helper
+  #
+  def edit_current: () -> void
+
   # === GET /org/show_select
   #
   # Show a menu to select an organization to show.
@@ -126,6 +147,11 @@ class OrgController < ApplicationController
   # @see #delete_select_org_path      Route helper
   #
   def delete_select: () -> void
+
+  # Indicate whether request parameters (explicitly or implicitly) reference
+  # the current user's organization.
+  #
+  def current_id?: () -> bool
 
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.

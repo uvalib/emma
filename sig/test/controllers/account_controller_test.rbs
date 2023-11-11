@@ -29,6 +29,14 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   # @type [String,nil]
   attr_accessor delete_id: String | nil
 
+  # Return a user which is in the same member organization as the given user.
+  #
+  # @param [User, nil] user
+  #
+  # @return [User, nil]
+  #
+  def other_member: (User|nil user) -> (User | nil)
+
   # Push a dummy item into the database for editing.
   #
   # @param [Symbol, String, Hash] src

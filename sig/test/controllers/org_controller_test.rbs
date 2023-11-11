@@ -17,9 +17,19 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
 
   WRITE_FORMATS: Symbol | symArray
 
+  # The organization for users in #ALL_TEST_USERS.
+  TEST_ORG: Symbol
+
+  # An organization different than #TEST_ORG.
+  OTHER_ORG: Symbol
+
   @readers: Array[User|nil]
 
   @writers: Array[User|nil]
+
+  @test_org: Org
+
+  @other_org: Org
 
   # @private
   # @type [String,nil]

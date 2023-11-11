@@ -44,6 +44,7 @@ class AccountController < ApplicationController
   # Display details of an existing EMMA user account.
   #
   # Redirects to #show_select if :id is not given.
+  # Redirects to #show_current if :id is #CURRENT_ID.
   #
   # @see #show_account_path           Route helper
   #
@@ -77,6 +78,7 @@ class AccountController < ApplicationController
   # Display a form for modification of an existing EMMA user account.
   #
   # Redirects to #edit_select if :id is not given.
+  # Redirects to #edit_current if :id is #CURRENT_ID.
   #
   # @see #edit_account_path           Route helper
   #
@@ -122,6 +124,22 @@ class AccountController < ApplicationController
   #
   def list_org: () -> void
 
+  # === GET /account/show_current
+  #
+  # Display details of the current EMMA user account.
+  #
+  # @see #show_current_account_path   Route helper
+  #
+  def show_current: () -> void
+
+  # === GET /account/edit_current
+  #
+  # Display a form for modification of the current EMMA user account.
+  #
+  # @see #edit_current_account_path   Route helper
+  #
+  def edit_current: () -> void
+
   # === GET /account/show_select
   #
   # Show a menu to select a user to show.
@@ -145,6 +163,11 @@ class AccountController < ApplicationController
   # @see #delete_select_account_path  Route helper
   #
   def delete_select: () -> void
+
+  # Indicate whether request parameters (explicitly or implicitly) reference
+  # the current user.
+  #
+  def current_id?: () -> bool
 
   # This is a kludge until I can figure out the right way to express this with
   # CanCan -- or replace CanCan with a more expressive authorization gem.

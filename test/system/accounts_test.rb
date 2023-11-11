@@ -15,9 +15,11 @@ class AccountsTest < ApplicationSystemTestCase
   LIST_ACTIONS = %i[list_all list_org].freeze
 
   TEST_USER    = :test_man_1
+  OTHER_USER   = :test_dso_1
 
   setup do
-    @user = find_user(TEST_USER)
+    @user  = find_user(TEST_USER)
+    @other = find_user(OTHER_USER)
   end
 
   # ===========================================================================
@@ -52,12 +54,37 @@ class AccountsTest < ApplicationSystemTestCase
 
   test 'accounts - show' do
     action    = :show
-    item      = @user
+    item      = @other
     params    = PARAMS.merge(action: action, id: item.id)
     title     = page_title(item, **params, name: item.label.inspect)
 
     start_url = url_for(**params)
     final_url = start_url
+
+    run_test(__method__) do
+
+      # Not available anonymously; successful sign-in should redirect back.
+      visit start_url
+      assert_flash alert: AUTH_FAILURE
+      sign_in_as @user
+
+      # The page should show the details of the org.
+      show_url
+      assert_current_url final_url
+      assert_valid_page  heading: title
+      screenshot
+
+    end
+  end
+
+  test 'accounts - show_current' do
+    action    = :show
+    item      = @user
+    params    = PARAMS.merge(action: action, id: item.id)
+    title     = page_title(item, **params, name: item.label.inspect)
+
+    start_url = url_for(**params)
+    final_url = url_for(**params.except(:id).merge!(action: :show_current))
 
     run_test(__method__) do
 

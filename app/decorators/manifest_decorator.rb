@@ -297,7 +297,7 @@ class ManifestDecorator < BaseDecorator
     # @return [Array<Symbol>]
     #
     def help_topic(sub_topic = nil, topic = nil)
-      case (sub_topic ||= context[:action])
+      case context[:action]
         when :edit  then sub_topic = :grid       if params[:selected]
         when :remit then sub_topic = :submission if params[:selected]
       end

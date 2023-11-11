@@ -512,14 +512,14 @@ class BaseDecorator < Draper::Decorator
 
     # help_topic
     #
-    # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
+    # @param [Symbol, nil] sub_topic  Def: :sub_topic or :action from `context`
     # @param [Symbol, nil] topic      Default: `model_type`.
     #
     # @return [Array<Symbol>]
     #
     def help_topic(sub_topic = nil, topic = nil)
       topic     ||= model_type
-      sub_topic ||= context[:action]
+      sub_topic ||= context[:sub_topic] || context[:action]
       sub_topic   = nil if sub_topic == :index
       sub_topic ? [topic, sub_topic] : [topic]
     end

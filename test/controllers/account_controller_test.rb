@@ -56,10 +56,27 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
     @readers.each do |user|
       able  = can?(user, action, MODEL)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      other = other_member(user) || users(:example)
 
       TEST_FORMATS.each do |fmt|
-        rec = user || users(:example)
-        url = url_for(id: rec.id, **params, format: fmt)
+        url = url_for(id: other.id, **params, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
+      end
+    end
+  end
+
+  test 'account show_current - details of the current user account' do
+    action  = :show_current
+    params  = PARAMS.merge(action: action)
+    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+
+    @readers.each do |user|
+      able  = can?(user, action, MODEL)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+
+      TEST_FORMATS.each do |fmt|
+        url = url_for(**params, format: fmt)
         opt = u_opt.merge(format: fmt)
         get_as(user, url, **opt, only: READ_FORMATS)
       end
@@ -195,6 +212,16 @@ class AccountControllerTest < ActionDispatch::IntegrationTest
   # @private
   # @type [String,nil]
   attr_accessor :delete_id
+
+  # Return a user which is in the same member organization as the given user.
+  #
+  # @param [User, nil] user
+  #
+  # @return [User, nil]
+  #
+  def other_member(user)
+    @readers.compact.excluding(user).first if user
+  end
 
   # Push a dummy item into the database for editing.
   #
