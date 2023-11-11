@@ -27,8 +27,7 @@ module SearchService::Properties
   #
   # @type [Symbol]
   #
-  DEFAULT_ENGINE = (application_deployment == :staging) ? :staging : :staging     # TODO: remove
-  #DEFAULT_ENGINE = (application_deployment == :staging) ? :staging : :production  # TODO: uncomment
+  DEFAULT_ENGINE = production_deployment? ? :production : :staging
 
   # ===========================================================================
   # :section: ApiService::Properties overrides
