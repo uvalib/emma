@@ -55,7 +55,7 @@ class ManifestItemController < ApplicationController
 
   OPS      = %i[new edit delete].freeze
   BULK_OPS = %i[bulk_new bulk_edit bulk_delete].freeze
-  MENUS    = %i[show_select edit_select delete_select remit_select].freeze
+  MENUS    = %i[show_select edit_select delete_select].freeze
 
   respond_to :html
   respond_to :json, :xml, except: OPS + BULK_OPS + MENUS

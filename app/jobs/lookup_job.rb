@@ -190,7 +190,7 @@ class LookupJob < ApplicationJob
     timeout   = job_opt.delete(:timeout)
     meth      = job_opt[:meth]     ||= __method__
     start     = job_opt[:start]    ||= timestamp
-    deadline  = job_opt[:deadline] ||= timeout && (start + timeout)
+    _deadline = job_opt[:deadline] ||= timeout && (start + timeout)
     job_type  = job_opt[:job_type] || :waiter
     waiter_id = job_id
 

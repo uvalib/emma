@@ -79,6 +79,14 @@ en:
 
       # =======================================================================
 
+      database:
+        label:          'Database'
+        title:          'Database Tables'
+        tooltip:        'Contents of database tables'
+        _endpoint:      true
+
+      # =======================================================================
+
       disk_space:
         label:          'Disk Space'
         title:          'Host Machine Disk Space'
@@ -131,14 +139,6 @@ en:
         label:          'Settings'
         title:          'Application Settings'
         tooltip:        'Dynamic feature toggles and application settings'
-        _endpoint:      true
-
-      # =======================================================================
-
-      database:
-        label:          'Database'
-        title:          'Database Tables'
-        tooltip:        'Contents of database tables'
         _endpoint:      true
 
       # =======================================================================

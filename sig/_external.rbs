@@ -60,11 +60,20 @@ module ActionCable
   end
 end
 
+module ActionController
+  module Flash
+    def redirect_to: (?(ActiveRecord::Base|String|Proc|Hash[untyped,untyped]) options, ?Hash[untyped,untyped] response_options_and_flash) -> untyped
+  end
+  module Redirecting
+    def redirect_to: (?(ActiveRecord::Base|String|Proc|Hash[untyped,untyped]) options, ?Hash[untyped,untyped] response_options) -> untyped
+  end
+end
+
 # NOTE: overrides .gem_rbs_collection/actionpack/6.0/actionpack-generated.rbs
 module ActionDispatch
   module Assertions
     module ResponseAssertions
-      def assert_redirected_to: ((anyHash|String) options, ?(String|nil) message) -> true
+      def assert_redirected_to: ((String|Hash[untyped,untyped]) options, ?(String|nil) message) -> true
     end
   end
 end
@@ -93,7 +102,7 @@ module ActiveSupport
   end
 
   class DeprecatedNumericWithFormat
-    def to_s: (?(String | Integer | Symbol | nil) format, ?(anyHash | nil) options) -> String
+    def to_s: (?(String | Integer | Symbol | nil) format, ?(Hash[untyped,untyped] | nil) options) -> String
   end
 
   class SafeBuffer < String
@@ -113,7 +122,7 @@ module ActiveSupport
 
     def *: (Integer other) -> ActiveSupport::SafeBuffer
 
-    def %: (String | strArray | anyHash other) -> ActiveSupport::SafeBuffer
+    def %: ((String | Array[String] | Hash[untyped,untyped]) other) -> ActiveSupport::SafeBuffer
 
     def html_safe?: () -> bool
 
@@ -128,10 +137,10 @@ end
 module ActionView
   module Helpers
     module FormTagHelper
-      def form_tag: (?(String|anyHash) url_for_options, ?anyHash options) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
+      def form_tag: (?(String|Hash[untyped,untyped]) url_for_options, ?Hash[untyped,untyped] options) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> (ActiveSupport::SafeBuffer | nil)
     end
     module RenderingHelper
-      def render: (?(String|anyHash) options, ?anyHash locals) ?{ () -> untyped } -> untyped
+      def render: (?(String|Hash[untyped,untyped]) options, ?Hash[untyped,untyped] locals) ?{ () -> untyped } -> untyped
     end
   end
 end
@@ -209,26 +218,26 @@ module ActiveRecord
   module Persistence
     module ClassMethods
       def create
-        : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
-        | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+        : (Array[Hash[untyped,untyped]] attributes) ?{ () -> untyped } -> Array[instance]
+        | (?(Hash[untyped,untyped]|nil) attributes) ?{ () -> untyped } -> instance
       def create!
-        : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
-        | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+        : (Array[Hash[untyped,untyped]] attributes) ?{ () -> untyped } -> Array[instance]
+        | (?(Hash[untyped,untyped]|nil) attributes) ?{ () -> untyped } -> instance
       def update
-        : (?:all     id, Array[anyHash] attributes) -> Array[instance]
-        | ( anyArray id, Array[anyHash] attributes) -> Array[instance]
-        | ( untyped  id, anyHash        attributes) -> instance
+        : (?:all           id, Array[Hash[untyped,untyped]] attributes) -> Array[instance]
+        | ( Array[untyped] id, Array[Hash[untyped,untyped]] attributes) -> Array[instance]
+        | ( untyped        id, Hash[untyped,untyped]        attributes) -> instance
     end
   end
 
   # NOTE: overrides .gem_rbs_collection/activerecord/7.0/activerecord.rbs
   class Base
     def self.create
-      : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
-      | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+      : (Array[Hash[untyped,untyped]] attributes) ?{ () -> untyped } -> Array[instance]
+      | (?(Hash[untyped,untyped]|nil) attributes) ?{ () -> untyped } -> instance
     def self.create!
-      : (Array[anyHash] attributes) ?{ () -> untyped } -> Array[instance]
-      | (?(anyHash|nil) attributes) ?{ () -> untyped } -> instance
+      : (Array[Hash[untyped,untyped]] attributes) ?{ () -> untyped } -> Array[instance]
+      | (?(Hash[untyped,untyped]|nil) attributes) ?{ () -> untyped } -> instance
   end
 
 end
@@ -260,7 +269,7 @@ class Array[unchecked out Elem] < Object
     | ()                        -> ::Enumerator[Elem, self]
 
   def collect!
-    : () { (Elem item) -> untyped } -> anyArray
+    : () { (Elem item) -> untyped } -> ::Array[untyped]
     | ()                            -> ::Enumerator[Elem, self]
 
   alias map! collect!
@@ -274,9 +283,9 @@ class Array[unchecked out Elem] < Object
   def extract_options!: () -> anyHash
 
   def self.wrap
-    : (nil)      -> []
-    | (untyped)  -> anyArray
-    | (anyArray) -> anyArray
+    : (nil)              -> []
+    | (untyped)          -> anyArray
+    | (::Array[untyped]) -> anyArray
 end
 
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb
@@ -288,13 +297,13 @@ module CanCan
 
   module Ability
     def can
-      : (?(Symbol | symArray | nil) action, ?untyped subject, **untyped conditions) -> void
-      | (?(Symbol | symArray | nil) action, ?untyped subject) ?{ (untyped object) -> bool } -> void
+      : (?(Symbol | Array[Symbol] | nil) action, ?untyped subject, **untyped conditions) -> void
+      | (?(Symbol | Array[Symbol] | nil) action, ?untyped subject) ?{ (untyped object) -> bool } -> void
       | () { (Symbol action, class object_class, untyped object) -> bool } -> void
 
     def cannot
-      : (?(Symbol | symArray | nil) action, ?untyped subject, **untyped conditions) -> void
-      | (?(Symbol | symArray | nil) action, ?untyped subject) ?{ (untyped object) -> bool } -> void
+      : (?(Symbol | Array[Symbol] | nil) action, ?untyped subject, **untyped conditions) -> void
+      | (?(Symbol | Array[Symbol] | nil) action, ?untyped subject) ?{ (untyped object) -> bool } -> void
       | () { (Symbol action, class object_class, untyped object) -> bool } -> void
   end
 
@@ -412,8 +421,8 @@ module Enumerable[unchecked out Elem] : _Each[Elem]
   def include?: (untyped) -> bool
 
   def flat_map
-    : [T] () { (Elem) -> untyped } -> anyArray
-    |     () -> ::Enumerator[Elem, anyArray]
+    : () { (Elem) -> untyped } -> Array[untyped]
+    | () -> ::Enumerator[Elem, Array[untyped]]
 
   def sum
     : [Elem] ()         ?{ (Elem arg0) -> Elem } -> (Elem | Integer)

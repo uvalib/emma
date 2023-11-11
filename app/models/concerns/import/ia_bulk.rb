@@ -347,9 +347,8 @@ module Import::IaBulk
         [ids.shift, dois.shift, issns.shift, lead_isbn, alt_isbn].compact
 
       if ids.concat(dois, issns, isbns).present?
-        current = fields[:dc_relation]
-        current &&= Array.wrap(current).compact_blank.presence
-        fields[:dc_relation] = current&.concat(ids)&.uniq || ids
+        rel_old = Array.wrap(fields[:dc_relation]).compact_blank.presence
+        fields[:dc_relation] = rel_old ? (rel_old + ids).uniq : ids
         Log.debug do
           ids_new = fields[:dc_identifier].inspect
           rel_new = fields[:dc_relation].inspect

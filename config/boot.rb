@@ -278,14 +278,14 @@ def rails_application?
   GlobalProperty.rails_application?
 end
 
-# Indicate whether this instance is being run as "rake" or "rails" with a Rake
-# task argument.
+# Indicate whether this instance is being run as "rake" or "rails" with a
+# Rake task argument.
 #
 def rake_task?
   GlobalProperty.rake_task?
 end
 
-# Indicate whether this is the Rails application not under test and not being
+# Indicate whether this is the Rails application not under test.
 #
 def live_rails_application?
   GlobalProperty.live_rails_application?

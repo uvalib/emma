@@ -149,8 +149,8 @@ class Object
 
   @in_rails: bool
 
-  # Indicate whether this instance is being run as "rake" or "rails" with a Rake
-  # task argument.
+  # Indicate whether this instance is being run as "rake" or "rails" with a
+  # Rake task argument.
   #
   def rake_task?: () -> bool
 

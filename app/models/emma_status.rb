@@ -61,6 +61,7 @@ class EmmaStatus < ApplicationRecord
   def self.api_version=(value)
     now  = DateTime.now
     attr = { active: true, updated_at: now }
+    # noinspection RubyMismatchedReturnType
     if (current = api_version)
       current.update(attr)
       current

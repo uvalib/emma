@@ -104,41 +104,42 @@ module Emma::Common::FormatMethods
   #
   # If the term is already quoted, those quotation marks are preserved.
   #
-  # @param [ActiveSupport::SafeBuffer, String, Array] term
-  # @param [String]                                   quote
-  # @param [String]                                   separator
+  # @param [*]      term
+  # @param [String] quote
+  # @param [String] separator
   #
-  # @return [ActiveSupport::SafeBuffer, String, Array]
+  # @return [ActiveSupport::SafeBuffer, String]
   #
   #--
   # === Variations
   #++
   #
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array<ActiveSupport::SafeBuffer>] terms
+  #   @param [String]                           quote
+  #   @param [String]                           separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
   # @overload quote(term, quote: '"', separator: ', ')
-  #   @param [String] term
+  #   @param [ActiveSupport::SafeBuffer] term
+  #   @param [String]                    quote
+  #   @param [String]                    separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array]  terms
   #   @param [String] quote
   #   @param [String] separator
   #   @return [String]
   #
-  # @overload quote(terms, quote: '"', separator: ', ')
-  #   @param [Array<String>] terms
-  #   @param [String]        quote
-  #   @param [String]        separator
+  # @overload quote(term, quote: '"', separator: ', ')
+  #   @param [*]      term
+  #   @param [String] quote
+  #   @param [String] separator
   #   @return [String]
   #
-  # @overload quote(term, quote: '"', separator: ', ')
-  #   @param [ActiveSupport::SafeBuffer] term
-  #   @param [String]                quote
-  #   @param [String]                separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
-  # @overload quote(terms, quote: '"', separator: ', ')
-  #   @param [Array<ActiveSupport::SafeBuffer>] terms
-  #   @param [String]                       quote
-  #   @param [String]                       separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
   def quote(term, quote: '"', separator: ', ')
+    # noinspection RubyMismatchedReturnType
     if term.is_a?(Array)
       terms = term.map { |t| quote(t, quote: quote, separator: separator) }
       html  = terms.all?(&:html_safe?)
@@ -163,36 +164,37 @@ module Emma::Common::FormatMethods
 
   # Remove pairs of surrounding quotation marks from a term.
   #
-  # @param [ActiveSupport::SafeBuffer, String, Array] term
-  # @param [String]                                   separator
+  # @param [*]      term
+  # @param [String] separator
   #
-  # @return [ActiveSupport::SafeBuffer, String, Array]
+  # @return [ActiveSupport::SafeBuffer, String]
   #
   #--
   # === Variations
   #++
   #
-  # @overload strip_quotes(term, separator: ', ')
-  #   @param [String] term
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array<ActiveSupport::SafeBuffer>] terms
+  #   @param [String]                           separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload strip_quotes(term,separator: ', ')
+  #   @param [ActiveSupport::SafeBuffer] term
+  #   @param [String]                    separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array]  terms
   #   @param [String] separator
   #   @return [String]
   #
-  # @overload strip_quotes(terms, separator: ', ')
-  #   @param [Array<String>] terms
-  #   @param [String]        separator
+  # @overload strip_quotes(term, separator: ', ')
+  #   @param [*]      term
+  #   @param [String] separator
   #   @return [String]
   #
-  # @overload strip_quotes(term, separator: ', ')
-  #   @param [ActiveSupport::SafeBuffer] term
-  #   @param [String]                separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
-  # @overload strip_quotes(terms, separator: ', ')
-  #   @param [Array<ActiveSupport::SafeBuffer>] terms
-  #   @param [String]                       separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
   def strip_quotes(term, separator: ', ')
+    # noinspection RubyMismatchedReturnType
     if term.is_a?(Array)
       terms = term.map { |t| strip_quotes(t, separator: separator) }
       html  = terms.all?(&:html_safe?)

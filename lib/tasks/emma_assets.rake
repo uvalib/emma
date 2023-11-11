@@ -24,6 +24,7 @@ namespace 'emma:assets' do
   # Tasks
   # ===========================================================================
 
+  # noinspection RubyMismatchedArgumentType
   desc ['Post-process CSS sourcemap', 'Replaces file:// with file://C:']
   task fix_css_map: [:environment] do
     $stderr.puts
@@ -111,6 +112,7 @@ namespace 'emma:assets' do
     command  = command.join(' && ')
     command  = "(#{command})" if subshell
     command  = "#{command} &" if async
+    # noinspection RubyMismatchedArgumentType
     sh(command)
     $stderr.puts
   end

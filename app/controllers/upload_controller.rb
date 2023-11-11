@@ -63,7 +63,7 @@ class UploadController < ApplicationController
   OPS      = %i[new edit delete].freeze
   BULK_OPS = %i[bulk_new bulk_edit bulk_delete].freeze
   ALL_OPS  = [*OPS, *BULK_OPS, :bulk_reindex].freeze
-  MENUS    = %i[show_select edit_select delete_select remit_select].freeze
+  MENUS    = %i[show_select edit_select delete_select].freeze
 
   before_action :set_ingest_engine, only: [:index, :bulk_index, *ALL_OPS]
   before_action :index_redirect,    only: :show

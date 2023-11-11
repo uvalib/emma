@@ -112,7 +112,6 @@ class AccountController < ApplicationController
     return redirect_to action: :show_select if identifier.blank?
     @item = get_record
     user_authorize!
-    # noinspection RubyMismatchedArgumentType
     raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
   rescue => error
     error_response(error, show_select_account_path)
@@ -181,7 +180,6 @@ class AccountController < ApplicationController
     return redirect_to action: :edit_select if identifier.blank?
     @item = edit_record
     user_authorize!
-    # noinspection RubyMismatchedArgumentType
     raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
   rescue => error
     error_response(error, edit_select_account_path)
@@ -229,7 +227,6 @@ class AccountController < ApplicationController
     @list = delete_records[:list]
     #user_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
-      # noinspection RubyMismatchedArgumentType
       raise "No records match #{quote(identifier_list)}" # TODO: I18n
     end
   rescue => error

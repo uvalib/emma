@@ -325,7 +325,7 @@ module BaseDecorator::Form
     end
 
     # Include a help icon control if applicable.  (The associated popup panel
-    # require some special handling to get it to appear above other elements
+    # requires some special handling to get it to appear above other elements
     # that are in different stacking contexts.)
     if help.present?
       icon  = h.help_popup(*help, panel: { class: 'z-order-capture' })

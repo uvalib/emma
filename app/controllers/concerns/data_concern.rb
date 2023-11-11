@@ -137,7 +137,7 @@ module DataConcern
   # @param [Array<String,Symbol>] cols  Column names; default: "*".
   # @param [Hash]                 opt   Passed to DataHelper#table_records.
   #
-  # @return [Array>]
+  # @return [Array]
   #
   def get_table_records(name = nil, *cols, **opt)
     opt  = data_params.merge(**opt)

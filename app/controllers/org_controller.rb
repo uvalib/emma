@@ -181,7 +181,6 @@ class OrgController < ApplicationController
       else                  return redirect_to action: :edit_select
     end
     org_authorize!
-    # noinspection RubyMismatchedArgumentType
     raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
   rescue => error
     error_response(error, edit_select_org_path)
@@ -224,7 +223,6 @@ class OrgController < ApplicationController
     @list = delete_records[:list]
     #org_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
-      # noinspection RubyMismatchedArgumentType
       raise "No records match #{quote(identifier_list)}" # TODO: I18n
     end
   rescue => error

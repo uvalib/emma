@@ -64,7 +64,7 @@ class User::SessionsController < Devise::SessionsController
     opt  = request_parameters
     mode = opt.delete(:mode)&.to_sym
     if mode == :local
-      redirect_to **opt.merge(action: :sign_in_local)
+      redirect_to opt.merge(action: :sign_in_local)
     else
       super
     end

@@ -56,82 +56,78 @@ module Emma::Common::FormatMethods
   #
   # If the term is already quoted, those quotation marks are preserved.
   #
-  # @param [ActiveSupport::SafeBuffer, String, Array] term
-  # @param [String]                                   quote
-  # @param [String]                                   separator
+  # @param [*]      term
+  # @param [String] quote
+  # @param [String] separator
   #
-  # @return [ActiveSupport::SafeBuffer, String, Array]
+  # @return [ActiveSupport::SafeBuffer, String]
   #
   # -
   # === Variations
   # +
   #
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array<ActiveSupport::SafeBuffer>] terms
+  #   @param [String]                           quote
+  #   @param [String]                           separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
   # @overload quote(term, quote: '"', separator: ', ')
-  #   @param [String] term
+  #   @param [ActiveSupport::SafeBuffer] term
+  #   @param [String]                    quote
+  #   @param [String]                    separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array]  terms
   #   @param [String] quote
   #   @param [String] separator
   #   @return [String]
   #
-  # @overload quote(terms, quote: '"', separator: ', ')
-  #   @param [Array<String>] terms
-  #   @param [String]        quote
-  #   @param [String]        separator
+  # @overload quote(term, quote: '"', separator: ', ')
+  #   @param [*]      term
+  #   @param [String] quote
+  #   @param [String] separator
   #   @return [String]
   #
-  # @overload quote(term, quote: '"', separator: ', ')
-  #   @param [ActiveSupport::SafeBuffer] term
-  #   @param [String]                quote
-  #   @param [String]                separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
-  # @overload quote(terms, quote: '"', separator: ', ')
-  #   @param [Array<ActiveSupport::SafeBuffer>] terms
-  #   @param [String]                       quote
-  #   @param [String]                       separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
   def quote
-    : (Array[ActiveSupport::SafeBuffer] terms, ?quote: String, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
-    | (Array[String] terms,                    ?quote: String, ?separator: String) -> Array[String]
-    | (ActiveSupport::SafeBuffer term,         ?quote: String, ?separator: String) -> ActiveSupport::SafeBuffer
-    | (String term,                            ?quote: String, ?separator: String) -> String
+    : (ActiveSupport::SafeBuffer|Array[ActiveSupport::SafeBuffer] terms, ?quote: String, ?separator: String) -> ActiveSupport::SafeBuffer
+    | (untyped                                                    terms, ?quote: String, ?separator: String) -> String
 
   # Remove pairs of surrounding quotation marks from a term.
   #
-  # @param [ActiveSupport::SafeBuffer, String, Array] term
-  # @param [String]                                   separator
+  # @param [*]      term
+  # @param [String] separator
   #
-  # @return [ActiveSupport::SafeBuffer, String, Array]
+  # @return [ActiveSupport::SafeBuffer, String]
   #
   # -
   # === Variations
   # +
   #
-  # @overload strip_quotes(term, separator: ', ')
-  #   @param [String] term
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array<ActiveSupport::SafeBuffer>] terms
+  #   @param [String]                           separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload strip_quotes(term,separator: ', ')
+  #   @param [ActiveSupport::SafeBuffer] term
+  #   @param [String]                    separator
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array]  terms
   #   @param [String] separator
   #   @return [String]
   #
-  # @overload strip_quotes(terms, separator: ', ')
-  #   @param [Array<String>] terms
-  #   @param [String]        separator
+  # @overload strip_quotes(term, separator: ', ')
+  #   @param [*]      term
+  #   @param [String] separator
   #   @return [String]
   #
-  # @overload strip_quotes(term, separator: ', ')
-  #   @param [ActiveSupport::SafeBuffer] term
-  #   @param [String]                separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
-  # @overload strip_quotes(terms, separator: ', ')
-  #   @param [Array<ActiveSupport::SafeBuffer>] terms
-  #   @param [String]                       separator
-  #   @return [ActiveSupport::SafeBuffer]
-  #
   def strip_quotes
-    : (Array[ActiveSupport::SafeBuffer] terms, ?separator: String) -> Array[ActiveSupport::SafeBuffer]
-    | (Array[String] terms,                    ?separator: String) -> Array[String]
-    | (ActiveSupport::SafeBuffer term,         ?separator: String) -> ActiveSupport::SafeBuffer
-    | (String term,                            ?separator: String) -> String
+    : (ActiveSupport::SafeBuffer|Array[ActiveSupport::SafeBuffer] terms, ?separator: String) -> ActiveSupport::SafeBuffer
+    | (untyped                                                    terms, ?separator: String) -> String
 
   # Match a named reference like "%{name}" for a #sprintf argument.
   #

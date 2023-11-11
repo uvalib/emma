@@ -201,9 +201,9 @@ module HtmlHelper
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String,Symbol] icon       Character(s) that should match #SYMBOLS.
-  # @param [String]        css        Characteristic CSS class/selector.
-  # @param [Hash]          opt        Passed to #html_span.
+  # @param [String, Symbol, *] icon   Character(s) that should match #SYMBOLS.
+  # @param [String]            css    Characteristic CSS class/selector.
+  # @param [Hash]              opt    Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

@@ -169,8 +169,8 @@ module BaseDecorator::Controls
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String,Symbol] icon       Unicode character or #ICON key.
-  # @param [Hash]          opt        Passed to HtmlHelper#symbol_icon.
+  # @param [String, Symbol, *] icon   Unicode character or #ICON key.
+  # @param [Hash]              opt    Passed to HtmlHelper#symbol_icon.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
