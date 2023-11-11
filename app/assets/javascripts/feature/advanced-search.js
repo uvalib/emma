@@ -5,7 +5,6 @@ import { AppDebug }                       from '../application/debug';
 import { appSetup }                       from '../application/setup';
 import { arrayWrap, maxSize }             from '../shared/arrays';
 import { Emma }                           from '../shared/assets';
-import { HIDDEN, isHidden, toggleHidden } from '../shared/css';
 import { debounce, handleEvent, isEvent } from '../shared/events';
 import { turnOffAutocomplete }            from '../shared/form';
 import { compact, deepFreeze, toObject }  from '../shared/objects';
@@ -15,6 +14,12 @@ import {
     toggleVisibility,
     handleClickAndKeypress,
 } from '../shared/accessibility';
+import {
+    HIDDEN,
+    isHidden,
+    selector,
+    toggleHidden,
+} from '../shared/css';
 import {
     isDefined,
     isEmpty,
@@ -29,6 +34,7 @@ const DEBUG  = true;
 
 AppDebug.file('feature/advanced-search', MODULE, DEBUG);
 
+// noinspection FunctionTooLongJS
 appSetup(MODULE, function() {
 
     /**
@@ -51,6 +57,32 @@ appSetup(MODULE, function() {
     // ========================================================================
     // Constants
     // ========================================================================
+
+    const IMMEDIATE_MARKER          = 'immediate-search-marker';
+    const SEARCH_BAR_CLASS          = 'search-bar-container';
+    const SEARCH_BAR_ROW_CLASS      = 'search-bar-row';
+    const SEARCH_BUTTON_CLASS       = 'search-button';
+    const SEARCH_CLEAR_CLASS        = 'search-clear';
+    const SEARCH_CONTROLS_CLASS     = 'search-controls';
+    const SEARCH_FILTER_CLASS       = 'menu-control';
+    const SEARCH_FILTERS_CLASS      = 'search-filter-container';
+    const SEARCH_INPUT_CLASS        = 'search-input';
+    const SEARCH_TOGGLE_CLASS       = 'advanced-search-toggle';
+    const SEARCH_TYPE_LABEL_CLASS   = 'search-input-label';
+    const SEARCH_TYPE_MENU_CLASS    = 'search-input-select';
+
+    const IMMEDIATE                 = selector(IMMEDIATE_MARKER);
+    const SEARCH_BAR                = selector(SEARCH_BAR_CLASS);
+    const SEARCH_BAR_ROW            = selector(SEARCH_BAR_ROW_CLASS);
+    const SEARCH_BUTTON             = selector(SEARCH_BUTTON_CLASS);
+    const SEARCH_CLEAR              = selector(SEARCH_CLEAR_CLASS);
+    const SEARCH_CONTROLS           = selector(SEARCH_CONTROLS_CLASS);
+    const SEARCH_FILTER             = selector(SEARCH_FILTER_CLASS);
+    const SEARCH_FILTERS            = selector(SEARCH_FILTERS_CLASS);
+    const SEARCH_INPUT              = selector(SEARCH_INPUT_CLASS);
+    const SEARCH_TOGGLE             = selector(SEARCH_TOGGLE_CLASS);
+    const SEARCH_TYPE_LABEL         = selector(SEARCH_TYPE_LABEL_CLASS);
+    const SEARCH_TYPE_MENU          = selector(SEARCH_TYPE_MENU_CLASS);
 
     /**
      * State value indicating the search filter panel is open (expanded).
@@ -194,7 +226,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $advanced_toggle = $search_sections.find('.advanced-search-toggle');
+    const $advanced_toggle = $search_sections.find(SEARCH_TOGGLE);
 
     /**
      * All instances of the search filter reset button.
@@ -208,8 +240,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $search_bar_container =
-        $search_sections.find('.search-bar-container');
+    const $search_bar_container = $search_sections.find(SEARCH_BAR);
 
     /**
      * One or more rows containing a search bar and, optionally, a search input
@@ -217,28 +248,28 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $search_bar_rows = $search_bar_container.find('.search-bar-row');
+    const $search_bar_rows = $search_bar_container.find(SEARCH_BAR_ROW);
 
     /**
      * The menu(s) which change the type for their associated search input.
      *
      * @type {jQuery}
      */
-    const $search_input_select = $search_bar_rows.find('.search-input-select');
+    const $search_input_select = $search_bar_rows.find(SEARCH_TYPE_MENU);
 
     /**
      * The search term input boxes.
      *
      * @type {jQuery}
      */
-    const $search_input = $search_bar_rows.find('.search-input');
+    const $search_input = $search_bar_rows.find(SEARCH_INPUT);
 
     /**
      * The search term input clear buttons.
      *
      * @type {jQuery}
      */
-    const $search_clear = $search_bar_rows.find('.search-clear');
+    const $search_clear = $search_bar_rows.find(SEARCH_CLEAR);
 
     /**
      * Buttons to reveal the next search term input row.
@@ -262,21 +293,21 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $search_button = $search_sections.find('.search-button');
+    const $search_button = $search_sections.find(SEARCH_BUTTON);
 
     /**
      * The search filters container.
      *
      * @type {jQuery}
      */
-    const $filter_controls = $search_sections.find('.search-filter-container');
+    const $filter_controls = $search_sections.find(SEARCH_FILTERS);
 
     /**
      * The search filter controls (menu containers).
      *
      * @type {jQuery}
      */
-    const $search_filters = $filter_controls.find('.menu-control');
+    const $search_filters = $filter_controls.find(SEARCH_FILTER);
 
     /**
      * Single-select dropdown menus.
@@ -301,8 +332,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {boolean}
      */
-    const IMMEDIATE_SEARCH =
-        isPresent($filter_controls.siblings('.immediate-search-marker'));
+    const IMMEDIATE_SEARCH = isPresent($filter_controls.siblings(IMMEDIATE));
 
     // ========================================================================
     // Functions - initialization
@@ -473,8 +503,8 @@ appSetup(MODULE, function() {
      */
     function guaranteeSearchButton() {
         /** @type {jQuery} */
-        const $controls  = $filter_controls.siblings('.search-controls'),
-              $filter_sb = $controls.find('.search-button');
+        const $controls  = $filter_controls.siblings(SEARCH_CONTROLS),
+              $filter_sb = $controls.find(SEARCH_BUTTON);
         if (isMissing($search_button.filter(':visible'))) {
             if (!$search_button.attr('value')) {
                 $search_button.attr('value', 'Search'); // TODO: I18n
@@ -495,7 +525,7 @@ appSetup(MODULE, function() {
     function reorderSearchControls() {
         const order    = (elem) => Number($(elem).css('order'));
         const by_order = (elem1, elem2) => order(elem1) - order(elem2);
-        $('.search-controls').each((_, container) => {
+        $(SEARCH_CONTROLS).each((_, container) => {
             const $container = $(container);
             const $children  = $container.children();
             const reordered  = $children.toArray().sort(by_order);
@@ -738,7 +768,7 @@ appSetup(MODULE, function() {
         if (typeof state !== 'string') {
             state = state ? OPEN : CLOSED;
         }
-        sessionStorage.setItem('search-controls', state);
+        sessionStorage.setItem(SEARCH_CONTROLS_CLASS, state);
     }
 
     /**
@@ -747,7 +777,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function getFilterPanelState() {
-        return sessionStorage.getItem('search-controls');
+        return sessionStorage.getItem(SEARCH_CONTROLS_CLASS);
     }
 
     /**
@@ -813,10 +843,9 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchRow(target, caller) {
-        const selector = '.search-bar-row';
-        const target_  = target || getSearchForm();
-        const func     = caller || 'getSearchRow';
-        return getContainerElement(target_, selector, func);
+        const func = caller || 'getSearchRow';
+        const tgt  = target || getSearchForm();
+        return getContainerElement(tgt, SEARCH_BAR_ROW, func);
     }
 
     /**
@@ -828,7 +857,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchInputSelect(target, caller) {
-        const selector = '.search-input-select';
+        const selector = SEARCH_TYPE_MENU;
         return getContainedElement(target, selector, caller, getSearchRow);
     }
 
@@ -841,8 +870,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchInput(target, caller) {
-        const selector = '.search-input';
-        return getContainedElement(target, selector, caller, getSearchRow);
+        return getContainedElement(target, SEARCH_INPUT, caller, getSearchRow);
     }
 
     /**
@@ -854,8 +882,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchClear(target, caller) {
-        const selector = '.search-clear';
-        return getContainedElement(target, selector, caller, getSearchRow);
+        return getContainedElement(target, SEARCH_CLEAR, caller, getSearchRow);
     }
 
     // ========================================================================
@@ -1000,8 +1027,8 @@ appSetup(MODULE, function() {
      * @param {jQuery.Event} [event]
      * @param {boolean} [allow_default]   If **true**, do not mark the event as
      *                                      handled (**false** by default
-     *                                      because the ".search-clear" control
-     *                                      is an `<a>` to preserve tab order).
+     *                                      because the SEARCH_CLEAR control is
+     *                                      an `<a>` to preserve tab order).
      */
     function clearSearchTerm(event, allow_default) {
         const func   = 'clearSearchTerm';
@@ -1013,7 +1040,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Show the search-clear control if the associated search input has content
+     * Show the SEARCH_CLEAR control if the associated search input has content
      * and hide it if it does not.
      *
      * @param {SelectorOrEvent} [target]    Passed to {@link getSearchInput}
@@ -1143,7 +1170,7 @@ appSetup(MODULE, function() {
         $menu.val(type);
         const $input = getSearchInput($row);
         $input.attr({ name: name, placeholder: config.placeholder });
-        $input.siblings('.search-input-label').html(config.label);
+        $input.siblings(SEARCH_TYPE_LABEL).html(config.label);
 
         if (notDefined(set_original)) {
             const original = $menu.attr('data-original');
@@ -1190,10 +1217,9 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchFilter(target, caller) {
-        const selector = '.menu-control';
-        const target_  = target || $search_filters;
-        const func     = caller || 'getSearchFilter';
-        return getContainerElement(target_, selector, func);
+        const func = caller || 'getSearchFilter';
+        const tgt  = target || $search_filters;
+        return getContainerElement(tgt, SEARCH_FILTER, func);
     }
 
     /**
@@ -1205,8 +1231,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchFilterMenu(target, caller) {
-        const selector = 'select';
-        return getContainedElement(target, selector, caller, getSearchFilter);
+        return getContainedElement(target, 'select', caller, getSearchFilter);
     }
 
     /**

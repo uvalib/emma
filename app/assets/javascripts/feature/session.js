@@ -17,6 +17,8 @@ AppDebug.file(PATH);
 
 appSetup(PATH, function() {
 
+    const DEBUG = false;
+
     /**
      * @readonly
      * @type {number}
@@ -129,9 +131,10 @@ appSetup(PATH, function() {
      *
      */
     function focusAnchor(event) {
+        const func   = 'focusAnchor';
         const anchor = getInPageAnchor(event);
         let $anchor  = anchor && $(anchor);
-        console.log('focusAnchor: $anchor =', $anchor);
+        DEBUG && console.log(`${func}: $anchor =`, $anchor);
         if (($anchor &&= $anchor.first()) && currentlyFocusable($anchor)) {
             $anchor.focus();
         }
@@ -163,7 +166,7 @@ appSetup(PATH, function() {
                 SearchInProgress.hide();
             }, FOCUS_DELAY);
         } else {
-            console.log(`${func}: no anchor for`, event);
+            DEBUG && console.log(`${func}: no anchor for`, event);
         }
     }
 
