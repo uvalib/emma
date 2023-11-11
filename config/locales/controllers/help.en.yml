@@ -64,7 +64,7 @@ en:
 
         download:
           <<:           *TOPIC_TEMPLATE
-          topic:        'download'
+          topic:        'downloads'
           Topic:        'Download'
           title:        'Downloading from EMMA'
           tooltip:      'Help with downloading files from EMMA'
@@ -72,11 +72,35 @@ en:
 
         upload:
           <<:           *TOPIC_TEMPLATE
-          topic:        'upload'
+          topic:        'uploads'
           Topic:        'Upload'
           title:        'Uploading to EMMA'
           tooltip:      'Help with uploading files to EMMA'
           content:      ~ # @see file:app/views/help/topic/_upload.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          list_all:
+            title:      'List all EMMA submissions'
+
+          list_org:
+            title:      "List your organization's EMMA submissions"
+
+          list_own:
+            title:      'List your past and current EMMA submissions'
+
+          new:
+            title:      'Submitting a new item to EMMA'
+
+          edit:
+            title:      'Updating an existing EMMA entry'
+
+          delete:
+            title:      'Removing an existing EMMA entry'
+
+          admin:
+            title:      'EMMA entry cloud storage administration'
 
         manifest:
           <<:           *TOPIC_TEMPLATE
@@ -86,9 +110,57 @@ en:
           tooltip:      'Help with EMMA bulk uploads'
           content:      ~ # @see file:app/views/help/topic/_manifest.html.erb
 
+          overview:
+            title:      'OVERVIEW'
+
+          grid:
+            title:      'Working with bulk upload manifests'
+            import:     'CSV file import'
+            edit:       'Manual item creation'
+
+          submission:
+            title:      'Bulk upload submissions'
+            step:
+              data:
+                label:  'Validation'
+                title:  'Correct and Save Items'
+              file:
+                label:  'File Status'
+                title:  'Identify Files'
+              store:
+                label:  'Storage Status'
+                title:  'File Uploading and Storage'
+              index:
+                label:  'Indexing Status'
+                title:  'Indexing Status'
+              entry:
+                label:  'Entry Status'
+                title:  'Entry Status'
+
+          list_all:
+            title:      'List all bulk upload manifests'
+
+          list_org:
+            title:      "List your organization's bulk upload manifests"
+
+          list_own:
+            title:      'List your bulk upload manifests'
+
+          new:
+            title:      'Creating a new bulk upload manifest'
+
+          edit:
+            title:      'Updating a bulk upload manifest'
+
+          delete:
+            title:      'Removing a bulk upload manifest'
+
+          remit:
+            title:      'Submit a bulk upload manifest'
+
         lookup_tool:
           <<:           *TOPIC_TEMPLATE
-          topic:        'lookup tool'
+          topic:        'bibliographic lookup'
           Topic:        'Bibliographic Lookup Tool'
           tooltip:      'Help with this feature'
           intro:        |
@@ -96,6 +168,96 @@ en:
             improving the usefulness of EMMA submissions by making it easy to
             fill in missing bibliographic metadata.
           content:      ~ # @see file:app/views/help/topic/_lookup_tool.html.erb
+
+        account:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'accounts'
+          Topic:        'Account'
+          title:        'EMMA Account'
+          tooltip:      'Help with EMMA account maintenance'
+          intro:        'Information about EMMA user accounts.'
+          content:      ~ # @see file:app/views/help/topic/_account.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          list_all:
+            title:      'List all EMMA user accounts'
+
+          list_org:
+            title:      "List your organization's EMMA user accounts"
+
+          show_current:
+            title:      'View details of your EMMA user account'
+
+          edit_current:
+            title:      'Updating your EMMA user account'
+
+          new:
+            title:      'Creating a new EMMA user account'
+
+          edit:
+            title:      'Updating an existing EMMA user account'
+
+          delete:
+            title:      'Removing an existing EMMA user account'
+
+          show:
+            title:      'View details of an EMMA user account'
+
+          show_select:
+            title:      'View details of a selected EMMA user account'
+
+          edit_select:
+            title:      'Updating a selected EMMA user account'
+
+        organization:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'organizations'
+          Topic:        'Organization'
+          title:        'EMMA Member Organization'
+          tooltip:      'Help with EMMA member organization maintenance'
+          intro:        'Information about EMMA member organizations.'
+          content:      ~ # @see file:app/views/help/topic/_organization.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          list_all:
+            title:      'List all EMMA member organizations'
+
+          show_select:
+            title:      'View details of a selected EMMA member organization'
+
+          show_current:
+            title:      'View details of your EMMA member organization'
+
+          edit_current:
+            title:      'Updating your EMMA member organization'
+
+          new:
+            title:      'Creating an EMMA member organization'
+
+          edit:
+            title:      'Updating an EMMA member organization'
+
+          delete:
+            title:      'Removing an EMMA member organization'
+
+          add_user:
+            title:      'Adding a new user to an organization'
+
+          edit_user:
+            title:      'Updating an existing user in an organization'
+
+          remove_user:
+            title:      'Removing an existing user from an organization'
+
+          show:
+            title:      'View details of an EMMA member organization'
+
+          edit_select:
+            title:      'Updating a selected EMMA member organization'
 
       # =======================================================================
       # Illustrations
@@ -167,6 +329,13 @@ en:
             "Change", and "Remove") with "My List" highlighted, indicating that
             the current page lists EMMA submissions made by this account.
 
+        upload_actions_admin:
+          asset:        'help/upload_actions_admin.png'
+          alt:          |
+            Upload action button panel ("My List", "List All", "Create",
+            "Change", and "Remove") with "My List" highlighted, indicating that
+            the current page lists EMMA submissions made by this account.
+
         source_menu:
           asset:        'help/source_menu.png'
           alt:          |
@@ -206,6 +375,14 @@ en:
           asset:        'help/manifest_actions.png'
           alt:          |
             Bulk upload action button panel ("My List", "Org List", "Create",
+            "Change", "Remove", and "Submit") with "My List" highlighted,
+            indicating that the current page lists bulk upload manifests made
+            by this account.
+
+        manifest_actions_admin:
+          asset:        'help/manifest_actions_admin.png'
+          alt:          |
+            Bulk upload action button panel ("My List", "List All", "Create",
             "Change", "Remove", and "Submit") with "My List" highlighted,
             indicating that the current page lists bulk upload manifests made
             by this account.
@@ -265,6 +442,45 @@ en:
           alt:          |
             The OK status marker, which indicates a submission step that has
             been successfully completed for the given item.
+
+
+        # =====================================================================
+        # Accounts
+        # =====================================================================
+
+        account_actions:
+          asset:        'help/account_actions.png'
+          alt:          |
+            Account action button panel ("Details", "Modify", "Org List") with
+            "Details" highlighted, indicating that the current page lists
+            information about the current account.
+
+        account_actions_admin:
+          asset:        'help/account_actions_admin.png'
+          alt:          |
+            Account action button panel ("Details", "Modify", "List All") with
+            "List All" highlighted, indicating that the current page is a
+            listing of all EMMA accounts.
+
+        # =====================================================================
+        # Organizations
+        # =====================================================================
+
+        org_actions_manager:
+          asset:        'help/org_actions_manager.png'
+          alt:          |
+            Organization action button panel ("Details", "Modify", "Add User",
+            "Edit User", "Remove User") with "Details" highlighted, indicating
+            that the current page lists information the user's EMMA member
+            organization.
+
+        org_actions_admin:
+          asset:        'help/org_actions_admin.png'
+          alt:          |
+            Organization action button panel ("List All", "Show Org", "Create",
+            "Change", "Remove", "Add User", "Edit User", "Remove User") with
+            "List All" highlighted, indicating that the current page is a
+            listing of all EMMA member organizations.
 
       # =======================================================================
       # Pages

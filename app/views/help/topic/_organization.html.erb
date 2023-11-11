@@ -1,0 +1,433 @@
+<%# app/views/help/topic/_organization.html.erb -%>
+<%-
+  # EMMA member organization help page.
+
+  view_debug(__FILE__)
+
+  topic             = t('emma.help.topic.organization')
+  administrator     = current_user&.administrator?
+  manager           = current_user&.manager? && !administrator
+
+  signed_in         = help_jump('signed in', :sign_in)
+
+  overview          =  topic[:overview]
+  list_all          = (topic[:list_all]     if administrator)
+  list_org          = (topic[:show_select]  if administrator)
+  list_own          = (topic[:show_current] unless administrator)
+  edit_own          = (topic[:edit_current] if manager)
+  new               = (topic[:new]          if administrator)
+  edit              = (topic[:edit]         if administrator)
+  delete            = (topic[:delete]       if administrator)
+  add_user          = (topic[:add_user]     if administrator || manager)
+  edit_user         = (topic[:edit_user]    if administrator || manager)
+  remove_user       = (topic[:remove_user]  if administrator || manager)
+
+  overview_title    =  overview[:title]
+  list_all_title    = (list_all[:title]     if list_all)
+  list_org_title    = (list_org[:title]     if list_org)
+  list_own_title    = (list_own[:title]     if list_own)
+  edit_own_title    = (edit_own[:title]     if edit_own)
+  new_title         = (new[:title]          if new)
+  edit_title        = (edit[:title]         if edit)
+  delete_title      = (delete[:title]       if delete)
+  add_user_title    = (add_user[:title]     if add_user)
+  edit_user_title   = (edit_user[:title]    if edit_user)
+  remove_user_title = (remove_user[:title]  if remove_user)
+
+  list_all_label    = (t('emma.org.list_all.label')     if list_all)
+  list_org_label    = (t('emma.org.show_select.label')  if list_org)
+  list_own_label    = (t('emma.org.show_current.label') if list_own)
+  edit_own_label    = (t('emma.org.edit_current.label') if edit_own)
+  new_label         = (t('emma.org.new.label')          if new)
+  edit_label        = (t('emma.org.edit.label')         if edit)
+  delete_label      = (t('emma.org.delete.label')       if delete)
+  add_user_label    = (t('emma.account.new.label')      if add_user)
+  edit_user_label   = (t('emma.account.edit.label')     if edit_user)
+  remove_user_label = (t('emma.account.delete.label')   if remove_user)
+
+  btn_opt           = { class: 'control-button' }
+
+  list_all_btn      = (help_span(list_all_label,    **btn_opt)  if list_all)
+  list_org_btn      = (help_span(list_org_label,    **btn_opt)  if list_org)
+  list_own_btn      = (help_span(list_own_label,    **btn_opt)  if list_own)
+  edit_own_btn      = (help_span(edit_own_label,    **btn_opt)  if edit_own)
+  new_btn           = (help_span(new_label,         **btn_opt)  if new)
+  edit_btn          = (help_span(edit_label,        **btn_opt)  if edit)
+  delete_btn        = (help_span(delete_label,      **btn_opt)  if delete)
+  add_user_btn      = (help_span(add_user_label,    **btn_opt)  if add_user)
+  edit_user_btn     = (help_span(edit_user_label,   **btn_opt)  if edit_user)
+  remove_user_btn   = (help_span(remove_user_label, **btn_opt)  if remove_user)
+
+  # Nav action menu
+
+  nav_menu_item     = t('emma.org.label')
+  action_menu_label = 'Org Actions'
+  action_menu       = nil
+  action_menu     ||= :org_actions_admin   if new
+  action_menu     ||= :org_actions_manager if edit_own
+  action_menu     &&= help_image(action_menu)
+
+  # Shortcut icons
+
+  shortcuts_icons   = 'action short-cuts'
+  icons             = help_shortcut_icons(OrgDecorator)
+  show_icon, show_tip = icons[:show].values_at(  :label, :value)
+  edit_icon, edit_tip = icons[:edit].values_at(  :label, :value)
+  del_icon,  del_tip  = icons[:delete].values_at(:label, :value)
+
+  # Form controls
+
+  panel_opener      = nil#help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+
+  delete_submit     = nil#help_button_for(OrgDecorator, :delete, :submit)
+  delete_cancel     = nil#help_button_for(OrgDecorator, :delete, :cancel)
+
+  # Page anchors
+
+  overview_help     = 'organization_overview_help'
+  list_all_help     = 'organization_list_all_help'
+  list_org_help     = 'organization_show_select_help'
+  list_own_help     = 'organization_show_current_help'
+  edit_own_help     = 'organization_edit_current_help'
+  new_help          = 'organization_new_help'
+  edit_help         = 'organization_edit_help'
+  delete_help       = 'organization_delete_help'
+  add_user_help     = 'organization_add_user_help'
+  edit_user_help    = 'organization_edit_user_help'
+  remove_user_help  = 'organization_remove_user_help'
+  actions_menu_help = 'organization_actions_menu_help'
+  shortcuts_help    = 'organization_shortcuts_help'
+
+-%>
+
+<p>
+  You must be <%= signed_in -%> in order to view EMMA member organizations.
+</p>
+
+<nav role="navigation" aria-labelledby="organization_help_nav">
+  <div id="organization_help_nav" class="sr-only">
+    Topics in this section:
+  </div>
+  <ul>
+    <li><a href="#<%= overview_help -%>"><%=     overview_title   -%></a></li>
+    <%- if list_all -%>
+      <li><a href="#<%= list_all_help -%>"><%=   list_all_title   -%></a></li>
+    <%- end -%>
+    <%- if list_org -%>
+      <li><a href="#<%= list_org_help -%>"><%=   list_org_title   -%></a></li>
+    <%- end -%>
+    <%- if list_own -%>
+      <li><a href="#<%= list_own_help -%>"><%=   list_own_title   -%></a></li>
+    <%- end -%>
+    <%- if edit_own -%>
+      <li><a href="#<%= edit_own_help -%>"><%=   edit_own_title   -%></a></li>
+    <%- end -%>
+    <%- if new -%>
+      <li><a href="#<%= new_help -%>"><%=        new_title        -%></a></li>
+    <%- end -%>
+    <%- if edit -%>
+      <li><a href="#<%= edit_help -%>"><%=       edit_title       -%></a></li>
+    <%- end -%>
+    <%- if delete -%>
+      <li><a href="#<%= delete_help -%>"><%=     delete_title     -%></a></li>
+    <%- end -%>
+    <%- if add_user -%>
+      <li><a href="#<%= add_user_help -%>"><%=   add_user_title   -%></a></li>
+    <%- end -%>
+    <%- if edit_user -%>
+      <li><a href="#<%= edit_user_help -%>"><%=  edit_user_title  -%></a></li>
+    <%- end -%>
+    <%- if remove_user -%>
+      <li><a href="#<%= remove_user_help-%>"><%= remove_user_title-%></a></li>
+    <%- end -%>
+  </ul>
+</nav>
+
+<section role="region" data-part="overview" aria-labelledby="<%= overview_help -%>">
+
+  <h2 class="section" id="<%= overview_help -%>">
+    <span class="text"><%= overview_title -%></span>
+  </h2>
+
+  <%- if administrator || manager -%>
+
+    <p>
+      By selecting <%= nav_menu_item -%> from the navigation menu you can get
+      information about your organization's details,
+      an overview of its members' EMMA submissions, and
+      a sub-menu with actions you may perform.
+    </p>
+
+    <h3 class="sub-section" id="<%= actions_menu_help -%>">
+      <%= action_menu_label -%> menu
+    </h3>
+
+    <p>
+      The available functions are displayed at the top of each
+      <%= nav_menu_item -%> page as a set of buttons:
+      <%= action_menu %>
+    </p>
+
+    <div class="choices">
+
+      <%- if list_all -%>
+        <div class="label">
+          <a href="#<%= list_all_help -%>"><%= list_all_label -%></a>
+        </div>
+        <div class="value"><%= list_all_title -%></div>
+      <%- end -%>
+
+      <%- if list_org -%>
+        <div class="label">
+          <a href="#<%= list_org_help -%>"><%= list_org_label -%></a>
+        </div>
+        <div class="value"><%= list_org_title -%></div>
+      <%- end -%>
+
+      <%- if list_own -%>
+        <div class="label">
+          <a href="#<%= list_own_help -%>"><%= list_own_label -%></a>
+        </div>
+        <div class="value"><%= list_own_title -%></div>
+      <%- end -%>
+
+      <%- if edit_own -%>
+        <div class="label">
+          <a href="#<%= edit_own_help -%>"><%= edit_own_label -%></a>
+        </div>
+        <div class="value"><%= edit_own_title -%></div>
+      <%- end -%>
+
+      <%- if new -%>
+        <div class="label">
+          <a href="#<%= new_help -%>"><%= new_label -%></a>
+        </div>
+        <div class="value"><%= new_title -%></div>
+      <%- end -%>
+
+      <%- if edit -%>
+        <div class="label">
+          <a href="#<%= edit_help -%>"><%= edit_label -%></a>
+        </div>
+        <div class="value"><%= edit_title -%></div>
+      <%- end -%>
+
+      <%- if delete -%>
+        <div class="label">
+          <a href="#<%= delete_help -%>"><%= delete_label -%></a>
+        </div>
+        <div class="value"><%= delete_title -%></div>
+      <%- end -%>
+
+      <%- if add_user -%>
+        <div class="label">
+          <a href="#<%= add_user_help -%>"><%= add_user_label -%></a>
+        </div>
+        <div class="value"><%= add_user_title -%></div>
+      <%- end -%>
+
+      <%- if edit_user -%>
+        <div class="label">
+          <a href="#<%= edit_user_help -%>"><%= edit_user_label -%></a>
+        </div>
+        <div class="value"><%= edit_user_title -%></div>
+      <%- end -%>
+
+      <%- if remove_user -%>
+        <div class="label">
+          <a href="#<%= remove_user_help -%>"><%= remove_user_label -%></a>
+        </div>
+        <div class="value"><%= remove_user_title -%></div>
+      <%- end -%>
+
+    </div>
+
+  <%- else -%>
+
+    <p>
+      By selecting <%= nav_menu_item -%> from the navigation menu you can get
+      information about your organization's details and
+      an overview of its members' EMMA submissions.
+    </p>
+
+  <%- end -%>
+
+  <h3 class="sub-section" id="<%= shortcuts_help -%>">
+    <%= shortcuts_icons.titleize -%>
+  </h3>
+
+  <p>
+    Each item listed on the <%= nav_menu_item -%> page is associated with
+    controls to manage that item (to the left of the item details on desktop
+    displays; at the top of the screen on mobile displays):
+  </p>
+
+  <div class="choices">
+    <div class="label"><%=  show_icon -%></div>
+    <div class="value">“<%= show_tip  -%>”</div>
+    <div class="label"><%=  edit_icon -%></div>
+    <div class="value">“<%= edit_tip  -%>”</div>
+    <div class="label"><%=  del_icon  -%></div>
+    <div class="value">“<%= del_tip   -%>”</div>
+  </div>
+
+  <p>
+    Clicking on <%= show_icon -%> will redirect your browser to a new screen
+    that allows you to view the associated item.
+    You may use your browser "back" button to return to this screen.
+  </p>
+
+  <p>
+    Clicking on <%= edit_icon -%> will redirect your browser to a new screen
+    that allows you to modify the associated item.
+  </p>
+
+  <p>
+    Clicking on <%= del_icon -%> will redirect your browser to a new screen
+    that will prompt you to delete the associated item.
+  </p>
+
+  <p>
+    If your account is not authorized to perform a particular operation on an
+    item, associated icon will not be displayed for that item.
+  </p>
+
+</section>
+
+<%- if list_all -%>
+  <section role="region" data-part="list_all" aria-labelledby="<%= list_all_help -%>">
+
+    <h2 class="section" id="<%= list_all_help -%>">
+      <%= list_all_btn -%> <span class="text"><%= list_all_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of all EMMA member organizations.
+    </p>
+
+    <p>
+      Each entry in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that EMMA member organization.
+    </p>
+
+    <p>
+      Clicking on <%= show_icon -%> will redirect your browser to a new screen
+      that allows you to view all information about that EMMA member
+      organization, including EMMA submissions and bulk upload manifests
+      created by its users.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if list_org -%>
+  <section role="region" data-part="list_org" aria-labelledby="<%= list_org_help -%>">
+
+    <h2 class="section" id="<%= list_org_help -%>">
+      <%= list_org_btn -%> <span class="text"><%= list_org_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of every user account associated with a specific EMMA
+      member organization,
+      along with every EMMA submission and bulk upload manifest associated with
+      the organization.
+    </p>
+
+    <p>
+      Each item is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that item.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if list_own -%>
+  <section role="region" data-part="list_own" aria-labelledby="<%= list_own_help -%>">
+
+    <h2 class="section" id="<%= list_own_help -%>">
+      <%= list_own_btn -%> <span class="text"><%= list_own_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of your EMMA member organization.
+    </p>
+
+    <p>
+      Each entry in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that entry.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if edit_own -%>
+  <section role="region" data-part="edit_own" aria-labelledby="<%= edit_own_help -%>">
+
+    <h2 class="section" id="<%= edit_own_help -%>">
+      <%= edit_own_btn -%> <span class="text"><%= edit_own_title -%></span>
+    </h2>
+
+    <p>
+      TODO: (edit your org)
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if new -%>
+  <section role="region" data-part="new_org" aria-labelledby="<%= new_help -%>">
+
+    <h2 class="section" id="<%= new_help -%>">
+      <%= new_btn -%> <span class="text"><%= new_title -%></span>
+    </h2>
+
+    <p>
+      TODO: (new org)
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if edit -%>
+  <section role="region" data-part="edit_org" aria-labelledby="<%= edit_help -%>">
+
+    <h2 class="section" id="<%= edit_help -%>">
+      <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
+    </h2>
+
+    <p>
+      TODO: (edit org)
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if delete -%>
+  <section role="region" data-part="delete_org" aria-labelledby="<%= delete_help -%>">
+
+    <h2 class="section" id="<%= delete_help -%>">
+      <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
+    </h2>
+
+    <p>
+      TODO: (delete org)
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if add_user -%>
+  <%= render 'help/topic/user/new', anchor: add_user_help, button: add_user_btn, title:  add_user_title %>
+<%- end -%>
+
+<%- if edit_user -%>
+  <%= render 'help/topic/user/edit', anchor: edit_user_help, button: edit_user_btn, title: edit_user_title %>
+<%- end -%>
+
+<%- if remove_user -%>
+  <%= render 'help/topic/user/delete', anchor: remove_user_help, button: remove_user_btn, title:  remove_user_title %>
+<%- end -%>

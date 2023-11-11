@@ -114,6 +114,7 @@ module HelpHelper
   #
   def help_popup(topic, sub_topic = nil, css: '.help-popup', **opt)
     return if topic.blank?
+    topic, sub_topic = help_normalize(topic, sub_topic)
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
@@ -136,7 +137,7 @@ module HelpHelper
       ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_opt[:'data-path']  = help_path(id: topic, modal: true)
       ph_opt[:'data-attr']  = attr.to_json
-      ph_opt[:'data-topic'] = "#{topic}_#{sub_topic}_help" if sub_topic
+      ph_opt[:'data-topic'] = [topic, sub_topic, 'help'].compact.join('_')
       ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
       html_div(ph_txt, **ph_opt)
     end
@@ -148,8 +149,52 @@ module HelpHelper
   #
   # @return [Hash{Symbol=>*}]
   #
-  def help_topic(topic)
+  def help_topic_entry(topic)
     HELP_ENTRY[topic&.to_sym] || {}
+  end
+
+  # Normalize help topic and sub_topic.
+  #
+  # @param [Symbol, String]      topic
+  # @param [Symbol, String, nil] sub_topic
+  #
+  # @return [Array<(Symbol,Symbol)>]
+  # @return [Array<(Symbol,nil)>]
+  #
+  def help_normalize(topic, sub_topic = nil)
+    topic     = help_topic(topic)
+    sub_topic = sub_topic&.to_sym
+    case [topic, sub_topic]
+      when %i[account new]                then %i[organization add_user]
+      when %i[account delete]             then %i[organization remove_user]
+      when %i[account edit_select]        then %i[organization edit_user]
+      when %i[account delete_select]      then %i[organization remove_user]
+      when %i[organization show]          then %i[organization list_org]
+      when %i[organization edit_select]   then %i[organization edit]
+      when %i[organization delete_select] then %i[organization delete]
+      when %i[upload edit_select]         then %i[upload edit]
+      when %i[upload delete_select]       then %i[upload delete]
+      when %i[manifest edit_select]       then %i[manifest edit]
+      when %i[manifest delete_select]     then %i[manifest delete]
+      when %i[manifest remit_select]      then %i[manifest remit]
+      else                                     [topic, sub_topic]
+    end
+  end
+
+  # Normalize a help topic.
+  #
+  # @param [Symbol, String, nil] topic
+  #
+  # @return [Symbol, nil]
+  #
+  def help_topic(topic)
+    return if topic.blank?
+    # noinspection RubyMismatchedReturnType
+    case (topic = topic.to_sym)
+      when :org  then :organization
+      when :user then :account
+      else            topic
+    end
   end
 
   # ===========================================================================
@@ -361,7 +406,7 @@ module HelpHelper
   # @see config/locales/controllers/help.en.yml
   #
   def help_container(item: nil, wrap: true, css: '.help-container', **opt)
-    topic     = (item || request_parameters[:id]).to_sym
+    topic     = help_topic(item || request_parameters[:id])
     partial   = "help/topic/#{topic}"
     content   = HELP_ENTRY.dig(topic, :content)
     content ||= (render(partial) if partial_exists?(partial))
@@ -372,6 +417,193 @@ module HelpHelper
     opt[:role] = 'article' if opt.delete(:level) == 1
     prepend_css!(opt, css, row, modal)
     html_div(content, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Render a toggle for use on help pages.
+  #
+  # @param [String] label
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_toggle(label, css: '.toggle', **opt)
+    prepend_css!(opt, css)
+    help_span(label, **opt)
+  end
+
+  # Render a button for use on help pages.
+  #
+  # @param [String] label
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_button(label, css: '.control-button', **opt)
+    prepend_css!(opt, css)
+    help_span(label, **opt)
+  end
+
+  # Render a button for use on help pages.
+  #
+  # @param [BaseDecorator, Class] decorator
+  # @param [Symbol]               action
+  # @param [Symbol]               button
+  # @param [Hash]                 opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def help_button_for(decorator, action, button, **opt)
+    label   = decorator.form_actions.dig(action, button).presence
+    label &&= label.dig(:if_enabled, :label) || label[:label]
+    help_button(label, **opt) if label.present?
+  end
+
+  # Generate data about action shortcut icons for use on help pages.
+  #
+  # @param [BaseDecorator, Class] decorator
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def help_shortcut_icons(decorator, actions: %i[show edit delete])
+    actions.map { |action|
+      prop = decorator.icon_definition(action)
+      opt  = { title: prop[:spoken], class: "icon #{action}" }
+      icon = html_span(**opt) { symbol_icon(prop[:icon]) }
+      [action, { label: icon, value: prop[:tooltip]}]
+    }.to_h
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  class FieldEntry
+
+    include HtmlHelper
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # @return [Symbol]
+    attr_reader :field
+
+    # @return [ActiveSupport::SafeBuffer]
+    attr_reader :label
+
+    # @return [String]
+    attr_reader :name
+
+    # @return [ActiveSupport::SafeBuffer, nil]
+    attr_reader :text
+
+    # @return [ActiveSupport::SafeBuffer, nil]
+    attr_reader :note
+
+    # @return [String]
+    attr_reader :id
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Create a new instance.
+    #
+    # @param [*]    base
+    # @param [Hash] cfg
+    #
+    def initialize(base: nil, **cfg)
+      @field  = cfg[:field]
+      @name   = cfg[:label]
+      @label  = html_tag(:strong, @name)
+      # noinspection RubyMismatchedArgumentType
+      @id     = html_id(base, @name, separator: '_')
+      @text   = text && html_span(text, class: 'text')
+      @text   = text_value(cfg, :help, :tooltip)
+      @text ||= '(TODO)' unless cfg.blank? # TODO: remove (?)
+      @text &&= html_span(@text, class: 'text')
+      @note   = text_value(cfg, :note, :notes)
+      @note &&= html_div(@note, class: 'note')
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Find an HTML or plain test value.
+    #
+    # @param [Hash]          cfg
+    # @param [Array<Symbol>] names
+    #
+    # @return [String, nil]
+    #
+    def text_value(cfg, *names)
+      v = nil
+      # noinspection RubyMismatchedReturnType
+      names.find do |name|
+        if (value = cfg[:"#{name}_html"]&.strip).present?
+          return value.html_safe
+        end
+        if (value = cfg[name]&.strip).present?
+          return value.match?(/[[:punct:]]$/) ? value : "#{value}."
+        end
+      end
+    end
+
+  end
+
+  # help_field_entries
+  #
+  # @param [Symbol, String, Class, Model, *] model
+  # @param [Array<Symbol>]                   names
+  # @param [*]                               base
+  #
+  # @return [Hash{Symbol=>FieldEntry}]
+  #
+  def help_field_entries(model, *names, base: nil)
+    model  = Model.for(model)
+    base   = (base || model).to_s
+    fields = Model.database_fields(model).to_h
+    fields.slice!(*names) if names.present?
+    fields.transform_values do |cfg|
+      FieldEntry.new(base: base, **cfg)
+    end
+  end
+
+  # A help entry for a model field description.
+  #
+  # @param [Symbol]                   fld
+  # @param [Hash{Symbol=>FieldEntry}] fields
+  # @param [String]                   css     Characteristic CSS class/selector
+  # @param [Hash]                     opt
+  #
+  # @yield [entry] The enclosed content for the entry.
+  # @yieldparam [FieldEntry] entry  Values related to the field.
+  #
+  def help_field(fld, fields:, css: '.field', **opt, &blk)
+    entry = fields[fld] || FieldEntry.new(label: "(missing #{fld.inspect})")
+    opt[:id]           ||= entry.id
+    opt[:'data-field'] ||= fld
+    prepend_css!(opt, css)
+    html_div(**opt) do
+      capture(entry, &blk)
+    end
   end
 
   # ===========================================================================

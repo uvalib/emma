@@ -7,7 +7,7 @@
 
   view_debug(__FILE__)
 
-  help  ||= nil # %i[home dashboard]
+  help  ||= %i[account show_current]
   title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
 
   unless modal?

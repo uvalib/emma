@@ -81,6 +81,15 @@ class OrgDecorator < BaseDecorator
     # @return [Org::Options]
     #
     def options: () -> Org::Options
+
+    # help_topic
+    #
+    # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
+    # @param [Symbol, nil] topic      Default: #model_type.
+    #
+    # @return [Array<Symbol>]
+    #
+    def help_topic: (?(Symbol|nil) sub_topic, ?(Symbol|nil) topic) -> symArray
   end
 
   # Definitions available to both this decorator class and the related

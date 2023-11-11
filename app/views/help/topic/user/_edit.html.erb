@@ -1,0 +1,140 @@
+<%# app/views/help/topic/user/_edit.html.erb -%>
+<%-
+  # Edit EMMA user.
+
+  view_debug(__FILE__)
+
+  anchor ||= nil
+  button ||= nil
+  title  ||= nil
+  raise unless anchor && button && title
+
+  base_id     ||= anchor.delete_suffix('_help')
+
+  administrator = current_user&.administrator?
+  manager       = current_user&.manager? && !administrator
+  own           = anchor.split('_').intersect?(%w[own current])
+
+  fields = %i[
+    email
+    role
+    org_id
+    first_name
+    last_name
+    preferred_email
+    phone
+    address
+    status
+    encrypted_password
+  ]
+  field = help_field_entries(:account, *fields, base: base_id)
+  f_opt = { fields: field }
+
+-%>
+
+<section role="region" data-part="user_edit" aria-labelledby="<%= anchor -%>">
+
+  <h2 class="section" id="<%= anchor -%>">
+    <%= button -%> <span class="text"><%= title -%></span>
+  </h2>
+
+  <p>
+    <%- if own -%>
+      This is a form that allows you to update your EMMA user account
+      information.
+    <%- else -%>
+      Because of your privileged account, you have the ability to make
+      corrections or additions to other accounts in
+      <%= administrator ? 'any' : 'your' -%>
+      EMMA member organization.
+    <%- end -%>
+  </p>
+
+  <%= help_field(:email, **f_opt) do |f| %>
+    <%- if own -%>
+      As a protective measure, your <%= f.label -%> is not changeable from this
+      account.
+      If you need this value changed,
+      <%- if administrator -%>
+        sign-on from a different administrator account,
+        or ask another administrator to change it for you.
+      <%- elsif manager -%>
+        sign-on from a different manager account,
+        or ask an administrator to change it for you.
+      <%- else -%>
+        ask your EMMA member organization manager to change it for you.
+      <%- end -%>
+      (Note that if you are using Shibboleth sign-on, this value must match
+      the value sent by your identity provider.)
+    <%- else -%>
+      The <%= f.label -%> can be changed as needed,
+      however note that if the user intends to make use of Shibboleth sign-on,
+      the value here must match the value returned by the identity provider.
+    <%- end -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:role, **f_opt) do |f| %>
+    <%= f.label -%>: <%= f.text -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:org_id, **f_opt) do |f| %>
+    <%- if administrator -%>
+      Although the interface allows you to change the user's <%= f.label -%>,
+      this is not a scenario that has been anticipated.
+      Because EMMA submissions are accredited on a per-user basis, the total
+      for an organization is just the sum of it's users submissions.
+      Changing the organization of the user means that any submissions
+      previously made by the user will become associated with the new
+      organization
+      (thereby lowering the number of submissions accredited to the old
+      organization).
+    <%- else -%>
+      Your <%= f.label -%> cannot be changed.
+      If you have a situation where a member of your organization is moving
+      to another EMMA member organization,
+      please contact an EMMA administrator for help.
+    <%- end -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:first_name, **f_opt) do |f| %>
+    <%= f.label -%>: <%= f.text -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:last_name, **f_opt) do |f| %>
+    <%= f.label -%>: <%= f.text -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:preferred_email, **f_opt) do |f| %>
+    The <%= f.label -%> field allows you to provide an address where you would
+    prefer to receive any correspondence from EMMA.
+    If your <%= field[:email].name -%> is identical to your email address then
+    you should leave this field blank.
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:phone, **f_opt) do |f| %>
+    <%= f.label -%>: <%= f.text -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:address, **f_opt) do |f| %>
+    <%= f.label -%>: <%= f.text -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:status, **f_opt) do |f| %>
+    <%= f.label -%>: <%= f.text -%>
+    <%= f.note -%>
+  <%- end -%>
+
+  <%= help_field(:encrypted_password, **f_opt) do |f| %>
+    <%= f.label -%>: <%= f.text -%>
+    <%= f.note -%>
+  <%- end -%>
+
+</section>

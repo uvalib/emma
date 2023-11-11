@@ -4,7 +4,7 @@
 
   dec   ||= nil or view_abort(__FILE__, ':dec not passed via "locals"')
 
-  help  ||= nil # dec.help_topic
+  help  ||= dec.help_topic
   title ||= nil
   name  ||= nil
   title   = dec.page_title(title, name: name)

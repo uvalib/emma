@@ -1,0 +1,315 @@
+<%# app/views/help/topic/_account.html.erb -%>
+<%-
+  # EMMA account help page.
+
+  view_debug(__FILE__)
+
+  topic             = t('emma.help.topic.account')
+  administrator     = current_user&.administrator?
+  manager           = current_user&.manager? && !administrator
+
+  signed_in         = help_jump('signed in', :sign_in)
+
+  overview          =  topic[:overview]
+  list_all          = (topic[:list_all] if administrator)
+  list_org          = (topic[:list_org] unless administrator)
+  list_own          =  topic[:show_current]
+  edit_own          =  topic[:edit_current]
+  new               = (topic[:new]      if false) # @see _organization.html.erb
+  edit              =  topic[:edit]
+  delete            = (topic[:delete]   if false) # @see _organization.html.erb
+
+  overview_title    =  overview[:title]
+  list_all_title    = (list_all[:title] if list_all)
+  list_org_title    = (list_org[:title] if list_org)
+  list_own_title    = (list_own[:title] if list_own)
+  edit_own_title    = (edit_own[:title] if edit_own)
+  new_title         = (new[:title]      if new)
+  edit_title        = (edit[:title]     if edit)
+  delete_title      = (delete[:title]   if delete)
+
+  list_all_label    = (t('emma.account.list_all.label')     if list_all)
+  list_org_label    = (t('emma.account.list_org.label')     if list_org)
+  list_own_label    = (t('emma.account.show_current.label') if list_own)
+  edit_own_label    = (t('emma.account.edit_current.label') if edit_own)
+  new_label         = (t('emma.account.new.label')          if new)
+  edit_label        = (t('emma.account.edit.label')         if edit)
+  delete_label      = (t('emma.account.delete.label')       if delete)
+
+  list_all_btn      = (help_button(list_all_label)  if list_all)
+  list_org_btn      = (help_button(list_org_label)  if list_org)
+  list_own_btn      = (help_button(list_own_label)  if list_own)
+  edit_own_btn      = (help_button(edit_own_label)  if edit_own)
+  new_btn           = (help_button(new_label)       if new)
+  edit_btn          = (help_button(edit_label)      if edit)
+  delete_btn        = (help_button(delete_label)    if delete)
+
+  # Nav action menu
+
+  nav_menu_item     = t('emma.account.label')
+  action_menu_label = 'Account Actions'
+  action_menu       = list_all ? :account_actions_admin : :account_actions
+  action_menu       = help_image(action_menu)
+
+  # Shortcut icons
+
+  shortcuts_icons   = 'action short-cuts'
+  icons             = help_shortcut_icons(OrgDecorator)
+  show_icon, show_tip = icons[:show].values_at(  :label, :value)
+  edit_icon, edit_tip = icons[:edit].values_at(  :label, :value)
+  del_icon,  del_tip  = icons[:delete].values_at(:label, :value)
+
+  # Form controls
+
+  panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+
+  delete_submit     = help_button_for(AccountDecorator, :delete,  :submit)
+  delete_cancel     = help_button_for(AccountDecorator, :delete,  :cancel)
+
+  # Page anchors
+
+  overview_help     = 'account_overview_help'
+  list_all_help     = 'account_list_all_help'
+  list_org_help     = 'account_list_org_help'
+  list_own_help     = 'account_show_current_help'
+  edit_own_help     = 'account_edit_current_help'
+  new_help          = 'account_new_help'
+  edit_help         = 'account_edit_help'
+  delete_help       = 'account_delete_help'
+  actions_menu_help = 'account_actions_menu_help'
+  shortcuts_help    = 'account_shortcuts_help'
+
+-%>
+
+<p>
+  You must be <%= signed_in -%> in order to submit a new remediated item, or
+  to make changes to an existing repository entry.
+</p>
+
+<nav role="navigation" aria-labelledby="account_help_nav">
+  <div id="account_help_nav" class="sr-only">
+    Topics in this section:
+  </div>
+  <ul>
+    <li><a href="#<%= overview_help -%>"><%=   overview_title -%></a></li>
+    <%- if list_own -%>
+      <li><a href="#<%= list_own_help -%>"><%= list_own_title -%></a></li>
+    <%- end -%>
+    <%- if edit_own -%>
+      <li><a href="#<%= edit_own_help -%>"><%= edit_own_title -%></a></li>
+    <%- end -%>
+    <%- if list_org -%>
+      <li><a href="#<%= list_org_help -%>"><%= list_org_title -%></a></li>
+    <%- end -%>
+    <%- if list_all -%>
+      <li><a href="#<%= list_all_help -%>"><%= list_all_title -%></a></li>
+    <%- end -%>
+    <%- if new -%>
+      <li><a href="#<%= new_help -%>"><%=        new_title      -%></a></li>
+    <%- end -%>
+    <%- if edit -%>
+      <li><a href="#<%= edit_help -%>"><%=       edit_title     -%></a></li>
+    <%- end -%>
+    <%- if delete -%>
+      <li><a href="#<%= delete_help -%>"><%=     delete_title   -%></a></li>
+    <%- end -%>
+  </ul>
+</nav>
+
+<section role="region" data-part="overview" aria-labelledby="<%= overview_help -%>">
+
+  <h2 class="section" id="<%= overview_help -%>">
+    <span class="text"><%= overview_title -%></span>
+  </h2>
+
+  <p>
+    By selecting <%= nav_menu_item -%> from the navigation menu you can get
+    information about your account's details,
+    an overview of submission activity,
+    and a sub-menu with actions you may perform.
+  </p>
+
+  <h3 class="sub-section" id="<%= actions_menu_help -%>">
+    <%= action_menu_label -%> menu
+  </h3>
+
+  <p>
+    The available functions are displayed at the top of each
+    <%= nav_menu_item -%> page as a set of buttons:
+    <%= action_menu %>
+  </p>
+
+  <div class="choices">
+
+    <%- if list_own -%>
+      <div class="label">
+        <a href="#<%= list_own_help -%>"><%= list_own_label -%></a>
+      </div>
+      <div class="value"><%= list_own_title -%></div>
+    <%- end -%>
+
+    <%- if edit_own -%>
+      <div class="label">
+        <a href="#<%= edit_own_help -%>"><%= edit_own_label -%></a>
+      </div>
+      <div class="value"><%= edit_own_title -%></div>
+    <%- end -%>
+
+    <%- if list_org -%>
+      <div class="label">
+        <a href="#<%= list_org_help -%>"><%= list_org_label -%></a>
+      </div>
+      <div class="value"><%= list_org_title -%></div>
+    <%- end -%>
+
+    <%- if list_all -%>
+      <div class="label">
+        <a href="#<%= list_all_help -%>"><%= list_all_label -%></a>
+      </div>
+      <div class="value"><%= list_all_title -%></div>
+    <%- end -%>
+
+    <%- if new -%>
+      <div class="label">
+        <a href="#<%= new_help -%>"><%= new_label -%></a>
+      </div>
+      <div class="value"><%= new_title -%></div>
+    <%- end -%>
+
+    <%- if edit -%>
+      <div class="label">
+        <a href="#<%= edit_help -%>"><%= edit_label -%></a>
+      </div>
+      <div class="value"><%= edit_title -%></div>
+    <%- end -%>
+
+    <%- if delete -%>
+      <div class="label">
+        <a href="#<%= delete_help -%>"><%= delete_label -%></a>
+      </div>
+      <div class="value"><%= delete_title -%></div>
+    <%- end -%>
+
+  </div>
+
+  <h3 class="sub-section" id="<%= shortcuts_help -%>">
+    <%= shortcuts_icons.titleize -%>
+  </h3>
+
+  <p>
+    Each item listed on the <%= nav_menu_item -%> page is associated with
+    controls to manage that item (to the left of the item details on desktop
+    displays; at the top of the screen on mobile displays):
+  </p>
+
+  <div class="choices">
+    <div class="label"><%=  show_icon -%></div>
+    <div class="value">“<%= show_tip  -%>”</div>
+    <div class="label"><%=  edit_icon -%></div>
+    <div class="value">“<%= edit_tip  -%>”</div>
+    <div class="label"><%=  del_icon  -%></div>
+    <div class="value">“<%= del_tip   -%>”</div>
+  </div>
+
+  <p>
+    Clicking on <%= show_icon -%> will redirect your browser to a new screen
+    that allows you to view the associated item.
+    You may use your browser "back" button to return to this screen.
+  </p>
+
+  <p>
+    Clicking on <%= edit_icon -%> will redirect your browser to a new screen
+    that allows you to modify the associated item.
+  </p>
+
+  <p>
+    Clicking on <%= del_icon -%> will redirect your browser to a new screen
+    that will prompt you to delete the associated item.
+  </p>
+
+  <p>
+    If your account is not authorized to perform a particular action on an
+    item, the associated icon will not be displayed for that item.
+  </p>
+
+</section>
+
+<%- if list_own -%>
+  <section role="region" data-part="list_own" aria-labelledby="<%= list_own_help -%>">
+
+    <h2 class="section" id="<%= list_own_help -%>">
+      <%= list_own_btn -%> <span class="text"><%= list_own_title -%></span>
+    </h2>
+
+    <p>
+      This page shows the properties of your EMMA account and system
+      information about account activity,
+      including a listing of your EMMA submissions,
+      and a listing of bulk upload submission manifests.
+    </p>
+
+    <p>
+      Items in each list are preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that item.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if edit_own -%>
+  <%= render 'help/topic/user/edit', anchor: edit_own_help, button: edit_own_btn, title:  edit_own_title %>
+<%- end -%>
+
+<%- if list_org -%>
+  <section role="region" data-part="list_org" aria-labelledby="<%= list_org_help -%>">
+
+    <h2 class="section" id="<%= list_org_help -%>">
+      <%= list_org_btn -%> <span class="text"><%= list_org_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of every user account associated with your EMMA member
+      organization.
+    </p>
+
+    <p>
+      Each user in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that EMMA user account.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if list_all -%>
+  <section role="region" data-part="list_all" aria-labelledby="<%= list_all_help -%>">
+
+    <h2 class="section" id="<%= list_all_help -%>">
+      <%= list_all_btn -%> <span class="text"><%= list_all_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of every EMMA user account.
+    </p>
+
+    <p>
+      Each user in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that EMMA user account.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if new -%>
+  <%= render 'help/topic/user/new', anchor: new_help, button: new_btn, title:  new_title %>
+<%- end -%>
+
+<%- if edit -%>
+  <%= render 'help/topic/user/edit', anchor: edit_help, button: edit_btn, title:  edit_title %>
+<%- end -%>
+
+<%- if delete -%>
+  <%= render 'help/topic/user/delete', anchor: delete_help, button: delete_btn, title:  delete_title %>
+<%- end -%>

@@ -1,0 +1,57 @@
+<%# app/views/help/topic/user/_delete.html.erb -%>
+<%-
+  # Delete EMMA user.
+
+  view_debug(__FILE__)
+
+  anchor ||= nil
+  button ||= nil
+  title  ||= nil
+  raise unless anchor && button && title
+
+  administrator     = current_user&.administrator?
+  manager           = current_user&.manager? && !administrator
+
+  panel_opener    = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+  delete_submit   = help_button_for(AccountDecorator, :delete,  :submit)
+  delete_cancel   = help_button_for(AccountDecorator, :delete,  :cancel)
+
+-%>
+
+<section role="region" data-part="user_delete" aria-labelledby="<%= anchor -%>">
+
+  <h2 class="section" id="<%= anchor -%>">
+    <%= button-%> <span class="text"><%= title-%></span>
+  </h2>
+
+  <p>
+    If you arrive at this page through the sub-menu <%= button -%> button,
+    you will be presented with a drop-down list of
+    <%- if administrator -%>
+      all EMMA user accounts.
+    <%- else -%>
+      user accounts belonging to your EMMA member organization.
+    <%- end -%>
+    Select a user account from the list to proceed.
+  </p>
+
+  <p>
+    To verify that this is really the user you want to remove, you may
+    click on <%= panel_opener -%> to display its details.
+  </p>
+
+  <p>
+    If you decide that you do not want to remove this user, you may click
+    <%= delete_cancel -%>
+    (which will attempt to return you to the previous page),
+    or simply go to any other page in EMMA.
+  </p>
+
+  <p>
+    If you are certain that you want to remove this user, then click
+    <%= delete_submit -%>.
+    This will removes the account from the associated EMMA member
+    organization.
+  </p>
+
+</section>

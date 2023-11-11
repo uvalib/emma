@@ -35,10 +35,8 @@
   #type_closed      = help_image(:search_type_closed)
   type_opened       = help_image(:search_type_opened)
 
-  panel_closer      = PanelHelper::PANEL_CLOSER_LABEL
-  panel_closer      = help_span(panel_closer, class: 'toggle')
-  panel_opener      = PanelHelper::PANEL_OPENER_LABEL
-  panel_opener      = help_span(panel_opener, class: 'toggle')
+  panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+  panel_closer      = help_toggle(PanelHelper::PANEL_CLOSER_LABEL)
 
   drop_down         = help_image(:drop_down)
   single_select     = help_image(:one_selection)
@@ -102,7 +100,7 @@
   </ul>
 </nav>
 
-<section role="region" aria-labelledby="search_overview_help">
+<section role="region" data-part="overview" aria-labelledby="search_overview_help">
 
   <h2 class="section" id="search_overview_help"><%= summary_title -%></h2>
 

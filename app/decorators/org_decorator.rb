@@ -161,6 +161,17 @@ class OrgDecorator < BaseDecorator
       context[:options] || Org::Options.new
     end
 
+    # help_topic
+    #
+    # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
+    # @param [Symbol, nil] topic      Default: #model_type.
+    #
+    # @return [Array<Symbol>]
+    #
+    def help_topic(sub_topic = nil, topic = nil)
+      super(sub_topic, (topic || :organization))
+    end
+
   end
 
   # Definitions available to both this decorator class and the related

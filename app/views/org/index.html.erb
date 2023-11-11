@@ -8,7 +8,7 @@
   dec     = OrgsDecorator.new(list, **context)
   list    = dec.object
 
-  help  ||= nil # dec.help_topic
+  help  ||= dec.help_topic
   title ||= nil
   name  ||= nil
   title   = dec.page_title(title, name: name)

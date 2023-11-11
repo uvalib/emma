@@ -62,8 +62,6 @@ class HelpController < ApplicationController
   # @see HelpHelper#help_topics
   #
   def index
-    err = nil
-    # noinspection RubyMismatchedArgumentType
     return redirect_to help_path(id: @topic) if @topic.present?
     __log_activity
     __debug_route
@@ -74,9 +72,7 @@ class HelpController < ApplicationController
       format.xml  { render_xml  index_values }
     end
   rescue => error
-    err = error
-  ensure
-    failure_status(err)
+    failure_status(error)
   end
 
   # === GET /help/:topic
@@ -89,16 +85,15 @@ class HelpController < ApplicationController
   def show
     __log_activity
     __debug_route
-    err = ('No topic specified' if @topic.nil?)
+    raise 'No topic specified'          if @topic.blank?
+    raise "#{@topic}: not a help topic" if HELP_ENTRY[@topic].blank?
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
   rescue => error
-    err = error
-  ensure
-    failure_status(err)
+    failure_status(error)
   end
 
 end

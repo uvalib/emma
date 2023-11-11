@@ -4,78 +4,112 @@
 
   view_debug(__FILE__)
 
-  overview_title    = 'OVERVIEW'
-  index_title       = 'Show your past and current uploads'
-  new_title         = 'Submitting a new item to EMMA'
-  edit_title        = 'Updating an existing EMMA entry'
-  delete_title      = 'Removing an existing EMMA entry'
-
-  index_label       = t('emma.upload.index.label')
-  new_label         = t('emma.upload.new.label')
-  edit_label        = t('emma.upload.edit.label')
-  delete_label      = t('emma.upload.delete.label')
-
-  btn_opt           = { class: 'control-button' }
-
-  index_btn         = help_span(index_label,  **btn_opt)
-  new_btn           = help_span(new_label,    **btn_opt)
-  edit_btn          = help_span(edit_label,   **btn_opt)
-  delete_btn        = help_span(delete_label, **btn_opt)
-
-  nav_menu_item     = t('emma.upload.label')
-  actions_menu      = 'Upload Actions'
-  action_icons      = 'action short-cuts'
+  topic             = t('emma.help.topic.upload')
+  administrator     = current_user&.administrator?
+ #manager           = current_user&.manager? && !administrator
 
   signed_in         = help_jump('signed in', :sign_in)
 
-  edit_prop         = UploadDecorator.icon_definition(:edit)
-  edit_tip          = edit_prop[:tooltip]
-  edit_name         = edit_prop[:spoken]
-  edit_opt          = { title: edit_name, class: 'icon edit' }
-  edit_icon         = symbol_icon(edit_prop[:icon].to_s)
-  edit_icon         = html_span(edit_icon, **edit_opt)
+  overview          =  topic[:overview]
+  list_all          = (topic[:list_all] if administrator)
+  list_org          = (topic[:list_org] unless administrator)
+  list_own          =  topic[:list_own]
+  new               =  topic[:new]
+  edit              =  topic[:edit]
+  delete            =  topic[:delete]
+  admin             = (topic[:admin]    if administrator)
 
-  del_prop          = UploadDecorator.icon_definition(:delete)
-  del_tip           = del_prop[:tooltip]
-  del_name          = del_prop[:spoken]
-  del_opt           = { title: del_name, class: 'icon delete' }
-  del_icon          = symbol_icon(del_prop[:icon].to_s)
-  del_icon          = html_span(del_icon, **del_opt)
+  overview_title    =  overview[:title]
+  list_all_title    = (list_all[:title] if list_all)
+  list_org_title    = (list_org[:title] if list_org)
+  list_own_title    = (list_own[:title] if list_own)
+  new_title         = (new[:title]      if new)
+  edit_title        = (edit[:title]     if edit)
+  delete_title      = (delete[:title]   if delete)
+  admin_title       = (admin[:title]    if admin)
 
-  panel_opener      = PanelHelper::PANEL_OPENER_LABEL
-  panel_opener      = help_span(panel_opener, class: 'toggle')
+  list_all_label    = (t('emma.upload.list_all.label') if list_all)
+  list_org_label    = (t('emma.upload.list_org.label') if list_org)
+  list_own_label    = (t('emma.upload.list_own.label') if list_own)
+  new_label         = (t('emma.upload.new.label')      if new)
+  edit_label        = (t('emma.upload.edit.label')     if edit)
+  delete_label      = (t('emma.upload.delete.label')   if delete)
+  admin_label       = (t('emma.upload.admin.label')    if admin)
 
-  button_for = -> (action, button, **opt) {
-    cfg = UploadDecorator.form_actions.dig(action, button).presence
-    lbl = cfg&.dig(:if_enabled, :label) || cfg&.dig(:label)
-    help_span(lbl, **btn_opt, **opt) if lbl
-  }
+  list_all_btn      = (help_button(list_all_label)  if list_all)
+  list_org_btn      = (help_button(list_org_label)  if list_org)
+  list_own_btn      = (help_button(list_own_label)  if list_own)
+  new_btn           = (help_button(new_label)       if new)
+  edit_btn          = (help_button(edit_label)      if edit)
+  delete_btn        = (help_button(delete_label)    if delete)
+  admin_btn         = (help_button(admin_label)     if admin)
 
-  create_select     = button_for.(:new,     :select)
-  create_submit     = button_for.(:new,     :submit)
-  create_cancel     = button_for.(:new,     :cancel)
+  # Nav action menu
 
-  edit_select       = button_for.(:edit,    :select)
-  edit_submit       = button_for.(:edit,    :submit)
-  edit_cancel       = button_for.(:edit,    :cancel)
+  nav_menu_item     = t('emma.upload.label')
+  action_menu_label = 'Upload Actions'
+  action_menu       = list_all ? :upload_actions_admin : :upload_actions
+  action_menu       = help_image(action_menu)
 
-  delete_submit     = button_for.(:delete,  :submit)
-  delete_cancel     = button_for.(:delete,  :cancel)
+  # Shortcut icons
 
-  menu_opt          = { class: 'wide' }
-  source_menu       = help_image(:source_menu,            **menu_opt)
-  source_menu_open  = help_image(:source_menu_open,       **menu_opt)
-  source_menu_repo  = help_image(:source_menu_repo,       **menu_opt)
-  source_selected   = help_image(:source_selected_fields, **menu_opt)
+  shortcuts_icons   = 'action short-cuts'
+  icons             = help_shortcut_icons(UploadDecorator)
+  show_icon, show_tip = icons[:show].values_at(  :label, :value)
+  edit_icon, edit_tip = icons[:edit].values_at(  :label, :value)
+  del_icon,  del_tip  = icons[:delete].values_at(:label, :value)
+
+  # Form controls
+
+  panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+
+  create_select     = help_button_for(UploadDecorator, :new,    :select)
+  create_submit     = help_button_for(UploadDecorator, :new,    :submit)
+  create_cancel     = help_button_for(UploadDecorator, :new,    :cancel)
+
+  edit_select       = help_button_for(UploadDecorator, :edit,   :select)
+  edit_submit       = help_button_for(UploadDecorator, :edit,   :submit)
+  edit_cancel       = help_button_for(UploadDecorator, :edit,   :cancel)
+
+  delete_submit     = help_button_for(UploadDecorator, :delete, :submit)
+  delete_cancel     = help_button_for(UploadDecorator, :delete, :cancel)
+
+  source_menu       = help_image(:source_menu,            class: 'wide')
+  source_menu_open  = help_image(:source_menu_open,       class: 'wide')
+  source_menu_repo  = help_image(:source_menu_repo,       class: 'wide')
+  source_selected   = help_image(:source_selected_fields, class: 'wide')
+
+  # Submission steps
 
   prepare_step      = 'Prepare a file for upload'
   select_step       = 'Select a file to upload'
-  repository_step   = 'Indicate the Source Repository'
+  repo_step         = 'Indicate the Source Repository'
   metadata_step     = 'Provide metadata'
   submit_step       = 'Complete the submission'
 
-  # noinspection RubyUnusedLocalVariable
-  upload_step = 0
+  # Page anchors
+
+  overview_help     = 'upload_overview_help'
+  list_all_help     = 'upload_list_all_help'
+  list_org_help     = 'upload_list_org_help'
+  list_own_help     = 'upload_list_own_help'
+  new_help          = 'upload_new_help'
+  edit_help         = 'upload_edit_help'
+  delete_help       = 'upload_delete_help'
+  admin_help        = 'upload_admin_help'
+  actions_menu_help = 'upload_actions_menu_help'
+  shortcuts_help    = 'upload_shortcuts_help'
+
+  prepare_step_help = 'upload_prepare_step_help'
+  select_step_help  = 'upload_select_step_help'
+  repo_step_help    = 'upload_repo_step_help'
+  metadata_step_help= 'upload_metadata_step_help'
+  metadata_filters  = 'upload_metadata_filters_help'
+  show_all_fields   = 'upload_show_all_fields_help'
+  show_completed    = 'upload_show_completed_fields_help'
+  show_invalid      = 'upload_show_invalid_fields_help'
+  submit_step_help  = 'upload_submit_step_help'
+  repository_detail = 'upload_repository_detail_help'
 
 -%>
 
@@ -89,17 +123,34 @@
     Topics in this section:
   </div>
   <ul>
-    <li><a href="#upload_overview_help"><%= overview_title -%></a></li>
-    <li><a href="#upload_index_help"><%=    index_title    -%></a></li>
-    <li><a href="#upload_new_help"><%=      new_title      -%></a></li>
-    <li><a href="#upload_edit_help"><%=     edit_title     -%></a></li>
-    <li><a href="#upload_delete_help"><%=   delete_title   -%></a></li>
+    <li><a href="#<%= overview_help -%>"><%=   overview_title -%></a></li>
+    <%- if list_own -%>
+      <li><a href="#<%= list_own_help -%>"><%= list_own_title -%></a></li>
+    <%- end -%>
+    <%- if list_org -%>
+      <li><a href="#<%= list_org_help -%>"><%= list_org_title -%></a></li>
+    <%- end -%>
+    <%- if list_all -%>
+      <li><a href="#<%= list_all_help -%>"><%= list_all_title -%></a></li>
+    <%- end -%>
+    <%- if new -%>
+      <li><a href="#<%= new_help -%>"><%=      new_title      -%></a></li>
+    <%- end -%>
+    <%- if edit -%>
+      <li><a href="#<%= edit_help -%>"><%=     edit_title     -%></a></li>
+    <%- end -%>
+    <%- if delete -%>
+      <li><a href="#<%= delete_help -%>"><%=   delete_title   -%></a></li>
+    <%- end -%>
+    <%- if admin -%>
+      <li><a href="#<%= admin_help -%>"><%=    admin_title    -%></a></li>
+    <%- end -%>
   </ul>
 </nav>
 
-<section role="region" aria-labelledby="upload_overview_help">
+<section role="region" data-part="overview" aria-labelledby="<%= overview_help -%>">
 
-  <h2 class="section" id="upload_overview_help">
+  <h2 class="section" id="<%= overview_help -%>">
     <span class="text"><%= overview_title -%></span>
   </h2>
 
@@ -110,36 +161,60 @@
     been previously uploaded to EMMA under your account.
   </p>
 
-  <h3 class="sub-section" id="upload_actions_menu_help">
-    <%= actions_menu -%> menu
+  <h3 class="sub-section" id="<%= actions_menu_help -%>">
+    <%= action_menu_label -%> menu
   </h3>
 
   <p>
     The available functions are displayed at the top of each
     <%= nav_menu_item -%> page as a set of buttons:
-    <%= help_image(:upload_actions) %>
+    <%= action_menu %>
   </p>
 
   <div class="choices">
-    <div class="label">
-      <a href="#upload_index_help"><%= index_label -%></a>
-    </div>
-    <div class="value"><%= index_title -%></div>
 
-    <div class="label">
-      <a href="#upload_new_help"><%= new_label -%></a>
-    </div>
-    <div class="value"><%= new_title -%></div>
+    <%- if list_own -%>
+      <div class="label">
+        <a href="#<%= list_own_help -%>"><%= list_own_label -%></a>
+      </div>
+      <div class="value"><%= list_own_title -%></div>
+    <%- end -%>
 
-    <div class="label">
-      <a href="#upload_edit_help"><%= edit_label -%></a>
-    </div>
-    <div class="value"><%= edit_title -%></div>
+    <%- if list_org -%>
+      <div class="label">
+        <a href="#<%= list_org_help -%>"><%= list_org_label -%></a>
+      </div>
+      <div class="value"><%= list_org_title -%></div>
+    <%- end -%>
 
-    <div class="label">
-      <a href="#upload_delete_help"><%= delete_label -%></a>
-    </div>
-    <div class="value"><%= delete_title -%></div>
+    <%- if list_all -%>
+      <div class="label">
+        <a href="#<%= list_all_help -%>"><%= list_all_label -%></a>
+      </div>
+      <div class="value"><%= list_all_title -%></div>
+    <%- end -%>
+
+    <%- if new -%>
+      <div class="label">
+        <a href="#<%= new_help -%>"><%= new_label -%></a>
+      </div>
+      <div class="value"><%= new_title -%></div>
+    <%- end -%>
+
+    <%- if edit -%>
+      <div class="label">
+        <a href="#<%= edit_help -%>"><%= edit_label -%></a>
+      </div>
+      <div class="value"><%= edit_title -%></div>
+    <%- end -%>
+
+    <%- if delete -%>
+      <div class="label">
+        <a href="#<%= delete_help -%>"><%= delete_label -%></a>
+      </div>
+      <div class="value"><%= delete_title -%></div>
+    <%- end -%>
+
   </div>
 
   <p>
@@ -152,8 +227,8 @@
     determining if this volume will match their needs.
   </p>
 
-  <h3 class="sub-section" id="upload_shortcuts_menu_help">
-    <%= action_icons.titleize -%>
+  <h3 class="sub-section" id="<%= shortcuts_help -%>">
+    <%= shortcuts_icons.titleize -%>
   </h3>
 
   <p>
@@ -163,6 +238,8 @@
   </p>
 
   <div class="choices">
+    <div class="label"><%=  show_icon -%></div>
+    <div class="value">“<%= show_tip  -%>”</div>
     <div class="label"><%=  edit_icon -%></div>
     <div class="value">“<%= edit_tip  -%>”</div>
     <div class="label"><%=  del_icon  -%></div>
@@ -170,346 +247,463 @@
   </div>
 
   <p>
+    Clicking on <%= show_icon -%> will redirect your browser to a new screen
+    that allows you to view the associated item.
+    You may use your browser "back" button to return to this screen.
+  </p>
+
+  <p>
     Clicking on <%= edit_icon -%> will redirect your browser to a new screen
-    that allows you to modify the associated entry.
+    that allows you to modify the associated item.
   </p>
 
   <p>
     Clicking on <%= del_icon -%> will redirect your browser to a new screen
-    that will prompt you to delete the associated entry.
+    that will prompt you to delete the associated item.
+  </p>
+
+  <p>
+    If your account is not authorized to perform a particular operation on an
+    item, associated icon will not be displayed for that item.
   </p>
 
 </section>
 
-<section role="region" aria-labelledby="upload_index_help">
+<%- if list_own -%>
+  <section role="region" data-part="list_own" aria-labelledby="<%= list_own_help -%>">
 
-  <h2 class="section" id="upload_index_help">
-    <%= index_btn -%> <span class="text"><%= index_title -%></span>
-  </h2>
-
-  <p>
-    This is a listing of your completed and pending EMMA submissions.
-  </p>
-
-  <p>
-    Each entry in the list is preceded by
-    <a href="#upload_shortcuts_menu_help"><%= action_icons -%></a>
-    for working with that entry.
-  </p>
-
-</section>
-
-<section role="region" aria-labelledby="upload_new_help">
-
-  <h2 class="section" id="upload_new_help">
-    <%= new_btn -%> <span class="text"><%= new_title -%></span>
-  </h2>
-
-  <p>
-    EMMA requires that you provide both the book’s content
-    (a single file or multiple files contained within a single *.zip file)
-    and metadata about the book that will benefit other EMMA users in
-    determining if this volume will match their needs.
-  </p>
-
-  <h3 class="sub-section" id="upload_new_prepare_help">
-    Step <%= upload_step += 1 -%>: <%= prepare_step -%>
-  </h3>
-
-  <p>
-    Currently remediated content must be submitted as a single file.
-    If your content is comprised of multiple individual files, you will need
-    to combine them into a single ZIP archive in order to submit them as a
-    single EMMA entry.
-  </p>
-
-  <h3 class="sub-section" id="upload_new_select_help">
-    Step <%= upload_step += 1 -%>: <%= select_step -%>
-  </h3>
-
-  <p>
-    Press the
-    <%= create_select -%>
-    button to open your browser's file dialog.
-    Navigate to find the file on your workstation, and select it to begin the
-    provisional upload of the file.
-  </p>
-
-  <p>
-    As this is occurring, an orange progress bar will appear just above the
-    buttons.
-    When file processed successfully, EMMA will display the file name.
-  </p>
-
-  <p>
-    (If the progress bar completes but no file name is listed,
-    then a problem encountered in processing the file.
-    You may wish to contact <%= contact_email -%>.)
-  </p>
-
-  <p>
-    This step gives EMMA an opportunity to verify the integrity of the file.
-    For certain file formats, metadata may be discovered that will be used to
-    "pre-populate" the submission form.
-  </p>
-
-  <h3 class="sub-section" id="upload_repository_help">
-    Step <%= upload_step += 1 -%>: <%= repository_step -%>
-  </h3>
-
-  <%= source_menu %>
-
-  <p>
-    Select "EMMA" if your file was an original scan, or is derived from a
-    source other than one of EMMA's participating partner repositories.
-  </p>
-
-  <p>
-    If your remediated file is based on a file from a participating partner
-    repository, you must indicate the EMMA entry associated with that original
-    file.
-  </p>
-
-  <%= source_menu_open %>
-
-  <p>
-    When you select the source partner repository, you will be prompted for the
-    identity of the original entry.
-    For most items the standard identifier (ISBN, OCLC, etc.) is sufficient to
-    locate the proper EMMA entry.
-    (For items without a standard identifier, the full title should work.)
-  </p>
-
-  <%= source_menu_repo %>
-
-  <p>
-    After the original item has been identified, you'll see that your
-    submission has "inherited" the bibliographic metadata of the original item:
-  </p>
-
-  <%= source_selected %>
-
-  <p>
-    These fields appear differently as a reminder that the bibliographic
-    metadata (title-level cataloging information) is not subject to change for
-    items derived from EMMA entries supplied by partner repositories.
-  </p>
-
-  <h3 class="sub-section" id="upload_new_metadata_help">
-    Step <%= upload_step += 1 -%>: <%= metadata_step -%>
-  </h3>
-
-  <p>
-    In order to make your remediation efforts findable in EMMA, information
-    must be supplied to identify the source material and the nature of the
-    file being uploaded.
-    These include:
-  </p>
-
-  <ul>
-    <li>Bibliographic metadata, such as Title, Creator (Author), Language,
-      Format, and Type.
-    </li>
-    <li>Remediation data, which will help other EMMA users know whether the
-      entire volume was remediated, specify which chapters were remediated,
-      and/or indicate whether the volume was born accessible.
-    </li>
-    <li>Source Repository, where you will indicate the source of the original
-      file that was remediated.
-      This may include the EMMA repository itself,
-      one of the partner repositories (ACE or Internet Archive),
-      or one of the other choices in the dropdown list.
-    </li>
-  </ul>
-
-  <section role="region" aria-labelledby="upload_metadata_filters_help">
-
-    <h3 class="sub-section" id="upload_metadata_filters_help">
-      Metadata field filters
-    </h3>
+    <h2 class="section" id="<%= list_own_help -%>">
+      <%= list_own_btn -%> <span class="text"><%= list_own_title -%></span>
+    </h2>
 
     <p>
-      EMMA defines a significant number of metadata fields, so there are three
-      radio buttons to provide different views of the data entered so far:
-    </p>
-
-    <%# ------------------------------------------------------------------- -%>
-
-    <h4 class="sub-section" id="upload_new_all_fields_help">
-      All Fields
-    </h4>
-
-    <p>
-      The initial selection is unfiltered, showing form fields for all of the
-      metadata types defined by EMMA.
-    </p>
-
-    <%# ------------------------------------------------------------------- -%>
-
-    <h4 class="sub-section" id="upload_new_data_fields_help">
-      Completed fields
-    </h4>
-
-    <p>
-      Select this option to see only the fields that have been filled, either
-      with data extracted from the file, or with values that have been entered
-      manually.
+      This is a listing of your completed and pending EMMA submissions.
     </p>
 
     <p>
-      This filter option also shows required fields that have not been
-      supplied.
-    </p>
-
-    <%# ------------------------------------------------------------------- -%>
-
-    <h4 class="sub-section" id="upload_new_invalid_fields_help">
-      Incomplete Fields
-    </h4>
-
-    <p>
-      Select this option to see only required fields that have not been
-      supplied and/or optional fields which do not have acceptable values.
-    </p>
-
-    <p>
-      If this filter option shows no fields, then the entry should be ready to
-      be submitted.
+      Each entry in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that entry.
     </p>
 
   </section>
+<%- end -%>
 
-  <%# --------------------------------------------------------------------- -%>
+<%- if list_org -%>
+  <section role="region" data-part="list_org" aria-labelledby="<%= list_org_help -%>">
 
-  <h3 class="sub-section" id="upload_new_submit_help">
-    Step <%= upload_step += 1 -%>: <%= submit_step -%>
-  </h3>
+    <h2 class="section" id="<%= list_org_help -%>">
+      <%= list_org_btn -%> <span class="text"><%= list_org_title -%></span>
+    </h2>
 
-  <p>
-    When all required fields have been supplied, and all fields with data are
-    valid, then the
-    <%= create_submit -%>
-    button will be enabled.
-    Press it to complete the submission.
-  </p>
+    <p>
+      This is a listing of completed and pending EMMA submissions made by
+      members of your organization.
+    </p>
 
-  <p>
-    If you decide that you do not want to submit the item, you may click
-    <%= create_cancel -%>
-    (which will attempt to return you to the previous page),
-    or simply go to any other page in EMMA.
-  </p>
+    <p>
+      Each entry in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that entry.
+    </p>
 
-  <%# --------------------------------------------------------------------- -%>
+  </section>
+<%- end -%>
 
-  <h3 class="sub-section" id="upload_repository_detail_help">
-    EMMA-native versus partner repository submissions
-  </h3>
+<%- if list_all -%>
+  <section role="region" data-part="list_all" aria-labelledby="<%= list_all_help -%>">
 
-  <p>
-    "EMMA-native" submissions (where "EMMA" is selected as the "Source
-    Repository") will be entered into the EMMA index immediately after
-    completion.
-    This means that your submission can start appearing in EMMA search results
-    almost immediately.
-  </p>
+    <h2 class="section" id="<%= list_all_help -%>">
+      <%= list_all_btn -%> <span class="text"><%= list_all_title -%></span>
+    </h2>
 
-  <p>
-    The remediation of a file derived from the holdings of a partner repository
-    must be submitted back to  is submitted back to that repository for
-    inclusion in their collection.
-    Depending the policy of the specific partner repository, there may be some
-    delay (hours or days) before the new partner repository item associated
-    with your submission starts to appear in EMMA search results.
-  </p>
+    <p>
+      This is a listing of all completed and pending EMMA submissions.
+    </p>
 
-</section>
+    <p>
+      Each entry in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that entry.
+    </p>
 
-<section role="region" aria-labelledby="upload_edit_help">
+  </section>
+<%- end -%>
 
-  <h2 class="section" id="upload_edit_help">
-    <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
-  </h2>
+<%- if new -%>
+  <section role="region" data-part="new_upload" aria-labelledby="<%= new_help -%>">
 
-  <p>
-    If you arrive at this page through the <%= actions_menu -%>
-    <strong>Change</strong> button,
-    you will be presented with a drop-down list of your previous submissions.
-    Select an entry from the list to proceed.
-  </p>
+    <%- upload_step = 0 -%>
 
-  <p>
-    The form for modifying an existing entry is very similar to the form for
-    creating a new entry, except that the initial field filter is
-    "Completed fields".
-  </p>
+    <h2 class="section" id="<%= new_help -%>">
+      <%= new_btn -%> <span class="text"><%= new_title -%></span>
+    </h2>
 
-  <p>
-    You may modify metadata associated with your submission by reviewing and
-    modifying the metadata fields
-    (refer to
-    "<a href="#upload_new_help"><%= new_title -%></a>"
-    above for a description of how the fields are organized).
-  </p>
+    <p>
+      EMMA requires that you provide both the book’s content
+      (a single file or multiple files contained within a single *.zip file)
+      and metadata about the book that will benefit other EMMA users in
+      determining if this volume will match their needs.
+    </p>
 
-  <p>
-    You may also replace the file that was originally submitted with a new
-    file.
-    To do this, select the
-    <%= edit_select -%>
-    button.
-    Refer to
-    "<a href="#upload_new_select_help"><%= select_step -%></a>"
-    above for a description of the remainder of this process.
-  </p>
+    <h3 class="sub-section" id="<%= prepare_step_help -%>">
+      Step <%= upload_step += 1 -%>: <%= prepare_step -%>
+    </h3>
 
-  <p>
-    When the changes have been validated, the
-    <%= edit_submit -%>
-    button will be enabled.
-  </p>
+    <p>
+      Currently remediated content must be submitted as a single file.
+      If your content is comprised of multiple individual files, you will need
+      to combine them into a single ZIP archive in order to submit them as a
+      single EMMA entry.
+    </p>
 
-  <p>
-    If you decide that you do not want to commit to the changes, you may click
-    <%= edit_cancel -%>
-    (which will attempt to return you to the previous page),
-    or simply go to any other page in EMMA.
-  </p>
+    <h3 class="sub-section" id="<%= select_step_help -%>">
+      Step <%= upload_step += 1 -%>: <%= select_step -%>
+    </h3>
 
-</section>
+    <p>
+      Press the
+      <%= create_select -%>
+      button to open your browser's file dialog.
+      Navigate to find the file on your workstation, and select it to begin the
+      provisional upload of the file.
+    </p>
 
-<section role="region" aria-labelledby="upload_delete_help">
+    <p>
+      As this is occurring, an orange progress bar will appear just above the
+      buttons.
+      When file processed successfully, EMMA will display the file name.
+    </p>
 
-  <h2 class="section" id="upload_delete_help">
-    <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
-  </h2>
+    <p>
+      (If the progress bar completes but no file name is listed,
+      then a problem encountered in processing the file.
+      You may wish to contact <%= contact_email -%>.)
+    </p>
 
-  <p>
-    If you arrive at this page through the <%= actions_menu -%>
-    <strong>Remove</strong> button,
-    you will be presented with a drop-down list of your previous submissions.
-    Select an entry from the list to proceed.
-  </p>
+    <p>
+      This step gives EMMA an opportunity to verify the integrity of the file.
+      For certain file formats, metadata may be discovered that will be used to
+      "pre-populate" the submission form.
+    </p>
 
-  <p>
-    To verify that this is really the item you want to delete, you may click on
-    <%= panel_opener -%> to display the item's metadata.
-  </p>
+    <h3 class="sub-section" id="<%= repo_step_help -%>">
+      Step <%= upload_step += 1 -%>: <%= repo_step -%>
+    </h3>
 
-  <p>
-    If you decide that you do not want to delete the item, you may click
-    <%= delete_cancel -%>
-    (which will attempt to return you to the previous page),
-    or simply go to any other page in EMMA.
-  </p>
+    <%= source_menu %>
 
-  <p>
-    If you are certain that you want to delete the item, then click
-    <%= delete_submit -%>.
-    This will removes the remediated content file and the associated entry from
-    the EMMA Unified Index.
-  </p>
+    <p>
+      Select "EMMA" if your file was an original scan, or is derived from a
+      source other than one of EMMA's participating partner repositories.
+    </p>
 
-</section>
+    <p>
+      If your remediated file is based on a file from a participating partner
+      repository, you must indicate the EMMA entry associated with that
+      original file.
+    </p>
 
-<%= Log.debug { "#{__FILE__}: upload steps: #{upload_step - 1}" } -%>
+    <%= source_menu_open %>
+
+    <p>
+      When you select the source partner repository, you will be prompted for
+      the identity of the original entry.
+      For most items the standard identifier (ISBN, OCLC, etc.) is sufficient
+      to locate the proper EMMA entry.
+      (For items without a standard identifier, the full title should work.)
+    </p>
+
+    <%= source_menu_repo %>
+
+    <p>
+      After the original item has been identified, you'll see that your
+      submission has "inherited" the bibliographic metadata of the original
+      item:
+    </p>
+
+    <%= source_selected %>
+
+    <p>
+      These fields appear differently as a reminder that the bibliographic
+      metadata (title-level cataloging information) is not subject to change
+      for items derived from EMMA entries supplied by partner repositories.
+    </p>
+
+    <h3 class="sub-section" id="<%= metadata_step_help -%>">
+      Step <%= upload_step += 1 -%>: <%= metadata_step -%>
+    </h3>
+
+    <p>
+      In order to make your remediation efforts findable in EMMA, information
+      must be supplied to identify the source material and the nature of the
+      file being uploaded.
+      These include:
+    </p>
+
+    <ul>
+      <li>Bibliographic metadata, such as Title, Creator (Author), Language,
+        Format, and Type.
+      </li>
+      <li>Remediation data, which will help other EMMA users know whether the
+        entire volume was remediated, specify which chapters were remediated,
+        and/or indicate whether the volume was born accessible.
+      </li>
+      <li>Source Repository, where you will indicate the source of the original
+        file that was remediated.
+        This may include the EMMA repository itself,
+        one of the partner repositories (ACE or Internet Archive),
+        or one of the other choices in the dropdown list.
+      </li>
+    </ul>
+
+    <section role="region" aria-labelledby="<%= metadata_filters -%>">
+
+      <h3 class="sub-section" id="<%= metadata_filters -%>">
+        Metadata field filters
+      </h3>
+
+      <p>
+        EMMA defines a significant number of metadata fields, so there are
+        three radio buttons to provide different views of the data entered so
+        far:
+      </p>
+
+      <%# ----------------------------------------------------------------- -%>
+
+      <h4 class="sub-section" id="<%= show_all_fields -%>">
+        All Fields
+      </h4>
+
+      <p>
+        The initial selection is unfiltered, showing form fields for all of the
+        metadata types defined by EMMA.
+      </p>
+
+      <%# ----------------------------------------------------------------- -%>
+
+      <h4 class="sub-section" id="<%= show_completed -%>">
+        Completed fields
+      </h4>
+
+      <p>
+        Select this option to see only the fields that have been filled, either
+        with data extracted from the file, or with values that have been
+        entered manually.
+      </p>
+
+      <p>
+        This filter option also shows required fields that have not been
+        supplied.
+      </p>
+
+      <%# ----------------------------------------------------------------- -%>
+
+      <h4 class="sub-section" id="<%= show_invalid -%>">
+        Incomplete Fields
+      </h4>
+
+      <p>
+        Select this option to see only required fields that have not been
+        supplied and/or optional fields which do not have acceptable values.
+      </p>
+
+      <p>
+        If this filter option shows no fields, then the entry should be ready
+        to be submitted.
+      </p>
+
+    </section>
+
+    <%# ------------------------------------------------------------------- -%>
+
+    <h3 class="sub-section" id="<%= submit_step_help -%>">
+      Step <%= upload_step += 1 -%>: <%= submit_step -%>
+    </h3>
+
+    <p>
+      When all required fields have been supplied, and all fields with data are
+      valid, then the <%= create_submit -%> button will be enabled.
+      Press it to complete the submission.
+    </p>
+
+    <p>
+      If you decide that you do not want to submit the item, you may click
+      <%= create_cancel -%>
+      (which will attempt to return you to the previous page),
+      or simply go to any other page in EMMA.
+    </p>
+
+    <%# ------------------------------------------------------------------- -%>
+
+    <h3 class="sub-section" id="<%= repository_detail -%>">
+      EMMA-native versus partner repository submissions
+    </h3>
+
+    <p>
+      "EMMA-native" submissions (where "EMMA" is selected as the "Source
+      Repository") will be entered into the EMMA index immediately after
+      completion.
+      This means that your submission can start appearing in EMMA search
+      results almost immediately.
+    </p>
+
+    <p>
+      The remediation of a file derived from the holdings of a partner
+      repository must be submitted back to  is submitted back to that
+      repository for inclusion in their collection.
+      Depending the policy of the specific partner repository, there may be
+      some delay (hours or days) before the new partner repository item
+      associated with your submission starts to appear in EMMA search results.
+    </p>
+
+    <%= Log.debug { "#{__FILE__}: upload steps: #{upload_step - 1}" } -%>
+
+  </section>
+<%- end -%>
+
+<%- if edit -%>
+  <section role="region" data-part="edit_upload" aria-labelledby="<%= edit_help -%>">
+
+    <h2 class="section" id="<%= edit_help -%>">
+      <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= edit_btn -%> button,
+      you will be presented with a drop-down list of your previous submissions.
+      Select an entry from the list to proceed.
+    </p>
+
+    <p>
+      The form for modifying an existing entry is very similar to the form for
+      creating a new entry, except that the initial field filter is
+      "Completed fields".
+    </p>
+
+    <p>
+      You may modify metadata associated with your submission by reviewing and
+      modifying the metadata fields
+      (refer to
+      "<a href="#<%= new_help -%>"><%= new_title -%></a>"
+      above for a description of how the fields are organized).
+    </p>
+
+    <p>
+      You may also replace the file that was originally submitted with a new
+      file.
+      To do this, select the <%= edit_select -%> button.
+      Refer to "<a href="#<%= select_step_help -%>"><%= select_step -%></a>"
+      above for a description of the remainder of this process.
+    </p>
+
+    <p>
+      When the changes have been validated, the <%= edit_submit -%> button will
+      be enabled.
+    </p>
+
+    <p>
+      If you decide that you do not want to commit to the changes, you may
+      click <%= edit_cancel -%>
+      (which will attempt to return you to the previous page),
+      or simply go to any other page in EMMA.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if delete -%>
+  <section role="region" data-part="delete_upload" aria-labelledby="<%= delete_help -%>">
+
+    <h2 class="section" id="<%= delete_help -%>">
+      <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= delete_btn -%> button,
+      you will be presented with a drop-down list of your previous submissions.
+      Select an entry from the list to proceed.
+    </p>
+
+    <p>
+      To verify that this is really the item you want to delete, you may click
+      on <%= panel_opener -%> to display the item's metadata.
+    </p>
+
+    <p>
+      If you decide that you do not want to delete the item, you may click
+      <%= delete_cancel -%>
+      (which will attempt to return you to the previous page),
+      or simply go to any other page in EMMA.
+    </p>
+
+    <p>
+      If you are certain that you want to delete the item, then click
+      <%= delete_submit -%>.
+      This will removes the remediated content file and the associated entry
+      from the EMMA Unified Index.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if admin -%>
+  <section role="region" data-part="admin_upload" aria-labelledby="<%= admin_help -%>">
+
+    <h2 class="section" id="<%= admin_help -%>">
+      <%= admin_btn -%> <span class="text"><%= admin_title -%></span>
+    </h2>
+
+    <p>
+      This is an administrator-only interface to the Amazon Web Service (AWS)
+      "buckets" used for storage of uploaded content files associated with EMMA
+      submissions and for drop-off of submissions to be held by partner
+      repositories.
+      (The latter use case may become defunct.)
+    </p>
+
+    <p>
+      For each AWS bucket a table of its most recent entries is displayed along
+      with an "AWS" button which links to the AWS web interface for that
+      bucket.
+    </p>
+
+    <h3>emma-storage-production</h3>
+
+    <p>
+      This is location for remediated content files associated with EMMA
+      entries uploaded through the production EMMA service.
+      These files are part of the EMMA repository and remain in perpetuity
+      (unless the associated EMMA entry is intentionally removed).
+    </p>
+
+    <h3>emma-storage-staging</h3>
+
+    <p>
+      This is location for remediated content files associated with EMMA
+      entries uploaded through the test/staging EMMA service.
+      Because these files are not associated with actual entries in the EMMA
+      repository they are subject to removal without notice.
+    </p>
+
+    <h3>emma-ia-queue-production</h3>
+
+    <p>
+      This is a drop-off location for remediated variants of entries that
+      originated with Internet Archive (or ACE/Scholar's Portal).
+      An independent task periodically checks this directory, and any
+      submissions (pairs of files that differ only by extension) found there
+      are pushed to archive.org then removed from the bucket.
+    </p>
+
+    <h3>emma-ia-queue-staging</h3>
+
+    <p>
+      This is a test drop-off location for remediated variants of entries that
+      originated with Internet Archive (or ACE/Scholar's Portal).
+    </p>
+
+  </section>
+<%- end -%>

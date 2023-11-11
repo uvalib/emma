@@ -67,7 +67,27 @@ module HelpHelper
   #
   # @return [Hash{Symbol=>*}]
   #
-  def help_topic: ((Symbol|String) topic) -> symHash
+  def help_topic_entry: ((Symbol|String) topic) -> symHash
+
+  # Normalize help topic and sub_topic.
+  #
+  # @param [Symbol, String]      topic
+  # @param [Symbol, String, nil] sub_topic
+  #
+  # @return [Array<(Symbol,Symbol)>]
+  # @return [Array<(Symbol,nil)>]
+  #
+  def help_normalize
+    : ((Symbol|String) topic, (Symbol|String) sub_topic) -> [Symbol, Symbol]
+    | ((Symbol|String) topic, ?nil            sub_topic) -> [Symbol, nil]
+
+  # Normalize a help topic.
+  #
+  # @param [Symbol, String, nil] topic
+  #
+  # @return [Symbol, nil]
+  #
+  def help_topic: ((Symbol|String|nil) topic) -> (Symbol | nil)
 
   # Help topic names.
   #
@@ -193,6 +213,105 @@ module HelpHelper
   # @see config/locales/controllers/help.en.yml
   #
   def help_container: (?item: Symbol|nil, ?wrap: bool, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render a toggle for use on help pages.
+  #
+  # @param [String] label
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_toggle: (String label, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a button for use on help pages.
+  #
+  # @param [String] label
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_button: (String label, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a button for use on help pages.
+  #
+  # @param [BaseDecorator, Class] decorator
+  # @param [Symbol]               action
+  # @param [Symbol]               button
+  # @param [Hash]                 opt
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def help_button_for: (BaseDecorator|Class decorator, actions: Symbol, button: Symbol, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Generate data about action shortcut icons for use on help pages.
+  #
+  # @param [BaseDecorator, Class] decorator
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  #
+  def help_shortcut_icons: (BaseDecorator|Class decorator, ?actions: symArray) -> Hash[Symbol, Hash[Symbol,untyped]]
+
+  class FieldEntry
+    include HtmlHelper
+
+    # @return [Symbol]
+    attr_reader field: Symbol
+
+    # @return [ActiveSupport::SafeBuffer]
+    attr_reader label: ActiveSupport::SafeBuffer
+
+    # @return [String]
+    attr_reader name: String
+
+    # @return [ActiveSupport::SafeBuffer, nil]
+    attr_reader text: ActiveSupport::SafeBuffer | nil
+
+    # @return [ActiveSupport::SafeBuffer, nil]
+    attr_reader note: ActiveSupport::SafeBuffer | nil
+
+    # @return [String]
+    attr_reader id: String
+
+    # Create a new instance.
+    #
+    # @param [*]    base
+    # @param [Hash] cfg
+    #
+    def initialize: (?base: untyped, **untyped cfg) -> void
+
+    # Find an HTML or plain test value.
+    #
+    # @param [Hash]          cfg
+    # @param [Array<Symbol>] names
+    #
+    # @return [String, nil]
+    #
+    def text_value: (symHash cfg, *Symbol names) -> (String | nil)
+  end
+
+  # help_field_entries
+  #
+  # @param [Symbol, String, Class, Model, *] model
+  # @param [Array<Symbol>]                   names
+  # @param [*]                               base
+  #
+  # @return [Hash{Symbol=>FieldEntry}]
+  #
+  def help_field_entries: (untyped model, *Symbol names, ?base: untyped) -> Hash[Symbol,FieldEntry]
+
+  # A help entry for a model field description.
+  #
+  # @param [Symbol]                   fld
+  # @param [Hash{Symbol=>FieldEntry}] fields
+  # @param [String]                   css     Characteristic CSS class/selector
+  # @param [Hash]                     opt
+  #
+  # @yield [entry] The enclosed content for the entry.
+  # @yieldparam [FieldEntry] entry  Values related to the field.
+  #
+  def help_field: (Symbol fld, fields: Hash[Symbol,FieldEntry], ?css: String, **untyped opt) { (FieldEntry entry) -> untyped } -> ActiveSupport::SafeBuffer
 
   private
 

@@ -7,7 +7,7 @@
   item  ||= @item || Org.new
   dec     = OrgDecorator.new(item, **context)
 
-  help  ||= nil # dec.help_topic
+  help  ||= dec.help_topic
   title ||= nil
   name  ||= nil
   title   = dec.page_title(title, name: name)

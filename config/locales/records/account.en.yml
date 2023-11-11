@@ -37,9 +37,6 @@ en:
           min:          1
           max:          1
           label:        'Organization'
-          notes:        |
-            For EMMA accounts that are authenticated remotely, this must match
-            the account name of the remote authentication provider.
           type:         !ruby/symbol Org
 
         role:
@@ -68,9 +65,9 @@ en:
           max:          1
           label:        'First Name'
           tooltip:      |
-            Optional "given" name of the person associated with the EMMA user
+            Optional "given name" of the person associated with the EMMA user
             account
-          notes:        |
+          internal_notes: |
             For remotely-authenticated accounts, if this value is not supplied
             when the account is created, it will be filled automatically at the
             user's first sign-in if it is supplied by the remote provider.
@@ -81,9 +78,9 @@ en:
           max:          1
           label:        'Last Name'
           tooltip:      |
-            Optional "family" name of the person associated with the EMMA user
+            Optional "family name" of the person associated with the EMMA user
             account
-          notes:        |
+          internal_notes: |
             For remotely-authenticated accounts, if this value is not supplied
             when the account is created, it will be filled automatically at the
             user's first sign-in if it is supplied by the remote provider.
@@ -96,6 +93,14 @@ en:
           tooltip:      |
             Preferred email address for the person associated with the EMMA
             user account
+          notes_html:   |
+            <p>
+              If this field is not given <strong>Account ID</strong> is assumed
+              to be the email address.
+            </p>
+            <p>
+              <strong>(NOTE: This feature is not yet implemented.)</strong>
+            </p>
           type:         text
 
         phone:
@@ -253,7 +258,9 @@ en:
         encrypted_password:
           min:          0
           max:          1
-          label:        'Encrypted Password'
+          label:        'Password'
+          tooltip:      'The password for the local EMMA account.'
+          notes:        'Unused when using a remote authentication provider'
           type:         text
           origin:       system
           role:         developer

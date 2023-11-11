@@ -4,69 +4,80 @@
 
   view_debug(__FILE__)
 
-  overview_title    = 'OVERVIEW'
-  index_title       = 'Show Your Bulk Upload Manifests'
-  new_title         = 'Creating a New Bulk Upload Manifest'
-  edit_title        = 'Updating a Bulk Upload Manifest'
-  delete_title      = 'Removing a Bulk Upload Manifest'
-  remit_title       = 'Submit a Bulk Upload Manifest'
-  grid_title        = 'Working With Bulk Upload Manifests'
-  submission_title  = 'Bulk Upload Submissions'
-
-  index_label       = t('emma.manifest.index.label')
-  new_label         = t('emma.manifest.new.label')
-  edit_label        = t('emma.manifest.edit.label')
-  delete_label      = t('emma.manifest.delete.label')
-  remit_label       = t('emma.manifest.remit.label')
-
-  btn_opt           = { class: 'control-button' }
-
-  index_btn         = help_span(index_label,  **btn_opt)
-  new_btn           = help_span(new_label,    **btn_opt)
-  edit_btn          = help_span(edit_label,   **btn_opt)
-  delete_btn        = help_span(delete_label, **btn_opt)
-  remit_btn         = help_span(remit_label,  **btn_opt)
-
-  nav_menu_item     = t('emma.manifest.label')
-  actions_menu      = 'Manifest Actions'
-  action_icons      = 'action short-cuts'
+  topic             = t('emma.help.topic.manifest')
+  administrator     = current_user&.administrator?
+  manager           = current_user&.manager? && !administrator
 
   signed_in         = help_jump('signed in', :sign_in)
 
-  edit_prop         = ManifestDecorator.icon_definition(:edit)
-  edit_tip          = edit_prop[:tooltip]
-  edit_name         = edit_prop[:spoken]
-  edit_opt          = { title: edit_name, class: 'icon edit' }
-  edit_icon         = symbol_icon(edit_prop[:icon].to_s)
-  edit_icon         = html_span(edit_icon, **edit_opt)
+  overview          =  topic[:overview]
+  grid              =  topic[:grid]
+  submission        =  topic[:submission]
+  list_all          = (topic[:list_all]   if administrator)
+  list_org          = (topic[:list_org]   if manager)
+  list_own          =  topic[:list_own]
+  new               =  topic[:new]
+  edit              =  topic[:edit]
+  delete            =  topic[:delete]
+  remit             =  topic[:remit]
 
-  del_prop          = ManifestDecorator.icon_definition(:delete)
-  del_tip           = del_prop[:tooltip]
-  del_name          = del_prop[:spoken]
-  del_opt           = { title: del_name, class: 'icon delete' }
-  del_icon          = symbol_icon(del_prop[:icon].to_s)
-  del_icon          = html_span(del_icon, **del_opt)
+  overview_title    =  overview[:title]
+  grid_title        =  grid[:title]
+  submission_title  =  submission[:title]
+  list_all_title    = (list_all[:title] if list_all)
+  list_org_title    = (list_org[:title] if list_org)
+  list_own_title    = (list_own[:title] if list_own)
+  new_title         = (new[:title]      if new)
+  edit_title        = (edit[:title]     if edit)
+  delete_title      = (delete[:title]   if delete)
+  remit_title       = (remit[:title]    if remit)
 
-  panel_opener      = PanelHelper::PANEL_OPENER_LABEL
-  panel_opener      = help_span(panel_opener, class: 'toggle')
+  list_all_label    = (t('emma.manifest.list_all.label') if list_all)
+  list_org_label    = (t('emma.manifest.list_org.label') if list_org)
+  list_own_label    = (t('emma.manifest.list_own.label') if list_own)
+  new_label         = (t('emma.manifest.new.label')      if new)
+  edit_label        = (t('emma.manifest.edit.label')     if edit)
+  delete_label      = (t('emma.manifest.delete.label')   if delete)
+  remit_label       = (t('emma.manifest.remit.label')    if remit)
 
-  button_for = -> (action, button, **opt) {
-    cfg = ManifestDecorator.form_actions.dig(action, button).presence
-    lbl = cfg&.dig(:if_enabled, :label) || cfg&.dig(:label)
-    help_span(lbl, **btn_opt, **opt) if lbl
-  }
+  list_all_btn      = (help_button(list_all_label)  if list_all)
+  list_org_btn      = (help_button(list_org_label)  if list_org)
+  list_own_btn      = (help_button(list_own_label)  if list_own)
+  new_btn           = (help_button(new_label)       if new)
+  edit_btn          = (help_button(edit_label)      if edit)
+  delete_btn        = (help_button(delete_label)    if delete)
+  remit_btn         = (help_button(remit_label)     if remit)
 
-  grid_save         = button_for.(:edit,    :submit)
- #grid_cancel       = button_for.(:edit,    :cancel)
-  grid_import       = button_for.(:edit,    :import)
-  grid_submit       = button_for.(:edit,    :submission)
+  # Nav action menu
 
-  delete_submit     = button_for.(:delete,  :submit)
-  delete_cancel     = button_for.(:delete,  :cancel)
+  nav_menu_item     = t('emma.manifest.label')
+  action_menu_label = 'Manifest Actions'
+  action_menu       = list_all ? :manifest_actions_admin : :manifest_actions
+  action_menu       = help_image(action_menu)
 
-  remit_start       = button_for.(:remit,   :start)
-  remit_files       = button_for.(:remit,   :files)
-  remit_results     = button_for.(:remit,   :results)
+  # Shortcut icons
+
+  shortcuts_icons   = 'action short-cuts'
+  icons             = help_shortcut_icons(ManifestDecorator)
+  show_icon, show_tip = icons[:show].values_at(  :label, :value)
+  edit_icon, edit_tip = icons[:edit].values_at(  :label, :value)
+  del_icon,  del_tip  = icons[:delete].values_at(:label, :value)
+
+  # Form controls
+
+  panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+
+  grid_save         = help_button_for(ManifestDecorator, :edit,   :submit)
+ #grid_cancel       = help_button_for(ManifestDecorator, :edit,   :cancel)
+  grid_import       = help_button_for(ManifestDecorator, :edit,   :import)
+  grid_submit       = help_button_for(ManifestDecorator, :edit,   :submission)
+
+  delete_submit     = help_button_for(ManifestDecorator, :delete, :submit)
+  delete_cancel     = help_button_for(ManifestDecorator, :delete, :cancel)
+
+  remit_start       = help_button_for(ManifestDecorator, :remit,  :start)
+  remit_files       = help_button_for(ManifestDecorator, :remit,  :files)
+  remit_results     = help_button_for(ManifestDecorator, :remit,  :results)
 
   manifest_title    = help_image(:manifest_title,       class: 'wide')
   title_edit        = help_image(:manifest_title_edit,  class: 'wide')
@@ -78,26 +89,57 @@
   not_started       = help_image(:not_started,          class: 'no-border')
   succeeded         = help_image(:succeeded,            class: 'no-border')
 
-  row_import        = 'CSV File Import'
-  row_edit          = 'Manual Item Creation'
+  row_import        = grid[:import]
+  row_edit          = grid[:edit]
 
-  data_step         = 'Validation'
-  file_step         = 'File Status'
-  upload_step       = 'Storage Status'
-  index_step        = 'Indexing Status'
-  entry_step        = 'Entry Status'
+  # Submission steps
 
-  data_column       = html_tag(:strong, data_step)
-  file_column       = html_tag(:strong, file_step)
-  upload_column     = html_tag(:strong, upload_step)
-  index_column      = html_tag(:strong, index_step)
-  entry_column      = html_tag(:strong, entry_step)
+  data_step         = submission.dig(:step, :data)
+  file_step         = submission.dig(:step, :file)
+  store_step        = submission.dig(:step, :store)
+  index_step        = submission.dig(:step, :index)
+  entry_step        = submission.dig(:step, :entry)
 
-  data_step_title   = 'Correct and Save Items'
-  file_step_title   = 'Identify Files'
-  upload_step_title = 'File Uploading and Storage'
-  index_step_title  = 'Indexing Status'
-  entry_step_title  = 'Entry Status'
+  data_column       = html_tag(:strong, data_step[:label])
+  file_column       = html_tag(:strong, file_step[:label])
+  store_column      = html_tag(:strong, store_step[:label])
+  index_column      = html_tag(:strong, index_step[:label])
+  entry_column      = html_tag(:strong, entry_step[:label])
+
+  data_step_title   = data_step[:title]
+  file_step_title   = file_step[:title]
+  store_step_title  = store_step[:title]
+  index_step_title  = index_step[:title]
+  entry_step_title  = entry_step[:title]
+
+  # Page anchors
+
+  overview_help     = 'manifest_overview_help'
+  grid_help         = 'manifest_grid_help'
+  submission_help   = 'manifest_submission_help'
+  list_all_help     = 'manifest_list_all_help'
+  list_org_help     = 'manifest_list_org_help'
+  list_own_help     = 'manifest_list_own_help'
+  new_help          = 'manifest_new_help'
+  edit_help         = 'manifest_edit_help'
+  delete_help       = 'manifest_delete_help'
+  remit_help        = 'manifest_remit_help'
+  actions_menu_help = 'manifest_actions_menu_help'
+  shortcuts_help    = 'manifest_shortcuts_help'
+
+  grid_import_help  = 'manifest_grid_import_help'
+  grid_manual_help  = 'manifest_grid_manual_help'
+  grid_title_help   = 'manifest_grid_title_help'
+  grid_next_steps   = 'manifest_grid_next_steps_help'
+
+  data_step_help    = 'manifest_data_step_help'
+  file_step_help    = 'manifest_file_step_help'
+  store_step_help   = 'manifest_store_step_help'
+  index_step_help   = 'manifest_index_step_help'
+  entry_step_help   = 'manifest_entry_step_help'
+
+  remit_items_help  = 'manifest_remit_items_help'
+  remit_start_help  = 'manifest_remit_start_help'
 
 -%>
 
@@ -111,20 +153,36 @@
     Topics in this section:
   </div>
   <ul>
-    <li><a href="#manifest_overview_help"><%=   overview_title   -%></a></li>
-    <li><a href="#manifest_grid_help"><%=       grid_title       -%></a></li>
-    <li><a href="#manifest_submission_help"><%= submission_title -%></a></li>
-    <li><a href="#manifest_index_help"><%=      index_title      -%></a></li>
-    <li><a href="#manifest_new_help"><%=        new_title        -%></a></li>
-    <li><a href="#manifest_edit_help"><%=       edit_title       -%></a></li>
-    <li><a href="#manifest_delete_help"><%=     delete_title     -%></a></li>
-    <li><a href="#manifest_remit_help"><%=      remit_title      -%></a></li>
+    <li><a href="#<%= overview_help -%>"><%=   overview_title   -%></a></li>
+    <li><a href="#<%= grid_help -%>"><%=       grid_title       -%></a></li>
+    <li><a href="#<%= submission_help -%>"><%= submission_title -%></a></li>
+    <%- if list_own -%>
+      <li><a href="#<%= list_own_help -%>"><%= list_own_title   -%></a></li>
+    <%- end -%>
+    <%- if list_org -%>
+      <li><a href="#<%= list_org_help -%>"><%= list_org_title   -%></a></li>
+    <%- end -%>
+    <%- if list_all -%>
+      <li><a href="#<%= list_all_help -%>"><%= list_all_title   -%></a></li>
+    <%- end -%>
+    <%- if new -%>
+      <li><a href="#<%= new_help -%>"><%=      new_title        -%></a></li>
+    <%- end -%>
+    <%- if edit -%>
+      <li><a href="#<%= edit_help -%>"><%=     edit_title       -%></a></li>
+    <%- end -%>
+    <%- if delete -%>
+      <li><a href="#<%= delete_help -%>"><%=   delete_title     -%></a></li>
+    <%- end -%>
+    <%- if remit -%>
+      <li><a href="#<%= remit_help -%>"><%=    remit_title      -%></a></li>
+    <%- end -%>
   </ul>
 </nav>
 
-<section role="region" aria-labelledby="manifest_overview_help">
+<section role="region" data-part="overview" aria-labelledby="<%= overview_help -%>">
 
-  <h2 class="section" id="manifest_overview_help">
+  <h2 class="section" id="<%= overview_help -%>">
     <span class="text"><%= overview_title -%></span>
   </h2>
 
@@ -139,7 +197,7 @@
 
   <p>
     The first phase,
-    <a href="#manifest_new_help">creating and updating the manifest</a>,
+    <a href="#<%= new_help -%>">creating and updating the manifest</a>,
     supports the ability to assemble items for submission one at a time or in
     batches, in one sitting or in multiple sessions.
     In this phase the system validates your items as you enter them and will
@@ -148,7 +206,7 @@
 
   <p>
     The second phase,
-    <a href="#manifest_remit_help">manifest submission</a>,
+    <a href="#<%= remit_help -%>">manifest submission</a>,
     supports unattended operation after providing file location information.
     Submitting only pre-validated manifest items ensures that all submitted
     items have the potential to become valid EMMA entries.
@@ -162,41 +220,67 @@
     been previously created under your account.
   </p>
 
-  <h3 class="sub-section" id="manifest_actions_menu_help">
-    <%= actions_menu -%> menu
+  <h3 class="sub-section" id="<%= actions_menu_help -%>">
+    <%= action_menu_label -%> menu
   </h3>
 
   <p>
     The available functions are displayed at the top of each
     <%= nav_menu_item -%> page as a set of buttons:
-    <%= help_image(:manifest_actions) %>
+    <%= action_menu %>
   </p>
 
   <div class="choices">
-    <div class="label">
-      <a href="#manifest_index_help"><%= index_label -%></a>
-    </div>
-    <div class="value"><%= index_title -%></div>
 
-    <div class="label">
-      <a href="#manifest_new_help"><%= new_label -%></a>
-    </div>
-    <div class="value"><%= new_title -%></div>
+    <%- if list_own -%>
+      <div class="label">
+        <a href="#<%= list_own_help -%>"><%= list_own_label -%></a>
+      </div>
+      <div class="value"><%= list_own_title -%></div>
+    <%- end -%>
 
-    <div class="label">
-      <a href="#manifest_edit_help"><%= edit_label -%></a>
-    </div>
-    <div class="value"><%= edit_title -%></div>
+    <%- if list_org -%>
+      <div class="label">
+        <a href="#<%= list_org_help -%>"><%= list_org_label -%></a>
+      </div>
+      <div class="value"><%= list_org_title -%></div>
+    <%- end -%>
 
-    <div class="label">
-      <a href="#manifest_delete_help"><%= delete_label -%></a>
-    </div>
-    <div class="value"><%= delete_title -%></div>
+    <%- if list_all -%>
+      <div class="label">
+        <a href="#<%= list_all_help -%>"><%= list_all_label -%></a>
+      </div>
+      <div class="value"><%= list_all_title -%></div>
+    <%- end -%>
 
-    <div class="label">
-      <a href="#manifest_remit_help"><%= remit_label -%></a>
-    </div>
-    <div class="value"><%= remit_title -%></div>
+    <%- if new -%>
+      <div class="label">
+        <a href="#<%= new_help -%>"><%= new_label -%></a>
+      </div>
+      <div class="value"><%= new_title -%></div>
+    <%- end -%>
+
+    <%- if edit -%>
+      <div class="label">
+        <a href="#<%= edit_help -%>"><%= edit_label -%></a>
+      </div>
+      <div class="value"><%= edit_title -%></div>
+    <%- end -%>
+
+    <%- if delete -%>
+      <div class="label">
+        <a href="#<%= delete_help -%>"><%= delete_label -%></a>
+      </div>
+      <div class="value"><%= delete_title -%></div>
+    <%- end -%>
+
+    <%- if remit -%>
+      <div class="label">
+        <a href="#<%= remit_help -%>"><%= remit_label -%></a>
+      </div>
+      <div class="value"><%= remit_title -%></div>
+    <%- end -%>
+
   </div>
 
   <p>
@@ -207,8 +291,8 @@
     validated and saved can be submitted all together.
   </p>
 
-  <h3 class="sub-section" id="manifest_shortcuts_menu_help">
-    <%= action_icons.titleize -%>
+  <h3 class="sub-section" id="<%= shortcuts_help -%>">
+    <%= shortcuts_icons.titleize -%>
   </h3>
 
   <p>
@@ -218,6 +302,8 @@
   </p>
 
   <div class="choices">
+    <div class="label"><%=  show_icon -%></div>
+    <div class="value">“<%= show_tip  -%>”</div>
     <div class="label"><%=  edit_icon -%></div>
     <div class="value">“<%= edit_tip  -%>”</div>
     <div class="label"><%=  del_icon  -%></div>
@@ -225,451 +311,527 @@
   </div>
 
   <p>
+    Clicking on <%= show_icon -%> will redirect your browser to a new screen
+    that allows you to view the associated item.
+    You may use your browser "back" button to return to this screen.
+  </p>
+
+  <p>
     Clicking on <%= edit_icon -%> will redirect your browser to a new screen
-    that allows you to modify that manifest and its contents.
+    that allows you to modify the associated item.
   </p>
 
   <p>
     Clicking on <%= del_icon -%> will redirect your browser to a new screen
-    that will prompt you to delete that manifest and its contents.
+    that will prompt you to delete the associated item.
+  </p>
+
+  <p>
+    If your account is not authorized to perform a particular operation on an
+    item, associated icon will not be displayed for that item.
   </p>
 
 </section>
 
-<section role="region" aria-labelledby="manifest_index_help">
+<%- if list_own -%>
+  <section role="region" data-part="list_own" aria-labelledby="<%= list_own_help -%>">
 
-  <h2 class="section" id="manifest_index_help">
-    <%= index_btn -%> <span class="text"><%= index_title -%></span>
-  </h2>
+    <h2 class="section" id="<%= list_own_help -%>">
+      <%= list_own_btn -%> <span class="text"><%= list_own_title -%></span>
+    </h2>
 
-  <p>
-    This is a listing of all EMMA bulk upload manifests you have created in
-    descending time order, starting with the one most recently created or
-    modified.
-  </p>
+    <p>
+      This is a listing of all EMMA bulk upload manifests you have created in
+      descending time order, starting with the one most recently created or
+      modified.
+    </p>
 
-  <p>
-    Each manifest in the list is preceded by
-    <a href="#manifest_shortcuts_menu_help"><%= action_icons -%></a>
-    for working with that manifest.
-  </p>
+    <p>
+      Each manifest in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that manifest.
+    </p>
 
-</section>
+  </section>
+<%- end -%>
 
-<section role="region" aria-labelledby="manifest_new_help">
+<%- if list_org -%>
+  <section role="region" data-part="list_org" aria-labelledby="<%= list_org_help -%>">
 
-  <h2 class="section" id="manifest_new_help">
-    <%= new_btn -%> <span class="text"><%= new_title -%></span>
-  </h2>
+    <h2 class="section" id="<%= list_org_help -%>">
+      <%= list_org_btn -%> <span class="text"><%= list_org_title -%></span>
+    </h2>
 
-  <p>
-    The interface for creating a new manifest is identical to modifying an
-    existing manifest.
-    Continue to
-    "<a href="#manifest_grid_help"><%= grid_title -%></a>"
-    for help on adding and modifying manifest items.
-  </p>
+    <p>
+      This is a listing of all EMMA bulk upload manifests created by members of
+      your organization in descending time order, starting with the one most
+      recently created or modified.
+    </p>
 
-</section>
+    <p>
+      Each manifest in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that manifest.
+    </p>
 
-<section role="region" aria-labelledby="manifest_grid_help">
+  </section>
+<%- end -%>
 
-  <h2 class="section" id="manifest_grid_help">
-    <span class="text"><%= grid_title -%></span>
-  </h2>
+<%- if list_all -%>
+  <section role="region" data-part="list_all" aria-labelledby="<%= list_all_help -%>">
 
-  <p>
-    A bulk submission manifest is a collection of items that can be submitted
-    together to create multiple EMMA entries.
-    A manifest is presented as an interactive grid with a row for each distinct
-    remediated item to be submitted to EMMA and where each column represents a
-    metadata field for that item
-    (including a reference to the remediated file).
-  </p>
+    <h2 class="section" id="<%= list_all_help -%>">
+      <%= list_all_btn -%> <span class="text"><%= list_all_title -%></span>
+    </h2>
 
-  <p>
-    Manifest items can be provided in several ways:
-  </p>
+    <p>
+      This is a listing of all EMMA bulk upload manifests
+      in descending time order, starting with the one most recently created or
+      modified.
+    </p>
 
-  <ul>
-    <li><a href="#manifest_grid_import_help"><%= row_import -%></a></li>
-    <li><a href="#manifest_grid_manual_help"><%= row_edit -%></a></li>
-  </ul>
+    <p>
+      Each manifest in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that manifest.
+    </p>
 
-  <h3 class="sub-section" id="manifest_grid_title_help">
-    Manifest title
-  </h3>
+  </section>
+<%- end -%>
 
-  <p>
-    When a manifest is started, a unique title is generated as a way to
-    distinguish it from others you may have created.
-    You can choose to keep this title or replace it clicking the Edit button
-    next to it, which copies it into to an edit control where some or all of
-    the characters can be replaced.
-  </p>
+<%- if new -%>
+  <section role="region" data-part="new_manifest" aria-labelledby="<%= new_help -%>">
 
-  <%= manifest_title %>
+    <h2 class="section" id="<%= new_help -%>">
+      <%= new_btn -%> <span class="text"><%= new_title -%></span>
+    </h2>
 
-  <%= title_edit %>
+    <p>
+      The interface for creating a new manifest is identical to modifying an
+      existing manifest.
+      Continue to
+      "<a href="#<%= grid_help -%>"><%= grid_title -%></a>"
+      for help on adding and modifying manifest items.
+    </p>
 
-  <p>
-    If you're satisfied, the Change button (or Enter key) will update the
-    title;
-    otherwise the Cancel button (or ESC key) will keep the title as it was.
-    The title can be changed whenever you like.
-    (Take care to provide a name that will let you distinguish it from other
-    manifests you may have created.)
-  </p>
+  </section>
+<%- end -%>
 
-  <h3 class="sub-section" id="manifest_grid_import_help">
-    <%= row_import -%>
-  </h3>
+<%- if new || edit -%>
+  <section role="region" data-part="new_manifest,edit_manifest" aria-labelledby="<%= grid_help -%>">
 
-  <p>
-    EMMA can fill manifest grid rows from the rows of an imported CSV
-    ("comma-separated variable") file that has been exported from a spreadsheet
-    (e.g. Microsoft Excel, or Google Sheets).
-  </p>
+    <h2 class="section" id="<%= grid_help -%>">
+      <span class="text"><%= grid_title -%></span>
+    </h2>
 
-  <p>
-    To begin, click the <%= grid_import -%> button which will open a
-    "file chooser" for CSV files.
-  </p>
+    <p>
+      A bulk submission manifest is a collection of items that can be submitted
+      together to create multiple EMMA entries.
+      A manifest is presented as an interactive grid with a row for each
+      distinct remediated item to be submitted to EMMA and where each column
+      represents a metadata field for that item (including a reference to the
+      remediated file).
+    </p>
 
-  <p>
-    TODO...
-  </p>
+    <p>
+      Manifest items can be provided in several ways:
+    </p>
 
-  <p>
-    Once rows have been imported, any missing or problematic values need to be
-    resolved manually in order to ensure that the new items have sufficient
-    information to allow them to be automatically submitted.
-  </p>
+    <ul>
+      <li><a href="#<%= grid_import_help -%>"><%= row_import -%></a></li>
+      <li><a href="#<%= grid_manual_help -%>"><%= row_edit -%></a></li>
+    </ul>
 
-  <h3 class="sub-section" id="manifest_grid_manual_help">
-    <%= row_edit -%>
-  </h3>
+    <h3 class="sub-section" id="<%= grid_title_help -%>">
+      Manifest title
+    </h3>
 
-  <p>
-    To create a new row at any point in the grid click the + (plus sign) and a
-    new empty row will be inserted after that row.
-  </p>
+    <p>
+      When a manifest is started, a unique title is generated as a way to
+      distinguish it from others you may have created.
+      You can choose to keep this title or replace it clicking the Edit button
+      next to it, which copies it into to an edit control where some or all of
+      the characters can be replaced.
+    </p>
 
-  <p>
-    TODO...
-  </p>
+    <%= manifest_title %>
 
-  <p>
-    Once your changes, additions, and deletions are as you like them, click the
-    <%= grid_save -%> button to commit them.
-    Uncommitted manifest items will be visible on the submission page but they
-    aren't eligible for submission.
-  </p>
+    <%= title_edit %>
 
-  <h3 class="sub-section" id="manifest_grid_next_steps_help">
-    Next Steps
-  </h3>
+    <p>
+      If you're satisfied, the Change button (or Enter key) will update the
+      title;
+      otherwise the Cancel button (or ESC key) will keep the title as it was.
+      The title can be changed whenever you like.
+      (Take care to provide a name that will let you distinguish it from other
+      manifests you may have created.)
+    </p>
 
-  <p>
-    After saving your manifest, you might be ready to submit the items it
-    contains.
-    In this case you may click the <%= grid_submit -%> button on that page to
-    submit that manifest.
-    Once your changes, additions, and deletions are as you like them, click the
-    <%= grid_save -%> button to commit them.
-    Uncommitted manifest items will be visible on the submission page but they
-    aren't eligible for submission.
-  </p>
+    <h3 class="sub-section" id="<%= grid_import_help -%>">
+      <%= row_import -%>
+    </h3>
 
-</section>
+    <p>
+      EMMA can fill manifest grid rows from the rows of an imported CSV
+      ("comma-separated variable") file that has been exported from a
+      spreadsheet (e.g. Microsoft Excel, or Google Sheets).
+    </p>
 
-<section role="region" aria-labelledby="manifest_edit_help">
+    <p>
+      To begin, click the <%= grid_import -%> button which will open a
+      "file chooser" for CSV files.
+    </p>
 
-  <h2 class="section" id="manifest_edit_help">
-    <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
-  </h2>
+    <p>
+      TODO...
+    </p>
 
-  <p>
-    If you arrive at this page through the <%= actions_menu -%>
-    <strong>Change</strong> button,
-    you will be presented with a drop-down list of your manifests in descending
-    time order, starting with the one most recently created or modified.
-    Select a manifest from the list to proceed.
-  </p>
+    <p>
+      Once rows have been imported, any missing or problematic values need to
+      be resolved manually in order to ensure that the new items have
+      sufficient information to allow them to be automatically submitted.
+    </p>
 
-  <p>
-    The interface for editing an existing manifest is identical to creating a
-    new manifest.
-    Continue to
-    "<a href="#manifest_grid_help"><%= grid_title -%></a>"
-    for help on adding and modifying manifest items.
-  </p>
+    <h3 class="sub-section" id="<%= grid_manual_help -%>">
+      <%= row_edit -%>
+    </h3>
 
-</section>
+    <p>
+      To create a new row at any point in the grid click the + (plus sign) and
+      a new empty row will be inserted after that row.
+    </p>
 
-<section role="region" aria-labelledby="manifest_delete_help">
+    <p>
+      TODO...
+    </p>
 
-  <h2 class="section" id="manifest_delete_help">
-    <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
-  </h2>
+    <p>
+      Once your changes, additions, and deletions are as you like them, click
+      the <%= grid_save -%> button to commit them.
+      Uncommitted manifest items will be visible on the submission page but
+      they aren't eligible for submission.
+    </p>
 
-  <p>
-    If you arrive at this page through the <%= actions_menu -%>
-    <strong>Remove</strong> button,
-    you will be presented with a drop-down list of your manifests in descending
-    time order, starting with the one most recently created or modified.
-    Select a manifest from the list to proceed.
-  </p>
+    <h3 class="sub-section" id="<%= grid_next_steps -%>">
+      Next Steps
+    </h3>
 
-  <p>
-    To verify that this is really the manifest you want to delete, you may
-    click on <%= panel_opener -%> to display its details.
-  </p>
+    <p>
+      After saving your manifest, you might be ready to submit the items it
+      contains.
+      In this case you may click the <%= grid_submit -%> button on that page to
+      submit that manifest.
+      Once your changes, additions, and deletions are as you like them, click
+      the <%= grid_save -%> button to commit them.
+      Uncommitted manifest items will be visible on the submission page but
+      they aren't eligible for submission.
+    </p>
 
-  <p>
-    If you decide that you do not want to delete the manifest, you may click
-    <%= delete_cancel -%>
-    (which will attempt to return you to the previous page),
-    or simply go to any other page in EMMA.
-  </p>
+  </section>
+<%- end -%>
 
-  <p>
-    If you are certain that you want to delete the manifest, then click
-    <%= delete_submit -%>.
-    This will removes the manifest and its contents from your list.
-  </p>
+<%- if edit -%>
+  <section role="region" data-part="edit_manifest" aria-labelledby="<%= edit_help -%>">
 
-</section>
+    <h2 class="section" id="<%= edit_help -%>">
+      <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
+    </h2>
 
-<section role="region" aria-labelledby="manifest_remit_help">
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= edit_btn -%> button,
+      you will be presented with a drop-down list of your manifests in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a manifest from the list to proceed.
+    </p>
 
-  <h2 class="section" id="manifest_remit_help">
-    <%= remit_btn -%> <span class="text"><%= remit_title -%></span>
-  </h2>
+    <p>
+      The interface for editing an existing manifest is identical to creating a
+      new manifest.
+      Continue to
+      "<a href="#<%= grid_help -%>"><%= grid_title -%></a>"
+      for help on adding and modifying manifest items.
+    </p>
 
-  <p>
-    If you arrive at this page through the <%= actions_menu -%>
-    <strong>Submit</strong> button,
-    you will be presented with a drop-down list of your manifests in descending
-    time order, starting with the one most recently created or modified.
-    Select a manifest from the list to proceed.
-  </p>
+  </section>
+<%- end -%>
 
-</section>
+<%- if delete -%>
+  <section role="region" data-part="delete_manifest" aria-labelledby="<%= delete_help -%>">
 
-<section role="region" aria-labelledby="manifest_submission_help">
+    <h2 class="section" id="<%= delete_help -%>">
+      <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
+    </h2>
 
-  <h2 class="section" id="manifest_submission_help">
-    <%= submission_title -%>
-  </h2>
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= delete_btn -%> button,
+      you will be presented with a drop-down list of your manifests in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a manifest from the list to proceed.
+    </p>
 
-  <%= remit_columns %>
+    <p>
+      To verify that this is really the manifest you want to delete, you may
+      click on <%= panel_opener -%> to display its details.
+    </p>
 
-  <p>
-    On the bulk submission page you will see a table with a row for each item
-    that could be submitted and columns for each of the submission steps for
-    that item.
-  </p>
+    <p>
+      If you decide that you do not want to delete the manifest, you may click
+      <%= delete_cancel -%>
+      (which will attempt to return you to the previous page),
+      or simply go to any other page in EMMA.
+    </p>
 
-  <div class="choices">
-    <div class="label"><%= data_column -%></div>
-    <div class="value">
-      <a href="#manifest_data_step_help"><%= data_step_title -%></a>
+    <p>
+      If you are certain that you want to delete the manifest, then click
+      <%= delete_submit -%>.
+      This will removes the manifest and its contents from your list.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if remit -%>
+  <section role="region" data-part="remit_manifest" aria-labelledby="<%= remit_help -%>">
+
+    <h2 class="section" id="<%= remit_help -%>">
+      <%= remit_btn -%> <span class="text"><%= remit_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= remit_btn -%> button,
+      you will be presented with a drop-down list of your manifests in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a manifest from the list to proceed.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if remit -%>
+  <section role="region" data-part="remit_manifest" aria-labelledby="<%= submission_help -%>">
+
+    <h2 class="section" id="<%= submission_help -%>">
+      <%= submission_title -%>
+    </h2>
+
+    <%= remit_columns %>
+
+    <p>
+      On the bulk submission page you will see a table with a row for each item
+      that could be submitted and columns for each of the submission steps for
+      that item.
+    </p>
+
+    <div class="choices">
+      <div class="label"><%= data_column -%></div>
+      <div class="value">
+        <a href="#<%= data_step_help -%>"><%= data_step_title -%></a>
+      </div>
+
+      <div class="label"><%= file_column -%></div>
+      <div class="value">
+        <a href="#<%= file_step_help -%>"><%= file_step_title -%></a>
+      </div>
+
+      <div class="label"><%= store_column -%></div>
+      <div class="value">
+        <a href="#<%= store_step_help -%>"><%= store_step_title -%></a>
+      </div>
+
+      <div class="label"><%= index_column -%></div>
+      <div class="value">
+        <a href="#<%= index_step_help -%>"><%= index_step_title -%></a>
+      </div>
+
+      <div class="label"><%= entry_column -%></div>
+      <div class="value">
+        <a href="#<%= entry_step_help -%>"><%= entry_step_title -%></a>
+      </div>
     </div>
 
-    <div class="label"><%= file_column -%></div>
-    <div class="value">
-      <a href="#manifest_file_step_help"><%= file_step_title -%></a>
-    </div>
+    <p>
+      Any submission step that an item has not yet progress through will show
+      <%= not_started -%> in the associated column.
+    </p>
 
-    <div class="label"><%= upload_column -%></div>
-    <div class="value">
-      <a href="#manifest_upload_step_help"><%= upload_step_title -%></a>
-    </div>
+    <h3 class="sub-section" id="<%= data_step_help -%>">
+      <%= data_step_title -%>
+    </h3>
 
-    <div class="label"><%= index_column -%></div>
-    <div class="value">
-      <a href="#manifest_index_step_help"><%= index_step_title -%></a>
-    </div>
+    <p>
+      The <%= data_column -%> column is the first "step" of bulk submission,
+      and, generally, that step has already been performed in the creation of
+      the manifest itself.
+      Items that have been saved and validated will have <%= succeeded -%> in
+      this column,
+      and these items are ready for the next submission step.
+    </p>
 
-    <div class="label"><%= entry_column -%></div>
-    <div class="value">
-      <a href="#manifest_entry_step_help"><%= entry_step_title -%></a>
-    </div>
-  </div>
+    <p>
+      Items that have not yet been saved will have <%= unsaved -%> in this
+      column.
+      Items that have been saved but are not valid will have
+      <%= data_missing -%> in this column.
+      Before these can be part of the submission,
+      return to the manifest (via the Edit button on the status),
+      make any changes required,
+      verify that items are correct,
+      and then save the manifest.
+    </p>
 
-  <p>
-    Any submission step that an item has not yet progress through will show
-    <%= not_started -%> in the associated column.
-  </p>
+    <h3 class="sub-section" id="<%= file_step_help -%>">
+      <%= file_step_title -%>
+    </h3>
 
-  <h3 class="sub-section" id="manifest_data_step_help">
-    <%= data_step_title -%>
-  </h3>
+    <p>
+      The <%= file_column -%> column is the next "step" of bulk submission.
+      In general, all items will initially display <%= file_needed -%> in this
+      column, meaning that the name of the remediated content file given in the
+      manifest needs to be located.
+    </p>
 
-  <p>
-    The <%= data_column -%> column is the first "step" of bulk submission, and,
-    generally, that step has already been performed in the creation of the
-    manifest itself.
-    Items that have been saved and validated will have <%= succeeded -%> in
-    this column,
-    and these items are ready for the next submission step.
-  </p>
+    <p>
+      Due to security constraints (enforced by all web browsers), files can
+      only be accessed by explicit command of the user by way of the selection
+      of file(s) through the native system's "file chooser".
+      For the bulk submission page this is invoked by clicking the
+      <%= remit_files -%> button.
+    </p>
 
-  <p>
-    Items that have not yet been saved will have <%= unsaved -%> in this
-    column.
-    Items that have been saved but are not valid will have
-    <%= data_missing -%> in this column.
-    Before these can be part of the submission,
-    return to the manifest (via the Edit button on the status),
-    make any changes required,
-    verify that items are correct,
-    and then save the manifest.
-  </p>
+    <p>
+      Files are not uploaded at this point, only identified and given internal
+      system "handles" that can be used to access the file for upload when the
+      submission process is initiated.
+    </p>
 
-  <h3 class="sub-section" id="manifest_file_step_help">
-    <%= file_step_title -%>
-  </h3>
+    <p>
+      The "file chooser" that is opened is "multi-select", meaning that you can
+      specify more than one file before pressing "Open" to select them.
+      To simplify the process, you can select "all files" (in whatever way your
+      native system allows) and EMMA will locate all of the files whose names
+      match manifest items.
+      All other files will be ignored, so your remediated files can safely
+      coexist with many other files in the same folder.
+    </p>
 
-  <p>
-    The <%= file_column -%> column is the next "step" of bulk submission.
-    In general, all items will initially display <%= file_needed -%> in
-    this column, meaning that the name of the remediated content file given in
-    the manifest needs to be located.
-  </p>
+    <p>
+      Because the automated submission process cannot begin without these file
+      "handles" in place, the <%= remit_start -%> button is disabled all of the
+      needed files have been supplied.
+    </p>
 
-  <p>
-    Due to security constraints (enforced by all web browsers), files can only
-    be accessed by explicit command of the user by way of the selection of
-    file(s) through the native system's "file chooser".
-    For the bulk submission page this is invoked by clicking the
-    <%= remit_files -%> button.
-  </p>
+    <h3 class="sub-section" id="<%= remit_items_help -%>">
+      Identify items (optional)
+    </h3>
 
-  <p>
-    Files are not uploaded at this point, only identified and given internal
-    system "handles" that can be used to access the file for upload when the
-    submission process is initiated.
-  </p>
+    <p>
+      If, for some reason, you would like to limit the set of items that will
+      be part of the current bulk submission action, you can check the
+      checkboxes of just those items.
+    </p>
 
-  <p>
-    The "file chooser" that is opened is "multi-select", meaning that you can
-    specify more than one file before pressing "Open" to select them.
-    To simplify the process, you can select "all files" (in whatever way your
-    native system allows) and EMMA will locate all of the files whose names
-    match manifest items.
-    All other files will be ignored, so your remediated files can safely
-    coexist with many other files in the same folder.
-  </p>
+    <p>
+      If you want to <em>exclude</em> a few items, you can check the checkbox
+      in the header to checkmark all items and then uncheck the items to
+      exclude.
+    </p>
 
-  <p>
-    Because the automated submission process cannot begin without these file
-    "handles" in place, the <%= remit_start -%> button is disabled until files
-  </p>
+    <p>
+      If you inadvertantly have checked items and want to restore the default
+      behavior you can click the checkbox in the header to toggle the state of
+      all items' checkboxes until all are unchecked.
+      When all items are checked, the header checkbox is checked;
+      when all items are unchecked, the header checkbox is unchecked;
+      if only some items are checked, the header checkbox displays a dash (-)
+      to indicate an intermediate state.
+    </p>
 
-  <h3 class="sub-section" id="manifest_remit_items_help">
-    Identify items (optional)
-  </h3>
+    <p>
+      If no items are checked (which is the usual case), it is assumed that all
+      eligible items should be included in the bulk submission.
+    </p>
 
-  <p>
-    If, for some reason, you would like to limit the set of items that will be
-    part of the current bulk submission action, you can check the checkboxes of
-    just those items.
-  </p>
+    <h3 class="sub-section" id="<%= remit_start_help -%>">
+      Begin the bulk submission
+    </h3>
 
-  <p>
-    If you want to <em>exclude</em> a few items, you can check the checkbox in
-    the header to checkmark all items and then uncheck the items to exclude.
-  </p>
+    <p>
+      Once file references have been resolved,
+      click <%= remit_start -%> to begin the submission.
+    </p>
 
-  <p>
-    If you inadvertantly have checked items and want to restore the default
-    behavior you can click the checkbox in the header to toggle the state of
-    all items' checkboxes until all are unchecked.
-    When all items are checked, the header checkbox is checked;
-    when all items are unchecked, the header checkbox is unchecked;
-    if only some items are checked, the header checkbox displays a dash (-) to
-    indicate an intermediate state.
-  </p>
+    <p>
+      During or after the submission process you may click on the
+      <%= remit_results -%> to see a text-based summary of submitted item
+      successes (or failures).
+    </p>
 
-  <p>
-    If no items are checked (which is the usual case), it is assumed that all
-    eligible items should be included in the bulk submission.
-  </p>
+    <p>
+      At this point, the bulk submission interface does not require any
+      interaction and will automatically process batches of manifest items
+      through the remaining submission steps on their way to becoming EMMA
+      entries.
+    </p>
 
-  <h3 class="sub-section" id="manifest_remit_start_help">
-    Begin the bulk submission
-  </h3>
+    <h3 class="sub-section" id="<%= store_step_help -%>">
+      <%= store_step_title -%>
+    </h3>
 
-  <p>
-    Once file references have been resolved,
-    click <%= remit_start -%> to begin the submission.
-  </p>
+    <p>
+      There are actually two parts to this step, which is why you may see
+      status values in the <%= store_column -%> column behave a little
+      unexpectedly.
+      The first part is handled by the EMMA client that runs in your web
+      browser which performs the upload-to-cache part.
+      The second part is managed by the EMMA server.
+    </p>
 
-  <p>
-    During or after the submission process you may click on the
-    <%= remit_results -%> to see a text-based summary of submitted item
-    successes (or failures).
-  </p>
+    <p>
+      The first part is handled by the EMMA client that runs in your web
+      browser which perform the actual "upload" in groups of five.
+      As they are uploaded to cloud cache storage, their respective entry in
+      the <%= store_column -%> column will change.
+    </p>
 
-  <p>
-    At this point, the bulk submission interface does not require any
-    interaction and will automatically process batches of manifest items
-    through the remaining submission steps on their way to becoming EMMA
-    entries.
-  </p>
+    <p>
+      As files begin to arrive in cloud cache storage they will be
+      "processed in" to be moved into permanent cloud storage, which is the
+      second part of this step (handled by the EMMA server).
+      Any entry whose file fails to be moved into permanent storage (possibly
+      due to a network error or other transient problem) will not advanced.
+    </p>
 
-  <h3 class="sub-section" id="manifest_upload_step_help">
-    <%= upload_step_title -%>
-  </h3>
+    <h3 class="sub-section" id="<%= index_step_help -%>">
+      <%= index_step_title -%>
+    </h3>
 
-  <p>
-    There are actually two parts to this step, which is why you may see status
-    values in the <%= upload_column -%> column behave a little unexpectedly.
-    The first part is handled by the EMMA client that runs in your web browser
-    which performs the upload-to-cache part.
-    The second part is managed by the EMMA server to
-  </p>
+    <p>
+      Metadata for items are submitted to the "index ingest API" to create the
+      index entry associated with that item.
+      As they are transmitted to the index, their respective entry in the
+      <%= index_column -%> column will change.
+      Any entry whose metadata is not accepted by the index (possibly due to a
+      network error or other transient problem) will not advance.
+    </p>
 
-  <p>
-    The first part is handled by the EMMA client that runs in your web browser
-    which perform the actual "upload" in groups of five.
-    As they are uploaded to cloud cache storage, their respective entry in the
-    <%= upload_column -%> column will change.
-  </p>
+    <h3 class="sub-section" id="<%= entry_step_help -%>">
+      <%= entry_step_title -%>
+    </h3>
 
-  <p>
-    As files begin to arrive in cloud cache storage they will be "processed in"
-    to be moved into permanent cloud storage,
-    which is the second part of this step (handled by the EMMA server).
-    Any entry whose file fails to be moved into permanent storage (possibly due
-    to a network error or other transient problem) will not advanced.
-  </p>
+    <p>
+      EMMA repository entries are created for manifest items.
+      As associated EMMA database items are created, their respective entry in
+      the <%= entry_column -%> column will change.
+      Any manifest item that has made it through this last step is now
+      associated with an EMMA repository entry which is findable in EMMA
+      search.
+    </p>
 
-  <h3 class="sub-section" id="manifest_index_step_help">
-    <%= index_step_title -%>
-  </h3>
-
-  <p>
-    Metadata for items are submitted to the "index ingest API" to create the
-    index entry associated with that item.
-    As they are transmitted to the index, their respective entry in the
-    <%= index_column -%> column will change.
-    Any entry whose metadata is not accepted by the index (possibly due to a
-    network error or other transient problem) will not advance.
-  </p>
-
-  <h3 class="sub-section" id="manifest_entry_step_help">
-    <%= entry_step_title -%>
-  </h3>
-
-  <p>
-    EMMA repository entries are created for manifest items.
-    As associated EMMA database items are created, their respective entry in
-    the <%= entry_column -%> column will change.
-    Any manifest item that has made it through this last step is now associated
-    with an EMMA repository entry which is findable in EMMA search.
-  </p>
-
-</section>
+  </section>
+<%- end -%>

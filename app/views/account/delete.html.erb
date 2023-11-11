@@ -8,7 +8,7 @@
   dec     = AccountsDecorator.new(list, **context)
   list    = dec.object
 
-  help  ||= nil # dec.help_topic
+  help  ||= dec.help_topic
   title ||= nil
   name  ||= list.many? ? list.map(&:id).join(', ') : list.first&.label.inspect
   title   = dec.page_title(title, name: name)

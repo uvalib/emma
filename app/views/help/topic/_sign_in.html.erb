@@ -5,17 +5,19 @@
   view_debug(__FILE__)
 
   sign_in_label     = get_sessions_label(:new)
-  sign_in           = help_span(sign_in_label, class: 'sign-in-button')
-  sign_in_submit    = %Q("#{sign_in_label}")
+  main_sign_in      = help_span(sign_in_label, class: 'sign-in-button')
+  sign_in_submit    = help_span(sign_in_label,  class: 'sign-in-link')
 
   local_auth        = :local
-  local_auth_title  = get_sessions_label(:sign_in, local_auth)
-  local_sign_in     = %Q("#{local_auth_title}")
+  local_auth_label  = get_sessions_label(:sign_in, local_auth)
+  local_auth_title  = local_auth_label
+  local_sign_in     = help_span(local_auth_label,  class: 'sign-in-link')
   local_login_form  = help_image(:"#{local_auth}_login")
 
   remote_auth       = :shibboleth
-  remote_auth_title = get_sessions_label(:new, remote_auth)
-  remote_sign_in    = %Q("#{remote_auth_title}")
+  remote_auth_label = get_sessions_label(:new, remote_auth)
+  remote_auth_title = remote_auth_label
+  remote_sign_in    = help_span(remote_auth_label,  class: 'sign-in-link')
   remote_login_form = help_image(:"#{remote_auth}_login")
 
   recovery_link     = t('emma.user.passwords.new.label')
@@ -43,19 +45,19 @@
   <h2 class="section" id="remote_sign_in_help"><%= remote_auth_title -%></h2>
 
   <p>
-    Pressing the <%= sign_in -%> button at the upper-right corner of the EMMA
-    screen take you to a page of sign-in options.
+    Pressing the <%= main_sign_in -%> button at the upper-right corner of the
+    EMMA screen take you to a page of sign-in options.
     If your institution is a member of
     <a href="https://incommon.org">InCommon</a>,
-    you can use the <%= remote_sign_in -%> link to sign in to EMMA.
+    you can use the <%= remote_sign_in -%> button to sign in to EMMA.
   </p>
 
   <%= remote_login_form %>
 
   <p>
-    When you click on the <%= remote_sign_in -%> link, EMMA redirects
-    you to the InCommon page (above) which prompts you for your institution in
-    order to redirect you to your institutional authentication provider.
+    When you click on this button, EMMA redirects you to the InCommon page
+    (above) which prompts you for your institution in order to redirect you to
+    your institutional authentication provider.
   </p>
 
   <p>
@@ -72,14 +74,14 @@
 
   <p>
     If you have an EMMA account that is not tied to an institutional account,
-    you can use the <%= local_sign_in -%> link to sign in to EMMA.
+    you can use the <%= local_sign_in -%> button to sign in to EMMA.
   </p>
 
   <%= local_login_form %>
 
   <p>
-    Clicking on <%= local_sign_in -%> presents fields for entering your EMMA
-    account name and EMMA password.
+    Clicking on this button presents fields for entering your EMMA account name
+    and EMMA password.
     Fill these and click on the <%= sign_in_submit -%> button on that same line
     to sign on with your local EMMA credentials.
   </p>

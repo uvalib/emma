@@ -6,7 +6,7 @@
 
   item  ||= @topic
 
-  entry   = help_topic(item)
+  entry   = help_topic_entry(item)
   title ||= entry[:label] || t('emma.help.show.title', **entry)
   intro ||= entry[:intro] || t('emma.help.show.intro', default: '', **entry)
 
