@@ -1,0 +1,31 @@
+# View helper methods for the 'overlays' container.
+#
+module LayoutHelper::Overlay
+  include LayoutHelper::Common
+
+  # HTML elements common to all overlays.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  OVERLAY_ATTRIBUTES: symHash
+
+  # The element holding all overlays.
+  #
+  # @param [Array|String] overlays    Default: #search_in_progress.
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def overlay_container: (*(strArray|String|nil) overlays, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The overlay used to indicate that a long-running action is taking place.
+  #
+  # @param [String, nil] content      Default: .search-in-progress background.
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def search_in_progress: (?(String|nil) content, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+end
