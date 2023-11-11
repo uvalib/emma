@@ -15,8 +15,9 @@
 
 @mixin help-interior {
     > * {
-        margin:  1rem 0;
-        padding: 0;
+        margin:      1rem 0;
+        padding:     0;
+        line-height: 1.35;
 
         &:first-child { margin-top:    0; }
         &:last-child  { margin-bottom: 0; }
@@ -36,11 +37,7 @@
     }
 }
 
-//=============================================================================
-// Internal placeholder classes
-//=============================================================================
-
-%help-styles {
+@mixin help-styles {
 
     @include help-interior;
 
@@ -162,6 +159,27 @@
                 max-width: 100%;
             }
         }
+    }
+}
+
+@mixin help-panel {
+
+    @include panel;
+    @include help-styles;
+
+    margin:  1rem 0;
+    padding: 0.5rem 1rem;
+
+    @media #{$wide-screen} {
+        max-width: 50%;
+    }
+
+    @media #{$medium-width} {
+        max-width: 75%;
+    }
+
+    li {
+        margin: 0;
     }
 }
 
@@ -328,28 +346,23 @@
 // Special information box.
 .help-intro {
 
-    @include panel;
-
-    @extend %help-styles;
-
-    margin:  1rem 0;
-    padding: 0.5rem 1rem;
-
-    @media #{$wide-screen} {
-        max-width: 50%;
+    > * {
+        @include help-panel;
     }
 
-    @media #{$medium-width} {
-        max-width: 75%;
+    .help-offline {
+        font-size: large;
     }
 }
 
 // Free-standing panel containing help topic table-of-contents links.
 .help-toc {
 
-    @extend .help-intro;
-
     margin: 3rem 0;
+
+    > * {
+        @include help-panel;
+    }
 }
 
 //=============================================================================
@@ -361,7 +374,8 @@
 .help-list-item {
 
     @extend .model-list-item;
-    @extend %help-styles;
+
+    @include help-styles;
 
     @media #{$not-narrow-screen} {
         margin-left: model.$list-item-gap-x;
@@ -379,10 +393,10 @@
 .help-list {
 
     @extend .model-list;
-    @extend %help-styles;
     @extend .help-section;
 
     @include help-layout;
+    @include help-styles;
 
     margin-top: model.$list-item-gap-y;
 
@@ -410,9 +424,9 @@
 .help-container {
 
     @extend .model-container;
-    @extend %help-styles;
 
     @include help-layout;
+    @include help-styles;
 
     flex-wrap:      wrap;
     flex-direction: column;

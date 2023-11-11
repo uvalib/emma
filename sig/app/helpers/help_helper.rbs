@@ -121,15 +121,17 @@ module HelpHelper
   # A table of contents element with a link for each help topic.
   #
   # @param [Array<Symbol,Array>] topics   Passed to #help_links.
+  # @param [Symbol, String]      tag      HTML tag for outer container.
+  # @param [Array, String, nil]  before   Content before the links.
+  # @param [Array, String, nil]  after    Content after the links.
   # @param [Hash]                opt      Passed to outer #html_div except for:
   #
   # @option opt [Symbol]        :type     Passed to #help_links.
-  # @option opt [Symbol,String] :tag      Default: :ul.
-  # @option opt [Hash]          :inner    Passed to inner #html_div.
+  # @option opt [Hash]          :inner    Passed to inner link wrapper.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def help_toc: (*(Symbol|symHash|Array[Symbol|symHash]) topics, **untyped opt) -> ActiveSupport::SafeBuffer
+  def help_toc: (*(Symbol|symHash|Array[Symbol|symHash]) topics, ?tag: Symbol|String, ?before: strArray|String|nil, ?after: strArray|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render help content parts within an HTML element.
   #
@@ -137,16 +139,18 @@ module HelpHelper
   # @param [Hash]                 opt       Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                           If no *content*.
   #
-  def help_element: (*(String|strArray) content, **untyped opt) -> ActiveSupport::SafeBuffer
+  def help_element: (*(String|strArray) content, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Transform help content parts into an array of HTML entries.
   #
   # @param [Array<String, Array>] content
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
+  # @return [nil]                           If no *content*.
   #
-  def help_paragraphs: (*(String|strArray) content) -> Array[ActiveSupport::SafeBuffer]
+  def help_paragraphs: (*(String|strArray) content) -> (Array[ActiveSupport::SafeBuffer] | nil)
 
   # Render an image from "app/assets/images/help/*".
   #
@@ -312,6 +316,29 @@ module HelpHelper
   # @yieldparam [FieldEntry] entry  Values related to the field.
   #
   def help_field: (Symbol fld, fields: Hash[Symbol,FieldEntry], ?css: String, **untyped opt) { (FieldEntry entry) -> untyped } -> ActiveSupport::SafeBuffer
+
+  # The introductory panel at the top of the Help index page.
+  #
+  # @param [Hash]   opt             Passed to the container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_main_intro: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a numbered list container with links to each item in "/public/doc".
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer list container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_offline: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Full directory paths to all "/public/doc" PDFs.
+  #
+  # @return [Array<String>]
+  #
+  def help_offline_items: () -> strArray
 
   private
 

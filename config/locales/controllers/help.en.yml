@@ -490,7 +490,18 @@ en:
         label:          'Help'
         title:          'EMMA Help Topics'
         tooltip:        'Get help on using the EMMA system'
-        intro:          ~ # TODO: 'EMMA Help Introduction' ???
+        intro_html:     |
+          <p>
+            Documentation is also available as downloadable PDFs covering these
+            topics:
+          </p>
+          %{help_offline}
+          <p>
+            <strong>NOTE:</strong>
+            Online help evolves along with system development, so the
+            information found here may be more up-to-date than the PDF
+            documentation.
+          </p>
         _endpoint:      true
 
       # =======================================================================

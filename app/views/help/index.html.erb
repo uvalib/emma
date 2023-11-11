@@ -7,7 +7,6 @@
   list  ||= help_topics
 
   title ||= t('emma.help.index.title')
-  intro ||= t('emma.help.index.intro', default: '')
 
   unless modal?
     label = t('emma.help.index.label', default: title)
@@ -16,16 +15,15 @@
     help_links(list).each { |name, path| skip_nav_append(name => path) }
   end
 
-  intro = intro.presence && help_paragraphs(intro).join("\n").html_safe
-  toc   = help_toc(*list)
+  toc_heading = 'Online help topics:' # TODO: I18n
 
 -%>
 
 <%= page_heading(title) %>
 
 <div class="help-intro">
-  <%= intro %>
-  <%= toc %>
+  <%= help_main_intro %>
+  <%= help_toc(*list, before: html_tag(:h2, toc_heading)) %>
 </div>
 
 <div class="help-list help-section">
@@ -33,5 +31,5 @@
 </div>
 
 <div class="help-toc">
-  <%= toc %>
+  <%= help_toc(*list) %>
 </div>

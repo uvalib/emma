@@ -16,15 +16,13 @@
     set_page_description(title)
   end
 
-  intro = intro.presence && help_element(intro, class: 'help-intro')
-
   opt = { item: item, skip: :title }
 
 -%>
 
 <%= page_heading(title) %>
 
-<%= intro %>
+<%= help_element(intro, class: 'help-intro') %>
 
 <%= render 'help/details', opt %>
 

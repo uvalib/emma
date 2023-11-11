@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # View helper methods for "/help" pages.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module HelpHelper
 
   include Emma::Common
@@ -264,24 +267,25 @@ module HelpHelper
   # A table of contents element with a link for each help topic.
   #
   # @param [Array<Symbol,Array>] topics   Passed to #help_links.
+  # @param [Symbol, String]      tag      HTML tag for outer container.
+  # @param [Array, String, nil]  before   Content before the links.
+  # @param [Array, String, nil]  after    Content after the links.
   # @param [Hash]                opt      Passed to outer #html_div except for:
   #
   # @option opt [Symbol]        :type     Passed to #help_links.
-  # @option opt [Symbol,String] :tag      Default: :ul.
-  # @option opt [Hash]          :inner    Passed to inner #html_div.
+  # @option opt [Hash]          :inner    Passed to inner link wrapper.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def help_toc(*topics, **opt)
+  def help_toc(*topics, tag: :ul, before: nil, after: nil, **opt)
     link_type = opt.delete(:type)
-    outer_tag = opt.delete(:tag) || :ul
     inner_opt = opt.delete(:inner)&.dup || {}
-    inner_tag = inner_opt.delete(:tag).presence || :li
-    html_tag(outer_tag, **opt) do
+    inner_tag = inner_opt.delete(:tag)  || :li
+    links =
       help_links(*topics, type: link_type).map do |title, path|
         html_tag(inner_tag, **inner_opt) { link_to(title, path) }
       end
-    end
+    html_tag(tag, *before, *links, *after, **opt)
   end
 
   # ===========================================================================
@@ -296,9 +300,11 @@ module HelpHelper
   # @param [Hash]                 opt       Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                           If no *content*.
   #
   def help_element(*content, **opt)
-    html_div(**opt) { help_paragraphs(*content) }
+    content = help_paragraphs(*content)
+    html_div(content, **opt) if content.present?
   end
 
   # Transform help content parts into an array of HTML entries.
@@ -306,15 +312,17 @@ module HelpHelper
   # @param [Array<String, Array>] content
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
+  # @return [nil]                           If no *content*.
   #
   def help_paragraphs(*content)
+    return if content.blank?
     content.flatten.map { |part|
       next if part.blank?
       safe = part.html_safe?
       part = part.to_s.strip
       part = part.html_safe if safe
       (safe && part.start_with?('<')) ? part : html_tag(:p, part)
-    }.compact
+    }.compact.presence
   end
 
   # Render an image from "app/assets/images/help/*".
@@ -604,6 +612,68 @@ module HelpHelper
     html_div(**opt) do
       capture(entry, &blk)
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The introductory panel at the top of the Help index page.
+  #
+  # @param [Hash]   opt             Passed to the container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_main_intro(**opt)
+    meth = :help_offline
+    docs = send(meth)
+    if (text = I18n.t('emma.help.index.intro_html', default: nil))
+      docs = nil if text.sub!(%r{<p>%{#{meth}}</p>|%{#{meth}}}, docs)
+      text = text.html_safe
+      text << docs if docs
+    elsif (text = I18n.t('emma.help.index.intro', default: nil))
+      text = text.split(/%{#{meth}}/).compact.map { |part| html_tag(:p, part) }
+      text = safe_join(text, docs)
+    end
+    html_div(**opt) do
+      help_paragraphs(text || docs)
+    end
+  end
+
+  # Render a numbered list container with links to each item in "/public/doc".
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer list container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_offline(css: '.help-offline', **opt)
+    prepend_css!(opt, css)
+    html_tag(:ol, **opt) do
+      base = Rails.root.join('public').to_s
+      help_offline_items.map do |path|
+        path.match(%r{^([^ ]+/)(\d+\.)(.*)(\(.*)$})
+        name = $3.squish!
+        file = "#{$2}#{$3}#{$4}"
+        dir  = $1.delete_prefix(base)
+        path = dir + ERB::Util.u(file)
+        html_tag(:li) do
+          external_link(name, path)
+        end
+      end
+    end
+  end
+
+  # Full directory paths to all "/public/doc" PDFs.
+  #
+  # @return [Array<String>]
+  #
+  def help_offline_items
+    dir  = Rails.root.join('public', 'doc')
+    base = "#{dir}/"
+    Dir[dir.join('*.pdf')].sort_by { |s| s.delete_prefix(base).to_i }
   end
 
   # ===========================================================================
