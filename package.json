@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@rails/actioncable": "^7.1.1",
-    "@rails/ujs":         "^7.1.1",
-    "@uppy/core":         "^3.6.1",
+    "@rails/actioncable": "^7.1.2",
+    "@rails/ujs":         "^7.1.2",
+    "@uppy/core":         "^3.7.0",
     "@uppy/file-input":   "^3.0.4",
     "@uppy/informer":     "^3.0.4",
     "@uppy/progress-bar": "^3.0.4",
-    "@uppy/xhr-upload":   "^3.4.2",
+    "@uppy/xhr-upload":   "^3.5.0",
     "esbuild":            "^0.19.5",
     "jquery":             "^3.7.1",
     "sass":               "^1.69.5",
@@ -17,17 +17,17 @@
     "turbolinks":         "^5.2.0"
   },
   "unused-dependencies": {
-    "@uppy/aws-s3":               "^3.4.0",
+    "@uppy/aws-s3":               "^3.5.0",
     "@uppy/box":                  "^2.1.4",
-    "@uppy/dashboard":            "^3.6.0",
+    "@uppy/dashboard":            "^3.7.0",
     "@uppy/drag-drop":            "^3.0.3",
     "@uppy/dropbox":              "^3.1.4",
     "@uppy/google-drive":         "^3.3.0",
     "@uppy/onedrive":             "^3.1.4",
     "@uppy/status-bar":           "^3.2.5",
     "@uppy/thumbnail-generator":  "^3.0.6",
-    "@uppy/url":                  "^3.3.4",
-    "uppy":                       "^3.18.1"
+    "@uppy/url":                  "^3.4.0",
+    "uppy":                       "^3.19.0"
   },
   "scripts": {
     "build":     "[ _$DEPLOYMENT = _local -a _$RAILS_ENV != _test ] && OPT='--sourcemap' || OPT='--sourcemap --minify'; esbuild app/assets/javascripts/application.js --outdir=app/assets/builds --bundle $OPT",
