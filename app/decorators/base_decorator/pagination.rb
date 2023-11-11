@@ -238,6 +238,10 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # === Implementation Notes
+  # Capybara test seem to have a consistent problem when Turbolinks is allowed
+  # to manage the "next page" link, so it is explicitly avoided during tests.
+  #
   def pagination_controls(
     fp:  nil,
     pp:  nil,
@@ -246,16 +250,13 @@ module BaseDecorator::Pagination
     css: '.pagination-controls',
     **opt
   )
+    fp_opt = pp_opt = np_opt = { class: 'link' }
+    np_opt = np_opt.merge('data-turbolinks': false) if Rails.env.test?
+    fp = pagination_first(fp, **fp_opt)
+    pp = pagination_prev( pp, **pp_opt)
+    np = pagination_next( np, **np_opt)
     prepend_css!(opt, css)
-    html_tag(:nav, **opt) do
-      link_opt = { class: 'link', 'data-turbolinks': false }
-      controls = [
-        pagination_first(fp, **link_opt),
-        pagination_prev(pp, **link_opt),
-        pagination_next(np, **link_opt)
-      ]
-      safe_join(controls, pagination_separator(sep))
-    end
+    html_tag(:nav, fp, pp, np, **opt, separator: pagination_separator(sep))
   end
 
   # ===========================================================================

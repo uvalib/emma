@@ -28,7 +28,7 @@ module SysHelper::Common
   #
   def dt_dd_section(hdrs, css: '.pairs', **opt)
     prepend_css!(opt, css)
-    html_div('data-turbolinks-cache': false, **opt) do
+    html_div('data-turbolinks-permanent': true, **opt) do
       dt_dd_lines(hdrs)
     end
   end
@@ -168,7 +168,7 @@ module SysHelper::Common
     opt[:'aria-rowcount'] = 1 + pairs.size
     opt[:'aria-colcount'] = cols
     prepend_css!(opt, css, "columns-#{cols}")
-    html_tag(:table, 'data-turbolinks-cache': false, **opt) do
+    html_tag(:table, 'data-turbolinks-permanent': true, **opt) do
       head << body
     end
   end

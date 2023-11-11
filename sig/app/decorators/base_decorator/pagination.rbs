@@ -140,6 +140,10 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # === Implementation Notes
+  # Capybara test seem to have a consistent problem when Turbolinks is allowed
+  # to manage the "next page" link, so it is explicitly avoided during tests.
+  #
   def pagination_controls: (?fp: String|symHash|nil, ?pp: String|symHash|nil, ?np: String|symHash|nil, ?sep: String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Page number label for the model type.
