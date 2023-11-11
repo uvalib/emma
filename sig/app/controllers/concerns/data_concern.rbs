@@ -27,14 +27,6 @@ module DataConcern
   #
   DATA_PARAMETERS: symArray
 
-  # The table holding EMMA submission entries.
-  #
-  # @type [String]
-  #
-  SUBMISSION_TABLE: String
-
-  SUBMISSION_COLUMNS: symArray
-
   # URL parameters for DataController.
   #
   # @return [Hash{Symbol=>*}]
@@ -102,7 +94,7 @@ module DataConcern
 
   # Generate results for submission pseudo records.
   #
-  # @param [String, Symbol, nil] table     Default: #SUBMISSION_TABLE
+  # @param [String, Symbol, nil] table     Default: #submission_table
   # @param [Hash]                opt       Passed to #get_table_records.
   #
   # @return [Array]
@@ -128,22 +120,6 @@ module DataConcern
   # @return [Array<Array>]
   #
   def modify_submission_records_for_html!: (Array[anyArray] records, ?(symArray|nil) columns) -> Array[anyArray]
-
-  # Enumerate the database columns which are relevant to data analysis output.
-  #
-  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
-  #
-  # @return [Array<Symbol>]
-  #
-  def submission_result_columns: (?(Symbol|symArray|nil) columns) -> symArray
-
-  # Enumerate the record array indicies which are relevant to data analysis.
-  #
-  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
-  #
-  # @return [Array<Symbol>]
-  #
-  def submission_result_indices: (?(Symbol|symArray|nil) columns) -> symArray
 
   # States which indicate that the submission is either complete or that it is
   # on track to becoming complete (in the case of submissions back to partner

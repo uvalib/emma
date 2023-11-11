@@ -4,9 +4,10 @@
 
   view_debug(__FILE__)
 
-  list ||= []
+  item ||= []
   name ||= nil or view_abort(__FILE__, ':name not passed via "locals"')
+  cols ||= nil
 
 -%>
 
-<%= html_db_table(list, name: name) %>
+<%= html_db_table(item, name: name, cols: cols) %>

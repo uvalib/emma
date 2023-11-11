@@ -4,14 +4,14 @@
 
   view_debug(__FILE__)
 
-  list  ||= []
+  item  ||= []
   name  ||= nil or return
 
   title ||= name.titleize
   id    ||= nil
   tag   ||= :h2
 
-  count   = positive(list.size - 1) || 0
+  count   = positive(item.size - 1) || 0
   number  = "#{count} #{'record'.pluralize(count)}"
   title   = html_span("#{title} (#{name} - #{number})")
 

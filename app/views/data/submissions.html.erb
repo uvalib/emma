@@ -4,8 +4,9 @@
 
   view_debug(__FILE__)
 
-  list  ||= @list
-  name  ||= SUBMISSION_TABLE
+  item  ||= @item
+  name  ||= submission_table
+  cols  ||= submission_result_columns
 
   help  ||= nil # %i[data submissions]
   title ||= t('emma.data.submissions.title')
@@ -22,6 +23,6 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
-<%= render 'data/details', list: list, name: name %>
+<%= render 'data/details', item: item, name: name, cols: cols %>
 
 <%= page_notes_section %>

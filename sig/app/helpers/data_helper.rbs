@@ -168,12 +168,13 @@ module DataHelper
   # @param [Array<Hash>]    records
   # @param [String, Symbol] name        Database table name.
   # @param [Integer]        start_row
+  # @param [Array]          cols        Subset of table columns.
   # @param [String]         css         Characteristic CSS class.
   # @param [Hash]           opt         Passed to #html_db_record.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def html_db_table: (Array[symHash] records, ?name: String|Symbol|nil, ?start_row: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def html_db_table: (Array[symHash] records, ?name: String|Symbol|nil, ?start_row: Integer, ?cols: Array[String|Symbol], ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate HTML to display a database record.
   #
@@ -244,6 +245,34 @@ module DataHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_db_field_values: (symHash values, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The subset of columns from #submission_table displayed as submission data.
+  #
+  # @type [Array<Symbol>]
+  #
+  SUBMISSION_COLUMNS: symArray
+
+  # The table holding EMMA submission entries.
+  #
+  # @return [String]
+  #
+  def submission_table: () -> String
+
+  # Enumerate the database columns which are relevant to data analysis output.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
+  def submission_result_columns: (?(Symbol|symArray|nil) columns) -> symArray
+
+  # Enumerate the record array indicies which are relevant to data analysis.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
+  def submission_result_indices: (?(Symbol|symArray|nil) columns) -> symArray
 
   private
 

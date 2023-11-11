@@ -41,25 +41,6 @@ module DataConcern
   #
   DATA_PARAMETERS = %i[html tables columns headings].freeze
 
-  # The table holding EMMA submission entries.
-  #
-  # @type [String]
-  #
-  SUBMISSION_TABLE = 'uploads'
-  SUBMISSION_COLUMNS = %i[
-    id
-    file_data
-    emma_data
-    user_id
-    repository
-    submission_id
-    fmt
-    ext
-    state
-    created_at
-    updated_at
-  ].freeze
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -80,7 +61,11 @@ module DataConcern
       request_parameters.tap do |prm|
         tables  = prm.extract!(*DATA_TABLE_PARAMETERS).compact.values.first
         columns = prm.extract!(*DATA_COLUMN_PARAMETERS).compact.values.first
-        prm[:html]     = true?(prm[:html]) || (prm[:format] == 'html')
+        if prm.key?(:html)
+          prm[:html] = true?(prm[:html])
+        else
+          prm[:html] = 'html'.casecmp?(prm[:format])
+        end
         prm[:tables]   = array_param(tables)&.map!(&:tableize)&.uniq
         prm[:tables]   = %i[all] if prm[:tables]&.include?('alls')
         prm[:columns]  = array_param(columns)&.map!(&:to_sym)&.uniq
@@ -141,8 +126,8 @@ module DataConcern
   #
   def get_table_records(name = nil, *cols, **opt)
     opt  = data_params.merge(**opt)
-    name = Array.wrap(opt.delete(:columns)).first || name
-    cols.concat(Array.wrap(opt.delete(:columns)))
+    name = Array.wrap(opt.delete(:tables)).first || name
+    cols.concat(Array.wrap(opt.delete(:columns))) if opt.key?(:columns)
     table_records(name, *cols, **opt)
   end
 
@@ -158,19 +143,16 @@ module DataConcern
   # @return [Array]
   #
   def get_submission_records(table = nil, **opt)
-
     # If columns have been specified, they are applied after the records have
     # been acquired and filtered based on the expected set of columns.
     opt     = data_params.merge(**opt)
     columns = Array.wrap(opt.delete(:columns)).presence
-
-    submission_records(table, **opt).tap do |_name, records|
-      # noinspection RubyMismatchedArgumentType
-      if records.first.is_a?(Hash)
-        modify_submission_records!(records, columns)
-      else
-        modify_submission_records_for_html!(records, columns)
-      end
+    records = submission_records(table, **opt)
+    # noinspection RubyMismatchedArgumentType
+    if records.first.is_a?(Hash)
+      modify_submission_records!(records, columns)
+    else
+      modify_submission_records_for_html!(records, columns)
     end
   end
 
@@ -191,7 +173,7 @@ module DataConcern
   #
   def get_submission_field_counts(all: false, **opt)
     fields  = {}
-    records = get_submission_records(**opt) || []
+    records = get_submission_records(**opt, html: false) || []
     records.each do |record|
       next unless (emma_data = safe_json_parse(record[:emma_data])).is_a?(Hash)
       emma_data.each_pair do |field, data|
@@ -220,13 +202,13 @@ module DataConcern
 
   # Generate results for submission pseudo records.
   #
-  # @param [String, Symbol, nil] table     Default: #SUBMISSION_TABLE
+  # @param [String, Symbol, nil] table     Default: #submission_table
   # @param [Hash]                opt       Passed to #get_table_records.
   #
   # @return [Array]
   #
   def submission_records(table = nil, **opt)
-    table ||= SUBMISSION_TABLE
+    table ||= submission_table
     get_table_records(table, **opt)
   end
 
@@ -245,6 +227,7 @@ module DataConcern
       if (schema = record[:schema])
         schema[:file_data] = schema[:emma_data] = :json
         schema.slice!(*columns)
+        record[:schema] = schema
       else
         next if submission_incomplete?(record[:state])
         next if submission_bogus?(record[:emma_data])
@@ -267,7 +250,7 @@ module DataConcern
   # noinspection RubyInstanceMethodNamingConvention
   #++
   def modify_submission_records_for_html!(records, columns = nil)
-    columns   = submission_result_indices(columns)
+    indices   = submission_result_indices(columns)
     state_idx = SUBMISSION_COLUMNS.index(:state)
     data_idx  = SUBMISSION_COLUMNS.index(:emma_data)
     records.map! { |record|
@@ -276,39 +259,9 @@ module DataConcern
         next if submission_incomplete?(record[state_idx])
         next if submission_bogus?(record[data_idx])
       end
-      record.values_at(*columns)
+      record.values_at(*indices)
     }.compact!
     records
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Enumerate the database columns which are relevant to data analysis output.
-  #
-  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
-  #
-  # @return [Array<Symbol>]
-  #
-  def submission_result_columns(columns = nil)
-    columns &&= Array.wrap(columns).presence&.map(:to_sym)
-    (columns || SUBMISSION_COLUMNS).excluding(:state)
-  end
-
-  # Enumerate the record array indicies which are relevant to data analysis.
-  #
-  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
-  #
-  # @return [Array<Symbol>]
-  #
-  def submission_result_indices(columns = nil)
-    columns = submission_result_columns(columns)
-    SUBMISSION_COLUMNS.map.with_index { |col, idx|
-      idx if columns.include?(col)
-    }.compact
   end
 
   # ===========================================================================
@@ -360,7 +313,7 @@ module DataConcern
   # @param [String, Hash] emma_data
   #
   def submission_bogus?(emma_data)
-    data  = json_parse(emma_data) || {}
+    data  = json_parse(emma_data, log: false) || {}
     title = data[:dc_title].to_s
     note  = data[:rem_comments].to_s
     title.blank? ||

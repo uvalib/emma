@@ -203,10 +203,10 @@ module DataHelper
     unless html
       columns.map!(&:to_sym)
       data_rows.map! do |row|
-        columns.zip(row).to_h.map { |column, value|
-          value = json_parse(value) if column.end_with?('_data')
-          [column, value]
-        }.to_h
+        values = columns.zip(row).to_h
+        values.each_pair do |column, value|
+          values[column] = json_parse(value) if column.end_with?('_data')
+        end
       end
     end
 
@@ -324,6 +324,7 @@ module DataHelper
   # @param [Array<Hash>]    records
   # @param [String, Symbol] name        Database table name.
   # @param [Integer]        start_row
+  # @param [Array]          cols        Subset of table columns.
   # @param [String]         css         Characteristic CSS class.
   # @param [Hash]           opt         Passed to #html_db_record.
   #
@@ -333,13 +334,14 @@ module DataHelper
     records,
     name:       nil,
     start_row:  1,
+    cols:       [],
     css:        '.database-table',
     **opt
   )
     records ||= []
     # noinspection RubyMismatchedArgumentType
     tbl_opt = { id: name.presence && html_id(name) }.compact
-    headers = name ? table_columns(name) : records.first&.keys
+    headers = name ? table_column_names(name, *cols) : records.first&.keys
 
     append_css!(tbl_opt, "columns-#{headers.size}") if headers
     append_css!(tbl_opt, 'empty')                   if records.empty?
@@ -553,6 +555,62 @@ module DataHelper
         count << item
       end
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The subset of columns from #submission_table displayed as submission data.
+  #
+  # @type [Array<Symbol>]
+  #
+  SUBMISSION_COLUMNS = %i[
+    id
+    file_data
+    emma_data
+    user_id
+    repository
+    submission_id
+    fmt
+    ext
+    state
+    created_at
+    updated_at
+  ].freeze
+
+  # The table holding EMMA submission entries.
+  #
+  # @return [String]
+  #
+  def submission_table
+    'uploads'
+  end
+
+  # Enumerate the database columns which are relevant to data analysis output.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
+  def submission_result_columns(columns = nil)
+    columns &&= Array.wrap(columns).presence&.map(&:to_sym)
+    (columns || SUBMISSION_COLUMNS).excluding(:state)
+  end
+
+  # Enumerate the record array indicies which are relevant to data analysis.
+  #
+  # @param [Array<Symbol>, Symbol, nil] columns   Default: #SUBMISSION_COLUMNS
+  #
+  # @return [Array<Symbol>]
+  #
+  def submission_result_indices(columns = nil)
+    columns = submission_result_columns(columns)
+    SUBMISSION_COLUMNS.map.with_index { |col, idx|
+      idx if columns.include?(col)
+    }.compact
   end
 
   # ===========================================================================

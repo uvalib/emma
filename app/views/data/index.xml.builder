@@ -15,7 +15,7 @@ xml.emma_tables do
     list.each_pair do |table_name, records|
       table_name = table_name.to_s.underscore
       xml.tag!(table_name) do
-        xml << render('data/details', list: records, name: table_name)
+        xml << render('data/details', item: records, name: table_name)
       end
     end
   end

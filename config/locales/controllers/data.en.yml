@@ -22,8 +22,15 @@ en:
 
       index:
         label:          'Database'
-        title:          'EMMA Database Tables'
+        title:          'EMMA Database'
         tooltip:        'View all database records for this deployment'
+
+        submissions:
+          title:        'EMMA Submissions'
+
+        tables:
+          title:        'EMMA Database Tables'
+
         _endpoint:      true
 
       # =======================================================================

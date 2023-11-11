@@ -9,4 +9,4 @@ item ||= @item
 name ||= @name
 
 json.timestamp DateTime.now
-json.partial! 'data/details', list: item, name: name
+json.partial! 'data/details', item: item, name: name

@@ -5,12 +5,12 @@
 #
 # Artificial database records representing EMMA submissions as XML.
 
-list ||= @list
+item ||= @item
 name ||= nil
 name   = name&.underscore || 'emma_submissions'
 
 xml.instruct!
 xml.tag!(name) do
   xml.timestamp DateTime.now
-  xml << render('data/details', list: list, name: name)
+  xml << render('data/details', item: item, name: name)
 end

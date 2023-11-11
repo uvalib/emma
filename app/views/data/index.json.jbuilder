@@ -13,7 +13,7 @@ json.count     list.size
 json.tables do
   list.each_pair do |table_name, records|
     json.set! table_name do
-      json.partial! 'data/details', list: records, name: table_name
+      json.partial! 'data/details', item: records, name: table_name
     end
   end
 end

@@ -84,8 +84,7 @@ class DataController < ApplicationController
   def submissions
     __log_activity
     __debug_route
-    default_format(:json)
-    @name = SUBMISSION_TABLE
+    default_format(:json) unless Rails.env.test?
     @item = get_submission_records(@name)
     respond_to(request.format)
   end
