@@ -21,6 +21,13 @@ module SysHelper::Settings
   #
   def app_settings: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Display of application GlobalProperty values.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_tag
+  #
+  def app_properties: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # HTML for separating application configuration items.
   #
   # @param [String, nil] content

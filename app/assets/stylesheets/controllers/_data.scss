@@ -55,7 +55,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
     gap:     1rem;
 
     $max-cols:     100;
-    $first-column: minmax(5vw, max-content);
+    $first-column: minmax(max-content, 5vw);
     $basic-column: minmax(15vw, max-content);
 
     &.columns-1 {
@@ -81,6 +81,9 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
         // @see DataHelper#html_db_column
         .database-column {
 
+            max-height:             33vh;
+            max-width:              33vw;
+            overflow:               auto;
             background:             var(--bg-color);
 
             &.array {
@@ -88,10 +91,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
             }
 
             &.hierarchy {
-                max-height:         25vh;
-                max-width:          30vw;
                 white-space:        pre;
-                overflow:           auto;
                 background:         ghostwhite;
             }
 
@@ -100,7 +100,6 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
                 left:               2rem;
                 box-shadow:         $side-scroll-shadow, $vert-scroll-shadow;
                 grid-column-start:  1;
-                word-break:         keep-all;
             }
         }
 

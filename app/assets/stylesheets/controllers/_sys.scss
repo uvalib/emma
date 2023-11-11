@@ -395,8 +395,16 @@ body.sys.settings {
         }
 
         .fields {
+
             .text {
+
                 @include constrain-column;
+
+                &.literal {
+                    font-family: monospace;
+                    font-size:   larger;
+                    font-weight: bold;
+                }
             }
         }
     }

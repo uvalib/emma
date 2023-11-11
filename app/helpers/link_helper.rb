@@ -188,6 +188,85 @@ module LinkHelper
 
   public
 
+  # Base URL for references to the EMMA project repository.
+  #
+  # @type [String]
+  #
+  GITHUB_ROOT = 'https://github.com/uvalib/emma'
+
+  # Base URL for references to EMMA source code.
+  #
+  # @type [String]
+  #
+  SOURCE_CODE_ROOT = "#{GITHUB_ROOT}/blob/master"
+
+  # Produce a link to EMMA source code for display within the application.
+  #
+  # @param [String, nil] label        Derived from *path* if not given.
+  # @param [String]      path
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #external_link
+  #
+  def source_code_link(label = nil, path, **opt, &blk)
+    if path.start_with?(SOURCE_CODE_ROOT)
+      label ||= path.sub(%r{^#{SOURCE_CODE_ROOT}/}, '')
+    else
+      label ||= path
+      path    = "#{SOURCE_CODE_ROOT}/#{path}"
+    end
+    # noinspection RubyMismatchedArgumentType
+    external_link(label, path, **opt, &blk)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Base URL for references to the UVALIB configuration repository.
+  #
+  # @type [String]
+  #
+  TERRAFORM_ROOT = 'https://gitlab.com/uvalib/terraform-infrastructure'
+
+  # Base URL for references to EMMA UVALIB configuration.
+  #
+  # @type [String]
+  #
+  TERRAFORM_EMMA = "#{TERRAFORM_ROOT}/-/blob/master/emma.lib.virginia.edu"
+
+  # Produce a link to EMMA UVALIB configuration for display within the
+  # application.
+  #
+  # @param [String, nil] label        Derived from *path* if not given.
+  # @param [String]      path
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #external_link
+  #
+  def terraform_link(label = nil, path, **opt, &blk)
+    if path.start_with?(TERRAFORM_EMMA)
+      label ||= path.sub(%r{^#{TERRAFORM_EMMA}/}, '')
+    else
+      label ||= path
+      path    = "#{TERRAFORM_EMMA}/#{path}"
+    end
+    # noinspection RubyMismatchedArgumentType
+    external_link(label, path, **opt, &blk)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # If *text* is a URL return it directly; if *text* is HTML, locate the first
   # "href" and return the indicated value.
   #

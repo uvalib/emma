@@ -62,6 +62,9 @@ module SysHelper::Headers
     @request_headers_names ||=
       header_names { |a|
 
+        # From ActionDispatch::Constants
+        a.concat string_constants(ActionDispatch::Constants)
+
         # From ActionDispatch::Request
         a.concat ActionDispatch::Request::ENV_METHODS
         a << 'HTTPS'
@@ -141,11 +144,53 @@ module SysHelper::Headers
     @rails_headers_names ||=
       header_names { |a|
         a.concat Rails.application.env_config.keys
+
+        # From ActionCable
+        a << 'async.callback'
+        a << 'stream.send'
+
+        # From ActionController
         a << 'action_controller.csrf_token'
         a << 'action_controller.instance'
+
+        # From ActionDispatch
+        a << 'action_dispatch.authorized_host'
         a << 'action_dispatch.blocked_hosts'
         a << 'action_dispatch.exception'
+        a << 'action_dispatch.original_path'
+        a << 'action_dispatch.original_request_method'
+        a << 'action_dispatch.remote_ip'
+        a << 'action_dispatch.request.query_parameters'
+        a << 'action_dispatch.request.request_parameters'
         a << 'action_dispatch.request_id'
+        a << 'action_dispatch.route_uri_pattern'
+        a << 'action_dispatch.routes.default_url_options'
+
+        # From ActionDispatch::Flash
+        a << 'action_dispatch.request.flash_hash'
+
+        # From ActionDispatch::Http::MimeNegotiation
+        a << 'action_dispatch.original_path'
+        a << 'action_dispatch.request.accepts'
+        a << 'action_dispatch.request.content_type'
+        a << 'action_dispatch.request.formats'
+
+        # From ActionDispatch::Http::Parameters
+        a << 'action_dispatch.request.parameters'
+        a << 'action_dispatch.request.path_parameters'
+
+        # From ActionDispatch::Session::CookieStore
+        a << 'action_dispatch.request.unsigned_session_cookie'
+
+        # From Puma
+        a << 'puma.config'
+        a << 'puma.peercert'
+        a << 'puma.request_body_wait'
+        a << 'puma.socket'
+
+        # From Warden
+        a << 'warden'
+
       }.deep_freeze
   end
 
@@ -159,14 +204,9 @@ module SysHelper::Headers
       header_names { |a|
         a.concat string_constants(Rack, 'RACK_')
         a.concat string_constants(Puma::Const, 'RACK_')
-        a << 'async.callback'
         a << 'protection.failed'
-        a << 'puma.peercert'
-        a << 'puma.request_body_wait'
-        a << 'puma.socket'
         a << 'rack.early_hints'
         a << 'rack.protection.attack'
-        a << 'stream.send'
         a.remove %w[rack.input rack.session rack.session.options]
       }.deep_freeze
   end

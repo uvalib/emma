@@ -1,6 +1,8 @@
 # View helper methods for "/data" pages.
 #
 module DataHelper
+  include Emma::Constants
+
   include Emma::Json
 
   include CssHelper

@@ -66,6 +66,22 @@ module SysHelper::Settings
     end
   end
 
+  # Display of application GlobalProperty values.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_tag
+  #
+  def app_properties(css: '.field-container.list', **opt)
+    prepend_css!(opt, css)
+    html_div(**opt) do
+      html_div(class: 'fields') do
+        GlobalProperty.instance_methods.map do |meth|
+          app_setting_display(meth, Object.send(meth))
+        end
+      end
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -163,11 +179,12 @@ module SysHelper::Settings
       cls << 'from-obj'
       tip << 'value from constant' # TODO: I18n
     end
-    if value.nil? || (value == EMPTY_VALUE)
-      cls << 'missing'
-      value = EMPTY_VALUE
-    else
-      value = value.inspect unless value == 'nil'
+    case value
+      when nil         then cls << 'missing'; value = EMPTY_VALUE
+      when EMPTY_VALUE then cls << 'missing'
+      when 'nil'       then cls << 'literal'
+      when String      then cls << 'string';  value = value.inspect
+      else                  cls << 'literal'; value = value.inspect
     end
 
     id    = css_randomize(key)

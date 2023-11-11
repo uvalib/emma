@@ -13,11 +13,23 @@
     set_page_description(title)
   end
 
-  env            = Rails.env.production? ? 'production' : 'staging'
-  terraform_base = 'https://gitlab.com/uvalib/terraform-infrastructure'
-  terraform_base = "#{terraform_base}/-/blob/master"
-  terraform_proj = "#{terraform_base}/emma.lib.virginia.edu"
-  terraform_env  = "#{terraform_proj}/ecs-tasks/#{env}/environment.vars"
+  the, vars, file =
+    if production_deployment?
+      ['the Terraform', 'production',   'configuration file']
+    elsif staging_deployment?
+      ['the Terraform', 'staging',      'configuration file']
+    elsif in_local_docker?
+      ['the', '/mnt/environment.rb',    'file in the Docker image']
+    else
+      ['the', './.idea/environment.rb', 'file in the local project directory']
+    end
+  if vars.include?('/')
+    vars = html_tag(:strong, vars)
+  else
+    vars = "ecs-tasks/#{vars}/environment.vars"
+    vars = terraform_link(File.basename(vars), vars)
+  end
+  vars = safe_join([the, vars, file], ' ')
 
 -%>
 
@@ -26,6 +38,13 @@
 <%= page_description_section %>
 
 <%= page_directions_section %>
+
+<h2>GlobalProperty Values</h2>
+<p role="note">
+  Fixed values set in <%= source_code_link('config/boot.rb') -%> at startup.
+</p>
+
+<%= app_properties %>
 
 <h2>Flags</h2>
 <p role="note">
@@ -41,13 +60,11 @@
   set at load time.
 </p>
 
-<h2>Values</h2>
+<h2>Settings</h2>
 <p role="note">
   Other configuration values which are defined at startup and cannot be
   changed dynamically.
-  They can only be changed by modifying the Terraform
-  <a href="<%= terraform_env -%>" target="_blank">environment.vars</a>
-  configuration file and restarting.
+  They can only be changed by modifying <%= vars -%> and restarting.
 </p>
 <%= app_settings %>
 

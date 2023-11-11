@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module DataHelper
 
+  include Emma::Constants
   include Emma::Json
 
   include CssHelper
@@ -434,10 +435,11 @@ module DataHelper
   )
     type =
       case field
-        when Hash                       then :hierarchy
-        when Array                      then :array
-        when /^{([^,\s]+(,[^,\s]+)*)}$/ then (field = $1.split(',')) && :array
-        when /^{/                       then :hierarchy
+        when Hash                        then :hierarchy
+        when Array                       then :array
+        when BoolType                    then :bool
+        when /^{([^",\s]+(,[^,\s]+)*)}$/ then (field = $1.split(',')) && :array
+        when /^{/                        then :hierarchy
       end
     classes = []
     classes << "row-#{row}" if row
@@ -450,7 +452,8 @@ module DataHelper
       case type
         when :hierarchy then pretty_json(field)
         when :array     then field.join(";\n")
-        else                 field
+        when :bool      then field
+        else                 field || EMPTY_VALUE
       end
     end
   end
