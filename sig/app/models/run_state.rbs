@@ -107,10 +107,10 @@ class RunState < Hash[untyped, untyped]
   # With no arguments, a RunState is created which indicates that the system
   # is available.
   #
-  # If the argument is *true* or "true", a RunState is created which indicates
-  # that the system is unavailable.
+  # If the argument is *false* or "false", a RunState is created which
+  # indicates that the system is unavailable.
   #
-  # @param [String, Boolean, Hash, RunState, Any, nil] source
+  # @param [String, Boolean, Hash, RunState, *] source
   #
   def initialize: (?untyped source) -> void
 
@@ -187,7 +187,7 @@ class RunState < Hash[untyped, untyped]
 
   # Set the current run state.
   #
-  # @param [Hash, String, Any, nil] source
+  # @param [String, Boolean, Hash, RunState, *] source
   #
   # @return [void]
   #

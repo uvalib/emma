@@ -138,23 +138,23 @@ class RunState < Hash
   # With no arguments, a RunState is created which indicates that the system
   # is available.
   #
-  # If the argument is *true* or "true", a RunState is created which indicates
-  # that the system is unavailable.
+  # If the argument is *false* or "false", a RunState is created which
+  # indicates that the system is unavailable.
   #
-  # @param [String, Boolean, Hash, RunState, Any, nil] source
+  # @param [String, Boolean, Hash, RunState, *] source
   #
   def initialize(source = nil)
-    if source.blank?
-      source  = AVAILABLE_DEFAULTS
-    elsif true?(source)
-      source  = UNAVAILABLE_DEFAULTS
-    else
-      default = AVAILABLE_DEFAULTS.merge(text: "invalid: #{source.inspect}")
-      source  = safe_json_parse(source, log: false, default: default)
-    end
     # noinspection RubyMismatchedArgumentType
-    merge!(source)
-    @status ||= UNAVAILABLE_STATUS
+    if source.nil? || true?(source)
+      merge!(AVAILABLE_DEFAULTS)
+    elsif false?(source)
+      merge!(UNAVAILABLE_DEFAULTS)
+    elsif (src = json_parse(source, log: false)).is_a?(Hash)
+      merge!(src)
+    else
+      merge!(AVAILABLE_DEFAULTS.merge(text: "invalid: #{source.inspect}"))
+    end
+    @status ||= AVAILABLE_STATUS
     @code   ||= STATE.dig(@status, :code)
     @text   ||= STATE.dig(@status, :text)
     @html   ||= ERB::Util.h(@text)
@@ -335,7 +335,7 @@ class RunState < Hash
 
     # Set the current run state.
     #
-    # @param [Hash, String, Any, nil] source
+    # @param [String, Boolean, Hash, RunState, *] source
     #
     # @return [void]
     #
@@ -385,7 +385,7 @@ class RunState < Hash
 
       # Set the current run state by replacing the contents of #STATE_FILE.
       #
-      # @param [Hash, String, Any] source
+      # @param [String, Boolean, Hash, RunState, *] source
       #
       # @return [void]
       #
@@ -522,7 +522,7 @@ class RunState < Hash
   # :section: Establish configured system availability as soon as possible
   # ===========================================================================
 
-  set_current(ENV['SERVICE_UNAVAILABLE'])
+  set_current(!true?(ENV['SERVICE_UNAVAILABLE']))
 
 end
 

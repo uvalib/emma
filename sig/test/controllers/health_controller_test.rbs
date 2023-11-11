@@ -1,9 +1,29 @@
 class HealthControllerTest < ActionDispatch::IntegrationTest
   CONTROLLER: Symbol
 
+  PARAMS: symHash
+
   OPTIONS: symHash
 
-  READ_FORMATS: Symbol | symArray
+  TEST_USERS: symArray
+
+  TEST_READERS: symArray
 
   TEST_SUBSYSTEM: String
+
+  # ===========================================================================
+  # :section: Methods
+  # ===========================================================================
+
+  public
+
+  # check_url_test
+  #
+  # @param [Symbol] action
+  # @param [String] url
+  # @param [Symbol] meth              Calling test method.
+  #
+  # @return [void]
+  #
+  def check_url_test: (Symbol action, String url, meth: Symbol|nil) -> void
 end
