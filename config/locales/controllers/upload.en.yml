@@ -537,12 +537,12 @@ en:
         directions:     |
           Click to remove the selected entry from the EMMA repository:
 
-        notes:          |
+        notes_html:     |
           Content which resides outside of EMMA is under the purview of the
           originating partner repository and cannot be deleted here.
 
           If there is a compelling reason to omit an item from the EMMA Unified
-          Index, please contact an EMMA administrator.
+          Index, please contact an %{emma_administrator}.
 
         submit:
           <<:           *GENERIC_SUBMIT

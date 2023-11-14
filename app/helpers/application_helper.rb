@@ -9,9 +9,6 @@ __loading_begin(__FILE__)
 #
 module ApplicationHelper
 
-  include Emma::Constants
-  include Emma::Common
-
   include HtmlHelper
   include ConfigurationHelper
 
@@ -87,20 +84,6 @@ module ApplicationHelper
       prefixes << p[:controller]
     end
     lookup_context.template_exists?(path, prefixes, true)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The "mailto:" link for the general e-mail contact.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def contact_email
-    mail_to(CONTACT_EMAIL)
   end
 
   # ===========================================================================

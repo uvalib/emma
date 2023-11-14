@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module EmmaHelper
 
+  include Emma::Constants
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -33,6 +35,26 @@ module EmmaHelper
 
   public
 
+  # List EMMA academic partners.
+  #
+  # @param [Hash] opt                 To #emma_partner_list.
+  #
+  # @return [String]
+  #
+  def academic_partners(**opt)
+    emma_partner_list(:academic, **opt)
+  end
+
+  # List EMMA commercial partners.
+  #
+  # @param [Hash] opt                 To #emma_partner_list.
+  #
+  # @return [String]
+  #
+  def commercial_partners(**opt)
+    emma_partner_list(:commercial, **opt)
+  end
+
   # Generate a textual list of EMMA partners.
   #
   # @param [Symbol, nil] type         One of :academic, :commercial, :all (def)
@@ -42,7 +64,7 @@ module EmmaHelper
   #
   # @return [String]
   #
-  def emma_partner_list(type = nil, mode: :long, separator: ',', final: 'and')
+  def emma_partner_list(type = nil, mode: :long, separator: ',', final: 'and', **)
     list =
       emma_partners(type).map { |key, partner|
         name = partner&.dig(:name) || partner&.dig(:tag) || key.to_s.upcase
@@ -77,6 +99,40 @@ module EmmaHelper
       Log.warn { "#{__method__}: #{type.inspect} not in #{EMMA_PARTNER_TYPE}" }
       {}
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A simple "mailto:" link for project e-mail contact.
+  #
+  # @param [String, nil] label        Link text instead of the email address.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_email(label = nil)
+    mail_to(PROJECT_EMAIL, label)
+  end
+
+  # A simple "mailto:" link for the general e-mail contact.
+  #
+  # @param [String, nil] label        Link text instead of the email address.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def contact_email(label = nil)
+    mail_to(CONTACT_EMAIL, label)
+  end
+
+  # The "mailto:" link for the general e-mail contact.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def emma_administrator(label = 'EMMA administrator') # TODO: I18n
+    contact_email(label)
   end
 
   # ===========================================================================

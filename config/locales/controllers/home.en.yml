@@ -49,8 +49,7 @@ en:
             The university partners on this project are %{academic_partners}.
             The repository partners are %{commercial_partners}.
             If you would like to be notified when EMMA is ready for broader
-            participation, please email
-            <a href="mailto:%{project_email}">%{project_email}</a>.
+            participation, please email %{project_email}.
           </p>
         _endpoint:      true
 
