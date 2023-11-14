@@ -743,6 +743,8 @@ function setupGridRows(grid) {
  *
  * @param {Selector} row
  * @param {number}   [row_number]     One-based row number.
+ *
+ * @returns {jQuery}
  */
 function setupGridColumns(row, row_number) {
     const num    = row_number || 0;

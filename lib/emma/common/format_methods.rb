@@ -236,7 +236,7 @@ module Emma::Common::FormatMethods
 
   # Extract the named references in a format string.
   #
-  # @param [String]                text   String with #sprintf formatting.
+  # @param [String, *]             text   String with #sprintf formatting.
   # @param [Array<Regexp>, Regexp] match  Patterns to match
   #
   # @return [Array<Symbol>]
@@ -275,7 +275,7 @@ module Emma::Common::FormatMethods
   # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
   # each "%<name>" reference is paired with the format which follows it.
   #
-  # @param [String]      text         String with #sprintf formatting.
+  # @param [String, *]   text         String with #sprintf formatting.
   # @param [String, nil] default_fmt  Format value for "%{name}" matches.
   #
   # @return [Hash{Symbol=>String}]
@@ -305,10 +305,10 @@ module Emma::Common::FormatMethods
   #
   # === Usage Notes
   # If *text* contains a mix of named references and unnamed specifiers, the
-  # assumption is that it will be processed in two passes -- first with a hash
-  # of values matching the named references generating an intermediate string,
-  # then (later) a second pass on that result to supply values for the unnamed
-  # specifiers.
+  # assumption is that it will be processed in two passes -- first (by this
+  # method) with a hash of values matching the named references generating an
+  # intermediate string, then (by the caller) a second pass on that result to
+  # supply values for the unnamed specifiers.
   #
   def interpolate_named_references(text, *items, **opt)
     interpolate_named_references!(text, *items, **opt) || text.to_s
