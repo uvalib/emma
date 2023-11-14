@@ -187,7 +187,7 @@ export function configFor(type, enabled, page_action) {
     //OUT.debug(`configFor: type = "${type}"; action = "${action}"`);
     const page       = pageAttributes();
     const action     = page_action || page.action;
-    const ctrlr_cfg  = page.properties.Action || {};
+    const ctrlr_cfg  = page.properties?.Action || {};
     const action_cfg = ctrlr_cfg[action] || ctrlr_cfg.new || {};
     return properties(action_cfg[type], enabled);
 }

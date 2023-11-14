@@ -712,27 +712,26 @@ function setupGridRows(grid) {
     const func  = 'setupGridRows'; OUT.debug(`${func}: grid =`, grid);
     const $grid = gridFor(grid);
     const $rows = gridRows($grid);
-
-    // Hidden template rows.
-    $grid.find(ROW).filter(HIDDEN).each((_, row) => setupGridColumns(row));
+    const $temp = $grid.find(ROW).filter(HIDDEN); // Hidden template rows.
 
     let $cols;
+    $temp.each((_,   row) => { $cols = setupGridColumns(row) })
     $rows.each((idx, row) => { $cols = setupGridColumns(row, (idx + 1)) });
 
-    const row_min   = ROW_FIRST;
-    const row_max   = $rows.length;
-    const row_count = Number($grid.attr('aria-rowcount')) || 0;
-    if (row_max > row_count) {
+    const row_cnt = Number($grid.attr('aria-rowcount')) || 0;
+    const row_min = ROW_FIRST;
+    const row_max = $rows?.length || row_cnt;
+    if (row_max > row_cnt) {
         $grid.attr('aria-rowcount', row_max);
-        OUT.debug(`${func}: row_count was ${row_count}; now ${row_max}`);
+        OUT.debug(`${func}: row_count was ${row_cnt}; now ${row_max}`);
     }
 
-    const col_min   = COL_FIRST;
-    const col_max   = $cols.length;
-    const col_count = Number($grid.attr('aria-colcount')) || 0;
-    if (col_max !== col_count) {
+    const col_cnt = Number($grid.attr('aria-colcount')) || 0;
+    const col_min = COL_FIRST;
+    const col_max = $cols?.length || col_cnt;
+    if (col_max !== col_cnt) {
         $grid.attr('aria-colcount', col_max);
-        OUT.debug(`${func}: col_count was ${col_count}; now ${col_max}`);
+        OUT.debug(`${func}: col_count was ${col_cnt}; now ${col_max}`);
     }
 
     setGridBounds($grid, row_min, row_max, col_min, col_max);
