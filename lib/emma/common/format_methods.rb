@@ -311,11 +311,12 @@ module Emma::Common::FormatMethods
   # supply values for the unnamed specifiers.
   #
   def interpolate_named_references(text, *items, **opt)
-    interpolate_named_references!(text, *items, **opt) || text.to_s
+    interpolate_named_references!(text, *items, **opt) ||
+      (text.is_a?(String) ? text.dup : text.to_s)
   end
 
-  # Replace #sprintf named references in *text* with the matching values
-  # extracted from *items* or *opt*.
+  # If possible, make a copy of *text* with #sprintf named references replaced
+  # by the matching values extracted from *items* or *opt*.
   #
   # @param [String, *]           text
   # @param [Array<Hash,Model,*>] items
@@ -327,7 +328,7 @@ module Emma::Common::FormatMethods
   # @see #interpolate_named_references
   #
   def interpolate_named_references!(text, *items, **opt)
-    items  = [*items, opt].compact_blank!.presence or return
+    return if text.blank? || items.push(opt).compact_blank!.empty?
     values =
       named_references_and_formats(text, default_fmt: nil).map { |term, format|
         term = term.to_s
@@ -348,9 +349,11 @@ module Emma::Common::FormatMethods
         val %= format if format
         [key, val]
       }.compact.presence or return
+    html = text.is_a?(ActiveSupport::SafeBuffer)
     text = text.to_s.gsub(/(?<!%)(%[^{<])/, '%\1')  # Preserve %s specifiers
     text %= values.to_h                             # Interpolate
-    text.gsub(/(?<!%)%(%[^{<])/, '\1')              # Restore %s specifiers
+    text = text.gsub(/(?<!%)%(%[^{<])/, '\1')       # Restore %s specifiers
+    html ? text.html_safe : text
   end
 
 end

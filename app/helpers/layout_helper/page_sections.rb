@@ -81,10 +81,12 @@ module LayoutHelper::PageSections
     type   = type&.to_s&.delete_suffix('_html')&.to_sym || :text
     text ||= page_text(controller: controller, action: action, type: type)
     return if text.blank?
-    # noinspection RubyMismatchedArgumentType
-    interpolation_keys = named_references(text).presence
-    text %= opt.extract!(*interpolation_keys) if interpolation_keys
-    text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
+    if (refs = named_references(text)).present?
+      vals = opt.extract!(*refs)
+      (refs - vals.keys).each { |ref| vals[ref] = try(ref) || '???' }
+      text %= vals
+    end
+    text = html_tag(tag, text) unless text.html_safe? || tag.blank?
     prepend_css!(opt, css)
     append_css!(opt, *type) unless type == :text
     html_div(text, **opt)
