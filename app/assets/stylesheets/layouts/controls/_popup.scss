@@ -28,8 +28,8 @@
         position:       absolute;
         top:            1.5rem;
         left:           1.75rem;
-        min-width:      33vw;
-        min-height:     50vh;
+        min-width:      min(50em, 50vw); // About 80 characters per line.
+        min-height:     min(50em, 50vh); // About 25 lines.
     }
 
     @media #{$medium-width} {

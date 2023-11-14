@@ -571,8 +571,8 @@ body.help {
 
 body.help.modal {
 
-    .help-intro,
-    .help-toc,
+    .help-intro > *,
+    .help-toc > *,
     .help-list,
     .help-container {
         max-width: unset;
@@ -585,8 +585,10 @@ body.help.modal {
 
 body.help:not(.modal) {
 
+    // Visibly separate major help sections.
     .entry-title {
-        padding-top: 2rem;
-        border-top:  0.25rem solid gray;
+        margin-top:  4rem;
+        padding-top: 4rem;
+        border-top:  0.375rem solid var(--rev-bg-color);
     }
 }
