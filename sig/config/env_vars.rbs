@@ -156,9 +156,9 @@ LOG_SILENCER: bool
 
 # Application endpoints which are intended to leave no footprint in the log.
 #
-# @type [Array<String>]
+# @type [Array<String,Regexp>]
 #
-LOG_SILENCER_ENDPOINTS: strArray
+LOG_SILENCER_ENDPOINTS: Array[String|Regexp]
 
 # Control console debugging output.
 #

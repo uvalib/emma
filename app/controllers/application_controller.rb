@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
   # ===========================================================================
 
   check_authorization unless: :devise_controller?
+  skip_authorization_check only: :return_to_sender
 
   # ===========================================================================
   # :section: Callbacks
@@ -93,6 +94,39 @@ class ApplicationController < ActionController::Base
   #
   def modal?
     @modal ||= true?(params[:modal])
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # This is a catch-all for endpoints which are intentionally being rejected
+  # with extreme prejudice.
+  #
+  def return_to_sender
+    Log.silence(true)
+    redirect_to "https://#{sender_ip}"
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Return the IP address of the requester.
+  #
+  # @param [ActionDispatch::Request, nil] req       Default: `request`.
+  # @param [Array<String>, nil]           proxies   Trusted proxies.
+  #
+  # @return [String]
+  #
+  def sender_ip(req = nil, proxies = nil)
+    req     ||= request
+    proxies ||= ActionDispatch::RemoteIp::TRUSTED_PROXIES
+    ActionDispatch::RemoteIp::GetIp.new(req, true, proxies).to_s
   end
 
 end

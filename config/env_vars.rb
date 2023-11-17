@@ -357,14 +357,24 @@ LOG_SILENCER = !false?(ENV['LOG_SILENCER'])
 
 # Application endpoints which are intended to leave no footprint in the log.
 #
-# @type [Array<String>]
+# @type [Array<String,Regexp>]
 #
+#--
+# noinspection RubyMismatchedArgumentType
+#++
 LOG_SILENCER_ENDPOINTS =
-  ENV.fetch('LOG_SILENCER_ENDPOINTS', %w[/healthcheck /health/check])
-     .then { |v| v.is_a?(Array) ? v.join("\n") : v.to_s }
-     .split(/[|\t\n]/)
-     .map! { |v| '/' + v.delete_prefix('/') unless (v = v.strip).empty? }
-     .compact
+  if (endpoints = ENV['LOG_SILENCER_ENDPOINTS'])
+    endpoints = endpoints.join("\n") if endpoints.is_a?(Array)
+    endpoints = endpoints.to_s.split(/[|\t\n]/).map!(&:strip).compact_blank!
+    endpoints.map! { |v| v.start_with?('/') ? v : "/#{v}" }
+  else
+    endpoints = %w[/healthcheck /health/check]
+    endpoints << %r{^/artifact}
+    endpoints << %r{^/bs_api}
+    endpoints << %r{^/periodical}
+    endpoints << %r{^/title}
+    endpoints << %r{^/v2}
+  end
 
 # =============================================================================
 # Output

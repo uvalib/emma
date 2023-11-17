@@ -343,6 +343,16 @@ Rails.application.routes.draw do
   get   '/tool/get_job_result/:job_id',         to: 'tool#get_job_result'
   get   '/tool/get_job_result/:job_id/*path',   to: 'tool#get_job_result'
 
+  # ===========================================================================
+  # Old routes that still get hit by robots
+  # ===========================================================================
+
+  get '/artifact(/*any)',    to: 'application#return_to_sender'
+  get '/bs_api(/*any)',      to: 'application#return_to_sender'
+  get '/periodical(/*any)',  to: 'application#return_to_sender'
+  get '/title(/*any)',       to: 'application#return_to_sender'
+  get '/v2(/*any)',          to: 'application#return_to_sender'
+
 end
 
 # Non-functional hints for RubyMine type checking.

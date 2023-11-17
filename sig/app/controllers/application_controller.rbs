@@ -25,4 +25,18 @@ class ApplicationController < ActionController::Base
   def modal?: () -> bool
 
   @modal: bool
+
+  # This is a catch-all for endpoints which are intentionally being rejected
+  # with extreme prejudice.
+  #
+  def return_to_sender: () -> void
+
+  # Return the IP address of the requester.
+  #
+  # @param [ActionDispatch::Request, nil] req       Default: `request`.
+  # @param [Array<String>, nil]           proxies   Trusted proxies.
+  #
+  # @return [String]
+  #
+  def sender_ip: (?(ActionDispatch::Request|nil) req, ?(strArray|nil) proxies) -> String
 end
