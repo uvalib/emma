@@ -1,11 +1,3 @@
-GIT
-  remote: https://github.com/uvalib/omniauth-shibboleth.git
-  revision: cffca2b320cfb1859ae6e977ccf6a551292d8bfd
-  branch: omniauth2
-  specs:
-    omniauth-shibboleth (2.0.0)
-      omniauth (~> 2.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -429,7 +421,6 @@ DEPENDENCIES
   oj
   omniauth (~> 2.1)
   omniauth-rails_csrf_protection
-  omniauth-shibboleth!
   pdf-reader
   pg
   prometheus-client

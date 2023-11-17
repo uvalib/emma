@@ -1,0 +1,82 @@
+module OmniAuth
+  module Strategies
+    # This strategy is based on 'omniauth-shibboleth' but with #callback_phase
+    # refactored to minimize log output.
+    #
+    class Shibboleth
+      include OmniAuth::Strategy
+
+      include OmniAuth::ExtensionDebugging
+
+      # The request phase results in a redirect to a path that is configured to
+      # be hijacked by mod rewrite and shibboleth apache module.
+      #
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [(Integer, Hash{String=>*}, Array<String>)]
+      #
+      def request_phase: () -> httpResult
+
+      # callback_phase
+      #
+      # @raise [Timeout::Error]
+      # @raise [Errno::ETIMEDOUT]
+      # @raise [SocketError]
+      #
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      #
+      def callback_phase: () -> httpResult
+
+      # User login name.
+      #
+      # @return [String]
+      #
+      def uid: () -> String
+
+      @uid: String?
+
+      # User account details.
+      #
+      # @return [Hash]
+      #
+      def info: () -> Hash[Symbol,String]
+
+      # Extra information.
+      #
+      # @return [Hash]
+      #
+      def extra: () -> symHash
+
+      # Return just the potentially-useful parts of `request.env`.
+      #
+      # This also converts the "(null)" value set by the Apache module to an
+      # actual *nil*.
+      #
+      # @return [Hash{String=>*}]
+      #
+      def request_env: () -> strHash
+
+      # parse_affiliation
+      #
+      # @param [Array, String, nil] value
+      #
+      # @return [Array<String>, nil]
+      #
+      def parse_affiliation: (String|anyArray|nil value) -> (strArray | nil)
+
+      # parse_member
+      #
+      # @param [Array, String, nil] value
+      #
+      # @return [Array<String>, nil]
+      #
+      def parse_member: (String|anyArray|nil value) -> (strArray | nil)
+
+      # inferred_affiliations
+      #
+      # @return [Array<String>, nil]
+      #
+      def inferred_affiliations: () -> (strArray | nil)
+    end
+  end
+end

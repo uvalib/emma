@@ -77,7 +77,6 @@ gem 'devise'
 
 gem 'omniauth', '~> 2.1'
 gem 'omniauth-rails_csrf_protection'
-gem 'omniauth-shibboleth', github: 'uvalib/omniauth-shibboleth', branch: 'omniauth2'
 
 # == Serialization
 gem 'faraday'
