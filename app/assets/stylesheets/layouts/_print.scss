@@ -6,9 +6,6 @@
 
 @media print {
 
-    $section-gap: 3rem;
-    $column-gap:  1rem;
-
     // In the print rendering, let the printer driver control the margins.
     html, body {
         margin:      0;
@@ -17,19 +14,14 @@
         font-size:   large;
     }
 
-    body > * {
-        width: 100%;
-    }
-
     p, img {
-        page-break-inside: avoid !important;
-        page-break-before: avoid !important;
-        page-break-after:  avoid !important;
+        break-inside: avoid !important;
     }
 
     .overlays               { display: none !important; }
     .skip-nav               { display: none !important; }
     .layout-header          { display: none !important; }
+    .layout-footer          { display: none !important; }
     .search-in-progress     { display: none !important; }
     .scroll-to-top          { display: none !important; }
 
@@ -37,134 +29,4 @@
     .help-popup             { display: none !important; }
     .pagination-controls    { display: none !important; }
 
-    .layout-content {
-        margin:  0;
-        padding: 0;
-    }
-
-    // noinspection CssReplaceWithShorthandSafely
-    .search-list {
-
-        grid-template-columns: 1fr;
-        margin:     0;
-        margin-top: $section-gap * 0.5;
-        padding:    0;
-        column-gap: $column-gap;
-        row-gap:    1rem;
-
-        .pagination-top {
-            margin:        0;
-            margin-bottom: $section-gap;
-            padding:       0;
-        }
-
-        .pagination-bottom {
-            display: none !important;
-        }
-
-        .number {
-
-            margin:     0;
-            padding:    0;
-            text-align: unset;
-
-            .container {
-                display:  block;
-                position: unset;
-            }
-        }
-
-        .search-list-item {
-
-            display:               grid;
-            grid-template-columns: auto 1fr;
-            column-gap:            $column-gap;
-            row-gap:               0.25rem;
-            margin-bottom:         $section-gap;
-
-            .value.array {
-
-                column-gap: $column-gap * 0.5;
-
-                > * {
-                    margin:       -0.25rem;
-                    margin-right: 0.5rem;
-                    padding:      0 0.25rem;
-                    box-shadow:   none;
-                }
-            }
-
-            .label.field-Title {
-                margin:         0;
-                padding-bottom: 0.125rem;
-                align-self:     end;
-            }
-
-            .value.field-Title {
-
-                height:          1.875rem;
-                flex-direction:  column-reverse;
-                justify-content: start;
-
-                .title {
-                    margin-top: 0;
-                }
-
-                .repository {
-                    img {
-                        max-height: 2rem;
-                    }
-                }
-            }
-        }
-    }
-
-    .layout-footer {
-
-        position:   unset;
-        margin-top: 2rem;
-        box-shadow: none;
-
-        .footer-section {
-            color:            black;
-            background-color: unset;
-        }
-
-        .footer-section * {
-            color: inherit;
-        }
-
-        .footer-table {
-
-            display:        grid;
-            grid-auto-flow: column;
-            margin-top:     0.5rem;
-
-            .entry {
-                display: flex;
-            }
-        }
-
-        .session-debug {
-
-            margin-top: 1rem;
-            border-top: 2px solid;
-
-            .session-debug-table {
-                border-top: none;
-            }
-        }
-    }
-
-    .help-intro,
-    .help-toc {
-        page-break-inside: avoid !important;
-    }
-
-    body.help:not(.modal) {
-
-        .entry-title {
-            page-break-before: always !important;
-        }
-    }
 }

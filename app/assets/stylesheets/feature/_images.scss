@@ -5,16 +5,16 @@
 @use 'shared/feature/images' as image;
 
 //=============================================================================
-// Internal placeholder classes
+// Internal mixins
 //=============================================================================
 
-%image {
+@mixin image-border {
     object-fit:    contain;
     border:        image.$border-width solid image.$border-color;
     border-radius: 3px;
 }
 
-%placeholder-image {
+@mixin image-placeholder {
     border-color: transparent;
 }
 
@@ -26,12 +26,12 @@
 .cover-image {
 
     img {
-        @extend %image;
+        @include image-border;
     }
 
     .placeholder {
 
-        @extend %placeholder-image;
+        @include image-placeholder;
 
         display: block;
         margin:  0 auto;
@@ -51,13 +51,13 @@
     min-width: $min-thumbnail-width;
 
     img {
-        @extend %image;
+        @include image-border;
         @include image.thumbnail-dimensions;
     }
 
     .placeholder {
 
-        @extend %placeholder-image;
+        @include image-placeholder;
 
         width:     $min-thumbnail-width - (2 * image.$border-width);
         height:    auto;

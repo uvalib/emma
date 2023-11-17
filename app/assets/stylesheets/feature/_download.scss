@@ -9,7 +9,7 @@
 
 // Properties for hidden controls that are shown at different stages.
 // @see file:app/assets/javascripts/feature/download.js
-%transient-control {
+@mixin transient-control {
 
     display:         inline-block;
     margin-left:     $gap-x;
@@ -35,7 +35,7 @@
     // @see file:javascripts/feature/download.js *showFailureMessage*
     .failure {
 
-        @extend %transient-control;
+        @include transient-control;
 
         padding:          3px 6px;
         color:            black;
@@ -43,5 +43,4 @@
         border-radius:    3px;
         cursor:           default;
     }
-
 }

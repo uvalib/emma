@@ -38,15 +38,12 @@ $data-list-border-color: none;
 
 /// A collection of one or more label/value pairs.
 ///
-// noinspection CssOverwrittenProperties
 @mixin label-value-pairs {
 
     @include list.columns-2;
 
     margin-bottom: $list-item-gap-y;
-    break-inside:  avoid;
     break-inside:  avoid-column;
-    break-after:   left;
     align-content: flex-start;
 
     @media #{v.$narrow-screen} {
@@ -80,7 +77,6 @@ $data-list-border-color: none;
     .value {
         margin-bottom: $list-item-margin-y;
         word-break:    break-word;
-        break-inside:  avoid;
         break-inside:  avoid-column;
     }
 
@@ -101,6 +97,7 @@ $data-list-border-color: none;
             margin-bottom: calc(3 * #{$list-item-gap-y} / 2);
         }
 
+        // noinspection CssOverwrittenProperties
         &.field-Links {
 
             word-break: break-all;

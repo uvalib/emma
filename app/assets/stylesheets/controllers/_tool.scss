@@ -75,7 +75,7 @@ body.tool.md {
 
     }
 
-    %input-prompt {
+    @mixin input-prompt {
         display:         flex;
         flex-direction:  row;
         justify-content: flex-start;
@@ -86,7 +86,7 @@ body.tool.md {
     // Wrapper containing the file input element.
     .file-prompt {
 
-        @extend %input-prompt;
+        @include input-prompt;
 
         //=====================================================================
         // Components
@@ -106,7 +106,7 @@ body.tool.md {
     // Wrapper containing the clipboard input element.
     .clipboard-prompt {
 
-        @extend %input-prompt;
+        @include input-prompt;
 
         //=====================================================================
         // Components

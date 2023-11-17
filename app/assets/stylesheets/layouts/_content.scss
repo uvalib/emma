@@ -27,6 +27,11 @@
     @media #{$narrow-screen} {
         padding-top:    $page-padding-y;
     }
+
+    @media print {
+        margin:         0;
+        padding:        0;
+    }
 }
 
 // For the heading at the top of the content area.

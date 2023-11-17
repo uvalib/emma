@@ -37,14 +37,10 @@ $control-height:         2.25rem;
     }
 }
 
-//=============================================================================
-// Internal placeholder classes
-//=============================================================================
-
 // Treat the including class as the top part of a visually enclosed header
 // area which is actually comprised of individual enclosures, one per layout
 // section.
-%complete-shadow-enclosure {
+@mixin complete-shadow-enclosure {
 
     @include header.enclosure;
 
@@ -68,9 +64,9 @@ $control-height:         2.25rem;
 // Treat the including class as the top part of a visually enclosed header
 // area which is actually comprised of individual enclosures, one per layout
 // section.
-%top-shadow-enclosure {
+@mixin top-shadow-enclosure {
 
-    @extend %complete-shadow-enclosure;
+    @include complete-shadow-enclosure;
 
     border-bottom-left-radius:  0;
     border-bottom-right-radius: 0;
@@ -80,9 +76,9 @@ $control-height:         2.25rem;
 // Treat the including class as the bottom part of a visually enclosed header
 // area which is actually comprised of individual enclosures, one per layout
 // section.
-%bottom-shadow-enclosure {
+@mixin bottom-shadow-enclosure {
 
-    @extend %complete-shadow-enclosure;
+    @include complete-shadow-enclosure;
 
     border-top-left-radius:  0;
     border-top-right-radius: 0;
@@ -307,9 +303,9 @@ $control-height:         2.25rem;
 
     &.shadow {
 
-        &.top      { @extend %top-shadow-enclosure; }
-        &.bottom   { @extend %bottom-shadow-enclosure; }
-        &.complete { @extend %complete-shadow-enclosure; }
+        &.top      { @include top-shadow-enclosure; }
+        &.bottom   { @include bottom-shadow-enclosure; }
+        &.complete { @include complete-shadow-enclosure; }
 
         &.top,
         &.complete {

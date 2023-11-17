@@ -27,6 +27,9 @@ $wide-open-pad:          1rem;
 $medium-open-pad:        0.875rem;
 $narrow-open-pad:        0.75rem;
 
+$print-section-gap:      3rem;
+$print-column-gap:       1rem;
+
 $h-shift:                0.125rem;
 $v-shift:                0.25rem;
 $v-shift-half:           $v-shift * 0.5;
@@ -57,21 +60,6 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 }
 
 //=============================================================================
-// Internal placeholder classes
-//=============================================================================
-
-// Use to display text as a substitute for a logo.
-%text-logo {
-    padding:       1px 0.5rem;
-    font-size:     medium;
-    font-weight:   normal;
-    color:         var(--rev-fg-color);
-    background:    $panel-accent;
-    border:        1px solid transparent;
-    border-radius: 0.5rem;
-}
-
-//=============================================================================
 // Base definitions
 //=============================================================================
 
@@ -99,6 +87,12 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
     @media #{$narrow-screen} {
         grid-template-columns: 1fr;
+    }
+
+    @media print {
+        display:         flex;
+        justify-content: space-between;
+        margin:          2rem;
     }
 
     //=========================================================================
@@ -137,6 +131,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
         @media #{$wide-screen} {
             column-gap: 1rem;
+        }
+
+        @media print {
+            display:    none;
         }
     }
 
@@ -248,8 +246,15 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         flex-direction:  column;
         justify-content: center;
 
+        // Use to display text as a substitute for a logo.
         div {
-            @extend %text-logo;
+            padding:       1px 0.5rem;
+            font-size:     medium;
+            font-weight:   normal;
+            color:         var(--rev-fg-color);
+            background:    $panel-accent;
+            border:        1px solid transparent;
+            border-radius: 0.5rem;
         }
     }
 
@@ -585,6 +590,12 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                     0.5rem  -0.5rem  0       0.5rem var(--bg-color),
                     0.25rem -0.25rem 0.75rem 0.5rem var(--bg-color);
             }
+
+            @media print {
+                margin:         0;
+                padding-bottom: 0.125rem;
+                align-self:     end;
+            }
         }
 
         // Field labels with help icons:
@@ -648,17 +659,27 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             }
         }
 
+        &.array {
+            @media print {
+
+                grid-template-columns: repeat(4, minmax(max-content, 0.25fr));
+                column-gap:            $print-column-gap * 0.5;
+
+                > * {
+                    margin:       -0.25rem;
+                    margin-right: 0.5rem;
+                }
+            }
+        }
+
         &.list,
         &.textbox {
 
             width:          max-content;
             min-width:      15vw;
+            max-width:      75vw;
             max-height:     20vh;
             overflow-y:     auto;
-
-            @media #{$wide-screen} {
-                max-width:  75vw;
-            }
 
             @media #{$medium-width} {
                 max-width:  62.5vw;
@@ -744,6 +765,11 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                      0        0.25rem  0.25rem  0        var(--bg-color);
             }
 
+            @media print {
+                height:          1.875rem;
+                justify-content: start;
+            }
+
             // @see SearchDecorator#title_and_source
             .title {
 
@@ -775,6 +801,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                     margin-top:     0.5rem;
                     padding-right:  $scroll-easement-x;
                     overflow-y:     auto;
+                }
+
+                @media print {
+                    margin-top:     0;
                 }
 
                 &:focus {
@@ -811,6 +841,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                     @media #{$not-wide-screen} {
                         max-height: 2.5rem;
+                    }
+
+                    @media print {
+                        max-height: 2rem;
                     }
                 }
             }
@@ -971,6 +1005,15 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         grid-template-columns: 1fr;
     }
 
+    // noinspection CssReplaceWithShorthandSafely
+    @media print {
+        margin:     0;
+        margin-top: $print-section-gap * 0.5;
+        padding:    0;
+        column-gap: $print-column-gap;
+        row-gap:    1rem;
+    }
+
     //=========================================================================
     // Components
     //=========================================================================
@@ -981,6 +1024,12 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
     // Replaced by .heading-bar .pagination-top.
     .pagination-top {
         display: none;
+    }
+
+    .pagination-bottom {
+        @media print {
+            display: none;
+        }
     }
 
     .number {
@@ -1021,6 +1070,12 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             box-shadow:     0 0 0 0.75rem var(--bg-color);
         }
 
+        @media print {
+            margin:         0;
+            padding:        0;
+            text-align:     unset;
+        }
+
         //=====================================================================
         // Components
         //=====================================================================
@@ -1040,6 +1095,11 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             @media #{$narrow-screen} {
                 top:            0;
                 flex-direction: row;
+            }
+
+            @media print {
+                display:        block;
+                position:       unset;
             }
 
             //=================================================================
@@ -1132,6 +1192,14 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             @include grid.column-span;
         }
 
+        @media print {
+            display:               grid;
+            grid-template-columns: auto 1fr;
+            column-gap:            $print-column-gap;
+            row-gap:               0.25rem;
+            margin-bottom:         $print-section-gap;
+        }
+
         //=====================================================================
         // Elements
         //=====================================================================
@@ -1190,6 +1258,8 @@ $title-scroll-mask:
     // Components
     //=========================================================================
 
+    $title-height: 3.25rem;
+
     $narrow-title-shadow:      0       0       0.5rem  0.25rem  ghostwhite;
     $not-narrow-title-shadow: -0.5rem  0       0       0        $title-bg;
     $title-bottom-shadow:      0       2px     0       0        darkgray;
@@ -1209,6 +1279,10 @@ $title-scroll-mask:
 
         @media #{$narrow-screen} {
             width:       1.875rem;
+        }
+
+        @media print {
+            display:     none;
         }
 
         // This may just be a Firefox thing, but the right triangle icon seems
@@ -1267,10 +1341,14 @@ $title-scroll-mask:
 
         .container {
 
-            height:      3.25rem;
+            height:      $title-height;
 
             @media #{$not-narrow-screen} {
                 display: none;
+            }
+
+            @media print {
+                height:  auto;
             }
 
             //=================================================================
@@ -1278,7 +1356,9 @@ $title-scroll-mask:
             //=================================================================
 
             .value {
-                @include sr-only;
+                @media not print {
+                    @include sr-only;
+                }
             }
 
             .toggle.for-item {
@@ -1384,6 +1464,11 @@ $title-scroll-mask:
 
                 @media #{$narrow-screen} {
                     justify-content: flex-end;
+                }
+
+                @media print {
+                    position:   unset;
+                    min-height: $title-height;
                 }
 
                 > * {
@@ -1503,6 +1588,10 @@ $title-scroll-mask:
 
                 @media #{$narrow-screen} {
                     box-shadow: $narrow-title-shadow,     $title-scroll-mask;
+                }
+
+                @media print {
+                    break-after: avoid;
                 }
 
                 > * {
@@ -2353,12 +2442,18 @@ body.search {
 body.search.title_results {
 
     @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: $title-bg) {
+
         background: $bg;
         box-shadow:
              $r-offset  1px  0  2px  $bg,
              $r-offset -1px  0  2px  $bg,
             -$l-offset  1px  0  2px  $bg,
             -$l-offset -1px  0  2px  $bg;
+
+        @media print {
+            background: unset;
+            box-shadow: none;
+        }
     }
 
     //=========================================================================
@@ -2400,6 +2495,10 @@ body.search.title_results {
                 line-height: 1.25;
                 font-size:   larger;
 
+                @media print {
+                    margin-top: 1rem;
+                }
+
                 // Don't display the divider if not valid.
                 &[data-value="-"],
                 &:not([data-value]) {
@@ -2424,6 +2523,12 @@ body.search.title_results {
                     box-shadow:
                         -1px  1px  0  3px  $title-bg,
                         -1px -1px  0  3px  $title-bg;
+                }
+
+                &.open {
+                    @media print {
+                        break-after: avoid;
+                    }
                 }
 
                 // Open/close toggle button
@@ -2458,6 +2563,11 @@ body.search.title_results {
                 }
 
                 &.open {
+
+                    @media print {
+                        break-after: avoid;
+                    }
+
                     .details {
                         display: none;
                     }

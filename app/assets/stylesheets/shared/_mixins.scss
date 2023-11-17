@@ -301,9 +301,19 @@
         padding-right:  calc(#{v.$page-padding-x} + #{v.$scroll-easement-x});
     }
 
+    @media print {
+        color:      black;
+        background: unset;
+    }
+
     * {
+
         margin: 0;
         color:  var(--rev-fg-color);
+
+        @media print {
+            color: black;
+        }
     }
 
     a {
@@ -331,6 +341,10 @@
     border-radius:    0.625rem;
 
     --focus-color:    #{v.$panel-focus};
+
+    @media print {
+        break-inside: avoid;
+    }
 }
 
 /// Definitions for elements within a panel.

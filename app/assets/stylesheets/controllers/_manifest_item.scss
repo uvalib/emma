@@ -27,6 +27,15 @@ $max-columns: 55; // The number of ManifestItem database columns.
     background:     white;
 }
 
+@mixin cell {
+    margin:       0;
+    padding:      0.25rem 0.5rem;
+    border-left:  0.0625rem solid;
+    border-right: 0.0625rem solid;
+    grid-column:  auto;
+    grid-row:     auto;
+}
+
 //=============================================================================
 // Manifest item index page
 //
@@ -70,26 +79,17 @@ $max-columns: 55; // The number of ManifestItem database columns.
     // Components
     //=========================================================================
 
-    %cell {
-        margin:       0;
-        padding:      0.25rem 0.5rem;
-        border-left:  0.0625rem solid;
-        border-right: 0.0625rem solid;
-        grid-column:  auto;
-        grid-row:     auto;
-    }
-
     > .controls {
-        @extend %cell;
+        @include cell;
     }
 
     > .value {
 
-        @extend %cell;
+        @include cell;
 
         &.field-FileData,
         &.field-EmmaData {
-            @extend %cell
+            @include cell;
         }
 
         &.textbox {
@@ -645,7 +645,7 @@ table.manifest_item-grid {
                     // Components
                     //=========================================================
 
-                    %special {
+                    @mixin special {
                         font-size: large;
                         color:     $uva-accent-orange;
                     }
@@ -660,7 +660,7 @@ table.manifest_item-grid {
 
                         .field-name {
 
-                            @extend %special;
+                            @include special;
 
                             font-family: monospace;
                         }
@@ -708,7 +708,7 @@ table.manifest_item-grid {
                             }
 
                             dt:not(.label) {
-                                @extend %special;
+                                @include special;
                             }
 
                             dd:not(.label) {
@@ -1198,7 +1198,7 @@ table.manifest_item-grid {
                     // Components
                     //=========================================================
 
-                    %file-type-button {
+                    @mixin file-type-button {
 
                         @include button.control;
 
@@ -1222,14 +1222,14 @@ table.manifest_item-grid {
 
                     // Visible replacement for the file chooser control.
                     .uppy-FileInput-btn {
-                        @extend %file-type-button;
+                        @include file-type-button;
                     }
 
                     // @see ManifestItemDecorator#file_input_popup
                     .inline-popup {
 
                         .popup-toggle {
-                            @extend %file-type-button;
+                            @include file-type-button;
                         }
 
                         .popup-panel {
@@ -1600,7 +1600,7 @@ table.manifest_item-grid {
 
             > .cell.error {
 
-                %bad-item {
+                @mixin bad-item {
                     text-decoration: line-through;
                     color:           $uva-emergency-red;
                 }
@@ -1618,13 +1618,13 @@ table.manifest_item-grid {
 
                     &.array {
                         .item {
-                            @extend %bad-item;
+                            @include bad-item;
                         }
                     }
 
                     &:not(.array),
                     &.array.enum:not(.multi) {
-                        @extend %bad-item;
+                        @include bad-item;
                     }
                 }
             }

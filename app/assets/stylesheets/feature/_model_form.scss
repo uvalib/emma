@@ -210,9 +210,7 @@
         display: grid;
         gap:     0.5rem;
 
-        @media #{$wide-screen} {
-            grid-template-columns: repeat(9, 1fr);
-        }
+        grid-template-columns: repeat(9, 1fr);
 
         @media #{$medium-width} {
             grid-template-columns: repeat(5, 1fr);
@@ -469,7 +467,7 @@
     // Elements - first grid row (if not using button tray)
     //=========================================================================
 
-    %grid-control {
+    @mixin grid-control {
 
         @include grid.row(1);
 
@@ -480,13 +478,13 @@
     // ERB-provided submit to '/upload/create' or '/upload/update'.
     .submit-button { // input[type="submit"].uppy-FileInput-btn
         @include button.control;
-        @extend %grid-control;
+        @include grid-control;
     }
 
     // ERB-provided cancel (back to '/upload/new' or '/upload/edit').
     .cancel-button { // button[type="cancel"].uppy-FileInput-btn
         @include button.control;
-        @extend %grid-control;
+        @include grid-control;
     }
 
     // ERB-provided file chooser.
@@ -495,7 +493,7 @@
 
     // Appended to .model-form and moved into place via model-form.js.
     .uppy-FileInput-container {
-        @extend %grid-control;
+        @include grid-control;
     }
 
     // Display for the selected filename moved into place via model-form.js.
@@ -544,8 +542,7 @@
         // Components
         //=====================================================================
 
-        // noinspection CssReplaceWithShorthandSafely
-        %tray-control {
+        @mixin tray-control {
             max-height: max-content;
             max-width:  max-content;
             margin:     0;
@@ -554,24 +551,24 @@
 
         .submit-button {
             @include button.control;
-            @extend %tray-control;
+            @include tray-control;
         }
 
         .cancel-button {
             @include button.control;
-            @extend %tray-control;
+            @include tray-control;
         }
 
         // Appended to .button-tray and moved into place via model-form.js.
         .uppy-FileInput-container {
-            @extend %tray-control;
+            @include tray-control;
         }
 
         // Display for the selected filename moved into place via
         // model-form.js.
         .uploaded-filename {
 
-            @extend %tray-control;
+            @include tray-control;
 
             margin:        0 0.25rem;
             line-height:   2.15;
@@ -598,7 +595,7 @@
 
         .lookup-button {
             @include button.control;
-            @extend %tray-control;
+            @include tray-control;
         }
     }
 

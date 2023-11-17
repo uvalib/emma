@@ -323,6 +323,18 @@ $item-padding:      0.5rem;
         grid-template-columns: 1fr;
     }
 
+    @media print {
+
+        padding-bottom: $item-padding;
+        overflow-y:     clip;
+        break-inside:   avoid;
+
+        .label,
+        .value {
+            margin-bottom: 0.25rem;
+        }
+    }
+
     //=========================================================================
     // Components
     //=========================================================================
@@ -523,6 +535,13 @@ $item-padding:      0.5rem;
             .icon.edit   { @include icon.edit;   }
             .icon.delete { @include icon.delete; }
 
+        }
+    }
+
+    th.actions,
+    td.actions {
+        @media print {
+            display: none;
         }
     }
 }

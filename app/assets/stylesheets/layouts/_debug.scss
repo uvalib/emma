@@ -18,6 +18,10 @@
 
     word-break: break-word;
 
+    @media print {
+        display: none;
+    }
+
     &.footer-section {
         padding-top: 0;
     }
@@ -49,41 +53,43 @@
         word-break:  break-word;
         border-top:  1px solid;
 
-        grid-template-columns: auto 1fr;
-        gap:                   0.25rem 1rem;
-    }
+        grid-template-columns:      auto 1fr;
+        gap:                        0.25rem 1rem;
 
-    .key,
-    .value {
-        text-align:  left;
+        @media #{$narrow-screen} {
+            grid-template-columns:  1fr;
+            gap:                    0.5rem;
+        }
     }
 
     .key {
+
+        text-align:  left;
         word-break:  keep-all;
         font-weight: bold;
+
+        &:not(.row-first) {
+            @media #{$narrow-screen} {
+                border-top:  1px solid;
+                margin-top:  0.25rem;
+                padding-top: 0.25rem;
+            }
+        }
+    }
+
+    .value {
+
+        text-align: left;
+
+        &:not(.row-first) {
+            @media #{$narrow-screen} {
+                margin-left: 0.75rem;
+            }
+        }
     }
 
     .row-first {
         font-weight: bold;
-    }
-
-    @media #{$narrow-screen} {
-
-        .session-debug-table {
-            grid-template-columns: 1fr;
-            gap:                   0.5rem;
-        }
-
-        .key:not(.row-first) {
-            border-top:  1px solid;
-            margin-top:  0.25rem;
-            padding-top: 0.25rem;
-        }
-
-        .value:not(.row-first) {
-            margin-left: 0.75rem;
-        }
-
     }
 
     .note {
