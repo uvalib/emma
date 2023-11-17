@@ -68,6 +68,10 @@ $aws-admin-column-space: 0.75rem;
         grid-template-columns: 1fr;
     }
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     > * {
         overflow:      hidden;
         text-overflow: ellipsis;

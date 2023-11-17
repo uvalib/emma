@@ -79,8 +79,6 @@ module ActionDispatch
 end
 
 module ActionMailer
-  class Base
-  end
   class Preview
   end
 end
@@ -101,7 +99,7 @@ module ActiveSupport
     end
   end
 
-  class DeprecatedNumericWithFormat
+  class NumericWithFormat
     def to_s: (?(String | Integer | Symbol | nil) format, ?(Hash[untyped,untyped] | nil) options) -> String
   end
 
@@ -290,7 +288,7 @@ end
 
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb
 class BigDecimal
-  prepend ActiveSupport::DeprecatedNumericWithFormat
+  prepend ActiveSupport::NumericWithFormat
 end
 
 module CanCan
@@ -308,12 +306,6 @@ module CanCan
   end
 
   module ControllerAdditions
-  end
-
-  class Error < StandardError
-  end
-
-  class AccessDenied < Error
   end
 
 end
@@ -451,8 +443,6 @@ module Faraday
   end
   module Logging
   end
-  class Error < StandardError
-  end
   class Env
   end
   class RackBuilder
@@ -461,15 +451,7 @@ end
 
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb
 class Float
-  prepend ActiveSupport::DeprecatedNumericWithFormat
-end
-
-module Forwardable
-end
-
-class GlobalID
-  module Identification
-  end
+  prepend ActiveSupport::NumericWithFormat
 end
 
 module GoodJob
@@ -558,7 +540,7 @@ end
 
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb
 class Integer
-  prepend ActiveSupport::DeprecatedNumericWithFormat
+  prepend ActiveSupport::NumericWithFormat
 end
 
 module IO::Like
@@ -570,6 +552,13 @@ module Kernel
 
   def self?.__dir__: () -> String
   def self?.__method__: () -> Symbol
+
+end
+
+class Module < Object
+
+  # NOTE: overrides gems/rbs-*/core/module.rbs
+  def self.constants: () -> symArray
 
 end
 
@@ -611,13 +600,6 @@ end
 class OpenStruct
 end
 
-class Module < Object
-
-  # NOTE: overrides gems/rbs-*/core/module.rbs
-  def self.constants: () -> symArray
-
-end
-
 module PDF
   class Reader
   end
@@ -650,8 +632,6 @@ module Puma
 end
 
 module Rake
-  module DSL
-  end
   class Task
   end
   class TaskArguments
@@ -696,10 +676,6 @@ end
 class Sanitize
 end
 
-class Set[unchecked out A]
-  include Enumerable[A]
-end
-
 class Shrine
   class Attacher
     module InstanceMethods
@@ -727,16 +703,16 @@ class Shrine
   end
 end
 
-# NOTE: overrides gems/rbs-*/core/string.rbs
-class String
-  def start_with?: (*(string|Regexp) prefixes) -> bool
-end
-
 module Sprockets
   module ProcessorUtils
   end
   module Loader
   end
+end
+
+# NOTE: overrides gems/rbs-*/core/string.rbs
+class String
+  def start_with?: (*(string|Regexp) prefixes) -> bool
 end
 
 module Workflow

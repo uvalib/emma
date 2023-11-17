@@ -9,12 +9,12 @@
   title  ||= nil
   raise unless anchor && button && title
 
-  administrator     = current_user&.administrator?
-  manager           = current_user&.manager? && !administrator
+  administrator = current_user&.administrator?
+ #manager       = current_user&.manager? && !administrator
 
-  panel_opener    = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
-  delete_submit   = help_button_for(AccountDecorator, :delete,  :submit)
-  delete_cancel   = help_button_for(AccountDecorator, :delete,  :cancel)
+  panel_opener  = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+  delete_submit = help_button_for(AccountDecorator, :delete,  :submit)
+  delete_cancel = help_button_for(AccountDecorator, :delete,  :cancel)
 
 -%>
 

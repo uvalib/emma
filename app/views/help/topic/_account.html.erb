@@ -6,7 +6,7 @@
 
   topic             = t('emma.help.topic.account')
   administrator     = current_user&.administrator?
-  manager           = current_user&.manager? && !administrator
+ #manager           = current_user&.manager? && !administrator
 
   signed_in         = help_jump('signed in', :sign_in)
 
@@ -58,13 +58,6 @@
   show_icon, show_tip = icons[:show].values_at(  :label, :value)
   edit_icon, edit_tip = icons[:edit].values_at(  :label, :value)
   del_icon,  del_tip  = icons[:delete].values_at(:label, :value)
-
-  # Form controls
-
-  panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
-
-  delete_submit     = help_button_for(AccountDecorator, :delete,  :submit)
-  delete_cancel     = help_button_for(AccountDecorator, :delete,  :cancel)
 
   # Page anchors
 

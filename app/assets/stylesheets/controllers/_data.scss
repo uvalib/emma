@@ -61,12 +61,13 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
     &.columns-1 {
         grid-template-columns: $first_column;
     }
+
     @for $n from 2 through $max-cols {
         &.columns-#{$n} {
             grid-template-columns:
                 $first_column
                 repeat(($n - 1), $basic-column);
-;        }
+        }
     }
 
     //=========================================================================
@@ -158,6 +159,10 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
     margin-top: 4.5rem;
 
     grid-template-columns: 0.1fr 0.9fr;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     // @see DataHelper#html_db_field
     .database-field-counts {

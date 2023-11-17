@@ -59,6 +59,10 @@ body.user_sessions {
         margin: calc(3 * #{$page-padding-y}) calc(3 * #{$page-padding-x});
     }
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     // @see file:app/views/devise/shared/_links.html.erb
     // @see file:app/views/user/sessions/_omniauth.html.erb
     // @see file:app/views/user/registrations/edit.html.erb

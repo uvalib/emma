@@ -161,6 +161,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             column-gap:  1rem;
         }
 
+        //=====================================================================
+        // Components
+        //=====================================================================
+
         .counts,
         .results.menu-control,
         .button-tray {
@@ -384,6 +388,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                 flex-wrap: wrap-reverse;
             }
 
+            //=================================================================
+            // Elements
+            //=================================================================
+
             a:not(:hover) {
                 text-decoration: none;
             }
@@ -476,6 +484,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                 }
             }
         }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
 
         ul {
 
@@ -588,6 +600,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                 display: none;
             }
         }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
 
         .text {
             @media #{$medium-width} {
@@ -1005,6 +1021,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             box-shadow:     0 0 0 0.75rem var(--bg-color);
         }
 
+        //=====================================================================
+        // Components
+        //=====================================================================
+
         .container {
 
             @media #{$wide-screen} {
@@ -1021,6 +1041,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                 top:            0;
                 flex-direction: row;
             }
+
+            //=================================================================
+            // Elements
+            //=================================================================
 
             .value {
 
@@ -1107,6 +1131,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         @media #{$narrow-screen} {
             @include grid.column-span;
         }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
 
         // Superfluous because BaseDecorator::Fields#field_property_pairs folds
         // the information from :rem_complete into :rem_coverage.
@@ -1234,7 +1262,7 @@ $title-scroll-mask:
         }
 
         //=====================================================================
-        // Special handling for the item toggle.
+        // Components - special handling for the item toggle
         //=====================================================================
 
         .container {
@@ -1244,6 +1272,10 @@ $title-scroll-mask:
             @media #{$not-narrow-screen} {
                 display: none;
             }
+
+            //=================================================================
+            // Elements
+            //=================================================================
 
             .value {
                 @include sr-only;
@@ -1275,7 +1307,7 @@ $title-scroll-mask:
         }
 
         //=====================================================================
-        // When the associated list item is open.
+        // Variation - when the associated list item is open
         //=====================================================================
 
         &.open {
@@ -1307,6 +1339,10 @@ $title-scroll-mask:
                 width:       0;
                 overflow:    visible;
             }
+
+            //=================================================================
+            // Components
+            //=================================================================
 
             .container {
                 width: min-content;
@@ -1569,6 +1605,7 @@ body.search.file_results {
 body.search.dev-style {
 
     .heading-bar {
+
         // @see SearchDecorator#list_styles
         .style-button {
 

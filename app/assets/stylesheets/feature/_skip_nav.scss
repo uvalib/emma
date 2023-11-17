@@ -34,6 +34,10 @@ $sn-entry-gap: 0.1rem;
     &         { z-index: $z-hidden }
     &.visible { z-index: $z-popup; }
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     .skip-nav-heading {
 
         @include clear-default-styling;
@@ -49,6 +53,10 @@ $sn-entry-gap: 0.1rem;
         @include clear-default-styling;
 
         padding-top: $sn-entry-gap;
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
 
         a, a:visited {
             color:           var(--fg-color);

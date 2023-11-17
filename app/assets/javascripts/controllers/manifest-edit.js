@@ -938,7 +938,7 @@ appSetup(MODULE, function() {
         const property = fieldProperty();
         dataCells(cells).each((_, cell) => {
             const $cell = $(cell);
-            const field = $cell.attr('data-field');
+            const field = $cell.attr(FIELD_ATTR);
             if (field === 'file_data') {
                 $cell.attr('aria-required', true);
             } else if (property[field]?.required) {
@@ -4302,7 +4302,7 @@ appSetup(MODULE, function() {
     function setCellValid(cell, setting) {
         //OUT.debug(`setCellValid: "${setting}"; cell =`, cell);
         const $cell  = dataCell(cell);
-        const field  = $cell.attr('data-field');
+        const field  = $cell.attr(FIELD_ATTR);
         const $input = $cell.find(`[name="${field}"]`);
         const valid  = (setting !== false);
         if (!valid) {

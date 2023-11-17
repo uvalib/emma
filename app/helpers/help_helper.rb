@@ -562,7 +562,6 @@ module HelpHelper
     # @return [String, nil]
     #
     def text_value(cfg, *names)
-      v = nil
       # noinspection RubyMismatchedReturnType
       names.find do |name|
         if (value = cfg[:"#{name}_html"]&.strip).present?

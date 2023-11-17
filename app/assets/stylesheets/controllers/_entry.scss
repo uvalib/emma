@@ -173,6 +173,10 @@ $checkbox-x-gap: 0.675rem;
 
     @extend .model-list;
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     row-gap: $entry-item-gap;
 
     .pagination-top {
@@ -232,6 +236,10 @@ $checkbox-x-gap: 0.675rem;
     @media #{$medium-width} {
         top: 0;
     }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     .popup-toggle.icon {
 
@@ -338,6 +346,10 @@ form.select-entry {
 
     margin: 2rem 0;
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     .selected-header {
 
         margin:    $page-padding-y 0;
@@ -380,9 +392,8 @@ form.select-entry {
 /// Settings used for a vertically-scrollable field value.
 ///
 @mixin scrollable-field {
-    overflow-y: auto;
-    resize:     vertical;
-
+    overflow-y:          auto;
+    resize:              vertical;
     overscroll-behavior: contain;
 }
 
@@ -396,11 +407,11 @@ form.select-entry {
 // @see BaseDecorator::Form#field_container
 .form-fields {
 
-    display:       grid;
-    width:         inherit;
-    margin-bottom: $entry-form-gap;
-    line-height:   1.375;
-    font-size:     large;
+    display:        grid;
+    width:          inherit;
+    margin-bottom:  $entry-form-gap;
+    line-height:    1.375;
+    font-size:      large;
 
     // A large minimum height is set to avoid the page bouncing vertically when
     // switching between field filter settings which display a varying number
@@ -414,8 +425,8 @@ form.select-entry {
     }
 
     @media #{$narrow-screen} {
-        row-gap:    0.25rem;
         grid-template-columns: 1fr;
+        row-gap:               0.25rem;
     }
 
     //=========================================================================
@@ -615,6 +626,10 @@ form.select-entry {
             margin-top:  0.75rem;
         }
 
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
         .help-popup .popup-toggle.icon {
 
             padding:            0.3125rem 0.375rem;
@@ -654,6 +669,10 @@ form.select-entry {
                 font-size:      x-large;
             }
         }
+
+        //=====================================================================
+        // Variations
+        //=====================================================================
 
         // Skip the status icon for disabled items.
         &:not(.disabled):not(.fixed) {
@@ -925,6 +944,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         width:          100%;
         height:         100%;
 
+        //=====================================================================
+        // Components
+        //=====================================================================
+
         .outer, .inner {
             @include shape.triangle-icon(right);
             margin-top: 0.5rem;
@@ -987,6 +1010,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         padding:    0;
     }
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     .popup-controls {
         @media #{$narrow-screen} {
             padding: 0.5rem;
@@ -996,6 +1023,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
 .modal-popup,
 .inline-popup.lookup-popup {
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     // noinspection CssReplaceWithShorthandSafely
     .lookup-container {
 
@@ -1014,6 +1046,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         }
 
         overscroll-behavior: contain;
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
 
         > * {
             max-width: inherit;
@@ -1054,6 +1090,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             left:     calc(50% - ($img-width  * 0.5));
         }
 
+        // @see BaseDecorator::Lookup#lookup_query
         .lookup-query {
 
             $color:             lighter($uva-blue, 95%);
@@ -1080,18 +1117,24 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 padding-top:    0.5rem;
             }
 
+            //=================================================================
+            // Elements
+            //=================================================================
+
             .terms {
                 padding: 0 0.5rem;
                 border:  1px solid $lookup-accent-fg;
             }
         }
 
+        // @see BaseDecorator::Lookup#lookup_input
         .lookup-prompt {
             .item-terms {
                 padding: 0.75rem 0.5rem;
             }
         }
 
+        // @see BaseDecorator::Lookup#lookup_status
         .lookup-status {
 
             justify-content: center;
@@ -1099,6 +1142,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             @media #{$narrow-screen} {
                 margin-left: 0.5rem;
             }
+
+            //=================================================================
+            // Elements
+            //=================================================================
 
             > * {
                 @media #{$narrow-screen} {
@@ -1122,9 +1169,9 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             .notice {
                 flex-basis: auto;
             }
-
         }
 
+        // @see LookupModal.makeEntriesDisplay()
         .lookup-entries {
 
             max-height:     80%;
@@ -1137,7 +1184,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 width:      max-content;
             }
 
-            // noinspection LongLine
+            //=================================================================
+            // Elements
+            //=================================================================
+
             .list {
 
                 $max-columns: 20;
@@ -1374,9 +1424,14 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             }
         }
 
+        // @see BaseDecorator::Lookup#lookup_results
         .lookup-output {
 
             width: 100%;
+
+            //=================================================================
+            // Elements
+            //=================================================================
 
             .value {
                 overscroll-behavior: contain;

@@ -171,8 +171,9 @@ module TestHelper::SystemTests::Common
     end
 
     # Control reaches here only if the page was not found and not *fatal*.
+    # noinspection RubyMismatchedArgumentType
+    current = url_without_port(url || current_url).inspect
     target  = targets.map!(&:inspect).pop
-    current = url_without_port((url ||= current_url)).inspect
     if targets.present?
       expected = "any of expected pages %s or #{target}" % targets.join(', ')
     elsif target.present?
