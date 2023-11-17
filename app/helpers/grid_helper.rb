@@ -42,7 +42,7 @@ module GridHelper
     opt[:row]     ||= 0
     opt[:col]     ||= 0
     opt[:row_max] ||= pairs.size
-    opt[:col_max] ||= 1
+    opt[:col_max] ||= 2
     outer_opt = remainder_hash!(opt, :wrap, :sr_only, *GRID_OPTS)
     html_div(**outer_opt) do
       pairs.map do |key, value|
