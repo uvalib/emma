@@ -1,0 +1,67 @@
+# Matomo analytics.
+#
+# @see https://analytics.lib.virginia.edu
+#
+module Matomo
+  PROD_SITE: Integer
+
+  DEV_SITE: Integer
+
+  SITE: Integer
+
+  HOST: String
+
+  ROOT: String
+
+  SCRIPT: String
+
+  TRACKER: String
+
+  OPT_OUT: String
+
+  ENABLED: bool
+
+  # Indicate whether Matomo analytics are in use.
+  #
+  # * If deployed, *true* unless `ENV[ANALYTICS_ENABLED]` is "false".
+  # * On the desktop, *false* unless `ENV[ANALYTICS_ENABLED]` is "true".
+  #
+  def self.enabled?: () -> bool
+
+  # Matomo site identifier ("idSite").
+  #
+  # The Matomo "site" or "project" is the data collection unit associated with
+  # this service.
+  #
+  # @return [Integer]
+  #
+  def self.site: () -> Integer
+
+  # Piwik host tracker URL.
+  #
+  # @return [String]
+  #
+  def self.tracker_url: () -> String
+
+  # Matomo script URL.
+  #
+  # @return [String]
+  #
+  def self.script_url: () -> String
+
+  # Matomo JavaScript asset.
+  #
+  # This should be included at the end of `<head>`.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def self.script_element: () -> ActiveSupport::SafeBuffer
+
+  # Element inserted to cause a page to be counted if JavaScript is disabled.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def self.no_js: (**untyped opt) -> ActiveSupport::SafeBuffer
+end

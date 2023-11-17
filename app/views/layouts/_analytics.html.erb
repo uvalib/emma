@@ -1,0 +1,10 @@
+<%# app/views/layouts/_analytics.html.erb -%>
+<%-
+  # Track a page hit if JavaScript is turned off.
+
+  return unless Matomo.enabled?
+
+  view_debug(__FILE__)
+-%>
+
+<noscript><%= Matomo.no_js -%></noscript>

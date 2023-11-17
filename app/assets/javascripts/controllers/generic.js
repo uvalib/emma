@@ -7,6 +7,7 @@
 
 import { AppDebug }                  from '../application/debug';
 import { appSetup }                  from '../application/setup';
+import { Analytics }                 from '../shared/analytics';
 import { isPresent }                 from '../shared/definitions';
 import { initializeTableNavigation } from '../shared/grids';
 import { InlinePopup }               from '../shared/inline-popup';
@@ -29,5 +30,9 @@ appSetup(MODULE, function() {
     // earlier "../controllers/*" module.
     InlinePopup.initializeAll();
     ModalDialog.initializeAll();
+
+    // Update links for analytics as the final step in case earlier actions
+    // create additional link targets on the page.
+    Analytics.updatePage();
 
 });

@@ -449,6 +449,14 @@ AppDebug.file('shared/assets.js.erb');
  * @property {string} Image_placeholder_asset
  */
 
+/**
+ * @typedef {object} AnalyticsProperties
+ *
+ * @property {boolean} enabled
+ * @property {string}  site
+ * @property {string}  tracker_url
+ */
+
 // ============================================================================
 // Application settings
 // ============================================================================
@@ -515,6 +523,17 @@ export const Emma = (function() {
     const DEPLOYED =        b$('<%= application_deployed? %>'),
           SEARCH_ANALYSIS = b$('<%= SearchesDecorator::SEARCH_ANALYSIS %>'),
           APP_DEBUG =       false;
+
+    // ========================================================================
+    // Analytics
+    // ========================================================================
+
+    /** @type {AnalyticsProperties} */
+    const Analytics = {
+        enabled:        b$('<%= Matomo.enabled? %>'),
+        site:           '<%= Matomo.site %>',
+        tracker_url:    '<%= Matomo.tracker_url %>',
+    };
 
     // ========================================================================
     // Feature settings
@@ -643,6 +662,7 @@ export const Emma = (function() {
         DEPLOYED,
         SESSION_ID,
         SEARCH_ANALYSIS,
+        Analytics,
         Image,
         Panel,
         Tree,

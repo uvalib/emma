@@ -91,8 +91,10 @@ module HeadHelper::Scripts
     result  = []
     result << javascript_include_tag(*items, opt)
     result << app_javascript(**opt)
-    if defined?(CapybaraLockstep) && CapybaraLockstep.active
-      result << capybara_lockstep(opt)
+    if Rails.env.test?
+      result << capybara_lockstep(opt) if CapybaraLockstep.active
+    else
+      result << Matomo.script_element  if Matomo.enabled?
     end
     safe_join(result, "\n")
   end
