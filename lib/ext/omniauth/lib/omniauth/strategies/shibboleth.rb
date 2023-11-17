@@ -30,7 +30,7 @@ module OmniAuth
       # This path should be hijacked by the Apache module for Shibboleth.
       option :callback_path, '/users/auth/shibboleth/callback'
 
-      option :fields, %i[
+      option :fields, %w[
         cn
         givenName
         mail
@@ -108,7 +108,7 @@ module OmniAuth
         options.fields.map { |field|
           names = [field.upcase, field.underscore.upcase].uniq
           value = names.map { |name| req_env["HTTP_#{name}"] }.compact.first
-          [field, value]
+          [field.to_sym, value]
         }.to_h
       end
 
