@@ -204,8 +204,7 @@ module Record::Steppable
   #
   #def being_indexed?: ((Model|Symbol|String|nil) item) -> bool
 
-  # Indicate whether this record is involved in a workflow step related to
-  # ingest into the EMMA Unified Index.
+  # Indicate whether this record is involved in a terminal workflow step.
   #
   # @param [Model, String, Symbol, nil] item
   #

@@ -77,6 +77,8 @@ module Emma::Common::ExceptionMethods
   #
   # @param [Exception, Any, nil] error
   #
+  # @note Currently unused.
+  #
   def operational_exception?(error)
     ancestors = self_class(error).ancestors || []
     ancestors.include?(Exception) && !ancestors.intersect?(INTERNAL_EXCEPTION)

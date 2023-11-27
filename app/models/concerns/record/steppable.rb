@@ -370,8 +370,7 @@ module Record::Steppable
     state_group(item) == :finalization
   end
 
-  # Indicate whether this record is involved in a workflow step related to
-  # ingest into the EMMA Unified Index.
+  # Indicate whether this record is involved in a terminal workflow step.
   #
   # @param [Model, String, Symbol, nil] item
   #

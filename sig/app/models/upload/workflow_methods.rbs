@@ -230,8 +230,7 @@ module Upload::WorkflowMethods
   #
   def being_indexed?: () -> bool
 
-  # Indicate whether this record is involved in a workflow step related to
-  # ingest into the EMMA Unified Index.
+  # Indicate whether this record is involved in a terminal workflow step.
   #
   def completed?: () -> bool
 

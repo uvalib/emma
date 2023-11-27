@@ -35,6 +35,8 @@ module BaseDecorator::Row
   #
   # @return [Integer]
   #
+  # @note Currently unused.
+  #
   def row_items_total: () -> Integer
 
   # The names and configurations for each possible row data column (whether

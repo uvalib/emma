@@ -463,8 +463,7 @@ module Upload::WorkflowMethods
     workflow_group == :finalization
   end
 
-  # Indicate whether this record is involved in a workflow step related to
-  # ingest into the EMMA Unified Index.
+  # Indicate whether this record is involved in a terminal workflow step.
   #
   def completed?
     workflow_group == :done

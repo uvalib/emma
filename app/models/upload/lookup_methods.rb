@@ -96,7 +96,8 @@ module Upload::LookupMethods
   # returns the matching records.
   #
   # @param [Array<Upload, String, Integer, Array>] identifiers
-  # @param [Hash]                                  opt  Passed to #where except
+  # @param [Hash]                                  opt To #get_relation except
+  #                                                    #SEARCH_RECORDS_OPTIONS:
   #
   # @option opt [Integer,nil]    :offset
   # @option opt [Integer,nil]    :limit
@@ -170,7 +171,7 @@ module Upload::LookupMethods
     result
   end
 
-  # Generate an ActiveRecord relation for Upload records specified by either
+  # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.
   #
   # Additional constraints may be supplied via *opt*.  If no *identifiers* are

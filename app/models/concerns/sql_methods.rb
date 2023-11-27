@@ -550,8 +550,8 @@ module SqlMethods
 
     # Dynamically create a derived table with JSON fields expanded into columns
     #
-    # @param [String, Hash, nil] extra  Passed to #sql_extended_table
-    # @param [Hash]              opt    Passed to #sql_extended_table
+    # @param [String, Array, Hash, nil] extra   Passed to #sql_extended_table
+    # @param [Hash]                     opt     Passed to #sql_extended_table
     #
     # @return [ActiveRecord::Result]
     #
@@ -563,7 +563,7 @@ module SqlMethods
     # Generate the SQL statement for dynamically creating a derived table with
     # JSON fields expanded into columns.
     #
-    # @param [String, Hash, nil]           extra      More SQL appended to FROM
+    # @param [String, Array, Hash, nil]    extra      More SQL appended to FROM
     # @param [Hash{Symbol=>Array<Symbol>}] field_map
     # @param [Array<Symbol>, Symbol, nil]  only
     # @param [Array<Symbol>, Symbol, nil]  except

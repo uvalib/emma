@@ -55,6 +55,8 @@ module BaseDecorator::Row
   #
   # @return [Integer]
   #
+  # @note Currently unused.
+  #
   def row_items_total
     row_items.size
   end

@@ -66,7 +66,7 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [*]    list
+  # @param [*]    list                Default: `paginator.page_items`
   # @param [Hash] opt
   #
   # @option opt [Symbol, String] :wrap

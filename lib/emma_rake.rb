@@ -100,6 +100,8 @@ module Emma::Rake
   # @param [String, Symbol]                  flag
   # @param [Rake::TaskArguments, Array, nil] task_args
   #
+  # @note Currently unused.
+  #
   def task_option?(flag, task_args = nil)
     value = task_option(flag, task_args)
     !value.nil? && !value.casecmp?('false')

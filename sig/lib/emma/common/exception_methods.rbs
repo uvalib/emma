@@ -35,6 +35,8 @@ module Emma::Common::ExceptionMethods
   #
   # @param [Exception, Any, nil] error
   #
+  # @note Currently unused.
+  #
   def operational_exception?: (untyped error) -> bool
 
   # Re-raise an exception which indicates a likely programming error.

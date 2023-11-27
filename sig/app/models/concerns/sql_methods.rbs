@@ -281,17 +281,17 @@ module SqlMethods
 
     # Dynamically create a derived table with JSON fields expanded into columns
     #
-    # @param [String, Hash, nil] extra  Passed to #sql_extended_table
-    # @param [Hash]              opt    Passed to #sql_extended_table
+    # @param [String, Array, Hash, nil] extra   Passed to #sql_extended_table
+    # @param [Hash]                     opt     Passed to #sql_extended_table
     #
     # @return [ActiveRecord::Result]
     #
-    def extended_table: (?(anyHash|String|nil) extra, **untyped opt) -> ActiveRecord::Result
+    def extended_table: (?(anyHash|strArray|String|nil) extra, **untyped opt) -> ActiveRecord::Result
 
     # Generate the SQL statement for dynamically creating a derived table with
     # JSON fields expanded into columns.
     #
-    # @param [String, Hash, nil]           extra      More SQL appended to FROM
+    # @param [String, Array, Hash, nil]    extra      More SQL appended to FROM
     # @param [Hash{Symbol=>Array<Symbol>}] field_map
     # @param [Array<Symbol>, Symbol, nil]  only
     # @param [Array<Symbol>, Symbol, nil]  except
@@ -299,7 +299,7 @@ module SqlMethods
     #
     # @return [String]
     #
-    def sql_extended_table: (?(anyHash|String|nil) extra, field_map: Hash[Symbol,symArray], ?only: symArray|Symbol|nil, ?except: symArray|Symbol|nil, **untyped where) -> String
+    def sql_extended_table: (?(anyHash|strArray|String|nil) extra, field_map: Hash[Symbol,symArray], ?only: symArray|Symbol|nil, ?except: symArray|Symbol|nil, **untyped where) -> String
   end
 
   # Class methods automatically added to the including class.
