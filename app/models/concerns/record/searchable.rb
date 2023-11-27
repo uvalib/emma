@@ -86,38 +86,6 @@ module Record::Searchable
 
   public
 
-  # The #search_records method returns a hash with these fields in this order.
-  #
-  #   :offset   The list offset for display purposes (not the SQL OFFSET).
-  #   :limit    The page size.
-  #   :page     The ordinal number of the current page.
-  #   :first    If the given :page is the first page of the record set.
-  #   :last     If the given :page is the last page of the record set.
-  #   :total    Count of all matching records.
-  #   :min_id   The #pagination_column value of the first matching record.
-  #   :max_id   The #pagination_column value of the last matching record.
-  #   :groups   Table of counts for each state group.
-  #   :pages    An array of arrays where each element has the IDs for that page
-  #   :list     An array of matching Entry records.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  # @note From Upload::LookupMethods#SEARCH_RECORDS_TEMPLATE
-  #
-  SEARCH_RECORDS_TEMPLATE = {
-    offset: 0,
-    limit:  0,
-    page:   0,
-    first:  true,
-    last:   true,
-    total:  0,
-    min_id: 0,
-    max_id: 0,
-    groups: {},
-    pages:  [],
-    list:   [],
-  }.freeze
-
   # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
@@ -133,7 +101,7 @@ module Record::Searchable
   # @note From Upload::LookupMethods#NON_SEARCH_PARAMS
   #
   NON_SEARCH_PARAMS =
-    [*SEARCH_RECORDS_OPTIONS, *Paginator::NON_SEARCH_KEYS]
+    (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS)
       .excluding(:sort).uniq.freeze
 
   # Get the records specified by either :id or :submission_id.
@@ -157,7 +125,7 @@ module Record::Searchable
   #
   # @raise [RangeError]                   If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]           @see #SEARCH_RECORDS_TEMPLATE
+  # @return [Paginator::Result]
   #
   # @see ActiveRecord::Relation#where
   #
@@ -168,7 +136,7 @@ module Record::Searchable
     sort   = pagination_column || implicit_order_column
     sort   = prop.key?(:sort) ? prop.delete(:sort) : sort
     groups = prop.delete(:groups)
-    result = SEARCH_RECORDS_TEMPLATE.dup
+    result = Paginator::Result.new
 
     # Handle the case where a range has been specified which resolves to an
     # empty set of identifiers.  Otherwise, #get_relation will treat this case
@@ -227,7 +195,7 @@ module Record::Searchable
     result[:groups] = group_counts(all) if groups
 
     # Finally, get the specific set of results.
-    result[:list] = get_relation(*identifiers, **opt, sort: sort).records
+    result[:list] = get_relation(*identifiers, **opt, sort: sort)
 
     result
   end
@@ -298,6 +266,7 @@ module Record::Searchable
         else                           col, dir = [sort, nil]
       end
       col ||= implicit_order_column || pagination_column
+      col &&= "#{table_name}.#{col}"
       dir &&= dir.to_s.upcase
       sort  = col && "#{col} #{dir}".squish
       Log.info { "#{meth}: no default sort" } unless sort
@@ -349,9 +318,8 @@ module Record::Searchable
     end
 
     # === Filter by association
-    assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }
-    assoc.map! { |k| k.split('.').first.singularize.to_sym }
-    assoc = assoc.presence
+    assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }.presence
+    assoc&.map! { |k| k.split('.').first.singularize.to_sym }
 
     # === Generate the relation
     query  = sql_terms(opt, *terms, join: :and)

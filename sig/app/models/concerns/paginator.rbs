@@ -100,12 +100,12 @@ class Paginator
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Hash] result
-  # @param [Hash] opt
+  # @param [ActiveRecord::Relation, Hash, nil] values
+  # @param [Hash]                              opt
   #
-  # @return [Array]
+  # @return [void]
   #
-  def finalize: (symHash result, **untyped search) -> anyArray
+  def finalize: (?(ActiveRecord::Relation|symHash|nil) values, **untyped opt) -> void
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.
@@ -148,8 +148,8 @@ class Paginator
   module ListMethods
     # Determine the number of records reported by an object.
     #
-    # @param [Api::Record, Model, Array, Hash, Any, nil] value
-    # @param [Integer]                                   default
+    # @param [Paginator, Api::Record, Model, Array, Hash, *] value
+    # @param [Integer]                                       default
     #
     # @return [Integer]               Zero indicates unknown count.
     #
@@ -160,8 +160,8 @@ class Paginator
     # (For aggregate items, this is the number of aggregates as opposed to the
     # number of records from which they are composed.)
     #
-    # @param [Api::Record, Model, Array, Hash, Any, nil] value
-    # @param [Integer]                                   default
+    # @param [Paginator, Api::Record, Model, Array, Hash, *] value
+    # @param [Integer]                                       default
     #
     # @return [Integer]               Zero indicates unknown count.
     #
@@ -219,8 +219,8 @@ class Paginator
 
   # Determine the number of records reported by an object.
   #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Hash]                                      opt
+  # @param [Paginator, Api::Record, Model, Array, Hash, *] value  Default: self
+  # @param [Hash]                                          opt
   #
   # @return [Integer]               Zero indicates unknown count.
   #
@@ -228,12 +228,30 @@ class Paginator
 
   # Extract the number of "items" reported by an object.
   #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Hash]                                      opt
+  # @param [Paginator, Api::Record, Model, Array, Hash, *] value  Default: self
+  # @param [Hash]                                          opt
   #
   # @return [Integer]               Zero indicates unknown count.
   #
   def item_count: (?untyped value, **untyped opt) -> Integer
+
+  # Relation which generates the indicated page of records.
+  #
+  # @return [ActiveRecord::Relation, nil]
+  #
+  def page_source: () -> (ActiveRecord::Relation | nil)
+
+  # Set the relation which generates the indicated page of records.
+  #
+  # @param [ActiveRecord::Relation, Array, nil] src
+  #
+  # @return [ActiveRecord::Relation, nil]
+  #
+  def page_source=
+    : (ActiveRecord::Relation src) -> ActiveRecord::Relation
+    | (anyArray|nil           src) -> nil
+
+  @page_source: ActiveRecord::Relation | nil
 
   # Get the current page of result items.
   #
@@ -243,13 +261,15 @@ class Paginator
 
   # Set the current page of result items.
   #
-  # @param [Array] values
+  # @param [ActiveRecord::Relation, Array, nil] values
   #
-  # @return [Array]
+  # @return [Array, nil]
   #
-  def page_items=: (anyArray values) -> anyArray
+  def page_items=
+    : (anyArray                   src) -> anyArray
+    | (ActiveRecord::Relation|nil src) -> nil
 
-  @page_items: anyArray
+  @page_items: anyArray | nil
 
   # property
   #
@@ -272,6 +292,28 @@ class Paginator
   def default_page_size: () -> Integer
 
   @default_page_size: Integer
+
+  # The number of records that are (or will be) produced.
+  #
+  # @return [Integer]
+  #
+  def size: () -> Integer
+
+  # Fetch records from the source.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Array<ActiveRecord::Base>, nil]
+  #
+  def source_page_items: (**untyped opt) -> (Array[ActiveRecord::Base] | nil)
+
+  # Generate a relation.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveRecord::Relation, nil]
+  #
+  def source_relation: (**untyped opt) -> (ActiveRecord::Relation | nil)
 
   # Get the current page number.
   #
@@ -498,4 +540,74 @@ class Paginator
   # @return [Integer]
   #
   def current_position: (?(Integer|nil) index, ?increment: bool, ?check: bool) -> Integer
+
+  # Delegate to the underlying array of items if it has been generated, or to
+  # the underlying source relation if it has been set.
+  #
+  # @param [Symbol, String] name
+  # @param [Array<*>]       args
+  # @param [Proc]           blk
+  #
+  # @return [Any]
+  #
+  def method_missing: ((Symbol|String) name, *untyped args) ?{ () -> untyped } -> untyped
+end
+
+# Results from #search_records with fields in this order:
+#
+# @!attribute [rw] offset
+#   The list offset for display purposes (not the SQL OFFSET).
+#   @return [Integer]
+#
+# @!attribute [rw] limit
+#   The page size.
+#   @return [Integer]
+#
+# @!attribute [rw] page
+#   The ordinal number of the current page.
+#   @return [Integer]
+#
+# @!attribute [rw] first
+#   If the given :page is the first page of the record set.
+#   @return [Boolean]
+#
+# @!attribute [rw] last
+#   If the given :page is the last page of the record set.
+#   @return [Boolean]
+#
+# @!attribute [rw] min_id
+#   The #pagination_column value of the first matching record.
+#   @return [Integer]
+#
+# @!attribute [rw] max_id
+#   The #pagination_column value of the last matching record.
+#   @return [Integer]
+#
+# @!attribute [rw] groups
+#   The Table of counts for each state group.
+#   @return [Hash]
+#
+# @!attribute [rw] pages
+#   An array of arrays where each element has the IDs for that page.
+#   @return [Array]
+#
+# @!attribute [rw] list
+#   A relation for retrieving records.
+#   @return [ActiveRecord::Relation, nil]
+#
+class Paginator::Result < ::Hash[Symbol, untyped]
+  TEMPLATE: symHash
+
+  attr_accessor offset: Integer
+  attr_accessor limit:  Integer
+  attr_accessor page:   Integer
+  attr_accessor first:  bool
+  attr_accessor last:   bool
+  attr_accessor min_id: Integer
+  attr_accessor max_id: Integer
+  attr_accessor groups: symHash
+  attr_accessor pages:  anyArray
+  attr_accessor list:   ActiveRecord::Relation | nil
+
+  def initialize: (?(symHash|nil) src) -> void
 end

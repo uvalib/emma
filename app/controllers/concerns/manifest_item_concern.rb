@@ -93,9 +93,7 @@ module ManifestItemConcern
   # @param [Array<Symbol>]       filters
   # @param [Hash]                opt
   #
-  # @return [Hash{Symbol=>*}]
-  #
-  # @see ModelConcern#find_or_match_records
+  # @return [Paginator::Result]
   #
   def find_or_match_records(*items, filters: [], **opt)
     opt.except!(:group, :groups) # TODO: groups
@@ -297,7 +295,7 @@ module ManifestItemConcern
   #
   # @raise [RangeError]               If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
+  # @return [Paginator::Result]
   #
   def delete_records(items = nil, prm = nil, **)
     items, prm = model_request_params(items, prm)
@@ -720,12 +718,12 @@ module ManifestItemConcern
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [*]    list
+  # @param [*]    list                Default: `paginator.page_items`
   # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list, **opt)
+  def index_values(list = nil, **opt)
     super(list, wrap: RESPONSE_OUTER, **opt)
   end
 

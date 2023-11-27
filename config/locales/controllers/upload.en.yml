@@ -209,6 +209,16 @@ en:
         # "emma.workflow" but here the state are organized to support filtering
         # for display and presentation purposes.
 
+        cancel:
+          label:        'Canceled'
+          tooltip:      'Submission records that can be removed'
+          show:         'nonzero'
+          enabled:      true
+          states:
+            - suspended
+            - failed
+            - canceled
+
         create:
           label:        'Creating'
           tooltip:      'New EMMA entries in the process of being created'
@@ -279,9 +289,6 @@ en:
          #show:         'nonzero'
           enabled:      true
           states:
-            - suspended
-            - failed
-            - canceled
             - completed
 
         pseudo:

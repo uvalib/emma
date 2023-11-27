@@ -601,7 +601,7 @@ module SqlMethods
           v.presence
         }.compact
       clause = where.presence && sql_where_clause(**where)
-      options << "WHERE #{clause}" if clause.present?
+      options.prepend("WHERE #{clause}") if clause.present?
       options = options.join(' ')
 
       json_tables =

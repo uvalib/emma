@@ -208,9 +208,25 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
+  # @note From Upload::WorkflowMethods#done?
+  #
+  #def done?: ((Model|Symbol|String|nil) item) -> bool
+
+  # Indicate whether this record has become a finalized EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
   # @note From Upload::WorkflowMethods#completed?
   #
   #def completed?: ((Model|Symbol|String|nil) item) -> bool
+
+  # Indicate whether this record will never become a finalized EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  # @note From Upload::WorkflowMethods#canceled?
+  #
+  #def canceled?: ((Model|Symbol|String|nil) item) -> bool
 
   # Indicate whether this record is involved in a workflow step which leads to
   # a change in the associated EMMA Unified Index entry.

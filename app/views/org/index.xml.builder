@@ -5,7 +5,7 @@
 #
 # EMMA member organizations as XML.
 
-list ||= @list || {}
+list ||= paginator.page_items
 
 xml.instruct!
 xml.orgs do

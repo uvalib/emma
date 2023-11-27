@@ -208,6 +208,7 @@ class Paginator
       self.prev_page   = :back
     end
     self.page_size = limit
+    limit = nil if limit == default_page_size
 
     # Set the effective URL parameters, including those required by API calls
     # for paginated results.
@@ -218,29 +219,31 @@ class Paginator
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [Hash] result
-  # @param [Hash] opt
+  # @param [ActiveRecord::Relation, Hash, nil] values
+  # @param [Hash]                              opt
   #
-  # @return [Array]
+  # @return [void]
   #
-  def finalize(result, **opt)
-    # noinspection RubyMismatchedArgumentType
-    if result.is_a?(Hash)
-      page  = result[:page]
-      first = result[:first] || page.nil?
-      last  = result[:last]  || page.nil?
-      self.page_items   = result[:list]
-      self.page_size    = result[:limit]
-      self.page_offset  = result[:offset]
-      self.total_items  = result[:total]
+  def finalize(values = nil, **opt)
+    options = opt.extract!(:page, :first, :last, :list, :total)
+    values  = { list: values } if values.is_a?(ActiveRecord::Relation)
+    values  = {}               if values.blank?
+    if values.is_a?(Hash)
+      values = values.merge(opt.slice(:limit, :offset), options)
+      page   = values[:page]
+      first  = values[:first] || page.nil?
+      last   = values[:last]  || page.nil?
+      self.page_items   = values[:list]
+      self.page_size    = values[:limit]
+      self.page_offset  = values[:offset]
+      self.total_items  = values[:total]
       self.next_page    = (url_for(opt.merge(page: (page + 1))) unless last)
       self.prev_page    = (url_for(opt.merge(page: (page - 1))) unless first)
       self.first_page   = (url_for(opt.except(*PAGE_KEYS))      unless first)
       self.prev_page    = first_page if page == 2
     else
-      raise "#{__method__}: not a Hash: #{result.class} #{result.inspect}"
+      raise "#{__method__}: not a Hash: #{values.class} #{values.inspect}"
     end
-    self.page_items
   end
 
   # ===========================================================================
@@ -255,12 +258,14 @@ class Paginator
   # @return [String]
   #
   def inspect
-    items = page_items.map(&:class)
+    items = Array.wrap(@page_items).map(&:class)
     items = items.tally.map { |cls, cnt| "#{cnt} #{cls}" }.presence
     items = items&.join(' / ') || 'empty'
-    vars  = instance_variables.excluding(:@page_items, :@_url_options).sort!
-    vars  = vars.map { |var| [var, instance_variable_get(var).inspect] }.to_h
-    vars  = vars.merge!('@page_items': "(#{items})").map { |k, v| "#{k}=#{v}" }
+    vars  = instance_variables
+    vars  = vars.excluding(:@page_source, :@page_items, :@_url_options).sort
+    vars  = vars.map { |k| "#{k}=%s" % instance_variable_get(k).inspect }
+    vars << "@page_source=#{@page_source.class}"
+    vars << "@page_items=(#{items})"
     "#<#{self.class.name}:#{object_id} %s>" % vars.join(' ')
   end
 
@@ -347,19 +352,19 @@ class Paginator
 
     # Determine the number of records reported by an object.
     #
-    # @param [Api::Record, Model, Array, Hash, Any, nil] value
-    # @param [Integer]                                   default
+    # @param [Paginator, Api::Record, Model, Array, Hash, *] value
+    # @param [Integer]                                       default
     #
     # @return [Integer]               Zero indicates unknown count.
     #
     def record_count(value, default: 0)
+      value   = value.page_items       if value.is_a?(Paginator)
       default = positive(default) || 1 if value.is_a?(Array)
-      # noinspection RubyMismatchedReturnType
       Array.wrap(value).sum do |v|
-        res   = v.try(:total_results)
-        res ||= v.try(:records).try(:size)
-        res ||= v.try(:size) unless v.is_a?(Hash)
-        res || default
+        v.try(:total_results) ||
+        v.try(:records)&.try(:size) ||
+        (v.try(:size) unless v.is_a?(Hash)) ||
+        default
       end
     end
 
@@ -368,21 +373,24 @@ class Paginator
     # (For aggregate items, this is the number of aggregates as opposed to the
     # number of records from which they are composed.)
     #
-    # @param [Api::Record, Model, Array, Hash, Any, nil] value
-    # @param [Integer]                                   default
+    # @param [Paginator, Api::Record, Model, Array, Hash, *] value
+    # @param [Integer]                                       default
     #
     # @return [Integer]               Zero indicates unknown count.
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def item_count(value, default: 0)
-      result   = (value.size if value.is_a?(Hash) || value.is_a?(Array))
-      result ||= value.try(:total_results)
-      result ||= value.try(:records).try(:size)
-      result ||= value.try(:item_count)
-      result ||= value.try(:titles).try(:size)
-      result || default
+      case value
+        when ActiveRecord::Relation
+          value.count
+        when Paginator, Array, Hash
+          value.size
+        else
+          value.try(:total_results) ||
+          value.try(:records)&.try(:size) ||
+          value.try(:item_count) ||
+          value.try(:titles)&.try(:size) ||
+          default
+      end
     end
 
     # =========================================================================
@@ -469,24 +477,24 @@ class Paginator
 
   # Determine the number of records reported by an object.
   #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Hash]                                      opt
+  # @param [Paginator, Api::Record, Model, Array, Hash, *] value  Default: self
+  # @param [Hash]                                          opt
   #
   # @return [Integer]               Zero indicates unknown count.
   #
   def record_count(value = nil, **opt)
-    super((value || page_items), **opt)
+    super((value || self), **opt)
   end
 
   # Extract the number of "items" reported by an object.
   #
-  # @param [Api::Record, Model, Array, Hash, Any, nil] value
-  # @param [Hash]                                      opt
+  # @param [Paginator, Api::Record, Model, Array, Hash, *] value  Default: self
+  # @param [Hash]                                          opt
   #
   # @return [Integer]               Zero indicates unknown count.
   #
   def item_count(value = nil, **opt)
-    super((value || page_items), **opt)
+    super((value || self), **opt)
   end
 
   # ===========================================================================
@@ -495,22 +503,44 @@ class Paginator
 
   public
 
+  # Relation which generates the indicated page of records.
+  #
+  # @return [ActiveRecord::Relation, nil]
+  #
+  def page_source
+    @page_source ||= nil
+  end
+
+  # Set the relation which generates the indicated page of records.
+  #
+  # @param [ActiveRecord::Relation, Array, nil] src
+  #
+  # @return [ActiveRecord::Relation, nil]
+  #
+  def page_source=(src)
+    @page_items  = src if src.is_a?(Array)
+    # noinspection RubyMismatchedReturnType
+    @page_source = (src if src.is_a?(ActiveRecord::Relation))
+  end
+
   # Get the current page of result items.
   #
   # @return [Array]
   #
   def page_items
-    @page_items ||= []
+    @page_items ||= source_page_items || []
   end
 
   # Set the current page of result items.
   #
-  # @param [Array] values
+  # @param [ActiveRecord::Relation, Array, nil] values
   #
-  # @return [Array]
+  # @return [Array, nil]
   #
   def page_items=(values)
-    @page_items = Array.wrap(values)
+    @page_source = values if values.is_a?(ActiveRecord::Relation)
+    # noinspection RubyMismatchedReturnType
+    @page_items  = (values if values.is_a?(Array))
   end
 
   # property
@@ -535,6 +565,51 @@ class Paginator
   #
   def default_page_size
     @default_page_size ||= get_page_size
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The number of records that are (or will be) produced.
+  #
+  # @return [Integer]
+  #
+  def size
+    page_source&.count || page_items.size
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Fetch records from the source.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Array<ActiveRecord::Base>, nil]
+  #
+  def source_page_items(**opt)
+    source_relation(**opt)&.to_a
+  end
+
+  # Generate a relation.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveRecord::Relation, nil]
+  #
+  def source_relation(**opt)
+    return unless (src = page_source)
+    limit  = positive(opt.key?(:limit)  ? opt[:limit]  : page_size)
+    offset = positive(opt.key?(:offset) ? opt[:offset] : page_offset)
+    src = src.limit(limit)   if limit
+    src = src.offset(offset) if offset
+    src
   end
 
   # ===========================================================================
@@ -797,7 +872,7 @@ class Paginator
   #
   def first_index
     property[:first_index] ||=
-      page_offset.nonzero? || ((page_number - 1) * page_size)
+      positive(page_offset) || ((page_number - 1) * page_size)
   end
 
   # Set the item index of the first item on the current page.
@@ -912,6 +987,103 @@ class Paginator
         raise "#{__method__}: #{v} > #{final} [final_position(#{index})]"
       end
       current[index] += 1 if increment
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Delegate to the underlying array of items if it has been generated, or to
+  # the underlying source relation if it has been set.
+  #
+  # @param [Symbol, String] name
+  # @param [Array<*>]       args
+  # @param [Proc]           blk
+  #
+  # @return [Any]
+  #
+  def method_missing(name, *args, &blk)
+    if @page_items&.respond_to?(name)
+      @page_items.send(name, *args, &blk)
+    elsif @page_source&.respond_to?(name)
+      @page_source.send(name, *args, &blk)
+    else
+      super
+    end
+  end
+
+end
+
+# Results from #search_records with fields in this order:
+#
+# @!attribute [rw] offset
+#   The list offset for display purposes (not the SQL OFFSET).
+#   @return [Integer]
+#
+# @!attribute [rw] limit
+#   The page size.
+#   @return [Integer]
+#
+# @!attribute [rw] page
+#   The ordinal number of the current page.
+#   @return [Integer]
+#
+# @!attribute [rw] first
+#   If the given :page is the first page of the record set.
+#   @return [Boolean]
+#
+# @!attribute [rw] last
+#   If the given :page is the last page of the record set.
+#   @return [Boolean]
+#
+# @!attribute [rw] min_id
+#   The #pagination_column value of the first matching record.
+#   @return [Integer]
+#
+# @!attribute [rw] max_id
+#   The #pagination_column value of the last matching record.
+#   @return [Integer]
+#
+# @!attribute [rw] groups
+#   The Table of counts for each state group.
+#   @return [Hash]
+#
+# @!attribute [rw] pages
+#   An array of arrays where each element has the IDs for that page.
+#   @return [Array]
+#
+# @!attribute [rw] list
+#   A relation for retrieving records.
+#   @return [ActiveRecord::Relation, nil]
+#
+class Paginator::Result < ::Hash
+
+  TEMPLATE = {
+    offset: 0,
+    limit:  0,
+    page:   0,
+    first:  true,
+    last:   true,
+    total:  0,
+    min_id: 0,
+    max_id: 0,
+    groups: {},
+    pages:  [],
+    list:   nil,
+  }.deep_freeze
+
+  TEMPLATE.each_key do |k|
+    define_method(k)        { self[k] }
+    define_method(:"#{k}=") { |v| self[k] = v }
+  end
+
+  def initialize(src = nil)
+    src ||= {}
+    TEMPLATE.each_pair do |k, v|
+      self[k] = src[k]&.dup || v&.dup
     end
   end
 

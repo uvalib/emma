@@ -148,26 +148,32 @@ module BaseDecorator::Fields
     elsif before
       Log.warn { "#{__method__}: before: unexpected: #{before.inspect}" }
     end
-    case (item ||= pairs || object)
-      when Model
-        config ||= model_context_fields || model_index_fields
-        pairs    = item.fields
-        parts <<
-          config.map { |field, _prop|
-            found = pairs.key?(field)
-            value = found ? pairs[field] : list_field_value(nil, field: field)
-            [field, value]
-          }.to_h
-      when Hash
-        parts << item
-      else
-        Log.warn { "#{__method__}: unexpected: #{item.inspect}" }
-    end
+
+    pairs = item || pairs || object
+    pairs = pairs.page_items if pairs.is_a?(Paginator)
+    parts +=
+      Array.wrap(pairs).map { |part|
+        case part
+          when Model
+            fields   = part.fields
+            config ||= model_context_fields || model_index_fields
+            config.keys.map { |k|
+              v = fields.key?(k) ? fields[k] : list_field_value(nil, field: k)
+              [k, v]
+            }.to_h
+          when Hash
+            part
+          else
+            Log.warn { "#{__method__}: unexpected: #{part.inspect}" }
+        end
+      }.compact
+
     if after.is_a?(Hash)
       parts << after
     elsif after
       Log.warn { "#{__method__}: after: unexpected: #{after.inspect}" }
     end
+
     {}.merge!(*parts)
   end
 

@@ -55,14 +55,6 @@ class OrgController < ApplicationController
 
   public
 
-  # Results for :index.
-  #
-  # @return [Array<Org>]
-  # @return [Array<String>]
-  # @return [nil]
-  #
-  attr_reader :list
-
   # Single item.
   #
   # @return [Org, nil]
@@ -85,14 +77,12 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     id  = identifier || current_id
-    prm = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    if id.blank? && prm.present?
-      # Perform search here.
-      sort  = prm.delete(:sort) || { updated_at: :desc }
-      found = find_or_match_records(sort: sort, **prm)
-      @list = paginator.finalize(found, **prm)
+    prm = paginator.initial_parameters
+    if id.blank? && prm.except(:sort, *Paginator::NON_SEARCH_KEYS).present?
+      # Apply parameters to render a page of items.
+      list_items(prm)
     else
-      # Otherwise redirect to the appropriate list action.
+      # If not performing a search, redirect to the appropriate view action.
       if id.blank?
         prm.merge!(action: :list_all)
       else
@@ -221,7 +211,7 @@ class OrgController < ApplicationController
     __debug_route
     return redirect_to action: :delete_select   if identifier.blank?
     raise 'Cannot delete your own organization' if current_id? # TODO: I18n
-    @list = delete_records[:list]
+    @list = delete_records.list&.records
     #org_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
       raise "No records match #{quote(identifier_list)}" # TODO: I18n
@@ -264,10 +254,7 @@ class OrgController < ApplicationController
   def list_all
     __log_activity
     __debug_route
-    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    sort  = prm.delete(:sort) || { updated_at: :desc }
-    found = find_or_match_records(sort: sort, **prm)
-    @list = paginator.finalize(found, **prm)
+    list_items
     respond_to do |format|
       format.html { render 'org/index' }
       format.json { render 'org/index' }
@@ -277,6 +264,27 @@ class OrgController < ApplicationController
     error_response(error)
   rescue => error
     error_response(error, root_path)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Setup pagination for lists of organizations.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  #
+  # @return [Hash]
+  #
+  def list_items(prm = nil)
+    prm ||= paginator.initial_parameters
+    sort  = prm.delete(:sort) || Org.implicit_order_column
+    items = find_or_match_records(sort: sort, **prm)
+    paginator.finalize(items, **prm)
+    # noinspection RubyMismatchedReturnType
+    prm
   end
 
   # ===========================================================================

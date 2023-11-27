@@ -48,7 +48,7 @@ module ManifestConcern
   #
   # @raise [Record::SubmitError]        If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Paginator::Result]
   #
   def find_or_match_manifest_items(item = nil, **opt)
     # An :id is only valid in this context if it's a ManifestItem ID.

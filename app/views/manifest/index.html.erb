@@ -4,8 +4,7 @@
 
   view_debug(__FILE__)
 
-  list  ||= paginator.page_items
-  dec     = ManifestsDecorator.new(list, **context)
+  dec     = ManifestsDecorator.new(**context)
   list    = dec.object
 
   help  ||= dec.help_topic

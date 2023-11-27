@@ -126,9 +126,10 @@ module BaseDecorator::Row
   # @return [Array<Model>]
   #
   def row_page(rows: nil, limit: nil, **)
-    rows  ||= row_items
-    limit ||= row_page_size
-    offset  = paginator.page_offset
+    rows ||= row_items
+    rows   = rows.page_source || rows.page_items if rows.is_a?(Paginator)
+    limit  = limit ? positive(limit) : row_page_size
+    offset = positive(paginator.page_offset)
     if rows.is_a?(Array)
       # noinspection RubyMismatchedArgumentType
       if offset && limit

@@ -81,7 +81,7 @@ module BaseCollectionDecorator::Table
   #
   def table_entries(row: 1, separator: "\n", **opt)
     trace_attrs!(opt)
-    rows  = table_row_page(limit: nil) # TODO: paginate tables
+    rows  = table_row_page(limit: 0) # TODO: paginate tables
     first = row + 1
     last  = first + rows.size - 1
     rows.map!.with_index(first) do |item, r|

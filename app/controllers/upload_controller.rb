@@ -124,22 +124,17 @@ class UploadController < ApplicationController
   def index
     __log_activity
     __debug_route
-    prm = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    if prm.present?
-      # Perform search here.
-      all   = prm[:group].nil? || (prm[:group].to_sym == :all)
-      sort  = prm.delete(:sort) # nil implies implicit_order_column
-      found = find_or_match_records(groups: all, sort: sort, **prm)
-      @list = paginator.finalize(found, **prm)
-      found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
-      @group_counts = found[:groups]
+    prm = paginator.initial_parameters
+    if prm.except(:sort, *Paginator::NON_SEARCH_KEYS).present?
+      # Apply parameters to render a page of items.
+      list_items(prm)
       respond_to do |format|
         format.html
         format.json { render_json index_values }
         format.xml  { render_xml  index_values(item: :entry) }
       end
     else
-      # Otherwise redirect to the appropriate list action.
+      # If not performing a search, redirect to the appropriate view action.
       prm[:action] = :list_own
       respond_to do |format|
         format.html { redirect_to prm }
@@ -351,13 +346,7 @@ class UploadController < ApplicationController
   def list_all
     __log_activity
     __debug_route
-    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    all   = prm[:group].nil? || (prm[:group].to_sym == :all)
-    sort  = prm.delete(:sort) # nil implies implicit_order_column
-    found = find_or_match_records(groups: all, sort: sort, **prm)
-    @list = paginator.finalize(found, **prm)
-    found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
-    @group_counts = found[:groups]
+    list_items
     respond_to do |format|
       format.html { render 'upload/index' }
       format.json { render_json index_values }
@@ -377,15 +366,8 @@ class UploadController < ApplicationController
   def list_org
     __log_activity
     __debug_route
-    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    org   = current_org and current_org!(prm, org)
-    all   = prm[:group].nil? || (prm[:group].to_sym == :all)
-    sort  = prm.delete(:sort) # nil implies implicit_order_column
-    found = find_or_match_records(groups: all, sort: sort, **prm)
-    @list = paginator.finalize(found, **prm)
-    found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
-    @group_counts = found[:groups]
-    opt   = { locals: { name: org&.label } }
+    list_items(for_org: true)
+    opt = { locals: { name: current_org&.label } }
     respond_to do |format|
       format.html { render 'upload/index', **opt }
       format.json { render_json index_values }
@@ -404,14 +386,7 @@ class UploadController < ApplicationController
   def list_own
     __log_activity
     __debug_route
-    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    current_user!(prm)
-    all   = prm[:group].nil? || (prm[:group].to_sym == :all)
-    sort  = prm.delete(:sort) # nil implies implicit_order_column
-    found = find_or_match_records(groups: all, sort: sort, **prm)
-    @list = paginator.finalize(found, **prm)
-    found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
-    @group_counts = found[:groups]
+    list_items(for_user: true)
     respond_to do |format|
       format.html { render 'upload/index' }
       format.json { render_json index_values }
@@ -422,6 +397,43 @@ class UploadController < ApplicationController
   rescue => error
     error_response(error, root_path)
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Setup pagination for lists of Upload items.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  # @param [Boolean]   for_org
+  # @param [Boolean]   for_user
+  #
+  # @return [Hash]
+  #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
+  def list_items(prm = nil, for_org: false, for_user: false)
+    prm ||= paginator.initial_parameters
+    current_org!(prm)  if for_org
+    current_user!(prm) if for_user
+    all   = prm[:group].nil? || (prm[:group].to_sym == :all)
+    sort  = prm.delete(:sort) || { Upload.implicit_order_column => :desc }
+    items = find_or_match_records(groups: all, sort: sort, **prm)
+    paginator.finalize(items, **prm)
+    items = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
+    @group_counts = items[:groups]
+    # noinspection RubyMismatchedReturnType
+    prm
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # === GET /upload/show_select
   #

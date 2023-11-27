@@ -128,7 +128,7 @@ module UploadConcern
   #
   # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Paginator::Result]
   #
   def find_or_match_records(*items, filters: [], **opt)
     filters = [*filters, :filter_by_state!, :filter_by_group!]
@@ -515,13 +515,12 @@ module UploadConcern
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [*]    list
+  # @param [*]    list                Default: `paginator.page_items`
   # @param [Hash] opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def index_values(list = @list, **opt)
-    list ||= @list
+  def index_values(list = nil, **opt)
     super(list, wrap: :entries, **opt)
   end
 

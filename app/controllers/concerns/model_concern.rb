@@ -214,7 +214,7 @@ module ModelConcern
   #
   # @raise [Record::SubmitError]    If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Paginator::Result]
   #
   def find_or_match_records(*items, filters: [], **opt)
     items = items.flatten.compact
@@ -476,7 +476,7 @@ module ModelConcern
   #
   # @raise [RangeError]                       If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}] From Record::Searchable#search_records.
+  # @return [Paginator::Result]
   #
   def delete_records(items = nil, prm = nil, **)
     items, prm = model_request_params(items, prm)

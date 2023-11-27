@@ -80,12 +80,13 @@ class BaseCollectionDecorator
   # @private
   DEFAULT_ACTION: Symbol
 
-  # initialize
+  # Create a new collection decorator, by default based on the paginator passed
+  # in through the *opt* parameter.
   #
-  # @param [Any, nil] obj
-  # @param [Hash]     opt
+  # @param [ActiveRecord::Relation, Paginator, Array, nil] obj
+  # @param [Hash]                                          opt
   #
-  def initialize: (?untyped obj, **untyped opt) -> void
+  def initialize: (?(ActiveRecord::Relation|Paginator|Array[ActiveRecord::Base]|ActiveRecord::Base|nil) obj, **untyped opt) -> void
 
   # Modify the inspection to limit the size of individual element results.
   #

@@ -33,7 +33,7 @@ class Manifest < ApplicationRecord
   # :section: ActiveRecord ModelSchema
   # ===========================================================================
 
-  self.implicit_order_column = :created_at
+  self.implicit_order_column = :updated_at
 
   # ===========================================================================
   # :section: ActiveRecord associations

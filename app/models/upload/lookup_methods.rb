@@ -46,36 +46,6 @@ module Upload::LookupMethods
 
   public
 
-  # The #search_records method returns a hash with these fields in this order.
-  #
-  #   :offset   The list offset for display purposes (not the SQL OFFSET).
-  #   :limit    The page size.
-  #   :page     The ordinal number of the current page.
-  #   :first    If the given :page is the first page of the record set.
-  #   :last     If the given :page is the last page of the record set.
-  #   :total    Count of all matching records.
-  #   :min_id   The :id of the first matching record.
-  #   :max_id   The :id of the last matching record.
-  #   :groups   Table of counts for each state group.
-  #   :pages    An array of arrays where each element has the IDs for that page
-  #   :list     An array of matching Upload records.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  SEARCH_RECORDS_TEMPLATE = {
-    offset: 0,
-    limit:  0,
-    page:   0,
-    first:  true,
-    last:   true,
-    total:  0,
-    min_id: 0,
-    max_id: 0,
-    groups: {},
-    pages:  [],
-    list:   [],
-  }.freeze
-
   # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
@@ -105,16 +75,18 @@ module Upload::LookupMethods
   # @option opt [Boolean]        :pages   Return array of arrays of record IDs.
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
+  # @option opt [String,Symbol]  :meth    Calling method for diagnostics.
   #
   # @raise [RangeError]                   If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]           @see #SEARCH_RECORDS_TEMPLATE
+  # @return [Paginator::Result]
   #
   # @see ActiveRecord::Relation#where
   #
   def search_records(*identifiers, **opt)
     prop   = opt.extract!(*SEARCH_RECORDS_OPTIONS)
-    result = SEARCH_RECORDS_TEMPLATE.dup
+    groups = prop.delete(:groups)
+    result = Paginator::Result.new
 
     # Handle the case where a range has been specified which resolves to an
     # empty set of identifiers.  Otherwise, #get_relation will treat this case
@@ -124,10 +96,11 @@ module Upload::LookupMethods
     end
 
     # Start by looking at results for all matches (without :limit or :offset).
+    opt[:meth] ||= "#{self_class}.#{__method__}"
     all = get_relation(*identifiers, **opt, sort: nil)
 
     # Handle the case where only a :groups summary is expected.
-    return result.merge!(groups: group_counts(all)) if prop[:groups] == :only
+    return result.merge!(groups: group_counts(all)) if groups == :only
 
     # Group record IDs into pages.
     # noinspection RailsParamDefResolve
@@ -135,6 +108,10 @@ module Upload::LookupMethods
     limit   = positive(prop[:limit])
     pg_size = limit || 10 # TODO: fall-back page size for grouping
     pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
+
+    result[:total]  = all_ids.size
+    result[:min_id] = all_ids.first
+    result[:max_id] = all_ids.last
 
     if (page = prop[:page]&.to_i)
       if page > 1
@@ -153,20 +130,16 @@ module Upload::LookupMethods
       result[:limit]  = limit
       result[:offset] = offset = prop[:offset]
     end
-
-    result[:total]  = all_ids.size
-    result[:min_id] = all_ids.first
-    result[:max_id] = all_ids.last
+    opt.merge!(limit: limit, offset: offset)
 
     # Include the array of arrays of database IDs if requested.
     result[:pages]  = pages if prop[:pages]
 
     # Generate a :groups summary if requested.
-    result[:groups] = group_counts(all) if prop[:groups]
+    result[:groups] = group_counts(all) if groups
 
     # Finally, get the specific set of results.
-    opt.merge!(limit: limit, offset: offset)
-    result[:list] = get_relation(*identifiers, **opt).records
+    result[:list] = get_relation(*identifiers, **opt)
 
     result
   end
@@ -230,6 +203,7 @@ module Upload::LookupMethods
         else                           col, dir = [sort, nil]
       end
       col ||= implicit_order_column
+      col &&= "#{table_name}.#{col}"
       dir &&= dir.to_s.upcase
       sort  = col && "#{col} #{dir}".squish
       Log.info { "#{meth}: no default sort" } unless sort
@@ -289,9 +263,8 @@ module Upload::LookupMethods
     terms << "id > #{offset}" if offset
 
     # === Filter by association
-    assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }
-    assoc.map! { |k| k.split('.').first.singularize.to_sym }
-    assoc = assoc.presence
+    assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }.presence
+    assoc&.map! { |k| k.split('.').first.singularize.to_sym }
 
     # === Generate the relation
     query  = sql_terms(opt, *terms, join: :and)

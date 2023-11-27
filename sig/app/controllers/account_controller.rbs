@@ -17,11 +17,7 @@ class AccountController < ApplicationController
 
   include AccountConcern
 
-  # Database results for :index.
-  #
-  # @return [Array<User>, nil]
-  #
-  attr_reader list: Array[User] | nil
+  @list: Array[User] | Array[Integer] | Array[String] | nil
 
   # Database results for :show.
   #
@@ -123,6 +119,15 @@ class AccountController < ApplicationController
   # List all user accounts in the same organization as the current user.
   #
   def list_org: () -> void
+
+  # Setup pagination for lists of accounts.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  # @param [Boolean]   for_org
+  #
+  # @return [Hash]
+  #
+  def list_items: (?(symHash|nil) prm, for_org: bool) -> symHash
 
   # === GET /account/show_current
   #

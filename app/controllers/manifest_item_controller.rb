@@ -66,14 +66,6 @@ class ManifestItemController < ApplicationController
 
   public
 
-  # Results for :index.
-  #
-  # @return [Array<ManifestItem>]
-  # @return [Array<String>]
-  # @return [nil]
-  #
-  attr_reader :list
-
   # API results for :show.
   #
   # @return [ManifestItem, nil]
@@ -98,10 +90,10 @@ class ManifestItemController < ApplicationController
     prm   = paginator.initial_parameters
     prm.except!(:group, :groups) # TODO: groups
     all   = prm[:group].nil? || (prm[:group].to_sym == :all)
-    found = find_or_match_records(groups: all, **prm)
-    @list = paginator.finalize(found, **prm)
-    found = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
-    @group_counts = found[:groups]
+    items = find_or_match_records(groups: all, **prm)
+    paginator.finalize(items, **prm)
+    items = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
+    @group_counts = items[:groups]
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -230,7 +222,7 @@ class ManifestItemController < ApplicationController
   #
   def delete
     __debug_route
-    @list = delete_records[:list]
+    @list = delete_records.list&.records
     #manifest_item_authorize!(@list) # TODO: authorize :delete
   rescue => error
     failure_status(error)

@@ -193,6 +193,16 @@ class UploadController < ApplicationController
   #
   def list_own: () -> void
 
+  # Setup pagination for lists of Upload items.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  # @param [Boolean]   for_org
+  # @param [Boolean]   for_user
+  #
+  # @return [Hash]
+  #
+  def list_items: (?(symHash|nil) prm, for_org: bool, for_user: bool) -> symHash
+
   # === GET /upload/show_select
   #
   # Show a menu to select an EMMA entry to show.

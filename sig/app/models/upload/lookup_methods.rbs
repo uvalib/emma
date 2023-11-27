@@ -22,24 +22,6 @@ module Upload::LookupMethods
   #
   def get_records: (*(symHash|Symbol|String|Integer|Upload) identifiers, **untyped opt) -> Array[Upload]
 
-  # The #search_records method returns a hash with these fields in this order.
-  #
-  #   :offset   The list offset for display purposes (not the SQL OFFSET).
-  #   :limit    The page size.
-  #   :page     The ordinal number of the current page.
-  #   :first    If the given :page is the first page of the record set.
-  #   :last     If the given :page is the last page of the record set.
-  #   :total    Count of all matching records.
-  #   :min_id   The :id of the first matching record.
-  #   :max_id   The :id of the last matching record.
-  #   :groups   Table of counts for each state group.
-  #   :pages    An array of arrays where each element has the IDs for that page
-  #   :list     An array of matching Upload records.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  SEARCH_RECORDS_TEMPLATE: symHash
-
   # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
@@ -68,14 +50,15 @@ module Upload::LookupMethods
   # @option opt [Boolean]        :pages   Return array of arrays of record IDs.
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
+  # @option opt [String,Symbol]  :meth    Calling method for diagnostics.
   #
   # @raise [RangeError]                   If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]           @see #SEARCH_RECORDS_TEMPLATE
+  # @return [Paginator::Result]
   #
   # @see ActiveRecord::Relation#where
   #
-  def search_records: (*(String|Integer|Upload|Array[String|Integer|Upload]) identifiers, **untyped opt) -> symHash
+  def search_records: (*(String|Integer|Upload|Array[String|Integer|Upload]) identifiers, **untyped opt) -> Paginator::Result
 
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.

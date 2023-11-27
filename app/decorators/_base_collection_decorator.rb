@@ -119,15 +119,19 @@ class BaseCollectionDecorator
   # @private
   DEFAULT_ACTION = :index
 
-  # initialize
+  # Create a new collection decorator, by default based on the paginator passed
+  # in through the *opt* parameter.
   #
-  # @param [Any, nil] obj
-  # @param [Hash]     opt
+  # @param [ActiveRecord::Relation, Paginator, Array, nil] obj
+  # @param [Hash]                                          opt
   #
   def initialize(obj = nil, **opt)
-    obj  = Array.wrap(obj)
     with = opt.delete(:with) || self.class.decorator_class
     ctx  = initialize_context(**opt).reverse_merge!(action: DEFAULT_ACTION)
+    case (obj ||= ctx[:paginator])
+      when Paginator, ActiveRecord::Relation then # as-is
+      else                                        obj = Array.wrap(obj)
+    end
     # noinspection RubyMismatchedArgumentType
     super(obj, with: with, context: ctx)
   end

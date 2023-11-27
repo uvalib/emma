@@ -4,8 +4,7 @@
 
   view_debug(__FILE__)
 
-  list  ||= paginator.page_items
-  dec     = OrgsDecorator.new(list, **context)
+  dec     = OrgsDecorator.new(**context)
   list    = dec.object
 
   help  ||= dec.help_topic

@@ -5,7 +5,7 @@
 #
 # EMMA manifests as XML.
 
-list ||= @list || {}
+list ||= paginator.page_items
 
 xml.instruct!
 xml.manifests do

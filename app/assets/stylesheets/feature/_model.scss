@@ -514,7 +514,9 @@ $item-padding:      0.5rem;
         $shadow-color:  ghostwhite;
 
         background-color: $shadow-color;
-        box-shadow:       -#{$shadow-offset} 0 0 $shadow-width $shadow-color;
+        box-shadow:
+            -#{$shadow-offset} 0 0 $shadow-width $shadow-color,
+             #{$shadow-offset} 0 0 $shadow-width $shadow-color;
 
         &:focus {
             z-index: 1; // Raise outline above the following cell's box-shadow.

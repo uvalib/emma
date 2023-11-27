@@ -56,11 +56,9 @@ module ManifestItemConcern
   # @param [Array<Symbol>]       filters
   # @param [Hash]                opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Paginator::Result]
   #
-  # @see ModelConcern#find_or_match_records
-  #
-  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> symHash
+  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> Paginator::Result
 
   # The related Manifest identified in URL parameters.
   #
@@ -176,9 +174,9 @@ module ManifestItemConcern
   #
   # @raise [RangeError]               If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}]         From Record::Searchable#search_records.
+  # @return [Paginator::Result]
   #
-  def delete_records: (?(String|Symbol|Integer|Model|Array[String|Symbol|Integer|Model]|nil) items, ?(symHash|nil) prm) -> symHash
+  def delete_records: (?(String|Symbol|Integer|Model|Array[String|Symbol|Integer|Model]|nil) items, ?(symHash|nil) prm) -> Paginator::Result
 
   RECORD_KEYS: symArray
 
@@ -370,7 +368,7 @@ module ManifestItemConcern
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [*]     list
+  # @param [*]    list                Default: `paginator.page_items`
   # @param [Hash]  opt
   #
   # @return [Hash{Symbol=>Hash}]

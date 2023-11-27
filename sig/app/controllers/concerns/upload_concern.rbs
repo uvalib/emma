@@ -70,9 +70,9 @@ module UploadConcern
   #
   # @raise [UploadWorkflow::SubmitError]  If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Paginator::Result]
   #
-  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> symHash
+  def find_or_match_records: (*(String|anyArray) items, ?filters: symArray, **untyped opt) -> Paginator::Result
 
   # Select records for the current user unless a different user has been
   # specified (or all records if specified as '*', 'all', or 'false').

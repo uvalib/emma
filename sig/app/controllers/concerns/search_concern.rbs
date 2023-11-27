@@ -77,7 +77,7 @@ module SearchConcern
   # Record a search call.
   #
   # @param [User, nil]    user        Default: `#current_user`.
-  # @param [Array, #to_a] result      Default: @list.
+  # @param [Array]        result      Default: @list or `paginator.page_items`.
   # @param [Boolean]      force       Save even if #save_search? is *false*.
   # @param [Hash]         parameters  Default: `#search_call_params`.
   #

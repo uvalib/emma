@@ -21,13 +21,7 @@ class OrgController < ApplicationController
 
   MENUS: symArray
 
-  # Results for :index.
-  #
-  # @return [Array<Org>]
-  # @return [Array<String>]
-  # @return [nil]
-  #
-  attr_reader list: (Array[Org] | Array[String] | nil)
+  @list: Array[Org] | Array[Integer] | Array[String] | nil
 
   # Single item.
   #
@@ -106,6 +100,14 @@ class OrgController < ApplicationController
   # List all organizations.
   #
   def list_all: () -> void
+
+  # Setup pagination for lists of organizations.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  #
+  # @return [Hash]
+  #
+  def list_items: (?(symHash|nil) prm) -> symHash
 
   # === GET /org/show_current
   #

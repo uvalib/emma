@@ -465,8 +465,20 @@ module Upload::WorkflowMethods
 
   # Indicate whether this record is involved in a terminal workflow step.
   #
-  def completed?
+  def done?
     workflow_group == :done
+  end
+
+  # Indicate whether this record has become a finalized EMMA entry.
+  #
+  def completed?
+    active_state == :completed
+  end
+
+  # Indicate whether this record will never become a finalized EMMA entry.
+  #
+  def canceled?
+    done? && !completed?
   end
 
   # Indicate whether this record is involved in a workflow step which leads to

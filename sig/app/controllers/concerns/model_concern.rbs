@@ -135,9 +135,9 @@ module ModelConcern
   #
   # @raise [Record::SubmitError]    If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Paginator::Result]
   #
-  def find_or_match_records: (*(String|Integer|Array[String|Integer]) items, ?filters: symArray, **untyped opt) -> symHash
+  def find_or_match_records: (*(String|Integer|Array[String|Integer]) items, ?filters: symArray, **untyped opt) -> Paginator::Result
 
   # Transform options into predicates usable for database lookup.
   #
@@ -258,9 +258,9 @@ module ModelConcern
   #
   # @raise [RangeError]                       If :page is not valid.
   #
-  # @return [Hash{Symbol=>*}] From Record::Searchable#search_records.
+  # @return [Paginator::Result]
   #
-  def delete_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, **untyped _ignored) -> symHash
+  def delete_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, **untyped _ignored) -> Paginator::Result
 
   # Remove the indicated record(s).
   #

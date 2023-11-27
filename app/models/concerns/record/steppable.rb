@@ -374,10 +374,30 @@ module Record::Steppable
   #
   # @param [Model, String, Symbol, nil] item
   #
+  # @note From Upload::WorkflowMethods#done?
+  #
+  def done?(item)
+    state_group(item) == :done
+  end
+
+  # Indicate whether this record has become a finalized EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
   # @note From Upload::WorkflowMethods#completed?
   #
   def completed?(item)
-    state_group(item) == :done
+    state_value(item) == :completed
+  end
+
+  # Indicate whether this record will never become a finalized EMMA entry.
+  #
+  # @param [Model, String, Symbol, nil] item
+  #
+  # @note From Upload::WorkflowMethods#canceled?
+  #
+  def canceled?(item)
+    done?(item) && !completed?(item)
   end
 
   # Indicate whether this record is involved in a workflow step which leads to

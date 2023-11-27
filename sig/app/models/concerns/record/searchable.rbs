@@ -49,26 +49,6 @@ module Record::Searchable
   #
   def get_records: (*(String|Symbol|Integer|Model|nil) identifiers, **untyped opt) -> Array[Model]
 
-  # The #search_records method returns a hash with these fields in this order.
-  #
-  #   :offset   The list offset for display purposes (not the SQL OFFSET).
-  #   :limit    The page size.
-  #   :page     The ordinal number of the current page.
-  #   :first    If the given :page is the first page of the record set.
-  #   :last     If the given :page is the last page of the record set.
-  #   :total    Count of all matching records.
-  #   :min_id   The :id of the first matching record.
-  #   :max_id   The :id of the last matching record.
-  #   :groups   Table of counts for each state group.
-  #   :pages    An array of arrays where each element has the IDs for that page
-  #   :list     An array of matching Entry records.
-  #
-  # @type [Hash{Symbol=>Any}]
-  #
-  # @note From Upload::LookupMethods#SEARCH_RECORDS_TEMPLATE
-  #
-  SEARCH_RECORDS_TEMPLATE: symHash
-
   # Local options consumed by #search_records.
   #
   # @type [Array<Symbol>]
@@ -106,13 +86,13 @@ module Record::Searchable
   #
   # @raise [RangeError]                   If :page is not valid.
   #
-  # @return [Hash{Symbol=>Any}]           @see #SEARCH_RECORDS_TEMPLATE
+  # @return [Paginator::Result]
   #
   # @see ActiveRecord::Relation#where
   #
   # @note From Upload::LookupMethods#search_records
   #
-  def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) identifiers, **untyped opt) -> symHash
+  def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) identifiers, **untyped opt) -> Paginator::Result
 
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.

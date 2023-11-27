@@ -52,12 +52,6 @@ class AccountController < ApplicationController
 
   public
 
-  # Database results for :index.
-  #
-  # @return [Array<User>, nil]
-  #
-  attr_reader :list
-
   # Database results for :show.
   #
   # @return [User, nil]
@@ -81,14 +75,12 @@ class AccountController < ApplicationController
   def index
     __log_activity
     __debug_route
-    prm = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    if prm.present?
-      # Perform search here.
-      terms = prm.delete(:like)
-      found = { list: get_accounts(*terms, **prm) }
-      @list = paginator.finalize(found, **prm)
+    prm = paginator.initial_parameters
+    if prm.except(:sort, *Paginator::NON_SEARCH_KEYS).present?
+      # Apply parameters to render a page of items.
+      list_items(prm)
     else
-      # Otherwise redirect to the appropriate list action.
+      # If not performing a search, redirect to the appropriate view action.
       prm[:action] = current_org ? :list_org : :list_all
       respond_to do |format|
         format.html { redirect_to prm }
@@ -229,7 +221,7 @@ class AccountController < ApplicationController
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
     raise 'Cannot delete your own account'    if current_id? # TODO: I18n
-    @list = delete_records[:list]
+    @list = delete_records.list&.records
     #user_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
       raise "No records match #{quote(identifier_list)}" # TODO: I18n
@@ -274,10 +266,7 @@ class AccountController < ApplicationController
   def list_all
     __log_activity
     __debug_route
-    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    terms = prm.delete(:like)
-    found = { list: get_accounts(*terms, **prm) }
-    @list = paginator.finalize(found, **prm)
+    list_items
     respond_to do |format|
       format.html { render 'account/index' }
       format.json { render 'account/index' }
@@ -292,17 +281,37 @@ class AccountController < ApplicationController
   def list_org
     __log_activity
     __debug_route
-    prm   = paginator.initial_parameters.except(*Paginator::NON_SEARCH_KEYS)
-    org   = current_org and current_org!(prm, org)
-    terms = prm.delete(:like)
-    found = { list: get_accounts(*terms, **prm) }
-    @list = paginator.finalize(found, **prm)
-    opt   = { locals: { name: org&.label } }
+    list_items(for_org: true)
+    opt = { locals: { name: current_org&.label } }
     respond_to do |format|
       format.html { render 'account/index', **opt }
       format.json { render 'account/index', **opt }
       format.xml  { render 'account/index', **opt }
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Setup pagination for lists of accounts.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  # @param [Boolean]   for_org
+  #
+  # @return [Hash]
+  #
+  def list_items(prm = nil, for_org: false)
+    prm ||= paginator.initial_parameters
+    # noinspection RubyMismatchedArgumentType
+    current_org!(prm) if for_org
+    terms = prm.delete(:like)
+    items = get_accounts(*terms, **prm)
+    paginator.finalize(items, **prm)
+    # noinspection RubyMismatchedReturnType
+    prm
   end
 
   # ===========================================================================

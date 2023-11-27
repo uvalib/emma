@@ -122,7 +122,7 @@ module SearchConcern
   # Record a search call.
   #
   # @param [User, nil]    user        Default: `#current_user`.
-  # @param [Array, #to_a] result      Default: @list.
+  # @param [Array]        result      Default: @list or `paginator.page_items`.
   # @param [Boolean]      force       Save even if #save_search? is *false*.
   # @param [Hash]         parameters  Default: `#search_call_params`.
   #
@@ -136,7 +136,8 @@ module SearchConcern
     attr[:controller] ||= :search
     attr[:action]     ||= :index
     attr[:user]       ||= user
-    attr[:result]     ||= result || @list
+    attr[:result]     ||= result
+    attr[:result]     ||= (@list if defined?(@list)) || paginator.page_items
     SearchCall.create(attr)
   end
 

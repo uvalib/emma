@@ -5,7 +5,7 @@
 #
 # EMMA user accounts as XML.
 
-list ||= @list || {}
+list ||= paginator.page_items
 
 xml.instruct!
 xml.users do

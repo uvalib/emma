@@ -5,6 +5,6 @@
 #
 # Manifests as JSON.
 
-list ||= @list
+list ||= paginator.page_items
 
 json.array! list, partial: 'manifest/details', as: :manifest

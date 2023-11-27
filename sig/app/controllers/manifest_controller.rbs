@@ -30,13 +30,7 @@ class ManifestController < ApplicationController
 
   MENUS: symArray
 
-  # Results for :index.
-  #
-  # @return [Array<Manifest>]
-  # @return [Array<String>]
-  # @return [nil]
-  #
-  attr_reader list: Array[Manifest] | strArray | nil
+  @list: Array[Manifest] | Array[Integer] | Array[String] | nil
 
   # Single item.
   #
@@ -122,6 +116,16 @@ class ManifestController < ApplicationController
   # List all bulk operation manifests associated with the current user.
   #
   def list_own: () -> void
+
+  # Setup pagination for lists of manifests.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  # @param [Boolean]   for_org
+  # @param [Boolean]   for_user
+  #
+  # @return [Hash]
+  #
+  def list_items: (?(symHash|nil) prm, for_org: bool) -> symHash
 
   # === GET /manifest/show_select
   #
