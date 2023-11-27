@@ -52,22 +52,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     CapybaraLockstep.active = false
   end
 
-end
-
-# Encapsulates setup of 'capybara-lockstep'.
-#
-module CapybaraLockstep
-
   Capybara::Lockstep.debug   = true?(ENV['DEBUG_LOCKSTEP'])
   Capybara::Lockstep.timeout = 2 * Capybara.default_max_wait_time
-
-  # This status is updated to indicate whether or not the Javascript for
-  # 'capybara-lockstep' should be included in the <head> of the page being
-  # rendered.  (It just gets in the way in controller tests if displaying the
-  # contents of the response body.)
-  #
-  # @return [Boolean]
-  #
-  mattr_accessor :active
 
 end

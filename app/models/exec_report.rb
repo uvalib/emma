@@ -450,6 +450,9 @@ class ExecReport
           result[STATUS_KEY] = result.extract!(*STATUS_KEYS).values.first
           result[HTML_KEY]   = result.extract!(*HTML_KEYS).values.first
 
+        when Numeric
+          result = { TOPIC_KEY => src.to_s, HTML_KEY => false }
+
         when ActiveSupport::SafeBuffer
           result = { TOPIC_KEY => src, HTML_KEY => true }
 
