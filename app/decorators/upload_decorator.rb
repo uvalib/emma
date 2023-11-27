@@ -295,7 +295,7 @@ class UploadDecorator < BaseDecorator
       BaseDecorator::Controls::ICONS.transform_values { |prop|
         tip = interpolate_named_references!(prop[:tooltip], item: ITEM_NAME)
         tip ? prop.merge(tooltip: tip) : prop
-      }.reverse_merge!(
+      }.merge!(
         check: {
           icon:    BANG,
           tooltip: 'Check for an update to the status of this submission',

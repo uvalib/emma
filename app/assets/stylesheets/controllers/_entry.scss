@@ -243,6 +243,9 @@ $checkbox-x-gap: 0.675rem;
 
     .popup-toggle.icon {
 
+        position:       relative;
+        z-index:        $z-raised; // Avoid clipping of hover effect.
+        margin:         -0.125rem;
         padding-top:    0.125rem;
         padding-bottom: 0.125rem;
         background:     transparent;
