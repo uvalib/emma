@@ -2,6 +2,8 @@ module Emma
   # Application logger.
   #
   class Logger < ActiveSupport::Logger
+    include Emma::Common
+
     #include ActiveSupport::LoggerSilence
 
     FILTERING: bool

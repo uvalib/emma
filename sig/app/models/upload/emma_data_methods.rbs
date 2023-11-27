@@ -1,6 +1,8 @@
 # Upload record methods to support management of EMMA metadata fields.
 #
 module Upload::EmmaDataMethods
+  include Emma::Common
+
   include Emma::Json
 
   include Upload::WorkflowMethods

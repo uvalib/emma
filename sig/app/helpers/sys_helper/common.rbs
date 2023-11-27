@@ -1,6 +1,8 @@
 # View helper supporting EMMA settings available to all workers/threads.
 #
 module SysHelper::Common
+  include Emma::Common
+
   include Emma::Constants
 
   # Translate Hash keys and values into an element containing pairs of

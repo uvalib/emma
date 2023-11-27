@@ -36,6 +36,8 @@ class AccountDecorator < BaseDecorator
 
     include BaseDecorator::SharedGenericMethods
 
+    extend Emma::Common::FormatMethods
+
     # =========================================================================
     # :section:
     # =========================================================================

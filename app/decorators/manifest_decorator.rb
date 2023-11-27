@@ -75,6 +75,8 @@ class ManifestDecorator < BaseDecorator
     include BaseDecorator::SharedGenericMethods
     include BaseDecorator::Grid
 
+    extend Emma::Common::FormatMethods
+
     # =========================================================================
     # :section:
     # =========================================================================

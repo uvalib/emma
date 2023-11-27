@@ -53,9 +53,11 @@ module Matomo
   #
   # This should be included at the end of `<head>`.
   #
+  # @param [User, String, Integer, nil] for_user
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def self.script_element: () -> ActiveSupport::SafeBuffer
+  def self.script_element: (?(User|String|Integer|nil) for_user) -> ActiveSupport::SafeBuffer
 
   # Element inserted to cause a page to be counted if JavaScript is disabled.
   #

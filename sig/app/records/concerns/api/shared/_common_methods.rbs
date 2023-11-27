@@ -1,6 +1,8 @@
 # General shared methods.
 #
 module Api::Shared::CommonMethods
+  include Emma::Common
+
   extend ::Api::Shared::CommonMethods
 
   # Normalization array handling.

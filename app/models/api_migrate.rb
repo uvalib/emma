@@ -57,6 +57,7 @@ class ApiMigrate
   module ClassMethods
 
     include Emma::Constants
+    include Emma::Common
     include Emma::Json
 
     # =========================================================================

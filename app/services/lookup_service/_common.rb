@@ -11,6 +11,7 @@ module LookupService::Common
 
   include Emma::Common
   include Emma::Debug
+  include Emma::TimeMethods
 
   # ===========================================================================
   # :section:

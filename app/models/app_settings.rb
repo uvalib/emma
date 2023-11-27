@@ -348,6 +348,8 @@ class AppSettings < AppGlobal
   #
   class Values < ::Hash
 
+    include Emma::Common
+
     def initialize(keys)
       if keys.is_a?(Hash)
         super

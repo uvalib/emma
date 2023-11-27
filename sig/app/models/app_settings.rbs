@@ -95,6 +95,8 @@ class AppSettings < AppGlobal
   # A table of AppSettings value instances.
   #
   class Values
+    include Emma::Common
+
     def initialize: (Array[Symbol|String] keys) -> void
 
     # Set the value at index *k* from either the associated `ENV` variable or

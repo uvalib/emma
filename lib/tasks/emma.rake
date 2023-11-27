@@ -5,7 +5,7 @@
 #
 # Maintenance tasks for the EMMA application.
 
-require 'emma/rake'
+require 'emma_rake'
 
 # =============================================================================
 # Tasks

@@ -16,6 +16,7 @@ module Record::FileData
 
   extend ActiveSupport::Concern
 
+  include Emma::Common
   include Emma::Json
 
   include Record

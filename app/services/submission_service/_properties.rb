@@ -11,6 +11,7 @@ module SubmissionService::Properties
 
   include ApiService::Properties
   include Record::Properties
+  include Emma::Common
   include Emma::TimeMethods
 
   # ===========================================================================

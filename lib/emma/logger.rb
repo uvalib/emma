@@ -11,6 +11,8 @@ module Emma
   #
   class Logger < ActiveSupport::Logger
 
+    include Emma::Common
+
     unless ONLY_FOR_DOCUMENTATION
       # :nocov:
       include ActiveSupport::LoggerSilence

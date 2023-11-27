@@ -1,10 +1,9 @@
-# lib/emma/rake.rb
+# lib/emma_rake.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 require 'rake'
-# noinspection RubyResolve
 require 'rake/dsl_definition'
 
 require 'emma'
@@ -14,16 +13,14 @@ __loading_begin(__FILE__)
 # Rake support methods.
 #
 # === Usage Notes
-# This is designed so that "require 'emma/rake'" will set up definitions in the
+# This is designed so that "require 'emma_rake'" will set up definitions in the
 # *.rake file in one step.  Loading this file in any other context is untested
 # and probably not a good idea.
 #
-module Emma::Rake
+module EmmaRake
 
   include Emma::Common
   include Emma::TimeMethods
-
-  extend self
 
   # ===========================================================================
   # :section:
@@ -237,23 +234,13 @@ module Emma::Rake
 
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  private
-
-  def self.included(base)
-    base.extend(self)
-  end
-
 end
 
 # =============================================================================
 # Override Rake definitions.
 # =============================================================================
 
-extend Emma::Rake::DSL
-include Emma::Rake
+include EmmaRake
+extend  EmmaRake::DSL
 
 __loading_end(__FILE__)

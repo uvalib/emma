@@ -71,12 +71,20 @@ module Matomo
   #
   # This should be included at the end of `<head>`.
   #
+  # @param [User, String, Integer, nil] for_user
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def self.script_element
-    <<~HEREDOC.html_safe
-      <script type="text/javascript">
+  def self.script_element(for_user = nil)
+    for_user = User.find(for_user)           if for_user.is_a?(Integer)
+    for_user = User.find_by(email: for_user) if for_user.is_a?(String)
+    user_id  = (for_user.email               if for_user.is_a?(User))
+    visitor  = ('%016d' % for_user.id        if for_user.is_a?(User))
+    <<~HEREDOC.squish.html_safe
+      <script type="text/javascript" data-cid="#{visitor}">
         let _paq = window._paq = window._paq || [];
+        #{"_paq.push(['setUserId',    '#{user_id}']);" if user_id}
+        #{"_paq.push(['setVisitorId', '#{visitor}']);" if visitor}
         _paq.push(['trackPageView']);
         _paq.push(['enableLinkTracking']);
         (function() {

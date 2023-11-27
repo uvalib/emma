@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module SysHelper::Common
 
+  include Emma::Common
   include Emma::Constants
 
   # ===========================================================================

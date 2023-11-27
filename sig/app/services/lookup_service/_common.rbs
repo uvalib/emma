@@ -5,6 +5,8 @@ module LookupService::Common
 
   include Emma::Debug
 
+  include Emma::TimeMethods
+
   # Configuration for all external lookup services.
   #
   # @type [Hash{Symbol=>Hash}]

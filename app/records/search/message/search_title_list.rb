@@ -143,6 +143,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   class GroupingCriteria
 
     include Comparable
+    include Emma::Common
 
     # @private
     IDENTIFIER_FIELDS = Api::Shared::IdentifierMethods::IDENTIFIER_FIELDS

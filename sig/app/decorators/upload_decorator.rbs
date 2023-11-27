@@ -28,6 +28,8 @@ class UploadDecorator < BaseDecorator
   module SharedGenericMethods
     include BaseDecorator::SharedGenericMethods
 
+    extend Emma::Common::FormatMethods
+
     # @private
     # @type [String]
     ITEM_NAME: String

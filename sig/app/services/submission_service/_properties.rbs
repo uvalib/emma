@@ -5,6 +5,8 @@ module SubmissionService::Properties
 
   include Record::Properties
 
+  include Emma::Common
+
   include Emma::TimeMethods
 
   COMMANDS: symArray

@@ -25,6 +25,8 @@ class ManifestDecorator < BaseDecorator
 
     include BaseDecorator::Grid
 
+    extend Emma::Common::FormatMethods
+
     # @private
     # @type [String]
     ITEM_NAME: String

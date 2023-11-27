@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module Upload::EmmaDataMethods
 
+  include Emma::Common
   include Emma::Json
 
   include Upload::WorkflowMethods

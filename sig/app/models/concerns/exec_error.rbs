@@ -1,6 +1,8 @@
 # Base exception for augmented application errors.
 #
 class ExecError < RuntimeError
+  include Emma::Common
+
   # Placeholder error message.
   #
   # @type [String]

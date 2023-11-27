@@ -1,16 +1,14 @@
 # Rake support methods.
 #
 # === Usage Notes
-# This is designed so that "require 'emma/rake'" will set up definitions in the
+# This is designed so that "require 'emma_rake'" will set up definitions in the
 # *.rake file in one step.  Loading this file in any other context is untested
 # and probably not a good idea.
 #
-module Emma::Rake
+module EmmaRake
   include Emma::Common
 
   include Emma::TimeMethods
-
-  extend ::Emma::Rake
 
   # True for "rake --quiet" or when not running from the command line.
   #
@@ -128,14 +126,4 @@ module Emma::Rake
     #
     def desc: (*(String|anyArray|nil) line) -> String
   end
-
-  private
-
-  def self.included: (Module base) -> void
-end
-
-class Object
-  extend Emma::Rake::DSL
-
-  include Emma::Rake
 end

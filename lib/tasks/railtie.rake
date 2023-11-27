@@ -31,7 +31,7 @@ EMMA_RAILTIE_RAKE ||= begin
   namespace 'emma:assets' do
 
     require 'erb'
-    require 'emma/rake'
+    require 'emma_rake'
 
     # =========================================================================
     # Tasks

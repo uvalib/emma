@@ -5,7 +5,7 @@
 #
 # Maintenance tasks for database table(s) involved with EMMA jobs.
 
-require 'emma/rake'
+require 'emma_rake'
 
 # =============================================================================
 # Tasks
