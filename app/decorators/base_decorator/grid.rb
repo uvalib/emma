@@ -28,15 +28,17 @@ module BaseDecorator::Grid
 
   # The collection of items to be presented in grid form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
   # @see BaseDecorator::Row#row_items
   #
-  def grid_row_items
+  def grid_row_items(**opt)
     # noinspection RubyMismatchedReturnType
-    row_items
+    row_items(**opt)
   end
 
   # The total number of associated items.
@@ -189,8 +191,8 @@ module BaseDecorator::Grid
   # @return [Array<Model>]
   #
   def grid_row_page(**opt)
-    opt[:rows]  = grid_row_items unless opt.key?(:rows)
-    opt[:limit] = grid_page_size unless opt.key?(:limit)
+    opt[:limit] = grid_page_size        unless opt.key?(:limit)
+    opt[:rows]  = grid_row_items(**opt) unless opt.key?(:rows)
     row_page(**opt)
   end
 

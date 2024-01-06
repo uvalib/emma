@@ -227,9 +227,11 @@ class ManifestDecorator
 
   # The collection of rows associated with the manifest.
   #
+  # @param [Hash] _opt                TODO: How to make use of this here?
+  #
   # @return [ActiveRecord::Associations::HasManyAssociation]
   #
-  def row_items: () -> ActiveRecord::Associations::HasManyAssociation
+  def row_items: (**untyped _opt) -> ActiveRecord::Associations::HasManyAssociation
 
   # The names of each ManifestItem column which is not displayed.
   #

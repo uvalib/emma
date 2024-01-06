@@ -280,8 +280,7 @@ class OrgController < ApplicationController
   #
   def list_items(prm = nil)
     prm ||= paginator.initial_parameters
-    sort  = prm.delete(:sort) || Org.implicit_order_column
-    items = find_or_match_records(sort: sort, **prm)
+    items = find_or_match_records(**prm)
     paginator.finalize(items, **prm)
     # noinspection RubyMismatchedReturnType
     prm

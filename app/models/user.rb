@@ -45,9 +45,9 @@ class User < ApplicationRecord
 
   belongs_to :org, optional: true
 
-  has_many :search_calls
-  has_many :uploads
-  has_many :manifests
+  has_many :search_calls, -> { order(SearchCall.default_sort) }
+  has_many :uploads,      -> { order(Upload.default_sort) }
+  has_many :manifests,    -> { order(Manifest.default_sort) }
 
   # ===========================================================================
   # :section: Authentication

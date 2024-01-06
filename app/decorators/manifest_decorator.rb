@@ -413,9 +413,11 @@ class ManifestDecorator
 
   # The collection of rows associated with the manifest.
   #
+  # @param [Hash] _opt                TODO: How to make use of this here?
+  #
   # @return [ActiveRecord::Associations::HasManyAssociation]
   #
-  def row_items
+  def row_items(**_opt)
     object.manifest_items.scope.active
   end
 

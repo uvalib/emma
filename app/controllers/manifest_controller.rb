@@ -325,8 +325,7 @@ class ManifestController < ApplicationController
     prm ||= paginator.initial_parameters
     current_org!(prm)  if for_org
     current_user!(prm) if for_user
-    sort  = prm.delete(:sort) || { Manifest.implicit_order_column => :desc }
-    items = find_or_match_records(sort: sort, **prm)
+    items = find_or_match_records(**prm)
     paginator.finalize(items, **prm)
     # noinspection RubyMismatchedReturnType
     prm

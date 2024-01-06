@@ -29,7 +29,8 @@ module BaseCollectionDecorator::Table
   #
   # @param [Integer]     row          Current row (prior to first entry).
   # @param [String, nil] separator
-  # @param [Hash]        opt          Passed to #table_entry
+  # @param [Hash]        opt          Passed to #table_entry except
+  #                                     #MODEL_TABLE_DATA_OPT
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
@@ -41,7 +42,8 @@ module BaseCollectionDecorator::Table
   # Render column headings for a table of model items.
   #
   # @param [Boolean, nil] dark
-  # @param [Hash]         opt         To #render_table_row
+  # @param [Hash]         opt         Passed to #render_table_row except
+  #                                     #MODEL_TABLE_DATA_OPT
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -58,11 +60,13 @@ module BaseCollectionDecorator::Table
 
   # The collection of items to be presented in tabular form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
-  def table_row_items: () -> decoratorRowItems
+  def table_row_items: (**untyped opt) -> decoratorRowItems
 
   # The #model_type of individual associated items for iteration.
   #

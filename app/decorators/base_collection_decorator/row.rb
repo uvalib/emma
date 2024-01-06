@@ -39,12 +39,34 @@ module BaseCollectionDecorator::Row
 
   # The collection of associated items to be presented in iterable form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
-  def row_items
-    object
+  def row_items(**opt)
+    arg = opt.extract!(:sort, :offset, :limit)
+    arg[:offset] &&= positive(arg[:offset])
+    arg[:limit]  &&= positive(arg[:limit])
+    arg.compact!
+    err = []
+    if arg.present? && !object.respond_to?(:order)
+      obj = "ignored for object #{object.class}"
+      err = arg.map { |k, v| "#{k} #{v.inspect} #{obj}" }
+    end
+    err << "ignored options #{opt.inspect}" if opt.present?
+    err.each { |msg| Log.info { "#{__method__}: #{msg}" } }
+    if arg.blank?
+      object
+    else
+      object.dup.tap do |result|
+        arg.each_pair do |k, v|
+          k = :order if k == :sort
+          result.send("#{k}!", v)
+        end
+      end
+    end
   end
 
   # ===========================================================================

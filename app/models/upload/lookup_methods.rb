@@ -19,6 +19,20 @@ module Upload::LookupMethods
 
   public
 
+  # Sort order applied by default in #get_relation.
+  #
+  # @return [Symbol, String, Hash]
+  #
+  def default_sort
+    { implicit_order_column => :desc }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Get the Upload record by either :id or :submission_id.
   #
   # @param [String, Symbol, Integer, Hash, Upload, nil] identifier
@@ -50,14 +64,15 @@ module Upload::LookupMethods
   #
   # @type [Array<Symbol>]
   #
-  SEARCH_RECORDS_OPTIONS = %i[offset limit page pages groups].freeze
+  SEARCH_RECORDS_OPTIONS = %i[offset limit page groups sort].freeze
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
   #
   NON_SEARCH_PARAMS =
-    (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS).uniq.freeze
+    (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS)
+      .excluding(:sort).uniq.freeze
 
   # Get the Upload records specified by either :id or :submission_id.
   #
@@ -65,14 +80,14 @@ module Upload::LookupMethods
   # supplied then this method is essentially an invocation of #where which
   # returns the matching records.
   #
-  # @param [Array<Upload, String, Integer, Array>] identifiers
+  # @param [Array<Upload, String, Integer, Array>] items
   # @param [Hash]                                  opt To #get_relation except
   #                                                    #SEARCH_RECORDS_OPTIONS:
   #
+  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
   # @option opt [Integer,nil]    :offset
   # @option opt [Integer,nil]    :limit
   # @option opt [Integer,nil]    :page
-  # @option opt [Boolean]        :pages   Return array of arrays of record IDs.
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
   # @option opt [String,Symbol]  :meth    Calling method for diagnostics.
@@ -83,66 +98,61 @@ module Upload::LookupMethods
   #
   # @see ActiveRecord::Relation#where
   #
-  def search_records(*identifiers, **opt)
-    prop   = opt.extract!(*SEARCH_RECORDS_OPTIONS)
-    groups = prop.delete(:groups)
+  def search_records(*items, **opt)
     result = Paginator::Result.new
 
-    # Handle the case where a range has been specified which resolves to an
-    # empty set of identifiers.  Otherwise, #get_relation will treat this case
-    # identically to one where no identifiers where specified to limit results.
-    if identifiers.present?
-      identifiers = expand_ids(*identifiers).presence or return result
+    # If a range of items has been specified which resolves to an empty set of
+    # identifiers, return now.  Otherwise, #get_relation would yield results
+    # for a general search.
+    return result if items.present? && (items = expand_ids(*items)).blank?
+
+    # Define a relation for all matches (without :limit or :offset).
+    opt[:meth] ||= "#{self_class}.#{__method__}"
+    arg = opt.extract!(*SEARCH_RECORDS_OPTIONS)
+    all = get_relation(*items, **opt, sort: :id)
+
+    # Generate a :groups summary if requested, returning if that was the only
+    # value of interest.
+    if (groups = arg[:groups])
+      result[:groups] = group_counts(all)
+      return result if groups == :only
     end
 
-    # Start by looking at results for all matches (without :limit or :offset).
-    opt[:meth] ||= "#{self_class}.#{__method__}"
-    all = get_relation(*identifiers, **opt, sort: nil)
-
-    # Handle the case where only a :groups summary is expected.
-    return result.merge!(groups: group_counts(all)) if groups == :only
-
-    # Group record IDs into pages.
+    # Record set information.
     # noinspection RailsParamDefResolve
     all_ids = all.pluck(:id)
-    limit   = positive(prop[:limit])
-    pg_size = limit || 10 # TODO: fall-back page size for grouping
-    pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
+    result[:min_id], result[:max_id] = all_ids.minmax
+    result[:total] = item_count = all_ids.size
 
-    result[:total]  = all_ids.size
-    result[:min_id] = all_ids.first
-    result[:max_id] = all_ids.last
-
-    if (page = prop[:page]&.to_i)
-      if page > 1
-        offset = pages[page - 2]&.last
-        raise RangeError, "Page #{page} is invalid" if offset.nil?
-      else
-        page   = 1
-        offset = nil
-      end
-      result[:page]   = page
-      result[:first]  = (page == 1)
-      result[:last]   = (page >= pages.size)
-      result[:limit]  = limit = pg_size
-      result[:offset] = (page - 1) * pg_size
-    else
-      result[:limit]  = limit
-      result[:offset] = offset = prop[:offset]
+    # Setup pagination; explicit page number overrides :limit/:offset.
+    limit  = positive(arg[:limit])
+    offset = positive(arg[:offset])
+    if (page = positive(arg[:page]))
+      page_size = limit ||= Paginator.default_page_size
+      offset    = (page - 1) * page_size
+      last_page = (item_count / page_size) + 1
+      result[:page]  = page
+      result[:first] = (page == 1)
+      result[:last]  = (page >= last_page)
     end
+    result[:limit]  = limit  if limit
+    result[:offset] = offset if offset
     opt.merge!(limit: limit, offset: offset)
 
-    # Include the array of arrays of database IDs if requested.
-    result[:pages]  = pages if prop[:pages]
+    # Setup sorting.
+    opt[:sort] = arg[:sort] if arg.key?(:sort)
 
-    # Generate a :groups summary if requested.
-    result[:groups] = group_counts(all) if groups
-
-    # Finally, get the specific set of results.
-    result[:list] = get_relation(*identifiers, **opt)
+    # Get the specific set of results.
+    result[:list] = get_relation(*items, **opt)
 
     result
   end
+
+  # Local options consumed by #get_relation.
+  #
+  # @type [Array<Symbol>]
+  #
+  GET_RELATION_OPTIONS = %i[id_key sid_key].freeze
 
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.
@@ -170,24 +180,26 @@ module Upload::LookupMethods
   #
   def get_relation(*items, **opt)
     terms = []
-    meth  = opt.delete(:meth) || "#{self_class}.#{__method__}"
+    _meth = opt[:meth] ||= "#{self_class}.#{__method__}"
 
     # === Record specifiers
-    ids  = Array.wrap(opt.delete(:id))
-    sids = Array.wrap(opt.delete(:submission_id))
+    i_key = :id
+    s_key = :submission_id
+    ids   = Array.wrap(opt.delete(i_key))
+    sids  = Array.wrap(opt.delete(s_key))
     if items.present?
       recs = expand_ids(*items).map! { |term| id_term(term) }
-      ids  = recs.map { |rec| rec[:id]            }.concat(ids)
-      sids = recs.map { |rec| rec[:submission_id] }.concat(sids)
+      ids  = recs.map { |rec| rec[i_key] }.concat(ids)  if i_key
+      sids = recs.map { |rec| rec[s_key] }.concat(sids) if s_key
     end
     ids  = ids.compact_blank!.uniq.presence
     sids = sids.compact_blank!.uniq.presence
     if ids && sids
-      terms << sql_terms(id: ids, submission_id: sids, join: :or)
+      terms << sql_terms(i_key => ids, s_key => sids, join: :or)
     elsif ids
-      opt[:id] = ids
+      opt[i_key] = ids
     elsif sids
-      opt[:submission_id] = sids
+      opt[s_key] = sids
     end
 
     # === Sort order
@@ -211,7 +223,9 @@ module Upload::LookupMethods
 
     # === Filter by user
     user_opt = opt.extract!(*USER_COLUMNS.excluding(:review_user))
-    terms << sql_terms(user_opt, join: :or) if user_opt.present?
+    if user_opt.present?
+      terms << sql_terms(user_opt, join: :or)
+    end
 
     # === Filter by state
     c_states, e_states =
@@ -264,7 +278,6 @@ module Upload::LookupMethods
     # === Record limit/offset
     limit  = positive(opt.delete(:limit))
     offset = positive(opt.delete(:offset))
-    terms << "id > #{offset}" if offset
 
     # === Filter by association
     assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }.presence

@@ -420,8 +420,7 @@ class UploadController < ApplicationController
     current_org!(prm)  if for_org
     current_user!(prm) if for_user
     all   = prm[:group].nil? || (prm[:group].to_sym == :all)
-    sort  = prm.delete(:sort) || { Upload.implicit_order_column => :desc }
-    items = find_or_match_records(groups: all, sort: sort, **prm)
+    items = find_or_match_records(groups: all, **prm)
     paginator.finalize(items, **prm)
     items = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
     @group_counts = items[:groups]

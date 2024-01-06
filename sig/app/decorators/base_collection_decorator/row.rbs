@@ -21,11 +21,13 @@ module BaseCollectionDecorator::Row
 
   # The collection of associated items to be presented in iterable form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
-  def row_items: () -> decoratorRowItems
+  def row_items: (**untyped opt) -> decoratorRowItems
 
   private
 

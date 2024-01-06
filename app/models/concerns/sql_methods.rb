@@ -74,13 +74,10 @@ module SqlMethods
   #   sql_clauses(cond, ids)-> "age='18' AND hgt='1.8' AND (id IN (123, 456))"
   #
   def sql_terms(*terms, join: :and, connector: join, **other)
-    connector &&= connector.to_s.strip.upcase
-    [*terms, other].flatten.compact_blank!.map! { |term|
-      term = sql_clauses(term, join: connector)  if term.is_a?(Hash)
-      term.start_with?('(') ? term : "(#{term})" if term.present?
-    }.compact.then { |result|
-      connector ? result.join(" #{connector} ") : result
-    }
+    terms = terms.flatten.compact_blank!
+    terms << other if other.present?
+    terms.map! { |t| t.is_a?(Hash) ? sql_clauses(t, join: connector) : t }
+    sql_join(*terms, connector)
   end
 
   # Translate hash keys/values into SQL conditions.
@@ -101,9 +98,8 @@ module SqlMethods
   #   sql_clauses(id: '123', age: '18', join: :or)-> "id = '123' OR age = '18'"
   #
   def sql_clauses(hash, join: :and, connector: join)
-    result = hash.map { |k, v| sql_clause(k, v) }.compact_blank!
-    connector &&= connector.to_s.strip.upcase
-    connector ? result.join(" #{connector} ") : result
+    clauses = hash.map { |k, v| sql_clause(k, v) }
+    sql_join(*clauses, connector)
   end
 
   # Translate a key and value into a SQL condition.
@@ -165,6 +161,26 @@ module SqlMethods
     else
       ranges.first
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Join SQL terms, with multiple terms fully parenthesized.
+  #
+  # @param [Array<String>]       terms
+  # @param [String, Symbol, nil] connector  Either :or or :and.
+  #
+  def sql_join(*terms, connector)
+    connector &&= connector.to_s.strip.upcase
+    terms.compact_blank!
+    return terms             if connector.blank?
+    return terms.first || '' unless terms.many?
+    terms.map! { |t| t.start_with?('(') ? t : "(#{t})" }
+    '(%s)' % terms.join(" #{connector} ")
   end
 
   # ===========================================================================

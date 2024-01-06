@@ -29,6 +29,7 @@ module BaseDecorator::Table
   # @type [Array<Symbol>]
   #
   MODEL_TABLE_OPTIONS:    symArray
+  MODEL_TABLE_DATA_OPT:   symArray
   MODEL_TABLE_HEAD_OPT:   symArray
   MODEL_TABLE_ENTRY_OPT:  symArray
   MODEL_TABLE_ROW_OPT:    symArray
@@ -42,11 +43,13 @@ module BaseDecorator::Table
 
   # The collection of items to be presented in tabular form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
-  def table_row_items: () -> decoratorRowItems
+  def table_row_items: (**untyped opt) -> decoratorRowItems
 
   # The #model_type of individual associated items for iteration.
   #

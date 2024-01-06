@@ -165,12 +165,11 @@ class Paginator
     Properties::INDEX.each { |k| property[k] = opt.delete(k)&.to_i }
 
     # Get pagination values.
-    limit, page, offset =
-      opt.values_at(:limit, :page, :offset).map { |v| v&.to_i }
-    limit  ||= page_size
+    page     = positive(opt[:page])
+    offset   = positive(opt[:offset])
+    limit    = positive(opt[:limit]) || page_size
     page   ||= (offset / limit) + 1 if offset
     offset ||= (page - 1) * limit   if page
-    offset   = positive(offset)
 
     # Get first and current page paths; adjust values if currently on the first
     # page of results.
@@ -208,19 +207,21 @@ class Paginator
       self.prev_page   = :back
     end
     self.page_size = limit
-    limit = nil if limit == default_page_size
 
     # Set the effective URL parameters, including those required by API calls
     # for paginated results.
-    @initial_parameters = url_parameters(opt).except!(*FORM_KEYS)
-    @initial_parameters.merge!(offset: offset, limit: limit).compact!
+    opt = url_parameters(opt).except!(*FORM_KEYS)
+    opt[:page]   = page
+    opt[:offset] = (offset unless page)
+    opt[:limit]  = (limit  unless limit == default_page_size)
+    @initial_parameters = opt.compact
   end
 
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [ActiveRecord::Relation, Hash, nil] values
-  # @param [Hash]                              opt
+  # @param [Paginator::Result, Hash, ActiveRecord::Relation, nil] values
+  # @param [Hash]                                                 opt
   #
   # @return [void]
   #
@@ -230,7 +231,7 @@ class Paginator
     values  = {}               if values.blank?
     if values.is_a?(Hash)
       values = values.merge(opt.slice(:limit, :offset), options)
-      page   = values[:page]
+      page   = positive(values[:page])
       first  = values[:first] || page.nil?
       last   = values[:last]  || page.nil?
       self.page_items   = values[:list]
@@ -328,6 +329,22 @@ class Paginator
       keys << :'emma.pagination.page_size'
       keys << :'emma.page_size'
       I18n.t(keys.shift, default: keys).to_i
+    end
+
+    # Number of results per page for any arbitrary controller.
+    #
+    # @return [Integer]
+    #
+    def generic_page_size
+      @generic_page_size ||= get_page_size
+    end
+
+    # Default number of results per page.
+    #
+    # @return [Integer]
+    #
+    def default_page_size
+      generic_page_size
     end
 
     # =========================================================================
@@ -468,6 +485,14 @@ class Paginator
     c ? super : super(context)
   end
 
+  # Default results per page for the current controller/action.
+  #
+  # @return [Integer]
+  #
+  def default_page_size
+    @default_page_size ||= get_page_size
+  end
+
   # ===========================================================================
   # :section: Paginator::ListMethods overrides
   # ===========================================================================
@@ -560,14 +585,6 @@ class Paginator
     Properties.keys.map { |prop| [prop, send(prop)] }.to_h
   end
 
-  # Default results per page for the current controller/action.
-  #
-  # @return [Integer]
-  #
-  def default_page_size
-    @default_page_size ||= get_page_size
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -578,8 +595,23 @@ class Paginator
   #
   # @return [Integer]
   #
+  # @see ActiveRecord::Calculations#count
+  #
   def size
-    page_source&.count || page_items.size
+    result = page_source&.count
+    result.is_a?(Hash) ? result.size : (result || page_items.size)
+  end
+
+  # Indicate whether a single record will be produced.
+  #
+  def one?
+    size == 1
+  end
+
+  # Indicate whether multiple records will be produced.
+  #
+  def many?
+    size > 1
   end
 
   # ===========================================================================
@@ -634,9 +666,7 @@ class Paginator
   # @return [Integer]
   #
   def page_number=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
-    property[:page_number] = value&.to_i
-    page_number
+    (property[:page_number] = positive(value)) or page_number
   end
 
   # Get the number of results per page.
@@ -654,9 +684,7 @@ class Paginator
   # @return [Integer]
   #
   def page_size=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
-    property[:page_size] = value&.to_i
-    page_size
+    (property[:page_size] = positive(value)) or page_size
   end
 
   # Get the offset of the current page into the total set of results.
@@ -674,9 +702,7 @@ class Paginator
   # @return [Integer]
   #
   def page_offset=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
-    property[:page_offset] = value&.to_i
-    page_offset
+    (property[:page_offset] = positive(value)) or page_offset
   end
 
   # ===========================================================================
@@ -700,7 +726,6 @@ class Paginator
   # @return [Integer, nil]
   #
   def total_items=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:total_items] = positive(value)
   end
 
@@ -719,7 +744,6 @@ class Paginator
   # @return [Integer, nil]
   #
   def page_records=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:page_records] = positive(value)
   end
 
@@ -746,7 +770,6 @@ class Paginator
   # @return [nil]                     If @first_page is unset.
   #
   def first_page=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:first_page] = page_path(value)
   end
 
@@ -767,7 +790,6 @@ class Paginator
   # @return [nil]                     If @last_page is unset.
   #
   def last_page=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:last_page] = page_path(value)
   end
 
@@ -788,7 +810,6 @@ class Paginator
   # @return [nil]                     If @next_page is unset.
   #
   def next_page=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:next_page] = page_path(value)
   end
 
@@ -809,7 +830,6 @@ class Paginator
   # @return [nil]                     If @prev_page is unset.
   #
   def prev_page=(value)
-    Log.debug { "#{self.class}: #{__method__} #{value.inspect}" }
     property[:prev_page] = page_path(value)
   end
 
@@ -883,8 +903,7 @@ class Paginator
   # @return [Integer]
   #
   def first_index=(value)
-    property[:first_index] = value&.to_i
-    first_index
+    (property[:first_index] = value&.to_i) or first_index
   end
 
   # The item index of the last item on the current page.
@@ -902,8 +921,7 @@ class Paginator
   # @return [Integer]
   #
   def last_index=(value)
-    property[:last_index] = value&.to_i
-    last_index
+    (property[:last_index] = value&.to_i) or last_index
   end
 
   # The item index cursor.
@@ -1016,7 +1034,7 @@ end
 # Results from #search_records with fields in this order:
 #
 # @!attribute [rw] offset
-#   The list offset for display purposes (not the SQL OFFSET).
+#   The list offset for display purposes (not necessarily the SQL OFFSET).
 #   @return [Integer]
 #
 # @!attribute [rw] limit
@@ -1047,10 +1065,6 @@ end
 #   The Table of counts for each state group.
 #   @return [Hash]
 #
-# @!attribute [rw] pages
-#   An array of arrays where each element has the IDs for that page.
-#   @return [Array]
-#
 # @!attribute [rw] list
 #   A relation for retrieving records.
 #   @return [ActiveRecord::Relation, nil]
@@ -1067,7 +1081,6 @@ class Paginator::Result < ::Hash
     min_id: 0,
     max_id: 0,
     groups: {},
-    pages:  [],
     list:   nil,
   }.deep_freeze
 

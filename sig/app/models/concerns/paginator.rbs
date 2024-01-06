@@ -100,12 +100,12 @@ class Paginator
   # Finish setting of pagination values based on the result list and original
   # URL parameters.
   #
-  # @param [ActiveRecord::Relation, Hash, nil] values
-  # @param [Hash]                              opt
+  # @param [Paginator::Result, Hash, ActiveRecord::Relation, nil] values
+  # @param [Hash]                                                 opt
   #
   # @return [void]
   #
-  def finalize: (?(ActiveRecord::Relation|symHash|nil) values, **untyped opt) -> void
+  def finalize: (?(Paginator::Result|symHash|ActiveRecord::Relation|nil) values, **untyped opt) -> void
 
   # Modify the usual result so that the dump of @page_items is replaced with
   # a count of each type of element it contains.
@@ -141,6 +141,20 @@ class Paginator
     def get_page_size
       : (symHash)                                        -> Integer
       | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+
+    # Default number of results per page.
+    #
+    # @return [Integer]
+    #
+    def generic_page_size: () -> Integer
+
+    @generic_page_size: Integer
+
+    # Default number of results per page.
+    #
+    # @return [Integer]
+    #
+    def default_page_size: () -> Integer
 
     def self.included: (Module base) -> void
   end
@@ -217,6 +231,14 @@ class Paginator
     : (symHash)                                        -> Integer
     | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
 
+  # Default results per page for the current controller/action.
+  #
+  # @return [Integer]
+  #
+  def default_page_size: () -> Integer
+
+  @default_page_size: Integer
+
   # Determine the number of records reported by an object.
   #
   # @param [Paginator, Api::Record, Model, Array, Hash, *] value  Default: self
@@ -285,19 +307,21 @@ class Paginator
   #
   def current_properties: () -> symHash
 
-  # Default results per page for the current controller/action.
-  #
-  # @return [Integer]
-  #
-  def default_page_size: () -> Integer
-
-  @default_page_size: Integer
-
   # The number of records that are (or will be) produced.
   #
   # @return [Integer]
   #
+  # @see ActiveRecord::Calculations#count
+  #
   def size: () -> Integer
+
+  # Indicate whether a single record will be produced.
+  #
+  def one?: () -> bool
+
+  # Indicate whether multiple records will be produced.
+  #
+  def many?: () -> bool
 
   # Fetch records from the source.
   #
@@ -556,7 +580,7 @@ end
 # Results from #search_records with fields in this order:
 #
 # @!attribute [rw] offset
-#   The list offset for display purposes (not the SQL OFFSET).
+#   The list offset for display purposes (not necessarily the SQL OFFSET).
 #   @return [Integer]
 #
 # @!attribute [rw] limit
@@ -587,10 +611,6 @@ end
 #   The Table of counts for each state group.
 #   @return [Hash]
 #
-# @!attribute [rw] pages
-#   An array of arrays where each element has the IDs for that page.
-#   @return [Array]
-#
 # @!attribute [rw] list
 #   A relation for retrieving records.
 #   @return [ActiveRecord::Relation, nil]
@@ -606,7 +626,6 @@ class Paginator::Result < ::Hash[Symbol, untyped]
   attr_accessor min_id: Integer
   attr_accessor max_id: Integer
   attr_accessor groups: symHash
-  attr_accessor pages:  anyArray
   attr_accessor list:   ActiveRecord::Relation | nil
 
   def initialize: (?(symHash|nil) src) -> void

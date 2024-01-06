@@ -24,12 +24,12 @@ module BaseCollectionDecorator::Table
   #
   # @param [Symbol] tag               Potential alternative to :table.
   # @param [String] css               Default: `#table_css_class`.
-  # @param [Hash]   opt               Passed to outer #html_tag except:
+  # @param [Hash]   opt               Passed to outer #html_tag except
+  #                                     #MODEL_TABLE_OPTIONS to render methods.
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
   # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated *tbody*.
   # @option opt [ActiveSupport::SafeBuffer] :tfoot  Pre-generated *tfoot*.
-  # @option opt [Any] #MODEL_TABLE_OPTIONS          Passed to render methods.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -43,21 +43,39 @@ module BaseCollectionDecorator::Table
     tag   = table && :table || tag || :div
     outer = remainder_hash!(opt, *MODEL_TABLE_OPTIONS)
     t_opt = trace_attrs_from(outer)
+    opt   = context.slice(*MODEL_TABLE_DATA_OPT).merge!(opt)
 
     opt[:sticky] = STICKY_HEAD unless opt.key?(:sticky)
     opt[:dark]   = DARK_HEAD   unless opt.key?(:dark)
     opt[:tag]    = tag         unless table
 
     parts = opt.extract!(*MODEL_TABLE_PART_OPT).compact
-    parts[:thead] ||= table_heading(**opt, **t_opt)
-    parts[:tbody] ||= table_entries(**opt, **t_opt)
-    cols  = parts[:thead].scan(/<th[>\s]/).size
+    thead = parts[:thead] || table_heading(**opt, **t_opt)
+    tbody = parts[:tbody] || table_entries(**opt, **t_opt, separator: nil)
+    if thead.is_a?(Array)
+      cols, parts[:thead] = thead.size, safe_join(thead)
+    else
+      cols, parts[:thead] = thead.scan(/<th[>\s]/).size, thead
+    end
+    if tbody.is_a?(Array)
+      rows, parts[:tbody] = tbody.size, safe_join(tbody)
+    else
+      rows, parts[:tbody] = tbody.scan(/<tr[>\s]/).size, tbody
+    end
+
+    limit = positive(opt[:partial])
+    full  = (rows < (limit || table_page_size))
 
     prepend_css!(outer, css, model_type)
-    append_css!(outer, "columns-#{cols}") if cols.positive?
-    append_css!(outer, 'sticky-head')     if opt[:sticky]
-    append_css!(outer, 'dark-head')       if opt[:dark]
-    outer[:role] = table_role             if table
+    append_css!(outer, "columns-#{cols}")       if cols.positive?
+    append_css!(outer, 'sticky-head')           if opt[:sticky]
+    append_css!(outer, 'dark-head')             if opt[:dark]
+    append_css!(outer, 'pageable')              if opt[:pageable]
+    append_css!(outer, 'sortable')              if opt[:sortable]
+    append_css!(outer, 'partial')               if opt[:partial]
+    append_css!(outer, 'complete')              if full
+    outer[:role] = table_role                   if table
+    outer[:'data-turbolinks-permanent'] = true  if opt[:sortable]
 
     html_tag(tag, **outer) do
       table ? parts.map { |k, rows| html_tag(k, rows, **t_opt) } : parts.values
@@ -74,14 +92,17 @@ module BaseCollectionDecorator::Table
   #
   # @param [Integer]     row          Current row (prior to first entry).
   # @param [String, nil] separator
-  # @param [Hash]        opt          Passed to #table_entry
+  # @param [Hash]        opt          Passed to #table_entry except
+  #                                     #MODEL_TABLE_DATA_OPT
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
   #
   def table_entries(row: 1, separator: "\n", **opt)
     trace_attrs!(opt)
-    rows  = table_row_page(limit: 0) # TODO: paginate tables
+    arg   = opt.extract!(*MODEL_TABLE_DATA_OPT)
+    p_opt = opt.extract!(:sort).merge!(limit: arg[:partial] || 0)
+    rows  = table_row_page(**p_opt)
     first = row + 1
     last  = first + rows.size - 1
     rows.map!.with_index(first) do |item, r|
@@ -98,14 +119,19 @@ module BaseCollectionDecorator::Table
   # Render column headings for a table of model items.
   #
   # @param [Boolean, nil] dark
-  # @param [Hash]         opt         To #render_table_row
+  # @param [Hash]         opt         Passed to #render_table_row except
+  #                                     #MODEL_TABLE_DATA_OPT
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def table_heading(dark: DARK_HEAD, **opt)
     trace_attrs!(opt)
-    opt[:inner_opt] = { tag: :th, role: 'columnheader' }
-    item = object.first || object_class.new
+    item  = object.first || object_class.new
+    arg   = opt.extract!(*MODEL_TABLE_DATA_OPT)
+    inner = opt[:inner_opt] = { tag: :th, role: 'columnheader' }
+    append_css!(inner, 'pageable') if arg[:pageable]
+    append_css!(inner, 'sortable') if arg[:sortable]
+    append_css!(inner, 'partial')  if arg[:partial]
     # noinspection RubyMismatchedArgumentType
     decorate(item).render_table_row(**opt) { |field, prop, **f_opt|
       html_div(class: 'field', **f_opt) do
@@ -136,13 +162,15 @@ module BaseCollectionDecorator::Table
 
   # The collection of items to be presented in tabular form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
-  def table_row_items
+  def table_row_items(**opt)
     # noinspection RubyMismatchedReturnType
-    row_items
+    row_items(**opt)
   end
 
   # The #model_type of individual associated items for iteration.

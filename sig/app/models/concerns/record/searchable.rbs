@@ -27,6 +27,12 @@ module Record::Searchable
   #
   def state_column: () -> (Symbol | nil)
 
+  # Sort order applied by default in #get_relation.
+  #
+  # @return [Symbol, String, Hash]
+  #
+  def default_sort: () -> (Symbol | String | anyHash)
+
   # Get a record by either :id or :submission_id.
   #
   # @param [String, Symbol, Integer, Hash, Model, nil] item
@@ -71,7 +77,7 @@ module Record::Searchable
   # supplied then this method is essentially an invocation of #where which
   # returns the matching records.
   #
-  # @param [Array<Model, String, Integer, Array>] identifiers
+  # @param [Array<Model, String, Integer, Array>] items
   # @param [Hash]                                 opt  To #get_relation except
   #                                                    #SEARCH_RECORDS_OPTIONS:
   #
@@ -79,7 +85,6 @@ module Record::Searchable
   # @option opt [Integer,nil]    :offset
   # @option opt [Integer,nil]    :limit
   # @option opt [Integer,nil]    :page
-  # @option opt [Boolean]        :pages   Return array of arrays of record IDs.
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
   # @option opt [String,Symbol]  :meth    Calling method for diagnostics.
@@ -92,7 +97,15 @@ module Record::Searchable
   #
   # @note From Upload::LookupMethods#search_records
   #
-  def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) identifiers, **untyped opt) -> Paginator::Result
+  def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> Paginator::Result
+
+  # Local options consumed by #get_relation.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @note From Upload::LookupMethods#GET_RELATION_OPTIONS
+  #
+  GET_RELATION_OPTIONS: symArray
 
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.

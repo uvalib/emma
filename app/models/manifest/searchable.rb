@@ -28,6 +28,14 @@ module Manifest::Searchable
     Log.debug { "#{__method__}: not defined for #{self_class}" }
   end
 
+  # Sort order applied by default in #get_relation.
+  #
+  # @return [Symbol, String, Hash]
+  #
+  def default_sort
+    { implicit_order_column => :desc }
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

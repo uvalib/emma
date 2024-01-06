@@ -34,8 +34,8 @@ class Org < ApplicationRecord
 
   has_many :users
 
-  has_many :uploads,   through: :users
-  has_many :manifests, through: :users
+  has_many :uploads,   -> { order(Upload.default_sort) },   through: :users
+  has_many :manifests, -> { order(Manifest.default_sort) }, through: :users
 
   # ===========================================================================
   # :section: ApplicationRecord overrides

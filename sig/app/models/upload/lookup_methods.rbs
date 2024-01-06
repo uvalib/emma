@@ -5,6 +5,12 @@ module Upload::LookupMethods
 
   extend ::Upload::LookupMethods
 
+  # Sort order applied by default in #get_relation.
+  #
+  # @return [Symbol, String, Hash]
+  #
+  def default_sort: () -> (Symbol | String | anyHash)
+
   # Get the Upload record by either :id or :submission_id.
   #
   # @param [String, Symbol, Integer, Hash, Upload, nil] identifier
@@ -40,14 +46,14 @@ module Upload::LookupMethods
   # supplied then this method is essentially an invocation of #where which
   # returns the matching records.
   #
-  # @param [Array<Upload, String, Integer, Array>] identifiers
+  # @param [Array<Upload, String, Integer, Array>] items
   # @param [Hash]                                  opt To #get_relation except
   #                                                    #SEARCH_RECORDS_OPTIONS:
   #
+  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
   # @option opt [Integer,nil]    :offset
   # @option opt [Integer,nil]    :limit
   # @option opt [Integer,nil]    :page
-  # @option opt [Boolean]        :pages   Return array of arrays of record IDs.
   # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
   #                                        then do not return :list.
   # @option opt [String,Symbol]  :meth    Calling method for diagnostics.
@@ -58,7 +64,13 @@ module Upload::LookupMethods
   #
   # @see ActiveRecord::Relation#where
   #
-  def search_records: (*(String|Integer|Upload|Array[String|Integer|Upload]) identifiers, **untyped opt) -> Paginator::Result
+  def search_records: (*(String|Integer|Upload|Array[String|Integer|Upload]) items, **untyped opt) -> Paginator::Result
+
+  # Local options consumed by #get_relation.
+  #
+  # @type [Array<Symbol>]
+  #
+  GET_RELATION_OPTIONS: symArray
 
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.

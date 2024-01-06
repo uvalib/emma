@@ -39,6 +39,8 @@ module BaseDecorator::Row
 
   # The collection of associated items to be presented in iterable form.
   #
+  # @param [Hash] _opt
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
@@ -47,7 +49,7 @@ module BaseDecorator::Row
   # A BaseDecorator subclass which supports iteration should override this
   # method to return the iterable items.
   #
-  def row_items
+  def row_items(**_opt)
     not_implemented 'Not applicable to single decorators by default'
   end
 
@@ -122,11 +124,12 @@ module BaseDecorator::Row
   #
   # @param [*, nil]      rows         Default: `#row_items`.
   # @param [Integer,nil] limit        Number of rows to display.
+  # @param [Hash]        opt          Passed to #row_items.
   #
   # @return [Array<Model>]
   #
-  def row_page(rows: nil, limit: nil, **)
-    rows ||= row_items
+  def row_page(rows: nil, limit: nil, **opt)
+    rows ||= row_items(**opt)
     rows   = rows.page_source || rows.page_items if rows.is_a?(Paginator)
     limit  = limit ? positive(limit) : row_page_size
     offset = positive(paginator.page_offset)

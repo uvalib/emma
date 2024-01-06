@@ -21,6 +21,8 @@ module BaseDecorator::Row
 
   # The collection of associated items to be presented in iterable form.
   #
+  # @param [Hash] _opt
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
@@ -29,7 +31,7 @@ module BaseDecorator::Row
   # A BaseDecorator subclass which supports iteration should override this
   # method to return the iterable items.
   #
-  def row_items: () -> decoratorRowItems
+  def row_items: (**untyped _opt) -> decoratorRowItems
 
   # The total number of associated items.
   #
@@ -80,10 +82,11 @@ module BaseDecorator::Row
   #
   # @param [*, nil]      rows         Default: `#row_items`.
   # @param [Integer,nil] limit        Number of rows to display.
+  # @param [Hash]        opt          Passed to #row_items.
   #
   # @return [Array<Model>]
   #
-  def row_page: (?rows: decoratorRowItems|nil, ?limit: Integer|nil) -> Array[Model]
+  def row_page: (?rows: decoratorRowItems|nil, ?limit: Integer|nil, **untyped opt) -> Array[Model]
 
   private
 

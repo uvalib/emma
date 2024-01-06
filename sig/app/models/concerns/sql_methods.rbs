@@ -113,6 +113,15 @@ module SqlMethods
     : ((String|Symbol) k, untyped v) -> (String | nil)
     | (anyHash)                      -> (String | nil)
 
+  # Join SQL terms, with multiple terms fully parenthesized.
+  #
+  # @param [Array<String>]       terms
+  # @param [String, Symbol, nil] connector  Either :or or :and.
+  #
+  def sql_join
+    : (*(String|nil) terms, nil           connector) -> strArray
+    | (*(String|nil) terms, String|Symbol connector) -> String
+
   # Look for a value in a standard database field.
   #
   # @param [Symbol, String] column

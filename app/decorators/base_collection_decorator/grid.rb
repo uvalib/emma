@@ -22,15 +22,17 @@ module BaseCollectionDecorator::Grid
 
   # The collection of items to be presented in grid form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
   # @see BaseCollectionDecorator::Row#row_items
   #
-  def grid_row_items
+  def grid_row_items(**opt)
     # noinspection RubyMismatchedReturnType
-    row_items
+    row_items(**opt)
   end
 
   # The #model_type of individual associated items for iteration.

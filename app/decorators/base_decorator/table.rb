@@ -42,6 +42,7 @@ module BaseDecorator::Table
   #
   MODEL_TABLE_OPTIONS = [
     :model,
+    MODEL_TABLE_DATA_OPT  = %i[partial pageable sortable],
     MODEL_TABLE_HEAD_OPT  = %i[sticky dark],
     MODEL_TABLE_ENTRY_OPT = %i[outer_tag inner_tag],
     MODEL_TABLE_ROW_OPT   = %i[row col],
@@ -62,13 +63,15 @@ module BaseDecorator::Table
 
   # The collection of items to be presented in tabular form.
   #
+  # @param [Hash] opt                 Modifies *object* results.
+  #
   # @return [Array<Model>]
   # @return [ActiveRecord::Relation]
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
-  def table_row_items
+  def table_row_items(**opt)
     # noinspection RubyMismatchedReturnType
-    row_items
+    row_items(**opt)
   end
 
   # The #model_type of individual associated items for iteration.
@@ -130,8 +133,8 @@ module BaseDecorator::Table
   # @return [Array<Model>]
   #
   def table_row_page(**opt)
-    opt[:rows]  = table_row_items unless opt.key?(:rows)
-    opt[:limit] = table_page_size unless opt.key?(:limit)
+    opt[:limit] = table_page_size        unless opt.key?(:limit)
+    opt[:rows]  = table_row_items(**opt) unless opt.key?(:rows)
     row_page(**opt)
   end
 
@@ -159,17 +162,18 @@ module BaseDecorator::Table
   def render_table_row(row: 1, col: 1, **opt, &blk)
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
+    arg   = opt.extract!(:tag, :outer_tag, :inner_tag, :outer_opt, :inner_opt)
 
     # Get options for outer (row) and inner (column cell) elements.
-    o_opt = (opt.delete(:outer_opt) || {}).merge('aria-rowindex': row)
-    i_opt = (opt.delete(:inner_opt) || {})
+    o_opt = (arg[:outer_opt] || {}).merge('aria-rowindex': row)
+    i_opt = (arg[:inner_opt] || {})
 
     # Get outer and inner element tags.
-    table = for_html_table?(opt.delete(:tag)) # If not rendering HTML table.
+    table = for_html_table?(arg[:tag]) # If not rendering HTML table.
     o_tag = o_opt.delete(:tag)
-    o_tag = opt.delete(:outer_tag) || o_tag || (table ? :tr : :div)
+    o_tag = arg[:outer_tag] || o_tag || (table ? :tr : :div)
     i_tag = i_opt.delete(:tag)
-    i_tag = opt.delete(:inner_tag) || i_tag || (table ? :td : :div)
+    i_tag = arg[:inner_tag] || i_tag || (table ? :td : :div)
 
     pairs = table_field_values(**opt)
     first = col
@@ -183,7 +187,7 @@ module BaseDecorator::Table
         append_css!(rc_opt, 'col-first') if c == first
         append_css!(rc_opt, 'col-last')  if c == last
         html_tag(i_tag, 'aria-colindex': c, **rc_opt, **t_opt) do
-          blk.(field, prop, **t_opt)
+          blk.(field, prop, index: "#{row}-#{c}", **t_opt)
         end
       end
     end
