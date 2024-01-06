@@ -50,16 +50,67 @@ module Model
     end
   end
 
+  # The data fields defined by this model plus synthetic field values.
+  #
+  # @return [Array<Symbol>]
+  #
+  def synthetic_field_names
+    return [] unless respond_to?(:model_type)
+    Model.config_for(model_type).synthetic.keys.tap do |meths|
+      attrs = field_names
+      meths << :user if attrs.include?(:user_id)
+      meths << :org  if attrs.include?(:org_id)
+    end
+  end
+
+  # The data fields defined by this model plus synthetic fields.
+  #
+  # @return [Array<Symbol>]
+  #
+  def extended_field_names
+    field_names + synthetic_field_names
+  end
+
   # The fields and values for this model instance.
+  #
+  # @param [Array<Symbol>] only       Only these names if provided.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def fields
+  def fields(*only)
+    only = only.compact.presence&.map(&:to_sym)
     if is_a?(ApplicationRecord)
-      attributes.symbolize_keys
+      attributes.symbolize_keys.tap { |hash| hash.slice!(*only) if only }
     else
-      field_names.select { |f| respond_to?(f) }.map { |f| [f, send(f)] }.to_h
+      names = field_names
+      names = names.intersection(only) if only
+      names.map { |meth| [meth, send(meth)] if respond_to?(meth) }.compact.to_h
     end
+  end
+
+  # The data and synthetic fields/values for this model instance.
+  #
+  # @param [Array<Symbol>] only       Only these names if provided.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def synthetic_fields(*only)
+    only  = only.compact.presence&.map(&:to_sym)
+    meths = synthetic_field_names
+    meths = meths.intersection(only) if only.present?
+    meths.map { |meth| [meth, send(meth)] if respond_to?(meth) }.compact.to_h
+  end
+
+  # The data and synthetic fields/values for this model instance.
+  #
+  # @param [Array<Symbol>] only       Only these names if provided.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def extended_fields(*only)
+    values = fields(*only)
+    synth  = synthetic_fields(*only)
+    values.merge(synth)
   end
 
   # The fields and values for this instance as a Hash.
@@ -67,7 +118,7 @@ module Model
   # @return [Hash{Symbol=>*}]
   #
   def to_h(**)
-    fields
+    extended_fields
   end
 
   # ===========================================================================
@@ -685,6 +736,23 @@ module Model
     def field_names
       @field_names ||= super
     end
+
+    # The data fields defined by this model plus synthetic field values.
+    #
+    # @return [Array<Symbol>]
+    #
+    def synthetic_field_names
+      @synthetic_field_names ||= super
+    end
+
+    # The data fields defined by this model plus synthetic fields.
+    #
+    # @return [Array<Symbol>]
+    #
+    def extended_field_names
+      @extended_field_names ||= super
+    end
+
   end
 
 end

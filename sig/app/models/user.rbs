@@ -146,6 +146,18 @@ class User < ApplicationRecord
   #
   def email_address: () -> String
 
+  # The number of EMMA entries submitted by this user.
+  #
+  # @return [Integer]
+  #
+  def upload_count: () -> Integer
+
+  # The number of bulk upload manifests associated with this user.
+  #
+  # @return [Integer]
+  #
+  def manifest_count: () -> Integer
+
   # Indicate whether the user is one of the known "fake" test user accounts.
   #
   def test_user?: () -> bool

@@ -89,10 +89,13 @@ en:
       display_fields: # Overrides order of 'en.emma.account.record'
         - id
         - email
-        - role
-        - org_id
         - first_name
         - last_name
+        - upload_count:   { label: 'Submissions' }
+        - manifest_count: { label: 'Manifests' }
+        - role
+        - org
+        # org_id
         - preferred_email
         - phone
         - address
@@ -103,13 +106,13 @@ en:
         - last_sign_in_at
         - current_sign_in_ip
         - last_sign_in_ip
-        - created_at
         - updated_at
+        - created_at
         - encrypted_password
         - remember_created_at
-        - reset_password_token
         - reset_password_sent_at
-        - provider
+        - reset_password_token
+        - provider:       { ignored: true }
         - effective_id:   { ignored: true }
         - access_token:   { ignored: true }
         - refresh_token:  { ignored: true }

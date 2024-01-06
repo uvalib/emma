@@ -92,12 +92,14 @@ en:
         - long_name
         - ip_domain
         - contact
+        - upload_count:   { label: 'Submissions' }
+        - manifest_count: { label: 'Manifests' }
         - status
         - status_date
         - start_date
-        - created_at
         - updated_at
-        - provider
+        - created_at
+        - provider:   { ignored: true }
         - info:       { ignored: true }
         - history:    { ignored: true }
 

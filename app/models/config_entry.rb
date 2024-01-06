@@ -239,7 +239,7 @@ class ModelConfig < ConfigEntry
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def synthetic
-    @synthetic ||= all.select { |_, entry| entry[:synthetic] }
+    all.select { |_, entry| entry[:synthetic] }
   end
 
   # ===========================================================================

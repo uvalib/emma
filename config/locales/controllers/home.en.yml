@@ -93,8 +93,8 @@ en:
           - [account, remember_created_at]
           - [account, reset_password_token]
           - [account, reset_password_sent_at]
-          - [account, created_at]
           - [account, updated_at]
+          - [account, created_at]
 
         _endpoint:      true
 

@@ -35,6 +35,12 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     DEFAULT_LEVEL_NAME: String
 
+    # Fields which will not be displayed or extracted from record data.
+    #
+    # @type [Array<Symbol>]
+    #
+    IGNORED_FIELDS: symArray
+
     # Fields whose values are identical across all #records.
     #
     # @type [Array<Symbol>]
@@ -193,7 +199,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def match_fields: ((Search::Record::MetadataRecord|symHash|nil) rec) -> symHash
 
-    # Field values used as the basis of #sort_keys.
+    # Field values used as the basis of #sort_values.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
@@ -204,29 +210,29 @@ class Search::Record::TitleRecord < Search::Api::Record
     # The values for *rec* for use with Enumerable#sort_by.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
-    # @param [Boolean]                                   exact
+    # @param [Hash]                                      opt To #sort_key_value
     #
     # @return [Array]
     #
-    def sort_keys: ((Search::Record::MetadataRecord|symHash|nil) rec, ?bool exact) -> symArray
+    def sort_values: ((Search::Record::MetadataRecord|symHash|nil) rec, **untyped opt) -> symArray
 
-    # extract_fields
+    # field_values
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
-    # @param [Array<Symbol>]                             fields
+    # @param [Array<Symbol,Array>]                       fields
     #
     # @return [Hash{Symbol=>Any}]
     #
-    def extract_fields: ((Search::Record::MetadataRecord|symHash|nil) rec, symArray fields) -> symHash
+    def field_values: ((Search::Record::MetadataRecord|symHash|nil) rec, *(Symbol|symArray) fields) -> symHash
 
     # Fields with values normalized for comparison.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
-    # @param [Array<Symbol>]                             fields
+    # @param [Array<Symbol,Array>]                       fields
     #
     # @return [Hash{Symbol=>Any}]
     #
-    def comparable_fields: ((Search::Record::MetadataRecord|symHash|nil) rec, symArray fields) -> symHash
+    def comparison_values: ((Search::Record::MetadataRecord|symHash|nil) rec, *(Symbol|symArray) fields) -> symHash
 
     # Transform a value into one whose elements are prepared for comparison
     # with a similar value.
@@ -250,11 +256,13 @@ class Search::Record::TitleRecord < Search::Api::Record
     # Normalize a value for use as a sort key value.
     #
     # @param [Any, nil] item
-    # @param [Boolean]  exact
+    # @param [Hash]     opt
+    #
+    # @option opt [Boolean] :lax
     #
     # @return [Any]
     #
-    def sort_key_value: (untyped item, ?bool exact) -> untyped
+    def sort_key_value: (untyped item, **untyped opt) -> untyped
 
     # field_value
     #
@@ -479,7 +487,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # Sort records.
   #
-  # If #sort_keys results in a set of value which cause Array#sort_by! to
+  # If #sort_values results in a set of values which cause Array#sort_by! to
   # fail then re-attempt with a less exact set of values.
   #
   # @param [Array<Search::Record::MetadataRecord>] recs

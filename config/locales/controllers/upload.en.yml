@@ -143,56 +143,41 @@ en:
       # =======================================================================
 
       display_fields:
+        - id
+        - submission_id
+        - user_id:        { label: 'Submitter' }
+        - state
+        - fmt
+        - ext
+        - repository
+        - updated_at
+        - created_at
 
-        emma_data:
-          cond:
-            only:       [index, show]
+        # === The order of these fields is overridden by the display method ===
 
-          # === emma_data JSON keys - Repository information ===
+        - file_data
+        - emma_data:
+            cond:
+              only:       [index, show]
 
-          emma_repository:
-            help:       [upload, repository]
+            # === emma_data JSON keys - Repository information ===
+
+            emma_repository:
+              help:       [upload, repository]
 
         # === Database record fields supporting submission workflow ===
         # (Upload table fields not yet displayed via 'index' or 'show'.)
 
-        phase:
-          role:         developer
-
-        edit_state:
-          role:         developer
-
-        edit_user:
-          role:         developer
-
-        edit_file_data:
-          role:         developer
-
-        edit_emma_data:
-          role:         developer
-
-        edited_at:
-          role:         developer
-
-        review_user:
-          ignored: true
-          cond:
-            only:       !ruby/symbol none
-
-        review_success:
-          ignored: true
-          cond:
-            only:       !ruby/symbol none
-
-        review_comment:
-          ignored: true
-          cond:
-            only:       !ruby/symbol none
-
-        reviewed_at:
-          ignored: true
-          cond:
-            only:       !ruby/symbol none
+        - phase:          { role: developer }
+        - edit_state:     { role: developer }
+        - edit_user:      { role: developer }
+        - edit_emma_data: { role: developer }
+        - edit_file_data: { role: developer }
+        - edited_at:      { role: developer }
+        - review_user:    { ignored: true }
+        - review_success: { ignored: true }
+        - review_comment: { ignored: true }
+        - reviewed_at:    { ignored: true }
 
       # =======================================================================
       # States

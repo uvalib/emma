@@ -6,7 +6,8 @@
 # Details of an EMMA user account as JSON.
 
 user    ||= @item
-columns ||= user&.attribute_names&.reject { |col| col.include?('password') }
+columns ||= user&.extended_field_names
+columns &&= columns.reject { |col| col.to_s.include?('password') }
 
 json.extract! user, *columns
 json.url show_account_url(user, format: :json)

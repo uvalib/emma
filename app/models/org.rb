@@ -120,6 +120,22 @@ class Org < ApplicationRecord
     users.pluck(:email)
   end
 
+  # The number of EMMA entries submitted by users of this organization.
+  #
+  # @return [Integer]
+  #
+  def upload_count
+    uploads.count
+  end
+
+  # The number of bulk manifests associated with users of this organization.
+  #
+  # @return [Integer]
+  #
+  def manifest_count
+    manifests.count
+  end
+
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================

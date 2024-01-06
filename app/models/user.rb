@@ -292,6 +292,22 @@ class User < ApplicationRecord
     preferred_email || email
   end
 
+  # The number of EMMA entries submitted by this user.
+  #
+  # @return [Integer]
+  #
+  def upload_count
+    uploads.count
+  end
+
+  # The number of bulk upload manifests associated with this user.
+  #
+  # @return [Integer]
+  #
+  def manifest_count
+    manifests.count
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

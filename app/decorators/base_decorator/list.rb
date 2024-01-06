@@ -480,15 +480,13 @@ module BaseDecorator::List
   # @return [Any]                     HTML or scalar value.
   # @return [nil]                     If executed method returned *nil*.
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def field_value(item, m, opt = nil)
     item ||= object
-    if item.try(:emma_metadata)&.key?(m)
-      item.emma_metadata[m]
-    elsif item.respond_to?(:fields) && item.include?(m)
-      item.fields[m]
+    # noinspection RailsParamDefResolve
+    if (data = item.try(:emma_metadata))&.key?(m)
+      data[m]
+    elsif item.try(:extended_field_names)&.include?(m)
+      item.extended_fields(m).values.first
     elsif item.try(:key?, m)
       item[m]
     elsif item.respond_to?(m)
@@ -500,19 +498,18 @@ module BaseDecorator::List
       end
     elsif respond_to?(m)
       kw, args = method(m).parameters.partition { |p, _| p.start_with?('key') }
-      args = args.presence
-      kw   = (kw.presence if opt.present?)
-      if args && kw
-        send(m, item, **opt)
-      elsif args
-        send(m, item)
-      elsif kw
-        send(m, **opt)
-      else
-        send(m)
+      item = (item.presence if args.present?)
+      opt  = (opt.presence  if kw.present?)
+      case
+        when item && opt then send(m, item, **opt)
+        when item        then send(m, item)
+        when opt         then send(m, **opt)
+        else                  send(m)
       end
     elsif DEBUG_DECORATOR_EXECUTE
-      Log.warn("#{self.class}.access(#{item.class}): #{m.inspect} not usable")
+      Log.warn do
+        "#{self.class}.field_value(#{item.class}): #{m.inspect} not usable"
+      end
     end
   end
 

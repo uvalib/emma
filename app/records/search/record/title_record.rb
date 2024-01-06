@@ -64,11 +64,21 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     DEFAULT_LEVEL_NAME = 'v.'
 
+    # Fields which will not be displayed or extracted from record data.
+    #
+    # @type [Array<Symbol>]
+    #
+    IGNORED_FIELDS = %i[
+      emma_collection
+      emma_webPageLink
+      rem_complete
+    ].freeze
+
     # Fields whose values are identical across all #records.
     #
     # @type [Array<Symbol>]
     #
-    MATCH_FIELDS = GROUPING_LEVELS.flatten.freeze
+    MATCH_FIELDS = GROUPING_LEVELS.flatten.excluding(*IGNORED_FIELDS).freeze
 
     # Fields whose values are used as keys to sort #records.
     #
@@ -83,7 +93,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       item_date
       dcterms_dateAccepted
       emma_repositoryRecordId
-    ].freeze
+    ].excluding(*IGNORED_FIELDS).freeze
 
     # A pattern matching a complete level name and value, where:
     #
@@ -316,38 +326,38 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>Any}]
     #
     def match_fields(rec)
-      comparable_fields(rec, MATCH_FIELDS)
+      comparison_values(rec, *MATCH_FIELDS)
     end
 
-    # Field values used as the basis of #sort_keys.
+    # Field values used as the basis of #sort_values.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
     # @return [Hash{Symbol=>Any}]
     #
     def sort_fields(rec)
-      extract_fields(rec, SORT_FIELDS)
+      field_values(rec, *SORT_FIELDS)
     end
 
     # The values for *rec* for use with Enumerable#sort_by.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
-    # @param [Boolean]                                   exact
+    # @param [Hash]                                      opt To #sort_key_value
     #
     # @return [Array]
     #
-    def sort_keys(rec, exact = true)
-      sort_fields(rec).values.map { |v| sort_key_value(v, exact) }
+    def sort_values(rec, **opt)
+      sort_fields(rec).values.map { |v| sort_key_value(v, **opt) }
     end
 
-    # extract_fields
+    # field_values
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
-    # @param [Array<Symbol>]                             fields
+    # @param [Array<Symbol,Array>]                       fields
     #
     # @return [Hash{Symbol=>Any}]
     #
-    def extract_fields(rec, fields)
+    def field_values(rec, *fields)
       return {} if rec.blank?
       fields.flatten.compact.map! { |f| [f.to_sym, field_value(rec, f)] }.to_h
     end
@@ -355,12 +365,12 @@ class Search::Record::TitleRecord < Search::Api::Record
     # Fields with values normalized for comparison.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
-    # @param [Array<Symbol>]                             fields
+    # @param [Array<Symbol,Array>]                       fields
     #
     # @return [Hash{Symbol=>Any}]
     #
-    def comparable_fields(rec, fields)
-      extract_fields(rec, fields).map { |field, value|
+    def comparison_values(rec, *fields)
+      field_values(rec, *fields).map { |field, value|
         [field, make_comparable(value, field)]
       }.to_h
     end
@@ -402,7 +412,7 @@ class Search::Record::TitleRecord < Search::Api::Record
           if id_fld
             value.compact_blank.sort_by! { |v| identifier_sort_key(v) }
           else
-            value.map { |v| make_comparable(v, field) }.compact_blank!.sort!
+            value.map { |v| make_comparable(v) }.compact_blank!.sort!
           end
         else
           # noinspection RubyMismatchedReturnType
@@ -434,23 +444,25 @@ class Search::Record::TitleRecord < Search::Api::Record
     # Normalize a value for use as a sort key value.
     #
     # @param [Any, nil] item
-    # @param [Boolean] exact
+    # @param [Hash]     opt
+    #
+    # @option opt [Boolean] :lax
     #
     # @return [Any]
     #
-    def sort_key_value(item, exact = true)
+    def sort_key_value(item, **opt)
       if item.is_a?(Array)
-        item.map { |v| sort_key_value(v, exact) }.join(' ')
+        item.map { |v| sort_key_value(v, **opt) }.join(' ')
       elsif item.is_a?(String)
         item.strip
       elsif item.respond_to?(:to_datetime)
         item.to_datetime.to_s
       elsif item.respond_to?(:number_value)
         item.number_value
-      elsif exact
-        item || 0
-      else
+      elsif opt[:lax]
         item.to_s
+      else
+        item || 0
       end
     end
 
@@ -920,7 +932,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # Sort records.
   #
-  # If #sort_keys results in a set of value which cause Array#sort_by! to
+  # If #sort_values results in a set of values which cause Array#sort_by! to
   # fail then re-attempt with a less exact set of values.
   #
   # @param [Array<Search::Record::MetadataRecord>] recs
@@ -928,9 +940,9 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Array<Search::Record::MetadataRecord>]
   #
   def sort_records!(recs)
-    recs.sort_by! { |rec| sort_keys(rec) }
+    recs.sort_by! { |rec| sort_values(rec) }
   rescue
-    recs.sort_by! { |rec| sort_keys(rec, false) }
+    recs.sort_by! { |rec| sort_values(rec, lax: true) }
   end
 
   # Copy the record, adding an item_number if appropriate.
@@ -1037,7 +1049,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     dc_rights
     dcterms_dateCopyright
     emma_titleId
-  ].freeze
+  ].excluding(*IGNORED_FIELDS).freeze
 
   # Combined information from the #UNION_FIELDS values all of the records.
   #
@@ -1059,7 +1071,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   EXCLUSIVE_FIELDS = %i[
     emma_collection
     emma_titleId
-  ].freeze
+  ].excluding(*IGNORED_FIELDS).freeze
 
   # List fields which have more than one value across all of the records.
   #
@@ -1289,7 +1301,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Hash]
   #
   def get_record_fields(rec, fields)
-    Array.wrap(fields).map { |field|
+    Array.wrap(fields).excluding(*IGNORED_FIELDS).map { |field|
       value = rec.try(field) || rec.try(:[], field)
       [field, value]
     }.to_h.compact
@@ -1386,12 +1398,11 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Hash{Symbol=>*}]
   #
-  def to_h(**opt)
-    wrap   = opt[:item].present?
-    tree   = field_hierarchy(wrap: wrap)
-    result = fields
-    wrap_array!(result, :records) if wrap
-    result.reverse_merge!(fields: reject_blanks(tree))
+  def to_h(item: nil, **)
+    wrap = item.present?
+    tree = field_hierarchy(wrap: wrap)
+    hash = wrap ? wrap_array!(super, :records) : super
+    hash.reverse_merge!(fields: reject_blanks(tree))
   end
 
 end

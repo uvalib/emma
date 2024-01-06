@@ -6,7 +6,7 @@
 # Details of an EMMA member organization as JSON.
 
 org     ||= @item
-columns ||= org&.attribute_names
+columns ||= org&.extended_field_names
 
 json.extract! org, *columns
 json.url show_org_url(org, format: :json)

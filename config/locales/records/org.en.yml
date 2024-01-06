@@ -151,3 +151,23 @@ en:
             The system-managed time at which this database record last changed
           type:         datetime
           origin:       system
+
+        # =====================================================================
+        # Display-only synthetic fields
+        # =====================================================================
+
+        _synthetic:
+
+          upload_count:   # @see Org#upload_count
+            min:          1
+            max:          1
+            label:        'Submissions'
+            type:         number
+            origin:       system
+
+          manifest_count: # @see Org#manifest_count
+            min:          1
+            max:          1
+            label:        'Manifests'
+            type:         number
+            origin:       system

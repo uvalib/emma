@@ -533,10 +533,10 @@ module UploadConcern
   # @return [Hash{Symbol=>*}]
   #
   def show_values(item = @item, **opt)
-    item = item.try(:fields) || item.dup
-    data = item.extract!(:file_data).compact.values.first
-    item[:file_data] = safe_json_parse(data)
-    super(item, **opt)
+    item = item.try(:to_h) || {} unless item.is_a?(Hash)
+    data = (safe_json_parse(item[:file_data]) || {} if item[:file_data])
+    item = item.merge(file_data: data) if data
+    super
   end
 
   # ===========================================================================

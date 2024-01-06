@@ -45,6 +45,22 @@ en:
           type:           !ruby/symbol User
           origin:         system
 
+        created_at:
+          min:            1
+          max:            1
+          label:          'Created'
+          tooltip:        'Date of manifest creation'
+          type:           datetime
+          origin:         system
+
+        updated_at:
+          min:            1
+          max:            1
+          label:          'Updated'
+          tooltip:        'Date of last manifest update'
+          type:           datetime
+          origin:         system
+
         # =====================================================================
         # Display-only synthetic fields
         # =====================================================================
@@ -127,23 +143,3 @@ en:
             tooltip:      'Items that have been marked for deletion'
             type:         number
             origin:       system
-
-        # =====================================================================
-        # Database record fields
-        # =====================================================================
-
-        created_at:
-          min:            1
-          max:            1
-          label:          'Created'
-          tooltip:        'Date of manifest creation'
-          type:           datetime
-          origin:         system
-
-        updated_at:
-          min:            1
-          max:            1
-          label:          'Updated'
-          tooltip:        'Date of last manifest update'
-          type:           datetime
-          origin:         system

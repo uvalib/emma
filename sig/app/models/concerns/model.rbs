@@ -23,11 +23,41 @@ module Model
   #
   def field_names: () -> symArray
 
+  # The data fields defined by this model plus synthetic field values.
+  #
+  # @return [Array<Symbol>]
+  #
+  def synthetic_field_names: () -> symArray
+
+  # The data fields defined by this model plus synthetic fields.
+  #
+  # @return [Array<Symbol>]
+  #
+  def extended_field_names: () -> symArray
+
   # The fields and values for this model instance.
+  #
+  # @param [Array<Symbol>] only       Only these names if provided.
   #
   # @return [Hash{Symbol=>Any}]
   #
-  def fields: () -> symHash
+  def fields: (*Symbol only) -> symHash
+
+  # The data and synthetic fields/values for this model instance.
+  #
+  # @param [Array<Symbol>] only       Only these names if provided.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def synthetic_fields: (*Symbol only) -> symHash
+
+  # The data and synthetic fields/values for this model instance.
+  #
+  # @param [Array<Symbol>] only       Only these names if provided.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def extended_fields: (*Symbol only) -> symHash
 
   # The fields and values for this instance as a Hash.
   #
@@ -317,6 +347,10 @@ module Model
   end
 
   @field_names: symArray
+
+  @synthetic_field_names: symArray
+
+  @extended_field_names: symArray
 
   private
 

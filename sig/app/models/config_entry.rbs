@@ -121,8 +121,6 @@ class ModelConfig < ConfigEntry[ActionConfig]
   #
   def synthetic: () -> Hash[Symbol,FieldConfig]
 
-  @synthetic: Hash[Symbol,FieldConfig]
-
   EMPTY: ModelConfig
 
   # Report on anomalies.

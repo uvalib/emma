@@ -226,7 +226,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
     else
       Log.error { "#{__method__}: level #{level} not in range #{range}" }
     end
-    GroupingCriteria.new(LIST_ELEMENT.extract_fields(rec, fields))
+    GroupingCriteria.new(LIST_ELEMENT.field_values(rec, *fields))
   end
 
   # Recursively group records.
@@ -306,7 +306,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @return [Hash{Symbol=>*}]
   #
   def to_h(item: nil, **)
-    fields.tap do |result|
+    super.tap do |result|
       if item.present?
         result[:titles]&.map! do |title|
           title[:records].map! { |rec| { record: rec } }

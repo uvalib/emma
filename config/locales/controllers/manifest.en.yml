@@ -97,8 +97,8 @@ en:
         - never_saved_item_count: { ignored: true }
         - incomplete_item_count:  { ignored: true }
         - to_delete_item_count:   { ignored: true }
-        - created_at
         - updated_at
+        - created_at
 
       # =======================================================================
       # Pages

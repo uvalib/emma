@@ -188,7 +188,7 @@ en:
             - dc_rights
           repository:
             - emma_repository
-            - emma_collection     # NOTE: only shown if the same for all files
+            # emma_collection     # NOTE: only shown if the same for all files
           index:
             - emma_titleId        # NOTE: only shown if the same for all files
 
@@ -222,7 +222,7 @@ en:
               bibliographic:
                 - emma_formatFeature
               repository:
-                - emma_collection # NOTE: shown when not the same for all files
+                # emma_collection # NOTE: shown when not the same for all files
                 - emma_retrievalLink
                 - rem_source
                 - rem_metadataSource

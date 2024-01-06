@@ -63,6 +63,18 @@ class Org < ApplicationRecord
   #
   def user_accounts: () -> strArray
 
+  # The number of EMMA entries submitted by users of this organization.
+  #
+  # @return [Integer]
+  #
+  def upload_count: () -> Integer
+
+  # The number of bulk manifests associated with users of this organization.
+  #
+  # @return [Integer]
+  #
+  def manifest_count: () -> Integer
+
   # This is the (non-persisted) organization associated with ID 0.
   #
   # User records use :org_id == 0 to indicate that the user is explicitly not

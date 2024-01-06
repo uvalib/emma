@@ -301,3 +301,23 @@ en:
           type:         !ruby/symbol AuthProvider
           origin:       system
           role:         developer
+
+        # =====================================================================
+        # Display-only synthetic fields
+        # =====================================================================
+
+        _synthetic:
+
+          upload_count:   # @see Account#upload_count
+            min:          1
+            max:          1
+            label:        'Submissions'
+            type:         number
+            origin:       system
+
+          manifest_count: # @see Account#manifest_count
+            min:          1
+            max:          1
+            label:        'Manifests'
+            type:         number
+            origin:       system
