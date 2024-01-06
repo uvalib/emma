@@ -108,30 +108,32 @@ module LayoutHelper::SearchFilters
 
     # Indicate whether a :sort value is a reversed (descending) sort.
     #
-    # @param [String] value           A :sort key.
-    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    # @param [String, Symbol] value   A :sort key.
+    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
     #
-    def is_reverse?: (String value, ?(String|nil) suffix) -> bool
+    # @note Currently unused.
+    #
+    def is_reverse?: (String|Symbol|nil value, ?(String|nil) suffix) -> bool
 
     # Change a :sort value to indicate a normal (ascending) sort.
     #
-    # @param [String] value           Base :sort key.
-    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    # @param [String, Symbol] value   Base :sort key.
+    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
     #
-    # @return [String]                Value for :sortOrder parameter.
-    # @return [nil]                   If *value* is blank.
+    # @return [String, nil]
     #
-    def ascending_sort: (String value, ?(String|nil) suffix) -> (String | nil)
+    # @note Currently unused.
+    #
+    def ascending_sort: (String|Symbol|nil value, ?(String|nil) suffix) -> (String | nil)
 
     # Change a :sort value to indicate a reversed (descending) sort.
     #
-    # @param [String] value           Base :sort key.
-    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    # @param [String, Symbol] value   Base :sort key.
+    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
     #
-    # @return [String]                Value for :sortOrder parameter.
-    # @return [nil]                   If *value* is blank.
+    # @return [String, nil]
     #
-    def descending_sort: (String value, ?(String|nil) suffix) -> (String | nil)
+    def descending_sort: (String|Symbol|nil value, ?(String|nil) suffix) -> (String | nil)
 
     private
 
@@ -288,7 +290,7 @@ module LayoutHelper::SearchFilters
   def blank_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Perform a search specifying a collation order for the results.
-  # (Default: `params[:sortOrder]`.)
+  # (Default: `params[:sort]`.)
   #
   # @param [Symbol] menu_name           Control name (should be :sort).
   # @param [Hash]   opt                 Passed to #menu_container.
@@ -296,11 +298,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  # @see ParamsConcern#resolve_sort
-  #
-  # === Implementation Notes
-  # This method produces a URL parameter (:sort) which is translated into the
-  # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
+  # @see ParamsConcern#save_search_menus
   #
   def sort_menu: (Symbol menu_name, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 

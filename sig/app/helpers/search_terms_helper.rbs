@@ -62,12 +62,6 @@ module SearchTermsHelper
   #
   SEARCH_KEYS: symArray
 
-  # URL parameters related to search sort menu settings.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_SORT_KEYS: symArray
-
   # Controllers which supply their own search capabilities.
   #
   # @type [Hash{Symbol=>String}]

@@ -205,7 +205,7 @@ module LayoutHelper::SearchFilters
       return pairs unless (config = config[:reverse]).is_a?(Hash)
       return pairs unless true?(config[:enabled])
       except = Array.wrap(config[:except])
-      pairs.flat_map do |fwd_pair|
+      pairs.flat_map { |fwd_pair|
         label, value = fwd_pair = fwd_pair.map(&:to_s)
         rev_pair =
           unless except.include?(value)
@@ -213,8 +213,8 @@ module LayoutHelper::SearchFilters
             rev_value = descending_sort(value, config[:suffix])
             [rev_label, rev_value]
           end
-        [fwd_pair, rev_pair].compact
-      end
+        [fwd_pair, rev_pair]
+      }.compact
     end
 
     # =========================================================================
@@ -225,8 +225,10 @@ module LayoutHelper::SearchFilters
 
     # Indicate whether a :sort value is a reversed (descending) sort.
     #
-    # @param [String] value           A :sort key.
-    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    # @param [String, Symbol] value   A :sort key.
+    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
+    #
+    # @note Currently unused.
     #
     def is_reverse?(value, suffix = nil)
       suffix ||= REVERSE_SORT_SUFFIX
@@ -235,30 +237,30 @@ module LayoutHelper::SearchFilters
 
     # Change a :sort value to indicate a normal (ascending) sort.
     #
-    # @param [String] value           Base :sort key.
-    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    # @param [String, Symbol] value   Base :sort key.
+    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
     #
-    # @return [String]                Value for :sortOrder parameter.
-    # @return [nil]                   If *value* is blank.
+    # @return [String, nil]
+    #
+    # @note Currently unused.
     #
     def ascending_sort(value, suffix = nil)
-      return if (value = value.to_s).blank?
+      return if value.blank?
       suffix ||= REVERSE_SORT_SUFFIX
-      value.delete_suffix(suffix)
+      value.to_s.delete_suffix(suffix)
     end
 
     # Change a :sort value to indicate a reversed (descending) sort.
     #
-    # @param [String] value           Base :sort key.
-    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    # @param [String, Symbol] value   Base :sort key.
+    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
     #
-    # @return [String]                Value for :sortOrder parameter.
-    # @return [nil]                   If *value* is blank.
+    # @return [String, nil]
     #
     def descending_sort(value, suffix = nil)
-      return if (value = value.to_s).blank?
+      return if value.blank?
       suffix ||= REVERSE_SORT_SUFFIX
-      value.end_with?(suffix) ? value : "#{value}#{suffix}"
+      value.end_with?(suffix) ? value.to_s : "#{value}#{suffix}"
     end
 
     # =========================================================================
@@ -549,7 +551,7 @@ module LayoutHelper::SearchFilters
   end
 
   # Perform a search specifying a collation order for the results.
-  # (Default: `params[:sortOrder]`.)
+  # (Default: `params[:sort]`.)
   #
   # @param [Symbol] menu_name           Control name (should be :sort).
   # @param [Hash]   opt                 Passed to #menu_container.
@@ -557,17 +559,10 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
   #
-  # @see ParamsConcern#resolve_sort
-  #
-  # === Implementation Notes
-  # This method produces a URL parameter (:sort) which is translated into the
-  # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
+  # @see ParamsConcern#save_search_menus
   #
   def sort_menu(menu_name, **opt)
-    prm       = request_parameters
-    direction = prm[:direction]
-    opt[:selected] ||= prm[:sort] || prm[:sortOrder]
-    opt[:selected] &&= descending_sort(opt[:selected]) if direction == 'desc'
+    opt[:selected] ||= request_parameters[:sort]
     append_css!(opt, 'non-search')
     menu_container(menu_name, **opt)
   end

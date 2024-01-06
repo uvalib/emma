@@ -139,20 +139,19 @@ module ParamsConcern
   #
   def set_origin: () -> void
 
-  # Resolve the menu-generated :sort selection into the appropriate pair of
-  # :sortOrder and :direction parameters.
+  # Save `params` related to federated index search.
   #
   # @return [void]
   #
   # @see LayoutHelper#sort_menu
   #
-  def resolve_sort: () -> void
+  def save_search_menus: () -> void
 
-  # Load `params` with values last set when searching.
+  # Load `params` with values last set for federated index search.
   #
   # @return [void]
   #
-  def initialize_menus: () -> void
+  def init_search_menus: () -> void
 
   # Clean up URL parameters and redirect.
   #
@@ -176,18 +175,7 @@ module ParamsConcern
 
   private
 
-  # Set :sortOrder and :direction parameters.
-  #
-  # @param [String] sort_value
-  #
-  # @return [void]
-  #
-  def set_sort_params: (String sort_value) -> void
-
   THIS_MODULE: Module
-
-  # Needed for #set_sort_params.
-  include LayoutHelper::SearchFilters
 
   # :nocov:
   #include AbstractController::Callbacks::ClassMethods

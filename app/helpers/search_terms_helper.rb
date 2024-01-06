@@ -86,12 +86,6 @@ module SearchTermsHelper
   #
   SEARCH_KEYS = %i[keyword sort limit language prefix]
 
-  # URL parameters related to search sort menu settings.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_SORT_KEYS = %i[sortOrder direction]
-
   # Controllers which supply their own search capabilities.
   #
   # @type [Hash{Symbol=>String}]

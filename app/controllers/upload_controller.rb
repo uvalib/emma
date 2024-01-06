@@ -67,7 +67,7 @@ class UploadController < ApplicationController
 
   before_action :set_ingest_engine, only: [:index, :bulk_index, *ALL_OPS]
   before_action :index_redirect,    only: :show
-  before_action :resolve_sort,      only: :admin
+  before_action :save_search_menus, only: :admin
 
   # ===========================================================================
   # :section:

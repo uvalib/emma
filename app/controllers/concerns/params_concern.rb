@@ -308,23 +308,16 @@ module ParamsConcern
     session['app.origin'] = origin || 'root'
   end
 
-  # Resolve the menu-generated :sort selection into the appropriate pair of
-  # :sortOrder and :direction parameters.
+  # Save `params` related to federated index search.
   #
   # @return [void]
   #
   # @see LayoutHelper#sort_menu
   #
-  def resolve_sort
+  def save_search_menus
     return if %w[search upload].include?(params[:controller].to_s.downcase)
-
-    changed = false
-
-    # Remember current search parameters.
-    ss   = session_section
-    keys = SEARCH_KEYS
-    keys += SEARCH_SORT_KEYS if params[:sort].blank?
-    keys.each do |key|
+    ss = session_section
+    SEARCH_KEYS.each do |key|
       ss_key = key.to_s
       if params[key].present?
         ss[ss_key] = params[key]
@@ -332,37 +325,18 @@ module ParamsConcern
         ss.delete(ss_key)
       end
     end
-
-    # Process the menu-generated :sort parameter.
-    if (sort = params.delete(:sort))
-      set_sort_params(sort)
-      changed = true
-    end
-
-    will_redirect if changed
   end
 
-  # Load `params` with values last set when searching.
+  # Load `params` with values last set for federated index search.
   #
   # @return [void]
   #
-  def initialize_menus
+  def init_search_menus
     return if %w[search upload].include?(params[:controller].to_s.downcase)
     ss = session_section
     SEARCH_KEYS.each do |key|
       ss_value = ss[key.to_s]
-      if ss_value.present?
-        if key == :sort
-          set_sort_params(ss_value)
-        else
-          params[key] = ss_value
-        end
-      elsif key == :sort
-        SEARCH_SORT_KEYS.each do |k|
-          v = ss[k.to_s]
-          params[k] = v if v.present?
-        end
-      end
+      params[key] = ss_value if ss_value.present?
     end
   end
 
@@ -401,28 +375,6 @@ module ParamsConcern
   end
 
   # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
-  private
-
-  # Set :sortOrder and :direction parameters.
-  #
-  # @param [String] sort_value
-  #
-  # @return [void]
-  #
-  def set_sort_params(sort_value)
-    no_reverse = current_menu_config(:sort).dig(:reverse, :except)
-    if Array.wrap(no_reverse).include?(sort_value&.to_sym)
-      params.delete(:direction)
-    else
-      params[:direction] = is_reverse?(sort_value) ? 'desc' : 'asc'
-    end
-    params[:sortOrder] = ascending_sort(sort_value)
-  end
-
-  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -433,9 +385,6 @@ module ParamsConcern
   included do |base|
 
     __included(base, THIS_MODULE)
-
-    # Needed for #set_sort_params.
-    include LayoutHelper::SearchFilters
 
     # Non-functional hints for RubyMine type checking.
     unless ONLY_FOR_DOCUMENTATION
@@ -456,8 +405,8 @@ module ParamsConcern
       before_action :set_dev_controls,     if:     :route_request?
       before_action :set_debug,            if:     :route_request?
       before_action :set_origin,           only:   %i[index]
-      before_action :resolve_sort,         only:   %i[index]
-      before_action :initialize_menus,     except: %i[index] # TODO: keep?
+      before_action :save_search_menus,    only:   %i[index]
+      before_action :init_search_menus,    except: %i[index] # TODO: keep?
       before_action :cleanup_parameters,   if:     :route_request?
 
       append_before_action :conditional_redirect

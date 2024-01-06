@@ -31,7 +31,7 @@ module AwsHelper
   AWS_CONSOLE_URL  = 'https://console.aws.amazon.com'
   AWS_BUCKET_URL   = "#{AWS_CONSOLE_URL}/s3/buckets"
 
-  AWS_SORT_OPT     = %i[sort sortOrder direction].freeze
+  AWS_SORT_OPT     = %i[sort].freeze
   AWS_FILTER_OPT   = %i[after before prefix prefix_limit].freeze
   AWS_RENDER_OPT   = %i[heading html object].freeze
 
@@ -238,13 +238,7 @@ module AwsHelper
     objects.compact!
 
     # Transform the object instances into a sorted array of value hashes.
-    if opt[:sortOrder] || opt[:direction]
-      sort_order = opt[:sortOrder] || opt[:sort]
-      direction  = opt[:direction] || is_reverse?(sort_order)
-      sort_objects!(objects, sort_order => direction)
-    else
-      sort_objects!(objects, opt[:sort])
-    end
+    sort_objects!(objects, opt[:sort])
 
     # Prepare for per-prefix limits.
     total = {}
@@ -522,9 +516,10 @@ module AwsHelper
         [name.to_sym, ascending]
       }.to_h
     else
+      reverse = LayoutHelper::SearchFilters::REVERSE_SORT_SUFFIX
       Array.wrap(sort_keys).compact.map { |name|
         name      = name.is_a?(String) ? name.dup : name.to_s
-        ascending = !name.delete_suffix!('_rev')
+        ascending = !name.delete_suffix!(reverse)
         [name.to_sym, ascending]
       }.to_h
     end

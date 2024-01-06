@@ -158,7 +158,6 @@ class SearchCall < ApplicationRecord
   #
   SORT_PARAMETERS = {
     sort:       %i[sort order],
-    sort_order: %i[sort order],
     direction:  %i[sort direction],
   }.deep_freeze
 
@@ -337,7 +336,7 @@ class SearchCall < ApplicationRecord
       creator:              h.dig(:query,  :creator),
       publisher:            h.dig(:query,  :publisher),
       q:                    h.dig(:query,  :q),
-      sortOrder:            h.dig(:sort,   :order),
+      sort:                 h.dig(:sort,   :order),
       direction:            h.dig(:sort,   :direction),
       limit:                h.dig(:page,   :limit),
       start:                h.dig(:page,   :start),
