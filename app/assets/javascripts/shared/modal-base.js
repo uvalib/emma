@@ -230,7 +230,7 @@ export class ModalBase extends BaseClass {
     /**
      * Toggle visibility of the modal popup element.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      *
      * @returns {boolean}
      */
@@ -403,7 +403,7 @@ export class ModalBase extends BaseClass {
          * If there was a problem with loading the content for the modal popup,
          * display a message in the popup placeholder element.
          *
-         * @param {jQuery.Event|Event} event
+         * @param {ElementEvt} event
          */
         function onError(event) {
             _warn(`${func}: ${type} FAILED`, event);
@@ -421,7 +421,7 @@ export class ModalBase extends BaseClass {
          * placeholder, scroll the `<iframe>` to bring the element with that ID
          * to the top of the panel display.
          *
-         * @param {jQuery.Event|Event} _event
+         * @param {ElementEvt} _event
          */
         function onLoad(_event) {
             if ($modal.hasClass(COMPLETE_MARKER)) {
@@ -468,7 +468,7 @@ export class ModalBase extends BaseClass {
          * Re-focus on the parent window so that the hidden modal does not
          * continue to intercept key press events.
          *
-         * @param {jQuery.Event|KeyboardEvent} event
+         * @param {KeyboardEvt} event
          */
         function onIframeKeyUp(event) {
             const key = keyCombo(event);
@@ -569,7 +569,7 @@ export class ModalBase extends BaseClass {
          * If there was a problem with loading the modal popup content, display
          * a message in the popup placeholder element.
          *
-         * @param {jQuery.Event|Event} event
+         * @param {ElementEvt} event
          */
         function onError(event) {
             _warn(`${func}: FAILED`, event);
@@ -584,7 +584,7 @@ export class ModalBase extends BaseClass {
          * When the modal popup content is loaded replace the placeholder
          * `<div>` with the content `<div>`.
          *
-         * @param {jQuery.Event|Event} _event
+         * @param {ElementEvt} _event
          */
         function onLoad(_event) {
             if ($modal.hasClass(COMPLETE_MARKER)) {
@@ -710,7 +710,7 @@ export class ModalBase extends BaseClass {
             this._trapFocus(false);
             this._setModalHidden(true);
             this._zOrderRelease();
-            $tgt.focus();
+            $tgt.trigger('focus');
         } else {
             this._warn(`${func}: chain halted`);
         }
@@ -973,7 +973,7 @@ export class ModalBase extends BaseClass {
     _setTabCycleStart($target) {
         const $item = $target || this.tabCycleFirst;
         this._debug('_setTabCycleStart:', $target, '$item =', $item);
-        return this._tab_cycle_start = $item?.focus();
+        return this._tab_cycle_start = $item?.trigger('focus');
     }
 
     /**
@@ -1017,7 +1017,7 @@ export class ModalBase extends BaseClass {
      * Cancel button) and cause focus to wrap around to the first tabbable
      * element in the dialog.
      *
-     * @param {jQuery.Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      *
      * @protected
      */
@@ -1026,7 +1026,7 @@ export class ModalBase extends BaseClass {
         this._debug(`_onKeydownTabCycleFirst: key = "${key}";`, event);
         if (key === 'Shift+Tab') {
             event.preventDefault();
-            this.tabCycleLast?.focus();
+            this.tabCycleLast?.trigger('focus');
             this._info('TAB BACKWARD TO', this.tabCycleLast);
         }
     }
@@ -1036,7 +1036,7 @@ export class ModalBase extends BaseClass {
      * Cancel button) and cause focus to wrap around to the first tabbable
      * element in the dialog.
      *
-     * @param {jQuery.Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      *
      * @protected
      */
@@ -1045,7 +1045,7 @@ export class ModalBase extends BaseClass {
         this._debug(`_onKeydownTabCycleLast: key = "${key}";`, event);
         if (key === 'Tab') {
             event.preventDefault();
-            this.tabCycleFirst?.focus();
+            this.tabCycleFirst?.trigger('focus');
             this._info('TAB FORWARD TO', this.tabCycleFirst);
         }
     }

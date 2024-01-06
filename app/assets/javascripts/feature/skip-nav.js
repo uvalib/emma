@@ -67,8 +67,8 @@ appSetup(MODULE, function() {
     // Make the hidden navigation menu visible when one of its links receives
     // focus.
     $nav.find('a')
-        .focus(function() { toggleSkipMenu(this, true)  })
-        .blur( function() { toggleSkipMenu(this, false) });
+        .on('focus', function() { toggleSkipMenu(this, true) })
+        .on('blur',  function() { toggleSkipMenu(this, false) });
 
     // ========================================================================
     // Actions

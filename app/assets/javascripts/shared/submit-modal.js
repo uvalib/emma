@@ -456,7 +456,7 @@ export class SubmitModal extends ModalDialog {
      */
     onShowModal(_$target, check_only, halted) {
         this._debug('onShowModal:', _$target, check_only, halted);
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
         this._debug('onShowModal actions?');
     }
 
@@ -473,7 +473,7 @@ export class SubmitModal extends ModalDialog {
      */
     onHideModal(_$target, check_only, halted) {
         this._debug('onHideModal:', _$target, check_only, halted);
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
         this._debug('onHideModal actions?');
     }
 

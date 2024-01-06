@@ -193,8 +193,8 @@ class GridLocation extends BaseClass {
     get row()       { return isDefined(this._row) ? this._row : this.def_row }
     get col()       { return isDefined(this._col) ? this._col : this.def_col }
 
-    set row(v)      { if (isDefined(v)) { this._row = Number(v) } }
-    set col(v)      { if (isDefined(v)) { this._col = Number(v) } }
+    set row(v)      { if (isDefined(v)) { this._row = Number(v) || this.row } }
+    set col(v)      { if (isDefined(v)) { this._col = Number(v) || this.col } }
 
     // ========================================================================
     // Methods
@@ -384,7 +384,7 @@ class GridMoveTo extends GridLocation {
     // ========================================================================
 
     _clamp(lbound, value, ubound) {
-        let min, max, val = Number(value);
+        let min, max, val = Number(value) || 0;
         if (val < (min = Number(lbound) || val)) { val = min }
         if (val > (max = Number(ubound) || val)) { val = max }
         return val;
@@ -601,7 +601,7 @@ class GridMoveBy extends GridMoveTo {
     // Class methods - internal
     // ========================================================================
 
-    static _num(n)  { return isDefined(n) ? Number(n) : 1 }
+    static _num(n)  { return Number(n) || 1 }
 
     // ========================================================================
     // Class methods
@@ -824,10 +824,10 @@ const FLAGS = Object.freeze(
  * Derive values and logical properties from the event which express the
  * relationships between the event target and the grid components.
  *
- * @param {string}             func
- * @param {jQuery.Event|Event} event
- * @param {string}             [key]
- * @param {boolean}            [validate]
+ * @param {string}     func
+ * @param {ElementEvt} event
+ * @param {string}     [key]
+ * @param {boolean}    [validate]
  *
  * @returns {GridEventProperties}
  */
@@ -858,6 +858,8 @@ function analyzeGridEvent(func, event, key, validate) {
     const in_cell  = !in_modal && to_other && contains($cell, $tgt);
     const active   = group?.active;
 
+    //noinspection JSValidateTypes
+    /** @type {GridEventProperties} */
     const result = {
         $tgt,
         $curr,
@@ -934,7 +936,7 @@ function validateGridEventAnalysis(result, caller) {
  * Detailed console output of an event analysis.
  *
  * @param {GridEventProperties} result
- * @param {jQuery.Event|Event}  event
+ * @param {ElementEvt}          event
  * @param {string}              [key]
  * @param {string}              [caller]
  */
@@ -960,9 +962,9 @@ function logGridEventAnalysis(result, event, key, caller) {
 /**
  * Detailed console output for the end of handling of an event.
  *
- * @param {jQuery.Event|Event}  event
- * @param {string}              [key]
- * @param {string}              [caller]
+ * @param {ElementEvt} event
+ * @param {string}     [key]
+ * @param {string}     [caller]
  */
 function logGridEventEnd(event, key, caller) {
     const func = caller || 'logGridEventEnd';
@@ -990,7 +992,7 @@ function setupGridNavigation($grid) {
 /**
  * Start handling grid navigation keys for the indicated grid.
  *
- * @param {jQuery.Event|FocusEvent} event
+ * @param {FocusEvt} event
  */
 function onGridFocus(event) {
     const func  = 'onGridFocus';
@@ -1024,7 +1026,7 @@ function onGridFocus(event) {
 /**
  * Stop handling grid navigation keys for the indicated grid.
  *
- * @param {jQuery.Event|FocusEvent} event
+ * @param {FocusEvt} event
  */
 function onGridBlur(event) {
     const func  = 'onGridBlur';
@@ -1059,7 +1061,7 @@ function onGridBlur(event) {
 /**
  * Keyboard navigation between grid cells.
  *
- * @param {jQuery.Event|KeyboardEvent} event
+ * @param {KeyboardEvt} event
  *
  * @returns {EventHandlerReturn}
  *
@@ -1069,7 +1071,7 @@ function onGridKeydownCapture(event) {
     const func = 'onGridKeydownCapture';
     const key  = keyCombo(event);
     if (!key) { return OUT.warn(`${func}: not a KeyboardEvent`, event) }
-    if (modifiersOnly(key)) { return } // Avoid excess console logging.
+    if (modifiersOnly(key)) { return undefined } // Avoid excess logging.
 
     const {
         $tgt,
@@ -1167,7 +1169,7 @@ function setupCellNavigation($cell) {
 /**
  * Respond to a cell gaining focus.
  *
- * @param {jQuery.Event|FocusEvent} event
+ * @param {FocusEvt} event
  */
 function onGridCellFocus(event) {
     const func   = 'onGridCellFocus';
@@ -1216,7 +1218,7 @@ function onGridCellFocus(event) {
 /**
  * Respond to a cell losing focus.
  *
- * @param {jQuery.Event|FocusEvent} event
+ * @param {FocusEvt} event
  */
 function onGridCellBlur(event) {
     const func   = 'onGridCellBlur';
@@ -1281,7 +1283,7 @@ function onGridCellBlur(event) {
  * included within the cell, but that event does not have an impact on the
  * state of the cell or of the nav group within it.
  *
- * @param {jQuery.Event|MouseEvent|KeyboardEvent} event
+ * @param {MouseEvt|KeyboardEvt} event
  */
 function onGridCellClickCapture(event) {
     const func = 'onGridCellClickCapture';
@@ -1343,7 +1345,7 @@ function onGridCellClickCapture(event) {
 /**
  * Navigation within a grid cell.
  *
- * @param {jQuery.Event|KeyboardEvent} event
+ * @param {KeyboardEvt} event
  *
  * @returns {EventHandlerReturn}
  *
@@ -1353,7 +1355,7 @@ function onGridCellKeydownCapture(event) {
     const func = 'onGridCellKeydownCapture';
     const key  = keyCombo(event);
     if (!key) { return OUT.warn(`${func}: not a KeyboardEvent`, event) }
-    if (modifiersOnly(key)) { return } // Avoid excess console logging.
+    if (modifiersOnly(key)) { return undefined } // Avoid excess logging.
 
     const {
         $tgt,
@@ -1405,7 +1407,7 @@ function onGridCellKeydownCapture(event) {
         group.activate($entry ? group.control($entry) : $control);
 
     } else if (enter && group.activate()) {
-        group.activeControls.first().focus();
+        group.activeControls.first().trigger('focus');
 
     } else if (leave || enter) {
         group.deactivate();
@@ -1506,7 +1508,7 @@ function setGridCellFocus($grid, $cell, focus) {
     } else {
         setFocusable($cell, true, func);
         $grid.data(FOCUS_DATA, $cell);
-        return (focus === false) ? $cell : $cell.focus();
+        return (focus === false) ? $cell : $cell.trigger('focus');
     }
 }
 
@@ -1706,7 +1708,7 @@ function scrollIntoView(cell, grid) {
     const $cell = gridCell(cell);
     const $grid = gridFor(grid || $cell);
 
-    const css_val  = (attr) => Number($grid.css(attr)?.replace(/[^\d]/g, ''));
+    const css_val  = (v) => Number($grid.css(v)?.replaceAll(/[^\d]/g, ''));
     const x_offset = css_val('scroll-padding-left') || 0;
     const y_offset = css_val('scroll-padding-top')  || 0;
 
@@ -1849,6 +1851,7 @@ function gridRows(grid, row_number) {
  */
 function gridCells(row, col_number) {
     //OUT.debug(`gridCells(${row_number}): row =`, row);
+    /** @type {jQuery} */
     const $row  = $(row);
     const $cols = $row.find(CELLS).not(HIDDEN);
     return col_number ? oneBasedIndex($cols, col_number) : $cols;
@@ -1863,7 +1866,7 @@ function gridCells(row, col_number) {
  * @returns {jQuery}
  */
 function oneBasedIndex($items, number) {
-    const n = Number(number);
+    const n = Number(number) || 0;
     switch (true) {
         case (n > 0): return $items.eq(n-1);
         case (n < 0): return $items.last();

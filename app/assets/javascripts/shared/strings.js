@@ -80,7 +80,7 @@ export function singularize(item) {
  */
 export function interpolate(item, values) {
     if ((typeof item === 'string') && item.includes('${')) {
-        return item.replace(/\${([^}\n]+)}/g, ((_, name) => values[name]));
+        return item.replaceAll(/\${([^}\n]+)}/g, ((_, name) => values[name]));
     } else {
         return item;
     }
@@ -101,7 +101,7 @@ export function asString(item, limit) {
     let result;
     switch (typeof item) {
         case 'string':
-            result = item.replace(/\\([^\\])/g, '\\\\$1');
+            result = item.replaceAll(/\\([^\\])/g, '\\\\$1');
             if (![s_quote, d_quote].includes(item[0])) {
                 [left, right] = [d_quote, d_quote];
             }

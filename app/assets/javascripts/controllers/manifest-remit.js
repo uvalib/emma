@@ -82,6 +82,28 @@ appSetup(MODULE, function() {
     const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 
     // ========================================================================
+    // Type definitions
+    // ========================================================================
+
+    /**
+     * @typedef SubmitData
+     *
+     * @property {string} manifest_item_id
+     */
+
+    /**
+     * @typedef {FileExt} QueueFile
+     *
+     * @property {SubmitData} meta
+     */
+
+    /**
+     * @typedef {UppyFile} UploadFile
+     *
+     * @property {UppyFile.InternalMetadata & SubmitData} meta
+     */
+
+    // ========================================================================
     // Constants
     // ========================================================================
 
@@ -257,11 +279,11 @@ appSetup(MODULE, function() {
 
         clear()      { return this.update(0) }
         reset()      { return this.update(this.constructor.current) }
-        increment(v) { return this.update(this.value + Number(v || 0)) }
-        decrement(v) { return this.update(this.value - Number(v || 0)) }
+        increment(v) { return this.update(this.value + (Number(v) || 0)) }
+        decrement(v) { return this.update(this.value - (Number(v) || 0)) }
 
         update(v) {
-            this._value = Number(v || 0);
+            this._value = Number(v) || 0;
             this.$target?.text(this._value);
             return this._value;
         }
@@ -522,7 +544,7 @@ appSetup(MODULE, function() {
     /**
      * Submit Manifest items.
      *
-     * @param {jQuery.Event|UIEvent} [event]
+     * @param {ElementEvt} [event]
      */
     function onSubmissionStart(event) {
         const func = 'onSubmissionStart'; OUT.debug(`${func}: event =`, event);
@@ -540,7 +562,7 @@ appSetup(MODULE, function() {
     /**
      * Terminate the current Manifest submission.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function onSubmissionStop(event) {
         const func = 'onSubmissionStop'; OUT.debug(`${func}: event =`, event);
@@ -558,7 +580,7 @@ appSetup(MODULE, function() {
     /**
      * Pause the current Manifest submission.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function onSubmissionPause(event) {
         const func = 'onSubmissionPause'; OUT.debug(`${func}: event =`, event);
@@ -578,7 +600,7 @@ appSetup(MODULE, function() {
     /**
      * Resume the currently-paused Manifest submission.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function onSubmissionResume(event) {
         const func = 'onSubmissionResume'; OUT.debug(`${func}: event =`, event);
@@ -615,6 +637,7 @@ appSetup(MODULE, function() {
     // Functions - auxiliary controls
     // ========================================================================
 
+    /** @type {jQuery} */
     const $auxiliary_tray = $(AUXILIARY_TRAY);
 
     const $remote_prompt  = $auxiliary_tray.find(REMOTE_FILE);
@@ -832,6 +855,7 @@ appSetup(MODULE, function() {
         const local = {}, remote = {};
         let unsaved = false;
         allItems().each((_, item) => {
+            /** @type {jQuery} */
             const $item   = $(item);
             const item_id = manifestItemId($item);
             STATUS_SELECTORS.forEach(status => {
@@ -1146,6 +1170,8 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     const $group_checkbox  = $head_row.find(`${CONTROLS} ${CHECKBOX}`);
+
+    /** @type {JQuery<HTMLInputElement>} */
     const $item_checkboxes = $item_rows.find(`${CONTROLS} ${CHECKBOX}`);
 
     /**
@@ -1158,8 +1184,9 @@ appSetup(MODULE, function() {
      * @returns {HTMLInputElement|undefined}
      */
     function checkbox(item, check, indeterminate) {
-        const func = 'checkbox';
+        /** @type {HTMLInputElement} */
         const cb   = selfOrDescendents(item, CHECKBOX)[0];
+        const func = 'checkbox';
         if (!cb) { return OUT.warn(`${func}: missing for item`, item) }
         if (isDefined(check)) {
             const was = cb.checked;
@@ -1300,7 +1327,7 @@ appSetup(MODULE, function() {
     /**
      * Respond after the group checkbox has been changed.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {CheckboxEvt} event
      */
     function onGroupCheckboxChange(event) {
         const func          = 'onGroupCheckboxChange';
@@ -1319,7 +1346,7 @@ appSetup(MODULE, function() {
     /**
      * Respond after an item checkbox has been changed.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function onItemCheckboxChange(event) {
         OUT.debug('onItemCheckboxChange: event =', event);
@@ -2028,7 +2055,7 @@ appSetup(MODULE, function() {
         /**
          * Callback invoked when the file select button is pressed.
          *
-         * @param {jQuery.Event} [event]    Ignored.
+         * @param {ElementEvt} [event]    Ignored.
          */
         function onSelect(event) {
             OUT.debug(`${func}: onSelect: event =`, event);
@@ -2053,7 +2080,7 @@ appSetup(MODULE, function() {
         /**
          * @see BaseUploader._onFileUploadProgress
          *
-         * @param {UppyFile}     file
+         * @param {UploadFile}   file
          * @param {FileProgress} progress
          *
          * @returns {boolean}
@@ -2078,7 +2105,7 @@ appSetup(MODULE, function() {
         /**
          * @see BaseUploader._onFileUploadError
          *
-         * @param {UppyFile}                       file
+         * @param {UploadFile}                     file
          * @param {Error}                          error
          * @param {{status: number, body: string}} [_response]
          */
@@ -2093,7 +2120,7 @@ appSetup(MODULE, function() {
         /**
          * @see BaseUploader._onFileUploadSuccess
          *
-         * @param {UppyFile}            file
+         * @param {UploadFile}          file
          * @param {UppyResponseMessage} _response
          */
         function onSuccess(file, _response) {
@@ -2131,14 +2158,14 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * @type {FileExt[]|undefined}
+     * @type {QueueFile[]|undefined}
      */
     let local_file_selection;
 
     /**
      * Local files selected by the user.
      *
-     * @returns {FileExt[]}
+     * @returns {QueueFile[]}
      */
     function localFileSelection() {
         return local_file_selection ||= [];
@@ -2147,7 +2174,7 @@ appSetup(MODULE, function() {
     /**
      * Include a local file.
      *
-     * @param {FileExt}       obj
+     * @param {QueueFile}     obj
      * @param {string|number} [item_id]
      */
     function addLocalFile(obj, item_id) {
@@ -2174,20 +2201,20 @@ appSetup(MODULE, function() {
     /**
      * Respond before the file chooser is invoked.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function beforeLocalFilesSelected(event) {
         OUT.debug('beforeLocalFilesSelected: event =', event);
         if (event.currentTarget === event.target) {
             clearLocalFileSelection();
-            $local_input.click();
+            $local_input.trigger('click');
         }
     }
 
     /**
      * Respond after the file chooser returns.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {InputEvt} event
      */
     function afterLocalFilesSelected(event) {
         const func  = 'afterLocalFilesSelected';
@@ -2207,7 +2234,7 @@ appSetup(MODULE, function() {
     /**
      * Replace the current list of selected files.
      *
-     * @param {FileExt[]|FileList} files
+     * @param {QueueFile[]|FileList} files
      */
     function queueLocalFiles(files) {
         OUT.debug(`queueLocalFiles: ${files.length} files =`, files);
@@ -2215,6 +2242,7 @@ appSetup(MODULE, function() {
         const count     = files?.length || 0;
         let lookup      = undefined;
         for (let i = 0; i < count; i++) {
+            /** @type {QueueFile} */
             const file  = files[i];
             const name  = file?.name;
             let item_id = file?.meta?.manifest_item_id;
@@ -2271,6 +2299,7 @@ appSetup(MODULE, function() {
             const fulfilled = new Set(names);
             const status    = FILE_STATUS;
             itemsStartable().each((_, item) => {
+                /** @type {jQuery} */
                 const $item   = $(item);
                 const $status = $item.find(status);
                 const needed  = $status.is(FILE_NEEDED);
@@ -2347,7 +2376,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function remainingLabel(count) {
-        const num   = Number(count || 0);
+        const num   = Number(count) || 0;
         const files = (num === 1) ? 'FILE' : 'FILES';   // TODO: I18n
         return `${num} ${files} STILL NEEDED:`;         // TODO: I18n
     }
@@ -2460,20 +2489,20 @@ appSetup(MODULE, function() {
     /**
      * Respond before the file chooser is invoked.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function beforeRemoteFilesSelected(event) {
         OUT.debug('*** beforeRemoteFilesSelected: event =', event);
         if (event.currentTarget === event.target) {
             clearRemoteFileSelection();
-            $remote_input.click();
+            $remote_input.trigger('click');
         }
     }
 
     /**
      * Respond after the file chooser returns.
      *
-     * @param {jQuery.Event|Event} _event
+     * @param {ElementEvt} _event
      */
     function afterRemoteFilesSelected(_event) {
         const func = 'afterRemoteFilesSelected';
@@ -2555,6 +2584,7 @@ appSetup(MODULE, function() {
             const fulfilled = new Set(names);
             const status    = FILE_STATUS;
             itemsStartable().each((_, item) => {
+                /** @type {jQuery} */
                 const $item   = $(item);
                 const $status = $item.find(status);
                 const needed  = $status.is(FILE_NEEDED);

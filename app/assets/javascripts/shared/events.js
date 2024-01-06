@@ -12,10 +12,6 @@ AppDebug.file('shared/events');
 // ============================================================================
 
 /**
- * @typedef {Selector|jQuery.Event|Event} SelectorOrEvent
- */
-
-/**
  * For event handlers processed by jQuery, a **false** return will result in
  * `event.stopPropagation()` and `event.preventDefault()`.
  *
@@ -26,7 +22,7 @@ AppDebug.file('shared/events');
 
 /**
  * @callback jQueryEventHandler
- * @param {jQuery.Event|Event} [event]
+ * @param {ElementEvt} [event]
  * @returns {EventHandlerReturn}
  */
 

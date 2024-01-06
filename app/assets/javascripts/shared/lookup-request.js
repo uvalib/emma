@@ -403,7 +403,7 @@ export class LookupRequest extends ChannelRequest {
      * @protected
      */
     _encodeValue(value) {
-        return value.replace(/./g, char => CHAR_ENCODE[char] || char);
+        return value.replaceAll(/./g, char => CHAR_ENCODE[char] || char);
     }
 
     /**

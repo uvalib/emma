@@ -33,7 +33,7 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
  * @typedef {object} FlashOptions
  *
  * @property {function} [onClose]   Callback when the flash is closed. <p/>
- * @property {Selector} [refocus]   Element that gets focus after close. <p/>
+ * @property {jQuery}   [refocus]   Receives focus after close. <p/>
  * @property {string}   [type]      Override flash type. <p/>
  * @property {string}   [role]      Override ARIA role. <p/>
  * @property {Selector} [fc]        Specify flash container. <p/>
@@ -113,13 +113,7 @@ const show_flash = DEFAULT_SHOW;
  * @returns {jQuery}
  */
 export function flashContainer(selector) {
-    if (selector instanceof jQuery) {
-        return selector;
-    } else if (typeof selector === 'string') {
-        return $(selector);
-    } else {
-        return $(CONTAINER);
-    }
+    return (selector instanceof jQuery) ? selector : $(selector || CONTAINER);
 }
 
 /**
@@ -153,7 +147,7 @@ export function flashInitialize(fc) {
         $fc.toggleClass(FLOATING_CLASS, true);
     }
     if (isPresent($items)) {
-        $first_closer?.focus();
+        $first_closer?.trigger('focus');
         showFlash($fc, true);
     }
     return !!$first_closer;
@@ -187,9 +181,9 @@ export function flashReset(fc) {
 export function suppressFlash(all) {
     //OUT.debug('suppressFlash: all =', all);
     switch (all) {
-        case false: enableFlash(true);                                  break;
-        case true:  show_flash.messages = show_flash.errors = false;    break;
-        default:    show_flash.messages = false;                        break;
+        case false: return show_flash.messages = show_flash.errors = true;
+        case true:  return show_flash.messages = show_flash.errors = false;
+        default:    return show_flash.messages = false;
     }
 }
 
@@ -201,9 +195,9 @@ export function suppressFlash(all) {
 export function enableFlash(all) {
     //OUT.debug('enableFlash: all =', all);
     switch (all) {
-        case false: suppressFlash(true);                                break;
-        case true:  show_flash.messages = show_flash.errors = true;     break;
-        default:    show_flash.messages = true;                         break;
+        case false: return show_flash.messages = show_flash.errors = false;
+        case true:  return show_flash.messages = show_flash.errors = true;
+        default:    return show_flash.messages = true;
     }
 }
 
@@ -343,7 +337,7 @@ function hideFlash(fc, force) {
         const option = getOptionsData($fc);
         if (option) {
             option.onClose?.();
-            option.refocus?.focus();
+            option.refocus?.trigger('focus');
             clearOptionsData($fc);
         }
     }
@@ -434,7 +428,7 @@ function addFlashItem(text, opt = {}) {
 
     setOptionsData($fc, opt);
     showFlash($fc).append($item);
-    $closer?.focus();
+    $closer?.trigger('focus');
     return $fc;
 }
 
@@ -455,7 +449,7 @@ function initializeFlashItem($item) {
 /**
  * Return the flash item associated with the argument.
  *
- * @param {jQuery.Event|Event|Selector} arg
+ * @param {Selector|ElementEvt} arg
  *
  * @returns {jQuery}
  */
@@ -467,7 +461,7 @@ function flashItem(arg) {
 /**
  * Callback invoked to remove a flash item from view.
  *
- * @param {jQuery.Event} event
+ * @param {ElementEvt} event
  */
 function closeFlashItem(event) {
     OUT.debug('closeFlashItem: event =', event);
@@ -481,7 +475,7 @@ function closeFlashItem(event) {
 /**
  * Allow the **Escape** key to close a specific flash item.
  *
- * @param {jQuery.Event|KeyboardEvent} event
+ * @param {KeyboardEvt} event
  */
 function onKeyUpFlashItem(event) {
     const key = keyCombo(event);
@@ -496,7 +490,7 @@ function onKeyUpFlashItem(event) {
  * Allow mouse down inside a flash item to avoid closing any flash item by
  * preventing {@link onMouseDownWindow} from being invoked.
  *
- * @param {jQuery.Event|KeyboardEvent} event
+ * @param {MouseEvt} event
  */
 function onMouseDownFlashItem(event) {
     OUT.debug('onMouseDownFlashItem: event =', event);
@@ -574,7 +568,7 @@ function initializeCloser($closer) {
 /**
  * Window events that could result in clearing all flash messages.
  *
- * @type {Object.<string,function(jQuery.Event)>}
+ * @type {Object.<string,function(MouseEvt|KeyboardEvt)>}
  */
 const WINDOW_EVENTS = {
     'keyup':     onKeyUpWindow,
@@ -597,7 +591,7 @@ function monitorWindowEvents(on = true) {
 /**
  * Allow the **Escape** key to close all flash items.
  *
- * @param {jQuery.Event|KeyboardEvent} event
+ * @param {KeyboardEvt} event
  */
 function onKeyUpWindow(event) {
     const key = keyCombo(event);
@@ -611,7 +605,7 @@ function onKeyUpWindow(event) {
 /**
  * Allow mouse down outside of a flash item to close all flash items.
  *
- * @param {jQuery.Event|MouseEvent} event
+ * @param {MouseEvt} event
  */
 function onMouseDownWindow(event) {
     OUT.debug('onMouseDownWindow: event =', event);

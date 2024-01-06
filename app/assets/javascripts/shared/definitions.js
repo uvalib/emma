@@ -40,13 +40,15 @@ export function notDefined(item) {
  * @returns {boolean}
  */
 export function isEmpty(item) {
-    if (item === false)             { return false }
-    if (item === 0)                 { return false }
-    if (!item)                      { return true }
-    if (isDefined(item?.size))      { return !item.size }
-    if (isDefined(item?.length))    { return !item.length }
-    if (typeof item === 'object')   { return !Object.keys(item).length }
-    return false;
+    switch (true) {
+        case (item === false):              return false;
+        case (item === 0):                  return false;
+        case (!item):                       return true;
+        case isDefined(item?.size):         return !item.size;
+        case isDefined(item?.length):       return !item.length;
+        case (typeof item === 'object'):    return !Object.keys(item).length;
+        default:                            return false;
+    }
 }
 
 /**

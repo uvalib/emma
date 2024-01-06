@@ -1,9 +1,12 @@
 // app/assets/javascripts/application/debug.js
 //
 // Application-wide debugging control.
+//
+// NOTE: It is assumed that this file is always imported in each JavaScript
+//  source file, particularly to expose the @typedefs in 'types.js'.
 
 
-// No imports
+import './types'
 
 
 /**

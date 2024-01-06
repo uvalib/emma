@@ -239,7 +239,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Submit the query terms as a lookup request.
      *
-     * @param {jQuery.Event|Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      */
     function manualSubmission(event) {
         if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
@@ -270,7 +270,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function onShowModal(_$target, check_only, halted) {
         OUT.debug('onShowModal:', _$target, check_only, halted);
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
         resetSearchResultsData();
         clearFieldResultsData();
         updateSearchTerms();
@@ -293,7 +293,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function onHideModal($target, check_only, halted) {
         OUT.debug('onHideModal:', $target, check_only, halted);
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
         if ($target.is(LookupModal.COMMIT)) {
             commitFieldValuesEntry();
         } else {
@@ -921,7 +921,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * If a field value column is not already locked, lock it if its contents
      * have changed.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function lockIfChanged(event) {
         OUT.debug('lockIfChanged:', event);
@@ -931,7 +931,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (current !== previous) {
             setLatestFieldValue($textarea, current);
             if (!isLockedFieldValue($textarea)) {
-                lockFor($textarea).click();
+                lockFor($textarea).trigger('click');
             }
         }
         const field    = $textarea.attr('data-field');
@@ -1060,7 +1060,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * The lock/unlock control is toggled.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function toggleFieldLock(event) {
         OUT.debug('toggleFieldLock:', event);
@@ -1172,7 +1172,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function resetSelectedEntry() {
         OUT.debug('resetSelectedEntry');
         $selected_entry = null;
-        getOriginalValuesEntry().find('[type="radio"]').click();
+        getOriginalValuesEntry().find('[type="radio"]').trigger('click');
     }
 
     /**
@@ -1197,7 +1197,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * The event target is assumed to have an entry row as a parent.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function selectEntry(event) {
         OUT.debug('selectEntry:', event);
@@ -1206,8 +1206,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const $target = $(event.currentTarget || event.target),
               $entry  = $target.parents('.row').first();
         if ($target.attr('type') !== 'radio') {
-            $target.focus();
-            $entry.find('[type="radio"]').click();
+            $target.trigger('focus');
+            $entry.find('[type="radio"]').trigger('click');
         } else if ($target.is(':checked')) {
             entrySelectButtons().not($target).prop('checked', false);
             useSelectedEntry($entry);
@@ -1219,7 +1219,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
                 $entry.children('[data-field]').each((_, column) => {
                     const $field = $(column);
                     if (isPresent($field.text())) {
-                        lockFor($field).click();
+                        lockFor($field).trigger('click');
                     }
                 });
             }
@@ -1231,7 +1231,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * The event target is assumed to have an entry row as a parent.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function highlightEntry(event) {
         const $target = $(event.target);
@@ -1244,7 +1244,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * The event target is assumed to have an entry row as a parent.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function unhighlightEntry(event) {
         const $target = $(event.target);
@@ -1655,6 +1655,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const lbl_id  = `state-${id_base}`;
         const locked  = !!checked;
 
+        /** @type {jQuery} */
         const $checkbox = $(`<input class="${LookupModal.LOCK_CLASS}">`);
         $checkbox.attr('type',            'checkbox');
         $checkbox.attr('role',            'switch');
@@ -1663,11 +1664,13 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         $checkbox.attr('aria-checked',    locked);
         $checkbox.prop('checked',         locked);
 
+        /** @type {jQuery} */
         const $slider = $('<div class="slider">');
         const $state  = $('<div class="state">');
         $state.attr('id',        lbl_id);
         $state.attr('data-name', label);
 
+        /** @type {jQuery} */
         const $indicator = $('<div class="lock-indicator">');
         $indicator.attr('aria-hidden', true).append($slider).append($state);
 
@@ -1890,7 +1893,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Create the lookup request from the search terms provided by the event
      * target.
      *
-     * @param {jQuery.Event|Event} [event]
+     * @param {ElementEvt} [event]
      */
     function updateSearchTerms(event) {
         OUT.debug('updateSearchTerms:', event);
@@ -1926,7 +1929,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (getSeparators() !== new_characters) {
             $.each(LookupModal.SEPARATORS, (key, characters) => {
                 if (new_characters !== characters) { return true } // continue
-                $separator.filter(`[value="${key}"]`).click();
+                $separator.filter(`[value="${key}"]`).trigger('click');
                 return false; // break
             });
         }

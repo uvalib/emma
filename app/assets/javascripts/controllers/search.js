@@ -166,6 +166,7 @@ appSetup(MODULE, function() {
             OUT.error(`${func}: no id for aria-controls`);
         }
         $items.each((_, item) => {
+            /** @type {jQuery} */
             const $item = $(item);
             for (const [name, value] of Object.entries(attrs)) {
                 if (notDefined($item.attr(name))) {
@@ -187,6 +188,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [open]       If **false**, mark as closed.
      */
     function markAsOpen(element, open) {
+        /** @type {jQuery} */
         const $section = $(element);
         const is_open  = notDefined(open) || open;
         $section.toggleClass(OPEN_MARKER, is_open);
@@ -196,8 +198,8 @@ appSetup(MODULE, function() {
     /**
      * Toggle visibility of the associated list item.
      *
-     * @param {jQuery.Event|UIEvent} event
-     * @param {boolean}              [open]
+     * @param {ElementEvt} event
+     * @param {boolean}    [open]
      */
     function toggleItem(event, open) {
         /** @type {jQuery} */
@@ -333,6 +335,7 @@ appSetup(MODULE, function() {
     $list_parts.filter('.number').each((_, num) => setupToggleControl(num));
 
     $result_items.each((_, item) => {
+        /** @type {jQuery} */
         const $item = $(item);
         const id    = item.id;
 
@@ -414,8 +417,8 @@ appSetup(MODULE, function() {
     /**
      * Toggle open/closed state of the associated item sub-section.
      *
-     * @param {jQuery.Event|UIEvent} event
-     * @param {boolean}              [open]     Def: opposite state.
+     * @param {ElementEvt} event
+     * @param {boolean}   [open]      Def: opposite state.
      */
     function toggleSection(event, open) {
         const $tgt    = $(event.currentTarget || event.target);

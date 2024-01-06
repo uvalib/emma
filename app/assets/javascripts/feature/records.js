@@ -190,6 +190,7 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}
      */
     function requestedStateGroup() {
+        // noinspection JSUnresolvedReference
         return asParams(window.location).group;
     }
 
@@ -288,7 +289,9 @@ appSetup(MODULE, function() {
         group ||= requestedStateGroup();
         group ||= defaultStateGroup($buttons.map((_, button) => button.value));
         group ||= 'done';
-        $buttons.filter(`[value="${group}"]`).prop('checked', true).change();
+        const $button = $buttons.filter(`[value="${group}"]`);
+        $button.prop('checked', true);
+        $button.trigger('change');
     }
 
     /**

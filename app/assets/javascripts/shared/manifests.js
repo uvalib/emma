@@ -149,6 +149,7 @@ export function buttonFor(type, buttons, caller) {
 export function enableButton(button, enable, config, override) {
     OUT.debug(`enableButton: enable = "${enable}"`, button);
     if (!button) { return }
+    /** @type {jQuery} */
     const $button  = $(button);
     const enabling = (enable !== false);
     const type     = (typeof(config) === 'string') ? config : '';

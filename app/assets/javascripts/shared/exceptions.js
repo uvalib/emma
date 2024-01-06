@@ -52,14 +52,11 @@ export class Exception extends Error {
      * @returns {array}
      */
     get messageParts() {
-        const message = this.message || '';
-        if (this.args.length === 0) {
-            return [message];
-        } else if (message.endsWith(':')) {
-            return [this.message, ...this.args];
-        } else {
-            return [`${this.message}:`, ...this.args];
+        let message = this.message || '';
+        if (this.args.length) {
+            message = message.replace(/([^:])$/, '$1:');
         }
+        return [message, ...this.args];
     }
 
 }

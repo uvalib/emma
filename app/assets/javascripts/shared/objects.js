@@ -158,10 +158,9 @@ export function isObject(item, or_array) {
  * @returns {object|undefined}
  */
 export function asObject(item) {
-    if ($.isPlainObject(item)) {
-        return item;
-    } else if (isDefined(item?.toObject)) {
-        return item.toObject();
+    switch (true) {
+        case $.isPlainObject(item):     return item;
+        case isDefined(item?.toObject): return item.toObject();
     }
 }
 

@@ -74,12 +74,14 @@ function alignKeys(item) {
  */
 function stringifyReplacer(_this, item) {
     const type = typeof(item);
-    if (type === 'undefined')      { return '(undefined)' }
-    else if (item === null)        { return '(null)' }
-    else if (item instanceof Date) { return asDateTime(item) }
-    else if (isEmpty(item))        { return item }
-    else if (type === 'object')    { return possiblyInlined(item) }
-    return item;
+    switch (true) {
+        case (type === 'undefined'):    return '(undefined)';
+        case (item === null):           return '(null)';
+        case (item instanceof Date):    return asDateTime(item);
+        case isEmpty(item):             return item;
+        case (type === 'object'):       return possiblyInlined(item);
+        default:                        return item;
+    }
 }
 
 /**
@@ -92,13 +94,12 @@ function stringifyReplacer(_this, item) {
  * @returns {string|*}
  */
 function possiblyInlined(obj, threshold = DEF_INLINE_MAX) {
-    const json =
-        postProcess(JSON.stringify(obj, null, ' '))
-            .replace(/\[\s+/g, '[')
-            .replace(/\s+]/g,  ']')
-            .replace(/{\s*/g,  '{ ')
-            .replace(/\s*}/g,  ' }')
-            .replace(/\s+/g,   ' ');
+    let json = postProcess(JSON.stringify(obj, null, ' '));
+    json = json.replaceAll(/\[\s+/g, '[');
+    json = json.replaceAll(/\s+]/g,  ']');
+    json = json.replaceAll(/{\s*/g,  '{ ');
+    json = json.replaceAll(/\s*}/g,  ' }');
+    json = json.replaceAll(/\s+/g,   ' ');
     return (json.length <= threshold) ? json : obj;
 }
 
@@ -112,10 +113,10 @@ function possiblyInlined(obj, threshold = DEF_INLINE_MAX) {
 function postProcess(item) {
     // noinspection RegExpRedundantEscape
     return item
-        .replace(/\\"/g, '"')
-        .replace(/"(\(\w+\))"/g, '$1')
-        .replace(/"(\{.+\})"/gm, '$1')
-        .replace(/"(\[.+\])"/gm, '$1')
-        .replace(/^( *)"(\w+)(\s*)":/gm,  '$1$2:$3')
-        .replace(/^( *)"(\S+?)(\s+)":/gm, '$1"$2":');
+        .replaceAll(/\\"/g, '"')
+        .replaceAll(/"(\(\w+\))"/g, '$1')
+        .replaceAll(/"(\{.+\})"/gm, '$1')
+        .replaceAll(/"(\[.+\])"/gm, '$1')
+        .replaceAll(/^( *)"(\w+)(\s*)":/gm,  '$1$2:$3')
+        .replaceAll(/^( *)"(\S+?)(\s+)":/gm, '$1"$2":');
 }

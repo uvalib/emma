@@ -31,6 +31,8 @@ export function urlFrom(arg) {
     } else if (!arg || (typeof arg !== 'object')) {
         // Skipping invalid argument.
     } else if (isDefined(arg.target)) { // Event or jQuery.Event
+        // noinspection JSValidateTypes
+        /** @type {HashChangeEvent|AnchorEvt} */
         const event = arg.originalEvent || arg;
         result = event.newURL || event.target.href;
     } else if (isDefined(arg.href)) {   // Location, HTMLBaseElement
@@ -53,7 +55,7 @@ export function asParams(item) {
     let result = {};
     if (typeof item === 'string') {
         item.trim().replace(/^[?&]+/, '').split('&').forEach(pair => {
-            const kv    = decodeURIComponent(pair.replace(/[+]/g, ' '));
+            const kv    = decodeURIComponent(pair.replaceAll('+', ' '));
             const parts = kv.split('=');
             let [k, v]  = [parts.shift(), parts.join('=')];
             if (k && v) {
@@ -103,33 +105,41 @@ export function makeUrl(...parts) {
     const func = 'makeUrl';
     let path   = [];
     let params = {};
-    let path_starter;
-    let starter_index = 0;
+    let path_start, start_idx = 0;
 
-    // Accumulate path parts and param parts.
-    parts.forEach(processPart);
-
+    // noinspection FunctionTooLongJS
     /**
      * @param {string|string[]|object} arg
      *
      * @returns {undefined}           Return value is ignored.
      */
     function processPart(arg) {
-        let part, starter, preserve;
-        if (typeof arg === 'string') {
-            part = arg.trim();
-        } else if (Array.isArray(arg)) {
-            return arg.forEach(processPart);
-        } else if (isObject(arg)) {
-            return $.extend(params, arg);
+        let start, keep, part;
+
+        switch (typeof arg) {
+            case 'string':  part = arg.trim();  break;
+            case 'bigint':  part = `${arg}`;    break;
+            case 'number':  part = `${arg}`;    break;
+            case 'boolean': part = `${arg}`;    break;
+            default:        part = arg;         break;
         }
-        if (!part) {
+
+        if (isEmpty(part)) {
             return;
+
+        } else if (Array.isArray(part)) {
+            return part.forEach(processPart);
+
+        } else if (isObject(part)) {
+            return Object.assign(params, part);
+
+        } else if (typeof part !== 'string') {
+            return console.warn(`${func}: ignored part`, part);
 
         } else if (part === '//') {
             // A token which distinctly denotes the beginning of a URL but is
             // without the leading protocol portion.
-            starter = window.location.protocol + part;
+            start = window.location.protocol + part;
 
         } else if (part.startsWith('//')) {
             // A URL fragment without the leading protocol portion.
@@ -139,14 +149,14 @@ export function makeUrl(...parts) {
 
         } else if (part.startsWith('javascript:')) {
             // Show this as-is (although it probably shouldn't be seen here).
-            starter  = part;
-            preserve = true;
+            start = part;
+            keep  = true;
 
         } else if ((part === 'https://') || (part === 'http://')) {
-            starter = part;
+            start = part;
 
         } else if ((part === 'https:') || (part === 'http:')) {
-            starter = part + '//';
+            start = part + '//';
 
         } else if (part.startsWith('https:') || part.startsWith('http:')) {
             // Full URL with leading protocol ("https://host/path?params").
@@ -157,33 +167,29 @@ export function makeUrl(...parts) {
 
         } else if (part.includes('?')) {
             const parts = part.split('?');
-            parts.shift().split('/').forEach(processPart); // Path portion.
-            $.extend(params, asParams(parts.join('&')));   // Params portion.
+            parts.shift().split('/').forEach(processPart);    // Path portion
+            Object.assign(params, asParams(parts.join('&'))); // Params portion
             return;
 
         } else if (part.includes('&') || part.includes('=')) {
-            return $.extend(params, asParams(part));
+            return Object.assign(params, asParams(part));
 
         } else if (part.includes('/')) {
             return part.split('/').forEach(processPart);
         }
 
-        if (starter && path_starter) {
+        // Add to the path, with adjustments as determined above.
+
+        if (start && path_start) {
             // Invalid arguments supplied.
             console.warn(`${func}: second URL starter "${arg}"`);
-
-        } else if (starter) {
+        } else if (start) {
             // Prepare leading URL part (ending with "//") so that the right
             // number of slashes remain when joined below.
-            if (preserve) {
-                part = starter;
-            } else {
-                part = starter.replace(/\/\/$/, '/').trim();
-            }
-            path_starter  = part;
-            starter_index = path.length;
-
-        } else if (!preserve) {
+            part       = keep ? start : start.replace(/\/\/$/, '/').trim();
+            path_start = part;
+            start_idx  = path.length;
+        } else if (!keep) {
             // Remove leading and trailing slash(es), if any.
             part = part.replace(/^\/+/, '').replace(/\/+$/, '').trim();
         }
@@ -193,22 +199,25 @@ export function makeUrl(...parts) {
         }
     }
 
+    // Accumulate path parts and param parts.
+    parts.forEach(processPart);
+
     // Assemble the parts of the path.  If the start of the path does not
     // happen to be the first argument it will be brought to the beginning.
     if (isEmpty(path)) {
         path.push(window.location.origin + window.location.pathname);
-    } else if (!path_starter) {
+    } else if (!path_start) {
         path.unshift(window.location.origin);
     } else {
-        const tmp_path = [path_starter];
-        tmp_path.push(...path.slice(0, starter_index));
-        tmp_path.push(...path.slice(starter_index + 1));
+        const tmp_path = [path_start];
+        tmp_path.push(...path.slice(0, start_idx));
+        tmp_path.push(...path.slice(start_idx + 1));
         path = tmp_path;
     }
 
     // Assemble the parts of the parameters.
     let url = path.join('/');
-    params = compact(params);
+    params  = compact(params);
     if (isPresent(params)) {
         url += '?' + $.map(params, (v,k) => `${k}=${v}`).join('&');
     }

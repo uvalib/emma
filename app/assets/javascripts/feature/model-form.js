@@ -718,7 +718,7 @@ appSetup(MODULE, function() {
         /**
          * Callback invoked when the file select button is pressed.
          *
-         * @param {jQuery.Event} [_event]   Ignored.
+         * @param {ElementEvt} [_event]   Ignored.
          */
         function onSelect(_event) {
             clearFlash();
@@ -881,7 +881,7 @@ appSetup(MODULE, function() {
             /**
              * Update the form after the bulk control file is selected.
              *
-             * @param {jQuery.Event} event
+             * @param {InputEvt} event
              */
             function setBulkFilename(event) {
                 const files    = event.target.files || [];
@@ -992,7 +992,7 @@ appSetup(MODULE, function() {
     /**
      * Setup the element which shows intermediate results during a bulk upload.
      *
-     * @param {jQuery.Event} [event]
+     * @param {ElementEvt} [event]
      */
     function monitorBulkOperation(event) {
         const target = event?.currentTarget || event?.target;
@@ -1467,6 +1467,7 @@ appSetup(MODULE, function() {
      */
     function initializeModelForm(form, start_data) {
 
+        /** @type {jQuery} */
         const $form = $(form);
 
         // Setup file uploader (if applicable).
@@ -1546,7 +1547,7 @@ appSetup(MODULE, function() {
         const func    = 'initializeFormFields';
         const $form   = formElement(form);
         const data    = {};
-        const extract = (value) => $.extend(data, fromJSON(value, func));
+        const extract = (value) => Object.assign(data, fromJSON(value, func));
 
         if (start_data) {
             extract(start_data);
@@ -1745,6 +1746,7 @@ appSetup(MODULE, function() {
         // checkboxes if it is an array, or to set a specific checkbox if it
         // is a string.
         const group       = CheckboxGroup.setupFor($field);
+        /** @type {JQuery<HTMLInputElement>} */
         const $checkboxes = group?.controls || CheckboxGroup.controls($field);
         if (Array.isArray(setting) || (setting === null)) {
             const values = compact(setting || []);
@@ -2175,6 +2177,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function fieldRequired(target, setting) {
+        /** @type {jQuery} */
         const $input = $(target);
         switch (setting) {
             case true:  $input.attr('data-required', true); break;
@@ -2384,12 +2387,11 @@ appSetup(MODULE, function() {
             value = item;
         }
         switch (typeof value) {
-            case 'boolean': value = value ? 'true' : 'false'; break;
-            case 'number':  value = value.toString();         break;
-            case 'string':  value = value.trim();             break;
-            default:        value = '';                       break;
+            case 'boolean': return value ? 'true' : 'false';
+            case 'number':  return value.toString();
+            case 'string':  return value.trim();
+            default:        return '';
         }
-        return value;
     }
 
     // ========================================================================
@@ -2683,12 +2685,13 @@ appSetup(MODULE, function() {
 
         handleEvent($menu, 'change', function() {
             clearFlash();
-            hideParentEntrySelect($form);
             const new_repo = $menu.val() || '';
             if (defaultRepository(new_repo)) {
+                hideParentEntrySelect($form);
                 setSourceRepository(new_repo);
             } else {
-                showParentEntrySelect($form).find(PARENT_SEARCH_INPUT).focus();
+                showParentEntrySelect($form);
+                parentEntrySearchInput($form).trigger('focus');
             }
         });
 
@@ -3193,7 +3196,7 @@ appSetup(MODULE, function() {
      * @see onShowModalHook
      */
     function onLookupStart($toggle, check_only, halted) {
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
         clearFlash();
         clearSearchResultsData($toggle);
         setSearchTermsData($toggle);
@@ -3212,7 +3215,7 @@ appSetup(MODULE, function() {
      * @see onHideModalHook
      */
     function onLookupComplete($toggle, check_only, halted) {
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
 
         const $form = formElement();
         let message = 'No fields changed.'; // TODO: I18n
@@ -3496,7 +3499,7 @@ appSetup(MODULE, function() {
      * To avoid excessive work, {@link setSearchTermsData} will only be run
      * if truly required to regenerate the data.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function updateSearchTermsData(event) {
         const $button = $(event.target);
@@ -3605,7 +3608,7 @@ appSetup(MODULE, function() {
          * of the element changes; otherwise it happens when the element loses
          * focus.
          *
-         * @param {jQuery.Event} event
+         * @param {ElementEvt} event
          */
         function onChange(event) {
             DEBUG_INPUT && OUT.debug('*** CHANGE ***');
@@ -3617,12 +3620,12 @@ appSetup(MODULE, function() {
          * re-validating the entire form with every key stroke.  This also
          * applies to cut, paste, drag, drop, and delete input event types.
          *
-         * @param {jQuery.Event|InputEvent} event
+         * @param {InputEvt} event
          *
          * @see https://www.w3.org/TR/input-events-1#interface-InputEvent
          */
         function onInput(event) {
-            const type = (event?.originalEvent || event).inputType || '';
+            const type = (event?.originalEvent || event)?.inputType || '';
             DEBUG_INPUT && OUT.debug(`*** INPUT ${type} ***`);
             if (!type.startsWith('format')) {
                 validateInputField(event, undefined, false);
@@ -3632,9 +3635,9 @@ appSetup(MODULE, function() {
         /**
          * Update a single input field then revalidate the form.
          *
-         * @param {jQuery.Event} event
-         * @param {string|null}  [value]  Default: current element value.
-         * @param {boolean}      [trim]   If **false**, don't trim white space.
+         * @param {ElementEvt}  event
+         * @param {string|null} [value] Default: current element value.
+         * @param {boolean}     [trim]  If **false**, don't trim white space.
          */
         function validateInputField(event, value, trim) {
             const $field = $(event.target);
@@ -3721,7 +3724,7 @@ appSetup(MODULE, function() {
     /**
      * Indicate that submission process has been initiated.
      *
-     * @param {jQuery.Event} [event]
+     * @param {ElementEvt} [event]
      */
     function startSubmission(event) {
         const $button = $(event.currentTarget || event.target);
@@ -3749,7 +3752,7 @@ appSetup(MODULE, function() {
      * The Upload record is restored to its original state (non-existence in
      * the case of the create form).
      *
-     * @param {jQuery.Event} [event]
+     * @param {ElementEvt} [event]
      */
     function cancelSubmission(event) {
         const $button = $(event.currentTarget || event.target);
@@ -4042,12 +4045,9 @@ appSetup(MODULE, function() {
      * @param {string}   [new_mode]
      */
     function fieldDisplayFilterSelect(form, new_mode) {
-        const $form  = formElement(form);
-        const $radio = fieldDisplayFilterButtons($form);
-        let mode;
-        if (isDefined(new_mode)) {
-            mode = new_mode;
-        } else {
+        const $form = formElement(form);
+        let mode    = new_mode;
+        if (notDefined(mode)) {
             let [action, general, first] = [];
             const current = termAction($form);
             const filters = Object.entries(PROPERTIES.Filter);
@@ -4062,8 +4062,10 @@ appSetup(MODULE, function() {
             }
             mode = action || general || first;
         }
-        const selector = `[value="${mode}"]`;
-        $radio.filter(selector).prop('checked', true).change();
+        const $buttons = fieldDisplayFilterButtons($form);
+        const $button  = $buttons.filter(`[value="${mode}"]`);
+        $button.prop('checked', true)
+        $button.trigger('change');
     }
 
     /**
@@ -4083,7 +4085,7 @@ appSetup(MODULE, function() {
         /**
          * Update field display filtering if the target is checked.
          *
-         * @param {jQuery.Event} event
+         * @param {ElementEvt} event
          */
         function fieldDisplayFilterHandler(event) {
             const $target = $(event.currentTarget || event.target);

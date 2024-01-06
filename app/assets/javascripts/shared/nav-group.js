@@ -296,7 +296,7 @@ export class NavGroup extends BaseClass {
     /**
      * Respond to the group element gaining focus.
      *
-     * @param {jQuery.Event|FocusEvent} event
+     * @param {FocusEvt} event
      */
     _groupFocus(event) {
         const func   = '_groupFocus';
@@ -333,7 +333,7 @@ export class NavGroup extends BaseClass {
     /**
      * Respond to the group element losing focus.
      *
-     * @param {jQuery.Event|FocusEvent} event
+     * @param {FocusEvt} event
      */
     _groupBlur(event) {
         const func   = '_groupBlur';
@@ -369,7 +369,7 @@ export class NavGroup extends BaseClass {
     /**
      * Respond to a mouse click in a control or anywhere within the group.
      *
-     * @param {jQuery.Event|MouseEvent} event
+     * @param {MouseEvt} event
      *
      * @returns {EventHandlerReturn}
      */
@@ -402,10 +402,10 @@ export class NavGroup extends BaseClass {
 
         let handled, $ctrl;
         if ($focus) {
-            $focus.click();
+            $focus.trigger('click');
             handled = true;
         } else if (to_entry && ($ctrl = this._getControls($entry))) {
-            $ctrl.click();
+            $ctrl.trigger('click');
             handled = true;
         }
 
@@ -420,7 +420,7 @@ export class NavGroup extends BaseClass {
      * Handle keyboard navigation within the group or allow the event to pass
      * to the destination.
      *
-     * @param {jQuery.Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      *
      * @returns {EventHandlerReturn}
      */
@@ -429,7 +429,7 @@ export class NavGroup extends BaseClass {
         const debug = this.debugging;
         const key   = keyCombo(event);
         if (!key) { return this._warn(`${func}: not a KeyboardEvent`, event) }
-        if (modifiersOnly(key)) { return } // Avoid excess console logging.
+        if (modifiersOnly(key)) { return undefined } // Avoid excess logging.
 
         const {
             $tgt,
@@ -523,7 +523,7 @@ export class NavGroup extends BaseClass {
     /**
      * Respond to a control within the group gaining focus.
      *
-     * @param {jQuery.Event|FocusEvent} event
+     * @param {FocusEvt} event
      */
     _controlFocus(event) {
         const func     = '_controlFocus';
@@ -555,7 +555,7 @@ export class NavGroup extends BaseClass {
     /**
      * Respond to a control within the group losing focus.
      *
-     * @param {jQuery.Event|FocusEvent} event
+     * @param {FocusEvt} event
      */
     _controlBlur(event) {
         const func     = '_controlBlur';
@@ -586,7 +586,7 @@ export class NavGroup extends BaseClass {
     /**
      * Respond to a control within the group receiving a mouse click.
      *
-     * @param {jQuery.Event|MouseEvent} event
+     * @param {MouseEvt} event
      *
      * @returns {EventHandlerReturn}
      */
@@ -619,7 +619,7 @@ export class NavGroup extends BaseClass {
     /**
      * Detect keyboard activity on a control.
      *
-     * @param {jQuery.Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      *
      * @returns {EventHandlerReturn}
      */
@@ -628,7 +628,7 @@ export class NavGroup extends BaseClass {
         const debug = this.debugging;
         const key   = keyCombo(event);
         if (!key) { return this._warn(`${func}: not a KeyboardEvent`, event) }
-        if (modifiersOnly(key)) { return } // Avoid excess console logging.
+        if (modifiersOnly(key)) { return undefined } // Avoid excess logging.
 
         const $tgt     = $(event.target);
         const $control = $(event.currentTarget);
@@ -755,10 +755,10 @@ export class NavGroup extends BaseClass {
      * Derive values and logical properties from the event which express the
      * relationships between the event target and the group components.
      *
-     * @param {string}             func
-     * @param {jQuery.Event|Event} event
-     * @param {string}             [key]
-     * @param {boolean}            [validate]
+     * @param {string}     func
+     * @param {ElementEvt} event
+     * @param {string}     [key]
+     * @param {boolean}    [validate]
      *
      * @returns {NavGroupEventProperties}
      */
@@ -852,7 +852,7 @@ export class NavGroup extends BaseClass {
      * Detailed console output of an event analysis.
      *
      * @param {NavGroupEventProperties} result
-     * @param {jQuery.Event|Event}      event
+     * @param {ElementEvt}              event
      * @param {string}                  [key]
      * @param {string}                  [caller]
      */
@@ -878,9 +878,9 @@ export class NavGroup extends BaseClass {
     /**
      * Detailed console output for the end of handling of an event.
      *
-     * @param {jQuery.Event|Event}  event
-     * @param {string}              [key]
-     * @param {string}              [caller]
+     * @param {ElementEvt} event
+     * @param {string}     [key]
+     * @param {string}     [caller]
      */
     _logGroupEventEnd(event, key, caller) {
         const func = caller || '_logGroupEventEnd';
@@ -1071,11 +1071,11 @@ export class NavGroup extends BaseClass {
     }
 
     _nextNeighbor() {
-        return nextInTabOrder(this.group).focus();
+        return nextInTabOrder(this.group)?.trigger('focus');
     }
 
     _prevNeighbor() {
-        return prevInTabOrder(this.group).focus();
+        return prevInTabOrder(this.group)?.trigger('focus');
     }
 
     // ========================================================================
@@ -1205,22 +1205,24 @@ export class NavGroup extends BaseClass {
      * @protected
      */
     _controlCategory(control) {
-        const $control = $(control);
-        if (isEmpty($control))        { return {} }
-        if ($control.is('a'))         { return { link:    true } }
-        if ($control.is('details'))   { return { details: true } }
-        if ($control.is('textarea'))  { return { text:    true } }
-        switch ($control.prop('type')) {
-            case 'button':              return { button:  true };
-            case 'reset':               return { button:  true };
-            case 'submit':              return { button:  true };
-            case 'checkbox':            return { check:   true };
-            case 'radio':               return { radio:   true };
-            case 'select':              return { select:  true };
-            case 'select-one':          return { select:  true };
-            case 'select-multiple':     return { select:  true };
-            case 'text':                return { text:    true };
-            default:                    return { input:   true };
+        const $c = $(control);
+        switch (true) {
+            case isEmpty($c):       return {};
+            case $c.is('a'):        return { link:    true };
+            case $c.is('details'):  return { details: true };
+            case $c.is('textarea'): return { text:    true };
+        }
+        switch ($c.prop('type')) {
+            case 'button':          return { button:  true };
+            case 'reset':           return { button:  true };
+            case 'submit':          return { button:  true };
+            case 'checkbox':        return { check:   true };
+            case 'radio':           return { radio:   true };
+            case 'select':          return { select:  true };
+            case 'select-one':      return { select:  true };
+            case 'select-multiple': return { select:  true };
+            case 'text':            return { text:    true };
+            default:                return { input:   true };
         }
     }
 
@@ -1630,7 +1632,7 @@ export class NavGroup extends BaseClass {
         if (!this._updateItem($item, ...args)) {
             this._warn(`${func}: empty $item =`, $item);
         } else if (focus !== false) {
-            this.activeControl($item)?.focus();
+            this.activeControl($item)?.trigger('focus');
         }
     }
 
@@ -2002,7 +2004,7 @@ export class ListGroup extends NavGroup {
     /**
      * Handle control checked state change.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      *
      * @returns {EventHandlerReturn}
      */

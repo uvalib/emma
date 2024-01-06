@@ -12,5 +12,4 @@ import jquery       from 'jquery';
 
 AppDebug.file('vendor/jquery');
 
-window.jQuery = jquery;
-window.$      = jquery;
+window.jQuery = window.$ = jquery;

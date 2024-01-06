@@ -129,13 +129,13 @@ export const Analytics = (function() {
         const $root   = root ? $(root) : defaultRoot();
         const $links  = $root.find(sel || defaultSelector());
         const ignored = selector(IGNORE_CLASSES);
-        $links.not(ignored).each(function() {
-            const $this = $(this);
-            const href  = $this.attr('href') || $this.attr('data-path');
+        $links.not(ignored).each((_, link) => {
+            const $link = $(link);
+            const href  = $link.attr('href') || $link.attr('data-path');
             if (href && !href.match(/^javascript:/)) {
-                if (MARK_LINKS) { $this.addClass(LINK_CLASS) }
+                if (MARK_LINKS) { $link.addClass(LINK_CLASS) }
                 // noinspection JSUnresolvedReference
-                tracker.addListener(this);
+                tracker.addListener(link);
             }
         });
     }
@@ -181,13 +181,12 @@ export const Analytics = (function() {
      * Track events on page header items.
      *
      * @param {jQuery} $root
-     * @param {string} [topic]        Event category; default: 'Header'
+     * @param {string} [topic]        Event category.
      */
-    function trackHeader($root, topic) {
-        const $r    = $root.find('.layout-banner');
-        if (isMissing($r)) { return }
-        const t     = topic || 'Header';
-        const track = (name, sel) => trackClick($r, sel, t, name);
+    function trackHeader($root, topic = 'Header') {
+        const $elem = $root.find('.layout-banner');
+        if (isMissing($elem)) { return }
+        const track = (name, sel) => trackClick($elem, sel, topic, name);
 
         // noinspection SpellCheckingInspection
         track('Home',    'a[href="/"]');
@@ -199,13 +198,12 @@ export const Analytics = (function() {
      * Track events on page footer items.
      *
      * @param {jQuery} $root
-     * @param {string} [topic]        Event category; default: 'Footer'
+     * @param {string} [topic]        Event category.
      */
-    function trackFooter($root, topic) {
-        const $r    = $root.find('.layout-footer');
-        if (isMissing($r)) { return }
-        const t     = topic || 'Footer';
-        const track = (name, sel) => trackClick($r, sel, t, name);
+    function trackFooter($root, topic = 'Footer') {
+        const $elem = $root.find('.layout-footer');
+        if (isMissing($elem)) { return }
+        const track = (name, sel) => trackClick($elem, sel, topic, name);
 
         // noinspection SpellCheckingInspection
         track('Website', 'a[href*="uvacreate"]');
@@ -219,7 +217,7 @@ export const Analytics = (function() {
      * @param {Selector} selector
      * @param {string}   cat          Matomo event category.
      * @param {string}   act          Matomo event action.
-     * @param {string}   [condition]  Evaluated in the handler.
+     * @param {function} [condition]  Evaluated in the handler.
      *
      * @return {number}               The number of items found.
      */
@@ -234,7 +232,7 @@ export const Analytics = (function() {
      * @param {Selector} selector
      * @param {string}   cat          Matomo event category.
      * @param {string}   act          Matomo event action.
-     * @param {string}   [condition]  Evaluated in the handler.
+     * @param {function} [condition]  Evaluated in the handler.
      *
      * @return {number}               The number of items found.
      */
@@ -250,19 +248,18 @@ export const Analytics = (function() {
      * @param {Selector} selector
      * @param {string}   cat          Matomo event category.
      * @param {string}   act          Matomo event action.
-     * @param {string}   [condition]  Evaluated in the handler.
+     * @param {function} [condition]  Evaluated in the handler.
      *
      * @return {number}               The number of items found.
      */
     function trackEvent(event_type, $root, selector, cat, act, condition) {
         const $elements = $root.find(selector);
         if (isPresent($elements)) {
-            const handler = function(event) {
-                //const $this = $(event.target); // For use within "condition".
-                //if (isMissing(condition) || eval(condition)) {
-                    _paq.push(['trackEvent', cat, act]);
-                //}
-            };
+            const track = function() { _paq.push(['trackEvent', cat, act]) };
+            let handler = track;
+            if (condition) {
+                handler = function(event) { condition(event) && track() };
+            }
             handleEvent($elements, event_type, handler);
         }
         return $elements.length;

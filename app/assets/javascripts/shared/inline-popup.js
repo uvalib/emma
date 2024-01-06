@@ -243,7 +243,7 @@ export class InlinePopup extends ModalBase {
      * If the event originates from outside of a popup control or open popup,
      * then close all open popups.
      *
-     * @param {jQuery.Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      *
      * @returns {EventHandlerReturn}
      * @protected
@@ -270,7 +270,7 @@ export class InlinePopup extends ModalBase {
      * Close all popups that are not hidden when clicking outside of a popup
      * control or popup panel.
      *
-     * @param {jQuery.Event|MouseEvent} event
+     * @param {MouseEvt} event
      *
      * @returns {undefined}
      * @protected

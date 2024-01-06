@@ -215,6 +215,7 @@ export function handleClickAndKeypress(element, callback) {
 function handleActivationAsClick(selector, direct, match, except) {
     //OUT.debug('handleActivationAsClick:', selector, direct, match, except);
 
+    // noinspection JSCheckFunctionSignatures
     /**
      * Determine the target(s) based on the *direct* argument.
      *
@@ -256,7 +257,7 @@ function handleActivationAsClick(selector, direct, match, except) {
  * Not intended for links (where the key press will be handled by the browser
  * itself).
  *
- * @param {jQuery.Event|KeyboardEvent} event
+ * @param {KeyboardEvt} event
  *
  * @returns {EventHandlerReturn}
  */
@@ -269,8 +270,8 @@ function handleActivationKeypress(event) {
         const $target = $(event.target);
         const href    = $target.attr('href');
         if (!href || (href === '#')) {
-            $target.click();
-            $target.focusin();
+            $target.trigger('click');
+            $target.trigger('focusin');
             return false;
         }
     }
@@ -384,7 +385,7 @@ export function delegateInputClick(element) {
     handleClickAndKeypress($element, function(event) {
         if (!sameElements($input, event.target)) {
             event.preventDefault();
-            $input.click();
+            $input.trigger('click');
         }
     });
 }
@@ -579,11 +580,11 @@ export function neutralizeFocusables(element, except, depth = 0) {
     const bool_arg = (typeof except === 'boolean');
     const children = !bool_arg || except;
     const rejected = !bool_arg && except;
-    const $element = element && $(element);
+    const $element = element ? $(element) : undefined;
     const $here    = rejected ? $element?.not(rejected) : $element;
 
     if (!$element) { return OUT.warn(`${func}: blank element`, element) }
-    depth || OUT.debug(`${func}:`, $element, except, $here);
+    //depth || OUT.debug(`${func}:`, $element, except, $here);
 
     getMaybeFocusables($here).each((_, el) => {
         setFocusable(el, false, func, false);
@@ -622,7 +623,7 @@ export function restoreFocusables(element, except, depth = 0) {
     const $here    = rejected ? $element?.not(rejected) : $element;
 
     if (!$element) { return OUT.warn(`${func}: blank element`, element) }
-    depth || OUT.debug(`${func}:`, $element, except, $here);
+    //depth || OUT.debug(`${func}:`, $element, except, $here);
 
     getMaybeFocusables($here).each((_, el) => {
         const $el     = $(el);
@@ -665,6 +666,7 @@ export function restoreFocusables(element, except, depth = 0) {
  */
 export function toggleVisibility(element, setting) {
     //OUT.debug('toggleVisibility: setting =', setting, 'for', element);
+    /** @type {jQuery} */
     const $element = $(element);
     let becoming_visible, now_hidden, visibility;
     if (isDefined(setting)) {

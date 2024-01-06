@@ -136,7 +136,7 @@ appSetup(PATH, function() {
         let $anchor  = anchor && $(anchor);
         DEBUG && console.log(`${func}: $anchor =`, $anchor);
         if (($anchor &&= $anchor.first()) && currentlyFocusable($anchor)) {
-            $anchor.focus();
+            $anchor.trigger('focus');
         }
     }
 
@@ -177,7 +177,7 @@ appSetup(PATH, function() {
      * If the browser in minimized or a different browser tab gets focus then
      * the page is not visible.
      *
-     * @param {Event} event
+     * @param {DocumentEvt} event
      */
     function pageVisibility(event) {
         const state  = document.visibilityState;

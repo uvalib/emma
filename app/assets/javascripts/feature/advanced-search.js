@@ -554,7 +554,7 @@ appSetup(MODULE, function() {
     /**
      * Actions to take before the search happens.
      *
-     * @param {Event} event
+     * @param {ElementEvt} event
      */
     function performSearch(event) {
         OUT.debug('performSearch:', event);
@@ -708,7 +708,7 @@ appSetup(MODULE, function() {
         /**
          * Check readiness after the element's content changes.
          *
-         * @param {jQuery.Event} event
+         * @param {ElementEvt} event
          */
         function onChange(event) {
             //OUT.debug('*** CHANGE ***');
@@ -720,12 +720,12 @@ appSetup(MODULE, function() {
          * re-validating the entire form with every key stroke.  This also
          * applies to cut, paste, drag, drop, and delete input event types.
          *
-         * @param {jQuery.Event|InputEvent} event
+         * @param {InputEvt} event
          *
          * @see https://www.w3.org/TR/input-events-1#interface-InputEvent
          */
         function onInput(event) {
-            const type = (event?.originalEvent || event).inputType || '';
+            const type = (event?.originalEvent || event)?.inputType || '';
             //OUT.debug(`*** INPUT ${type} ***`);
             if (!type.startsWith('format')) {
                 updatedSearchTerm(event);
@@ -890,7 +890,7 @@ appSetup(MODULE, function() {
     /**
      * Cause the first hidden search bar row in the sequence to be revealed.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function showNextRow(event) {
         const func      = 'showNextRow';
@@ -907,7 +907,7 @@ appSetup(MODULE, function() {
      *
      * The implementation assumes that the first row cannot be deleted.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function hideThisRow(event) {
         const func      = 'hideThisRow';
@@ -961,7 +961,7 @@ appSetup(MODULE, function() {
             arrayWrap(new_terms)
                 .map(term => term?.trim())
                 .filter(term => term)
-                .map(term => decodeURIComponent(term.replace(/\+/g, ' ')))
+                .map(term => decodeURIComponent(term.replaceAll('+', ' ')))
                 .join(' ');
         if (terms === '*') { terms = '' }
 
@@ -1000,7 +1000,7 @@ appSetup(MODULE, function() {
     /**
      * Respond to a user-initiated change in the content of a search input.
      *
-     * @param {jQuery.Event} event
+     * @param {ElementEvt} event
      *
      * @see monitorSearchFields
      */
@@ -1022,7 +1022,7 @@ appSetup(MODULE, function() {
     /**
      * Clear the associated search input.
      *
-     * @param {jQuery.Event} [event]
+     * @param {ElementEvt} [event]
      * @param {boolean} [allow_default]   If **true**, do not mark the event as
      *                                      handled (**false** by default
      *                                      because the SEARCH_CLEAR control is
@@ -1187,7 +1187,7 @@ appSetup(MODULE, function() {
     /**
      * Respond to a user-initiated change in a search input selection menu.
      *
-     * @param {jQuery.Event} event
+     * @param {ElementEvt} event
      */
     function updatedSearchType(event) {
         const func   = 'updatedSearchType';
@@ -1456,7 +1456,7 @@ appSetup(MODULE, function() {
      *
      * @note Not currently used.
      *
-     * @param {jQuery.Event} event
+     * @param {ElementEvt} event
      *!/
     function preChange(event) {
         const $menu = $(event.currentTarget || event.target);
@@ -1471,7 +1471,7 @@ appSetup(MODULE, function() {
      *
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
      *
-     * @param {jQuery.Event} event
+     * @param {ElementEvt} event
      */
     function multiSelectPostChange(event) {
         const $menu = $(event.currentTarget || event.target);
@@ -1487,7 +1487,7 @@ appSetup(MODULE, function() {
      *
      * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
      *
-     * @param {jQuery.Event} event
+     * @param {ElementEvt} event
      */
     function suppressMenuOpen(event) {
         const $menu = $(event.currentTarget || event.target);
@@ -1501,7 +1501,7 @@ appSetup(MODULE, function() {
     /**
      * Log a Select2 event.
      *
-     * @param {jQuery.Event} event
+     * @param {ElementEvt} event
      */
     function logSelectEvent(event) {
         const type = `${event.type}`.padEnd(MULTI_SELECT_EVENTS_WIDTH);
@@ -1674,6 +1674,7 @@ appSetup(MODULE, function() {
             return;
         }
         $(dst).each((_, element) => {
+            /** @type {jQuery} */
             const $dst    = $(element);
             const $hidden = $dst.find('input[type="hidden"]');
             const base_id = $dst.attr('id') || randomizeName(base);
@@ -1693,6 +1694,7 @@ appSetup(MODULE, function() {
                     const $input = $hidden.filter(selector);
                     if (isPresent($input)) {
                         if (value) {
+                            // noinspection JSCheckFunctionSignatures
                             $input.val(value);
                         } else {
                             $input.remove();

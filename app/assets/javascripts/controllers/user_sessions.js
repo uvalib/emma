@@ -52,7 +52,7 @@ appSetup(PATH, function() {
     /**
      * Toggle visibility of inline sign-in form fields.
      *
-     * @param {jQuery.Event|UIEvent} [event]
+     * @param {ElementEvt} [event]
      */
     function toggleInlineForm(event) {
         const $control = $(event.currentTarget || event.target);

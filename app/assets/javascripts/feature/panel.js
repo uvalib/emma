@@ -70,7 +70,7 @@ appSetup(MODULE, function() {
     /**
      * Toggle visibility of a toggle button and its panel.
      *
-     * @param {jQuery.Event} event
+     * @param {ElementEvt} event
      */
     function onTogglePanel(event) {
         const $button = $(event.currentTarget || event.target);

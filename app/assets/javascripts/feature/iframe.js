@@ -14,6 +14,7 @@ AppDebug.file('feature/iframe', MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
+    /** @type {jQuery} */
     const $iframe_body = $('body.modal');
 
     // Only proceed if this is being run from within an `<iframe>`.
@@ -50,7 +51,7 @@ appSetup(MODULE, function() {
      * Intercept anchor links to scroll to the element on the page inside the
      * `<iframe>`.
      *
-     * @param {jQuery.Event|UIEvent} [event]
+     * @param {ElementEvt} [event]
      *
      * @returns {boolean|undefined}     False indicates event has been handled.
      */

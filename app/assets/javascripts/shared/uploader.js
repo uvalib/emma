@@ -229,11 +229,11 @@ class BaseUploader extends BaseClass {
     /**
      * @typedef UppyCallbacks
      *
-     * @property {Callback} [onSelect]
-     * @property {Callback} [onStart]
-     * @property {Callback} [onProgress]
-     * @property {Callback} [onError]
-     * @property {Callback} [onSuccess]
+     * @property {function} [onSelect]
+     * @property {function} [onStart]
+     * @property {function} [onProgress]
+     * @property {function} [onError]
+     * @property {function} [onSuccess]
      */
 
     /**
@@ -307,11 +307,11 @@ class BaseUploader extends BaseClass {
     /** @type {string}              */ model;
     /** @type {string}              */ controller;
     /** @type {string}              */ action;
-    /** @type {Callback|undefined}  */ onSelect;
-    /** @type {Callback|undefined}  */ onStart;
-    /** @type {Callback|undefined}  */ onProgress;
-    /** @type {Callback|undefined}  */ onError;
-    /** @type {Callback|undefined}  */ onSuccess;
+    /** @type {function|undefined}  */ onSelect;
+    /** @type {function|undefined}  */ onStart;
+    /** @type {function|undefined}  */ onProgress;
+    /** @type {function|undefined}  */ onError;
+    /** @type {function|undefined}  */ onSuccess;
     /** @type {number}              */ //upload_timeout = UPLOAD_TIMEOUT;
     /** @type {number}              */ message_duration = MESSAGE_DURATION;
     /** @type {string}              */ upload_error     = UPLOAD_ERROR_MESSAGE;
@@ -898,6 +898,7 @@ class BaseUploader extends BaseClass {
         // noinspection JSCheckFunctionSignatures
         uppy.on((event = 'upload-started'), function(file) {
             warn(event, file);
+            // noinspection JSUnresolvedReference
             show_info(`Uploading "${file.name || file}"`); // TODO: I18n
         });
 
@@ -1006,8 +1007,8 @@ class BaseUploader extends BaseClass {
 
         // Echo the included Uppy events on the console.
         events.forEach(event => {
-            const evt = event.toUpperCase().replace(/:/, ': ');
-            const tag = '*** ' + evt.replaceAll(/-/g, ' ');
+            const evt = event.toUpperCase().replace(':', ': ');
+            const tag = '*** ' + evt.replaceAll('-', ' ');
             // noinspection JSCheckFunctionSignatures
             this._uppy.on(event, (...args) => debug(tag, ...compact(args)));
         });
@@ -1975,6 +1976,7 @@ export class MultiUploader extends BaseUploader {
         if (!super._filenameUpdate(filename)) { return false }
         const uploader_type = this.constructor.FILE_TYPE;
         this.uploadedFilenameDisplay().children().each((_, line) => {
+            /** @type {jQuery} */
             const $line  = $(line);
             const active = $line.is(uploader_type);
             $line.attr('aria-hidden', !active);
@@ -2029,11 +2031,11 @@ export class BulkUploader extends BaseUploader {
     // ========================================================================
 
     /**
-     *  @typedef {File} FileExt
+     * A File object augmented with Uppy metadata.
      *
-     *  A File object augmented with Uppy metadata.
+     * @typedef {File} FileExt
      *
-     *  @property {object} meta
+     * @property {object} meta
      */
 
     // ========================================================================
@@ -2108,7 +2110,7 @@ export class BulkUploader extends BaseUploader {
 
     get inProgress() { return this._in_progress }
     get batchSize()  { return this._batch_size }
-  //set batchSize(v) { this._batch_size = Number(v || 0) }
+  //set batchSize(v) { this._batch_size = Number(v) || this.batch_size }
 
     // ========================================================================
     // Methods

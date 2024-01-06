@@ -28,9 +28,9 @@ AppDebug.file('shared/decode');
  * @see file:config/boot.rb "#js"
  */
 export function decodeJSON(arg) {
-    const func    = 'decodeJSON';
-    const string  = arg.replace(/\n/g, '\\n');
-    return fromJSON(string, func, (k, v) => {
+    const func = 'decodeJSON';
+    const str  = arg.replaceAll(/\n/g, '\\n');
+    return fromJSON(str, func, (k, v) => {
         const encoded = (typeof v === 'string') && v.includes('%5C');
         return encoded ? decodeURIComponent(v).replaceAll(/\\"/g, '"') : v;
     });
@@ -45,13 +45,15 @@ export function decodeJSON(arg) {
  * @returns {array}
  */
 export function decodeArray(arg, separator = ',') {
-    if (!arg)                    { return [] }
-    if (Array.isArray(arg))      { return arg }
-    if (typeof arg === 'object') { return Object.values(arg)  }
-    if (typeof arg !== 'string') { return [arg]  }
-    const string = arg.trim();
-    if (string.startsWith('['))  { return decodeJSON(string) }
-    return string.split(separator).map(v => v.trim());
+    let s;
+    switch (true) {
+        case (!arg):                            return [];
+        case Array.isArray(arg):                return arg;
+        case (typeof arg === 'object'):         return Object.values(arg);
+        case (typeof arg !== 'string'):         return [arg];
+        case (s = arg.trim()).startsWith('['):  return decodeJSON(s);
+    }
+    return s.split(separator).map(v => v.trim());
 }
 
 /**

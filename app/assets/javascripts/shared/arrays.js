@@ -34,12 +34,14 @@ export function dupArray(item, shallow) {
  * @returns {array}
  */
 export function arrayWrap(item) {
-    if (notDefined(item))           { return [] }
-    if (item === null)              { return [] }
-    if (Array.isArray(item))        { return item }
-    if (isDefined(item?.forEach))   { return [...item] }
-    if (isDefined(item?.toArray))   { return item.toArray() }
-    return [item];
+    switch (true) {
+        case notDefined(item):          return [];
+        case (item === null):           return [];
+        case Array.isArray(item):       return item;
+        case isDefined(item?.forEach):  return [...item];
+        case isDefined(item?.toArray):  return item.toArray();
+        default:                        return [item];
+    }
 }
 
 /**

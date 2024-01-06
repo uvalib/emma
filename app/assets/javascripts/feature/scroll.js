@@ -143,14 +143,14 @@ appSetup(MODULE, function() {
     function scrollToTop() {
         OUT.debug('scrollToTop');
         $scroll_target[0].scrollIntoView();
-        currentFocusablesIn($scroll_target).first().focus();
+        currentFocusablesIn($scroll_target).first().trigger('focus');
     }
 
     /**
      * Scroll so that the previous list entry is fully displayed at the top of
      * the screen.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      *
      * @returns {boolean}            Always **false** to end event propagation.
      *
@@ -165,7 +165,7 @@ appSetup(MODULE, function() {
      * Scroll so that the next list entry is fully displayed at the top of the
      * screen.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      *
      * @returns {boolean}            Always **false** to end event propagation.
      *
@@ -180,8 +180,8 @@ appSetup(MODULE, function() {
      * Scroll so that the indicated list entry is fully displayed at the top of
      * the screen.
      *
-     * @param {jQuery.Event|Event} event
-     * @param {Selector}           button_selector
+     * @param {ElementEvt} event
+     * @param {Selector}   button_selector
      *
      * @returns {boolean}            Always **false** to end event propagation.
      *
@@ -221,7 +221,7 @@ appSetup(MODULE, function() {
             }
 
             // Set focus to the button which matches the original action.
-            $title.find(button_selector).focus();
+            $title.find(button_selector).trigger('focus');
         }
         return false;
     }
@@ -233,6 +233,7 @@ appSetup(MODULE, function() {
      * @param {Selector} button
      */
     function invalidPrevNext(button) {
+        /** @type {jQuery} */
         const $button = $(button);
         $button.attr('href', '#');
         $button.attr('disabled', true);

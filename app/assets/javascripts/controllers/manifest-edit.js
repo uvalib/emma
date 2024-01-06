@@ -489,7 +489,7 @@ appSetup(MODULE, function() {
     /**
      * Enter title edit mode.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function onStartTitleEdit(event) {
         OUT.debug('onStartTitleEdit: event =', event);
@@ -505,13 +505,13 @@ appSetup(MODULE, function() {
         $title_heading.toggleClass(EDITING_MARKER, true);
         $title_heading.data(TITLE_DATA, old_name);
         $title_input.val(old_name);
-        $title_input.focus();
+        $title_input.trigger('focus');
     }
 
     /**
      * Update the name of the Manifest and leave title edit mode.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function onUpdateTitleEdit(event) {
         OUT.debug('onUpdateTitleEdit: event =', event);
@@ -524,7 +524,7 @@ appSetup(MODULE, function() {
     /**
      * Leave title edit mode without changing the Manifest title.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function onCancelTitleEdit(event) {
         OUT.debug('onCancelTitleEdit: event =', event);
@@ -543,13 +543,13 @@ appSetup(MODULE, function() {
             $title_text.text(new_name);
         }
         $title_heading.toggleClass(EDITING_MARKER, false);
-        $title_edit.focus();
+        $title_edit.trigger('focus');
     }
 
     /**
      * Allow **Enter** to work as "Change" and **Escape** to work as "Keep".
      *
-     * @param {jQuery.Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      *
      * @returns {EventHandlerReturn}
      */
@@ -557,7 +557,7 @@ appSetup(MODULE, function() {
         switch (keyCombo(event)) {
             case 'Enter':  onUpdateTitleEdit(event); break;
             case 'Escape': onCancelTitleEdit(event); break;
-            default:       return;
+            default:       return undefined;
         }
         event.stopImmediatePropagation();
         return false;
@@ -685,7 +685,7 @@ appSetup(MODULE, function() {
      * it could change the validation state so that it's not longer safe to
      * save the updates that have been made so far.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      *
      * @see "ManifestConcern#save_changes"
      */
@@ -740,7 +740,7 @@ appSetup(MODULE, function() {
     /**
      * Cancel all changes since the last save.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      *
      * @see "ManifestConcern#cancel_changes"
      */
@@ -775,7 +775,7 @@ appSetup(MODULE, function() {
     /**
      * Import manifest item rows.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function importRows(event) {
         const func = 'importRows'; OUT.debug(`${func}: event =`, event);
@@ -845,7 +845,7 @@ appSetup(MODULE, function() {
     /**
      * Export manifest items to a CSV file.
      *
-     * @param {jQuery.Event|UIEvent} event
+     * @param {ElementEvt} event
      */
     function exportRows(event) {
         OUT.debug('exportRows: event =', event);
@@ -935,6 +935,7 @@ appSetup(MODULE, function() {
         //OUT.debug('initializeCellInputs: cells =', cells);
         const property = fieldProperty();
         dataCells(cells).each((_, cell) => {
+            /** @type {jQuery} */
             const $cell = $(cell);
             const field = $cell.attr(FIELD_ATTR);
             if (field === 'file_data') {
@@ -1482,7 +1483,7 @@ appSetup(MODULE, function() {
     /**
      * Perform an operation on a row item.
      *
-     * @param {Selector|jQuery.Event|UIEvent} arg
+     * @param {Selector|ElementEvt} arg
      */
     function rowOperation(arg) {
         const func     = 'rowOperation'; OUT.debug(`${func}: arg =`, arg);
@@ -1508,7 +1509,7 @@ appSetup(MODULE, function() {
                 evt && OUT.error(`${func}: no function for "${action}"`);
                 break;
         }
-        if ($row) { $row.children().first().focus() }
+        $row?.children()?.first()?.trigger('focus');
     }
 
     /**
@@ -1521,6 +1522,7 @@ appSetup(MODULE, function() {
     function rowControls(target) {
         const $t    = target && $(target);
         const match = TRAY;
+        /** @type {jQuery} */
         const $tray = $t?.is(match) ? $t : controlsColumn($t).find(match);
         return $tray.find(ICON);
     }
@@ -1707,7 +1709,7 @@ appSetup(MODULE, function() {
         if (!intermediate) {
             updateGridRowCount(items.length);
             updateGridNavigation($grid);
-            if ($first_added) { $first_added.children().first().focus() }
+            $first_added?.children()?.first()?.trigger('focus');
         }
         if (isPresent(mod)) {
             sendUpdateRecords(mod);
@@ -1871,14 +1873,11 @@ appSetup(MODULE, function() {
         const db_ids =
             arrayWrap(list).map(item => {
                 let $row;
-                if (item instanceof jQuery) {
-                    $row = item;
-                } else if (item instanceof HTMLElement) {
-                    $row = $(item);
-                } else if (isDefined(item?.id)) {
-                    return item.id;
-                } else {
-                    return item;
+                switch (true) {
+                    case (item instanceof jQuery):      $row = item;    break;
+                    case (item instanceof HTMLElement): $row = $(item); break;
+                    case isDefined(item?.id):           return item.id;
+                    default:                            return item;
                 }
                 const db_id = getManifestItemId($row);
                 if (!db_id) {
@@ -2179,7 +2178,7 @@ appSetup(MODULE, function() {
          */
         function onLookupStart($activator, check_only, halted) {
             OUT.debug('LOOKUP START | $activator =', $activator);
-            if (check_only || halted) { return }
+            if (check_only || halted) { return undefined }
             clearSearchResultsData($row);
             setSearchTermsData($row);
             setOriginalValues($row);
@@ -2199,7 +2198,7 @@ appSetup(MODULE, function() {
          */
         function onLookupComplete($activator, check_only, halted) {
             OUT.debug('LOOKUP COMPLETE | $activator =', $activator);
-            if (check_only || halted) { return }
+            if (check_only || halted) { return undefined }
             const func  = 'onLookupComplete';
             let message = 'No fields changed.'; // TODO: I18n
             const data  = getFieldResultsData($row);
@@ -2458,7 +2457,7 @@ appSetup(MODULE, function() {
      * To avoid excessive work, {@link setSearchTermsData} will only be run
      * if truly required to regenerate the data.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     function updateSearchTermsData(event) {
         OUT.debug('updateSearchTermsData: event =', event);
@@ -2729,7 +2728,7 @@ appSetup(MODULE, function() {
         /**
          * Callback invoked when the file select button is pressed.
          *
-         * @param {jQuery.Event} [event]    Ignored.
+         * @param {ElementEvt} [event]    Ignored.
          */
         function onSelect(event) {
             OUT.debug(`${func}: onSelect: event =`, event);
@@ -2878,7 +2877,7 @@ appSetup(MODULE, function() {
                  *
                  * @note This is not currently compatible with shared/grids.js.
                  *
-                 * @param {jQuery.Event|KeyboardEvent} event
+                 * @param {KeyboardEvt} event
                  *
                  * @returns {EventHandlerReturn}
                  */
@@ -2888,7 +2887,7 @@ appSetup(MODULE, function() {
                     const key = keyCombo(event);
                     if (key === 'Enter') {
                         event.stopImmediatePropagation();
-                        $submit.click();
+                        $submit.trigger('click');
                         return false;
                     }
                 }
@@ -2898,7 +2897,7 @@ appSetup(MODULE, function() {
                  * If a value was given update the displayed file value and
                  * send the new file_data value to the server.
                  *
-                 * @param {Event} event
+                 * @param {ElementEvt} event
                  */
                 function onSubmit(event) {
                     OUT.debug('onSubmit: event =', event);
@@ -2914,7 +2913,7 @@ appSetup(MODULE, function() {
                 /**
                  * Just close the modal.
                  *
-                 * @param {Event} event
+                 * @param {ElementEvt} event
                  */
                 function onCancel(event) {
                     OUT.debug('onCancel: event =', event);
@@ -2925,7 +2924,7 @@ appSetup(MODULE, function() {
                  * Add an attribute to the cell element indicating the button
                  * being hovered, allowing for CSS rules relative to the cell.
                  *
-                 * @param {Event} _event
+                 * @param {ElementEvt} _event
                  */
                 function hoverToggle(_event) {
                     //OUT.debug('hoverToggle: event =', _event);
@@ -2936,7 +2935,7 @@ appSetup(MODULE, function() {
                  * Remove the attribute unless it has been changed by something
                  * else.
                  *
-                 * @param {Event} _event
+                 * @param {ElementEvt} _event
                  */
                 function unhoverToggle(_event) {
                     //OUT.debug('unhoverToggle: event =', _event);
@@ -3016,7 +3015,7 @@ appSetup(MODULE, function() {
              * Add an attribute to the cell element indicating the button
              * being hovered, allowing for CSS rules relative to the cell.
              *
-             * @param {Event} _event
+             * @param {ElementEvt} _event
              */
             function hoverUpload(_event) {
                 //OUT.debug('hoverUpload: event =', _event);
@@ -3027,7 +3026,7 @@ appSetup(MODULE, function() {
              * Remove the attribute unless it has been changed by something
              * else.
              *
-             * @param {Event} _event
+             * @param {ElementEvt} _event
              */
             function unhoverUpload(_event) {
                 //OUT.debug('unhoverUpload: event =', _event);
@@ -4122,7 +4121,7 @@ appSetup(MODULE, function() {
         } else {
             OUT.debug(`${func}: arg = `, arg);
         }
-        startValueEdit($cell) && cellEdit($cell).focus();
+        startValueEdit($cell) && cellEdit($cell).trigger('focus');
         // TODO: move the caret to the perceived location of the mouse click
         return true;
     }
@@ -4578,6 +4577,7 @@ appSetup(MODULE, function() {
         const from_type = `.from-${type}`;
         let show_name   = false;
         $from.each((_, line) => {
+            /** @type {jQuery} */
             const $line  = $(line);
             const active = $line.is(from_type);
             $line.text(active && file || '');
@@ -5102,7 +5102,7 @@ appSetup(MODULE, function() {
      * event to see whether it is going somewhere outside the active cell.
      * If so then editing of the active cell is ended.
      *
-     * @param {jQuery.Event|Event} [event]
+     * @param {ElementEvt} [event]
      *
      * @note "focus" does not bubble; this should be triggered during capture.
      *
@@ -5332,6 +5332,7 @@ appSetup(MODULE, function() {
      */
     function toggleControlsRemove($toggle, elements) {
         //OUT.debug('toggleControlsRemove:', $toggle, elements);
+        // noinspection JSCheckFunctionSignatures
         const ids       = $(elements).toArray().map(el => $(el).attr('id'));
         const id_set    = new Set(compact(ids));
         const start_ids = $toggle.data(CONTROLS_IDS_DATA) || [];

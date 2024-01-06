@@ -147,7 +147,7 @@ export class Properties extends BaseClass {
      */
     _extractFromAttributes(arg) {
         const result = {};
-        $.each(arg, (_, attr) => {
+        Array.from(arg).forEach(attr => {
             const name = attr.name;
             if (name.startsWith('data-')) {
                 const key = name.replace(/^data-/, '');
@@ -428,9 +428,11 @@ export class Value extends BaseClass {
      * @protected
      */
     _typeFor(value) {
-        if (Array.isArray(value)) { return 'array' }
-        if (value === null)       { return 'undefined' }
-        return typeof(value);
+        switch (true) {
+            case Array.isArray(value):  return 'array';
+            case (value === null):      return 'undefined';
+            default:                    return typeof(value);
+        }
     }
 
     /**

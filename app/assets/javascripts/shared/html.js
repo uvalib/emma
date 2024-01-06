@@ -13,18 +13,6 @@ import { hexRand }                        from './random';
 AppDebug.file('shared/html');
 
 // ============================================================================
-// Type definitions
-// ============================================================================
-
-/**
- * @typedef {Window.jQuery} jQuery
- */
-
-/**
- * @typedef {jQuery|HTMLElement|EventTarget|string} Selector
- */
-
-// ============================================================================
 // Constants
 // ============================================================================
 
@@ -362,10 +350,9 @@ export function uniqAttrsTree(root, unique, attributes, append_only) {
     /** @type {jQuery} */
     const $root = $(root);
     const uniq  = unique || hexRand();
-    const attr  = attributes;
-    const app   = append_only;
-    $root.find('*').each((_, elem) => uniqAttrs(elem, uniq, attr, app));
-    return uniqAttrs($root, uniq, attr, app);
+    const apply = (elem) => uniqAttrs(elem, uniq, attributes, append_only);
+    $root.find('*').toArray().forEach(apply);
+    return apply($root);
 }
 
 /**

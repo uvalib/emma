@@ -225,7 +225,7 @@ export function setupFor(root) {
      * Process file data from the clipboard through the Math Detective API and
      * render the results.
      *
-     * @param {jQuery.Event|Event} _event
+     * @param {ElementEvt} _event
      */
     function processClipboard(_event) {
         const func = 'processClipboard';
@@ -280,7 +280,7 @@ export function setupFor(root) {
     /**
      * Process an image file when it is selected.
      *
-     * @param {jQuery.Event|Event} _event
+     * @param {ElementEvt} _event
      */
     function onNewFile(_event) {
         const func = 'onNewFile';
@@ -476,6 +476,7 @@ export function setupFor(root) {
      */
     function copyOutput(tgt) {
         resetCopyNotes();
+        /** @type {jQuery} */
         let $btn   = $(isEvent(tgt) ? (tgt.currentTarget || tgt.target) : tgt);
         let $note  = $btn.siblings(COPY_NOTE_SELECTOR);
         const text = $btn.parents('.container').first().find('.output').text();
@@ -697,7 +698,7 @@ export class MathDetectiveApi extends Api {
                 name:   '', status: '', ocr_confidence: '' , labels: '',
                 mathml: '', latex:  '', spokentext: ''
             };
-            $.extend(output, this.result);
+            Object.assign(output, this.result);
         }
         return output;
     }

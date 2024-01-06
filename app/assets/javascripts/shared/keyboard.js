@@ -65,7 +65,7 @@ const MODIFIERS = Object.freeze(new Set([
  * Combinations retain case so control-C is "Control+c" versus
  * control-shift-C, which is "Control+Shift+C".
  *
- * @param {jQuery.Event|KeyboardEvent} event
+ * @param {KeyboardEvt} event
  *
  * @returns {string}
  */

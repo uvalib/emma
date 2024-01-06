@@ -44,6 +44,7 @@ AppDebug.file('feature/search-analysis', MODULE, DEBUG);
  * @returns {string}            ID of the visible title element.
  */
 export function cloneTitle(item, title) {
+    /** @type {jQuery} */
     const $item  = $(item);
     const $title = title ? $(title) : $item.find('.value.field-Title .title');
 
@@ -287,6 +288,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
 
     // Initialize identification tooltips for each item.
     $result_items.each((index, item) => {
+        /** @type {jQuery} */
         const $item  = $(item);
         const $title = $item.find('.value.field-Title .title');
         if (COLLAPSE_ITEMS && ($title.length === 1)) {
@@ -394,6 +396,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @returns {string}
      */
     function titleId(item) {
+        /** @type {jQuery} */
         const $item = $(item);
         const value = $item.attr('data-title_id');
         return value || $item.find('.field-TitleId.value').text();
@@ -407,6 +410,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @returns {string}
      */
     function normalizedTitle(item) {
+        /** @type {jQuery} */
         const $item = $(item);
         let value = $item.attr('data-normalized_title');
         if (!value) {
@@ -427,6 +431,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @returns {string}
      */
     function recordId(item) {
+        /** @type {jQuery} */
         const $item = $(item);
         const value = $item.attr('data-record_id');
         return value || $item.find('.field-RecordId.value').text();
@@ -440,6 +445,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @returns {string}
      */
     function repositoryRecordId(item) {
+        /** @type {jQuery} */
         const $item = $(item);
         const value = $item.attr('data-repo_id');
         return value || $item.find('.field-RepositoryRecordId.value').text();
@@ -453,7 +459,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @returns {string[]}
      */
     function standardIdentifiers(item) {
-        const $ids = $(item).find('.field-Identifier.value').children();
+        /** @type {jQuery} */
+        const $item = $(item);
+        const $ids  = $item.find('.field-Identifier.value').children();
         return $ids.toArray().map(element => $(element).text());
     }
 
@@ -891,7 +899,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 let error_score, next_score = 0;
                 $items.toArray().reverse().forEach(item => {
                     const $item = $(item);
-                    const score = Number($item.attr('data-item_score'));
+                    const score = Number($item.attr('data-item_score')) || 0;
                     if (score < next_score) {
                         error_score = score;
                     } else if (score > next_score) {
@@ -914,7 +922,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _markDisabledRelevancy(item) {
-            const $score = $(item).find('.item-score');
+            /** @type {jQuery} */
+            const $item  = $(item);
+            const $score = $item.find('.item-score');
             const desc   = SORTED[SORT_ORDER] || 'specific metadata field(s)';
             const tip    = `Relevancy based on ${desc}`;
             return $score.addClass('disabled').attr('title', tip).text(BLANK);
@@ -929,7 +939,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _markSuspiciousRelevancy(item) {
-            const $score = $(item).find('.item-score');
+            /** @type {jQuery} */
+            const $item  = $(item);
+            const $score = $item.find('.item-score');
             let tip = $score.attr('title');
             tip += "\n\nNOTE:";
             tip += "The placement of this item seems to be anomalous, ";
@@ -1102,7 +1114,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 }
             }
             if ((this.valid = !!count)) {
-                $active?.click();
+                $active?.trigger('click');
             } else {
                 this._debug('feature not present');
             }
@@ -1289,12 +1301,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                     error.push(`${item}: '${value}' is not a string`);
                 }
             }
-            if (isPresent(error)) {
-                error.forEach(msg => this._error(msg));
-                return false;
-            } else {
-                return true;
-            }
+            error.forEach(msg => this._error(msg));
+            return isMissing(error);
         }
 
         // ====================================================================
@@ -1795,6 +1803,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 const bg_color = rgbColor(color);
                 const fg_color = rgbColorInverse(color);
                 item_list.forEach((item, position) => {
+                    /** @type {jQuery} */
                     const $item  = $(item);
                     const $title = $item.find('.field-Title.value');
                     $title.css({ color: fg_color, background: bg_color });
@@ -1818,6 +1827,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             this._unmarkIdentityFields($result_items);
             const item_classes = ['colorized', ...this.TOPICS];
             $result_items.each((_, item) => {
+                /** @type {jQuery} */
                 const $item  = $(item);
                 const $title = $item.find('.field-Title.value');
                 $title.css({ color: '', background: '' });
@@ -1878,6 +1888,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _markItemAsExile(item) {
+            /** @type {jQuery} */
             const $item      = $(item);
             const store_keys = $item.attr('data-title_id') || '';
             const curr_page  = pageNumber();
@@ -1916,6 +1927,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _addIdentityNumber(item, by_topic, identity, position) {
+            /** @type {jQuery} */
             const $item  = $(item);
             const error  = $item.hasClass(ERROR_MARKER);
             const exile  = $item.hasClass(EXILE_MARKER);

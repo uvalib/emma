@@ -47,6 +47,7 @@ export function toggleClass(target, cls, setting) {
  * @see toggleVisibility
  */
 export function toggleHidden(target, hide) {
+    /** @type {jQuery} */
     const $target = $(target);
     $target.toggleClass(HIDDEN_MARKER, hide);
     if (isDefined(hide) ? hide : isHidden($target)) {

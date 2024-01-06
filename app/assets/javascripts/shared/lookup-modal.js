@@ -669,7 +669,7 @@ export class LookupModal extends ModalDialog {
     /**
      * Submit the query terms as a lookup request.
      *
-     * @param {jQuery.Event|Event|KeyboardEvent} event
+     * @param {KeyboardEvt} event
      */
     manualSubmission(event) {
         if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
@@ -700,7 +700,7 @@ export class LookupModal extends ModalDialog {
      */
     onShowModal(_$target, check_only, halted) {
         this._debug('onShowModal:', _$target, check_only, halted);
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
         this.resetSearchResultsData();
         this.clearFieldResultsData();
         this.updateSearchTerms();
@@ -723,7 +723,7 @@ export class LookupModal extends ModalDialog {
      */
     onHideModal($target, check_only, halted) {
         this._debug('onHideModal:', $target, check_only, halted);
-        if (check_only || halted) { return }
+        if (check_only || halted) { return undefined }
         if ($target.is(this.COMMIT)) {
             this.commitFieldValuesEntry();
         } else {
@@ -785,8 +785,6 @@ export class LookupModal extends ModalDialog {
 
     /**
      * Clear the current lookup request.
-     *
-     * @returns {void}
      */
     clearRequestData() {
         this._debug('clearRequestData');
@@ -912,8 +910,6 @@ export class LookupModal extends ModalDialog {
 
     /**
      * Clear the user-selected field values from lookup.
-     *
-     * @returns {void}
      */
     clearFieldResultsData() {
         this._debug('clearFieldResultsData');
@@ -995,8 +991,6 @@ export class LookupModal extends ModalDialog {
      * Add status element(s) for external service(s).
      *
      * @param {string|string[]} services
-     *
-     * @returns {void}
      */
     addServiceStatuses(services) {
         this._debug('addServiceStatuses:', services);
@@ -1365,7 +1359,7 @@ export class LookupModal extends ModalDialog {
      * If a field value column is not already locked, lock it if its contents
      * have changed.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     lockIfChanged(event) {
         this._debug('lockIfChanged:', event);
@@ -1375,7 +1369,7 @@ export class LookupModal extends ModalDialog {
         if (current !== previous) {
             this.setLatestFieldValue($textarea, current);
             if (!this.isLockedFieldValue($textarea)) {
-                this.lockFor($textarea).click();
+                this.lockFor($textarea).trigger('click');
             }
         }
         const field    = $textarea.attr('data-field');
@@ -1499,7 +1493,7 @@ export class LookupModal extends ModalDialog {
     /**
      * Respond to a state change in a lock/unlock control.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     toggleFieldLock(event) {
         this._debug('toggleFieldLock:', event);
@@ -1631,7 +1625,7 @@ export class LookupModal extends ModalDialog {
      *
      * The event target is assumed to have an entry row as a parent.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     selectEntry(event) {
         this._debug('selectEntry:', event);
@@ -1640,8 +1634,8 @@ export class LookupModal extends ModalDialog {
         const $target = $(event.currentTarget || event.target),
               $entry  = $target.parents('.row').first();
         if ($target.attr('type') !== 'radio') {
-            $target.focus();
-            $entry.find('[type="radio"]').click();
+            $target.trigger('focus');
+            $entry.find('[type="radio"]').trigger('click');
         } else if ($target.is(':checked')) {
             this.entrySelectButtons.not($target).prop('checked', false);
             this.useSelectedEntry($entry);
@@ -1654,7 +1648,7 @@ export class LookupModal extends ModalDialog {
                     const $field = $(column);
                     const value  = this.getValue($field);
                     if (isPresent(value)) {
-                        this.lockFor($field).click();
+                        this.lockFor($field).trigger('click');
                     }
                 });
             }
@@ -1666,7 +1660,7 @@ export class LookupModal extends ModalDialog {
      *
      * The event target is assumed to have an entry row as a parent.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     highlightEntry(event) {
         const $target = $(event.target);
@@ -1679,7 +1673,7 @@ export class LookupModal extends ModalDialog {
      *
      * The event target is assumed to have an entry row as a parent.
      *
-     * @param {jQuery.Event|Event} event
+     * @param {ElementEvt} event
      */
     unhighlightEntry(event) {
         const $target = $(event.target);
@@ -2085,6 +2079,7 @@ export class LookupModal extends ModalDialog {
         const lbl_id  = `state-${id_base}`;
         const locked  = !!checked;
 
+        /** @type {jQuery} */
         const $checkbox = $(`<input class="${this.constructor.LOCK_CLASS}">`);
         $checkbox.attr('type',            'checkbox');
         $checkbox.attr('role',            'switch');
@@ -2093,11 +2088,13 @@ export class LookupModal extends ModalDialog {
         $checkbox.attr('aria-checked',    locked);
         $checkbox.prop('checked',         locked);
 
+        /** @type {jQuery} */
         const $slider = $('<div class="slider">');
         const $state  = $('<div class="state">');
         $state.attr('id',        lbl_id);
         $state.attr('data-name', label);
 
+        /** @type {jQuery} */
         const $indicator = $('<div class="lock-indicator">');
         $indicator.attr('aria-hidden', true).append($slider).append($state);
 
@@ -2322,7 +2319,7 @@ export class LookupModal extends ModalDialog {
      * Create the lookup request from the search terms provided by the event
      * target.
      *
-     * @param {jQuery.Event|Event} [event]
+     * @param {ElementEvt} [event]
      */
     updateSearchTerms(event) {
         this._debug('updateSearchTerms:', event);
@@ -2357,7 +2354,7 @@ export class LookupModal extends ModalDialog {
             const $separator = this.inputSeparator;
             $.each(this.SEPARATORS, (key, characters) => {
                 if (new_characters !== characters) { return true } // continue
-                $separator.filter(`[value="${key}"]`).click();
+                $separator.filter(`[value="${key}"]`).trigger('click');
                 return false; // break
             });
         }
