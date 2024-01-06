@@ -357,9 +357,9 @@ module SqlMethods
       when Symbol
         term = term.to_s.downcase if %i[nil null NULL * any ANY].include?(term)
       when Range
-        return 'BETWEEN', ('%s AND %s' % term.minmax.map! { |v| sql_quote(v) })
+        return 'BETWEEN', ('%s AND %s' % term.minmax.map { |v| sql_quote(v) })
       when Array
-        return 'IN', ('(%s)' % term.map { |v| sql_quote(v) }.join(', '))
+        return 'IN', sql_list(term)
       else
         return '=', term.to_s
     end
@@ -419,19 +419,33 @@ module SqlMethods
   # Return the value, quoted if necessary.
   #
   # @param [String, Symbol, Float, Integer, nil] value
+  # @param [String, nil]                         null
   #
   # @return [String, Float, Integer, nil]
   #
-  def sql_quote(value)
-    value = value.to_s.downcase if %i[nil null NULL].include?(value)
+  def sql_quote(value, null: nil)
+    return 'TRUE'      if true?(value)
+    return 'FALSE'     if false?(value)
+    value = value.to_s if value.is_a?(Symbol)
     # noinspection RubyMismatchedReturnType
     case value
-      when nil, 'nil', 'null', 'NULL' then nil
+      when nil, 'nil', 'null', 'NULL' then null
       when /^-?\d+$/                  then value.to_i
       when SQL_NUMBER                 then value.to_f
-      when String, Symbol             then "'#{value}'"
+      when String                     then "'#{value}'"
       else                                 value
     end
+  end
+
+  # Return a list of SQL values.
+  #
+  # @param [*]           value
+  # @param [String, nil] null
+  #
+  # @return [String]
+  #
+  def sql_list(value, null: 'NULL')
+    '(%s)' % Array.wrap(value).map { |v| sql_quote(v, null: null) }.join(', ')
   end
 
   # ===========================================================================

@@ -227,13 +227,23 @@ module SqlMethods
   # Return the value, quoted if necessary.
   #
   # @param [String, Symbol, Float, Integer, nil] value
+  # @param [String, nil]                         null
   #
   # @return [String, Float, Integer, nil]
   #
   def sql_quote
-    :     (String value) -> (String | Float | Integer | nil)
-    |     (Symbol value) -> (String | nil)
-    | [T] (T      value) -> T
+    :     (String value, ?null: String|nil) -> (String | Float | Integer | nil)
+    |     (Symbol value, ?null: String|nil) -> (String | nil)
+    | [T] (T      value, ?null: String|nil) -> T
+
+  # Return a list of SQL values.
+  #
+  # @param [*]           value
+  # @param [String, nil] null
+  #
+  # @return [String]
+  #
+  def sql_list: (untyped value, ?null: String|nil) -> String
 
   module InstanceMethods
     include SqlMethods

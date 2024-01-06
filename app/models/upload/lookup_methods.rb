@@ -216,20 +216,24 @@ module Upload::LookupMethods
     # === Filter by state
     c_states, e_states =
       STATE_COLUMNS.map do |key|
-        next unless opt.key?(key)
         value = opt.delete(key)
-        false?(value) ? false : Array.wrap(value).compact_blank.map!(&:to_sym)
+        next if value.blank? || false?(value)
+        Array.wrap(value).compact_blank.map!(&:to_sym)
       end
     if c_states || e_states
       phase, state, edit_state = [WORKFLOW_PHASE_COLUMN, *STATE_COLUMNS]
-      edit     = "#{phase} = 'edit'"
-      create   = "(#{phase} != 'edit') OR (#{edit_state} = 'canceled')"
-      e_states = c_states.excluding(:canceled)           if e_states.nil?
-      e_states = e_states.map { |v| "'#{v}'" }.join(',') if e_states
-      c_states = c_states.map { |v| "'#{v}'" }.join(',') if c_states
-      parts = []
-      parts << "((#{edit})   AND (#{edit_state} IN (#{e_states})))" if e_states
-      parts << "((#{create}) AND (#{state}      IN (#{c_states})))" if c_states
+      parts    = []
+      aborted  = %i[suspended failed canceled]
+      e_states = (e_states || c_states).excluding(*aborted) if c_states
+      if e_states.present?
+        edited  = "#{phase} = 'edit'"
+        parts << "((#{edited}) AND (#{edit_state} IN %s))" % sql_list(e_states)
+      end
+      if c_states.present?
+        aborted = sql_list(aborted)
+        created = "(#{phase} != 'edit') OR (#{edit_state} IN #{aborted})"
+        parts << "((#{created}) AND (#{state} IN %s))" % sql_list(c_states)
+      end
       terms << '(%s)' % parts.map { |term| "(#{term})" }.join(' OR ').squish
     end
 

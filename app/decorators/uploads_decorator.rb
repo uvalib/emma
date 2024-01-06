@@ -65,8 +65,9 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   def state_group_select(counts: nil, css: GROUP_PANEL_CLASS, **opt)
+    curr_prm   = param_values.except(*Upload::NON_SEARCH_PARAMS)
     curr_path  = opt.delete(:curr_path)  || request_value(:fullpath)
-    curr_group = opt.delete(:curr_group) || param_values[:group] || :all
+    curr_group = opt.delete(:curr_group) || curr_prm[:group] || :all
     curr_group = curr_group.to_sym if curr_group.is_a?(String)
     counts   ||= group_counts
 
@@ -87,8 +88,7 @@ class UploadsDecorator < BaseCollectionDecorator
         label = html_span(label, class: 'label')
         label << html_span("(#{count})", class: 'count')
 
-        p_opt = all ? {} : { group: group }
-        p_opt = context.slice(:action).merge!(p_opt)
+        p_opt = all ? curr_prm.except(:group) : curr_prm.merge(group: group)
         url   = path_for(**p_opt, anchor: 'main')
 
         link_opt = append_css('control-button', GROUP_CONTROL_CLASS)
