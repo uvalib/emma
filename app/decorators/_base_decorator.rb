@@ -750,8 +750,8 @@ class BaseDecorator
     unless opt.delete(:from_internal)
       raise "Unexpected: #{self.class}.new(#{obj.class})"
     end
+    ctx = initialize_context(action: DEFAULT_ACTION, **opt)
     obj = null_object if obj.nil?
-    ctx = initialize_context(**opt).reverse_merge!(action: DEFAULT_ACTION)
     # noinspection RubyMismatchedArgumentType
     super(obj, context: ctx)
   end

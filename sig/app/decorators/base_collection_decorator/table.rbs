@@ -25,6 +25,34 @@ module BaseCollectionDecorator::Table
   #
   def render_table: (?tag: Symbol|nil, ?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
 
+  # Render a link to a page for access to the full contents of a table.
+  #
+  # @param [String, nil]  path        Default: `#table_path`.
+  # @param [Integer, nil] rows        Number of records currently rows.
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt         Passed to #make_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_full_table_link: (?path: String|nil, ?rows: Integer|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The URL path needed to reconstruct the current table.
+  #
+  # @param [Hash, nil] prm            Default: `#param_values`.
+  # @param [Hash]      opt            Optional added URL parameters.
+  #
+  # @return [String]
+  #
+  def table_path: (?(anyHash|nil) prm, **untyped opt) -> String
+
+  # Translate a hash of sorting order(s) into a single comma-separated value.
+  #
+  # @param [Hash, String, nil] val
+  #
+  # @return [String, nil]
+  #
+  def normalize_sort_param: (symHash|String|nil val) -> (String | nil)
+
   # Render one or more entries for use within a *tbody*.
   #
   # @param [Integer]     row          Current row (prior to first entry).

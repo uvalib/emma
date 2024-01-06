@@ -259,7 +259,7 @@ en:
     pagination:         &PAGINATION
 
       page:             'page'
-      page_size:        100
+      page_size:        25
       separator:        '|'
       count:
         one:            'item found'

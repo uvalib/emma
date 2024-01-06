@@ -99,6 +99,12 @@ module BaseDecorator::Table
   #
   def table_row_page: (**untyped opt) -> Array[Model]
 
+  # Options used by BaseCollectionDecorator::Table#render_table.
+  #
+  # @type [Array<Symbol>]
+  #
+  RENDER_TABLE_OPTIONS: symArray
+
   # Render the object for use within a table of items.
   #
   # @param [Integer] row

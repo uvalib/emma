@@ -62,6 +62,26 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
       "#<#{self.class.name}:#{object_id} %s>" % vars.join(' ')
     end
 
+    # Create a value for #context based on the parameters supplied through the
+    # initializer.
+    #
+    # @param [Hash] opt
+    #
+    # @return [Hash]                  Suitable for assignment to #context.
+    #
+    # @see #MODEL_TABLE_DATA_OPT
+    #
+    def initialize_context(**opt)
+      super.tap do |ctx|
+        if ctx[:partial].is_a?(TrueClass)
+          ctx[:partial] =
+            ctx[:paginator]&.page_size || Paginator.default_page_size
+        end
+        ctx[:pageable] = !ctx[:partial] unless ctx.key?(:pageable)
+        ctx[:sortable] = true           unless ctx.key?(:sortable)
+      end
+    end
+
   end
 
   # Methods for each collection decorator class.
@@ -127,11 +147,8 @@ class BaseCollectionDecorator
   #
   def initialize(obj = nil, **opt)
     with = opt.delete(:with) || self.class.decorator_class
-    ctx  = initialize_context(**opt).reverse_merge!(action: DEFAULT_ACTION)
-    case (obj ||= ctx[:paginator])
-      when Paginator, ActiveRecord::Relation then # as-is
-      else                                        obj = Array.wrap(obj)
-    end
+    ctx  = initialize_context(action: DEFAULT_ACTION, **opt)
+    obj  = ctx[:paginator] if obj.nil?
     # noinspection RubyMismatchedArgumentType
     super(obj, with: with, context: ctx)
   end

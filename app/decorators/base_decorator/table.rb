@@ -144,6 +144,12 @@ module BaseDecorator::Table
 
   public
 
+  # Options used by BaseCollectionDecorator::Table#render_table.
+  #
+  # @type [Array<Symbol>]
+  #
+  RENDER_TABLE_OPTIONS = [*MODEL_TABLE_OPTIONS, :except, :sort].freeze
+
   # Render the object for use within a table of items.
   #
   # @param [Integer] row
@@ -180,7 +186,7 @@ module BaseDecorator::Table
     last  = first + pairs.size - 1
 
     html_tag(o_tag, **o_opt, **t_opt) do
-      i_opt.merge!(opt.except!(*MODEL_TABLE_OPTIONS))
+      i_opt.merge!(opt.except!(*RENDER_TABLE_OPTIONS))
       pairs.map.with_index(first) do |(field, prop), c|
         # noinspection RubyMismatchedArgumentType
         rc_opt = model_rc_options(field, row, c, i_opt)

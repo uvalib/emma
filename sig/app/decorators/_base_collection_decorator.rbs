@@ -40,6 +40,25 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   #
   module SharedInstanceMethods
     include BaseDecorator::SharedInstanceMethods
+
+    # Modify the inspection to limit the size of individual element results.
+    #
+    # @param [Integer] max            Maximum characters per element.
+    #
+    # @return [String]
+    #
+    def inspect: (?max: Integer) -> String
+
+    # Create a value for #context based on the parameters supplied through the
+    # initializer.
+    #
+    # @param [Hash] opt
+    #
+    # @return [Hash]                  Suitable for assignment to #context.
+    #
+    # @see #MODEL_TABLE_DATA_OPT
+    #
+    def initialize_context: (**untyped opt) -> symHash
   end
 
   # Methods for each collection decorator class.
@@ -87,14 +106,6 @@ class BaseCollectionDecorator
   # @param [Hash]                                          opt
   #
   def initialize: (?(ActiveRecord::Relation|Paginator|Array[ActiveRecord::Base]|ActiveRecord::Base|nil) obj, **untyped opt) -> void
-
-  # Modify the inspection to limit the size of individual element results.
-  #
-  # @param [Integer] max              Maximum characters per element.
-  #
-  # @return [String]
-  #
-  def inspect: (?max: Integer) -> String
 
   # Set to *true* to see how each collection decorator overrides Array methods.
   #

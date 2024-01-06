@@ -41,7 +41,7 @@ module BaseCollectionDecorator::Table
     css ||= table_css_class
     table = for_html_table?(tag)
     tag   = table && :table || tag || :div
-    outer = remainder_hash!(opt, *MODEL_TABLE_OPTIONS)
+    outer = remainder_hash!(opt, *RENDER_TABLE_OPTIONS)
     t_opt = trace_attrs_from(outer)
     opt   = context.slice(*MODEL_TABLE_DATA_OPT).merge!(opt)
 
@@ -77,16 +77,77 @@ module BaseCollectionDecorator::Table
     outer[:role] = table_role                   if table
     outer[:'data-turbolinks-permanent'] = true  if opt[:sortable]
 
-    html_tag(tag, **outer) do
-      table ? parts.map { |k, rows| html_tag(k, rows, **t_opt) } : parts.values
-    end
+    # Generate the table, preceded by a link to access the full table if only
+    # displaying a partial table here.
+    html_tag(tag, **outer, 'data-path': table_path(sort: opt[:sort])) {
+      table ? parts.map { |k, part| html_tag(k, part, **t_opt) } : parts.values
+    }.tap { |result|
+      result.prepend(render_full_table_link(rows: rows)) if limit && !full
+    }
+  end
+
+  # Render a link to a page for access to the full contents of a table.
+  #
+  # @param [String, nil]  path        Default: `#table_path`.
+  # @param [Integer, nil] rows        Number of records currently rows.
+  # @param [String]       css         Characteristic CSS class/selector.
+  # @param [Hash]         opt         Passed to #make_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_full_table_link(path: nil, rows: nil, css: '.full-table-link', **opt)
+    label = 'See all records' # TODO: I18n
+    link  = make_link(label, (path || table_path))
+    rows  = "(#{rows} displayed here)" if rows.present? # TODO: I18n
+    prepend_css!(opt, css)
+    html_tag(:div, link, rows, **opt)
   end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  public
+  protected
+
+  # The URL path needed to reconstruct the current table.
+  #
+  # @param [Hash, nil] prm            Default: `#param_values`.
+  # @param [Hash]      opt            Optional added URL parameters.
+  #
+  # @return [String]
+  #
+  def table_path(prm = nil, **opt)
+    prm = (prm || param_values).merge(opt)
+    prm[:sort] = normalize_sort_param(prm[:sort]) if prm[:sort]
+    unless model_type == (base = prm[:controller]&.to_sym)
+      case model_type
+        when :org            then dst, src = :id, %i[org  org_id]
+        when :user, :account then dst, src = :id, %i[user user_id]
+        else                      dst, src = :"#{base}_id", :id
+      end
+      prm[dst] = prm.extract!(*src).values.first
+    end
+    path_for(**prm, controller: model_type, action: :index)
+  end
+
+  # Translate a hash of sorting order(s) into a single comma-separated value.
+  #
+  # @param [Hash, String, nil] val
+  #
+  # @return [String, nil]
+  #
+  def normalize_sort_param(val)
+    return     if val.nil? || false?(val)
+    # noinspection RubyMismatchedReturnType
+    return val if val.is_a?(String)
+    reverse = LayoutHelper::SearchFilters::REVERSE_SORT_SUFFIX
+    val.map { |k, v|
+      k   = k.to_s
+      fld = k.delete_suffix(reverse)
+      rev = (k == fld) ? (v == :desc) : (v == :asc)
+      rev ? "#{fld}#{reverse}" : fld
+    }.join(',')
+  end
 
   # Render one or more entries for use within a *tbody*.
   #

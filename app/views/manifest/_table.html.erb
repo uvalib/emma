@@ -1,19 +1,20 @@
 <%# app/views/manifest/_table.html.erb -%>
 <%-
-  # Display a list of Manifest records.
+  # Display a partial list of Manifest records.
 
   view_debug(__FILE__)
 
-  list   ||= nil
-  dec    ||= ManifestsDecorator.new(list, **context)
-  list     = dec.object
+  list  ||= nil
+  full  ||= false
+  dec   ||= ManifestsDecorator.new(list, partial: !full)
+  list    = dec.object
 
-  count  ||= list.size
-  level  ||= 1
-  skip   ||= nil
+  count ||= list.size
+  level ||= 1
+  skip  ||= nil
 
-  skip     = [*skip, :thumbnail]
-  heading  =
+  skip    = [*skip, :thumbnail]
+  heading =
     unless skip.include?(:title)
       title ||= nil
       title   = dec.page_title(title)
@@ -24,8 +25,10 @@
     end
 
   except ||= nil
+  opt    ||= {}
+  opt[:except] = [*opt[:except], *except] if except
+  opt[:sort] ||= Manifest.default_sort
 
-  opt   = { except: except }.compact
   table = dec.render_table(**opt)
 
 -%>

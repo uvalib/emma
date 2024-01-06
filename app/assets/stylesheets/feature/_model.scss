@@ -542,6 +542,14 @@ $item-padding:      0.5rem;
     }
 }
 
+.full-table-link {
+    font-size: large;
+}
+
+.full-table-link + .model-table {
+    margin-top: calc(2 * $flex-gap-y);
+}
+
 //=============================================================================
 // Item details (show page) support
 //=============================================================================

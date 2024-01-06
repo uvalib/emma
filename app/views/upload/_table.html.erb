@@ -1,19 +1,20 @@
 <%# app/views/upload/_table.html.erb -%>
 <%-
-  # Display a table of uploaded entries.
+  # Display a partial table of uploaded entries.
 
   view_debug(__FILE__)
 
-  list   ||= nil
-  dec    ||= UploadsDecorator.new(list, **context)
-  list     = dec.object
+  list  ||= nil
+  full  ||= false
+  dec   ||= UploadsDecorator.new(list, partial: !full)
+  list    = dec.object
 
-  count  ||= list.size
-  level  ||= 1
-  skip   ||= nil
+  count ||= list.size
+  level ||= 1
+  skip  ||= nil
 
-  skip     = [*skip, :thumbnail]
-  heading  =
+  skip    = [*skip, :thumbnail]
+  heading =
     unless skip.include?(:title)
       title ||= nil
       title   = dec.page_title(title)
@@ -23,13 +24,14 @@
       html_tag(level, title, class: classes)
     end
 
-  process_fields = %i[phase edit_state]
-  edit_fields    = Upload::EDIT_COLUMNS
-  review_fields  = Upload::REVIEW_COLUMNS
-
   except ||= nil
+  opt    ||= {}
+  opt[:except] = [*opt[:except], *except]
+  opt[:except].concat(%i[phase edit_state])
+  opt[:except].concat(Upload::EDIT_COLUMNS)
+  opt[:except].concat(Upload::REVIEW_COLUMNS)
+  opt[:sort] ||= Upload.default_sort
 
-  opt   = { except: [*except, *process_fields, *edit_fields, *review_fields] }
   table = dec.render_table(**opt)
 
 -%>
