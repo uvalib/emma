@@ -74,7 +74,7 @@ class Api::Error < ExecError
         Log.warn { "Api::Error#initialize: @cause #{@cause.class} unexpected" }
     end
     @http_status ||= @http_response&.status
-    super(*args, **opt)
+    super
   rescue => error
     Log.error { "Api::Error#initialize: #{error.class}: #{error.message}" }
     re_raise_if_internal_exception(error)

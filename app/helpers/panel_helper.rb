@@ -94,7 +94,7 @@ module PanelHelper
       opt[:'data-selector'] = selector
       opt[:data] = opt[:data].except(:selector) if opt[:data].is_a?(Hash)
     end
-    label       &&= non_breaking(label)
+    label       &&= non_breaking(label).presence unless label&.html_safe?
     label       ||= open ? PANEL_CLOSER_LABEL : PANEL_OPENER_LABEL
     opt[:title] ||= open ? PANEL_CLOSER_TIP   : PANEL_OPENER_TIP
     prepend_css!(opt, css, context, open)
@@ -119,7 +119,7 @@ module PanelHelper
     label = html_div(label, class: 'toggle-panel-title')
 
     # Initially hidden panel.
-    opt.merge!(id: id)
+    opt[:id] = id
     prepend_css!(opt, css)
     panel = content || yield
     panel = html_div(panel, **opt)

@@ -66,7 +66,7 @@ module HelpConcern
   # @return [Hash{Symbol=>Array,Hash}]
   #
   def index_values(list = @list, **opt)
-    topics = list.map { |topic| show_values(topic) }
+    topics = Array.wrap(list).map { |topic| show_values(topic) }
     topics = {}.merge!(*topics)
     super(topics, wrap: :help, **opt)
   end
@@ -79,9 +79,8 @@ module HelpConcern
   # @return [Hash{Symbol=>*}]
   #
   def show_values(topic = @topic, **opt)
-    opt.reverse_merge!(name: topic)
-    result = get_help_entry(topic)
-    super(result, **opt)
+    entry = get_help_entry(topic)
+    super(entry, name: topic, **opt)
   end
 
   # ===========================================================================

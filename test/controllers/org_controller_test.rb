@@ -295,10 +295,10 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   #
   # @return [String, nil]
   #
-  def index_redirect(**opt, &blk)
+  def index_redirect(**opt)
     opt[:user] = find_user(opt[:user] || current_user)
     opt[:dst]  = opt[:user]&.administrator? ? :list_all : :show
-    super(**opt, &blk)
+    super
   end
 
 end

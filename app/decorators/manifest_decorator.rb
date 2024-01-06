@@ -172,10 +172,10 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
+      trace_attrs!(opt)
       items_menu_role_constraints!(opt)
       opt[:sort] ||= { id: :desc } if administrator? || manager?
-      trace_attrs!(opt)
-      super(**opt)
+      super
     end
 
     # =========================================================================
@@ -303,7 +303,7 @@ class ManifestDecorator < BaseDecorator
         when :edit  then sub_topic = :grid       if params[:selected]
         when :remit then sub_topic = :submission if params[:selected]
       end
-      super(sub_topic, topic)
+      super
     end
 
   end
@@ -444,7 +444,8 @@ class ManifestDecorator
     trace_attrs!(opt)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
-    super(**opt, before: { actions: controls })
+    opt[:before] = { actions: controls }
+    super
   end
 
   # ===========================================================================
@@ -462,7 +463,7 @@ class ManifestDecorator
   def render_grid(**opt)
     opt[:'data-manifest']     = object.id
     opt[:'aria-labelledby'] ||= page_heading_id
-    super(**opt)
+    super
   end
 
   # The names of each grid data column which is not displayed.
@@ -534,8 +535,8 @@ class ManifestDecorator
   #
   def form_buttons(**opt)
     trace_attrs!(opt)
-    opt.reverse_merge!('data-manifest': object.id)
-    buttons = super(**opt)
+    opt[:'data-manifest'] ||= object.id
+    buttons = super
     buttons << submission_button(**opt)
     buttons << export_button(**opt)
     buttons << import_button(**opt)
@@ -562,7 +563,7 @@ class ManifestDecorator
   #
   def cancel_button(**opt)
     opt[:'data-path'] ||= opt.delete(:url) || context[:cancel] || back_path
-    super(**opt)
+    super
   end
 
   # ===========================================================================

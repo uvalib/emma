@@ -329,8 +329,7 @@ class SubmissionService::ControlRequest < SubmissionService::Request
     command = opt.delete(:command)
     items, command = [nil, items] if items.is_a?(Symbol)
     opt[:command] = command&.to_sym || DEFAULT_COMMAND
-    # noinspection RubyMismatchedArgumentType
-    super(items, **opt)
+    super
   end
 
   # ===========================================================================

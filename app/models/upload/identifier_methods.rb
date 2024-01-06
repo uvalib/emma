@@ -153,15 +153,26 @@ module Upload::IdentifierMethods
   # @return [Hash{Symbol=>Integer,String,nil}] Exactly one key-value pair.
   #
   def id_term(v)
-    id, sid =
-      case v
-        when Integer then [v, nil]
-        when Upload  then [v[:id], v[:submission_id]]
-        when Hash    then v.symbolize_keys.values_at(:id, :submission_id)
-        else              valid_id?((v = v.to_s.strip)) ? [v, nil] : [nil, v]
-      end
-    id = id.to_i if digits_only?(id)
-    id ? { id: id } : { submission_id: sid }
+    i_key = :id
+    s_key = :submission_id
+    v = v.strip if v.is_a?(String)
+    v = v.to_s  if v.is_a?(Symbol)
+    v = v.presence
+    id = sid = nil
+    if valid_id?(v)
+      id  = v if i_key
+    elsif v.is_a?(String)
+      sid = v if s_key
+    elsif v
+      id  = Upload.get_value(v, i_key) if i_key
+      sid = Upload.get_value(v, s_key) if s_key && !id
+    end
+    # noinspection RubyMismatchedReturnType
+    if sid
+      { s_key => sid.to_s }
+    else
+      { i_key => (digits_only?(id) ? id.to_i : id) }
+    end
   end
 
   # The database ID of the first "upload" table record.

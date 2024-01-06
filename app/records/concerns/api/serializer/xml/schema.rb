@@ -191,12 +191,10 @@ module Api::Serializer::Xml::Schema
   # @return [String]
   #
   def element_name(name, mode = nil)
-    if (xml_type = XML_TYPE[name])
-      super(xml_type)
-    elsif scalar_type?(name)
-      super(DEFAULT_XML_TYPE)
-    else
-      super(name, mode)
+    case
+      when (type = XML_TYPE[name]) then super(type)
+      when scalar_type?(name)      then super(DEFAULT_XML_TYPE)
+      else                              super
     end
   end
 

@@ -38,7 +38,7 @@ class Model::WorkflowJob < ApplicationJob
     job_warn { "ignoring #{cb_opt.inspect}" } if cb && cb_opt
     opt[:callback] = AsyncCallback.new(cb)    if (cb ||= cb_opt)
     opt.except!(*cb_opt.keys)                 if cb_opt
-    super(*args, **opt)
+    super
   end
 
   # ===========================================================================

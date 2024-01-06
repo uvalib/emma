@@ -720,13 +720,14 @@ class ManifestItemDecorator
 
   # details_container
   #
-  # @param [Array]         before     Optional elements before the details.
-  # @param [Array<Symbol>] skip       Display aspects to avoid.
-  # @param [Hash]          opt        Passed to super
+  # @param [Array] before             Optional elements before the details.
+  # @param [Hash]  opt                Passed to super except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :skip   Display aspects to avoid.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container: (*String before, ?skip: Symbol|symArray|nil, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+  def details_container: (*String before, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
   # Submission status row for a single active submission.
   #

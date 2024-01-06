@@ -55,7 +55,7 @@ class LookupService::WorldCat < LookupService::RemoteService
       else
         msg = Lookup::WorldCat::Message::Sru.new(msg)
     end
-    super(msg, extended: extended)
+    super
   end
 
   # ===========================================================================

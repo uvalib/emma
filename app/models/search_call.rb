@@ -358,7 +358,7 @@ class SearchCall < ApplicationRecord
   def assign_attributes(attr)
     attr = normalize_attributes(attr)
     attr.except!(:id)
-    super(attr)
+    super
   end
 
   # Called to prepare values to be used for assignment to record attributes.
@@ -484,7 +484,7 @@ class SearchCall < ApplicationRecord
   def self.sql_where_clause(**opt)
     opt[:field_map] ||= JSON_COLUMN_FIELDS
     opt[:param_map] ||= JSON_COLUMN_PARAMETERS
-    super(**opt)
+    super
   end
 
 end

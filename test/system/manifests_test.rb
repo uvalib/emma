@@ -135,6 +135,7 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   def list_test(action:, title:, total:, redir_url: nil, meth: nil, **opt)
     params    = opt.merge!(action: action)
+
     start_url = url_for(**params)
     final_url = redir_url || start_url
 
@@ -415,10 +416,10 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   # @return [String, nil]
   #
-  def index_redirect(**opt, &blk)
+  def index_redirect(**opt)
     opt[:user] ||= current_user || @user
     opt[:dst]  ||= :list_own
-    super(**opt, &blk)
+    super
   end
 
 end

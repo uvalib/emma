@@ -71,12 +71,10 @@ module Record::EmmaIdentification
   # @note From Upload::IdentifierMethods#sid_for
   #
   def sid_value(item, **opt)
-    # noinspection RubyMismatchedReturnType
-    return item            if valid_sid?(item)
-    return                 unless (key = opt[:sid_key] || sid_column)
-    opt  = item.merge(opt) if item.is_a?(Hash)
-    item = opt             unless item.is_a?(Model)
-    get_value(item, key) || get_value(item, :sid) if item.present?
+    return item if valid_sid?(item)
+    key  = opt[:sid_key] || sid_column or return
+    item = item.is_a?(Hash) ? item.merge(opt) : opt unless item.is_a?(Model)
+    get_value(item, [key, :sid]) if item.present?
   end
 
   # Indicate whether *value* could be an EMMA submission ID.
@@ -119,11 +117,9 @@ module Record::EmmaIdentification
   # EmmaRepository#valid?.
   #
   def repository_value(item)
-    unless item.nil? || item.is_a?(String) || item.is_a?(Symbol)
-      (repo = get_value(item, :repository))      and return repo
-      (repo = get_value(item, :emma_repository)) and return repo
-      (repo = get_value(item, :repo))            and return repo
-      item  = get_value(item, :emma_recordId)
+    if (item = item.presence) && !item.is_a?(String) && !item.is_a?(Symbol)
+      r    = get_value(item, %i[repository emma_repository repo]) and return r
+      item = get_value(item, :emma_recordId)
     end
     item.to_s.strip.split('-').first.presence if item.present?
   end
@@ -335,7 +331,7 @@ module Record::EmmaIdentification
   # @note From Upload::IdentifierMethods#id_term
   #
   def id_term(v = nil, **opt)
-    opt[:sid_key] = sid_column unless opt.key?(:sid_key)
+    opt.reverse_merge!(sid_key: sid_column)
     super
   end
 
@@ -353,7 +349,7 @@ module Record::EmmaIdentification
   # @note From Upload::IdentifierMethods#expand_id_range
   #
   def expand_id_range(id, **opt)
-    opt[:sid_key] = sid_column unless opt.key?(:sid_key)
+    opt.reverse_merge!(sid_key: sid_column)
     super
   end
 
@@ -385,13 +381,15 @@ module Record::EmmaIdentification
     # @see Record::EmmaIdentification#sid_value
     #
     def sid_value(item = nil, **opt)
-      super((item || self), **opt)
+      item ||= self
+      super
     end
 
     # @see Record::EmmaIdentification#valid_sid?
     #
     def valid_sid?(value = nil)
-      super(value || sid_value)
+      value ||= sid_value
+      super
     end
 
     # =========================================================================
@@ -403,31 +401,36 @@ module Record::EmmaIdentification
     # @see Record::EmmaIdentification#emma_native?
     #
     def emma_native?(item = nil)
-      super(item || self)
+      item ||= self
+      super
     end
 
     # @see Record::EmmaIdentification#repository_value
     #
     def repository_value(item = nil)
-      super(item || self)
+      item ||= self
+      super
     end
 
     # @see Record::EmmaIdentification#repository_name
     #
     def repository_name(item = nil)
-      super(item || self)
+      item ||= self
+      super
     end
 
     # @see Record::EmmaIdentification#record_id
     #
     def record_id(item = nil)
-      super(item || self)
+      item ||= self
+      super
     end
 
     # @see Record::EmmaIdentification#valid_record_id?
     #
     def valid_record_id?(item = nil, **opt)
-      super((item || self), **opt)
+      item ||= self
+      super
     end
 
   end

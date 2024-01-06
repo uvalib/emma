@@ -55,8 +55,7 @@ module Record::FileData
   # @note Only used by #file_attacher_load
   #
   def make_file_record(data, **opt)
-    opt.reverse_merge!(symbolize_keys: false)
-    json_parse(data, **opt) || {}
+    json_parse(data, symbolize_keys: false, **opt) || {}
   end
 
   # parse_file_data
@@ -124,8 +123,8 @@ module Record::FileData
     public
 
     def generate_file_data(data, attr = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(data, (attr || self))
+      attr ||= self
+      super
     end
 
     # =========================================================================

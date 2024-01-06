@@ -43,7 +43,8 @@ class ApplicationJob::Table < Concurrent::Hash
   # @return [*]
   #
   def []=(job_id, data)
-    super(job_id, data&.except(:active_job_id))
+    data &&= data.except(:active_job_id)
+    super
   end
 
   # ===========================================================================

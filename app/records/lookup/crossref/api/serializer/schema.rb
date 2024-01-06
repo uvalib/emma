@@ -37,7 +37,7 @@ module Lookup::Crossref::Api::Serializer::Schema
   def deserialize(data, method: nil)
     data = safe_json_parse(data, log: false, symbolize_keys: false)
     data = data.deep_transform_keys!(&:underscore).to_json if data.is_a?(Hash)
-    super(data, method: method)
+    super
   end
 
 end

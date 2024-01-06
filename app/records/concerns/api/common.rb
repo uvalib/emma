@@ -194,7 +194,8 @@ class ScalarType
   # @param [*] v
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Transform value into a valid form.
@@ -204,7 +205,8 @@ class ScalarType
   # @return [String]
   #
   def normalize(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # ===========================================================================
@@ -510,7 +512,8 @@ class IsoDuration < ScalarType
   # @param [*] v                      Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -923,7 +926,8 @@ class IsoDate < ScalarType
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Indicate whether the instance represents a year value, or indicate whether
@@ -932,7 +936,8 @@ class IsoDate < ScalarType
   # @param [*] v
   #
   def year?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Indicate whether the instance represents a day value, or indicate whether
@@ -941,7 +946,8 @@ class IsoDate < ScalarType
   # @param [*] v
   #
   def day?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Indicate whether the instance represents a full ISO 8601 date value, or
@@ -950,7 +956,8 @@ class IsoDate < ScalarType
   # @param [*] v
   #
   def complete?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1021,7 +1028,8 @@ class IsoYear < IsoDate
   # @param [String, nil] v            Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1092,7 +1100,8 @@ class IsoDay < IsoDate
   # @param [*] v                      Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1205,7 +1214,8 @@ class IsoLanguage < ScalarType
   # @return [String, nil]
   #
   def set(v, **opt)
-    super(v, warn: true, **opt)
+    opt.reverse_merge!(warn: true)
+    super
   end
 
   # ===========================================================================
@@ -1219,7 +1229,8 @@ class IsoLanguage < ScalarType
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Return the associated three-letter language code.
@@ -1229,7 +1240,8 @@ class IsoLanguage < ScalarType
   # @return [String, nil]
   #
   def code(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1576,7 +1588,8 @@ class EnumType < ScalarType
   # @return [String, nil]
   #
   def set(v, **opt)
-    super(v, warn: true, **opt)
+    opt.reverse_merge!(warn: true)
+    super
   end
 
   # ===========================================================================
@@ -1590,7 +1603,8 @@ class EnumType < ScalarType
   # @param [*] v                      Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # ===========================================================================
@@ -1850,7 +1864,8 @@ class LanguageType < EnumType
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Return the associated three-letter language code.
@@ -1860,7 +1875,8 @@ class LanguageType < EnumType
   # @return [String, nil]
   #
   def code(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end

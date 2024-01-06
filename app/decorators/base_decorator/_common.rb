@@ -105,7 +105,8 @@ module BaseDecorator::Common
     opt[:'data-trace-class'] ||= self.class.name
     opt[:'data-trace-chain']   = (chain << meth).join(separator)
     opt[:'data-trace-caller']  = from
-    opt.merge!('data-trace-method': meth)
+    opt[:'data-trace-method']  = meth
+    opt
   end
     .tap { |meth| define_method(meth) { |opt, *, **| opt } unless DEBUG_ATTRS }
 

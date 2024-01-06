@@ -1093,7 +1093,8 @@ module LayoutHelper::SearchFilters
   # @return [Hash]
   #
   def current_menu_config(menu_name, target: nil, **)
-    super(menu_name, target: search_target(target))
+    target = search_target(target)
+    super
   end
 
   # ===========================================================================

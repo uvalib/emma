@@ -55,7 +55,7 @@ class Search::Message::SearchRecord < Search::Api::Message
       src = src.select { |record| record.emma_recordId == rid } if rid.present?
     end
     src = src.first if src.is_a?(Array)
-    super(src, opt)
+    super
     normalize_data_fields!
   end
 

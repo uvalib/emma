@@ -521,7 +521,8 @@ module UploadConcern
   # @return [Hash{Symbol=>Hash}]
   #
   def index_values(list = nil, **opt)
-    super(list, wrap: :entries, **opt)
+    opt.reverse_merge!(wrap: :entries)
+    super
   end
 
   # Response values for de-serializing the show page to JSON or XML.

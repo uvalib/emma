@@ -79,7 +79,7 @@ module ParamsConcern
   def identifier_list(*ids, **opt)
     cid = current_id.presence
     ids = params.values_at(*id_param_keys) if ids.blank?
-    super(ids, **opt).tap do |result|
+    super.tap do |result|
       result.map! { |v| CURRENT_ID.casecmp?(v) ? cid : v } if cid
     end
   end

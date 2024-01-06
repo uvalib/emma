@@ -128,12 +128,12 @@ module HeadHelper::MetaTags
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emit_page_meta_tags(opt = nil)
+  def emit_page_meta_tags(**opt)
     opt, html_opt     = partition_hash(opt, :tag_separator)
     tag_separator     = opt[:tag_separator] || META_TAG_SEPARATOR
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
     @page_meta_tags.map { |key, value|
-      emit_meta_tag(key, value, html_opt)
+      emit_meta_tag(key, value, **html_opt)
     }.compact.join(tag_separator).html_safe
   end
 
@@ -178,7 +178,7 @@ module HeadHelper::MetaTags
   # @return [ActiveSupport::SafeBuffer]       If valid.
   # @return [nil]                             If the tag would be a "no-op".
   #
-  def emit_meta_tag(key, value, opt = nil)
+  def emit_meta_tag(key, value, **opt)
     opt, html_opt = partition_hash(opt, *EMIT_META_TAG_OPTIONS)
     separator = opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR
 

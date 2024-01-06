@@ -68,7 +68,7 @@ class LookupService::Crossref < LookupService::RemoteService
       else
         msg = Lookup::Crossref::Message::Work.new(msg)
     end
-    super(msg, extended: extended)
+    super
   end
 
   # ===========================================================================

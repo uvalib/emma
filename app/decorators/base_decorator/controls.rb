@@ -176,9 +176,8 @@ module BaseDecorator::Controls
   #
   def symbol_icon(icon, **opt)
     trace_attrs!(opt)
-    char = icon.is_a?(Symbol) ? icon_definition(icon)[:icon] : icon
-    # noinspection RubyMismatchedArgumentType
-    super(char, **opt)
+    icon = icon_definition(icon)[:icon] if icon.is_a?(Symbol)
+    super
   end
 
   # ===========================================================================

@@ -243,9 +243,9 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
   #
   # @return [String, nil]
   #
-  def index_redirect(**opt, &blk)
+  def index_redirect(**opt)
     opt[:dst] ||= :list_own
-    super(**opt, &blk)
+    super
   end
 
 end

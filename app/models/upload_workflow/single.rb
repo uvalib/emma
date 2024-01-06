@@ -350,7 +350,8 @@ module UploadWorkflow::Single::Actions
     __debug_items(binding)
     opt = event_args.extract_options!
     event_args << record if event_args.empty?
-    super(*event_args, opt)
+    event_args << opt    if opt.present?
+    super
     self.results = succeeded
   end
 
@@ -1347,7 +1348,7 @@ class UploadWorkflow::Single < UploadWorkflow
       opt[:start_state] ||= get_workflow_state.presence&.to_sym || :starting
       data = nil
     end
-    super(data, **opt)
+    super
   end
 
   # ===========================================================================
@@ -1485,17 +1486,11 @@ class UploadWorkflow::Single < UploadWorkflow
   #
   def self.generate(data, **opt)
     data &&= data.is_a?(Upload) ? data : Upload.get_record(data)
-    opt[:variant] ||= data&.phase
-    opt[:variant] ||=
-      if data.nil?
-        :remove
-      elsif data&.state&.to_sym == FINAL_STATE
-        :edit
-      else
-        :create
-      end
+    opt[:variant] ||= (:remove if data.nil?)
+    opt[:variant] ||= data.phase
+    opt[:variant] ||= (data.state&.to_sym == FINAL_STATE) ? :edit : :create
     # noinspection RubyMismatchedReturnType
-    super(data, **opt)
+    super
   end
 
   # ===========================================================================

@@ -101,13 +101,13 @@ class OrgsTest < ApplicationSystemTestCase
   # @param [String, nil] title        Default: #INDEX_TITLE.
   # @param [String, nil] redir_url
   # @param [Symbol]      meth         Calling test method.
-  # @param [Hash]        params       URL parameters.
+  # @param [Hash]        opt          URL parameters.
   #
   # @return [void]
   #
-  def list_test(action:, title: nil, redir_url: nil, meth: nil, **params)
-    params.merge!(action: action)
-    title ||= page_title(**params)
+  def list_test(action:, title: nil, redir_url: nil, meth: nil, **opt)
+    params    = opt.merge!(action: action)
+    title   ||= page_title(**params)
 
     start_url = url_for(**params)
     final_url = redir_url || start_url
@@ -344,10 +344,10 @@ class OrgsTest < ApplicationSystemTestCase
   #
   # @return [String, nil]
   #
-  def index_redirect(**opt, &blk)
+  def index_redirect(**opt)
     opt[:user] = find_user(opt[:user] || current_user || @user)
     opt[:dst]  = opt[:user]&.administrator? ? :list_all : :show
-    super(**opt, &blk)
+    super
   end
 
 end

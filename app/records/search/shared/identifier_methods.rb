@@ -78,7 +78,7 @@ class PublicationIdentifierSet < Set
     ids.map! { |v| PublicationIdentifier.cast(v, invalid: true) }
     ids.compact!
     ids.sort!
-    super(ids)
+    super
   end
 
   # ===========================================================================

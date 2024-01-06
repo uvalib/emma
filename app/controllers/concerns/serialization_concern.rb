@@ -119,16 +119,14 @@ module SerializationConcern
   # @return [Hash{Symbol=>*}]
   #
   def show_values(item, as: nil, name: nil, **)
-    if as == :array
-      result = item.try(:values) || Array.wrap(item)
-    elsif item.is_a?(Model)
-      result = item.to_h(item: name)
-    else
-      result = item
+    case
+      when as == :array      then entry = item.try(:values) || Array.wrap(item)
+      when item.is_a?(Model) then entry = item.to_h(item: name)
+      else                        entry = item
     end
-    name ||= :item unless result.is_a?(Hash)
+    name ||= :item unless entry.is_a?(Hash)
     # noinspection RubyMismatchedReturnType
-    name ? { name.to_sym => result } : result
+    name ? { name.to_sym => entry } : entry
   end
 
   # ===========================================================================

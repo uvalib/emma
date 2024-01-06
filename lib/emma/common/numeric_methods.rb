@@ -7,7 +7,8 @@ __loading_begin(__FILE__)
 
 module Emma::Common::NumericMethods
 
-  NUMBER_PATTERN = /\A\s*[-+]?\d*(_\d+)*\.?\d+(_\d+)*(e[-+]?[0-9]+)?\s*\z/i
+  NUMBER_PATTERN =
+    /\A\s*[-+]?\d*(_\d+)*\.?\d+(_\d+)*([eE][-+]?[0-9]+)?\s*\z/.freeze
 
   # ===========================================================================
   # :section:

@@ -1030,7 +1030,7 @@ class UploadWorkflow::Bulk < UploadWorkflow
     end
     @control_file = opt[:control]
     data = set_entries(data)
-    super(data, **opt)
+    super
   end
 
 end

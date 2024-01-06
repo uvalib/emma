@@ -43,7 +43,7 @@ if DEBUG_SPROCKETS
         info = args.inspect
         $stderr.puts "*** SPROCKETS [#{self}] Base #{__method__} | #{info}"
         #__ext_log(info, tag: "[#{self}] Base")
-        super(*args, &blk)
+        super
       end
 
     end

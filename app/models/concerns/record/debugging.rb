@@ -160,10 +160,10 @@ module Record::Debugging
       #
       # @param [Model, Hash, nil] attr
       #
-      def initialize(attr = nil, &blk)
+      def initialize(attr = nil)
         ldr = "new #{self.class.base_class.name.underscore.upcase} RECORD"
         __debug_items(binding, leader: ldr)
-        super(attr, &blk)
+        super
         __debug_items(self.class.name, self, leader: ldr)
       end
 

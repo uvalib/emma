@@ -348,8 +348,7 @@ module Emma::Debug
     # @return [nil]
     #
     def __debug_line(*args, **opt, &blk)
-      opt.reverse_merge!(separator: DEBUG_SEPARATOR)
-      __debug_impl(*args, **opt, &blk)
+      __debug_impl(*args, separator: DEBUG_SEPARATOR, **opt, &blk)
     end
 
     # Output each data item on its own line, with special handling to inject
@@ -428,8 +427,6 @@ module Emma::Debug
     # @return [nil]
     #
     def __debug_exception(label, exception, *args, **opt, &blk)
-      opt.reverse_merge!(leader: '!!!')
-      trace = opt.delete(:trace)
       args << "#{label} #{exception.class}"
       args << "ERROR: #{exception.message}"
 
@@ -444,7 +441,8 @@ module Emma::Debug
         args.concat(added) if added.present?
       end
 
-      __debug_line(*args, **opt, &blk)
+      trace = opt.delete(:trace)
+      __debug_line(*args, leader: '!!!', **opt, &blk)
       Log.warn { exception.full_message(order: :top) } if trace
     end
 

@@ -151,7 +151,7 @@ module UploadWorkflow::Errors
     #
     def render_topic(src, **opt)
       src = make_label(src, default: '').presence || src
-      super(src, **opt)
+      super
     end
 
   end

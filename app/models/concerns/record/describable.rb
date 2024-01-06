@@ -354,7 +354,8 @@ module Record::Describable
 
     # @see Record::Describable#interpolations
     def interpolations(text, model = nil, **opt)
-      super(text, (model || self), **opt)
+      model ||= self
+      super
     end
 
   end

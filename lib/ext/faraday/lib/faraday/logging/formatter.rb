@@ -64,8 +64,8 @@ module Faraday
     # @param [String] type          'request' or 'response'
     #
     def public_send(log_method, type, &blk)
-      progname = [@logger&.progname, type].compact.join(': ')
-      super(log_method, progname, &blk) # Object#public_send
+      type = [@logger&.progname, type].compact.join(': ')
+      super # Object#public_send
     end
 
   end

@@ -491,8 +491,8 @@ module Record::Steppable
     # @return [Hash, nil]
     #
     def get_state_table(item = nil, fatal: false)
-      # noinspection RubyMismatchedArgumentType
-      super((item || self), fatal: fatal)
+      item ||= self
+      super
     end
 
     # All valid workflow states.
@@ -702,8 +702,8 @@ module Record::Steppable
     # @return [Hash, nil]
     #
     def get_state_table(item = nil, fatal: false)
-      # noinspection RubyMismatchedArgumentType
-      super((item || self), fatal: fatal)
+      item ||= self
+      super
     end
 
     # All valid workflow states for the current record.
@@ -713,8 +713,8 @@ module Record::Steppable
     # @return [Array<Symbol>, nil]
     #
     def get_state_names(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # =========================================================================
@@ -730,7 +730,8 @@ module Record::Steppable
     # @return [Symbol, nil]
     #
     def state_value(item = nil)
-      super(item || self[state_column])
+      item ||= self[state_column]
+      super
     end
 
     # Get the configured descriptive note for the current state.
@@ -740,7 +741,8 @@ module Record::Steppable
     # @return [String, nil]
     #
     def state_note(item = nil)
-      super(item || self[state_column])
+      item ||= self[state_column]
+      super
     end
 
     # Get a natural-language description for the current state.
@@ -750,7 +752,8 @@ module Record::Steppable
     # @return [String, nil]
     #
     def state_description(item = nil)
-      super(item || self[state_column])
+      item ||= self[state_column]
+      super
     end
 
     # =========================================================================
@@ -773,8 +776,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def new_submission?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # =========================================================================
@@ -788,8 +791,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def state_group(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Return the label for the state group of the record.
@@ -800,8 +803,8 @@ module Record::Steppable
     # @return [nil]                     If *group* is invalid.
     #
     def state_group_label(group = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      group ||= self
+      super
     end
 
     # =========================================================================
@@ -816,8 +819,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_created?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step related to
@@ -826,8 +829,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_modified?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step related to
@@ -836,8 +839,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_removed?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step related to
@@ -846,8 +849,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def under_review?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step related to
@@ -856,8 +859,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_submitted?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step related to
@@ -866,8 +869,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def being_indexed?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step related to
@@ -876,8 +879,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def completed?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step which leads
@@ -886,8 +889,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def in_process?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # Indicate whether this record is involved in a workflow step where
@@ -896,8 +899,8 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def unsealed?(item = nil)
-      # noinspection RubyMismatchedArgumentType
-      super(item || self)
+      item ||= self
+      super
     end
 
     # =========================================================================

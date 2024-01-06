@@ -119,7 +119,7 @@ module Emma
         end
       end
       # noinspection RubyMismatchedReturnType
-      filter_out?(message) or super(severity, message, progname)
+      filter_out?(message) or super
     end
 
     # =========================================================================

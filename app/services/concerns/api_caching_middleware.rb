@@ -45,7 +45,7 @@ class ApiCachingMiddleware < Faraday::Middleware
     @store_options = opt[:store_options] || {}
     @expires_in    = opt[:expires_in] || @store_options[:expires_in]
     @store_options[:expires_in] = @expires_in
-    super(app, opt)
+    super
   end
 
   # ===========================================================================

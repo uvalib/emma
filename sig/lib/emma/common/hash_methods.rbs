@@ -1,4 +1,10 @@
 module Emma::Common::HashMethods
+  # Analyze Hash extensions behavior.
+  #
+  # @type [Boolean]
+  #
+  DEBUG_HASH: bool
+
   # Strip off the hash elements identified by *keys* to return two hashes:
   # - First, a hash containing only the requested option keys and values.
   # - Second, a copy of the original *hash* without the those keys/values.
@@ -37,19 +43,14 @@ module Emma::Common::HashMethods
   #
   def extract_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> symHash
 
-  private
-
-  def gather_keys: (*(Symbol|String|Array[Symbol|String]|nil) keys) ?{ () -> (Symbol|String|Array[Symbol|String]|nil) } -> symArray
-
-  public
-
   # normalize_hash
   #
   # @param [ActionController::Parameters, Hash, nil] item
+  # @param [Boolean]                                 debug
   #
   # @return [Hash{Symbol=>*}]         A new normalized Hash.
   #
-  def normalize_hash: ((prmHash|nil) item) -> symHash
+  def normalize_hash: ((prmHash|nil) item, ?debug: bool) -> symHash
 
   # normalize_hash
   #

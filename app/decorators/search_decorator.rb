@@ -53,7 +53,9 @@ class SearchDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer, nil]
     #
     def render_pair(label, value, **opt)
-      super(label, value, no_code: true, **opt) if value.present?
+      return if value.blank?
+      opt.reverse_merge!(no_code: true)
+      super
     end
 
     # =========================================================================
@@ -291,7 +293,7 @@ class SearchDecorator
   #
   def link(**opt)
     opt[:path] = search_path(id: object.identifier)
-    super(**opt)
+    super
   end
 
   # ===========================================================================
@@ -543,21 +545,22 @@ class SearchDecorator
   #
   def details(**opt)
     opt[:pairs] ||= model_show_fields
-    super(**opt)
+    super
   end
 
   # details_container
   #
-  # @param [Array]         before     Optional elements before the details.
-  # @param [Array<Symbol>] skip       Display aspects to avoid.
-  # @param [Hash]          opt        Passed to super
+  # @param [Array] before             Optional elements before the details.
+  # @param [Hash]  opt                Passed to super except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :skip   Display aspects to avoid.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container(*before, skip: [], **opt, &blk)
-    skip = Array.wrap(skip)
+  def details_container(*before, **opt, &blk)
+    skip = Array.wrap(opt.delete(:skip))
     before.prepend(cover(placeholder: false)) unless skip.include?(:cover)
-    super(*before, **opt, &blk)
+    super
   end
 
   # Create a container with the repository ID displayed as a link but acting as
@@ -606,12 +609,12 @@ class SearchDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item(before: nil, after: nil, **opt)
-    score_data  = (score_values.presence if relevancy_scores?)
-    opt[:outer] = opt[:outer]&.merge(score_data) || score_data if score_data
-    opt[:wrap]  = PAIR_WRAPPER unless opt.key?(:wrap)
+  def list_item(**opt)
     trace_attrs!(opt)
-    super(before: before, after: after, **opt)
+    score_data  = (score_values.presence if relevancy_scores?)
+    opt[:outer] = (opt[:outer] || {}).merge(score_data) if score_data
+    opt.reverse_merge!(wrap: PAIR_WRAPPER)
+    super
   end
 
   # Include control icons below the entry number.

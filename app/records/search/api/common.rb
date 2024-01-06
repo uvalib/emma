@@ -309,7 +309,8 @@ class PublicationIdentifier < ScalarType
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # ===========================================================================
@@ -800,7 +801,8 @@ class Isbn < PublicationIdentifier
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Indicate whether the instance is a valid ISBN-13.
@@ -808,7 +810,8 @@ class Isbn < PublicationIdentifier
   # @param [String, *] v              Default: #value.
   #
   def isbn13?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
   # Indicate whether the instance is a valid ISBN-10.
@@ -816,7 +819,8 @@ class Isbn < PublicationIdentifier
   # @param [String, *] v              Default: #value.
   #
   def isbn10?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1038,7 +1042,8 @@ class Issn < PublicationIdentifier
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1256,7 +1261,8 @@ class Oclc < PublicationIdentifier
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1449,7 +1455,8 @@ class Lccn < PublicationIdentifier
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1670,7 +1677,8 @@ class Upc < PublicationIdentifier
   # @param [String, nil] v            Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end
@@ -1846,7 +1854,8 @@ class Doi < PublicationIdentifier
   # @param [String, *] v              Default: #value.
   #
   def valid?(v = nil)
-    super(v || value)
+    v ||= value
+    super
   end
 
 end

@@ -51,7 +51,7 @@ module TestHelper::SystemTests::Index
   )
     ctrlr = controller_name(model)
     prop  = property(ctrlr, :index)&.slice(:title, :heading)
-    opt.reverse_merge!(prop) if prop.present?
+    opt.reverse_merge!(prop) if prop.is_a?(Hash)
     if (terms = terms.presence)
       opt[:title] &&= "#{opt[:title]} - #{title_terms(ctrlr, **terms)} |"
     end

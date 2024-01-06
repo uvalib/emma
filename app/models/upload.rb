@@ -112,11 +112,11 @@ class Upload < ApplicationRecord
   #
   # @param [Upload, Hash, nil] attr   Passed to #assign_attributes via super.
   #
-  def initialize(attr = nil, &blk)
+  def initialize(attr = nil)
     __debug_items(binding)
     attr = attr.fields if attr.is_a?(Upload)
     attr = attr.merge(initializing: true).except!(:reset) if attr.is_a?(Hash)
-    super(attr, &blk)
+    super
     __debug_items(leader: 'new UPLOAD') { self }
   end
 
@@ -582,14 +582,11 @@ class Upload < ApplicationRecord
   # noinspection RubyMismatchedArgumentType
   #++
   def self.repository_of(item)
-    item = item.to_s if item.is_a?(Symbol)
-    if item && !item.is_a?(String)
-      %i[repository emma_repository].find do |key|
-        (repo = get_value(item, key)) and return repo
-      end
+    if (item = item.presence) && !item.is_a?(String) && !item.is_a?(Symbol)
+      r    = get_value(item, %i[repository emma_repository]) and return r
       item = get_value(item, :emma_recordId)
     end
-    item && item.strip.split('-').first.presence
+    item.to_s.strip.split('-').first.presence if item.present?
   end
 
   # The full name of the indicated repository
@@ -659,26 +656,24 @@ class Upload < ApplicationRecord
   #
   # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @param [Upload, Hash, #repository, #emma_repository] item
-  # @param [Symbol, String]                              key
-  # @param [Any]                                         default
+  # @param [Model, Hash, String, Symbol, *]       item
+  # @param [Symbol, String, Array<Symbol,String>] key
+  # @param [*]                                    default
   #
   # @return [*]
   #
   def self.get_value(item, key, default: nil)
-    key = key.to_sym
-    # noinspection RubyMismatchedArgumentType
-    if item.respond_to?(key)
-      item.send(key).presence
-    elsif item.is_a?(Upload) && item.emma_metadata.key?(key)
-      item.emma_metadata[key].presence
-    elsif item.is_a?(Hash) && item.key?(key.to_s)
-      item[key.to_s].presence
-    elsif item.is_a?(Hash) && item.key?(key)
-      item[key].presence
-    else
-      default
-    end
+    if key.blank?
+      nil
+    elsif key.is_a?(Array)
+      key.find { |k| (v = get_value(item, k)) and (break v) }
+    elsif item.respond_to?(key)
+      item.send(key)
+    elsif item.is_a?(Upload)
+      item.emma_metadata[key.to_sym]
+    elsif item.is_a?(Hash)
+      item[key.to_sym] || item[key.to_s]
+    end.presence || default
   end
 
   # ===========================================================================

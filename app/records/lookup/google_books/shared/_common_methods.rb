@@ -57,7 +57,7 @@ module Lookup::GoogleBooks::Shared::CommonMethods
   def get_values(*fields, target: nil, **)
     # @type [Lookup::GoogleBooks::Record::VolumeInfo, nil]
     target = find_record_item(:volumeInfo, target: target) || target
-    super(*fields, target: target)
+    super
   end
 
 end

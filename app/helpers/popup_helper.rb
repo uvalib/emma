@@ -70,12 +70,12 @@ module PopupHelper
 
     # Visible modal popup activation toggle control.
     t_opt = opt.extract!(*POPUP_TOGGLE_OPT)
-    t_opt.reverse_merge!(control) if control
+    t_opt.reverse_merge!(control) if control.is_a?(Hash)
     popup_toggle = make_popup_toggle(**t_opt)
 
     # Initially-hidden modal popup panel.
     p_opt = opt.extract!(*POPUP_PANEL_OPT)
-    p_opt.reverse_merge!(panel) if panel
+    p_opt.reverse_merge!(panel) if panel.is_a?(Hash)
     prepend_css!(p_opt, POPUP_PANEL_CLASS)
     popup_panel = make_popup_panel(**p_opt, &blk)
 

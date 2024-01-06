@@ -277,7 +277,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   def delete_submit_path(ids = nil, **opt)
     opt.reverse_merge!(options.all)
-    super(ids, **opt)
+    super
   end
 
   # ===========================================================================

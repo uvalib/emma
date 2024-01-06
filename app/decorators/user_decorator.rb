@@ -139,7 +139,8 @@ class UserDecorator < AccountDecorator
     # @return [Array<Symbol>]
     #
     def help_topic(sub_topic = nil, topic = nil)
-      super(sub_topic, (topic || :account))
+      topic ||= :account
+      super
     end
 
   end

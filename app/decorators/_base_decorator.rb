@@ -274,7 +274,7 @@ class BaseDecorator < Draper::Decorator
     #
     def config_lookup(*path, **opt)
       opt[:action] ||= context[:action]
-      super(*path, **opt)
+      super
     end
 
     # =========================================================================
@@ -656,7 +656,7 @@ class BaseDecorator < Draper::Decorator
     def generate(item, force: false, **opt)
       sub = ObjectClassMap.get(item) || OtherClassMap.get(item)
       raise "No decorator for #{item.class}" unless sub || force || item.nil?
-      opt.merge!(from_internal: true)
+      opt[:from_internal] = true
       # noinspection RubyMismatchedArgumentType, RubyArgCount
       # noinspection RubyMismatchedReturnType
       sub&.new(item, **opt) || new(item, **opt)
@@ -821,7 +821,8 @@ class BaseDecorator
     # Override BaseDecorator#new so that instances of this terminal subclass
     # can be created.
     def self.new(obj = nil, **opt)
-      super(obj, **opt.merge!(from_internal: true))
+      opt[:from_internal] = true
+      super
     end
 
     debug_inheritance if DEBUG_DECORATOR_INHERITANCE

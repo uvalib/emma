@@ -16,7 +16,8 @@ module Representable
     def call(input, options)
       # This make the parse a little more forgiving by allowing a simple string
       # to be interpreted as an implicit single-element array.
-      super(Array.wrap(input), options)
+      input = Array.wrap(input)
+      super
     end
 
   end

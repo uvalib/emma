@@ -110,9 +110,9 @@ class ManifestItem < ApplicationRecord
   #
   # @param [ManifestItem,Manifest,Hash] attr    To #assign_attributes via super
   #
-  def initialize(attr = nil, &blk)
+  def initialize(attr = nil)
     attr = { manifest_id: attr.id } if attr.is_a?(Manifest)
-    super(attr, &blk)
+    super
   end
 
   # ===========================================================================
@@ -177,7 +177,7 @@ class ManifestItem < ApplicationRecord
   def assign_attributes(attr)
     attr = normalize_attributes(attr)
     opt  = attr[:attr_opt] || {}
-    super(attr)
+    super
     if opt[:re_validate]
       data_columns = fields.except(*NON_BACKUP_COLS)
       data_values  = normalize_attributes(data_columns)

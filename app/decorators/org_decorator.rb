@@ -74,7 +74,7 @@ class OrgDecorator < BaseDecorator
       opt[:prop]   ||= field_configuration(opt[:field])
       opt[:field]  ||= opt.dig(:prop, :field)
       opt[:render] ||= :render_form_input if opt[:field] == :ip_domain
-      super(label, value, **opt)
+      super
     end
 
     # =========================================================================
@@ -92,7 +92,7 @@ class OrgDecorator < BaseDecorator
     def items_menu(**opt)
       items_menu_role_constraints!(opt)
       opt[:sort] ||= { id: :asc }
-      super(**opt)
+      super
     end
 
     # =========================================================================
@@ -169,7 +169,8 @@ class OrgDecorator < BaseDecorator
     # @return [Array<Symbol>]
     #
     def help_topic(sub_topic = nil, topic = nil)
-      super(sub_topic, (topic || :organization))
+      topic ||= :organization
+      super
     end
 
   end
@@ -219,7 +220,8 @@ class OrgDecorator
     trace_attrs!(opt)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
-    super(**opt, before: { actions: controls })
+    opt[:before] = { actions: controls }
+    super
   end
 
 end

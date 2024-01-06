@@ -35,8 +35,9 @@ module ManifestItem::Assignable
   # @return [Hash{Symbol=>*}]
   #
   def normalize_attributes(attr, **opt)
-    opt[:errors] = ({} unless opt[:re_validate]) unless opt.key?(:errors)
-    super(attr, compact: false, key_norm: true, **opt).tap do |result|
+    opt.reverse_merge!(key_norm: true, compact: false)
+    opt.reverse_merge!(errors: {}) unless opt[:re_validate]
+    super.tap do |result|
       unless opt[:re_validate]
         result[:field_error] = opt[:errors]
         update_status!(result, **opt.slice(*UPDATE_STATUS_OPTS))

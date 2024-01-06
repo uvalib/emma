@@ -126,15 +126,15 @@ class HomeController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Hash, nil] result
+  # @param [Hash, nil] entry
   # @param [Hash]      opt
   #
   # @return [Hash{Symbol=>Hash,Array}]
   #
-  def show_values(result = nil, **opt)
+  def show_values(entry = nil, **opt)
+    entry ||= { details: @item, preferences: @preferences, history: @history }
     opt.reverse_merge!(name: :account)
-    result ||= { details: @item, preferences: @preferences, history: @history }
-    super(result, **opt)
+    super
   end
 
 end

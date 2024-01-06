@@ -90,7 +90,7 @@ class SearchCallDecorator
   #
   def link(**opt)
     opt[:path] = show_path(id: object.identifier)
-    super(**opt)
+    super
   end
 
   # ===========================================================================

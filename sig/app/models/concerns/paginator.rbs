@@ -153,7 +153,7 @@ class Paginator
     #
     # @return [Integer]               Zero indicates unknown count.
     #
-    def record_count: (?untyped value, ?default: Integer) -> Integer
+    def record_count: (?untyped value, ?default: Integer, **untyped _ignored) -> Integer
 
     # Extract the number of "items" reported by an object.
     #
@@ -165,7 +165,7 @@ class Paginator
     #
     # @return [Integer]               Zero indicates unknown count.
     #
-    def item_count: (?untyped value, ?default: Integer) -> Integer
+    def item_count: (?untyped value, ?default: Integer, **untyped _ignored) -> Integer
 
     def self.included: (Module base) -> void
   end

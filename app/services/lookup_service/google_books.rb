@@ -47,7 +47,7 @@ class LookupService::GoogleBooks < LookupService::RemoteService
       else
         msg = Lookup::GoogleBooks::Message::List.new(msg)
     end
-    super(msg, extended: extended)
+    super
   end
 
 end

@@ -832,7 +832,8 @@ class ExecReport
   # @return [Hash{Symbol=>String,Array<String>}]
   #
   def message_hash(src = nil)
-    super(src || self.exception)
+    src ||= self.exception
+    super
   end
 
   # ===========================================================================
@@ -848,8 +849,8 @@ class ExecReport
   # @return [Integer, Symbol, nil]
   #
   def extract_status(src = nil)
-    # noinspection RubyMismatchedArgumentType
-    super(src || self)
+    src ||= self
+    super
   end
 
   # Attempt to get topic/details from *src*.
@@ -862,7 +863,7 @@ class ExecReport
   def extract_message_hashes(src = nil, meth = nil)
     src, meth = [nil, src] if meth.nil? && src.is_a?(Symbol)
     src ||= self.parts
-    super(src, meth)
+    super
   end
 
   # Attempt to get topic/details from *src*.
@@ -875,7 +876,7 @@ class ExecReport
   def extract_message_hash(src = nil, meth = nil)
     src, meth = [nil, src] if meth.nil? && src.is_a?(Symbol)
     src ||= self.exception
-    super(src, meth)
+    super
   end
 
   # ===========================================================================
@@ -1268,7 +1269,8 @@ class ExecReport::Part
   # @return [String, nil]           *nil* if *src* was blank.
   #
   def serialize(src = nil)
-    super(src || self)
+    src ||= self
+    super
   end
 
   # Interpret an error report part from a database column.
@@ -1278,7 +1280,8 @@ class ExecReport::Part
   # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
   #
   def deserialize(src = nil)
-    super(src || self)
+    src ||= self
+    super
   end
 
   # ===========================================================================
@@ -1324,7 +1327,8 @@ class ExecReport::Part
   # @return [String, ActiveSupport::SafeBuffer, nil]
   #
   def render(src = nil, **opt)
-    super((src || self), **opt)
+    src ||= self
+    super
   end
 
   # ===========================================================================
@@ -1482,7 +1486,7 @@ class ExecReport::FlashPart < ExecReport::Part
       sep = opt[:separator]
       opt[:separators] = [sep, sep.strip]
       idx = start || 1
-      src.map!.with_index(idx) { |v, i| render_part(v, **opt.merge!(pos: i)) }
+      src.map!.with_index(idx) { |v, i| render_part(v, **opt, pos: i) }
       src.compact!
       opt[:html] ? html_join(src, sep) : src.join(sep) if src.present?
     end
@@ -1517,7 +1521,8 @@ class ExecReport::FlashPart < ExecReport::Part
   # @see #render_part
   #
   def render(src = nil, **opt)
-    super((src || self), **opt)
+    src ||= self
+    super
   end
 
   # ===========================================================================

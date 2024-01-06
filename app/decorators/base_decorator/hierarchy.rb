@@ -388,7 +388,7 @@ module BaseDecorator::Hierarchy
     label = name
     unless label.is_a?(ActiveSupport::SafeBuffer)
       term  = (opt[:term] || type).to_s.titleize
-      label = "#{term} #{label}"
+      label = "#{term} #{label}".strip
     end
     label = toggle << html_span(label, class: 'text')
 

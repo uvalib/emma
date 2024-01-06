@@ -57,10 +57,10 @@ class HomeController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Hash, nil] result
+  # @param [Hash, nil] entry
   # @param [Hash]      opt
   #
   # @return [Hash{Symbol=>Hash,Array}]
   #
-  def show_values: (?(anyHash|nil) result, **untyped opt) -> symHash
+  def show_values: (?(anyHash|nil) entry, **untyped opt) -> symHash
 end

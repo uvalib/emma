@@ -349,10 +349,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def extract_fields(rec, fields)
       return {} if rec.blank?
-      fields = fields.flatten
-      fields.compact!
-      # noinspection RubyMismatchedArgumentType
-      fields.map! { |f| [f.to_sym, field_value(rec, f)] }.to_h
+      fields.flatten.compact.map! { |f| [f.to_sym, field_value(rec, f)] }.to_h
     end
 
     # Fields with values normalized for comparison.
@@ -1366,17 +1363,13 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [String]                      If *separator* is a plain string.
   #
   def all_item_numbers(separator = nil)
-    html    = separator.is_a?(ActiveSupport::SafeBuffer)
-    numbers = records.map { |rec| item_number(rec) }
-    numbers.compact!
-    numbers.sort_by!(&:number_value)
-    numbers.uniq!(&:number_range)
-    numbers.map!(&:to_s)
-    numbers.map! { |v| ERB::Util.h(v) } if html
-    numbers = numbers.join(separator)   if separator
-    numbers = numbers.html_safe         if html
-    # noinspection RubyMismatchedReturnType
-    numbers
+    numbers = records.map { |rec| item_number(rec) }.compact
+    numbers = numbers.sort_by(&:number_value).uniq(&:number_range).map!(&:to_s)
+    case separator
+      when ActiveSupport::SafeBuffer then html_join(numbers, separator)
+      when String                    then numbers.join(separator)
+      else                                numbers
+    end
   end
 
   # ===========================================================================

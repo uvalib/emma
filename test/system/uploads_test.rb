@@ -401,10 +401,10 @@ class UploadsTest < ApplicationSystemTestCase
   #
   # @return [String, nil]
   #
-  def index_redirect(**opt, &blk)
+  def index_redirect(**opt)
     opt[:user] ||= current_user || @user
     opt[:dst]  ||= :list_own
-    super(**opt, &blk)
+    super
   end
 
 end

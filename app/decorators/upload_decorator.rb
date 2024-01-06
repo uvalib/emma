@@ -363,10 +363,10 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
+      trace_attrs!(opt)
       items_menu_role_constraints!(opt)
       opt[:sort] ||= { id: :desc } if administrator? || manager?
-      trace_attrs!(opt)
-      super(**opt)
+      super
     end
 
     # =========================================================================
@@ -544,7 +544,7 @@ class UploadDecorator
   def list_field_values(**opt)
     opt[:except] ||= FIELD_FILTERS unless developer?
     trace_attrs!(opt)
-    result = super(**opt)
+    result = super
 
     # Move :file_data and :emma_data to the end.
     data   = result.extract!(*compound_fields).presence and result.merge!(data)
@@ -588,16 +588,17 @@ class UploadDecorator
 
   # details_container
   #
-  # @param [Array]         before     Optional elements before the details.
-  # @param [Array<Symbol>] skip       Display aspects to avoid.
-  # @param [Hash]          opt        Passed to super
+  # @param [Array] before             Optional elements before the details.
+  # @param [Hash]  opt                Passed to super except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :skip   Display aspects to avoid.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def details_container(*before, skip: [], **opt, &blk)
-    skip = Array.wrap(skip)
+  def details_container(*before, **opt, &blk)
+    skip = Array.wrap(opt.delete(:skip))
     before.prepend(cover(placeholder: false)) unless skip.include?(:cover)
-    super(*before, **opt, &blk)
+    super
   end
 
   # ===========================================================================
@@ -617,7 +618,8 @@ class UploadDecorator
     trace_attrs!(opt)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
-    super(**opt, before: { actions: controls })
+    opt[:before] = { actions: controls }
+    super
   end
 
   # Transform a field value for rendering in a table.
@@ -764,8 +766,8 @@ class UploadDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def model_form(**opt)
-    opt[:uploader] = true unless opt.key?(:uploader)
-    super(**opt)
+    opt.reverse_merge!(uploader: true)
+    super
   end
 
   # ===========================================================================
@@ -838,7 +840,7 @@ class UploadDecorator
   #
   def cancel_button(**opt)
     opt[:'data-path'] ||= opt.delete(:url) || context[:cancel] || back_path
-    super(**opt)
+    super
   end
 
   # Data for hidden form fields.

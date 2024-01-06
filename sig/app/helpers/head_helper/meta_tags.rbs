@@ -98,7 +98,7 @@ module HeadHelper::MetaTags
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emit_page_meta_tags: (?(symHash|nil) opt) -> ActiveSupport::SafeBuffer
+  def emit_page_meta_tags: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # Merge hashes, accumulating values as arrays for overlapping keys.
   #
@@ -126,7 +126,7 @@ module HeadHelper::MetaTags
   # @return [ActiveSupport::SafeBuffer]       If valid.
   # @return [nil]                             If the tag would be a "no-op".
   #
-  def emit_meta_tag: (Symbol key, (String|Symbol|anyArray|nil) value, ?(symHash|nil) opt) -> (ActiveSupport::SafeBuffer | nil)
+  def emit_meta_tag: (Symbol key, (String|Symbol|anyArray|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Set '<meta name="description">', eliminating any previous value.
   #

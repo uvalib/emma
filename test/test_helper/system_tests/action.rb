@@ -78,7 +78,7 @@ module TestHelper::SystemTests::Action
   #
   def assert_valid_action_page(model, action, **opt)
     prop = property(model, action)&.slice(:title, :heading)
-    opt.reverse_merge!(prop) if prop.present?
+    opt.reverse_merge!(prop) if prop.is_a?(Hash)
     assert_valid_page(**opt)
   end
 

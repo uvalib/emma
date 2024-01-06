@@ -147,13 +147,14 @@ module Record::Identification
   # @note From Upload#get_value
   #
   def get_value(item, key, default: nil, **)
-    return if key.blank?
-    if key.is_a?(Array)
-      key.find { |k| (v = get_value(item, k)) and break v }
+    if key.blank?
+      nil
+    elsif key.is_a?(Array)
+      key.find { |k| (v = get_value(item, k)) and (break v) }
     elsif item.respond_to?(key)
       item.send(key)
-    elsif item.respond_to?(:emma_metadata) # Upload, etc.
-      item.emma_metadata&.dig(key.to_sym)
+    elsif item.respond_to?(:emma_metadata) # ManifestItem
+      item.emma_metadata[key.to_sym]
     elsif item.is_a?(Hash)
       item[key.to_sym] || item[key.to_s]
     end.presence || default
@@ -345,22 +346,27 @@ module Record::Identification
   # @note From Upload::IdentifierMethods#id_term
   #
   def id_term(v = nil, **opt)
-    id_key  = opt.key?(:id_key) ? opt.delete(:id_key) : id_column
-    sid_key = opt.delete(:sid_key)
-    v = opt     if v.nil? && opt.present?
+    i_key = opt.key?(:id_key) ? opt.delete(:id_key) : id_column
+    s_key = opt.delete(:sid_key)
+    v = opt     if v.nil?
     v = v.strip if v.is_a?(String)
     v = v.to_s  if v.is_a?(Symbol)
+    v = v.presence
     id = sid = nil
-    if v.is_a?(Model) || v.is_a?(Hash)
-      id  = get_value(v, id_key)  if id_key
-      sid = get_value(v, sid_key) if sid_key && !id
-    elsif valid_id?(v)
-      id  = v if id_key
-    else
-      sid = v if sid_key
+    if valid_id?(v)
+      id  = v if i_key
+    elsif v.is_a?(String)
+      sid = v if s_key
+    elsif v
+      id  = get_value(v, i_key) if i_key
+      sid = get_value(v, s_key) if s_key && !id
     end
-    # noinspection RubyNestedTernaryOperatorsInspection
-    sid ? { sid_key => sid } : { id_key => (digits_only?(id) ? id.to_i : id) }
+    # noinspection RubyMismatchedReturnType
+    if sid
+      { s_key => sid.to_s }
+    else
+      { i_key => (digits_only?(id) ? id.to_i : id) }
+    end
   end
 
   # Transform a mixture of ID representations into a set of one or more

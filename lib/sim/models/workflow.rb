@@ -150,10 +150,9 @@ module Workflow::Base::Simulation
   # @return [nil]
   #
   def __debug_sim(*args, **opt, &blk)
-    opt.reverse_merge!(leader: '   ')
     meth = args.first.is_a?(Symbol) ? args.shift : calling_method
     args.unshift(':%-20s' % meth)
-    __debug_line(*args, **opt, &blk)
+    __debug_line(*args, leader: '   ', **opt, &blk)
   end
 
 end

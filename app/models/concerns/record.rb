@@ -57,7 +57,8 @@ module Record
   #
   def __included(base, mod, tag = nil)
     tag ||= mod.try(:name)&.remove(/^[^:]+::/) || mod
-    super(base, mod, "[#{tag}]")
+    tag &&= "[#{tag}]"
+    super
   end
     .tap { |meth| neutralize(meth) unless TRACE_CONCERNS }
 

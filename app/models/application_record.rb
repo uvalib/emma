@@ -126,8 +126,10 @@ class ApplicationRecord < ActiveRecord::Base
   # noinspection RubyMismatchedReturnType
   #++
   def self.instance_for(v)
-    v = v.values_at(model_key, model_id_key).first if v.is_a?(Hash)
-    v.is_a?(self) ? v : ((v &&= positive(v) || v) && find_by(id: v))
+    v = v.values_at(model_key, model_id_key).first  if v.is_a?(Hash)
+    return                                          if v.nil?
+    return v                                        if v.is_a?(self)
+    find_by(id: v)                                  if (v = positive(v))
   end
 
   delegate :model_type, :model_key, :model_id_key, to: :class

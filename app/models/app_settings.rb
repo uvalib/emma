@@ -503,7 +503,7 @@ class AppSettings < AppGlobal
     #
     def reset_item(values = nil)
       values = prepare_all(values) || default
-      super(values)
+      super
     end
 
     # =========================================================================

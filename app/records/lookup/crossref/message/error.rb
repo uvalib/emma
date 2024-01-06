@@ -34,7 +34,7 @@ class Lookup::Crossref::Message::Error < Lookup::Crossref::Api::Message
       txt = src.is_a?(ApiService::RequestError) ? 'NOT FOUND' : src.message
       src = { status: 'error', code: cod, text: txt }.compact
     end
-    super(src, opt)
+    super
   end
 
 end

@@ -378,7 +378,7 @@ class Paginator
     #
     # @return [Integer]               Zero indicates unknown count.
     #
-    def item_count(value, default: 0)
+    def item_count(value, default: 0, **)
       case value
         when ActiveRecord::Relation
           value.count
@@ -483,7 +483,8 @@ class Paginator
   # @return [Integer]               Zero indicates unknown count.
   #
   def record_count(value = nil, **opt)
-    super((value || self), **opt)
+    value ||= self
+    super
   end
 
   # Extract the number of "items" reported by an object.
@@ -494,7 +495,8 @@ class Paginator
   # @return [Integer]               Zero indicates unknown count.
   #
   def item_count(value = nil, **opt)
-    super((value || self), **opt)
+    value ||= self
+    super
   end
 
   # ===========================================================================
@@ -1006,13 +1008,8 @@ class Paginator
   # @return [*]
   #
   def method_missing(name, *args, &blk)
-    if @page_items&.respond_to?(name)
-      @page_items.send(name, *args, &blk)
-    elsif @page_source&.respond_to?(name)
-      @page_source.send(name, *args, &blk)
-    else
-      super
-    end
+    var = [@page_items, @page_source].find { |v| v&.respond_to?(name) }
+    var ? var.send(name, *args, &blk) : super
   end
 
 end

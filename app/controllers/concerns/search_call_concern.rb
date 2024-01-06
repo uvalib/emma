@@ -96,13 +96,13 @@ module SearchCallConcern
   # @return [Hash{Symbol=>Hash}]
   #
   def show_values(item = @item, **opt)
-    opt.reverse_merge!(name: :search_call)
     if item.is_a?(SearchCall)
-      result = item.as_search_parameters
+      item = item.as_search_parameters
     else
-      result = item.to_h.deep_symbolize_keys
+      item = item.to_h.deep_symbolize_keys
     end
-    super(result, **opt)
+    opt.reverse_merge!(name: :search_call)
+    super
   end
 
   # ===========================================================================

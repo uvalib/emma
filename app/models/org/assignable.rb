@@ -28,7 +28,8 @@ module Org::Assignable
   # @return [Hash{Symbol=>*}]
   #
   def normalize_attributes(attr, **opt)
-    super(attr, compact: false, key_norm: true, **opt)
+    opt.reverse_merge!(key_norm: true, compact: false)
+    super
   end
 
   # ===========================================================================

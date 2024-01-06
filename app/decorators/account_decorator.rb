@@ -114,7 +114,7 @@ class AccountDecorator < BaseDecorator
         data = Array.wrap(data).presence
         opt[:fixed] = true if data&.excluding(current_user.email)&.blank?
       end
-      super(label, value, **opt)
+      super
     end
 
     # =========================================================================
@@ -132,7 +132,7 @@ class AccountDecorator < BaseDecorator
     def items_menu(**opt)
       items_menu_role_constraints!(opt)
       opt[:sort] ||= { id: :asc }
-      super(**opt)
+      super
     end
 
     # =========================================================================
@@ -251,7 +251,8 @@ class AccountDecorator
     trace_attrs!(opt)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
-    super(**opt, before: { actions: controls })
+    opt[:before] = { actions: controls }
+    super
   end
 
   # ===========================================================================
@@ -275,9 +276,9 @@ class AccountDecorator
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def list_field_values(**opt)
-    opt[:except] ||= FIELD_FILTERS unless developer?
     trace_attrs!(opt)
-    super(**opt)
+    opt[:except] ||= FIELD_FILTERS unless developer?
+    super
   end
 
   # ===========================================================================
@@ -326,9 +327,9 @@ class AccountDecorator
   def render_form_email(name, value, **opt)
     action = opt.delete(:action) || context[:action]
     edit   = (action == :edit)
-    opt[:readonly]     = true                 if edit
-    opt[:title]        = EMAIL_FIELD_READONLY if edit
-    opt[:autocomplete] = 'email'              unless opt.key?(:autocomplete)
+    opt[:readonly] = true                 if edit
+    opt[:title]    = EMAIL_FIELD_READONLY if edit
+    opt.reverse_merge!(autocomplete: 'email')
     super
   end
 
@@ -348,8 +349,8 @@ class AccountDecorator
     required  = current || !edit
     min, max  = opt.values_at(:minlength, :maxlength)
     if field == :password
-      min = MINIMUM_PASSWORD_LENGTH and opt.merge!(minlength: min) unless min
-      max = MAXIMUM_PASSWORD_LENGTH and opt.merge!(maxlength: max) unless max
+      min = opt[:minlength] = MINIMUM_PASSWORD_LENGTH unless min
+      max = opt[:maxlength] = MAXIMUM_PASSWORD_LENGTH unless max
     end
     length    = (min_length_note(**opt)       if min || max)
     curr_note = (current_password_note(**opt) if current && edit)

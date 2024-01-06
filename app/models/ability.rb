@@ -641,7 +641,9 @@ class Ability
   # @param [*]                   extra_args
   #
   def can?(action, subject, *extra_args)
-    action.blank? ? false : super(action.to_sym, subject, *extra_args)
+    return false if action.blank?
+    action = action.to_sym
+    super
   end
 
   # Returns the opposite of the #can? method.
@@ -653,7 +655,9 @@ class Ability
   # @param [*]                   extra_args
   #
   def cannot?(action, subject, *extra_args)
-    action.blank? || super(action.to_sym, subject, *extra_args)
+    return true if action.blank?
+    action = action.to_sym
+    super
   end
 
   # Add a rule allowing an action.
@@ -667,7 +671,7 @@ class Ability
   def can(action = nil, subject = nil, *conditions, &blk)
     action, subject, conditions = prep_conditions(action, subject, conditions)
     all_actions_add(action, subject)
-    super(action, subject, *conditions, &blk)
+    super
   end
 
   # Add a rule forbidding an action.
@@ -681,7 +685,7 @@ class Ability
   def cannot(action = nil, subject = nil, *conditions, &blk)
     action, subject, conditions = prep_conditions(action, subject, conditions)
     all_actions_remove(action, subject)
-    super(action, subject, *conditions, &blk)
+    super
   end
 
   # ===========================================================================

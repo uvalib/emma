@@ -31,7 +31,8 @@ class SearchTitleDecorator < SearchDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def list_item(before: nil, after: nil, **opt)
+  def list_item(**opt)
+    trace_attrs!(opt)
     if present?
       added = {}
       # noinspection RailsParamDefResolve
@@ -45,8 +46,7 @@ class SearchTitleDecorator < SearchDecorator
       opt[:after]    = added                   if object.aggregate?
       opt[:render] ||= :render_field_hierarchy if title_results?
     end
-    trace_attrs!(opt)
-    super(before: before, after: after, **opt)
+    super
   end
 
   # Include control icons below the entry number.

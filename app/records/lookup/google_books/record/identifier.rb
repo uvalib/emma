@@ -39,7 +39,7 @@ class Lookup::GoogleBooks::Record::Identifier < Lookup::GoogleBooks::Api::Record
       src = PublicationIdentifier.cast(src)
       src &&= { type: src.type.to_s, identifier: src.value }
     end
-    super(src, **opt)
+    super
   end
 
   # ===========================================================================

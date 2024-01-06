@@ -230,13 +230,14 @@ module Record::EmmaData
     #
     def make_retrieval_link(rid = nil, base_url = nil)
       rid ||= emma_data[:emma_retrievalLink]
-      super(rid, base_url)
+      super
     end
 
     # @see Record::EmmaData#generate_emma_data
     #
     def generate_emma_data(data, attr = nil)
-      super(data, (attr || self))
+      attr ||= self
+      super
     end
 
     # =========================================================================

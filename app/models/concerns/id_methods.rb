@@ -124,11 +124,13 @@ module IdMethods
     public
 
     def uid(item = nil)
-      super(item || self)
+      item ||= self
+      super
     end
 
     def oid(item = nil)
-      super(item || self)
+      item ||= self
+      super
     end
 
   end

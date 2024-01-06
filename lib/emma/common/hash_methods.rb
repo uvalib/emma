@@ -7,6 +7,12 @@ __loading_begin(__FILE__)
 
 module Emma::Common::HashMethods
 
+  # Analyze Hash extensions behavior.
+  #
+  # @type [Boolean]
+  #
+  DEBUG_HASH = true?(ENV['DEBUG_HASH'])
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -23,9 +29,11 @@ module Emma::Common::HashMethods
   # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
   #
   def partition_hash(hash, *keys)
-    keys = gather_keys(*keys)
-    hash = normalize_hash(hash)
-    return (matched = hash.slice(*keys)), hash.except(*matched.keys)
+    keys      = keys.flatten.compact_blank!.map!(&:to_sym)
+    hash      = normalize_hash(hash)
+    matching  = hash.slice(*keys)
+    remainder = hash.except(*matching.keys)
+    return matching, remainder
   end
 
   # Retain the elements identified by *keys* in *hash* (that is, extract all
@@ -41,8 +49,8 @@ module Emma::Common::HashMethods
   # changed by this method.
   #
   def remainder_hash!(hash, *keys)
-    keys = gather_keys(*keys)
-    hash = normalize_hash(hash) unless hash.class == ::Hash
+    keys = keys.flatten.compact_blank!.map!(&:to_sym)
+    hash = normalize_hash!(hash)
     hash.slice!(*keys)
   end
 
@@ -58,20 +66,9 @@ module Emma::Common::HashMethods
   # changed by this method.
   #
   def extract_hash!(hash, *keys)
-    keys = gather_keys(*keys)
-    hash = normalize_hash(hash) unless hash.class == ::Hash
-    hash.slice(*keys).tap { |matches| hash.except!(*matches.keys) }
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  private
-
-  def gather_keys(*keys)
-    keys.concat(Array.wrap(yield)) if block_given?
-    keys.flatten.compact_blank!.map!(&:to_sym).uniq
+    keys = keys.flatten.compact_blank!.map!(&:to_sym)
+    hash = normalize_hash!(hash)
+    hash.slice(*keys).tap { |matching| hash.except!(*matching.keys) }
   end
 
   # ===========================================================================
@@ -83,11 +80,20 @@ module Emma::Common::HashMethods
   # normalize_hash
   #
   # @param [ActionController::Parameters, Hash, nil] item
+  # @param [Boolean]                                 debug
   #
   # @return [Hash{Symbol=>*}]         A new normalized Hash.
   #
-  def normalize_hash(item)
-    (item&.try(:to_unsafe_h) || item)&.symbolize_keys || {}
+  def normalize_hash(item, debug: false)
+    item  = item.params      if item.respond_to?(:params)
+    item  = item.to_unsafe_h if item.respond_to?(:to_unsafe_h)
+    valid = item.is_a?(Hash)
+    if (DEBUG_HASH && !valid) || (debug && (item.class != ::Hash))
+      Log.debug { "#{__method__}: #{item.class} at\n#{caller.join("\n")}" }
+    elsif !valid
+      Log.warn { "#{__method__}: #{item.class} unexpected: #{item.inspect}" }
+    end
+    valid ? item.symbolize_keys : {}
   end
 
   # normalize_hash
@@ -97,8 +103,14 @@ module Emma::Common::HashMethods
   # @return [Hash{Symbol=>*}]     The modified item itself if *item* is a Hash.
   #
   def normalize_hash!(item)
-    new_item = normalize_hash(item)
-    (item.class == ::Hash) ? item.replace(new_item) : new_item
+    # noinspection RubyMismatchedReturnType
+    if item.class != ::Hash
+      normalize_hash(item, debug: DEBUG_HASH)
+    elsif !item.keys.all? { |k| k.is_a?(Symbol) }
+      item.replace(item.symbolize_keys)
+    else
+      item
+    end
   end
 
   # ===========================================================================

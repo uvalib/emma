@@ -57,7 +57,6 @@ module Record::Assignable
   #++
   def normalize_attributes(attr, **opt)
     opt  = opt[:attr_opt].merge(opt.except(:attr_opt)) if opt[:attr_opt]
-    opt  = attr[:attr_opt].merge(opt) if attr.is_a?(Hash) && attr[:attr_opt]
     meth = opt[:meth] || __method__
 
     case attr
@@ -67,7 +66,10 @@ module Record::Assignable
         end
         attr = attr.fields.except!(*ignored_keys)
       when Hash
-        return attr.merge(attr_opt: opt) if attr.dig(:attr_opt, :normalized)
+        if (attr_opt = attr[:attr_opt]).is_a?(Hash)
+          opt.reverse_merge!(attr_opt)
+          return attr.merge(attr_opt: opt) if attr_opt[:normalized]
+        end
         attr = attr.except(:attr_opt)
       when nil
         attr = {}
@@ -264,12 +266,12 @@ module Record::Assignable
   #
   def is_invalid?(v, type)
     case type
-      when 'json'     then !v.is_a?(Hash)
-      when 'date'     then !v.is_a?(Date)
-      when 'datetime' then !v.is_a?(DateTime)
-      when 'number'   then !v.is_a?(Numeric)
-      when TrueFalse  then !v.is_a?(TrueFalse)
-      else                 v.respond_to?(:valid?) ? !v.valid? : v.nil?
+      when true, false  then !v.is_a?(TrueFalse)
+      when 'json'       then !v.is_a?(Hash)
+      when 'date'       then !v.is_a?(Date)
+      when 'datetime'   then !v.is_a?(DateTime)
+      when 'number'     then !v.is_a?(Numeric)
+      else                   v.respond_to?(:valid?) ? !v.valid? : v.nil?
     end
   end
 
@@ -315,14 +317,14 @@ module Record::Assignable
   #
   def normalize_single(v, type, **opt)
     # noinspection RubyMismatchedArgumentType
-    case
-      when type == 'json'     then normalize_json(v)
-      when type == 'date'     then normalize_date(v)
-      when type == 'datetime' then normalize_datetime(v)
-      when type == 'number'   then normalize_number(v)
-      when type == TrueFalse  then normalize_bool(v)
-      when type.is_a?(Class)  then normalize_class(v, type, **opt)
-      else                         normalize_text(v)
+    case type
+      when Class        then normalize_class(v, type, **opt)
+      when true, false  then normalize_bool(v)
+      when 'json'       then normalize_json(v)
+      when 'date'       then normalize_date(v)
+      when 'datetime'   then normalize_datetime(v)
+      when 'number'     then normalize_number(v)
+      else                   normalize_text(v)
     end
   end
 
@@ -533,7 +535,7 @@ module Record::Assignable
     #
     # @note - for dev traceability
     #
-    def initialize(attr = nil, &blk)
+    def initialize(attr = nil)
       super
     end
 
@@ -550,7 +552,7 @@ module Record::Assignable
       attr = normalize_attributes(attr)
       opt  = attr.delete(:attr_opt) || {}
       set_model_options(opt)
-      super(attr)
+      super
     rescue => err # TODO: testing - remove?
       Log.warn { "#{record_name}.#{__method__}: #{err.class}: #{err.message}" }
       raise err

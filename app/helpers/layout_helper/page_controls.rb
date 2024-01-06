@@ -163,8 +163,8 @@ module LayoutHelper::PageControls
         state << 'disabled' if act  == action
       end
       opt = path_opt.merge(entry.except(:params, :label))
-      opt.merge!(**prm) if prm.present?
-      opt.merge!(link_opt: append_css(link_opt, *state))
+      opt.merge!(prm) if prm.present?
+      opt[:link_opt] = append_css(link_opt, *state)
       link_to_action(lbl, **opt)
     }.compact.join("\n").html_safe
   end

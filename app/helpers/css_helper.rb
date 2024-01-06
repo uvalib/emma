@@ -302,10 +302,7 @@ module CssHelper
   #
   def unique_id(*parts, unique: nil, index: nil, **opt)
     unique = hex_rand if unique.nil? || unique.is_a?(TrueClass)
-    parts << unique   if unique
-    parts << index    if index
-    opt.reverse_merge!(underscore: false, camelize: false)
-    html_id(*parts, **opt)
+    html_id(*parts, unique, index, underscore: false, camelize: false, **opt)
   end
 
   # ===========================================================================

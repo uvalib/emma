@@ -175,7 +175,8 @@ class User < ApplicationRecord
   # @return [nil]                     If no matching record was found.
   #
   def self.id_value(user, **opt)
-    super(instance_for(user), **opt)
+    user = instance_for(user)
+    super
   end
 
   # ===========================================================================
@@ -222,7 +223,7 @@ class User < ApplicationRecord
     if item.is_a?(String) && !digits_only?(item)
       find_by(email: item)
     else
-      opt[:fatal] = false unless opt.key?(:fatal)
+      opt.reverse_merge!(fatal: false)
       super
     end
   end

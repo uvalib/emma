@@ -197,7 +197,7 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
       opt         = opt.dup
       @diagnostic = opt.delete(:diagnostic)
     end
-    super(src, opt)
+    super
     normalize_dates!
   end
 

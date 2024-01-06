@@ -227,13 +227,13 @@ class Upload < ApplicationRecord
   #
   # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @param [Upload, Hash, #repository, #emma_repository] item
-  # @param [Symbol, String]                              key
-  # @param [Any]                                         default
+  # @param [Model, Hash, String, Symbol, *]       item
+  # @param [Symbol, String, Array<Symbol,String>] key
+  # @param [*]                                    default
   #
   # @return [*]
   #
-  def self.get_value: ((Upload|anyHash) item, (String|Symbol) key, ?default: untyped) -> untyped
+  def self.get_value: (untyped item, (Symbol|String|Array[Symbol|String]) key, ?default: untyped) -> untyped?
 
   # Create a URL for use with :emma_retrievalLink.
   #

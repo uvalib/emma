@@ -39,7 +39,7 @@ class SearchCallsDecorator < BaseCollectionDecorator
   #
   def render_table(extended: false, **opt)
     prepend_css!(opt, 'extended') if extended
-    super(**opt)
+    super
   end
 
 end

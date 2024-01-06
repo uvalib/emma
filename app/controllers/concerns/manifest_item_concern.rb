@@ -724,7 +724,8 @@ module ManifestItemConcern
   # @return [Hash{Symbol=>Hash}]
   #
   def index_values(list = nil, **opt)
-    super(list, wrap: RESPONSE_OUTER, **opt)
+    opt.reverse_merge!(wrap: RESPONSE_OUTER)
+    super
   end
 
   # Response values for de-serializing the show page to JSON or XML.
@@ -741,7 +742,7 @@ module ManifestItemConcern
       file = item.delete(:file_data)
       item[:file_data] = safe_json_parse(file) if file
     end
-    super(item, **opt)
+    super
   end
 
   # ===========================================================================
