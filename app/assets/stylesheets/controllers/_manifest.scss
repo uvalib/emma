@@ -104,7 +104,7 @@
 body.manifest.new:not(.select),
 body.manifest.edit:not(.select) {
 
-    $hdg-gap: calc($gap-y * 2) calc($gap-x * 2);
+    $hdg-gap: calc(2 * $gap-y) calc(2 * $gap-x);
 
     .layout-content {
 
@@ -115,7 +115,7 @@ body.manifest.edit:not(.select) {
         // - Replacing part of the left margin with padding is required to keep
         //   the Save button box shadow from being clipped when it is hovered.
 
-        $half-left: calc(#{$page-padding-x} / 2);
+        $half-left: calc($page-padding-x / 2);
 
         margin-left:       $half-left;
         overflow:          hidden;
@@ -574,7 +574,7 @@ body.manifest.remit:not(.select) {
 
         @media #{$not-wide-screen} {
             margin-top:    $page-padding-y;
-            margin-bottom: calc(2 * #{$page-padding-y});
+            margin-bottom: calc(2 * $page-padding-y);
         }
 
         &::before, &::after {
@@ -705,7 +705,7 @@ body.manifest.remit:not(.select) {
 
             display:       grid;
             align-items:   start;
-            width:         calc(100% - ($col-pad * 4));
+            width:         calc(100% - #{$col-pad * 4});
             padding:       $row-pad ($col-pad * 2);
             margin:        0;
             line-height:   1.375;

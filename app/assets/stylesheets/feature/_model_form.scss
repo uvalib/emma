@@ -429,7 +429,7 @@
 
     @media #{$narrow-screen} {
         margin-right: 0.25rem;
-        gap:          calc(#{$gap-y} / 3) calc(#{$gap-x} / 3);
+        gap:          calc($gap-y / 3) calc($gap-x / 3);
     }
 
     grid-template-columns:
@@ -640,14 +640,14 @@
         display:       grid;
         position:      sticky;
         z-index:       $z-controls;
-        top:           calc(2 * #{$gap-y});
-        margin-bottom: calc(2 * #{$gap-y});
-        background:    var(--bg-color);
-        box-shadow:    0 -0.5rem 0      1.0rem var(--bg-color),
-                       0  0.5rem 0.5rem 0.5rem var(--bg-color);
+        top:           calc(2 * $gap-y);
+        margin-bottom: calc(2 * $gap-y);
+        background:    $bg-color;
+        box-shadow:    0 -0.5rem 0      1.0rem $bg-color,
+                       0  0.5rem 0.5rem 0.5rem $bg-color;
 
         grid-template-columns: 1fr;
-        row-gap:               calc(2 * #{$gap-y});
+        row-gap:               calc(2 * $gap-y);
         column-gap:            $gap-x;
     }
 
@@ -660,7 +660,7 @@
 
         @include grid.column-span;
 
-        margin-top: calc(4 * #{$gap-y});
+        margin-top: calc(4 * $gap-y);
         z-index:    $z-visible; // NOTE: Needed for Firefox.
     }
 

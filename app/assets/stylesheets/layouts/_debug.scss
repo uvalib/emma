@@ -106,7 +106,7 @@
 
     @media #{$not-wide-screen} {
         width:      100%;
-        margin-top: calc(2 * #{$page-padding-y});
+        margin-top: calc(2 * $page-padding-y);
     }
 
     //=========================================================================
@@ -116,7 +116,7 @@
     .toggle-panel-title {
 
         @media #{$narrow-screen} {
-            margin:    calc(2 * #{$flex-gap-y}) 0;
+            margin:    calc(2 * $flex-gap-y) 0;
             font-size: x-large;
         }
 

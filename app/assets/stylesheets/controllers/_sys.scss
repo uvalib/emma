@@ -60,7 +60,7 @@ body.sys {
     //=========================================================================
 
     h2 {
-        margin-top: calc(2.5 * #{$page-padding-y});
+        margin-top: calc(2.5 * $page-padding-y);
     }
 
     p {

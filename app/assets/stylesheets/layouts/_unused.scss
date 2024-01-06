@@ -65,9 +65,9 @@
     $separator: "\00A0\00A0|\00A0\00A0";
 
     position:      fixed;
-    top:           calc(100vh - #{$page-padding-y} - #{$marker-y});
+    top:           calc(100vh - $page-padding-y - $marker-y);
     left:          $marker-x;
-    width:         calc(100vw - #{$page-padding-x} - (2 * #{$marker-x}));
+    width:         calc(100vw - $page-padding-x - #{$marker-x * 2});
     color:         white;
     background:    hotpink;
     border:        0.5rem solid lightgray;

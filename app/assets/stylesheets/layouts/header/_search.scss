@@ -313,18 +313,18 @@ $control-height:         2.25rem;
             // Set margin-top to keep shadow from being clipped above.
 
             @media #{$wide-screen} {
-                margin-top:     calc(#{$page-padding-y} * 1.5);
+                margin-top:     calc($page-padding-y * 1.5);
                 padding-top:    calc(#{header.$enclosure-pad-wide} + 0.5rem);
             }
 
             @media #{$medium-width} {
-                margin-top:     calc(#{$page-padding-y} * 3);
+                margin-top:     calc($page-padding-y * 3);
                 padding-top:    calc(#{header.$enclosure-pad-medium} + 0.5rem);
                 padding-bottom: 0.5rem;
             }
 
             @media #{$narrow-screen} {
-                margin-top:     calc(#{$page-padding-y} * 4);
+                margin-top:     calc($page-padding-y * 4);
                 padding-top:    calc(#{header.$enclosure-pad-narrow} + 0.5rem);
             }
         }
@@ -335,15 +335,15 @@ $control-height:         2.25rem;
             // Set margin-bottom to keep shadow from being clipped below.
 
             @media #{$wide-screen} {
-                margin-bottom:  calc(#{$page-padding-y} * 2);
+                margin-bottom:  calc($page-padding-y * 2);
             }
 
             @media #{$medium-width} {
-                margin-bottom:  calc(#{$page-padding-y} * 3);
+                margin-bottom:  calc($page-padding-y * 3);
             }
 
             @media #{$narrow-screen} {
-                margin-bottom:  calc(#{$page-padding-y} * 4);
+                margin-bottom:  calc($page-padding-y * 4);
             }
         }
 
@@ -466,7 +466,7 @@ $control-height:         2.25rem;
 
             @media #{$narrow-screen} {
                 max-width: 80vw;
-                margin:    calc(2 * #{$gap-y}) 0;
+                margin:    calc(2 * $gap-y) 0;
             }
         }
     }
@@ -475,7 +475,7 @@ $control-height:         2.25rem;
     .search-bar-container {
 
         $sb-row-vertical-gap:        $gap-y;
-        $sb-row-narrow-vertical-gap: calc(3 * #{$gap-y});
+        $sb-row-narrow-vertical-gap: calc(3 * $gap-y);
         $sb-clear-inset:             -1.75rem;
 
         display:               grid;
@@ -544,11 +544,11 @@ $control-height:         2.25rem;
                 margin:         0;
 
                 @media #{$wide-screen} {
-                    column-gap: calc(2 * #{$gap-x});
+                    column-gap: calc(2 * $gap-x);
                 }
 
                 @media #{$medium-width} {
-                    column-gap: calc(4 * #{$gap-x});
+                    column-gap: calc(4 * $gap-x);
                 }
 
                 @media #{$narrow-screen} {
@@ -592,7 +592,7 @@ $control-height:         2.25rem;
             justify-items:   center;
             width:           100%;
             margin:          0;
-            margin-top:      calc(4 * #{$page-padding-y});
+            margin-top:      calc(4 * $page-padding-y);
         }
 
         .search-button          { order: 1; }
@@ -645,7 +645,7 @@ $control-height:         2.25rem;
         max-width:  unset;
         overflow-y: hidden;
         box-sizing: border-box;
-        row-gap:    calc(2 * #{$gap-y});
+        row-gap:    calc(2 * $gap-y);
         column-gap: $gap-x;
 
         // Maximum number of physical columns per width breakpoint.
@@ -667,7 +667,7 @@ $control-height:         2.25rem;
         }
 
         @media #{$medium-width} {
-            column-gap: calc(2 * #{$gap-x});
+            column-gap: calc(2 * $gap-x);
         }
 
         @media #{$narrow-screen} {
@@ -676,7 +676,7 @@ $control-height:         2.25rem;
 
             @include grid.column-classes($max-columns, $column, $template-map);
 
-            column-gap: calc(6 * #{$gap-x});
+            column-gap: calc(6 * $gap-x);
         }
 
         //=====================================================================
@@ -739,7 +739,7 @@ $control-height:         2.25rem;
             @include grid-cell;
 
             @media #{$not-narrow-screen} {
-                margin-right: calc(3 * #{$gap-x});
+                margin-right: calc(3 * $gap-x);
             }
 
             > * {

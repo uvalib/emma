@@ -8,6 +8,8 @@
 // Search controls
 //=============================================================================
 
+$list-item-gap-y: model.$list-item-gap-y;
+
 .pagination-top,
 .pagination-bottom {
 
@@ -20,14 +22,14 @@
 // @see BaseCollectionDecorator::List#index_controls
 .pagination-top {
 
-    margin-top:         model.$list-item-gap-y;
+    margin-top:         $list-item-gap-y;
 
     @media #{$not-narrow-screen} {
-        margin-bottom:  calc(2 * #{model.$list-item-gap-y});
+        margin-bottom:  calc(2 * $list-item-gap-y);
     }
 
     @media #{$narrow-screen} {
-        margin-bottom:  model.$list-item-gap-y;
+        margin-bottom:  $list-item-gap-y;
     }
 }
 
@@ -37,11 +39,11 @@
     margin-bottom:  0;
 
     @media #{$wide-screen} {
-        margin-top: calc(#{model.$list-item-gap-y} / 2);
+        margin-top: calc($list-item-gap-y / 2);
     }
 
     @media #{$not-wide-screen} {
-        margin-top: calc(2 * #{model.$list-item-gap-y});
+        margin-top: calc(2 * $list-item-gap-y);
     }
 }
 

@@ -105,7 +105,7 @@ $checkbox-x-gap: 0.675rem;
         &.label {
 
             @media #{$not-narrow-screen} {
-                margin-top: calc(#{$entry-padding} / 2);
+                margin-top: $entry-padding * 0.5;
             }
 
             @media #{$narrow-screen} {
@@ -771,7 +771,7 @@ form.select-entry {
 
         // A note inserted just below an input element.
         & + .label + .note {
-            margin-top:    calc(0.5rem - #{$entry-form-gap});
+            margin-top:    calc(0.5rem - $entry-form-gap);
             margin-bottom: -($entry-form-gap * 0.5);
             line-height:   1;
             text-indent:   0.5rem;
@@ -861,7 +861,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         .slider {
             position:       relative;
             height:         100%;
-            width:          calc(50% + #{$slider-pad-x});
+            width:          calc(50% + $slider-pad-x);
             word-break:     keep-all;
             color:          inherit;
             background:     $slider-bg;
@@ -903,8 +903,8 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         border-color:   $locked-color;
 
         .slider {
-            $x-pos:     $slider-offset + $slider-pad-x * 2;
-            transform:  translate(calc(100% - #{$x-pos}));
+            $x-pos:     $slider-offset + ($slider-pad-x * 2);
+            transform:  translate(calc(100% - $x-pos));
             &::after {  content: 'locked'; }
         }
     }
@@ -1089,8 +1089,8 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             );
 
             position: absolute;
-            top:      calc(50% - ($img-height * 0.5));
-            left:     calc(50% - ($img-width  * 0.5));
+            top:      calc(50% - #{$img-height * 0.5});
+            left:     calc(50% - #{$img-width  * 0.5});
         }
 
         // @see BaseDecorator::Lookup#lookup_query

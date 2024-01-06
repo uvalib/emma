@@ -10,7 +10,7 @@
 $aws-bucket-fg:          $rev-fg-color;
 $aws-bucket-bg:          $rev-bg-color;
 $aws-bucket-padding:     0.5rem;
-$aws-admin-section-gap:  calc(2 * #{$page-padding-y});
+$aws-admin-section-gap:  calc(2 * $page-padding-y);
 $aws-admin-column-space: 0.75rem;
 
 //=============================================================================

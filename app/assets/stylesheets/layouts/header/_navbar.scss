@@ -18,12 +18,12 @@
 
     @media #{$narrow-screen} {
         flex-direction: column;
-        padding-right:  calc(#{$page-padding-x} + #{$scroll-easement-x});
-        padding-left:   calc(#{$page-padding-x} * 2);
+        padding-right:  calc($page-padding-x + $scroll-easement-x);
+        padding-left:   calc($page-padding-x * 2);
     }
 
     &:last-child {
-        padding-bottom: calc(2 * #{$page-padding-y});
+        padding-bottom: calc(2 * $page-padding-y);
     }
 
     //=========================================================================

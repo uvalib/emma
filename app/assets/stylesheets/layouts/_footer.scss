@@ -24,7 +24,7 @@ $footer-margin-top: 1rem;
     display:        flex;
     flex-direction: column;
     margin:         0;
-    margin-top:     calc(#{$footer-margin-top} - #{$hcm-divider-width});
+    margin-top:     calc($footer-margin-top - $hcm-divider-width);
     padding:        0;
     border-top:     $hcm-divider-width solid $rev-bg-color;
     box-shadow:     0 0 1rem -0.25rem $rev-bg-color;

@@ -149,7 +149,7 @@
 
                     @include icon.edit;
 
-                    padding: calc(0.25 * #{$icon-pad}) $icon-pad;
+                    padding: calc(0.25 * $icon-pad) $icon-pad;
 
                     .symbol { font-size: large; }
                 }
@@ -158,7 +158,7 @@
 
                     @include icon.delete;
 
-                    padding: 0 calc(1.25 * #{$icon-pad});
+                    padding: 0 calc(1.25 * $icon-pad);
 
                     .symbol { font-size: large; }
                 }
@@ -248,7 +248,7 @@ $item-padding:      0.5rem;
             @media #{$not-narrow-screen} {
                 position:   absolute;
                 margin:     0;
-                column-gap: calc(2 * #{$gap-x});
+                column-gap: calc(2 * $gap-x);
             }
 
             @media #{$wide-screen} {
@@ -264,7 +264,7 @@ $item-padding:      0.5rem;
             .value.field-FileDataMetadataFilename {
                 // noinspection CssBrowserCompatibilityForProperties
                 word-wrap: break-word;
-                max-width: calc(#{$w-value-max-width} - #{$w-hierarchy-left});
+                max-width: calc($w-value-max-width - $w-hierarchy-left);
                 font-weight: bold;
             }
         }
@@ -609,7 +609,7 @@ $item-padding:      0.5rem;
 
         @media #{$narrow-screen} {
 
-            margin-top:         calc(2 * #{$page-padding-y});
+            margin-top:         calc(2 * $page-padding-y);
 
             &:first-child {
                 margin-top:     0;

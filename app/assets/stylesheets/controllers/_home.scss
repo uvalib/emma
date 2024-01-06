@@ -20,7 +20,7 @@ body.home-dashboard {
         }
 
         @media #{$not-wide-screen} {
-            margin-top: calc(2 * #{$page-padding-y});
+            margin-top: calc(2 * $page-padding-y);
         }
     }
 

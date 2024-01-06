@@ -94,7 +94,7 @@ $data-list-border-color: none;
     .value {
 
         @media #{v.$narrow-screen} {
-            margin-bottom: calc(3 * #{$list-item-gap-y} / 2);
+            margin-bottom: calc(1.5 * $list-item-gap-y);
         }
 
         // noinspection CssOverwrittenProperties

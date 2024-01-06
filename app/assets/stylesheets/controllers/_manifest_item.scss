@@ -1530,7 +1530,7 @@ table.manifest_item-grid {
                         }
 
                         &.date {
-                            height:         calc(100% - ($value-pad * 3));
+                            height:         calc(100% - #{$value-pad * 3});
                             width:          calc(100% + $value-pad);
                             letter-spacing: 0.25px;
                         }
@@ -1542,14 +1542,14 @@ table.manifest_item-grid {
                         &.array.enum {
                             padding-top:    $value-pad * 2;
                             padding-left:   $value-pad * 2;
-                            height:         calc(100% - ($value-pad * 3));
+                            height:         calc(100% - #{$value-pad * 3});
                         }
 
                         &.array.enum.multi {
 
                             padding-left:   $value-pad;
                             padding-right:  $value-pad * 8;
-                            height:         calc(100% - ($value-pad * 4));
+                            height:         calc(100% - #{$value-pad * 4});
 
                             .item {
                                 padding-right: $value-pad * 4;

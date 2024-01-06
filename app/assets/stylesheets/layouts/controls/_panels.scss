@@ -59,7 +59,7 @@
     }
 
     @media #{$medium-width} {
-        column-gap:     calc(2 * #{$gap-x});
+        column-gap:     calc(2 * $gap-x);
     }
 
     @media #{$narrow-screen} {

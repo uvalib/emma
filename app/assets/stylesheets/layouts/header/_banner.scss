@@ -179,7 +179,7 @@
         .help-popup {
 
             @media #{$narrow-screen} {
-                margin-top: calc(2 * #{$flex-gap-y});
+                margin-top: calc(2 * $flex-gap-y);
             }
 
             .popup-panel {

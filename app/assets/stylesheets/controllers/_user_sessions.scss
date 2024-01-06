@@ -38,7 +38,7 @@ body.user_sessions {
             [links]    1fr
             [options]  1fr;
         gap:        1rem 3rem;
-        margin-top: calc(2 * #{$page-padding-y});
+        margin-top: calc(2 * $page-padding-y);
     }
 
     @media #{$medium-width} {
@@ -50,13 +50,13 @@ body.user_sessions {
             [links]    auto
             [options]  auto;
         gap:        1rem;
-        margin-top: calc(3 * #{$page-padding-y});
+        margin-top: calc(3 * $page-padding-y);
     }
 
     @media #{$narrow-screen} {
         grid-template-columns: [label] max-content [other] auto;
         gap:    1rem;
-        margin: calc(3 * #{$page-padding-y}) calc(3 * #{$page-padding-x});
+        margin: calc(3 * $page-padding-y) calc(3 * $page-padding-x);
     }
 
     //=========================================================================
@@ -149,11 +149,11 @@ body.user_sessions {
                 }
 
                 @media #{$medium-width} {
-                    margin-right: calc(3 * #{$flex-gap-x});
+                    margin-right: calc(3 * $flex-gap-x);
                 }
 
                 @media #{$narrow-screen} {
-                    margin-right: calc(4 * #{$flex-gap-x});
+                    margin-right: calc(4 * $flex-gap-x);
                     grid-column-start: 1; // Force to next line.
                 }
             }
@@ -205,7 +205,7 @@ body.user_sessions {
 
             input[type='checkbox'] {
                 @media #{$wide-screen} {
-                    margin-right: calc(#{$flex-gap-x} / 2);
+                    margin-right: calc($flex-gap-x / 2);
                 }
                 @media #{$narrow-screen} {
                     margin-left:  0;
