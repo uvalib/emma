@@ -1,0 +1,3 @@
+class RecreateGoodJobCronIndexesWithConditional < ActiveRecord::Migration
+  def change: () -> untyped
+end
