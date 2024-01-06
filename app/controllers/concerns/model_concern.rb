@@ -186,6 +186,94 @@ module ModelConcern
 
   public
 
+  # Field name URL sort parameter names with this suffix are interpreted as
+  # a descending sort on the database column indicated by the root name.
+  # (E.g., "last_name_rev" will result in `{ last_name: :desc }`.)
+  #
+  # @type [String]
+  #
+  REVERSE_SUFFIX = LayoutHelper::SearchFilters::REVERSE_SORT_SUFFIX
+
+  # Field name URL parameters which need "_id" to be used as database column
+  # names. (E.g., "?sort=user" will order on "user_id".)
+  #
+  # @type [Array<String>]
+  #
+  ID_FIELD = %w[
+    active_job
+    manifest
+    org
+    submission
+    user
+  ].freeze
+
+  # Field name URL parameters which need "_at" to be used as database column
+  # names. (E.g., "?sort=updated" will order on "updated_at".)
+  #
+  # @type [Array<String>]
+  #
+  AT_FIELD = %w[
+    created
+    updated
+  ].freeze
+
+  # Field name URL parameters which need "_count" to be used as database column
+  # names. (E.g., "?sort=upload" will order on "upload_count".)
+  #
+  # @type [Array<String>]
+  #
+  COUNT_FIELD = %w[
+    upload
+    manifest
+  ].freeze
+
+  # Generate arguments to ActiveRecord#order from *val*.
+  #
+  # @param [Hash, String, Symbol, nil] prm
+  # @param [Hash]                      opt  Passed to #normalize_sort_order.
+  #
+  # @return [Hash]
+  #
+  def normalize_sort_order!(prm, **opt)
+    sort = normalize_sort_order(prm, **opt)
+    prm  = {} unless prm.is_a?(Hash)
+    # noinspection RubyMismatchedReturnType
+    sort ? prm.merge!(sort: sort) : prm.except!(:sort)
+  end
+
+  # Generate arguments to ActiveRecord#order from *val*.
+  #
+  # @param [Hash, String, Symbol, nil] val
+  # @param [Symbol, String]            dir
+  #
+  # @return [Hash]                    The arguments for #order.
+  # @return [String]                  A complex SQL expression.
+  # @return [nil]                     If no sort was specified.
+  #
+  def normalize_sort_order(val, dir: :asc, **)
+    val = val[:sort] if val.is_a?(Hash)
+    val = model_class.normalize_sort_order(val, dir: dir)
+    # noinspection RubyMismatchedReturnType
+    return val if val.nil? || val.is_a?(String)
+    val.map { |k, v|
+      next if v.nil? || false?(v)
+      case (field = k.to_s.delete_suffix(REVERSE_SUFFIX))
+        when *ID_FIELD    then field = "#{field}_id"
+        when *AT_FIELD    then field = "#{field}_at"
+        when *COUNT_FIELD then field = "#{field}_count"
+      end
+      v = dir if true?(v)
+      v = (v == :asc) ? :desc : :asc if k.end_with?(REVERSE_SUFFIX)
+      [field.to_sym, v]
+    }.compact.to_h.presence
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Return with the specified model record.
   #
   # @param [String, Integer, Hash, Model, *] item   Default: #identifier.
@@ -227,8 +315,9 @@ module ModelConcern
     opt[:limit] ||= paginator.page_size
     opt[:page]  ||= paginator.page_number
 
-    # Prepare terms.
+    # Prepare options.
     normalize_predicates!(opt)
+    normalize_sort_order!(opt)
 
     # Disallow experimental database WHERE predicates unless privileged.
     filters = administrator? ? [*filters] : [:filter_predicates!, *filters]

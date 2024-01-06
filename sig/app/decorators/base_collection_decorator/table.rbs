@@ -77,6 +77,27 @@ module BaseCollectionDecorator::Table
   #
   def table_heading: (?dark: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Render a heading element for the given column.
+  #
+  # @param [Symbol, String]  field
+  # @param [FieldConfig]     prop
+  # @param [Boolean]         sortable
+  # @param [String]          css      Characteristic CSS class/selector.
+  # @param [Hash]            opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_column_label: (Symbol|String field, FieldConfig prop, sortable: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a sort toggle element for a colum header.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_column_sorter: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Render a hidden row which spans the table.
   #
   # @param [String] css               Characteristic CSS class/selector.

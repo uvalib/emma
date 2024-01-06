@@ -18,6 +18,21 @@ AppDebug.file('shared/url');
 // ============================================================================
 
 /**
+ * Return the non-parameter portion of a URL (with no trailing slash).
+ *
+ * @param {string} [path]             Default: from `window.location`.
+ *
+ * @returns {string}
+ */
+export function baseUrl(path) {
+    if (path) {
+        return path.replace(/\?.*$/, '').replace(/\/+$/, '');
+    } else {
+        return window.location.origin + window.location.pathname;
+    }
+}
+
+/**
  * Extract the URL value associated with *arg*.
  *
  * @param {string|jQuery.Event|Event|Location|{url: string}} arg

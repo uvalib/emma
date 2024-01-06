@@ -195,12 +195,44 @@ module BaseCollectionDecorator::Table
     append_css!(inner, 'partial')  if arg[:partial]
     # noinspection RubyMismatchedArgumentType
     decorate(item).render_table_row(**opt) { |field, prop, **f_opt|
-      html_div(class: 'field', **f_opt) do
-        prop[:label] || labelize(field)
-      end
+      sortable = arg[:sortable] && (field != :actions)
+      table_column_label(field, prop, **f_opt, sortable: sortable)
     }.tap { |line|
       line.prepend(table_spanner(**trace_attrs_from(opt))) if dark
     }
+  end
+
+  # Render a heading element for the given column.
+  #
+  # @param [Symbol, String]  field
+  # @param [FieldConfig]     prop
+  # @param [Boolean]         sortable
+  # @param [String]          css      Characteristic CSS class/selector.
+  # @param [Hash]            opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_column_label(field, prop, sortable:, css: '.field', **opt)
+    prepend_css!(opt, css)
+    label = html_div(**opt) { prop[:label] || labelize(field) }
+    label << table_column_sorter if sortable
+    label
+  end
+
+  # Render a sort toggle element for a colum header.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_column_sorter(css: '.sort-toggle', **opt)
+    opt[:role] ||= :presentation
+    prepend_css!(opt, css)
+    html_div(**opt) do
+      icons = { ascending: UP_TRIANGLE, descending: DOWN_TRIANGLE }
+      icons.map { |dir, icon| symbol_icon(icon, class: "#{dir}-sort-toggle") }
+    end
   end
 
   # Render a hidden row which spans the table.

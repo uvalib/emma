@@ -15,3 +15,4 @@ import './search-analysis';
 import './search-in-progress';
 import './session';
 import './skip-nav';
+import './table';

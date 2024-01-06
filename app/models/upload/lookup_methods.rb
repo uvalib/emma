@@ -162,21 +162,14 @@ module Upload::LookupMethods
   # returns the matching records.
   #
   # @param [Array<Upload, String, Integer, Array>] items
-  # @param [Hash]                                  opt  Passed to #where except
+  # @param [Hash]                                  opt To #make_relation except
   #
-  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
-  # @option opt [Integer, nil]      :offset
-  # @option opt [Integer, nil]      :limit
-  # @option opt [String, Date]      :start_date   Earliest :updated_at.
-  # @option opt [String, Date]      :end_date     Latest :updated_at.
-  # @option opt [String, Date]      :after        All :updated_at after this.
-  # @option opt [String, Date]      :before       All :updated_at before this.
-  # @option opt [String,Symbol,nil] :meth         Caller for diagnostics.
+  # @option opt [Integer, Array] :id              Added items by ID.
+  # @option opt [String, Array]  :submission_id   Added items by submission ID.
   #
   # @return [ActiveRecord::Relation]
   #
   # @see Upload#expand_ids
-  # @see ActiveRecord::Relation#where
   #
   def get_relation(*items, **opt)
     terms = []
@@ -204,21 +197,69 @@ module Upload::LookupMethods
 
     # === Sort order
     # Avoid applying a sort order if identifiers were specified or if
-    # opt[:sort] was explicitly *nil* or *false*. Permit :asc as shorthand for
-    # the default sort order ascending; :desc as shorthand for the default sort
-    # order descending.
-    if (sort = opt.key?(:sort) ? opt.delete(:sort) : (:id unless ids || sids))
-      case sort
-        when Hash                 then col, dir = sort.first
-        when TrueClass            then col, dir = [nil, nil]
-        when /^ASC$/i, /^DESC$/i  then col, dir = [nil, sort]
-        else                           col, dir = [sort, nil]
-      end
-      col ||= implicit_order_column
-      col &&= "#{table_name}.#{col}"
-      dir &&= dir.to_s.upcase
-      sort  = col && "#{col} #{dir}".squish
-      Log.info { "#{meth}: no default sort" } unless sort
+    # opt[:sort] was explicitly *nil* or *false*.
+    opt[:sort] = (ids || sids).blank? unless opt.key?(:sort)
+
+    make_relation(*terms, **opt)
+  end
+
+  # Local options consumed by #make_relation.
+  #
+  # @type [Array<Symbol>]
+  #
+  MAKE_RELATION_OPTIONS =
+    %i[sort offset limit start_date end_date after before].freeze
+
+  # make_relation
+  #
+  # @param [Array<String, Hash>]     terms
+  # @param [Hash,String,Boolean,nil] sort   No sort if *nil*, *false* or blank.
+  # @param [Hash]                    opt    Passed to #where except:
+  #
+  # @option opt [Integer, nil]      :offset
+  # @option opt [Integer, nil]      :limit
+  # @option opt [String, Date]      :start_date   Earliest :updated_at.
+  # @option opt [String, Date]      :end_date     Latest :updated_at.
+  # @option opt [String, Date]      :after        All :updated_at after this.
+  # @option opt [String, Date]      :before       All :updated_at before this.
+  # @option opt [String,Symbol,nil] :meth         Caller for diagnostics.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def make_relation(*terms, sort: nil, **opt)
+    meth = opt.delete(:meth)
+
+    # === Sort order
+    # Honor :asc as shorthand for the default sort order ascending, and :desc
+    # as shorthand for the default sort order descending.
+    outer = []
+    group = []
+    sort  = default_sort if sort.nil? || sort.is_a?(TrueClass)
+    sort  = normalize_sort_order(sort)
+    if sort.is_a?(Hash)
+      sort =
+        sort.map { |col, dir|
+          next if col.blank? || dir.blank? || false?(dir)
+          dir = (true?(dir) ? :asc : dir).upcase
+          if col.end_with?('_item_count')
+            tbl = :manifest_items
+            terms << sort_scope(col, tbl)
+          else
+            case col.to_sym
+              when :upload_count    then tbl = :uploads
+              when :manifest_count  then tbl = :manifests
+              when :item_count      then tbl = :manifest_items
+              else                       tbl = nil
+            end
+          end
+          if tbl
+            outer << tbl
+            group << "#{table_name}.id"
+            Arel.sql("COUNT(#{tbl}.id) #{dir}")
+          else
+            "#{table_name}.#{col} #{dir}"
+          end
+        }.compact.presence
     end
 
     # === Filter by user
@@ -280,15 +321,68 @@ module Upload::LookupMethods
     offset = positive(opt.delete(:offset))
 
     # === Filter by association
-    assoc = opt.keys.map(&:to_s).select { |k| k.include?('.') }.presence
-    assoc&.map! { |k| k.split('.').first.singularize.to_sym }
+    inner = opt.keys.map(&:to_s).select { |k| k.include?('.') }.presence
+    inner&.map! { |k| k.split('.').first.singularize.to_sym }
+
+    # === Generate the SQL query
+    if opt[:columns]
+      query = sql_match(*terms, **opt)
+    else
+      query = sql_terms(*terms, **opt)
+    end
 
     # === Generate the relation
-    query  = sql_terms(opt, *terms, join: :and)
-    result = assoc ? joins(*assoc).where(query) : where(query)
-    result.order!(sort)  if sort.present?
-    result.limit!(limit) if limit.present?
-    result
+    self.all.dup.tap do |result|
+      result.left_outer_joins!(*outer)  if outer.present?
+      result.group!(*group)             if group.present?
+      result.joins!(*inner)             if inner.present?
+      result.where!(query)              if query.present?
+      result.order!(sort)               if sort.present?
+      result.limit!(limit)              if limit.present?
+      result.offset!(offset)            if offset.present?
+      __debug_line(meth, leader: "\t>>>", separator: "\n") do
+        {
+          outer:  outer,
+          group:  group,
+          inner:  inner,
+          query:  query,
+          sort:   sort,
+          limit:  limit,
+          offset: offset,
+          SQL:    (result.to_sql rescue 'FAILED')
+        }.compact_blank
+      end
+    end
+  end
+
+  # Generate arguments to ActiveRecord#order from *val*.
+  #
+  # @param [Hash, String, Symbol, TrueClass, FalseClass, nil] val
+  # @param [Symbol, String]                                   dir
+  #
+  # @return [Hash]                    The arguments for #order.
+  # @return [String]                  A complex SQL expression.
+  # @return [nil]                     If no sort was specified.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def normalize_sort_order(val, dir: :asc, **)
+    return                     if val.blank?
+    return val                 if val.is_a?(Hash)
+    return val                 if val.is_a?(String) && val.match?(%r{[()*/+-]})
+    val = val.map(&:dup)       if val.is_a?(Array)
+    val = val.split(/\s*,\s*/) if val.is_a?(String)
+    col = implicit_order_column
+    Array.wrap(val).map(&:to_s).map { |k|
+      case
+        when k.casecmp?('DESC')      then [col, :desc] if col
+        when k.casecmp?('ASC')       then [col, :asc]  if col
+        when k.sub!(/\s+DESC$/i, '') then [k,   :desc]
+        when k.sub!(/\s+ASC$/i, '')  then [k,   :asc]
+        else                              [k,   dir]
+      end
+    }.compact.to_h.presence
   end
 
   # ===========================================================================
@@ -335,6 +429,35 @@ module Upload::LookupMethods
     end
     # noinspection RubyMismatchedReturnType
     return day, !!month, !!year
+  end
+
+  # Generates SQL terms which mirror ManifestItem scopes.
+  #
+  # @param [String, Symbol] col
+  # @param [Symbol] tbl
+  #
+  # @return [String]
+  #
+  def sort_scope(col, tbl)
+    raise unless tbl == :manifest_items
+    active      = "NOT #{tbl}.deleting is TRUE"
+    to_delete   = "#{tbl}.deleting is TRUE"
+    completed   = "#{tbl}.last_saved >= #{tbl}.updated_at"
+    unsaved     = "#{tbl}.last_saved < #{tbl}.updated_at"
+    never_saved = "#{tbl}.last_saved IS NULL"
+    incomplete  = sql_terms(unsaved, never_saved, join: :or)
+    pending     = sql_terms(active, incomplete)
+    saved       = sql_terms(active, completed)
+    # noinspection RubyMismatchedReturnType
+    case col.to_sym
+      when :saved_item_count        then saved
+      when :pending_item_count      then pending
+      when :completed_item_count    then completed
+      when :unsaved_item_count      then unsaved
+      when :never_saved_item_count  then never_saved
+      when :incomplete_item_count   then incomplete
+      when :to_delete_item_count    then to_delete
+    end
   end
 
   # ===========================================================================

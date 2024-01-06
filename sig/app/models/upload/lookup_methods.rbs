@@ -80,9 +80,29 @@ module Upload::LookupMethods
   # returns the matching records.
   #
   # @param [Array<Upload, String, Integer, Array>] items
-  # @param [Hash]                                  opt  Passed to #where except
+  # @param [Hash]                                  opt To #make_relation except
   #
-  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
+  # @option opt [Integer, Array] :id              Added items by ID.
+  # @option opt [String, Array]  :submission_id   Added items by submission ID.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  # @see Upload#expand_ids
+  #
+  def get_relation: (*(String|Integer|Upload|Array[String|Integer|Upload]) identifiers, **untyped opt) -> ActiveRecord::Relation
+
+  # Local options consumed by #make_relation.
+  #
+  # @type [Array<Symbol>]
+  #
+  MAKE_RELATION_OPTIONS: symArray
+
+  # make_relation
+  #
+  # @param [Array<String, Hash>]     terms
+  # @param [Hash,String,Boolean,nil] sort   No sort if *nil*, *false* or blank.
+  # @param [Hash]                    opt    Passed to #where except:
+  #
   # @option opt [Integer, nil]      :offset
   # @option opt [Integer, nil]      :limit
   # @option opt [String, Date]      :start_date   Earliest :updated_at.
@@ -93,10 +113,18 @@ module Upload::LookupMethods
   #
   # @return [ActiveRecord::Relation]
   #
-  # @see Upload#expand_ids
-  # @see ActiveRecord::Relation#where
+  def make_relation: (*(String|strArray|nil) terms, sort: symHash|String|bool|nil, **untyped opt) -> ActiveRecord::Relation
+
+  # Generate arguments to ActiveRecord#order from *val*.
   #
-  def get_relation: (*(String|Integer|Upload|Array[String|Integer|Upload]) identifiers, **untyped opt) -> ActiveRecord::Relation
+  # @param [Hash, String, Symbol, TrueClass, FalseClass, nil] val
+  # @param [Symbol, String]                                   dir
+  #
+  # @return [Hash]                    The arguments for #order.
+  # @return [String]                  A complex SQL expression.
+  # @return [nil]                     If no sort was specified.
+  #
+  def normalize_sort_order: ((symHash|String|Symbol|bool|nil) prm, ?dir: Symbol|String, **untyped _ignored) -> (symHash | String | nil)
 
   # A table of counts for items in each state group.
   #
@@ -120,6 +148,15 @@ module Upload::LookupMethods
   def day_string
     : (String  value) -> ([String, bool, bool] | [nil, false, false])
     | (untyped value) -> [nil, false, false]
+
+  # Generates SQL terms which mirror ManifestItem scopes.
+  #
+  # @param [String, Symbol] col
+  # @param [Symbol] tbl
+  #
+  # @return [String]
+  #
+  def sort_scope: ((String|Symbol) col, Symbol tbl) -> String
 
   private
 

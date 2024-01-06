@@ -159,30 +159,25 @@ module AccountConcern
   # Get matching User account records or all records if no terms are given.
   #
   # @param [Array<String,Hash,Array,nil>] terms
-  # @param [Symbol, String, Hash, Array]  sort        Def.: implicit order
   # @param [Array<Symbol>]                columns
-  # @param [Hash]                         hash_terms  Added to *terms*.
+  # @param [Hash]                         hash_terms  Added to *terms* except
+  #                                                     #MAKE_RELATION_OPTIONS
   #
   # @return [ActiveRecord::Relation<User>]
   #
-  def get_accounts(*terms, sort: nil, columns: ACCT_MATCH_KEYS, **hash_terms)
-    terms.flatten!
-    terms << hash_terms if hash_terms.present?
-    terms.compact_blank!
-    if terms.present?
-      terms.map! { |t| t.is_a?(Hash) ? normalize_predicates!(t) : t }
-      relation = User.matching(*terms, columns: columns, join: :or) # TODO: Is :or really correct here?
-    elsif administrator?
-      relation = User.all
-    elsif (org = current_org&.id)
-      relation = User.where(org_id: org)
-    elsif (usr = current_user&.id)
-      relation = User.where(id: usr)
-    else
-      relation = User.none
+  def get_accounts(*terms, columns: ACCT_MATCH_KEYS, **hash_terms)
+    keys  = Record::Searchable::MAKE_RELATION_OPTIONS
+    opt   = normalize_sort_order!(hash_terms.extract!(*keys))
+    terms = [*terms, hash_terms].flatten.compact_blank!
+    terms.map! { |t| t.is_a?(Hash) ? normalize_predicates!(t) : t }
+    case
+      when terms.present?           then opt[:columns] = columns
+      when administrator?           then # continue
+      when (org = current_org&.id)  then opt[:org_id]  = org
+      when (usr = current_user&.id) then opt[:id]      = usr
+      else                               return User.none
     end
-    # noinspection RubyMismatchedReturnType
-    relation.order(sort || :id)
+    User.make_relation(*terms, **opt)
   end
 
   # ===========================================================================

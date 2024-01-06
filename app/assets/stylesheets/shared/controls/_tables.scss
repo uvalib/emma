@@ -97,6 +97,7 @@ $border-fg:  v.$rev-fg-color;
 
             th {
                 color:         $border-fg;
+                background:    $border-bg;
                 border-bottom: none;
             }
         }
@@ -202,6 +203,131 @@ $border-fg:  v.$rev-fg-color;
                 margin-bottom: $narrow-gap;
             }
         }
+    }
+
+    // A table with one or more sortable columns.
+    &.sortable {
+
+        thead {
+
+            // An element with up and down controls.
+            // @see BaseCollectionDecorator::Table#table_column_sorter
+            .sort-toggle {
+
+                display:         flex;
+                flex-direction:  column;
+                justify-content: center;
+                gap:             0;
+
+                .ascending-sort-toggle,
+                .descending-sort-toggle {
+                    display:     block;
+                    margin:      0;
+                    padding:     0;
+                    max-width:   max-content;
+                    max-height:  max-content;
+                    line-height: 1;
+                    opacity:     0.5;
+                    cursor:      pointer;
+                }
+
+                .ascending-sort-toggle {
+                    margin-bottom: -0.125rem;
+                }
+
+                .descending-sort-toggle {
+                    margin-top:    -0.125rem;
+                }
+            }
+
+            th {
+
+                // Highlight the "up" control for a column whose elements are
+                // sorted in ascending order.
+                &[aria-sort="ascending"] {
+                    .sort-toggle {
+                        .ascending-sort-toggle {
+                            opacity: 1;
+                        }
+                    }
+                }
+
+                // Highlight the "down" control for a column whose elements are
+                // sorted in reverse order.
+                &[aria-sort="descending"] {
+                    .sort-toggle {
+                        .descending-sort-toggle {
+                            opacity: 1;
+                        }
+                    }
+                }
+
+                // Hide both controls for columns that can't be sorted.
+                &:not(.sortable) {
+                    .sort-toggle {
+                        display: none;
+                    }
+                }
+
+                &.sortable {
+                    display:         inline-flex;
+                    flex-direction:  row;
+                    flex-wrap:       nowrap;
+                    justify-content: space-between;
+                    gap:             0.75rem;
+                    padding-top:     0.25rem;
+                    cursor:          pointer;
+                }
+
+                &.sortable:focus {
+                    outline-offset: -1px;
+                }
+
+                > * {
+                    margin-top:    auto;
+                    margin-bottom: auto;
+                }
+            }
+        }
+    }
+
+    &.sortable.dark-head {
+
+        thead {
+
+            th.sortable:focus {
+                outline-color: v.$rev-focus-color;
+            }
+        }
+    }
+
+    &.sortable.sticky-head {
+
+        thead {
+
+            th {
+                top: 0.25rem;
+            }
+        }
+    }
+
+    // A table with one or more sortable columns requiring server-side database
+    // row sorting with the results replacing the table via client-side code.
+    &.sortable.partial {
+
+    }
+
+    // A table with one or more sortable columns requiring server-side database
+    // row sorting where the results will be rendered on a new page.
+    &.sortable.pageable {
+
+    }
+
+    // A table with one or more sortable columns that can be sorted client-side
+    // because all data rows are present on the current browser page.
+    &.sortable.complete,
+    &.sortable:not(.partial):not(.pageable) {
+
     }
 
     //=========================================================================
