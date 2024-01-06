@@ -659,12 +659,12 @@ body.manifest.remit:not(.select) {
 
         $limit-height: false;
 
-        $bg-clear:  var(--bg-color);
-        $bg-solid:  var(--rev-bg-color);
+        $bg-clear:  $bg-color;
+        $bg-solid:  $rev-bg-color;
 
         $fg-clear:  $bg-clear;
         $fg-light:  $uva-text-gray;
-        $fg-dark:   var(--fg-color);
+        $fg-dark:   $fg-color;
 
         margin-top:     $page-padding-y;
         color:          $fg-clear;

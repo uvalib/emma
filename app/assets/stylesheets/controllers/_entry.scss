@@ -85,7 +85,7 @@ $checkbox-x-gap: 0.675rem;
 
             margin:      (2 * $entry-padding) 0;
             padding-top: (2 * $entry-padding);
-            border-top:  1px solid var(--fg-color);
+            border-top:  1px solid $fg-color;
 
             .text {
                 @media #{$narrow-screen} {
@@ -277,7 +277,7 @@ $checkbox-x-gap: 0.675rem;
             line-height: 1.5;
             font-size:   medium;
             font-weight: bold;
-            color:       var(--rev-fg-color);
+            color:       $rev-fg-color;
             background:  $uva-accent-orange; // For color contrast checkers.
             cursor:      pointer;
 
@@ -499,7 +499,7 @@ form.select-entry {
         border-radius: 0.25rem;
 
         option {
-            background: var(--bg-color);
+            background: $bg-color;
         }
 
         // This assumes that the first option is a blank value used to clear
@@ -708,7 +708,7 @@ form.select-entry {
         margin:         0;
         font-family:    inherit;
         font-size:      large;
-        color:          var(--fg-color);
+        color:          $fg-color;
         border:         2px groove lightgray;
 
         &.optional {

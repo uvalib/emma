@@ -6,8 +6,8 @@
 // Internal constants
 //=============================================================================
 
-$side-scroll-shadow: -1.5rem  0  0  0.5rem  var(--bg-color);
-$vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
+$side-scroll-shadow: -1.5rem  0  0  0.5rem  $bg-color;
+$vert-scroll-shadow:  0       0  0  0.5rem  $bg-color;
 
 //=============================================================================
 // DataController index page
@@ -85,7 +85,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
             max-height:             33vh;
             max-width:              33vw;
             overflow:               auto;
-            background:             var(--bg-color);
+            background:             $bg-color;
 
             &.array {
                 white-space:        pre-line;
@@ -113,7 +113,7 @@ $vert-scroll-shadow:  0       0  0  0.5rem  var(--bg-color);
                 padding:            0 1px;
                 font-weight:        bold;
                 text-transform:     uppercase;
-                border-bottom:      2px solid var(--fg-color);
+                border-bottom:      2px solid $fg-color;
 
                 &.col-first {
                     z-index:        $z-raised;

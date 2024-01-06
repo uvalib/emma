@@ -19,7 +19,7 @@
     flex-wrap:          wrap;
     padding:            0.5rem;
     font:               message-box;
-    background:         var(--bg-color);
+    background:         $bg-color;
     border:             0.25rem solid $uva-accent-orange;
     border-top-width:   1.5rem;
     border-radius:      0.75rem;
@@ -95,7 +95,7 @@
     // Temporary deferred-content placeholder.
     .deferred {
         font-size: large;
-        color:     var(--fg-color);
+        color:     $fg-color;
     }
 
     // Controls at the bottom of the popup panel (at minimum a "Close" button).

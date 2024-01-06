@@ -369,7 +369,7 @@
 
     display:         flex;
     padding:         1rem;
-    background:      var(--bg-color);
+    background:      $bg-color;
     border:          0.5rem solid $uva-accent-orange;
     border-radius:   0.75rem;
     flex-wrap:       wrap;
@@ -611,7 +611,7 @@
 
         position:          sticky;
         top:               1rem;
-        background:        var(--bg-color);
+        background:        $bg-color;
 
         // noinspection CssReplaceWithShorthandSafely
         @media #{$narrow-screen} {
@@ -861,7 +861,7 @@
         p {
             font-weight: bold;
             word-break:  break-word;
-            box-shadow:  0 0 0.5rem 0.25rem var(--bg-color);
+            box-shadow:  0 0 0.5rem 0.25rem $bg-color;
         }
     }
 }

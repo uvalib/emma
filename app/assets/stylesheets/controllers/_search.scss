@@ -251,7 +251,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             padding:       1px 0.5rem;
             font-size:     medium;
             font-weight:   normal;
-            color:         var(--rev-fg-color);
+            color:         $rev-fg-color;
             background:    $panel-accent;
             border:        1px solid transparent;
             border-radius: 0.5rem;
@@ -314,7 +314,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
         &.textbox {
             box-shadow:
-                0 0 0 0.25rem  var(--bg-color),
+                0 0 0 0.25rem  $bg-color,
                 0 0 0 0.375rem lightgray;
         }
 
@@ -585,10 +585,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                 align-items:	flex-start;
                 margin:		    0;
                 padding-top:    1.25rem;
-                background:	    var(--bg-color);
+                background:	    $bg-color;
                 box-shadow:
-                    0.5rem  -0.5rem  0       0.5rem var(--bg-color),
-                    0.25rem -0.25rem 0.75rem 0.5rem var(--bg-color);
+                    0.5rem  -0.5rem  0       0.5rem $bg-color,
+                    0.25rem -0.25rem 0.75rem 0.5rem $bg-color;
             }
 
             @media print {
@@ -731,7 +731,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             line-height:   unset;
             font-size:     x-large;
             font-weight:   bold;
-            background:	   var(--bg-color);
+            background:	   $bg-color;
             border-bottom: 1px solid darkgray;
 
             @if $title-spans-entry {
@@ -741,16 +741,16 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             @media #{$wide-screen} {
                 top:            $sticky-top-wide;
                 box-shadow:
-                     0.50rem -2.00rem  1.00rem  2.00rem  var(--bg-color),
-                     0        0        0.25rem  0.50rem  var(--bg-color);
+                     0.50rem -2.00rem  1.00rem  2.00rem  $bg-color,
+                     0        0        0.25rem  0.50rem  $bg-color;
             }
 
             @media #{$medium-width} {
                 top:            $sticky-top-medium;
                 column-gap:     calc(3 * #{$flex-gap-x});
                 box-shadow:
-                     0       -1.00rem  0        0.50rem  var(--bg-color),
-                     0        0        0.25rem  0.25rem  var(--bg-color);
+                     0       -1.00rem  0        0.50rem  $bg-color,
+                     0        0        0.25rem  0.25rem  $bg-color;
             }
 
             @media #{$narrow-screen} {
@@ -759,10 +759,10 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                 top:            $sticky-top-narrow;
                 padding-bottom: 0.5rem;
-                border-color:   var(--fg-color);
+                border-color:   $fg-color;
                 box-shadow:
-                     0       -0.50rem  0        0.25rem  var(--bg-color),
-                     0        0.25rem  0.25rem  0        var(--bg-color);
+                     0       -0.50rem  0        0.25rem  $bg-color,
+                     0        0.25rem  0.25rem  0        $bg-color;
             }
 
             @media print {
@@ -878,7 +878,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                     min-width:     unset;
                     margin:        0;
-                    color:         var(--fg-color);
+                    color:         $fg-color;
                     border-radius: 50%;
 
                     &:focus {
@@ -1066,8 +1066,8 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             margin-bottom:  0;
             padding:        0;
             text-align:     center;
-            background:     var(--bg-color);
-            box-shadow:     0 0 0 0.75rem var(--bg-color);
+            background:     $bg-color;
+            box-shadow:     0 0 0 0.75rem $bg-color;
         }
 
         @media print {
@@ -1239,8 +1239,8 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
 // Box shadow sections preventing scrolled text from appearing above the title.
 $title-scroll-mask:
-    0.25rem  -0.25rem  0         0.5rem  var(--bg-color),
-    0.125rem  0        0.125rem  0.5rem  var(--bg-color);
+    0.25rem  -0.25rem  0         0.5rem  $bg-color,
+    0.125rem  0        0.125rem  0.5rem  $bg-color;
 
 @mixin collapsible-search-list {
 
@@ -1679,8 +1679,8 @@ body.search.file_results {
                 // Adjust to keep from overshadowing the page heading.
                 @media #{$wide-screen} {
                     box-shadow:
-                        0.50rem -1.25rem  0.00rem  1.00rem  var(--bg-color),
-                        0        0        0.25rem  0.50rem  var(--bg-color);
+                        0.50rem -1.25rem  0.00rem  1.00rem  $bg-color,
+                        0        0        0.25rem  0.50rem  $bg-color;
                 }
             }
         }
@@ -2218,16 +2218,13 @@ body.search.dev-style {
                         border-radius: 0;
 
                         @media #{$wide-screen} {
-                            box-shadow:
-                                -0.875rem  0 0 1.125rem  var(--bg-color);
+                            box-shadow: -0.875rem  0 0 1.125rem  $bg-color;
                         }
                         @media #{$medium-width} {
-                            box-shadow:
-                                -0.3125rem 0 0 0.9375rem var(--bg-color);
+                            box-shadow: -0.3125rem 0 0 0.9375rem $bg-color;
                         }
                         @media #{$narrow-screen} {
-                            box-shadow:
-                                -0.625rem  0 0 0.625rem  var(--bg-color);
+                            box-shadow: -0.625rem  0 0 0.625rem  $bg-color;
                         }
                     }
                 }
@@ -2687,7 +2684,7 @@ body.search.title_results {
                     margin-top:     -1.25rem;
                     min-height:     4rem;
                     font-size:      small;
-                    box-shadow:     0 -0.25rem 0.5rem 0.25rem var(--bg-color);
+                    box-shadow:     0 -0.25rem 0.5rem 0.25rem $bg-color;
                     grid-template-columns: [count] max-content [format] 1fr;
                 }
 

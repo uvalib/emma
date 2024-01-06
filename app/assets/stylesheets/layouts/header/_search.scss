@@ -220,8 +220,8 @@ $control-height:         2.25rem;
                     display:     block;
                     padding-top: 1px;
                     color:       $uva-text-gray;
-                    background:  var(--bg-color);
-                    border:      3px solid var(--bg-color);
+                    background:  $bg-color;
+                    border:      3px solid $bg-color;
                     content:     "(any)";
                 }
             }
@@ -433,7 +433,7 @@ $control-height:         2.25rem;
 
             @media #{$not-narrow-screen} {
                 height:         1.75rem;
-                color:          var(--fg-color);
+                color:          $fg-color;
             }
 
             // noinspection CssReplaceWithShorthandSafely

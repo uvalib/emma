@@ -199,7 +199,7 @@
 /// Make focus outline more easily seen.
 ///
 @mixin focus {
-    outline:        2px solid var(--focus-color);
+    outline:        2px solid v.$focus-color;
     outline-offset: 2px;
 }
 
@@ -207,7 +207,7 @@
 /// width of the text.
 ///
 @mixin hover-bold {
-    text-shadow: 0 0 1px var(--fg-color);
+    text-shadow: 0 0 1px v.$fg-color;
 }
 
 /// Add to outline text so that it passes color contrast checks.
@@ -216,7 +216,7 @@
 /// @param {String} $width
 /// @param {String} $blur
 ///
-@mixin text-contrast($color: var(--fg-color), $width: 1px, $blur: 1px) {
+@mixin text-contrast($color: v.$fg-color, $width: 1px, $blur: 1px) {
     text-shadow:
           0         0       $blur $color,
         ( $width) ( $width) $blur $color,
@@ -286,8 +286,8 @@
     flex-direction:     row;
     justify-content:    space-between;
     margin:             0;
-    color:              var(--rev-fg-color);
-    background:         var(--rev-bg-color);
+    color:              v.$rev-fg-color;
+    background:         v.$rev-bg-color;
 
     --focus-color:      var(--rev-focus-color);
 
@@ -309,7 +309,7 @@
     * {
 
         margin: 0;
-        color:  var(--rev-fg-color);
+        color:  v.$rev-fg-color;
 
         @media print {
             color: black;

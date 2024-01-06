@@ -59,7 +59,7 @@
     &:not(.disabled):not(.forbidden):hover {
         background-color: v.$uva-accent-orange;
         border-color:     v.$uppy-file-input;
-        color:            var(--rev-fg-color);
+        color:            v.$rev-fg-color;
     }
 
     &.disabled:hover, &.forbidden:hover {

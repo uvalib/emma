@@ -264,6 +264,15 @@ $gap-y:             var(--gap-y);
 $scroll-easement-x: var(--scroll-easement-x);
 $scroll-easement-y: var(--scroll-easement-y);
 
+// Colors
+
+$bg-color:          var(--bg-color);
+$fg-color:          var(--fg-color);
+$focus-color:       var(--focus-color);
+$rev-bg-color:      var(--rev-bg-color);
+$rev-fg-color:      var(--rev-fg-color);
+$rev-focus-color:   var(--rev-focus-color);
+
 // Unicode characters.
 
 $NBSP:                "\00A0";  //   No-Break Space (NBSP)
