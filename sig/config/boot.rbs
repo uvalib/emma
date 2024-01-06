@@ -25,6 +25,24 @@ PRODUCTION_BASE_URL: String
 #
 STAGING_BASE_URL: String
 
+# Controls whether '0' and '1' are interpreted as boolean values for URL
+# parameters or ENV setting values.
+#
+# @type [Boolean]
+#
+# @note Setting this to *true* may yield unexpected results.
+#
+BOOL_DIGIT: bool
+
+# @private
+BOOL_DIGITS: strArray
+
+# @private
+FALSE_DIGIT: String | nil
+
+# @private
+TRUE_DIGIT: String | nil
+
 # Text values which represent *true*.
 #
 # @type [Array<String>]

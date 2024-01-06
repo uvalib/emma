@@ -3,7 +3,7 @@ module Emma::Common::BooleanMethods
   #
   # @type [Array<String>]
   #
-  BOOLEAN_VALUES: strArray
+  BOOL_VALUES: strArray
 
   # Indicate whether the item represents a true or false value.
   #

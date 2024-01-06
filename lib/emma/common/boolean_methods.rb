@@ -17,7 +17,7 @@ module Emma::Common::BooleanMethods
   #
   # @type [Array<String>]
   #
-  BOOLEAN_VALUES = (TRUE_VALUES + FALSE_VALUES).sort_by!(&:length).freeze
+  BOOL_VALUES = (TRUE_VALUES + FALSE_VALUES).freeze
 
   # ===========================================================================
   # :section:
@@ -30,9 +30,15 @@ module Emma::Common::BooleanMethods
   # @param [Boolean, String, Symbol, *] value
   #
   def boolean?(value)
-    return true  if value.is_a?(TrueClass) || value.is_a?(FalseClass)
-    return false unless value.is_a?(String) || value.is_a?(Symbol)
-    BOOLEAN_VALUES.include?(value.to_s.strip.downcase)
+    case (arg = value)
+      when String then value = value.strip.downcase
+      when Symbol then value = value.to_s.downcase
+    end
+    case value
+      when true, false  then true
+      when *BOOL_VALUES then true
+      when *BOOL_DIGITS then Log.warn { "boolean?(#{arg.inspect}) never bool" }
+    end || false
   end
 
 end

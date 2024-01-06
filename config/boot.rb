@@ -44,26 +44,47 @@ STAGING_BASE_URL = 'https://emma-dev.lib.virginia.edu'
 
 public
 
+# Controls whether '0' and '1' are interpreted as boolean values for URL
+# parameters or ENV setting values.
+#
+# @type [Boolean]
+#
+# @note Setting this to *true* may yield unexpected results.
+#
+BOOL_DIGIT = false
+
+# @private
+BOOL_DIGITS = %w[0 1].freeze
+
+# @private
+FALSE_DIGIT, TRUE_DIGIT = (BOOL_DIGITS if BOOL_DIGIT)
+
 # Text values which represent *true*.
 #
 # @type [Array<String>]
 #
-TRUE_VALUES  = %w[1 yes true on].freeze
+TRUE_VALUES = ['true', 'yes', 'on', TRUE_DIGIT].compact.freeze
 
 # Text values which represent *false*.
 #
 # @type [Array<String>]
 #
-FALSE_VALUES = %w[0 no false off].freeze
+FALSE_VALUES = ['false', 'off', 'no', FALSE_DIGIT].compact.freeze
 
 # Indicate whether the item represents an explicit *true* value.
 #
 # @param [Boolean, String, Symbol, *] value
 #
 def true?(value)
-  return value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
-  return false unless value.is_a?(String) || value.is_a?(Symbol)
-  TRUE_VALUES.include?(value.to_s.strip.downcase)
+  case (arg = value)
+    when String then value = value.strip.downcase
+    when Symbol then value = value.to_s.downcase
+  end
+  case value
+    when true, false  then value
+    when *TRUE_VALUES then true
+    when *BOOL_DIGITS then Log.warn { "true?(#{arg.inspect}) never bool" }
+  end || false
 end
 
 # Indicate whether the item represents an explicit *false* value.
@@ -71,9 +92,15 @@ end
 # @param [Boolean, String, Symbol, *] value
 #
 def false?(value)
-  return !value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
-  return false  unless value.is_a?(String) || value.is_a?(Symbol)
-  FALSE_VALUES.include?(value.to_s.strip.downcase)
+  case (arg = value)
+    when String then value = value.strip.downcase
+    when Symbol then value = value.to_s.downcase
+  end
+  case value
+    when true, false   then !value
+    when *FALSE_VALUES then true
+    when *BOOL_DIGITS  then Log.warn { "false?(#{arg.inspect}) never bool" }
+  end || false
 end
 
 # Produce JSON for use with "assets.js.erb".
