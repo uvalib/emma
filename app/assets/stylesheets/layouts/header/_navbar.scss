@@ -78,12 +78,10 @@
         @include header.control-panel;
         @include user-select(none);
 
-        $page-control-gap-x: $gap-x;
-        $page-control-gap-y: calc(#{$gap-y} / 2);
-
         flex-wrap:          nowrap;
         justify-content:    flex-start;
         align-items:        baseline;
+        gap:                calc($gap-y / 2) $gap-x;
         border-color:       $debug-fg;
         border-style:       dashed;
         flex:               0 1 max-content;
@@ -96,12 +94,8 @@
             max-width:      100%;
         }
 
-        @media #{$medium-width} {
-            max-width:      98%;
-        }
-
-        @media #{$narrow-screen} {
-            max-width:      95%;
+        @media #{$not-wide-screen} {
+            margin-top:     calc(2 * $gap-y);
         }
 
         //=====================================================================
@@ -113,30 +107,22 @@
         //
         // noinspection CssReplaceWithShorthandSafely
         .label {
-            display:       block;
-            width:         max-content;
-            margin-top:    $page-control-gap-y;
-            margin-bottom: $gap-y;
-            margin-left:   0;
-            margin-right:  $page-control-gap-x;
-            font-size:     larger;
-            flex:          0 1 max-content;
+            display:    block;
+            width:      max-content;
+            font-size:  larger;
+            flex:       0 1 max-content;
         }
 
         // From .layout-section.page.controls and
         // .layout-section.page.controls.page-controls.controls
         .controls {
 
-            display:            flex;
-            flex-direction:     row;
-            flex-wrap:          wrap;
-            margin:             0;
-            row-gap:            $gap-y;
-            flex:               1 1 max-content;
-
-            @media #{$not-narrow-screen} {
-                margin-bottom:  $page-control-gap-y;
-            }
+            display:        flex;
+            flex-direction: row;
+            flex-wrap:      wrap;
+            gap:            $gap-y $gap-x;
+            margin:         0;
+            flex:           1 1 max-content;
 
             // From .layout-section.page.control and
             // .layout-section.page.controls.page-controls.controls.control
@@ -146,20 +132,11 @@
 
                 @include button.basic;
 
-                margin:             0;
-                font-size:          larger;
-                color:              inherit;
-                border-color:       $debug-fg;
-                border-width:       2px;
-
-                @media #{$not-narrow-screen} {
-                    margin-right:   $page-control-gap-x;
-                }
-
-                @media #{$narrow-screen} {
-                    margin-top:     $page-control-gap-y;
-                    margin-bottom:  $page-control-gap-y;
-                }
+                margin:         0;
+                font-size:      larger;
+                color:          inherit;
+                border-color:   $debug-fg;
+                border-width:   2px;
             }
         }
     }

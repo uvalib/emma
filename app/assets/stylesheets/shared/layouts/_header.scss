@@ -9,15 +9,9 @@
 // Constants
 //=============================================================================
 
-// For enclosures which are the only child elements of header layout sections.
-// section.
-$enclosure-indent-wide:     4vw;
-$enclosure-indent-medium:   2.5vw;
-$enclosure-indent-narrow:   0;
-
-$enclosure-pad-wide:        1.25rem;
-$enclosure-pad-medium:      1rem;
-$enclosure-pad-narrow:      0.75rem;
+$enclosure-pad-wide:    1.25rem;
+$enclosure-pad-medium:  1rem;
+$enclosure-pad-narrow:  0.75rem;
 
 //=============================================================================
 // Mixins
@@ -41,16 +35,14 @@ $enclosure-pad-narrow:      0.75rem;
     }
 }
 
-// noinspection CssReplaceWithShorthandSafely
-@mixin control-panel {
+@mixin control-panel($pad-y: v.$gap-y, $pad-x: v.$gap-x) {
 
-    padding:        0.5rem;
-    padding-right:  0;
-    border:         0.125rem dotted var(--rev-fg-color);
+    padding:        $pad-y $pad-x;
+    border:         0.125rem dotted v.$rev-fg-color;
     border-radius:  0.75rem;
 
-    @media #{v.$not-narrow-screen} {
-        padding-bottom: 0.25rem;
+    @media #{v.$not-wide-screen} {
+        padding:    calc(2 * $pad-y) calc(3 * $pad-x);
     }
 }
 

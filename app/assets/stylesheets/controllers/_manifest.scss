@@ -395,6 +395,7 @@ body.manifest.edit:not(.select) {
 
             .counts {
 
+                display:        inline-flex;
                 flex-direction: row-reverse;
                 gap:            1rem;
                 margin:         0;

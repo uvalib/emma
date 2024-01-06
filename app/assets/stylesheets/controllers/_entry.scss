@@ -217,9 +217,13 @@ $checkbox-x-gap: 0.675rem;
 
         padding-top:        $entry-padding * 0.75;
 
+        @media #{$medium-width} {
+            margin-left:    0.25rem;
+            margin-right:   -0.25rem;
+        }
+
         @media #{$narrow-screen} {
-            margin-left:    -0.25rem;
-            margin-right:   0.25rem;
+            margin-right:   -0.25rem;
         }
     }
 

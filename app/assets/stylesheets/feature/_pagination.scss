@@ -123,8 +123,9 @@
 
     .counts {
 
-        flex:               0 1 auto;
+        display:            inline-flex;
         line-height:        1.25;
+        flex:               0 1 auto;
 
         @media #{$not-narrow-screen} {
             margin-left:    1.5rem;

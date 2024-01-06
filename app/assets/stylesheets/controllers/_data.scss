@@ -93,6 +93,8 @@ $vert-scroll-shadow:  0       0  0  0.5rem  $bg-color;
 
             &.hierarchy {
                 white-space:        pre;
+                font-family:        monospace;
+                font-size:          larger;
                 background:         ghostwhite;
             }
 
@@ -206,12 +208,4 @@ $vert-scroll-shadow:  0       0  0  0.5rem  $bg-color;
             }
         }
     }
-}
-
-//=============================================================================
-// Database pages
-//=============================================================================
-
-body.data:not(.index) {
-    width: fit-content;
 }

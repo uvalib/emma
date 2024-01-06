@@ -97,22 +97,10 @@ $control-height:         2.25rem;
 
 // Header sections whose content is a single .enclosure child element.
 .layout-section:not(.enclosure) {
-
-    display:        block;
-    margin:         0;
-    overflow-y:     hidden;
-
-    @media #{$wide-screen} {
-        padding:    0 header.$enclosure-indent-wide;
-    }
-
-    @media #{$medium-width} {
-        padding:    0 header.$enclosure-indent-medium;
-    }
-
-    @media #{$narrow-screen} {
-        padding:    0 header.$enclosure-indent-narrow;
-    }
+    display:    block;
+    margin:     0;
+    padding:    0 calc(2 * $page-padding-x);
+    overflow-y: hidden;
 }
 
 // Header section enclosures (including layout sections which are standalone

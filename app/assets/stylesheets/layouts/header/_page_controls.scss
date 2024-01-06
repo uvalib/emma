@@ -12,7 +12,7 @@
 // Controller- and action-specific sections.
 .layout-section.page {
 
-    padding: 0 2vw;
+    padding: 0 $page-padding-x;
 
     //=========================================================================
     // Elements
@@ -28,6 +28,7 @@
         display:        flex;
         flex-direction: row;
         flex-wrap:      wrap;
+        gap:            $gap-y $gap-x;
         margin:         0;
     }
 
@@ -52,13 +53,11 @@
         @include header.control-panel;
         @include user-select(none);
 
-        $page-control-gap-x: $gap-x;
-        $page-control-gap-y: calc(#{$gap-y} / 2);
-
-        width:              max-content;
         flex-wrap:          wrap;
         justify-content:    flex-start;
         align-items:        baseline;
+        gap:                calc($gap-y / 2) $gap-x;
+        width:              max-content;
 
         @media #{$wide-screen} {
             max-width:      100%;
@@ -84,32 +83,18 @@
         // Elements
         //=====================================================================
 
-        // noinspection CssReplaceWithShorthandSafely
-        .label {
-            margin-top:    $page-control-gap-y;
-            margin-bottom: $gap-y;
-            margin-left:   0;
-            margin-right:  $page-control-gap-x;
-        }
+        .label { }
 
         .controls {
 
-            margin-bottom:  $page-control-gap-y;
-
             @media #{$narrow-screen} {
-                gap:        $gap-y $gap-x;
+                gap: $gap-y $gap-x;
             }
 
             // noinspection CssReplaceWithShorthandSafely
             .control {
 
-                margin:             0;
-                margin-right:       $page-control-gap-x;
-
-                @media #{$narrow-screen} {
-                    margin-top:     $page-control-gap-y;
-                    margin-bottom:  $page-control-gap-y;
-                }
+                margin: 0;
 
                 &.current {
 

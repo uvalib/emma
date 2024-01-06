@@ -279,7 +279,7 @@ en:
         text_html:      |
           <p>
             A search term is required to begin.
-            The search will vary depending on your choice of Keyword (default),
+            The search will vary depending on your choice of Keyword,
             Creator, Title, or ISBN/DOI/etc. as the search criterion.
             There are also several filters, whose behavior is documented in
             Help (the "question mark" button next to the title).

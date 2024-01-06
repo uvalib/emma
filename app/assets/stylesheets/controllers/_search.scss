@@ -175,6 +175,8 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
         .counts {
 
+            display: inline-flex;
+
             @media #{$not-narrow-screen} {
                 flex-direction:  row-reverse;
                 column-gap:      1rem;
@@ -1372,8 +1374,9 @@ $title-scroll-mask:
 
                 @media #{$narrow-screen} {
                     margin-bottom: 0.5rem;
-                    margin-left:   0.5rem;
-                    transform:     scale(1.5);
+                    margin-left:   0.875rem;
+                    margin-right:  -1.125rem;
+                    transform:     scale(1.25);
                 }
             }
         }

@@ -17,10 +17,9 @@
 ///
 @mixin entry-radio-group {
 
-    display:            flex;
-    flex-direction:     row;
-    flex-wrap:          wrap;
-    justify-content:    space-between;
+    display:               grid;
+    gap:                   0.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(10vw,max-content));
 
     border:             1px solid gray;
     border-radius:      0.25rem;
@@ -30,7 +29,12 @@
         line-height:    1;
     }
 
+    @media #{$medium-width} {
+        grid-template-columns: repeat(auto-fill, minmax(20vw,max-content));
+    }
+
     @media #{$narrow-screen} {
+        grid-template-columns: repeat(auto-fill, minmax(33vw,max-content));
         line-height:    1.5;
     }
 
@@ -42,7 +46,7 @@
 
         display:        inline-flex;
         align-items:    baseline;
-        margin:         0.25rem;
+        column-gap:     0.125rem;
         word-break:     keep-all;
         border:         0.25rem solid transparent;
 
@@ -190,6 +194,10 @@
             display: none;
         }
 
+        @media #{$medium-width} {
+            margin-bottom: 0.75rem;
+        }
+
         .note {
 
             position:        absolute;
@@ -210,14 +218,14 @@
         display: grid;
         gap:     0.5rem;
 
-        grid-template-columns: repeat(9, 1fr);
+        grid-template-columns:     repeat(auto-fill, minmax(10vw,max-content));
 
         @media #{$medium-width} {
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(20vw,max-content));
         }
 
         @media #{$narrow-screen} {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(25vw,max-content));
             gap:                   0.25rem;
         }
 
@@ -343,7 +351,6 @@
 
     padding:            0.25rem;
     background:         $debug-bg;
-    justify-content:    flex-start;
 
     @media #{$wide-screen} {
         margin:         $page-padding-y 0;
