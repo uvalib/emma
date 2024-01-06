@@ -106,6 +106,8 @@ public
 # @param [String, nil]   filename     If provided, first #require each file
 #                                       from the subdirectory with the same
 #                                       base name as *filename*.
+# @param [bool]          and_extend   If *true* then also extend *base* with
+#                                       the included modules.
 #
 # @return [Array<Module>]             The modules included into *base*.
 #
@@ -116,7 +118,7 @@ public
 #
 # @see #require_submodules
 #
-def include_submodules(base, filename = nil)
+def include_submodules(base, filename = nil, and_extend: false)
   curr_constants = constants(false)
   if filename.present?
     # noinspection RubyMismatchedArgumentType
@@ -128,8 +130,17 @@ def include_submodules(base, filename = nil)
     next unless mod.is_a?(Module) && !mod.is_a?(Class)
     next unless !block_given? || yield(name, mod)
     base.include(mod)
+    base.extend(mod) if and_extend
     mod
   }.compact
+end
+
+# Include and extend submodules.
+#
+# @see #include_submodules
+#
+def include_and_extend_submodules(base, filename = nil, &blk)
+  include_submodules(base, filename, and_extend: true, &blk)
 end
 
 # =============================================================================

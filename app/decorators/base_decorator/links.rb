@@ -144,21 +144,27 @@ module BaseDecorator::Links
   #
   # @param [String, Symbol, nil]     current      Def: `context[:action]`
   # @param [Hash{Symbol=>Hash}, nil] table        Def: `#action_links`.
+  # @param [Symbol, nil]             tag
   # @param [String]                  css          Characteristic CSS selector.
   # @param [Hash]                    opt          Passed to #action_links.
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def action_list(current: nil, table: nil, css: '.page-actions', **opt)
+  def action_list(
+    current:  nil,
+    table:    nil,
+    tag:      :ul,
+    css:      '.page-actions',
+    **opt
+  )
     trace_attrs!(opt)
     t_opt     = trace_attrs_from(opt)
     current ||= context[:action]
     table   ||= action_links(**opt)
 
-    links =
-      table.keys.map { |action|
-        action_link(action, current: current, table: table, **t_opt)
-      }.compact
+    l_opt = { current: current, table: table, **t_opt }
+    l_opt.merge!(tag: tag) if tag.nil?
+    links = table.keys.map { |action| action_link(action, **l_opt) }.compact
 
     # Move the link referencing the current action to the top of the list.
     # E.g.: On an :edit page, the "Edit another..." link is moved to the top.
@@ -166,7 +172,7 @@ module BaseDecorator::Links
     first &&= links.delete_at(first)
     links.prepend(first) if first && !menu_action?(current)
 
-    html_tag(:ul, *links, **prepend_css(t_opt, css)) if links.present?
+    html_tag(tag, *links, **prepend_css(t_opt, css)) if links.present?
   end
 
   # ===========================================================================
@@ -180,6 +186,7 @@ module BaseDecorator::Links
   # @param [String, Symbol, nil] action   The target controller action.
   # @param [String, Symbol, nil] current  Def: current `params[:action]`.
   # @param [String, nil]         label    Override configured label.
+  # @param [Symbol, nil]         tag
   # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #action_entry.
   #
@@ -189,10 +196,11 @@ module BaseDecorator::Links
   # @return [nil]                         If *action* not configured.
   #
   def action_link(
-    action = nil,
-    current: nil,
-    label:   nil,
-    css:     '.page-action',
+    action =  nil,
+    current:  nil,
+    label:    nil,
+    tag:      :li,
+    css:      '.page-action',
     **opt
   )
     trace_attrs!(opt)
@@ -207,7 +215,7 @@ module BaseDecorator::Links
     label  = (label || entry[:label]).presence
     label  = label ? (label % entry) : labelize(action)
 
-    html_tag(:li, **prepend_css(t_opt, css)) do
+    html_tag(tag, **prepend_css(t_opt, css)) do
       link_to_action(label, action: action, **t_opt)
     end
   end

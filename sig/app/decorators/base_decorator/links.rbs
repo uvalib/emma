@@ -76,18 +76,20 @@ module BaseDecorator::Links
   #
   # @param [String, Symbol, nil]     current      Def: `context[:action]`
   # @param [Hash{Symbol=>Hash}, nil] table        Def: `#action_links`.
+  # @param [Symbol, nil]             tag
   # @param [String]                  css          Characteristic CSS selector.
   # @param [Hash]                    opt          Passed to #action_links.
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # The URL link for an entry in a list of controller actions.
   #
   # @param [String, Symbol, nil] action   The target controller action.
   # @param [String, Symbol, nil] current  Def: current `params[:action]`.
   # @param [String, nil]         label    Override configured label.
+  # @param [Symbol, nil]         tag
   # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #action_entry.
   #
@@ -96,7 +98,7 @@ module BaseDecorator::Links
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *action* not configured.
   #
-  def action_link: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def action_link: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # An entry in a list of controller actions.
   #

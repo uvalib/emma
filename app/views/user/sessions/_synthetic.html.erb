@@ -9,7 +9,7 @@
 
   p_opt = { fast: Rails.env.test? }.compact_blank!
   links = User.test_users.keys.map { |acct|
-    user  = html_tag(:strong, acct)
+    user  = html_bold(acct)
     label = get_sessions_label(:sign_in_as, user: user).html_safe
     path  = sign_in_as_path(id: acct, **p_opt)
     [label, path]

@@ -431,17 +431,17 @@ class AccountDecorator
     rows = 0
 
     heading_rows =
-      html_tag(:thead, role: 'rowgroup') do
+      html_thead do
         rows += 1
-        html_tag(:tr, role: 'row', 'aria-rowindex': rows) do
+        html_tr('aria-rowindex': rows) do
           columns.map do |css_class, label|
-            html_tag(:th, label, role: 'columnheader', class: css_class)
+            html_th(label, role: 'columnheader', class: css_class)
           end
         end
       end
 
     data_rows =
-      html_tag(:tbody, role: 'rowgroup') do
+      html_tbody do
         divider = ability_table_divider
         ability_table_rows(target, start: rows).flat_map do |_, row_group|
           rows += row_group.size
@@ -449,10 +449,9 @@ class AccountDecorator
         end
       end
 
-    table_opt[:role] ||= 'table'
     table_opt[:'aria-colcount'] = columns.size
     table_opt[:'aria-rowcount'] = rows
-    html_tag(:table, **table_opt) do
+    html_table(**table_opt) do
       heading_rows << data_rows
     end
   end
@@ -482,7 +481,7 @@ class AccountDecorator
     models.map { |model|
       ctrlr_actions = model.model_controller.public_instance_methods(false)
       actions.intersection(ctrlr_actions).map { |action|
-        row_opt = { role: 'row', 'aria-rowindex': (row += 1) }
+        row_opt = { 'aria-rowindex': (row += 1) }
         status  = target.can?(action, model)
         can     = status ? 'can' : 'cannot'
         if status.nil?
@@ -497,13 +496,13 @@ class AccountDecorator
           status = "true for #{cond}"
         end
         append_css!(row_opt, can, action, model)
-        html_tag(:tr, **row_opt) {
+        html_tr(**row_opt) {
           columns = { model: model, action: action, status: status }
           columns.map.with_index(1) do |(cls, val), col|
             id  = unique_id(action, model)
             opt = { role: 'cell', 'aria-labelledby': id, 'aria-colindex': col }
             append_css!(opt, cls, can)
-            html_tag(:td, **opt) { html_span(val.to_s, id: id) }
+            html_td(**opt) { html_span(val.to_s, id: id) }
           end
         }.then { |column| [action, column] }
       }.to_h.then { |rows| [model, rows] }
@@ -518,12 +517,10 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def ability_table_divider(css: '.blank-row', **opt)
-    opt.reverse_merge!(role: 'presentation', 'aria-hidden': true)
     prepend_css!(opt, css)
-    html_tag(:tr, **opt) do
-      col_opt = { role: 'cell', class: 'blank' }
+    html_tr(role: 'presentation', 'aria-hidden': true, **opt) do
       ABILITY_COLUMNS.keys.map.with_index(1) do |cls, idx|
-        html_tag(:td, **prepend_css(col_opt, cls).merge!('aria-colindex': idx))
+        html_td(role: 'cell', 'aria-colindex': idx, class: "#{cls} blank")
       end
     end
   end

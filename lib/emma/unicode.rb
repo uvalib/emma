@@ -20,6 +20,30 @@ module Emma::Unicode
 
   public
 
+  # A matcher for one or more symbol-like characters.
+  #
+  # @type [Regexp]
+  #
+  SYMBOLS = %w[
+    \u2000-\u{FFFF}
+    \u{1F000}-\u{1FFFF}
+  ].join.then { |char_ranges| Regexp.new("[#{char_ranges}]+") }.freeze
+
+  # Indicate whether the string contains only characters that fall outside the
+  # normal text range.  Always `false` if *text* is not a string.
+  #
+  # @param [String, *] text
+  #
+  def only_symbols?(text)
+    text.is_a?(String) && text.present? && text.remove(SYMBOLS).blank?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Produce a single character.
   #
   # @param [String, Integer] v

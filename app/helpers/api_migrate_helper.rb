@@ -32,7 +32,7 @@ module ApiMigrateHelper
         "#{count} records in '#{table}' table" # TODO: I18n
       end
     record_changes =
-      html_tag(:ul, class: 'record-list') do
+      html_ul(class: 'record-list') do
         report[:record]&.map { |id, rec| api_record_changes(id, rec, level) }
       end
     change_summary << record_changes
@@ -53,7 +53,7 @@ module ApiMigrateHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def api_record_changes(rid, entry, level)
-    html_tag(:li, class: 'record-results', id: rid) do
+    html_li(class: 'record-results', id: rid) do
       heading = "Record #{rid}" # TODO: I18n
       heading = html_tag(level, heading, class: 'record-id')
       changes = api_field_section(rid, entry, :changes, (level + 1))

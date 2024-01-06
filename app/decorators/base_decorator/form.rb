@@ -458,7 +458,7 @@ module BaseDecorator::Form
     gr_opt[:multiple] = true
     gr_opt[:tabindex] = 0
     gr_opt.merge!(opt[:inner]) if opt[:inner].is_a?(Hash)
-    group = html_tag(:ul, *checkboxes, **gr_opt)
+    group = html_ul(*checkboxes, **gr_opt)
 
     html_opt.delete(:'aria-labelledby')
     html_opt[:id]       = opt[:id]
@@ -627,7 +627,7 @@ module BaseDecorator::Form
     opt = form_input_related_opt(css: 'note', **opt)
     opt[:separator] = ''
     trace_attrs!(opt)
-    html_tag(:em, **opt) { "(#{note})" }
+    html_italic("(#{note})", **opt)
   end
 
   # Options assumed to be related to a field element which are not retained by
@@ -1166,7 +1166,7 @@ module BaseDecorator::Form
 
     # Radio button controls.
     controls =
-      field_groups.map do |group, properties|
+      field_groups.map { |group, properties|
         next unless user_has_role?(properties[:role])
 
         parts = []
@@ -1190,7 +1190,7 @@ module BaseDecorator::Form
         l_name = "#{name}_#{group}"
         l_opt  = { class: 'radio', title: properties[:tooltip] }
         h.label_tag(l_name, safe_join(parts), l_opt)
-      end
+      }.compact
     return ''.html_safe if controls.blank?
 
     # A label for the group (screen-reader only).
@@ -1201,7 +1201,7 @@ module BaseDecorator::Form
     opt[:tabindex] = 0
     prepend_css!(opt, css)
     trace_attrs!(opt)
-    html_tag(:fieldset, legend, *controls, **opt)
+    html_fieldset(legend, *controls, **opt)
   end
 
   # ===========================================================================

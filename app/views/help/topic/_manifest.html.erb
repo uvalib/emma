@@ -100,11 +100,11 @@
   index_step        = submission.dig(:step, :index)
   entry_step        = submission.dig(:step, :entry)
 
-  data_column       = html_tag(:strong, data_step[:label])
-  file_column       = html_tag(:strong, file_step[:label])
-  store_column      = html_tag(:strong, store_step[:label])
-  index_column      = html_tag(:strong, index_step[:label])
-  entry_column      = html_tag(:strong, entry_step[:label])
+  data_column       = html_bold(data_step[:label])
+  file_column       = html_bold(file_step[:label])
+  store_column      = html_bold(store_step[:label])
+  index_column      = html_bold(index_step[:label])
+  entry_column      = html_bold(entry_step[:label])
 
   data_step_title   = data_step[:title]
   file_step_title   = file_step[:title]

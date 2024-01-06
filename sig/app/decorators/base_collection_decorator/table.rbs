@@ -47,6 +47,15 @@ module BaseCollectionDecorator::Table
   #
   def table_heading: (?dark: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Render a hidden row which spans the table.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_spanner: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # The collection of items to be presented in tabular form.
   #
   # @return [Array<Model>]

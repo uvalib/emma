@@ -473,7 +473,7 @@ class ManifestItemDecorator < BaseDecorator
 
       tag    = html_span("#{tag}: ", class: 'tag')
       name   = html_span(name, class: 'field-name')
-      req    = html_tag(:em, " (#{req})") if req
+      req  &&= html_italic(" (#{req})")
 
       first  = safe_join([tag, name, req].compact)
       lines  = prop[:notes_html] || prop[:notes]
@@ -510,11 +510,11 @@ class ManifestItemDecorator < BaseDecorator
         if prop[:pairs]
           label_dt = 'Data value'   # TODO: I18n
           label_dd = 'Displayed as' # TODO: I18n
-          html_tag(:dl) do
+          html_dl do
             opt = { class: 'label' } # First pair only
             { label_dt => label_dd }.merge!(prop[:pairs]).map do |value, label|
-              value = html_tag(:dt, value, **opt)
-              label = html_tag(:dd, label, **opt)
+              value = html_dt(value, **opt)
+              label = html_dd(label, **opt)
               opt   = {}
               value << label
             end
@@ -1092,7 +1092,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def row_field_error_details(value, css: '.field-errors', **opt)
       append_css!(opt, css)
-      html_tag(:dl, **opt) do
+      html_dl(**opt) do
         value.map do |fld, errs|
           if errs.is_a?(Hash)
             errs =
@@ -1101,12 +1101,10 @@ class ManifestItemDecorator < BaseDecorator
                 issue = html_span(v)
                 html_div { "#{item}: #{issue}".html_safe }
               end
-          elsif errs.is_a?(Array)
-            errs = safe_join(errs, HTML_BREAK)
+            html_dt(fld) << html_dd(*errs)
           else
-            errs = ERB::Util.h(errs)
+            html_dt(fld) << html_dd(*errs, separator: HTML_BREAK)
           end
-          html_tag(:dt, fld) << html_tag(:dd, *errs)
         end
       end
     end
@@ -1320,7 +1318,7 @@ class ManifestItemDecorator
           if t == file_type
             html_div(file_name, class: "from-#{t} active")
           else
-            html_div(nil, class: "from-#{t}", 'aria-hidden': true)
+            html_div(class: "from-#{t}", 'aria-hidden': true)
           end
         end
       value = safe_join(file_type_entries)

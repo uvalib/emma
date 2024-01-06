@@ -305,7 +305,7 @@ module BaseDecorator::Grid
     prepend_css!(opt, "columns-#{headers.size}") unless table
     prepend_css!(opt, css, "head row-#{row}")
     content = html_tag(tag, *headers, **opt)
-    wrap ? html_tag(:thead, content, **t_opt) : content
+    wrap ? html_thead(content, **t_opt) : content
   end
 
   # render_grid_data_rows
@@ -348,7 +348,7 @@ module BaseDecorator::Grid
     rows << render_grid_template_row(**opt, outer: outer)
 
     if wrap
-      html_tag(:tbody, *rows, **trace_attrs_from(opt))
+      html_tbody(*rows, **trace_attrs_from(opt))
     else
       safe_join(rows, "\n")
     end

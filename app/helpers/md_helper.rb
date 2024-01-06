@@ -60,7 +60,7 @@ module MdHelper
     c_txt = 'Paste' # TODO: I18n
     c_id  = "button-#{id}"
     c_opt = { class: 'clipboard-input', id: c_id, 'aria-describedby': l_id }
-    ctrl  = html_tag(:button, c_txt, **c_opt)
+    ctrl  = html_button(c_txt, **c_opt)
 
     n_opt = { class: 'clipboard-note hidden' }
     note  = html_span('', **n_opt)
@@ -84,7 +84,7 @@ module MdHelper
     l_css = 'preview-label'
     l_id  = unique_id(l_css)
     l_opt = { class: l_css, id: l_id }
-    label = html_tag(:h2, l_txt, **l_opt)
+    label = html_h2(l_txt, **l_opt)
 
     i_txt = 'Preview of selected file' # TODO: I18n
     i_css = 'file-preview'

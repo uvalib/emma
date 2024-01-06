@@ -89,20 +89,20 @@ module LayoutHelper::SkipNav
   # Generate HTML for a "skip navigation" menu.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to outer #html_tag.
+  # @param [Hash]   opt               Passed to outer container element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_skip_nav(css: '.skip-nav-menu', **opt)
     opt = prepend_css(opt, css)
-    html_tag(:ul, **opt) do
+    html_ul(**opt) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
           entry.map { |label, link| render_skip_nav_link(label, link) }
         else
           entry.presence
         end
-      }.compact.uniq.map! { |e| html_tag(:li, e, class: 'skip-nav-entry') }
+      }.compact.uniq.map! { |entry| html_li(entry, class: 'skip-nav-entry') }
     end
   end
 

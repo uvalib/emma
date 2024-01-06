@@ -24,11 +24,11 @@
     items     = dec.object_class.model_controller.unit[:Items]
 
     my_title  = "My #{items}" # TODO: I18n
-    my_title  = html_tag(:h2, my_title,  class: 'select-title')
+    my_title  = html_h2(my_title,  class: 'select-title')
     my_menu   = dec.items_menu(constraints: { user: current_user })
 
     all_title = administrator? ? "All #{items}" : "Organization #{items}" # TODO: I18n
-    all_title = html_tag(:h2, all_title, class: 'select-title')
+    all_title = html_h2(all_title, class: 'select-title')
     all_menu  = dec.items_menu
   else
     my_title  = all_title = all_menu = nil

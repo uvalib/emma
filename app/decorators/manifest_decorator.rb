@@ -916,7 +916,7 @@ class ManifestDecorator
         decorate(item).submission_status(tag: tag, index: i, row: (row + i))
       end
     row += rows.size
-    opt[:tbody] = table ? html_tag(:tbody, *rows) : safe_join(rows, "\n")
+    opt[:tbody] = table ? html_tbody(*rows) : safe_join(rows, "\n")
 
     opt[:'data-labels']   ||= STATUS_LABELS
     opt[:'aria-colcount'] ||= STATUS_COLUMN_COUNT

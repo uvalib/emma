@@ -28,7 +28,7 @@
 
   min_length    = @minimum_password_length
   min_length  &&= t('emma.user.password.length', min: min_length)
-  min_length  &&= '<br/>'.html_safe << html_tag(:em, "(#{min_length})")
+  min_length  &&= '<br/>'.html_safe << html_italic("(#{min_length})")
 
   conf_label     = t('emma.user.passwords.edit.confirm')
   conf_label_opt = label_opt

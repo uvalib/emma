@@ -338,6 +338,16 @@ module BaseDecorator::List
 
   @cover_image: String | nil
 
+  # An "empty" element that can be used as a placeholder.
+  #
+  # @param [String, nil] comment      Text for an interior HTML comment.
+  # @param [Symbol]      tag          The HTML tag to use for the element.
+  # @param [Hash]        opt          Passed to #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def placeholder_element: (?comment: String|nil, ?tag: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Generate a standardized (base) element identifier from the object.
   #
   # @param [Hash] opt                 Passed to #html_id.

@@ -1,0 +1,52 @@
+# Shared view helper HTML support methods.
+#
+module HtmlHelper::Symbols
+  include HtmlHelper::Tags
+
+  # Pattern to #scan a string for HTML elements optionally preceded and
+  # followed by literal text.
+  #
+  # @type [Regexp]
+  #
+  FOR_ELEMENTS: Regexp
+
+  # If the text has any symbols in it, hide them from screen readers.
+  #
+  # If so, each run of one or more symbolic characters will be wrapped in
+  # span.symbol with 'aria-hidden' and all other runs of characters will be
+  # wrapped in span.text (unless *text* is already ActiveSupport::SafeBuffer).
+  #
+  # If not, *text* will be returned HTML-ready with no `<span>`s added.
+  #
+  # @param [String, nil] text
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def hide_symbols: ((String|nil) text) -> ActiveSupport::SafeBuffer
+
+  # Augment Emma::Common::FormatMethods#non_breaking to hide symbols from
+  # screen readers.
+  #
+  # @param [String, nil] text
+  # @param [Boolean]     show_symbols   If *true* don't #hide_symbols.
+  # @param [Hash]        opt            To super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see Emma::Common::FormatMethods#non_breaking
+  #
+  def non_breaking: (String? text, ?show_symbols: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Augment Emma::Common::FormatMethods#labelize to hide symbols from screen
+  # readers.
+  #
+  # @param [String, Symbol, nil]  text
+  # @param [Boolean]              show_symbols  If *true* don't #hide_symbols.
+  # @param [Hash]                 opt           To super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see Emma::Common::FormatMethods#labelize
+  #
+  def labelize: ((String|Symbol|nil) text, ?show_symbols: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+end

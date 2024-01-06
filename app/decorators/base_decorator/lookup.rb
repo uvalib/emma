@@ -233,7 +233,6 @@ module BaseDecorator::Lookup
 
     # === Separator type radio buttons
     sep_label    = 'Term Separators' # TODO: I18n
-    sep_label    = html_tag(:legend, sep_label)
     sep_css      = 'item-separator'
     sep_id       = unique_id(sep_css, **uniq_opt)
     sep_opt      = { id: sep_id, class: sep_css, tabindex: 0 }
@@ -242,15 +241,16 @@ module BaseDecorator::Lookup
       space: 'Space, tab, and <strong>|</strong> (pipe)'.html_safe,
       pipe:  'Only <strong>|</strong> (pipe)'.html_safe
     }
-    separators   =
-      sep_types.map.with_index do |(value, text), index|
-        id      = "#{sep_id}-#{index}"
-        checked = sep_selected ? (value == sep_selected) : index.zero?
-        button  = h.radio_button_tag('separator', value, checked, id: id)
-        label   = h.label_tag(id, text)
-        button << label
+    separator_choices =
+      html_fieldset(sep_label, **sep_opt) do
+        sep_types.map.with_index do |(value, text), index|
+          id      = "#{sep_id}-#{index}"
+          checked = sep_selected ? (value == sep_selected) : index.zero?
+          button  = h.radio_button_tag('separator', value, checked, id: id)
+          label   = h.label_tag(id, text)
+          button << label
+        end
       end
-    separator_choices = html_tag(:fieldset, sep_label, *separators, **sep_opt)
 
     # === Input prompt element
     prepend_css!(opt, css)
@@ -302,7 +302,7 @@ module BaseDecorator::Lookup
     hdg_label = 'Results' # TODO: I18n
     hdg_css   = 'lookup-heading'
     hdg_id    = unique_id(hdg_css, **uniq_opt)
-    heading   = html_tag(2, hdg_label, id: hdg_id, class: hdg_css, **t_opt)
+    heading   = html_h2(hdg_label, id: hdg_id, class: hdg_css, **t_opt)
 
     # === Output results element
     res_css   = 'item-results'

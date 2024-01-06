@@ -1,0 +1,211 @@
+# Shared view helper HTML support methods.
+#
+module HtmlHelper::Tags
+  include HtmlHelper::Attributes
+
+  # Short-cut for generating an HTML '<span>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_span: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<strong>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_bold: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<em>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_italic: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<div>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_div: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<p>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_paragraph: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<h1>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_h1: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<h2>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_h2: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<h3>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_h3: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<dl>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_dl: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<dt>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_dt: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<dd>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_dd: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<ol>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_ol: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<ul>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_ul: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<li>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_li: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<table>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_table: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<thead>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_thead: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<tbody>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_tbody: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<tr>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_tr: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<th>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_th: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<td>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_td: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<legend>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_legend: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<fieldset>' element with a legend.
+  #
+  # @param [String, nil] legend
+  # @param [Array<*>]    content
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Additional content
+  # @yieldreturn [String, Array]
+  #
+  def html_fieldset: (String|nil legend, *String content, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<button>' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_button: (*untyped args, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML '<details>' element.
+  #
+  # For easier styling, additional content is wrapped in a '.content' element.
+  #
+  # @param [String]   summary         The text visible when not expanded.
+  # @param [Array<*>] content         Appended to the '.content' element.
+  # @param [String]   id              Passed to the inner `<summary>` element.
+  # @param [String]   title           Passed to the inner `<summary>` element.
+  # @param [Hash]     opt             Passed to the outer `<details>` element.
+  # @param [Proc]     blk             Appended to the '.content' element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_details: (String summary, *String content, ?id: String|nil, ?title: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Short-cut for generating an HTML element which normalizes element contents
+  # provided via the parameter list and/or the block.
+  #
+  # If *tag* is a number it is translated to 'h1'-'h6'.  If *tag* is 0 or *nil*
+  # then it defaults to 'div'.
+  #
+  # @param [Symbol, String, Integer, nil] tag
+  # @param [*]                            args
+  # @param [String, nil]                  separator   Between *args*.
+  # @param [Hash]                         opt         Passed to #content_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Additional content
+  # @yieldreturn [String, Array]
+  #
+  # @see ActionView::Helpers::TagHelper#content_tag
+  #
+  def html_tag: ((Symbol|String|Integer|nil) tag, *untyped args, ?separator: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Invoke #form_tag after normalizing element contents provided via the
+  # parameter list and/or the block.
+  #
+  # @param [String, Hash] url_or_path
+  # @param [*]            args
+  # @param [String, nil]  separator   Between *args*.
+  # @param [Hash]         opt         Passed to #form_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Form contents
+  # @yieldreturn [String, Array]
+  #
+  def html_form: ((String|symHash) url_or_path, *untyped args, ?separator: String|nil, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
+
+  # Make a Unicode character (sequence) into a decorative element that is not
+  # pronounced by screen readers.
+  #
+  # @param [String, Symbol, *] icon   Character(s) that should match #SYMBOLS.
+  # @param [String]            css    Characteristic CSS class/selector.
+  # @param [Hash]              opt    Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def symbol_icon: (untyped icon, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+end

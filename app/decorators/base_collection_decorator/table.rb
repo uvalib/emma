@@ -112,12 +112,20 @@ module BaseCollectionDecorator::Table
         prop[:label] || labelize(field)
       end
     }.tap { |line|
-      if dark
-        t_opt   = trace_attrs_from(opt)
-        spanner = html_tag(:tr, class: 'spanner', 'aria-hidden': true, **t_opt)
-        line.prepend(spanner)
-      end
+      line.prepend(table_spanner(**trace_attrs_from(opt))) if dark
     }
+  end
+
+  # Render a hidden row which spans the table.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_spanner(css: '.spanner', **opt)
+    prepend_css!(opt, css)
+    html_tr(role: 'presentation', 'aria-hidden': true, **opt)
   end
 
   # ===========================================================================

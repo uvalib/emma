@@ -352,11 +352,11 @@ module BaseDecorator::Fields
 
   # render_check_box
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Symbol] tag
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt
+  # @param [String]      name
+  # @param [*]           value
+  # @param [Symbol, nil] tag
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #

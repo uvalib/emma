@@ -716,10 +716,10 @@ class SearchDecorator
   #
   def format_counts(css: '.format-counts', **opt)
     prepend_css!(opt, css)
-    html_tag(:ul, **opt) do
+    html_ul(**opt) do
       counts = object&.get_format_counts || {}
       counts.map do |format, count|
-        html_tag(:li) do
+        html_li do
           count  = html_span(count, class: 'count')
           format = format.try(:titleize).try(:upcase) || '???'
           format = 'AUDIO' if format == 'DAISY AUDIO'

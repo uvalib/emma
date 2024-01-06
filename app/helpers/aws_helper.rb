@@ -221,7 +221,7 @@ module AwsHelper
       name    = bucket.is_a?(Aws::S3::Bucket) ? bucket.name : bucket
       title ||= name
       parts <<
-        html_tag(:h3, class: 'aws-bucket-hdg', id: "##{name}") do
+        html_h3(class: 'aws-bucket-hdg', id: "##{name}") do
           html_span(title) << s3_bucket_link(name)
         end
       skip_nav_append(title => name)
@@ -391,11 +391,9 @@ module AwsHelper
   # @return [Hash]                        If *html* is *false*.
   #
   def render_s3_object_placeholder(label: nil, html: nil, **opt)
-    html    = !false?(html)
-    label ||= S3_EMPTY_BUCKET
-    if html && !label.is_a?(ActiveSupport::SafeBuffer)
-      label = html_tag(:strong, label)
-      label = html_tag(:em, label, **opt)
+    html  = !false?(html)
+    unless label.is_a?(ActiveSupport::SafeBuffer)
+      label = html_bold(**opt) { html_italic(label || S3_EMPTY_BUCKET) }
     end
     entry = { placeholder: label }
     render_s3_object(entry, html: html)
@@ -426,18 +424,18 @@ module AwsHelper
   # @return [Hash]
   #
   def value_hash(item, methods)
-    result =
-      (item.dup if item.is_a?(Hash)) ||
-      (methods.map { |m| [m, m.to_s.titleize] } if item.nil?) ||
-      (methods.map { |m| [m, item.send(m)] if item.respond_to?(m) })
-    result = result.compact.to_h if result.is_a?(Array)
-    key    = result[:key] || result[:object_key]
-    if key.present? && result[:prefix].blank?
-      prefix = item ? prefix_of(key) : 'Prefix' # TODO: I18n
-      result = { prefix: prefix }.merge!(result)
+    if item.is_a?(Hash)
+      item.dup
+    elsif item.nil?
+      methods.map { |m| [m, m.to_s.titleize] }.to_h
+    else
+      methods.map { |m| [m, item.send(m)] if item.respond_to?(m) }.compact.to_h
+    end.tap do |result|
+      key = result[:key] || result[:object_key]
+      if key.present? && result[:prefix].blank?
+        result[:prefix] = item ? prefix_of(key) : 'Prefix' # TODO: I18n
+      end
     end
-    # noinspection RubyMismatchedReturnType
-    result
   end
 
   # ===========================================================================

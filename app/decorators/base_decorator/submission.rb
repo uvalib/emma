@@ -190,7 +190,7 @@ module BaseDecorator::Submission
     opt[:id] = unique_id(css, unique: unique)
     prepend_css!(opt, css)
     trace_attrs!(opt)
-    html_tag(:h1, label, **opt)
+    html_h1(label, **opt)
   end
 
   # monitor_status
@@ -252,7 +252,7 @@ module BaseDecorator::Submission
     trace_attrs!(opt)
     html_div(**opt) do
       t_opt = trace_attrs_from(opt)
-      html_tag(:h2, label, **t_opt) << html_div(class: 'display', **t_opt)
+      html_h2(label, **t_opt) << html_div(class: 'display', **t_opt)
     end
   end
 

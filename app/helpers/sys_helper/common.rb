@@ -60,8 +60,8 @@ module SysHelper::Common
     pairs.map do |k, v|
       blank = v.nil? || (v == EMPTY_VALUE)
       p_opt = append_css(opt, (blank ? 'blank' : 'present'))
-      label = html_tag(:dt, **p_opt) { dt_name(k) }
-      value = html_tag(:dd, **p_opt) { dd_value(v) }
+      label = html_dt(**p_opt) { dt_name(k) }
+      value = html_dd(**p_opt) { dd_value(v) }
       label << value
     end
   end
@@ -142,8 +142,8 @@ module SysHelper::Common
 
     # Generate table header row.
     head =
-      html_tag(:thead) do
-        html_tag(:tr, 'aria-rowindex': (row += 1)) do
+      html_thead do
+        html_tr('aria-rowindex': (row += 1)) do
           headers.map.with_index(1) do |(k, v), col|
             tag, role = [:th, 'columnheader']
             html_tag(tag, v, class: k, role: role, 'aria-colindex': col)
@@ -153,10 +153,10 @@ module SysHelper::Common
 
     # Generate table body rows.
     body =
-      html_tag(:tbody) do
+      html_tbody do
         column = ->(*values) { headers.transform_values { values.shift } }
         pairs.map do |name, values|
-          html_tag(:tr, 'aria-rowindex': (row += 1)) do
+          html_tr('aria-rowindex': (row += 1)) do
             column.(name, *values).map.with_index(1) do |(k, v), col|
               tag, role = (col == 1) ? [:th, 'rowheader'] : [:td, 'cell']
               html_tag(tag, v, class: k, role: role, 'aria-colindex': col)
@@ -169,7 +169,7 @@ module SysHelper::Common
     opt[:'aria-rowcount'] = 1 + pairs.size
     opt[:'aria-colcount'] = cols
     prepend_css!(opt, css, "columns-#{cols}")
-    html_tag(:table, 'data-turbolinks-permanent': true, **opt) do
+    html_table('data-turbolinks-permanent': true, **opt) do
       head << body
     end
   end

@@ -3,6 +3,21 @@
 module Emma::Unicode
   extend ::Emma::Unicode
 
+  # A matcher for one or more symbol-like characters.
+  #
+  # @type [Regexp]
+  #
+  SYMBOLS: Regexp
+
+  # Indicate whether the string contains only characters that fall outside the
+  # normal text range.  Always `false` if *text* is not a string.
+  #
+  # @param [String, *] text
+  #
+  def only_symbols?
+    : (String  text) -> bool
+    | (untyped text) -> false
+
   # Produce a single character.
   #
   # @param [String, Integer] v

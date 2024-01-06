@@ -58,7 +58,7 @@ module LayoutHelper::SkipNav
   # Generate HTML for a "skip navigation" menu.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to outer #html_tag.
+  # @param [Hash]   opt               Passed to outer container element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

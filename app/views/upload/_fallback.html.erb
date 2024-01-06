@@ -18,7 +18,7 @@
     set_page_description(title)
   end
 
-  error = (html_tag(:p, error) unless error.blank? || (error == :none))
+  error = (html_paragraph(error) unless error.blank? || (error == :none))
 
 -%>
 

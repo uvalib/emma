@@ -138,15 +138,15 @@ module BaseDecorator::Fields
 
   # render_check_box
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Symbol] tag
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt
+  # @param [String]      name
+  # @param [*]           value
+  # @param [Symbol, nil] tag
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_check_box: (String name, untyped value, ?tag: Symbol, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_check_box: (String name, untyped value, ?tag: Symbol|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Indicate whether the value is a valid range type.
   #

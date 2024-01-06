@@ -48,7 +48,7 @@ module ToolHelper
   def tool_list(user: nil, css: '.tool-list', **opt)
     user ||= current_user
     prepend_css!(opt, css)
-    html_tag(:ul, **opt) do
+    html_ul(**opt) do
       TOOL_ITEMS.map { |act, cfg| tool_list_item(act, cfg, user: user) }
     end
   end
@@ -83,7 +83,7 @@ module ToolHelper
     notice = html_span(notice, **append_css(n_css))
 
     prepend_css!(opt, css)
-    html_tag(:li, **opt) do
+    html_li(**opt) do
       link << notice
     end
   end

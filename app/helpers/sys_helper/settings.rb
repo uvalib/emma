@@ -42,7 +42,7 @@ module SysHelper::Settings
     submit = submit_tag(submit || COMMIT_LABEL) unless submit&.html_safe?
     prepend_css!(opt, css)
     form_tag(update_sys_path, **opt) do
-      html_tag(:fieldset, nil, class: 'fields') do
+      html_fieldset(nil, class: 'fields') do
         AppSettings.each_flag(spacers: true).map do |name, value|
           value.spacer ? app_spacer : app_flag_controls(name, value)
         end

@@ -67,20 +67,17 @@ module HelpHelper
       end
 
       # Massage content if defined within the YAML file.
-      html = entry[:content_html]
-      text = entry[:content]
-      content = html ? Array.wrap(html).map(&:html_safe) : Array.wrap(text)
-      content.map! do |part|
-        safe = part.html_safe?
-        part = ERB::Util.h(part) unless safe
-        part =
-          part.strip.gsub(%r{(?<=\s)https?://[^\s]+}) { |url|
-            external_link(url, url)
-          }.html_safe
-        (safe && part.start_with?('<')) ? part : html_tag(:p, part)
-      end
+      text, html = entry.values_at(:content, :content_html)
       entry[:content] = entry[:content_html] =
-        content.compact.presence&.join("\n")&.html_safe
+        (html ? Array.wrap(html).map(&:html_safe) : Array.wrap(text)).map { |s|
+          next if s.blank?
+          s = ERB::Util.h(s) unless (safe = s.html_safe?)
+          s.strip.gsub(%r{(?<=\s)https?://[^\s]+}) { |url|
+            external_link(url, url)
+          }.html_safe.then { |part|
+            (safe && part.start_with?('<')) ? part : html_paragraph(part)
+          }
+        }.compact.presence&.join("\n")&.html_safe
 
       # The updated help topic entry.
       [topic, entry]
@@ -321,7 +318,7 @@ module HelpHelper
       safe = part.html_safe?
       part = part.to_s.strip
       part = part.html_safe if safe
-      (safe && part.start_with?('<')) ? part : html_tag(:p, part)
+      (safe && part.start_with?('<')) ? part : html_paragraph(part)
     }.compact.presence
   end
 
@@ -537,7 +534,7 @@ module HelpHelper
     def initialize(base: nil, **cfg)
       @field  = cfg[:field]
       @name   = cfg[:label]
-      @label  = html_tag(:strong, @name)
+      @label  = html_bold(@name)
       # noinspection RubyMismatchedArgumentType
       @id     = html_id(base, @name, separator: '_')
       @text   = text && html_span(text, class: 'text')
@@ -633,7 +630,7 @@ module HelpHelper
       text = text.html_safe
       text << docs if docs
     elsif (text = I18n.t('emma.help.index.intro', default: nil))
-      text = text.split(/%{#{meth}}/).compact.map { |part| html_tag(:p, part) }
+      text = text.split(/%{#{meth}}/).compact.map { |txt| html_paragraph(txt) }
       text = safe_join(text, docs)
     end
     html_div(**opt) do
@@ -650,7 +647,7 @@ module HelpHelper
   #
   def help_offline(css: '.help-offline', **opt)
     prepend_css!(opt, css)
-    html_tag(:ol, **opt) do
+    html_ol(**opt) do
       base = Rails.root.join('public').to_s
       help_offline_items.map do |path|
         path.match(%r{^([^ ]+/)(\d+\.)(.*)(\(.*)$})
@@ -658,7 +655,7 @@ module HelpHelper
         file = "#{$2}#{$3}#{$4}"
         dir  = $1.delete_prefix(base)
         path = dir + ERB::Util.u(file)
-        html_tag(:li) do
+        html_li do
           external_link(name, path)
         end
       end

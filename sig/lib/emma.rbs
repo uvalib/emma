@@ -69,6 +69,8 @@ class Object
   # @param [String, nil]   filename     If provided, first #require each file
   #                                       from the subdirectory with the same
   #                                       base name as *filename*.
+  # @param [bool]          and_extend   If *true* then also extend *base* with
+  #                                       the included modules.
   #
   # @return [Array<Module>]             The modules included into *base*.
   #
@@ -79,5 +81,11 @@ class Object
   #
   # @see #require_submodules
   #
-  def include_submodules: (Module base, ?(String|nil) filename) ?{ (Symbol, Module) -> bool } -> Array[Module]
+  def include_submodules: (Module base, ?(String|nil) filename, ?and_extend: bool) ?{ (Symbol, Module) -> bool } -> Array[Module]
+
+  # Include and extend submodules.
+  #
+  # @see #include_submodules
+  #
+  def include_and_extend_submodules: (Module base, ?(String|nil) filename) ?{ (Symbol, Module) -> bool } -> Array[Module]
 end

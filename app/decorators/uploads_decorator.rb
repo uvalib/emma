@@ -187,14 +187,12 @@ class UploadsDecorator < BaseCollectionDecorator
 
     # A label for the group (screen-reader only).
     legend = "Choose the #{model_type} submission state to display:" # TODO: I18n
-    legend = html_tag(:legend, legend, class: 'sr-only')
+    legend = html_legend(legend, class: 'sr-only')
 
     # Include the group in a panel with accompanying label.
     outer_opt = prepend_css(outer, css)
     append_css!(outer_opt, 'hidden') unless controls.many?
-    h.field_set_tag(nil, outer_opt) do
-      legend << group
-    end
+    html_fieldset(legend, group, **outer_opt)
   end
 
   # Control the selection of filters displayed by #list_filter.
@@ -240,7 +238,7 @@ class UploadsDecorator < BaseCollectionDecorator
     opt[:tabindex]          = 0
     opt[:'aria-labelledby'] = l_id
     prepend_css!(opt, css)
-    html_tag(:ul, label, *checkboxes, **opt)
+    html_ul(label, *checkboxes, **opt)
   end
 
   # ===========================================================================

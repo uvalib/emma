@@ -99,7 +99,7 @@ class IaDownloadService::Error < ApiService::Error
     #
     def added_messages(ia_message)
       IA_MESSAGES.map { |pattern, note|
-        html_tag(:strong, "(#{note})") if ia_message.match?(pattern)
+        html_bold("(#{note})") if ia_message.match?(pattern)
       }.compact
     end
 

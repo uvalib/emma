@@ -861,6 +861,26 @@ module BaseDecorator::List
   # :section:
   # ===========================================================================
 
+  protected
+
+  # An "empty" element that can be used as a placeholder.
+  #
+  # @param [String, nil] comment      Text for an interior HTML comment.
+  # @param [Symbol]      tag          The HTML tag to use for the element.
+  # @param [Hash]        opt          Passed to #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def placeholder_element(comment: nil, tag: :div, **opt)
+    html_tag(tag, 'aria-hidden': true, **opt) do
+      "<!-- #{comment} -->".html_safe if comment.present?
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
   # Generate a standardized (base) element identifier from the object.
