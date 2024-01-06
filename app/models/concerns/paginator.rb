@@ -357,8 +357,7 @@ class Paginator
     #
     # @return [Integer]               Zero indicates unknown count.
     #
-    def record_count(value, default: 0)
-      value   = value.page_items       if value.is_a?(Paginator)
+    def record_count(value, default: 0, **)
       default = positive(default) || 1 if value.is_a?(Array)
       Array.wrap(value).sum do |v|
         v.try(:total_results) ||
@@ -385,10 +384,10 @@ class Paginator
         when Paginator, Array, Hash
           value.size
         else
-          value.try(:total_results) ||
-          value.try(:records)&.try(:size) ||
           value.try(:item_count) ||
           value.try(:titles)&.try(:size) ||
+          value.try(:total_results) ||
+          value.try(:records)&.try(:size) ||
           default
       end
     end
