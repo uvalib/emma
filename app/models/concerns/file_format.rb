@@ -125,7 +125,7 @@ module FileFormat
 
   # Metadata extracted from the file format instance.
   #
-  # @return [Hash]
+  # @return [Hash{String=>Any}]
   #
   def metadata
     @metadata ||= format_metadata(parser_metadata)
@@ -147,7 +147,7 @@ module FileFormat
 
   # Metadata extracted from the file format instance.
   #
-  # @param [Any] info                 Information supplied by the subclass.
+  # @param [*] info                   Information supplied by the subclass.
   #
   # @return [Hash{String=>Any}]
   #
@@ -177,7 +177,7 @@ module FileFormat
   # Map metadata extracted from the file format instance into common metadata
   # fields.
   #
-  # @param [Any] info                 Information supplied by the subclass.
+  # @param [*] info                   Information supplied by the subclass.
   #
   # @return [Hash{Symbol=>Any}]
   #
@@ -200,7 +200,7 @@ module FileFormat
 
   # apply_field_accessor
   #
-  # @param [Any]                 info
+  # @param [*]                   info
   # @param [Symbol, Proc, Array] accessor
   #
   # @return [Array<String>]

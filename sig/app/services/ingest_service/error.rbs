@@ -31,7 +31,7 @@ class IngestService::Error < ApiService::Error
     # Extract message(s) from a response body that has been determined to be
     # JSON.
     #
-    # @param [Hash, Array, nil] src
+    # @param [Hash, *] src
     #
     # @return [Array<String>]         If *json* was a Hash.
     # @return [Array<Any>]            Otherwise.

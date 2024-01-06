@@ -275,7 +275,7 @@ module AccountConcern
   def message_for(action, outcome, config = account_fields)
     # noinspection RubyMismatchedReturnType
     [action, :generic, :messages].find do |k|
-      (v = config.dig(k, outcome)) and break v
+      (v = config.dig(k, outcome)) and (break v)
     end
   end
 

@@ -544,6 +544,7 @@ module DataHelper
   #
   def html_db_field_values(values, css: '.field-values', **opt)
     prepend_css!(opt, css)
+    # noinspection RubyMismatchedArgumentType
     html_div(**opt) do
       total  = values.values.sum
       values = values.map { |value, count| [count, Array.wrap(value)] }

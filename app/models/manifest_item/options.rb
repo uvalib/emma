@@ -20,7 +20,7 @@ class ManifestItem::Options < Options
   # Extract POST parameters that are usable for creating/updating a new model
   # instance.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def get_model_params
     super.tap do |prm|

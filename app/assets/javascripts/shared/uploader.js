@@ -54,9 +54,9 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
 // ============================================================================
 
 /**
- * @typedef UppyFeatures
- *
  * Uppy plugin selection plus other optional settings.
+ *
+ * @typedef UppyFeatures
  *
  * @property {boolean} [replace_input]      Hide the `<input type="file">`
  *                                              present in the container. <p/>
@@ -79,9 +79,9 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
  */
 
 /**
- * @typedef {UppyFeatures} UppyFeatureSettings
- *
  * A live copy of Uppy features.
+ *
+ * @typedef {UppyFeatures} UppyFeatureSettings
  *
  * @property {boolean}             replace_input
  * @property {boolean}             popup_messages
@@ -109,9 +109,9 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
  */
 
 /**
- * @typedef {object} ShrineResponseBody
- *
  * Shrine upload response message.
+ *
+ * @typedef {object} ShrineResponseBody
  *
  * @property {EmmaDataOrError}  [emma_data]
  * @property {string}           id
@@ -122,9 +122,9 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
  */
 
 /**
- * @typedef {object} UppyResponseMessage
- *
  * Uppy upload response message.
+ *
+ * @typedef {object} UppyResponseMessage
  *
  * @property {number}             status
  * @property {ShrineResponseBody} body

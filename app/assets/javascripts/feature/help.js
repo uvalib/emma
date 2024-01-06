@@ -17,9 +17,7 @@ appSetup(MODULE, function() {
     const $help_content = $('.help-section');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($help_content)) {
-        return;
-    }
+    if (isMissing($help_content)) { return }
 
     // ========================================================================
     // Constants

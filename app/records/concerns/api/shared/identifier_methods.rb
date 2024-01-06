@@ -66,6 +66,7 @@ module Api::Shared::IdentifierMethods
   def normalize_identifier_fields!(data = nil, mode = nil)
     mode ||= id_array_mode
     identifier_fields.each do |field|
+      # noinspection RubyMismatchedArgumentType
       update_field_value!(data, field, mode) { |v| normalize_identifiers(v) }
     end
   end

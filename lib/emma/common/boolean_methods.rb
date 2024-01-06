@@ -27,7 +27,7 @@ module Emma::Common::BooleanMethods
 
   # Indicate whether the item represents a true or false value.
   #
-  # @param [Any, nil] value
+  # @param [Boolean, String, Symbol, *] value
   #
   def boolean?(value)
     return true  if value.is_a?(TrueClass) || value.is_a?(FalseClass)

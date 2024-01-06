@@ -83,9 +83,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     const $body = $('body.search-index');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($body)) {
-        return;
-    }
+    if (isMissing($body)) { return }
 
     /**
      * The database holding search result item data across pages.

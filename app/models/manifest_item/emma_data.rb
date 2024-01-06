@@ -47,7 +47,7 @@ module ManifestItem::EmmaData
     #
     # @param [Boolean, nil] refresh   If *false* avoid regeneration.
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>*}]
     #
     def emma_metadata(refresh: nil)
       if refresh.nil?

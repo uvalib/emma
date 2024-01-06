@@ -548,7 +548,7 @@ class Paginator
   # @param [Array<*>]       args
   # @param [Proc]           blk
   #
-  # @return [Any]
+  # @return [*]
   #
   def method_missing: ((Symbol|String) name, *untyped args) ?{ () -> untyped } -> untyped
 end

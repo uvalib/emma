@@ -64,7 +64,7 @@ module LookupService::GoogleBooks::Action::Volumes
   # @see https://cloud.google.com/apis/docs/system-parameters
   #
   def get_volumes(terms, **opt)
-    terms = query_terms!(terms, opt)
+    terms = query_terms(terms, opt)
     lccns = terms.select { |v| v.start_with?('lccn:') }.presence
     ids   = terms.map { |v| v.split(':', 2).first }.intersect?(ID_TYPES)
     opt[:foreign] = false unless ids
@@ -126,14 +126,14 @@ module LookupService::GoogleBooks::Action::Volumes
   # @private
   OPT = { author: QUERY_PREFIX.slice(*AUTHOR_TYPES).values }.deep_freeze
 
-  # query_terms!
+  # Aggregate terms into groups of similar search behavior.
   #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #
   # @return [Array<String>]
   #
-  def query_terms!(terms, opt)
+  def query_terms(terms, opt)
     query = [*opt.delete(:q), *opt.delete(:query)].compact.presence
     other = extract_hash!(opt, *QUERY_ALIAS).presence
     if terms.is_a?(LookupService::Request)

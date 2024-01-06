@@ -356,7 +356,7 @@ class UploadDecorator < BaseDecorator
 
     public
 
-    # Generate a menu of user instances.
+    # Generate a menu of upload instances.
     #
     # @param [Hash] opt
     #
@@ -806,7 +806,9 @@ class UploadDecorator
   def form_top_controls(f, *buttons, **opt)
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
-    super { |parts| parts << parent_entry_select(**t_opt) }
+    super do |parts|
+      parts << parent_entry_select(**t_opt)
+    end
   end
 
   # form_top_button_tray

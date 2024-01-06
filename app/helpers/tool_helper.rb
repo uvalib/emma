@@ -79,7 +79,8 @@ module ToolHelper
 
     n_css  = %w[notice]
     n_css << 'hidden' if allow
-    notice = html_span('(sign-in required)', **append_css(n_css)) # TODO: I18n
+    notice = '(sign-in required)' # TODO: I18n
+    notice = html_span(notice, **append_css(n_css))
 
     prepend_css!(opt, css)
     html_tag(:li, **opt) do

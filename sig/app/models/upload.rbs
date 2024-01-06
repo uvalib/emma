@@ -145,7 +145,7 @@ class Upload < ApplicationRecord
   # Allow :file_data and :emma_data to be seen fully when inspecting.
   #
   # @param [Symbol, String] name      Attribute name.
-  # @param [Any]            value     Attribute value.
+  # @param [*]              value     Attribute value.
   #
   # @return [String]
   #
@@ -231,7 +231,7 @@ class Upload < ApplicationRecord
   # @param [Symbol, String]                              key
   # @param [Any]                                         default
   #
-  # @return [Any]
+  # @return [*]
   #
   def self.get_value: ((Upload|anyHash) item, (String|Symbol) key, ?default: untyped) -> untyped
 

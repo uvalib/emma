@@ -156,9 +156,6 @@ module BaseDecorator::Table
   #
   # @see #table_heading
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def render_table_row(row: 1, col: 1, **opt, &blk)
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
@@ -181,6 +178,7 @@ module BaseDecorator::Table
     html_tag(o_tag, **o_opt, **t_opt) do
       i_opt.merge!(opt.except!(*MODEL_TABLE_OPTIONS))
       pairs.map.with_index(first) do |(field, prop), c|
+        # noinspection RubyMismatchedArgumentType
         rc_opt = model_rc_options(field, row, c, i_opt)
         append_css!(rc_opt, 'col-first') if c == first
         append_css!(rc_opt, 'col-last')  if c == last

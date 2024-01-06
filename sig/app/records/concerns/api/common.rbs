@@ -400,9 +400,9 @@ class IsoDate < ScalarType
     #
     # @param [String, Date, Time, IsoDate, *] value
     #
-    # @return [String, Date, Time, IsoDate, Any, nil]
+    # @return [String, Date, Time, IsoDate, *]
     #
-    def translate: (untyped value) -> untyped
+    def translate: [T] (T value) -> T
 
     # Remove fractional seconds and normalize +00:00 to Z.
     #

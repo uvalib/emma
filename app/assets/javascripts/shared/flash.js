@@ -183,8 +183,6 @@ export function flashReset(fc) {
  * Prevent flash messages from being generated.
  *
  * @param {boolean} [all]
- *
- * @returns {void}
  */
 export function suppressFlash(all) {
     //OUT.debug('suppressFlash: all =', all);
@@ -199,8 +197,6 @@ export function suppressFlash(all) {
  * Restore generation of flash messages.
  *
  * @param {boolean} [all]
- *
- * @returns {void}
  */
 export function enableFlash(all) {
     //OUT.debug('enableFlash: all =', all);
@@ -529,8 +525,6 @@ function getOptionsData($fc) {
  *
  * @param {jQuery}       [$fc]
  * @param {FlashOptions} [opt]        If missing the data is cleared.
- *
- * @returns {function|undefined}
  */
 function setOptionsData($fc, opt) {
     if (opt) {

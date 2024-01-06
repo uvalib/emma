@@ -56,7 +56,7 @@ module ApiService::Properties
 
   # The service identified by the given value.
   #
-  # @param [Any] target
+  # @param [*] target
   #
   # @return [String]
   #
@@ -64,7 +64,7 @@ module ApiService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   def configuration: () -> symHash
 

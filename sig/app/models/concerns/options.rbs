@@ -82,18 +82,20 @@ class Options
   # @param [Symbol, String] key
   # @param [Boolean]        log   If *false* do not warn about bad keys.
   #
-  # @return [Any, nil]
+  # @return [*]
   #
   def get: ((Symbol|String) key, ?log: bool) -> untyped
 
   # Set an option value.
   #
   # @param [Symbol, String] key
-  # @param [Any, nil]       value
+  # @param [*]              value
   #
-  # @return [Any, nil]
+  # @return [*]
   #
-  def set: ((Symbol|String) key, untyped value) -> untyped
+  def set
+    :     (nil             key, untyped value) -> nil
+    | [T] ((Symbol|String) key, T       value) -> T
 
   # Fill @value with all option settings from defaults and supplied URL params.
   #
@@ -101,7 +103,7 @@ class Options
   #                                     the local copy of URL parameters.
   # @param [Hash]    opt              Passed to #get.
   #
-  # @return [Hash{Symbol=>Any}]       Updated option values.
+  # @return [Hash{Symbol=>*}]         Updated option values.
   #
   def all: (?clean: bool, **untyped opt) -> symHash
 
@@ -153,7 +155,7 @@ class Options
   #
   # @note This method is expected by Record::Properties#parameters.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def model_params: () -> symHash
 
@@ -161,14 +163,14 @@ class Options
 
   # Get URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def get_model_params: () -> symHash
 
   # Extract POST parameters that are usable for creating/updating a new model
   # instance.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def model_post_params: () -> symHash
 
@@ -187,11 +189,11 @@ class Options
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
   #
-  # @param [Hash]    prm              Parameters to update
-  # @param [Boolean] compact          If *false*, allow blanks.
-  # @param [Hash]    opt              Options to #json_parse.
+  # @param [Hash{Symbol=>*}] prm      Parameters to update
+  # @param [Boolean]         compact  If *false*, allow blanks.
+  # @param [Hash]            opt      Options to #json_parse.
   #
-  # @return [Hash]                    The possibly-modified *prm*.
+  # @return [Hash{Symbol=>*}]         The possibly-modified *prm*.
   #
   def extract_model_data!: (symHash prm, ?compact: bool, **untyped opt) -> symHash
 

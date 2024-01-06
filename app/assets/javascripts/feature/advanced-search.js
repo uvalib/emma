@@ -45,9 +45,7 @@ appSetup(MODULE, function() {
     const $search_sections = $('.layout-section.search');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($search_sections)) {
-        return;
-    }
+    if (isMissing($search_sections)) { return }
 
     /**
      * Console output functions for this module.

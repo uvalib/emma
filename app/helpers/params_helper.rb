@@ -316,8 +316,8 @@ module ParamsHelper
   #   @return [Array<(String,nil)>]
   #
   # @overload ctrlr_action_to_names(ctrlr, action)
-  #   @param [Symbol, String, Hash, Module, Any] ctrlr
-  #   @param [Symbol, String]                    action
+  #   @param [Symbol, String, Hash, Module, *] ctrlr
+  #   @param [Symbol, String]                  action
   #   @return [Array<(String,String)>]
   #
   def ctrlr_action_to_names(ctrlr = nil, action = nil)

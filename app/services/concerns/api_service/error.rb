@@ -238,7 +238,7 @@ class ApiService::Error < Api::Error
     # Extract message(s) from a response body that has been determined to be
     # JSON.
     #
-    # @param [Hash, Any, nil] src
+    # @param [Hash, *] src
     #
     # @return [Array<String>]         If *src* was a Hash.
     # @return [Array<Any>]            Otherwise.

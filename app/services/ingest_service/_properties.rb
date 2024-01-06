@@ -19,9 +19,9 @@ module IngestService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
-  CONFIGURATION = i18n_erb('emma.service.ingest').deep_freeze
+  CONFIGURATION = i18n_config('emma.service.ingest').deep_freeze
 
   # Default engine selection.
   #
@@ -37,7 +37,7 @@ module IngestService::Properties
 
   # Configuration for the EMMA Unified Ingest service.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   def configuration
     CONFIGURATION

@@ -231,7 +231,7 @@ module HealthConcern
   # @return [HealthStatus]
   #
   #--
-  # noinspection RubyScope
+  # noinspection RubyScope, RubyMismatchedArgumentType
   #++
   def status_report(subsystem, entry = nil)
     entry ||= HEALTH_CHECK[subsystem] || INVALID_HEALTH_CHECK

@@ -85,7 +85,7 @@ module ApiService::Properties
 
   # The service identified by the given value.
   #
-  # @param [Any] target
+  # @param [*] target
   #
   # @return [String]
   #
@@ -101,11 +101,10 @@ module ApiService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   def configuration
-    # noinspection RubyMismatchedReturnType
-    i18n_erb("emma.service.#{service_name}", default: {})
+    i18n_config("emma.service.#{service_name}", default: {})
   end
 
   # The URL for the API connection.

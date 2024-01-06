@@ -195,8 +195,8 @@ module LayoutHelper::SearchFilters
 
     # Create reverse sort entries.
     #
-    # @param [Array<Array<String,Any>>] pairs
-    # @param [Hash]                     config
+    # @param [Array<Array<String,String>>] pairs
+    # @param [Hash]                        config
     #
     # @return [Array<Array<String,String>>]
     #
@@ -223,7 +223,7 @@ module LayoutHelper::SearchFilters
 
     public
 
-    # Indicate whether the :sort is a reversed (descending) sort.
+    # Indicate whether a :sort value is a reversed (descending) sort.
     #
     # @param [String] value           A :sort key.
     # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
@@ -233,7 +233,7 @@ module LayoutHelper::SearchFilters
       value.to_s.end_with?(suffix)
     end
 
-    # Change :sort value to indicate a normal (ascending) sort.
+    # Change a :sort value to indicate a normal (ascending) sort.
     #
     # @param [String] value           Base :sort key.
     # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
@@ -247,7 +247,7 @@ module LayoutHelper::SearchFilters
       value.delete_suffix(suffix)
     end
 
-    # Change :sort value to indicate a reversed (descending) sort.
+    # Change a :sort value to indicate a reversed (descending) sort.
     #
     # @param [String] value           Base :sort key.
     # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
@@ -707,7 +707,7 @@ module LayoutHelper::SearchFilters
   # @param [Hash]                opt        Passed to #search_form except for
   #                                           #MENU_OPTS and:
   #
-  # @option opt [Any]  :default             Provided default value.
+  # @option opt [*]    :default             Provided default value.
   # @option opt [Hash] :config              Pre-fetched menu configuration.
   #
   # @return [ActiveSupport::SafeBuffer]     HTML menu element.
@@ -1053,7 +1053,7 @@ module LayoutHelper::SearchFilters
 
   # Indicate whether the menu is already sorted.
   #
-  # @param [Array<Array<(String,Any)>>] menu
+  # @param [Array<Array<(String,*)>>] menu
   #
   def entries_sorted?(menu)
     sort_entries(menu) == menu
@@ -1061,9 +1061,9 @@ module LayoutHelper::SearchFilters
 
   # Return a sorted copy of the menu.
   #
-  # @param [Array<Array<(String,Any)>>] menu
+  # @param [Array<Array<(String,*)>>] menu
   #
-  # @return [Array<Array<(String,Any)>>]
+  # @return [Array<Array<(String,*)>>]
   #
   def sort_entries(menu)
     sort_entries!(menu.dup)
@@ -1071,9 +1071,9 @@ module LayoutHelper::SearchFilters
 
   # Sort the menu by value if the value is a number or by the label otherwise.
   #
-  # @param [Array<Array<(String,Any)>>] menu
+  # @param [Array<Array<(String,*)>>] menu
   #
-  # @return [Array<Array<(String,Any)>>]      The possibly-modified *menu*.
+  # @return [Array<Array<(String,*)>>]    The possibly-modified *menu*.
   #
   def sort_entries!(menu)
     menu.sort_by! { |lbl, val| val.is_a?(Integer) ? ('%09d' % val) : lbl.to_s }

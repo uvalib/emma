@@ -30,9 +30,9 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 /** @typedef {function(XMLHttpRequest,string)}        AjaxCompleteCallback */
 
 /**
- * @typedef {object} AjaxOptions
- *
  * Options beginning with an underscore are local to {@link xmit}().
+ *
+ * @typedef {object} AjaxOptions
  *
  * @property {boolean}                          [_ignoreBody]
  * @property {object}                           [accepts]
@@ -94,7 +94,14 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 // Functions - send
 // ============================================================================
 
-/** @returns {void} */
+/**
+ * Invoke HTTP GET.
+ *
+ * @param {string}                   path
+ * @param {string|object}            prm
+ * @param {AjaxOptions|XmitCallback} [opt]
+ * @param {XmitCallback}             [cb]
+ */
 
 export function get(  path, prm, opt, cb) { xmit('GET',   path, prm, opt, cb) }
 export function head( path, prm, opt, cb) { xmit('HEAD',  path, prm, opt, cb) }

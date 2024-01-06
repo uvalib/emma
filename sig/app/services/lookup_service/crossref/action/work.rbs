@@ -45,12 +45,12 @@ module LookupService::Crossref::Action::Work
   # @private
   OPT: symHash
 
-  # query_terms!
+  # Aggregate terms into groups of similar search behavior.
   #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #
   # @return [Hash]
   #
-  def query_terms!: ((LookupService::Request|strArray|String) terms, symHash opt) -> symHash
+  def query_terms: ((LookupService::Request|strArray|String) terms, symHash opt) -> symHash
 end

@@ -19,9 +19,9 @@ module IaDownloadService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
-  CONFIGURATION = i18n_erb('emma.service.ia_download').deep_freeze
+  CONFIGURATION = i18n_config('emma.service.ia_download').deep_freeze
 
   # Maximum length of redirection chain.
   #
@@ -69,7 +69,7 @@ module IaDownloadService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   def configuration
     CONFIGURATION

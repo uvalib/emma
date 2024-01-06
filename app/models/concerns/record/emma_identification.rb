@@ -324,13 +324,13 @@ module Record::EmmaIdentification
   # If :sid_key set to *nil* then the result will always be in terms of :id_key
   # (which cannot be set to *nil*).
   #
-  # @param [String, Symbol, Integer, Hash, Model, *] v
-  # @param [Hash]                                    opt
+  # @param [String, Symbol, Integer, Hash, Model, nil] v
+  # @param [Hash]                                      opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   # @option opt [Symbol] :sid_key     Default: `#sid_column`.
   #
-  # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
+  # @return [Hash{Symbol=>Integer,String,nil}] Exactly one key-value pair.
   #
   # @note From Upload::IdentifierMethods#id_term
   #

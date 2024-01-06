@@ -40,14 +40,14 @@ module LookupService::GoogleBooks::Action::Volumes
   # @private
   OPT: symHash
 
-  # query_terms!
+  # Aggregate terms into groups of similar search behavior.
   #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #
   # @return [Array<String>]
   #
-  def query_terms!: ((LookupService::Request|strArray|String) terms, symHash opt) -> strArray
+  def query_terms: ((LookupService::Request|strArray|String) terms, symHash opt) -> strArray
 
   # Combine terms to make a Google Books query string.
   #

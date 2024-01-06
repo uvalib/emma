@@ -33,9 +33,7 @@ appSetup(MODULE, function() {
     const $body = $('body.search-index');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($body)) {
-        return;
-    }
+    if (isMissing($body)) { return }
 
     /**
      * Console output functions for this module.
@@ -244,6 +242,8 @@ appSetup(MODULE, function() {
      * @param {jQuery}  $control
      * @param {jQuery}  [$container]
      * @param {boolean} [open]          Default: `$control.is(OPEN)`.
+     *
+     * @returns {jQuery}
      */
     function updateControl($control, $container, open) {
         const is_open = isDefined(open) ? open : $control.is(OPEN);
@@ -261,7 +261,7 @@ appSetup(MODULE, function() {
     /**
      * Create a new open/close toggle control.
      *
-     * @param {number}  row
+     * @param {string}  row           E.g., "row-1".
      * @param {string}  target
      * @param {boolean} [open]        If **true**, start in the open state.
      *

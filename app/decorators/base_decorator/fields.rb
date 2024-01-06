@@ -543,7 +543,7 @@ module BaseDecorator::Fields
 
   protected
 
-  # format_datetime
+  # Render a value into ISO 8601 format if possible.
   #
   # @param [*] value
   #

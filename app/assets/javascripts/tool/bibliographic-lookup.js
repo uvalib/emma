@@ -55,8 +55,6 @@ AppDebug.file('tool/bibliographic-lookup', MODULE, DEBUG);
  * @param {Selector}               base
  * @param {CallbackChainFunctions} [show_hooks]
  * @param {CallbackChainFunctions} [hide_hooks]
- *
- * @returns {void}
  */
 export async function setupFor(base, show_hooks, hide_hooks) {
 
@@ -352,8 +350,6 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
     /**
      * Clear the current lookup request.
-     *
-     * @returns {void}
      */
     function clearRequestData() {
         OUT.debug('clearRequestData');
@@ -481,8 +477,6 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
     /**
      * Clear the user-selected field values from lookup.
-     *
-     * @returns {void}
      */
     function clearFieldResultsData() {
         OUT.debug('clearFieldResultsData');
@@ -2080,7 +2074,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      *
      * @returns {jQuery}
      */
-   function getLoadingOverlay() {
+    function getLoadingOverlay() {
         return $loading_overlay ||=
             presence(container().children(LookupModal.LOADING)) ||
             makeLoadingOverlay().prependTo(container());

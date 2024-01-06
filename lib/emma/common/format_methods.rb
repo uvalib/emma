@@ -335,8 +335,8 @@ module Emma::Common::FormatMethods
         key  = term.underscore.to_sym
         val  = nil
         items.find { |item|
-          item.respond_to?(key)    and break (val = item.send(key)) || true
-          item.try(:include?, key) and break (val = item[key])      || true
+          break (val = item.send(key)) || true if item.respond_to?(key)
+          break (val = item[key])      || true if item.try(:include?, key)
         } or next
         val = val&.to_s || term
         if term.match?(/[[:alpha:]]/)

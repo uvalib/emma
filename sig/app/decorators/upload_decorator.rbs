@@ -161,6 +161,14 @@ class UploadDecorator < BaseDecorator
     #
     def list_item_columns: (?(Model|anyHash|anyArray|nil) item) -> Integer
 
+    # Generate a menu of upload instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+
     # Generate a prompt for #items_menu.
     #
     # @param [User, Symbol, nil] user

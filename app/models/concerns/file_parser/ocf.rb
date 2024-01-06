@@ -110,13 +110,14 @@ class FileParser::Ocf < FileParser
   # @return [Hash{Symbol=>Array<String>}]
   #
   def get_opf_metadata
-    result = {}
-    doc = opf_zip_path
-    doc &&= get_archive_entry(doc, file_handle)
-    doc &&= Nokogiri.XML(doc)
+    result   = {}
+    cover_id = nil
+    doc      = opf_zip_path
+    doc    &&= get_archive_entry(doc, file_handle)
+    doc    &&= Nokogiri.XML(doc)
 
     # Parse <package><metadata> for metadata values.
-    cover_id = nil
+    # noinspection RubyMismatchedArgumentType
     (doc&.xpath('//xmlns:metadata')&.children || []).each do |element|
       next unless element.element?
       if element.name.include?('metadata')
@@ -135,6 +136,7 @@ class FileParser::Ocf < FileParser
     end
 
     # Parse <package><manifest> for cover image reference.
+    # noinspection RubyMismatchedArgumentType
     (doc&.xpath('//xmlns:manifest')&.children || []).each do |element|
       next unless element.element?
       next unless (cover = retrieve_cover_image(element, cover_id))

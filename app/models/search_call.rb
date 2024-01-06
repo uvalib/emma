@@ -306,7 +306,6 @@ class SearchCall < ApplicationRecord
   def self.for_org(org = nil, **opt)
     org = extract_value!(org, opt, :org, __method__)
     org = oid(org)
-    # noinspection SqlResolve
     joins(:user).where('users.org_id = ?', org, **opt)
   end
 

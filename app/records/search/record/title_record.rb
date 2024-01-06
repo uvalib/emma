@@ -355,9 +355,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       fields.map! { |f| [f.to_sym, field_value(rec, f)] }.to_h
     end
 
-    # comparable_fields
-    #
-    # @note This should probably be coalesced with extract_fields
+    # Fields with values normalized for comparison.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     # @param [Array<Symbol>]                             fields
@@ -662,7 +660,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
       # Operator needed to make instances usable from Enumerable#group_by.
       #
-      # @param [Any] other
+      # @param [*] other
       #
       def eql?(other)
         self == other
@@ -676,7 +674,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
       # Comparison operator required by the Comparable mixin.
       #
-      # @param [Any] other
+      # @param [*] other
       #
       # @return [Integer]   -1 if self is later, 1 if self is earlier
       #
@@ -745,7 +743,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # Add to #level.
     #
     # @param [String, nil] name
-    # @param [Any]         value
+    # @param [*]           value
     # @param [Hash]        opt        Passed to Level initializer.
     #
     # @return [void]
@@ -825,7 +823,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Operator needed to make instances usable from Enumerable#group_by.
     #
-    # @param [Any] other
+    # @param [*] other
     #
     def eql?(other)
       self == other
@@ -839,7 +837,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Comparison operator required by the Comparable mixin.
     #
-    # @param [Any] other
+    # @param [*] other
     #
     # @return [Integer]   -1 if self is later, 1 if self is earlier
     #
@@ -1393,7 +1391,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #                   should be wrapped (i.e., that the intended output format
   #                   is XML).
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def to_h(**opt)
     wrap   = opt[:item].present?

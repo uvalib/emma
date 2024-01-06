@@ -73,6 +73,14 @@ class ManifestDecorator < BaseDecorator
     #
     def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
 
+    # Generate a menu of manifest instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+
     # Generate a prompt for #items_menu.
     #
     # @param [User, Symbol, nil] user
@@ -124,7 +132,7 @@ class ManifestDecorator < BaseDecorator
     include SharedGenericMethods
 
     # Create a value for #context based on the parameters supplied through the
-    # initializer
+    # initializer.
     #
     # @param [Hash] opt
     #

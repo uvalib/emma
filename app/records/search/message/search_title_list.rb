@@ -169,7 +169,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
     # Indicate whether the other value is similar to the current value.
     #
-    # @param [Any] other
+    # @param [Any, nil] other
     #
     def match?(other)
       return false unless other.is_a?(GroupingCriteria)
@@ -233,7 +233,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #
   # @param [Array<Search::Record::MetadataRecord>] recs
   # @param [Integer] level            Incremented via recursion.
-  # @param [Any]     fields           Supplied via recursion.
+  # @param [*]       fields           Supplied via recursion.
   # @param [Proc]    blk              Executed at the bottom-level.
   #
   # @return [Array<Search::Record::TitleRecord>]
@@ -303,7 +303,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   #                   should be wrapped (i.e., that the intended output format
   #                   is XML).
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>*}]
   #
   def to_h(item: nil, **)
     fields.tap do |result|

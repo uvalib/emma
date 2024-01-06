@@ -56,26 +56,26 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {RecordProperties}
      */
-    const PROPERTY = CONTROLLER_PROPERTIES?.Record;
+    const PROPERTY    = CONTROLLER_PROPERTIES?.Record;
+    const GROUP_PANEL = PROPERTY?.GroupPanel;
+    const LIST_FILTER = PROPERTY?.ListFilter;
 
     /**
      * The element containing the submission workflow state select controls.
      *
      * @type {jQuery}
      */
-    const $group_select_panel = PROPERTY && $(`.${PROPERTY.GroupPanel.class}`);
+    const $group_panel = GROUP_PANEL && $(`.${GROUP_PANEL.class}`);
 
     /**
      * The element containing the submission list filter controls.
      *
      * @type {jQuery}
      */
-    const $list_filter_panel = PROPERTY && $(`.${PROPERTY.ListFilter.class}`);
+    const $list_filter = LIST_FILTER && $(`.${LIST_FILTER.class}`);
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($group_select_panel) && isMissing($list_filter_panel)) {
-        return;
-    }
+    if (isMissing($group_panel) && isMissing($list_filter)) { return }
 
     /**
      * Console output functions for this module.
@@ -92,8 +92,8 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $group_select_links =
-        $group_select_panel.find(`.${PROPERTY.GroupPanel.Control.class}`);
+    const $group_panel_controls =
+        $group_panel.find(`.${GROUP_PANEL.Control.class}`);
 
     /**
      * An element which receives a description of the state group button being
@@ -101,7 +101,8 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $group_select_note = $group_select_panel.find('.note-tray .note');
+    const $group_panel_note =
+        $group_panel.find('.note-tray .note');
 
     // ========================================================================
     // Variables - list filter
@@ -114,7 +115,7 @@ appSetup(MODULE, function() {
      * @type {jQuery}
      */
     const $list_filter_controls =
-        $list_filter_panel.find(`.${PROPERTY.ListFilter.Control.class}`);
+        $list_filter.find(`.${LIST_FILTER.Control.class}`);
 
     /**
      * Radio buttons which cause the set of displayed records to be filtered.
@@ -129,11 +130,11 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * The container for $filter_options checkboxes.
+     * The container for filter options checkboxes.
      *
      * @type {jQuery}
      */
-    const $filter_options_panel = $(`.${PROPERTY.FilterOptions.class}`);
+    const $options_panel = $(`.${PROPERTY.FilterOptions.class}`);
 
     /**
      * The filter option controls (each is an element containing a checkbox and
@@ -141,8 +142,8 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $filter_options_controls =
-        $filter_options_panel.find(`.${PROPERTY.FilterOptions.Control.class}`);
+    const $options_controls =
+        $options_panel.find(`.${PROPERTY.FilterOptions.Control.class}`);
 
     /**
      * The debug-only checkboxes to enable/disable the presence of
@@ -150,8 +151,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $filter_options_checkboxes =
-        CheckboxGroup.controls($filter_options_controls);
+    const $options_checkboxes = CheckboxGroup.controls($options_controls);
 
     // ========================================================================
     // Variables - records list
@@ -224,18 +224,18 @@ appSetup(MODULE, function() {
      * Display a description of the workflow state group button of interest
      * within the element dedicated to that purpose.
      *
-     * @param {SelectorOrEvent} ev
+     * @param {SelectorOrEvent} tgt
      *
      * @see "UploadsDecorator#state_group_select"
      */
-    function showGroupNote(ev) {
-        const target  = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
+    function showGroupNote(tgt) {
+        const target  = isEvent(tgt) ? (tgt.currentTarget || tgt.target) : tgt;
         const $target = $(target);
         const indent  = $target.position().left;
         const text    = $target.attr('data-label');
-        $group_select_note.css('margin-left', indent);
-        $group_select_note.text(text);
-        toggleVisibility($group_select_note, true);
+        $group_panel_note.css('margin-left', indent);
+        $group_panel_note.text(text);
+        toggleVisibility($group_panel_note, true);
     }
 
     /**
@@ -243,14 +243,14 @@ appSetup(MODULE, function() {
      * over or focused on.
      */
     function hideGroupNote() {
-        $group_select_note.html('&nbsp;'); // Keep filled to maintain height.
-        toggleVisibility($group_select_note, false);
+        $group_panel_note.html('&nbsp;'); // Keep filled to maintain height.
+        toggleVisibility($group_panel_note, false);
     }
 
     /**
      * Prevent a disabled link from being clicked.
      *
-     * @param {jQuery.Event|MouseEvent|KeyboardEvent} ev
+     * @param {MouseEvt|KeyboardEvt} ev
      */
     function onClickGroupNote(ev) {
         const key = keyCombo(ev);
@@ -347,7 +347,7 @@ appSetup(MODULE, function() {
         let all;
         let checked   = 0;
         let unchecked = 0;
-        $filter_options_checkboxes.each((_, cb) => {
+        $options_checkboxes.each((_, cb) => {
             const $checkbox = $(cb);
             if ($checkbox.val() === 'ALL_FILTERS') {
                 all = cb;
@@ -380,25 +380,25 @@ appSetup(MODULE, function() {
         OUT.debug(`${func}: group = "${group}"; enable = "${enable}"`);
         let $sel_controls, $pag_controls, any_checked;
         if (group === 'ALL_FILTERS') {
-            $filter_options_checkboxes.each((_, cb) => {
+            $options_checkboxes.each((_, cb) => {
                 if ($(cb).val() === 'ALL_FILTERS') {
                     cb.indeterminate = false;
                 } else {
                     cb.checked = enable;
                 }
             });
-            $sel_controls = $group_select_links;
+            $sel_controls = $group_panel_controls;
             $pag_controls = $list_filter_controls;
             any_checked   = enable;
         } else {
             const only    = `[data-group="${group}"]`;
-            $sel_controls = $group_select_links.filter(only);
+            $sel_controls = $group_panel_controls.filter(only);
             $pag_controls = $list_filter_controls.filter(only);
             any_checked   = initializeFilterOptions();
         }
-        toggleHidden($sel_controls,      !enable);
-        toggleHidden($pag_controls,      !enable);
-        toggleHidden($list_filter_panel, !any_checked);
+        toggleHidden($sel_controls, !enable);
+        toggleHidden($pag_controls, !enable);
+        toggleHidden($list_filter,  !any_checked);
     }
 
     // ========================================================================
@@ -414,19 +414,19 @@ appSetup(MODULE, function() {
     });
 
     // Listen for a change to the debug-only filter options checkboxes.
-    handleEvent($filter_options_checkboxes, 'change', (event) => {
+    handleEvent($options_checkboxes, 'change', (event) => {
         filterOptionToggle(event.currentTarget || event.target);
     });
 
     // When hovering/focusing on a group selection button, display its
     // description below the group selection panel.
-    handleHoverAndFocus($group_select_links, showGroupNote, hideGroupNote);
-    handleEvent($group_select_links, 'click',   onClickGroupNote);
-    handleEvent($group_select_links, 'keydown', onClickGroupNote);
+    handleHoverAndFocus($group_panel_controls, showGroupNote, hideGroupNote);
+    handleEvent($group_panel_controls, 'click',   onClickGroupNote);
+    handleEvent($group_panel_controls, 'keydown', onClickGroupNote);
 
     // Initialize controls and the initial record filtering.
     initializeFilterOptions();
-    if ($list_filter_panel.is(':visible')) {
+    if ($list_filter.is(':visible')) {
         listFilterSelect();
     } else {
         filterPageDisplayAll();

@@ -130,7 +130,7 @@ class Record::Exceptions::FlashPart < FlashHelper::FlashPart
 
   # A hook for treating the first part of a entry as special.
   #
-  # @param [Any]  src
+  # @param [*]    src
   # @param [Hash] opt
   #
   # @return [ActiveSupport::SafeBuffer, String, nil]

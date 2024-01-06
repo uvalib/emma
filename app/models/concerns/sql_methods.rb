@@ -109,7 +109,7 @@ module SqlMethods
   # Translate a key and value into a SQL condition.
   #
   # @param [String, Symbol, Hash] k
-  # @param [Any]                  v
+  # @param [*]                    v
   #
   # @return [String, nil]
   #
@@ -119,7 +119,7 @@ module SqlMethods
   #
   # @overload sql_clause(k, v)
   #   @param [String, Symbol] k
-  #   @param [Any]            v
+  #   @param [*]              v
   #
   # @overload sql_clause(hash)
   #   @param [Hash] hash              Only the first pair is used.

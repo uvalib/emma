@@ -41,7 +41,7 @@ module Record::Submittable
     # Indicate whether the item represents an EMMA repository entry (as opposed
     # to a partner repository entry).
     #
-    # @param [Model, String, Any] item
+    # @param [Model, String, *] item
     #
     # @see Record::EmmaIdentification#valid_sid?
     # @see Record::EmmaIdentification#emma_native?
@@ -54,7 +54,7 @@ module Record::Submittable
 
     # Indicate whether the item does not represent an existing EMMA entry.
     #
-    # @param [Model, String, Any] item
+    # @param [Model, String, *] item
     #
     # @note From UploadWorkflow::External#incomplete?
     #
@@ -67,8 +67,7 @@ module Record::Submittable
         item.try(:new_submission?)
       end || false
 =end
-      # noinspection RailsParamDefResolve
-      item.try(:new_submission?) || false
+      item&.try(:new_submission?) || false
     end
 
     # Create a new free-standing (un-persisted) record instance.

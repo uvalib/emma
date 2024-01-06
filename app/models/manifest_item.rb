@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#--
-# noinspection SqlResolve
-#++
 class ManifestItem < ApplicationRecord
 
   include Model
@@ -146,7 +143,6 @@ class ManifestItem < ApplicationRecord
   def self.for_user(user = nil, **opt)
     user = extract_value!(user, opt, :user, __method__)
     user = uid(user)
-    # noinspection SqlResolve
     joins(:manifest).where('manifests.user_id = ?', user, **opt)
   end
 
@@ -161,7 +157,6 @@ class ManifestItem < ApplicationRecord
   def self.for_org(org = nil, **opt)
     org = extract_value!(org, opt, :org, __method__)
     org = oid(org)
-    # noinspection SqlResolve
     joins(:user).where('users.org_id = ?', org, **opt)
   end
 

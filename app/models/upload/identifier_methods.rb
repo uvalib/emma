@@ -150,7 +150,7 @@ module Upload::IdentifierMethods
   #
   # @param [String, Symbol, Integer, Hash, Upload, nil] v
   #
-  # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
+  # @return [Hash{Symbol=>Integer,String,nil}] Exactly one key-value pair.
   #
   def id_term(v)
     id, sid =

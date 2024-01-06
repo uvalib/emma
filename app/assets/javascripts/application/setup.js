@@ -70,10 +70,10 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
  */
 
 /**
- * @typedef ApplicationMaps
+ * A globally available collection of mappings which control setup and teardown
+ * on the current page.
  *
- *  A globally available collection of mappings which control setup and
- *  teardown on the current page.
+ * @typedef ApplicationMaps
  *
  * @property {AppEventMap} Event
  *

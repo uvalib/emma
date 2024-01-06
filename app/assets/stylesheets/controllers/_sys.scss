@@ -219,7 +219,7 @@ body.sys {
                 [progname]  minmax(max-content, 0.25fr)
                 [class]     minmax(max-content, 0.25fr)
                 [level]     minmax(max-content, 0.125fr)
-                [value]     1fr
+                [value]     1fr;
         }
 
         &.middleware-table {
@@ -227,7 +227,7 @@ body.sys {
                 [name]      max-content
                 [object_id] max-content
                 [args]      1fr
-                [block]     1fr
+                [block]     1fr;
         }
     }
 

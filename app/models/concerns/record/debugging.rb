@@ -124,7 +124,7 @@ module Record::Debugging
         pp all
         output(all_label, **opt)
         parts.each do |part|
-          count = eval("#{part}.count rescue 0")
+          count = part&.try(:count) || 0
           output("#{part} = #{count}", **opt)
         end
         nil

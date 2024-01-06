@@ -100,12 +100,22 @@ class Org < ApplicationRecord
 
   public
 
+  # The 'users' table IDs of users associated with this organization.
+  #
+  # @return [Array<Integer>]
+  #
   def user_ids
     # noinspection RubyMismatchedReturnType
     users.pluck(:id)
   end
 
-  def user_emails
+  # The account names of users associated with this organization.
+  #
+  # @return [Array<String>]
+  #
+  # @note Currently unused.
+  #
+  def user_accounts
     # noinspection RubyMismatchedReturnType
     users.pluck(:email)
   end
@@ -146,7 +156,7 @@ class Org < ApplicationRecord
   # @return [Org, nil]
   #
   #--
-  # noinspection RubyMismatchedReturnType, SqlResolve
+  # noinspection RubyMismatchedReturnType
   #++
   def self.instance_for(v)
     v = v.values_at(:org, :org_id).first if v.is_a?(Hash)

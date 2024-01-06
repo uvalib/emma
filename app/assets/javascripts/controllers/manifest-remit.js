@@ -74,9 +74,7 @@ appSetup(MODULE, function() {
     const $body = $('body.manifest:not(.select)').filter('.remit');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($body)) {
-        return;
-    }
+    if (isMissing($body)) { return }
 
     /**
      * Console output functions for this module.

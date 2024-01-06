@@ -49,9 +49,19 @@ class Org < ApplicationRecord
 
   def self.for_user: (?untyped user, **untyped opt) -> ActiveRecord::Relation
 
+  # The 'users' table IDs of users associated with this organization.
+  #
+  # @return [Array<Integer>]
+  #
   def user_ids: () -> Array[Integer]
 
-  def user_emails: () -> strArray
+  # The account names of users associated with this organization.
+  #
+  # @return [Array<String>]
+  #
+  # @note Currently unused.
+  #
+  def user_accounts: () -> strArray
 
   # This is the (non-persisted) organization associated with ID 0.
   #

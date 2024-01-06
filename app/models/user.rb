@@ -207,8 +207,8 @@ class User < ApplicationRecord
 
   # Return with the specified User record or *nil* if one could not be found.
   #
-  # @param [String, Symbol, Integer, Hash, Model, Any, nil] item
-  # @param [Hash]                                           opt
+  # @param [String, Symbol, Integer, Hash, Model, *] item
+  # @param [Hash]                                    opt
   #
   # @option opt [Boolean] :fatal      False by default.
   #
@@ -247,7 +247,7 @@ class User < ApplicationRecord
 
   # Return the account ID of *user*.
   #
-  # @param [User, String, Symbol, Integer, Any, nil] user  Default: self.
+  # @param [User, String, Symbol, Integer, *] user  Default: self.
   #
   # @return [String, nil]
   #
@@ -257,7 +257,7 @@ class User < ApplicationRecord
 
   # Return the account ID of *user*.
   #
-  # @param [User, String, Symbol, Integer, Any, nil] user
+  # @param [User, String, Symbol, Integer, *] user
   #
   # @return [String, nil]
   #
@@ -283,7 +283,7 @@ class User < ApplicationRecord
     email
   end
 
-  # Address to use for email communication with the user.
+  # The email address to use for communications with the user.
   #
   # @return [String]
   #
@@ -305,6 +305,9 @@ class User < ApplicationRecord
 
   # Indicate whether the user has the :developer role.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def developer?
     @developer = has_role?(:developer) if @developer.nil?
     @developer
@@ -312,6 +315,9 @@ class User < ApplicationRecord
 
   # Indicate whether the user has the :administrator role.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def administrator?
     @administrator = has_role?(:administrator) if @administrator.nil?
     @administrator
@@ -319,6 +325,9 @@ class User < ApplicationRecord
 
   # Indicate whether the user has the :manager role.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def manager?
     @manager = has_role?(:manager) if @manager.nil?
     @manager
@@ -410,7 +419,7 @@ class User < ApplicationRecord
   # @return [User, nil]
   #
   #--
-  # noinspection RubyMismatchedReturnType, SqlResolve
+  # noinspection RubyMismatchedReturnType
   #++
   def self.instance_for(v)
     v = v.values_at(:user, :user_id).first if v.is_a?(Hash)

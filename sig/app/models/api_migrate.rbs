@@ -78,85 +78,91 @@ class ApiMigrate
 
     # Transform the value before #translate by applying each requested method.
     #
-    # @param [Any]       value
+    # @param [*]         value
     # @param [Array]     meths
     # @param [Symbol]    field
     # @param [Hash, nil] emma_data
     #
-    # @return [Any]
+    # @return [*]
     #
     def pre_translate: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash|nil) -> untyped
 
     # Translate values.
     #
-    # @param [Any]     value
+    # @param [*]       value
     # @param [Hash]    translations
     # @param [Boolean] unique         If *false*, do not prune results.
     #
-    # @return [Any]
+    # @return [*]
     #
     def translate: (untyped value, symHash translations, ?unique: bool) -> untyped
 
     # Transform the value after #translate by applying each requested method.
     #
-    # @param [Any]       value
+    # @param [*]         value
     # @param [Array]     meths
     # @param [Symbol]    field
     # @param [Hash, nil] emma_data
     #
-    # @return [Any]
+    # @return [*]
     #
     def post_translate: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash|nil) -> untyped
 
     # Transform the value by applying each requested method.
     #
-    # @param [Any]    value
+    # @param [*]      value
     # @param [Array]  meths
     # @param [Symbol] field
     #
-    # @return [Any]
+    # @return [*]
     #
     def normalize: (untyped value, symArray meths, field: Symbol) -> untyped
 
     # Change cardinality (single to array or array to single) based on the
     # specified range of values.
     #
-    # @param [Any]          value
+    # @param [*]            value
     # @param [Array, Range] range
     # @param [Symbol]       field
     #
-    # @return [Any]
+    # @return [*]
     #
     def new_min_max: (untyped value, (Array[Integer]|Range[Integer]) range, field: Symbol) -> untyped
 
     # Transform the value by applying each requested method.
     #
-    # @param [Any]       value
+    # @param [*]         value
     # @param [Array]     meths
     # @param [Symbol]    field
     # @param [Hash, nil] emma_data
     #
-    # @return [Any]
+    # @return [*]
     #
     def apply: (untyped value, symArray meths, field: Symbol, ?emma_data: symHash|nil) -> untyped
 
     # Transform a multi-item value into a single-item value.
     #
-    # @param [Any]    value
+    # @param [*]      value
     # @param [String] separator
     #
-    # @return [Any]                   The *value* itself if it was not an Array
+    # @return [*]                     The *value* itself if it was not an Array
     #
-    def from_array: (untyped value, ?String separator) -> untyped
+    def from_array
+      :     (strArray value, ?String separator) -> String
+      | [E] (Array[E] value, ?String separator) -> E
+      | [T] (T        value, ?String separator) -> T
 
     # Transform a single-item value into an array of items.
     #
-    # @param [Any]    value
+    # @param [*]      value
     # @param [String] separator
     #
     # @return [Array]
     #
-    def to_array: (untyped value, ?String separator) -> untyped
+    def to_array
+      :     (anyArray value, ?String separator) -> anyArray
+      |     (String   value, ?String separator) -> strArray
+      | [T] (T        value, ?String separator) -> Array[T]
 
     # report_changes
     #
@@ -191,11 +197,11 @@ class ApiMigrate
     # characters and by replacing Unicode characters with ASCII characters
     # where possible.
     #
-    # @param [Array<String>, String] value
+    # @param [Array, String, *] value
     #
-    # @return [Array<String>, String, Any]    Nil for an empty array.
+    # @return [Array, String, *]      Nil for an empty array.
     #
-    def remove_blank: ((String|strArray) value) -> untyped
+    def remove_blank: [T] (T value) -> T?
 
     # Bogus :dc_creator values found via
     # "https://emma.lib.virginia.edu/data/counts".
@@ -264,11 +270,14 @@ class ApiMigrate
 
     # Ensure that a field designated as 'boolean' is not persisted as a String.
     #
-    # @param [Array, Any, nil] value
+    # @param [Array, *] value
     #
     # @return [Array<Boolean>, Boolean, nil]
     #
-    def normalize_boolean: (untyped value) -> (Array[bool] | bool | nil)
+    def normalize_boolean
+      : (nil      value) -> nil
+      | (anyArray value) -> Array[bool]
+      | (untyped  value) -> bool
 
     # Reduce an array of quality values to the single highest value.
     #
@@ -405,7 +414,7 @@ class ApiMigrate
     # @param [Boolean]               unique
     # @param [Boolean, nil]          single
     #
-    # @return [Any]                   New value of `emma_data[field]`.
+    # @return [*]                     New value of `emma_data[field]`.
     #
     def add_values: (symHash emma_data, (Symbol|symArray) fields, (String|strArray) values, ?unique: bool, ?single: bool|nil) -> (untyped | nil)
 
@@ -416,7 +425,7 @@ class ApiMigrate
     #
     # If none are present, the last (or only) supplied field name is returned.
     #
-    # @param [Hash]                       emma_data
+    # @param [Hash{Symbol=>*}]            emma_data
     # @param [Array<Symbol>, Symbol, nil] fields
     #
     # @return [Symbol, nil]
@@ -458,7 +467,7 @@ class ApiMigrate
   # Run the data migrations.
   #
   # @param [Boolean] update           If *true*, the database is updated.
-  # @param [Any]     range            For #get_relation.
+  # @param [*]       range            For #get_relation.
   # @param [Hash]    opt              Passed to #transform!.
   #
   # @return [Array{Hash}]             New record values.

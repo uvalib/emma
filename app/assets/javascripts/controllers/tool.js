@@ -23,9 +23,7 @@ appSetup(PATH, function() {
     const $body = $('body.tool');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($body)) {
-        return;
-    }
+    if (isMissing($body)) { return }
 
     // ========================================================================
     // Math Detective API tool
@@ -40,6 +38,7 @@ appSetup(PATH, function() {
     // ========================================================================
 
     if ($body.hasClass('lookup')) {
+        // noinspection JSIgnoredPromiseFromCall
         Lookup.setupFor($body);
     }
 

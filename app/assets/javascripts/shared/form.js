@@ -83,5 +83,5 @@ export function turnOffAutocomplete(inputs, filter) {
  */
 export function turnOffAutocompleteIn(container) {
     const $inputs = $(container).find(FORM_FIELD);
-    return turnOffAutocomplete($inputs, false);
+    turnOffAutocomplete($inputs, false);
 }

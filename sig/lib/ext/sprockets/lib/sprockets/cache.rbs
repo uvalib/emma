@@ -1,5 +1,5 @@
 module Sprockets
-  class CacheLoggerExt
+  module CacheLoggerExt
     # This is used to redefine the class methods to use Emma::Logger.
     #
     # @return [Emma::Logger]

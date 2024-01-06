@@ -277,9 +277,9 @@ class Api::Record
 
   # Recursively generate hierarchical values.
   #
-  # @param [Array, Any] value
+  # @param [*] value
   #
-  # @return [Array, Any]
+  # @return [*]
   #
   def make_hierarchy(value)
     # noinspection RailsParamDefResolve

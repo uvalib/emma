@@ -334,7 +334,7 @@ class BaseDecorator < Draper::Decorator
     public
 
     # Create a value for #context based on the parameters supplied through the
-    # initializer
+    # initializer.
     #
     # @param [Hash] opt
     #
@@ -352,7 +352,7 @@ class BaseDecorator < Draper::Decorator
     #
     # @param [Array<Symbol>] keys
     #
-    # @return [Any, nil]
+    # @return [*]
     #
     def context_value(*keys)
       keys = keys.flatten.map!(&:to_s)
@@ -743,8 +743,8 @@ class BaseDecorator
 
   # initialize
   #
-  # @param [Any, nil] obj
-  # @param [Hash]     opt
+  # @param [*]    obj
+  # @param [Hash] opt
   #
   def initialize(obj = nil, **opt)
     unless opt.delete(:from_internal)
@@ -928,7 +928,7 @@ class BaseDecorator
 
     # Get the matching decorator class.
     #
-    # @param [Any, nil] key
+    # @param [*] key
     #
     # @return [Class, nil]            The associated decorator class.
     #
@@ -939,9 +939,9 @@ class BaseDecorator
 
     # Set the matching decorator class.
     #
-    # @param [Any, nil] key
-    # @param [Class]    dec           Decorator class
-    # @param [Boolean]  force         Update the #table entry unconditionally.
+    # @param [*]       key
+    # @param [Class]   dec            Decorator class
+    # @param [Boolean] force          Update the #table entry unconditionally.
     #
     # @return [Any, nil]              The normalize key if added to the table.
     #
@@ -963,9 +963,9 @@ class BaseDecorator
 
     # Normalize the provided value as a valid key or *nil*.
     #
-    # @param [Any, nil] key
+    # @param [*] key
     #
-    # @return [Any, nil]
+    # @return [*]
     #
     def normalize(key)
       key.presence
@@ -1120,13 +1120,10 @@ class BaseDecorator
 
   # fetch_property
   #
-  # @param [Any, nil] item
+  # @param [*] item
   #
-  # @return [Any, nil]
+  # @return [*]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def self.fetch_property(item)
     return fetch_properties(item) if item.is_a?(Hash)
     item = safe_const_get(item)   if item.is_a?(Symbol)

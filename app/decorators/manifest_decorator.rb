@@ -165,7 +165,7 @@ class ManifestDecorator < BaseDecorator
 
     public
 
-    # Generate a menu of user instances.
+    # Generate a menu of manifest instances.
     #
     # @param [Hash] opt
     #
@@ -271,7 +271,7 @@ class ManifestDecorator < BaseDecorator
     public
 
     # Create a value for #context based on the parameters supplied through the
-    # initializer
+    # initializer.
     #
     # @param [Hash] opt
     #
@@ -590,7 +590,8 @@ class ManifestDecorator
   def manifest_page_heading(help: nil, **opt)
     name  = object.name
 
-    t_lbl = html_span('Manifest:', class: 'text label')
+    t_lbl = 'Manifest:' # TODO: I18n
+    t_lbl = html_span(t_lbl, class: 'text label')
     t_nam = html_span(name, class: 'text name')
     title = t_lbl << t_nam
 

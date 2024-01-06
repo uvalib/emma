@@ -70,7 +70,7 @@ module ApiService::Exceptions
 
   # Set the latest API error.
   #
-  # @param [Exception, Class<ApiService::Error>, Symbol, Any, nil] error
+  # @param [Exception, Class<ApiService::Error>, Symbol, *] error
   # @param [Hash] opt   Passed to initializer if *error* is a class.
   #
   # @return [ApiService::Error]       New value of @exception.

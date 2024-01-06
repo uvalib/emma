@@ -58,7 +58,9 @@ module BaseCollectionDecorator::Grid
   public
 
   %i[grid_row grid_row_controls grid_item].each do |meth|
-    define_method(meth) { |**opt| single_item_method(meth) or super(**opt) }
+    define_method(meth) do |**opt|
+      single_item_method(meth) or super(**opt)
+    end
   end
 
   # ===========================================================================

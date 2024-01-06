@@ -23,7 +23,7 @@ class SearchDecorator < BaseDecorator
     # Render a single label/value pair.
     #
     # @param [String, Symbol, nil] label
-    # @param [Any, nil]            value
+    # @param [*]                   value
     # @param [Hash]                opt        Passed to super.
     #
     # @return [ActiveSupport::SafeBuffer, nil]

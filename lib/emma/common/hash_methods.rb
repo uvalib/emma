@@ -84,7 +84,7 @@ module Emma::Common::HashMethods
   #
   # @param [ActionController::Parameters, Hash, nil] item
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]         A new normalized Hash.
   #
   def normalize_hash(item)
     (item&.try(:to_unsafe_h) || item)&.symbolize_keys || {}
@@ -94,7 +94,7 @@ module Emma::Common::HashMethods
   #
   # @param [ActionController::Parameters, Hash, nil] item
   #
-  # @return [Hash{Symbol=>Any}]   The modified item itself if *item* is a Hash.
+  # @return [Hash{Symbol=>*}]     The modified item itself if *item* is a Hash.
   #
   def normalize_hash!(item)
     new_item = normalize_hash(item)
@@ -199,7 +199,7 @@ module Emma::Common::HashMethods
   # @param [Boolean]        dup       Ensure that the result is completely
   #                                     disentangled with the original.
   #
-  # @return [Hash, Array, Any, nil]
+  # @return [*]
   #
   # === Usage Notes
   # * Empty strings and nils are considered blank, however an item or element
@@ -241,7 +241,7 @@ module Emma::Common::HashMethods
   #                                     element into scalars.
   # @param [Boolean]        nil_hash  *true* except at the top-level.
   #
-  # @return [Hash, Array, Any, nil]
+  # @return [*]
   #
   # === Usage Notes
   # * Empty strings and nils are considered blank, however an item or element

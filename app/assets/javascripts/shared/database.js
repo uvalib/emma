@@ -32,11 +32,11 @@ AppDebug.file('shared/database', MODULE, DEBUG);
 /**
  * @typedef {object} DbRecordProperties
  *
- * @note The optional "default" entry is only used by the database client.
- *
  * @property {*}                          [default]
  * @property {boolean|IDBIndexParameters} [index]
  * @property {function(...):IDBValidKey}  [func]
+ *
+ * @note The optional "default" entry is only used by the database client.
  */
 
 /**
@@ -501,8 +501,8 @@ export const DB = (function() {
     /**
      * Create the default object store for a new database.
      *
-     * @param {Event|IDBDatabase} arg
-     * @param {string}            func
+     * @param {IDBVersionChangeEvent|IDBDatabase} arg
+     * @param {string}                            func
      */
     function dbSetupDatabase(arg, func) {
         /** @type {IDBDatabase} */

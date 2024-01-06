@@ -5,7 +5,7 @@ module SearchService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   CONFIGURATION: symHash
 
@@ -17,7 +17,7 @@ module SearchService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   def configuration: () -> symHash
 

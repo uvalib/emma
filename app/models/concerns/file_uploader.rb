@@ -121,6 +121,7 @@ class FileUploader < Shrine
     #
     def self.upload(io, storage, **options)
       __ext_debug { { io: io, storage: storage, options: options } }
+      # noinspection RubyMismatchedReturnType
       super
     end
 
@@ -176,6 +177,7 @@ class FileUploader < Shrine
     def upload(io, **options)
       __ext_debug { { io: io, options: options } }
       start = timestamp
+      # noinspection RubyMismatchedReturnType
       super
         .tap { __ext_debug(start) }
     end

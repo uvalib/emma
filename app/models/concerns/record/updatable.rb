@@ -168,7 +168,7 @@ module Record::Updatable
     # callbacks.
     #
     # @param [String, Symbol] column
-    # @param [Any, nil]       new_value
+    # @param [*]              new_value
     #
     # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
     #
@@ -187,7 +187,7 @@ module Record::Updatable
     # is updated.  If the record does exist then it is updated dynamically in
     # the database as well.
     #
-    # @param [Hash] pairs
+    # @param [Hash{Symbol=>*}] pairs
     #
     # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
     #
@@ -196,6 +196,7 @@ module Record::Updatable
     # @note From Upload::WorkflowMethods#set_fields_direct
     #
     def set_fields_direct(pairs)
+      # noinspection RailsParamDefResolve
       if readonly?
         send(:_raise_readonly_record_error)
       elsif destroyed?

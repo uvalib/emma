@@ -19,9 +19,7 @@ appSetup(MODULE, function() {
     const $toggle_buttons = $('.toggle.for-panel').not('.for-example');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($toggle_buttons)) {
-        return;
-    }
+    if (isMissing($toggle_buttons)) { return }
 
     /**
      * Console output functions for this module.

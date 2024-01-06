@@ -178,7 +178,7 @@ module Api::Record::Associations
     # Module#attr_accessor.
     #
     # @param [Symbol, String] name
-    # @param [Any, nil]       default
+    # @param [*]              default
     #
     # @return [void]
     #
@@ -259,9 +259,9 @@ module Api::Record::Associations
     # Set the default value for a property.
     #
     # @param [Symbol, String] name
-    # @param [Any, nil]       value
+    # @param [*]              value
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>*}]
     #
     def add_property_default(name, value)
       property_defaults[name.to_s.to_sym] = value.freeze

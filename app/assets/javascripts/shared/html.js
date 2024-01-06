@@ -359,6 +359,7 @@ export const ID_ATTRIBUTES = [
  * @returns {jQuery}                    The element (for chaining).
  */
 export function uniqAttrsTree(root, unique, attributes, append_only) {
+    /** @type {jQuery} */
     const $root = $(root);
     const uniq  = unique || hexRand();
     const attr  = attributes;

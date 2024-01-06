@@ -194,6 +194,7 @@ module ApplicationJob::Properties
     # @type [Integer]
     #
     def base_priority
+      # noinspection RubyMismatchedReturnType
       priority.is_a?(Integer) ? priority : QUEUE_PRIORITY[queue_key]
     end
 

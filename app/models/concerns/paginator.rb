@@ -1003,7 +1003,7 @@ class Paginator
   # @param [Array<*>]       args
   # @param [Proc]           blk
   #
-  # @return [Any]
+  # @return [*]
   #
   def method_missing(name, *args, &blk)
     if @page_items&.respond_to?(name)

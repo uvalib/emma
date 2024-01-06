@@ -498,6 +498,7 @@ module Upload::FileMethods
     return unless active_attach_cached
     old_file   = !keep_cached
     old_file &&= active_file&.data
+    # noinspection RubyArgCount
     old_file &&= FileUploader::UploadedFile.new(old_file)
     active_file_attacher.promote.tap { old_file&.delete }
   rescue => error

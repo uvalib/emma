@@ -17,9 +17,7 @@ appSetup(PATH, function() {
     const $inline_forms = $('.sign-in-form.inline');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($inline_forms)) {
-        return;
-    }
+    if (isMissing($inline_forms)) { return }
 
     // ========================================================================
     // Constants

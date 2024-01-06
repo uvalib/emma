@@ -97,8 +97,8 @@ module UploadWorkflow::Errors
 
     # Show the submission ID if it can be determined for the given item(s).
     #
-    # @param [Api::Record, Upload, Hash, String, Any] item
-    # @param [String]                                 default
+    # @param [Api::Record, Upload, Hash, String, *] item
+    # @param [String]                               default
     #
     # @return [String]
     #
@@ -144,7 +144,7 @@ module UploadWorkflow::Errors
 
     # A hook for treating the first part of a entry as special.
     #
-    # @param [Any]  src
+    # @param [*]    src
     # @param [Hash] opt
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]

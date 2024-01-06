@@ -65,7 +65,7 @@ module Emma::Common::ExceptionMethods
   # Indicate whether *error* is an exception which matches or is derived from
   # one of the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, Any, nil] error
+  # @param [Exception, *] error
   #
   def internal_exception?(error)
     ancestors = self_class(error).ancestors || []
@@ -75,7 +75,7 @@ module Emma::Common::ExceptionMethods
   # Indicate whether *error* is an exception which is not (derived from) one of
   # the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, Any, nil] error
+  # @param [Exception, *] error
   #
   # @note Currently unused.
   #

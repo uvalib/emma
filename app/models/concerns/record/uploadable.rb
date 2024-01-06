@@ -430,6 +430,7 @@ module Record::Uploadable
     return unless attach_cached
     old_file   = !keep_cached
     old_file &&= file&.data
+    # noinspection RubyArgCount
     old_file &&= FileUploader::UploadedFile.new(old_file)
     file_attacher.promote.tap { old_file&.delete }
   rescue => error

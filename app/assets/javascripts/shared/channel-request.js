@@ -18,8 +18,6 @@ AppDebug.file('shared/channel-request', MODULE, DEBUG);
 // ============================================================================
 
 /**
- * ChannelRequestPayload
- *
  * @typedef {object} ChannelRequestPayload
  */
 

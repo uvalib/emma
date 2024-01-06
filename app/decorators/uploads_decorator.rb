@@ -397,7 +397,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [Any, nil]                         value
+  # @param [*]                                value
   # @param [Hash{Symbol=>String}]             labels
   # @param [Boolean]                          debug_only
   #
@@ -419,7 +419,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [Any, nil]                         value
+  # @param [*]                                value
   # @param [Hash{Symbol=>String}]             labels
   # @param [Symbol]                           meth
   # @param [Hash]                             opt
@@ -548,7 +548,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [Any, nil]                         value
+  # @param [*]                                value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -564,7 +564,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [Any, nil]                         value
+  # @param [*]                                value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -689,7 +689,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [Any, nil]                         value
+  # @param [*]                                value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -705,7 +705,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Symbol]                           param
-  # @param [Any, nil]                         value
+  # @param [*]                                value
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]

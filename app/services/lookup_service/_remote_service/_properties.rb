@@ -70,7 +70,7 @@ module LookupService::RemoteService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   def configuration
     CONFIGURATION[service_key]

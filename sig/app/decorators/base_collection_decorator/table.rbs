@@ -11,12 +11,12 @@ module BaseCollectionDecorator::Table
   #
   # @param [Symbol] tag               Potential alternative to :table.
   # @param [String] css               Default: `#table_css_class`.
-  # @param [Hash]   opt               Passed to outer #html_tag except:
+  # @param [Hash]   opt               Passed to outer #html_tag except
+  #                                     #MODEL_TABLE_OPTIONS to render methods.
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
   # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated *tbody*.
   # @option opt [ActiveSupport::SafeBuffer] :tfoot  Pre-generated *tfoot*.
-  # @option opt [Any] #MODEL_TABLE_OPTIONS          Passed to render methods.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

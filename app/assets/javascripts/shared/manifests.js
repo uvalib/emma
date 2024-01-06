@@ -242,9 +242,9 @@ export function server(controller, callback) {
 }
 
 /**
- * @typedef {object} SendOptions
- *
  * Option values for the {@link serverSend} function.
+ *
+ * @typedef {object} SendOptions
  *
  * @property {boolean}            [_ignoreBody]
  * @property {string}             [method]

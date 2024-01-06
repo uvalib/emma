@@ -46,8 +46,8 @@ module Emma::Log
   # method.  If the next element of *args* is an Exception, a message is
   # constructed from its contents.
   #
-  # @param [Integer, Symbol, nil]               severity
-  # @param [Array<String,Symbol,Exception,Any>] args
+  # @param [Integer, Symbol, nil]             severity
+  # @param [Array<String,Symbol,Exception,*>] args
   #
   # @return [nil]
   #

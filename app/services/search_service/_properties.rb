@@ -19,9 +19,9 @@ module SearchService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
-  CONFIGURATION = i18n_erb('emma.service.search').deep_freeze
+  CONFIGURATION = i18n_config('emma.service.search').deep_freeze
 
   # Default engine selection.
   #
@@ -37,7 +37,7 @@ module SearchService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>*}]
   #
   def configuration
     CONFIGURATION

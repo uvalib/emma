@@ -144,7 +144,6 @@ class Upload < ApplicationRecord
   def self.for_org(org = nil, **opt)
     org = extract_value!(org, opt, :org, __method__)
     org = oid(org)
-    # noinspection SqlResolve
     joins(:user).where('users.org_id = ?', org, **opt)
   end
 
@@ -423,6 +422,7 @@ class Upload < ApplicationRecord
     super(attr)
 
     # Fetch the file source if named via :file_path and not deferred.
+    # noinspection RubyMismatchedReturnType
     fetch_and_upload_file(@file_path) if fetch_file
 
   rescue => error # TODO: remove - testing
@@ -485,7 +485,7 @@ class Upload < ApplicationRecord
   # Allow :file_data and :emma_data to be seen fully when inspecting.
   #
   # @param [Symbol, String] name      Attribute name.
-  # @param [Any]            value     Attribute value.
+  # @param [*]              value     Attribute value.
   #
   # @return [String]
   #
@@ -663,7 +663,7 @@ class Upload < ApplicationRecord
   # @param [Symbol, String]                              key
   # @param [Any]                                         default
   #
-  # @return [Any]
+  # @return [*]
   #
   def self.get_value(item, key, default: nil)
     key = key.to_sym

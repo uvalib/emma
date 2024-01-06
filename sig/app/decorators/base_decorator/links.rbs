@@ -83,17 +83,6 @@ module BaseDecorator::Links
   #
   def action_list: (?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-  # An entry in a list of controller actions.
-  #
-  # @param [String, Symbol, nil]     action   The target controller action.
-  # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
-  # @param [Hash{Symbol=>Hash}, nil] table    Def: `#action_links`.
-  # @param [Hash]                    opt      Passed to #action_links.
-  #
-  # @return [Hash{Symbol=>String}]
-  #
-  def action_entry: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> Hash[Symbol,String]
-
   # The URL link for an entry in a list of controller actions.
   #
   # @param [String, Symbol, nil] action   The target controller action.
@@ -108,6 +97,17 @@ module BaseDecorator::Links
   # @return [nil]                         If *action* not configured.
   #
   def action_link: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?label: String|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # An entry in a list of controller actions.
+  #
+  # @param [String, Symbol, nil]     action   The target controller action.
+  # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
+  # @param [Hash{Symbol=>Hash}, nil] table    Def: `#action_links`.
+  # @param [Hash]                    opt      Passed to #action_links.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def action_entry: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> Hash[Symbol,String]
 
   # Action links configured for the controller.
   #

@@ -746,7 +746,7 @@ class IsoDate < ScalarType
     #
     # @param [String, Date, Time, IsoDate, *] value
     #
-    # @return [String, Date, Time, IsoDate, Any, nil]
+    # @return [String, Date, Time, IsoDate, *]
     #
     #--
     # noinspection RubyMismatchedArgumentType

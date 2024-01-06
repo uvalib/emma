@@ -6,18 +6,27 @@ module I18nHelper
   # @param [String] path
   # @param [Hash]   opt               Passed to I18n#translate.
   #
-  # @return [Any]
+  # @return [Hash{Symbol=>*}]
+  #
+  def i18n_config: (String path, **untyped opt) -> symHash
+
+  # Parse ERB within the item found at the given config location.
+  #
+  # @param [String] path
+  # @param [Hash]   opt               Passed to I18n#translate.
+  #
+  # @return [*]
   #
   def i18n_erb: (String path, **untyped opt) -> untyped
 
   # Interpret ERB.
   #
-  # @param [Any]                              val
+  # @param [*]                                val
   # @param [Thread::Backtrace::Location, nil] loc
   #
-  # @return [Any]
+  # @return [*]
   #
-  def erb_interpolate: (untyped val, ?(Thread::Backtrace::Location|nil) loc) -> untyped
+  def erb_interpolate: [T] (T val, ?(Thread::Backtrace::Location|nil) loc) -> T
 
   private
 

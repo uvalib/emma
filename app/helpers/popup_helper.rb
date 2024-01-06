@@ -113,7 +113,6 @@ module PopupHelper
     opt[:'aria-haspopup'] ||= 'dialog'
     prepend_css!(opt, POPUP_TOGGLE_CLASS, type)
     if button.is_a?(Hash)
-      # noinspection RubyMismatchedArgumentType
       merge_html_options!(opt, button)
       label = opt.delete(:label) || label || text || 'Popup' # TODO: I18n
       html_button(label, **opt)

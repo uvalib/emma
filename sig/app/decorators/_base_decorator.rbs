@@ -289,8 +289,8 @@ class BaseDecorator < Draper::Decorator
 
   # initialize
   #
-  # @param [Any, nil] obj
-  # @param [Hash]     opt
+  # @param [*]    obj
+  # @param [Hash] opt
   #
   def initialize: (?untyped obj, **untyped opt) -> void
 
@@ -374,7 +374,7 @@ class BaseDecorator < Draper::Decorator
 
     alias [] get
 
-    def normalize: (untyped key) -> (untyped | nil)
+    def normalize: (untyped key) -> untyped
   end
 
   # Methods for mapping model types to decorator classes.
@@ -438,9 +438,9 @@ class BaseDecorator < Draper::Decorator
 
   # fetch_property
   #
-  # @param [Any, nil] item
+  # @param [*] item
   #
-  # @return [Any, nil]
+  # @return [*]
   #
   def self.fetch_property: (untyped item) -> untyped
 

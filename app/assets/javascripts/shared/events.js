@@ -16,10 +16,10 @@ AppDebug.file('shared/events');
  */
 
 /**
- * @typedef {boolean|undefined} EventHandlerReturn
- *
  * For event handlers processed by jQuery, a **false** return will result in
  * `event.stopPropagation()` and `event.preventDefault()`.
+ *
+ * @typedef {boolean|undefined} EventHandlerReturn
  *
  * @see https://api.jquery.com/on/ jQuery.on()
  */

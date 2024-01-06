@@ -129,7 +129,7 @@ module Import
   #
   # @param [*] v
   #
-  # @return [Array, String, Integer, Boolean, nil]
+  # @return [Any, nil]
   #
   def values(v)
     v = v.split(/\s*;\s*/) if v.is_a?(String) && v.include?(';')
@@ -325,8 +325,7 @@ module Import
   # @param [*]              v
   # @param [String]         prefix
   #
-  # @return [Array<(Symbol,Any)>]
-  # @return [Array<(Symbol,Array)>]
+  # @return [Array<(Symbol,*)>]
   #
   def default(k, v, prefix = name_prefix)
     __debug_import(__method__, k, v)
@@ -358,7 +357,7 @@ module Import
   # @param [Symbol, String] k         Import field name.
   # @param [*]              v         Import field value.
   #
-  # @return [Array<(Symbol,Any)>]
+  # @return [Array<(Symbol,*)>]
   #
   def resolve(k, v)
     k     = k.to_sym

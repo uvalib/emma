@@ -103,7 +103,7 @@ module SerializationHelper
       serializer ||= Search::Api::Serializer::Xml.new
       make_opt     = { separator: separator, serializer: serializer }
       # @type [Symbol] k
-      # @type [Any]    v
+      # @type [*]      v
       item.map { |k, v|
         value = make_xml(v, **make_opt)
         next if value.nil? && !serializer.render_nil?

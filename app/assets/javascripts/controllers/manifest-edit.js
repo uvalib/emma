@@ -104,9 +104,7 @@ appSetup(MODULE, function() {
     const $body = $('body.manifest:not(.select)').filter('.new, .edit');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($body)) {
-        return;
-    }
+    if (isMissing($body)) { return }
 
     /**
      * Console output functions for this module.
@@ -235,19 +233,19 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {object} ManifestRecordMessage
-     *
      * JSON format of a response message containing a list of ManifestItems.
      *
-     * @see "ManifestItemController#bulk_update_response"
+     * @typedef {object} ManifestRecordMessage
      *
      * @property {ManifestRecordItem[]} items
+     *
+     * @see "ManifestItemController#bulk_update_response"
      */
 
     /**
-     * @typedef {object} ManifestItemIdMessage
-     *
      * JSON format of a response message containing a list of ManifestItems.
+     *
+     * @typedef {object} ManifestItemIdMessage
      *
      * @property {list: number[]} items
      */
@@ -261,11 +259,11 @@ appSetup(MODULE, function() {
     /**
      * @typedef {object} ItemResponse
      *
-     * @see "ManifestItemConcern#finish_editing"
-     *
      * @property {ManifestItemTable|null} items
      * @property {ManifestItemTable|null} [pending]
      * @property {MessageTable|null}      [problems]
+     *
+     * @see "ManifestItemConcern#finish_editing"
      */
 
     /**
@@ -283,9 +281,9 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {object} ManifestSaveMessage
-     *
      * JSON format of a response message from "/manifest/save".
+     *
+     * @typedef {object} ManifestSaveMessage
      *
      * @property {ManifestItemTable} items
      *
@@ -3109,8 +3107,8 @@ appSetup(MODULE, function() {
      * @returns {number|undefined}
      */
     function gridRowClassNumber(target, prefix = ROW_CLASS_PREFIX) {
-        const css_class = getClass(target, prefix);
-        return css_class && Number(css_class.replace(prefix, '')) || undefined;
+        const cls = getClass(target, prefix);
+        return cls && Number(cls.replace(prefix, '')) || undefined;
     }
 
     /**

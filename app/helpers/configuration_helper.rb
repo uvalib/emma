@@ -97,7 +97,7 @@ module ConfigurationHelper
   #
   # @raise [RuntimeError]             If *fatal* and configuration not found.
   #
-  # @return [Any]                     The specified value or *default*.
+  # @return [*]                       The specified value or *default*.
   #
   # @example Simple path - [:button, :label]
   # Returns the most specific configuration match from the list:

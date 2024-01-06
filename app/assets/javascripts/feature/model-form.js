@@ -133,9 +133,7 @@ appSetup(MODULE, function() {
     const $bulk_op_form = $(BULK_FORM_SELECTOR).not('.delete');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($model_form) && isMissing($bulk_op_form)) {
-        return;
-    }
+    if (isMissing($model_form) && isMissing($bulk_op_form)) { return }
 
     /**
      * Console output functions for this module.
@@ -147,9 +145,9 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * @typedef {object} FileDataMetadata
-     *
      * Shrine upload information for the submission.
+     *
+     * @typedef {object} FileDataMetadata
      *
      * @property {string} filename
      * @property {number} size
@@ -157,9 +155,9 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {object} FileData
-     *
      * Shrine upload information for the submission.
+     *
+     * @typedef {object} FileData
      *
      * @property {string}           id
      * @property {string}           storage
@@ -170,21 +168,21 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {string[]|string} multiString
-     *
      * Normally *string[]* but may be received as *string*.
+     *
+     * @typedef {string[]|string} multiString
      */
 
     /**
-     * @typedef {string|string[]} singleString
-     *
      * Normally *string* but may be received as *string[]*.
+     *
+     * @typedef {string|string[]} singleString
      */
 
     /**
-     * @typedef {object} EmmaData
-     *
      * EMMA metadata for the submission.
+     *
+     * @typedef {object} EmmaData
      *
      * @property {string}       emma_recordId
      * @property {string}       emma_titleId
@@ -252,9 +250,9 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {object} UploadRecord
-     *
      * A complete submission database record.
+     *
+     * @typedef {object} UploadRecord
      *
      * @property {number}   id
      * @property {FileData} file_data
@@ -297,9 +295,9 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {object} UploadRecordMessage
-     *
      * JSON format of a response message containing a list of submissions.
+     *
+     * @typedef {object} UploadRecordMessage
      *
      * @property {RecordMessageTable} entries
      */
@@ -313,9 +311,9 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {object} SearchResultEntry
-     *
      * A single search result entry.
+     *
+     * @typedef {object} SearchResultEntry
      *
      * @property {string}   emma_recordId
      * @property {string}   emma_titleId
@@ -376,17 +374,17 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {object} SearchResultMessage
-     *
      * JSON format of a response message containing a list of search results.
+     *
+     * @typedef {object} SearchResultMessage
      *
      * @property {SearchResultMessageTable} response
      */
 
     /**
-     * @typedef {object} Relationship
-     *
      * Field relationship.
+     *
+     * @typedef {object} Relationship
      *
      * @property {string}           name
      * @property {boolean|function} [required]
@@ -2720,8 +2718,6 @@ appSetup(MODULE, function() {
          * Extract the title information from the search results.
          *
          * @param {SearchResultEntry[]} list
-         *
-         * @returns {void}
          */
         function useParentEntryMetadata(list) {
 
@@ -2740,7 +2736,8 @@ appSetup(MODULE, function() {
                 OUT.warn(`${func}:`, error);
             }
             if (error) {
-                return searchFailure(error);
+                searchFailure(error);
+                return;
             }
 
             // Ideally, there should be only a single search result which
@@ -3017,9 +3014,9 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function showParentEntrySelect(form) {
-        const $form = parentEntrySelect(form);
-        parentEntrySearchInput($form).prop('disabled', false);
-        return toggleHidden($form, false);
+        const $popup_form = parentEntrySelect(form);
+        parentEntrySearchInput($popup_form).prop('disabled', false);
+        return toggleHidden($popup_form, false);
     }
 
     /**
@@ -3030,9 +3027,9 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function hideParentEntrySelect(form) {
-        const $form = parentEntrySelect(form);
-        parentEntrySearchInput($form).prop('disabled', true);
-        return toggleHidden($form, true);
+        const $popup_form = parentEntrySelect(form);
+        parentEntrySearchInput($popup_form).prop('disabled', true);
+        return toggleHidden($popup_form, true);
     }
 
     /**
@@ -4006,7 +4003,7 @@ appSetup(MODULE, function() {
          * @param {string}         [_status]
          */
         function onCreateComplete(_xhr, _status) {
-            databaseInputFields($form).each((_, i) => { i.disabled = false });
+            databaseInputFields($form).each((_, e) => { e.disabled = false });
         }
     }
 
@@ -4547,7 +4544,7 @@ appSetup(MODULE, function() {
         uploader?.disableFileSelectButton();
         disableSubmit($form).attr(tooltip);
         fieldContainer($form).attr(tooltip);
-        inputFields($form).attr(tooltip).each((_, i) => { i.disabled = true });
+        inputFields($form).attr(tooltip).each((_, e) => { e.disabled = true });
         cancelButton($form).addClass(BEST_CHOICE_MARKER);
     }
 

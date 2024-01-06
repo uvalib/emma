@@ -240,7 +240,7 @@ module BaseDecorator::Fields
   #
   def field_html_id: (?(Symbol|String|nil) name, ?id_base: String|nil, ?field: Symbol|nil, ?label: String|Symbol|nil, ?index: String|Integer|nil, ?group: String|Symbol|nil, **untyped opt) -> String
 
-  # format_datetime
+  # Render a value into ISO 8601 format if possible.
   #
   # @param [*] value
   #

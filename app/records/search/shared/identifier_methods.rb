@@ -56,9 +56,11 @@ module Search::Shared::IdentifierMethods
   # @return [Array<String>]
   #
   def extract_isbns(*fields)
-    vals = fields.flat_map { |field| get_values(field) }
-    vals.map! { |v| v.to_s.remove(/\s/).sub!(/^isbn[^\d]*/, '') }
-    vals.compact_blank!.uniq
+    fields
+      .flat_map { |field| get_values(field) }
+      .map! { |v| v.to_s.remove(/\s/).sub!(/^isbn[^\d]*/, '') }
+      .compact_blank!
+      .uniq
   end
 
 end

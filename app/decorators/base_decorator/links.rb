@@ -175,28 +175,6 @@ module BaseDecorator::Links
 
   protected
 
-  # An entry in a list of controller actions.
-  #
-  # @param [String, Symbol, nil]     action   The target controller action.
-  # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
-  # @param [Hash{Symbol=>Hash}, nil] table    Def: `#action_links`.
-  # @param [Hash]                    opt      Passed to #action_links.
-  #
-  # @return [Hash{Symbol=>String}]
-  #
-  def action_entry(action = nil, current: nil, table: nil, **opt)
-    trace_attrs!(opt)
-    current = (opt.delete(:current) || current || context[:action])&.to_sym
-    action  = (opt.delete(:action)  || action  || current)&.to_sym
-    table ||= action_links(**opt)
-    table[action]&.dup&.tap do |entry|
-      # noinspection RubyMismatchedArgumentType
-      entry[:article]  = ANOTHER if base_action(action) == base_action(current)
-      entry[:current]  = current
-      entry[:action] ||= action
-    end || {}
-  end
-
   # The URL link for an entry in a list of controller actions.
   #
   # @param [String, Symbol, nil] action   The target controller action.
@@ -232,6 +210,28 @@ module BaseDecorator::Links
     html_tag(:li, **prepend_css(t_opt, css)) do
       link_to_action(label, action: action, **t_opt)
     end
+  end
+
+  # An entry in a list of controller actions.
+  #
+  # @param [String, Symbol, nil]     action   The target controller action.
+  # @param [String, Symbol, nil]     current  Def: current `params[:action]`.
+  # @param [Hash{Symbol=>Hash}, nil] table    Def: `#action_links`.
+  # @param [Hash]                    opt      Passed to #action_links.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def action_entry(action = nil, current: nil, table: nil, **opt)
+    trace_attrs!(opt)
+    current = (opt.delete(:current) || current || context[:action])&.to_sym
+    action  = (opt.delete(:action)  || action  || current)&.to_sym
+    table ||= action_links(**opt)
+    table[action]&.dup&.tap do |entry|
+      # noinspection RubyMismatchedArgumentType
+      entry[:article]  = ANOTHER if base_action(action) == base_action(current)
+      entry[:current]  = current
+      entry[:action] ||= action
+    end || {}
   end
 
   # Action links configured for the controller.

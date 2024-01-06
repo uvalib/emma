@@ -308,7 +308,7 @@ module UploadWorkflow::Single::Simulation
 
   # Set simulated record properties.
   #
-  # @param [Any] data
+  # @param [*] data
   #
   # @return [RecordProperties]
   # @return [nil]                   If `#simulating` is *false*.

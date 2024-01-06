@@ -205,7 +205,7 @@ module Api::Shared::CommonMethods
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
   #
-  # @return [Any]
+  # @return [*]
   #
   def get_field_value: ((symHash|nil) data, Symbol field) -> untyped
 
@@ -213,7 +213,7 @@ module Api::Shared::CommonMethods
   #
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
-  # @param [Any, nil]  value
+  # @param [*]         value
   #
   # @return [void]
   #
@@ -228,7 +228,7 @@ module Api::Shared::CommonMethods
   # @return [void]
   #
   # @yield [value] Generate a replacement value
-  # @yieldparam [Any] value   The current field value.
+  # @yieldparam [*] value     The current field value.
   # @yieldreturn [Array]      The new field value(s).
   #
   def update_field_value!: ((symHash|nil) data, Symbol field, ?(Symbol|nil) mode) { (untyped) -> untyped } -> void

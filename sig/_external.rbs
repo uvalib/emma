@@ -60,6 +60,7 @@ module ActionCable
   end
 end
 
+# NOTE: overrides .gem_rbs_collection/actionpack/6.0/actionpack-generated.rbs
 module ActionController
   module Flash
     def redirect_to: (?(ActiveRecord::Base|String|Proc|Hash[untyped,untyped]) options, ?Hash[untyped,untyped] response_options_and_flash) -> untyped
@@ -80,6 +81,16 @@ end
 
 module ActionMailer
   class Preview
+  end
+end
+
+# NOTE: overrides .gem_rbs_collection/activemodel/7.0/patch.rbs
+module ActiveModel
+  module Serialization
+    def send: (interned name, *untyped args) ?{ (*untyped) -> untyped } -> untyped
+  end
+  module Validations
+    def send: (interned name, *untyped args) ?{ (*untyped) -> untyped } -> untyped
   end
 end
 
@@ -106,9 +117,9 @@ module ActiveSupport
   class SafeBuffer < String
     def []: (*untyped args) -> ActiveSupport::SafeBuffer
 
-    def safe_concat: (untyped value) -> ActiveSupport::SafeBuffer
+    def safe_concat: (untyped value) -> self
 
-    def concat: (untyped value) -> ActiveSupport::SafeBuffer
+    def concat: (untyped value) -> self
 
     def insert: (untyped index, untyped value) -> self
 
@@ -242,7 +253,7 @@ end
 
 class Array[unchecked out Elem] < Object
 
-  # NOTE: overrides gems/rbs-3.1.0/core/array.rbs
+  # NOTE: overrides gems/rbs-*/core/array.rbs
 
   #def compact: () -> anyArray
 
@@ -262,28 +273,20 @@ class Array[unchecked out Elem] < Object
     : () { (Elem arg0) -> (Comparable | ::Array[untyped]) } -> ::Array[Elem]
     | () -> ::Enumerator[Elem, ::Array[Elem]]
 
-  def delete_if
-    : () { (Elem item) -> top } -> self
-    | ()                        -> ::Enumerator[Elem, self]
-
   def collect!
     : () { (Elem item) -> untyped } -> ::Array[untyped]
     | ()                            -> ::Enumerator[Elem, self]
 
   alias map! collect!
 
-  def all?
-    : (_Pattern[Elem] pattern)  -> bool
-    | () ?{ (Elem obj) -> top } -> bool
-
   # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 
-  def extract_options!: () -> anyHash
+  def extract_options!: () -> Hash[untyped,untyped]
 
   def self.wrap
-    : (nil)              -> []
-    | (untyped)          -> anyArray
-    | (::Array[untyped]) -> anyArray
+    :     (nil              object) -> []
+    |     (::Array[untyped] object) -> Array[untyped]
+    | [V] (V                object) -> [V]
 end
 
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb
@@ -291,6 +294,7 @@ class BigDecimal
   prepend ActiveSupport::NumericWithFormat
 end
 
+# NOTE: overrides .gem_rbs_collection/cancancan/3.5/cancancan.rbs
 module CanCan
 
   module Ability
@@ -400,6 +404,7 @@ module Draper
   end
 end
 
+# NOTE: overrides gems/rbs-*/core/enumerable.rbs
 module Enumerable[unchecked out Elem] : _Each[Elem]
 
   #def find
@@ -408,20 +413,15 @@ module Enumerable[unchecked out Elem] : _Each[Elem]
   #  | [T] (_NotFound[T] ifnone) { (Elem) -> top } -> (Elem | T)
   #  | [T] (_NotFound[T] ifnone)                   -> ::Enumerator[Elem, Elem | T]
 
-  # NOTE: overrides gems/rbs-3.1.0/core/enumerable.rbs
-
   def include?: (untyped) -> bool
 
   def flat_map
     : () { (Elem) -> untyped } -> Array[untyped]
     | () -> ::Enumerator[Elem, Array[untyped]]
 
-  def sum
-    : [Elem] ()         ?{ (Elem arg0) -> Elem } -> (Elem | Integer)
-    | [Elem] (Elem arg) ?{ (Elem arg0) -> Elem } -> Elem
-
 end
 
+# NOTE: overrides gems/rbs-*/stdlib/erb/0/erb.rbs
 class ERB
 
   module Escape
@@ -473,21 +473,11 @@ end
 
 class Hash[unchecked out K, unchecked out V] < Object
 
-  # NOTE: overrides /gems/rbs-3.1.0/core/hash.rbs
+  # NOTE: overrides gems/rbs-*/core/hash.rbs
 
-  def compact: () -> instance
+  def has_key?: (untyped) -> bool
 
-  def select
-    : () { (K,V) -> boolish } -> instance
-    | () -> Enumerator[K, instance]
-
-  def reject
-    : () { (K,V) -> boolish } -> instance
-    | () -> Enumerator[K, instance]
-
-  def any?
-    : () ?{ (K, V) -> top } -> bool
-    | (untyped pattern)     -> bool
+  def has_value?: (untyped) -> bool
 
   def transform_keys!
     : ()                    -> Enumerator[K, self]
@@ -498,8 +488,6 @@ class Hash[unchecked out K, unchecked out V] < Object
     | () { (V) -> untyped } -> Hash[K, untyped]
 
   # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
-
-  def deep_dup: () -> self
 
   def deep_transform_keys
     : ()                    -> Enumerator[K, self]
@@ -517,9 +505,9 @@ class Hash[unchecked out K, unchecked out V] < Object
     : ()                    -> Enumerator[V, self]
     | () { (V) -> untyped } -> Hash[K, untyped]
 
-  def slice!: (*untyped keys) -> Hash[untyped, untyped]
+  def slice!: (*untyped keys) -> self
 
-  def extract!: (*untyped keys) -> Hash[untyped, untyped]
+  def extract!: (*untyped keys) -> self
 end
 
 module Hashie
@@ -555,10 +543,10 @@ module Kernel
 
 end
 
+# NOTE: overrides gems/rbs-*/core/module.rbs
 class Module < Object
 
-  # NOTE: overrides gems/rbs-*/core/module.rbs
-  def self.constants: () -> symArray
+  def self.constants: () -> Array[Symbol]
 
 end
 
@@ -638,21 +626,15 @@ module Rake
   end
 end
 
+# NOTE: overrides .gem_rbs_collection/railties/6.0/railties-generated.rbs
 module Rails
   class Application
     def config: () -> Rails::Application::Configuration
   end
 end
 
-class Random
-  def self.rand
-    : () -> Float
-    | [T < Numeric] (T | ::Range[T]) -> T
-end
-
+# NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 class Range[out Elem]
-
-  # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 
   def sum
     : [Elem] ()         ?{ (Elem arg0) -> Elem } -> (Elem | Integer)

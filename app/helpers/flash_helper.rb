@@ -104,6 +104,9 @@ module FlashHelper
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def flash_reset
     @flash_reset = true if @flash_reset.nil?
     @flash_reset

@@ -346,7 +346,7 @@ module Api::Shared::CommonMethods
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
   #
-  # @return [Any]
+  # @return [*]
   #
   def get_field_value(data, field)
     data.is_a?(Hash) ? data[field] : try(field)
@@ -356,7 +356,7 @@ module Api::Shared::CommonMethods
   #
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
-  # @param [Any, nil]  value
+  # @param [*]         value
   #
   # @return [void]
   #
@@ -380,7 +380,7 @@ module Api::Shared::CommonMethods
   # @return [void]
   #
   # @yield [value] Generate a replacement value
-  # @yieldparam [Any] value   The current field value.
+  # @yieldparam [*] value     The current field value.
   # @yieldreturn [Array]      The new field value(s).
   #
   def update_field_value!(data, field, mode = nil)

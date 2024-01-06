@@ -1164,10 +1164,6 @@ module BaseDecorator::Form
   #
   def field_group_controls(name: FIELD_GROUP_NAME, css: '.field-group', **opt)
 
-    # A label for the group (screen-reader only).
-    legend = 'Filter input fields by state:' # TODO: I18n
-    legend = html_tag(:legend, legend, class: 'sr-only')
-
     # Radio button controls.
     controls =
       field_groups.map do |group, properties|
@@ -1196,6 +1192,10 @@ module BaseDecorator::Form
         h.label_tag(l_name, safe_join(parts), l_opt)
       end
     return ''.html_safe if controls.blank?
+
+    # A label for the group (screen-reader only).
+    legend = 'Filter input fields by state:' # TODO: I18n
+    legend = html_legend(legend, class: 'sr-only')
 
     opt[:role]     = 'radiogroup'
     opt[:tabindex] = 0

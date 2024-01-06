@@ -359,10 +359,10 @@ module BaseDecorator::Hierarchy
   # @note SIDE EFFECT: `opt[:row]` will be incremented.
   #
   # @param [Symbol, String] type
-  # @param [Any]            name        Distinct section indicator.
-  # @param [Any, nil]       data_value  For 'data-value'.
-  # @param [Any, nil]       details
-  # @param [Any]            index       Unique line indicator.
+  # @param [*]              name        Distinct section indicator.
+  # @param [*]              data_value  For 'data-value'.
+  # @param [*]              details
+  # @param [*]              index       Unique line indicator.
   # @param [Hash]           prop
   # @param [Hash]           opt         Passed to #render_line.
   #
@@ -428,7 +428,7 @@ module BaseDecorator::Hierarchy
   # Render a single label/value line.
   #
   # @param [String, Symbol, nil] label
-  # @param [Any, nil]            value
+  # @param [*]                   value
   # @param [Hash]                opt        Passed #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -446,7 +446,7 @@ module BaseDecorator::Hierarchy
   # it was indicated by the :except parameter.
   #
   # @param [Symbol]              key
-  # @param [Any]                 value
+  # @param [*]                   value
   # @param [Symbol]              meth
   # @param [Hash, Array, Symbol] except
   #

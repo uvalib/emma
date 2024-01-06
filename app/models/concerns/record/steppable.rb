@@ -619,7 +619,7 @@ module Record::Steppable
     # Create an ActiveJob serializer for the given Record class if it does not
     # already exist.
     #
-    # @param [Class, Module, Any] base
+    # @param [Class, Module, *] base
     #
     # @return [void]
     #

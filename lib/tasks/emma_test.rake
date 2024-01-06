@@ -100,7 +100,7 @@ namespace 'emma:test' do
     # =========================================================================
 
     def run_serialization_tests(*formats)
-      $LOAD_PATH << 'test' unless $LOAD_PATH.include?('test')
+      $LOAD_PATH << 'test'  unless $LOAD_PATH.include?('test')
       require 'test_helper' unless defined?(TestHelper)
       formats = formats.flatten.presence || TestHelper.cli_env_test_formats
       silence_warnings { Object.const_set(:TEST_FORMATS, formats) }

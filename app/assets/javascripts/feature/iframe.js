@@ -17,9 +17,7 @@ appSetup(MODULE, function() {
     const $iframe_body = $('body.modal');
 
     // Only proceed if this is being run from within an `<iframe>`.
-    if (isMissing($iframe_body)) {
-        return;
-    }
+    if (isMissing($iframe_body)) { return }
 
     /**
      * Console output functions for this module.
@@ -48,14 +46,13 @@ appSetup(MODULE, function() {
     // Functions
     // ========================================================================
 
-    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Intercept anchor links to scroll to the element on the page inside the
      * `<iframe>`.
      *
      * @param {jQuery.Event|UIEvent} [event]
      *
-     * @returns {boolean}   False to indicate that the event has been handled.
+     * @returns {boolean|undefined}     False indicates event has been handled.
      */
     function scrollToAnchor(event) {
         const func    = 'IFRAME scrollToAnchor';

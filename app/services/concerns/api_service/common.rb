@@ -297,9 +297,9 @@ module ApiService::Common
 
   # Process a message body component into a form ready for conversion to JSON.
   #
-  # @param [Hash, String, Any, nil] obj
+  # @param [Hash, String, *] obj
   #
-  # @return [Hash, String, Any, nil]
+  # @return [Hash, String, *]
   #
   def api_body(obj)
     obj = obj.as_json unless obj.is_a?(String)
@@ -462,7 +462,7 @@ module ApiService::Common
 
     # Return with the options needed for the API request.
     # @type [Symbol] k
-    # @type [Any]    v
+    # @type [*]      v
     opt.slice(*specified_keys).map { |k, v|
       v = v.first if v.is_a?(Array) && !v.many?
       next if v.blank?

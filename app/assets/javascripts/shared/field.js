@@ -20,10 +20,10 @@ AppDebug.file('shared/field');
 // ============================================================================
 
 /**
- * @typedef {object} FieldProperties
- *
  * Data type information for data cells of a given column as defined by the
  * attributes attached to that column's header.
+ *
+ * @typedef {object} FieldProperties
  *
  * @property {string}   [field]
  * @property {string}   [label]

@@ -256,9 +256,9 @@ export class SubmitModal extends ModalDialog {
     // ========================================================================
 
     /**
-     * @typedef {object} ChannelCallbacks
-     *
      * WebSocket event handlers.
+     *
+     * @typedef {object} ChannelCallbacks
      *
      * @property {function}         [initialized]
      * @property {function}         [connected]
@@ -563,8 +563,6 @@ export class SubmitModal extends ModalDialog {
 
     /**
      * Clear the current submission request.
-     *
-     * @returns {void}
      */
     clearRequestData() {
         const func = 'clearRequestData';

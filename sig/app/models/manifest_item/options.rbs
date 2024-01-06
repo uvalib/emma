@@ -5,7 +5,7 @@ class ManifestItem::Options < Options
 
   # Get URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def get_model_params: () -> symHash
 

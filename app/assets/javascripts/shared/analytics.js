@@ -16,7 +16,7 @@ AppDebug.file('shared/analytics');
 
 /**
  * @external Matomo
- * @see https://github.com/matomo-org/matomo/blob/master/js/piwik.js
+ * @see https://github.com/matomo-org/matomo/blob/5.x-dev/js/piwik.js
  */
 
 /**
@@ -162,7 +162,7 @@ export const Analytics = (function() {
      */
     function trackPage($root, topic) {
         const t = topic || 'OtherPage';
-        if (skipTracking($root, t)) { return; }
+        if (skipTracking($root, t)) { return }
         trackPageControls($root, t);
     }
 

@@ -20,7 +20,19 @@ module I18nHelper
   # @param [String] path
   # @param [Hash]   opt               Passed to I18n#translate.
   #
-  # @return [Any]
+  # @return [Hash{Symbol=>*}]
+  #
+  def i18n_config(path, **opt)
+    # noinspection RubyMismatchedReturnType
+    i18n_erb(path, **opt)
+  end
+
+  # Parse ERB within the item found at the given config location.
+  #
+  # @param [String] path
+  # @param [Hash]   opt               Passed to I18n#translate.
+  #
+  # @return [*]
   #
   def i18n_erb(path, **opt)
     result = I18n.t(path, **opt)
@@ -30,10 +42,10 @@ module I18nHelper
 
   # Interpret ERB.
   #
-  # @param [Any]                              val
+  # @param [*]                                val
   # @param [Thread::Backtrace::Location, nil] loc
   #
-  # @return [Any]
+  # @return [*]
   #
   def erb_interpolate(val, loc = nil)
     case val

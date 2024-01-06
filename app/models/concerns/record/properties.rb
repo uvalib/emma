@@ -322,7 +322,7 @@ module Record::Properties
   # EntryConcern) or in the context of the workflow instance (through the
   # parameters saved from the :params initializer option).
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   # @see ::Options#model_params
   #

@@ -262,7 +262,7 @@ module Record::EmmaData
     #
     # @param [Boolean] refresh        If *true*, force regeneration.
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>*}]
     #
     # @note From Upload::EmmaDataMethods#emma_metadata
     #
@@ -320,7 +320,7 @@ module Record::EmmaData
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
     # @param [Boolean]                                           allow_blank
     #
-    # @return [Hash{String=>Any}]     New value of :emma_data
+    # @return [Hash{String=>*}]       New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
     def set_emma_data(data, allow_blank = true)
@@ -334,7 +334,7 @@ module Record::EmmaData
     # @param [Hash]    data
     # @param [Boolean] allow_blank
     #
-    # @return [Hash{String=>Any}]     New value of :emma_data
+    # @return [Hash{String=>*}]       New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
     def modify_emma_data(data, allow_blank = true)

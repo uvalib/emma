@@ -84,6 +84,7 @@ module Api::Shared::DateMethods
   def normalize_day_fields!(data = nil, mode = nil)
     mode ||= date_array_mode
     day_fields.each do |field|
+      # noinspection RubyMismatchedArgumentType
       update_field_value!(data, field, mode) { |v| normalize_dates(v) }
     end
   end

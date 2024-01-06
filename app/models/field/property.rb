@@ -119,10 +119,10 @@ module Field::Property
 
   # Generate derived fields for an entry.
   #
-  # @param [Hash{Symbol=>Any}] prop
-  # @param [Symbol, nil]       field
+  # @param [Hash{Symbol=>*}] prop
+  # @param [Symbol, nil]     field
   #
-  # @return [Hash{Symbol=>Any}]       The modified *prop* entry.
+  # @return [Hash{Symbol=>*}]         The modified *prop* entry.
   #
   def finalize!(prop, field = nil)
     sub = prop.except(:cond).select { |_, v| v.is_a?(Hash) }

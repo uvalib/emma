@@ -226,7 +226,7 @@ class ExecReport
 
     # Prepare an error report value for assignment to a database column.
     #
-    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, Any, nil] src
+    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, *] src
     #
     # @return [String, nil]           *nil* if *src* was blank.
     #
@@ -238,7 +238,7 @@ class ExecReport
 
     # Interpret an error report value from a database column.
     #
-    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, Any, nil] src
+    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, *] src
     #
     # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
     #
@@ -284,7 +284,7 @@ class ExecReport
 
     # Get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
     #
     # @return [Array<Hash{Symbol=>String,Array<String>}>]
     #
@@ -296,7 +296,7 @@ class ExecReport
 
     # Get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
     #
     # @return [Hash{Symbol=>String,Array<String>}]
     #
@@ -328,9 +328,9 @@ class ExecReport
 
     # normalized_value
     #
-    # @param [Array, String, Any, nil] value
+    # @param [*] value
     #
-    # @return [Array, String, Any, nil]
+    # @return [*]
     #
     def normalized_value(value)
       case value
@@ -355,7 +355,7 @@ class ExecReport
 
     # Attempt to get an HTTP status value from *src*.
     #
-    # @param [ExecReport, Exception, Faraday::Response, Any, nil] src
+    # @param [ExecReport, Exception, Faraday::Response, *] src
     #
     # @return [Integer, Symbol, nil]
     #
@@ -369,7 +369,7 @@ class ExecReport
 
     # Attempt to get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
     # @param [Symbol, nil] meth
     #
     # @return [Array<Hash{Symbol=>Array}>]
@@ -389,7 +389,7 @@ class ExecReport
 
     # Attempt to get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, Any, nil] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
     # @param [Symbol, nil] meth
     #
     # @return [Hash{Symbol=>Array<String>}]
@@ -422,8 +422,8 @@ class ExecReport
 
     # Create message hash values from *src*.
     #
-    # @param [ExecReport::Part, Exception, Hash, String, nil] src
-    # @param [Symbol, nil]                                    meth
+    # @param [ExecReport::Part, Exception, Hash, String, *] src
+    # @param [Symbol, nil]                                  meth
     #
     # @return [Hash{Symbol=>Array}]
     #
@@ -607,7 +607,7 @@ class ExecReport
 
     # Get the HTTP status value from *src*.
     #
-    # @param [ExecReport, Exception, Faraday::Response, Any, nil] src
+    # @param [ExecReport, Exception, Faraday::Response, *] src
     #
     # @return [Integer, Symbol, nil]
     #
@@ -886,7 +886,7 @@ class ExecReport
 
   # Generate an ExecReport if necessary.
   #
-  # @param [ExecReport, Any]
+  # @param [ExecReport, *] src
   #
   # @return [ExecReport]
   #
@@ -1350,7 +1350,7 @@ class ExecReport::Part
 
   # Generate an ExecReport::Part if necessary.
   #
-  # @param [ExecReport::Part, Any]
+  # @param [ExecReport::Part, *] src
   #
   # @return [ExecReport::Part]
   #

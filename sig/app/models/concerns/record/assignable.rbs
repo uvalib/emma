@@ -93,13 +93,13 @@ module Record::Assignable
   #
   def normalize_field: (Symbol key, untyped value, String|Class `type`, ?(symHash|nil) errors) -> untyped
 
-  # Pattern by which strings are split into arrays.
+  # Pattern by which string attribute values are split into arrays.
   #
   # @type [String,Regexp]
   #
   LINE_SPLIT: String | Regexp
 
-  # String by which arrays are combined into strings.
+  # String by which array attribute values are combined into strings.
   #
   # @type [String,RegExp]
   #

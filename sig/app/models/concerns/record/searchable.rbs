@@ -97,7 +97,7 @@ module Record::Searchable
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.
   #
-  # Additional constraints may be supplied via *opt*.  If no *identifiers* are
+  # Additional constraints may be supplied via *opt*.  If no *items* are
   # supplied then this method is essentially an invocation of #where which
   # returns the matching records.
   #

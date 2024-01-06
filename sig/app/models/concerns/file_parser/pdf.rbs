@@ -25,7 +25,7 @@ class FileParser::Pdf < FileParser
   # @param [Symbol] name
   # @param [Array]  args
   #
-  # @return [Any]
+  # @return [*]
   #
   def method_missing: (Symbol name, *untyped args) -> untyped
 end

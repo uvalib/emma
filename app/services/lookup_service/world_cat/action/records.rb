@@ -33,7 +33,7 @@ module LookupService::WorldCat::Action::Records
   #   '/search/worldcat/sru', however this does not work.
   #
   def get_sru_records(terms, **opt)
-    terms = query_terms!(terms, opt)
+    terms = query_terms(terms, opt)
     isbns = lccns = nil
     if terms[:ids].present?
       isbns = Array.wrap(terms.dig(:ids, :bn)).presence
@@ -215,7 +215,7 @@ module LookupService::WorldCat::Action::Records
   #   '/search/worldcat/opensearch', however this does not work.
   #
   def get_opensearch_records(terms, **opt)
-    terms   = query_terms!(terms, opt)
+    terms   = query_terms(terms, opt)
     opt[:q] = make_query(terms)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/search/worldcat/opensearch', **opt)
@@ -257,7 +257,7 @@ module LookupService::WorldCat::Action::Records
   #
   # @see LookupService::Request#TEMPLATE
   #
-  def query_terms!(terms, opt)
+  def query_terms(terms, opt)
     result = { ids: IdTerms.new, query: QueryTerms.new, limit: LimitTerms.new }
     groups = result.values
 

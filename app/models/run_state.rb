@@ -289,7 +289,7 @@ class RunState < Hash
   # Transform a value into either a duration (as an integral number of seconds)
   # or a fixed timestamp.
   #
-  # @param [String, Integer, ActiveSupport::Duration, Time, Any] v
+  # @param [String, Integer, ActiveSupport::Duration, Time, *] v
   #
   # @return [Time, Integer, nil]
   #

@@ -239,13 +239,13 @@ module Record::Assignable
 
   protected
 
-  # Pattern by which strings are split into arrays.
+  # Pattern by which string attribute values are split into arrays.
   #
   # @type [String,Regexp]
   #
   LINE_SPLIT = /[;\n]+/
 
-  # String by which arrays are combined into strings.
+  # String by which array attribute values are combined into strings.
   #
   # @type [String,RegExp]
   #

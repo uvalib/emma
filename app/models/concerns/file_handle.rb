@@ -27,7 +27,7 @@ class FileHandle
 
   # Indicate whether the given object may be used to create a FileHandle.
   #
-  # @param [FileHandle, IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO, Any, nil] value
+  # @param [FileHandle,IO,StringIO,Tempfile,IO::Like,Down::ChunkedIO,*] value
   #
   def self.compatible?(value)
     value.is_a?(FileHandle) || VALID_BASE_TYPE.any? { |t| value.is_a?(t) }
@@ -121,7 +121,7 @@ class FileHandle
     # @param [Array<*>]       args
     # @param [Proc]           blk
     #
-    # @return [Any]
+    # @return [*]
     #
     def method_missing(name, *args, &blk)
       __debug_handle(*args, leader: ("#{@handle.class} %-4s" % name))

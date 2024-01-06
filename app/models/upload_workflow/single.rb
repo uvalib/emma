@@ -180,7 +180,7 @@ module UploadWorkflow::Single::Data
   #
   # @param [Upload, Hash] data
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def record_data(data)
     data = data.attributes if data.is_a?(Upload)
@@ -1358,8 +1358,8 @@ class UploadWorkflow::Single < UploadWorkflow
 
   # Set initial state.
   #
-  # @param [Any, nil] data
-  # @param [Hash]     opt
+  # @param [*]    data
+  # @param [Hash] opt
   #
   # @return [void]
   #

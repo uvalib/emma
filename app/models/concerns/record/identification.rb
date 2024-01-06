@@ -49,7 +49,7 @@ module Record::Identification
 
   # The type of record for the given item.
   #
-  # @param [Any] item
+  # @param [*] item
   #
   # @return [Class<ApplicationRecord>]
   #
@@ -61,7 +61,7 @@ module Record::Identification
 
   # Name of the type of record for the given item.
   #
-  # @param [Any] item
+  # @param [*] item
   #
   # @return [String]
   #
@@ -140,7 +140,7 @@ module Record::Identification
   #
   # @param [Model, Hash, String, Symbol, *]       item
   # @param [Symbol, String, Array<Symbol,String>] key
-  # @param [Any]                                  default
+  # @param [*]                                    default
   #
   # @return [*]
   #
@@ -167,7 +167,7 @@ module Record::Identification
 
   # A foreign-key reference to the current record.
   #
-  # @param [Hash{Symbol=>Any}] opt
+  # @param [Hash{Symbol=>*}] opt
   #
   # E.g., :entry_id would indicate an Entry ID.
   #
@@ -334,13 +334,13 @@ module Record::Identification
   # If :sid_key set to *nil* then the result will always be in terms of :id_key
   # (which cannot be set to *nil*).
   #
-  # @param [String, Symbol, Integer, Hash, Model, *] v
-  # @param [Hash]                                    opt
+  # @param [String, Symbol, Integer, Hash, Model, nil] v
+  # @param [Hash]                                      opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   # @option opt [Symbol] :sid_key     Default: nil.
   #
-  # @return [Hash{Symbol=>Integer,String,nil}] Result will have only one entry.
+  # @return [Hash{Symbol=>Integer,String,nil}] Exactly one key-value pair.
   #
   # @note From Upload::IdentifierMethods#id_term
   #

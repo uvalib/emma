@@ -52,7 +52,7 @@ module Model
 
   # The fields and values for this model instance.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def fields
     if is_a?(ApplicationRecord)
@@ -64,7 +64,7 @@ module Model
 
   # The fields and values for this instance as a Hash.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>*}]
   #
   def to_h(**)
     fields

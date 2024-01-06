@@ -63,9 +63,16 @@ module Import
   #
   # @param [*] v
   #
-  # @return [Array, String, Integer, Boolean, nil]
+  # @return [Any, nil]
   #
-  def values: (untyped v) -> untyped
+  def values
+    :     (true     v) -> true
+    |     (false    v) -> nil
+    |     (Integer  v) -> Integer
+    |     (String   v) -> (strArray|String|nil)
+    |     (strArray v) -> (strArray|String|nil)
+    |     (anyArray v) -> (anyArray|untyped|nil)
+    | [T] (T        v) -> (T|nil)
 
   # Transform a data item into an array unconditionally.
   #
@@ -193,8 +200,7 @@ module Import
   # @param [*]              v
   # @param [String]         prefix
   #
-  # @return [Array<(Symbol,Any)>]
-  # @return [Array<(Symbol,Array)>]
+  # @return [Array<(Symbol,*)>]
   #
   def default: (untyped k, untyped v, ?String prefix) -> [Symbol, untyped]
 
@@ -211,7 +217,7 @@ module Import
   # @param [Symbol, String] k         Import field name.
   # @param [*]              v         Import field value.
   #
-  # @return [Array<(Symbol,Any)>]
+  # @return [Array<(Symbol,*)>]
   #
   def resolve: ((Symbol|String) k, untyped v) -> [Symbol, untyped]
 

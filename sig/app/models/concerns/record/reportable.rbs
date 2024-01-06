@@ -67,7 +67,7 @@ module Record::Reportable
 
   # Directly update the contents of the current record's #REPORT_COLUMN.
   #
-  # @param [Any, nil]    value
+  # @param [*]           value
   # @param [Symbol, nil] meth         Default: `#calling_method`.
   # @param [Boolean]     fatal        If *true* raise on error.
   # @param [Symbol]      col          Default: `#REPORT_COLUMN`.

@@ -94,7 +94,7 @@ module LookupService::WorldCat::Action::Records
   #
   # @see LookupService::Request#TEMPLATE
   #
-  def query_terms!: ((LookupService::Request|strArray|String) terms, symHash opt) -> Hash[Symbol,LookupService::WorldCat::Action::Records::Terms]
+  def query_terms: ((LookupService::Request|strArray|String) terms, symHash opt) -> Hash[Symbol,LookupService::WorldCat::Action::Records::Terms]
 
   # Combine terms to make a WorldCat query string.
   #

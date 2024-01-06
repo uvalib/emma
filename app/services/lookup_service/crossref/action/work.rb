@@ -109,7 +109,7 @@ module LookupService::Crossref::Action::Work
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works
   #
   def get_work_list(terms, **opt)
-    terms = query_terms!(terms, opt)
+    terms = query_terms(terms, opt)
     ids   = extract_hash!(terms, *ID_TYPES)
     opt[:filter] = [*opt[:filter], *ids.values] if ids.present?
     opt[:filter] &&= Array.wrap(opt[:filter]).compact.join(',')
@@ -150,14 +150,14 @@ module LookupService::Crossref::Action::Work
   # @private
   OPT = { author: QUERY_PREFIX.slice(*AUTHOR_TYPES).values }.deep_freeze
 
-  # query_terms!
+  # Aggregate terms into groups of similar search behavior.
   #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #
   # @return [Hash]
   #
-  def query_terms!(terms, opt)
+  def query_terms(terms, opt)
     query = [*opt.delete(:q), *opt.delete(:query)].compact.presence
     other = extract_hash!(opt, *QUERY_ALIAS).presence
     if terms.is_a?(LookupService::Request)

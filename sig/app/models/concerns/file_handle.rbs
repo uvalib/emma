@@ -10,7 +10,7 @@ class FileHandle
 
   # Indicate whether the given object may be used to create a FileHandle.
   #
-  # @param [FileHandle, IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO, Any, nil] value
+  # @param [FileHandle,IO,StringIO,Tempfile,IO::Like,Down::ChunkedIO,*] value
   #
   def self.compatible?: (untyped value) -> bool
 
@@ -68,7 +68,7 @@ class FileHandle
   # @param [Array<*>]       args
   # @param [Proc]           blk
   #
-  # @return [Any]
+  # @return [*]
   #
   def method_missing: ((Symbol|String) name, *untyped args) ?{ () -> untyped } -> untyped
 end
