@@ -115,22 +115,30 @@ class ManifestItem < ApplicationRecord
     super
   end
 
+  # The user associated with this record.
+  #
+  # @return [Integer, nil]
+  #
+  def user_id = user&.id
+
+  # The organization associated with this record.
+  #
+  # @return [Integer, nil]
+  #
+  def org_id = org&.id
+
   # ===========================================================================
   # :section: IdMethods overrides
   # ===========================================================================
 
   public
 
-  def user_id = user&.id
-
-  def org_id  = org&.id
-
   def uid(item = nil)
-    item ? super : user&.id
+    item ? super : user_id
   end
 
   def oid(item = nil)
-    item ? super : org&.id
+    item ? super : org_id
   end
 
   # Produce a relation for selecting records associated with the given user.

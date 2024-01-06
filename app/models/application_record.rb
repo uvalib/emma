@@ -22,6 +22,22 @@ class ApplicationRecord < ActiveRecord::Base
 
   public
 
+  # The user associated with this record if applicable.
+  #
+  # @return [Integer, nil]
+  #
+  def user_id
+    may_be_overridden
+  end
+
+  # The organization associated with this record if applicable.
+  #
+  # @return [Integer, nil]
+  #
+  def org_id
+    may_be_overridden
+  end
+
   # A short textual representation for the record instance.
   #
   # @param [ApplicationRecord, nil] item  Default: self.

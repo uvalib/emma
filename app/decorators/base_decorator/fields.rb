@@ -543,6 +543,43 @@ module BaseDecorator::Fields
 
   protected
 
+  # format_org
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def format_org(value, **)
+    return EMPTY_VALUE          if value.blank?
+    return value                if value.is_a?(String)
+    id    = (value              if value.is_a?(Integer))
+    id  ||= (value.org_id       if value.is_a?(ApplicationRecord))
+    value = Org.none            if id == Org::INTERNAL_ID
+    value = Org.find_by(id: id) if id && !value.is_a?(Org)
+    value.abbrev                if value.is_a?(Org)
+  end
+
+  # format_user
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def format_user(value, **)
+    return EMPTY_VALUE if value.blank?
+    # noinspection RubyMismatchedReturnType
+    case value
+      when Integer, String, User then User.account_name(value)
+      when ApplicationRecord     then User.account_name(value.user_id)
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
   # Render a value into ISO 8601 format if possible.
   #
   # @param [*] value
@@ -578,7 +615,8 @@ module BaseDecorator::Fields
   # Reformat descriptions which are structured in a way that one would find
   # in MARC metadata.
   #
-  # @param [String] text
+  # @param [String, Array]  text
+  # @param [String, Regexp] separator
   #
   # @return [Array<String>]
   #
@@ -588,8 +626,12 @@ module BaseDecorator::Fields
   # layout of information, and this method may not be that beneficial in those
   # cases.
   #
-  def format_description(text)
+  def format_description(text, separator: / *; */, **)
+    if text.is_a?(Array)
+      return value.flat_map { |v| send(__method__, v, separator: separator) }
+    end
     # Look for signs of structure, otherwise just treat as unstructured.
+    # noinspection RubyMismatchedArgumentType
     case text
       when /"";/                     then double_quotes_to_sections(text)
       when /\.--v\. */               then double_dash_to_sections(text)
@@ -674,12 +716,13 @@ module BaseDecorator::Fields
 
   # Transform a string with newlines/semicolons into an array of lines.
   #
-  # @param [String] text
+  # @param [String, Array]  text
+  # @param [String, Regexp] separator
   #
   # @return [Array<String>]
   #
-  def format_multiline(text)
-    Array.wrap(text).flat_map { |s| s.to_s.split(/ *[;\n] */) }.compact_blank!
+  def format_multiline(text, separator: / *[;\n] */, **)
+    Array.wrap(text).flat_map { |s| s.to_s.split(separator) }.compact_blank!
   end
 
   # ===========================================================================
@@ -747,7 +790,7 @@ module BaseDecorator::Fields
   #   @param [Array<String>] array
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
-  def mark_invalid_identifiers(value)
+  def mark_invalid_identifiers(value, **)
     return value.map { |v| send(__method__, v) } if value.is_a?(Array)
     type, id_part = value.to_s.split(':', 2)
     if id_part.nil? # No type prefix.

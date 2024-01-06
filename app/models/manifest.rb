@@ -71,20 +71,30 @@ class Manifest < ApplicationRecord
     super
   end
 
+  # The user associated with this record.
+  #
+  # @return [Integer, nil]
+  #
+  def user_id = self[:user_id]
+
+  # The organization associated with this record.
+  #
+  # @return [Integer, nil]
+  #
+  def org_id = org&.id
+
   # ===========================================================================
   # :section: IdMethods overrides
   # ===========================================================================
 
   public
 
-  def org_id = org&.id
-
   def uid(item = nil)
-    item ? super : user&.id
+    item ? super : user_id
   end
 
   def oid(item = nil)
-    item ? super : org&.id
+    item ? super : org_id
   end
 
   def self.for_user(user = nil, **opt)

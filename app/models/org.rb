@@ -73,13 +73,13 @@ class Org < ApplicationRecord
     super
   end
 
+  def org_id = id
+
   # ===========================================================================
   # :section: IdMethods overrides
   # ===========================================================================
 
   public
-
-  def org_id = id
 
   def org_key = ID_COLUMN
 
@@ -137,8 +137,8 @@ class Org < ApplicationRecord
   def self.none
     # noinspection RbsMissingTypeSignature
     @null ||= new(
-      id:           0,
-      short_name:   EMPTY_VALUE,
+      id:           INTERNAL_ID,
+      short_name:   INTERNAL_NAME,
       long_name:    '(no organization)', # TODO: I18n
       status:       :active,
       status_date:  (t0 = DateTime.new(0)),
@@ -164,9 +164,9 @@ class Org < ApplicationRecord
     return v                             if v.is_a?(Org)
     v = v.oid                            if v.is_a?(ApplicationRecord)
     case (v = non_negative(v) || v)
-      when 0       then none
-      when Integer then find_by(id: v)
-      when String  then where('(short_name=?) OR (long_name=?)', v, v).first
+      when INTERNAL_ID then none
+      when Integer     then find_by(id: v)
+      when String      then where('(short_name=?) OR (long_name=?)',v,v).first
     end
   end
 

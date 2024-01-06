@@ -113,11 +113,11 @@ module BaseDecorator::List
   #
   # @param [Symbol]      field
   # @param [*]           value
-  # @param [Boolean,nil] no_code  Reverse of :code for #mark_invalid_languages
+  # @param [Hash]        opt          Options for #mark_invalid_languages.
   #
-  # @return [*]
+  # @return [Array<String>, String, nil]
   #
-  def render_format: (Symbol field, untyped value, ?no_code: bool|nil, **untyped _ignored) -> untyped
+  def render_format: (Symbol field, untyped value, **untyped opt) -> (strArray|String|nil)
 
   # Generate a help icon relevant to *field*.
   #

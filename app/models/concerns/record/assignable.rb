@@ -171,18 +171,25 @@ module Record::Assignable
   # @return [Hash]                    A possibly-modified copy of *attr*.
   #
   def normalize_fields(attr, **opt)
-    meth = opt[:meth] || __method__
+    meth = opt[:meth]   || __method__
+    err  = opt[:errors] || {}
     lax  = !opt[:invalid].is_a?(FalseClass)
-    err  = opt.key?(:errors) ? opt[:errors] : {}
+    col  = database_columns
+    fld  = database_fields
+
     attr.map { |k, v|
+      next          unless (k &&= k.to_sym).present?
       next [k, nil] unless v.present? || v.is_a?(FalseClass)
 
-      column = database_columns[k]
-      field  = database_fields[k]
-      type   = field[:type]
-      v_orig = v
+      k_alt =
+        %w[_id].map do |suffix|
+          k.to_s.delete_suffix!(suffix)&.to_sym || "#{k}#{suffix}".to_sym
+        end
+      array = col.slice(k, *k_alt).values.first&.array
+      field = fld.slice(k, *k_alt).values.first || {}
+      type  = field[:type] || 'text'
 
-      if column.array || field[:array] || (type == 'textarea')
+      if array || field[:array] || (type == 'textarea')
         case v
           when Array  then v = v.dup
           when Symbol then v = v.to_s
@@ -192,18 +199,17 @@ module Record::Assignable
         v = Array.wrap(v).map! { |item| normalize_field(k, item, type, err) }
         v.compact!
         v.uniq! if type.is_a?(Class)
-        v = v.join(LINE_JOIN) unless column.array
-      else
-        v = normalize_field(k, v, type, err)
-      end
+        v = v.join(LINE_JOIN) unless array
 
-      if v.nil?
-        type = [v_orig.class.to_s]
+      elsif (v_normal = normalize_field(k, v, type, err)).nil?
+        type = [v.class.to_s]
         type << 'skipped' unless lax
         type = type.join(': ')
-        Log.warn("#{meth}: #{k}: unexpected #{type}: #{v_orig.inspect}")
+        Log.warn("#{meth}: #{k}: unexpected #{type}: #{v.inspect}")
         next unless lax
-        v = v_orig
+
+      else
+        v = v_normal
       end
 
       [k, v]

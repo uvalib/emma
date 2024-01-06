@@ -223,16 +223,18 @@ module BaseDecorator::List
     if Array.wrap(value).first.is_a?(ActiveSupport::SafeBuffer)
       no_fmt = true
     elsif enum || model
+      array  = value.is_a?(Array)
       value  = value.split(/[,;|\t\n]/) if value.is_a?(String)
       value  = Array.wrap(value).compact_blank
       value.map! { |v| type.cast(v, warn: false) || v } if enum
       value.map! { |v| type.find_by(id: v)       || v } if model
       v_dv ||= value.join('|')
+      value  = value.first unless array || value.many?
     end
 
     # Format the content of certain fields.
     unless no_fmt
-      value = render_format(field, value, no_code: no_code)
+      value = render_format(field, value, code: !no_code) || value
       array = value.is_a?(Array)
       if enum || model
         value = Array.wrap(value).map! { |v| v.try(:label) || v }
@@ -354,23 +356,23 @@ module BaseDecorator::List
   #
   # @param [Symbol]      field
   # @param [*]           value
-  # @param [Boolean,nil] no_code  Reverse of :code for #mark_invalid_languages
+  # @param [Hash]        opt          Options for #mark_invalid_languages.
   #
-  # @return [*]
+  # @return [Array<String>, String, nil]
   #
-  def render_format(field, value, no_code: nil, **)
-    opt = { code: false?(no_code) }
+  def render_format(field, value, **opt)
     case field
-      when :dc_description           then format_description(value)
-      when :dc_identifier            then mark_invalid_identifiers(value)
-      when :dc_language              then mark_invalid_languages(value, **opt)
-      when :dc_relation              then mark_invalid_identifiers(value)
-      when :emma_lastRemediationNote then format_multiline(value)
-      when :rem_comments             then format_multiline(value)
-      when :rem_remediationComments  then format_multiline(value)
-      when :s_accessibilitySummary   then format_multiline(value)
-      else                                value.dup
-    end
+      when :org,  :org_id            then :format_org
+      when :user, :user_id           then :format_user
+      when :dc_description           then :format_description
+      when :dc_language              then :mark_invalid_languages
+      when :dc_identifier            then :mark_invalid_identifiers
+      when :dc_relation              then :mark_invalid_identifiers
+      when :emma_lastRemediationNote then :format_multiline
+      when :rem_comments             then :format_multiline
+      when :rem_remediationComments  then :format_multiline
+      when :s_accessibilitySummary   then :format_multiline
+    end.then { |meth| send(meth, value, **opt) if meth }
   end
 
   # Generate a help icon relevant to *field*.

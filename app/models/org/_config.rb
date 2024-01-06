@@ -11,6 +11,26 @@ module Org::Config
   # :section:
   # ===========================================================================
 
+  public
+
+  # The internal organization identifier.  This may be assigned as an :org_id
+  # indicating an internal EMMA user, however no persisted Org record has this
+  # as its :id.
+  #
+  # @type [Integer]
+  #
+  INTERNAL_ID = 0
+
+  # The display name for the internal organization.
+  #
+  # @type [String]
+  #
+  INTERNAL_NAME = '(EMMA)'
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   protected
 
   # Used by methods defined in modules to allow the primary argument to be

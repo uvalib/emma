@@ -240,6 +240,28 @@ module BaseDecorator::Fields
   #
   def field_html_id: (?(Symbol|String|nil) name, ?id_base: String|nil, ?field: Symbol|nil, ?label: String|Symbol|nil, ?index: String|Integer|nil, ?group: String|Symbol|nil, **untyped opt) -> String
 
+  # format_org
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def format_org
+    :     (Org|String|Integer|nil value, **untyped _ignored) -> String
+    |     (ApplicationRecord      value, **untyped _ignored) -> (String | nil)
+    |     (untyped                value, **untyped _ignored) -> nil
+
+  # format_user
+  #
+  # @param [*] value
+  #
+  # @return [String, nil]
+  #
+  def format_user
+    :     (User|String|Integer|nil value, **untyped _ignored) -> String
+    |     (ApplicationRecord       value, **untyped _ignored) -> (String | nil)
+    |     (untyped                 value, **untyped _ignored) -> nil
+
   # Render a value into ISO 8601 format if possible.
   #
   # @param [*] value
@@ -263,7 +285,8 @@ module BaseDecorator::Fields
   # Reformat descriptions which are structured in a way that one would find
   # in MARC metadata.
   #
-  # @param [String] text
+  # @param [String, Array]  text
+  # @param [String, Regexp] separator
   #
   # @return [Array<String>]
   #
@@ -273,7 +296,7 @@ module BaseDecorator::Fields
   # layout of information, and this method may not be that beneficial in those
   # cases.
   #
-  def format_description: (String text) -> strArray
+  def format_description: (String|anyArray text, ?separator: String|Regexp, **untyped _ignored) -> strArray
 
   # Seen in some IA records.
   #
@@ -293,11 +316,12 @@ module BaseDecorator::Fields
 
   # Transform a string with newlines/semicolons into an array of lines.
   #
-  # @param [String] text
+  # @param [String, Array]  text
+  # @param [String, Regexp] separator
   #
   # @return [Array<String>]
   #
-  def format_multiline: (String text) -> strArray
+  def format_multiline: (String|anyArray text, ?separator: String|Regexp, **untyped _ignored) -> strArray
 
   VALID_LANGUAGE: String
 
@@ -348,9 +372,9 @@ module BaseDecorator::Fields
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
   def mark_invalid_identifiers
-    : (anyArray value) -> Array[String|ActiveSupport::SafeBuffer]
-    | (String   value) -> (String | ActiveSupport::SafeBuffer)
-    | (untyped  value) -> ActiveSupport::SafeBuffer
+    : (anyArray value, **untyped _ignored) -> Array[String|ActiveSupport::SafeBuffer]
+    | (String   value, **untyped _ignored) -> (String | ActiveSupport::SafeBuffer)
+    | (untyped  value, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   private
 

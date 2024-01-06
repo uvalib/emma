@@ -1,4 +1,18 @@
 module Org::Config
+  # The internal organization identifier.  This may be assigned as an :org_id
+  # indicating an internal EMMA user, however no persisted Org record has this
+  # as its :id.
+  #
+  # @type [Integer]
+  #
+  INTERNAL_ID: Integer
+
+  # The display name for the internal organization.
+  #
+  # @type [String]
+  #
+  INTERNAL_NAME: String
+
   # Used by methods defined in modules to allow the primary argument to be
   # missing/nil when used as a record instance method.
   #

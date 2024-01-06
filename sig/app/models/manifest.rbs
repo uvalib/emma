@@ -40,6 +40,16 @@ class Manifest < ApplicationRecord
   #
   def initialize: (?(Manifest|prmHash|nil) attr) ?{ () -> untyped } -> void
 
+  # The user associated with this record.
+  #
+  # @return [Integer, nil]
+  #
+  def user_id: () -> (Integer | nil)
+
+  # The organization associated with this record.
+  #
+  # @return [Integer, nil]
+  #
   def org_id: () -> (Integer | nil)
 
   def uid: (?untyped item) -> (Integer | nil)

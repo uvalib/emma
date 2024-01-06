@@ -119,15 +119,15 @@ class User < ApplicationRecord
     super
   end
 
+  def user_id = id
+
+  def org_id = self[:org_id]
+
   # ===========================================================================
   # :section: IdMethods overrides
   # ===========================================================================
 
   public
-
-  def user_id = id
-
-  def org_id = self[:org_id]
 
   def user_key = ID_COLUMN
 
