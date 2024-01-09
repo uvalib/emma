@@ -40,7 +40,7 @@ module Record::Searchable
   #
   # @return [Model, nil]
   #
-  # @note From Upload::LookupMethods#get_record
+  # @note From Upload::SearchMethods#get_record
   #
   def get_record: ((symHash|String|Symbol|Integer|Model|nil) item, **untyped opt) -> (Model | nil)
 
@@ -51,7 +51,7 @@ module Record::Searchable
   #
   # @return [Array<Model>]
   #
-  # @note From Upload::LookupMethods#get_records
+  # @note From Upload::SearchMethods#get_records
   #
   def get_records: (*(String|Symbol|Integer|Model|nil) identifiers, **untyped opt) -> Array[Model]
 
@@ -59,7 +59,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#SEARCH_RECORDS_OPTIONS
+  # @note From Upload::SearchMethods#SEARCH_RECORDS_OPTIONS
   #
   SEARCH_RECORDS_OPTIONS: symArray
 
@@ -67,7 +67,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#NON_SEARCH_PARAMS
+  # @note From Upload::SearchMethods#NON_SEARCH_PARAMS
   #
   NON_SEARCH_PARAMS: symArray
 
@@ -95,7 +95,7 @@ module Record::Searchable
   #
   # @see ActiveRecord::Relation#where
   #
-  # @note From Upload::LookupMethods#search_records
+  # @note From Upload::SearchMethods#search_records
   #
   def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> Paginator::Result
 
@@ -103,7 +103,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#GET_RELATION_OPTIONS
+  # @note From Upload::SearchMethods#GET_RELATION_OPTIONS
   #
   GET_RELATION_OPTIONS: symArray
 
@@ -124,7 +124,7 @@ module Record::Searchable
   #
   # @see Record::EmmaIdentification#expand_ids
   #
-  # @note From Upload::LookupMethods#get_relation
+  # @note From Upload::SearchMethods#get_relation
   #
   def get_relation: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> ActiveRecord::Relation
 
@@ -132,7 +132,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#MAKE_RELATION_OPTIONS
+  # @note From Upload::SearchMethods#MAKE_RELATION_OPTIONS
   #
   MAKE_RELATION_OPTIONS: symArray
 
@@ -152,7 +152,7 @@ module Record::Searchable
   #
   # @return [ActiveRecord::Relation]
   #
-  # @note From Upload::LookupMethods#make_relation
+  # @note From Upload::SearchMethods#make_relation
   #
   def make_relation: (*(String|strArray|nil) terms, sort: symHash|String|bool|nil, **untyped opt) -> ActiveRecord::Relation
 
@@ -176,7 +176,7 @@ module Record::Searchable
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  # @note From Upload::LookupMethods#group_counts
+  # @note From Upload::SearchMethods#group_counts
   #
   def group_counts: (ActiveRecord::Relation relation, ?(Symbol|nil) column) -> Hash[Symbol,Integer]
 
@@ -191,7 +191,7 @@ module Record::Searchable
   # @return [String, true,  false]    If *value* specifies a month.
   # @return [String, false, true]     If *value* specifies a year
   #
-  # @note From Upload::LookupMethods#day_string
+  # @note From Upload::SearchMethods#day_string
   #
   def day_string
     : (String  value) -> ([String, bool, bool] | [nil, false, false])

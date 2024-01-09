@@ -1,15 +1,9 @@
 # Class methods for accessing Upload records.
 #
-module Upload::LookupMethods
+module Upload::SearchMethods
   include Upload::WorkflowMethods
 
-  extend ::Upload::LookupMethods
-
-  # Sort order applied by default in #get_relation.
-  #
-  # @return [Symbol, String, Hash]
-  #
-  def default_sort: () -> (Symbol | String | anyHash)
+  extend ::Upload::SearchMethods
 
   # Get the Upload record by either :id or :submission_id.
   #
@@ -115,17 +109,6 @@ module Upload::LookupMethods
   #
   def make_relation: (*(String|strArray|nil) terms, sort: symHash|String|bool|nil, **untyped opt) -> ActiveRecord::Relation
 
-  # Generate arguments to ActiveRecord#order from *val*.
-  #
-  # @param [Hash, String, Symbol, TrueClass, FalseClass, nil] val
-  # @param [Symbol, String]                                   dir
-  #
-  # @return [Hash]                    The arguments for #order.
-  # @return [String]                  A complex SQL expression.
-  # @return [nil]                     If no sort was specified.
-  #
-  def normalize_sort_order: ((symHash|String|Symbol|bool|nil) prm, ?dir: Symbol|String, **untyped _ignored) -> (symHash | String | nil)
-
   # A table of counts for items in each state group.
   #
   # @param [ActiveRecord::Relation] relation
@@ -148,15 +131,6 @@ module Upload::LookupMethods
   def day_string
     : (String  value) -> ([String, bool, bool] | [nil, false, false])
     | (untyped value) -> [nil, false, false]
-
-  # Generates SQL terms which mirror ManifestItem scopes.
-  #
-  # @param [String, Symbol] col
-  # @param [Symbol] tbl
-  #
-  # @return [String]
-  #
-  def sort_scope: ((String|Symbol) col, Symbol tbl) -> String
 
   private
 

@@ -13,7 +13,7 @@ class Upload < ApplicationRecord
 
   include Upload::IdentifierMethods
 
-  include Upload::LookupMethods
+  include Upload::SearchMethods
 
   include Upload::RenderMethods
 

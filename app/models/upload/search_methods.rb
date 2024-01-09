@@ -1,4 +1,4 @@
-# app/models/upload/lookup_methods.rb
+# app/models/upload/search_methods.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Class methods for accessing Upload records.
 #
-module Upload::LookupMethods
+module Upload::SearchMethods
 
   include Upload::WorkflowMethods
 

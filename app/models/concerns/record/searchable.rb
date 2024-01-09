@@ -69,7 +69,7 @@ module Record::Searchable
   #
   # @return [Model, nil]
   #
-  # @note From Upload::LookupMethods#get_record
+  # @note From Upload::SearchMethods#get_record
   #
   def get_record(item, **opt)
     find_by(**id_term(item, **opt))
@@ -82,7 +82,7 @@ module Record::Searchable
   #
   # @return [Array<Model>]
   #
-  # @note From Upload::LookupMethods#get_records
+  # @note From Upload::SearchMethods#get_records
   #
   def get_records(*identifiers, **opt)
     get_relation(*identifiers, **opt).records
@@ -98,7 +98,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#SEARCH_RECORDS_OPTIONS
+  # @note From Upload::SearchMethods#SEARCH_RECORDS_OPTIONS
   #
   SEARCH_RECORDS_OPTIONS = %i[offset limit page groups sort].freeze
 
@@ -106,7 +106,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#NON_SEARCH_PARAMS
+  # @note From Upload::SearchMethods#NON_SEARCH_PARAMS
   #
   NON_SEARCH_PARAMS =
     (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS)
@@ -136,7 +136,7 @@ module Record::Searchable
   #
   # @see ActiveRecord::Relation#where
   #
-  # @note From Upload::LookupMethods#search_records
+  # @note From Upload::SearchMethods#search_records
   #
   def search_records(*items, **opt)
     result = Paginator::Result.new
@@ -195,7 +195,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#GET_RELATION_OPTIONS
+  # @note From Upload::SearchMethods#GET_RELATION_OPTIONS
   #
   GET_RELATION_OPTIONS = %i[id_key sid_key].freeze
 
@@ -216,7 +216,7 @@ module Record::Searchable
   #
   # @see Record::EmmaIdentification#expand_ids
   #
-  # @note From Upload::LookupMethods#get_relation
+  # @note From Upload::SearchMethods#get_relation
   #
   def get_relation(*items, **opt)
     terms  = []
@@ -256,7 +256,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::LookupMethods#MAKE_RELATION_OPTIONS
+  # @note From Upload::SearchMethods#MAKE_RELATION_OPTIONS
   #
   MAKE_RELATION_OPTIONS =
     %i[sort offset limit start_date end_date after before].freeze
@@ -277,7 +277,7 @@ module Record::Searchable
   #
   # @return [ActiveRecord::Relation]
   #
-  # @note From Upload::LookupMethods#make_relation
+  # @note From Upload::SearchMethods#make_relation
   #
   def make_relation(*terms, sort: nil, **opt)
     meth = opt.delete(:meth)
@@ -437,7 +437,7 @@ module Record::Searchable
   #
   # @return [Hash{Symbol=>Integer}]
   #
-  # @note From Upload::LookupMethods#group_counts
+  # @note From Upload::SearchMethods#group_counts
   #
   def group_counts(relation, column = state_column)
     raise "no :state_column for #{self.class}" unless column
@@ -461,7 +461,7 @@ module Record::Searchable
   # @return [String, true,  false]    If *value* specifies a month.
   # @return [String, false, true]     If *value* specifies a year
   #
-  # @note From Upload::LookupMethods#day_string
+  # @note From Upload::SearchMethods#day_string
   #
   def day_string(value)
     day = month = year = nil

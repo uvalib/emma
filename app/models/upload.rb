@@ -22,7 +22,7 @@ class Upload < ApplicationRecord
   include Upload::EmmaDataMethods
   include Upload::FileMethods
   include Upload::IdentifierMethods
-  include Upload::LookupMethods
+  include Upload::SearchMethods
   include Upload::RenderMethods
   include Upload::WorkflowMethods
 
