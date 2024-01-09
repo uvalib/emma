@@ -16,11 +16,13 @@ module Capybara
       # This override, in conjunction with the Javascript module, allows
       # 'capybara-lockstep' to work with Turbolinks.
       #
+      # @param [Hash] options
+      #
       # @return [String]
       #
       # @see file:app/assets/javascripts/vendor/capybara-lockstep.js
       #
-      def capybara_lockstep_js
+      def capybara_lockstep_js(options = {})
         super.sub(/^CapybaraLockstep.track/, '//\0')
       end
 
