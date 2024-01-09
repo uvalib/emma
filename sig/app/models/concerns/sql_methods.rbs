@@ -31,13 +31,13 @@ module SqlMethods
 
   # Translate hash keys/values into SQL conditions.
   #
-  # @param [Array<Hash,String>]  terms
-  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
-  # @param [String, Symbol, nil] join       Alias for :connector.
-  # @param [Hash]                other      Additional terms.
+  # If *join* is set to *nil*, an array of SQL clauses is returned instead.
   #
-  # @return [String]  SQL expression.
-  # @return [Array]   SQL clauses if *connector* is set to *nil*.
+  # @param [Array<Hash,Array,String>] terms
+  # @param [Symbol, nil]              join    Either :or or :and; default: :and
+  # @param [Hash]                     other   Additional terms.
+  #
+  # @return [String]
   #
   # === Examples
   #
@@ -52,18 +52,15 @@ module SqlMethods
   # @example Multiple terms
   #   sql_clauses(cond, ids)-> "age='18' AND hgt='1.8' AND (id IN (123, 456))"
   #
-  def sql_terms
-    : (*(anyHash|String) terms, ?join: Symbol|String|nil,  connector: nil,           **untyped other) -> strArray
-    | (*(anyHash|String) terms, ?join: Symbol|String|nil, ?connector: Symbol|String, **untyped other) -> String
+  def sql_terms: (*(anyHash|strArray|String|nil) terms, ?join: Symbol|nil, **untyped other) -> String
 
   # Translate hash keys/values into SQL conditions.
   #
-  # @param [Hash]           hash
-  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
-  # @param [String, Symbol, nil] join       Alias for :connector.
+  # @param [Hash]        hash
+  # @param [Symbol, nil] join         Either :or or :and; default: :and
   #
-  # @return [String]  SQL expression.
-  # @return [Array]   SQL clauses if *connector* is set to *nil*.
+  # @return [String]                  SQL expression.
+  # @return [Array]                   SQL clauses if *join* is set to *nil*.
   #
   # === Examples
   #
@@ -73,9 +70,7 @@ module SqlMethods
   # @example OR-ed values
   #   sql_clauses(id: '123', age: '18', join: :or)-> "id = '123' OR age = '18'"
   #
-  def sql_clauses
-    : (anyHash hash, ?join: Symbol|String|nil,  connector: nil)           -> strArray
-    | (anyHash hash, ?join: Symbol|String|nil, ?connector: String|Symbol) -> String
+  def sql_clauses: (anyHash, ?join: Symbol|nil) -> String
 
   # Translate a key and value into a SQL condition.
   #
@@ -115,12 +110,13 @@ module SqlMethods
 
   # Join SQL terms, with multiple terms fully parenthesized.
   #
-  # @param [Array<String>]       terms
-  # @param [String, Symbol, nil] connector  Either :or or :and.
+  # @param [Array<String,Array>] terms
+  # @param [Symbol, nil]         join   Either :or or :and.
   #
-  def sql_join
-    : (*(String|nil) terms, nil           connector) -> strArray
-    | (*(String|nil) terms, String|Symbol connector) -> String
+  # @return [String]
+  # @return [Array<String>]             If *join* is *nil*.
+  #
+  def sql_join: (*(String|strArray|nil) terms, Symbol|nil join) -> String
 
   # Look for a value in a standard database field.
   #
@@ -267,24 +263,22 @@ module SqlMethods
 
     # Translate hash keys/values into SQL LIKE statements.
     #
-    # @param [Array<Hash,String>]  terms
-    # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
-    # @param [String, Symbol, nil] join       Alias for :connector.
-    # @param [Hash]                opt        Passed to #merge_match_terms.
+    # If *join* is set to *nil*, an array of SQL clauses is returned instead.
     #
-    # @return [String]  SQL expression.
-    # @return [Array]   SQL clauses if *connector* is set to *nil*.
+    # @param [Array<Hash,String>] terms
+    # @param [Symbol, nil]        join    Either :or or :and; default: :and
+    # @param [Hash]               opt     Passed to #merge_match_terms.
     #
-    def sql_match
-      : (*(anyHash|String) terms, ?join: Symbol|String|nil,  connector: nil,           **untyped opt) -> strArray
-      | (*(anyHash|String) terms, ?join: Symbol|String|nil, ?connector: Symbol|String, **untyped opt) -> String
+    # @return [String]
+    #
+    def sql_match: (*(anyHash|String) terms, ?join: Symbol|nil, **untyped opt) -> String
 
     # Accumulate match pairs.
     #
     # @param [String, Array, Hash] terms
     # @param [Hash]                opt    Passed to #merge_match_terms!
     #
-    def merge_match_terms: (*(anyHash|anyArray|String) terms, **untyped opt) -> Hash[Symbol,strArray]
+    def merge_match_terms: (*(anyHash|strArray|String) terms, **untyped opt) -> Hash[Symbol,strArray]
 
     # Accumulate match pairs.
     #
@@ -296,7 +290,7 @@ module SqlMethods
     #
     # @return [Hash{Symbol=>Array<String>}] The modified *dst* hash.
     #
-    def merge_match_terms!: (symHash dst, *(anyHash|anyArray|String) terms, ?columns: symArray|nil, ?type: Symbol|nil, ?sanitize: bool) -> Hash[Symbol,strArray]
+    def merge_match_terms!: (symHash dst, *(anyHash|strArray|String) terms, ?columns: symArray|nil, ?type: Symbol|nil, ?sanitize: bool) -> Hash[Symbol,strArray]
 
     # Dynamically create a derived table with JSON fields expanded into columns
     #

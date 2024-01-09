@@ -52,13 +52,13 @@ module SqlMethods
 
   # Translate hash keys/values into SQL conditions.
   #
-  # @param [Array<Hash,String>]  terms
-  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
-  # @param [String, Symbol, nil] join       Alias for :connector.
-  # @param [Hash]                other      Additional terms.
+  # If *join* is set to *nil*, an array of SQL clauses is returned instead.
   #
-  # @return [String]  SQL expression.
-  # @return [Array]   SQL clauses if *connector* is set to *nil*.
+  # @param [Array<Hash,Array,String>] terms
+  # @param [Symbol, nil]              join    Either :or or :and; default: :and
+  # @param [Hash]                     other   Additional terms.
+  #
+  # @return [String]
   #
   # === Examples
   #
@@ -73,21 +73,20 @@ module SqlMethods
   # @example Multiple terms
   #   sql_clauses(cond, ids)-> "age='18' AND hgt='1.8' AND (id IN (123, 456))"
   #
-  def sql_terms(*terms, join: :and, connector: join, **other)
+  def sql_terms(*terms, join: :and, **other)
     terms = terms.flatten.compact_blank!
     terms << other if other.present?
-    terms.map! { |t| t.is_a?(Hash) ? sql_clauses(t, join: connector) : t }
-    sql_join(*terms, connector)
+    terms.map! { |t| t.is_a?(Hash) ? sql_clauses(t, join: join) : t }
+    sql_join(*terms, join)
   end
 
   # Translate hash keys/values into SQL conditions.
   #
-  # @param [Hash]           hash
-  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
-  # @param [String, Symbol, nil] join       Alias for :connector.
+  # @param [Hash]        hash
+  # @param [Symbol, nil] join         Either :or or :and; default: :and
   #
-  # @return [String]  SQL expression.
-  # @return [Array]   SQL clauses if *connector* is set to *nil*.
+  # @return [String]                  SQL expression.
+  # @return [Array]                   SQL clauses if *join* is set to *nil*.
   #
   # === Examples
   #
@@ -97,9 +96,9 @@ module SqlMethods
   # @example OR-ed values
   #   sql_clauses(id: '123', age: '18', join: :or)-> "id = '123' OR age = '18'"
   #
-  def sql_clauses(hash, join: :and, connector: join)
+  def sql_clauses(hash, join: :and)
     clauses = hash.map { |k, v| sql_clause(k, v) }
-    sql_join(*clauses, connector)
+    sql_join(*clauses, join)
   end
 
   # Translate a key and value into a SQL condition.
@@ -171,16 +170,19 @@ module SqlMethods
 
   # Join SQL terms, with multiple terms fully parenthesized.
   #
-  # @param [Array<String>]       terms
-  # @param [String, Symbol, nil] connector  Either :or or :and.
+  # @param [Array<String,Array>] terms
+  # @param [Symbol, nil]         join   Either :or or :and.
   #
-  def sql_join(*terms, connector)
-    connector &&= connector.to_s.strip.upcase
-    terms.compact_blank!
-    return terms             if connector.blank?
+  # @return [String]
+  # @return [Array<String>]             If *join* is *nil*.
+  #
+  def sql_join(*terms, join)
+    terms = terms.flatten.compact_blank!
+    # noinspection RubyMismatchedReturnType
+    return terms             if join.nil?
     return terms.first || '' unless terms.many?
     terms.map! { |t| t.start_with?('(') ? t : "(#{t})" }
-    '(%s)' % terms.join(" #{connector} ")
+    '(%s)' % terms.join(" #{join} ".upcase)
   end
 
   # ===========================================================================
@@ -496,26 +498,24 @@ module SqlMethods
 
     # Translate hash keys/values into SQL LIKE statements.
     #
-    # @param [Array<Hash,String>]  terms
-    # @param [String, Symbol, nil] connector  Either :or or :and; default: :and
-    # @param [String, Symbol, nil] join       Alias for :connector.
-    # @param [Hash]                opt        Passed to #merge_match_terms.
+    # If *join* is set to *nil*, an array of SQL clauses is returned instead.
     #
-    # @return [String]  SQL expression.
-    # @return [Array]   SQL clauses if *connector* is set to *nil*.
+    # @param [Array<Hash,String>] terms
+    # @param [Symbol, nil]        join    Either :or or :and; default: :and
+    # @param [Hash]               opt     Passed to #merge_match_terms.
     #
-    def sql_match(*terms, join: :and, connector: join, **opt)
+    # @return [String]
+    #
+    def sql_match(*terms, join: :and, **opt)
       json = (opt[:type] == :json)
       opt[:columns] &&= Array.wrap(opt[:columns]).compact.map!(&:to_sym)
       opt[:columns]   = field_names if opt[:columns].blank?
+      # noinspection RubyMismatchedReturnType
       merge_match_terms(*terms, **opt).flat_map { |field, matches|
         matches.map do |value|
           json ? sql_match_json(field, value) : sql_match_pattern(field, value)
         end
-      }.then { |result|
-        connector &&= connector.to_s.strip.upcase.presence
-        connector ? result.join(" #{connector} ") : result
-      }
+      }.then { |result| join ? result.join(" #{join} ".upcase) : result }
     end
 
     # =========================================================================
@@ -553,9 +553,7 @@ module SqlMethods
     )
       columns &&= field_names.select { |f| columns.include?(f) }
       columns ||= field_names
-      terms.flatten!
-      terms.compact!
-      terms.each do |term|
+      terms.flatten.compact.each do |term|
         if term.is_a?(Hash)
           term = term.deep_symbolize_keys
         else
