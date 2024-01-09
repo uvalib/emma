@@ -15,6 +15,7 @@ class ManifestItem < ApplicationRecord
   include Record::Assignable
   include Record::Describable
   include Record::Searchable
+  include Record::Sortable
   include Record::Updatable
   include Record::Uploadable
   include Record::Validatable
@@ -78,16 +79,16 @@ class ManifestItem < ApplicationRecord
   #
   # ===========================================================================
 
-  scope :active,       -> { where('NOT deleting IS TRUE') }
+  scope :active,       -> { where('deleting IS NOT TRUE') }
   scope :to_delete,    -> { where(deleting: true) }
 
-  scope :completed,    -> { where('last_saved >= updated_at') }
-  scope :unsaved,      -> { where('last_saved < updated_at') }
   scope :never_saved,  -> { where(last_saved: nil) }
-  scope :incomplete,   -> { unsaved.or(never_saved) }
+  scope :unsaved,      -> { where('last_saved < updated_at') }
+  scope :completed,    -> { where('last_saved >= updated_at') }
+  scope :incomplete,   -> { never_saved.or(unsaved) }
 
-  scope :saved,        -> { active.and(completed) }
   scope :pending,      -> { active.and(incomplete) }
+  scope :saved,        -> { active.and(completed) }
 
   scope :data_valid,   -> { where(data_status: STATUS_VALID[:data_status]) }
   scope :file_valid,   -> { where(file_status: STATUS_VALID[:file_status]) }

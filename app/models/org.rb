@@ -15,6 +15,7 @@ class Org < ApplicationRecord
   include Record
   include Record::Assignable
   include Record::Searchable
+  include Record::Sortable
 
   include Record::Testing
   include Record::Debugging

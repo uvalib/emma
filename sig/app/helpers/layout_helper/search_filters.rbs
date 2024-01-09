@@ -109,31 +109,31 @@ module LayoutHelper::SearchFilters
     # Indicate whether a :sort value is a reversed (descending) sort.
     #
     # @param [String, Symbol] value   A :sort key.
-    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
+    # @param [String]         suffix
     #
     # @note Currently unused.
     #
-    def is_reverse?: (String|Symbol|nil value, ?(String|nil) suffix) -> bool
+    def is_reverse?: (String|Symbol|nil value, ?String suffix) -> bool
 
     # Change a :sort value to indicate a normal (ascending) sort.
     #
     # @param [String, Symbol] value   Base :sort key.
-    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
+    # @param [String]         suffix
     #
     # @return [String, nil]
     #
     # @note Currently unused.
     #
-    def ascending_sort: (String|Symbol|nil value, ?(String|nil) suffix) -> (String | nil)
+    def ascending_sort: (String|Symbol|nil value, ?String suffix) -> (String | nil)
 
     # Change a :sort value to indicate a reversed (descending) sort.
     #
     # @param [String, Symbol] value   Base :sort key.
-    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
+    # @param [String]         suffix
     #
     # @return [String, nil]
     #
-    def descending_sort: (String|Symbol|nil value, ?(String|nil) suffix) -> (String | nil)
+    def descending_sort: (String|Symbol|nil value, ?String suffix) -> (String | nil)
 
     private
 
@@ -178,13 +178,6 @@ module LayoutHelper::SearchFilters
   # @note Currently unused.
   #
   SEARCH_PARAMETERS: symArray
-
-  # If a :sort parameter value ends with this, it indicates that the sort
-  # should be performed in reverse order.
-  #
-  # @type [String]
-  #
-  REVERSE_SORT_SUFFIX: String
 
   # Search filter configurations for each controller where they are enabled.
   #

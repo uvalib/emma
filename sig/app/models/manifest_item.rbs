@@ -13,6 +13,8 @@ class ManifestItem < ApplicationRecord
 
   include Record::Searchable
 
+  include Record::Sortable
+
   include Record::Updatable
 
   include Record::Uploadable

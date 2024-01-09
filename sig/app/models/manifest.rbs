@@ -9,6 +9,8 @@ class Manifest < ApplicationRecord
 
   include Record::Searchable
 
+  include Record::Sortable
+
   include Record::Testing
 
   include Record::Debugging
@@ -20,6 +22,8 @@ class Manifest < ApplicationRecord
   include Manifest::ItemMethods
 
   include Manifest::Searchable
+
+  include Manifest::Sortable
 
   # :nocov:
   #extend Record::Describable::ClassMethods

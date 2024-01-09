@@ -13,6 +13,7 @@ class Manifest < ApplicationRecord
   include Record::Assignable
   include Record::Describable
   include Record::Searchable
+  include Record::Sortable
 
   include Record::Testing
   include Record::Debugging
@@ -21,6 +22,7 @@ class Manifest < ApplicationRecord
   include Manifest::EmmaIdentification
   include Manifest::ItemMethods
   include Manifest::Searchable
+  include Manifest::Sortable
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

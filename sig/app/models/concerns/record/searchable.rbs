@@ -7,6 +7,8 @@ module Record::Searchable
 
   include Record::EmmaIdentification
 
+  include Record::Sortable
+
   # :nocov:
   #include ActiveRecord::FinderMethods
 
@@ -26,12 +28,6 @@ module Record::Searchable
   # @return [Symbol, nil]
   #
   def state_column: () -> (Symbol | nil)
-
-  # Sort order applied by default in #get_relation.
-  #
-  # @return [Symbol, String, Hash]
-  #
-  def default_sort: () -> (Symbol | String | anyHash)
 
   # Get a record by either :id or :submission_id.
   #
@@ -138,9 +134,9 @@ module Record::Searchable
 
   # make_relation
   #
-  # @param [Array<String, Hash>]     terms
-  # @param [Hash,String,Boolean,nil] sort   No sort if *nil*, *false* or blank.
-  # @param [Hash]                    opt    Passed to #where except:
+  # @param [Array<String,Array,Hash>] terms
+  # @param [Hash,String,Boolean,nil]  sort  No sort if *nil*, *false* or blank.
+  # @param [Hash]                     opt   Passed to #where except:
   #
   # @option opt [Integer, nil]      :offset
   # @option opt [Integer, nil]      :limit
@@ -154,18 +150,7 @@ module Record::Searchable
   #
   # @note From Upload::SearchMethods#make_relation
   #
-  def make_relation: (*(String|strArray|nil) terms, sort: symHash|String|bool|nil, **untyped opt) -> ActiveRecord::Relation
-
-  # Generate arguments to ActiveRecord#order from *val*.
-  #
-  # @param [Hash, String, Symbol, TrueClass, FalseClass, nil] val
-  # @param [Symbol, String]                                   dir
-  #
-  # @return [Hash]                    The arguments for #order.
-  # @return [String]                  A complex SQL expression.
-  # @return [nil]                     If no sort was specified.
-  #
-  def normalize_sort_order: ((symHash|String|Symbol|bool|nil) prm, ?dir: Symbol|String, **untyped _ignored) -> (symHash | String | nil)
+  def make_relation: (*(String|strArray|symHash|nil) terms, sort: symHash|String|bool|nil, **untyped opt) -> ActiveRecord::Relation
 
   # A table of counts for items in each state group.
   #
@@ -196,15 +181,6 @@ module Record::Searchable
   def day_string
     : (String  value) -> ([String, bool, bool] | [nil, false, false])
     | (untyped value) -> [nil, false, false]
-
-  # Generates SQL terms which mirror ManifestItem scopes.
-  #
-  # @param [String, Symbol] col
-  # @param [Symbol] tbl
-  #
-  # @return [String]
-  #
-  def sort_scope: ((String|Symbol) col, Symbol tbl) -> String
 
   # Class methods automatically added to the including record class.
   #

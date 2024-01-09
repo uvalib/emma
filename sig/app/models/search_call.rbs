@@ -11,6 +11,8 @@ class SearchCall < ApplicationRecord
 
   include Record::Searchable
 
+  include Record::Sortable
+
   # :nocov:
   #extend SqlMethods::ClassMethods
 

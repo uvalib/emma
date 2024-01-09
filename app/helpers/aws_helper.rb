@@ -492,9 +492,9 @@ module AwsHelper
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
   def sort_objects!(array, sort_keys = nil)
-    primary_sort = transform_sort_keys(S3_BUCKET_PRIMARY_SORT)
-    sort_keys    = transform_sort_keys(sort_keys || S3_BUCKET_DEFAULT_SORT)
-    sort_keys    = primary_sort.merge(sort_keys)
+    primary_sort   = transform_sort_keys(S3_BUCKET_PRIMARY_SORT)
+    secondary_sort = transform_sort_keys(sort_keys || S3_BUCKET_DEFAULT_SORT)
+    sort_keys      = primary_sort.merge(secondary_sort)
     array.sort! do |a, b|
       sort_keys.find do |key, ascending|
         comparison = ascending ? (a[key] <=> b[key]) : (b[key] <=> a[key])
@@ -510,19 +510,7 @@ module AwsHelper
   # @return [Hash{Symbol=>Boolean}]
   #
   def transform_sort_keys(sort_keys)
-    if sort_keys.is_a?(Hash)
-      sort_keys.compact.map { |name, dir|
-        ascending = !dir.is_a?(FalseClass) && !dir.to_s.casecmp?('desc')
-        [name.to_sym, ascending]
-      }.to_h
-    else
-      reverse = LayoutHelper::SearchFilters::REVERSE_SORT_SUFFIX
-      Array.wrap(sort_keys).compact.map { |name|
-        name      = name.is_a?(String) ? name.dup : name.to_s
-        ascending = !name.delete_suffix!(reverse)
-        [name.to_sym, ascending]
-      }.to_h
-    end
+    SortOrder.wrap(sort_keys).transform_values { |dir| dir == :asc }
   end
 
   # ===========================================================================

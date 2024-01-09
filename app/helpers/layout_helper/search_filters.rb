@@ -51,6 +51,7 @@ module LayoutHelper::SearchFilters
         cfg[:url_param]     = (cfg[:url_param] || menu_name)&.to_sym
         if (reverse = cfg[:reverse])
           reverse[:suffix] &&= reverse[:suffix].sub(/^([^_])/, '_\1')
+          reverse[:suffix] ||= SortOrder::REVERSE_SUFFIX
           reverse[:except] &&= Array.wrap(reverse[:except])
         end
         default   = cfg[:default] || cfg[:_default]
@@ -226,40 +227,37 @@ module LayoutHelper::SearchFilters
     # Indicate whether a :sort value is a reversed (descending) sort.
     #
     # @param [String, Symbol] value   A :sort key.
-    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
+    # @param [String]         suffix
     #
     # @note Currently unused.
     #
-    def is_reverse?(value, suffix = nil)
-      suffix ||= REVERSE_SORT_SUFFIX
+    def is_reverse?(value, suffix = SortOrder::REVERSE_SUFFIX)
       value.to_s.end_with?(suffix)
     end
 
     # Change a :sort value to indicate a normal (ascending) sort.
     #
     # @param [String, Symbol] value   Base :sort key.
-    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
+    # @param [String]         suffix
     #
     # @return [String, nil]
     #
     # @note Currently unused.
     #
-    def ascending_sort(value, suffix = nil)
+    def ascending_sort(value, suffix = SortOrder::REVERSE_SUFFIX)
       return if value.blank?
-      suffix ||= REVERSE_SORT_SUFFIX
       value.to_s.delete_suffix(suffix)
     end
 
     # Change a :sort value to indicate a reversed (descending) sort.
     #
     # @param [String, Symbol] value   Base :sort key.
-    # @param [String]         suffix  Default: #REVERSE_SORT_SUFFIX
+    # @param [String]         suffix
     #
     # @return [String, nil]
     #
-    def descending_sort(value, suffix = nil)
+    def descending_sort(value, suffix = SortOrder::REVERSE_SUFFIX)
       return if value.blank?
-      suffix ||= REVERSE_SORT_SUFFIX
       value.end_with?(suffix) ? value.to_s : "#{value}#{suffix}"
     end
 
@@ -325,13 +323,6 @@ module LayoutHelper::SearchFilters
   #
   SEARCH_PARAMETERS =
     SEARCH_MENU_BASE.values.map { |config| config[:url_param] }.uniq.freeze
-
-  # If a :sort parameter value ends with this, it indicates that the sort
-  # should be performed in reverse order.
-  #
-  # @type [String]
-  #
-  REVERSE_SORT_SUFFIX = SEARCH_MENU_BASE.dig(:sort, :reverse, :suffix)
 
   # Search filter configurations for each controller where they are enabled.
   #

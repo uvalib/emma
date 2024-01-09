@@ -23,6 +23,7 @@ class Upload < ApplicationRecord
   include Upload::FileMethods
   include Upload::IdentifierMethods
   include Upload::SearchMethods
+  include Upload::SortMethods
   include Upload::RenderMethods
   include Upload::WorkflowMethods
 

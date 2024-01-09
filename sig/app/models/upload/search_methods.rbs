@@ -1,6 +1,8 @@
 # Class methods for accessing Upload records.
 #
 module Upload::SearchMethods
+  include Upload::SortMethods
+
   include Upload::WorkflowMethods
 
   extend ::Upload::SearchMethods

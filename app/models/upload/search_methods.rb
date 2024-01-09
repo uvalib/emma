@@ -9,23 +9,10 @@ __loading_begin(__FILE__)
 #
 module Upload::SearchMethods
 
+  include Upload::SortMethods
   include Upload::WorkflowMethods
 
   extend self
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Sort order applied by default in #get_relation.
-  #
-  # @return [Symbol, String, Hash]
-  #
-  def default_sort
-    { implicit_order_column => :desc }
-  end
 
   # ===========================================================================
   # :section:
@@ -212,9 +199,9 @@ module Upload::SearchMethods
 
   # make_relation
   #
-  # @param [Array<String, Hash>]     terms
-  # @param [Hash,String,Boolean,nil] sort   No sort if *nil*, *false* or blank.
-  # @param [Hash]                    opt    Passed to #where except:
+  # @param [Array<String,Array,Hash>] terms
+  # @param [Hash,String,Boolean,nil]  sort  No sort if *nil*, *false* or blank.
+  # @param [Hash]                     opt   Passed to #where except:
   #
   # @option opt [Integer, nil]      :offset
   # @option opt [Integer, nil]      :limit
@@ -234,32 +221,29 @@ module Upload::SearchMethods
     # as shorthand for the default sort order descending.
     outer = []
     group = []
-    sort  = default_sort if sort.nil? || sort.is_a?(TrueClass)
+    order = []
     sort  = normalize_sort_order(sort)
-    if sort.is_a?(Hash)
-      sort =
-        sort.map { |col, dir|
-          next if col.blank? || dir.blank? || false?(dir)
-          dir = (true?(dir) ? :asc : dir).upcase
-          if col.end_with?('_item_count')
-            tbl = :manifest_items
-            terms << sort_scope(col, tbl)
-          else
+    if sort&.sql_only?
+      order << sort
+    elsif sort&.is_a?(Hash)
+      sort.each_pair do |col, dir|
+        dir = dir.to_s.upcase
+        if col.end_with?('_item_count')
+          tbl = :manifest_items
+          cnt = "COUNT(1) FILTER (WHERE %s) #{dir}" % sort_scope(col, tbl)
+        else
+          tbl =
             case col.to_sym
-              when :upload_count    then tbl = :uploads
-              when :manifest_count  then tbl = :manifests
-              when :item_count      then tbl = :manifest_items
-              else                       tbl = nil
+              when :upload_count    then :uploads
+              when :manifest_count  then :manifests
+              when :item_count      then :manifest_items
             end
-          end
-          if tbl
-            outer << tbl
-            group << "#{table_name}.id"
-            Arel.sql("COUNT(#{tbl}.id) #{dir}")
-          else
-            "#{table_name}.#{col} #{dir}"
-          end
-        }.compact.presence
+          cnt = ("COUNT(#{tbl}.id) #{dir}" if tbl)
+        end
+        outer << tbl                if tbl
+        group << "#{table_name}.id" if tbl
+        order << (cnt ? Arel.sql(cnt) : "#{table_name}.#{col} #{dir}")
+      end
     end
 
     # === Filter by user
@@ -337,7 +321,7 @@ module Upload::SearchMethods
       result.group!(*group)             if group.present?
       result.joins!(*inner)             if inner.present?
       result.where!(query)              if query.present?
-      result.order!(sort)               if sort.present?
+      result.order!(*order)             if order.present?
       result.limit!(limit)              if limit.present?
       result.offset!(offset)            if offset.present?
       __debug_line(meth, leader: "\t>>>", separator: "\n") do
@@ -346,43 +330,13 @@ module Upload::SearchMethods
           group:  group,
           inner:  inner,
           query:  query,
-          sort:   sort,
+          order:  order,
           limit:  limit,
           offset: offset,
           SQL:    (result.to_sql rescue 'FAILED')
         }.compact_blank
       end
     end
-  end
-
-  # Generate arguments to ActiveRecord#order from *val*.
-  #
-  # @param [Hash, String, Symbol, TrueClass, FalseClass, nil] val
-  # @param [Symbol, String]                                   dir
-  #
-  # @return [Hash]                    The arguments for #order.
-  # @return [String]                  A complex SQL expression.
-  # @return [nil]                     If no sort was specified.
-  #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
-  def normalize_sort_order(val, dir: :asc, **)
-    return                     if val.blank?
-    return val                 if val.is_a?(Hash)
-    return val                 if val.is_a?(String) && val.match?(%r{[()*/+-]})
-    val = val.map(&:dup)       if val.is_a?(Array)
-    val = val.split(/\s*,\s*/) if val.is_a?(String)
-    col = implicit_order_column
-    Array.wrap(val).map(&:to_s).map { |k|
-      case
-        when k.casecmp?('DESC')      then [col, :desc] if col
-        when k.casecmp?('ASC')       then [col, :asc]  if col
-        when k.sub!(/\s+DESC$/i, '') then [k,   :desc]
-        when k.sub!(/\s+ASC$/i, '')  then [k,   :asc]
-        else                              [k,   dir]
-      end
-    }.compact.to_h.presence
   end
 
   # ===========================================================================
@@ -429,35 +383,6 @@ module Upload::SearchMethods
     end
     # noinspection RubyMismatchedReturnType
     return day, !!month, !!year
-  end
-
-  # Generates SQL terms which mirror ManifestItem scopes.
-  #
-  # @param [String, Symbol] col
-  # @param [Symbol] tbl
-  #
-  # @return [String]
-  #
-  def sort_scope(col, tbl)
-    raise unless tbl == :manifest_items
-    active      = "NOT #{tbl}.deleting is TRUE"
-    to_delete   = "#{tbl}.deleting is TRUE"
-    completed   = "#{tbl}.last_saved >= #{tbl}.updated_at"
-    unsaved     = "#{tbl}.last_saved < #{tbl}.updated_at"
-    never_saved = "#{tbl}.last_saved IS NULL"
-    incomplete  = sql_terms(unsaved, never_saved, join: :or)
-    pending     = sql_terms(active, incomplete)
-    saved       = sql_terms(active, completed)
-    # noinspection RubyMismatchedReturnType
-    case col.to_sym
-      when :saved_item_count        then saved
-      when :pending_item_count      then pending
-      when :completed_item_count    then completed
-      when :unsaved_item_count      then unsaved
-      when :never_saved_item_count  then never_saved
-      when :incomplete_item_count   then incomplete
-      when :to_delete_item_count    then to_delete
-    end
   end
 
   # ===========================================================================

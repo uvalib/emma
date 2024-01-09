@@ -1,31 +1,30 @@
-# app/models/manifest/searchable.rb
+# app/models/manifest/sortable.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-module Manifest::Searchable
+module Manifest::Sortable
 
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include Record::Searchable
+    include Record::Sortable
     # :nocov:
   end
 
   # ===========================================================================
-  # :section: Record::Searchable overrides
+  # :section: Record::Sortable overrides
   # ===========================================================================
 
   public
 
-  # Because UUIDs are not ordered, Manifests can't support pagination as it is
-  # currently implemented.
+  # Sort order applied by default in #get_relation.
   #
-  # @return [nil]
+  # @return [Symbol, String, Hash]
   #
-  def pagination_column
-    Log.debug { "#{__method__}: not defined for #{self_class}" }
+  def default_sort
+    { implicit_order_column => :desc }
   end
 
   # ===========================================================================

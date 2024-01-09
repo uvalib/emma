@@ -1,0 +1,14 @@
+module Manifest::Sortable
+  # :nocov:
+  #include Record::Sortable
+
+  # Sort order applied by default in #get_relation.
+  #
+  # @return [Symbol, String, Hash]
+  #
+  def default_sort: () -> (Symbol | String | anyHash)
+
+  private
+
+  def self.included: (Module base) -> void
+end

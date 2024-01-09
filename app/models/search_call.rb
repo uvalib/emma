@@ -16,6 +16,7 @@ class SearchCall < ApplicationRecord
   include Record
   include Record::Assignable
   include Record::Searchable
+  include Record::Sortable
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION

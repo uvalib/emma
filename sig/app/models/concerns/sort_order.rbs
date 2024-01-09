@@ -1,0 +1,156 @@
+class SortOrder < Hash[Symbol,Symbol]
+  # The URL query parameter for the sort order.
+  #
+  # @type [Symbol]
+  #
+  URL_PARAM: Symbol
+
+  # Field name URL sort parameter names with this suffix are interpreted as
+  # a descending sort on the database column indicated by the root name.
+  # (E.g., "last_name_rev" will result in `{ last_name: :desc }`.)
+  #
+  # @type [String]
+  #
+  REVERSE_SUFFIX: String
+
+  # Sort directions.
+  #
+  # @type [Array<Symbol>]
+  #
+  DIRECTIONS: symArray
+
+  # Default sort direction.
+  #
+  # @type [Symbol]
+  #
+  DEF_DIRECTION: Symbol
+
+  # Field name URL parameters which need "_id" to be used as database column
+  # names. (E.g., "?sort=user" will order on "user_id".)
+  #
+  # @type [Array<String>]
+  #
+  ID_FIELD: strArray
+
+  # Field name URL parameters which need "_at" to be used as database column
+  # names. (E.g., "?sort=updated" will order on "updated_at".)
+  #
+  # @type [Array<String>]
+  #
+  AT_FIELD: strArray
+
+  # Field name URL parameters which need "_count" to be used as database column
+  # names. (E.g., "?sort=upload" will order on "upload_count".)
+  #
+  # @type [Array<String>]
+  #
+  COUNT_FIELD: strArray
+
+  # Indicate whether validity should be checked when emitting a result.
+  #
+  # @type [Boolean]
+  #
+  VALIDATE: bool
+
+  # @return [String, nil]
+  attr_reader raw_sql: String | nil
+
+  @raw_sql: String | nil
+
+  # Initialize a new instance.
+  #
+  # @param [SortOrder, Hash, Array, *] value
+  # @param [Hash]                      opt    Passed to #parse.
+  #
+  def initialize: (?untyped? value, **untyped opt) -> void
+
+  # Indicate whether the instance does not represent a sort of any kind (i.e.,
+  # neither a raw SQL sort nor order/direction pairs).
+  #
+  def empty?: () -> bool
+
+  # Return this sort value as a URL parameter.
+  #
+  # @param [Symbol] key
+  #
+  # @return [String]
+  #
+  def to_param: (?Symbol key) -> String
+
+  # Indicate whether the instance represents a raw SQL sort and does not
+  # include order/direction pairs.
+  #
+  def sql_only?: () -> bool
+
+  # Return the value which can be used as an ActiveRecord #order argument.
+  #
+  # @return [Hash{Symbol=>Symbol}, String, nil]
+  #
+  def sql_order: () -> (Hash[Symbol,Symbol] | String | nil)
+
+  # Return the order/direction pairs as a comma-separated string.
+  #
+  # @param [String] separator
+  #
+  # @return [String]
+  #
+  def param_value: (?separator: String) -> String
+
+  # Raise an exception if the instance has contradictory information.
+  #
+  # @return [nil]
+  #
+  def validate: () -> nil
+
+  # Create a new instance from *item* if it is not already an instance.
+  #
+  # @param [SortOrder, Hash, *] item
+  #
+  # @return [SortOrder]
+  #
+  def self.wrap: (untyped item) -> SortOrder
+
+  def wrap: (untyped item) -> SortOrder
+
+  # Interpret a value as a raw SQL sort or order/direction pair(s).
+  #
+  # @param [SortOrder, Hash, *]  value
+  # @param [Symbol, String, nil] dir
+  # @param [Symbol, String, nil] col
+  # @param [Symbol, String, nil] meth
+  # @param [Boolean, nil]        fatal
+  # @param [Boolean, nil]        record
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  # @return [String]                  If *value* is a SQL expression.
+  # @return [nil]                     If *value* is *nil*, *false*, or empty.
+  #
+  def self.parse
+    : (false|nil            value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> nil
+    | (true|Symbol          value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | nil)
+    | (SortOrder|symHash    value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | nil)
+    | (Array[String|Symbol] value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | nil)
+    | (String               value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | String | nil)
+    | (untyped              value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> nil
+
+  def parse
+    : (false|nil            value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> nil
+    | (true|Symbol          value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | nil)
+    | (SortOrder|symHash    value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | nil)
+    | (Array[String|Symbol] value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | nil)
+    | (String               value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> (Hash[Symbol,Symbol] | String | nil)
+    | (untyped              value, ?dir: Symbol|String|nil, ?col: Symbol|String|nil, ?meth: Symbol|String|nil, ?fatal: bool|nil, ?record: bool|nil, **untyped _ignored) -> nil
+
+  # Report an error or raise an exception if *fatal* is *true*.
+  #
+  # @param [*]            msg
+  # @param [*]            field
+  # @param [Boolean, nil] fatal
+  # @param [Symbol, nil]  meth
+  #
+  # @return [nil]
+  #
+  def self.error: (?untyped? msg, ?field: untyped?, ?fatal: bool|nil, ?meth: Symbol|String|nil, **untyped _ignored) { () -> untyped } -> nil
+
+  def error: (?untyped? msg, ?field: untyped?, ?fatal: bool|nil, ?meth: Symbol|String|nil, **untyped _ignored) { () -> untyped } -> nil
+end

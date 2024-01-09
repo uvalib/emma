@@ -113,54 +113,14 @@ module ModelConcern
   #
   def current_org!: (symHash prm, ?(Org|nil) org) -> symHash
 
-  # Field name URL sort parameter names with this suffix are interpreted as
-  # a descending sort on the database column indicated by the root name.
-  # (E.g., "last_name_rev" will result in `{ last_name: :desc }`.)
-  #
-  # @type [String]
-  #
-  REVERSE_SUFFIX: String
-
-  # Field name URL parameters which need "_id" to be used as database column
-  # names. (E.g., "?sort=user" will order on "user_id".)
-  #
-  # @type [Array<String>]
-  #
-  ID_FIELD: strArray
-
-  # Field name URL parameters which need "_at" to be used as database column
-  # names. (E.g., "?sort=updated" will order on "updated_at".)
-  #
-  # @type [Array<String>]
-  #
-  AT_FIELD: strArray
-
-  # Field name URL parameters which need "_count" to be used as database column
-  # names. (E.g., "?sort=upload" will order on "upload_count".)
-  #
-  # @type [Array<String>]
-  #
-  COUNT_FIELD: strArray
-
   # Generate arguments to ActiveRecord#order from *val*.
   #
-  # @param [Hash, String, Symbol, nil] prm
-  # @param [Hash]                      opt  Passed to #normalize_sort_order.
+  # @param [Hash] prm
+  # @param [Hash] opt                 Passed to #normalize_sort_order.
   #
   # @return [Hash]
   #
-  def normalize_sort_order!: ((symHash|String|Symbol|nil) prm, **untyped opt) -> symHash
-
-  # Generate arguments to ActiveRecord#order from *val*.
-  #
-  # @param [Hash, String, Symbol, nil] val
-  # @param [Symbol, String]            dir
-  #
-  # @return [Hash]                    The arguments for #order.
-  # @return [String]                  A complex SQL expression.
-  # @return [nil]                     If no sort was specified.
-  #
-  def normalize_sort_order: ((symHash|String|Symbol|nil) prm, ?dir: Symbol|String, **untyped _ignored) -> (symHash | String | nil)
+  def normalize_sort_order!: (symHash prm, **untyped opt) -> symHash
 
   # Return with the specified model record.
   #

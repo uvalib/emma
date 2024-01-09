@@ -118,7 +118,6 @@ module BaseCollectionDecorator::Table
   #
   def table_path(prm = nil, **opt)
     prm = (prm || param_values).merge(opt)
-    prm[:sort] = normalize_sort_param(prm[:sort]) if prm[:sort]
     unless model_type == (base = prm[:controller]&.to_sym)
       case model_type
         when :org            then dst, src = :id, %i[org  org_id]
@@ -127,26 +126,10 @@ module BaseCollectionDecorator::Table
       end
       prm[dst] = prm.extract!(*src).values.first
     end
+    if (sort = prm.delete(:sort)).present?
+      prm[:sort] = SortOrder.wrap(sort).param_value.presence
+    end
     path_for(**prm, controller: model_type, action: :index)
-  end
-
-  # Translate a hash of sorting order(s) into a single comma-separated value.
-  #
-  # @param [Hash, String, nil] val
-  #
-  # @return [String, nil]
-  #
-  def normalize_sort_param(val)
-    return     if val.nil? || false?(val)
-    # noinspection RubyMismatchedReturnType
-    return val if val.is_a?(String)
-    reverse = LayoutHelper::SearchFilters::REVERSE_SORT_SUFFIX
-    val.map { |k, v|
-      k   = k.to_s
-      fld = k.delete_suffix(reverse)
-      rev = (k == fld) ? (v == :desc) : (v == :asc)
-      rev ? "#{fld}#{reverse}" : fld
-    }.join(',')
   end
 
   # Render one or more entries for use within a *tbody*.

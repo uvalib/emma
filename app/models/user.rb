@@ -20,6 +20,7 @@ class User < ApplicationRecord
   include Record::Assignable
   include Record::Identification
   include Record::Searchable
+  include Record::Sortable
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
