@@ -164,8 +164,8 @@ appSetup(MODULE, function() {
         const $rows  = rowsFor($table);
         const $first = $rows.first();
         const $cells = $first.children('td');
-        const cls    = $cells.first().attr('class').split(' ');
-        const row    = cls.find(c => c.match(/^row-\d/));
+        const cls    = $cells.first().attr('class')?.split(' ');
+        const row    = cls?.find(c => c.match(/^row-\d/));
         const n      = Number(row?.replace(/^row-/, ''))    || 1;
         const ri     = Number($first.attr('aria-rowindex')) || n;
         originalStartRowNumber($table, n);

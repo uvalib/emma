@@ -78,4 +78,8 @@
             margin-bottom: 1rem;
         }
     }
+
+    .list-heading.empty + .toggle.for-panel {
+        display: none;
+    }
 }
