@@ -9,18 +9,23 @@
   sign_in_submit    = help_span(sign_in_label,  class: 'sign-in-link')
 
   local_auth        = :local
-  local_auth_label  = get_sessions_label(:sign_in, local_auth)
-  local_auth_title  = local_auth_label
-  local_sign_in     = help_span(local_auth_label,  class: 'sign-in-link')
+  local_label       = get_sessions_label(:sign_in, local_auth)
+  local_title       = local_label
+  local_sign_in     = help_span(local_label,  class: 'sign-in-link')
   local_login_form  = help_image(:"#{local_auth}_login")
 
   remote_auth       = :shibboleth
-  remote_auth_label = get_sessions_label(:new, remote_auth)
-  remote_auth_title = remote_auth_label
-  remote_sign_in    = help_span(remote_auth_label,  class: 'sign-in-link')
+  remote_label      = get_sessions_label(:new, remote_auth)
+  remote_title      = remote_label
+  remote_sign_in    = help_span(remote_label,  class: 'sign-in-link')
   remote_login_form = help_image(:"#{remote_auth}_login")
 
   recovery_link     = t('emma.user.passwords.new.label')
+
+  # Page anchors
+
+  local_help        = 'local_sign_in_help'
+  remote_help       = 'remote_sign_in_help'
 
 -%>
 
@@ -35,14 +40,14 @@
     Topics in this section:
   </div>
   <ul>
-    <li><a href="#remote_sign_in_help"><%= remote_auth_title -%></a></li>
-    <li><a href="#local_sign_in_help"><%=  local_auth_title  -%></a></li>
+    <li><a href="#<%= remote_help -%>"><%= remote_title -%></a></li>
+    <li><a href="#<%= local_help  -%>"><%= local_title  -%></a></li>
   </ul>
 </nav>
 
-<section role="region" aria-labelledby="remote_sign_in_help">
+<section role="region" aria-labelledby="<%= remote_help -%>">
 
-  <h2 class="section" id="remote_sign_in_help"><%= remote_auth_title -%></h2>
+  <h2 class="section" id="<%= remote_help -%>"><%= remote_title -%></h2>
 
   <p>
     Pressing the <%= main_sign_in -%> button at the upper-right corner of the
@@ -68,9 +73,9 @@
 
 </section>
 
-<section role="region" aria-labelledby="local_sign_in_help">
+<section role="region" aria-labelledby="<%= local_help -%>">
 
-  <h2 class="section" id="local_sign_in_help"><%= local_auth_title -%></h2>
+  <h2 class="section" id="<%= local_help -%>"><%= local_title -%></h2>
 
   <p>
     If you have an EMMA account that is not tied to an institutional account,

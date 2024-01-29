@@ -148,13 +148,7 @@ module Serializable
       #
       def re_symbolize_keys(hash)
         hash.deep_transform_keys do |key|
-          if RESERVED_KEYS.include?(key)
-            key.to_s
-          elsif key.respond_to?(:to_sym)
-            key.to_sym
-          else
-            key
-          end
+          RESERVED_KEYS.include?(key) ? key.to_s : (key.try(:to_sym) || key)
         end
       end
 

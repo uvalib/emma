@@ -176,8 +176,8 @@ module DataConcern
     records = get_submission_records(**opt, html: false) || []
     records.each do |record|
       next unless (emma_data = safe_json_parse(record[:emma_data])).is_a?(Hash)
+      emma_data.slice!(*EMMA_DATA_FIELDS) unless all
       emma_data.each_pair do |field, data|
-        next unless all || EMMA_DATA_FIELDS.include?(field)
         entry = fields[field] ||= {}
         Array.wrap(data).flatten.each do |item|
           item = item.to_s.squish

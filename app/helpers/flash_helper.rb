@@ -754,7 +754,7 @@ module FlashHelper
   #
   def flash_i18n_scope
     parts = self.class.name&.split('_') || []
-    parts.reject { |p| %w[controller concern helper].include?(p) }.join('_')
+    parts.excluding('controller', 'concern', 'helper').join('_')
   end
 
   # Build an I18n path.

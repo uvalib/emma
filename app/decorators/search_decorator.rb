@@ -217,9 +217,9 @@ class SearchDecorator < BaseDecorator
     def style_classes(suffix: '-style')
       styles = [search_style]
       styles << :dev if search_debug?
+      styles.remove(*EngineConcern::RESET_KEYS)
       styles.compact_blank!
-      styles.reject! { |v| EngineConcern::RESET_KEYS.include?(v) }
-      styles.map! { |v| v.to_s.delete_suffix(suffix) << suffix }
+      styles.map! { |v| v.end_with?(suffix) ? v.to_s : "#{v}#{suffix}" }
     end
 
     # CSS classes for the current results mode.
@@ -232,9 +232,9 @@ class SearchDecorator < BaseDecorator
     #
     def result_classes(suffix: '_results')
       results = [results_type]
+      results.remove(*EngineConcern::RESET_KEYS)
       results.compact_blank!
-      results.reject! { |v| EngineConcern::RESET_KEYS.include?(v) }
-      results.map! { |v| v.to_s.delete_suffix(suffix) << suffix }
+      results.map! { |v| v.end_with?(suffix) ? v.to_s : "#{v}#{suffix}" }
     end
 
   end

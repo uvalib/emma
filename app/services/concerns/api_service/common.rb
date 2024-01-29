@@ -256,15 +256,13 @@ module ApiService::Common
   # If overridden, this should be called first via 'super'.
   #
   #--
-  # noinspection RubyMismatchedArgumentType
+  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
   def api_options(params = nil)
-    params ||= @params
-    params = params.reject { |k, _| IGNORED_PARAMETERS.include?(k) }
-    decode_parameters!(params)
-    params[:api_key] = api_key if api_key
-    # noinspection RubyMismatchedReturnType
-    params
+    params = @params if params.nil?
+    params = params.except(*IGNORED_PARAMETERS)
+    params = decode_parameters!(params)
+    api_key ? params.merge!(api_key: api_key) : params
   end
 
   # Determine whether the HTTP method indicates a write rather than a read and

@@ -106,37 +106,29 @@ module Emma::Common::UrlMethods
     unescape: true,
     **opt
   )
-    opt = reject_blanks(opt).reverse_merge!(args.extract_options!)
+    opt = reject_blanks(args.extract_options!.merge(opt))
     args << opt if opt.present?
+    normal = ->(v) { CGI.unescape(v.to_s) }
+    rmerge = !replace
     result = {}
     args.each do |arg|
       arg = arg.query      if arg.is_a?(URI)
       arg = arg.split('&') if arg.is_a?(String)
       arg = arg.to_a       if arg.is_a?(Hash)
-      next unless arg.is_a?(Array) && arg.present?
+      next unless arg.present? && arg.is_a?(Array)
       res = {}
       arg.each do |pair|
         k, v = pair.is_a?(Array) ? pair : pair.to_s.split('=', 2)
-        k = CGI.unescape(k.to_s).delete_suffix('[]')
-        v = Array.wrap(v).compact_blank
-        next if k.blank? || v.blank?
-        v.map!(&:to_s)
-        v.map! { |s| CGI.unescape(s) } if unescape
-        if replace || !res[k]
-          res[k] = v
-        else
-          res[k].rmerge!(v)
-        end
+        next if (k = normal.(k).delete_suffix('[]')).blank?
+        next if (v = Array.wrap(v).compact_blank.map!(&:to_s)).blank?
+        v.map!(&normal) if unescape
+        rmerge && res[k]&.rmerge!(v) || res.merge!(k => v)
       end
-      if replace
-        result.merge!(res)
-      else
-        result.rmerge!(res)
-      end
+      rmerge ? result.rmerge!(res) : result.merge!(res)
     end
     result.map { |k, v|
       v = v.sort.uniq
-      v = v.first  if minimize && (v.size <= 1)
+      v = v.first  if minimize && !v.many?
       k = "#{k}[]" if decorate && v.is_a?(Array)
       [k, v]
     }.to_h

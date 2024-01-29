@@ -416,7 +416,7 @@ class ExecReport
       else
         topic   = make_message_hash(parts.shift)
         details = (make_message_hash(DETAILS_KEY => parts) if parts.present?)
-        topic.rmerge!(details || {})
+        details ? topic.rmerge!(details) : topic
       end
     end
 

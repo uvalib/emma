@@ -10,11 +10,11 @@
   q_title           = 'Keyword Search'
   title_title       = 'Title Search'
   creator_title     = 'Creator Search'
-  identifier_title  = 'Identifier Search'
+  id_title          = 'Identifier Search'
 
   filters_title     = 'Filters'
   single_title      = 'Simple Filters'
-  repository_title  = 'Repository'
+  repo_title        = 'Repository'
   multi_title       = 'Multi-select Filters'
   format_title      = 'Format'
   feature_title     = 'Feature'
@@ -47,6 +47,32 @@
   open_toggle       = TreeHelper::TREE_CLOSER_LABEL
   open_toggle       = html_span(open_toggle, class: 'toggle for-item open')
 
+  # Page anchors
+
+  summary_help      = 'search_overview_help'
+
+  types_help        = 'search_type_help'
+  q_help            = 'search_q_help'
+  title_help        = 'search_title_help'
+  creator_help      = 'search_creator_help'
+  id_help           = 'search_identifier_help'
+
+  filters_help      = 'search_filter_help'
+  single_help       = 'search_filter_single_help'
+  repo_help         = 'search_repository_help'
+  multi_help        = 'search_filter_multi_help'
+  format_help       = 'search_format_help'
+  feature_help      = 'search_feature_help'
+  access_help       = 'search_accessibility_help'
+
+  results_help      = 'search_control_help'
+  sort_help         = 'search_sort_help'
+  size_help         = 'search_page_help'
+
+  display_help      = 'search_display_help'
+  by_title_help     = 'search_by_title_help'
+  by_file_help      = 'search_by_file_help'
+
 -%>
 
 <nav role="navigation" aria-labelledby="search_help_nav">
@@ -55,54 +81,54 @@
   </div>
   <ul>
     <li>
-      <a href="#search_overview_help"><%= summary_title -%></a>
+      <a href="#<%= summary_help -%>"><%= summary_title -%></a>
     </li>
     <li>
-      <a href="#search_type_help"><%= types_title -%></a>
+      <a href="#<%= types_help -%>"><%= types_title -%></a>
       <ul>
-        <li><a href="#search_q_help"><%=          q_title          -%></a></li>
-        <li><a href="#search_title_help"><%=      title_title      -%></a></li>
-        <li><a href="#search_creator_help"><%=    creator_title    -%></a></li>
-        <li><a href="#search_identifier_help"><%= identifier_title -%></a></li>
+        <li><a href="#<%= q_help       -%>"><%= q_title       -%></a></li>
+        <li><a href="#<%= title_help   -%>"><%= title_title   -%></a></li>
+        <li><a href="#<%= creator_help -%>"><%= creator_title -%></a></li>
+        <li><a href="#<%= id_help      -%>"><%= id_title      -%></a></li>
       </ul>
     </li>
     <li>
-      <a href="#search_filter_help"><%= filters_title -%></a>
+      <a href="#<%= filters_help -%>"><%= filters_title -%></a>
     </li>
     <li>
-      <a href="#search_filter_single_help"><%= single_title -%></a>
+      <a href="#<%= single_help -%>"><%= single_title -%></a>
       <ul>
-        <li><a href="#search_repository_help"><%= repository_title -%></a></li>
+        <li><a href="#<%= repo_help -%>"><%= repo_title -%></a></li>
       </ul>
     </li>
     <li>
-      <a href="#search_filter_multi_help"><%= multi_title -%></a>
+      <a href="#<%= multi_help -%>"><%= multi_title -%></a>
       <ul>
-        <li><a href="#search_format_help"><%=        format_title  -%></a></li>
-        <li><a href="#search_feature_help"><%=       feature_title -%></a></li>
-        <li><a href="#search_accessibility_help"><%= access_title  -%></a></li>
+        <li><a href="#<%= format_help  -%>"><%= format_title  -%></a></li>
+        <li><a href="#<%= feature_help -%>"><%= feature_title -%></a></li>
+        <li><a href="#<%= access_help  -%>"><%= access_title  -%></a></li>
       </ul>
     </li>
     <li>
-      <a href="#search_control_help"><%= results_title -%></a>
+      <a href="#<%= results_help -%>"><%= results_title -%></a>
       <ul>
-        <li><a href="#search_sort_help"><%= sort_title -%></a></li>
-        <li><a href="#search_page_help"><%= size_title -%></a></li>
+        <li><a href="#<%= sort_help -%>"><%= sort_title -%></a></li>
+        <li><a href="#<%= size_help -%>"><%= size_title -%></a></li>
       </ul>
     </li>
     <li>
-      <a href="#search_display_help"><%= display_title -%></a>
+      <a href="#<%= display_help -%>"><%= display_title -%></a>
       <ul>
-        <li><a href="#search_by_title_help"><%= by_title_title -%></a></li>
-        <li><a href="#search_by_file_help"><%=  by_file_title  -%></a></li>
+        <li><a href="#<%= by_title_help -%>"><%= by_title_title -%></a></li>
+        <li><a href="#<%= by_file_help  -%>"><%= by_file_title  -%></a></li>
       </ul>
     </li>
   </ul>
 </nav>
 
-<section role="region" data-part="overview" aria-labelledby="search_overview_help">
+<section role="region" data-part="overview" aria-labelledby="<%= summary_help -%>">
 
-  <h2 class="section" id="search_overview_help"><%= summary_title -%></h2>
+  <h2 class="section" id="<%= summary_help -%>"><%= summary_title -%></h2>
 
   <p>
     A search term is required to begin.
@@ -143,9 +169,9 @@
 
 </section>
 
-<section role="region" aria-labelledby="search_type_help">
+<section role="region" aria-labelledby="<%= types_help -%>">
 
-  <h2 class="section" id="search_type_help"><%= types_title -%></h2>
+  <h2 class="section" id="<%= types_help -%>"><%= types_title -%></h2>
 
   <p>
     Enter one or more search terms in the search input box, then press the
@@ -179,7 +205,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_q_help"><%= q_title -%></h3>
+  <h3 class="sub-section" id="<%= q_help -%>"><%= q_title -%></h3>
 
   <p>
     This search type looks for items matching your search term(s) across a
@@ -189,12 +215,12 @@
   <p>
     As a convenience, if a search term appears to be a standard identifier,
     your keyword search will automatically converted to an
-    <a href="#search_identifier_help">identifier search</a>.
+    <a href="#<%= id_help -%>">identifier search</a>.
   </p>
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_title_help"><%= title_title -%></h3>
+  <h3 class="sub-section" id="<%= title_help -%>"><%= title_title -%></h3>
 
   <p>
     Find items whose title matches the search term(s).
@@ -207,7 +233,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_creator_help"><%= creator_title -%></h3>
+  <h3 class="sub-section" id="<%= creator_help -%>"><%= creator_title -%></h3>
 
   <p>
     Find items whose author/creator matches the search term(s).
@@ -221,7 +247,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_identifier_help"><%= identifier_title -%></h3>
+  <h3 class="sub-section" id="<%= id_help -%>"><%= id_title -%></h3>
 
   <p>
     Find items whose ISBN, ISSN, OCLC, LCCN, DOI, or UPC matches the search
@@ -249,9 +275,9 @@
 
 </section>
 
-<section role="region" aria-labelledby="search_filter_help">
+<section role="region" aria-labelledby="<%= filters_help -%>">
 
-  <h2 class="section" id="search_filter_help"><%= filters_title -%></h2>
+  <h2 class="section" id="<%= filters_help -%>"><%= filters_title -%></h2>
 
   <p>
     The menu selections below the search input bar either filter out results
@@ -269,9 +295,9 @@
 
 </section>
 
-<section role="region" aria-labelledby="search_filter_single_help">
+<section role="region" aria-labelledby="<%= single_help -%>">
 
-  <h2 class="section" id="search_filter_single_help"><%= single_title -%></h2>
+  <h2 class="section" id="<%= single_help -%>"><%= single_title -%></h2>
 
   <p>
     These are drop-down menus which can only be set to a single value.
@@ -279,8 +305,8 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_repository_help">
-    <span class="menu-label"><%= repository_title -%></span>
+  <h3 class="sub-section" id="<%= repo_help -%>">
+    <span class="menu-label"><%= repo_title -%></span>
   </h3>
 
   <p>
@@ -307,9 +333,9 @@
 
 </section>
 
-<section role="region" aria-labelledby="search_filter_multi_help">
+<section role="region" aria-labelledby="<%= multi_help -%>">
 
-  <h2 class="section" id="search_filter_multi_help"><%= multi_title -%></h2>
+  <h2 class="section" id="<%= multi_help -%>"><%= multi_title -%></h2>
 
   <p>
     These are drop-down menus which can be set to multiple values.
@@ -369,7 +395,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_format_help">
+  <h3 class="sub-section" id="<%= format_help -%>">
     <span class="menu-label"><%= format_title -%></span> (multi-select)
   </h3>
 
@@ -379,7 +405,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_feature_help">
+  <h3 class="sub-section" id="<%= feature_help -%>">
     <span class="menu-label"><%= feature_title -%></span> (multi-select)
   </h3>
 
@@ -390,7 +416,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_accessibility_help">
+  <h3 class="sub-section" id="<%= access_help -%>">
     <span class="menu-label"><%= access_title -%></span> (multi-select)
   </h3>
 
@@ -401,9 +427,9 @@
 
 </section>
 
-<section role="region" aria-labelledby="search_control_help">
+<section role="region" aria-labelledby="<%= results_help -%>">
 
-  <h2 class="section" id="search_control_help"><%= results_title -%></h2>
+  <h2 class="section" id="<%= results_help -%>"><%= results_title -%></h2>
 
   <p>
     The following menus do not limit the potential set of results you receive;
@@ -412,7 +438,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_sort_help">
+  <h3 class="sub-section" id="<%= sort_help -%>">
     <span class="menu-label"><%= sort_title -%></span>
   </h3>
 
@@ -450,7 +476,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_page_help">
+  <h3 class="sub-section" id="<%= size_help -%>">
     <span class="menu-label"><%= size_title -%></span>
   </h3>
 
@@ -472,9 +498,9 @@
 
 </section>
 
-<section role="region" aria-labelledby="search_display_help">
+<section role="region" aria-labelledby="<%= display_help -%>">
 
-  <h2 class="section" id="search_display_help"><%= display_title -%></h2>
+  <h2 class="section" id="<%= display_help -%>"><%= display_title -%></h2>
 
   <p>
     The search index underlying EMMA deals in low-level quantities that
@@ -486,7 +512,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_by_title_help">
+  <h3 class="sub-section" id="<%= by_title_help -%>">
     <span class="menu-control"><%= by_title_title -%></span>
   </h3>
 
@@ -521,7 +547,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h3 class="sub-section" id="search_by_file_help">
+  <h3 class="sub-section" id="<%= by_file_help -%>">
     <span class="menu-control"><%= by_file_title -%></span>
   </h3>
 

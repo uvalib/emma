@@ -434,15 +434,14 @@ module FileFormat
       I18n.t(section).deep_dup.tap do |hash|
         %i[mimes exts].each do |key|
           hash[key] ||= []
-          hash[key].map! { |s| s.to_s.strip.downcase.presence }
-          hash[key].compact!
+          hash[key].map! { |s| s.to_s.strip.downcase }.compact_blank!
         end
         %i[fields map].each do |key|
           hash[key] ||= {}
           hash[key].transform_values! do |value|
             array = value.is_a?(Array)
             value = Array.wrap(value)
-            value.map! { |s| s.to_s.strip.to_sym.presence }.compact!
+            value.map! { |s| s.to_s.strip.to_sym }.compact_blank!
             array ? value.presence : value.first
           end
           hash[key].compact!

@@ -774,9 +774,8 @@ module SubmissionService::Action::Submit
       replace(TEMPLATE)
       valid = opt.delete(:valid)
       opt[:submitted] ||= valid unless valid.nil?
-      arg = (arg.presence if arg.is_a?(Hash))
-      opt = (arg&.merge(opt) || opt).presence
-      update(normalize!(opt)) if opt
+      opt = arg.merge(opt)    if arg.present? && arg.is_a?(Hash)
+      update(normalize!(opt)) if opt.present?
     end
 
     def count     = self[:count] || 0
@@ -788,12 +787,10 @@ module SubmissionService::Action::Submit
 
     def finalize(**opt)
       normalize!(opt).each_pair do |key, val|
-        if key == :count
-          self[key] = val
-        elsif self[key].is_a?(Hash)
-          self[key].rmerge!(val)
-        else
-          self[key] = [*self[key], *val]
+        case
+          when key == :count          then self[key] = val
+          when self[key].is_a?(Hash)  then self[key].rmerge!(val)
+          else                             self[key] = [*self[key], *val]
         end
       end
       self[:submitted] ||= [*ids(self[:success]), *ids(self[:failure])]
@@ -824,15 +821,12 @@ module SubmissionService::Action::Submit
       opt.slice!(*TEMPLATE.keys)
       opt.compact!
       opt.each_pair do |k, v|
-        if k == :count
-          opt[k] = non_negative(v)
-        elsif v.is_a?(Hash)
-          opt[k] = v.deep_dup
-        else
-          opt[k] = Array.wrap(v).deep_dup
+        case
+          when k == :count   then opt[k] = non_negative(v)
+          when v.is_a?(Hash) then opt[k] = v.deep_dup
+          else                    opt[k] = Array.wrap(v).deep_dup
         end
       end
-      opt
     end
 
   end

@@ -205,11 +205,11 @@ module LayoutHelper::SearchFilters
       return pairs unless config.is_a?(Hash)
       return pairs unless (config = config[:reverse]).is_a?(Hash)
       return pairs unless true?(config[:enabled])
-      except = Array.wrap(config[:except])
+      except = Array.wrap(config[:except]).presence
       pairs.flat_map { |fwd_pair|
         label, value = fwd_pair = fwd_pair.map(&:to_s)
         rev_pair =
-          unless except.include?(value)
+          unless except&.include?(value)
             rev_label = sprintf(config[:label], sort: label)
             rev_value = descending_sort(value, config[:suffix])
             [rev_label, rev_value]
@@ -729,7 +729,7 @@ module LayoutHelper::SearchFilters
       selected = any_value
     else
       values = pairs.map { |_, value| value }
-      added  = selected.reject { |sel| values.include?(sel) }
+      added  = selected.excluding(*values)
       if added.present?
         sorted = entries_sorted?(pairs)
         pairs += added.map { |sel| [make_menu_label(menu_name, sel), sel] }

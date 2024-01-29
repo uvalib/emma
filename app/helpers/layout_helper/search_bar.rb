@@ -619,10 +619,10 @@ module LayoutHelper::SearchBar
   # @return [Array]                   The original object, possibly modified.
   #
   def filter!(array, only: nil, except: nil, **)
-    only   &&= Array.wrap(only).compact.map!(&:to_sym)
-    except &&= Array.wrap(except).compact.map!(&:to_sym)
-    array.select! { |v| only.include?(v) }   if only
-    array.reject! { |v| except.include?(v) } if except
+    only   &&= Array.wrap(only).compact.presence&.map!(&:to_sym)
+    except &&= Array.wrap(except).compact.presence&.map!(&:to_sym)
+    array.keep(*only)     if only
+    array.remove(*except) if except
     array
   end
 

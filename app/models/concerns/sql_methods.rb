@@ -508,8 +508,6 @@ module SqlMethods
     #
     def sql_match(*terms, join: :and, **opt)
       json = (opt[:type] == :json)
-      opt[:columns] &&= Array.wrap(opt[:columns]).compact.map!(&:to_sym)
-      opt[:columns]   = field_names if opt[:columns].blank?
       # noinspection RubyMismatchedReturnType
       merge_match_terms(*terms, **opt).flat_map { |field, matches|
         matches.map do |value|
@@ -551,21 +549,19 @@ module SqlMethods
       sanitize: (type != :json),
       **        # Ignore any others
     )
-      columns &&= field_names.select { |f| columns.include?(f) }
+      columns &&= Array.wrap(columns).map(&:to_sym).intersection(field_names)
       columns ||= field_names
-      terms.flatten.compact.each do |term|
-        if term.is_a?(Hash)
-          term = term.deep_symbolize_keys
-        else
-          term = columns.map { |col| [col, term] }.to_h
+      terms.flatten.each do |term|
+        case term
+          when nil  then next
+          when Hash then term = term.deep_symbolize_keys
+          else           term = columns.map { |col| [col, term] }.to_h
         end
-        term.transform_values! do |v|
-          v = Array.wrap(v).compact_blank.map!(&:to_s)
-          v.map! { |s| sanitize_sql_like(s) } if sanitize
-          v.presence
-        end
-        term.compact!
-        dst.rmerge!(term)
+        term.transform_values! { |v|
+          next if (v = Array.wrap(v).compact_blank).empty?
+          sanitize ? v.map! { |s| sanitize_sql_like(s) } : v.map!(&:to_s)
+        }.compact!
+        dst.rmerge!(term) if term.present?
       end
       dst
     end

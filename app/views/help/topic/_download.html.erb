@@ -16,10 +16,16 @@
   search              = help_jump('search',    :search)
   ia_timeout          = help_image(:ia_timeout, class: 'no-border wide')
 
-  ia_help             = 'https://help.archive.org/help'
+  archive_org_help    = 'https://help.archive.org/help'
   is_disability_help  = 'disability-access-general-information'
-  ia_disability_page  = "#{ia_help}/#{is_disability_help}"
+  ia_disability_page  = "#{archive_org_help}/#{is_disability_help}"
   ia_disability_link  = external_link('Disability Access', ia_disability_page)
+
+  # Page anchors
+
+  ace_help            = 'download_ace_help'
+  ia_help             = 'download_internetArchive_help'
+  emma_help           = 'download_emma_help'
 
 -%>
 
@@ -36,29 +42,29 @@
     Topics in this section:
   </div>
   <ul>
-    <li><a href="#download_ace_help"><%=             ace_title  -%></a></li>
-    <li><a href="#download_internetArchive_help"><%= ia_title   -%></a></li>
-    <li><a href="#download_emma_help"><%=            emma_title -%></a></li>
+    <li><a href="#<%= ace_help  -%>"><%= ace_title  -%></a></li>
+    <li><a href="#<%= ia_help   -%>"><%= ia_title   -%></a></li>
+    <li><a href="#<%= emma_help -%>"><%= emma_title -%></a></li>
   </ul>
 </nav>
 
-<section role="region" data-part="download" aria-labelledby="download_ace_help">
+<section role="region" data-part="download" aria-labelledby="<%= ace_help -%>">
 
-  <h2 class="section" id="download_ace_help">
+  <h2 class="section" id="<%= ace_help -%>">
     <span class="text"><%= ace_title -%></span>
     <%= ace_logo %>
   </h2>
 
   <p>
     Because these items are made available to EMMA users via Internet Archive,
-    see <a href="#download_internetArchive_help"><%= ia_title -%></a> below.
+    see <a href="#<%= ia_help -%>"><%= ia_title -%></a> below.
   </p>
 
 </section>
 
-<section role="region" data-part="download" aria-labelledby="download_internetArchive_help">
+<section role="region" data-part="download" aria-labelledby="<%= ia_help -%>">
 
-  <h2 class="section" id="download_internetArchive_help">
+  <h2 class="section" id="<%= ia_help -%>">
     <span class="text"><%= ia_title -%></span>
     <%= ia_logo %>
   </h2>
@@ -99,9 +105,9 @@
 
 </section>
 
-<section role="region" data-part="download" aria-labelledby="download_emma_help">
+<section role="region" data-part="download" aria-labelledby="<%= emma_help -%>">
 
-  <h2 class="section" id="download_emma_help">
+  <h2 class="section" id="<%= emma_help -%>">
     <span class="text"><%= emma_title -%></span>
     <%= emma_logo %>
   </h2>

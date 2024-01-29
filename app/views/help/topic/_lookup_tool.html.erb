@@ -6,6 +6,10 @@
 
   terms_title = 'Search Terms'
 
+  # Page anchors
+
+  terms_help  = 'lookup_tool_terms_help'
+
 -%>
 
 <p>
@@ -22,9 +26,9 @@
   <em>Caveat emptor.</em>
 </p>
 
-<section role="region" data-part="lookup" aria-labelledby="lookup_tool_terms_help">
+<section role="region" data-part="lookup" aria-labelledby="<%= terms_help -%>">
 
-  <h2 class="section" id="lookup_tool_terms_help"><%= terms_title -%></h2>
+  <h2 class="section" id="<%= terms_help -%>"><%= terms_title -%></h2>
 
   <p>
     A query can have multiple space-separated terms.

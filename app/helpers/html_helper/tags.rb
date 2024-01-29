@@ -281,12 +281,14 @@ module HtmlHelper::Tags
     opt = args.pop.dup if opt.blank? && args.last.is_a?(Hash)
     opt = add_inferred_attributes(tag, opt)
     opt = add_required_attributes(tag, opt)
+    opt = html_options!(opt)
     check_required_attributes(tag, opt, meth: calling_method) if Log.debug?
 
     args.concat(Array.wrap(yield)) if block_given?
-    args.flatten!
-    args.compact_blank!
-    content_tag(tag, safe_join(args, separator), html_options!(opt))
+    args = args.flatten.compact_blank!
+    args = safe_join(args, separator)
+
+    content_tag(tag, args, opt)
   end
 
   # Invoke #form_tag after normalizing element contents provided via the
@@ -305,10 +307,8 @@ module HtmlHelper::Tags
   def html_form(url_or_path, *args, separator: "\n", **opt)
     opt = args.pop if opt.blank? && args.last.is_a?(Hash)
     args.concat(Array.wrap(yield)) if block_given?
-    args.flatten!
-    args.compact_blank!
     form_tag(url_or_path, opt) do
-      safe_join(args, separator)
+      safe_join(args.flatten.compact_blank!, separator)
     end
   end
 
