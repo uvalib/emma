@@ -114,11 +114,11 @@ module ConfigurationHelper
   # Recursively apply supplied unit interpolations.
   #
   # @param [Hash, Array, String, Integer, Boolean, *] item
-  # @param [Hash]                                     units
+  # @param [Hash]                                     opt
   #
   # @return [*]
   #
-  def apply_config_interpolations: [T] (T item, units: symHash, **untyped _ignored) -> T
+  def apply_config_interpolations: [T] (T item, **untyped opt) -> T
 
   # The variations on the description of a model item managed by a controller.
   #

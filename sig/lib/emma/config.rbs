@@ -1,15 +1,221 @@
-# Emma::Config
+# General access into "config/locales/**.yml" configuration information.
 #
 module Emma::Config
-  include Emma::Common
+  include SystemExtension
 
-  # Load a YAML configuration file.
+  # The root of all I18n paths related to the project.
   #
-  # @param [String, Pathname] path    Relative or absolute path to the file.
-  # @param [Boolean]          erb     If *false* don't attempt ERB translation.
+  # @note Does not include locale.
   #
-  # @return [Hash{Symbol=>*}]         Contents of the YAML file.
-  # @return [nil]                     If there was a problem.
+  # @type [String]
   #
-  def self.load: ((String|Pathname) path, ?bool erb) -> (symHash | nil)
+  CONFIG_ROOT: String
+
+  # All "en.emma.*" configuration values.
+  class Data
+    include Singleton
+
+    # All "en.emma.*" configuration values.
+    def self.all: () -> symHash
+
+    # All "en.emma.*" configuration values.
+    def all: () -> symHash
+
+    @all: symHash
+
+    def fetch_all: (?initialize: bool) -> (symHash | nil)
+
+  end
+
+  # All "en.emma.*" configuration values.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def config_all: () -> symHash
+
+  # YAML 1.1 boolean values (which cannot be used as keys).
+  #
+  # @type [Array<String>]
+  #
+  YAML_BOOLEAN: strArray
+
+  # @private
+  YAML_KEY_FIX: Regexp
+
+  # Generate I18n paths.
+  #
+  # The first returned element should be used as the key for I18n#translate and
+  # the remaining elements should be used passed as the :default option.
+  #
+  # @param [*]     base
+  # @param [Array] path
+  #
+  # @return [Array<Symbol>]
+  #
+  def config_keys: ((Symbol|String|nil|Array[Symbol|String|nil]) base, *(Symbol|String|nil) path) -> symArray
+
+  # Configuration sections that may hold message values for *item*.
+  #
+  # The first returned element should be used as the key for I18n#translate and
+  # the remaining elements should be used passed as the :default option.
+  #
+  # @param [Array<Symbol>]  base
+  # @param [Symbol, nil]    item
+  # @param [Symbol, String] root
+  #
+  # @return [Array<Symbol>]
+  #
+  def config_text_keys: (*Symbol base, (Symbol|nil) item, ?root: Symbol|String) -> symArray
+
+  # All "en.emma.*" configuration values.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def config_all: () -> symHash
+
+  @config_all: symHash
+
+  # @private
+  CONFIG_ITEM_OPTIONS: symArray
+
+  # @private
+  I18N_OPTIONS: symArray
+
+  # The configuration item specified by *key* or alternate *default* locations.
+  #
+  # If *path* is an array, the first element is used as the I18n#translate key
+  # and the remaining elements are passed as the :default option.
+  #
+  # @param [*]             key        I18n path(s).
+  # @param [*]             fallback   Returned if the item is not found.
+  # @param [*]             default    Passed to I18n#translate.
+  # @param [Symbol,String] root
+  # @param [Hash]          opt        Passed to I18n#translate except:
+  #
+  # @option opt [Boolean] :cfg_fatal  Raise if the item is not found.
+  # @option opt [Boolean] :cfg_warn   Log a warning if the item is not found.
+  #
+  # @return [*]                       Or the type of *fallback*.
+  #
+  def config_item
+    :     ((String|Symbol|Array[String|Symbol]) key, ?fallback: nil, ?default: String|Symbol|Array[String|Symbol]|nil, ?root: Symbol|String, **untyped opt) -> (untyped | nil)
+    | [T] ((String|Symbol|Array[String|Symbol]) key,  fallback: T,   ?default: String|Symbol|Array[String|Symbol]|nil, ?root: Symbol|String, **untyped opt) -> (untyped | T)
+
+  # Get an item from configuration.
+  #
+  # @param [String|Symbol] key        I18n path.
+  # @param [Symbol,String] root
+  # @param [Hash]          opt        Passed to I18n#translate.
+  #
+  # @option opt [Boolean] :raise      Raise exception if item not found.
+  #
+  # @return [*]
+  #
+  def config_item_get
+    : (?(String|Symbol|nil) key, ?root: Symbol|String, **untyped options) -> (untyped | nil)
+    | (Array[String|Symbol] key, ?root: Symbol|String, **untyped options) -> Array[untyped|nil]
+
+  # Fetch a configuration item and raise an exception if not found.
+  #
+  # @param [String|Symbol] key        I18n path.
+  # @param [Array, *]      other      Alternate location(s)
+  # @param [Hash]          opt        Passed to I18n#translate except:
+  #
+  # @option opt [Boolean] :cfg_fatal  If *false* do not raise if item not found
+  # @option opt [Boolean] :cfg_warn   If *false* do not log a warning.
+  #
+  # @return [*]
+  #
+  def config_item_fetch: ((String|Symbol) key, ?(String|Symbol|Array[String|Symbol]|nil) other, **untyped opt) -> (untyped | nil)
+
+  # The configuration section specified by *key* or *default* locations.
+  #
+  # @param [*]    key                 I18n path(s).
+  # @param [Hash] opt                 To #config_deep_interpolate except for
+  #                                     #CONFIG_ITEM_OPTIONS to #config_item.
+  #
+  # @return [Hash{Symbol=>*}]         Or the type of *fallback*.
+  #
+  def config_section: ((String|Symbol|Array[String|Symbol]) key, **untyped opt) -> symHash
+
+  # Text value from the most specific match found for *item* within the
+  # configuration location(s) specified by *base* under #config_text_keys.
+  #
+  # @param [Array<Symbol>] base
+  # @param [Symbol]        item
+  # @param [Hash]          opt        To #config_item.
+  #
+  # @return [String]
+  #
+  def config_text: (*Symbol base, Symbol item, **untyped opt) -> String
+
+  # Configuration text section built up from all of the matches found within
+  # the configuration locations under #config_text_keys.
+  #
+  # If *opt* interpolation values are given they will be attempted on all
+  # strings copied from the section.
+  #
+  # @param [Array<Symbol>] base
+  # @param [Symbol]        item
+  # @param [Hash]          opt        Optional interpolation values except
+  #                                     #CONFIG_ITEM_OPTIONS to #config_section
+  #
+  # @return [Hash]
+  #
+  def config_text_section: (*Symbol base, Symbol item, **untyped opt) -> symHash
+
+  # Attempt to apply interpolations to *item*.
+  #
+  # @param [String, *] item
+  # @param [Hash]      opt            Passed to #interpolate_named_references
+  #
+  # @return [String, *]
+  #
+  def config_interpolate: [T] (T item, **untyped opt) -> T
+
+  # Attempt to apply interpolations to all strings in *item*.
+  #
+  # @param [Hash, Array, String, *] item
+  # @param [Hash]                   opt
+  #
+  # @return [*]
+  #
+  def config_deep_interpolate: [T] (T item, **untyped opt) -> T
+
+  # Included in custom exception variants.
+  #
+  module MissingTranslationBase
+    include I18n::MissingTranslation::Base
+    def initialize
+      : (I18n::MissingTranslation::Base src) -> void
+      | (String|Symbol key, *(String|Symbol) other, **untyped opt) -> void
+
+    def message: () -> String
+
+    def self.wrap
+      :     (I18n::MissingTranslation     src) -> Emma::Config::MissingTranslation
+      |     (I18n::MissingTranslationData src) -> Emma::Config::MissingTranslationData
+      | [T] (T                            src) -> T
+  end
+
+  # Custom variant which redefines the exception message.
+  #
+  class MissingTranslation < I18n::MissingTranslation
+    include MissingTranslationBase
+  end
+
+  # Custom variant which redefines the exception message.
+  #
+  class MissingTranslationData < I18n::MissingTranslationData
+    include MissingTranslationBase
+  end
+
+  private
+
+  def self.included: (Module base) -> void
+end
+
+class Object
+  include Emma::Config
+  extend  Emma::Config
 end

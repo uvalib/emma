@@ -7,6 +7,14 @@ __loading_begin(__FILE__)
 
 module Emma::Common::HashMethods
 
+  extend self
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Analyze Hash extensions behavior.
   #
   # @type [Boolean]

@@ -1,4 +1,6 @@
 module Emma::Common::MethodMethods
+  extend ::Emma::Common::MethodMethods
+
   # Return the name of the calling method.
   #
   # @param [Array<String>, Integer, nil] call_stack

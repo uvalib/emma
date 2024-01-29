@@ -1,4 +1,6 @@
 module Emma::Common::StringMethods
+  extend ::Emma::Common::StringMethods
+
   # Generic text list separator.
   #
   # @type [String]

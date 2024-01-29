@@ -25,7 +25,7 @@ module ApplicationHelper
   # @type [Hash{Symbol=>Hash}]
   #
   CONTROLLER_CONFIGURATION =
-    I18n.t('emma').select { |k, config|
+    config_all.select { |k, config|
       next true if k == :generic
       next unless config.is_a?(Hash)
       config.any? do |_, cfg|

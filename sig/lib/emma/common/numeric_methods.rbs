@@ -1,4 +1,6 @@
 module Emma::Common::NumericMethods
+  extend ::Emma::Common::NumericMethods
+
   NUMBER_PATTERN: Regexp
 
   # Interpret *value* as an integer.

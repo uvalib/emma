@@ -21,7 +21,7 @@ module IngestService::Properties
   #
   # @type [Hash{Symbol=>*}]
   #
-  CONFIGURATION = i18n_config('emma.service.ingest').deep_freeze
+  CONFIGURATION = config_section('emma.service.ingest').deep_freeze
 
   # Default engine selection.
   #

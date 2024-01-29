@@ -9,6 +9,8 @@ require 'erb'
 
 module Emma::Common::FormatMethods
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -291,17 +293,41 @@ module Emma::Common::FormatMethods
     end
   end
 
-  # Make a copy of *text* with #sprintf named references replaced by the
-  # matching values extracted from *items* or *opt*.
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Attempt to apply interpolations to all strings in *item*.
+  #
+  # @param [Hash, Array, String, *] item
+  # @param [Hash]                   opt
+  #
+  # @return [*]
+  #
+  def deep_interpolate_named_references(item, **opt)
+    case item
+      when Hash   then item.transform_values { |v| send(__method__, v, **opt) }
+      when Array  then item.map { |v| send(__method__, v, **opt) }
+      when String then interpolate_named_references(item, **opt)
+      else             item
+    end
+  end
+
+  # If possible, make a copy of *text* with #sprintf named references replaced
+  # by the matching values extracted from *src* or *opt*.  Otherwise return
+  # *text* unchanged.
   #
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
   # then the interpolated value will follow the same case.
   #
   # @param [String, *]           text
-  # @param [Array<Hash,Model,*>] items
+  # @param [Array<Hash,Model,*>] src
   # @param [Hash]                opt
   #
-  # @return [String]                  A (possibly modified) copy of *text*.
+  # @return [String]                  A modified copy of *text*.
+  # @return [nil]                     If no interpolations could be made.
   #
   # === Usage Notes
   # If *text* contains a mix of named references and unnamed specifiers, the
@@ -310,16 +336,15 @@ module Emma::Common::FormatMethods
   # intermediate string, then (by the caller) a second pass on that result to
   # supply values for the unnamed specifiers.
   #
-  def interpolate_named_references(text, *items, **opt)
-    interpolate_named_references!(text, *items, **opt) ||
-      (text.is_a?(String) ? text.dup : text.to_s)
+  def interpolate_named_references(text, *src, **opt)
+    interpolate_named_references!(text, *src, **opt) || text.to_s
   end
 
   # If possible, make a copy of *text* with #sprintf named references replaced
-  # by the matching values extracted from *items* or *opt*.
+  # by the matching values extracted from *src* or *opt*.
   #
   # @param [String, *]           text
-  # @param [Array<Hash,Model,*>] items
+  # @param [Array<Hash,Model,*>] src
   # @param [Hash]                opt
   #
   # @return [String]                  A modified copy of *text*.
@@ -327,31 +352,41 @@ module Emma::Common::FormatMethods
   #
   # @see #interpolate_named_references
   #
-  def interpolate_named_references!(text, *items, **opt)
-    return if text.blank? || items.push(opt).compact_blank!.empty?
+  def interpolate_named_references!(text, *src, **opt)
+    return if text.blank? || src.push(opt).compact_blank!.empty?
+    html   = false
     values =
       named_references_and_formats(text, default_fmt: nil).map { |term, format|
-        term = term.to_s
-        key  = term.underscore.to_sym
+        key  = term.to_s.underscore.to_sym
         val  = nil
-        items.find { |item|
-          break (val = item.send(key)) || true if item.respond_to?(key)
-          break (val = item[key])      || true if item.try(:include?, key)
-        } or next
-        val = val&.to_s || term
-        if term.match?(/[[:alpha:]]/)
-          if term == term.upcase
-            key, val = [key, val].map(&:upcase)
-          elsif (term == term.capitalize) && term.start_with?(/[[:alpha:]]/)
-            key, val = [key, val].map(&:capitalize)
+        src.find { |item|
+          case
+            when item.try(:include?, key)  then val = item[key]
+            when item.try(:include?, term) then val = item[term]
+            when item.respond_to?(key)     then val = item.send(key)
+            when item.respond_to?(term)    then val = item.send(term)
+            else                                next
           end
+          break true
+        } or next
+        term = term.to_s
+        val  = val&.to_s || term
+        htm  = val.is_a?(ActiveSupport::SafeBuffer)
+        if term.start_with?(/[[:alpha:]]/) && (term == term.capitalize)
+          key = key.capitalize
+          val = val.capitalize unless htm
+        elsif term.match?(/[[:alpha:]]/) && (term == term.upcase)
+          key = key.upcase
+          val = val.upcase unless htm
         end
-        val %= format if format
+        val %= format if format && !htm
+        html ||= htm
         [key, val]
-      }.compact.presence or return
-    html = text.is_a?(ActiveSupport::SafeBuffer)
+      }.compact.presence&.to_h or return
+    html ||= text.is_a?(ActiveSupport::SafeBuffer)
+    values.transform_values! { |val| ERB::Util.h(val) } if html
     text = text.to_s.gsub(/(?<!%)(%[^{<])/, '%\1')  # Preserve %s specifiers
-    text %= values.to_h                             # Interpolate
+    text %= values                                  # Interpolate named values
     text = text.gsub(/(?<!%)%(%[^{<])/, '\1')       # Restore %s specifiers
     html ? text.html_safe : text
   end

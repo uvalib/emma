@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'logger'
+require 'emma/logger'
 
 # Emma::Log
 #

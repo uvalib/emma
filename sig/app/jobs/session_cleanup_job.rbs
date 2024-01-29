@@ -1,0 +1,10 @@
+class SessionCleanupJob < ApplicationJob
+  # initialize
+  #
+  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
+  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
+  #
+  def initialize: (*untyped args, **untyped opt) -> void
+
+  def perform: (*untyped _ignored) -> untyped
+end

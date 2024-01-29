@@ -19,9 +19,6 @@ __loading_begin(__FILE__)
 #
 module EmmaRake
 
-  include Emma::Common
-  include Emma::TimeMethods
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -149,7 +146,7 @@ module EmmaRake
   # @return [Float]
   #
   def save_start_time(start_time = nil)
-    @start_time = start_time || timestamp
+    @start_time = start_time || Emma::TimeMethods.timestamp
   end
 
   # A time span message.
@@ -159,7 +156,7 @@ module EmmaRake
   # @return [String]
   #
   def elapsed_time(start_time = nil)
-    '[Run time %s]' % time_span(start_time || @start_time)
+    '[Run time %s]' % Emma::TimeMethods.time_span(start_time || @start_time)
   end
 
   # ===========================================================================

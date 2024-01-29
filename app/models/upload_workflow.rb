@@ -81,6 +81,8 @@ module UploadWorkflow::Errors
 
   module RenderMethods
 
+    include Emma::Common
+
     extend self
 
     # =========================================================================

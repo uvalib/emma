@@ -21,7 +21,7 @@ module SearchService::Properties
   #
   # @type [Hash{Symbol=>*}]
   #
-  CONFIGURATION = i18n_config('emma.service.search').deep_freeze
+  CONFIGURATION = config_section('emma.service.search').deep_freeze
 
   # Default engine selection.
   #

@@ -1,4 +1,6 @@
 module Emma::Common::BooleanMethods
+  extend ::Emma::Common::BooleanMethods
+
   # Text values which represent a Boolean value.
   #
   # @type [Array<String>]

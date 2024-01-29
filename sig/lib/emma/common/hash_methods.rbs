@@ -1,4 +1,6 @@
 module Emma::Common::HashMethods
+  extend ::Emma::Common::HashMethods
+
   # Analyze Hash extensions behavior.
   #
   # @type [Boolean]

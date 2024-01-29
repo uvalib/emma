@@ -6,10 +6,6 @@
 # and probably not a good idea.
 #
 module EmmaRake
-  include Emma::Common
-
-  include Emma::TimeMethods
-
   # True for "rake --quiet" or when not running from the command line.
   #
   # @type [Boolean]

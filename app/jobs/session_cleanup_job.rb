@@ -6,16 +6,19 @@
 
 __loading_begin(__FILE__)
 
-require 'rake'
-
 class SessionCleanupJob < ApplicationJob
-  queue_as :background
-  require 'rake'
-  Emma::Application.load_tasks
 
-  def perform(*args, **opt)
+  queue_as :background
+
+  def initialize(*args, **opt)
+    Emma::Application.load_tasks
+    super
+  end
+
+  def perform(*)
     Rake::Task['db:sessions:trim'].invoke
   end
+
 end
 
 __loading_end(__FILE__)

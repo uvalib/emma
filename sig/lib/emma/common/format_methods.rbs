@@ -1,4 +1,6 @@
 module Emma::Common::FormatMethods
+  extend ::Emma::Common::FormatMethods
+
   # @type [Array<Symbol>]
   INFLECT_SINGULAR: symArray
 
@@ -179,17 +181,28 @@ module Emma::Common::FormatMethods
   #
   def named_references_and_formats: (untyped text, ?default_fmt: String|nil) -> Hash[Symbol,String]
 
-  # Make a copy of *text* with #sprintf named references replaced by the
-  # matching values extracted from *items* or *opt*.
+  # Attempt to apply interpolations to all strings in *item*.
+  #
+  # @param [Hash, Array, String, *] item
+  # @param [Hash]                   opt
+  #
+  # @return [*]
+  #
+  def deep_interpolate_named_references: [T] (T item, **untyped opt) -> T
+
+  # If possible, make a copy of *text* with #sprintf named references replaced
+  # by the matching values extracted from *src* or *opt*.  Otherwise return
+  # *text* unchanged.
   #
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
   # then the interpolated value will follow the same case.
   #
   # @param [String, *]           text
-  # @param [Array<Hash,Model,*>] items
+  # @param [Array<Hash,Model,*>] src
   # @param [Hash]                opt
   #
-  # @return [String]                  A (possibly modified) copy of *text*.
+  # @return [String]                  A modified copy of *text*.
+  # @return [nil]                     If no interpolations could be made.
   #
   # === Usage Notes
   # If *text* contains a mix of named references and unnamed specifiers, the
@@ -199,14 +212,14 @@ module Emma::Common::FormatMethods
   # supply values for the unnamed specifiers.
   #
   def interpolate_named_references
-    : (ActiveSupport::SafeBuffer text, *untyped items, **untyped opt) -> ActiveSupport::SafeBuffer
-    | (untyped                   text, *untyped items, **untyped opt) -> String
+    : (ActiveSupport::SafeBuffer text, *untyped src, **untyped opt) -> ActiveSupport::SafeBuffer
+    | (untyped                   text, *untyped src, **untyped opt) -> String
 
   # If possible, make a copy of *text* with #sprintf named references replaced
-  # by the matching values extracted from *items* or *opt*.
+  # by the matching values extracted from *src* or *opt*.
   #
   # @param [String, *]           text
-  # @param [Array<Hash,Model,*>] items
+  # @param [Array<Hash,Model,*>] src
   # @param [Hash]                opt
   #
   # @return [String]                  A modified copy of *text*.
@@ -215,6 +228,6 @@ module Emma::Common::FormatMethods
   # @see #interpolate_named_references
   #
   def interpolate_named_references!
-    : (ActiveSupport::SafeBuffer text, *untyped items, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
-    | (untyped                   text, *untyped items, **untyped opt) -> (String | nil)
+    : (ActiveSupport::SafeBuffer text, *untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+    | (untyped                   text, *untyped src, **untyped opt) -> (String | nil)
 end

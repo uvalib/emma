@@ -1,4 +1,6 @@
 module Emma::Common::ObjectMethods
+  extend ::Emma::Common::ObjectMethods
+
   # Transform a hash into a struct recursively.  (Any hash value which is
   # itself a hash will be converted to a struct).
   #

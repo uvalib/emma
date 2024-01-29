@@ -43,6 +43,8 @@ module UploadWorkflow::Errors
   include Emma::Debug
 
   module RenderMethods
+    include Emma::Common
+
     extend ::UploadWorkflow::Errors::RenderMethods
 
     # Default label. TODO: I18n

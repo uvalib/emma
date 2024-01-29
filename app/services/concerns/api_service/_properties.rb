@@ -9,8 +9,6 @@ __loading_begin(__FILE__)
 #
 module ApiService::Properties
 
-  include I18nHelper
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -104,7 +102,7 @@ module ApiService::Properties
   # @type [Hash{Symbol=>*}]
   #
   def configuration
-    i18n_config("emma.service.#{service_name}", default: {})
+    config_section("emma.service.#{service_name}")
   end
 
   # The URL for the API connection.

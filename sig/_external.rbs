@@ -519,11 +519,18 @@ end
 
 # NOTE: overrides .gem_rbs_collection/i18n/1.10/i18n.rbs
 module I18n
+
   module Base
     def translate
       : (?(String|Symbol|nil) key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> (untyped | nil)
       | (Array[String|Symbol] key, ?throw: bool, ?raise: bool, ?locale: Symbol|nil, **untyped options) -> Array[untyped|nil]
   end
+
+  class MissingTranslation < ArgumentError
+    module Base
+    end
+  end
+
 end
 
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb

@@ -1,4 +1,6 @@
 module Emma::Common::ExceptionMethods
+  extend ::Emma::Common::ExceptionMethods
+
   # Exceptions which are more likely to indicate unexpected exceptions (i.e.,
   # programming problems) and not operational exceptions due to external API
   # failures.

@@ -141,26 +141,28 @@ module ConfigurationHelper
     raise(CONFIG_FAIL) if entry.nil? && fatal
     return default     if entry.nil?
 
-    i_opt = remainder_hash!(opt, :mode, :one, :many)
-
     # Use count-specific definitions if present.
-    if entry.is_a?(Hash) && !false?((mode = opt[:mode]))
-      vals = %i[many one]
-      mode = mode.to_sym unless mode.nil? || true?(mode)
-      mode = nil if mode == :auto
-      mode = vals.find { |v| true?(opt[v]) } unless vals.include?(mode)
-      mode ||=
-        if (count = i_opt[:count].to_i).zero?
-          (action && (action.to_s != 'index')) ? :one : :many
-        else
-          (count == 1) ? :one : :many
+    local = opt.extract!(:mode, :one, :many)
+    if entry.is_a?(Hash) && !false?((mode = local[:mode]))
+      case
+        when true?(local[:many]) then mode = :many
+        when true?(local[:one])  then mode = :one
+        when true?(mode)         then mode = :auto
+        when mode.nil?           then mode = :auto
+      end
+      if (mode = mode.to_sym) == :auto
+        case opt[:count].to_i
+          when 0 then mode = (action.to_s == 'index') ? :many : :one
+          when 1 then mode = :one
+          else        mode = :many
         end
-      entry = entry[mode] unless false?(opt[mode]) || !entry.key?(mode)
+      end
+      entry = entry[mode] if entry.key?(mode)
     end
 
     # Honor override of displayed unit names.
-    units = config_interpolations(**i_opt)
-    apply_config_interpolations(entry, units: units)
+    opt[:item] = opt.delete(:unit) if opt.key?(:unit) && !opt.key?(:item)
+    apply_config_interpolations(entry, **opt)
   end
 
   # ===========================================================================
@@ -235,20 +237,13 @@ module ConfigurationHelper
   # Recursively apply supplied unit interpolations.
   #
   # @param [Hash, Array, String, Integer, Boolean, *] item
-  # @param [Hash]                                     units
+  # @param [Hash]                                     opt
   #
   # @return [*]
   #
-  def apply_config_interpolations(item, units:, **)
-    if item.is_a?(Hash)
-      item.transform_values { |v| send(__method__, v, units: units) }
-    elsif item.is_a?(Array)
-      item.map { |v| send(__method__, v, units: units) }
-    elsif item.is_a?(String) && item.include?('%{')
-      item.gsub(SPRINTF_NAMED_REFERENCE) { |s| units[$1&.to_sym] || s }
-    else
-      item
-    end
+  def apply_config_interpolations(item, **opt)
+    units = config_interpolations(**opt)
+    deep_interpolate_named_references(item, **opt, **units)
   end
 
   # The variations on the description of a model item managed by a controller.

@@ -1,8 +1,6 @@
 # ApiService::Properties
 #
 module ApiService::Properties
-  include I18nHelper
-
   # Control whether information requests are ever cached. # TODO: ???
   #
   # @type [Boolean]

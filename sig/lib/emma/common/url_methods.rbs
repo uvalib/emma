@@ -1,4 +1,6 @@
 module Emma::Common::UrlMethods
+  extend ::Emma::Common::UrlMethods
+
   # Fully URL-encode (including transforming '.' to '%2E') without escaping a
   # string which is already escaped.
   #

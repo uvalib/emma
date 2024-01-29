@@ -1,4 +1,6 @@
 module Emma::Common::HtmlMethods
+  extend ::Emma::Common::HtmlMethods
+
   # ASCII characters.
   #
   # @type [String]
