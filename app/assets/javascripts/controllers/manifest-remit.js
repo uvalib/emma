@@ -5,11 +5,13 @@ import { AppDebug }                             from '../application/debug';
 import { appSetup }                             from '../application/setup';
 import { handleClickAndKeypress }               from '../shared/accessibility';
 import { arrayWrap, uniq }                      from '../shared/arrays';
+import { Emma }                                 from '../shared/assets';
 import { BaseClass }                            from '../shared/base-class';
 import { selector, toggleHidden }               from '../shared/css';
 import { handleEvent }                          from '../shared/events';
 import { clearFlash, flashError, flashMessage } from '../shared/flash';
 import { initializeGridNavigation }             from '../shared/grids';
+import { capitalize, pluralize }                from '../shared/strings';
 import { SubmitModal }                          from '../shared/submit-modal';
 import { BulkUploader }                         from '../shared/uploader';
 import {
@@ -548,7 +550,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionStart(event) {
         const func = 'onSubmissionStart'; OUT.debug(`${func}: event =`, event);
-        const fail = 'Submission failed'; // TODO: I18n
+        const fail = Emma.Messages.submission.failed.submit;
         if (submissionsActive()) {
             OUT.error(`${fail} - already submitting`);
         } else {
@@ -566,7 +568,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionStop(event) {
         const func = 'onSubmissionStop'; OUT.debug(`${func}: event =`, event);
-        const fail = 'Cancel failed'; // TODO: I18n
+        const fail = Emma.Messages.submission.failed.cancel;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
         } else {
@@ -584,7 +586,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionPause(event) {
         const func = 'onSubmissionPause'; OUT.debug(`${func}: event =`, event);
-        const fail = 'Pause failed'; // TODO: I18n
+        const fail = Emma.Messages.submission.failed.pause;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
         } else if (submissionsPaused()) {
@@ -603,8 +605,8 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onSubmissionResume(event) {
-        const func = 'onSubmissionResume'; OUT.debug(`${func}: event =`, event);
-        const fail = 'Resume failed'; // TODO: I18n
+        const func = 'onSubmissionResume'; OUT.debug(`${func}: event=`, event);
+        const fail = Emma.Messages.submission.failed.resume;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
         } else if (!submissionsPaused()) {
@@ -628,7 +630,7 @@ appSetup(MODULE, function() {
         OUT.debug(`${func}: ${action}`);
         if (!submissionMonitor().command(action, options?.data)) {
             const tag  = options?.fail || `${action} failed`;
-            const note = 'Refresh this page to re-authenticate.';
+            const note = Emma.Messages.submission.refresh;
             flashError(`${tag}: ${note}`);
         }
     }
@@ -652,16 +654,6 @@ appSetup(MODULE, function() {
     const files_remaining = { local: {}, remote: {} };
 
     /**
-     * Submit button tooltip override. # TODO: I18n
-     *
-     * @type {string}
-     */
-    const SUBMISSION_BLOCKED_TOOLTIP =
-        'Files must be resolved before the submission process can begin';
-    const NOTHING_TO_SUBMIT_TOOLTIP =
-        'None of the items in the manifest have been completed and saved';
-
-    /**
      * Change whether the Submit button is enabled based on conditions. <p/>
      *
      * If not ready, a custom tooltip is provided to indicate the reason.
@@ -678,9 +670,9 @@ appSetup(MODULE, function() {
         let blocked;
         const prop = {};
         if ((blocked = remote_needed || local_needed)) {
-            prop.tooltip = SUBMISSION_BLOCKED_TOOLTIP;
+            prop.tooltip = Emma.Messages.submission.blocked;
         } else if ((blocked = !counter.ready.reset())) {
-            prop.tooltip = NOTHING_TO_SUBMIT_TOOLTIP;
+            prop.tooltip = Emma.Messages.submission.none_saved;
         }
         prop.highlight = !blocked;
         SUBMISSION_ENABLE.start(!blocked, prop);
@@ -1299,13 +1291,13 @@ appSetup(MODULE, function() {
         const now_enabled = isStartable($item);
         const tip_data    = now_enabled ? 'enabledTip' : 'disabledTip';
         let new_tooltip   = $item.data(tip_data);
-        if (notDefined(new_tooltip)) {
-            if (!now_enabled) {
-                const number = $item.attr('data-number');
-                new_tooltip  = `Item ${number} not selectable until resolved`; // TODO: I18n
-                $item.data(tip_data, new_tooltip);
-                $item.attr('title', new_tooltip);
-            }
+        if (notDefined(new_tooltip) && !now_enabled) {
+            const item_      = capitalize(Emma.Messages.item);
+            const number     = $item.attr('data-number');
+            const disallowed = Emma.Messages.submission.not_selectable;
+            new_tooltip      = `${item_} ${number} ${disallowed}`;
+            $item.data(tip_data, new_tooltip);
+            $item.attr('title', new_tooltip);
         }
         $item.attr('title', (new_tooltip || ''));
         return enableItemSelect($item, now_enabled);
@@ -1917,8 +1909,9 @@ appSetup(MODULE, function() {
      */
     function onSubmissionRejected() {
         OUT.debug('onSubmissionRejected');
-        const note = 'Refresh this page to re-authenticate.';
-        flashError(`Connection error: ${note}`);
+        const error = Emma.Messages.submission.conn_error;
+        const note  = Emma.Messages.submission.refresh;
+        flashError(`${error}: ${note}`);
         submissionsEnded(true);
     }
 
@@ -2347,6 +2340,17 @@ appSetup(MODULE, function() {
     }
 
     /**
+     * Configured terms for 'file' or 'files'.
+     *
+     * @param {number} [count]
+     *
+     * @returns {string}
+     */
+    function files(count) {
+        return pluralize(Emma.Messages.file, count);
+    }
+
+    /**
      * resolvedLabel
      *
      * @param {number} [count]
@@ -2354,8 +2358,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function resolvedLabel(count) {
-        const files = (count === 1) ? 'FILE' : 'FILES'; // TODO: I18n
-        return `RESOLVED ${files}:`;                    // TODO: I18n
+        return `${Emma.Messages.resolved} ${files(count)}:`.toUpperCase();
     }
 
     /**
@@ -2366,8 +2369,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function problematicLabel(count) {
-        const files = (count === 1) ? 'FILE' : 'FILES'; // TODO: I18n
-        return `PROBLEM ${files}:`;                     // TODO: I18n
+        return `${Emma.Messages.problem} ${files(count)}:`.toUpperCase();
     }
 
     /**
@@ -2378,41 +2380,45 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function remainingLabel(count) {
-        const num   = Number(count) || 0;
-        const files = (num === 1) ? 'FILE' : 'FILES';   // TODO: I18n
-        return `${num} ${files} STILL NEEDED:`;         // TODO: I18n
+        const number = Number(count) || 0;
+        const needed = Emma.Messages.submission.still_needed;
+        return `${number} ${files(number)} ${needed}:`.toUpperCase();
     }
 
     /**
-     * allResolvedLabel // TODO: I18n
+     * allResolvedLabel
      *
      * @returns {string}
      */
     function allResolvedLabel() {
-        const total = allItems().length;
-        const ready = itemsReady().length;
-        let count, submittable;
+        const resolved = Emma.Messages.submission.all_resolved;
+        const total    = allItems().length;
+        const ready    = itemsReady().length;
+        let submittable, count;
         if (ready) {
             if (ready === total) {
-                count = (total > 1) ? 'ALL' : 'THE';
+                count = (total > 1) ? Emma.Messages.all : Emma.Messages.the;
             } else {
                 const selected = itemsSelected().length;
                 if (!selected) {
                     count = ready.toString();
                 } else if (ready >= selected) {
-                    count = 'ALL SELECTED';
+                    count = Emma.Messages.submission.all_selected;
                 } else {
-                    count = 'SOME SELECTED';
+                    count = Emma.Messages.submission.some_selected;
                 }
             }
-            const items = (ready > 1) ? 'ITEMS'   : 'ITEM';
-            submittable = `${count} ${items} READY FOR UPLOAD`;
+            const items = pluralize(Emma.Messages.item, ready);
+            const to_go = Emma.Messages.submission.ready_for_upload;
+            submittable = `${count} ${items} ${to_go}`;
         } else {
-            const items = (total > 1) ? 'ITEMS'   : 'ITEM';
-            const need  = (total > 1) ? 'REQUIRE' : 'REQUIRES';
-            submittable = `${items} STILL ${need} ATTENTION`;
+            const items = pluralize(Emma.Messages.item, total);
+            const still = Emma.Messages.still;
+            const need  = pluralize(Emma.Messages.require, total);
+            const attn  = Emma.Messages.attention;
+            submittable = `${items} ${still} ${need} ${attn}`;
         }
-        return `ALL FILES RESOLVED - ${submittable}`;
+        return `${resolved} - ${submittable}`.toUpperCase();
     }
 
     // ========================================================================

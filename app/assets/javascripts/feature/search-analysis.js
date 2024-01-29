@@ -792,23 +792,6 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     const ERROR_MARKER = 'error';
 
     /**
-     * Tooltip text for an erroneous item. // TODO: I18n
-     *
-     * @readonly
-     * @type {string}
-     */
-    const ERROR_TOOLTIP = 'THIS ITEM IS OUT-OF-SEQUENCE';
-
-    /**
-     * Tooltip text for an erroneous item. // TODO: I18n
-     *
-     * @readonly
-     * @type {string}
-     */
-    const ERROR_JUMP_TOOLTIP =
-        'Jump to the first occurrence on the page of this identity';
-
-    /**
      * CSS marker class indicating the metadata field associated with the
      * current topic.
      *
@@ -826,22 +809,20 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     const EXILE_MARKER = 'exile';
 
     /**
-     * Tooltip text for an erroneous item. // TODO: I18n
+     * Tooltip text for an erroneous item.
      *
      * @readonly
      * @type {string}
      */
-    const LATE_EXILE_TOOLTIP =
-        'THIS ITEM BELONGS ON AN EARLIER PAGE OF SEARCH RESULTS';
+    const LATE_EXILE_TIP = Emma.Messages.search_analysis.late_exile;
 
     /**
-     * Tooltip text for an erroneous item. // TODO: I18n
+     * Tooltip text for an erroneous item.
      *
      * @readonly
      * @type {string}
      */
-    const EARLY_EXILE_TOOLTIP =
-        'A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE';
+    const EARLY_EXILE_TIP = Emma.Messages.search_analysis.early_exile;
 
     /**
      * Maximum integer color value.
@@ -925,8 +906,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             /** @type {jQuery} */
             const $item  = $(item);
             const $score = $item.find('.item-score');
-            const desc   = SORTED[SORT_ORDER] || 'specific metadata field(s)';
-            const tip    = `Relevancy based on ${desc}`;
+            const order  = SORTED[SORT_ORDER];
+            const desc   = order || Emma.Messages.search_analysis.fields;
+            const tip    = `${Emma.Messages.search_analysis.tooltip} ${desc}`;
             return $score.addClass('disabled').attr('title', tip).text(BLANK);
         }
 
@@ -1872,7 +1854,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         _markItemAsError(item) {
             const $item = $(item);
             $item.addClass(ERROR_MARKER)
-            this._itemStateTip($item, ERROR_TOOLTIP);
+            this._itemStateTip($item, Emma.Messages.search_analysis.error);
             return true;
         }
 
@@ -1908,8 +1890,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 $tag.addClass(EXILE_MARKER);
 
                 // Update the item itself.
-                const tip =
-                    (found < 0) ? LATE_EXILE_TOOLTIP : EARLY_EXILE_TOOLTIP;
+                const tip = (found < 0) ? LATE_EXILE_TIP : EARLY_EXILE_TIP;
                 this._itemStateTip($item, tip);
                 $item.addClass(EXILE_MARKER);
             }
@@ -1936,7 +1917,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             let $t_tag;
             if (error) {
                 $t_tag = $(`<a href="#${identity}">`).addClass(ERROR_MARKER);
-                $t_tag.attr('title', ERROR_JUMP_TOOLTIP);
+                $t_tag.attr('title', Emma.Messages.search_analysis.jump);
                 if (exile) { $t_tag.addClass(EXILE_MARKER) }
             } else if (exile) {
                 $t_tag = $('<div>').addClass(EXILE_MARKER);

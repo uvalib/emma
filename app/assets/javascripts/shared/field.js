@@ -602,7 +602,7 @@ export class Value extends BaseClass {
             if (Array.isArray(v)) {
                 msg.push(...v);
             } else {
-                msg.push(v || 'invalid'); // TODO: I18n
+                msg.push(v || Emma.Messages.invalid);
             }
             this._errors[k] = msg.join('; ');
         }

@@ -8,6 +8,7 @@
 import { AppDebug }                       from '../application/debug';
 import { LookupChannel }                  from '../channels/lookup-channel';
 import { arrayWrap }                      from '../shared/arrays';
+import { Emma }                           from '../shared/assets';
 import { selector, toggleHidden }         from '../shared/css';
 import { turnOffAutocomplete }            from '../shared/form';
 import { HTML_BREAK }                     from '../shared/html';
@@ -19,7 +20,7 @@ import { ModalDialog }                    from '../shared/modal-dialog';
 import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
 import { dupObject, hasKey, toObject }    from '../shared/objects';
 import { randomizeName }                  from '../shared/random';
-import { camelCase }                      from '../shared/strings';
+import { camelCase, capitalize }          from '../shared/strings';
 import {
     handleClickAndKeypress,
     toggleVisibility,
@@ -83,6 +84,9 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Console output functions for this module.
      */
     const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
+
+    const LOCK_TIP    = Emma.Messages.lookup.lock.tooltip;
+    const UNLOCK_TIP  = Emma.Messages.lookup.unlock.tooltip;
 
     // ========================================================================
     // Channel
@@ -1028,21 +1032,16 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function lockFieldValue(field, locking) {
         OUT.debug('lockFieldValue:', field, locking);
-        const $cell  = fieldValueCell(field);
-        const $lock  = lockFor($cell);
-        const $state = $lock.parent().find('.state');
-        const name   = $state.attr('data-name');
-        const locked = (locking !== false);
-        const status = locked ? 'locked' : 'unlocked';
-        let tooltip;
-        if (locked) {
-            tooltip = 'Click to allow this data field to be replaceable'; // TODO: I18n
-        } else {
-            tooltip = 'Click to prevent this data field from being replaced'; // TODO: I18n
-        }
+        const $cell   = fieldValueCell(field);
+        const $lock   = lockFor($cell);
+        const $state  = $lock.parent().find('.state');
+        const name    = $state.attr('data-name');
+        const locked  = (locking !== false);
+        const status  = locked ? 'locked' : 'unlocked';
+        const tooltip = locked ? UNLOCK_TIP : LOCK_TIP;
         $cell.data(LookupModal.FIELD_LOCKED_DATA, locked);
         $lock.attr('title', tooltip);
-        $state.text(`${name} field is ${status}`); // TODO: I18n
+        $state.text(`${name} ${Emma.Messages.lookup.field_is} ${status}`);
     }
 
     /**
@@ -1562,7 +1561,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function makeOriginalValuesEntry(row) {
         const func = 'makeOriginalValuesEntry';
-        const tag  = 'ORIGINAL'; // TODO: I18n
+        const tag  = Emma.Messages.original.toUpperCase();
         const css  = LookupModal.ORIG_VALUES_CLASS;
         setOriginalValuesEntry(makeResultEntry(row, tag, css));
         return refreshOriginalValuesEntry(func);
@@ -1580,7 +1579,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function makeResultEntry(row, tag, css_class) {
         const css    = css_class || LookupModal.RESULT_CLASS;
         const fields = LookupModal.DATA_COLUMNS;
-        const label  = tag || 'Result'; // TODO: I18n
+        const label  = tag || capitalize(Emma.Messages.result);
         const $radio = makeSelectColumn();
         const $label = makeTagColumn(label);
         const values = fields.map(field => makeDataColumn(field));

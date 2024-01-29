@@ -6,6 +6,7 @@
 import { AppDebug }                          from '../application/debug';
 import { handleClickAndKeypress }            from './accessibility';
 import { arrayWrap }                         from './arrays';
+import { Emma }                              from './assets';
 import { selector }                          from './css';
 import { isMissing, isPresent }              from './definitions';
 import { handleEvent, isEvent, windowEvent } from './events';
@@ -675,14 +676,14 @@ export function xhrDecode(data) {
  */
 export function fetchFlashMessage(url) {
     const func = 'fetchFlash'; //OUT.debug(`${func}: url =`, url);
-    let error  = 'could not fetch message'; // TODO: I18n
+    let error  = Emma.Messages.flash.client.no_fetch;
     let content;
 
     function onSuccess(data) {
         if (isMissing(data)) {
-            error = 'no data for message'; // TODO: I18n
+            error = Emma.Messages.flash.client.no_data;
         } else if (typeof(data) !== 'string') {
-            error = `unexpected data type ${typeof data}`; // TODO: I18n
+            error = `${Emma.Messages.flash.client.bad_data} ${typeof data}`;
         } else {
             content = data;
         }

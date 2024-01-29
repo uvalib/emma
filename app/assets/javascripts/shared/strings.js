@@ -53,6 +53,39 @@ export function camelCase(item) {
 }
 
 /**
+ * Convert a singular to the plural form.
+ *
+ * @param {string}               item
+ * @param {number|boolean|Array} [v]
+ *
+ * @returns {string}
+ */
+export function pluralize(item, v) {
+    if (!item)                                  { return item }
+    if (typeof item !== 'string')               { return item }
+    if (Array.isArray(v) && (v.length === 1))   { return item }
+    if (v === false)                            { return item }
+    if ((v !== true) || (Number(v) === 1))      { return item }
+
+    const upr = (item === item.toUpperCase());
+    const str = upr ? item.toLowerCase() : item;
+
+    let expr, suffix;
+    switch (true) {
+        case str.endsWith('es'): break;
+        case str.endsWith('y'):  [expr, suffix] = [/y$/, 'ies']; break;
+        case str.endsWith('s'):  [expr, suffix] = [/s$/, 'es'];  break;
+        default:                 [expr, suffix] = [/$/,  's'];   break;
+    }
+    if (expr) {
+        const result = str.replace(expr, suffix);
+        return upr ? result.toUpperCase() : result;
+    } else {
+        return item;
+    }
+}
+
+/**
  * Convert a plural to the singular form.
  *
  * @note This isn't meant to be comprehensive; it's tuned to returning the
@@ -63,24 +96,21 @@ export function camelCase(item) {
  * @returns {string}
  */
 export function singularize(item) {
+    if (!item)                    { return item }
     if (typeof item !== 'string') { return item }
-    if (item.endsWith('ies'))     { return item.replace(/ies$/, 'y') }
-    if (item.endsWith('es'))      { return item.replace(/es$/,  '')  }
-    if (item.endsWith('s'))       { return item.replace(/s$/,   '')  }
-    return item;
-}
 
-/**
- * Manually interpolate a string.
- *
- * @param {string|*}    item
- * @param {StringTable} values
- *
- * @returns {string|*}
- */
-export function interpolate(item, values) {
-    if ((typeof item === 'string') && item.includes('${')) {
-        return item.replaceAll(/\${([^}\n]+)}/g, ((_, name) => values[name]));
+    const upr = (item === item.toUpperCase());
+    const str = upr ? item.toLowerCase() : item;
+
+    let expr, suffix;
+    switch (true) {
+        case str.endsWith('ies'): [expr, suffix] = [/ies$/, 'y']; break;
+        case str.endsWith('es'):  [expr, suffix] = [/es$/,  ''];  break;
+        case str.endsWith('s'):   [expr, suffix] = [/s$/,   ''];  break;
+    }
+    if (expr) {
+        const result = str.replace(expr, suffix);
+        return upr ? result.toUpperCase() : result;
     } else {
         return item;
     }

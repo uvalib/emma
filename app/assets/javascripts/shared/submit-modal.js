@@ -8,6 +8,7 @@
 import { AppDebug }                       from '../application/debug';
 import { appTeardown }                    from '../application/setup';
 import { SubmitChannel }                  from '../channels/submit-channel';
+import { Emma }                           from './assets';
 import { selector }                       from './css';
 import { isEmpty, isPresent }             from './definitions';
 import { htmlDecode }                     from './html';
@@ -72,6 +73,8 @@ const LOG_DISPLAY          = selector(LOG_DISPLAY_CLASS);
 const RESULTS              = selector(RESULTS_CLASS);
 const ERRORS               = selector(ERRORS_CLASS);
 const DIAGNOSTICS          = selector(DIAGNOSTICS_CLASS);
+
+const STATUS               = Emma.Messages.submission.status;
 
 // ============================================================================
 // Class SubmitModal
@@ -679,7 +682,7 @@ export class SubmitModal extends ModalDialog {
     }
 
     /**
-     * Change status values based on received data. // TODO: I18n
+     * Change status values based on received data.
      *
      * @param {SubmitResponseSubclass} message
      */
@@ -693,10 +696,10 @@ export class SubmitModal extends ModalDialog {
             // Waiter states
 
             case 'STARTING':
-                notice = 'Working';
+                notice = STATUS.starting;
                 break;
             case 'COMPLETE':
-                notice = 'Completed';
+                notice = STATUS.complete;
                 break;
 
             // Worker states
@@ -705,16 +708,16 @@ export class SubmitModal extends ModalDialog {
                 notice = `${this.statusNotice.text()}.`;
                 break;
             case 'STEP':
-                notice = `Submission step "${message.step}"`;
+                notice = `${STATUS.step} "${message.step}"`;
                 break;
             case 'DONE':
-                notice = 'Worker done';
+                notice = STATUS.done;
                 break;
 
             // Other
 
             default:
-                this._warn(`${func}: ${message.status}: unexpected`);
+                this._warn(`${func}: ${message.status}: ${STATUS.unexpected}`);
                 break;
         }
         if (notice) { this.setStatusNotice(notice) }
@@ -809,7 +812,7 @@ export class SubmitModal extends ModalDialog {
             if (isObject(v)) {
                 const [sid, err] = [v.submission_id, v.error];
                 if (sid && !err) {
-                    line = `submitted as entry ${sid}`; // TODO: I18n
+                    line = `${Emma.Messages.submission.submitted_as} ${sid}`;
                 } else if (err && !sid) {
                     line = err;
                 }
@@ -818,9 +821,10 @@ export class SubmitModal extends ModalDialog {
             return htmlDecode(line) || line || '';
         };
         const val = (v) => Array.isArray(v) ? v.map(fmt).join('; ') : fmt(v);
+        const sub = Emma.Messages.submission.submitted;
         let added;
         if (Array.isArray(data)) {
-            added = data.map(k => isString(k) ? `${k}: submitted` : val(k)); // TODO: I18n
+            added = data.map(k => isString(k) ? `${k}: ${sub}` : val(k));
         } else {
             added = Object.entries(data).map(([k, v]) => `${k}: ${val(v)}`);
         }

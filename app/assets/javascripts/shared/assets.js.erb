@@ -492,6 +492,8 @@ AppDebug.file('shared/assets.js.erb');
  * @property {ModelProperties}    Upload
  * @property {ModelProperties}    Manifest
  * @property {ModelProperties}    ManifestItem
+ *
+ * @property {object}             Messages
  */
 export const Emma = (function() {
 
@@ -629,20 +631,23 @@ export const Emma = (function() {
     /** @type {DownloadProperties} */
     const Download = {
         button: {
-            class:      'button',
+            class:          'button',
         },
         progress: {
-            class:      'progress',
+            class:          'progress',
+            image: {
+                alt:        '<%= js config_item("emma.download.progress.image.alt") %>',
+            }
         },
         failure: {
-            class:      'failure',
-            sign_in:    '<%= js I18n.t("emma.download.failure.sign_in") %>',
-            unknown:    '<%= js I18n.t("emma.download.failure.unknown") %>',
+            class:          'failure',
+            sign_in:        '<%= js config_item("emma.download.failure.sign_in") %>',
+            unknown:        '<%= js config_item("emma.download.failure.unknown") %>',
         },
     };
 
     /** @type {ActionProperties} */
-    const Lookup =      o$('<%= js I18n.t(%q(emma.lookup)) %>');
+    const Lookup =          o$('<%= js config_section("emma.lookup") %>');
 
     /** @type {ModelProperties} */
     const Org =             o$('<%= js OrgDecorator.js_properties %>'),
@@ -651,6 +656,191 @@ export const Emma = (function() {
           Upload =          o$('<%= js UploadDecorator.js_properties %>'),
           Manifest =        o$('<%= js ManifestDecorator.js_properties %>'),
           ManifestItem =    o$('<%= js ManifestItemDecorator.js_properties %>');
+
+    // ========================================================================
+    // Messages
+    // ========================================================================
+
+    /** @type {Object} */
+    const Messages = {
+
+        EMMA:                           '<%= js config_text(:EMMA) %>',
+
+        all:                            '<%= js config_text(:all) %>',
+        also:                           '<%= js config_text(:also) %>',
+        attention:                      '<%= js config_text(:attention) %>',
+        entry:                          '<%= js config_text(:entry) %>',
+        error:                          '<%= js config_text(:error) %>',
+        file:                           '<%= js config_text(:file) %>',
+        for:                            '<%= js config_text(:for) %>',
+        from:                           '<%= js config_text(:from) %>',
+        invalid:                        '<%= js config_text(:invalid) %>',
+        item:                           '<%= js config_text(:item) %>',
+        match:                          '<%= js config_text(:match) %>',
+        one:                            '<%= js config_text(:one) %>',
+        original:                       '<%= js config_text(:original) %>',
+        other:                          '<%= js config_text(:other) %>',
+        problem:                        '<%= js config_text(:problem) %>',
+        require:                        '<%= js config_text(:require) %>',
+        resolved:                       '<%= js config_text(:resolved) %>',
+        result:                         '<%= js config_text(:result) %>',
+        still:                          '<%= js config_text(:still) %>',
+        the:                            '<%= js config_text(:the) %>',
+
+        field: {
+            readonly:                   '<%= js config_text(:field, :readonly) %>',
+            validation: {
+                empty:                  '<%= js config_text(:field, :validation, :empty) %>',
+                no_server:              '<%= js config_text(:field, :validation, :no_server) %>',
+                too_big:                '<%= js config_text(:field, :validation, :too_big) %>',
+                too_small:              '<%= js config_text(:field, :validation, :too_small) %>',
+            },
+        },
+        flash: {
+            client: {
+                no_fetch:               '<%= js config_text(:flash, :client, :no_fetch) %>',
+                no_data:                '<%= js config_text(:flash, :client, :no_data) %>',
+                bad_data:               '<%= js config_text(:flash, :client, :bad_data) %>',
+            },
+        },
+        form: {
+            cancel_first:               '<%= js config_text(:form, :cancel_first) %>',
+            no_lookup:                  '<%= js config_text(:form, :no_lookup) %>',
+            success:                    '<%= js config_text(:form, :success) %>',
+            unchangeable:               '<%= js config_text(:form, :unchangeable) %>',
+            action: {
+                create:                 '<%= js config_text(:form, :action, :create) %>',
+                created:                '<%= js config_text(:form, :action, :created) %>',
+                update:                 '<%= js config_text(:form, :action, :update) %>',
+                updated:                '<%= js config_text(:form, :action, :updated) %>',
+            },
+        },
+        lookup: {
+            field_is:                   '<%= js config_text(:lookup, :field_is) %>',
+            no_changes:                 '<%= js config_text(:lookup, :no_changes) %>',
+            lock: {
+                tooltip:                '<%= js config_text(:lookup, :lock, :tooltip) %>',
+            },
+            unlock: {
+                tooltip:                '<%= js config_text(:lookup, :unlock, :tooltip) %>',
+            },
+            column: {
+                selection:              '<%= js config_text(:lookup, :column, :selection) %>',
+                tag:                    '<%= js config_text(:lookup, :column, :tag) %>',
+                dc_identifier:          '<%= js config_text(:lookup, :column, :dc_identifier) %>',
+                dc_title:               '<%= js config_text(:lookup, :column, :dc_title) %>',
+                dc_creator:             '<%= js config_text(:lookup, :column, :dc_creator) %>',
+                dc_publisher:           '<%= js config_text(:lookup, :column, :dc_publisher) %>',
+                emma_publicationDate:   '<%= js config_text(:lookup, :column, :emma_publicationDate) %>',
+                dcterms_dateCopyright:  '<%= js config_text(:lookup, :column, :dcterms_dateCopyright) %>',
+                dc_description:         '<%= js config_text(:lookup, :column, :dc_description) %>',
+            },
+        },
+        md: {
+            clipboard: {
+                access:                 '<%= js config_text(:md, :clipboard, :access) %>',
+                copied:                 '<%= js config_text(:md, :clipboard, :copied) %>',
+                failed:                 '<%= js config_text(:md, :clipboard, :failed) %>',
+                saved:                  '<%= js config_text(:md, :clipboard, :saved) %>',
+                unknown:                '<%= js config_text(:md, :clipboard, :unknown) %>',
+                data: {
+                    image:              '<%= js config_text(:md, :clipboard, :data, :image) %>',
+                    no_image:           '<%= js config_text(:md, :clipboard, :data, :no_image) %>',
+                    nothing:            '<%= js config_text(:md, :clipboard, :data, :nothing) %>',
+                },
+                input: {
+                    file_name:          '<%= js config_text(:md, :clipboard, :input, :file_name) %>',
+                },
+            },
+            copy: {
+                tooltip:                '<%= js config_text(:md, :copy, :tooltip) %>',
+            },
+            response: {
+                error:                  '<%= js config_text(:md, :response, :error) %>',
+                fatal:                  '<%= js config_text(:md, :response, :fatal) %>',
+                unknown:                '<%= js config_text(:md, :response, :unknown) %>',
+                no_item:                '<%= js config_text(:md, :response, :no_item) %>',
+                size_limit:             '<%= js config_text(:md, :response, :size_limit) %>',
+                bad_http:               '<%= js config_text(:md, :response, :bad_http) %>',
+                no_data:                '<%= js config_text(:md, :response, :no_data) %>',
+                no_req:                 '<%= js config_text(:md, :response, :no_req) %>',
+            },
+            status: {
+                starting:               '<%= js config_text(:md, :status, :starting) %>',
+                failed:                 '<%= js config_text(:md, :status, :failed) %>',
+                fetching:               '<%= js config_text(:md, :status, :fetching) %>',
+                submitting:             '<%= js config_text(:md, :status, :submitting) %>',
+                initializing:           '<%= js config_text(:md, :status, :initializing) %>',
+                timeout:                '<%= js config_text(:md, :status, :timeout) %>',
+            },
+        },
+        search_analysis: {
+            early_exile:                '<%= js config_text(:search_analysis, :early_exile) %>',
+            error:                      '<%= js config_text(:search_analysis, :error) %>',
+            fields:                     '<%= js config_text(:search_analysis, :fields) %>',
+            jump:                       '<%= js config_text(:search_analysis, :jump) %>',
+            late_exile:                 '<%= js config_text(:search_analysis, :late_exile) %>',
+            tooltip:                    '<%= js config_text(:search_analysis, :tooltip) %>',
+        },
+        search_bar: {
+            button: {
+                label:                  '<%= js config_item("emma.search_bar.button.label") %>',
+            },
+        },
+        search_filters: {
+            remove_all:                 '<%= js config_text(:search_filters, :remove_all) %>',
+        },
+        status: {
+            offline:                    '<%= js config_text(:status, :offline) %>',
+        },
+        submission: {
+            all_resolved:               '<%= js config_text(:submission, :all_resolved) %>',
+            all_selected:               '<%= js config_text(:submission, :all_selected) %>',
+            blocked:                    '<%= js config_text(:submission, :blocked) %>',
+            conn_error:                 '<%= js config_text(:submission, :conn_error) %>',
+            none_saved:                 '<%= js config_text(:submission, :none_saved) %>',
+            not_selectable:             '<%= js config_text(:submission, :not_selectable) %>',
+            ready_for_upload:           '<%= js config_text(:submission, :ready_for_upload) %>',
+            refresh:                    '<%= js config_text(:submission, :refresh) %>',
+            some_selected:              '<%= js config_text(:submission, :some_selected) %>',
+            still_needed:               '<%= js config_text(:submission, :still_needed) %>',
+            submitted_as:               '<%= js config_text(:submission, :submitted_as) %>',
+            failed: {
+                cancel:                 '<%= js config_text(:submission, :failed, :cancel) %>',
+                pause:                  '<%= js config_text(:submission, :failed, :pause) %>',
+                resume:                 '<%= js config_text(:submission, :failed, :resume) %>',
+                submit:                 '<%= js config_text(:submission, :failed, :submit) %>',
+            },
+            status: {
+                complete:               '<%= js config_text(:submission, :status, :complete) %>',
+                done:                   '<%= js config_text(:submission, :status, :done) %>',
+                starting:               '<%= js config_text(:submission, :status, :starting) %>',
+                step:                   '<%= js config_text(:submission, :status, :step) %>',
+                unexpected:             '<%= js config_text(:submission, :status, :unexpected) %>',
+            },
+        },
+        table: {
+            sort: {
+                ascending:              '<%= js config_text(:table, :sort, :ascending) %>',
+                descending:             '<%= js config_text(:table, :sort, :descending) %>',
+                none:                   '<%= js config_text(:table, :sort, :none) %>',
+            },
+        },
+        uploader: {
+            error:                      '<%= js config_text(:uploader, :error) %>',
+            paused:                     '<%= js config_text(:uploader, :paused) %>',
+            placeholder:                '<%= js config_text(:uploader, :placeholder) %>',
+            results:                    '<%= js config_text(:uploader, :results) %>',
+            resumed:                    '<%= js config_text(:uploader, :resumed) %>',
+            state: {
+                canceled:               '<%= js config_text(:uploader, :state, :canceled) %>',
+                paused:                 '<%= js config_text(:uploader, :state, :paused) %>',
+                resumed:                '<%= js config_text(:uploader, :state, :resumed) %>',
+                retrying:               '<%= js config_text(:uploader, :state, :retrying) %>',
+                uploading:              '<%= js config_text(:uploader, :state, :uploading) %>',
+            },
+        },
+    };
 
     // ========================================================================
     // Application settings
@@ -678,6 +868,7 @@ export const Emma = (function() {
         Upload,
         Manifest,
         ManifestItem,
+        Messages,
     };
 
     // Update with any configuration values injected from the server.

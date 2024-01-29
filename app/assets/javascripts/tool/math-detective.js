@@ -9,6 +9,7 @@
 import { AppDebug }                        from '../application/debug';
 import { handleClickAndKeypress }          from '../shared/accessibility';
 import { Api }                             from '../shared/api'
+import { Emma }                            from '../shared/assets';
 import { selector, toggleHidden }          from '../shared/css';
 import { isDefined, isMissing, isPresent } from '../shared/definitions';
 import { HTTP }                            from '../shared/http';
@@ -56,6 +57,25 @@ const DEF_RECHECK_TIME  = 5 * SECONDS;
 const DEF_RECHECK_MAX   = 5; // attempts
 const MAX_SIZE          = undefined; // 5 * MB;
 
+const IN_CLIPBOARD      = Emma.Messages.md.clipboard.saved;
+const CLIPBOARD_FILE    = Emma.Messages.md.clipboard.input.file_name;
+
+const COPY_TIP          = Emma.Messages.md.copy.tooltip;
+
+const COPIED_NOTE       = Emma.Messages.md.clipboard.copied;
+const FAILED_NOTE       = Emma.Messages.md.clipboard.failed;
+
+const STATUS            = Emma.Messages.md.status;
+
+const ERROR             = Emma.Messages.md.response.error;
+const FATAL             = Emma.Messages.md.response.fatal;
+const UNKNOWN           = Emma.Messages.md.response.unknown;
+const NO_ITEM           = Emma.Messages.md.response.no_item;
+const SIZE_LIMIT        = Emma.Messages.md.response.size_limit;
+const BAD_HTTP          = Emma.Messages.md.response.bad_http;
+const NO_DATA           = Emma.Messages.md.response.no_data;
+const NO_REQ            = Emma.Messages.md.response.no_req;
+
 // ============================================================================
 // Internal functions
 // ============================================================================
@@ -85,8 +105,6 @@ export function setupFor(root) {
 
     const COPY_NOTE_CLASS    = 'copy-note';
     const COPY_NOTE_SELECTOR = selector(COPY_NOTE_CLASS);
-
-    const COPY_TIP  = 'Copy this output to clipboard'; // TODO: I18n
 
     // ========================================================================
     // Variables
@@ -149,7 +167,7 @@ export function setupFor(root) {
                     break;
                 default:
                     hover = false;
-                    note  = 'Change settings to allow clipboard access';
+                    note  = Emma.Messages.md.clipboard.access;
                     break;
             }
             click && handleClickAndKeypress($clip_input, processClipboard);
@@ -202,19 +220,19 @@ export function setupFor(root) {
             if (clip_type && callback) {
                 // Processing has started.
             } if (clip_type) {
-                data = 'Image';
+                data = Emma.Messages.md.clipboard.data.image;
             } else if (clip_item) {
-                data = 'No image';
+                data = Emma.Messages.md.clipboard.data.no_image;
             } else {
-                data = 'Nothing';
+                data = Emma.Messages.md.clipboard.data.nothing;
             }
-            data && showClipboardNote(`${data} saved in the clipboard`, func);
+            data && showClipboardNote(`${data} ${IN_CLIPBOARD}`, func);
         }).catch(reason => {
             let message = (reason instanceof Error) ? reason.message : reason;
             if (message?.includes('permission')) {
                 setupClipboardInput();
             } else {
-                message ||= 'unknown error';
+                message ||= Emma.Messages.md.clipboard.unknown;
                 console.warn(`${func}:`, message);
                 showClipboardNote(message, func);
             }
@@ -301,7 +319,7 @@ export function setupFor(root) {
      */
     function processFile(file) {
         clearDisplay();
-        const file_name = (file instanceof File) ? file.name : '(clipboard)';
+        const file_name = (file instanceof File) ? file.name : CLIPBOARD_FILE;
         const reader    = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = (event) => process(file_name, event.target.result);
@@ -319,7 +337,7 @@ export function setupFor(root) {
      */
     function process(file_name, file_data) {
         showPreview(file_data);
-        showStatus('STARTING');
+        showStatus(STATUS.starting);
         const options = { on_fetch: onComplete, on_status: showStatus };
         new MathDetectiveApi(options).submitImage(file_name, file_data);
     }
@@ -481,8 +499,8 @@ export function setupFor(root) {
         let $note  = $btn.siblings(COPY_NOTE_SELECTOR);
         const text = $btn.parents('.container').first().find('.output').text();
         navigator.clipboard.writeText(text).then(
-            () => toggleHidden($note.text('(copied)'), false),
-            () => toggleHidden($note.text('(failed)'), false),
+            () => toggleHidden($note.text(COPIED_NOTE), false),
+            () => toggleHidden($note.text(FAILED_NOTE), false),
         );
         return true;
     }
@@ -738,16 +756,16 @@ export class MathDetectiveApi extends Api {
         // ... encoded using base64. In the worst case this encoding can cause
         // the binary body to be inflated up to 4/3 its original size.
         if (MAX_SIZE && ((3 * image.length) > (4 * MAX_SIZE))) {
-            this.error = 'API only accepts images <= 5 megabytes';
+            this.error = SIZE_LIMIT;
         } else if (isMissing((data = encodeImageOrUrl(image)))) {
-            this.error = 'No image data supplied';
+            this.error = NO_DATA;
         }
         const cb = callback || this._on_fetch;
         if (this.error) {
-            this._showStatus('FAILED');
+            this._showStatus(STATUS.failed);
             cb?.(this);
         } else {
-            this._showStatus('SUBMITTING');
+            this._showStatus(STATUS.submitting);
             /** @type {MD_ImageProcessingRequest} */
             const params = { name: name, url: data };
             const api_cb = (...a) => this._submitImageOnComplete(...a, cb);
@@ -763,11 +781,11 @@ export class MathDetectiveApi extends Api {
     fetchImage(callback) {
         const cb = callback || this._on_fetch;
         if (isMissing(this.handle)) {
-            this._showStatus('FAILED');
-            this.error = 'Missing request identifier to check';
+            this._showStatus(STATUS.failed);
+            this.error = NO_REQ;
             cb?.(this);
         } else {
-            this._showStatus('FETCHING');
+            this._showStatus(STATUS.fetching);
             const api_cb = (...a) => this._fetchImageOnComplete(...a, cb);
             this.get(`${MD_IMAGE_PATH}/${this.handle}`, undefined, api_cb);
         }
@@ -817,7 +835,7 @@ export class MathDetectiveApi extends Api {
                 this._retryTimer = setTimeout(next_cycle, this._recheck);
             } else {
                 this.#clearRetryTimer();
-                this._showStatus('TIMEOUT');
+                this._showStatus(STATUS.timeout);
                 cb?.(this);
             }
         }
@@ -878,26 +896,26 @@ export class MathDetectiveApi extends Api {
 
             case HTTP.bad_request:          // NOTE: [4]
             case HTTP.forbidden:
-                this.md_status    = this.result.error  || 'ERROR';
-                warn = this.error = this._errorMessage || 'unknown error';
+                this.md_status    = this.result.error  || ERROR;
+                warn = this.error = this._errorMessage || UNKNOWN;
                 break;
 
             case HTTP.not_found:            // NOTE: only for _fetchImage
-                this.md_status    = this.result.error  || 'ERROR';
+                this.md_status    = this.result.error  || ERROR;
                 warn = this.error = this._errorMessage ||
-                    `could not find item ${this.handle}`;
+                    `${NO_ITEM} ${this.handle}`;
                 break;
 
             case HTTP.payload_too_large:    // NOTE: only for _submitImage
             case HTTP.bad_gateway:          // NOTE: only for _submitImage
-                this.md_status    = this.result.error  || 'ERROR';
-                warn = this.error = 'API limited to images <= 5 MB';
+                this.md_status    = this.result.error  || ERROR;
+                warn = this.error = SIZE_LIMIT;
                 break;
 
             default:
-                this.md_status    = this.result.error  || 'FATAL';
+                this.md_status    = this.result.error  || FATAL;
                 err = this.error  = this._errorMessage ||
-                    `unexpected HTTP ${xhr_status}`;
+                    `${BAD_HTTP} ${xhr_status}`;
                 break;
         }
         warn && console.log(`${func}: WARNING: ${warn}`);
@@ -917,7 +935,7 @@ export class MathDetectiveApi extends Api {
             this.md_status = value;
         }
         const cb = callback || this._on_status;
-        cb?.(this.md_status || 'INITIALIZING');
+        cb?.(this.md_status || STATUS.initializing);
     }
 
     // ========================================================================

@@ -10,6 +10,7 @@ import { appTeardown }                    from '../application/setup';
 import { LookupChannel }                  from '../channels/lookup-channel';
 import { toggleVisibility }               from './accessibility';
 import { arrayWrap }                      from './arrays';
+import { Emma }                           from './assets';
 import { selector, toggleHidden }         from './css';
 import { turnOffAutocomplete }            from './form';
 import { HTML_BREAK }                     from './html';
@@ -18,7 +19,7 @@ import { LookupRequest }                  from './lookup-request';
 import { ModalDialog }                    from './modal-dialog';
 import { ModalHideHooks, ModalShowHooks } from './modal_hooks';
 import { randomizeName }                  from './random';
-import { camelCase }                      from './strings';
+import { camelCase, capitalize }          from './strings';
 import {
     isDefined,
     isEmpty,
@@ -51,6 +52,21 @@ AppDebug.file('shared/lookup-modal', MODULE, DEBUG);
 
 export const LOOKUP_BUTTON_CLASS = 'lookup-button';
 export const LOOKUP_BUTTON       = selector(LOOKUP_BUTTON_CLASS);
+
+const COLUMN = deepFreeze({
+    selection:              Emma.Messages.lookup.column.selection,
+    tag:                    Emma.Messages.lookup.column.tag,
+    dc_identifier:          Emma.Messages.lookup.column.dc_identifier,
+    dc_title:               Emma.Messages.lookup.column.dc_title,
+    dc_creator:             Emma.Messages.lookup.column.dc_creator,
+    dc_publisher:           Emma.Messages.lookup.column.dc_publisher,
+    emma_publicationDate:   Emma.Messages.lookup.column.emma_publicationDate,
+    dcterms_dateCopyright:  Emma.Messages.lookup.column.dcterms_dateCopyright,
+    dc_description:         Emma.Messages.lookup.column.dc_description,
+});
+
+const LOCK_TIP   = Emma.Messages.lookup.lock.tooltip;
+const UNLOCK_TIP = Emma.Messages.lookup.unlock.tooltip;
 
 // ============================================================================
 // Class LookupModal
@@ -212,16 +228,16 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {Object.<string, {label: string, non_data?: boolean}>}
      */
-    static ENTRY_TABLE = deepFreeze({ // TODO: I18n
-        selection:              { label: 'USE',  non_data: true },
-        tag:                    { label: 'FROM', non_data: true },
-        dc_identifier:          { label: 'IDENTIFIER' },
-        dc_title:               { label: 'TITLE' },
-        dc_creator:             { label: 'AUTHOR/CREATOR' },
-        dc_publisher:           { label: 'PUBLISHER' },
-        emma_publicationDate:   { label: 'DATE' },
-        dcterms_dateCopyright:  { label: 'YEAR' },
-        dc_description:         { label: 'DESCRIPTION' },
+    static ENTRY_TABLE = deepFreeze({
+        selection:              { label: COLUMN.selection,  non_data: true },
+        tag:                    { label: COLUMN.tag,        non_data: true },
+        dc_identifier:          { label: COLUMN.dc_identifier },
+        dc_title:               { label: COLUMN.dc_title },
+        dc_creator:             { label: COLUMN.dc_creator },
+        dc_publisher:           { label: COLUMN.dc_publisher },
+        emma_publicationDate:   { label: COLUMN.emma_publicationDate },
+        dcterms_dateCopyright:  { label: COLUMN.dcterms_dateCopyright },
+        dc_description:         { label: COLUMN.dc_description },
     });
 
     /**
@@ -1461,21 +1477,16 @@ export class LookupModal extends ModalDialog {
      */
     lockFieldValue(field, locking) {
         this._debug('lockFieldValue:', field, locking);
-        const $cell  = this.fieldValueCell(field);
-        const $lock  = this.lockFor($cell);
-        const $state = $lock.parent().find('.state');
-        const name   = $state.attr('data-name');
-        const locked = (locking !== false);
-        const status = locked ? 'locked' : 'unlocked';
-        let tooltip;
-        if (locked) {
-            tooltip = 'Click to allow this data field to be replaceable'; // TODO: I18n
-        } else {
-            tooltip = 'Click to prevent this data field from being replaced'; // TODO: I18n
-        }
+        const $cell   = this.fieldValueCell(field);
+        const $lock   = this.lockFor($cell);
+        const $state  = $lock.parent().find('.state');
+        const name    = $state.attr('data-name');
+        const locked  = (locking !== false);
+        const status  = locked ? 'locked' : 'unlocked';
+        const tooltip = locked ? UNLOCK_TIP : LOCK_TIP;
         $cell.data(this.FIELD_LOCKED_DATA, locked);
         $lock.attr('title', tooltip);
-        $state.text(`${name} field is ${status}`); // TODO: I18n
+        $state.text(`${name} ${Emma.Messages.lookup.field_is} ${status}`);
     }
 
     /**
@@ -1987,7 +1998,7 @@ export class LookupModal extends ModalDialog {
      */
     makeOriginalValuesEntry(row) {
         const func = 'makeOriginalValuesEntry';
-        const tag  = 'ORIGINAL'; // TODO: I18n
+        const tag  = Emma.Messages.original.toUpperCase();
         const css  = this.constructor.ORIG_VALUES_CLASS;
         this.originalValuesEntry = this.makeResultEntry(row, tag, css);
         return this.refreshOriginalValuesEntry(func);
@@ -2005,7 +2016,7 @@ export class LookupModal extends ModalDialog {
     makeResultEntry(row, tag, css_class) {
         const css    = css_class || this.constructor.RESULT_CLASS;
         const fields = this.DATA_COLUMNS;
-        const label  = tag || 'Result'; // TODO: I18n
+        const label  = tag || capitalize(Emma.Messages.result);
         const $radio = this.makeSelectColumn();
         const $label = this.makeTagColumn(label);
         const values = fields.map(field => this.makeDataColumn(field));

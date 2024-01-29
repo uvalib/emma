@@ -16,6 +16,7 @@ import { LookupModal }                     from '../shared/lookup-modal';
 import { LookupRequest }                   from '../shared/lookup-request';
 import { ModalHideHooks, ModalShowHooks }  from '../shared/modal_hooks';
 import { randomizeName }                   from '../shared/random';
+import { pluralize }                       from '../shared/strings';
 import { timestamp }                       from '../shared/time';
 import { asParams, cancelAction, makeUrl } from '../shared/url';
 import {
@@ -407,6 +408,10 @@ appSetup(MODULE, function() {
     const PAGE_ATTRIBUTES = pageAttributes();
     const PAGE_PROPERTIES = PAGE_ATTRIBUTES.properties;
 
+    const SUCCESS         = Emma.Messages.form.success;
+    const NO_LOOKUP       = Emma.Messages.form.no_lookup;
+    const NOT_CHANGEABLE  = Emma.Messages.form.unchangeable;
+
     // ========================================================================
     // Variables
     // ========================================================================
@@ -730,7 +735,7 @@ appSetup(MODULE, function() {
             } else if (isEmpty(data)) {
                 OUT.error(`${func}: no items present in response data`);
             } else {
-                flashMessage('Changes saved.', { refocus: $button });
+                flashMessage(SUCCESS, { refocus: $button });
                 updateRowValues(data);
                 refreshEditForm();
             }
@@ -1346,7 +1351,7 @@ appSetup(MODULE, function() {
 
                 let tooltip = '';
                 if (err) {
-                    const tag = 'ERROR'; // TODO: I18n
+                    const tag = Emma.Messages.error.toUpperCase();
                     let parts;
                     if (isObject(err)) {
                         parts = Object.entries(err);
@@ -1624,10 +1629,7 @@ appSetup(MODULE, function() {
             new_was_forbidden = !old_was_forbidden;
         }
 
-        const tooltip = (action === 'lookup') && now_forbidden && (
-            "Bibliographic metadata is inherited from\n" + // TODO: I18n
-            'the original repository entry.'
-        );
+        const tooltip = (action === 'lookup') && now_forbidden && NO_LOOKUP;
         $button.attr('title', (tooltip || config.tooltip || ''));
 
         $button.prop('disabled', now_disabled);
@@ -2201,7 +2203,7 @@ appSetup(MODULE, function() {
             if (check_only || halted) { return undefined }
 
             const func  = 'onLookupComplete';
-            let message = 'No fields changed.'; // TODO: I18n
+            let message = Emma.Messages.lookup.no_changes;
             const data  = getFieldResultsData($row);
 
             if (isPresent(data)) {
@@ -2220,13 +2222,12 @@ appSetup(MODULE, function() {
                     }
                 }
                 message = $.map(compact(updates), (fields, update_type) => {
-                    const s     = (fields.length === 1) ? '' : 's';
-                    const label = `${update_type} item${s}`; // TODO: I18n
-                    const names = dataFields($cells, fields)
-                        .toArray()
-                        .map(c => $(c).find('.label .text').text())
-                        .sort()
-                        .join(', ');
+                    const items = pluralize(Emma.Messages.item, fields.length);
+                    const label = `${update_type} ${items}`;
+                    const cells = dataFields($cells, fields).toArray();
+                    const names = cells.map(cell =>
+                        $(cell).find('.label .text').text()
+                    ).sort().join(', ');
                     const type  = `<span class="type">${label}:</span>`;
                     const list  = `<span class="list">${names}.</span>`;
                     return `${type} ${list}`;
@@ -5830,13 +5831,6 @@ appSetup(MODULE, function() {
     const OFFLINE_DATA = 'offline';
 
     /**
-     * Appended to tooltips when the server is offline. // TODO: I18n
-     *
-     * @type {string}
-     */
-    const NOT_CHANGEABLE = 'NOT CHANGEABLE WHILE THE SERVER IS OFFLINE';
-
-    /**
      * Indicate whether the EMMA server appears to be available.
      *
      * @returns {boolean}
@@ -5937,7 +5931,7 @@ appSetup(MODULE, function() {
      */
     function onCommStatus(online) {
         const offline = !online;
-        const error   = offline && isOnline() && 'EMMA is offline'; // TODO: I18n
+        const error   = offline && isOnline() && Emma.Messages.status.offline;
         if (error) { flashError(error) }
         setOffline(offline);
     }

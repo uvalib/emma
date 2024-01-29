@@ -5,6 +5,7 @@ import { AppDebug }                        from '../application/debug';
 import { appSetup }                        from '../application/setup';
 import { handleClickAndKeypress }          from '../shared/accessibility';
 import { arrayWrap }                       from '../shared/arrays';
+import { Emma }                            from '../shared/assets';
 import { selector }                        from '../shared/css';
 import { selfOrParent }                    from '../shared/html';
 import { fromJSON, toObject }              from '../shared/objects';
@@ -97,11 +98,7 @@ appSetup(MODULE, function() {
      *
      * @type {Object.<SortDirection,string>}
      */
-    const SORT = {
-        none:       'Unsorted; click to sort on this column',
-        ascending:  'Sorted; click to reverse-sort on this column',
-        descending: 'Reverse-sorted; click to stop sorting on this column',
-    };
+    const SORT = Emma.Messages.table.sort;
 
     /**
      *  Sorting strategies.

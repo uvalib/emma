@@ -3,6 +3,7 @@
 
 import { AppDebug }                   from '../application/debug';
 import { Api }                        from './api';
+import { Emma }                       from './assets';
 import { pageAction, pageAttributes } from './controller';
 import { isMissing }                  from './definitions';
 import { flashError, flashMessage }   from './flash';
@@ -327,7 +328,7 @@ export function serverSend(ctr_act, send_options) {
         if (!err && !warn && !offline) {
             cb_ok?.(result, warn, err, xhr);
         } else if (offline && !cb_comm) {
-            err = 'EMMA is offline'; // TODO: I18n
+            err = Emma.Messages.status.offline;
         }
         if (err || warn) {
             if (!offline || !cb_comm) {

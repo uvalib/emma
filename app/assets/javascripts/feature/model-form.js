@@ -63,6 +63,8 @@ import {
 import {
     asString,
     camelCase,
+    capitalize,
+    pluralize,
     singularize,
 } from '../shared/strings';
 import {
@@ -541,6 +543,11 @@ appSetup(MODULE, function() {
      */
     const FORM_STATE_DATA = 'formState';
 
+    const CREATE  = Emma.Messages.form.action.create;
+    const CREATED = Emma.Messages.form.action.created;
+    const UPDATE  = Emma.Messages.form.action.update;
+    const UPDATED = Emma.Messages.form.action.updated;
+
     // ========================================================================
     // Constants - field validation
     // ========================================================================
@@ -657,7 +664,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const TMP_LINE_TEXT = 'Uploading...'; // TODO: I18n
+    const TMP_LINE_TEXT = Emma.Messages.uploader.placeholder;
 
     // ========================================================================
     // Functions - Uploader
@@ -1004,7 +1011,7 @@ appSetup(MODULE, function() {
         const $label   = bulkOpResultsLabel($results);
         $results.removeClass(OLD_DATA_MARKER).empty();
         addBulkOpResult($results, TMP_LINE_TEXT, TMP_LINE_CLASS);
-        $label.text('Upload results:'); // TODO: I18n
+        $label.text(Emma.Messages.uploader.results + ':');
         toggleHidden($label,   false);
         toggleHidden($results, false);
 
@@ -2413,7 +2420,7 @@ appSetup(MODULE, function() {
         let valid, notes, min, max;
 
         if (isEmpty(value)) {
-            notes = 'empty value';
+            notes = Emma.Messages.field.validation.empty;
             valid = undefined;
 
         } else if (typeof entry === 'string') {
@@ -2437,11 +2444,11 @@ appSetup(MODULE, function() {
             }
 
         } else if ((min = $input.attr('minlength')) && (value.length < min)) {
-            notes = 'Not enough characters.'; // TODO: I18n
+            notes = Emma.Messages.field.validation.too_small;
             valid = false;
 
         } else if ((max = $input.attr('maxlength')) && (value.length > max)) {
-            notes = 'Too many characters.'; // TODO: I18n
+            notes = Emma.Messages.field.validation.too_big;
             valid = false;
 
         } else {
@@ -2535,7 +2542,7 @@ appSetup(MODULE, function() {
          */
         function onError(xhr, status, message) {
             if (xhr.status === HTTP.unauthorized) {
-                error = 'Could not contact server for validation'; // TODO: I18n
+                error = Emma.Messages.field.validation.no_server;
             } else {
                 error = `${status}: ${xhr.status} ${message}`;
             }
@@ -2671,7 +2678,7 @@ appSetup(MODULE, function() {
         // updated.
 
         if (isUpdateForm($form) && $menu.val() && !$menu.is(FIXED)) {
-            const note = 'This cannot be changed for an existing EMMA entry'; // TODO: I18n
+            const note = Emma.Messages.field.readonly;
             seal($menu, true).attr('title', note);
             return;
         }
@@ -2758,12 +2765,16 @@ appSetup(MODULE, function() {
             const title_id = parent.emma_titleId;
             const mismatch = list.filter(e => (e.emma_titleId !== title_id));
             if (isPresent(mismatch)) {
-                const one     = (mismatch.length === 1);
-                const many    = one ? 'One'     : mismatch.length.toString();
-                const results = one ? 'result'  : 'results';
-                const match   = one ? 'matches' : 'match';
+                const count   = mismatch.length;
+                const one     = (count === 1);
+                const many    = one ? capitalize(Emma.Messages.one) : count;
+                const other   = `${Emma.Messages.other} ${Emma.Messages.EMMA}`;
+                const results = pluralize(Emma.Messages.result, count);
+                const from    = Emma.Messages.from;
+                const also    = Emma.Messages.also;
+                const match   = pluralize(Emma.Messages.match, one);
                 flashMessage(
-                    `${many} other EMMA ${results} from ${repo} also ${match}`
+                    [many, other, results, from, repo, also, match].join(' ')
                 );
                 const warn = (label, entry) => {
                     const id = entry.emma_titleId;
@@ -3218,7 +3229,7 @@ appSetup(MODULE, function() {
         if (check_only || halted) { return undefined }
 
         const $form = formElement();
-        let message = 'No fields changed.'; // TODO: I18n
+        let message = Emma.Messages.lookup.no_changes;
         const data  = getFieldResultsData($toggle);
 
         if (isPresent(data)) {
@@ -3232,10 +3243,10 @@ appSetup(MODULE, function() {
                     updates.Added.push(field);
                 }
             }
-            message = $.map(compact(updates), (keys, update_type) => {
-                const s      = (keys.length === 1) ? '' : 's';
-                const label  = `${update_type} item${s}`; // TODO: I18n
-                const attrs  = keys.map(fld => `[name="${fld}"]`).join(', ');
+            message = $.map(compact(updates), (fields, update_type) => {
+                const items  = pluralize(Emma.Messages.item, fields.length);
+                const label  = `${update_type} ${items}`;
+                const attrs  = fields.map(fld => `[name="${fld}"]`).join(', ');
                 const inputs = $form.find(attrs).toArray();
                 const names  = inputs.map(input =>
                     fieldLabel(input).children('.text').text()
@@ -3299,15 +3310,14 @@ appSetup(MODULE, function() {
         const $button = lookupButton(form);
         $button.prop('disabled', true);
         $button.addClass('disabled');
-        let tip;
+        let tooltip;
         if (forbid) {
             $button.addClass('forbidden');
-            tip = "Bibliographic metadata is inherited from\n" + // TODO: I18n
-                  'the original repository entry.';
+            tooltip = Emma.Messages.form.no_lookup;
         } else {
-            tip = Emma.Lookup.if_disabled.tooltip;
+            tooltip = Emma.Lookup.if_disabled.tooltip;
         }
-        $button.attr('title', tip);
+        $button.attr('title', tooltip);
         return $button;
     }
 
@@ -3960,12 +3970,13 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} xhr
          */
         function onCreateSuccess(data, status, xhr) {
-            const func  = 'onCreateSuccess';
-            const flash = compact(extractFlashMessage(xhr));
-            const entry = (flash.length > 1) ? 'entries' : 'entry'; // TODO: I18n
-            let message = `EMMA ${entry} ${termActionOccurred()}`;  // TODO: I18n
+            const func   = 'onCreateSuccess';
+            const flash  = compact(extractFlashMessage(xhr));
+            const entry  = pluralize(Emma.Messages.entry, flash.length);
+            const action = termActionOccurred();
+            let message  = `${Emma.Messages.EMMA} ${entry} ${action}`;
             if (isPresent(flash)) {
-                message += ' for: ' + flash.join(', ');
+                message += ` ${Emma.Messages.for}: ` + flash.join(', ');
             }
             OUT.debug(`${func}:`, message);
             showFlashMessage(message);
@@ -3985,8 +3996,8 @@ appSetup(MODULE, function() {
         function onCreateError(xhr, status, error) {
             const func   = 'onCreateError';
             const flash  = compact(extractFlashMessage(xhr));
-            const action = termAction($form).toUpperCase();
-            let message  = `${action} ERROR:`; // TODO: I18n
+            const action = termAction($form);
+            let message  = `${action} ${Emma.Messages.error}:`.toUpperCase();
             if (flash.length > 1) {
                 message += "\n" + flash.join("\n");
             } else if (flash.length === 1) {
@@ -4540,7 +4551,7 @@ appSetup(MODULE, function() {
      */
     function requireFormCancellation(form) {
         const $form   = formElement(form);
-        const message = 'Cancel this submission before retrying'; // TODO: I18n
+        const message = Emma.Messages.form.cancel_first;
         const tooltip = { 'title': message };
         uploader?.cancel();
         uploader?.disableFileSelectButton();
@@ -4624,7 +4635,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function termAction(form) {
-        return isUpdateForm(form) ? 'update' : 'create'; // TODO: I18n
+        return isUpdateForm(form) ? UPDATE : CREATE;
     }
 
     /**
@@ -4635,7 +4646,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function termActionOccurred(form) {
-        return isUpdateForm(form) ? 'updated' : 'created'; // TODO: I18n
+        return isUpdateForm(form) ? UPDATED : CREATED;
     }
 
     /**

@@ -505,7 +505,8 @@ appSetup(MODULE, function() {
               $filter_sb = $controls.find(SEARCH_BUTTON);
         if (isMissing($search_button.filter(':visible'))) {
             if (!$search_button.attr('value')) {
-                $search_button.attr('value', 'Search'); // TODO: I18n
+                const label = Emma.Messages.search_bar.button.label;
+                $search_button.attr('value', label);
                 $search_button.css('row-gap', '0.5rem');
             }
             toggleHidden($filter_sb, false).toggleClass('visible', true);
@@ -1405,7 +1406,7 @@ appSetup(MODULE, function() {
      * @see file:node_modules/select2/src/js/select2/i18n/en.js
      */
     function select2Language() {
-        const text = { // TODO: I18n
+        const text = {
           //errorLoading:    'The results could not be loaded.',
           //inputTooLong:    'Please delete {n} character',
           //inputTooShort:   'Please enter {n} or more characters',
@@ -1413,7 +1414,7 @@ appSetup(MODULE, function() {
           //maximumSelected: 'You can only select {n} item',
           //noResults:       'No results found',
           //searching:       'Searching…',
-            removeAllItems:  'Remove all selected values',
+            removeAllItems:  Emma.Messages.search_filters.remove_all,
         };
         const translations = {};
         for (const [name, value] of Object.entries(text)) {

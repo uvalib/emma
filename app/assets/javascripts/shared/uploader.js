@@ -185,7 +185,7 @@ const MESSAGE_DURATION = 30 * SECONDS;
  * @readonly
  * @type {string}
  */
-const UPLOAD_ERROR_MESSAGE = 'FILE UPLOAD ERROR'; // TODO: I18n
+const UPLOAD_ERROR_MESSAGE = Emma.Messages.uploader.error;
 
 const UPLOADER_CLASS        = 'file-uploader';
 const UPPY_ROOT_CLASS       = 'uppy-Root';
@@ -206,6 +206,10 @@ export const INFORMER       = selector(INFORMER_CLASS);
 export const PROGRESS_BAR   = selector(PROGRESS_BAR_CLASS);
 export const FILE_NAME      = selector(FILE_NAME_CLASS);
 export const UPLOADED_NAME  = selector(UPLOADED_NAME_CLASS);
+
+const STATE     = Emma.Messages.uploader.state;
+const PAUSED    = Emma.Messages.uploader.paused.toUpperCase();
+const RESUMED   = Emma.Messages.uploader.resumed.toUpperCase();
 
 // ============================================================================
 // Class BaseUploader
@@ -898,47 +902,47 @@ class BaseUploader extends BaseClass {
         // noinspection JSCheckFunctionSignatures
         uppy.on((event = 'upload-started'), function(file) {
             warn(event, file);
-            // noinspection JSUnresolvedReference
-            show_info(`Uploading "${file.name || file}"`); // TODO: I18n
+            const name = file.name || file;
+            show_info(`${STATE.uploading} "${name}"`);
         });
 
         // noinspection JSCheckFunctionSignatures
         uppy.on((event = 'upload-pause'), function(file_id, is_paused) {
             debug(event, file_id, is_paused);
             if (is_paused) {
-                show_info('PAUSED');   // TODO: I18n
+                show_info(PAUSED);
             } else {
-                show_popup('RESUMED'); // TODO: I18n
+                show_popup(RESUMED);
             }
         });
 
         uppy.on((event = 'upload-retry'), function(file_id) {
             debug(event, file_id);
-            show_warn('Retrying...'); // TODO: I18n
+            show_warn(`${STATE.retrying}...`);
         });
 
         uppy.on((event = 'retry-all'), function(files) {
             debug(event, files);
             const count   = files ? files.length : 0;
             const uploads = (count === 1) ? 'upload' : `${count} uploads`;
-            show_warn(`Retrying ${uploads}...`); // TODO: I18n
+            show_warn(`${STATE.retrying} ${uploads}...`);
         });
 
         // noinspection JSCheckFunctionSignatures
         uppy.on((event = 'pause-all'), function() {
             debug(event);
-            show_info('Uploading PAUSED'); // TODO: I18n
+            show_info(STATE.paused);
         });
 
         uppy.on((event = 'cancel-all'), function() {
             debug(event);
-            show_warn('Uploading CANCELED'); // TODO: I18n
+            show_warn(STATE.canceled);
         });
 
         // noinspection JSCheckFunctionSignatures
         uppy.on((event = 'resume-all'), function() {
             debug(event);
-            show_warn('Uploading RESUMED'); // TODO: I18n
+            show_warn(STATE.resumed);
         });
 
         uppy.on((event = 'restriction-failed'), function(file, msg) {

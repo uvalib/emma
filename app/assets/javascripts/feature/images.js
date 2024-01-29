@@ -129,7 +129,7 @@ appSetup(MODULE, function() {
             const $container = $img.parent();
             if ($img.is(PLACEHOLDER)) {
                 toggleHidden($img, true);
-                $img.attr('alt', 'Downloading...'); // TODO: I18n
+                $img.attr('alt', Emma.Download.progress.image.alt);
             } else {
                 $container.empty();
             }
