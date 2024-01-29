@@ -170,7 +170,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $record_lines = $record_list.children(`.number, .${MODEL}-list-item`);
+    const $record_lines = $record_list.children(`.number, .${MODEL}-list-item`)
 
     /**
      * The record list elements that are shown when there are no records.

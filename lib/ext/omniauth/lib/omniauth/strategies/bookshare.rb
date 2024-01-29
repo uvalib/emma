@@ -579,7 +579,7 @@ module OmniAuth
       #++
       #
       # @overload synthetic_auth_hash(uid, token = nil)
-      #   @param [String, User] uid     Bookshare user identity (email address).
+      #   @param [String, User] uid     Bookshare user identity (email address)
       #   @param [String]       token   Default from #stored_auth.
       #
       # @overload synthetic_auth_hash(auth_hash)

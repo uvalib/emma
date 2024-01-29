@@ -423,7 +423,6 @@ class ManifestItemDecorator < BaseDecorator
       idx  = opt[:'aria-colindex']
       l_id = opt[:'aria-labelledby'] = unique_id(*opt[:css], index: idx)
       prop = opt[:prop] ||= field_configuration(col)
-      # noinspection RailsParamDefResolve
       unless prop[:pairs] || (pairs = prop[:type].try(:pairs)).blank?
         prop = prop.merge(pairs: pairs)
         opt[:prop] = opt[:prop].merge(pairs: pairs.to_json)
@@ -752,7 +751,13 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_ctls(ctrl = nil, col: nil, tag: nil, css: '.controls', **opt)
+    def submit_status_ctls(
+      ctrl =  nil,
+      col:    nil,
+      tag:    nil,
+      css:    '.controls',
+      **opt
+    )
       table = for_html_table?(tag)
       head  = opt[:role].to_s.include?('header')
       tag   = head ? :th : :td if table
@@ -832,7 +837,15 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    def submit_status_value(type, status, col:, row: nil, tag: nil, css: '.status', **opt)
+    def submit_status_value(
+      type,
+      status,
+      col:,
+      row:  nil,
+      tag:  nil,
+      css:  '.status',
+      **opt
+    )
       table  = for_html_table?(tag)
       head   = opt[:role].to_s.include?('header') || !respond_to?(:object)
       tag    = head ? :th : :td if table

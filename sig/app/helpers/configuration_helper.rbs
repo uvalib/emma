@@ -58,6 +58,8 @@ module ConfigurationHelper
   # @param [Boolean]             fatal    If *true* then raise exceptions.
   # @param [Hash]                opt      To #config_interpolations except:
   #
+  # @option opt [Integer]                 :count
+  # @option opt [String]                  :unit
   # @option opt [String, Symbol, Boolean] :mode
   # @option opt [Boolean]                 :one
   # @option opt [Boolean]                 :many

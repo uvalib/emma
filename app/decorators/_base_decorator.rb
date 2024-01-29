@@ -898,6 +898,7 @@ class BaseDecorator
 
   # @private
   def self.map_warn(map, key, meth)
+    return if key == User # NOTE: will already be set to AccountDecorator.
     Log.warn("#{meth}: #{map}[#{key}]: already set to #{map.get(key)}")
   end
 

@@ -9,6 +9,8 @@ module SerializationConcern
 
   include ApiConcern
 
+  include PaginationConcern
+
   # Render an item in JSON format.
   #
   # @param [*]    item

@@ -132,11 +132,13 @@ module BaseDecorator::Pagination
 
   # Page count along with the page number when appropriate.
   #
+  # @param [Array,   nil] list        Page items.
   # @param [Integer, nil] count       Default: *list* size.
   # @param [Integer, nil] total       Default: `paginator.total_items`.
   # @param [Integer, nil] records     Default: `paginator.record_count`.
   # @param [Integer, nil] page        Default: `paginator.page_number`.
   # @param [Integer, nil] size        Default: `paginator.page_size`.
+  # @param [String,  nil] unit        Name for one page item.
   # @param [String]       css         Characteristic CSS class/selector.
   # @param [Hash]         opt         Passed to the outer div.
   #
@@ -146,12 +148,12 @@ module BaseDecorator::Pagination
   # noinspection RubyMismatchedArgumentType
   #++
   def page_count_and_number(
+    list:    nil,
     count:   nil,
     total:   nil,
     records: nil,
     page:    nil,
     size:    nil,
-    list:    nil,
     unit:    nil,
     css:    '.counts',
     **opt
@@ -196,7 +198,7 @@ module BaseDecorator::Pagination
   #
   # @param [Integer, nil] count
   # @param [Integer, nil] total
-  # @param [String]       unit
+  # @param [String,  nil] unit        Name for one page item.
   # @param [String]       css         Characteristic CSS class/selector.
   # @param [Hash]         opt         Options to .search-count wrapper.
   #
@@ -281,6 +283,7 @@ module BaseDecorator::Pagination
   # @param [Hash] opt               Passed to #config_lookup
   #
   # @option opt [Integer] :count
+  # @option opt [String]  :unit
   #
   # @return [String]                The specified value.
   # @return [nil]                   No non-empty value was found.

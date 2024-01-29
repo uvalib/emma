@@ -64,7 +64,13 @@ module EmmaHelper
   #
   # @return [String]
   #
-  def emma_partner_list(type = nil, mode: :long, separator: ',', final: 'and', **)
+  def emma_partner_list(
+    type =      nil,
+    mode:       :long,
+    separator:  ',',
+    final:      'and',
+    **
+  )
     list =
       emma_partners(type).map { |key, partner|
         name = partner&.dig(:name) || partner&.dig(:tag) || key.to_s.upcase

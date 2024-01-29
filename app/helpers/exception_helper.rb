@@ -31,17 +31,17 @@ module ExceptionHelper
       next if model.start_with?('_') || !model_entry.is_a?(Hash)
       entry = model_entry.select { |_, error_entry| error_entry.is_a?(Hash) }
       next if entry.blank?
-      inter = model_entry.except(*entry.keys)
-      inter = inter.map { |k, v| [k.to_sym, v] if (k = k.to_s.sub!(/^_/, '')) }
-      inter = inter.compact.to_h
+      value = model_entry.except(*entry.keys)
+      value = value.map { |k, v| [k.to_sym, v] if (k = k.to_s.sub!(/^_/, '')) }
+      value = value.compact.to_h
       entry =
         entry.transform_values { |properties|
           m, e = properties.values_at(:message, :error)
+          m = interpolate_named_references(m, value) if value.present?
           e = e.to_s             if e.is_a?(Symbol)
           e = "Net::#{e}"        if e.is_a?(String) && !e.include?('::')
           e = e.safe_constantize if e.is_a?(String)
           e = e.exception_type   if e.respond_to?(:exception_type)
-          m = interpolate_named_references(m, inter) if inter.present?
           [m, e]
         }.compact
       [model, entry]

@@ -24,39 +24,6 @@ en:
           staging:      ENV[SERVICE_INGEST_STAGING]
           qa:           ENV[SERVICE_INGEST_QA]
 
-      search:
-        name:           'EMMA Unified Search service'
-        endpoint:       # @see SearchService::Properties#engines
-          production:   ENV[SERVICE_SEARCH_PRODUCTION]
-          staging:      ENV[SERVICE_SEARCH_STAGING]
-          qa:           ENV[SERVICE_SEARCH_QA]
-
-      submission:
-        name:           'Batch submission service'
-
-        _template:      &SUBMISSION_SUB_SERVICE
-          name:         ~   # Short name for the service.
-          batch_size:   6   # @see SubmissionService::DEF_BATCH
-          batch_min:    2   # @see SubmissionService::MIN_BATCH
-          batch_max:    ~   # @see SubmissionService::MAX_BATCH
-          slice_size:   ~   # @see SubmissionService::DEF_SLICE
-          slice_min:    ~   # @see SubmissionService::MIN_SLICE
-          slice_max:    ~   # @see SubmissionService::MAX_SLICE
-          priority:     100 # high = 1; medium = 10; low = 100
-          timeout:      5   # seconds per item
-
-        db:
-          <<:           *SUBMISSION_SUB_SERVICE
-          name:         'Batch submission database sub-service'
-
-        aws_s3:
-          <<:           *SUBMISSION_SUB_SERVICE
-          name:         'Batch submission storage sub-service'
-
-        ingest:
-          <<:           *SUBMISSION_SUB_SERVICE
-          name:         'Batch submission indexing sub-service'
-
       lookup:
 
         _template:      &LOOKUP_SERVICE
@@ -127,3 +94,36 @@ en:
           types:        [isbn, oclc, lccn]
           priority:     1
           enabled:      false
+
+      search:
+        name:           'EMMA Unified Search service'
+        endpoint:       # @see SearchService::Properties#engines
+          production:   ENV[SERVICE_SEARCH_PRODUCTION]
+          staging:      ENV[SERVICE_SEARCH_STAGING]
+          qa:           ENV[SERVICE_SEARCH_QA]
+
+      submission:
+        name:           'Batch submission service'
+
+        _template:      &SUBMISSION_SUB_SERVICE
+          name:         ~   # Short name for the service.
+          batch_size:   6   # @see SubmissionService::DEF_BATCH
+          batch_min:    2   # @see SubmissionService::MIN_BATCH
+          batch_max:    ~   # @see SubmissionService::MAX_BATCH
+          slice_size:   ~   # @see SubmissionService::DEF_SLICE
+          slice_min:    ~   # @see SubmissionService::MIN_SLICE
+          slice_max:    ~   # @see SubmissionService::MAX_SLICE
+          priority:     100 # high = 1; medium = 10; low = 100
+          timeout:      5   # seconds per item
+
+        db:
+          <<:           *SUBMISSION_SUB_SERVICE
+          name:         'Batch submission database sub-service'
+
+        aws_s3:
+          <<:           *SUBMISSION_SUB_SERVICE
+          name:         'Batch submission storage sub-service'
+
+        ingest:
+          <<:           *SUBMISSION_SUB_SERVICE
+          name:         'Batch submission indexing sub-service'

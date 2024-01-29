@@ -268,6 +268,7 @@ module Record::EmmaIdentification
     return item if item.nil? || item.is_a?(record_class)
     meth  ||= __method__
     record  = error = id = sid = nil
+
     id_key  = opt.key?(:id_key)  ? opt[:id_key]  : id_column
     sid_key = opt.key?(:sid_key) ? opt[:sid_key] : sid_column
     if id_key || sid_key
@@ -301,6 +302,7 @@ module Record::EmmaIdentification
     else
       error = "#{record_name}: both :id_key and :sid_key set to nil"
     end
+
     if record
       record
     elsif !id && !sid

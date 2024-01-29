@@ -214,12 +214,12 @@ module BaseDecorator::List
     end
 
     # Adjust field properties.
-    type    = prop[:type]
-    cls     = type.is_a?(Class)
-    enum    = cls && (type < EnumType)
-    model   = cls && (type < Model)
-    no_fmt  = [no_fmt]               if no_fmt.is_a?(Symbol)
-    no_fmt  = no_fmt.include?(field) if no_fmt.is_a?(Array)
+    type   = prop[:type]
+    cls    = type.is_a?(Class)
+    enum   = cls && (type < EnumType)
+    model  = cls && (type < Model)
+    no_fmt = [no_fmt]               if no_fmt.is_a?(Symbol)
+    no_fmt = no_fmt.include?(field) if no_fmt.is_a?(Array)
     if Array.wrap(value).first.is_a?(ActiveSupport::SafeBuffer)
       no_fmt = true
     elsif enum || model
@@ -888,12 +888,9 @@ module BaseDecorator::List
   #
   # @return [String]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def model_item_id(**opt)
-    obj = (object if present?)
-    id  = obj&.try(:submission_id) || obj&.try(:identifier) || hex_rand
+    obj = object.presence
+    id  = obj.try(:submission_id) || obj.try(:identifier) || hex_rand
     html_id(model_type, id, underscore: false, **opt)
   end
 
@@ -902,9 +899,9 @@ module BaseDecorator::List
   # @return [String,nil]
   #
   def title_id_values
-    # noinspection RailsParamDefResolve
-    records = (object.try(:records) if present?)
-    records&.map(&:emma_titleId)&.compact&.presence&.uniq&.join(',')
+    records = object.presence.try(:records)
+    titles  = records&.map(&:emma_titleId)&.compact
+    titles.uniq.join(',') if titles.present?
   end
 
   # state_group
@@ -912,8 +909,7 @@ module BaseDecorator::List
   # @return [Symbol, nil]
   #
   def state_group(...)
-    # noinspection RailsParamDefResolve
-    (object if present?)&.try(:state_group)
+    object.presence.try(:state_group)
   end
 
   # get_thumbnail_image

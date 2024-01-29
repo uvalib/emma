@@ -79,11 +79,11 @@ class Field::Type
     if (@field = field&.to_sym) && src.is_a?(Model)
       prop   ||= Field.configuration_for(field, model)
       @base    = prop[:type]
-      data     = src&.try(:active_emma_record) || src&.try(:emma_record)
-      @range ||= data&.try(field)
-      @range ||= (data&.try(:[], field) if data&.try(:key?, field))
-      @range ||= src&.try(field)
-      @range ||= src&.try(:[], field)
+      data     = src.try(:active_emma_record) || src.try(:emma_record)
+      @range ||= data.try(field)
+      @range ||= (data.try(:[], field) if data.try(:key?, field))
+      @range ||= src.try(field)
+      @range ||= src.try(:[], field)
       @range &&= Array.wrap(@range).map { |v| v.to_s.strip }.compact_blank!
     end
     @base  = @base.to_s.safe_constantize if @base.is_a?(Symbol)

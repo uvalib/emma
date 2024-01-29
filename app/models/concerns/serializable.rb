@@ -114,10 +114,10 @@ module Serializable
     # @yieldreturn [self,*]     An item instance or data to create a new one.
     #
     def deserialize(hash)
-      value = hash.values_at(*VALUE_KEYS).first
-      value = deserialize_argument(value) if WORK_REQUIRED.include?(value.class)
-      value = yield(value)                if block_given?
-      value.is_a?(klass) ? value : klass.new(value)
+      item = hash.values_at(*VALUE_KEYS).first
+      item = deserialize_argument(item) if WORK_REQUIRED.include?(item.class)
+      item = yield(item)                if block_given?
+      item.is_a?(klass) ? item : klass.new(item)
     end
 
     # =========================================================================

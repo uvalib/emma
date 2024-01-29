@@ -278,7 +278,7 @@ class SearchCall < ApplicationRecord
   #
   # @note - for dev traceability
   #
-  def initialize(attr = nil, &blk)
+  def initialize(attr = nil)
     super
   end
 

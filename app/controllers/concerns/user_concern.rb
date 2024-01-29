@@ -11,6 +11,11 @@ module UserConcern
 
   extend ActiveSupport::Concern
 
+  include FlashHelper
+  include IdentityHelper
+
+  include AuthConcern
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -40,11 +45,6 @@ module UserConcern
 
     # :nocov:
   end
-
-  include FlashHelper
-  include IdentityHelper
-
-  include AuthConcern
 
   # ===========================================================================
   # :section:

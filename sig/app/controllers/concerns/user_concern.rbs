@@ -3,6 +3,12 @@
 module UserConcern
   extend ActiveSupport::Concern
 
+  include FlashHelper
+
+  include IdentityHelper
+
+  include AuthConcern
+
   # Defined by Devise.
   #
   # @return [User, nil]
@@ -22,12 +28,6 @@ module UserConcern
   # @private
   #
   def current_user: () -> (User | nil)
-
-  include FlashHelper
-
-  include IdentityHelper
-
-  include AuthConcern
 
   # Return account summary information and account preferences.
   #

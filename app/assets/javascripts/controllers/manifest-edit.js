@@ -818,7 +818,7 @@ appSetup(MODULE, function() {
             params.row   = dbRowValue($last);
             params.delta = dbRowDelta($last);
         }
-        OUT.debug(`${func}: from "${filename}": type = "${type}"; data =`, data);
+        OUT.debug(`${func}: from "${filename}": type "${type}"; data =`, data);
         sendCreateRecords(data, params);
     }
 
@@ -1783,7 +1783,7 @@ appSetup(MODULE, function() {
      * @see "SerializationConcern#index_values"
      */
     function processReceivedItems(body) {
-        const func = 'processReceivedItems'; OUT.debug(`${func}: body =`, body);
+        const func = 'processReceivedItems'; OUT.debug(`${func}: body =`,body);
         const data = body?.items || body || {};
         const list = data.list;
         if (isEmpty(data)) {
@@ -1995,7 +1995,7 @@ appSetup(MODULE, function() {
             if (!$row) {
                 OUT.debug(`${func}: no row for db_id ${db_id}`);
             } else if (!$row.is(TO_DELETE)) {
-                OUT.debug(`${func}: ${db_id}: not already marked ${TO_DELETE}`);
+                OUT.debug(`${func}: ${db_id} not already marked ${TO_DELETE}`);
                 $row.addClass(TO_DELETE_MARKER);
                 marked.push(db_id);
             }
@@ -2199,6 +2199,7 @@ appSetup(MODULE, function() {
         function onLookupComplete($activator, check_only, halted) {
             OUT.debug('LOOKUP COMPLETE | $activator =', $activator);
             if (check_only || halted) { return undefined }
+
             const func  = 'onLookupComplete';
             let message = 'No fields changed.'; // TODO: I18n
             const data  = getFieldResultsData($row);

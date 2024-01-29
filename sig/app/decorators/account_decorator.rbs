@@ -226,7 +226,7 @@ class AccountDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def ability_table: (?(User|Ability|nil) user, ?symHash columns, **untyped table_opt) -> ActiveSupport::SafeBuffer
+  def ability_table: (?(User|Ability|nil) user, ?columns: symHash, **untyped table_opt) -> ActiveSupport::SafeBuffer
 
   # A table of models where each value is a sub-table of rows for each action.
   #

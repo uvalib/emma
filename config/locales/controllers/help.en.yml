@@ -303,7 +303,7 @@ en:
 
         search_type_closed:
           asset:        'help/search_type_closed.png'
-          alt:           |
+          alt:          |
             Search type menu (closed) with "Keyword" selected.
 
         search_type_opened:

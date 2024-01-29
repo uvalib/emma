@@ -308,8 +308,8 @@ export class CableChannel extends BaseClass {
     }
 
     /**
-     * Assign the function(s) that will be invoked when something is received over
-     * LookupChannel.
+     * Assign the function(s) that will be invoked when something is received
+     * over LookupChannel.
      *
      * @param {...(function|function[])} callbacks
      */
@@ -429,8 +429,8 @@ export class CableChannel extends BaseClass {
     }
 
     /**
-     * Getting a message: this callback will be invoked once we receive something
-     * over LookupChannel.
+     * Getting a message: this callback will be invoked once we receive
+     * something over LookupChannel.
      *
      * @param {...(function|function[])} callbacks
      */

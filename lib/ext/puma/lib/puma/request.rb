@@ -15,6 +15,9 @@ module Puma
 
     # Overrides adding extra debugging around method calls.
     #
+    #--
+    # noinspection LongLine
+    #++
     module RequestDebug
 
       include Puma::ExtensionDebugging

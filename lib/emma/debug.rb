@@ -595,7 +595,7 @@ module Emma::Debug
   #++
   def __log_activity(*message, user: nil, addr: nil, anonymous: false, **opt)
     user ||= try(:current_user) || ('anonymous' if anonymous) or return
-    addr ||= try(:request)&.try(:ip) || '-'
+    addr ||= try(:request).try(:ip) || '-'
     action = opt[:activity] || __debug_route_label(**opt)
     entry  = [user, addr, action, *message].join(' | ')
     Log.info("*** ACTIVITY | #{entry}")

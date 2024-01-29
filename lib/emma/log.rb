@@ -240,7 +240,7 @@ module Emma::Log
     opt[:progname] ||= anonymous_progname
     logger = Emma::Logger.new(src, *args, **opt)
     ActiveSupport::TaggedLogging.new(logger).tap do |log|
-      tags = src&.try(:formatter)&.try(:current_tags)
+      tags = src.try(:formatter).try(:current_tags)
       log.formatter.push_tags(tags) if tags.present?
     end
   end

@@ -1202,9 +1202,9 @@ appSetup(MODULE, function() {
             const was = cb.indeterminate;
             const now = !!indeterminate;
             if (was === now) {
-                OUT.debug(`${func}: indeterminate "${was}" no change for`, item);
+                OUT.debug(`${func}: indeterminate "${was}" no change for`,item)
             } else {
-                OUT.debug('${func}: indeterminate', was, '->', now, 'for', item);
+                OUT.debug('${func}: indeterminate', was, '->', now, 'for',item)
                 cb.indeterminate = now;
             }
         }
@@ -1473,7 +1473,7 @@ appSetup(MODULE, function() {
      * @return {string|undefined}
      */
     function setStatusFor(item, status, new_value, new_note) {
-        OUT.debug(`setStatusFor "${new_value}" -> "${status}" for item =`, item);
+        OUT.debug(`setStatusFor "${new_value}" -> "${status}" for item`, item);
         const $item = itemRow(item);
         const data  = $item.data(STATUS_DATA);
         const key   = status.replace(/^\./, '');
@@ -1748,26 +1748,22 @@ appSetup(MODULE, function() {
 
         const success_step = final ? AFTER_FINAL_STEP : step;
         const success_stat = SUBMIT_STEP_TO_STATUS[success_step];
-        for (const [id, info] of Object.entries(success)) {
-            const $item   = itemFor(id);
-            const current = table[id]; // TODO: remove
+        for (const [id, _info] of Object.entries(success)) {
+            const $item = itemFor(id);
             setStatusFor($item, status, SUCCEEDED_MARKER);
             if (final) {
                 selectItem($item, false);
                 disableItemSelect($item);
             }
             table[id] = { step: success_step, value: success_stat };
-            console.log('*** RESP STEP', success_step, 'success | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
         }
 
         const failed = FAILED_MARKER;
         for (const [id, info] of Object.entries(failure)) {
-            const $item   = itemFor(id);
-            const error   = htmlDecode(info.error);
-            const current = table[id]; // TODO: remove
+            const $item = itemFor(id);
+            const error = htmlDecode(info.error);
             setStatusFor($item, status, failed, error);
             table[id] = { step: step, value: failed, message: error };
-            console.log('*** RESP STEP', step, 'FAILURE | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
         }
 
         if (isPresent(invalid)) {
@@ -1820,7 +1816,7 @@ appSetup(MODULE, function() {
         const end_step  = AFTER_FINAL_STEP;
 
         const succeeded = SUCCEEDED_MARKER;
-        for (const [id, info] of Object.entries(success)) {
+        for (const [id, _info] of Object.entries(success)) {
             const current = table[id] || {};
             if (current.step !== end_step) {
                 const $item = itemFor(id);
@@ -1828,7 +1824,6 @@ appSetup(MODULE, function() {
                 selectItem($item, false);
                 disableItemSelect($item);
                 table[id] = { step: end_step, value: succeeded };
-                console.log('*** RESP BATCH success | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
             }
         }
 
@@ -1840,7 +1835,6 @@ appSetup(MODULE, function() {
                 const error = htmlDecode(info.error);
                 setStatusFor($item, status, failed, error);
                 table[id] = { step: end_step, value: failed, message: error };
-                console.log('*** RESP BATCH FAILURE | id', id, '| info: ', info, '| was:', current, 'now:', table[id]); // TODO: remove
             }
         }
 
@@ -2090,7 +2084,15 @@ appSetup(MODULE, function() {
             const item_id = file?.meta?.manifest_item_id;
             const $item   = itemFor(item_id);
             const status  = statusFor($item, UPLOAD_STATUS);
-            OUT.debug(`${tag}: item = ${item_id} | status =`, status, '| uploadStarted =', progress.uploadStarted, '| uploadComplete =', progress.uploadComplete, '| bytesTotal = ', progress.bytesTotal, '| bytesUploaded = ', progress.bytesUploaded, '| percentage = ', progress.percentage);
+            OUT.debug(
+                `${tag}: item =`,       item_id,
+                '| status =',           status,
+                '| uploadStarted =',    progress.uploadStarted,
+                '| uploadComplete =',   progress.uploadComplete,
+                '| bytesTotal = ',      progress.bytesTotal,
+                '| bytesUploaded = ',   progress.bytesUploaded,
+                '| percentage = ',      progress.percentage
+            );
             if (status === FAILED_MARKER) {
                 OUT.debug(`${tag}: CANCEL: ${item_id} | file =`, file);
                 return false;
@@ -2178,7 +2180,7 @@ appSetup(MODULE, function() {
      * @param {string|number} [item_id]
      */
     function addLocalFile(obj, item_id) {
-        OUT.debug(`Queueing local file "${obj.name}" for item ${item_id}`, obj);
+        OUT.debug(`Queueing local file "${obj.name}" for item ${item_id}`,obj);
         let file = obj;
         if (item_id) {
             file.meta ||= {}

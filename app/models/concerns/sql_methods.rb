@@ -620,7 +620,7 @@ module SqlMethods
       end
       table_alias = field_map.map { |col, _| [col, "#{col}_columns"] }.to_h
 
-      options =
+      opt =
         Array.wrap(extra).flatten.map { |v|
           if v.is_a?(Hash)
             where = v.deep_symbolize_keys.merge!(where)
@@ -629,20 +629,20 @@ module SqlMethods
           v.presence
         }.compact
       clause = where.presence && sql_where_clause(**where)
-      options.prepend("WHERE #{clause}") if clause.present?
-      options = options.join(' ')
+      opt.prepend("WHERE #{clause}") if clause.present?
+      opt = opt.join(' ')
 
       json_tables =
-        field_map.map { |column, json_fields|
-          sql_json_table(column, fields: json_fields, name: table_alias[column])
+        field_map.map { |col, json_fields|
+          sql_json_table(col, fields: json_fields, name: table_alias[col])
         }.join(', ')
 
       columns_to_show =
-        field_names.map { |column|
-          (name = table_alias[column]) ? "#{name}.*" : "#{table_name}.#{column}"
+        field_names.map { |col|
+          (name = table_alias[col]) ? "#{name}.*" : "#{table_name}.#{col}"
         }.join(', ')
 
-      "SELECT #{columns_to_show} FROM #{table_name}, #{json_tables} #{options};"
+      "SELECT #{columns_to_show} FROM #{table_name}, #{json_tables} #{opt};"
     end
 
   end

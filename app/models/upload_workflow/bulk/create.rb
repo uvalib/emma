@@ -180,7 +180,7 @@ module UploadWorkflow::Bulk::Create::States
     # Verify validity of the submission. # TODO: simulation - remove
     if simulating
       # From UploadController#bulk_create:
-      # succeeded, failed = bulk_upload_create(data, base_url: url, user: @user)
+      #succeeded, failed = bulk_upload_create(data, base_url: url, user: @user)
       __debug_sim('CODE') do
         args = "data=#{submission.data.inspect}"
         opt  = 'base_url: url, user: @user'

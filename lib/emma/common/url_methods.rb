@@ -142,7 +142,6 @@ module Emma::Common::UrlMethods
     }.to_h
   end
 
-
 end
 
 __loading_end(__FILE__)

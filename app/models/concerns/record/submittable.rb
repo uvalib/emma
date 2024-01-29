@@ -67,7 +67,7 @@ module Record::Submittable
         item.try(:new_submission?)
       end || false
 =end
-      item&.try(:new_submission?) || false
+      item.try(:new_submission?) || false
     end
 
     # Create a new free-standing (un-persisted) record instance.

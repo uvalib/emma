@@ -226,7 +226,7 @@ class ExecReport
 
     # Prepare an error report value for assignment to a database column.
     #
-    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, *] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
     #
     # @return [String, nil]           *nil* if *src* was blank.
     #
@@ -238,7 +238,7 @@ class ExecReport
 
     # Interpret an error report value from a database column.
     #
-    # @param [ExecReport, ExecReport::Part, ActiveModel::Errors, Exception, Hash, Array, String, *] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
     #
     # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
     #
@@ -284,7 +284,7 @@ class ExecReport
 
     # Get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
     #
     # @return [Array<Hash{Symbol=>String,Array<String>}>]
     #
@@ -296,7 +296,7 @@ class ExecReport
 
     # Get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
     #
     # @return [Hash{Symbol=>String,Array<String>}]
     #
@@ -369,8 +369,8 @@ class ExecReport
 
     # Attempt to get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
-    # @param [Symbol, nil] meth
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
+    # @param [Symbol, nil]                                              meth
     #
     # @return [Array<Hash{Symbol=>Array}>]
     #
@@ -389,8 +389,8 @@ class ExecReport
 
     # Attempt to get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src
-    # @param [Symbol, nil] meth
+    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
+    # @param [Symbol, nil]                                              meth
     #
     # @return [Hash{Symbol=>Array<String>}]
     #
@@ -745,7 +745,7 @@ class ExecReport
 
   # Prepare the error report value for assignment to a database column.
   #
-  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, Array, String, *] src  Default: `self`.
+  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, *] src  Def: self
   #
   # @return [String, nil]           *nil* if *src* was blank.
   #
@@ -755,7 +755,7 @@ class ExecReport
 
   # Interpret the error report value from a database column.
   #
-  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, Array, String, *] src  Default: `self`.
+  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, *] src  Def: self
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
   #
@@ -855,8 +855,8 @@ class ExecReport
 
   # Attempt to get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src    Def.: `self.part`.
-  # @param [Symbol, nil] meth
+  # @param [ExecReport, ExecReport::Part, Exception, *] src  Def.: `self`.
+  # @param [Symbol, nil]                                meth
   #
   # @return [Array<Hash{Symbol=>Array<String>}>]
   #
@@ -868,8 +868,8 @@ class ExecReport
 
   # Attempt to get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src  Def.: `self.exception`.
-  # @param [Symbol, nil] meth
+  # @param [ExecReport, ExecReport::Part, Exception, *] src  Def.: `self`.
+  # @param [Symbol, nil]                                meth
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
@@ -1264,7 +1264,7 @@ class ExecReport::Part
 
   # Prepare an error report part for assignment to a database column.
   #
-  # @param [ExecReport::Part, Exception, Hash, Array, String, *] src  Def: self
+  # @param [ExecReport::Part, Exception, Hash, Array, *] src  Def: `self`
   #
   # @return [String, nil]           *nil* if *src* was blank.
   #
@@ -1275,7 +1275,7 @@ class ExecReport::Part
 
   # Interpret an error report part from a database column.
   #
-  # @param [ExecReport::Part, Exception, Hash, Array, *] src  Def: self
+  # @param [ExecReport::Part, Exception, Hash, Array, *] src  Def: `self`
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
   #
@@ -1292,7 +1292,7 @@ class ExecReport::Part
 
   # Get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src   Default: `self`
+  # @param [ExecReport, ExecReport::Part, Exception, Hash, *] src  Def.: `self`
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>]
   #
@@ -1302,7 +1302,7 @@ class ExecReport::Part
 
   # Get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, Hash, Array, String, *] src  Default: `self`.
+  # @param [ExecReport, ExecReport::Part, Exception, Hash, *] src  Def.: `self`
   #
   # @return [Hash{Symbol=>String,Array<String>}]
   #

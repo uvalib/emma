@@ -32,7 +32,7 @@ Rails.application.configure do
   poll   = ENV['GOOD_JOB_POLL_INTERVAL']&.to_f
   poll ||= application_deployed? ? 1.0 : 0.25
 
-  # noinspection RubyResolve
+  # noinspection RubyResolve, LongLine
   config.good_job = {
     execution_mode: mode,
     poll_interval:  poll,

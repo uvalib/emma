@@ -1543,7 +1543,8 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     get originalValuesEntry() {
-        return this.$original_values ||= this.entriesList.find(this.ORIG_VALUES);
+        return this.$original_values ||=
+            this.entriesList.find(this.ORIG_VALUES);
     }
 
     /**

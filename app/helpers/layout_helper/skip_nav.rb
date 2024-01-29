@@ -141,9 +141,7 @@ module LayoutHelper::SkipNav
     end
 
     link = link.to_s
-    unless link.start_with?('#', 'http') || link.include?('/')
-      link = '#' + link
-    end
+    link = "##{link}" unless link.start_with?('#','http') || link.include?('/')
 
     prepend_css!(opt, css)
     link_to(label, link, opt)

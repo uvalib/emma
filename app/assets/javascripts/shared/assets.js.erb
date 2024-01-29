@@ -475,6 +475,8 @@ AppDebug.file('shared/assets.js.erb');
  * @property {string}   SESSION_ID
  * @property {boolean}  SEARCH_ANALYSIS
  *
+ * @property {AnalyticsProperties} Analytics
+ *
  * @property {ImageProperties}    Image
  * @property {PanelProperties}    Panel
  * @property {TreeProperties}     Tree
@@ -530,9 +532,9 @@ export const Emma = (function() {
 
     /** @type {AnalyticsProperties} */
     const Analytics = {
-        enabled:        b$('<%= Matomo.enabled? %>'),
-        site:           '<%= Matomo.site %>',
-        tracker_url:    '<%= Matomo.tracker_url %>',
+        enabled:            b$('<%= Matomo.enabled? %>'),
+        site:               '<%= Matomo.site %>',
+        tracker_url:        '<%= Matomo.tracker_url %>',
     };
 
     // ========================================================================
@@ -542,86 +544,84 @@ export const Emma = (function() {
     /** @type {ImageProperties} */
     const Image = {
         placeholder: {
-            alt:        '<%= js ImageHelper::PLACEHOLDER_IMAGE_ALT %>',
-            class:      '<%= js ImageHelper::PLACEHOLDER_IMAGE_CLASS %>',
-            asset:      image_placeholder,
-        }
+            alt:            '<%= js ImageHelper::PLACEHOLDER_IMAGE_ALT %>',
+            class:          '<%= js ImageHelper::PLACEHOLDER_IMAGE_CLASS %>',
+            asset:          image_placeholder,
+        },
     };
 
     /** @type {PanelProperties} */
     const Panel = {
         opener: {
-            label:      '<%= js PanelHelper::PANEL_OPENER_LABEL %>',
-            tooltip:    '<%= js PanelHelper::PANEL_OPENER_TIP %>',
+            label:          '<%= js PanelHelper::PANEL_OPENER_LABEL %>',
+            tooltip:        '<%= js PanelHelper::PANEL_OPENER_TIP %>',
         },
         closer: {
-            label:      '<%= js PanelHelper::PANEL_CLOSER_LABEL %>',
-            tooltip:    '<%= js PanelHelper::PANEL_CLOSER_TIP %>',
+            label:          '<%= js PanelHelper::PANEL_CLOSER_LABEL %>',
+            tooltip:        '<%= js PanelHelper::PANEL_CLOSER_TIP %>',
         },
     };
 
     /** @type {TreeProperties} */
     const Tree = {
         opener: {
-            label:      '<%= js TreeHelper::TREE_OPENER_LABEL %>',
-            tooltip:    '<%= js TreeHelper::TREE_OPENER_TIP %>',
+            label:          '<%= js TreeHelper::TREE_OPENER_LABEL %>',
+            tooltip:        '<%= js TreeHelper::TREE_OPENER_TIP %>',
         },
         closer: {
-            label:      '<%= js TreeHelper::TREE_CLOSER_LABEL %>',
-            tooltip:    '<%= js TreeHelper::TREE_CLOSER_TIP %>',
+            label:          '<%= js TreeHelper::TREE_CLOSER_LABEL %>',
+            tooltip:        '<%= js TreeHelper::TREE_CLOSER_TIP %>',
         },
     };
 
     /** @type {GridProperties} */
     const Grid = {
-        Headers:        o$('<%= js ManifestItemDecorator::GRID_HEADER %>'),
-        Icons:          o$('<%= js ManifestItemDecorator::ICONS %>'),
+        Headers:            o$('<%= js ManifestItemDecorator::GRID_HEADER %>'),
+        Icons:              o$('<%= js ManifestItemDecorator::ICONS %>'),
     };
 
     /** @type {PopupProperties} */
     const Popup = {
         button: {
-            class:      '<%= js PopupHelper::POPUP_TOGGLE_CLASS %>',
+            class:          '<%= js PopupHelper::POPUP_TOGGLE_CLASS %>',
         },
         panel: {
-            class:      '<%= js PopupHelper::POPUP_PANEL_CLASS %>',
+            class:          '<%= js PopupHelper::POPUP_PANEL_CLASS %>',
         },
         closer: {
-            class:      '<%= js PopupHelper::POPUP_CLOSER_CLASS %>',
+            class:          '<%= js PopupHelper::POPUP_CLOSER_CLASS %>',
         },
         controls: {
-            class:      '<%= js PopupHelper::POPUP_CONTROLS_CLASS %>',
+            class:          '<%= js PopupHelper::POPUP_CONTROLS_CLASS %>',
         },
         deferred: {
-            class:      '<%= js PopupHelper::POPUP_DEFERRED_CLASS %>',
+            class:          '<%= js PopupHelper::POPUP_DEFERRED_CLASS %>',
         },
         hidden: {
-            class:      '<%= js PopupHelper::POPUP_HIDDEN_MARKER %>',
+            class:          '<%= js PopupHelper::POPUP_HIDDEN_MARKER %>',
         },
     };
 
     /** @type {ScrollProperties} */
     const Scroll = {
-        target:         o$('<%= js ScrollHelper::SCROLL_TARGET %>'),
-        button:         o$('<%= js ScrollHelper::SCROLL_TOP_BUTTON %>'),
-        down:           o$('<%= js ScrollHelper::SCROLL_DOWN_BUTTON %>'),
+        target:             o$('<%= js ScrollHelper::SCROLL_TARGET %>'),
+        button:             o$('<%= js ScrollHelper::SCROLL_TOP_BUTTON %>'),
+        down:               o$('<%= js ScrollHelper::SCROLL_DOWN_BUTTON %>'),
     };
 
     /** @type {SearchProperties} */
     const Search = {
-        type:           o$('<%= js SearchTermsHelper::SEARCH_TYPE %>'),
+        type:               o$('<%= js SearchTermsHelper::SEARCH_TYPE %>'),
         Filter: {
-            control:    o$('<%= js LayoutHelper::SearchFilters::ADV_SEARCH%>'),
+            control:        o$('<%= js LayoutHelper::SearchFilters::ADV_SEARCH %>'),
         },
         Style: {
             container: {
-                class:  '<%= js SearchDecorator::STYLE_CONTAINER %>',
+                class:      '<%= js SearchDecorator::STYLE_CONTAINER %>',
             },
             control: {
-                template:
-                        o$('<%= js SearchDecorator::STYLE_BUTTON_TEMPLATE %>'),
-                buttons:
-                        o$('<%= js SearchDecorator::STYLE_BUTTONS %>'),
+                template:   o$('<%= js SearchDecorator::STYLE_BUTTON_TEMPLATE %>'),
+                buttons:    o$('<%= js SearchDecorator::STYLE_BUTTONS %>'),
             },
         },
     };
@@ -645,12 +645,12 @@ export const Emma = (function() {
     const Lookup =      o$('<%= js I18n.t(%q(emma.lookup)) %>');
 
     /** @type {ModelProperties} */
-    const Org =         o$('<%= js OrgDecorator.js_properties %>'),
-          User =        o$('<%= js UserDecorator.js_properties %>'),
-          Account =     o$('<%= js AccountDecorator.js_properties %>'),
-          Upload =      o$('<%= js UploadDecorator.js_properties %>'),
-          Manifest =    o$('<%= js ManifestDecorator.js_properties %>'),
-          ManifestItem= o$('<%= js ManifestItemDecorator.js_properties %>');
+    const Org =             o$('<%= js OrgDecorator.js_properties %>'),
+          User =            o$('<%= js UserDecorator.js_properties %>'),
+          Account =         o$('<%= js AccountDecorator.js_properties %>'),
+          Upload =          o$('<%= js UploadDecorator.js_properties %>'),
+          Manifest =        o$('<%= js ManifestDecorator.js_properties %>'),
+          ManifestItem =    o$('<%= js ManifestItemDecorator.js_properties %>');
 
     // ========================================================================
     // Application settings
