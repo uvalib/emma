@@ -230,7 +230,7 @@ module Record::Searchable
     ids  = ids.compact_blank!.uniq.presence
     sids = sids.compact_blank!.uniq.presence
     if ids && sids
-      terms << sql_terms(i_key => ids, s_key => sids, join: :or)
+      terms << sql_or(i_key => ids, s_key => sids)
     elsif ids
       opt[i_key] = ids
     elsif sids
@@ -310,13 +310,13 @@ module Record::Searchable
     if user_column && user_opt.present?
       users = user_opt.values.flatten.map! { |u| User.id_value(u) }.uniq
       users = users.first unless users.many?
-      terms << sql_terms(user_column => users, join: :or)
+      terms << sql_or(user_column => users)
     end
 
     # === Filter by state
     state_opt = state_column && opt.extract!(state_column)
     if state_opt.present?
-      terms << sql_terms(state_opt, join: :or)
+      terms << sql_or(state_opt)
     end
 
     # === Update time lower bound

@@ -249,7 +249,7 @@ module Upload::SearchMethods
     # === Filter by user
     user_opt = opt.extract!(*USER_COLUMNS.excluding(:review_user))
     if user_opt.present?
-      terms << sql_terms(user_opt, join: :or)
+      terms << sql_or(user_opt)
     end
 
     # === Filter by state

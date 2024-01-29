@@ -50,6 +50,38 @@ module SqlMethods
       (rec_1.attributes == rec_2.attributes)
   end
 
+  # Translate hash keys/values into SQL conditions combined by AND.
+  #
+  # @param [Array<Hash,Array,String>] terms
+  # @param [Hash]                     other   Additional terms.
+  #
+  # @return [String]
+  #
+  # @see #sql_terms
+  #
+  def sql_and(*terms, **other)
+    if other.key?(:join)
+      Log.warn { "#{__method__}: join #{other[:join].inspect} ignored" }
+    end
+    sql_terms(*terms, **other, join: :and)
+  end
+
+  # Translate hash keys/values into SQL conditions combined by OR.
+  #
+  # @param [Array<Hash,Array,String>] terms
+  # @param [Hash]                     other   Additional terms.
+  #
+  # @return [String]
+  #
+  # @see #sql_terms
+  #
+  def sql_or(*terms, **other)
+    if other.key?(:join)
+      Log.warn { "#{__method__}: join #{other[:join].inspect} ignored" }
+    end
+    sql_terms(*terms, **other, join: :or)
+  end
+
   # Translate hash keys/values into SQL conditions.
   #
   # If *join* is set to *nil*, an array of SQL clauses is returned instead.

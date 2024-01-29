@@ -79,9 +79,9 @@ module Record::Sortable
   def scope_never_saved(t)  = "#{t}.last_saved IS NULL"
   def scope_unsaved(t)      = "#{t}.last_saved < #{t}.updated_at"
   def scope_completed(t)    = "#{t}.last_saved >= #{t}.updated_at"
-  def scope_incomplete(t)   = sql_terms(scope_never_saved(t), scope_unsaved(t))
-  def scope_pending(t)      = sql_terms(scope_active(t), scope_incomplete(t))
-  def scope_saved(t)        = sql_terms(scope_active(t), scope_completed(t))
+  def scope_incomplete(t)   = sql_or(scope_never_saved(t), scope_unsaved(t))
+  def scope_pending(t)      = sql_and(scope_active(t), scope_incomplete(t))
+  def scope_saved(t)        = sql_and(scope_active(t), scope_completed(t))
 
   # ===========================================================================
   # :section:

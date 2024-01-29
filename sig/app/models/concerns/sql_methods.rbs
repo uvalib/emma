@@ -29,6 +29,28 @@ module SqlMethods
   #
   def match?: (ApplicationRecord rec_1, ApplicationRecord rec_2) -> bool
 
+  # Translate hash keys/values into SQL conditions combined by AND.
+  #
+  # @param [Array<Hash,Array,String>] terms
+  # @param [Hash]                     other   Additional terms.
+  #
+  # @return [String]
+  #
+  # @see #sql_terms
+  #
+  def sql_and: (*(anyHash|strArray|String|nil) terms, **untyped other) -> String
+
+  # Translate hash keys/values into SQL conditions combined by OR.
+  #
+  # @param [Array<Hash,Array,String>] terms
+  # @param [Hash]                     other   Additional terms.
+  #
+  # @return [String]
+  #
+  # @see #sql_terms
+  #
+  def sql_or: (*(anyHash|strArray|String|nil) terms, **untyped other) -> String
+
   # Translate hash keys/values into SQL conditions.
   #
   # If *join* is set to *nil*, an array of SQL clauses is returned instead.
