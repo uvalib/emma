@@ -13,23 +13,20 @@ module Ability::Role
 
   public
 
+  # @private
+  ROLE_TYPE_CONFIGURATION = config_section('emma.role.type').deep_freeze
+
   # Role prototypes.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
-  ROLE_CONFIG = I18n.t('emma.role.type.RolePrototype')
+  ROLE_CONFIG = ROLE_TYPE_CONFIGURATION[:RolePrototype]
 
   # Role capabilities.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
-  CAPABILITY_CONFIG = I18n.t('emma.role.type.RoleCapability')
+  CAPABILITY_CONFIG = ROLE_TYPE_CONFIGURATION[:RoleCapability]
 
   # Role capabilities for each role prototype.
   #

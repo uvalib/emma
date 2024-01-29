@@ -17,13 +17,6 @@ module SysHelper::Config
 
   public
 
-  # Column headers for #application_config.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_CONFIG_HEADERS =
-    I18n.t('emma.sys.application_config.headers').deep_freeze
-
   # Render a table current `Rails.configuration` values.
   #
   # @param [Boolean] sort
@@ -36,7 +29,7 @@ module SysHelper::Config
     pairs = rails_config_entries
     pairs.transform_values! { |val| [rails_config_entry(val)] }
     prepend_css!(opt, css)
-    sys_table(pairs, APPLICATION_CONFIG_HEADERS, sort: sort, **opt)
+    sys_table(pairs, __method__, sort: sort, **opt)
   end
 
   # ===========================================================================

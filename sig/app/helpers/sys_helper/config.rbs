@@ -3,12 +3,6 @@
 module SysHelper::Config
   include SysHelper::Common
 
-  # Column headers for #application_config.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_CONFIG_HEADERS: Hash[Symbol,String]
-
   # Render a table current `Rails.configuration` values.
   #
   # @param [Boolean] sort

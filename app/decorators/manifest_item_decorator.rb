@@ -146,7 +146,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    BULK_GRID_CFG = I18n.t('emma.bulk.grid', default: {}).deep_freeze
+    BULK_GRID_CFG = config_section('emma.bulk.grid').deep_freeze
 
     # @private
     # @type [Hash{Symbol=>Hash}]

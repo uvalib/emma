@@ -131,16 +131,20 @@ class Paginator
   def env: () -> strHash
 
   module PageMethods
+    # @private
+    PAGE_SIZE_KEY: Symbol
+
     # Configured results per page for the given controller/action.
     #
-    # @param [Symbol, String, Hash, nil] c   Controller
-    # @param [Symbol, String, nil]       a   Action
+    # @param [Symbol, String, Hash, nil] c    Controller
+    # @param [Symbol, String, nil]       a    Action
+    # @param [Symbol]                    key  Default: :page_size.
     #
     # @return [Integer]
     #
     def get_page_size
-      : (symHash)                                        -> Integer
-      | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+      : ( symHash             c,                         ?key: Symbol) -> Integer
+      | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a, ?key: Symbol) -> Integer
 
     # Default number of results per page.
     #
@@ -222,8 +226,9 @@ class Paginator
   # Current results per page for the given controller/action (unless an
   # argument is present).
   #
-  # @param [Symbol, String, Hash, nil] c   Controller
-  # @param [Symbol, String, nil]       a   Action
+  # @param [Symbol, String, Hash, nil] c    Controller
+  # @param [Symbol, String, nil]       a    Action
+  # @param [Symbol]                    key  Configuration key.
   #
   # @return [Integer]
   #

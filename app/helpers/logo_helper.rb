@@ -21,7 +21,7 @@ module LogoHelper
   #
   # @type [Array<Symbol>]
   #
-  LOGO_TYPE = I18n.t('emma.repository._template.logo').keys.freeze
+  LOGO_TYPE = config_section('emma.repository._template.logo').keys.freeze
 
   # ===========================================================================
   # :section:

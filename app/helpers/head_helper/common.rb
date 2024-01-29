@@ -21,7 +21,7 @@ module HeadHelper::Common
   #
   # @type [Hash{Symbol=>*}]
   #
-  HEAD_CONFIG = I18n.t('emma.head', default: {}).deep_freeze
+  HEAD_CONFIG = config_section('emma.head').deep_freeze
 
 end
 

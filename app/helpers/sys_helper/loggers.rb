@@ -17,13 +17,6 @@ module SysHelper::Loggers
 
   public
 
-  # Column headers for #applicaton_loggers.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_LOGGERS_HEADERS =
-    I18n.t('emma.sys.application_loggers.headers').deep_freeze
-
   # Render a table of loggers currently active for the application.
   #
   # Loggers which are only associated with ActiveSupport::LogSubscriber have
@@ -62,7 +55,7 @@ module SysHelper::Loggers
 
     # Render the table of values.
     prepend_css!(opt, css)
-    sys_table(pairs, APPLICATION_LOGGERS_HEADERS, sort: false, **opt)
+    sys_table(pairs, __method__, sort: false, **opt)
   end
 
   # ===========================================================================

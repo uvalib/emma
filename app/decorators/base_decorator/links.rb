@@ -77,7 +77,7 @@ module BaseDecorator::Links
       html_opt[:title] ||= opt[:tooltip]
       html_opt[:title] ||=
         if (type ||= opt[:scope] || opt[:controller] || Model.for(item))
-          I18n.t("emma.#{type}.show.tooltip", default: '')
+          config_item("emma.#{type}.show.tooltip", fallback: '')
         end
       # noinspection RubyMismatchedArgumentType
       make_link(label, path, **html_opt)

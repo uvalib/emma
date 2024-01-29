@@ -15,9 +15,9 @@ class ApiMigrate
   CONFIGURATION_ENTRY: Hash[Symbol,symHash]
 
   module ClassMethods
-    include Emma::Constants
-
     include Emma::Common
+
+    include Emma::Constants
 
     include Emma::Json
 

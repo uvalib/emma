@@ -17,13 +17,6 @@ module SysHelper::Railties
 
   public
 
-  # Column headers for #application_railties.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_RAILTIES_HEADERS =
-    I18n.t('emma.sys.application_railties.headers').deep_freeze
-
   # Render a table of loaded Rails::Railtie entries.
   #
   # @param [Boolean] sort
@@ -43,7 +36,7 @@ module SysHelper::Railties
         [key, entry]
       end
     prepend_css!(opt, css)
-    sys_table(pairs, APPLICATION_RAILTIES_HEADERS, sort: sort, **opt)
+    sys_table(pairs, __method__, sort: sort, **opt)
   end
 
   # ===========================================================================

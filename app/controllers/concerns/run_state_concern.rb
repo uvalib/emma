@@ -31,7 +31,7 @@ module RunStateConcern
   # @type [Array<String,Hash>]
   #
   NO_RUN_STATE_REDIRECT =
-    I18n.t('emma.health.run_state.exempt', default: []).deep_freeze
+    config_item('emma.health.run_state.exempt', fallback: []).deep_freeze
 
   # Controllers whose endpoints are exempt from redirection due to unavailable
   # run state.

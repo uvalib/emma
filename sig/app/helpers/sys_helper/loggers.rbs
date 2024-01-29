@@ -3,12 +3,6 @@
 module SysHelper::Loggers
   include SysHelper::Common
 
-  # Column headers for #applicaton_loggers.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_LOGGERS_HEADERS: Hash[Symbol,String]
-
   # Render a table of loggers currently active for the application.
   #
   # Loggers which are only associated with ActiveSupport::LogSubscriber have

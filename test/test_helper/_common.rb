@@ -70,17 +70,17 @@ module TestHelper::Common
   #
   PROPERTY =
     SYSTEM_CONTROLLERS.map { |model|
-      path = (model == :user_sessions) ? 'emma.user.sessions' : "emma.#{model}"
+      path = (model == :user_sessions) ? 'user.sessions' : model
       unit = %I[
-        #{path}.pagination.count.one
-        #{path}.pagination.count
-        #{path}.unit.brief
-        #{path}.unit
+        emma.#{path}.pagination.count.one
+        emma.#{path}.pagination.count
+        emma.#{path}.unit.brief
+        emma.#{path}.unit
         emma.generic.unit.brief
       ]
-      unit = I18n.t(unit.shift, default: [*unit, model.to_s])
+      unit = config_item(unit, fallback: model.to_s)
       endpoints =
-        I18n.t(path, default: {}).map { |endpoint, config|
+        config_section(path).map { |endpoint, config|
           next unless config.is_a?(Hash) && config[:_endpoint]
           config = config.except(:_endpoint).deep_dup
           entry  = (endpoint == :index) ? 'list-item' : 'details'

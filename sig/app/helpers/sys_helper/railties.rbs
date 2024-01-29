@@ -3,12 +3,6 @@
 module SysHelper::Railties
   include SysHelper::Common
 
-  # Column headers for #application_railties.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_RAILTIES_HEADERS: Hash[Symbol,String]
-
   # Render a table of loaded Rails::Railtie entries.
   #
   # @param [Boolean] sort

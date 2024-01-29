@@ -5,6 +5,9 @@ module SysHelper::Common
 
   include Emma::Constants
 
+  # @private
+  SYS_CONFIGURATION: symHash
+
   # Translate Hash keys and values into an element containing pairs of
   # dt and dd elements.
   #
@@ -58,14 +61,14 @@ module SysHelper::Common
   # Render a table for "/sys" pages.
   #
   # @param [Hash,Array<Array>] pairs
-  # @param [Hash]              headers  Where the keys become CSS class names.
+  # @param [Symbol, Hash]      headers  Where the keys become CSS class names.
   # @param [Boolean]           sort
   # @param [String]            css      Characteristic CSS class/selector.
   # @param [Hash]              opt      Passed to the outer `<table>` element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def sys_table: ((anyHash|Array[[untyped,untyped]]) pairs, anyHash headers, ?sort: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def sys_table: ((anyHash|Array[[untyped,untyped]]) pairs, (Symbol|anyHash) headers, ?sort: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

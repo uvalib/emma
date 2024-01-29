@@ -37,7 +37,7 @@ class Workflow::Base
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  CONFIGURATION = I18n.t('emma.workflow').deep_freeze
+  CONFIGURATION = config_section('emma.workflow').deep_freeze
 
   # The state which indicates that the item associated with the workflow has
   # progressed to the end.

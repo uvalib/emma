@@ -11,7 +11,6 @@ module DataConcern
 
   extend ActiveSupport::Concern
 
-  include Emma::Constants
   include ParamsHelper
   include DataHelper
 

@@ -3,12 +3,6 @@
 module SysHelper::Ies
   include SysHelper::Common
 
-  # Column headers for #application_ies.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_IES_HEADERS: Hash[Symbol,String]
-
   # Render a table of current ActiveSupport::IsolatedExecutionState entries.
   #
   # @param [Boolean] sort

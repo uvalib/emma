@@ -102,6 +102,9 @@ class SearchDecorator < BaseDecorator
 
     public
 
+    # @private
+    SEARCH_CONFIGURATION = config_section('emma.search').deep_freeze
+
     # CSS class for the colorization button tray.
     #
     # @type [String]
@@ -112,14 +115,14 @@ class SearchDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>String,Symbol}]
     #
-    STYLE_BUTTON_TEMPLATE = I18n.t('emma.search.styles._colorize').deep_freeze
+    STYLE_BUTTON_TEMPLATE = SEARCH_CONFIGURATION.dig(:styles, :_colorize)
 
     # Colorization buttons.
     #
     # @type [Hash{Symbol=>Hash}]
     #
     STYLE_BUTTONS =
-      I18n.t('emma.search.styles').map { |style, prop|
+      SEARCH_CONFIGURATION[:styles].map { |style, prop|
         next if style.start_with?('_')
         prop = prop.dup
         prop[:label] ||= style.to_s
@@ -148,7 +151,7 @@ class SearchDecorator < BaseDecorator
     # @type [Hash{Symbol=>Hash}]
     #
     RESULT_TYPES =
-      I18n.t('emma.search.results').map { |style, prop|
+      SEARCH_CONFIGURATION[:results].map { |style, prop|
         next if style.start_with?('_')
         prop = prop.dup
         prop[:label] ||= style.to_s

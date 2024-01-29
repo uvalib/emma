@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module EmmaHelper
 
-  include Emma::Constants
+  include Emma::Project
 
   # ===========================================================================
   # :section:
@@ -21,7 +21,7 @@ module EmmaHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  EMMA_PARTNER = I18n.t('emma.grant.partner').deep_freeze
+  EMMA_PARTNER = config_section('emma.grant.partner').deep_freeze
 
   # EMMA grant partner categories.
   #

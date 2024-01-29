@@ -119,27 +119,24 @@ module LayoutHelper::SearchFilters
     # noinspection RubyMismatchedArgumentType
     #++
     def make_menu(menu_name, values, **opt)
-      config  = values.is_a?(Hash) ? values : current_menu_config(menu_name)
-      pairs   = config[:menu]
-      pairs ||=
-        case values
-          when Hash
-            (val = values[:values]).is_a?(Hash) ? val.invert : val
-          when Array
-            values
-          when String
-            path = values
-            path = "emma.#{path}" unless path.start_with?('emma.')
-            I18n.t(path, default: {}).invert
-          when Symbol
-            EnumType.pairs_for(values)&.invert
-          else
-            # noinspection RailsParamDefResolve
-            val   = values.try(:pairs).presence
-            val ||= values.try(:values).presence
-            val ||= values
-            val.is_a?(Hash) ? val.invert : val
-        end
+      if values.is_a?(Hash)
+        config, values = values, values[:values]
+      else
+        config = current_menu_config(menu_name)
+      end
+      unless (pairs = config[:menu])
+        pairs =
+          case values
+            when Array  then values
+            when String then config_section(values)
+            when Symbol then EnumType.pairs_for(values)
+          end
+        # noinspection RailsParamDefResolve
+        pairs ||= values.try(:pairs).presence
+        pairs ||= values.try(:values).presence
+        pairs ||= values
+        pairs = pairs.invert if pairs.is_a?(Hash)
+      end
 
       # Transform a simple list of values into label/value pairs.
       if pairs.is_a?(Hash)
@@ -286,7 +283,7 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_FILTERS_ROOT = I18n.t('emma.search_filters').deep_freeze
+  SEARCH_FILTERS_ROOT = config_section('emma.search_filters').deep_freeze
 
   # The value 'en.emma.search_filters._default' contains each of the properties
   # that can be expressed for a menu.  If a property there has a non-nil value,
@@ -331,9 +328,9 @@ module LayoutHelper::SearchFilters
   SEARCH_FILTERS_CONFIG =
     ApplicationHelper::APP_CONTROLLERS.map { |controller|
       filter_configs = SEARCH_FILTERS_ROOT.deep_dup
-      %W[generic #{controller} #{controller}.generic].each do |section|
-        section_cfg = I18n.t("emma.#{section}.search_filters", default: nil)
-        filter_configs.deep_merge!(section_cfg) if section_cfg.present?
+      %W[generic #{controller} #{controller}.generic].each do |ctrlr|
+        ctrlr_cfg = config_section("emma.#{ctrlr}.search_filters")
+        filter_configs.deep_merge!(ctrlr_cfg) if ctrlr_cfg.present?
       end
       enabled = filter_configs[:enabled]
       enabled = enabled.is_a?(Array) ? enabled.map(&:to_s) : true?(enabled)
@@ -390,7 +387,7 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  ADV_SEARCH_CONFIG = I18n.t('emma.search_bar.advanced').deep_freeze
+  ADV_SEARCH_CONFIG = config_section('emma.search_bar.advanced').deep_freeze
 
   # Labels/tooltips for expanding and contracting search filters.
   #

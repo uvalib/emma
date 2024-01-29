@@ -28,7 +28,7 @@ module ManifestItem::Config
   #
   # @see file:config/locales/types/manifest_item.en.yml
   #
-  MANIFEST_ITEM_TYPES = I18n.t('emma.manifest_item.type').deep_freeze
+  MANIFEST_ITEM_TYPES = config_section('emma.manifest_item.type').deep_freeze
 
   # Values for each status column which indicate an unblocked status.
   #

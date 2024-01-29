@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module LookupService::Crossref::Properties
 
-  include Emma::Constants
+  include Emma::Project
 
   include LookupService::RemoteService::Properties
 

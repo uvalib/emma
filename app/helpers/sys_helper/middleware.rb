@@ -17,13 +17,6 @@ module SysHelper::Middleware
 
   public
 
-  # Column headers for #application_middleware.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_MIDDLEWARE_HEADERS =
-    I18n.t('emma.sys.application_middleware.headers').deep_freeze
-
   # Render a table of ActionDispatch::MiddlewareStack entries.
   #
   # @param [Boolean] sort
@@ -44,7 +37,7 @@ module SysHelper::Middleware
         [key, entry]
       end
     prepend_css!(opt, css)
-    sys_table(pairs, APPLICATION_MIDDLEWARE_HEADERS, sort: sort, **opt)
+    sys_table(pairs, __method__, sort: sort, **opt)
   end
 
   # ===========================================================================

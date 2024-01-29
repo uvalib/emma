@@ -27,7 +27,7 @@ class ApiMigrate
   # @type [Hash{Symbol=>Hash}]
   #
   CONFIGURATION_ENTRY =
-    I18n.t('emma.api_migrate').map { |name, entries|
+    config_section('emma.api_migrate').map { |name, entries|
       next if name.start_with?('_')
       entries =
         entries.map { |field, entry|
@@ -56,8 +56,8 @@ class ApiMigrate
   #++
   module ClassMethods
 
-    include Emma::Constants
     include Emma::Common
+    include Emma::Constants
     include Emma::Json
 
     # =========================================================================

@@ -1,31 +1,9 @@
 # Emma::Constants
 #
 module Emma::Constants
-  # The web site for project information.
-  #
-  # @type [String]
-  #
-  PROJECT_SITE: String
-
-  # The email address for project information.
-  #
-  # @type [String]
-  #
-  PROJECT_EMAIL: String
-
-  # The email address for support and general information.
-  #
-  # @type [String]
-  #
-  CONTACT_EMAIL: String
-
   # Field value used to explicitly indicate missing data.
   #
   # @type [String]
   #
   EMPTY_VALUE: String
-
-  private
-
-  def self.included: (Module base) -> void
 end

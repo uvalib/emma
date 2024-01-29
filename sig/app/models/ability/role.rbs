@@ -1,4 +1,7 @@
 module Ability::Role
+  # @private
+  ROLE_TYPE_CONFIGURATION: symHash
+
   # Role prototypes.
   #
   # @type [Hash{Symbol=>Hash}]

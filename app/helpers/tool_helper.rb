@@ -22,7 +22,7 @@ module ToolHelper
   # @return [Hash{Symbol=>Hash}]
   #
   TOOL_ITEMS =
-    I18n.t('emma.tool').map { |k, v|
+    config_section('emma.tool').map { |k, v|
       next unless v.is_a?(Hash) && v[:_endpoint] && (k != :index)
       p = v[:path].presence
       v = v.merge(path: p.to_sym).freeze if p.is_a?(String) && !p.include?('/')

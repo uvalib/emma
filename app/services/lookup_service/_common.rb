@@ -24,7 +24,7 @@ module LookupService::Common
   # @type [Hash{Symbol=>Hash}]
   #
   CONFIGURATION =
-    I18n.t('emma.service.lookup').transform_values { |service_config|
+    config_section('emma.service.lookup').transform_values { |service_config|
       service_config.dup.tap do |cfg|
         api_key        = cfg[:api_key].to_s
         cfg[:api_key]  = ENV[api_key] if api_key.match?(/^[A-Z][A-Z0-9_]+$/)

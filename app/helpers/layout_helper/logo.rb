@@ -21,7 +21,7 @@ module LayoutHelper::Logo
   #
   # @type [Hash{Symbol=>*}]
   #
-  LOGO_CONFIG = I18n.t('emma.logo', default: {}).deep_freeze
+  LOGO_CONFIG = config_section('emma.logo').deep_freeze
 
   # Text logo.
   #

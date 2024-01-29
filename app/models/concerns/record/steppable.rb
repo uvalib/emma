@@ -59,7 +59,7 @@ module Record::Steppable
   # @see file:config/locales/state_table.en.yml
   #
   STATE_TABLES =
-    I18n.t('emma.state_table', default: {}).transform_values { |leaf_classes|
+    config_section('emma.state_table').transform_values { |leaf_classes|
       leaf_classes.transform_values do |states|
         states.transform_values { |entry|
           next unless entry.is_a?(Hash)
@@ -98,7 +98,7 @@ module Record::Steppable
   # @note From Upload::WorkflowMethods#STATE_GROUP
   #
   STATE_GROUP =
-    I18n.t('emma.upload.state_group', default: {}).transform_values { |entry|
+    config_section('emma.upload.state_group').transform_values { |entry|
       states = Array.wrap(entry[:states]).map(&:to_sym)
       entry.merge(states: states)
     }.deep_freeze

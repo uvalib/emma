@@ -724,28 +724,25 @@ module FlashHelper
   # @param [Symbol, String, nil]   meth
   # @param [Boolean, nil]          html
   # @param [String, nil]           separator
-  # @param [Hash]                  opt        Passed to I18n#t.
+  # @param [Hash]                  opt        Passed to #config_item.
   #
   # @return [String]                          # Even if html is *true*.
   #
   def flash_template(msg, topic:, meth: nil, html: nil, separator: nil, **opt)
-    scope = flash_i18n_scope
-    topic = topic.to_sym
-    # noinspection RubyMismatchedArgumentType
-    i18n_path = flash_i18n_path(scope, meth, topic)
+    t_key = (topic.to_sym == :success) ? :file : :error
     if msg.is_a?(Array)
-      separator ||= html ? "\n" : ', '
-      msg = msg.compact_blank.join(separator)
+      opt[t_key] = msg.compact_blank.join(separator || (html ? "\n" : ', '))
+    else
+      opt[t_key] = msg
     end
-    i18n_key = (topic == :success) ? :file : :error
-    opt[i18n_key] = msg
-    opt[:default] = Array.wrap(opt[:default]&.dup)
-    opt[:default] << flash_i18n_path(scope, 'error', topic)
-    opt[:default] << flash_i18n_path(scope, topic)
-    opt[:default] << flash_i18n_path('error', topic)
-    opt[:default] << ExecError::DEFAULT_ERROR
-    # noinspection RubyMismatchedReturnType
-    I18n.t(i18n_path, **opt)
+    scope = flash_i18n_scope
+    keys  = []
+    keys << :"emma.#{scope}.#{meth}" if meth
+    keys << :"emma.#{scope}.error"
+    keys << :"emma.#{scope}"
+    keys << :'emma.error'
+    keys.map! { |base| :"#{base}.#{topic}" }
+    config_item(keys, **opt) || ExecError::DEFAULT_ERROR
   end
 
   # I18n scope based on the current class context.
@@ -755,18 +752,6 @@ module FlashHelper
   def flash_i18n_scope
     parts = self.class.name&.split('_') || []
     parts.excluding('controller', 'concern', 'helper').join('_')
-  end
-
-  # Build an I18n path.
-  #
-  # @param [Array<String,Symbol,nil,Array>] parts
-  #
-  # @return [Symbol]
-  #
-  def flash_i18n_path(*parts)
-    result = parts.flatten.compact_blank.join('.')
-    result = "emma.#{result}" unless result.start_with?('emma.')
-    result.to_sym
   end
 
   # ===========================================================================

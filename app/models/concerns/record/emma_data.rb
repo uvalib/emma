@@ -46,7 +46,7 @@ module Record::EmmaData
   # @type [Hash]
   #
   EMMA_DATA_CONFIG =
-    I18n.t('emma.upload.record.emma_data').select { |_, v|
+    config_section('emma.upload.record.emma_data').select { |_, v|
       v[:max].nil? || positive(v[:max]) if v.is_a?(Hash)
     }.deep_freeze
 

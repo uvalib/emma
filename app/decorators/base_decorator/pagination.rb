@@ -23,7 +23,7 @@ module BaseDecorator::Pagination
   #
   # @type [Hash{Symbol=>*}]
   #
-  PAGINATION_CONFIG = I18n.t('emma.pagination', default: {}).deep_freeze
+  PAGINATION_CONFIG = config_section('emma.pagination').deep_freeze
 
   # Separator between pagination controls.
   #

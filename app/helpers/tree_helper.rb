@@ -22,7 +22,7 @@ module TreeHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  TREE_CTRL_CFG = I18n.t('emma.tree.control', default: {}).deep_freeze
+  TREE_CTRL_CFG = config_section('emma.tree.control').deep_freeze
 
   # Label for button to open a collapsed tree.
   #

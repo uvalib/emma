@@ -310,25 +310,30 @@ class Paginator
 
     public
 
+    # @private
+    PAGE_SIZE_KEY = :page_size
+
     # Configured results per page for the given controller/action.
     #
-    # @param [Symbol, String, Hash, nil] c   Controller
-    # @param [Symbol, String, nil]       a   Action
+    # @param [Symbol, String, Hash, nil] c    Controller
+    # @param [Symbol, String, nil]       a    Action
+    # @param [Symbol]                    key  Configuration key.
     #
     # @return [Integer]
     #
-    def get_page_size(c = nil, a = nil)
+    def get_page_size(c = nil, a = nil, key: PAGE_SIZE_KEY)
       c, a = c.values_at(:controller, :action) if c.is_a?(Hash)
       keys = []
-      keys << :"emma.#{c}.#{a}.pagination.page_size" if c && a
-      keys << :"emma.#{c}.#{a}.page_size"            if c && a
-      keys << :"emma.#{c}.pagination.page_size"      if c
-      keys << :"emma.#{c}.page_size"                 if c
-      keys << :'emma.generic.pagination.page_size'
-      keys << :'emma.generic.page_size'
-      keys << :'emma.pagination.page_size'
-      keys << :'emma.page_size'
-      I18n.t(keys.shift, default: keys).to_i
+      keys << :"emma.#{c}.#{a}.pagination" if c && a
+      keys << :"emma.#{c}.#{a}"            if c && a
+      keys << :"emma.#{c}.pagination"      if c
+      keys << :"emma.#{c}"                 if c
+      keys << :'emma.generic.pagination'
+      keys << :'emma.generic'
+      keys << :'emma.pagination'
+      keys << :'emma'
+      keys.map! { |base| :"#{base}.#{key}" }
+      config_item(keys).to_i
     end
 
     # Number of results per page for any arbitrary controller.
@@ -476,12 +481,13 @@ class Paginator
   # Current results per page for the given controller/action (unless an
   # argument is present).
   #
-  # @param [Symbol, String, Hash, nil] c   Controller
-  # @param [Symbol, String, nil]       a   Action
+  # @param [Symbol, String, Hash, nil] c    Controller
+  # @param [Symbol, String, nil]       a    Action
+  # @param [Symbol]                    key  Configuration key.
   #
   # @return [Integer]
   #
-  def get_page_size(c = nil, a = nil)
+  def get_page_size(c = nil, a = nil, key: PAGE_SIZE_KEY)
     c ? super : super(context)
   end
 

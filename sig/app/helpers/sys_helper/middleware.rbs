@@ -3,12 +3,6 @@
 module SysHelper::Middleware
   include SysHelper::Common
 
-  # Column headers for #application_middleware.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_MIDDLEWARE_HEADERS: Hash[Symbol,String]
-
   # Render a table of current ActiveSupport::IsolatedExecutionState entries.
   #
   # @param [Boolean] sort

@@ -195,7 +195,7 @@ module Model
   # @return [ModelConfig]
   #
   def self.configured_fields_for(type)
-    model_config = I18n.t("emma.#{type}", default: nil)&.deep_dup || {}
+    model_config = config_section("emma.#{type}").deep_dup
 
     # Start with definitions from config/locales/records/*.yml, separating
     # control directives from field name entries.

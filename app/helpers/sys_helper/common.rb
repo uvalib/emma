@@ -18,6 +18,15 @@ module SysHelper::Common
 
   protected
 
+  # @private
+  SYS_CONFIGURATION = config_section('emma.sys').deep_freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
   # Translate Hash keys and values into an element containing pairs of
   # dt and dd elements.
   #
@@ -118,7 +127,7 @@ module SysHelper::Common
   # Render a table for "/sys" pages.
   #
   # @param [Hash,Array<Array>] pairs
-  # @param [Hash]              headers  Where the keys become CSS class names.
+  # @param [Symbol, Hash]      headers  Where the keys become CSS class names.
   # @param [Boolean]           sort
   # @param [String]            css      Characteristic CSS class/selector.
   # @param [Hash]              opt      Passed to the outer `<table>` element.
@@ -126,10 +135,11 @@ module SysHelper::Common
   # @return [ActiveSupport::SafeBuffer]
   #
   def sys_table(pairs, headers, sort: true, css: '.sys-table', **opt)
-    cols  = positive(headers&.size) or raise "#{__method__}: no columns"
-    row   = 0
-    pairs = pairs.sort_by(&:first) if sort
-    pairs = pairs.to_h
+    headers = SYS_CONFIGURATION.dig(headers, :headers) if headers.is_a?(Symbol)
+    cols    = positive(headers&.size) or raise "#{__method__}: no columns"
+    row     = 0
+    pairs   = pairs.sort_by(&:first) if sort
+    pairs   = pairs.to_h
 
     if sanity_check?
       pairs.each_pair do |k, v|

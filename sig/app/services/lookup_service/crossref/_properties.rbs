@@ -1,7 +1,7 @@
 # LookupService::Crossref::Properties
 #
 module LookupService::Crossref::Properties
-  include Emma::Constants
+  include Emma::Project
 
   include LookupService::RemoteService::Properties
 

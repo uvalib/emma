@@ -31,7 +31,7 @@ module FileFormat
   #
   # @see file:config/locales/types.en.yml
   #
-  TYPES = I18n.t('emma.format').keys.map(&:to_sym).freeze
+  TYPES = config_section('emma.format').keys.map(&:to_sym).freeze
 
   # Placeholder for an unknown format.
   #
@@ -429,9 +429,7 @@ module FileFormat
     # @return [Hash{Symbol=>String,Array,Hash}]
     #
     def configuration_section(section)
-      section = section.to_s
-      section = "emma.#{section}" unless section.start_with?('emma.')
-      I18n.t(section).deep_dup.tap do |hash|
+      config_section(section).deep_dup.tap do |hash|
         %i[mimes exts].each do |key|
           hash[key] ||= []
           hash[key].map! { |s| s.to_s.strip.downcase }.compact_blank!

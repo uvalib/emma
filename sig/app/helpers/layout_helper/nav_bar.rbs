@@ -11,9 +11,9 @@ module LayoutHelper::NavBar
 
   # Configuration for nav bar properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  NAV_BAR_CONFIG: symHash
+  NAV_BAR_CONFIG: Hash[Symbol,symArray]
 
   # The controllers included on the nav bar.
   #

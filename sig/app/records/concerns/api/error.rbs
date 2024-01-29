@@ -98,17 +98,19 @@ class Api::Error < ExecError
     # The descriptive name of the service for use in display and messages.
     #
     # @param [Symbol, String, nil] source     Source repository
+    # @param [Symbol]              key
+    # @param [String, nil]         fallback
     #
     # @return [String]
     #
-    def service_name: (?source: Symbol|String|nil) -> String
+    def service_name: (?source: Symbol|String|nil, ?key: Symbol, ?fallback: String|nil) -> String
 
     # Default error message for the current instance based on the name of its
     # class.
     #
     # @param [Symbol, String, nil] source     Source repository
     # @param [Symbol, String, nil] type       Error type.
-    # @param [Boolean]             allow_nil
+    # @param [String, Boolean]     fallback
     #
     # @return [String]                The appropriate error message.
     # @return [nil]                   If *allow_nil* is set to *true* and no
@@ -116,7 +118,7 @@ class Api::Error < ExecError
     #
     # @see file:config/locales/error.en.yml *en.emma.error.api*
     #
-    def default_message: (?source: Symbol|String|nil, ?type: Symbol|String|nil, ?allow_nil: bool) -> (String | nil)
+    def default_message: (?source: Symbol|String|nil, ?type: Symbol|String|nil, ?fallback: String|bool) -> (String | nil)
 
     private
 

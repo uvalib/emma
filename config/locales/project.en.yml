@@ -1,0 +1,16 @@
+# config/locales/project.en.yml
+#
+# EMMA project information
+
+en:
+
+  emma:
+
+    project:
+
+      site:             'https://emma.uvacreate.virginia.edu'
+      email:            'emma4accessibility@virginia.edu'
+
+    contact:
+
+      email:            'emmahelp@virginia.edu'

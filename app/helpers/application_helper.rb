@@ -45,7 +45,7 @@ module ApplicationHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  APP_CONFIG = I18n.t('emma.application', default: {}).deep_freeze
+  APP_CONFIG = config_section('emma.application').deep_freeze
 
   # The controllers for the application.
   #

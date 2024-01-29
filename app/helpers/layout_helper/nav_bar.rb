@@ -22,10 +22,10 @@ module LayoutHelper::NavBar
 
   # Configuration for nav bar properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  NAV_BAR_CONFIG = I18n.t('emma.nav_bar', default: {}).transform_values { |cfg|
-    cfg.is_a?(Hash) ? cfg : Array.wrap(cfg).compact.map!(&:to_sym)
+  NAV_BAR_CONFIG = config_section('emma.nav_bar').transform_values { |cfg|
+    Array.wrap(cfg).compact.map!(&:to_sym)
   }.deep_freeze
 
   # The controllers included on the nav bar.
@@ -63,7 +63,7 @@ module LayoutHelper::NavBar
   #
   # @type [Hash{Symbol=>*}]
   #
-  DASHBOARD_CONFIG = I18n.t('emma.home.dashboard', default: {}).deep_freeze
+  DASHBOARD_CONFIG = config_section('emma.home.dashboard').deep_freeze
 
   # Controller link labels.
   #
@@ -71,7 +71,7 @@ module LayoutHelper::NavBar
   #
   CONTROLLER_LABEL =
     NAV_BAR_CONTROLLERS.map { |c|
-      [c, I18n.t("emma.#{c}.label", default: c.to_s.camelize)]
+      [c, config_item("emma.#{c}.label", fallback: c.to_s.camelize)]
     }.to_h.deep_freeze
 
   # Controller link tooltips.
@@ -80,7 +80,7 @@ module LayoutHelper::NavBar
   #
   CONTROLLER_TOOLTIP =
     NAV_BAR_CONTROLLERS.map { |c|
-      [c, I18n.t("emma.#{c}.tooltip", default: '')]
+      [c, config_item("emma.#{c}.tooltip", fallback: '')]
     }.to_h.deep_freeze
 
   # ===========================================================================

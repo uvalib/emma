@@ -120,21 +120,8 @@ module LayoutHelper::SkipNav
     return if label.blank? || link.blank?
 
     unless label.is_a?(String)
-      if label.is_a?(Array)
-        other = label.dup
-        key   = other.shift
-        if other.blank?
-          t_opt = {}
-        elsif !other.first.is_a?(Hash)
-          t_opt = { default: other }
-        else
-          t_opt = other.shift || {}
-          other = [*t_opt[:default], *other].compact.uniq
-          t_opt = t_opt.merge(default: other) if other.present?
-        end
-        label = I18n.t(key, **t_opt)
-      elsif label.to_s.start_with?('emma.')
-        label = I18n.t(label)
+      if label.is_a?(Array) || label.start_with?('emma.')
+        label = config_item(label)
       else
         label = page_controls_label(controller: label.to_s, many: true)
       end

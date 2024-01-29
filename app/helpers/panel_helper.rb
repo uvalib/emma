@@ -21,7 +21,7 @@ module PanelHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  PANEL_CTRL_CFG = I18n.t('emma.panel.control', default: {}).deep_freeze
+  PANEL_CTRL_CFG = config_section('emma.panel.control').deep_freeze
 
   # Label for button to open a collapsible panel.
   #

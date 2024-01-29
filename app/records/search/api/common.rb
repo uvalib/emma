@@ -25,7 +25,7 @@ module Search::Api::Common
   #
   # @see file:config/locales/types/search.en.yml
   #
-  CONFIGURATION = I18n.t('emma.search.type').deep_freeze
+  CONFIGURATION = config_section('emma.search.type').deep_freeze
 
   # Enumeration scalar type names and properties.
   #

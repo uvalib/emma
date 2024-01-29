@@ -27,7 +27,7 @@ module ExceptionHelper
   # @type [Hash{Symbol=>Hash{Symbol=>(String,Class)}}]
   #
   MODEL_ERROR =
-    I18n.t('emma.error').map { |model, model_entry|
+    config_section('emma.error').map { |model, model_entry|
       next if model.start_with?('_') || !model_entry.is_a?(Hash)
       entry = model_entry.select { |_, error_entry| error_entry.is_a?(Hash) }
       next if entry.blank?

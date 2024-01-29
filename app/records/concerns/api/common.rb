@@ -1455,12 +1455,10 @@ class EnumType < ScalarType
     # @return [Hash{Symbol=>*}, Array<String>, nil]
     #
     def get_configuration(i18n_path, default: nil)
-      default &&= Array.wrap(default)
-      default &&= [*default, nil] unless default&.last.nil?
-      I18n.t(i18n_path, default: default).tap do |config|
+      config_item(i18n_path, default: default).tap do |config|
         raise "'#{i18n_path}' is empty" if config.blank?
         if config.is_a?(Hash)
-          items = config.reject { |k, _| k.to_s.start_with?('_') }
+          items = config.reject { |k, _| k.start_with?('_') }
           raise "'#{i18n_path}' has no items" if items.blank?
         elsif !config.is_a?(Array)
           raise "'#{i18n_path}' is not a Hash or Array"
@@ -1695,7 +1693,7 @@ module Api::Common
   #
   # @see file:config/locales/en.yml
   #
-  DEPLOYMENT = I18n.t('emma.application.deployment').deep_freeze
+  DEPLOYMENT = config_section('emma.application.deployment').deep_freeze
 
   # Table of deployment names.
   #
@@ -1716,7 +1714,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Any}]
   #
-  REPOSITORY_CONFIG = I18n.t('emma.repository', default: {}).deep_freeze
+  REPOSITORY_CONFIG = config_section('emma.repository').deep_freeze
 
   # The default repository for uploads.
   #
@@ -1758,7 +1756,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Any}]
   #
-  LANGUAGE_CONFIG = I18n.t('emma.language', default: {}).deep_freeze
+  LANGUAGE_CONFIG = config_section('emma.language').deep_freeze
 
   # All language codes and labels.
   #
@@ -1801,7 +1799,7 @@ module Api::Common
   #
   # @see file:config/locales/types/account.en.yml
   #
-  MEMBER_STATUS = I18n.t('emma.account.type.MemberStatus').deep_freeze
+  MEMBER_STATUS = config_section('emma.account.type.MemberStatus').deep_freeze
 
   # Table of membership status.
   #

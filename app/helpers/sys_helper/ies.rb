@@ -17,13 +17,6 @@ module SysHelper::Ies
 
   public
 
-  # Column headers for #application_ies.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  APPLICATION_IES_HEADERS =
-    I18n.t('emma.sys.application_ies.headers').deep_freeze
-
   # Render a table of current ActiveSupport::IsolatedExecutionState entries.
   #
   # @param [Boolean] sort
@@ -42,7 +35,7 @@ module SysHelper::Ies
         [key, entry]
       end
     prepend_css!(opt, css)
-    sys_table(pairs, APPLICATION_IES_HEADERS, sort: sort, **opt)
+    sys_table(pairs, __method__, sort: sort, **opt)
   end
 
   # ===========================================================================

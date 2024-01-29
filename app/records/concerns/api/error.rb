@@ -192,9 +192,8 @@ class Api::Error < ExecError
     #
     def error_config
       @error_config ||=
-        [:api, service].compact.reduce({}) do |result, config_section|
-          # noinspection RubyMismatchedArgumentType
-          result.merge!(I18n.t("emma.error.#{config_section}", default: {}))
+        [:api, service].compact.reduce({}) do |result, section|
+          result.merge!(config_section("emma.error.#{section}"))
         end
     end
 
@@ -217,17 +216,19 @@ class Api::Error < ExecError
     # The descriptive name of the service for use in display and messages.
     #
     # @param [Symbol, String, nil] source     Source repository
+    # @param [Symbol]              key
+    # @param [String, nil]         fallback
     #
     # @return [String]
     #
-    def service_name(source: nil)
+    def service_name(source: nil, key: :_name, fallback: 'remote service')
       source ||= service
       keys = []
-      keys << :"emma.error.#{source}._name" if source
-      keys << :'emma.error.api._name'
-      keys << 'remote service'
+      keys << :"emma.error.#{source}" if source
+      keys << :'emma.error.api'
+      keys.map! { |base| :"#{base}.#{key}" }
       # noinspection RubyMismatchedReturnType
-      I18n.t(keys.shift, default: keys)
+      config_item(keys, fallback: fallback)
     end
 
     # =========================================================================
@@ -241,7 +242,7 @@ class Api::Error < ExecError
     #
     # @param [Symbol, String, nil] source     Source repository
     # @param [Symbol, String, nil] type       Error type.
-    # @param [Boolean]             allow_nil
+    # @param [String, Boolean]     fallback
     #
     # @return [String]                The appropriate error message.
     # @return [nil]                   If *allow_nil* is set to *true* and no
@@ -249,18 +250,22 @@ class Api::Error < ExecError
     #
     # @see file:config/locales/error.en.yml *en.emma.error.api*
     #
-    def default_message(source: nil, type: nil, allow_nil: false)
+    def default_message(source: nil, type: nil, fallback: true)
       source ||= service
       type   ||= error_type
       name = service_name(source: source)
       opt  = { service: name, Service: name.upcase_first }
+      case fallback
+        when String then opt[:fallback] = fallback
+        when true   then opt[:fallback] = "#{type&.capitalize || 'API'} error"
+      end
       keys = []
-      keys << :"emma.error.#{source}.#{type}"       if source && type
-      keys << :"emma.error.api.#{type}"             if type
-      keys << :"emma.error.#{source}._default"      if source
-      keys << :'emma.error.api._default'
-      keys << "#{type&.capitalize || 'API'} error"  unless allow_nil
-      I18n.t(keys.shift, default: keys, **opt)
+      keys << :"#{source}.#{type}"  if source && type
+      keys << :"api.#{type}"        if type
+      keys << :"#{source}._default" if source
+      keys << :'api._default'
+      keys.map! { |key| :"emma.error.#{key}" }
+      config_item(keys, **opt)
     end
 
     # =========================================================================

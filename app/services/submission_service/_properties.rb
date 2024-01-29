@@ -27,7 +27,7 @@ module SubmissionService::Properties
   # @type [Hash{Symbol=>*}]
   #
   CONFIGURATION =
-    I18n.t('emma.service.submission').transform_values { |config|
+    config_section('emma.service.submission').transform_values { |config|
       if config.is_a?(Hash)
         config.dup.tap do |cfg|
           cfg[:timeout]  = positive_float(cfg[:timeout]).to_f * SECONDS
@@ -57,13 +57,13 @@ module SubmissionService::Properties
   #
   # @type [Integer]
   #
-  DEFAULT_PRIORITY = SERVICE_PROPERTY[:priority]
+  DEFAULT_PRIORITY = SERVICE_PROPERTY[:priority].to_i
 
   # How long to wait for a response from the external service.
   #
   # @type [Float]
   #
-  DEFAULT_TIMEOUT = SERVICE_PROPERTY[:timeout]
+  DEFAULT_TIMEOUT = SERVICE_PROPERTY[:timeout].to_f
 
   # ===========================================================================
   # :section: Configuration - batch size
@@ -79,7 +79,7 @@ module SubmissionService::Properties
   # @see "en.emma.service.submission.batch_min"
   # @see "en.emma.service.submission._template.batch_min"
   #
-  MIN_BATCH = SERVICE_PROPERTY[:batch_min] || 1
+  MIN_BATCH = SERVICE_PROPERTY[:batch_min]&.to_i || 1
 
   # Batches larger than this number are not permitted.
   #
@@ -88,7 +88,7 @@ module SubmissionService::Properties
   # @see "en.emma.service.submission.batch_max"
   # @see "en.emma.service.submission._template.batch_max"
   #
-  MAX_BATCH = SERVICE_PROPERTY[:batch_max] || MAX_BATCH_SIZE
+  MAX_BATCH = SERVICE_PROPERTY[:batch_max]&.to_i || MAX_BATCH_SIZE
 
   # How many manifest items to process in a single job.
   #
@@ -126,7 +126,7 @@ module SubmissionService::Properties
   # @see "en.emma.service.submission.slice_min"
   # @see "en.emma.service.submission._template.slice_min"
   #
-  MIN_SLICE = SERVICE_PROPERTY[:slice_min] || MIN_BATCH
+  MIN_SLICE = SERVICE_PROPERTY[:slice_min]&.to_i || MIN_BATCH
 
   # Maximum slice size.
   #
@@ -135,7 +135,7 @@ module SubmissionService::Properties
   # @see "en.emma.service.submission.slice_max"
   # @see "en.emma.service.submission._template.slice_max"
   #
-  MAX_SLICE = SERVICE_PROPERTY[:slice_max] || MAX_BATCH
+  MAX_SLICE = SERVICE_PROPERTY[:slice_max]&.to_i || MAX_BATCH
 
   # Within a given batch of ManifestItems being submitted, this value specifies
   # how many will be transmitted together to each subsystem.
@@ -189,7 +189,7 @@ module SubmissionService::Properties
   # @type [Hash{Symbol=>Hash}]
   #
   SUBMIT_STEPS_TABLE =
-    I18n.t('emma.bulk.step', default: {}).map { |step, entry|
+    config_section('emma.bulk.step').map { |step, entry|
       entry = entry.dup
       entry[:label]   ||= "#{step} status".titleize
       entry[:css]     ||= "#{step}-status"

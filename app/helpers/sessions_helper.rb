@@ -21,7 +21,7 @@ module SessionsHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  SESSIONS_CONFIG = I18n.t('emma.user.sessions', default: {}).deep_freeze
+  SESSIONS_CONFIG = config_section('emma.user.sessions').deep_freeze
 
   # Default sign-in tooltip.
   #

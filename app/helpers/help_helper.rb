@@ -33,7 +33,7 @@ module HelpHelper
   #
   # @type [Hash{Symbol=>*}]
   #
-  HELP_CONFIG = I18n.t('emma.help', default: {}).deep_freeze
+  HELP_CONFIG = config_section('emma.help').deep_freeze
 
   # Help topics and values.
   #
@@ -330,7 +330,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_image(name, **opt)
-    entry = I18n.t("emma.help.image.#{name}", default: nil)
+    entry = HELP_CONFIG.dig(:image, name.to_sym)
     asset, alt = entry.is_a?(Hash) ? [entry[:asset], entry[:alt]] : entry
     asset     ||= "help/#{name}.png"
     opt[:alt] ||= alt || name.to_s.tr('_', ' ').capitalize << ' illustration'
@@ -625,11 +625,12 @@ module HelpHelper
   def help_main_intro(**opt)
     meth = :help_offline
     docs = send(meth)
-    if (text = I18n.t('emma.help.index.intro_html', default: nil))
+    cfg  = HELP_CONFIG.dig(:index)
+    if (text = cfg[:intro_html]&.dup)
       docs = nil if text.sub!(%r{<p>%{#{meth}}</p>|%{#{meth}}}, docs)
       text = text.html_safe
       text << docs if docs
-    elsif (text = I18n.t('emma.help.index.intro', default: nil))
+    elsif (text = cfg[:intro])
       text = text.split(/%{#{meth}}/).compact.map { |txt| html_paragraph(txt) }
       text = safe_join(text, docs)
     end

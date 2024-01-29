@@ -426,7 +426,7 @@ module FlashHelper
   # @param [Symbol, String, nil]   meth
   # @param [Boolean, nil]          html
   # @param [String, nil]           separator
-  # @param [Hash]                  opt        Passed to I18n#t.
+  # @param [Hash]                  opt        Passed to #config_item.
   #
   # @return [String]                          # Even if html is *true*.
   #
@@ -437,14 +437,6 @@ module FlashHelper
   # @return [String]
   #
   def flash_i18n_scope: () -> String
-
-  # Build an I18n path.
-  #
-  # @param [Array<String,Symbol,nil,Array>] parts
-  #
-  # @return [Symbol]
-  #
-  def flash_i18n_path: (*(Array[String|Symbol|nil]|String|Symbol|nil) parts) -> Symbol
 
   private
 
