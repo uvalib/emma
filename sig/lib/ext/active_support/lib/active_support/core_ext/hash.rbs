@@ -1,4 +1,6 @@
 module HashExt
+  include SystemExtension
+
   #include ObjectExt
 
   # Recursively freeze a Hash so that no part of its forest of key-value pairs

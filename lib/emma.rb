@@ -5,6 +5,7 @@
 #
 # This file is loaded from config/initializers/_extensions.rb.
 
+require '_at_start'
 require '_trace'
 
 __loading_begin(__FILE__)
@@ -154,6 +155,7 @@ end
 # Require all modules from extensions and the "lib/emma" directory.
 # =============================================================================
 
+require '_system'
 require '_loader'
 require 'ext/active_support/ext'
 require_submodules(__FILE__)

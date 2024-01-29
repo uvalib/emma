@@ -1,0 +1,40 @@
+# Included in modules which extend/override system definitions.
+#
+module SystemExtension
+  # This method checks that the methods defined in *ext* are not already
+  # defined in *mod*.
+  #
+  # If there is ever a time when Rails or the standard Ruby library defines
+  # one of these extension methods, any current uses of the method needs to be
+  # evaluated and the local definition should be removed.
+  #
+  # @param [Module]  mod            The module or class that is being extended.
+  # @param [Module]  ext            The module with new or override methods.
+  # @param [Array]   except         The names of overridden methods.
+  # @param [Boolean] fatal          If *false* then just log errors.
+  # @param [Symbol]  ref            Defined in './at_start.rb'
+  #
+  def check_extension: (Module mod, Module ext, ?except: symArray, ?fatal: bool, ?ref: Symbol) -> void
+
+  # Inject extension methods into *mod*.
+  #
+  # @param [Module] mod
+  # @param [Module] ext               Default: the including module.
+  #
+  # @return [Module]                  The *ext* module.
+  #
+  def include_in: (Module mod, ?Module? ext) -> Module
+
+  # Inject extension methods into *mod*.
+  #
+  # @param [Module] mod
+  # @param [Module] ext               Default: the including module.
+  #
+  # @return [Module]                  The *ext* module.
+  #
+  def include_and_extend: (Module mod, ?Module? ext) -> Module
+
+  private
+
+  def self.included: (Module base) -> void
+end

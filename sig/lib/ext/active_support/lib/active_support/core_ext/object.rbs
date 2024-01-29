@@ -1,4 +1,6 @@
 module ObjectExt
+  include SystemExtension
+
   # Recursive freezing support.
   #
   # @see Hash#deep_freeze

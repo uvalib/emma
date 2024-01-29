@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 module NilClassExt
 
+  include SystemExtension
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -36,22 +38,36 @@ module NilClassExt
   end
 
   # ===========================================================================
-  # :section:
+  # :section: SystemExtension overrides
   # ===========================================================================
 
-  # If there is ever a time when Rails or the standard Ruby library defines
-  # one of these extension methods, any current uses of the method needs to be
-  # evaluated and the local definition should be removed.
-  if sanity_check?
-    local  = instance_methods.excluding(:html_safe?)
-    errors = local.intersection(NilClass.instance_methods)
-    fail 'NilClass already defines %s' % errors.join(', ') if errors.present?
+  public
+
+  # This method checks that the methods defined in *ext* are not already
+  # defined in *mod*.
+  #
+  # @param [Module] mod             The module or class that is being extended.
+  # @param [Module] ext             The module with new or override methods.
+  # @param [Hash]   opt             Passed to super.
+  #
+  def self.check_extension(mod, ext, **opt)
+    opt[:except] ||= %i[html_safe?]
+    super(mod, ext, **opt)
   end
 
 end
 
 class NilClass
-  include NilClassExt
+
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include NilClassExt
+    # :nocov:
+  end
+
+  NilClassExt.include_in(self)
+
 end
 
 __loading_end(__FILE__)

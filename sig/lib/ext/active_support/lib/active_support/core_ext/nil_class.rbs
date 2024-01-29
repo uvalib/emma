@@ -1,4 +1,6 @@
 module NilClassExt
+  include SystemExtension
+
   #include ObjectExt
 
   # This prevents values that might be *nil* from causing a problem in ERB
@@ -11,6 +13,15 @@ module NilClassExt
   # Indicates that *nil* is treated as HTML-safe.
   #
   def html_safe?: () -> true
+
+  # This method checks that the methods defined in *ext* are not already
+  # defined in *mod*.
+  #
+  # @param [Module] mod             The module or class that is being extended.
+  # @param [Module] ext             The module with new or override methods.
+  # @param [Hash]   opt             Passed to super.
+  #
+  def self.check_extension: (Module mod, Module ext, **untyped opt) -> void
 end
 
 class NilClass

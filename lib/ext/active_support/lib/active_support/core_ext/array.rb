@@ -9,6 +9,8 @@ require 'active_support/core_ext/array'
 
 module ArrayExt
 
+  include SystemExtension
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -104,22 +106,19 @@ module ArrayExt
     delete_if { |v| elements.include?(v) }
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  # If there is ever a time when Rails or the standard Ruby library defines
-  # one of these extension methods, any current uses of the method needs to be
-  # evaluated and the local definition should be removed.
-  if sanity_check?
-    errors = instance_methods.intersection(Array.instance_methods)
-    fail 'Array already defines %s' % errors.join(', ') if errors.present?
-  end
-
 end
 
 class Array
-  include ArrayExt
+
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include ArrayExt
+    # :nocov:
+  end
+
+  ArrayExt.include_in(self)
+
 end
 
 __loading_end(__FILE__)

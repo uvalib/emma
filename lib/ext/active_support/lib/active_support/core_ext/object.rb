@@ -9,6 +9,8 @@ require 'active_support/core_ext/object'
 
 module ObjectExt
 
+  include SystemExtension
+
   # ===========================================================================
   # :section: Instance methods to add to Object
   # ===========================================================================
@@ -60,22 +62,19 @@ module ObjectExt
     end
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  # If there is ever a time when Rails or the standard Ruby library defines
-  # one of these extension methods, any current uses of the method needs to be
-  # evaluated and the local definition should be removed.
-  if sanity_check?
-    errors = instance_methods.intersection(Object.instance_methods)
-    fail 'Object already defines %s' % errors.join(', ') if errors.present?
-  end
-
 end
 
 class Object
-  include ObjectExt
+
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include ObjectExt
+    # :nocov:
+  end
+
+  ObjectExt.include_in(self)
+
 end
 
 __loading_end(__FILE__)

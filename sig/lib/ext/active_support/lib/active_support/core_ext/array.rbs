@@ -1,4 +1,6 @@
 module ArrayExt
+  include SystemExtension
+
   #include ObjectExt
 
   # Recursively freeze an Array and all of its elements so that the contents of

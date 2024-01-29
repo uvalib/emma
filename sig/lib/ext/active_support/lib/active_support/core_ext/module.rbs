@@ -1,4 +1,6 @@
 module ModuleExt
+  include SystemExtension
+
   #include ObjectExt
 
   # Prevent inadvertent freezing of modules and classes.
@@ -20,4 +22,5 @@ end
 
 class Module
   include ModuleExt
+  extend  ModuleExt
 end
