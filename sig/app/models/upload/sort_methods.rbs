@@ -1,7 +1,7 @@
 # Methods for applying a sort order to sets of records.
 #
 module Upload::SortMethods
-  include Upload::WorkflowMethods
+  include Record::Sortable
 
   extend ::Upload::SortMethods
 
@@ -10,40 +10,6 @@ module Upload::SortMethods
   # @return [Symbol, String, Hash]
   #
   def default_sort: () -> (Symbol | String | anyHash)
-
-  # Generate an object to specify sorting.
-  #
-  # @param [*]    value
-  # @param [Hash] opt                 To SortOrder#initialize.
-  #
-  # @return [SortOrder, nil]
-  #
-  def normalize_sort_order: (untyped val, **untyped opt) -> (SortOrder | nil)
-
-  # Generates SQL terms which mirror ManifestItem scopes.
-  #
-  # @param [String, Symbol] col
-  # @param [Symbol]         tbl
-  #
-  # @return [String]
-  #
-  def sort_scope: ((String|Symbol) col, Symbol tbl) -> String
-
-  def scope_active: (Symbol t) -> String
-
-  def scope_to_delete: (Symbol t) -> String
-
-  def scope_never_saved: (Symbol t) -> String
-
-  def scope_unsaved: (Symbol t) -> String
-
-  def scope_completed: (Symbol t) -> String
-
-  def scope_incomplete: (Symbol t) -> String
-
-  def scope_pending: (Symbol t) -> String
-
-  def scope_saved: (Symbol t) -> String
 
   private
 

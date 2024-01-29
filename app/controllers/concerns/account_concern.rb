@@ -73,13 +73,13 @@ module AccountConcern
 
   # Start a new (un-persisted) User.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
   # @return [User]                      Un-persisted User instance.
   #
-  def new_record(attr = nil, force_id: false, **)
-    # noinspection RubyScope, RubyMismatchedReturnType
+  def new_record(prm = nil, force_id: false, **)
+    # noinspection RubyMismatchedReturnType
     super do |attr|
       if administrator?
         # Allow :org_id to be nil to allow selection on the form.
@@ -91,14 +91,14 @@ module AccountConcern
 
   # Create and persist a new User.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [User]                      A new User instance.
   #
-  def create_record(attr = nil, force_id: false, fatal: true, **)
-    # noinspection RubyScope, RubyMismatchedReturnType
+  def create_record(prm = nil, force_id: false, fatal: true, **)
+    # noinspection RubyMismatchedReturnType
     super do |attr|
       if administrator?
         attr[:org_id] = Org.none.id if attr[:org_id].nil?
@@ -111,9 +111,9 @@ module AccountConcern
   # Update the indicated User, ensuring that :email and :org_id are not changed
   # unless authorized.
   #
-  # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   fatal          If *false* use #update not #update!.
-  # @param [Hash]      prm            Field values.
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.

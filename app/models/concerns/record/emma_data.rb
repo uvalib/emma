@@ -167,40 +167,6 @@ module Record::EmmaData
     re_raise_if_internal_exception(error) or {}
   end
 
-  # generate_emma_data
-  #
-  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
-  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] attr
-  #
-  # @return [Hash]
-  #
-  # @note From Upload#assign_attributes (sorta)
-  #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
-  def generate_emma_data(data, attr)
-    data  = data&.dup || {}
-    utime = attr&.dig(:updated_at) || DateTime.now
-
-    aed   = json_parse(attr&.dig(:emma_data))
-    data  = aed.merge(data) if aed.is_a?(Hash)
-    data  = parse_emma_data(data)
-
-    # Augment supplied attribute values with supplied EMMA metadata.
-    data[:emma_repository] ||= repository_value(attr)
-    DEFAULT_TIME_NOW_FIELDS.each { |f| data[f] ||= utime if data.key?(f) }
-
-    # EMMA metadata defaults that are only appropriate for EMMA-native items.
-    if emma_native?(attr)
-      rid = data[:emma_repositoryRecordId] ||= sid_value(attr)
-      data[:emma_retrievalLink] ||= make_retrieval_link(rid, attr)
-    end
-
-    # noinspection RubyMismatchedReturnType
-    data
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -230,13 +196,6 @@ module Record::EmmaData
     #
     def make_retrieval_link(rid = nil, base_url = nil)
       rid ||= emma_data[:emma_retrievalLink]
-      super
-    end
-
-    # @see Record::EmmaData#generate_emma_data
-    #
-    def generate_emma_data(data, attr = nil)
-      attr ||= self
       super
     end
 
@@ -272,12 +231,12 @@ module Record::EmmaData
       @emma_metadata ||= parse_emma_data(emma_data, true)
     end
 
-    # Set the :emma_data field value (if not #EMMA_DATA_HASH).
+    # Set the :emma_data field value.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
     # @param [Boolean]                                           allow_blank
     #
-    # @return [String]                New value of :emma_data
+    # @return [*]                     New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
     # @note From Upload::EmmaDataMethods#set_emma_data
@@ -285,20 +244,15 @@ module Record::EmmaData
     def set_emma_data(data, allow_blank = true)
       @emma_record     = nil # Force regeneration.
       @emma_metadata   = parse_emma_data(data, allow_blank)
-      self[:emma_data] =
-        case data
-          when nil    then data
-          when String then data.dup
-          else             @emma_metadata.to_json
-        end
+      self[:emma_data] = init_emma_data_value(data)
     end
 
-    # Selectively modify the :emma_data field value (if not #EMMA_DATA_HASH).
+    # Selectively modify the :emma_data field value.
     #
     # @param [Hash]    data
     # @param [Boolean] allow_blank
     #
-    # @return [String]                New value of :emma_data.
+    # @return [*]                     New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
     # @note From Upload::EmmaDataMethods#modify_emma_data
@@ -307,14 +261,41 @@ module Record::EmmaData
       if (new_metadata = parse_emma_data(data, allow_blank)).present?
         @emma_record     = nil # Force regeneration.
         @emma_metadata   = emma_metadata.merge(new_metadata)
-        self[:emma_data] = @emma_metadata.to_json
+        self[:emma_data] = curr_emma_data_value
       end
       self[:emma_data]
     end
 
+    # init_emma_data_value
+    #
+    # @param [*] data
+    #
+    # @return [Hash{String=>*}, String, nil]
+    #
+    def init_emma_data_value(data)
+      must_be_overridden
+    end
+
+    # curr_emma_data_value
+    #
+    # @return [Hash{String=>*}, String, nil]
+    #
+    def curr_emma_data_value
+      must_be_overridden
+    end
+
   end
 
-  module InstanceMethods
+  # Instance implementation overrides if EMMA_DATA_COLUMN is saved as 'json'.
+  module HashEmmaData
+
+    include InstanceMethods
+
+    # =========================================================================
+    # :section: InstanceMethods overrides
+    # =========================================================================
+
+    public
 
     # Set the :emma_data field value hash.
     #
@@ -325,9 +306,7 @@ module Record::EmmaData
     # @return [nil]                   ...if *data* is *nil*.
     #
     def set_emma_data(data, allow_blank = true)
-      @emma_record     = nil # Force regeneration.
-      @emma_metadata   = parse_emma_data(data, allow_blank)
-      self[:emma_data] = data && @emma_metadata.deep_stringify_keys
+      super
     end
 
     # Selectively modify the :emma_data field value hash.
@@ -339,15 +318,88 @@ module Record::EmmaData
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
     def modify_emma_data(data, allow_blank = true)
-      if (new_metadata = parse_emma_data(data, allow_blank)).present?
-        @emma_record     = nil # Force regeneration.
-        @emma_metadata   = emma_metadata.merge(new_metadata)
-        self[:emma_data] = @emma_metadata.deep_stringify_keys
-      end
-      self[:emma_data]
+      super
     end
 
-  end if EMMA_DATA_HASH
+    # init_emma_data_value
+    #
+    # @param [*] data
+    #
+    # @return [Hash{String=>*}, nil]
+    #
+    def init_emma_data_value(data)
+      data.presence && curr_emma_data_value
+    end
+
+    # curr_emma_data_value
+    #
+    # @return [Hash{String=>*}, nil]
+    #
+    def curr_emma_data_value
+      # noinspection RubyMismatchedReturnType
+      @emma_metadata&.deep_stringify_keys
+    end
+
+  end
+
+  # Instance implementation overrides if EMMA_DATA_COLUMN is saved as 'text'.
+  module StringEmmaData
+
+    include InstanceMethods
+
+    # =========================================================================
+    # :section: InstanceMethods overrides
+    # =========================================================================
+
+    public
+
+    # Set the :emma_data field value.
+    #
+    # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+    # @param [Boolean]                                           allow_blank
+    #
+    # @return [String]                New value of :emma_data
+    # @return [nil]                   ...if *data* is *nil*.
+    #
+    def set_emma_data(data, allow_blank = true)
+      super
+    end
+
+    # Selectively modify the :emma_data field value.
+    #
+    # @param [Hash]    data
+    # @param [Boolean] allow_blank
+    #
+    # @return [String]                New value of :emma_data
+    # @return [nil]                   If no change and :emma_data was *nil*.
+    #
+    def modify_emma_data(data, allow_blank = true)
+      super
+    end
+
+    # init_emma_data_value
+    #
+    # @param [*] data
+    #
+    # @return [String, nil]
+    #
+    def init_emma_data_value(data)
+      case data
+        when nil    then data
+        when String then data.dup
+        else             curr_emma_data_value
+      end
+    end
+
+    # curr_emma_data_value
+    #
+    # @return [String, nil]
+    #
+    def curr_emma_data_value
+      @emma_metadata&.to_json
+    end
+
+  end
 
   # ===========================================================================
   # :section:
@@ -362,7 +414,17 @@ module Record::EmmaData
     __included(base, THIS_MODULE)
     assert_record_class(base, THIS_MODULE)
 
-    include InstanceMethods if has_column?(EMMA_DATA_COLUMN)
+    if has_column?(EMMA_DATA_COLUMN)
+
+      include InstanceMethods
+
+      if EMMA_DATA_HASH
+        include HashEmmaData
+      else
+        include StringEmmaData
+      end
+
+    end
 
   end
 

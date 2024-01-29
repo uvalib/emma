@@ -101,18 +101,6 @@ module UploadConcern
   #
   def filter_by_group!: (symHash opt, ?key: Symbol, ?state: Symbol|symArray) -> (symHash | nil)
 
-  # Return with the specified Upload record or *nil* if one could not be found.
-  #
-  # @param [String, Integer, Hash, Upload, *] item  Default: #identifier.
-  #
-  # @raise [UploadWorkflow::SubmitError]    If *item* not found.
-  #
-  # @return [Upload, nil]
-  #
-  # @see Upload#get_record
-  #
-  def get_record: (?(String|Integer|Upload|symHash|nil) id) -> (Upload | nil)
-
   # Get item data from the production service.
   #
   # @param [String] sid               Submission ID of the item.

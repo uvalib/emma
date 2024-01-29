@@ -9,8 +9,8 @@ __loading_begin(__FILE__)
 #
 module Upload::EmmaDataMethods
 
-  include Emma::Common
-  include Emma::Json
+  include Record::EmmaData
+  include Record::EmmaData::StringEmmaData
 
   include Upload::WorkflowMethods
 
@@ -69,62 +69,19 @@ module Upload::EmmaDataMethods
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Record::EmmaData::StringEmmaData overrides
   # ===========================================================================
 
   public
 
-  # Present :emma_data as a structured object (if it is present).
+  # init_emma_data_value
   #
-  # @param [Boolean] refresh          If *true*, force regeneration.
+  # @param [*] _data
   #
-  # @return [Search::Record::MetadataRecord]
+  # @return [String, nil]
   #
-  def emma_record(refresh: false)
-    @emma_record = nil if refresh
-    @emma_record ||= make_emma_record(emma_metadata(refresh: true))
-  end
-
-  # Present :emma_data as a hash (if it is present).
-  #
-  # @param [Boolean] refresh          If *true*, force regeneration.
-  #
-  # @return [Hash]
-  #
-  def emma_metadata(refresh: false)
-    @emma_metadata = nil if refresh
-    @emma_metadata ||= parse_emma_data(emma_data, true)
-  end
-
-  # Set the :emma_data field value.
-  #
-  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-  # @param [Boolean]                                           allow_blank
-  #
-  # @return [String]
-  # @return [nil]                     If *data* is *nil*.
-  #
-  def set_emma_data(data, allow_blank = false)
-    @emma_record     = nil # Force regeneration.
-    @emma_metadata   = parse_emma_data(data, allow_blank)
-    self[:emma_data] = @emma_metadata.presence&.to_json
-  end
-
-  # Selectively modify the :emma_data field value.
-  #
-  # @param [Hash]    data
-  # @param [Boolean] allow_blank
-  #
-  # @return [String]
-  #
-  def modify_emma_data(data, allow_blank = false)
-    new_metadata = parse_emma_data(data, allow_blank)
-    if new_metadata.present?
-      @emma_record     = nil # Force regeneration.
-      @emma_metadata   = emma_metadata.merge(new_metadata)
-      self[:emma_data] = @emma_metadata.to_json
-    end
-    self[:emma_data]
+  def init_emma_data_value(_data)
+    @emma_metadata.presence&.to_json
   end
 
   # ===========================================================================
@@ -160,7 +117,7 @@ module Upload::EmmaDataMethods
   def set_edit_emma_data(data, allow_blank = false)
     @edit_emma_record     = nil # Force regeneration.
     @edit_emma_metadata   = parse_emma_data(data, allow_blank)
-    self[:edit_emma_data] = @edit_emma_metadata.presence&.to_json
+    self[:edit_emma_data] = init_edit_emma_data_value(data)
   end
 
   # Selectively modify the :edit_emma_data field value.
@@ -168,16 +125,34 @@ module Upload::EmmaDataMethods
   # @param [Hash]    data
   # @param [Boolean] allow_blank
   #
-  # @return [String]
+  # @return [String, nil]
   #
   def modify_edit_emma_data(data, allow_blank = false)
     new_metadata = parse_emma_data(data, allow_blank)
     if new_metadata.present?
       @edit_emma_record     = nil # Force regeneration.
       @edit_emma_metadata   = edit_emma_metadata.merge(new_metadata)
-      self[:edit_emma_data] = @edit_emma_metadata.to_json
+      self[:edit_emma_data] = curr_edit_emma_data_value
     end
     self[:edit_emma_data]
+  end
+
+  # init_edit_emma_data_value
+  #
+  # @param [*] _data
+  #
+  # @return [String, nil]
+  #
+  def init_edit_emma_data_value(_data)
+    @edit_emma_metadata.presence&.to_json
+  end
+
+  # curr_edit_emma_data_value
+  #
+  # @return [String, nil]
+  #
+  def curr_edit_emma_data_value
+    @emma_metadata&.to_json
   end
 
   # ===========================================================================
@@ -224,7 +199,7 @@ module Upload::EmmaDataMethods
   # @param [Hash]    data
   # @param [Boolean] allow_blank
   #
-  # @return [String]
+  # @return [String, nil]
   #
   def modify_active_emma_data(data, allow_blank = false)
     if edit_phase
@@ -232,76 +207,6 @@ module Upload::EmmaDataMethods
     else
       modify_emma_data(data, allow_blank)
     end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Generate a record to express structured EMMA data.
-  #
-  # @param [Hash] data
-  #
-  # @return [Search::Record::MetadataRecord]
-  #
-  def make_emma_record(data, **)
-    Search::Record::MetadataRecord.new(data)
-  end
-
-  # parse_emma_data
-  #
-  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
-  # @param [Boolean] allow_blank
-  #
-  # @return [Hash]
-  #
-  def parse_emma_data(data, allow_blank = false)
-    case data
-      when Search::Record::MetadataRecord
-        result = data.as_json
-      when Model
-        result = data.as_json(only: Search::Record::MetadataRecord.field_names)
-      else
-        result = data
-    end
-    result = json_parse(result, fatal: true) or return {}
-    reject_blanks!(result) unless allow_blank
-    result.map { |k, v|
-      v     = Array.wrap(v)
-      prop  = Field.configuration_for(k, :upload)
-      array = prop[:array]
-      type  = prop[:type]
-      join  = "\n"
-      sep   = /[|\t\n]+/
-      if %i[dc_identifier dc_relation].include?(k)
-        v = PublicationIdentifier.split(v)
-      elsif (type == 'boolean') || (type == TrueFalse)
-        v = v.first
-        v = true?(v) unless v.nil?
-      elsif (lines = (type == 'textarea')) || (type == 'text') || type.blank?
-        join = sep = ';' unless lines
-        if array
-          v = v.join(join).split(sep).map!(&:strip).compact_blank!
-        else
-          v = v.map(&:to_s).map!(&:strip).compact_blank!.join(join)
-        end
-      else
-        v = v.join(join).split(sep).map!(&:strip).compact_blank!
-      end
-      v = v.first if v.is_a?(Array) && !array
-      [k, v] if allow_blank || v.present? || v.is_a?(FalseClass)
-    }.compact.sort.to_h.tap { |hash|
-      Api::Shared::TransformMethods.normalize_data_fields!(hash)
-    }
-  rescue => error
-    Log.warn do
-      msg = [__method__, error.message]
-      msg << "for #{data.inspect}" if Log.debug?
-      msg.join(': ')
-    end
-    re_raise_if_internal_exception(error) or {}
   end
 
 end

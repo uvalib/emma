@@ -133,31 +133,30 @@ module ManifestItemConcern
 
   # Create and persist a new ManifestItem.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [ManifestItem]              A new ManifestItem instance.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> ManifestItem
+  def create_record: (?symHash? prm, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> ManifestItem
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
   #
-  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
-  # @param [Hash, nil]         prm
-  # @param [Hash]              opt
+  # @param [ManifestItem, *] item     Def.: record for ModelConcern#identifier.
+  # @param [Hash]            opt      Passed to super
   #
   # @raise [Record::SubmitError]      Record could not be found.
   #
   # @return [ManifestItem, nil]       An existing persisted ManifestItem.
   #
-  def edit_record: (?(ManifestItem|nil) item, ?(symHash|nil) prm, **untyped opt) -> (ManifestItem | nil)
+  def edit_record: (?(String|Integer|ManifestItem|symHash|nil) item, **untyped opt) -> (ManifestItem | nil)
 
   # Update the indicated ManifestItem.
   #
-  # @param [ManifestItem, nil] item     Def.: rec for ModelConcern#identifier.
-  # @param [Boolean]           fatal    If *false* use #update not #update!.
-  # @param [Hash]              prm      Field values except #UPDATE_STATUS_OPTS
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values except #UPDATE_STATUS_OPTS
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -165,18 +164,18 @@ module ManifestItemConcern
   #
   # @return [ManifestItem, nil]         The updated ManifestItem instance.
   #
-  def update_record: (?(ManifestItem|nil) item, ?fatal: bool, **untyped prm) -> (ManifestItem | nil)
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (ManifestItem | nil)
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [String, Model, Array, nil] items
-  # @param [Hash, nil]                 prm    Default: `#current_params`
+  # @param [*]    items               To #search_records
+  # @param [Hash] prm                 Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Paginator::Result]
   #
-  def delete_records: (?(String|Symbol|Integer|Model|Array[String|Symbol|Integer|Model]|nil) items, ?(symHash|nil) prm) -> Paginator::Result
+  def delete_records: (?(String|Symbol|Integer|Model|Array[String|Symbol|Integer|Model]|nil) items, **untyped prm) -> Paginator::Result
 
   RECORD_KEYS: symArray
 

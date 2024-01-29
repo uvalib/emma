@@ -744,7 +744,7 @@ class Upload < ApplicationRecord
   def self.matching_sid(sid = nil, max: nil, log: false, fatal: true, **opt)
     msg = log.present?
     err = fatal.present?
-    sid = opt[:submission_id] = sid_for(sid || opt)
+    sid = opt[:submission_id] = sid_value(sid, **opt)
     if sid.blank?
       err &&= UploadWorkflow::SubmitError
       msg &&= 'No submission ID given'
@@ -782,6 +782,21 @@ class Upload < ApplicationRecord
     sort ||= :created_at
     # noinspection RubyMismatchedReturnType
     result.order(sort).last
+  end
+
+  # Return the Upload instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, *] v
+  #
+  # @return [Upload, nil]             A fresh record unless *v* is an Upload.
+  #
+  def self.instance_for(v)
+    return v if v.is_a?(self) || v.nil?
+    v = try_key(v, :submission) || v
+    return v if v.is_a?(self)
+    sid = try_key(v, :submission_id)
+    # noinspection RubyMismatchedReturnType
+    valid_sid?(sid) ? find_by(submission_id: sid) : super
   end
 
   # ===========================================================================
@@ -880,6 +895,19 @@ class Upload < ApplicationRecord
     #
     def database_columns
       @database_columns ||= columns_hash.symbolize_keys
+    end
+
+    # Counter for the trailing portion of the generated submission ID.
+    #
+    # This provides a per-thread value in the range 0..99 which can be used to
+    # differentiate submission IDs which are generated in rapid succession (e.g.,
+    # for bulk upload).
+    #
+    # @return [Integer]
+    #
+    def sid_counter
+      @sid_counter &&= (@sid_counter + 1) % 100
+      @sid_counter ||= rand(100) % 100
     end
 
   end

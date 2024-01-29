@@ -168,22 +168,20 @@ class Org < ApplicationRecord
 
   # Return the Org instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, nil] v
+  # @param [Model, Hash, String, Integer, *] v
   #
-  # @return [Org, nil]
+  # @return [Org, nil]                A fresh record unless *v* is an Org.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def self.instance_for(v)
-    v = v.values_at(:org, :org_id).first if v.is_a?(Hash)
-    return                               if v.nil?
-    return v                             if v.is_a?(Org)
-    v = v.oid                            if v.is_a?(ApplicationRecord)
-    case (v = non_negative(v) || v)
+    return v if v.is_a?(self) || v.nil?
+    v = try_key(v, model_key) || v
+    return v if v.is_a?(self)
+    # noinspection RubyMismatchedReturnType
+    case (v = oid(v) || v)
       when INTERNAL_ID then none
       when Integer     then find_by(id: v)
-      when String      then where('(short_name=?) OR (long_name=?)',v,v).first
+      when String      then where(short_name: v).or(where(long_name: v)).first
+      when Hash        then find_by(v) if (v = v.slice(*field_names)).present?
     end
   end
 

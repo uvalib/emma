@@ -89,9 +89,9 @@ class Org < ApplicationRecord
 
   # Return the Org instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, nil] v
+  # @param [Model, Hash, String, Integer, *] v
   #
-  # @return [Org, nil]
+  # @return [Org, nil]                A fresh record unless *v* is an Org.
   #
-  def self.instance_for: (Model|symHash|String|Integer|nil v) -> (Org | nil)
+  def self.instance_for: (untyped v) -> (Org | nil)
 end

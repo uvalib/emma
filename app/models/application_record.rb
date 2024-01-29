@@ -134,18 +134,19 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Return the record instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, nil] v
+  # @param [Model, Hash, String, Integer, *] v
   #
-  # @return [ApplicationRecord, nil]
+  # @return [ApplicationRecord, nil]  A fresh record unless *v* is a *self*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def self.instance_for(v)
-    v = v.values_at(model_key, model_id_key).first  if v.is_a?(Hash)
-    return                                          if v.nil?
-    return v                                        if v.is_a?(self)
-    find_by(id: v)                                  if (v = positive(v))
+    return v if v.is_a?(self) || v.nil?
+    v = try_key(v, model_key) || v
+    return v if v.is_a?(self)
+    if (id = get_id(v, model_id_key))
+      find_by(id: id)
+    elsif v.is_a?(Hash) && (v = v.slice(*field_names)).present?
+      find_by(v)
+    end
   end
 
   delegate :model_type, :model_key, :model_id_key, to: :class

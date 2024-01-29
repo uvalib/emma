@@ -197,10 +197,10 @@ module UploadWorkflow::Single::Edit::States
         end
       if action == :create_record
         # From UploadController#edit:
-        # @item = (get_record(@item_id) unless show_menu?(@item_id))
+        # @item = (find_record(@item_id) unless show_menu?(@item_id))
         __debug_sim('CODE') do
           args = "id=#{submission.id.inspect}"
-          "@item = get_record(#{args})"
+          "@item = find_record(#{args})"
         end
         submission.set_item
       else

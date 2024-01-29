@@ -230,14 +230,14 @@ module ManifestItemConcern
 
   # Create and persist a new ManifestItem.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [ManifestItem]              A new ManifestItem instance.
   #
-  def create_record(attr = nil, force_id: false, fatal: true, **)
-    # noinspection RubyScope, RubyMismatchedReturnType
+  def create_record(prm = nil, force_id: false, fatal: true, **)
+    # noinspection RubyMismatchedReturnType
     super do |attr|
       attr[:backup] ||= {}
       attr[:row]    ||= 1 + all_manifest_items(**attr)&.last&.row.to_i
@@ -246,24 +246,23 @@ module ManifestItemConcern
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
   #
-  # @param [ManifestItem, nil] item   Def.: record for ModelConcern#identifier.
-  # @param [Hash, nil]         prm
-  # @param [Hash]              opt
+  # @param [ManifestItem, *] item     Def.: record for ModelConcern#identifier.
+  # @param [Hash]            opt      Passed to super
   #
   # @raise [Record::SubmitError]      Record could not be found.
   #
   # @return [ManifestItem, nil]       An existing persisted ManifestItem.
   #
-  def edit_record(item = nil, prm = nil, **opt)
+  def edit_record(item = nil, **opt)
     # noinspection RubyMismatchedReturnType
     item.is_a?(ManifestItem) ? item : super
   end
 
   # Update the indicated ManifestItem.
   #
-  # @param [ManifestItem, nil] item     Def.: rec for ModelConcern#identifier.
-  # @param [Boolean]           fatal    If *false* use #update not #update!.
-  # @param [Hash]              prm      Field values except #UPDATE_STATUS_OPTS
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values except #UPDATE_STATUS_OPTS
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -290,17 +289,17 @@ module ManifestItemConcern
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [String, Model, Array, nil] items
-  # @param [Hash, nil]                 prm    Default: `#current_params`
+  # @param [*]    items               To #search_records
+  # @param [Hash] prm                 Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Paginator::Result]
   #
-  def delete_records(items = nil, prm = nil, **)
-    items, prm = model_request_params(items, prm)
-    prm.except!(:force, :emergency, :truncate)
-    super
+  def delete_records(items = nil, **prm)
+    super.tap do |_items, opt|
+      opt.except!(:force, :emergency, :truncate)
+    end
   end
 
   # ===========================================================================
@@ -430,7 +429,7 @@ module ManifestItemConcern
     if update_time
       record = start_editing(item, meth: meth, **opt)
     else
-      record = edit_record(item, { id: opt[:id] })
+      record = edit_record(item, **opt.slice(:id))
     end
     status, headers, body = record.upload_file(env: env)
     if status == 200

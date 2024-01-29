@@ -114,7 +114,7 @@ class OrgController < ApplicationController
     __debug_route
     return redirect_to action: :show_select  if identifier.blank?
     return redirect_to action: :show_current if current_id?
-    @item = get_record
+    @item = find_record
     org_authorize!
     raise config_text(:org, :not_found, id: identifier) if @item.blank?
   rescue => error
@@ -170,7 +170,7 @@ class OrgController < ApplicationController
     __debug_route
     return redirect_to action: :edit_select  if identifier.blank?
     return redirect_to action: :edit_current if current_id?
-    @item = get_record
+    @item = find_record
     org_authorize!
     raise config_text(:org, :not_found, id: identifier) if @item.blank?
   rescue => error

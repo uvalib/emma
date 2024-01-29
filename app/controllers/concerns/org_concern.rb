@@ -57,13 +57,13 @@ module OrgConcern
 
   # Create and persist a new Org.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [Org]                       A new Org instance.
   #
-  def create_record(attr = nil, force_id: true, fatal: true, **)
+  def create_record(prm = nil, force_id: true, fatal: true, **)
     raise "unavailable to user '#{current_user}'" unless administrator?
     # noinspection RubyMismatchedReturnType
     super
@@ -71,9 +71,9 @@ module OrgConcern
 
   # Update the indicated Org.
   #
-  # @param [Org, nil] item            Def.: record for ModelConcern#identifier.
-  # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     prm             Field values.
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -89,15 +89,15 @@ module OrgConcern
 
   # Remove the indicated record(s).
   #
-  # @param [String, Org, Array, nil] items
-  # @param [Hash, nil]               prm      Default: `#current_params`
-  # @param [Boolean]                 fatal
+  # @param [*]       items
+  # @param [Boolean] fatal            If *false* do not #raise_failure.
+  # @param [Hash]    prm              Default: `#current_params`
   #
-  # @raise [Record::SubmitError]              If there were failure(s).
+  # @raise [Record::SubmitError]      If there were failure(s).
   #
-  # @return [Array]                           Destroyed entries.
+  # @return [Array]                   Destroyed entries.
   #
-  def destroy_records(items = nil, prm = nil, fatal: true, **)
+  def destroy_records(items = nil, fatal: true, **prm)
     raise "unavailable to user '#{current_user}'" unless administrator?
     super
   end

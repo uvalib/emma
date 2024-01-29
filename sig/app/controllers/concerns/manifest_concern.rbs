@@ -20,11 +20,11 @@ module ManifestConcern
   # Return with the specified Manifest record.
   #
   # @param [Manifest, Hash, String, nil] item  Def `ModelConcern#identifier`
-  # @param [Hash]                        opt   To ModelConcern#get_record.
+  # @param [Hash]                        opt   To ModelConcern#find_record.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
-  def get_manifest: (?(Manifest|anyHash|String|nil) item, **untyped opt) -> Manifest
+  def find_manifest: (?(Manifest|anyHash|String|nil) item, **untyped opt) -> Manifest
 
   # Locate related ManifestItem records.
   #
@@ -39,19 +39,19 @@ module ManifestConcern
 
   # Start a new (un-persisted) manifest.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
   # @return [Manifest]                  Un-persisted Manifest instance.
   #
-  def new_record: (?symHash? attr, ?force_id: bool|String, **untyped _ignored) -> Manifest
+  def new_record: (?symHash? prm, ?force_id: bool|String, **untyped _ignored) -> Manifest
 
   # Update the indicated User, ensuring that :email is not changed unless
   # authorized.
   #
-  # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   fatal          If *false* use #update not #update!.
-  # @param [Hash]      prm            Field values.
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -59,19 +59,19 @@ module ManifestConcern
   #
   # @return [Manifest, nil]           The updated Manifest instance.
   #
-  def update_record: (?(Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (Manifest | nil)
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (Manifest | nil)
 
   # Persist changes to an existing manifest and update the saved state of all
   # associated rows.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           attr       Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
   #
@@ -79,14 +79,14 @@ module ManifestConcern
 
   # Back out of provisional changes to associated rows.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           attr       Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest, nil]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *cancelUpdates()*
   #
@@ -94,66 +94,66 @@ module ManifestConcern
 
   # Validate readiness of a manifest to start transmission.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   def remit_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Start transmission of a manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   #def start_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Terminate transmission of a manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   #def stop_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Pause transmission of a manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   #def pause_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 
   # Resume transmission of a paused manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   #def resume_manifest: (?(Manifest|symHash|nil) item, ?(symHash|nil) opt) -> Manifest
 

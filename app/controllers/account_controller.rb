@@ -104,7 +104,7 @@ class AccountController < ApplicationController
     __debug_route
     return redirect_to action: :show_select  if identifier.blank?
     return redirect_to action: :show_current if current_id?
-    @item = get_record
+    @item = find_record
     user_authorize!
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
   rescue => error
@@ -330,7 +330,7 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :show if identifier.present?
-    @item = get_record(current_id)
+    @item = find_record(current_id)
     user_authorize!
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|

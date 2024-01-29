@@ -44,17 +44,24 @@ module Record::EmmaIdentification
   # @return [String]                      The submission ID.
   # @return [nil]                         No submission ID could be determined.
   #
-  # @note From Upload::IdentifierMethods#sid_for
-  #
   def sid_value: (untyped item, **untyped opt) -> (String | nil)
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
   # @param [String, *] value
   #
-  # @note From Upload::IdentifierMethods#valid_sid?
-  #
   def valid_sid?
+    : (untyped value) -> false
+    | (String  value) -> bool
+
+  # Indicate whether *value* could be an EMMA submission ID.
+  #
+  # (Unlike #valid_sid? this is not overridden in InstanceMethods so it is not
+  # subject to problems with recursive definitions.)
+  #
+  # @param [String, *] value
+  #
+  def match_sid?
     : (untyped value) -> false
     | (String  value) -> bool
 
@@ -128,8 +135,6 @@ module Record::EmmaIdentification
   #
   # @see #sid_counter
   #
-  # @note From Upload::IdentifierMethods#generate_submission_id
-  #
   # === Implementation Notes
   # The result is a (single-character) prefix followed by 8 hexadecimal digits
   # which represent seconds into the epoch followed by a single random letter
@@ -151,8 +156,6 @@ module Record::EmmaIdentification
   #
   # @return [Integer]
   #
-  # @note From Upload::IdentifierMethods#sid_counter
-  #
   def sid_counter: () -> Integer
 
   # Return with the specified record or *nil* if one could not be found.
@@ -169,10 +172,10 @@ module Record::EmmaIdentification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]
+  # @return [ApplicationRecord<Model>]  A fresh rec unless *item* is a *self*.
   # @return [nil]                       Only if *fatal* is *false*.
   #
-  # @note From UploadWorkflow::External#get_record
+  # @note From UploadWorkflow::External#find_record
   #
   def find_record: (untyped item, ?fatal: bool, ?meth: Symbol|nil, **untyped opt) -> (ApplicationRecord | nil)
 
@@ -190,8 +193,6 @@ module Record::EmmaIdentification
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Exactly one key-value pair.
   #
-  # @note From Upload::IdentifierMethods#id_term
-  #
   def id_term: (?(symHash|Symbol|String|Integer|Model|nil) v, **untyped opt) -> Hash[Symbol,(String|Integer|nil)]
 
   # Interpret an ID string as a range of IDs if possible.
@@ -204,8 +205,6 @@ module Record::EmmaIdentification
   # @param [Hash]                   opt
   #
   # @return [Array<String>]
-  #
-  # @note From Upload::IdentifierMethods#expand_id_range
   #
   def expand_id_range: ((String|Integer|Model) id, **untyped opt) -> strArray
 

@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Upload::SearchMethods
 
+  include Record::Searchable
+
   include Upload::SortMethods
   include Upload::WorkflowMethods
 
@@ -19,183 +21,6 @@ module Upload::SearchMethods
   # ===========================================================================
 
   public
-
-  # Get the Upload record by either :id or :submission_id.
-  #
-  # @param [String, Symbol, Integer, Hash, Upload, nil] identifier
-  #
-  # @return [Upload, nil]
-  #
-  def get_record(identifier)
-    find_by(**id_term(identifier))
-  end
-
-  # Get Upload records specified by either :id or :submission_id.
-  #
-  # @param [Array<Upload, String, Integer, Array>] identifiers
-  # @param [Hash]                                  opt  Passed to #get_relation
-  #
-  # @return [Array<Upload>]
-  #
-  def get_records(*identifiers, **opt)
-    get_relation(*identifiers, **opt).records
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Local options consumed by #search_records.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_RECORDS_OPTIONS = %i[offset limit page groups sort].freeze
-
-  # URL parameters that are not directly used in searches.
-  #
-  # @type [Array<Symbol>]
-  #
-  NON_SEARCH_PARAMS =
-    (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS)
-      .excluding(:sort).uniq.freeze
-
-  # Get the Upload records specified by either :id or :submission_id.
-  #
-  # Additional constraints may be supplied via *opt*.  If no *identifiers* are
-  # supplied then this method is essentially an invocation of #where which
-  # returns the matching records.
-  #
-  # @param [Array<Upload, String, Integer, Array>] items
-  # @param [Hash]                                  opt To #get_relation except
-  #                                                    #SEARCH_RECORDS_OPTIONS:
-  #
-  # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
-  # @option opt [Integer,nil]    :offset
-  # @option opt [Integer,nil]    :limit
-  # @option opt [Integer,nil]    :page
-  # @option opt [Boolean,Symbol] :groups  Return state group counts; if :only
-  #                                        then do not return :list.
-  # @option opt [String,Symbol]  :meth    Calling method for diagnostics.
-  #
-  # @raise [RangeError]                   If :page is not valid.
-  #
-  # @return [Paginator::Result]
-  #
-  # @see ActiveRecord::Relation#where
-  #
-  def search_records(*items, **opt)
-    result = Paginator::Result.new
-
-    # If a range of items has been specified which resolves to an empty set of
-    # identifiers, return now.  Otherwise, #get_relation would yield results
-    # for a general search.
-    return result if items.present? && (items = expand_ids(*items)).blank?
-
-    # Define a relation for all matches (without :limit or :offset).
-    opt[:meth] ||= "#{self_class}.#{__method__}"
-    arg = opt.extract!(*SEARCH_RECORDS_OPTIONS)
-    all = get_relation(*items, **opt, sort: :id)
-
-    # Generate a :groups summary if requested, returning if that was the only
-    # value of interest.
-    if (groups = arg[:groups])
-      result[:groups] = group_counts(all)
-      return result if groups == :only
-    end
-
-    # Record set information.
-    # noinspection RailsParamDefResolve
-    all_ids = all.pluck(:id)
-    result[:min_id], result[:max_id] = all_ids.minmax
-    result[:total] = item_count = all_ids.size
-
-    # Setup pagination; explicit page number overrides :limit/:offset.
-    limit  = positive(arg[:limit])
-    offset = positive(arg[:offset])
-    if (page = positive(arg[:page]))
-      page_size = limit ||= Paginator.default_page_size
-      offset    = (page - 1) * page_size
-      last_page = (item_count / page_size) + 1
-      result[:page]  = page
-      result[:first] = (page == 1)
-      result[:last]  = (page >= last_page)
-    end
-    result[:limit]  = limit  if limit
-    result[:offset] = offset if offset
-    opt.merge!(limit: limit, offset: offset)
-
-    # Setup sorting.
-    opt[:sort] = arg[:sort] if arg.key?(:sort)
-
-    # Get the specific set of results.
-    result[:list] = get_relation(*items, **opt)
-
-    result
-  end
-
-  # Local options consumed by #get_relation.
-  #
-  # @type [Array<Symbol>]
-  #
-  GET_RELATION_OPTIONS = %i[id_key sid_key].freeze
-
-  # Generate an ActiveRecord relation for records specified by either
-  # :id or :submission_id.
-  #
-  # Additional constraints may be supplied via *opt*.  If no *items* are
-  # supplied then this method is essentially an invocation of #where which
-  # returns the matching records.
-  #
-  # @param [Array<Upload, String, Integer, Array>] items
-  # @param [Hash]                                  opt To #make_relation except
-  #
-  # @option opt [Integer, Array] :id              Added items by ID.
-  # @option opt [String, Array]  :submission_id   Added items by submission ID.
-  #
-  # @return [ActiveRecord::Relation]
-  #
-  # @see Upload#expand_ids
-  #
-  def get_relation(*items, **opt)
-    terms = []
-    _meth = opt[:meth] ||= "#{self_class}.#{__method__}"
-
-    # === Record specifiers
-    i_key = :id
-    s_key = :submission_id
-    ids   = Array.wrap(opt.delete(i_key))
-    sids  = Array.wrap(opt.delete(s_key))
-    if items.present?
-      recs = expand_ids(*items).map! { |term| id_term(term) }
-      ids  = recs.map { |rec| rec[i_key] }.concat(ids)  if i_key
-      sids = recs.map { |rec| rec[s_key] }.concat(sids) if s_key
-    end
-    ids  = ids.compact_blank!.uniq.presence
-    sids = sids.compact_blank!.uniq.presence
-    if ids && sids
-      terms << sql_terms(i_key => ids, s_key => sids, join: :or)
-    elsif ids
-      opt[i_key] = ids
-    elsif sids
-      opt[s_key] = sids
-    end
-
-    # === Sort order
-    # Avoid applying a sort order if identifiers were specified or if
-    # opt[:sort] was explicitly *nil* or *false*.
-    opt[:sort] = (ids || sids).blank? unless opt.key?(:sort)
-
-    make_relation(*terms, **opt)
-  end
-
-  # Local options consumed by #make_relation.
-  #
-  # @type [Array<Symbol>]
-  #
-  MAKE_RELATION_OPTIONS =
-    %i[sort offset limit start_date end_date after before].freeze
 
   # make_relation
   #
@@ -359,30 +184,6 @@ module Upload::SearchMethods
     }.compact.group_by(&:itself).transform_values(&:size).tap do |group_count|
       group_count[:all] = group_count.values.sum
     end
-  end
-
-  # Generate a Date-parseable string from a string that indicates either a day,
-  # (YYYYMMDD), a month (YYYYMM), or a year (YYYY) -- with or without date
-  # separator punctuation.
-  #
-  # @param [*] value
-  #
-  # @return [nil,    false, false]    If *value* is not a date string.
-  # @return [String, false, false]    If *value* specifies a day.
-  # @return [String, true,  false]    If *value* specifies a month.
-  # @return [String, false, true]     If *value* specifies a year
-  #
-  def day_string(value)
-    day = month = year = nil
-    if value.is_a?(String)
-      case (value = value.strip)
-        when /^\d{4}$/           then day = year  = "#{value}-01-01"
-        when /^\d{4}(\D?)\d{2}$/ then day = month = "#{value}#{$1}01"
-        else                          day = value
-      end
-    end
-    # noinspection RubyMismatchedReturnType
-    return day, !!month, !!year
   end
 
   # ===========================================================================

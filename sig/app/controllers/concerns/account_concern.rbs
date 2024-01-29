@@ -42,16 +42,16 @@ module AccountConcern
 
   # Start a new (un-persisted) User.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
   # @return [User]                      Un-persisted User instance.
   #
-  def new_record: (?symHash? attr, ?force_id: bool|String, **untyped _ignored) -> User
+  def new_record: (?symHash? prm, ?force_id: bool|String, **untyped _ignored) -> User
 
   # Create and persist a new User.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
@@ -62,9 +62,9 @@ module AccountConcern
   # Update the indicated User, ensuring that :email and :org_id are not changed
   # unless authorized.
   #
-  # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   fatal          If *false* use #update not #update!.
-  # @param [Hash]      prm            Field values.
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -72,7 +72,7 @@ module AccountConcern
   #
   # @return [User, nil]               The updated User instance.
   #
-  def update_record: (?(Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (User | nil)
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (User | nil)
 
   # Get matching User account records or all records if no terms are given.
   #

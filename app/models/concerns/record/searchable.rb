@@ -60,12 +60,11 @@ module Record::Searchable
   # @param [String, Symbol, Integer, Hash, Model, nil] item
   # @param [Hash]                                      opt   Passed to #id_term
   #
-  # @return [Model, nil]
+  # @return [Model, nil]              A fresh record from the database.
   #
-  # @note From Upload::SearchMethods#get_record
-  #
-  def get_record(item, **opt)
-    find_by(**id_term(item, **opt))
+  def fetch_record(item, **opt)
+    item = id_term(item, **opt)
+    find_by(item) if item.present?
   end
 
   # Get records specified by either :id or :submission_id.
@@ -73,11 +72,9 @@ module Record::Searchable
   # @param [Array<Model, String, Integer, Array>] identifiers
   # @param [Hash]                                 opt  Passed to #get_relation
   #
-  # @return [Array<Model>]
+  # @return [Array<Model>]            Fresh records from a database query.
   #
-  # @note From Upload::SearchMethods#get_records
-  #
-  def get_records(*identifiers, **opt)
+  def fetch_records(*identifiers, **opt)
     get_relation(*identifiers, **opt).records
   end
 

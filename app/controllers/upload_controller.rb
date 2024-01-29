@@ -160,7 +160,7 @@ class UploadController < ApplicationController
     __log_activity(anonymous: true)
     __debug_route
     return redirect_to action: :show_select if identifier.blank?
-    @item = get_record
+    @item = find_record
     upload_authorize!
     respond_to do |format|
       format.html
@@ -755,7 +755,7 @@ class UploadController < ApplicationController
   def download
     __log_activity
     __debug_route
-    @item = get_record
+    @item = find_record
     link  = @item.download_url
     respond_to do |format|
       format.html { redirect_to(link, allow_other_host: true) }

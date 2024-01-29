@@ -164,7 +164,7 @@ module Record::Submittable
         if item.is_a?(record_class)
           item
         elsif data.blank?
-          find_record(item)
+          fetch_record(item)
         else
           data   = data.dup
           opt    = data.extract!(:fatal, :meth)
@@ -196,7 +196,7 @@ module Record::Submittable
     #
     def db_delete(item)
       __debug_items("ENTRY WF #{__method__}", binding)
-      find_record(item)&.destroy!
+      fetch_record(item)&.destroy!
     end
 
   end
@@ -280,7 +280,7 @@ module Record::Submittable
           if removed.present?
             sids = removed.map(&:submission_id)
             Log.info { "#{__method__}: removed: #{sids}" }
-            rollback.reject! { |item| sids.include?(item.submission_id) }
+            rollback.reject! { |item| sids.include?(sid_value(item)) }
           end
           failed.concat(kept) if kept.present?
         end

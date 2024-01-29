@@ -302,6 +302,14 @@ class Upload < ApplicationRecord
   #
   def self.latest_for_sid: (?(Model|symHash|String|Symbol|nil) sid, ?sort: Symbol|String|nil, **untyped opt) -> (Model | nil)
 
+  # Return the Upload instance indicated by the argument.
+  #
+  # @param [Model, Hash, String, Integer, *] v
+  #
+  # @return [Upload, nil]             A fresh record unless *v* is an Upload.
+  #
+  def self.instance_for: (untyped v) -> (Upload | nil)
+
   # Configured requirements for Upload fields.
   #
   # @return [ActionConfig]            Frozen result.
@@ -340,6 +348,18 @@ class Upload < ApplicationRecord
     def database_columns: () -> Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
 
     @database_columns: Hash[Symbol,ActiveRecord::ConnectionAdapters::PostgreSQL::Column]
+
+    # Counter for the trailing portion of the generated submission ID.
+    #
+    # This provides a per-thread value in the range 0..99 which can be used to
+    # differentiate submission IDs which are generated in rapid succession (e.g.,
+    # for bulk upload).
+    #
+    # @return [Integer]
+    #
+    def sid_counter: () -> Integer
+
+    @sid_counter: Integer
   end
 
   extend ClassMethods

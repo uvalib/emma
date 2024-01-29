@@ -68,22 +68,39 @@ module Record::EmmaIdentification
   # @return [String]                      The submission ID.
   # @return [nil]                         No submission ID could be determined.
   #
-  # @note From Upload::IdentifierMethods#sid_for
-  #
   def sid_value(item, **opt)
-    return item if valid_sid?(item)
-    key  = opt[:sid_key] || sid_column or return
     item = item.is_a?(Hash) ? item.merge(opt) : opt unless item.is_a?(Model)
-    get_value(item, [key, :sid]) if item.present?
+    return if item.blank?
+    # noinspection RubyMismatchedReturnType
+    return item if match_sid?(item)
+    sid   = key = opt[:sid_key] || sid_column
+    sid &&= get_value(item, [key, :sid])
+    sid ||= record_id(item)&.split('-')&.second
+    sid if match_sid?(sid)
   end
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
   # @param [String, *] value
   #
-  # @note From Upload::IdentifierMethods#valid_sid?
-  #
   def valid_sid?(value)
+    match_sid?(value)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Indicate whether *value* could be an EMMA submission ID.
+  #
+  # (Unlike #valid_sid? this is not overridden in InstanceMethods so it is not
+  # subject to problems with recursive definitions.)
+  #
+  # @param [String, *] value
+  #
+  def match_sid?(value)
     value.is_a?(String) && value.match?(SID_PATTERN)
   end
 
@@ -198,8 +215,6 @@ module Record::EmmaIdentification
   #
   # @see #sid_counter
   #
-  # @note From Upload::IdentifierMethods#generate_submission_id
-  #
   # === Implementation Notes
   # The result is a (single-character) prefix followed by 8 hexadecimal digits
   # which represent seconds into the epoch followed by a single random letter
@@ -233,10 +248,8 @@ module Record::EmmaIdentification
   #
   # @return [Integer]
   #
-  # @note From Upload::IdentifierMethods#sid_counter
-  #
   def sid_counter
-    Upload.send(__method__)
+    Upload.sid_counter
   end
 
   # ===========================================================================
@@ -259,13 +272,13 @@ module Record::EmmaIdentification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]
+  # @return [ApplicationRecord<Model>]  A fresh rec unless *item* is a *self*.
   # @return [nil]                       Only if *fatal* is *false*.
   #
-  # @note From UploadWorkflow::External#get_record
+  # @note From UploadWorkflow::External#find_record
   #
   def find_record(item, fatal: true, meth: nil, **opt)
-    return item if item.nil? || item.is_a?(record_class)
+    return item if item.is_a?(record_class)
     meth  ||= __method__
     record  = error = id = sid = nil
 
@@ -304,6 +317,7 @@ module Record::EmmaIdentification
     end
 
     if record
+      # noinspection RubyMismatchedReturnType
       record
     elsif !id && !sid
       Log.info { "#{meth}: #{error} (no record specified)" }
@@ -330,8 +344,6 @@ module Record::EmmaIdentification
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Exactly one key-value pair.
   #
-  # @note From Upload::IdentifierMethods#id_term
-  #
   def id_term(v = nil, **opt)
     opt.reverse_merge!(sid_key: sid_column)
     super
@@ -347,8 +359,6 @@ module Record::EmmaIdentification
   # @param [Hash]                   opt
   #
   # @return [Array<String>]
-  #
-  # @note From Upload::IdentifierMethods#expand_id_range
   #
   def expand_id_range(id, **opt)
     opt.reverse_merge!(sid_key: sid_column)

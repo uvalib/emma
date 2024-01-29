@@ -525,7 +525,7 @@ module UploadWorkflow::External
   #
   # @raise [UploadWorkflow::SubmitError]  If *item* not found and !*fatal*.
   #
-  # @return [Upload]                  The item; from the database if necessary.
+  # @return [Upload]                  A fresh record from the database.
   # @return [nil]                     If *item* not found and *fatal*.
   #
   def get_record: ((Upload|symHash|String|nil) id, ?fatal: bool, ?meth: Symbol|nil) -> (Upload | nil)
@@ -535,7 +535,7 @@ module UploadWorkflow::External
   # @param [Array<Upload,String,Array>] items
   # @param [Hash]                       opt     Passed to #collect_records.
   #
-  # @return [Array<Upload>]
+  # @return [Array<Upload>]           Fresh records from a database query.
   #
   def find_records: (*(Upload|String|Array[Upload|String]) items, **untyped opt) -> Array[Upload]
 
@@ -555,7 +555,7 @@ module UploadWorkflow::External
   # @param [Array<Upload,String,Array>] items   @see Upload#expand_ids
   # @param [Boolean]                    all     If *true*, empty *items* is OK.
   # @param [Boolean]                    force   See Usage Notes
-  # @param [Hash]                       opt     Passed to Upload#get_records.
+  # @param [Hash]                       opt     Passed to Upload#fetch_records.
   #
   # @raise [StandardException] If *all* is *true* and *items* were supplied.
   #

@@ -178,28 +178,6 @@ module UploadConcern
 
   public
 
-  # Return with the specified Upload record or *nil* if one could not be found.
-  #
-  # @param [String, Integer, Hash, Upload, *] item  Default: #identifier.
-  #
-  # @raise [UploadWorkflow::SubmitError]    If *item* not found.
-  #
-  # @return [Upload, nil]
-  #
-  # @see Upload#get_record
-  #
-  def get_record(id = nil)
-    id ||= identifier
-    if (result = Upload.get_record(id))
-      result
-    elsif id.blank? || Upload.id_term(id).values.first.blank?
-      raise_failure(:file_id)
-    else
-      Log.warn { "#{__method__}: #{id}: non-existent record" }
-      raise_failure(:find, id)
-    end
-  end
-
   # Get item data from the production service.
   #
   # @param [String] sid               Submission ID of the item.
@@ -411,7 +389,7 @@ module UploadConcern
     failures  = []
     bad       = []
     list      = Array.wrap(list)
-    sids      = list.map { |item| Upload.sid_for(item) }
+    sids      = list.map { |item| Upload.sid_value(item) }
 
     unless dryrun
       result = ingest_api.put_records(*list)

@@ -47,6 +47,15 @@ module IdMethods
   #
   def get_id: (untyped item, Symbol key, ?allow_zero: bool) -> (Integer | nil)
 
+  # Get the specified value from *item*.
+  #
+  # @param [*]      item
+  # @param [Symbol] key
+  #
+  # @return [Any, nil]
+  #
+  def try_key: (untyped item, Symbol key) -> (untyped | nil)
+
   def normalize_id_keys: [T] (T arg, ?untyped target) -> T
 
   def normalize_id_keys!: (symHash arg, ?untyped target) -> symHash

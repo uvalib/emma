@@ -114,7 +114,7 @@ class ManifestItemController < ApplicationController
   def show
     __log_activity
     __debug_route
-    @item = get_record
+    @item = find_record
     manifest_item_authorize!
     respond_to do |format|
       format.html

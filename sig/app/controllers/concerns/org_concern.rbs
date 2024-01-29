@@ -27,19 +27,19 @@ module OrgConcern
 
   # Create and persist a new Org.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [Org]                       A new Org instance.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> Org
+  def create_record: (?symHash? prm, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> Org
 
   # Update the indicated Org.
   #
-  # @param [Org, nil] item            Def.: record for ModelConcern#identifier.
-  # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     prm             Field values.
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -47,19 +47,19 @@ module OrgConcern
   #
   # @return [Org, nil]                The updated Org instance.
   #
-  def update_record: (?(Org|symHash|nil) item, ?fatal: bool, **untyped prm) -> (Org | nil)
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (Org | nil)
 
   # Remove the indicated record(s).
   #
-  # @param [String, Org, Array, nil] items
-  # @param [Hash, nil]               prm      Default: `#current_params`
-  # @param [Boolean]                 fatal
+  # @param [*]       items
+  # @param [Boolean] fatal            If *false* do not #raise_failure.
+  # @param [Hash]    prm              Default: `#current_params`
   #
-  # @raise [Record::SubmitError]              If there were failure(s).
+  # @raise [Record::SubmitError]      If there were failure(s).
   #
-  # @return [Array]                           Destroyed entries.
+  # @return [Array]                   Destroyed entries.
   #
-  def destroy_records: (?(Org|symHash|nil) item, ?(symHash|nil) prm, ?fatal: bool, **untyped _ignored) -> (Array[Integer]|Array[String])
+  def destroy_records: ((String|Integer|Model|Array[String|Integer|Model]|nil) items, ?fatal: bool, **untyped prm) -> (Array[Integer]|Array[String])
 
   # Create an Options instance from the current parameters.
   #

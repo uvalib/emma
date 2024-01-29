@@ -53,8 +53,6 @@ module Record::Identification
   #
   # @param [*] value
   #
-  # @note From Upload::IdentifierMethods#valid_id?
-  #
   def valid_id?: (untyped value) -> bool
 
   # Extract the database ID from the given item.
@@ -66,8 +64,6 @@ module Record::Identification
   #
   # @return [String]                  Record ID Array<(:id)>.
   # @return [nil]                     No valid :id specified.
-  #
-  # @note From Upload::IdentifierMethods#id_for
   #
   def id_value: (untyped item, **untyped opt) -> (String | nil)
 
@@ -115,10 +111,10 @@ module Record::Identification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]
+  # @return [ApplicationRecord<Model>]  A fresh rec unless *item* is a *self*.
   # @return [nil]                       Only if *fatal* is *false*.
   #
-  # @note From UploadWorkflow::External#get_record
+  # @note From UploadWorkflow::External#find_record
   #
   def find_record: (untyped item, ?fatal: bool, ?meth: Symbol|nil, **untyped opt) -> (ApplicationRecord | nil)
 
@@ -131,7 +127,7 @@ module Record::Identification
   #
   # @option opt []
   #
-  # @return [Array<Model>]
+  # @return [Array<Model>]            Fresh records from a database query.
   #
   # @note From UploadWorkflow::External#find_records
   #
@@ -151,7 +147,7 @@ module Record::Identification
   # @return [Array<(Array<Model>,Array)>]      Record instances and failed ids.
   # @return [Array<(Array<Model,String>,[])>]  If *force* is *true*.
   #
-  # @see Record::Searchable#get_records
+  # @see Record::Searchable#fetch_records
   #
   # @note From UploadWorkflow::External#collect_records
   #
@@ -176,8 +172,6 @@ module Record::Identification
   #
   # @return [Hash{Symbol=>Integer,String,nil}] Exactly one key-value pair.
   #
-  # @note From Upload::IdentifierMethods#id_term
-  #
   def id_term: (?(symHash|Symbol|String|Integer|Model|nil) v, **untyped opt) -> Hash[Symbol,(Integer|String|nil)]
 
   # Transform a mixture of ID representations into a set of one or more
@@ -190,8 +184,6 @@ module Record::Identification
   # @option opt [Integer] :max_id     Default: `#maximum_id`
   #
   # @return [Array<String>]
-  #
-  # @note From Upload::IdentifierMethods#compact_ids
   #
   def compact_ids: (*(String|Integer|Model|Array[String|Integer|Model]) items, **untyped opt) -> strArray
 
@@ -210,8 +202,6 @@ module Record::Identification
   # @option opt [Integer] :max_id     Default: `#maximum_id`
   #
   # @return [Array<String>]
-  #
-  # @note From Upload::IdentifierMethods#id_term
   #
   # === Examples
   #
@@ -259,15 +249,11 @@ module Record::Identification
   #
   # @return [Array<String>]
   #
-  # @note From Upload::IdentifierMethods#group_ids
-  #
   def group_ids: (*String ids, ?min_id: Integer|nil, ?max_id: Integer|nil, **untyped _ignored) -> strArray
 
   # A valid ID range term for interpolation into a Regexp.
   #
   # @type [String]
-  #
-  # @note From Upload::IdentifierMethods#RANGE_TERM
   #
   RNG_TERM: String
 
@@ -289,8 +275,6 @@ module Record::Identification
   #
   # @see #expand_ids
   #
-  # @note From Upload::IdentifierMethods#expand_id_range
-  #
   def expand_id_range: ((String|Integer|Model) id, **untyped opt) -> strArray
 
   # The database ID of the first record associated with the including class.
@@ -300,8 +284,6 @@ module Record::Identification
   # @return [Integer]                 If 0 then the table is empty.
   # @return [nil]                     Not supported by the current schema.
   #
-  # @note From Upload::IdentifierMethods#minimum_id
-  #
   def minimum_id: (?id_key: Symbol|nil) -> (Integer | nil)
 
   # The database ID of the last record associated with the including class.
@@ -310,8 +292,6 @@ module Record::Identification
   #
   # @return [Integer]                 If 0 then the table is empty.
   # @return [nil]                     Not supported by the current schema.
-  #
-  # @note From Upload::IdentifierMethods#maximum_id
   #
   def maximum_id: (?id_key: Symbol|nil) -> (Integer | nil)
 

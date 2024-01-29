@@ -130,9 +130,9 @@ module ModelConcern
   # @raise [Record::StatementInvalid] If :id not given.
   # @raise [Record::NotFound]         If *item* was not found.
   #
-  # @return [Model, nil]
+  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
   #
-  def get_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) -> (Model | nil)
+  def find_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) -> (Model | nil)
 
   # Locate and filter model records.
   #
@@ -216,72 +216,71 @@ module ModelConcern
 
   # Start a new (un-persisted) model instance.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
   # @return [Model]                     Un-persisted model record instance.
   #
-  def new_record: (?symHash? attr, ?force_id: bool|String, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
+  def new_record: (?symHash? prm, ?force_id: bool|String, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
 
   # Create and persist a new model record.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [Model]                     New persisted model record instance.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
+  def create_record: (?symHash? prm, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
 
   # Start editing an existing model record.
   #
-  # @param [*]         item           If present, used as a template.
-  # @param [Hash, nil] prm            Default: `#current_params`
-  # @param [Hash]      opt            Passed to #get_record.
+  # @param [*]    item
+  # @param [Hash] opt                 Passed to ModelConcern#find_record.
   #
   # @raise [Record::StatementInvalid]   If :id not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [Model, nil]
+  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
   #
-  def edit_record: (?(String|Integer|Model|symHash|nil) item, ?(symHash|nil) prm, **untyped opt) ?{ (Model record) -> void } -> (Model | nil)
+  def edit_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (Model record) -> void } -> (Model | nil)
 
   # Persist changes to an existing model record.
   #
-  # @param [*]         item           If present, used as a template.
-  # @param [Boolean]   fatal          If *false* use #update not #update!.
-  # @param [Hash, nil] prm            Default: `#current_params`
+  # @param [*]       item
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               If the record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Model record update halted.
   #
-  # @return [Model, nil]
+  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
   #
-  def update_record: (?(Model|symHash|nil) item, ?fatal: bool, **untyped prm) ?{ (Model record, symHash attr) -> void } -> (Model | nil)
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) ?{ (Model record, symHash attr) -> void } -> (Model | nil)
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [String, Model, Array, nil] items
-  # @param [Hash, nil]                 prm    Default: `#current_params`
+  # @param [*]    items               To #search_records
+  # @param [Hash] prm                 Default: `#current_params`
   #
-  # @raise [RangeError]                       If :page is not valid.
+  # @raise [RangeError]               If :page is not valid.
   #
   # @return [Paginator::Result]
   #
-  def delete_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, **untyped _ignored) -> Paginator::Result
+  def delete_records: (?(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped prm) ?{ ((String|Integer|Model|Array[String|Integer|Model]|nil) items, symHash opt) -> void } -> Paginator::Result
 
   # Remove the indicated record(s).
   #
-  # @param [String, Model, Array, nil] items
-  # @param [Hash, nil]                 prm    Default: `#current_params`
-  # @param [Boolean]                   fatal  If *false* do not #raise_failure.
+  # @param [*]       items
+  # @param [Boolean] fatal            If *false* do not #raise_failure.
+  # @param [Hash]    prm              Default: `#current_params`
   #
-  # @raise [Record::SubmitError]              If there were failure(s).
+  # @raise [Record::SubmitError]      If there were failure(s).
   #
-  # @return [Array]                           Destroyed entries.
+  # @return [Array]                   Destroyed entries.
   #
-  def destroy_records: (?(Model|symHash|nil) item, ?(symHash|nil) prm, ?fatal: bool, **untyped _ignored) -> (Array[Integer]|Array[String])
+  def destroy_records: (?(String|Integer|Model|Array[String|Integer|Model]|nil) items, ?fatal: bool, **untyped prm) ?{ ((String|Integer|Model|Array[String|Integer|Model]|nil) items, symHash opt) -> void } -> (Array[Integer]|Array[String])
 
   # Raise an exception.
   #

@@ -93,11 +93,11 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Return the record instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, nil] v
+  # @param [Model, Hash, String, Integer, *] v
   #
-  # @return [ApplicationRecord, nil]
+  # @return [ApplicationRecord, nil]  A fresh record unless *v* is a *self*.
   #
-  def self.instance_for: (Model|symHash|String|Integer|nil v) -> (ApplicationRecord | nil)
+  def self.instance_for: (untyped v) -> (ApplicationRecord | nil)
 
   # This is a convenience so that model classes can provide lists for use with
   # menus in the same way that EnumType#pairs does.

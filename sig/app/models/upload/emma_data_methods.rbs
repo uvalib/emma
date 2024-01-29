@@ -1,9 +1,9 @@
 # Upload record methods to support management of EMMA metadata fields.
 #
 module Upload::EmmaDataMethods
-  include Emma::Common
+  include Record::EmmaData
 
-  include Emma::Json
+  include Record::EmmaData::StringEmmaData
 
   include Upload::WorkflowMethods
 
@@ -38,44 +38,13 @@ module Upload::EmmaDataMethods
   #
   def active_emma_data: () -> (String | nil)
 
-  # Present :emma_data as a structured object (if it is present).
+  # init_emma_data_value
   #
-  # @param [Boolean] refresh          If *true*, force regeneration.
+  # @param [*] _data
   #
-  # @return [Search::Record::MetadataRecord]
+  # @return [String, nil]
   #
-  def emma_record: (?refresh: bool) -> Search::Record::MetadataRecord
-
-  @emma_record: Search::Record::MetadataRecord | nil
-
-  # Present :emma_data as a hash (if it is present).
-  #
-  # @param [Boolean] refresh          If *true*, force regeneration.
-  #
-  # @return [Hash]
-  #
-  def emma_metadata: (?refresh: bool) -> symHash
-
-  @emma_metadata: symHash | nil
-
-  # Set the :emma_data field value.
-  #
-  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-  # @param [Boolean]                                           allow_blank
-  #
-  # @return [String]
-  # @return [nil]                     If *data* is *nil*.
-  #
-  def set_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
-
-  # Selectively modify the :emma_data field value.
-  #
-  # @param [Hash]    data
-  # @param [Boolean] allow_blank
-  #
-  # @return [String]
-  #
-  def modify_emma_data: (symHash data, ?bool allow_blank) -> String
+  def init_emma_data_value: (untyped _data) -> (String | nil)
 
   # Present :edit_emma_data as a structured object (if it is present).
   #
@@ -108,9 +77,23 @@ module Upload::EmmaDataMethods
   # @param [Hash]    data
   # @param [Boolean] allow_blank
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def modify_edit_emma_data: (symHash data, ?bool allow_blank) -> String
+  def modify_edit_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
+
+  # init_edit_emma_data_value
+  #
+  # @param [*] _data
+  #
+  # @return [String, nil]
+  #
+  def init_edit_emma_data_value: (untyped _data) -> (String | nil)
+
+  # curr_edit_emma_data_value
+  #
+  # @return [String, nil]
+  #
+  def curr_edit_emma_data_value: () -> (String | nil)
 
   # Present the EMMA data currently associated with the record as a
   # structured object.
@@ -140,24 +123,7 @@ module Upload::EmmaDataMethods
   # @param [Hash]    data
   # @param [Boolean] allow_blank
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def modify_active_emma_data: (symHash data, ?bool allow_blank) -> String
-
-  # Generate a record to express structured EMMA data.
-  #
-  # @param [Hash] data
-  #
-  # @return [Search::Record::MetadataRecord]
-  #
-  def make_emma_record: (symHash data, **untyped _ignored) -> Search::Record::MetadataRecord
-
-  # parse_emma_data
-  #
-  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
-  # @param [Boolean] allow_blank
-  #
-  # @return [Hash]
-  #
-  def parse_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, ?bool allow_blank) -> symHash
+  def modify_active_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
 end

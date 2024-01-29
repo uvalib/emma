@@ -32,13 +32,13 @@ module ManifestConcern
   # Return with the specified Manifest record.
   #
   # @param [Manifest, Hash, String, nil] item  Def `ModelConcern#identifier`
-  # @param [Hash]                        opt   To ModelConcern#get_record.
+  # @param [Hash]                        opt   To ModelConcern#find_record.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
-  def get_manifest(item = nil, **opt)
+  def find_manifest(item = nil, **opt)
     # noinspection RubyMismatchedReturnType
-    get_record(item, **opt)
+    find_record(item, **opt)
   end
 
   # Locate related ManifestItem records.
@@ -67,13 +67,13 @@ module ManifestConcern
 
   # Start a new (un-persisted) manifest.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
   # @return [Manifest]                  Un-persisted Manifest instance.
   #
-  def new_record(attr = nil, force_id: false, **)
-    # noinspection RubyScope, RubyMismatchedReturnType
+  def new_record(prm = nil, force_id: false, **)
+    # noinspection RubyMismatchedReturnType
     super do |attr|
       attr[:name]  ||= Manifest.default_name
       attr[:user_id] = current_user.id unless manager? && attr[:user_id]
@@ -83,9 +83,9 @@ module ManifestConcern
   # Update the indicated User, ensuring that :email is not changed unless
   # authorized.
   #
-  # @param [User, nil] item           Def.: record for ModelConcern#identifier.
-  # @param [Boolean]   fatal          If *false* use #update not #update!.
-  # @param [Hash]      prm            Field values.
+  # @param [*]       item             Def.: record for ModelConcern#identifier.
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -109,40 +109,40 @@ module ManifestConcern
   # Persist changes to an existing manifest and update the saved state of all
   # associated rows.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           attr       Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
   #
   def save_changes(item = nil, attr = nil)
     item, attr = model_request_params(item, attr)
-    get_manifest(item).tap do |manifest|
+    find_manifest(item).tap do |manifest|
       manifest.save_changes!(**attr)
     end
   end
 
   # Back out of provisional changes to associated rows.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           attr       Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   # @see file:assets/javascripts/controllers/manifest-edit.js *cancelUpdates()*
   #
   def cancel_changes(item = nil, attr = nil)
     item, attr = model_request_params(item, attr)
-    get_manifest(item).tap do |manifest|
+    find_manifest(item).tap do |manifest|
       manifest.cancel_changes!(**attr)
     end
   end
@@ -155,89 +155,89 @@ module ManifestConcern
 
   # Validate readiness of a manifest to start transmission.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#current_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   def remit_manifest(item = nil, opt = nil)
     item, _ = model_request_params(item, opt)
-    get_manifest(item)
+    find_manifest(item)
   end
 
 =begin # TODO: submission start/stop ?
   # Start transmission of a manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   def start_manifest(item = nil, opt = nil)
     item, _  = model_request_params(item, opt)
-    get_manifest(item).tap do |manifest|
+    find_manifest(item).tap do |manifest|
       start_submission(manifest)
     end
   end
 
   # Terminate transmission of a manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   def stop_manifest(item = nil, opt = nil)
     item, _  = model_request_params(item, opt)
-    get_manifest(item).tap do |manifest|
+    find_manifest(item).tap do |manifest|
       stop_submission(manifest) if manifest
     end
   end
 
   # Pause transmission of a manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   def pause_manifest(item = nil, opt = nil)
     item, _  = model_request_params(item, opt)
-    get_manifest(item).tap do |manifest|
+    find_manifest(item).tap do |manifest|
       pause_submission(manifest)
     end
   end
 
   # Resume transmission of a paused manifest.
   #
-  # @param [Manifest, Hash, nil] item       If present, used as a template.
+  # @param [Manifest, Hash, nil] item
   # @param [Hash, nil]           opt        Default: `#model_request_params`
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Manifest record update halted.
   #
-  # @return [Manifest]
+  # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   def resume_manifest(item = nil, opt = nil)
     item, _  = model_request_params(item, opt)
-    get_manifest(item).tap do |manifest|
+    find_manifest(item).tap do |manifest|
       resume_submission(manifest)
     end
   end

@@ -213,13 +213,11 @@ module ModelConcern
   # @raise [Record::StatementInvalid] If :id not given.
   # @raise [Record::NotFound]         If *item* was not found.
   #
-  # @return [Model, nil]
+  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
   #
-  def get_record(item = nil, **opt)
-    id = opt.delete(:id)
-    id = item            if item.is_a?(String) || item.is_a?(Integer)
-    id = item[:id] || id if item.is_a?(Model)  || item.is_a?(Hash)
-    id = identifier      if id.blank?
+  def find_record(item = nil, **opt)
+    # noinspection RailsParamDefResolve
+    id = opt.delete(:id) || item.try(:id) || item || identifier
     model_class.find_record(id, **opt)
   end
 
@@ -357,10 +355,11 @@ module ModelConcern
     i_key = model.model_id_key
     keys  = [m_key, i_key, id_key].compact
     item  = opt.extract!(*keys).compact_blank!.values.first.presence
-    id    =
+    id    = ('' if item.nil? || %w[* 0 all false].include?(item))
+    id  ||=
       if item.is_a?(model)
         item.id
-      elsif item && !%w[* 0 all false].include?(item)
+      else
         case model.columns_hash['id']&.type
           when :uuid    then item if uuid?(item)
           when :integer then item if digits_only?(item)
@@ -420,69 +419,69 @@ module ModelConcern
 
   # Start a new (un-persisted) model instance.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
   # @return [Model]                     Un-persisted model record instance.
   #
-  def new_record(attr = nil, force_id: false, **, &blk)
-    attr ||= current_params
-    blk&.(attr)
-    attr.delete(:id) unless true?(force_id)
-    __debug_items("WF #{self.class} #{__method__}") { { attr: attr } }
-    model_class.new(attr)
+  def new_record(prm = nil, force_id: false, **)
+    prm ||= current_params
+    prm.delete(:id) unless true?(force_id)
+    __debug_items("WF #{self.class} #{__method__}") { { attr: prm } }
+    # noinspection RubyMismatchedArgumentType
+    yield(prm) if block_given?
+    model_class.new(prm)
   end
 
   # Create and persist a new model record.
   #
-  # @param [Hash, nil]       attr       Default: `#current_params`.
+  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
   # @return [Model]                     New persisted model record instance.
   #
-  def create_record(attr = nil, force_id: false, fatal: true, **, &blk)
-    __debug_items("WF #{self.class} #{__method__}") { { attr: attr } }
-    new_record(attr, force_id: force_id, &blk).tap do |record|
+  def create_record(prm = nil, force_id: false, fatal: true, **, &blk)
+    __debug_items("WF #{self.class} #{__method__}") { { prm: prm } }
+    new_record(prm, force_id: force_id, &blk).tap do |record|
       fatal ? record.save! : record.save
     end
   end
 
   # Start editing an existing model record.
   #
-  # @param [*]         item           If present, used as a template.
-  # @param [Hash, nil] prm            Default: `#current_params`
-  # @param [Hash]      opt            Passed to #get_record.
+  # @param [*]    item
+  # @param [Hash] opt                 Passed to ModelConcern#find_record.
   #
   # @raise [Record::StatementInvalid]   If :id not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [Model, nil]
+  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
   #
-  def edit_record(item = nil, prm = nil, **opt, &blk)
-    item, prm = model_request_params(item, prm)
-    __debug_items("WF #{self.class} #{__method__}") {{ prm: prm, item: item }}
-    get_record(item, **opt)&.tap do |record|
+  def edit_record(item = nil, **opt, &blk)
+    item, _prm = model_request_params(item)
+    __debug_items("WF #{self.class} #{__method__}") {{ prm: _prm, item: item }}
+    find_record(item, **opt)&.tap do |record|
       blk&.(record)
     end
   end
 
   # Persist changes to an existing model record.
   #
-  # @param [*]         item           If present, used as a template.
-  # @param [Boolean]   fatal          If *false* use #update not #update!.
-  # @param [Hash, nil] prm            Default: `#current_params`
+  # @param [*]       item
+  # @param [Boolean] fatal            If *false* use #update not #update!.
+  # @param [Hash]    prm              Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               If the record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Model record update halted.
   #
-  # @return [Model, nil]
+  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
   #
   def update_record(item = nil, fatal: true, **prm, &blk)
     item, attr = model_request_params(item, prm.presence)
     __debug_items("WF #{self.class} #{__method__}") {{ prm: attr, item: item }}
-    # noinspection RubyScope
+    item ||= attr[:id]
     edit_record(item)&.tap do |record|
       blk&.(record, attr)
       fatal ? record.update!(attr) : record.update(attr)
@@ -491,48 +490,49 @@ module ModelConcern
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [String, Model, Array, nil] items
-  # @param [Hash, nil]                 prm    Default: `#current_params`
+  # @param [*]    items               To #search_records
+  # @param [Hash] prm                 Default: `#current_params`
   #
-  # @raise [RangeError]                       If :page is not valid.
+  # @raise [RangeError]               If :page is not valid.
   #
   # @return [Paginator::Result]
   #
-  def delete_records(items = nil, prm = nil, **)
-    items, prm = model_request_params(items, prm)
-    __debug_items("WF #{self.class} #{__method__}") {{ prm: prm, item: item }}
-    ids     = prm.extract!(:ids, :id).compact.values.first
-    items ||= ids
-    model_class.search_records(*items, **prm)
+  def delete_records(items = nil, **prm)
+    items, opt = model_request_params(items, prm.presence)
+    __debug_items("WF #{self.class} #{__method__}") {{ prm: opt, item: item }}
+    items = opt.extract!(:ids, :id).compact.values.first || items
+    yield(items, opt) if block_given?
+    model_class.search_records(*items, **opt)
   end
 
   # Remove the indicated record(s).
   #
-  # @param [String, Model, Array, nil] items
-  # @param [Hash, nil]                 prm    Default: `#current_params`
-  # @param [Boolean]                   fatal  If *false* do not #raise_failure.
+  # @param [*]       items
+  # @param [Boolean] fatal            If *false* do not #raise_failure.
+  # @param [Hash]    prm              Default: `#current_params`
   #
-  # @raise [Record::SubmitError]              If there were failure(s).
+  # @raise [Record::SubmitError]      If there were failure(s).
   #
-  # @return [Array]                           Destroyed entries.
+  # @return [Array]                   Destroyed entries.
   #
-  def destroy_records(items = nil, prm = nil, fatal: true, **)
-    items, prm = model_request_params(items, prm)
-    prm.reverse_merge!(model_options.all)
-    __debug_items("WF #{self.class} #{__method__}") {{ prm: prm, item: item }}
-    ids     = prm.extract!(:ids, :id).compact.values.first
-    items   = [*items, *ids].map! { |item| item.try(:id) || item }
-    success = []
-    failure = []
+  def destroy_records(items = nil, fatal: true, **prm)
+    items, opt = model_request_params(items, prm.presence)
+    __debug_items("WF #{self.class} #{__method__}") {{ prm: opt, item: item }}
+    opt   = model_options.all.merge(opt)
+    ids   = opt.extract!(:ids, :id).compact.values.first
+    items = [*items, *ids].map! { |item| item.try(:id) || item }.uniq
+    yield(items, opt) if block_given?
+    done  = []
+    fail  = []
     model_class.where(id: items).each do |item|
       if item.destroy
-        success << item.id
+        done << item.id
       else
-        failure << item.id
+        fail << item.id
       end
     end
-    raise_failure(:destroy, failure.uniq) if fatal && failure.present?
-    success
+    raise_failure(:destroy, fail.uniq) if fatal && fail.present?
+    done
   end
 
   # ===========================================================================

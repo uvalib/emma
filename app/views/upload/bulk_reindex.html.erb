@@ -14,6 +14,6 @@
 
 <ul>
   <%- list.each do |item| -%>
-    <li><%= Upload.sid_for(item) -%></li>
+    <li><%= Upload.sid_value(item) -%></li>
   <%- end -%>
 </ul>

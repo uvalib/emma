@@ -211,9 +211,9 @@ class User < ApplicationRecord
 
   # Return the User instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, nil] v
+  # @param [Model, Hash, String, Integer, *] v
   #
-  # @return [User, nil]
+  # @return [User, nil]               A fresh record unless *v* is a User.
   #
-  def self.instance_for: (Model|symHash|String|Integer|nil v) -> (User | nil)
+  def self.instance_for: (untyped v) -> (User | nil)
 end

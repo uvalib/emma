@@ -74,17 +74,6 @@ module Record::EmmaData
   #
   def parse_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, ?bool allow_blank) -> symHash
 
-  # generate_emma_data
-  #
-  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
-  # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] attr
-  #
-  # @return [Hash]
-  #
-  # @note From Upload#assign_attributes (sorta)
-  #
-  def generate_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, (Search::Record::MetadataRecord|Model|anyHash|String|nil) attr) -> symHash
-
   # Class methods automatically added to the including record class.
   #
   module ClassMethods
@@ -100,10 +89,6 @@ module Record::EmmaData
     # @see Record::EmmaData#make_retrieval_link
     #
     def make_retrieval_link: (?(String|nil) rid, ?(symHash|String|nil) base_url) -> (String | nil)
-
-    # @see Record::EmmaData#generate_emma_data
-    #
-    def generate_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, (Search::Record::MetadataRecord|Model|anyHash|String|nil) attr) -> symHash
 
     # Present :emma_data as a structured object (if it is present).
     #
@@ -129,7 +114,50 @@ module Record::EmmaData
 
     @emma_metadata: symHash | nil
 
-    # Set the :emma_data field value (if not #EMMA_DATA_HASH).
+    # Set the :emma_data field value.
+    #
+    # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+    # @param [Boolean]                                           allow_blank
+    #
+    # @return [*]                     New value of :emma_data
+    # @return [nil]                   ...if *data* is *nil*.
+    #
+    # @note From Upload::EmmaDataMethods#set_emma_data
+    #
+    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (untyped | nil)
+
+    # Selectively modify the :emma_data field value.
+    #
+    # @param [Hash]    data
+    # @param [Boolean] allow_blank
+    #
+    # @return [*]                     New value of :emma_data
+    # @return [nil]                   If no change and :emma_data was *nil*.
+    #
+    # @note From Upload::EmmaDataMethods#modify_emma_data
+    #
+    def modify_emma_data: (symHash data, ?bool allow_blank) -> (untyped | nil)
+
+    # init_emma_data_value
+    #
+    # @param [String, nil] data
+    #
+    # @return [Hash{String=>*}, String, nil]
+    #
+    def init_emma_data_value: (untyped data) -> (untyped | nil)
+
+    # curr_emma_data_value
+    #
+    # @return [Hash{String=>*}, String, nil]
+    #
+    def curr_emma_data_value: () -> (untyped | nil)
+  end
+
+  # Instance implementation overrides if EMMA_DATA_COLUMN is saved as 'json'.
+  module HashEmmaData
+    include InstanceMethods
+
+    # Set the :emma_data field value.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
     # @param [Boolean]                                           allow_blank
@@ -137,11 +165,9 @@ module Record::EmmaData
     # @return [Hash{String=>*}]       New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    # @note From Upload::EmmaDataMethods#set_emma_data
-    #
-    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
+    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (symHash | nil)
 
-    # Selectively modify the :emma_data field value (if not #EMMA_DATA_HASH).
+    # Selectively modify the :emma_data field value.
     #
     # @param [Hash]    data
     # @param [Boolean] allow_blank
@@ -149,9 +175,60 @@ module Record::EmmaData
     # @return [Hash{String=>*}]       New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    # @note From Upload::EmmaDataMethods#modify_emma_data
+    def modify_emma_data: (symHash data, ?bool allow_blank) -> (symHash | nil)
+
+    # init_emma_data_value
+    #
+    # @param [*] data
+    #
+    # @return [Hash{String=>*}, nil]
+    #
+    def init_emma_data_value: (untyped data) -> (symHash | nil)
+
+    # curr_emma_data_value
+    #
+    # @return [Hash{String=>*}, nil]
+    #
+    def curr_emma_data_value: () -> (symHash | nil)
+  end
+
+  # Instance implementation overrides if EMMA_DATA_COLUMN is saved as 'text'.
+  module StringEmmaData
+    include InstanceMethods
+
+    # Set the :emma_data field value.
+    #
+    # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+    # @param [Boolean]                                           allow_blank
+    #
+    # @return [String]                New value of :emma_data
+    # @return [nil]                   ...if *data* is *nil*.
+    #
+    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
+
+    # Selectively modify the :emma_data field value.
+    #
+    # @param [Hash]    data
+    # @param [Boolean] allow_blank
+    #
+    # @return [String]                New value of :emma_data
+    # @return [nil]                   If no change and :emma_data was *nil*.
     #
     def modify_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
+
+    # init_emma_data_value
+    #
+    # @param [*] data
+    #
+    # @return [String, nil]
+    #
+    def init_emma_data_value: (untyped data) -> (String | nil)
+
+    # curr_emma_data_value
+    #
+    # @return [String, nil]
+    #
+    def curr_emma_data_value: () -> (String | nil)
   end
 
   private

@@ -70,13 +70,21 @@ module IdMethods
   # @return [Integer, nil]
   #
   def get_id(item, key, allow_zero: false)
+    item = try_key(item, key) || item
+    allow_zero ? non_negative(item) : positive(item)
+  end
+
+  # Get the specified value from *item*.
+  #
+  # @param [*]      item
+  # @param [Symbol] key
+  #
+  # @return [Any, nil]
+  #
+  def try_key(item, key)
     case item
-      when Integer, String, Symbol
-        allow_zero ? non_negative(item) : positive(item)
-      when ApplicationRecord
-        item.try(key) || item[key]
-      when Hash
-        item[key] || item[key.to_s]
+      when ApplicationRecord then item.try(key) || item[key]
+      when Hash              then item[key]     || item[key.to_s]
     end
   end
 

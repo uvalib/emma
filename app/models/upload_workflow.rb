@@ -106,9 +106,9 @@ module UploadWorkflow::Errors
     #
     def make_label(item, default: DEFAULT_LABEL)
       file  = (item.filename if item.is_a?(Upload))
-      ident = Upload.sid_for(item) || Upload.id_for(item) || default
-      ident = "Item #{ident}"      if digits_only?(ident) # TODO: I18n
-      ident = "#{ident} (#{file})" if file.present?
+      ident = Upload.sid_value(item) || Upload.id_value(item) || default
+      ident = config_text(:record, :item, id: ident) if digits_only?(ident)
+      ident = "#{ident} (#{file})"                   if file.present?
       ident
     end
 
@@ -726,7 +726,7 @@ module UploadWorkflow::External
       items, failed =
         items.partition do |item|
           emma_item?(item) || incomplete?(item) ||
-            (Upload.sid_for(item) if emergency)
+            (Upload.sid_value(item) if emergency)
         end
       if model_options.repo_remove
         deferred = opt.key?(:requests)
@@ -921,7 +921,7 @@ module UploadWorkflow::External
   # @return [nil]                     No identifier could be determined.
   #
   def identifier(item)
-    Upload.id_for(item) || Upload.sid_for(item)
+    Upload.id_value(item) || Upload.sid_value(item)
   end
 
   # Return an array of the characteristic identifiers for the item.
@@ -931,7 +931,7 @@ module UploadWorkflow::External
   # @return [Array<String>]
   #
   def identifiers(item)
-    [Upload.id_for(item), Upload.sid_for(item)].compact
+    [Upload.id_value(item), Upload.sid_value(item)].compact
   end
 
   # Return with the specified record or *nil* if one could not be found.
@@ -942,7 +942,7 @@ module UploadWorkflow::External
   #
   # @raise [UploadWorkflow::SubmitError]  If *item* not found and !*fatal*.
   #
-  # @return [Upload]                  The item; from the database if necessary.
+  # @return [Upload]                  A fresh record from the database.
   # @return [nil]                     If *item* not found and *fatal*.
   #
   def get_record(id, fatal: true, meth: nil)
@@ -963,7 +963,7 @@ module UploadWorkflow::External
   # @param [Array<Upload,String,Array>] items
   # @param [Hash]                       opt     Passed to #collect_records.
   #
-  # @return [Array<Upload>]
+  # @return [Array<Upload>]           Fresh records from a database query.
   #
   def find_records(*items, **opt)
     collect_records(*items, **opt).first || []
@@ -997,7 +997,7 @@ module UploadWorkflow::External
   # @param [Array<Upload,String,Array>] items   @see Upload#expand_ids
   # @param [Boolean]                    all     If *true*, empty *items* is OK.
   # @param [Boolean]                    force   See Usage Notes
-  # @param [Hash]                       opt     Passed to Upload#get_records.
+  # @param [Hash]                       opt     Passed to Upload#fetch_records.
   #
   # @raise [StandardException] If *all* is *true* and *items* were supplied.
   #
@@ -1024,7 +1024,7 @@ module UploadWorkflow::External
       identifiers = items.reject { |item| item.is_a?(Upload) }
       if identifiers.present?
         found = {}
-        Upload.get_records(*identifiers, **opt).each do |record|
+        Upload.fetch_records(*identifiers, **opt).each do |record|
           (id  = record.id.to_s).present?       and (found[id]  = record)
           (sid = record.submission_id).present? and (found[sid] = record)
         end
@@ -1033,7 +1033,7 @@ module UploadWorkflow::External
       end
     elsif all
       # Searching for non-identifier criteria (e.g. { user: @user }).
-      items = Upload.get_records(**opt)
+      items = Upload.fetch_records(**opt)
     end
     return items, failed
   end
@@ -1119,7 +1119,7 @@ module UploadWorkflow::External
         data = nil
         id   = record
       end
-      record = get_record(id, **opt)
+      record = find_record(id, **opt)
     end
     return unless record
     if data.present?
@@ -1140,7 +1140,7 @@ module UploadWorkflow::External
   #
   def db_delete(data)
     __debug_items("UPLOAD WF #{__method__}", binding)
-    record = data.is_a?(Upload) ? data : get_record(data)
+    record = data.is_a?(Upload) ? data : find_record(data)
     record&.destroy
   end
 
@@ -1296,7 +1296,7 @@ module UploadWorkflow::External
     by_index = errors.select { |k| k.is_a?(Integer) }
     if by_index.present?
       errors.except!(*by_index.keys)
-      by_index.transform_keys! { |idx| Upload.sid_for(items[idx-1]) }
+      by_index.transform_keys! { |idx| Upload.sid_value(items[idx-1]) }
       sids.concat   by_index.keys
       failed.concat by_index.map { |sid, msg| FlashPart.new(sid, msg) }
     end
@@ -1314,7 +1314,7 @@ module UploadWorkflow::External
     if errors.present?
       failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
     elsif sids.present?
-      sids = sids.map! { |v| Upload.sid_for(v) }.uniq
+      sids = sids.map! { |v| Upload.sid_value(v) }.uniq
       rollback, succeeded =
         items.partition { |itm| sids.include?(itm.submission_id) }
     end
@@ -1666,7 +1666,7 @@ module UploadWorkflow::Actions
 
     # EMMA items and/or EMMA submission ID's.
     emma_items.each do |item|
-      if (rec = get_record(item, fatal: fatal))
+      if (rec = find_record(item, fatal: fatal))
         self.succeeded << rec
       else
         self.failures << item

@@ -115,7 +115,7 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :show_select if identifier.blank?
-    @item = get_record
+    @item = find_record
     manifest_authorize!
     respond_to do |format|
       format.html

@@ -34,22 +34,18 @@ module Record::Searchable
   # @param [String, Symbol, Integer, Hash, Model, nil] item
   # @param [Hash]                                      opt   Passed to #id_term
   #
-  # @return [Model, nil]
+  # @return [Model, nil]              A fresh record from the database.
   #
-  # @note From Upload::SearchMethods#get_record
-  #
-  def get_record: ((symHash|String|Symbol|Integer|Model|nil) item, **untyped opt) -> (Model | nil)
+  def fetch_record: ((symHash|String|Symbol|Integer|Model|nil) item, **untyped opt) -> (Model | nil)
 
   # Get records specified by either :id or :submission_id.
   #
   # @param [Array<Model, String, Integer, Array>] identifiers
   # @param [Hash]                                 opt  Passed to #get_relation
   #
-  # @return [Array<Model>]
+  # @return [Array<Model>]            Fresh records from a database query.
   #
-  # @note From Upload::SearchMethods#get_records
-  #
-  def get_records: (*(String|Symbol|Integer|Model|nil) identifiers, **untyped opt) -> Array[Model]
+  def fetch_records: (*(String|Symbol|Integer|Model|nil) identifiers, **untyped opt) -> Array[Model]
 
   # Local options consumed by #search_records.
   #
